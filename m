@@ -2,149 +2,94 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC28C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:34:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 447ECC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:35:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0069222B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:34:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08D4F222B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:35:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mjbD1SBB"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S+mAqM0F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392191AbfBMMee (ORCPT
+        id S1731418AbfBMMfV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 07:34:34 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42584 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388068AbfBMMe3 (ORCPT
+        Wed, 13 Feb 2019 07:35:21 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33060 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728442AbfBMMfU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 07:34:29 -0500
-Received: by mail-pg1-f195.google.com with SMTP id d72so1066159pga.9
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 04:34:28 -0800 (PST)
+        Wed, 13 Feb 2019 07:35:20 -0500
+Received: by mail-lf1-f68.google.com with SMTP id q12so1671897lfm.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 04:35:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=AM3cPOYZnTTguViecu0E1+Ba1m1zZ0u7N8ID6CDTa4A=;
-        b=mjbD1SBBY26BMfhUfCRIgG32/jSSvduWH75bBY9R+Gq8IKSJAyNuD1XTxDS6WD7nbg
-         A8PgPX0v4hbV6BjeRZHIXdNS0Y3pMDuED7wGRjCDjV39Z+CRqbO+hwi2rgOu14TcLBI6
-         0b0qB0f9CPF7He27o4CY7rZnLpyAD2OiyK84OBw1z8t6IR0QGMkC1xDpPGWAQwJIewfP
-         ZTiHb5tFQ+twVP4YTz8DzbSsu0Yy+777EIlqOSWOdkvfleOwhb/mHwC1NrlnJIEKJbnq
-         BaPUSQ2mf9yRtuUSZrhJ8gyd/1TcckbIjffnOLeWY+Mv5/aN3+BrtjTqJ0OrADw/VAWb
-         iF4g==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aj4FwLyMuUozNVbO9F2S0UM6EjpblZStbiitkn8Ar2M=;
+        b=S+mAqM0FKb+y8IczZrrGArOxZP8MOZqvJv+V2Xz8GQdxplQDDlZJKvfGeNOAjS0EWy
+         OAkLqPh+2k6HMycpP9jspkcmZyY0fXau2U+3qaqJosc5wTBJs1QaV6bZBaGBB47nSctt
+         oPKlGJKscapm7Qz1MxyE6eI1CqLuXIN6wR7K70TfpOhIx1WZFsDboGEl/oeHCCY3eE3E
+         6igRg/aDVBrNSkHY5oQp+lt5JrtAVX5UDIcCo0oRbDrh0IRfwNgTAZYwGuyZG8DsqcoS
+         iqYyC8+yF7zdkGa8H7DNb9qyBimd/6JIU/m6JzOWQ2RPtmlrjlXZCIb4qPZ8aflUY2G5
+         QZhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=AM3cPOYZnTTguViecu0E1+Ba1m1zZ0u7N8ID6CDTa4A=;
-        b=b+ZU6WMgaUKKx43823kibEjmRw4OJRAKw6VY7ZcOgYGOHneHoJ24X0rZMXtTgJAIiY
-         NbOharVCjINNWiywaE0TqXCbSs7PtowH5ttuEQBRhEgyV7LCl2j1maTt29ONs/FDE4a+
-         p7PQ76Pvde44EDucP2YE6bJxuWIxy4wwwN7DUNldUbMHKJpVqFXWshCZ5gYmiNA0CMQu
-         7V1QGtwSicRUZlcS6yAQ+ROXlzI8/4N+AESLFaSFleTufnmhFNLAHUQKLF/wr2D6OrfC
-         cyoj7NyYGkjhVx2xKVLxZcK7NXcr8hh0t3oz8BIIsm3+KqlcaeLkTrlf+TnNN31jW+6M
-         /q1A==
-X-Gm-Message-State: AHQUAuYSwnIKRFEfqhOoKAYAqgaZdtiiO7/VwtOzMiYGQEL2lCmKCsPF
-        W3DDrlV9rjnfHG2i1mIBhsusFA==
-X-Google-Smtp-Source: AHgI3IYzBUqBlJxj3lN55vuJ9Qse/YMpgygqbXFQINAsrgnurSDtJojuYPg/iAOOErNhfmUP17PsaA==
-X-Received: by 2002:a65:62ce:: with SMTP id m14mr262963pgv.101.1550061268236;
-        Wed, 13 Feb 2019 04:34:28 -0800 (PST)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id l5sm21223640pgl.51.2019.02.13.04.34.24
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 13 Feb 2019 04:34:27 -0800 (PST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aj4FwLyMuUozNVbO9F2S0UM6EjpblZStbiitkn8Ar2M=;
+        b=Uks2SjVcwVgK3NQ7TmKYAd9Gob8kBB+4QDdlwqrX2x8sEBlNMcGVeRCSy2T/01jmgS
+         MGq3Q1h5XZ6D5EVDrhpiF64zqfYETjTnMyGYfYzg4AFw7AoiNQpCB0xuVk+q+N7wAIox
+         FcksS/Nok9IOQYfefJh9Mom9egYZnHLiavY9O6N4dEJBxrFUtAsvewGrzMeWaRUhraFY
+         aw8BfSFRmnV+dfC74NAvWhOsi1ZeH/2mGXita6oQbJ9zpIUdbipEd013UIt+ogt1KayI
+         99g+xHTjUidMnRjsMTSYS4z1zpRlVTxdZLoZBkT1srQpPG9wu/Pb1uz1fGPA+1VLTtZs
+         4ZZQ==
+X-Gm-Message-State: AHQUAubzI2jQ3D+JOBFv7iQJ2Xc0mJZOllgmyQDB1z7rC5dvIeHtgffb
+        1IIr4cmZ85Sl7As3d6OSm0ezZ4oPRCWR5Tjs5zd8Ag==
+X-Google-Smtp-Source: AHgI3IbPtFLZT9mNhKd6IQP71cXun87GeXwst/WAQzOdNceW3KRc3OxGQYSfVfShiV/6O+ey1N9bZhdVizcjTzYC/TE=
+X-Received: by 2002:a19:5205:: with SMTP id m5mr173188lfb.61.1550061318196;
+ Wed, 13 Feb 2019 04:35:18 -0800 (PST)
+MIME-Version: 1.0
+References: <11e55b5f9b0d83649a5b81c7e3fdb667cd3ddc5b.1550043082.git.baolin.wang@linaro.org>
+ <3f9d23d4b250c5046f8c3411606aa9ffe807edd8.1550043082.git.baolin.wang@linaro.org>
+ <20190213122012.GE7540@sirena.org.uk>
+In-Reply-To: <20190213122012.GE7540@sirena.org.uk>
 From:   Baolin Wang <baolin.wang@linaro.org>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, arnd@arndb.de
-Cc:     olof@lixom.net, orsonzhai@gmail.com, zhang.lyra@gmail.com,
-        devicetree@vger.kernel.org, arm@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        broonie@kernel.org, baolin.wang@linaro.org
-Subject: [PATCH v2 5/5] arm64: dts: sprd: Remove wildcard compatible string
-Date:   Wed, 13 Feb 2019 20:32:49 +0800
-Message-Id: <f34970a034946bacda19202e2ce9973ca732c925.1550060544.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <cover.1550060543.git.baolin.wang@linaro.org>
-References: <cover.1550060543.git.baolin.wang@linaro.org>
-In-Reply-To: <cover.1550060543.git.baolin.wang@linaro.org>
-References: <cover.1550060543.git.baolin.wang@linaro.org>
+Date:   Wed, 13 Feb 2019 20:35:06 +0800
+Message-ID: <CAMz4kuJL2OTkeik5gR1NnxzSAxY6QcQp9wRTcft-DX8oknY+eg@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] spi: sprd: spi: sprd: Add DMA mode support
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>, lanqing.liu@unisoc.com,
+        linux-spi <linux-spi@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove wildcard compatible string.
+On Wed, 13 Feb 2019 at 20:20, Mark Brown <broonie@kernel.org> wrote:
+>
+> On Wed, Feb 13, 2019 at 03:36:11PM +0800, Baolin Wang wrote:
+>
+> > +enum sprd_spi_dma_channel {
+> > +     SPI_RX,
+> > +     SPI_TX,
+> > +     SPI_MAX,
+> > +};
+>
+> It'd have been better to namespace these (SPRD_SPI_ or something) in
+> case of conflicts.  That's really minor though and everything else looks
+> good so I'll go ahead and apply, thanks!
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
- arch/arm64/boot/dts/sprd/sc2731.dtsi |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Yes, I'll send one incremental patch ASAP. Thanks for your reviewing.
 
-diff --git a/arch/arm64/boot/dts/sprd/sc2731.dtsi b/arch/arm64/boot/dts/sprd/sc2731.dtsi
-index 4a79ddf..e15409f 100644
---- a/arch/arm64/boot/dts/sprd/sc2731.dtsi
-+++ b/arch/arm64/boot/dts/sprd/sc2731.dtsi
-@@ -24,7 +24,7 @@
- 		};
- 
- 		led-controller@200 {
--			compatible = "sprd,sc27xx-bltc", "sprd,sc2731-bltc";
-+			compatible = "sprd,sc2731-bltc";
- 			reg = <0x200>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-@@ -46,14 +46,14 @@
- 		};
- 
- 		rtc@280 {
--			compatible = "sprd,sc27xx-rtc", "sprd,sc2731-rtc";
-+			compatible = "sprd,sc2731-rtc";
- 			reg = <0x280>;
- 			interrupt-parent = <&sc2731_pmic>;
- 			interrupts = <2>;
- 		};
- 
- 		pmic_eic: gpio@300 {
--			compatible = "sprd,sc27xx-eic";
-+			compatible = "sprd,sc2731-eic";
- 			reg = <0x300>;
- 			interrupt-parent = <&sc2731_pmic>;
- 			interrupts = <5>;
-@@ -64,7 +64,7 @@
- 		};
- 
- 		efuse@380 {
--			compatible = "sprd,sc27xx-efuse", "sprd,sc2731-efuse";
-+			compatible = "sprd,sc2731-efuse";
- 			reg = <0x380>;
- 			#address-cells = <1>;
- 			#size-cells = <1>;
-@@ -85,7 +85,7 @@
- 		};
- 
- 		pmic_adc: adc@480 {
--			compatible = "sprd,sc27xx-adc", "sprd,sc2731-adc";
-+			compatible = "sprd,sc2731-adc";
- 			reg = <0x480>;
- 			interrupt-parent = <&sc2731_pmic>;
- 			interrupts = <0>;
-@@ -109,12 +109,12 @@
- 		};
- 
- 		vibrator@ec8 {
--			compatible = "sprd,sc27xx-vibrator", "sprd,sc2731-vibrator";
-+			compatible = "sprd,sc2731-vibrator";
- 			reg = <0xec8>;
- 		};
- 
- 		regulators {
--			compatible = "sprd,sc27xx-regulator";
-+			compatible = "sprd,sc2731-regulator";
- 
- 			vddarm0: BUCK_CPU0 {
- 				regulator-name = "vddarm0";
 -- 
-1.7.9.5
-
+Baolin Wang
+Best Regards
