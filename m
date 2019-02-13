@@ -2,119 +2,136 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B2EC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:15:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99F70C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:17:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 249D2222B1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:15:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 622B4222B1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:17:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J4U8F7EB"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xj2JPIQB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389999AbfBMNPF (ORCPT
+        id S2390087AbfBMNRZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 08:15:05 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41126 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733075AbfBMNPE (ORCPT
+        Wed, 13 Feb 2019 08:17:25 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:42690 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730377AbfBMNRZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 08:15:04 -0500
-Received: by mail-lj1-f193.google.com with SMTP id e17-v6so1952513lja.8
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 05:15:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Kk0uXEtDGFeuQ7BmGJpm/lypD4HdVbYq30UwslEG62I=;
-        b=J4U8F7EBI0rzGCj+N0bD6iQBDrmLeDhNcQ+g+lNl46ez+aow4ai10TxYBT85b8Pn01
-         /p6TVm1bQ7AjJfQ2ZETvmvP51eYjjQFgHS4wkr4++jm6knExmqY2cLDwegklDaQXTxig
-         yk4YvE5C0rp5hLdVyWV7FuNtHxEu3h2dtLvE5piEPo7bjP3cLj1EKbj+f/Bl0kp7IX+0
-         3xVXmVPHoYUsXSk/tpXmUBLinhsJ2+fa+Bh3nIyxqmGdcHYzKH4TinhVLF3GYWmrPmWd
-         ov3beLAIeyj+kZRzySKJ4ddTnGVUONWY7Hs2BDltzvKpTwkt69Q8veJlC7UYUxHAD6hz
-         Mx+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Kk0uXEtDGFeuQ7BmGJpm/lypD4HdVbYq30UwslEG62I=;
-        b=mT65ziz+WKlb7kqwMIoE+J1/XSG/TidAT1Xo8JN6KmTp2nrSWyOTO+NXebDvnEd0wl
-         TUMM/oQonSzlfj0nVH3A3iFvHJ+bo0sH30LMpcELoGWOSDElL7wn3X1e9lGeGYBxyG7Z
-         5b/tQujMb7HMeZ3NpMw2VNaey6knrZ5rneL48u4a4qqjgSdcv8Yh1mTmCWv9+xAof+2p
-         vyAqZpbvcf6NhwEzj/029onZxKklHGBjhTNWlMxf0QqIeaZXJ7RhlbDcGD9Dh8dksvE8
-         wD7smt5od5yg4qglPGYWa0w9tXqkefPWg77Vl37wWsAQ31OvC6u0kO+n+tKqdF7IRp22
-         cK8A==
-X-Gm-Message-State: AHQUAuZf9uVDcj4GVX351dE4t5UWW6o1icUD+fYBUBysDM5eoW+gsAq1
-        rW7q2C1Ijo/8+BhzPealJKlMSZiB2V0c9H8lvG33kQ==
-X-Google-Smtp-Source: AHgI3IYfQHZlf/+TKgo9gjcXFsKx6ZtD0H9uRU2Emos79oqs5v29WLAe+EYzoUOoCR2Vo5DjL/yRLT9v3Fvb1TzEJ0Q=
-X-Received: by 2002:a2e:868c:: with SMTP id l12-v6mr302969lji.90.1550063701990;
- Wed, 13 Feb 2019 05:15:01 -0800 (PST)
+        Wed, 13 Feb 2019 08:17:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=sSbenEiJhYX0l2EY5xkUhH56SlPk5uQLJ95FY6Mjt1Y=; b=Xj2JPIQBOloxhQw3JujUmGJIq
+        DFUBrKC+gfMyibtvX1xhuP6U5b6tDKKXEfK+cJojo6IjEyeLF91bsRPk+YOlJ+kpegYeb2ZFXdhAq
+        OSZrldohNa09OEJgutlw0oex04SKKqk7maSCd4Nlkhiy5T8uRAB92kbhvi73QFea/81qqeWmdpHeP
+        JAvOL4HNW+DTdMpbGM0k+zFFvKRACTDr22Equv682FZWcYaivmgMPXMsBPKGk0gW0ZcTqeFfZW2kg
+        84BvlBxo08nJ1Ql2V06hNEjJNphxNXCTHtpn2/majCFoSv5cnqTmjDYldsye7FzBmNeBUDHKHi7rZ
+        qBvBdEqHA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gtuPh-00084g-BQ; Wed, 13 Feb 2019 13:17:21 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 207E325D07E27; Wed, 13 Feb 2019 14:17:20 +0100 (CET)
+Date:   Wed, 13 Feb 2019 14:17:20 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, mingo@redhat.com,
+        catalin.marinas@arm.com, will.deacon@arm.com, james.morse@arm.com,
+        hpa@zytor.com, valentin.schneider@arm.com
+Subject: Re: [PATCH v3 3/4] uaccess: Check no rescheduling function is called
+ in unsafe region
+Message-ID: <20190213131720.GU32494@hirez.programming.kicks-ass.net>
+References: <1547560709-56207-1-git-send-email-julien.thierry@arm.com>
+ <1547560709-56207-4-git-send-email-julien.thierry@arm.com>
+ <20190211134527.GA121589@gmail.com>
+ <20190211135159.GC32511@hirez.programming.kicks-ass.net>
+ <a23fdd84-8c4b-0c1f-d877-24d946cff6d0@arm.com>
+ <20190213103553.GO32494@hirez.programming.kicks-ass.net>
+ <1c2429a4-9df9-40a3-98e0-51577de4bd6a@arm.com>
 MIME-Version: 1.0
-References: <b8101fd6d303c1993ee294eeee8bce4d24b9547f.1550061925.git.baolin.wang@linaro.org>
- <0438b78c7f9f9bc3f0e7bcbcef3873fd2dd7e259.1550061925.git.baolin.wang@linaro.org>
- <CAMpxmJWuMWBSPjoJWkfagAAopYjohA0rhxUacNPXhhiTFZJorA@mail.gmail.com>
-In-Reply-To: <CAMpxmJWuMWBSPjoJWkfagAAopYjohA0rhxUacNPXhhiTFZJorA@mail.gmail.com>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Wed, 13 Feb 2019 21:14:49 +0800
-Message-ID: <CAMz4kuJRvYo699J5SiG9mhjy5pt1hke8yXwoj9KfmZBTKkkKzw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: sprd: Change to use SoC compatible string
-To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Lyra Zhang <zhang.lyra@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-devicetree <devicetree@vger.kernel.org>,
-        linux-gpio <linux-gpio@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1c2429a4-9df9-40a3-98e0-51577de4bd6a@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 13 Feb 2019 at 20:59, Bartosz Golaszewski
-<bgolaszewski@baylibre.com> wrote:
->
-> =C5=9Br., 13 lut 2019 o 13:49 Baolin Wang <baolin.wang@linaro.org> napisa=
-=C5=82(a):
-> >
-> > Change to use SoC compatible string instead of wildcard string.
-> >
-> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> > ---
-> >  drivers/gpio/gpio-pmic-eic-sprd.c |    2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpio/gpio-pmic-eic-sprd.c b/drivers/gpio/gpio-pmic=
--eic-sprd.c
-> > index ac573da..24228cf 100644
-> > --- a/drivers/gpio/gpio-pmic-eic-sprd.c
-> > +++ b/drivers/gpio/gpio-pmic-eic-sprd.c
-> > @@ -364,7 +364,7 @@ static int sprd_pmic_eic_probe(struct platform_devi=
-ce *pdev)
-> >  }
-> >
-> >  static const struct of_device_id sprd_pmic_eic_of_match[] =3D {
-> > -       { .compatible =3D "sprd,sc27xx-eic", },
-> > +       { .compatible =3D "sprd,sc2731-eic", },
-> >         { /* end of list */ }
-> >  };
-> >  MODULE_DEVICE_TABLE(of, sprd_pmic_eic_of_match);
-> > --
-> > 1.7.9.5
-> >
->
-> We guarantee to make older device-trees to work with new kernel so you
-> can add the new compatible, but you can't remove the old one.
+On Wed, Feb 13, 2019 at 10:50:21AM +0000, Julien Thierry wrote:
+> On 13/02/2019 10:35, Peter Zijlstra wrote:
+> > On Tue, Feb 12, 2019 at 09:15:13AM +0000, Julien Thierry wrote:
+> > 
+> >>>>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> >>>>> index a674c7db..b1bb7e9 100644
+> >>>>> --- a/kernel/sched/core.c
+> >>>>> +++ b/kernel/sched/core.c
+> >>>>> @@ -3289,6 +3289,14 @@ static inline void schedule_debug(struct task_struct *prev)
+> >>>>>  		__schedule_bug(prev);
+> >>>>>  		preempt_count_set(PREEMPT_DISABLED);
+> >>>>>  	}
+> >>>>> +
+> >>>>> +	if (IS_ENABLED(CONFIG_DEBUG_UACCESS_SLEEP) &&
+> >>>>> +	    unlikely(unsafe_user_region_active())) {
+> >>>>> +		printk(KERN_ERR "BUG: scheduling while user_access enabled: %s/%d/0x%08x\n",
+> >>>>> +		       prev->comm, prev->pid, preempt_count());
+> >>>>> +		dump_stack();
+> >>>>> +	}
+> >>>>> +
+> >>>>>  	rcu_sleep_check();
+> >>>>>
+> >>>>>  	profile_hit(SCHED_PROFILING, __builtin_return_address(0));
+> > 
+> >> I guess I'll drop the might_resched() part of this patch if that sounds
+> >> alright.
+> > 
+> > I'm still confused by the schedule_debug() part. How is that not broken?
+> 
+> Hmmm, I am not exactly sure which part you expect to be broken, I guess
+> it's because of the nature of the uaccess unsafe accessor usage.
+> 
+> Basically, the following is a definite no:
+> 	if (user_access_begin(ptr, size)) {
+> 
+> 		[...]
+> 
+> 		//something that calls schedule
+> 
+> 		[...]
+> 
+> 		user_access_end();
+> 	}
+> 	
+> 
+> However the following is fine:
+> 
+> - user_access_begin(ptr, size)
+> - taking irq/exception
+> - get preempted
 
-But the old one is incorrect, and we still keep it?
+This; how is getting preempted fundamentally different from scheduling
+ourselves?
 
---=20
-Baolin Wang
-Best Regards
+> - get resumed at some point in time
+> - restore state + eret
+> - user_access_end()
+> 
+> That's because exceptions/irq implicitly "suspend" the user access
+> region. (That's what I'm trying to clarify with the comment)
+> So, unsafe_user_region_active() should return false in a irq/exception
+> context.
+> 
+> Is this what you were concerned about? Or there still something that
+> might be broken?
+
+I really hate the asymetry introduced between preemptible and being able
+to schedule. Both end up calling __schedule() and there really should
+not be a difference.
