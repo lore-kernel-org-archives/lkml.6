@@ -2,77 +2,89 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69522C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:23:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C39DDC282CE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:23:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36A63222CD
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:23:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="p103b3JS"
+	by mail.kernel.org (Postfix) with ESMTP id 9B4D320663
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:23:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391772AbfBMPXd (ORCPT
+        id S2391821AbfBMPX6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 10:23:33 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:39228 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728119AbfBMPXd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 10:23:33 -0500
-Received: from zn.tnic (p200300EC2BCDE80001C441D7371A5B73.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:e800:1c4:41d7:371a:5b73])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BFE361EC02FF;
-        Wed, 13 Feb 2019 16:23:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1550071411;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=Ed+qZFvUH1CbTgvyh/nwON5pLfd+2jQtEruy5zv7iqw=;
-        b=p103b3JS86YS3N/G1dECBI5BoYEzDSWhBr1X82sUgR9/q5dwIqWVrdzRDnymNxoFOP37kQ
-        7tsLz/rhTsWhGFafCnDsulX9LTNLW4fzCwjP4JYxp/mBTpS8Mg1Kp7bRBUhNClAjz6iFUM
-        qJxIrYtPfoVkMsoptMVEBfQ2wU7jxCA=
-Date:   Wed, 13 Feb 2019 16:23:26 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-Cc:     platform-driver-x86@vger.kernel.org, dvhart@infradead.org,
-        andy@infradead.org, linux-kernel@vger.kernel.org, x86@kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "David E. Box" <david.e.box@intel.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: Re: [PATCH v2 06/10] x86/cpu: Add Icelake to Intel family
-Message-ID: <20190213152326.GA1883@zn.tnic>
-References: <20190213150810.32750-1-rajneesh.bhardwaj@linux.intel.com>
- <20190213150810.32750-7-rajneesh.bhardwaj@linux.intel.com>
+        Wed, 13 Feb 2019 10:23:58 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56056 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726139AbfBMPX5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 10:23:57 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1756580D;
+        Wed, 13 Feb 2019 07:23:57 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D60F3F575;
+        Wed, 13 Feb 2019 07:23:55 -0800 (PST)
+Date:   Wed, 13 Feb 2019 15:23:52 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Khasim Syed Mohammed <khasim.mohammed@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH] PCI: qcom: Don't deassert reset GPIO during probe
+Message-ID: <20190213152352.GB417@e107981-ln.cambridge.arm.com>
+References: <20190125232616.25714-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190213150810.32750-7-rajneesh.bhardwaj@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190125232616.25714-1-bjorn.andersson@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 08:38:06PM +0530, Rajneesh Bhardwaj wrote:
-> Add CPUID of Icelake (ICL) mobile processors to Intel family list. The
-> information related to ICL CPUID is referenced from below Coreboot
-> project link.
+On Fri, Jan 25, 2019 at 03:26:16PM -0800, Bjorn Andersson wrote:
+> Acquiring the reset GPIO low means that reset is being deasserted, this
+> is followed almost immediately with qcom_pcie_host_init() asserting it,
+> initializing it and then finally deasserting it again, for the link to
+> come up.
 > 
-> https://github.com/coreboot/coreboot/blob/5ebcea3aaaa3cd358bc5bccaa156b13a6ef25df6/src/soc/intel/common/block/include/intelblocks/mp_init.h
+> Some PCIe devices requires a minimum time between the initial deassert
+> and subsequent reset cycles. In a platform that boots with the reset
+> GPIO asserted this requirement is being violated by this deassert/assert
+> pulse.
 > 
+> Acquiring the reset GPIO high will prevent this by matching the state to
+> the subsequent asserted state.
+> 
+> Cc: stable@vger.kernel.org
 
-I believe tglx was suggesting you should drop this link. If you can't
-reference an official document, then you don't need any reference.
+Missing Fixes: tag, please provide me one so that I can proceed.
 
--- 
-Regards/Gruss,
-    Boris.
+Lorenzo
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index d185ea5fe996..a7f703556790 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -1228,7 +1228,7 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>  
+>  	pcie->ops = of_device_get_match_data(dev);
+>  
+> -	pcie->reset = devm_gpiod_get_optional(dev, "perst", GPIOD_OUT_LOW);
+> +	pcie->reset = devm_gpiod_get_optional(dev, "perst", GPIOD_OUT_HIGH);
+>  	if (IS_ERR(pcie->reset)) {
+>  		ret = PTR_ERR(pcie->reset);
+>  		goto err_pm_runtime_put;
+> -- 
+> 2.18.0
+> 
