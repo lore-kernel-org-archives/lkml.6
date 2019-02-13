@@ -2,164 +2,81 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A069C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7C14C282CE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:08:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70273222C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:08:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92B5A2190A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:08:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Cf+TYhiF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404283AbfBMPIX (ORCPT
+        id S2404296AbfBMPI0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 10:08:23 -0500
-Received: from mga06.intel.com ([134.134.136.31]:11815 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404265AbfBMPIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 10:08:22 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 07:08:21 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,365,1544515200"; 
-   d="scan'208";a="299437358"
-Received: from rajneesh-desk.iind.intel.com ([10.223.86.34])
-  by orsmga005.jf.intel.com with ESMTP; 13 Feb 2019 07:08:19 -0800
-From:   Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-To:     platform-driver-x86@vger.kernel.org
-Cc:     dvhart@infradead.org, andy@infradead.org,
-        linux-kernel@vger.kernel.org,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
-Subject: [PATCH v2 10/10] platform/x86: intel_pmc_core: Quirk to ignore XTAL shutdown
-Date:   Wed, 13 Feb 2019 20:38:10 +0530
-Message-Id: <20190213150810.32750-11-rajneesh.bhardwaj@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190213150810.32750-1-rajneesh.bhardwaj@linux.intel.com>
-References: <20190213150810.32750-1-rajneesh.bhardwaj@linux.intel.com>
+        Wed, 13 Feb 2019 10:08:26 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:44330 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730973AbfBMPIZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 10:08:25 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=B6Hjpqy7xmesO0Qjschsa/xWQvFbbpkd+0q/JbfvpyM=; b=Cf+TYhiF/Eohq3X9KPtkgIaIM
+        15uhPMT0CtY+DXgu9tJnhvaqN07D7HiZZkICnydqBMpn5Q7SGBNh+sGKrk8y2jzT/c3QhzLgd3ctQ
+        UPN4DBS0FAoG/qzy12UpoY9nTCnd8cTZaGl/4NXS5W+pOQqL/uIWXnCUbWWH+NVNn3V478RTibx8u
+        gWtDzuuWQSt7uzEXaOYd1D05AlF3KYVqWhvqYXfQDYcNMw9vMip2Ny/PEb345zlRzWMWEWCLSKqSM
+        Ou02S3BDAOaC54tAKIPKbRsDHImaxX3RmNvLgyq3RQwpXxcLFN/+TPPhN0Y5m7qE+ZPCFm7gOJawK
+        EnENDn9Hw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gtw97-0001mY-7j; Wed, 13 Feb 2019 15:08:21 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id AD4EA202CEF73; Wed, 13 Feb 2019 16:08:19 +0100 (CET)
+Date:   Wed, 13 Feb 2019 16:08:19 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     Will Deacon <will.deacon@arm.com>, Ingo Molnar <mingo@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        mingo@redhat.com, catalin.marinas@arm.com, james.morse@arm.com,
+        hpa@zytor.com, valentin.schneider@arm.com
+Subject: Re: [PATCH v3 3/4] uaccess: Check no rescheduling function is called
+ in unsafe region
+Message-ID: <20190213150819.GP32534@hirez.programming.kicks-ass.net>
+References: <20190211134527.GA121589@gmail.com>
+ <20190211135159.GC32511@hirez.programming.kicks-ass.net>
+ <a23fdd84-8c4b-0c1f-d877-24d946cff6d0@arm.com>
+ <20190213103553.GO32494@hirez.programming.kicks-ass.net>
+ <1c2429a4-9df9-40a3-98e0-51577de4bd6a@arm.com>
+ <20190213131720.GU32494@hirez.programming.kicks-ass.net>
+ <20190213140025.GB6346@brain-police>
+ <20190213141712.GV32494@hirez.programming.kicks-ass.net>
+ <e8ff5f65-b8df-0296-e9e7-ba627a4ef1a4@arm.com>
+ <20190213144000.GX32494@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190213144000.GX32494@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On some platforms such as HP Elite-x2-1013-g3, the platform BIOS
-enforces XTAL to remain off before S0ix state can be achieved. This may
-not be optimum when we want to enable use cases like Low Power Audio,
-Wake on Voice etc which always need 24mhz clock.
+On Wed, Feb 13, 2019 at 03:40:00PM +0100, Peter Zijlstra wrote:
 
-This introduces a new quirk to allow S0ix entry when all other
-conditions except for XTAL clock are good on a given platform. The extra
-power consumed by XTAL clock is about 2mw but it saves much more
-platform power compared to the system that remains in just PC10.
+> So far, all 6 in-tree users are indeed free of dodgy code, but *groan*.
 
-Link: https://bit.ly/2UmnrFf
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201579
-Tested-by: "David E. Box" <david.e.box@linux.intel.com>
-Reported-and-tested-by: russianneuromancer <russianneuromancer@ya.ru>
-Signed-off-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>
----
- drivers/platform/x86/intel_pmc_core.c | 34 +++++++++++++++++++++++++++
- drivers/platform/x86/intel_pmc_core.h |  5 ++++
- 2 files changed, 39 insertions(+)
+because of this, there must also not be tracepoints (even implicit ones
+like function-trace) between user_access_{begin,end}().
 
-diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
-index 4e7aa1711148..a27574e3e868 100644
---- a/drivers/platform/x86/intel_pmc_core.c
-+++ b/drivers/platform/x86/intel_pmc_core.c
-@@ -15,6 +15,7 @@
- #include <linux/bitfield.h>
- #include <linux/debugfs.h>
- #include <linux/delay.h>
-+#include <linux/dmi.h>
- #include <linux/io.h>
- #include <linux/module.h>
- #include <linux/pci.h>
-@@ -151,6 +152,7 @@ static const struct pmc_reg_map spt_reg_map = {
- 	.pm_cfg_offset = SPT_PMC_PM_CFG_OFFSET,
- 	.pm_read_disable_bit = SPT_PMC_READ_DISABLE_BIT,
- 	.ltr_ignore_max = SPT_NUM_IP_IGN_ALLOWED,
-+	.pm_vric1_offset = SPT_PMC_VRIC1_OFFSET,
- };
- 
- /* Cannonlake: PGD PFET Enable Ack Status Register(s) bitmap */
-@@ -821,6 +823,37 @@ static const struct pci_device_id pmc_pci_ids[] = {
- 	{ 0, },
- };
- 
-+/*
-+ * This quirk can be used on those platforms where
-+ * the platform BIOS enforces 24Mhx Crystal to shutdown
-+ * before PMC can assert SLP_S0#.
-+ */
-+int quirk_xtal_ignore(const struct dmi_system_id *id)
-+{
-+	struct pmc_dev *pmcdev = &pmc;
-+	u32 value;
-+
-+	value = pmc_core_reg_read(pmcdev, pmcdev->map->pm_vric1_offset);
-+	/* 24MHz Crystal Shutdown Qualification Disable */
-+	value |= SPT_PMC_VRIC1_XTALSDQDIS;
-+	/* Low Voltage Mode Enable */
-+	value &= ~SPT_PMC_VRIC1_SLPS0LVEN;
-+	pmc_core_reg_write(pmcdev, pmcdev->map->pm_vric1_offset, value);
-+	return 0;
-+}
-+
-+static const struct dmi_system_id pmc_core_dmi_table[]  = {
-+	{
-+	.callback = quirk_xtal_ignore,
-+	.ident = "HP Elite x2 1013 G3",
-+	.matches = {
-+		DMI_MATCH(DMI_SYS_VENDOR, "HP"),
-+		DMI_MATCH(DMI_PRODUCT_NAME, "HP Elite x2 1013 G3"),
-+		},
-+	},
-+	{}
-+};
-+
- static int __init pmc_core_probe(void)
- {
- 	struct pmc_dev *pmcdev = &pmc;
-@@ -862,6 +895,7 @@ static int __init pmc_core_probe(void)
- 		return err;
- 	}
- 
-+	dmi_check_system(pmc_core_dmi_table);
- 	pr_info(" initialized\n");
- 	return 0;
- }
-diff --git a/drivers/platform/x86/intel_pmc_core.h b/drivers/platform/x86/intel_pmc_core.h
-index 6f1b64808075..88d9c0653a5f 100644
---- a/drivers/platform/x86/intel_pmc_core.h
-+++ b/drivers/platform/x86/intel_pmc_core.h
-@@ -25,6 +25,7 @@
- #define SPT_PMC_MTPMC_OFFSET			0x20
- #define SPT_PMC_MFPMC_OFFSET			0x38
- #define SPT_PMC_LTR_IGNORE_OFFSET		0x30C
-+#define SPT_PMC_VRIC1_OFFSET			0x31c
- #define SPT_PMC_MPHY_CORE_STS_0			0x1143
- #define SPT_PMC_MPHY_CORE_STS_1			0x1142
- #define SPT_PMC_MPHY_COM_STS_0			0x1155
-@@ -136,6 +137,9 @@ enum ppfear_regs {
- #define SPT_PMC_BIT_MPHY_CMN_LANE2		BIT(2)
- #define SPT_PMC_BIT_MPHY_CMN_LANE3		BIT(3)
- 
-+#define SPT_PMC_VRIC1_SLPS0LVEN			BIT(13)
-+#define SPT_PMC_VRIC1_XTALSDQDIS		BIT(22)
-+
- /* Cannonlake Power Management Controller register offsets */
- #define CNP_PMC_SLPS0_DBG_OFFSET		0x10B4
- #define CNP_PMC_PM_CFG_OFFSET			0x1818
-@@ -224,6 +228,7 @@ struct pmc_reg_map {
- 	const int pm_read_disable_bit;
- 	const u32 slps0_dbg_offset;
- 	const u32 ltr_ignore_max;
-+	const u32 pm_vric1_offset;
- };
- 
- /**
--- 
-2.17.1
+And while that is unlikely with the current code; it is not guaranteed
+afaict.
 
+What a ff'ing mess.
