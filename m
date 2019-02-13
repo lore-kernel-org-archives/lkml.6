@@ -2,155 +2,111 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48825C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:22:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFA39C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2150B2190A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:22:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 468B52190A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:30:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389339AbfBMKWF (ORCPT
+        id S2389611AbfBMKaR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 05:22:05 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59016 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1733047AbfBMKWF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 05:22:05 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 3FA1AAEE9;
-        Wed, 13 Feb 2019 10:22:03 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id A27971E09C5; Wed, 13 Feb 2019 11:22:02 +0100 (CET)
-Date:   Wed, 13 Feb 2019 11:22:02 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-nvdimm@lists.01.org, Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-kernel@vger.kernel.org, vishal.l.verma@intel.com,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 3/7] dax: Check the end of the block-device capacity with
- dax_direct_access()
-Message-ID: <20190213102202.GA13313@quack2.suse.cz>
-References: <155000668075.348031.9371497273408112600.stgit@dwillia2-desk3.amr.corp.intel.com>
- <155000669646.348031.16690970886357498896.stgit@dwillia2-desk3.amr.corp.intel.com>
+        Wed, 13 Feb 2019 05:30:17 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50998 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732488AbfBMKaR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 05:30:17 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B2725A78;
+        Wed, 13 Feb 2019 02:30:16 -0800 (PST)
+Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 795B53F575;
+        Wed, 13 Feb 2019 02:30:14 -0800 (PST)
+Subject: Re: [PATCH v8 4/5] arm64: implement ftrace with regs
+To:     Torsten Duwe <duwe@lst.de>, Mark Rutland <mark.rutland@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Amit Daniel Kachhap <amit.kachhap@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org
+References: <20190208150826.44EBC68DD2@newverein.lst.de>
+ <20190208151019.9E7A968DDD@newverein.lst.de>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <c6a24572-84d5-bf0f-f70c-8580a83834a1@arm.com>
+Date:   Wed, 13 Feb 2019 10:30:12 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <155000669646.348031.16690970886357498896.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190208151019.9E7A968DDD@newverein.lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 12-02-19 13:24:56, Dan Williams wrote:
-> The checks in __bdev_dax_supported() helped mitigate a potential data
-> corruption bug in the pmem driver's handling of section alignment
-> padding. Strengthen the checks, including checking the end of the range,
-> to validate the dev_pagemap, Xarray entries, and sector-to-pfn
-> translation established for pmem namespaces.
+Hi Torsten,
+
+On 08/02/2019 15:10, Torsten Duwe wrote:
+> Implement ftrace with regs, based on the new gcc flag
+> -fpatchable-function-entry (=2)
 > 
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: "Darrick J. Wong" <darrick.wong@oracle.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> Now that gcc8 added 2 NOPs at the beginning of each function, replace
+> the first NOP thus generated with a quick LR saver (move it to scratch
+> reg x9), so the 2nd replacement insn, the call to ftrace, does not
+> clobber the value. Ftrace will then generate the standard stack
+> frames.
+> 
+> Note that patchable-function-entry in GCC disables IPA-RA, which means
+> ABI register calling conventions are obeyed and scratch registers such
+> as x9 are available.
+> 
+> Introduce and handle an ftrace_regs_trampoline for module PLTs, right
+> after ftrace_trampoline in an ftrace_trampolines[2] array, and double
+> the size of the corresponding special section.
+> 
+> Signed-off-by: Torsten Duwe <duwe@suse.de>
+> 
 > ---
->  drivers/dax/super.c |   39 +++++++++++++++++++++++++++++----------
->  1 file changed, 29 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/dax/super.c b/drivers/dax/super.c
-> index 6e928f37d084..a27395cfcec6 100644
-> --- a/drivers/dax/super.c
-> +++ b/drivers/dax/super.c
-> @@ -86,12 +86,14 @@ bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
->  {
->  	struct dax_device *dax_dev;
->  	bool dax_enabled = false;
-> +	pgoff_t pgoff, pgoff_end;
->  	struct request_queue *q;
-> -	pgoff_t pgoff;
-> -	int err, id;
-> -	pfn_t pfn;
-> -	long len;
->  	char buf[BDEVNAME_SIZE];
-> +	void *kaddr, *end_kaddr;
-> +	pfn_t pfn, end_pfn;
-> +	sector_t last_page;
-> +	long len, len2;
-> +	int err, id;
->  
->  	if (blocksize != PAGE_SIZE) {
->  		pr_debug("%s: error: unsupported blocksize for dax\n",
-> @@ -113,6 +115,15 @@ bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
->  		return false;
->  	}
->  
-> +	last_page = ALIGN_DOWN(part_nr_sects_read(bdev->bd_part)
-> +			- PAGE_SIZE / 512, PAGE_SIZE / 512);
+>  arch/arm64/include/asm/ftrace.h  |   16 ++++
+>  arch/arm64/include/asm/module.h  |    3 
+>  arch/arm64/kernel/entry-ftrace.S |  125 +++++++++++++++++++++++++++++++++++++--
+>  arch/arm64/kernel/ftrace.c       |  117 ++++++++++++++++++++++++++++--------
+>  arch/arm64/kernel/module-plts.c  |    3 
+>  arch/arm64/kernel/module.c       |    2 
+>  6 files changed, 231 insertions(+), 35 deletions(-)
 
-Why not just (i_size_read(bdev->bd_inode) - 1) >> PAGE_SHIFT? Otherwise the
-patch looks good to me.
+[...]
 
-								Honza
+> --- a/arch/arm64/include/asm/module.h
+> +++ b/arch/arm64/include/asm/module.h
+> @@ -32,7 +32,8 @@ struct mod_arch_specific {
+>  	struct mod_plt_sec	init;
+>  
+>  	/* for CONFIG_DYNAMIC_FTRACE */
+> -	struct plt_entry 	*ftrace_trampoline;
+> +	struct plt_entry	*ftrace_trampolines;
+> +#define MOD_ARCH_NR_FTRACE_TRAMPOLINES	2
 
+Nit: I'd define this outside of the struct, just below
+MODULE_ARCH_VERMAGIC, and use the prefix "MODULE_ARCH" instead of
+"MOD_ARCH" as this seem to be already in use for a few other defines.
 
-> +	err = bdev_dax_pgoff(bdev, last_page, PAGE_SIZE, &pgoff_end);
-> +	if (err) {
-> +		pr_debug("%s: error: unaligned partition for dax\n",
-> +				bdevname(bdev, buf));
-> +		return false;
-> +	}
-> +
->  	dax_dev = dax_get_by_host(bdev->bd_disk->disk_name);
->  	if (!dax_dev) {
->  		pr_debug("%s: error: device does not support dax\n",
-> @@ -121,14 +132,15 @@ bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
->  	}
->  
->  	id = dax_read_lock();
-> -	len = dax_direct_access(dax_dev, pgoff, 1, NULL, &pfn);
-> +	len = dax_direct_access(dax_dev, pgoff, 1, &kaddr, &pfn);
-> +	len2 = dax_direct_access(dax_dev, pgoff_end, 1, &end_kaddr, &end_pfn);
->  	dax_read_unlock(id);
->  
->  	put_dax(dax_dev);
->  
-> -	if (len < 1) {
-> +	if (len < 1 || len2 < 1) {
->  		pr_debug("%s: error: dax access failed (%ld)\n",
-> -				bdevname(bdev, buf), len);
-> +				bdevname(bdev, buf), len < 1 ? len : len2);
->  		return false;
->  	}
->  
-> @@ -143,13 +155,20 @@ bool __bdev_dax_supported(struct block_device *bdev, int blocksize)
->  		 */
->  		WARN_ON(IS_ENABLED(CONFIG_ARCH_HAS_PMEM_API));
->  		dax_enabled = true;
-> -	} else if (pfn_t_devmap(pfn)) {
-> -		struct dev_pagemap *pgmap;
-> +	} else if (pfn_t_devmap(pfn) && pfn_t_devmap(end_pfn)) {
-> +		struct dev_pagemap *pgmap, *end_pgmap;
->  
->  		pgmap = get_dev_pagemap(pfn_t_to_pfn(pfn), NULL);
-> -		if (pgmap && pgmap->type == MEMORY_DEVICE_FS_DAX)
-> +		end_pgmap = get_dev_pagemap(pfn_t_to_pfn(end_pfn), NULL);
-> +		if (pgmap && pgmap == end_pgmap && pgmap->type == MEMORY_DEVICE_FS_DAX
-> +				&& pfn_t_to_page(pfn)->pgmap == pgmap
-> +				&& pfn_t_to_page(end_pfn)->pgmap == pgmap
-> +				&& pfn_t_to_pfn(pfn) == PHYS_PFN(__pa(kaddr))
-> +				&& pfn_t_to_pfn(end_pfn) == PHYS_PFN(__pa(end_kaddr)))
->  			dax_enabled = true;
->  		put_dev_pagemap(pgmap);
-> +		put_dev_pagemap(end_pgmap);
-> +
->  	}
->  
->  	if (!dax_enabled) {
-> 
+Otherwise things look good to me:
+
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+
+Cheers,
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Julien Thierry
