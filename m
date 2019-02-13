@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86CC1C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C5AC282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56643206B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7136F206B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:35:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025347;
-	bh=cKRT9wIdlA0mFtlv4E1zbRPiqP0Zl62XkpM09mgsqDU=;
+	s=default; t=1550025353;
+	bh=JDmDFm0aWvL0p7gR8IWgxxG6wZcsl/D8YmyIzAXo/Nw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QlidWkA9bZ2DJ71IykqxrcX2bj2skN566auv+g2oIhrLBI4SZD7/WwlpUTMdn/vqY
-	 63TM2vnPul27k/YHMrt9ItOjALx4etG7IiHOv9DGdI8mLK12lj+fqnKo4o8ZvnuT5R
-	 Wo9AMBIVmHqGAqfD+bwatbWdLf5f14+hIF6ONuE4=
+	b=USEvhm1hfCDu/UGI0m0ZiD4XOFYZmKGUghsKpPEkKaBqQ1zRSc6dFmjf3xCPPGr6E
+	 IDwRSDbkubxCM1k8jL4h1eERWy7UeaBNZn4VpFuN+n4LtMEu8fJC2fhgJToQ8Fnpij
+	 XYHBCfqa+L/sC6lyJbTHKI4VbU46TyIN4wG+UDFc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731542AbfBMCfp (ORCPT
+        id S2388079AbfBMCfv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:35:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39278 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:35:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388035AbfBMCfd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:35:33 -0500
+        id S2388053AbfBMCfk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:35:40 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52C28222CC;
-        Wed, 13 Feb 2019 02:35:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8B7A222CE;
+        Wed, 13 Feb 2019 02:35:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025332;
-        bh=cKRT9wIdlA0mFtlv4E1zbRPiqP0Zl62XkpM09mgsqDU=;
+        s=default; t=1550025339;
+        bh=JDmDFm0aWvL0p7gR8IWgxxG6wZcsl/D8YmyIzAXo/Nw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E4ZxVly1DnmUdBtw5Bf93Utgcdm89NxUGz7k2zI4lKAIPHeI+rI/m3DInBRkVPagM
-         T1L2BVpbHPjZPhz1DorD2y4ZrJukrhiQ9I9O9JOzu8Wb3KMnEhStUcTUPUgKtdN5qq
-         iCwGmzuY/f9kXUw9xJ+KDOMuMqM1xQGDXPi+5H0o=
+        b=b219lcXw6IKqomrj2Tr7kw56NneurW0CZSXKGEwhaQ4YtL7LUaNvZnF9zfyHwRx/l
+         Zf1tUnHUcyGxfINsLCovY8L4ZBFXGM9bkZy6WNf5odKa9lMaQrgrjEGhaT6ikPDvBK
+         nkbhEFPdcnEdPpY6jDVbkn3Qw+ar5Y077AU5yiis=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yonghong Song <yhs@fb.com>, Daniel Borkmann <daniel@iogearbox.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        xdp-newbies@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 074/105] samples/bpf: workaround clang asm goto compilation errors
-Date:   Tue, 12 Feb 2019 21:33:05 -0500
-Message-Id: <20190213023336.19019-74-sashal@kernel.org>
+Cc:     "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 079/105] ACPI: EC: Look for ECDT EC after calling acpi_load_tables()
+Date:   Tue, 12 Feb 2019 21:33:10 -0500
+Message-Id: <20190213023336.19019-79-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -58,109 +57,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yonghong Song <yhs@fb.com>
+From: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 
-[ Upstream commit 6bf3bbe1f4d4cf405e3c2bf07bbdff56d3223ec8 ]
+[ Upstream commit b1c0330823fe842dbb34641f1410f0afa51c29d3 ]
 
-x86 compilation has required asm goto support since 4.17.
-Since clang does not support asm goto, at 4.17,
-Commit b1ae32dbab50 ("x86/cpufeature: Guard asm_volatile_goto usage
-for BPF compilation") worked around the issue by permitting an
-alternative implementation without asm goto for clang.
+Some systems have had functional issues since commit 5a8361f7ecce
+(ACPICA: Integrate package handling with module-level code) that,
+among other things, changed the initial values of the
+acpi_gbl_group_module_level_code and acpi_gbl_parse_table_as_term_list
+global flags in ACPICA which implicitly caused acpi_ec_ecdt_probe() to
+be called before acpi_load_tables() on the vast majority of platforms.
 
-At 5.0, more asm goto usages appeared.
-  [yhs@148 x86]$ egrep -r asm_volatile_goto
-  include/asm/cpufeature.h:     asm_volatile_goto("1: jmp 6f\n"
-  include/asm/jump_label.h:     asm_volatile_goto("1:"
-  include/asm/jump_label.h:     asm_volatile_goto("1:"
-  include/asm/rmwcc.h:  asm_volatile_goto (fullop "; j" #cc " %l[cc_label]"     \
-  include/asm/uaccess.h:        asm_volatile_goto("\n"                          \
-  include/asm/uaccess.h:        asm_volatile_goto("\n"                          \
-  [yhs@148 x86]$
+Namely, before commit 5a8361f7ecce, acpi_load_tables() was called from
+acpi_early_init() if acpi_gbl_parse_table_as_term_list was FALSE and
+acpi_gbl_group_module_level_code was TRUE, which almost always was
+the case as FALSE and TRUE were their initial values, respectively.
+The acpi_gbl_parse_table_as_term_list value would be changed to TRUE
+for a couple of platforms in acpi_quirks_dmi_table[], but it remained
+FALSE in the vast majority of cases.
 
-Compiling samples/bpf directories, most bpf programs failed
-compilation with error messages like:
-  In file included from /home/yhs/work/bpf-next/samples/bpf/xdp_sample_pkts_kern.c:2:
-  In file included from /home/yhs/work/bpf-next/include/linux/ptrace.h:6:
-  In file included from /home/yhs/work/bpf-next/include/linux/sched.h:15:
-  In file included from /home/yhs/work/bpf-next/include/linux/sem.h:5:
-  In file included from /home/yhs/work/bpf-next/include/uapi/linux/sem.h:5:
-  In file included from /home/yhs/work/bpf-next/include/linux/ipc.h:9:
-  In file included from /home/yhs/work/bpf-next/include/linux/refcount.h:72:
-  /home/yhs/work/bpf-next/arch/x86/include/asm/refcount.h:70:9: error: 'asm goto' constructs are not supported yet
-        return GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl",
-               ^
-  /home/yhs/work/bpf-next/arch/x86/include/asm/rmwcc.h:67:2: note: expanded from macro 'GEN_BINARY_SUFFIXED_RMWcc'
-        __GEN_RMWcc(op " %[val], %[var]\n\t" suffix, var, cc,           \
-        ^
-  /home/yhs/work/bpf-next/arch/x86/include/asm/rmwcc.h:21:2: note: expanded from macro '__GEN_RMWcc'
-        asm_volatile_goto (fullop "; j" #cc " %l[cc_label]"             \
-        ^
-  /home/yhs/work/bpf-next/include/linux/compiler_types.h:188:37: note: expanded from macro 'asm_volatile_goto'
-  #define asm_volatile_goto(x...) asm goto(x)
+After commit 5a8361f7ecce, the initial values of the two flags have
+been reversed, so in effect acpi_load_tables() has not been called
+from acpi_early_init() any more.  That, in turn, affects
+acpi_ec_ecdt_probe() which is invoked before acpi_load_tables() now
+and it is not possible to evaluate the _REG method for the EC address
+space handler installed by it.  That effectively causes the EC address
+space to be inaccessible to AML on platforms with an ECDT matching the
+EC device definition in the DSDT and functional problems ensue in
+there.
 
-Most implementation does not even provide an alternative
-implementation. And it is also not practical to make changes
-for each call site.
+Because the default behavior before commit 5a8361f7ecce was to call
+acpi_ec_ecdt_probe() after acpi_load_tables(), it should be safe to
+do that again.  Moreover, the EC address space handler installed by
+acpi_ec_ecdt_probe() is only needed for AML to be able to access the
+EC address space and the only AML that can run during acpi_load_tables()
+is module-level code which only is allowed to access address spaces
+with default handlers (memory, I/O and PCI config space).
 
-This patch workarounded the asm goto issue by redefining the macro like below:
-  #define asm_volatile_goto(x...) asm volatile("invalid use of asm_volatile_goto")
+For this reason, move the acpi_ec_ecdt_probe() invocation back to
+acpi_bus_init(), from where it was taken away by commit d737f333b211
+(ACPI: probe ECDT before loading AML tables regardless of module-level
+code flag), and put it after the invocation of acpi_load_tables() to
+restore the original code ordering from before commit 5a8361f7ecce.
 
-If asm_volatile_goto is not used by bpf programs, which is typically the case, nothing bad
-will happen. If asm_volatile_goto is used by bpf programs, which is incorrect, the compiler
-will issue an error since "invalid use of asm_volatile_goto" is not valid assembly codes.
-
-With this patch, all bpf programs under samples/bpf can pass compilation.
-
-Note that bpf programs under tools/testing/selftests/bpf/ compiled fine as
-they do not access kernel internal headers.
-
-Fixes: e769742d3584 ("Revert "x86/jump-labels: Macrofy inline assembly code to work around GCC inlining bugs"")
-Fixes: 18fe58229d80 ("x86, asm: change the GEN_*_RMWcc() macros to not quote the condition")
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Yonghong Song <yhs@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Fixes: 5a8361f7ecce ("ACPICA: Integrate package handling with module-level code")
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=199981
+Reported-by: step-ali <sunmooon15@gmail.com>
+Reported-by: Charles Stanhope <charles.stanhope@gmail.com>
+Tested-by: Charles Stanhope <charles.stanhope@gmail.com>
+Reported-by: Paulo Nascimento <paulo.ulusu@googlemail.com>
+Reported-by: David Purton <dcpurton@marshwiggle.net>
+Reported-by: Adam Harvey <adam@adamharvey.name>
+Reported-by: Zhang Rui <rui.zhang@intel.com>
+Tested-by: Zhang Rui <rui.zhang@intel.com>
+Tested-by: Jean-Marc Lenoir <archlinux@jihemel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- samples/bpf/Makefile              |  1 +
- samples/bpf/asm_goto_workaround.h | 16 ++++++++++++++++
- 2 files changed, 17 insertions(+)
- create mode 100644 samples/bpf/asm_goto_workaround.h
+ drivers/acpi/bus.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/samples/bpf/Makefile b/samples/bpf/Makefile
-index be0a961450bc..f5ce993c78e4 100644
---- a/samples/bpf/Makefile
-+++ b/samples/bpf/Makefile
-@@ -273,6 +273,7 @@ $(obj)/%.o: $(src)/%.c
- 		-Wno-gnu-variable-sized-type-not-at-end \
- 		-Wno-address-of-packed-member -Wno-tautological-compare \
- 		-Wno-unknown-warning-option $(CLANG_ARCH_ARGS) \
-+		-I$(srctree)/samples/bpf/ -include asm_goto_workaround.h \
- 		-O2 -emit-llvm -c $< -o -| $(LLC) -march=bpf $(LLC_FLAGS) -filetype=obj -o $@
- ifeq ($(DWARF2BTF),y)
- 	$(BTF_PAHOLE) -J $@
-diff --git a/samples/bpf/asm_goto_workaround.h b/samples/bpf/asm_goto_workaround.h
-new file mode 100644
-index 000000000000..5cd7c1d1a5d5
---- /dev/null
-+++ b/samples/bpf/asm_goto_workaround.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2019 Facebook */
-+#ifndef __ASM_GOTO_WORKAROUND_H
-+#define __ASM_GOTO_WORKAROUND_H
+diff --git a/drivers/acpi/bus.c b/drivers/acpi/bus.c
+index bb3d96dea6db..26d4164d394f 100644
+--- a/drivers/acpi/bus.c
++++ b/drivers/acpi/bus.c
+@@ -1054,18 +1054,6 @@ void __init acpi_early_init(void)
+ 		goto error0;
+ 	}
+ 
+-	/*
+-	 * ACPI 2.0 requires the EC driver to be loaded and work before
+-	 * the EC device is found in the namespace (i.e. before
+-	 * acpi_load_tables() is called).
+-	 *
+-	 * This is accomplished by looking for the ECDT table, and getting
+-	 * the EC parameters out of that.
+-	 *
+-	 * Ignore the result. Not having an ECDT is not fatal.
+-	 */
+-	status = acpi_ec_ecdt_probe();
+-
+ #ifdef CONFIG_X86
+ 	if (!acpi_ioapic) {
+ 		/* compatible (0) means level (3) */
+@@ -1142,6 +1130,18 @@ static int __init acpi_bus_init(void)
+ 		goto error1;
+ 	}
+ 
++	/*
++	 * ACPI 2.0 requires the EC driver to be loaded and work before the EC
++	 * device is found in the namespace.
++	 *
++	 * This is accomplished by looking for the ECDT table and getting the EC
++	 * parameters out of that.
++	 *
++	 * Do that before calling acpi_initialize_objects() which may trigger EC
++	 * address space accesses.
++	 */
++	acpi_ec_ecdt_probe();
 +
-+/* this will bring in asm_volatile_goto macro definition
-+ * if enabled by compiler and config options.
-+ */
-+#include <linux/types.h>
-+
-+#ifdef asm_volatile_goto
-+#undef asm_volatile_goto
-+#define asm_volatile_goto(x...) asm volatile("invalid use of asm_volatile_goto")
-+#endif
-+
-+#endif
+ 	status = acpi_enable_subsystem(ACPI_NO_ACPI_ENABLE);
+ 	if (ACPI_FAILURE(status)) {
+ 		printk(KERN_ERR PREFIX
 -- 
 2.19.1
 
