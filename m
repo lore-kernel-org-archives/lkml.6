@@ -2,173 +2,148 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0548C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:14:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EB3DC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:16:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B89112190A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:14:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7551D222B5
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 11:16:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391682AbfBMLO6 (ORCPT
+        id S2403857AbfBMLP7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 06:14:58 -0500
-Received: from mga12.intel.com ([192.55.52.136]:4817 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391691AbfBMLOw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 06:14:52 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 03:14:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,365,1544515200"; 
-   d="scan'208";a="126113237"
-Received: from sorenthe-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.151])
-  by orsmga003.jf.intel.com with ESMTP; 13 Feb 2019 03:14:43 -0800
-Date:   Wed, 13 Feb 2019 13:14:43 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     bsz@semihalf.com, matthewgarrett@google.com
-Cc:     linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peterhuewe@gmx.de,
-        ard.biesheuvel@linaro.org, tweek@google.com, mingo@kernel.org,
-        hdegoede@redhat.com, leif.lindholm@linaro.org, mw@semihalf.com
-Subject: Re: [PATCH 1/5] tpm: Copy calc_tpm2_event_size() to TPM library
-Message-ID: <20190213111443.GE7087@linux.intel.com>
-References: <20190211143052.3128-1-bsz@semihalf.com>
- <20190211143052.3128-2-bsz@semihalf.com>
+        Wed, 13 Feb 2019 06:15:59 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:33862 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728454AbfBMLP7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 06:15:59 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gtsWC-0004Tn-7X; Wed, 13 Feb 2019 11:15:56 +0000
+To:     Siva Reddy <siva.kallam@samsung.com>,
+        Vipul Pandya <vipul.pandya@samsung.com>,
+        Girish K S <ks.giri@samsung.com>,
+        Byungho An <bh74.an@samsung.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc:     linux-kernel@vger.kernel.org
+From:   Colin Ian King <colin.king@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Subject:  net: sxgbe: issue with case statement in sxgbe_mtl_init
+Message-ID: <c16dfcf4-4402-cd34-c40c-4dd5bd5912c4@canonical.com>
+Date:   Wed, 13 Feb 2019 11:15:55 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211143052.3128-2-bsz@semihalf.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 03:30:48PM +0100, bsz@semihalf.com wrote:
-> From: Bartosz Szczepanek <bsz@semihalf.com>
-> 
-> Function to calculate event size in TPM 2.0 log will also be needed in EFI
-> stub. Separate it to library to make it accessible out of TPM character
-> driver.
-> 
-> It will be removed from tpm2.c in subsequent commit.
-> 
-> Signed-off-by: Bartosz Szczepanek <bsz@semihalf.com>
+Hi,
 
-Collides with Matthew's patch set, which has priority over this because
-it was sent earlier.
+Static analysis with CoverityScan has detected two switch statements
+where all of the case statements are deadcode.  The values being
+switched on are masked and these will never match any of the values
+being checked, so this clearly is an error.
 
-Matthew, what you think of this? Maybe could replace 1/4 with this in
-your patch set? Somehow feels a bit cleaner approach.
+Function sxgbe_mtl_init, drivers/net/ethernet/samsung/sxgbe/sxgbe_mtl.c:
 
-> ---
->  lib/tpm.c | 80 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 80 insertions(+)
->  create mode 100644 lib/tpm.c
-> 
-> diff --git a/lib/tpm.c b/lib/tpm.c
-> new file mode 100644
-> index 000000000000..aaeeafe52426
-> --- /dev/null
-> +++ b/lib/tpm.c
-> @@ -0,0 +1,80 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2016 IBM Corporation
+ 31        /* ETS Algorith */
+ 32        switch (etsalg & SXGBE_MTL_OPMODE_ESTMASK) {
 
-Do we want copyright statements to new files? I'm sure that this code
-would have more copyright holders than just IBM (eg VMWare). Git
-documents this anyway. This is something that will be left unmaintained.
+   dead_error_condition: The switch value etsalg & 3U cannot be 4294967199U.
+   CID 1195543 (#1 of 3): Logically dead code
 
-> + * Parts of this file based on earlier work by:
-> + *      Nayna Jain <nayna@linux.vnet.ibm.com>
-> + *      Petr Vandrovec <petr@vmware.com>
+ 33        case ETS_WRR:
+ 34                reg_val &= ETS_WRR;
+ 35                break;
 
-Please remove these three lines. These type of lists are just inaccurate
-presentaion of the commit log.
+ dead_error_condition: The switch value etsalg & 3U cannot be 32U.
+   CID 1195543 (#2 of 3): Logically dead code
 
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License
-> + * as published by the Free Software Foundation; either version
-> + * 2 of the License, or (at your option) any later version.
+ 36        case ETS_WFQ:
+ 37                reg_val |= ETS_WFQ;
+ 38                break;
 
-You already have SPDX identifier. Unncessary repeat.
+  dead_error_condition: The switch value etsalg & 3U cannot be 64U.
+   CID 1195543 (#3 of 3): Logically dead code
 
-> + */
-> +#include <linux/types.h>
-> +#include <linux/export.h>
-> +#include <linux/string.h>
-> +#include <linux/tpm_eventlog.h>
-> +
-> +/*
-> + * calc_tpm2_event_size() - calculate the event size, where event
-> + * is an entry in the TPM 2.0 event log. The event is of type Crypto
-> + * Agile Log Entry Format as defined in TCG EFI Protocol Specification
-> + * Family "2.0".
-> +
-> + * @event: event whose size is to be calculated.
-> + * @event_header: the first event in the event log.
-> + *
-> + * Returns size of the event. If it is an invalid event, returns 0.
-> + */
-> +int calc_tpm2_event_size(struct tcg_pcr_event2 *event,
-> +			 struct tcg_pcr_event *event_header)
-> +{
-> +	struct tcg_efi_specid_event *efispecid;
-> +	struct tcg_event_field *event_field;
-> +	void *marker;
-> +	void *marker_start;
-> +	u32 halg_size;
-> +	size_t size;
-> +	u16 halg;
-> +	int i;
-> +	int j;
-> +
-> +	marker = event;
-> +	marker_start = marker;
-> +	marker = marker + sizeof(event->pcr_idx) + sizeof(event->event_type)
-> +		+ sizeof(event->count);
-> +
-> +	efispecid = (struct tcg_efi_specid_event *)event_header->event;
-> +
-> +	/* Check if event is malformed. */
-> +	if (event->count > efispecid->num_algs)
-> +		return 0;
-> +
-> +	for (i = 0; i < event->count; i++) {
-> +		halg_size = sizeof(event->digests[i].alg_id);
-> +		memcpy(&halg, marker, halg_size);
-> +		marker = marker + halg_size;
-> +		for (j = 0; j < efispecid->num_algs; j++) {
-> +			if (halg == efispecid->digest_sizes[j].alg_id) {
-> +				marker +=
-> +					efispecid->digest_sizes[j].digest_size;
-> +				break;
-> +			}
-> +		}
-> +		/* Algorithm without known length. Such event is unparseable. */
-> +		if (j == efispecid->num_algs)
-> +			return 0;
-> +	}
-> +
-> +	event_field = (struct tcg_event_field *)marker;
-> +	marker = marker + sizeof(event_field->event_size)
-> +		+ event_field->event_size;
-> +	size = marker - marker_start;
-> +
-> +	if ((event->event_type == 0) && (event_field->event_size == 0))
-> +		return 0;
-> +
-> +	return size;
-> +}
-> +EXPORT_SYMBOL(calc_tpm2_event_size);
-> -- 
-> 2.14.4
-> 
+ 39        case ETS_DWRR:
+ 40                reg_val |= ETS_DWRR;
+ 41                break;
+ 42        }
+ 43        writel(reg_val, ioaddr + SXGBE_MTL_OP_MODE_REG);
+ 44
+
+And also in the following switch statement:
+
+ 45        switch (raa & SXGBE_MTL_OPMODE_RAAMASK) {
+
+ dead_error_condition: The switch value raa & 1U cannot be 4294967291U.
+   CID 1195544 (#1 of 2): Logically dead code
+
+ 46        case RAA_SP:
+ 47                reg_val &= RAA_SP;
+ 48                break;
+
+  dead_error_condition: The switch value raa & 1U cannot be 4U.
+   CID 1195544 (#2 of 2): Logically dead code
+
+ 49        case RAA_WSP:
+ 50                reg_val |= RAA_WSP;
+ 51                break;
+ 52        }
+ 53        writel(reg_val, ioaddr + SXGBE_MTL_OP_MODE_REG);
+ 54}
+
+Colin
