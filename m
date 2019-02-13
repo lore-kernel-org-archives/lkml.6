@@ -2,134 +2,262 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE336C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05C3DC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4196222D2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Xn0DUXg5";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HbbSoRZ5"
+	by mail.kernel.org (Postfix) with ESMTP id C7AD9222D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:44:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550083488;
+	bh=CeLCw0ccUC2W6wYH2ysmHkqIWkDWLRYdcc395Wa1XhU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=up/ZKojTbif87GQbcYwvJ98IL3xwxRba3EViY6gBLuqw/ztLktqrvaWDuFhoLhhiO
+	 pkvR/PZD4yacItKh7kscdBp5Qle4BhpBligrnTK5HR5t/x3qr+pzkdUpftMS3FgldP
+	 0rDI0VfFCX0+syvb40NoWrfTglQ0mO0nqup5eiF0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393992AbfBMSom (ORCPT
+        id S2394004AbfBMSor (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Feb 2019 13:44:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43266 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2393986AbfBMSom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 13 Feb 2019 13:44:42 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:58730 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388097AbfBMSok (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:44:40 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 086F860C3D; Wed, 13 Feb 2019 18:44:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550083478;
-        bh=F87YOsPP9BTuLaqkEIDa5weDH2iiqGmOdN1YadkeJNE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Xn0DUXg5j3TnR2fEBhsWyuhv7TZ4UHxKyZAY2tZyAl47GBC3MNOKzkvfi9j2YJRnS
-         NAowuQnKL10Nb/JlOWd7nEFU4xKxpLQxcwqpcVNVbRISteb2hqboMI+fFFBH8EElTF
-         /3dQdjHWwMwBXBiuiCtAfGkVyh6wxKEeUrZjlO6U=
-Received: from [192.168.1.101] (unknown [157.45.221.146])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D09CE60C3D;
-        Wed, 13 Feb 2019 18:44:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550083476;
-        bh=F87YOsPP9BTuLaqkEIDa5weDH2iiqGmOdN1YadkeJNE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=HbbSoRZ5E3D57TggqaplIL+7LSjb29zLnCED9DNxSum0WaWnR7UFps049LRVuzIxO
-         0/g57YacSkEb3vZzDguBsT2lVOq2Q1X2snOSqR/VPc1HoLb18wV+R4nhDVxcx3czm5
-         XRF6NSeHQpW19w4XS0XWYsWnqge6xdSegmMHkJxM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D09CE60C3D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: BUG: sleeping function called from invalid context at
- kernel/locking/rwsem.c:65
-To:     Pintu Agarwal <pintu.ping@gmail.com>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rt-users@vger.kernel.org, linux-mm@kvack.org,
-        Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>,
-        "Xenomai@xenomai.org" <xenomai@xenomai.org>
-References: <CAOuPNLgaDJm27nECxq1jtny=+ixt=GPf2C7zyDsVgbsLvtDarA@mail.gmail.com>
- <6183c865-2e90-5fb9-9e10-1339ae491b71@codeaurora.org>
- <CAOuPNLgUvECE6XBjszFggY3efmEBKywzKNWupjfQ2svsCMqd7w@mail.gmail.com>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <2c91af7d-4580-cedc-70ea-d38c2587c7bf@codeaurora.org>
-Date:   Thu, 14 Feb 2019 00:14:28 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        by mail.kernel.org (Postfix) with ESMTPSA id EA9D020835;
+        Wed, 13 Feb 2019 18:44:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550083481;
+        bh=CeLCw0ccUC2W6wYH2ysmHkqIWkDWLRYdcc395Wa1XhU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=uc8hyA5HpJbf9PQ5BJiY+I97S/pxCaxlvSYgY+vpKdzvibZnWYITCPAByuFw3sKw6
+         4Q+mGBf4pPMjr7PEdGtUe/qdzgKFpMSdDBmPgyCrTm7FvLc05FxvXvdS5kvxZE+Ljm
+         IRu72U46sJc4IkoColF+G5LkCRbPl77Jg8EQ75Ps=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Don Dutile <ddutile@redhat.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        "J. Bruce Fields" <bfields@redhat.com>
+Subject: [PATCH 4.19 44/44] svcrdma: Remove max_sge check at connect time
+Date:   Wed, 13 Feb 2019 19:38:45 +0100
+Message-Id: <20190213183655.483627018@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190213183651.648060257@linuxfoundation.org>
+References: <20190213183651.648060257@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-In-Reply-To: <CAOuPNLgUvECE6XBjszFggY3efmEBKywzKNWupjfQ2svsCMqd7w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-On 2/13/2019 8:10 PM, Pintu Agarwal wrote:
-> OK thanks for your suggestions. sdm845-perf_defconfig did not work for
-> me. The target did not boot.
+------------------
 
-Perf defconfig works fine. You need to enable serial console with below
-config added to perf defconfig.
+From: Chuck Lever <chuck.lever@oracle.com>
 
-CONFIG_SERIAL_MSM_GENI_CONSOLE=y
+commit e248aa7be86e8179f20ac0931774ecd746f3f5bf upstream.
 
-> However, disabling CONFIG_PANIC_ON_SCHED_BUG works, and I got a root
-> shell at least.
+Two and a half years ago, the client was changed to use gathered
+Send for larger inline messages, in commit 655fec6987b ("xprtrdma:
+Use gathered Send for large inline messages"). Several fixes were
+required because there are a few in-kernel device drivers whose
+max_sge is 3, and these were broken by the change.
 
-> 
-> But this seems to be a work around.
-> I still get a back trace in kernel logs from many different places.
-> So, it looks like there is some code in qualcomm specific drivers that
-> is calling a sleeping method from invalid context.
-> How to find that...
-> If this fix is already available in latest version, please let me know.
-> 
+Apparently my memory is going, because some time later, I submitted
+commit 25fd86eca11c ("svcrdma: Don't overrun the SGE array in
+svc_rdma_send_ctxt"), and after that, commit f3c1fd0ee294 ("svcrdma:
+Reduce max_send_sges"). These too incorrectly assumed in-kernel
+device drivers would have more than a few Send SGEs available.
 
-Seems like interrupts are disabled when down_write_killable() is called.
-It's not the drivers that is calling the sleeping method which can  be
-seen from the log.
+The fix for the server side is not the same. This is because the
+fundamental problem on the server is that, whether or not the client
+has provisioned a chunk for the RPC reply, the server must squeeze
+even the most complex RPC replies into a single RDMA Send. Failing
+in the send path because of Send SGE exhaustion should never be an
+option.
 
-[   22.140224] [<ffffff88b8ce65a8>] ___might_sleep+0x140/0x188
-[   22.145862] [<ffffff88b8ce6648>] __might_sleep+0x58/0x90         <---
-[   22.151249] [<ffffff88b9d43f84>] down_write_killable+0x2c/0x80   <---
-[   22.157155] [<ffffff88b8e53cd8>] setup_arg_pages+0xb8/0x208      <---
-[   22.162792] [<ffffff88b8eb7534>] load_elf_binary+0x434/0x1298
-[   22.168600] [<ffffff88b8e55674>] search_binary_handler+0xac/0x1f0
-[   22.174763] [<ffffff88b8e560ec>]
-do_execveat_common.isra.15+0x504/0x6c8
-[   22.181452] [<ffffff88b8e562f4>] do_execve+0x44/0x58
-[   22.186481] [<ffffff88b8c84030>] run_init_process+0x38/0x48      <---
-[   22.192122] [<ffffff88b9d3db1c>] kernel_init+0x8c/0x108
-[   22.197411] [<ffffff88b8c83f00>] ret_from_fork+0x10/0x50
+Therefore, instead of failing when the send path runs out of SGEs,
+switch to using a bounce buffer mechanism to handle RPC replies that
+are too complex for the device to send directly. That allows us to
+remove the max_sge check to enable drivers with small max_sge to
+work again.
 
- >
- > This at least proves that there is no issue in core ipipe patches, and
- > I can proceed.
+Reported-by: Don Dutile <ddutile@redhat.com>
+Fixes: 25fd86eca11c ("svcrdma: Don't overrun the SGE array in ...")
+Cc: stable@vger.kernel.org
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-I doubt the *IPIPE patches*. You said you removed the configs, but all
-code are not under IPIPE configs and as I see there are lots of
-changes to interrupt code in general with ipipe.
+---
+ net/sunrpc/xprtrdma/svc_rdma_sendto.c    |  105 +++++++++++++++++++++++++++++--
+ net/sunrpc/xprtrdma/svc_rdma_transport.c |    9 --
+ 2 files changed, 102 insertions(+), 12 deletions(-)
 
-So to actually confirm whether the issue is with qcom drivers or ipipe,
-please *remove ipipe patches (not just configs)* and boot.
-Also paste the full dmesg logs for these 2 cases(with and without
-ipipe).
+--- a/net/sunrpc/xprtrdma/svc_rdma_sendto.c
++++ b/net/sunrpc/xprtrdma/svc_rdma_sendto.c
+@@ -563,6 +563,99 @@ void svc_rdma_sync_reply_hdr(struct svcx
+ 				      DMA_TO_DEVICE);
+ }
+ 
++/* If the xdr_buf has more elements than the device can
++ * transmit in a single RDMA Send, then the reply will
++ * have to be copied into a bounce buffer.
++ */
++static bool svc_rdma_pull_up_needed(struct svcxprt_rdma *rdma,
++				    struct xdr_buf *xdr,
++				    __be32 *wr_lst)
++{
++	int elements;
++
++	/* xdr->head */
++	elements = 1;
++
++	/* xdr->pages */
++	if (!wr_lst) {
++		unsigned int remaining;
++		unsigned long pageoff;
++
++		pageoff = xdr->page_base & ~PAGE_MASK;
++		remaining = xdr->page_len;
++		while (remaining) {
++			++elements;
++			remaining -= min_t(u32, PAGE_SIZE - pageoff,
++					   remaining);
++			pageoff = 0;
++		}
++	}
++
++	/* xdr->tail */
++	if (xdr->tail[0].iov_len)
++		++elements;
++
++	/* assume 1 SGE is needed for the transport header */
++	return elements >= rdma->sc_max_send_sges;
++}
++
++/* The device is not capable of sending the reply directly.
++ * Assemble the elements of @xdr into the transport header
++ * buffer.
++ */
++static int svc_rdma_pull_up_reply_msg(struct svcxprt_rdma *rdma,
++				      struct svc_rdma_send_ctxt *ctxt,
++				      struct xdr_buf *xdr, __be32 *wr_lst)
++{
++	unsigned char *dst, *tailbase;
++	unsigned int taillen;
++
++	dst = ctxt->sc_xprt_buf;
++	dst += ctxt->sc_sges[0].length;
++
++	memcpy(dst, xdr->head[0].iov_base, xdr->head[0].iov_len);
++	dst += xdr->head[0].iov_len;
++
++	tailbase = xdr->tail[0].iov_base;
++	taillen = xdr->tail[0].iov_len;
++	if (wr_lst) {
++		u32 xdrpad;
++
++		xdrpad = xdr_padsize(xdr->page_len);
++		if (taillen && xdrpad) {
++			tailbase += xdrpad;
++			taillen -= xdrpad;
++		}
++	} else {
++		unsigned int len, remaining;
++		unsigned long pageoff;
++		struct page **ppages;
++
++		ppages = xdr->pages + (xdr->page_base >> PAGE_SHIFT);
++		pageoff = xdr->page_base & ~PAGE_MASK;
++		remaining = xdr->page_len;
++		while (remaining) {
++			len = min_t(u32, PAGE_SIZE - pageoff, remaining);
++
++			memcpy(dst, page_address(*ppages), len);
++			remaining -= len;
++			dst += len;
++			pageoff = 0;
++		}
++	}
++
++	if (taillen)
++		memcpy(dst, tailbase, taillen);
++
++	ctxt->sc_sges[0].length += xdr->len;
++	ib_dma_sync_single_for_device(rdma->sc_pd->device,
++				      ctxt->sc_sges[0].addr,
++				      ctxt->sc_sges[0].length,
++				      DMA_TO_DEVICE);
++
++	return 0;
++}
++
+ /* svc_rdma_map_reply_msg - Map the buffer holding RPC message
+  * @rdma: controlling transport
+  * @ctxt: send_ctxt for the Send WR
+@@ -585,8 +678,10 @@ int svc_rdma_map_reply_msg(struct svcxpr
+ 	u32 xdr_pad;
+ 	int ret;
+ 
+-	if (++ctxt->sc_cur_sge_no >= rdma->sc_max_send_sges)
+-		return -EIO;
++	if (svc_rdma_pull_up_needed(rdma, xdr, wr_lst))
++		return svc_rdma_pull_up_reply_msg(rdma, ctxt, xdr, wr_lst);
++
++	++ctxt->sc_cur_sge_no;
+ 	ret = svc_rdma_dma_map_buf(rdma, ctxt,
+ 				   xdr->head[0].iov_base,
+ 				   xdr->head[0].iov_len);
+@@ -617,8 +712,7 @@ int svc_rdma_map_reply_msg(struct svcxpr
+ 	while (remaining) {
+ 		len = min_t(u32, PAGE_SIZE - page_off, remaining);
+ 
+-		if (++ctxt->sc_cur_sge_no >= rdma->sc_max_send_sges)
+-			return -EIO;
++		++ctxt->sc_cur_sge_no;
+ 		ret = svc_rdma_dma_map_page(rdma, ctxt, *ppages++,
+ 					    page_off, len);
+ 		if (ret < 0)
+@@ -632,8 +726,7 @@ int svc_rdma_map_reply_msg(struct svcxpr
+ 	len = xdr->tail[0].iov_len;
+ tail:
+ 	if (len) {
+-		if (++ctxt->sc_cur_sge_no >= rdma->sc_max_send_sges)
+-			return -EIO;
++		++ctxt->sc_cur_sge_no;
+ 		ret = svc_rdma_dma_map_buf(rdma, ctxt, base, len);
+ 		if (ret < 0)
+ 			return ret;
+--- a/net/sunrpc/xprtrdma/svc_rdma_transport.c
++++ b/net/sunrpc/xprtrdma/svc_rdma_transport.c
+@@ -478,12 +478,9 @@ static struct svc_xprt *svc_rdma_accept(
+ 	/* Transport header, head iovec, tail iovec */
+ 	newxprt->sc_max_send_sges = 3;
+ 	/* Add one SGE per page list entry */
+-	newxprt->sc_max_send_sges += svcrdma_max_req_size / PAGE_SIZE;
+-	if (newxprt->sc_max_send_sges > dev->attrs.max_send_sge) {
+-		pr_err("svcrdma: too few Send SGEs available (%d needed)\n",
+-		       newxprt->sc_max_send_sges);
+-		goto errout;
+-	}
++	newxprt->sc_max_send_sges += (svcrdma_max_req_size / PAGE_SIZE) + 1;
++	if (newxprt->sc_max_send_sges > dev->attrs.max_send_sge)
++		newxprt->sc_max_send_sges = dev->attrs.max_send_sge;
+ 	newxprt->sc_max_req_size = svcrdma_max_req_size;
+ 	newxprt->sc_max_requests = svcrdma_max_requests;
+ 	newxprt->sc_max_bc_requests = svcrdma_max_bc_requests;
 
-Thanks,
-Sai
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
