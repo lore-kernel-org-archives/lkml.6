@@ -4,57 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8051C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:33:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB65C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:33:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B51A8206C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:33:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCEEF222C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:33:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s1XmvoAF"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AA4ASCp2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436823AbfBMVcs (ORCPT
+        id S2394850AbfBMVdB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 16:32:48 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:44622 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436778AbfBMVcm (ORCPT
+        Wed, 13 Feb 2019 16:33:01 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:46240 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436819AbfBMVcs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 16:32:42 -0500
-Received: by mail-qt1-f193.google.com with SMTP id n32so4421825qte.11
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 13:32:41 -0800 (PST)
+        Wed, 13 Feb 2019 16:32:48 -0500
+Received: by mail-qt1-f195.google.com with SMTP id y20so4409976qtm.13
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 13:32:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=V7lJaSOHNBHQZSETMFK/nyiszapRsFtwkzZBpnv7tGA=;
-        b=s1XmvoAFbRCLC+JYLNPmrgNi+JssmEFKTHIZcbM99ZzHvaXiWEfPcFsaMjA+RPq43B
-         yczPxj7RcP711w57TAUQz4xYaaSoh0jVfFOx6j2h1wb4wNsihK7IHdINuM4acN3EumDB
-         xIj6RHmwbyX+CFsVaTCtf0PC03jDYm/FDu7TgzxZgcUaUr3QU9/UcllBOO+cDWOB7VOP
-         62n+djXEWgqrMCOz8Grqx0dZmARAqSalkajlxcHnsSHtoZugHfU/WH9gSkJ0qxHixc9l
-         0T6lAt8LTTdgMcPw+qKCJ6Za9zyampaPTnUb/ld8J4oChpEd9cDInVVeD5I4/8FNAnDm
-         VTJg==
+        bh=JWWM0xAWumO0p3bY/5x9HLgVZOQ3s148CYkAGBmj6Ho=;
+        b=AA4ASCp2mELKr3pko0Uf9JXxx6WuXxEkZtSYvfWe5+vswKI88GBJZLXygbMTr5fjVQ
+         EGRU3Wf7YEt2bEOeP1Ec4scUcgv4TRBQtVF/vh6SP04SLUGKLnmpmjvM0JYsgE6vZV4J
+         +RS1qwK0+UoBpvRt1EK53hEu4R+TT3N4DUSmTMhzWl+ql/v98Mc1J/Am/Ef7LYYE4AJ0
+         91c6Vue80g9PSD6s7zvtX9sqVlrPuIOLqJNFsN6e+WgF0iBOKXQHCGg9Td6Ea3fmWRaT
+         50q+aR4sM4R6x0ciV6+61Jq+WUNxLiuX3rrpMhjkE/wvSOvzl4FQZj7enqKkUN9Pevjm
+         gzCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=V7lJaSOHNBHQZSETMFK/nyiszapRsFtwkzZBpnv7tGA=;
-        b=Dpi/c7X/FwV/j/BFEMUp8Du4C1FZ2Ja0tRc7DKQsLy+v6O26vSO/AqqXgjRU0B51ZD
-         jcXxZSf6lELpinq3EXnEvKKRH1yFRGWwPH8Ddvs3lzcCf4Ie7jtYJczTFutK+MXHqoWB
-         g246Q/8dYxn1ELlGnx+2F2L5d+O72IT8qQp/UU7VT+/FzlOlPdv2F0yIvyZG+lCDUuCT
-         vynhZ1Os1oSNB4TcYR1YncdH8RJYXKsx0+DoBUrKVv4TLMRKP+7VoL+k8LvliJ/jDv97
-         VahHtfgTnPGOAj980y0HNnfYcpIV3pyUtLwq1AN8WeTU3Du5W2yjnGOYYd61YSY03evy
-         4TrQ==
-X-Gm-Message-State: AHQUAuYOlLpANRit7pp28u3x9FJTvyZYXSjJG3m0+rEaRz+yAYbZlV3d
-        W8Bd5E4+TkegRU4tPMWqVBfu6w==
-X-Google-Smtp-Source: AHgI3IbTTm0DogF/FptlR1dRTwoq3QbYdqPasZVufAbowtGviiZuiARLC3IPIYbYMT42lDIZy/nX6g==
-X-Received: by 2002:a0c:d90b:: with SMTP id p11mr245177qvj.140.1550093560912;
-        Wed, 13 Feb 2019 13:32:40 -0800 (PST)
+        bh=JWWM0xAWumO0p3bY/5x9HLgVZOQ3s148CYkAGBmj6Ho=;
+        b=bdiUTxZ6c6Q6pQeKOaI9neVcSCWUM1yzSAkwdjMDdQJ0mXXchBAv2mH5LfBWNmoOgr
+         aT3lyZtrDp662TCo/ZpwPCOYocTLc+XZt1WZuk3SDX+buz3A8k/RM/rixSZLF4Z+2WUc
+         SOrf0oMdAgZGFJmUtb8yY84jD+2RLXlkjBcnpduZBv3gDff9cFCK+60MxQNxbbcLkpyM
+         EmIauZfk9vJyOgaJ4cvpleu5/GwxGrn3AXrEdnzVmnFyooOw8rbg9WH0Hl681uhnTH/x
+         H3Nxvpg6DuX8mOYbXC/S8igqU69VybN9BXb0ww0gsRH9A0DUrz1k46Rm0neN5U6NGx66
+         tPhA==
+X-Gm-Message-State: AHQUAuZkpRFCLSvkveIKo0cUDorWdIcQHMQm7Jx8lQLLzFyQIvx11AQt
+        6k3zu/Vjst0ta3IdG70W9IhrTQ==
+X-Google-Smtp-Source: AHgI3IY/femxih2p2G073ZpOVUi64ABe1+DQ/mhgjBNHd5Uoxbg7pDbglRMHPTNGP3fYNDBhVMMfDA==
+X-Received: by 2002:a0c:86bd:: with SMTP id 58mr237102qvf.162.1550093567665;
+        Wed, 13 Feb 2019 13:32:47 -0800 (PST)
 Received: from localhost.localdomain (pool-72-71-243-63.cncdnh.fast00.myfairpoint.net. [72.71.243.63])
-        by smtp.googlemail.com with ESMTPSA id 8sm382675qtr.7.2019.02.13.13.32.39
+        by smtp.googlemail.com with ESMTPSA id 8sm382675qtr.7.2019.02.13.13.32.46
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 13:32:40 -0800 (PST)
+        Wed, 13 Feb 2019 13:32:47 -0800 (PST)
 From:   David Long <dave.long@linaro.org>
 To:     stable@vger.kernel.org,
         Russell King - ARM Linux <linux@armlinux.org.uk>,
@@ -66,9 +66,9 @@ To:     stable@vger.kernel.org,
         Mark Rutland <mark.rutland@arm.com>
 Cc:     Will Deacon <will.deacon@arm.com>, Mark Brown <broonie@kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 4.19 11/17] ARM: make lookup_processor_type() non-__init
-Date:   Wed, 13 Feb 2019 16:32:17 -0500
-Message-Id: <20190213213223.916-12-dave.long@linaro.org>
+Subject: [PATCH 4.19 16/17] ARM: ensure that processor vtables is not lost after boot
+Date:   Wed, 13 Feb 2019 16:32:22 -0500
+Message-Id: <20190213213223.916-17-dave.long@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190213213223.916-1-dave.long@linaro.org>
 References: <20190213213223.916-1-dave.long@linaro.org>
@@ -79,42 +79,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Russell King <rmk+kernel@armlinux.org.uk>
 
-Commit 899a42f836678a595f7d2bc36a5a0c2b03d08cbc upstream.
+Commit 3a4d0c2172bcf15b7a3d9d498b2b355f9864286b upstream.
 
-Move lookup_processor_type() out of the __init section so it is callable
-from (eg) the secondary startup code during hotplug.
+Marek Szyprowski reported problems with CPU hotplug in current kernels.
+This was tracked down to the processor vtables being located in an
+init section, and therefore discarded after kernel boot, despite being
+required after boot to properly initialise the non-boot CPUs.
 
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Arrange for these tables to end up in .rodata when required.
+
+Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
+Fixes: 383fb3ee8024 ("ARM: spectre-v2: per-CPU vtables to work around big.Little systems")
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: David A. Long <dave.long@linaro.org>
 ---
- arch/arm/kernel/head-common.S | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm/mm/proc-macros.S | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm/kernel/head-common.S b/arch/arm/kernel/head-common.S
-index 6e0375e7db05..997b02302c31 100644
---- a/arch/arm/kernel/head-common.S
-+++ b/arch/arm/kernel/head-common.S
-@@ -145,6 +145,9 @@ __mmap_switched_data:
- #endif
- 	.size	__mmap_switched_data, . - __mmap_switched_data
+diff --git a/arch/arm/mm/proc-macros.S b/arch/arm/mm/proc-macros.S
+index 81d0efb055c6..19516fbc2c55 100644
+--- a/arch/arm/mm/proc-macros.S
++++ b/arch/arm/mm/proc-macros.S
+@@ -274,6 +274,13 @@
+ 	.endm
  
-+	__FINIT
-+	.text
-+
- /*
-  * This provides a C-API version of __lookup_processor_type
-  */
-@@ -156,9 +159,6 @@ ENTRY(lookup_processor_type)
- 	ldmfd	sp!, {r4 - r6, r9, pc}
- ENDPROC(lookup_processor_type)
+ .macro define_processor_functions name:req, dabort:req, pabort:req, nommu=0, suspend=0, bugs=0
++/*
++ * If we are building for big.Little with branch predictor hardening,
++ * we need the processor function tables to remain available after boot.
++ */
++#if 1 // defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
++	.section ".rodata"
++#endif
+ 	.type	\name\()_processor_functions, #object
+ 	.align 2
+ ENTRY(\name\()_processor_functions)
+@@ -309,6 +316,9 @@ ENTRY(\name\()_processor_functions)
+ 	.endif
  
--	__FINIT
--	.text
--
- /*
-  * Read processor ID register (CP#15, CR0), and look up in the linker-built
-  * supported processor list.  Note that we can't use the absolute addresses
+ 	.size	\name\()_processor_functions, . - \name\()_processor_functions
++#if 1 // defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
++	.previous
++#endif
+ .endm
+ 
+ .macro define_cache_functions name:req
 -- 
 2.17.1
 
