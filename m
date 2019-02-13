@@ -2,116 +2,96 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA25C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:21:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E9FC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:24:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA1A421934
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:21:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC25521934
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:24:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WaU/UsWi"
+	dkim=pass (2048-bit key) header.d=mathembedded-com.20150623.gappssmtp.com header.i=@mathembedded-com.20150623.gappssmtp.com header.b="lfw58aOC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404250AbfBMWV4 (ORCPT
+        id S2392489AbfBMWYj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 17:21:56 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:33814 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729530AbfBMWVz (ORCPT
+        Wed, 13 Feb 2019 17:24:39 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54325 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388723AbfBMWYi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 17:21:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=8oVuLoDVnj2tb2XL5dON4xuyr7XcMyQKTfgiYjWaLHI=; b=WaU/UsWieX2GCqS8xoDxOCDm1f
-        iQHN6byeGNnfFjJLrEs2yJmo3QvTchGtaPZXX/LXgjvGUpeqfzaWd3N1MkGc4H/nYV4rnmDlQGAvm
-        rQHFvd/ZKor/yOLH/uM+/07qmI7okCZgL4zbClCoJ0JYuwPZo8A/GboNM5v26jpVO1fSsOBKizDyx
-        a7EK7YyOgKNvG88TPOat8cDOVa+eCRb2OnLWzlo6lVYKjrIMiwho5XtVVFjfc4oVATccuH6d1Y4z5
-        HVERuxqUbeHmEX1iu1bobz83z149fAksgGCgSH8vcpk7j6KWzmmhxfu7xhP/59GqHF0PFN7UXiFY+
-        9mCDnpaw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gu2ua-0006DD-Qd; Wed, 13 Feb 2019 22:21:48 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id CECC425E3DE45; Wed, 13 Feb 2019 23:21:46 +0100 (CET)
-Date:   Wed, 13 Feb 2019 23:21:46 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Julien Thierry <julien.thierry@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, mingo@redhat.com,
-        catalin.marinas@arm.com, james.morse@arm.com, hpa@zytor.com,
-        valentin.schneider@arm.com, brgerst@gmail.com, jpoimboe@redhat.com,
-        luto@kernel.org, bp@alien8.de, dvlasenk@redhat.com,
-        torvalds@linux-foundation.org, tglx@linutronix.de
-Subject: Re: [PATCH v3 3/4] uaccess: Check no rescheduling function is called
- in unsafe region
-Message-ID: <20190213222146.GC32494@hirez.programming.kicks-ass.net>
-References: <a23fdd84-8c4b-0c1f-d877-24d946cff6d0@arm.com>
- <20190213103553.GO32494@hirez.programming.kicks-ass.net>
- <1c2429a4-9df9-40a3-98e0-51577de4bd6a@arm.com>
- <20190213131720.GU32494@hirez.programming.kicks-ass.net>
- <20190213140025.GB6346@brain-police>
- <20190213142524.GW32494@hirez.programming.kicks-ass.net>
- <dd33cc20-f335-0e4c-e3f4-02497ecc3710@arm.com>
- <20190213144145.GY32494@hirez.programming.kicks-ass.net>
- <20190213154532.GQ32534@hirez.programming.kicks-ass.net>
- <D61C430D-4321-4114-AB85-671A3C7B8EAE@amacapital.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <D61C430D-4321-4114-AB85-671A3C7B8EAE@amacapital.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 13 Feb 2019 17:24:38 -0500
+Received: by mail-wm1-f66.google.com with SMTP id a62so4295733wmh.4
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 14:24:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mathembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=m+vCklTWoSobytp7Gc3dHDsQcFaMYAikQDXSI8DPoMk=;
+        b=lfw58aOCKT6bJXatKmsWUo/L6nFMoh4ku0BsWsvhKY0Lz4tRqw1BOk7y8/bT8ejH4j
+         u/+vXeR3EbiPnZi2x3s31TVrY5wymOYvl2qGFQDUpBoigrduNcFuvyJ7rPNBy5dQLhya
+         /2KH2Xq+RS/14gTeQGNoLRE2CYMGXI3LYzl2fr1BhfRsjjwI2r7Co2mmsW8MvNErAIxq
+         m8pK+979sbGolm0M4fHyikK2T89bWXsqsAfqL2P5h+2ck/9iwh1CJ82nHWGEJ3aHMFoa
+         sE/Y2ImCBHutOJYSyGO4NZSXEFhSKl7PtOqiA24v3ETwzc3Urqq6RdVvhHpUn1lehj3p
+         Ng6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=m+vCklTWoSobytp7Gc3dHDsQcFaMYAikQDXSI8DPoMk=;
+        b=KXvo/zZ22TNSEtaKGxGxVrpwjG42qTeTtOhBvY7W2RzWmk7D8Fqo2R/uRSY4ZEkiAC
+         pQpKAD9gY1CIpsjDuymf034mXDX17scJC18OxslblATAJuurc/zErYTZGQDgyhTVIQNU
+         uhUh7jhXvEo/ShrL2kHLTlqMH6dcr/KDeQLBg2f1ALgKqlM4le/bwhrV2azFlgJuzHgB
+         UXr721qmEWVpXgf0qwbikvaMeauljpsfvY7NdeTtgjg5lJhQCFEsMf748eszg8dexj8v
+         YL6hcbvoCKBmyRah7nN4jRnylZbEyXwDW+AIzDq3EsIkjNXqXYDwZjsdavUx2H/hxFoo
+         S+fw==
+X-Gm-Message-State: AHQUAubY5//lVWcEUCW5i+Dzs+EJS5VjfUXpq4XacmB89WSgx3FljK66
+        rAaWmA/95Iu86OUSlY6vacfbxQ==
+X-Google-Smtp-Source: AHgI3IaOpfGHUjxvmhDCxkXzLXzIfQ1TB3hqopYyP8jKoRacfL0nP3yvHKl20OaO0HeNLB0nVWDVYQ==
+X-Received: by 2002:a7b:c8d0:: with SMTP id f16mr265981wml.134.1550096676753;
+        Wed, 13 Feb 2019 14:24:36 -0800 (PST)
+Received: from diamond.mathembedded.com (host86-176-243-198.range86-176.btcentralplus.com. [86.176.243.198])
+        by smtp.gmail.com with ESMTPSA id h71sm788330wme.20.2019.02.13.14.24.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Feb 2019 14:24:35 -0800 (PST)
+From:   Stuart Menefy <stuart.menefy@mathembedded.com>
+To:     Sangbeom Kim <sbkim73@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Stuart Menefy <stuart.menefy@mathembedded.com>
+Subject: [PATCH v3 0/2] mfd: sec: Add support for the RTC on S2MPA01
+Date:   Wed, 13 Feb 2019 22:24:00 +0000
+Message-Id: <20190213222402.20541-1-stuart.menefy@mathembedded.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 10:51:24AM -0800, Andy Lutomirski wrote:
-> > On Feb 13, 2019, at 7:45 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+Add the RTC on the S2MPA01. As this is appears to be identical to the
+RTC on the S2MPS14 we can use the existing code.
 
-> > Which I suppose means that GCC generates the PUSHF/POPF to preserve the
-> > EFLAGS, since we mark those explicitly clobbered.
-> > 
-> 
-> Not quite.  A flags clobber doesn’t save the control bits like AC
-> except on certain rather buggy llvm compilers. The change you’re
-> looking for is:
-> 
-> http://git.kernel.org/tip/2c7577a7583747c9b71f26dced7f696b739da745
+Before we can do that however tidy up the existing code as requested by
+Lee:
+https://lore.kernel.org/lkml/20190213072458.GB1863@dell/
 
-Indeed, failed to find that.
+Changes since v2:
+ - Add patch tidying up existing one element structure initialisation
+ - Rebase patch 2/2
 
-> > For a little bit of context; it turns out that user_access_begin() /
-> > user_access_end() sets EFLAGS.AC and scheduling in between there wrecks
-> > that because we're apparently not saving that anymore.
-> 
-> But only explicit scheduling — preemption and sleepy page faults are
-> fine because the interrupt frame saves flags.
+Changes since v1:
+ - Remove the duplicated code and simply declare the RTC to be the same
+   as that on the S2MPS14.
 
-No, like pointed out elsewhere in this thread, anything that does
-preempt_disable() is utterly broken with this.
+Stuart Menefy (2):
+  mfd: sec: Put one element structure initialisation on one line
+  mfd: sec: Add support for the RTC on S2MPA01
 
-Because at that point the IRQ return path doesn't reschedule but
-preempt_enable() will, and that doesn't preserve EFLAGS again.
+ drivers/mfd/sec-core.c | 59 +++++++++++++++++---------------------------------
+ drivers/mfd/sec-irq.c  |  3 +++
+ 2 files changed, 23 insertions(+), 39 deletions(-)
 
-> > Now, I'm tempted to add the PUSHF / POPF right back because of this, but
-> > first I suppose we need to figure out if that change was on purpose and
-> > why that went missing from the Changelog.
-> 
-> That’s certainly the easy solution. Or we could teach the might_sleep
-> checks about this, but that could be a mess.
+-- 
+2.13.6
 
-That's not enough, we'd have to teach preempt_disable(), but worse,
-preempt_disable_notrace().
-
-Anything that lands in ftrace, which _will_ use
-preempt_disable_notrace(), will screw this thing up.
