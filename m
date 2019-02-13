@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D68C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DF45C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:41:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B20F2222D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:41:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 217B4222D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:41:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083281;
-	bh=ErRDEoG03l0ZoRnBEhsMOSk6xipBeW3o3Q+Yn2NOpNU=;
+	s=default; t=1550083287;
+	bh=qPxhzocgGE4rYqbE5S8Yr5qGjhURbsTSEnWbioPWrwA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iXCG0pRUKP3BLGg6DZigb8W6k+jfJi8/HmSBoyvXGQVcr1m0zJ4ISLoZyM/kTzVzl
-	 pmfb7j1i1PagFqWvxfUh6R78V+rsd2CQuSkXwSzR50D7APuNFzr3Sa1Pdtfje63IHz
-	 TjhJ2l1lbYYCG11hR5rpNumyy9wCajpNAgIEo4Yg=
+	b=jD+PqumVS6mt2kVcJCtSfOSOatJMnPzZlQ4lyNIOoTeUDS8XnMjp48orYFyQ7A4YV
+	 N3O2YZBhad8WQvTkM+AU6V7fSwBZ+/lTnTBSaqClov/FE2/VHbcuK5Vc8uxutSf+RU
+	 0EMzGZt2olFU4DIwY2QOppx9gRBhfqh+02fp0JFU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393815AbfBMSlU (ORCPT
+        id S2393838AbfBMSlZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:41:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39594 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:41:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39720 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393806AbfBMSlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:41:17 -0500
+        id S1730678AbfBMSlX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:41:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05ABF222D5;
-        Wed, 13 Feb 2019 18:41:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04AF2222D5;
+        Wed, 13 Feb 2019 18:41:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083276;
-        bh=ErRDEoG03l0ZoRnBEhsMOSk6xipBeW3o3Q+Yn2NOpNU=;
+        s=default; t=1550083282;
+        bh=qPxhzocgGE4rYqbE5S8Yr5qGjhURbsTSEnWbioPWrwA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xD2CKEvi/KD28UITw+qJYpid/vatLRfxzKeUdZ1oKdx5jilSNlD9oXOLe/jt3qtMj
-         DS0GGszQiRP/OvvGSo1lqbQABrt3fJ2U9Fx+wiFeH1xt9oce2cWoCeM4Lo+aR37CAa
-         M7zaMi7S+mcsJxxxnY39GfDK+3Ov9z30iWhpmdDg=
+        b=lO++kFMhplmd/H05exmm187CN0KgmbEKAjClNjTkau8UQ0gWcEyNYy5gGtLO4Tpjs
+         ZBV/zW2agVyd3dxGSu0tP12dsCEp1OiDvIlPem0dUOe3iKvwxE/eUZGxksxq6n7lbB
+         2DnuU2a9NKHVA0arGY55IJ7yow9dxGCLzSOqhipw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.14 02/35] iio: adc: axp288: Fix TS-pin handling
-Date:   Wed, 13 Feb 2019 19:37:57 +0100
-Message-Id: <20190213183706.297155819@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+acdeb633f6211ccdf886@syzkaller.appspotmail.com,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Myungho Jung <mhjungk@gmail.com>
+Subject: [PATCH 4.14 21/35] libceph: avoid KEEPALIVE_PENDING races in ceph_con_keepalive()
+Date:   Wed, 13 Feb 2019 19:38:16 +0100
+Message-Id: <20190213183707.102744334@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183706.176685027@linuxfoundation.org>
 References: <20190213183706.176685027@linuxfoundation.org>
@@ -66,200 +66,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Ilya Dryomov <idryomov@gmail.com>
 
-commit 9bcf15f75cac3c6a00d8f8083a635de9c8537799 upstream.
+commit 4aac9228d16458cedcfd90c7fb37211cf3653ac3 upstream.
 
-Prior to this commit there were 3 issues with our handling of the TS-pin:
+con_fault() can transition the connection into STANDBY right after
+ceph_con_keepalive() clears STANDBY in clear_standby():
 
-1) There are 2 ways how the firmware can disable monitoring of the TS-pin
-for designs which do not have a temperature-sensor for the battery:
-a) Clearing bit 0 of the AXP20X_ADC_EN1 register
-b) Setting bit 2 of the AXP288_ADC_TS_PIN_CTRL monitoring
+    libceph user thread               ceph-msgr worker
 
-Prior to this commit we were unconditionally setting both bits to the
-value used on devices with a TS. This causes the temperature protection to
-kick in on devices without a TS, such as the Jumper ezbook v2, causing
-them to not charge under Linux.
+ceph_con_keepalive()
+  mutex_lock(&con->mutex)
+  clear_standby(con)
+  mutex_unlock(&con->mutex)
+                                mutex_lock(&con->mutex)
+                                con_fault()
+                                  ...
+                                  if KEEPALIVE_PENDING isn't set
+                                    set state to STANDBY
+                                  ...
+                                mutex_unlock(&con->mutex)
+  set KEEPALIVE_PENDING
+  set WRITE_PENDING
 
-This commit fixes this by using regmap_update_bits when updating these 2
-registers, leaving the 2 mentioned bits alone.
+This triggers warnings in clear_standby() when either ceph_con_send()
+or ceph_con_keepalive() get to clearing STANDBY next time.
 
-The next 2 problems are related to our handling of the current-source
-for the TS-pin. The current-source used for the battery temp-sensor (TS)
-is shared with the GPADC. For proper fuel-gauge and charger operation the
-TS current-source needs to be permanently on. But to read the GPADC we
-need to temporary switch the TS current-source to ondemand, so that the
-GPADC can use it, otherwise we will always read an all 0 value.
+I don't see a reason to condition queue_con() call on the previous
+value of KEEPALIVE_PENDING, so move the setting of KEEPALIVE_PENDING
+into the critical section -- unlike WRITE_PENDING, KEEPALIVE_PENDING
+could have been a non-atomic flag.
 
-2) Problem 2 is we were writing hardcoded values to the ADC TS pin-ctrl
-register, overwriting various other unrelated bits. Specifically we were
-overwriting the current-source setting for the TS and GPIO0 pins, forcing
-it to 80ųA independent of its original setting. On a Chuwi Vi10 tablet
-this was causing us to get a too high adc value (due to a too high
-current-source) resulting in the following errors being logged:
-
-ACPI Error: AE_ERROR, Returned by Handler for [UserDefinedRegion]
-ACPI Error: Method parse/execution failed \_SB.SXP1._TMP, AE_ERROR
-
-This commit fixes this by using regmap_update_bits to change only the
-relevant bits.
-
-3) After reading the GPADC channel we were unconditionally enabling the
-TS current-source even on devices where the TS-pin is not used and the
-current-source thus was off before axp288_adc_read_raw call.
-
-This commit fixes this by making axp288_adc_set_ts a nop on devices where
-the ADC is not enabled for the TS-pin.
-
-BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1610545
-Fixes: 3091141d7803 ("iio: adc: axp288: Fix the GPADC pin ...")
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Reported-by: syzbot+acdeb633f6211ccdf886@syzkaller.appspotmail.com
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Tested-by: Myungho Jung <mhjungk@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/axp288_adc.c |   76 +++++++++++++++++++++++++++++++++----------
- 1 file changed, 60 insertions(+), 16 deletions(-)
+ net/ceph/messenger.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/drivers/iio/adc/axp288_adc.c
-+++ b/drivers/iio/adc/axp288_adc.c
-@@ -27,9 +27,18 @@
- #include <linux/iio/machine.h>
- #include <linux/iio/driver.h>
- 
--#define AXP288_ADC_EN_MASK		0xF1
--#define AXP288_ADC_TS_PIN_GPADC		0xF2
--#define AXP288_ADC_TS_PIN_ON		0xF3
-+/*
-+ * This mask enables all ADCs except for the battery temp-sensor (TS), that is
-+ * left as-is to avoid breaking charging on devices without a temp-sensor.
-+ */
-+#define AXP288_ADC_EN_MASK				0xF0
-+#define AXP288_ADC_TS_ENABLE				0x01
+--- a/net/ceph/messenger.c
++++ b/net/ceph/messenger.c
+@@ -3210,9 +3210,10 @@ void ceph_con_keepalive(struct ceph_conn
+ 	dout("con_keepalive %p\n", con);
+ 	mutex_lock(&con->mutex);
+ 	clear_standby(con);
++	con_flag_set(con, CON_FLAG_KEEPALIVE_PENDING);
+ 	mutex_unlock(&con->mutex);
+-	if (con_flag_test_and_set(con, CON_FLAG_KEEPALIVE_PENDING) == 0 &&
+-	    con_flag_test_and_set(con, CON_FLAG_WRITE_PENDING) == 0)
 +
-+#define AXP288_ADC_TS_CURRENT_ON_OFF_MASK		GENMASK(1, 0)
-+#define AXP288_ADC_TS_CURRENT_OFF			(0 << 0)
-+#define AXP288_ADC_TS_CURRENT_ON_WHEN_CHARGING		(1 << 0)
-+#define AXP288_ADC_TS_CURRENT_ON_ONDEMAND		(2 << 0)
-+#define AXP288_ADC_TS_CURRENT_ON			(3 << 0)
- 
- enum axp288_adc_id {
- 	AXP288_ADC_TS,
-@@ -44,6 +53,7 @@ enum axp288_adc_id {
- struct axp288_adc_info {
- 	int irq;
- 	struct regmap *regmap;
-+	bool ts_enabled;
- };
- 
- static const struct iio_chan_spec axp288_adc_channels[] = {
-@@ -123,21 +133,33 @@ static int axp288_adc_read_channel(int *
- 	return IIO_VAL_INT;
++	if (con_flag_test_and_set(con, CON_FLAG_WRITE_PENDING) == 0)
+ 		queue_con(con);
  }
- 
--static int axp288_adc_set_ts(struct regmap *regmap, unsigned int mode,
--				unsigned long address)
-+/*
-+ * The current-source used for the battery temp-sensor (TS) is shared
-+ * with the GPADC. For proper fuel-gauge and charger operation the TS
-+ * current-source needs to be permanently on. But to read the GPADC we
-+ * need to temporary switch the TS current-source to ondemand, so that
-+ * the GPADC can use it, otherwise we will always read an all 0 value.
-+ */
-+static int axp288_adc_set_ts(struct axp288_adc_info *info,
-+			     unsigned int mode, unsigned long address)
- {
- 	int ret;
- 
--	/* channels other than GPADC do not need to switch TS pin */
-+	/* No need to switch the current-source if the TS pin is disabled */
-+	if (!info->ts_enabled)
-+		return 0;
-+
-+	/* Channels other than GPADC do not need the current source */
- 	if (address != AXP288_GP_ADC_H)
- 		return 0;
- 
--	ret = regmap_write(regmap, AXP288_ADC_TS_PIN_CTRL, mode);
-+	ret = regmap_update_bits(info->regmap, AXP288_ADC_TS_PIN_CTRL,
-+				 AXP288_ADC_TS_CURRENT_ON_OFF_MASK, mode);
- 	if (ret)
- 		return ret;
- 
- 	/* When switching to the GPADC pin give things some time to settle */
--	if (mode == AXP288_ADC_TS_PIN_GPADC)
-+	if (mode == AXP288_ADC_TS_CURRENT_ON_ONDEMAND)
- 		usleep_range(6000, 10000);
- 
- 	return 0;
-@@ -153,14 +175,14 @@ static int axp288_adc_read_raw(struct ii
- 	mutex_lock(&indio_dev->mlock);
- 	switch (mask) {
- 	case IIO_CHAN_INFO_RAW:
--		if (axp288_adc_set_ts(info->regmap, AXP288_ADC_TS_PIN_GPADC,
-+		if (axp288_adc_set_ts(info, AXP288_ADC_TS_CURRENT_ON_ONDEMAND,
- 					chan->address)) {
- 			dev_err(&indio_dev->dev, "GPADC mode\n");
- 			ret = -EINVAL;
- 			break;
- 		}
- 		ret = axp288_adc_read_channel(val, chan->address, info->regmap);
--		if (axp288_adc_set_ts(info->regmap, AXP288_ADC_TS_PIN_ON,
-+		if (axp288_adc_set_ts(info, AXP288_ADC_TS_CURRENT_ON,
- 						chan->address))
- 			dev_err(&indio_dev->dev, "TS pin restore\n");
- 		break;
-@@ -172,13 +194,35 @@ static int axp288_adc_read_raw(struct ii
- 	return ret;
- }
- 
--static int axp288_adc_set_state(struct regmap *regmap)
-+static int axp288_adc_initialize(struct axp288_adc_info *info)
- {
--	/* ADC should be always enabled for internal FG to function */
--	if (regmap_write(regmap, AXP288_ADC_TS_PIN_CTRL, AXP288_ADC_TS_PIN_ON))
--		return -EIO;
-+	int ret, adc_enable_val;
-+
-+	/*
-+	 * Determine if the TS pin is enabled and set the TS current-source
-+	 * accordingly.
-+	 */
-+	ret = regmap_read(info->regmap, AXP20X_ADC_EN1, &adc_enable_val);
-+	if (ret)
-+		return ret;
-+
-+	if (adc_enable_val & AXP288_ADC_TS_ENABLE) {
-+		info->ts_enabled = true;
-+		ret = regmap_update_bits(info->regmap, AXP288_ADC_TS_PIN_CTRL,
-+					 AXP288_ADC_TS_CURRENT_ON_OFF_MASK,
-+					 AXP288_ADC_TS_CURRENT_ON);
-+	} else {
-+		info->ts_enabled = false;
-+		ret = regmap_update_bits(info->regmap, AXP288_ADC_TS_PIN_CTRL,
-+					 AXP288_ADC_TS_CURRENT_ON_OFF_MASK,
-+					 AXP288_ADC_TS_CURRENT_OFF);
-+	}
-+	if (ret)
-+		return ret;
- 
--	return regmap_write(regmap, AXP20X_ADC_EN1, AXP288_ADC_EN_MASK);
-+	/* Turn on the ADC for all channels except TS, leave TS as is */
-+	return regmap_update_bits(info->regmap, AXP20X_ADC_EN1,
-+				  AXP288_ADC_EN_MASK, AXP288_ADC_EN_MASK);
- }
- 
- static const struct iio_info axp288_adc_iio_info = {
-@@ -209,7 +253,7 @@ static int axp288_adc_probe(struct platf
- 	 * Set ADC to enabled state at all time, including system suspend.
- 	 * otherwise internal fuel gauge functionality may be affected.
- 	 */
--	ret = axp288_adc_set_state(axp20x->regmap);
-+	ret = axp288_adc_initialize(info);
- 	if (ret) {
- 		dev_err(&pdev->dev, "unable to enable ADC device\n");
- 		return ret;
+ EXPORT_SYMBOL(ceph_con_keepalive);
 
 
