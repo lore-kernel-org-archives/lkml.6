@@ -2,95 +2,129 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B8AC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:11:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2CE7C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85ABD222B1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:11:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 713BC222B1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:13:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iKXNBPgJ"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZQOt+KVH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389411AbfBMNLp (ORCPT
+        id S2389537AbfBMNN3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 08:11:45 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:56570 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726084AbfBMNLo (ORCPT
+        Wed, 13 Feb 2019 08:13:29 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36600 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733220AbfBMNN2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 08:11:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=aYXYOSh02VrgFOoAtWZsG3dC6gl0mwh0qQIVsd6b6/U=; b=iKXNBPgJ/QWjwdq9K/ZA6v+x9
-        5Y3A54QPC72zkNBsg4SgL6/FXbuEbgxUjjZMyeOumCtxt6+KjXuW94vOx+tdr0Gap/U+fRhOEtRcR
-        5umJ2pljfWs+9TCLUZoW5tO+8wKmpCeVreqbVS3UrJJH3d/tjN89mOiAU7uvZW8wTYr9WHgQy5zDm
-        NlQvX8XP71crgRCjSTVZ4xgb5A10DKgP/Ige657/16+t5l5sZqa8VLkfWNIoXpYC0j+4VHiWaunun
-        GY4ABcJ6XUZPFXm+zW79mgTBCCmQ4rmjPQQIYcDIBl+KJxJVmcd+eCoRvIark50+94JSFMGLSPZJa
-        N6Oe6fM9w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gtuK4-0003qU-Na; Wed, 13 Feb 2019 13:11:32 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 3668222BBEBE5; Wed, 13 Feb 2019 14:11:31 +0100 (CET)
-Date:   Wed, 13 Feb 2019 14:11:31 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org, Pingfan Liu <kernelfans@gmail.com>,
-        Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Tony Luck <tony.luck@intel.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-ia64@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@elte.hu>
-Subject: Re: [PATCH v3 2/2] mm: be more verbose about zonelist initialization
-Message-ID: <20190213131131.GS32494@hirez.programming.kicks-ass.net>
-References: <20190212095343.23315-3-mhocko@kernel.org>
- <20190213094315.3504-1-mhocko@kernel.org>
- <20190213103231.GN32494@hirez.programming.kicks-ass.net>
- <20190213115014.GC4525@dhcp22.suse.cz>
+        Wed, 13 Feb 2019 08:13:28 -0500
+Received: by mail-lj1-f193.google.com with SMTP id g11-v6so1968646ljk.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 05:13:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=zBVGPIl77A6T4nt2AQmWlHxw7DBCxUKBUmxAuHFPJ2Q=;
+        b=ZQOt+KVHXL7+bO+WoguF6Ew5btUUrd/SiI/m8k081Om8LOIRrRy1dIEWU9/kLMWI0+
+         jwCHkZprC9xit2q004nBZ2gDdViLfJMMHB1M4/KMx8AM4jdzNBaRaJweaER413UxfSre
+         P7uOpDVNgoKJNSI60x3EDN0qCt2FTDwermkEIH8TKpdKmbO92y5SAAz3gW9JMa74DpGS
+         hFBQDlO9LKrxow14rGbTbKzy1JezlURlTjvmzUqEgc2WuCHYF0Q02l8kHO2bYe3dO1Tm
+         sZmh3IIDVoagaeC++j32TafIskhM0gH4JpK0cjaycHPpyUKSCXiIM0Wsh7XvdqC9kYDb
+         crIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=zBVGPIl77A6T4nt2AQmWlHxw7DBCxUKBUmxAuHFPJ2Q=;
+        b=qdY+G6jRuuB8G/iDeJhRDcXHn+7XMUiWR3HmpAohu/Rr1njv+jw/+ei+MblENfsdVZ
+         f1z6Ihpk9iXInZUeEZcDKpINKdup3QAYhrgSv3WDb2AZRE+vaEQ8faXeZTmh7dlXm+bD
+         7AW7A7XOrFtKtTgh72Gu9OfXJpZvkN5nZMrIFCkmy2EgrLf33CVpSvgZBJClPOnmdEtE
+         eIegTSnP0pkzrfdUBEyHNew14IXdN1GHaY3N/WPmXbdKQ/c4bwIsg/DlBYO5A4YEaYxx
+         Pu7xG74U8Igj0eXHsWFeWXSRBpeFPcQaWBXAJEGw+4SUXwncRpllyS3Y2TqCttqnvjAs
+         py7g==
+X-Gm-Message-State: AHQUAuaZqLZ1QqeTG7n0HoKwv+ziZ9Zd04tJvoNlDZ0FokPpw9X8SekB
+        O1jIu2aQEwcnpsYFAI3clzmL0bqjIhzYcLKnzz9kNA==
+X-Google-Smtp-Source: AHgI3IaDOicHkL37jQX3Dh0LiTQmnm+iyPoaKhBsj+Pj+x/A+KB0ckfOss5/0yPnIx1G2fX/Yzn2iCOHZ1ZRXasxNr4=
+X-Received: by 2002:a2e:9d83:: with SMTP id c3-v6mr285394ljj.9.1550063606715;
+ Wed, 13 Feb 2019 05:13:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190213115014.GC4525@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <b8101fd6d303c1993ee294eeee8bce4d24b9547f.1550061925.git.baolin.wang@linaro.org>
+ <CAMpxmJX7WdtbN=w8D=ZPwAFsamoTm89KeC42ag_LoSoJBFjiRg@mail.gmail.com>
+In-Reply-To: <CAMpxmJX7WdtbN=w8D=ZPwAFsamoTm89KeC42ag_LoSoJBFjiRg@mail.gmail.com>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Wed, 13 Feb 2019 21:13:15 +0800
+Message-ID: <CAMz4kuKz1d6HpPWyB_aanAvzsiqR6UkGK5ysYjdG7B5=vYRYUQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: gpio: Use SoC compatible string instead
+ of wildcard string
+To:     Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Lyra Zhang <zhang.lyra@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 12:50:14PM +0100, Michal Hocko wrote:
-> On Wed 13-02-19 11:32:31, Peter Zijlstra wrote:
-> > On Wed, Feb 13, 2019 at 10:43:15AM +0100, Michal Hocko wrote:
-> > > @@ -5259,6 +5261,11 @@ static void build_zonelists(pg_data_t *pgdat)
-> > >  
-> > >  	build_zonelists_in_node_order(pgdat, node_order, nr_nodes);
-> > >  	build_thisnode_zonelists(pgdat);
-> > > +
-> > > +	pr_info("node[%d] zonelist: ", pgdat->node_id);
-> > > +	for_each_zone_zonelist(zone, z, &pgdat->node_zonelists[ZONELIST_FALLBACK], MAX_NR_ZONES-1)
-> > > +		pr_cont("%d:%s ", zone_to_nid(zone), zone->name);
-> > > +	pr_cont("\n");
-> > >  }
-> > 
-> > Have you ran this by the SGI and other stupid large machine vendors?
-> 
-> I do not have such a large machine handy. The biggest I have has
-> handfull (say dozen) of NUMA nodes.
-> 
-> > Traditionally they tend to want to remove such things instead of adding
-> > them.
-> 
-> I do not insist on this patch but I find it handy. If there is an
-> opposition I will not miss it much.
+On Wed, 13 Feb 2019 at 20:57, Bartosz Golaszewski
+<bgolaszewski@baylibre.com> wrote:
+>
+> =C5=9Br., 13 lut 2019 o 13:49 Baolin Wang <baolin.wang@linaro.org> napisa=
+=C5=82(a):
+> >
+> > Use SoC compatible string instead of wildcard string.
+> >
+> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> > ---
+> >  .../devicetree/bindings/gpio/gpio-eic-sprd.txt     |    4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt b=
+/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
+> > index 93d98d0..54040a2 100644
+> > --- a/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
+> > +++ b/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
+> > @@ -33,7 +33,7 @@ Required properties:
+> >    "sprd,sc9860-eic-latch",
+> >    "sprd,sc9860-eic-async",
+> >    "sprd,sc9860-eic-sync",
+> > -  "sprd,sc27xx-eic".
+> > +  "sprd,sc2731-eic".
+> >  - reg: Define the base and range of the I/O address space containing
+> >    the GPIO controller registers.
+> >  - gpio-controller: Marks the device node as a GPIO controller.
+> > @@ -86,7 +86,7 @@ Example:
+> >         };
+> >
+> >         pmic_eic: gpio@300 {
+> > -               compatible =3D "sprd,sc27xx-eic";
+> > +               compatible =3D "sprd,sc2731-eic";
+> >                 reg =3D <0x300>;
+> >                 interrupt-parent =3D <&sc2731_pmic>;
+> >                 interrupts =3D <5 IRQ_TYPE_LEVEL_HIGH>;
+> > --
+> > 1.7.9.5
+> >
+>
+> Hi,
+>
+> please indicate the module this concerns in the subject line.
+> Something like: "dt-bindings: gpio: sprd: ..."
 
-Well, I don't have machines like that either and don't mind the patch.
-Just raising the issue; I've had the big iron boys complain about
-similar things (typically printing something for every CPU, which gets
-out of hand much faster than zones, but still).
+Sure. Thanks.
+
+--=20
+Baolin Wang
+Best Regards
