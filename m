@@ -2,117 +2,222 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F232BC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:37:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCEFCC4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:42:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBE25222C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:37:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E775222CC
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:42:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HV9aVsJP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395118AbfBMWhk (ORCPT
+        id S2395127AbfBMWl7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 17:37:40 -0500
-Received: from shell.v3.sk ([90.176.6.54]:58129 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727471AbfBMWhj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 17:37:39 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 57456100BD3;
-        Wed, 13 Feb 2019 23:37:36 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id MYl-W-5R0QJO; Wed, 13 Feb 2019 23:37:33 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 92748100E85;
-        Wed, 13 Feb 2019 23:37:33 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id kykTtcoSSWPQ; Wed, 13 Feb 2019 23:37:32 +0100 (CET)
-Received: from nedofet.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 5AEBF100BD3;
-        Wed, 13 Feb 2019 23:37:32 +0100 (CET)
-Message-ID: <b92426e9f5c50c71fa89ea5b53396c1885cc396f.camel@v3.sk>
-Subject: Re: [PATCH 4/6] dt-bindings: display: armada: Add display subsystem
- binding
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Wed, 13 Feb 2019 23:37:30 +0100
-In-Reply-To: <CAL_JsqLT7jEdwi7o7RR_3OcbMTxeNXmSzif8Ez2psjhu24No5Q@mail.gmail.com>
-References: <20190120172534.24617-1-lkundrak@v3.sk>
-         <20190120172534.24617-5-lkundrak@v3.sk>
-         <CAL_JsqLT7jEdwi7o7RR_3OcbMTxeNXmSzif8Ez2psjhu24No5Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 13 Feb 2019 17:41:59 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43172 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730150AbfBMWl7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 17:41:59 -0500
+Received: by mail-wr1-f67.google.com with SMTP id r2so4351338wrv.10;
+        Wed, 13 Feb 2019 14:41:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:reply-to:mime-version
+         :content-transfer-encoding;
+        bh=v//UVpOdI2pMBj7QngoAd2+0IKN5JRjyVZ7fMRhNP+M=;
+        b=HV9aVsJPiTJ8ZtGFtYNGVlu+kroKUKT0z0DZv7bbng1WJtW39lNBcvRrJ4L2yi8thp
+         8GgJBfqo5LY41MIA4JzsvzB9JICICqzCxkxwMgRnIohIkBLovLdHs8zA2bXaV0ivk8dE
+         T5/W2cyc4qGmNas/ftPIQ1eIB2CJHuajsm3wvGcs9ZNK4DOzLweatVfsI30+HGbJYInb
+         JgoK4tB/kYtLHG+NI2Vp5v5mXStjmL1hP1Eg+MF/OKVcGOVRy9Cru/ptSYzI3HKWAFAR
+         Z7biHK7zLf7raY13IZ4KLoAdgkY3w1C8KDgVpPi8eSWOoZe83PcX7qUn8cQFVzefOy9/
+         29cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:reply-to
+         :mime-version:content-transfer-encoding;
+        bh=v//UVpOdI2pMBj7QngoAd2+0IKN5JRjyVZ7fMRhNP+M=;
+        b=ZJp9E4Hp2KGZ6SRJ3VK2+p6nZPd+BJ3/mNhLIadPHYqAjJGj7WCoLjYik3RdZDVni7
+         zS5ZwyxTvSSH2Y0xDP1uCCBGNwGOEMKHuoMzk3himAGzyRTX9vKjCHHUUpvxs7jxbxqv
+         iDoKbiSTuYr1o++Wb6kMw1DAUKDlOcTp4qDPJN2o3X7njxzTDKCKduQZ28MpGdXY/89/
+         SpvgCye+dVxIUBV/oy8IhGNxRISHYrzPB1OiJdgbyovRBcK+UT2jE+zTFU6CqcZWK6W9
+         XfA4j78x0gY9FSYhBAY4JbAKwjhXqK1z555GaQVGDehoiXvg9dpAMAV3Pu2fkL9wEkdb
+         2KpQ==
+X-Gm-Message-State: AHQUAuakFQPApD2hCABTsRKHgywmuQ6eGOtfXGuDt0crofMPrKoFjnu4
+        McQvdMohjAP5doHiHh07yEw=
+X-Google-Smtp-Source: AHgI3IZUuVHIWSI5hYTH0/oiUtwLakqcG7yQVPGl6sKahQzdaJJLWVEUPmv7QWzr17ryUO0e9iB5YQ==
+X-Received: by 2002:adf:b60e:: with SMTP id f14mr296526wre.134.1550097716715;
+        Wed, 13 Feb 2019 14:41:56 -0800 (PST)
+Received: from localhost.localdomain ([91.75.74.250])
+        by smtp.gmail.com with ESMTPSA id f196sm780810wme.36.2019.02.13.14.41.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 14:41:55 -0800 (PST)
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
+Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH v5 00/12] hardening: statically allocated protected memory
+Date:   Thu, 14 Feb 2019 00:41:29 +0200
+Message-Id: <cover.1550097697.git.igor.stoppa@huawei.com>
+X-Mailer: git-send-email 2.19.1
+Reply-To: Igor Stoppa <igor.stoppa@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-01-21 at 09:35 -0600, Rob Herring wrote:
-> On Sun, Jan 20, 2019 at 11:26 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
-> > The Marvell Armada DRM master device is a virtual device needed to list all
-> > nodes that comprise the graphics subsystem.
-> > 
-> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> > ---
-> >  .../display/armada/marvell-armada-drm.txt     | 24 +++++++++++++++++++
-> >  1 file changed, 24 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/display/armada/marvell-armada-drm.txt b/Documentation/devicetree/bindings/display/armada/marvell-armada-drm.txt
-> > index de4cca9432c8..3dbfa8047f0b 100644
-> > --- a/Documentation/devicetree/bindings/display/armada/marvell-armada-drm.txt
-> > +++ b/Documentation/devicetree/bindings/display/armada/marvell-armada-drm.txt
-> > @@ -1,3 +1,27 @@
-> > +Marvell Armada DRM master device
-> > +================================
-> > +
-> > +The Marvell Armada DRM master device is a virtual device needed to list all
-> > +nodes that comprise the graphics subsystem.
-> > +
-> > +Required properties:
-> > +
-> > + - compatible: value should be "marvell,dove-display-subsystem",
-> > +   "marvell,armada-display-subsystem"
-> > + - ports: a list of phandles pointing to display interface ports of CRTC
-> > +   devices
-> > + - memory-region: phandle to a node describing memory to be used for the
-> > +   framebuffer
-> > +
-> > +Example:
-> > +
-> > +       display-subsystem {
-> > +               compatible = "marvell,dove-display-subsystem",
-> > +                            "marvell,armada-display-subsystem";
-> > +               memory-region = <&display_reserved>;
-> > +               ports = <&lcd0_port>;
-> 
-> If there is only one device, you don't need this virtual node.
+To: Andy Lutomirski <luto@amacapital.net>,
+To: Matthew Wilcox <willy@infradead.org>,
+To: Nadav Amit <nadav.amit@gmail.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+To: Dave Hansen <dave.hansen@linux.intel.com>,
+To: Mimi Zohar <zohar@linux.vnet.ibm.com>
+To: Thiago Jung Bauermann <bauerman@linux.ibm.com>
+CC: Kees Cook <keescook@chromium.org>
+CC: Ahmed Soliman <ahmedsoliman@mena.vt.edu>
+CC: linux-integrity <linux-integrity@vger.kernel.org>
+CC: Kernel Hardening <kernel-hardening@lists.openwall.com>
+CC: Linux-MM <linux-mm@kvack.org>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 
-Before I follow up on this and submit a version without the virtual
-node, I'm wondering: is it okay that the bindings for the LCDC and the
-framebuffer are in the same file, or would it be preferrable if they
-were separate? Both styles seem to be used for the display bindings.
+Hello,
+new version of the patchset, with default memset_user() function.
 
-> 
-> 
-> > +       };
-> > +
-> >  Marvell Armada LCD controller
-> >  =============================
-> > 
-> > --
-> > 2.20.1
+Patch-set implementing write-rare memory protection for statically
+allocated data.
+Its purpose is to keep write protected the kernel data which is seldom
+modified, especially if altering it can be exploited during an attack.
 
-Lubo
+There is no read overhead, however writing requires special operations that
+are probably unsuitable for often-changing data.
+The use is opt-in, by applying the modifier __wr_after_init to a variable
+declaration.
+
+As the name implies, the write protection kicks in only after init() is
+completed; before that moment, the data is modifiable in the usual way.
+
+Current Limitations:
+* supports only data which is allocated statically, at build time.
+* verified (and enabled) only x86_64 and arm64; other architectures need to
+  be tested, possibly providing own backend.
+
+Some notes:
+- in case an architecture doesn't support write rare, the behavior is to
+  fallback to regular write operations
+- before altering any memory, the destination is sanitized
+- write rare data is segregated into own set of pages
+- only x86_64 and arm64 verified, atm
+- the memset_user() assembly functions seems to work, but I'm not too sure
+  they are really ok
+- I've added a simple example: the protection of ima_policy_flags
+- the last patch is optional, but it seemed worth to do the refactoring
+- the x86_64 user space address range is double the size of the kernel
+  address space, so it's possible to randomize the beginning of the
+  mapping of the kernel address space, but on arm64 they have the same
+  size, so it's not possible to do the same. Eventually, the randomization
+  could affect exclusively the ranges containing protectable memory, but
+  this should be done togeter with the protection of dynamically allocated
+  data (once it is available).
+- unaddressed: Nadav proposed to do:
+	#define __wr          __attribute__((address_space(5)))
+  but I don't know exactly where to use it atm
+
+Changelog:
+
+v4->v5
+------
+* turned conditional inclusion of mm.h into permanent
+* added generic, albeit unoptimized memset_user() function
+* more verbose error messages for testing of wr_memset()
+
+v3->v4
+------
+
+* added function for setting memory in user space mapping for arm64
+* refactored code, to work with both supported architectures
+* reduced dependency on x86_64 specific code, to support by default also
+  arm64
+* improved memset_user() for x86_64, but I'm not sure if I understood
+  correctly what was the best way to enhance it.
+
+v2->v3
+------
+
+* both wr_memset and wr_memcpy are implemented as generic functions
+  the arch code must provide suitable helpers
+* regular initialization for ima_policy_flags: it happens during init
+* remove spurious code from the initialization function
+
+v1->v2
+------
+
+* introduce cleaner split between generic and arch code
+* add x86_64 specific memset_user()
+* replace kernel-space memset() memcopy() with userspace counterpart
+* randomize the base address for the alternate map across the entire
+  available address range from user space (128TB - 64TB)
+* convert BUG() to WARN()
+* turn verification of written data into debugging option
+* wr_rcu_assign_pointer() as special case of wr_assign()
+* example with protection of ima_policy_flags
+* documentation
+
+Igor Stoppa (11):
+  __wr_after_init: linker section and attribute
+  __wr_after_init: Core and default arch
+  __wr_after_init: x86_64: randomize mapping offset
+  __wr_after_init: x86_64: enable
+  __wr_after_init: arm64: enable
+  __wr_after_init: Documentation: self-protection
+  __wr_after_init: lkdtm test
+  __wr_after_init: rodata_test: refactor tests
+  __wr_after_init: rodata_test: test __wr_after_init
+  __wr_after_init: test write rare functionality
+  IMA: turn ima_policy_flags into __wr_after_init
+
+Nadav Amit (1):
+  fork: provide a function for copying init_mm
+
+ Documentation/security/self-protection.rst |  14 +-
+ arch/Kconfig                               |  22 +++
+ arch/arm64/Kconfig                         |   1 +
+ arch/x86/Kconfig                           |   1 +
+ arch/x86/mm/Makefile                       |   2 +
+ arch/x86/mm/prmem.c (new)                  |  20 +++
+ drivers/misc/lkdtm/core.c                  |   3 +
+ drivers/misc/lkdtm/lkdtm.h                 |   3 +
+ drivers/misc/lkdtm/perms.c                 |  29 ++++
+ include/asm-generic/vmlinux.lds.h          |  25 +++
+ include/linux/cache.h                      |  21 +++
+ include/linux/prmem.h (new)                |  70 ++++++++
+ include/linux/sched/task.h                 |   1 +
+ init/main.c                                |   3 +
+ kernel/fork.c                              |  24 ++-
+ mm/Kconfig.debug                           |   8 +
+ mm/Makefile                                |   2 +
+ mm/prmem.c (new)                           | 193 +++++++++++++++++++++
+ mm/rodata_test.c                           |  69 +++++---
+ mm/test_write_rare.c (new)                 | 142 +++++++++++++++
+ security/integrity/ima/ima.h               |   3 +-
+ security/integrity/ima/ima_policy.c        |   9 +-
+ 22 files changed, 628 insertions(+), 37 deletions(-)
+ create mode 100644 arch/x86/mm/prmem.c
+ create mode 100644 include/linux/prmem.h
+ create mode 100644 mm/prmem.c
+ create mode 100644 mm/test_write_rare.c
+
+-- 
+2.19.1
 
