@@ -2,107 +2,132 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20ED6C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 06:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA469C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 06:50:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE3E7222BE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 06:49:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tNemEN1M"
+	by mail.kernel.org (Postfix) with ESMTP id A1F79222BE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 06:50:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387410AbfBMGte (ORCPT
+        id S2387445AbfBMGuF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 01:49:34 -0500
-Received: from ozlabs.org ([203.11.71.1]:46135 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726411AbfBMGte (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 01:49:34 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 43zqrV5wC9z9s5c;
-        Wed, 13 Feb 2019 17:49:30 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1550040571;
-        bh=mCIOb0ADz4WtQRLQC81fOoAZNjpyhJw0QmXZufwVGfc=;
-        h=Date:From:To:Cc:Subject:From;
-        b=tNemEN1M3ZP+7WBfh/OqtcwVWf3rww3cYqtQRSpQgWNqMC8VGL503PHlEVIlMxSHt
-         1vuNR1z40EC/BrDdw4vkUYipptyfH81IMMaDv+Fw3E8xKftrmJf8B0fJp2FGcTkk/r
-         Vnm/AIi2+0kzW1QH9SjZs2l+dP5UCet28dsK9PkkuQIfKxcKYU1VrbbwMVr4pE82+m
-         7IVtcFrnIuRVruLHc2QLX7L/UTkVvF+V/GLmwYjEXZLTz+ulLCm/+hJ03k13mYn7Sy
-         cKSpHftNiWT8bXZU8NI2IoB/xk4O6g9eVSlJXDWWFAsg7RDLVxiXc6m/8mcke1yIzZ
-         dxOQ559jykNGQ==
-Date:   Wed, 13 Feb 2019 17:49:28 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: linux-next: manual merge of the akpm tree with the tip tree
-Message-ID: <20190213174928.18128be0@canb.auug.org.au>
+        Wed, 13 Feb 2019 01:50:05 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:15466 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2387415AbfBMGuE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 01:50:04 -0500
+X-UUID: 621f949198ff4ac497ea4337c4f676c0-20190213
+X-UUID: 621f949198ff4ac497ea4337c4f676c0-20190213
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <mars.cheng@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1942036351; Wed, 13 Feb 2019 14:49:46 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Wed, 13 Feb 2019 14:49:45 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Wed, 13 Feb 2019 14:49:45 +0800
+Message-ID: <1550040585.12645.9.camel@mtkswgap22>
+Subject: Re: [PATCH 1/1] tracing: Fix event_trace_printk loss on
+ printk_format.
+From:   Mars Cheng <mars.cheng@mediatek.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+CC:     Andress Kuo <andress.kuo@mediatek.com>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Wed, 13 Feb 2019 14:49:45 +0800
+In-Reply-To: <1550033650.7648.2.camel@mtkswgap22>
+References: <1549971717-4693-1-git-send-email-mars.cheng@mediatek.com>
+         <20190212204113.5ecaa2a1@gandalf.local.home>
+         <1550033650.7648.2.camel@mtkswgap22>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/46bUxRtCSLx_u3UBCkH3naR"; protocol="application/pgp-signature"
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/46bUxRtCSLx_u3UBCkH3naR
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Steve
 
-Hi all,
+On Wed, 2019-02-13 at 12:54 +0800, Mars Cheng wrote:
+> Hi Steve
+> 
+> On Tue, 2019-02-12 at 20:41 -0500, Steven Rostedt wrote:
+> > On Tue, 12 Feb 2019 19:41:57 +0800
+> > Mars Cheng <mars.cheng@mediatek.com> wrote:
+> > 
+> > > From: Andress Kuo <andress.kuo@mediatek.com>
+> > > 
+> > > If fmt on event_trace_printk is not a constant, It means that something not
+> > > guaranteed, so the compiler optimizes the fmt out, and then the
+> > > __trace_printk_fmt section is not filled. if __trace_printk_fmt is not
+> > > filled, the kernel will not allocate the special buffers needed for the
+> > > event_trace_printk() and then not shown in the file output
+> > > sys/kernel/debug/tracing/print_formats.
+> > > 
+> > > Adding a "__used" to the variable in the __trace_printk_fmt section on
+> > > event_trace_printk() will keep it around, even though it is set to NULL.
+> > > This will keep the string from being printed in the
+> > > sys/kernel/debug/tracing/printk_formats section.
+> > > 
+> > > We can also refer to commit 3debb0a9ddb1 ("tracing: Fix trace_printk()
+> > > to print when not using bprintk()")that it had similar issue on path of
+> > > trace_printk().
+> > 
+> > Honestly, I don't even remember why that macro was created. I think
+> > it's a remnant from the creation of the trace events. I think the best
+> > solution is just to nuke it. It shouldn't be used anymore.
+> > 
+> > I'll dig a bit deeper into the history of that macro, but I'm thinking
+> > it shouldn't exist anymore.
+> > 
+> > [ /me returns from walking down memory lane ]
+> > 
+> > Wow, that brings back some wild memories. Yes, that macro must die, and
+> > I wish the history of it could die along with it ;-) The horror of the
+> > old ways I tell you. The event_trace_printk() was the original way we
+> > displayed events! No real formatting, no parsing my userspace tools. It
+> > was just a glamorized printk. It was called TRACE_FORMAT() which was
+> > deprecated by today's TRACE_EVENT().
+> > 
+> > That macro should have been removed by commit b8e65554d80b4.
+> > 
+> > Please just send a patch to delete that macro. Let's not be maintaining
+> > it. It gives me nightmares.
+> > 
+> > -- Steve
+> 
+> Got it, I will send another patch to remove the nightmares. :-)
+> 
+> Thanks.
 
-Today's linux-next merge of the akpm tree got a conflict in:
+After some grep, I found event_trace_printk() not used in 5.0-rc*. But
+trace_printk() is still used in several places.
 
-  scripts/atomic/check-atomics.sh
+kernel/trace/ring_buffer_benchmark.c:415: trace_printk("Sleeping for 10
+secs\n");
+...
+drivers/gpu/drm/i915/i915_gem.h:66:#define GEM_TRACE(...)
+trace_printk(__VA_ARGS__)
+drivers/hwtracing/stm/dummy_stm.c:30:   trace_printk("[%u:%u] [pkt: %x/%
+x] (%llx)\n", master, channel,
+...
 
-between commit:
+since they are similar functions, do you prefer remove both of them or
+just remove event_trace_printk()? the former approach might affect some
+modules, and the latter approach keeps nightmares, right?
 
-  4ad119545d78 ("locking/atomics: Check atomic headers with sha1sum")
+Thanks.
+> 
 
-from the tip tree and patch:
 
-  "scripts/atomic/check-atomics.sh: don't assume that scripts are executabl=
-e"
-
-from the akpm tree.
-
-I fixed it up (this latter patch is now needed against the new
-scripts/atomic/gen-atomics.sh instead) and can carry the fix as
-necessary. This is now fixed as far as linux-next is concerned, but any
-non trivial conflicts should be mentioned to your upstream maintainer
-when your tree is submitted for merging.  You may also want to consider
-cooperating with the maintainer of the conflicting tree to minimise any
-particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/46bUxRtCSLx_u3UBCkH3naR
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxjvfgACgkQAVBC80lX
-0GxhPQf/WZPKKMkkBisXpXhIIF+AQilxcK4XmHrYowxx1ih4uoPYys+Y9eRvfvk4
-eXSeyTcUovEWn8BmMKtGNNLSAEa9tdweE1NfPQ5TDRUqW8xTEeKShK9JFLYXoQMd
-/GU4DtWNfXVPkC/HWSclSV00G+Gz4Z+zqVbVehkYgs0x4X8lxo4GXUuqO11797Ib
-1sZtHKLpmDlXnOOYySDkkRuuTY7sTwmAC4D/Y/m8agSpHXpBxeXGlTVY5XYNMFpF
-YGrD5Xk2fGiHyzmcHRyYh2NBF3ukk1SdmR1WQmetcTggnw8IH9W5UNBc6t0qhEVi
-MDy1gBe+xlRo4LbsSN9cuIYefIAjxw==
-=ZAbZ
------END PGP SIGNATURE-----
-
---Sig_/46bUxRtCSLx_u3UBCkH3naR--
