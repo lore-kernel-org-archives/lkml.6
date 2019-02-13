@@ -3,180 +3,120 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B21C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:56:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E340C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:57:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 309AF222B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:56:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47118222BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:57:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390896AbfBMI4F (ORCPT
+        id S2390914AbfBMI5K convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 03:56:05 -0500
-Received: from mga02.intel.com ([134.134.136.20]:61820 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727264AbfBMI4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 03:56:05 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 00:56:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,365,1544515200"; 
-   d="scan'208";a="124116509"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by fmsmga008.fm.intel.com with ESMTP; 13 Feb 2019 00:56:03 -0800
-Received: from fmsmsx120.amr.corp.intel.com (10.18.124.208) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 13 Feb 2019 00:55:58 -0800
-Received: from shsmsx151.ccr.corp.intel.com (10.239.6.50) by
- fmsmsx120.amr.corp.intel.com (10.18.124.208) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Wed, 13 Feb 2019 00:55:57 -0800
-Received: from shsmsx102.ccr.corp.intel.com ([169.254.2.207]) by
- SHSMSX151.ccr.corp.intel.com ([169.254.3.172]) with mapi id 14.03.0415.000;
- Wed, 13 Feb 2019 16:55:45 +0800
-From:   "Wang, Wei W" <wei.w.wang@intel.com>
-To:     'David Hildenbrand' <david@redhat.com>,
-        Nitesh Narayan Lal <nitesh@redhat.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
-        "pagupta@redhat.com" <pagupta@redhat.com>,
-        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
-        "riel@surriel.com" <riel@surriel.com>,
-        "mst@redhat.com" <mst@redhat.com>,
-        "dodgen@google.com" <dodgen@google.com>,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        "dhildenb@redhat.com" <dhildenb@redhat.com>,
-        "aarcange@redhat.com" <aarcange@redhat.com>
-Subject: RE: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
-Thread-Topic: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
-Thread-Index: AQHUvMb57IQCd72gCkOm4okDUKYrcaXb13cw//+SQwCAAKVowA==
-Date:   Wed, 13 Feb 2019 08:55:45 +0000
-Message-ID: <286AC319A985734F985F78AFA26841F73DF6B52A@shsmsx102.ccr.corp.intel.com>
-References: <20190204201854.2328-1-nitesh@redhat.com>
- <286AC319A985734F985F78AFA26841F73DF68060@shsmsx102.ccr.corp.intel.com>
- <17adc05d-91f9-682b-d9a4-485e6a631422@redhat.com>
-In-Reply-To: <17adc05d-91f9-682b-d9a4-485e6a631422@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYTMyMmVmMjktODkwOC00ODJkLWEyODctYjUwMjVhM2UzNTBkIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiYjRxYmFGbFRGSnMwQStYa0xTRklKNWUzcFJYWkh5SVdCS1J6eXpwXC9OVWV5ZFF2UnF3QkFjYnF3UkswZkVqT3EifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 13 Feb 2019 03:57:10 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:49653 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727264AbfBMI5I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 03:57:08 -0500
+X-Originating-IP: 87.231.134.186
+Received: from localhost (87-231-134-186.rev.numericable.fr [87.231.134.186])
+        (Authenticated sender: gregory.clement@bootlin.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 8C44EE0012;
+        Wed, 13 Feb 2019 08:57:04 +0000 (UTC)
+From:   Gregory CLEMENT <gregory.clement@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        linux-kernel@vger.kernel.org,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+Subject: Re: [PATCH v3 0/6] Add CPU clock support for Armada 7K/8K
+In-Reply-To: <875zuwo4fi.fsf@FE-laptop>
+References: <20181216094147.6468-1-gregory.clement@bootlin.com> <87a7k8o5d5.fsf@FE-laptop> <154713766177.15366.14948014236046606980@swboyd.mtv.corp.google.com> <875zuwo4fi.fsf@FE-laptop>
+Date:   Wed, 13 Feb 2019 09:57:04 +0100
+Message-ID: <871s4c5an3.fsf@FE-laptop>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlc2RheSwgRmVicnVhcnkgMTIsIDIwMTkgNToyNCBQTSwgRGF2aWQgSGlsZGVuYnJhbmQg
-d3JvdGU6DQo+IEdsb2JhbCBtZWFucyBhbGwgVkNQVXMgd2lsbCBiZSBjb21wZXRpbmcgcG90ZW50
-aWFsbHkgZm9yIGEgc2luZ2xlIGxvY2sgd2hlbg0KPiBmcmVlaW5nL2FsbG9jYXRpbmcgYSBwYWdl
-LCBubz8gV2hhdCBpZiB5b3UgaGF2ZSA2NFZDUFVzIGFsbG9jYXRpbmcvZnJlZWluZw0KPiBtZW1v
-cnkgbGlrZSBjcmF6eT8NCg0KSSB0aGluayB0aGUga2V5IHBvaW50IGlzIHRoYXQgdGhlIDY0IHZj
-cHVzIHdvbid0IGFsbG9jYXRlL2ZyZWUgb24gdGhlIHNhbWUgcGFnZSBzaW11bHRhbmVvdXNseSwg
-c28gbm8gbmVlZCB0byBoYXZlIGEgZ2xvYmFsIGJpZyBsb2NrLCBpc27igJl0IGl0Pw0KSSB0aGlu
-ayBhdG9taWMgb3BlcmF0aW9ucyBvbiB0aGUgYml0bWFwIHdvdWxkIGJlIGVub3VnaC4NCg0KPiAo
-SSBhc3N1bWUgc29tZSBraW5kIG9mIGxvY2tpbmcgaXMgcmVxdWlyZWQgZXZlbiBpZiB0aGUgYml0
-bWFwIHdvdWxkIGJlDQo+IGF0b21pYy4gQWxzbywgZG9lc24ndCB4Yml0bWFwIG1lYW4gdGhhdCB3
-ZSBldmVudHVhbGx5IGhhdmUgdG8gYWxsb2NhdGUNCj4gbWVtb3J5IGF0IHBsYWNlcyB3aGVyZSB3
-ZSBkb24ndCB3YW50IHRvIC0gZS5nLiBmcm9tIGFyY2hfZnJlZV9wYWdlID8pDQoNCmFyY2hfZnJl
-ZV9wYWdlcyBpcyBpbiBmcmVlX3BhZ2VzX3ByZXBhcmUsIHdoeSBjYW4ndCB3ZSBoYXZlIG1lbW9y
-eSBhbGxvY2F0aW9uIHRoZXJlPw0KDQpJdCB3b3VsZCBhbHNvIGJlIGRvYWJsZSB0byBmaW5kIGEg
-cHJlZmVycmVkIHBsYWNlIHRvIHByZWFsbG9jYXRlIHNvbWUgYW1vdW50IG9mIG1lbW9yeSBmb3Ig
-dGhlIGJpdG1hcC4NCg0KPiANCj4gVGhhdCdzIHRoZSBiaWcgYmVuZWZpdCBvZiB0YWtpbmcgdGhl
-IHBhZ2VzIG9mIHRoZSBidWRkeSBmcmVlIGxpc3QuIE90aGVyIFZDUFVzDQo+IHdvbid0IHN0dW1i
-bGUgb3ZlciB0aGVtLCB3YWl0aW5nIGZvciB0aGVtIHRvIGdldCBmcmVlZCBpbiB0aGUgaHlwZXJ2
-aXNvci4NCg0KQXMgYWxzbyBtZW50aW9uZWQgYWJvdmUsIEkgdGhpbmsgb3RoZXIgdmNwdXMgd2ls
-bCBub3QgYWxsb2NhdGUvZnJlZSBvbiB0aGUgc2FtZSBwYWdlIHRoYXQgaXMgaW4gcHJvZ3Jlc3Mg
-b2YgYmVpbmcgYWxsb2NhdGVkL2ZyZWVkLg0KDQo+IFRoaXMgc291bmRzIG1vcmUgbGlrZSAidGhl
-IGhvc3QgcmVxdWVzdHMgdG8gZ2V0IGZyZWUgcGFnZXMgb25jZSBpbiBhIHdoaWxlIg0KPiBjb21w
-YXJlZCB0byAidGhlIGhvc3QgaXMgYWx3YXlzIGluZm9ybWVkIGFib3V0IGZyZWUgcGFnZXMiLiBB
-dCB0aGUgdGltZQ0KPiB3aGVyZSB0aGUgaG9zdCBhY3R1YWxseSBoYXMgdG8gYXNrIHRoZSBndWVz
-dCAoZS5nLiBiZWNhdXNlIHRoZSBob3N0IGlzIGxvdyBvbg0KPiBtZW1vcnkpLCBpdCBtaWdodCBi
-ZSB0byBsYXRlIHRvIHdhaXQgZm9yIGd1ZXN0IGFjdGlvbi4NCg0KT3B0aW9uIDE6IEhvc3QgYXNr
-cyBmb3IgZnJlZSBwYWdlczoNCk5vdCBuZWNlc3NhcnkgdG8gYXNrIG9ubHkgd2hlbiB0aGUgaG9z
-dCBoYXMgYmVlbiBpbiBtZW1vcnkgcHJlc3N1cmUuDQpUaGlzIGNvdWxkIGJlIHRoZSBvcmNoZXN0
-cmF0aW9uIGxheWVyJ3Mgam9iIHRvIG1vbml0b3IgdGhlIGhvc3QgbWVtb3J5IHVzYWdlLg0KRm9y
-IGV4YW1wbGUsIHBlb3BsZSBjb3VsZCBzZXQgdGhlIGNvbmRpdGlvbiAid2hlbiA1MCUgb2YgdGhl
-IGhvc3QgbWVtb3J5DQpoYXMgYmVlbiB1c2VkLCBzdGFydCB0byBhc2sgYSBndWVzdCBmb3Igc29t
-ZSBhbW91bnQgb2YgZnJlZSBwYWdlcyIgDQoNCk9wdGlvbiAyOiBHdWVzdCBhY3RpdmVseSBvZmZl
-cnMgZnJlZSBwYWdlczoNCkFkZCBhIGJhbGxvb24gY2FsbGJhY2sgdG8gYXJjaF9mcmVlX3BhZ2Ug
-c28gdGhhdCB3aGVuZXZlciBhIHBhZ2UgZ2V0cyBmcmVlZCBpdHMgZ2ZuDQp3aWxsIGJlIGZpbGxl
-ZCBpbnRvIHRoZSBiYWxsb29uJ3MgcmVwb3J0X3ZxIGFuZCB0aGUgaG9zdCB3aWxsIHRha2UgYXdh
-eSB0aGUgYmFja2luZw0KaG9zdCBwYWdlLg0KDQpCb3RoIG9wdGlvbnMgY2FuIGJlIGltcGxlbWVu
-dGVkLiBCdXQgSSB0aGluayBvcHRpb24gMSB3b3VsZCBiZSBtb3JlDQplZmZpY2llbnQgYXMgdGhl
-IGd1ZXN0IGZyZWUgcGFnZXMgYXJlIG9mZmVyZWQgb24gZGVtYW5kLiAgDQoNCj4gTml0ZXNoIHVz
-ZXMgTUFEVl9GUkVFIGhlcmUgKGFzIGZhciBhcyBJIHJlY2FsbCA6KSApLCB0byBvbmx5IG1hcmsg
-cGFnZXMgYXMNCj4gY2FuZGlkYXRlcyBmb3IgcmVtb3ZhbCBhbmQgaWYgdGhlIGhvc3QgaXMgbG93
-IG9uIG1lbW9yeSwgb25seSBzY2FubmluZyB0aGUNCj4gZ3Vlc3QgcGFnZSB0YWJsZXMgaXMgc3Vm
-ZmljaWVudCB0byBmcmVlIHVwIG1lbW9yeS4NCj4gDQo+IEJ1dCBib3RoIHBvaW50cyBtaWdodCBq
-dXN0IGJlIGFuIGltcGxlbWVudGF0aW9uIGRldGFpbCBpbiB0aGUgZXhhbXBsZSB5b3UNCj4gZGVz
-Y3JpYmUuDQoNClllcywgaXQgaXMgYW4gaW1wbGVtZW50YXRpb24gZGV0YWlsLiBJIHRoaW5rIERP
-TlRORUVEIHdvdWxkIGJlIGVhc2llcg0KZm9yIHRoZSBmaXJzdCBzdGVwLg0KDQo+IA0KPiA+DQo+
-ID4gSW4gYWJvdmUgMiksIGdldF9mcmVlX3BhZ2VfaGludHMgY2xlYXJzIHRoZSBiaXRzIHdoaWNo
-IGluZGljYXRlcyB0aGF0IHRob3NlDQo+IHBhZ2VzIGFyZSBub3QgcmVhZHkgdG8gYmUgdXNlZCBi
-eSB0aGUgZ3Vlc3QgeWV0LiBXaHk/DQo+ID4gVGhpcyBpcyBiZWNhdXNlIDMpIHdpbGwgdW5tYXAg
-dGhlIHVuZGVybHlpbmcgcGh5c2ljYWwgcGFnZXMgZnJvbSBFUFQuDQo+IE5vcm1hbGx5LCB3aGVu
-IGd1ZXN0IHJlLXZpc2l0cyB0aG9zZSBwYWdlcywgRVBUIHZpb2xhdGlvbnMgYW5kIFFFTVUgcGFn
-ZQ0KPiBmYXVsdHMgd2lsbCBnZXQgYSBuZXcgaG9zdCBwYWdlIHRvIHNldCB1cCB0aGUgcmVsYXRl
-ZCBFUFQgZW50cnkuIElmIGd1ZXN0IHVzZXMNCj4gdGhhdCBwYWdlIGJlZm9yZSB0aGUgcGFnZSBn
-ZXRzIHVubWFwcGVkIChpLmUuIHJpZ2h0IGJlZm9yZSBzdGVwIDMpLCBubyBFUFQNCj4gdmlvbGF0
-aW9uIGhhcHBlbnMgYW5kIHRoZSBndWVzdCB3aWxsIHVzZSB0aGUgc2FtZSBwaHlzaWNhbCBwYWdl
-IHRoYXQgd2lsbCBiZQ0KPiB1bm1hcHBlZCBhbmQgZ2l2ZW4gdG8gb3RoZXIgaG9zdCB0aHJlYWRz
-LiBTbyB3ZSBuZWVkIHRvIG1ha2Ugc3VyZSB0aGF0DQo+IHRoZSBndWVzdCBmcmVlIHBhZ2UgaXMg
-dXNhYmxlIG9ubHkgYWZ0ZXIgc3RlcCAzIGZpbmlzaGVzLg0KPiA+DQo+ID4gQmFjayB0byBhcmNo
-X2FsbG9jX3BhZ2UoKSwgaXQgbmVlZHMgdG8gY2hlY2sgaWYgdGhlIGFsbG9jYXRlZCBwYWdlcw0K
-PiA+IGhhdmUgIjEiIHNldCBpbiB0aGUgYml0bWFwLCBpZiB0aGF0J3MgdHJ1ZSwganVzdCBjbGVh
-ciB0aGUgYml0cy4gT3RoZXJ3aXNlLCBpdA0KPiBtZWFucyBzdGVwIDIpIGFib3ZlIGhhcyBoYXBw
-ZW5lZCBhbmQgc3RlcCA0KSBoYXNuJ3QgYmVlbiByZWFjaGVkLiBJbiB0aGlzDQo+IGNhc2UsIHdl
-IGNhbiBlaXRoZXIgaGF2ZSBhcmNoX2FsbG9jX3BhZ2UoKSBidXN5d2FpdGluZyBhIGJpdCB0aWxs
-IDQpIGlzIGRvbmUNCj4gZm9yIHRoYXQgcGFnZSBPciBiZXR0ZXIgdG8gaGF2ZSBhIGJhbGxvb24g
-Y2FsbGJhY2sgd2hpY2ggcHJpb3JpdGl6ZSAzKSBhbmQgNCkNCj4gdG8gbWFrZSB0aGlzIHBhZ2Ug
-dXNhYmxlIGJ5IHRoZSBndWVzdC4NCj4gDQo+IFJlZ2FyZGluZyB0aGUgbGF0dGVyLCB0aGUgVkNQ
-VSBhbGxvY2F0aW5nIGEgcGFnZSBjYW5ub3QgZG8gYW55dGhpbmcgaWYgdGhlDQo+IHBhZ2UgKGFs
-b25nIHdpdGggb3RoZXIgcGFnZXMpIGlzIGp1c3QgYmVpbmcgZnJlZWQgYnkgdGhlIGh5cGVydmlz
-b3IuDQo+IEl0IGhhcyB0byBidXN5LXdhaXQsIG5vIGNoYW5jZSB0byBwcmlvcml0aXplLg0KDQpJ
-IG1lYW50IHRoaXM6DQpXaXRoIHRoaXMgYXBwcm9hY2gsIGVzc2VudGlhbGx5IHRoZSBmcmVlIHBh
-Z2VzIGhhdmUgMiBzdGF0ZXM6DQpyZWFkeSBmcmVlIHBhZ2U6IHRoZSBwYWdlIGlzIG9uIHRoZSBm
-cmVlIGxpc3QgYW5kIGl0IGhhcyAiMSIgaW4gdGhlIGJpdG1hcA0Kbm9uLXJlYWR5IGZyZWUgcGFn
-ZTogdGhlIHBhZ2UgaXMgb24gdGhlIGZyZWUgbGlzdCBhbmQgaXQgaGFzICIwIiBpbiB0aGUgYml0
-bWFwDQpSZWFkeSBmcmVlIHBhZ2VzIGFyZSB0aG9zZSB3aG8gY2FuIGJlIGFsbG9jYXRlZCB0byB1
-c2UuDQpOb24tcmVhZHkgZnJlZSBwYWdlcyBhcmUgdGhvc2Ugd2hvIGFyZSBpbiBwcm9ncmVzcyBv
-ZiBiZWluZyByZXBvcnRlZCB0bw0KaG9zdCBhbmQgdGhlIHJlbGF0ZWQgRVBUIG1hcHBpbmcgaXMg
-YWJvdXQgdG8gYmUgemFwcGVkLiANCg0KVGhlIG5vbi1yZWFkeSBwYWdlcyBhcmUgaW5zZXJ0ZWQg
-aW50byB0aGUgcmVwb3J0X3ZxIGFuZCB3YWl0aW5nIGZvciB0aGUNCmhvc3QgdG8gemFwIHRoZSBt
-YXBwaW5ncyBvbmUgYnkgb25lLiBBZnRlciB0aGUgbWFwcGluZyBnZXRzIHphcHBlZA0KKHdoaWNo
-IG1lYW5zIHRoZSBiYWNraW5nIGhvc3QgcGFnZSBoYXMgYmVlbiB0YWtlbiBhd2F5KSwgaG9zdCBh
-Y2tzIHRvDQp0aGUgZ3Vlc3QgdG8gbWFyayB0aGUgZnJlZSBwYWdlIGFzIHJlYWR5IGZyZWUgcGFn
-ZSAoc2V0IHRoZSBiaXQgdG8gMSBpbiB0aGUgYml0bWFwKS4NCg0KU28gdGhlIG5vbi1yZWFkeSBm
-cmVlIHBhZ2UgbWF5IGhhcHBlbiB0byBiZSB1c2VkIHdoZW4gdGhleSBhcmUgd2FpdGluZyBpbg0K
-dGhlIHJlcG9ydF92cSB0byBiZSBoYW5kbGVkIGJ5IHRoZSBob3N0IHRvIHphcCB0aGUgbWFwcGlu
-ZywgYmFsbG9vbiBjb3VsZA0KaGF2ZSBhIGZhc3QgcGF0aCB0byBub3RpZnkgdGhlIGhvc3Q6DQoi
-cGFnZSAweDEwMDAgaXMgYWJvdXQgdG8gYmUgdXNlZCwgZG9u4oCZdCB6YXAgdGhlIG1hcHBpbmcg
-d2hlbiB5b3UgZ2V0DQoweDEwMDAgZnJvbSB0aGUgcmVwb3J0X3ZxIiAgLypvcHRpb24gWzFdICov
-DQoNCk9yDQoNCiJwYWdlIDB4MTAwMCBpcyBhYm91dCB0byBiZSB1c2VkLCBwbGVhc2UgemFwIHRo
-ZSBtYXBwaW5nIE5PVywgaS5lLiBkbyAzKSBhbmQgNCkgYWJvdmUsDQpzbyB0aGF0IHRoZSBmcmVl
-IHBhZ2Ugd2lsbCBiZSBtYXJrZWQgYXMgcmVhZHkgZnJlZSBwYWdlIGFuZCB0aGUgZ3Vlc3QgY2Fu
-IHVzZSBpdCIuDQpUaGlzIG9wdGlvbiB3aWxsIGdlbmVyYXRlIGFuIGV4dHJhIEVQVCB2aW9sYXRp
-b24gYW5kIFFFTVUgcGFnZSBmYXVsdCB0byBnZXQgYSBuZXcgaG9zdA0KcGFnZSB0byBiYWNrIHRo
-ZSBndWVzdCByZWFkeSBmcmVlIHBhZ2UuDQoNCj4gDQo+ID4NCj4gPiBVc2luZyBiaXRtYXBzIHRv
-IHJlY29yZCBmcmVlIHBhZ2UgaGludHMgZG9uJ3QgbmVlZCB0byB0YWtlIHRoZSBmcmVlIHBhZ2Vz
-DQo+IG9mZiB0aGUgYnVkZHkgbGlzdCBhbmQgcmV0dXJuIHRoZW0gbGF0ZXIsIHdoaWNoIG5lZWRz
-IHRvIGdvIHRocm91Z2ggdGhlIGxvbmcNCj4gYWxsb2NhdGlvbi9mcmVlIGNvZGUgcGF0aC4NCj4g
-Pg0KPiANCj4gWWVzLCBidXQgaXQgbWVhbnMgdGhhdCBhbnkgcHJvY2VzcyBpcyBhYmxlIHRvIGdl
-dCBzdHVjayBvbiBzdWNoIGEgcGFnZSBmb3IgYXMNCj4gbG9uZyBhcyBpdCB0YWtlcyB0byByZXBv
-cnQgdGhlIGZyZWUgcGFnZXMgdG8gdGhlIGh5cGVydmlzb3IgYW5kIGZvciBpdCB0byBjYWxsDQo+
-IG1hZHZpc2UocGZuX3N0YXJ0LCBET05UTkVFRCkgb24gYW55IHN1Y2ggcGFnZS4NCg0KVGhpcyBv
-bmx5IGhhcHBlbnMgd2hlbiB0aGUgZ3Vlc3QgdGhyZWFkIGhhcHBlbnMgdG8gZ2V0IGFsbG9jYXRl
-ZCBvbiBhIHBhZ2Ugd2hpY2ggaXMNCmJlaW5nIHJlcG9ydGVkIHRvIHRoZSBob3N0LiBVc2luZyBv
-cHRpb24gWzFdIGFib3ZlIHdpbGwgYXZvaWQgdGhpcy4NCg0KQmVzdCwNCldlaQ0K
+Hi Stephen,
+ 
+ On jeu., janv. 10 2019, Gregory CLEMENT <gregory.clement@bootlin.com> wrote:
+
+> Hi Stephen,
+>  
+>  On jeu., janv. 10 2019, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+>> Quoting Gregory CLEMENT (2019-01-10 08:16:22)
+>>> Hi Stephen,
+>>>  
+>>>  On dim., déc. 16 2018, Gregory CLEMENT <gregory.clement@bootlin.com> wrote:
+>>> 
+>>> > Hello,
+>>> >
+>>> > This is the third version of a series allowing to manage the cpu
+>>> > clock for Armada 7K/8K. For these SoCs, the CPUs share the same clock
+>>> > by cluster, so actually the clock management is done at cluster level.
+>>> >
+>>> > As for the other Armada 7K/8K clocks it is possible to have multiple
+>>> > AP so here again we need to have unique name: the purpose of the second
+>>> > patch is to share a common code which will be used in 3 drivers.
+>>> >
+>>> > The last 2 patch enable the driver at dt and platform level and will
+>>> > be applied through the mvebu subsystem.
+>>> 
+>>> What is the status of this series?
+>>> 
+>>> The only comments I had was from Rob about the binding and I answered
+>>> them 3 weeks ago. Do you have any other comments? Do you expect a rebase
+>>> of this series on v5.0-rc1?
+>>> 
+>>
+>> I'm waiting for Rob. I think the binding is not proper so presumably you
+>> will figure out what Rob wants and then change the code accordingly and
+>> resend?
+>
+> Actually the binding describes properly the hardware we have and that
+> what I answered to Rob.
+
+I pinged you about this series more than one month ago, and answered Rob
+concerned 2 months ago! He didn't said anything about my comments so I
+really think that the binding is OK and described the hardware we have.
+
+So could you consider to apply this series?
+
+Thanks,
+
+Gregory
+
+
+>
+> Gregory
+>
+> -- 
+> Gregory Clement, Bootlin
+> Embedded Linux and Kernel engineering
+> http://bootlin.com
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+-- 
+Gregory Clement, Bootlin
+Embedded Linux and Kernel engineering
+http://bootlin.com
