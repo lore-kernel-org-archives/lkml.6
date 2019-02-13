@@ -2,153 +2,127 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7B9FC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:05:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C187CC282CE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:05:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 835EB21904
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:05:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BBB821904
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:05:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="dUebzb4w"
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="QR45GSPP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392188AbfBMQFM (ORCPT
+        id S2392016AbfBMQF6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 11:05:12 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:37765 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729649AbfBMQFM (ORCPT
+        Wed, 13 Feb 2019 11:05:58 -0500
+Received: from sonic309-27.consmr.mail.gq1.yahoo.com ([98.137.65.153]:45904
+        "EHLO sonic309-27.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729649AbfBMQF5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 11:05:12 -0500
-Received: by mail-ot1-f67.google.com with SMTP id b3so4933555otp.4
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 08:05:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=E4rm+dPHumJI+cccvdii/izqIGaiBjQQRkm0cHKUQDY=;
-        b=dUebzb4wU+pFts3jNYFWY4A1QQhxcVMpFOiCN+IbYPntirYrg1YCJ30gppOxPH4Ifq
-         YxMkVE1Gjp0UNQoSEawUNLmbM10aRaxCI0zbRLIVGTzlj35T3nMpnk/4UOL+/qy0xV+z
-         7NROVLdY7E/28MecAMHbfOQFf0Wv6vQlNV6Eg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=E4rm+dPHumJI+cccvdii/izqIGaiBjQQRkm0cHKUQDY=;
-        b=DUxi675L4xDKSi+F5aEs6jtTzwNYwF+qt9Tdmmp/r6TN/XLznY5/358N2CWuIbzooq
-         nSXz/oDKCTvhzTKIuZPcya4MLp7S8HTeqF/zu0zeiYwfBt5j7evW2rAEYVoRaqtpfpiz
-         faq9Uhex74xQl+dyS77/cu3+pdtgi7zdac0XtuQOBF/z8qkrg8Z0nDeJhRCDf0s+4m2E
-         xLWfU4Q3Za7Z49SW1hbbsRuqy6JBpEtfprHAOPNViu58jgatsYn1Fasiqk7tOhx78MmX
-         LPDOMhiozQsZuH1iINtICV4WEf9n1LDfefYTvc8YxHTrQPD/7DYY1ug4eBl9UQpirs34
-         zPBA==
-X-Gm-Message-State: AHQUAubWs30aB9ZfCGPypioJfs+jIDyBODBWsjj6XlwvmnIv/7ZnPbiK
-        p6qSp9MW1eKF41iEFOnBXgrRoSeXmpwnpy0+rUlTMg==
-X-Google-Smtp-Source: AHgI3IZG4jAaFOsu9mddpdRnT37Vlmb6q/rvctvHVCC5bO86814rTufc+BTgln/QujMmSVwMDLbY3BgbRTWgUxSey8c=
-X-Received: by 2002:a24:94cb:: with SMTP id j194mr624095ite.117.1550073910624;
- Wed, 13 Feb 2019 08:05:10 -0800 (PST)
+        Wed, 13 Feb 2019 11:05:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1550073956; bh=ZmeWGtL2jJAgsHvJTpT8hEHPVvmez+a7kadxy+k1Zso=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=QR45GSPP4PFIsLa/DPzaHHIr22eSGKfd5voWItvfC4HYrPKQPukyL1RGj3bypuERGyfxu8q2afUJbnCWc4vVcrmfkDcLI9x7xu7V0pHs8L688+yOjmr+iPwpiDex31WV+sGoS9/PQjC6+1rx9leQ7C0Uqgz0/42JYzqcjbx/54Wqour+lJxrxg5DSxxeONQ0jUKegpVmKSxZZ3RBWfhrivBTvq5XzaPtIotkF3GSLjGzdmey5a/I9K8dWmyTfHR4tTgLlHQyr+dBd0vvDUCeVZ3piOiJU+cWIvza1ynBg/ClD3/e0j3TtnuTBeaTeBl1TahSAi4laeNQUs+w8HqXIA==
+X-YMail-OSG: HaWF8QsVM1nwH7B3F3fBitwBOkn4RuGQXa8ru8uwhrgMDPl2.0qnGwg7IJRUCsc
+ WFZDXWLuXNArsp4Pnq6ia7peb46Y_yqx7o4O93qlZRuRZWQ5_NxNacWcAe6zbSdD6Vc_N96_qwX8
+ tZ.7YZzMnReuOBvqyxp0VzxBzMaXMxbKP0fKc7cBY35Ifr41Oi_Qppdd9nIA3vWi7vDYS2ayuzVZ
+ dprxeOYT_3XtqE_3wSF3nZwypSHt3AdqXkkMrPFFsN8j0Gg0MtM.NdqdtwSek.VxRyIf5Kt7yLSG
+ xSLONdc8cV3OOMHkTR1n2bP6x4q_M9bV39b6PM2b2AN06fS8BWFEE9QwjNV3jJZdSuRvY8yzx7ti
+ JszL8bTcRjCoa2875U4_8crJbOgoFo4t0nxfnUaw2hPFyweY8p3lTPnm7B9URrCnGmuD5VoxlH8j
+ JDIqru53ZyN33YVOX8ihsiP0hXQgCOPNvU0V95NgsUzp4r.o7U4aS_zPQC917ezw3kBtJRLMTPje
+ uDYYDbJE.5WWpCVlJf7dLCM7qR.NZfJ3GOyQCJ4dxH6iSTg8dCF.9UpNjUsXgHVlqr5.LQ_dl0vz
+ .oJJ0yyw6cKNliUXsB366CqRO8PfWkoVpYxlx1w1AqWi4u0s9GcQQbdrP0FKnQGBmLppIIxAmLDw
+ OQJuuEVkfj7mf.akqMfMk1qwPpoboHIZtnzB6TgzigybFQqlakeI2KpNKxLAUv8Zlx8kagK9.1oF
+ L4BlBPQzLUm_Y54Il23l7_4VyPtr7B5bPPd6KL3AledrONcgMs9g1rcU0mUn92.FAwNMoiv3NI27
+ 8NJcaMbzfEgGkaNaFHzixEF8pmzY2a3LeUn9z2SP.9KJewCXdxVTji99K88W883WYiSkI212pM8T
+ XVS0Qi_HX71psLOicFYW.G2W4.fJQkuirGJmiCADQ0kuMgZjH1lMYA9ntGxRm10J9sYkyzBs2c08
+ XK00KqA15_9mH4O3z9lI4f9SCXL.IYmp0eCS_uGKSD7Ke5siAqIlRz_H9aPiXR6SHTgNpe30lcw7
+ sJqI3E0lOy4A3LWYK7wg29pHkU.aVBCepk5dE3Jtm6McCDKgDk7FuoG8YAqLiJkYMPC8Goq.f3EX
+ dKAjCa_TCPhWoDrlmuBE47yVXA1c7dYQ-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.gq1.yahoo.com with HTTP; Wed, 13 Feb 2019 16:05:56 +0000
+Received: from c-67-169-65-224.hsd1.ca.comcast.net (EHLO [192.168.0.100]) ([67.169.65.224])
+          by smtp409.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 475e3725adb542197ca4c357eac8f865;
+          Wed, 13 Feb 2019 16:05:52 +0000 (UTC)
+Subject: Re: [PATCH v2] LSM: Ignore "security=" when "lsm=" is specified
+To:     Kees Cook <keescook@chromium.org>, James Morris <jmorris@namei.org>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190212182318.GA16669@beast>
+From:   Casey Schaufler <casey@schaufler-ca.com>
+Message-ID: <5260689d-9016-bdf4-6070-13d2c88ac8a8@schaufler-ca.com>
+Date:   Wed, 13 Feb 2019 08:05:45 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <20190213151107.14833-1-robdclark@gmail.com> <20190213152802.GK23159@phenom.ffwll.local>
- <CAF6AEGvMTQD3Yusp+qSLkSAM7=T+4q6kvJJtEAOd+9UsvrxMnA@mail.gmail.com>
-In-Reply-To: <CAF6AEGvMTQD3Yusp+qSLkSAM7=T+4q6kvJJtEAOd+9UsvrxMnA@mail.gmail.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Wed, 13 Feb 2019 17:04:59 +0100
-Message-ID: <CAKMK7uHxS8XhpuRe-s7vFxBWc7WH8wiPZskDrW0QmXSg-dKDhA@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: update entry for drm/msm
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190212182318.GA16669@beast>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 4:43 PM Rob Clark via dri-devel
-<dri-devel@lists.freedesktop.org> wrote:
+On 2/12/2019 10:23 AM, Kees Cook wrote:
+> To avoid potential confusion, explicitly ignore "security=" when "lsm=" is
+> used on the command line, and report that it is happening.
 >
-> On Wed, Feb 13, 2019 at 10:28 AM Daniel Vetter <daniel@ffwll.ch> wrote:
-> >
-> > On Wed, Feb 13, 2019 at 10:10:44AM -0500, Rob Clark via dri-devel wrote:
-> > > We've moved the tree to a shared gitlab tree, so that Sean can help out
-> > > with maintainer duties.
-> > >
-> > > Cc: Sean Paul <seanpaul@chromium.org>
-> > > Signed-off-by: Rob Clark <robdclark@gmail.com>
-> > > ---
-> > > I can include this patch in msm-next for v5.1, but wanted to get it
-> > > ack'd on list
-> >
-> > Is the plan to also add this to dim, for full group maintainership fun?
-> > It's more or less adding a few lines to nightly.conf and done (plus
-> > everyone being ok with using the dim tooling).
+> Suggested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt | 10 ++++------
+>  security/security.c                             |  8 ++++++--
+>  2 files changed, 10 insertions(+), 8 deletions(-)
 >
-> I think drm/msm is big enough, that it wouldn't make sense to move to
-> drm-misc..  but possibly using the dim tooling could make sense.
-
-This was about using the dim tooling, not about moving msm to
-drm-misc. That indeed doesn't make much sense. And Sean already knows
-that tooling. Plus you pretty much need a big script if you want to
-add more committers (which imo you guys totally should), since
-otherwise you spend up endless amounts of time training people on
-trivial hiccups.
--Daniel
-
-> BR,
-> -R
->
-> > -Daniel
-> >
-> > >
-> > >  MAINTAINERS | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index 9919840d54cd..2141a1b6653d 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -4838,10 +4838,11 @@ F:    Documentation/devicetree/bindings/display/multi-inno,mi0283qt.txt
-> > >
-> > >  DRM DRIVER FOR MSM ADRENO GPU
-> > >  M:   Rob Clark <robdclark@gmail.com>
-> > > +M:   Sean Paul <sean@poorly.run>
-> > >  L:   linux-arm-msm@vger.kernel.org
-> > >  L:   dri-devel@lists.freedesktop.org
-> > >  L:   freedreno@lists.freedesktop.org
-> > > -T:   git git://people.freedesktop.org/~robclark/linux
-> > > +T:   git https://gitlab.freedesktop.org/drm/msm.git
-> > >  S:   Maintained
-> > >  F:   drivers/gpu/drm/msm/
-> > >  F:   include/uapi/drm/msm_drm.h
-> > > --
-> > > A
-> > > 2.20.1
-> > >
-> > > _______________________________________________
-> > > dri-devel mailing list
-> > > dri-devel@lists.freedesktop.org
-> > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> >
-> > --
-> > Daniel Vetter
-> > Software Engineer, Intel Corporation
-> > http://blog.ffwll.ch
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
-
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 93d2c97f28fe..a0abd5f56e00 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -2340,7 +2340,7 @@
+>  
+>  	lsm=lsm1,...,lsmN
+>  			[SECURITY] Choose order of LSM initialization. This
+> -			overrides CONFIG_LSM.
+> +			overrides CONFIG_LSM, and the "security=" parameter.
+>  
+>  	machvec=	[IA-64] Force the use of a particular machine-vector
+>  			(machvec) in a generic kernel.
+> @@ -4129,11 +4129,9 @@
+>  			Note: increases power consumption, thus should only be
+>  			enabled if running jitter sensitive (HPC/RT) workloads.
+>  
+> -	security=	[SECURITY] Choose a security module to enable at boot.
+> -			If this boot parameter is not specified, only the first
+> -			security module asking for security registration will be
+> -			loaded. An invalid security module name will be treated
+> -			as if no module has been chosen.
+> +	security=	[SECURITY] Choose a legacy "major" security module to
+> +			enable at boot. This has been deprecated by the
+> +			"lsm=" parameter.
+>  
+>  	selinux=	[SELINUX] Disable or enable SELinux at boot time.
+>  			Format: { "0" | "1" }
+> diff --git a/security/security.c b/security/security.c
+> index 3147785e20d7..23cbb1a295a3 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -288,9 +288,13 @@ static void __init ordered_lsm_init(void)
+>  	ordered_lsms = kcalloc(LSM_COUNT + 1, sizeof(*ordered_lsms),
+>  				GFP_KERNEL);
+>  
+> -	if (chosen_lsm_order)
+> +	if (chosen_lsm_order) {
+> +		if (chosen_major_lsm) {
+> +			pr_info("security= is ignored because it is superseded by lsm=\n");
+> +			chosen_major_lsm = NULL;
+> +		}
+>  		ordered_lsm_parse(chosen_lsm_order, "cmdline");
+> -	else
+> +	} else
+>  		ordered_lsm_parse(builtin_lsm_order, "builtin");
+>  
+>  	for (lsm = ordered_lsms; *lsm; lsm++)
