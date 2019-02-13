@@ -4,141 +4,199 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E17C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 00:17:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27295C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 00:18:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEDE12175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 00:17:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD7F6222CE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 00:18:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="g5bSxWzt"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GCqc6z00"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730110AbfBMARo (ORCPT
+        id S1729356AbfBMASb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 19:17:44 -0500
-Received: from mail-eopbgr1320130.outbound.protection.outlook.com ([40.107.132.130]:18704
-        "EHLO APC01-PU1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728101AbfBMARn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 19:17:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=89SPNahk8FQodxookyuytnMPdUnKfK3i148hHZdTINo=;
- b=g5bSxWztGWqOizpxcVwd4bgFW4St2F0uwOlqd15gZ0tpFtuOEX0N8mtpYlym+Hass9vUJgJcguAe1ozWmQf9KPv/EAMeQq1QP4hCDSf2bl4lqmMD0S8IEArDtuq18cCe6NMuORz0GcGsxj6epowEfK9knXAJemwrHmaTU5vGcVU=
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
- PU1P153MB0187.APCP153.PROD.OUTLOOK.COM (10.170.188.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1643.0; Wed, 13 Feb 2019 00:17:36 +0000
-Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::7822:a20:e63c:de2f]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
- ([fe80::7822:a20:e63c:de2f%9]) with mapi id 15.20.1643.004; Wed, 13 Feb 2019
- 00:17:36 +0000
-From:   Dexuan Cui <decui@microsoft.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     Bjorn Helgaas <bhelgaas@google.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "driverdev-devel@linuxdriverproject.org" 
-        <driverdev-devel@linuxdriverproject.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Michael Kelley <mikelley@microsoft.com>
-Subject: RE: [PATCH] PCI: hv: Add hv_pci_remove_slots() when we unload the
- driver
-Thread-Topic: [PATCH] PCI: hv: Add hv_pci_remove_slots() when we unload the
- driver
-Thread-Index: AdS/JKy4gHBOTZqYQrqpJy5ySOaIggDp5REAABiteEA=
-Date:   Wed, 13 Feb 2019 00:17:35 +0000
-Message-ID: <PU1P153MB01694FE34AEE56373DC9B86BBF660@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
-References: <PU1P153MB0169F06340FC519C2802C5CFBF680@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
- <20190212121235.GA23166@e107981-ln.cambridge.arm.com>
-In-Reply-To: <20190212121235.GA23166@e107981-ln.cambridge.arm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-02-13T00:17:33.9312352Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=3ea485df-64c1-4a3c-bedf-457fdbb9595d;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
-x-originating-ip: [2601:600:a280:1760:5896:cf8a:cefe:fd7]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;PU1P153MB0187;6:575S9UH5ZYnDMn3W15qT55ya6cCusVvQDsmbcar2VjiZyiWGBFbgtSqMupDqLuQoC4nC4qbYMQ8kDGZlO+tQSx0cFz5LiCqjaeM8Swmcc3/T208diyf/WYsZIcoEuL+abBNp1mqbv0oLeSUIt5MPecbeBJekuqaIYcSmazzZ9sKaAhnZecYi5a8NveLPWpKF4PjUTKQC290jz558hZAdPRZrHtDM6DaDQ+LyAhxfdInwigA6xH+1TEwnm7ZpMFpmHZFjaT61uvAs/siEU9LKlBbSNKIWYQx02/QgYbJ9rNi4cjGdqCVfen0J/trLpZVbpXF1OGsDPk6BmjhtCvX9AbcW/mfZngErGWkftE5hu+36FoDaxkn+d5ioiDKigNtK42+4SeQ36g+WAncHL6/P1ZltMYHHAb2+7QojOlC5tfg99TYoD1dlofQb9vIoo6C1hRszpOVCBn9cumpUAdoXUA==;5:53vs4NqqLPXLfQRhwrAU1C+PhRuRoso88o+AXkjXdGt+Vyx0529v3cj+kjNbYo6LRRgz+7L+c0mFTrMRaNEjef+rGLJKrxPGIipKDuyvpTgOcOh1Dft/HqdMJin/1qkRv6xg1xDdHUg2+Hb/UngQw9Jzdg037ULJNIJ3AWtcsN0ZkuohFws3WUG8QjhOjjKSz8LZ72UA04oIqh2yCS61Vw==;7:FgSAcTttm5p+cAMSw3WHoFeGCHCJEhCCfuYPjzRD+X2K9sfWtFdL7wn26QlB8O6tdpm8y0YUcBDrkzbWqdgHSrwGaTJNo5ZS35xLnRMzo1QLpN1X18dxoP4QSb/Y0Ud4V5N22JBn6KYW3G87L/o90A==
-x-ms-office365-filtering-correlation-id: 208057d1-5462-4b93-0bdd-08d69148a806
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600126)(711020)(4605077)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:PU1P153MB0187;
-x-ms-traffictypediagnostic: PU1P153MB0187:
-x-microsoft-antispam-prvs: <PU1P153MB0187422957208D8A1B9FA29FBF660@PU1P153MB0187.APCP153.PROD.OUTLOOK.COM>
-x-forefront-prvs: 094700CA91
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(136003)(346002)(396003)(366004)(39860400002)(199004)(189003)(2906002)(10290500003)(478600001)(10090500001)(53936002)(107886003)(6246003)(14454004)(22452003)(9686003)(55016002)(6436002)(105586002)(106356001)(229853002)(6116002)(97736004)(81156014)(81166006)(4326008)(25786009)(8936002)(68736007)(7736002)(6916009)(71190400001)(71200400001)(74316002)(86612001)(6506007)(476003)(46003)(305945005)(186003)(6346003)(8990500004)(99286004)(8676002)(11346002)(486006)(33656002)(446003)(14444005)(76176011)(256004)(102836004)(316002)(86362001)(7696005)(54906003);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0187;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=decui@microsoft.com; 
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: af0+LXEHJ+kV3W3+CR+rNQBfzug2T9Pj3/wcU/AQlFFH5QOI6WSE2HtABzVZzfnwhxWaXRH4mb9VVPT2DdLxoaSy9VV3JiZLKT1vXWVVD0fbh4RpIF6sl4d+nuJxvQF2YZ2sDZYldDYWSjzLF4yU22U1RkDen9QkpvrbjgEqEUzstY8oehzaxsRHXPrK8Q9LcOihkl6pztlMEyuvsFe/aU91vUxptL9PjjtIZs2cKswFt4TZiMo1fGIYsY2kN4hLrVJQ/DINPuFHNzTy0D/hUM7SLdowrWuaEkRfEJkLEVqatrXEVkvsyq99P2XTSVWoCG7iZia/XDVmj5JCtPaVoolLqyOHzHA0aj9ePejFEgukjGHONerM2tWhRYOpZfGUZKKaAIv66PauuEyki2/ElKrT2vrmZL965Wiwb+gL7IY=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 12 Feb 2019 19:18:31 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:59954 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730629AbfBMAS3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 19:18:29 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190213001826epoutp0455c6aacab82129204f2475f37cd62b18~CxFiOG6pp2024420244epoutp04b
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 00:18:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190213001826epoutp0455c6aacab82129204f2475f37cd62b18~CxFiOG6pp2024420244epoutp04b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1550017106;
+        bh=iplie65ufORcVwGT/wZ8b/yV2ipYxi2JDPN5nj9LyYc=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=GCqc6z00oOmNfdQuYYzGaLyCLmCsA5LJjH/WJwYU0DTIi6M4uT3jHs0KejaRTrUbQ
+         Fgfga7GcxvbiZtXxcLw/B/D0k+EUz9gRvSiOfSO8v/jV/VS5JNgo0TLpbeBW1BkZ3j
+         kVBBpGvRopj6oQ8sFPCayRHF/s3jNpht7rYmuSaU=
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.157]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190213001823epcas1p17a62e841b476aa5f82ee6dc96a8cad8c~CxFfzuk8Q0697106971epcas1p1J;
+        Wed, 13 Feb 2019 00:18:23 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        00.0B.04288.F42636C5; Wed, 13 Feb 2019 09:18:23 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190213001822epcas1p125811e96cdbc21b7f87f21a57fafb4ae~CxFeir4cC0701007010epcas1p1Q;
+        Wed, 13 Feb 2019 00:18:22 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190213001822epsmtrp28ca6ace91561454cbaafd734d98e16c3~CxFehSBC00511405114epsmtrp2_;
+        Wed, 13 Feb 2019 00:18:22 +0000 (GMT)
+X-AuditID: b6c32a38-c0fff700000010c0-d4-5c63624f175e
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        80.6A.03601.E42636C5; Wed, 13 Feb 2019 09:18:22 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190213001822epsmtip2897affd1fa7bb9c505b24981897533a1~CxFeW9uMz2505125051epsmtip2T;
+        Wed, 13 Feb 2019 00:18:22 +0000 (GMT)
+Subject: Re: [PATCH v3 0/7] drivers: devfreq: fix and optimize workqueue
+ mechanism
+To:     Lukasz Luba <l.luba@partner.samsung.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     b.zolnierkie@samsung.com, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
+        s.nawrocki@samsung.com, joel@joelfernandes.org,
+        chris.diamand@arm.com, mka@chromium.org, rostedt@goodmis.org,
+        mingo@redhat.com
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <d9245497-ec63-4a5d-6c00-0ec2954af735@samsung.com>
+Date:   Wed, 13 Feb 2019 09:18:21 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.4.0
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 208057d1-5462-4b93-0bdd-08d69148a806
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2019 00:17:35.7328
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0187
+In-Reply-To: <1550010238-24002-1-git-send-email-l.luba@partner.samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIJsWRmVeSWpSXmKPExsWy7bCmrq5/UnKMwbT9ehYbZ6xntZj26TKL
+        xbIGVYuzTW/YLW41yFhc3jWHzeJz7xFGi7VH7rJbXDqwgMni84bHjBa3G1ewWezreMBkcfhN
+        O6sDr8eaeWsYPWY3XGTxaNl3i91j4aevrB4H3+1h8ni/7yqbR9+WVYwenzfJBXBEZdtkpCam
+        pBYppOYl56dk5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5+AToumXmAF2spFCWmFMKFApI
+        LC5W0rezKcovLUlVyMgvLrFVSi1IySmwLNArTswtLs1L10vOz7UyNDAwMgUqTMjOeHDuJFvB
+        ZpmKyzcnMzYw9ot1MXJySAiYSJx6+4m9i5GLQ0hgB6PEoYlPGCGcT4wS7f19LBDON0aJ938n
+        MsO07FpwDqplL6PEl9a9bBDOe0aJx3tfs4FUCQuESMz8tYkFxBYRSJN4236XCaSIWeAjo8TG
+        A+1gCTYBLYn9L26ANfALKEpc/fGYEcTmFbCTONrXC9TAwcEioCrR2agCEhYViJA43PsOqkRQ
+        4uTMJ2BjOAW8Jc5MW8kKYjMLiEvcejKfCcKWl2jeOpsZZK+EwDZ2iT9NC9ghXnCR2LfqPNQ7
+        whKvjm+BiktJfH63lw3CrpZYefIIG0RzB6PElv0XWCESxhL7l04GO45ZQFNi/S59iGV8Eu++
+        9rCChCUEeCU62oQgqpUlLj+4ywRhS0osbu+EGu8h8fPePaYJjIqzkLwzC8kLs5C8MAth2QJG
+        llWMYqkFxbnpqcWGBSbI0b2JEZyctSx2MO4553OIUYCDUYmHd8XRpBgh1sSy4srcQ4wSHMxK
+        IrwtickxQrwpiZVVqUX58UWlOanFhxhNgYE9kVlKNDkfmDnySuINTY2MjY0tTAzNTA0NlcR5
+        1zs4xwgJpCeWpGanphakFsH0MXFwSjUwigQa9LF/ePvzTSTTklSRCx658if4xMsN5MQ6BB0F
+        0i9H332++MhLcfdr3XanHpal8G7W+tB0n5dPdP0vxmBGhae7/Rf5LP++03u9vLr9pS1phYem
+        ygVuEKibcuC5k8AjoyMHpMtdei98+aFuVuTAZiRt966jkEs//Ot2x9KF9Y/3TDoVl+alxFKc
+        kWioxVxUnAgATJMPLOQDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFIsWRmVeSWpSXmKPExsWy7bCSvK5fUnKMwcQZ4hYbZ6xntZj26TKL
+        xbIGVYuzTW/YLW41yFhc3jWHzeJz7xFGi7VH7rJbXDqwgMni84bHjBa3G1ewWezreMBkcfhN
+        O6sDr8eaeWsYPWY3XGTxaNl3i91j4aevrB4H3+1h8ni/7yqbR9+WVYwenzfJBXBEcdmkpOZk
+        lqUW6dslcGU8OHeSrWCzTMXlm5MZGxj7xboYOTkkBEwkdi04x97FyMUhJLCbUaL12RpmiISk
+        xLSLR4FsDiBbWOLw4WKQsJDAW0aJjvWWILawQIjEzF+bWEBsEYE0iUMNt8HmMAt8ZJQ49OwA
+        1NB5jBItM54ygVSxCWhJ7H9xgw3E5hdQlLj64zEjiM0rYCdxtK+XCWQZi4CqRGejCkhYVCBC
+        4uPTfUwQJYISJ2c+AVvGKeAtcWbaSlYQm1lAXeLPvEvMELa4xK0n85kgbHmJ5q2zmScwCs9C
+        0j4LScssJC2zkLQsYGRZxSiZWlCcm55bbFhglJdarlecmFtcmpeul5yfu4kRHKNaWjsYT5yI
+        P8QowMGoxMO74mhSjBBrYllxZe4hRgkOZiUR3pbE5Bgh3pTEyqrUovz4otKc1OJDjNIcLEri
+        vPL5xyKFBNITS1KzU1MLUotgskwcnFINjEuZstZFOWdOqlkx4X/yg/6g1orJ3Rcm/59epdK0
+        UfzIibX7Cz/EeaxQqH595MtZfY67pufVl6kw5RzNPPyx4UAaq8nyVUcOOVS+jZXexjnnGaPm
+        BbknYuLf3Xyid35fKPdR4uLlnVo/1ySvrPF3Y5I5UvP32511MTtcrj+RsO8U/Wu8oTksm02J
+        pTgj0VCLuag4EQDRB6nkzQIAAA==
+X-CMS-MailID: 20190213001822epcas1p125811e96cdbc21b7f87f21a57fafb4ae
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190212222422eucas1p1624203db4db3e495035820dea542e23a
+References: <CGME20190212222422eucas1p1624203db4db3e495035820dea542e23a@eucas1p1.samsung.com>
+        <1550010238-24002-1-git-send-email-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Sent: Tuesday, February 12, 2019 4:13 AM
->  ...
-> This patch fixes three bugs:
->=20
-> 1) set hpdev->pci_slot to NULL
-> 2) move code destroying the slot inside a locked region in
->    hv_eject_device_work()
-> 3) Add missing slots removal code in hv_pci_remove()
->=20
-> We need three patches, not one.
->=20
-> (1) and (2), I am not entirely sure we want them in stable kernels,
-> since they are potential bugs, waiting for your input.
->=20
-> Lorenzo
+On 19. 2. 13. 오전 7:23, Lukasz Luba wrote:
+> This patch set changes workqueue related features in devfreq framework.
+> First patch switches to delayed work instead of deferred.
+> The second switches to regular system work and deletes custom 'devfreq'.
+> 
+> Using deferred work in this context might harm the system performance.
+> When the CPU enters idle, deferred work is not fired. The devfreq device's
+> utilization does not have to be connected with a particular CPU.
+> The drivers for GPUs, Network on Chip, cache L3 rely on devfreq governor.
+> They all are missing opportunity to check the HW state and react when
+> the deferred work is not fired.
+> A corner test case, when Dynamic Memory Controller is utilized by CPUs running
+> on full speed, might show x5 worse performance if the crucial CPU is in idle.
+> 
+> There was a discussion regarding v2 that the power usage because of waking up
 
-(1) is actually unnecessary, as I suppose hpdev should be freed at a later
-place in the same function hv_eject_device_work -> put_pcichild() -> kfree(=
-hpdev).
-But today I think I found a refcount bug in the hot-remove case and the "kf=
-ree(hpdev)"
-is never called in the hot-remove case. I'll further dig into this and make=
- some extra
-patches.
+We have not yet finished the any discussion. We only just had a few reply
+and you didn't wait for any reply from other. As I already commented
+on exynos5422-dmc series, please don't send the next patch
+without any final agreement.
 
-About (2), it's a race condition that can happen when the device is being h=
-ot-removed
-and we're unloading the pci-hyperv driver at the same time. This is not a n=
-ormal usage,
-so I agree it doesn't really need to go into the stables.
+In this series, patch1/patch2 are same at version 2 patchset.
+Even if we need to discuss more them, you just send same patches
+without any agreement among reviewers. At least, you have to wait the reply
+instead of just sending the new patchset. It is basic review rule on mailing list.
 
-(3) should go into the stables.
 
-I'll make 3 separate patches, and extra patches for the refcount issue, and=
- possible other
-minor issues.
+> an idle CPU would be too high. In my opinion it won't and fixing bug is more
+> important than < 1% more power used [1].
+> I have addressed also this issue. In this patch set there is a mechanism
+> which prevents from to frequent checks when there is no need.
+> When the device enters its lowest state (OPP) the framework sets polling
+> interval to 'polling_idle_ms'. In default Kconfig it is 500ms, so 2 times per
+> second.
+> It is tunable from the sysfs interface per device, thus driver developer can
+> experiment and choose best intervals for the system.
+> 
+> Changes:
+> v3:
+> - reordered first two patches
+> - added functionality to lower power consumption when the device is less busy;
+>   there is a new polling interval enabled when device enters lowest frequency;
+> - added trace events to capture the behaviour of the system
+> v2:
+> - single patch split into two
+> - added cover letter
+> 
+> link for the previous version and discussion:
+> https://marc.info/?l=linux-pm&m=154989907416072&w=2
+> https://marc.info/?l=linux-pm&m=154904631226997&w=2
+> 
+> Regards,
+> Lukasz Luba
+> 
+> [1] https://marc.info/?l=linux-kernel&m=155000641622443&w=2
+> 
+> Lukasz Luba (7):
+>   drivers: devfreq: change deferred work into delayed
+>   drivers: devfreq: change devfreq workqueue mechanism
+>   Kconfig: drivers: devfreq: add default idle polling
+>   include: devfreq: add polling_idle_ms to 'profile'
+>   drivers: devfreq: add longer polling interval in idle
+>   trace: events: add devfreq trace event file
+>   drivers: devfreq: add tracing for scheduling work
+> 
+>  MAINTAINERS                               |   1 +
+>  drivers/devfreq/Kconfig                   |  13 +++
+>  drivers/devfreq/devfreq.c                 | 184 ++++++++++++++++++++++++------
+>  drivers/devfreq/governor.h                |   3 +-
+>  drivers/devfreq/governor_simpleondemand.c |   6 +-
+>  include/linux/devfreq.h                   |   6 +
+>  include/trace/events/devfreq.h            |  39 +++++++
+>  7 files changed, 218 insertions(+), 34 deletions(-)
+>  create mode 100644 include/trace/events/devfreq.h
+> 
 
-Thanks,
--- Dexuan
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
