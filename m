@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15CEBC282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2794C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:36:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF67D222CE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:36:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A31F9222C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:36:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025384;
-	bh=sCSH2rzZn9xX82VwTmiDXLJFMwtXldl8YrhaQpU+R/M=;
+	s=default; t=1550025387;
+	bh=kbHHvMhjAihKXDh83nP/GV8wEsHxPN6eWQ4gwtMU788=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LQY0aDMiHeYAaavjEsLfuHoimtzXA3vantyIk8BIB3ubMZYYiJB3BmzTJ41humKbg
-	 0mUuHsI95xT4gErczw8urQQA6CsKCs4w0bipBGDd2Eqd/LW+XzEUI7DP+GPtSlZ50U
-	 EV/E+C8/IrQ1dhp5g+kbZECLNoOFlRrTHUKhxlko=
+	b=HDoLNeUFbCwsMJlhZJNgViZUPVwnvOAusOdhURFzH/Hx5bRZYAF1EEtZtA8KrsRzt
+	 nhHQlhRNBakupvieVXGXVtA4afLSaESgeChqsQAJZL/LroEUidIqGqdYY7szNKKNsg
+	 guZ/hUSJicTcKU+0oBDR4PQHZOtx6xwxjFulKL1U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388112AbfBMCgW (ORCPT
+        id S1732691AbfBMCg0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:36:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39930 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:36:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388098AbfBMCgU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:36:20 -0500
+        id S2388114AbfBMCgX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:36:23 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B9E02206B6;
-        Wed, 13 Feb 2019 02:36:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37AAC222C9;
+        Wed, 13 Feb 2019 02:36:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025379;
-        bh=sCSH2rzZn9xX82VwTmiDXLJFMwtXldl8YrhaQpU+R/M=;
+        s=default; t=1550025382;
+        bh=kbHHvMhjAihKXDh83nP/GV8wEsHxPN6eWQ4gwtMU788=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R6y7vlSpGZgVpwzCe8zKsLukuAyQSu+9HObdzXhBAyFoBozCc0c+mFQipU5TUvbGT
-         yfTOv9HsRc7KelFZFDP4XA6UZYOYTnJ9r1nkP+H2rRz490T0gA65Mx6cXjgAX2+WYp
-         fKfJdayOfjFuK8ygsx+85gxwCfWUAinz/LdJKSJo=
+        b=DIAhlI0ez1bYQdBt6ZZXJaE6zQP8dxsrtOAtsmmIqgbqLkz6A88AewxwPryiak5La
+         Kh7tcoKU+tfpHygAIVhPnBUZctOmP0PbFLm7wuikiAh0EU2EYGtLcGASaFYOJg1xXh
+         ybtZUxxdkfoEeU3i0uEFcspE7yRi28iuP2Pvlrt4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 089/105] bpf: don't assume build-id length is always 20 bytes
-Date:   Tue, 12 Feb 2019 21:33:20 -0500
-Message-Id: <20190213023336.19019-89-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 092/105] atm: he: fix sign-extension overflow on large shift
+Date:   Tue, 12 Feb 2019 21:33:23 -0500
+Message-Id: <20190213023336.19019-92-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -58,54 +58,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stanislav Fomichev <sdf@google.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 0b698005a9d11c0e91141ec11a2c4918a129f703 ]
+[ Upstream commit cb12d72b27a6f41325ae23a11033cf5fedfa1b97 ]
 
-Build-id length is not fixed to 20, it can be (`man ld` /--build-id):
-  * 128-bit (uuid)
-  * 160-bit (sha1)
-  * any length specified in ld --build-id=0xhexstring
+Shifting the 1 by exp by an int can lead to sign-extension overlow when
+exp is 31 since 1 is an signed int and sign-extending this result to an
+unsigned long long will set the upper 32 bits.  Fix this by shifting an
+unsigned long.
 
-To fix the issue of missing BPF_STACK_BUILD_ID_VALID for shorter build-ids,
-assume that build-id is somewhere in the range of 1 .. 20.
-Set the remaining bytes to zero.
+Detected by cppcheck:
+(warning) Shifting signed 32-bit value by 31 bits is undefined behaviour
 
-v2:
-* don't introduce new "len = min(BPF_BUILD_ID_SIZE, nhdr->n_descsz)",
-  we already know that nhdr->n_descsz <= BPF_BUILD_ID_SIZE if we enter
-  this 'if' condition
-
-Fixes: 615755a77b24 ("bpf: extend stackmap to save binary_build_id+offset instead of address")
-Acked-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Stanislav Fomichev <sdf@google.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/stackmap.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/atm/he.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-index d9e2483669d0..f9df545e92f6 100644
---- a/kernel/bpf/stackmap.c
-+++ b/kernel/bpf/stackmap.c
-@@ -180,11 +180,14 @@ static inline int stack_map_parse_build_id(void *page_addr,
+diff --git a/drivers/atm/he.c b/drivers/atm/he.c
+index 29f102dcfec4..329ce9072ee9 100644
+--- a/drivers/atm/he.c
++++ b/drivers/atm/he.c
+@@ -717,7 +717,7 @@ static int he_init_cs_block_rcm(struct he_dev *he_dev)
+ 			instead of '/ 512', use '>> 9' to prevent a call
+ 			to divdu3 on x86 platforms
+ 		*/
+-		rate_cps = (unsigned long long) (1 << exp) * (man + 512) >> 9;
++		rate_cps = (unsigned long long) (1UL << exp) * (man + 512) >> 9;
  
- 		if (nhdr->n_type == BPF_BUILD_ID &&
- 		    nhdr->n_namesz == sizeof("GNU") &&
--		    nhdr->n_descsz == BPF_BUILD_ID_SIZE) {
-+		    nhdr->n_descsz > 0 &&
-+		    nhdr->n_descsz <= BPF_BUILD_ID_SIZE) {
- 			memcpy(build_id,
- 			       note_start + note_offs +
- 			       ALIGN(sizeof("GNU"), 4) + sizeof(Elf32_Nhdr),
--			       BPF_BUILD_ID_SIZE);
-+			       nhdr->n_descsz);
-+			memset(build_id + nhdr->n_descsz, 0,
-+			       BPF_BUILD_ID_SIZE - nhdr->n_descsz);
- 			return 0;
- 		}
- 		new_offs = note_offs + sizeof(Elf32_Nhdr) +
+ 		if (rate_cps < 10)
+ 			rate_cps = 10;	/* 2.2.1 minimum payload rate is 10 cps */
 -- 
 2.19.1
 
