@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D04DC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:41:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5D68C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:41:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38D00222D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:41:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B20F2222D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:41:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083278;
-	bh=V9mQg8eZj3pJUUsY27IfB+5L/KUVp/mH7gprvqFF5ts=;
+	s=default; t=1550083281;
+	bh=ErRDEoG03l0ZoRnBEhsMOSk6xipBeW3o3Q+Yn2NOpNU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MoKrlh8q/QaHwtmO5BP0dR4Lyf8xvY2oOkS7QjSDqPugf8vEh9q+aIfaJj2+ZywMo
-	 X40KiYlr3wCY+XdhcaDWK+jHMsfGW6GNKy1XiAeG0Qc6v+mG6c+6pmimSQotT/PXhi
-	 b+dIoxzuWb8ZLrBR3OGwoRKa4bRuSN6thNfMkX4k=
+	b=iXCG0pRUKP3BLGg6DZigb8W6k+jfJi8/HmSBoyvXGQVcr1m0zJ4ISLoZyM/kTzVzl
+	 pmfb7j1i1PagFqWvxfUh6R78V+rsd2CQuSkXwSzR50D7APuNFzr3Sa1Pdtfje63IHz
+	 TjhJ2l1lbYYCG11hR5rpNumyy9wCajpNAgIEo4Yg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388610AbfBMSlQ (ORCPT
+        id S2393815AbfBMSlU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:41:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39540 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:41:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393788AbfBMSlO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:41:14 -0500
+        id S2393806AbfBMSlR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:41:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA90D222D6;
-        Wed, 13 Feb 2019 18:41:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05ABF222D5;
+        Wed, 13 Feb 2019 18:41:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083273;
-        bh=V9mQg8eZj3pJUUsY27IfB+5L/KUVp/mH7gprvqFF5ts=;
+        s=default; t=1550083276;
+        bh=ErRDEoG03l0ZoRnBEhsMOSk6xipBeW3o3Q+Yn2NOpNU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=otsCexaJsV3H+SugR0Y6kufTeFR0Fs2VAyHOy89DtvU8YxHC9CmRe2PMSYXcyzuaa
-         ZNXpsw3OBqyYWizFg5DjxGMtkTVPvWKWpwraGTx1uFLXtOmdZInUGzESULyRXmWOC4
-         wGn54UeMFxKQGhjCtlMPbnsfXQWpUsKXGoYj+OQI=
+        b=xD2CKEvi/KD28UITw+qJYpid/vatLRfxzKeUdZ1oKdx5jilSNlD9oXOLe/jt3qtMj
+         DS0GGszQiRP/OvvGSo1lqbQABrt3fJ2U9Fx+wiFeH1xt9oce2cWoCeM4Lo+aR37CAa
+         M7zaMi7S+mcsJxxxnY39GfDK+3Ov9z30iWhpmdDg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vladis Dronov <vdronov@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH 4.14 19/35] HID: debug: fix the ring buffer implementation
-Date:   Wed, 13 Feb 2019 19:38:14 +0100
-Message-Id: <20190213183707.024585663@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.14 02/35] iio: adc: axp288: Fix TS-pin handling
+Date:   Wed, 13 Feb 2019 19:37:57 +0100
+Message-Id: <20190213183706.297155819@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183706.176685027@linuxfoundation.org>
 References: <20190213183706.176685027@linuxfoundation.org>
@@ -65,270 +66,200 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vladis Dronov <vdronov@redhat.com>
+From: Hans de Goede <hdegoede@redhat.com>
 
-commit 13054abbaa4f1fd4e6f3b4b63439ec033b4c8035 upstream.
+commit 9bcf15f75cac3c6a00d8f8083a635de9c8537799 upstream.
 
-Ring buffer implementation in hid_debug_event() and hid_debug_events_read()
-is strange allowing lost or corrupted data. After commit 717adfdaf147
-("HID: debug: check length before copy_to_user()") it is possible to enter
-an infinite loop in hid_debug_events_read() by providing 0 as count, this
-locks up a system. Fix this by rewriting the ring buffer implementation
-with kfifo and simplify the code.
+Prior to this commit there were 3 issues with our handling of the TS-pin:
 
-This fixes CVE-2019-3819.
+1) There are 2 ways how the firmware can disable monitoring of the TS-pin
+for designs which do not have a temperature-sensor for the battery:
+a) Clearing bit 0 of the AXP20X_ADC_EN1 register
+b) Setting bit 2 of the AXP288_ADC_TS_PIN_CTRL monitoring
 
-v2: fix an execution logic and add a comment
-v3: use __set_current_state() instead of set_current_state()
+Prior to this commit we were unconditionally setting both bits to the
+value used on devices with a TS. This causes the temperature protection to
+kick in on devices without a TS, such as the Jumper ezbook v2, causing
+them to not charge under Linux.
 
-Backport to v4.14: 2 tree-wide patches 6396bb22151 ("treewide: kzalloc() ->
-kcalloc()") and a9a08845e9ac ("vfs: do bulk POLL* -> EPOLL* replacement")
-are missing in v4.14 so cherry-pick relevant pieces.
+This commit fixes this by using regmap_update_bits when updating these 2
+registers, leaving the 2 mentioned bits alone.
 
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=1669187
-Cc: stable@vger.kernel.org # v4.18+
-Fixes: cd667ce24796 ("HID: use debugfs for events/reports dumping")
-Fixes: 717adfdaf147 ("HID: debug: check length before copy_to_user()")
-Signed-off-by: Vladis Dronov <vdronov@redhat.com>
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+The next 2 problems are related to our handling of the current-source
+for the TS-pin. The current-source used for the battery temp-sensor (TS)
+is shared with the GPADC. For proper fuel-gauge and charger operation the
+TS current-source needs to be permanently on. But to read the GPADC we
+need to temporary switch the TS current-source to ondemand, so that the
+GPADC can use it, otherwise we will always read an all 0 value.
+
+2) Problem 2 is we were writing hardcoded values to the ADC TS pin-ctrl
+register, overwriting various other unrelated bits. Specifically we were
+overwriting the current-source setting for the TS and GPIO0 pins, forcing
+it to 80ųA independent of its original setting. On a Chuwi Vi10 tablet
+this was causing us to get a too high adc value (due to a too high
+current-source) resulting in the following errors being logged:
+
+ACPI Error: AE_ERROR, Returned by Handler for [UserDefinedRegion]
+ACPI Error: Method parse/execution failed \_SB.SXP1._TMP, AE_ERROR
+
+This commit fixes this by using regmap_update_bits to change only the
+relevant bits.
+
+3) After reading the GPADC channel we were unconditionally enabling the
+TS current-source even on devices where the TS-pin is not used and the
+current-source thus was off before axp288_adc_read_raw call.
+
+This commit fixes this by making axp288_adc_set_ts a nop on devices where
+the ADC is not enabled for the TS-pin.
+
+BugLink: https://bugzilla.redhat.com/show_bug.cgi?id=1610545
+Fixes: 3091141d7803 ("iio: adc: axp288: Fix the GPADC pin ...")
+Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/hid-debug.c   |  122 ++++++++++++++++++----------------------------
- include/linux/hid-debug.h |    9 +--
- 2 files changed, 52 insertions(+), 79 deletions(-)
+ drivers/iio/adc/axp288_adc.c |   76 +++++++++++++++++++++++++++++++++----------
+ 1 file changed, 60 insertions(+), 16 deletions(-)
 
---- a/drivers/hid/hid-debug.c
-+++ b/drivers/hid/hid-debug.c
-@@ -30,6 +30,7 @@
+--- a/drivers/iio/adc/axp288_adc.c
++++ b/drivers/iio/adc/axp288_adc.c
+@@ -27,9 +27,18 @@
+ #include <linux/iio/machine.h>
+ #include <linux/iio/driver.h>
  
- #include <linux/debugfs.h>
- #include <linux/seq_file.h>
-+#include <linux/kfifo.h>
- #include <linux/sched/signal.h>
- #include <linux/export.h>
- #include <linux/slab.h>
-@@ -457,7 +458,7 @@ static char *resolv_usage_page(unsigned
- 	char *buf = NULL;
+-#define AXP288_ADC_EN_MASK		0xF1
+-#define AXP288_ADC_TS_PIN_GPADC		0xF2
+-#define AXP288_ADC_TS_PIN_ON		0xF3
++/*
++ * This mask enables all ADCs except for the battery temp-sensor (TS), that is
++ * left as-is to avoid breaking charging on devices without a temp-sensor.
++ */
++#define AXP288_ADC_EN_MASK				0xF0
++#define AXP288_ADC_TS_ENABLE				0x01
++
++#define AXP288_ADC_TS_CURRENT_ON_OFF_MASK		GENMASK(1, 0)
++#define AXP288_ADC_TS_CURRENT_OFF			(0 << 0)
++#define AXP288_ADC_TS_CURRENT_ON_WHEN_CHARGING		(1 << 0)
++#define AXP288_ADC_TS_CURRENT_ON_ONDEMAND		(2 << 0)
++#define AXP288_ADC_TS_CURRENT_ON			(3 << 0)
  
- 	if (!f) {
--		buf = kzalloc(sizeof(char) * HID_DEBUG_BUFSIZE, GFP_ATOMIC);
-+		buf = kzalloc(HID_DEBUG_BUFSIZE, GFP_ATOMIC);
- 		if (!buf)
- 			return ERR_PTR(-ENOMEM);
- 	}
-@@ -661,17 +662,12 @@ EXPORT_SYMBOL_GPL(hid_dump_device);
- /* enqueue string to 'events' ring buffer */
- void hid_debug_event(struct hid_device *hdev, char *buf)
- {
--	unsigned i;
- 	struct hid_debug_list *list;
- 	unsigned long flags;
+ enum axp288_adc_id {
+ 	AXP288_ADC_TS,
+@@ -44,6 +53,7 @@ enum axp288_adc_id {
+ struct axp288_adc_info {
+ 	int irq;
+ 	struct regmap *regmap;
++	bool ts_enabled;
+ };
  
- 	spin_lock_irqsave(&hdev->debug_list_lock, flags);
--	list_for_each_entry(list, &hdev->debug_list, node) {
--		for (i = 0; buf[i]; i++)
--			list->hid_debug_buf[(list->tail + i) % HID_DEBUG_BUFSIZE] =
--				buf[i];
--		list->tail = (list->tail + i) % HID_DEBUG_BUFSIZE;
--        }
-+	list_for_each_entry(list, &hdev->debug_list, node)
-+		kfifo_in(&list->hid_debug_fifo, buf, strlen(buf));
- 	spin_unlock_irqrestore(&hdev->debug_list_lock, flags);
- 
- 	wake_up_interruptible(&hdev->debug_wait);
-@@ -722,8 +718,7 @@ void hid_dump_input(struct hid_device *h
- 	hid_debug_event(hdev, buf);
- 
- 	kfree(buf);
--        wake_up_interruptible(&hdev->debug_wait);
--
-+	wake_up_interruptible(&hdev->debug_wait);
+ static const struct iio_chan_spec axp288_adc_channels[] = {
+@@ -123,21 +133,33 @@ static int axp288_adc_read_channel(int *
+ 	return IIO_VAL_INT;
  }
- EXPORT_SYMBOL_GPL(hid_dump_input);
  
-@@ -1088,8 +1083,8 @@ static int hid_debug_events_open(struct
- 		goto out;
- 	}
- 
--	if (!(list->hid_debug_buf = kzalloc(sizeof(char) * HID_DEBUG_BUFSIZE, GFP_KERNEL))) {
--		err = -ENOMEM;
-+	err = kfifo_alloc(&list->hid_debug_fifo, HID_DEBUG_FIFOSIZE, GFP_KERNEL);
-+	if (err) {
- 		kfree(list);
- 		goto out;
- 	}
-@@ -1109,77 +1104,57 @@ static ssize_t hid_debug_events_read(str
- 		size_t count, loff_t *ppos)
+-static int axp288_adc_set_ts(struct regmap *regmap, unsigned int mode,
+-				unsigned long address)
++/*
++ * The current-source used for the battery temp-sensor (TS) is shared
++ * with the GPADC. For proper fuel-gauge and charger operation the TS
++ * current-source needs to be permanently on. But to read the GPADC we
++ * need to temporary switch the TS current-source to ondemand, so that
++ * the GPADC can use it, otherwise we will always read an all 0 value.
++ */
++static int axp288_adc_set_ts(struct axp288_adc_info *info,
++			     unsigned int mode, unsigned long address)
  {
- 	struct hid_debug_list *list = file->private_data;
--	int ret = 0, len;
-+	int ret = 0, copied;
- 	DECLARE_WAITQUEUE(wait, current);
+ 	int ret;
  
- 	mutex_lock(&list->read_mutex);
--	while (ret == 0) {
--		if (list->head == list->tail) {
--			add_wait_queue(&list->hdev->debug_wait, &wait);
--			set_current_state(TASK_INTERRUPTIBLE);
--
--			while (list->head == list->tail) {
--				if (file->f_flags & O_NONBLOCK) {
--					ret = -EAGAIN;
--					break;
--				}
--				if (signal_pending(current)) {
--					ret = -ERESTARTSYS;
--					break;
--				}
--
--				if (!list->hdev || !list->hdev->debug) {
--					ret = -EIO;
--					set_current_state(TASK_RUNNING);
--					goto out;
--				}
--
--				/* allow O_NONBLOCK from other threads */
--				mutex_unlock(&list->read_mutex);
--				schedule();
--				mutex_lock(&list->read_mutex);
--				set_current_state(TASK_INTERRUPTIBLE);
-+	if (kfifo_is_empty(&list->hid_debug_fifo)) {
-+		add_wait_queue(&list->hdev->debug_wait, &wait);
-+		set_current_state(TASK_INTERRUPTIBLE);
+-	/* channels other than GPADC do not need to switch TS pin */
++	/* No need to switch the current-source if the TS pin is disabled */
++	if (!info->ts_enabled)
++		return 0;
 +
-+		while (kfifo_is_empty(&list->hid_debug_fifo)) {
-+			if (file->f_flags & O_NONBLOCK) {
-+				ret = -EAGAIN;
-+				break;
- 			}
++	/* Channels other than GPADC do not need the current source */
+ 	if (address != AXP288_GP_ADC_H)
+ 		return 0;
  
--			set_current_state(TASK_RUNNING);
--			remove_wait_queue(&list->hdev->debug_wait, &wait);
--		}
--
--		if (ret)
--			goto out;
--
--		/* pass the ringbuffer contents to userspace */
--copy_rest:
--		if (list->tail == list->head)
--			goto out;
--		if (list->tail > list->head) {
--			len = list->tail - list->head;
--			if (len > count)
--				len = count;
--
--			if (copy_to_user(buffer + ret, &list->hid_debug_buf[list->head], len)) {
--				ret = -EFAULT;
--				goto out;
-+			if (signal_pending(current)) {
-+				ret = -ERESTARTSYS;
-+				break;
- 			}
--			ret += len;
--			list->head += len;
--		} else {
--			len = HID_DEBUG_BUFSIZE - list->head;
--			if (len > count)
--				len = count;
+-	ret = regmap_write(regmap, AXP288_ADC_TS_PIN_CTRL, mode);
++	ret = regmap_update_bits(info->regmap, AXP288_ADC_TS_PIN_CTRL,
++				 AXP288_ADC_TS_CURRENT_ON_OFF_MASK, mode);
+ 	if (ret)
+ 		return ret;
  
--			if (copy_to_user(buffer, &list->hid_debug_buf[list->head], len)) {
--				ret = -EFAULT;
-+			/* if list->hdev is NULL we cannot remove_wait_queue().
-+			 * if list->hdev->debug is 0 then hid_debug_unregister()
-+			 * was already called and list->hdev is being destroyed.
-+			 * if we add remove_wait_queue() here we can hit a race.
-+			 */
-+			if (!list->hdev || !list->hdev->debug) {
-+				ret = -EIO;
-+				set_current_state(TASK_RUNNING);
- 				goto out;
- 			}
--			list->head = 0;
--			ret += len;
--			count -= len;
--			if (count > 0)
--				goto copy_rest;
-+
-+			/* allow O_NONBLOCK from other threads */
-+			mutex_unlock(&list->read_mutex);
-+			schedule();
-+			mutex_lock(&list->read_mutex);
-+			set_current_state(TASK_INTERRUPTIBLE);
- 		}
- 
-+		__set_current_state(TASK_RUNNING);
-+		remove_wait_queue(&list->hdev->debug_wait, &wait);
-+
-+		if (ret)
-+			goto out;
- 	}
-+
-+	/* pass the fifo content to userspace, locking is not needed with only
-+	 * one concurrent reader and one concurrent writer
-+	 */
-+	ret = kfifo_to_user(&list->hid_debug_fifo, buffer, count, &copied);
-+	if (ret)
-+		goto out;
-+	ret = copied;
- out:
- 	mutex_unlock(&list->read_mutex);
- 	return ret;
-@@ -1190,7 +1165,7 @@ static unsigned int hid_debug_events_pol
- 	struct hid_debug_list *list = file->private_data;
- 
- 	poll_wait(file, &list->hdev->debug_wait, wait);
--	if (list->head != list->tail)
-+	if (!kfifo_is_empty(&list->hid_debug_fifo))
- 		return POLLIN | POLLRDNORM;
- 	if (!list->hdev->debug)
- 		return POLLERR | POLLHUP;
-@@ -1205,7 +1180,7 @@ static int hid_debug_events_release(stru
- 	spin_lock_irqsave(&list->hdev->debug_list_lock, flags);
- 	list_del(&list->node);
- 	spin_unlock_irqrestore(&list->hdev->debug_list_lock, flags);
--	kfree(list->hid_debug_buf);
-+	kfifo_free(&list->hid_debug_fifo);
- 	kfree(list);
+ 	/* When switching to the GPADC pin give things some time to settle */
+-	if (mode == AXP288_ADC_TS_PIN_GPADC)
++	if (mode == AXP288_ADC_TS_CURRENT_ON_ONDEMAND)
+ 		usleep_range(6000, 10000);
  
  	return 0;
-@@ -1256,4 +1231,3 @@ void hid_debug_exit(void)
- {
- 	debugfs_remove_recursive(hid_debug_root);
+@@ -153,14 +175,14 @@ static int axp288_adc_read_raw(struct ii
+ 	mutex_lock(&indio_dev->mlock);
+ 	switch (mask) {
+ 	case IIO_CHAN_INFO_RAW:
+-		if (axp288_adc_set_ts(info->regmap, AXP288_ADC_TS_PIN_GPADC,
++		if (axp288_adc_set_ts(info, AXP288_ADC_TS_CURRENT_ON_ONDEMAND,
+ 					chan->address)) {
+ 			dev_err(&indio_dev->dev, "GPADC mode\n");
+ 			ret = -EINVAL;
+ 			break;
+ 		}
+ 		ret = axp288_adc_read_channel(val, chan->address, info->regmap);
+-		if (axp288_adc_set_ts(info->regmap, AXP288_ADC_TS_PIN_ON,
++		if (axp288_adc_set_ts(info, AXP288_ADC_TS_CURRENT_ON,
+ 						chan->address))
+ 			dev_err(&indio_dev->dev, "TS pin restore\n");
+ 		break;
+@@ -172,13 +194,35 @@ static int axp288_adc_read_raw(struct ii
+ 	return ret;
  }
--
---- a/include/linux/hid-debug.h
-+++ b/include/linux/hid-debug.h
-@@ -24,7 +24,10 @@
  
- #ifdef CONFIG_DEBUG_FS
- 
-+#include <linux/kfifo.h>
+-static int axp288_adc_set_state(struct regmap *regmap)
++static int axp288_adc_initialize(struct axp288_adc_info *info)
+ {
+-	/* ADC should be always enabled for internal FG to function */
+-	if (regmap_write(regmap, AXP288_ADC_TS_PIN_CTRL, AXP288_ADC_TS_PIN_ON))
+-		return -EIO;
++	int ret, adc_enable_val;
 +
- #define HID_DEBUG_BUFSIZE 512
-+#define HID_DEBUG_FIFOSIZE 512
++	/*
++	 * Determine if the TS pin is enabled and set the TS current-source
++	 * accordingly.
++	 */
++	ret = regmap_read(info->regmap, AXP20X_ADC_EN1, &adc_enable_val);
++	if (ret)
++		return ret;
++
++	if (adc_enable_val & AXP288_ADC_TS_ENABLE) {
++		info->ts_enabled = true;
++		ret = regmap_update_bits(info->regmap, AXP288_ADC_TS_PIN_CTRL,
++					 AXP288_ADC_TS_CURRENT_ON_OFF_MASK,
++					 AXP288_ADC_TS_CURRENT_ON);
++	} else {
++		info->ts_enabled = false;
++		ret = regmap_update_bits(info->regmap, AXP288_ADC_TS_PIN_CTRL,
++					 AXP288_ADC_TS_CURRENT_ON_OFF_MASK,
++					 AXP288_ADC_TS_CURRENT_OFF);
++	}
++	if (ret)
++		return ret;
  
- void hid_dump_input(struct hid_device *, struct hid_usage *, __s32);
- void hid_dump_report(struct hid_device *, int , u8 *, int);
-@@ -37,11 +40,8 @@ void hid_debug_init(void);
- void hid_debug_exit(void);
- void hid_debug_event(struct hid_device *, char *);
+-	return regmap_write(regmap, AXP20X_ADC_EN1, AXP288_ADC_EN_MASK);
++	/* Turn on the ADC for all channels except TS, leave TS as is */
++	return regmap_update_bits(info->regmap, AXP20X_ADC_EN1,
++				  AXP288_ADC_EN_MASK, AXP288_ADC_EN_MASK);
+ }
  
--
- struct hid_debug_list {
--	char *hid_debug_buf;
--	int head;
--	int tail;
-+	DECLARE_KFIFO_PTR(hid_debug_fifo, char);
- 	struct fasync_struct *fasync;
- 	struct hid_device *hdev;
- 	struct list_head node;
-@@ -64,4 +64,3 @@ struct hid_debug_list {
- #endif
- 
- #endif
--
+ static const struct iio_info axp288_adc_iio_info = {
+@@ -209,7 +253,7 @@ static int axp288_adc_probe(struct platf
+ 	 * Set ADC to enabled state at all time, including system suspend.
+ 	 * otherwise internal fuel gauge functionality may be affected.
+ 	 */
+-	ret = axp288_adc_set_state(axp20x->regmap);
++	ret = axp288_adc_initialize(info);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "unable to enable ADC device\n");
+ 		return ret;
 
 
