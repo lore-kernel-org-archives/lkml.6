@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 730E2C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:38:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53881C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:38:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 449E8222C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:38:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EDFA222C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:38:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025490;
-	bh=1z71pzkxzyVS2GESeNK7FKCMwy6xGxN/TGedt9Obyjc=;
+	s=default; t=1550025496;
+	bh=TNkmIcypAoyoP3+FNg/zLJ4g6tuh4egK7HK+8TMCHKo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EZybZ1tLcvsDPDGoh5jlhLK1JrdsTMKB0srcWbI5dCaqPTdwud95F540JxPhH2Z0q
-	 3wsJjIlEI/AMrHAm/YiS31Al4fgZI2JfwFnuEr9H13VAzp1lAN4TJaOP9hgXP8SntO
-	 e7/I3nnb+m+sZYXaiMH1oqR2B6ysPUN/E54DacZ8=
+	b=ZdXcZ8L8pwfs+ZSwdv+IqcwRMl1HqETdbNDHMgB8GxxT8ebrp5vu9RNDnYB9jYqoQ
+	 4aI0xmmTk0VhwoHYVh2XQocBErwtwPlUgKpXDUvL1y/sHcRL+W+GKKNVDzZ8tgykwd
+	 LLidEf4/vw9I6Y+ETLYx2Rq9Pe952IBrI7QdFZSw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388462AbfBMCiI (ORCPT
+        id S2388479AbfBMCiP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:38:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41594 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:38:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732893AbfBMCiF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:38:05 -0500
+        id S1730629AbfBMCiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:38:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DF77206B6;
-        Wed, 13 Feb 2019 02:38:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F252222C2;
+        Wed, 13 Feb 2019 02:38:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025484;
-        bh=1z71pzkxzyVS2GESeNK7FKCMwy6xGxN/TGedt9Obyjc=;
+        s=default; t=1550025489;
+        bh=TNkmIcypAoyoP3+FNg/zLJ4g6tuh4egK7HK+8TMCHKo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cvEKM4GBTPUAD/2PUFqTnNwYTauFkuLzq4DfIt68UZgewGaZfjP8Vmd+HmKXxMCt2
-         Af9J5iWG4fP1T0qNbaBrga/KldVxvBCvjl7O7yLSoPO5EKPh5U8XUhuVJ7CnMDnEIB
-         WK5TKJ6s/sy/XyiPqpp4yrEytJJRDvsvdkOcH6q4=
+        b=2iEretVhtsX587++DjSTlpqdOcIEQp/wI67834OipKQ4t/og7a7kKHIUTFqIUdoCK
+         2VxIqzpswpq1dV0u+w8NHXAYPFOjfHqpcZjwi2YT3lznv7K5herFIUS5UqTY+YU4dA
+         GhPa+pzyATRJv3dQNTmckl4gxubJWV9aZFPlWxIQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 36/83] MIPS: jazz: fix 64bit build
-Date:   Tue, 12 Feb 2019 21:36:14 -0500
-Message-Id: <20190213023701.20286-36-sashal@kernel.org>
+Cc:     Song Liu <songliubraving@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 40/83] bpf: fix panic in stack_map_get_build_id() on i386 and arm32
+Date:   Tue, 12 Feb 2019 21:36:18 -0500
+Message-Id: <20190213023701.20286-40-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -60,75 +58,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+From: Song Liu <songliubraving@fb.com>
 
-[ Upstream commit 41af167fbc0032f9d7562854f58114eaa9270336 ]
+[ Upstream commit beaf3d1901f4ea46fbd5c9d857227d99751de469 ]
 
-64bit JAZZ builds failed with
+As Naresh reported, test_stacktrace_build_id() causes panic on i386 and
+arm32 systems. This is caused by page_address() returns NULL in certain
+cases.
 
-  linux-next/arch/mips/jazz/jazzdma.c: In function `vdma_init`:
-  /linux-next/arch/mips/jazz/jazzdma.c:77:30: error: implicit declaration
-    of function `KSEG1ADDR`; did you mean `CKSEG1ADDR`?
-    [-Werror=implicit-function-declaration]
-    pgtbl = (VDMA_PGTBL_ENTRY *)KSEG1ADDR(pgtbl);
-                                ^~~~~~~~~
-                                CKSEG1ADDR
-  /linux-next/arch/mips/jazz/jazzdma.c:77:10: error: cast to pointer from
-    integer of different size [-Werror=int-to-pointer-cast]
-    pgtbl = (VDMA_PGTBL_ENTRY *)KSEG1ADDR(pgtbl);
-            ^
-  In file included from /linux-next/arch/mips/include/asm/barrier.h:11:0,
-                   from /linux-next/include/linux/compiler.h:248,
-                   from /linux-next/include/linux/kernel.h:10,
-                   from /linux-next/arch/mips/jazz/jazzdma.c:11:
-  /linux-next/arch/mips/include/asm/addrspace.h:41:29: error: cast from
-    pointer to integer of different size [-Werror=pointer-to-int-cast]
-   #define _ACAST32_  (_ATYPE_)(_ATYPE32_) /* widen if necessary */
-                               ^
-  /linux-next/arch/mips/include/asm/addrspace.h:53:25: note: in
-    expansion of macro `_ACAST32_`
-   #define CPHYSADDR(a)  ((_ACAST32_(a)) & 0x1fffffff)
-                           ^~~~~~~~~
-  /linux-next/arch/mips/jazz/jazzdma.c:84:44: note: in expansion of
-    macro `CPHYSADDR`
-    r4030_write_reg32(JAZZ_R4030_TRSTBL_BASE, CPHYSADDR(pgtbl));
+This patch fixes this error by using kmap_atomic/kunmap_atomic instead
+of page_address.
 
-Using correct casts and CKSEG1ADDR when dealing with the pgtbl setup
-fixes this.
-
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+Fixes: 615755a77b24 (" bpf: extend stackmap to save binary_build_id+offset instead of address")
+Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/jazz/jazzdma.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ kernel/bpf/stackmap.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/mips/jazz/jazzdma.c b/arch/mips/jazz/jazzdma.c
-index d31bc2f01208..fb2b6d0b77c3 100644
---- a/arch/mips/jazz/jazzdma.c
-+++ b/arch/mips/jazz/jazzdma.c
-@@ -74,14 +74,15 @@ static int __init vdma_init(void)
- 						    get_order(VDMA_PGTBL_SIZE));
- 	BUG_ON(!pgtbl);
- 	dma_cache_wback_inv((unsigned long)pgtbl, VDMA_PGTBL_SIZE);
--	pgtbl = (VDMA_PGTBL_ENTRY *)KSEG1ADDR(pgtbl);
-+	pgtbl = (VDMA_PGTBL_ENTRY *)CKSEG1ADDR((unsigned long)pgtbl);
+diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+index 8061a439ef18..e50ef5bca421 100644
+--- a/kernel/bpf/stackmap.c
++++ b/kernel/bpf/stackmap.c
+@@ -260,7 +260,7 @@ static int stack_map_get_build_id(struct vm_area_struct *vma,
+ 		return -EFAULT;	/* page not mapped */
  
- 	/*
- 	 * Clear the R4030 translation table
- 	 */
- 	vdma_pgtbl_init();
+ 	ret = -EINVAL;
+-	page_addr = page_address(page);
++	page_addr = kmap_atomic(page);
+ 	ehdr = (Elf32_Ehdr *)page_addr;
  
--	r4030_write_reg32(JAZZ_R4030_TRSTBL_BASE, CPHYSADDR(pgtbl));
-+	r4030_write_reg32(JAZZ_R4030_TRSTBL_BASE,
-+			  CPHYSADDR((unsigned long)pgtbl));
- 	r4030_write_reg32(JAZZ_R4030_TRSTBL_LIM, VDMA_PGTBL_SIZE);
- 	r4030_write_reg32(JAZZ_R4030_TRSTBL_INV, 0);
- 
+ 	/* compare magic x7f "ELF" */
+@@ -276,6 +276,7 @@ static int stack_map_get_build_id(struct vm_area_struct *vma,
+ 	else if (ehdr->e_ident[EI_CLASS] == ELFCLASS64)
+ 		ret = stack_map_get_build_id_64(page_addr, build_id);
+ out:
++	kunmap_atomic(page_addr);
+ 	put_page(page);
+ 	return ret;
+ }
 -- 
 2.19.1
 
