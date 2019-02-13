@@ -2,145 +2,167 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FED4C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:24:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B0FEC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:26:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D49021934
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:24:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFE0C222B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:26:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="REZi4wN7"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MQdMGSFq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392664AbfBMQYb (ORCPT
+        id S2392672AbfBMQ0J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 11:24:31 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:3183 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729502AbfBMQYa (ORCPT
+        Wed, 13 Feb 2019 11:26:09 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:37731 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728150AbfBMQ0J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 11:24:30 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c6444c10000>; Wed, 13 Feb 2019 08:24:33 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 13 Feb 2019 08:24:29 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 13 Feb 2019 08:24:29 -0800
-Received: from [172.17.136.14] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 13 Feb
- 2019 16:24:29 +0000
-Subject: Re: [PATCH V2] arm64: tegra: add topology data for Tegra194 cpu
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     <jonathanh@nvidia.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20190131222517.GB13156@mithrandir>
- <1549928827-14006-1-git-send-email-byan@nvidia.com>
- <20190213081252.GA647@ulmo>
-X-Nvconfidentiality: public
-From:   Bo Yan <byan@nvidia.com>
-Message-ID: <705dcfd2-0808-2c50-d73f-97050bf876f0@nvidia.com>
-Date:   Wed, 13 Feb 2019 08:24:29 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 13 Feb 2019 11:26:09 -0500
+Received: by mail-qt1-f196.google.com with SMTP id a48so3238561qtb.4
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 08:26:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=i4mevzt5StSYjMjq+E1SLBDidyPTBhRKkvGDS6UkqGs=;
+        b=MQdMGSFqlE5c1cs1fMkXnwxb7WD/KYUN9EmsCsfvZYkAvfG6B/x8NrEfDMtqhwJcEg
+         9xdFeCC48QyGgGXG1hfTCV6HFFeR0pWd1AyAJw8tw4rsbQu7N/HFpvczR84dYUyw3q9r
+         /Cdxcg9+W5Kukz8mDkYk3t/GNi5t/0ajrfbH4eL2Ck/G+/s/YUrfLcQFQ4G5X16NoRE2
+         j50Fs16kJV05P/u9nPsFxe/ZeGdvc7OXpi5iJUJPOIMkJvzJHRkjieiHuv2E36OIvYvZ
+         bEDH7o8NOzbrTXrwahSPZYXV/uAy8C7b1Bbb33JxyYXbo8jk4kz/H+Cl6ySICHWFKeqD
+         qBRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=i4mevzt5StSYjMjq+E1SLBDidyPTBhRKkvGDS6UkqGs=;
+        b=Aa7wdX4G0tQD5TsP+bc/+byOV0TufhaafBsj7fILuR0qGIhZcFXH35AQB2rHitkk5x
+         F+vMURwGkuc+8Iki2ADUwdyhWuPdJeppyu95BxUepZi5aBPacvA/bnbzniIQaXt3M31Z
+         Jtb6H16PZvmdgkVazQF6x6vGbh8miSUU82B9XWeV3AKJveSvcPHy4OpcZMhMf+dgMEh5
+         auUbWjMKSvjWi/TksTddTjQxudZ5HjuEe0W8eIRghG1WlGU4np1VwS240YiPajahpVUL
+         y99LX1aBSg5wYUsL41zul/rlyTXFRPIjuWGAM1ssMIpiZGikySbEgkQGXeNkxHNvegOx
+         D5hg==
+X-Gm-Message-State: AHQUAuZVO8XYvrA1nCTmIyghyZgxWO5vySO3fPgo2xQiQ865T2yfxmey
+        Xjz73GhcjJCasC8tBueOee0qB4z+S/OcPMOOlLM=
+X-Google-Smtp-Source: AHgI3IawSmS2G47ZEEmAJG7vakgXTCyA+EPSA4ojErR+CCBpo8+znL8cAP6/tIaY32S6zxeLcgoJ5HOoZO4UjL5eQto=
+X-Received: by 2002:ac8:1625:: with SMTP id p34mr1046265qtj.95.1550075167698;
+ Wed, 13 Feb 2019 08:26:07 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190213081252.GA647@ulmo>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1550075073; bh=UclfUCethAx4spVjmkQXGT7PLw5oZe23bVhYJx1K/pQ=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=REZi4wN7xlDzS3S1/d4QxzsqAoQ6ePmIgx3DdzrpaN40DljF2ahGW99prZ8wM8yWp
-         E9/X+jNulpr6pL730NxT9PCyfsqeZ9YxxEg/oIJnNeRwEDE3UzDeZ7UzqdZ+AJlslE
-         JPg2d//Ig1rInzS1m1t+fl6E2T9+u4xnB5icEZxSs9kffSN/o++6DnPfkqB1/LhMsQ
-         uYFKS2/TAcqKQRUyQ9Rx0DsiYH0UU6DM4gVvlahrqmcijaMysw/2LnHCO8xBBBPr3n
-         9dQzkeLDCnjFXqvDW+BYkeag+z6YhHgCX3XvM5c5TcRVYkiNe7074Oq4JGzcPalKOc
-         tTV8uAGCf/s+g==
+References: <1549995065-27597-1-git-send-email-xiaoxiang@xiaomi.com>
+ <20190212144606.4b7cf0f8@gandalf.local.home> <CAH2Cfb-Zd9TKgs52ROVGYg6F_hiN2ieWKwYPkxpVV8St+zwa2A@mail.gmail.com>
+ <20190213084741.5512307a@gandalf.local.home> <CAH2Cfb9YTAf4j7tv4Q5dWM_jQCzsWBo6ufoT=BXYx5qpgcMCNQ@mail.gmail.com>
+ <20190213093154.7af84743@gandalf.local.home>
+In-Reply-To: <20190213093154.7af84743@gandalf.local.home>
+From:   xiang xiao <xiaoxiang781216@gmail.com>
+Date:   Thu, 14 Feb 2019 00:25:56 +0800
+Message-ID: <CAH2Cfb-1n8-KwoAJqjoH-M701T+s6Dfp+j_YB=kMc-cnWAY=Pg@mail.gmail.com>
+Subject: Re: [PATCH] printk: add KERN_NOTIME to skip the timestamp
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-kernel@vger.kernel.org, Xiang Xiao <xiaoxiang@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I agree, will update this patch with full paths replacing phandles.
+On Wed, Feb 13, 2019 at 10:31 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> On Wed, 13 Feb 2019 22:00:04 +0800
+> xiang xiao <xiaoxiang781216@gmail.com> wrote:
+>
+> > On Wed, Feb 13, 2019 at 9:47 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+> > >
+> > > On Wed, 13 Feb 2019 14:19:01 +0800
+> > > xiang xiao <xiaoxiang781216@gmail.com> wrote:
+> > >
+> > > > On Wed, Feb 13, 2019 at 3:46 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+> > > > >
+> > > > > On Wed, 13 Feb 2019 02:11:05 +0800
+> > > > > Xiang Xiao <xiaoxiang781216@gmail.com> wrote:
+> > > > >
+> > > > > > Because log may already add the timestamp sometime
+> > > > >
+> > > > > Can you be a bit more detailed on this. When and where does this
+> > > > > happen?
+> > > >
+> > > > Here is my case:
+> > > > 1.A small MCU(Cortex M4) in SoC run RTOS
+> > > > 2.RTOS append timestamp to log for the accurate timing
+> > > > 3.RTOS send log to Linux kernel when buffer exceed the threshold
+> > > > 4.Kernel call printk to dump the received buffer
+> > > > So I want that printk skip the timestamp here.
+> > > >
+> > > > > If anything, I would probably prefer that we export whether
+> > > > > time is being printed, and have the caller not print time if printk is
+> > > > > doing it already, than to add the complexity into printk itself.
+> > > >
+> > > > Actually, the timestamp of our initial implementation like your
+> > > > suggestion come from printk,
+> > > > but we found that timestamp from kernel isn't accurate as from RTOS
+> > > > due the buffer and IPC.
+> > > >
+> > >
+> > > If the timestamps are different, then you don't want to remove the
+> > > printk one. Otherwise you are going to have a confusion between your
+> > > added timestamp mixed in with the kernel's inaccurate timestamps.
+> > >
+> >
+> > Here is a sample output with this patch:
+> > [   10.991426] virtio_rpmsg_bus virtio1: rpmsg host is online
+> > [   10.991443] remoteproc remoteproc1: registered virtio1 (type 7)
+> > [   10.991450] remoteproc remoteproc1: remote processor
+> > f9210000.toppwr:sen-rproc is now up
+> > [   10.993715] virtio_rpmsg_bus virtio1: creating channel
+> > rpmsg-ttySENSOR addr 0x1
+> > [   10.994606] virtio_rpmsg_bus virtio1: creating channel rpmsg-ttyGPS addr 0x2
+> > [   10.995236] virtio_rpmsg_bus virtio1: creating channel rpmsg-clk addr 0x3
+> > [   10.995702] virtio_rpmsg_bus virtio1: creating channel rpmsg-syslog addr 0x4
+> > [   10.996197] virtio_rpmsg_bus virtio1: creating channel rpmsg-rtc addr 0x5
+> > [   10.997297] virtio_rpmsg_bus virtio1: creating channel rpmsg-hostfs addr 0x6
+> > [   10.999842] virtio_rpmsg_bus virtio1: creating channel rpmsg-usrsock addr 0x7
+> > [     0.007680] sensor: NuttX sensor 7.28 e3c2ecb Feb 12 2019 16:53:49
+> > arm song/banks
+> > ^^^^^^^^^^^^^
+> > [   11.918177] random: crng init done
+> > [   12.567362] e2fsck: e2fsck 1.42.9 (28-Dec-2013)
+> >
+> > Without this patch:
+> > [   10.991426] virtio_rpmsg_bus virtio1: rpmsg host is online
+> > [   10.991443] remoteproc remoteproc1: registered virtio1 (type 7)
+> > [   10.991450] remoteproc remoteproc1: remote processor
+> > f9210000.toppwr:sen-rproc is now up
+> > [   10.993715] virtio_rpmsg_bus virtio1: creating channel
+> > rpmsg-ttySENSOR addr 0x1
+> > [   10.994606] virtio_rpmsg_bus virtio1: creating channel rpmsg-ttyGPS addr 0x2
+> > [   10.995236] virtio_rpmsg_bus virtio1: creating channel rpmsg-clk addr 0x3
+> > [   10.995702] virtio_rpmsg_bus virtio1: creating channel rpmsg-syslog addr 0x4
+> > [   10.996197] virtio_rpmsg_bus virtio1: creating channel rpmsg-rtc addr 0x5
+> > [   10.997297] virtio_rpmsg_bus virtio1: creating channel rpmsg-hostfs addr 0x6
+> > [   10.999842] virtio_rpmsg_bus virtio1: creating channel rpmsg-usrsock addr 0x7
+> > [   11.105345][     0.007680] sensor: NuttX sensor 7.28 e3c2ecb Feb 12
+> > 2019 16:53:49 arm song/banks
+> > ^^^^^^^^^^^^^^^^^^^^^^^^^^
+> > [   11.918177] random: crng init done
+> > [   12.567362] e2fsck: e2fsck 1.42.9 (28-Dec-2013)
+> >
+> > Which one do you think better?
+>
+> Honestly, the one without the patch.
+>
+> Seriously, it also makes it easy to see where that message happened
+> with respect to the other printks. With your patch, we would have no
+> idea, and if I was a normal user, unaware of this patch, I would
+> probably submit a bug report claiming that something is wrong with the
+> timestamps.
+>
 
-On 2/13/19 12:12 AM, Thierry Reding wrote:
-> On Mon, Feb 11, 2019 at 03:47:07PM -0800, Bo Yan wrote:
->> The xavier CPU architecture includes 8 CPU cores organized in
->> 4 clusters. Add cpu-map data for topology initialization, this
->> fixes the topology information in
->> /sys/devices/system/cpu/cpu[n]/topology
->>
->> Signed-off-by: Bo Yan <byan@nvidia.com>
->> ---
->> V2: remove cache nodes, add topology data only
->>
->>   arch/arm64/boot/dts/nvidia/tegra194.dtsi | 58 +++++++++++++++++++++++++++-----
->>   1 file changed, 50 insertions(+), 8 deletions(-)
-> 
-> This mostly looks good to me. One minor comment below.
-> 
->>
->> diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
->> index 6dfa1ca..35e6e76 100644
->> --- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
->> +++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
->> @@ -870,56 +870,98 @@
->>   		#address-cells = <1>;
->>   		#size-cells = <0>;
->>   
->> -		cpu@0 {
->> +		cpu-map {
->> +			cluster0 {
->> +				core0 {
->> +					cpu = <&cl0_0>;
-> 
-> I wonder if perhaps in this case it would be better to use the full path
-> to refer to the phandle here. That way we can avoid the labels, which
-> are somewhat cumbersome to write and the hierarchy, in my opinion, is a
-> much more natural way to reference these.
-> 
-> What I'm suggesting would look roughly like this:
-> 
-> 		cpu-map {
-> 			cluster0 {
-> 				core0 {
-> 					cpu = <&{/cpus/cpu@0}>;
-> 				};
-> 
-> 				core1 {
-> 					cpu = <&{/cpus/cpu@1}>;
-> 				};
-> 			};
-> 
-> 			cluster1 {
-> 				core0 {
-> 					cpu = <&{/cpus/cpu@2}>;
-> 				};
-> 
-> 				core1 {
-> 					cpu = <&{/cpus/cpu@3}>;
-> 				};
-> 			};
-> 
-> 			...
-> 		};
-> 
-> That's slightly more characters, but I think it's much easier to read
-> than the labels.
-> 
-> I don't feel very strongly about it, though, so feel free to keep this
-> as-is if you prefer.
-> 
-> Thierry
-> 
+Ok, I will remove KERN_NOTIME from rpmsg-syslog driver.
+
+> -- Steve
