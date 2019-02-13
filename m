@@ -4,57 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6896C282CE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25165C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:09:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5549222C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:09:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8B09222BA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:09:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="yD0DRYzs"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="1p64dTsv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392430AbfBMPJq (ORCPT
+        id S2388447AbfBMPJt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 10:09:46 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:43730 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392409AbfBMPJo (ORCPT
+        Wed, 13 Feb 2019 10:09:49 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:40609 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392420AbfBMPJr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 10:09:44 -0500
-Received: by mail-ed1-f67.google.com with SMTP id f9so2196317eds.10
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 07:09:43 -0800 (PST)
+        Wed, 13 Feb 2019 10:09:47 -0500
+Received: by mail-ed1-f68.google.com with SMTP id 10so2212426eds.7
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 07:09:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=RXmtNLTc175lxeTH4WR0FnsamrIEb1qNdvropbMnYQY=;
-        b=yD0DRYzsVX92dlSIf/PztkWelRkLDlZHneO9ZtSuNOLLwtVOwihBQ/W9zsPLM+j7nN
-         Cyv+6IIMNc0F+q4CuHWcviDrfZu3nOweZSpQou71w/SJ1PfbyevjcipIZeiTXcKEm+E5
-         FUd86h5EeMHPgu1nlQTSQLJu+vrxLvis/6qepUk8Z8c7K1A/OYj+GrXCXUMbAr0c6xFL
-         uorDlZUadR8X3Uw5qr+o9hCPeW5VRARVj5Hl36ROoQyrAxasp5qveLwV0hKQjIPRQn4g
-         QH3VPSx4AI08iZ2hBHp5cxpFlAObQ3jl983HsK8nzNmLr/PXjdKFZ42o06TbypBc5DUd
-         CSDQ==
+        bh=Nl2exdiih+VjHG/ozKpTxSpUwLVI9022jYFyfu0Qz18=;
+        b=1p64dTsvl5SVUsGHL3FLt1+nD8NmQocR3FhCscUxik7dkqyvYZe9zLqoAObZrNGuXM
+         /vdO1YZnjzEwQPUtC8hKELtdhfce4nKivab6kodqWOrgaDLv8Rgj32i7rvz05mCS4+8v
+         fcD0GaTXet39ium9YtMFesNYNBkTcBYr5ZsvReQTVJ3T2S1xB5q+lDXh5pPumzz/ApR2
+         7hSB3HTEOK9Xld8MWQIDZrMNmphOkRUDvD1VZuvE7gTTDmVn/DwgKjKBZzhVCYUB3auI
+         lHejL2e6gA0siuSse9ZExSf8k/E00GjSz4Hef/Rv2qttqxuL5XPkIaGSX4enPRBfmvqU
+         v9eg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=RXmtNLTc175lxeTH4WR0FnsamrIEb1qNdvropbMnYQY=;
-        b=rMeQpxkZaLmePMrNb58CfkJLC3u49PpDRNv3hTYr+UC56LICLFOrvtb1SwOQV6OxoT
-         7mp6kaTyFjjgAicw4x4reHZgJvte9zDa29mKLS4LOrIY16QDA7bSw49XH1UXFQs+wXCY
-         Y4P+PrPGFr1mNW2uTKvy5g4uw+Bzngux8ge9xWABxo9+0VtO0GAZVV31z8E1REPP5/j1
-         EQQzhThvS7qNfbiQaFNyMriMMdU57z399yt9WaXlk4ZnGSoaJYL31u4md8WAoTdt/KGX
-         QmvLDGv7rzCW1zBF7jzNdLZfeAHVEcVkdCinJ2Y5TUd5G6tIw+MrvMeCFwF3dm/JP7ND
-         tkIw==
-X-Gm-Message-State: AHQUAuYW2IQzJXl0pSeia9PPvzMn5SJn7HLuiyZQoFFNEBpEWzuzBH52
-        1nMTbFUClm5kaDcPUQSJRWFUEA==
-X-Google-Smtp-Source: AHgI3IYm6lK0YlhtSzkgX6CYrK6Mz5b5BmHD0nzdKeKE8+Irkx/R5nZ608RzcZTgog2SWuH7Cq9n+Q==
-X-Received: by 2002:a50:b902:: with SMTP id m2mr769570ede.108.1550070582788;
-        Wed, 13 Feb 2019 07:09:42 -0800 (PST)
+        bh=Nl2exdiih+VjHG/ozKpTxSpUwLVI9022jYFyfu0Qz18=;
+        b=g19B/6yLqHLzUjMGpqbna0Se7Aen3tEuJRO8RRim7Q4avFp9OWTYCtxcjGQLUbtK3e
+         HftXawmaM0SPMLJRKnNQpnldLTYHRYhK6+e7L1Us4MXDmqPo6XqIcGRdTWRJJGB3bZua
+         4sgUIuWsPjs6jekE1tn5BaHOpz9mt+vzrYYxVzv5cMYPfKeiflbHb6DyRmXN9jHIksM3
+         MnG7RLdfFqCsT9dOhLkE7Bb6s1myWil62/Rf0wjLM8B7ckUtgDuA2rIXXcUh3gpdfc7/
+         P6Ip/S7nelXRvCDRatzUveX8TXQoDWaCFXhfvARrw6Ja4EPVap4A4o5HyvAVgGUI/T1u
+         WQ/g==
+X-Gm-Message-State: AHQUAuane3f4uAb+Q7uZAfVIaA1vIrDese9unNixCKJcM8lmarQ+rXgZ
+        wLqdVpi3rO32k5CVS3xy1Q+5yw==
+X-Google-Smtp-Source: AHgI3IamSPBWkpmVDICq57ehjEwNPLY2zEI4b9JBPG8jq5i5XYnNhIuRNGkhmx8cKd1Whz5KZ3ufZQ==
+X-Received: by 2002:a50:ad57:: with SMTP id z23mr727379edc.223.1550070585131;
+        Wed, 13 Feb 2019 07:09:45 -0800 (PST)
 Received: from loys-ubuntu-BY1835A49200471.thefacebook.com ([2620:10d:c092:180::1:4505])
-        by smtp.googlemail.com with ESMTPSA id k26sm1903941ejv.63.2019.02.13.07.09.39
+        by smtp.googlemail.com with ESMTPSA id k26sm1903941ejv.63.2019.02.13.07.09.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 13 Feb 2019 07:09:42 -0800 (PST)
+        Wed, 13 Feb 2019 07:09:44 -0800 (PST)
 From:   Loys Ollivier <lollivier@baylibre.com>
 To:     devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
 Cc:     Loys Ollivier <lollivier@baylibre.com>,
@@ -65,9 +65,9 @@ Cc:     Loys Ollivier <lollivier@baylibre.com>,
         linux-mediatek@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v4 2/4] dt-bindings: gnss: add mediatek binding
-Date:   Wed, 13 Feb 2019 16:09:27 +0100
-Message-Id: <1550070569-18588-3-git-send-email-lollivier@baylibre.com>
+Subject: [PATCH v4 3/4] gnss: add mtk receiver type support
+Date:   Wed, 13 Feb 2019 16:09:28 +0100
+Message-Id: <1550070569-18588-4-git-send-email-lollivier@baylibre.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1550070569-18588-1-git-send-email-lollivier@baylibre.com>
 References: <1550070569-18588-1-git-send-email-lollivier@baylibre.com>
@@ -76,73 +76,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add binding for Mediatek-based GNSS receivers.
+Add an MTK (Mediatek) type to the "GNSS_TYPE" attribute.
+
+Note that MTK receivers support a subset of NMEA 0183 with vendor
+extensions.
 
 Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
 ---
 v4:
-Use standard names for reset-gpios and gnss-fix-gpios
-s/an/a UART
+No changes
 
 v3:
-Removed the I2C and SPI interfaces references.
-Removed the "mediatek,mt3339" compatible line.
-Added the optional propertied (reset, fix)
-Added the pin names for the optional properties.
+Moved the gnss_type_names string addition to this patch.
+Edited the commit message to remove the reference to a vendor protocol.
 
 v2:
-Renamed bindings from Globaltop/gtop to Mediatek/mtk.
-Moved current-speed as an optional propertie.
-Removed the status line in the example.
-Added "mediatek,mt3339" compatible.
+Renamed from GTOP to MTK.
 
- .../devicetree/bindings/gnss/mediatek.txt          | 37 ++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/gnss/mediatek.txt
+ drivers/gnss/core.c  | 1 +
+ include/linux/gnss.h | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/gnss/mediatek.txt b/Documentation/devicetree/bindings/gnss/mediatek.txt
-new file mode 100644
-index 000000000000..12283d429baa
---- /dev/null
-+++ b/Documentation/devicetree/bindings/gnss/mediatek.txt
-@@ -0,0 +1,37 @@
-+Mediatek-based GNSS Receiver DT binding
-+
-+Mediatek chipsets are used in GNSS-receiver modules produced by several
-+vendors and can use a UART interface.
-+
-+Please see Documentation/devicetree/bindings/gnss/gnss.txt for generic
-+properties.
-+
-+Required properties:
-+
-+- compatible	: Must be
-+
-+			"globaltop,pa6h"
-+
-+- vcc-supply	: Main voltage regulator (pin name: VCC)
-+
-+Optional properties:
-+
-+- current-speed		: Default UART baud rate
-+- gnss-fix-gpios	: GPIO used to determine device position fix state
-+			  (pin name: FIX, 3D_FIX)
-+- reset-gpios		: GPIO used to reset the device
-+  		  	  (pin name: RESET, NRESET)
-+- timepulse-gpios	: Time pulse GPIO (pin name: PPS1, 1PPS)
-+- v-bckp-supply		: Backup voltage regulator
-+  			  (pin name: VBAT, VBACKUP)
-+
-+Example:
-+
-+serial@1234 {
-+	compatible = "ns16550a";
-+
-+	gnss {
-+		compatible = "globaltop,pa6h";
-+		vcc-supply = <&vcc_3v3>;
-+	};
-+};
+diff --git a/drivers/gnss/core.c b/drivers/gnss/core.c
+index 4291a0dd22aa..320cfca80d5f 100644
+--- a/drivers/gnss/core.c
++++ b/drivers/gnss/core.c
+@@ -334,6 +334,7 @@ static const char * const gnss_type_names[GNSS_TYPE_COUNT] = {
+ 	[GNSS_TYPE_NMEA]	= "NMEA",
+ 	[GNSS_TYPE_SIRF]	= "SiRF",
+ 	[GNSS_TYPE_UBX]		= "UBX",
++	[GNSS_TYPE_MTK]		= "MTK",
+ };
+ 
+ static const char *gnss_type_name(struct gnss_device *gdev)
+diff --git a/include/linux/gnss.h b/include/linux/gnss.h
+index 43546977098c..36968a0f33e8 100644
+--- a/include/linux/gnss.h
++++ b/include/linux/gnss.h
+@@ -22,6 +22,7 @@ enum gnss_type {
+ 	GNSS_TYPE_NMEA = 0,
+ 	GNSS_TYPE_SIRF,
+ 	GNSS_TYPE_UBX,
++	GNSS_TYPE_MTK,
+ 
+ 	GNSS_TYPE_COUNT
+ };
 -- 
 2.7.4
 
