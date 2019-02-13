@@ -4,51 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F7FC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F1AC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:48:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1A8D222D1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:48:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1251D20811
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:48:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083686;
-	bh=YaLgMlk5ulSiJtjiRMII83+nVG+KDv2bpWqVRxluOBM=;
+	s=default; t=1550083691;
+	bh=Hbf0xLssCghT4W7m2Q/2dJlZfJLco96g6vP0aKu74Bk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=D+XesHyC+Q90LIAGDwZR4UlefoAeYDagGpJ1V7QedXCzBVd6FwlB84hSt0LcKRQL4
-	 +n6gM8bZ7d6eUW8r2Q4KoFip2r/5x1S4G3tUSC10gaV+t7HIOBYGuILFhHFlbZLakM
-	 XIS6RYXP4YJ5Q7w4xPD9swMgctSefh1qJrCeG8sE=
+	b=v1XmdT0/EDqu6XloPEm5dxeML1Z6uMqf79v7CcUHqc5UH1ZaoLxrFZ6vsAX3i8GUX
+	 5qNLwF1vaCAjXNuzsz6SZW1sGAereS/ME9651mClcBSq8hHXIOHXA2+Ji244IytoVj
+	 hGSBcmyljmMbnFnPzjZ/FEKnkf+e3ZcT2zMEmPnA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406248AbfBMSsE (ORCPT
+        id S2406524AbfBMSqs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:48:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45364 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:46:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45288 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406523AbfBMSqt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:46:49 -0500
+        id S2406497AbfBMSqn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:46:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB73B20811;
-        Wed, 13 Feb 2019 18:46:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A687920811;
+        Wed, 13 Feb 2019 18:46:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083608;
-        bh=YaLgMlk5ulSiJtjiRMII83+nVG+KDv2bpWqVRxluOBM=;
+        s=default; t=1550083603;
+        bh=Hbf0xLssCghT4W7m2Q/2dJlZfJLco96g6vP0aKu74Bk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Se0ny6J3tkNO37W1eg+7pSZ1rYc60YhADwu81+Xv0k3vGdOmZLPa0wc/fUO+NOLSq
-         /uxWwbyfrxsnpu/d2Y9c4cREvkKB6ioFjvgp4IZF2DjR+9QaIPe52EnE/UoDuF9ygJ
-         3y432GKrV3V33JKCbieQqtybpx0VZZCqvnJIkxP8=
+        b=KeKmBl0I3AvlpxlGaS9XScH9WlwHjlIqffBathaiPRnIgGTObYiQgdNJef5cnameu
+         T/oyoQzjf/RPJmvO/qKhW+L+c/qEKMPXn0jWrWQBvq8rMvcpTFnSQNExaoInIb5GRw
+         jJBhwVdQEYLIDrRqL/jErvs7G0N6/WGM5IQADMDU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, 3ntr0py1337@gmail.com,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Florian Westphal <fw@strlen.de>,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Subject: [PATCH 4.20 48/50] xfrm: refine validation of template and selector families
-Date:   Wed, 13 Feb 2019 19:38:53 +0100
-Message-Id: <20190213183659.456889702@linuxfoundation.org>
+        stable@vger.kernel.org, Theodore Tso <tytso@mit.edu>
+Subject: [PATCH 4.20 46/50] Revert "ext4: use ext4_write_inode() when fsyncing w/o a journal"
+Date:   Wed, 13 Feb 2019 19:38:51 +0100
+Message-Id: <20190213183659.307182878@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183655.747168774@linuxfoundation.org>
 References: <20190213183655.747168774@linuxfoundation.org>
@@ -67,64 +64,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Theodore Ts'o <tytso@mit.edu>
 
-commit 35e6103861a3a970de6c84688c6e7a1f65b164ca upstream.
+commit 8fdd60f2ae3682caf2a7258626abc21eb4711892 upstream.
 
-The check assumes that in transport mode, the first templates family
-must match the address family of the policy selector.
+This reverts commit ad211f3e94b314a910d4af03178a0b52a7d1ee0a.
 
-Syzkaller managed to build a template using MODE_ROUTEOPTIMIZATION,
-with ipv4-in-ipv6 chain, leading to following splat:
+As Jan Kara pointed out, this change was unsafe since it means we lose
+the call to sync_mapping_buffers() in the nojournal case.  The
+original point of the commit was avoid taking the inode mutex (since
+it causes a lockdep warning in generic/113); but we need the mutex in
+order to call sync_mapping_buffers().
 
-BUG: KASAN: stack-out-of-bounds in xfrm_state_find+0x1db/0x1854
-Read of size 4 at addr ffff888063e57aa0 by task a.out/2050
- xfrm_state_find+0x1db/0x1854
- xfrm_tmpl_resolve+0x100/0x1d0
- xfrm_resolve_and_create_bundle+0x108/0x1000 [..]
+The real fix to this problem was discussed here:
 
-Problem is that addresses point into flowi4 struct, but xfrm_state_find
-treats them as being ipv6 because it uses templ->encap_family is used
-(AF_INET6 in case of reproducer) rather than family (AF_INET).
+https://lore.kernel.org/lkml/20181025150540.259281-4-bvanassche@acm.org
 
-This patch inverts the logic: Enforce 'template family must match
-selector' EXCEPT for tunnel and BEET mode.
+The proposed patch was to fix a syzbot complaint, but the problem can
+also demonstrated via "kvm-xfstests -c nojournal generic/113".
+Multiple solutions were discused in the e-mail thread, but none have
+landed in the kernel as of this writing.  Anyway, commit
+ad211f3e94b314 is absolutely the wrong way to suppress the lockdep, so
+revert it.
 
-In BEET and Tunnel mode, xfrm_tmpl_resolve_one will have remote/local
-address pointers changed to point at the addresses found in the template,
-rather than the flowi ones, so no oob read will occur.
-
-Reported-by: 3ntr0py1337@gmail.com
-Reported-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Fixes: ad211f3e94b314a910d4af03178a0b52a7d1ee0a ("ext4: use ext4_write_inode() when fsyncing w/o a journal")
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Reported: Jan Kara <jack@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/xfrm/xfrm_user.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ fs/ext4/fsync.c |   13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -1488,10 +1488,15 @@ static int validate_tmpl(int nr, struct
- 		if (!ut[i].family)
- 			ut[i].family = family;
+--- a/fs/ext4/fsync.c
++++ b/fs/ext4/fsync.c
+@@ -116,16 +116,8 @@ int ext4_sync_file(struct file *file, lo
+ 		goto out;
+ 	}
  
--		if ((ut[i].mode == XFRM_MODE_TRANSPORT) &&
--		    (ut[i].family != prev_family))
--			return -EINVAL;
+-	ret = file_write_and_wait_range(file, start, end);
+-	if (ret)
+-		return ret;
 -
-+		switch (ut[i].mode) {
-+		case XFRM_MODE_TUNNEL:
-+		case XFRM_MODE_BEET:
-+			break;
-+		default:
-+			if (ut[i].family != prev_family)
-+				return -EINVAL;
-+			break;
-+		}
- 		if (ut[i].mode >= XFRM_MODE_MAX)
- 			return -EINVAL;
+ 	if (!journal) {
+-		struct writeback_control wbc = {
+-			.sync_mode = WB_SYNC_ALL
+-		};
+-
+-		ret = ext4_write_inode(inode, &wbc);
++		ret = __generic_file_fsync(file, start, end, datasync);
+ 		if (!ret)
+ 			ret = ext4_sync_parent(inode);
+ 		if (test_opt(inode->i_sb, BARRIER))
+@@ -133,6 +125,9 @@ int ext4_sync_file(struct file *file, lo
+ 		goto out;
+ 	}
  
++	ret = file_write_and_wait_range(file, start, end);
++	if (ret)
++		return ret;
+ 	/*
+ 	 * data=writeback,ordered:
+ 	 *  The caller's filemap_fdatawrite()/wait will sync the data.
 
 
