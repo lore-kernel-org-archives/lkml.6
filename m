@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2A9FC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBFABC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:01:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4B502190A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:01:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A8262190A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:01:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026875;
-	bh=jL5OgQ8vlV2GwGhNJ90qQ0XuMoubJxkBzq3T5VSjm3s=;
+	s=default; t=1550026879;
+	bh=hudbPPq2wsnn673GkKZ6TJB4xcclMV3mS4tVqlm3Mow=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qJ/IYEOYvlJjqm98OmHyjfDtumC3rb1WVmDd0jYTD6TlRTeuP637fKPO/mAoK8VOM
-	 ir0POjl7t34h+CakmWOp9VZ5xNRPj2/5lT/QAGg7Q/tmGaV9vIhxb9A150smRdF+Kj
-	 AEXMLqazOmFB0EUtE0j9FLaPJS0B+6syk0GyrSgY=
+	b=QLfQbyD+tMYTmp49ZZjjbauRzdDDdZ5NauVTkE8do/rX65g0Re6QWzIuWXAhrVvlp
+	 xqyBPTEwvOrbGKEJmdPTJhSTLJaMZx7cNSe1nci6vAjpiYAWFd6Kl94GIXXbj66apA
+	 2S/E9ye29Hbvluo/j+BxQnxIhwGh0Oh2VIDCyZN4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389139AbfBMDBO (ORCPT
+        id S2390301AbfBMDBS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 22:01:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38840 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 22:01:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728415AbfBMCfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:35:12 -0500
+        id S2388047AbfBMCfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:35:39 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6139222CA;
-        Wed, 13 Feb 2019 02:35:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74EB1222CD;
+        Wed, 13 Feb 2019 02:35:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025311;
-        bh=jL5OgQ8vlV2GwGhNJ90qQ0XuMoubJxkBzq3T5VSjm3s=;
+        s=default; t=1550025338;
+        bh=hudbPPq2wsnn673GkKZ6TJB4xcclMV3mS4tVqlm3Mow=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C+gS8mjd5q+XCAJsCHy3vLvxry7Ow0IBL+ZU8FfLf1RlgiSv5PXEtMRZqASbG/p/g
-         ZEVepotS491hZME5nH4/vuN9VRQ/wxvKJE52chjloPdd1a8v4cFPuZsjWIzVud2cM2
-         3wZeFb0fUghkeihNTGZOeeLfQdAohT4iKx6nzoGw=
+        b=nII3WzL4gQkE2ym8i4D3Li3Junntrcr5SxW+BjUUOINEKGJA+GxmHXQOL3VlNDJVL
+         /juWM+W0ADxJE/XwCEw5W+R5M0dninMYTIKXP2pzrvYVBAMsi7m+rK/gG+KxWukv9l
+         BX5NwHgiAbeLZnuf50Ac7KbcllCRqFb0PPxSStfU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Avri Altman <avri.altman@wdc.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 062/105] scsi: ufs: Fix geometry descriptor size
-Date:   Tue, 12 Feb 2019 21:32:53 -0500
-Message-Id: <20190213023336.19019-62-sashal@kernel.org>
+Cc:     Wen Yang <wen.yang99@zte.com.cn>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        xen-devel@lists.xenproject.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 078/105] pvcalls-front: fix potential null dereference
+Date:   Tue, 12 Feb 2019 21:33:09 -0500
+Message-Id: <20190213023336.19019-78-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -58,38 +61,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Avri Altman <avri.altman@wdc.com>
+From: Wen Yang <wen.yang99@zte.com.cn>
 
-[ Upstream commit 9be9db9f78f52ef03ee90063730cb9d730e7032b ]
+[ Upstream commit b4711098066f1cf808d4dc11a1a842860a3292fe ]
 
-Albeit we no longer rely on those hard-coded descriptor sizes, we still use
-them as our defaults, so better get it right. While adding its sysfs
-entries, we forgot to update the geometry descriptor size. It is 0x48
-according to UFS2.1, and wasn't changed in UFS3.0.
+ static checker warning:
+    drivers/xen/pvcalls-front.c:373 alloc_active_ring()
+    error: we previously assumed 'map->active.ring' could be null
+           (see line 357)
 
-[mkp: typo]
+drivers/xen/pvcalls-front.c
+    351 static int alloc_active_ring(struct sock_mapping *map)
+    352 {
+    353     void *bytes;
+    354
+    355     map->active.ring = (struct pvcalls_data_intf *)
+    356         get_zeroed_page(GFP_KERNEL);
+    357     if (!map->active.ring)
+                    ^^^^^^^^^^^^^^^^^
+Check
 
-Fixes: c720c091222e (scsi: ufs: sysfs: geometry descriptor)
-Signed-off-by: Avri Altman <avri.altman@wdc.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+    358         goto out;
+    359
+    360     map->active.ring->ring_order = PVCALLS_RING_ORDER;
+    361     bytes = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
+    362                     PVCALLS_RING_ORDER);
+    363     if (!bytes)
+    364         goto out;
+    365
+    366     map->active.data.in = bytes;
+    367     map->active.data.out = bytes +
+    368         XEN_FLEX_RING_SIZE(PVCALLS_RING_ORDER);
+    369
+    370     return 0;
+    371
+    372 out:
+--> 373     free_active_ring(map);
+                                 ^^^
+Add null check on map->active.ring before dereferencing it to avoid
+any NULL pointer dereferences.
+
+Fixes: 9f51c05dc41a ("pvcalls-front: Avoid get_free_pages(GFP_KERNEL) under spinlock")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Suggested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+CC: Juergen Gross <jgross@suse.com>
+CC: Stefano Stabellini <sstabellini@kernel.org>
+CC: Dan Carpenter <dan.carpenter@oracle.com>
+CC: xen-devel@lists.xenproject.org
+CC: linux-kernel@vger.kernel.org
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/ufs/ufs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/xen/pvcalls-front.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
-index 58087d3916d0..5417ce09b105 100644
---- a/drivers/scsi/ufs/ufs.h
-+++ b/drivers/scsi/ufs/ufs.h
-@@ -195,7 +195,7 @@ enum ufs_desc_def_size {
- 	QUERY_DESC_CONFIGURATION_DEF_SIZE	= 0x90,
- 	QUERY_DESC_UNIT_DEF_SIZE		= 0x23,
- 	QUERY_DESC_INTERCONNECT_DEF_SIZE	= 0x06,
--	QUERY_DESC_GEOMETRY_DEF_SIZE		= 0x44,
-+	QUERY_DESC_GEOMETRY_DEF_SIZE		= 0x48,
- 	QUERY_DESC_POWER_DEF_SIZE		= 0x62,
- 	QUERY_DESC_HEALTH_DEF_SIZE		= 0x25,
- };
+diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
+index 6357160d466a..91da7e44d5d4 100644
+--- a/drivers/xen/pvcalls-front.c
++++ b/drivers/xen/pvcalls-front.c
+@@ -343,6 +343,9 @@ int pvcalls_front_socket(struct socket *sock)
+ 
+ static void free_active_ring(struct sock_mapping *map)
+ {
++	if (!map->active.ring)
++		return;
++
+ 	free_pages((unsigned long)map->active.data.in,
+ 			map->active.ring->ring_order);
+ 	free_page((unsigned long)map->active.ring);
 -- 
 2.19.1
 
