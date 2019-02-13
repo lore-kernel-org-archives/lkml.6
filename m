@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 570F5C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:51:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB16C4151A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:51:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22BDE21934
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:51:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AC21222C7
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:51:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026278;
-	bh=Qh9bsEsEr35ZlKzDoT/RoXjoU3PPlW8lu0vCb05fTWo=;
+	s=default; t=1550026282;
+	bh=vFgsdek5Djb4tzCQZ01g87DA+RvzawbfRqB421QaWiU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Vii36Sn9BuDt6r9lOAXwjqIL4v0jAyt6jDAtkgDbPswxmwNdXIKygR/WZKtx9Vegb
-	 Sgc2BDx6g/7ALuj7c+1CxK1exyjQWU6ALDqvAMsqXN1obBuZjIW7TeZgJA3855mOLq
-	 hdKWhsS7nbRiyx79X7PSN4Pf+jIc8fCFdGvDNUaw=
+	b=FeFQ7tqaEw1joZVKYiwLB47+Nf5TiENkJkIFAgaN42K2/5TEYk7igBMbO8dCx3zSR
+	 bm+uWnRdWC2vbsmjmPDcU7HMkLV9vm087j96H/FxBaW6DXEPA2ic1gjr4JA3kVnqMa
+	 8+OSe+qIgUGLg7MqrZXvCc7F3Y4d6SvNiKU2rz8g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388699AbfBMCj0 (ORCPT
+        id S2388686AbfBMCjZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:39:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42916 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:39:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730235AbfBMCjW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:39:22 -0500
+        id S1732877AbfBMCjV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:39:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1C88222C2;
-        Wed, 13 Feb 2019 02:39:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1FD82175B;
+        Wed, 13 Feb 2019 02:39:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025561;
-        bh=Qh9bsEsEr35ZlKzDoT/RoXjoU3PPlW8lu0vCb05fTWo=;
+        s=default; t=1550025559;
+        bh=vFgsdek5Djb4tzCQZ01g87DA+RvzawbfRqB421QaWiU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sc+qg2UdqG10XScguWE32+EFT/El0hy14B/tP6JsNgEjdB3DKZL6yMCjyTjm5mxG9
-         FxTj5UCmrpOJFfnfFTbEWqY4XSj+Rj9sY68k8N4ibqjOLzaGeQKnuXeYEWPj8TA5EP
-         xgtS9bGG5ygTM/+Q+Etxm9sSaFhInTngcQr+/VJo=
+        b=nsc2I3PjLf+LB0lwBxmOTxxleXzTSmAtrdYYnqrkk8F92V8+5OCI7z2z/rpZtHCCe
+         RDLReKX0a7dduPQmJm6JKXZw8mqrKpuSwUDaHQEDEFJIZIcVaKOC7bU4GDipp0PhYe
+         LM3VN7qjqQpcCQ11BRoqG2uTyQozjKIMpzT6FUYc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marc Dionne <marc.dionne@auristor.com>,
-        David Howells <dhowells@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, linux-afs@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 68/83] afs: Don't set vnode->cb_s_break in afs_validate()
-Date:   Tue, 12 Feb 2019 21:36:46 -0500
-Message-Id: <20190213023701.20286-68-sashal@kernel.org>
+Cc:     Davide Caratti <dcaratti@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 66/83] selftests: tc-testing: fix parsing of ife type
+Date:   Tue, 12 Feb 2019 21:36:44 -0500
+Message-Id: <20190213023701.20286-66-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -58,56 +59,464 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marc Dionne <marc.dionne@auristor.com>
+From: Davide Caratti <dcaratti@redhat.com>
 
-[ Upstream commit 4882a27cec24319d10f95e978ecc80050e3e3e15 ]
+[ Upstream commit 91fa038d9446b5bf5ea80822790af7dd9bcbb5a2 ]
 
-A cb_interest record is not necessarily attached to the vnode on entry to
-afs_validate(), which can cause an oops when we try to bring the vnode's
-cb_s_break up to date in the default case (ie. no current callback promise
-and the vnode has not been deleted).
+In iproute2 commit 90c5c969f0b9 ("fix print_0xhex on 32 bit"), the format
+specifier for the ife type changed from 0x%X to %#llX, causing systematic
+failures in the following TDC test cases:
 
-Fix this by simply removing the line, as vnode->cb_s_break will be set when
-needed by afs_register_server_cb_interest() when we next get a callback
-promise from RPC call.
+ 7682 - Create valid ife encode action with mark and pass control
+ ef47 - Create valid ife encode action with mark and pipe control
+ df43 - Create valid ife encode action with mark and continue control
+ e4cf - Create valid ife encode action with mark and drop control
+ ccba - Create valid ife encode action with mark and reclassify control
+ a1cf - Create valid ife encode action with mark and jump control
+ cb3d - Create valid ife encode action with mark value at 32-bit maximum
+ 95ed - Create valid ife encode action with prio and pass control
+ aa17 - Create valid ife encode action with prio and pipe control
+ 74c7 - Create valid ife encode action with prio and continue control
+ 7a97 - Create valid ife encode action with prio and drop control
+ f66b - Create valid ife encode action with prio and reclassify control
+ 3056 - Create valid ife encode action with prio and jump control
+ 7dd3 - Create valid ife encode action with prio value at 32-bit maximum
+ 05bb - Create valid ife encode action with tcindex and pass control
+ ce65 - Create valid ife encode action with tcindex and pipe control
+ 09cd - Create valid ife encode action with tcindex and continue control
+ 8eb5 - Create valid ife encode action with tcindex and continue control
+ 451a - Create valid ife encode action with tcindex and drop control
+ d76c - Create valid ife encode action with tcindex and reclassify control
+ e731 - Create valid ife encode action with tcindex and jump control
+ b7b8 - Create valid ife encode action with tcindex value at 16-bit maximum
+ 2a9c - Create valid ife encode action with mac src parameter
+ cf5c - Create valid ife encode action with mac dst parameter
+ 2353 - Create valid ife encode action with mac src and mac dst parameters
+ 552c - Create valid ife encode action with mark and type parameters
+ 0421 - Create valid ife encode action with prio and type parameters
+ 4017 - Create valid ife encode action with tcindex and type parameters
+ fac3 - Create valid ife encode action with index at 32-bit maximnum
+ 7c25 - Create valid ife decode action with pass control
+ dccb - Create valid ife decode action with pipe control
+ 7bb9 - Create valid ife decode action with continue control
+ d9ad - Create valid ife decode action with drop control
+ 219f - Create valid ife decode action with reclassify control
+ 8f44 - Create valid ife decode action with jump control
+ b330 - Create ife encode action with cookie
 
-The oops looks something like:
+Change 'matchPattern' values, allowing '0' and '0x0' if ife type is equal
+to 0, and accepting both '0x' and '0X' otherwise, to let these tests pass
+both with old and new tc binaries.
+While at it, fix a small typo in test case fac3 ('maximnum'->'maximum').
 
-    BUG: unable to handle kernel NULL pointer dereference at 0000000000000018
-    ...
-    RIP: 0010:afs_validate+0x66/0x250 [kafs]
-    ...
-    Call Trace:
-     afs_d_revalidate+0x8d/0x340 [kafs]
-     ? __d_lookup+0x61/0x150
-     lookup_dcache+0x44/0x70
-     ? lookup_dcache+0x44/0x70
-     __lookup_hash+0x24/0xa0
-     do_unlinkat+0x11d/0x2c0
-     __x64_sys_unlink+0x23/0x30
-     do_syscall_64+0x4d/0xf0
-     entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-Fixes: ae3b7361dc0e ("afs: Fix validation/callback interaction")
-Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Davide Caratti <dcaratti@redhat.com>
+Acked-by: Stephen Hemminger <stephen@networkplumber.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/afs/inode.c | 1 -
- 1 file changed, 1 deletion(-)
+ .../tc-testing/tc-tests/actions/ife.json      | 88 +++++++++----------
+ 1 file changed, 44 insertions(+), 44 deletions(-)
 
-diff --git a/fs/afs/inode.c b/fs/afs/inode.c
-index 071075d775a9..26aa2d111a28 100644
---- a/fs/afs/inode.c
-+++ b/fs/afs/inode.c
-@@ -411,7 +411,6 @@ int afs_validate(struct afs_vnode *vnode, struct key *key)
- 	} else if (test_bit(AFS_VNODE_DELETED, &vnode->flags)) {
- 		valid = true;
- 	} else {
--		vnode->cb_s_break = vnode->cb_interest->server->cb_s_break;
- 		vnode->cb_v_break = vnode->volume->cb_v_break;
- 		valid = false;
- 	}
+diff --git a/tools/testing/selftests/tc-testing/tc-tests/actions/ife.json b/tools/testing/selftests/tc-testing/tc-tests/actions/ife.json
+index 637ea0219617..0da3545cabdb 100644
+--- a/tools/testing/selftests/tc-testing/tc-tests/actions/ife.json
++++ b/tools/testing/selftests/tc-testing/tc-tests/actions/ife.json
+@@ -17,7 +17,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode allow mark pass index 2",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 2",
+-        "matchPattern": "action order [0-9]*: ife encode action pass.*type 0xED3E.*allow mark.*index 2",
++        "matchPattern": "action order [0-9]*: ife encode action pass.*type 0[xX]ED3E.*allow mark.*index 2",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -41,7 +41,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode use mark 10 pipe index 2",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 2",
+-        "matchPattern": "action order [0-9]*: ife encode action pipe.*type 0xED3E.*use mark.*index 2",
++        "matchPattern": "action order [0-9]*: ife encode action pipe.*type 0[xX]ED3E.*use mark.*index 2",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -65,7 +65,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode allow mark continue index 2",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 2",
+-        "matchPattern": "action order [0-9]*: ife encode action continue.*type 0xED3E.*allow mark.*index 2",
++        "matchPattern": "action order [0-9]*: ife encode action continue.*type 0[xX]ED3E.*allow mark.*index 2",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -89,7 +89,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode use mark 789 drop index 2",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 2",
+-        "matchPattern": "action order [0-9]*: ife encode action drop.*type 0xED3E.*use mark 789.*index 2",
++        "matchPattern": "action order [0-9]*: ife encode action drop.*type 0[xX]ED3E.*use mark 789.*index 2",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -113,7 +113,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode use mark 656768 reclassify index 2",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 2",
+-        "matchPattern": "action order [0-9]*: ife encode action reclassify.*type 0xED3E.*use mark 656768.*index 2",
++        "matchPattern": "action order [0-9]*: ife encode action reclassify.*type 0[xX]ED3E.*use mark 656768.*index 2",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -137,7 +137,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode use mark 65 jump 1 index 2",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 2",
+-        "matchPattern": "action order [0-9]*: ife encode action jump 1.*type 0xED3E.*use mark 65.*index 2",
++        "matchPattern": "action order [0-9]*: ife encode action jump 1.*type 0[xX]ED3E.*use mark 65.*index 2",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -161,7 +161,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode use mark 4294967295 reclassify index 90",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 90",
+-        "matchPattern": "action order [0-9]*: ife encode action reclassify.*type 0xED3E.*use mark 4294967295.*index 90",
++        "matchPattern": "action order [0-9]*: ife encode action reclassify.*type 0[xX]ED3E.*use mark 4294967295.*index 90",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -185,7 +185,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode use mark 4294967295999 pipe index 90",
+         "expExitCode": "255",
+         "verifyCmd": "$TC actions get action ife index 90",
+-        "matchPattern": "action order [0-9]*: ife encode action pipe.*type 0xED3E.*use mark 4294967295999.*index 90",
++        "matchPattern": "action order [0-9]*: ife encode action pipe.*type 0[xX]ED3E.*use mark 4294967295999.*index 90",
+         "matchCount": "0",
+         "teardown": []
+     },
+@@ -207,7 +207,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode allow prio pass index 9",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 9",
+-        "matchPattern": "action order [0-9]*: ife encode action pass.*type 0xED3E.*allow prio.*index 9",
++        "matchPattern": "action order [0-9]*: ife encode action pass.*type 0[xX]ED3E.*allow prio.*index 9",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -231,7 +231,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode use prio 7 pipe index 9",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 9",
+-        "matchPattern": "action order [0-9]*: ife encode action pipe.*type 0xED3E.*use prio 7.*index 9",
++        "matchPattern": "action order [0-9]*: ife encode action pipe.*type 0[xX]ED3E.*use prio 7.*index 9",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -255,7 +255,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode use prio 3 continue index 9",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 9",
+-        "matchPattern": "action order [0-9]*: ife encode action continue.*type 0xED3E.*use prio 3.*index 9",
++        "matchPattern": "action order [0-9]*: ife encode action continue.*type 0[xX]ED3E.*use prio 3.*index 9",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -279,7 +279,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode allow prio drop index 9",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 9",
+-        "matchPattern": "action order [0-9]*: ife encode action drop.*type 0xED3E.*allow prio.*index 9",
++        "matchPattern": "action order [0-9]*: ife encode action drop.*type 0[xX]ED3E.*allow prio.*index 9",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -303,7 +303,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode use prio 998877 reclassify index 9",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 9",
+-        "matchPattern": "action order [0-9]*: ife encode action reclassify.*type 0xED3E.*use prio 998877.*index 9",
++        "matchPattern": "action order [0-9]*: ife encode action reclassify.*type 0[xX]ED3E.*use prio 998877.*index 9",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -327,7 +327,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode use prio 998877 jump 10 index 9",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 9",
+-        "matchPattern": "action order [0-9]*: ife encode action jump 10.*type 0xED3E.*use prio 998877.*index 9",
++        "matchPattern": "action order [0-9]*: ife encode action jump 10.*type 0[xX]ED3E.*use prio 998877.*index 9",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -351,7 +351,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode use prio 4294967295 reclassify index 99",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 99",
+-        "matchPattern": "action order [0-9]*: ife encode action reclassify.*type 0xED3E.*use prio 4294967295.*index 99",
++        "matchPattern": "action order [0-9]*: ife encode action reclassify.*type 0[xX]ED3E.*use prio 4294967295.*index 99",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -375,7 +375,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode use prio 4294967298 pipe index 99",
+         "expExitCode": "255",
+         "verifyCmd": "$TC actions get action ife index 99",
+-        "matchPattern": "action order [0-9]*: ife encode action pipe.*type 0xED3E.*use prio 4294967298.*index 99",
++        "matchPattern": "action order [0-9]*: ife encode action pipe.*type 0[xX]ED3E.*use prio 4294967298.*index 99",
+         "matchCount": "0",
+         "teardown": []
+     },
+@@ -397,7 +397,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode allow tcindex pass index 1",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 1",
+-        "matchPattern": "action order [0-9]*: ife encode action pass.*type 0xED3E.*allow tcindex.*index 1",
++        "matchPattern": "action order [0-9]*: ife encode action pass.*type 0[xX]ED3E.*allow tcindex.*index 1",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -421,7 +421,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode use tcindex 111 pipe index 1",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 1",
+-        "matchPattern": "action order [0-9]*: ife encode action pipe.*type 0xED3E.*use tcindex 111.*index 1",
++        "matchPattern": "action order [0-9]*: ife encode action pipe.*type 0[xX]ED3E.*use tcindex 111.*index 1",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -445,7 +445,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode use tcindex 1 continue index 1",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 1",
+-        "matchPattern": "action order [0-9]*: ife encode action continue.*type 0xED3E.*use tcindex 1.*index 1",
++        "matchPattern": "action order [0-9]*: ife encode action continue.*type 0[xX]ED3E.*use tcindex 1.*index 1",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -469,7 +469,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode use tcindex 1 continue index 1",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 1",
+-        "matchPattern": "action order [0-9]*: ife encode action continue.*type 0xED3E.*use tcindex 1.*index 1",
++        "matchPattern": "action order [0-9]*: ife encode action continue.*type 0[xX]ED3E.*use tcindex 1.*index 1",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -493,7 +493,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode allow tcindex drop index 77",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 77",
+-        "matchPattern": "action order [0-9]*: ife encode action drop.*type 0xED3E.*allow tcindex.*index 77",
++        "matchPattern": "action order [0-9]*: ife encode action drop.*type 0[xX]ED3E.*allow tcindex.*index 77",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -517,7 +517,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode allow tcindex reclassify index 77",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 77",
+-        "matchPattern": "action order [0-9]*: ife encode action reclassify.*type 0xED3E.*allow tcindex.*index 77",
++        "matchPattern": "action order [0-9]*: ife encode action reclassify.*type 0[xX]ED3E.*allow tcindex.*index 77",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -541,7 +541,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode allow tcindex jump 999 index 77",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 77",
+-        "matchPattern": "action order [0-9]*: ife encode action jump 999.*type 0xED3E.*allow tcindex.*index 77",
++        "matchPattern": "action order [0-9]*: ife encode action jump 999.*type 0[xX]ED3E.*allow tcindex.*index 77",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -565,7 +565,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode use tcindex 65535 pass index 1",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 1",
+-        "matchPattern": "action order [0-9]*: ife encode action pass.*type 0xED3E.*use tcindex 65535.*index 1",
++        "matchPattern": "action order [0-9]*: ife encode action pass.*type 0[xX]ED3E.*use tcindex 65535.*index 1",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -589,7 +589,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode use tcindex 65539 pipe index 1",
+         "expExitCode": "255",
+         "verifyCmd": "$TC actions get action ife index 1",
+-        "matchPattern": "action order [0-9]*: ife encode action pipe.*type 0xED3E.*use tcindex 65539.*index 1",
++        "matchPattern": "action order [0-9]*: ife encode action pipe.*type 0[xX]ED3E.*use tcindex 65539.*index 1",
+         "matchCount": "0",
+         "teardown": []
+     },
+@@ -611,7 +611,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode allow mark src 00:11:22:33:44:55 pipe index 1",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 1",
+-        "matchPattern": "action order [0-9]*: ife encode action pipe.*type 0xED3E.*allow mark src 00:11:22:33:44:55.*index 1",
++        "matchPattern": "action order [0-9]*: ife encode action pipe.*type 0[xX]ED3E.*allow mark src 00:11:22:33:44:55.*index 1",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -635,7 +635,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode use prio 9876 dst 00:11:22:33:44:55 reclassify index 1",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 1",
+-        "matchPattern": "action order [0-9]*: ife encode action reclassify.*type 0xED3E.*use prio 9876 dst 00:11:22:33:44:55.*index 1",
++        "matchPattern": "action order [0-9]*: ife encode action reclassify.*type 0[xX]ED3E.*use prio 9876 dst 00:11:22:33:44:55.*index 1",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -659,7 +659,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode allow tcindex src 00:aa:bb:cc:dd:ee dst 00:11:22:33:44:55 pass index 11",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 11",
+-        "matchPattern": "action order [0-9]*: ife encode action pass.*type 0xED3E.*allow tcindex dst 00:11:22:33:44:55 src 00:aa:bb:cc:dd:ee .*index 11",
++        "matchPattern": "action order [0-9]*: ife encode action pass.*type 0[xX]ED3E.*allow tcindex dst 00:11:22:33:44:55 src 00:aa:bb:cc:dd:ee .*index 11",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -683,7 +683,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode use mark 7 type 0xfefe pass index 1",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 1",
+-        "matchPattern": "action order [0-9]*: ife encode action pass.*type 0xFEFE.*use mark 7.*index 1",
++        "matchPattern": "action order [0-9]*: ife encode action pass.*type 0[xX]FEFE.*use mark 7.*index 1",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -707,7 +707,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode use prio 444 type 0xabba pipe index 21",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 21",
+-        "matchPattern": "action order [0-9]*: ife encode action pipe.*type 0xABBA.*use prio 444.*index 21",
++        "matchPattern": "action order [0-9]*: ife encode action pipe.*type 0[xX]ABBA.*use prio 444.*index 21",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -731,7 +731,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode use tcindex 5000 type 0xabcd reclassify index 21",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 21",
+-        "matchPattern": "action order [0-9]*: ife encode action reclassify.*type 0xABCD.*use tcindex 5000.*index 21",
++        "matchPattern": "action order [0-9]*: ife encode action reclassify.*type 0[xX]ABCD.*use tcindex 5000.*index 21",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -739,7 +739,7 @@
+     },
+     {
+         "id": "fac3",
+-        "name": "Create valid ife encode action with index at 32-bit maximnum",
++        "name": "Create valid ife encode action with index at 32-bit maximum",
+         "category": [
+             "actions",
+             "ife"
+@@ -755,7 +755,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode allow mark pass index 4294967295",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 4294967295",
+-        "matchPattern": "action order [0-9]*: ife encode action pass.*type 0xED3E.*allow mark.*index 4294967295",
++        "matchPattern": "action order [0-9]*: ife encode action pass.*type 0[xX]ED3E.*allow mark.*index 4294967295",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -779,7 +779,7 @@
+         "cmdUnderTest": "$TC actions add action ife decode pass index 1",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 1",
+-        "matchPattern": "action order [0-9]*: ife decode action pass.*type 0x0.*allow mark allow tcindex allow prio.*index 1",
++        "matchPattern": "action order [0-9]*: ife decode action pass.*type 0(x0)?.*allow mark allow tcindex allow prio.*index 1",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -803,7 +803,7 @@
+         "cmdUnderTest": "$TC actions add action ife decode pipe index 1",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 1",
+-        "matchPattern": "action order [0-9]*: ife decode action pipe.*type 0x0.*allow mark allow tcindex allow prio.*index 1",
++        "matchPattern": "action order [0-9]*: ife decode action pipe.*type 0(x0)?.*allow mark allow tcindex allow prio.*index 1",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -827,7 +827,7 @@
+         "cmdUnderTest": "$TC actions add action ife decode continue index 1",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 1",
+-        "matchPattern": "action order [0-9]*: ife decode action continue.*type 0x0.*allow mark allow tcindex allow prio.*index 1",
++        "matchPattern": "action order [0-9]*: ife decode action continue.*type 0(x0)?.*allow mark allow tcindex allow prio.*index 1",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -851,7 +851,7 @@
+         "cmdUnderTest": "$TC actions add action ife decode drop index 1",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 1",
+-        "matchPattern": "action order [0-9]*: ife decode action drop.*type 0x0.*allow mark allow tcindex allow prio.*index 1",
++        "matchPattern": "action order [0-9]*: ife decode action drop.*type 0(x0)?.*allow mark allow tcindex allow prio.*index 1",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -875,7 +875,7 @@
+         "cmdUnderTest": "$TC actions add action ife decode reclassify index 1",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 1",
+-        "matchPattern": "action order [0-9]*: ife decode action reclassify.*type 0x0.*allow mark allow tcindex allow prio.*index 1",
++        "matchPattern": "action order [0-9]*: ife decode action reclassify.*type 0(x0)?.*allow mark allow tcindex allow prio.*index 1",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -899,7 +899,7 @@
+         "cmdUnderTest": "$TC actions add action ife decode jump 10 index 1",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 1",
+-        "matchPattern": "action order [0-9]*: ife decode action jump 10.*type 0x0.*allow mark allow tcindex allow prio.*index 1",
++        "matchPattern": "action order [0-9]*: ife decode action jump 10.*type 0(x0)?.*allow mark allow tcindex allow prio.*index 1",
+         "matchCount": "1",
+         "teardown": [
+             "$TC actions flush action ife"
+@@ -923,7 +923,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode allow mark pass index 4294967295999",
+         "expExitCode": "255",
+         "verifyCmd": "$TC actions get action ife index 4294967295999",
+-        "matchPattern": "action order [0-9]*: ife encode action pass.*type 0xED3E.*allow mark.*index 4294967295999",
++        "matchPattern": "action order [0-9]*: ife encode action pass.*type 0[xX]ED3E.*allow mark.*index 4294967295999",
+         "matchCount": "0",
+         "teardown": []
+     },
+@@ -945,7 +945,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode allow mark kuka index 4",
+         "expExitCode": "255",
+         "verifyCmd": "$TC actions get action ife index 4",
+-        "matchPattern": "action order [0-9]*: ife encode action kuka.*type 0xED3E.*allow mark.*index 4",
++        "matchPattern": "action order [0-9]*: ife encode action kuka.*type 0[xX]ED3E.*allow mark.*index 4",
+         "matchCount": "0",
+         "teardown": []
+     },
+@@ -967,7 +967,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode allow prio pipe index 4 cookie aabbccddeeff112233445566778800a1",
+         "expExitCode": "0",
+         "verifyCmd": "$TC actions get action ife index 4",
+-        "matchPattern": "action order [0-9]*: ife encode action pipe.*type 0xED3E.*allow prio.*index 4.*cookie aabbccddeeff112233445566778800a1",
++        "matchPattern": "action order [0-9]*: ife encode action pipe.*type 0[xX]ED3E.*allow prio.*index 4.*cookie aabbccddeeff112233445566778800a1",
+         "matchCount": "1",
+         "teardown": [
+            "$TC actions flush action ife"
+@@ -991,7 +991,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode allow foo pipe index 4",
+         "expExitCode": "255",
+         "verifyCmd": "$TC actions get action ife index 4",
+-        "matchPattern": "action order [0-9]*: ife encode action pipe.*type 0xED3E.*allow foo.*index 4",
++        "matchPattern": "action order [0-9]*: ife encode action pipe.*type 0[xX]ED3E.*allow foo.*index 4",
+         "matchCount": "0",
+         "teardown": []
+     },
+@@ -1013,7 +1013,7 @@
+         "cmdUnderTest": "$TC actions add action ife encode allow prio type 70000 pipe index 4",
+         "expExitCode": "255",
+         "verifyCmd": "$TC actions get action ife index 4",
+-        "matchPattern": "action order [0-9]*: ife encode action pipe.*type 0x11170.*allow prio.*index 4",
++        "matchPattern": "action order [0-9]*: ife encode action pipe.*type 0[xX]11170.*allow prio.*index 4",
+         "matchCount": "0",
+         "teardown": []
+     },
 -- 
 2.19.1
 
