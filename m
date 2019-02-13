@@ -2,115 +2,145 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F5BFC10F00
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 23:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1551C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 23:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFE5921924
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 23:36:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="InnTlCQ8"
+	by mail.kernel.org (Postfix) with ESMTP id 7E8C82146E
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 23:37:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550101054;
+	bh=mmw0Cz14/AR/9LF/3AzPMBAHhphh3tGJBq/njSqj7bE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
+	b=JoqMHDqV4aRreet3azVwGHfsRYYB083pZrixeB8g8h1hO2vf3tfURQUOkFamgeAPu
+	 koh00hAOU6h+EQTNju+T1WUYcki0zz9L0gCZzEl28EZtbRAXtlbSM9M3YW3xagic+V
+	 AvL3dDnwfMlriT3p6CC43GdJ0MbSrQ3VHKDty2nE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389788AbfBMXgo (ORCPT
+        id S2390638AbfBMXhd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 18:36:44 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51805 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728875AbfBMXgn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 18:36:43 -0500
-Received: by mail-wm1-f67.google.com with SMTP id b11so4436955wmj.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 15:36:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=35CHtKJBdFYeYnwdQ+jDpVSeyCId7XDKRnuVATTH7qE=;
-        b=InnTlCQ8yZGgzzy4vTB16CA5XllT324ARR3hC5Eh4cZKcAxk8+bUWbI3HEGY949UU8
-         WQgmSsfwKn0nsbWQHVRSvbK22N4UynAciFjj/AqP2Lw6hFokZmtlca4qcrKCZK7mY7PT
-         Q75vRW3RHB+U7jqKUwhmVYXzlHJWwMkgy393G+CWL1ByO+LaaYih2pikAFPeqXJodeQv
-         gS/Gdw4F1AbbYbMypx+M2bmkflYli3zbT1trPlUQP7iku42A8wzxF2u9bTbsWvmuTQFy
-         u/ncJeTYoaWVMHBit3cyq3LQfWdyGt/W0GQ+UfRAWSBTKqis6VnUIOp7504Lqy1SN2hf
-         3Ktg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=35CHtKJBdFYeYnwdQ+jDpVSeyCId7XDKRnuVATTH7qE=;
-        b=OWtUN7xBSjlHGafBT8pqxc7CB5B8LCHSNO81SnYTzP1jivjvWAeEM2JTbqbFBxG3m8
-         eI8BBVlaBFLw2gbdAzm2aEW6P/OLmM8+R8hFfrfhd3B3KuesMUX11tnrM5pJjcfuMnHW
-         l3ewXijZXK/BYzsPG5furdhz+2kNgjwt7h6ERZwq2a61Anlh6cE3pEJmxuZIHs+c5BPO
-         dOUGFhapjn8yNwK3/zFu82VXX2VpXQ7zE9lc/3EIk48iZBgTktCogO6M3YgZlVpgFwAC
-         hkmmWcfNvMa0inhTlNV96+XLeoeX2aq4Yq04J8zE8U6N2i9cImbLqX2O4eOUTzA3XyG1
-         C7Tg==
-X-Gm-Message-State: AHQUAubtPnDeYtU5JUHtE+q6V662bJO/nqmyEcbC8IFsnUwWRaCE/NEY
-        zRXzHJjYAOdhFGHuGBmJJZD2QeQeYi6bYA6u4+Q=
-X-Google-Smtp-Source: AHgI3IY/VTF+lc7eJHG8woM0S5LFIESsNRCDJ3XtAbYMj2wONvmcNsDiP1HyzEpCNa+Zu3QoMN4OVi0jn0FgOD+fjxc=
-X-Received: by 2002:a1c:a8d7:: with SMTP id r206mr392919wme.115.1550101001331;
- Wed, 13 Feb 2019 15:36:41 -0800 (PST)
+        Wed, 13 Feb 2019 18:37:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48330 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728875AbfBMXhc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 18:37:32 -0500
+Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B27912146E;
+        Wed, 13 Feb 2019 23:37:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550101051;
+        bh=mmw0Cz14/AR/9LF/3AzPMBAHhphh3tGJBq/njSqj7bE=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=cSysp/0Gwp6xQWLvzckob42fhXlEa6YgFSHzyZzYnVeU3oGs7NmS3P1G90Rl4poNk
+         U+XNLQqacGfT/iD/OXDBzHGRJw9zvLLRtDHjDaH17Lt8Fy4Kdo0mmIogq37kXTX/LU
+         Wz3rRVmUw8SVqEHJBPnVuBHT/AGrV0NB4Yh+tHDY=
+Date:   Thu, 14 Feb 2019 00:37:28 +0100 (CET)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Jim Broadus <jbroadus@gmail.com>
+cc:     kai.heng.feng@canonical.com, benjamin.tissoires@gmail.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Fix resume for ELAN2097 touchscreen.
+In-Reply-To: <20190211070040.4569-1-jbroadus@gmail.com>
+Message-ID: <nycvar.YFH.7.76.1902140036400.11598@cbobk.fhfr.pm>
+References: <20190211070040.4569-1-jbroadus@gmail.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-References: <CAN1fySViLgrLAHHfTHMef-Bkh73kUHKP-ava6TbgALeSE4LfFw@mail.gmail.com>
-In-Reply-To: <CAN1fySViLgrLAHHfTHMef-Bkh73kUHKP-ava6TbgALeSE4LfFw@mail.gmail.com>
-From:   Richard Weinberger <richard.weinberger@gmail.com>
-Date:   Thu, 14 Feb 2019 00:36:29 +0100
-Message-ID: <CAFLxGvwpuxKF4UWdsULwQWo7kgVLMNHC=77dN+w-A0a6avrAXA@mail.gmail.com>
-Subject: Re: Userspace regression in LTS and stable kernels
-To:     Samuel Dionne-Riel <samuel@dionne-riel.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        graham@grahamc.com, Oleg Nesterov <oleg@redhat.com>,
-        Kees Cook <keescook@chromium.org>, mhocko@suse.com,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[CC'in relevant folks]
+On Sun, 10 Feb 2019, Jim Broadus wrote:
 
-On Thu, Feb 14, 2019 at 12:19 AM Samuel Dionne-Riel
-<samuel@dionne-riel.com> wrote:
->
-> Hi,
->
-> I am posting as a representative of the NixOS Linux distribution,
-> about a userspace regression on 5.0-rc* which recently was backported
-> to the 4.14.99, 4.19.21 and 4.20.8 current LTS and stable versions.
-> The issue has been reported to the bug tracker, bug 202497, but seems
-> to have gone unnoticed by the maintainers.
->
-> The issue seems to break userspace for long-standing patterns in the
-> NixOS distribution, with regards to use of the shebangs.
->
-> Here is an example shebang causing an issue:
->
-> #! /nix/store/mbwav8kz8b3y471wjsybgzw84mrh4js9-perl-5.28.1/bin/perl
-> -I/nix/store/x6yyav38jgr924nkna62q3pkp0dgmzlx-perl5.28.1-File-Slurp-9999.25/lib/perl5/site_perl
-> -I/nix/store/ha8v67sl8dac92r9z07vzr4gv1y9nwqz-perl5.28.1-Net-DBus-1.1.0/lib/perl5/site_perl
-> -I/nix/store/dcrkvnjmwh69ljsvpbdjjdnqgwx90a9d-perl5.28.1-XML-Parser-2.44/lib/perl5/site_perl
-> -I/nix/store/rmji88k2zz7h4zg97385bygcydrf2q8h-perl5.28.1-XML-Twig-3.52/lib/perl5/site_perl
+> Commit 52cf93e63ee6 ("HID: i2c-hid: Don't reset device upon system resume")
+> fixes the resume behavior of several devices. However, this breaks the
+> resume on the ELAN2097, used on Dell Inspiron laptops, with the same flood
+> of messages:
+> 
+> [27009.817110] i2c_hid i2c-ELAN2097:00: i2c_hid_get_input: incomplete report (67/65535)
+> [27009.818867] i2c_hid i2c-ELAN2097:00: i2c_hid_get_input: incomplete report (67/65535)
+> [27009.820623] i2c_hid i2c-ELAN2097:00: i2c_hid_get_input: incomplete report (67/65535)
+> 
+> This change adds a new I2C_HID_QUIRK_RESET_AFTER_RESUME and replaces the
+> original reset behavior for this device.
+> 
+> Signed-off-by: Jim Broadus <jbroadus@gmail.com>
 
-This this ever work correctly? It is longer than BINPRM_BUF_SIZE.
+This should be fixed in hid.git#for-5.1/i2c-hid already by commit 
+1475af255e18f. Could you please confirm that?
 
-> (The shebang was artificially wrapped spaces replaced by newlines)
->
-> Another contributor tracked the regression it to commit
-> 8099b047ecc431518b9bb6bdbba3549bbecdc343 in the 5.0-rc* tree.
->
-> I bring no particular fix to the issue, but I believe it should at
-> least be fast-tracked to a revert for the stable and LTS branches, and
-> since 5.0 might drop soon, a solution worked on, or possibly a revert
-> until one is figured out.
+> ---
+>  drivers/hid/hid-ids.h              |  1 +
+>  drivers/hid/i2c-hid/i2c-hid-core.c | 20 ++++++++++++++------
+>  2 files changed, 15 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+> index 24f846d67478..38cc7033712a 100644
+> --- a/drivers/hid/hid-ids.h
+> +++ b/drivers/hid/hid-ids.h
+> @@ -387,6 +387,7 @@
+>  #define USB_DEVICE_ID_TOSHIBA_CLICK_L9W	0x0401
+>  #define USB_DEVICE_ID_HP_X2		0x074d
+>  #define USB_DEVICE_ID_HP_X2_10_COVER	0x0755
+> +#define USB_DEVICE_ID_ELAN2097		0x2504
+>  
+>  #define USB_VENDOR_ID_ELECOM		0x056e
+>  #define USB_DEVICE_ID_ELECOM_BM084	0x0061
+> diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
+> index c5edfa966343..fdbad29b4406 100644
+> --- a/drivers/hid/i2c-hid/i2c-hid-core.c
+> +++ b/drivers/hid/i2c-hid/i2c-hid-core.c
+> @@ -50,6 +50,7 @@
+>  #define I2C_HID_QUIRK_NO_IRQ_AFTER_RESET	BIT(1)
+>  #define I2C_HID_QUIRK_NO_RUNTIME_PM		BIT(2)
+>  #define I2C_HID_QUIRK_DELAY_AFTER_SLEEP		BIT(3)
+> +#define I2C_HID_QUIRK_RESET_AFTER_RESUME	BIT(4)
+>  
+>  /* flags */
+>  #define I2C_HID_STARTED		0
+> @@ -181,6 +182,8 @@ static const struct i2c_hid_quirks {
+>  		I2C_HID_QUIRK_NO_RUNTIME_PM },
+>  	{ I2C_VENDOR_ID_GOODIX, I2C_DEVICE_ID_GOODIX_01F0,
+>  		I2C_HID_QUIRK_NO_RUNTIME_PM },
+> +	{ USB_VENDOR_ID_ELAN, USB_DEVICE_ID_ELAN2097,
+> +		 I2C_HID_QUIRK_RESET_AFTER_RESUME },
+>  	{ 0, 0 }
+>  };
+>  
+> @@ -1279,12 +1282,17 @@ static int i2c_hid_resume(struct device *dev)
+>  
+>  	enable_irq(client->irq);
+>  
+> -	/* Instead of resetting device, simply powers the device on. This
+> -	 * solves "incomplete reports" on Raydium devices 2386:3118 and
+> -	 * 2386:4B33 and fixes various SIS touchscreens no longer sending
+> -	 * data after a suspend/resume.
+> -	 */
+> -	ret = i2c_hid_set_power(client, I2C_HID_PWR_ON);
+> +	if (ihid->quirks & I2C_HID_QUIRK_RESET_AFTER_RESUME) {
+> +		ret = i2c_hid_hwreset(client);
+> +	} else {
+> +		/* Instead of resetting device, simply powers the device on.
+> +		 * This solves "incomplete reports" on Raydium devices 2386:3118
+> +		 * and 2386:4B33 and fixes various SIS touchscreens no longer
+> +		 * sending data after a suspend/resume.
+> +		 */
+> +		ret = i2c_hid_set_power(client, I2C_HID_PWR_ON);
+> +	}
+> +
+>  	if (ret)
+>  		return ret;
+>  
+> -- 
+> 2.20.1
+> 
 
-Your shebang line exceeds BINPRM_BUF_SIZE.
-Before the said commit the kernel silently truncated the shebang line
-(and corrupted it),
-now it tells the user that the line is too long.
+-- 
+Jiri Kosina
+SUSE Labs
 
-Thanks,
-//richard
