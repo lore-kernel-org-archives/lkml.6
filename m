@@ -7,50 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1E0BC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:41:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E7DCC282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:41:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B87FA222C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:41:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C31F222C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:41:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025668;
-	bh=vU9FBR8zMZmPYzMM+UQCbhw06l0bFoddS/mbVyVQNtM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WHATz06VtQidMkr5m+uNrwvcfS+oz8cUgMB+8IRcsuB0N3RY8yNnzfo3NwoJ5Kt6Y
-	 NU+Vr9HuAvpL3t5Ck/Dw2nydeD9yVaDdARbcPaH6sj7XQnn0uov5CklUU+Q7mCUnjH
-	 cE3vvruSCRUa6xfTJXbrfNcNaNxW9jnBQTY5MZas=
+	s=default; t=1550025683;
+	bh=fLvhAg0rze/XBm+48Ps7Ej0Rgw3LmpduiQXiXGuIjj0=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=mYiH8kjOLY4IoPaY5ES6Mcp2Nf4N6DIZd6eZ5dxgyIp7cmwJUOlOp8ooRiueP9+y1
+	 QjlAkqK8u/OZc/rt9XiaF8WuoGlqexclE8nLuaX5dhVDCpq/PaGgTp1yO2y6FcDA0o
+	 k3A0BNtDAEC61Gr4cMxYwQUmL2j5mTcYgi37szlY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389155AbfBMClH (ORCPT
+        id S2389257AbfBMClW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:41:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44688 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:41:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389113AbfBMCk4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:40:56 -0500
+        id S2389212AbfBMClP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:41:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5B3B222C2;
-        Wed, 13 Feb 2019 02:40:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F0FC222C2;
+        Wed, 13 Feb 2019 02:41:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025655;
-        bh=vU9FBR8zMZmPYzMM+UQCbhw06l0bFoddS/mbVyVQNtM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D1B0sEluD5BmDgpvoCyNKl2sttJFXzwg1PpDPE9If90qw5Ae8QbFn/7ZXat6/LcjK
-         phPco5oEr3AU4tM3/ZDsyEKtGDy4oM3agDifb0z1+4u289bkGzEMd2FpV9JzL/97PL
-         4AiXJKLCq/AJbMHek8PcmFED41R15uD0VE/mUSEs=
+        s=default; t=1550025674;
+        bh=fLvhAg0rze/XBm+48Ps7Ej0Rgw3LmpduiQXiXGuIjj0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=OqtMYMLtGysuHUnBrn5OKr76Jlf1WsVY6WzRefn9tRWpNlCwL+aPNpOtITIoSwV9q
+         IKPNLYYUu1ArmyCUglkm+b/K3WaSfVDohTu8PbtvYUkdAk1cri63BpT3M80UqVD+c8
+         1IdCEDsB8Qn5HnlCN+8PC04B2jAzO6dHQBhBLZN0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alban Bedel <albeu@free.fr>, Paul Burton <paul.burton@mips.com>,
-        linux-mips@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
+Cc:     Vignesh R <vigneshr@ti.com>, Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 11/21] MIPS: ath79: Enable OF serial ports in the default config
-Date:   Tue, 12 Feb 2019 21:40:30 -0500
-Message-Id: <20190213024040.21740-11-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 01/16] mfd: ti_am335x_tscadc: Use PLATFORM_DEVID_AUTO while registering mfd cells
+Date:   Tue, 12 Feb 2019 21:40:57 -0500
+Message-Id: <20190213024112.22038-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190213024040.21740-1-sashal@kernel.org>
-References: <20190213024040.21740-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -59,37 +55,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alban Bedel <albeu@free.fr>
+From: Vignesh R <vigneshr@ti.com>
 
-[ Upstream commit 565dc8a4f55e491935bfb04866068d21784ea9a4 ]
+[ Upstream commit b40ee006fe6a8a25093434e5d394128c356a48f3 ]
 
-CONFIG_SERIAL_OF_PLATFORM is needed to get a working console on the OF
-boards, enable it in the default config to get a working setup out of
-the box.
+Use PLATFORM_DEVID_AUTO to number mfd cells while registering, so that
+different instances are uniquely identified. This is required in order
+to support registering of multiple instances of same ti_am335x_tscadc IP.
 
-Signed-off-by: Alban Bedel <albeu@free.fr>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: linux-mips@vger.kernel.org
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/configs/ath79_defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/mfd/ti_am335x_tscadc.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/mips/configs/ath79_defconfig b/arch/mips/configs/ath79_defconfig
-index 134879c1310a..4ed369c0ec6a 100644
---- a/arch/mips/configs/ath79_defconfig
-+++ b/arch/mips/configs/ath79_defconfig
-@@ -74,6 +74,7 @@ CONFIG_SERIAL_8250_CONSOLE=y
- # CONFIG_SERIAL_8250_PCI is not set
- CONFIG_SERIAL_8250_NR_UARTS=1
- CONFIG_SERIAL_8250_RUNTIME_UARTS=1
-+CONFIG_SERIAL_OF_PLATFORM=y
- CONFIG_SERIAL_AR933X=y
- CONFIG_SERIAL_AR933X_CONSOLE=y
- # CONFIG_HW_RANDOM is not set
+diff --git a/drivers/mfd/ti_am335x_tscadc.c b/drivers/mfd/ti_am335x_tscadc.c
+index 4a0f076c91ba..faf8ce5be576 100644
+--- a/drivers/mfd/ti_am335x_tscadc.c
++++ b/drivers/mfd/ti_am335x_tscadc.c
+@@ -279,8 +279,9 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
+ 		cell->pdata_size = sizeof(tscadc);
+ 	}
+ 
+-	err = mfd_add_devices(&pdev->dev, pdev->id, tscadc->cells,
+-			tscadc->used_cells, NULL, 0, NULL);
++	err = mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO,
++			      tscadc->cells, tscadc->used_cells, NULL,
++			      0, NULL);
+ 	if (err < 0)
+ 		goto err_disable_clk;
+ 
 -- 
 2.19.1
 
