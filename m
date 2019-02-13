@@ -2,167 +2,84 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ACA7C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:30:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B620C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:32:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F06D222BE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:30:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 363F2222C7
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 07:32:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMI05su8"
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Yj9LduyX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389694AbfBMHab (ORCPT
+        id S2387898AbfBMHcl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 02:30:31 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:34106 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732822AbfBMHab (ORCPT
+        Wed, 13 Feb 2019 02:32:41 -0500
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:42017 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729911AbfBMHcl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 02:30:31 -0500
-Received: by mail-it1-f196.google.com with SMTP id j17so885701ita.1;
-        Tue, 12 Feb 2019 23:30:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/PGOtFQP2glJh8X2lYD7XOqlwPMjpkV+z0GGZhUQueM=;
-        b=OMI05su8Y6mGlUPLyMHePKvd66LqGIi5rhwHBSNFOUS8y2saTp0eCjCxgwHZc/RfkE
-         sx6tuYIVwUbd0ak8yiwaJ91VI5MVVxGKG8tem7pL1gn8WGhY4K4wa4bVcKQGYjpQaBpM
-         FfI7289nZ0HuoWunkOJjBbdvSXKg89ykakqgJq9BJPcWvh1o0H3Rmi3UiNlKUVYPZd59
-         EQddw2uCWckrqoVHrxWdFnXAXbwpCsreWInU2zALfpoGiP4MJlejob9CoZCjvdTnXODi
-         tzZyqKSJE15gZ3YL6CbeKDaa/Lf2n4JI6qazC1Hm1YuCLBPIm2GBStqw8WuP4QHZTdjv
-         sEyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/PGOtFQP2glJh8X2lYD7XOqlwPMjpkV+z0GGZhUQueM=;
-        b=Nsd+tdqIV+uTtVLwjc2fuuXuE00RJYpuB3AsC/gWFFiEiyRClMazufQ7fPaaUph8wt
-         5a1llvelpeVc1V6HKXSjFnOPOS61sPDXXFEYc/3AmrwSHoBPQT/WBEJpGQFrD++33pom
-         zey5SETDbxZcREAGT2IK1/ZWXCpPkmMtAJDAm0EP5eypqZ7KQduFnANmjRR2imtrOx63
-         hjkscXQSJ6+w68oKIIQZD4Iyg+2vlylj3SDJIjYDvpVG61XcDZulZHalrhWkIdgcKmZl
-         rraY6PAcJgOTP41pA+9V6ir2A2JB0u3OVpfpORIhByn82+84xnXDc4OHVR6w0I+lWKsm
-         PZDw==
-X-Gm-Message-State: AHQUAuYo8pze6s/RdwDXkiFKRk3FjOv7NHZwmuZ8osqnrkBtu/2ipSs8
-        MSNpIbvkBtL3i/65RSc9LdCGmTuSsZWXH2NKY8E=
-X-Google-Smtp-Source: AHgI3IZ2qRfONjHmOZBrNNAvyuxuAjCPsqzSM4h6iwmMQdn4um0DSblnjn0C5Ezt/9WkClQYhKuWBL2gtsVGBPEmZFk=
-X-Received: by 2002:a6b:9106:: with SMTP id t6mr4847187iod.298.1550043029362;
- Tue, 12 Feb 2019 23:30:29 -0800 (PST)
+        Wed, 13 Feb 2019 02:32:41 -0500
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id B3AEF21B55;
+        Wed, 13 Feb 2019 02:32:40 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Wed, 13 Feb 2019 02:32:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm2; bh=+/C6EaNfq8gXsgMCYQEEr71KXJaPBdUxGSd0IfnMF
+        lg=; b=Yj9LduyXHslYA/Z15hx4F+BD9rpMYQe0GyOUczRGa0oq4CiMjFVoxHNeR
+        iRBfQ+PkL085aBsS5OQA6H7iWl+Hf3WNeV3HYtIyefbIsrFhF1cjCoNIwLTOOf91
+        V+N7wTMT2jJpy3vMqYEJM4FOX0t5u2reM4tUSqpizWoTLLLhZxcYIT5gY7ESWnp7
+        hYgUFaqSzokVqZMHSrD6YfTLukZl53sl5aOwHaXS8qSj2xNKYz2oAq9EFRttLRHO
+        MNpo5drdyFeDvRm64RnR7GxvpmzT1KVtQuwKIDxgq7im7oYvW41uniiH8pdnrSAx
+        aWp65UCyad2yJC9zrLOK5ejloPScg==
+X-ME-Sender: <xms:F8hjXJE1YfvwsBLDsCIcm8h3CsRZBFToz8djiyugQUWt0ov4QBjTYg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledruddtvddgudduudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecu
+    fedttdenucenucfjughrpefuvfhfhffkffgfgggjtgfgsehtjeertddtfeejnecuhfhroh
+    hmpefrvghkkhgrucfgnhgsvghrghcuoehpvghnsggvrhhgsehikhhirdhfiheqnecukfhp
+    peekledrvdejrdeffedrudejfeenucfrrghrrghmpehmrghilhhfrhhomhepphgvnhgsvg
+    hrghesihhkihdrfhhinecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:F8hjXDCY4J0KLplMsgbReh1ul9H7rh2QsBr8v-8QvME3L9v3em1g7A>
+    <xmx:F8hjXLZUilAPAMEFyP3qvI8cmDOyzpSWosbtbJnKWrDDOQuG26PvWg>
+    <xmx:F8hjXDPSiYl7tKrgZgKflPCeUVhDaQC-5Mh0bh9PSLKBlb42PEcL5w>
+    <xmx:GMhjXKWLRqKKSKgsQEXUAQaZd0uaXfHLh3j2TrwoNQfxWHB-X1n7mw>
+Received: from Pekka-MacBook.local (89-27-33-173.bb.dnainternet.fi [89.27.33.173])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 91A47E412E;
+        Wed, 13 Feb 2019 02:32:37 -0500 (EST)
+Subject: Re: [PATCH] slub: untag object before slab end
+To:     Qian Cai <cai@lca.pw>, akpm@linux-foundation.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com
+Cc:     andreyknvl@google.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20190213020550.82453-1-cai@lca.pw>
+From:   Pekka Enberg <penberg@iki.fi>
+Message-ID: <eeac3e54-c31a-a583-b185-b2d36d7debed@iki.fi>
+Date:   Wed, 13 Feb 2019 09:32:32 +0200
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:60.0)
+ Gecko/20100101 Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <20190118134244.22253-1-brgl@bgdev.pl> <20190118134244.22253-13-brgl@bgdev.pl>
- <20190119090318.GB187380@dtor-ws> <20190212203408.GA1863@dell>
-In-Reply-To: <20190212203408.GA1863@dell>
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date:   Tue, 12 Feb 2019 23:30:17 -0800
-Message-ID: <CAKdAkRQZ+ug7tpkE4x_8iTbUm9JnyF5wWrUnPRASi98t25LTbA@mail.gmail.com>
-Subject: Re: [PATCH 12/13] input: max77650: add onkey support
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190213020550.82453-1-cai@lca.pw>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lee,
 
-On Tue, Feb 12, 2019 at 12:34 PM Lee Jones <lee.jones@linaro.org> wrote:
->
-> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > >
-> > > Add support for the push- and slide-button events for max77650.
-> > >
-> > > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > > ---
-> > >  drivers/input/misc/Kconfig          |   9 ++
-> > >  drivers/input/misc/Makefile         |   1 +
-> > >  drivers/input/misc/max77650-onkey.c | 135 ++++++++++++++++++++++++++++
-> > >  3 files changed, 145 insertions(+)
-> > >  create mode 100644 drivers/input/misc/max77650-onkey.c
->
-> [...]
->
-> Moving things around a bit:
->
-> > > +static int max77650_onkey_probe(struct platform_device *pdev)
-> > > +{
->
-> > > +   irq_f = regmap_irq_get_virq(irq_data, MAX77650_INT_nEN_F);
-> > > +   if (irq_f <= 0)
-> > > +           return -EINVAL;
-> > > +
-> > > +   irq_r = regmap_irq_get_virq(irq_data, MAX77650_INT_nEN_R);
-> > > +   if (irq_r <= 0)
-> > > +           return -EINVAL;
-> >
-> > Ugh, it would be better if you handled IRQ mapping in the MFD piece and
-> > passed it as resources of platform device. Then you'd simply call
-> > platform_get_irq() here and did not have to reach into parent device for
-> > "irq_dara".
->
-> These device IRQs were defined and registered with the Regmap *set*
-> (actually init()) APIs and thus should be pulled out using the
-> appropriate reverse Regmap *get* APIs here in the device.
->
-> Registering them with Regmap *and* pulling them back out again in the
-> same (MFD in this case) driver, only to register them as platform data
-> is certainly not how I see the API being designed/used.
->
-> > > +   struct regmap_irq_chip_data *irq_data;
-> > > +   struct device *dev, *parent;
->
-> > > +   dev = &pdev->dev;
-> > > +   parent = dev->parent;
-> > > +   i2c = to_i2c_client(parent);
-> > > +   irq_data = i2c_get_clientdata(i2c);
-> > > +
-> > > +   map = dev_get_regmap(parent, NULL);
-> > > +   if (!map)
-> > > +           return -ENODEV;
->
-> However, this hoop jumping is a bit crazy and for the most part
-> superfluous.  Instead, create a struct of attributes you wish to share
-> with the child devices (containing both regmap (which you should call
-> regmap and not map by the way) and irq_data) and pass it as either
-> platform data (preferred) or as device data.
->
-> If you choose the latter, you do not need to convert from 'device' to
-> 'i2c' to do the look-up.  Since this function (probe()) is provided
-> with a platform_device, you can just use platform_get_drvdata() to
-> achieve the same as above.
->
-> If you go the preferred (platform data) route, then you should use
-> dev_get_platdata() instead.
 
-By doing what you are suggesting (introducing platform data) you
-introducing strong dependency between MFD and input piece for no
-different reason. With the current implementation the parent can be
-reworked completely without involving onkey driver.
+On 13/02/2019 4.05, Qian Cai wrote:
+> get_freepointer() could return NULL if there is no more free objects in
+> the slab. However, it could return a tagged pointer (like
+> 0x2200000000000000) with KASAN_SW_TAGS which would escape the NULL
+> object checking in check_valid_pointer() and trigger errors below, so
+> untag the object before checking for a NULL object there.
 
-I find such clean separation desirable. We are trying to move away
-form platform data where it makes sense.
-
-Thanks.
-
--- 
-Dmitry
+Reviewed-by: Pekka Enberg <penberg@kernel.org>
