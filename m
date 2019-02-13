@@ -6,131 +6,89 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 112EAC282CA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC667C282C2
 	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFB9921902
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:17:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C48FE21902
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:17:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404374AbfBMQRC (ORCPT
+        id S2404402AbfBMQRJ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Feb 2019 11:17:09 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:56039 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2404221AbfBMQRC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 13 Feb 2019 11:17:02 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46778 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404228AbfBMQRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 11:17:01 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 266D3C04B94F;
-        Wed, 13 Feb 2019 16:17:01 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-125-158.rdu2.redhat.com [10.10.125.158])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2BDB7600C0;
-        Wed, 13 Feb 2019 16:16:59 +0000 (UTC)
-Subject: Re: [PATCH 03/10] locking/rwsem: Rename kernel/locking/rwsem.h
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-References: <1550017627-14504-1-git-send-email-longman@redhat.com>
- <1550017627-14504-4-git-send-email-longman@redhat.com>
- <20190213091918.GL32494@hirez.programming.kicks-ass.net>
- <31e47c29-fdb4-6fcb-64a9-36ce70226af5@redhat.com>
- <20190213155423.GZ32494@hirez.programming.kicks-ass.net>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <95c79d19-3c69-6f50-337f-2bbe9f517ee7@redhat.com>
-Date:   Wed, 13 Feb 2019 11:16:53 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20190213155423.GZ32494@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-120-j48i3whzPMyeTZXy-1nD-Q-1; Wed, 13 Feb 2019 16:16:58 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
+ AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
+ Server (TLS) id 15.0.1347.2; Wed, 13 Feb 2019 16:17:41 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Wed, 13 Feb 2019 16:17:41 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Marcelo Ricardo Leitner' <marcelo.leitner@gmail.com>,
+        David Miller <davem@davemloft.net>
+CC:     "julien@arista.com" <julien@arista.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-sctp@vger.kernel.org" <linux-sctp@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "nhorman@tuxdriver.com" <nhorman@tuxdriver.com>,
+        "vyasevich@gmail.com" <vyasevich@gmail.com>,
+        "lucien.xin@gmail.com" <lucien.xin@gmail.com>
+Subject: RE: [PATCH net] sctp: make sctp_setsockopt_events() less strict about
+ the option length
+Thread-Topic: [PATCH net] sctp: make sctp_setsockopt_events() less strict
+ about the option length
+Thread-Index: AQHUwX1vGkCaWibVqE6iK21f5qVrJKXd6y/A
+Date:   Wed, 13 Feb 2019 16:17:41 +0000
+Message-ID: <71e3d64ae3d44e499f3fb9f876398ee4@AcuMS.aculab.com>
+References: <20190206201430.18830-1-julien@arista.com>
+ <20190206203754.GC13621@localhost.localdomain>
+ <20190209.151217.175627323493244750.davem@davemloft.net>
+ <20190210124616.GG13621@localhost.localdomain>
+ <20190210201559.GE10665@localhost.localdomain>
+In-Reply-To: <20190210201559.GE10665@localhost.localdomain>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Wed, 13 Feb 2019 16:17:01 +0000 (UTC)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-MC-Unique: j48i3whzPMyeTZXy-1nD-Q-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/13/2019 10:54 AM, Peter Zijlstra wrote:
-> On Wed, Feb 13, 2019 at 10:47:11AM -0500, Waiman Long wrote:
->> On 02/13/2019 04:19 AM, Peter Zijlstra wrote:
->>> On Tue, Feb 12, 2019 at 07:27:00PM -0500, Waiman Long wrote:
->>>> The content of kernel/locking/rwsem.h is now specific to rwsem-xadd only.
->>>> Rename it to rwsem-xadd.h to indicate that it is specific to rwsem-xadd
->>>> and include it only when CONFIG_RWSEM_XCHGADD_ALGORITHM is set. As a result,
->>>> the CONFIG_RWSEM_XCHGADD_ALGORITHM conditional compilation directives can
->>>> be removed. There is no functional change.
->>> Since all of rwsem-xadd is now generic code; how about we delete the
->>> spinlock thing and keep everything rwsem ?
->>>
->>> We don't carry a special spinlock mutex implementation either. And
->>> arguably any arch that uses spinlock based atomics (afaict the only case
->>> where rwsem-spinlock makes any sense anyway) suck anyway.
->> I don't mind removing the rwsem-spinlock code and have just one
->> implementation for all as long as there is no objection from others. I
->> don't know the history of why we have 2 implementations of rwsem and so
->> I didn't plan to do that.
-> It is from before my time too; but I think rwsem-spinlock is generic and
-> didn't require arch asm helpers, where rwsem-xadd did, but we just fixed
-> that :-)
+From: Marcelo Ricardo Leitner
+> Sent: 10 February 2019 20:16
+...
+> We have issues on read path too. 52ccb8e90c0a ("[SCTP]: Update
+> SCTP_PEER_ADDR_PARAMS socket option to the latest api draft.")
+> extended struct sctp_paddrparams and its getsockopt goes with:
 
-OK, I will attempt to send a patch to remove rwsem-spinlock. That will
-touch a lot of arch specific files too.
+The API shouldn't change like this at all.
+Is this from the RFC or elsewhere??
 
-Cheers,
-Longman
+If the structure changes the socket option name and value
+should also change.
+
+IMHO large chunks of the sctp rfc are just horrid.
+In particular all the places where is states that API functions are
+implemented using setsockopt() - that should be an implementation detail.
+Also ISTR that some of the structures are defined to have holes in them...
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
