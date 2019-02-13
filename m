@@ -6,48 +6,49 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B77C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86A6CC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:41:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D63E7222D8
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:41:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B249222D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:41:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083289;
-	bh=77W+Lm5+rPQ3BLw28qrkuIBnmYSReekOyQMhSmyaMGw=;
+	s=default; t=1550083293;
+	bh=qsPlDopCh8ODNunck7c5aZ/nZc0gOG3DEq7RFSgAjjQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ElMC7xrK3T4ZmcYQ+AQfg5bcZBGQqy46madzEsFsRGEBNO76sKL75rZhSRQ3hro5/
-	 OqTrf2OAn0FW8t0u0NDEsvHY4jWACCA3KBURJiFjI/w/AgftDwTZQSI28uVrr/L45T
-	 kvbmRXHfvn2Ls799X7Q6XnJI/JMvOiXEkQ3lvaaY=
+	b=zrx8RYMXAfs90veefd2fqQlFb4bFI0OihaXoowf2y3mkGOjImqzrMJOC8SDkhyC/N
+	 EfJBKQN0fFx3wGR6ajA4qqJo/r2toLK4jyeujPr1KuFr2ZZwBTGDq06n72HyEv0DLI
+	 MkM5UsBVyxCl9aTfngd6frMsFVAr1GqrzTUN6rrQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393850AbfBMSl2 (ORCPT
+        id S2393862AbfBMSlb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:41:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39754 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:41:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393836AbfBMSlZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:41:25 -0500
+        id S2393851AbfBMSl3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:41:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAEBD222D5;
-        Wed, 13 Feb 2019 18:41:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 100A6222D6;
+        Wed, 13 Feb 2019 18:41:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083285;
-        bh=77W+Lm5+rPQ3BLw28qrkuIBnmYSReekOyQMhSmyaMGw=;
+        s=default; t=1550083288;
+        bh=qsPlDopCh8ODNunck7c5aZ/nZc0gOG3DEq7RFSgAjjQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OGSHnzlZ6xK64PaxWRw4hUyCE4WTRRD/G4dkVrLw4aajCysRnrFk72Ixmg9LwmOEQ
-         Qo6lo0JWwYu3/WLZUd/AjJVKoAPT5lamtsZtnKjcJg5BVrHqDcMtjHuydCLSFQVouz
-         HU+UjWJgib2QiBZfVpESFkIqzcNBLdnok9ecU8QM=
+        b=o+eIfR7DxIpVKD7YFLnN7VoC2Y4xxePmoF+F175w2GEqS8ue66l8th6yf17Toa6WF
+         ZG0SeXCtRhsmHVKZkKLYMnD7wxjPAZiayT9NrImt0EF4IIpQXmGEXmDGY3Y09hn89j
+         9+zGqWCT6Xntx4uY5Ke/FrZRkuKwr6iR5SCXx3Kc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, 3ntr0py1337@gmail.com,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Florian Westphal <fw@strlen.de>,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Subject: [PATCH 4.14 22/35] xfrm: refine validation of template and selector families
-Date:   Wed, 13 Feb 2019 19:38:17 +0100
-Message-Id: <20190213183707.140467082@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+c764de0fcfadca9a8595@syzkaller.appspotmail.com,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Sven Eckelmann <sven@narfation.org>,
+        Simon Wunderlich <sw@simonwunderlich.de>
+Subject: [PATCH 4.14 23/35] batman-adv: Avoid WARN on net_device without parent in netns
+Date:   Wed, 13 Feb 2019 19:38:18 +0100
+Message-Id: <20190213183707.176359632@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183706.176685027@linuxfoundation.org>
 References: <20190213183706.176685027@linuxfoundation.org>
@@ -66,64 +67,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Westphal <fw@strlen.de>
+From: Sven Eckelmann <sven@narfation.org>
 
-commit 35e6103861a3a970de6c84688c6e7a1f65b164ca upstream.
+commit 955d3411a17f590364238bd0d3329b61f20c1cd2 upstream.
 
-The check assumes that in transport mode, the first templates family
-must match the address family of the policy selector.
+It is not allowed to use WARN* helpers on potential incorrect input from
+the user or transient problems because systems configured as panic_on_warn
+will reboot due to such a problem.
 
-Syzkaller managed to build a template using MODE_ROUTEOPTIMIZATION,
-with ipv4-in-ipv6 chain, leading to following splat:
+A NULL return value of __dev_get_by_index can be caused by various problems
+which can either be related to the system configuration or problems
+(incorrectly returned network namespaces) in other (virtual) net_device
+drivers. batman-adv should not cause a (harmful) WARN in this situation and
+instead only report it via a simple message.
 
-BUG: KASAN: stack-out-of-bounds in xfrm_state_find+0x1db/0x1854
-Read of size 4 at addr ffff888063e57aa0 by task a.out/2050
- xfrm_state_find+0x1db/0x1854
- xfrm_tmpl_resolve+0x100/0x1d0
- xfrm_resolve_and_create_bundle+0x108/0x1000 [..]
-
-Problem is that addresses point into flowi4 struct, but xfrm_state_find
-treats them as being ipv6 because it uses templ->encap_family is used
-(AF_INET6 in case of reproducer) rather than family (AF_INET).
-
-This patch inverts the logic: Enforce 'template family must match
-selector' EXCEPT for tunnel and BEET mode.
-
-In BEET and Tunnel mode, xfrm_tmpl_resolve_one will have remote/local
-address pointers changed to point at the addresses found in the template,
-rather than the flowi ones, so no oob read will occur.
-
-Reported-by: 3ntr0py1337@gmail.com
-Reported-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Fixes: b7eddd0b3950 ("batman-adv: prevent using any virtual device created on batman-adv as hard-interface")
+Reported-by: syzbot+c764de0fcfadca9a8595@syzkaller.appspotmail.com
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+Signed-off-by: Simon Wunderlich <sw@simonwunderlich.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/xfrm/xfrm_user.c |   13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ net/batman-adv/hard-interface.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/net/xfrm/xfrm_user.c
-+++ b/net/xfrm/xfrm_user.c
-@@ -1445,10 +1445,15 @@ static int validate_tmpl(int nr, struct
- 		if (!ut[i].family)
- 			ut[i].family = family;
+--- a/net/batman-adv/hard-interface.c
++++ b/net/batman-adv/hard-interface.c
+@@ -19,7 +19,6 @@
+ #include "main.h"
  
--		if ((ut[i].mode == XFRM_MODE_TRANSPORT) &&
--		    (ut[i].family != prev_family))
--			return -EINVAL;
--
-+		switch (ut[i].mode) {
-+		case XFRM_MODE_TUNNEL:
-+		case XFRM_MODE_BEET:
-+			break;
-+		default:
-+			if (ut[i].family != prev_family)
-+				return -EINVAL;
-+			break;
-+		}
- 		if (ut[i].mode >= XFRM_MODE_MAX)
- 			return -EINVAL;
+ #include <linux/atomic.h>
+-#include <linux/bug.h>
+ #include <linux/byteorder/generic.h>
+ #include <linux/errno.h>
+ #include <linux/fs.h>
+@@ -172,8 +171,10 @@ static bool batadv_is_on_batman_iface(co
+ 	parent_dev = __dev_get_by_index((struct net *)parent_net,
+ 					dev_get_iflink(net_dev));
+ 	/* if we got a NULL parent_dev there is something broken.. */
+-	if (WARN(!parent_dev, "Cannot find parent device"))
++	if (!parent_dev) {
++		pr_err("Cannot find parent device\n");
+ 		return false;
++	}
  
+ 	if (batadv_mutual_parents(net_dev, net, parent_dev, parent_net))
+ 		return false;
 
 
