@@ -2,111 +2,127 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD687C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 952ACC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:34:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D1EC222C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:32:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="jcwHCmRO"
+	by mail.kernel.org (Postfix) with ESMTP id 5D95D222C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:34:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550050477;
+	bh=bpKIGqwfvriBDdJ2TvoYx9+jDU+Hk5PNkjSw9907Kxc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=nWoCbaflKhIRnh2axDjjBivjsxrNOvJn7NV4uT8lSVPnIxpePR2nBpzABv400q72/
+	 8m74OLE8XBJCjUW+oqQxBJIZzYOEL4jz+y6FJk/+qdUVd2DuS0ft+wUA1W7SWSpsNw
+	 TnLM/XWnsFjF4RhkowAJhhU6kpU48XHpDxbT0xyM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728677AbfBMJc2 (ORCPT
+        id S1730588AbfBMJef (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 04:32:28 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:33541 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726264AbfBMJc1 (ORCPT
+        Wed, 13 Feb 2019 04:34:35 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:40104 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726342AbfBMJef (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 04:32:27 -0500
-Received: by mail-wm1-f65.google.com with SMTP id h22so1416321wmb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 01:32:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=umkFh3sTag7wcOVtRbwb7GAQcTXPyffr2EM4OfV+U/Q=;
-        b=jcwHCmROVMEEkmR8QkE/h55GGYneRqjiGp5ldd0OUlncaNDXqYLOSSMw2CRkvxDaC8
-         8eF89m0174a3JU1Y+/qaWzfdPFq/n3t0k8W1DTrJLw747vIa32BkYaMs85BOdjm7VpLC
-         zEpwvhVFhtEw8tcRibk4XfW5ev4Z7FEDgz+WA+pZoHxbVH0b4/4c+bVvP8rofEm6QRje
-         FyowH+OqUTXup4wDUXjT+tezhCeJzkEYY1od8l6rZm8B6FmnzHiB9T9FQE7T+3JBV3kC
-         Q3+Uc2SJfCNYIl5cHRg4Z5qfCvEEmFotSLrsOqML+p0eRL5HYOhKRlqJfKnrkfdVmQta
-         n/oQ==
+        Wed, 13 Feb 2019 04:34:35 -0500
+Received: by mail-lj1-f196.google.com with SMTP id z25-v6so1389820ljk.7;
+        Wed, 13 Feb 2019 01:34:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=umkFh3sTag7wcOVtRbwb7GAQcTXPyffr2EM4OfV+U/Q=;
-        b=NXCiCB1GPeRbeiJoLDlDReywdGshxPyNTEOFSls28vU+ZXGjtMX20mt9L5yQGrSYwi
-         g/+/v4AgF5dd//yvEOHY76AbJZqOYw2ZWI8qiQrzgmV6m0MFo2zEL6BrG3epBjQOpKfU
-         UFSQK324SgTsMiDcB7eriJ8iG6Rv4h1bAi2lDcjOrptbVDsr4iBzHb/J6lHxggzEeVpN
-         LNhBHcF/E+bBJ4R5cn8FZLCvzI3Goez9NngwpiCzQku44sD+ECHkng8HqvtpqqomhqGo
-         pPh2iqSme4zIEGMlah/S4zyEAiJQal1vleeXC/tMk0tk7oJETfKXmnxIYtfSktB5np5t
-         QL5w==
-X-Gm-Message-State: AHQUAuaxfLOdUSQXNKouio3s8xgfZ0H2o1i/gmaS5ir9Mr+/gP7bD5DR
-        YkuOJ/G2f6TGa9tgJ87+gSZ+DQ==
-X-Google-Smtp-Source: AHgI3IY0Tme/033Av9FLl5/k2u50Y94eEnG2p30A1X1++j0jq//zsx0AuXlEoj1vb8dcpaYZTellbQ==
-X-Received: by 2002:a1c:4e08:: with SMTP id g8mr2464252wmh.46.1550050345629;
-        Wed, 13 Feb 2019 01:32:25 -0800 (PST)
-Received: from boomer.baylibre.com (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id y20sm32630100wra.51.2019.02.13.01.32.24
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 13 Feb 2019 01:32:24 -0800 (PST)
-Message-ID: <121ae6212cd555bc784af675d63f6b190c0bee10.camel@baylibre.com>
-Subject: Re: [PATCH 7/9] clk: Allow parents to be specified without string
- names
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>
-Date:   Wed, 13 Feb 2019 10:32:23 +0100
-In-Reply-To: <154878820913.136743.9860407353339842831@swboyd.mtv.corp.google.com>
-References: <20190129061021.94775-1-sboyd@kernel.org>
-         <20190129061021.94775-8-sboyd@kernel.org>
-         <2f88e7fb1788f68f7b97d9806d56f9271663bdfc.camel@baylibre.com>
-         <154878820913.136743.9860407353339842831@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zahirVm0TD8tFdJrSdrC51Xnvqieohwgze4d7k+/G7Q=;
+        b=WKFYCFVLQ6wf2I/Y0sQ7RHoYg2sbAbaUGpo5vgEVYfXI7JLbf50ojayraJAHLGWaO3
+         IFI6IXm6clpkKZqYjGfd+KgxXTQJVQS5cxWSjiYYqp3pOgudsI57DnQcIi5ww0uMHCqr
+         ixp8NAWyvZa6x5qo20WEAlm6ljOF5ngHdNiad6v1FSDk7VvEmTepyMV/Lr1EAVjfxEPd
+         7WdfPJvfdnFVL41LvkYIhLHve2UTORHMVYfeRfMJy3ZvbfK6KMxrD2Xw4Z1Ejs4vv0V1
+         9BBpecgg0ZhvyCWleqIjHA3ul5J2Q0z4ON+PiRAVHOFzAt6Yilm2XbPnis0TT/oTqYNt
+         kslg==
+X-Gm-Message-State: AHQUAub6T5IEt2M4QCLYiwF+rSsRyaj1ORU0L39RJxLNe2FCK0AylHco
+        /XApMQKbH0yu3Z90YWsqOQI=
+X-Google-Smtp-Source: AHgI3IaRJCwj3e+LCgQoHC4dx8FrwaR9d+qs+kXoyIoYIa5MBf99ovZP7nNxWUm2hA3UFhtHXXjbrQ==
+X-Received: by 2002:a2e:8446:: with SMTP id u6-v6mr5076658ljh.74.1550050472709;
+        Wed, 13 Feb 2019 01:34:32 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id q3sm3643252lfj.50.2019.02.13.01.34.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 01:34:31 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1gtqvx-0007j6-8w; Wed, 13 Feb 2019 10:34:25 +0100
+Date:   Wed, 13 Feb 2019 10:34:25 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Loys Ollivier <lollivier@baylibre.com>
+Cc:     Johan Hovold <johan@kernel.org>, Rob Herring <robh@kernel.org>,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH v3 2/4] dt-bindings: gnss: add mediatek binding
+Message-ID: <20190213093425.GH28278@localhost>
+References: <1548693481-1162-1-git-send-email-lollivier@baylibre.com>
+ <1548693481-1162-3-git-send-email-lollivier@baylibre.com>
+ <20190130155016.GA26536@bogus>
+ <20190211092251.GV4686@localhost>
+ <86o97iv2px.fsf@baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86o97iv2px.fsf@baylibre.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-01-29 at 10:56 -0800, Stephen Boyd wrote:
-> > > +/**
-> > > + * struct clk_parent_data - clk parent information
-> > > + * @hw: parent clk_hw pointer (used for clk providers with internal
-> > > clks)
-> > > + * @name: parent name local to provider registering clk
-> > > + * @fallback: globally unique parent name (used as a fallback)
-> > > + */
-> > > +struct clk_parent_data {
-> > > +     struct clk_hw   *hw;
-> > > +     const char      *name;
-> > > +     const char      *fallback;
-
-One last nitpick about this structure, because I did not figure it out at
-first.
-
-'fallback' is what we known as 'name' in CCF so far.
-
-What do you think about renaming 'fallback' to 'name' and 'name' to something
-more obvious, like 'of_name' or 'fw_name' or something else ?
-
-> > 
-> > If I understand correctly, .name and .fallback will be ignored if hw is
-> > provided ? Maybe this should be documented somehow ?
+On Mon, Feb 11, 2019 at 03:06:50PM +0100, Loys Ollivier wrote:
 > 
-> Sure. I'll add some documentation to the long portion of the kernel-doc
-> here describing priority order.
+> On Mon 11 Feb 2019 at 09:22, Johan Hovold <johan@kernel.org> wrote:
+> 
+> > On Wed, Jan 30, 2019 at 09:50:16AM -0600, Rob Herring wrote:
+> >> On Mon, Jan 28, 2019 at 05:37:59PM +0100, Loys Ollivier wrote:
+> >> > Add binding for Mediatek-based GNSS receivers.
+> >> > 
+> >> > Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
 
-Anyway, with this patch, I should be able to remove a lot of (ugly) code I
-have been writting lately. I'll be happy to test it when you have a v2 ready.
+> >> reset-gpios is the standard name.
+> >> 
+> >> > +- gtop,fix-gpios	: GPIO used to determine device position fix state
+> >> > +			  (pin name: FIX, 3D_FIX)
+> >
+> > I'm thinking we might need a standard name for fix-gpios as well. This
+> > isn't a feature that is globaltop (or mediatek) specific, and other
+> > manufacturers provide similar functionality through pins named UI_FIX,
+> > or even LCKIND (lock indicator).
+> >
+> > The pin is typically used to drive an indicator LED AFAIU, but the
+> > characteristics of the signal varies from device to device (fw to fw),
+> > for example, pulse when no lock and low otherwise, or pulse when a 2d or
+> > 3d-fix is acquired, etc.
+> >
+> 
+> Yes most GNSS recevivers provide a similar feature even if behavior of
+> the line differs.
+> 
+> > I'm not sure how useful the pulsing would be for software, but someone
+> > might find a use for it in some form.
+> >
+> 
+> Well it is useful to know when you start acquiring "valid" positionning
+> data. I'm using this as a trigger to start recording position.
 
+Sure, but a non-pulsing signal might have been easier to deal with if it
+was meant to be used by software.
+
+> > Rob, is this something we want to keep in the binding, and if so, how
+> > about using a generic name such as "gnss-fix-gpios"?
+> 
+> Name "gnss-fix-gpios" sounds good to me.
+
+Let's go with that then.
+
+Johan
