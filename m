@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67EA5C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:57:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 860D0C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:57:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26ADB21B1A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:57:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A00520835
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:57:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026620;
-	bh=QBIuctLtVlS9aMbkxcGI8DEbrjCG/na/F621DTyBIPI=;
+	s=default; t=1550026627;
+	bh=LsK7omSp9/B3EHP4Se8H0UsHklqvEVYTkx+mJSL0+wo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tEyMX2SbBw4vEUJsAuYrCOVXcb1oFSb4uz/GoYcXXXQEeaDAnKD/QAubvyp2JyTHO
-	 T8Sgok2yyKOg8wUBb46iy3I36LSAL3eUJTsdVKpww9QVWeC1io/qchPOksqMRVp2w7
-	 6P0UdTGcnlytW5+Tbz6F64m6TVRySNTK6WtWza74=
+	b=CcFZTULip0Wp1ChIPODzhvvlBCJYsMcKu47BLuteko9Rj7U+I+ze9aiVHH4fnQbth
+	 CegQO+o49wIsMFch0ApXIvHGfzcT6wCCfGXk6pyxeDhEdN/hoRXkUlVvG3faJ0ECFE
+	 JBOzgkNVykGgCml4YoclT8C3LbBxDevNHEgqt7u8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390131AbfBMC47 (ORCPT
+        id S2390136AbfBMC5F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:56:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40786 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:57:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388250AbfBMChO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:37:14 -0500
+        id S2388244AbfBMChM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:37:12 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E421206B6;
-        Wed, 13 Feb 2019 02:37:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A8A1222C2;
+        Wed, 13 Feb 2019 02:37:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025433;
-        bh=QBIuctLtVlS9aMbkxcGI8DEbrjCG/na/F621DTyBIPI=;
+        s=default; t=1550025431;
+        bh=LsK7omSp9/B3EHP4Se8H0UsHklqvEVYTkx+mJSL0+wo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WLRnCbOCCNC6sN63QsS/pc4SGq8YtsXovQoZHWCeB+Ud1IAFYbCyBZk+XTAqCZtbb
-         SQJTNLI+ldmDt51QDdtfAs3E/5BlcYlV2Spgqr6Nix3zmn0IBNPKUI7NV8kMMgkbW2
-         xBnLdWqjHH3hi4TaekkB0jmSHS6hTLtbsvPomyo0=
+        b=nc42F2TciOmgoQlVAAKMJ7fl3TWjsQurYtBcFvSwNvz26o3KPDsIrd/15KovPqxJ3
+         AbOPXVYfFhGT5aPeZAWjqjG3WAQH5cyVcGJUxiUv6iMb4zLVCZwsF/+FE3ulJbLTeL
+         zFoRv9NMsgARfpxxXce0eN5bmgnr+Jxgr1U+yp0w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
         Lee Jones <lee.jones@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 10/83] mfd: ab8500-core: Return zero in get_register_interruptible()
-Date:   Tue, 12 Feb 2019 21:35:48 -0500
-Message-Id: <20190213023701.20286-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 08/83] mfd: db8500-prcmu: Fix some section annotations
+Date:   Tue, 12 Feb 2019 21:35:46 -0500
+Message-Id: <20190213023701.20286-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -58,40 +58,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 10628e3ecf544fa2e4e24f8e112d95c37884dc98 ]
+[ Upstream commit a3888f62fe66429fad3be7f2ba962e1e08c26fd6 ]
 
-This function is supposed to return zero on success or negative error
-codes on error.  Unfortunately, there is a bug so it sometimes returns
-non-zero, positive numbers on success.
+When building the kernel with Clang, the following section mismatch
+warnings appear:
 
-I noticed this bug during review and I can't test it.  It does appear
-that the return is sometimes propogated back to _regmap_read() where all
-non-zero returns are treated as failure so this may affect run time.
+WARNING: vmlinux.o(.text+0x7239cc): Section mismatch in reference from
+the function db8500_prcmu_probe() to the function
+.init.text:init_prcm_registers()
+The function db8500_prcmu_probe() references
+the function __init init_prcm_registers().
+This is often because db8500_prcmu_probe lacks a __init
+annotation or the annotation of init_prcm_registers is wrong.
 
-Fixes: 47c1697508f2 ("mfd: Align ab8500 with the abx500 interface")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+WARNING: vmlinux.o(.text+0x723e28): Section mismatch in reference from
+the function db8500_prcmu_probe() to the function
+.init.text:fw_project_name()
+The function db8500_prcmu_probe() references
+the function __init fw_project_name().
+This is often because db8500_prcmu_probe lacks a __init
+annotation or the annotation of fw_project_name is wrong.
+
+db8500_prcmu_probe should not be marked as __init so remove the __init
+annotation from fw_project_name and init_prcm_registers.
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/ab8500-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/mfd/db8500-prcmu.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mfd/ab8500-core.c b/drivers/mfd/ab8500-core.c
-index 30d09d177171..11ab17f64c64 100644
---- a/drivers/mfd/ab8500-core.c
-+++ b/drivers/mfd/ab8500-core.c
-@@ -261,7 +261,7 @@ static int get_register_interruptible(struct ab8500 *ab8500, u8 bank,
- 	mutex_unlock(&ab8500->lock);
- 	dev_vdbg(ab8500->dev, "rd: addr %#x => data %#x\n", addr, ret);
+diff --git a/drivers/mfd/db8500-prcmu.c b/drivers/mfd/db8500-prcmu.c
+index 5970b8def548..aec20e1c7d3d 100644
+--- a/drivers/mfd/db8500-prcmu.c
++++ b/drivers/mfd/db8500-prcmu.c
+@@ -2584,7 +2584,7 @@ static struct irq_chip prcmu_irq_chip = {
+ 	.irq_unmask	= prcmu_irq_unmask,
+ };
  
--	return ret;
-+	return (ret < 0) ? ret : 0;
+-static __init char *fw_project_name(u32 project)
++static char *fw_project_name(u32 project)
+ {
+ 	switch (project) {
+ 	case PRCMU_FW_PROJECT_U8500:
+@@ -2732,7 +2732,7 @@ void __init db8500_prcmu_early_init(u32 phy_base, u32 size)
+ 	INIT_WORK(&mb0_transfer.mask_work, prcmu_mask_work);
  }
  
- static int ab8500_get_register(struct device *dev, u8 bank,
+-static void __init init_prcm_registers(void)
++static void init_prcm_registers(void)
+ {
+ 	u32 val;
+ 
 -- 
 2.19.1
 
