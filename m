@@ -2,166 +2,130 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A35C4151A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 00:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C41C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 00:13:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C262222C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 00:07:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FBCA206B6
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 00:13:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dellteam.com header.i=@dellteam.com header.b="IrVGRhG+"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GeW81E+F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732615AbfBMAH2 (ORCPT
+        id S1732618AbfBMANW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 19:07:28 -0500
-Received: from esa8.dell-outbound.iphmx.com ([68.232.149.218]:1705 "EHLO
-        esa8.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728789AbfBMAH1 (ORCPT
+        Tue, 12 Feb 2019 19:13:22 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:37594 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728789AbfBMANW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 19:07:27 -0500
-X-Greylist: delayed 566 seconds by postgrey-1.27 at vger.kernel.org; Tue, 12 Feb 2019 19:07:26 EST
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dellteam.com; i=@dellteam.com; q=dns/txt; s=smtpout;
-  t=1550016446; x=1581552446;
-  h=cc:from:to:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=4i6tT/j0epsZwWvUMo0P86JYbjHMAjxumLjbiTLVauQ=;
-  b=IrVGRhG+7XaidtP9f+PeLudU7MpWuSPbTx8F86J/XwdcClFHcFp7xxl0
-   VzzqJxqOMqAMv7nFU5pG2pgdr6XG0n1sO/l6QjPmdK4GpjG54qBJC1yg1
-   UDZO4q6z5pZxIVvpvSVGtlh4hkIv+yHeRs4gR1tgyqZv/WUbs3fQTTqZK
-   o=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EbAADUXGNchiWd50NjGwEBAQEDAQE?=
- =?us-ascii?q?BBwMBAQGBVAMBAQELAYJZgRQxjHOLEoINgX2YEQsBASyEQINIIjcGDQEDAQE?=
- =?us-ascii?q?CAQECAQECEAEBAQoJCwgpL4I6IoJvAQEBAwESKD8FCwIBCBgeEFcCBBsTB4M?=
- =?us-ascii?q?CgXoInls9Am2BAYkHAQEBgh6KLIxDghaBEYJkLoUBTYUTAol7ggaXHgkFkkM?=
- =?us-ascii?q?hkmCcFQIEAgQFAhSBXIF5cIM9gicOCY4eQYFZjV4BgR4BAQ?=
-X-IPAS-Result: =?us-ascii?q?A2EbAADUXGNchiWd50NjGwEBAQEDAQEBBwMBAQGBVAMBA?=
- =?us-ascii?q?QELAYJZgRQxjHOLEoINgX2YEQsBASyEQINIIjcGDQEDAQECAQECAQECEAEBA?=
- =?us-ascii?q?QoJCwgpL4I6IoJvAQEBAwESKD8FCwIBCBgeEFcCBBsTB4MCgXoInls9Am2BA?=
- =?us-ascii?q?YkHAQEBgh6KLIxDghaBEYJkLoUBTYUTAol7ggaXHgkFkkMhkmCcFQIEAgQFA?=
- =?us-ascii?q?hSBXIF5cIM9gicOCY4eQYFZjV4BgR4BAQ?=
-Received: from mx0b-00154901.pphosted.com ([67.231.157.37])
-  by esa8.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 12 Feb 2019 17:57:59 -0600
-Received: from pps.filterd (m0144103.ppops.net [127.0.0.1])
-        by mx0b-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1CNllV4113570;
-        Tue, 12 Feb 2019 18:57:58 -0500
-Received: from esa2.dell-outbound2.iphmx.com (esa2.dell-outbound2.iphmx.com [68.232.153.202])
-        by mx0b-00154901.pphosted.com with ESMTP id 2qm310sm2s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 12 Feb 2019 18:57:58 -0500
-Cc:     <mr.nuke.me@gmail.com>, <bhelgaas@google.com>,
-        <Austin.Bolen@dell.com>, <keith.busch@intel.com>,
-        <Shyam.Iyer@dell.com>, <gustavo@embeddedor.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Received: from ausxippc106.us.dell.com ([143.166.85.156])
-  by esa2.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 13 Feb 2019 05:56:42 +0600
-X-LoopCount0: from 10.166.134.84
-X-IronPort-AV: E=Sophos;i="5.58,364,1544508000"; 
-   d="scan'208";a="352948300"
-From:   <Alex_Gagniuc@Dellteam.com>
-To:     <lukas@wunner.de>
-Subject: Re: [PATCH] PCI: pciehp: Do not turn off slot if presence comes up
- after link
-Thread-Topic: [PATCH] PCI: pciehp: Do not turn off slot if presence comes up
- after link
-Thread-Index: AQHUvZbN4kEiyNA8xUGy+Uw4G87SXw==
-Date:   Tue, 12 Feb 2019 23:57:55 +0000
-Message-ID: <b2fffa5beb7941ebaceb8b8ce6e5b133@ausx13mps321.AMER.DELL.COM>
-References: <20190205210701.25387-1-mr.nuke.me@gmail.com>
- <20190209115849.244u67h7wmn3eb7o@wunner.de>
- <52afa1c45f684dbda6a8771b65583a22@ausx13mps321.AMER.DELL.COM>
- <20190212083031.2no7mzn5xug7nba3@wunner.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [143.166.11.234]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 12 Feb 2019 19:13:22 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1D03osC127411;
+        Wed, 13 Feb 2019 00:13:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=i/DRl5Ab8RJflfKksWYbm6JgjdqdldbLWDY4G+e/3hk=;
+ b=GeW81E+FpIl/jZBIKGaVE6nhvYyck8B5ybuMX41uaLSwmFrhYOSgD5pLycllWGeHKRo3
+ zbY2QGemmqeIsasHRI+w3ykVQv+nfU/JILNsWaLBph79FapWe3vNZ7DphmMsIFnTnb1s
+ T3rY4QG+chT/RvrGKYJOKhCTeJeLEpCONm/3svxaupyUeBHxEDLr2MWS+QemYSriAd+n
+ B5dKzMgE855IeW4jNebnQo+Xa8cMWP9aBFET4xzIRZbVXyMzH75eIvAGD1rky/eD0Heu
+ FeFRjZX+z/L9xxUXKVWOKdZa86SxU5offVhBusMxzx2emOye36SflqgHxkEBibvaw+hM mA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2qhre5f3sx-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Feb 2019 00:13:13 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1D0D7Mm008885
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Feb 2019 00:13:07 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1D0D60c022977;
+        Wed, 13 Feb 2019 00:13:06 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 12 Feb 2019 16:13:06 -0800
+Subject: Re: [PATCH] mm,memory_hotplug: Explicitly pass the head to
+ isolate_huge_page
+To:     Michal Hocko <mhocko@kernel.org>,
+        Oscar Salvador <osalvador@suse.de>
+Cc:     akpm@linux-foundation.org, david@redhat.com,
+        anthony.yznaga@oracle.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20190208090604.975-1-osalvador@suse.de>
+ <20190212083329.GN15609@dhcp22.suse.cz>
+ <20190212134546.gubfir6zzwrvmunr@d104.suse.de>
+ <20190212144026.GY15609@dhcp22.suse.cz>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <52f7a47c-4a8b-c06d-04c0-48d9bb43823b@oracle.com>
+Date:   Tue, 12 Feb 2019 16:13:05 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-12_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902120161
+In-Reply-To: <20190212144026.GY15609@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9165 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902120162
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/12/19 2:30 AM, Lukas Wunner wrote:=0A=
-> The PCI SIG=0A=
-> should probably consider granting access to specs to open source=0A=
-> developers to ease adoption of new features in Linux et al.=0A=
-=0A=
-Don't get me started on just how ridiculous I think PCI-SIG's policy is =0A=
-with respect to public availability of standards.=0A=
-=0A=
->>> Table 4-14 in sec 4.2.6 is also important because it shows the differen=
-ce=0A=
->>> between Link Up and in-band presence.=0A=
->>=0A=
->> So, we'd expect PD to come up at the same time or before DLL?=0A=
-> =0A=
-> Per table 4-14 and figure 4-23 (immediately below the table) in r4.0,=0A=
-> PDC ought to be signaled before DLLSC.  As said, Linux can handle PDC=0A=
-> after DLLSC if they're not too far apart (100 ms, see pcie_wait_for_link(=
-)).=0A=
-> =0A=
-> =0A=
->> I'd like a generic solution. I suspect supporting 'in-band PD disabled'=
-=0A=
->> and quirking for that would be a saner way to do things. If we support=
-=0A=
->> it, then we need to handle PDSC after DLLSC scenarios anyway.=0A=
-> =0A=
-> I agree, having support for this new ECN would be great.=0A=
-> =0A=
-> If you look at struct controller in drivers/pci/hotplug/pciehp.h,=0A=
-> there's a section labelled /* capabilities and quirks */.  An idea=0A=
-> would be to add an unsigned int there to indicate whether in-band=0A=
-> presence is disabled.  An alternative would be to add a flag to=0A=
-> struct pci_dev.=0A=
-=0A=
-> Instead of modifying the logic in pciehp_handle_presence_or_link_change()=
-,=0A=
-> you could amend pcie_wait_for_link() to poll PDS until it's set, in=0A=
-> addition to DLLLA.  The rationale would be that although the link is up,=
-=0A=
-> the hot-added device cannot really be considered accessible until PDS=0A=
-> is also set.  Unfortunately we cannot do this for all devices because=0A=
-> (as I've said before), some broken devices hardwire PDS to zero.  But=0A=
-> it should be safe to constrain it to those which can disable in-band=0A=
-> presence.=0A=
-=0A=
-=0A=
-The recommendation is to set the "in-band PD disable" bit, and it's =0A=
-possible that platform firmware may have set it at boot time (*). I'm =0A=
-not sure that there is a spec-justifiable reason to not access a device =0A=
-whose DLL is up, but PD isn't.=0A=
-=0A=
-(*) A bit hypothetical: There is no hardware yet implementing the ECN.=0A=
-=0A=
-> Be mindful however that pcie_wait_for_link() is also called from the=0A=
-> DPC driver.  Keith should be able to judge whether a change to that=0A=
-> function breaks DPC.=0A=
-=0A=
-That's why I went for ammending pciehp_handle_presence_or_link_change(). =
-=0A=
-Smaller bug surface ;). What I'm thinking at this point is, keep the =0A=
-patch as is, but, also check for in-band PD disable before aborting the =0A=
-shutdown. Old behavior stays the same.=0A=
-=0A=
-I'll rework this a little bit for in-band PD disable (what's a good =0A=
-acronym for that, BTW?), and then quirk those machines that are known to =
-=0A=
-'disable' this in hardware.=0A=
-=0A=
-Alex=0A=
+On 2/12/19 6:40 AM, Michal Hocko wrote:
+> On Tue 12-02-19 14:45:49, Oscar Salvador wrote:
+>> On Tue, Feb 12, 2019 at 09:33:29AM +0100, Michal Hocko wrote:
+>>>>  
+>>>>  		if (PageHuge(page)) {
+>>>>  			struct page *head = compound_head(page);
+>>>> -			pfn = page_to_pfn(head) + (1<<compound_order(head)) - 1;
+>>>>  			if (compound_order(head) > PFN_SECTION_SHIFT) {
+>>>>  				ret = -EBUSY;
+>>>>  				break;
+>>>>  			}
+>>>
+>>> Why are we doing this, btw? 
+>>
+>> I assume you are referring to:
+>>
+>>>>                     if (compound_order(head) > PFN_SECTION_SHIFT) {
+>>>>                             ret = -EBUSY;
+>>>>                             break;
+>>>>                     }
+> 
+> yes.
+> 
+>> I thought it was in case we stumble upon a gigantic page, and commit
+>> (c8721bbbdd36 mm: memory-hotplug: enable memory hotplug to handle hugepage)
+>> confirms it.
+>>
+>> But I am not really sure if the above condition would still hold on powerpc,
+>> I wanted to check it but it is a bit more tricky than it is in x86_64 because
+>> of the different hugetlb sizes.
+>> Could it be that the above condition is not true, but still the order of that
+>> hugetlb page goes beyond MAX_ORDER? It is something I have to check.
+
+Well, commit 94310cbcaa3c ("mm/madvise: enable (soft|hard) offline of
+HugeTLB pages at PGD level") should have allowed migration of gigantic
+pages.  I believe it was added for 16GB pages on powerpc.  However, due
+to subsequent changes I suspsect this no longer works.
+
+> This check doesn't make much sense in principle. Why should we bail out
+> based on a section size? We are offlining a pfn range. All that we care
+> about is whether the hugetlb is migrateable.
+
+Yes.  Do note that the do_migrate_range is only called from __offline_pages
+with a start_pfn that was returned by scan_movable_pages.  scan_movable_pages
+has the hugepage_migration_supported check for PageHuge pages.  So, it would
+seem to be redundant to do another check in do_migrate_range.
+
+-- 
+Mike Kravetz
