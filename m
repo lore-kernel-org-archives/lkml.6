@@ -2,142 +2,79 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46D30C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ADECC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:26:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10C6E222B1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:25:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="V5yd8V+M"
+	by mail.kernel.org (Postfix) with ESMTP id 0A1D1222B1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:26:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390611AbfBMNZS (ORCPT
+        id S2390703AbfBMN0H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 08:25:18 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37260 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730301AbfBMNZR (ORCPT
+        Wed, 13 Feb 2019 08:26:07 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:36201 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388743AbfBMN0G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 08:25:17 -0500
-Received: by mail-pf1-f196.google.com with SMTP id s22so1146437pfh.4
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 05:25:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JDK7YwyTGvm7x2Sf6x4F2/57uwwOVD7bIycRuQRv664=;
-        b=V5yd8V+ME+qqPIPRw62h4cwOcfdUd5S/SMCyHZZZJ7wzzeT+hVGG9NsWLr7RCznsvt
-         69LyHk09hzKG99Sph9lsF/IV2zO9i7mI4p2qb0nqOQJor/3lWgPnXjP1us9rRlBwunny
-         F+XdU0x9jIhlrL+P0edFScfXEXJUNwCeSvnQEOVhfx8SkCC1uippRacLaY8r6Gl889ad
-         Qk0bgTagJUPYeaSaWEMbHIUpScvpTrHUWa99gkcbyEUXNXjyThfnM/MDcPHqzHG1/Vaq
-         /jheFVPZO5OUVchkWhLJNR2VWRAzE2mi6DkhYZh1xbGoS1wUloom+KoxU+KZIe/2HDRn
-         qFRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JDK7YwyTGvm7x2Sf6x4F2/57uwwOVD7bIycRuQRv664=;
-        b=Em8nBV6Duar1zrda9AutNBl+VakhY8dIwH9OjSsFXJ6n7UqTBu2rywuqIejlx/b6xX
-         dDOFG1gcb7XF5V6lAcGHp+2mhpMcYOeX2trYdw14PNjqna69220+280xzEcd6JbLPcnG
-         OF9dB3wJPR2tMHvfcpBgWXq0Ak18GJ8UhcMB/pnMVpnH3iFWMQkHAUL25iTBb8V9y2fm
-         lwENgI1EztY35t6KnZ5Xc2ObU+Xl6ktWkYohn4rXfdzWrBDZCj3AT0Pr2NUZop7E9fvR
-         DY1CnrPuMuI3OBUN8Y4F3sYT4k28yJ4/gvwkFuqIIobkPWBQ7b6EPYJFIcb2rkAhcnoT
-         wKqQ==
-X-Gm-Message-State: AHQUAubWg8M9qkcPrmF03x/IoqHZn9KAzZ54yDSPH/2hfXrAnDUUG1IJ
-        KHUKiI2DGUE+Q1MuiN8niGOWFtvjPUFazGHd8ESzHQ==
-X-Google-Smtp-Source: AHgI3IZl5WKJdwVCrLY/jCZlAXw9WcZHiK+bS8GVGZgn/xiEjhxBOuxWiqqBVu0nsKSlr5uE4c9rfpS9B3hoaerx9Z0=
-X-Received: by 2002:a63:7f46:: with SMTP id p6mr512867pgn.54.1550064316418;
- Wed, 13 Feb 2019 05:25:16 -0800 (PST)
+        Wed, 13 Feb 2019 08:26:06 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gtuY3-0007OK-Sb; Wed, 13 Feb 2019 13:26:00 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Kyungmin Park <kyungmin.park@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] media: exynos4-is: remove redundant check on type
+Date:   Wed, 13 Feb 2019 13:25:59 +0000
+Message-Id: <20190213132559.30900-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <cover.1549921721.git.andreyknvl@google.com> <cd895d627465a3f1c712647072d17f10883be2a1.1549921721.git.andreyknvl@google.com>
- <20190212131250.0f98d6a9cea8e03ca47f980c@linux-foundation.org>
-In-Reply-To: <20190212131250.0f98d6a9cea8e03ca47f980c@linux-foundation.org>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Wed, 13 Feb 2019 14:25:05 +0100
-Message-ID: <CAAeHK+w3r9nYwesNYGjbcVwZj2ceTeNaVq0pD7SnLRLb7PiWtQ@mail.gmail.com>
-Subject: Re: [PATCH 4/5] kasan, slub: move kasan_poison_slab hook before page_address
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>, Qian Cai <cai@lca.pw>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 10:12 PM Andrew Morton
-<akpm@linux-foundation.org> wrote:
->
-> On Mon, 11 Feb 2019 22:59:53 +0100 Andrey Konovalov <andreyknvl@google.com> wrote:
->
-> > With tag based KASAN page_address() looks at the page flags to see
-> > whether the resulting pointer needs to have a tag set. Since we don't
-> > want to set a tag when page_address() is called on SLAB pages, we call
-> > page_kasan_tag_reset() in kasan_poison_slab(). However in allocate_slab()
-> > page_address() is called before kasan_poison_slab(). Fix it by changing
-> > the order.
-> >
-> > ...
-> >
-> > --- a/mm/slub.c
-> > +++ b/mm/slub.c
-> > @@ -1642,12 +1642,15 @@ static struct page *allocate_slab(struct kmem_cache *s, gfp_t flags, int node)
-> >       if (page_is_pfmemalloc(page))
-> >               SetPageSlabPfmemalloc(page);
-> >
-> > +     kasan_poison_slab(page);
-> > +
-> >       start = page_address(page);
-> >
-> > -     if (unlikely(s->flags & SLAB_POISON))
-> > +     if (unlikely(s->flags & SLAB_POISON)) {
-> > +             metadata_access_enable();
-> >               memset(start, POISON_INUSE, PAGE_SIZE << order);
-> > -
-> > -     kasan_poison_slab(page);
-> > +             metadata_access_disable();
-> > +     }
-> >
-> >       shuffle = shuffle_freelist(s, page);
->
-> This doesn't compile when CONFIG_SLUB_DEBUG=n.  Please review carefully:
+From: Colin Ian King <colin.king@canonical.com>
 
-Sorry, missed this. I think it makes more sense to move this memset
-into another function CONFIG_SLUB_DEBUG ifdef, since all other
-poisoning code is also there. I'll send a v2.
+The check to see if type is V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE is redundant
+as this has been already checked at the start of the function and if
+it's not that value then -ENOSYS is returned. Hence the sprintf can be
+replaced by a simpler string copy.
 
->
-> --- a/mm/slub.c~kasan-slub-move-kasan_poison_slab-hook-before-page_address-fix
-> +++ a/mm/slub.c
-> @@ -1357,6 +1357,14 @@ slab_flags_t kmem_cache_flags(unsigned i
->
->  #define disable_higher_order_debug 0
->
-> +static inline void metadata_access_enable(void)
-> +{
-> +}
-> +
-> +static inline void metadata_access_disable(void)
-> +{
-> +}
-> +
->  static inline unsigned long slabs_node(struct kmem_cache *s, int node)
->                                                         { return 0; }
->  static inline unsigned long node_nr_slabs(struct kmem_cache_node *n)
-> _
->
+Detected by CoverityScan, CID#1309450 ("Logically dead code")
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/media/platform/exynos4-is/fimc-isp-video.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/drivers/media/platform/exynos4-is/fimc-isp-video.c b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+index de6bd28f7e31..bb35a2017f21 100644
+--- a/drivers/media/platform/exynos4-is/fimc-isp-video.c
++++ b/drivers/media/platform/exynos4-is/fimc-isp-video.c
+@@ -606,9 +606,7 @@ int fimc_isp_video_device_register(struct fimc_isp *isp,
+ 
+ 	vdev = &iv->ve.vdev;
+ 	memset(vdev, 0, sizeof(*vdev));
+-	snprintf(vdev->name, sizeof(vdev->name), "fimc-is-isp.%s",
+-			type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE ?
+-			"capture" : "output");
++	strscpy(vdev->name, "fimc-is-isp.capture", sizeof(vdev->name));
+ 	vdev->queue = q;
+ 	vdev->fops = &isp_video_fops;
+ 	vdev->ioctl_ops = &isp_video_ioctl_ops;
+-- 
+2.20.1
+
