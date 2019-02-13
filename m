@@ -2,92 +2,145 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B15C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE84FC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:16:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0387C222B1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:16:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE3CB222C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 15:16:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550071006;
+	bh=8T698jJA+B1VS7dD3ss7MUKHpeHgLZ8j3f8asqnOGdk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=pZjJnX6h2Oia5tTWR95OY5O42IHE27HzBqXoar/S7KvF20r6VF8BxLp5mujfrNCuU
+	 TQvVIAsz9w+jFrZCXUlre5uPPN3WODQi2W8yVWt/f12Jz+gckKDvvdSKDdOTRWONAR
+	 XX1lPRyr1ZugYbpxFK+9lhDKbzjFIVkJp8lce9TM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390356AbfBMPQE (ORCPT
+        id S2391308AbfBMPQp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 10:16:04 -0500
-Received: from mga18.intel.com ([134.134.136.126]:37249 "EHLO mga18.intel.com"
+        Wed, 13 Feb 2019 10:16:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729139AbfBMPQB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 10:16:01 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 07:16:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,365,1544515200"; 
-   d="scan'208";a="126161184"
-Received: from rbhardw1-mobl.gar.corp.intel.com (HELO [10.252.68.82]) ([10.252.68.82])
-  by orsmga003.jf.intel.com with ESMTP; 13 Feb 2019 07:15:58 -0800
-Subject: Re: linux-next: Fixes tag needs some work in the drivers-x86 tree
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Darren Hart <dvhart@infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190207095703.564e76b2@canb.auug.org.au>
- <38152c55-c2c1-c89f-2751-0ef0d40fcba9@linux.intel.com>
- <CAHp75Vf6gs1342N16MZHvPmiiv3+xJyMyyJQK677KPZbb_7Vrg@mail.gmail.com>
-From:   "Bhardwaj, Rajneesh" <rajneesh.bhardwaj@linux.intel.com>
-Message-ID: <e0c40627-f1a2-254f-14b0-b9df0d62dd34@linux.intel.com>
-Date:   Wed, 13 Feb 2019 20:45:56 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        id S2390416AbfBMPQp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 10:16:45 -0500
+Received: from localhost (173-25-63-173.client.mchsi.com [173.25.63.173])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12624222B1;
+        Wed, 13 Feb 2019 15:16:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550071004;
+        bh=8T698jJA+B1VS7dD3ss7MUKHpeHgLZ8j3f8asqnOGdk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=nCDxYi/O9bFnFcsjAv3aqhXArBwjiBPbh2pmj8ws6eMxr6GE36JNYuc5YXPTXc6u4
+         mrf3n5YkPugO2YhLvSu+fSO8eAS0ZKINDoOKdyfl/NTeuwsnHw8FmVqgixQsBGwjuu
+         8lNlhJE4JJTRUiGuG4tZPV8iTR3FMs3EtTAI7tzE=
+Date:   Wed, 13 Feb 2019 09:16:43 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, Keith Busch <keith.busch@intel.com>
+Subject: Re: [PATCH V3 5/5] genirq/affinity: Document .calc_sets as required
+ in case of multiple sets
+Message-ID: <20190213151642.GF96272@google.com>
+References: <20190213105041.13537-1-ming.lei@redhat.com>
+ <20190213105041.13537-6-ming.lei@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vf6gs1342N16MZHvPmiiv3+xJyMyyJQK677KPZbb_7Vrg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190213105041.13537-6-ming.lei@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Feb 13, 2019 at 06:50:41PM +0800, Ming Lei wrote:
+> Now NVMe has implemented the .calc_sets callback for caculating each
+> set's vectors.
 
-On 07-Feb-19 9:25 PM, Andy Shevchenko wrote:
-> On Thu, Feb 7, 2019 at 4:06 AM Bhardwaj, Rajneesh
-> <rajneesh.bhardwaj@linux.intel.com> wrote:
->> On 07-Feb-19 4:27 AM, Stephen Rothwell wrote:
->>
->> Hi all,
->>
->> In commit
->>
->>    4284dc008f43 ("platform/x86: intel_pmc_core: Fix file permissions for ltr_show")
->>
->> Fixes tag
->>
->>    Fixes: 63cde0c16c67 ("platform/x86: intel_pmc_core: Show Latency Tolerance info")
->>
->> has these problem(s):
->>
->>    - Target SHA1 does not exist
->>
->> Did you mean:
->>
->>    2eb150558bb7 ("platform/x86: intel_pmc_core: Show Latency Tolerance info")
->>
->> Yes, upstream commit is 2eb150558bb79ee01c39b64c2868216c0be2904f. For some reason when i do git show on my repo with both these SHA1 i see the same patch.
->>
->> I will fix this in next version.
-> Hmm... this came to our published branch, i.e. for-next, would it be
-> better to update it via rebasing?
->
-> Darren, what do you think?
+s/caculating/calculating/
 
-Hi Andy, I have corrected this in v2 anyway and i sent to upstream 
-today, just in case you prefer it over rebasing.
+> For other cases of multiple IRQ sets, pre-caculating each set's vectors
+> before allocating IRQ vectors can't work because the whole vectors
+> number is unknow at that time.
 
-https://patchwork.kernel.org/patch/10810123/
+s/unknow/unknown/
+Maybe spell check could be helpful?
 
+> So document .calc_sets as required explicitly for multiple sets.
+> 
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> ---
+>  drivers/pci/msi.c         | 16 ++++++++++------
+>  include/linux/interrupt.h |  3 ++-
+>  2 files changed, 12 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
+> index 96978459e2a0..199d708b4099 100644
+> --- a/drivers/pci/msi.c
+> +++ b/drivers/pci/msi.c
+> @@ -1036,10 +1036,12 @@ static int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
+>  		return -ERANGE;
+>  
+>  	/*
+> -	 * If the caller is passing in sets, we can't support a range of
+> -	 * vectors. The caller needs to handle that.
+> +	 * If the caller requests multiple sets of IRQs where each set
+> +	 * requires different affinity, it must also supply a ->calc_sets()
+> +	 * callback to compute vectors for each set after whole vectors are
+> +	 * allocated.
 
+"compute vectors for each set after whole vectors are allocated"
+doesn't read smoothly.  The caller is requesting "multiple sets of
+IRQs".  So each set contains several IRQ vectors.  IIUC, the vectors
+calc_sets() are computing are something other than IRQ vectors.
 
->
+>  	 */
+> -	if (affd && affd->nr_sets && minvec != maxvec)
+> +	if (affd && affd->nr_sets > 1 && !affd->calc_sets)
+>  		return -EINVAL;
+>  
+>  	if (WARN_ON_ONCE(dev->msi_enabled))
+> @@ -1094,10 +1096,12 @@ static int __pci_enable_msix_range(struct pci_dev *dev,
+>  		return -ERANGE;
+>  
+>  	/*
+> -	 * If the caller is passing in sets, we can't support a range of
+> -	 * supported vectors. The caller needs to handle that.
+> +	 * If the caller requests multiple sets of IRQs where each set
+> +	 * requires different affinity, it must also supply a ->calc_sets()
+> +	 * callback to compute vectors for each set after whole vectors are
+> +	 * allocated.
+>  	 */
+> -	if (affd && affd->nr_sets && minvec != maxvec)
+> +	if (affd && affd->nr_sets > 1 && !affd->calc_sets)
+>  		return -EINVAL;
+>  
+>  	if (WARN_ON_ONCE(dev->msix_enabled))
+> diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+> index 7a27f6ba1f2f..a053f7fb0ff1 100644
+> --- a/include/linux/interrupt.h
+> +++ b/include/linux/interrupt.h
+> @@ -269,7 +269,8 @@ struct irq_affinity_notify {
+>   *			the MSI(-X) vector space
+>   * @nr_sets:		Length of passed in *sets array
+>   * @set_vectors:	Number of affinitized sets
+> - * @calc_sets:		Callback for caculating set vectors
+> + * @calc_sets:		Callback for caculating set vectors, required for
+> + * 			multiple irq sets.
+>   * @priv:		Private data of @calc_sets
+>   */
+>  struct irq_affinity {
+> -- 
+> 2.9.5
+> 
