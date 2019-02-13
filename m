@@ -2,132 +2,109 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D5ABC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:35:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F978C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:38:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BBA7222BE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:35:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F13BA222BE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 08:38:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vsQQUyDp"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JjA0P3vK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731546AbfBMIfr (ORCPT
+        id S2389285AbfBMIih (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 03:35:47 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:38490 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727345AbfBMIfr (ORCPT
+        Wed, 13 Feb 2019 03:38:37 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45254 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733035AbfBMIig (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 03:35:47 -0500
-Received: by mail-vs1-f67.google.com with SMTP id t7so906723vsq.5
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 00:35:46 -0800 (PST)
+        Wed, 13 Feb 2019 03:38:36 -0500
+Received: by mail-lj1-f195.google.com with SMTP id s5-v6so1230022ljd.12
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 00:38:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=1CJ7+HBssyW4VgrPSTkVO+QUsjpdif2wB2Ncp6ltYSU=;
-        b=vsQQUyDp1rZxWyX/tCBU6HR2ElSUPwTlpRRWFnf5z/toGyZYwMYY5twEqvy4z0Jq0y
-         Wp5L21DqIDyD6kde5StKA/IK6MviD2qwF433lHfWtwvKn7kefBEmEOsax5loPKkAuTn+
-         0tr3kFdTd7k4lTGdjWbOH1L2jYvapytjQGRHsQ5eb/B+ykciLw4B5Tohs5AmLBlP1X3x
-         cqFUUMKF6Y2YGdmHQ2LOFlnvrJ1mMcLWrbZ051ThJ3wOHdxcdQfDd9ObiDopVXwijf6J
-         bMl9v5Kw9x+O8dWMsAzpOicDRsysjnWuDCbem2MBcislxcgl3+QdUd46VE7nNPnYDECa
-         hq5w==
+         :cc;
+        bh=zeTngYgb/4MDOX0lTbENW3uviJ2EzDI0XEMt5X040V8=;
+        b=JjA0P3vK4pOU7F5qrd3IeVvTQo9T4FfV7/zrrNxO0/NN1f+51FZB/ZNDvTn+at2cV7
+         j3WenQxHYUROFMA4bX2f9ScfUB83loKPLUN3va79aOuTSz49FJiedvCehrzu3ZhxvDwb
+         0Q8pkGq0hl6GFfBdcXq4RE5U06yA/6i2ows3PjVpwAWOKmplYH00hwuUiJ+rGGEv0C4F
+         jDODiTT4nZ5NJUy7SC0dBSaX92aXY7NS22H8HS/Z4hA7mvadEB9N4MYWUJX7RnGK19dX
+         E7oOPNH3Uwl4nU22HyNawHrPGCLN6Rym7BhZLz2qlLsz3/C3K6hrnBHFR7nzVvOlMA/f
+         DHyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=1CJ7+HBssyW4VgrPSTkVO+QUsjpdif2wB2Ncp6ltYSU=;
-        b=cwZh147ORrokZHeKfkXMuXhqbLYf5E4mqABCpAWn4VnQ6LJkL7KU/j9QYgtmSGCYsV
-         dEtqpIBAHoov0MGNYzy38EiIVM3NiWYpHc8FrHsuERuMdH3Xy0yVjwSWSgc0gOdstd2u
-         VaMzjq8HfB+dXugZYMWTWC/Hy0q9Hi0UGRV/w7oscBp3Mxy8q4hawPxYg8xo4iGFKCs1
-         EJ8MyTjQArkF951jwTBbJ63SHcFkUwKo8pJJutu3CTEJ3apSbowyHbalNC7HZwnnAoBh
-         OQQ8ZM8eVVppDIbWbvmAjlzH0W0JHFUIqg/Pp17Z9WrQCGfhxEalDxHqKVKai6RD6N0R
-         SbEQ==
-X-Gm-Message-State: AHQUAubVnjhytL3BQyFFrpn77KoF1FdCRmolq62tTKi3G5cy534tzUm1
-        eb9fu2UjVOVWPvsnxnJo/+4TeiJKww87s42LiR8UB6pG
-X-Google-Smtp-Source: AHgI3IYbZGP5UWt2TZFLIb1rQsRRqwfTSEHsbQ3ukj/qF+qwcoiro0ePSA7QHkIyNe7ugUGCXFpqWxlAfcdiOfU7h98=
-X-Received: by 2002:a67:7685:: with SMTP id r127mr3298985vsc.35.1550046945890;
- Wed, 13 Feb 2019 00:35:45 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=zeTngYgb/4MDOX0lTbENW3uviJ2EzDI0XEMt5X040V8=;
+        b=I0kd0diP+knFOyt5bJBvXo1Giz7USfBoBo3pafGIwfNKgNHAK7z6S+Lg3ek6QH3Cze
+         CKk7sr3xGhuUfH/YqBqVOHaN17wxqiY7v+wjZp7vuua7QcQNPScqocO7Jo0Te1u0+/iD
+         hY2cvraoVZyHQdQNGXtxiJ3wNAgGU6CJfre6l7oOkALjxwH78YbizrNi3cDdmAerXEtG
+         qNBlJPDykVXorsAknRQush+PILsLj5G1iZjrK8nRLZ7xwfWb0zCM35YONLhfEgmC8Dfp
+         xacMpi9jtjeXKW6y4RzcCpNovstV6VE+Xr+SOjKW+pGdmvBSaYTmz+EcOnC6cSZGY4qf
+         OseQ==
+X-Gm-Message-State: AHQUAuaZepoQMj4AnnnBCwTinl4PeUUO54L8Lad6Y/YQR1SjH1OCCZF/
+        nTYYrmsDWar9vvoZtJr7udCiaFOH4LJI3ulefBWn7g==
+X-Google-Smtp-Source: AHgI3IYKI3ujB+z/zvj9R5ko8c5vEvF5fCQ+jE8sGD5YhK8ET9x/GDcq44WdKqu0NQ/R799tXjGPUwQyLxQ6GfYs4kw=
+X-Received: by 2002:a2e:9087:: with SMTP id l7-v6mr4673657ljg.153.1550047114497;
+ Wed, 13 Feb 2019 00:38:34 -0800 (PST)
 MIME-Version: 1.0
-References: <20190212152558.GA21933@embeddedor>
-In-Reply-To: <20190212152558.GA21933@embeddedor>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Wed, 13 Feb 2019 09:35:10 +0100
-Message-ID: <CAPDyKFrP3GX16EXQTjCa1ThfF-jzWM-JdtvY6TOqo8LBCJ2bbw@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-xenon: Mark expected switch fall-through
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Hu Ziji <huziji@marvell.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
+References: <20190208021631.30252-1-masneyb@onstation.org>
+In-Reply-To: <20190208021631.30252-1-masneyb@onstation.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 13 Feb 2019 09:38:23 +0100
+Message-ID: <CACRpkdYHK1qwcy3AzRjwC1A_FB3ns9T7O_UnCgbtk30Nx=S8+A@mail.gmail.com>
+Subject: Re: [PATCH v2 00/11] qcom: ssbi-gpio: add support for hierarchical
+ IRQ chip
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Doug Anderson <dianders@chromium.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        linux-arm-msm@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Feb 2019 at 16:26, Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
->
-> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> cases where we are expecting to fall through.
->
-> This patch fixes the following warning:
->
-> drivers/mmc/host/sdhci-xenon-phy.c: In function =E2=80=98xenon_emmc_phy_s=
-low_mode=E2=80=99:
-> drivers/mmc/host/sdhci-xenon-phy.c:527:47: warning: this statement may fa=
-ll through [-Wimplicit-fallthrough=3D]
->    if ((priv->init_card_type =3D=3D MMC_TYPE_SDIO) ||
->        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~
->        params->slow_mode) {
->        ~~~~~~~~~~~~~~~~~
-> drivers/mmc/host/sdhci-xenon-phy.c:534:2: note: here
->   default:
->   ^~~~~~~
->
-> Warning level 3 was used: -Wimplicit-fallthrough=3D3
->
-> Notice that, in this particular case, the code comment is modified
-> in accordance with what GCC is expecting to find.
->
-> This patch is part of the ongoing efforts to enable
-> -Wimplicit-fallthrough.
->
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+On Fri, Feb 8, 2019 at 3:16 AM Brian Masney <masneyb@onstation.org> wrote:
 
-Applied for next - and by cleaning up the somewhat noisy change log, thanks=
-!
-
-Kind regards
-Uffe
-
-
-> ---
->  drivers/mmc/host/sdhci-xenon-phy.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> This patch series adds hierarchical IRQ chip support to ssbi-gpio so
+> that device tree consumers can request an IRQ directly from the GPIO
+> block rather than having to request an IRQ from the underlying PMIC.
 >
-> diff --git a/drivers/mmc/host/sdhci-xenon-phy.c b/drivers/mmc/host/sdhci-=
-xenon-phy.c
-> index 5b5eb53a63d2..8d07ee1b8f08 100644
-> --- a/drivers/mmc/host/sdhci-xenon-phy.c
-> +++ b/drivers/mmc/host/sdhci-xenon-phy.c
-> @@ -530,7 +530,7 @@ static bool xenon_emmc_phy_slow_mode(struct sdhci_hos=
-t *host,
->                         ret =3D true;
->                         break;
->                 }
-> -               /* else: fall through */
-> +               /* fall through */
->         default:
->                 reg &=3D ~XENON_TIMING_ADJUST_SLOW_MODE;
->                 ret =3D false;
-> --
-> 2.20.1
+> For more background information, see the email thread with Linus
+> Walleij's excellent description of the problem at
+> https://www.spinics.net/lists/linux-gpio/msg34655.html.
 >
+> These changes were tested by Linus Walleij on an APQ8060 DragonBoard.
+>
+> See the notes on the individual patches for the changelog.
+
+SInce we have definitive ACKs from the irqchip and
+MFD maintainers I have queued this series on an immutable branch
+that I will merge for v5.1 and offer to the MFD and ARM SoC
+once it builds fine on the test servers.
+
+I don't think the Qcom maintainers will complain.
+
+Yours,
+Linus Walleij
