@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 700E3C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:33:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD54C43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:33:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FE83206C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:33:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E576206C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 21:33:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MzOyVW4D"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DbAPnFK7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394898AbfBMVdj (ORCPT
+        id S2394902AbfBMVdu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 16:33:39 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:33112 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436747AbfBMVcg (ORCPT
+        Wed, 13 Feb 2019 16:33:50 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:41370 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394819AbfBMVce (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 16:32:36 -0500
-Received: by mail-qt1-f196.google.com with SMTP id z39so4518731qtz.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 13:32:35 -0800 (PST)
+        Wed, 13 Feb 2019 16:32:34 -0500
+Received: by mail-qk1-f196.google.com with SMTP id u188so2325922qkh.8
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 13:32:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Y9bjfpnIjOT82L5WN75hPg2gnG6Z+LcsZzLHUB1TZws=;
-        b=MzOyVW4Ds6vkL8Y/zO0X8jD1DAb5GY6O3kQ39qkczIEmemCNKPrJYCWKTEGPZcvhLj
-         oqbNB/eHgyKCShxs0F39T7zRkhQUgZxwb0LwiEMFgU2wfrAD2/wNGhxx2cF6mx66JJVi
-         BGZyh6/XkwdlnKx2Shg/ISzfQDAZB840GPOPkg6ou95OAAVx++PnwWh49qx30F/3sAdQ
-         9XqmvLIfMyZdmGcvVyM69WC+yo8aW+kskfuIZN7fNu+YzJ8ZmBI/7AsgP6b86ThTx7eu
-         BpQZhNw5bNPUY8CKrwUySJ0duKB4X5YhLLvU9q/+eKJ7r2GqY2ZFIh1YfvKQoVPJ/OAK
-         hkBA==
+        bh=DKiPUgce4JTheoGvWXbyBEIdokTDXbYrmiEYcaxz36E=;
+        b=DbAPnFK7wOOhgCkSXvr0rLYtTRXuMZoONdFu6iHTzWBB/el8BuICjM2pTFOqGm9uUD
+         MzehSpAKMBox9yPh88f2hG4Knzskm9d/Uq8PuLOjVRmRyw5HfRE6h65JxG1hWs/jgzb7
+         ep/kP7umpWmHAL7RDckVkr84vFvbcl+65Eci/o6yk9AgDW1Ho6YpNC0KPJG4GyO4KOof
+         qU7020prSwEjhrPdjOhv0nTnfZ7UB3eFEgtPH/+g/B13w+swHlEWHm6+9ejg/Yh4evoc
+         YKL4JtBxJiSaOeonz7KnTt4HCuTAV2YpOxp3PrVTmVy1PE7u0Hl25MccfI52IVcaCcLa
+         sAew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Y9bjfpnIjOT82L5WN75hPg2gnG6Z+LcsZzLHUB1TZws=;
-        b=GackY176lloiqFME6avoA8Cid9DiXCG1KbZL1PGUVR6KP1Mnq2X3tGcS52mSVhh1cF
-         qmh0dan6aDDKYBxGI24MJ3aqHB00HMRt8fVQ/VifFj696wc1XcaPUUaYrIyCCwb5R2HC
-         E164vqWrM30KNqS8dy+S2DAIiikm0w+dESaZElj1Gcv+sT9G989E0tmfO43kQqMhHW0X
-         NElfbHGI2epbe8mAQMjaaQcC6GGoenswgDAQcEHjgwsDyccfnTlG9TVFVp69TxuXPjOR
-         Xii748buJ3oW+3w+szblW/RJqzPK3EZFydOfKTJ/k6AD0plsSu+YmuAtb5bfpVmQrqOk
-         94Mg==
-X-Gm-Message-State: AHQUAuYuAzXNDK6w0UFgzCFgVQ5PjtPqjMJGfMDiW4KawCl0BWGcwaWq
-        HMasCKGvC2psWjtoxc1VK9Zj0w==
-X-Google-Smtp-Source: AHgI3IZpLedZO/Zy4OyyvE6dqteNaaVtgsW0nEdTvXN5uBvmTqhDJUVV0Djjr6W1HTQST2PeTfrwBg==
-X-Received: by 2002:ac8:33d7:: with SMTP id d23mr206276qtb.243.1550093555522;
-        Wed, 13 Feb 2019 13:32:35 -0800 (PST)
+        bh=DKiPUgce4JTheoGvWXbyBEIdokTDXbYrmiEYcaxz36E=;
+        b=TulGEV+RRbeTcQ2C0lUPIbsCjc2mLJLkT6L6IBWXijtw0d+sK6lQz2X3u/jw72J/YM
+         KdabpBxhqptapysSivXgByZ4t8o3A2fnSkgYzK2codadBM/bRQg/kz8mhJ6lol7x/27t
+         WKjSJg2DlywFdb+86u2WWKuVvHHg2/6ubBDKzMomGf8UTX9VwcLIDbfPPfgv0k9ZQBla
+         WFEsfN9Y/VCFeHAscAk3r+CEEb4yGFEPbKkRul8wRBGdrKjsfdubDMQV+Za9XZIxRj2O
+         tvJ1CXeqrfHkjqIR3kfFMBu4mw6+TnGVnwFHyYKbz7vwFEBLocUmZYeSXZSklpKYalHg
+         sP2w==
+X-Gm-Message-State: AHQUAuaOxQb/JJIzeNlVSlcKT0rehpFkDkdWFZFTXFweha1A5f7asESE
+        fWx1+g1XU2+NeXy4kZNvvrAAyw==
+X-Google-Smtp-Source: AHgI3Ibx+sKx3L99liSsDx+HFc+v/ruM6shgCriTB9LCyaZtBZ2LkNnyIIhH56SKc+xo29hyIj24zg==
+X-Received: by 2002:a37:a14d:: with SMTP id k74mr216780qke.242.1550093552772;
+        Wed, 13 Feb 2019 13:32:32 -0800 (PST)
 Received: from localhost.localdomain (pool-72-71-243-63.cncdnh.fast00.myfairpoint.net. [72.71.243.63])
-        by smtp.googlemail.com with ESMTPSA id 8sm382675qtr.7.2019.02.13.13.32.34
+        by smtp.googlemail.com with ESMTPSA id 8sm382675qtr.7.2019.02.13.13.32.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 13:32:34 -0800 (PST)
+        Wed, 13 Feb 2019 13:32:32 -0800 (PST)
 From:   David Long <dave.long@linaro.org>
 To:     stable@vger.kernel.org,
         Russell King - ARM Linux <linux@armlinux.org.uk>,
@@ -66,9 +66,9 @@ To:     stable@vger.kernel.org,
         Mark Rutland <mark.rutland@arm.com>
 Cc:     Will Deacon <will.deacon@arm.com>, Mark Brown <broonie@kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 4.19 07/17] ARM: 8795/1: spectre-v1.1: use put_user() for __put_user()
-Date:   Wed, 13 Feb 2019 16:32:13 -0500
-Message-Id: <20190213213223.916-8-dave.long@linaro.org>
+Subject: [PATCH 4.19 05/17] ARM: 8793/1: signal: replace __put_user_error with __put_user
+Date:   Wed, 13 Feb 2019 16:32:11 -0500
+Message-Id: <20190213213223.916-6-dave.long@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190213213223.916-1-dave.long@linaro.org>
 References: <20190213213223.916-1-dave.long@linaro.org>
@@ -79,59 +79,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Julien Thierry <julien.thierry@arm.com>
 
-Commit e3aa6243434fd9a82e84bb79ab1abd14f2d9a5a7 upstream.
+Commit 18ea66bd6e7a95bdc598223d72757190916af28b upstream.
 
-When Spectre mitigation is required, __put_user() needs to include
-check_uaccess. This is already the case for put_user(), so just make
-__put_user() an alias of put_user().
+With Spectre-v1.1 mitigations, __put_user_error is pointless. In an attempt
+to remove it, replace its references in frame setups with __put_user.
 
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: David A. Long <dave.long@linaro.org>
 ---
- arch/arm/include/asm/uaccess.h | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ arch/arm/kernel/signal.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/include/asm/uaccess.h b/arch/arm/include/asm/uaccess.h
-index d65ef85fc617..1191e7da8fab 100644
---- a/arch/arm/include/asm/uaccess.h
-+++ b/arch/arm/include/asm/uaccess.h
-@@ -370,6 +370,14 @@ do {									\
- 	__pu_err;							\
- })
+diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
+index 1e2ecfe080bb..b908382b69ff 100644
+--- a/arch/arm/kernel/signal.c
++++ b/arch/arm/kernel/signal.c
+@@ -336,7 +336,7 @@ setup_sigframe(struct sigframe __user *sf, struct pt_regs *regs, sigset_t *set)
+ 	if (err == 0)
+ 		err |= preserve_vfp_context(&aux->vfp);
+ #endif
+-	__put_user_error(0, &aux->end_magic, err);
++	err |= __put_user(0, &aux->end_magic);
  
-+#ifdef CONFIG_CPU_SPECTRE
-+/*
-+ * When mitigating Spectre variant 1.1, all accessors need to include
-+ * verification of the address space.
-+ */
-+#define __put_user(x, ptr) put_user(x, ptr)
-+
-+#else
- #define __put_user(x, ptr)						\
- ({									\
- 	long __pu_err = 0;						\
-@@ -377,12 +385,6 @@ do {									\
- 	__pu_err;							\
- })
+ 	return err;
+ }
+@@ -499,7 +499,7 @@ setup_frame(struct ksignal *ksig, sigset_t *set, struct pt_regs *regs)
+ 	/*
+ 	 * Set uc.uc_flags to a value which sc.trap_no would never have.
+ 	 */
+-	__put_user_error(0x5ac3c35a, &frame->uc.uc_flags, err);
++	err = __put_user(0x5ac3c35a, &frame->uc.uc_flags);
  
--#define __put_user_error(x, ptr, err)					\
--({									\
--	__put_user_switch((x), (ptr), (err), __put_user_nocheck);	\
--	(void) 0;							\
--})
--
- #define __put_user_nocheck(x, __pu_ptr, __err, __size)			\
- 	do {								\
- 		unsigned long __pu_addr = (unsigned long)__pu_ptr;	\
-@@ -462,6 +464,7 @@ do {									\
- 	: "r" (x), "i" (-EFAULT)				\
- 	: "cc")
+ 	err |= setup_sigframe(frame, regs, set);
+ 	if (err == 0)
+@@ -519,8 +519,8 @@ setup_rt_frame(struct ksignal *ksig, sigset_t *set, struct pt_regs *regs)
  
-+#endif /* !CONFIG_CPU_SPECTRE */
+ 	err |= copy_siginfo_to_user(&frame->info, &ksig->info);
  
- #ifdef CONFIG_MMU
- extern unsigned long __must_check
+-	__put_user_error(0, &frame->sig.uc.uc_flags, err);
+-	__put_user_error(NULL, &frame->sig.uc.uc_link, err);
++	err |= __put_user(0, &frame->sig.uc.uc_flags);
++	err |= __put_user(NULL, &frame->sig.uc.uc_link);
+ 
+ 	err |= __save_altstack(&frame->sig.uc.uc_stack, regs->ARM_sp);
+ 	err |= setup_sigframe(&frame->sig, regs, set);
 -- 
 2.17.1
 
