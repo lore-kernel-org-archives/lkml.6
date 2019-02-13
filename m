@@ -2,178 +2,297 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FEA0C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:19:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18A52C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:19:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3F6C222C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:19:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="qDQT8GFv"
+	by mail.kernel.org (Postfix) with ESMTP id DA64B222C0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 09:19:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391298AbfBMJTf (ORCPT
+        id S2391313AbfBMJTh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 04:19:35 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:55047 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388290AbfBMJTe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 04:19:34 -0500
-Received: by mail-it1-f194.google.com with SMTP id z9so2339781itc.4
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 01:19:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=suiqjiV/3v7/sXoqCHDymg+ph6X+23+FUiEu0DKo16Y=;
-        b=qDQT8GFvjnlkX1Ds44AYVi4ILsJvDPT03Iz6c8hPXzgLATXyAjviON6+vzvmgOZ3ap
-         ydKl6C+l8GmsVPW/EAHE2Inli6hVkZs0dHyF3/NvwPFj+sMMsq/E+VHL5jcBMOoM8Qzb
-         zgxZlFJsJ+8Tt5gJ94tSo1yJpqdqsdt4YHdO8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=suiqjiV/3v7/sXoqCHDymg+ph6X+23+FUiEu0DKo16Y=;
-        b=GUewV/dX1RTkxHzWexycWk96YadlSkeFZyUdR4yShdPHqrhUxG5EG2RhsgsvRn3hZ/
-         DTi7wrhWTrQFAo7zyokAfEnK9FXk8z9j8qrvIzwNIz6voTHyT5qCYJrjkyIpfEsi1Dxq
-         4PuUClXbvT4i0daFm/twcoQUh1svzivbAaDLxjXItF5lPRM/FVelzIdJ4I3QWspkfx1j
-         W9js33oC1yj7Oy//vQ0xvcUHaHPuNZb803d7METuXNXkT7qnAz1QjfvBS3r4CuOtQfxV
-         Nvj/fW4FgBQuOEm4zrpmMagED+BbviG7y/hkudjc0e05Fs7th6oqLHEe6j3qhDmFUSjb
-         FI8w==
-X-Gm-Message-State: AHQUAuZPYQ1AXewJvbJM0V/7rP+CQNK0HgS3x6wiHUG5tUi7H8lJAqyl
-        Zwh0OatzuITucAZadCWJq45UIe8bYB04kD33Top07w==
-X-Google-Smtp-Source: AHgI3IY0QB990fMWVki8Kr2ijwfqnVm0vmvmNzZT3ufy9FCTR4jzj674f5//NmA5xa03EpvAwigbj/gsJI1SKT05gUM=
-X-Received: by 2002:a24:6891:: with SMTP id v139mr1764177itb.107.1550049573146;
- Wed, 13 Feb 2019 01:19:33 -0800 (PST)
+        Wed, 13 Feb 2019 04:19:37 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:39742 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730444AbfBMJTg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 04:19:36 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C055381F2F;
+        Wed, 13 Feb 2019 09:19:34 +0000 (UTC)
+Received: from [10.36.118.22] (unknown [10.36.118.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 909F060856;
+        Wed, 13 Feb 2019 09:19:06 +0000 (UTC)
+Subject: Re: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
+To:     "Wang, Wei W" <wei.w.wang@intel.com>,
+        Nitesh Narayan Lal <nitesh@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
+        "pagupta@redhat.com" <pagupta@redhat.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "riel@surriel.com" <riel@surriel.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "dodgen@google.com" <dodgen@google.com>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        "dhildenb@redhat.com" <dhildenb@redhat.com>,
+        "aarcange@redhat.com" <aarcange@redhat.com>
+References: <20190204201854.2328-1-nitesh@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF68060@shsmsx102.ccr.corp.intel.com>
+ <17adc05d-91f9-682b-d9a4-485e6a631422@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF6B52A@shsmsx102.ccr.corp.intel.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <62b43699-f548-e0da-c944-80702ceb7202@redhat.com>
+Date:   Wed, 13 Feb 2019 10:19:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190201154232.10505-1-jagan@amarulasolutions.com>
- <CAMty3ZBspvP=qZEK9vaowVq4f5W3Qx2qHkwcuAnCOOjV29=Y_Q@mail.gmail.com> <20190213090308.dlcwgcrhg264k2cu@flea>
-In-Reply-To: <20190213090308.dlcwgcrhg264k2cu@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Wed, 13 Feb 2019 14:49:21 +0530
-Message-ID: <CAMty3ZCSMRm-0suApB4Zb+kE1M2sWn3F7ugPBFWaL4ap7cJejQ@mail.gmail.com>
-Subject: Re: [PATCH v7 00/23] drm/sun4i: Allwinner A64 MIPI-DSI support
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <286AC319A985734F985F78AFA26841F73DF6B52A@shsmsx102.ccr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 13 Feb 2019 09:19:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 2:33 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Tue, Feb 12, 2019 at 03:16:02PM +0530, Jagan Teki wrote:
-> > On Fri, Feb 1, 2019 at 9:12 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > >
-> > > Here is next version changes for Allwinner A64 MIPI-DSI support
-> > >
-> > > This series grouped the changes like previous version[1] with different
-> > > sets to support three different panels types that can fit into the DSI
-> > > controller.
-> > >
-> > > set:1, for 4-lane, burst mode support
-> > > - patch 0001: 0009, DSI controller changes that support burst mode.
-> > >
-> > > set:2, for A64 DSI support
-> > > - patch 0010: tcon dclk divider computation based on A64 BSP.
-> > > - patch 0011: 0017, Allwinner A64 DSI controller changes.
-> > >
-> > > set:3, enable 4-lane burst mode panel:
-> > > - patch 0018: Overlay patch that enable Feiyang FY07024DI26A30-D
-> > >   burst mode panel on Pine64-LTS
-> > >
-> > > set:4, enable 4-lane video mode panel:
-> > > - patch 0019: msg type MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM support
-> > > - patch 0020: Overlay patch that enable Bananapi S070WV20-CT16 ICN6211
-> > >   panel on Bananapi M64
-> > >
-> > > set:5, enable 2-lane video mode panel:
-> > > - patch 0021, 0022: DSI hfp and hbp timings fixes
-> > > - patch 0023: Enable Techstar TS8550B panel on Amarula A64-Relic
-> > >
-> > > Changes for v7:
-> > > - moved vcc-dsi binding to required filed.
-> > > - drop quotes on fallback dphy bindings.
-> > > - drop min_rate clock pll-mipi patches.
-> > > - introduce dclk divider computation as like A64 BSP.
-> > > - add A64 DSI quark patches.
-> > > - fixed A64 DSI pipeline.
-> > > - add proper commit messages.
-> > > - collect Merlijn Wajer Tested-by credits.
-> > > Changes for v6:
-> > > - dropped unneeded changes, patches
-> > > - fixed all burst mode patches as per previous version comments
-> > > - rebase on master
-> > > - update proper commit message
-> > > - dropped unneeded comments
-> > > - order the patches that make review easy
-> > > Changes for v5:
-> > > - collect Rob, Acked-by
-> > > - droped "Fix VBP size calculation" patch
-> > > - updated vblk timing calculation.
-> > > - droped techstar, bananapi dsi panel drivers which may require
-> > >   bridge or other setup. it's under discussion.
-> > > Changes for v4:
-> > > - droppoed untested CCU_FEATURE_FIXED_POSTDIV check code in
-> > >   nkm min, max rate patches
-> > > - create two patches for "Add Allwinner A64 MIPI DSI support"
-> > >   one for has_mod_clk quirk and other one for A64 support
-> > > - use existing driver code construct for hblk computation
-> > > - dropped "Increase hfp packet overhead" patch [2], though BSP added
-> > >   this but we have no issues as of now.
-> > >   (no issues on panel side w/o this change)
-> > > - create separate function for vblk computation
-> > > - enable vcc-dsi regulator in dsi_runtime_resume
-> > > - collect Rob, Acked-by
-> > > - update MAINTAINERS file for panel drivers
-> > > - cleanup commit messages
-> > > - fixed checkpatch warnings/errors
-> > >
-> > > [1] https://patchwork.kernel.org/cover/10779893/
-> > >
-> > > Any inputs?
-> > > Jagan.
-> > >
-> > > Jagan Teki (23):
-> > >   drm/sun4i: sun6i_mipi_dsi: Compute burst mode loop N1 instruction
-> > >     delay
-> > >   drm/sun4i: sun6i_mipi_dsi: Support instruction loop selection
-> > >   drm/sun4i: sun6i_mipi_dsi: Setup burst mode timings
-> > >   drm/sun4i: sun6i_mipi_dsi: Simplify drq to support all modes
-> > >   drm/sun4i: tcon: Export get tcon0 routine
-> > >   drm/sun4i: sun6i_mipi_dsi: Probe tcon0 during dsi_bind
-> > >   drm/sun4i: sun6i_mipi_dsi: Setup burst mode
-> > >   drm/sun4i: sun6i_mipi_dsi: Enable trail_inv and trail_fill controls
-> > >   drm/sun4i: sun6i_mipi_dsi: Enable HBP, HSA_HSE for burst mode
-> >
-> > Can you pick these burst changes which are generic to all SoCs. and
-> > reset will send once we decide the tcon clock.
->
-> These patches don't implement what we discussed last week, and as I
-> told you already, most of them really need some work on the commit log
-> and their explanations.
+On 13.02.19 09:55, Wang, Wei W wrote:
+> On Tuesday, February 12, 2019 5:24 PM, David Hildenbrand wrote:
+>> Global means all VCPUs will be competing potentially for a single lock when
+>> freeing/allocating a page, no? What if you have 64VCPUs allocating/freeing
+>> memory like crazy?
+> 
+> I think the key point is that the 64 vcpus won't allocate/free on the same page simultaneously, so no need to have a global big lock, isn’t it?
+> I think atomic operations on the bitmap would be enough.
 
-If I'm not wrong, we discussed about tcon_dclk (PLL_MIPI) last week
-[1] and these burst changes between 01/23 to 09/23 which are generic
-changes to DSI and not related to clock. Apart from that I made few
-changes on commit logs between the versions (which I was mentioned on
-the cover-letter patch). If any issues issues on commit message,
-please let me know so-that I can rework.
+If you have to resize/alloc/coordinate who will report, you will need
+locking. Especially, I doubt that there is an atomic xbitmap  (prove me
+wrong :) ).
 
-[1] https://patchwork.kernel.org/patch/10780041/
+> 
+>> (I assume some kind of locking is required even if the bitmap would be
+>> atomic. Also, doesn't xbitmap mean that we eventually have to allocate
+>> memory at places where we don't want to - e.g. from arch_free_page ?)
+> 
+> arch_free_pages is in free_pages_prepare, why can't we have memory allocation there?
+
+I remember we were stumbling over some issues that were non-trivial. I
+am not 100% sure yet anymore, but allocating memory while deep down in
+the freeing part of MM core smells like "be careful".
+
+> 
+> It would also be doable to find a preferred place to preallocate some amount of memory for the bitmap.
+
+That makes things very ugly. Especially, preallocation will most likely
+require locking.
+
+> 
+>>
+>> That's the big benefit of taking the pages of the buddy free list. Other VCPUs
+>> won't stumble over them, waiting for them to get freed in the hypervisor.
+> 
+> As also mentioned above, I think other vcpus will not allocate/free on the same page that is in progress of being allocated/freed.
+
+If a page is in the buddy but stuck in some other bitmap, there is
+nothing stopping another VCPU from trying to allocate it. Nitesh has
+been fighting with this problem already :)
+
+> 
+>> This sounds more like "the host requests to get free pages once in a while"
+>> compared to "the host is always informed about free pages". At the time
+>> where the host actually has to ask the guest (e.g. because the host is low on
+>> memory), it might be to late to wait for guest action.
+> 
+> Option 1: Host asks for free pages:
+> Not necessary to ask only when the host has been in memory pressure.
+> This could be the orchestration layer's job to monitor the host memory usage.
+> For example, people could set the condition "when 50% of the host memory
+> has been used, start to ask a guest for some amount of free pages" 
+> 
+> Option 2: Guest actively offers free pages:
+> Add a balloon callback to arch_free_page so that whenever a page gets freed its gfn
+> will be filled into the balloon's report_vq and the host will take away the backing
+> host page.
+> 
+> Both options can be implemented. But I think option 1 would be more
+> efficient as the guest free pages are offered on demand.  
+
+Yes, but as I mentioned this has other drawbacks. Relying on a a guest
+to free up memory when you really need it is not going to work. It might
+work for some scenarios but should not dictate the design. It is a good
+start though if it makes things easier.
+
+Enabling/disabling free page hintning by the hypervisor via some
+mechanism is on the other hand a good idea. "I have plenty of free
+space, don't worry".
+
+> 
+>> Nitesh uses MADV_FREE here (as far as I recall :) ), to only mark pages as
+>> candidates for removal and if the host is low on memory, only scanning the
+>> guest page tables is sufficient to free up memory.
+>>
+>> But both points might just be an implementation detail in the example you
+>> describe.
+> 
+> Yes, it is an implementation detail. I think DONTNEED would be easier
+> for the first step.
+> 
+>>
+>>>
+>>> In above 2), get_free_page_hints clears the bits which indicates that those
+>> pages are not ready to be used by the guest yet. Why?
+>>> This is because 3) will unmap the underlying physical pages from EPT.
+>> Normally, when guest re-visits those pages, EPT violations and QEMU page
+>> faults will get a new host page to set up the related EPT entry. If guest uses
+>> that page before the page gets unmapped (i.e. right before step 3), no EPT
+>> violation happens and the guest will use the same physical page that will be
+>> unmapped and given to other host threads. So we need to make sure that
+>> the guest free page is usable only after step 3 finishes.
+>>>
+>>> Back to arch_alloc_page(), it needs to check if the allocated pages
+>>> have "1" set in the bitmap, if that's true, just clear the bits. Otherwise, it
+>> means step 2) above has happened and step 4) hasn't been reached. In this
+>> case, we can either have arch_alloc_page() busywaiting a bit till 4) is done
+>> for that page Or better to have a balloon callback which prioritize 3) and 4)
+>> to make this page usable by the guest.
+>>
+>> Regarding the latter, the VCPU allocating a page cannot do anything if the
+>> page (along with other pages) is just being freed by the hypervisor.
+>> It has to busy-wait, no chance to prioritize.
+> 
+> I meant this:
+> With this approach, essentially the free pages have 2 states:
+> ready free page: the page is on the free list and it has "1" in the bitmap
+> non-ready free page: the page is on the free list and it has "0" in the bitmap
+> Ready free pages are those who can be allocated to use.
+> Non-ready free pages are those who are in progress of being reported to
+> host and the related EPT mapping is about to be zapped. 
+> 
+> The non-ready pages are inserted into the report_vq and waiting for the
+> host to zap the mappings one by one. After the mapping gets zapped
+> (which means the backing host page has been taken away), host acks to
+> the guest to mark the free page as ready free page (set the bit to 1 in the bitmap).
+
+Yes, that's how I understood your approach. The interesting part is
+where somebody finds a buddy page and wants to allocate it.
+
+> 
+> So the non-ready free page may happen to be used when they are waiting in
+> the report_vq to be handled by the host to zap the mapping, balloon could
+> have a fast path to notify the host:
+> "page 0x1000 is about to be used, don’t zap the mapping when you get
+> 0x1000 from the report_vq"  /*option [1] */
+
+This requires coordination and in any case there will be a scenario
+where you have to wait for the hypervisor to eventually finish a madv
+call. You can just try to make that scenario less likely.
+
+What you propose is synchronous in the worst case. Getting pages of the
+buddy makes it possible to have it done completely asynchronous. Nobody
+allocating a page has to wait.
+
+> 
+> Or
+> 
+> "page 0x1000 is about to be used, please zap the mapping NOW, i.e. do 3) and 4) above,
+> so that the free page will be marked as ready free page and the guest can use it".
+> This option will generate an extra EPT violation and QEMU page fault to get a new host
+> page to back the guest ready free page.
+
+Again, coordination with the hypervisor while allocating a page. That is
+to be avoided in any case.
+
+> 
+>>
+>>>
+>>> Using bitmaps to record free page hints don't need to take the free pages
+>> off the buddy list and return them later, which needs to go through the long
+>> allocation/free code path.
+>>>
+>>
+>> Yes, but it means that any process is able to get stuck on such a page for as
+>> long as it takes to report the free pages to the hypervisor and for it to call
+>> madvise(pfn_start, DONTNEED) on any such page.
+> 
+> This only happens when the guest thread happens to get allocated on a page which is
+> being reported to the host. Using option [1] above will avoid this.
+
+I think getting pages out of the buddy system temporarily is the only
+way we can avoid somebody else stumbling over a page currently getting
+reported by the hypervisor. Otherwise, as I said, there are scenarios
+where a allocating VCPU has to wait for the hypervisor to finish the
+"freeing" task. While you can try to "speedup" that scenario -
+"hypervisor please prioritize" you cannot avoid it. There will be busy
+waiting.
+
+I don't believe what you describe is going to work (especially the not
+locking part when working with global resources).
+
+What would be interesting is to see if something like a xbitmap could be
+used instead of the per-vcpu list. Nitesh, do you remember what the
+problem was with allocating memory from these hooks? Was it a locking issue?
+
+Thanks!
+
+> 
+> Best,
+> Wei
+> 
+
+
+-- 
+
+Thanks,
+
+David / dhildenb
