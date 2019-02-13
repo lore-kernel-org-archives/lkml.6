@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6273C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:46:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A484AC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:46:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BC3F20835
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:46:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A9EE222D1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:46:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083612;
-	bh=gzVnmnmzdM/kzCjwvKbx+hK6zO61rF2m5sxJBh30GcE=;
+	s=default; t=1550083615;
+	bh=3q93zkdMWFHjvzgRIhRz2ulE7/6uiGcMs/3cPd+7j+c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XtrCjoDYhItiSnP6SFkBciI+4WH0Rpy1ZhyqiG2BnGmvOm0+ARPnqZcYQb2ou0Qyn
-	 HC9EAYHbKkMpeptRsGijzAuWg//W3qnFiG4IQ8Ag4tUOaR+xFF+qQw/+yxqYTorn6a
-	 B+KPt1o9X0B03GXOBQ3JcQEWYwN5YSgYwCTN5/Xw=
+	b=F2TlH7WO1U87XGv0quC6gyqP1945fHf71XMqC1O50zwXOZA/dUgy8VH1tm/cF3BaN
+	 k3jeyAo2fptDnZyTMhz0Ycs2tV1HkJv3bNT8NzVRxUNFfmcW3uvTYzB9DA/RPb98pU
+	 dUIcxRegw8j2d+V4QOYI8DQN+nLHVlXAtRFOIxWk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406540AbfBMSqu (ORCPT
+        id S2406553AbfBMSqx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:46:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45184 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:46:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406486AbfBMSqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:46:38 -0500
+        id S2406508AbfBMSqq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:46:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2ED8F20811;
-        Wed, 13 Feb 2019 18:46:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4A8DB20811;
+        Wed, 13 Feb 2019 18:46:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083597;
-        bh=gzVnmnmzdM/kzCjwvKbx+hK6zO61rF2m5sxJBh30GcE=;
+        s=default; t=1550083605;
+        bh=3q93zkdMWFHjvzgRIhRz2ulE7/6uiGcMs/3cPd+7j+c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MVL25ECvrJVOVDO1Gexl5W0ArVi2w+HudoeWlGMJssRQk8QsCSEhzpDnFA6ENzykc
-         WXzbGo53GpGYvmM8CknF9LxNqIUExvUBZKA1UW9v1M0Gg85GYFvBNouq4Mpbn7PmML
-         AxpSbcawKOimUBYAeuUGPCRa4YS8+GkmgHTjfwPs=
+        b=hbs2K7W+Vr57PVo/s44dGyO8V8s1yFy8oNyNAKiYf25lCxA7TTtEslxuvXKIPyl0w
+         m9I+nqn6/mJ8HsHDZDuz1N0ntyxzgsuGCZw9U9vAdFM+te8Jyid1Ht1kcKkRcdllym
+         o5I0F2Al7DtWNNw65vb46NKWAbuUx0JBfE/eHGqg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Benedict Wong <benedictwong@google.com>,
-        Steffen Klassert <steffen.klassert@secunet.com>
-Subject: [PATCH 4.20 44/50] xfrm: Make set-mark default behavior backward compatible
-Date:   Wed, 13 Feb 2019 19:38:49 +0100
-Message-Id: <20190213183659.167323266@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+acdeb633f6211ccdf886@syzkaller.appspotmail.com,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Myungho Jung <mhjungk@gmail.com>
+Subject: [PATCH 4.20 47/50] libceph: avoid KEEPALIVE_PENDING races in ceph_con_keepalive()
+Date:   Wed, 13 Feb 2019 19:38:52 +0100
+Message-Id: <20190213183659.389268899@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183655.747168774@linuxfoundation.org>
 References: <20190213183655.747168774@linuxfoundation.org>
@@ -65,45 +67,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Benedict Wong <benedictwong@google.com>
+From: Ilya Dryomov <idryomov@gmail.com>
 
-commit e2612cd496e7b465711d219ea6118893d7253f52 upstream.
+commit 4aac9228d16458cedcfd90c7fb37211cf3653ac3 upstream.
 
-Fixes 9b42c1f179a6, which changed the default route lookup behavior for
-tunnel mode SAs in the outbound direction to use the skb mark, whereas
-previously mark=0 was used if the output mark was unspecified. In
-mark-based routing schemes such as Android’s, this change in default
-behavior causes routing loops or lookup failures.
+con_fault() can transition the connection into STANDBY right after
+ceph_con_keepalive() clears STANDBY in clear_standby():
 
-This patch restores the default behavior of using a 0 mark while still
-incorporating the skb mark if the SET_MARK (and SET_MARK_MASK) is
-specified.
+    libceph user thread               ceph-msgr worker
 
-Tested with additions to Android's kernel unit test suite:
-https://android-review.googlesource.com/c/kernel/tests/+/860150
+ceph_con_keepalive()
+  mutex_lock(&con->mutex)
+  clear_standby(con)
+  mutex_unlock(&con->mutex)
+                                mutex_lock(&con->mutex)
+                                con_fault()
+                                  ...
+                                  if KEEPALIVE_PENDING isn't set
+                                    set state to STANDBY
+                                  ...
+                                mutex_unlock(&con->mutex)
+  set KEEPALIVE_PENDING
+  set WRITE_PENDING
 
-Fixes: 9b42c1f179a6 ("xfrm: Extend the output_mark to support input direction and masking")
-Signed-off-by: Benedict Wong <benedictwong@google.com>
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+This triggers warnings in clear_standby() when either ceph_con_send()
+or ceph_con_keepalive() get to clearing STANDBY next time.
+
+I don't see a reason to condition queue_con() call on the previous
+value of KEEPALIVE_PENDING, so move the setting of KEEPALIVE_PENDING
+into the critical section -- unlike WRITE_PENDING, KEEPALIVE_PENDING
+could have been a non-atomic flag.
+
+Reported-by: syzbot+acdeb633f6211ccdf886@syzkaller.appspotmail.com
+Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+Tested-by: Myungho Jung <mhjungk@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/xfrm/xfrm_policy.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ net/ceph/messenger.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/net/xfrm/xfrm_policy.c
-+++ b/net/xfrm/xfrm_policy.c
-@@ -1628,7 +1628,10 @@ static struct dst_entry *xfrm_bundle_cre
- 		dst_copy_metrics(dst1, dst);
- 
- 		if (xfrm[i]->props.mode != XFRM_MODE_TRANSPORT) {
--			__u32 mark = xfrm_smark_get(fl->flowi_mark, xfrm[i]);
-+			__u32 mark = 0;
+--- a/net/ceph/messenger.c
++++ b/net/ceph/messenger.c
+@@ -3219,9 +3219,10 @@ void ceph_con_keepalive(struct ceph_conn
+ 	dout("con_keepalive %p\n", con);
+ 	mutex_lock(&con->mutex);
+ 	clear_standby(con);
++	con_flag_set(con, CON_FLAG_KEEPALIVE_PENDING);
+ 	mutex_unlock(&con->mutex);
+-	if (con_flag_test_and_set(con, CON_FLAG_KEEPALIVE_PENDING) == 0 &&
+-	    con_flag_test_and_set(con, CON_FLAG_WRITE_PENDING) == 0)
 +
-+			if (xfrm[i]->props.smark.v || xfrm[i]->props.smark.m)
-+				mark = xfrm_smark_get(fl->flowi_mark, xfrm[i]);
- 
- 			family = xfrm[i]->props.family;
- 			dst = xfrm_dst_lookup(xfrm[i], tos, fl->flowi_oif,
++	if (con_flag_test_and_set(con, CON_FLAG_WRITE_PENDING) == 0)
+ 		queue_con(con);
+ }
+ EXPORT_SYMBOL(ceph_con_keepalive);
 
 
