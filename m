@@ -2,101 +2,165 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF582C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:51:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CA7CC282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:51:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA29B21901
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:51:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23AAB21920
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 10:51:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391576AbfBMKuz (ORCPT
+        id S2391617AbfBMKvI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 05:50:55 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:47899 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2391545AbfBMKuv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 05:50:51 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1DAkvNf020737;
-        Wed, 13 Feb 2019 11:50:39 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2qjfy6akcj-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 13 Feb 2019 11:50:39 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 71B6A38;
-        Wed, 13 Feb 2019 10:50:37 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E8E9F4EE5;
-        Wed, 13 Feb 2019 10:50:36 +0000 (GMT)
-Received: from localhost (10.75.127.51) by SFHDAG5NODE3.st.com (10.75.127.15)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 13 Feb 2019 11:50:36
- +0100
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-To:     <thierry.reding@gmail.com>, <robh+dt@kernel.org>
-CC:     <u.kleine-koenig@pengutronix.de>, <tduszyns@gmail.com>,
-        <mark.rutland@arm.com>, <alexandre.torgue@st.com>,
-        <mcoquelin.stm32@gmail.com>, <fabrice.gasnier@st.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-Subject: [PATCH v3 1/3] dt-bindings: pwm-stm32-lp: document pinctrl sleep state
-Date:   Wed, 13 Feb 2019 11:50:10 +0100
-Message-ID: <1550055012-23348-2-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1550055012-23348-1-git-send-email-fabrice.gasnier@st.com>
-References: <1550055012-23348-1-git-send-email-fabrice.gasnier@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.51]
-X-ClientProxiedBy: SFHDAG5NODE2.st.com (10.75.127.14) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-13_07:,,
- signatures=0
+        Wed, 13 Feb 2019 05:51:08 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60888 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390325AbfBMKvG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 05:51:06 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3B6A386675;
+        Wed, 13 Feb 2019 10:51:06 +0000 (UTC)
+Received: from localhost (ovpn-8-32.pek2.redhat.com [10.72.8.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 09F3660466;
+        Wed, 13 Feb 2019 10:51:00 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>, Bjorn Helgaas <helgaas@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
+        Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH V3 2/5] genirq/affinity: store irq set vectors in 'struct irq_affinity'
+Date:   Wed, 13 Feb 2019 18:50:38 +0800
+Message-Id: <20190213105041.13537-3-ming.lei@redhat.com>
+In-Reply-To: <20190213105041.13537-1-ming.lei@redhat.com>
+References: <20190213105041.13537-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 13 Feb 2019 10:51:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add documentation for pinctrl sleep state on STM32 LPTimer PWM.
+Currently the array of irq set vectors is provided by driver.
 
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+irq_create_affinity_masks() can be simplied a bit by treating the
+non-irq-set case as single irq set.
+
+So move this array into 'struct irq_affinity', and pre-define the max
+set number as 4, which should be enough for normal cases.
+
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- Documentation/devicetree/bindings/pwm/pwm-stm32-lp.txt | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/nvme/host/pci.c   |  5 ++---
+ include/linux/interrupt.h |  6 ++++--
+ kernel/irq/affinity.c     | 18 +++++++++++-------
+ 3 files changed, 17 insertions(+), 12 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-stm32-lp.txt b/Documentation/devicetree/bindings/pwm/pwm-stm32-lp.txt
-index bd23302..6521bc4 100644
---- a/Documentation/devicetree/bindings/pwm/pwm-stm32-lp.txt
-+++ b/Documentation/devicetree/bindings/pwm/pwm-stm32-lp.txt
-@@ -11,8 +11,10 @@ Required parameters:
- 			bindings defined in pwm.txt.
- 
- Optional properties:
--- pinctrl-names: 	Set to "default".
--- pinctrl-0: 		Phandle pointing to pin configuration node for PWM.
-+- pinctrl-names: 	Set to "default". An additional "sleep" state can be
-+			defined to set pins in sleep state when in low power.
-+- pinctrl-n: 		Phandle(s) pointing to pin configuration node for PWM,
-+			respectively for "default" and "sleep" states.
- 
- Example:
- 	timer@40002400 {
-@@ -21,7 +23,8 @@ Example:
- 		pwm {
- 			compatible = "st,stm32-pwm-lp";
- 			#pwm-cells = <3>;
--			pinctrl-names = "default";
-+			pinctrl-names = "default", "sleep";
- 			pinctrl-0 = <&lppwm1_pins>;
-+			pinctrl-1 = <&lppwm1_sleep_pins>;
- 		};
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 022ea1ee63f8..0086bdf80ea1 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2081,12 +2081,11 @@ static void nvme_calc_io_queues(struct nvme_dev *dev, unsigned int irq_queues)
+ static int nvme_setup_irqs(struct nvme_dev *dev, unsigned int nr_io_queues)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(dev->dev);
+-	int irq_sets[2];
+ 	struct irq_affinity affd = {
+ 		.pre_vectors = 1,
+-		.nr_sets = ARRAY_SIZE(irq_sets),
+-		.sets = irq_sets,
++		.nr_sets = 2,
  	};
++	int *irq_sets = affd.set_vectors;
+ 	int result = 0;
+ 	unsigned int irq_queues, this_p_queues;
+ 
+diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+index 1ed1014c9684..a20150627a32 100644
+--- a/include/linux/interrupt.h
++++ b/include/linux/interrupt.h
+@@ -259,6 +259,8 @@ struct irq_affinity_notify {
+ 	void (*release)(struct kref *ref);
+ };
+ 
++#define	IRQ_MAX_SETS  4
++
+ /**
+  * struct irq_affinity - Description for automatic irq affinity assignements
+  * @pre_vectors:	Don't apply affinity to @pre_vectors at beginning of
+@@ -266,13 +268,13 @@ struct irq_affinity_notify {
+  * @post_vectors:	Don't apply affinity to @post_vectors at end of
+  *			the MSI(-X) vector space
+  * @nr_sets:		Length of passed in *sets array
+- * @sets:		Number of affinitized sets
++ * @set_vectors:	Number of affinitized sets
+  */
+ struct irq_affinity {
+ 	int	pre_vectors;
+ 	int	post_vectors;
+ 	int	nr_sets;
+-	int	*sets;
++	int	set_vectors[IRQ_MAX_SETS];
+ };
+ 
+ /**
+diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
+index 9200d3b26f7d..b868b9d3df7f 100644
+--- a/kernel/irq/affinity.c
++++ b/kernel/irq/affinity.c
+@@ -244,7 +244,7 @@ irq_create_affinity_masks(int nvecs, struct irq_affinity *affd)
+ 	int affvecs = nvecs - affd->pre_vectors - affd->post_vectors;
+ 	int curvec, usedvecs;
+ 	struct irq_affinity_desc *masks = NULL;
+-	int i, nr_sets;
++	int i;
+ 
+ 	/*
+ 	 * If there aren't any vectors left after applying the pre/post
+@@ -253,6 +253,9 @@ irq_create_affinity_masks(int nvecs, struct irq_affinity *affd)
+ 	if (nvecs == affd->pre_vectors + affd->post_vectors)
+ 		return NULL;
+ 
++	if (affd->nr_sets > IRQ_MAX_SETS)
++		return NULL;
++
+ 	masks = kcalloc(nvecs, sizeof(*masks), GFP_KERNEL);
+ 	if (!masks)
+ 		return NULL;
+@@ -264,12 +267,13 @@ irq_create_affinity_masks(int nvecs, struct irq_affinity *affd)
+ 	 * Spread on present CPUs starting from affd->pre_vectors. If we
+ 	 * have multiple sets, build each sets affinity mask separately.
+ 	 */
+-	nr_sets = affd->nr_sets;
+-	if (!nr_sets)
+-		nr_sets = 1;
++	if (!affd->nr_sets) {
++		affd->nr_sets = 1;
++		affd->set_vectors[0] = affvecs;
++	}
+ 
+-	for (i = 0, usedvecs = 0; i < nr_sets; i++) {
+-		int this_vecs = affd->sets ? affd->sets[i] : affvecs;
++	for (i = 0, usedvecs = 0; i < affd->nr_sets; i++) {
++		int this_vecs = affd->set_vectors[i];
+ 		int ret;
+ 
+ 		ret = irq_build_affinity_masks(affd, curvec, this_vecs,
+@@ -316,7 +320,7 @@ int irq_calc_affinity_vectors(int minvec, int maxvec, const struct irq_affinity
+ 		int i;
+ 
+ 		for (i = 0, set_vecs = 0;  i < affd->nr_sets; i++)
+-			set_vecs += affd->sets[i];
++			set_vecs += affd->set_vectors[i];
+ 	} else {
+ 		get_online_cpus();
+ 		set_vecs = cpumask_weight(cpu_possible_mask);
 -- 
-1.9.1
+2.9.5
 
