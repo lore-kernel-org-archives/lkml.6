@@ -2,82 +2,75 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE75C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:19:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BBAAC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:19:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE40E21904
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:19:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0859C21904
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:19:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="sfnRNTN6"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="d4q2FbZq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392630AbfBMQTT (ORCPT
+        id S2392640AbfBMQTn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 11:19:19 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:40926 "EHLO
+        Wed, 13 Feb 2019 11:19:43 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:36157 "EHLO
         mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729502AbfBMQTS (ORCPT
+        with ESMTP id S1729502AbfBMQTn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 11:19:18 -0500
-Received: by mail-ot1-f65.google.com with SMTP id s5so5112183oth.7
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 08:19:17 -0800 (PST)
+        Wed, 13 Feb 2019 11:19:43 -0500
+Received: by mail-ot1-f65.google.com with SMTP id k98so5163752otk.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 08:19:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=6cgydVzEMe2hY+xvoZbvAXaDHt8Fvtz1odtZkVMvLmU=;
-        b=sfnRNTN67G5hJbWbDrOvTOiV7JaDoiYNtomEZeOJ2Cg4RlKrQAEZMEE8GCPO7UvHLj
-         GPR1r1bWUfYVEaEFMOnYaAhZI6P89ivWehuRk8b/h3lxf0FMXyQus6ly/WmBXLgZ7FKK
-         nZf9v/JUojwBuy+JU1zQG9561ufog6r5xqzb49IyJ9eeCQYclpkzOy4k1rk6vfBCgWKI
-         LRqtSKqS+C2zF4D/l40stip5td6J68ixu8Rdkni6LBIMJ2cxPeCwpsJFKuQX/o7UppsS
-         w246TVXJ0ZPjWFXpjH397vBDcGrhTS+1jBO9ulGUL8ph3D2poHRcI1JqC51oXpX3n/8u
-         Viog==
+        bh=uQn0e18MAiop804coB+aUVWsY7wEtvXCPcsxsNvGqEM=;
+        b=d4q2FbZquwOPD6u4Hh+IcVWY5AprhbhxpH8avllH4tx1t3NQ4WIaW98OgYUU6d1Md5
+         uCIsLbEOmPbpRVjvSxSEjtuaKxPTLyfSDlaIFM6v/3YmBdvu2/uMYJLs74NZwahnG6Wi
+         xY5jCLOPZs2as4NSIWypLVh9UXXbFVGHRBa61wnyUvJZJKSAnYHe4OEUZ7MTCsYlKa5L
+         q3EuTvCGgeF/6YAp73kMmnXAIenExEIC5M/SRjKum/CF2TfhgS0AjkN0hmZ36YHb4S1/
+         zi/pZSjQzbyARnXVw5SyUEjjKQXGySMRFBAifz4smOzA6m+2N6SZ7fbANiVeFAJOwLs4
+         vh4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=6cgydVzEMe2hY+xvoZbvAXaDHt8Fvtz1odtZkVMvLmU=;
-        b=KkVzyatABtZtSLaBNfFQsevlP4SPA6ngB55hVpHzkJMyYiLUAnyxcz22zdZJLwWEay
-         eTdza3/HKr+DaWjsi+PTL7a3BqtKTg0+z6sV3sihWv0z6ZUxB8SBz+P4jDHHlU44twJ/
-         EE93wR/bWYsDhsGgc2mL98DmIftbhxhPrsS76677iTilacDYHsYAZLeSse7FwQFo9EK6
-         sOydcZkdGR+BQDLAz8ls0CrVVd2FygWuYR+UklQkipxK6L1J4m3ZH//T9FkLIB8RoXLt
-         U32LjO/h1TF5Ee8DLIuadrMuPhpX72sL9pBFKpRvNxC9EK1d5BXnNmvKQNAAmr04EkuG
-         QHmA==
-X-Gm-Message-State: AHQUAuZlnpc4kUOqcTXcdmWuK3OkqF3E/Dz6OSWGyx49bmW1+FqmLifP
-        AasU1AwWFio4gsxnH8oinnXfB4VaeDMBFGejr3/Z/Q==
-X-Google-Smtp-Source: AHgI3IZ9CIAGGslUXr2nx86tN/Mvd9GJImhvz5Oimwf9LiErsS9Mz+SJ8i51KWePKhVC3iZgZBWXQIlfh48mI/s6BKo=
-X-Received: by 2002:a05:6830:1c1:: with SMTP id r1mr748863ota.229.1550074757434;
- Wed, 13 Feb 2019 08:19:17 -0800 (PST)
+        bh=uQn0e18MAiop804coB+aUVWsY7wEtvXCPcsxsNvGqEM=;
+        b=k6j0V1s651Ek6GZVgR6oYj71dZ5X81twG3yvSHRBkscldJ317cF9tXKehoYz+gTBsY
+         QNgJSB73dcwivD0VZmRYvLYeFXiH4PXvS8Hi/cd60YOhKA9BolPQcvI8Qq/CxsmY453u
+         uSdkPKbPD4BLJ6JO6376ywNBwVztP046Q8Zfhb2Vt+EcYvZYDYGmbWHeP65pn3ZLTBR8
+         NDM6It7EpgUVRioa+Q1tdwOWf2Yb7iVMOoxTNB2OVrDYwj+KOSMhgGJAoawHkpSWG4j1
+         9vzqtvrzHjBvEI8kIe+tey10fFQHx7AXO0T1IFWzvTMLDwCJj+E1HZ+z4W+kt9MYttb8
+         47QQ==
+X-Gm-Message-State: AHQUAuYFY0wFNLppt9bH1bZPMXIF5vkA7QWNWQq/lhMQHbRePEVVOO/E
+        VnAigB+WvFTm2Oyp2fEcyIxmf+h9BLrjt6G0/tfKPw==
+X-Google-Smtp-Source: AHgI3IbD9biGMUhEJz/SijA2fzCuMSA1oJwsEIfiiJDOPnrAZ5zLqKPSJGVK+94FsKDbmumvYW6n0giayhZ2tsW/Jwk=
+X-Received: by 2002:a05:6830:1658:: with SMTP id h24mr681810otr.301.1550074221979;
+ Wed, 13 Feb 2019 08:10:21 -0800 (PST)
 MIME-Version: 1.0
-References: <20190124231441.37A4A305@viggo.jf.intel.com> <20190124231448.E102D18E@viggo.jf.intel.com>
- <c4c6aca8-6ee8-be10-65ae-4cbe0aa03bfb@inria.fr> <26ac36f4-7391-5321-217b-50d67e2119d7@intel.com>
- <453f13cd-a7fe-33eb-9a27-8490825ca29c@inria.fr> <CAPcyv4jF7ZyKaFDw7nb04UvWkVWGJdLGkZDQ1g=X7i+kdu7JRg@mail.gmail.com>
- <a3bfe739-228e-26fe-90f7-4a4f8ceb3a9a@inria.fr> <CAPcyv4jJ=C7ZEsJqBxzBMsQWz4+C8BZmWuk7OkztOebprd2rMg@mail.gmail.com>
- <057ad938-e745-02f7-edce-e19bd326da6a@inria.fr> <eb58cb96-1f61-2dd2-b1ab-5a7d4df78297@inria.fr>
-In-Reply-To: <eb58cb96-1f61-2dd2-b1ab-5a7d4df78297@inria.fr>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 13 Feb 2019 08:19:05 -0800
-Message-ID: <CAPcyv4iAex_rgPXfhsjWjbvKX79s0ZoieE2NeX14_F56WoQ_7A@mail.gmail.com>
-Subject: Re: [PATCH 5/5] dax: "Hotplug" persistent memory for use like normal RAM
-To:     Brice Goglin <Brice.Goglin@inria.fr>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Michal Hocko <mhocko@suse.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Takashi Iwai <tiwai@suse.de>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
-        "Huang, Ying" <ying.huang@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Borislav Petkov <bp@suse.de>
+References: <b8101fd6d303c1993ee294eeee8bce4d24b9547f.1550061925.git.baolin.wang@linaro.org>
+ <0438b78c7f9f9bc3f0e7bcbcef3873fd2dd7e259.1550061925.git.baolin.wang@linaro.org>
+ <CAMpxmJWuMWBSPjoJWkfagAAopYjohA0rhxUacNPXhhiTFZJorA@mail.gmail.com> <CAMz4kuJRvYo699J5SiG9mhjy5pt1hke8yXwoj9KfmZBTKkkKzw@mail.gmail.com>
+In-Reply-To: <CAMz4kuJRvYo699J5SiG9mhjy5pt1hke8yXwoj9KfmZBTKkkKzw@mail.gmail.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Wed, 13 Feb 2019 17:10:11 +0100
+Message-ID: <CAMpxmJXbuOuMvxe+bXqjaCrVU5WXxQ=fZTU9iA8Opnqrx25eMQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] gpio: sprd: Change to use SoC compatible string
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Lyra Zhang <zhang.lyra@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -85,73 +78,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 5:07 AM Brice Goglin <Brice.Goglin@inria.fr> wrote:
+=C5=9Br., 13 lut 2019 o 14:15 Baolin Wang <baolin.wang@linaro.org> napisa=
+=C5=82(a):
 >
+> On Wed, 13 Feb 2019 at 20:59, Bartosz Golaszewski
+> <bgolaszewski@baylibre.com> wrote:
+> >
+> > =C5=9Br., 13 lut 2019 o 13:49 Baolin Wang <baolin.wang@linaro.org> napi=
+sa=C5=82(a):
+> > >
+> > > Change to use SoC compatible string instead of wildcard string.
+> > >
+> > > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> > > ---
+> > >  drivers/gpio/gpio-pmic-eic-sprd.c |    2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/gpio/gpio-pmic-eic-sprd.c b/drivers/gpio/gpio-pm=
+ic-eic-sprd.c
+> > > index ac573da..24228cf 100644
+> > > --- a/drivers/gpio/gpio-pmic-eic-sprd.c
+> > > +++ b/drivers/gpio/gpio-pmic-eic-sprd.c
+> > > @@ -364,7 +364,7 @@ static int sprd_pmic_eic_probe(struct platform_de=
+vice *pdev)
+> > >  }
+> > >
+> > >  static const struct of_device_id sprd_pmic_eic_of_match[] =3D {
+> > > -       { .compatible =3D "sprd,sc27xx-eic", },
+> > > +       { .compatible =3D "sprd,sc2731-eic", },
+> > >         { /* end of list */ }
+> > >  };
+> > >  MODULE_DEVICE_TABLE(of, sprd_pmic_eic_of_match);
+> > > --
+> > > 1.7.9.5
+> > >
+> >
+> > We guarantee to make older device-trees to work with new kernel so you
+> > can add the new compatible, but you can't remove the old one.
 >
-> Le 13/02/2019 =C3=A0 09:43, Brice Goglin a =C3=A9crit :
-> > Le 13/02/2019 =C3=A0 09:24, Dan Williams a =C3=A9crit :
-> >> On Wed, Feb 13, 2019 at 12:12 AM Brice Goglin <Brice.Goglin@inria.fr> =
-wrote:
-> >>> Le 13/02/2019 =C3=A0 01:30, Dan Williams a =C3=A9crit :
-> >>>> On Tue, Feb 12, 2019 at 11:59 AM Brice Goglin <Brice.Goglin@inria.fr=
-> wrote:
-> >>>>> # ndctl disable-region all
-> >>>>> # ndctl zero-labels all
-> >>>>> # ndctl enable-region region0
-> >>>>> # ndctl create-namespace -r region0 -t pmem -m devdax
-> >>>>> {
-> >>>>>   "dev":"namespace0.0",
-> >>>>>   "mode":"devdax",
-> >>>>>   "map":"dev",
-> >>>>>   "size":"1488.37 GiB (1598.13 GB)",
-> >>>>>   "uuid":"ad0096d7-3fe7-4402-b529-ad64ed0bf789",
-> >>>>>   "daxregion":{
-> >>>>>     "id":0,
-> >>>>>     "size":"1488.37 GiB (1598.13 GB)",
-> >>>>>     "align":2097152,
-> >>>>>     "devices":[
-> >>>>>       {
-> >>>>>         "chardev":"dax0.0",
-> >>>>>         "size":"1488.37 GiB (1598.13 GB)"
-> >>>>>       }
-> >>>>>     ]
-> >>>>>   },
-> >>>>>   "align":2097152
-> >>>>> }
-> >>>>> # ndctl enable-namespace namespace0.0
-> >>>>> # echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/remove_id
-> >>>>> <hang>
-> >>>>>
-> >>>>> I tried with and without dax_pmem_compat loaded, but it doesn't hel=
-p.
-> >>>> I think this is due to:
-> >>>>
-> >>>>   a9f1ffdb6a20 device-dax: Auto-bind device after successful new_id
-> >>>>
-> >>>> I missed that this path is also called in the remove_id path. Thanks
-> >>>> for the bug report! I'll get this fixed up.
-> >>> Now that remove_id is fixed, things fails later in Dave's procedure:
-> >>>
-> >>> # echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/remove_id
-> >>> # echo -n dax0.0 > /sys/bus/dax/drivers/device_dax/unbind
-> >>> # echo -n dax0.0 > /sys/bus/dax/drivers/kmem/new_id
-> >> In the current version of the code the bind is not necessary, so the
-> >> lack of error messages here means the bind succeeded.
+> But the old one is incorrect, and we still keep it?
 >
->
-> It looks like "unbind" is required to make the PMEM appear as a new
-> node. If I remove_id from devdax and new_id to kmem without "unbind" in
-> the middle, nothing appears.
->
-> Writing to "kmem/bind" didn't seem necessary.
 
-Yes, in short:
+Well in theory the device-tree is supposed to be a stable ABI so once
+it's released, it should work with any following kernel version.
 
-device_dax/remove_id: not required, this driver attaches to any and
-all device-dax devices by default
-device_dax/unbind: required, nothing else will free the device for
-kmem to attach
-kmem/new_id: required, it will attach if the device is currently
-unbound otherwise the device must be unbound before proceeding
-kmem/bind: only required if the device was busy / attached to
-device_dax when new_id was written.
+In practice changes are sometimes allowed and there are also bugs in DT fil=
+es.
+
+Linus: what do you think?
+
+Bart
