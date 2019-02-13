@@ -4,53 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 950D4C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FDA1C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:53:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58E0E21934
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:53:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7D0121934
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:53:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026411;
-	bh=tHqfUanSKFBXC7jmBlPYykEeDrnbGfgEw8RaKA7Brlk=;
+	s=default; t=1550026420;
+	bh=EtNnjpe5ajSv7EpOWQztmnKgEZaR2KD9x+GaCWCYZ0g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tqccAaUz1xQk+n5hGFj/zJvric6j6ioJGOQEimzNMZ5w6ZfLQTxmSp8dY4GeVEg8C
-	 MVkrLl3uJEqb8S964A+KGOQ9zsRjrVqsxSDO1wA+inGDZOMq7WknWAngGS9hl8jWDx
-	 ovc5XhRUBVMUR4ZDOSN5z41xipmWQLH+aS3uXx/Y=
+	b=CdUhSl/A7s5ilxVCvkXefK4dsEaF4w7Li+fGrwmsJZo8Pvy/ngAjlGTolrCwk3Rjd
+	 ocE+IpWQ8AYB3gb+wtIFAdPSPy4yzUHSub3wory82sQdX8akjmoyFQcBgmHPPqOvyr
+	 6iZvRdG8fCsmUBojB02NO7tAN9GrXWKQfZ+Y34I0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389951AbfBMCx3 (ORCPT
+        id S1732274AbfBMCiM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:53:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41838 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:38:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732851AbfBMCiT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:38:19 -0500
+        id S2388461AbfBMCiJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:38:09 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A48E222CA;
-        Wed, 13 Feb 2019 02:38:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEE6B222CC;
+        Wed, 13 Feb 2019 02:38:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025498;
-        bh=tHqfUanSKFBXC7jmBlPYykEeDrnbGfgEw8RaKA7Brlk=;
+        s=default; t=1550025488;
+        bh=EtNnjpe5ajSv7EpOWQztmnKgEZaR2KD9x+GaCWCYZ0g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zEJe5KY+w9PdNT1VH74GgXBqsAl0pNFJuzufKYSZvLCAE9Nt5RjUc7j+CTj2LNWMV
-         uDcUBh0WNHkh77hBjXzwHzHnkAhQMwhuafrUyiYZ5Z5ZRNApibdTAqFxAs6QIitY2Q
-         unJQVfgk2V8ze5dEwHkujXK8+Mhzr1Hr5cibQyzc=
+        b=TGY+xLM8SKVxX5WgWpQfK5SK4iz8UnuESLl3gJcyV4OrSzYYEV/92yYjqgLaq6JSX
+         YC/29hkicaV8vxO/2R+wLWCUf8h9MyyMbQcomr6hNDJYtMOtmn6ikEnApyhdRCh6Kv
+         DU3nVBZ4tDP51HFDMKm/jfCDzHuauae+1nwYndkE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jose Abreu <jose.abreu@synopsys.com>,
-        Joao Pinto <jpinto@synopsys.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 45/83] net: stmmac: Fix PCI module removal leak
-Date:   Tue, 12 Feb 2019 21:36:23 -0500
-Message-Id: <20190213023701.20286-45-sashal@kernel.org>
+Cc:     Wen Yang <wen.yang99@zte.com.cn>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        xen-devel@lists.xenproject.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 39/83] pvcalls-front: Avoid get_free_pages(GFP_KERNEL) under spinlock
+Date:   Tue, 12 Feb 2019 21:36:17 -0500
+Message-Id: <20190213023701.20286-39-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -62,54 +61,206 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jose Abreu <jose.abreu@synopsys.com>
+From: Wen Yang <wen.yang99@zte.com.cn>
 
-[ Upstream commit 6dea7e1881fd86b80da64e476ac398008daed857 ]
+[ Upstream commit 9f51c05dc41a6d69423e3d03d18eb7ab22f9ec19 ]
 
-Since commit b7d0f08e9129, the enable / disable of PCI device is not
-managed which will result in IO regions not being automatically unmapped.
-As regions continue mapped it is currently not possible to remove and
-then probe again the PCI module of stmmac.
+The problem is that we call this with a spin lock held.
+The call tree is:
+pvcalls_front_accept() holds bedata->socket_lock.
+    -> create_active()
+        -> __get_free_pages() uses GFP_KERNEL
 
-Fix this by manually unmapping regions on remove callback.
+The create_active() function is only called from pvcalls_front_accept()
+with a spin_lock held, The allocation is not allowed to sleep and
+GFP_KERNEL is not sufficient.
 
-Changes from v1:
-- Fix build error
+This issue was detected by using the Coccinelle software.
 
-Cc: Joao Pinto <jpinto@synopsys.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Fixes: b7d0f08e9129 ("net: stmmac: Fix WoL for PCI-based setups")
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+v2: Add a function doing the allocations which is called
+    outside the lock and passing the allocated data to
+    create_active().
+
+v3: Use the matching deallocators i.e., free_page()
+    and free_pages(), respectively.
+
+v4: It would be better to pre-populate map (struct sock_mapping),
+    rather than introducing one more new struct.
+
+v5: Since allocating the data outside of this call it should also
+    be freed outside, when create_active() fails.
+    Move kzalloc(sizeof(*map2), GFP_ATOMIC) outside spinlock and
+    use GFP_KERNEL instead.
+
+v6: Drop the superfluous calls.
+
+Suggested-by: Juergen Gross <jgross@suse.com>
+Suggested-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Suggested-by: Stefano Stabellini <sstabellini@kernel.org>
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Acked-by: Stefano Stabellini <sstabellini@kernel.org>
+CC: Julia Lawall <julia.lawall@lip6.fr>
+CC: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+CC: Juergen Gross <jgross@suse.com>
+CC: Stefano Stabellini <sstabellini@kernel.org>
+CC: xen-devel@lists.xenproject.org
+CC: linux-kernel@vger.kernel.org
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/xen/pvcalls-front.c | 81 +++++++++++++++++++++++++++----------
+ 1 file changed, 59 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-index c54a50dbd5ac..d819e8eaba12 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_pci.c
-@@ -299,7 +299,17 @@ static int stmmac_pci_probe(struct pci_dev *pdev,
-  */
- static void stmmac_pci_remove(struct pci_dev *pdev)
- {
-+	int i;
-+
- 	stmmac_dvr_remove(&pdev->dev);
-+
-+	for (i = 0; i <= PCI_STD_RESOURCE_END; i++) {
-+		if (pci_resource_len(pdev, i) == 0)
-+			continue;
-+		pcim_iounmap_regions(pdev, BIT(i));
-+		break;
-+	}
-+
- 	pci_disable_device(pdev);
+diff --git a/drivers/xen/pvcalls-front.c b/drivers/xen/pvcalls-front.c
+index 01588582ae66..6357160d466a 100644
+--- a/drivers/xen/pvcalls-front.c
++++ b/drivers/xen/pvcalls-front.c
+@@ -341,6 +341,39 @@ int pvcalls_front_socket(struct socket *sock)
+ 	return ret;
  }
  
++static void free_active_ring(struct sock_mapping *map)
++{
++	free_pages((unsigned long)map->active.data.in,
++			map->active.ring->ring_order);
++	free_page((unsigned long)map->active.ring);
++}
++
++static int alloc_active_ring(struct sock_mapping *map)
++{
++	void *bytes;
++
++	map->active.ring = (struct pvcalls_data_intf *)
++		get_zeroed_page(GFP_KERNEL);
++	if (!map->active.ring)
++		goto out;
++
++	map->active.ring->ring_order = PVCALLS_RING_ORDER;
++	bytes = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
++					PVCALLS_RING_ORDER);
++	if (!bytes)
++		goto out;
++
++	map->active.data.in = bytes;
++	map->active.data.out = bytes +
++		XEN_FLEX_RING_SIZE(PVCALLS_RING_ORDER);
++
++	return 0;
++
++out:
++	free_active_ring(map);
++	return -ENOMEM;
++}
++
+ static int create_active(struct sock_mapping *map, int *evtchn)
+ {
+ 	void *bytes;
+@@ -349,15 +382,7 @@ static int create_active(struct sock_mapping *map, int *evtchn)
+ 	*evtchn = -1;
+ 	init_waitqueue_head(&map->active.inflight_conn_req);
+ 
+-	map->active.ring = (struct pvcalls_data_intf *)
+-		__get_free_page(GFP_KERNEL | __GFP_ZERO);
+-	if (map->active.ring == NULL)
+-		goto out_error;
+-	map->active.ring->ring_order = PVCALLS_RING_ORDER;
+-	bytes = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
+-					PVCALLS_RING_ORDER);
+-	if (bytes == NULL)
+-		goto out_error;
++	bytes = map->active.data.in;
+ 	for (i = 0; i < (1 << PVCALLS_RING_ORDER); i++)
+ 		map->active.ring->ref[i] = gnttab_grant_foreign_access(
+ 			pvcalls_front_dev->otherend_id,
+@@ -367,10 +392,6 @@ static int create_active(struct sock_mapping *map, int *evtchn)
+ 		pvcalls_front_dev->otherend_id,
+ 		pfn_to_gfn(virt_to_pfn((void *)map->active.ring)), 0);
+ 
+-	map->active.data.in = bytes;
+-	map->active.data.out = bytes +
+-		XEN_FLEX_RING_SIZE(PVCALLS_RING_ORDER);
+-
+ 	ret = xenbus_alloc_evtchn(pvcalls_front_dev, evtchn);
+ 	if (ret)
+ 		goto out_error;
+@@ -391,8 +412,6 @@ static int create_active(struct sock_mapping *map, int *evtchn)
+ out_error:
+ 	if (*evtchn >= 0)
+ 		xenbus_free_evtchn(pvcalls_front_dev, *evtchn);
+-	free_pages((unsigned long)map->active.data.in, PVCALLS_RING_ORDER);
+-	free_page((unsigned long)map->active.ring);
+ 	return ret;
+ }
+ 
+@@ -412,17 +431,24 @@ int pvcalls_front_connect(struct socket *sock, struct sockaddr *addr,
+ 		return PTR_ERR(map);
+ 
+ 	bedata = dev_get_drvdata(&pvcalls_front_dev->dev);
++	ret = alloc_active_ring(map);
++	if (ret < 0) {
++		pvcalls_exit_sock(sock);
++		return ret;
++	}
+ 
+ 	spin_lock(&bedata->socket_lock);
+ 	ret = get_request(bedata, &req_id);
+ 	if (ret < 0) {
+ 		spin_unlock(&bedata->socket_lock);
++		free_active_ring(map);
+ 		pvcalls_exit_sock(sock);
+ 		return ret;
+ 	}
+ 	ret = create_active(map, &evtchn);
+ 	if (ret < 0) {
+ 		spin_unlock(&bedata->socket_lock);
++		free_active_ring(map);
+ 		pvcalls_exit_sock(sock);
+ 		return ret;
+ 	}
+@@ -784,25 +810,36 @@ int pvcalls_front_accept(struct socket *sock, struct socket *newsock, int flags)
+ 		}
+ 	}
+ 
+-	spin_lock(&bedata->socket_lock);
+-	ret = get_request(bedata, &req_id);
+-	if (ret < 0) {
++	map2 = kzalloc(sizeof(*map2), GFP_KERNEL);
++	if (map2 == NULL) {
+ 		clear_bit(PVCALLS_FLAG_ACCEPT_INFLIGHT,
+ 			  (void *)&map->passive.flags);
+-		spin_unlock(&bedata->socket_lock);
++		pvcalls_exit_sock(sock);
++		return -ENOMEM;
++	}
++	ret = alloc_active_ring(map2);
++	if (ret < 0) {
++		clear_bit(PVCALLS_FLAG_ACCEPT_INFLIGHT,
++				(void *)&map->passive.flags);
++		kfree(map2);
+ 		pvcalls_exit_sock(sock);
+ 		return ret;
+ 	}
+-	map2 = kzalloc(sizeof(*map2), GFP_ATOMIC);
+-	if (map2 == NULL) {
++	spin_lock(&bedata->socket_lock);
++	ret = get_request(bedata, &req_id);
++	if (ret < 0) {
+ 		clear_bit(PVCALLS_FLAG_ACCEPT_INFLIGHT,
+ 			  (void *)&map->passive.flags);
+ 		spin_unlock(&bedata->socket_lock);
++		free_active_ring(map2);
++		kfree(map2);
+ 		pvcalls_exit_sock(sock);
+-		return -ENOMEM;
++		return ret;
+ 	}
++
+ 	ret = create_active(map2, &evtchn);
+ 	if (ret < 0) {
++		free_active_ring(map2);
+ 		kfree(map2);
+ 		clear_bit(PVCALLS_FLAG_ACCEPT_INFLIGHT,
+ 			  (void *)&map->passive.flags);
 -- 
 2.19.1
 
