@@ -4,51 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 210FEC282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DB5DC282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:01:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E550221B68
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:00:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 425E22190A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:01:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026858;
-	bh=RQU30As3xSfIPvZkakasWO6gvoloSxpi8+9p2jDGVps=;
+	s=default; t=1550026868;
+	bh=5tjmXzFTUIE4OO3WZusUGz6Ws2YUMxupeW3MAG4kd8Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pbc/YrWDSsLoRGr0tBf4pK1Vq8s3lvCenn/Oa5Hx5CVItSdK1l33JKxKpU6iTwcVb
-	 4dpNhDm2lKmmZbrzOPvINJxvQLHkRgOFoagujSykx/NY8VWF/YLuSFsYUDujwh7evy
-	 vThZW/Lb1r0hxMI/PMNupwV00w7S6p48agQpQcWc=
+	b=aB+bHWQlEz5Ec8mh0CbD2Akwf9Dnw+wf9LNobI+B+JrYiOAAHxN3fqW+KfEeglMDJ
+	 gVIUSM47OcuRXdQuNKP54rkUlGMdTPJq2R/4OpOG91AkpYsjrZ5LurSrHzcOPmfTGU
+	 8tX7Rhfo8e82kejo/gsquTDLcHCh6o8BHZFsmXcM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390305AbfBMDAz (ORCPT
+        id S2387951AbfBMCfP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 22:00:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38954 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:35:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731769AbfBMCfT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:35:19 -0500
+        id S2387918AbfBMCfJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:35:09 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D90A222C2;
-        Wed, 13 Feb 2019 02:35:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 432CE222CA;
+        Wed, 13 Feb 2019 02:35:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025318;
-        bh=RQU30As3xSfIPvZkakasWO6gvoloSxpi8+9p2jDGVps=;
+        s=default; t=1550025308;
+        bh=5tjmXzFTUIE4OO3WZusUGz6Ws2YUMxupeW3MAG4kd8Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bg9bSgKjBZpyIMOxSzjXsQm5Y7EoiVhj0ro87g2Rrfnuwn9ss8VVrBV3OlASu/eiM
-         qJtI1b9OzFCZRf+MTDqPznNXq+wdVVH7kkhPO2Py2o1iQIl0Q420l5RIFYxmGvNUMo
-         Qyp/6oAjRDj8NEN0kXrggZ2nR5g5nBxlBrnQBpAA=
+        b=CLYbRhsRhfqZUBQvwWadDNTLTeCafhWF1gLTI3DTx1glKdHLtjfLcXU6x3qg698+5
+         YazVJm9c96wvwCN8XPOoUPIRPoNECMhtGE3FQexoJkd8J2cB7KKfnai2EzPkf0bUIG
+         t3GFR0JvPYRmPusNNHU1pI0mlGqsGrfa5NUJEdfs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Henry Yen <henry.yen@mediatek.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 065/105] netfilter: nft_flow_offload: fix checking method of conntrack helper
-Date:   Tue, 12 Feb 2019 21:32:56 -0500
-Message-Id: <20190213023336.19019-65-sashal@kernel.org>
+Cc:     Xiubo Li <xiubli@redhat.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 059/105] scsi: tcmu: avoid cmd/qfull timers updated whenever a new cmd comes
+Date:   Tue, 12 Feb 2019 21:32:50 -0500
+Message-Id: <20190213023336.19019-59-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023336.19019-1-sashal@kernel.org>
 References: <20190213023336.19019-1-sashal@kernel.org>
@@ -60,61 +58,321 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Henry Yen <henry.yen@mediatek.com>
+From: Xiubo Li <xiubli@redhat.com>
 
-[ Upstream commit 2314e879747e82896f51cce4488f6a00f3e1af7b ]
+[ Upstream commit a94a2572b97744d3a35a1996df0e5cf6b2461a4a ]
 
-This patch uses nfct_help() to detect whether an established connection
-needs conntrack helper instead of using test_bit(IPS_HELPER_BIT,
-&ct->status).
+Currently there is one cmd timeout timer and one qfull timer for each udev,
+and whenever any new command is coming in we will update the cmd timer or
+qfull timer. For some corner cases the timers are always working only for
+the ringbuffer's and full queue's newest cmd. That's to say the timer won't
+be fired even if one cmd has been stuck for a very long time and the
+deadline is reached.
 
-The reason is that IPS_HELPER_BIT is only set when using explicit CT
-target.
+This fix will keep the cmd/qfull timers to be pended for the oldest cmd in
+ringbuffer and full queue, and will update them with the next cmd's
+deadline only when the old cmd's deadline is reached or removed from the
+ringbuffer and full queue.
 
-However, in the case that a device enables conntrack helper via command
-"echo 1 > /proc/sys/net/netfilter/nf_conntrack_helper", the status of
-IPS_HELPER_BIT will not present any change, and consequently it loses
-the checking ability in the context.
-
-Signed-off-by: Henry Yen <henry.yen@mediatek.com>
-Reviewed-by: Ryder Lee <ryder.lee@mediatek.com>
-Tested-by: John Crispin <john@phrozen.org>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Xiubo Li <xiubli@redhat.com>
+Acked-by: Mike Christie <mchristi@redhat.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nft_flow_offload.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/target/target_core_user.c | 88 +++++++++++++++++++++----------
+ 1 file changed, 61 insertions(+), 27 deletions(-)
 
-diff --git a/net/netfilter/nft_flow_offload.c b/net/netfilter/nft_flow_offload.c
-index 188c6bbf4e16..6e6b9adf7d38 100644
---- a/net/netfilter/nft_flow_offload.c
-+++ b/net/netfilter/nft_flow_offload.c
-@@ -12,6 +12,7 @@
- #include <net/netfilter/nf_conntrack_core.h>
- #include <linux/netfilter/nf_conntrack_common.h>
- #include <net/netfilter/nf_flow_table.h>
-+#include <net/netfilter/nf_conntrack_helper.h>
+diff --git a/drivers/target/target_core_user.c b/drivers/target/target_core_user.c
+index 9cd404acdb82..ac7620120491 100644
+--- a/drivers/target/target_core_user.c
++++ b/drivers/target/target_core_user.c
+@@ -148,7 +148,7 @@ struct tcmu_dev {
+ 	size_t ring_size;
  
- struct nft_flow_offload {
- 	struct nft_flowtable	*flowtable;
-@@ -66,6 +67,7 @@ static void nft_flow_offload_eval(const struct nft_expr *expr,
+ 	struct mutex cmdr_lock;
+-	struct list_head cmdr_queue;
++	struct list_head qfull_queue;
+ 
+ 	uint32_t dbi_max;
+ 	uint32_t dbi_thresh;
+@@ -159,6 +159,7 @@ struct tcmu_dev {
+ 
+ 	struct timer_list cmd_timer;
+ 	unsigned int cmd_time_out;
++	struct list_head inflight_queue;
+ 
+ 	struct timer_list qfull_timer;
+ 	int qfull_time_out;
+@@ -179,7 +180,7 @@ struct tcmu_dev {
+ struct tcmu_cmd {
+ 	struct se_cmd *se_cmd;
+ 	struct tcmu_dev *tcmu_dev;
+-	struct list_head cmdr_queue_entry;
++	struct list_head queue_entry;
+ 
+ 	uint16_t cmd_id;
+ 
+@@ -192,6 +193,7 @@ struct tcmu_cmd {
+ 	unsigned long deadline;
+ 
+ #define TCMU_CMD_BIT_EXPIRED 0
++#define TCMU_CMD_BIT_INFLIGHT 1
+ 	unsigned long flags;
+ };
+ /*
+@@ -586,7 +588,7 @@ static struct tcmu_cmd *tcmu_alloc_cmd(struct se_cmd *se_cmd)
+ 	if (!tcmu_cmd)
+ 		return NULL;
+ 
+-	INIT_LIST_HEAD(&tcmu_cmd->cmdr_queue_entry);
++	INIT_LIST_HEAD(&tcmu_cmd->queue_entry);
+ 	tcmu_cmd->se_cmd = se_cmd;
+ 	tcmu_cmd->tcmu_dev = udev;
+ 
+@@ -915,11 +917,13 @@ setup_timer:
+ 		return 0;
+ 
+ 	tcmu_cmd->deadline = round_jiffies_up(jiffies + msecs_to_jiffies(tmo));
+-	mod_timer(timer, tcmu_cmd->deadline);
++	if (!timer_pending(timer))
++		mod_timer(timer, tcmu_cmd->deadline);
++
+ 	return 0;
+ }
+ 
+-static int add_to_cmdr_queue(struct tcmu_cmd *tcmu_cmd)
++static int add_to_qfull_queue(struct tcmu_cmd *tcmu_cmd)
  {
- 	struct nft_flow_offload *priv = nft_expr_priv(expr);
- 	struct nf_flowtable *flowtable = &priv->flowtable->data;
-+	const struct nf_conn_help *help;
- 	enum ip_conntrack_info ctinfo;
- 	struct nf_flow_route route;
- 	struct flow_offload *flow;
-@@ -88,7 +90,8 @@ static void nft_flow_offload_eval(const struct nft_expr *expr,
+ 	struct tcmu_dev *udev = tcmu_cmd->tcmu_dev;
+ 	unsigned int tmo;
+@@ -942,7 +946,7 @@ static int add_to_cmdr_queue(struct tcmu_cmd *tcmu_cmd)
+ 	if (ret)
+ 		return ret;
+ 
+-	list_add_tail(&tcmu_cmd->cmdr_queue_entry, &udev->cmdr_queue);
++	list_add_tail(&tcmu_cmd->queue_entry, &udev->qfull_queue);
+ 	pr_debug("adding cmd %u on dev %s to ring space wait queue\n",
+ 		 tcmu_cmd->cmd_id, udev->name);
+ 	return 0;
+@@ -999,7 +1003,7 @@ static sense_reason_t queue_cmd_ring(struct tcmu_cmd *tcmu_cmd, int *scsi_err)
+ 	base_command_size = tcmu_cmd_get_base_cmd_size(tcmu_cmd->dbi_cnt);
+ 	command_size = tcmu_cmd_get_cmd_size(tcmu_cmd, base_command_size);
+ 
+-	if (!list_empty(&udev->cmdr_queue))
++	if (!list_empty(&udev->qfull_queue))
+ 		goto queue;
+ 
+ 	mb = udev->mb_addr;
+@@ -1096,13 +1100,16 @@ static sense_reason_t queue_cmd_ring(struct tcmu_cmd *tcmu_cmd, int *scsi_err)
+ 	UPDATE_HEAD(mb->cmd_head, command_size, udev->cmdr_size);
+ 	tcmu_flush_dcache_range(mb, sizeof(*mb));
+ 
++	list_add_tail(&tcmu_cmd->queue_entry, &udev->inflight_queue);
++	set_bit(TCMU_CMD_BIT_INFLIGHT, &tcmu_cmd->flags);
++
+ 	/* TODO: only if FLUSH and FUA? */
+ 	uio_event_notify(&udev->uio_info);
+ 
+ 	return 0;
+ 
+ queue:
+-	if (add_to_cmdr_queue(tcmu_cmd)) {
++	if (add_to_qfull_queue(tcmu_cmd)) {
+ 		*scsi_err = TCM_OUT_OF_RESOURCES;
+ 		return -1;
+ 	}
+@@ -1145,6 +1152,8 @@ static void tcmu_handle_completion(struct tcmu_cmd *cmd, struct tcmu_cmd_entry *
+ 	if (test_bit(TCMU_CMD_BIT_EXPIRED, &cmd->flags))
  		goto out;
+ 
++	list_del_init(&cmd->queue_entry);
++
+ 	tcmu_cmd_reset_dbi_cur(cmd);
+ 
+ 	if (entry->hdr.uflags & TCMU_UFLAG_UNKNOWN_OP) {
+@@ -1194,9 +1203,29 @@ out:
+ 	tcmu_free_cmd(cmd);
+ }
+ 
++static void tcmu_set_next_deadline(struct list_head *queue,
++				   struct timer_list *timer)
++{
++	struct tcmu_cmd *tcmu_cmd, *tmp_cmd;
++	unsigned long deadline = 0;
++
++	list_for_each_entry_safe(tcmu_cmd, tmp_cmd, queue, queue_entry) {
++		if (!time_after(jiffies, tcmu_cmd->deadline)) {
++			deadline = tcmu_cmd->deadline;
++			break;
++		}
++	}
++
++	if (deadline)
++		mod_timer(timer, deadline);
++	else
++		del_timer(timer);
++}
++
+ static unsigned int tcmu_handle_completions(struct tcmu_dev *udev)
+ {
+ 	struct tcmu_mailbox *mb;
++	struct tcmu_cmd *cmd;
+ 	int handled = 0;
+ 
+ 	if (test_bit(TCMU_DEV_BIT_BROKEN, &udev->flags)) {
+@@ -1210,7 +1239,6 @@ static unsigned int tcmu_handle_completions(struct tcmu_dev *udev)
+ 	while (udev->cmdr_last_cleaned != READ_ONCE(mb->cmd_tail)) {
+ 
+ 		struct tcmu_cmd_entry *entry = (void *) mb + CMDR_OFF + udev->cmdr_last_cleaned;
+-		struct tcmu_cmd *cmd;
+ 
+ 		tcmu_flush_dcache_range(entry, sizeof(*entry));
+ 
+@@ -1243,7 +1271,7 @@ static unsigned int tcmu_handle_completions(struct tcmu_dev *udev)
+ 		/* no more pending commands */
+ 		del_timer(&udev->cmd_timer);
+ 
+-		if (list_empty(&udev->cmdr_queue)) {
++		if (list_empty(&udev->qfull_queue)) {
+ 			/*
+ 			 * no more pending or waiting commands so try to
+ 			 * reclaim blocks if needed.
+@@ -1252,6 +1280,8 @@ static unsigned int tcmu_handle_completions(struct tcmu_dev *udev)
+ 			    tcmu_global_max_blocks)
+ 				schedule_delayed_work(&tcmu_unmap_work, 0);
+ 		}
++	} else if (udev->cmd_time_out) {
++		tcmu_set_next_deadline(&udev->inflight_queue, &udev->cmd_timer);
  	}
  
--	if (test_bit(IPS_HELPER_BIT, &ct->status))
-+	help = nfct_help(ct);
-+	if (help)
- 		goto out;
+ 	return handled;
+@@ -1271,7 +1301,7 @@ static int tcmu_check_expired_cmd(int id, void *p, void *data)
+ 	if (!time_after(jiffies, cmd->deadline))
+ 		return 0;
  
- 	if (ctinfo == IP_CT_NEW ||
+-	is_running = list_empty(&cmd->cmdr_queue_entry);
++	is_running = test_bit(TCMU_CMD_BIT_INFLIGHT, &cmd->flags);
+ 	se_cmd = cmd->se_cmd;
+ 
+ 	if (is_running) {
+@@ -1288,12 +1318,11 @@ static int tcmu_check_expired_cmd(int id, void *p, void *data)
+ 		 */
+ 		scsi_status = SAM_STAT_CHECK_CONDITION;
+ 	} else {
+-		list_del_init(&cmd->cmdr_queue_entry);
+-
+ 		idr_remove(&udev->commands, id);
+ 		tcmu_free_cmd(cmd);
+ 		scsi_status = SAM_STAT_TASK_SET_FULL;
+ 	}
++	list_del_init(&cmd->queue_entry);
+ 
+ 	pr_debug("Timing out cmd %u on dev %s that is %s.\n",
+ 		 id, udev->name, is_running ? "inflight" : "queued");
+@@ -1372,7 +1401,8 @@ static struct se_device *tcmu_alloc_device(struct se_hba *hba, const char *name)
+ 
+ 	INIT_LIST_HEAD(&udev->node);
+ 	INIT_LIST_HEAD(&udev->timedout_entry);
+-	INIT_LIST_HEAD(&udev->cmdr_queue);
++	INIT_LIST_HEAD(&udev->qfull_queue);
++	INIT_LIST_HEAD(&udev->inflight_queue);
+ 	idr_init(&udev->commands);
+ 
+ 	timer_setup(&udev->qfull_timer, tcmu_qfull_timedout, 0);
+@@ -1383,7 +1413,7 @@ static struct se_device *tcmu_alloc_device(struct se_hba *hba, const char *name)
+ 	return &udev->se_dev;
+ }
+ 
+-static bool run_cmdr_queue(struct tcmu_dev *udev, bool fail)
++static bool run_qfull_queue(struct tcmu_dev *udev, bool fail)
+ {
+ 	struct tcmu_cmd *tcmu_cmd, *tmp_cmd;
+ 	LIST_HEAD(cmds);
+@@ -1391,15 +1421,15 @@ static bool run_cmdr_queue(struct tcmu_dev *udev, bool fail)
+ 	sense_reason_t scsi_ret;
+ 	int ret;
+ 
+-	if (list_empty(&udev->cmdr_queue))
++	if (list_empty(&udev->qfull_queue))
+ 		return true;
+ 
+ 	pr_debug("running %s's cmdr queue forcefail %d\n", udev->name, fail);
+ 
+-	list_splice_init(&udev->cmdr_queue, &cmds);
++	list_splice_init(&udev->qfull_queue, &cmds);
+ 
+-	list_for_each_entry_safe(tcmu_cmd, tmp_cmd, &cmds, cmdr_queue_entry) {
+-		list_del_init(&tcmu_cmd->cmdr_queue_entry);
++	list_for_each_entry_safe(tcmu_cmd, tmp_cmd, &cmds, queue_entry) {
++		list_del_init(&tcmu_cmd->queue_entry);
+ 
+ 	        pr_debug("removing cmd %u on dev %s from queue\n",
+ 		         tcmu_cmd->cmd_id, udev->name);
+@@ -1437,14 +1467,13 @@ static bool run_cmdr_queue(struct tcmu_dev *udev, bool fail)
+ 			 * cmd was requeued, so just put all cmds back in
+ 			 * the queue
+ 			 */
+-			list_splice_tail(&cmds, &udev->cmdr_queue);
++			list_splice_tail(&cmds, &udev->qfull_queue);
+ 			drained = false;
+-			goto done;
++			break;
+ 		}
+ 	}
+-	if (list_empty(&udev->cmdr_queue))
+-		del_timer(&udev->qfull_timer);
+-done:
++
++	tcmu_set_next_deadline(&udev->qfull_queue, &udev->qfull_timer);
+ 	return drained;
+ }
+ 
+@@ -1454,7 +1483,7 @@ static int tcmu_irqcontrol(struct uio_info *info, s32 irq_on)
+ 
+ 	mutex_lock(&udev->cmdr_lock);
+ 	tcmu_handle_completions(udev);
+-	run_cmdr_queue(udev, false);
++	run_qfull_queue(udev, false);
+ 	mutex_unlock(&udev->cmdr_lock);
+ 
+ 	return 0;
+@@ -1982,7 +2011,7 @@ static void tcmu_block_dev(struct tcmu_dev *udev)
+ 	/* complete IO that has executed successfully */
+ 	tcmu_handle_completions(udev);
+ 	/* fail IO waiting to be queued */
+-	run_cmdr_queue(udev, true);
++	run_qfull_queue(udev, true);
+ 
+ unlock:
+ 	mutex_unlock(&udev->cmdr_lock);
+@@ -1997,7 +2026,7 @@ static void tcmu_reset_ring(struct tcmu_dev *udev, u8 err_level)
+ 	mutex_lock(&udev->cmdr_lock);
+ 
+ 	idr_for_each_entry(&udev->commands, cmd, i) {
+-		if (!list_empty(&cmd->cmdr_queue_entry))
++		if (!test_bit(TCMU_CMD_BIT_INFLIGHT, &cmd->flags))
+ 			continue;
+ 
+ 		pr_debug("removing cmd %u on dev %s from ring (is expired %d)\n",
+@@ -2006,6 +2035,7 @@ static void tcmu_reset_ring(struct tcmu_dev *udev, u8 err_level)
+ 
+ 		idr_remove(&udev->commands, i);
+ 		if (!test_bit(TCMU_CMD_BIT_EXPIRED, &cmd->flags)) {
++			list_del_init(&cmd->queue_entry);
+ 			if (err_level == 1) {
+ 				/*
+ 				 * Userspace was not able to start the
+@@ -2666,6 +2696,10 @@ static void check_timedout_devices(void)
+ 
+ 		mutex_lock(&udev->cmdr_lock);
+ 		idr_for_each(&udev->commands, tcmu_check_expired_cmd, NULL);
++
++		tcmu_set_next_deadline(&udev->inflight_queue, &udev->cmd_timer);
++		tcmu_set_next_deadline(&udev->qfull_queue, &udev->qfull_timer);
++
+ 		mutex_unlock(&udev->cmdr_lock);
+ 
+ 		spin_lock_bh(&timed_out_udevs_lock);
 -- 
 2.19.1
 
