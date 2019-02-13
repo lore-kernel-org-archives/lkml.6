@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47DBFC282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6AF8C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:43:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13FA52175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:43:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A09772064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:43:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025831;
-	bh=AukooJYYEWsA9ZNXtMpE/p+4kLZE5MMdq98agdN/7gA=;
+	s=default; t=1550025836;
+	bh=dQAQwrMf4ko/peHWcwvqP91XcMSIX1yyOY06NizeDS8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jd9bunA0Df8tovBusr6f3oTLTi2Unzol2yV7K4BRZpUHi6f3Nxk/cpYb7UzFDJrzC
-	 l3YgppUGZ94NnChjBAoszghTH21qjnDweTddaF/9HXab7vaB8vzYVd01Ht2oYLD43o
-	 XRYfJ5r+iQZN7rFIxOvmjNA3oRvrJL7i1WBi6lhY=
+	b=kwBTfBpjUf/mYG+LVBf1/XCuPVFyHnQiDQ995FF1tBctdhL9FdPUmeatJNz67kfYQ
+	 cNydyXoXGXcFj5StQ4VMlmaA+fDwWeA3rHz4q/BobRHRPSDQzlHRA5p6U7rH3Gz2Hm
+	 H6enPM7nORLBK+WgXRvleDciGbZU3d9N1+G+X//k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389583AbfBMCnt (ORCPT
+        id S2389305AbfBMClb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:43:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45200 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:41:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387609AbfBMClc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:41:32 -0500
+        id S2389266AbfBMClY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:41:24 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 70957222C2;
-        Wed, 13 Feb 2019 02:41:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E32D02175B;
+        Wed, 13 Feb 2019 02:41:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025691;
-        bh=AukooJYYEWsA9ZNXtMpE/p+4kLZE5MMdq98agdN/7gA=;
+        s=default; t=1550025683;
+        bh=dQAQwrMf4ko/peHWcwvqP91XcMSIX1yyOY06NizeDS8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LP+pMhBvLnwV623EaOA05iVjjLarXeB78Ai01M5qORHJVFWHg5w7mo0Tm6aNcBdBY
-         IHqf+wr7ZiEJtMsKCrgFCvw2rrWlctBuDJ+BFdsvYionZUEW1/VuC/1HUNnu78uhxP
-         d7mg2dLGywugc4pgA9r7OIsec1ltQOY6cFlrTgmM=
+        b=OlgNRu98xSYyx47JNbzzkfLeGD0aguQ1FDMOnYAr0Y9iGuduJGqGItEwnH2W3AgxB
+         3id7fQtJ6M7nJGQoNzk+KiJtNIzKempIYa/+V8TMadwJ1LcOZCTTkGR8g+pNQRxtpO
+         KwiEMJ2BNgMvKjjNNhjG829D8McQVC5zFQZIC3+U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 12/16] MIPS: jazz: fix 64bit build
-Date:   Tue, 12 Feb 2019 21:41:08 -0500
-Message-Id: <20190213024112.22038-12-sashal@kernel.org>
+Cc:     Yonglong Liu <liuyonglong@huawei.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 08/16] net: hns: Fix use after free identified by SLUB debug
+Date:   Tue, 12 Feb 2019 21:41:04 -0500
+Message-Id: <20190213024112.22038-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213024112.22038-1-sashal@kernel.org>
 References: <20190213024112.22038-1-sashal@kernel.org>
@@ -60,75 +59,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+From: Yonglong Liu <liuyonglong@huawei.com>
 
-[ Upstream commit 41af167fbc0032f9d7562854f58114eaa9270336 ]
+[ Upstream commit bb989501abcafa0de5f18b0ec0ec459b5b817908 ]
 
-64bit JAZZ builds failed with
+When enable SLUB debug, than remove hns_enet_drv module, SLUB debug will
+identify a use after free bug:
 
-  linux-next/arch/mips/jazz/jazzdma.c: In function `vdma_init`:
-  /linux-next/arch/mips/jazz/jazzdma.c:77:30: error: implicit declaration
-    of function `KSEG1ADDR`; did you mean `CKSEG1ADDR`?
-    [-Werror=implicit-function-declaration]
-    pgtbl = (VDMA_PGTBL_ENTRY *)KSEG1ADDR(pgtbl);
-                                ^~~~~~~~~
-                                CKSEG1ADDR
-  /linux-next/arch/mips/jazz/jazzdma.c:77:10: error: cast to pointer from
-    integer of different size [-Werror=int-to-pointer-cast]
-    pgtbl = (VDMA_PGTBL_ENTRY *)KSEG1ADDR(pgtbl);
-            ^
-  In file included from /linux-next/arch/mips/include/asm/barrier.h:11:0,
-                   from /linux-next/include/linux/compiler.h:248,
-                   from /linux-next/include/linux/kernel.h:10,
-                   from /linux-next/arch/mips/jazz/jazzdma.c:11:
-  /linux-next/arch/mips/include/asm/addrspace.h:41:29: error: cast from
-    pointer to integer of different size [-Werror=pointer-to-int-cast]
-   #define _ACAST32_  (_ATYPE_)(_ATYPE32_) /* widen if necessary */
-                               ^
-  /linux-next/arch/mips/include/asm/addrspace.h:53:25: note: in
-    expansion of macro `_ACAST32_`
-   #define CPHYSADDR(a)  ((_ACAST32_(a)) & 0x1fffffff)
-                           ^~~~~~~~~
-  /linux-next/arch/mips/jazz/jazzdma.c:84:44: note: in expansion of
-    macro `CPHYSADDR`
-    r4030_write_reg32(JAZZ_R4030_TRSTBL_BASE, CPHYSADDR(pgtbl));
+[134.189505] Unable to handle kernel paging request at virtual address
+		006b6b6b6b6b6b6b
+[134.197553] Mem abort info:
+[134.200381]   ESR = 0x96000004
+[134.203487]   Exception class = DABT (current EL), IL = 32 bits
+[134.209497]   SET = 0, FnV = 0
+[134.212596]   EA = 0, S1PTW = 0
+[134.215777] Data abort info:
+[134.218701]   ISV = 0, ISS = 0x00000004
+[134.222596]   CM = 0, WnR = 0
+[134.225606] [006b6b6b6b6b6b6b] address between user and kernel address ranges
+[134.232851] Internal error: Oops: 96000004 [#1] SMP
+[134.237798] CPU: 21 PID: 27834 Comm: rmmod Kdump: loaded Tainted: G
+		OE     4.19.5-1.2.34.aarch64 #1
+[134.247856] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.58 10/24/2018
+[134.255181] pstate: 20000005 (nzCv daif -PAN -UAO)
+[134.260044] pc : hns_ae_put_handle+0x38/0x60
+[134.264372] lr : hns_ae_put_handle+0x24/0x60
+[134.268700] sp : ffff00001be93c50
+[134.272054] x29: ffff00001be93c50 x28: ffff802faaec8040
+[134.277442] x27: 0000000000000000 x26: 0000000000000000
+[134.282830] x25: 0000000056000000 x24: 0000000000000015
+[134.288284] x23: ffff0000096fe098 x22: ffff000001050070
+[134.293671] x21: ffff801fb3c044a0 x20: ffff80afb75ec098
+[134.303287] x19: ffff80afb75ec098 x18: 0000000000000000
+[134.312945] x17: 0000000000000000 x16: 0000000000000000
+[134.322517] x15: 0000000000000002 x14: 0000000000000000
+[134.332030] x13: dead000000000100 x12: ffff7e02bea3c988
+[134.341487] x11: ffff80affbee9e68 x10: 0000000000000000
+[134.351033] x9 : 6fffff8000008101 x8 : 0000000000000000
+[134.360569] x7 : dead000000000100 x6 : ffff000009579748
+[134.370059] x5 : 0000000000210d00 x4 : 0000000000000000
+[134.379550] x3 : 0000000000000001 x2 : 0000000000000000
+[134.388813] x1 : 6b6b6b6b6b6b6b6b x0 : 0000000000000000
+[134.397993] Process rmmod (pid: 27834, stack limit = 0x00000000d474b7fd)
+[134.408498] Call trace:
+[134.414611]  hns_ae_put_handle+0x38/0x60
+[134.422208]  hnae_put_handle+0xd4/0x108
+[134.429563]  hns_nic_dev_remove+0x60/0xc0 [hns_enet_drv]
+[134.438342]  platform_drv_remove+0x2c/0x70
+[134.445958]  device_release_driver_internal+0x174/0x208
+[134.454810]  driver_detach+0x70/0xd8
+[134.461913]  bus_remove_driver+0x64/0xe8
+[134.469396]  driver_unregister+0x34/0x60
+[134.476822]  platform_driver_unregister+0x20/0x30
+[134.485130]  hns_nic_dev_driver_exit+0x14/0x6e4 [hns_enet_drv]
+[134.494634]  __arm64_sys_delete_module+0x238/0x290
 
-Using correct casts and CKSEG1ADDR when dealing with the pgtbl setup
-fixes this.
+struct hnae_handle is a member of struct hnae_vf_cb, so when vf_cb is
+freed, than use hnae_handle will cause use after free panic.
 
-Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
+This patch frees vf_cb after hnae_handle used.
+
+Signed-off-by: Yonglong Liu <liuyonglong@huawei.com>
+Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/jazz/jazzdma.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/mips/jazz/jazzdma.c b/arch/mips/jazz/jazzdma.c
-index db6f5afff4ff..ea897912bc71 100644
---- a/arch/mips/jazz/jazzdma.c
-+++ b/arch/mips/jazz/jazzdma.c
-@@ -71,14 +71,15 @@ static int __init vdma_init(void)
- 						    get_order(VDMA_PGTBL_SIZE));
- 	BUG_ON(!pgtbl);
- 	dma_cache_wback_inv((unsigned long)pgtbl, VDMA_PGTBL_SIZE);
--	pgtbl = (VDMA_PGTBL_ENTRY *)KSEG1ADDR(pgtbl);
-+	pgtbl = (VDMA_PGTBL_ENTRY *)CKSEG1ADDR((unsigned long)pgtbl);
+diff --git a/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c b/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c
+index 1a16c0307b47..bd36fbe81ad2 100644
+--- a/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c
++++ b/drivers/net/ethernet/hisilicon/hns/hns_ae_adapt.c
+@@ -188,12 +188,10 @@ static void hns_ae_put_handle(struct hnae_handle *handle)
+ 	struct hnae_vf_cb *vf_cb = hns_ae_get_vf_cb(handle);
+ 	int i;
  
- 	/*
- 	 * Clear the R4030 translation table
- 	 */
- 	vdma_pgtbl_init();
+-	vf_cb->mac_cb	 = NULL;
+-
+-	kfree(vf_cb);
+-
+ 	for (i = 0; i < handle->q_num; i++)
+ 		hns_ae_get_ring_pair(handle->qs[i])->used_by_vf = 0;
++
++	kfree(vf_cb);
+ }
  
--	r4030_write_reg32(JAZZ_R4030_TRSTBL_BASE, CPHYSADDR(pgtbl));
-+	r4030_write_reg32(JAZZ_R4030_TRSTBL_BASE,
-+			  CPHYSADDR((unsigned long)pgtbl));
- 	r4030_write_reg32(JAZZ_R4030_TRSTBL_LIM, VDMA_PGTBL_SIZE);
- 	r4030_write_reg32(JAZZ_R4030_TRSTBL_INV, 0);
- 
+ static void hns_ae_ring_enable_all(struct hnae_handle *handle, int val)
 -- 
 2.19.1
 
