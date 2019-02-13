@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E5D4C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:43:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90DBAC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:43:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF18620811
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:43:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F95A20811
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 18:43:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550083431;
-	bh=ysfh84W7HfNG4G/5WhZhVv15nBZJ6dJSn+iUX9r9feY=;
+	s=default; t=1550083433;
+	bh=tYN6i92JDHeUUgRweWn7plxRzQ5CiUo8btN+SuoKOOo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=onpdQlJofUHlj4GNvZDxKcU43BbNW5Qw/YOR7eh0fCcYbmL9Ex8RKwxBtC5u4L5h7
-	 aTuETCfWLa8CJLPjZKnjmKyPy5EYBe100jo+Fo4dJj6dmjaXb92tKCXUzy50Cd6ULt
-	 ivyVzQgOoGT3tmwlCJrl4r508THF4vmJ1lvw95DI=
+	b=PYsaz39GcXw5ql+/tevII7/jlN4lKhcrOJjKAu1ONH5wIe8SSk6xmt8m9iHbYF7Ai
+	 70PxsxcYi/vj1ygHpc1SybejmtCC16Q1ROU7KQA7gKbsMzik/OvD2xkbK9hN2zT2Pa
+	 ZBwU5NbMt/HoHQJthESIDejn0x5eQIj7uB+AiNfs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405993AbfBMSnt (ORCPT
+        id S2406006AbfBMSnw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 13:43:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42350 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 13:43:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405968AbfBMSnq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 13:43:46 -0500
+        id S2405992AbfBMSnu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 13:43:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81DED222D5;
-        Wed, 13 Feb 2019 18:43:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC53220811;
+        Wed, 13 Feb 2019 18:43:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550083426;
-        bh=ysfh84W7HfNG4G/5WhZhVv15nBZJ6dJSn+iUX9r9feY=;
+        s=default; t=1550083429;
+        bh=tYN6i92JDHeUUgRweWn7plxRzQ5CiUo8btN+SuoKOOo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wL11oX5MsOFVgl2NIJTp6UCJ+CTsg6eq4nuUcHXYzLQzjxFuwdinvD0OIELVESJYR
-         N+H0INxij17bfIrnqGfoXzkgqDapWx9aBTX2P0gx0R67sWh8G/rjp4kkNMtRD9Fh29
-         PiJTXFv6XbwC8kK0Naav9gq+hU4LHkBr4DIWeOvw=
+        b=K4mXJ/CfKwtDG/c0dMHV+3RKhhqZ4W6U+dMNqlOpMsZa9A6+qiCsD4tLWTJNu2Vxz
+         NyejCNwKGga9aR98Gktk0OGuBjC49qBnTxqEtggvBfoHkJcdOFzQ6nkpR96NOdtwtW
+         UXgxbPGeYoH89bIoJ1UeeZHp81jqMIg2VN9tL+aU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.19 32/44] drm/amd/powerplay: Fix missing break in switch
-Date:   Wed, 13 Feb 2019 19:38:33 +0100
-Message-Id: <20190213183654.494134460@linuxfoundation.org>
+        stable@vger.kernel.org, Paulo Zanoni <paulo.r.zanoni@intel.com>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        Mika Kahola <mika.kahola@intel.com>,
+        Jani Nikula <jani.nikula@intel.com>
+Subject: [PATCH 4.19 33/44] drm/i915: always return something on DDI clock selection
+Date:   Wed, 13 Feb 2019 19:38:34 +0100
+Message-Id: <20190213183654.576717830@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213183651.648060257@linuxfoundation.org>
 References: <20190213183651.648060257@linuxfoundation.org>
@@ -65,39 +67,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Lucas De Marchi <lucas.demarchi@intel.com>
 
-commit 2f10d823739680d2477ce34437e8a08a53117f40 upstream.
+commit 2a121030d4ee3f84f60c6f415f9c44bffbcde81d upstream.
 
-Add missing break statement in order to prevent the code from falling
-through to the default case.
+Even if we don't have the correct clock and get a warning, we should not
+skip the return.
 
-The resoning for this is that pclk_vol_table is an automatic variable.
-So, it makes no sense to update it just before falling through to the
-default case and return -EINVAL.
+v2: improve commit message (from Joonas)
 
-This bug was found thanks to the ongoing efforts to enabling
--Wimplicit-fallthrough.
-
-Fixes: cd70f3d6e3fa ("drm/amd/powerplay: PP/DAL interface changes for dynamic clock switch")
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: 1fa11ee2d9d0 ("drm/i915/icl: start adding the TBT pll")
+Cc: Paulo Zanoni <paulo.r.zanoni@intel.com>
+Cc: <stable@vger.kernel.org> # v4.19+
+Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
+Reviewed-by: Mika Kahola <mika.kahola@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190125222444.19926-3-lucas.demarchi@intel.com
+(cherry picked from commit 7a61a6dec3dfb9f2e8c39a337580a3c3036c5cdf)
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/i915/intel_ddi.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
-@@ -984,6 +984,7 @@ static int smu10_get_clock_by_type_with_
- 		break;
- 	case amd_pp_dpp_clock:
- 		pclk_vol_table = pinfo->vdd_dep_on_dppclk;
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
+--- a/drivers/gpu/drm/i915/intel_ddi.c
++++ b/drivers/gpu/drm/i915/intel_ddi.c
+@@ -1085,7 +1085,7 @@ static uint32_t icl_pll_to_ddi_pll_sel(s
+ 			return DDI_CLK_SEL_TBT_810;
+ 		default:
+ 			MISSING_CASE(clock);
+-			break;
++			return DDI_CLK_SEL_NONE;
+ 		}
+ 	case DPLL_ID_ICL_MGPLL1:
+ 	case DPLL_ID_ICL_MGPLL2:
 
 
