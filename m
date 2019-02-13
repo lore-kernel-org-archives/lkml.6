@@ -2,87 +2,111 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B20EC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:58:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F386BC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:59:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75739222B1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:58:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD3D520643
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:59:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Y6h46vE8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387549AbfBMM6K (ORCPT
+        id S1732972AbfBMM7d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 07:58:10 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:38049 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732686AbfBMM6J (ORCPT
+        Wed, 13 Feb 2019 07:59:33 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:45950 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726084AbfBMM7c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 07:58:09 -0500
-Received: by mail-qk1-f196.google.com with SMTP id p15so1241298qkl.5;
-        Wed, 13 Feb 2019 04:58:08 -0800 (PST)
+        Wed, 13 Feb 2019 07:59:32 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 32so3646793ota.12
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 04:59:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=cjbHZjDXzQHFpoSUmBFSxpmR6yzoGP2sypxmSivxUZU=;
+        b=Y6h46vE8GjsC6PKKglbQiMh1fsBgaFrHV/kyWuaRrjS+HA7EbBokcmTLQnPb0ZdFpI
+         WR9dUfb/aLHuvEJe9KMEpkVoDUvWb5ldlXvGezMIlrJKE+jv4TFJ7B0xf9ATu2pAIx/x
+         RnRwmLWq3aKkKErAv8y3GhC+bjPNIpCeLvK44NRjr9uapfmaycggmwGJnswIiZS1iAtE
+         UWnHdF9eHh49y9OIFu9STrrxVLEPn9BgCmMvU2Nr6DSi34Hv71k91Zvu4RRnoY83gfh5
+         h5Qp2uxseyoUe8POO+Wpq4GN/+5e2Gm99UbZRLKAldkhaMyBPpMLBulRjON6oBFYZjcE
+         4FBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3YzZ2+SgQSwy84SnOV79SobpVyq4HhxYuNdqg2CL408=;
-        b=C/TXootOper4gFNyMPqRCkXfkt4jFgltmL46HUMT5FMvndJ8YkHawB1bOdkr2//4+1
-         PySX4yxFm5vAnOqKzqMLTaTYqoDwqdXO941fSyFw1NYQGgDd8Qdan1wHlHH6barTlAQv
-         DlMJMWObeeIG/ErZtO3AVpr3VGfmHXz/nSXvrqcZ51E+w/9PZp5t3OvpiHdFX6uX70WE
-         ftuXzbTL+GglbUYT68Sy6lDtUQNFnzLTOe0U3deY098IH27qw/IsM02YsRlXrWF++97X
-         MXja720DMOaaRrcPytm1TQvnYWKiz5aq/uq/01oF5oTh7WCfedqDpKy+uk5trhV7ccjw
-         kBpQ==
-X-Gm-Message-State: AHQUAuZ0EC7swwp8izL/dIUqPXOlR1zv7eAZk/SaGjfen3hcXhGxrw7w
-        w88rjq5nOrDl7sBNmdY02DKqQy5LBR6Yi9wDDarZkQ==
-X-Google-Smtp-Source: AHgI3IbDh/aN4uwHc3bgj/wuN5euYJWTa5JODpycyEU4V5s7OSrRKLC0kHhB2OfzwGsDwoNI1PVjQincJRq7Gy2CSH0=
-X-Received: by 2002:a37:d492:: with SMTP id s18mr232860qks.343.1550062688184;
- Wed, 13 Feb 2019 04:58:08 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=cjbHZjDXzQHFpoSUmBFSxpmR6yzoGP2sypxmSivxUZU=;
+        b=ZI/Rwchwv3ewFW7JrfIaj9GRHlniyJL0SLoKMaU+fIEzrlIUk+FSm1UrO7qOSaQWc0
+         01CKbYJNVAJfrxGSt+UpVWvxfR7wVfW2jbNB1mD3t4Zzs6PDNzNK4rnDJxUlD5teGPBU
+         u2QiPlJgm7p+d5rvn4l6e5Mujw7MXkGq16IYd8zVVq+B/DNczCoHTt947tAP2fqmdRDx
+         QERcltoX94/q2775noo+DT4hiStFrBcwMGxVZzwNAeBjdcYYwyCPvbkDaQCuEowZ0jWc
+         NEKbd5XU7+/o+BFobQnQdqP2OexZd9sEgyIvLba1zobhqD8KAa8LSS6Oir+xL/h04F2y
+         LwSQ==
+X-Gm-Message-State: AHQUAubBS2Y2R2IATHQsW8JrgJxck0FdR1sxzODTSIvt2Q+5zNp+v60T
+        K83gS6Vkr/Ypxcdh8gxhW+h0ZGfeyBXwhc7V/woQDg==
+X-Google-Smtp-Source: AHgI3IYQg7s8BzfbNtquOZXJFhitpEDZzKNNvrfoPUuYtUyLQTEHJyffZBMpxpVMxbjA4jk8DGhc0K21KpsOARYZrmk=
+X-Received: by 2002:aca:af53:: with SMTP id y80mr155896oie.170.1550062772306;
+ Wed, 13 Feb 2019 04:59:32 -0800 (PST)
 MIME-Version: 1.0
-References: <20190122141027.70cd9166@canb.auug.org.au> <20190213162212.500a7cd5@canb.auug.org.au>
-In-Reply-To: <20190213162212.500a7cd5@canb.auug.org.au>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 13 Feb 2019 13:57:51 +0100
-Message-ID: <CAK8P3a1hw03ik+tZSG8PnP7Rd=Pzwbo7n59HLJW04ncndyqzsg@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the pidfd tree with the y2038 tree
- (now block and tip trees)
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Christian Brauner <christian@brauner.io>,
-        Jens Axboe <axboe@kernel.dk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <b8101fd6d303c1993ee294eeee8bce4d24b9547f.1550061925.git.baolin.wang@linaro.org>
+ <0438b78c7f9f9bc3f0e7bcbcef3873fd2dd7e259.1550061925.git.baolin.wang@linaro.org>
+In-Reply-To: <0438b78c7f9f9bc3f0e7bcbcef3873fd2dd7e259.1550061925.git.baolin.wang@linaro.org>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Wed, 13 Feb 2019 13:59:21 +0100
+Message-ID: <CAMpxmJWuMWBSPjoJWkfagAAopYjohA0rhxUacNPXhhiTFZJorA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] gpio: sprd: Change to use SoC compatible string
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Lyra Zhang <zhang.lyra@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-devicetree <devicetree@vger.kernel.org>,
+        linux-gpio <linux-gpio@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 6:22 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> On Tue, 22 Jan 2019 14:10:27 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> >
-> > Today's linux-next merge of the pidfd tree got conflicts in:
-> >
-> >   arch/x86/entry/syscalls/syscall_32.tbl
-> >   arch/x86/entry/syscalls/syscall_64.tbl
-> >   include/uapi/asm-generic/unistd.h
-> >
-> > between commits:
-> >
-> >   63a96220ad45 ("arch: add split IPC system calls where needed")
-> >   0bd4bb9c5612 ("y2038: add 64-bit time_t syscalls to all 32-bit architectures")
-> >
-> > from the y2038 tree and commit:
-> >
-> >   3d2991bc7a67 ("signal: add pidfd_send_signal() syscall")
-> >
-> > from the pidfd tree.
+=C5=9Br., 13 lut 2019 o 13:49 Baolin Wang <baolin.wang@linaro.org> napisa=
+=C5=82(a):
 >
-> This is now a conflict between the block, tip and pidfd trees.  The
-> resolution now looks like below.
+> Change to use SoC compatible string instead of wildcard string.
+>
+> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> ---
+>  drivers/gpio/gpio-pmic-eic-sprd.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpio/gpio-pmic-eic-sprd.c b/drivers/gpio/gpio-pmic-e=
+ic-sprd.c
+> index ac573da..24228cf 100644
+> --- a/drivers/gpio/gpio-pmic-eic-sprd.c
+> +++ b/drivers/gpio/gpio-pmic-eic-sprd.c
+> @@ -364,7 +364,7 @@ static int sprd_pmic_eic_probe(struct platform_device=
+ *pdev)
+>  }
+>
+>  static const struct of_device_id sprd_pmic_eic_of_match[] =3D {
+> -       { .compatible =3D "sprd,sc27xx-eic", },
+> +       { .compatible =3D "sprd,sc2731-eic", },
+>         { /* end of list */ }
+>  };
+>  MODULE_DEVICE_TABLE(of, sprd_pmic_eic_of_match);
+> --
+> 1.7.9.5
+>
 
-Checked it again, still looks good. Thanks,
+We guarantee to make older device-trees to work with new kernel so you
+can add the new compatible, but you can't remove the old one.
 
-    Arnd
+Bart
