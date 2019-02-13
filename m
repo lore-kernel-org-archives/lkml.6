@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C05C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA5EC282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:54:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D103120835
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:54:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CE9B2190A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:54:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026461;
-	bh=JTqfmv3GQSPbzfiajPqVW5BzLqL133mgimg029Hvh9o=;
+	s=default; t=1550026467;
+	bh=t/jdnR/b73dM2MNUSlGO3paOW+Swt3OsdAkfoNAxEgk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ao1eU0EUBv2rXefZjcYXLC2Lyv0RI4gmmC8mTEC/hxSfVy16ZsNQHjT65WsNsLgqx
-	 JO/VdbW604ncnJGXYChBzGRgHzSe9KJjxfsQ3xcsqejy2hH3qy7Nm+V+ZtMiiYJjZf
-	 7keKS1GEhPLSyVma7c5EoqECG+Y2r7XtN0Z7FJoE=
+	b=HF1JwMbCS0BEqZKu5Z0D6PXl/mups0nKBWqAs6eYzuXJk3l1F8fFvJaNO+hJtZ+Cs
+	 SEqsopUnjRCazCFoIr3KXz8P7bJRq9U1nR1L9hbrmUyyPZ7EbJswhB+l7S0C50F4h+
+	 b6dp/fhdu0eegE/HhkOgJFkksAG6kqVWUPbIEoN8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388414AbfBMChz (ORCPT
+        id S2387530AbfBMCyZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:37:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41370 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:54:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728442AbfBMChv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:37:51 -0500
+        id S2388403AbfBMChy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:37:54 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37C9F206B6;
-        Wed, 13 Feb 2019 02:37:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45CF8222C7;
+        Wed, 13 Feb 2019 02:37:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025471;
-        bh=JTqfmv3GQSPbzfiajPqVW5BzLqL133mgimg029Hvh9o=;
+        s=default; t=1550025474;
+        bh=t/jdnR/b73dM2MNUSlGO3paOW+Swt3OsdAkfoNAxEgk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wldk1ZNO+nTNSbELl9ntTo+C6L79m5TMsWgcG2+vvbiQvaZm7E4sFVx/hH5v7sJc2
-         j28YY5B8aB49GU58CWMSvOTAcpec54XV2Mj6F4lDLM5xxFpBMTOUQsNT6i1MY11YuB
-         0YhlkUA+EpWI2z3bvWVHOj5cQOcYX+tzz6Q55nHE=
+        b=u2gcVuo3+SS6lsxsaAVVTA0NzsxDqGG2X5v06OO0NEXWTJm4QasiOS6wKlb1rZtZf
+         kJcOHm+RN2NfIUUTaIfEJ+QvBG2gxIx5yX8blEaDAdyEuy1aS7OG/8C/79Jxviit5I
+         NH4DsAF7JMONymbqtqradg3pEgTt2PtxJDjKAcRE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ido Schimmel <idosch@mellanox.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 31/83] selftests: forwarding: Add a test for VLAN deletion
-Date:   Tue, 12 Feb 2019 21:36:09 -0500
-Message-Id: <20190213023701.20286-31-sashal@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 33/83] scsi: qla4xxx: check return code of qla4xxx_copy_from_fwddb_param
+Date:   Tue, 12 Feb 2019 21:36:11 -0500
+Message-Id: <20190213023701.20286-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -59,53 +58,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ido Schimmel <idosch@mellanox.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 4fabf3bf93a194c7fa5288da3e0af37e4b943cf3 ]
+[ Upstream commit 72b4a0465f995175a2e22cf4a636bf781f1f28a7 ]
 
-Add a VLAN on a bridge port, delete it and make sure the PVID VLAN is
-not affected.
+The return code should be check while qla4xxx_copy_from_fwddb_param fails.
 
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Manish Rangankar <mrangankar@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../selftests/net/forwarding/bridge_vlan_aware.sh | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ drivers/scsi/qla4xxx/ql4_os.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh b/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
-index d8313d0438b7..04c6431b2bd8 100755
---- a/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
-+++ b/tools/testing/selftests/net/forwarding/bridge_vlan_aware.sh
-@@ -1,7 +1,7 @@
- #!/bin/bash
- # SPDX-License-Identifier: GPL-2.0
+diff --git a/drivers/scsi/qla4xxx/ql4_os.c b/drivers/scsi/qla4xxx/ql4_os.c
+index 0e13349dce57..575445c761b4 100644
+--- a/drivers/scsi/qla4xxx/ql4_os.c
++++ b/drivers/scsi/qla4xxx/ql4_os.c
+@@ -7237,6 +7237,8 @@ static int qla4xxx_sysfs_ddb_tgt_create(struct scsi_qla_host *ha,
  
--ALL_TESTS="ping_ipv4 ping_ipv6 learning flooding"
-+ALL_TESTS="ping_ipv4 ping_ipv6 learning flooding vlan_deletion"
- NUM_NETIFS=4
- CHECK_TC="yes"
- source lib.sh
-@@ -96,6 +96,19 @@ flooding()
- 	flood_test $swp2 $h1 $h2
- }
+ 	rc = qla4xxx_copy_from_fwddb_param(fnode_sess, fnode_conn,
+ 					   fw_ddb_entry);
++	if (rc)
++		goto free_sess;
  
-+vlan_deletion()
-+{
-+	# Test that the deletion of a VLAN on a bridge port does not affect
-+	# the PVID VLAN
-+	log_info "Add and delete a VLAN on bridge port $swp1"
-+
-+	bridge vlan add vid 10 dev $swp1
-+	bridge vlan del vid 10 dev $swp1
-+
-+	ping_ipv4
-+	ping_ipv6
-+}
-+
- trap cleanup EXIT
- 
- setup_prepare
+ 	ql4_printk(KERN_INFO, ha, "%s: sysfs entry %s created\n",
+ 		   __func__, fnode_sess->dev.kobj.name);
 -- 
 2.19.1
 
