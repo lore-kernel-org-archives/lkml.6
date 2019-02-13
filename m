@@ -2,126 +2,150 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14E18C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:00:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3D31C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:00:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6A6B20836
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:00:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A47E222B1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 14:00:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FTkvJIhi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gO2qUv2j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390331AbfBMOAU (ORCPT
+        id S2390384AbfBMOA0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 09:00:20 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46185 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733126AbfBMOAT (ORCPT
+        Wed, 13 Feb 2019 09:00:26 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:45521 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728615AbfBMOAZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 09:00:19 -0500
-Received: by mail-pf1-f195.google.com with SMTP id g6so1165412pfh.13
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 06:00:19 -0800 (PST)
+        Wed, 13 Feb 2019 09:00:25 -0500
+Received: by mail-qt1-f193.google.com with SMTP id e5so2565845qtr.12
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 06:00:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=+cqpEOgVsQX6FuKbkjkqnPdK6JJEhfhSEvMIkCtIVgk=;
-        b=FTkvJIhiZxuB2UN3OVrDxEf8j3emEZw9A9itD1oPd+tVJ0e8g/nDyZISMfbdyXaAP6
-         Ku+f1/oU09s8dZXMCE15EC/lZ4jhE9XpyVezCzRAsRLdy/21AR6rTdyIxoZbfsMxmQYr
-         o1QFAdcjEMZ4hpVPbwUZfbKD3bP3YaF5W6bCDSkoV9uE7cMXX9QTOFBJsVTZFBub3vD/
-         tLP1kpXdfL6PFeEz95+peYCFGB2V3ZREDDgo2MiHR2YRRTInP7Ujlzf+v8xIEwW/acLG
-         YYBPMe+meJlZK/PpLg21XpK/Zqy+ohSuq8qV9XGFBs8K15TIr80jXNZJz+mddYFSLU45
-         kSXQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mYbCWBQ0Y9GWex24vzz5nL8T5g6xF4FMzPuyoRoFGm4=;
+        b=gO2qUv2jZwtHceCBFPeMhKMpEfxaOZqwURhBXpcZlaeGe13MhG6UWFkg/gvKxXEBwm
+         JvE4ZF6041L4Op5jDYiPFR8y8gWlLbyFpirVyTA9c8Gv3i6SfEddjebeCGOpirkj3+yI
+         l+KD2AoBjwfzrBQHtuLToRsZC2UpG833ssoDl9/0qARcyks7rJzx3zWT10YpzaFArDAi
+         uA3uaVawxAIq4EbDqSwbTm0gTPkTrh1e3+kqZl1i5AgnVU56ilS+3spt7kaqz+w1cqcL
+         DvXeF92JzYFWSutKgwVhk1nfP6R/Os1XboCsK8QkI3shRdRkebtgpXTwJcim/W1u7CEM
+         n8KQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=+cqpEOgVsQX6FuKbkjkqnPdK6JJEhfhSEvMIkCtIVgk=;
-        b=njo2XawSfQ3PyWy3tuQA/C+E1ouhcfU1egFqvGWkM0HuuhFAwVLsY9HCbSfGEoxIqa
-         bI+Vu1ltKIC9BlKAJHzvPeQm28bfuftobP1fzjBtGNFjtvpfD70IFeKDFP/FFX69j55P
-         +D9FRHKzxK71qiLkCOahBL0ytQbJmx2cBLYPLqoeLDd8gMQ4gA0eSsjodqGMQO/C6n/V
-         3U9SF/fgFWkJIZutk4JO2V3uifYE/IFLtGVdCdaradyUT4ia2LsoaRBQQ08hUHY6e3za
-         VMsu1VfFtv4T4CbVg7hNj3qIoDDdMpRFNkZZw9l7wAKA2Yj1r7FBKfS+gZdB9WyaHM+E
-         gECw==
-X-Gm-Message-State: AHQUAubZ9QekW+H2bT11HO2Z+Gfj/Q99kjnaLfyd+nK9PmzJPBqc7SK4
-        PvFFWg5iban+tNC2UhtTgE0=
-X-Google-Smtp-Source: AHgI3IYGzYQtaDAzpRnw4j6/fnsbGP2OWM7ItsKgcpabtFzajnCQ7pxNpaBmZJle8XOTxzleQFh85A==
-X-Received: by 2002:a63:5442:: with SMTP id e2mr628034pgm.282.1550066419102;
-        Wed, 13 Feb 2019 06:00:19 -0800 (PST)
-Received: from jordon-HP-15-Notebook-PC ([49.207.48.54])
-        by smtp.gmail.com with ESMTPSA id o2sm27521833pfa.149.2019.02.13.06.00.17
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 13 Feb 2019 06:00:18 -0800 (PST)
-Date:   Wed, 13 Feb 2019 19:34:36 +0530
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
-        hjc@rock-chips.com, heiko@sntech.de, airlied@linux.ie,
-        linux@armlinux.org.uk, robin.murphy@arm.com
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org,
-        dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org
-Subject: [PATCH v3 4/9] drm/rockchip/rockchip_drm_gem.c: Convert to use
- vm_map_pages()
-Message-ID: <20190213140436.GA22010@jordon-HP-15-Notebook-PC>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=mYbCWBQ0Y9GWex24vzz5nL8T5g6xF4FMzPuyoRoFGm4=;
+        b=Cf6NEsCAciE99hdZ/qX7311uO+rjDHHRV33a7BJCkW4PHSBEN/LRvM5+F8Mrz4NReK
+         aCfchR9CPiF7e15WrMIRztkKWNFbU+RewEKm/KESBaRAhvJqDsY6PXc/GM87r3tUYF8n
+         MuFLB870j7fPXK61rYc9O2y0R3KtalVfkzrkHttXni8ypGw8Jq7jNdFYekFy62PXt6mC
+         VgrJ/ihWx3eLROuVeHh5XePaLm4+B3gSD774f+mfEvKOXbTExpuSRONGME+xI3PcIXNk
+         4r9I8J57ghsa56IK3QTu5Tlyb8CmCQCNYEBC+jkQgZZw17YF3bCPYOTTWj2XF9f3Sxng
+         7GGw==
+X-Gm-Message-State: AHQUAuac4/QOZXKwUwn+kXKWePucOihozJ48TZ4x4AOXRlMWbgZM53J9
+        bD2ruYFcHioUpuxGyjDAXYSXcj2PICD+ujuv0cM=
+X-Google-Smtp-Source: AHgI3IbBnL3R3iUAHhrZpZwlxn7HkL1sSvXQjcDZXuxVoXXewikybOJu1QlJ9oAR7fulmA33dLjHQKqFyE7FVXc7jlM=
+X-Received: by 2002:a0c:8aa1:: with SMTP id 30mr479699qvv.1.1550066424479;
+ Wed, 13 Feb 2019 06:00:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <1549995065-27597-1-git-send-email-xiaoxiang@xiaomi.com>
+ <20190212144606.4b7cf0f8@gandalf.local.home> <CAH2Cfb-Zd9TKgs52ROVGYg6F_hiN2ieWKwYPkxpVV8St+zwa2A@mail.gmail.com>
+ <20190213084741.5512307a@gandalf.local.home>
+In-Reply-To: <20190213084741.5512307a@gandalf.local.home>
+From:   xiang xiao <xiaoxiang781216@gmail.com>
+Date:   Wed, 13 Feb 2019 22:00:04 +0800
+Message-ID: <CAH2Cfb9YTAf4j7tv4Q5dWM_jQCzsWBo6ufoT=BXYx5qpgcMCNQ@mail.gmail.com>
+Subject: Re: [PATCH] printk: add KERN_NOTIME to skip the timestamp
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-kernel@vger.kernel.org, Xiang Xiao <xiaoxiang@xiaomi.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert to use vm_map_pages() to map range of kernel
-memory to user vma.
+On Wed, Feb 13, 2019 at 9:47 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> On Wed, 13 Feb 2019 14:19:01 +0800
+> xiang xiao <xiaoxiang781216@gmail.com> wrote:
+>
+> > On Wed, Feb 13, 2019 at 3:46 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+> > >
+> > > On Wed, 13 Feb 2019 02:11:05 +0800
+> > > Xiang Xiao <xiaoxiang781216@gmail.com> wrote:
+> > >
+> > > > Because log may already add the timestamp sometime
+> > >
+> > > Can you be a bit more detailed on this. When and where does this
+> > > happen?
+> >
+> > Here is my case:
+> > 1.A small MCU(Cortex M4) in SoC run RTOS
+> > 2.RTOS append timestamp to log for the accurate timing
+> > 3.RTOS send log to Linux kernel when buffer exceed the threshold
+> > 4.Kernel call printk to dump the received buffer
+> > So I want that printk skip the timestamp here.
+> >
+> > > If anything, I would probably prefer that we export whether
+> > > time is being printed, and have the caller not print time if printk is
+> > > doing it already, than to add the complexity into printk itself.
+> >
+> > Actually, the timestamp of our initial implementation like your
+> > suggestion come from printk,
+> > but we found that timestamp from kernel isn't accurate as from RTOS
+> > due the buffer and IPC.
+> >
+>
+> If the timestamps are different, then you don't want to remove the
+> printk one. Otherwise you are going to have a confusion between your
+> added timestamp mixed in with the kernel's inaccurate timestamps.
+>
 
-Tested on Rockchip hardware and display is working,
-including talking to Lima via prime.
+Here is a sample output with this patch:
+[   10.991426] virtio_rpmsg_bus virtio1: rpmsg host is online
+[   10.991443] remoteproc remoteproc1: registered virtio1 (type 7)
+[   10.991450] remoteproc remoteproc1: remote processor
+f9210000.toppwr:sen-rproc is now up
+[   10.993715] virtio_rpmsg_bus virtio1: creating channel
+rpmsg-ttySENSOR addr 0x1
+[   10.994606] virtio_rpmsg_bus virtio1: creating channel rpmsg-ttyGPS addr 0x2
+[   10.995236] virtio_rpmsg_bus virtio1: creating channel rpmsg-clk addr 0x3
+[   10.995702] virtio_rpmsg_bus virtio1: creating channel rpmsg-syslog addr 0x4
+[   10.996197] virtio_rpmsg_bus virtio1: creating channel rpmsg-rtc addr 0x5
+[   10.997297] virtio_rpmsg_bus virtio1: creating channel rpmsg-hostfs addr 0x6
+[   10.999842] virtio_rpmsg_bus virtio1: creating channel rpmsg-usrsock addr 0x7
+[     0.007680] sensor: NuttX sensor 7.28 e3c2ecb Feb 12 2019 16:53:49
+arm song/banks
+^^^^^^^^^^^^^
+[   11.918177] random: crng init done
+[   12.567362] e2fsck: e2fsck 1.42.9 (28-Dec-2013)
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-Tested-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/gpu/drm/rockchip/rockchip_drm_gem.c | 17 ++---------------
- 1 file changed, 2 insertions(+), 15 deletions(-)
+Without this patch:
+[   10.991426] virtio_rpmsg_bus virtio1: rpmsg host is online
+[   10.991443] remoteproc remoteproc1: registered virtio1 (type 7)
+[   10.991450] remoteproc remoteproc1: remote processor
+f9210000.toppwr:sen-rproc is now up
+[   10.993715] virtio_rpmsg_bus virtio1: creating channel
+rpmsg-ttySENSOR addr 0x1
+[   10.994606] virtio_rpmsg_bus virtio1: creating channel rpmsg-ttyGPS addr 0x2
+[   10.995236] virtio_rpmsg_bus virtio1: creating channel rpmsg-clk addr 0x3
+[   10.995702] virtio_rpmsg_bus virtio1: creating channel rpmsg-syslog addr 0x4
+[   10.996197] virtio_rpmsg_bus virtio1: creating channel rpmsg-rtc addr 0x5
+[   10.997297] virtio_rpmsg_bus virtio1: creating channel rpmsg-hostfs addr 0x6
+[   10.999842] virtio_rpmsg_bus virtio1: creating channel rpmsg-usrsock addr 0x7
+[   11.105345][     0.007680] sensor: NuttX sensor 7.28 e3c2ecb Feb 12
+2019 16:53:49 arm song/banks
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+[   11.918177] random: crng init done
+[   12.567362] e2fsck: e2fsck 1.42.9 (28-Dec-2013)
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-index a8db758..a2ebb08 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
-@@ -221,26 +221,13 @@ static int rockchip_drm_gem_object_mmap_iommu(struct drm_gem_object *obj,
- 					      struct vm_area_struct *vma)
- {
- 	struct rockchip_gem_object *rk_obj = to_rockchip_obj(obj);
--	unsigned int i, count = obj->size >> PAGE_SHIFT;
-+	unsigned int count = obj->size >> PAGE_SHIFT;
- 	unsigned long user_count = vma_pages(vma);
--	unsigned long uaddr = vma->vm_start;
--	unsigned long offset = vma->vm_pgoff;
--	unsigned long end = user_count + offset;
--	int ret;
- 
- 	if (user_count == 0)
- 		return -ENXIO;
--	if (end > count)
--		return -ENXIO;
- 
--	for (i = offset; i < end; i++) {
--		ret = vm_insert_page(vma, uaddr, rk_obj->pages[i]);
--		if (ret)
--			return ret;
--		uaddr += PAGE_SIZE;
--	}
--
--	return 0;
-+	return vm_map_pages(vma, rk_obj->pages, count);
- }
- 
- static int rockchip_drm_gem_object_mmap_dma(struct drm_gem_object *obj,
--- 
-1.9.1
+Which one do you think better?
 
+> -- Steve
