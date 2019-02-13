@@ -2,111 +2,153 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD3CDC282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:36:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADABDC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:37:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 897242175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:36:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DF9E2175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:37:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393129AbfBMRg6 (ORCPT
+        id S2393162AbfBMRhx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 12:36:58 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45568 "EHLO
+        Wed, 13 Feb 2019 12:37:53 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59118 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2390226AbfBMRg5 (ORCPT
+        by vger.kernel.org with ESMTP id S2393130AbfBMRhv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 12:36:57 -0500
+        Wed, 13 Feb 2019 12:37:51 -0500
 Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1DHSo3Q141128
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 12:36:55 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qmqet12jm-1
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1DHSpHx141167
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 12:37:50 -0500
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qmqet13ys-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 12:36:55 -0500
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 12:37:49 -0500
 Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 13 Feb 2019 17:36:54 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        Wed, 13 Feb 2019 17:37:49 -0000
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 13 Feb 2019 17:36:50 -0000
+        Wed, 13 Feb 2019 17:37:44 -0000
 Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1DHanp321823728
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1DHbhJu17563702
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Feb 2019 17:36:50 GMT
+        Wed, 13 Feb 2019 17:37:44 GMT
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BD06FB206E;
-        Wed, 13 Feb 2019 17:36:49 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id E1B84B2067;
+        Wed, 13 Feb 2019 17:37:43 +0000 (GMT)
 Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A824CB206A;
-        Wed, 13 Feb 2019 17:36:49 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id C3AEAB2068;
+        Wed, 13 Feb 2019 17:37:43 +0000 (GMT)
 Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.41])
         by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 13 Feb 2019 17:36:49 +0000 (GMT)
+        Wed, 13 Feb 2019 17:37:43 +0000 (GMT)
 Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 0706916C5E3A; Wed, 13 Feb 2019 09:36:51 -0800 (PST)
-Date:   Wed, 13 Feb 2019 09:36:50 -0800
+        id CD75516C3758; Wed, 13 Feb 2019 09:37:44 -0800 (PST)
 From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
 To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
         mingo@kernel.org
 Cc:     stern@rowland.harvard.edu, parri.andrea@gmail.com,
         will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
         npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com
-Subject: [PATCH memory-model 0/7] LKMM updates for v5.1
-Reply-To: paulmck@linux.ibm.com
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        luc.maranget@inria.fr, akiyks@gmail.com,
+        Luc Maranget <Luc.Maranget@inria.fr>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>
+Subject: [PATCH memory-model 6/7] tools/memory-model: Dynamically check SRCU lock-to-unlock matching
+Date:   Wed, 13 Feb 2019 09:37:42 -0800
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190213173650.GA26078@linux.ibm.com>
+References: <20190213173650.GA26078@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19021317-0072-0000-0000-000003F96EF4
+x-cbid: 19021317-0068-0000-0000-000003934B0B
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00010589; HX=3.00000242; KW=3.00000007;
  PH=3.00000004; SC=3.00000279; SDB=6.01160548; UDB=6.00605725; IPR=6.00941102;
- MB=3.00025565; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-13 17:36:54
+ MB=3.00025565; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-13 17:37:48
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021317-0073-0000-0000-00004B2B8E7E
-Message-Id: <20190213173650.GA26078@linux.ibm.com>
+x-cbparentid: 19021317-0069-0000-0000-0000477EC7E9
+Message-Id: <20190213173743.26682-6-paulmck@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-13_10:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=659 adultscore=98 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1902130124
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Ingo,
+From: Luc Maranget <Luc.Maranget@inria.fr>
 
-This series contains updates for the Linux-kernel memory model, which
-are ready for inclusion into -tip:
+This commit checks that the return value of srcu_read_lock() is passed
+to the matching srcu_read_unlock(), where "matching" is determined by
+nesting.  This check operates as follows:
 
-1-5.	Add support for SRCU, courtesy of Alan Stern.
+   1. srcu_read_lock() creates an integer token, which is stored into
+      the generated events.
+   2. srcu_read_unlock() records its second (token) argument into the
+      generated event.
+   3. A new herd primitive 'different-values' filters out pairs of events
+      with identical values from the relation passed as its argument.
+   4. The bell file applies the above primitive to the (srcu)
+      read-side-critical-section relation 'srcu-rscs' and flags non-empty
+      results.
 
-6.	Dynamically check SRCU lock-to-unlock matching, courtesy of
-	Luc Maranget.
+BEWARE: Works only with herd version 7.51+6 and onwards.
 
-7.	Avoid duplicating herdtools versions in documentation, courtesy
-	of Andrea Parri.
+Signed-off-by: Luc Maranget <Luc.Maranget@inria.fr>
+Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+[ paulmck: Apply Andrea Parri's off-list feedback. ]
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+---
+ tools/memory-model/linux-kernel.bell | 3 +++
+ tools/memory-model/linux-kernel.cat  | 2 ++
+ tools/memory-model/linux-kernel.def  | 2 +-
+ 3 files changed, 6 insertions(+), 1 deletion(-)
 
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
- Documentation/explanation.txt |  289 ++++++++++++++++++++++--------------------
- README                        |   33 ++++
- linux-kernel.bell             |   37 ++++-
- linux-kernel.cat              |   57 +++++---
- linux-kernel.def              |    7 -
- lock.cat                      |    3 
- 6 files changed, 254 insertions(+), 172 deletions(-)
+diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
+index 9c42cd9ddcb4..def9131d3d8e 100644
+--- a/tools/memory-model/linux-kernel.bell
++++ b/tools/memory-model/linux-kernel.bell
+@@ -73,3 +73,6 @@ flag ~empty Srcu-unlock \ range(srcu-rscs) as unbalanced-srcu-locking
+ 
+ (* Check for use of synchronize_srcu() inside an RCU critical section *)
+ flag ~empty rcu-rscs & (po ; [Sync-srcu] ; po) as invalid-sleep
++
++(* Validate SRCU dynamic match *)
++flag ~empty different-values(srcu-rscs) as srcu-bad-nesting
+diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
+index 8dcb37835b61..95bf45f1215f 100644
+--- a/tools/memory-model/linux-kernel.cat
++++ b/tools/memory-model/linux-kernel.cat
+@@ -1,5 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0+
+ (*
++ * Requires herd version 7.51+6 or higher.
++ *
+  * Copyright (C) 2015 Jade Alglave <j.alglave@ucl.ac.uk>,
+  * Copyright (C) 2016 Luc Maranget <luc.maranget@inria.fr> for Inria
+  * Copyright (C) 2017 Alan Stern <stern@rowland.harvard.edu>,
+diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
+index 1d6a120cde14..0c3f0ef486f4 100644
+--- a/tools/memory-model/linux-kernel.def
++++ b/tools/memory-model/linux-kernel.def
+@@ -49,7 +49,7 @@ synchronize_rcu_expedited() { __fence{sync-rcu}; }
+ 
+ // SRCU
+ srcu_read_lock(X)  __srcu{srcu-lock}(X)
+-srcu_read_unlock(X,Y) { __srcu{srcu-unlock}(X); }
++srcu_read_unlock(X,Y) { __srcu{srcu-unlock}(X,Y); }
+ synchronize_srcu(X)  { __srcu{sync-srcu}(X); }
+ 
+ // Atomic
+-- 
+2.17.1
 
