@@ -2,43 +2,45 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA48FC43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 23:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CEFFC43381
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 23:43:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63BD2222D2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 23:43:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 426A9222D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 23:43:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550101386;
-	bh=hnEuHjZQ6t5ez1rqkYS8TbSZaPth8MjACWbz6ivvOrU=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=q6nQzFSDZAuy8hIF9itN81Is1MSTSLsKSaaJtfwD+JuzKzkXWOSnTSVtO3pIOghEq
-	 ItDIFMcBAiTec3jwLzdmWuQIjFWrEpi4UrLRYFzjm6WkXIrXML+d+3YOTMWb+f3MjJ
-	 dv++tyhXNlqj+mLYhfRdAbUYj+8NfB2X50aZHPNo=
+	s=default; t=1550101396;
+	bh=GK469UM692TkmS3api8EA6BEZGz9YvmwczCKHcvOsWo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+	 References:List-ID:From;
+	b=xU3BW8etj0vWAUBP7nzS6MZmVRxe98A5cPAObbI8MmsJ7d8yBaLniPaJq3dsTjaXR
+	 1cvXHMu48xQmNXxD++TDIqNS3NIjK82bxR30V86RySVxHAcZ/s1XeD+OJxIgWJnd97
+	 Srj6HoPrx+i7YTOMozy2E2otDuhTGDvYKAc8tNrI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392790AbfBMXnE (ORCPT
+        id S2393107AbfBMXnP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 18:43:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50992 "EHLO mail.kernel.org"
+        Wed, 13 Feb 2019 18:43:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727745AbfBMXnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 18:43:03 -0500
+        id S2393048AbfBMXnL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 18:43:11 -0500
 Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEDFA222C9;
-        Wed, 13 Feb 2019 23:43:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC5F7222CF;
+        Wed, 13 Feb 2019 23:43:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550101382;
-        bh=hnEuHjZQ6t5ez1rqkYS8TbSZaPth8MjACWbz6ivvOrU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=yKu7qHOO20TSiN2iaL0uwFeo+hcNlvNtdwvEejYv4xpY/7CcugjR0Xd897G/k5Tmk
-         atrLiFbUuTgybqf9bAX7HiZ/htxi+Ej/0XDqadAgXqyUldM/E/ZY5C4URjH3aT7flA
-         1YmoSVTY9XFU4++pi145mpT9vk0QakNeIoJGt2DU=
+        s=default; t=1550101389;
+        bh=GK469UM692TkmS3api8EA6BEZGz9YvmwczCKHcvOsWo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+         References:From;
+        b=ND+QWssUd2IpFCwo7myTBmNE2PyYCezZCQ4nUOe6W7PNWFPZzhtg1T5rlvng5SLki
+         ATUhiv2lya8neQLT6m+uzTuFhuw5y4mLMeG7EgA5mtIwGRq1uDWAuM8aSeExNRQrjV
+         TXN0/mtICJs5oJZgUWcFFReEUv4O+Z6qDu48GH1g=
 From:   Tom Zanussi <zanussi@kernel.org>
 To:     rostedt@goodmis.org
 Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
@@ -46,10 +48,14 @@ Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
         joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
         julia@ni.com, linux-kernel@vger.kernel.org,
         linux-rt-users@vger.kernel.org
-Subject: [PATCH v15 00/15] tracing: Hist trigger snapshot and onchange additions
-Date:   Wed, 13 Feb 2019 17:42:40 -0600
-Message-Id: <cover.1550100284.git.tom.zanussi@linux.intel.com>
+Subject: [PATCH v15 04/15] tracing: Generalize hist trigger onmax and save action
+Date:   Wed, 13 Feb 2019 17:42:44 -0600
+Message-Id: <980ea73dd8e3f36db3d646f99652f8fed42b77d4.1550100284.git.tom.zanussi@linux.intel.com>
 X-Mailer: git-send-email 2.14.1
+In-Reply-To: <cover.1550100284.git.tom.zanussi@linux.intel.com>
+References: <cover.1550100284.git.tom.zanussi@linux.intel.com>
+In-Reply-To: <cover.1550100284.git.tom.zanussi@linux.intel.com>
+References: <cover.1550100284.git.tom.zanussi@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -57,237 +63,447 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Hi,
+The action refactor code allowed actions and handlers to be separated,
+but the existing onmax handler and save action code is still not
+flexible enough to handle arbitrary coupling.  This change generalizes
+them and in the process makes additional handlers and actions easier
+to implement.
 
-This is v15 of the hist trigger snapshot and onchange additions
-patchset.
+The onmax action can be broken up and thought of as two separate
+components - a variable to be tracked (the parameter given to the
+onmax($var_to_track) function) and an invisible variable created to
+save the ongoing result of doing something with that variable, such as
+saving the max value of that variable so far seen.
 
-This version addresses several comments from Steve Rostedt (thanks,
-Steve!) in the snapshot and snapshot command patches.  Everything else
-remains the same.
+Separating it out like this and renaming it appropriately allows us to
+use the same code for similar tracking functions such as
+onchange($var_to_track), which would just track the last value seen
+rather than the max seen so far, which is useful in some situations.
 
-Thanks,
+Additionally, because different handlers and actions may want to save
+and access data differently e.g. save and retrieve tracking values as
+local variables vs something more global, save_val() and get_val()
+interface functions are introduced and max-specific implementations
+are used instead.
 
-Tom
+The same goes for the code that checks whether a maximum has been hit
+- a generic check_val() interface and max-checking implementation is
+used instead, which allows future patches to make use of he same code
+using their own implemetations of similar functionality.
 
+Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
+---
+ kernel/trace/trace_events_hist.c | 236 ++++++++++++++++++++++++++-------------
+ 1 file changed, 160 insertions(+), 76 deletions(-)
 
-v14->v15 changes:
-
-  - Fixed return-with-mutex-held errors in tracing_snapshot_cond_enable()
-    and simplified the error return handling.
-  - Simplified error return handling in update_max_tr().
-  - Simplified the -EBUSY cond_snapshot checks in tracing_set_tracer()
-    and tracing_snapshot_write().
-  - Removed ifdef around cond_snapshot struct in trace.h.
-  - Introduced tracing_snapshot_instance_cond(), defined
-    tracing_snapshot_instance() in terms of that, and changed the more
-    numerous calls to that simpler function instead.
-  - Removed the unnecessary size param in track_data_alloc() and use
-    TASK_COMM_LEN directly instead.
-
-v13->v14 changes:
-
-  - Added CONFIG_TRACER_SNAPSHOT ifdefs as appropriate to partition
-    out snapshot code.
-  - Changed tracing_snapshot_cond_enable() to return -ENODEV to the
-    user if CONFIG_TRACER_SNAPSHOT isn't on.
-  - Made sure only the trigger that enabled the snapshot can disable
-    it in track_data_destroy().
-
-v12->v13 changes:
-
-  - Added -EBUSY checks to tracing_snapshot_cond_enable()
-    tracing_snapshot_cond(), tracing_set_tracer() and
-    tracing_snapshot_write().
-  - Introduced snapshot_context for passing key/elt pair to
-    tracing_snapshot_cond().
-  - Removed key and cond_snapshot from action_data and cur_elt from
-    track_data.
-  - Added updated flag to track_data and test for it in
-    hist_trigger_print_key().
-  - Removed cond_snapshot_update_track_data() and simplified
-    cond_snapshot_update().
-  - Removed get/save_track_val_fn_t and corresponding
-    get_val/save_val() members from action_data.
-  - Moved code from get/save_val functions to save_data instead.
-
-v11->v12 changes:
-
-  - Removed parens from the param list specification in the trace()
-    command description
-  - Changed the Documentation for synthetic event generation to
-    emphasize the trace() form over the function-call form.
-
-v10->v11 changes:
-
-  - Updated to use str_has_prefix() for static strings
-
-v9->v10 changes:
-
-  - Updated to use strncmp_prefix() for static strings
-
-v8->v9 changes:
-
-  - Moved v8 patches 17-22 to a separate series
-  - Moved track_data.var_ref_idx removal into 'tracing: Generalize
-    hist trigger onmax and save action'
-  - Merged 'tracing: Add hist trigger handler.action documentation'
-    into 'tracing: Refactor hist trigger action code'
-  - Updated patches to change all strlen() to sizeof() for string
-    constants
-  - Moved test cases to the end of the series
-
-v7->v8 changes:
-
-  - Removed /dev/null redirection from test cases
-  - Replaced event disable with tracing_on disable instead
-  - New patch to remove hist_field.var_idx and track_data.var_ref_idx
-  - New patch to use var_refs[] array for reference checking
-  - New patch to remove open-coding of var_ref count manipulation
-  - New patch to use var_refs[] array to destroy var_refs
-  - New patch to remove synth_var_refs[] now that var_refs[] is used
-  - New patch to add comments to variable-related fields
-  - Added various new comments in the patches to clarify other things
-  - Replaced the convoluted logic mentioned by Namhyung in
-    update_track_val with wrappers and simpler check/save logic as
-    suggested
-  - Rebased to latest ftrace/core including Masami's dynamic event
-    framework changes
-
-v6->v7 changes:
-
-  - Removed unnecessary HANDLER_ONMAX checks from onmax_print()/create()
-  - Moved handler assignment to acion_parse()
-  - Changed goto in ATION_TRACE case in action_create() to return
-  - Changed EINVAL to EEXIST in action_create() ACTION_SAVE case
-  - Made the return logic in create_actions() more consistent
-  - Merged 'tracing: Move hist trigger key printing into a separate
-    function' into 'tracing: Add hist trigger snapshot() action'
-  - Updated the new snapshot, onchange, and trace test cases to match
-    4.20 kselftest changes.
-  - Added new xfail test case that make sure certain unsupported
-    handler/action combinations fail as expected.
-  - While updating the test cases, realized that the other testcases
-    in the inter-event subdir needed SPDX license updates, so added
-    them.
-
-v5->v6 changes:
-
-  - Added new Documentation patch explaining handler.action
-  - Added new README patch explaining handler.action
-  - Added separate snapshot() Documentation
-  - Added new snapshot() test case
-  - Updated README with snapshote()
-  - Added separate onchange() Documentation
-  - Added separate onchange() test case
-  - Updated README with onchange()
-  - Added separate trace() test case
-  - Updated README with trace() and <synthetic_event>() syntax
-
-v4->v5 changes:
-
-  - added 'trace' keyword test case
-  - added 'onchange' handler test case
-
-v3->v4 changes:
-
-  - added 'trace' keyword for generating synthetic events
-  - fix elt_data leak
-  - changed cond_update to cond_update_fn_t
-
-v2->v3 changes:
-
-  - fixed problem where trace actions were only being allowed for
-    onmatch handlers - now trace actions can be used with any handler.
-  - fixed problem where no action was being assigned to onmatch
-    handlers if save or snapshot actions were specified.
-
-v1->v2 changes:
-
-  - added missing tracing_cond_snapshot_data() definition for when
-    CONFIG_TRACER_SNAPSHOT not defined
-  - removed an unnecessary WARN_ON() in track_data_snapshot_print()
-
-
-Original text:
-
-This patchset adds some useful new functions to the hist
-trigger code: a snapshot action and an onchange handler.
-
-In order to make it easier to add these and in the process make the
-code more generic, I separated the code into explicit 'handlers' and
-'actions', handlers being things like 'onmax' and 'onchange', and
-'actions' being things like 'take a snapshot' or 'save some fields'.
-
-The first few patches do that basic refactoring, which make it easier
-to add the subsequent changes that arbitrarily combine actions and
-handlers.
-
-The fourth patch adds a 'conditional snapshot' capability that via a
-new tracing_snaphot_cond() function extends the existing snapshot
-code.  It allows the caller to associate some user data with the
-snapshot that can be checked and saved in an update() callback whose
-return value determines whether the snapshot should be taken or not.
-
-The remaining patches finally add the new snapshot action and onchange
-handler functionality - please see those patches for details and some
-examples.
-
-Thanks,
-
-Tom
-
-
-The following changes since commit 50c35ae1267d64eee975b8125e151e600071d4dc:
-
-  tracing: Use strncpy instead of memcpy for string keys in hist triggers (2019-02-04 08:45:50 -0600)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/zanussi/linux-trace.git ftrace/hist-snapshot-onchange-v15
-
-Tom Zanussi (15):
-  tracing: Refactor hist trigger action code
-  tracing: Make hist trigger Documentation better reflect
-    actions/handlers
-  tracing: Split up onmatch action data
-  tracing: Generalize hist trigger onmax and save action
-  tracing: Add conditional snapshot
-  tracing: Add hist trigger snapshot() action
-  tracing: Add hist trigger snapshot() action Documentation
-  tracing: Add hist trigger onchange() handler
-  tracing: Add hist trigger onchange() handler Documentation
-  tracing: Add alternative synthetic event trace action syntax
-  tracing: Add SPDX license GPL-2.0 license identifier to inter-event
-    testcases
-  tracing: Add hist trigger snapshot() action test case
-  tracing: Add hist trigger onchange() handler test case
-  tracing: Add alternative synthetic event trace action test case
-  tracing: Add hist trigger action 'expected fail' test case
-
- Documentation/trace/histogram.rst                  |  316 +++++-
- kernel/trace/trace.c                               |  208 +++-
- kernel/trace/trace.h                               |   56 +-
- kernel/trace/trace_events_hist.c                   | 1048 ++++++++++++++------
- kernel/trace/trace_sched_wakeup.c                  |    2 +-
- .../inter-event/trigger-action-hist-xfail.tc       |   30 +
- .../inter-event/trigger-extended-error-support.tc  |    1 +
- .../inter-event/trigger-field-variable-support.tc  |    1 +
- .../trigger-inter-event-combined-hist.tc           |    1 +
- .../inter-event/trigger-multi-actions-accept.tc    |    1 +
- .../inter-event/trigger-onchange-action-hist.tc    |   28 +
- .../inter-event/trigger-onmatch-action-hist.tc     |    1 +
- .../trigger-onmatch-onmax-action-hist.tc           |    1 +
- .../inter-event/trigger-onmax-action-hist.tc       |    1 +
- .../inter-event/trigger-snapshot-action-hist.tc    |   43 +
- .../trigger-synthetic-event-createremove.tc        |    1 +
- .../inter-event/trigger-trace-action-hist.tc       |   42 +
- 17 files changed, 1459 insertions(+), 322 deletions(-)
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-action-hist-xfail.tc
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-snapshot-action-hist.tc
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-trace-action-hist.tc
-
+diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
+index 16f91467a02d..c3cb6283daf3 100644
+--- a/kernel/trace/trace_events_hist.c
++++ b/kernel/trace/trace_events_hist.c
+@@ -386,6 +386,8 @@ typedef void (*action_fn_t) (struct hist_trigger_data *hist_data,
+ 			     struct ring_buffer_event *rbe, void *key,
+ 			     struct action_data *data, u64 *var_ref_vals);
+ 
++typedef bool (*check_track_val_fn_t) (u64 track_val, u64 var_val);
++
+ enum handler_id {
+ 	HANDLER_ONMATCH = 1,
+ 	HANDLER_ONMAX,
+@@ -423,15 +425,35 @@ struct action_data {
+ 		} match_data;
+ 
+ 		struct {
++			/*
++			 * var_str contains the $-unstripped variable
++			 * name referenced by var_ref, and used when
++			 * printing the action.  Because var_ref
++			 * creation is deferred to create_actions(),
++			 * we need a per-action way to save it until
++			 * then, thus var_str.
++			 */
+ 			char			*var_str;
+-			unsigned int		max_var_ref_idx;
+-			struct hist_field	*max_var;
+-			struct hist_field	*var;
+-		} onmax;
++
++			/*
++			 * var_ref refers to the variable being
++			 * tracked e.g onmax($var).
++			 */
++			struct hist_field	*var_ref;
++
++			/*
++			 * track_var contains the 'invisible' tracking
++			 * variable created to keep the current
++			 * e.g. max value.
++			 */
++			struct hist_field	*track_var;
++
++			check_track_val_fn_t	check_val;
++			action_fn_t		save_data;
++		} track_data;
+ 	};
+ };
+ 
+-
+ static char last_hist_cmd[MAX_FILTER_STR_VAL];
+ static char hist_err_str[MAX_FILTER_STR_VAL];
+ 
+@@ -3238,10 +3260,10 @@ static void update_field_vars(struct hist_trigger_data *hist_data,
+ 			    hist_data->n_field_vars, 0);
+ }
+ 
+-static void update_max_vars(struct hist_trigger_data *hist_data,
+-			    struct tracing_map_elt *elt,
+-			    struct ring_buffer_event *rbe,
+-			    void *rec)
++static void save_track_data_vars(struct hist_trigger_data *hist_data,
++				 struct tracing_map_elt *elt, void *rec,
++				 struct ring_buffer_event *rbe, void *key,
++				 struct action_data *data, u64 *var_ref_vals)
+ {
+ 	__update_field_vars(elt, rbe, rec, hist_data->save_vars,
+ 			    hist_data->n_save_vars, hist_data->n_field_var_str);
+@@ -3379,14 +3401,67 @@ create_target_field_var(struct hist_trigger_data *target_hist_data,
+ 	return create_field_var(target_hist_data, file, var_name);
+ }
+ 
+-static void onmax_print(struct seq_file *m,
+-			struct hist_trigger_data *hist_data,
+-			struct tracing_map_elt *elt,
+-			struct action_data *data)
++static bool check_track_val_max(u64 track_val, u64 var_val)
++{
++	if (var_val <= track_val)
++		return false;
++
++	return true;
++}
++
++static u64 get_track_val(struct hist_trigger_data *hist_data,
++			 struct tracing_map_elt *elt,
++			 struct action_data *data)
+ {
+-	unsigned int i, save_var_idx, max_idx = data->onmax.max_var->var.idx;
++	unsigned int track_var_idx = data->track_data.track_var->var.idx;
++	u64 track_val;
++
++	track_val = tracing_map_read_var(elt, track_var_idx);
+ 
+-	seq_printf(m, "\n\tmax: %10llu", tracing_map_read_var(elt, max_idx));
++	return track_val;
++}
++
++static void save_track_val(struct hist_trigger_data *hist_data,
++			   struct tracing_map_elt *elt,
++			   struct action_data *data, u64 var_val)
++{
++	unsigned int track_var_idx = data->track_data.track_var->var.idx;
++
++	tracing_map_set_var(elt, track_var_idx, var_val);
++}
++
++static void save_track_data(struct hist_trigger_data *hist_data,
++			    struct tracing_map_elt *elt, void *rec,
++			    struct ring_buffer_event *rbe, void *key,
++			    struct action_data *data, u64 *var_ref_vals)
++{
++	if (data->track_data.save_data)
++		data->track_data.save_data(hist_data, elt, rec, rbe, key, data, var_ref_vals);
++}
++
++static bool check_track_val(struct tracing_map_elt *elt,
++			    struct action_data *data,
++			    u64 var_val)
++{
++	struct hist_trigger_data *hist_data;
++	u64 track_val;
++
++	hist_data = data->track_data.track_var->hist_data;
++	track_val = get_track_val(hist_data, elt, data);
++
++	return data->track_data.check_val(track_val, var_val);
++}
++
++static void track_data_print(struct seq_file *m,
++			     struct hist_trigger_data *hist_data,
++			     struct tracing_map_elt *elt,
++			     struct action_data *data)
++{
++	u64 track_val = get_track_val(hist_data, elt, data);
++	unsigned int i, save_var_idx;
++
++	if (data->handler == HANDLER_ONMAX)
++		seq_printf(m, "\n\tmax: %10llu", track_val);
+ 
+ 	for (i = 0; i < hist_data->n_save_vars; i++) {
+ 		struct hist_field *save_val = hist_data->save_vars[i]->val;
+@@ -3405,25 +3480,17 @@ static void onmax_print(struct seq_file *m,
+ 	}
+ }
+ 
+-static void onmax_save(struct hist_trigger_data *hist_data,
+-		       struct tracing_map_elt *elt, void *rec,
+-		       struct ring_buffer_event *rbe, void *key,
+-		       struct action_data *data, u64 *var_ref_vals)
++static void ontrack_action(struct hist_trigger_data *hist_data,
++			   struct tracing_map_elt *elt, void *rec,
++			   struct ring_buffer_event *rbe, void *key,
++			   struct action_data *data, u64 *var_ref_vals)
+ {
+-	unsigned int max_idx = data->onmax.max_var->var.idx;
+-	unsigned int max_var_ref_idx = data->onmax.max_var_ref_idx;
++	u64 var_val = var_ref_vals[data->track_data.var_ref->var_ref_idx];
+ 
+-	u64 var_val, max_val;
+-
+-	var_val = var_ref_vals[max_var_ref_idx];
+-	max_val = tracing_map_read_var(elt, max_idx);
+-
+-	if (var_val <= max_val)
+-		return;
+-
+-	tracing_map_set_var(elt, max_idx, var_val);
+-
+-	update_max_vars(hist_data, elt, rbe, rec);
++	if (check_track_val(elt, data, var_val)) {
++		save_track_val(hist_data, elt, data, var_val);
++		save_track_data(hist_data, elt, rec, rbe, key, data, var_ref_vals);
++	}
+ }
+ 
+ static void action_data_destroy(struct action_data *data)
+@@ -3443,12 +3510,13 @@ static void action_data_destroy(struct action_data *data)
+ 	kfree(data);
+ }
+ 
+-static void onmax_destroy(struct action_data *data)
++static void track_data_destroy(struct hist_trigger_data *hist_data,
++			       struct action_data *data)
+ {
+-	destroy_hist_field(data->onmax.max_var, 0);
+-	destroy_hist_field(data->onmax.var, 0);
++	destroy_hist_field(data->track_data.track_var, 0);
++	destroy_hist_field(data->track_data.var_ref, 0);
+ 
+-	kfree(data->onmax.var_str);
++	kfree(data->track_data.var_str);
+ 
+ 	action_data_destroy(data);
+ }
+@@ -3456,25 +3524,24 @@ static void onmax_destroy(struct action_data *data)
+ static int action_create(struct hist_trigger_data *hist_data,
+ 			 struct action_data *data);
+ 
+-static int onmax_create(struct hist_trigger_data *hist_data,
+-			struct action_data *data)
++static int track_data_create(struct hist_trigger_data *hist_data,
++			     struct action_data *data)
+ {
+-	struct hist_field *var_field, *ref_field, *max_var = NULL;
++	struct hist_field *var_field, *ref_field, *track_var = NULL;
+ 	struct trace_event_file *file = hist_data->event_file;
+-	unsigned int var_ref_idx = hist_data->n_var_refs;
+-	char *onmax_var_str;
++	char *track_data_var_str;
+ 	int ret = 0;
+ 
+-	onmax_var_str = data->onmax.var_str;
+-	if (onmax_var_str[0] != '$') {
+-		hist_err("onmax: For onmax(x), x must be a variable: ", onmax_var_str);
++	track_data_var_str = data->track_data.var_str;
++	if (track_data_var_str[0] != '$') {
++		hist_err("For onmax(x), x must be a variable: ", track_data_var_str);
+ 		return -EINVAL;
+ 	}
+-	onmax_var_str++;
++	track_data_var_str++;
+ 
+-	var_field = find_target_event_var(hist_data, NULL, NULL, onmax_var_str);
++	var_field = find_target_event_var(hist_data, NULL, NULL, track_data_var_str);
+ 	if (!var_field) {
+-		hist_err("onmax: Couldn't find onmax variable: ", onmax_var_str);
++		hist_err("Couldn't find onmax variable: ", track_data_var_str);
+ 		return -EINVAL;
+ 	}
+ 
+@@ -3482,17 +3549,16 @@ static int onmax_create(struct hist_trigger_data *hist_data,
+ 	if (!ref_field)
+ 		return -ENOMEM;
+ 
+-	data->onmax.var = ref_field;
++	data->track_data.var_ref = ref_field;
+ 
+-	data->onmax.max_var_ref_idx = var_ref_idx;
+-
+-	max_var = create_var(hist_data, file, "max", sizeof(u64), "u64");
+-	if (IS_ERR(max_var)) {
+-		hist_err("onmax: Couldn't create onmax variable: ", "max");
+-		ret = PTR_ERR(max_var);
++	if (data->handler == HANDLER_ONMAX)
++		track_var = create_var(hist_data, file, "__max", sizeof(u64), "u64");
++	if (IS_ERR(track_var)) {
++		hist_err("Couldn't create onmax variable: ", "__max");
++		ret = PTR_ERR(track_var);
+ 		goto out;
+ 	}
+-	data->onmax.max_var = max_var;
++	data->track_data.track_var = track_var;
+ 
+ 	ret = action_create(hist_data, data);
+  out:
+@@ -3570,8 +3636,15 @@ static int action_parse(char *str, struct action_data *data,
+ 			goto out;
+ 
+ 		if (handler == HANDLER_ONMAX)
+-			data->fn = onmax_save;
++			data->track_data.check_val = check_track_val_max;
++		else {
++			hist_err("action parsing: Handler doesn't support action: ", action_name);
++			ret = -EINVAL;
++			goto out;
++		}
+ 
++		data->track_data.save_data = save_track_data_vars;
++		data->fn = ontrack_action;
+ 		data->action = ACTION_SAVE;
+ 	} else {
+ 		char *params = strsep(&str, ")");
+@@ -3582,7 +3655,15 @@ static int action_parse(char *str, struct action_data *data,
+ 				goto out;
+ 		}
+ 
+-		data->fn = action_trace;
++		if (handler == HANDLER_ONMAX)
++			data->track_data.check_val = check_track_val_max;
++
++		if (handler != HANDLER_ONMATCH) {
++			data->track_data.save_data = action_trace;
++			data->fn = ontrack_action;
++		} else
++			data->fn = action_trace;
++
+ 		data->action = ACTION_TRACE;
+ 	}
+ 
+@@ -3597,24 +3678,25 @@ static int action_parse(char *str, struct action_data *data,
+ 	return ret;
+ }
+ 
+-static struct action_data *onmax_parse(char *str, enum handler_id handler)
++static struct action_data *track_data_parse(struct hist_trigger_data *hist_data,
++					    char *str, enum handler_id handler)
+ {
+ 	struct action_data *data;
+-	char *onmax_var_str;
+ 	int ret = -EINVAL;
++	char *var_str;
+ 
+ 	data = kzalloc(sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	onmax_var_str = strsep(&str, ")");
+-	if (!onmax_var_str || !str) {
++	var_str = strsep(&str, ")");
++	if (!var_str || !str) {
+ 		ret = -EINVAL;
+ 		goto free;
+ 	}
+ 
+-	data->onmax.var_str = kstrdup(onmax_var_str, GFP_KERNEL);
+-	if (!data->onmax.var_str) {
++	data->track_data.var_str = kstrdup(var_str, GFP_KERNEL);
++	if (!data->track_data.var_str) {
+ 		ret = -ENOMEM;
+ 		goto free;
+ 	}
+@@ -3625,7 +3707,7 @@ static struct action_data *onmax_parse(char *str, enum handler_id handler)
+  out:
+ 	return data;
+  free:
+-	onmax_destroy(data);
++	track_data_destroy(hist_data, data);
+ 	data = ERR_PTR(ret);
+ 	goto out;
+ }
+@@ -4389,7 +4471,7 @@ static void destroy_actions(struct hist_trigger_data *hist_data)
+ 		if (data->handler == HANDLER_ONMATCH)
+ 			onmatch_destroy(data);
+ 		else if (data->handler == HANDLER_ONMAX)
+-			onmax_destroy(data);
++			track_data_destroy(hist_data, data);
+ 		else
+ 			kfree(data);
+ 	}
+@@ -4418,7 +4500,8 @@ static int parse_actions(struct hist_trigger_data *hist_data)
+ 		} else if ((len = str_has_prefix(str, "onmax("))) {
+ 			char *action_str = str + len;
+ 
+-			data = onmax_parse(action_str, HANDLER_ONMAX);
++			data = track_data_parse(hist_data, action_str,
++						HANDLER_ONMAX);
+ 			if (IS_ERR(data)) {
+ 				ret = PTR_ERR(data);
+ 				break;
+@@ -4448,7 +4531,7 @@ static int create_actions(struct hist_trigger_data *hist_data)
+ 			if (ret)
+ 				break;
+ 		} else if (data->handler == HANDLER_ONMAX) {
+-			ret = onmax_create(hist_data, data);
++			ret = track_data_create(hist_data, data);
+ 			if (ret)
+ 				break;
+ 		} else {
+@@ -4470,7 +4553,7 @@ static void print_actions(struct seq_file *m,
+ 		struct action_data *data = hist_data->actions[i];
+ 
+ 		if (data->handler == HANDLER_ONMAX)
+-			onmax_print(m, hist_data, elt, data);
++			track_data_print(m, hist_data, elt, data);
+ 	}
+ }
+ 
+@@ -4495,12 +4578,13 @@ static void print_action_spec(struct seq_file *m,
+ 	}
+ }
+ 
+-static void print_onmax_spec(struct seq_file *m,
+-			     struct hist_trigger_data *hist_data,
+-			     struct action_data *data)
++static void print_track_data_spec(struct seq_file *m,
++				  struct hist_trigger_data *hist_data,
++				  struct action_data *data)
+ {
+-	seq_puts(m, ":onmax(");
+-	seq_printf(m, "%s", data->onmax.var_str);
++	if (data->handler == HANDLER_ONMAX)
++		seq_puts(m, ":onmax(");
++	seq_printf(m, "%s", data->track_data.var_str);
+ 	seq_printf(m, ").%s(", data->action_name);
+ 
+ 	print_action_spec(m, hist_data, data);
+@@ -4558,8 +4642,8 @@ static bool actions_match(struct hist_trigger_data *hist_data,
+ 				   data_test->match_data.event) != 0)
+ 				return false;
+ 		} else if (data->handler == HANDLER_ONMAX) {
+-			if (strcmp(data->onmax.var_str,
+-				   data_test->onmax.var_str) != 0)
++			if (strcmp(data->track_data.var_str,
++				   data_test->track_data.var_str) != 0)
+ 				return false;
+ 		}
+ 	}
+@@ -4579,7 +4663,7 @@ static void print_actions_spec(struct seq_file *m,
+ 		if (data->handler == HANDLER_ONMATCH)
+ 			print_onmatch_spec(m, hist_data, data);
+ 		else if (data->handler == HANDLER_ONMAX)
+-			print_onmax_spec(m, hist_data, data);
++			print_track_data_spec(m, hist_data, data);
+ 	}
+ }
+ 
 -- 
 2.14.1
 
