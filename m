@@ -2,262 +2,161 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 618C2C282CE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 04:40:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B214C282CE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 04:52:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2254A222B6
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 04:40:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD641222BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 04:52:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dXZt5+4a"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="OxJmUX5z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731364AbfBMEk0 (ORCPT
+        id S1732931AbfBMEwJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 23:40:26 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:45875 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726530AbfBMEk0 (ORCPT
+        Tue, 12 Feb 2019 23:52:09 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46968 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726095AbfBMEwJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 23:40:26 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 32so1764068ota.12;
-        Tue, 12 Feb 2019 20:40:25 -0800 (PST)
+        Tue, 12 Feb 2019 23:52:09 -0500
+Received: by mail-wr1-f65.google.com with SMTP id l9so875484wrt.13
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Feb 2019 20:52:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=broadcom.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=2O/L6iDMn8Hbl4EBzvoA26ZPT18ydXKdDpuh/VfFDNw=;
-        b=dXZt5+4aliqsrLPgKycT2ujKAkUG3bnxY4C9kQOBvIehvz/li8BHg9XZVoq+LPWpgf
-         wVxT2yF9OT3f2pFBjiLPTi8gVv0jeZTQpn7IohVKwJfpxaksm5BUTY3jw145x2QHy0zm
-         5zVrsFcualL7m32fuH+OwDWfmVDHOo51N2LJ8WArUzuhlOfPu4fbhjFAW4DIbKpnhb4n
-         YvQWqlHD1n5Kc9OtO5LyaLM27oMA721r5QcsqIfKNho2v1l1TdUftJpi91Ncqg10cx/j
-         x3ZsnPnoZu6WWHFMp/dyK/N5BqYZXRpEy6iVcXXBQct/O4A6Lj56oJswTTdk4gRUPMpb
-         LkXw==
+        bh=DXA/qvdpSx6JXTBhI/uFT9HoAq1/F1TFzcciALG1AYs=;
+        b=OxJmUX5zQu5U6nrWnmxyDZyIuzCHbmDqxo+0G/z+Nh7rAVwTVumF8bRmnw87IP2bcW
+         BQhkBgm0rrKU5HynC+ee43mZmGnYUX43ZJBtZqCGEJVMFhShcNudiFz8SDcEG74xNi3L
+         LDUF92CzYPCWvmHvrkntBmg1uRdUNRpUNOly0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=2O/L6iDMn8Hbl4EBzvoA26ZPT18ydXKdDpuh/VfFDNw=;
-        b=VcCmjPtmaEU3NL72iFZPPBHfUtk2HelMnvclpL+zTiLECNE30lPp9jqVivjwUJBr8m
-         gsQDK8oIjyo7zhx08oLJcyno+wiG4ZnDTlEIj9v/gUaRYcLzTf3YkEpbfx26kmh1dC2l
-         Wi317h75SP+JrfOor1kNR3Ay/G8RZ/vd20y+iw/M+DKIiXU3l/Pjj6FBClOTa6NBVZ9u
-         Gu90WFSvTWeDb9SYCH7sHTetvJiqX4TjjuuVwMZVKdLoycn8QcgvRep+9OXgiYyJHHCi
-         QzTpIt7ktjaCMULbXG+lA5i0wA5y9yJd5WEKDxwsdZcR4n/syapQecdpubN+5AJuVtRF
-         eSHA==
-X-Gm-Message-State: AHQUAuZj8mt8PxMjXoqkyBAh+A5WMlTBUq+p4l6axQZsZc6awH/DG5Fn
-        ZEyGkuZCE6FneyVArH6oE/qMBEedgUnoFXiX6tk=
-X-Google-Smtp-Source: AHgI3IaHZ6KcVlpx88GucMcF11lDl98740xoW2VKb7BnQ4LA+iP4nzCYMbYsmdZcnKwzcj9wbXna7cynD3exhQZLtGc=
-X-Received: by 2002:a9d:6a50:: with SMTP id h16mr6829242otn.95.1550032824873;
- Tue, 12 Feb 2019 20:40:24 -0800 (PST)
+        bh=DXA/qvdpSx6JXTBhI/uFT9HoAq1/F1TFzcciALG1AYs=;
+        b=UTWM14qdsqmjE8YXU+bu1zgipfquE+tC6zo23mJ8kOv32PchKXsxxotx5Mhxn2Q6Q8
+         /d1ZbVAcAMxNRwac5YzWO6gGQ0EWDJIBDag58ED10C3TfitEywSDA5UJmSIB81nxY4Bx
+         UT/F1EWcPVzEfa9IzzSIUT3Xn6S3MLEihGZA5swx6x3rbd8aQXYU1WT5Y89O3Aql7ZBq
+         yWqbj8I8pe+JYoDWCXTmO9JpJ4vlButDlyoVs4/xH5RyO4yQvJL4Ak9LIdI0DWkQIytE
+         Qp8lSuxmxymYwi3zdQCUOt78WYEArbRLq/xCq+7limib7kW8FdUQtt1JvQ9Df5xUyRom
+         XOVg==
+X-Gm-Message-State: AHQUAub4ey8jxKK7Kwc/CKlbyIy73+z7ZsSq9x71DtIzOr/aireyAx8P
+        61fXySinulkooAoeTZqmSztGGflJpisAeHoTELMyWw==
+X-Google-Smtp-Source: AHgI3Ia9QVrR7br4MRK/M7rJ+G5f/NiBxxfA6Jw199UR3vcvgzFs81rCJPzaWmpkA6Nd6HDqBEBF0m54vJdp+E4EINQ=
+X-Received: by 2002:adf:f70c:: with SMTP id r12mr5684356wrp.54.1550033526805;
+ Tue, 12 Feb 2019 20:52:06 -0800 (PST)
 MIME-Version: 1.0
-References: <89716a4433cd83aea5f4200359b184b0ee2cc8bd.1549828313.git.bobbyeshleman@gmail.com>
- <CAGngYiV6zm12XhB6WChSXNndLMSJ3e4NAB=BLq_mrXtWLKEruQ@mail.gmail.com>
- <20190211212734.01909e62@archlinux> <CAGngYiV_6MzKOSomAWs1znp8ThPRAL-e2CVZfn+ZHZOq8DiD0A@mail.gmail.com>
- <20190212204730.16864802@archlinux>
-In-Reply-To: <20190212204730.16864802@archlinux>
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-Date:   Tue, 12 Feb 2019 23:40:13 -0500
-Message-ID: <CAGngYiVGjPSnVfnJhR+0YJg+qOzMQfJM+Cd9ZRe===9pk1_3pA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] iio: light: Add driver for ap3216c
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Robert Eshleman <bobbyeshleman@gmail.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+References: <1549342622-9929-1-git-send-email-srinath.mannam@broadcom.com>
+ <1549342622-9929-3-git-send-email-srinath.mannam@broadcom.com> <20190212183739.GB918@e107981-ln.cambridge.arm.com>
+In-Reply-To: <20190212183739.GB918@e107981-ln.cambridge.arm.com>
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+Date:   Wed, 13 Feb 2019 10:21:55 +0530
+Message-ID: <CABe79T6L5mCc5zoyRUD-bPk7UdxOv_Yz3vyUNYg=Edw-u2mGzQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] PCI: iproc: Add PCIe 32bit outbound memory configuration
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>, Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-iio@vger.kernel.org
+        Abhishek Shah <abhishek.shah@broadcom.com>,
+        Ray Jui <ray.jui@broadcom.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 3:47 PM Jonathan Cameron <jic23@kernel.org> wrote:
->
->
-> Good question on whether it is guaranteed to read in increasing register
-> order (I didn't actually check the addresses are in increasing order
-> but assume they are or you would have pointed that out ;)
->
-> That strikes me as behaviour that should probably be documented as long
-> as it is true currently.
->
+Hi Lorenzo,
 
-Looking at the datasheet closely... this chip doesn't seem to support
-bulk/raw accesses. At least, it's not documented. So maybe we should
-steer clear of that, and tell the regmap core, via .use_single_read
-and .use_single_write in regmap_config.
+Thanks for review, please see my comments below inline.
 
-So once these flags are set, we could call regmap_bulk_read() on the
-LO/HI combo registers, and it would probably work. But do we really
-want to? The LO register, when read, cause side-effects
-in the corresponding HI register. That's weird / unexpected for developers.
-Maybe it makes sense to make this explicit, not implicit. In addition,
-bulk_read() behaviour changes in the future may break the register
-reads ?
+On Wed, Feb 13, 2019 at 12:07 AM Lorenzo Pieralisi
+<lorenzo.pieralisi@arm.com> wrote:
+>
+> On Tue, Feb 05, 2019 at 10:27:01AM +0530, Srinath Mannam wrote:
+> > Add configuration to support IPROC PCIe host controller outbound memory
+> > window mapping with SOC address range inside 4GB boundary, which is 32 bit
+> > AXI address.
+>
+> I do not understand what this means, explain it to me and rewrite the
+> commit log accordingly.
+>
+This is about "I/O regions" addressing given through ranges DT property.
+In the current driver "I/O regions" address mapping to corresponding
+PCI memory address in controller outbound registers
+is supports above 32-bit address.
+> What does this solve ? Why do we need this patch or rephrased, what
+> is missing in the current driver ?
+With this patch, If ranges DT property has below 32-bit I/O regions
+address then it will be added in the outbound mapping.
+This will help to access I/O region from CPU in 32-bit.
+I will update commit log and send next patch set.
+Ex:
+1. ranges DT property for current driver is,
+    ranges = <0x83000000 0x0 0x40000000 0x4 0x00000000 0 0x40000000>;
+    I/O region address is 0x400000000
+2. ranges DT property with this patch,
+    ranges = <0x83000000 0x0 0x42000000 0x0 0x42000000 0 0x2000000>;
+    I/O region address is 0x42000000
 
+Regards,
+Srinath.
+>
+> > Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+> > Signed-off-by: Abhishek Shah <abhishek.shah@broadcom.com>
+> > Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+> > Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+> > Reviewed-by: Vikram Prakash <vikram.prakash@broadcom.com>
+>
+> Review tags should be given on public mailing lists, these ones seem
+> to come from non-public review cycles in which case you must drop
+> them.
+>
+> >  drivers/pci/controller/pcie-iproc.c | 21 +++++++++++++++++++--
+> >  1 file changed, 19 insertions(+), 2 deletions(-)
 > >
+> > diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
+> > index b882255..080f142 100644
+> > --- a/drivers/pci/controller/pcie-iproc.c
+> > +++ b/drivers/pci/controller/pcie-iproc.c
+> > @@ -955,8 +955,25 @@ static int iproc_pcie_setup_ob(struct iproc_pcie *pcie, u64 axi_addr,
+> >                       resource_size_t window_size =
+> >                               ob_map->window_sizes[size_idx] * SZ_1M;
+> >
+> > -                     if (size < window_size)
+> > -                             continue;
+> > +                     /*
+> > +                      * Keep iterating until we reach the last window and
+> > +                      * with the minimal window size at index zero. In this
+> > +                      * case, we take a compromise by mapping it using the
+> > +                      * minimum window size that can be supported
 >
-> If we clear just the right one, (which I think we can do from
-> the datasheet
-> "1: Software clear after writing 1 into address 0x01 each bit#"
-> However the code isn't writing a 3 in that clear, so I'm not
-> sure if the datasheet is correct or not...
+> See above, I do not understand clearly what this means.
 >
-> and it is a level interrupt (which I think it is?) then we would
-> be safe against this miss.
+> Lorenzo
 >
-> If either we can only globally clear or it's not a level interrupt
-> there isn't much we can do to avoid a miss, it's just a bad hardware
-> design.
->
-
-I think we're in luck, and this would work ! Note 1 on page 12 of the
-datasheet:
-
-"Note1. The INT pin will be set low and set INT status bit when ALS or
-PS or (ALS+PS) interrupt event occurrence.
-User can clear INT bit and individual status bits when reading the
-register 0xD(ALS) , 0xF(PS) and 0xD+0xF(ALS+PS) respectively."
-
->
->
-
-I'm sorry to wear out your patience, but I think there are more
-synchronization issues lurking here.
-
-The iio_push_event(THRESH) tells interested userspace processes:
-"hey, maybe you want to check if a threshold is crossed", right?
-Is my understanding correct?
-
-If so, I think it's possible that a threshold is crossed, without
-userspace knowing. To see why, let's look at the handler again:
-
-static irqreturn_t ap3216c_event_handler(int irq, void *p)
-{
-        /* imagine ALS interrupt came in */
-        regmap_read(data->regmap, AP3216C_INT_STATUS, &status);
-        if (status & als) iio_push_event(LIGHT);
-
-        /* imagine schedule happens here */
-        msleep(...);
-        /* while we are not running, userspace reacts to the event,
-         * reads the new ALS value.
-         * Next, imagine a _new_ ALS interrupt comes in, while we are
-         * still sleeping. the irq does not get re-scheduled, as it's
-         * still running !
-         * Next, we proceed:
-        */
-        ap3216c_clear_als(data);
-        /* at this point there has been a new ALS interrupt without
-         * userspace knowing about it.
-         */
-}
-
-The _chance_ of this happening is very low, as ALS/PS events are quite
-widely spaced. But we're not an RTOS. Question is: do we want to take
-the risk? Idk, perhaps it's ok to trade simplicity for the low chance of
-missing a threshold.
-
-+static int ap3216c_write_event_config(struct iio_dev *indio_dev,
-+                                    const struct iio_chan_spec *chan,
-+                                    enum iio_event_type type,
-+                                    enum iio_event_direction dir, int state)
-+{
-+       struct ap3216c_data *data = iio_priv(indio_dev);
-+
-+       switch (chan->type) {
-+       case IIO_LIGHT:
-+               data->als_thresh_en = state;
-+               return 0;
-+
-+       case IIO_PROXIMITY:
-+               data->prox_thresh_en = state;
-+               return 0;
-+
-+       default:
-+               return -EINVAL;
-+       }
-
-I think this may not work as intended. One thread (userspace) writes
-a variable, another thread (threaded irq handler) checks it. but there
-is no explicit or implicit memory barrier. So when userspace activates
-thresholding, it may take a long time for the handler to 'see' it !
-
-One way to guarantee that the irq handler 'sees' this immediately
-is to grab a mutex, which issues an implicit memory barrier.
-
->
->
-
-Allow me to suggest a simple, straightforward way to make all the above
-issues go away (if indeed they are issues) :
-
-First, disable fine-grained regmap locking, by setting .disable_locking
-in regmap_config.
-
-Next, read ALS and PS _exclusively_ in the irq handler, guard it with
-a mutex:
-
-static irqreturn_t ap3216c_event_handler(int irq, void *p)
-{
-    int ret = IRQ_NONE;
-
-    mutex_lock(&data->m);
-    regmap_read(data->regmap, AP3216C_INT_STATUS, &status);
-    if (status & als) {
-        /* mutex m ensures LO and HI are read non-interleaved */
-        regmap_read(data->regmap, ALS_LO, &als_lo);
-        regmap_read(data->regmap, ALS_HI, &als_hi);
-        /* mutex m's memory barrier lets userspace 'see' data->als change */
-        data->als = als_lo | (als_hi<<8);
-        /* mutex m's memory barrier lets us 'see' do_thresholding change */
-        if (data->do_thresholding)
-            iio_push_event();
-        /* mutex m prevents userspace from reading the cached value
-         * in between iio_push_event() and als_clear(), which means
-         * userspace never 'misses' interrupts.
-         */
-        als_clear(data);
-        ret = IRQ_HANDLED;
-    }
-    ( ... ps case left out for brevity ... )
-    mutex_unlock(&data->m);
-
-    return ret;
-}
-
-Now, ap3216c_read_raw becomes:
-
-ap3216c_read_raw()
-{
-    mutex_lock(&data->m);
-    switch (mask) {
-        IIO_CHAN_INFO_PROCESSED:
-            switch (chan->type) {
-                case IIO_LIGHT:
-                    *val = some_function_of(data->als);
-            }
-    }
-    mutex_unlock(&data->m);
-}
-
-and ap3216c_write_event_config becomes:
-
-ap3216c_write_event_config()
-{
-    mutex_lock(&data->m);
-    switch (chan->type) {
-       case IIO_LIGHT:
-               data->als_thresh_en = state;
-               goto out;
-    }
-out:
-    mutex_unlock(&data->m);
-}
-
-In fact, we'd need mutex_lock around any function that touches the
-regmap, cached data, or threshold enable/disable flags.
+> > +                      */
+> > +                     if (size < window_size) {
+> > +                             if (size_idx > 0 || window_idx > 0)
+> > +                                     continue;
+> > +
+> > +                             /*
+> > +                              * For the corner case of reaching the minimal
+> > +                              * window size that can be supported on the
+> > +                              * last window
+> > +                              */
+> > +                             axi_addr = ALIGN_DOWN(axi_addr, window_size);
+> > +                             pci_addr = ALIGN_DOWN(pci_addr, window_size);
+> > +                             size = window_size;
+> > +                     }
+> >
+> >                       if (!IS_ALIGNED(axi_addr, window_size) ||
+> >                           !IS_ALIGNED(pci_addr, window_size)) {
+> > --
+> > 2.7.4
+> >
