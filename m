@@ -2,189 +2,163 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCDC5C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:23:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6E33C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:23:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8737D21904
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:23:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B55D21904
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 16:23:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="beigrxpd"
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="PmzZyaVG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392631AbfBMQXL (ORCPT
+        id S2392651AbfBMQXl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 11:23:11 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:37150 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729502AbfBMQXK (ORCPT
+        Wed, 13 Feb 2019 11:23:41 -0500
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:63806 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729502AbfBMQXk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 11:23:10 -0500
-Received: by mail-qt1-f193.google.com with SMTP id a48so3225135qtb.4
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 08:23:09 -0800 (PST)
+        Wed, 13 Feb 2019 11:23:40 -0500
+X-IronPort-AV: E=Sophos;i="5.58,366,1544511600"; 
+   d="scan'208";a="23798536"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 13 Feb 2019 09:23:39 -0700
+Received: from NAM03-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.37) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Wed, 13 Feb 2019 09:23:39 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=NjxEKeyCObRr2sjcSUeukxOsu5en/ljpvN0RjIO7Ejs=;
-        b=beigrxpdNR+B/wztcbc4ZiGTIErUN1WbfjBqhk6yzHFHQDOKRkksCBhxAJ95d5+mG1
-         blO3YrNugSEg3AlXlYq6XfF9g093N6ogEa0ZkZJYJJB09CQkeHumCQN9L5iYv4IKXPfq
-         XSbdMokRxLfzdk2Wad/uONUp789H1Uz1R5qMY5Z5iGPqMTxJ4Up3cBIp4JXAt99AJxCq
-         nikT72negFaQxoDwdmzqR8ZzntjJLYlmM2+Eub0F38POqp4rHrwbtiMzb2FAgs88iFew
-         cyO6mHKtKruImTUgnch9/saEzKr/zQyhA/StRV2J/mcI5b7bVP8JTL5bkqPwbL4P2DDx
-         JXJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NjxEKeyCObRr2sjcSUeukxOsu5en/ljpvN0RjIO7Ejs=;
-        b=fyU9ni4ZNvjAu148Q9Fh/PphSKaok4b4yvlPyYOuKEqDgo6OWEHXe4558xb2mv3fDn
-         HLemDeC8r6IZX+fKo1rTGaZ4rzhvL6talCItlFuppp4xEpFYAkq5aWN4DNR7pFYvFyXi
-         PPmPsD3iiAMPI2p0pMaDKGlOb8HjZ1k1J+XTCPbiCimi4PLBgs5UV0j1qLRja/JJb4Ma
-         cZepK6oeIbBx3a9p8OSa+ceZM4F6sl3ge1zlHBcnVI2ZYVsQ8muP/RKXdVPqb5fSZbSH
-         LObrWzLdPXzFZIFVQmnCs7hbBvWFcQ7npANNzq0NZLGuymlJ++g9YnSoUgp1Hf/ZjA08
-         fCxQ==
-X-Gm-Message-State: AHQUAuaFDN3uW54ubsfCGnd4MaVkrPh9IkPihH3Rcj09E9s3nmwOf8wR
-        pBd5eN9/dcSuF4f+HS/qbTLARW6U2a0=
-X-Google-Smtp-Source: AHgI3IbWKIXV3Qg1k0ZC67tBztNKKXXaJlE9eBFl1qavFpJ/jZcthPyMAVAI/EaoxcqwQ8efqII3Ag==
-X-Received: by 2002:ac8:1ba9:: with SMTP id z38mr1082845qtj.3.1550074988815;
-        Wed, 13 Feb 2019 08:23:08 -0800 (PST)
-Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
-        by smtp.gmail.com with ESMTPSA id 46sm14115766qty.59.2019.02.13.08.23.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Feb 2019 08:23:07 -0800 (PST)
-Date:   Wed, 13 Feb 2019 11:23:07 -0500
-From:   Sean Paul <sean@poorly.run>
-To:     Daniel Vetter <daniel@ffwll.ch>
-Cc:     Rob Clark <robdclark@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH] MAINTAINERS: update entry for drm/msm
-Message-ID: <20190213162307.GL114153@art_vandelay>
-References: <20190213151107.14833-1-robdclark@gmail.com>
- <20190213152802.GK23159@phenom.ffwll.local>
- <CAF6AEGvMTQD3Yusp+qSLkSAM7=T+4q6kvJJtEAOd+9UsvrxMnA@mail.gmail.com>
- <CAKMK7uHxS8XhpuRe-s7vFxBWc7WH8wiPZskDrW0QmXSg-dKDhA@mail.gmail.com>
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=35uzC3gz42JppQzcOlU7tTVi8bHkbWaC7ADT7Bj81mc=;
+ b=PmzZyaVGoTZP/P/ApDMf0cEvMhnocdfYE29l/Mqz9Jg+CV0CFeAgb60cUZRbsSCNgczKFYL1VY3yHPxzVC9NhPPkOv5NHlv7ysYN87deszuxMlYZqcqbzx2kKNqVBLkp9s/KBwbHeTvjvmWN+FnitKlwI6BYONOg57ixU3CqyVU=
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.98.146) by
+ BN6PR11MB1572.namprd11.prod.outlook.com (10.172.23.9) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.19; Wed, 13 Feb 2019 16:23:37 +0000
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::847:4296:13b9:fc9f]) by BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::847:4296:13b9:fc9f%8]) with mapi id 15.20.1601.023; Wed, 13 Feb 2019
+ 16:23:37 +0000
+From:   <Tudor.Ambarus@microchip.com>
+To:     <palmer@sifive.com>, <marek.vasut@gmail.com>
+CC:     <wesley@sifive.com>, <richard@nod.at>,
+        <linux-kernel@vger.kernel.org>, <bbrezillon@kernel.org>,
+        <linux-mtd@lists.infradead.org>, <paul.walmsley@sifive.com>,
+        <computersforpeace@gmail.com>, <dwmw2@infradead.org>
+Subject: Re: [PATCH v2 1/2] spi-nor: add support for ISSI's block unlocking
+ scheme
+Thread-Topic: [PATCH v2 1/2] spi-nor: add support for ISSI's block unlocking
+ scheme
+Thread-Index: AQHUu8mGKUlY2FcutUatqhzCBwYMZaXd+VWA
+Date:   Wed, 13 Feb 2019 16:23:37 +0000
+Message-ID: <35446d76-5712-c51f-e1ab-f81a53b1a4aa@microchip.com>
+References: <20180807194059.26348-1-palmer@sifive.com>
+ <20180807194059.26348-2-palmer@sifive.com>
+In-Reply-To: <20180807194059.26348-2-palmer@sifive.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1P195CA0007.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:800:d0::17) To BN6PR11MB1842.namprd11.prod.outlook.com
+ (2603:10b6:404:101::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Tudor.Ambarus@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 32aac2d6-7b19-4e25-362c-08d691cf9b2e
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1572;
+x-ms-traffictypediagnostic: BN6PR11MB1572:
+x-ms-exchange-purlcount: 2
+x-microsoft-exchange-diagnostics: =?utf-8?B?MTtCTjZQUjExTUIxNTcyOzIzOm9mTnlWOWlHWmtSbHNSRjFnR1VmM1lVbUJr?=
+ =?utf-8?B?YXJCUXZ3dlJISlkwOUhzTyt5K0Y5b2lTbkg1dG9zOUxSdVU5VTh4SHJZanN1?=
+ =?utf-8?B?RUZ5aGdBQU91S0RQRWQrajl4MlREdUVEd01kQ2Rnckp0Z2I2SEtqbVM5ZWdy?=
+ =?utf-8?B?Y3FRVlFjWCt6OVpjRk5iaS9CeStoUElaTkFhOS9DNzlVckQ2S21lWWF4Rk1t?=
+ =?utf-8?B?cHlRVmxVWVM4WEdOTUJVdk9NSmFheWxJQnJ2NWhNWFRnT3REcWpUWWRKcm9B?=
+ =?utf-8?B?ZFQ4UUlKSXRRSVQ0Q0pUb0JrYW1oWi9rblJzcXZFZ2syeW0zZ0J0cUwyQjlL?=
+ =?utf-8?B?bDNqYWh5Tmc4VkJVQ2dMM0UwK2NaL1F5cVNsRFQrOFhYT0o2cWtlM3ZIRUtt?=
+ =?utf-8?B?b0xjVFZEd3M1Sm5qVjd0L1dGNzE5Wmx5SXVMUDNVL0JGUWNFSDE5eC93bnlW?=
+ =?utf-8?B?OXYveVNQLzVMek5ac2IrZ2NLVmFFalJ5K2NEbG5UblBraDJGTWptSHBucTdD?=
+ =?utf-8?B?ZEtxQ1lhZi9OamxIMEZkRTk1T0prVXRUajQ2VHpzblVYR2xuL1JtbURueTZn?=
+ =?utf-8?B?VlhWa3lySzBmM0l1OVNoOEtNbmxoR0lzbTd1dVlwdS9DVkJRQUt6RlB4bW5N?=
+ =?utf-8?B?N3EwQTFldnhHUGY3M1dWZXNpYXpYOTF2VmdQdm0wcWRXN3VBOFZjSDlmdTBW?=
+ =?utf-8?B?emJWRjYwSGVCak5lejJ1ZTYrU1dlY0E5cnNKVXpvdXNPZzZVdGx6OC8wdkh0?=
+ =?utf-8?B?akN1WFFGS2FOUVBzeCtMbjgrL2crSnFhazdEQ1BSeEVpWkEvOVZWRlF3V0hu?=
+ =?utf-8?B?Y0wrRG9TOFZWRjV5Uld5c0ZORDJaREtyRUVoSEx3Mlk5U3lHZEp1bXpRcFVU?=
+ =?utf-8?B?eDBCWU1DQWdZZ2xwa3h6V3duWlRnM2VpZXZubWdoc1Jadzc2YkRSL1FmVk9x?=
+ =?utf-8?B?VTZubGFrQWgrRkpUK3V2NXpScnZJQmFza0tYVnRVODhrdkNiRkJmYWRhSTQ3?=
+ =?utf-8?B?eVpFVmd3dGU2TGpEVWJLY0JxZkJ3bG9kNXlzMWdRZUN4b3NoYk40UXRLMDhx?=
+ =?utf-8?B?ekJjN2kyZ2hFM2NFb1piV1MrNWtBenBybVV2Mk12bDZQTVNkdTc3djQvaEpq?=
+ =?utf-8?B?UEUyR3BMNFdBb09pd3ZTeHNMWU9uN0JpVnJrZzd0d1FEQXN2dERmUzUrVzhq?=
+ =?utf-8?B?TzNvY0Q5YTNVVk1yMUNtU2o4T04wUG5tU2JMVFNpMnlHRVliZmRzOFFXRVZ6?=
+ =?utf-8?B?V0x3Tm1PbmZsV2ovNjlUWGpuSzFRMlVCQ1hBRjhKTVc0Z1YvL1Vwb0NHaEFS?=
+ =?utf-8?B?dUVGS1V5QnZqdWV2NGRhd01ianN6Z2VGQS84UUFyVjFBWWxscnoyNXJ2Qi9W?=
+ =?utf-8?B?UFJRRllSaTZBMHZtYjg2SVY0bHdNTlF3OWlnUkt0TklsbGoycmt2c1JBaStD?=
+ =?utf-8?B?QjY3SHNRL1NXOTRZeUZaLzRkczhqNzF0MVZQNEVQWkFYWlFOYndsT1k3VDlr?=
+ =?utf-8?B?djhkb0xBMXFiWm1pT0IreGZXZlQrTVRKWnZLYVNxcDBwVFJ0dzJNWjN1VnZ4?=
+ =?utf-8?B?VTRhS2tuUE83cmJMVXQvSDlkTlV3YlZhZkM4Y2tNRFpYZjgzeno4YmhJeVpn?=
+ =?utf-8?B?OGptRkxQNmRaMGhQL2c0N2NET1psVmRRcElyelg3eW1wc0taTmdEYWg1cTNk?=
+ =?utf-8?B?QWo3bTBzSCs2cHBaL1RvR002M01hRXozTDlmQ01EYXlGYzYyWURpaUJOck84?=
+ =?utf-8?B?WWZaUjdjcmRudGw1RHhxQnh1clFtd2dqN29DbDg2SWJWOUdsU2EyZW9XcG55?=
+ =?utf-8?B?SmtENVZoenZiZGhzbXV3STdTRnFIdGM4Tms4T2NuajhsYVRQcUdvNmZMaHJE?=
+ =?utf-8?Q?FRbq26eTSWg=3D?=
+x-microsoft-antispam-prvs: <BN6PR11MB1572A68A1F2A593C00B3F671F0660@BN6PR11MB1572.namprd11.prod.outlook.com>
+x-forefront-prvs: 094700CA91
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(346002)(39860400002)(366004)(396003)(199004)(51914003)(189003)(31686004)(6436002)(305945005)(256004)(486006)(2616005)(14444005)(476003)(14454004)(11346002)(446003)(53936002)(4326008)(2906002)(7736002)(3846002)(316002)(97736004)(6486002)(110136005)(8936002)(54906003)(105586002)(229853002)(6116002)(72206003)(7416002)(66066001)(71200400001)(86362001)(71190400001)(106356001)(966005)(6246003)(53546011)(386003)(478600001)(25786009)(6306002)(68736007)(102836004)(186003)(81156014)(6512007)(99286004)(36756003)(76176011)(81166006)(2501003)(31696002)(52116002)(8676002)(26005)(6506007);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1572;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: qW0Iz4XbeH4YmR7wKdmzAHoXz//EoVcA+msYHr6Z/brUVwK0oaUa197xmvLDpmBRpKOXwiQdcfEOcvS4NeD+Bo3dQXDnOa0JdfTKfSmucXLNnNKhBdDBGlvKnREg2KN2SI+Fr3BKXtMTF5G7F219kQX7UTQX/oxslfR+TslwiUY6HnfdqorfSjuKk7HguKkQ0ciNiWlumoDvMwI4EMLVtRchXtuOgulR4jdM1O8tOapKwY84jjmMQ1ONxjx3JEz7OLgeYyLM3pbjg5/FEvdMHGyTrhBVudTPaO9vRn3Ykbo7ArrmxUwCBgl0GLOR8gzn0TUfY0MJTrXTcdyqV0ImA1QlZkAMzHzO+LHt3nnoN4yGH/9K//ALXsDjuJwTouAuftuHtsuvLTCDXrZ2VN4SUVTZP1cxxuJb5DNvuYt7RBM=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8097D68D102B9746B6C7C05FC506FC2F@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uHxS8XhpuRe-s7vFxBWc7WH8wiPZskDrW0QmXSg-dKDhA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32aac2d6-7b19-4e25-362c-08d691cf9b2e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2019 16:23:34.6962
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1572
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 05:04:59PM +0100, Daniel Vetter wrote:
-> On Wed, Feb 13, 2019 at 4:43 PM Rob Clark via dri-devel
-> <dri-devel@lists.freedesktop.org> wrote:
-> >
-> > On Wed, Feb 13, 2019 at 10:28 AM Daniel Vetter <daniel@ffwll.ch> wrote:
-> > >
-> > > On Wed, Feb 13, 2019 at 10:10:44AM -0500, Rob Clark via dri-devel wrote:
-> > > > We've moved the tree to a shared gitlab tree, so that Sean can help out
-> > > > with maintainer duties.
-> > > >
-> > > > Cc: Sean Paul <seanpaul@chromium.org>
-> > > > Signed-off-by: Rob Clark <robdclark@gmail.com>
-> > > > ---
-> > > > I can include this patch in msm-next for v5.1, but wanted to get it
-> > > > ack'd on list
-> > >
-> > > Is the plan to also add this to dim, for full group maintainership fun?
-> > > It's more or less adding a few lines to nightly.conf and done (plus
-> > > everyone being ok with using the dim tooling).
-> >
-> > I think drm/msm is big enough, that it wouldn't make sense to move to
-> > drm-misc..  but possibly using the dim tooling could make sense.
-> 
-> This was about using the dim tooling, not about moving msm to
-> drm-misc. That indeed doesn't make much sense. And Sean already knows
-> that tooling. Plus you pretty much need a big script if you want to
-> add more committers (which imo you guys totally should), since
-> otherwise you spend up endless amounts of time training people on
-> trivial hiccups.
-
-Yeah, we've talked about switching to dim a few times already. IMO, the big win
-for msm would be inclusion in drm-tip to catch integration issues early, and
-dim's sanity checks around tags. Selfishly, this would also reduce dim's
-complaints when backmerging drm into drm-misc  :-).
-
-That said, would the committers we'd want to add to msm (Qualcomm employees) be
-receptive to (or even able to install/download) dim? I'm not sure on this one.
-
-At any rate, last time we discussed dim, we agreed the first step was to get
-msm on gitlab so we can easily add commit access and go from there. I think
-we're probably just at the end of that transition period, so everything is on
-track!
-
-Sean
-
-
-> -Daniel
-> 
-> > BR,
-> > -R
-> >
-> > > -Daniel
-> > >
-> > > >
-> > > >  MAINTAINERS | 3 ++-
-> > > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > > index 9919840d54cd..2141a1b6653d 100644
-> > > > --- a/MAINTAINERS
-> > > > +++ b/MAINTAINERS
-> > > > @@ -4838,10 +4838,11 @@ F:    Documentation/devicetree/bindings/display/multi-inno,mi0283qt.txt
-> > > >
-> > > >  DRM DRIVER FOR MSM ADRENO GPU
-> > > >  M:   Rob Clark <robdclark@gmail.com>
-> > > > +M:   Sean Paul <sean@poorly.run>
-> > > >  L:   linux-arm-msm@vger.kernel.org
-> > > >  L:   dri-devel@lists.freedesktop.org
-> > > >  L:   freedreno@lists.freedesktop.org
-> > > > -T:   git git://people.freedesktop.org/~robclark/linux
-> > > > +T:   git https://gitlab.freedesktop.org/drm/msm.git
-> > > >  S:   Maintained
-> > > >  F:   drivers/gpu/drm/msm/
-> > > >  F:   include/uapi/drm/msm_drm.h
-> > > > --
-> > > > A
-> > > > 2.20.1
-> > > >
-> > > > _______________________________________________
-> > > > dri-devel mailing list
-> > > > dri-devel@lists.freedesktop.org
-> > > > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> > >
-> > > --
-> > > Daniel Vetter
-> > > Software Engineer, Intel Corporation
-> > > http://blog.ffwll.ch
-> > _______________________________________________
-> > dri-devel mailing list
-> > dri-devel@lists.freedesktop.org
-> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
-> 
-> 
-> 
-> -- 
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
-
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+SGksIFdlc2xleSwgUGFsbWVyLA0KDQpPbiAwOC8wNy8yMDE4IDEwOjQwIFBNLCBQYWxtZXIgRGFi
+YmVsdCB3cm90ZToNCg0KRmlyc3Qgb2YgYWxsLCB0aGFua3MgZm9yIHRoZSBwYXRpZW5jZSENCg0K
+PiBGcm9tOiAiV2VzbGV5IFcuIFRlcnBzdHJhIiA8d2VzbGV5QHNpZml2ZS5jb20+DQo+IA0KPiBJ
+U1NJIHVzZXMgYSBub24tc3RhbmRhcmQgc2NoZW1lIHRvIGNvbnRyb2wgYmxvY2sgcHJvdGVjdGlv
+biwgd2l0aCBiaXQgNQ0KPiBvZiB0aGUgc3RhdHVzIHJlZ2lzdGVyciBjb250cm9sbGluZyBhbiBh
+ZGRpdGlvbmFsIGJsb2NrIHByb3RlY3Rpb24gYml0Lg0KDQpJbmRlZWQsIGlzc2kncyBibG9jayBw
+cm90ZWN0aW9uIChCUDMsIEJQMiwgQlAxLCBCUDApIGJpdHMgYXJlIHVzZWQgaW4gYQ0KZGlmZmVy
+ZW50IHdheSB0aGFuIGhvdyBhcmUgdXNlZCBpbiBzdG1fbG9jay91bmxvY2ssIGV2ZW4gd2l0aCB0
+aGUgNGJpdCBibG9jaw0KcHJvdGVjdGlvbiBvbiBpdHMgd2F5IChzZWUgWzFdKS4NCg0KPiBUaGlz
+IHBhdGNoIGRpc2FibGVzIGFsbCB0aGUgYmxvY2sgcHJvdGVjdGlvbiBiaXRzIHdoZW5ldmVyIGFu
+IElTU0kgY2hpcA0KPiBpcyBzZWVuLg0KDQpJUzI1V1AyNTYncyBkYXRhc2hlZXQgc2F5cyB0aGF0
+ICJUaGUgZGVmYXVsdCB2YWx1ZSBvZiB0aGUgQlAwLCBCUDEsIEJQMiwgQlAzLA0KUUUsIGFuZCBT
+UldEIGJpdHMgd2VyZSBzZXQgdG8g4oCcMOKAnQ0KIGF0IGZhY3RvcnkuIiwgd2hpY2ggbWVhbnMg
+dGhhdCBhbGwgbWVtb3J5IGJsb2NrcyBjb21lIHVucHJvdGVjdGVkICh1bmxvY2tlZCkgYnkNCmRl
+ZmF1bHQuDQoNCkkgc2VlIHlvdXIgcGF0Y2ggYXMgYW4gZXh0cmEgc2FmZXR5IG1lYXN1cmUgZm9y
+IHBlb3BsZSB0aGF0IHNvbWVob3cNCnVuZm9ydHVuYXRlbHkgc2V0IHRoZXNlIGJsb2NrIHByb3Rl
+Y3Rpb24gYml0cywgc28gdGhhdCB0aGV5IG5vdCBlbmQgdXAgd2l0aA0KbG9ja2VkIGJsb2Nrcy4g
+SW5zdGVhZCBvZiBhZGRpbmcgdGhpcyBleHRyYSBzYWZldHkgY2hlY2svc2V0LCBJIHdvdWxkIHN1
+Z2dlc3QgdG8NCmFjdHVhbGx5IGFkZCBzdXBwb3J0IGZvciB0aGUgaXNzaSdzIGJsb2NrIHByb3Rl
+Y3Rpb24gc2NoZW1lLiBJbiBhIHBlcmZlY3Qgd29ybGQsDQp0aGlzIHdvdWxkIGZpdCBpbiBhIHBl
+ci1tYW51ZmFjdHVyZXIgaG9vayBhZnRlciB0aGUgcGVyLW1hbnVmYWN0dXJlciBzcGxpdCB1cA0K
+Y29kZSB3aWxsIGJlIGludGVncmF0ZWQgKHNlZSBbMl0pLg0KDQo+IA0KPiBXZSBtaWdodCBhbHNv
+IHdhbnQgdG8gdHJpZ2dlciBhbiBlcnJvciB3aGVuIHdyaXRpbmcgU1JfVEIgdG8gdGhlc2UNCj4g
+Y2hpcHMsIGFzIGl0IGFsaWFzZXMgd2l0aCB0aGlzIGV4dHJhIHByb3RlY3Rpb24gYml0IGluIHRo
+ZSBzdGF0dXMNCj4gcmVnaXN0ZXIuICBJdCBsb29rcyBsaWtlIHRoYXQncyBhbHdheXMgY29uZGl0
+aW9uYWwgb24gU05PUl9GX0hBU19TUl9UQiwNCj4gc28gYXQgbGVhc3Qgd2hhdCdzIHRoZXJlIGlz
+IHNhZmUuDQoNClRoaXMgcHJvYmxlbSB3aWxsIHZhbmlzaCB3aGVuIHlvdSdsbCBoYXZlIHRoZSBp
+c3NpJ3MgcHJvdGVjdGlvbiBzY2hlbWUgaW1wbGVtZW50ZWQuDQoNCkNoZWVycywNCnRhDQoNClsx
+XSBodHRwczovL3BhdGNod29yay5vemxhYnMub3JnL3BhdGNoLzEwMTE4MjAvDQpbMl0gaHR0cHM6
+Ly9wYXRjaHdvcmsub3psYWJzLm9yZy9wcm9qZWN0L2xpbnV4LW10ZC9saXN0Lz9zZXJpZXM9ODAz
+NTMNCg==
