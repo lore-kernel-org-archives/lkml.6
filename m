@@ -2,60 +2,60 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67404C282CA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:44:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E8E0C282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:44:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20877218D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:44:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3346222C1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 13:44:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="I1gqFALS"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="p3MjEF3B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391246AbfBMNoF (ORCPT
+        id S2391307AbfBMNoK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 08:44:05 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:32955 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391214AbfBMNoC (ORCPT
+        Wed, 13 Feb 2019 08:44:10 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51822 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391273AbfBMNoG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 08:44:02 -0500
-Received: by mail-wr1-f68.google.com with SMTP id i12so2589602wrw.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 05:44:01 -0800 (PST)
+        Wed, 13 Feb 2019 08:44:06 -0500
+Received: by mail-wm1-f66.google.com with SMTP id b11so2524726wmj.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 05:44:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=caR1J78T9xUr52DM1a/x3S+1zsiDFCefdp8tof1EDSc=;
-        b=I1gqFALSLDsJt9nTLnpwl6GXe3x7qInRLO0Bch0af7NKaWNSOpu/rn5Qw9BMPk8nAn
-         H4j5eO5g9Nqn717eR1Cy/6DbDhZsvsejXL+W1PCcEF3YHlrVy9/SMdVbsoSAScdC5Ext
-         hVrm6o5miunnb38Y37iZuZQlRc7GskfLODONsVsJYmxvgDxfVpRG9W4mtb4Ih22UZjpb
-         MfOXqPJzSJ/kxJeJXp9a9l+1rrML420Co/6JQxW4lK9q+DW5rG+u1tvsltNakT8PezZh
-         XsQWujGlGvwe5gZk85osnmjnUzPhDnYFX9ZvBQ5J14ZefaqaqHH24byQL+Puy8U1pQWT
-         xnfA==
+        bh=QyF/lYrXa4aZsXur/pzKaUabjktiLGBj4fanbTYeB6U=;
+        b=p3MjEF3Byy6BZL4NEFPtnj9ARzliBH8WZk0mzqm9b6xBd4TcvbNkv5bpdd3gQGKsXf
+         EYnRRbQBiwF4Q5S/3eLSnGQviGyePuuYtrh7KxEmDlj+PPWjN0+mmOMphhzBkcRTEdh+
+         vtIZGLI4sSlVxYsBQA9ExfSUoy81hjYllMDbWz1yKKFrQcackXtuj409k6BIwarvDxI4
+         CUdxPhJcA9GFCVJrKuQ6oxNOjPTZVLg++LSBXx1xnq2b/FKzQ0caOE/b8Us+Sn7LYXnb
+         sgCSKQofL3Mm4JU2vCp1vMqcJVcAkE5SeoKc/w4Xvx7+uDRddiqT9mOFA1D67o3Ovx9U
+         Tz0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=caR1J78T9xUr52DM1a/x3S+1zsiDFCefdp8tof1EDSc=;
-        b=qqan2Dl9ecgiku5n45EOpdlCEtCJc9CvAKG8YBQui7vCn0D9CJjBH+KIsWpJINsZvW
-         0mOh9lzhJ/zb0Fphu/oZdA6eO6JHZmahTeFV2XsC16fNnJ7E745BlppSeIECvUHqLUwd
-         pv8mYO6qc0k9cvxbE1eAniyL1Yv8OL1E/8ACwUcdVSvVl3HcI9fhPVHoJictc9+SIzuZ
-         Gh6XraQKTBkCuaeOK0m9ZC1layC3kz4M0HumiP6u+9IqhPtv7iZ3ZQwfnZbuNoW7QWMA
-         9A+mr7kY1gI88PC0HVHsQQYVEuNbnlcpD7jIPMV3MSUmQFCBW4ieHg+vqWu8iJ/INsbv
-         H4CA==
-X-Gm-Message-State: AHQUAuZWephEygRl88cwZP8VLdzidKu/cI2Zbg5OpovoCo1cZJTo/J4/
-        T8e00fHES+8tTVbp1LsDH0iJvQ==
-X-Google-Smtp-Source: AHgI3IaodJK/iGjaTqWakoVlGvczCp/jn28lNs7BL1iVcBDYe5ozykBCZJ/N/bGM0O/kAqBPIIhkZw==
-X-Received: by 2002:a5d:468e:: with SMTP id u14mr446700wrq.253.1550065440412;
-        Wed, 13 Feb 2019 05:44:00 -0800 (PST)
+        bh=QyF/lYrXa4aZsXur/pzKaUabjktiLGBj4fanbTYeB6U=;
+        b=ZHfl6tCc7jP8+2W8xnGf41Ezsj5ZXCtVr715WZoivAbjGL4lQE//agFdj1TTiirs7G
+         0f45hTknRg6Oj64UFyE8fkiJsNWDvQJlzn9TYFccHr2/ednZtoQITZkEomFGWuB/4w5T
+         x8qVWO8A5DdF/m/DyoiC/prQJ4dpn/vXkTUMVl7yJ4hSt4oxVGY28wVeUjvEFHuOs7W4
+         ZiNEQYSwBdF0rI1K0EEaR3Sntp9I1bezcJbxkNp04bAnDZplaz237VcB3mE9DMKF86UC
+         4HKiXYKcCOksk72CSHjnk+RmCB9wbSIuIa1+vXKa4gL0FSxKKbGR6wjO0A+0R522dqNT
+         v3ZQ==
+X-Gm-Message-State: AHQUAuZZuq8a6SwNdXIxd2BJ+NTCOrxK3luAa5UWYOPEJGfYkO4i276i
+        a+uHZFOV6zjeamyX6HOv3nijLw==
+X-Google-Smtp-Source: AHgI3IbbF48VOUVBEzahxem5NKWQ156Wo7BnfJ0R+IOJnutWgcEACCNO4rO7qW4n2t/3KMLZClEaTQ==
+X-Received: by 2002:a1c:2985:: with SMTP id p127mr349456wmp.63.1550065444489;
+        Wed, 13 Feb 2019 05:44:04 -0800 (PST)
 Received: from debian-brgl.home (amontpellier-652-1-54-116.w109-210.abo.wanadoo.fr. [109.210.45.116])
-        by smtp.gmail.com with ESMTPSA id e7sm2046720wrw.35.2019.02.13.05.43.58
+        by smtp.gmail.com with ESMTPSA id e7sm2046720wrw.35.2019.02.13.05.44.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 05:43:59 -0800 (PST)
+        Wed, 13 Feb 2019 05:44:03 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -70,9 +70,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-input@vger.kernel.org,
         linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v5 08/11] gpio: max77650: add GPIO support
-Date:   Wed, 13 Feb 2019 14:43:32 +0100
-Message-Id: <20190213134335.10838-9-brgl@bgdev.pl>
+Subject: [PATCH v5 11/11] MAINTAINERS: add an entry for max77650 mfd driver
+Date:   Wed, 13 Feb 2019 14:43:35 +0100
+Message-Id: <20190213134335.10838-12-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190213134335.10838-1-brgl@bgdev.pl>
 References: <20190213134335.10838-1-brgl@bgdev.pl>
@@ -85,244 +85,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Add GPIO support for max77650 mfd device. This PMIC exposes a single
-GPIO line.
+I plan on extending this set of drivers so add myself as maintainer.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/gpio/Kconfig         |   7 ++
- drivers/gpio/Makefile        |   1 +
- drivers/gpio/gpio-max77650.c | 190 +++++++++++++++++++++++++++++++++++
- 3 files changed, 198 insertions(+)
- create mode 100644 drivers/gpio/gpio-max77650.c
+ MAINTAINERS | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index b5a2845347ec..fb297fe5bfec 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -1095,6 +1095,13 @@ config GPIO_MAX77620
- 	  driver also provides interrupt support for each of the gpios.
- 	  Say yes here to enable the max77620 to be used as gpio controller.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 9919840d54cd..ac96659bcfe4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9226,6 +9226,20 @@ S:	Maintained
+ F:	Documentation/devicetree/bindings/sound/max9860.txt
+ F:	sound/soc/codecs/max9860.*
  
-+config GPIO_MAX77650
-+	tristate "Maxim MAX77650/77651 GPIO support"
-+	depends on MFD_MAX77650
-+	help
-+	  GPIO driver for MAX77650/77651 PMIC from Maxim Semiconductor.
-+	  These chips have a single pin that can be configured as GPIO.
++MAXIM MAX77650 PMIC MFD DRIVER
++M:	Bartosz Golaszewski <bgolaszewski@baylibre.com>
++L:	linux-kernel@vger.kernel.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/*/*max77650.txt
++F:	Documentation/devicetree/bindings/*/max77650*.txt
++F:	include/linux/mfd/max77650.h
++F:	drivers/mfd/max77650.c
++F:	drivers/regulator/max77650-regulator.c
++F:	drivers/power/supply/max77650-charger.c
++F:	drivers/input/misc/max77650-onkey.c
++F:	drivers/leds/leds-max77650.c
++F:	drivers/gpio/gpio-max77650.c
 +
- config GPIO_MSIC
- 	bool "Intel MSIC mixed signal gpio support"
- 	depends on (X86 || COMPILE_TEST) && MFD_INTEL_MSIC
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index 37628f8dbf70..8bdad50db822 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -78,6 +78,7 @@ obj-$(CONFIG_GPIO_MAX7300)	+= gpio-max7300.o
- obj-$(CONFIG_GPIO_MAX7301)	+= gpio-max7301.o
- obj-$(CONFIG_GPIO_MAX732X)	+= gpio-max732x.o
- obj-$(CONFIG_GPIO_MAX77620)	+= gpio-max77620.o
-+obj-$(CONFIG_GPIO_MAX77650)	+= gpio-max77650.o
- obj-$(CONFIG_GPIO_MB86S7X)	+= gpio-mb86s7x.o
- obj-$(CONFIG_GPIO_MENZ127)	+= gpio-menz127.o
- obj-$(CONFIG_GPIO_MERRIFIELD)	+= gpio-merrifield.o
-diff --git a/drivers/gpio/gpio-max77650.c b/drivers/gpio/gpio-max77650.c
-new file mode 100644
-index 000000000000..3f03f4e8956c
---- /dev/null
-+++ b/drivers/gpio/gpio-max77650.c
-@@ -0,0 +1,190 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (C) 2018 BayLibre SAS
-+// Author: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-+//
-+// GPIO driver for MAXIM 77650/77651 charger/power-supply.
-+
-+#include <linux/gpio/driver.h>
-+#include <linux/i2c.h>
-+#include <linux/mfd/max77650.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#define MAX77650_GPIO_DIR_MASK		BIT(0)
-+#define MAX77650_GPIO_INVAL_MASK	BIT(1)
-+#define MAX77650_GPIO_DRV_MASK		BIT(2)
-+#define MAX77650_GPIO_OUTVAL_MASK	BIT(3)
-+#define MAX77650_GPIO_DEBOUNCE_MASK	BIT(4)
-+
-+#define MAX77650_GPIO_DIR_OUT		0x00
-+#define MAX77650_GPIO_DIR_IN		BIT(0)
-+#define MAX77650_GPIO_OUT_LOW		0x00
-+#define MAX77650_GPIO_OUT_HIGH		BIT(3)
-+#define MAX77650_GPIO_DRV_OPEN_DRAIN	0x00
-+#define MAX77650_GPIO_DRV_PUSH_PULL	BIT(2)
-+#define MAX77650_GPIO_DEBOUNCE		BIT(4)
-+
-+#define MAX77650_GPIO_DIR_BITS(_reg) \
-+		((_reg) & MAX77650_GPIO_DIR_MASK)
-+#define MAX77650_GPIO_INVAL_BITS(_reg) \
-+		(((_reg) & MAX77650_GPIO_INVAL_MASK) >> 1)
-+
-+struct max77650_gpio_chip {
-+	struct regmap *map;
-+	struct gpio_chip gc;
-+	int irq;
-+};
-+
-+static int max77650_gpio_direction_input(struct gpio_chip *gc,
-+					 unsigned int offset)
-+{
-+	struct max77650_gpio_chip *chip = gpiochip_get_data(gc);
-+
-+	return regmap_update_bits(chip->map,
-+				  MAX77650_REG_CNFG_GPIO,
-+				  MAX77650_GPIO_DIR_MASK,
-+				  MAX77650_GPIO_DIR_IN);
-+}
-+
-+static int max77650_gpio_direction_output(struct gpio_chip *gc,
-+					  unsigned int offset, int value)
-+{
-+	struct max77650_gpio_chip *chip = gpiochip_get_data(gc);
-+	int mask, regval;
-+
-+	mask = MAX77650_GPIO_DIR_MASK | MAX77650_GPIO_OUTVAL_MASK;
-+	regval = value ? MAX77650_GPIO_OUT_HIGH : MAX77650_GPIO_OUT_LOW;
-+	regval |= MAX77650_GPIO_DIR_OUT;
-+
-+	return regmap_update_bits(chip->map,
-+				  MAX77650_REG_CNFG_GPIO, mask, regval);
-+}
-+
-+static void max77650_gpio_set_value(struct gpio_chip *gc,
-+				    unsigned int offset, int value)
-+{
-+	struct max77650_gpio_chip *chip = gpiochip_get_data(gc);
-+	int rv, regval;
-+
-+	regval = value ? MAX77650_GPIO_OUT_HIGH : MAX77650_GPIO_OUT_LOW;
-+
-+	rv = regmap_update_bits(chip->map, MAX77650_REG_CNFG_GPIO,
-+				MAX77650_GPIO_OUTVAL_MASK, regval);
-+	if (rv)
-+		dev_err(gc->parent, "cannot set GPIO value: %d\n", rv);
-+}
-+
-+static int max77650_gpio_get_value(struct gpio_chip *gc,
-+				   unsigned int offset)
-+{
-+	struct max77650_gpio_chip *chip = gpiochip_get_data(gc);
-+	unsigned int val;
-+	int rv;
-+
-+	rv = regmap_read(chip->map, MAX77650_REG_CNFG_GPIO, &val);
-+	if (rv)
-+		return rv;
-+
-+	return MAX77650_GPIO_INVAL_BITS(val);
-+}
-+
-+static int max77650_gpio_get_direction(struct gpio_chip *gc,
-+				       unsigned int offset)
-+{
-+	struct max77650_gpio_chip *chip = gpiochip_get_data(gc);
-+	unsigned int val;
-+	int rv;
-+
-+	rv = regmap_read(chip->map, MAX77650_REG_CNFG_GPIO, &val);
-+	if (rv)
-+		return rv;
-+
-+	return MAX77650_GPIO_DIR_BITS(val);
-+}
-+
-+static int max77650_gpio_set_config(struct gpio_chip *gc,
-+				    unsigned int offset, unsigned long cfg)
-+{
-+	struct max77650_gpio_chip *chip = gpiochip_get_data(gc);
-+
-+	switch (pinconf_to_config_param(cfg)) {
-+	case PIN_CONFIG_DRIVE_OPEN_DRAIN:
-+		return regmap_update_bits(chip->map,
-+					  MAX77650_REG_CNFG_GPIO,
-+					  MAX77650_GPIO_DRV_MASK,
-+					  MAX77650_GPIO_DRV_OPEN_DRAIN);
-+	case PIN_CONFIG_DRIVE_PUSH_PULL:
-+		return regmap_update_bits(chip->map,
-+					  MAX77650_REG_CNFG_GPIO,
-+					  MAX77650_GPIO_DRV_MASK,
-+					  MAX77650_GPIO_DRV_PUSH_PULL);
-+	case PIN_CONFIG_INPUT_DEBOUNCE:
-+		return regmap_update_bits(chip->map,
-+					  MAX77650_REG_CNFG_GPIO,
-+					  MAX77650_GPIO_DEBOUNCE_MASK,
-+					  MAX77650_GPIO_DEBOUNCE);
-+	default:
-+		return -ENOTSUPP;
-+	}
-+}
-+
-+static int max77650_gpio_to_irq(struct gpio_chip *gc, unsigned int offset)
-+{
-+	struct max77650_gpio_chip *chip = gpiochip_get_data(gc);
-+
-+	return chip->irq;
-+}
-+
-+static int max77650_gpio_probe(struct platform_device *pdev)
-+{
-+	struct max77650_gpio_chip *chip;
-+	struct device *dev, *parent;
-+	struct i2c_client *i2c;
-+
-+	dev = &pdev->dev;
-+	parent = dev->parent;
-+	i2c = to_i2c_client(parent);
-+
-+	chip = devm_kzalloc(dev, sizeof(*chip), GFP_KERNEL);
-+	if (!chip)
-+		return -ENOMEM;
-+
-+	chip->map = dev_get_regmap(parent, NULL);
-+	if (!chip->map)
-+		return -ENODEV;
-+
-+	chip->irq = platform_get_irq_byname(pdev, "GPI");
-+	if (chip->irq < 0)
-+		return chip->irq;
-+
-+	chip->gc.base = -1;
-+	chip->gc.ngpio = 1;
-+	chip->gc.label = i2c->name;
-+	chip->gc.parent = dev;
-+	chip->gc.owner = THIS_MODULE;
-+	chip->gc.can_sleep = true;
-+
-+	chip->gc.direction_input = max77650_gpio_direction_input;
-+	chip->gc.direction_output = max77650_gpio_direction_output;
-+	chip->gc.set = max77650_gpio_set_value;
-+	chip->gc.get = max77650_gpio_get_value;
-+	chip->gc.get_direction = max77650_gpio_get_direction;
-+	chip->gc.set_config = max77650_gpio_set_config;
-+	chip->gc.to_irq = max77650_gpio_to_irq;
-+
-+	return devm_gpiochip_add_data(dev, &chip->gc, chip);
-+}
-+
-+static struct platform_driver max77650_gpio_driver = {
-+	.driver = {
-+		.name = "max77650-gpio",
-+	},
-+	.probe = max77650_gpio_probe,
-+};
-+module_platform_driver(max77650_gpio_driver);
-+
-+MODULE_DESCRIPTION("MAXIM 77650/77651 GPIO driver");
-+MODULE_AUTHOR("Bartosz Golaszewski <bgolaszewski@baylibre.com>");
-+MODULE_LICENSE("GPL v2");
+ MAXIM MAX77802 PMIC REGULATOR DEVICE DRIVER
+ M:	Javier Martinez Canillas <javier@dowhile0.org>
+ L:	linux-kernel@vger.kernel.org
 -- 
 2.20.1
 
