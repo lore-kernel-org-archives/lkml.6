@@ -4,53 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C4EC282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:53:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E75C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:53:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF42621934
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:53:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 713A121934
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:53:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550026388;
-	bh=RUaBm/YMp9M1Sw70QcSa4ukqGdLSql/KuV1pzCFlsWw=;
+	s=default; t=1550026397;
+	bh=6oSGu96vmQLFys8dH4hYRptXHe/YX0k1QTvOPWNR8zo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oCSfh18I7HVpwuzo9QSoZmeQb1FSXZB1IhTD6lpkTVmph7hZwRWrDFq/JN+lwP2D7
-	 2lwMM2q4GxOCwt1L7eQGwH0J2GSEHggrR3vXFJa6Zyzql4kNfg1z6aaYAjUDpXQHXt
-	 Av6AxzSkccxjFeK4SLoBxIH3Gy7bEwRpx0yZMbKQ=
+	b=hMolR8OcPVD+xUG1yB2O0pEQA2R/qDXkANZmk+U3JVvk29q3A+qohFaJnKIU9u+Q1
+	 BtKYwyhXhrtpyAPOmqFYrMGMA573NdoC87VbYBWAg+7rjq+e0Y3TDYWNTSZLoZgNV6
+	 v5avN21JPmbQfAfNdhO8X0qbwjq+/iY0E/f8cbB8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389924AbfBMCxG (ORCPT
+        id S2388494AbfBMCiU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:53:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41890 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:38:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388501AbfBMCiV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:38:21 -0500
+        id S1731084AbfBMCiN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:38:13 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4330F222C7;
-        Wed, 13 Feb 2019 02:38:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 373FE222C9;
+        Wed, 13 Feb 2019 02:38:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025501;
-        bh=RUaBm/YMp9M1Sw70QcSa4ukqGdLSql/KuV1pzCFlsWw=;
+        s=default; t=1550025493;
+        bh=6oSGu96vmQLFys8dH4hYRptXHe/YX0k1QTvOPWNR8zo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bbWmFgdd1AY+2iDUf86OSGPC7ILdemF7pGQEY7ZdZ+c9tseGI6BNXIuI2RqDApUNs
-         ptFKE4lG38SkGsse1TFxNGVAMPR8mw+zg5Xe8bLMplaSWak9AvhTtu62x1Ki/bB+hI
-         3LbH2PQpbFFO3Deebcff7urTtJkGa4uF40peV8Z4=
+        b=Qm6mK2AtjAQCPI3ZlmZgyB3Mbddvy7TIPnNTD9ts3OHYiyFN5cW96Rn6yW8SAyXX7
+         A+miWbGztVF7WISr9X7Uo/xMTMgiLlIl0mM02daRat6Ircia811zHJmcG1LDvav+Zf
+         5dxuW3Mnu7ovUm9lKBZ4aBrVJUW4A3nxm1ih+ZWI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jose Abreu <jose.abreu@synopsys.com>,
-        Joao Pinto <jpinto@synopsys.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Jose Abreu <joabreu@synopsys.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 47/83] net: stmmac: Check if CBS is supported before configuring
-Date:   Tue, 12 Feb 2019 21:36:25 -0500
-Message-Id: <20190213023701.20286-47-sashal@kernel.org>
+Cc:     Leon Romanovsky <leonro@mellanox.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 42/83] RDMA/mthca: Clear QP objects during their allocation
+Date:   Tue, 12 Feb 2019 21:36:20 -0500
+Message-Id: <20190213023701.20286-42-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190213023701.20286-1-sashal@kernel.org>
 References: <20190213023701.20286-1-sashal@kernel.org>
@@ -62,35 +59,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jose Abreu <jose.abreu@synopsys.com>
+From: Leon Romanovsky <leonro@mellanox.com>
 
-[ Upstream commit 0650d4017f4d2eee67230a02285a7ae5204240c2 ]
+[ Upstream commit 9d9f59b4204bc41896c866b3e5856e5b416aa199 ]
 
-Check if CBS is currently supported before trying to configure it in HW.
+As part of audit process to update drivers to use rdma_restrack_add()
+ensure that QP objects is cleared before access. Such change fixes the
+crash observed with uninitialized non zero sgid attr accessed by
+ib_destroy_qp().
 
-Cc: Joao Pinto <jpinto@synopsys.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+CPU: 3 PID: 74 Comm: kworker/u16:1 Not tainted 4.19.10-300.fc29.x86_64
+Workqueue: ipoib_wq ipoib_cm_tx_reap [ib_ipoib]
+RIP: 0010:rdma_put_gid_attr+0x9/0x30 [ib_core]
+RSP: 0018:ffffb7ad819dbde8 EFLAGS: 00010202
+RAX: 0000000000000000 RBX: ffff8d1bdf5a2e00 RCX: 0000000000002699
+RDX: 206c656e72656af8 RSI: ffff8d1bf7ae6160 RDI: 206c656e72656b20
+RBP: 0000000000000000 R08: 0000000000026160 R09: ffffffffc06b45bf
+R10: ffffe849887da000 R11: 0000000000000002 R12: ffff8d1be30cb400
+R13: ffff8d1bdf681800 R14: ffff8d1be2272400 R15: ffff8d1be30ca000
+FS:  0000000000000000(0000) GS:ffff8d1bf7ac0000(0000)
+knlGS:0000000000000000
+Trace:
+ ib_destroy_qp+0xc9/0x240 [ib_core]
+ ipoib_cm_tx_reap+0x1f9/0x4e0 [ib_ipoib]
+ process_one_work+0x1a1/0x3a0
+ worker_thread+0x30/0x380
+ ? pwq_unbound_release_workfn+0xd0/0xd0
+ kthread+0x112/0x130
+ ? kthread_create_worker_on_cpu+0x70/0x70
+ ret_from_fork+0x22/0x40
+
+Reported-by: Alexander Murashkin <AlexanderMurashkin@msn.com>
+Tested-by: Alexander Murashkin <AlexanderMurashkin@msn.com>
+Fixes: 1a1f460ff151 ("RDMA: Hold the sgid_attr inside the struct ib_ah/qp")
+Signed-off-by: Parav Pandit <parav@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/infiniband/hw/mthca/mthca_provider.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-index 531294f4978b..58ea18af9813 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_tc.c
-@@ -301,6 +301,8 @@ static int tc_setup_cbs(struct stmmac_priv *priv,
- 	/* Queue 0 is not AVB capable */
- 	if (queue <= 0 || queue >= tx_queues_count)
- 		return -EINVAL;
-+	if (!priv->dma_cap.av)
-+		return -EOPNOTSUPP;
- 	if (priv->speed != SPEED_100 && priv->speed != SPEED_1000)
- 		return -EOPNOTSUPP;
+diff --git a/drivers/infiniband/hw/mthca/mthca_provider.c b/drivers/infiniband/hw/mthca/mthca_provider.c
+index 0d3473b4596e..21f4239022c7 100644
+--- a/drivers/infiniband/hw/mthca/mthca_provider.c
++++ b/drivers/infiniband/hw/mthca/mthca_provider.c
+@@ -533,7 +533,7 @@ static struct ib_qp *mthca_create_qp(struct ib_pd *pd,
+ 	{
+ 		struct mthca_ucontext *context;
+ 
+-		qp = kmalloc(sizeof *qp, GFP_KERNEL);
++		qp = kzalloc(sizeof(*qp), GFP_KERNEL);
+ 		if (!qp)
+ 			return ERR_PTR(-ENOMEM);
+ 
+@@ -599,7 +599,7 @@ static struct ib_qp *mthca_create_qp(struct ib_pd *pd,
+ 		if (pd->uobject)
+ 			return ERR_PTR(-EINVAL);
+ 
+-		qp = kmalloc(sizeof (struct mthca_sqp), GFP_KERNEL);
++		qp = kzalloc(sizeof(struct mthca_sqp), GFP_KERNEL);
+ 		if (!qp)
+ 			return ERR_PTR(-ENOMEM);
  
 -- 
 2.19.1
