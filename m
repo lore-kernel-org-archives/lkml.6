@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC0F1C282C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:44:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32DA8C282C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:44:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0144214DA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:44:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA2362080A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 02:44:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550025851;
-	bh=A29tdASFHBdT2QJ2PHgx26wSsrOletmiIZjcyJAK9MM=;
+	s=default; t=1550025859;
+	bh=FiJ9h5LQVN4gBWsdWvfnuS7QNw+1Pp55w3h0gdd+5s0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CNh9jDrmGnERTcHBPPDSz88NgnQSA2DvAInrGuL38rsDIuDsjXURipJLgghAmzAX4
-	 /6bGSBUiy27mgxgesR78Ni1k8viHT4F3nFk62I8mtuT9QM5xr5EzKIzaVuxJ27YgsG
-	 c7nVat1HztjUXi5rraaynXQlcZa3p7bAXT6RkHiE=
+	b=S9kczInYpscDHK6h5C0qtkH0sx5HaxzxY1zZT+Mg/dtWEVgKfFo+UFdP6FfayDQwP
+	 RuZO+J1TzpsGnIOk3fP1VZc+obI+9f3ehy0vksaRM/vrn1v458qosKN8hLew2/DtpA
+	 BOirSpPrUtajcMrcWhsrqfg8bONxFatuOzjfbj0c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389270AbfBMClY (ORCPT
+        id S2389244AbfBMClT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 21:41:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45018 "EHLO mail.kernel.org"
+        Tue, 12 Feb 2019 21:41:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389163AbfBMClU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 21:41:20 -0500
+        id S2389163AbfBMClK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 21:41:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62178222C2;
-        Wed, 13 Feb 2019 02:41:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBEA32175B;
+        Wed, 13 Feb 2019 02:41:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550025680;
-        bh=A29tdASFHBdT2QJ2PHgx26wSsrOletmiIZjcyJAK9MM=;
+        s=default; t=1550025669;
+        bh=FiJ9h5LQVN4gBWsdWvfnuS7QNw+1Pp55w3h0gdd+5s0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b4U91/nxe1qAGqn0Oan6Syrb6pfCZd8ltXZVcSaXzCzkNqVd+ASFGC7D15+ZWdKL4
-         gw//viWIdS1mE0Kis7200QQdzcRL7g3APLgztT5+AGrkUV+jh0wkUGLnPD4I1txWBP
-         ZUT57q2YoWJYxe+kX8XYfUUpi8D6QKj29jlKyJB8=
+        b=byJe3JBDNePwPwj5sqG+0Qln++zE/hCvjRh6BwTRMBHZlJdLgP+Jf9hAPwT+1Luzd
+         938A6rxEh6rgUGDS8LtbRP+3vlOvlWRGDrFc7iDGKeqxdwyzlsjaMrKBHL8gLnMeVm
+         HHjcyhIUiaw0H7exInurtihy6tsuBWWsDSxlFRBQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, patches@opensource.cirrus.com
-Subject: [PATCH AUTOSEL 4.4 06/16] mfd: wm5110: Add missing ASRC rate register
-Date:   Tue, 12 Feb 2019 21:41:02 -0500
-Message-Id: <20190213024112.22038-6-sashal@kernel.org>
+Cc:     Tariq Toukan <tariqt@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 20/21] net/mlx5e: Fix wrong (zero) TX drop counter indication for representor
+Date:   Tue, 12 Feb 2019 21:40:39 -0500
+Message-Id: <20190213024040.21740-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190213024112.22038-1-sashal@kernel.org>
-References: <20190213024112.22038-1-sashal@kernel.org>
+In-Reply-To: <20190213024040.21740-1-sashal@kernel.org>
+References: <20190213024040.21740-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -58,37 +58,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
+From: Tariq Toukan <tariqt@mellanox.com>
 
-[ Upstream commit 04c801c18ded421845324255e660147a6f58dcd6 ]
+[ Upstream commit 7fdc1adc52d3975740547a78c2df329bb207f15d ]
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+For representors, the TX dropped counter is not folded from the
+per-ring counters. Fix it.
+
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mfd/wm5110-tables.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/en_rep.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/mfd/wm5110-tables.c b/drivers/mfd/wm5110-tables.c
-index 2bb2d0467a92..c47efe6dcb01 100644
---- a/drivers/mfd/wm5110-tables.c
-+++ b/drivers/mfd/wm5110-tables.c
-@@ -1622,6 +1622,7 @@ static const struct reg_default wm5110_reg_default[] = {
- 	{ 0x00000ECD, 0x0000 },    /* R3789  - HPLPF4_2 */
- 	{ 0x00000EE0, 0x0000 },    /* R3808  - ASRC_ENABLE */
- 	{ 0x00000EE2, 0x0000 },    /* R3810  - ASRC_RATE1 */
-+	{ 0x00000EE3, 0x4000 },    /* R3811  - ASRC_RATE2 */
- 	{ 0x00000EF0, 0x0000 },    /* R3824  - ISRC 1 CTRL 1 */
- 	{ 0x00000EF1, 0x0000 },    /* R3825  - ISRC 1 CTRL 2 */
- 	{ 0x00000EF2, 0x0000 },    /* R3826  - ISRC 1 CTRL 3 */
-@@ -2877,6 +2878,7 @@ static bool wm5110_readable_register(struct device *dev, unsigned int reg)
- 	case ARIZONA_ASRC_ENABLE:
- 	case ARIZONA_ASRC_STATUS:
- 	case ARIZONA_ASRC_RATE1:
-+	case ARIZONA_ASRC_RATE2:
- 	case ARIZONA_ISRC_1_CTRL_1:
- 	case ARIZONA_ISRC_1_CTRL_2:
- 	case ARIZONA_ISRC_1_CTRL_3:
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
+index bf1c09ca73c0..b210c171a380 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_rep.c
+@@ -91,6 +91,7 @@ static void mlx5e_update_sw_rep_counters(struct mlx5e_priv *priv)
+ 
+ 			s->tx_packets		+= sq_stats->packets;
+ 			s->tx_bytes		+= sq_stats->bytes;
++			s->tx_queue_dropped	+= sq_stats->dropped;
+ 		}
+ 	}
+ }
 -- 
 2.19.1
 
