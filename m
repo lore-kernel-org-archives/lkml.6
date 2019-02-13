@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67328C4360F
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B7DC4360F
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C500222C9
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:42:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2754E222CC
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:42:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NjIzVPkQ"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MIR5bn/f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395214AbfBMWm3 (ORCPT
+        id S2395225AbfBMWme (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 17:42:29 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55866 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2395185AbfBMWm0 (ORCPT
+        Wed, 13 Feb 2019 17:42:34 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33284 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2395202AbfBMWm3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 17:42:26 -0500
-Received: by mail-wm1-f68.google.com with SMTP id r17so4289340wmh.5;
-        Wed, 13 Feb 2019 14:42:24 -0800 (PST)
+        Wed, 13 Feb 2019 17:42:29 -0500
+Received: by mail-wm1-f65.google.com with SMTP id h22so2934471wmb.0;
+        Wed, 13 Feb 2019 14:42:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references:reply-to
          :mime-version:content-transfer-encoding;
-        bh=FDryqu5ur4j9ePg/wc9MnpTPYVkBg8AjJFLLJs3gfA8=;
-        b=NjIzVPkQI+bCcLNEI/Rt4U85tu0DGaKik0uQCOMXvSEkO/SvlHDTcAU8+IhLk21y1p
-         5m+FNp4iAWRrJ/k/DDDQZG8GEE1PO9QmTNuEZj9sZ3t8GOVxkaHS88LjJhq6BKQ7N9X3
-         FJu9x7w0j1lXKAVEa9NaOLOiDSwyj28NVgD1R/mi4Ij/muEfi9+4T/7X6PO8M08gwtT4
-         aaJwB93WJNH0Lk9jcLkQo1ju6chbGRcgdS0TIt45lL7EReQ2hPmGRvbjzBEH7IuKbkQK
-         PTBJS9E+bupu40oKgPBcvq9VxB11GBhj6qIU7b2yqA1Ep6uVGLC5RY2njYXlBvxDI91M
-         RhlQ==
+        bh=vgb7J+uzu72a1nLgAIDJQpmIZYI0IWGcwJEvrx3eHk8=;
+        b=MIR5bn/fwd0D9N8Om1k7o8c/GCTN6LB0C3GeABYZt+IdgyaeK88/xnCr2afThsQtba
+         OdrxjaKohAGefxP47UJqddJuo1wL6QROIgYS0nqcNKVXavRx0k4ynvja67Sso2VpdoLb
+         z9j+1xtt6Ba4iqVJyiEtsV6kVv2f6na8AIvyf5kQBP+bHJANL/fMnSMajCnjT+s2x5We
+         S0NgnOqmddtMsILaxMaOff7AK5WqJx2F8sVI6dC5yeP3exfq/e0MKp75IrcRWN3PIgcX
+         a55clojZ32DlpLA7ve3dKZwubnysbhMO49f7OxiSBhfj+QUGvfT6whA+F8zobwRBMXHz
+         Re+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:reply-to:mime-version:content-transfer-encoding;
-        bh=FDryqu5ur4j9ePg/wc9MnpTPYVkBg8AjJFLLJs3gfA8=;
-        b=Yw2hQ/LaP+YDXt+txVaKfoPEMJ6p0qbWRXy0sb37cujzMTxqRwgW8faKS2v5U3D05C
-         LANJ9VfQF5v0veXGGP2a0f9P59HqFnhTB2frFGYnrAjUp2J811zamf4stPfD6kv1I5f+
-         OfJmgSiQ5hiJGJFT0VikTawmqxOD+k/lbo9/R/XVY7iovaPkmoyJRe+WYHMalPlZ2G+e
-         UmxvzAb+myKT1uUjM+lcRR3LqAVUY19nyNPvFFfwetuPDtQQqJ5T2gjKIZrbBWWQtFYF
-         s8x+Ug8+ve1CkXe9PN7dQzqmowH7G3rni8yHOq8YLFs/lFrEdrIjTI4q9EQ9F80q9SaQ
-         /+Nw==
-X-Gm-Message-State: AHQUAuYBnglnpOhBmqubHsfK+8ZZJRXQSe9vqgpxQFF55WwCmbevm79z
-        ixDqKw2ncZvcFIHs10+aDhE=
-X-Google-Smtp-Source: AHgI3Ia10COWxjNMWWeGUZ4kyfPoLmhHvf/GKRNqfO/0o20+P2q+df+RyfuyEETkMZNIJGOmGU8VSw==
-X-Received: by 2002:a1c:e086:: with SMTP id x128mr325384wmg.10.1550097743522;
-        Wed, 13 Feb 2019 14:42:23 -0800 (PST)
+        bh=vgb7J+uzu72a1nLgAIDJQpmIZYI0IWGcwJEvrx3eHk8=;
+        b=Yal/o9RwUYvmMC2Gic5Y1QK0qLW48FAnlZzwKGPxl2O6krtDh0MdCkx9HdPtgZoWXl
+         yruHb4KyooGQdXAwPw/jCUcG3r9VljE3VFMmzCxi3CBpJRzkzKxsTBVA18jHQbdgr9ou
+         /zxiYK5+zvUDPYUWrVqiIlyV3IToqHwsMse2RTNwwW18R7X2VucbAHUHKYRjtx23NLQC
+         tcQ43T+1C1wjcERhF6kcYUDYnguJLipeTNkJAULfhIR/waGKk1XJL3HzrWRGW6Uqm4c3
+         CTBc0QPXK3iNqao/n7EgR2iR8TrSwCUu0qfpyzBXCa0lszij57brOyCAqIUsraDsxpjv
+         /uYw==
+X-Gm-Message-State: AHQUAubHFFTvsnNwxws4LB+qi/NWx3YOJGmTIwMfRhQ5w3OrwZ+a+ISY
+        M5aW3cUCNH5rjSOeV3ADH7U=
+X-Google-Smtp-Source: AHgI3IY/qpx9bIN8m/MToJYg7+VC1FFLoWbQiBQL48Q2ZmiFFaSGSIEBHj0CtX918v3oqTB9pREW7w==
+X-Received: by 2002:a1c:14:: with SMTP id 20mr259551wma.91.1550097747249;
+        Wed, 13 Feb 2019 14:42:27 -0800 (PST)
 Received: from localhost.localdomain ([91.75.74.250])
-        by smtp.gmail.com with ESMTPSA id f196sm780810wme.36.2019.02.13.14.42.20
+        by smtp.gmail.com with ESMTPSA id f196sm780810wme.36.2019.02.13.14.42.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 14:42:22 -0800 (PST)
+        Wed, 13 Feb 2019 14:42:26 -0800 (PST)
 From:   Igor Stoppa <igor.stoppa@gmail.com>
 X-Google-Original-From: Igor Stoppa <igor.stoppa@huawei.com>
 Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
@@ -72,9 +72,9 @@ Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
         linux-integrity@vger.kernel.org,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v5 08/12] __wr_after_init: lkdtm test
-Date:   Thu, 14 Feb 2019 00:41:37 +0200
-Message-Id: <b739e9f8f43cb9cf5843fcb2f90b569bd560fccc.1550097697.git.igor.stoppa@huawei.com>
+Subject: [RFC PATCH v5 09/12] __wr_after_init: rodata_test: refactor tests
+Date:   Thu, 14 Feb 2019 00:41:38 +0200
+Message-Id: <826811306c45f5735b83b169017b40f563f21fba.1550097697.git.igor.stoppa@huawei.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <cover.1550097697.git.igor.stoppa@huawei.com>
 References: <cover.1550097697.git.igor.stoppa@huawei.com>
@@ -87,8 +87,8 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Verify that trying to modify a variable with the __wr_after_init
-attribute will cause a crash.
+Refactor the test cases, in preparation for using them also for testing
+__wr_after_init memory, when available.
 
 Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
 
@@ -106,97 +106,85 @@ CC: kernel-hardening@lists.openwall.com
 CC: linux-mm@kvack.org
 CC: linux-kernel@vger.kernel.org
 ---
- drivers/misc/lkdtm/core.c  |  3 +++
- drivers/misc/lkdtm/lkdtm.h |  3 +++
- drivers/misc/lkdtm/perms.c | 29 +++++++++++++++++++++++++++++
- 3 files changed, 35 insertions(+)
+ mm/rodata_test.c | 48 ++++++++++++++++++++++++++++--------------------
+ 1 file changed, 28 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
-index 2837dc77478e..73c34b17c433 100644
---- a/drivers/misc/lkdtm/core.c
-+++ b/drivers/misc/lkdtm/core.c
-@@ -155,6 +155,9 @@ static const struct crashtype crashtypes[] = {
- 	CRASHTYPE(ACCESS_USERSPACE),
- 	CRASHTYPE(WRITE_RO),
- 	CRASHTYPE(WRITE_RO_AFTER_INIT),
-+#ifdef CONFIG_PRMEM
-+	CRASHTYPE(WRITE_WR_AFTER_INIT),
-+#endif
- 	CRASHTYPE(WRITE_KERN),
- 	CRASHTYPE(REFCOUNT_INC_OVERFLOW),
- 	CRASHTYPE(REFCOUNT_ADD_OVERFLOW),
-diff --git a/drivers/misc/lkdtm/lkdtm.h b/drivers/misc/lkdtm/lkdtm.h
-index 3c6fd327e166..abba2f52ffa6 100644
---- a/drivers/misc/lkdtm/lkdtm.h
-+++ b/drivers/misc/lkdtm/lkdtm.h
-@@ -38,6 +38,9 @@ void lkdtm_READ_BUDDY_AFTER_FREE(void);
- void __init lkdtm_perms_init(void);
- void lkdtm_WRITE_RO(void);
- void lkdtm_WRITE_RO_AFTER_INIT(void);
-+#ifdef CONFIG_PRMEM
-+void lkdtm_WRITE_WR_AFTER_INIT(void);
-+#endif
- void lkdtm_WRITE_KERN(void);
- void lkdtm_EXEC_DATA(void);
- void lkdtm_EXEC_STACK(void);
-diff --git a/drivers/misc/lkdtm/perms.c b/drivers/misc/lkdtm/perms.c
-index 53b85c9d16b8..f681730aa652 100644
---- a/drivers/misc/lkdtm/perms.c
-+++ b/drivers/misc/lkdtm/perms.c
-@@ -9,6 +9,7 @@
- #include <linux/vmalloc.h>
- #include <linux/mman.h>
+diff --git a/mm/rodata_test.c b/mm/rodata_test.c
+index d908c8769b48..e1349520b436 100644
+--- a/mm/rodata_test.c
++++ b/mm/rodata_test.c
+@@ -14,44 +14,52 @@
  #include <linux/uaccess.h>
-+#include <linux/prmem.h>
- #include <asm/cacheflush.h>
+ #include <asm/sections.h>
  
- /* Whether or not to fill the target memory area with do_nothing(). */
-@@ -27,6 +28,10 @@ static const unsigned long rodata = 0xAA55AA55;
- /* This is marked __ro_after_init, so it should ultimately be .rodata. */
- static unsigned long ro_after_init __ro_after_init = 0x55AA5500;
+-static const int rodata_test_data = 0xC3;
++#define INIT_TEST_VAL 0xC3
  
-+/* This is marked __wr_after_init, so it should be in .rodata. */
-+static
-+unsigned long wr_after_init __wr_after_init = 0x55AA5500;
+-void rodata_test(void)
++static const int rodata_test_data = INIT_TEST_VAL;
 +
- /*
-  * This just returns to the caller. It is designed to be copied into
-  * non-executable memory regions.
-@@ -104,6 +109,28 @@ void lkdtm_WRITE_RO_AFTER_INIT(void)
- 	*ptr ^= 0xabcd1234;
- }
- 
-+#ifdef CONFIG_PRMEM
-+
-+void lkdtm_WRITE_WR_AFTER_INIT(void)
-+{
-+	unsigned long *ptr = &wr_after_init;
-+
-+	/*
-+	 * Verify we were written to during init. Since an Oops
-+	 * is considered a "success", a failure is to just skip the
-+	 * real test.
-+	 */
-+	if ((*ptr & 0xAA) != 0xAA) {
-+		pr_info("%p was NOT written during init!?\n", ptr);
-+		return;
-+	}
-+
-+	pr_info("attempting bad wr_after_init write at %p\n", ptr);
-+	*ptr ^= 0xabcd1234;
-+}
-+
-+#endif
-+
- void lkdtm_WRITE_KERN(void)
++static bool test_data(char *data_type, const int *data,
++		      unsigned long start, unsigned long end)
  {
- 	size_t size;
-@@ -200,4 +227,6 @@ void __init lkdtm_perms_init(void)
- 	/* Make sure we can write to __ro_after_init values during __init */
- 	ro_after_init |= 0xAA;
+-	unsigned long start, end;
+ 	int zero = 0;
  
-+	/* Make sure we can write to __wr_after_init during __init */
-+	wr_after_init |= 0xAA;
+ 	/* test 1: read the value */
+ 	/* If this test fails, some previous testrun has clobbered the state */
+-	if (!rodata_test_data) {
+-		pr_err("test 1 fails (start data)\n");
+-		return;
++	if (*data != INIT_TEST_VAL) {
++		pr_err("%s: test 1 fails (init data value)\n", data_type);
++		return false;
+ 	}
+ 
+ 	/* test 2: write to the variable; this should fault */
+-	if (!probe_kernel_write((void *)&rodata_test_data,
+-				(void *)&zero, sizeof(zero))) {
+-		pr_err("test data was not read only\n");
+-		return;
++	if (!probe_kernel_write((void *)data, (void *)&zero, sizeof(zero))) {
++		pr_err("%s: test data was not read only\n", data_type);
++		return false;
+ 	}
+ 
+ 	/* test 3: check the value hasn't changed */
+-	if (rodata_test_data == zero) {
+-		pr_err("test data was changed\n");
+-		return;
++	if (*data != INIT_TEST_VAL) {
++		pr_err("%s: test data was changed\n", data_type);
++		return false;
+ 	}
+ 
+ 	/* test 4: check if the rodata section is PAGE_SIZE aligned */
+-	start = (unsigned long)__start_rodata;
+-	end = (unsigned long)__end_rodata;
+ 	if (start & (PAGE_SIZE - 1)) {
+-		pr_err("start of .rodata is not page size aligned\n");
+-		return;
++		pr_err("%s: start of data is not page size aligned\n",
++		       data_type);
++		return false;
+ 	}
+ 	if (end & (PAGE_SIZE - 1)) {
+-		pr_err("end of .rodata is not page size aligned\n");
+-		return;
++		pr_err("%s: end of data is not page size aligned\n",
++		       data_type);
++		return false;
+ 	}
++	pr_info("%s tests were successful", data_type);
++	return true;
++}
+ 
+-	pr_info("all tests were successful\n");
++void rodata_test(void)
++{
++	test_data("rodata", &rodata_test_data,
++		  (unsigned long)&__start_rodata,
++		  (unsigned long)&__end_rodata);
  }
 -- 
 2.19.1
