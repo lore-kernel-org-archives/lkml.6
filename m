@@ -2,133 +2,126 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 647F0C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98FFFC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:32:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34F14222B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:32:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6322C222BB
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 12:32:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550061129;
-	bh=x/nWmipnAVSXp+Bn4F6Z8ByPTf/rOp5QHWHyDMH6g90=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=ZXCT7XDw+UO0ButaS3U+8F5itiKiSSKluM4a8UzHA5LeJBGZmUkxqwfO6cAEBNAKk
-	 yDp/63Hn0sEFP8o+tZWAAWjGU/tonaXPdqBGdWek+liV+HzRdob+dc8HTK6fKDT6cv
-	 TJVRWU+KA9mMchnrVmry9rXGElwJlxYMwKCpKgSs=
+	s=default; t=1550061171;
+	bh=XLFvBgO2WPUBjd3pk64TUX8NwhLDuGjs2UpDTY0W0JQ=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=hIYdSRtmrc8wAKXlT6/W/jPOYlQeevYbdDXPul/M4BB/Vtug+Ph4XbOXwQ9qyHqx9
+	 fRTj8/oL9LhQGgEcTL896rHYIC2su5d/N63eF3WU4OiH1Pxd9ojsPa42DsLVwh07ye
+	 5fhmRmDZaL9RdQN9fQK58WAobpcwjjN/tIui1S9M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404147AbfBMMcH (ORCPT
+        id S2404157AbfBMMct (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 07:32:07 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57794 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404104AbfBMMcG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 07:32:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=GdUp/FX2y5ub4uJLSnF7rDP7Hv9t/8aUaO7+malV/g8=; b=PJWKE9tI2FGj
-        VFLKa1R0OoVnWc38sm4fv7q4o+ilanCQ1E3eJFDg2bUQMZqtkC9b8tTZ8eGaNC5uZoErsUTAZgatK
-        ZdgqILR19IQjZhEthijXQ8LLKxr6TIR1bIXZJcXZ+7fwgd1V+oiyhngQYdfJ570028Dh+bVsKbH/9
-        Bt8ss=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gtthi-0004JT-R1; Wed, 13 Feb 2019 12:31:54 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 6E51D1128159; Wed, 13 Feb 2019 12:31:54 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Lanqing Liu <lanqing.liu@unisoc.com>
-Cc:     Baolin Wang <baolin.wang@linaro.org>,
-        Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, orsonzhai@gmail.com,
-        zhang.lyra@gmail.com, lanqing.liu@unisoc.com,
-        baolin.wang@linaro.org, linux-spi@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Applied "dt-bindings: spi: Add the DMA properties for the SPI dma mode" to the spi tree
-In-Reply-To:  <2be9d6de92507e5886433fb2cd55117c63b63d72.1550043082.git.baolin.wang@linaro.org>
-X-Patchwork-Hint: ignore
-Message-Id: <20190213123154.6E51D1128159@debutante.sirena.org.uk>
-Date:   Wed, 13 Feb 2019 12:31:54 +0000 (GMT)
+        Wed, 13 Feb 2019 07:32:49 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46126 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388157AbfBMMct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 07:32:49 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 88985AC610;
+        Wed, 13 Feb 2019 12:32:48 +0000 (UTC)
+Received: from krava.brq.redhat.com (unknown [10.43.17.136])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E454360856;
+        Wed, 13 Feb 2019 12:32:46 +0000 (UTC)
+From:   Jiri Olsa <jolsa@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: [PATCH 00/10] perf tools: Assorted fixes
+Date:   Wed, 13 Feb 2019 13:32:36 +0100
+Message-Id: <20190213123246.4015-1-jolsa@kernel.org>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Wed, 13 Feb 2019 12:32:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+hi,
+sending assorted general fixes that queued
+up in my other branches.
 
-   dt-bindings: spi: Add the DMA properties for the SPI dma mode
+Also available in here:
+  https://git.kernel.org/pub/scm/linux/kernel/git/jolsa/perf.git
+  perf/fixes
 
-has been applied to the spi tree at
+thanks,
+jirka
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 6dcb144f7da634e4a0f8837e5076ef48e4d6ac12 Mon Sep 17 00:00:00 2001
-From: Lanqing Liu <lanqing.liu@unisoc.com>
-Date: Wed, 13 Feb 2019 15:36:10 +0800
-Subject: [PATCH] dt-bindings: spi: Add the DMA properties for the SPI dma mode
-
-Add the DMA properties for the SPI dma mode.
-
-Signed-off-by: Lanqing Liu <lanqing.liu@unisoc.com>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- Documentation/devicetree/bindings/spi/spi-sprd.txt | 7 +++++++
- 1 file changed, 7 insertions(+)
+Jiri Olsa (10):
+      perf tools: Compile perf with libperf-in.o instead of libperf.a
+      perf tools: Rename LIB_FILE to LIBPERF_A
+      perf tools: Rename build libperf to perf
+      perf tools: Fix legacy events symbol separator parsing
+      perf list: Display metric expressions for --details option
+      perf header: Fix wrong node write in NUMA_TOPOLOGY feature
+      perf header: Get rid of write_it label
+      perf header: Remove cpu_nr from struct cpu_topo
+      perf tools: Add perf_topo_cpu object
+      perf tools: Add perf_topo_numa object
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-sprd.txt b/Documentation/devicetree/bindings/spi/spi-sprd.txt
-index bad211a19da4..3c7eacce0ee3 100644
---- a/Documentation/devicetree/bindings/spi/spi-sprd.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-sprd.txt
-@@ -14,6 +14,11 @@ Required properties:
- 	address on the SPI bus. Should be set to 1.
- - #size-cells: Should be set to 0.
- 
-+Optional properties:
-+dma-names: Should contain names of the SPI used DMA channel.
-+dmas: Should contain DMA channels and DMA slave ids which the SPI used
-+	sorted in the same order as the dma-names property.
-+
- Example:
- spi0: spi@70a00000{
- 	compatible = "sprd,sc9860-spi";
-@@ -21,6 +26,8 @@ spi0: spi@70a00000{
- 	interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
- 	clock-names = "spi", "source","enable";
- 	clocks = <&clk_spi0>, <&ext_26m>, <&clk_ap_apb_gates 5>;
-+	dma-names = "rx_chn", "tx_chn";
-+	dmas = <&apdma 11 11>, <&apdma 12 12>;
- 	#address-cells = <1>;
- 	#size-cells = <0>;
- };
--- 
-2.20.1
-
+ tools/perf/Build                                |  10 +++---
+ tools/perf/Makefile.perf                        |  22 ++++++------
+ tools/perf/arch/Build                           |   4 +--
+ tools/perf/arch/arm/Build                       |   4 +--
+ tools/perf/arch/arm/tests/Build                 |   8 ++---
+ tools/perf/arch/arm/util/Build                  |   8 ++---
+ tools/perf/arch/arm64/Build                     |   4 +--
+ tools/perf/arch/arm64/tests/Build               |   6 ++--
+ tools/perf/arch/arm64/util/Build                |  12 +++----
+ tools/perf/arch/nds32/Build                     |   2 +-
+ tools/perf/arch/nds32/util/Build                |   2 +-
+ tools/perf/arch/powerpc/Build                   |   4 +--
+ tools/perf/arch/powerpc/tests/Build             |   6 ++--
+ tools/perf/arch/powerpc/util/Build              |  18 +++++-----
+ tools/perf/arch/s390/Build                      |   2 +-
+ tools/perf/arch/s390/util/Build                 |  12 +++----
+ tools/perf/arch/sh/Build                        |   2 +-
+ tools/perf/arch/sh/util/Build                   |   2 +-
+ tools/perf/arch/sparc/Build                     |   2 +-
+ tools/perf/arch/sparc/util/Build                |   2 +-
+ tools/perf/arch/x86/Build                       |   4 +--
+ tools/perf/arch/x86/tests/Build                 |  14 ++++----
+ tools/perf/arch/x86/util/Build                  |  30 ++++++++--------
+ tools/perf/arch/xtensa/Build                    |   2 +-
+ tools/perf/arch/xtensa/util/Build               |   2 +-
+ tools/perf/builtin-list.c                       |   8 ++---
+ tools/perf/scripts/Build                        |   4 +--
+ tools/perf/scripts/perl/Perf-Trace-Util/Build   |   2 +-
+ tools/perf/scripts/python/Perf-Trace-Util/Build |   2 +-
+ tools/perf/tests/parse-events.c                 |  30 ++++++++++++++++
+ tools/perf/trace/beauty/Build                   |  26 +++++++-------
+ tools/perf/ui/Build                             |  18 +++++-----
+ tools/perf/ui/browsers/Build                    |  10 +++---
+ tools/perf/ui/tui/Build                         |   8 ++---
+ tools/perf/util/Build                           | 277 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----------------------------------------------------------------------
+ tools/perf/util/c++/Build                       |   4 +--
+ tools/perf/util/cputopo.c                       | 264 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ tools/perf/util/cputopo.h                       |  33 +++++++++++++++++
+ tools/perf/util/cs-etm-decoder/Build            |   2 +-
+ tools/perf/util/header.c                        | 277 +++++++++++++++++------------------------------------------------------------------------------------------------------------------------------
+ tools/perf/util/intel-pt-decoder/Build          |   2 +-
+ tools/perf/util/metricgroup.c                   |   8 ++++-
+ tools/perf/util/metricgroup.h                   |   3 +-
+ tools/perf/util/parse-events.c                  |   2 +-
+ tools/perf/util/parse-events.y                  |   4 +--
+ tools/perf/util/scripting-engines/Build         |   4 +--
+ 46 files changed, 647 insertions(+), 525 deletions(-)
+ create mode 100644 tools/perf/util/cputopo.c
+ create mode 100644 tools/perf/util/cputopo.h
