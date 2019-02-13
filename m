@@ -2,119 +2,110 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7E35C43381
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:33:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB08C00319
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:37:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9364421872
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:33:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A62F222C9
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 22:37:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392469AbfBMWdX (ORCPT
+        id S2395104AbfBMWh1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 17:33:23 -0500
-Received: from mout.kundenserver.de ([217.72.192.74]:33531 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728708AbfBMWdW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 17:33:22 -0500
-Received: from oxbaltgw00.schlund.de ([172.19.246.6]) by
- mrelayeu.kundenserver.de (mreue109 [213.165.67.113]) with ESMTPSA (Nemesis)
- id 1N95mL-1h6vJ11dcl-0169yT; Wed, 13 Feb 2019 23:33:12 +0100
-Date:   Wed, 13 Feb 2019 23:33:11 +0100 (CET)
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Eric Anholt <eric@anholt.net>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Cc:     linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com
-Message-ID: <1278623750.602548.1550097191567@email.ionos.de>
-In-Reply-To: <87tvh7v8yd.fsf@anholt.net>
-References: <20190213003324.15224-1-eric@anholt.net>
- <20190213003324.15224-2-eric@anholt.net>
- <648bbc3e-6690-9b05-cae5-bf81edbec74a@i2se.com> <87tvh7v8yd.fsf@anholt.net>
-Subject: Re: [PATCH 2/2] soc: bcm: bcm2835-pm: Fix error paths of
- initialization.
+        Wed, 13 Feb 2019 17:37:27 -0500
+Received: from mga05.intel.com ([192.55.52.43]:38579 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727471AbfBMWh1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 17:37:27 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 14:37:26 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,366,1544515200"; 
+   d="scan'208";a="122254784"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by fmsmga007.fm.intel.com with ESMTP; 13 Feb 2019 14:37:26 -0800
+Date:   Wed, 13 Feb 2019 15:37:11 -0700
+From:   Keith Busch <keith.busch@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Sagi Grimberg <sagi@grimberg.me>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
+        Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH V3 1/5] genirq/affinity: don't mark 'affd' as const
+Message-ID: <20190213223711.GC8027@localhost.localdomain>
+References: <20190213105041.13537-1-ming.lei@redhat.com>
+ <20190213105041.13537-2-ming.lei@redhat.com>
+ <20190213150407.GB96272@google.com>
+ <alpine.DEB.2.21.1902132112590.1659@nanos.tec.linutronix.de>
+ <20190213213149.GB8027@localhost.localdomain>
+ <alpine.DEB.2.21.1902132232560.1659@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev47
-X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K1:DqYO30DjaNHimC3rWe2Bs3YBnZMLZYdE4l/CtepfnpKTvvQIVcz
- Uz/VxVAUshlJDI90DG1qTZBQB2EHTpnrR/dyNY6jcdMPp2Nm0GsmyBGUlixi0YVYYkYSGfl
- AUPU9v+HiBdg+82ec/s40HjcK2CYJCL4imcCHraDb7VfB+p4afplTrzfkckYCDnRotnMj31
- +Zxq8YbGTN8r24gx5Wilg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:lkLhe2+p65M=:zN8LflAYN4T935rhvTqBlb
- B3IqtSknE9nmtNxVbNAdqSDL48yTeo6PATztadycIpFgjW6E1UxvinNLbz8YQCcd7QuyuZok4
- AykWOPqaSFyLT4IuWUt2IwOs7AoNxS4XZ7zhz0vdzyBg/dSseciB9PYvzDua1rE2giJuJUX/I
- oRAz22jtrheafDRwycE85E9pDQ6NZZHj22cjDqp3VKEl+xcQOSSMV5CwHkDMspQUCorug+mZK
- +BDrMBlp6gcMWXISTGbZ6D0+XOfhdS4VJXIg2qytox1v0Y6G2da2VJGAdmq9zLM5oY1Px8ScW
- NIQzni/cdWPDbnsFxTDJRMoTpMNEvt77t/snjAIXfrwOwEZ+RwsbSKcMD+m79dNSpR9CCrxDb
- /cZR7xQ2ou+prjhaBPIHa5/KpPN8RdpdZkWdncHH+o79uIVO9/zmbnhpdmOTPLKgMixFBoh7I
- LZtSGIma8NwpM8onebowleAGp4bkBESVDUtDw5RMkey66vxJoBGkDlNiDCNHmH8aXGnOg93wv
- YHyJClQuzXCSPxTQjG7AAETGlqPJjXkLrD5A7FRj4eL5iNZSTJlYC26+e4GrHVX5AQIO2ZmbY
- x4BZP8sB+DO8V0yehrSRaqVTQ6vH/lEd7gwmKvY2eAxAbPYZ7ntBf/SkNZ2a7fMWL3KwWppUt
- J5imzIZp7SHrsniS4RbE8WZcX5P7OJnWCXl7ki9ic/H6pTl2Qxsc8RGzu7oDSXSgaYmv/MVIw
- wYciWO9dG9r0xrS+E2jGIQ1D3pYRsE8YtJXX0DBMUOC0x+uf4D0LZTXTmTE=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1902132232560.1659@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-> Eric Anholt <eric@anholt.net> hat am 13. Februar 2019 um 19:28 geschrieben:
+On Wed, Feb 13, 2019 at 10:41:55PM +0100, Thomas Gleixner wrote:
+> Btw, while I have your attention. There popped up an issue recently related
+> to that affinity logic.
 > 
+> The current implementation fails when:
 > 
-> Stefan Wahren <stefan.wahren@i2se.com> writes:
+>         /*
+>          * If there aren't any vectors left after applying the pre/post
+>          * vectors don't bother with assigning affinity.
+> 	 */
+> 	if (nvecs == affd->pre_vectors + affd->post_vectors)
+>     		return NULL;
 > 
-> > Hi Eric,
-> >
-> > Am 13.02.19 um 01:33 schrieb Eric Anholt:
-> >> The clock driver may probe after ours and so we need to pass the
-> >> -EPROBE_DEFER out.  Fix the other error path while we're here.
-> >>
-> >> Signed-off-by: Eric Anholt <eric@anholt.net>
-> >> Fixes: 670c672608a1 ("soc: bcm: bcm2835-pm: Add support for power domains under a new binding.")
-> >> ---
-> >>  drivers/soc/bcm/bcm2835-power.c | 30 +++++++++++++++++++++++++-----
-> >>  1 file changed, 25 insertions(+), 5 deletions(-)
-> >>
-> >> diff --git a/drivers/soc/bcm/bcm2835-power.c b/drivers/soc/bcm/bcm2835-power.c
-> >> index 4a1b99b773c0..11f9469423f7 100644
-> >> --- a/drivers/soc/bcm/bcm2835-power.c
-> >> +++ b/drivers/soc/bcm/bcm2835-power.c
-> >> @@ -485,7 +485,7 @@ static int bcm2835_power_pd_power_off(struct generic_pm_domain *domain)
-> >>  	}
-> >>  }
-> >>  
-> >> -static void
-> >> +static int
-> >>  bcm2835_init_power_domain(struct bcm2835_power *power,
-> >>  			  int pd_xlate_index, const char *name)
-> >>  {
-> >> @@ -493,6 +493,12 @@ bcm2835_init_power_domain(struct bcm2835_power *power,
-> >>  	struct bcm2835_power_domain *dom = &power->domains[pd_xlate_index];
-> >>  
-> >>  	dom->clk = devm_clk_get(dev->parent, name);
-> >> +	if (IS_ERR(dom->clk)) {
-> >> +		int ret = PTR_ERR(dom->clk);
-> >> +
-> >> +		if (ret == -EPROBE_DEFER)
-> >> +			return ret;
-> > is it safe to proceed in the other error cases?
-> > Even it would be more consistent with clk_prepare_enable() to print an
-> > error here.
+> Now the discussion arised, that in that case the affinity sets are not
+> allocated and filled in for the pre/post vectors, but somehow the
+> underlying device still works and later on triggers the warning in the
+> blk-mq code because the MSI entries do not have affinity information
+> attached.
+>
+> Sure, we could make that work, but there are several issues:
 > 
-> Yes, not all domains have a clk, so we want to ignore the other error.
+>     1) irq_create_affinity_masks() has another reason to return NULL:
+>        memory allocation fails.
+> 
+>     2) Does it make sense at all.
+> 
+> Right now the PCI allocator ignores the NULL return and proceeds without
+> setting any affinities. As a consequence nothing is managed and everything
+> happens to work.
+> 
+> But that happens to work is more by chance than by design and the warning
+> is bogus if this is an expected mode of operation.
+> 
+> We should address these points in some way.
 
-But shouldn't we set dom->clk to NULL instead of keeping the error pointer? AFAIK clk_prepare_enable is aware of NULL instead of error pointer.
+Ah, yes, that's a mistake in the nvme driver. It is assuming IO queues are
+always on managed interrupts, but that's not true if when only 1 vector
+could be allocated. This should be an appropriate fix to the warning:
 
-> And we shouldn't print for defers, generally.
-
-Sure, i wanted to refer to all the other error cases.
-
-Stefan
+---
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 022ea1ee63f8..f2ccebe1c926 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -506,7 +506,7 @@ static int nvme_pci_map_queues(struct blk_mq_tag_set *set)
+ 		 * affinity), so use the regular blk-mq cpu mapping
+ 		 */
+ 		map->queue_offset = qoff;
+-		if (i != HCTX_TYPE_POLL)
++		if (i != HCTX_TYPE_POLL && dev->num_vecs > 1)
+ 			blk_mq_pci_map_queues(map, to_pci_dev(dev->dev), offset);
+ 		else
+ 			blk_mq_map_queues(map);
+--
