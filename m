@@ -2,166 +2,156 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CC20C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:38:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F0CC282C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:38:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AB962175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:38:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="dzliPKzA"
+	by mail.kernel.org (Postfix) with ESMTP id BBA102175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 17:38:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393210AbfBMRiM (ORCPT
+        id S2393198AbfBMRiK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 12:38:12 -0500
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:25704 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390306AbfBMRiF (ORCPT
+        Wed, 13 Feb 2019 12:38:10 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47494 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2390226AbfBMRhx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 12:38:05 -0500
-X-IronPort-AV: E=Sophos;i="5.58,366,1544511600"; 
-   d="scan'208";a="26504863"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 13 Feb 2019 10:37:51 -0700
-Received: from NAM03-DM3-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.105) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Wed, 13 Feb 2019 10:37:51 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gmimxU55TllXSOjDWoihlOkLtXWVGJUmNFDjygcYR3w=;
- b=dzliPKzAWuHwkFwWAItnSOZWXptuMNQ8/k0T34xu3luLdfq5Wu1sZI3cSYAzyuSe4zE6R/hXQM5hOTYy6+mT/baF7dPJCRrwcB+i781EYXV3TUZzDhQpzgXCahzeGmx0CNBvGaS0qCgxUIHNrVMDvuJLKEJaSbJkMI+VDMEb8GA=
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.98.146) by
- BN6PR11MB1378.namprd11.prod.outlook.com (10.173.33.10) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.22; Wed, 13 Feb 2019 17:37:49 +0000
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::847:4296:13b9:fc9f]) by BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::847:4296:13b9:fc9f%8]) with mapi id 15.20.1601.023; Wed, 13 Feb 2019
- 17:37:49 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <palmer@sifive.com>, <marek.vasut@gmail.com>
-CC:     <wesley@sifive.com>, <richard@nod.at>,
-        <linux-kernel@vger.kernel.org>, <bbrezillon@kernel.org>,
-        <linux-mtd@lists.infradead.org>, <paul.walmsley@sifive.com>,
-        <computersforpeace@gmail.com>, <dwmw2@infradead.org>
-Subject: Re: [PATCH v2 2/2] spi-nor: add support for is25wp256
-Thread-Topic: [PATCH v2 2/2] spi-nor: add support for is25wp256
-Thread-Index: AQHUu8lZNYJ2Ubpy8EavTZ/VcmOfWqXeCw0AgAADBAA=
-Date:   Wed, 13 Feb 2019 17:37:49 +0000
-Message-ID: <92a75f0c-372f-df8e-f99d-264217046f55@microchip.com>
-References: <20180807194059.26348-1-palmer@sifive.com>
- <20180807194059.26348-3-palmer@sifive.com>
- <ef174850-93df-6032-c742-68237c37afde@microchip.com>
-In-Reply-To: <ef174850-93df-6032-c742-68237c37afde@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR0801CA0068.eurprd08.prod.outlook.com
- (2603:10a6:800:7d::12) To BN6PR11MB1842.namprd11.prod.outlook.com
- (2603:10b6:404:101::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tudor.Ambarus@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 071c789d-7f01-4c9b-0bdd-08d691d9f8e2
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1378;
-x-ms-traffictypediagnostic: BN6PR11MB1378:
-x-microsoft-exchange-diagnostics: =?utf-8?B?MTtCTjZQUjExTUIxMzc4OzIzOmxHUWRnNjNyQ0ZUR0dVWFpoM1pDYlo1SEFz?=
- =?utf-8?B?OHBJcXpwYVZueTNEQ2NVdDRveVdJK2phdlc1Z2tybGZzUzloTU13YUpycm9I?=
- =?utf-8?B?bUFhQzN1bXJZYjVONFdRTUVWZVQwYzdmVjI2K1A1bVRDRlFOdUdzRHBzUVVD?=
- =?utf-8?B?ZFFwbWUwb3hGeWVCMit1V1ZWalpRdXluYk1QS3NKM1hiOG55WUJ5OWVQY29H?=
- =?utf-8?B?YUIrRWQyRkRIUVRqaHAvVGpDVjZXVUh3eTRyS3hpbU5mZ2ljeE80aWNNcjJr?=
- =?utf-8?B?anVRa1g4YTdvSkZxYmdGTVkzSHJkRmp6MDdwL3NrVFZFOVp5REgxc2FIM282?=
- =?utf-8?B?TUtjQWZVQ0E2OHFMdmQyU2lFMFNrREVRK1VTcXcxVGFWWmg4SnRmU2p4MHls?=
- =?utf-8?B?dFM4c0Y1YnFlcHJjeGZScythaW1jNG1pbWpxOTVHYjlBL09ocnEzS1Z4Y0lL?=
- =?utf-8?B?UUVRR2RYSWdCRk82MnljSnRtWW1kMDk5azF4UHVDeHBZUmN3dVZJYWdpcm1w?=
- =?utf-8?B?UlFGK2E2Nkp3K1RiTlhjemxCc0FraTBOSHYxZ3dTTGF4VGVzZ3VqTFEyaStF?=
- =?utf-8?B?VGFma1hCSTlKdnVUbkphRkFTQXY1cDc5eHVBN2JDSS92OHlKZTB3SnlsNTd3?=
- =?utf-8?B?N2lZRWlsZVhtK1FOOHE1eU5aN25DZms5WjB0Vjg2ZHJCcEhtUllybTRxMERs?=
- =?utf-8?B?MzkrVHpZL2JYd1BpcjNhU2UxSmc5OXhENUZZSnJSMVJOYmRtN0l2TjdOY2Q4?=
- =?utf-8?B?YjRwN3RuUkRaZUlEYTFWQ3cybUhwMTQzbzNiQ1hiZ3o5bWplcG9UMGVLTTNk?=
- =?utf-8?B?RWsxWUllMkdBVmwxTkpxL0FEOHlEamp3cGZ6d24yTmdXYU9McmdOcldENlhO?=
- =?utf-8?B?YktqMVpDZnlWYjdXdmx1SjlFVTRYVkgveFVvR2xTeCtHYmxhSlVHdjJtNVQ5?=
- =?utf-8?B?NUJReitoR2VIRi9KWThXbWhhUU16dWlaaW91MEZEaFprQzhqRzBjY0JIemw1?=
- =?utf-8?B?OXRTNFBRRVcxNHZPS2xyYklHYVczd2Z6eHkxelkyNWpxcWd0ZytsTW1qTDhD?=
- =?utf-8?B?dy9JMGorL21TZ2JudDFNTWNodEVFQ3hxR0lra2Y4UDRhemlwTmQ4cG1Gd1Vs?=
- =?utf-8?B?c0NJNGtVNEJtR0ZQbEczV2t5eHY2MGlOSzNsN2ZyLzhrNEJPQWFnTDN5TWZ6?=
- =?utf-8?B?Z1NIa0ZlM3J0Nzc5ZGc0VG5BeUJyUy85WC9oR1Evc3gwUk1lZ04wRndpK00y?=
- =?utf-8?B?NVVNYWYxK3plamVWQkFaVlpRSmlQOXJEeWxQSGx2T1Fwci9BT1RmWk8xLzRF?=
- =?utf-8?B?azAvUEpuenhCRno1QVM2eXF3YjhPWG5sRThwYU9JS2gzT1AxcERKN1hFSEYx?=
- =?utf-8?B?MFl6aEhLeUVjK3pBeUhkckZHWDV4NWhWUm42c2JiRGc1bDBUY1hYSU54alJj?=
- =?utf-8?B?RThPcEdlSnljVlhQSTBDN21yZm5oc25scHFlcW0zK1ZtU1o3NE8raFdJQTE1?=
- =?utf-8?B?eVFWV1lrc05meTVFM3J6QUJwdFNGbW1kU0lmeWN0VXEwcU4wVTNnbGlmQS9t?=
- =?utf-8?B?NWxvYzFMSTZscnJSRUIxdlh1S3RUTVBhbmwrR0NNQ2NYRjZBWlQvN1NaRzMy?=
- =?utf-8?B?SFkyRCtHeGNzZHIrdHp4K05zbXN0UzB4UGlkRHlRZ2QzL1c1NXZJcXhxSjJv?=
- =?utf-8?B?UVRWUko5MDBmTmhVS0MyU3kwZlYxcENQdllQenV3NmNTM3NGd3g3ZGdkamVs?=
- =?utf-8?B?dTk3Z2JWcklubEpSeEJ4RzAvYmtJWFdzL2NDNTRJdERJOXZrWTFCNnk3SXAr?=
- =?utf-8?B?RS9OR0lrLzZpeTFnN2sxMnp0c1FCZ0JyVmNHRjM4b29aTEE9PQ==?=
-x-microsoft-antispam-prvs: <BN6PR11MB13783DB1AB4520DBC8B43078F0660@BN6PR11MB1378.namprd11.prod.outlook.com>
-x-forefront-prvs: 094700CA91
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(346002)(376002)(396003)(39860400002)(189003)(199004)(53546011)(7416002)(386003)(6506007)(7736002)(6486002)(229853002)(6436002)(106356001)(476003)(486006)(2616005)(305945005)(105586002)(11346002)(6116002)(446003)(3846002)(4326008)(102836004)(26005)(25786009)(31686004)(186003)(14444005)(68736007)(76176011)(52116002)(478600001)(72206003)(2906002)(6246003)(2501003)(71190400001)(8676002)(81166006)(81156014)(8936002)(86362001)(6512007)(14454004)(66066001)(97736004)(71200400001)(31696002)(36756003)(256004)(316002)(54906003)(99286004)(53936002)(110136005)(138113003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1378;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: RDsogw1e1Y7OOnG8axbYngXP8JFMLzHmnk6J5yq817aA+Z1BdcIrkxDgXAgE7Tz7OfLDEwVF+DaLI4Cu46QK9jTJsgDPdy28hwU4CCTXZedy2X4lAwQdyhy9V1CIZlA/sUSzJpxQujFsSitQ9QT5pjDgkPj0mFVe7T4Rz6C7N9FesXdDOZQiUAMI0Avuc+OJse3kipIh5jvbRLrqL+lNybqk6hzsU2at8xR3JngLZQXM+HdU0OZjhSCns3fQRMSW7YpH0UWskuysDXttGqyd5Ox8XlbVfeQyPlGTu4Nfu/ylyHvhQHeel6tIB9X+vDAR3iDDDJJgO8hKMIqTPctZdhLXcq18ZtDzDyhzNy/t8iIVkzqakPXPqaZYF+iulJh5CKHtlqhbWqGxwwllMwHHINyX9iOqaToQuy9xofnOCYg=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <47E67AA48EDB804A9BCD83DC11602D73@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 071c789d-7f01-4c9b-0bdd-08d691d9f8e2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Feb 2019 17:37:47.2885
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1378
-X-OriginatorOrg: microchip.com
+        Wed, 13 Feb 2019 12:37:53 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1DHSrdB008824
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 12:37:51 -0500
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qmpbbmdtk-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 12:37:51 -0500
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 13 Feb 2019 17:37:50 -0000
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 13 Feb 2019 17:37:45 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1DHbiQS20709382
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Feb 2019 17:37:45 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D86F5B2065;
+        Wed, 13 Feb 2019 17:37:44 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C3E8CB2066;
+        Wed, 13 Feb 2019 17:37:44 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.41])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 13 Feb 2019 17:37:44 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id D52D516C63E4; Wed, 13 Feb 2019 09:37:44 -0800 (PST)
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mingo@kernel.org
+Cc:     stern@rowland.harvard.edu, parri.andrea@gmail.com,
+        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
+        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
+        luc.maranget@inria.fr, akiyks@gmail.com,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>
+Subject: [PATCH memory-model 7/7] tools/memory-model: Avoid duplicating herdtools versions
+Date:   Wed, 13 Feb 2019 09:37:43 -0800
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190213173650.GA26078@linux.ibm.com>
+References: <20190213173650.GA26078@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19021317-0064-0000-0000-000003A8302D
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010589; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000279; SDB=6.01160548; UDB=6.00605725; IPR=6.00941102;
+ MB=3.00025565; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-13 17:37:49
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021317-0065-0000-0000-00003C678742
+Message-Id: <20190213173743.26682-7-paulmck@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-13_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902130124
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDAyLzEzLzIwMTkgMDc6MjcgUE0sIFR1ZG9yLkFtYmFydXNAbWljcm9jaGlwLmNvbSB3
-cm90ZToNCj4gSGksDQo+IA0KPiBUaGlzIG9uZSBsb29rcyBwcmV0dHkgZ29vZC4gWW91J2xsIGhh
-dmUgdG8gc3RhcnQgdGhlIHBhdGNoJ3Mgc3ViamVjdCB3aXRoICJtdGQ6DQo+IHNwaS1ub3I6IiBp
-bnN0ZWFkIG9mIGp1c3QgInNwaS1ub3IiLg0KPiANCj4gV2hlbiBpbiBkb3VidCwgcnVuIGdpdCBs
-b2cgLS1vbmVsaW5lIG9uIHRoZSBmaWxlIHRoYXQgeW91IGFyZSBtb2RpZnlpbmcgYW5kIHNlZQ0K
-PiBob3cgcHJldmlvdXMgcGF0Y2hlcyBhcmUgcHJlZml4aW5nIHRoZSBzdWJqZWN0Lg0KPiANCj4g
-T24gMDgvMDcvMjAxOCAxMDo0MCBQTSwgUGFsbWVyIERhYmJlbHQgd3JvdGU6DQo+PiBGcm9tOiAi
-V2VzbGV5IFcuIFRlcnBzdHJhIiA8d2VzbGV5QHNpZml2ZS5jb20+DQo+Pg0KPj4gVGhpcyBpcyB1
-c2VkIG9mIHRoZSBIaUZpdmUgVW5sZWFzaGVkIGRldmVsb3BtZW50IGJvYXJkLCBhbmQgZm9sbG93
-cyB0aGUNCj4+IHBhdHRlcm4gb2Ygc2ltaWxhciBJU1NJIGRldmljZXMgYWxyZWFkeSBsaXN0ZWQu
-DQo+Pg0KPiBQbGVhc2UgYWRkIGEgY29tbWVudCBhbmQgbGV0IHVzIGtub3cgaG93IHlvdSB0ZXN0
-ZWQgdGhlIGZsYXNoLCBpdCdzIGFsd2F5cw0KPiBjb21mb3J0YWJsZSB0byBzZWUgdGhhdCBuZXcg
-c3VwcG9ydCB3YXMgYWN0dWFsbHkgdGVzdGVkLg0KPiANCj4+IFNpZ25lZC1vZmYtYnk6IFdlc2xl
-eSBXLiBUZXJwc3RyYSA8d2VzbGV5QHNpZml2ZS5jb20+DQo+PiBTaWduZWQtb2ZmLWJ5OiBQYWxt
-ZXIgRGFiYmVsdCA8cGFsbWVyQHNpZml2ZS5jb20+DQo+PiAtLS0NCj4+ICBkcml2ZXJzL210ZC9z
-cGktbm9yL3NwaS1ub3IuYyB8IDIgKysNCj4+ICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25z
-KCspDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbXRkL3NwaS1ub3Ivc3BpLW5vci5jIGIv
-ZHJpdmVycy9tdGQvc3BpLW5vci9zcGktbm9yLmMNCj4+IGluZGV4IGFhYjkzNDYzYTVlNy4uZjEw
-MDE3YjQ1NDNkIDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVycy9tdGQvc3BpLW5vci9zcGktbm9yLmMN
-Cj4+ICsrKyBiL2RyaXZlcnMvbXRkL3NwaS1ub3Ivc3BpLW5vci5jDQo+PiBAQCAtMTA3Miw2ICsx
-MDcyLDggQEAgc3RhdGljIGNvbnN0IHN0cnVjdCBmbGFzaF9pbmZvIHNwaV9ub3JfaWRzW10gPSB7
-DQo+PiAgCQkJU0VDVF80SyB8IFNQSV9OT1JfRFVBTF9SRUFEIHwgU1BJX05PUl9RVUFEX1JFQUQp
-IH0sDQo+PiAgCXsgImlzMjV3cDEyOCIsICBJTkZPKDB4OWQ3MDE4LCAwLCA2NCAqIDEwMjQsIDI1
-NiwNCj4+ICAJCQlTRUNUXzRLIHwgU1BJX05PUl9EVUFMX1JFQUQgfCBTUElfTk9SX1FVQURfUkVB
-RCkgfSwNCj4+ICsJeyAiaXMyNXdwMjU2IiwgIElORk8oMHg5ZDcwMTksIDAsIDY0ICogMTAyNCwg
-NTEyLA0KPj4gKwkgICAgICAgICAgICAgICAgU0VDVF80SyB8IFNQSV9OT1JfRFVBTF9SRUFEIHwg
-U1BJX05PUl9RVUFEX1JFQUQpIH0sDQoNCmRvbid0IGZvcmdldCB0byBmaXggdGhlIGNoZWNrcGF0
-Y2ggd2FybmluZyB3aGVuIHJlc3VibWl0dGluZzoNCiQgLi9zY3JpcHRzL2NoZWNrcGF0Y2gucGwg
-LS1zdHJpY3QgdjItMi0yLXNwaS1ub3ItYWRkLXN1cHBvcnQtZm9yLWlzMjV3cDI1Ni5wYXRjaCAN
-CkVSUk9SOiBjb2RlIGluZGVudCBzaG91bGQgdXNlIHRhYnMgd2hlcmUgcG9zc2libGUNCiM0MDog
-RklMRTogZHJpdmVycy9tdGQvc3BpLW5vci9zcGktbm9yLmM6MTA3NjoNCiteSSAgICAgICAgICAg
-ICAgICBTRUNUXzRLIHwgU1BJX05PUl9EVUFMX1JFQUQgfCBTUElfTk9SX1FVQURfUkVBRCkgfSwk
-DQoNCnRvdGFsOiAxIGVycm9ycywgMCB3YXJuaW5ncywgMCBjaGVja3MsIDggbGluZXMgY2hlY2tl
-ZA0KPiANCj4gWW91IG1pc3NlZCB0aGUgU1BJX05PUl80Ql9PUENPREVTIGZsYWcuIFRoZSBmbGFz
-aCBoYXMgNEIgb3Bjb2RlcywgbGV0J3MgdXNlIHRoZW0uDQo+IA0KPiBDaGVlcnMsDQo+IHRhDQo+
-IA0K
+From: Andrea Parri <andrea.parri@amarulasolutions.com>
+
+Currently, herdtools version information appears no fewer than three
+times in the LKMM source, which is difficult to maintain.  This commit
+therefore places the required version in one place, namely the
+tools/memory-model/README file.
+
+Signed-off-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+---
+ tools/memory-model/README           | 8 ++++++--
+ tools/memory-model/linux-kernel.cat | 2 --
+ tools/memory-model/lock.cat         | 3 ---
+ 3 files changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/tools/memory-model/README b/tools/memory-model/README
+index 9d7d4f23503f..2b87f3971548 100644
+--- a/tools/memory-model/README
++++ b/tools/memory-model/README
+@@ -20,13 +20,17 @@ that litmus test to be exercised within the Linux kernel.
+ REQUIREMENTS
+ ============
+ 
+-Version 7.49 of the "herd7" and "klitmus7" tools must be downloaded
+-separately:
++Version 7.52 or higher of the "herd7" and "klitmus7" tools must be
++downloaded separately:
+ 
+   https://github.com/herd/herdtools7
+ 
+ See "herdtools7/INSTALL.md" for installation instructions.
+ 
++Note that although these tools usually provide backwards compatibility,
++this is not absolutely guaranteed.  Therefore, if a later version does
++not work, please try using the exact version called out above.
++
+ 
+ ==================
+ BASIC USAGE: HERD7
+diff --git a/tools/memory-model/linux-kernel.cat b/tools/memory-model/linux-kernel.cat
+index 95bf45f1215f..8dcb37835b61 100644
+--- a/tools/memory-model/linux-kernel.cat
++++ b/tools/memory-model/linux-kernel.cat
+@@ -1,7 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0+
+ (*
+- * Requires herd version 7.51+6 or higher.
+- *
+  * Copyright (C) 2015 Jade Alglave <j.alglave@ucl.ac.uk>,
+  * Copyright (C) 2016 Luc Maranget <luc.maranget@inria.fr> for Inria
+  * Copyright (C) 2017 Alan Stern <stern@rowland.harvard.edu>,
+diff --git a/tools/memory-model/lock.cat b/tools/memory-model/lock.cat
+index 305ded17e741..a059d1a6d8a2 100644
+--- a/tools/memory-model/lock.cat
++++ b/tools/memory-model/lock.cat
+@@ -6,9 +6,6 @@
+ 
+ (*
+  * Generate coherence orders and handle lock operations
+- *
+- * Warning: spin_is_locked() crashes herd7 versions strictly before 7.48.
+- * spin_is_locked() is functional from herd7 version 7.49.
+  *)
+ 
+ include "cross.cat"
+-- 
+2.17.1
+
