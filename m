@@ -2,153 +2,115 @@ Return-Path: <SRS0=o3h7=QU=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F7B8C282C2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:25:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02B41C282CA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:25:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E957C21B1A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:25:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C72CF21B68
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Feb 2019 03:25:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WBno6xkn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730088AbfBMDZW (ORCPT
+        id S1731842AbfBMDZw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Feb 2019 22:25:22 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3193 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727346AbfBMDZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Feb 2019 22:25:21 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 2011EF1FBB5C16EC2E4D;
-        Wed, 13 Feb 2019 11:25:20 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Wed, 13 Feb 2019
- 11:25:19 +0800
-Subject: Re: [PATCH] f2fs: do not use mutex lock in atomic context
-To:     Sahitya Tummala <stummala@codeaurora.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-CC:     <linux-kernel@vger.kernel.org>
-References: <1549267613-9288-1-git-send-email-stummala@codeaurora.org>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <c98cbfcb-f45d-e9a9-5c2e-6730d0448e82@huawei.com>
-Date:   Wed, 13 Feb 2019 11:25:31 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 12 Feb 2019 22:25:52 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44687 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727346AbfBMDZw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Feb 2019 22:25:52 -0500
+Received: by mail-ot1-f68.google.com with SMTP id g1so1559784otj.11;
+        Tue, 12 Feb 2019 19:25:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4bkgZFc/8Q3xOXDvpsueCN2/ExuocXIiElyX/Xh257c=;
+        b=WBno6xknNk8YySAGU/UUuhbJuFAt5fCigADkR+WKghxGoKm65tWx1sG7XMIeuXLazR
+         Pk7tCdlvtBSfxFo8sRik3vPi7gSoCQDsoHGmIjmfCwAE3Y/UiExs6WmLVu80cOPRwnfh
+         iGVVAwtz0lYdylwuy7LL6d+XAksOQMkp0UMAmLHaq4Ju6DUUAj/Nmw5mSyK0om0keynB
+         3MtXc5Jh93JAfRYae06qdBqiqIjMUYOVCSy/l3XKSJ3+nbQCNe2/4eFckLZp5vf3bO8M
+         Zq5t/bJBCxs3WirVEf0UhPGMPgP1NTqW+jHlfibHQISG4r8yj6ZzVvFGaBSEEgzufBzp
+         p2pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4bkgZFc/8Q3xOXDvpsueCN2/ExuocXIiElyX/Xh257c=;
+        b=MHMoxd/yJsgmFlItBfFbHkCBELN486T0AaLIk0f+jY3vxgcean1mEh9B8cNIaqv7G3
+         E9LF141WpDmnspRP/6PT5WodEmmeMo209Cg+5VeaIFfQTTpLQqbrbVGsNTTfDoWph+1f
+         USOfQoQU3UvrYWGWFC8mocbRvo9AxZ9kKQECnuMLz6eqnuiHhHM5KXBy6QWGaKXHOVUQ
+         RJpzp4Thu6e5PIzWLxoQkBlS2Bw0hDJpdX15d150DEqMb3Ov5F6kqhMMj6Htwssg2Sx+
+         PChSjUomt7Kf3L2DYqH9dxcmU+KoXobHImtzExys18wRcBP4NucA8QyabJJ4zBueuoJn
+         smSg==
+X-Gm-Message-State: AHQUAua4uZGbj0Dpd0RLyuEzcbrpvf+OrmLvvp9WQgkDbq8YNYaVGpgC
+        wmuadsaYtSbEOdcedRsWyobABIdKaG+VDBAUIx0=
+X-Google-Smtp-Source: AHgI3IZ8F40LlwKG9xjwbQiKgnZEczzVRq9GmRoCfDWdwe61ij31H+yDKHCcFlI1HzmDjLZm9cFRKENWJUqaerme0Bc=
+X-Received: by 2002:a05:6830:1317:: with SMTP id p23mr7323846otq.55.1550028350950;
+ Tue, 12 Feb 2019 19:25:50 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1549267613-9288-1-git-send-email-stummala@codeaurora.org>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+References: <89716a4433cd83aea5f4200359b184b0ee2cc8bd.1549828313.git.bobbyeshleman@gmail.com>
+ <CAGngYiXPsj-TAZxC43UtAZYTkbztFtDB-z4jW29CthmaoeNy_w@mail.gmail.com> <20190213021753.GA19621@bobby.localdomain>
+In-Reply-To: <20190213021753.GA19621@bobby.localdomain>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Tue, 12 Feb 2019 22:25:39 -0500
+Message-ID: <CAGngYiUvEpSgESzFGJOtYjLi+_xmZ18GwiSTxaaMjEmjk2pu4Q@mail.gmail.com>
+Subject: Re: [PATCH 1/3] iio: light: Add driver for ap3216c
+To:     Robert Eshleman <bobbyeshleman@gmail.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-iio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/2/4 16:06, Sahitya Tummala wrote:
-> Fix below warning coming because of using mutex lock in atomic context.
-> 
-> BUG: sleeping function called from invalid context at kernel/locking/mutex.c:98
-> in_atomic(): 1, irqs_disabled(): 0, pid: 585, name: sh
-> Preemption disabled at: __radix_tree_preload+0x28/0x130
-> Call trace:
->  dump_backtrace+0x0/0x2b4
->  show_stack+0x20/0x28
->  dump_stack+0xa8/0xe0
->  ___might_sleep+0x144/0x194
->  __might_sleep+0x58/0x8c
->  mutex_lock+0x2c/0x48
->  f2fs_trace_pid+0x88/0x14c
->  f2fs_set_node_page_dirty+0xd0/0x184
-> 
-> Do not use f2fs_radix_tree_insert() to avoid doing cond_resched() with
-> spin_lock() acquired.
-> 
-> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> ---
->  fs/f2fs/trace.c | 20 +++++++++++++-------
->  1 file changed, 13 insertions(+), 7 deletions(-)
-> 
-> diff --git a/fs/f2fs/trace.c b/fs/f2fs/trace.c
-> index ce2a5eb..d0ab533 100644
-> --- a/fs/f2fs/trace.c
-> +++ b/fs/f2fs/trace.c
-> @@ -14,7 +14,7 @@
->  #include "trace.h"
->  
->  static RADIX_TREE(pids, GFP_ATOMIC);
-> -static struct mutex pids_lock;
-> +static spinlock_t pids_lock;
->  static struct last_io_info last_io;
->  
->  static inline void __print_last_io(void)
-> @@ -58,23 +58,29 @@ void f2fs_trace_pid(struct page *page)
->  
->  	set_page_private(page, (unsigned long)pid);
->  
-> +retry:
->  	if (radix_tree_preload(GFP_NOFS))
->  		return;
->  
-> -	mutex_lock(&pids_lock);
-> +	spin_lock(&pids_lock);
->  	p = radix_tree_lookup(&pids, pid);
->  	if (p == current)
->  		goto out;
->  	if (p)
->  		radix_tree_delete(&pids, pid);
->  
-> -	f2fs_radix_tree_insert(&pids, pid, current);
-> +	if (radix_tree_insert(&pids, pid, current)) {
-> +		spin_unlock(&pids_lock);
-> +		radix_tree_preload_end();
-> +		cond_resched();
-> +		goto retry;
-> +	}
->  
->  	trace_printk("%3x:%3x %4x %-16s\n",
->  			MAJOR(inode->i_sb->s_dev), MINOR(inode->i_sb->s_dev),
->  			pid, current->comm);
+Hi Bobby,
 
-Hi Sahitya,
+On Tue, Feb 12, 2019 at 9:17 PM Robert Eshleman <bobbyeshleman@gmail.com> wrote:
+>
+> First, thank you for the feedback.
 
-Can trace_printk sleep? For safety, how about moving it out of spinlock?
+First of all, thank _you_ for doing the hard work on this driver !
+I very much respect what you've done here.
 
-Thanks,
+>
+> I had initially went with a similar design, but there is
+> the case in which the interrupt fires and then before the status
+> register is read by the handler a user process reads the data and
+> clears the interrupt.  When the handler continues execution it will
+> read a zero status and return IRQ_NONE.  My understanding of how
+> Linux handles IRQ_NONE is pretty poor, but I felt that this behavior
+> is incorrect even if inconsequential.  This could be avoided by
+> doing a status register read with every data read, and buffering
+> that as well, but then we lose the benefit altogether by increasing
+> I2C reads.
+>
+> In the approach you describe here, it seems like that would
+> work if this driver wasn't supporting shared interrupts.  In the
+> case that a user-space read happens to clear the interrupt before
+> the handler reads the status register, I think we would end up
+> falsely returning IRQ_NONE.
+>
+> Is my understanding of this correct?  It's very possible I'm
+> misunderstanding IRQ_NONE and shared interrupts.
+>
 
->  out:
-> -	mutex_unlock(&pids_lock);
-> +	spin_unlock(&pids_lock);
->  	radix_tree_preload_end();
->  }
->  
-> @@ -119,7 +125,7 @@ void f2fs_trace_ios(struct f2fs_io_info *fio, int flush)
->  
->  void f2fs_build_trace_ios(void)
->  {
-> -	mutex_init(&pids_lock);
-> +	spin_lock_init(&pids_lock);
->  }
->  
->  #define PIDVEC_SIZE	128
-> @@ -147,7 +153,7 @@ void f2fs_destroy_trace_ios(void)
->  	pid_t next_pid = 0;
->  	unsigned int found;
->  
-> -	mutex_lock(&pids_lock);
-> +	spin_lock(&pids_lock);
->  	while ((found = gang_lookup_pids(pid, next_pid, PIDVEC_SIZE))) {
->  		unsigned idx;
->  
-> @@ -155,5 +161,5 @@ void f2fs_destroy_trace_ios(void)
->  		for (idx = 0; idx < found; idx++)
->  			radix_tree_delete(&pids, pid[idx]);
->  	}
-> -	mutex_unlock(&pids_lock);
-> +	spin_unlock(&pids_lock);
->  }
-> 
+Yes, I can see how one can run into those issues.
 
+I believe that this whole class of problems goes away if PS/ALS
+are _exclusively_ read inside the interrupt, and cached.
+
+Then, whenever a user process wants to read the data, the function
+does not touch the h/w, but simply return the cached value.
+
+But hang on, I will have more to say on this when replying to Jonathan's
+feedback.
