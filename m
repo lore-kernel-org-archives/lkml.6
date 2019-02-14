@@ -3,97 +3,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE17CC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:03:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 628C2C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:04:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9099F218EA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:03:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E84320663
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:04:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405349AbfBNQDx (ORCPT
+        id S2502599AbfBNQEB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:03:53 -0500
-Received: from muru.com ([72.249.23.125]:38866 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391103AbfBNQDw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 11:03:52 -0500
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 0BE6B80EA;
-        Thu, 14 Feb 2019 16:04:01 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        Florian Vaussard <florian.vaussard@epfl.ch>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: [PATCHv2] mfd: twl6040: Fix device init errors for ACCCTL register
-Date:   Thu, 14 Feb 2019 08:03:45 -0800
-Message-Id: <20190214160345.353-1-tony@atomide.com>
-X-Mailer: git-send-email 2.20.1
+        Thu, 14 Feb 2019 11:04:01 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:54966 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2405282AbfBNQEA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 11:04:00 -0500
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1EG1j6E022794;
+        Thu, 14 Feb 2019 17:03:47 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2qn0jwughc-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 14 Feb 2019 17:03:47 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3D51831;
+        Thu, 14 Feb 2019 16:03:46 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2044258E8;
+        Thu, 14 Feb 2019 16:03:46 +0000 (GMT)
+Received: from localhost (10.75.127.46) by SFHDAG3NODE2.st.com (10.75.127.8)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 14 Feb 2019 17:03:46
+ +0100
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+To:     Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Jose Abreu <joabreu@synopsys.com>, <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Subject: [net-next, PATCH v2] net: stmmac: use correct define to get rx timestamp on GMAC4
+Date:   Thu, 14 Feb 2019 17:03:44 +0100
+Message-ID: <1550160224-8927-1-git-send-email-alexandre.torgue@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG4NODE2.st.com (10.75.127.11) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I noticed that we can get a -EREMOTEIO errors on at least omap4 duovero:
+In dwmac4_wrback_get_rx_timestamp_status we looking for a RX timestamp.
+For that receive descriptors are handled and so we should use defines
+related to receive descriptors. It'll no change the functional behavior
+as RDES3_RDES1_VALID=TDES3_RS1V=BIT(26) but it makes code easier to read.
 
-twl6040 0-004b: Failed to write 2d = 19: -121
-
-And then any following register access will produce errors.
-
-There 2d offset above is register ACCCTL that gets written on twl6040
-powerup. With error checking added to the related regcache_sync() call,
-the -EREMOTEIO error is reproducable on twl6040 powerup at least
-duovero.
-
-To fix the error, we need to wait until twl6040 is accessible after the
-powerup. Based on tests on omap4 duovero, we need to wait over 8ms after
-powerup before register write will complete without failures. Let's also
-make sure we warn about possible errors too.
-
-Note that we have twl6040_patch[] reg_sequence with the ACCCTL register
-configuration and regcache_sync() will write the new value to ACCCTL.
-
-Cc: Florian Vaussard <florian.vaussard@epfl.ch>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
-
-Changes since v1:
-
-- Cosmetic change to improve error message as suggested by Lee
+Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
 
 ---
- drivers/mfd/twl6040.c | 13 ++++++++++++-
- 1 file changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mfd/twl6040.c b/drivers/mfd/twl6040.c
---- a/drivers/mfd/twl6040.c
-+++ b/drivers/mfd/twl6040.c
-@@ -322,8 +322,19 @@ int twl6040_power(struct twl6040 *twl6040, int on)
- 			}
- 		}
+changes since v1:
+ *use le32_to_cpu to handle endianess
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
+index 20299f6..90045ff 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
+@@ -268,7 +268,7 @@ static int dwmac4_wrback_get_rx_timestamp_status(void *desc, void *next_desc,
+ 	int ret = -EINVAL;
  
-+		/*
-+		 * Register access can produce errors after power-up unless we
-+		 * wait at least 8ms based on measurements on duovero.
-+		 */
-+		usleep_range(10000, 12000);
-+
- 		/* Sync with the HW */
--		regcache_sync(twl6040->regmap);
-+		ret = regcache_sync(twl6040->regmap);
-+		if (ret) {
-+			dev_err(twl6040->dev, "Failed to sync with the HW: %i\n",
-+				ret);
-+			goto out;
-+		}
+ 	/* Get the status from normal w/b descriptor */
+-	if (likely(p->des3 & TDES3_RS1V)) {
++	if (likely(le32_to_cpu(p->des3) & RDES3_RDES1_VALID)) {
+ 		if (likely(le32_to_cpu(p->des1) & RDES1_TIMESTAMP_AVAILABLE)) {
+ 			int i = 0;
  
- 		/* Default PLL configuration after power up */
- 		twl6040->pll = TWL6040_SYSCLK_SEL_LPPLL;
 -- 
-2.20.1
+2.7.4
+
