@@ -2,135 +2,88 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 165B4C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:19:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB0DAC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:19:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4E2320823
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:19:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20150623.gappssmtp.com header.i=@ndufresne-ca.20150623.gappssmtp.com header.b="KvphQnwz"
+	by mail.kernel.org (Postfix) with ESMTP id C3972222DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:19:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395397AbfBNQTV (ORCPT
+        id S2393629AbfBNQTT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:19:21 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:34935 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730918AbfBNQTT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 14 Feb 2019 11:19:19 -0500
-Received: by mail-qk1-f196.google.com with SMTP id w204so3919976qka.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:19:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=AxuHCqH7c+QRUhY3Jid4ATKz6AXdTTJj/yE7k5txmuc=;
-        b=KvphQnwzQ6hxJrUOiBUpJSyK0dNjgTP5ITt7+sdjFElkm00lYkoWceeuKcdJjTpZZ6
-         1/96wcrGhRpkfWGESn8CfVoC9ZLMi6L4D5BanePYHCAKl7iMet2Dy9Gnq3aMsA0aM7t8
-         A6iq54ZISKz/i1xUERGRF3KHOhrNozVkFYIazH5vNRyb93vH6mmddKk/lNX/6ZMZXM9M
-         JKeyuMjUu8JLDUnkvNkFE0IrnTFCaL6gxOc8nG3yyMCXZ8aCfvyih/swfZeSlr05MbDR
-         LbLtv3/+MYHC4Mbhw6g1G//MzEqlEGGHVwXnjl8TgpznUO35E/Zsr5bGij7DqjBRwqYE
-         /Ujw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=AxuHCqH7c+QRUhY3Jid4ATKz6AXdTTJj/yE7k5txmuc=;
-        b=fgK+lEON+gGgEpfU2FLvTtRVVdKD8RM/iYN36C5kx2L6Zszaeo+Ncz4S7VjfjG2C9P
-         XYMiYIsHivVpiMfttgQWDYBMQp0Xxm8B+JUPVleQpy86sphOCGGtm6gfJLLL+HXxJJ8Y
-         muvUFgAuzJd8dZEbGJi6kdMUU4nm1AK8MYOk/nPQEY4WGaqvxbVnUyJ28WdeTzRl5ZLM
-         Z9Scl/73kSCguJkzGW3lb4IOTywd7oKc40HcIpjdchxJuIedLRVQfs1YhWLp2ipSIWWH
-         mOo1fTsmNPY5UcC64awBSYiYTR6wH7bobrLIJo/gdua/8YUi4hdMq/OfLSoCx8mkrkca
-         XXAA==
-X-Gm-Message-State: AHQUAubdJFbHP81LRADlw9h5uON6cRn+51jAEqFUegh8AaVsjf1du/Ow
-        MskSOYf+8QFNIlFczRkkAzkaug==
-X-Google-Smtp-Source: AHgI3IYgb3YZOLuWe4trND68o2DvKWBNdl+FBr16n3rCZfLhyHzDVzrviq72ySINlIM1iNHWIb0p1Q==
-X-Received: by 2002:a37:8105:: with SMTP id c5mr3465494qkd.116.1550161157696;
-        Thu, 14 Feb 2019 08:19:17 -0800 (PST)
-Received: from skullcanyon ([192.222.193.21])
-        by smtp.gmail.com with ESMTPSA id y11sm2520187qky.2.2019.02.14.08.19.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 08:19:16 -0800 (PST)
-Message-ID: <69347bdc0065b395f44673fea19e2b798c90fbc3.camel@ndufresne.ca>
-Subject: Re: [PATCH 10/10] venus: dec: make decoder compliant with stateful
- codec API
-From:   Nicolas Dufresne <nicolas@ndufresne.ca>
-To:     Tomasz Figa <tfiga@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Malathi Gottam <mgottam@codeaurora.org>
-Date:   Thu, 14 Feb 2019 11:19:15 -0500
-In-Reply-To: <CAAFQd5CR+_y-d_v4zk9eqWCSxze8gWWsCU0diyA=hOcMxNucJg@mail.gmail.com>
-References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
-         <20190117162008.25217-11-stanimir.varbanov@linaro.org>
-         <CAAFQd5Cm1zyPzJnixwNmWzxn2zh=63YrA+ZzH-arW-VZ_x-Awg@mail.gmail.com>
-         <28069a44-b188-6b89-2687-542fa762c00e@linaro.org>
-         <CAAFQd5BevOV2r1tqmGPnVtdwirGMWU=ZJU85HjfnH-qMyQiyEg@mail.gmail.com>
-         <affce842d4f015e13912b2c3941c9bf02e84d194.camel@ndufresne.ca>
-         <CAAFQd5Ahg4Di+SBd+-kKo4PLVyvqLwcuG6MphU5Rz1PFXVuamQ@mail.gmail.com>
-         <e8a90694c306fde24928a569b7bcb231b86ec73b.camel@ndufresne.ca>
-         <CAAFQd5DFfQRd1VoN7itVXnWGKW_WBKU-sm6vo5CdgjkzjEEkFg@mail.gmail.com>
-         <57419418d377f32d0e6978f4e4171c0da7357cbb.camel@ndufresne.ca>
-         <1548938556.4585.1.camel@pengutronix.de>
-         <CAAFQd5Aih7cWu-cfwBvNdwhHHYEaMF0SFebrYfdNXD9qKu8fxw@mail.gmail.com>
-         <1f8485785a21c0b0e071a3a766ed2cbc727e47f6.camel@ndufresne.ca>
-         <CAAFQd5CPKm1ES8c9Lab63Lr8ZfWRckHmJ99SVRYi6Hpe7hzy+g@mail.gmail.com>
-         <f1e9dc99-4fcb-dee1-4279-ac0cf1d1fd6e@xs4all.nl>
-         <CAAFQd5B+bt3SV_WRw1=2agZk=Q+Enbkv=nXCrbXX=+MNpeSpCg@mail.gmail.com>
-         <cb8cda5d-e714-6019-4a76-3853ea49c4a6@xs4all.nl>
-         <CAAFQd5BZhhX6Cjj7GhbaY_G7ERksyKne6hxKFCuTJoOnamoQ=A@mail.gmail.com>
-         <CAAFQd5CR+_y-d_v4zk9eqWCSxze8gWWsCU0diyA=hOcMxNucJg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Received: from mx1.redhat.com ([209.132.183.28]:6413 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387987AbfBNQTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 11:19:19 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C25A081F25;
+        Thu, 14 Feb 2019 16:19:18 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8F305611A0;
+        Thu, 14 Feb 2019 16:19:17 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH 1/4] KEYS: allow reaching the keys quotas exactly
+From:   David Howells <dhowells@redhat.com>
+To:     jmorris@namei.org
+Cc:     linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        dhowells@redhat.com, ebiggers@kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 14 Feb 2019 16:19:16 +0000
+Message-ID: <155016114592.8024.108035728807781948.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 14 Feb 2019 16:19:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le jeudi 14 février 2019 à 11:43 +0900, Tomasz Figa a écrit :
-> > > > No, I exactly meant the OUTPUT queue. The behavior of s5p-mfc in case
-> > > > of the format not being detected yet is to waits for any pending
-> > > > bitstream buffers to be processed by the decoder before returning an
-> > > > error.
-> > > > 
-> > > > See https://elixir.bootlin.com/linux/v5.0-rc5/source/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c#L329
-> > > 
-> > > It blocks?! That shouldn't happen. Totally against the spec.
-> > > 
-> > 
-> > Yeah and that's what this patch tries to implement in venus as well
-> > and is seemingly required for compatibility with gstreamer...
-> > 
-> 
-> Hans, Nicolas, any thoughts?
+From: Eric Biggers <ebiggers@google.com>
 
-Thinking about this, if CODA managed to make it work without this, and
-without the source change event, we should probably study more this
-code and propose to do this instead of blocking (which is the ugly but
-easy solution). I'm sure it was a bit of juggle to pass the information
-correctly from input to output, but that would bring "compatibility"
-with un-ported userspace. If we had a codec specific framework (making
-a wish here), we could handle that for the codec, a bit like the code
-that emulates CROP on top of G/S_SELECTION.
+If the sysctl 'kernel.keys.maxkeys' is set to some number n, then
+actually users can only add up to 'n - 1' keys.  Likewise for
+'kernel.keys.maxbytes' and the root_* versions of these sysctls.  But
+these sysctls are apparently supposed to be *maximums*, as per their
+names and all documentation I could find -- the keyrings(7) man page,
+Documentation/security/keys/core.rst, and all the mentions of EDQUOT
+meaning that the key quota was *exceeded* (as opposed to reached).
 
-Meanwhile, I'm trying to get some time allocated to implement the event
-in GStreamer, as this would be sufficient argument to say that newly
-introduce drivers don't need to care, you just need newer userspace.
-For Venus it's a bit difficult, since they have customers using
-GStreamer already, and it's quite common to run newer kernel with much
-older userspace (and expect the userspace to keep working).
+Thus, fix the code to allow reaching the quotas exactly.
 
-Nicolas
+Fixes: 0b77f5bfb45c ("keys: make the keyring quotas controllable through /proc/sys")
+Cc: stable@vger.kernel.org
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+
+ security/keys/key.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/security/keys/key.c b/security/keys/key.c
+index 44a80d6741a1..0ec9322af4f9 100644
+--- a/security/keys/key.c
++++ b/security/keys/key.c
+@@ -265,8 +265,8 @@ struct key *key_alloc(struct key_type *type, const char *desc,
+ 
+ 		spin_lock(&user->lock);
+ 		if (!(flags & KEY_ALLOC_QUOTA_OVERRUN)) {
+-			if (user->qnkeys + 1 >= maxkeys ||
+-			    user->qnbytes + quotalen >= maxbytes ||
++			if (user->qnkeys + 1 > maxkeys ||
++			    user->qnbytes + quotalen > maxbytes ||
+ 			    user->qnbytes + quotalen < user->qnbytes)
+ 				goto no_quota;
+ 		}
 
