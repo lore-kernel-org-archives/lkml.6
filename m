@@ -2,241 +2,82 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8B0C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:54:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76AB9C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:54:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90DA72229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:54:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 465232229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:54:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="D/l5ZajA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502003AbfBNOyv (ORCPT
+        id S2501991AbfBNOyt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 09:54:51 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52262 "EHLO mx1.redhat.com"
+        Thu, 14 Feb 2019 09:54:49 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:57610 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727605AbfBNOyr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 09:54:47 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2501960AbfBNOyj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 09:54:39 -0500
+Received: from zn.tnic (p200300EC2BCDFC008528D8D3AD4EA9C4.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:fc00:8528:d8d3:ad4e:a9c4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C072981DF2;
-        Thu, 14 Feb 2019 14:54:46 +0000 (UTC)
-Received: from gondolin (dhcp-192-213.str.redhat.com [10.33.192.213])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E148E10027DA;
-        Thu, 14 Feb 2019 14:54:43 +0000 (UTC)
-Date:   Thu, 14 Feb 2019 15:54:41 +0100
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Pierre Morel <pmorel@linux.ibm.com>
-Cc:     borntraeger@de.ibm.com, alex.williamson@redhat.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
-        pasic@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
-Subject: Re: [PATCH v3 1/9] s390: vfio_ap: link the vfio_ap devices to the
- vfio_ap bus subsystem
-Message-ID: <20190214155441.087d2a68.cohuck@redhat.com>
-In-Reply-To: <1550152269-6317-2-git-send-email-pmorel@linux.ibm.com>
-References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
-        <1550152269-6317-2-git-send-email-pmorel@linux.ibm.com>
-Organization: Red Hat GmbH
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 541081EC0253;
+        Thu, 14 Feb 2019 15:54:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1550156078;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=5EBNeDPqlBI/WIiXNaBcXzRHjwYdgNW/mfFmFfkvcFE=;
+        b=D/l5ZajAy2L8YzhmQkHj4tD12wB9TgrJMcwejkb6HyFevPCiheI0l3DqZBUmj7V7k+TnAG
+        acy6cPXOG+ZvtXo8zCuYQcckaaRDAM9sySTbh8V2M2otzUAhWL6H4XXTnMrESbZ7/o5i/h
+        y6j2Jgx5NqEw8dVgxQNo91vfdST+HGo=
+Date:   Thu, 14 Feb 2019 15:54:33 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Daniel Bristot de Oliveira <bristot@redhat.com>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jiri Kosina <jkosina@suse.cz>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Chris von Recklinghausen <crecklin@redhat.com>,
+        Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Clark Williams <williams@redhat.com>, x86@kernel.org
+Subject: Re: [PATCH V4 7/9] x86/alternative: Batch of patch operations
+Message-ID: <20190214145433.GD4423@zn.tnic>
+References: <cover.1549308412.git.bristot@redhat.com>
+ <84e6b00634085f0fca721e4e7e5aaf43cd062564.1549308412.git.bristot@redhat.com>
+ <20190214125330.GB12467@zn.tnic>
+ <20190214090620.1ee73a36@gandalf.local.home>
+ <20190214143030.GB4423@zn.tnic>
+ <20190214094011.6e8a22eb@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 14 Feb 2019 14:54:46 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190214094011.6e8a22eb@gandalf.local.home>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 14 Feb 2019 14:51:01 +0100
-Pierre Morel <pmorel@linux.ibm.com> wrote:
+On Thu, Feb 14, 2019 at 09:40:11AM -0500, Steven Rostedt wrote:
+> 	void *detour;
 
-> Libudev relies on having a subsystem link for non-root devices. To
-> avoid libudev (and potentially other userspace tools) choking on the
-> matrix device let us introduce a vfio_ap bus and with that the vfio_ap
-> bus subsytem, and make the matrix device reside within it.
+Yap, with a nice comment ontop and you're golden! :-)
 
-How does libudev choke on this? It feels wrong to introduce a bus that
-basically does nothing...
+Thx.
 
-> 
-> We restrict the number of allowed devices to a single one.
-> 
-> Doing this we need to suppress the forced link from the matrix device to
-> the vfio_ap driver and we suppress the device_type we do not need
-> anymore.
-> 
-> Since the associated matrix driver is not the vfio_ap driver any more,
-> we have to change the search for the devices on the vfio_ap driver in
-> the function vfio_ap_verify_queue_reserved.
-> 
-> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-> ---
->  drivers/s390/crypto/vfio_ap_drv.c     | 63 +++++++++++++++++++++++++++++++----
->  drivers/s390/crypto/vfio_ap_ops.c     |  4 +--
->  drivers/s390/crypto/vfio_ap_private.h |  1 +
->  3 files changed, 60 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
-> index 31c6c84..1fd5fe6 100644
-> --- a/drivers/s390/crypto/vfio_ap_drv.c
-> +++ b/drivers/s390/crypto/vfio_ap_drv.c
-> @@ -24,8 +24,9 @@ MODULE_LICENSE("GPL v2");
->  
->  static struct ap_driver vfio_ap_drv;
->  
-> -static struct device_type vfio_ap_dev_type = {
-> -	.name = VFIO_AP_DEV_TYPE_NAME,
-> +struct matrix_driver {
-> +	struct device_driver drv;
-> +	int device_count;
+-- 
+Regards/Gruss,
+    Boris.
 
-This counter basically ensures that at most one device may bind with
-this driver... you'd still have that device on the bus, though.
-
->  };
->  
->  struct ap_matrix_dev *matrix_dev;
-> @@ -62,6 +63,41 @@ static void vfio_ap_matrix_dev_release(struct device *dev)
->  	kfree(matrix_dev);
->  }
->  
-> +static int matrix_bus_match(struct device *dev, struct device_driver *drv)
-> +{
-> +	return 1;
-> +}
-> +
-> +static struct bus_type matrix_bus = {
-> +	.name = "vfio_ap",
-> +	.match = &matrix_bus_match,
-> +};
-> +
-> +static int matrix_probe(struct device *dev);
-> +static int matrix_remove(struct device *dev);
-> +static struct matrix_driver matrix_driver = {
-> +	.drv = {
-> +		.name = "vfio_ap",
-> +		.bus = &matrix_bus,
-> +		.probe = matrix_probe,
-> +		.remove = matrix_remove,
-> +	},
-> +};
-> +
-> +static int matrix_probe(struct device *dev)
-> +{
-> +	if (matrix_driver.device_count)
-> +		return -EEXIST;
-> +	matrix_driver.device_count++;
-> +	return 0;
-> +}
-> +
-> +static int matrix_remove(struct device *dev)
-> +{
-> +	matrix_driver.device_count--;
-> +	return 0;
-> +}
-> +
->  static int vfio_ap_matrix_dev_create(void)
->  {
->  	int ret;
-> @@ -71,6 +107,10 @@ static int vfio_ap_matrix_dev_create(void)
->  	if (IS_ERR(root_device))
->  		return PTR_ERR(root_device);
->  
-> +	ret = bus_register(&matrix_bus);
-> +	if (ret)
-> +		goto bus_register_err;
-> +
->  	matrix_dev = kzalloc(sizeof(*matrix_dev), GFP_KERNEL);
->  	if (!matrix_dev) {
->  		ret = -ENOMEM;
-> @@ -87,30 +127,41 @@ static int vfio_ap_matrix_dev_create(void)
->  	mutex_init(&matrix_dev->lock);
->  	INIT_LIST_HEAD(&matrix_dev->mdev_list);
->  
-> -	matrix_dev->device.type = &vfio_ap_dev_type;
->  	dev_set_name(&matrix_dev->device, "%s", VFIO_AP_DEV_NAME);
->  	matrix_dev->device.parent = root_device;
-> +	matrix_dev->device.bus = &matrix_bus;
->  	matrix_dev->device.release = vfio_ap_matrix_dev_release;
-> -	matrix_dev->device.driver = &vfio_ap_drv.driver;
-> +	matrix_dev->vfio_ap_drv = &vfio_ap_drv;
-
-Can't you get that structure through matrix_dev->device.driver instead
-when you need it in the function below?
-
->  
->  	ret = device_register(&matrix_dev->device);
->  	if (ret)
->  		goto matrix_reg_err;
->  
-> +	ret = driver_register(&matrix_driver.drv);
-> +	if (ret)
-> +		goto matrix_drv_err;
-> +
-
-As you already have several structures that can be registered exactly
-once (the root device, the bus, the driver, ...), you can already be
-sure that there's only one device on the bus, can't you?
-
->  	return 0;
->  
-> +matrix_drv_err:
-> +	device_unregister(&matrix_dev->device);
->  matrix_reg_err:
->  	put_device(&matrix_dev->device);
->  matrix_alloc_err:
-> +	bus_unregister(&matrix_bus);
-> +bus_register_err:
->  	root_device_unregister(root_device);
-> -
->  	return ret;
->  }
->  
->  static void vfio_ap_matrix_dev_destroy(void)
->  {
-> +	struct device *root_device = matrix_dev->device.parent;
-> +
-> +	driver_unregister(&matrix_driver.drv);
->  	device_unregister(&matrix_dev->device);
-> -	root_device_unregister(matrix_dev->device.parent);
-> +	bus_unregister(&matrix_bus);
-> +	root_device_unregister(root_device);
->  }
->  
->  static int __init vfio_ap_init(void)
-> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-> index 272ef42..900b9cf 100644
-> --- a/drivers/s390/crypto/vfio_ap_ops.c
-> +++ b/drivers/s390/crypto/vfio_ap_ops.c
-> @@ -198,8 +198,8 @@ static int vfio_ap_verify_queue_reserved(unsigned long *apid,
->  	qres.apqi = apqi;
->  	qres.reserved = false;
->  
-> -	ret = driver_for_each_device(matrix_dev->device.driver, NULL, &qres,
-> -				     vfio_ap_has_queue);
-> +	ret = driver_for_each_device(&matrix_dev->vfio_ap_drv->driver, NULL,
-> +				     &qres, vfio_ap_has_queue);
->  	if (ret)
->  		return ret;
->  
-> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
-> index 5675492..76b7f98 100644
-> --- a/drivers/s390/crypto/vfio_ap_private.h
-> +++ b/drivers/s390/crypto/vfio_ap_private.h
-> @@ -40,6 +40,7 @@ struct ap_matrix_dev {
->  	struct ap_config_info info;
->  	struct list_head mdev_list;
->  	struct mutex lock;
-> +	struct ap_driver  *vfio_ap_drv;
->  };
->  
->  extern struct ap_matrix_dev *matrix_dev;
-
-This feels like a lot of boilerplate code, just to create a bus that
-basically doesn't do anything. I'm surprised that libudev can't deal
-with bus-less devices properly...
+Good mailing practices for 400: avoid top-posting and trim the reply.
