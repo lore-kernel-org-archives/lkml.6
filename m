@@ -2,207 +2,153 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B5A0C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:54:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1B7BC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5360321900
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:54:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A69121900
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:58:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UqSPKNky"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FsIWpgjk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436482AbfBNSy1 (ORCPT
+        id S1732572AbfBNS6L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 13:54:27 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50874 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727717AbfBNSy0 (ORCPT
+        Thu, 14 Feb 2019 13:58:11 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:59283 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726360AbfBNS6L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 13:54:26 -0500
-Received: by mail-wm1-f68.google.com with SMTP id x7so7421041wmj.0;
-        Thu, 14 Feb 2019 10:54:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=N9eJJVG9XGs4TaN74QOpQZCPONKwYIz2B722eHcHttE=;
-        b=UqSPKNkyoJxNYYWFVTemRARDhJD8QPg3kY+ugEchqehm2frEaLoArmiby04EL518I+
-         kqTjY5s3sqnefl5VSZ8ISlE/ZjirPJPULWZ13CH+5BA5OfMDDOPVBZl+p5i1Awj+ixoJ
-         W41gJhijrljbko7KPyBlFhMX4VkwRwJi5hSNUd+JY9vTHyGVyyNyQR9hFAIt9Wm21c2L
-         IUfG+t0uEOO4yFTCHomHORR3s4l+Y7EWs6xLgzsmp5+UTMzfWuSNqYLxfGO0qji5p3xM
-         MJlFK77Nkjbl/4s5TjndNTLqVZJa9CSq4vdRHPbQ7dW6KPktkqD4CJ0KYanR5xFAwNvg
-         /4/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=N9eJJVG9XGs4TaN74QOpQZCPONKwYIz2B722eHcHttE=;
-        b=RspIbw+2kh1dAtEQgt/5QtV1zCqQnI6KurM3SFbY1gdyOeMkT98UmnEwtuTbPEyLdR
-         wWPaynMCGMoihE5ySqUYx5PjnVLrWDChWOGM/MlnsMlnWl0BLvs35BlyXi1EZGlJWS8y
-         67an+Wi1AtGEQYuhtDTOJqtQi4x2FnXZSQSywnpKjyt68zZoZHjklJbwzezRzSNwWOrZ
-         r3JqdJWK2kFdykr8Elc1q6rsudGRsKagStfQny3KeOaCC4LOvDBsu+Mi3ESoSmt3XlIV
-         unNbavhLlYyZho61mtOWe1P3qitMnHaUKA9LN7xmswcsdsUU+x1di+w2LhN3fz31V1Ln
-         EihQ==
-X-Gm-Message-State: AHQUAuaZHxrmiVU+H6ke7RxGk30v279+PLKHV2XE5drfoYx5KLRpXd/V
-        jDhGbIW2q6svTg23bSV2+IfXWaL9
-X-Google-Smtp-Source: AHgI3Iaxelc3rbTtRNAzAshx+KwuL/C5Soqrl4VvDbj6ZTlznDQDqFua6U6bbx+mTsUuhjGYn212EQ==
-X-Received: by 2002:a1c:81c2:: with SMTP id c185mr3558479wmd.58.1550170463538;
-        Thu, 14 Feb 2019 10:54:23 -0800 (PST)
-Received: from [172.30.88.202] (sjewanfw1-nat.mentorg.com. [139.181.7.34])
-        by smtp.gmail.com with ESMTPSA id u134sm2047373wmf.21.2019.02.14.10.54.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 10:54:22 -0800 (PST)
-From:   Steve Longerbeam <slongerbeam@gmail.com>
-Subject: Re: [PATCH v4 1/4] gpu: ipu-v3: ipu-ic: Rename yuv2rgb encoding
- matrices
-To:     Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org
-Cc:     Tim Harvey <tharvey@gateworks.com>,
-        "open list:DRM DRIVERS FOR FREESCALE IMX" 
-        <dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190209014748.10427-1-slongerbeam@gmail.com>
- <20190209014748.10427-2-slongerbeam@gmail.com>
- <1549879117.7687.2.camel@pengutronix.de>
- <0f987e19-e6e9-a56e-00ec-61e7e300a92e@gmail.com>
- <1549966666.4800.3.camel@pengutronix.de>
- <7d4c5935-ffa1-2320-1632-136e1ce89350@gmail.com>
- <1550054109.3937.1.camel@pengutronix.de>
-Message-ID: <58bf1e34-8b9d-7fec-6ba5-5db1d5c5457d@gmail.com>
-Date:   Thu, 14 Feb 2019 10:54:19 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <1550054109.3937.1.camel@pengutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Thu, 14 Feb 2019 13:58:11 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190214185809euoutp0153384747a552ca90a789b9f7fd69590d~DUAdqie9c2899128991euoutp01i
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 18:58:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190214185809euoutp0153384747a552ca90a789b9f7fd69590d~DUAdqie9c2899128991euoutp01i
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1550170689;
+        bh=Su1rPLTicRiOsH5SVc0+7ylWj2PWIwZR7g4kDCP0QnM=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=FsIWpgjky8D+YheeFgIvwKr2yKMcHih57Aja9CzPmyLkGk0z/xoh1iohFvn52XLTS
+         LNvTdQjSYOlPxPGardkMD/vkbKWfhvTDfwrrYEVVk3lkq+EkzfggOud3WjK6q2xK+a
+         ywYyRVfx0egJtIMLPfKeErg0UhIKqTXzTMu/Cmv8=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190214185808eucas1p2fa970247e6efdc4f54eef46b264c7c8d~DUAc0PhUa0150201502eucas1p2L;
+        Thu, 14 Feb 2019 18:58:08 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 2E.D9.04806.04AB56C5; Thu, 14
+        Feb 2019 18:58:08 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190214185807eucas1p10432f753eeb3ce7c3e9ce8245a3aee20~DUAb6BOsQ3265232652eucas1p1G;
+        Thu, 14 Feb 2019 18:58:07 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190214185807eusmtrp2a4b684c609c28bfdbd1d07be60248f7b~DUAbrReJk1343513435eusmtrp2o;
+        Thu, 14 Feb 2019 18:58:07 +0000 (GMT)
+X-AuditID: cbfec7f5-367ff700000012c6-07-5c65ba40a7ee
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 40.39.04284.F3AB56C5; Thu, 14
+        Feb 2019 18:58:07 +0000 (GMT)
+Received: from AMDC3778.DIGITAL.local (unknown [106.120.51.20]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190214185806eusmtip21a7e63625761f501e47e8f144c153985~DUAbHZl260560105601eusmtip2L;
+        Thu, 14 Feb 2019 18:58:06 +0000 (GMT)
+From:   Lukasz Luba <l.luba@partner.samsung.com>
+To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     b.zolnierkie@samsung.com, myungjoo.ham@samsung.com,
+        cw00.choi@samsung.com, kyungmin.park@samsung.com,
+        m.szyprowski@samsung.com, s.nawrocki@samsung.com, mka@chromium.org,
+        rostedt@goodmis.org, mingo@redhat.com,
+        Lukasz Luba <l.luba@partner.samsung.com>
+Subject: [PATCH 0/2] tracing: drivers: devfreq: add basic trace mechanism
+Date:   Thu, 14 Feb 2019 19:57:54 +0100
+Message-Id: <1550170676-14173-1-git-send-email-l.luba@partner.samsung.com>
+X-Mailer: git-send-email 2.7.4
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupileLIzCtJLcpLzFFi42LZduznOV2HXakxBgeXCVhsnLGe1eL6l+es
+        Fmeb3rBb3GqQsbi8aw6bxefeI4wWa4/cZbe4dGABk8XnDY8ZLW43rmCz2NfxgMni8Jt2Vgce
+        j9kNF1k8WvbdYvc4+G4Pk8f7fVfZPPq2rGL0+LxJLoAtissmJTUnsyy1SN8ugStjx7457AXX
+        eSvWzTnF1MDYy93FyMkhIWAiMXXDedYuRi4OIYEVjBKrJn5gBUkICXxhlOg/HgmR+Mwo0XD3
+        LxNMx4K+OSwQieWMElMev2OHcIA61vc1AWU4ONgE9CR2rCoEaRARsJJ40f4KrIZZoJlJ4lnb
+        QhaQhLCAp8SktgWMIDaLgKrE/r5L7CA2r4CXRMPzT8wQ2+Qkbp7rZAZplhBoZpdY0tvICJFw
+        kZgxYz+ULSzx6vgWdghbRuL/zvlQpxZLnO1YxQZh10i0n9wBVWMtcfj4RVaQQ5kFNCXW79KH
+        CDtKdLcfYwQJSwjwSdx4KwgSZgYyJ22bzgwR5pXoaBOCqNaQ2NJzAWqRmMTyNdOghntIvJ/V
+        Cw3EWIm71zqZJzDKzULYtYCRcRWjeGppcW56arFxXmq5XnFibnFpXrpecn7uJkZgCjn97/jX
+        HYz7/iQdYhTgYFTi4V2RkRojxJpYVlyZe4hRgoNZSYT39TagEG9KYmVValF+fFFpTmrxIUZp
+        DhYlcd5qhgfRQgLpiSWp2ampBalFMFkmDk6pBkbOnv19EjdXJc5n3MvVrfp5aY9KevhSiWfB
+        IZYlMm0LT933VrO3XSY045l63he7949inA2C/b36/q7Odkib/7XI4MbHFTbrKo6e5z57p3uJ
+        8EWllCnzuMSTi1b9bU3Y9vHS5d5vnqbTr/2ufeQYt/NUe8ws8+Tu5VL7RJuWvmH9ovmJMXub
+        yC8lluKMREMt5qLiRAC0VB2FHQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrILMWRmVeSWpSXmKPExsVy+t/xe7r2u1JjDL52illsnLGe1eL6l+es
+        Fmeb3rBb3GqQsbi8aw6bxefeI4wWa4/cZbe4dGABk8XnDY8ZLW43rmCz2NfxgMni8Jt2Vgce
+        j9kNF1k8WvbdYvc4+G4Pk8f7fVfZPPq2rGL0+LxJLoAtSs+mKL+0JFUhI7+4xFYp2tDCSM/Q
+        0kLPyMRSz9DYPNbKyFRJ384mJTUnsyy1SN8uQS9jx7457AXXeSvWzTnF1MDYy93FyMkhIWAi
+        saBvDksXIxeHkMBSRonVPSuYIBJiEpP2bWeHsIUl/lzrYgOxhQQ+MUpsWlXUxcjBwSagJ7Fj
+        VSFIWETARuL93DNgc5gF+pkkmpZ0sIIkhAU8JSa1LWAEsVkEVCX2910Cm8kr4CXR8PwTM8R8
+        OYmb5zqZJzDyLGBkWMUoklpanJueW2yoV5yYW1yal66XnJ+7iREYvNuO/dy8g/HSxuBDjAIc
+        jEo8vCsyUmOEWBPLiitzDzFKcDArifC+3gYU4k1JrKxKLcqPLyrNSS0+xGgKtHwis5Rocj4w
+        svJK4g1NDc0tLA3Njc2NzSyUxHnPG1RGCQmkJ5akZqemFqQWwfQxcXBKNTDOTIu37Vgo2fTu
+        sG5V4BV2Fsk/q3hmGnvt2m08V0FEInfpnlXbXqmfYvD5wKzLOF9K0dth/p3/PMX/2+ZUmuW8
+        0PL6eHaWsYuyuHlxUsmdSdsqFQvm1f7ZufPIDbGNNt0cpmqaLzT7ihsTW8/tTfkQpLNrPa/m
+        eWHt9L+5jB+sDvXcPcZvHavEUpyRaKjFXFScCACwT1WfdAIAAA==
+X-CMS-MailID: 20190214185807eucas1p10432f753eeb3ce7c3e9ce8245a3aee20
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190214185807eucas1p10432f753eeb3ce7c3e9ce8245a3aee20
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190214185807eucas1p10432f753eeb3ce7c3e9ce8245a3aee20
+References: <CGME20190214185807eucas1p10432f753eeb3ce7c3e9ce8245a3aee20@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi all,
 
+This patch set adds support for tracing in devfreq framework. It is related
+to the discussion regarding devfreq workqueue mechanism and wake-ups.
+These two tracing patches have been submitted in larger patch set, which
+needs more discussion. For the further discussion and development there
+is a need of measurements/testing, though. It was agreed that trace events
+would help. The whole discussion is here [1].
 
-On 2/13/19 2:35 AM, Philipp Zabel wrote:
-> On Tue, 2019-02-12 at 09:42 -0800, Steve Longerbeam wrote:
-> [...]
->>>> But what about this "SAT_MODE" field in the IC task parameter memory?
->>> That just controls the saturation. The result after the matrix
->>> multiplication is either saturated to [0..255] or to [16..235]/[16..240]
->>> when converting from the internal representation to the 8 bit output.
->> By saturation I think you mean clipped to those ranges?
-> Yes, thanks. I didn't realize it sounds weird to use saturated this way.
-> See:https://en.wikipedia.org/wiki/Saturation_arithmetic
+With these patches it is possible to capture current behaviour for the 
+devfreq subsystem and devices such as when and which workqueue is used,
+on which CPU, what is the load and frequency of the device.
 
-Ok, saturation can mean the same thing as clipping/clamping. Thanks for 
-the article.
+A few comments for the first version has been addressed here:
+- moved long '/' operation to post-processing phase, according to Seven's
+  comments [2] 
+- re-ordered fields in the structure to avoid holes, according to Seven's
+  comments [3] 
+- removed unneeded variable, according to Chanwoo's comment [4]
 
-I tested a RGB->YUV pipeline with the .sat bit set in the BT.601 rgb2yuv 
-table, with the following pipeline on the SabreSD:
+I did not dare to add 'Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>'
+for the 1st patch, which was in [5], since the code slightly changed.
+The 2nd patch has it. 
 
-'ov5640 1-003c':0
-         [fmt:RGB565_2X8_LE/1024x768@1/30 field:none colorspace:srgb 
-xfer:srgb ycbcr:601 quantization:full-range]
+Regards,
+Lukasz Luba
 
-'imx6-mipi-csi2':0
-         [fmt:RGB565_2X8_LE/1024x768 field:none colorspace:srgb 
-xfer:srgb ycbcr:601 quantization:full-range]
+[1] https://lkml.org/lkml/2019/2/12/1179
+[2] https://lkml.org/lkml/2019/2/12/1201
+[3] https://lkml.org/lkml/2019/2/13/532
+[4] https://lkml.org/lkml/2019/2/13/1587
+[5] https://lkml.org/lkml/2019/2/14/2
 
-'imx6-mipi-csi2':2
-         [fmt:RGB565_2X8_LE/1024x768 field:none colorspace:srgb 
-xfer:srgb ycbcr:601 quantization:full-range]
+Lukasz Luba (2):
+  trace: events: add devfreq trace event file
+  drivers: devfreq: add tracing for scheduling work
 
-'ipu1_csi1':0
-         [fmt:RGB565_2X8_LE/1024x768@1/30 field:none colorspace:srgb 
-xfer:srgb ycbcr:601 quantization:full-range
-          crop.bounds:(0,0)/1024x768
-          crop:(0,0)/1024x768
-          compose.bounds:(0,0)/1024x768
-          compose:(0,0)/1024x768]
+ MAINTAINERS                    |  1 +
+ drivers/devfreq/devfreq.c      |  8 ++++++++
+ include/trace/events/devfreq.h | 42 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 51 insertions(+)
+ create mode 100644 include/trace/events/devfreq.h
 
-'ipu1_csi1':1
-         [fmt:ARGB8888_1X32/1024x768@1/30 field:none colorspace:srgb 
-xfer:srgb ycbcr:601 quantization:full-range]
-
-'ipu1_ic_prp':0
-         [fmt:ARGB8888_1X32/1024x768@1/30 field:none colorspace:srgb 
-xfer:srgb ycbcr:601 quantization:full-range]
-
-'ipu1_ic_prp':1
-         [fmt:ARGB8888_1X32/1024x768@1/30 field:none colorspace:srgb 
-xfer:srgb ycbcr:601 quantization:full-range]
-
-'ipu1_ic_prpenc':0
-         [fmt:ARGB8888_1X32/1024x768@1/30 field:none colorspace:srgb 
-xfer:srgb ycbcr:601 quantization:full-range]
-
-'ipu1_ic_prpenc':1
-         [fmt:AYUV8_1X32/800x600@1/30 field:none colorspace:srgb 
-xfer:srgb ycbcr:601 quantization:lim-range]
-
-/dev/video0:0
-Format Video Capture:
-     Width/Height      : 800/600
-     Pixel Format      : 'YV12'
-     Field             : None
-     Bytes per Line    : 800
-     Size Image        : 720000
-     Colorspace        : sRGB
-     Transfer Function : sRGB
-     YCbCr/HSV Encoding: ITU-R 601
-     Quantization      : Limited Range
-     Flags             :
-
-
-The result being that the captured image colors are all off (there's a 
-bright pink shade to the images). But I discovered the init_csc() 
-function was not setting the saturation bit at the correct bit offset 
-within the TPMEM. The saturation bit is bit 42, or bit 10 of the second 
-32-bit word. But the code was writing to bit 9 of the second word. After 
-correcting this, saturation is working fine. I have added another patch 
-that fixes this for v5 series.
-
-
->
->>> SAT_MODE should be set for conversions to YUV limited range so that the
->>> coefficients can be rounded to the closest value.
->> Well, we have already rounded the coefficients to the nearest int in the
->> tables. Do you mean the final result (coeff * color component + offset)
->> is rounded?
-> The manual says so: "The final calculation result is limited according
-> to the SAT_MODE parameter and rounded to 8 bits", but that's not what I
-> meant. Still, I might have been mistaken.
->
-> I think due to the fact that the coefficients are multiplied by up to
-> 255 (max pixel value) and then effectively divided by 256 when
-> converting to 8 bit, the only way to overflow limited range is if two
-> coefficients are rounded away from zero in the calculation of a single
-> component. This doesn't seem to happen in practice.
->
-> A constructed example, conversion to YUV limited range with carefully
-> chosen coefficients.
->
->    Y = R * .1817 + G * .6153 + B * .0618 + 16;
->
-> Note that .1817 + .6153 + .0618 < 219/255.
-> With rounded coefficients though:
->
->    Y = (R * 47 + G * 158 + B * 16 + (64 << 6)) / 256 = 236.136
-
-Yes, for a rec.709 conversion and max/worst-case RGB signal = (255,255,255).
-
-But the rec.709 coefficients for Y are actually
-
-Y = (R * 47 + G * 157 + B * 16 + (16 << 8)) / 256
-
-
-which for RGB = (255,255,255), Y = 235.14, which doesn't overflow 
-limited range.
-
-Steve
+-- 
+2.7.4
 
