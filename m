@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A721BC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:12:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 484BBC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:13:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AC082229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:12:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B5212229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:13:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394388AbfBNIMU (ORCPT
+        id S2394492AbfBNIN1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 03:12:20 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:37189 "EHLO
+        Thu, 14 Feb 2019 03:13:27 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:43474 "EHLO
         mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726321AbfBNIMU (ORCPT
+        with ESMTP id S2388915AbfBNIN1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 03:12:20 -0500
-Received: by mail-ua1-f65.google.com with SMTP id v26so1736194uap.4;
-        Thu, 14 Feb 2019 00:12:19 -0800 (PST)
+        Thu, 14 Feb 2019 03:13:27 -0500
+Received: by mail-ua1-f65.google.com with SMTP id z11so1723434uaa.10;
+        Thu, 14 Feb 2019 00:13:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=gyhVZT2cvH02qo+0nGpWrG/zXh7SGwoDkx6XeIiXPzo=;
-        b=DUNSncaSswEVeuYjgTjYJtmFfqbZwUycjPKq4P10n9PaUORzaJWlhNnvvakEgi06hu
-         yTmOu1M4pBZEI+/LvUPt9sA4ADCNZkYjjjyTyDEzWxnynQXc0rt9H9skHcrh37LFE1Ul
-         QW3frUZKLG0ExIT2mOfyZ/w+djAxTLJW7KmkeH6UgaYfF0dKEsgeNykWXzAxDJa/Yez/
-         OCaIArGH9+fjoibsnK4veA0g50bnaZyVka6vfbw8yhPyx99ZrQTe4FYtLtWwhAVOSBxv
-         5kUOvv34EVpxC+9Ta2Gez43RSixznBgWgQCxqZ1VA1CHbXCYb69sBc2xgKjKv6F4jrQE
-         ue8Q==
-X-Gm-Message-State: AHQUAuZIC3Pt3ehcl28WtlydN9inLlGYnvD/6Vp6krUsI91RQEy5JVuZ
-        kgzKrbMhj5AjwALsColw+9jzVIlDhrPDPfZ9+wGx2Was
-X-Google-Smtp-Source: AHgI3IZarNBxgZqVSOHbG6fu5WSACF5VlsCI/qxhQmwcEzw1zAysB+AexGAtBhb6oMJQSg01PbRqjo2LsHbPzEA6iy4=
-X-Received: by 2002:ab0:210e:: with SMTP id d14mr1341942ual.20.1550131938902;
- Thu, 14 Feb 2019 00:12:18 -0800 (PST)
+        bh=oDHSHKTHIgYnWNuqdjR3jG49iOOy8VGtWQxLsAaEpHQ=;
+        b=LlVczVozth4MOvxVtkyYkUXlmKaOK3uDOBttXwoyBfKUyhp0vdR9rS+d5ddQv+oOii
+         1lNzTSV0SS4xv83gTrANUBabKB2LaumFtcypWE9X+TIe9td00zyw4F5G/bN51J5IQnlR
+         AKD7msP/r7LSNiOtPmQEw+mSyAnuJN3jb9RIzJBtihqYjSLhckk6nFmYs1ShMTvpXzGg
+         HCk4baLsVl/ZanZRzYUuELaX2daUJW0ffVoSuz5msAP9TxifAap0FyHizQLPfO1iKLxj
+         tXIEE6g49RTzKrIyogwV0zieS+NUK/Hb+cHNK6RRWDqVLfGVI5mpEGCJDetzmTq885EI
+         JtLQ==
+X-Gm-Message-State: AHQUAuY8YVRkAmGJ27Cy/XtOBh8dtOlRcfW4OVcSs1mxh6kZ0tky3EAM
+        agC1LTw6CArQFwkMlxN5wIr4ZFs4sxOS+ciNST8=
+X-Google-Smtp-Source: AHgI3IaE7cLxRKK27MHaxfzygEbpt/ImKUPXYqD0AR24BwNoDeuAjGZAMxX2/11NraL7sUOPNQIVEL+mp2wcl+dGTyg=
+X-Received: by 2002:a9f:2726:: with SMTP id a35mr1290069uaa.75.1550132006060;
+ Thu, 14 Feb 2019 00:13:26 -0800 (PST)
 MIME-Version: 1.0
-References: <20190213174005.28785-1-hch@lst.de> <20190213174005.28785-10-hch@lst.de>
-In-Reply-To: <20190213174005.28785-10-hch@lst.de>
+References: <20190213174005.28785-1-hch@lst.de> <20190213174005.28785-11-hch@lst.de>
+In-Reply-To: <20190213174005.28785-11-hch@lst.de>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 14 Feb 2019 09:12:07 +0100
-Message-ID: <CAMuHMdUX=dq49b08UUxkLCn+HikUBOEs29314fYbwregfrSEqg@mail.gmail.com>
-Subject: Re: [PATCH 09/11] lib: consolidate the GENERIC_CSUM symbol
+Date:   Thu, 14 Feb 2019 09:13:13 +0100
+Message-ID: <CAMuHMdXPF4ohqzEnT_rnwKWi6r13cDMTtEinh-TpZ6YpSaQ=WA@mail.gmail.com>
+Subject: Re: [PATCH 10/11] lib: consolidate the GENERIC_HWEIGHT symbol
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kbuild <linux-kbuild@vger.kernel.org>,
@@ -59,13 +59,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 3:25 AM Christoph Hellwig <hch@lst.de> wrote:
-> Add one definition to lib/Kconfig and let the architectures
-> select if it supported.
+On Thu, Feb 14, 2019 at 3:11 AM Christoph Hellwig <hch@lst.de> wrote:
+> Introduce a new ARCH_HAS_HWEIGHT symbol for alpha and ia64, and just
+> default to the generic version otherwise.
 >
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
->  arch/m68k/Kconfig       | 3 ---
+>  arch/m68k/Kconfig       | 4 ----
 
 Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
