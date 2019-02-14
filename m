@@ -2,98 +2,207 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77A17C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED853C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:47:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 553AE222DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC0A5222DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:47:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="j9dhbMbx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405539AbfBNRqU (ORCPT
+        id S2405923AbfBNRrW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 12:46:20 -0500
-Received: from muru.com ([72.249.23.125]:38890 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393650AbfBNRqR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 12:46:17 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 4E2E680EA;
-        Thu, 14 Feb 2019 17:46:25 +0000 (UTC)
-Date:   Thu, 14 Feb 2019 09:46:12 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Lokesh Vutla <lokeshvutla@ti.com>
-Cc:     marc.zyngier@arm.com, Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, tglx@linutronix.de,
-        jason@lakedaemon.net,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org,
-        Device Tree Mailing List <devicetree@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: Re: [PATCH v5 05/10] dt-bindings: irqchip: Introduce TISCI Interrupt
- router bindings
-Message-ID: <20190214174612.GF5720@atomide.com>
-References: <20190212074237.2875-1-lokeshvutla@ti.com>
- <20190212074237.2875-6-lokeshvutla@ti.com>
- <20190212162247.GK5720@atomide.com>
- <6a274588-0fb6-2ddf-3bcc-f9e4d849ac07@ti.com>
- <20190213152620.GS5720@atomide.com>
- <4791de04-63af-4c5e-db9c-47634fcb8dc9@ti.com>
- <20190214154100.GB5720@atomide.com>
- <b4e821b3-f2fb-41d8-eb8c-8f4e8a19f77c@ti.com>
+        Thu, 14 Feb 2019 12:47:22 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46190 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392765AbfBNRrW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 12:47:22 -0500
+Received: by mail-pl1-f193.google.com with SMTP id o6so3508097pls.13
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 09:47:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=0t1v1OuKZbxtqvHBYBeHW8maDqWGT55mJUN35OAsXkA=;
+        b=j9dhbMbxxkZcqdkzc2916PHF6QFB6wAvgmcouEUSD/NxCOJOlStMkTnoxOIl3GLUzF
+         L5OGlo80wAkIVsInv2aAw1EpmgGGLfElnticrZ1JAjbNsHWFaVUAukaf3owSYBB820nx
+         O4mm0gr5R6ptEfLsJmoj1Z9ErbKX/wPkiuAtw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=0t1v1OuKZbxtqvHBYBeHW8maDqWGT55mJUN35OAsXkA=;
+        b=jhaC/jxjpCAu6pseRN3vBSqveUJG7aKsaUrgcN/wnBD47iC4P5ojFvg7yJ1LKui8yj
+         KfubOLv3oi8MX54JDl7+bC0p/8QXAAmpPGndyyzjV2rlNvGMuF5Ce75jLWRb0cve64Jf
+         gzAAACEPGJosTrjvetcj5CcO4aLyzO6QFdQPgctr7bcYPlf+vDfMwlC39oNMa3HSyC5r
+         Jy87Ny6oW3/rJg8lR9PYJBpDtYJk3I2yxj5PPUc1jW1aYSdxd7SPRS2IrrhMvbCdxaEb
+         1qFHzCcUh53fV2BD6LNQgSQdh2b2sXizVc82KwPZT9Qv0TrHDjXLKeGN4iXgrUfPXk5b
+         MMdA==
+X-Gm-Message-State: AHQUAuauGaTBTBxoE2eAr1afGc4KEb2QHaBn3cgR3x8dMsN9ybdnT3Pc
+        GmBYa4N6ceZ1L75OCAS5yrKwzw==
+X-Google-Smtp-Source: AHgI3IZWEP9CSyV2PDgCuvjWk5DM9J2s1yTFsLySDxMvrLiS6K4NOEHy4DMi4WOnXeKrR66xymD7Ig==
+X-Received: by 2002:a17:902:64:: with SMTP id 91mr5569509pla.229.1550166441213;
+        Thu, 14 Feb 2019 09:47:21 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id b9sm4184559pfi.118.2019.02.14.09.47.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 14 Feb 2019 09:47:20 -0800 (PST)
+Date:   Thu, 14 Feb 2019 09:47:19 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Chanwoo Choi <cwchoi00@gmail.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Lukasz Luba <l.luba@partner.samsung.com>
+Subject: Re: [PATCH 2/4] PM / devfreq: Handle monitor suspend/resume in the
+ devfreq core
+Message-ID: <20190214174719.GZ117604@google.com>
+References: <20190214013042.254790-1-mka@chromium.org>
+ <20190214013042.254790-3-mka@chromium.org>
+ <CAGTfZH29QQCW4ecXy9VbRd3aTixyjbDgB0EE0YwDcQDZYsSCvg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <b4e821b3-f2fb-41d8-eb8c-8f4e8a19f77c@ti.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGTfZH29QQCW4ecXy9VbRd3aTixyjbDgB0EE0YwDcQDZYsSCvg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Lokesh Vutla <lokeshvutla@ti.com> [190214 17:32]:
-> Hi Tony,
-> 	Please do not snip the on going discussion.
+Hi Chanwoo,
+
+On Thu, Feb 14, 2019 at 11:10:00PM +0900, Chanwoo Choi wrote:
+> Hi Matthias,
 > 
-> On 2/14/2019 9:11 PM, Tony Lindgren wrote:
-> > * Lokesh Vutla <lokeshvutla@ti.com> [190214 08:39]:
-> >> IMHO, device ids are something which can be used in DT. There are many other
-> >> things like the interrupt ranges etc.. which are discoverable from sysfw and we
-> >> are implementing it.
-> > 
-> > We need to describe hardware in the device tree, not firmware.
-> > 
-> > If you have something discoverable from the firmware, you should
-> > have the device driver query it from sysfw based on a hardware
-> > property, not based on some invented enumeration in the firmware.
+> 2019년 2월 14일 (목) 오후 7:16, Matthias Kaehlcke <mka@chromium.org>님이 작성:
+> >
+> > devfreq expects governors to call devfreq_monitor_suspend/resume()
+> > in response to DEVFREQ_GOV_SUSPEND/RESUME events. Since the devfreq
+> > core itself generates these events and invokes the governor's event
+> > handler the suspend/resume of the load monitoring can be done in the
+> > common code.
+> >
+> > Call devfreq_monitor_suspend/resume() when the governor reports a
+> > successful handling of DEVFREQ_GOV_SUSPEND/RESUME and remove these
+> > calls from the simpleondemand and tegra governors. Make
+> > devfreq_monitor_suspend/resume() static since these functions are now
+> > only used by the devfreq core.
 > 
-> Yes we are already querying sysfw for all the irq ranges that can be
-> discoverable. The topic of discussion here is about the parent interrupt
-> controller id. I am not sure how you are expecting an id be discoverable
-> from system firmware especially with a name.
-
-Well names are quite standard in dts (but should be used with
-the phandle + offset). Think for example interrupt-names and
-reg-names :)
-
-> > If there is some device to firmware translation needed, hide that
-> > into the device driver and keep it out of the device tree.
+> The devfreq core generates the all events including
+> DEVFREQ_GOV_START/STOP/INTERVAL.
+> It is possible to make 'devfreq_monitor_*()' function as the static
+> instead of exported function.
+> And call them in devfreq.c as this patch as following:
 > 
-> If preferred this can be moved to of_match_data attached to each
-> compatible property. Then for each SoC a new compatible needs to be created.
+> --- a/drivers/devfreq/devfreq.c
+> +++ b/drivers/devfreq/devfreq.c
+> @@ -728,6 +728,8 @@ struct devfreq *devfreq_add_device(struct device *dev,
+>                 goto err_init;
+>         }
+> 
+> +       devfreq_monitor_start(devfreq);
+> +
+>         list_add(&devfreq->node, &devfreq_list);
+> 
+>         mutex_unlock(&devfreq_list_lock);
+> @@ -760,6 +762,7 @@ int devfreq_remove_device(struct devfreq *devfreq)
+>         if (devfreq->governor)
+>                 devfreq->governor->event_handler(devfreq,
+>                                                  DEVFREQ_GOV_STOP, NULL);
+> +       devfreq_monitor_stop(devfreq);
+>         device_unregister(&devfreq->dev);
+> 
+>         return 0;
+> @@ -1259,6 +1262,9 @@ static ssize_t polling_interval_store(struct device *dev,
+>         df->governor->event_handler(df, DEVFREQ_GOV_INTERVAL, &value);
+>         ret = count;
+> 
+> +       if (!ret)
+> +               devfreq_interval_update(devfreq, (unsigned int *)data);
+> +
+>         return ret;
+>  }
+>  static DEVICE_ATTR_RW(polling_interval);
+> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
+> index 79efa1e..515fb85 100644
+> --- a/drivers/devfreq/tegra-devfreq.c
+> +++ b/drivers/devfreq/tegra-devfreq.c
+> @@ -580,13 +580,11 @@ static int tegra_governor_event_handler(struct
+> devfreq *devfreq,
+> 
+>         switch (event) {
+>         case DEVFREQ_GOV_START:
+> -               devfreq_monitor_start(devfreq);
+>                 tegra_actmon_enable_interrupts(tegra);
+>                 break;
+> 
+>         case DEVFREQ_GOV_STOP:
+>                 tegra_actmon_disable_interrupts(tegra);
+> -               devfreq_monitor_stop(devfreq);
+>                 break;
 
-Hiding the ID into the device driver and compatible property
-makes sense to me if the id is based on SoC + firmware.
+indeed, that's similar to "[4/4] PM / devfreq: Handle monitor
+start/stop in the devfreq core" of this series.
 
-But I'd rather have a proper hardware based phandle + index
-type mapping in the dts if possible though.
+> Instead,
+> 
+> If the governor should execute some codes before and after of
+> DEVFREQ_GOV_SUSPEND, DEVFREQ_GOV_RESUME,
+> it is impossible to change the order between devfreq_monitor_*() function
+> and the specific governor in the event_handler callback function of
+> each governor.
+> 
+> For example, if some govenor requires the following sequencue,
+> after this patch, it is not possible.
+> 
+> case DEVFREQ_GOV_SUSPEND:
+>         /* execute some code before devfreq_monitor_suspend() */
+>         devfreq_monitor_suspend()
+>         /* execute some code after devfreq_monitor_suspend() */
 
-What does this id really consist of?
+I agree that the patch introduces this limitation, however I'm not
+convinced it is a problem in practice.
 
-Regards,
+For suspend we'd essentially end up with:
 
-Tony
+governor_suspend
+  governor->suspend
+
+  monitor_suspend
+    update_status
+
+    stop polling
+
+What would a governor want to do after polling is stopped? Is there
+any real world or halfway reasonable hypothetical example?
+
+
+And for resume:
+
+governor_resume
+  governor->resume
+
+  monitor_resume
+    start polling
+
+Same question here, what would the governor realistically want to do
+after polling has started that it couldn't have done before?
+
+Cheers
+
+Matthias
