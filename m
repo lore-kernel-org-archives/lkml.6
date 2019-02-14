@@ -2,184 +2,88 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 969A4C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:57:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E964AC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:57:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 657F1222B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:57:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Hn6IfzZR"
+	by mail.kernel.org (Postfix) with ESMTP id C084A222A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:57:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405461AbfBNK5D (ORCPT
+        id S1733306AbfBNK5i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 05:57:03 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:51000 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727739AbfBNK5D (ORCPT
+        Thu, 14 Feb 2019 05:57:38 -0500
+Received: from mout.kundenserver.de ([212.227.126.187]:38349 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727739AbfBNK5i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 05:57:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=h87IdZdCVuSbWdFagb1UhdNLjtjBoimcYpQUS+r7AhY=; b=Hn6IfzZRhdbXf7c86Xmn0Ffst
-        WuQKta1CW47PaeEOB9FAAZC2ns5vNDz4hnZJm2czo42swIoeWSYwCdXB3mMGI6Qry1J8MSDpclLXK
-        kdz6ZPsaUmrFBqSyRmLRQphHRHmsnhEVDcqVMhVVkh0pqTqFxA2MBqfOixBxtAfHMIEGMA8uShynt
-        gEmU77M+VEv7uQg+5zFABeAGrfdRH8lpv80oGZcQfZnVI24U0lr/Z8awzWDUObdMr0qaNEriTdPnS
-        Ovp522m8/zrSzKlu0kvLWGZ6YPvbQooP80v2TnDMFGscejdP3PxIeNCzFNyJhoD0bungED7gO6LKc
-        AH+tdD3Nw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1guEgz-00036v-MJ; Thu, 14 Feb 2019 10:56:33 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id DB8A220298375; Thu, 14 Feb 2019 11:56:31 +0100 (CET)
-Date:   Thu, 14 Feb 2019 11:56:31 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Khalid Aziz <khalid.aziz@oracle.com>
-Cc:     juergh@gmail.com, tycho@tycho.ws, jsteckli@amazon.de,
-        ak@linux.intel.com, torvalds@linux-foundation.org,
-        liran.alon@oracle.com, keescook@google.com,
-        akpm@linux-foundation.org, mhocko@suse.com,
-        catalin.marinas@arm.com, will.deacon@arm.com, jmorris@namei.org,
-        konrad.wilk@oracle.com,
-        Juerg Haefliger <juerg.haefliger@canonical.com>,
-        deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
-        tyhicks@canonical.com, dwmw@amazon.co.uk,
-        andrew.cooper3@citrix.com, jcm@redhat.com,
-        boris.ostrovsky@oracle.com, kanth.ghatraju@oracle.com,
-        oao.m.martins@oracle.com, jmattson@google.com,
-        pradeep.vincent@oracle.com, john.haxby@oracle.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com, hch@lst.de,
-        steven.sistare@oracle.com, labbott@redhat.com, luto@kernel.org,
-        dave.hansen@intel.com, kernel-hardening@lists.openwall.com,
-        linux-mm@kvack.org, x86@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Tycho Andersen <tycho@docker.com>,
-        Marco Benatto <marco.antonio.780@gmail.com>
-Subject: Re: [RFC PATCH v8 03/14] mm, x86: Add support for eXclusive Page
- Frame Ownership (XPFO)
-Message-ID: <20190214105631.GJ32494@hirez.programming.kicks-ass.net>
-References: <cover.1550088114.git.khalid.aziz@oracle.com>
- <8275de2a7e6b72d19b1cd2ec5d71a42c2c7dd6c5.1550088114.git.khalid.aziz@oracle.com>
+        Thu, 14 Feb 2019 05:57:38 -0500
+Received: from [192.168.1.110] ([77.2.75.124]) by mrelayeu.kundenserver.de
+ (mreue009 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1MfpGL-1hZu2m0dGT-00gDfe; Thu, 14 Feb 2019 11:57:33 +0100
+Subject: Re: [PATCH 2/2] x86: pcengines apuv2 gpio/leds/keys platform driver
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86 <platform-driver-x86@vger.kernel.org>
+References: <1549588593-4856-1-git-send-email-lkml@metux.net>
+ <1549588593-4856-2-git-send-email-lkml@metux.net>
+ <CACRpkdaFJyGYeDZ83LQBG4pr3tgtYPkDQ3RGrrGPM==Sw1vE2w@mail.gmail.com>
+ <39fe843d-feba-c871-7b2d-407ab3a35082@metux.net>
+ <CACRpkdajLnMY3w40xx6jNEPqr-DYg2FjNgipt6tNBPgRoTx__w@mail.gmail.com>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Organization: metux IT consult
+Message-ID: <4662508c-01cc-ca84-7241-d28c2719dc63@metux.net>
+Date:   Thu, 14 Feb 2019 11:57:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8275de2a7e6b72d19b1cd2ec5d71a42c2c7dd6c5.1550088114.git.khalid.aziz@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CACRpkdajLnMY3w40xx6jNEPqr-DYg2FjNgipt6tNBPgRoTx__w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:u7Ci8es+0sg8FiwdIHwmmiByBzqU09Y2U5Gc3AaC5oELfqYscTe
+ p8qoFsm7Pn6FODvEibzIJFtbX55Nycpz6fNh1fN3yDX5LbJMMJW2gpg7xCya+URglfdFykI
+ m1qn8ZSh9PIo41flFijSiFihxD0FAtUF7S2p8qXgJ6cIj16esS/4hJpFNKgvSP0cX64/FpX
+ +tmcjlI/f3KSj+2nEYOTg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:sicNOErR0yY=:+bL76hIvkAZJci3xem4PYB
+ sBCwd9dGWLxvtBT6z4mIwj9jJRrqcgm3BR6t3zTK3sTx4U5kkvgXGur9dgiCV0SeuZjQhvm/Y
+ zvnNPGdYS+K80tEMN0pwG/ya6sa1Z04medc/f/XDWdM4zI/t/9zFU/vJCZM0M5bZT6TU7Fi7T
+ o2jIg8xcmIcGrKNj478sMYQ7ifsdb2oNNCKtZ7yGAalXwJI3gWeSWKrFa2pat2j/1690rrlLb
+ nI7DEJiQKROWlNNI/QDmkBiBSE6+9yiMZ/WPjmo+1s41+fFgPRMU34ma0ts/y0trN5kso0yL8
+ D4rDJq6/agU+cpeEo/VXbfHN8rWSywRcHEMrdL1cLby9L5TsmAyaLlZIeUC0gUwlVTwX6eLjs
+ PcLslia4gfYtIMI7VtRoboT3pjqG7wKUmnQj+GuxOaBskCZl8cV1elcQ4R2tpbteKb6SdEu/r
+ 3LQTcSZQppX3KobXiC8ka52Wtd0RNijQdUYDnXT+F2xwnM5Ylir9tAuv3wh6iltuUX2xjIUna
+ yQxd561wEO8lZ/e8/276JtLc7jRhMhVibfHcQct/3ucp1F2tK/WfyuRqTqNUlEEydMqU+UF6O
+ QjY7vtTWGgdsWRxXlHFhFx+i5HdBadR+A8q7RWSKj29YpStP0Ejw+AoyIxJpJFGyH+ASAgniX
+ ehE622gEdDN1keD4knI2o8S1XhPT2byzILYiwi93FvNu5dYvs9AEKfPLTtZmQo+y3k+EOpLy4
+ ECICma3hbrT7dTlFE/ml3vWn+f4cduf98y6B2oqSHejX4ecccElqNXoJU5U=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 05:01:26PM -0700, Khalid Aziz wrote:
->  static inline void *kmap_atomic(struct page *page)
->  {
-> +	void *kaddr;
-> +
->  	preempt_disable();
->  	pagefault_disable();
-> +	kaddr = page_address(page);
-> +	xpfo_kmap(kaddr, page);
-> +	return kaddr;
->  }
->  #define kmap_atomic_prot(page, prot)	kmap_atomic(page)
->  
->  static inline void __kunmap_atomic(void *addr)
->  {
-> +	xpfo_kunmap(addr, virt_to_page(addr));
->  	pagefault_enable();
->  	preempt_enable();
->  }
+On 13.02.19 10:35, Linus Walleij wrote:
 
-How is that supposed to work; IIRC kmap_atomic was supposed to be
-IRQ-safe.
+> For the dev_id you need to be aware of the following from> <linux/platform_device.h>:> #define PLATFORM_DEVID_NONE     (-1)>
+#define PLATFORM_DEVID_AUTO     (-2)>> If the platform device has .id
+set to -1 it will be just "leds-gpio",> if it is -2 it will be whatever,
+take a chance on .0 or ideally fix> it up. Any positive number like .id
+= 4 becomes "leds-gpio.4".> > So figure out the .id field on the
+platform device.
 
-> +/* Per-page XPFO house-keeping data */
-> +struct xpfo {
-> +	unsigned long flags;	/* Page state */
-> +	bool inited;		/* Map counter and lock initialized */
+Hacked up some debuging into the lookup code and found that it's
+just "leds-gpio" and "gpio-keys-polled" in my case. I've just got one
+instance of each right now and used PLATFORM_DEVID_NONE.
 
-What's sizeof(_Bool) ? Why can't you use a bit in that flags word?
+--mtx
 
-> +	atomic_t mapcount;	/* Counter for balancing map/unmap requests */
-> +	spinlock_t maplock;	/* Lock to serialize map/unmap requests */
-> +};
-
-Without that bool, the structure would be 16 bytes on 64bit, which seems
-like a good number.
-
-> +void xpfo_kmap(void *kaddr, struct page *page)
-> +{
-> +	struct xpfo *xpfo;
-> +
-> +	if (!static_branch_unlikely(&xpfo_inited))
-> +		return;
-> +
-> +	xpfo = lookup_xpfo(page);
-> +
-> +	/*
-> +	 * The page was allocated before page_ext was initialized (which means
-> +	 * it's a kernel page) or it's allocated to the kernel, so nothing to
-> +	 * do.
-> +	 */
-> +	if (!xpfo || unlikely(!xpfo->inited) ||
-> +	    !test_bit(XPFO_PAGE_USER, &xpfo->flags))
-> +		return;
-> +
-> +	spin_lock(&xpfo->maplock);
-> +
-> +	/*
-> +	 * The page was previously allocated to user space, so map it back
-> +	 * into the kernel. No TLB flush required.
-> +	 */
-> +	if ((atomic_inc_return(&xpfo->mapcount) == 1) &&
-> +	    test_and_clear_bit(XPFO_PAGE_UNMAPPED, &xpfo->flags))
-> +		set_kpte(kaddr, page, PAGE_KERNEL);
-> +
-> +	spin_unlock(&xpfo->maplock);
-> +}
-> +EXPORT_SYMBOL(xpfo_kmap);
-> +
-> +void xpfo_kunmap(void *kaddr, struct page *page)
-> +{
-> +	struct xpfo *xpfo;
-> +
-> +	if (!static_branch_unlikely(&xpfo_inited))
-> +		return;
-> +
-> +	xpfo = lookup_xpfo(page);
-> +
-> +	/*
-> +	 * The page was allocated before page_ext was initialized (which means
-> +	 * it's a kernel page) or it's allocated to the kernel, so nothing to
-> +	 * do.
-> +	 */
-> +	if (!xpfo || unlikely(!xpfo->inited) ||
-> +	    !test_bit(XPFO_PAGE_USER, &xpfo->flags))
-> +		return;
-> +
-> +	spin_lock(&xpfo->maplock);
-> +
-> +	/*
-> +	 * The page is to be allocated back to user space, so unmap it from the
-> +	 * kernel, flush the TLB and tag it as a user page.
-> +	 */
-> +	if (atomic_dec_return(&xpfo->mapcount) == 0) {
-> +		WARN(test_bit(XPFO_PAGE_UNMAPPED, &xpfo->flags),
-> +		     "xpfo: unmapping already unmapped page\n");
-> +		set_bit(XPFO_PAGE_UNMAPPED, &xpfo->flags);
-> +		set_kpte(kaddr, page, __pgprot(0));
-> +		xpfo_flush_kernel_tlb(page, 0);
-> +	}
-> +
-> +	spin_unlock(&xpfo->maplock);
-> +}
-> +EXPORT_SYMBOL(xpfo_kunmap);
-
-And these here things are most definitely not IRQ-safe.
+-- 
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
