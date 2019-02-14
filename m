@@ -2,155 +2,174 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8BD9C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:04:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B48AAC4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:05:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BECB20836
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:04:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FF302089F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:05:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sk4Bpn+p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406427AbfBNSEA (ORCPT
+        id S2392460AbfBNSFA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 13:04:00 -0500
-Received: from foss.arm.com ([217.140.101.70]:48846 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729935AbfBNSD7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 13:03:59 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 59119EBD;
-        Thu, 14 Feb 2019 10:03:59 -0800 (PST)
-Received: from [192.168.100.241] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AE9EF3F589;
-        Thu, 14 Feb 2019 10:03:58 -0800 (PST)
-Subject: Re: [RFC 2/3] arm_pmu: acpi: spe: Add initial MADT/SPE probing
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-acpi@vger.kernel.org, devel@acpica.org,
-        catalin.marinas@arm.com, mark.rutland@arm.com,
-        robert.moore@intel.com, erik.schmauss@intel.com,
-        rafael.j.wysocki@intel.com, lenb@kernel.org
-References: <20190209004718.3292087-1-jeremy.linton@arm.com>
- <20190209004718.3292087-3-jeremy.linton@arm.com>
- <20190214171125.GG2475@fuggles.cambridge.arm.com>
-From:   Jeremy Linton <jeremy.linton@arm.com>
-Message-ID: <c740a06e-d5d3-3e42-d19b-fbfea02ac0e7@arm.com>
-Date:   Thu, 14 Feb 2019 12:03:57 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 14 Feb 2019 13:05:00 -0500
+Received: from mail-lf1-f42.google.com ([209.85.167.42]:41460 "EHLO
+        mail-lf1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729857AbfBNSFA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 13:05:00 -0500
+Received: by mail-lf1-f42.google.com with SMTP id e27so5221148lfj.8
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 10:04:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=xDRd0qhG3tI9UXOIwFYphIgOhKBbabDtTbzGlD6CWcs=;
+        b=sk4Bpn+pg//Ory8CnM2dJFLf1FuNivCaV/tHMJUY2s/4lsq+0aTMY92NPqGsUefLe+
+         MEPQGnJwdo6fz4dIjcUXIHPvCpCGBZkR6xsRl753FvVRcYiRWNULWw6MLfZ9BUm7CypJ
+         CzIUZMY7Dg+pnWRJbM3TCNANuj7btg/fGe+O6XhUJKg9XOqLYfS5asSFZslwy9nFRlsi
+         vkTzGJ1ihEjMwt5eoaZys3NCkCASjhJD3eA9NjxNo25UgZnVjHxf+MPPyiRMyIZIiwMP
+         8yW9xVTqSRgNz2RmvG1ruAzWQIVAHL5ScQ2IUBDV/aQZ7FGJc+vxgGXDND61IYiM3rz3
+         XWYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=xDRd0qhG3tI9UXOIwFYphIgOhKBbabDtTbzGlD6CWcs=;
+        b=X14TQN292iSNRJ7ticH6qKbK97rCNtSTIFEuXpCRwbrT5mzcR5Mh3ro9B6vJYNKKVb
+         Zl14nO/pe+DRAqyKsqQzDBCr4U3jJufFL/SV9FYMeTyESh2OQFLViyGh3GaX8CqChDT2
+         /4+n+j/LKSMsFwAxFNCbR7sMbHnewxLXX9pUaEOo6FRwktrCujUcq3J1UUvL0eBil98W
+         ga2t99kbIS0SXqzk6b4RbP3EzULwHv1m+u59FItGh4QgjThBGsYag9X7USMWBe9Rdl7Z
+         4H3GtgYqwvEoMCpvFyPsPDfd4oR7D+O0PNrAgxCnnbKrFUwV3NxyBDN6qbXJJP/xjZ49
+         v5sw==
+X-Gm-Message-State: AHQUAua5ykQne2lZZ57nJ4dnMtrDBDaRqwTB8VdK77fzlOa+lWKADT4w
+        9k1K7p1a1HvKlwjxQrQAnRNUV7pyIqhWoaJp7n7fBg==
+X-Google-Smtp-Source: AHgI3IYbzjlFIV4Cb5mui34bpbh8tFkaqCnkwIIdZifP1U9qhs80R1CbmwdwP2nSkhma0mf4gex2VTSVGAlCuegOkpw=
+X-Received: by 2002:a19:ae0b:: with SMTP id f11mr3202615lfc.104.1550167497001;
+ Thu, 14 Feb 2019 10:04:57 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190214171125.GG2475@fuggles.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From:   Evan Green <evgreen@google.com>
+Date:   Thu, 14 Feb 2019 10:04:20 -0800
+Message-ID: <CAE=gft4_WiL87FtZnVmZok+oXPjK=GUb5tDUPGQFijddrB0Pbg@mail.gmail.com>
+Subject: KASAN warning in bt_for_each
+To:     linux-block <linux-block@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Jens Axboe <axboe@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Greetings, block experts!
 
-Thanks for taking a look at this..
+I'm trying to track down a KASAN warning I'm seeing in our downstream
+4.19 kernel, and I could use a little help. The warning looks like
+this:
 
-On 2/14/19 11:11 AM, Will Deacon wrote:
-> Hi Jeremy,
-> 
-> On Fri, Feb 08, 2019 at 06:47:17PM -0600, Jeremy Linton wrote:
->> ACPI 6.3 adds additional fields to the MADT GICC
->> structure to describe SPE PPI's. We pick these out
->> of the cached reference to the madt_gicc structure
->> similarly to the core PMU code. We then create a platform
->> device referring to the IRQ and let the user/module loader
->> decide whether to load the SPE driver.
->>
->> Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
->> ---
->>   arch/arm64/include/asm/acpi.h |  3 ++
->>   drivers/perf/arm_pmu_acpi.c   | 67 +++++++++++++++++++++++++++++++++++
->>   2 files changed, 70 insertions(+)
->>
->> diff --git a/arch/arm64/include/asm/acpi.h b/arch/arm64/include/asm/acpi.h
->> index 2def77ec14be..f9f9f2eb5d54 100644
->> --- a/arch/arm64/include/asm/acpi.h
->> +++ b/arch/arm64/include/asm/acpi.h
->> @@ -40,6 +40,9 @@
->>   	(!(entry) || (entry)->header.length < ACPI_MADT_GICC_MIN_LENGTH || \
->>   	(unsigned long)(entry) + (entry)->header.length > (end))
->>   
->> +#define ACPI_MADT_GICC_SPE  (ACPI_OFFSET(struct acpi_madt_generic_interrupt, \
->> +	spe_overflow_interrupt) + sizeof(u16))
->> +
->>   /* Basic configuration for ACPI */
->>   #ifdef	CONFIG_ACPI
->>   pgprot_t __acpi_get_mem_attribute(phys_addr_t addr);
->> diff --git a/drivers/perf/arm_pmu_acpi.c b/drivers/perf/arm_pmu_acpi.c
->> index 0f197516d708..725d413b47dc 100644
->> --- a/drivers/perf/arm_pmu_acpi.c
->> +++ b/drivers/perf/arm_pmu_acpi.c
->> @@ -74,6 +74,71 @@ static void arm_pmu_acpi_unregister_irq(int cpu)
->>   	acpi_unregister_gsi(gsi);
->>   }
->>   
->> +static struct resource spe_resources[] = {
->> +	{
->> +		/* irq */
->> +		.flags          = IORESOURCE_IRQ,
->> +	}
->> +};
->> +
->> +static struct platform_device spe_dev = {
->> +	.name = "arm,spe-v1",
->> +	.id = -1,
->> +	.resource = spe_resources,
->> +	.num_resources = ARRAY_SIZE(spe_resources)
->> +};
->> +
->> +/*
->> + * For lack of a better place, hook the normal PMU MADT walk
->> + * and create a SPE device if we detect a recent MADT with
->> + * a homogeneous PPI mapping.
->> + */
->> +static int arm_spe_acpi_parse_irqs(void)
->> +{
->> +	int cpu, ret, irq;
->> +	u16 gsi = 0;
->> +	bool first = true;
->> +
->> +	struct acpi_madt_generic_interrupt *gicc;
->> +
->> +	/*
->> +	 * sanity check all the GICC tables for the same interrupt number
->> +	 * for now we only support homogeneous ACPI/SPE machines.
->> +	 */
->> +	for_each_possible_cpu(cpu) {
->> +		gicc = acpi_cpu_get_madt_gicc(cpu);
->> +
->> +		if (gicc->header.length < ACPI_MADT_GICC_SPE)
->> +			return -ENODEV;
->> +
->> +		if (first) {
->> +			gsi = gicc->spe_overflow_interrupt;
->> +			if (!gsi)
->> +				return -ENODEV;
->> +			first = false;
->> +		} else if (gsi != gicc->spe_overflow_interrupt) {
->> +			pr_warn("ACPI: SPE must have homogeneous interrupts\n");
->> +			return -EINVAL;
->> +		}
-> 
-> Unfortunately, I don't think this is sufficient to detect a homogeneous
-> system: we'll have to check the MIDRs instead, which is nasty. I would
-> personally be in favour of enforcing homogeneity for ACPI systems when we
-> bring up secondary CPUs, but I suspect others would disagree.
+[  224.564894] BUG: KASAN: use-after-free in bt_for_each+0x1ac/0x28c
+[  224.571195] Read of size 8 at addr ffffffc17c621340 by task fio/3851
+[  224.577745]
+[  224.579320] CPU: 2 PID: 3851 Comm: fio Tainted: G        W
+4.19.16 #398
+[  224.591905] Call trace:
+[  224.594465]  dump_backtrace+0x0/0x2d8
+[  224.598263]  show_stack+0x20/0x2c
+[  224.601708]  __dump_stack+0x20/0x28
+[  224.605329]  dump_stack+0xc8/0xec
+[  224.608769]  print_address_description+0x74/0x240
+[  224.613632]  kasan_report+0x258/0x274
+[  224.617431]  __asan_report_load8_noabort+0x20/0x28
+[  224.622384]  bt_for_each+0x1ac/0x28c
+[  224.626090]  blk_mq_queue_tag_busy_iter+0x1d4/0x2f8
+[  224.631127]  blk_mq_in_flight+0xa0/0x100
+[  224.635193]  part_in_flight+0x54/0x19c
+[  224.639079]  part_round_stats+0x138/0x1f0
+[  224.643230]  blk_account_io_start+0x23c/0x54c
+[  224.647742]  blk_mq_bio_to_request+0x24/0x2c
+[  224.652165]  blk_mq_make_request+0x674/0xf90
+[  224.656581]  generic_make_request+0x32c/0x7b4
+[  224.661090]  submit_bio+0x230/0x464
+[  224.664702]  __blkdev_direct_IO_simple+0x3d0/0x79c
+[  224.669656]  blkdev_direct_IO+0x60/0x88
+[  224.673629]  generic_file_read_iter+0x368/0xeb8
+[  224.678308]  blkdev_read_iter+0xc0/0xd0
+[  224.682281]  __vfs_read+0x1d8/0x2f0
+[  224.685900]  vfs_read+0xd0/0x1bc
+[  224.689249]  ksys_pread64+0x9c/0xec
+[  224.692869]  __arm64_compat_sys_aarch32_pread64+0x60/0x68
+[  224.698441]  el0_svc_common+0x120/0x1e0
+[  224.702409]  el0_svc_compat_handler+0x64/0x80
+[  224.706919]  el0_svc_compat+0x8/0x18
+[  224.710615]
+[  224.712177] The buggy address belongs to the page:
+[  224.717128] page:ffffffbf05f18840 count:0 mapcount:0
+mapping:0000000000000000 index:0x0
+[  224.725377] flags: 0x4000000000000000()
+[  224.729361] raw: 4000000000000000 0000000000000000 ffffffff00000301
+0000000000000000
+[  224.737340] raw: 0000000000000000 0000000000000000 00000000ffffffff
+0000000000000000
+[  224.745318] page dumped because: kasan: bad access detected
+[  224.751070]
+[  224.752629] Memory state around the buggy address:
+[  224.757583]  ffffffc17c621200: ff ff ff ff ff ff ff ff ff ff ff ff
+ff ff ff ff
+[  224.765035]  ffffffc17c621280: ff ff ff ff ff ff ff ff ff ff ff ff
+ff ff ff ff
+[  224.772483] >ffffffc17c621300: ff ff ff ff ff ff ff ff ff ff ff ff
+ff ff ff ff
+[  224.779921]                                            ^
+[  224.785403]  ffffffc17c621380: ff ff ff ff ff ff ff ff ff ff ff ff
+ff ff ff ff
+[  224.792853]  ffffffc17c621400: ff ff ff ff ff ff ff ff ff ff ff ff
+ff ff ff ff
+[  224.800299]
 
-Given that all the SPE capable machines i'm aware of at the moment are 
-homogeneous, are we ok with just doing an online CPU MIDR check for now, 
-and cleaning that up if/when someone builds a machine and complains?
+What was I doing when I saw this?
+I was running blktests block/005 (switch schedulers while doing IO) on
+a loop device backed by a block device. I don't hit this on every run
+of block/005, but with this script I can usually hit it in less than a
+minute:
 
-Thanks,
+d=`losetup --show -f /dev/sda5` # Replace sda5 with your favorite
+unused partition.
+cd /usr/blktests
+echo "TEST_DEVS=$d" > config
+while true; do
+    ./check block/005
+done
 
+I got totally lost in the blk-mq stuff, but my best hunch is related
+to this comment in bt_iter:
+        /*
+         * We can hit rq == NULL here, because the tagging functions
+         * test and set the bit before assining ->rqs[].
+         */
+        if (rq && rq->q == hctx->queue)
+                iter_data->fn(hctx, rq, iter_data->data, reserved);
 
+I believe the KASAN warning is about touching rq->q. So my question
+is: blk_mq_put_tag doesn't appear to clear out tags->rqs[tag] when
+releasing the tag, so what's to prevent bt_iter from looking through a
+stale rq, in between when someone has allocated that sbitmap tag (for
+the second time), but not yet assigned their own rq in ->rqs[tag].
+Maybe there's some synchronization further up the stack that I'm
+missing?
 
+I was hoping to prove this by nulling out tags->rqs[tag] in
+blk_mq_put_tag, but apparently hctx->tags is sometimes not valid
+anymore by that point? Horrible things happen when I do that.
 
+So I moved sideways and tried a partial fix by clearing rqs[tag] right
+away in blk_mq_get_tag. This of course doesn't close my suspected
+window, but does make it a lot smaller, and indeed I saw my repro rate
+drop to zero (at least letting it go for a few minutes).
+
+Do you agree this might be an issue, and if so, is there a good place
+I can null out tags->rqs[tag] before calling blk_mq_put_tag?
+-Evan
