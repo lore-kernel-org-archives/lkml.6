@@ -2,122 +2,124 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D174C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:10:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84448C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:10:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13DE9222A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:10:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E0CD222D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:10:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="KAgdLSGO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389457AbfBNCKJ (ORCPT
+        id S2393859AbfBNCKY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 21:10:09 -0500
-Received: from smtp2.provo.novell.com ([137.65.250.81]:43213 "EHLO
-        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726295AbfBNCKI (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Wed, 13 Feb 2019 21:10:08 -0500
-Received: from linux-fcij.suse (prv-ext-foundry1int.gns.novell.com [137.65.251.240])
-        by smtp2.provo.novell.com with ESMTP (TLS encrypted); Wed, 13 Feb 2019 19:10:00 -0700
-Subject: Re: linux 4.19.19: md0_raid:1317 blocked for more than 120 seconds.
-To:     Wolfgang Walter <linux@stwm.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, NeilBrown <neilb@suse.com>,
-        linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <2131016.q2kFhguZXe@stwm.de>
- <0ee180ac-bb43-6c2f-4084-5cc452a18c9d@suse.com> <3057098.nBgIypvgED@stwm.de>
-From:   Guoqing Jiang <gqjiang@suse.com>
-Message-ID: <0c832f67-de10-8872-d3db-6a9f11c97454@suse.com>
-Date:   Thu, 14 Feb 2019 10:09:56 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 13 Feb 2019 21:10:24 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:65159 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726295AbfBNCKY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 21:10:24 -0500
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id x1E2A7v5014978;
+        Thu, 14 Feb 2019 11:10:08 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x1E2A7v5014978
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1550110208;
+        bh=fvcpaNMgXMoAkt+h1wYITqXfUtOYx7Y+5g1/h/MdbG0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=KAgdLSGOBwnbXO+3HVh0ox4lx264FIE5jIB+94k7LBPNelyN0v7mjHWzRE6rw3rod
+         lKCBfqk1yxOB3SzHYyaxv2K1dxUNckx2qi+x/rYIMqBSh8500hqllaktbQebEqySEb
+         hLX3FfqP7eqAYEDhwCFc7eZePmDhlhcG+N66gFCHqGxm4vdgcIrfDMi65UmagpPID8
+         +Ovzzl7nFlRIPWmFSrNCp/wSK0Po3u7MsiUQaAMNOjyWbZi+242Q5n82Ziz9e3xF5/
+         xHRVAcdBJ4f+bvk+7753P2pS0K/xoae2N4gHSYKIur/CIgt/07jLRm7XCHkWny1E7l
+         H1o7jh0ZGMqdQ==
+X-Nifty-SrcIP: [209.85.221.174]
+Received: by mail-vk1-f174.google.com with SMTP id f206so1038336vke.6;
+        Wed, 13 Feb 2019 18:10:07 -0800 (PST)
+X-Gm-Message-State: AHQUAuYy/ohXzjoJUYLDZpZEM6grhMiIk0OIsSwE9mBYzxIXXfR3XbJd
+        9063WZlLZYxLYax5thzcTPzxrP3paVIBM02J2BI=
+X-Google-Smtp-Source: AHgI3IYUAZY3JywzYPGZvD7o/l6VVb76nNK/+cnfmOVNU9YPA6780YLaJ9lVCQ1aLabF7xr0APRXYTPnJ8JuNZbQzLo=
+X-Received: by 2002:a1f:1ac3:: with SMTP id a186mr709977vka.34.1550110206820;
+ Wed, 13 Feb 2019 18:10:06 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <3057098.nBgIypvgED@stwm.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <1549245198-6182-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1549245198-6182-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 14 Feb 2019 11:09:31 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASnRfOOX2oKkPp_Ehe7QG3bMLvR_Sr6CEw91zoqJaqkRQ@mail.gmail.com>
+Message-ID: <CAK7LNASnRfOOX2oKkPp_Ehe7QG3bMLvR_Sr6CEw91zoqJaqkRQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] kallsyms: add static qualifiers where missing
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     nixiaoming <nixiaoming@huawei.com>,
+        Jan Beulich <JBeulich@suse.com>,
+        Cao jin <caoj.fnst@cn.fujitsu.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Mathias Krause <minipli@googlemail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2/12/19 7:20 PM, Wolfgang Walter wrote:
-> Am Dienstag, 12. Februar 2019, 16:20:11 schrieb Guoqing Jiang:
->> On 2/11/19 11:12 PM, Wolfgang Walter wrote:
->>> With 4.19.19 we see sometimes the following issue (practically only with
->>> blk_mq, though):
->>>
->>> Feb  4 20:04:46 tettnang kernel: [252300.060165] INFO: task md0_raid1:317
->>> blocked for more than 120 seconds. Feb  4 20:04:46 tettnang kernel:
->>> [252300.060188]       Not tainted 4.19.19-debian64.all+1.1 #1 Feb  4
->>> 20:04:46 tettnang kernel: [252300.060197] "echo 0 >
->>> /proc/sys/kernel/hung_task_timeout_secs" disables this message. Feb  4
->>> 20:04:46 tettnang kernel: [252300.060207] md0_raid1       D    0   317
->>>    2 0x80000000 Feb  4 20:04:46 tettnang kernel: [252300.060211] Call
->>> Trace:
->>> Feb  4 20:04:46 tettnang kernel: [252300.060222]  ? __schedule+0x2a2/0x8c0
->>> Feb  4 20:04:46 tettnang kernel: [252300.060226]  ?
->>> _raw_spin_unlock_irqrestore+0x20/0x40 Feb  4 20:04:46 tettnang kernel:
->>> [252300.060229]  schedule+0x32/0x90 Feb  4 20:04:46 tettnang kernel:
->>> [252300.060241]  md_super_wait+0x69/0xa0 [md_mod] Feb  4 20:04:46
->>> tettnang kernel: [252300.060247]  ? finish_wait+0x80/0x80 Feb  4 20:04:46
->>> tettnang kernel: [252300.060255]  md_bitmap_wait_writes+0x8e/0xa0
->>> [md_mod] Feb  4 20:04:46 tettnang kernel: [252300.060263]  ?
->>> md_bitmap_get_counter+0x42/0xd0 [md_mod] Feb  4 20:04:46 tettnang kernel:
->>> [252300.060271]  md_bitmap_daemon_work+0x1e8/0x380 [md_mod] Feb  4
->>> 20:04:46 tettnang kernel: [252300.060278]  ? md_rdev_init+0xb0/0xb0
->>> [md_mod] Feb  4 20:04:46 tettnang kernel: [252300.060285]
->>> md_check_recovery+0x26/0x540 [md_mod] Feb  4 20:04:46 tettnang kernel:
->>> [252300.060290]  raid1d+0x5c/0xf00 [raid1] Feb  4 20:04:46 tettnang
->>> kernel: [252300.060294]  ? preempt_count_add+0x79/0xb0 Feb  4 20:04:46
->>> tettnang kernel: [252300.060298]  ? lock_timer_base+0x67/0x80 Feb  4
->>> 20:04:46 tettnang kernel: [252300.060302]  ?
->>> _raw_spin_unlock_irqrestore+0x20/0x40 Feb  4 20:04:46 tettnang kernel:
->>> [252300.060304]  ? try_to_del_timer_sync+0x4d/0x80 Feb  4 20:04:46
->>> tettnang kernel: [252300.060306]  ? del_timer_sync+0x35/0x40 Feb  4
->>> 20:04:46 tettnang kernel: [252300.060309]  ? schedule_timeout+0x17a/0x3b0
->>> Feb  4 20:04:46 tettnang kernel: [252300.060312]  ?
->>> preempt_count_add+0x79/0xb0 Feb  4 20:04:46 tettnang kernel:
->>> [252300.060315]  ? _raw_spin_lock_irqsave+0x25/0x50 Feb  4 20:04:46
->>> tettnang kernel: [252300.060321]  ? md_rdev_init+0xb0/0xb0 [md_mod] Feb
->>> 4 20:04:46 tettnang kernel: [252300.060327]  ? md_thread+0xf9/0x160
->>> [md_mod] Feb  4 20:04:46 tettnang kernel: [252300.060330]  ?
->>> r1bio_pool_alloc+0x20/0x20 [raid1] Feb  4 20:04:46 tettnang kernel:
->>> [252300.060336]  md_thread+0xf9/0x160 [md_mod] Feb  4 20:04:46 tettnang
->>> kernel: [252300.060340]  ? finish_wait+0x80/0x80 Feb  4 20:04:46 tettnang
->>> kernel: [252300.060344]  kthread+0x112/0x130 Feb  4 20:04:46 tettnang
->>> kernel: [252300.060346]  ? kthread_create_worker_on_cpu+0x70/0x70 Feb  4
->>> 20:04:46 tettnang kernel: [252300.060350]  ret_from_fork+0x35/0x40
->>>
->>> I saw that there was a similar problem with raid10 and an upstream patch
->>>
->>> e820d55cb99dd93ac2dc949cf486bb187e5cd70d
->>> md: fix raid10 hang issue caused by barrier
->>> by  Guoqing Jiang
->>>
->>> I wonder if there is a similar fix needed for raid1?
->> Seems not, the calltrace tells the previous write superblock IO was not
->> finish as expected,
->> there is a report for raid5 which has similar problem with md_super_wait
->> in the link [1]. Maybe
->> you can disable blk-mq to narrow down the issue as well.
-> I already did for 4 weeks. I didn't saw this with blk-mq disabled (for scsi
-> and md), though this may be by luck.
-
-Then I guess it maybe related to blk-mq, which scheduler are you used 
-with blk-mq?
-And maybe you can switch it to see if it is caused by specified 
-scheduler or not.
-
->> [1] |https://bbs.archlinux.org/viewtopic.php?id=243520
-> I found this bug report in debian:
+On Mon, Feb 4, 2019 at 10:57 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 >
-> https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=904822
+> Fix the following sparse warnings:
+>
+> scripts/kallsyms.c:65:5: warning: symbol 'token_profit' was not declared. Should it be static?
+> scripts/kallsyms.c:68:15: warning: symbol 'best_table' was not declared. Should it be static?
+> scripts/kallsyms.c:69:15: warning: symbol 'best_table_len' was not declared. Should it be static?
+>
+> Also, remove 'inline' from is_arm_mapping_symbol(). The compiler
+> will inline it anyway when it is appropriate to do so.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-Thanks, the bug report also said it didn't happen after disable blk-mq.
+Applied to linux-kbuild.
 
-Regards,
-Guoqing
+> ---
+>
+>  scripts/kallsyms.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>
+> diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
+> index 77cebad..fc00bb0 100644
+> --- a/scripts/kallsyms.c
+> +++ b/scripts/kallsyms.c
+> @@ -62,11 +62,11 @@ static int all_symbols = 0;
+>  static int absolute_percpu = 0;
+>  static int base_relative = 0;
+>
+> -int token_profit[0x10000];
+> +static int token_profit[0x10000];
+>
+>  /* the table that holds the result of the compression */
+> -unsigned char best_table[256][2];
+> -unsigned char best_table_len[256];
+> +static unsigned char best_table[256][2];
+> +static unsigned char best_table_len[256];
+>
+>
+>  static void usage(void)
+> @@ -80,7 +80,7 @@ static void usage(void)
+>   * This ignores the intensely annoying "mapping symbols" found
+>   * in ARM ELF files: $a, $t and $d.
+>   */
+> -static inline int is_arm_mapping_symbol(const char *str)
+> +static int is_arm_mapping_symbol(const char *str)
+>  {
+>         return str[0] == '$' && strchr("axtd", str[1])
+>                && (str[2] == '\0' || str[2] == '.');
+> --
+> 2.7.4
+>
+
+
+-- 
+Best Regards
+Masahiro Yamada
