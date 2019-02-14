@@ -2,141 +2,139 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F9BC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 05:07:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6535AC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 05:09:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4AD9222C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 05:07:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B815222CC
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 05:09:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vd1hSdiT"
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="Z+fXL3qR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405122AbfBNFHe (ORCPT
+        id S2405164AbfBNFJu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 00:07:34 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:56778 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbfBNFHd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 00:07:33 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1E57FOn011562;
-        Wed, 13 Feb 2019 23:07:15 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1550120835;
-        bh=6SQtU9RSVfN90eT8tdTGGJqFD0t1JC2r8XXu5pO7MtU=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=vd1hSdiTtt4iunXP/L5IW/+/WE8vS7zd90tw+QdKYy1OMPeR5DwiykZADow7RxOev
-         ufcisTD5YJJxnTGfGwnzi376on+xso88wQmIDwx/sPTgOKZZWzfnmLc2tN1Xz/hdMA
-         mHnjxDoDB4dnscDl0IHK19yWP1najF/E1C74faVw=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1E57FJV025504
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 13 Feb 2019 23:07:15 -0600
-Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 13
- Feb 2019 23:07:15 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 13 Feb 2019 23:07:15 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1E57Aju017362;
-        Wed, 13 Feb 2019 23:07:11 -0600
-Subject: Re: [PATCH 11/15] PCI: pci-epf-test: Use pci_epc_get_features to get
- EPC features
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     Bjorn Helgaas <bhelgaas@google.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
-        <linux-omap@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190107064148.10152-1-kishon@ti.com>
- <20190107064148.10152-12-kishon@ti.com>
- <20190212150718.GA28306@e107981-ln.cambridge.arm.com>
- <6d72cfdf-97a7-4aab-f746-d0e545431ea2@ti.com>
- <20190213143646.GC25260@e107981-ln.cambridge.arm.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <4cb9ce03-e360-b518-96fd-f8a618a9c803@ti.com>
-Date:   Thu, 14 Feb 2019 10:36:35 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190213143646.GC25260@e107981-ln.cambridge.arm.com>
-Content-Type: text/plain; charset="utf-8"
+        Thu, 14 Feb 2019 00:09:50 -0500
+Received: from mail-eopbgr720042.outbound.protection.outlook.com ([40.107.72.42]:35977
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725781AbfBNFJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 00:09:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zhsgMN7EH1KAN9RkqD/P3gg/M8Uf6mEeRztpXb/JAdQ=;
+ b=Z+fXL3qRoQHAcsH2LJmhfhWP+DrCckGc3voPAKVwx8DC9IhdOY3diHyqKa3d/WV5HNVaDdnxs7EUNfQYtzSXFrvhxzXiYPKO7g2Ya8RxrG9wNw1pDmq8w6xOuTFFhd7xZ+ig27lUosyWHABbAo7intcr9CIJ2WZ7ILOtUU8wAHw=
+Received: from DM6PR12MB2908.namprd12.prod.outlook.com (20.179.71.214) by
+ DM6PR12MB3228.namprd12.prod.outlook.com (20.179.105.96) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.16; Thu, 14 Feb 2019 05:09:45 +0000
+Received: from DM6PR12MB2908.namprd12.prod.outlook.com
+ ([fe80::6448:8368:c5f9:fe62]) by DM6PR12MB2908.namprd12.prod.outlook.com
+ ([fe80::6448:8368:c5f9:fe62%3]) with mapi id 15.20.1622.016; Thu, 14 Feb 2019
+ 05:09:45 +0000
+From:   "Zhou, David(ChunMing)" <David1.Zhou@amd.com>
+To:     Bo YU <tsu.yubo@gmail.com>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        "daniel@ffwll.ch" <daniel@ffwll.ch>, "Zhu, Rex" <Rex.Zhu@amd.com>,
+        "Grodzovsky, Andrey" <Andrey.Grodzovsky@amd.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>
+Subject: RE: [PATCH] drm/amdgpu: Error handling issues about CHECKED_RETURN
+Thread-Topic: [PATCH] drm/amdgpu: Error handling issues about CHECKED_RETURN
+Thread-Index: AQHUxCB7Uf9Sg9+2AEejhLZiKhxoGKXevnsw
+Date:   Thu, 14 Feb 2019 05:09:45 +0000
+Message-ID: <DM6PR12MB2908A5B2BD12B9139C5DAB01B4670@DM6PR12MB2908.namprd12.prod.outlook.com>
+References: <20190214044628.26759-1-tsu.yubo@gmail.com>
+In-Reply-To: <20190214044628.26759-1-tsu.yubo@gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=David1.Zhou@amd.com; 
+x-originating-ip: [180.167.199.189]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c302e863-1d42-4123-de21-08d6923aa2e4
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM6PR12MB3228;
+x-ms-traffictypediagnostic: DM6PR12MB3228:
+x-ld-processed: 3dd8961f-e488-4e60-8e11-a82d994e183d,ExtAddr
+x-microsoft-exchange-diagnostics: 1;DM6PR12MB3228;20:Aom/1McvzEZ8EYvbClg3qB09nCsY3oUGkNX6SRoJoa2n8ImPr6HeFYN5ZMyqLx1FmAe+raoWaxxdS5h264KUWGxAWxQsUwInDIcTP2sQIxgbUlOPqUxO/Z80sAiJylnT8zGYBRV7EMXMVKI7PDDzgTGqXvLM++WMYjffNtaSTqD6LTZ9CT4+k7/n6pGzHRiQ0Jk8cZU3J1BlHQBW9qukjCCyXitg7cdMiVgbgeNWJqVF6e6QBBN3H7DjlGeCP+5O
+x-microsoft-antispam-prvs: <DM6PR12MB32282BB4FF1FF68D5479ACFBB4670@DM6PR12MB3228.namprd12.prod.outlook.com>
+x-forefront-prvs: 09480768F8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(346002)(136003)(376002)(396003)(199004)(189003)(13464003)(71190400001)(71200400001)(25786009)(256004)(316002)(229853002)(7736002)(74316002)(6436002)(8936002)(55016002)(305945005)(81166006)(9686003)(81156014)(8676002)(478600001)(97736004)(76176011)(68736007)(110136005)(72206003)(14454004)(6246003)(4326008)(14444005)(7696005)(99286004)(66066001)(86362001)(2906002)(2201001)(2501003)(486006)(11346002)(26005)(3846002)(6116002)(6506007)(53546011)(102836004)(476003)(446003)(53936002)(186003)(106356001)(33656002)(105586002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3228;H:DM6PR12MB2908.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: G9HT2YyIboMLRNch4/Egc28lN4deGARghiuTOTybRVJy3PYWnB6gdIE/no8JNTpdpAdL9Z7i0IxaNlETnLnoNwfChqV8xNBtazFP/v3w5tswVpUq1YspKDtnSd6G395Aw9mzCNuMT6dVwG6SMFTn6jaf4m9FtdKVRN+I5km99FsAYWQJA9+y6rwfmbZVqG/7DS0/Vq3669oGH8va1Ukwh2WPlpUteybQ4Omnh0QzhIF1/g6enxHli7VKd/eNA8F0lyHDzOETsSakYRVFsAFtrRll+UymOR8+uv+m8K/nOhpeN60FTGh6cs/rHRH4gVhdo+tV/G4dmnoUdBsWw/LKT4tDX/AHVEQuR6YMJreFOHany+tFnl1IwDwPI/MW2YQndFplHvyNTmt7Vd78R2jnMVneCxxwP01QjFYnGA5PLNg=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c302e863-1d42-4123-de21-08d6923aa2e4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2019 05:09:45.7009
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3228
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lorenzo,
 
-On 13/02/19 8:06 PM, Lorenzo Pieralisi wrote:
-> On Wed, Feb 13, 2019 at 07:08:18PM +0530, Kishon Vijay Abraham I wrote:
->> Hi Lorenzo,
->>
->> On 12/02/19 8:37 PM, Lorenzo Pieralisi wrote:
->>> On Mon, Jan 07, 2019 at 12:11:44PM +0530, Kishon Vijay Abraham I wrote:
->>>
->>> [...]
->>>
->>>>  static int pci_epf_test_bind(struct pci_epf *epf)
->>>>  {
->>>>  	int ret;
->>>>  	struct pci_epf_test *epf_test = epf_get_drvdata(epf);
->>>>  	struct pci_epf_header *header = epf->header;
->>>> +	const struct pci_epc_features *epc_features;
->>>> +	enum pci_barno test_reg_bar = BAR_0;
->>>>  	struct pci_epc *epc = epf->epc;
->>>>  	struct device *dev = &epf->dev;
->>>> +	bool linkup_notifier = false;
->>>> +	bool msix_capable = false;
->>>> +	bool msi_capable = true;
->>>>  
->>>>  	if (WARN_ON_ONCE(!epc))
->>>>  		return -EINVAL;
->>>>  
->>>> -	if (epc->features & EPC_FEATURE_NO_LINKUP_NOTIFIER)
->>>> -		epf_test->linkup_notifier = false;
->>>> -	else
->>>> -		epf_test->linkup_notifier = true;
->>>> -
->>>> -	epf_test->msix_available = epc->features & EPC_FEATURE_MSIX_AVAILABLE;
->>>> +	epc_features = pci_epc_get_features(epc, epf->func_no);
->>>
->>> I think it would work out better if struct pci_epc_features was
->>> allocated in the caller (stack) and pci_epc_get_features() take a
->>> pointer parameter to it rather than the callee and the callee would just
->>> have to fill it out, this also removes data in the driver that is not
->>> really useful.
->>>
->>> Is there any other reason behind the current design choice ?
->>
->> Some drivers are used by multiple platforms each with different features. In
->> such cases it's cleaner to have separate epc_feature table for each platform.
->>
->> I think the driver should maintain some sort of data to even populate
->> pci_epc_features allocated by EP function driver.
-> 
-> You mean that every EP controller driver should keep a table of
-> pci_epc_features (instead of a single instance) to be matched using DT
-> compatible strings to detect the platform variations ?
 
-Yes.
+> -----Original Message-----
+> From: Bo YU <tsu.yubo@gmail.com>
+> Sent: Thursday, February 14, 2019 12:46 PM
+> To: Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig, Christian
+> <Christian.Koenig@amd.com>; Zhou, David(ChunMing)
+> <David1.Zhou@amd.com>; airlied@linux.ie; daniel@ffwll.ch; Zhu, Rex
+> <Rex.Zhu@amd.com>; Grodzovsky, Andrey
+> <Andrey.Grodzovsky@amd.com>; dri-devel@lists.freedesktop.org; linux-
+> kernel@vger.kernel.org
+> Cc: Bo Yu <tsu.yubo@gmail.com>; amd-gfx@lists.freedesktop.org
+> Subject: [PATCH] drm/amdgpu: Error handling issues about
+> CHECKED_RETURN
+>=20
+> From: Bo Yu <tsu.yubo@gmail.com>
+>=20
+> Calling "amdgpu_ring_test_helper" without checking return value
 
-Thanks
-Kishon
+We could need to continue to ring test even there is one ring test failed.
+
+-David
+
+>=20
+> Signed-off-by: Bo Yu <tsu.yubo@gmail.com>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+> b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+> index 57cb3a51bda7..48465a61516b 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+> @@ -4728,7 +4728,9 @@ static int gfx_v8_0_cp_test_all_rings(struct
+> amdgpu_device *adev)
+>=20
+>  	for (i =3D 0; i < adev->gfx.num_compute_rings; i++) {
+>  		ring =3D &adev->gfx.compute_ring[i];
+> -		amdgpu_ring_test_helper(ring);
+> +		r =3D amdgpu_ring_test_helper(ring);
+> +		if (r)
+> +			return r;
+>  	}
+>=20
+>  	return 0;
+> --
+> 2.11.0
+
