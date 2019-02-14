@@ -2,110 +2,130 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 860E4C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7A09C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:55:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E0C2222A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:55:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77F5E222A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:55:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=daynix-com.20150623.gappssmtp.com header.i=@daynix-com.20150623.gappssmtp.com header.b="LXiBP3YV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406103AbfBNHzL (ORCPT
+        id S2406121AbfBNHz2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 02:55:11 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:14634 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727511AbfBNHzL (ORCPT
+        Thu, 14 Feb 2019 02:55:28 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:36285 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731244AbfBNHz1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 02:55:11 -0500
-X-UUID: a144a7d2084b4d42b5b314372a942809-20190214
-X-UUID: a144a7d2084b4d42b5b314372a942809-20190214
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <shun-chih.yu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 703602289; Thu, 14 Feb 2019 15:55:06 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 14 Feb 2019 15:55:04 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 14 Feb 2019 15:55:04 +0800
-From:   <shun-chih.yu@mediatek.com>
-To:     Sean Wang <sean.wang@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>
-CC:     <dmaengine@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <srv_wsdupstream@mediatek.com>,
-        Shun-Chih Yu <shun-chih.yu@mediatek.com>
-Subject: [PATCH v2 1/1] dt-bindings: dmaengine: Add MediaTek Command-Queue DMA controller bindings
-Date:   Thu, 14 Feb 2019 15:54:52 +0800
-Message-ID: <1550130892-19488-2-git-send-email-shun-chih.yu@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1550130892-19488-1-git-send-email-shun-chih.yu@mediatek.com>
-References: <1550130892-19488-1-git-send-email-shun-chih.yu@mediatek.com>
+        Thu, 14 Feb 2019 02:55:27 -0500
+Received: by mail-yw1-f67.google.com with SMTP id 189so1989922ywi.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 23:55:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=daynix-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=yBwSSlNv9tCyPDX/sqUOFEoAcNsBJ8hUgkR8QwekNPc=;
+        b=LXiBP3YVwUoJYM9R7Y6HmgAPbLmALMeOLVMlAuQI2AASyM9TF8cs+09o2Wn5YmGlcG
+         fJVY5IdFShBJpvqKjfXJoCSbv13xnYbBJTUbolx3B3NayUWIMXv3W5zZgzZfge9ScRlh
+         xeuEa8chAb0m7k/MxjX5Q/oRWUXHH6Bni9G7260kl0HplK12sLXPJMd4iKkn0a1qR69g
+         JwTpQJNElgM/hTpMx9i2vuG2tUwFGGXJVDhQj0cHg0PCB7vdENPQfPp7BIonWfyTVsSh
+         q8EtJU/wF8B3ynqJTIuLcPhrJx0BUQ7gfpQdTMnk6URLQBWMIN/QOE1KC9ygQYxu6mBH
+         5W/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=yBwSSlNv9tCyPDX/sqUOFEoAcNsBJ8hUgkR8QwekNPc=;
+        b=Aob8StKa9ymE48eoiv2pT5A15+J+uxtR3SjdSk7TuM0ukNYwfJhsOt8R1BjLWcwcs1
+         no/Qvv0Hr2sp0eZAn+smCodtlJLbzZ62xzTwybgaP1ecXbWpENQouKYwWac1lgc+kMRM
+         pQb5aOyzp8ey4VdxPF3s/zlg5wEx8ij73dzUXHeND1IWYRskxXK7ctITWRE+JWfctVZq
+         1dr7SgBXEuCYdBfqjOnGwJc9e4cfiNQ/u9LMJh1Kx003UIGHvxD777aghzzXeAMH1ir8
+         DFgKTeEPNBLqtKh7RGIe0hrS1h8B62hUFFUY+T0E69fmN0tcXLx5GoPrsX+mbNH5dCfF
+         DkPA==
+X-Gm-Message-State: AHQUAuaqcAqs5nEYqaPwe2+bp3m1WCnJGW+/TtiKnY7HkXbdNAfdUmtg
+        RbLzCpWRE4+HEC6IvpRpzq0JqIo7BDGtRiQGxGb/pA==
+X-Google-Smtp-Source: AHgI3IZuQqRFXQU0lDya6EixA9gy4bQPrBjRhcUu1uoPiRAE1QsbusX2LXOq2LYzaHpMOBCcaEfYst6UhSc+DPQrF6k=
+X-Received: by 2002:a81:2fcc:: with SMTP id v195mr1794829ywv.419.1550130926284;
+ Wed, 13 Feb 2019 23:55:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+References: <20190201085035.18481-1-yuri.benditovich@daynix.com>
+In-Reply-To: <20190201085035.18481-1-yuri.benditovich@daynix.com>
+From:   Yuri Benditovich <yuri.benditovich@daynix.com>
+Date:   Thu, 14 Feb 2019 09:55:17 +0200
+Message-ID: <CAOEp5OfvoB3YV4Ga9K7xRrHvKmtX57ExOB-wYbYaUZHmDn=ydw@mail.gmail.com>
+Subject: Re: [PATCH v2] virtio_net: Introduce extended RSC feature
+To:     "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        virtualization@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shun-Chih Yu <shun-chih.yu@mediatek.com>
+Can you please let me know whether this patch accepted?
+Is yes, I'll post similar change to qemu to prevent future compilation
+error when linux header will be updated.
 
-Document the devicetree bindings for MediaTek Command-Queue DMA controller
-which could be found on MT6765 SoC or other similar Mediatek SoCs.
+Thanks,
+Yuri
 
-Signed-off-by: Shun-Chih Yu <shun-chih.yu@mediatek.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Sean Wang <sean.wang@kernel.org>
----
- .../devicetree/bindings/dma/mtk-cqdma.txt          |   31 ++++++++++++++++++++
- 1 file changed, 31 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/dma/mtk-cqdma.txt
-
-diff --git a/Documentation/devicetree/bindings/dma/mtk-cqdma.txt b/Documentation/devicetree/bindings/dma/mtk-cqdma.txt
-new file mode 100644
-index 0000000..fb12927
---- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/mtk-cqdma.txt
-@@ -0,0 +1,31 @@
-+MediaTek Command-Queue DMA Controller
-+==================================
-+
-+Required properties:
-+
-+- compatible:	Must be "mediatek,mt6765-cqdma" for MT6765.
-+- reg:		Should contain the base address and length for each channel.
-+- interrupts:	Should contain references to the interrupts for each channel.
-+- clocks:	Should be the clock specifiers corresponding to the entry in
-+		clock-names property.
-+- clock-names:	Should contain "cqdma" entries.
-+- dma-channels: The number of DMA channels supported by the controller.
-+- dma-requests: The number of DMA request supported by the controller.
-+- #dma-cells: 	The length of the DMA specifier, must be <1>. This one cell
-+		in dmas property of a client device represents the channel
-+		number.
-+Example:
-+
-+        cqdma: dma-controller@10212000 {
-+		compatible = "mediatek,mt6765-cqdma";
-+		reg = <0 0x10212000 0 0x1000>;
-+		interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_LOW>,
-+			<GIC_SPI 114 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&infracfg CLK_IFR_CQ_DMA>;
-+		clock-names = "cqdma";
-+		dma-channels = <2>;
-+		dma-requests = <32>;
-+		#dma-cells = <1>;
-+	};
-+
-+DMA clients must use the format described in dma/dma.txt file.
--- 
-1.7.9.5
-
+On Fri, Feb 1, 2019 at 10:50 AM Yuri Benditovich
+<yuri.benditovich@daynix.com> wrote:
+>
+> VIRTIO_NET_F_RSC_EXT feature bit indicates that the device
+> is able to provide extended RSC information. When the feature
+> is active and 'gso_type' field in received packet is not GSO_NONE,
+> the device reports number of coalesced packets in 'csum_start'
+> field and number of duplicated acks in 'csum_offset' field
+> and sets VIRTIO_NET_HDR_F_RSC_INFO in 'flags' field.
+>
+> Signed-off-by: Yuri Benditovich <yuri.benditovich@daynix.com>
+> ---
+>  include/uapi/linux/virtio_net.h | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/uapi/linux/virtio_net.h b/include/uapi/linux/virtio_net.h
+> index a3715a3224c1..23e73d666fc2 100644
+> --- a/include/uapi/linux/virtio_net.h
+> +++ b/include/uapi/linux/virtio_net.h
+> @@ -56,7 +56,7 @@
+>  #define VIRTIO_NET_F_MQ        22      /* Device supports Receive Flow
+>                                          * Steering */
+>  #define VIRTIO_NET_F_CTRL_MAC_ADDR 23  /* Set MAC address */
+> -
+> +#define VIRTIO_NET_F_RSC_EXT     61    /* Provides extended RSC info */
+>  #define VIRTIO_NET_F_STANDBY     62    /* Act as standby for another device
+>                                          * with the same MAC.
+>                                          */
+> @@ -104,6 +104,7 @@ struct virtio_net_config {
+>  struct virtio_net_hdr_v1 {
+>  #define VIRTIO_NET_HDR_F_NEEDS_CSUM    1       /* Use csum_start, csum_offset */
+>  #define VIRTIO_NET_HDR_F_DATA_VALID    2       /* Csum is valid */
+> +#define VIRTIO_NET_HDR_F_RSC_INFO      4   /* rsc_ext data in csum_ fields */
+>         __u8 flags;
+>  #define VIRTIO_NET_HDR_GSO_NONE                0       /* Not a GSO frame */
+>  #define VIRTIO_NET_HDR_GSO_TCPV4       1       /* GSO frame, IPv4 TCP (TSO) */
+> @@ -118,6 +119,15 @@ struct virtio_net_hdr_v1 {
+>         __virtio16 num_buffers; /* Number of merged rx buffers */
+>  };
+>
+> +/* if VIRTIO_NET_HDR_F_RSC_INFO is set, the csum_start
+> + * field contains number of coalesced segments
+> + */
+> +#define virtio_net_rsc_ext_num_packets csum_start
+> +/* if VIRTIO_NET_HDR_F_RSC_INFO is set, the csum_offset
+> + * field contains number of duplicated acks
+> + */
+> +#define virtio_net_rsc_ext_num_dupacks csum_offset
+> +
+>  #ifndef VIRTIO_NET_NO_LEGACY
+>  /* This header comes first in the scatter-gather list.
+>   * For legacy virtio, if VIRTIO_F_ANY_LAYOUT is not negotiated, it must
+> --
+> 2.17.1
+>
