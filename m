@@ -2,110 +2,123 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CBF8C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 204D3C4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:01:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F9002080A
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:00:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E44162080A
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:00:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kApAc8ju"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="anzzR5Sa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390555AbfBNSAu (ORCPT
+        id S2391741AbfBNSA5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 13:00:50 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35495 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730119AbfBNSAu (ORCPT
+        Thu, 14 Feb 2019 13:00:57 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36656 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390777AbfBNSA5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 13:00:50 -0500
-Received: by mail-lj1-f196.google.com with SMTP id j13-v6so6063689ljc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 10:00:48 -0800 (PST)
+        Thu, 14 Feb 2019 13:00:57 -0500
+Received: by mail-pf1-f193.google.com with SMTP id n22so3474118pfa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 10:00:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cNdmBhJV6l2CrpOn23AdUvuvbdoQzPMeGeladPJyn9A=;
-        b=kApAc8juLL1jfsml6kvJ912qHNEFbMQMO0HAg6aPT+R9mD7nmIVEz9780OYMNDENsy
-         5KLMqJuFyeTsEIyCMUFclXbwU7ny5JbACEz1fgVxx2hHfBVKBTdRRLgqMPi14FyENs/b
-         phPeh1WjjPTFjNPwtwKLdYKZ2aZAM/miG+sR0=
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Q7Cx/Crhp0no8GWc+NeB1APfLt8OgYRtu//UB0ro46A=;
+        b=anzzR5SaedAZk06QdlqvK+8aQPBhG9BdoVepDvnS3cjH3q/C1I5PR3laMdjNkIk79t
+         zl1HnLZEudBmNNMcb+DXfd16DadgKrUA196LSd4LQDkvkoCp2GushiA4nOle4eoLEbtb
+         LKTWP75+TYEBq3Cu0Sn7n49S7ZaJjee0qz7Cs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cNdmBhJV6l2CrpOn23AdUvuvbdoQzPMeGeladPJyn9A=;
-        b=o2N0SGCuYrscyzcQlAnuQEVPr7Ysf1JTGhc0Cpoe5mFjQfNIjvv09KQHIZoe+5EoEb
-         JtqgMEHL6z557/6P+Qwfxd+rKdw+SxIrGlZA4NmcpptLnBnw3xbEE0PJm5op3lqIhafA
-         /wUjY+JVGa8EaDw4T9mabO+zMNjyfIj6Yl3beRTSno+4YZ86psU0kKBeoNQ4hYKx795D
-         jzn+8L0YsM2Unbub2ZMx+kctsj8536Y+Jqr0tEcrFkvO2slkgJQRHW9Yfsk6jmT7Ljtt
-         EU1KWPlnc5ivXpfsXgnONOWoGsQKlEfKa4eA22I5dSLclu9TybZloW6WPBhlUc+umHYA
-         xOfA==
-X-Gm-Message-State: AHQUAuZJjwivBkv1pdLOjFg40R59cH6AgIKJRt7hZ4KxC6V2p8LRBqTJ
-        6m7sEsWtdiOTJntBvTavbzGGY/ajnNM=
-X-Google-Smtp-Source: AHgI3Ia62/Nap2c6NWr/E2Db0/e/ZDbcb6CvA7IB3d6sG8ePyoqzVZvHqkOeybIXLRok45iDDVTiVw==
-X-Received: by 2002:a2e:8105:: with SMTP id d5-v6mr3375665ljg.76.1550167247746;
-        Thu, 14 Feb 2019 10:00:47 -0800 (PST)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id r10-v6sm554310ljj.71.2019.02.14.10.00.47
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Q7Cx/Crhp0no8GWc+NeB1APfLt8OgYRtu//UB0ro46A=;
+        b=rS1NKbuV+rBRcVAB8oMm7UBuBNkjl4/gjMo/MZgNACxq0kMr4zeThEHnrPnbJ6IOSx
+         P+VqCuqRDTNkTziMmvO2MjYeagoOh0eAroyU53ueVervTXwuLBDKKN6wwdLBgM5mROEL
+         WYvqPsfmnl1jjkpCqdREhOVEtp391X0XzL+HiaDo3MdQ83mkec8bU7pIicHaaSFPTErk
+         aRR/sx65m2537X6lsOfPm8tVz6k6Na7ws/xV+awk+2pFIgRwCqft/8pnZWUTRgqCYDgL
+         LFjU0g2323yqdBEnrZZgI/lPPa9l60gzjQN0j9nEFrgBT58FDq7JgXfBmQNV+cjG/Ydv
+         pmtA==
+X-Gm-Message-State: AHQUAub3WIBrb07Hq1E6ItexOiYuPnlClteB2/9jNufHdpWM1NY5mV7g
+        T/wHjKiYlrWz2XVTnPjwgLY4hw==
+X-Google-Smtp-Source: AHgI3IbBRg4BeV7A2tfIPWRmuJqA1lhebwzeYtQKTwpatkwrrACg9uMGbIVwx0n641kDDjpl+u8dSA==
+X-Received: by 2002:a65:610f:: with SMTP id z15mr1043149pgu.153.1550167255854;
+        Thu, 14 Feb 2019 10:00:55 -0800 (PST)
+Received: from [10.136.8.252] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id m7sm7238498pfj.162.2019.02.14.10.00.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 10:00:47 -0800 (PST)
-Received: by mail-lj1-f179.google.com with SMTP id z20so5026607ljj.10
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 10:00:47 -0800 (PST)
-X-Received: by 2002:a2e:99c9:: with SMTP id l9mr2782851ljj.60.1550167242216;
- Thu, 14 Feb 2019 10:00:42 -0800 (PST)
+        Thu, 14 Feb 2019 10:00:54 -0800 (PST)
+Subject: Re: [PATCH] mailbox: bcm-flexrm-mailbox: Fix FlexRM ring flush
+ timeout issue
+To:     Scott Branden <scott.branden@broadcom.com>,
+        Jassi Brar <jassisinghbrar@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+References: <20190204192129.93533-1-ray.jui@broadcom.com>
+ <dc8e7d9b-51fb-d216-d85c-915dda7d18ae@broadcom.com>
+From:   Ray Jui <ray.jui@broadcom.com>
+Message-ID: <c1307907-47ce-7081-547f-1a3f5fe1633b@broadcom.com>
+Date:   Thu, 14 Feb 2019 10:00:52 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <20190207205730.199332-1-evgreen@chromium.org> <20190207205730.199332-3-evgreen@chromium.org>
- <yq1d0nvqeix.fsf@oracle.com>
-In-Reply-To: <yq1d0nvqeix.fsf@oracle.com>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Thu, 14 Feb 2019 10:00:05 -0800
-X-Gmail-Original-Message-ID: <CAE=gft6bdM2dLc9RhGYMWp8bz6_c-W8Yy-CUTM9wXe+UiYkXEw@mail.gmail.com>
-Message-ID: <CAE=gft6bdM2dLc9RhGYMWp8bz6_c-W8Yy-CUTM9wXe+UiYkXEw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] loop: Better discard support for block devices
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Bart Van Assche <bvanassche@acm.org>,
-        Gwendal Grignou <gwendal@chromium.org>,
-        Alexis Savery <asavery@chromium.org>,
-        Ming Lei <ming.lei@redhat.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <dc8e7d9b-51fb-d216-d85c-915dda7d18ae@broadcom.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 6:40 PM Martin K. Petersen
-<martin.petersen@oracle.com> wrote:
->
->
-> Evan,
->
-> > If the backing device for a loop device is a block device, then mirror
-> > the discard properties of the underlying block device into the loop
-> > device. While in there, differentiate between REQ_OP_DISCARD and
-> > REQ_OP_WRITE_ZEROES, which are different for block devices, but which
-> > the loop device had just been lumping together.
->
-> Bubbling up the queue limits from the backing device is fine. However,
-> I'm not sure why you are requiring a filesystem to be on a
-> discard-capable device for REQ_OP_DISCARD to have an effect? Punching a
-> hole in a file is semantically the same as discarding.
->
+Hi Jassi,
 
-Hi Martin,
-Thanks so much for taking a look at this patch, I was getting nervous
-it was languishing again. I got confused by this comment though. My
-intention was to not change behavior for loop devices backed by a
-regular file system file. The changes in loop_config_discard() should
-result in QUEUE_FLAG_DISCARD being set for backings of regular files
-that support f_op->fallocate(), same as before my patch. The change in
-lo_discard() to call blk_queue_discard() on the loopback queue itself
-was just shorthand to avoid duplicating all those if statements from
-loop_config_discard again. Am I missing a spot where I've implicitly
-changed the behavior for file-backed loop devices?
--Evan
+Have you had a chance to review this fix? This is a critical fix for a
+crash during driver shutdown.
+
+Regards,
+
+Ray
+
+On 2/4/2019 11:22 AM, Scott Branden wrote:
+> Fix looks good.
+> 
+> On 2019-02-04 11:21 a.m., Ray Jui wrote:
+>> From: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+>>
+>> RING_CONTROL reg was not written due to wrong address, hence all
+>> the subsequent ring flush was timing out.
+>>
+>> Fixes: a371c10ea4b3 ("mailbox: bcm-flexrm-mailbox: Fix FlexRM ring
+>> flush sequence")
+>>
+>> Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+>> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
+>> ---
+>>   drivers/mailbox/bcm-flexrm-mailbox.c | 4 ++--
+>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/mailbox/bcm-flexrm-mailbox.c
+>> b/drivers/mailbox/bcm-flexrm-mailbox.c
+>> index d713271ebf7c..a64116586b4c 100644
+>> --- a/drivers/mailbox/bcm-flexrm-mailbox.c
+>> +++ b/drivers/mailbox/bcm-flexrm-mailbox.c
+>> @@ -1396,9 +1396,9 @@ static void flexrm_shutdown(struct mbox_chan *chan)
+>>         /* Clear ring flush state */
+>>       timeout = 1000; /* timeout of 1s */
+>> -    writel_relaxed(0x0, ring + RING_CONTROL);
+>> +    writel_relaxed(0x0, ring->regs + RING_CONTROL);
+>>       do {
+>> -        if (!(readl_relaxed(ring + RING_FLUSH_DONE) &
+>> +        if (!(readl_relaxed(ring->regs + RING_FLUSH_DONE) &
+>>                 FLUSH_DONE_MASK))
+>>               break;
+>>           mdelay(1);
