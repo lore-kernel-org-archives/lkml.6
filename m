@@ -2,173 +2,95 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1092EC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:16:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE1E0C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:18:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E02A8222B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:16:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DF66222B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:18:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="w1WCXLd3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405415AbfBNLQP (ORCPT
+        id S2405439AbfBNLSp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 06:16:15 -0500
-Received: from foss.arm.com ([217.140.101.70]:41716 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731116AbfBNLQO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 06:16:14 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 29A42EBD;
-        Thu, 14 Feb 2019 03:16:14 -0800 (PST)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3A41D3F675;
-        Thu, 14 Feb 2019 03:16:12 -0800 (PST)
-Date:   Thu, 14 Feb 2019 11:16:09 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jisheng Zhang <jszhang@marvell.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Joshua Frkuska <joshua_frkuska@mentor.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>
-Subject: Re: [PATCH v2] drivers: base: add support to skip power management
- in device/driver model
-Message-ID: <20190214111609.GC28361@e107155-lin>
-References: <20190213120137.23354-1-sudeep.holla@arm.com>
- <CAJZ5v0gg7H9G_HrvLhf9k26maYUR+_EpE8DDQ7NPh58HMRH3Ew@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJZ5v0gg7H9G_HrvLhf9k26maYUR+_EpE8DDQ7NPh58HMRH3Ew@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Thu, 14 Feb 2019 06:18:45 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:39782 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731116AbfBNLSo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 06:18:44 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1EBE9IS013286;
+        Thu, 14 Feb 2019 11:18:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
+ mime-version : subject : from : in-reply-to : date : cc :
+ content-transfer-encoding : message-id : references : to;
+ s=corp-2018-07-02; bh=pxT21No+zAo92Lt8izw0UGg1JN7hZwHAao7k9nslps4=;
+ b=w1WCXLd3IIOE4a8WApeNxTUjUJ8gFSeYZv7b8jsilBPlNaFTpx3qeeKAScZH5H990BBN
+ KeC3QOcrrGIj+kX1FiBTB2KZyzqXnHWrpETeX2anz+y6KId5Ct+KxYegUXj2bG/aVVyG
+ 7yqw6uNj8yWGnCauyZKabrZ0RK1aPqI8gyqNj981q9JOODzUeOBSSUWcZwIDIdo0meJa
+ vXUSQaSAAkytALtAN9KXxQUaAdNfxYEa1ZsTSl613Dc0RtrB85v18e/kmcXsU/leynpD
+ 8nZRpyy73ABFsF/rLGnMt5uetm30dtN+WEMGmOXh35GURDYbNNcLwrTXXA1/mYoKKNey qQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2qhree7ehq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Feb 2019 11:18:30 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1EBITwE029134
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Feb 2019 11:18:29 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1EBIQ7a026969;
+        Thu, 14 Feb 2019 11:18:26 GMT
+Received: from [192.168.0.110] (/73.243.10.6)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 14 Feb 2019 03:18:26 -0800
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.2\))
+Subject: Re: [PATCH] mm/shmem: make find_get_pages_range() work for huge page
+From:   William Kucharski <william.kucharski@oracle.com>
+In-Reply-To: <20190212235743.GB95899@google.com>
+Date:   Thu, 14 Feb 2019 04:18:24 -0700
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dave Chinner <david@fromorbit.com>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Hugh Dickins <hughd@google.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <404C0A0A-F145-4622-B3EB-492D0FFB7CB6@oracle.com>
+References: <20190110030838.84446-1-yuzhao@google.com>
+ <A7BE64E0-8F88-46AC-A330-E1AB23A50073@oracle.com>
+ <20190212235743.GB95899@google.com>
+To:     Yu Zhao <yuzhao@google.com>
+X-Mailer: Apple Mail (2.3445.104.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9166 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=859 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902140082
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 11:17:47PM +0100, Rafael J. Wysocki wrote:
-> On Wed, Feb 13, 2019 at 1:01 PM Sudeep Holla <sudeep.holla@arm.com> wrote:
-> >
-> > All device objects in the driver model contain fields that control the
-> > handling of various power management activities. However, it's not
-> > always useful. There are few instances where pseudo devices are added
-> > to the model just to take advantage of many other features like
-> > kobjects, udev events, and so on. One such example is cpu devices and
-> > their caches.
-> >
-> > The sysfs for the cpu caches are managed by adding devices with cpu
-> > as the parent in cpu_device_create() when secondary cpu is brought
-> > online. Generally when the secondary CPUs are hotplugged back in as part
-> > of resume from suspend-to-ram, we call cpu_device_create() from the cpu
-> > hotplug state machine while the cpu device associated with that CPU is
-> > not yet ready to be resumed as the device_resume() call happens bit
-> > later. It's not really needed to set the flag is_prepared for cpu
-> > devices as they are mostly pseudo device and hotplug framework deals
-> > with state machine and not managed through the cpu device.
-> >
-> > This often results in annoying warning when resuming:
-> > Enabling non-boot CPUs ...
-> > CPU1: Booted secondary processor
-> >  cache: parent cpu1 should not be sleeping
-> > CPU1 is up
-> > CPU2: Booted secondary processor
-> >  cache: parent cpu2 should not be sleeping
-> > CPU2 is up
-> > .... and so on.
-> >
-> > So in order to fix these kind of errors, we could just completely avoid
-> > doing any power management related initialisations and operations if
-> > they are not used by these devices.
-> >
-> > Lets add no_pm_required flags to indicate that the device doesn't
-> > require any sort of pm activities and all of them can be completely
-> > skipped. We can use the same flag to also avoid adding not used *power*
-> > sysfs entries for these devices. For now, lets use this for cpu cache
-> > devices.
-> >
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> > ---
-> >  drivers/base/cpu.c         |  1 +
-> >  drivers/base/power/main.c  |  7 +++++++
-> >  drivers/base/power/sysfs.c |  4 ++++
-> >  include/linux/device.h     | 10 ++++++++++
-> >  include/linux/pm.h         |  1 +
-> >  5 files changed, 23 insertions(+)
-> >
-> > v1->v2:
-> >         - dropped setting the flag for cpu devices, for now just cpu caches
-> >          will make use of this new flag.
-> >
-> > RFC->v1:
-> >         - dropped the idea of adding cpu hotplug callback to deal just
-> >           with cpu devices, instead add a new flag in the device pm_info
-> >           structure
-> >
-> > [RFC] : https://marc.info/?l=linux-pm&m=154842896407904&w=2
-> > [v1] : https://marc.info/?l=linux-pm&m=154946578717730&w=2
-> >
-> > diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
-> > index eb9443d5bae1..6ce93a52bf3f 100644
-> > --- a/drivers/base/cpu.c
-> > +++ b/drivers/base/cpu.c
-> > @@ -427,6 +427,7 @@ __cpu_device_create(struct device *parent, void *drvdata,
-> >         dev->parent = parent;
-> >         dev->groups = groups;
-> >         dev->release = device_create_release;
-> > +       device_set_pm_not_required(dev);
-> >         dev_set_drvdata(dev, drvdata);
-> >
-> >         retval = kobject_set_name_vargs(&dev->kobj, fmt, args);
-> > diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-> > index 0992e67e862b..2a29c3d4e240 100644
-> > --- a/drivers/base/power/main.c
-> > +++ b/drivers/base/power/main.c
-> > @@ -124,6 +124,10 @@ void device_pm_unlock(void)
-> >   */
-> >  void device_pm_add(struct device *dev)
-> >  {
-> > +       /* No need to create pm sysfs if explicitly specified as not required */
->
-> Is this really about sysfs?
->
 
-Nope, copy-paste from dpm_sysfs_add, will drop it.
 
-> > +       if (device_pm_not_required(dev))
->
-> Should power.disable_depth be bumped up here or while setting the "no PM" flag?
->
+> On Feb 12, 2019, at 4:57 PM, Yu Zhao <yuzhao@google.com> wrote:
+> 
+> It seems to me it's pefectly fine to use fields of xas directly,
+> and it's being done this way throughout the file.
 
-OK, I missed that.
+Fair enough.
 
-Also I did have extra check in dpm_sysfs_remove but dropped it as redundant.
-Based on Eugeniu report, I need to add it back.
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>
 
-[...]
-
-> > diff --git a/include/linux/pm.h b/include/linux/pm.h
-> > index 0bd9de116826..300ab9f0b858 100644
-> > --- a/include/linux/pm.h
-> > +++ b/include/linux/pm.h
-> > @@ -592,6 +592,7 @@ struct dev_pm_info {
-> >         bool                    is_suspended:1; /* Ditto */
-> >         bool                    is_noirq_suspended:1;
-> >         bool                    is_late_suspended:1;
-> > +       bool                    no_pm_required:1;
->
-> Maybe call it "no_pm"?
->
-Sure.
-
---
-Regards,
-Sudeep
