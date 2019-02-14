@@ -2,295 +2,144 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A7E1C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:52:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73654C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA38E222A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:52:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 382F8222A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:52:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cern.onmicrosoft.com header.i=@cern.onmicrosoft.com header.b="j3TD5OyP"
+	dkim=pass (1024-bit key) header.d=cern.onmicrosoft.com header.i=@cern.onmicrosoft.com header.b="DDSqF07h"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437743AbfBNIwL (ORCPT
+        id S2437753AbfBNIwb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 03:52:11 -0500
-Received: from mail-eopbgr130084.outbound.protection.outlook.com ([40.107.13.84]:44576
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        Thu, 14 Feb 2019 03:52:31 -0500
+Received: from mail-eopbgr50063.outbound.protection.outlook.com ([40.107.5.63]:52090
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2437690AbfBNIwH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 03:52:07 -0500
+        id S1728428AbfBNIwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 03:52:30 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.onmicrosoft.com;
  s=selector1-cern-ch;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kKQXFH6sBb+tFypxuppFlQTN2tTn5tqcOnbxiyUMxWA=;
- b=j3TD5OyPe9UwnM+0HfTIt85EAVXv9YDLLonD8/usm02I0WylTbvdYimGXHT4ZUFyUXwXDrEFdiRnt4R29fZ61SYl66p61pfubvpjbGpBVhUgbT/vARbUVjJeIsJUxBt0t8SNVxI8OeBUepfGfiR1qY5f4Phy2groujWDVx+rCDw=
-Received: from VI1PR0601CA0012.eurprd06.prod.outlook.com
- (2603:10a6:800:1e::22) by HE1PR0601MB2154.eurprd06.prod.outlook.com
- (2603:10a6:3:29::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1622.16; Thu, 14 Feb
- 2019 08:51:49 +0000
-Received: from HE1EUR02FT053.eop-EUR02.prod.protection.outlook.com
- (2a01:111:f400:7e05::209) by VI1PR0601CA0012.outlook.office365.com
- (2603:10a6:800:1e::22) with Microsoft SMTP Server (version=TLS1_2,
+ bh=E8g4K+caOZ1VUPuz6/1LdHSnHzEGjtNXP6lJ/V32ezI=;
+ b=DDSqF07hsoMurjr3UGBznsJcSasr6V/aO9EGqajzcOpJbwZPyoyWytSOjukffCbWWYjZFudJoJrh9WY7UbrROYMwCOvwxbQqzCfMzt23aP+vdSI5awOEjujkCWV+/hYrYiKGrtpAS4Uk8HVQG0mz76sKTQYbmp8/OpmwgJy2aiA=
+Received: from DB6PR0601CA0046.eurprd06.prod.outlook.com (2603:10a6:4:17::32)
+ by DB6PR0601MB2150.eurprd06.prod.outlook.com (2603:10a6:4:4d::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1601.17; Thu, 14 Feb
+ 2019 08:51:47 +0000
+Received: from VE1EUR02FT020.eop-EUR02.prod.protection.outlook.com
+ (2a01:111:f400:7e06::208) by DB6PR0601CA0046.outlook.office365.com
+ (2603:10a6:4:17::32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1622.16 via Frontend
- Transport; Thu, 14 Feb 2019 08:51:49 +0000
-Authentication-Results: spf=pass (sender IP is 188.184.36.50)
+ Transport; Thu, 14 Feb 2019 08:51:47 +0000
+Authentication-Results: spf=pass (sender IP is 188.184.36.48)
  smtp.mailfrom=cern.ch; korsgaard.com; dkim=none (message not signed)
  header.d=none;korsgaard.com; dmarc=bestguesspass action=none
  header.from=cern.ch;
 Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
- 188.184.36.50 as permitted sender) receiver=protection.outlook.com;
- client-ip=188.184.36.50; helo=cernmxgwlb4.cern.ch;
-Received: from cernmxgwlb4.cern.ch (188.184.36.50) by
- HE1EUR02FT053.mail.protection.outlook.com (10.152.11.109) with Microsoft SMTP
+ 188.184.36.48 as permitted sender) receiver=protection.outlook.com;
+ client-ip=188.184.36.48; helo=cernmxgwlb4.cern.ch;
+Received: from cernmxgwlb4.cern.ch (188.184.36.48) by
+ VE1EUR02FT020.mail.protection.outlook.com (10.152.12.102) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1580.10 via Frontend Transport; Thu, 14 Feb 2019 08:51:49 +0000
+ 15.20.1580.10 via Frontend Transport; Thu, 14 Feb 2019 08:51:46 +0000
 Received: from cernfe03.cern.ch (188.184.36.39) by cernmxgwlb4.cern.ch
- (188.184.36.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 14 Feb
- 2019 09:51:45 +0100
+ (188.184.36.48) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 14 Feb
+ 2019 09:51:43 +0100
 Received: from cwe-513-vol689.cern.ch (188.185.69.206) by smtp.cern.ch
  (188.184.36.52) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 14 Feb
- 2019 09:51:43 +0100
+ 2019 09:51:41 +0100
 From:   Federico Vaga <federico.vaga@cern.ch>
 To:     Peter Korsgaard <peter@korsgaard.com>, Andrew Lunn <andrew@lunn.ch>
 CC:     Peter Rosin <peda@axentia.se>, <linux-i2c@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Federico Vaga <federico.vaga@cern.ch>
-Subject: [PATCH v7 1/5] i2c: ocores: stop transfer on timeout
-Date:   Thu, 14 Feb 2019 09:51:30 +0100
-Message-ID: <20190214085134.12900-2-federico.vaga@cern.ch>
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v7 0/5] i2c: ocores: improvements
+Date:   Thu, 14 Feb 2019 09:51:29 +0100
+Message-ID: <20190214085134.12900-1-federico.vaga@cern.ch>
 X-Mailer: git-send-email 2.15.0
-In-Reply-To: <20190214085134.12900-1-federico.vaga@cern.ch>
-References: <20190214085134.12900-1-federico.vaga@cern.ch>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [188.185.69.206]
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:188.184.36.50;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(396003)(136003)(346002)(376002)(2980300002)(199004)(189003)(48376002)(1076003)(336012)(14444005)(76176011)(51416003)(26005)(7696005)(16526019)(44832011)(6666004)(356004)(186003)(36756003)(426003)(486006)(476003)(11346002)(3846002)(6116002)(7636002)(106466001)(478600001)(4326008)(8676002)(246002)(2616005)(86362001)(106002)(126002)(107886003)(53416004)(110136005)(54906003)(16586007)(50466002)(446003)(305945005)(8936002)(74482002)(2906002)(7736002)(66066001)(786003)(316002)(47776003)(50226002)(956004);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR0601MB2154;H:cernmxgwlb4.cern.ch;FPR:;SPF:Pass;LANG:en;PTR:cernmx11.cern.ch;A:1;MX:1;
+X-Forefront-Antispam-Report: CIP:188.184.36.48;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(136003)(346002)(39860400002)(396003)(2980300002)(189003)(54534003)(199004)(336012)(44832011)(6306002)(956004)(186003)(4326008)(2616005)(47776003)(66066001)(26005)(14444005)(16526019)(126002)(2906002)(51416003)(7696005)(426003)(36756003)(476003)(486006)(966005)(246002)(6666004)(1076003)(8676002)(8936002)(50226002)(356004)(478600001)(4744005)(74482002)(86362001)(53416004)(7736002)(54906003)(106002)(305945005)(7636002)(316002)(16586007)(106466001)(6116002)(48376002)(50466002)(786003)(3846002)(110136005);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0601MB2150;H:cernmxgwlb4.cern.ch;FPR:;SPF:Pass;LANG:en;PTR:cernmx12.cern.ch;MX:1;A:1;
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 098bacca-2827-45e3-7685-08d69259a858
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4608076)(4709027)(2017052603328)(7153060)(7193020);SRVR:HE1PR0601MB2154;
-X-MS-TrafficTypeDiagnostic: HE1PR0601MB2154:
-X-Microsoft-Exchange-Diagnostics: 1;HE1PR0601MB2154;20:u+OUrwaLpt3T4ZKWRvc2xU00XaMfGrKWKlzfrLQNTxpbHCyX+cMbamN1t3zYZ76IFYgGR+ImfKKe7TXzEhzSb57qZx9PIf8mdEVUeHPi9DKu8dkV6SlVa+kq6CSKOqKY0/jZPPenS+KxHqOMBLFkxQCwG2+ebHKHdc8L96MIjHMYi4UeKvp7GQhEcCT5kMtR+6eLXZ3Mor8W4Xt3svhosNw1UBKiXM62jdOc91TR5djZjundkNA9NsIHFwG0+B1MyCD/y4JJ3ItTLywufY4IitXHK+Hbv/SIjrf2Hqs5MtjKY11JMWyFPxSyebFuaqNUK1aINuJZYgZh2Aubv29tbr0Ba3+MCtmltr1/61bH+kO4nGSx+9Md2lVJVD2CbI2/apVLOUGsNp4Uu+WFktKXdTWU5kYFjJoUpklA5P+q0vB029CWdj23IOJi1ZvFYG0NXK0QDDvwcllRZwW4FIEPXyYXPERnj7Eq0dddoY0FcVJ7H7zbCgXc/IpKObCom9qL
-X-Microsoft-Antispam-PRVS: <HE1PR0601MB2154597892A4301C48AAD11FEF670@HE1PR0601MB2154.eurprd06.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: b31f16d5-60bc-4845-8b61-08d69259a71a
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4608076)(4709027)(2017052603328)(7153060)(7193020);SRVR:DB6PR0601MB2150;
+X-MS-TrafficTypeDiagnostic: DB6PR0601MB2150:
+X-MS-Exchange-PUrlCount: 1
+X-Microsoft-Exchange-Diagnostics: 1;DB6PR0601MB2150;20:aobVDvyN9/gpXq/HAd7ioSgnl3n6BvafkzwNGn6Qa24/YwhpPp2ppHGFet3L8nhNRiAhU5gnP9tAlycMG1br7N/rgCEZjRRKpEWgP5Ch2I31oIRKS0L4dGVnPgaJ6IvBzs+4K/ikysch2nVvW4OrsMIHno+nP4nZGeuV5dRBI14yzIvtm8Llw3LaG3/Os9Lk1Fce7eFnswuAkyD9dl4O4emuX1VqTFLq5u9zfcb32lbP/f/1Lm8pHmquPpQ66/tNNyW3kP1uXFzDa5aHDm+kCrNR1yUBkSq9GjvtWP5Qd6b496S7/EPIkUUAeACSCMx+efCV6UvS3bfCX1vROgQ1dkSkY3zCoWT+U8CghKYqZ9vxo0zFhvODjndn+rTksesLKbAtOQ1P8xx+YO8IkU/tZMQ9nFyQDRk5KmGAEdywoY1Remci5BmiAgVZfefMKY2q45gBEnF9AWa8jUql/4EZBE7JQEyz9OOKWu+bDv6pM9dxe8Gf8qdDqsY+PkZaPN8J
+X-Microsoft-Antispam-PRVS: <DB6PR0601MB2150FBFDA61BFDBFB6FA777CEF670@DB6PR0601MB2150.eurprd06.prod.outlook.com>
 X-Forefront-PRVS: 09480768F8
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;HE1PR0601MB2154;23:7ED6jy/iLldCEXpE1UVyPMBVGhcMCp4eEkPhfbd?=
- =?us-ascii?Q?2Hunnqxtu/bKNg3i2l49Y+4k2a1s6xfqoVsRMyPLjkH1TuNCEhfRG0eHR/JR?=
- =?us-ascii?Q?+yjt9zctfvCoyPzhY/udbvyvo/Vz5xuLgxLiZ6VB5Vxb7im4Rc+Z1hZuw3pL?=
- =?us-ascii?Q?irBShD3j4naa9DO6WmP7ScSzQNKXduDBVhb5BdtcC0HAq3p2+DoS/5j8kGSg?=
- =?us-ascii?Q?5Pu06rC2eArnRmSOoJIM4dTStCwIvNN8KPfgDoht12lItH4bs99teG6uc44C?=
- =?us-ascii?Q?kpXPTt8iyTC4VjoyS78CJ+MVzCUU/35Od+YCwt+JkOhHTQLeU4OpF1OeHJD+?=
- =?us-ascii?Q?OTb40LP3Wh//HgiB0ThnCzuBdwu3MaKB8/jxHa4urKBreOCPOCvmQwBMXYna?=
- =?us-ascii?Q?yLXqvtP4M9vdQKFzpdQwuIdAfcCLgK5iGX25yi8oCoJ7Ki4BcfXZ/cLPHesP?=
- =?us-ascii?Q?y/K/S/UhOaPpEYsjTnMpny59yW9LFJXYm2onL5ssYCHLTvLzQIgIU/sImI5N?=
- =?us-ascii?Q?u75Vh7StuS1Dz77AdeOzzDZ/PyGHG9gusWxM+w7EDtc5b0qcQFJR46zL+THj?=
- =?us-ascii?Q?0Suk3hFjhlZ5X+y3YO6YOcCAsFdQXO8NeYUBGJA2+AIVAAyGeNQyrwl6uxnT?=
- =?us-ascii?Q?/70Z3lAZBR1eG7BP3scOHy90ue/9BJL86zAdemPJT/1Yie9uhKxGY3LuQkis?=
- =?us-ascii?Q?5ZlscFLosuzZ1J4UvWLLXgaH1MppLv4MdhqD4v3MCRtQeyXvJ4I3xqmbqRpq?=
- =?us-ascii?Q?w2WXQoFZNzUJHyBJ2yg+hjsX/Ey5bj3/h7PEcnQqFZwr0m3HA3kGrZgySJJA?=
- =?us-ascii?Q?4EnOyKq3oyg5D0FfVkTMtUAfYq8Gzwqenprh2EDTmtX7/I+0FJtPb6+ajHTH?=
- =?us-ascii?Q?SWHD+2CeUzUwZ+bVF9x9RK/Ld6C0u6Qs6OM0oj3omzwJqSV9AzqimzViUaSl?=
- =?us-ascii?Q?UA8xz439eEe9MQLh0Ka76IMHMvziJQnuemp0Wxs2yDyJEkTeiHs+PaEy+ALk?=
- =?us-ascii?Q?rYRw6p4xUwYe2iwpsbOk1HI45wQF/GTs8WWl/IwRG+BndgQe3IFB1/oWWh5G?=
- =?us-ascii?Q?75Y2UiQ9efPrl9FE1du7Xhjjl7rg8huzSnK78OH8bVoZlJcYGyJD+DEn/VTu?=
- =?us-ascii?Q?SO7EfHnqayiASzsFO9KfZXQ+M1ybjLWUpsal3YyZWnGUNB2OMPNTVkX6bZ9g?=
- =?us-ascii?Q?HerrLFw+5ku9U8Qw/rKpjEXijp6geV7LmLTYo?=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DB6PR0601MB2150;23:xOfMXVaTlv36rQVqJGUT5ZhyeMLp2h1KfEAgIfA?=
+ =?us-ascii?Q?vcX8v6u0eYmzbQirsatpaPpw+8l1ljXOur2Dl5HkEDf9SxMHmvxWfsZkU9wB?=
+ =?us-ascii?Q?Ao4dprimoIFkEo+rIVgAuQHUkNVZ8kIvmm/wIdpde5uxHF9ICPRocuX6v5d+?=
+ =?us-ascii?Q?fyabJUlvzZMefJaLaWltQE90JqNiOorkiykW6AmEKfkeEDW7+gDMcsKtxrn4?=
+ =?us-ascii?Q?SZLdjFu/oesbrdOCfjeYUsLJ4Us3zsaqiU1t0z1K4C6iDa59BvUz9PVGIvlw?=
+ =?us-ascii?Q?cFx6YTFomkhzt/j70iZgBBFC4vnV/V01b3JxQRcuvDZTQj/9WoVFwEG1xEv9?=
+ =?us-ascii?Q?jIPYNZJwBMH9RitgfEhZvUP9Cnju5Nm7s5kkJSMjIDM82NdevbBGvd5tH4OO?=
+ =?us-ascii?Q?/O3WL71d3c18xYMiu1HtCrDTciBFV5Fd96GEwDHDeDJPNcAF8NJ1LsOjM50P?=
+ =?us-ascii?Q?tbFtcU0RwBmw8ogjlk9p5NstDgnA6ydV7Ru+zveqMczOd0bH1x0Ko9qQljkK?=
+ =?us-ascii?Q?PO+TwCwoaTdstba0xKcY1MPD2B6MszI+qo8MIl4KsTI/XShE1uXngMdKYpE/?=
+ =?us-ascii?Q?am1QtQexsYhu0EeFzLr6vWbe4adR8X/Ybq1piwZL248OddU0+EnvAXQUHOfD?=
+ =?us-ascii?Q?Bj9OR/GhKHZ6pshdqiAlR7apfT731HOefLwtIeYSeZsKQPMeQY4yFzuqrpFC?=
+ =?us-ascii?Q?ajSXLCjJiREYfUH/Z5fsJ76fRDineeL2n228m2ca6xDmy22r5DyvOgz9r7NF?=
+ =?us-ascii?Q?uwOVrkP67LDaSVjCLMI9a2blUY1yCxpRVhyp+lYercKiE0ZYOw9pNuEJ/9+X?=
+ =?us-ascii?Q?U3k3Ypsr/mhsMiRqQ6bGZ9wSWtJ0xrOKQwqpiUAAO+fgfffOQT0kK4/5DkgP?=
+ =?us-ascii?Q?OrzZit8WJAxikGH//ldNUipGM/mPQxhnzYNor3/hhdn+Gj42fCYO4GEcSM5h?=
+ =?us-ascii?Q?SbcA5bQgEKBTNjupJb6i0Yt5mkkrZNVT6QIg4h5Ih/pmZkJn9mfUZzAlF/Yq?=
+ =?us-ascii?Q?FVJJJEZkBs5IhBTLS8F+sbp9xy5I/KHYAf6CUXTPdH8dxwSvWYvMDffR3LQE?=
+ =?us-ascii?Q?f2rsFTqjpqYtszsF1AkiueOeg5FRyrrPA6NV5MVZsBvjEi4znq5d4KWyqk0q?=
+ =?us-ascii?Q?2lNCxkG+JAXMB1p3et8Hinl7Y6PPLFH4VJdvpJIBjXytBNCF1ZvTFRSldGlu?=
+ =?us-ascii?Q?KUCdzveIwSWLGBmLiAsobMOhoe/+acGDyGLQk?=
 X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: 8Uub4JPa+QoLx+zAFNu5tVKF59mWYQrbsB4GR8WS2tI8I4Js2YiEyN2A1IxtN69uBMsC+Bpp36FRvUjVAbsDTezzeII6XXCQfwTIAYwnIrC56M869BczbvMCPeYy8XOeXnXdBFujIht/MN0L5pXKNe12Tl0fK20cJMjxZFFhYRANhoCUH82tO/RvkYpfjk1D2lMwbbw1Yi7xDJMDmtDGSzbnLHvpu7N5bIHiogqrNCTOM9SjSi7ZsZv8Dfzm5qS8W54PtsYqarJlnqYPj4zCCjPT+r9KJHJUiZ7m3ZBbJGWwBNUcfh095FHciIaD2iDA+Fq4fe/ELyh6+ipDnLtvNkm3E1hCV/1zyk/N14Eo6W9fpvWrrxgj89TgqbuGCef21FLqte4YHTYH82WwB0490EQyn+2zpvp+s4H6soXHydA=
+X-Microsoft-Antispam-Message-Info: fkqYNMnwCeukEv0in3+gm3RsZLEnTie7wnpbTxVQ950CXT3V3hlT8DndUPtMzM7rjMtjalmd/sxL2MrXW69v6QteipTeoA4FYfX1VPG54usDwO7jGZUDttH1ukEIUifSV4xlak1E9rtKmwq8QG6N3E5cFHTCjMvsdJPfrkUlhn/Y/LamTxK9a6vYdTr3pGNzkZjCX8/Bg6m47vNMMcotcpESzTtsPrQ1fRGF5IeUMWn1vs3BY+AuqqRMV9i6K69tYNcn5o9aBCVEvgSjq/N521ZH+oXT6KoBBFr90u7MdYFZD9XybYDoOyWere0CaYid/XXhTSDwolF9g2U1BeZEwD9DLw3e47uOI5jcMRaTt1ND9okhJ+xMRBV4k2WWuD7R/Ep+Rw7F6BDfXe1aN8j81iAQmt2N04/3KwyVk1FQR44=
 X-OriginatorOrg: cern.ch
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2019 08:51:49.0635
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2019 08:51:46.7872
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 098bacca-2827-45e3-7685-08d69259a858
+X-MS-Exchange-CrossTenant-Network-Message-Id: b31f16d5-60bc-4845-8b61-08d69259a71a
 X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.50];Helo=[cernmxgwlb4.cern.ch]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.48];Helo=[cernmxgwlb4.cern.ch]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0601MB2154
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0601MB2150
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Detecting a timeout is ok, but we also need to assert a STOP command on
-the bus in order to prevent it from generating interrupts when there are
-no on going transfers.
 
-Example: very long transmission.
+This patch set provides improvements to the i2c-ocore driver.
 
-1. ocores_xfer: START a transfer
-2. ocores_isr : handle byte by byte the transfer
-3. ocores_xfer: goes in timeout [[bugfix here]]
-4. ocores_xfer: return to I2C subsystem and to the I2C driver
-5. I2C driver : it may clean up the i2c_msg memory
-6. ocores_isr : receives another interrupt (pending bytes to be
-                transferred) but the i2c_msg memory is invalid now
+[V6 -> V7]
+- restore accidentally removed 'reviewed-by' tags in changelog
 
-So, since the transfer was too long, we have to detect the timeout and
-STOP the transfer.
+[V5 -> V6]
+- remove redundant code introduced in V5 (double read control register)
 
-Another point is that we have a critical region here. When handling the
-timeout condition we may have a running IRQ handler. For this reason I
-introduce a spinlock.
+[V4 -> V5]
+- deterministic status of IEN bit in register "CONTROL" at the end of
+  ocores_init()
+- more style fixes
 
-In order to make easier to understan locking I have:
-- added a new function to handle timeout
-- modified the current ocores_process() function in order to be protected
-  by the new spinlock
-Like this it is obvious at first sight that this locking serializes
-the execution of ocores_process() and ocores_process_timeout()
+[V3 -> V4]
+- add reviews-by/tested-by
+- add comment to justify the formula in
+    udelay((8 * 1000) / i2c->bus_clock_khz);
 
-Signed-off-by: Federico Vaga <federico.vaga@cern.ch>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
----
- drivers/i2c/busses/i2c-ocores.c | 54 ++++++++++++++++++++++++++++++++++-------
- 1 file changed, 45 insertions(+), 9 deletions(-)
+[V2 -> V3]
+- fix particular error condition on platform_get_irq(). Copied from
+  https://patchwork.ozlabs.org/patch/1038409/
 
-diff --git a/drivers/i2c/busses/i2c-ocores.c b/drivers/i2c/busses/i2c-ocores.c
-index 87f9caa..aa85202 100644
---- a/drivers/i2c/busses/i2c-ocores.c
-+++ b/drivers/i2c/busses/i2c-ocores.c
-@@ -25,7 +25,12 @@
- #include <linux/slab.h>
- #include <linux/io.h>
- #include <linux/log2.h>
-+#include <linux/spinlock.h>
- 
-+/**
-+ * @process_lock: protect I2C transfer process.
-+ *     ocores_process() and ocores_process_timeout() can't run in parallel.
-+ */
- struct ocores_i2c {
- 	void __iomem *base;
- 	u32 reg_shift;
-@@ -36,6 +41,7 @@ struct ocores_i2c {
- 	int pos;
- 	int nmsgs;
- 	int state; /* see STATE_ */
-+	spinlock_t process_lock;
- 	struct clk *clk;
- 	int ip_clock_khz;
- 	int bus_clock_khz;
-@@ -141,19 +147,26 @@ static void ocores_process(struct ocores_i2c *i2c)
- {
- 	struct i2c_msg *msg = i2c->msg;
- 	u8 stat = oc_getreg(i2c, OCI2C_STATUS);
-+	unsigned long flags;
-+
-+	/*
-+	 * If we spin here is because we are in timeout, so we are going
-+	 * to be in STATE_ERROR. See ocores_process_timeout()
-+	 */
-+	spin_lock_irqsave(&i2c->process_lock, flags);
- 
- 	if ((i2c->state == STATE_DONE) || (i2c->state == STATE_ERROR)) {
- 		/* stop has been sent */
- 		oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_IACK);
- 		wake_up(&i2c->wait);
--		return;
-+		goto out;
- 	}
- 
- 	/* error? */
- 	if (stat & OCI2C_STAT_ARBLOST) {
- 		i2c->state = STATE_ERROR;
- 		oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_STOP);
--		return;
-+		goto out;
- 	}
- 
- 	if ((i2c->state == STATE_START) || (i2c->state == STATE_WRITE)) {
-@@ -163,7 +176,7 @@ static void ocores_process(struct ocores_i2c *i2c)
- 		if (stat & OCI2C_STAT_NACK) {
- 			i2c->state = STATE_ERROR;
- 			oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_STOP);
--			return;
-+			goto out;
- 		}
- 	} else
- 		msg->buf[i2c->pos++] = oc_getreg(i2c, OCI2C_DATA);
-@@ -184,14 +197,14 @@ static void ocores_process(struct ocores_i2c *i2c)
- 
- 				oc_setreg(i2c, OCI2C_DATA, addr);
- 				oc_setreg(i2c, OCI2C_CMD,  OCI2C_CMD_START);
--				return;
-+				goto out;
- 			} else
- 				i2c->state = (msg->flags & I2C_M_RD)
- 					? STATE_READ : STATE_WRITE;
- 		} else {
- 			i2c->state = STATE_DONE;
- 			oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_STOP);
--			return;
-+			goto out;
- 		}
- 	}
- 
-@@ -202,6 +215,9 @@ static void ocores_process(struct ocores_i2c *i2c)
- 		oc_setreg(i2c, OCI2C_DATA, msg->buf[i2c->pos++]);
- 		oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_WRITE);
- 	}
-+
-+out:
-+	spin_unlock_irqrestore(&i2c->process_lock, flags);
- }
- 
- static irqreturn_t ocores_isr(int irq, void *dev_id)
-@@ -213,9 +229,24 @@ static irqreturn_t ocores_isr(int irq, void *dev_id)
- 	return IRQ_HANDLED;
- }
- 
-+/**
-+ * Process timeout event
-+ * @i2c: ocores I2C device instance
-+ */
-+static void ocores_process_timeout(struct ocores_i2c *i2c)
-+{
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&i2c->process_lock, flags);
-+	i2c->state = STATE_ERROR;
-+	oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_STOP);
-+	spin_unlock_irqrestore(&i2c->process_lock, flags);
-+}
-+
- static int ocores_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
- {
- 	struct ocores_i2c *i2c = i2c_get_adapdata(adap);
-+	int ret;
- 
- 	i2c->msg = msgs;
- 	i2c->pos = 0;
-@@ -225,11 +256,14 @@ static int ocores_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs, int num)
- 	oc_setreg(i2c, OCI2C_DATA, i2c_8bit_addr_from_msg(i2c->msg));
- 	oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_START);
- 
--	if (wait_event_timeout(i2c->wait, (i2c->state == STATE_ERROR) ||
--			       (i2c->state == STATE_DONE), HZ))
--		return (i2c->state == STATE_DONE) ? num : -EIO;
--	else
-+	ret = wait_event_timeout(i2c->wait, (i2c->state == STATE_ERROR) ||
-+				 (i2c->state == STATE_DONE), HZ);
-+	if (ret == 0) {
-+		ocores_process_timeout(i2c);
- 		return -ETIMEDOUT;
-+	}
-+
-+	return (i2c->state == STATE_DONE) ? num : -EIO;
- }
- 
- static int ocores_init(struct device *dev, struct ocores_i2c *i2c)
-@@ -422,6 +456,8 @@ static int ocores_i2c_probe(struct platform_device *pdev)
- 	if (!i2c)
- 		return -ENOMEM;
- 
-+	spin_lock_init(&i2c->process_lock);
-+
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	i2c->base = devm_ioremap_resource(&pdev->dev, res);
- 	if (IS_ERR(i2c->base))
--- 
-2.15.0
+[V1 -> V2]
+- replaced usleep_range() with udelay() so that the polling version can be
+  used in atomic context.
+- added dedicated patch for minor style issues
+- fixed delay computation
+- use spin_lock_irqsave(), instead of spin_trylock_irqsave(). IACK is always
+  necessary and a trylock would generate an extra interrupt for nothing
+- make the driver ready for an eventual master_xfer_irqless()
 
