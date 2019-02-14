@@ -2,74 +2,70 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DATE_IN_PAST_03_06,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E875C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:28:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE49C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:29:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 045A42147C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:28:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E097E2147C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:29:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440157AbfBNV23 (ORCPT
+        id S2440172AbfBNV3p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 16:28:29 -0500
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:43715 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388241AbfBNV23 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 16:28:29 -0500
-X-Originating-IP: 141.70.45.131
-Received: from localhost (hadi-gate-vlan-851.hadiko.whka.de [141.70.45.131])
-        (Authenticated sender: hle@owl.eu.com)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id AA4811C0002;
-        Thu, 14 Feb 2019 21:28:25 +0000 (UTC)
-Date:   Thu, 14 Feb 2019 22:28:25 +0100
-From:   Hugo Lefeuvre <hle@owl.eu.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, Todd Kjos <tkjos@android.com>,
-        Greg Hartman <ghartman@google.com>,
-        Alistair Strachan <astrachan@google.com>,
-        linux-kernel@vger.kernel.org,
-        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Martijn Coenen <maco@android.com>,
-        Christian Brauner <christian@brauner.io>
-Subject: Re: [PATCH] staging/android: use multiple futex wait queues
-Message-ID: <20190214212825.GA7017@behemoth.owl.eu.com.local>
-References: <20190214173459.GA10737@behemoth.owl.eu.com.local>
- <20190214175053.GA11103@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190214175053.GA11103@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 14 Feb 2019 16:29:45 -0500
+Received: from customer-85-204-195-167.ip4.gigabit.dk ([85.204.195.167]:60124
+        "EHLO customer-2a00-7660-0ca7-0000-0000-0000-0000-0b1b.ip6.gigabit.dk"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388241AbfBNV3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 16:29:45 -0500
+X-Greylist: delayed 306 seconds by postgrey-1.27 at vger.kernel.org; Thu, 14 Feb 2019 16:29:44 EST
+Received: by customer-2a00-7660-0ca7-0000-0000-0000-0000-0b1b.ip6.gigabit.dk (Postfix, from userid 1000)
+        id F21E74AC6E; Thu, 14 Feb 2019 22:24:37 +0100 (CET)
+Message-Id: <641301f26ac895e39b15d62a2ba069b853ab5b09.1550178066.git.rask@formelder.dk>
+From:   Rask Ingemann Lambertsen <rask@formelder.dk>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Olliver Schinagl <oliver@schinagl.nl>,
+        linux-arm-kernel@lists.infradead.org
+Date:   Thu, 14 Feb 2019 16:47:41 +0100
+Subject: [PATCH] regulator: axp20x: Fix AXP806 dcdcb copy/paste bug
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > Use multiple per-offset wait queues instead of one big wait queue per
-> > region.
-> > 
-> > Signed-off-by: Hugo Lefeuvre <hle@owl.eu.com>
-> 
-> Have you tested this?
-> 
-> Noticed any performance speedups or slow downs?
+An obvious copy/paste bug was introduced with the conversion to sybolic
+register masks. The result is contradictory output like this:
 
-Not yet. I have started to set up a cuttlefish test environment but
-it might take some time until I am able to fully test these changes
-myself (having some trouble to find documentation)... I will post the
-results here when ready.
+vcc-dram: Bringing 1100000uV into 1450000-1450000uV
+vcc-dram: 1450 <--> 1550 mV at 1050 mV
 
-thanks!
+This patch fixes it:
 
-regards,
- Hugo
+vcc-dram: 1450 <--> 1550 mV at 1500 mV
 
+Fixes: db4a555f7c4c ("regulator: axp20x: use defines for masks")
+Signed-off-by: Rask Ingemann Lambertsen <rask@formelder.dk>
+---
+ drivers/regulator/axp20x-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
+index 1b51d557ab55..f03cae440f7f 100644
+--- a/drivers/regulator/axp20x-regulator.c
++++ b/drivers/regulator/axp20x-regulator.c
+@@ -791,7 +791,7 @@ static const struct regulator_desc axp806_regulators[] = {
+ 			AXP806_DCDCA_V_CTRL, AXP806_DCDCA_V_CTRL_MASK,
+ 			AXP806_PWR_OUT_CTRL1, AXP806_PWR_OUT_DCDCA_MASK),
+ 	AXP_DESC(AXP806, DCDCB, "dcdcb", "vinb", 1000, 2550, 50,
+-		 AXP806_DCDCB_V_CTRL, AXP806_DCDCB_V_CTRL,
++		 AXP806_DCDCB_V_CTRL, AXP806_DCDCB_V_CTRL_MASK,
+ 		 AXP806_PWR_OUT_CTRL1, AXP806_PWR_OUT_DCDCB_MASK),
+ 	AXP_DESC_RANGES(AXP806, DCDCC, "dcdcc", "vinc",
+ 			axp806_dcdca_ranges, AXP806_DCDCA_NUM_VOLTAGES,
 -- 
-                Hugo Lefeuvre (hle)    |    www.owl.eu.com
-RSA4096_ 360B 03B3 BF27 4F4D 7A3F D5E8 14AA 1EB8 A247 3DFD
-ed25519_ 37B2 6D38 0B25 B8A2 6B9F 3A65 A36F 5357 5F2D DC4C
+2.20.1
+
