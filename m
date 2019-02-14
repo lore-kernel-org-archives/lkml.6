@@ -2,87 +2,57 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A8BFC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:38:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D831C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:41:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 618992229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:38:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rGF0/+BT"
+	by mail.kernel.org (Postfix) with ESMTP id DA36D2229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:41:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437277AbfBNHiD (ORCPT
+        id S2437299AbfBNHlb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 02:38:03 -0500
-Received: from ozlabs.org ([203.11.71.1]:60251 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726358AbfBNHiB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 02:38:01 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 440Ssy68TWz9sML;
-        Thu, 14 Feb 2019 18:37:58 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1550129878;
-        bh=mhSnKBbxtFBqhKsmuQxMGBbzf0loUXWxbGsgZMCPC/Y=;
-        h=Date:From:To:Cc:Subject:From;
-        b=rGF0/+BTCWD3C4NfXRFxeBn3gVIhXPbXMcgTG/NgDdNf8ArhsU0Sw5rXLfVZmGEo5
-         shlSbFRT23P3ui5qK8NqSU2SEsTd3k36Kfd7okQP7xlYFkcugc0t1mZk7tSzVQfTOX
-         drnL8/l9hQKGzhJmezOxnA28C+R5G3X+c9USG/EB7rbxsautPDMjvMFvXhSHNKf/2l
-         +IiwZTH90p+y7UCHZZXoHbxu3Q619IHhCBHr4knWCak1X5HnSZQd78I3XColddkogA
-         zul9aIQZFjx9rqqXjtytbw0k0Yw0Q8yYzR3Dxm2c4B7C9sJwLb8RM6ZJsrs/GcttPT
-         5qesR66G/3NLA==
-Date:   Thu, 14 Feb 2019 18:37:55 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Steve French <smfrench@gmail.com>,
-        CIFS <linux-cifs@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the cifs tree
-Message-ID: <20190214183755.71b8f1b4@canb.auug.org.au>
+        Thu, 14 Feb 2019 02:41:31 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:36751 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726358AbfBNHla (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 02:41:30 -0500
+X-UUID: f8220450b069459d8b8ef87b898c99b6-20190214
+X-UUID: f8220450b069459d8b8ef87b898c99b6-20190214
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <shun-chih.yu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 441033165; Thu, 14 Feb 2019 15:41:15 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 14 Feb 2019 15:41:13 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 14 Feb 2019 15:41:12 +0800
+From:   <shun-chih.yu@mediatek.com>
+To:     Sean Wang <sean.wang@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>
+CC:     <dmaengine@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <srv_wsdupstream@mediatek.com>
+Subject: [PATCH] dt-bindings: dmaengine: Add MediaTek Command-Queue DMA controller bindings
+Date:   Thu, 14 Feb 2019 15:40:57 +0800
+Message-ID: <1550130058-16566-1-git-send-email-shun-chih.yu@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/sgSiSkvbPg_SznL/PXDkN3D"; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-TM-SNTS-SMTP: EB8D3DD81CB270C9216F03756C71D191B17DD17CC5378CF7A056D71389ACE2522000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/sgSiSkvbPg_SznL/PXDkN3D
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Add document the devicetree bindings for MediaTek Command-Queue DMA controller.
 
-Hi all,
-
-Commit
-
-  375808983c63 ("smb3: request more credits on tree connect")
-
-is missing a Signed-off-by from its author and committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/sgSiSkvbPg_SznL/PXDkN3D
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxlGtMACgkQAVBC80lX
-0Gws/Qf/aJHGk5hm9nMhBvPW03P4hdyJ/aDbHk8OffH7B07VO5Cmx2jAb8zd19nY
-VQFaDcV0CTTlD5nJKXKkBFO9mZg8Xa5GorDvbe8EkU50brxcQ/yvG/z+fBsywol/
-Up7Wr2TdJX1dHRfVMehw7bxY1lzwGoaA2d5m/Jb0lOVmxznwhxT/gSPcaxJGD5KN
-4/bT5KZ4LyZIsUy14zL4KIS5vdjqdpzNHhBihyOhwGYYRYnMKhOLJY3A/oV7LRFU
-RE4TTRRDTU5qgnN2qHFpUcz7NAvhAS69uKanlv0iV95CfWJb3RXv/0i93RZSXi6a
-hacu0OkUkF3smHtm56aFoaZOYFIezQ==
-=DS9N
------END PGP SIGNATURE-----
-
---Sig_/sgSiSkvbPg_SznL/PXDkN3D--
