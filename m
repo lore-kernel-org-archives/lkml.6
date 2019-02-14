@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3BBDC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:51:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11194C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:51:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A11C72229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:51:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D558B2229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:51:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ioo7iJvX"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="miavcMRK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404198AbfBNOvM (ORCPT
+        id S2407357AbfBNOvT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 09:51:12 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:46107 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407293AbfBNOtl (ORCPT
+        Thu, 14 Feb 2019 09:51:19 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:43921 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407285AbfBNOtk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 09:49:41 -0500
-Received: by mail-qt1-f194.google.com with SMTP id y20so7026703qtm.13
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 06:49:41 -0800 (PST)
+        Thu, 14 Feb 2019 09:49:40 -0500
+Received: by mail-qt1-f193.google.com with SMTP id y4so7064859qtc.10
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 06:49:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=3EUxbJ4Gs2ebNHsOGp92F1GifsPVltaoVmIWi4xEEBo=;
-        b=Ioo7iJvX7d6MQbbygi6AqmTR717u8Nn9q4l6Lz9RRC1h2d3f5BI8HB987KC8ic+sht
-         SQoxNNsUvDcnct0MF5I7HmqlYkNS2SnlTLS6JYqlJzKgIMXBTIjxD/ZV1tuqzpb8uBNH
-         PT+t9K7fRpu0muIzuxJZ8aQn96cPNTdDS6TQkBjJDluavck2nBuD8bXJAUe6O24/tHBv
-         IqnIxPiZ3ZUbgvPrcsMySFm4fRYjuYQ18ImpPHE0oknCl1zf75nzAP2rV/RLyoq3jQsY
-         t32Aj633ROdtEItbocW7xgTqUgYH/Skv+qTXrlsGaJwxZDOZWqyXOnVmgqKtIjJhzjRX
-         PAlA==
+        bh=zCTqVlx5Etjzo5hueWu7ypOoXoXF8xnytS5XFeEjaGs=;
+        b=miavcMRKjxTTt1NnXSs9S5SIgv6tQi9tuaM3o7X7tprvmlvmHyoXop5aflXJXeIkxx
+         do6zn2NQHvlyFLkcgrVE8GxZj3wMi/CVz+CAeO2sqXb6/JH+94dcqoo6axIotNkQff+y
+         nS0SpEGNhIyWDYBl0wL/nOf4e/jaDpfvwpp1OV/osZTnnbxkBW83unDmtBBHN/lQA1w6
+         9pC94Au9Z8viUxDsy4X6o/h3vdSZrDOs3mAZ8WYwEDDgb7YDGS3LA1ga3UIJ4UFLuCRp
+         wz7fH4hU0moX1giYjpcsYQlvD6N7pgpZWQN/iAIubXQpPjWD3vN9huAkB0S0ACkixiWv
+         n+Lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=3EUxbJ4Gs2ebNHsOGp92F1GifsPVltaoVmIWi4xEEBo=;
-        b=U/WKitwHINfDH8V7Z0u3C8THHkauuY+QfbwP6wpFK91qkP5J+7tS5ZHn73wNYbb/3b
-         U5LXfhSZg3Ct9Q/1xV4pgPeq3OJIyHBp/soUm2ePI6AQJNz5OBz3AWR+q5UxKjWENsAO
-         X3zUxk6Oc7axkdHpBEL6s0aR+ziKaaRRgayF5sBMr1UcrMs9Fh91XwgKNIkxE1qbTqhB
-         cJAyMxXtPENLPDubAliRR1HfkRQtd1xzgtubYG7T7d+IlR90Jm7ucEnLig5R5C/hF5AJ
-         Fi5MyO0vd6spnejfbFdsJO9cBCK/vDEXTJ3R5g25POLKycEuomG767ocmfgh4+nl2FfB
-         tgAA==
-X-Gm-Message-State: AHQUAub2aN+MH3xjElp3rKaztZxdy5fUYuYa/dpCNRRIrFJmxxjmevwT
-        r/GjxEVxMBekpkOLeqXnuAuj/A==
-X-Google-Smtp-Source: AHgI3IZsomSLVmJUtA5Ud1tLgJJgLsgoW/v5KOp+5LVD6Kt1FqCgcuILjIUVEQBX6zyvIgGiuH5Uqg==
-X-Received: by 2002:a0c:8816:: with SMTP id 22mr3233956qvl.247.1550155781094;
-        Thu, 14 Feb 2019 06:49:41 -0800 (PST)
+        bh=zCTqVlx5Etjzo5hueWu7ypOoXoXF8xnytS5XFeEjaGs=;
+        b=K8adXS4FImQZJW9LnE8VG9tB7oHegKRuFtC6b+fEuZ8ETBzs4WH6XkIZBUTsSlBUJo
+         x9DI5Mzi1B0e7mqZ3eJOG+Tmy3kLkhK3XneK935UyKoDOenqJtroMBwQAHH6TK9KtQk2
+         gwdSc8hw8DksgL/BPwLey/GxQ704D6Fjc2q/4CbRXuYp+ONlLz2Mm7S5uS5z+KOwAtfN
+         dtwh3hHtXjD9/FInNaHnbVCqjI2Wyxel6jgwnTu4Zvj6xAzPFzYaz7BNMy0X6JHDIWLs
+         DN8yUs35agY6POspSZGvX6YTMDSFM63XHfj7atxzsU1ye+pb7KoMw/cphgi7ieFQwP1n
+         cm0Q==
+X-Gm-Message-State: AHQUAuaOAvxikv/1Fn+e5GFvjesBZHPHwkRsHzRKM+EOf2pLhiJ9uLbz
+        hoyFEoc/VoW0YSqG5UnJumclTg==
+X-Google-Smtp-Source: AHgI3IYuyKJfKTx5XoJwsHlZqWG3Jx+9E8LTTDtKIppzoB5eOlCS7mWVYLojIewdtsIltstdjCU/kQ==
+X-Received: by 2002:ac8:26ea:: with SMTP id 39mr3372612qtp.351.1550155779753;
+        Thu, 14 Feb 2019 06:49:39 -0800 (PST)
 Received: from localhost.localdomain (pool-72-71-243-63.cncdnh.fast00.myfairpoint.net. [72.71.243.63])
-        by smtp.googlemail.com with ESMTPSA id k66sm1498919qkc.25.2019.02.14.06.49.39
+        by smtp.googlemail.com with ESMTPSA id k66sm1498919qkc.25.2019.02.14.06.49.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 06:49:40 -0800 (PST)
+        Thu, 14 Feb 2019 06:49:39 -0800 (PST)
 From:   David Long <dave.long@linaro.org>
 To:     stable@vger.kernel.org,
         Russell King - ARM Linux <linux@armlinux.org.uk>,
@@ -66,9 +66,9 @@ To:     stable@vger.kernel.org,
         Mark Rutland <mark.rutland@arm.com>
 Cc:     Will Deacon <will.deacon@arm.com>, Mark Brown <broonie@kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 4.9 06/16] ARM: 8795/1: spectre-v1.1: use put_user() for __put_user()
-Date:   Thu, 14 Feb 2019 09:49:20 -0500
-Message-Id: <20190214144930.27539-7-dave.long@linaro.org>
+Subject: [PATCH 4.9 05/16] ARM: 8794/1: uaccess: Prevent speculative use of the current addr_limit
+Date:   Thu, 14 Feb 2019 09:49:19 -0500
+Message-Id: <20190214144930.27539-6-dave.long@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190214144930.27539-1-dave.long@linaro.org>
 References: <20190214144930.27539-1-dave.long@linaro.org>
@@ -79,59 +79,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Julien Thierry <julien.thierry@arm.com>
 
-Commit e3aa6243434fd9a82e84bb79ab1abd14f2d9a5a7 upstream.
+Commit 621afc677465db231662ed126ae1f355bf8eac47 upstream.
 
-When Spectre mitigation is required, __put_user() needs to include
-check_uaccess. This is already the case for put_user(), so just make
-__put_user() an alias of put_user().
+A mispredicted conditional call to set_fs could result in the wrong
+addr_limit being forwarded under speculation to a subsequent access_ok
+check, potentially forming part of a spectre-v1 attack using uaccess
+routines.
+
+This patch prevents this forwarding from taking place, but putting heavy
+barriers in set_fs after writing the addr_limit.
+
+Porting commit c2f0ad4fc089cff8 ("arm64: uaccess: Prevent speculative use
+of the current addr_limit").
 
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: David A. Long <dave.long@linaro.org>
 ---
- arch/arm/include/asm/uaccess.h | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ arch/arm/include/asm/uaccess.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/arch/arm/include/asm/uaccess.h b/arch/arm/include/asm/uaccess.h
-index 9ae888775743..b61acd62cffb 100644
+index 7b17460127fd..9ae888775743 100644
 --- a/arch/arm/include/asm/uaccess.h
 +++ b/arch/arm/include/asm/uaccess.h
-@@ -400,6 +400,14 @@ do {									\
- 	__pu_err;							\
- })
- 
-+#ifdef CONFIG_CPU_SPECTRE
-+/*
-+ * When mitigating Spectre variant 1.1, all accessors need to include
-+ * verification of the address space.
-+ */
-+#define __put_user(x, ptr) put_user(x, ptr)
+@@ -99,6 +99,14 @@ extern int __put_user_bad(void);
+ static inline void set_fs(mm_segment_t fs)
+ {
+ 	current_thread_info()->addr_limit = fs;
 +
-+#else
- #define __put_user(x, ptr)						\
- ({									\
- 	long __pu_err = 0;						\
-@@ -407,12 +415,6 @@ do {									\
- 	__pu_err;							\
- })
++	/*
++	 * Prevent a mispredicted conditional call to set_fs from forwarding
++	 * the wrong address limit to access_ok under speculation.
++	 */
++	dsb(nsh);
++	isb();
++
+ 	modify_domain(DOMAIN_KERNEL, fs ? DOMAIN_CLIENT : DOMAIN_MANAGER);
+ }
  
--#define __put_user_error(x, ptr, err)					\
--({									\
--	__put_user_switch((x), (ptr), (err), __put_user_nocheck);	\
--	(void) 0;							\
--})
--
- #define __put_user_nocheck(x, __pu_ptr, __err, __size)			\
- 	do {								\
- 		unsigned long __pu_addr = (unsigned long)__pu_ptr;	\
-@@ -492,6 +494,7 @@ do {									\
- 	: "r" (x), "i" (-EFAULT)				\
- 	: "cc")
- 
-+#endif /* !CONFIG_CPU_SPECTRE */
- 
- #ifdef CONFIG_MMU
- extern unsigned long __must_check
 -- 
 2.17.1
 
