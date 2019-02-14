@@ -2,126 +2,123 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9CE7C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:48:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5FAC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:49:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEB3A2229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:48:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F5172229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:49:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y1iEwJhy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407229AbfBNOsw (ORCPT
+        id S2407264AbfBNOte (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 09:48:52 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:39605 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2392313AbfBNOsv (ORCPT
+        Thu, 14 Feb 2019 09:49:34 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:33031 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390743AbfBNOte (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 09:48:51 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1EEkENE017829;
-        Thu, 14 Feb 2019 15:48:34 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2qmwsukxmv-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 14 Feb 2019 15:48:34 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 02E6F38;
-        Thu, 14 Feb 2019 14:48:32 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag4node3.st.com [10.75.127.12])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AF037567D;
-        Thu, 14 Feb 2019 14:48:32 +0000 (GMT)
-Received: from SFHDAG5NODE3.st.com (10.75.127.15) by SFHDAG4NODE3.st.com
- (10.75.127.12) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 14 Feb
- 2019 15:48:32 +0100
-Received: from SFHDAG5NODE3.st.com ([fe80::7c09:5d6b:d2c7:5f47]) by
- SFHDAG5NODE3.st.com ([fe80::7c09:5d6b:d2c7:5f47%20]) with mapi id
- 15.00.1347.000; Thu, 14 Feb 2019 15:48:32 +0100
-From:   Christophe ROULLIER <christophe.roullier@st.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     "robh@kernel.org" <robh@kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "joabreu@synopsys.com" <joabreu@synopsys.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Peppe CAVALLARO <peppe.cavallaro@st.com>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH 2/8] net: ethernet: stmmac: update to support all PHY
- config for stm32mp157c.
-Thread-Topic: [PATCH 2/8] net: ethernet: stmmac: update to support all PHY
- config for stm32mp157c.
-Thread-Index: AQHUxHRaruoUjCWOKUCtoqiBRHT0Ug==
-Date:   Thu, 14 Feb 2019 14:48:32 +0000
-Message-ID: <04801425-ae14-3bfe-4eaf-2f3d552093cb@st.com>
-References: <1550126763-22669-1-git-send-email-christophe.roullier@st.com>
- <1550126763-22669-3-git-send-email-christophe.roullier@st.com>
- <20190214134040.GA5699@lunn.ch>
-In-Reply-To: <20190214134040.GA5699@lunn.ch>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.49]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DAE59BFA02BDE64A9D0E85A4A9EF177E@st.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_07:,,
- signatures=0
+        Thu, 14 Feb 2019 09:49:34 -0500
+Received: by mail-qt1-f193.google.com with SMTP id z39so7146323qtz.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 06:49:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=4OMBVou4qebwFqB5VwBh3FlAvgT21K5AaH/tbF5iY1Y=;
+        b=Y1iEwJhyidP/O2f5pszWUmSXx0GZ2nZ9z4jJB1hIXquDGcvmpyuuzISOxVK4cf+j05
+         0zr1eAv/Pl6+cFlW0CgKImM47UjXPAd5nWrxkk01JfC1JIWxwzVGBheMaHkBkbLt3eoW
+         n/PRV3I1H5rmPNpre0hdblJ+8nl/JBGg7grabgllOSuIkSo66A4tsfHpZR5Fhlee88JQ
+         T1ZhGlth3sNpjuKBfMLqJf6Dr1PIqK/xurdTC1On0P5Wcak0EJlsvUSxr96Ld5ITJ+tt
+         4Zh7I20OzvMQCY1eMJz+6gbv58RrAQoUL4bZVL5LdrioHe7hNxqpZcEDfFPs/ftE+v4O
+         eUeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=4OMBVou4qebwFqB5VwBh3FlAvgT21K5AaH/tbF5iY1Y=;
+        b=oVRe02tpHXapOCV2JXFEsI3QsZcJl4fRGWHJ/lxmEhRbuSZg+qIpRHAl7kjYE07iLH
+         Gw6zgO/n9QXLiZ0pImPOo1U+1MhYiR82/drp1Z/tyk2RTTRpc9N0wJvrjiyuC4ldgdvF
+         lZxHWDsshLb6Etx5mLH3fHEQ/XUwhD/RIpVPLB2OK/C6hjrhFyk0+LchpnVx/iPg6SZH
+         gEIKO78ATrrwDJTRpKGpkYknrz4pPI3J5LcbZh25rpbyHXFvP6tyVkVlhncbk3Txr/C4
+         UZuR4b/PpwxJnp1zvAsRTAEIHhJG/HzI46j82wSAyO7BrahlRzzFDxgwnn/stYYe6FNZ
+         Kwxw==
+X-Gm-Message-State: AHQUAuZAfwTcSIOjYRbf0n6nA5YUHEFNXfGHboM8hR5gnWeUBiiey8TU
+        rmBsdfqnWqmJhariOELcQwWDBw==
+X-Google-Smtp-Source: AHgI3IbQ7KUrWBYl394zB9/w7jbXgXWb2dLvxyHf3BYgHGWVJLfdBhK7TPIkp1JTT4sBv1+YRZgtKQ==
+X-Received: by 2002:ac8:1e84:: with SMTP id c4mr3304948qtm.181.1550155772912;
+        Thu, 14 Feb 2019 06:49:32 -0800 (PST)
+Received: from localhost.localdomain (pool-72-71-243-63.cncdnh.fast00.myfairpoint.net. [72.71.243.63])
+        by smtp.googlemail.com with ESMTPSA id k66sm1498919qkc.25.2019.02.14.06.49.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Feb 2019 06:49:32 -0800 (PST)
+From:   David Long <dave.long@linaro.org>
+To:     stable@vger.kernel.org,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Will Deacon <will.deacon@arm.com>, Mark Brown <broonie@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 4.9 00/16] V4.9 backport of more 32-bit arm spectre patches
+Date:   Thu, 14 Feb 2019 09:49:14 -0500
+Message-Id: <20190214144930.27539-1-dave.long@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMi8xNC8xOSAyOjQwIFBNLCBBbmRyZXcgTHVubiB3cm90ZToNCj4gICBPbiBUaHUsIEZlYiAx
-NCwgMjAxOSBhdCAwNzo0NTo1N0FNICswMTAwLCBDaHJpc3RvcGhlIFJvdWxsaWVyIHdyb3RlOg0K
-Pj4gQEAgLTEzMSwxOSArMTg1LDE5IEBAIHN0YXRpYyBpbnQgc3RtMzJtcDFfc2V0X21vZGUoc3Ry
-dWN0IHBsYXRfc3RtbWFjZW5ldF9kYXRhICpwbGF0X2RhdCkNCj4+ICAgCWNhc2UgUEhZX0lOVEVS
-RkFDRV9NT0RFX1JHTUlJOg0KPj4gICAJCXZhbCA9IFNZU0NGR19QTUNSX0VUSF9TRUxfUkdNSUk7
-DQo+PiAtCQlpZiAoZHdtYWMtPmludF9waHljbGspDQo+PiArCQlpZiAoZHdtYWMtPmV0aF9jbGtf
-c2VsX3JlZykNCj4+ICAgCQkJdmFsIHw9IFNZU0NGR19QTUNSX0VUSF9DTEtfU0VMOw0KPj4gICAJ
-CXByX2RlYnVnKCJTWVNDRkcgaW5pdCA6IFBIWV9JTlRFUkZBQ0VfTU9ERV9SR01JSVxuIik7DQo+
-PiAgIAkJYnJlYWs7DQo+IA0KPiBIaSBDaHJpc3RvcGhlDQo+IA0KPiBUaGlzIGNvZGUgc2hvdWxk
-IGhhbmRsZSBhbGwgNCBQSFlfSU5URVJGQUNFX01PREVfUkdNSUkqIHZhbHVlcy4NCj4gDQo+ICAg
-ICAgIEFuZHJldw0KPiANCg0KSGkgQW5kcmV3LA0KDQpGb3IgUkdNSUkgd2UgYXJlIHN1cHBvcnRp
-bmcgMyBtb2RlczoNCiAgICAtIG5vcm1hbCBtb2RlICh3aXRoIFBIWSB3aXRoIHF1YXJ0eikNCiAg
-ICAtIFBoeSB3byBjcnlzdGFsIGFuZCBwaHkgaXMgY2xvY2tpbmcgd2l0aCBQTEwgdG8gMjVNaHou
-DQogICAgLSBvdGhlciBtb2RlIHdoZXJlIHdlIHVzZWQgUExMIGZyb20gUkNDICgxMjVNaHopIHRv
-IGNsb2NrIEV0aGVybmV0IA0KSVAgKHNhdmUgb25lIHBpbiAiRVRIX0NLMTI1IikNCg0KSW4gZHJp
-dmVyIHNvdXJjZSBjb2RlIEkgcHV0IHRhYmxlIHRvIHN1bS11cCBhbGwgY29uZmlncyBzdXBwb3J0
-ZWQgZm9yIA0KZWFjaCBwaHkgbW9kZToNCisgKiBCZWxvdyB0YWJsZSBzdW1tYXJpemVzIHRoZSBj
-bG9jayByZXF1aXJlbWVudCBhbmQgY2xvY2sgc291cmNlcyBmb3INCisgKiBzdXBwb3J0ZWQgcGh5
-IGludGVyZmFjZSBtb2Rlcy4NCisgKiANCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQorICp8UEhZX01PREUg
-fCBOb3JtYWwgfCBQSFkgd28gY3J5c3RhbHwgICBQSFkgd28gY3J5c3RhbCAgIHxObyAxMjVNaHog
-DQpmcm9tIFBIWXwNCisgKnwgICAgICAgICB8ICAgICAgICB8ICAgICAgMjVNSHogICAgfCAgICAg
-ICAgNTBNSHogICAgICAgfCANCiAgICAgIHwNCisgKiANCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KKyAq
-fCAgTUlJICAgIHwJIC0gICB8ICAgICBldGgtY2sgICAgfAkgICAgICBuL2EJICB8CSAgbi9hICAg
-ICAgICB8DQorICp8ICAgICAgICAgfCAgICAgICAgfAkJICAgICB8ICAgICAgICAgICAgICAgICAg
-ICB8CQkgICAgIHwNCisgKiANCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KKyAqfCAgR01JSSAgIHwJIC0g
-ICB8ICAgICBldGgtY2sgICAgfAkgICAgICBuL2EJICB8CSAgbi9hICAgICAgICB8DQorICp8ICAg
-ICAgICAgfCAgICAgICAgfCAgICAgICAgICAgICAgIHwgICAgICAgICAgICAgICAgICAgIHwJCSAg
-ICAgfA0KKyAqIA0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQorICp8IFJHTUlJICAgfAkgLSAgIHwgICAg
-IGV0aC1jayAgICB8CSAgICAgIG4vYQkgIHwgIGV0aC1jayAobm8gcGluKSB8DQorICp8ICAgICAg
-ICAgfCAgICAgICAgfCAgICAgICAgICAgICAgIHwgICAgICAgICAgICAgICAgICAgIHwgDQpzdCxl
-dGhfY2xrX3NlbCAgfA0KKyAqIA0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQorICp8IFJNSUkgICAgfAkg
-LSAgIHwgICAgIGV0aC1jayAgICB8CSAgICBldGgtY2sgICAgICAgIHwJICBuL2EgICAgICAgIHwN
-CisgKnwgICAgICAgICB8ICAgICAgICB8CQkgICAgIHwgc3QsZXRoX3JlZl9jbGtfc2VsIHwJCSAg
-ICAgfA0KKyAqIA0KLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQoNClJlZ2FyZHMsDQoNCkNocmlzdG9waGU=
+From: "David A. Long" <dave.long@linaro.org>
+
+V4.9 backport of spectre patches from Russell M. King's spectre branch.
+Patches have been kvm-unit-test'ed on an arndale, run through kernelci, and
+handed off to ARM for functional testing.
+
+Julien Thierry (9):
+  ARM: 8789/1: signal: copy registers using __copy_to_user()
+  ARM: 8791/1: vfp: use __copy_to_user() when saving VFP state
+  ARM: 8792/1: oabi-compat: copy oabi events using __copy_to_user()
+  ARM: 8793/1: signal: replace __put_user_error with __put_user
+  ARM: 8794/1: uaccess: Prevent speculative use of the current
+    addr_limit
+  ARM: 8795/1: spectre-v1.1: use put_user() for __put_user()
+  ARM: 8796/1: spectre-v1,v1.1: provide helpers for address sanitization
+  ARM: 8797/1: spectre-v1.1: harden __copy_to_user
+  ARM: 8810/1: vfp: Fix wrong assignement to ufp_exc
+
+Russell King (7):
+  ARM: make lookup_processor_type() non-__init
+  ARM: split out processor lookup
+  ARM: clean up per-processor check_bugs method call
+  ARM: add PROC_VTABLE and PROC_TABLE macros
+  ARM: spectre-v2: per-CPU vtables to work around big.Little systems
+  ARM: ensure that processor vtables is not lost after boot
+  ARM: fix the cockup in the previous patch
+
+ arch/arm/include/asm/assembler.h   | 11 +++++
+ arch/arm/include/asm/cputype.h     |  1 +
+ arch/arm/include/asm/proc-fns.h    | 61 +++++++++++++++++++++-----
+ arch/arm/include/asm/thread_info.h |  4 +-
+ arch/arm/include/asm/uaccess.h     | 49 ++++++++++++++++++---
+ arch/arm/kernel/bugs.c             |  4 +-
+ arch/arm/kernel/head-common.S      |  6 +--
+ arch/arm/kernel/setup.c            | 40 ++++++++++-------
+ arch/arm/kernel/signal.c           | 70 ++++++++++++++++--------------
+ arch/arm/kernel/smp.c              | 32 ++++++++++++++
+ arch/arm/kernel/sys_oabi-compat.c  |  8 +++-
+ arch/arm/lib/copy_from_user.S      |  6 +--
+ arch/arm/lib/copy_to_user.S        |  6 ++-
+ arch/arm/lib/uaccess_with_memcpy.c |  3 +-
+ arch/arm/mm/proc-macros.S          | 10 +++++
+ arch/arm/mm/proc-v7-bugs.c         | 17 +-------
+ arch/arm/vfp/vfpmodule.c           | 20 ++++-----
+ 17 files changed, 240 insertions(+), 108 deletions(-)
+
+-- 
+2.17.1
+
