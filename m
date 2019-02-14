@@ -2,334 +2,117 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A714C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC9DC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:59:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27EC5222DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:58:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2751222DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:59:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NC0usvaI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439719AbfBNQ6i (ORCPT
+        id S2391317AbfBNQ7u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:58:38 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57572 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726444AbfBNQ6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 11:58:36 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 15F3B1F56A;
-        Thu, 14 Feb 2019 16:58:36 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AA5005DD63;
-        Thu, 14 Feb 2019 16:58:30 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 9/9] KEYS: Namespace keyring names
-From:   David Howells <dhowells@redhat.com>
-To:     keyrings@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        rgb@redhat.com, dhowells@redhat.com, linux-kernel@vger.kernel.org
-Date:   Thu, 14 Feb 2019 16:58:28 +0000
-Message-ID: <155016350891.11489.1919263866882662876.stgit@warthog.procyon.org.uk>
-In-Reply-To: <155016339876.11489.901851271827069026.stgit@warthog.procyon.org.uk>
-References: <155016339876.11489.901851271827069026.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Thu, 14 Feb 2019 11:59:50 -0500
+Received: from mail-pl1-f171.google.com ([209.85.214.171]:46565 "EHLO
+        mail-pl1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726891AbfBNQ7t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 11:59:49 -0500
+Received: by mail-pl1-f171.google.com with SMTP id o6so3437760pls.13
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:59:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=6oKGsFl3KFzaCsPTqB4+XI+ENpv9qnKFvpPnyA2yzUk=;
+        b=NC0usvaI5uuSZnbo7c3PXX+jlxXVz8royWn8YUo75Q2AJ0LSKpDuCmuk9YrnyVlWkQ
+         66ZdLYNVWWCl2jg2stQaVsXwdzN2Jgmdb4fkxQHO1cpr9r8cjAWHX9OiiMNtJCI/QfN8
+         7wKtqGRuq5/4DgcDXjNkyy9ZvxAXVrhdeAIIE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=6oKGsFl3KFzaCsPTqB4+XI+ENpv9qnKFvpPnyA2yzUk=;
+        b=E7YLqwXk5PaY/vRt4bFpMSYh+BE8Q7pSt+SRPEvcHmC75bcrP0Maa7PZW1Y2wtM69o
+         O9hLf13yMx+bEoaVFJTKC67cRPQeBEq2fWdPGf4e03rWI3dh8CUU5ZpeKXVaIOWJoFmF
+         wJgibY1kSKkL7Co4TtkyJuCUt69R6eJxARoEo1kN+w4upHe645TR4wSKrwBrmSFcNZ+f
+         vAYiDgiy2GLrqtSKY/MKQvYkBzb+K4/BBuAdqb5mo6n7Zgv0ZZoZ2tMFH0mcJ4hN0EyR
+         rMH3pqMta4o65+5fAMANv2C7EAybglhJUYozIquitsqXdjcNWerKFX2Y2L48WqLrmxKI
+         6kwg==
+X-Gm-Message-State: AHQUAuZbsoGRw7vyOdMx2ghesa/OLrfnJbeJhVD3LaLVnA8bwjX3aYBk
+        +jUDcADlE228L36r45uV8PRjkQ==
+X-Google-Smtp-Source: AHgI3IZ1NkGC2bCiBiPt8Zo2HwrU+mluSlVdjMJ7JeV4Pc5IojmVxBEjCgxwEmhnYb7xG4ipudLB5g==
+X-Received: by 2002:a17:902:5066:: with SMTP id f35mr5253312plh.78.1550163588984;
+        Thu, 14 Feb 2019 08:59:48 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id j5sm3653268pfe.84.2019.02.14.08.59.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 14 Feb 2019 08:59:48 -0800 (PST)
+Date:   Thu, 14 Feb 2019 08:59:47 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Chanwoo Choi <cwchoi00@gmail.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Lukasz Luba <l.luba@partner.samsung.com>
+Subject: Re: [PATCH 1/4] PM / devfreq: Track overall load monitor state
+ instead of 'stop_polling'
+Message-ID: <20190214165947.GY117604@google.com>
+References: <20190214013042.254790-1-mka@chromium.org>
+ <20190214013042.254790-2-mka@chromium.org>
+ <CAGTfZH3E+RetMzKxzZNEgYw6=kocdfgRcKSbmP5GfZ4k1j0Cuw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 14 Feb 2019 16:58:36 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGTfZH3E+RetMzKxzZNEgYw6=kocdfgRcKSbmP5GfZ4k1j0Cuw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Keyring names are held in a single global list that any process can pick
-from by means of keyctl_join_session_keyring (provided the keyring grants
-Search permission).  This isn't very container friendly, however.
+Hi Chanwoo,
 
-Make the following changes:
+On Thu, Feb 14, 2019 at 11:25:52PM +0900, Chanwoo Choi wrote:
+> Hi Matthias,
+> 
+> 2019년 2월 14일 (목) 오후 7:16, Matthias Kaehlcke <mka@chromium.org>님이 작성:
+> >
+> > The field ->stop_polling indicates whether load monitoring should be/is
+> > stopped, it is set in devfreq_monitor_suspend(). Change the variable to
+> > hold the general state of load monitoring (stopped, running, suspended).
+> > Besides improving readability of conditions involving the field and this
+> > prepares the terrain for moving some duplicated code from the governors
+> > into the devfreq core.
+> >
+> > Hold the devfreq lock in devfreq_monitor_start/stop() to ensure proper
+> > synchronization.
+> 
+> IMHO, I'm not sure that there are any benefits changing
+> from 'stop_polling' to 'monitor_state'. I have no objections
+> if Myungjoo confirms it.
 
- (1) Make default session, process and thread keyring names begin with a
-     '.' instead of '_'.
+I agree that as an isolated change there isn't a clear benefit.
+However in the context of the series the change is needed to
+avoid resuming a load monitor that wasn't even started.
 
- (2) Keyrings whose names begin with a '.' aren't added to the list.  Such
-     keyrings are system specials.
+In case this series isn't accepted I'd still suggest to change the
+name from 'stop_polling' to 'suspended'. I read 'stop_polling' as a
+call for action, while 'suspended' is a state. IMO at least in some
+contexts conditions using a state is clearer.
 
- (3) Replace the global list with per-user_namespace lists.  A keyring adds
-     its name to the list for the user_namespace that it is currently in.
+Cheers
 
- (4) When a user_namespace is deleted, it just removes itself from the
-     keyring.
-
-The global keyring_name_lock is retained for accessing the name lists.
-This allows (4) to work.
-
-This can be tested by:
-
-	# keyctl newring foo @s
-	995906392
-	# unshare -U
-	$ keyctl show
-	...
-	 995906392 --alswrv  65534 65534   \_ keyring: foo
-	...
-	$ keyctl session foo
-	Joined session keyring: 935622349
-
-As can be seen, a new session keyring was created.
-
-
-Signed-off-by: David Howells <dhowells@redhat.com>
----
-
- include/linux/key.h            |    2 +
- include/linux/user_namespace.h |    5 ++
- kernel/user.c                  |    3 +
- kernel/user_namespace.c        |    7 ++-
- security/keys/keyring.c        |   99 +++++++++++++++++-----------------------
- 5 files changed, 57 insertions(+), 59 deletions(-)
-
-diff --git a/include/linux/key.h b/include/linux/key.h
-index dd643e131894..bfa70f3ee8e6 100644
---- a/include/linux/key.h
-+++ b/include/linux/key.h
-@@ -369,6 +369,7 @@ extern void key_set_timeout(struct key *, unsigned);
- 
- extern key_ref_t lookup_user_key(key_serial_t id, unsigned long flags,
- 				 key_perm_t perm);
-+extern void key_free_user_ns(struct user_namespace *);
- 
- /*
-  * The permissions required on a key that we're looking up.
-@@ -443,6 +444,7 @@ extern void key_init(void);
- #define key_fsgid_changed(t)		do { } while(0)
- #define key_init()			do { } while(0)
- #define key_put_subject(s)		do { } while(0)
-+#define key_free_user_ns(ns)		do { } while(0)
- 
- #endif /* CONFIG_KEYS */
- #endif /* __KERNEL__ */
-diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
-index d6b74b91096b..90457015fa3f 100644
---- a/include/linux/user_namespace.h
-+++ b/include/linux/user_namespace.h
-@@ -64,6 +64,11 @@ struct user_namespace {
- 	struct ns_common	ns;
- 	unsigned long		flags;
- 
-+#ifdef CONFIG_KEYS
-+	/* List of joinable keyrings in this namespace */
-+	struct list_head	keyring_name_list;
-+#endif
-+
- 	/* Register of per-UID persistent keyrings for this namespace */
- #ifdef CONFIG_PERSISTENT_KEYRINGS
- 	struct key		*persistent_keyring_register;
-diff --git a/kernel/user.c b/kernel/user.c
-index 0df9b1640b2a..6a6ccb99f31a 100644
---- a/kernel/user.c
-+++ b/kernel/user.c
-@@ -62,6 +62,9 @@ struct user_namespace init_user_ns = {
- 	.ns.ops = &userns_operations,
- #endif
- 	.flags = USERNS_INIT_FLAGS,
-+#ifdef CONFIG_KEYS
-+	.keyring_name_list = LIST_HEAD_INIT(init_user_ns.keyring_name_list),
-+#endif
- #ifdef CONFIG_PERSISTENT_KEYRINGS
- 	.persistent_keyring_register_sem =
- 	__RWSEM_INITIALIZER(init_user_ns.persistent_keyring_register_sem),
-diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-index 923414a246e9..bda6e890ad88 100644
---- a/kernel/user_namespace.c
-+++ b/kernel/user_namespace.c
-@@ -133,6 +133,9 @@ int create_user_ns(struct cred *new)
- 	ns->flags = parent_ns->flags;
- 	mutex_unlock(&userns_state_mutex);
- 
-+#ifdef CONFIG_KEYS
-+	INIT_LIST_HEAD(&ns->keyring_name_list);
-+#endif
- #ifdef CONFIG_PERSISTENT_KEYRINGS
- 	init_rwsem(&ns->persistent_keyring_register_sem);
- #endif
-@@ -196,9 +199,7 @@ static void free_user_ns(struct work_struct *work)
- 			kfree(ns->projid_map.reverse);
- 		}
- 		retire_userns_sysctls(ns);
--#ifdef CONFIG_PERSISTENT_KEYRINGS
--		key_put(ns->persistent_keyring_register);
--#endif
-+		key_free_user_ns(ns);
- 		ns_free_inum(&ns->ns);
- 		kmem_cache_free(user_ns_cachep, ns);
- 		dec_user_namespaces(ucounts);
-diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-index 2fefdc79abff..3e537d927cbb 100644
---- a/security/keys/keyring.c
-+++ b/security/keys/keyring.c
-@@ -17,6 +17,7 @@
- #include <linux/seq_file.h>
- #include <linux/err.h>
- #include <linux/nsproxy.h>
-+#include <linux/user_namespace.h>
- #include <keys/keyring-type.h>
- #include <keys/user-type.h>
- #include <linux/assoc_array_priv.h>
-@@ -30,11 +31,6 @@
-  */
- #define KEYRING_SEARCH_MAX_DEPTH 6
- 
--/*
-- * We keep all named keyrings in a hash to speed looking them up.
-- */
--#define KEYRING_NAME_HASH_SIZE	(1 << 5)
--
- /*
-  * We mark pointers we pass to the associative array with bit 1 set if
-  * they're keyrings and clear otherwise.
-@@ -57,17 +53,20 @@ static inline void *keyring_key_to_ptr(struct key *key)
- 	return key;
- }
- 
--static struct list_head	keyring_name_hash[KEYRING_NAME_HASH_SIZE];
- static DEFINE_RWLOCK(keyring_name_lock);
- 
--static inline unsigned keyring_hash(const char *desc)
-+/*
-+ * Clean up the bits of user_namespace that belong to us.
-+ */
-+void key_free_user_ns(struct user_namespace *ns)
- {
--	unsigned bucket = 0;
--
--	for (; *desc; desc++)
--		bucket += (unsigned char)*desc;
-+	write_lock(&keyring_name_lock);
-+	list_del_init(&ns->keyring_name_list);
-+	write_unlock(&keyring_name_lock);
- 
--	return bucket & (KEYRING_NAME_HASH_SIZE - 1);
-+#ifdef CONFIG_PERSISTENT_KEYRINGS
-+	key_put(ns->persistent_keyring_register);
-+#endif
- }
- 
- /*
-@@ -106,23 +105,17 @@ static DECLARE_RWSEM(keyring_serialise_link_sem);
- 
- /*
-  * Publish the name of a keyring so that it can be found by name (if it has
-- * one).
-+ * one and it doesn't begin with a dot).
-  */
- static void keyring_publish_name(struct key *keyring)
- {
--	int bucket;
--
--	if (keyring->description) {
--		bucket = keyring_hash(keyring->description);
-+	struct user_namespace *ns = current_user_ns();
- 
-+	if (keyring->description &&
-+	    keyring->description[0] &&
-+	    keyring->description[0] != '.') {
- 		write_lock(&keyring_name_lock);
--
--		if (!keyring_name_hash[bucket].next)
--			INIT_LIST_HEAD(&keyring_name_hash[bucket]);
--
--		list_add_tail(&keyring->name_link,
--			      &keyring_name_hash[bucket]);
--
-+		list_add_tail(&keyring->name_link, &ns->keyring_name_list);
- 		write_unlock(&keyring_name_lock);
- 	}
- }
-@@ -1140,50 +1133,44 @@ key_ref_t find_key_to_update(key_ref_t keyring_ref,
-  */
- struct key *find_keyring_by_name(const char *name, bool uid_keyring)
- {
-+	struct user_namespace *ns = current_user_ns();
- 	struct key *keyring;
--	int bucket;
- 
- 	if (!name)
- 		return ERR_PTR(-EINVAL);
- 
--	bucket = keyring_hash(name);
--
- 	read_lock(&keyring_name_lock);
- 
--	if (keyring_name_hash[bucket].next) {
--		/* search this hash bucket for a keyring with a matching name
--		 * that's readable and that hasn't been revoked */
--		list_for_each_entry(keyring,
--				    &keyring_name_hash[bucket],
--				    name_link
--				    ) {
--			if (!kuid_has_mapping(current_user_ns(), keyring->user->uid))
--				continue;
--
--			if (test_bit(KEY_FLAG_REVOKED, &keyring->flags))
--				continue;
-+	/* Search this hash bucket for a keyring with a matching name that
-+	 * grants Search permission and that hasn't been revoked
-+	 */
-+	list_for_each_entry(keyring, &ns->keyring_name_list, name_link) {
-+		if (!kuid_has_mapping(ns, keyring->user->uid))
-+			continue;
- 
--			if (strcmp(keyring->description, name) != 0)
--				continue;
-+		if (test_bit(KEY_FLAG_REVOKED, &keyring->flags))
-+			continue;
- 
--			if (uid_keyring) {
--				if (!test_bit(KEY_FLAG_UID_KEYRING,
--					      &keyring->flags))
--					continue;
--			} else {
--				if (key_permission(make_key_ref(keyring, 0),
--						   KEY_NEED_SEARCH) < 0)
--					continue;
--			}
-+		if (strcmp(keyring->description, name) != 0)
-+			continue;
- 
--			/* we've got a match but we might end up racing with
--			 * key_cleanup() if the keyring is currently 'dead'
--			 * (ie. it has a zero usage count) */
--			if (!refcount_inc_not_zero(&keyring->usage))
-+		if (uid_keyring) {
-+			if (!test_bit(KEY_FLAG_UID_KEYRING,
-+				      &keyring->flags))
-+				continue;
-+		} else {
-+			if (key_permission(make_key_ref(keyring, 0),
-+					   KEY_NEED_SEARCH) < 0)
- 				continue;
--			keyring->last_used_at = ktime_get_real_seconds();
--			goto out;
- 		}
-+
-+		/* we've got a match but we might end up racing with
-+		 * key_cleanup() if the keyring is currently 'dead'
-+		 * (ie. it has a zero usage count) */
-+		if (!refcount_inc_not_zero(&keyring->usage))
-+			continue;
-+		keyring->last_used_at = ktime_get_real_seconds();
-+		goto out;
- 	}
- 
- 	keyring = ERR_PTR(-ENOKEY);
-
+Matthias
