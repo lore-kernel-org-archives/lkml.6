@@ -7,136 +7,120 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B088EC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:20:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6515C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:23:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EDD9222B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:20:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7511E2229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:23:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kP60hn1C"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b+e2VAHP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436990AbfBNJUu (ORCPT
+        id S2392473AbfBNJXP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 04:20:50 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55078 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726411AbfBNJUt (ORCPT
+        Thu, 14 Feb 2019 04:23:15 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38085 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390125AbfBNJXP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 04:20:49 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a62so5465216wmh.4
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 01:20:48 -0800 (PST)
+        Thu, 14 Feb 2019 04:23:15 -0500
+Received: by mail-wr1-f66.google.com with SMTP id v13so5622146wrw.5
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 01:23:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=nMz1ymCsOf65DabRL8W9oE+jLUTE0mcGttneun/Pans=;
-        b=kP60hn1CevWUmK2N/c9hFJ2i5MN2eDG1ZPAehe4MbQ5LKCAr1Tg2auA8SMbe1Iglm0
-         OvHbsbLxrOB8SAZwc8JDqFSk9WIqSu9x3Sz6M+8D5p0FtMwZM1j/1xKXHwYB+51g/oh+
-         VivSSDZJbVgQNrQWOOCtnRQcoCAAVbsyN83eVeABmYA0DP0MXwMppQz9efeCjIlyTxeN
-         csnyNUY4fEvhMPZ+/OTT+8nzxKF+nQP6OuE1LnVdCv0H+g/4kTjO3syf014ADJF+90QE
-         yA0514zPzgQ7MndoJgBIEThrObpJlJpgkpwl0A/GxK6P3hpEUD3FQMNrUhhZJmEZZXoa
-         eyFA==
+        bh=9k/LIGQhUpABvLCk42mZFsQuNOmZs0f9/Ru/D3fAVNE=;
+        b=b+e2VAHP2wTv6jQ03ImxFmqQsoceByNZkdBWs4yNmAtBcjCbJclcFQ8txFo7G8hlzO
+         uZhVVmSV9BGLMKlPd6zeoe11S6KHyb8zYv9m+l+cykJPqC8+8lr9ofyKWXXQhhK2XAiD
+         wz2u7+ihURgdlfjKWfvsKowy19G8KQsSvfu3MoyE7FhgXFMVxSj8qdk6B1yzAPs1QlcX
+         MGY+VY5YNStIqXFYu1223FeJEI5sUNBbC83ckwwo+g+CCnHtCbtuwUKh8PzMOdU49+xR
+         X8yElPF7tEq1tVX5UER33Jh6IHdgMEJMJod3koGBnoGZWFlD/K7ZZU5t8GN+Fszqb8iL
+         b2Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=nMz1ymCsOf65DabRL8W9oE+jLUTE0mcGttneun/Pans=;
-        b=mdF7jRXCkTvbatPpMo3BXIiDoC9JqtnKAZSJm/dRK4aO1RBQCNg9BmanID1vbPZpTl
-         1RK8cYpYfGBYmX+a9MXXOU4vAHl5ySEyLgKCg0I0Q3TFj0Y5VBOL3N2rAQxDYGsgvu+6
-         +DDV3R0F2sOeH4eUAJNqa9kwDq0e1Xu3VCSxLemHkfVrV7DN0/mZ4AFg55zpLfenAOQ8
-         UdQnfc5FC+1/TZIVcbX7hBf61m4Z/pzDxo07eQn1DxUs59ziXbtRAWkQfwK++b34ODy7
-         sCCM7QJ9KYsjKC1yzzIZnr1XKs4WftcsRoX1RRolmGjZkGrh4UK49Psrf9pJSE7LqNJE
-         jdHA==
-X-Gm-Message-State: AHQUAub3Emj5VCwkbKwMs6svoZkbbnaIHCGW7MFQACQ625rXYT/cC8ii
-        lnISxlecCYsxZIfvO6IWOKxWJg==
-X-Google-Smtp-Source: AHgI3Iauy0DFL2xJFV8jX/SZgQJHfgRFOewe7ge2fOIeU9erGRO2fGYvsusag7w8ePMUvML+QhU3/w==
-X-Received: by 2002:a1c:a8d7:: with SMTP id r206mr1885612wme.115.1550136047705;
-        Thu, 14 Feb 2019 01:20:47 -0800 (PST)
+        bh=9k/LIGQhUpABvLCk42mZFsQuNOmZs0f9/Ru/D3fAVNE=;
+        b=KQc4Yb8dMk/TdlSTCkP/yLam0RCNO+JNVfi8rvrSHKiBMkPzjjMkup3rjMgTuYNAy5
+         sZ4QNVIZc3qxPhHJxnh7RErWQMyiI4Uz43bCphvI4fSVgCKr789PcfyAt0TbdYNJsaa5
+         wTMYa/K1z4CBcH9nwmYuUzrS/xWo9QIdJkNDTEewlvDuKmmqFUwmLErE83+UpIe58cXE
+         Tq9e+IDbf3alKjINPZwX7evLYJuMeOXdN9Z4wb3GOsWJencgqvEUVl4vaTaNj42LIPoF
+         hDlb7gAw2/5VJfNYNnLq+JIQ2tf/JLS3HOnuckKRdjshyLw4MGssIV3c4utYWXYmWOVl
+         8oAw==
+X-Gm-Message-State: AHQUAuYpSAXo7o1wbMTQzdGcs8+21Px2RmYETy8fLKgiSrtxUXRApvp2
+        qjIcJgZPW1N/2GctdqnDGCuQAA==
+X-Google-Smtp-Source: AHgI3IZk6kWyruuwtTLVSw0GPlLqqxYngWEi+0xMpePR+mlKcXwXIFXwh2MUQUEh3CAQg9skD0A46w==
+X-Received: by 2002:a5d:6244:: with SMTP id m4mr1914252wrv.314.1550136192635;
+        Thu, 14 Feb 2019 01:23:12 -0800 (PST)
 Received: from dell ([2a01:4c8:c:28c9:4c60:37da:d7a:230])
-        by smtp.gmail.com with ESMTPSA id s5sm1815649wmh.37.2019.02.14.01.20.46
+        by smtp.gmail.com with ESMTPSA id y187sm1179320wmy.41.2019.02.14.01.23.11
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 01:20:47 -0800 (PST)
-Date:   Thu, 14 Feb 2019 09:20:45 +0000
+        Thu, 14 Feb 2019 01:23:12 -0800 (PST)
+Date:   Thu, 14 Feb 2019 09:23:10 +0000
 From:   Lee Jones <lee.jones@linaro.org>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org,
-        Florian Vaussard <florian.vaussard@epfl.ch>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: Re: [PATCH] mfd: twl6040: Fix device init errors for ACCCTL register
-Message-ID: <20190214092045.GD13737@dell>
-References: <20190211225726.38355-1-tony@atomide.com>
+To:     Virendra Kakade <virendra.kakade@ni.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        sre@kernel.org, moritz.fischer@ettus.com
+Subject: Re: [RFC 1/6] mfd: Support for Ettus Research E31x devices PMU
+Message-ID: <20190214092310.GE13737@dell>
+References: <20190212010143.3729-1-virendra.kakade@ni.com>
+ <20190212010143.3729-2-virendra.kakade@ni.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190211225726.38355-1-tony@atomide.com>
+In-Reply-To: <20190212010143.3729-2-virendra.kakade@ni.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 11 Feb 2019, Tony Lindgren wrote:
+On Mon, 11 Feb 2019, Virendra Kakade wrote:
 
-> I noticed that we can get a -EREMOTEIO errors on at least omap4 duovero:
+> Document bindings for E31x device PMU MFD driver.
 > 
-> twl6040 0-004b: Failed to write 2d = 19: -121
-> 
-> And then any following register access will produce errors.
-> 
-> There 2d offset above is register ACCCTL that gets written on twl6040
-> powerup. With error checking added to the related regcache_sync() call,
-> the -EREMOTEIO error is reproducable on twl6040 powerup at least
-> duovero.
-> 
-> To fix the error, we need to wait until twl6040 is accessible after the
-> powerup. Based on tests on omap4 duovero, we need to wait over 8ms after
-> powerup before register write will complete without failures. Let's also
-> make sure we warn about possible errors too.
-> 
-> Note that we have twl6040_patch[] reg_sequence with the ACCCTL register
-> configuration and regcache_sync() will write the new value to ACCCTL.
-> 
-> Cc: Florian Vaussard <florian.vaussard@epfl.ch>
-> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> Signed-off-by: Virendra Kakade <virendra.kakade@ni.com>
 > ---
->  drivers/mfd/twl6040.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/mfd/e31x-pmu.txt | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mfd/e31x-pmu.txt
 > 
-> diff --git a/drivers/mfd/twl6040.c b/drivers/mfd/twl6040.c
-> --- a/drivers/mfd/twl6040.c
-> +++ b/drivers/mfd/twl6040.c
-> @@ -322,8 +322,19 @@ int twl6040_power(struct twl6040 *twl6040, int on)
->  			}
->  		}
->  
-> +		/*
-> +		 * Register access can produce errors after power-up unless we
-> +		 * wait at least 8ms based on measurements on duovero.
-> +		 */
-> +		usleep_range(10000, 12000);
+> diff --git a/Documentation/devicetree/bindings/mfd/e31x-pmu.txt b/Documentation/devicetree/bindings/mfd/e31x-pmu.txt
+> new file mode 100644
+> index 000000000000..ebb5625f6c74
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mfd/e31x-pmu.txt
+> @@ -0,0 +1,14 @@
+> +Ettus Research/National Instruments E31x PMU MFD driver
+
+Please expand on what PMU is.
+
+MFD is a Linuxisum and has no place in the description.
+
+You can supplement it with "parent device" or some such.
+
+> +Required properties:
+> +- compatible : Must be "ni,e31x-pmu"
+> +- regmap     : Must be <&regmapnode>
 > +
->  		/* Sync with the HW */
-> -		regcache_sync(twl6040->regmap);
-> +		ret = regcache_sync(twl6040->regmap);
-> +		if (ret) {
-> +			dev_err(twl6040->dev, "%s register write failed: %i\n",
-> +				__func__, ret);
+> +Example:
+> +
+> +pmu {
+> +	compatible = "ni,e31x-pmu";
 
-Please drop the __func__ and just use the standard format.
+No address?
 
-Wouldn't something a little more forthcoming be better?
+> +	regmap = <&devctrl>;
+> +	status = "okay";
 
-"Failed to sync with the HW" ?
+Not required in DT documentation.
 
-> +			goto out;
-> +		}
->  
->  		/* Default PLL configuration after power up */
->  		twl6040->pll = TWL6040_SYSCLK_SEL_LPPLL;
+> +};
+> +
 
 -- 
 Lee Jones [李琼斯]
