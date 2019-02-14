@@ -2,206 +2,232 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA13C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:01:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 580BFC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:03:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2ED4222A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:01:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="VHrh7Drv"
+	by mail.kernel.org (Postfix) with ESMTP id 22F6A222D2
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:03:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438217AbfBNKBo (ORCPT
+        id S2404814AbfBNKDU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 05:01:44 -0500
-Received: from mout.web.de ([212.227.17.12]:42715 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391135AbfBNKBn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 05:01:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1550138472;
-        bh=UpdSdcSNY9uqdPNT4Pb1MVMa0ay4aPEN4V3Qc6wkzwI=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=VHrh7DrvLVIwg53zZQ/3NgXBp7MTim8VPlkE+QEyck4kzlYv8eOGYFM7RXsxXlD5z
-         ify//qLOucN1ccZOuu90+VkDqglEiG8vFiuLwA5EnPdmbrjdBncSTPnc96OegW3ET8
-         p//j5DYXPkkJiLo6221UCu+6z/vhUTW+QGJgiqNE=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.3] ([93.131.97.110]) by smtp.web.de (mrweb101
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0MDgLi-1grPTK37oU-00H6Oo; Thu, 14
- Feb 2019 11:01:12 +0100
-Subject: Re: [PATCH v4] coccinelle: semantic patch for missing put_device()
-To:     Wen Yang <wen.yang99@zte.com.cn>
-Cc:     Julia Lawall <julia.lawall@lip6.fr>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Yi Wang <wang.yi59@zte.com.cn>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wen Yang <yellowriver2010@hotmail.com>,
-        Cheng Shengyu <cheng.shengyu@zte.com.cn>,
-        cocci@systeme.lip6.fr, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <1550126293-27839-1-git-send-email-wen.yang99@zte.com.cn>
-From:   Markus Elfring <Markus.Elfring@web.de>
+        Thu, 14 Feb 2019 05:03:20 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37632 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391135AbfBNKDU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 05:03:20 -0500
+Received: by mail-wm1-f66.google.com with SMTP id x10so5387785wmg.2;
+        Thu, 14 Feb 2019 02:03:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=2IkciQHUpcJSDX4ggYJG/NdD2ohgp4TCqvxvqNsxRMY=;
+        b=GnjfORXrDw1xDZZnP7mLdVdK/iDfcx2bgiJjKWgkSkv9Kk6Nx7ATHARsC4AJAexhAF
+         yVi71JcdF71u/SntKsxj9+e/4l/2y91diZ+V8R41feiIhe2+zTEuMWUf8dNoQDyjxgCU
+         0Ns0z76f5Zzx5IZALr/Dm0TGyUqtl1JS/C/+qJ8qCiMAysrs7KktR4+Lh6f3ncPEIz8I
+         pqYjbq3ETsddRPP9crRUYzVENhH9X+6k8Z8vHzD9bkkW4dRjUaZWOL3O9QLC+VirWtjI
+         ua8Cya6skopoWd+LXyG7fefm+0rLQ6g9eeHfboX81QOtsNEpzErqJAMEVkPfhQ2F3Z79
+         fHQg==
+X-Gm-Message-State: AHQUAuarm+TITZKg54Ej/mOMuJ+2tyqfEbgW5s3c5A4jm17rfmIunLfH
+        dcu9HzytojhNhEWl1DG+VNk=
+X-Google-Smtp-Source: AHgI3IYwamfic1t2aOqq5fiv2rFhYlckaJjgHT1Mi2qnJr+YxhlhlL0OhR/hgyiCGMP5RKnKehTGOA==
+X-Received: by 2002:a7b:c00f:: with SMTP id c15mr2044571wmb.14.1550138597903;
+        Thu, 14 Feb 2019 02:03:17 -0800 (PST)
+Received: from ?IPv6:2a0b:e7c0:0:107::49? ([2a0b:e7c0:0:107::49])
+        by smtp.gmail.com with ESMTPSA id f196sm4876298wme.36.2019.02.14.02.03.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Feb 2019 02:03:16 -0800 (PST)
+Subject: Re: [PATCH v7 05/28] x86/asm/entry: annotate THUNKs
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     mingo@redhat.com, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+References: <20190130124711.12463-1-jslaby@suse.cz>
+ <20190130124711.12463-6-jslaby@suse.cz> <20190209112551.GA5089@zn.tnic>
+ <b75f2a0d-974a-c63b-64f8-8f333991e826@suse.cz>
+ <20190212110501.GB30028@zn.tnic>
+ <6b6aebb5-5f7c-e3b7-545e-3a4558e01e66@suse.cz>
+ <20190212114654.GC30028@zn.tnic>
+ <37e83ece-28c0-a7ec-86a3-b9b5ca2c61f6@suse.cz>
+ <20190212121347.GD30028@zn.tnic>
+From:   Jiri Slaby <jslaby@suse.cz>
 Openpgp: preference=signencrypt
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <7c4e26a4-32b9-e1f8-beeb-bfa4fc9e6128@web.de>
-Date:   Thu, 14 Feb 2019 11:01:09 +0100
+Autocrypt: addr=jslaby@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <cd09f00f-7174-4d06-50a2-3cc056b7d763@suse.cz>
+Date:   Thu, 14 Feb 2019 11:03:14 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <1550126293-27839-1-git-send-email-wen.yang99@zte.com.cn>
+In-Reply-To: <20190212121347.GD30028@zn.tnic>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:uPbZOw1bAXbLPKvVSU+ApZVLQKFrw9CJUVK1AqhDPtu71KLmWva
- G8RQuwOZpq/+psJaSPq2+0/JUbshr0kxKQPRwOn3hCzsP1zQ4s+BkS9oRBSAm1f7B3Wz1WC
- ib0YZno0+jrETVvi4u/7lk7nGrNrMEzOGo7BZSVdUhPOTy/DX6/dcvgv6HZsXcHTAaUQ6dA
- 3Kc50QjmSJ8pIxgLekXsw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:4RD1Khhb85E=:RqbvCBs6fo1ldhu0OhpeXe
- AKc7uBoZgJJSbejH/WaMxpCwysbK//4XNCzya+clHfft6hYsVNbK0JFX74aQrRhtFX+p9dNsg
- 0uOXpXdqkiOYS8rzX1yyLqcqmGsoysAIlVZCc8F7PHvn214NJrB7ehWlvrEquqs3ZLPSS7IYu
- CsTST2uWBvtM3sFxJarILce7rujoRCKmtX3boh1cV2z0SZqLhZGqibF0UsAmSdByeF9mn4GwG
- VBMWO7+jIFEr8/ZcCKCz+l24bamqKBWQrcrjwjCnvVhi4QsICPBekvQrypLs+THHppzQIWiNf
- DYPl10qKmZmqDrlgeqDX9nW2Al8l/fTKTJw1SwBSSM9G6+5OvX+jRTY4nXTpeLaIczO/+Jpmy
- wE5J1hJ0p3VC6ibkG8xYIf6bojM9YCldWPSxn3ZASML4SXWshCSaZCXaRWRGYvoLwkwAvNnj8
- MH42vv9MfYxzEdcNlJVGOsSCdIGLUDi+Vz0oGhu4eofYGxtURe6zIqhUvv87KAOLz69wPNeaX
- wufzHqtnbfriA+C2U0FP/US1EfXovxD+2h8SW2khgkK3TSSNleY2cL3JiFtZZ6XHKaVUIfVaY
- 2s4n1FTu20iRzxYLJDZvztKCxU/KDGjfPOxZntkDtsvJH11YdzGK9K+JIrc+sNxLmjSydRHfA
- hEsA08u6VW8i+5a4FOW5nHcOvqfuzs5hX31XBQZ9erBLnZi3qDdAv8Z1Trk+8cyQD6I6SCq9l
- H2UdWYyKYkLxT7nG1/owiaLGsElnpQElVuY8tgL0bureyp0oG2cleOJL9ursLaLRaAegBeMtI
- V16U4PXpFI3VezB8tbMFs5Um6aXNktuDFJOsAFrV98oA/gWQhLnA+FvlAgXq0oMCywJJabRDH
- o2Fmzeebh42rd6lQESa85ZunoWMR0Xih6HbwDk/0xYSEFXep0Va0dAD5K29veke4riC+6ryBq
- 1FM1k/DcHeg==
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> The implementation of this semantic patch is:
+On 12. 02. 19, 13:13, Borislav Petkov wrote:
+> On Tue, Feb 12, 2019 at 12:51:08PM +0100, Jiri Slaby wrote:
+>> And what if the LOCAL macros prepend .L automatically? The references
+>> would need to be via macro or by manually adding .L. I mean:
+>>
+>> SYM_CODE_START_LOCAL(function)
+>>   ret
+>> SYM_CODE_END(function)
+>>
+>> And then used as:
+>> call .Lfunction
+>> or
+>> call SYM_LOCAL(function)
+>>
+>> Is that too ugly?
+> 
+> I'd prefer SYM_LOCAL because not everyone is aware of the fact that the
+> GNU toolchain makes .L-prepended symbols local.
 
-Thanks for your extension of such a commit message.
+The problem with local .L symbols is when debugging:
+> Local symbols are defined and used within the assembler, but they are
+> normally not saved in object files.  Thus, they are not visible when
+> debugging.
 
+Which means, when I have:
+> .text
+> 
+> .globl _start
+> _start:
+>         call .Lbubak
+> .type _start STT_FUNC
+> .size _start, .-_start
+> 
+> .Lbubak:
+>         movb $0, 0
+> .type .Lbubak STT_FUNC
+> .size .Lbubak, .-.Lbubak
 
-I would interpret the provided SmPL code in the way that it will not gener=
-ate
-adjusted (patched) C code so far.
-Source code search results will be presented by the operation mode =E2=80=
-=9Creport=E2=80=9D or =E2=80=9Corg=E2=80=9D.
+and I run it:
+> (gdb) r
+> Starting program: /tmp/asm/asm 
+> 
+> Program received signal SIGSEGV, Segmentation fault.
+> 0x0000000000401006 in ?? ()
+> (gdb) where
+> #0  0x0000000000401006 in ?? ()
+> #1  0x0000000000401005 in _start ()
+> (gdb) disass
+> No function contains program counter for selected frame.
+> (gdb) disass *0x0000000000401006
+> No function contains specified address.
+> (gdb) x/i $pc
+> => 0x401006:    movb   $0x0,0x0
+> (gdb) x/i 0x0000000000401006
+> => 0x401006:    movb   $0x0,0x0
 
-How do you think about to exchange the word =E2=80=9Cpatch=E2=80=9D by =E2=
-=80=9Ccode search=E2=80=9D
-at affected places (and in the subject) then?
+Which is quite impractical -- disass won't work, only explicit dump via
+x. And the kernel unwinder would be no more clever. So when patching
+entry like:
+> --- a/arch/x86/entry/entry_64.S
+> +++ b/arch/x86/entry/entry_64.S
+> @@ -323,6 +323,18 @@ SYM_CODE_START(__switch_to_asm)
+>         jmp     __switch_to
+>  SYM_CODE_END(__switch_to_asm)
+>  
+> +#if 0
+> +#define KILLER killer
+> +#else
+> +#define KILLER .Lkiller
+> +#endif
+> +
+> +SYM_CODE_START_LOCAL(KILLER)
+> +       UNWIND_HINT_EMPTY
+> +       movb $0, 0
+> +       ret
+> +SYM_CODE_END(KILLER)
+> +
+>  /*
+>   * A newly forked process directly context switches into this address.
+>   *
+> @@ -332,6 +344,7 @@ SYM_CODE_END(__switch_to_asm)
+>   */
+>  SYM_CODE_START(ret_from_fork)
+>         UNWIND_HINT_EMPTY
+> +       call    KILLER
+>         movq    %rax, %rdi
+>         call    schedule_tail                   /* rdi: 'prev' task parameter */
+>  
 
+first results in objtool complaints:
+> arch/x86/entry/entry_64.o: warning: objtool: .entry.text+0x190: unsupported intra-function call
+> arch/x86/entry/entry_64.o: warning: objtool: If this is a retpoline, please patch it in with alternatives and annotate it with ANNOTATE_NOSPEC_ALTERNATIVE.
 
-> In a function, for variables returned by calling of_find_device_by_node(=
-),
+and also the crash is misleading:
+> BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+> #PF error: [WRITE] 
+> PGD 0 P4D 0 
+> Oops: 0002 [#1] PREEMPT SMP
+...
+> RIP: 0010:__switch_to_asm+0x70/0x80
 
-Do variables really get returned?
+opposing to classic symbol:
+> BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+> #PF error: [WRITE] 
+> PGD 0 P4D 0 
+> Oops: 0002 [#1] PREEMPT SMP
+...> RIP: 0010:killer+0x0/0x10
 
-The provided pointer should usually be stored somewhere.
+(The killer was appended to the previous function by gas in the former
+case.)
 
+Therefore, I don't think using local .L labels outside of functions is a
+good idea...
 
-> c, for the rest of the situation, the current function should release th=
-e
->    reference by calling put_device, this patch will report the
->    corresponding error message.
-
-* Do you expect that the desired object release should be performed only i=
-n
-  the same function implementation?
-
-* Would you like to pick any software development challenges up around
-  inter-procedural data flow (or even escape) analysis for the shown use c=
-ase?
-
-
-> Further, for the case of b, the object returned to other functions may a=
-lso
-> have a reference leak, we will continue to develop other cocci scripts t=
-o
-> further check the reference leak.
-
-I am curious on how these approaches will evolve further.
-
-
-> +// Copyright: (C) 2018-2019 Wen Yang, ZTE.  GPLv2.
-
-Would you like to add a SPDX identifier?
-
-
-> +coccilib.report.print_report(p2[0],
-
-Thanks for a nicer indentation here.
-
-
-> +			     "ERROR: missing put_device;"
-
-Will change confidence considerations result in another fine-tuning for th=
-is message?
-
-
-> +			      + " call of_find_device_by_node on line "
-
-I find that such a split string literal can be unwanted.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/coding-style.rst?id=3D1f947a7a011fcceb14cb912f5481a53b=
-18f1879a#n94
-
-
-> +			      + " and return without releasing.")
-
-Possible rewording?
-
-+			      + " but without a corresponding object release within this funct=
-ion.")
-
-
-Regards,
-Markus
+regards,
+-- 
+js
+suse labs
