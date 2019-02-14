@@ -2,63 +2,245 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC467C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:46:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6495AC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:51:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A4A7222B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:46:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550151986;
-	bh=9VFACCoGzLjG/ySkIt88r3vgcVlkdUz8JenhZuiLfuQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=hZ1hGq9RA2AgIdPFjVETOb457+U+9ePsK6H7nQ5YrFfGmPFP2gr79exodH05Q6iZV
-	 MeqsJ8AOmURIJjW9kmzlzqnQpsRFkd5uPSc8cdNQ8HVW/2CroKEqOI9thgRWjSlMBv
-	 pH4cm8AGgszmRmtLOKYL1uTROEiI6aa5BFWxf7a8=
+	by mail.kernel.org (Postfix) with ESMTP id 33038222D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:51:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436861AbfBNNqZ (ORCPT
+        id S2404025AbfBNNvU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 08:46:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42914 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387759AbfBNNqY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 08:46:24 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 14C45AF9C;
-        Thu, 14 Feb 2019 13:46:23 +0000 (UTC)
-Date:   Thu, 14 Feb 2019 14:46:22 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     lsf-pc@lists.linux-foundation.org,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Subject: Re: [Lsf-pc] [LSF/MM TOPIC] The end of the DAX experiment
-Message-ID: <20190214134622.GG4525@dhcp22.suse.cz>
-References: <CAPcyv4jyCDJTpGZB6qVX7_FiaxJfDzWA1cw8dfPjHM2j3j3yqQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4jyCDJTpGZB6qVX7_FiaxJfDzWA1cw8dfPjHM2j3j3yqQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 14 Feb 2019 08:51:20 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46112 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2392390AbfBNNvT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 08:51:19 -0500
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1EDiQQV112906
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:51:18 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qn94b1wju-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:51:18 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Thu, 14 Feb 2019 13:51:15 -0000
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 14 Feb 2019 13:51:13 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1EDpBnA61145196
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 14 Feb 2019 13:51:11 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 91E2842041;
+        Thu, 14 Feb 2019 13:51:11 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0C46842047;
+        Thu, 14 Feb 2019 13:51:11 +0000 (GMT)
+Received: from morel-ThinkPad-W530.boeblingen.de.ibm.com (unknown [9.152.224.140])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 14 Feb 2019 13:51:10 +0000 (GMT)
+From:   Pierre Morel <pmorel@linux.ibm.com>
+To:     borntraeger@de.ibm.com
+Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        pasic@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
+Subject: [PATCH v3 1/9] s390: vfio_ap: link the vfio_ap devices to the vfio_ap bus subsystem
+Date:   Thu, 14 Feb 2019 14:51:01 +0100
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
+References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19021413-0008-0000-0000-000002C072A5
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021413-0009-0000-0000-0000222C9545
+Message-Id: <1550152269-6317-2-git-send-email-pmorel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902140098
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 06-02-19 13:12:59, Dan Williams wrote:
-[...]
-> * Userfaultfd for file-backed mappings and DAX
+Libudev relies on having a subsystem link for non-root devices. To
+avoid libudev (and potentially other userspace tools) choking on the
+matrix device let us introduce a vfio_ap bus and with that the vfio_ap
+bus subsytem, and make the matrix device reside within it.
 
-I assume that other topics are meant to be FS track but this one is MM,
-right?
+We restrict the number of allowed devices to a single one.
 
+Doing this we need to suppress the forced link from the matrix device to
+the vfio_ap driver and we suppress the device_type we do not need
+anymore.
+
+Since the associated matrix driver is not the vfio_ap driver any more,
+we have to change the search for the devices on the vfio_ap driver in
+the function vfio_ap_verify_queue_reserved.
+
+Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+---
+ drivers/s390/crypto/vfio_ap_drv.c     | 63 +++++++++++++++++++++++++++++++----
+ drivers/s390/crypto/vfio_ap_ops.c     |  4 +--
+ drivers/s390/crypto/vfio_ap_private.h |  1 +
+ 3 files changed, 60 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
+index 31c6c84..1fd5fe6 100644
+--- a/drivers/s390/crypto/vfio_ap_drv.c
++++ b/drivers/s390/crypto/vfio_ap_drv.c
+@@ -24,8 +24,9 @@ MODULE_LICENSE("GPL v2");
+ 
+ static struct ap_driver vfio_ap_drv;
+ 
+-static struct device_type vfio_ap_dev_type = {
+-	.name = VFIO_AP_DEV_TYPE_NAME,
++struct matrix_driver {
++	struct device_driver drv;
++	int device_count;
+ };
+ 
+ struct ap_matrix_dev *matrix_dev;
+@@ -62,6 +63,41 @@ static void vfio_ap_matrix_dev_release(struct device *dev)
+ 	kfree(matrix_dev);
+ }
+ 
++static int matrix_bus_match(struct device *dev, struct device_driver *drv)
++{
++	return 1;
++}
++
++static struct bus_type matrix_bus = {
++	.name = "vfio_ap",
++	.match = &matrix_bus_match,
++};
++
++static int matrix_probe(struct device *dev);
++static int matrix_remove(struct device *dev);
++static struct matrix_driver matrix_driver = {
++	.drv = {
++		.name = "vfio_ap",
++		.bus = &matrix_bus,
++		.probe = matrix_probe,
++		.remove = matrix_remove,
++	},
++};
++
++static int matrix_probe(struct device *dev)
++{
++	if (matrix_driver.device_count)
++		return -EEXIST;
++	matrix_driver.device_count++;
++	return 0;
++}
++
++static int matrix_remove(struct device *dev)
++{
++	matrix_driver.device_count--;
++	return 0;
++}
++
+ static int vfio_ap_matrix_dev_create(void)
+ {
+ 	int ret;
+@@ -71,6 +107,10 @@ static int vfio_ap_matrix_dev_create(void)
+ 	if (IS_ERR(root_device))
+ 		return PTR_ERR(root_device);
+ 
++	ret = bus_register(&matrix_bus);
++	if (ret)
++		goto bus_register_err;
++
+ 	matrix_dev = kzalloc(sizeof(*matrix_dev), GFP_KERNEL);
+ 	if (!matrix_dev) {
+ 		ret = -ENOMEM;
+@@ -87,30 +127,41 @@ static int vfio_ap_matrix_dev_create(void)
+ 	mutex_init(&matrix_dev->lock);
+ 	INIT_LIST_HEAD(&matrix_dev->mdev_list);
+ 
+-	matrix_dev->device.type = &vfio_ap_dev_type;
+ 	dev_set_name(&matrix_dev->device, "%s", VFIO_AP_DEV_NAME);
+ 	matrix_dev->device.parent = root_device;
++	matrix_dev->device.bus = &matrix_bus;
+ 	matrix_dev->device.release = vfio_ap_matrix_dev_release;
+-	matrix_dev->device.driver = &vfio_ap_drv.driver;
++	matrix_dev->vfio_ap_drv = &vfio_ap_drv;
+ 
+ 	ret = device_register(&matrix_dev->device);
+ 	if (ret)
+ 		goto matrix_reg_err;
+ 
++	ret = driver_register(&matrix_driver.drv);
++	if (ret)
++		goto matrix_drv_err;
++
+ 	return 0;
+ 
++matrix_drv_err:
++	device_unregister(&matrix_dev->device);
+ matrix_reg_err:
+ 	put_device(&matrix_dev->device);
+ matrix_alloc_err:
++	bus_unregister(&matrix_bus);
++bus_register_err:
+ 	root_device_unregister(root_device);
+-
+ 	return ret;
+ }
+ 
+ static void vfio_ap_matrix_dev_destroy(void)
+ {
++	struct device *root_device = matrix_dev->device.parent;
++
++	driver_unregister(&matrix_driver.drv);
+ 	device_unregister(&matrix_dev->device);
+-	root_device_unregister(matrix_dev->device.parent);
++	bus_unregister(&matrix_bus);
++	root_device_unregister(root_device);
+ }
+ 
+ static int __init vfio_ap_init(void)
+diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+index 272ef42..900b9cf 100644
+--- a/drivers/s390/crypto/vfio_ap_ops.c
++++ b/drivers/s390/crypto/vfio_ap_ops.c
+@@ -198,8 +198,8 @@ static int vfio_ap_verify_queue_reserved(unsigned long *apid,
+ 	qres.apqi = apqi;
+ 	qres.reserved = false;
+ 
+-	ret = driver_for_each_device(matrix_dev->device.driver, NULL, &qres,
+-				     vfio_ap_has_queue);
++	ret = driver_for_each_device(&matrix_dev->vfio_ap_drv->driver, NULL,
++				     &qres, vfio_ap_has_queue);
+ 	if (ret)
+ 		return ret;
+ 
+diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
+index 5675492..76b7f98 100644
+--- a/drivers/s390/crypto/vfio_ap_private.h
++++ b/drivers/s390/crypto/vfio_ap_private.h
+@@ -40,6 +40,7 @@ struct ap_matrix_dev {
+ 	struct ap_config_info info;
+ 	struct list_head mdev_list;
+ 	struct mutex lock;
++	struct ap_driver  *vfio_ap_drv;
+ };
+ 
+ extern struct ap_matrix_dev *matrix_dev;
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
+
