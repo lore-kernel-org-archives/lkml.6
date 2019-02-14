@@ -2,79 +2,91 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36CF7C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 20:08:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F6D5C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 20:09:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1A43218AC
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 20:08:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jzgMym79"
+	by mail.kernel.org (Postfix) with ESMTP id 55C01218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 20:09:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406150AbfBNUIn (ORCPT
+        id S2437355AbfBNUJw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 15:08:43 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:52954 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391810AbfBNUIn (ORCPT
+        Thu, 14 Feb 2019 15:09:52 -0500
+Received: from smtp1.de.adit-jv.com ([93.241.18.167]:51949 "EHLO
+        smtp1.de.adit-jv.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390902AbfBNUJw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 15:08:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=3mwfpa8LNR+UOVANIfUHZaTtq+bD3XmZiQXOhtKUaYM=; b=jzgMym798e+z4CWQ3ts9zTomB
-        uHV6QS0qAtJeDzNsTejixTR+SDHlduKxrcqrHiXyAO2Q/ULK7UvQwR0jVicPyjzPFUnrHrKHJ7GXk
-        EJfHHxWsdgxwI+voRvnm8h5vfk5qogPwExo9oipC2mmm3rsej2CB1GGR8KvJrsrU0SdEb559cn5Bu
-        pFnlYyCYXVb0fl62gI3kW4iM9QNtVjdf+WfL0PwrFNel4DubKhOirZQwfNhBGjK1DEuWCSaX3gYWh
-        eW+lUsRanX1U/dg99zxiecdw7y81b8n3GSys5wIV68R9Uchj6/YzPUN7gGaLLIkL8H67YI6FQNDbV
-        OVoaejwvg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1guNJI-0005oe-Vl; Thu, 14 Feb 2019 20:08:40 +0000
-Date:   Thu, 14 Feb 2019 12:08:40 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Jerome Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Thu, 14 Feb 2019 15:09:52 -0500
+Received: from localhost (smtp1.de.adit-jv.com [127.0.0.1])
+        by smtp1.de.adit-jv.com (Postfix) with ESMTP id BDA8C3C00B7;
+        Thu, 14 Feb 2019 21:09:49 +0100 (CET)
+Received: from smtp1.de.adit-jv.com ([127.0.0.1])
+        by localhost (smtp1.de.adit-jv.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id rl9DF3eYkIYq; Thu, 14 Feb 2019 21:09:43 +0100 (CET)
+Received: from HI2EXCH01.adit-jv.com (hi2exch01.adit-jv.com [10.72.92.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtp1.de.adit-jv.com (Postfix) with ESMTPS id 095293C00B6;
+        Thu, 14 Feb 2019 21:09:43 +0100 (CET)
+Received: from vmlxhi-102.adit-jv.com (10.72.93.184) by HI2EXCH01.adit-jv.com
+ (10.72.92.24) with Microsoft SMTP Server (TLS) id 14.3.435.0; Thu, 14 Feb
+ 2019 21:09:42 +0100
+Date:   Thu, 14 Feb 2019 21:09:37 +0100
+From:   Eugeniu Rosca <erosca@de.adit-jv.com>
+To:     Sudeep Holla <sudeep.holla@arm.com>
+CC:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Subject: Re: [Lsf-pc] [LSF/MM TOPIC] The end of the DAX experiment
-Message-ID: <20190214200840.GB12668@bombadil.infradead.org>
-References: <CAPcyv4jyCDJTpGZB6qVX7_FiaxJfDzWA1cw8dfPjHM2j3j3yqQ@mail.gmail.com>
- <20190214134622.GG4525@dhcp22.suse.cz>
- <CAPcyv4gxFKBQ9eVdn+pNEzBXRfw6Qwfmu21H2i5uj-PyFmRAGQ@mail.gmail.com>
- <20190214191013.GA3420@redhat.com>
- <CAPcyv4jLTdJyTOy715qvBL_j_deiLoBmu_thkUnFKZKMvZL6hA@mail.gmail.com>
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jisheng Zhang <jszhang@marvell.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Joshua Frkuska <joshua_frkuska@mentor.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v3] drivers: base: add support to skip power management
+ in device/driver model
+Message-ID: <20190214200937.GA21536@vmlxhi-102.adit-jv.com>
+Illegal-Object: Syntax error in Reply-To: address found on vger.kernel.org:
+        Reply-To:       =?ISO-8859-1?Q?=20=22=1B=1B=1B=22@smtp1.de.a?==?ISO-8859-1?Q?dit-jv.com?=
+                                                                      ^-missing end of address
+References: <20190214182910.20600-1-sudeep.holla@arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <CAPcyv4jLTdJyTOy715qvBL_j_deiLoBmu_thkUnFKZKMvZL6hA@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20190214182910.20600-1-sudeep.holla@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.72.93.184]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 11:31:24AM -0800, Dan Williams wrote:
-> On Thu, Feb 14, 2019 at 11:10 AM Jerome Glisse <jglisse@redhat.com> wrote:
-> > I am just again working on my struct page mapping patchset as well as
-> > the generic page write protection that sits on top. I hope to be able
-> > to post the v2 in couple weeks. You can always look at my posting last
-> > year to see more details.
-> 
-> Yes, I have that in mind as one of the contenders. However, it's not
-> clear to me that its a suitable fit for filesystem-reflink. Others
-> have floated the 'page proxy' idea, so it would be good to discuss the
-> merits of the general approaches.
+Hello Sudeep,
 
-... and my preferred option of putting pfn entries in the page cache.
-Or is that what you meant by "page proxy"?
+On Thu, Feb 14, 2019 at 06:29:10PM +0000, Sudeep Holla wrote:
+[..]
+> 
+> Lets add no_pm_required flags to indicate that the device doesn't
+
+s/no_pm_required/no_pm/ ?
+
+> require any sort of pm activities and all of them can be completely
+> skipped. We can use the same flag to also avoid adding not used *power*
+> sysfs entries for these devices. For now, lets use this for cpu cache
+> devices.
+[..]
+
+Running suspend/resume ~500 times on H3-Salvator-X with this patch
+didn't reveal any regressions. The annoying warnings are gone.
+Console log and .config are available at:
+https://gist.github.com/erosca/1af11aa62e16903e1b6964be6a9eea77
+
+Tested-by: Eugeniu Rosca <erosca@de.adit-jv.com>
+
+Thanks!
+Eugeniu.
