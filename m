@@ -2,63 +2,63 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-21.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 259E4C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:39:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7B1C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:39:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC8BD21B68
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:39:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C72721B68
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:39:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jZgYCZZ0"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hQ+9SEU2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440373AbfBNVjD (ORCPT
+        id S2440390AbfBNVjH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 16:39:03 -0500
-Received: from mail-ot1-f74.google.com ([209.85.210.74]:35724 "EHLO
-        mail-ot1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2440359AbfBNVjA (ORCPT
+        Thu, 14 Feb 2019 16:39:07 -0500
+Received: from mail-yb1-f201.google.com ([209.85.219.201]:52153 "EHLO
+        mail-yb1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2440375AbfBNVjF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 16:39:00 -0500
-Received: by mail-ot1-f74.google.com with SMTP id d25so6556502otq.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 13:38:59 -0800 (PST)
+        Thu, 14 Feb 2019 16:39:05 -0500
+Received: by mail-yb1-f201.google.com with SMTP id d9so1469097ybn.18
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 13:39:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=08p6LXJC2eOmIY3InQ6qxCCQbTx/hOsrRz7mzip6vVQ=;
-        b=jZgYCZZ0MJv5+THlsUyohqICtQNgP0QaHQK/z9dQ2yAutpNoCti9uoBKok2HYqelyW
-         gNQWrF4dJ2nbUIlEWXh0OM6Ix7d+/K1UdFZIMSVAak2NeEqjbUL+bAosONxScwg4u7vS
-         KI5Mu/NkXBzKRl5Ph8Le2SYZUgjcCzPNW+1i90dRSr6A+y6rImMVIN2/va9OiohuEFKU
-         89ofCGsxPlE6O+8E9OxxCpl5fem25H4WjtaTaBI8PVfu3MhEKuhgmUIZe7Abah36BPSk
-         /jS2Bf5ErscJrHLgSQ1e/zy9aA36kKK3DKdxNG2dnHPMX+E0DySaDDJuZsv+C67+Jz1N
-         V1ag==
+        bh=f2wa2equXX0Uxv32W1z3RSapSiZpl47DzRFek4cVN+E=;
+        b=hQ+9SEU2BXhRthIqXbbxwnORMXGh8cVLmhcD9GTucG7YR8YyBSkhzs1X+WCWAFugOM
+         0tqHVnpLIqiM27g26aFoJmN8mIu2c3o0miFlEmQcwVfISVld/+3XyvzallOIGl4UFD10
+         qA65w1wr9QBu5eW9NXUm2EzUI2t3xVOlscFL3WXo3Y5t9kFJqN9mgTROrvtrgPrHiOEe
+         Nk64WPJWDcmGCaCi4fX92YoJQpM5PF1tPBTxt8MHw/yjBs6b369giBrSeqpLTYqP2LgA
+         W1T3GufJf8uGilYKvzxVOE88P6RK6B5UB4CxkxgamWARLqzUZaCSGXmKW+o38ObKBdxR
+         1JJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=08p6LXJC2eOmIY3InQ6qxCCQbTx/hOsrRz7mzip6vVQ=;
-        b=DpxzGp4UTavAN0MGss0yRzXDZsMJB5pAJHQj2rgSJQgqWxGLivEpyaujtflFtaqPse
-         /xAS8F4oI3b3BcwFw7ayQIC/N1IO3CZJ8uhcRPU8TGlp8htLZsDrx8dtzzvD20XD+GV7
-         6cW4qCXF3cBYcbQS7yv//CFp0iTimwyE46KgJQt1f9PuJY3lVn01umlCmsP7uALNSb7B
-         XYBO7QUMDiu02xZo3EyWK/D0pRWdef99gxHNpnJ1+X2tMKAwf+xa+FjpVQaRwxhhrAog
-         coCufF8NCNW+TLj8GJjfKiXvX4QVnY07/HaAeTtOG/FSQ3EZoK4Z1f51JozHHhK3LMpk
-         zgCw==
-X-Gm-Message-State: AHQUAuZLdcn9RQNn6Eev+tqMNj8aaXo0J0Qh5XFm7dDxJqowxBs1VBDy
-        zrvsG3iX9W/KP83g1grtsp9ljYICJ3dpuprDYRBx2Q==
-X-Google-Smtp-Source: AHgI3IaWH68HDxcFPg1bCdiky+YA+574zMEFM7qIisxkFQKBKPnLp5yjulce0WtytgimJQ14iCu4iLWCWqMFhNeNugRx6A==
-X-Received: by 2002:a05:6830:8b:: with SMTP id a11mr3441406oto.33.1550180338477;
- Thu, 14 Feb 2019 13:38:58 -0800 (PST)
-Date:   Thu, 14 Feb 2019 13:37:23 -0800
+        bh=f2wa2equXX0Uxv32W1z3RSapSiZpl47DzRFek4cVN+E=;
+        b=ZOooBhCcI6RIdipdKEWvy96hluaupcA8PwBVDWBPn3yVN0yIfpweEUNHdxUSExPEwx
+         ZAyNVt3WxzpPbN1T1CWn+Sf5lo++4SEW9wYbhBr+qIaa3jzcAtTJDz7zcNOs3v9WVS+l
+         nRUpUqrEoEIRjaehrUltos5tA4cKkCB+Eo6yBMHewa9/gWRIpd6kK7zYxb7l13RSJ81D
+         cJ5fFTC+sJENL4yo06qZ/mbj66EOC6iVyoykwNHAl6DK6zdJth8+V5n+bn5G/daDDA2r
+         o3Tp4o3nuQNOUzCm794edO1Gu8nkBIqkJLO/OevOFIgwst3psbwlCyAaxblaSJikXdNk
+         QH1g==
+X-Gm-Message-State: AHQUAuZz4QtH7OY+uIIIn4RDw37kspr/VxUrh7EkdNDPMogV1Lu1JBOQ
+        i0Oqvi/7IsWK/pTUjcmo2ElwH98MOzCmQsk0foRD2g==
+X-Google-Smtp-Source: AHgI3IZgYWfJyxJREZSe13lsXNnaZTXjzW8qZKuiy29JOyParXycVnIyBwX4vvwgltI1l4yqdfN/ODKRJd+roBN2exsbKQ==
+X-Received: by 2002:a5b:d11:: with SMTP id y17mr2944152ybp.40.1550180343982;
+ Thu, 14 Feb 2019 13:39:03 -0800 (PST)
+Date:   Thu, 14 Feb 2019 13:37:25 -0800
 In-Reply-To: <20190214213729.21702-1-brendanhiggins@google.com>
-Message-Id: <20190214213729.21702-12-brendanhiggins@google.com>
+Message-Id: <20190214213729.21702-14-brendanhiggins@google.com>
 Mime-Version: 1.0
 References: <20190214213729.21702-1-brendanhiggins@google.com>
 X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
-Subject: [RFC v4 11/17] kunit: tool: add Python wrappers for running KUnit tests
+Subject: [RFC v4 13/17] Documentation: kunit: add documentation for KUnit
 From:   Brendan Higgins <brendanhiggins@google.com>
 To:     keescook@google.com, mcgrof@kernel.org, shuah@kernel.org,
         robh@kernel.org, kieran.bingham@ideasonboard.com,
@@ -74,496 +74,867 @@ Cc:     gregkh@linuxfoundation.org, joel@jms.id.au, mpe@ellerman.id.au,
         devicetree@vger.kernel.org, pmladek@suse.com,
         Alexander.Levin@microsoft.com, amir73il@gmail.com,
         dan.carpenter@oracle.com, wfg@linux.intel.com,
-        Felix Guo <felixguoxiuping@gmail.com>,
-        Brendan Higgins <brendanhiggins@google.com>
+        Brendan Higgins <brendanhiggins@google.com>,
+        Felix Guo <felixguoxiuping@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Felix Guo <felixguoxiuping@gmail.com>
-
-The ultimate goal is to create minimal isolated test binaries; in the
-meantime we are using UML to provide the infrastructure to run tests, so
-define an abstract way to configure and run tests that allow us to
-change the context in which tests are built without affecting the user.
-This also makes pretty and dynamic error reporting, and a lot of other
-nice features easier.
-
-kunit_config.py:
-  - parse .config and Kconfig files.
-
-kunit_kernel.py: provides helper functions to:
-  - configure the kernel using kunitconfig.
-  - build the kernel with the appropriate configuration.
-  - provide function to invoke the kernel and stream the output back.
+Add documentation for KUnit, the Linux kernel unit testing framework.
+- Add intro and usage guide for KUnit
+- Add API reference
 
 Signed-off-by: Felix Guo <felixguoxiuping@gmail.com>
 Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
 ---
-Changes Since Last Version
- - Added support for building and running tests in an external
-   directory.
- - Squashed with most other kunit_tool commits, since most did not
-   represent a coherent new feature.
----
- tools/testing/kunit/.gitignore      |   3 +
- tools/testing/kunit/kunit.py        |  78 +++++++++++++++
- tools/testing/kunit/kunit_config.py |  66 +++++++++++++
- tools/testing/kunit/kunit_kernel.py | 148 ++++++++++++++++++++++++++++
- tools/testing/kunit/kunit_parser.py | 119 ++++++++++++++++++++++
- 5 files changed, 414 insertions(+)
- create mode 100644 tools/testing/kunit/.gitignore
- create mode 100755 tools/testing/kunit/kunit.py
- create mode 100644 tools/testing/kunit/kunit_config.py
- create mode 100644 tools/testing/kunit/kunit_kernel.py
- create mode 100644 tools/testing/kunit/kunit_parser.py
+ Documentation/index.rst           |   1 +
+ Documentation/kunit/api/index.rst |  16 ++
+ Documentation/kunit/api/test.rst  |  15 +
+ Documentation/kunit/faq.rst       |  46 +++
+ Documentation/kunit/index.rst     |  80 ++++++
+ Documentation/kunit/start.rst     | 180 ++++++++++++
+ Documentation/kunit/usage.rst     | 447 ++++++++++++++++++++++++++++++
+ 7 files changed, 785 insertions(+)
+ create mode 100644 Documentation/kunit/api/index.rst
+ create mode 100644 Documentation/kunit/api/test.rst
+ create mode 100644 Documentation/kunit/faq.rst
+ create mode 100644 Documentation/kunit/index.rst
+ create mode 100644 Documentation/kunit/start.rst
+ create mode 100644 Documentation/kunit/usage.rst
 
-diff --git a/tools/testing/kunit/.gitignore b/tools/testing/kunit/.gitignore
+diff --git a/Documentation/index.rst b/Documentation/index.rst
+index c858c2e66e361..9512de536b34a 100644
+--- a/Documentation/index.rst
++++ b/Documentation/index.rst
+@@ -65,6 +65,7 @@ merged much easier.
+    kernel-hacking/index
+    trace/index
+    maintainer/index
++   kunit/index
+ 
+ Kernel API documentation
+ ------------------------
+diff --git a/Documentation/kunit/api/index.rst b/Documentation/kunit/api/index.rst
 new file mode 100644
-index 0000000000000..c791ff59a37a9
+index 0000000000000..c31c530088153
 --- /dev/null
-+++ b/tools/testing/kunit/.gitignore
-@@ -0,0 +1,3 @@
-+# Byte-compiled / optimized / DLL files
-+__pycache__/
-+*.py[cod]
-\ No newline at end of file
-diff --git a/tools/testing/kunit/kunit.py b/tools/testing/kunit/kunit.py
-new file mode 100755
-index 0000000000000..7413ec7351a20
---- /dev/null
-+++ b/tools/testing/kunit/kunit.py
-@@ -0,0 +1,78 @@
-+#!/usr/bin/python3
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# A thin wrapper on top of the KUnit Kernel
-+#
-+# Copyright (C) 2019, Google LLC.
-+# Author: Felix Guo <felixguoxiuping@gmail.com>
-+# Author: Brendan Higgins <brendanhiggins@google.com>
++++ b/Documentation/kunit/api/index.rst
+@@ -0,0 +1,16 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
-+import argparse
-+import sys
-+import os
-+import time
++=============
++API Reference
++=============
++.. toctree::
 +
-+import kunit_config
-+import kunit_kernel
-+import kunit_parser
++	test
 +
-+parser = argparse.ArgumentParser(description='Runs KUnit tests.')
++This section documents the KUnit kernel testing API. It is divided into 3
++sections:
 +
-+parser.add_argument('--raw_output', help='don\'t format output from kernel',
-+		    action='store_true')
-+
-+parser.add_argument('--timeout', help='maximum number of seconds to allow for '
-+		    'all tests to run. This does not include time taken to '
-+		    'build the tests.', type=int, default=300,
-+		    metavar='timeout')
-+
-+parser.add_argument('--jobs',
-+		    help='As in the make command, "Specifies  the number of '
-+		    'jobs (commands) to run simultaneously."',
-+		    type=int, default=8, metavar='jobs')
-+
-+parser.add_argument('--build_dir',
-+		    help='As in the make command, it specifies the build '
-+		    'directory.',
-+		    type=str, default=None, metavar='build_dir')
-+
-+cli_args = parser.parse_args()
-+
-+linux = kunit_kernel.LinuxSourceTree()
-+
-+build_dir = None
-+if cli_args.build_dir:
-+	build_dir = cli_args.build_dir
-+
-+config_start = time.time()
-+success = linux.build_reconfig(build_dir)
-+config_end = time.time()
-+if not success:
-+	quit()
-+
-+kunit_parser.print_with_timestamp('Building KUnit Kernel ...')
-+
-+build_start = time.time()
-+
-+success = linux.build_um_kernel(jobs=cli_args.jobs, build_dir=build_dir)
-+build_end = time.time()
-+if not success:
-+	quit()
-+
-+kunit_parser.print_with_timestamp('Starting KUnit Kernel ...')
-+test_start = time.time()
-+
-+if cli_args.raw_output:
-+	kunit_parser.raw_output(linux.run_kernel(timeout=cli_args.timeout,
-+						 build_dir=build_dir))
-+else:
-+	kunit_parser.parse_run_tests(linux.run_kernel(timeout=cli_args.timeout,
-+						      build_dir=build_dir))
-+
-+test_end = time.time()
-+
-+kunit_parser.print_with_timestamp((
-+	"Elapsed time: %.3fs total, %.3fs configuring, %.3fs " +
-+	"building, %.3fs running.\n") % (test_end - config_start,
-+	config_end - config_start, build_end - build_start,
-+	test_end - test_start))
-diff --git a/tools/testing/kunit/kunit_config.py b/tools/testing/kunit/kunit_config.py
++================================= ==============================================
++:doc:`test`                       documents all of the standard testing API
++                                  excluding mocking or mocking related features.
++================================= ==============================================
+diff --git a/Documentation/kunit/api/test.rst b/Documentation/kunit/api/test.rst
 new file mode 100644
-index 0000000000000..167f47d9ab8e4
+index 0000000000000..7c926014f047c
 --- /dev/null
-+++ b/tools/testing/kunit/kunit_config.py
-@@ -0,0 +1,66 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Builds a .config from a kunitconfig.
-+#
-+# Copyright (C) 2019, Google LLC.
-+# Author: Felix Guo <felixguoxiuping@gmail.com>
-+# Author: Brendan Higgins <brendanhiggins@google.com>
++++ b/Documentation/kunit/api/test.rst
+@@ -0,0 +1,15 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
-+import collections
-+import re
++========
++Test API
++========
 +
-+CONFIG_IS_NOT_SET_PATTERN = r'^# CONFIG_\w+ is not set$'
-+CONFIG_PATTERN = r'^CONFIG_\w+=\S+$'
++This file documents all of the standard testing API excluding mocking or mocking
++related features.
 +
-+KconfigEntryBase = collections.namedtuple('KconfigEntry', ['raw_entry'])
++.. kernel-doc:: include/kunit/test.h
++   :internal:
 +
++.. kernel-doc:: include/kunit/kunit-stream.h
++   :internal:
 +
-+class KconfigEntry(KconfigEntryBase):
-+
-+	def __str__(self) -> str:
-+		return self.raw_entry
-+
-+
-+class KconfigParseError(Exception):
-+	"""Error parsing Kconfig defconfig or .config."""
-+
-+
-+class Kconfig(object):
-+	"""Represents defconfig or .config specified using the Kconfig language."""
-+
-+	def __init__(self):
-+		self._entries = []
-+
-+	def entries(self):
-+		return set(self._entries)
-+
-+	def add_entry(self, entry: KconfigEntry) -> None:
-+		self._entries.append(entry)
-+
-+	def is_subset_of(self, other: "Kconfig") -> bool:
-+		return self.entries().issubset(other.entries())
-+
-+	def write_to_file(self, path: str) -> None:
-+		with open(path, 'w') as f:
-+			for entry in self.entries():
-+				f.write(str(entry) + '\n')
-+
-+	def parse_from_string(self, blob: str) -> None:
-+		"""Parses a string containing KconfigEntrys and populates this Kconfig."""
-+		self._entries = []
-+		is_not_set_matcher = re.compile(CONFIG_IS_NOT_SET_PATTERN)
-+		config_matcher = re.compile(CONFIG_PATTERN)
-+		for line in blob.split('\n'):
-+			line = line.strip()
-+			if not line:
-+				continue
-+			elif config_matcher.match(line) or is_not_set_matcher.match(line):
-+				self._entries.append(KconfigEntry(line))
-+			elif line[0] == '#':
-+				continue
-+			else:
-+				raise KconfigParseError('Failed to parse: ' + line)
-+
-+	def read_from_file(self, path: str) -> None:
-+		with open(path, 'r') as f:
-+			self.parse_from_string(f.read())
-diff --git a/tools/testing/kunit/kunit_kernel.py b/tools/testing/kunit/kunit_kernel.py
+diff --git a/Documentation/kunit/faq.rst b/Documentation/kunit/faq.rst
 new file mode 100644
-index 0000000000000..07c0abf2f47df
+index 0000000000000..cb8e4fb2257a0
 --- /dev/null
-+++ b/tools/testing/kunit/kunit_kernel.py
-@@ -0,0 +1,148 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Runs UML kernel, collects output, and handles errors.
-+#
-+# Copyright (C) 2019, Google LLC.
-+# Author: Felix Guo <felixguoxiuping@gmail.com>
-+# Author: Brendan Higgins <brendanhiggins@google.com>
++++ b/Documentation/kunit/faq.rst
+@@ -0,0 +1,46 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
++=========================================
++Frequently Asked Questions
++=========================================
 +
-+import logging
-+import subprocess
-+import os
++How is this different from Autotest, kselftest, etc?
++====================================================
++KUnit is a unit testing framework. Autotest, kselftest (and some others) are
++not.
 +
-+import kunit_config
++A `unit test <https://martinfowler.com/bliki/UnitTest.html>`_ is supposed to
++test a single unit of code in isolation, hence the name. A unit test should be
++the finest granularity of testing and as such should allow all possible code
++paths to be tested in the code under test; this is only possible if the code
++under test is very small and does not have any external dependencies outside of
++the test's control like hardware.
 +
-+KCONFIG_PATH = '.config'
++There are no testing frameworks currently available for the kernel that do not
++require installing the kernel on a test machine or in a VM and all require
++tests to be written in userspace and run on the kernel under test; this is true
++for Autotest, kselftest, and some others, disqualifying any of them from being
++considered unit testing frameworks.
 +
-+class ConfigError(Exception):
-+	"""Represents an error trying to configure the Linux kernel."""
++What is the difference between a unit test and these other kinds of tests?
++==========================================================================
++Most existing tests for the Linux kernel would be categorized as an integration
++test, or an end-to-end test.
 +
-+
-+class BuildError(Exception):
-+	"""Represents an error trying to build the Linux kernel."""
-+
-+
-+class LinuxSourceTreeOperations(object):
-+	"""An abstraction over command line operations performed on a source tree."""
-+
-+	def make_mrproper(self):
-+		try:
-+			subprocess.check_output(['make', 'mrproper'])
-+		except OSError as e:
-+			raise ConfigError('Could not call make command: ' + e)
-+		except subprocess.CalledProcessError as e:
-+			raise ConfigError(e.output)
-+
-+	def make_olddefconfig(self, build_dir):
-+		command = ['make', 'ARCH=um', 'olddefconfig']
-+		if build_dir:
-+			command += ['O=' + build_dir]
-+		try:
-+			subprocess.check_output(command)
-+		except OSError as e:
-+			raise ConfigError('Could not call make command: ' + e)
-+		except subprocess.CalledProcessError as e:
-+			raise ConfigError(e.output)
-+
-+	def make(self, jobs, build_dir):
-+		command = ['make', 'ARCH=um', '--jobs=' + str(jobs)]
-+		if build_dir:
-+			command += ['O=' + build_dir]
-+		try:
-+			subprocess.check_output(command)
-+		except OSError as e:
-+			raise BuildError('Could not call execute make: ' + e)
-+		except subprocess.CalledProcessError as e:
-+			raise BuildError(e.output)
-+
-+	def linux_bin(self, params, timeout, build_dir):
-+		"""Runs the Linux UML binary. Must be named 'linux'."""
-+		linux_bin = './linux'
-+		if build_dir:
-+			linux_bin = os.path.join(build_dir, 'linux')
-+		process = subprocess.Popen(
-+			[linux_bin] + params,
-+			stdin=subprocess.PIPE,
-+			stdout=subprocess.PIPE,
-+			stderr=subprocess.PIPE)
-+		process.wait(timeout=timeout)
-+		return process
-+
-+
-+def get_kconfig_path(build_dir):
-+	kconfig_path = KCONFIG_PATH
-+	if build_dir:
-+		kconfig_path = os.path.join(build_dir, KCONFIG_PATH)
-+	return kconfig_path
-+
-+class LinuxSourceTree(object):
-+	"""Represents a Linux kernel source tree with KUnit tests."""
-+
-+	def __init__(self):
-+		self._kconfig = kunit_config.Kconfig()
-+		self._kconfig.read_from_file('kunitconfig')
-+		self._ops = LinuxSourceTreeOperations()
-+
-+	def clean(self):
-+		try:
-+			self._ops.make_mrproper()
-+		except ConfigError as e:
-+			logging.error(e)
-+			return False
-+		return True
-+
-+	def build_config(self, build_dir):
-+		kconfig_path = get_kconfig_path(build_dir)
-+		if build_dir and not os.path.exists(build_dir):
-+			os.mkdir(build_dir)
-+		self._kconfig.write_to_file(kconfig_path)
-+		try:
-+			self._ops.make_olddefconfig(build_dir)
-+		except ConfigError as e:
-+			logging.error(e)
-+			return False
-+		validated_kconfig = kunit_config.Kconfig()
-+		validated_kconfig.read_from_file(kconfig_path)
-+		if not self._kconfig.is_subset_of(validated_kconfig):
-+			logging.error('Provided Kconfig is not contained in validated .config!')
-+			return False
-+		return True
-+
-+	def build_reconfig(self, build_dir):
-+		"""Creates a new .config if it is not a subset of the kunitconfig."""
-+		kconfig_path = get_kconfig_path(build_dir)
-+		if os.path.exists(kconfig_path):
-+			existing_kconfig = kunit_config.Kconfig()
-+			existing_kconfig.read_from_file(kconfig_path)
-+			if not self._kconfig.is_subset_of(existing_kconfig):
-+				print('Regenerating .config ...')
-+				os.remove(kconfig_path)
-+				return self.build_config(build_dir)
-+			else:
-+				return True
-+		else:
-+			print('Generating .config ...')
-+			return self.build_config(build_dir)
-+
-+	def build_um_kernel(self, jobs, build_dir):
-+		try:
-+			self._ops.make_olddefconfig(build_dir)
-+			self._ops.make(jobs, build_dir)
-+		except (ConfigError, BuildError) as e:
-+			logging.error(e)
-+			return False
-+		used_kconfig = kunit_config.Kconfig()
-+		used_kconfig.read_from_file(get_kconfig_path(build_dir))
-+		if not self._kconfig.is_subset_of(used_kconfig):
-+			logging.error('Provided Kconfig is not contained in final config!')
-+			return False
-+		return True
-+
-+	def run_kernel(self, args=[], timeout=None, build_dir=None):
-+		args.extend(['mem=256M'])
-+		process = self._ops.linux_bin(args, timeout, build_dir)
-+		with open('test.log', 'w') as f:
-+			for line in process.stdout:
-+				f.write(line.rstrip().decode('ascii') + '\n')
-+				yield line.rstrip().decode('ascii')
-diff --git a/tools/testing/kunit/kunit_parser.py b/tools/testing/kunit/kunit_parser.py
++- A unit test is supposed to test a single unit of code in isolation, hence the
++  name. A unit test should be the finest granularity of testing and as such
++  should allow all possible code paths to be tested in the code under test; this
++  is only possible if the code under test is very small and does not have any
++  external dependencies outside of the test's control like hardware.
++- An integration test tests the interaction between a minimal set of components,
++  usually just two or three. For example, someone might write an integration
++  test to test the interaction between a driver and a piece of hardware, or to
++  test the interaction between the userspace libraries the kernel provides and
++  the kernel itself; however, one of these tests would probably not test the
++  entire kernel along with hardware interactions and interactions with the
++  userspace.
++- An end-to-end test usually tests the entire system from the perspective of the
++  code under test. For example, someone might write an end-to-end test for the
++  kernel by installing a production configuration of the kernel on production
++  hardware with a production userspace and then trying to exercise some behavior
++  that depends on interactions between the hardware, the kernel, and userspace.
+diff --git a/Documentation/kunit/index.rst b/Documentation/kunit/index.rst
 new file mode 100644
-index 0000000000000..6c81d4dcfabb5
+index 0000000000000..c6710211b647f
 --- /dev/null
-+++ b/tools/testing/kunit/kunit_parser.py
-@@ -0,0 +1,119 @@
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Parses test results from a kernel dmesg log.
-+#
-+# Copyright (C) 2019, Google LLC.
-+# Author: Felix Guo <felixguoxiuping@gmail.com>
-+# Author: Brendan Higgins <brendanhiggins@google.com>
++++ b/Documentation/kunit/index.rst
+@@ -0,0 +1,80 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
-+import re
-+from datetime import datetime
++=========================================
++KUnit - Unit Testing for the Linux Kernel
++=========================================
 +
-+kunit_start_re = re.compile('printk: console .* enabled')
-+kunit_end_re = re.compile('List of all partitions:')
++.. toctree::
++	:maxdepth: 2
 +
-+def isolate_kunit_output(kernel_output):
-+	started = False
-+	for line in kernel_output:
-+		if kunit_start_re.match(line):
-+			started = True
-+		elif kunit_end_re.match(line):
-+			break
-+		elif started:
-+			yield line
++	start
++	usage
++	api/index
++	faq
 +
-+def raw_output(kernel_output):
-+	for line in kernel_output:
-+		print(line)
++What is KUnit?
++==============
 +
-+DIVIDER = "=" * 30
++KUnit is a lightweight unit testing and mocking framework for the Linux kernel.
++These tests are able to be run locally on a developer's workstation without a VM
++or special hardware.
 +
-+RESET = '\033[0;0m'
++KUnit is heavily inspired by JUnit, Python's unittest.mock, and
++Googletest/Googlemock for C++. KUnit provides facilities for defining unit test
++cases, grouping related test cases into test suites, providing common
++infrastructure for running tests, and much more.
 +
-+def red(text):
-+	return '\033[1;31m' + text + RESET
++Get started now: :doc:`start`
 +
-+def yellow(text):
-+	return '\033[1;33m' + text + RESET
++Why KUnit?
++==========
 +
-+def green(text):
-+	return '\033[1;32m' + text + RESET
++A unit test is supposed to test a single unit of code in isolation, hence the
++name. A unit test should be the finest granularity of testing and as such should
++allow all possible code paths to be tested in the code under test; this is only
++possible if the code under test is very small and does not have any external
++dependencies outside of the test's control like hardware.
 +
-+def print_with_timestamp(message):
-+	print('[%s] %s' % (datetime.now().strftime('%H:%M:%S'), message))
++Outside of KUnit, there are no testing frameworks currently
++available for the kernel that do not require installing the kernel on a test
++machine or in a VM and all require tests to be written in userspace running on
++the kernel; this is true for Autotest, and kselftest, disqualifying
++any of them from being considered unit testing frameworks.
 +
-+def print_log(log):
-+	for m in log:
-+		print_with_timestamp(m)
++KUnit addresses the problem of being able to run tests without needing a virtual
++machine or actual hardware with User Mode Linux. User Mode Linux is a Linux
++architecture, like ARM or x86; however, unlike other architectures it compiles
++to a standalone program that can be run like any other program directly inside
++of a host operating system; to be clear, it does not require any virtualization
++support; it is just a regular program.
 +
-+def parse_run_tests(kernel_output):
-+	test_case_output = re.compile('^kunit .*?: (.*)$')
++KUnit is fast. Excluding build time, from invocation to completion KUnit can run
++several dozen tests in only 10 to 20 seconds; this might not sound like a big
++deal to some people, but having such fast and easy to run tests fundamentally
++changes the way you go about testing and even writing code in the first place.
++Linus himself said in his `git talk at Google
++<https://gist.github.com/lorn/1272686/revisions#diff-53c65572127855f1b003db4064a94573R874>`_:
 +
-+	test_module_success = re.compile('^kunit .*: all tests passed')
-+	test_module_fail = re.compile('^kunit .*: one or more tests failed')
++	"... a lot of people seem to think that performance is about doing the
++	same thing, just doing it faster, and that is not true. That is not what
++	performance is all about. If you can do something really fast, really
++	well, people will start using it differently."
 +
-+	test_case_success = re.compile('^kunit (.*): (.*) passed')
-+	test_case_fail = re.compile('^kunit (.*): (.*) failed')
-+	test_case_crash = re.compile('^kunit (.*): (.*) crashed')
++In this context Linus was talking about branching and merging,
++but this point also applies to testing. If your tests are slow, unreliable, are
++difficult to write, and require a special setup or special hardware to run,
++then you wait a lot longer to write tests, and you wait a lot longer to run
++tests; this means that tests are likely to break, unlikely to test a lot of
++things, and are unlikely to be rerun once they pass. If your tests are really
++fast, you run them all the time, every time you make a change, and every time
++someone sends you some code. Why trust that someone ran all their tests
++correctly on every change when you can just run them yourself in less time than
++it takes to read his / her test log?
 +
-+	total_tests = set()
-+	failed_tests = set()
-+	crashed_tests = set()
++How do I use it?
++===================
 +
-+	def get_test_name(match):
-+		return match.group(1) + ":" + match.group(2)
++*   :doc:`start` - for new users of KUnit
++*   :doc:`usage` - for a more detailed explanation of KUnit features
++*   :doc:`api/index` - for the list of KUnit APIs used for testing
 +
-+	current_case_log = []
-+	def end_one_test(match, log):
-+		log.clear()
-+		total_tests.add(get_test_name(match))
+diff --git a/Documentation/kunit/start.rst b/Documentation/kunit/start.rst
+new file mode 100644
+index 0000000000000..5cdba5091905e
+--- /dev/null
++++ b/Documentation/kunit/start.rst
+@@ -0,0 +1,180 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
-+	print_with_timestamp(DIVIDER)
-+	for line in isolate_kunit_output(kernel_output):
-+		# Ignore module output:
-+		if (test_module_success.match(line) or
-+		    test_module_fail.match(line)):
-+			print_with_timestamp(DIVIDER)
-+			continue
++===============
++Getting Started
++===============
 +
-+		match = re.match(test_case_success, line)
-+		if match:
-+			print_with_timestamp(green("[PASSED] ") +
-+					     get_test_name(match))
-+			end_one_test(match, current_case_log)
-+			continue
++Installing dependencies
++=======================
++KUnit has the same dependencies as the Linux kernel. As long as you can build
++the kernel, you can run KUnit.
 +
-+		match = re.match(test_case_fail, line)
-+		# Crashed tests will report as both failed and crashed. We only
-+		# want to show and count it once.
-+		if match and get_test_name(match) not in crashed_tests:
-+			failed_tests.add(get_test_name(match))
-+			print_with_timestamp(red("[FAILED] " +
-+						 get_test_name(match)))
-+			print_log(map(yellow, current_case_log))
-+			print_with_timestamp("")
-+			end_one_test(match, current_case_log)
-+			continue
++KUnit Wrapper
++=============
++Included with KUnit is a simple Python wrapper that helps format the output to
++easily use and read KUnit output. It handles building and running the kernel, as
++well as formatting the output.
 +
-+		match = re.match(test_case_crash, line)
-+		if match:
-+			crashed_tests.add(get_test_name(match))
-+			print_with_timestamp(yellow("[CRASH] " +
-+						    get_test_name(match)))
-+			print_log(current_case_log)
-+			print_with_timestamp("")
-+			end_one_test(match, current_case_log)
-+			continue
++The wrapper can be run with:
 +
-+		# Strip off the `kunit module-name:` prefix
-+		match = re.match(test_case_output, line)
-+		if match:
-+			current_case_log.append(match.group(1))
-+		else:
-+			current_case_log.append(line)
++.. code-block:: bash
 +
-+	fmt = green if (len(failed_tests) + len(crashed_tests) == 0) else red
-+	print_with_timestamp(
-+		fmt("Testing complete. %d tests run. %d failed. %d crashed." %
-+		    (len(total_tests), len(failed_tests), len(crashed_tests))))
++   ./tools/testing/kunit/kunit.py
++
++Creating a kunitconfig
++======================
++The Python script is a thin wrapper around Kbuild as such, it needs to be
++configured with a ``kunitconfig`` file. This file essentially contains the
++regular Kernel config, with the specific test targets as well.
++
++.. code-block:: bash
++
++	git clone -b master https://kunit.googlesource.com/kunitconfig $PATH_TO_KUNITCONFIG_REPO
++	cd $PATH_TO_LINUX_REPO
++	ln -s $PATH_TO_KUNIT_CONFIG_REPO/kunitconfig kunitconfig
++
++You may want to add kunitconfig to your local gitignore.
++
++Verifying KUnit Works
++-------------------------
++
++To make sure that everything is set up correctly, simply invoke the Python
++wrapper from your kernel repo:
++
++.. code-block:: bash
++
++	./tools/testing/kunit/kunit.py
++
++.. note::
++   You may want to run ``make mrproper`` first.
++
++If everything worked correctly, you should see the following:
++
++.. code-block:: bash
++
++	Generating .config ...
++	Building KUnit Kernel ...
++	Starting KUnit Kernel ...
++
++followed by a list of tests that are run. All of them should be passing.
++
++.. note::
++   Because it is building a lot of sources for the first time, the ``Building
++   kunit kernel`` step may take a while.
++
++Writing your first test
++==========================
++
++In your kernel repo let's add some code that we can test. Create a file
++``drivers/misc/example.h`` with the contents:
++
++.. code-block:: c
++
++	int misc_example_add(int left, int right);
++
++create a file ``drivers/misc/example.c``:
++
++.. code-block:: c
++
++	#include <linux/errno.h>
++
++	#include "example.h"
++
++	int misc_example_add(int left, int right)
++	{
++		return left + right;
++	}
++
++Now add the following lines to ``drivers/misc/Kconfig``:
++
++.. code-block:: kconfig
++
++	config MISC_EXAMPLE
++		bool "My example"
++
++and the following lines to ``drivers/misc/Makefile``:
++
++.. code-block:: make
++
++	obj-$(CONFIG_MISC_EXAMPLE) += example.o
++
++Now we are ready to write the test. The test will be in
++``drivers/misc/example-test.c``:
++
++.. code-block:: c
++
++	#include <kunit/test.h>
++	#include "example.h"
++
++	/* Define the test cases. */
++
++	static void misc_example_add_test_basic(struct kunit *test)
++	{
++		KUNIT_EXPECT_EQ(test, 1, misc_example_add(1, 0));
++		KUNIT_EXPECT_EQ(test, 2, misc_example_add(1, 1));
++		KUNIT_EXPECT_EQ(test, 0, misc_example_add(-1, 1));
++		KUNIT_EXPECT_EQ(test, INT_MAX, misc_example_add(0, INT_MAX));
++		KUNIT_EXPECT_EQ(test, -1, misc_example_add(INT_MAX, INT_MIN));
++	}
++
++	static void misc_example_test_failure(struct kunit *test)
++	{
++		KUNIT_FAIL(test, "This test never passes.");
++	}
++
++	static struct kunit_case misc_example_test_cases[] = {
++		KUNIT_CASE(misc_example_add_test_basic),
++		KUNIT_CASE(misc_example_test_failure),
++		{},
++	};
++
++	static struct kunit_module misc_example_test_module = {
++		.name = "misc-example",
++		.test_cases = misc_example_test_cases,
++	};
++	module_test(misc_example_test_module);
++
++Now add the following to ``drivers/misc/Kconfig``:
++
++.. code-block:: kconfig
++
++	config MISC_EXAMPLE_TEST
++		bool "Test for my example"
++		depends on MISC_EXAMPLE && KUNIT
++
++and the following to ``drivers/misc/Makefile``:
++
++.. code-block:: make
++
++	obj-$(CONFIG_MISC_EXAMPLE_TEST) += example-test.o
++
++Now add it to your ``kunitconfig``:
++
++.. code-block:: none
++
++	CONFIG_MISC_EXAMPLE=y
++	CONFIG_MISC_EXAMPLE_TEST=y
++
++Now you can run the test:
++
++.. code-block:: bash
++
++	./tools/testing/kunit/kunit.py
++
++You should see the following failure:
++
++.. code-block:: none
++
++	...
++	[16:08:57] [PASSED] misc-example:misc_example_add_test_basic
++	[16:08:57] [FAILED] misc-example:misc_example_test_failure
++	[16:08:57] EXPECTATION FAILED at drivers/misc/example-test.c:17
++	[16:08:57] 	This test never passes.
++	...
++
++Congrats! You just wrote your first KUnit test!
++
++Next Steps
++=============
++*   Check out the :doc:`usage` page for a more
++    in-depth explanation of KUnit.
+diff --git a/Documentation/kunit/usage.rst b/Documentation/kunit/usage.rst
+new file mode 100644
+index 0000000000000..96ef7f9a1add4
+--- /dev/null
++++ b/Documentation/kunit/usage.rst
+@@ -0,0 +1,447 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++=============
++Using KUnit
++=============
++
++The purpose of this document is to describe what KUnit is, how it works, how it
++is intended to be used, and all the concepts and terminology that are needed to
++understand it. This guide assumes a working knowledge of the Linux kernel and
++some basic knowledge of testing.
++
++For a high level introduction to KUnit, including setting up KUnit for your
++project, see :doc:`start`.
++
++Organization of this document
++=================================
++
++This document is organized into two main sections: Testing and Isolating
++Behavior. The first covers what a unit test is and how to use KUnit to write
++them. The second covers how to use KUnit to isolate code and make it possible
++to unit test code that was otherwise un-unit-testable.
++
++Testing
++==========
++
++What is KUnit?
++------------------
++
++"K" is short for "kernel" so "KUnit" is the "(Linux) Kernel Unit Testing
++Framework." KUnit is intended first and foremost for writing unit tests; it is
++general enough that it can be used to write integration tests; however, this is
++a secondary goal. KUnit has no ambition of being the only testing framework for
++the kernel; for example, it does not intend to be an end-to-end testing
++framework.
++
++What is Unit Testing?
++-------------------------
++
++A `unit test <https://martinfowler.com/bliki/UnitTest.html>`_ is a test that
++tests code at the smallest possible scope, a *unit* of code. In the C
++programming language that's a function.
++
++Unit tests should be written for all the publicly exposed functions in a
++compilation unit; so that is all the functions that are exported in either a
++*class* (defined below) or all functions which are **not** static.
++
++Writing Tests
++-------------
++
++Test Cases
++~~~~~~~~~~
++
++The fundamental unit in KUnit is the test case. A test case is a function with
++the signature ``void (*)(struct kunit *test)``. It calls a function to be tested
++and then sets *expectations* for what should happen. For example:
++
++.. code-block:: c
++
++	void example_test_success(struct kunit *test)
++	{
++	}
++
++	void example_test_failure(struct kunit *test)
++	{
++		KUNIT_FAIL(test, "This test never passes.");
++	}
++
++In the above example ``example_test_success`` always passes because it does
++nothing; no expectations are set, so all expectations pass. On the other hand
++``example_test_failure`` always fails because it calls ``KUNIT_FAIL``, which is
++a special expectation that logs a message and causes the test case to fail.
++
++Expectations
++~~~~~~~~~~~~
++An *expectation* is a way to specify that you expect a piece of code to do
++something in a test. An expectation is called like a function. A test is made
++by setting expectations about the behavior of a piece of code under test; when
++one or more of the expectations fail, the test case fails and information about
++the failure is logged. For example:
++
++.. code-block:: c
++
++	void add_test_basic(struct kunit *test)
++	{
++		KUNIT_EXPECT_EQ(test, 1, add(1, 0));
++		KUNIT_EXPECT_EQ(test, 2, add(1, 1));
++	}
++
++In the above example ``add_test_basic`` makes a number of assertions about the
++behavior of a function called ``add``; the first parameter is always of type
++``struct kunit *``, which contains information about the current test context;
++the second parameter, in this case, is what the value is expected to be; the
++last value is what the value actually is. If ``add`` passes all of these
++expectations, the test case, ``add_test_basic`` will pass; if any one of these
++expectations fail, the test case will fail.
++
++It is important to understand that a test case *fails* when any expectation is
++violated; however, the test will continue running, potentially trying other
++expectations until the test case ends or is otherwise terminated. This is as
++opposed to *assertions* which are discussed later.
++
++To learn about more expectations supported by KUnit, see :doc:`api/test`.
++
++.. note::
++   A single test case should be pretty short, pretty easy to understand,
++   focused on a single behavior.
++
++For example, if we wanted to properly test the add function above, we would
++create additional tests cases which would each test a different property that an
++add function should have like this:
++
++.. code-block:: c
++
++	void add_test_basic(struct kunit *test)
++	{
++		KUNIT_EXPECT_EQ(test, 1, add(1, 0));
++		KUNIT_EXPECT_EQ(test, 2, add(1, 1));
++	}
++
++	void add_test_negative(struct kunit *test)
++	{
++		KUNIT_EXPECT_EQ(test, 0, add(-1, 1));
++	}
++
++	void add_test_max(struct kunit *test)
++	{
++		KUNIT_EXPECT_EQ(test, INT_MAX, add(0, INT_MAX));
++		KUNIT_EXPECT_EQ(test, -1, add(INT_MAX, INT_MIN));
++	}
++
++	void add_test_overflow(struct kunit *test)
++	{
++		KUNIT_EXPECT_EQ(test, INT_MIN, add(INT_MAX, 1));
++	}
++
++Notice how it is immediately obvious what all the properties that we are testing
++for are.
++
++Assertions
++~~~~~~~~~~
++
++KUnit also has the concept of an *assertion*. An assertion is just like an
++expectation except the assertion immediately terminates the test case if it is
++not satisfied.
++
++For example:
++
++.. code-block:: c
++
++	static void mock_test_do_expect_default_return(struct kunit *test)
++	{
++		struct mock_test_context *ctx = test->priv;
++		struct mock *mock = ctx->mock;
++		int param0 = 5, param1 = -5;
++		const char *two_param_types[] = {"int", "int"};
++		const void *two_params[] = {&param0, &param1};
++		const void *ret;
++
++		ret = mock->do_expect(mock,
++				      "test_printk", test_printk,
++				      two_param_types, two_params,
++				      ARRAY_SIZE(two_params));
++		KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ret);
++		KUNIT_EXPECT_EQ(test, -4, *((int *) ret));
++	}
++
++In this example, the method under test should return a pointer to a value, so
++if the pointer returned by the method is null or an errno, we don't want to
++bother continuing the test since the following expectation could crash the test
++case. `ASSERT_NOT_ERR_OR_NULL(...)` allows us to bail out of the test case if
++the appropriate conditions have not been satisfied to complete the test.
++
++Modules / Test Suites
++~~~~~~~~~~~~~~~~~~~~~
++
++Now obviously one unit test isn't very helpful; the power comes from having
++many test cases covering all of your behaviors. Consequently it is common to
++have many *similar* tests; in order to reduce duplication in these closely
++related tests most unit testing frameworks provide the concept of a *test
++suite*, in KUnit we call it a *test module*; all it is is just a collection of
++test cases for a unit of code with a set up function that gets invoked before
++every test cases and then a tear down function that gets invoked after every
++test case completes.
++
++Example:
++
++.. code-block:: c
++
++	static struct kunit_case example_test_cases[] = {
++		KUNIT_CASE(example_test_foo),
++		KUNIT_CASE(example_test_bar),
++		KUNIT_CASE(example_test_baz),
++		{},
++	};
++
++	static struct kunit_module example_test_module[] = {
++		.name = "example",
++		.init = example_test_init,
++		.exit = example_test_exit,
++		.test_cases = example_test_cases,
++	};
++	module_test(example_test_module);
++
++In the above example the test suite, ``example_test_module``, would run the test
++cases ``example_test_foo``, ``example_test_bar``, and ``example_test_baz``, each
++would have ``example_test_init`` called immediately before it and would have
++``example_test_exit`` called immediately after it.
++``module_test(example_test_module)`` registers the test suite with the KUnit
++test framework.
++
++.. note::
++   A test case will only be run if it is associated with a test suite.
++
++For a more information on these types of things see the :doc:`api/test`.
++
++Isolating Behavior
++==================
++
++The most important aspect of unit testing that other forms of testing do not
++provide is the ability to limit the amount of code under test to a single unit.
++In practice, this is only possible by being able to control what code gets run
++when the unit under test calls a function and this is usually accomplished
++through some sort of indirection where a function is exposed as part of an API
++such that the definition of that function can be changed without affecting the
++rest of the code base. In the kernel this primarily comes from two constructs,
++classes, structs that contain function pointers that are provided by the
++implementer, and architecture specific functions which have definitions selected
++at compile time.
++
++Classes
++-------
++
++Classes are not a construct that is built into the C programming language;
++however, it is an easily derived concept. Accordingly, pretty much every project
++that does not use a standardized object oriented library (like GNOME's GObject)
++has their own slightly different way of doing object oriented programming; the
++Linux kernel is no exception.
++
++The central concept in kernel object oriented programming is the class. In the
++kernel, a *class* is a struct that contains function pointers. This creates a
++contract between *implementers* and *users* since it forces them to use the
++same function signature without having to call the function directly. In order
++for it to truly be a class, the function pointers must specify that a pointer
++to the class, known as a *class handle*, be one of the parameters; this makes
++it possible for the member functions (also known as *methods*) to have access
++to member variables (more commonly known as *fields*) allowing the same
++implementation to have multiple *instances*.
++
++Typically a class can be *overridden* by *child classes* by embedding the
++*parent class* in the child class. Then when a method provided by the child
++class is called, the child implementation knows that the pointer passed to it is
++of a parent contained within the child; because of this, the child can compute
++the pointer to itself because the pointer to the parent is always a fixed offset
++from the pointer to the child; this offset is the offset of the parent contained
++in the child struct. For example:
++
++.. code-block:: c
++
++	struct shape {
++		int (*area)(struct shape *this);
++	};
++
++	struct rectangle {
++		struct shape parent;
++		int length;
++		int width;
++	};
++
++	int rectangle_area(struct shape *this)
++	{
++		struct rectangle *self = container_of(this, struct shape, parent);
++
++		return self->length * self->width;
++	};
++
++	void rectangle_new(struct rectangle *self, int length, int width)
++	{
++		self->parent.area = rectangle_area;
++		self->length = length;
++		self->width = width;
++	}
++
++In this example (as in most kernel code) the operation of computing the pointer
++to the child from the pointer to the parent is done by ``container_of``.
++
++Faking Classes
++~~~~~~~~~~~~~~
++
++In order to unit test a piece of code that calls a method in a class, the
++behavior of the method must be controllable, otherwise the test ceases to be a
++unit test and becomes an integration test.
++
++A fake just provides an implementation of a piece of code that is different than
++what runs in a production instance, but behaves identically from the standpoint
++of the callers; this is usually done to replace a dependency that is hard to
++deal with, or is slow.
++
++A good example for this might be implementing a fake EEPROM that just stores the
++"contents" in an internal buffer. For example, let's assume we have a class that
++represents an EEPROM:
++
++.. code-block:: c
++
++	struct eeprom {
++		ssize_t (*read)(struct eeprom *this, size_t offset, char *buffer, size_t count);
++		ssize_t (*write)(struct eeprom *this, size_t offset, const char *buffer, size_t count);
++	};
++
++And we want to test some code that buffers writes to the EEPROM:
++
++.. code-block:: c
++
++	struct eeprom_buffer {
++		ssize_t (*write)(struct eeprom_buffer *this, const char *buffer, size_t count);
++		int flush(struct eeprom_buffer *this);
++		size_t flush_count; /* Flushes when buffer exceeds flush_count. */
++	};
++
++	struct eeprom_buffer *new_eeprom_buffer(struct eeprom *eeprom);
++	void destroy_eeprom_buffer(struct eeprom *eeprom);
++
++We can easily test this code by *faking out* the underlying EEPROM:
++
++.. code-block:: c
++
++	struct fake_eeprom {
++		struct eeprom parent;
++		char contents[FAKE_EEPROM_CONTENTS_SIZE];
++	};
++
++	ssize_t fake_eeprom_read(struct eeprom *parent, size_t offset, char *buffer, size_t count)
++	{
++		struct fake_eeprom *this = container_of(parent, struct fake_eeprom, parent);
++
++		count = min(count, FAKE_EEPROM_CONTENTS_SIZE - offset);
++		memcpy(buffer, this->contents + offset, count);
++
++		return count;
++	}
++
++	ssize_t fake_eeprom_write(struct eeprom *this, size_t offset, const char *buffer, size_t count)
++	{
++		struct fake_eeprom *this = container_of(parent, struct fake_eeprom, parent);
++
++		count = min(count, FAKE_EEPROM_CONTENTS_SIZE - offset);
++		memcpy(this->contents + offset, buffer, count);
++
++		return count;
++	}
++
++	void fake_eeprom_init(struct fake_eeprom *this)
++	{
++		this->parent.read = fake_eeprom_read;
++		this->parent.write = fake_eeprom_write;
++		memset(this->contents, 0, FAKE_EEPROM_CONTENTS_SIZE);
++	}
++
++We can now use it to test ``struct eeprom_buffer``:
++
++.. code-block:: c
++
++	struct eeprom_buffer_test {
++		struct fake_eeprom *fake_eeprom;
++		struct eeprom_buffer *eeprom_buffer;
++	};
++
++	static void eeprom_buffer_test_does_not_write_until_flush(struct kunit *test)
++	{
++		struct eeprom_buffer_test *ctx = test->priv;
++		struct eeprom_buffer *eeprom_buffer = ctx->eeprom_buffer;
++		struct fake_eeprom *fake_eeprom = ctx->fake_eeprom;
++		char buffer[] = {0xff};
++
++		eeprom_buffer->flush_count = SIZE_MAX;
++
++		eeprom_buffer->write(eeprom_buffer, buffer, 1);
++		KUNIT_EXPECT_EQ(test, fake_eeprom->contents[0], 0);
++
++		eeprom_buffer->write(eeprom_buffer, buffer, 1);
++		KUNIT_EXPECT_EQ(test, fake_eeprom->contents[1], 0);
++
++		eeprom_buffer->flush(eeprom_buffer);
++		KUNIT_EXPECT_EQ(test, fake_eeprom->contents[0], 0xff);
++		KUNIT_EXPECT_EQ(test, fake_eeprom->contents[1], 0xff);
++	}
++
++	static void eeprom_buffer_test_flushes_after_flush_count_met(struct kunit *test)
++	{
++		struct eeprom_buffer_test *ctx = test->priv;
++		struct eeprom_buffer *eeprom_buffer = ctx->eeprom_buffer;
++		struct fake_eeprom *fake_eeprom = ctx->fake_eeprom;
++		char buffer[] = {0xff};
++
++		eeprom_buffer->flush_count = 2;
++
++		eeprom_buffer->write(eeprom_buffer, buffer, 1);
++		KUNIT_EXPECT_EQ(test, fake_eeprom->contents[0], 0);
++
++		eeprom_buffer->write(eeprom_buffer, buffer, 1);
++		KUNIT_EXPECT_EQ(test, fake_eeprom->contents[0], 0xff);
++		KUNIT_EXPECT_EQ(test, fake_eeprom->contents[1], 0xff);
++	}
++
++	static void eeprom_buffer_test_flushes_increments_of_flush_count(struct kunit *test)
++	{
++		struct eeprom_buffer_test *ctx = test->priv;
++		struct eeprom_buffer *eeprom_buffer = ctx->eeprom_buffer;
++		struct fake_eeprom *fake_eeprom = ctx->fake_eeprom;
++		char buffer[] = {0xff, 0xff};
++
++		eeprom_buffer->flush_count = 2;
++
++		eeprom_buffer->write(eeprom_buffer, buffer, 1);
++		KUNIT_EXPECT_EQ(test, fake_eeprom->contents[0], 0);
++
++		eeprom_buffer->write(eeprom_buffer, buffer, 2);
++		KUNIT_EXPECT_EQ(test, fake_eeprom->contents[0], 0xff);
++		KUNIT_EXPECT_EQ(test, fake_eeprom->contents[1], 0xff);
++		/* Should have only flushed the first two bytes. */
++		KUNIT_EXPECT_EQ(test, fake_eeprom->contents[2], 0);
++	}
++
++	static int eeprom_buffer_test_init(struct kunit *test)
++	{
++		struct eeprom_buffer_test *ctx;
++
++		ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL);
++		ASSERT_NOT_ERR_OR_NULL(test, ctx);
++
++		ctx->fake_eeprom = kunit_kzalloc(test, sizeof(*ctx->fake_eeprom), GFP_KERNEL);
++		ASSERT_NOT_ERR_OR_NULL(test, ctx->fake_eeprom);
++
++		ctx->eeprom_buffer = new_eeprom_buffer(&ctx->fake_eeprom->parent);
++		ASSERT_NOT_ERR_OR_NULL(test, ctx->eeprom_buffer);
++
++		test->priv = ctx;
++
++		return 0;
++	}
++
++	static void eeprom_buffer_test_exit(struct kunit *test)
++	{
++		struct eeprom_buffer_test *ctx = test->priv;
++
++		destroy_eeprom_buffer(ctx->eeprom_buffer);
++	}
 +
 -- 
 2.21.0.rc0.258.g878e2cd30e-goog
