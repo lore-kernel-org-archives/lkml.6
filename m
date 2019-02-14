@@ -2,240 +2,230 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F916C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:57:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D5BC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:57:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CAF8222DE
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:57:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D4C4222DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:57:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="CdHRN3Ln"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502883AbfBNQ5b (ORCPT
+        id S2502918AbfBNQ5t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:57:31 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:36030 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502866AbfBNQ52 (ORCPT
+        Thu, 14 Feb 2019 11:57:49 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:53290 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2502953AbfBNQ5p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 11:57:28 -0500
-Received: by mail-it1-f195.google.com with SMTP id h6so14723181itl.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:57:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=uR7QMXNd1yKBGiu/lg/ms8J+Ju4uZnkZopHIfNz3114=;
-        b=ZYkk80vZi1gmwrLzIY3z6WFtAhYZTJnVdWJK0GubuS5QZaHt72/iUXEuoq4NMZlrRA
-         wdHXtkIE0KM1ZchKweq+dfo98RO91SsQZosEuveTz8Fty0hgNyH0/iNNK7VfTljZxW/Z
-         jpY216/Mm8fjccQ24QdfeYQNozmQZ+Yw4Az5zDWdcQNg7TQLIN5iB3gbj0gk9O5SsarI
-         DupTK2Wnhq+7D9NX1WVdHSVtC6MdzUkRaPUrhVTj4o2Pix76IWO4aWUK/k4X08M6MegF
-         ELJMafZFk6deM5HS221EyVUMmikPPwIxydG9oZMMPrUMoZA1C5KJCsOEuWIp5URcn08b
-         iUtg==
-X-Gm-Message-State: AHQUAubJsoGJI6PESES+rNgZfNdMSGmuOL/6rrxOi4n9EFacWeJuclVo
-        YVPdfDHw1oHJNl4ExmTdKOl51ObkmSBbLwwt56Xb3Q==
-X-Google-Smtp-Source: AHgI3IYAzXWVlT4S6h5PECwe8A6vhSZaRPcVsJZaOBI2nx/f0WLsX1M13Eq0KTkq8IBTH8WIPWvmBFDA+r+zoU7ABX4=
-X-Received: by 2002:a24:29c8:: with SMTP id p191mr1273351itp.115.1550163446737;
- Thu, 14 Feb 2019 08:57:26 -0800 (PST)
+        Thu, 14 Feb 2019 11:57:45 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1EGmlNw109854;
+        Thu, 14 Feb 2019 16:56:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type; s=corp-2018-07-02;
+ bh=MotuX5uwsuODNodXmCNKkBCxOxRxYVbct++kioqcJCk=;
+ b=CdHRN3Lnvj3SIOrf8LqxGj+jFsmhVludo1tNIdornRvlfx3bAnQZ9mvDb7wKbaLiH28H
+ 8bZBksPqAZNeYfTtkQLEB2xabwSZdfl5CtlL6N7L7YLytvr16YXj/blIm9dxBriiLpmd
+ Vb9IjRNLx3V45chjSmynKrhfJhI2D+DoAvYc76ROMkYkQnnbUcyielyKPkwQX8iFZI32
+ s8XojcUGz2U0OQbYH0gbGl5SOdkMK7AvJI6PCdvqb9czEK7b4N5MGclhq/PtsDwjxoMx
+ n2CfcCYMXOK4SCH4taB4qCaig+Tm4g2/2KHn7lQtEby4OnYscvfFAbTBsi2T4OYMIs8W ow== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2qhree9866-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Feb 2019 16:56:32 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1EGuUcR011678
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Feb 2019 16:56:31 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1EGuSJX027469;
+        Thu, 14 Feb 2019 16:56:28 GMT
+Received: from [192.168.1.16] (/24.9.64.241)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 14 Feb 2019 08:56:27 -0800
+Subject: Re: [RFC PATCH v8 04/14] swiotlb: Map the buffer if it was unmapped
+ by XPFO
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     juergh@gmail.com, tycho@tycho.ws, jsteckli@amazon.de,
+        ak@linux.intel.com, torvalds@linux-foundation.org,
+        liran.alon@oracle.com, keescook@google.com,
+        akpm@linux-foundation.org, mhocko@suse.com,
+        catalin.marinas@arm.com, will.deacon@arm.com, jmorris@namei.org,
+        konrad.wilk@oracle.com,
+        Juerg Haefliger <juerg.haefliger@canonical.com>,
+        deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
+        tyhicks@canonical.com, dwmw@amazon.co.uk,
+        andrew.cooper3@citrix.com, jcm@redhat.com,
+        boris.ostrovsky@oracle.com, kanth.ghatraju@oracle.com,
+        oao.m.martins@oracle.com, jmattson@google.com,
+        pradeep.vincent@oracle.com, john.haxby@oracle.com,
+        tglx@linutronix.de, kirill.shutemov@linux.intel.com,
+        steven.sistare@oracle.com, labbott@redhat.com, luto@kernel.org,
+        dave.hansen@intel.com, peterz@infradead.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Tycho Andersen <tycho@docker.com>
+References: <cover.1550088114.git.khalid.aziz@oracle.com>
+ <b595ffb3231dfef3c6b6c896a8e1cba0e838978c.1550088114.git.khalid.aziz@oracle.com>
+ <20190214074747.GA10666@lst.de>
+From:   Khalid Aziz <khalid.aziz@oracle.com>
+Organization: Oracle Corp
+Message-ID: <3c75c46c-2a5a-cd75-83d4-f77d96d22f7d@oracle.com>
+Date:   Thu, 14 Feb 2019 09:56:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190213192329.680-1-brijesh.singh@amd.com>
-In-Reply-To: <20190213192329.680-1-brijesh.singh@amd.com>
-From:   Nathaniel McCallum <npmccallum@redhat.com>
-Date:   Thu, 14 Feb 2019 10:57:15 -0600
-Message-ID: <CAOASepMn-r+2fQjDxP3yM=JuM-YDXNiAZWOo2x0OdTQBj4pdYA@mail.gmail.com>
-Subject: Re: [PATCH] crypto: ccp: introduce SEV_GET_ID2 command
-To:     "Singh, Brijesh" <brijesh.singh@amd.com>
-Cc:     "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Natarajan, Janakarajan" <Janakarajan.Natarajan@amd.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "Hook, Gary" <Gary.Hook@amd.com>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190214074747.GA10666@lst.de>
+Content-Type: multipart/mixed;
+ boundary="------------4E8F634EF1C80F4AD05A0F4B"
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9167 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=706 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902140114
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I'm a little concerned that this immediately disables SEV_GET_ID.
-IMHO, we should continue to support both for a period of time. One
-justification for immediate disablement would be that if keeping it
-around is likely to enabled incorrect or insecure userspace behavior
-with a firmware change. Given that this value is passed directly to
-the AMD server, I don't think either of these is the case and it can
-probably be worked around on the server side.
+This is a multi-part message in MIME format.
+--------------4E8F634EF1C80F4AD05A0F4B
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 13, 2019 at 1:24 PM Singh, Brijesh <brijesh.singh@amd.com> wrote:
->
-> The current definition and implementation of the SEV_GET_ID command
-> does not provide the length of the unique ID returned by the firmware.
-> As per the firmware specification, the firmware may return an ID
-> length that is not restricted to 64 bytes as assumed by the SEV_GET_ID
-> command.
->
-> Introduce the SEV_GET_ID2 command to allow for querying and returing
-> the length of the ID. Deprecate the SEV_GET_ID in the favor of
-> SEV_GET_ID2.
->
-> Cc: Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: Gary Hook <gary.hook@amd.com>
-> Cc: Tom Lendacky <thomas.lendacky@amd.com>
-> Signed-off-by: Brijesh Singh <brijesh.singh@amd.com>
-> ---
->  drivers/crypto/ccp/psp-dev.c | 65 +++++++++++++++++++++++++-----------
->  include/uapi/linux/psp-sev.h | 18 +++++++---
->  2 files changed, 60 insertions(+), 23 deletions(-)
->
-> diff --git a/drivers/crypto/ccp/psp-dev.c b/drivers/crypto/ccp/psp-dev.c
-> index b16be8a11d92..b510900a9a83 100644
-> --- a/drivers/crypto/ccp/psp-dev.c
-> +++ b/drivers/crypto/ccp/psp-dev.c
-> @@ -584,40 +584,63 @@ static int sev_ioctl_do_pek_import(struct sev_issue_cmd *argp)
->
->  static int sev_ioctl_do_get_id(struct sev_issue_cmd *argp)
->  {
-> +       struct sev_user_data_get_id2 input;
->         struct sev_data_get_id *data;
-> -       u64 data_size, user_size;
-> -       void *id_blob, *mem;
-> +       void *id_blob = NULL;
->         int ret;
->
-> -       /* SEV GET_ID available from SEV API v0.16 and up */
-> +       /* SEV GET_ID is available from SEV API v0.16 and up */
->         if (!SEV_VERSION_GREATER_OR_EQUAL(0, 16))
->                 return -ENOTSUPP;
->
-> -       /* SEV FW expects the buffer it fills with the ID to be
-> -        * 8-byte aligned. Memory allocated should be enough to
-> -        * hold data structure + alignment padding + memory
-> -        * where SEV FW writes the ID.
-> -        */
-> -       data_size = ALIGN(sizeof(struct sev_data_get_id), 8);
-> -       user_size = sizeof(struct sev_user_data_get_id);
-> +       if (copy_from_user(&input, (void __user *)argp->data, sizeof(input)))
-> +               return -EFAULT;
->
-> -       mem = kzalloc(data_size + user_size, GFP_KERNEL);
-> -       if (!mem)
-> +       /* Check if we have write access to the userspace buffer */
-> +       if (input.address &&
-> +           input.length &&
-> +           !access_ok(input.address, input.length))
-> +               return -EFAULT;
-> +
-> +       data = kzalloc(sizeof(*data), GFP_KERNEL);
-> +       if (!data)
->                 return -ENOMEM;
->
-> -       data = mem;
-> -       id_blob = mem + data_size;
-> +       if (input.address && input.length) {
-> +               id_blob = kmalloc(input.length, GFP_KERNEL);
-> +               if (!id_blob) {
-> +                       kfree(data);
-> +                       return -ENOMEM;
-> +               }
->
-> -       data->address = __psp_pa(id_blob);
-> -       data->len = user_size;
-> +               data->address = __psp_pa(id_blob);
-> +               data->len = input.length;
-> +       }
->
->         ret = __sev_do_cmd_locked(SEV_CMD_GET_ID, data, &argp->error);
-> -       if (!ret) {
-> -               if (copy_to_user((void __user *)argp->data, id_blob, data->len))
-> +
-> +       /*
-> +        * Firmware will return the length of the ID value (either the minimum
-> +        * required length or the actual length written), return it to the user.
-> +        */
-> +       input.length = data->len;
-> +
-> +       if (copy_to_user((void __user *)argp->data, &input, sizeof(input))) {
-> +               ret = -EFAULT;
-> +               goto e_free;
-> +       }
-> +
-> +       if (id_blob) {
-> +               if (copy_to_user((void __user *)input.address,
-> +                                id_blob, data->len)) {
->                         ret = -EFAULT;
-> +                       goto e_free;
-> +               }
->         }
->
-> -       kfree(mem);
-> +e_free:
-> +       kfree(id_blob);
-> +       kfree(data);
->
->         return ret;
->  }
-> @@ -760,6 +783,10 @@ static long sev_ioctl(struct file *file, unsigned int ioctl, unsigned long arg)
->                 ret = sev_ioctl_do_pdh_export(&input);
->                 break;
->         case SEV_GET_ID:
-> +               /* SEV_GET_ID is deprecated */
-> +               ret = -ENOTSUPP;
-> +               break;
-> +       case SEV_GET_ID2:
->                 ret = sev_ioctl_do_get_id(&input);
->                 break;
->         default:
-> diff --git a/include/uapi/linux/psp-sev.h b/include/uapi/linux/psp-sev.h
-> index ac8c60bcc83b..43521d500c2b 100644
-> --- a/include/uapi/linux/psp-sev.h
-> +++ b/include/uapi/linux/psp-sev.h
-> @@ -6,8 +6,7 @@
->   *
->   * Author: Brijesh Singh <brijesh.singh@amd.com>
->   *
-> - * SEV spec 0.14 is available at:
-> - * http://support.amd.com/TechDocs/55766_SEV-KM%20API_Specification.pdf
-> + * SEV API specification is available at: https://developer.amd.com/sev/
->   *
->   * This program is free software; you can redistribute it and/or modify
->   * it under the terms of the GNU General Public License version 2 as
-> @@ -30,7 +29,8 @@ enum {
->         SEV_PDH_GEN,
->         SEV_PDH_CERT_EXPORT,
->         SEV_PEK_CERT_IMPORT,
-> -       SEV_GET_ID,
-> +       SEV_GET_ID,     /* This command is deprecated, use SEV_GET_ID2 */
-> +       SEV_GET_ID2,
->
->         SEV_MAX,
->  };
-> @@ -125,7 +125,7 @@ struct sev_user_data_pdh_cert_export {
->  } __packed;
->
->  /**
-> - * struct sev_user_data_get_id - GET_ID command parameters
-> + * struct sev_user_data_get_id - GET_ID command parameters (deprecated)
->   *
->   * @socket1: Buffer to pass unique ID of first socket
->   * @socket2: Buffer to pass unique ID of second socket
-> @@ -135,6 +135,16 @@ struct sev_user_data_get_id {
->         __u8 socket2[64];                       /* Out */
->  } __packed;
->
-> +/**
-> + * struct sev_user_data_get_id2 - GET_ID command parameters
-> + * @address: Buffer to store unique ID
-> + * @length: length of the unique ID
-> + */
-> +struct sev_user_data_get_id2 {
-> +       __u64 address;                          /* In */
-> +       __u32 length;                           /* In/Out */
-> +} __packed;
-> +
->  /**
->   * struct sev_issue_cmd - SEV ioctl parameters
->   *
-> --
-> 2.17.1
->
+On 2/14/19 12:47 AM, Christoph Hellwig wrote:
+> On Wed, Feb 13, 2019 at 05:01:27PM -0700, Khalid Aziz wrote:
+>> +++ b/kernel/dma/swiotlb.c
+>> @@ -396,8 +396,9 @@ static void swiotlb_bounce(phys_addr_t orig_addr, =
+phys_addr_t tlb_addr,
+>>  {
+>>  	unsigned long pfn =3D PFN_DOWN(orig_addr);
+>>  	unsigned char *vaddr =3D phys_to_virt(tlb_addr);
+>> +	struct page *page =3D pfn_to_page(pfn);
+>> =20
+>> -	if (PageHighMem(pfn_to_page(pfn))) {
+>> +	if (PageHighMem(page) || xpfo_page_is_unmapped(page)) {
+>=20
+> I think this just wants a page_unmapped or similar helper instead of
+> needing the xpfo_page_is_unmapped check.  We actually have quite
+> a few similar construct in the arch dma mapping code for architectures
+> that require cache flushing.
+
+As I am not the original author of this patch, I am interpreting the
+original intent. I think xpfo_page_is_unmapped() was added to account
+for kernel build without CONFIG_XPFO. xpfo_page_is_unmapped() has an
+alternate definition to return false if CONFIG_XPFO is not defined.
+xpfo_is_unmapped() is cleaned up further in patch 11 ("xpfo, mm: remove
+dependency on CONFIG_PAGE_EXTENSION") to a one-liner "return
+PageXpfoUnmapped(page);". xpfo_is_unmapped() can be eliminated entirely
+by adding an else clause to the following code added by that patch:
+
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -398,6 +402,15 @@ TESTCLEARFLAG(Young, young, PF_ANY)
+ PAGEFLAG(Idle, idle, PF_ANY)
+ #endif
+
++#ifdef CONFIG_XPFO
++PAGEFLAG(XpfoUser, xpfo_user, PF_ANY)
++TESTCLEARFLAG(XpfoUser, xpfo_user, PF_ANY)
++TESTSETFLAG(XpfoUser, xpfo_user, PF_ANY)
++PAGEFLAG(XpfoUnmapped, xpfo_unmapped, PF_ANY)
++TESTCLEARFLAG(XpfoUnmapped, xpfo_unmapped, PF_ANY)
++TESTSETFLAG(XpfoUnmapped, xpfo_unmapped, PF_ANY)
++#endif
++
+ /*
+  * On an anonymous page mapped into a user virtual memory area,
+  * page->mapping points to its anon_vma, not to a struct address_space;
+
+
+Adding the following #else to above conditional:
+
+#else
+TESTPAGEFLAG_FALSE(XpfoUser)
+TESTPAGEFLAG_FALSE(XpfoUnmapped)
+
+should allow us to eliminate xpfo_is_unmapped(). Right?
+
+Thanks,
+Khalid
+
+>=20
+>> +bool xpfo_page_is_unmapped(struct page *page)
+>> +{
+>> +	struct xpfo *xpfo;
+>> +
+>> +	if (!static_branch_unlikely(&xpfo_inited))
+>> +		return false;
+>> +
+>> +	xpfo =3D lookup_xpfo(page);
+>> +	if (unlikely(!xpfo) && !xpfo->inited)
+>> +		return false;
+>> +
+>> +	return test_bit(XPFO_PAGE_UNMAPPED, &xpfo->flags);
+>> +}
+>> +EXPORT_SYMBOL(xpfo_page_is_unmapped);
+>=20
+> And at least for swiotlb there is no need to export this helper,
+> as it is always built in.
+>=20
+
+
+--------------4E8F634EF1C80F4AD05A0F4B
+Content-Type: application/pgp-keys;
+ name="pEpkey.asc"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: attachment;
+ filename="pEpkey.asc"
+
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+
+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
++Wrj8Rwom6h21PXZRKnlkis7ibQfE+TxqOI7vg=3D=3D
+=3DnPqY
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------4E8F634EF1C80F4AD05A0F4B--
