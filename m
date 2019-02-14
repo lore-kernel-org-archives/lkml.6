@@ -2,66 +2,67 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,UPPERCASE_50_75,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37637C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A3D9C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B324A222DD
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:02:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A63C222DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:02:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L7qtxriZ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="njRQl1dv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407784AbfBNQBm (ORCPT
+        id S2502585AbfBNQCc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:01:42 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:54547 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502522AbfBNQBi (ORCPT
+        Thu, 14 Feb 2019 11:02:32 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44432 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393543AbfBNQBk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 11:01:38 -0500
-Received: by mail-wm1-f65.google.com with SMTP id a62so6863570wmh.4
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:01:36 -0800 (PST)
+        Thu, 14 Feb 2019 11:01:40 -0500
+Received: by mail-wr1-f67.google.com with SMTP id v16so7023752wrn.11
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:01:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=VzmlpGGO/QDRhTSbAQN+/a5SdpuCCFJSx4xjXxl6wkY=;
-        b=L7qtxriZxqlxWRJ1KnSqjcKKq08EeGnQH5LdIoEF2Bce/0MRDwCN3GLbA7hFcK4c/7
-         9/Qg2ganNelX71TF8+sVJ8+1CWZfMlTDwcbMbKEJ50nn04VZ/534DvbWJpKtDDRd4nmU
-         rWlmmFUTTZKiaCDD/9r/7e+lgWQr3yWuTAGnabr6jM4wDLlxRhoWjpusNtpv99ATAlHv
-         W5i4K2hH6kCm9bYNzgWf23gXoPxmRcOzZgj+CnU+cKHuFUXYq2bZfBQRKjbCpBkYs3Zb
-         u5v/uPAr5Zyk1W//HE1+68W4zY74whT5zUHItjNSUTDs6F0OAn0KlA655IcGILW07h3P
-         NQsA==
+        bh=5kgEVKxJEXwhGwYiiV7VJMnt75N8+v0hACtWxMS3hDs=;
+        b=njRQl1dvieBmmqHqzKl5lypFN3pEuEciZv6SdyGEboNfPP/EA81W/1imnVqn7kbll5
+         Ja3fz6IRLdVkSS/19PVKdui/fczqrZ4zc7I04lC1q3gPg0e0rQGrXoyfGE3NaDkVKNbW
+         S+ouGnQL8HKPwJk3ZODaYu5jHCs9Ucy7IKjswqKfSyF1B3VQ8dRxVWpiZm2KLo83p3Km
+         fohVHgh0T5k4bjInVvB/JteKDEkcnK2Nvk+LrZIMxuSwWECl376J6IhZXf+E3jgcj3Kd
+         2HueEoBdXHCxS/NPa1oTIeVgy9UIvOpHa7Llwp0P3Oij5K9oG9YJOptLSSBPPHUoyDFF
+         KTRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=VzmlpGGO/QDRhTSbAQN+/a5SdpuCCFJSx4xjXxl6wkY=;
-        b=jUazEhexxlsFo3bZeNwybi149L2+sHhTUtg2Tqhu22grentby2VGj2nYyGlLL4e2Su
-         xw6wRiSR2SvkccFbMpeh/aMwEcbCOwAzyonNXqkwk9PipqhavVggLnerFUkrYDe29C9C
-         Nm5/k4nSbkszasXHCOhw+BywPiItLGhfnEGD+MJZM63D6j5kbCkpndqa0T3VzB3ooiSR
-         d5kgEs2mdUGPE7vIz1aAvq4GzzN2wCq79FOBd3N4VOe9JPTBCNKqv2TlQLBqs2cfaqfS
-         Pa1SHlgCz3ZdTOTRjl9Kke8pfi6aD9ZOzXHEH1yWKhz03Ll0lY0zbrzRmYJALngz80fJ
-         24bw==
-X-Gm-Message-State: AHQUAua+hoea38tEHiqCqGT4UODjGNTBfE3qBem+oo9IytKt4Cy3EehH
-        7SfTmXQQdK34IGnoqKVs8hY=
-X-Google-Smtp-Source: AHgI3IZLhwwdYNF7ZYOCTLlbMgabchwuE/Vl3xppF/EcR6ZG1zriYrI/un4b6pr3v9VoJUrJb6bLwA==
-X-Received: by 2002:a1c:eb10:: with SMTP id j16mr3058538wmh.64.1550160095030;
-        Thu, 14 Feb 2019 08:01:35 -0800 (PST)
+        bh=5kgEVKxJEXwhGwYiiV7VJMnt75N8+v0hACtWxMS3hDs=;
+        b=epeAPqBw1wuSaVEX4VypBx9awz9Mlg72Zk2T0JmbkaL+VxT3jn2Q4HJVrV4xf2exWM
+         gvkxegpKzFqGk1Hh4qmcu6gwoJ+1dRnU7UOpMtGH4PKj0Q9vUae7jIagUQRibsxcKMjS
+         3NFKxcz0+HWR9o61SUNsDMAqZff3YzCttRZU8ZylOAavs4ePmgnUU/53zOcVt3Z/Y6sH
+         pP1CTWBswdrVwh2YYMr452/1Vlxnp6cous5rH3N7z/U+kqEmuoh+NIHIjCk4TVRIb4Oy
+         RtO5AA+Oga1CCsiBuZbHNoXOJ/gHj9cbUE51eRzlyexDKxFGwPw9R+qgQoIpbIBEzkF0
+         DBYA==
+X-Gm-Message-State: AHQUAuallgWz14PAeYRB5J6EyqC2uH6KdBX73COoayEwOunYTSoIvaVE
+        IOLLkZ+HNKLVLU14Sr79ieA=
+X-Google-Smtp-Source: AHgI3IZjgGjcvSVd6CB+iEUscK95KYTpnJkKK3p4ojQ+0Z98FFwsyxHho0ZNEr7Ep9lPTh003IyIaw==
+X-Received: by 2002:adf:ef4a:: with SMTP id c10mr3428615wrp.180.1550160088695;
+        Thu, 14 Feb 2019 08:01:28 -0800 (PST)
 Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id u15sm5092855wmu.17.2019.02.14.08.01.33
+        by smtp.gmail.com with ESMTPSA id u15sm5092855wmu.17.2019.02.14.08.01.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 08:01:34 -0800 (PST)
+        Thu, 14 Feb 2019 08:01:27 -0800 (PST)
 From:   Oded Gabbay <oded.gabbay@gmail.com>
 To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
         rppt@linux.ibm.com, olof@lixom.net
 Cc:     ogabbay@habana.ai, arnd@arndb.de, joe@perches.com
-Subject: [PATCH v5 10/15] habanalabs: add device reset support
-Date:   Thu, 14 Feb 2019 18:01:09 +0200
-Message-Id: <20190214160114.26314-11-oded.gabbay@gmail.com>
+Subject: [PATCH v5 06/15] habanalabs: add basic Goya h/w initialization
+Date:   Thu, 14 Feb 2019 18:01:05 +0200
+Message-Id: <20190214160114.26314-7-oded.gabbay@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190214160114.26314-1-oded.gabbay@gmail.com>
 References: <20190214160114.26314-1-oded.gabbay@gmail.com>
@@ -70,1317 +71,4207 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for doing various on-the-fly reset of Goya.
+This patch adds the basic part of Goya's H/W initialization. It adds code
+that initializes Goya's internal CPU, various registers that are related to
+internal routing, scrambling, workarounds for H/W bugs, etc.
 
-The driver supports two types of resets:
-1. soft-reset
-2. hard-reset
-
-Soft-reset is done when the device detects a timeout of a command
-submission that was given to the device. The soft-reset process only resets
-the engines that are relevant for the submission of compute jobs, i.e. the
-DMA channels, the TPCs and the MME. The purpose is to bring the device as
-fast as possible to a working state.
-
-Hard-reset is done in several cases:
-1. After soft-reset is done but the device is not responding
-2. When fatal errors occur inside the device, e.g. ECC error
-3. When the driver is removed
-
-Hard-reset performs a reset of the entire chip except for the PCI
-controller and the PLLs. It is a much longer process then soft-reset but it
-helps to recover the device without the need to reboot the Host.
-
-After hard-reset, the driver will restore the max power attribute and in
-case of manual power management, the frequencies that were set.
-
-This patch also adds two entries to the sysfs, which allows the root user
-to initiate a soft or hard reset.
+It also initializes Goya's security scheme that prevents the user from
+abusing Goya to steal data from the host, crash the host, change
+Goya's F/W, etc.
 
 Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
 Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 ---
 Changes in v5:
-  - Fix pointer cast warnings by casting to uintptr_t
+  - Use %zu to print size_t
+  - Include headers to compile writeq in 32-bit architectures
  
- drivers/misc/habanalabs/command_buffer.c   |   9 +-
- drivers/misc/habanalabs/device.c           | 323 ++++++++++++++++++++-
- drivers/misc/habanalabs/goya/goya.c        | 226 +++++++++++++-
- drivers/misc/habanalabs/goya/goya_hwmgr.c  |  18 +-
- drivers/misc/habanalabs/habanalabs.h       |  52 ++++
- drivers/misc/habanalabs/habanalabs_drv.c   |   9 +-
- drivers/misc/habanalabs/habanalabs_ioctl.c |   6 +
- drivers/misc/habanalabs/hwmon.c            |   4 +-
- drivers/misc/habanalabs/irq.c              |  31 ++
- drivers/misc/habanalabs/sysfs.c            |  82 +++++-
- 10 files changed, 736 insertions(+), 24 deletions(-)
+ drivers/misc/habanalabs/device.c              |   12 +
+ drivers/misc/habanalabs/goya/Makefile         |    2 +-
+ drivers/misc/habanalabs/goya/goya.c           |  880 ++++-
+ drivers/misc/habanalabs/goya/goyaP.h          |    4 +
+ drivers/misc/habanalabs/goya/goya_security.c  | 2999 +++++++++++++++++
+ drivers/misc/habanalabs/habanalabs.h          |   15 +
+ drivers/misc/habanalabs/habanalabs_drv.c      |    7 +
+ drivers/misc/habanalabs/include/armcp_if.h    |   19 +
+ .../misc/habanalabs/include/goya/goya_fw_if.h |   28 +
+ drivers/misc/habanalabs/include/hl_boot_if.h  |   30 +
+ 10 files changed, 3989 insertions(+), 7 deletions(-)
+ create mode 100644 drivers/misc/habanalabs/goya/goya_security.c
+ create mode 100644 drivers/misc/habanalabs/include/armcp_if.h
+ create mode 100644 drivers/misc/habanalabs/include/goya/goya_fw_if.h
+ create mode 100644 drivers/misc/habanalabs/include/hl_boot_if.h
 
-diff --git a/drivers/misc/habanalabs/command_buffer.c b/drivers/misc/habanalabs/command_buffer.c
-index 43febaea8a17..ff970c1ed414 100644
---- a/drivers/misc/habanalabs/command_buffer.c
-+++ b/drivers/misc/habanalabs/command_buffer.c
-@@ -90,9 +90,14 @@ int hl_cb_create(struct hl_device *hdev, struct hl_cb_mgr *mgr,
- 	bool alloc_new_cb = true;
- 	int rc;
- 
--	if (hdev->disabled) {
-+	/*
-+	 * Can't use generic function to check this because of special case
-+	 * where we create a CB as part of the reset process
-+	 */
-+	if ((hdev->disabled) || ((atomic_read(&hdev->in_reset)) &&
-+					(ctx_id != HL_KERNEL_ASID_ID))) {
- 		dev_warn_ratelimited(hdev->dev,
--			"Device is disabled. Can't create new CBs\n");
-+			"Device is disabled or in reset. Can't create new CBs\n");
- 		rc = -EBUSY;
- 		goto out_err;
- 	}
 diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
-index 91b32db5832a..c4b00f7b6010 100644
+index 45028938fb0c..54303fcfeb04 100644
 --- a/drivers/misc/habanalabs/device.c
 +++ b/drivers/misc/habanalabs/device.c
-@@ -11,6 +11,14 @@
- #include <linux/kthread.h>
- #include <linux/sched/signal.h>
+@@ -320,6 +320,15 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
+ 		goto release_ctx;
+ 	}
  
-+bool hl_device_disabled_or_in_reset(struct hl_device *hdev)
-+{
-+	if ((hdev->disabled) || (atomic_read(&hdev->in_reset)))
-+		return true;
-+	else
-+		return false;
-+}
-+
- static void hpriv_release(struct kref *ref)
- {
- 	struct hl_fpriv *hpriv;
-@@ -193,6 +201,7 @@ static int device_early_init(struct hl_device *hdev)
- 
- 	mutex_init(&hdev->fd_open_cnt_lock);
- 	mutex_init(&hdev->send_cpu_message_lock);
-+	atomic_set(&hdev->in_reset, 0);
- 	atomic_set(&hdev->fd_open_cnt, 0);
- 
- 	return 0;
-@@ -243,6 +252,27 @@ static void set_freq_to_low_job(struct work_struct *work)
- 			usecs_to_jiffies(HL_PLL_LOW_JOB_FREQ_USEC));
- }
- 
-+static void hl_device_heartbeat(struct work_struct *work)
-+{
-+	struct hl_device *hdev = container_of(work, struct hl_device,
-+						work_heartbeat.work);
-+
-+	if (hl_device_disabled_or_in_reset(hdev))
-+		goto reschedule;
-+
-+	if (!hdev->asic_funcs->send_heartbeat(hdev))
-+		goto reschedule;
-+
-+	dev_err(hdev->dev, "Device heartbeat failed!\n");
-+	hl_device_reset(hdev, true, false);
-+
-+	return;
-+
-+reschedule:
-+	schedule_delayed_work(&hdev->work_heartbeat,
-+			usecs_to_jiffies(HL_HEARTBEAT_PER_USEC));
-+}
-+
- /*
-  * device_late_init - do late stuff initialization for the habanalabs device
-  *
-@@ -278,6 +308,12 @@ static int device_late_init(struct hl_device *hdev)
- 	schedule_delayed_work(&hdev->work_freq,
- 			usecs_to_jiffies(HL_PLL_LOW_JOB_FREQ_USEC));
- 
-+	if (hdev->heartbeat) {
-+		INIT_DELAYED_WORK(&hdev->work_heartbeat, hl_device_heartbeat);
-+		schedule_delayed_work(&hdev->work_heartbeat,
-+				usecs_to_jiffies(HL_HEARTBEAT_PER_USEC));
-+	}
-+
- 	hdev->late_init_done = true;
- 
- 	return 0;
-@@ -295,6 +331,8 @@ static void device_late_fini(struct hl_device *hdev)
- 		return;
- 
- 	cancel_delayed_work_sync(&hdev->work_freq);
-+	if (hdev->heartbeat)
-+		cancel_delayed_work_sync(&hdev->work_heartbeat);
- 
- 	if (hdev->asic_funcs->late_fini)
- 		hdev->asic_funcs->late_fini(hdev);
-@@ -402,6 +440,260 @@ int hl_device_resume(struct hl_device *hdev)
- 	return 0;
- }
- 
-+static void hl_device_hard_reset_pending(struct work_struct *work)
-+{
-+	struct hl_device_reset_work *device_reset_work =
-+		container_of(work, struct hl_device_reset_work, reset_work);
-+	struct hl_device *hdev = device_reset_work->hdev;
-+	u16 pending_cnt = HL_PENDING_RESET_PER_SEC;
-+	struct task_struct *task = NULL;
-+
-+	/* Flush all processes that are inside hl_open */
-+	mutex_lock(&hdev->fd_open_cnt_lock);
-+
-+	while ((atomic_read(&hdev->fd_open_cnt)) && (pending_cnt)) {
-+
-+		pending_cnt--;
-+
-+		dev_info(hdev->dev,
-+			"Can't HARD reset, waiting for user to close FD\n");
-+		ssleep(1);
-+	}
-+
-+	if (atomic_read(&hdev->fd_open_cnt)) {
-+		task = get_pid_task(hdev->user_ctx->hpriv->taskpid,
-+					PIDTYPE_PID);
-+		if (task) {
-+			dev_info(hdev->dev, "Killing user processes\n");
-+			send_sig(SIGKILL, task, 1);
-+			msleep(100);
-+
-+			put_task_struct(task);
-+		}
-+	}
-+
-+	mutex_unlock(&hdev->fd_open_cnt_lock);
-+
-+	hl_device_reset(hdev, true, true);
-+
-+	kfree(device_reset_work);
-+}
-+
-+/*
-+ * hl_device_reset - reset the device
-+ *
-+ * @hdev: pointer to habanalabs device structure
-+ * @hard_reset: should we do hard reset to all engines or just reset the
-+ *              compute/dma engines
-+ *
-+ * Block future CS and wait for pending CS to be enqueued
-+ * Call ASIC H/W fini
-+ * Flush all completions
-+ * Re-initialize all internal data structures
-+ * Call ASIC H/W init, late_init
-+ * Test queues
-+ * Enable device
-+ *
-+ * Returns 0 for success or an error on failure.
-+ */
-+int hl_device_reset(struct hl_device *hdev, bool hard_reset,
-+			bool from_hard_reset_thread)
-+{
-+	int i, rc;
-+
-+	if (!hdev->init_done) {
-+		dev_err(hdev->dev,
-+			"Can't reset before initialization is done\n");
-+		return 0;
-+	}
-+
-+	/*
-+	 * Prevent concurrency in this function - only one reset should be
-+	 * done at any given time. Only need to perform this if we didn't
-+	 * get from the dedicated hard reset thread
-+	 */
-+	if (!from_hard_reset_thread) {
-+		/* Block future CS/VM/JOB completion operations */
-+		rc = atomic_cmpxchg(&hdev->in_reset, 0, 1);
-+		if (rc)
-+			return 0;
-+
-+		/* This also blocks future CS/VM/JOB completion operations */
-+		hdev->disabled = true;
-+
-+		/*
-+		 * Flush anyone that is inside the critical section of enqueue
-+		 * jobs to the H/W
-+		 */
-+		hdev->asic_funcs->hw_queues_lock(hdev);
-+		hdev->asic_funcs->hw_queues_unlock(hdev);
-+
-+		dev_err(hdev->dev, "Going to RESET device!\n");
-+	}
-+
-+again:
-+	if ((hard_reset) && (!from_hard_reset_thread)) {
-+		struct hl_device_reset_work *device_reset_work;
-+
-+		if (!hdev->pdev) {
-+			dev_err(hdev->dev,
-+				"Reset action is NOT supported in simulator\n");
-+			rc = -EINVAL;
-+			goto out_err;
-+		}
-+
-+		hdev->hard_reset_pending = true;
-+
-+		device_reset_work = kzalloc(sizeof(*device_reset_work),
-+						GFP_ATOMIC);
-+		if (!device_reset_work) {
-+			rc = -ENOMEM;
-+			goto out_err;
-+		}
-+
-+		/*
-+		 * Because the reset function can't run from interrupt or
-+		 * from heartbeat work, we need to call the reset function
-+		 * from a dedicated work
-+		 */
-+		INIT_WORK(&device_reset_work->reset_work,
-+				hl_device_hard_reset_pending);
-+		device_reset_work->hdev = hdev;
-+		schedule_work(&device_reset_work->reset_work);
-+
-+		return 0;
-+	}
-+
-+	if (hard_reset) {
-+		device_late_fini(hdev);
-+
-+		/*
-+		 * Now that the heartbeat thread is closed, flush processes
-+		 * which are sending messages to CPU
-+		 */
-+		mutex_lock(&hdev->send_cpu_message_lock);
-+		mutex_unlock(&hdev->send_cpu_message_lock);
-+	}
-+
-+	/*
-+	 * Halt the engines and disable interrupts so we won't get any more
-+	 * completions from H/W and we won't have any accesses from the
-+	 * H/W to the host machine
-+	 */
-+	hdev->asic_funcs->halt_engines(hdev, hard_reset);
-+
-+	if (hard_reset) {
-+		/* Release kernel context */
-+		if (hl_ctx_put(hdev->kernel_ctx) != 1) {
-+			dev_err(hdev->dev,
-+				"kernel ctx is alive during hard reset\n");
-+			rc = -EBUSY;
-+			goto out_err;
-+		}
-+
-+		hdev->kernel_ctx = NULL;
-+	}
-+
-+	/* Reset the H/W. It will be in idle state after this returns */
-+	hdev->asic_funcs->hw_fini(hdev, hard_reset);
-+
-+	if (hard_reset)
-+		hl_eq_reset(hdev, &hdev->event_queue);
-+
-+	/* Re-initialize PI,CI to 0 in all queues (hw queue, cq) */
-+	hl_hw_queue_reset(hdev, hard_reset);
-+	for (i = 0 ; i < hdev->asic_prop.completion_queues_count ; i++)
-+		hl_cq_reset(hdev, &hdev->completion_queue[i]);
-+
-+	/* Finished tear-down, starting to re-initialize */
-+
-+	if (hard_reset) {
-+		/* Allocate the kernel context */
-+		hdev->kernel_ctx = kzalloc(sizeof(*hdev->kernel_ctx),
-+						GFP_KERNEL);
-+		if (!hdev->kernel_ctx) {
-+			rc = -ENOMEM;
-+			goto out_err;
-+		}
-+
-+		hdev->user_ctx = NULL;
-+
-+		rc = hl_ctx_init(hdev, hdev->kernel_ctx, true);
-+		if (rc) {
-+			dev_err(hdev->dev,
-+				"failed to init kernel ctx in hard reset\n");
-+			kfree(hdev->kernel_ctx);
-+			hdev->kernel_ctx = NULL;
-+			goto out_err;
-+		}
-+	}
-+
 +	rc = hdev->asic_funcs->hw_init(hdev);
 +	if (rc) {
-+		dev_err(hdev->dev,
-+			"failed to initialize the H/W after reset\n");
-+		goto out_err;
++		dev_err(hdev->dev, "failed to initialize the H/W\n");
++		rc = 0;
++		goto out_disabled;
 +	}
 +
 +	hdev->disabled = false;
 +
-+	/* Check that the communication with the device is working */
-+	rc = hdev->asic_funcs->test_queues(hdev);
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"Failed to detect if device is alive after reset\n");
-+		goto out_err;
-+	}
-+
-+	if (hard_reset) {
-+		rc = device_late_init(hdev);
-+		if (rc) {
-+			dev_err(hdev->dev,
-+				"Failed late init after hard reset\n");
-+			goto out_err;
-+		}
-+
-+		hl_set_max_power(hdev, hdev->max_power);
-+
-+		hdev->hard_reset_pending = false;
-+	} else {
-+		rc = hdev->asic_funcs->soft_reset_late_init(hdev);
-+		if (rc) {
-+			dev_err(hdev->dev,
-+				"Failed late init after soft reset\n");
-+			goto out_err;
-+		}
-+	}
-+
-+	atomic_set(&hdev->in_reset, 0);
-+
-+	if (hard_reset)
-+		hdev->hard_reset_cnt++;
-+	else
-+		hdev->soft_reset_cnt++;
-+
-+	return 0;
-+
-+out_err:
-+	hdev->disabled = true;
-+
-+	if (hard_reset) {
-+		dev_err(hdev->dev,
-+			"Failed to reset! Device is NOT usable\n");
-+		hdev->hard_reset_cnt++;
-+	} else {
-+		dev_err(hdev->dev,
-+			"Failed to do soft-reset, trying hard reset\n");
-+		hdev->soft_reset_cnt++;
-+		hard_reset = true;
-+		goto again;
-+	}
-+
-+	atomic_set(&hdev->in_reset, 0);
-+
-+	return rc;
-+}
-+
- /*
-  * hl_device_init - main initialization function for habanalabs device
-  *
-@@ -509,6 +801,12 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
- 		goto free_cb_pool;
- 	}
- 
-+	if (hdev->asic_funcs->get_hw_state(hdev) == HL_DEVICE_HW_STATE_DIRTY) {
-+		dev_info(hdev->dev,
-+			"H/W state is dirty, must reset before initializing\n");
-+		hdev->asic_funcs->hw_fini(hdev, true);
-+	}
-+
- 	rc = hdev->asic_funcs->hw_init(hdev);
- 	if (rc) {
- 		dev_err(hdev->dev, "failed to initialize the H/W\n");
-@@ -549,6 +847,8 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
  	dev_notice(hdev->dev,
  		"Successfully added device to habanalabs driver\n");
  
-+	hdev->init_done = true;
-+
- 	return 0;
+@@ -371,6 +380,9 @@ void hl_device_fini(struct hl_device *hdev)
+ 	if ((hdev->kernel_ctx) && (hl_ctx_put(hdev->kernel_ctx) != 1))
+ 		dev_err(hdev->dev, "kernel ctx is still alive\n");
  
- free_cb_pool:
-@@ -596,9 +896,30 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
-  */
- void hl_device_fini(struct hl_device *hdev)
- {
--	int i;
-+	int i, rc;
-+	ktime_t timeout;
++	/* Reset the H/W. It will be in idle state after this returns */
++	hdev->asic_funcs->hw_fini(hdev, true);
 +
- 	dev_info(hdev->dev, "Removing device\n");
+ 	/* Call ASIC S/W finalize function */
+ 	hdev->asic_funcs->sw_fini(hdev);
  
-+	/*
-+	 * This function is competing with the reset function, so try to
-+	 * take the reset atomic and if we are already in middle of reset,
-+	 * wait until reset function is finished. Reset function is designed
-+	 * to always finish (could take up to a few seconds in worst case).
-+	 */
-+
-+	timeout = ktime_add_us(ktime_get(),
-+				HL_PENDING_RESET_PER_SEC * 1000 * 1000 * 4);
-+	rc = atomic_cmpxchg(&hdev->in_reset, 0, 1);
-+	while (rc) {
-+		usleep_range(50, 200);
-+		rc = atomic_cmpxchg(&hdev->in_reset, 0, 1);
-+		if (ktime_compare(ktime_get(), timeout) > 0) {
-+			WARN(1, "Failed to remove device because reset function did not finish\n");
-+			return;
-+		}
-+	};
-+
- 	/* Mark device as disabled */
- 	hdev->disabled = true;
+diff --git a/drivers/misc/habanalabs/goya/Makefile b/drivers/misc/habanalabs/goya/Makefile
+index 38d43006386d..7ae221696de9 100644
+--- a/drivers/misc/habanalabs/goya/Makefile
++++ b/drivers/misc/habanalabs/goya/Makefile
+@@ -1,3 +1,3 @@
+ subdir-ccflags-y += -I$(src)
  
+-HL_GOYA_FILES :=  goya/goya.o
++HL_GOYA_FILES :=  goya/goya.o goya/goya_security.o
 diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
-index 9639bb325c77..be3ad39cbcf8 100644
+index 5f303f75bf9d..c829b8ecb385 100644
 --- a/drivers/misc/habanalabs/goya/goya.c
 +++ b/drivers/misc/habanalabs/goya/goya.c
-@@ -129,6 +129,130 @@ static const char *goya_axi_name[GOYA_MAX_INITIATORS] = {
+@@ -21,6 +21,8 @@
+ #include <linux/hwmon.h>
+ #include <linux/string.h>
+ #include <linux/io.h>
++#include <linux/io-64-nonatomic-lo-hi.h>
++#include <linux/io-64-nonatomic-hi-lo.h>
  
- #define GOYA_ASYC_EVENT_GROUP_NON_FATAL_SIZE 121
+ /*
+  * GOYA security scheme:
+@@ -119,11 +121,11 @@ static void goya_get_fixed_properties(struct hl_device *hdev)
+ 	prop->va_space_dram_end_address = VA_DDR_SPACE_END;
+ 	prop->cfg_size = CFG_SIZE;
+ 	prop->max_asid = MAX_ASID;
++	prop->cb_pool_cb_cnt = GOYA_CB_POOL_CB_CNT;
++	prop->cb_pool_cb_size = GOYA_CB_POOL_CB_SIZE;
+ 	prop->tpc_enabled_mask = TPC_ENABLED_MASK;
  
-+static u32 goya_non_fatal_events[GOYA_ASYC_EVENT_GROUP_NON_FATAL_SIZE] = {
-+	GOYA_ASYNC_EVENT_ID_PCIE_IF,
-+	GOYA_ASYNC_EVENT_ID_TPC0_ECC,
-+	GOYA_ASYNC_EVENT_ID_TPC1_ECC,
-+	GOYA_ASYNC_EVENT_ID_TPC2_ECC,
-+	GOYA_ASYNC_EVENT_ID_TPC3_ECC,
-+	GOYA_ASYNC_EVENT_ID_TPC4_ECC,
-+	GOYA_ASYNC_EVENT_ID_TPC5_ECC,
-+	GOYA_ASYNC_EVENT_ID_TPC6_ECC,
-+	GOYA_ASYNC_EVENT_ID_TPC7_ECC,
-+	GOYA_ASYNC_EVENT_ID_MME_ECC,
-+	GOYA_ASYNC_EVENT_ID_MME_ECC_EXT,
-+	GOYA_ASYNC_EVENT_ID_MMU_ECC,
-+	GOYA_ASYNC_EVENT_ID_DMA_MACRO,
-+	GOYA_ASYNC_EVENT_ID_DMA_ECC,
-+	GOYA_ASYNC_EVENT_ID_CPU_IF_ECC,
-+	GOYA_ASYNC_EVENT_ID_PSOC_MEM,
-+	GOYA_ASYNC_EVENT_ID_PSOC_CORESIGHT,
-+	GOYA_ASYNC_EVENT_ID_SRAM0,
-+	GOYA_ASYNC_EVENT_ID_SRAM1,
-+	GOYA_ASYNC_EVENT_ID_SRAM2,
-+	GOYA_ASYNC_EVENT_ID_SRAM3,
-+	GOYA_ASYNC_EVENT_ID_SRAM4,
-+	GOYA_ASYNC_EVENT_ID_SRAM5,
-+	GOYA_ASYNC_EVENT_ID_SRAM6,
-+	GOYA_ASYNC_EVENT_ID_SRAM7,
-+	GOYA_ASYNC_EVENT_ID_SRAM8,
-+	GOYA_ASYNC_EVENT_ID_SRAM9,
-+	GOYA_ASYNC_EVENT_ID_SRAM10,
-+	GOYA_ASYNC_EVENT_ID_SRAM11,
-+	GOYA_ASYNC_EVENT_ID_SRAM12,
-+	GOYA_ASYNC_EVENT_ID_SRAM13,
-+	GOYA_ASYNC_EVENT_ID_SRAM14,
-+	GOYA_ASYNC_EVENT_ID_SRAM15,
-+	GOYA_ASYNC_EVENT_ID_SRAM16,
-+	GOYA_ASYNC_EVENT_ID_SRAM17,
-+	GOYA_ASYNC_EVENT_ID_SRAM18,
-+	GOYA_ASYNC_EVENT_ID_SRAM19,
-+	GOYA_ASYNC_EVENT_ID_SRAM20,
-+	GOYA_ASYNC_EVENT_ID_SRAM21,
-+	GOYA_ASYNC_EVENT_ID_SRAM22,
-+	GOYA_ASYNC_EVENT_ID_SRAM23,
-+	GOYA_ASYNC_EVENT_ID_SRAM24,
-+	GOYA_ASYNC_EVENT_ID_SRAM25,
-+	GOYA_ASYNC_EVENT_ID_SRAM26,
-+	GOYA_ASYNC_EVENT_ID_SRAM27,
-+	GOYA_ASYNC_EVENT_ID_SRAM28,
-+	GOYA_ASYNC_EVENT_ID_SRAM29,
-+	GOYA_ASYNC_EVENT_ID_GIC500,
-+	GOYA_ASYNC_EVENT_ID_PLL0,
-+	GOYA_ASYNC_EVENT_ID_PLL1,
-+	GOYA_ASYNC_EVENT_ID_PLL3,
-+	GOYA_ASYNC_EVENT_ID_PLL4,
-+	GOYA_ASYNC_EVENT_ID_PLL5,
-+	GOYA_ASYNC_EVENT_ID_PLL6,
-+	GOYA_ASYNC_EVENT_ID_AXI_ECC,
-+	GOYA_ASYNC_EVENT_ID_L2_RAM_ECC,
-+	GOYA_ASYNC_EVENT_ID_PSOC_GPIO_05_SW_RESET,
-+	GOYA_ASYNC_EVENT_ID_PSOC_GPIO_10_VRHOT_ICRIT,
-+	GOYA_ASYNC_EVENT_ID_PCIE_DEC,
-+	GOYA_ASYNC_EVENT_ID_TPC0_DEC,
-+	GOYA_ASYNC_EVENT_ID_TPC1_DEC,
-+	GOYA_ASYNC_EVENT_ID_TPC2_DEC,
-+	GOYA_ASYNC_EVENT_ID_TPC3_DEC,
-+	GOYA_ASYNC_EVENT_ID_TPC4_DEC,
-+	GOYA_ASYNC_EVENT_ID_TPC5_DEC,
-+	GOYA_ASYNC_EVENT_ID_TPC6_DEC,
-+	GOYA_ASYNC_EVENT_ID_TPC7_DEC,
-+	GOYA_ASYNC_EVENT_ID_MME_WACS,
-+	GOYA_ASYNC_EVENT_ID_MME_WACSD,
-+	GOYA_ASYNC_EVENT_ID_CPU_AXI_SPLITTER,
-+	GOYA_ASYNC_EVENT_ID_PSOC_AXI_DEC,
-+	GOYA_ASYNC_EVENT_ID_PSOC,
-+	GOYA_ASYNC_EVENT_ID_TPC0_KRN_ERR,
-+	GOYA_ASYNC_EVENT_ID_TPC1_KRN_ERR,
-+	GOYA_ASYNC_EVENT_ID_TPC2_KRN_ERR,
-+	GOYA_ASYNC_EVENT_ID_TPC3_KRN_ERR,
-+	GOYA_ASYNC_EVENT_ID_TPC4_KRN_ERR,
-+	GOYA_ASYNC_EVENT_ID_TPC5_KRN_ERR,
-+	GOYA_ASYNC_EVENT_ID_TPC6_KRN_ERR,
-+	GOYA_ASYNC_EVENT_ID_TPC7_KRN_ERR,
-+	GOYA_ASYNC_EVENT_ID_TPC0_CMDQ,
-+	GOYA_ASYNC_EVENT_ID_TPC1_CMDQ,
-+	GOYA_ASYNC_EVENT_ID_TPC2_CMDQ,
-+	GOYA_ASYNC_EVENT_ID_TPC3_CMDQ,
-+	GOYA_ASYNC_EVENT_ID_TPC4_CMDQ,
-+	GOYA_ASYNC_EVENT_ID_TPC5_CMDQ,
-+	GOYA_ASYNC_EVENT_ID_TPC6_CMDQ,
-+	GOYA_ASYNC_EVENT_ID_TPC7_CMDQ,
-+	GOYA_ASYNC_EVENT_ID_TPC0_QM,
-+	GOYA_ASYNC_EVENT_ID_TPC1_QM,
-+	GOYA_ASYNC_EVENT_ID_TPC2_QM,
-+	GOYA_ASYNC_EVENT_ID_TPC3_QM,
-+	GOYA_ASYNC_EVENT_ID_TPC4_QM,
-+	GOYA_ASYNC_EVENT_ID_TPC5_QM,
-+	GOYA_ASYNC_EVENT_ID_TPC6_QM,
-+	GOYA_ASYNC_EVENT_ID_TPC7_QM,
-+	GOYA_ASYNC_EVENT_ID_MME_QM,
-+	GOYA_ASYNC_EVENT_ID_MME_CMDQ,
-+	GOYA_ASYNC_EVENT_ID_DMA0_QM,
-+	GOYA_ASYNC_EVENT_ID_DMA1_QM,
-+	GOYA_ASYNC_EVENT_ID_DMA2_QM,
-+	GOYA_ASYNC_EVENT_ID_DMA3_QM,
-+	GOYA_ASYNC_EVENT_ID_DMA4_QM,
-+	GOYA_ASYNC_EVENT_ID_DMA0_CH,
-+	GOYA_ASYNC_EVENT_ID_DMA1_CH,
-+	GOYA_ASYNC_EVENT_ID_DMA2_CH,
-+	GOYA_ASYNC_EVENT_ID_DMA3_CH,
-+	GOYA_ASYNC_EVENT_ID_DMA4_CH,
-+	GOYA_ASYNC_EVENT_ID_TPC0_BMON_SPMU,
-+	GOYA_ASYNC_EVENT_ID_TPC1_BMON_SPMU,
-+	GOYA_ASYNC_EVENT_ID_TPC2_BMON_SPMU,
-+	GOYA_ASYNC_EVENT_ID_TPC3_BMON_SPMU,
-+	GOYA_ASYNC_EVENT_ID_TPC4_BMON_SPMU,
-+	GOYA_ASYNC_EVENT_ID_TPC5_BMON_SPMU,
-+	GOYA_ASYNC_EVENT_ID_TPC6_BMON_SPMU,
-+	GOYA_ASYNC_EVENT_ID_TPC7_BMON_SPMU,
-+	GOYA_ASYNC_EVENT_ID_DMA_BM_CH0,
-+	GOYA_ASYNC_EVENT_ID_DMA_BM_CH1,
-+	GOYA_ASYNC_EVENT_ID_DMA_BM_CH2,
-+	GOYA_ASYNC_EVENT_ID_DMA_BM_CH3,
-+	GOYA_ASYNC_EVENT_ID_DMA_BM_CH4
-+};
+ 	prop->high_pll = PLL_HIGH_DEFAULT;
+-	prop->cb_pool_cb_cnt = GOYA_CB_POOL_CB_CNT;
+-	prop->cb_pool_cb_size = GOYA_CB_POOL_CB_SIZE;
+ }
+ 
+ /*
+@@ -468,10 +470,12 @@ static int goya_early_init(struct hl_device *hdev)
+ 		goto disable_device;
+ 	}
+ 
+-	val = RREG32(mmPSOC_GLOBAL_CONF_BOOT_STRAP_PINS);
+-	if (val & PSOC_GLOBAL_CONF_BOOT_STRAP_PINS_SRIOV_EN_MASK)
+-		dev_warn(hdev->dev,
+-			"PCI strap is not configured correctly, PCI bus errors may occur\n");
++	if (!hdev->pldm) {
++		val = RREG32(mmPSOC_GLOBAL_CONF_BOOT_STRAP_PINS);
++		if (val & PSOC_GLOBAL_CONF_BOOT_STRAP_PINS_SRIOV_EN_MASK)
++			dev_warn(hdev->dev,
++				"PCI strap is not configured correctly, PCI bus errors may occur\n");
++	}
+ 
+ 	return 0;
+ 
+@@ -602,6 +606,868 @@ int goya_sw_fini(struct hl_device *hdev)
+ 	return 0;
+ }
+ 
++static void goya_set_pll_refclk(struct hl_device *hdev)
++{
++	WREG32(mmCPU_PLL_DIV_SEL_0, 0x0);
++	WREG32(mmCPU_PLL_DIV_SEL_1, 0x0);
++	WREG32(mmCPU_PLL_DIV_SEL_2, 0x0);
++	WREG32(mmCPU_PLL_DIV_SEL_3, 0x0);
 +
- static int goya_armcp_info_get(struct hl_device *hdev);
- 
- static void goya_get_fixed_properties(struct hl_device *hdev)
-@@ -2456,6 +2580,14 @@ static int goya_hw_init(struct hl_device *hdev)
- 	/* Perform read from the device to make sure device is up */
- 	val = RREG32(mmPCIE_DBI_DEVICE_ID_VENDOR_ID_REG);
- 
++	WREG32(mmIC_PLL_DIV_SEL_0, 0x0);
++	WREG32(mmIC_PLL_DIV_SEL_1, 0x0);
++	WREG32(mmIC_PLL_DIV_SEL_2, 0x0);
++	WREG32(mmIC_PLL_DIV_SEL_3, 0x0);
++
++	WREG32(mmMC_PLL_DIV_SEL_0, 0x0);
++	WREG32(mmMC_PLL_DIV_SEL_1, 0x0);
++	WREG32(mmMC_PLL_DIV_SEL_2, 0x0);
++	WREG32(mmMC_PLL_DIV_SEL_3, 0x0);
++
++	WREG32(mmPSOC_MME_PLL_DIV_SEL_0, 0x0);
++	WREG32(mmPSOC_MME_PLL_DIV_SEL_1, 0x0);
++	WREG32(mmPSOC_MME_PLL_DIV_SEL_2, 0x0);
++	WREG32(mmPSOC_MME_PLL_DIV_SEL_3, 0x0);
++
++	WREG32(mmPSOC_PCI_PLL_DIV_SEL_0, 0x0);
++	WREG32(mmPSOC_PCI_PLL_DIV_SEL_1, 0x0);
++	WREG32(mmPSOC_PCI_PLL_DIV_SEL_2, 0x0);
++	WREG32(mmPSOC_PCI_PLL_DIV_SEL_3, 0x0);
++
++	WREG32(mmPSOC_EMMC_PLL_DIV_SEL_0, 0x0);
++	WREG32(mmPSOC_EMMC_PLL_DIV_SEL_1, 0x0);
++	WREG32(mmPSOC_EMMC_PLL_DIV_SEL_2, 0x0);
++	WREG32(mmPSOC_EMMC_PLL_DIV_SEL_3, 0x0);
++
++	WREG32(mmTPC_PLL_DIV_SEL_0, 0x0);
++	WREG32(mmTPC_PLL_DIV_SEL_1, 0x0);
++	WREG32(mmTPC_PLL_DIV_SEL_2, 0x0);
++	WREG32(mmTPC_PLL_DIV_SEL_3, 0x0);
++}
++
++static void goya_disable_clk_rlx(struct hl_device *hdev)
++{
++	WREG32(mmPSOC_MME_PLL_CLK_RLX_0, 0x100010);
++	WREG32(mmIC_PLL_CLK_RLX_0, 0x100010);
++}
++
++static void _goya_tpc_mbist_workaround(struct hl_device *hdev, u8 tpc_id)
++{
++	u64 tpc_eml_address;
++	u32 val, tpc_offset, tpc_eml_offset, tpc_slm_offset;
++	int err, slm_index;
++
++	tpc_offset = tpc_id * 0x40000;
++	tpc_eml_offset = tpc_id * 0x200000;
++	tpc_eml_address = (mmTPC0_EML_CFG_BASE + tpc_eml_offset - CFG_BASE);
++	tpc_slm_offset = tpc_eml_address + 0x100000;
++
 +	/*
-+	 * Let's mark in the H/W that we have reached this point. We check
-+	 * this value in the reset_before_init function to understand whether
-+	 * we need to reset the chip before doing H/W init. This register is
-+	 * cleared by the H/W upon H/W reset
++	 * Workaround for Bug H2 #2443 :
++	 * "TPC SB is not initialized on chip reset"
 +	 */
-+	WREG32(mmPSOC_GLOBAL_CONF_APP_STATUS, HL_DEVICE_HW_STATE_DIRTY);
 +
- 	rc = goya_init_cpu(hdev, GOYA_CPU_TIMEOUT_USEC);
- 	if (rc) {
- 		dev_err(hdev->dev, "failed to initialize CPU\n");
-@@ -2584,6 +2716,14 @@ static void goya_hw_fini(struct hl_device *hdev, bool hard_reset)
- 			"Timeout while waiting for device to reset 0x%x\n",
- 			status);
- 
-+	if (!hard_reset) {
-+		goya->hw_cap_initialized &= ~(HW_CAP_DMA | HW_CAP_MME |
-+						HW_CAP_GOLDEN | HW_CAP_TPC);
-+		WREG32(mmGIC_DISTRIBUTOR__5_GICD_SETSPI_NSR,
-+				GOYA_ASYNC_EVENT_ID_SOFT_RESET);
++	val = RREG32(mmTPC0_CFG_FUNC_MBIST_CNTRL + tpc_offset);
++	if (val & TPC0_CFG_FUNC_MBIST_CNTRL_MBIST_ACTIVE_MASK)
++		dev_warn(hdev->dev, "TPC%d MBIST ACTIVE is not cleared\n",
++			tpc_id);
++
++	WREG32(mmTPC0_CFG_FUNC_MBIST_PAT + tpc_offset, val & 0xFFFFF000);
++
++	WREG32(mmTPC0_CFG_FUNC_MBIST_MEM_0 + tpc_offset, 0x37FF);
++	WREG32(mmTPC0_CFG_FUNC_MBIST_MEM_1 + tpc_offset, 0x303F);
++	WREG32(mmTPC0_CFG_FUNC_MBIST_MEM_2 + tpc_offset, 0x71FF);
++	WREG32(mmTPC0_CFG_FUNC_MBIST_MEM_3 + tpc_offset, 0x71FF);
++	WREG32(mmTPC0_CFG_FUNC_MBIST_MEM_4 + tpc_offset, 0x70FF);
++	WREG32(mmTPC0_CFG_FUNC_MBIST_MEM_5 + tpc_offset, 0x70FF);
++	WREG32(mmTPC0_CFG_FUNC_MBIST_MEM_6 + tpc_offset, 0x70FF);
++	WREG32(mmTPC0_CFG_FUNC_MBIST_MEM_7 + tpc_offset, 0x70FF);
++	WREG32(mmTPC0_CFG_FUNC_MBIST_MEM_8 + tpc_offset, 0x70FF);
++	WREG32(mmTPC0_CFG_FUNC_MBIST_MEM_9 + tpc_offset, 0x70FF);
++
++	WREG32_OR(mmTPC0_CFG_FUNC_MBIST_CNTRL + tpc_offset,
++		1 << TPC0_CFG_FUNC_MBIST_CNTRL_MBIST_START_SHIFT);
++
++	err = hl_poll_timeout(
++		hdev,
++		mmTPC0_CFG_FUNC_MBIST_CNTRL + tpc_offset,
++		val,
++		(val & TPC0_CFG_FUNC_MBIST_CNTRL_MBIST_DONE_MASK),
++		1000,
++		HL_DEVICE_TIMEOUT_USEC);
++
++	if (err)
++		dev_err(hdev->dev,
++			"Timeout while waiting for TPC%d MBIST DONE\n", tpc_id);
++
++	WREG32_OR(mmTPC0_EML_CFG_DBG_CNT + tpc_eml_offset,
++		1 << TPC0_EML_CFG_DBG_CNT_CORE_RST_SHIFT);
++
++	msleep(GOYA_RESET_WAIT_MSEC);
++
++	WREG32_AND(mmTPC0_EML_CFG_DBG_CNT + tpc_eml_offset,
++		~(1 << TPC0_EML_CFG_DBG_CNT_CORE_RST_SHIFT));
++
++	msleep(GOYA_RESET_WAIT_MSEC);
++
++	for (slm_index = 0 ; slm_index < 256 ; slm_index++)
++		WREG32(tpc_slm_offset + (slm_index << 2), 0);
++
++	val = RREG32(tpc_slm_offset);
++}
++
++static void goya_tpc_mbist_workaround(struct hl_device *hdev)
++{
++	struct goya_device *goya = hdev->asic_specific;
++	int i;
++
++	if (hdev->pldm)
++		return;
++
++	if (goya->hw_cap_initialized & HW_CAP_TPC_MBIST)
++		return;
++
++	/* Workaround for H2 #2443 */
++
++	for (i = 0 ; i < TPC_MAX_NUM ; i++)
++		_goya_tpc_mbist_workaround(hdev, i);
++
++	goya->hw_cap_initialized |= HW_CAP_TPC_MBIST;
++}
++
++/*
++ * goya_init_golden_registers - Initialize golden registers
++ *
++ * @hdev: pointer to hl_device structure
++ *
++ * Initialize the H/W registers of the device
++ *
++ */
++static void goya_init_golden_registers(struct hl_device *hdev)
++{
++	struct goya_device *goya = hdev->asic_specific;
++	u32 polynom[10], tpc_intr_mask, offset;
++	int i;
++
++	if (goya->hw_cap_initialized & HW_CAP_GOLDEN)
++		return;
++
++	polynom[0] = 0x00020080;
++	polynom[1] = 0x00401000;
++	polynom[2] = 0x00200800;
++	polynom[3] = 0x00002000;
++	polynom[4] = 0x00080200;
++	polynom[5] = 0x00040100;
++	polynom[6] = 0x00100400;
++	polynom[7] = 0x00004000;
++	polynom[8] = 0x00010000;
++	polynom[9] = 0x00008000;
++
++	/* Mask all arithmetic interrupts from TPC */
++	tpc_intr_mask = 0x7FFF;
++
++	for (i = 0, offset = 0 ; i < 6 ; i++, offset += 0x20000) {
++		WREG32(mmSRAM_Y0_X0_RTR_HBW_RD_RQ_L_ARB + offset, 0x302);
++		WREG32(mmSRAM_Y0_X1_RTR_HBW_RD_RQ_L_ARB + offset, 0x302);
++		WREG32(mmSRAM_Y0_X2_RTR_HBW_RD_RQ_L_ARB + offset, 0x302);
++		WREG32(mmSRAM_Y0_X3_RTR_HBW_RD_RQ_L_ARB + offset, 0x302);
++		WREG32(mmSRAM_Y0_X4_RTR_HBW_RD_RQ_L_ARB + offset, 0x302);
++
++		WREG32(mmSRAM_Y0_X0_RTR_HBW_DATA_L_ARB + offset, 0x204);
++		WREG32(mmSRAM_Y0_X1_RTR_HBW_DATA_L_ARB + offset, 0x204);
++		WREG32(mmSRAM_Y0_X2_RTR_HBW_DATA_L_ARB + offset, 0x204);
++		WREG32(mmSRAM_Y0_X3_RTR_HBW_DATA_L_ARB + offset, 0x204);
++		WREG32(mmSRAM_Y0_X4_RTR_HBW_DATA_L_ARB + offset, 0x204);
++
++
++		WREG32(mmSRAM_Y0_X0_RTR_HBW_DATA_E_ARB + offset, 0x206);
++		WREG32(mmSRAM_Y0_X1_RTR_HBW_DATA_E_ARB + offset, 0x206);
++		WREG32(mmSRAM_Y0_X2_RTR_HBW_DATA_E_ARB + offset, 0x206);
++		WREG32(mmSRAM_Y0_X3_RTR_HBW_DATA_E_ARB + offset, 0x207);
++		WREG32(mmSRAM_Y0_X4_RTR_HBW_DATA_E_ARB + offset, 0x207);
++
++		WREG32(mmSRAM_Y0_X0_RTR_HBW_DATA_W_ARB + offset, 0x207);
++		WREG32(mmSRAM_Y0_X1_RTR_HBW_DATA_W_ARB + offset, 0x207);
++		WREG32(mmSRAM_Y0_X2_RTR_HBW_DATA_W_ARB + offset, 0x206);
++		WREG32(mmSRAM_Y0_X3_RTR_HBW_DATA_W_ARB + offset, 0x206);
++		WREG32(mmSRAM_Y0_X4_RTR_HBW_DATA_W_ARB + offset, 0x206);
++
++		WREG32(mmSRAM_Y0_X0_RTR_HBW_WR_RS_E_ARB + offset, 0x101);
++		WREG32(mmSRAM_Y0_X1_RTR_HBW_WR_RS_E_ARB + offset, 0x102);
++		WREG32(mmSRAM_Y0_X2_RTR_HBW_WR_RS_E_ARB + offset, 0x103);
++		WREG32(mmSRAM_Y0_X3_RTR_HBW_WR_RS_E_ARB + offset, 0x104);
++		WREG32(mmSRAM_Y0_X4_RTR_HBW_WR_RS_E_ARB + offset, 0x105);
++
++		WREG32(mmSRAM_Y0_X0_RTR_HBW_WR_RS_W_ARB + offset, 0x105);
++		WREG32(mmSRAM_Y0_X1_RTR_HBW_WR_RS_W_ARB + offset, 0x104);
++		WREG32(mmSRAM_Y0_X2_RTR_HBW_WR_RS_W_ARB + offset, 0x103);
++		WREG32(mmSRAM_Y0_X3_RTR_HBW_WR_RS_W_ARB + offset, 0x102);
++		WREG32(mmSRAM_Y0_X4_RTR_HBW_WR_RS_W_ARB + offset, 0x101);
++	}
++
++	WREG32(mmMME_STORE_MAX_CREDIT, 0x21);
++	WREG32(mmMME_AGU, 0x0f0f0f10);
++	WREG32(mmMME_SEI_MASK, ~0x0);
++
++	WREG32(mmMME6_RTR_HBW_RD_RQ_N_ARB, 0x01010101);
++	WREG32(mmMME5_RTR_HBW_RD_RQ_N_ARB, 0x01040101);
++	WREG32(mmMME4_RTR_HBW_RD_RQ_N_ARB, 0x01030101);
++	WREG32(mmMME3_RTR_HBW_RD_RQ_N_ARB, 0x01020101);
++	WREG32(mmMME2_RTR_HBW_RD_RQ_N_ARB, 0x01010101);
++	WREG32(mmMME1_RTR_HBW_RD_RQ_N_ARB, 0x07010701);
++	WREG32(mmMME6_RTR_HBW_RD_RQ_S_ARB, 0x04010401);
++	WREG32(mmMME5_RTR_HBW_RD_RQ_S_ARB, 0x04050401);
++	WREG32(mmMME4_RTR_HBW_RD_RQ_S_ARB, 0x03070301);
++	WREG32(mmMME3_RTR_HBW_RD_RQ_S_ARB, 0x01030101);
++	WREG32(mmMME2_RTR_HBW_RD_RQ_S_ARB, 0x01040101);
++	WREG32(mmMME1_RTR_HBW_RD_RQ_S_ARB, 0x01050105);
++	WREG32(mmMME6_RTR_HBW_RD_RQ_W_ARB, 0x01010501);
++	WREG32(mmMME5_RTR_HBW_RD_RQ_W_ARB, 0x01010501);
++	WREG32(mmMME4_RTR_HBW_RD_RQ_W_ARB, 0x01040301);
++	WREG32(mmMME3_RTR_HBW_RD_RQ_W_ARB, 0x01030401);
++	WREG32(mmMME2_RTR_HBW_RD_RQ_W_ARB, 0x01040101);
++	WREG32(mmMME1_RTR_HBW_RD_RQ_W_ARB, 0x01050101);
++	WREG32(mmMME6_RTR_HBW_WR_RQ_N_ARB, 0x02020202);
++	WREG32(mmMME5_RTR_HBW_WR_RQ_N_ARB, 0x01070101);
++	WREG32(mmMME4_RTR_HBW_WR_RQ_N_ARB, 0x02020201);
++	WREG32(mmMME3_RTR_HBW_WR_RQ_N_ARB, 0x07020701);
++	WREG32(mmMME2_RTR_HBW_WR_RQ_N_ARB, 0x01020101);
++	WREG32(mmMME1_RTR_HBW_WR_RQ_S_ARB, 0x01010101);
++	WREG32(mmMME6_RTR_HBW_WR_RQ_S_ARB, 0x01070101);
++	WREG32(mmMME5_RTR_HBW_WR_RQ_S_ARB, 0x01070101);
++	WREG32(mmMME4_RTR_HBW_WR_RQ_S_ARB, 0x07020701);
++	WREG32(mmMME3_RTR_HBW_WR_RQ_S_ARB, 0x02020201);
++	WREG32(mmMME2_RTR_HBW_WR_RQ_S_ARB, 0x01070101);
++	WREG32(mmMME1_RTR_HBW_WR_RQ_S_ARB, 0x01020102);
++	WREG32(mmMME6_RTR_HBW_WR_RQ_W_ARB, 0x01020701);
++	WREG32(mmMME5_RTR_HBW_WR_RQ_W_ARB, 0x01020701);
++	WREG32(mmMME4_RTR_HBW_WR_RQ_W_ARB, 0x07020707);
++	WREG32(mmMME3_RTR_HBW_WR_RQ_W_ARB, 0x01020201);
++	WREG32(mmMME2_RTR_HBW_WR_RQ_W_ARB, 0x01070201);
++	WREG32(mmMME1_RTR_HBW_WR_RQ_W_ARB, 0x01070201);
++	WREG32(mmMME6_RTR_HBW_RD_RS_N_ARB, 0x01070102);
++	WREG32(mmMME5_RTR_HBW_RD_RS_N_ARB, 0x01070102);
++	WREG32(mmMME4_RTR_HBW_RD_RS_N_ARB, 0x01060102);
++	WREG32(mmMME3_RTR_HBW_RD_RS_N_ARB, 0x01040102);
++	WREG32(mmMME2_RTR_HBW_RD_RS_N_ARB, 0x01020102);
++	WREG32(mmMME1_RTR_HBW_RD_RS_N_ARB, 0x01020107);
++	WREG32(mmMME6_RTR_HBW_RD_RS_S_ARB, 0x01020106);
++	WREG32(mmMME5_RTR_HBW_RD_RS_S_ARB, 0x01020102);
++	WREG32(mmMME4_RTR_HBW_RD_RS_S_ARB, 0x01040102);
++	WREG32(mmMME3_RTR_HBW_RD_RS_S_ARB, 0x01060102);
++	WREG32(mmMME2_RTR_HBW_RD_RS_S_ARB, 0x01070102);
++	WREG32(mmMME1_RTR_HBW_RD_RS_S_ARB, 0x01070102);
++	WREG32(mmMME6_RTR_HBW_RD_RS_E_ARB, 0x01020702);
++	WREG32(mmMME5_RTR_HBW_RD_RS_E_ARB, 0x01020702);
++	WREG32(mmMME4_RTR_HBW_RD_RS_E_ARB, 0x01040602);
++	WREG32(mmMME3_RTR_HBW_RD_RS_E_ARB, 0x01060402);
++	WREG32(mmMME2_RTR_HBW_RD_RS_E_ARB, 0x01070202);
++	WREG32(mmMME1_RTR_HBW_RD_RS_E_ARB, 0x01070102);
++	WREG32(mmMME6_RTR_HBW_RD_RS_W_ARB, 0x01060401);
++	WREG32(mmMME5_RTR_HBW_RD_RS_W_ARB, 0x01060401);
++	WREG32(mmMME4_RTR_HBW_RD_RS_W_ARB, 0x01060401);
++	WREG32(mmMME3_RTR_HBW_RD_RS_W_ARB, 0x01060401);
++	WREG32(mmMME2_RTR_HBW_RD_RS_W_ARB, 0x01060401);
++	WREG32(mmMME1_RTR_HBW_RD_RS_W_ARB, 0x01060401);
++	WREG32(mmMME6_RTR_HBW_WR_RS_N_ARB, 0x01050101);
++	WREG32(mmMME5_RTR_HBW_WR_RS_N_ARB, 0x01040101);
++	WREG32(mmMME4_RTR_HBW_WR_RS_N_ARB, 0x01030101);
++	WREG32(mmMME3_RTR_HBW_WR_RS_N_ARB, 0x01020101);
++	WREG32(mmMME2_RTR_HBW_WR_RS_N_ARB, 0x01010101);
++	WREG32(mmMME1_RTR_HBW_WR_RS_N_ARB, 0x01010107);
++	WREG32(mmMME6_RTR_HBW_WR_RS_S_ARB, 0x01010107);
++	WREG32(mmMME5_RTR_HBW_WR_RS_S_ARB, 0x01010101);
++	WREG32(mmMME4_RTR_HBW_WR_RS_S_ARB, 0x01020101);
++	WREG32(mmMME3_RTR_HBW_WR_RS_S_ARB, 0x01030101);
++	WREG32(mmMME2_RTR_HBW_WR_RS_S_ARB, 0x01040101);
++	WREG32(mmMME1_RTR_HBW_WR_RS_S_ARB, 0x01050101);
++	WREG32(mmMME6_RTR_HBW_WR_RS_E_ARB, 0x01010501);
++	WREG32(mmMME5_RTR_HBW_WR_RS_E_ARB, 0x01010501);
++	WREG32(mmMME4_RTR_HBW_WR_RS_E_ARB, 0x01040301);
++	WREG32(mmMME3_RTR_HBW_WR_RS_E_ARB, 0x01030401);
++	WREG32(mmMME2_RTR_HBW_WR_RS_E_ARB, 0x01040101);
++	WREG32(mmMME1_RTR_HBW_WR_RS_E_ARB, 0x01050101);
++	WREG32(mmMME6_RTR_HBW_WR_RS_W_ARB, 0x01010101);
++	WREG32(mmMME5_RTR_HBW_WR_RS_W_ARB, 0x01010101);
++	WREG32(mmMME4_RTR_HBW_WR_RS_W_ARB, 0x01010101);
++	WREG32(mmMME3_RTR_HBW_WR_RS_W_ARB, 0x01010101);
++	WREG32(mmMME2_RTR_HBW_WR_RS_W_ARB, 0x01010101);
++	WREG32(mmMME1_RTR_HBW_WR_RS_W_ARB, 0x01010101);
++
++	WREG32(mmTPC1_RTR_HBW_RD_RQ_N_ARB, 0x01010101);
++	WREG32(mmTPC1_RTR_HBW_RD_RQ_S_ARB, 0x01010101);
++	WREG32(mmTPC1_RTR_HBW_RD_RQ_E_ARB, 0x01060101);
++	WREG32(mmTPC1_RTR_HBW_WR_RQ_N_ARB, 0x02020102);
++	WREG32(mmTPC1_RTR_HBW_WR_RQ_S_ARB, 0x01010101);
++	WREG32(mmTPC1_RTR_HBW_WR_RQ_E_ARB, 0x02070202);
++	WREG32(mmTPC1_RTR_HBW_RD_RS_N_ARB, 0x01020201);
++	WREG32(mmTPC1_RTR_HBW_RD_RS_S_ARB, 0x01070201);
++	WREG32(mmTPC1_RTR_HBW_RD_RS_W_ARB, 0x01070202);
++	WREG32(mmTPC1_RTR_HBW_WR_RS_N_ARB, 0x01010101);
++	WREG32(mmTPC1_RTR_HBW_WR_RS_S_ARB, 0x01050101);
++	WREG32(mmTPC1_RTR_HBW_WR_RS_W_ARB, 0x01050101);
++
++	WREG32(mmTPC2_RTR_HBW_RD_RQ_N_ARB, 0x01020101);
++	WREG32(mmTPC2_RTR_HBW_RD_RQ_S_ARB, 0x01050101);
++	WREG32(mmTPC2_RTR_HBW_RD_RQ_E_ARB, 0x01010201);
++	WREG32(mmTPC2_RTR_HBW_WR_RQ_N_ARB, 0x02040102);
++	WREG32(mmTPC2_RTR_HBW_WR_RQ_S_ARB, 0x01050101);
++	WREG32(mmTPC2_RTR_HBW_WR_RQ_E_ARB, 0x02060202);
++	WREG32(mmTPC2_RTR_HBW_RD_RS_N_ARB, 0x01020201);
++	WREG32(mmTPC2_RTR_HBW_RD_RS_S_ARB, 0x01070201);
++	WREG32(mmTPC2_RTR_HBW_RD_RS_W_ARB, 0x01070202);
++	WREG32(mmTPC2_RTR_HBW_WR_RS_N_ARB, 0x01010101);
++	WREG32(mmTPC2_RTR_HBW_WR_RS_S_ARB, 0x01040101);
++	WREG32(mmTPC2_RTR_HBW_WR_RS_W_ARB, 0x01040101);
++
++	WREG32(mmTPC3_RTR_HBW_RD_RQ_N_ARB, 0x01030101);
++	WREG32(mmTPC3_RTR_HBW_RD_RQ_S_ARB, 0x01040101);
++	WREG32(mmTPC3_RTR_HBW_RD_RQ_E_ARB, 0x01040301);
++	WREG32(mmTPC3_RTR_HBW_WR_RQ_N_ARB, 0x02060102);
++	WREG32(mmTPC3_RTR_HBW_WR_RQ_S_ARB, 0x01040101);
++	WREG32(mmTPC3_RTR_HBW_WR_RQ_E_ARB, 0x01040301);
++	WREG32(mmTPC3_RTR_HBW_RD_RS_N_ARB, 0x01040201);
++	WREG32(mmTPC3_RTR_HBW_RD_RS_S_ARB, 0x01060201);
++	WREG32(mmTPC3_RTR_HBW_RD_RS_W_ARB, 0x01060402);
++	WREG32(mmTPC3_RTR_HBW_WR_RS_N_ARB, 0x01020101);
++	WREG32(mmTPC3_RTR_HBW_WR_RS_S_ARB, 0x01030101);
++	WREG32(mmTPC3_RTR_HBW_WR_RS_W_ARB, 0x01030401);
++
++	WREG32(mmTPC4_RTR_HBW_RD_RQ_N_ARB, 0x01040101);
++	WREG32(mmTPC4_RTR_HBW_RD_RQ_S_ARB, 0x01030101);
++	WREG32(mmTPC4_RTR_HBW_RD_RQ_E_ARB, 0x01030401);
++	WREG32(mmTPC4_RTR_HBW_WR_RQ_N_ARB, 0x02070102);
++	WREG32(mmTPC4_RTR_HBW_WR_RQ_S_ARB, 0x01030101);
++	WREG32(mmTPC4_RTR_HBW_WR_RQ_E_ARB, 0x02060702);
++	WREG32(mmTPC4_RTR_HBW_RD_RS_N_ARB, 0x01060201);
++	WREG32(mmTPC4_RTR_HBW_RD_RS_S_ARB, 0x01040201);
++	WREG32(mmTPC4_RTR_HBW_RD_RS_W_ARB, 0x01040602);
++	WREG32(mmTPC4_RTR_HBW_WR_RS_N_ARB, 0x01030101);
++	WREG32(mmTPC4_RTR_HBW_WR_RS_S_ARB, 0x01020101);
++	WREG32(mmTPC4_RTR_HBW_WR_RS_W_ARB, 0x01040301);
++
++	WREG32(mmTPC5_RTR_HBW_RD_RQ_N_ARB, 0x01050101);
++	WREG32(mmTPC5_RTR_HBW_RD_RQ_S_ARB, 0x01020101);
++	WREG32(mmTPC5_RTR_HBW_RD_RQ_E_ARB, 0x01200501);
++	WREG32(mmTPC5_RTR_HBW_WR_RQ_N_ARB, 0x02070102);
++	WREG32(mmTPC5_RTR_HBW_WR_RQ_S_ARB, 0x01020101);
++	WREG32(mmTPC5_RTR_HBW_WR_RQ_E_ARB, 0x02020602);
++	WREG32(mmTPC5_RTR_HBW_RD_RS_N_ARB, 0x01070201);
++	WREG32(mmTPC5_RTR_HBW_RD_RS_S_ARB, 0x01020201);
++	WREG32(mmTPC5_RTR_HBW_RD_RS_W_ARB, 0x01020702);
++	WREG32(mmTPC5_RTR_HBW_WR_RS_N_ARB, 0x01040101);
++	WREG32(mmTPC5_RTR_HBW_WR_RS_S_ARB, 0x01010101);
++	WREG32(mmTPC5_RTR_HBW_WR_RS_W_ARB, 0x01010501);
++
++	WREG32(mmTPC6_RTR_HBW_RD_RQ_N_ARB, 0x01010101);
++	WREG32(mmTPC6_RTR_HBW_RD_RQ_S_ARB, 0x01010101);
++	WREG32(mmTPC6_RTR_HBW_RD_RQ_E_ARB, 0x01010601);
++	WREG32(mmTPC6_RTR_HBW_WR_RQ_N_ARB, 0x01010101);
++	WREG32(mmTPC6_RTR_HBW_WR_RQ_S_ARB, 0x01010101);
++	WREG32(mmTPC6_RTR_HBW_WR_RQ_E_ARB, 0x02020702);
++	WREG32(mmTPC6_RTR_HBW_RD_RS_N_ARB, 0x01010101);
++	WREG32(mmTPC6_RTR_HBW_RD_RS_S_ARB, 0x01010101);
++	WREG32(mmTPC6_RTR_HBW_RD_RS_W_ARB, 0x01020702);
++	WREG32(mmTPC6_RTR_HBW_WR_RS_N_ARB, 0x01050101);
++	WREG32(mmTPC6_RTR_HBW_WR_RS_S_ARB, 0x01010101);
++	WREG32(mmTPC6_RTR_HBW_WR_RS_W_ARB, 0x01010501);
++
++	for (i = 0, offset = 0 ; i < 10 ; i++, offset += 4) {
++		WREG32(mmMME1_RTR_SPLIT_COEF_0 + offset, polynom[i] >> 7);
++		WREG32(mmMME2_RTR_SPLIT_COEF_0 + offset, polynom[i] >> 7);
++		WREG32(mmMME3_RTR_SPLIT_COEF_0 + offset, polynom[i] >> 7);
++		WREG32(mmMME4_RTR_SPLIT_COEF_0 + offset, polynom[i] >> 7);
++		WREG32(mmMME5_RTR_SPLIT_COEF_0 + offset, polynom[i] >> 7);
++		WREG32(mmMME6_RTR_SPLIT_COEF_0 + offset, polynom[i] >> 7);
++
++		WREG32(mmTPC0_NRTR_SPLIT_COEF_0 + offset, polynom[i] >> 7);
++		WREG32(mmTPC1_RTR_SPLIT_COEF_0 + offset, polynom[i] >> 7);
++		WREG32(mmTPC2_RTR_SPLIT_COEF_0 + offset, polynom[i] >> 7);
++		WREG32(mmTPC3_RTR_SPLIT_COEF_0 + offset, polynom[i] >> 7);
++		WREG32(mmTPC4_RTR_SPLIT_COEF_0 + offset, polynom[i] >> 7);
++		WREG32(mmTPC5_RTR_SPLIT_COEF_0 + offset, polynom[i] >> 7);
++		WREG32(mmTPC6_RTR_SPLIT_COEF_0 + offset, polynom[i] >> 7);
++		WREG32(mmTPC7_NRTR_SPLIT_COEF_0 + offset, polynom[i] >> 7);
++
++		WREG32(mmPCI_NRTR_SPLIT_COEF_0 + offset, polynom[i] >> 7);
++		WREG32(mmDMA_NRTR_SPLIT_COEF_0 + offset, polynom[i] >> 7);
++	}
++
++	for (i = 0, offset = 0 ; i < 6 ; i++, offset += 0x40000) {
++		WREG32(mmMME1_RTR_SCRAMB_EN + offset,
++				1 << MME1_RTR_SCRAMB_EN_VAL_SHIFT);
++		WREG32(mmMME1_RTR_NON_LIN_SCRAMB + offset,
++				1 << MME1_RTR_NON_LIN_SCRAMB_EN_SHIFT);
++	}
++
++	for (i = 0, offset = 0 ; i < 8 ; i++, offset += 0x40000) {
++		/*
++		 * Workaround for Bug H2 #2441 :
++		 * "ST.NOP set trace event illegal opcode"
++		 */
++		WREG32(mmTPC0_CFG_TPC_INTR_MASK + offset, tpc_intr_mask);
++
++		WREG32(mmTPC0_NRTR_SCRAMB_EN + offset,
++				1 << TPC0_NRTR_SCRAMB_EN_VAL_SHIFT);
++		WREG32(mmTPC0_NRTR_NON_LIN_SCRAMB + offset,
++				1 << TPC0_NRTR_NON_LIN_SCRAMB_EN_SHIFT);
++	}
++
++	WREG32(mmDMA_NRTR_SCRAMB_EN, 1 << DMA_NRTR_SCRAMB_EN_VAL_SHIFT);
++	WREG32(mmDMA_NRTR_NON_LIN_SCRAMB,
++			1 << DMA_NRTR_NON_LIN_SCRAMB_EN_SHIFT);
++
++	WREG32(mmPCI_NRTR_SCRAMB_EN, 1 << PCI_NRTR_SCRAMB_EN_VAL_SHIFT);
++	WREG32(mmPCI_NRTR_NON_LIN_SCRAMB,
++			1 << PCI_NRTR_NON_LIN_SCRAMB_EN_SHIFT);
++
++	/*
++	 * Workaround for H2 #HW-23 bug
++	 * Set DMA max outstanding read requests to 240 on DMA CH 1. Set it
++	 * to 16 on KMD DMA
++	 * We need to limit only these DMAs because the user can only read
++	 * from Host using DMA CH 1
++	 */
++	WREG32(mmDMA_CH_0_CFG0, 0x0fff0010);
++	WREG32(mmDMA_CH_1_CFG0, 0x0fff00F0);
++
++	goya->hw_cap_initialized |= HW_CAP_GOLDEN;
++}
++
++
++/*
++ * goya_push_fw_to_device - Push FW code to device
++ *
++ * @hdev: pointer to hl_device structure
++ *
++ * Copy fw code from firmware file to device memory.
++ * Returns 0 on success
++ *
++ */
++static int goya_push_fw_to_device(struct hl_device *hdev, const char *fw_name,
++					void __iomem *dst)
++{
++	const struct firmware *fw;
++	const u64 *fw_data;
++	size_t fw_size, i;
++	int rc;
++
++	rc = request_firmware(&fw, fw_name, hdev->dev);
++
++	if (rc) {
++		dev_err(hdev->dev, "Failed to request %s\n", fw_name);
++		goto out;
++	}
++
++	fw_size = fw->size;
++	if ((fw_size % 4) != 0) {
++		dev_err(hdev->dev, "illegal %s firmware size %zu\n",
++			fw_name, fw_size);
++		rc = -EINVAL;
++		goto out;
++	}
++
++	dev_dbg(hdev->dev, "%s firmware size == %zu\n", fw_name, fw_size);
++
++	fw_data = (const u64 *) fw->data;
++
++	if ((fw->size % 8) != 0)
++		fw_size -= 8;
++
++	for (i = 0 ; i < fw_size ; i += 8, fw_data++, dst += 8) {
++		if (!(i & (0x80000 - 1))) {
++			dev_dbg(hdev->dev,
++				"copied so far %zu out of %zu for %s firmware",
++				i, fw_size, fw_name);
++			usleep_range(20, 100);
++		}
++
++		writeq(*fw_data, dst);
++	}
++
++	if ((fw->size % 8) != 0)
++		writel(*(const u32 *) fw_data, dst);
++
++out:
++	release_firmware(fw);
++	return rc;
++}
++
++static int goya_pldm_init_cpu(struct hl_device *hdev)
++{
++	char fw_name[200];
++	void __iomem *dst;
++	u32 val, unit_rst_val;
++	int rc;
++
++	/* Must initialize SRAM scrambler before pushing u-boot to SRAM */
++	goya_init_golden_registers(hdev);
++
++	/* Put ARM cores into reset */
++	WREG32(mmCPU_CA53_CFG_ARM_RST_CONTROL, CPU_RESET_ASSERT);
++	val = RREG32(mmCPU_CA53_CFG_ARM_RST_CONTROL);
++
++	/* Reset the CA53 MACRO */
++	unit_rst_val = RREG32(mmPSOC_GLOBAL_CONF_UNIT_RST_N);
++	WREG32(mmPSOC_GLOBAL_CONF_UNIT_RST_N, CA53_RESET);
++	val = RREG32(mmPSOC_GLOBAL_CONF_UNIT_RST_N);
++	WREG32(mmPSOC_GLOBAL_CONF_UNIT_RST_N, unit_rst_val);
++	val = RREG32(mmPSOC_GLOBAL_CONF_UNIT_RST_N);
++
++	snprintf(fw_name, sizeof(fw_name), "habanalabs/goya/goya-u-boot.bin");
++	dst = hdev->pcie_bar[SRAM_CFG_BAR_ID] + UBOOT_FW_OFFSET;
++	rc = goya_push_fw_to_device(hdev, fw_name, dst);
++	if (rc)
++		return rc;
++
++	snprintf(fw_name, sizeof(fw_name), "habanalabs/goya/goya-fit.itb");
++	dst = hdev->pcie_bar[DDR_BAR_ID] + LINUX_FW_OFFSET;
++	rc = goya_push_fw_to_device(hdev, fw_name, dst);
++	if (rc)
++		return rc;
++
++	WREG32(mmPSOC_GLOBAL_CONF_UBOOT_MAGIC, KMD_MSG_FIT_RDY);
++	WREG32(mmPSOC_GLOBAL_CONF_WARM_REBOOT, CPU_BOOT_STATUS_NA);
++
++	WREG32(mmCPU_CA53_CFG_RST_ADDR_LSB_0,
++		lower_32_bits(SRAM_BASE_ADDR + UBOOT_FW_OFFSET));
++	WREG32(mmCPU_CA53_CFG_RST_ADDR_MSB_0,
++		upper_32_bits(SRAM_BASE_ADDR + UBOOT_FW_OFFSET));
++
++	/* Release ARM core 0 from reset */
++	WREG32(mmCPU_CA53_CFG_ARM_RST_CONTROL,
++					CPU_RESET_CORE0_DEASSERT);
++	val = RREG32(mmCPU_CA53_CFG_ARM_RST_CONTROL);
++
++	return 0;
++}
++
++/*
++ * FW component passes an offset from SRAM_BASE_ADDR in SCRATCHPAD_xx.
++ * The version string should be located by that offset.
++ */
++static void goya_read_device_fw_version(struct hl_device *hdev,
++					enum goya_fw_component fwc)
++{
++	const char *name;
++	u32 ver_off;
++	char *dest;
++
++	switch (fwc) {
++	case FW_COMP_UBOOT:
++		ver_off = RREG32(mmPSOC_GLOBAL_CONF_SCRATCHPAD_29);
++		dest = hdev->asic_prop.uboot_ver;
++		name = "U-Boot";
++		break;
++	case FW_COMP_PREBOOT:
++		ver_off = RREG32(mmPSOC_GLOBAL_CONF_SCRATCHPAD_28);
++		dest = hdev->asic_prop.preboot_ver;
++		name = "Preboot";
++		break;
++	default:
++		dev_warn(hdev->dev, "Undefined FW component: %d\n", fwc);
 +		return;
 +	}
 +
- 	/* Chicken bit to re-initiate boot sequencer flow */
- 	WREG32(mmPSOC_GLOBAL_CONF_BOOT_SEQ_RE_START,
- 		1 << PSOC_GLOBAL_CONF_BOOT_SEQ_RE_START_IND_SHIFT);
-@@ -3193,6 +3333,57 @@ static void goya_print_irq_info(struct hl_device *hdev, u16 event_type)
- 	}
- }
- 
-+static int goya_unmask_irq_arr(struct hl_device *hdev, u32 *irq_arr,
-+		size_t irq_arr_size)
-+{
-+	struct armcp_unmask_irq_arr_packet *pkt;
-+	size_t total_pkt_size;
-+	long result;
-+	int rc;
++	ver_off &= ~((u32)SRAM_BASE_ADDR);
 +
-+	total_pkt_size = sizeof(struct armcp_unmask_irq_arr_packet) +
-+			irq_arr_size;
-+
-+	/* data should be aligned to 8 bytes in order to ArmCP to copy it */
-+	total_pkt_size = (total_pkt_size + 0x7) & ~0x7;
-+
-+	/* total_pkt_size is casted to u16 later on */
-+	if (total_pkt_size > USHRT_MAX) {
-+		dev_err(hdev->dev, "too many elements in IRQ array\n");
-+		return -EINVAL;
++	if (ver_off < SRAM_SIZE - VERSION_MAX_LEN) {
++		memcpy_fromio(dest, hdev->pcie_bar[SRAM_CFG_BAR_ID] + ver_off,
++							VERSION_MAX_LEN);
++	} else {
++		dev_err(hdev->dev, "%s version offset (0x%x) is above SRAM\n",
++								name, ver_off);
++		strcpy(dest, "unavailable");
 +	}
-+
-+	pkt = kzalloc(total_pkt_size, GFP_KERNEL);
-+	if (!pkt)
-+		return -ENOMEM;
-+
-+	pkt->length = irq_arr_size / sizeof(irq_arr[0]);
-+	memcpy(&pkt->irqs, irq_arr, irq_arr_size);
-+
-+	pkt->armcp_pkt.ctl = ARMCP_PACKET_UNMASK_RAZWI_IRQ_ARRAY <<
-+						ARMCP_PKT_CTL_OPCODE_SHIFT;
-+
-+	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) pkt,
-+			total_pkt_size, HL_DEVICE_TIMEOUT_USEC, &result);
-+
-+	if (rc)
-+		dev_err(hdev->dev, "failed to unmask IRQ array\n");
-+
-+	kfree(pkt);
-+
-+	return rc;
 +}
 +
-+static int goya_soft_reset_late_init(struct hl_device *hdev)
-+{
-+	/*
-+	 * Unmask all IRQs since some could have been received
-+	 * during the soft reset
-+	 */
-+	return goya_unmask_irq_arr(hdev, goya_non_fatal_events,
-+			sizeof(goya_non_fatal_events));
-+}
-+
- static int goya_unmask_irq(struct hl_device *hdev, u16 event_type)
- {
- 	struct armcp_packet pkt;
-@@ -3254,6 +3445,7 @@ void goya_handle_eqe(struct hl_device *hdev, struct hl_eq_entry *eq_entry)
- 		dev_err(hdev->dev,
- 			"Received H/W interrupt %d, reset the chip\n",
- 			event_type);
-+		hl_device_reset(hdev, true, false);
- 		break;
- 
- 	case GOYA_ASYNC_EVENT_ID_PCIE_DEC:
-@@ -3319,6 +3511,30 @@ void *goya_get_events_stat(struct hl_device *hdev, u32 *size)
- 	return goya->events_stat;
- }
- 
-+int goya_send_heartbeat(struct hl_device *hdev)
++static int goya_init_cpu(struct hl_device *hdev, u32 cpu_timeout)
 +{
 +	struct goya_device *goya = hdev->asic_specific;
-+	struct armcp_packet hb_pkt;
-+	long result;
++	char fw_name[200];
++	void __iomem *dst;
++	u32 status;
 +	int rc;
 +
-+	if (!(goya->hw_cap_initialized & HW_CAP_CPU_Q))
++	if (!hdev->cpu_enable)
 +		return 0;
 +
-+	memset(&hb_pkt, 0, sizeof(hb_pkt));
++	if (goya->hw_cap_initialized & HW_CAP_CPU)
++		return 0;
 +
-+	hb_pkt.ctl = ARMCP_PACKET_TEST << ARMCP_PKT_CTL_OPCODE_SHIFT;
-+	hb_pkt.value = ARMCP_PACKET_FENCE_VAL;
++	/*
++	 * Before pushing u-boot/linux to device, need to set the ddr bar to
++	 * base address of dram
++	 */
++	rc = goya_set_ddr_bar_base(hdev, DRAM_PHYS_BASE);
++	if (rc) {
++		dev_err(hdev->dev,
++			"failed to map DDR bar to DRAM base address\n");
++		return rc;
++	}
 +
-+	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &hb_pkt,
-+			sizeof(hb_pkt), HL_DEVICE_TIMEOUT_USEC, &result);
++	if (hdev->pldm) {
++		rc = goya_pldm_init_cpu(hdev);
++		if (rc)
++			return rc;
 +
-+	if ((rc) || (result != ARMCP_PACKET_FENCE_VAL))
-+		rc = -EIO;
++		goto out;
++	}
 +
-+	return rc;
++	/* Make sure CPU boot-loader is running */
++	rc = hl_poll_timeout(
++		hdev,
++		mmPSOC_GLOBAL_CONF_WARM_REBOOT,
++		status,
++		(status == CPU_BOOT_STATUS_DRAM_RDY) ||
++		(status == CPU_BOOT_STATUS_SRAM_AVAIL),
++		10000,
++		cpu_timeout);
++
++	if (rc) {
++		dev_err(hdev->dev, "Error in ARM u-boot!");
++		switch (status) {
++		case CPU_BOOT_STATUS_NA:
++			dev_err(hdev->dev,
++				"ARM status %d - BTL did NOT run\n", status);
++			break;
++		case CPU_BOOT_STATUS_IN_WFE:
++			dev_err(hdev->dev,
++				"ARM status %d - Inside WFE loop\n", status);
++			break;
++		case CPU_BOOT_STATUS_IN_BTL:
++			dev_err(hdev->dev,
++				"ARM status %d - Stuck in BTL\n", status);
++			break;
++		case CPU_BOOT_STATUS_IN_PREBOOT:
++			dev_err(hdev->dev,
++				"ARM status %d - Stuck in Preboot\n", status);
++			break;
++		case CPU_BOOT_STATUS_IN_SPL:
++			dev_err(hdev->dev,
++				"ARM status %d - Stuck in SPL\n", status);
++			break;
++		case CPU_BOOT_STATUS_IN_UBOOT:
++			dev_err(hdev->dev,
++				"ARM status %d - Stuck in u-boot\n", status);
++			break;
++		case CPU_BOOT_STATUS_DRAM_INIT_FAIL:
++			dev_err(hdev->dev,
++				"ARM status %d - DDR initialization failed\n",
++				status);
++			break;
++		default:
++			dev_err(hdev->dev,
++				"ARM status %d - Invalid status code\n",
++				status);
++			break;
++		}
++		return -EIO;
++	}
++
++	/* Read U-Boot version now in case we will later fail */
++	goya_read_device_fw_version(hdev, FW_COMP_UBOOT);
++	goya_read_device_fw_version(hdev, FW_COMP_PREBOOT);
++
++	if (status == CPU_BOOT_STATUS_SRAM_AVAIL)
++		goto out;
++
++	if (!hdev->fw_loading) {
++		dev_info(hdev->dev, "Skip loading FW\n");
++		goto out;
++	}
++
++	snprintf(fw_name, sizeof(fw_name), "habanalabs/goya/goya-fit.itb");
++	dst = hdev->pcie_bar[DDR_BAR_ID] + LINUX_FW_OFFSET;
++	rc = goya_push_fw_to_device(hdev, fw_name, dst);
++	if (rc)
++		return rc;
++
++	WREG32(mmPSOC_GLOBAL_CONF_UBOOT_MAGIC, KMD_MSG_FIT_RDY);
++
++	rc = hl_poll_timeout(
++		hdev,
++		mmPSOC_GLOBAL_CONF_WARM_REBOOT,
++		status,
++		(status == CPU_BOOT_STATUS_SRAM_AVAIL),
++		10000,
++		cpu_timeout);
++
++	if (rc) {
++		if (status == CPU_BOOT_STATUS_FIT_CORRUPTED)
++			dev_err(hdev->dev,
++				"ARM u-boot reports FIT image is corrupted\n");
++		else
++			dev_err(hdev->dev,
++				"ARM Linux failed to load, %d\n", status);
++		WREG32(mmPSOC_GLOBAL_CONF_UBOOT_MAGIC, KMD_MSG_NA);
++		return -EIO;
++	}
++
++	dev_info(hdev->dev, "Successfully loaded firmware to device\n");
++
++out:
++	goya->hw_cap_initialized |= HW_CAP_CPU;
++
++	return 0;
 +}
 +
- static int goya_armcp_info_get(struct hl_device *hdev)
- {
- 	struct goya_device *goya = hdev->asic_specific;
-@@ -3464,6 +3680,11 @@ int goya_get_eeprom_data(struct hl_device *hdev, void *data, size_t max_size)
- 	return rc;
- }
- 
-+static enum hl_device_hw_state goya_get_hw_state(struct hl_device *hdev)
++/*
++ * goya_hw_init - Goya hardware initialization code
++ *
++ * @hdev: pointer to hl_device structure
++ *
++ * Returns 0 on success
++ *
++ */
++static int goya_hw_init(struct hl_device *hdev)
 +{
-+	return RREG32(mmPSOC_GLOBAL_CONF_APP_STATUS);
++	struct asic_fixed_properties *prop = &hdev->asic_prop;
++	u32 val;
++	int rc;
++
++	dev_info(hdev->dev, "Starting initialization of H/W\n");
++
++	/* Perform read from the device to make sure device is up */
++	val = RREG32(mmPCIE_DBI_DEVICE_ID_VENDOR_ID_REG);
++
++	rc = goya_init_cpu(hdev, GOYA_CPU_TIMEOUT_USEC);
++	if (rc) {
++		dev_err(hdev->dev, "failed to initialize CPU\n");
++		return rc;
++	}
++
++	goya_tpc_mbist_workaround(hdev);
++
++	goya_init_golden_registers(hdev);
++
++	/*
++	 * After CPU initialization is finished, change DDR bar mapping inside
++	 * iATU to point to the start address of the MMU page tables
++	 */
++	rc = goya_set_ddr_bar_base(hdev, DRAM_PHYS_BASE +
++		(MMU_PAGE_TABLES_ADDR & ~(prop->dram_pci_bar_size - 0x1ull)));
++	if (rc) {
++		dev_err(hdev->dev,
++			"failed to map DDR bar to MMU page tables\n");
++		return rc;
++	}
++
++	goya_init_security(hdev);
++
++	/* CPU initialization is finished, we can now move to 48 bit DMA mask */
++	rc = pci_set_dma_mask(hdev->pdev, DMA_BIT_MASK(48));
++	if (rc) {
++		dev_warn(hdev->dev, "Unable to set pci dma mask to 48 bits\n");
++		rc = pci_set_dma_mask(hdev->pdev, DMA_BIT_MASK(32));
++		if (rc) {
++			dev_err(hdev->dev,
++				"Unable to set pci dma mask to 32 bits\n");
++			return rc;
++		}
++	}
++
++	rc = pci_set_consistent_dma_mask(hdev->pdev, DMA_BIT_MASK(48));
++	if (rc) {
++		dev_warn(hdev->dev,
++			"Unable to set pci consistent dma mask to 48 bits\n");
++		rc = pci_set_consistent_dma_mask(hdev->pdev, DMA_BIT_MASK(32));
++		if (rc) {
++			dev_err(hdev->dev,
++				"Unable to set pci consistent dma mask to 32 bits\n");
++			return rc;
++		}
++	}
++
++	/* Perform read from the device to flush all MSI-X configuration */
++	val = RREG32(mmPCIE_DBI_DEVICE_ID_VENDOR_ID_REG);
++
++	return 0;
 +}
 +
- static const struct hl_asic_funcs goya_funcs = {
- 	.early_init = goya_early_init,
++/*
++ * goya_hw_fini - Goya hardware tear-down code
++ *
++ * @hdev: pointer to hl_device structure
++ * @hard_reset: should we do hard reset to all engines or just reset the
++ *              compute/dma engines
++ */
++static void goya_hw_fini(struct hl_device *hdev, bool hard_reset)
++{
++	struct goya_device *goya = hdev->asic_specific;
++	u32 reset_timeout_ms, status;
++
++	if (hdev->pldm)
++		reset_timeout_ms = GOYA_PLDM_RESET_TIMEOUT_MSEC;
++	else
++		reset_timeout_ms = GOYA_RESET_TIMEOUT_MSEC;
++
++	if (hard_reset) {
++		goya_set_ddr_bar_base(hdev, DRAM_PHYS_BASE);
++		goya_disable_clk_rlx(hdev);
++		goya_set_pll_refclk(hdev);
++
++		WREG32(mmPSOC_GLOBAL_CONF_SW_ALL_RST_CFG, RESET_ALL);
++		dev_info(hdev->dev,
++			"Issued HARD reset command, going to wait %dms\n",
++			reset_timeout_ms);
++	} else {
++		WREG32(mmPSOC_GLOBAL_CONF_SW_ALL_RST_CFG, DMA_MME_TPC_RESET);
++		dev_info(hdev->dev,
++			"Issued SOFT reset command, going to wait %dms\n",
++			reset_timeout_ms);
++	}
++
++	/*
++	 * After hard reset, we can't poll the BTM_FSM register because the PSOC
++	 * itself is in reset. In either reset we need to wait until the reset
++	 * is deasserted
++	 */
++	msleep(reset_timeout_ms);
++
++	status = RREG32(mmPSOC_GLOBAL_CONF_BTM_FSM);
++	if (status & PSOC_GLOBAL_CONF_BTM_FSM_STATE_MASK)
++		dev_err(hdev->dev,
++			"Timeout while waiting for device to reset 0x%x\n",
++			status);
++
++	/* Chicken bit to re-initiate boot sequencer flow */
++	WREG32(mmPSOC_GLOBAL_CONF_BOOT_SEQ_RE_START,
++		1 << PSOC_GLOBAL_CONF_BOOT_SEQ_RE_START_IND_SHIFT);
++	/* Move boot manager FSM to pre boot sequencer init state */
++	WREG32(mmPSOC_GLOBAL_CONF_SW_BTM_FSM,
++			0xA << PSOC_GLOBAL_CONF_SW_BTM_FSM_CTRL_SHIFT);
++
++	goya->hw_cap_initialized &= ~(HW_CAP_CPU | HW_CAP_CPU_Q |
++					HW_CAP_DDR_0 | HW_CAP_DDR_1 |
++					HW_CAP_DMA | HW_CAP_MME |
++					HW_CAP_MMU | HW_CAP_TPC_MBIST |
++					HW_CAP_GOLDEN | HW_CAP_TPC);
++
++	if (!hdev->pldm) {
++		int rc;
++		/* In case we are running inside VM and the VM is
++		 * shutting down, we need to make sure CPU boot-loader
++		 * is running before we can continue the VM shutdown.
++		 * That is because the VM will send an FLR signal that
++		 * we must answer
++		 */
++		dev_info(hdev->dev,
++			"Going to wait up to %ds for CPU boot loader\n",
++			GOYA_CPU_TIMEOUT_USEC / 1000 / 1000);
++
++		rc = hl_poll_timeout(
++			hdev,
++			mmPSOC_GLOBAL_CONF_WARM_REBOOT,
++			status,
++			(status == CPU_BOOT_STATUS_DRAM_RDY),
++			10000,
++			GOYA_CPU_TIMEOUT_USEC);
++		if (rc)
++			dev_err(hdev->dev,
++				"failed to wait for CPU boot loader\n");
++	}
++}
++
+ int goya_suspend(struct hl_device *hdev)
+ {
+ 	return 0;
+@@ -650,6 +1516,8 @@ static const struct hl_asic_funcs goya_funcs = {
  	.early_fini = goya_early_fini,
-@@ -3493,12 +3714,15 @@ static const struct hl_asic_funcs goya_funcs = {
- 	.handle_eqe = goya_handle_eqe,
- 	.set_pll_profile = goya_set_pll_profile,
- 	.get_events_stat = goya_get_events_stat,
-+	.send_heartbeat = goya_send_heartbeat,
- 	.enable_clock_gating = goya_init_clock_gating,
- 	.disable_clock_gating = goya_disable_clock_gating,
-+	.soft_reset_late_init = goya_soft_reset_late_init,
- 	.hw_queues_lock = goya_hw_queues_lock,
- 	.hw_queues_unlock = goya_hw_queues_unlock,
- 	.get_eeprom_data = goya_get_eeprom_data,
--	.send_cpu_message = goya_send_cpu_message
-+	.send_cpu_message = goya_send_cpu_message,
-+	.get_hw_state = goya_get_hw_state
+ 	.sw_init = goya_sw_init,
+ 	.sw_fini = goya_sw_fini,
++	.hw_init = goya_hw_init,
++	.hw_fini = goya_hw_fini,
+ 	.suspend = goya_suspend,
+ 	.resume = goya_resume,
+ 	.mmap = goya_mmap,
+diff --git a/drivers/misc/habanalabs/goya/goyaP.h b/drivers/misc/habanalabs/goya/goyaP.h
+index e43b911f8428..583fdd92e98a 100644
+--- a/drivers/misc/habanalabs/goya/goyaP.h
++++ b/drivers/misc/habanalabs/goya/goyaP.h
+@@ -10,7 +10,9 @@
+ 
+ #include <uapi/misc/habanalabs.h>
+ #include "habanalabs.h"
++#include "include/hl_boot_if.h"
+ #include "include/goya/goya.h"
++#include "include/goya/goya_fw_if.h"
+ 
+ #define NUMBER_OF_CMPLT_QUEUES		5
+ #define NUMBER_OF_EXT_HW_QUEUES		5
+@@ -149,4 +151,6 @@ struct goya_device {
+ 	u32		hw_cap_initialized;
  };
  
- /*
-diff --git a/drivers/misc/habanalabs/goya/goya_hwmgr.c b/drivers/misc/habanalabs/goya/goya_hwmgr.c
-index b524799c62b7..c885b7f9feb3 100644
---- a/drivers/misc/habanalabs/goya/goya_hwmgr.c
-+++ b/drivers/misc/habanalabs/goya/goya_hwmgr.c
-@@ -38,7 +38,7 @@ static ssize_t mme_clk_show(struct device *dev, struct device_attribute *attr,
- 	struct hl_device *hdev = dev_get_drvdata(dev);
- 	long value;
- 
--	if (hdev->disabled)
-+	if (hl_device_disabled_or_in_reset(hdev))
- 		return -ENODEV;
- 
- 	value = hl_get_frequency(hdev, MME_PLL, false);
-@@ -57,7 +57,7 @@ static ssize_t mme_clk_store(struct device *dev, struct device_attribute *attr,
- 	int rc;
- 	long value;
- 
--	if (hdev->disabled) {
-+	if (hl_device_disabled_or_in_reset(hdev)) {
- 		count = -ENODEV;
- 		goto fail;
- 	}
-@@ -87,7 +87,7 @@ static ssize_t tpc_clk_show(struct device *dev, struct device_attribute *attr,
- 	struct hl_device *hdev = dev_get_drvdata(dev);
- 	long value;
- 
--	if (hdev->disabled)
-+	if (hl_device_disabled_or_in_reset(hdev))
- 		return -ENODEV;
- 
- 	value = hl_get_frequency(hdev, TPC_PLL, false);
-@@ -106,7 +106,7 @@ static ssize_t tpc_clk_store(struct device *dev, struct device_attribute *attr,
- 	int rc;
- 	long value;
- 
--	if (hdev->disabled) {
-+	if (hl_device_disabled_or_in_reset(hdev)) {
- 		count = -ENODEV;
- 		goto fail;
- 	}
-@@ -136,7 +136,7 @@ static ssize_t ic_clk_show(struct device *dev, struct device_attribute *attr,
- 	struct hl_device *hdev = dev_get_drvdata(dev);
- 	long value;
- 
--	if (hdev->disabled)
-+	if (hl_device_disabled_or_in_reset(hdev))
- 		return -ENODEV;
- 
- 	value = hl_get_frequency(hdev, IC_PLL, false);
-@@ -155,7 +155,7 @@ static ssize_t ic_clk_store(struct device *dev, struct device_attribute *attr,
- 	int rc;
- 	long value;
- 
--	if (hdev->disabled) {
-+	if (hl_device_disabled_or_in_reset(hdev)) {
- 		count = -ENODEV;
- 		goto fail;
- 	}
-@@ -185,7 +185,7 @@ static ssize_t mme_clk_curr_show(struct device *dev,
- 	struct hl_device *hdev = dev_get_drvdata(dev);
- 	long value;
- 
--	if (hdev->disabled)
-+	if (hl_device_disabled_or_in_reset(hdev))
- 		return -ENODEV;
- 
- 	value = hl_get_frequency(hdev, MME_PLL, true);
-@@ -202,7 +202,7 @@ static ssize_t tpc_clk_curr_show(struct device *dev,
- 	struct hl_device *hdev = dev_get_drvdata(dev);
- 	long value;
- 
--	if (hdev->disabled)
-+	if (hl_device_disabled_or_in_reset(hdev))
- 		return -ENODEV;
- 
- 	value = hl_get_frequency(hdev, TPC_PLL, true);
-@@ -219,7 +219,7 @@ static ssize_t ic_clk_curr_show(struct device *dev,
- 	struct hl_device *hdev = dev_get_drvdata(dev);
- 	long value;
- 
--	if (hdev->disabled)
-+	if (hl_device_disabled_or_in_reset(hdev))
- 		return -ENODEV;
- 
- 	value = hl_get_frequency(hdev, IC_PLL, true);
++void goya_init_security(struct hl_device *hdev);
++
+ #endif /* GOYAP_H_ */
+diff --git a/drivers/misc/habanalabs/goya/goya_security.c b/drivers/misc/habanalabs/goya/goya_security.c
+new file mode 100644
+index 000000000000..7315bbc02569
+--- /dev/null
++++ b/drivers/misc/habanalabs/goya/goya_security.c
+@@ -0,0 +1,2999 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Copyright 2016-2018 HabanaLabs, Ltd.
++ * All Rights Reserved.
++ */
++
++#include "goyaP.h"
++
++/*
++ * goya_set_block_as_protected - set the given block as protected
++ *
++ * @hdev: pointer to hl_device structure
++ * @block: block base address
++ *
++ */
++static void goya_pb_set_block(struct hl_device *hdev, u64 base)
++{
++	u32 pb_addr = base - CFG_BASE + PROT_BITS_OFFS;
++
++	while (pb_addr & 0xFFF) {
++		WREG32(pb_addr, 0);
++		pb_addr += 4;
++	}
++}
++
++static void goya_init_mme_protection_bits(struct hl_device *hdev)
++{
++	u32 pb_addr, mask;
++	u8 word_offset;
++
++	/* TODO: change to real reg name when Soc Online is updated */
++	u64 mmMME_SBB_POWER_ECO1 = 0xDFF60,
++		mmMME_SBB_POWER_ECO2 = 0xDFF64;
++
++	goya_pb_set_block(hdev, mmACC_MS_ECC_MEM_0_BASE);
++	goya_pb_set_block(hdev, mmACC_MS_ECC_MEM_1_BASE);
++	goya_pb_set_block(hdev, mmACC_MS_ECC_MEM_2_BASE);
++	goya_pb_set_block(hdev, mmACC_MS_ECC_MEM_3_BASE);
++
++	goya_pb_set_block(hdev, mmSBA_ECC_MEM_BASE);
++	goya_pb_set_block(hdev, mmSBB_ECC_MEM_BASE);
++
++	goya_pb_set_block(hdev, mmMME1_RTR_BASE);
++	goya_pb_set_block(hdev, mmMME1_RD_REGULATOR_BASE);
++	goya_pb_set_block(hdev, mmMME1_WR_REGULATOR_BASE);
++	goya_pb_set_block(hdev, mmMME2_RTR_BASE);
++	goya_pb_set_block(hdev, mmMME2_RD_REGULATOR_BASE);
++	goya_pb_set_block(hdev, mmMME2_WR_REGULATOR_BASE);
++	goya_pb_set_block(hdev, mmMME3_RTR_BASE);
++	goya_pb_set_block(hdev, mmMME3_RD_REGULATOR_BASE);
++	goya_pb_set_block(hdev, mmMME3_WR_REGULATOR_BASE);
++
++	goya_pb_set_block(hdev, mmMME4_RTR_BASE);
++	goya_pb_set_block(hdev, mmMME4_RD_REGULATOR_BASE);
++	goya_pb_set_block(hdev, mmMME4_WR_REGULATOR_BASE);
++
++	goya_pb_set_block(hdev, mmMME5_RTR_BASE);
++	goya_pb_set_block(hdev, mmMME5_RD_REGULATOR_BASE);
++	goya_pb_set_block(hdev, mmMME5_WR_REGULATOR_BASE);
++
++	goya_pb_set_block(hdev, mmMME6_RTR_BASE);
++	goya_pb_set_block(hdev, mmMME6_RD_REGULATOR_BASE);
++	goya_pb_set_block(hdev, mmMME6_WR_REGULATOR_BASE);
++
++	pb_addr = (mmMME_DUMMY & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmMME_DUMMY & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmMME_DUMMY & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_RESET & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_STALL & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_SM_BASE_ADDRESS_LOW & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_SM_BASE_ADDRESS_HIGH & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_DBGMEM_ADD & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_DBGMEM_DATA_WR & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_DBGMEM_DATA_RD & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_DBGMEM_CTRL & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_DBGMEM_RC & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_LOG_SHADOW & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmMME_STORE_MAX_CREDIT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmMME_STORE_MAX_CREDIT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmMME_STORE_MAX_CREDIT & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_AGU & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_SBA & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_SBB & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_SBC & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_WBC & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_SBA_CONTROL_DATA & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_SBB_CONTROL_DATA & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_SBC_CONTROL_DATA & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_WBC_CONTROL_DATA & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_TE & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_TE2DEC & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_REI_STATUS & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_REI_MASK & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_SEI_STATUS & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_SEI_MASK & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_SPI_STATUS & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_SPI_MASK & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmMME_QM_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmMME_QM_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmMME_QM_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_GLBL_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_PQ_BASE_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_PQ_BASE_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_PQ_SIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_PQ_PI & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_PQ_CI & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_PQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_PQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_PQ_ARUSER & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmMME_QM_PQ_PUSH0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmMME_QM_PQ_PUSH0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmMME_QM_PQ_PUSH0 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_PQ_PUSH1 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_PQ_PUSH2 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_PQ_PUSH3 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_PQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_PQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_PQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_PQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_PQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_PQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CQ_PTR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CQ_PTR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CQ_TSIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CQ_CTL & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmMME_QM_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmMME_QM_CQ_IFIFO_CNT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmMME_QM_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmMME_QM_CP_STS & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmMME_QM_CP_STS & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmMME_QM_CP_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CP_CURRENT_INST_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CP_CURRENT_INST_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CP_BARRIER_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CP_DBG_0 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_PQ_BUF_ADDR & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_PQ_BUF_RDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CQ_BUF_ADDR & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_QM_CQ_BUF_RDATA & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmMME_CMDQ_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmMME_CMDQ_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmMME_CMDQ_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_GLBL_STS1 & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmMME_CMDQ_CQ_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmMME_CMDQ_CQ_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmMME_CMDQ_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmMME_CMDQ_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmMME_CMDQ_CQ_IFIFO_CNT &
++			PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmMME_CMDQ_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CP_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CP_CURRENT_INST_LO & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmMME_CMDQ_CP_CURRENT_INST_HI & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmMME_CMDQ_CP_CURRENT_INST_HI & PROT_BITS_OFFS) >> 7)
++			<< 2;
++	mask = 1 << ((mmMME_CMDQ_CP_CURRENT_INST_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CP_BARRIER_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CP_DBG_0 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CQ_BUF_ADDR & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_CMDQ_CQ_BUF_RDATA & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmMME_SBB_POWER_ECO1 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmMME_SBB_POWER_ECO1 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmMME_SBB_POWER_ECO1 & 0x7F) >> 2);
++	mask |= 1 << ((mmMME_SBB_POWER_ECO2 & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++}
++
++static void goya_init_dma_protection_bits(struct hl_device *hdev)
++{
++	u32 pb_addr, mask;
++	u8 word_offset;
++
++	goya_pb_set_block(hdev, mmDMA_NRTR_BASE);
++	goya_pb_set_block(hdev, mmDMA_RD_REGULATOR_BASE);
++	goya_pb_set_block(hdev, mmDMA_WR_REGULATOR_BASE);
++
++	pb_addr = (mmDMA_QM_0_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmDMA_QM_0_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmDMA_QM_0_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_GLBL_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_PQ_BASE_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_PQ_BASE_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_PQ_SIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_PQ_PI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_PQ_CI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_PQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_PQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_PQ_ARUSER & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmDMA_QM_0_PQ_PUSH0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmDMA_QM_0_PQ_PUSH0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmDMA_QM_0_PQ_PUSH0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_PQ_PUSH1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_PQ_PUSH2 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_PQ_PUSH3 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_PQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_PQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_PQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_PQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_PQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_PQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CQ_PTR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CQ_PTR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CQ_TSIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CQ_CTL & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmDMA_QM_0_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmDMA_QM_0_CQ_IFIFO_CNT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmDMA_QM_0_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_0_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	goya_pb_set_block(hdev, mmDMA_CH_0_BASE);
++
++	pb_addr = (mmDMA_QM_1_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmDMA_QM_1_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmDMA_QM_1_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_GLBL_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_PQ_BASE_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_PQ_BASE_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_PQ_SIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_PQ_PI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_PQ_CI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_PQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_PQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_PQ_ARUSER & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmDMA_QM_1_PQ_PUSH0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmDMA_QM_1_PQ_PUSH0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmDMA_QM_1_PQ_PUSH0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_PQ_PUSH1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_PQ_PUSH2 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_PQ_PUSH3 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_PQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_PQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_PQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_PQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_PQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_PQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CQ_PTR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CQ_PTR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CQ_TSIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CQ_CTL & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmDMA_QM_1_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmDMA_QM_1_CQ_IFIFO_CNT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmDMA_QM_1_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_1_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	goya_pb_set_block(hdev, mmDMA_CH_1_BASE);
++
++	pb_addr = (mmDMA_QM_2_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmDMA_QM_2_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmDMA_QM_2_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_GLBL_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_PQ_BASE_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_PQ_BASE_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_PQ_SIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_PQ_PI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_PQ_CI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_PQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_PQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_PQ_ARUSER & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmDMA_QM_2_PQ_PUSH0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmDMA_QM_2_PQ_PUSH0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmDMA_QM_2_PQ_PUSH0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_PQ_PUSH1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_PQ_PUSH2 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_PQ_PUSH3 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_PQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_PQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_PQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_PQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_PQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_PQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CQ_PTR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CQ_PTR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CQ_TSIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CQ_CTL & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmDMA_QM_2_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmDMA_QM_2_CQ_IFIFO_CNT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmDMA_QM_2_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_2_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	goya_pb_set_block(hdev, mmDMA_CH_2_BASE);
++
++	pb_addr = (mmDMA_QM_3_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmDMA_QM_3_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmDMA_QM_3_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_GLBL_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_PQ_BASE_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_PQ_BASE_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_PQ_SIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_PQ_PI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_PQ_CI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_PQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_PQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_PQ_ARUSER & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmDMA_QM_3_PQ_PUSH0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmDMA_QM_3_PQ_PUSH0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmDMA_QM_3_PQ_PUSH0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_PQ_PUSH1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_PQ_PUSH2 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_PQ_PUSH3 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_PQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_PQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_PQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_PQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_PQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_PQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CQ_PTR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CQ_PTR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CQ_TSIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CQ_CTL & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmDMA_QM_3_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmDMA_QM_3_CQ_IFIFO_CNT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmDMA_QM_3_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_3_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	goya_pb_set_block(hdev, mmDMA_CH_3_BASE);
++
++	pb_addr = (mmDMA_QM_4_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmDMA_QM_4_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmDMA_QM_4_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_GLBL_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_PQ_BASE_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_PQ_BASE_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_PQ_SIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_PQ_PI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_PQ_CI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_PQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_PQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_PQ_ARUSER & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmDMA_QM_4_PQ_PUSH0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmDMA_QM_4_PQ_PUSH0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmDMA_QM_4_PQ_PUSH0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_PQ_PUSH1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_PQ_PUSH2 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_PQ_PUSH3 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_PQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_PQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_PQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_PQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_PQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_PQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CQ_PTR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CQ_PTR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CQ_TSIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CQ_CTL & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmDMA_QM_4_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmDMA_QM_4_CQ_IFIFO_CNT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmDMA_QM_4_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmDMA_QM_4_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	goya_pb_set_block(hdev, mmDMA_CH_4_BASE);
++}
++
++static void goya_init_tpc_protection_bits(struct hl_device *hdev)
++{
++	u32 pb_addr, mask;
++	u8 word_offset;
++
++	goya_pb_set_block(hdev, mmTPC0_RD_REGULATOR_BASE);
++	goya_pb_set_block(hdev, mmTPC0_WR_REGULATOR_BASE);
++
++	pb_addr = (mmTPC0_CFG_CFG_BASE_ADDRESS_HIGH & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC0_CFG_CFG_BASE_ADDRESS_HIGH &
++			PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC0_CFG_CFG_BASE_ADDRESS_HIGH & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CFG_CFG_SUBTRACT_VALUE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CFG_SM_BASE_ADDRESS_LOW & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CFG_SM_BASE_ADDRESS_HIGH & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC0_CFG_ARUSER & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC0_CFG_ARUSER & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC0_CFG_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CFG_AWUSER & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC0_CFG_FUNC_MBIST_CNTRL & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC0_CFG_FUNC_MBIST_CNTRL &
++			PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC0_CFG_FUNC_MBIST_CNTRL & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CFG_FUNC_MBIST_PAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CFG_FUNC_MBIST_MEM_0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CFG_FUNC_MBIST_MEM_1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CFG_FUNC_MBIST_MEM_2 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CFG_FUNC_MBIST_MEM_3 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CFG_FUNC_MBIST_MEM_4 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CFG_FUNC_MBIST_MEM_5 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CFG_FUNC_MBIST_MEM_6 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CFG_FUNC_MBIST_MEM_7 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CFG_FUNC_MBIST_MEM_8 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CFG_FUNC_MBIST_MEM_9 & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC0_QM_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC0_QM_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC0_QM_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_GLBL_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_PQ_BASE_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_PQ_BASE_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_PQ_SIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_PQ_PI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_PQ_CI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_PQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_PQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_PQ_ARUSER & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC0_QM_PQ_PUSH0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC0_QM_PQ_PUSH0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC0_QM_PQ_PUSH0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_PQ_PUSH1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_PQ_PUSH2 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_PQ_PUSH3 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_PQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_PQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_PQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_PQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_PQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_PQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CQ_PTR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CQ_PTR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CQ_TSIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CQ_CTL & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC0_QM_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC0_QM_CQ_IFIFO_CNT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC0_QM_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_QM_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC0_CMDQ_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC0_CMDQ_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC0_CMDQ_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_GLBL_STS1 & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC0_CMDQ_CQ_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC0_CMDQ_CQ_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC0_CMDQ_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC0_CMDQ_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC0_CMDQ_CQ_IFIFO_CNT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC0_CMDQ_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CP_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CP_CURRENT_INST_LO & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC0_CMDQ_CP_CURRENT_INST_HI & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC0_CMDQ_CP_CURRENT_INST_HI & PROT_BITS_OFFS) >> 7)
++			<< 2;
++	mask = 1 << ((mmTPC0_CMDQ_CP_CURRENT_INST_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CP_BARRIER_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CP_DBG_0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CQ_BUF_ADDR & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC0_CMDQ_CQ_BUF_RDATA & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	goya_pb_set_block(hdev, mmTPC1_RTR_BASE);
++	goya_pb_set_block(hdev, mmTPC1_RD_REGULATOR_BASE);
++	goya_pb_set_block(hdev, mmTPC1_WR_REGULATOR_BASE);
++
++	pb_addr = (mmTPC1_CFG_CFG_BASE_ADDRESS_HIGH & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC1_CFG_CFG_BASE_ADDRESS_HIGH &
++			PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC1_CFG_CFG_BASE_ADDRESS_HIGH & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CFG_CFG_SUBTRACT_VALUE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CFG_SM_BASE_ADDRESS_LOW & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CFG_SM_BASE_ADDRESS_HIGH & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC1_CFG_ARUSER & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC1_CFG_ARUSER & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC1_CFG_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CFG_AWUSER & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC1_CFG_FUNC_MBIST_CNTRL & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC1_CFG_FUNC_MBIST_CNTRL & PROT_BITS_OFFS) >> 7)
++			<< 2;
++	mask = 1 << ((mmTPC1_CFG_FUNC_MBIST_CNTRL & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CFG_FUNC_MBIST_PAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CFG_FUNC_MBIST_MEM_0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CFG_FUNC_MBIST_MEM_1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CFG_FUNC_MBIST_MEM_2 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CFG_FUNC_MBIST_MEM_3 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CFG_FUNC_MBIST_MEM_4 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CFG_FUNC_MBIST_MEM_5 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CFG_FUNC_MBIST_MEM_6 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CFG_FUNC_MBIST_MEM_7 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CFG_FUNC_MBIST_MEM_8 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CFG_FUNC_MBIST_MEM_9 & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC1_QM_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC1_QM_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC1_QM_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_GLBL_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_PQ_BASE_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_PQ_BASE_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_PQ_SIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_PQ_PI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_PQ_CI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_PQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_PQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_PQ_ARUSER & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC1_QM_PQ_PUSH0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC1_QM_PQ_PUSH0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC1_QM_PQ_PUSH0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_PQ_PUSH1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_PQ_PUSH2 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_PQ_PUSH3 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_PQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_PQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_PQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_PQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_PQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_PQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CQ_PTR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CQ_PTR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CQ_TSIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CQ_CTL & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC1_QM_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC1_QM_CQ_IFIFO_CNT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC1_QM_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_QM_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC1_CMDQ_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC1_CMDQ_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC1_CMDQ_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_GLBL_STS1 & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC1_CMDQ_CQ_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC1_CMDQ_CQ_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC1_CMDQ_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC1_CMDQ_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC1_CMDQ_CQ_IFIFO_CNT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC1_CMDQ_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CP_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CP_CURRENT_INST_LO & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC1_CMDQ_CP_CURRENT_INST_HI & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC1_CMDQ_CP_CURRENT_INST_HI & PROT_BITS_OFFS) >> 7)
++			<< 2;
++	mask = 1 << ((mmTPC1_CMDQ_CP_CURRENT_INST_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CP_BARRIER_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CP_DBG_0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CQ_BUF_ADDR & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC1_CMDQ_CQ_BUF_RDATA & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	goya_pb_set_block(hdev, mmTPC2_RTR_BASE);
++	goya_pb_set_block(hdev, mmTPC2_RD_REGULATOR_BASE);
++	goya_pb_set_block(hdev, mmTPC2_WR_REGULATOR_BASE);
++
++	pb_addr = (mmTPC2_CFG_CFG_BASE_ADDRESS_HIGH & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC2_CFG_CFG_BASE_ADDRESS_HIGH &
++			PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC2_CFG_CFG_BASE_ADDRESS_HIGH & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CFG_CFG_SUBTRACT_VALUE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CFG_SM_BASE_ADDRESS_LOW & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CFG_SM_BASE_ADDRESS_HIGH & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC2_CFG_ARUSER & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC2_CFG_ARUSER & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC2_CFG_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CFG_AWUSER & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC2_CFG_FUNC_MBIST_CNTRL & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC2_CFG_FUNC_MBIST_CNTRL & PROT_BITS_OFFS) >> 7)
++			<< 2;
++	mask = 1 << ((mmTPC2_CFG_FUNC_MBIST_CNTRL & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CFG_FUNC_MBIST_PAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CFG_FUNC_MBIST_MEM_0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CFG_FUNC_MBIST_MEM_1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CFG_FUNC_MBIST_MEM_2 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CFG_FUNC_MBIST_MEM_3 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CFG_FUNC_MBIST_MEM_4 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CFG_FUNC_MBIST_MEM_5 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CFG_FUNC_MBIST_MEM_6 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CFG_FUNC_MBIST_MEM_7 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CFG_FUNC_MBIST_MEM_8 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CFG_FUNC_MBIST_MEM_9 & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC2_QM_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC2_QM_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC2_QM_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_GLBL_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_PQ_BASE_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_PQ_BASE_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_PQ_SIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_PQ_PI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_PQ_CI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_PQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_PQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_PQ_ARUSER & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC2_QM_PQ_PUSH0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC2_QM_PQ_PUSH0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC2_QM_PQ_PUSH0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_PQ_PUSH1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_PQ_PUSH2 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_PQ_PUSH3 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_PQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_PQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_PQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_PQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_PQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_PQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CQ_PTR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CQ_PTR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CQ_TSIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CQ_CTL & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC2_QM_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC2_QM_CQ_IFIFO_CNT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC2_QM_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_QM_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC2_CMDQ_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC2_CMDQ_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC2_CMDQ_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_GLBL_STS1 & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC2_CMDQ_CQ_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC2_CMDQ_CQ_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC2_CMDQ_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC2_CMDQ_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC2_CMDQ_CQ_IFIFO_CNT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC2_CMDQ_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CP_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CP_CURRENT_INST_LO & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC2_CMDQ_CP_CURRENT_INST_HI & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC2_CMDQ_CP_CURRENT_INST_HI & PROT_BITS_OFFS) >> 7)
++			<< 2;
++	mask = 1 << ((mmTPC2_CMDQ_CP_CURRENT_INST_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CP_BARRIER_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CP_DBG_0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CQ_BUF_ADDR & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC2_CMDQ_CQ_BUF_RDATA & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	goya_pb_set_block(hdev, mmTPC3_RTR_BASE);
++	goya_pb_set_block(hdev, mmTPC3_RD_REGULATOR_BASE);
++	goya_pb_set_block(hdev, mmTPC3_WR_REGULATOR_BASE);
++
++	pb_addr = (mmTPC3_CFG_CFG_BASE_ADDRESS_HIGH & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC3_CFG_CFG_BASE_ADDRESS_HIGH
++			& PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC3_CFG_CFG_BASE_ADDRESS_HIGH & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CFG_CFG_SUBTRACT_VALUE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CFG_SM_BASE_ADDRESS_LOW & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CFG_SM_BASE_ADDRESS_HIGH & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC3_CFG_ARUSER & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC3_CFG_ARUSER & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC3_CFG_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CFG_AWUSER & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC3_CFG_FUNC_MBIST_CNTRL & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC3_CFG_FUNC_MBIST_CNTRL
++			& PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC3_CFG_FUNC_MBIST_CNTRL & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CFG_FUNC_MBIST_PAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CFG_FUNC_MBIST_MEM_0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CFG_FUNC_MBIST_MEM_1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CFG_FUNC_MBIST_MEM_2 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CFG_FUNC_MBIST_MEM_3 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CFG_FUNC_MBIST_MEM_4 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CFG_FUNC_MBIST_MEM_5 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CFG_FUNC_MBIST_MEM_6 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CFG_FUNC_MBIST_MEM_7 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CFG_FUNC_MBIST_MEM_8 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CFG_FUNC_MBIST_MEM_9 & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC3_QM_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC3_QM_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC3_QM_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_GLBL_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_PQ_BASE_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_PQ_BASE_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_PQ_SIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_PQ_PI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_PQ_CI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_PQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_PQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_PQ_ARUSER & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC3_QM_PQ_PUSH0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC3_QM_PQ_PUSH0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC3_QM_PQ_PUSH0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_PQ_PUSH1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_PQ_PUSH2 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_PQ_PUSH3 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_PQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_PQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_PQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_PQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_PQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_PQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CQ_PTR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CQ_PTR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CQ_TSIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CQ_CTL & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC3_QM_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC3_QM_CQ_IFIFO_CNT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC3_QM_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_QM_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC3_CMDQ_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC3_CMDQ_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC3_CMDQ_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_GLBL_STS1 & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC3_CMDQ_CQ_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC3_CMDQ_CQ_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC3_CMDQ_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC3_CMDQ_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC3_CMDQ_CQ_IFIFO_CNT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC3_CMDQ_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CP_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CP_CURRENT_INST_LO & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC3_CMDQ_CP_CURRENT_INST_HI & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC3_CMDQ_CP_CURRENT_INST_HI & PROT_BITS_OFFS) >> 7)
++			<< 2;
++	mask = 1 << ((mmTPC3_CMDQ_CP_CURRENT_INST_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CP_BARRIER_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CP_DBG_0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CQ_BUF_ADDR & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC3_CMDQ_CQ_BUF_RDATA & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	goya_pb_set_block(hdev, mmTPC4_RTR_BASE);
++	goya_pb_set_block(hdev, mmTPC4_RD_REGULATOR_BASE);
++	goya_pb_set_block(hdev, mmTPC4_WR_REGULATOR_BASE);
++
++	pb_addr = (mmTPC4_CFG_CFG_BASE_ADDRESS_HIGH & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC4_CFG_CFG_BASE_ADDRESS_HIGH &
++			PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC4_CFG_CFG_BASE_ADDRESS_HIGH & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CFG_CFG_SUBTRACT_VALUE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CFG_SM_BASE_ADDRESS_LOW & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CFG_SM_BASE_ADDRESS_HIGH & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC4_CFG_ARUSER & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC4_CFG_ARUSER & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC4_CFG_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CFG_AWUSER & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC4_CFG_FUNC_MBIST_CNTRL & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC4_CFG_FUNC_MBIST_CNTRL &
++			PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC4_CFG_FUNC_MBIST_CNTRL & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CFG_FUNC_MBIST_PAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CFG_FUNC_MBIST_MEM_0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CFG_FUNC_MBIST_MEM_1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CFG_FUNC_MBIST_MEM_2 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CFG_FUNC_MBIST_MEM_3 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CFG_FUNC_MBIST_MEM_4 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CFG_FUNC_MBIST_MEM_5 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CFG_FUNC_MBIST_MEM_6 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CFG_FUNC_MBIST_MEM_7 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CFG_FUNC_MBIST_MEM_8 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CFG_FUNC_MBIST_MEM_9 & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC4_QM_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC4_QM_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC4_QM_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_GLBL_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_PQ_BASE_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_PQ_BASE_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_PQ_SIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_PQ_PI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_PQ_CI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_PQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_PQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_PQ_ARUSER & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC4_QM_PQ_PUSH0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC4_QM_PQ_PUSH0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC4_QM_PQ_PUSH0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_PQ_PUSH1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_PQ_PUSH2 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_PQ_PUSH3 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_PQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_PQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_PQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_PQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_PQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_PQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CQ_PTR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CQ_PTR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CQ_TSIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CQ_CTL & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC4_QM_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC4_QM_CQ_IFIFO_CNT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC4_QM_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_QM_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC4_CMDQ_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC4_CMDQ_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC4_CMDQ_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_GLBL_STS1 & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC4_CMDQ_CQ_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC4_CMDQ_CQ_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC4_CMDQ_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC4_CMDQ_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC4_CMDQ_CQ_IFIFO_CNT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC4_CMDQ_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CP_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CP_CURRENT_INST_LO & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC4_CMDQ_CP_CURRENT_INST_HI & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC4_CMDQ_CP_CURRENT_INST_HI & PROT_BITS_OFFS) >> 7)
++			<< 2;
++	mask = 1 << ((mmTPC4_CMDQ_CP_CURRENT_INST_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CP_BARRIER_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CP_DBG_0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CQ_BUF_ADDR & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC4_CMDQ_CQ_BUF_RDATA & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	goya_pb_set_block(hdev, mmTPC5_RTR_BASE);
++	goya_pb_set_block(hdev, mmTPC5_RD_REGULATOR_BASE);
++	goya_pb_set_block(hdev, mmTPC5_WR_REGULATOR_BASE);
++
++	pb_addr = (mmTPC5_CFG_CFG_BASE_ADDRESS_HIGH & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC5_CFG_CFG_BASE_ADDRESS_HIGH &
++			PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC5_CFG_CFG_BASE_ADDRESS_HIGH & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CFG_CFG_SUBTRACT_VALUE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CFG_SM_BASE_ADDRESS_LOW & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CFG_SM_BASE_ADDRESS_HIGH & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC5_CFG_ARUSER & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC5_CFG_ARUSER & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC5_CFG_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CFG_AWUSER & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC5_CFG_FUNC_MBIST_CNTRL & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC5_CFG_FUNC_MBIST_CNTRL &
++			PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC5_CFG_FUNC_MBIST_CNTRL & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CFG_FUNC_MBIST_PAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CFG_FUNC_MBIST_MEM_0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CFG_FUNC_MBIST_MEM_1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CFG_FUNC_MBIST_MEM_2 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CFG_FUNC_MBIST_MEM_3 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CFG_FUNC_MBIST_MEM_4 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CFG_FUNC_MBIST_MEM_5 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CFG_FUNC_MBIST_MEM_6 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CFG_FUNC_MBIST_MEM_7 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CFG_FUNC_MBIST_MEM_8 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CFG_FUNC_MBIST_MEM_9 & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC5_QM_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC5_QM_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC5_QM_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_GLBL_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_PQ_BASE_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_PQ_BASE_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_PQ_SIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_PQ_PI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_PQ_CI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_PQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_PQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_PQ_ARUSER & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC5_QM_PQ_PUSH0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC5_QM_PQ_PUSH0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC5_QM_PQ_PUSH0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_PQ_PUSH1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_PQ_PUSH2 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_PQ_PUSH3 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_PQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_PQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_PQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_PQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_PQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_PQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CQ_PTR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CQ_PTR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CQ_TSIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CQ_CTL & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC5_QM_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC5_QM_CQ_IFIFO_CNT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC5_QM_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_QM_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC5_CMDQ_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC5_CMDQ_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC5_CMDQ_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_GLBL_STS1 & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC5_CMDQ_CQ_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC5_CMDQ_CQ_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC5_CMDQ_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC5_CMDQ_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC5_CMDQ_CQ_IFIFO_CNT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC5_CMDQ_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CP_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CP_CURRENT_INST_LO & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC5_CMDQ_CP_CURRENT_INST_HI & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC5_CMDQ_CP_CURRENT_INST_HI & PROT_BITS_OFFS) >> 7)
++			<< 2;
++	mask = 1 << ((mmTPC5_CMDQ_CP_CURRENT_INST_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CP_BARRIER_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CP_DBG_0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CQ_BUF_ADDR & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC5_CMDQ_CQ_BUF_RDATA & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	goya_pb_set_block(hdev, mmTPC6_RTR_BASE);
++	goya_pb_set_block(hdev, mmTPC6_RD_REGULATOR_BASE);
++	goya_pb_set_block(hdev, mmTPC6_WR_REGULATOR_BASE);
++
++	pb_addr = (mmTPC6_CFG_CFG_BASE_ADDRESS_HIGH & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC6_CFG_CFG_BASE_ADDRESS_HIGH &
++			PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC6_CFG_CFG_BASE_ADDRESS_HIGH & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CFG_CFG_SUBTRACT_VALUE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CFG_SM_BASE_ADDRESS_LOW & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CFG_SM_BASE_ADDRESS_HIGH & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC6_CFG_ARUSER & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC6_CFG_ARUSER & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC6_CFG_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CFG_AWUSER & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC6_CFG_FUNC_MBIST_CNTRL & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC6_CFG_FUNC_MBIST_CNTRL &
++			PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC6_CFG_FUNC_MBIST_CNTRL & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CFG_FUNC_MBIST_PAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CFG_FUNC_MBIST_MEM_0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CFG_FUNC_MBIST_MEM_1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CFG_FUNC_MBIST_MEM_2 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CFG_FUNC_MBIST_MEM_3 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CFG_FUNC_MBIST_MEM_4 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CFG_FUNC_MBIST_MEM_5 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CFG_FUNC_MBIST_MEM_6 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CFG_FUNC_MBIST_MEM_7 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CFG_FUNC_MBIST_MEM_8 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CFG_FUNC_MBIST_MEM_9 & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC6_QM_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC6_QM_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC6_QM_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_GLBL_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_PQ_BASE_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_PQ_BASE_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_PQ_SIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_PQ_PI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_PQ_CI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_PQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_PQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_PQ_ARUSER & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC6_QM_PQ_PUSH0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC6_QM_PQ_PUSH0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC6_QM_PQ_PUSH0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_PQ_PUSH1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_PQ_PUSH2 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_PQ_PUSH3 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_PQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_PQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_PQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_PQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_PQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_PQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CQ_PTR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CQ_PTR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CQ_TSIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CQ_CTL & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC6_QM_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC6_QM_CQ_IFIFO_CNT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC6_QM_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_QM_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC6_CMDQ_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC6_CMDQ_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC6_CMDQ_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_GLBL_STS1 & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC6_CMDQ_CQ_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC6_CMDQ_CQ_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC6_CMDQ_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC6_CMDQ_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC6_CMDQ_CQ_IFIFO_CNT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC6_CMDQ_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CP_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CP_CURRENT_INST_LO & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC6_CMDQ_CP_CURRENT_INST_HI & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC6_CMDQ_CP_CURRENT_INST_HI & PROT_BITS_OFFS) >> 7)
++			<< 2;
++	mask = 1 << ((mmTPC6_CMDQ_CP_CURRENT_INST_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CP_BARRIER_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CP_DBG_0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CQ_BUF_ADDR & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC6_CMDQ_CQ_BUF_RDATA & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	goya_pb_set_block(hdev, mmTPC7_NRTR_BASE);
++	goya_pb_set_block(hdev, mmTPC7_RD_REGULATOR_BASE);
++	goya_pb_set_block(hdev, mmTPC7_WR_REGULATOR_BASE);
++
++	pb_addr = (mmTPC7_CFG_CFG_BASE_ADDRESS_HIGH & ~0xFFF) +	PROT_BITS_OFFS;
++	word_offset = ((mmTPC7_CFG_CFG_BASE_ADDRESS_HIGH &
++			PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC7_CFG_CFG_BASE_ADDRESS_HIGH & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CFG_CFG_SUBTRACT_VALUE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CFG_SM_BASE_ADDRESS_LOW & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CFG_SM_BASE_ADDRESS_HIGH & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC7_CFG_ARUSER & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC7_CFG_ARUSER & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC7_CFG_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CFG_AWUSER & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC7_CFG_FUNC_MBIST_CNTRL & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC7_CFG_FUNC_MBIST_CNTRL &
++			PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC7_CFG_FUNC_MBIST_CNTRL & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CFG_FUNC_MBIST_PAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CFG_FUNC_MBIST_MEM_0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CFG_FUNC_MBIST_MEM_1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CFG_FUNC_MBIST_MEM_2 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CFG_FUNC_MBIST_MEM_3 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CFG_FUNC_MBIST_MEM_4 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CFG_FUNC_MBIST_MEM_5 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CFG_FUNC_MBIST_MEM_6 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CFG_FUNC_MBIST_MEM_7 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CFG_FUNC_MBIST_MEM_8 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CFG_FUNC_MBIST_MEM_9 & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC7_QM_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC7_QM_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC7_QM_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_GLBL_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_PQ_BASE_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_PQ_BASE_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_PQ_SIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_PQ_PI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_PQ_CI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_PQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_PQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_PQ_ARUSER & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC7_QM_PQ_PUSH0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC7_QM_PQ_PUSH0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC7_QM_PQ_PUSH0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_PQ_PUSH1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_PQ_PUSH2 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_PQ_PUSH3 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_PQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_PQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_PQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_PQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_PQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_PQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CQ_PTR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CQ_PTR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CQ_TSIZE & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CQ_CTL & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC7_QM_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC7_QM_CQ_IFIFO_CNT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC7_QM_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_QM_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC7_CMDQ_GLBL_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC7_CMDQ_GLBL_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC7_CMDQ_GLBL_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_GLBL_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_GLBL_PROT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_GLBL_ERR_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_GLBL_ERR_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_GLBL_ERR_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_GLBL_ERR_WDATA & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_GLBL_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_GLBL_NON_SECURE_PROPS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_GLBL_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_GLBL_STS1 & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC7_CMDQ_CQ_CFG0 & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC7_CMDQ_CQ_CFG0 & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC7_CMDQ_CQ_CFG0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CQ_CFG1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CQ_ARUSER & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CQ_PTR_LO_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CQ_PTR_HI_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CQ_TSIZE_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CQ_CTL_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CQ_STS0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CQ_STS1 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CQ_RD_RATE_LIM_EN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CQ_RD_RATE_LIM_RST_TOKEN & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CQ_RD_RATE_LIM_SAT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CQ_RD_RATE_LIM_TOUT & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC7_CMDQ_CQ_IFIFO_CNT & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC7_CMDQ_CQ_IFIFO_CNT & PROT_BITS_OFFS) >> 7) << 2;
++	mask = 1 << ((mmTPC7_CMDQ_CQ_IFIFO_CNT & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CP_MSG_BASE0_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CP_MSG_BASE0_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CP_MSG_BASE1_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CP_MSG_BASE1_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CP_MSG_BASE2_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CP_MSG_BASE2_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CP_MSG_BASE3_ADDR_LO & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CP_MSG_BASE3_ADDR_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CP_LDMA_TSIZE_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CP_LDMA_SRC_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CP_LDMA_SRC_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CP_LDMA_DST_BASE_LO_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CP_LDMA_DST_BASE_HI_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CP_LDMA_COMMIT_OFFSET & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CP_STS & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CP_CURRENT_INST_LO & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++
++	pb_addr = (mmTPC7_CMDQ_CP_CURRENT_INST_HI & ~0xFFF) + PROT_BITS_OFFS;
++	word_offset = ((mmTPC7_CMDQ_CP_CURRENT_INST_HI & PROT_BITS_OFFS) >> 7)
++			<< 2;
++	mask = 1 << ((mmTPC7_CMDQ_CP_CURRENT_INST_HI & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CP_BARRIER_CFG & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CP_DBG_0 & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CQ_BUF_ADDR & 0x7F) >> 2);
++	mask |= 1 << ((mmTPC7_CMDQ_CQ_BUF_RDATA & 0x7F) >> 2);
++
++	WREG32(pb_addr + word_offset, ~mask);
++}
++
++/*
++ * goya_init_protection_bits - Initialize protection bits for specific registers
++ *
++ * @hdev: pointer to hl_device structure
++ *
++ * All protection bits are 1 by default, means not protected. Need to set to 0
++ * each bit that belongs to a protected register.
++ *
++ */
++static void goya_init_protection_bits(struct hl_device *hdev)
++{
++	/*
++	 * In each 4K block of registers, the last 128 bytes are protection
++	 * bits - total of 1024 bits, one for each register. Each bit is related
++	 * to a specific register, by the order of the registers.
++	 * So in order to calculate the bit that is related to a given register,
++	 * we need to calculate its word offset and then the exact bit inside
++	 * the word (which is 4 bytes).
++	 *
++	 * Register address:
++	 *
++	 * 31                 12 11           7   6             2  1      0
++	 * -----------------------------------------------------------------
++	 * |      Don't         |    word       |  bit location  |    0    |
++	 * |      care          |   offset      |  inside word   |         |
++	 * -----------------------------------------------------------------
++	 *
++	 * Bits 7-11 represents the word offset inside the 128 bytes.
++	 * Bits 2-6 represents the bit location inside the word.
++	 */
++
++	goya_pb_set_block(hdev, mmPCI_NRTR_BASE);
++	goya_pb_set_block(hdev, mmPCI_RD_REGULATOR_BASE);
++	goya_pb_set_block(hdev, mmPCI_WR_REGULATOR_BASE);
++
++	goya_pb_set_block(hdev, mmSRAM_Y0_X0_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y0_X0_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y0_X1_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y0_X1_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y0_X2_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y0_X2_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y0_X3_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y0_X3_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y0_X4_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y0_X4_RTR_BASE);
++
++	goya_pb_set_block(hdev, mmSRAM_Y1_X0_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y1_X0_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y1_X1_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y1_X1_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y1_X2_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y1_X2_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y1_X3_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y1_X3_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y1_X4_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y1_X4_RTR_BASE);
++
++	goya_pb_set_block(hdev, mmSRAM_Y2_X0_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y2_X0_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y2_X1_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y2_X1_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y2_X2_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y2_X2_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y2_X3_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y2_X3_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y2_X4_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y2_X4_RTR_BASE);
++
++	goya_pb_set_block(hdev, mmSRAM_Y3_X0_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y3_X0_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y3_X1_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y3_X1_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y3_X2_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y3_X2_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y3_X3_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y3_X3_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y3_X4_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y3_X4_RTR_BASE);
++
++	goya_pb_set_block(hdev, mmSRAM_Y4_X0_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y4_X0_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y4_X1_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y4_X1_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y4_X2_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y4_X2_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y4_X3_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y4_X3_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y4_X4_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y4_X4_RTR_BASE);
++
++	goya_pb_set_block(hdev, mmSRAM_Y5_X0_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y5_X0_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y5_X1_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y5_X1_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y5_X2_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y5_X2_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y5_X3_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y5_X3_RTR_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y5_X4_BANK_BASE);
++	goya_pb_set_block(hdev, mmSRAM_Y5_X4_RTR_BASE);
++
++	goya_pb_set_block(hdev, mmPCIE_WRAP_BASE);
++	goya_pb_set_block(hdev, mmPCIE_CORE_BASE);
++	goya_pb_set_block(hdev, mmPCIE_DB_CFG_BASE);
++	goya_pb_set_block(hdev, mmPCIE_DB_CMD_BASE);
++	goya_pb_set_block(hdev, mmPCIE_AUX_BASE);
++	goya_pb_set_block(hdev, mmPCIE_DB_RSV_BASE);
++	goya_pb_set_block(hdev, mmPCIE_PHY_BASE);
++
++	goya_init_mme_protection_bits(hdev);
++
++	goya_init_dma_protection_bits(hdev);
++
++	goya_init_tpc_protection_bits(hdev);
++}
++
++/*
++ * goya_init_security - Initialize security model
++ *
++ * @hdev: pointer to hl_device structure
++ *
++ * Initialize the security model of the device
++ * That includes range registers and protection bit per register
++ *
++ */
++void goya_init_security(struct hl_device *hdev)
++{
++	struct goya_device *goya = hdev->asic_specific;
++
++	u32 dram_addr_lo = lower_32_bits(DRAM_PHYS_BASE);
++	u32 dram_addr_hi = upper_32_bits(DRAM_PHYS_BASE);
++
++	u32 lbw_rng0_base = 0xFC440000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++	u32 lbw_rng0_mask = 0xFFFF0000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++
++	u32 lbw_rng1_base = 0xFC480000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++	u32 lbw_rng1_mask = 0xFFF80000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++
++	u32 lbw_rng2_base = 0xFC600000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++	u32 lbw_rng2_mask = 0xFFE00000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++
++	u32 lbw_rng3_base = 0xFC800000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++	u32 lbw_rng3_mask = 0xFFF00000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++
++	u32 lbw_rng4_base = 0xFCC02000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++	u32 lbw_rng4_mask = 0xFFFFF000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++
++	u32 lbw_rng5_base = 0xFCC40000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++	u32 lbw_rng5_mask = 0xFFFF8000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++
++	u32 lbw_rng6_base = 0xFCC48000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++	u32 lbw_rng6_mask = 0xFFFFF000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++
++	u32 lbw_rng7_base = 0xFCC4A000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++	u32 lbw_rng7_mask = 0xFFFFE000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++
++	u32 lbw_rng8_base = 0xFCC4C000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++	u32 lbw_rng8_mask = 0xFFFFC000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++
++	u32 lbw_rng9_base = 0xFCC50000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++	u32 lbw_rng9_mask = 0xFFFF0000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++
++	u32 lbw_rng10_base = 0xFCC60000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++	u32 lbw_rng10_mask = 0xFFFE0000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++
++	u32 lbw_rng11_base = 0xFCE00000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++	u32 lbw_rng11_mask = 0xFFFFC000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++
++	u32 lbw_rng12_base = 0xFE484000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++	u32 lbw_rng12_mask = 0xFFFFF000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++
++	u32 lbw_rng13_base = 0xFEC43000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++	u32 lbw_rng13_mask = 0xFFFFF000 & DMA_MACRO_LBW_RANGE_BASE_R_MASK;
++
++	WREG32(mmDMA_MACRO_LBW_RANGE_HIT_BLOCK, 0xFFFF);
++	WREG32(mmDMA_MACRO_HBW_RANGE_HIT_BLOCK, 0xFF);
++
++	if (!(goya->hw_cap_initialized & HW_CAP_MMU)) {
++		WREG32(mmDMA_MACRO_HBW_RANGE_HIT_BLOCK, 0xFE);
++
++		/* Protect HOST */
++		WREG32(mmDMA_MACRO_HBW_RANGE_BASE_31_0_0, 0);
++		WREG32(mmDMA_MACRO_HBW_RANGE_BASE_49_32_0, 0);
++		WREG32(mmDMA_MACRO_HBW_RANGE_MASK_31_0_0, 0);
++		WREG32(mmDMA_MACRO_HBW_RANGE_MASK_49_32_0, 0xFFF80);
++	}
++
++	/*
++	 * Protect DDR @
++	 * DRAM_VIRT_BASE : DRAM_VIRT_BASE + DRAM_VIRT_END
++	 * The mask protects the first 512MB
++	 */
++	WREG32(mmDMA_MACRO_HBW_RANGE_BASE_31_0_1, dram_addr_lo);
++	WREG32(mmDMA_MACRO_HBW_RANGE_BASE_49_32_1, dram_addr_hi);
++	WREG32(mmDMA_MACRO_HBW_RANGE_MASK_31_0_1, 0xE0000000);
++	WREG32(mmDMA_MACRO_HBW_RANGE_MASK_49_32_1, 0x3FFFF);
++
++	/* Protect registers */
++
++	WREG32(mmDMA_MACRO_LBW_RANGE_BASE_0, lbw_rng0_base);
++	WREG32(mmDMA_MACRO_LBW_RANGE_MASK_0, lbw_rng0_mask);
++	WREG32(mmDMA_MACRO_LBW_RANGE_BASE_1, lbw_rng1_base);
++	WREG32(mmDMA_MACRO_LBW_RANGE_MASK_1, lbw_rng1_mask);
++	WREG32(mmDMA_MACRO_LBW_RANGE_BASE_2, lbw_rng2_base);
++	WREG32(mmDMA_MACRO_LBW_RANGE_MASK_2, lbw_rng2_mask);
++	WREG32(mmDMA_MACRO_LBW_RANGE_BASE_3, lbw_rng3_base);
++	WREG32(mmDMA_MACRO_LBW_RANGE_MASK_3, lbw_rng3_mask);
++	WREG32(mmDMA_MACRO_LBW_RANGE_BASE_4, lbw_rng4_base);
++	WREG32(mmDMA_MACRO_LBW_RANGE_MASK_4, lbw_rng4_mask);
++	WREG32(mmDMA_MACRO_LBW_RANGE_BASE_5, lbw_rng5_base);
++	WREG32(mmDMA_MACRO_LBW_RANGE_MASK_5, lbw_rng5_mask);
++	WREG32(mmDMA_MACRO_LBW_RANGE_BASE_6, lbw_rng6_base);
++	WREG32(mmDMA_MACRO_LBW_RANGE_MASK_6, lbw_rng6_mask);
++	WREG32(mmDMA_MACRO_LBW_RANGE_BASE_7, lbw_rng7_base);
++	WREG32(mmDMA_MACRO_LBW_RANGE_MASK_7, lbw_rng7_mask);
++	WREG32(mmDMA_MACRO_LBW_RANGE_BASE_8, lbw_rng8_base);
++	WREG32(mmDMA_MACRO_LBW_RANGE_MASK_8, lbw_rng8_mask);
++	WREG32(mmDMA_MACRO_LBW_RANGE_BASE_9, lbw_rng9_base);
++	WREG32(mmDMA_MACRO_LBW_RANGE_MASK_9, lbw_rng9_mask);
++	WREG32(mmDMA_MACRO_LBW_RANGE_BASE_10, lbw_rng10_base);
++	WREG32(mmDMA_MACRO_LBW_RANGE_MASK_10, lbw_rng10_mask);
++	WREG32(mmDMA_MACRO_LBW_RANGE_BASE_11, lbw_rng11_base);
++	WREG32(mmDMA_MACRO_LBW_RANGE_MASK_11, lbw_rng11_mask);
++	WREG32(mmDMA_MACRO_LBW_RANGE_BASE_12, lbw_rng12_base);
++	WREG32(mmDMA_MACRO_LBW_RANGE_MASK_12, lbw_rng12_mask);
++	WREG32(mmDMA_MACRO_LBW_RANGE_BASE_13, lbw_rng13_base);
++	WREG32(mmDMA_MACRO_LBW_RANGE_MASK_13, lbw_rng13_mask);
++
++	WREG32(mmMME1_RTR_LBW_RANGE_HIT, 0xFFFF);
++	WREG32(mmMME2_RTR_LBW_RANGE_HIT, 0xFFFF);
++	WREG32(mmMME3_RTR_LBW_RANGE_HIT, 0xFFFF);
++	WREG32(mmMME4_RTR_LBW_RANGE_HIT, 0xFFFF);
++	WREG32(mmMME5_RTR_LBW_RANGE_HIT, 0xFFFF);
++	WREG32(mmMME6_RTR_LBW_RANGE_HIT, 0xFFFF);
++
++	WREG32(mmMME1_RTR_HBW_RANGE_HIT, 0xFE);
++	WREG32(mmMME2_RTR_HBW_RANGE_HIT, 0xFE);
++	WREG32(mmMME3_RTR_HBW_RANGE_HIT, 0xFE);
++	WREG32(mmMME4_RTR_HBW_RANGE_HIT, 0xFE);
++	WREG32(mmMME5_RTR_HBW_RANGE_HIT, 0xFE);
++	WREG32(mmMME6_RTR_HBW_RANGE_HIT, 0xFE);
++
++	/* Protect HOST */
++	WREG32(mmMME1_RTR_HBW_RANGE_BASE_L_0, 0);
++	WREG32(mmMME1_RTR_HBW_RANGE_BASE_H_0, 0);
++	WREG32(mmMME1_RTR_HBW_RANGE_MASK_L_0, 0);
++	WREG32(mmMME1_RTR_HBW_RANGE_MASK_H_0, 0xFFF80);
++
++	WREG32(mmMME2_RTR_HBW_RANGE_BASE_L_0, 0);
++	WREG32(mmMME2_RTR_HBW_RANGE_BASE_H_0, 0);
++	WREG32(mmMME2_RTR_HBW_RANGE_MASK_L_0, 0);
++	WREG32(mmMME2_RTR_HBW_RANGE_MASK_H_0, 0xFFF80);
++
++	WREG32(mmMME3_RTR_HBW_RANGE_BASE_L_0, 0);
++	WREG32(mmMME3_RTR_HBW_RANGE_BASE_H_0, 0);
++	WREG32(mmMME3_RTR_HBW_RANGE_MASK_L_0, 0);
++	WREG32(mmMME3_RTR_HBW_RANGE_MASK_H_0, 0xFFF80);
++
++	WREG32(mmMME4_RTR_HBW_RANGE_BASE_L_0, 0);
++	WREG32(mmMME4_RTR_HBW_RANGE_BASE_H_0, 0);
++	WREG32(mmMME4_RTR_HBW_RANGE_MASK_L_0, 0);
++	WREG32(mmMME4_RTR_HBW_RANGE_MASK_H_0, 0xFFF80);
++
++	WREG32(mmMME5_RTR_HBW_RANGE_BASE_L_0, 0);
++	WREG32(mmMME5_RTR_HBW_RANGE_BASE_H_0, 0);
++	WREG32(mmMME5_RTR_HBW_RANGE_MASK_L_0, 0);
++	WREG32(mmMME5_RTR_HBW_RANGE_MASK_H_0, 0xFFF80);
++
++	WREG32(mmMME6_RTR_HBW_RANGE_BASE_L_0, 0);
++	WREG32(mmMME6_RTR_HBW_RANGE_BASE_H_0, 0);
++	WREG32(mmMME6_RTR_HBW_RANGE_MASK_L_0, 0);
++	WREG32(mmMME6_RTR_HBW_RANGE_MASK_H_0, 0xFFF80);
++
++	/*
++	 * Protect DDR @
++	 * DRAM_VIRT_BASE : DRAM_VIRT_BASE + DRAM_VIRT_END
++	 * The mask protects the first 512MB
++	 */
++	WREG32(mmMME1_RTR_HBW_RANGE_BASE_L_1, dram_addr_lo);
++	WREG32(mmMME1_RTR_HBW_RANGE_BASE_H_1, dram_addr_hi);
++	WREG32(mmMME1_RTR_HBW_RANGE_MASK_L_1, 0xE0000000);
++	WREG32(mmMME1_RTR_HBW_RANGE_MASK_H_1, 0x3FFFF);
++
++	WREG32(mmMME2_RTR_HBW_RANGE_BASE_L_1, dram_addr_lo);
++	WREG32(mmMME2_RTR_HBW_RANGE_BASE_H_1, dram_addr_hi);
++	WREG32(mmMME2_RTR_HBW_RANGE_MASK_L_1, 0xE0000000);
++	WREG32(mmMME2_RTR_HBW_RANGE_MASK_H_1, 0x3FFFF);
++
++	WREG32(mmMME3_RTR_HBW_RANGE_BASE_L_1, dram_addr_lo);
++	WREG32(mmMME3_RTR_HBW_RANGE_BASE_H_1, dram_addr_hi);
++	WREG32(mmMME3_RTR_HBW_RANGE_MASK_L_1, 0xE0000000);
++	WREG32(mmMME3_RTR_HBW_RANGE_MASK_H_1, 0x3FFFF);
++
++	WREG32(mmMME4_RTR_HBW_RANGE_BASE_L_1, dram_addr_lo);
++	WREG32(mmMME4_RTR_HBW_RANGE_BASE_H_1, dram_addr_hi);
++	WREG32(mmMME4_RTR_HBW_RANGE_MASK_L_1, 0xE0000000);
++	WREG32(mmMME4_RTR_HBW_RANGE_MASK_H_1, 0x3FFFF);
++
++	WREG32(mmMME5_RTR_HBW_RANGE_BASE_L_1, dram_addr_lo);
++	WREG32(mmMME5_RTR_HBW_RANGE_BASE_H_1, dram_addr_hi);
++	WREG32(mmMME5_RTR_HBW_RANGE_MASK_L_1, 0xE0000000);
++	WREG32(mmMME5_RTR_HBW_RANGE_MASK_H_1, 0x3FFFF);
++
++	WREG32(mmMME6_RTR_HBW_RANGE_BASE_L_1, dram_addr_lo);
++	WREG32(mmMME6_RTR_HBW_RANGE_BASE_H_1, dram_addr_hi);
++	WREG32(mmMME6_RTR_HBW_RANGE_MASK_L_1, 0xE0000000);
++	WREG32(mmMME6_RTR_HBW_RANGE_MASK_H_1, 0x3FFFF);
++
++	WREG32(mmMME1_RTR_LBW_RANGE_BASE_0, lbw_rng0_base);
++	WREG32(mmMME1_RTR_LBW_RANGE_MASK_0, lbw_rng0_mask);
++	WREG32(mmMME1_RTR_LBW_RANGE_BASE_1, lbw_rng1_base);
++	WREG32(mmMME1_RTR_LBW_RANGE_MASK_1, lbw_rng1_mask);
++	WREG32(mmMME1_RTR_LBW_RANGE_BASE_2, lbw_rng2_base);
++	WREG32(mmMME1_RTR_LBW_RANGE_MASK_2, lbw_rng2_mask);
++	WREG32(mmMME1_RTR_LBW_RANGE_BASE_3, lbw_rng3_base);
++	WREG32(mmMME1_RTR_LBW_RANGE_MASK_3, lbw_rng3_mask);
++	WREG32(mmMME1_RTR_LBW_RANGE_BASE_4, lbw_rng4_base);
++	WREG32(mmMME1_RTR_LBW_RANGE_MASK_4, lbw_rng4_mask);
++	WREG32(mmMME1_RTR_LBW_RANGE_BASE_5, lbw_rng5_base);
++	WREG32(mmMME1_RTR_LBW_RANGE_MASK_5, lbw_rng5_mask);
++	WREG32(mmMME1_RTR_LBW_RANGE_BASE_6, lbw_rng6_base);
++	WREG32(mmMME1_RTR_LBW_RANGE_MASK_6, lbw_rng6_mask);
++	WREG32(mmMME1_RTR_LBW_RANGE_BASE_7, lbw_rng7_base);
++	WREG32(mmMME1_RTR_LBW_RANGE_MASK_7, lbw_rng7_mask);
++	WREG32(mmMME1_RTR_LBW_RANGE_BASE_8, lbw_rng8_base);
++	WREG32(mmMME1_RTR_LBW_RANGE_MASK_8, lbw_rng8_mask);
++	WREG32(mmMME1_RTR_LBW_RANGE_BASE_9, lbw_rng9_base);
++	WREG32(mmMME1_RTR_LBW_RANGE_MASK_9, lbw_rng9_mask);
++	WREG32(mmMME1_RTR_LBW_RANGE_BASE_10, lbw_rng10_base);
++	WREG32(mmMME1_RTR_LBW_RANGE_MASK_10, lbw_rng10_mask);
++	WREG32(mmMME1_RTR_LBW_RANGE_BASE_11, lbw_rng11_base);
++	WREG32(mmMME1_RTR_LBW_RANGE_MASK_11, lbw_rng11_mask);
++	WREG32(mmMME1_RTR_LBW_RANGE_BASE_12, lbw_rng12_base);
++	WREG32(mmMME1_RTR_LBW_RANGE_MASK_12, lbw_rng12_mask);
++	WREG32(mmMME1_RTR_LBW_RANGE_BASE_13, lbw_rng13_base);
++	WREG32(mmMME1_RTR_LBW_RANGE_MASK_13, lbw_rng13_mask);
++
++	WREG32(mmMME2_RTR_LBW_RANGE_BASE_0, lbw_rng0_base);
++	WREG32(mmMME2_RTR_LBW_RANGE_MASK_0, lbw_rng0_mask);
++	WREG32(mmMME2_RTR_LBW_RANGE_BASE_1, lbw_rng1_base);
++	WREG32(mmMME2_RTR_LBW_RANGE_MASK_1, lbw_rng1_mask);
++	WREG32(mmMME2_RTR_LBW_RANGE_BASE_2, lbw_rng2_base);
++	WREG32(mmMME2_RTR_LBW_RANGE_MASK_2, lbw_rng2_mask);
++	WREG32(mmMME2_RTR_LBW_RANGE_BASE_3, lbw_rng3_base);
++	WREG32(mmMME2_RTR_LBW_RANGE_MASK_3, lbw_rng3_mask);
++	WREG32(mmMME2_RTR_LBW_RANGE_BASE_4, lbw_rng4_base);
++	WREG32(mmMME2_RTR_LBW_RANGE_MASK_4, lbw_rng4_mask);
++	WREG32(mmMME2_RTR_LBW_RANGE_BASE_5, lbw_rng5_base);
++	WREG32(mmMME2_RTR_LBW_RANGE_MASK_5, lbw_rng5_mask);
++	WREG32(mmMME2_RTR_LBW_RANGE_BASE_6, lbw_rng6_base);
++	WREG32(mmMME2_RTR_LBW_RANGE_MASK_6, lbw_rng6_mask);
++	WREG32(mmMME2_RTR_LBW_RANGE_BASE_7, lbw_rng7_base);
++	WREG32(mmMME2_RTR_LBW_RANGE_MASK_7, lbw_rng7_mask);
++	WREG32(mmMME2_RTR_LBW_RANGE_BASE_8, lbw_rng8_base);
++	WREG32(mmMME2_RTR_LBW_RANGE_MASK_8, lbw_rng8_mask);
++	WREG32(mmMME2_RTR_LBW_RANGE_BASE_9, lbw_rng9_base);
++	WREG32(mmMME2_RTR_LBW_RANGE_MASK_9, lbw_rng9_mask);
++	WREG32(mmMME2_RTR_LBW_RANGE_BASE_10, lbw_rng10_base);
++	WREG32(mmMME2_RTR_LBW_RANGE_MASK_10, lbw_rng10_mask);
++	WREG32(mmMME2_RTR_LBW_RANGE_BASE_11, lbw_rng11_base);
++	WREG32(mmMME2_RTR_LBW_RANGE_MASK_11, lbw_rng11_mask);
++	WREG32(mmMME2_RTR_LBW_RANGE_BASE_12, lbw_rng12_base);
++	WREG32(mmMME2_RTR_LBW_RANGE_MASK_12, lbw_rng12_mask);
++	WREG32(mmMME2_RTR_LBW_RANGE_BASE_13, lbw_rng13_base);
++	WREG32(mmMME2_RTR_LBW_RANGE_MASK_13, lbw_rng13_mask);
++
++	WREG32(mmMME3_RTR_LBW_RANGE_BASE_0, lbw_rng0_base);
++	WREG32(mmMME3_RTR_LBW_RANGE_MASK_0, lbw_rng0_mask);
++	WREG32(mmMME3_RTR_LBW_RANGE_BASE_1, lbw_rng1_base);
++	WREG32(mmMME3_RTR_LBW_RANGE_MASK_1, lbw_rng1_mask);
++	WREG32(mmMME3_RTR_LBW_RANGE_BASE_2, lbw_rng2_base);
++	WREG32(mmMME3_RTR_LBW_RANGE_MASK_2, lbw_rng2_mask);
++	WREG32(mmMME3_RTR_LBW_RANGE_BASE_3, lbw_rng3_base);
++	WREG32(mmMME3_RTR_LBW_RANGE_MASK_3, lbw_rng3_mask);
++	WREG32(mmMME3_RTR_LBW_RANGE_BASE_4, lbw_rng4_base);
++	WREG32(mmMME3_RTR_LBW_RANGE_MASK_4, lbw_rng4_mask);
++	WREG32(mmMME3_RTR_LBW_RANGE_BASE_5, lbw_rng5_base);
++	WREG32(mmMME3_RTR_LBW_RANGE_MASK_5, lbw_rng5_mask);
++	WREG32(mmMME3_RTR_LBW_RANGE_BASE_6, lbw_rng6_base);
++	WREG32(mmMME3_RTR_LBW_RANGE_MASK_6, lbw_rng6_mask);
++	WREG32(mmMME3_RTR_LBW_RANGE_BASE_7, lbw_rng7_base);
++	WREG32(mmMME3_RTR_LBW_RANGE_MASK_7, lbw_rng7_mask);
++	WREG32(mmMME3_RTR_LBW_RANGE_BASE_8, lbw_rng8_base);
++	WREG32(mmMME3_RTR_LBW_RANGE_MASK_8, lbw_rng8_mask);
++	WREG32(mmMME3_RTR_LBW_RANGE_BASE_9, lbw_rng9_base);
++	WREG32(mmMME3_RTR_LBW_RANGE_MASK_9, lbw_rng9_mask);
++	WREG32(mmMME3_RTR_LBW_RANGE_BASE_10, lbw_rng10_base);
++	WREG32(mmMME3_RTR_LBW_RANGE_MASK_10, lbw_rng10_mask);
++	WREG32(mmMME3_RTR_LBW_RANGE_BASE_11, lbw_rng11_base);
++	WREG32(mmMME3_RTR_LBW_RANGE_MASK_11, lbw_rng11_mask);
++	WREG32(mmMME3_RTR_LBW_RANGE_BASE_12, lbw_rng12_base);
++	WREG32(mmMME3_RTR_LBW_RANGE_MASK_12, lbw_rng12_mask);
++	WREG32(mmMME3_RTR_LBW_RANGE_BASE_13, lbw_rng13_base);
++	WREG32(mmMME3_RTR_LBW_RANGE_MASK_13, lbw_rng13_mask);
++
++	WREG32(mmMME4_RTR_LBW_RANGE_BASE_0, lbw_rng0_base);
++	WREG32(mmMME4_RTR_LBW_RANGE_MASK_0, lbw_rng0_mask);
++	WREG32(mmMME4_RTR_LBW_RANGE_BASE_1, lbw_rng1_base);
++	WREG32(mmMME4_RTR_LBW_RANGE_MASK_1, lbw_rng1_mask);
++	WREG32(mmMME4_RTR_LBW_RANGE_BASE_2, lbw_rng2_base);
++	WREG32(mmMME4_RTR_LBW_RANGE_MASK_2, lbw_rng2_mask);
++	WREG32(mmMME4_RTR_LBW_RANGE_BASE_3, lbw_rng3_base);
++	WREG32(mmMME4_RTR_LBW_RANGE_MASK_3, lbw_rng3_mask);
++	WREG32(mmMME4_RTR_LBW_RANGE_BASE_4, lbw_rng4_base);
++	WREG32(mmMME4_RTR_LBW_RANGE_MASK_4, lbw_rng4_mask);
++	WREG32(mmMME4_RTR_LBW_RANGE_BASE_5, lbw_rng5_base);
++	WREG32(mmMME4_RTR_LBW_RANGE_MASK_5, lbw_rng5_mask);
++	WREG32(mmMME4_RTR_LBW_RANGE_BASE_6, lbw_rng6_base);
++	WREG32(mmMME4_RTR_LBW_RANGE_MASK_6, lbw_rng6_mask);
++	WREG32(mmMME4_RTR_LBW_RANGE_BASE_7, lbw_rng7_base);
++	WREG32(mmMME4_RTR_LBW_RANGE_MASK_7, lbw_rng7_mask);
++	WREG32(mmMME4_RTR_LBW_RANGE_BASE_8, lbw_rng8_base);
++	WREG32(mmMME4_RTR_LBW_RANGE_MASK_8, lbw_rng8_mask);
++	WREG32(mmMME4_RTR_LBW_RANGE_BASE_9, lbw_rng9_base);
++	WREG32(mmMME4_RTR_LBW_RANGE_MASK_9, lbw_rng9_mask);
++	WREG32(mmMME4_RTR_LBW_RANGE_BASE_10, lbw_rng10_base);
++	WREG32(mmMME4_RTR_LBW_RANGE_MASK_10, lbw_rng10_mask);
++	WREG32(mmMME4_RTR_LBW_RANGE_BASE_11, lbw_rng11_base);
++	WREG32(mmMME4_RTR_LBW_RANGE_MASK_11, lbw_rng11_mask);
++	WREG32(mmMME4_RTR_LBW_RANGE_BASE_12, lbw_rng12_base);
++	WREG32(mmMME4_RTR_LBW_RANGE_MASK_12, lbw_rng12_mask);
++	WREG32(mmMME4_RTR_LBW_RANGE_BASE_13, lbw_rng13_base);
++	WREG32(mmMME4_RTR_LBW_RANGE_MASK_13, lbw_rng13_mask);
++
++	WREG32(mmMME5_RTR_LBW_RANGE_BASE_0, lbw_rng0_base);
++	WREG32(mmMME5_RTR_LBW_RANGE_MASK_0, lbw_rng0_mask);
++	WREG32(mmMME5_RTR_LBW_RANGE_BASE_1, lbw_rng1_base);
++	WREG32(mmMME5_RTR_LBW_RANGE_MASK_1, lbw_rng1_mask);
++	WREG32(mmMME5_RTR_LBW_RANGE_BASE_2, lbw_rng2_base);
++	WREG32(mmMME5_RTR_LBW_RANGE_MASK_2, lbw_rng2_mask);
++	WREG32(mmMME5_RTR_LBW_RANGE_BASE_3, lbw_rng3_base);
++	WREG32(mmMME5_RTR_LBW_RANGE_MASK_3, lbw_rng3_mask);
++	WREG32(mmMME5_RTR_LBW_RANGE_BASE_4, lbw_rng4_base);
++	WREG32(mmMME5_RTR_LBW_RANGE_MASK_4, lbw_rng4_mask);
++	WREG32(mmMME5_RTR_LBW_RANGE_BASE_5, lbw_rng5_base);
++	WREG32(mmMME5_RTR_LBW_RANGE_MASK_5, lbw_rng5_mask);
++	WREG32(mmMME5_RTR_LBW_RANGE_BASE_6, lbw_rng6_base);
++	WREG32(mmMME5_RTR_LBW_RANGE_MASK_6, lbw_rng6_mask);
++	WREG32(mmMME5_RTR_LBW_RANGE_BASE_7, lbw_rng7_base);
++	WREG32(mmMME5_RTR_LBW_RANGE_MASK_7, lbw_rng7_mask);
++	WREG32(mmMME5_RTR_LBW_RANGE_BASE_8, lbw_rng8_base);
++	WREG32(mmMME5_RTR_LBW_RANGE_MASK_8, lbw_rng8_mask);
++	WREG32(mmMME5_RTR_LBW_RANGE_BASE_9, lbw_rng9_base);
++	WREG32(mmMME5_RTR_LBW_RANGE_MASK_9, lbw_rng9_mask);
++	WREG32(mmMME5_RTR_LBW_RANGE_BASE_10, lbw_rng10_base);
++	WREG32(mmMME5_RTR_LBW_RANGE_MASK_10, lbw_rng10_mask);
++	WREG32(mmMME5_RTR_LBW_RANGE_BASE_11, lbw_rng11_base);
++	WREG32(mmMME5_RTR_LBW_RANGE_MASK_11, lbw_rng11_mask);
++	WREG32(mmMME5_RTR_LBW_RANGE_BASE_12, lbw_rng12_base);
++	WREG32(mmMME5_RTR_LBW_RANGE_MASK_12, lbw_rng12_mask);
++	WREG32(mmMME5_RTR_LBW_RANGE_BASE_13, lbw_rng13_base);
++	WREG32(mmMME5_RTR_LBW_RANGE_MASK_13, lbw_rng13_mask);
++
++	WREG32(mmMME6_RTR_LBW_RANGE_BASE_0, lbw_rng0_base);
++	WREG32(mmMME6_RTR_LBW_RANGE_MASK_0, lbw_rng0_mask);
++	WREG32(mmMME6_RTR_LBW_RANGE_BASE_1, lbw_rng1_base);
++	WREG32(mmMME6_RTR_LBW_RANGE_MASK_1, lbw_rng1_mask);
++	WREG32(mmMME6_RTR_LBW_RANGE_BASE_2, lbw_rng2_base);
++	WREG32(mmMME6_RTR_LBW_RANGE_MASK_2, lbw_rng2_mask);
++	WREG32(mmMME6_RTR_LBW_RANGE_BASE_3, lbw_rng3_base);
++	WREG32(mmMME6_RTR_LBW_RANGE_MASK_3, lbw_rng3_mask);
++	WREG32(mmMME6_RTR_LBW_RANGE_BASE_4, lbw_rng4_base);
++	WREG32(mmMME6_RTR_LBW_RANGE_MASK_4, lbw_rng4_mask);
++	WREG32(mmMME6_RTR_LBW_RANGE_BASE_5, lbw_rng5_base);
++	WREG32(mmMME6_RTR_LBW_RANGE_MASK_5, lbw_rng5_mask);
++	WREG32(mmMME6_RTR_LBW_RANGE_BASE_6, lbw_rng6_base);
++	WREG32(mmMME6_RTR_LBW_RANGE_MASK_6, lbw_rng6_mask);
++	WREG32(mmMME6_RTR_LBW_RANGE_BASE_7, lbw_rng7_base);
++	WREG32(mmMME6_RTR_LBW_RANGE_MASK_7, lbw_rng7_mask);
++	WREG32(mmMME6_RTR_LBW_RANGE_BASE_8, lbw_rng8_base);
++	WREG32(mmMME6_RTR_LBW_RANGE_MASK_8, lbw_rng8_mask);
++	WREG32(mmMME6_RTR_LBW_RANGE_BASE_9, lbw_rng9_base);
++	WREG32(mmMME6_RTR_LBW_RANGE_MASK_9, lbw_rng9_mask);
++	WREG32(mmMME6_RTR_LBW_RANGE_BASE_10, lbw_rng10_base);
++	WREG32(mmMME6_RTR_LBW_RANGE_MASK_10, lbw_rng10_mask);
++	WREG32(mmMME6_RTR_LBW_RANGE_BASE_11, lbw_rng11_base);
++	WREG32(mmMME6_RTR_LBW_RANGE_MASK_11, lbw_rng11_mask);
++	WREG32(mmMME6_RTR_LBW_RANGE_BASE_12, lbw_rng12_base);
++	WREG32(mmMME6_RTR_LBW_RANGE_MASK_12, lbw_rng12_mask);
++	WREG32(mmMME6_RTR_LBW_RANGE_BASE_13, lbw_rng13_base);
++	WREG32(mmMME6_RTR_LBW_RANGE_MASK_13, lbw_rng13_mask);
++
++	WREG32(mmTPC0_NRTR_LBW_RANGE_HIT, 0xFFFF);
++	WREG32(mmTPC0_NRTR_HBW_RANGE_HIT, 0xFE);
++
++	/* Protect HOST */
++	WREG32(mmTPC0_NRTR_HBW_RANGE_BASE_L_0, 0);
++	WREG32(mmTPC0_NRTR_HBW_RANGE_BASE_H_0, 0);
++	WREG32(mmTPC0_NRTR_HBW_RANGE_MASK_L_0, 0);
++	WREG32(mmTPC0_NRTR_HBW_RANGE_MASK_H_0, 0xFFF80);
++
++	/*
++	 * Protect DDR @
++	 * DRAM_VIRT_BASE : DRAM_VIRT_BASE + DRAM_VIRT_END
++	 * The mask protects the first 512MB
++	 */
++	WREG32(mmTPC0_NRTR_HBW_RANGE_BASE_L_1, dram_addr_lo);
++	WREG32(mmTPC0_NRTR_HBW_RANGE_BASE_H_1, dram_addr_hi);
++	WREG32(mmTPC0_NRTR_HBW_RANGE_MASK_L_1, 0xE0000000);
++	WREG32(mmTPC0_NRTR_HBW_RANGE_MASK_H_1, 0x3FFFF);
++
++	WREG32(mmTPC0_NRTR_LBW_RANGE_BASE_0, lbw_rng0_base);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_MASK_0, lbw_rng0_mask);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_BASE_1, lbw_rng1_base);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_MASK_1, lbw_rng1_mask);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_BASE_2, lbw_rng2_base);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_MASK_2, lbw_rng2_mask);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_BASE_3, lbw_rng3_base);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_MASK_3, lbw_rng3_mask);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_BASE_4, lbw_rng4_base);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_MASK_4, lbw_rng4_mask);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_BASE_5, lbw_rng5_base);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_MASK_5, lbw_rng5_mask);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_BASE_6, lbw_rng6_base);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_MASK_6, lbw_rng6_mask);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_BASE_7, lbw_rng7_base);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_MASK_7, lbw_rng7_mask);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_BASE_8, lbw_rng8_base);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_MASK_8, lbw_rng8_mask);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_BASE_9, lbw_rng9_base);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_MASK_9, lbw_rng9_mask);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_BASE_10, lbw_rng10_base);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_MASK_10, lbw_rng10_mask);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_BASE_11, lbw_rng11_base);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_MASK_11, lbw_rng11_mask);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_BASE_12, lbw_rng12_base);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_MASK_12, lbw_rng12_mask);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_BASE_13, lbw_rng13_base);
++	WREG32(mmTPC0_NRTR_LBW_RANGE_MASK_13, lbw_rng13_mask);
++
++	WREG32(mmTPC1_RTR_LBW_RANGE_HIT, 0xFFFF);
++	WREG32(mmTPC1_RTR_HBW_RANGE_HIT, 0xFE);
++
++	/* Protect HOST */
++	WREG32(mmTPC1_RTR_HBW_RANGE_BASE_L_0, 0);
++	WREG32(mmTPC1_RTR_HBW_RANGE_BASE_H_0, 0);
++	WREG32(mmTPC1_RTR_HBW_RANGE_MASK_L_0, 0);
++	WREG32(mmTPC1_RTR_HBW_RANGE_MASK_H_0, 0xFFF80);
++
++	/*
++	 * Protect DDR @
++	 * DRAM_VIRT_BASE : DRAM_VIRT_BASE + DRAM_VIRT_END
++	 * The mask protects the first 512MB
++	 */
++	WREG32(mmTPC1_RTR_HBW_RANGE_BASE_L_1, dram_addr_lo);
++	WREG32(mmTPC1_RTR_HBW_RANGE_BASE_H_1, dram_addr_hi);
++	WREG32(mmTPC1_RTR_HBW_RANGE_MASK_L_1, 0xE0000000);
++	WREG32(mmTPC1_RTR_HBW_RANGE_MASK_H_1, 0x3FFFF);
++
++	WREG32(mmTPC1_RTR_LBW_RANGE_BASE_0, lbw_rng0_base);
++	WREG32(mmTPC1_RTR_LBW_RANGE_MASK_0, lbw_rng0_mask);
++	WREG32(mmTPC1_RTR_LBW_RANGE_BASE_1, lbw_rng1_base);
++	WREG32(mmTPC1_RTR_LBW_RANGE_MASK_1, lbw_rng1_mask);
++	WREG32(mmTPC1_RTR_LBW_RANGE_BASE_2, lbw_rng2_base);
++	WREG32(mmTPC1_RTR_LBW_RANGE_MASK_2, lbw_rng2_mask);
++	WREG32(mmTPC1_RTR_LBW_RANGE_BASE_3, lbw_rng3_base);
++	WREG32(mmTPC1_RTR_LBW_RANGE_MASK_3, lbw_rng3_mask);
++	WREG32(mmTPC1_RTR_LBW_RANGE_BASE_4, lbw_rng4_base);
++	WREG32(mmTPC1_RTR_LBW_RANGE_MASK_4, lbw_rng4_mask);
++	WREG32(mmTPC1_RTR_LBW_RANGE_BASE_5, lbw_rng5_base);
++	WREG32(mmTPC1_RTR_LBW_RANGE_MASK_5, lbw_rng5_mask);
++	WREG32(mmTPC1_RTR_LBW_RANGE_BASE_6, lbw_rng6_base);
++	WREG32(mmTPC1_RTR_LBW_RANGE_MASK_6, lbw_rng6_mask);
++	WREG32(mmTPC1_RTR_LBW_RANGE_BASE_7, lbw_rng7_base);
++	WREG32(mmTPC1_RTR_LBW_RANGE_MASK_7, lbw_rng7_mask);
++	WREG32(mmTPC1_RTR_LBW_RANGE_BASE_8, lbw_rng8_base);
++	WREG32(mmTPC1_RTR_LBW_RANGE_MASK_8, lbw_rng8_mask);
++	WREG32(mmTPC1_RTR_LBW_RANGE_BASE_9, lbw_rng9_base);
++	WREG32(mmTPC1_RTR_LBW_RANGE_MASK_9, lbw_rng9_mask);
++	WREG32(mmTPC1_RTR_LBW_RANGE_BASE_10, lbw_rng10_base);
++	WREG32(mmTPC1_RTR_LBW_RANGE_MASK_10, lbw_rng10_mask);
++	WREG32(mmTPC1_RTR_LBW_RANGE_BASE_11, lbw_rng11_base);
++	WREG32(mmTPC1_RTR_LBW_RANGE_MASK_11, lbw_rng11_mask);
++	WREG32(mmTPC1_RTR_LBW_RANGE_BASE_12, lbw_rng12_base);
++	WREG32(mmTPC1_RTR_LBW_RANGE_MASK_12, lbw_rng12_mask);
++	WREG32(mmTPC1_RTR_LBW_RANGE_BASE_13, lbw_rng13_base);
++	WREG32(mmTPC1_RTR_LBW_RANGE_MASK_13, lbw_rng13_mask);
++
++	WREG32(mmTPC2_RTR_LBW_RANGE_HIT, 0xFFFF);
++	WREG32(mmTPC2_RTR_HBW_RANGE_HIT, 0xFE);
++
++	/* Protect HOST */
++	WREG32(mmTPC2_RTR_HBW_RANGE_BASE_L_0, 0);
++	WREG32(mmTPC2_RTR_HBW_RANGE_BASE_H_0, 0);
++	WREG32(mmTPC2_RTR_HBW_RANGE_MASK_L_0, 0);
++	WREG32(mmTPC2_RTR_HBW_RANGE_MASK_H_0, 0xFFF80);
++
++	/*
++	 * Protect DDR @
++	 * DRAM_VIRT_BASE : DRAM_VIRT_BASE + DRAM_VIRT_END
++	 * The mask protects the first 512MB
++	 */
++	WREG32(mmTPC2_RTR_HBW_RANGE_BASE_L_1, dram_addr_lo);
++	WREG32(mmTPC2_RTR_HBW_RANGE_BASE_H_1, dram_addr_hi);
++	WREG32(mmTPC2_RTR_HBW_RANGE_MASK_L_1, 0xE0000000);
++	WREG32(mmTPC2_RTR_HBW_RANGE_MASK_H_1, 0x3FFFF);
++
++	WREG32(mmTPC2_RTR_LBW_RANGE_BASE_0, lbw_rng0_base);
++	WREG32(mmTPC2_RTR_LBW_RANGE_MASK_0, lbw_rng0_mask);
++	WREG32(mmTPC2_RTR_LBW_RANGE_BASE_1, lbw_rng1_base);
++	WREG32(mmTPC2_RTR_LBW_RANGE_MASK_1, lbw_rng1_mask);
++	WREG32(mmTPC2_RTR_LBW_RANGE_BASE_2, lbw_rng2_base);
++	WREG32(mmTPC2_RTR_LBW_RANGE_MASK_2, lbw_rng2_mask);
++	WREG32(mmTPC2_RTR_LBW_RANGE_BASE_3, lbw_rng3_base);
++	WREG32(mmTPC2_RTR_LBW_RANGE_MASK_3, lbw_rng3_mask);
++	WREG32(mmTPC2_RTR_LBW_RANGE_BASE_4, lbw_rng4_base);
++	WREG32(mmTPC2_RTR_LBW_RANGE_MASK_4, lbw_rng4_mask);
++	WREG32(mmTPC2_RTR_LBW_RANGE_BASE_5, lbw_rng5_base);
++	WREG32(mmTPC2_RTR_LBW_RANGE_MASK_5, lbw_rng5_mask);
++	WREG32(mmTPC2_RTR_LBW_RANGE_BASE_6, lbw_rng6_base);
++	WREG32(mmTPC2_RTR_LBW_RANGE_MASK_6, lbw_rng6_mask);
++	WREG32(mmTPC2_RTR_LBW_RANGE_BASE_7, lbw_rng7_base);
++	WREG32(mmTPC2_RTR_LBW_RANGE_MASK_7, lbw_rng7_mask);
++	WREG32(mmTPC2_RTR_LBW_RANGE_BASE_8, lbw_rng8_base);
++	WREG32(mmTPC2_RTR_LBW_RANGE_MASK_8, lbw_rng8_mask);
++	WREG32(mmTPC2_RTR_LBW_RANGE_BASE_9, lbw_rng9_base);
++	WREG32(mmTPC2_RTR_LBW_RANGE_MASK_9, lbw_rng9_mask);
++	WREG32(mmTPC2_RTR_LBW_RANGE_BASE_10, lbw_rng10_base);
++	WREG32(mmTPC2_RTR_LBW_RANGE_MASK_10, lbw_rng10_mask);
++	WREG32(mmTPC2_RTR_LBW_RANGE_BASE_11, lbw_rng11_base);
++	WREG32(mmTPC2_RTR_LBW_RANGE_MASK_11, lbw_rng11_mask);
++	WREG32(mmTPC2_RTR_LBW_RANGE_BASE_12, lbw_rng12_base);
++	WREG32(mmTPC2_RTR_LBW_RANGE_MASK_12, lbw_rng12_mask);
++	WREG32(mmTPC2_RTR_LBW_RANGE_BASE_13, lbw_rng13_base);
++	WREG32(mmTPC2_RTR_LBW_RANGE_MASK_13, lbw_rng13_mask);
++
++	WREG32(mmTPC3_RTR_LBW_RANGE_HIT, 0xFFFF);
++	WREG32(mmTPC3_RTR_HBW_RANGE_HIT, 0xFE);
++
++	/* Protect HOST */
++	WREG32(mmTPC3_RTR_HBW_RANGE_BASE_L_0, 0);
++	WREG32(mmTPC3_RTR_HBW_RANGE_BASE_H_0, 0);
++	WREG32(mmTPC3_RTR_HBW_RANGE_MASK_L_0, 0);
++	WREG32(mmTPC3_RTR_HBW_RANGE_MASK_H_0, 0xFFF80);
++
++	/*
++	 * Protect DDR @
++	 * DRAM_VIRT_BASE : DRAM_VIRT_BASE + DRAM_VIRT_END
++	 * The mask protects the first 512MB
++	 */
++	WREG32(mmTPC3_RTR_HBW_RANGE_BASE_L_1, dram_addr_lo);
++	WREG32(mmTPC3_RTR_HBW_RANGE_BASE_H_1, dram_addr_hi);
++	WREG32(mmTPC3_RTR_HBW_RANGE_MASK_L_1, 0xE0000000);
++	WREG32(mmTPC3_RTR_HBW_RANGE_MASK_H_1, 0x3FFFF);
++
++	WREG32(mmTPC3_RTR_LBW_RANGE_BASE_0, lbw_rng0_base);
++	WREG32(mmTPC3_RTR_LBW_RANGE_MASK_0, lbw_rng0_mask);
++	WREG32(mmTPC3_RTR_LBW_RANGE_BASE_1, lbw_rng1_base);
++	WREG32(mmTPC3_RTR_LBW_RANGE_MASK_1, lbw_rng1_mask);
++	WREG32(mmTPC3_RTR_LBW_RANGE_BASE_2, lbw_rng2_base);
++	WREG32(mmTPC3_RTR_LBW_RANGE_MASK_2, lbw_rng2_mask);
++	WREG32(mmTPC3_RTR_LBW_RANGE_BASE_3, lbw_rng3_base);
++	WREG32(mmTPC3_RTR_LBW_RANGE_MASK_3, lbw_rng3_mask);
++	WREG32(mmTPC3_RTR_LBW_RANGE_BASE_4, lbw_rng4_base);
++	WREG32(mmTPC3_RTR_LBW_RANGE_MASK_4, lbw_rng4_mask);
++	WREG32(mmTPC3_RTR_LBW_RANGE_BASE_5, lbw_rng5_base);
++	WREG32(mmTPC3_RTR_LBW_RANGE_MASK_5, lbw_rng5_mask);
++	WREG32(mmTPC3_RTR_LBW_RANGE_BASE_6, lbw_rng6_base);
++	WREG32(mmTPC3_RTR_LBW_RANGE_MASK_6, lbw_rng6_mask);
++	WREG32(mmTPC3_RTR_LBW_RANGE_BASE_7, lbw_rng7_base);
++	WREG32(mmTPC3_RTR_LBW_RANGE_MASK_7, lbw_rng7_mask);
++	WREG32(mmTPC3_RTR_LBW_RANGE_BASE_8, lbw_rng8_base);
++	WREG32(mmTPC3_RTR_LBW_RANGE_MASK_8, lbw_rng8_mask);
++	WREG32(mmTPC3_RTR_LBW_RANGE_BASE_9, lbw_rng9_base);
++	WREG32(mmTPC3_RTR_LBW_RANGE_MASK_9, lbw_rng9_mask);
++	WREG32(mmTPC3_RTR_LBW_RANGE_BASE_10, lbw_rng10_base);
++	WREG32(mmTPC3_RTR_LBW_RANGE_MASK_10, lbw_rng10_mask);
++	WREG32(mmTPC3_RTR_LBW_RANGE_BASE_11, lbw_rng11_base);
++	WREG32(mmTPC3_RTR_LBW_RANGE_MASK_11, lbw_rng11_mask);
++	WREG32(mmTPC3_RTR_LBW_RANGE_BASE_12, lbw_rng12_base);
++	WREG32(mmTPC3_RTR_LBW_RANGE_MASK_12, lbw_rng12_mask);
++	WREG32(mmTPC3_RTR_LBW_RANGE_BASE_13, lbw_rng13_base);
++	WREG32(mmTPC3_RTR_LBW_RANGE_MASK_13, lbw_rng13_mask);
++
++	WREG32(mmTPC4_RTR_LBW_RANGE_HIT, 0xFFFF);
++	WREG32(mmTPC4_RTR_HBW_RANGE_HIT, 0xFE);
++
++	/* Protect HOST */
++	WREG32(mmTPC4_RTR_HBW_RANGE_BASE_L_0, 0);
++	WREG32(mmTPC4_RTR_HBW_RANGE_BASE_H_0, 0);
++	WREG32(mmTPC4_RTR_HBW_RANGE_MASK_L_0, 0);
++	WREG32(mmTPC4_RTR_HBW_RANGE_MASK_H_0, 0xFFF80);
++
++	/*
++	 * Protect DDR @
++	 * DRAM_VIRT_BASE : DRAM_VIRT_BASE + DRAM_VIRT_END
++	 * The mask protects the first 512MB
++	 */
++	WREG32(mmTPC4_RTR_HBW_RANGE_BASE_L_1, dram_addr_lo);
++	WREG32(mmTPC4_RTR_HBW_RANGE_BASE_H_1, dram_addr_hi);
++	WREG32(mmTPC4_RTR_HBW_RANGE_MASK_L_1, 0xE0000000);
++	WREG32(mmTPC4_RTR_HBW_RANGE_MASK_H_1, 0x3FFFF);
++
++	WREG32(mmTPC4_RTR_LBW_RANGE_BASE_0, lbw_rng0_base);
++	WREG32(mmTPC4_RTR_LBW_RANGE_MASK_0, lbw_rng0_mask);
++	WREG32(mmTPC4_RTR_LBW_RANGE_BASE_1, lbw_rng1_base);
++	WREG32(mmTPC4_RTR_LBW_RANGE_MASK_1, lbw_rng1_mask);
++	WREG32(mmTPC4_RTR_LBW_RANGE_BASE_2, lbw_rng2_base);
++	WREG32(mmTPC4_RTR_LBW_RANGE_MASK_2, lbw_rng2_mask);
++	WREG32(mmTPC4_RTR_LBW_RANGE_BASE_3, lbw_rng3_base);
++	WREG32(mmTPC4_RTR_LBW_RANGE_MASK_3, lbw_rng3_mask);
++	WREG32(mmTPC4_RTR_LBW_RANGE_BASE_4, lbw_rng4_base);
++	WREG32(mmTPC4_RTR_LBW_RANGE_MASK_4, lbw_rng4_mask);
++	WREG32(mmTPC4_RTR_LBW_RANGE_BASE_5, lbw_rng5_base);
++	WREG32(mmTPC4_RTR_LBW_RANGE_MASK_5, lbw_rng5_mask);
++	WREG32(mmTPC4_RTR_LBW_RANGE_BASE_6, lbw_rng6_base);
++	WREG32(mmTPC4_RTR_LBW_RANGE_MASK_6, lbw_rng6_mask);
++	WREG32(mmTPC4_RTR_LBW_RANGE_BASE_7, lbw_rng7_base);
++	WREG32(mmTPC4_RTR_LBW_RANGE_MASK_7, lbw_rng7_mask);
++	WREG32(mmTPC4_RTR_LBW_RANGE_BASE_8, lbw_rng8_base);
++	WREG32(mmTPC4_RTR_LBW_RANGE_MASK_8, lbw_rng8_mask);
++	WREG32(mmTPC4_RTR_LBW_RANGE_BASE_9, lbw_rng9_base);
++	WREG32(mmTPC4_RTR_LBW_RANGE_MASK_9, lbw_rng9_mask);
++	WREG32(mmTPC4_RTR_LBW_RANGE_BASE_10, lbw_rng10_base);
++	WREG32(mmTPC4_RTR_LBW_RANGE_MASK_10, lbw_rng10_mask);
++	WREG32(mmTPC4_RTR_LBW_RANGE_BASE_11, lbw_rng11_base);
++	WREG32(mmTPC4_RTR_LBW_RANGE_MASK_11, lbw_rng11_mask);
++	WREG32(mmTPC4_RTR_LBW_RANGE_BASE_12, lbw_rng12_base);
++	WREG32(mmTPC4_RTR_LBW_RANGE_MASK_12, lbw_rng12_mask);
++	WREG32(mmTPC4_RTR_LBW_RANGE_BASE_13, lbw_rng13_base);
++	WREG32(mmTPC4_RTR_LBW_RANGE_MASK_13, lbw_rng13_mask);
++
++	WREG32(mmTPC5_RTR_LBW_RANGE_HIT, 0xFFFF);
++	WREG32(mmTPC5_RTR_HBW_RANGE_HIT, 0xFE);
++
++	/* Protect HOST */
++	WREG32(mmTPC5_RTR_HBW_RANGE_BASE_L_0, 0);
++	WREG32(mmTPC5_RTR_HBW_RANGE_BASE_H_0, 0);
++	WREG32(mmTPC5_RTR_HBW_RANGE_MASK_L_0, 0);
++	WREG32(mmTPC5_RTR_HBW_RANGE_MASK_H_0, 0xFFF80);
++
++	/*
++	 * Protect DDR @
++	 * DRAM_VIRT_BASE : DRAM_VIRT_BASE + DRAM_VIRT_END
++	 * The mask protects the first 512MB
++	 */
++	WREG32(mmTPC5_RTR_HBW_RANGE_BASE_L_1, dram_addr_lo);
++	WREG32(mmTPC5_RTR_HBW_RANGE_BASE_H_1, dram_addr_hi);
++	WREG32(mmTPC5_RTR_HBW_RANGE_MASK_L_1, 0xE0000000);
++	WREG32(mmTPC5_RTR_HBW_RANGE_MASK_H_1, 0x3FFFF);
++
++	WREG32(mmTPC5_RTR_LBW_RANGE_BASE_0, lbw_rng0_base);
++	WREG32(mmTPC5_RTR_LBW_RANGE_MASK_0, lbw_rng0_mask);
++	WREG32(mmTPC5_RTR_LBW_RANGE_BASE_1, lbw_rng1_base);
++	WREG32(mmTPC5_RTR_LBW_RANGE_MASK_1, lbw_rng1_mask);
++	WREG32(mmTPC5_RTR_LBW_RANGE_BASE_2, lbw_rng2_base);
++	WREG32(mmTPC5_RTR_LBW_RANGE_MASK_2, lbw_rng2_mask);
++	WREG32(mmTPC5_RTR_LBW_RANGE_BASE_3, lbw_rng3_base);
++	WREG32(mmTPC5_RTR_LBW_RANGE_MASK_3, lbw_rng3_mask);
++	WREG32(mmTPC5_RTR_LBW_RANGE_BASE_4, lbw_rng4_base);
++	WREG32(mmTPC5_RTR_LBW_RANGE_MASK_4, lbw_rng4_mask);
++	WREG32(mmTPC5_RTR_LBW_RANGE_BASE_5, lbw_rng5_base);
++	WREG32(mmTPC5_RTR_LBW_RANGE_MASK_5, lbw_rng5_mask);
++	WREG32(mmTPC5_RTR_LBW_RANGE_BASE_6, lbw_rng6_base);
++	WREG32(mmTPC5_RTR_LBW_RANGE_MASK_6, lbw_rng6_mask);
++	WREG32(mmTPC5_RTR_LBW_RANGE_BASE_7, lbw_rng7_base);
++	WREG32(mmTPC5_RTR_LBW_RANGE_MASK_7, lbw_rng7_mask);
++	WREG32(mmTPC5_RTR_LBW_RANGE_BASE_8, lbw_rng8_base);
++	WREG32(mmTPC5_RTR_LBW_RANGE_MASK_8, lbw_rng8_mask);
++	WREG32(mmTPC5_RTR_LBW_RANGE_BASE_9, lbw_rng9_base);
++	WREG32(mmTPC5_RTR_LBW_RANGE_MASK_9, lbw_rng9_mask);
++	WREG32(mmTPC5_RTR_LBW_RANGE_BASE_10, lbw_rng10_base);
++	WREG32(mmTPC5_RTR_LBW_RANGE_MASK_10, lbw_rng10_mask);
++	WREG32(mmTPC5_RTR_LBW_RANGE_BASE_11, lbw_rng11_base);
++	WREG32(mmTPC5_RTR_LBW_RANGE_MASK_11, lbw_rng11_mask);
++	WREG32(mmTPC5_RTR_LBW_RANGE_BASE_12, lbw_rng12_base);
++	WREG32(mmTPC5_RTR_LBW_RANGE_MASK_12, lbw_rng12_mask);
++	WREG32(mmTPC5_RTR_LBW_RANGE_BASE_13, lbw_rng13_base);
++	WREG32(mmTPC5_RTR_LBW_RANGE_MASK_13, lbw_rng13_mask);
++
++	WREG32(mmTPC6_RTR_LBW_RANGE_HIT, 0xFFFF);
++	WREG32(mmTPC6_RTR_HBW_RANGE_HIT, 0xFE);
++
++	/* Protect HOST */
++	WREG32(mmTPC6_RTR_HBW_RANGE_BASE_L_0, 0);
++	WREG32(mmTPC6_RTR_HBW_RANGE_BASE_H_0, 0);
++	WREG32(mmTPC6_RTR_HBW_RANGE_MASK_L_0, 0);
++	WREG32(mmTPC6_RTR_HBW_RANGE_MASK_H_0, 0xFFF80);
++
++	/*
++	 * Protect DDR @
++	 * DRAM_VIRT_BASE : DRAM_VIRT_BASE + DRAM_VIRT_END
++	 * The mask protects the first 512MB
++	 */
++	WREG32(mmTPC6_RTR_HBW_RANGE_BASE_L_1, dram_addr_lo);
++	WREG32(mmTPC6_RTR_HBW_RANGE_BASE_H_1, dram_addr_hi);
++	WREG32(mmTPC6_RTR_HBW_RANGE_MASK_L_1, 0xE0000000);
++	WREG32(mmTPC6_RTR_HBW_RANGE_MASK_H_1, 0x3FFFF);
++
++	WREG32(mmTPC6_RTR_LBW_RANGE_BASE_0, lbw_rng0_base);
++	WREG32(mmTPC6_RTR_LBW_RANGE_MASK_0, lbw_rng0_mask);
++	WREG32(mmTPC6_RTR_LBW_RANGE_BASE_1, lbw_rng1_base);
++	WREG32(mmTPC6_RTR_LBW_RANGE_MASK_1, lbw_rng1_mask);
++	WREG32(mmTPC6_RTR_LBW_RANGE_BASE_2, lbw_rng2_base);
++	WREG32(mmTPC6_RTR_LBW_RANGE_MASK_2, lbw_rng2_mask);
++	WREG32(mmTPC6_RTR_LBW_RANGE_BASE_3, lbw_rng3_base);
++	WREG32(mmTPC6_RTR_LBW_RANGE_MASK_3, lbw_rng3_mask);
++	WREG32(mmTPC6_RTR_LBW_RANGE_BASE_4, lbw_rng4_base);
++	WREG32(mmTPC6_RTR_LBW_RANGE_MASK_4, lbw_rng4_mask);
++	WREG32(mmTPC6_RTR_LBW_RANGE_BASE_5, lbw_rng5_base);
++	WREG32(mmTPC6_RTR_LBW_RANGE_MASK_5, lbw_rng5_mask);
++	WREG32(mmTPC6_RTR_LBW_RANGE_BASE_6, lbw_rng6_base);
++	WREG32(mmTPC6_RTR_LBW_RANGE_MASK_6, lbw_rng6_mask);
++	WREG32(mmTPC6_RTR_LBW_RANGE_BASE_7, lbw_rng7_base);
++	WREG32(mmTPC6_RTR_LBW_RANGE_MASK_7, lbw_rng7_mask);
++	WREG32(mmTPC6_RTR_LBW_RANGE_BASE_8, lbw_rng8_base);
++	WREG32(mmTPC6_RTR_LBW_RANGE_MASK_8, lbw_rng8_mask);
++	WREG32(mmTPC6_RTR_LBW_RANGE_BASE_9, lbw_rng9_base);
++	WREG32(mmTPC6_RTR_LBW_RANGE_MASK_9, lbw_rng9_mask);
++	WREG32(mmTPC6_RTR_LBW_RANGE_BASE_10, lbw_rng10_base);
++	WREG32(mmTPC6_RTR_LBW_RANGE_MASK_10, lbw_rng10_mask);
++	WREG32(mmTPC6_RTR_LBW_RANGE_BASE_11, lbw_rng11_base);
++	WREG32(mmTPC6_RTR_LBW_RANGE_MASK_11, lbw_rng11_mask);
++	WREG32(mmTPC6_RTR_LBW_RANGE_BASE_12, lbw_rng12_base);
++	WREG32(mmTPC6_RTR_LBW_RANGE_MASK_12, lbw_rng12_mask);
++	WREG32(mmTPC6_RTR_LBW_RANGE_BASE_13, lbw_rng13_base);
++	WREG32(mmTPC6_RTR_LBW_RANGE_MASK_13, lbw_rng13_mask);
++
++	WREG32(mmTPC7_NRTR_LBW_RANGE_HIT, 0xFFFF);
++	WREG32(mmTPC7_NRTR_HBW_RANGE_HIT, 0xFE);
++
++	/* Protect HOST */
++	WREG32(mmTPC7_NRTR_HBW_RANGE_BASE_L_0, 0);
++	WREG32(mmTPC7_NRTR_HBW_RANGE_BASE_H_0, 0);
++	WREG32(mmTPC7_NRTR_HBW_RANGE_MASK_L_0, 0);
++	WREG32(mmTPC7_NRTR_HBW_RANGE_MASK_H_0, 0xFFF80);
++
++	/*
++	 * Protect DDR @
++	 * DRAM_VIRT_BASE : DRAM_VIRT_BASE + DRAM_VIRT_END
++	 * The mask protects the first 512MB
++	 */
++	WREG32(mmTPC7_NRTR_HBW_RANGE_BASE_L_1, dram_addr_lo);
++	WREG32(mmTPC7_NRTR_HBW_RANGE_BASE_H_1, dram_addr_hi);
++	WREG32(mmTPC7_NRTR_HBW_RANGE_MASK_L_1, 0xE0000000);
++	WREG32(mmTPC7_NRTR_HBW_RANGE_MASK_H_1, 0x3FFFF);
++
++	WREG32(mmTPC7_NRTR_LBW_RANGE_BASE_0, lbw_rng0_base);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_MASK_0, lbw_rng0_mask);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_BASE_1, lbw_rng1_base);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_MASK_1, lbw_rng1_mask);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_BASE_2, lbw_rng2_base);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_MASK_2, lbw_rng2_mask);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_BASE_3, lbw_rng3_base);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_MASK_3, lbw_rng3_mask);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_BASE_4, lbw_rng4_base);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_MASK_4, lbw_rng4_mask);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_BASE_5, lbw_rng5_base);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_MASK_5, lbw_rng5_mask);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_BASE_6, lbw_rng6_base);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_MASK_6, lbw_rng6_mask);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_BASE_7, lbw_rng7_base);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_MASK_7, lbw_rng7_mask);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_BASE_8, lbw_rng8_base);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_MASK_8, lbw_rng8_mask);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_BASE_9, lbw_rng9_base);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_MASK_9, lbw_rng9_mask);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_BASE_10, lbw_rng10_base);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_MASK_10, lbw_rng10_mask);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_BASE_11, lbw_rng11_base);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_MASK_11, lbw_rng11_mask);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_BASE_12, lbw_rng12_base);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_MASK_12, lbw_rng12_mask);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_BASE_13, lbw_rng13_base);
++	WREG32(mmTPC7_NRTR_LBW_RANGE_MASK_13, lbw_rng13_mask);
++
++	goya_init_protection_bits(hdev);
++}
 diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
-index e260586f3bdb..4d5cba225700 100644
+index ed79a0be58d7..8b0e8796628b 100644
 --- a/drivers/misc/habanalabs/habanalabs.h
 +++ b/drivers/misc/habanalabs/habanalabs.h
-@@ -26,8 +26,12 @@
+@@ -8,6 +8,8 @@
+ #ifndef HABANALABSP_H_
+ #define HABANALABSP_H_
+ 
++#include "include/armcp_if.h"
++
+ #define pr_fmt(fmt)			"habanalabs: " fmt
+ 
+ #include <linux/pci.h>
+@@ -23,6 +25,8 @@
  
  #define HL_MMAP_CB_MASK			(0x8000000000000000ull >> PAGE_SHIFT)
  
-+#define HL_PENDING_RESET_PER_SEC	5
++#define HL_DEVICE_TIMEOUT_USEC		1000000 /* 1 s */
 +
- #define HL_DEVICE_TIMEOUT_USEC		1000000 /* 1 s */
- 
-+#define HL_HEARTBEAT_PER_USEC		5000000 /* 5 s */
-+
- #define HL_PLL_LOW_JOB_FREQ_USEC	5000000 /* 5 s */
- 
  #define HL_MAX_QUEUES			128
-@@ -62,6 +66,18 @@ struct hw_queue_properties {
- 	u8			kmd_only;
- };
  
-+/**
-+ * enum hl_device_hw_state - H/W device state. use this to understand whether
-+ *                           to do reset before hw_init or not
-+ * @HL_DEVICE_HW_STATE_CLEAN: H/W state is clean. i.e. after hard reset
-+ * @HL_DEVICE_HW_STATE_DIRTY: H/W state is dirty. i.e. we started to execute
-+ *                            hw_init
-+ */
-+enum hl_device_hw_state {
-+	HL_DEVICE_HW_STATE_CLEAN = 0,
-+	HL_DEVICE_HW_STATE_DIRTY
-+};
-+
+ struct hl_device;
+@@ -31,6 +35,8 @@ struct hl_fpriv;
+ 
  /**
   * struct asic_fixed_properties - ASIC specific immutable properties.
-  * @hw_queues_props: H/W queues properties.
-@@ -366,12 +382,15 @@ enum hl_pll_frequency {
-  * @handle_eqe: handle event queue entry (IRQ) from ArmCP.
-  * @set_pll_profile: change PLL profile (manual/automatic).
-  * @get_events_stat: retrieve event queue entries histogram.
-+ * @send_heartbeat: send is-alive packet to ArmCP and verify response.
-  * @enable_clock_gating: enable clock gating for reducing power consumption.
-  * @disable_clock_gating: disable clock for accessing registers on HBW.
-+ * @soft_reset_late_init: perform certain actions needed after soft reset.
-  * @hw_queues_lock: acquire H/W queues lock.
-  * @hw_queues_unlock: release H/W queues lock.
-  * @get_eeprom_data: retrieve EEPROM data from F/W.
-  * @send_cpu_message: send buffer to ArmCP.
-+ * @get_hw_state: retrieve the H/W state
++ * @uboot_ver: F/W U-boot version.
++ * @preboot_ver: F/W Preboot version.
+  * @sram_base_address: SRAM physical start address.
+  * @sram_end_address: SRAM physical end address.
+  * @sram_user_base_address - SRAM physical start address for user access.
+@@ -59,6 +65,8 @@ struct hl_fpriv;
+  * @tpc_enabled_mask: which TPCs are enabled.
   */
- struct hl_asic_funcs {
- 	int (*early_init)(struct hl_device *hdev);
-@@ -413,14 +432,17 @@ struct hl_asic_funcs {
- 	void (*set_pll_profile)(struct hl_device *hdev,
- 			enum hl_pll_frequency freq);
- 	void* (*get_events_stat)(struct hl_device *hdev, u32 *size);
-+	int (*send_heartbeat)(struct hl_device *hdev);
- 	void (*enable_clock_gating)(struct hl_device *hdev);
- 	void (*disable_clock_gating)(struct hl_device *hdev);
-+	int (*soft_reset_late_init)(struct hl_device *hdev);
- 	void (*hw_queues_lock)(struct hl_device *hdev);
- 	void (*hw_queues_unlock)(struct hl_device *hdev);
- 	int (*get_eeprom_data)(struct hl_device *hdev, void *data,
- 				size_t max_size);
- 	int (*send_cpu_message)(struct hl_device *hdev, u32 *msg,
- 				u16 len, u32 timeout, long *result);
-+	enum hl_device_hw_state (*get_hw_state)(struct hl_device *hdev);
+ struct asic_fixed_properties {
++	char			uboot_ver[VERSION_MAX_LEN];
++	char			preboot_ver[VERSION_MAX_LEN];
+ 	u64			sram_base_address;
+ 	u64			sram_end_address;
+ 	u64			sram_user_base_address;
+@@ -156,6 +164,8 @@ enum hl_asic_type {
+  * @early_fini: tears down what was done in early_init.
+  * @sw_init: sets up driver state, does not configure H/W.
+  * @sw_fini: tears down driver state, does not configure H/W.
++ * @hw_init: sets up the H/W state.
++ * @hw_fini: tears down the H/W state.
+  * @suspend: handles IP specific H/W or SW changes for suspend.
+  * @resume: handles IP specific H/W or SW changes for resume.
+  * @mmap: mmap function, does nothing.
+@@ -174,6 +184,8 @@ struct hl_asic_funcs {
+ 	int (*early_fini)(struct hl_device *hdev);
+ 	int (*sw_init)(struct hl_device *hdev);
+ 	int (*sw_fini)(struct hl_device *hdev);
++	int (*hw_init)(struct hl_device *hdev);
++	void (*hw_fini)(struct hl_device *hdev, bool hard_reset);
+ 	int (*suspend)(struct hl_device *hdev);
+ 	int (*resume)(struct hl_device *hdev);
+ 	int (*mmap)(struct hl_fpriv *hpriv, struct vm_area_struct *vma);
+@@ -350,7 +362,10 @@ struct hl_device {
+ 	u8				disabled;
+ 
+ 	/* Parameters for bring-up */
++	u8				cpu_enable;
+ 	u8				reset_pcilink;
++	u8				fw_loading;
++	u8				pldm;
  };
  
  
-@@ -532,6 +554,16 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
- 	WREG32(mm##reg, (RREG32(mm##reg) & ~REG_FIELD_MASK(reg, field)) | \
- 			(val) << REG_FIELD_SHIFT(reg, field))
- 
-+/**
-+ * struct hl_device_reset_work - reset workqueue task wrapper.
-+ * @reset_work: reset work to be done.
-+ * @hdev: habanalabs device structure.
-+ */
-+struct hl_device_reset_work {
-+	struct work_struct		reset_work;
-+	struct hl_device		*hdev;
-+};
-+
- /**
-  * struct hl_device - habanalabs device structure.
-  * @pdev: pointer to PCI device, can be NULL in case of simulator device.
-@@ -540,6 +572,7 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
-  * @cdev: related char device.
-  * @dev: realted kernel basic device structure.
-  * @work_freq: delayed work to lower device frequency if possible.
-+ * @work_heartbeat: delayed work for ArmCP is-alive check.
-  * @asic_name: ASIC specific nmae.
-  * @asic_type: ASIC specific type.
-  * @completion_queue: array of hl_cq.
-@@ -571,6 +604,7 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
-  * @cb_pool: list of preallocated CBs.
-  * @cb_pool_lock: protects the CB pool.
-  * @user_ctx: current user context executing.
-+ * @in_reset: is device in reset flow.
-  * @curr_pll_profile: current PLL profile.
-  * @fd_open_cnt: number of open user processes.
-  * @max_power: the max power of the device, as configured by the sysadmin. This
-@@ -578,10 +612,15 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
-  *             value and update the F/W after the re-initialization
-  * @major: habanalabs KMD major.
-  * @high_pll: high PLL profile frequency.
-+ * @soft_reset_cnt: number of soft reset since KMD loading.
-+ * @hard_reset_cnt: number of hard reset since KMD loading.
-  * @id: device minor.
-  * @disabled: is device disabled.
-  * @late_init_done: is late init stage was done during initialization.
-  * @hwmon_initialized: is H/W monitor sensors was initialized.
-+ * @hard_reset_pending: is there a hard reset work pending.
-+ * @heartbeat: is heartbeat sanity check towards ArmCP enabled.
-+ * @init_done: is the initialization of the device done.
-  */
- struct hl_device {
- 	struct pci_dev			*pdev;
-@@ -590,6 +629,7 @@ struct hl_device {
- 	struct cdev			cdev;
- 	struct device			*dev;
- 	struct delayed_work		work_freq;
-+	struct delayed_work		work_heartbeat;
- 	char				asic_name[16];
- 	enum hl_asic_type		asic_type;
- 	struct hl_cq			*completion_queue;
-@@ -621,15 +661,21 @@ struct hl_device {
- 	/* TODO: remove user_ctx for multiple process support */
- 	struct hl_ctx			*user_ctx;
- 
-+	atomic_t			in_reset;
- 	atomic_t			curr_pll_profile;
- 	atomic_t			fd_open_cnt;
- 	u64				max_power;
- 	u32				major;
- 	u32				high_pll;
-+	u32				soft_reset_cnt;
-+	u32				hard_reset_cnt;
- 	u16				id;
- 	u8				disabled;
- 	u8				late_init_done;
- 	u8				hwmon_initialized;
-+	u8				hard_reset_pending;
-+	u8				heartbeat;
-+	u8				init_done;
- 
- 	/* Parameters for bring-up */
- 	u8				cpu_enable;
-@@ -670,6 +716,7 @@ struct hl_ioctl_desc {
-  */
- 
- int hl_device_open(struct inode *inode, struct file *filp);
-+bool hl_device_disabled_or_in_reset(struct hl_device *hdev);
- int create_hdev(struct hl_device **dev, struct pci_dev *pdev,
- 		enum hl_asic_type asic_type, int minor);
- void destroy_hdev(struct hl_device *hdev);
-@@ -683,6 +730,7 @@ int hl_hw_queue_send_cb_no_cmpl(struct hl_device *hdev, u32 hw_queue_id,
- 				u32 cb_size, u64 cb_ptr);
- u32 hl_hw_queue_add_ptr(u32 ptr, u16 val);
- void hl_hw_queue_inc_ci_kernel(struct hl_device *hdev, u32 hw_queue_id);
-+void hl_hw_queue_reset(struct hl_device *hdev, bool hard_reset);
- 
- #define hl_queue_inc_ptr(p)		hl_hw_queue_add_ptr(p, 1)
- #define hl_pi_2_offset(pi)		((pi) & (HL_QUEUE_LENGTH - 1))
-@@ -691,6 +739,8 @@ int hl_cq_init(struct hl_device *hdev, struct hl_cq *q, u32 hw_queue_id);
- void hl_cq_fini(struct hl_device *hdev, struct hl_cq *q);
- int hl_eq_init(struct hl_device *hdev, struct hl_eq *q);
- void hl_eq_fini(struct hl_device *hdev, struct hl_eq *q);
-+void hl_cq_reset(struct hl_device *hdev, struct hl_cq *q);
-+void hl_eq_reset(struct hl_device *hdev, struct hl_eq *q);
- irqreturn_t hl_irq_handler_cq(int irq, void *arg);
- irqreturn_t hl_irq_handler_eq(int irq, void *arg);
- int hl_asid_init(struct hl_device *hdev);
-@@ -708,6 +758,8 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass);
- void hl_device_fini(struct hl_device *hdev);
- int hl_device_suspend(struct hl_device *hdev);
- int hl_device_resume(struct hl_device *hdev);
-+int hl_device_reset(struct hl_device *hdev, bool hard_reset,
-+			bool from_hard_reset_thread);
- void hl_hpriv_get(struct hl_fpriv *hpriv);
- void hl_hpriv_put(struct hl_fpriv *hpriv);
- int hl_device_set_frequency(struct hl_device *hdev, enum hl_pll_frequency freq);
 diff --git a/drivers/misc/habanalabs/habanalabs_drv.c b/drivers/misc/habanalabs/habanalabs_drv.c
-index 6260d99ef1ca..0702f6f974eb 100644
+index b07979c599e2..2611883eab11 100644
 --- a/drivers/misc/habanalabs/habanalabs_drv.c
 +++ b/drivers/misc/habanalabs/habanalabs_drv.c
-@@ -88,9 +88,9 @@ int hl_device_open(struct inode *inode, struct file *filp)
+@@ -171,7 +171,14 @@ int create_hdev(struct hl_device **dev, struct pci_dev *pdev,
+ 	hdev->major = hl_major;
  
- 	mutex_lock(&hdev->fd_open_cnt_lock);
- 
--	if (hdev->disabled) {
-+	if (hl_device_disabled_or_in_reset(hdev)) {
- 		dev_err_ratelimited(hdev->dev,
--			"Can't open %s because it is disabled\n",
-+			"Can't open %s because it is disabled or in reset\n",
- 			dev_name(hdev->dev));
- 		mutex_unlock(&hdev->fd_open_cnt_lock);
- 		return -EPERM;
-@@ -183,6 +183,7 @@ int create_hdev(struct hl_device **dev, struct pci_dev *pdev,
- 	hdev->cpu_queues_enable = 1;
- 	hdev->fw_loading = 1;
- 	hdev->pldm = 0;
-+	hdev->heartbeat = 1;
- 
- 	/* If CPU is disabled, no point in loading FW */
- 	if (!hdev->cpu_enable)
-@@ -192,6 +193,10 @@ int create_hdev(struct hl_device **dev, struct pci_dev *pdev,
- 	if (!hdev->fw_loading)
- 		hdev->cpu_queues_enable = 0;
- 
-+	/* If CPU queues not enabled, no way to do heartbeat */
-+	if (!hdev->cpu_queues_enable)
-+		hdev->heartbeat = 0;
+ 	/* Parameters for bring-up - set them to defaults */
++	hdev->cpu_enable = 1;
+ 	hdev->reset_pcilink = 0;
++	hdev->fw_loading = 1;
++	hdev->pldm = 0;
 +
++	/* If CPU is disabled, no point in loading FW */
++	if (!hdev->cpu_enable)
++		hdev->fw_loading = 0;
+ 
  	hdev->disabled = true;
  	hdev->pdev = pdev; /* can be NULL in case of simulator device */
- 
-diff --git a/drivers/misc/habanalabs/habanalabs_ioctl.c b/drivers/misc/habanalabs/habanalabs_ioctl.c
-index 71dd1e760a22..f406c3eb6316 100644
---- a/drivers/misc/habanalabs/habanalabs_ioctl.c
-+++ b/drivers/misc/habanalabs/habanalabs_ioctl.c
-@@ -33,6 +33,12 @@ long hl_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
- 	unsigned int usize, asize;
- 	int retcode;
- 
-+	if (hdev->hard_reset_pending) {
-+		dev_crit_ratelimited(hdev->dev,
-+			"Device HARD reset pending! Please close FD\n");
-+		return -ENODEV;
-+	}
+diff --git a/drivers/misc/habanalabs/include/armcp_if.h b/drivers/misc/habanalabs/include/armcp_if.h
+new file mode 100644
+index 000000000000..85fc2efe144b
+--- /dev/null
++++ b/drivers/misc/habanalabs/include/armcp_if.h
+@@ -0,0 +1,19 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Copyright 2016-2018 HabanaLabs, Ltd.
++ * All Rights Reserved.
++ *
++ */
 +
- 	if ((nr >= HL_COMMAND_START) && (nr < HL_COMMAND_END)) {
- 		u32 hl_size;
- 
-diff --git a/drivers/misc/habanalabs/hwmon.c b/drivers/misc/habanalabs/hwmon.c
-index 4d60b36dfa21..61b0a2b26c19 100644
---- a/drivers/misc/habanalabs/hwmon.c
-+++ b/drivers/misc/habanalabs/hwmon.c
-@@ -111,7 +111,7 @@ static int hl_read(struct device *dev, enum hwmon_sensor_types type,
- {
- 	struct hl_device *hdev = dev_get_drvdata(dev);
- 
--	if (hdev->disabled)
-+	if (hl_device_disabled_or_in_reset(hdev))
- 		return -ENODEV;
- 
- 	switch (type) {
-@@ -185,7 +185,7 @@ static int hl_write(struct device *dev, enum hwmon_sensor_types type,
- {
- 	struct hl_device *hdev = dev_get_drvdata(dev);
- 
--	if (hdev->disabled)
-+	if (hl_device_disabled_or_in_reset(hdev))
- 		return -ENODEV;
- 
- 	switch (type) {
-diff --git a/drivers/misc/habanalabs/irq.c b/drivers/misc/habanalabs/irq.c
-index 1addcbcee078..4761c3235799 100644
---- a/drivers/misc/habanalabs/irq.c
-+++ b/drivers/misc/habanalabs/irq.c
-@@ -250,6 +250,23 @@ void hl_cq_fini(struct hl_device *hdev, struct hl_cq *q)
- 			(void *) (uintptr_t) q->kernel_address, q->bus_address);
- }
- 
-+void hl_cq_reset(struct hl_device *hdev, struct hl_cq *q)
-+{
-+	q->ci = 0;
-+	q->pi = 0;
++#ifndef ARMCP_IF_H
++#define ARMCP_IF_H
 +
-+	atomic_set(&q->free_slots_cnt, HL_CQ_LENGTH);
++#include <linux/types.h>
 +
-+	/*
-+	 * It's not enough to just reset the PI/CI because the H/W may have
-+	 * written valid completion entries before it was halted and therefore
-+	 * we need to clean the actual queues so we won't process old entries
-+	 * when the device is operational again
-+	 */
++/*
++ * ArmCP info
++ */
 +
-+	memset((void *) (uintptr_t) q->kernel_address, 0, HL_CQ_SIZE_IN_BYTES);
-+}
++#define VERSION_MAX_LEN			128
 +
- /*
-  * hl_eq_init - main initialization function for an event queue object
-  *
-@@ -292,3 +309,17 @@ void hl_eq_fini(struct hl_device *hdev, struct hl_eq *q)
- 	hdev->asic_funcs->dma_free_coherent(hdev, HL_EQ_SIZE_IN_BYTES,
- 			(void *) (uintptr_t) q->kernel_address, q->bus_address);
- }
++#endif /* ARMCP_IF_H */
+diff --git a/drivers/misc/habanalabs/include/goya/goya_fw_if.h b/drivers/misc/habanalabs/include/goya/goya_fw_if.h
+new file mode 100644
+index 000000000000..a9920cb4a07b
+--- /dev/null
++++ b/drivers/misc/habanalabs/include/goya/goya_fw_if.h
+@@ -0,0 +1,28 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Copyright 2016-2018 HabanaLabs, Ltd.
++ * All Rights Reserved.
++ *
++ */
 +
-+void hl_eq_reset(struct hl_device *hdev, struct hl_eq *q)
-+{
-+	q->ci = 0;
++#ifndef GOYA_FW_IF_H
++#define GOYA_FW_IF_H
 +
-+	/*
-+	 * It's not enough to just reset the PI/CI because the H/W may have
-+	 * written valid completion entries before it was halted and therefore
-+	 * we need to clean the actual queues so we won't process old entries
-+	 * when the device is operational again
-+	 */
++#define CPU_BOOT_ADDR		0x7FF8040000ull
 +
-+	memset((void *) (uintptr_t) q->kernel_address, 0, HL_EQ_SIZE_IN_BYTES);
-+}
-diff --git a/drivers/misc/habanalabs/sysfs.c b/drivers/misc/habanalabs/sysfs.c
-index fe865b2e8bab..443045ac3c57 100644
---- a/drivers/misc/habanalabs/sysfs.c
-+++ b/drivers/misc/habanalabs/sysfs.c
-@@ -105,7 +105,7 @@ static ssize_t pm_mng_profile_show(struct device *dev,
- {
- 	struct hl_device *hdev = dev_get_drvdata(dev);
- 
--	if (hdev->disabled)
-+	if (hl_device_disabled_or_in_reset(hdev))
- 		return -ENODEV;
- 
- 	return sprintf(buf, "%s\n",
-@@ -119,7 +119,7 @@ static ssize_t pm_mng_profile_store(struct device *dev,
- {
- 	struct hl_device *hdev = dev_get_drvdata(dev);
- 
--	if (hdev->disabled) {
-+	if (hl_device_disabled_or_in_reset(hdev)) {
- 		count = -ENODEV;
- 		goto out;
- 	}
-@@ -163,7 +163,7 @@ static ssize_t high_pll_show(struct device *dev, struct device_attribute *attr,
- {
- 	struct hl_device *hdev = dev_get_drvdata(dev);
- 
--	if (hdev->disabled)
-+	if (hl_device_disabled_or_in_reset(hdev))
- 		return -ENODEV;
- 
- 	return sprintf(buf, "%u\n", hdev->high_pll);
-@@ -176,7 +176,7 @@ static ssize_t high_pll_store(struct device *dev, struct device_attribute *attr,
- 	long value;
- 	int rc;
- 
--	if (hdev->disabled) {
-+	if (hl_device_disabled_or_in_reset(hdev)) {
- 		count = -ENODEV;
- 		goto out;
- 	}
-@@ -260,6 +260,48 @@ static ssize_t preboot_btl_ver_show(struct device *dev,
- 	return sprintf(buf, "%s\n", hdev->asic_prop.preboot_ver);
- }
- 
-+static ssize_t soft_reset_store(struct device *dev,
-+				struct device_attribute *attr, const char *buf,
-+				size_t count)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+	long value;
-+	int rc;
++#define UBOOT_FW_OFFSET		0x100000		/* 1MB in SRAM */
++#define LINUX_FW_OFFSET		0x800000		/* 8MB in DDR */
 +
-+	rc = kstrtoul(buf, 0, &value);
++enum goya_pll_index {
++	CPU_PLL = 0,
++	IC_PLL,
++	MC_PLL,
++	MME_PLL,
++	PCI_PLL,
++	EMMC_PLL,
++	TPC_PLL
++};
 +
-+	if (rc) {
-+		count = -EINVAL;
-+		goto out;
-+	}
++#define GOYA_PLL_FREQ_LOW		50000000 /* 50 MHz */
 +
-+	hl_device_reset(hdev, false, false);
++#endif /* GOYA_FW_IF_H */
+diff --git a/drivers/misc/habanalabs/include/hl_boot_if.h b/drivers/misc/habanalabs/include/hl_boot_if.h
+new file mode 100644
+index 000000000000..7475732b9996
+--- /dev/null
++++ b/drivers/misc/habanalabs/include/hl_boot_if.h
+@@ -0,0 +1,30 @@
++/* SPDX-License-Identifier: GPL-2.0
++ *
++ * Copyright 2018 HabanaLabs, Ltd.
++ * All Rights Reserved.
++ *
++ */
 +
-+out:
-+	return count;
-+}
++#ifndef HL_BOOT_IF_H
++#define HL_BOOT_IF_H
 +
-+static ssize_t hard_reset_store(struct device *dev,
-+				struct device_attribute *attr,
-+				const char *buf, size_t count)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+	long value;
-+	int rc;
++enum cpu_boot_status {
++	CPU_BOOT_STATUS_NA = 0,		/* Default value after reset of chip */
++	CPU_BOOT_STATUS_IN_WFE,
++	CPU_BOOT_STATUS_DRAM_RDY,
++	CPU_BOOT_STATUS_SRAM_AVAIL,
++	CPU_BOOT_STATUS_IN_BTL,		/* BTL is H/W FSM */
++	CPU_BOOT_STATUS_IN_PREBOOT,
++	CPU_BOOT_STATUS_IN_SPL,
++	CPU_BOOT_STATUS_IN_UBOOT,
++	CPU_BOOT_STATUS_DRAM_INIT_FAIL,
++	CPU_BOOT_STATUS_FIT_CORRUPTED
++};
 +
-+	rc = kstrtoul(buf, 0, &value);
++enum kmd_msg {
++	KMD_MSG_NA = 0,
++	KMD_MSG_GOTO_WFE,
++	KMD_MSG_FIT_RDY
++};
 +
-+	if (rc) {
-+		count = -EINVAL;
-+		goto out;
-+	}
-+
-+	hl_device_reset(hdev, true, false);
-+
-+out:
-+	return count;
-+}
-+
- static ssize_t device_type_show(struct device *dev,
- 		struct device_attribute *attr, char *buf)
- {
-@@ -301,7 +343,9 @@ static ssize_t status_show(struct device *dev, struct device_attribute *attr,
- 	struct hl_device *hdev = dev_get_drvdata(dev);
- 	char *str;
- 
--	if (hdev->disabled)
-+	if (atomic_read(&hdev->in_reset))
-+		str = "In reset";
-+	else if (hdev->disabled)
- 		str = "Malfunction";
- 	else
- 		str = "Operational";
-@@ -317,13 +361,29 @@ static ssize_t write_open_cnt_show(struct device *dev,
- 	return sprintf(buf, "%d\n", hdev->user_ctx ? 1 : 0);
- }
- 
-+static ssize_t soft_reset_cnt_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%d\n", hdev->soft_reset_cnt);
-+}
-+
-+static ssize_t hard_reset_cnt_show(struct device *dev,
-+		struct device_attribute *attr, char *buf)
-+{
-+	struct hl_device *hdev = dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%d\n", hdev->hard_reset_cnt);
-+}
-+
- static ssize_t max_power_show(struct device *dev, struct device_attribute *attr,
- 				char *buf)
- {
- 	struct hl_device *hdev = dev_get_drvdata(dev);
- 	long val;
- 
--	if (hdev->disabled)
-+	if (hl_device_disabled_or_in_reset(hdev))
- 		return -ENODEV;
- 
- 	val = hl_get_max_power(hdev);
-@@ -338,7 +398,7 @@ static ssize_t max_power_store(struct device *dev,
- 	unsigned long value;
- 	int rc;
- 
--	if (hdev->disabled) {
-+	if (hl_device_disabled_or_in_reset(hdev)) {
- 		count = -ENODEV;
- 		goto out;
- 	}
-@@ -390,12 +450,16 @@ static DEVICE_ATTR_RO(armcp_ver);
- static DEVICE_ATTR_RO(cpld_ver);
- static DEVICE_ATTR_RO(device_type);
- static DEVICE_ATTR_RO(fuse_ver);
-+static DEVICE_ATTR_WO(hard_reset);
-+static DEVICE_ATTR_RO(hard_reset_cnt);
- static DEVICE_ATTR_RW(high_pll);
- static DEVICE_ATTR_RO(infineon_ver);
- static DEVICE_ATTR_RW(max_power);
- static DEVICE_ATTR_RO(pci_addr);
- static DEVICE_ATTR_RW(pm_mng_profile);
- static DEVICE_ATTR_RO(preboot_btl_ver);
-+static DEVICE_ATTR_WO(soft_reset);
-+static DEVICE_ATTR_RO(soft_reset_cnt);
- static DEVICE_ATTR_RO(status);
- static DEVICE_ATTR_RO(thermal_ver);
- static DEVICE_ATTR_RO(uboot_ver);
-@@ -413,12 +477,16 @@ static struct attribute *hl_dev_attrs[] = {
- 	&dev_attr_cpld_ver.attr,
- 	&dev_attr_device_type.attr,
- 	&dev_attr_fuse_ver.attr,
-+	&dev_attr_hard_reset.attr,
-+	&dev_attr_hard_reset_cnt.attr,
- 	&dev_attr_high_pll.attr,
- 	&dev_attr_infineon_ver.attr,
- 	&dev_attr_max_power.attr,
- 	&dev_attr_pci_addr.attr,
- 	&dev_attr_pm_mng_profile.attr,
- 	&dev_attr_preboot_btl_ver.attr,
-+	&dev_attr_soft_reset.attr,
-+	&dev_attr_soft_reset_cnt.attr,
- 	&dev_attr_status.attr,
- 	&dev_attr_thermal_ver.attr,
- 	&dev_attr_uboot_ver.attr,
++#endif /* HL_BOOT_IF_H */
 -- 
 2.17.1
 
