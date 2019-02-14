@@ -2,109 +2,187 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9AE5C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB38C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:46:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F0CF2229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:41:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDD47222A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:46:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NpGnKFlg";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XhTDONbp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437315AbfBNHly (ORCPT
+        id S2437322AbfBNHqh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 02:41:54 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:31886 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2437301AbfBNHlx (ORCPT
+        Thu, 14 Feb 2019 02:46:37 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:55568 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726358AbfBNHqg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 02:41:53 -0500
-X-UUID: bcc70f86294b45a5b705f2b57d9cbe16-20190214
-X-UUID: bcc70f86294b45a5b705f2b57d9cbe16-20190214
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
-        (envelope-from <shun-chih.yu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1621777597; Thu, 14 Feb 2019 15:41:47 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 14 Feb 2019 15:41:45 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 14 Feb 2019 15:41:45 +0800
-From:   <shun-chih.yu@mediatek.com>
-To:     Sean Wang <sean.wang@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Dan Williams <dan.j.williams@intel.com>
-CC:     <dmaengine@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <srv_wsdupstream@mediatek.com>,
-        Shun-Chih Yu <shun-chih.yu@mediatek.com>
-Subject: [PATCH 1/1] dt-bindings: dmaengine: Add MediaTek Command-Queue DMA controller bindings
-Date:   Thu, 14 Feb 2019 15:40:58 +0800
-Message-ID: <1550130058-16566-2-git-send-email-shun-chih.yu@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1550130058-16566-1-git-send-email-shun-chih.yu@mediatek.com>
-References: <1550130058-16566-1-git-send-email-shun-chih.yu@mediatek.com>
+        Thu, 14 Feb 2019 02:46:36 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5DA1E60886; Thu, 14 Feb 2019 07:46:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550130395;
+        bh=4UWOZAHo8P5HQluG58zpa1sMTmgdpcRHGQVkuLn1LPA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NpGnKFlg6T005Y7+SZYnTnq6nPwYgHVFOpULaAZqMoYJBh0NN3NZPppxly+mKrwA2
+         LeHkmkLvSW/Xa5RFqDGJBnmv45zVZbVsaMIl/sfMi39FxS3679UJZlBoasDTWzsrtl
+         oBJ0r6Qx4FJ9124PCosNYxV4Nzxatecxvh1OUii8=
+Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: stummala@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E2DDD605A0;
+        Thu, 14 Feb 2019 07:46:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550130394;
+        bh=4UWOZAHo8P5HQluG58zpa1sMTmgdpcRHGQVkuLn1LPA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XhTDONbpT7oTsDWWBRzzBxU7ROS2IhorXaPvPhySTWE6tc9GEVRsU25V2cpFf6k+H
+         cPmf0NJPqverwcXF8/xotYJs4MgH+9JbZr/687M7bTZ0w6NqtbnjivJzuFIIpcBVo+
+         0tBNQxlPhG+cxI8V/eHA8Wrbw27CS3j5kNXt2Qsc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E2DDD605A0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
+Date:   Thu, 14 Feb 2019 13:16:28 +0530
+From:   Sahitya Tummala <stummala@codeaurora.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] f2fs: do not use mutex lock in atomic context
+Message-ID: <20190214074628.GD7308@codeaurora.org>
+References: <1549267613-9288-1-git-send-email-stummala@codeaurora.org>
+ <c98cbfcb-f45d-e9a9-5c2e-6730d0448e82@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c98cbfcb-f45d-e9a9-5c2e-6730d0448e82@huawei.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shun-Chih Yu <shun-chih.yu@mediatek.com>
+On Wed, Feb 13, 2019 at 11:25:31AM +0800, Chao Yu wrote:
+> On 2019/2/4 16:06, Sahitya Tummala wrote:
+> > Fix below warning coming because of using mutex lock in atomic context.
+> > 
+> > BUG: sleeping function called from invalid context at kernel/locking/mutex.c:98
+> > in_atomic(): 1, irqs_disabled(): 0, pid: 585, name: sh
+> > Preemption disabled at: __radix_tree_preload+0x28/0x130
+> > Call trace:
+> >  dump_backtrace+0x0/0x2b4
+> >  show_stack+0x20/0x28
+> >  dump_stack+0xa8/0xe0
+> >  ___might_sleep+0x144/0x194
+> >  __might_sleep+0x58/0x8c
+> >  mutex_lock+0x2c/0x48
+> >  f2fs_trace_pid+0x88/0x14c
+> >  f2fs_set_node_page_dirty+0xd0/0x184
+> > 
+> > Do not use f2fs_radix_tree_insert() to avoid doing cond_resched() with
+> > spin_lock() acquired.
+> > 
+> > Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+> > ---
+> >  fs/f2fs/trace.c | 20 +++++++++++++-------
+> >  1 file changed, 13 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/trace.c b/fs/f2fs/trace.c
+> > index ce2a5eb..d0ab533 100644
+> > --- a/fs/f2fs/trace.c
+> > +++ b/fs/f2fs/trace.c
+> > @@ -14,7 +14,7 @@
+> >  #include "trace.h"
+> >  
+> >  static RADIX_TREE(pids, GFP_ATOMIC);
+> > -static struct mutex pids_lock;
+> > +static spinlock_t pids_lock;
+> >  static struct last_io_info last_io;
+> >  
+> >  static inline void __print_last_io(void)
+> > @@ -58,23 +58,29 @@ void f2fs_trace_pid(struct page *page)
+> >  
+> >  	set_page_private(page, (unsigned long)pid);
+> >  
+> > +retry:
+> >  	if (radix_tree_preload(GFP_NOFS))
+> >  		return;
+> >  
+> > -	mutex_lock(&pids_lock);
+> > +	spin_lock(&pids_lock);
+> >  	p = radix_tree_lookup(&pids, pid);
+> >  	if (p == current)
+> >  		goto out;
+> >  	if (p)
+> >  		radix_tree_delete(&pids, pid);
+> >  
+> > -	f2fs_radix_tree_insert(&pids, pid, current);
+> > +	if (radix_tree_insert(&pids, pid, current)) {
+> > +		spin_unlock(&pids_lock);
+> > +		radix_tree_preload_end();
+> > +		cond_resched();
+> > +		goto retry;
+> > +	}
+> >  
+> >  	trace_printk("%3x:%3x %4x %-16s\n",
+> >  			MAJOR(inode->i_sb->s_dev), MINOR(inode->i_sb->s_dev),
+> >  			pid, current->comm);
+> 
+> Hi Sahitya,
+> 
+> Can trace_printk sleep? For safety, how about moving it out of spinlock?
+> 
+Hi Chao,
 
-Document the devicetree bindings for MediaTek Command-Queue DMA controller
-which could be found on MT6765 SoC or other similar Mediatek SoCs.
+Yes, trace_printk() is safe to use in atomic context (unlike printk).
 
-Change-Id: I9736c8cac9be160358feeab935fabaffc5730519
-Signed-off-by: Shun-Chih Yu <shun-chih.yu@mediatek.com>
----
- .../devicetree/bindings/dma/mtk-cqdma.txt          |   31 ++++++++++++++++++++
- 1 file changed, 31 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/dma/mtk-cqdma.txt
+Thanks,
+Sahitya.
 
-diff --git a/Documentation/devicetree/bindings/dma/mtk-cqdma.txt b/Documentation/devicetree/bindings/dma/mtk-cqdma.txt
-new file mode 100644
-index 0000000..fb12927
---- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/mtk-cqdma.txt
-@@ -0,0 +1,31 @@
-+MediaTek Command-Queue DMA Controller
-+==================================
-+
-+Required properties:
-+
-+- compatible:	Must be "mediatek,mt6765-cqdma" for MT6765.
-+- reg:		Should contain the base address and length for each channel.
-+- interrupts:	Should contain references to the interrupts for each channel.
-+- clocks:	Should be the clock specifiers corresponding to the entry in
-+		clock-names property.
-+- clock-names:	Should contain "cqdma" entries.
-+- dma-channels: The number of DMA channels supported by the controller.
-+- dma-requests: The number of DMA request supported by the controller.
-+- #dma-cells: 	The length of the DMA specifier, must be <1>. This one cell
-+		in dmas property of a client device represents the channel
-+		number.
-+Example:
-+
-+        cqdma: dma-controller@10212000 {
-+		compatible = "mediatek,mt6765-cqdma";
-+		reg = <0 0x10212000 0 0x1000>;
-+		interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_LOW>,
-+			<GIC_SPI 114 IRQ_TYPE_LEVEL_LOW>;
-+		clocks = <&infracfg CLK_IFR_CQ_DMA>;
-+		clock-names = "cqdma";
-+		dma-channels = <2>;
-+		dma-requests = <32>;
-+		#dma-cells = <1>;
-+	};
-+
-+DMA clients must use the format described in dma/dma.txt file.
+> Thanks,
+> 
+> >  out:
+> > -	mutex_unlock(&pids_lock);
+> > +	spin_unlock(&pids_lock);
+> >  	radix_tree_preload_end();
+> >  }
+> >  
+> > @@ -119,7 +125,7 @@ void f2fs_trace_ios(struct f2fs_io_info *fio, int flush)
+> >  
+> >  void f2fs_build_trace_ios(void)
+> >  {
+> > -	mutex_init(&pids_lock);
+> > +	spin_lock_init(&pids_lock);
+> >  }
+> >  
+> >  #define PIDVEC_SIZE	128
+> > @@ -147,7 +153,7 @@ void f2fs_destroy_trace_ios(void)
+> >  	pid_t next_pid = 0;
+> >  	unsigned int found;
+> >  
+> > -	mutex_lock(&pids_lock);
+> > +	spin_lock(&pids_lock);
+> >  	while ((found = gang_lookup_pids(pid, next_pid, PIDVEC_SIZE))) {
+> >  		unsigned idx;
+> >  
+> > @@ -155,5 +161,5 @@ void f2fs_destroy_trace_ios(void)
+> >  		for (idx = 0; idx < found; idx++)
+> >  			radix_tree_delete(&pids, pid[idx]);
+> >  	}
+> > -	mutex_unlock(&pids_lock);
+> > +	spin_unlock(&pids_lock);
+> >  }
+> > 
+> 
+
 -- 
-1.7.9.5
-
+--
+Sent by a consultant of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
