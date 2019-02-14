@@ -2,97 +2,162 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0F9C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:07:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54505C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61DB921A80
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:07:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="X4PmYtR3"
+	by mail.kernel.org (Postfix) with ESMTP id 2B2D321A80
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:08:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728765AbfBNXHd (ORCPT
+        id S1728835AbfBNXIB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 18:07:33 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33832 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725975AbfBNXHd (ORCPT
+        Thu, 14 Feb 2019 18:08:01 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:56057 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725975AbfBNXIB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 18:07:33 -0500
-Received: by mail-lf1-f68.google.com with SMTP id u21so5827983lfu.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 15:07:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7hlg+eKh/auF+5WjWvtMwFbY0os3KJiNPz+CKE17eCw=;
-        b=X4PmYtR3b/vLVV8Rq+SsVlH05Njyet7+8JGlkL3Jhl5QjSCrvwxuOjJ7egjO0cAFUa
-         MuWWobHTOiWwulA73H6UsLZHzP0psulbboA/BU3mHHAeWgbGvcK0Ef5wB2oOwKBYmZNx
-         r2ZqugF4hMyZe80qdKWIoYTEgTUOKltWectYY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7hlg+eKh/auF+5WjWvtMwFbY0os3KJiNPz+CKE17eCw=;
-        b=Jb8nTl/BIF1jKNFf3+ToC7+Lh1SqlNZ7y5XiN21VmZ+DUvYPFR9kyzgKU48TWMgKCp
-         K39RD/9AD558Ijuo5fMCd2r2W0FQOQcTkeQyRPhirykSix8XlxXM6E94n67nreOAIpqu
-         WuCKZgUbAomjrFrz4TmoV+9fVsrvnbDTRFniqWB07u2r3oFtSk+lRMG6zxkG/QiWv3d1
-         PYZblQU4SF9MNwmfre/tAJxtMDMqc3S4FN9YcwwN46+Zgph40I4PjmdehfdZh2c86aj3
-         bPEf0qARQ/M0ZfMHg7ec+HzEMRpZxsQHw1ZK1AmvlS37EW/PR0mqM8UVLjDmxe/1Xums
-         OIXQ==
-X-Gm-Message-State: AHQUAuZ8V4/7fN/pHLmk1XiOC99u8nyPj+2HqwMwMzgwjjiGKavvkIiP
-        0OuclE4wy9e4DWdZc2m3j+e/Nsbl2Ao=
-X-Google-Smtp-Source: AHgI3IYzDUEL9z6v+YIDGDMGi/WAvfnlyJ6hC4HZOPA+o/zDYNholperIMuWhRVL1PUbsqXWC3wC7Q==
-X-Received: by 2002:ac2:43c6:: with SMTP id u6mr3884073lfl.102.1550185650861;
-        Thu, 14 Feb 2019 15:07:30 -0800 (PST)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id r80sm729339lff.33.2019.02.14.15.07.29
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 15:07:29 -0800 (PST)
-Received: by mail-lf1-f43.google.com with SMTP id f5so5780685lfc.13
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 15:07:29 -0800 (PST)
-X-Received: by 2002:a19:ae0a:: with SMTP id f10mr3621252lfc.1.1550185648629;
- Thu, 14 Feb 2019 15:07:28 -0800 (PST)
+        Thu, 14 Feb 2019 18:08:01 -0500
+X-Originating-IP: 86.202.231.219
+Received: from localhost (lfbn-lyo-1-149-219.w86-202.abo.wanadoo.fr [86.202.231.219])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 548C6240004;
+        Thu, 14 Feb 2019 23:07:57 +0000 (UTC)
+Date:   Fri, 15 Feb 2019 00:07:56 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Nicolas.Ferre@microchip.com, wg@grandegger.com, mkl@pengutronix.de,
+        davem@davemloft.net, Ludovic.Desroches@microchip.com,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] can: mark expected switch fall-throughs
+Message-ID: <20190214230756.GR10129@piout.net>
+References: <20190129180612.GA28650@embeddedor>
+ <432a9399-95f4-e988-5cd2-93340f155fa1@microchip.com>
+ <daae008e-35fd-7553-fcb2-7932fe53b959@embeddedor.com>
+ <20190214221703.GQ10129@piout.net>
+ <a8e53868-2b13-b050-7714-e3e24d18cf00@embeddedor.com>
 MIME-Version: 1.0
-References: <20190214164331.GA33450@beast> <CAHk-=wg+Bc1Qmp0VBqPQq=_4=SgbN6jRvPtrme8-ieobpM16iw@mail.gmail.com>
- <CAGXu5jLYJyz+afGrMp_KbvL2xiwg3h6Cz_q6fQjXL9gpbej7QA@mail.gmail.com>
-In-Reply-To: <CAGXu5jLYJyz+afGrMp_KbvL2xiwg3h6Cz_q6fQjXL9gpbej7QA@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 14 Feb 2019 15:07:12 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgNt+Pm89Cqp5onH2dQN2ddAV-GU5ZftgrBpupx3h+juA@mail.gmail.com>
-Message-ID: <CAHk-=wgNt+Pm89Cqp5onH2dQN2ddAV-GU5ZftgrBpupx3h+juA@mail.gmail.com>
-Subject: Re: [PATCH v2] exec: load_script: Allow interpreter argument truncation
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Samuel Dionne-Riel <samuel@dionne-riel.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
-        Graham Christensen <graham@grahamc.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a8e53868-2b13-b050-7714-e3e24d18cf00@embeddedor.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 10:10 AM Kees Cook <keescook@chromium.org> wrote:>
-> We certainly can, but we'll still need to fix the "don't exec a
-> truncated interpreter path" problem (which this fixes).
->
-> I'm happy to do it as two steps instead: revert, then a separate fix
-> to land in the merge window?
+On 14/02/2019 17:04:03-0600, Gustavo A. R. Silva wrote:
+> 
+> 
+> On 2/14/19 4:17 PM, Alexandre Belloni wrote:
+> > Hi,
+> > 
+> > On 14/02/2019 15:37:26-0600, Gustavo A. R. Silva wrote:
+> >>
+> >>
+> >> On 1/30/19 2:11 AM, Nicolas.Ferre@microchip.com wrote:
+> >>> On 29/01/2019 at 19:06, Gustavo A. R. Silva wrote:
+> >>>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> >>>> where we are expecting to fall through.
+> >>>>
+> >>>> This patch fixes the following warnings:
+> >>>>
+> >>>> drivers/net/can/peak_canfd/peak_pciefd_main.c:668:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> >>>> drivers/net/can/spi/mcp251x.c:875:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> >>>> drivers/net/can/usb/peak_usb/pcan_usb.c:422:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> >>>> drivers/net/can/at91_can.c:895:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> >>>> drivers/net/can/at91_can.c:953:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> >>>> drivers/net/can/usb/peak_usb/pcan_usb.c: In function ‘pcan_usb_decode_error’:
+> >>>> drivers/net/can/usb/peak_usb/pcan_usb.c:422:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> >>>>     if (n & PCAN_USB_ERROR_BUS_LIGHT) {
+> >>>>        ^
+> >>>> drivers/net/can/usb/peak_usb/pcan_usb.c:428:2: note: here
+> >>>>    case CAN_STATE_ERROR_WARNING:
+> >>>>    ^~~~
+> >>>>
+> >>>> Warning level 3 was used: -Wimplicit-fallthrough=3
+> >>>>
+> >>>> This patch is part of the ongoing efforts to enabling
+> >>>> -Wimplicit-fallthrough.
+> >>>>
+> >>>> Notice that in some cases spelling mistakes were fixed.
+> >>>> In other cases, the /* fall through */ comment is placed
+> >>>> at the bottom of the case statement, which is what GCC
+> >>>> is expecting to find.
+> >>>>
+> >>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> >>>> ---
+> >>>>   drivers/net/can/at91_can.c                    | 6 ++++--
+> >>>
+> >>> For this one:
+> >>> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> >>>
+> >>
+> >> Thanks, Nicolas.
+> >>
+> > 
+> > I though I had a déjà vu but you actually sent the at91 part twice.
+> > 
+> 
+> It wasn't intentional.
+> 
+> >> Dave:
+> >>
+> >> I wonder if you can take this patch.
+> >>
+> >> Thanks
+> >> --
+> >> Gustavo
+> >>
+> >>>>   drivers/net/can/peak_canfd/peak_pciefd_main.c | 2 +-
+> >>>>   drivers/net/can/spi/mcp251x.c                 | 3 ++-
+> >>>>   drivers/net/can/usb/peak_usb/pcan_usb.c       | 2 +-
+> >>>>   4 files changed, 8 insertions(+), 5 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/net/can/at91_can.c b/drivers/net/can/at91_can.c
+> >>>> index d98c69045b17..1718c20f9c99 100644
+> >>>> --- a/drivers/net/can/at91_can.c
+> >>>> +++ b/drivers/net/can/at91_can.c
+> >>>> @@ -902,7 +902,8 @@ static void at91_irq_err_state(struct net_device *dev,
+> >>>>   				CAN_ERR_CRTL_TX_WARNING :
+> >>>>   				CAN_ERR_CRTL_RX_WARNING;
+> >>>>   		}
+> >>>> -	case CAN_STATE_ERROR_WARNING:	/* fallthrough */
+> >>>> +		/* fall through */
+> >>>> +	case CAN_STATE_ERROR_WARNING:
+> >>>>   		/*
+> >>>>   		 * from: ERROR_ACTIVE, ERROR_WARNING
+> >>>>   		 * to  : ERROR_PASSIVE, BUS_OFF
+> >>>> @@ -951,7 +952,8 @@ static void at91_irq_err_state(struct net_device *dev,
+> >>>>   		netdev_dbg(dev, "Error Active\n");
+> >>>>   		cf->can_id |= CAN_ERR_PROT;
+> >>>>   		cf->data[2] = CAN_ERR_PROT_ACTIVE;
+> >>>> -	case CAN_STATE_ERROR_WARNING:	/* fallthrough */
+> > 
+> > Seriously, for that one, you should fix the compiler. The fall through
+> 
+> I'll pass your feedback on to the GCC guys.
+> 
+> > is not implicit, it is actually quite explicit and the warning is simply
+> > wrong.
+> > 
+> > Also, the gcc documentation says that -Wimplicit-fallthrough=3
+> > recognizes /* fallthrough */ as a proper fall through comment (and I
+> > tested with gcc 8.2).
+> > 
+> 
+> Yeah. But that's not the relevant change in this case.  Notice that the
+> comment was moved to the very bottom of the previous case.
+> 
 
-I think that's better. It should also be fairly easy: just look for
-whitespace in the truncated output (in the place where we already
-check for the "oh, we truncated")
+Yes and it doesn't matter for gcc, I tested with gcc 8.2.
 
-It's even possible that somebody depends on a truncated interpreter
-executable name. Unlikely, but possiible. So I'd rather just revert,
-and re-try the smaller approach for 5.1.
-
-               Linus
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
