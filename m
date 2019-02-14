@@ -2,135 +2,261 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45CF4C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 06:00:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 698C1C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 06:02:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F43D21934
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 06:00:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 272EF222B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 06:02:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="AqFGGKQk"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="htdykzQ6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393683AbfBNGAK (ORCPT
+        id S2392594AbfBNGCe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 01:00:10 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36376 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391894AbfBNGAJ (ORCPT
+        Thu, 14 Feb 2019 01:02:34 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:41135 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726407AbfBNGCe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 01:00:09 -0500
-Received: by mail-pg1-f194.google.com with SMTP id r124so2479033pgr.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 22:00:08 -0800 (PST)
+        Thu, 14 Feb 2019 01:02:34 -0500
+Received: by mail-qk1-f193.google.com with SMTP id u188so2925143qkh.8
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 22:02:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=EyhZ0LXI8S6DO+1lKPJ+3xCo7Hi2M9DApl/OXP8GRG0=;
-        b=AqFGGKQkWIE4m9oWUPQKPfYDWffEV3DD3kw2gte/hIVc+ZOI2ALww287MyZktoOcDi
-         CbpDfqNDDxjQTYKo+HSL1jPCcxgIu0tlHCqsVDa+M5KY9ZBsLFTmv/t2wqc5kisOEAq3
-         Ey9IsWcwZPCXnG/nVFmz7GUhhGKdm8IWeTP2Dk0HwbmuU3cqx7K5BZzuoEE5qUenFwFw
-         FhXuEgKL+2MrnrRuMG0A1nR+NYB/69dpYPvc7V/phtqqydIA5J2EkPID7AxDk9lsLjAP
-         NbaOeXfbMwnJ+uPtI2ATX/eErFA+0vBz71ipAT/cQzRY+HNlZcQmNhta5uk0wuPGbr4p
-         3GKA==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fjYk8M+ZpYBHIdl3SpuI+eMPnvXJ1FTwPx90gKG5ags=;
+        b=htdykzQ6xRtqzlK300swdx4zlf+eSRWKvGd++NszWWrVAyevn5sSGjQoFRgg53bRt3
+         ODwpAL2JsbRsFvSlgHHkg4s1+qIX1HzXzHJtKmgzuGWqNgc29TKbBAlgmPc2Dxr6XWi5
+         cLo/mQsXn0b4UBcivhHQG1LMWDCEvVM+hQOUQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EyhZ0LXI8S6DO+1lKPJ+3xCo7Hi2M9DApl/OXP8GRG0=;
-        b=Sf9ViAPvpAdBJmj885N4HAugn4Z8C0WEztRTfcOzG/xEz+2t45Cl8WRoHtTp2x0mPI
-         uE0QJLIWjrlt+hgWuT/k8BVELMMeyUExu9Apkqfh+tVmjEE6KIjqvndBN2wINCA8VH4h
-         MP1ZBlzkEjl4q8IoKIpxysT4fJxj+31A1nVKVp1Jsqf7JeY+OKCaRNvyylMcWNiRZ6Pb
-         1nKwK+bjupZ7QYa8RMfmoYxsJVR/YatryEwhQWqwIkf7croqoMWv46Gk3HC3SIIj4MV9
-         eg/kib456aLlUcz1/7w5p8y5LJebLRQlqx/ebDco2xyePEtk76OyLuY0Qrr+dJrnj+DO
-         7Mfw==
-X-Gm-Message-State: AHQUAuZZKUvbGNu2/H8ZATATvhegLLAtMUDheIkotq6kZhu//ZCYeC0Q
-        HJ6hre2Plu3/Tv62XhVXKDnGxg==
-X-Google-Smtp-Source: AHgI3IZsTuAr/2agKNUI6fHNmik1DYYjhaWBR5rn+7baCxky03ZS5RyeSxDZdNqDP/QzwRlb2m6TAA==
-X-Received: by 2002:a62:9f1a:: with SMTP id g26mr2297647pfe.123.1550124008008;
-        Wed, 13 Feb 2019 22:00:08 -0800 (PST)
-Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
-        by smtp.gmail.com with ESMTPSA id z127sm2288820pfb.80.2019.02.13.22.00.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Feb 2019 22:00:07 -0800 (PST)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1guA46-00040P-Jk; Wed, 13 Feb 2019 23:00:06 -0700
-Date:   Wed, 13 Feb 2019 23:00:06 -0700
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
-        akpm@linux-foundation.org, dave@stgolabs.net, jack@suse.cz,
-        cl@linux.com, linux-mm@kvack.org, kvm@vger.kernel.org,
-        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alex.williamson@redhat.com, paulus@ozlabs.org,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, hao.wu@intel.com,
-        atull@kernel.org, mdf@kernel.org, aik@ozlabs.ru
-Subject: Re: [PATCH 0/5] use pinned_vm instead of locked_vm to account pinned
- pages
-Message-ID: <20190214060006.GE24692@ziepe.ca>
-References: <20190211224437.25267-1-daniel.m.jordan@oracle.com>
- <20190211225447.GN24692@ziepe.ca>
- <20190214015314.GB1151@iweiny-DESK2.sc.intel.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fjYk8M+ZpYBHIdl3SpuI+eMPnvXJ1FTwPx90gKG5ags=;
+        b=JudbI8DExtoHMblQVsQsGf7SWaAtFa21++eTqpveutkqhryqoFVHQtWuHxfDTz3AAL
+         c98SEfpAJKSEox6eInjfR84L4NvwfPsYsNRHos7xI3hNMVLeo3Kfom5sbzT0Uklg3Lpc
+         kBEYz05PA7J/gjqbGypBdba32tDA8sZ443bTJ0uDH8tVQDGFXsEC7O0lSDlAPqtJk18z
+         mA0YOKyjxLdkZHib+fSbdtuzUsL8kAjC++eNg+PnRFN7+ENTdyP44CgKnYp/4Z1TwsJh
+         nEDDYFZ4b4RU193LKaFJpNz0AAn1NizfrC3FTxhJ4klRRIrWiNBsEykStazTvatqmRPk
+         8HFQ==
+X-Gm-Message-State: AHQUAubD5FlNN0BoVi5m+AWfZIAeaBusFZlHae9ejI817ygUbblBdWk0
+        S0YWWiPKnQiz99dm4ciLP1iw4lf9H9RRvHAH9QuKjw==
+X-Google-Smtp-Source: AHgI3Iby8fhzCIwktkWL4Ujf0oyJahj4kZsiZDwr2lsB2cT0Yffc5bVfRKg2O4WsTWc1D/2jb9WkzHFYqVAoonPJNDw=
+X-Received: by 2002:a37:4d57:: with SMTP id a84mr1433821qkb.288.1550124152382;
+ Wed, 13 Feb 2019 22:02:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190214015314.GB1151@iweiny-DESK2.sc.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190214044243.129920-1-jitao.shi@mediatek.com>
+In-Reply-To: <20190214044243.129920-1-jitao.shi@mediatek.com>
+From:   Nicolas Boichat <drinkcat@chromium.org>
+Date:   Thu, 14 Feb 2019 14:02:21 +0800
+Message-ID: <CANMq1KC+ga-Sjxj6eD51nLmq_54Y-gpJR_8qOLQee5gAy7ypkQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] drm/mediatek: move mipi_dsi_host_register to probe
+To:     Jitao Shi <jitao.shi@mediatek.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>, linux-pwm@vger.kernel.org,
+        David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Ajay Kumar <ajaykumar.rs@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Rahul Sharma <rahul.sharma@samsung.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Vincent Palatin <vpalatin@chromium.org>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        devicetree@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>, srv_heupstream@mediatek.com,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        cawa cheng <cawa.cheng@mediatek.com>,
+        =?UTF-8?B?QmliYnkgSHNpZWggKOisnea/n+mBoCk=?= 
+        <bibby.hsieh@mediatek.com>, CK HU <ck.hu@mediatek.com>,
+        stonea168@163.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 05:53:14PM -0800, Ira Weiny wrote:
-> On Mon, Feb 11, 2019 at 03:54:47PM -0700, Jason Gunthorpe wrote:
-> > On Mon, Feb 11, 2019 at 05:44:32PM -0500, Daniel Jordan wrote:
-> > 
-> > > All five of these places, and probably some of Davidlohr's conversions,
-> > > probably want to be collapsed into a common helper in the core mm for
-> > > accounting pinned pages.  I tried, and there are several details that
-> > > likely need discussion, so this can be done as a follow-on.
-> > 
-> > I've wondered the same..
-> 
-> I'm really thinking this would be a nice way to ensure it gets cleaned up and
-> does not happen again.
-> 
-> Also, by moving it to the core we could better manage any user visible changes.
-> 
-> From a high level, pinned is a subset of locked so it seems like we need a 2
-> sets of helpers.
-> 
-> try_increment_locked_vm(...)
-> decrement_locked_vm(...)
-> 
-> try_increment_pinned_vm(...)
-> decrement_pinned_vm(...)
-> 
-> Where try_increment_pinned_vm() also increments locked_vm...  Of course this
-> may end up reverting the improvement of Davidlohr  Bueso's atomic work...  :-(
-> 
-> Furthermore it would seem better (although I don't know if at all possible) if
-> this were accounted for in core calls which tracked them based on how the pages
-> are being used so that drivers can't call try_increment_locked_vm() and then
-> pin the pages...  Thus getting the account wrong vs what actually happened.
-> 
-> And then in the end we can go back to locked_vm being the value checked against
-> RLIMIT_MEMLOCK.
+Just some comments on the error path, I'm not sure about the change itself.
 
-Someone would need to understand the bug that was fixed by splitting
-them. 
+On Thu, Feb 14, 2019 at 12:42 PM Jitao Shi <jitao.shi@mediatek.com> wrote:
+>
+> DSI panel driver need attach function which is inculde in
+> mipi_dsi_host_ops.
+>
+> If mipi_dsi_host_register is not in probe, dsi panel will
+> probe fail or more delay.
+>
+> So move the mipi_dsi_host_register to probe from bind.
+>
+> Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_dsi.c | 49 ++++++++++++++++++------------
+>  1 file changed, 30 insertions(+), 19 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
+> index 27b507eb4a99..93fa255b4aad 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
+> @@ -1045,12 +1045,6 @@ static int mtk_dsi_bind(struct device *dev, struct device *master, void *data)
+>                 return ret;
+>         }
+>
+> -       ret = mipi_dsi_host_register(&dsi->host);
+> -       if (ret < 0) {
+> -               dev_err(dev, "failed to register DSI host: %d\n", ret);
+> -               goto err_ddp_comp_unregister;
+> -       }
+> -
+>         ret = mtk_dsi_create_conn_enc(drm, dsi);
+>         if (ret) {
+>                 DRM_ERROR("Encoder create failed with %d\n", ret);
+> @@ -1060,8 +1054,6 @@ static int mtk_dsi_bind(struct device *dev, struct device *master, void *data)
+>         return 0;
+>
+>  err_unregister:
+> -       mipi_dsi_host_unregister(&dsi->host);
+> -err_ddp_comp_unregister:
+>         mtk_ddp_comp_unregister(drm, &dsi->ddp_comp);
+>         return ret;
+>  }
+> @@ -1097,31 +1089,37 @@ static int mtk_dsi_probe(struct platform_device *pdev)
+>
+>         dsi->host.ops = &mtk_dsi_ops;
+>         dsi->host.dev = dev;
+> +       dsi->dev = dev;
+> +       ret = mipi_dsi_host_register(&dsi->host);
+> +       if (ret < 0) {
+> +               dev_err(dev, "failed to register DSI host: %d\n", ret);
+> +               return -EPROBE_DEFER;
 
-I think it had to do with double accounting pinned and mlocked pages
-and thus delivering a lower than expected limit to userspace.
+return ret
 
-vfio has this bug, RDMA does not. RDMA has a bug where it can
-overallocate locked memory, vfio doesn't.
+> +       }
+>
+>         ret = drm_of_find_panel_or_bridge(dev->of_node, 0, 0,
+>                                           &dsi->panel, &dsi->bridge);
+>         if (ret)
+> -               return ret;
+> +               goto err_unregister_host;
+>
+>         dsi->engine_clk = devm_clk_get(dev, "engine");
+>         if (IS_ERR(dsi->engine_clk)) {
+>                 ret = PTR_ERR(dsi->engine_clk);
+>                 dev_err(dev, "Failed to get engine clock: %d\n", ret);
+> -               return ret;
+> +               goto err_unregister_host;
+>         }
+>
+>         dsi->digital_clk = devm_clk_get(dev, "digital");
+>         if (IS_ERR(dsi->digital_clk)) {
+>                 ret = PTR_ERR(dsi->digital_clk);
+>                 dev_err(dev, "Failed to get digital clock: %d\n", ret);
+> -               return ret;
+> +               goto err_unregister_host;
+>         }
+>
+>         dsi->hs_clk = devm_clk_get(dev, "hs");
+>         if (IS_ERR(dsi->hs_clk)) {
+>                 ret = PTR_ERR(dsi->hs_clk);
+>                 dev_err(dev, "Failed to get hs clock: %d\n", ret);
+> -               return ret;
+> +               goto err_unregister_host;
+>         }
+>
+>         regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> @@ -1129,33 +1127,35 @@ static int mtk_dsi_probe(struct platform_device *pdev)
+>         if (IS_ERR(dsi->regs)) {
+>                 ret = PTR_ERR(dsi->regs);
+>                 dev_err(dev, "Failed to ioremap memory: %d\n", ret);
+> -               return ret;
+> +               goto err_unregister_host;
+>         }
+>
+>         dsi->phy = devm_phy_get(dev, "dphy");
+>         if (IS_ERR(dsi->phy)) {
+>                 ret = PTR_ERR(dsi->phy);
+>                 dev_err(dev, "Failed to get MIPI-DPHY: %d\n", ret);
+> -               return ret;
+> +               goto err_unregister_host;
+>         }
+>
+>         comp_id = mtk_ddp_comp_get_id(dev->of_node, MTK_DSI);
+>         if (comp_id < 0) {
+>                 dev_err(dev, "Failed to identify by alias: %d\n", comp_id);
+> -               return comp_id;
+> +               ret = comp_id;
+> +               goto err_unregister_host;
+>         }
+>
+>         ret = mtk_ddp_comp_init(dev, dev->of_node, &dsi->ddp_comp, comp_id,
+>                                 &mtk_dsi_funcs);
+>         if (ret) {
+>                 dev_err(dev, "Failed to initialize component: %d\n", ret);
+> -               return ret;
+> +               goto err_unregister_host;
+>         }
+>
+>         irq_num = platform_get_irq(pdev, 0);
+>         if (irq_num < 0) {
+>                 dev_err(&pdev->dev, "failed to request dsi irq resource\n");
+> -               return -EPROBE_DEFER;
+> +               ret = -EPROBE_DEFER;
 
-Really unclear how to fix this. The pinned/locked split with two
-buckets may be the right way.
+I think you need to do ret = irq_num here, too (and yes, it was
+probably wrong before?)
 
-Jason
+> +               goto err_unregister_host;
+>         }
+>
+>         irq_set_status_flags(irq_num, IRQ_TYPE_LEVEL_LOW);
+> @@ -1163,14 +1163,25 @@ static int mtk_dsi_probe(struct platform_device *pdev)
+>                                IRQF_TRIGGER_LOW, dev_name(&pdev->dev), dsi);
+>         if (ret) {
+>                 dev_err(&pdev->dev, "failed to request mediatek dsi irq\n");
+> -               return -EPROBE_DEFER;
+> +               ret = -EPROBE_DEFER;
+
+Ditto, I'd not reassign ret.
+
+> +               goto err_unregister_host;
+>         }
+>
+>         init_waitqueue_head(&dsi->irq_wait_queue);
+>
+>         platform_set_drvdata(pdev, dsi);
+>
+> -       return component_add(&pdev->dev, &mtk_dsi_component_ops);
+> +       ret = component_add(&pdev->dev, &mtk_dsi_component_ops);
+> +       if (ret) {
+> +               ret = -EPROBE_DEFER;
+
+Ditto (this one _was_ right before).
+
+> +               goto err_unregister_host;
+> +       }
+> +
+> +       return 0;
+> +
+> +err_unregister_host:
+> +       mipi_dsi_host_unregister(&dsi->host);
+> +       return ret;
+>  }
+>
+>  static int mtk_dsi_remove(struct platform_device *pdev)
+> --
+> 2.20.1
+>
