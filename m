@@ -2,94 +2,86 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53615C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:23:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19868C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21C2F21927
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:23:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D08DE21B24
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:25:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KGXgbkE1"
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="xmcCQWPv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408076AbfBNSXw (ORCPT
+        id S2393011AbfBNSZT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 13:23:52 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40256 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2408055AbfBNSXw (ORCPT
+        Thu, 14 Feb 2019 13:25:19 -0500
+Received: from mail-ot1-f42.google.com ([209.85.210.42]:42519 "EHLO
+        mail-ot1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732475AbfBNSZT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 13:23:52 -0500
-Received: by mail-pl1-f196.google.com with SMTP id bj4so3570057plb.7
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 10:23:52 -0800 (PST)
+        Thu, 14 Feb 2019 13:25:19 -0500
+Received: by mail-ot1-f42.google.com with SMTP id i5so12120066oto.9
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 10:25:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:in-reply-to:user-agent
-         :subject:message-id:references:cc:from:date;
-        bh=FAWxPv94ddgd6BnLn4nm1oTRlMpVgNSJoFrPvkS3g5I=;
-        b=KGXgbkE1qGUD9wMmvN7YKz5WXey9m3sl1LX1bT2j2Yh9IIvz1iA6QQnR8p1IW57KNr
-         z1B1OR+cNHlwiHFz6DOpX7rWc6lResAxSW9c4BLsTL46ASNQ5RrvL2J/tEyoDc0pMk3o
-         klXEaf6S4xIKkyETbuEdDiPJiaDAI4a0YTNV8=
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+LwC+e/wfz0phwsvG3UA7Kxyo8TmV6yoBd0ExF7DlW4=;
+        b=xmcCQWPvi1tk0wx/+640HuxnyKNJnavefeN7OquFeviACdB+I3NqbWlo91L0PAtpu5
+         dkfsZFDXpnac5GQj9mR2JyrCdE/nqvVjjuapSYOpnTfpXQR4W8KdcCMmxx1Pw1FW+GdK
+         hAyEznua/qD92KaKxMW+Gctzoswj4JliVw0t2unJCsxP2hq0mko/o8H15ftbOrKjwHDz
+         V9vBTsDewBKoMSXzSFz1CIGExWB5ziAQOqO/lz2VshL6FqIdKqyZiQtYSMx3/b58rAKr
+         WGs3KpMu2COOGyiAlGnMEgIbtBpudxVMdesC5okQpMLayZvGJxjzt3MK2ngjUfCbF6Bk
+         Tx9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to
-         :in-reply-to:user-agent:subject:message-id:references:cc:from:date;
-        bh=FAWxPv94ddgd6BnLn4nm1oTRlMpVgNSJoFrPvkS3g5I=;
-        b=Bg1tLUnte474iVXXXAYQucvn6VLB3HqzrF94pGgcLPrevg3NvKDXHeoZozCQsF4MBd
-         gnW5Dh7C+UkzKqFltInA8mj/5e3eDDCvRF19CGtlsEfUXW2/gAkGvHgm04/a16NMLSu2
-         RijeK0BDZk/buG4DIVXzDIQ7lWvEqT0LSFeMvUmcDXTVwmMSrk+wTBIscJdSESEgSvAY
-         VWpZeWyC/bMH3rPUKNRCxBMO28dKc4dghIwi8vViv+rKpZBWfs7RU2DEv8Ja4e3qEW0G
-         mkIuLru6WlMsGwIz8KWypnue5zpL11vZbEvslg7L7YSEVe5z/dXG2N5DIn4q2VgwkjRK
-         Tb/A==
-X-Gm-Message-State: AHQUAuZ1V8K5/q0bXDeFjY++ekQcUZyYnN5S+xaNOT2yE/3/5gar1FuU
-        gma705As/6ohiHXsMsfM9TOrgA==
-X-Google-Smtp-Source: AHgI3IZeXXVtscwtX7Q5eQleR4x23Hih/A3s/BfWPA1ORxhbnAt8Ch5ai5eGtPiAMOXI0ljQ08MCvA==
-X-Received: by 2002:a17:902:bcc6:: with SMTP id o6mr5535680pls.39.1550168631797;
-        Thu, 14 Feb 2019 10:23:51 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id q1sm5038302pfb.96.2019.02.14.10.23.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 10:23:51 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+LwC+e/wfz0phwsvG3UA7Kxyo8TmV6yoBd0ExF7DlW4=;
+        b=kt9zDY6LsLvzvJI3xsGzdcOR+sp+mMm+8/KqDHGcS7M7M2H4I7te1TtmFG1b27wkhi
+         54Dl9CvTe5GZkB4ZSm8vebwjZGdM/v5hTBza5oIE1PJbkH5eYLxv6BpZ/83JPX2abO6k
+         iNnp/ICjXX4BH7edgu8oL78lwk94VnPJ3kPuLufzj6LEPy5PjUZ+bv8ONg1iKceoycsN
+         Ee0idKlBFo5vo+OBjwTFRvC+5rLAurEjW/AxOVdg991RoRVrPwZRqeFITR+0/3vuJ3QW
+         IwuDWBeUSUnx93NqGMTjhgxcZVjTh6jgA1Z9ebF4NFahqnqechXcCgtnkH7S646ZCU+8
+         v48g==
+X-Gm-Message-State: AHQUAuZazrRRbI9+6VoUmGC8VTmrwOLz9zhBFAANB11iJsUgtQJvBGfp
+        zRro1sl2srk8iLUqRYF9mhDLVzjyz5LVj9V1c5rmuoVd
+X-Google-Smtp-Source: AHgI3IbnVCugpE3Z3TuIXgzzpIW2bhHG1b8KnucO+K5F+0eWFNyJPwJNhrQScGtCUaNp7Uq9wSjup/Hte5V+E7+tXnM=
+X-Received: by 2002:a9d:4c85:: with SMTP id m5mr1976349otf.367.1550168718363;
+ Thu, 14 Feb 2019 10:25:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Douglas Anderson <dianders@chromium.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-In-Reply-To: <20190214181249.2749-2-dianders@chromium.org>
-User-Agent: alot/0.8
-Subject: Re: [PATCH 2/2] PM / Domains: Mark "name" const in dev_pm_domain_attach_by_name()
-Message-ID: <155016863043.115909.10810905918164847994@swboyd.mtv.corp.google.com>
-References: <20190214181249.2749-1-dianders@chromium.org> <20190214181249.2749-2-dianders@chromium.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Len Brown <len.brown@intel.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pavel Machek <pavel@ucw.cz>
-From:   Stephen Boyd <swboyd@chromium.org>
-Date:   Thu, 14 Feb 2019 10:23:50 -0800
+References: <CAPcyv4jyCDJTpGZB6qVX7_FiaxJfDzWA1cw8dfPjHM2j3j3yqQ@mail.gmail.com>
+ <20190214134622.GG4525@dhcp22.suse.cz>
+In-Reply-To: <20190214134622.GG4525@dhcp22.suse.cz>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Thu, 14 Feb 2019 10:25:07 -0800
+Message-ID: <CAPcyv4gxFKBQ9eVdn+pNEzBXRfw6Qwfmu21H2i5uj-PyFmRAGQ@mail.gmail.com>
+Subject: Re: [Lsf-pc] [LSF/MM TOPIC] The end of the DAX experiment
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     lsf-pc@lists.linux-foundation.org,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Douglas Anderson (2019-02-14 10:12:49)
-> As of the patch ("PM / Domains: Mark "name" const in
-> genpd_dev_pm_attach_by_name()") it's clear that the name in
-> dev_pm_domain_attach_by_name() can be const.  Mark it as so.  This
-> allows drivers to pass in a name that was declared "const" in a
-> driver.
->=20
-> Fixes: 27dceb81f445 ("PM / Domains: Introduce dev_pm_domain_attach_by_nam=
-e()")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
+On Thu, Feb 14, 2019 at 5:46 AM Michal Hocko <mhocko@kernel.org> wrote:
+>
+> On Wed 06-02-19 13:12:59, Dan Williams wrote:
+> [...]
+> > * Userfaultfd for file-backed mappings and DAX
+>
+> I assume that other topics are meant to be FS track but this one is MM,
+> right?
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-
+Yes, but I think it is the lowest priority of all the noted sub-topics
+in this proposal. The DAX-reflink discussion, where a given
+physical-page may need to be mapped into multiple inodes at different
+offsets, might be more fruitful to have as a joint discussion with MM.
