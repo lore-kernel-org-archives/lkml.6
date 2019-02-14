@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EE78C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:03:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C8B3C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10792218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:03:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C96F21B68
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:03:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="v+GlI0hp"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="tG8U1eRm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387846AbfBNXD1 (ORCPT
+        id S2387958AbfBNXDo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 18:03:27 -0500
-Received: from com-out001.mailprotect.be ([83.217.72.83]:60273 "EHLO
-        com-out001.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727674AbfBNXBi (ORCPT
+        Thu, 14 Feb 2019 18:03:44 -0500
+Received: from out002.mailprotect.be ([83.217.72.86]:37507 "EHLO
+        out002.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727327AbfBNXBd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 18:01:38 -0500
+        Thu, 14 Feb 2019 18:01:33 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:References
         :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:reply-to:sender:bcc:
-        content-type; bh=6ZU/qYXswpDm1I3o44PiL+adMqtfT0R/2jW+VS2kvk4=; b=v+GlI0hpjBey
-        g2uhTVvtMqPf2G8QWc0EEtvharetMBC7TAi8FBe/TaOoqIYilZJEAyRVZn30ZA8Vx2S4TrJeLRw0y
-        s06YlIBh2FrCTdtNVAVXIhp1fdjb3k8guHkw5j9pRjPgwXgyEFsFkZm1b8shFfqUXALeGhYhtFK88
-        cTG2qGyKlYdRo84eVL4SjXklUAiKOUSLhIuJJHhQzG+eD8p6xZ3QL29ostkhonGq9d5prq2R8PWXP
-        9SNaroEztFslkoMwZbckyh5o/Ko8x7FS+a5GReQR3/UqlwIrGSP2fLEBp5xSnQswIj1f3YO9EGWhI
-        IjcX6Jgh13cjXgGPsA0C9A==;
+        content-type; bh=hsoeGDjUGXey8ONlL+laSe3sURvv4DnkGAvQi6DeVMc=; b=tG8U1eRmv23g
+        /x+gNPD3GXx2WQf2J//IvABU6Klw4/K3C2WZauWgzxkgXaHEGaeNSRG9znRzXFqQFUlRSe4KkLyzM
+        oRgh9eomLez0LBMyAItjYnO3k/VhU30/CP9gjHveY8BD8A5XKOb5AXMZyALJ+p7Dxzfp3BR96VAnx
+        mplgWhEskt1qQzqSyIZNPTp8BUjdQsf/KW2bNCV7zyBwlBAltyldQlkL++NMnSlcxqdYieHCOIroJ
+        ms8jv7K03J+9IDBqpTnrvkswdZ9iImsSE+atjOBGEG4P4vHPK6nG3TlrUTEyvWBrrddrI8F83BI9V
+        c+boIterNr9KbRVmTrnraw==;
 Received: from smtp-auth.mailprotect.be ([178.208.39.159])
-        by com-mpt-out001.mailprotect.be with esmtp (Exim 4.89)
+        by com-mpt-out002.mailprotect.be with esmtp (Exim 4.89)
         (envelope-from <bvanassche@acm.org>)
-        id 1guQ0Z-000DLb-AW; Fri, 15 Feb 2019 00:01:31 +0100
+        id 1guQ0S-0000Wr-L1; Fri, 15 Feb 2019 00:01:25 +0100
 Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id BFA0FC04D0;
-        Fri, 15 Feb 2019 00:01:28 +0100 (CET)
+        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 0EA84C0482;
+        Fri, 15 Feb 2019 00:01:21 +0100 (CET)
 From:   Bart Van Assche <bvanassche@acm.org>
 To:     peterz@infradead.org
 Cc:     mingo@redhat.com, will.deacon@arm.com, tj@kernel.org,
         longman@redhat.com, johannes.berg@intel.com,
         linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
         Johannes Berg <johannes@sipsolutions.net>
-Subject: [PATCH v7 09/23] locking/lockdep: Make it easy to detect whether or not inside a selftest
-Date:   Thu, 14 Feb 2019 15:00:44 -0800
-Message-Id: <20190214230058.196511-10-bvanassche@acm.org>
+Subject: [PATCH v7 06/23] locking/lockdep: Make zap_class() remove all matching lock order entries
+Date:   Thu, 14 Feb 2019 15:00:41 -0800
+Message-Id: <20190214230058.196511-7-bvanassche@acm.org>
 X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
 In-Reply-To: <20190214230058.196511-1-bvanassche@acm.org>
 References: <20190214230058.196511-1-bvanassche@acm.org>
@@ -59,23 +59,23 @@ X-SpamExperts-Domain: mailprotect.be
 X-SpamExperts-Username: 178.208.39.128/27
 Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
 X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: Combined (0.01)
+X-SpamExperts-Outgoing-Evidence: Combined (0.02)
 X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5l/+lDF/HdQ5BfR5oRJ0+BZ602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+X-Filter-ID: EX5BVjFpneJeBchSMxfU5qFgSS9jCK3LSUoCav/J+cJ602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
  q3u0UDjvO1tLifGj39bI0bcPyaJsYTbXCyMe5v8y2H30acbVA7+CsLowAEMLnIs/c915wTAPANfX
  yKo+pvzCeHRww82sG/8HW2me2F11ZDpUG2A5Oiv0I5mALh2L1FvYZOvwUqXjvDk55wR+TsdsSUF6
  GKzdvFr/HXw7HB6/ASdSFy6HwS/kPXDwAtkmamZ68x0sIvfyXcDIKE+0kbt+hzad+8LmAP3D1N2U
  GbvmsuDbvpqB9SNial5u6w2P0n3AP5HxdAj+kw2FxVgE7SkvtWKxkgySOE3GN0ExaDjCWJE9qkQd
- cN59bBwMKfB73GOq6x000AEXifFzAzRoMTGLkyW94JLtHXpy+28pF/HE/UXip0YpvmqSgtBtsvjK
- 9mpXvZ581yfqNeeYAkx3ZcmLZYF56A5GPA+gQUA9iOUB9gXW15it62GvKaV7puimXuHjFEy4159w
+ cN59Y08C+1+ciJCAfwA+JGk4n3TFgIfDMShmlQFqCr5hA8xy+28pF/HE/UXip0YpvmqSgtBtsvjK
+ 9mpXvZ581yfqNVA0hlu/NpOnaXNvrIp4mRGgQUA9iOUB9gXW15it62GvKaV7puimXuHjFEy4159w
  b450J4XCXsfFdbMPgtsajKwG2cpJ3lvOyWe43aQJV0FQAw4GDaNi9opIpCCZlwPhCSifQg48iasD
  JL+gSQdpc7Qjle0LcSTVPooEuo2QsxqqSZrgzSd/y/UPcC3OGqi0VLzxDmzcG0iKavUv44HfPfc9
  3SsS4aMXJmiJ2G0eb5ahWSZS8itsoBzU38uNQrbb6O7J//0XCxCMJn8bXo41UD0XUeyeeLgoe8v3
  Ml5+IDYsxJeBk/os5j8abOYt1SAwFTiWFYSlhfdXoL2rBaBWqCutI4g+l6rCWbY0MZcgnbHshzjL
- mWRvvkZRtgBBWwxR0VpXCEqSenvCQusD//B2Ay/DNaBiti8rX52xSxVHK1dLr1x1RYIHNNee2LMZ
+ mWRvvkZRtgBBWwxR0WH0EA9CFU+XZZAji6JOThI+k1ucVCQQ+dji/Nf3amyIr1x1RYIHNNee2LMZ
  auWd3bJLCnhUZijhyP+NAi4z4ocCHqI/c8KjUic/Eh5gmfm8Qixyw/DNQAInR1tPJCnqBScHL8+l
- TGBIVE9xbEkX79v7DEiBILyHFulTt8MZ+2FHvumGWhrOrsi8Jm+XkWaiDAd3nY0YMuPuNHKfsH9r
- 46Yhu1/rdU1t/SWu+yxj6TsAI+iDD9vGjzLZdruisfuPhyICICyimEKZnywKt5h6ngx9mFmID8gM
+ TGBIVE9xbEkX79v7DEiBILyHFulTt8MZ+2FHzI2tRk9+5zIafXpAwSGPnS32oons44HyMUKLWR7N
+ GVchu1/rdU1t/SWu+yxj6TsAI+iDD9vGjzLZdruisfuPhyICICyimEKZnywKt5h6ngx9mFmID8gM
  9QZDi01IhiaMMDRcCgYQIezXimM8MMGBqfqdqJBJSRulWz3lJxoVd7HeK8WDo27Oo9Jnn2NG+H38
  c/DXtHJOj+IrynVpkScfoGQWOPBVY82M8ECfDTyNS/J0MyNuDItEaHVAyCe015AGfC4N4YKcCY/W
  O55FSnHkew==
@@ -85,88 +85,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch that frees unused lock classes will modify the behavior of
-lockdep_free_key_range() and lockdep_reset_lock() depending on whether
-or not these functions are called from the context of the lockdep
-selftests. Hence make it easy to detect whether or not lockdep code
-is called from the context of a lockdep selftest.
+Make sure that all lock order entries that refer to a class are removed
+from the list_entries[] array when a kernel module is unloaded.
 
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Waiman Long <longman@redhat.com>
 Cc: Johannes Berg <johannes@sipsolutions.net>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- include/linux/lockdep.h  | 5 +++++
- kernel/locking/lockdep.c | 6 ++++++
- lib/locking-selftest.c   | 2 ++
- 3 files changed, 13 insertions(+)
+ include/linux/lockdep.h  |  1 +
+ kernel/locking/lockdep.c | 19 +++++++++++++------
+ 2 files changed, 14 insertions(+), 6 deletions(-)
 
 diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-index b5e6bfe0ae4a..66eee1ba0f2a 100644
+index 0c38bade84b7..b5e6bfe0ae4a 100644
 --- a/include/linux/lockdep.h
 +++ b/include/linux/lockdep.h
-@@ -265,6 +265,7 @@ extern void lockdep_reset(void);
- extern void lockdep_reset_lock(struct lockdep_map *lock);
- extern void lockdep_free_key_range(void *start, unsigned long size);
- extern asmlinkage void lockdep_sys_exit(void);
-+extern void lockdep_set_selftest_task(struct task_struct *task);
+@@ -178,6 +178,7 @@ static inline void lockdep_copy_map(struct lockdep_map *to,
+ struct lock_list {
+ 	struct list_head		entry;
+ 	struct lock_class		*class;
++	struct lock_class		*links_to;
+ 	struct stack_trace		trace;
+ 	int				distance;
  
- extern void lockdep_off(void);
- extern void lockdep_on(void);
-@@ -395,6 +396,10 @@ static inline void lockdep_on(void)
- {
- }
- 
-+static inline void lockdep_set_selftest_task(struct task_struct *task)
-+{
-+}
-+
- # define lock_acquire(l, s, t, r, c, n, i)	do { } while (0)
- # define lock_release(l, n, i)			do { } while (0)
- # define lock_downgrade(l, i)			do { } while (0)
 diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 7f80d8789978..42161b8f0e68 100644
+index 404086b23fc7..16657662ca4f 100644
 --- a/kernel/locking/lockdep.c
 +++ b/kernel/locking/lockdep.c
-@@ -81,6 +81,7 @@ module_param(lock_stat, int, 0644);
-  * code to recurse back into the lockdep code...
-  */
- static arch_spinlock_t lockdep_lock = (arch_spinlock_t)__ARCH_SPIN_LOCK_UNLOCKED;
-+static struct task_struct *lockdep_selftest_task_struct;
- 
- static int graph_lock(void)
- {
-@@ -331,6 +332,11 @@ void lockdep_on(void)
- }
- EXPORT_SYMBOL(lockdep_on);
- 
-+void lockdep_set_selftest_task(struct task_struct *task)
-+{
-+	lockdep_selftest_task_struct = task;
-+}
-+
+@@ -859,7 +859,8 @@ static struct lock_list *alloc_list_entry(void)
  /*
-  * Debugging switches:
+  * Add a new dependency to the head of the list:
   */
-diff --git a/lib/locking-selftest.c b/lib/locking-selftest.c
-index 1e1bbf171eca..a1705545e6ac 100644
---- a/lib/locking-selftest.c
-+++ b/lib/locking-selftest.c
-@@ -1989,6 +1989,7 @@ void locking_selftest(void)
+-static int add_lock_to_list(struct lock_class *this, struct list_head *head,
++static int add_lock_to_list(struct lock_class *this,
++			    struct lock_class *links_to, struct list_head *head,
+ 			    unsigned long ip, int distance,
+ 			    struct stack_trace *trace)
+ {
+@@ -873,6 +874,7 @@ static int add_lock_to_list(struct lock_class *this, struct list_head *head,
+ 		return 0;
  
- 	init_shared_classes();
- 	debug_locks_silent = !debug_locks_verbose;
-+	lockdep_set_selftest_task(current);
+ 	entry->class = this;
++	entry->links_to = links_to;
+ 	entry->distance = distance;
+ 	entry->trace = *trace;
+ 	/*
+@@ -1918,14 +1920,14 @@ check_prev_add(struct task_struct *curr, struct held_lock *prev,
+ 	 * Ok, all validations passed, add the new lock
+ 	 * to the previous lock's dependency list:
+ 	 */
+-	ret = add_lock_to_list(hlock_class(next),
++	ret = add_lock_to_list(hlock_class(next), hlock_class(prev),
+ 			       &hlock_class(prev)->locks_after,
+ 			       next->acquire_ip, distance, trace);
  
- 	DO_TESTCASE_6R("A-A deadlock", AA);
- 	DO_TESTCASE_6R("A-B-B-A deadlock", ABBA);
-@@ -2097,5 +2098,6 @@ void locking_selftest(void)
- 		printk("---------------------------------\n");
- 		debug_locks = 1;
+ 	if (!ret)
+ 		return 0;
+ 
+-	ret = add_lock_to_list(hlock_class(prev),
++	ret = add_lock_to_list(hlock_class(prev), hlock_class(next),
+ 			       &hlock_class(next)->locks_before,
+ 			       next->acquire_ip, distance, trace);
+ 	if (!ret)
+@@ -4119,15 +4121,20 @@ void lockdep_reset(void)
+  */
+ static void zap_class(struct lock_class *class)
+ {
++	struct lock_list *entry;
+ 	int i;
+ 
+ 	/*
+ 	 * Remove all dependencies this lock is
+ 	 * involved in:
+ 	 */
+-	for (i = 0; i < nr_list_entries; i++) {
+-		if (list_entries[i].class == class)
+-			list_del_rcu(&list_entries[i].entry);
++	for (i = 0, entry = list_entries; i < nr_list_entries; i++, entry++) {
++		if (entry->class != class && entry->links_to != class)
++			continue;
++		list_del_rcu(&entry->entry);
++		/* Clear .class and .links_to to avoid double removal. */
++		WRITE_ONCE(entry->class, NULL);
++		WRITE_ONCE(entry->links_to, NULL);
  	}
-+	lockdep_set_selftest_task(NULL);
- 	debug_locks_silent = 0;
- }
+ 	/*
+ 	 * Unhash the class and remove it from the all_lock_classes list:
 -- 
 2.21.0.rc0.258.g878e2cd30e-goog
 
