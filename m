@@ -2,105 +2,88 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A43BEC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:49:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F474C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:49:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 761C3222A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:49:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27E8B222A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:49:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436831AbfBNIs6 (ORCPT
+        id S2437613AbfBNItD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 03:48:58 -0500
-Received: from mx2.suse.de ([195.135.220.15]:33002 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388475AbfBNIs6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 03:48:58 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4CC03AAA9;
-        Thu, 14 Feb 2019 08:48:56 +0000 (UTC)
-Date:   Thu, 14 Feb 2019 09:48:55 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     xiang xiao <xiaoxiang781216@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        linux-kernel@vger.kernel.org, Xiang Xiao <xiaoxiang@xiaomi.com>
-Subject: Re: [PATCH] printk: add KERN_NOTIME to skip the timestamp
-Message-ID: <20190214084855.xyug7cmnrybdcmos@pathway.suse.cz>
-References: <1549995065-27597-1-git-send-email-xiaoxiang@xiaomi.com>
- <20190212144606.4b7cf0f8@gandalf.local.home>
- <CAH2Cfb-Zd9TKgs52ROVGYg6F_hiN2ieWKwYPkxpVV8St+zwa2A@mail.gmail.com>
- <20190213084741.5512307a@gandalf.local.home>
- <CAH2Cfb9YTAf4j7tv4Q5dWM_jQCzsWBo6ufoT=BXYx5qpgcMCNQ@mail.gmail.com>
- <20190213093154.7af84743@gandalf.local.home>
+        Thu, 14 Feb 2019 03:49:03 -0500
+Received: from mga04.intel.com ([192.55.52.120]:36698 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388475AbfBNItC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 03:49:02 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2019 00:49:01 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,368,1544515200"; 
+   d="scan'208";a="143370729"
+Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
+  by fmsmga002.fm.intel.com with ESMTP; 14 Feb 2019 00:49:01 -0800
+Received: from fmsmsx163.amr.corp.intel.com (10.18.125.72) by
+ fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Thu, 14 Feb 2019 00:49:01 -0800
+Received: from shsmsx101.ccr.corp.intel.com (10.239.4.153) by
+ fmsmsx163.amr.corp.intel.com (10.18.125.72) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Thu, 14 Feb 2019 00:49:01 -0800
+Received: from shsmsx102.ccr.corp.intel.com ([169.254.2.207]) by
+ SHSMSX101.ccr.corp.intel.com ([169.254.1.110]) with mapi id 14.03.0415.000;
+ Thu, 14 Feb 2019 16:48:59 +0800
+From:   "Wang, Wei W" <wei.w.wang@intel.com>
+To:     'Nitesh Narayan Lal' <nitesh@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
+        "pagupta@redhat.com" <pagupta@redhat.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "riel@surriel.com" <riel@surriel.com>,
+        "david@redhat.com" <david@redhat.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "dodgen@google.com" <dodgen@google.com>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        "dhildenb@redhat.com" <dhildenb@redhat.com>,
+        "aarcange@redhat.com" <aarcange@redhat.com>
+Subject: RE: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
+Thread-Topic: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
+Thread-Index: AQHUvMb57IQCd72gCkOm4okDUKYrcaXdemAg//+vEwCAAWxXYA==
+Date:   Thu, 14 Feb 2019 08:48:59 +0000
+Message-ID: <286AC319A985734F985F78AFA26841F73DF6F0E3@shsmsx102.ccr.corp.intel.com>
+References: <20190204201854.2328-1-nitesh@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF6B56A@shsmsx102.ccr.corp.intel.com>
+ <f9516222-793a-a169-c18a-728ca0256cd3@redhat.com>
+In-Reply-To: <f9516222-793a-a169-c18a-728ca0256cd3@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMjE2NmU1M2MtYzg1NC00YTVmLWE4ZWItZWM4ZWNmNWU1Y2JlIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoibStaa2tXSVNJYmRsVHJCRmQ0VEZxbjNabUpcL1BaUXM5MXoySWQwVGo0R01LNXBTejRZaWFaa2pQYzFOY21ITEUifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190213093154.7af84743@gandalf.local.home>
-User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2019-02-13 09:31:54, Steven Rostedt wrote:
-> On Wed, 13 Feb 2019 22:00:04 +0800
-> xiang xiao <xiaoxiang781216@gmail.com> wrote:
-> > Here is a sample output with this patch:
-> > [   10.991426] virtio_rpmsg_bus virtio1: rpmsg host is online
-> > [   10.991443] remoteproc remoteproc1: registered virtio1 (type 7)
-> > [   10.991450] remoteproc remoteproc1: remote processor
-> > f9210000.toppwr:sen-rproc is now up
-> > [   10.993715] virtio_rpmsg_bus virtio1: creating channel
-> > rpmsg-ttySENSOR addr 0x1
-> > [   10.994606] virtio_rpmsg_bus virtio1: creating channel rpmsg-ttyGPS addr 0x2
-> > [   10.995236] virtio_rpmsg_bus virtio1: creating channel rpmsg-clk addr 0x3
-> > [   10.995702] virtio_rpmsg_bus virtio1: creating channel rpmsg-syslog addr 0x4
-> > [   10.996197] virtio_rpmsg_bus virtio1: creating channel rpmsg-rtc addr 0x5
-> > [   10.997297] virtio_rpmsg_bus virtio1: creating channel rpmsg-hostfs addr 0x6
-> > [   10.999842] virtio_rpmsg_bus virtio1: creating channel rpmsg-usrsock addr 0x7
-> > [     0.007680] sensor: NuttX sensor 7.28 e3c2ecb Feb 12 2019 16:53:49
-> > arm song/banks
-> > ^^^^^^^^^^^^^
-> > [   11.918177] random: crng init done
-> > [   12.567362] e2fsck: e2fsck 1.42.9 (28-Dec-2013)
-> > 
-> > Without this patch:
-> > [   10.991426] virtio_rpmsg_bus virtio1: rpmsg host is online
-> > [   10.991443] remoteproc remoteproc1: registered virtio1 (type 7)
-> > [   10.991450] remoteproc remoteproc1: remote processor
-> > f9210000.toppwr:sen-rproc is now up
-> > [   10.993715] virtio_rpmsg_bus virtio1: creating channel
-> > rpmsg-ttySENSOR addr 0x1
-> > [   10.994606] virtio_rpmsg_bus virtio1: creating channel rpmsg-ttyGPS addr 0x2
-> > [   10.995236] virtio_rpmsg_bus virtio1: creating channel rpmsg-clk addr 0x3
-> > [   10.995702] virtio_rpmsg_bus virtio1: creating channel rpmsg-syslog addr 0x4
-> > [   10.996197] virtio_rpmsg_bus virtio1: creating channel rpmsg-rtc addr 0x5
-> > [   10.997297] virtio_rpmsg_bus virtio1: creating channel rpmsg-hostfs addr 0x6
-> > [   10.999842] virtio_rpmsg_bus virtio1: creating channel rpmsg-usrsock addr 0x7
-> > [   11.105345][     0.007680] sensor: NuttX sensor 7.28 e3c2ecb Feb 12
-> > 2019 16:53:49 arm song/banks
-> > ^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > [   11.918177] random: crng init done
-> > [   12.567362] e2fsck: e2fsck 1.42.9 (28-Dec-2013)
-> > 
-> > Which one do you think better?
-> 
-> Honestly, the one without the patch.
-> 
-> Seriously, it also makes it easy to see where that message happened
-> with respect to the other printks. With your patch, we would have no
-> idea, and if I was a normal user, unaware of this patch, I would
-> probably submit a bug report claiming that something is wrong with the
-> timestamps.
-
-Just for record. I agree with Steven and Sergey here. The two clocks
-are too out of sync. "Randomly" and quietly replacing one with
-the other would cause more harm than good from my point of view.
-
-Best Regards,
-Petr
+T24gV2VkbmVzZGF5LCBGZWJydWFyeSAxMywgMjAxOSA4OjA3IFBNLCBOaXRlc2ggTmFyYXlhbiBM
+YWwgd3JvdGU6DQo+IE9uY2UgdGhlIGhvc3QgZnJlZSB0aGUgcGFnZXMuIEFsbCB0aGUgaXNvbGF0
+ZWQgcGFnZXMgYXJlIHJldHVybmVkIGJhY2sgDQo+IHRvIHRoZSBidWRkeS4gKFRoaXMgaXMgaW1w
+bGVtZW50ZWQgaW4gaHlwZXJsaXN0X3JlYWR5KCkpDQoNClRoaXMgYWN0dWFsbHkgaGFzIHRoZSBz
+YW1lIGlzc3VlOiB0aGUgaXNvbGF0ZWQgcGFnZXMgaGF2ZSB0byB3YWl0IHRvIHJldHVybiB0byB0
+aGUgYnVkZHkNCmFmdGVyIHRoZSBob3N0IGhhcyBkb25lIHdpdGggbWFkdmlzZShET05UTkVFRCku
+IE90aGVyd2lzZSwgYSBwYWdlIGNvdWxkIGJlIHVzZWQgYnkNCmEgZ3Vlc3QgdGhyZWFkIGFuZCB0
+aGUgbmV4dCBtb21lbnQgdGhlIGhvc3QgdGFrZXMgaXQgdG8gb3RoZXIgaG9zdCB0aHJlYWRzLg0K
+DQpCZXN0LA0KV2VpDQo=
