@@ -2,98 +2,111 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0CD4C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67659C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:42:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84C9D222D2
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:42:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550137331;
-	bh=3y3cokQQMIouqGIaVg2qeuXpZAD3dMQo0WkuCPlzX0M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Jx0+WtbqMtNpm3YPFU08nJS1X3C1DvqHj4YLKv50FiqnR+dNaL7fVh8UJFgaRdqrP
-	 kJsXaYs5GToOe028sRUDwJ/qL2VdVM+SK0OeuttUkfhbTkNAKqP3K4ZVayLE1rWpSD
-	 aNX2Cc/pyaR1Q0hpxTHN0ry6S8ZqUZ5hJomfZkoA=
+	by mail.kernel.org (Postfix) with ESMTP id 3FBA2222A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:42:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392762AbfBNJmK (ORCPT
+        id S2392926AbfBNJmr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 04:42:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33418 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 04:42:47 -0500
+Received: from mga09.intel.com ([134.134.136.24]:32197 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728194AbfBNJmJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 04:42:09 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E283222A4;
-        Thu, 14 Feb 2019 09:42:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550137329;
-        bh=3y3cokQQMIouqGIaVg2qeuXpZAD3dMQo0WkuCPlzX0M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=070Y2BjLfDaEe+eK3vshODuDxRgEKb2z7LwQFFpW4DdE1B7geG7g75wUBfKam1V7p
-         cmpVBtiusERBSC+EJhmF/sYuSXtf6GWGymtuMUPIT6Nwuz0N2QCZ/PxIfrelrFkjjH
-         oate21sgBlVokrm5SwtaUIvHuzIlLYgZCTPdUYOQ=
-Date:   Thu, 14 Feb 2019 10:42:06 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Hyun Kwon <hyun.kwon@xilinx.com>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Christian Brauner <christian@brauner.io>,
-        devel@driverdev.osuosl.org, dri-devel@lists.freedesktop.org,
-        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
-        Martijn Coenen <maco@android.com>,
-        Wendy Liang <jliang@xilinx.com>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Cyril Chemparathy <cyrilc@xilinx.com>
-Subject: Re: [PATCH 1/1] staging: android: ion: Add the GPL exception for
- syscalls
-Message-ID: <20190214094206.GB10895@kroah.com>
-References: <1550102506-24731-1-git-send-email-hyun.kwon@xilinx.com>
- <1550102506-24731-2-git-send-email-hyun.kwon@xilinx.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1550102506-24731-2-git-send-email-hyun.kwon@xilinx.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        id S1726106AbfBNJmr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 04:42:47 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2019 01:42:46 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,368,1544515200"; 
+   d="scan'208";a="124411677"
+Received: from devel-ww.sh.intel.com ([10.239.48.128])
+  by fmsmga008.fm.intel.com with ESMTP; 14 Feb 2019 01:42:44 -0800
+From:   Wei Wang <wei.w.wang@intel.com>
+To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        pbonzini@redhat.com, ak@linux.intel.com, peterz@infradead.org
+Cc:     kan.liang@intel.com, mingo@redhat.com, rkrcmar@redhat.com,
+        like.xu@intel.com, wei.w.wang@intel.com, jannh@google.com,
+        arei.gonglei@huawei.com, jmattson@google.com
+Subject: [PATCH v5 00/12] Guest LBR Enabling
+Date:   Thu, 14 Feb 2019 17:06:02 +0800
+Message-Id: <1550135174-5423-1-git-send-email-wei.w.wang@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 04:01:46PM -0800, Hyun Kwon wrote:
-> Add "WITH Linux-syscall-note" to the license to not put GPL
-> restrictions on user space programs using this header.
-> 
-> Signed-off-by: Hyun Kwon <hyun.kwon@xilinx.com>
-> ---
->  drivers/staging/android/uapi/ion.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/android/uapi/ion.h b/drivers/staging/android/uapi/ion.h
-> index 5d70098..46c93fc 100644
-> --- a/drivers/staging/android/uapi/ion.h
-> +++ b/drivers/staging/android/uapi/ion.h
-> @@ -1,4 +1,4 @@
-> -/* SPDX-License-Identifier: GPL-2.0 */
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
->  /*
->   * drivers/staging/android/uapi/ion.h
->   *
-> -- 
-> 2.7.4
-> 
+Last Branch Recording (LBR) is a performance monitor unit (PMU) feature
+on Intel CPUs that captures branch related info. This patch series enables
+this feature to KVM guests.
 
-Yes, that is the correct thing to do, let me go queue this up.
+Here is a conclusion of the fundamental methods that we use:
+1) the LBR feature is enabled per guest via QEMU setting of
+   KVM_CAP_X86_GUEST_LBR;
+2) the LBR stack is passed through to the guest for direct accesses after
+   the guest's first access to any of the lbr related MSRs;
+3) the host will help save/resotre the LBR stack when the vCPU is
+   scheduled out/in.
 
-thanks,
+ChangeLog:
+    - KVM/x86:
+        - patch 4: enable guest lbr when guest lbr msr index and host
+          lbr msr index matches;
+        - patch 5: change kvm_pmu_get_msr to get the msr_data struct;
+	- patch 8: remove the PF_VCPU and is_kernel_event check;
+	- patch 10:
+          - move the lbr virtualization code from vmx.c to pmu_intel.c;
+          - save the lbr stack even when the guest is not using the user
+            callstack mode in case some tools (e.g. autofdo) complain
+            for bogus samples;
+        - patch 11: remove the common handling of the debugctl;
+        - patch 12: support to report GLOBAL_STATUS_LBRS_FROZEN.
+previous:
+https://lkml.org/lkml/2018/12/26/82
 
-greg k-h
+Like Xu (1):
+  KVM/x86/vPMU: Add APIs to support host save/restore the guest lbr
+    stack
+
+Wei Wang (11):
+  perf/x86: fix the variable type of the LBR MSRs
+  perf/x86: add a function to get the lbr stack
+  KVM/x86: KVM_CAP_X86_GUEST_LBR
+  KVM/x86: intel_pmu_lbr_enable
+  KVM/x86/vPMU: tweak kvm_pmu_get_msr
+  KVM/x86: expose MSR_IA32_PERF_CAPABILITIES to the guest
+  perf/x86: no counter allocation support
+  perf/x86: save/restore LBR_SELECT on vCPU switching
+  KVM/x86/lbr: lazy save the guest lbr stack
+  KVM/x86: remove the common handling of the debugctl msr
+  KVM/VMX/vPMU: support to report GLOBAL_STATUS_LBRS_FROZEN
+
+ arch/x86/events/core.c            |  12 ++
+ arch/x86/events/intel/lbr.c       |  42 +++-
+ arch/x86/events/perf_event.h      |   6 +-
+ arch/x86/include/asm/kvm_host.h   |   5 +
+ arch/x86/include/asm/perf_event.h |  16 ++
+ arch/x86/kvm/cpuid.c              |   2 +-
+ arch/x86/kvm/cpuid.h              |   8 +
+ arch/x86/kvm/pmu.c                |  18 +-
+ arch/x86/kvm/pmu.h                |  11 +-
+ arch/x86/kvm/pmu_amd.c            |   7 +-
+ arch/x86/kvm/vmx/pmu_intel.c      | 398 +++++++++++++++++++++++++++++++++++++-
+ arch/x86/kvm/vmx/vmx.c            |   4 +-
+ arch/x86/kvm/vmx/vmx.h            |   2 +
+ arch/x86/kvm/x86.c                |  33 ++--
+ include/linux/perf_event.h        |   5 +
+ include/uapi/linux/kvm.h          |   1 +
+ include/uapi/linux/perf_event.h   |   3 +-
+ 17 files changed, 535 insertions(+), 38 deletions(-)
+
+-- 
+2.7.4
+
