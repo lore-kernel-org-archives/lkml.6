@@ -2,127 +2,141 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C81ACC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:10:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E1F3C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:11:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9770B21B1A
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:10:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B80IEHWH"
+	by mail.kernel.org (Postfix) with ESMTP id 3A90721B68
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:11:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728753AbfBNXKk (ORCPT
+        id S1728832AbfBNXLx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 18:10:40 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40954 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725975AbfBNXKk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 18:10:40 -0500
-Received: by mail-wr1-f67.google.com with SMTP id q1so8352343wrp.7;
-        Thu, 14 Feb 2019 15:10:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=z+9zbb8RFe/yUhMkwO8O4v64fl479cQbUFQDaaeTxkI=;
-        b=B80IEHWH7Opk+JI5pSyBN4WBwwOYdiaWFl5lpRa56dKMWQrdo0SWI013F9SnWvp4RU
-         a4xLPNKiVu07GJ1V7SYGutQTTXfzXuy7JpPMaCZ24/2Op1XfDcdkxZMRzHfbqAFjrFpw
-         SklayuQMtbEtVR/7bOqkXTvN+qe9TiN5iOahznxESvMsLUm642K93wv2CyS9BvegFx3U
-         OcRMfZEkQjDQChQB7YhbPScjb1bLjsnQwEK6iCk0M5fNlDU7nKcz6EAWOWf7Dfc/kvwJ
-         C1wGcbVsMUIqUMzWqKgK8CRMX8WJzStgIy0HvBfie3isr4IJbfeSWGGtGaQnric/khNQ
-         LrMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=z+9zbb8RFe/yUhMkwO8O4v64fl479cQbUFQDaaeTxkI=;
-        b=a6k1QS0HdAwEUgF4W4WV93QntnIaDkUSjhaSYcd6YOxGb5FHZTmJG9uVjTtHMPeKwY
-         25pytrI68b+pjWuHmZTi2DkLsXMSv0Dh5RpQWc8VyLaF2B2lD2kJs7jJN+IHqI8hP4ba
-         4spKHbX7dVOpqAb5CzgQwIZnHayjyHRVLz3L51tCAIJ8wrSx9zZEADltRyPtq6MMiVUo
-         uj9TN3epRLmQyyKWeoKdCaTF/8K2qwqBJoPapKlJe+BR4bil/uuScsOeVIXGpg4MY8UV
-         N40vGWs6hD1utl4XHW8zj2KrT3vHwbOr6N3nCrZ51Rbil134qpLuLQtuhcrRO/iRYU03
-         yXwg==
-X-Gm-Message-State: AHQUAuZYlRINruZxmrkBujwfBz9FYfvtp0/yJPc8rE4FEx8fUk+8+Yn9
-        MOmY4yj7FCERahYT670Mrc6pwhuANPA=
-X-Google-Smtp-Source: AHgI3IbsNlk4Fvpr3HH+kDs+qGc4Q1NAHmTiRsxdrVOqxRzBB2FRVhft3utppOvMD+0T6z/BkkeXbA==
-X-Received: by 2002:adf:e949:: with SMTP id m9mr4830622wrn.1.1550185838039;
-        Thu, 14 Feb 2019 15:10:38 -0800 (PST)
-Received: from [10.32.107.126] ([80.227.69.14])
-        by smtp.gmail.com with ESMTPSA id o12sm10467992wre.0.2019.02.14.15.10.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 15:10:37 -0800 (PST)
-Subject: Re: [RFC PATCH v5 03/12] __wr_after_init: Core and default arch
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
-        linux-integrity@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1550097697.git.igor.stoppa@huawei.com>
- <b99f0de701e299b9d25ce8cfffa3387b9687f5fc.1550097697.git.igor.stoppa@huawei.com>
- <20190214112849.GM32494@hirez.programming.kicks-ass.net>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <6e9ec71c-ee75-9b1e-9ff8-a3210030e85d@gmail.com>
-Date:   Fri, 15 Feb 2019 01:10:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 14 Feb 2019 18:11:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57710 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725975AbfBNXLx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 18:11:53 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFB0821B1A;
+        Thu, 14 Feb 2019 23:11:51 +0000 (UTC)
+Date:   Thu, 14 Feb 2019 18:11:50 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Tom Zanussi <zanussi@kernel.org>
+Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
+        vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Subject: Re: [PATCH v15 05/15] tracing: Add conditional snapshot
+Message-ID: <20190214181150.0453ecdf@gandalf.local.home>
+In-Reply-To: <1bea07828d5fd6864a585f83b1eed47ce097eb45.1550100284.git.tom.zanussi@linux.intel.com>
+References: <cover.1550100284.git.tom.zanussi@linux.intel.com>
+        <1bea07828d5fd6864a585f83b1eed47ce097eb45.1550100284.git.tom.zanussi@linux.intel.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20190214112849.GM32494@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 13 Feb 2019 17:42:45 -0600
+Tom Zanussi <zanussi@kernel.org> wrote:
+
+> +
+> +/**
+> + * tracing_snapshot_cond_enable - enable conditional snapshot for an instance
+> + * @tr:		The tracing instance
+> + * @cond_data:	User data to associate with the snapshot
+> + * @update:	Implementation of the cond_snapshot update function
+> + *
+> + * Check whether the conditional snapshot for the given instance has
+> + * already been enabled, or if the current tracer is already using a
+> + * snapshot; if so, return -EBUSY, else create a cond_snapshot and
+> + * save the cond_data and update function inside.
+> + *
+> + * Returns 0 if successful, error otherwise.
+> + */
+> +int tracing_snapshot_cond_enable(struct trace_array *tr, void *cond_data,
+> +				 cond_update_fn_t update)
+> +{
+> +	struct cond_snapshot *cond_snapshot;
+> +	int ret = 0;
+> +
+> +	cond_snapshot = kzalloc(sizeof(*cond_snapshot), GFP_KERNEL);
+> +	if (!cond_snapshot)
+> +		return -ENOMEM;
+> +
+> +	cond_snapshot->cond_data = cond_data;
+> +	cond_snapshot->update = update;
+> +
+> +	mutex_lock(&trace_types_lock);
+> +
+> +	ret = tracing_alloc_snapshot_instance(tr);
+> +	if (ret)
+> +		goto fail_unlock;
+> +
+> +	if (tr->current_trace->use_max_tr) {
+> +		ret = -EBUSY;
+> +		goto fail_unlock;
+> +	}
+> +
+> +	if (tr->cond_snapshot) {
+> +		ret = -EBUSY;
+> +		goto fail_unlock;
+> +	}
+> +
+> +	arch_spin_lock(&tr->max_lock);
+> +	tr->cond_snapshot = cond_snapshot;
+> +	arch_spin_unlock(&tr->max_lock);
+> +
+> +	mutex_unlock(&trace_types_lock);
+> +
+> +	return ret;
+> +
+> + fail_unlock:
+> +        mutex_unlock(&trace_types_lock);
+> +        kfree(cond_snapshot);
+> +        return ret;
+
+Some whitespace damage here. No need to resend, I fixed it.
 
 
-On 14/02/2019 13:28, Peter Zijlstra wrote:
-> On Thu, Feb 14, 2019 at 12:41:32AM +0200, Igor Stoppa wrote:
+> +}
+> +EXPORT_SYMBOL_GPL(tracing_snapshot_cond_enable);
+> +
 
-[...]
+I also added this change on top of your series.
 
->> +#define wr_rcu_assign_pointer(p, v) ({	\
->> +	smp_mb();			\
->> +	wr_assign(p, v);		\
->> +	p;				\
->> +})
-> 
-> This requires that wr_memcpy() (through wr_assign) is single-copy-atomic
-> for native types. There is not a comment in sight that states this.
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 0460cc0f28fd..2cf3c747a357 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -1116,6 +1116,14 @@ int tracing_snapshot_cond_enable(struct trace_array *tr, void *cond_data,
+ 		goto fail_unlock;
+ 	}
+ 
++	/*
++	 * The cond_snapshot can only change to NULL without the
++	 * trace_types_lock. We don't care if we race with it going
++	 * to NULL, but we want to make sure that it's not set to
++	 * something other than NULL when we get here, which we can
++	 * do safely with only holding the trace_types_lock and not
++	 * having to take the max_lock.
++	 */
+ 	if (tr->cond_snapshot) {
+ 		ret = -EBUSY;
+ 		goto fail_unlock;
 
-Right, I kinda expected native-aligned <-> atomic, but it's not 
-necessarily true. It should be confirmed when enabling write rare on a 
-new architecture. I'll add the comment.
+I'll start testing your series now.
 
-> Also, is this true of x86/arm64 memcpy ?
+Thanks!
 
+-- Steve
 
-For x86_64:
-https://elixir.bootlin.com/linux/v5.0-rc6/source/arch/x86/include/asm/uaccess.h#L462 
-  the mov"itype"  part should deal with atomic copy of native, aligned 
-types.
-
-
-For arm64:
-https://elixir.bootlin.com/linux/v5.0-rc6/source/arch/arm64/lib/copy_template.S#L110 
-.Ltiny15 deals with copying less than 16 bytes, which includes pointers. 
-When the data is aligned, the copy of a pointer should be atomic.
-
-
---
-igor
