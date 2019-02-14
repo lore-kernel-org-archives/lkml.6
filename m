@@ -2,196 +2,210 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 860EFC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:04:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93E4DC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:06:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45EBD222B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:04:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550142272;
-	bh=bkPYfEgGfcf65LdR4e66/Aygoyrgaoc1Rca2IqLCvmQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=tRhtPJ5TuaLFCeEWSkL63Uwn+6Nsyhlg99DEdWmUmNES5F4iQJgbGgA75tV2p7e1+
-	 5fuqQA5TFlonjZPTXermoWqWLYpok+X19GMPLeDeKmc7/DeeylL5xu/PfDIXHJBy0Y
-	 Jx1kCe2rrkawQZ27zRC3UZFFSIryje5HVeD7oArg=
+	by mail.kernel.org (Postfix) with ESMTP id 5B06B20838
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:06:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406871AbfBNLEa (ORCPT
+        id S2392726AbfBNLGd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 06:04:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57840 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 06:06:33 -0500
+Received: from foss.arm.com ([217.140.101.70]:41538 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726386AbfBNLEa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 06:04:30 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2281A20838;
-        Thu, 14 Feb 2019 11:04:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550142268;
-        bh=bkPYfEgGfcf65LdR4e66/Aygoyrgaoc1Rca2IqLCvmQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dv8oC7OYd/CQmJgjkggK5SRsXQenE2TQAf0SofoStBn9nYEJyOwE9mcUzGABPavBi
-         YhK1tvEFHShCK3X6FpUALBLWrbSBKFTEo2i/HoC0K3iJ5Vo7OsBl05U9ZsUvyJYc8e
-         sorluMv4UzhmQ+TPu7K1RpVDZy9GJQXi2yiQJFN4=
-Date:   Thu, 14 Feb 2019 12:04:26 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Oded Gabbay <oded.gabbay@gmail.com>
-Cc:     "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Olof Johansson <olof@lixom.net>, ogabbay@habana.ai,
-        Arnd Bergmann <arnd@arndb.de>, Joe Perches <joe@perches.com>
-Subject: Re: [PATCH v4 00/15] Habana Labs kernel driver
-Message-ID: <20190214110426.GA9566@kroah.com>
-References: <20190211151751.12336-1-oded.gabbay@gmail.com>
- <20190214071114.GA21381@kroah.com>
- <CAFCwf12VaYSpCtqyYsTGp2TZDJiJ4bYc4egrRY6mdzaceO_5Cw@mail.gmail.com>
- <CAFCwf11hP89LwKnyjuwnP1KLe0GwL_T=Z+eQ1uUEiPTnJRASpA@mail.gmail.com>
- <20190214100727.GA10405@kroah.com>
- <CAFCwf13-qVm_2UV5294jwwud4+oCZB_2WQfNmbg2qAUBCj4d4g@mail.gmail.com>
- <20190214103720.GA6518@kroah.com>
- <CAFCwf13Lwr7M2Jao+3k+w_VaQ-9J7dpu7AOS4B+udnG__Fd53A@mail.gmail.com>
+        id S1726365AbfBNLGd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 06:06:33 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AEFEFEBD;
+        Thu, 14 Feb 2019 03:06:32 -0800 (PST)
+Received: from [10.162.0.144] (a075553-lin.blr.arm.com [10.162.0.144])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5E4253F575;
+        Thu, 14 Feb 2019 03:06:29 -0800 (PST)
+Subject: Re: [PATCH v5 3/5] arm64/kvm: context-switch ptrauth registers
+To:     Kristina Martsenko <kristina.martsenko@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>
+References: <1548658727-14271-1-git-send-email-amit.kachhap@arm.com>
+ <1548658727-14271-4-git-send-email-amit.kachhap@arm.com>
+ <0a2df488-a80d-ef08-6241-7f4695f2a578@arm.com>
+From:   Amit Daniel Kachhap <amit.kachhap@arm.com>
+Message-ID: <ee8669f7-5c3d-ada3-49f2-0c9b37559553@arm.com>
+Date:   Thu, 14 Feb 2019 16:36:27 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFCwf13Lwr7M2Jao+3k+w_VaQ-9J7dpu7AOS4B+udnG__Fd53A@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <0a2df488-a80d-ef08-6241-7f4695f2a578@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 12:45:00PM +0200, Oded Gabbay wrote:
-> On Thu, Feb 14, 2019 at 12:37 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Thu, Feb 14, 2019 at 12:15:19PM +0200, Oded Gabbay wrote:
-> > > On Thu, Feb 14, 2019 at 12:07 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > >
-> > > > On Thu, Feb 14, 2019 at 11:58:41AM +0200, Oded Gabbay wrote:
-> > > > > On Thu, Feb 14, 2019 at 9:13 AM Oded Gabbay <oded.gabbay@gmail.com> wrote:
-> > > > > >
-> > > > > > On Thu, Feb 14, 2019 at 9:11 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > > > > >
-> > > > > > > On Mon, Feb 11, 2019 at 05:17:36PM +0200, Oded Gabbay wrote:
-> > > > > > > > Hello,
-> > > > > > > > This is v4 of the Habana Labs kernel driver patch-set. It contains fixes
-> > > > > > > > according to reviews done on v3, mainly for the command buffer, sysfs and MMU
-> > > > > > > > patches. In addition, patch 2/15 was reduced in size from 4.3MB to 1.4MB.
-> > > > > > > >
-> > > > > > > > The patch-set is rebased on v5.0-rc6.
-> > > > > > > >
-> > > > > > > > Link to v3 cover letter: https://lkml.org/lkml/2019/2/4/1033
-> > > > > > > >
-> > > > > > > > Link to v2 cover letter: https://lkml.org/lkml/2019/1/30/1003
-> > > > > > > >
-> > > > > > > > Link to v1 cover letter: https://lwn.net/Articles/777342/
-> > > > > > > >
-> > > > > > > > I would appricate any feedback, question and/or review.
-> > > > > > >
-> > > > > > > There's been some 0-day bot feedback on some of these patches now that I
-> > > > > > > put them in my -testing branch.  So I'm going to drop the patch series
-> > > > > > > from there now and wait for a v5 of the series that hopefully will have
-> > > > > > > those issues fixed :)
-> > > > > > >
-> > > > > Hi Greg,
-> > > > > I looked at the 4 warnings I received from your emails, and they all
-> > > > > appear in i386 architecture.
-> > > > > I don't want to support 32-bit kernel and I don't intend to support it.
-> > > > > Can we just specify in kconfig that we don't support it, and then you
-> > > > > won't get these warnings ?
-> > > >
-> > > > No, if you use the correct kernel types and castings, you should be
-> > > > fine.
-> > > >
-> > > > > I initially set in kconfig to support only x86_64, and you told me
-> > > > > (and you were right) not to limit to that. But I do think I would like
-> > > > > to disable the driver on i386.
-> > > >
-> > > > You might want to not support it on 32bit kernels, but even then, I
-> > > > think all you need to do here is use the proper kernel types and you
-> > > > will be ok.
-> > > >
-> > > > As an example:
-> > > >    drivers/misc/habanalabs/goya/goya.c: In function 'goya_early_init':
-> > > >    drivers/misc/habanalabs/goya/goya.c:404:4: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'resource_size_t' {aka 'unsigned int'} [-Wformat=]
-> > > >        "Not " HL_NAME "? BAR %d size %llu, expecting %llu\n",
-> > > >        ^~~~~~
-> > > >
-> > > > Use the correct printk type for a resource_size_t.
-> > > >
-> > > > You got that warning twice.
-> > > >
-> > > > Another one is:
-> > > > >> drivers/misc/habanalabs/device.c:283:24: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-> > > >      volatile u32 *paddr = (volatile u32 *) addr;
-> > > >
-> > > > Now using a volatile makes me want to say "you are doing it wrong!", as
-> > > > yes, you shouldn't be reading directly from a memory pointer, you need
-> > > > to use the correct iomem accessors, right?
-> > > >
-> > > > So I think just fixing this stuff up should be simple, the
-> > > > resource_size_t fix is needed no matter what size kernel you run on.
-> > > >
-> > > > thanks,
-> > > >
-> > > > greg k-h
-> > >
-> > > ok, got it, will be fixed.
-> > >
-> > > Regarding the volatile, this is not an I/O memory. This is host memory
-> > > that is changed by the device. That's why I wrote in the comment
-> > > there:
-> > > /*
-> > > * paddr is defined as volatile because it points to HOST memory,
-> > > * which is being written to by the device. Therefore, we can't use
-> > > * locks to synchronize it and it is not a memory-mapped register space
-> >
-> > What do you mean by "HOST" memory?  The memory that the processor is
-> > running on?
-> >
-> Yes, exactly. The memory of the server. Not a memory on my device.
+Hi,
+
+On 2/13/19 11:04 PM, Kristina Martsenko wrote:
+> Hi Amit,
 > 
-> > > */
-> > >
-> > > Am I missing something here ? I don't think I should use the iomem
-> > > accessors on host memory, right ? Assuming I'm right, is there another
-> > > way to ensure the compiler won't optimize this without using the
-> > > volatile keyword ?
-> >
-> > What are you trying to prevent from being "optimized" here?
-> >
-> > Are you sure you just don't need a correct memory barrier?  That's the
-> > only way to ensure that if you write to a location from one thread/cpu,
-> > it will show up to the other thread/cpu correctly.  volatile will not
-> > ensure that for you at all (hint, the compiler just ignores it for the
-> > most part.)
+> (Please always Cc: everyone who commented on previous versions of the
+> series.)
 > 
-> But the writing entity in this case is NOT another thread/cpu. The
-> writing entity is the device. So a memory barrier, IMO, won't help me
-> here, because memory barriers affect only on the CPU. Not on external
-> initiators.
+> On 28/01/2019 06:58, Amit Daniel Kachhap wrote:
+>> When pointer authentication is supported, a guest may wish to use it.
+>> This patch adds the necessary KVM infrastructure for this to work, with
+>> a semi-lazy context switch of the pointer auth state.
+>>
+>> Pointer authentication feature is only enabled when VHE is built
+>> into the kernel and present into CPU implementation so only VHE code
+>> paths are modified.
+>>
+>> When we schedule a vcpu, we disable guest usage of pointer
+>> authentication instructions and accesses to the keys. While these are
+>> disabled, we avoid context-switching the keys. When we trap the guest
+>> trying to use pointer authentication functionality, we change to eagerly
+>> context-switching the keys, and enable the feature. The next time the
+>> vcpu is scheduled out/in, we start again.
+>>
+>> Pointer authentication consists of address authentication and generic
+>> authentication, and CPUs in a system might have varied support for
+>> either. Where support for either feature is not uniform, it is hidden
+>> from guests via ID register emulation, as a result of the cpufeature
+>> framework in the host.
+>>
+>> Unfortunately, address authentication and generic authentication cannot
+>> be trapped separately, as the architecture provides a single EL2 trap
+>> covering both. If we wish to expose one without the other, we cannot
+>> prevent a (badly-written) guest from intermittently using a feature
+>> which is not uniformly supported (when scheduled on a physical CPU which
+>> supports the relevant feature). When the guest is scheduled on a
+>> physical CPU lacking the feature, these attempts will result in an UNDEF
+>> being taken by the guest.
 > 
-> AFAIK, the volatile keyword tells the compiler that the value of the
-> variable may change at any time--without any action being taken by the
-> code the compiler finds nearby. And this is exactly what happens here.
-> I poll on a memory location of the CPU, and that memory can change at
-> any time by the device.
+> [...]
+> 
+>>   /*
+>> + * Handle the guest trying to use a ptrauth instruction, or trying to access a
+>> + * ptrauth register.
+>> + */
+>> +void kvm_arm_vcpu_ptrauth_trap(struct kvm_vcpu *vcpu)
+>> +{
+>> +	if (has_vhe() && kvm_supports_ptrauth())
+>> +		kvm_arm_vcpu_ptrauth_enable(vcpu);
+>> +	else
+>> +		kvm_inject_undefined(vcpu);
+>> +}
+>> +
+>> +/*
+>>    * Guest usage of a ptrauth instruction (which the guest EL1 did not turn into
+>> - * a NOP).
+>> + * a NOP), or guest EL1 access to a ptrauth register.
+> 
+> Doesn't guest EL1 access of ptrauth registers go through trap_ptrauth
+> instead?
+Yes you are right.
+> 
+>>    */
+>>   static int kvm_handle_ptrauth(struct kvm_vcpu *vcpu, struct kvm_run *run)
+>>   {
+>> -	/*
+>> -	 * We don't currently support ptrauth in a guest, and we mask the ID
+>> -	 * registers to prevent well-behaved guests from trying to make use of
+>> -	 * it.
+>> -	 *
+>> -	 * Inject an UNDEF, as if the feature really isn't present.
+>> -	 */
+>> -	kvm_inject_undefined(vcpu);
+>> +	kvm_arm_vcpu_ptrauth_trap(vcpu);
+>>   	return 1;
+>>   }
+>>   
+> 
+> [...]
+> 
+>> +static __always_inline bool __hyp_text __ptrauth_is_enabled(struct kvm_vcpu *vcpu)
+>> +{
+>> +	return IS_ENABLED(CONFIG_ARM64_PTR_AUTH) &&
+>> +			vcpu->arch.ctxt.hcr_el2 & (HCR_API | HCR_APK);
+>> +}
+>> +
+>> +void __no_ptrauth __hyp_text __ptrauth_switch_to_guest(struct kvm_vcpu *vcpu,
+>> +					  struct kvm_cpu_context *host_ctxt,
+>> +					  struct kvm_cpu_context *guest_ctxt)
+>> +{
+>> +	if (!__ptrauth_is_enabled(vcpu))
+>> +		return;
+>> +
+>> +	ptrauth_keys_store((struct ptrauth_keys *) &host_ctxt->sys_regs[APIAKEYLO_EL1]);
+>> +	ptrauth_keys_switch((struct ptrauth_keys *) &guest_ctxt->sys_regs[APIAKEYLO_EL1]);
+>> +}
+>> +
+>> +void __no_ptrauth __hyp_text __ptrauth_switch_to_host(struct kvm_vcpu *vcpu,
+> 
+> We don't call this code in the !VHE case anymore, so are the __hyp_text
+> annotations still needed?
+Yes they can be removed.
+> 
+>> +					 struct kvm_cpu_context *host_ctxt,
+>> +					 struct kvm_cpu_context *guest_ctxt)
+>> +{
+>> +	if (!__ptrauth_is_enabled(vcpu))
+>> +		return;
+>> +
+>> +	ptrauth_keys_store((struct ptrauth_keys *) &guest_ctxt->sys_regs[APIAKEYLO_EL1]);
+>> +	ptrauth_keys_switch((struct ptrauth_keys *) &host_ctxt->sys_regs[APIAKEYLO_EL1]);
+>> +}
+> 
+> [...]
+> 
+>> @@ -1040,14 +1066,6 @@ static u64 read_id_reg(struct sys_reg_desc const *r, bool raz)
+>>   			kvm_debug("SVE unsupported for guests, suppressing\n");
+>>   
+>>   		val &= ~(0xfUL << ID_AA64PFR0_SVE_SHIFT);
+>> -	} else if (id == SYS_ID_AA64ISAR1_EL1) {
+>> -		const u64 ptrauth_mask = (0xfUL << ID_AA64ISAR1_APA_SHIFT) |
+>> -					 (0xfUL << ID_AA64ISAR1_API_SHIFT) |
+>> -					 (0xfUL << ID_AA64ISAR1_GPA_SHIFT) |
+>> -					 (0xfUL << ID_AA64ISAR1_GPI_SHIFT);
+>> -		if (val & ptrauth_mask)
+>> -			kvm_debug("ptrauth unsupported for guests, suppressing\n");
+>> -		val &= ~ptrauth_mask;
+> 
+> If all CPUs support address authentication, but no CPUs support generic
+> authentication, then I think the guest will still see address auth in
+> the ID register and try to use it, but since kvm_supports_ptrauth() ==
+> false, then kvm will enable trapping and inject an undef. So I think we
+> still need to zero the ID register bits here if !kvm_supports_ptrauth().
+Yes even James Morse suggested same thing.
+> 
+> In the following patch, I think we also need to zero the bits if
+> !kvm_arm_vcpu_ptrauth_allowed(), as done in v4 [1], because otherwise
+> the guest will see that ptrauth is available, but will receive an undef
+> when it tries to use it.
+ok.
+> 
+> Regarding the patch in v4, most of the work is passing the vcpu down to
+> read_id_reg(). Dave has a similar patch in his SVE series [2]. I think
+> it might make sense to rebase onto that patch and mention that patch as
+> a dependency in the cover letter.
+Yes it is helpful. Will check it.
 
-And how is that memory location mapped into the device memory?  As such,
-it's iomemory, right?
-
-volatile doesn't tell the compiler much, if anything, anymore.
-
-I can't seem to trace back the code here (it's split across multiple
-emails), but it seems that the memory location is coming from struct
-armcp_packet in one location, and a dma pool in another one.  I don't
-know what the rules are for dma mapped memory, but it feels like
-'volatile' is not the way to use it :)
-
-thanks,
-
-greg k-h
+//Amit D
+> 
+> [1] https://lore.kernel.org/linux-arm-kernel/1545119810-12182-5-git-send-email-amit.kachhap@arm.com/
+> [2] https://lore.kernel.org/linux-arm-kernel/1547757219-19439-11-git-send-email-Dave.Martin@arm.com/
+> 
+> Thanks,
+> Kristina
+> 
