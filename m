@@ -2,314 +2,120 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E31C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84461C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:13:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 298492080A
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:13:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s29CI/X5"
+	by mail.kernel.org (Postfix) with ESMTP id 545E92075C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:13:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404599AbfBNONe (ORCPT
+        id S2404687AbfBNONy convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 09:13:34 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:33336 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387611AbfBNONd (ORCPT
+        Thu, 14 Feb 2019 09:13:54 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:23258 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2393613AbfBNONy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 09:13:33 -0500
-Received: by mail-qt1-f193.google.com with SMTP id z39so7005567qtz.0;
-        Thu, 14 Feb 2019 06:13:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=82Eoim/sp9OokMECnUSQZdyG6roLp6zl++a2hyeJwBE=;
-        b=s29CI/X5ewXuhUGSnqf6rC+Hyi0hNSSCM5zbCAGe1CLPhhaZCppjl+k13Kvd0cQBGv
-         1H9AAj16cy62cWYXAPciSlcoI+ToMePg7KVNrC7mKbAU88BTfiHWGCxztQERlE0uYmiD
-         RoVEoxbVSAbPDecK4vlrQjToUZNluMGDJRvD6Yj8RlzdGHvVEHWnN0V5OI8eyPnRyibr
-         vUwdpNJ0l+O2NLnN2qLebwKEQtSOUFUH8oRZ2kAslcDqzvOGkKAAD+dA7+Hqrgb2/quH
-         tGhDdHHqNWIuwFfN5URgPAAmVi1f1gz8P76XMlww6rNbkYvX8apgD0FqWAsywC6HtOT2
-         YLpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
-         :from:date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=82Eoim/sp9OokMECnUSQZdyG6roLp6zl++a2hyeJwBE=;
-        b=lkId2vt5TBCKncMbvLu+bPPNYoG4o0Lx+3+UlU+XeANoJBocJo4ac6bWhi9kehjQzk
-         /qQSh6NL37+vk0LU3ptdhxqzWAS7IXR4OUofiXIzVenjLUmetGyMkmMIzxKPv0hh2v4e
-         eLf5LS/QYkViU7e46alrVsDu3z+TaVLwqXqVWVofJ1Ht7mC/32AMuUaUULaCQK74qDbW
-         HvvmypaP852GsQYEvbnTO0BOakXA6RmlesnD2UTmyP+EJBTtHaAij8htPVEiFSc83qi7
-         gWUPQMkcrPbEErWc9Vy0IPO+EHxdrMMXT5HM6q9zokNZK17aFU+TH3mm7ZFuuT8ymWSt
-         cXRQ==
-X-Gm-Message-State: AHQUAuZBaFe3dbOqrUGdvFVWizMD4Sz1xVTocw/P0d1AShLNv3xq6n41
-        WVBTke2tDAo2hMcOj/8KoKdnRvL8ubudsdofZOk=
-X-Google-Smtp-Source: AHgI3IbHI4GnsD3Amq1+KtkqMRUXZ65vZ0YUCSu8JiRoyoBz0dJYnszqarfuxkSSjoGh9wHt85UC8tK9YEK68AdJ2H8=
-X-Received: by 2002:a0c:d237:: with SMTP id m52mr3032532qvh.219.1550153611840;
- Thu, 14 Feb 2019 06:13:31 -0800 (PST)
+        Thu, 14 Feb 2019 09:13:54 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-58-cS1Xal03PAGXnZoPo9IHMA-1; Thu, 14 Feb 2019 14:13:51 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu,
+ 14 Feb 2019 14:14:34 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Thu, 14 Feb 2019 14:14:34 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Peter Zijlstra' <peterz@infradead.org>,
+        Alexey Brodkin <alexey.brodkin@synopsys.com>
+CC:     "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        Arnd Bergmann <arnd.bergmann@linaro.org>,
+        Vineet Gupta <vineet.gupta1@synopsys.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: RE: [PATCH] ARC: Explicitly set ARCH_SLAB_MINALIGN = 8
+Thread-Topic: [PATCH] ARC: Explicitly set ARCH_SLAB_MINALIGN = 8
+Thread-Index: AQHUwvc8KjF6Xlwy10OvbYFx5kwo16XcaZhggAK74naAADJoAA==
+Date:   Thu, 14 Feb 2019 14:14:34 +0000
+Message-ID: <3b9d2eadfc81422caa0292c7ef1684f1@AcuMS.aculab.com>
+References: <20190208105519.26750-1-abrodkin@synopsys.com>
+ <81017fe4-b31f-4942-e822-a7b70008b74d@synopsys.com>
+ <f83412d1e7fd4d67b4632c1f81fae963@AcuMS.aculab.com>
+ <bfc65835-21f9-6d5e-791d-ee49113d939c@synopsys.com>
+ <20190213125651.GP32494@hirez.programming.kicks-ass.net>
+ <e6138aeb-9ce4-fbfa-4d6a-b76f189a3e47@synopsys.com>
+ <20190214103140.GG32494@hirez.programming.kicks-ass.net>
+ <4881796E12491D4BB15146FE0209CE64681DB122@DE02WEMBXB.internal.synopsys.com>
+ <20190214110813.GK32494@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190214110813.GK32494@hirez.programming.kicks-ass.net>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-References: <20190214013042.254790-1-mka@chromium.org> <20190214013042.254790-4-mka@chromium.org>
-In-Reply-To: <20190214013042.254790-4-mka@chromium.org>
-Reply-To: cwchoi00@gmail.com
-From:   Chanwoo Choi <cwchoi00@gmail.com>
-Date:   Thu, 14 Feb 2019 23:12:55 +0900
-Message-ID: <CAGTfZH0cQhBLDx91VArMQ52z+iJAsfb2Zvk5nJSCqSM=aPhK0A@mail.gmail.com>
-Subject: Re: [PATCH 3/4] PM / devfreq: Add devfreq_governor_start/stop()
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Lukasz Luba <l.luba@partner.samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MC-Unique: cS1Xal03PAGXnZoPo9IHMA-1
+X-Mimecast-Spam-Score: 0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
+From: Peter Zijlstra
+> Sent: 14 February 2019 11:08
+> On Thu, Feb 14, 2019 at 10:44:49AM +0000, Alexey Brodkin wrote:
+> > > On Wed, Feb 13, 2019 at 03:23:36PM -0800, Vineet Gupta wrote:
+> > > > On 2/13/19 4:56 AM, Peter Zijlstra wrote:
+> > > > >
+> > > > > Personally I think u64 and company should already force natural
+> > > > > alignment; but alas.
+> > > >
+> > > > But there is an ISA/ABI angle here too. e.g. On 32-bit ARC, LDD (load double) is
+> > > > allowed to take a 32-bit aligned address to load a register pair. Thus all u64
+> > > > need not be 64-bit aligned (unless attribute aligned 8 etc) hence the relaxation
+> > > > in ABI (alignment of long long is 4). You could certainly argue that we end up
+> > > > undoing some of it anyways by defining things like ARCH_KMALLOC_MINALIGN to 8, but
+> > > > still...
+> > >
+> > > So what happens if the data is then split across two cachelines; will a
+> > > STD vs LDD still be single-copy-atomic? I don't _think_ we rely on that
+> > > for > sizeof(unsigned long), with the obvious exception of atomic64_t,
+> > > but yuck...
+> >
+> > STD & LDD are simple store/load instructions so there's no problem for
+> > their 64-bit data to be from 2 subsequent cache lines as well as 2 pages
+> > (if we're that unlucky). Or you mean something else?
+> 
+> u64 x;
+> 
+> WRITE_ONCE(x, 0x1111111100000000);
+> WRITE_ONCE(x, 0x0000000011111111);
+> 
+> vs
+> 
+> t = READ_ONCE(x);
+> 
+> is t allowed to be 0x1111111111111111 ?
+> 
+> If the data is split between two cachelines, the hardware must do
+> something very funny to avoid that.
 
-Looks good to me for making the function to remove the duplicate code.
-But,  When I just tested the kernel build, following warnings occur
-about devfreq_governor_stop().
+Never mind cachelines, think about separate pages.
+You'd have to 'lock' both TLB before doing either access.
+Not to mention the fact that the two physical locations could be
+on entirely different memory cards (or whatever).
 
-In file included from ./include/linux/devfreq.h:16:0,
-                 from drivers/devfreq/devfreq.c:23:
-drivers/devfreq/devfreq.c: In function =E2=80=98devfreq_governor_stop=E2=80=
-=99:
-drivers/devfreq/devfreq.c:619:17: warning: format =E2=80=98%s=E2=80=99 expe=
-cts
-argument of type =E2=80=98char *=E2=80=99, but argument 4 has type =E2=80=
-=98int=E2=80=99 [-Wformat=3D]
-   dev_warn(dev, "%s: Governor %s not stopped: %d\n",
-                 ^
-./include/linux/device.h:1380:22: note: in definition of macro =E2=80=98dev=
-_fmt=E2=80=99
- #define dev_fmt(fmt) fmt
-                      ^
-drivers/devfreq/devfreq.c:619:3: note: in expansion of macro =E2=80=98dev_w=
-arn=E2=80=99
-   dev_warn(dev, "%s: Governor %s not stopped: %d\n",
-   ^
-drivers/devfreq/devfreq.c:619:17: warning: format =E2=80=98%d=E2=80=99 expe=
-cts a
-matching =E2=80=98int=E2=80=99 argument [-Wformat=3D]
-   dev_warn(dev, "%s: Governor %s not stopped: %d\n",
-                 ^
-./include/linux/device.h:1380:22: note: in definition of macro =E2=80=98dev=
-_fmt=E2=80=99
- #define dev_fmt(fmt) fmt
-                      ^
-drivers/devfreq/devfreq.c:619:3: note: in expansion of macro =E2=80=98dev_w=
-arn=E2=80=99
-   dev_warn(dev, "%s: Governor %s not stopped: %d\n",
+	David
 
-2019=EB=85=84 2=EC=9B=94 14=EC=9D=BC (=EB=AA=A9) =EC=98=A4=ED=9B=84 7:16, M=
-atthias Kaehlcke <mka@chromium.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
->
-> The following pattern is repeated multiple times:
->
-> - call governor event handler with DEVFREQ_GOV_START/STOP
-> - check return value
-> - in case of error log a message
->
-> Add devfreq_governor_start/stop() helper functions with this code
-> and call them instead.
->
-> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
->  drivers/devfreq/devfreq.c | 96 +++++++++++++++++++++++----------------
->  1 file changed, 58 insertions(+), 38 deletions(-)
->
-> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> index 7fab6c4cf719b..eb86461648d74 100644
-> --- a/drivers/devfreq/devfreq.c
-> +++ b/drivers/devfreq/devfreq.c
-> @@ -580,6 +580,53 @@ static int devfreq_notifier_call(struct notifier_blo=
-ck *nb, unsigned long type,
->         return ret;
->  }
->
-> +/**
-> + * devfreq_governor_start() - Start the devfreq governor of the device.
-> + * @devfreq:   the devfreq instance
-> + */
-> +static int devfreq_governor_start(struct devfreq *devfreq)
-> +{
-> +       struct device *dev =3D devfreq->dev.parent;
-> +       int err;
-> +
-> +       if (WARN(mutex_is_locked(&devfreq->lock),
-> +                "mutex must *not* be held by the caller\n"))
-> +               return -EINVAL;
-> +
-> +       err =3D devfreq->governor->event_handler(devfreq, DEVFREQ_GOV_STA=
-RT,
-> +                                              NULL);
-> +       if (err) {
-> +               dev_err(dev, "Governor %s not started: %d\n",
-> +                       devfreq->governor->name, err);
-> +               return err;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +/**
-> + * devfreq_governor_stop() - Stop the devfreq governor of the device.
-> + * @devfreq:   the devfreq instance
-> + */
-> +static int devfreq_governor_stop(struct devfreq *devfreq)
-> +{
-> +       struct device *dev =3D devfreq->dev.parent;
-> +       int err;
-> +
-> +       if (WARN(mutex_is_locked(&devfreq->lock),
-> +                "mutex must *not* be held by the caller\n"))
-> +               return -EINVAL;
-> +
-> +       err =3D devfreq->governor->event_handler(devfreq, DEVFREQ_GOV_STO=
-P, NULL);
-> +       if (err) {
-> +               dev_warn(dev, "%s: Governor %s not stopped: %d\n",
-> +                        devfreq->governor->name, err);
-> +               return err;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
->  /**
->   * devfreq_dev_release() - Callback for struct device to release the dev=
-ice.
->   * @dev:       the devfreq device
-> @@ -720,13 +767,9 @@ struct devfreq *devfreq_add_device(struct device *de=
-v,
->         }
->
->         devfreq->governor =3D governor;
-> -       err =3D devfreq->governor->event_handler(devfreq, DEVFREQ_GOV_STA=
-RT,
-> -                                               NULL);
-> -       if (err) {
-> -               dev_err(dev, "%s: Unable to start governor for the device=
-\n",
-> -                       __func__);
-> +       err =3D devfreq_governor_start(devfreq);
-> +       if (err)
->                 goto err_init;
-> -       }
->
->         list_add(&devfreq->node, &devfreq_list);
->
-> @@ -1029,24 +1072,13 @@ int devfreq_add_governor(struct devfreq_governor =
-*governor)
->                                 dev_warn(dev,
->                                          "%s: Governor %s already present=
-\n",
->                                          __func__, devfreq->governor->nam=
-e);
-> -                               ret =3D devfreq->governor->event_handler(=
-devfreq,
-> -                                                       DEVFREQ_GOV_STOP,=
- NULL);
-> -                               if (ret) {
-> -                                       dev_warn(dev,
-> -                                                "%s: Governor %s stop =
-=3D %d\n",
-> -                                                __func__,
-> -                                                devfreq->governor->name,=
- ret);
-> -                               }
-> +                               ret =3D devfreq_governor_stop(devfreq);
-> +
->                                 /* Fall through */
->                         }
-> +
->                         devfreq->governor =3D governor;
-> -                       ret =3D devfreq->governor->event_handler(devfreq,
-> -                                               DEVFREQ_GOV_START, NULL);
-> -                       if (ret) {
-> -                               dev_warn(dev, "%s: Governor %s start=3D%d=
-\n",
-> -                                        __func__, devfreq->governor->nam=
-e,
-> -                                        ret);
-> -                       }
-> +                       devfreq_governor_start(devfreq);
->                 }
->         }
->
-> @@ -1081,7 +1113,6 @@ int devfreq_remove_governor(struct devfreq_governor=
- *governor)
->                 goto err_out;
->         }
->         list_for_each_entry(devfreq, &devfreq_list, node) {
-> -               int ret;
->                 struct device *dev =3D devfreq->dev.parent;
->
->                 if (!strncmp(devfreq->governor_name, governor->name,
-> @@ -1093,13 +1124,8 @@ int devfreq_remove_governor(struct devfreq_governo=
-r *governor)
->                                 continue;
->                                 /* Fall through */
->                         }
-> -                       ret =3D devfreq->governor->event_handler(devfreq,
-> -                                               DEVFREQ_GOV_STOP, NULL);
-> -                       if (ret) {
-> -                               dev_warn(dev, "%s: Governor %s stop=3D%d\=
-n",
-> -                                        __func__, devfreq->governor->nam=
-e,
-> -                                        ret);
-> -                       }
-> +
-> +                       devfreq_governor_stop(devfreq);
->                         devfreq->governor =3D NULL;
->                 }
->         }
-> @@ -1149,19 +1175,13 @@ static ssize_t governor_store(struct device *dev,=
- struct device_attribute *attr,
->         }
->
->         if (df->governor) {
-> -               ret =3D df->governor->event_handler(df, DEVFREQ_GOV_STOP,=
- NULL);
-> -               if (ret) {
-> -                       dev_warn(dev, "%s: Governor %s not stopped(%d)\n"=
-,
-> -                                __func__, df->governor->name, ret);
-> +               ret =3D devfreq_governor_stop(df);
-> +               if (ret)
->                         goto out;
-> -               }
->         }
->         df->governor =3D governor;
->         strncpy(df->governor_name, governor->name, DEVFREQ_NAME_LEN);
-> -       ret =3D df->governor->event_handler(df, DEVFREQ_GOV_START, NULL);
-> -       if (ret)
-> -               dev_warn(dev, "%s: Governor %s not started(%d)\n",
-> -                        __func__, df->governor->name, ret);
-> +       ret =3D devfreq_governor_start(df);
->  out:
->         mutex_unlock(&devfreq_list_lock);
->
-> --
-> 2.20.1.791.gb4d0f1c61a-goog
->
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
-
---=20
-Best Regards,
-Chanwoo Choi
