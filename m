@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65433C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6542C4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:31:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22E26222A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:30:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9C80222A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:31:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YIlwuLFn"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FGkq8uFl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732345AbfBNBa5 (ORCPT
+        id S1733115AbfBNBa7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 20:30:57 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43853 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730421AbfBNBaz (ORCPT
+        Wed, 13 Feb 2019 20:30:59 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46870 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732141AbfBNBa5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 20:30:55 -0500
-Received: by mail-pl1-f196.google.com with SMTP id f90so2174358plb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 17:30:54 -0800 (PST)
+        Wed, 13 Feb 2019 20:30:57 -0500
+Received: by mail-pl1-f193.google.com with SMTP id o6so2171006pls.13
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 17:30:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=cJPsF4XxjEGWMiB9f3+lShzsGeUaN6tuDYb4BL3O6BA=;
-        b=YIlwuLFnsN4k9F1/3gvjIie+67GffreLIWW+CwTMVxR8aaH75NsYm79ezmabwTE+7Z
-         HKOgwH8iTSFV0aDF3VdQrSKiHQWde0wU9mwev7P61sdiBhWTY+IeABrsL72f+iNgoG9F
-         EwSsXD9/cRavIJZ2uFuCjTejkPYG6mESFtaxQ=
+        bh=GsKUef20fAh07gfu78gOpr0DjYw/ko20eGV0n0JBmK0=;
+        b=FGkq8uFlHwkBTIIdmp61J0sT/E2AoufEZBgiUVgOfGl1IJq1vgzHtk89MLVZ9ChNE6
+         Lu6NkZrK/S4kXAEWkN82Vxp2jIQ++s43HLRESAWUipffbH/ezxz8Esato/IWUohJmugo
+         3Q4S3Qg9SUuLwBTxiZm2LtORx9cS0VkAPdm7c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=cJPsF4XxjEGWMiB9f3+lShzsGeUaN6tuDYb4BL3O6BA=;
-        b=TlOI5T2SlT78m28MgmGKGoA8IuJRUubEXOPkyo/aCDPCEfmITNyh5+CRDNd1SUi6+6
-         noFo73LB8cbDh8T85SatBq1j0zOxckLpN+nSLkTXRgMZKRVHH/YMEFEGlxp23ktNrCrw
-         +drswz5f3fXM487YdGJVZqhI/NpwYe6FfJujDP1uxA9C20c1NL70ZvRJynKKGrf+omSt
-         lReKm7Id0zd6MblCD4hk/4S59LXI9uNsV1ezCaz0vMOc9pu7vCJItvg40niFeqJCtKxm
-         yA/5aMsVfLnjxDx3pl1hT8v0XSAP0gtJT1eSWq5uXW6+jXKJ2FVRxKWh98UcuJk+Pyqu
-         TLaQ==
-X-Gm-Message-State: AHQUAuYL4nxd4XWrIlEECWtpxJu2QLqM72y17QAXCktklUomwY6W/tIJ
-        ZacVxo5eBmuMbnRyb1p30Ho8fQ==
-X-Google-Smtp-Source: AHgI3Ib0uzj8u4s+io55IqeyUT/B8Bj7K2MGYIcavwhZARaOwvrzHZSNKpOX8d4kySoluce9he4KEQ==
-X-Received: by 2002:a17:902:aa8c:: with SMTP id d12mr1332765plr.25.1550107854202;
-        Wed, 13 Feb 2019 17:30:54 -0800 (PST)
+        bh=GsKUef20fAh07gfu78gOpr0DjYw/ko20eGV0n0JBmK0=;
+        b=FI1XZjXsPRhVnYGaZfyKufaSx12VblVk45rPkm+JTtKKaAz3DFhYhBqCBeQZuN0csU
+         cmBtHZe0pdcnkt+/eA1IfdhoA+EOYndIOgdAPtGWnueMb37nDNrLzV8Bsn5Zj/r9abEk
+         PN6YlObg67eI99TWtaYSXC9L0jRjqTkA82MUx2fxJJjAW1mwUFIPOORFuqOQF0656Hqf
+         OiLkAyW7YVi3o9hz7/+uZWIFLvzIvNj+nLSZhY67HBAIGWZChSH0XjU+IBttWW3KHGd0
+         GwJ5EWFj3X/RREu71XM+yW3FOFt+k6yDt0ogEQNNp6Kh3oiuK9z24hh1yMdNQwAIZuvw
+         25Ig==
+X-Gm-Message-State: AHQUAuZ88KKUdNVtbVKCb/1zUrBDsf2AqgiJQZHA76PVnFg8SEkAC/ag
+        vi3x5kkzcwY7AbyDD4haHj01WQ==
+X-Google-Smtp-Source: AHgI3Iawq8vLr9FK/kXBVRcj1L9gwW2DAP72ex0uB2sqO6q1P3TxM8FsANVXz6YDF7YZ5GVK/KlsOg==
+X-Received: by 2002:a17:902:7086:: with SMTP id z6mr1345620plk.125.1550107856301;
+        Wed, 13 Feb 2019 17:30:56 -0800 (PST)
 Received: from mka.mtv.corp.google.com ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id p64sm811072pfi.56.2019.02.13.17.30.53
+        by smtp.gmail.com with ESMTPSA id p64sm811072pfi.56.2019.02.13.17.30.55
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 17:30:53 -0800 (PST)
+        Wed, 13 Feb 2019 17:30:55 -0800 (PST)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
         Kyungmin Park <kyungmin.park@samsung.com>,
@@ -63,9 +63,9 @@ To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
         linux-tegra@vger.kernel.org,
         Lukasz Luba <l.luba@partner.samsung.com>
 Cc:     Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH 1/4] PM / devfreq: Track overall load monitor state instead of 'stop_polling'
-Date:   Wed, 13 Feb 2019 17:30:39 -0800
-Message-Id: <20190214013042.254790-2-mka@chromium.org>
+Subject: [PATCH 3/4] PM / devfreq: Add devfreq_governor_start/stop()
+Date:   Wed, 13 Feb 2019 17:30:41 -0800
+Message-Id: <20190214013042.254790-4-mka@chromium.org>
 X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
 In-Reply-To: <20190214013042.254790-1-mka@chromium.org>
 References: <20190214013042.254790-1-mka@chromium.org>
@@ -76,158 +76,170 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The field ->stop_polling indicates whether load monitoring should be/is
-stopped, it is set in devfreq_monitor_suspend(). Change the variable to
-hold the general state of load monitoring (stopped, running, suspended).
-Besides improving readability of conditions involving the field and this
-prepares the terrain for moving some duplicated code from the governors
-into the devfreq core.
+The following pattern is repeated multiple times:
 
-Hold the devfreq lock in devfreq_monitor_start/stop() to ensure proper
-synchronization.
+- call governor event handler with DEVFREQ_GOV_START/STOP
+- check return value
+- in case of error log a message
+
+Add devfreq_governor_start/stop() helper functions with this code
+and call them instead.
 
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 ---
- drivers/devfreq/devfreq.c | 34 +++++++++++++++++++++++++---------
- include/linux/devfreq.h   |  4 ++--
- 2 files changed, 27 insertions(+), 11 deletions(-)
+ drivers/devfreq/devfreq.c | 96 +++++++++++++++++++++++----------------
+ 1 file changed, 58 insertions(+), 38 deletions(-)
 
 diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 0ae3de76833b7..1d3a43f8b3a10 100644
+index 7fab6c4cf719b..eb86461648d74 100644
 --- a/drivers/devfreq/devfreq.c
 +++ b/drivers/devfreq/devfreq.c
-@@ -29,6 +29,10 @@
- #include <linux/of.h>
- #include "governor.h"
+@@ -580,6 +580,53 @@ static int devfreq_notifier_call(struct notifier_block *nb, unsigned long type,
+ 	return ret;
+ }
  
-+#define DEVFREQ_MONITOR_STOPPED		0
-+#define DEVFREQ_MONITOR_RUNNING		1
-+#define DEVFREQ_MONITOR_SUSPENDED	2
++/**
++ * devfreq_governor_start() - Start the devfreq governor of the device.
++ * @devfreq:	the devfreq instance
++ */
++static int devfreq_governor_start(struct devfreq *devfreq)
++{
++	struct device *dev = devfreq->dev.parent;
++	int err;
 +
- static struct class *devfreq_class;
- 
- /*
-@@ -407,10 +411,17 @@ static void devfreq_monitor(struct work_struct *work)
-  */
- void devfreq_monitor_start(struct devfreq *devfreq)
- {
--	INIT_DEFERRABLE_WORK(&devfreq->work, devfreq_monitor);
--	if (devfreq->profile->polling_ms)
-+	mutex_lock(&devfreq->lock);
++	if (WARN(mutex_is_locked(&devfreq->lock),
++		 "mutex must *not* be held by the caller\n"))
++		return -EINVAL;
 +
-+	if (devfreq->profile->polling_ms) {
-+		INIT_DEFERRABLE_WORK(&devfreq->work, devfreq_monitor);
- 		queue_delayed_work(devfreq_wq, &devfreq->work,
- 			msecs_to_jiffies(devfreq->profile->polling_ms));
-+
-+		devfreq->monitor_state = DEVFREQ_MONITOR_RUNNING;
++	err = devfreq->governor->event_handler(devfreq, DEVFREQ_GOV_START,
++					       NULL);
++	if (err) {
++		dev_err(dev, "Governor %s not started: %d\n",
++			devfreq->governor->name, err);
++		return err;
 +	}
 +
-+	mutex_unlock(&devfreq->lock);
- }
- EXPORT_SYMBOL(devfreq_monitor_start);
- 
-@@ -425,6 +436,10 @@ EXPORT_SYMBOL(devfreq_monitor_start);
- void devfreq_monitor_stop(struct devfreq *devfreq)
- {
- 	cancel_delayed_work_sync(&devfreq->work);
++	return 0;
++}
 +
-+	mutex_lock(&devfreq->lock);
-+	devfreq->monitor_state = DEVFREQ_MONITOR_STOPPED;
-+	mutex_unlock(&devfreq->lock);
- }
- EXPORT_SYMBOL(devfreq_monitor_stop);
- 
-@@ -443,13 +458,13 @@ EXPORT_SYMBOL(devfreq_monitor_stop);
- void devfreq_monitor_suspend(struct devfreq *devfreq)
- {
- 	mutex_lock(&devfreq->lock);
--	if (devfreq->stop_polling) {
-+	if (devfreq->monitor_state != DEVFREQ_MONITOR_RUNNING) {
- 		mutex_unlock(&devfreq->lock);
- 		return;
++/**
++ * devfreq_governor_stop() - Stop the devfreq governor of the device.
++ * @devfreq:	the devfreq instance
++ */
++static int devfreq_governor_stop(struct devfreq *devfreq)
++{
++	struct device *dev = devfreq->dev.parent;
++	int err;
++
++	if (WARN(mutex_is_locked(&devfreq->lock),
++		 "mutex must *not* be held by the caller\n"))
++		return -EINVAL;
++
++	err = devfreq->governor->event_handler(devfreq, DEVFREQ_GOV_STOP, NULL);
++	if (err) {
++		dev_warn(dev, "%s: Governor %s not stopped: %d\n",
++			 devfreq->governor->name, err);
++		return err;
++	}
++
++	return 0;
++}
++
+ /**
+  * devfreq_dev_release() - Callback for struct device to release the device.
+  * @dev:	the devfreq device
+@@ -720,13 +767,9 @@ struct devfreq *devfreq_add_device(struct device *dev,
  	}
  
- 	devfreq_update_status(devfreq, devfreq->previous_freq);
--	devfreq->stop_polling = true;
-+	devfreq->monitor_state = DEVFREQ_MONITOR_SUSPENDED;
- 	mutex_unlock(&devfreq->lock);
- 	cancel_delayed_work_sync(&devfreq->work);
- }
-@@ -468,7 +483,7 @@ void devfreq_monitor_resume(struct devfreq *devfreq)
- 	unsigned long freq;
+ 	devfreq->governor = governor;
+-	err = devfreq->governor->event_handler(devfreq, DEVFREQ_GOV_START,
+-						NULL);
+-	if (err) {
+-		dev_err(dev, "%s: Unable to start governor for the device\n",
+-			__func__);
++	err = devfreq_governor_start(devfreq);
++	if (err)
+ 		goto err_init;
+-	}
  
- 	mutex_lock(&devfreq->lock);
--	if (!devfreq->stop_polling)
-+	if (devfreq->monitor_state == DEVFREQ_MONITOR_STOPPED)
- 		goto out;
+ 	list_add(&devfreq->node, &devfreq_list);
  
- 	if (!delayed_work_pending(&devfreq->work) &&
-@@ -477,7 +492,7 @@ void devfreq_monitor_resume(struct devfreq *devfreq)
- 			msecs_to_jiffies(devfreq->profile->polling_ms));
- 
- 	devfreq->last_stat_updated = jiffies;
--	devfreq->stop_polling = false;
-+	devfreq->monitor_state = DEVFREQ_MONITOR_RUNNING;
- 
- 	if (devfreq->profile->get_cur_freq &&
- 		!devfreq->profile->get_cur_freq(devfreq->dev.parent, &freq))
-@@ -504,13 +519,14 @@ void devfreq_interval_update(struct devfreq *devfreq, unsigned int *delay)
- 	mutex_lock(&devfreq->lock);
- 	devfreq->profile->polling_ms = new_delay;
- 
--	if (devfreq->stop_polling)
-+	if (devfreq->monitor_state == DEVFREQ_MONITOR_SUSPENDED)
- 		goto out;
- 
- 	/* if new delay is zero, stop polling */
- 	if (!new_delay) {
- 		mutex_unlock(&devfreq->lock);
- 		cancel_delayed_work_sync(&devfreq->work);
-+		devfreq->monitor_state == DEVFREQ_MONITOR_STOPPED;
- 		return;
+@@ -1029,24 +1072,13 @@ int devfreq_add_governor(struct devfreq_governor *governor)
+ 				dev_warn(dev,
+ 					 "%s: Governor %s already present\n",
+ 					 __func__, devfreq->governor->name);
+-				ret = devfreq->governor->event_handler(devfreq,
+-							DEVFREQ_GOV_STOP, NULL);
+-				if (ret) {
+-					dev_warn(dev,
+-						 "%s: Governor %s stop = %d\n",
+-						 __func__,
+-						 devfreq->governor->name, ret);
+-				}
++				ret = devfreq_governor_stop(devfreq);
++
+ 				/* Fall through */
+ 			}
++
+ 			devfreq->governor = governor;
+-			ret = devfreq->governor->event_handler(devfreq,
+-						DEVFREQ_GOV_START, NULL);
+-			if (ret) {
+-				dev_warn(dev, "%s: Governor %s start=%d\n",
+-					 __func__, devfreq->governor->name,
+-					 ret);
+-			}
++			devfreq_governor_start(devfreq);
+ 		}
  	}
  
-@@ -526,7 +542,7 @@ void devfreq_interval_update(struct devfreq *devfreq, unsigned int *delay)
- 		mutex_unlock(&devfreq->lock);
- 		cancel_delayed_work_sync(&devfreq->work);
- 		mutex_lock(&devfreq->lock);
--		if (!devfreq->stop_polling)
-+		if (devfreq->monitor_state != DEVFREQ_MONITOR_SUSPENDED)
- 			queue_delayed_work(devfreq_wq, &devfreq->work,
- 			      msecs_to_jiffies(devfreq->profile->polling_ms));
+@@ -1081,7 +1113,6 @@ int devfreq_remove_governor(struct devfreq_governor *governor)
+ 		goto err_out;
  	}
-@@ -1372,7 +1388,7 @@ static ssize_t trans_stat_show(struct device *dev,
- 	int i, j;
- 	unsigned int max_state = devfreq->profile->max_state;
+ 	list_for_each_entry(devfreq, &devfreq_list, node) {
+-		int ret;
+ 		struct device *dev = devfreq->dev.parent;
  
--	if (!devfreq->stop_polling &&
-+	if ((devfreq->monitor_state == DEVFREQ_MONITOR_RUNNING) &&
- 			devfreq_update_status(devfreq, devfreq->previous_freq))
- 		return 0;
- 	if (max_state == 0)
-diff --git a/include/linux/devfreq.h b/include/linux/devfreq.h
-index fbffa74bfc1bb..0a618bbb8b294 100644
---- a/include/linux/devfreq.h
-+++ b/include/linux/devfreq.h
-@@ -130,7 +130,7 @@ struct devfreq_dev_profile {
-  * @max_freq:	Limit maximum frequency requested by user (0: none)
-  * @scaling_min_freq:	Limit minimum frequency requested by OPP interface
-  * @scaling_max_freq:	Limit maximum frequency requested by OPP interface
-- * @stop_polling:	 devfreq polling status of a device.
-+ * @monitor_state:	State of the load monitor.
-  * @suspend_freq:	 frequency of a device set during suspend phase.
-  * @resume_freq:	 frequency of a device set in resume phase.
-  * @suspend_count:	 suspend requests counter for a device.
-@@ -168,7 +168,7 @@ struct devfreq {
- 	unsigned long max_freq;
- 	unsigned long scaling_min_freq;
- 	unsigned long scaling_max_freq;
--	bool stop_polling;
-+	int monitor_state;
+ 		if (!strncmp(devfreq->governor_name, governor->name,
+@@ -1093,13 +1124,8 @@ int devfreq_remove_governor(struct devfreq_governor *governor)
+ 				continue;
+ 				/* Fall through */
+ 			}
+-			ret = devfreq->governor->event_handler(devfreq,
+-						DEVFREQ_GOV_STOP, NULL);
+-			if (ret) {
+-				dev_warn(dev, "%s: Governor %s stop=%d\n",
+-					 __func__, devfreq->governor->name,
+-					 ret);
+-			}
++
++			devfreq_governor_stop(devfreq);
+ 			devfreq->governor = NULL;
+ 		}
+ 	}
+@@ -1149,19 +1175,13 @@ static ssize_t governor_store(struct device *dev, struct device_attribute *attr,
+ 	}
  
- 	unsigned long suspend_freq;
- 	unsigned long resume_freq;
+ 	if (df->governor) {
+-		ret = df->governor->event_handler(df, DEVFREQ_GOV_STOP, NULL);
+-		if (ret) {
+-			dev_warn(dev, "%s: Governor %s not stopped(%d)\n",
+-				 __func__, df->governor->name, ret);
++		ret = devfreq_governor_stop(df);
++		if (ret)
+ 			goto out;
+-		}
+ 	}
+ 	df->governor = governor;
+ 	strncpy(df->governor_name, governor->name, DEVFREQ_NAME_LEN);
+-	ret = df->governor->event_handler(df, DEVFREQ_GOV_START, NULL);
+-	if (ret)
+-		dev_warn(dev, "%s: Governor %s not started(%d)\n",
+-			 __func__, df->governor->name, ret);
++	ret = devfreq_governor_start(df);
+ out:
+ 	mutex_unlock(&devfreq_list_lock);
+ 
 -- 
 2.20.1.791.gb4d0f1c61a-goog
 
