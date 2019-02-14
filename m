@@ -2,150 +2,98 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F948C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:43:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ECC9C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:43:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2D1E222A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:43:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550140985;
-	bh=fahtXq3DVKL0vXCvKJOXinAYJ3+kxzScXhki9IFX4dI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=RbLmKMHMo+k1WBWyz18XUhc+iCgsYSPXXFtUzBJgwXPe/iT7mkrkRcg3dncYwKPRC
-	 /lu+xeeAba8ursTyQECyC9t1gLRYFrIcl3PwEAOtL+rUGCCtaJ4FswN1AQD866sNMp
-	 MicGFmxUGTivAnTTN3qRIXeDsLGCsJOirgHmx948=
+	by mail.kernel.org (Postfix) with ESMTP id DB08C222A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:43:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406700AbfBNKnD (ORCPT
+        id S2406710AbfBNKnN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 05:43:03 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33377 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394286AbfBNKnC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 05:43:02 -0500
-Received: by mail-ot1-f68.google.com with SMTP id i20so9759713otl.0;
-        Thu, 14 Feb 2019 02:43:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RSC7FfOp1eL3+/dELdJD9KCYfJPiqPMHcMMMOYxa89A=;
-        b=Vhvwbb+2SJy9sMbZRbeHh+ZAIU7HReuImsI0kOqa579l7S4a/pCJeTCnaaYTRZgkWy
-         7vkCmLhtddRGRQGzrBsKuySHXDR14272G2LNw1xo4SbMYeFSk/4ej6qxMUkgpYwDJuMo
-         Yqf4QYpyy0dZRuluSlfJgb2Qkitmt2ZB00y7PbWl6Cd0PQCIks6zKy02qqPwVUutpXi+
-         u5Yc4rFe/rspGA7ZYJmXwxzX6knZcBErmJWQ6LZWb6/o0rCo/flI3WTsRZaU2O2aDuPc
-         +xD0iNHeaVwe3Av9nZIs1Uo1WVqLs8n8eG8TeeD9d1jCHWhTe7HFvsur/LF+lBlQfUwT
-         lY5w==
-X-Gm-Message-State: AHQUAuZev8t5x/xpKfLrMHTEsJkcG8Ej18i3E/hUAb29EFoPI6xEqYlK
-        dZriCylbPHMvlPOstXBuh7QN/ye9z4D+eZrGUyQ=
-X-Google-Smtp-Source: AHgI3IYjNDAnrA4i4gmx9VI6xwBkZp4/AL2HD4rDKLoJ//d8HzzpYcgzfcimfRRsbu7dCeY2jBxIu9SvMKtIK26xpzQ=
-X-Received: by 2002:a9d:638c:: with SMTP id w12mr1923290otk.139.1550140980784;
- Thu, 14 Feb 2019 02:43:00 -0800 (PST)
-MIME-Version: 1.0
-References: <1550130368-60513-1-git-send-email-wangxiongfeng2@huawei.com> <1550130368-60513-2-git-send-email-wangxiongfeng2@huawei.com>
-In-Reply-To: <1550130368-60513-2-git-send-email-wangxiongfeng2@huawei.com>
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Thu, 14 Feb 2019 11:42:49 +0100
-Message-ID: <CAJZ5v0husvV--mD_8B9cXx6-rD1677s6zT6tcjwk3Dg-dNPAxw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] ACPI / CPPC: Add a helper to get desired performance
-To:     Xiongfeng Wang <wangxiongfeng2@huawei.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>, gcherianv@gmail.com,
-        Prashanth Prakash <pprakash@codeaurora.org>,
-        George Cherian <george.cherian@cavium.com>,
-        Robert Moore <robert.moore@intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        John Garry <john.garry@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 14 Feb 2019 05:43:13 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41060 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388285AbfBNKnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 05:43:12 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4186FEBD;
+        Thu, 14 Feb 2019 02:43:12 -0800 (PST)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 87AF63F575;
+        Thu, 14 Feb 2019 02:43:09 -0800 (PST)
+Date:   Thu, 14 Feb 2019 10:43:06 +0000
+Message-ID: <86r2caslad.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        <linux-kernel@vger.kernel.org>, <tomli@tomli.me>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>
+Subject: Re: [PATCH] irqchip/i8259: fix shutdown order by moving syscore_ops registration
+In-Reply-To: <20190207205812.GA11315@darkstar.musicnaut.iki.fi>
+References: <20190206212608.27189-1-aaro.koskinen@iki.fi>
+        <8492440b-b489-0ce1-865c-4505042cb061@arm.com>
+        <20190207205812.GA11315@darkstar.musicnaut.iki.fi>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 8:46 AM Xiongfeng Wang
-<wangxiongfeng2@huawei.com> wrote:
->
-> This patch add a helper to get the value of desired performance
-> register.
->
-> Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
-> ---
->  drivers/acpi/cppc_acpi.c | 38 ++++++++++++++++++++++++++++++++++++++
->  include/acpi/cppc_acpi.h |  1 +
->  2 files changed, 39 insertions(+)
->
-> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-> index 217a782..93588c5 100644
-> --- a/drivers/acpi/cppc_acpi.c
-> +++ b/drivers/acpi/cppc_acpi.c
-> @@ -1051,6 +1051,44 @@ static int cpc_write(int cpu, struct cpc_register_resource *reg_res, u64 val)
->  }
->
->  /**
-> + * cppc_get_desired_perf - Get the value of desired performance register.
-> + * @cpunum: CPU from which to get desired performance.
-> + * @desired_perf: address of a variable to store the returned desired performance
-> + *
-> + * Return: 0 for success, -EIO otherwise.
-> + */
-> +int cppc_get_desired_perf(int cpunum, u64 *desired_perf)
-> +{
-> +       struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpunum);
-> +       int pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpunum);
-> +       struct cpc_register_resource *desired_reg;
-> +       struct cppc_pcc_data *pcc_ss_data = NULL;
-> +       int regs_in_pcc = 0;
+On Thu, 07 Feb 2019 20:58:12 +0000,
+Aaro Koskinen <aaro.koskinen@iki.fi> wrote:
+> 
+> Hi,
+> 
+> On Thu, Feb 07, 2019 at 08:56:37AM +0000, Marc Zyngier wrote:
+> > On 06/02/2019 21:26, Aaro Koskinen wrote:
+> > >  static void init_8259A(int auto_eoi)
+> > >  {
+> > >  	unsigned long flags;
+> > > @@ -332,6 +324,7 @@ struct irq_domain * __init __init_i8259_irqs(struct device_node *node)
+> > >  		panic("Failed to add i8259 IRQ domain");
+> > >  
+> > >  	setup_irq(I8259A_IRQ_BASE + PIC_CASCADE_IR, &irq2);
+> > > +	register_syscore_ops(&i8259_syscore_ops);
+> > >  	return domain;
+> > >  }
+> > >  
+> > > 
+> > 
+> > Given that this is a change of behaviour that is likely to affect other
+> > platforms (I see at least another 6 MIPS machines using the i8259),
+> > could someone make sure that this doesn't cause any regression? This is
+> > unlikely to affect the SGI boxes, as they predate any notion of power
+> > management, but something like Malta could potentially be affected.
+> 
+> For shutdown, I don't think there are many syscore_ops users on these
+> platforms. Actually I could find only two that I think could be used:
+> 	- cpufreq (issue fixed by this patch, and Loongson is the only user
+> 	  anyway)
+> 	- leds-trigger
+> 
+> Then suspend/resume: i8259 doesn't implement suspend, so there is no
+> change in behaviour. In resume it does PIC re-init, but syscore_resume()
+> is done with interrupts disabled so the order shouldn't matter.
 
-It would be better to use bool here, but it would be even better to
-not try to avoid calling cpc_read() in two branches.
+In the absence of any comment from the MIPS guys over the past week,
+I've queued this. Please let me know should it break anything.
 
-> +
-> +       desired_reg = &cpc_desc->cpc_regs[DESIRED_PERF];
-> +
-> +       if (CPC_IN_PCC(desired_reg)) {
+Thanks,
 
-    int ret = 0;
+	M.
 
-> +               if (pcc_ss_id < 0)
-> +                       return -EIO;
-> +               pcc_ss_data = pcc_data[pcc_ss_id];
-> +               down_write(&pcc_ss_data->pcc_lock);
-
-    if (send_pcc_cmd(pcc_ss_id, CMD_READ) >= 0)
-            cpc_read(cpunum, desired_reg, desired_perf);
-    else
-            ret = -EIO;
-
-    up_write(&pcc_ss_data->pcc_lock);
-    return ret;
-
-> +               regs_in_pcc = 1;
-> +               if (send_pcc_cmd(pcc_ss_id, CMD_READ) < 0) {
-> +                       up_write(&pcc_ss_data->pcc_lock);
-> +                       return -EIO;
-> +               }
-> +       }
-
-cpc_read(cpunum, desired_reg, desired_perf);
-return 0;
-
-> +
-> +       cpc_read(cpunum, desired_reg, desired_perf);
-> +
-> +       if (regs_in_pcc)
-> +               up_write(&pcc_ss_data->pcc_lock);
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(cppc_get_desired_perf);
-> +
-> +/**
->   * cppc_get_perf_caps - Get a CPUs performance capabilities.
->   * @cpunum: CPU from which to get capabilities info.
->   * @perf_caps: ptr to cppc_perf_caps. See cppc_acpi.h
+-- 
+Jazz is not dead, it just smell funny.
