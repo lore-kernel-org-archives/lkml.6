@@ -2,220 +2,149 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 508A8C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:40:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9EF6C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:43:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06D982070C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:40:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 817A821901
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:43:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WJvpP34e"
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="NTArWyMj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437136AbfBNLkr (ORCPT
+        id S2437177AbfBNLnv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 06:40:47 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:35604 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388002AbfBNLkr (ORCPT
+        Thu, 14 Feb 2019 06:43:51 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:42442 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725975AbfBNLnv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 06:40:47 -0500
-Received: by mail-ua1-f67.google.com with SMTP id d2so1914743ual.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 03:40:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zu4xXWWcRfokrYuKH0aL1uXf/Gr9KjLHPzbN4ZK2vpA=;
-        b=WJvpP34ey1FTPM7Bqv6/HOldP57+9LiBAcbSAnlD9EVs9f0KepKAeicuPt7yYkX0bQ
-         btcYhc8kj8N6bHMXk72c61/qc/jeQdPfsl1v3Mckqdnn5XJbi0Uq8EEniDLWUn7LK/ug
-         6Lx7Wp7TpBqoNKModHau5KxRyq3m8f/USJgR6JebPuU38E6tGPxjThF+EKPYUXWwXyJE
-         RehlvKpPtkoQJw9rHI+QR0Rn7/Q59YTAy8TobudqyBRUOn8lFCTfdE10ibLq8cHb4mIH
-         X5WGfl6EwJju/+bXTWjeUSc//aQdmak1SG/ZWXIustYWlWUNx2+geh5GhA7RDjhUC/HW
-         JI3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zu4xXWWcRfokrYuKH0aL1uXf/Gr9KjLHPzbN4ZK2vpA=;
-        b=pehHeXI/OdF6ChnzeE9/5XldOQy4EAFIuk0QefjKa43+E3ywzwZnUjOu568paWgyQw
-         3ao2hhIaKs7w+WHD7evEtq2XsF4nt9vO5zESjz0JWLPQwN5VnwgwMcqrWJJ7DBO0T4JZ
-         k4HDf0oZpvrvrrmElm6pXSOPUZKCLQhv5+5i9Z7rv2svSO/Oxytf6ikeBJ3spGhHokuw
-         QVDNFv3xlS4pdMeZquiP+QgiyEGMQIrSnHvUQ81a2C/Y5xjgs9LRsQ/TLki8hJ2zLjmW
-         nB977EDL4ZS40uCjM2eiV+N2nVbV1Z0RwpyeltX1N8RbmIkG//cFbcc2M6o0OKGb/314
-         nXYg==
-X-Gm-Message-State: AHQUAua/ZGu0DuHddcugsLErY+T46BHi094bGPhSuoSX8LTAj2KWWjqq
-        NGp/wYkvfL+o/2wi5DqdCZ8QbMdW1gYWwRDa0yqsQKJd
-X-Google-Smtp-Source: AHgI3IblOMbqM5LnW4Q025cll8vgUNBwDOn5Je+oYNgXOd6j8YemQHVfsd8KV2+qQdut5zgrhifsCldLO2jKU8T0JOQ=
-X-Received: by 2002:ab0:22d6:: with SMTP id z22mr1630062uam.66.1550144445093;
- Thu, 14 Feb 2019 03:40:45 -0800 (PST)
+        Thu, 14 Feb 2019 06:43:51 -0500
+Received: from mailhost.synopsys.com (badc-mailhost1.synopsys.com [10.192.0.17])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay.synopsys.com (Postfix) with ESMTPS id DCF7124E20A3;
+        Thu, 14 Feb 2019 03:43:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1550144631; bh=vGC8AVemBHxssQXUd3ikttdHqoi7yY2qYaAnNCS9qmE=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=NTArWyMjutjVUw851p6hni8yeMcL/5Lw9u0j68W74TQvd+wxars0C2m/qQ2NWkygQ
+         R/2GeaXkglhHewYbRjfiM0UvJpZ/dhFXnriowAbSQirD6kOpasRoi+5bSlCutpAWAb
+         gEWpwbejnwXTpEY3mvuc19HX6Zj7uIaYnodakYAA/QzM9ax8JDAMZQdS1DH9Zrk859
+         vULaG+nVTnGjb04p8Op21wq6uJIuaWrTuH6s94K/6cI0FgOVp7MJBGLNqdFnDNCxVo
+         Ut48JgdLPew3rqVOxRwz2OkXiKdq7hEII/riR9kQFrMNwJYEhHA2PBji/AlNiZ9fp7
+         LRd8vTOmQuK9A==
+Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 7C27FA0071;
+        Thu, 14 Feb 2019 11:43:50 +0000 (UTC)
+Received: from AM04WEHTCA.internal.synopsys.com (10.116.16.190) by
+ US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 14 Feb 2019 03:43:50 -0800
+Received: from AM04WEMBXA.internal.synopsys.com ([fe80::79c3:55f2:1f20:5bf4])
+ by am04wehtca.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Thu,
+ 14 Feb 2019 15:43:47 +0400
+From:   Minas Harutyunyan <minas.harutyunyan@synopsys.com>
+To:     Jaehoon Chung <jh80.chung@samsung.com>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
+CC:     "minas.harutyunyan@synopsys.com" <minas.harutyunyan@synopsys.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] usb: dwc2: hcd: call dwc2_is_controller_alive under
+ spinlock
+Thread-Topic: [PATCH] usb: dwc2: hcd: call dwc2_is_controller_alive under
+ spinlock
+Thread-Index: AQHUxEycCYLg8CCwHU26ysYDrcXjtA==
+Date:   Thu, 14 Feb 2019 11:43:46 +0000
+Message-ID: <410670D7E743164D87FA6160E7907A56013A7DC6C8@am04wembxa.internal.synopsys.com>
+References: <CGME20190214100344epcas1p316a40d88f3b52a10745c95cc3d16a0ed@epcas1p3.samsung.com>
+ <1550138622-10761-1-git-send-email-jh80.chung@samsung.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.116.70.132]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20190211151751.12336-1-oded.gabbay@gmail.com> <20190214071114.GA21381@kroah.com>
- <CAFCwf12VaYSpCtqyYsTGp2TZDJiJ4bYc4egrRY6mdzaceO_5Cw@mail.gmail.com>
- <CAFCwf11hP89LwKnyjuwnP1KLe0GwL_T=Z+eQ1uUEiPTnJRASpA@mail.gmail.com>
- <20190214100727.GA10405@kroah.com> <CAFCwf13-qVm_2UV5294jwwud4+oCZB_2WQfNmbg2qAUBCj4d4g@mail.gmail.com>
- <20190214103720.GA6518@kroah.com> <CAFCwf13Lwr7M2Jao+3k+w_VaQ-9J7dpu7AOS4B+udnG__Fd53A@mail.gmail.com>
- <20190214110426.GA9566@kroah.com>
-In-Reply-To: <20190214110426.GA9566@kroah.com>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Thu, 14 Feb 2019 13:40:18 +0200
-Message-ID: <CAFCwf10qgc3_BxbnMm-A52=66+QJB7p+s2WZeXyMgD06t3h5LQ@mail.gmail.com>
-Subject: Re: [PATCH v4 00/15] Habana Labs kernel driver
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Olof Johansson <olof@lixom.net>, ogabbay@habana.ai,
-        Arnd Bergmann <arnd@arndb.de>, Joe Perches <joe@perches.com>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 1:04 PM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Thu, Feb 14, 2019 at 12:45:00PM +0200, Oded Gabbay wrote:
-> > On Thu, Feb 14, 2019 at 12:37 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Thu, Feb 14, 2019 at 12:15:19PM +0200, Oded Gabbay wrote:
-> > > > On Thu, Feb 14, 2019 at 12:07 PM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > > >
-> > > > > On Thu, Feb 14, 2019 at 11:58:41AM +0200, Oded Gabbay wrote:
-> > > > > > On Thu, Feb 14, 2019 at 9:13 AM Oded Gabbay <oded.gabbay@gmail.com> wrote:
-> > > > > > >
-> > > > > > > On Thu, Feb 14, 2019 at 9:11 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> > > > > > > >
-> > > > > > > > On Mon, Feb 11, 2019 at 05:17:36PM +0200, Oded Gabbay wrote:
-> > > > > > > > > Hello,
-> > > > > > > > > This is v4 of the Habana Labs kernel driver patch-set. It contains fixes
-> > > > > > > > > according to reviews done on v3, mainly for the command buffer, sysfs and MMU
-> > > > > > > > > patches. In addition, patch 2/15 was reduced in size from 4.3MB to 1.4MB.
-> > > > > > > > >
-> > > > > > > > > The patch-set is rebased on v5.0-rc6.
-> > > > > > > > >
-> > > > > > > > > Link to v3 cover letter: https://lkml.org/lkml/2019/2/4/1033
-> > > > > > > > >
-> > > > > > > > > Link to v2 cover letter: https://lkml.org/lkml/2019/1/30/1003
-> > > > > > > > >
-> > > > > > > > > Link to v1 cover letter: https://lwn.net/Articles/777342/
-> > > > > > > > >
-> > > > > > > > > I would appricate any feedback, question and/or review.
-> > > > > > > >
-> > > > > > > > There's been some 0-day bot feedback on some of these patches now that I
-> > > > > > > > put them in my -testing branch.  So I'm going to drop the patch series
-> > > > > > > > from there now and wait for a v5 of the series that hopefully will have
-> > > > > > > > those issues fixed :)
-> > > > > > > >
-> > > > > > Hi Greg,
-> > > > > > I looked at the 4 warnings I received from your emails, and they all
-> > > > > > appear in i386 architecture.
-> > > > > > I don't want to support 32-bit kernel and I don't intend to support it.
-> > > > > > Can we just specify in kconfig that we don't support it, and then you
-> > > > > > won't get these warnings ?
-> > > > >
-> > > > > No, if you use the correct kernel types and castings, you should be
-> > > > > fine.
-> > > > >
-> > > > > > I initially set in kconfig to support only x86_64, and you told me
-> > > > > > (and you were right) not to limit to that. But I do think I would like
-> > > > > > to disable the driver on i386.
-> > > > >
-> > > > > You might want to not support it on 32bit kernels, but even then, I
-> > > > > think all you need to do here is use the proper kernel types and you
-> > > > > will be ok.
-> > > > >
-> > > > > As an example:
-> > > > >    drivers/misc/habanalabs/goya/goya.c: In function 'goya_early_init':
-> > > > >    drivers/misc/habanalabs/goya/goya.c:404:4: warning: format '%llu' expects argument of type 'long long unsigned int', but argument 4 has type 'resource_size_t' {aka 'unsigned int'} [-Wformat=]
-> > > > >        "Not " HL_NAME "? BAR %d size %llu, expecting %llu\n",
-> > > > >        ^~~~~~
-> > > > >
-> > > > > Use the correct printk type for a resource_size_t.
-> > > > >
-> > > > > You got that warning twice.
-> > > > >
-> > > > > Another one is:
-> > > > > >> drivers/misc/habanalabs/device.c:283:24: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-> > > > >      volatile u32 *paddr = (volatile u32 *) addr;
-> > > > >
-> > > > > Now using a volatile makes me want to say "you are doing it wrong!", as
-> > > > > yes, you shouldn't be reading directly from a memory pointer, you need
-> > > > > to use the correct iomem accessors, right?
-> > > > >
-> > > > > So I think just fixing this stuff up should be simple, the
-> > > > > resource_size_t fix is needed no matter what size kernel you run on.
-> > > > >
-> > > > > thanks,
-> > > > >
-> > > > > greg k-h
-> > > >
-> > > > ok, got it, will be fixed.
-> > > >
-> > > > Regarding the volatile, this is not an I/O memory. This is host memory
-> > > > that is changed by the device. That's why I wrote in the comment
-> > > > there:
-> > > > /*
-> > > > * paddr is defined as volatile because it points to HOST memory,
-> > > > * which is being written to by the device. Therefore, we can't use
-> > > > * locks to synchronize it and it is not a memory-mapped register space
-> > >
-> > > What do you mean by "HOST" memory?  The memory that the processor is
-> > > running on?
-> > >
-> > Yes, exactly. The memory of the server. Not a memory on my device.
-> >
-> > > > */
-> > > >
-> > > > Am I missing something here ? I don't think I should use the iomem
-> > > > accessors on host memory, right ? Assuming I'm right, is there another
-> > > > way to ensure the compiler won't optimize this without using the
-> > > > volatile keyword ?
-> > >
-> > > What are you trying to prevent from being "optimized" here?
-> > >
-> > > Are you sure you just don't need a correct memory barrier?  That's the
-> > > only way to ensure that if you write to a location from one thread/cpu,
-> > > it will show up to the other thread/cpu correctly.  volatile will not
-> > > ensure that for you at all (hint, the compiler just ignores it for the
-> > > most part.)
-> >
-> > But the writing entity in this case is NOT another thread/cpu. The
-> > writing entity is the device. So a memory barrier, IMO, won't help me
-> > here, because memory barriers affect only on the CPU. Not on external
-> > initiators.
-> >
-> > AFAIK, the volatile keyword tells the compiler that the value of the
-> > variable may change at any time--without any action being taken by the
-> > code the compiler finds nearby. And this is exactly what happens here.
-> > I poll on a memory location of the CPU, and that memory can change at
-> > any time by the device.
->
-> And how is that memory location mapped into the device memory?  As such,
-> it's iomemory, right?
->
-> volatile doesn't tell the compiler much, if anything, anymore.
->
-> I can't seem to trace back the code here (it's split across multiple
-> emails), but it seems that the memory location is coming from struct
-> armcp_packet in one location, and a dma pool in another one.  I don't
-> know what the rules are for dma mapped memory, but it feels like
-> 'volatile' is not the way to use it :)
->
-Yes, this is dma coherent memory.
-
-And I actually found one call to this function where we use this
-function for polling on host memory that is changed by another
-thread/core.
-Therefore, I replaced the volatile with an mb() to flush the CPU read
-and write buffers. I believe that is enough and I hope this closes
-this issue :)
-
-Oded
-
-
-> thanks,
->
-> greg k-h
+Hi Jaehoon Chung,=0A=
+=0A=
+On 2/14/2019 2:04 PM, Jaehoon Chung wrote:=0A=
+> This patch is referred to Robert's patch=0A=
+> commit cf54772b913b ("usb: dwc2: call dwc2_is_controller_alive() under sp=
+inlock")=0A=
+> =0A=
+> During running sdb with otg mode, the usb is hung sometime.=0A=
+> =0A=
+> The one of SDB hang issues should be fixed with this patch.=0A=
+> After hang, it doesn't never trigger the usb interrupt.=0A=
+> =0A=
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>=0A=
+> ---=0A=
+>   drivers/usb/dwc2/hcd_intr.c | 7 ++++---=0A=
+>   1 file changed, 4 insertions(+), 3 deletions(-)=0A=
+> =0A=
+> diff --git a/drivers/usb/dwc2/hcd_intr.c b/drivers/usb/dwc2/hcd_intr.c=0A=
+> index 88b5dcf..8d3b155 100644=0A=
+> --- a/drivers/usb/dwc2/hcd_intr.c=0A=
+> +++ b/drivers/usb/dwc2/hcd_intr.c=0A=
+> @@ -2222,13 +2222,13 @@ irqreturn_t dwc2_handle_hcd_intr(struct dwc2_hsot=
+g *hsotg)=0A=
+>   	u32 gintsts, dbg_gintsts;=0A=
+>   	irqreturn_t retval =3D IRQ_NONE;=0A=
+>   =0A=
+> +	spin_lock(&hsotg->lock);=0A=
+> +=0A=
+>   	if (!dwc2_is_controller_alive(hsotg)) {=0A=
+>   		dev_warn(hsotg->dev, "Controller is dead\n");=0A=
+> -		return retval;=0A=
+> +		goto out;=0A=
+>   	}=0A=
+>   =0A=
+> -	spin_lock(&hsotg->lock);=0A=
+> -=0A=
+>   	/* Check if HOST Mode */=0A=
+>   	if (dwc2_is_host_mode(hsotg)) {=0A=
+>   		gintsts =3D dwc2_read_core_intr(hsotg);=0A=
+> @@ -2276,6 +2276,7 @@ irqreturn_t dwc2_handle_hcd_intr(struct dwc2_hsotg =
+*hsotg)=0A=
+>   		}=0A=
+>   	}=0A=
+>   =0A=
+> +out:=0A=
+>   	spin_unlock(&hsotg->lock);=0A=
+>   =0A=
+>   	return retval;=0A=
+> =0A=
+=0A=
+1. Checking core alive or not was introduced in our internal reference =0A=
+driver for our setups, because sometime AHB-PCI bridge can hung, not =0A=
+core itself. If it happen then only way to overcome it - reboot core =0A=
+setup and PC.=0A=
+2. Actually this issue was fixed on our setups and currently no need to =0A=
+check access via bridge to core.=0A=
+3. Any case if it still happen on some platforms then first need to =0A=
+check and fix HW.=0A=
+=0A=
+On asserted any interrupt for dwc2, handlers call sequence is follow: =0A=
+common->gadget->host handlers. If core alive checked in common handler =0A=
+then checking same stuff in host handler again not needed at all.=0A=
+=0A=
+So, core alive checking in host handler create issue for your test, I =0A=
+suggest to not fix alive checking in host interrupt handler as you =0A=
+suggested and done in common handler, but just remove it.=0A=
+=0A=
+Thanks,=0A=
+Minas=0A=
+=0A=
+=0A=
+=0A=
