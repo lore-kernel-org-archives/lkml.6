@@ -2,129 +2,98 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41B9AC4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0513DC4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:32:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0801A222DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:32:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBCEB222DF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:32:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550161946;
+	bh=GbMzRensU03GT9hjWsSQCVuqqG+tPntmwIoS4ac4+Fg=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=UeaT5qb7z5K5Lz0cZyyvkSIcFDaLJspYBimZa2HoJSbZsai+jDTg/36MNdeVqnfVT
+	 3w6jMflesJeVRkuAfvHilbseQHUxXDiB4Bau6w0KEYz/qHCGao+uXmw/fIcNuGEEXr
+	 4GmiNmxLi/zzXR8mhRImsrdT8C3zbFUE6Gh4Oupk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407976AbfBNQcC (ORCPT
+        id S2439669AbfBNQcZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:32:02 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49112 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2407963AbfBNQb6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 11:31:58 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E9F93AF63;
-        Thu, 14 Feb 2019 16:31:56 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 0929E1E0900; Thu, 14 Feb 2019 17:31:56 +0100 (CET)
-Date:   Thu, 14 Feb 2019 17:31:56 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@ozlabs.org, aneesh.kumar@linux.vnet.ibm.com,
-        jack@suse.cz, erhard_f@mailbox.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH] powerpc/64s: Fix possible corruption on big endian due
- to pgd/pud_present()
-Message-ID: <20190214163156.GB23000@quack2.suse.cz>
-References: <20190214062339.7139-1-mpe@ellerman.id.au>
+        Thu, 14 Feb 2019 11:32:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36326 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728867AbfBNQcY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 11:32:24 -0500
+Received: from ziggy.de (unknown [37.223.146.9])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18F5F222DA;
+        Thu, 14 Feb 2019 16:32:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550161944;
+        bh=GbMzRensU03GT9hjWsSQCVuqqG+tPntmwIoS4ac4+Fg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=T8bZfAGXAiMXSF3lC2oWdTr9u+o2hGATuJby8133xEJI8cPF6Gw4Dmd3pJRfYtDwv
+         NZFtu/Bck1UYCQvphugUn81DUnpe9ZKOgD0klfqEyi5+1kQah2NrZ+ctGG815FVDLh
+         JRPCBBgM6m0/Hdu7R+uAdXAdkFXmiY60b0iKQREM=
+From:   matthias.bgg@kernel.org
+To:     mturquette@baylibre.com, sboyd@kernel.org,
+        kevin-cw.chen@mediatek.com, mars.cheng@mediatek.com
+Cc:     sean.wang@mediatek.com, matthias.bgg@gmail.com, jasu@njomotys.info,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH v4 1/3] clk: mediatek: Add MUX_FLAGS macro
+Date:   Thu, 14 Feb 2019 17:32:18 +0100
+Message-Id: <20190214163218.26148-1-matthias.bgg@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190214062339.7139-1-mpe@ellerman.id.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 14-02-19 17:23:39, Michael Ellerman wrote:
-> In v4.20 we changed our pgd/pud_present() to check for _PAGE_PRESENT
-> rather than just checking that the value is non-zero, e.g.:
-> 
->   static inline int pgd_present(pgd_t pgd)
->   {
->  -       return !pgd_none(pgd);
->  +       return (pgd_raw(pgd) & cpu_to_be64(_PAGE_PRESENT));
->   }
-> 
-> Unfortunately this is broken on big endian, as the result of the
-> bitwise && is truncated to int, which is always zero because
-> _PAGE_PRESENT is 0x8000000000000000ul. This means pgd_present() and
-> pud_present() are always false at compile time, and the compiler
-> elides the subsequent code.
-> 
-> Remarkably with that bug present we are still able to boot and run
-> with few noticeable effects. However under some work loads we are able
-> to trigger a warning in the ext4 code:
+From: Jasper Mattsson <jasu@njomotys.info>
 
-Wow, good catch. I wouldn't believe there are so few bad effects from
-such a major breakage! :)
+This is required to mark outputs of certain MUXes as CLK_IS_CRITICAL.
 
-								Honza
+Signed-off-by: Jasper Mattsson <jasu@njomotys.info>
+Acked-by: Mars Cheng <mars.cheng@mediatek.com>
+Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+---
+ drivers/clk/mediatek/clk-mtk.h | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-> 
->   WARNING: CPU: 11 PID: 29593 at fs/ext4/inode.c:3927 .ext4_set_page_dirty+0x70/0xb0
->   CPU: 11 PID: 29593 Comm: debugedit Not tainted 4.20.0-rc1 #1
->   ...
->   NIP .ext4_set_page_dirty+0x70/0xb0
->   LR  .set_page_dirty+0xa0/0x150
->   Call Trace:
->    .set_page_dirty+0xa0/0x150
->    .unmap_page_range+0xbf0/0xe10
->    .unmap_vmas+0x84/0x130
->    .unmap_region+0xe8/0x190
->    .__do_munmap+0x2f0/0x510
->    .__vm_munmap+0x80/0x110
->    .__se_sys_munmap+0x14/0x30
->    system_call+0x5c/0x70
-> 
-> The fix is simple, we need to convert the result of the bitwise && to
-> an int before returning it.
-> 
-> Thanks to Jan Kara and Aneesh for help with debugging.
-> 
-> Fixes: da7ad366b497 ("powerpc/mm/book3s: Update pmd_present to look at _PAGE_PRESENT bit")
-> Cc: stable@vger.kernel.org # v4.20+
-> Reported-by: Erhard F. <erhard_f@mailbox.org>
-> Reviewed-by: Aneesh Kumar K.V <aneesh.kumar@linux.ibm.com>
-> Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-> ---
->  arch/powerpc/include/asm/book3s/64/pgtable.h | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
-> index c9bfe526ca9d..d8c8d7c9df15 100644
-> --- a/arch/powerpc/include/asm/book3s/64/pgtable.h
-> +++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
-> @@ -904,7 +904,7 @@ static inline int pud_none(pud_t pud)
->  
->  static inline int pud_present(pud_t pud)
->  {
-> -	return (pud_raw(pud) & cpu_to_be64(_PAGE_PRESENT));
-> +	return !!(pud_raw(pud) & cpu_to_be64(_PAGE_PRESENT));
->  }
->  
->  extern struct page *pud_page(pud_t pud);
-> @@ -951,7 +951,7 @@ static inline int pgd_none(pgd_t pgd)
->  
->  static inline int pgd_present(pgd_t pgd)
->  {
-> -	return (pgd_raw(pgd) & cpu_to_be64(_PAGE_PRESENT));
-> +	return !!(pgd_raw(pgd) & cpu_to_be64(_PAGE_PRESENT));
->  }
->  
->  static inline pte_t pgd_pte(pgd_t pgd)
-> -- 
-> 2.20.1
-> 
+diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
+index f83c2bbb677e..daab6ee94788 100644
+--- a/drivers/clk/mediatek/clk-mtk.h
++++ b/drivers/clk/mediatek/clk-mtk.h
+@@ -111,7 +111,11 @@ struct mtk_composite {
+ 	MUX_GATE_FLAGS(_id, _name, _parents, _reg, _shift, _width,	\
+ 		_gate, CLK_SET_RATE_PARENT)
+ 
+-#define MUX(_id, _name, _parents, _reg, _shift, _width) {		\
++#define MUX(_id, _name, _parents, _reg, _shift, _width)			\
++	MUX_FLAGS(_id, _name, _parents, _reg,				\
++		  _shift, _width, CLK_SET_RATE_PARENT)
++
++#define MUX_FLAGS(_id, _name, _parents, _reg, _shift, _width, _flags) {	\
+ 		.id = _id,						\
+ 		.name = _name,						\
+ 		.mux_reg = _reg,					\
+@@ -121,7 +125,7 @@ struct mtk_composite {
+ 		.divider_shift = -1,					\
+ 		.parent_names = _parents,				\
+ 		.num_parents = ARRAY_SIZE(_parents),			\
+-		.flags = CLK_SET_RATE_PARENT,				\
++		.flags = _flags,				\
+ 	}
+ 
+ #define DIV_GATE(_id, _name, _parent, _gate_reg, _gate_shift, _div_reg,	\
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.20.1
+
