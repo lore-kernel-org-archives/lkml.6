@@ -6,63 +6,63 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFEEC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53615C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:23:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 271B621927
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:23:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21C2F21927
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:23:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="S+Yfs7Ox"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KGXgbkE1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408051AbfBNSXq (ORCPT
+        id S2408076AbfBNSXw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 13:23:46 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37302 "EHLO
+        Thu, 14 Feb 2019 13:23:52 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:40256 "EHLO
         mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406694AbfBNSXq (ORCPT
+        with ESMTP id S2408055AbfBNSXw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 13:23:46 -0500
-Received: by mail-pl1-f196.google.com with SMTP id b5so3582902plr.4
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 10:23:46 -0800 (PST)
+        Thu, 14 Feb 2019 13:23:52 -0500
+Received: by mail-pl1-f196.google.com with SMTP id bj4so3570057plb.7
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 10:23:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:content-transfer-encoding:to:in-reply-to:user-agent
          :subject:message-id:references:cc:from:date;
-        bh=bWMqxxh71sYomjw3+iVu5SDnYatAZ8LCG9PdU2Q4xsI=;
-        b=S+Yfs7Oxw8a3/VwgN8X7DA+pUp78HLGS0qeHTt6RsOZMSV/UHsHhti1t/lj4bjG4JQ
-         xsX7gBU5/j+QtHVO2Qbssgf4DycyogbliJDcsI38kiZVNLdhM4oFkF9/1xgLieCltJaQ
-         y+VjrA3lk9g+0cJxWaFZ1yLV2H7d4HK3pzwPU=
+        bh=FAWxPv94ddgd6BnLn4nm1oTRlMpVgNSJoFrPvkS3g5I=;
+        b=KGXgbkE1qGUD9wMmvN7YKz5WXey9m3sl1LX1bT2j2Yh9IIvz1iA6QQnR8p1IW57KNr
+         z1B1OR+cNHlwiHFz6DOpX7rWc6lResAxSW9c4BLsTL46ASNQ5RrvL2J/tEyoDc0pMk3o
+         klXEaf6S4xIKkyETbuEdDiPJiaDAI4a0YTNV8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:content-transfer-encoding:to
          :in-reply-to:user-agent:subject:message-id:references:cc:from:date;
-        bh=bWMqxxh71sYomjw3+iVu5SDnYatAZ8LCG9PdU2Q4xsI=;
-        b=IPCmEaWz3fYSUYwp/oParJzTjuDxtp709zcCPuCwkm/ZwsXncx8hn8EDZ7Iz+FTu81
-         VWpJglQKuVkRHPCB7mOqdcvu1nUt6g3uvX5K02iwW2Ng7xDsI16CfbhCFTrD4DIfOPDp
-         HiTGOkamhIYqKWC7OUk0LKEBXj8F1bGDcK3Zldgk+LlfmYzcblCW2IhTQvAxvccPaceR
-         f6LALzfcv68+jGxJbIsFLM9egR5HWR8AqWro+KsizeOQk57iQwl0ZD1GHnTM7ZUXM5nG
-         kz+KmSXyxEV/jOiR7k5JeUFYARQOetwiSTdKLBWfW9Csz2v8ik64X06aQlVKJ4DmjOEj
-         kKLg==
-X-Gm-Message-State: AHQUAuayb2BIerMMbrH9kqL7DE7Qm3GL7GGhvnAC5UkvRfxgY8yDyIiB
-        D4jCgnIBUoZmxH/s8xhz+DefNw==
-X-Google-Smtp-Source: AHgI3Ibu3pv63e9hZjTB8VFBPJ6EENseF95lpab9Yko1XmYbUUJCtc5P6IvSqDCeEAhv1xRhyXei/g==
-X-Received: by 2002:a17:902:31c3:: with SMTP id x61mr5508579plb.113.1550168625764;
-        Thu, 14 Feb 2019 10:23:45 -0800 (PST)
+        bh=FAWxPv94ddgd6BnLn4nm1oTRlMpVgNSJoFrPvkS3g5I=;
+        b=Bg1tLUnte474iVXXXAYQucvn6VLB3HqzrF94pGgcLPrevg3NvKDXHeoZozCQsF4MBd
+         gnW5Dh7C+UkzKqFltInA8mj/5e3eDDCvRF19CGtlsEfUXW2/gAkGvHgm04/a16NMLSu2
+         RijeK0BDZk/buG4DIVXzDIQ7lWvEqT0LSFeMvUmcDXTVwmMSrk+wTBIscJdSESEgSvAY
+         VWpZeWyC/bMH3rPUKNRCxBMO28dKc4dghIwi8vViv+rKpZBWfs7RU2DEv8Ja4e3qEW0G
+         mkIuLru6WlMsGwIz8KWypnue5zpL11vZbEvslg7L7YSEVe5z/dXG2N5DIn4q2VgwkjRK
+         Tb/A==
+X-Gm-Message-State: AHQUAuZ1V8K5/q0bXDeFjY++ekQcUZyYnN5S+xaNOT2yE/3/5gar1FuU
+        gma705As/6ohiHXsMsfM9TOrgA==
+X-Google-Smtp-Source: AHgI3IZeXXVtscwtX7Q5eQleR4x23Hih/A3s/BfWPA1ORxhbnAt8Ch5ai5eGtPiAMOXI0ljQ08MCvA==
+X-Received: by 2002:a17:902:bcc6:: with SMTP id o6mr5535680pls.39.1550168631797;
+        Thu, 14 Feb 2019 10:23:51 -0800 (PST)
 Received: from localhost ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id 62sm3567446pgc.61.2019.02.14.10.23.45
+        by smtp.gmail.com with ESMTPSA id q1sm5038302pfb.96.2019.02.14.10.23.51
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 10:23:45 -0800 (PST)
+        Thu, 14 Feb 2019 10:23:51 -0800 (PST)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         Douglas Anderson <dianders@chromium.org>,
         Ulf Hansson <ulf.hansson@linaro.org>
-In-Reply-To: <20190214181249.2749-1-dianders@chromium.org>
+In-Reply-To: <20190214181249.2749-2-dianders@chromium.org>
 User-Agent: alot/0.8
-Subject: Re: [PATCH 1/2] PM / Domains: Mark "name" const in genpd_dev_pm_attach_by_name()
-Message-ID: <155016862432.115909.9670639610937764563@swboyd.mtv.corp.google.com>
-References: <20190214181249.2749-1-dianders@chromium.org>
+Subject: Re: [PATCH 2/2] PM / Domains: Mark "name" const in dev_pm_domain_attach_by_name()
+Message-ID: <155016863043.115909.10810905918164847994@swboyd.mtv.corp.google.com>
+References: <20190214181249.2749-1-dianders@chromium.org> <20190214181249.2749-2-dianders@chromium.org>
 Cc:     linux-arm-msm@vger.kernel.org,
         Viresh Kumar <viresh.kumar@linaro.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
@@ -73,21 +73,21 @@ Cc:     linux-arm-msm@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Pavel Machek <pavel@ucw.cz>
 From:   Stephen Boyd <swboyd@chromium.org>
-Date:   Thu, 14 Feb 2019 10:23:44 -0800
+Date:   Thu, 14 Feb 2019 10:23:50 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Douglas Anderson (2019-02-14 10:12:48)
-> The genpd_dev_pm_attach_by_name() simply takes the name and passes it
-> to of_property_match_string() where the argument is "const char *".
-> Adding a const here allows a later patch to add a const to
-> dev_pm_domain_attach_by_name() which allows drivers to pass in a name
-> that was declared "const" in a driver.
+Quoting Douglas Anderson (2019-02-14 10:12:49)
+> As of the patch ("PM / Domains: Mark "name" const in
+> genpd_dev_pm_attach_by_name()") it's clear that the name in
+> dev_pm_domain_attach_by_name() can be const.  Mark it as so.  This
+> allows drivers to pass in a name that was declared "const" in a
+> driver.
 >=20
-> Fixes: 5d6be70add65 ("PM / Domains: Introduce option to attach a device b=
-y name to genpd")
+> Fixes: 27dceb81f445 ("PM / Domains: Introduce dev_pm_domain_attach_by_nam=
+e()")
 > Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > ---
 
