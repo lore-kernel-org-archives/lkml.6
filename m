@@ -2,131 +2,106 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B44EAC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:25:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CFFAC10F04
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BDEB21900
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:25:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l+z3NP45"
+	by mail.kernel.org (Postfix) with ESMTP id 1B9E321B24
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:26:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550179585;
+	bh=WI1QmcOyy/0Wivhhry7Y7TZqKL/+Bxs3/rSslkhVn1w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Z7HzQ0+8o+F4WZ2OWywObsMK+gxdH2gCyO29XL60xrsCtt8HmCjOnkpDstUFWMDOq
+	 aYkeYJBIiN/6rfvYEVyeUthtLMi9CHEkvUtZUHqp7MK4+d7RpHyF7w3Jp1yyYlC3az
+	 NLlPzUe6rrLYfwpE6VyQzFqv2SHsn0O2onOgfwIE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438013AbfBNVZv (ORCPT
+        id S2440121AbfBNV0X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 16:25:51 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:46291 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388263AbfBNVZv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 16:25:51 -0500
-Received: by mail-qt1-f195.google.com with SMTP id y20so8556755qtm.13
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 13:25:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uvdk4l69SVq1YCepBd0SNErCFPeMSilcO259odTUTos=;
-        b=l+z3NP45VQ7XjqmgiGSFeyDx69gQDt8EGKaKIWsQEH7XQdV3EtFSlPAyH8ieWnAtN4
-         hTalZqklXKd0pkRVVIOEbyy2xBsqOFUPT5tASXhKSIBj36KpP3dY0vGEjKJcG3pqrxpE
-         vjJLZUT6gYRtssNYOrih/32Mx+hAECs2nNXgG5wJhvFApQHKiaMC21MbI64RiNq5Va8m
-         Q8V80F+9nUsTmY7u2D4Er/ESohNGhAtQ+vy2BSb/x28lbkpjS2Cl0ow7w5BG5HXwBqF8
-         wjU5YFJ36CvR0NwZGucMYkGOmAm1Yq3HUF+gsEgFQfP3Jx/t7BM0b+1qkY+ScSyVALij
-         v32w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uvdk4l69SVq1YCepBd0SNErCFPeMSilcO259odTUTos=;
-        b=Hw8Z39sXkvnFHCG4K56CruuhaoUM25thE9O3hynL49HhSaPN6IzdxKiRCj1oDSLQBR
-         Lm0aRtnkU+uG3a/zBg8TbzIDzV+Q/cYJkvj/OU1xTt1WkOPpHcZXCM6SHuFCKUVW+FTt
-         kDxbIr7zDm396MUm7wVn/THSzkdg2h2yqgU9x7/k/RV5XZyUndxkIIFJhPsy2mkM+MWc
-         akv0ZkkSw8E+WKSlCuv2V4nu0IbMq6pyNtc24h3Tdpie2oS+NJKPtJJRnvCpzTGDvFDU
-         EkvTZoPZanE7VdObwC2Dg3nDPcHBXle+qP67waK+JFgFVS0lz5Dnl+gRk7w/LN1z85CW
-         U+HQ==
-X-Gm-Message-State: AHQUAuZOlhZ5IclMYBj6sogDEp7GiS7REQnLrJ3/wXcrAzZ2BrR/KkEJ
-        +XGexxWGl2CLlEsm/Xf/8eMiVA==
-X-Google-Smtp-Source: AHgI3Ia+iJnekvlkjNnCl1bw/RcAzTNdWayOpTyWdfUsJLRuOu+vzVZLin+EplRFNc/LJudNKlGUKQ==
-X-Received: by 2002:ac8:1ae9:: with SMTP id h38mr4899963qtk.229.1550179550058;
-        Thu, 14 Feb 2019 13:25:50 -0800 (PST)
-Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
-        by smtp.gmail.com with ESMTPSA id s48sm2145501qts.47.2019.02.14.13.25.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 13:25:49 -0800 (PST)
-Date:   Thu, 14 Feb 2019 16:25:49 -0500
-From:   Joel Fernandes <joelaf@google.com>
-To:     Todd Kjos <tkjos@google.com>
-Cc:     Todd Kjos <tkjos@android.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Martijn Coenen <maco@google.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Android Kernel Team <kernel-team@android.com>
-Subject: Re: [PATCH v3 1/7] binder: create userspace-to-binder-buffer copy
- function
-Message-ID: <20190214212549.GB185075@google.com>
-References: <20190208183520.30886-1-tkjos@google.com>
- <20190208183520.30886-2-tkjos@google.com>
- <20190214194540.GA185075@google.com>
- <CAHRSSEw22kuwLqjXHocBQTv4d5hS1tXi4uirjBhgQ=yGbw9J4g@mail.gmail.com>
- <CAJWu+oqq0s3x7j+gPzSRREj2gjZxzAPS_=XVM4uhC9GjSM9zfw@mail.gmail.com>
+        Thu, 14 Feb 2019 16:26:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35626 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388263AbfBNV0X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 16:26:23 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 016B121900;
+        Thu, 14 Feb 2019 21:26:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550179582;
+        bh=WI1QmcOyy/0Wivhhry7Y7TZqKL/+Bxs3/rSslkhVn1w=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oGwRMeGYXasbairlftRGWTx8bRRKJwaraw5F45XkiiioAYGBL1DvlD67PHJKOy5vF
+         K9987LYnCLjGeF7QwMyWbVCJspPJ+/d8tvxaasAzA4LNznd5Ysm80/JxUefRHc0WUa
+         PRYbcIfrNRxBun8qQP25yotc7CkUItVTpbRsWU0c=
+Date:   Thu, 14 Feb 2019 15:26:19 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Lukas Wunner <lukas@wunner.de>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Oza Pawandeep <poza@codeaurora.org>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] PCI: Fix runtime PME generation from D3hot
+Message-ID: <20190214212619.GO96272@google.com>
+References: <20190131170746.7604-1-mika.westerberg@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJWu+oqq0s3x7j+gPzSRREj2gjZxzAPS_=XVM4uhC9GjSM9zfw@mail.gmail.com>
+In-Reply-To: <20190131170746.7604-1-mika.westerberg@linux.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 03:53:54PM -0500, Joel Fernandes wrote:
-> On Thu, Feb 14, 2019 at 3:42 PM Todd Kjos <tkjos@google.com> wrote:
-> >
-> > On Thu, Feb 14, 2019 at 11:45 AM Joel Fernandes <joelaf@google.com> wrote:
-> [snip]
-> > > > + * check_buffer() - verify that buffer/offset is safe to access
-> > > > + * @alloc: binder_alloc for this proc
-> > > > + * @buffer: binder buffer to be accessed
-> > > > + * @offset: offset into @buffer data
-> > > > + * @bytes: bytes to access from offset
-> > > > + *
-> > > > + * Check that the @offset/@bytes are within the size of the given
-> > > > + * @buffer and that the buffer is currently active and not freeable.
-> > > > + * Offsets must also be multiples of sizeof(u32). The kernel is
-> > >
-> > > In all callers of binder_alloc_copy_user_to_buffer, the alignment of offsets
-> > > is set to sizeof(void *). Then shouldn't this function check for sizeof(void *)
-> > > alignment instead of u32?
-> >
-> > But there are other callers of check_buffer() later in the series that
-> > don't require pointer-size alignment. u32 alignment is consistent with
-> > the alignment requirements of the binder driver before this change.
-> > The copy functions don't actually need to insist on alignment, but
-> > these binder buffer objects have always used u32 alignment which has
-> > been checked in the driver. If user code misaligned it, then errors
-> > are returned. The alignment checks are really to be consistent with
-> > previous binder driver behavior.
+On Thu, Jan 31, 2019 at 08:07:44PM +0300, Mika Westerberg wrote:
+> Hi all,
 > 
-> Got it, thanks.
+> Heiner reported [1] that runtime PME generation of his network card does
+> not work after commit 0e157e528604 ("PCI/PME: Implement runtime PM
+> callbacks") that landed in v4.20. Reverting the commit helps but it has
+> another drawback, which I originally tried to solve with the commit, that
+> the PCIe hierarchy wakes up immediately after being put into D3cold.
+> 
+> This series of two patches tries to fix both issues so that PME wakes up
+> from D3hot and that the hierarchy does not wake up immediately from D3cold.
+> 
+> The previous version of the series can be found here:
+> 
+>   https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1892241.html
+> 
+> Changes from the previous version:
+> 
+>   * Add tags from Heiner and Rafael
+>   * Update changelog to mention relevent PCIe spec sections
+>   * Add comment to pcie_disable_interrupt() explaining why and what is
+>     masked
+> 
+> [1] https://www.spinics.net/lists/linux-pci/msg79051.html
+> 
+> Mika Westerberg (2):
+>   Revert "PCI/PME: Implement runtime PM callbacks"
+>   PCI: pciehp: Disable Data Link Layer State Changed event on suspend
 
-One more thing I wanted to ask is, kmap() will now cause global lock
-contention because of using spin_lock due to kmap_high().
+I tentatively applied these to pci/pm for v5.1.
 
-Previously the binder driver was made to not use global lock (as you had
-done). Now these paths will start global locking on 32-bit architectures.
-Would that degrade performance?
+I suspect these should be marked for stable (v4.20+)?
 
-Are we not using kmap_atomic() in this patch because of any concern that the
-kmap fixmap space is limited and may run out?
+I don't think the bugzilla in the second patch is directly relevant to
+that patch.  I'd like to update the patch with a more relevant
+bugzilla if you have or can open one?
 
-thanks,
-
- - Joel
-
-
+>  drivers/pci/hotplug/pciehp_hpc.c | 17 +++++++++++++++--
+>  drivers/pci/pcie/pme.c           | 27 ---------------------------
+>  2 files changed, 15 insertions(+), 29 deletions(-)
+> 
+> -- 
+> 2.20.1
+> 
