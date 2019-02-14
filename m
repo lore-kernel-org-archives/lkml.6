@@ -2,124 +2,154 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A49EEC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59172C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:34:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 797F22229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:34:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30235222D2
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:34:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437809AbfBNJeg (ORCPT
+        id S2437824AbfBNJej (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Feb 2019 04:34:39 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:37010 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2437803AbfBNJeg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 14 Feb 2019 04:34:36 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:39408 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388196AbfBNJee (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 04:34:34 -0500
-Received: by mail-lj1-f195.google.com with SMTP id g80so4614409ljg.6;
-        Thu, 14 Feb 2019 01:34:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=ZeUnetqvuA+PqiTe8imsP6iY5EBsg84BOkF6NC5DMOQ=;
-        b=Qbxg+MVqhtBx8RTypxyrkBC7iUBsHUqgXLh+Nw2YGSXcCg3zaZMfjtDjpaitJldtO6
-         AxV9W7MnzQEa3roHUc4eVLIY5hueROaeBILrVWS6nzGsQRHgcBVOtruoCaN7pz4ap+lG
-         sbOzJ48hmEiAQvvBQ1E6587ASephzo7585i1WeundQCrMgQwZcy1pA2ILQlSQNq7NRDI
-         DpjKj5/ouNGUO7upog1bpU5QO4mZIE1ibFVUwpAWLIfu+RysW5V3saKMkcX4676NOCYT
-         ZGRGDK9hAPoQykdJfBwxYdt+UDhh+I6AsHyaRCz8XHPTUkFoBhvN3e1togiLX+O84gYu
-         39Mg==
-X-Gm-Message-State: AHQUAuYz3Wzq/dY9LPGGCqD4Gev5STt8tQk2OdWVaNsp8dH16nfPPLhv
-        w6/jCr0lYtwFFHEbAhmMz7OKeYMi
-X-Google-Smtp-Source: AHgI3Ibg672CD6QprUzl8emdd7X1rM2fKBHSjg5zD3clLS2qZPMmIiSGolgSViTqfTngIKs7LTXrvQ==
-X-Received: by 2002:a2e:3a10:: with SMTP id h16-v6mr1777219lja.184.1550136872163;
-        Thu, 14 Feb 2019 01:34:32 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id k68-v6sm341509ljb.35.2019.02.14.01.34.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 01:34:31 -0800 (PST)
-Date:   Thu, 14 Feb 2019 11:34:19 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     matti.vaittinen@fi.rohmeurope.com, mazzisaccount@gmail.com
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, heikki.haikola@fi.rohmeurope.com,
-        mikko.mutanen@fi.rohmeurope.com, Robin Gong <yibin.gong@nxp.com>,
-        Elven Wang <elven.wang@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Angus Ainslie <angus.ainslie@puri.sm>
-Subject: [PATCH v3 0/3] bd718x7: Support SNVS low power state
-Message-ID: <cover.1550135853.git.matti.vaittinen@fi.rohmeurope.com>
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5C8E8C05784A;
+        Thu, 14 Feb 2019 09:34:36 +0000 (UTC)
+Received: from [10.36.117.7] (ovpn-117-7.ams2.redhat.com [10.36.117.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 343DD5D704;
+        Thu, 14 Feb 2019 09:34:29 +0000 (UTC)
+Subject: Re: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
+To:     "Wang, Wei W" <wei.w.wang@intel.com>,
+        'Nitesh Narayan Lal' <nitesh@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
+        "pagupta@redhat.com" <pagupta@redhat.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "riel@surriel.com" <riel@surriel.com>,
+        "dodgen@google.com" <dodgen@google.com>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        "dhildenb@redhat.com" <dhildenb@redhat.com>,
+        "aarcange@redhat.com" <aarcange@redhat.com>
+References: <20190204201854.2328-1-nitesh@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF68060@shsmsx102.ccr.corp.intel.com>
+ <17adc05d-91f9-682b-d9a4-485e6a631422@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF6B52A@shsmsx102.ccr.corp.intel.com>
+ <62b43699-f548-e0da-c944-80702ceb7202@redhat.com>
+ <6198f4b9-47ad-2647-73de-da057541c45f@redhat.com>
+ <20190213120733-mutt-send-email-mst@kernel.org>
+ <b7956e84-256f-2304-3a09-28fc47c1efb7@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF6F1C3@shsmsx102.ccr.corp.intel.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <401883fd-bdad-6e34-cabe-c9b8fdadce92@redhat.com>
+Date:   Thu, 14 Feb 2019 10:34:28 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <286AC319A985734F985F78AFA26841F73DF6F1C3@shsmsx102.ccr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 14 Feb 2019 09:34:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Patch series adding SNVS power state support to ROHM bd718x7 driver.
+On 14.02.19 10:12, Wang, Wei W wrote:
+> On Thursday, February 14, 2019 1:22 AM, Nitesh Narayan Lal wrote:
+>> In normal condition yes we would not like to report any memory when the
+>> guest is already under memory pressure.
+>>
+>> I am not sure about the scenario where both guest and the host are under
+>> memory pressure, who will be given priority? Is it something per-decided or
+>> it depends on the use case?
+>>
+> 
+> That's one of the reasons that I would vote for "host to ask for free pages".
 
-The SNVS is a low power state used by i.MX family of SoCs. In SNVS
-state processor and most of the peripherials are shut off in order
-to minimize power consumption.
+As I already said, there are scenarios where this does not work reliably.
 
-BD71837 and BD71847 can be configured to use the SNVS state as a
-reset/shutdown target state. There is some HW limitations though.
-Main limitation is that regulators which have been under SW control
-(regarding enable/disable state) will stay shut down after such reset.
-Thus if SNVS is used as reset target the control of boot crucial
-regulators must be left to HW state machine.
+When we
 
-This patch seris adds DT properties for specifying whether to use
-SNVS as reset target state and for setting the HW run level
-specific voltages.
+1. Let the guest report free pages
+2. Allow the hypervisor to enable/disable it
 
-Changelog v3:
-Patch 2 unchanged
-- DT bindings SNVS rest description improved(?)
-- Added optional HW state properties in usage example
-- Fixed a bug from DVS voltage settings (buck 1 was initialize with
-  voltag from buck 2 and buck 2 was uninitialized) - thanks to Angus
-  Ainslie for reoporting.
+We have a mechanism that is superior to what you describe.
 
-Changelog v2:
-- drop RFC tag
-- add handling of SNVS as reset target
-- add skipping SW control for critical regulators based on presense
-  of regulator-always-on and regulator-boot-on
+"host to ask for free pages" can be emulated using that.
 
----
-
-Matti Vaittinen (3):
-  devicetree: bindings: bd718x7: document HW state related ROHM specific
-    properties
-  regulator: add regulator_desc_list_voltage_linear_range
-  regulator: bd718x7: Support SNVS low power state
-
- .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  |  17 ++
- .../bindings/regulator/rohm,bd71837-regulator.txt  |  38 ++++
- drivers/regulator/bd718x7-regulator.c              | 201 ++++++++++++++++++---
- drivers/regulator/helpers.c                        |  39 +++-
- include/linux/regulator/driver.h                   |   6 +
- 5 files changed, 266 insertions(+), 35 deletions(-)
-
--- 
-2.14.3
+> 
+> Host can have a global view of all the guest's memory states, so better to have the
+> memory overcommitment policy defined on the host.
+> 
+> For example, the host can know guest1 is under memory pressure (thus not asking him)
+> and guest2 has a huge amount of free memory. When host lacks memory to run the 3rd
+> guest, it can asks guest2 to offer some free memory. 
+> 
+> Best,
+> Wei
+> 
 
 
 -- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
 
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+Thanks,
+
+David / dhildenb
