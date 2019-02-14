@@ -2,67 +2,67 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E09F4C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:03:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2FF2C4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:03:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BF04222C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:03:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7805222C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:03:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="hbwMBi+u"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="Me35s4gp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393205AbfBNADa (ORCPT
+        id S2393391AbfBNADd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 19:03:30 -0500
-Received: from mail-eopbgr740047.outbound.protection.outlook.com ([40.107.74.47]:26526
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        Wed, 13 Feb 2019 19:03:33 -0500
+Received: from mail-eopbgr770048.outbound.protection.outlook.com ([40.107.77.48]:46000
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387940AbfBNAD3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 19:03:29 -0500
+        id S1732400AbfBNADc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 19:03:32 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sR5XeFO+figSswTHOWnV4OfPfuj7oqOVLTwqqLiK/nY=;
- b=hbwMBi+uX2qVkOtDX6psYPu3/juTwjL1OEcj0isUZpUD78wiAQcwQqp5EFNJV3dkJYOvApN/DqfD6+hyXe2TEx3b+JwtMnL80pIs52oZhgCTtHobkmILS5C0Pdchyz5+U+dP0glrVnkUckKgMJzldni8NAnOc1cVQNsUNMBe1U8=
-Received: from SN4PR0201CA0037.namprd02.prod.outlook.com
- (2603:10b6:803:2e::23) by SN1PR02MB2158.namprd02.prod.outlook.com
- (2a01:111:e400:7a48::20) with Microsoft SMTP Server (version=TLS1_2,
+ bh=nP8tdw2S9QumZGCJScqE8f4jhuqe5clIoQFMo9pTpms=;
+ b=Me35s4gpgLHSQeHF0gDNjBZkMehLT3/z01LI9J7pqLrhp4P7IT7F6+Vlaw9e+Mhqvi6cyKjJF2kI0Yx4Azlc7GsJaIUFLYpQIwp2STNsyMcjpxRrj3eTQTDXhSbQ3NfVKOXwA8KX0WQQvpePwBxPj65hTsCG1FIAS8II2H75/Q8=
+Received: from DM6PR02CA0055.namprd02.prod.outlook.com (2603:10b6:5:177::32)
+ by SN6PR02MB5023.namprd02.prod.outlook.com (2603:10b6:805:67::20) with
+ Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1622.16; Thu, 14 Feb
  2019 00:03:25 +0000
-Received: from CY1NAM02FT053.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::209) by SN4PR0201CA0037.outlook.office365.com
- (2603:10b6:803:2e::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1622.16 via Frontend
+Received: from BL2NAM02FT024.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::208) by DM6PR02CA0055.outlook.office365.com
+ (2603:10b6:5:177::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1601.19 via Frontend
  Transport; Thu, 14 Feb 2019 00:03:25 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+Authentication-Results: spf=pass (sender IP is 149.199.60.100)
  smtp.mailfrom=xilinx.com; android.com; dkim=none (message not signed)
  header.d=none;android.com; dmarc=bestguesspass action=none
  header.from=xilinx.com;
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- CY1NAM02FT053.mail.protection.outlook.com (10.152.74.165) with Microsoft SMTP
+ 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
+Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
+ BL2NAM02FT024.mail.protection.outlook.com (10.152.77.62) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1580.10
  via Frontend Transport; Thu, 14 Feb 2019 00:03:24 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+Received: from unknown-38-66.xilinx.com ([149.199.38.66]:49088 helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
         (envelope-from <hyun.kwon@xilinx.com>)
-        id 1gu4Uu-0004gw-Bl; Wed, 13 Feb 2019 16:03:24 -0800
+        id 1gu4Uu-00080W-Bl; Wed, 13 Feb 2019 16:03:24 -0800
 Received: from localhost ([127.0.0.1] helo=xsj-pvapsmtp01)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <hyun.kwon@xilinx.com>)
-        id 1gu4Up-0001Jq-5v; Wed, 13 Feb 2019 16:03:19 -0800
+        id 1gu4Up-0001Js-58; Wed, 13 Feb 2019 16:03:19 -0800
 Received: from [172.19.2.244] (helo=xsjhyunkubuntu)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <hyunk@smtp.xilinx.com>)
-        id 1gu4Uo-0001JN-Ga; Wed, 13 Feb 2019 16:03:18 -0800
+        id 1gu4Uo-0001JP-H3; Wed, 13 Feb 2019 16:03:18 -0800
 Received: by xsjhyunkubuntu (Postfix, from userid 13638)
-        id 3EB232C740D; Wed, 13 Feb 2019 16:02:16 -0800 (PST)
+        id 44A762C7416; Wed, 13 Feb 2019 16:02:16 -0800 (PST)
 From:   Hyun Kwon <hyun.kwon@xilinx.com>
 To:     Laura Abbott <labbott@redhat.com>,
         Sumit Semwal <sumit.semwal@linaro.org>,
@@ -77,88 +77,84 @@ CC:     Martijn Coenen <maco@android.com>, Wendy Liang <jliang@xilinx.com>,
         Michal Simek <michal.simek@xilinx.com>,
         Cyril Chemparathy <cyrilc@xilinx.com>,
         Hyun Kwon <hyun.kwon@xilinx.com>
-Subject: [PATCH 0/1] staging: android: ion: add the GPL exception note to header
-Date:   Wed, 13 Feb 2019 16:01:45 -0800
-Message-ID: <1550102506-24731-1-git-send-email-hyun.kwon@xilinx.com>
+Subject: [PATCH 1/1] staging: android: ion: Add the GPL exception for syscalls
+Date:   Wed, 13 Feb 2019 16:01:46 -0800
+Message-ID: <1550102506-24731-2-git-send-email-hyun.kwon@xilinx.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1550102506-24731-1-git-send-email-hyun.kwon@xilinx.com>
+References: <1550102506-24731-1-git-send-email-hyun.kwon@xilinx.com>
 X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
 X-TM-AS-User-Approved-Sender: Yes;Yes
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(39850400004)(396003)(346002)(376002)(136003)(2980300002)(54094003)(199004)(189003)(7416002)(51416003)(4326008)(106466001)(107886003)(6266002)(4744005)(126002)(476003)(2616005)(486006)(36756003)(44832011)(14444005)(26005)(2201001)(63266004)(426003)(90966002)(336012)(52956003)(186003)(305945005)(106002)(16586007)(48376002)(50466002)(42186006)(6306002)(316002)(478600001)(50226002)(8936002)(54906003)(966005)(110136005)(81156014)(47776003)(356004)(103686004)(6666004)(2906002)(8676002)(81166006)(107986001)(921003)(83996005)(1121003)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR02MB2158;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT053;1:6kZaBwi6yGs0lXX5EyUZOJGSM28WwHy//ph33KBhfJfALC6cjSOVgdkhaHRDbe7HjogPUj/a3//B1DedCqbeRTbq/Eo7dN1WZhX2iXgvfpxqqfyWB4BQh3wHIF0AJPwPHzMR0Skx10S5/m5OP8LMskFr4rmCaP58mEuD7sK8Uu8=
+X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(396003)(136003)(376002)(39860400002)(2980300002)(189003)(199004)(478600001)(2906002)(6666004)(6266002)(356004)(107886003)(106466001)(50226002)(4744005)(4326008)(36756003)(63266004)(103686004)(47776003)(90966002)(52956003)(8936002)(8676002)(81156014)(2201001)(76176011)(7416002)(51416003)(81166006)(126002)(26005)(11346002)(186003)(446003)(336012)(2616005)(476003)(44832011)(426003)(305945005)(110136005)(42186006)(316002)(54906003)(16586007)(14444005)(106002)(50466002)(48376002)(486006)(921003)(107986001)(5001870100001)(83996005)(1121003)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB5023;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-100.xilinx.com,xapps1.xilinx.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BL2NAM02FT024;1:uLpWcWQBYSPHv1xUFgAL0QPm1vr5Y0ajeAUqoXiu0wEJw6a5QiO7SXoelpD0+CxZk9ABvwZ97Ow61EYYC9R4SNNj5MFgw6QIXJ+euADfcovnHT5MeUbrH8I6cm55ikexkQ+EFSDWeufze2sNXyTNwHI3O9xK2yKuUErAp1CF8uU=
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 937dec4f-6217-4a0c-81d2-08d6920fd770
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4608076)(4709027)(2017052603328)(7153060);SRVR:SN1PR02MB2158;
-X-MS-TrafficTypeDiagnostic: SN1PR02MB2158:
-X-MS-Exchange-PUrlCount: 1
+X-MS-Office365-Filtering-Correlation-Id: 9fbb77b4-0801-4199-9e05-08d6920fd722
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4608076)(4709027)(2017052603328)(7153060);SRVR:SN6PR02MB5023;
+X-MS-TrafficTypeDiagnostic: SN6PR02MB5023:
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Exchange-Diagnostics: 1;SN1PR02MB2158;20:LMVkBT+F9cphAkoyCrYH7Rh1c/DLkKP6b5sBbXIyCE0RJlB+XXQU0yKY4HLQierQn0IZ6992O+257Qef6KfxSofeIYnj7/4x3If/VG5y2RvxwcN50cmS5gRIM0ULFgok/+QtdIzW/DpzHWP1jrKSfzLl3fRFZ7jUgk1dWfY6HqZRWZN5ldr3RbLFOTBt+zgzI/QtA7L8K5Jl9IMfx+mGQzKsW0eh83m5h2spR+6Y2erR7TuhSty+P67RU4LXlOGYHnSe4tdH5HWyH+wCuCZrOid/G0/o1MpwXfbHbhxsQgiJpT/SkRhBPF8UNIQ9ynB51wQfXtV6kaGCu+AYYe8bnxQ7QePxBp4uDVRFV1fywsPk0roEpfvq4Nrm4ERy0eNt63RGotf0jRw40AMOj2OTI+nHwzvi/7xS3BQGBP2yW3bclZTNUgmdn7Rnm/blz+C/nIPuKZJC2V50wE6BUxKAp6t3JHo4bs18rd3KYzGqQhnX/oeUi22BkVcYjWjf1cFS
-X-Microsoft-Antispam-PRVS: <SN1PR02MB2158DBF32A3BFBC90558C939D6670@SN1PR02MB2158.namprd02.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB5023;20:PcM8t5EvXNu/kcrALGE1fc3s7Wu83dE30zzbzrcZUFN/gmO57vNUsxL8LEZd8WHQDeguWW3LHE660CT3HdX1u6njYbG0c3daXfMMQraL5uFcMl1/EuaWDfYO965t9ImpSm48bad9JMVc2TkioI4GUCqd2to+1qDuFwxCQUK3qlZZuOknRs0i+yXHnddMQX41NjwmzUo/CMHDWzCzboLA12deQTJKwISyBkstgFWmUpu5CmBxvPkLwomfVA3oCsapsyOijgj/2XO9Z3vmGA36ONn/enFs2kXkYPIbuhK1mTiDVOcOCNF3zqj90Vpjo4H2Ivkvzn/+CIVcLX9r+7RFknfAwW6H7C27Lu/a9eRAkIu+jsPGMlvcO3B80hhCy3JsEZ6dyaJkNoZneZn3E/GBIF7K962VQHELdbyYtISMfAmJaGLwHXl7Q/LC2lwtyh4ZPV/FCKSgI2TWwE4iB5xT+5GPOhK3XytEuDvpR3XFfwiwC+/RPjzv5acTDA+FHxm4
+X-Microsoft-Antispam-PRVS: <SN6PR02MB50236E04DC38AE35D4316AB2D6670@SN6PR02MB5023.namprd02.prod.outlook.com>
 X-Forefront-PRVS: 09480768F8
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN1PR02MB2158;23:Ue2MEyxPgYehEB9gUy7rLNHzue1xBgky4TpPz1mhc?=
- =?us-ascii?Q?L+SUXEyOpAAZ/rG02KgFL5V6JacGT2FooamJebQpNtvT6stOA+xD/cus4LP7?=
- =?us-ascii?Q?8uI0ooCtZ/DaXJrq7V7vuAyWQ2wRMovbRy8GDEHTH6P+r/E1VURp50kdE4l0?=
- =?us-ascii?Q?NH/PJ/+/QlEd/igwq/BzPi1XpgJ5gsrLcPhDhvAWptwvzDS/W2eZ5rlXemn9?=
- =?us-ascii?Q?Dp7ffAVLxrRSptehDowLTfM+fCIee9zqnjK6UsK58FfsxYGmazWjBrEbZMUU?=
- =?us-ascii?Q?HZygbYSAzJRMNkcFH1aj1l7C8c7r1BaN7iZith+/eNhpKSuQCB8itbYv2JIg?=
- =?us-ascii?Q?DQEDmnhDPEv8ZYhR+JjzAvJOnhJ2sWvZpthlOH7rb2mR6Kl0xURzXDwg7nYf?=
- =?us-ascii?Q?tmgZHXSJyUboSyvF8Z/nRvtktXyasgovZstqwGUxQ4Ww+m9kywrX5rOkI/oG?=
- =?us-ascii?Q?Ug/bjnLiqoETbWFulUbI9cAPQhVQkm9FKTY088zp1mQWOoYRk5RCw9igR9sD?=
- =?us-ascii?Q?aLA0nqN2k43bcnKBAT+Gxhz6TwHo3yZ3jCsjDpN8YhKWWps532fJLDJbgIQl?=
- =?us-ascii?Q?tD/lU4Z5dcORkTptH65s4Nfcu7t9io7h43vhW7yBI1FLYVwd6wxj84DH9d+i?=
- =?us-ascii?Q?tntfXUlCMVOXYwoQ3ZSoXukculYEMhqoVXNEMNyKyqWdlH/NNqW4ctaXNAji?=
- =?us-ascii?Q?f5bjHzpG8tjYVYAG3lRGZsEpqXfT/wNjKfEbphz8celRy2zb8gNCacnlyZga?=
- =?us-ascii?Q?2I4jHdsj76PLbDplDT5FS/v2usTwP0zpe2aRH23Hn/4U7EBKPg7BjvVdrGMe?=
- =?us-ascii?Q?Lvqm+3Rn4cd+3CO2PlKesuwyLICsHW07Ou9Vi3cVmTS4PAfhO1Q6zAzhCQmF?=
- =?us-ascii?Q?QWM8C+XmDJKlA3NbzVAc8lgihXv5yDIUWGfLdHeALbAdcMtGND2TuUOKCGwJ?=
- =?us-ascii?Q?i7kOsSTZ39OBqX+ZFnYMWURCBlnpDZCToEl74IW3ul0yt9jXn1OO9JgxlkhU?=
- =?us-ascii?Q?GAfpyL5Jj8zsob27WlC9Apbkh/dLDjYeDBu9YEaw64w9Do9fZk2RDrZiDf0f?=
- =?us-ascii?Q?vwIwYKU+ABY2Q1Yq8g+6vphibtLhuyHJ1/xdBsiKHW22aMmTHqUu8cmuTELr?=
- =?us-ascii?Q?jOsXCFd19+Zu7fkN9snSJLMfSBM+UNTK8/jQUDc+CPcocN7IGMAJbOc83GOw?=
- =?us-ascii?Q?7SxFG3MdssWlkzCM5wmRBUD3NrpgNyPOTnUYOV2FfcPy8kTmg7XX8JXpcbk5?=
- =?us-ascii?Q?RLHpBF67QGbg+HbMj4=3D?=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR02MB5023;23:zlpla7CSy9B+5A/hXUubr/T85aLg2CtD/XQHyoqrH?=
+ =?us-ascii?Q?3SnwpV4aZcfAUkXSH46sUQ8CtThK2pi7H7hVLionw/P/3t/eUUvfZJkpdoR3?=
+ =?us-ascii?Q?KlcyUX2aVHtKqaLFbBJGbQjxplg2W/R7stl37tfmLaSO1tPA1jjQEoKKbf24?=
+ =?us-ascii?Q?EbX63vf7MEXHPDNwSfaIbztV7F/Evwoo9lAIgiZzo7j/sT6Rgu1PGYkF3/dK?=
+ =?us-ascii?Q?NBX1qyZ/BuJY87DnkX0QTZGgQNsFWPm6K3IBM0TiXJBLlzYVuvtirzmiqpTU?=
+ =?us-ascii?Q?jpWhHRXveV7spZzYkZVFbKTWQ7HuOfq+FUFjUnGFLNFFoRVXzz4BD8KwlAtr?=
+ =?us-ascii?Q?FxmPnUIt+oEShaii/2ZFwPVxRY9kZpmAXZ0HgMiZATYPQgVZjbCtI7k8QuMC?=
+ =?us-ascii?Q?9dNvB+pK/rSiZKN11oCPtdUpQMq77x7x6cSUK7pI3xC95YMzCirsb11oQAOv?=
+ =?us-ascii?Q?tPeaSl0J/P0BleRPcYQj+IW4nTyQK9kD5EWOdmDFzRn950FPeVyB2GFNpbyn?=
+ =?us-ascii?Q?pTkozBzk26qT+BzD4eK7IMf8JMDQMCeDFNsEsNiM51OrGXfabNlbiSMU5+c+?=
+ =?us-ascii?Q?/wEy3AxA4GAeoglI0IJPOc1k07LNbHaj5Ial/KH131Z9NMry29Zt7H9T/yuk?=
+ =?us-ascii?Q?GvLJLcWbv1W22yxhsOnunk0JjaFeJpNqIfjW5iiqrQSGfoIpdPlVRzCPCcLZ?=
+ =?us-ascii?Q?i+Zbnpc8q6mze/on4k8xJ+y9YoGgjZAOlSK6FHiZsHsQMWk1qSbU3yyEV0Xw?=
+ =?us-ascii?Q?Ykw80XdCVLkKljm+4m56sM0bQGhhFoqE0+V/fDrsiSmRSAdG/mtNmgDWv7Sd?=
+ =?us-ascii?Q?VIGjsaM1iVGEC+A0iAyGd5mWfY5bFfLW5tXmpKiymwqbT9v7ptx4GjM0dl0W?=
+ =?us-ascii?Q?7V4gwtruv/6EGPbdZCbhfvHdlBNPR/6jMestQlVhEOMEEA79ML0vpCZarxkI?=
+ =?us-ascii?Q?X5HscS7o6Leup+N2KO+N45gHngfSlnimigei5fg/o2GFrYVlvueLZxYpaiiN?=
+ =?us-ascii?Q?zcSpnsHL82RRN0U8uDQipxV18pTr5jRNC5xO9NN37NzJFGCdJiIFKCY+F6jU?=
+ =?us-ascii?Q?Vn4wUcm3E3Lr+75zjRENzV/vCAYcWKBDYE1/dDjiGPnS+qkts/zI5LpNLDAy?=
+ =?us-ascii?Q?dHZP0THEc3uIUDu0Tndw1xlRmZFJxQOuBgFpy9PzsGnTtJmEgcfH+xV9u/0a?=
+ =?us-ascii?Q?XwBrZUcWvpwQhqTlx28fkpAxwZTsw/0aVjX2VERPDssKkYDpXRR7PxHXtVIC?=
+ =?us-ascii?Q?NmhKXgmjPAAXNszCsNnVyWgH330540qhMca02sEkQnEe+IP2OC+gOvX0rvpQ?=
+ =?us-ascii?B?QT09?=
 X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: zimF+AY/mRKdQqOpzlc8zPTxuDjdhX0UVKw/kTqBjZuVA9kxjau42bPOgzKtaHO+33nZaQLJmdcNQkB0SxQvQnQb82W/FL05lwrjHg/EnaIBcjaQ1du1yYBHvxOLpgkjYS2+mfPRagu6yGizdh3WvMNTS5l28e3kaummrgBIDYrt+dEf+EAVSHp8hPNRBxr5odtbCajSmnu/7oxDJsq5VH8NeYaiVL1T90KMZhfC4Wf3kWKTVAl8pm7jHJFzwfd5uOWqmzpUYo6SBlxaSiQduDnTpQ/PYNTqQpFdnrGxM8j3TbSWiPpgxaFvVrQ9Q8qXHrV+DcH9Z62wXmmihGJOV6etYAGMaJmwyqAaLULJv84neDQ/i3fNSf7mCt4Tos7gNTbzxtH6XUAdYu3/qr3A9phQuJhzSnMBqgGjC6qROK0=
+X-Microsoft-Antispam-Message-Info: GannT790iie2HTc1uptuHneG1M7wUK29nHdXK56ijDAlJk+8PvVQk/RaFxl3uT+FH+E3OKwleXLbR0kkymmpebgnfSAR+IW1uuZdhM7hWrGsuBU6airMUdnnZO4zHvoPu/0vHJTmNNQwWEUEBBIhfZvww2YR/xm4apHWtiIsNrwLBz4q8npZ35ThE8/o86AuAyIYDPtVk5jYyk9JRZAEmdhkcIE5Jht51gbMTDPpPB5nTkmmZO1zk3/cX+Rzw6Rx35XiGRAvdyHhkUpcgJqjlpwGtixZIz/vdKTMZPbESUHuHJMM6HMCzpPh+X4nulJbLi/rcb+QQ83c4dfWT9Ocjjp6jEtRsMqvnabbiODxjkEBrGgkXA+oa01zWIJgocZ5LkwGkLq9r7KISCBfrRAOLNRiz8dbw9pV2dzjUJchI7o=
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2019 00:03:24.9178
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2019 00:03:24.9307
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 937dec4f-6217-4a0c-81d2-08d6920fd770
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9fbb77b4-0801-4199-9e05-08d6920fd722
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR02MB2158
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB5023
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Add "WITH Linux-syscall-note" to the license to not put GPL
+restrictions on user space programs using this header.
 
-I wonder if the exception, "WITH Linux-syscall-note", can be added to
-the ion header license, to allow user source code with different
-license to include it without being derivative of GPL.
-
-More specifically, we want to use this ion header in a BSD license
-module [1], without enforcing the GPL license on its users or
-on the module itself when it has a copy of the header in its source
-code.
-
-Any guide on what can be done would be appreciated.
-
-Thanks,
--hyun
-
-[1] https://github.com/OpenAMP/libmetal/blob/master/LICENSE.md
-
-Hyun Kwon (1):
-  staging: android: ion: Add the GPL exception for syscalls
-
+Signed-off-by: Hyun Kwon <hyun.kwon@xilinx.com>
+---
  drivers/staging/android/uapi/ion.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/staging/android/uapi/ion.h b/drivers/staging/android/uapi/ion.h
+index 5d70098..46c93fc 100644
+--- a/drivers/staging/android/uapi/ion.h
++++ b/drivers/staging/android/uapi/ion.h
+@@ -1,4 +1,4 @@
+-/* SPDX-License-Identifier: GPL-2.0 */
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+ /*
+  * drivers/staging/android/uapi/ion.h
+  *
 -- 
 2.7.4
 
