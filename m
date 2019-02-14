@@ -2,232 +2,161 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 383EBC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:58:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6532C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:58:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE88321928
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:58:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="GZL7bMWs"
+	by mail.kernel.org (Postfix) with ESMTP id 7697921928
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:58:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550167111;
+	bh=66b0ltTdjXzPnPc+X3pGDo0Z4VxDVcmhUVI44uPdQeg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=LU+Z3eZ2eTP/PXuD8TnU7BQ+O4wjLgEFwxTaLC6dYn3EfluokJGwatSe7ZEI8fGv6
+	 5Ok7AirUIWlx+YMIJhPT3uRit7tpasfhZHeRh97ho7mAH+QJ0cpV41q+yWDGUjhgPL
+	 cpILuE7dEuJ6+gPt1h8UAE9BA3yZZtJDWN7SBii4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437940AbfBNR6X (ORCPT
+        id S2437971AbfBNR6a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 12:58:23 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:40430 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437829AbfBNR6G (ORCPT
+        Thu, 14 Feb 2019 12:58:30 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40195 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727852AbfBNR62 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 12:58:06 -0500
-Received: by mail-it1-f193.google.com with SMTP id i2so16463270ite.5
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 09:58:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=fF0LtqiU+ezqKDEGBPuxdJhivCCihna6QbzlCwznwyo=;
-        b=GZL7bMWsuhT/yxy1rHdCzEmJxBLDze3KipqjsMO9AXNUmndIK/l3k0kAWpt/whJBt9
-         9fHjkTAAbCBKGNdGJbpPGGpTT6Bc/+4M8mQ7NCRNgL8bcPE+xk6WHXsTpKU++DxO4/YU
-         +0igyBni8rrMxWl00/XM07aa3JleVBnu28Da4=
+        Thu, 14 Feb 2019 12:58:28 -0500
+Received: by mail-pg1-f193.google.com with SMTP id z10so3429519pgp.7;
+        Thu, 14 Feb 2019 09:58:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=fF0LtqiU+ezqKDEGBPuxdJhivCCihna6QbzlCwznwyo=;
-        b=BavNcfawD3gcMBEzfAmIZMriC6R3lDJVNhqoWbDkW4nr1tGYy4NjdsDpIfavmIVVhm
-         G24YBpMGTbieUp8KMCM4r29vBG9nAUV8cV1zDf8vQG5g4FplwxQz8rZbQVSnkPEjVZVE
-         Q2wAhcU0WKwR5Pi5zFz2/YIAGuWOx6z3fUcZ+oJmNkBXBFoB11fqAdUj9ZpE8hGC26ur
-         d3Mc78I/bhJOmrIXYgka3+PBOQDSPpzjn9330lnryJxhZtcFDhfuO0/2u0ZAeMpc4yp9
-         W41cS+qAkpU2SjpcgnBKNf8+3OpKFmxz/W0xn8zIppxry20mpEYezI8JM0LS+/y/b17w
-         vHVQ==
-X-Gm-Message-State: AHQUAubByZ7uR/OV/UWaBaQzRItr1AGnsg8aE0DAjrrh8m6iBHZeSw3l
-        vCz/uCMIeYSmi6Ke8KiifCiJ/g==
-X-Google-Smtp-Source: AHgI3IY5j6xsuyyk1XVs+BpvsO4vD5bIoDMrBNL02aS+ROITaVKAg9qVntm6joUMi1D2DR5QQ70b7w==
-X-Received: by 2002:a24:bdcc:: with SMTP id x195mr1541749ite.149.1550167085551;
-        Thu, 14 Feb 2019 09:58:05 -0800 (PST)
-Received: from rj-aorus.ric.broadcom.com ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id t64sm1534178itb.5.2019.02.14.09.58.03
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 09:58:04 -0800 (PST)
-From:   Ray Jui <ray.jui@broadcom.com>
-To:     Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>,
-        Ray Jui <ray.jui@broadcom.com>
-Subject: [PATCH v5 7/8] i2c: iproc: add NIC I2C support
-Date:   Thu, 14 Feb 2019 09:57:24 -0800
-Message-Id: <20190214175725.60462-8-ray.jui@broadcom.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190214175725.60462-1-ray.jui@broadcom.com>
-References: <20190214175725.60462-1-ray.jui@broadcom.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gz0mDdAFP0iHqS6mE6/JnB6Z9tei8hlMgres71bhWmM=;
+        b=nvHEyWj2vkleNgBkYxQI0Mw3S3tjSNd/p7oX2xboKo1oyzGDSQ+bAd691di8Hh1p94
+         OCdMAxxrioxClkXpWtc3oybxSiLsFKIqlM/i40mmnuFBWfHHHit558kdh9219G7zZGSN
+         zOKoxTvuGa4SKyoPFOsZbX80/FDKECXlJH1W9YSVCQHgSvgX1SyrsNGcjzqnCKEK+IMp
+         QZpCkr554lUqnbaWQZANwvhkRcHJmR94KMDgIMnIGxNffoQP5T0Hhce/r2MI9rRSPKOF
+         V3uIdwiLaNPoQsX77sDPBzXbQB6g3n1HWbtKywIA3F9CuYDlfsYN2FaEyTVq60Y37WoW
+         k80Q==
+X-Gm-Message-State: AHQUAub0aAOWEAcxXePsER30h04LYhA5w5vYxH2Bkl9qgyPFVHFx+7fy
+        GD//NGU4pVcE/oDsmUy+U4I=
+X-Google-Smtp-Source: AHgI3IY02ZV1wDrTuc6VvWKs+BqBN7uj5ByaABhoSsPQgzyZtk0eVGgWWGx8hlAeEJ6IErGFT4usUg==
+X-Received: by 2002:a63:ce4f:: with SMTP id r15mr1066495pgi.303.1550167107834;
+        Thu, 14 Feb 2019 09:58:27 -0800 (PST)
+Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
+        by smtp.gmail.com with ESMTPSA id h10sm3892986pgn.11.2019.02.14.09.58.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 14 Feb 2019 09:58:26 -0800 (PST)
+Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Thu, 14 Feb 2019 09:58:23 -0800
+Date:   Thu, 14 Feb 2019 09:58:23 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Mimi Zohar <zohar@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        "Bruno E . O . Meneguele" <bmeneg@redhat.com>
+Subject: Re: [PATCH v2] x86/ima: require signed kernel modules
+Message-ID: <20190214175823.GG11489@garbanzo.do-not-panic.com>
+References: <1550060279-8624-1-git-send-email-zohar@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1550060279-8624-1-git-send-email-zohar@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+On Wed, Feb 13, 2019 at 07:17:59AM -0500, Mimi Zohar wrote:
+> Require signed kernel modules on systems with secure boot mode enabled.
+> 
+> Requiring appended kernel module signatures may be configured, enabled
+> on the boot command line, or with this patch enabled in secure boot
+> mode. 
 
-Add NIC I2C support to the iProc I2C driver. Access to the NIC I2C base
-registers requires going through the IDM wrapper to map into the NIC's
-address space
+But only if IMA is enabled? If so, should this statement be true if
+IMA is disabled?
 
-Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
-Signed-off-by: Ray Jui <ray.jui@broadcom.com>
----
- drivers/i2c/busses/i2c-bcm-iproc.c | 79 ++++++++++++++++++++++++++++--
- 1 file changed, 75 insertions(+), 4 deletions(-)
+Either way, this is not clear from the commit log and code, can the
+commit log be clear if set_module_sig_enforced() will be set if
+IMA is disabled but secure boot mode enabled?
 
-diff --git a/drivers/i2c/busses/i2c-bcm-iproc.c b/drivers/i2c/busses/i2c-bcm-iproc.c
-index 5b9cbd7a3776..9598e1d0048e 100644
---- a/drivers/i2c/busses/i2c-bcm-iproc.c
-+++ b/drivers/i2c/busses/i2c-bcm-iproc.c
-@@ -17,9 +17,11 @@
- #include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
-+#include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
- 
-+#define IDM_CTRL_DIRECT_OFFSET       0x00
- #define CFG_OFFSET                   0x00
- #define CFG_RESET_SHIFT              31
- #define CFG_EN_SHIFT                 30
-@@ -174,11 +176,26 @@ enum bus_speed_index {
- 	I2C_SPD_400K,
- };
- 
-+enum bcm_iproc_i2c_type {
-+	IPROC_I2C,
-+	IPROC_I2C_NIC
-+};
-+
- struct bcm_iproc_i2c_dev {
- 	struct device *device;
-+	enum bcm_iproc_i2c_type type;
- 	int irq;
- 
- 	void __iomem *base;
-+	void __iomem *idm_base;
-+
-+	u32 ape_addr_mask;
-+
-+	/* lock for indirect access through IDM */
-+	spinlock_t idm_lock;
-+
-+	/* indicates no slave mode support */
-+	bool no_slave;
- 
- 	struct i2c_adapter adapter;
- 	unsigned int bus_speed;
-@@ -215,13 +232,33 @@ static void bcm_iproc_i2c_enable_disable(struct bcm_iproc_i2c_dev *iproc_i2c,
- static inline u32 iproc_i2c_rd_reg(struct bcm_iproc_i2c_dev *iproc_i2c,
- 				   u32 offset)
- {
--	return readl(iproc_i2c->base + offset);
-+	u32 val;
-+
-+	if (iproc_i2c->idm_base) {
-+		spin_lock(&iproc_i2c->idm_lock);
-+		writel(iproc_i2c->ape_addr_mask,
-+		       iproc_i2c->idm_base + IDM_CTRL_DIRECT_OFFSET);
-+		val = readl(iproc_i2c->base + offset);
-+		spin_unlock(&iproc_i2c->idm_lock);
-+	} else {
-+		val = readl(iproc_i2c->base + offset);
-+	}
-+
-+	return val;
- }
- 
- static inline void iproc_i2c_wr_reg(struct bcm_iproc_i2c_dev *iproc_i2c,
- 				    u32 offset, u32 val)
- {
--	writel(val, iproc_i2c->base + offset);
-+	if (iproc_i2c->idm_base) {
-+		spin_lock(&iproc_i2c->idm_lock);
-+		writel(iproc_i2c->ape_addr_mask,
-+		       iproc_i2c->idm_base + IDM_CTRL_DIRECT_OFFSET);
-+		writel(val, iproc_i2c->base + offset);
-+		spin_unlock(&iproc_i2c->idm_lock);
-+	} else {
-+		writel(val, iproc_i2c->base + offset);
-+	}
- }
- 
- static void bcm_iproc_i2c_slave_init(
-@@ -766,7 +803,13 @@ static int bcm_iproc_i2c_xfer(struct i2c_adapter *adapter,
- 
- static uint32_t bcm_iproc_i2c_functionality(struct i2c_adapter *adap)
- {
--	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL | I2C_FUNC_SLAVE;
-+	struct bcm_iproc_i2c_dev *iproc_i2c = i2c_get_adapdata(adap);
-+	u32 val = I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
-+
-+	if (!iproc_i2c->no_slave)
-+		val |= I2C_FUNC_SLAVE;
-+
-+	return val;
- }
- 
- static const struct i2c_algorithm bcm_iproc_algo = {
-@@ -829,6 +872,8 @@ static int bcm_iproc_i2c_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, iproc_i2c);
- 	iproc_i2c->device = &pdev->dev;
-+	iproc_i2c->type =
-+		(enum bcm_iproc_i2c_type) of_device_get_match_data(&pdev->dev);
- 	init_completion(&iproc_i2c->done);
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@ -836,6 +881,26 @@ static int bcm_iproc_i2c_probe(struct platform_device *pdev)
- 	if (IS_ERR(iproc_i2c->base))
- 		return PTR_ERR(iproc_i2c->base);
- 
-+	if (iproc_i2c->type == IPROC_I2C_NIC) {
-+		res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
-+		iproc_i2c->idm_base = devm_ioremap_resource(iproc_i2c->device,
-+							    res);
-+		if (IS_ERR(iproc_i2c->idm_base))
-+			return PTR_ERR(iproc_i2c->idm_base);
-+
-+		ret = of_property_read_u32(iproc_i2c->device->of_node,
-+					   "brcm,ape-hsls-addr-mask",
-+					   &iproc_i2c->ape_addr_mask);
-+		if (ret < 0) {
-+			dev_err(iproc_i2c->device,
-+				"'brcm,ape-hsls-addr-mask' missing\n");
-+			return -EINVAL;
-+		}
-+
-+		spin_lock_init(&iproc_i2c->idm_lock);
-+		iproc_i2c->no_slave = true;
-+	}
-+
- 	ret = bcm_iproc_i2c_init(iproc_i2c);
- 	if (ret)
- 		return ret;
-@@ -992,7 +1057,13 @@ static int bcm_iproc_i2c_unreg_slave(struct i2c_client *slave)
- }
- 
- static const struct of_device_id bcm_iproc_i2c_of_match[] = {
--	{ .compatible = "brcm,iproc-i2c" },
-+	{
-+		.compatible = "brcm,iproc-i2c",
-+		.data = (int *)IPROC_I2C,
-+	}, {
-+		.compatible = "brcm,iproc-nic-i2c",
-+		.data = (int *)IPROC_I2C_NIC,
-+	},
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, bcm_iproc_i2c_of_match);
--- 
-2.17.1
+> This patch defines set_module_sig_enforced().
+> 
+> To coordinate between appended kernel module signatures and IMA
+> signatures, only define an IMA MODULE_CHECK policy rule if
+> CONFIG_MODULE_SIG is not enabled.
+> 
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+> 
+> Changelog:
+> - Removed new "sig_required" flag and associated functions, directly set
+>   sig_enforce.
+> 
+>  arch/x86/kernel/ima_arch.c | 9 ++++++++-
+>  include/linux/module.h     | 1 +
+>  kernel/module.c            | 5 +++++
+>  3 files changed, 14 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
+> index e47cd9390ab4..3fb9847f1cad 100644
+> --- a/arch/x86/kernel/ima_arch.c
+> +++ b/arch/x86/kernel/ima_arch.c
+> @@ -64,12 +64,19 @@ static const char * const sb_arch_rules[] = {
+>  	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
+>  #endif /* CONFIG_KEXEC_VERIFY_SIG */
+>  	"measure func=KEXEC_KERNEL_CHECK",
+> +#if !IS_ENABLED(CONFIG_MODULE_SIG)
+> +	"appraise func=MODULE_CHECK appraise_type=imasig",
+> +#endif
+> +	"measure func=MODULE_CHECK",
+>  	NULL
+>  };
+>  
+>  const char * const *arch_get_ima_policy(void)
+>  {
+> -	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot())
+> +	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
+> +		if (IS_ENABLED(CONFIG_MODULE_SIG))
+> +			set_module_sig_enforced();
+>  		return sb_arch_rules;
+> +	}
+>  	return NULL;
+>  }
+> diff --git a/include/linux/module.h b/include/linux/module.h
+> index 8fa38d3e7538..75e2a5c24a2b 100644
+> --- a/include/linux/module.h
+> +++ b/include/linux/module.h
+> @@ -660,6 +660,7 @@ static inline bool is_livepatch_module(struct module *mod)
+>  #endif /* CONFIG_LIVEPATCH */
+>  
+>  bool is_module_sig_enforced(void);
+> +void set_module_sig_enforced(void);
+>  
+>  #else /* !CONFIG_MODULES... */
 
+I think you need the !CONFIG_MODULES definition of set_module_sig_enforced()
+then...
+
+> diff --git a/kernel/module.c b/kernel/module.c
+> index 2ad1b5239910..4cb5b733fb18 100644
+> --- a/kernel/module.c
+> +++ b/kernel/module.c
+> @@ -286,6 +286,11 @@ bool is_module_sig_enforced(void)
+>  }
+>  EXPORT_SYMBOL(is_module_sig_enforced);
+>  
+> +void set_module_sig_enforced(void)
+> +{
+> +       sig_enforce = true;
+> +}
+
+The export is not needed as it is bool eh?
+
+  Luis
