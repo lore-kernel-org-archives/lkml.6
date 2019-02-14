@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A376EC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:03:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCDCBC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:05:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 686C720835
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:03:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86EB5222CC
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:05:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VjSTr/Aq"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="uIx25zRg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404494AbfBNAD4 (ORCPT
+        id S2393530AbfBNAFN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 19:03:56 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:45966 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404396AbfBNADy (ORCPT
+        Wed, 13 Feb 2019 19:05:13 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:50168 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391445AbfBNAFN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 19:03:54 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1DNwvnk099503;
-        Thu, 14 Feb 2019 00:02:10 GMT
+        Wed, 13 Feb 2019 19:05:13 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1DNwgkD100217;
+        Thu, 14 Feb 2019 00:02:15 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : in-reply-to :
  references; s=corp-2018-07-02;
- bh=iAUhMQrV5BcM9lvrtcT+KJw+jAn1o1A4vhSmYo6KfrI=;
- b=VjSTr/AqEcZZcnT253Enimw080YefgzZ6lczl9mWxonAMufYwkCcF3dwQch6ueHmg70i
- dJpR3VkpqqCo5MrMJg08cXPCQwRMg0ItEUkV50un7KCD9qy/0d+vUhhjmxELv5vDsXg3
- Ec8x2cdR9pfsnnCSj5tyMVOUNuafN0UEGEnMrvyKFP6U+tH7zegPGoK2cHWcMcllXHpR
- 1PT/VRty4pVVnHKlT/GtTFe+lLr6OSdMuZAJLbsu2cPVgpX0UlpaWQ5YfTTR1EgTiKBX
- JspamAuYU1IEU+REu+zfOfbB5ugsNlyZSl+JykVJwE4cXEWuAqhvosNaLi5M380H3gN0 KA== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2qhree55mx-1
+ bh=B56xy1SykMvAYC6aqGnZB/bYPtFwWukcKOnvet3ifEU=;
+ b=uIx25zRg4V1mI7KE5rlBz/NOl4jvjuexvGmPkyZvqcfrmno71cCT5E+9JbWTSHC/QKat
+ mwHwGgsn3lyUx7sgJV9UNpCRjTU6py7eGgk7lKgOpsDhpFjeerfPM2DbaBuKJ9UZcAKz
+ DsSL/ZBoCBxdhR3YuaIpkJ3CIAyPWAuQv3sF7iGkSsqlEtLlb7Zeh/RNvN5hZ7YrOLsh
+ sHsS6j1a4GAWGwWpXc9lQ+6XKaFyP9pfD/3U4ji5t9w3llUxgied6gcwwuUnMAESawHr
+ XKG5wRxJo2PHsFrtNsUaPYHBCbF2txoevXeZNyWcby8O60DPcnZ1QRqSHrFDNLBVEldH TQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2qhre5n3v1-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Feb 2019 00:02:10 +0000
+        Thu, 14 Feb 2019 00:02:15 +0000
 Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1E029GD008227
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1E02ERU026044
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Feb 2019 00:02:09 GMT
+        Thu, 14 Feb 2019 00:02:14 GMT
 Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1E027gu001545;
-        Thu, 14 Feb 2019 00:02:07 GMT
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1E02ELP001735;
+        Thu, 14 Feb 2019 00:02:14 GMT
 Received: from concerto.internal (/24.9.64.241)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 13 Feb 2019 16:02:06 -0800
+        with ESMTP ; Wed, 13 Feb 2019 16:02:14 -0800
 From:   Khalid Aziz <khalid.aziz@oracle.com>
 To:     juergh@gmail.com, tycho@tycho.ws, jsteckli@amazon.de,
         ak@linux.intel.com, torvalds@linux-foundation.org,
@@ -56,9 +56,8 @@ To:     juergh@gmail.com, tycho@tycho.ws, jsteckli@amazon.de,
         akpm@linux-foundation.org, mhocko@suse.com,
         catalin.marinas@arm.com, will.deacon@arm.com, jmorris@namei.org,
         konrad.wilk@oracle.com
-Cc:     Juerg Haefliger <juerg.haefliger@canonical.com>,
-        deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
-        tyhicks@canonical.com, dwmw@amazon.co.uk,
+Cc:     Tycho Andersen <tycho@docker.com>, deepa.srinivasan@oracle.com,
+        chris.hyser@oracle.com, tyhicks@canonical.com, dwmw@amazon.co.uk,
         andrew.cooper3@citrix.com, jcm@redhat.com,
         boris.ostrovsky@oracle.com, kanth.ghatraju@oracle.com,
         oao.m.martins@oracle.com, jmattson@google.com,
@@ -68,11 +67,10 @@ Cc:     Juerg Haefliger <juerg.haefliger@canonical.com>,
         dave.hansen@intel.com, peterz@infradead.org,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Tycho Andersen <tycho@docker.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>
-Subject: [RFC PATCH v8 05/14] arm64/mm: Add support for XPFO
-Date:   Wed, 13 Feb 2019 17:01:28 -0700
-Message-Id: <4a7b373b438d5b93999349c648189bd5ba8f9198.1550088114.git.khalid.aziz@oracle.com>
+        linux-kernel@vger.kernel.org
+Subject: [RFC PATCH v8 08/14] arm64/mm: disable section/contiguous mappings if XPFO is enabled
+Date:   Wed, 13 Feb 2019 17:01:31 -0700
+Message-Id: <0b9624b6c1fe5a31d73a6390e063d551bfebc321.1550088114.git.khalid.aziz@oracle.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1550088114.git.khalid.aziz@oracle.com>
 References: <cover.1550088114.git.khalid.aziz@oracle.com>
@@ -89,121 +87,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Juerg Haefliger <juerg.haefliger@canonical.com>
+From: Tycho Andersen <tycho@docker.com>
 
-Enable support for eXclusive Page Frame Ownership (XPFO) for arm64 and
-provide a hook for updating a single kernel page table entry (which is
-required by the generic XPFO code).
+XPFO doesn't support section/contiguous mappings yet, so let's disable it
+if XPFO is turned on.
+
+Thanks to Laura Abbot for the simplification from v5, and Mark Rutland for
+pointing out we need NO_CONT_MAPPINGS too.
 
 CC: linux-arm-kernel@lists.infradead.org
-Signed-off-by: Juerg Haefliger <juerg.haefliger@canonical.com>
 Signed-off-by: Tycho Andersen <tycho@docker.com>
-Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
+Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
 ---
-v6:
-	- use flush_tlb_kernel_range() instead of __flush_tlb_one()
+ arch/arm64/mm/mmu.c  | 2 +-
+ include/linux/xpfo.h | 4 ++++
+ mm/xpfo.c            | 6 ++++++
+ 3 files changed, 11 insertions(+), 1 deletion(-)
 
-v8:
-	- Add check for NULL pte in set_kpte()
-
- arch/arm64/Kconfig     |  1 +
- arch/arm64/mm/Makefile |  2 ++
- arch/arm64/mm/xpfo.c   | 64 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 67 insertions(+)
- create mode 100644 arch/arm64/mm/xpfo.c
-
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index ea2ab0330e3a..f0a9c0007d23 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -171,6 +171,7 @@ config ARM64
- 	select SWIOTLB
- 	select SYSCTL_EXCEPTION_TRACE
- 	select THREAD_INFO_IN_TASK
-+	select ARCH_SUPPORTS_XPFO
- 	help
- 	  ARM 64-bit (AArch64) Linux support.
+diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+index d1d6601b385d..f4dd27073006 100644
+--- a/arch/arm64/mm/mmu.c
++++ b/arch/arm64/mm/mmu.c
+@@ -451,7 +451,7 @@ static void __init map_mem(pgd_t *pgdp)
+ 	struct memblock_region *reg;
+ 	int flags = 0;
  
-diff --git a/arch/arm64/mm/Makefile b/arch/arm64/mm/Makefile
-index 849c1df3d214..cca3808d9776 100644
---- a/arch/arm64/mm/Makefile
-+++ b/arch/arm64/mm/Makefile
-@@ -12,3 +12,5 @@ KASAN_SANITIZE_physaddr.o	+= n
+-	if (debug_pagealloc_enabled())
++	if (debug_pagealloc_enabled() || xpfo_enabled())
+ 		flags = NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
  
- obj-$(CONFIG_KASAN)		+= kasan_init.o
- KASAN_SANITIZE_kasan_init.o	:= n
+ 	/*
+diff --git a/include/linux/xpfo.h b/include/linux/xpfo.h
+index 1ae05756344d..8b029918a958 100644
+--- a/include/linux/xpfo.h
++++ b/include/linux/xpfo.h
+@@ -47,6 +47,8 @@ void xpfo_temp_map(const void *addr, size_t size, void **mapping,
+ void xpfo_temp_unmap(const void *addr, size_t size, void **mapping,
+ 		     size_t mapping_len);
+ 
++bool xpfo_enabled(void);
 +
-+obj-$(CONFIG_XPFO)		+= xpfo.o
-diff --git a/arch/arm64/mm/xpfo.c b/arch/arm64/mm/xpfo.c
-new file mode 100644
-index 000000000000..1f790f7746ad
---- /dev/null
-+++ b/arch/arm64/mm/xpfo.c
-@@ -0,0 +1,64 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2017 Hewlett Packard Enterprise Development, L.P.
-+ * Copyright (C) 2016 Brown University. All rights reserved.
-+ *
-+ * Authors:
-+ *   Juerg Haefliger <juerg.haefliger@hpe.com>
-+ *   Vasileios P. Kemerlis <vpk@cs.brown.edu>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms of the GNU General Public License version 2 as published by
-+ * the Free Software Foundation.
-+ */
+ #else /* !CONFIG_XPFO */
+ 
+ static inline void xpfo_kmap(void *kaddr, struct page *page) { }
+@@ -69,6 +71,8 @@ static inline void xpfo_temp_unmap(const void *addr, size_t size,
+ }
+ 
+ 
++static inline bool xpfo_enabled(void) { return false; }
 +
-+#include <linux/mm.h>
-+#include <linux/module.h>
-+
-+#include <asm/tlbflush.h>
-+
-+/*
-+ * Lookup the page table entry for a virtual address and return a pointer to
-+ * the entry. Based on x86 tree.
-+ */
-+static pte_t *lookup_address(unsigned long addr)
+ #endif /* CONFIG_XPFO */
+ 
+ #endif /* _LINUX_XPFO_H */
+diff --git a/mm/xpfo.c b/mm/xpfo.c
+index 92ca6d1baf06..150784ae0f08 100644
+--- a/mm/xpfo.c
++++ b/mm/xpfo.c
+@@ -71,6 +71,12 @@ struct page_ext_operations page_xpfo_ops = {
+ 	.init = init_xpfo,
+ };
+ 
++bool __init xpfo_enabled(void)
 +{
-+	pgd_t *pgd;
-+	pud_t *pud;
-+	pmd_t *pmd;
-+
-+	pgd = pgd_offset_k(addr);
-+	if (pgd_none(*pgd))
-+		return NULL;
-+
-+	pud = pud_offset(pgd, addr);
-+	if (pud_none(*pud))
-+		return NULL;
-+
-+	pmd = pmd_offset(pud, addr);
-+	if (pmd_none(*pmd))
-+		return NULL;
-+
-+	return pte_offset_kernel(pmd, addr);
++	return !xpfo_disabled;
 +}
++EXPORT_SYMBOL(xpfo_enabled);
 +
-+/* Update a single kernel page table entry */
-+inline void set_kpte(void *kaddr, struct page *page, pgprot_t prot)
-+{
-+	pte_t *pte = lookup_address((unsigned long)kaddr);
-+
-+	if (unlikely(!pte)) {
-+		WARN(1, "xpfo: invalid address %p\n", kaddr);
-+		return;
-+	}
-+
-+	set_pte(pte, pfn_pte(page_to_pfn(page), prot));
-+}
-+
-+inline void xpfo_flush_kernel_tlb(struct page *page, int order)
-+{
-+	unsigned long kaddr = (unsigned long)page_address(page);
-+	unsigned long size = PAGE_SIZE;
-+
-+	flush_tlb_kernel_range(kaddr, kaddr + (1 << order) * size);
-+}
+ static inline struct xpfo *lookup_xpfo(struct page *page)
+ {
+ 	struct page_ext *page_ext = lookup_page_ext(page);
 -- 
 2.17.1
 
