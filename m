@@ -2,92 +2,177 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D77CC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B12C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:44:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66B0D222D2
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:43:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 801CF222A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:44:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406721AbfBNKnU (ORCPT
+        id S2395312AbfBNKo3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 05:43:20 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:14221 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2388285AbfBNKnU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 05:43:20 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1EAfp5e005278;
-        Thu, 14 Feb 2019 11:42:53 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2qmxr72h02-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 14 Feb 2019 11:42:53 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DCD5838;
-        Thu, 14 Feb 2019 10:42:52 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag4node2.st.com [10.75.127.11])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B3E6C4EC4;
-        Thu, 14 Feb 2019 10:42:52 +0000 (GMT)
-Received: from localhost (10.75.127.46) by SFHDAG4NODE2.st.com (10.75.127.11)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 14 Feb 2019 11:42:52
- +0100
-From:   <gabriel.fernandez@st.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        Gabriel Fernandez <gabriel.fernandez@st.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-CC:     <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH v2] dt-bindings: clock: remove unused definition for stm32mp1
-Date:   Thu, 14 Feb 2019 11:42:42 +0100
-Message-ID: <20190214104242.1491-1-gabriel.fernandez@st.com>
-X-Mailer: git-send-email 2.17.0
+        Thu, 14 Feb 2019 05:44:29 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49094 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732430AbfBNKo2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 05:44:28 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 313AD3DD99;
+        Thu, 14 Feb 2019 10:44:27 +0000 (UTC)
+Received: from [10.36.117.7] (ovpn-117-7.ams2.redhat.com [10.36.117.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2B7065C582;
+        Thu, 14 Feb 2019 10:44:15 +0000 (UTC)
+Subject: Re: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
+From:   David Hildenbrand <david@redhat.com>
+To:     "Wang, Wei W" <wei.w.wang@intel.com>,
+        Nitesh Narayan Lal <nitesh@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
+        "pagupta@redhat.com" <pagupta@redhat.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "riel@surriel.com" <riel@surriel.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "dodgen@google.com" <dodgen@google.com>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        "dhildenb@redhat.com" <dhildenb@redhat.com>,
+        "aarcange@redhat.com" <aarcange@redhat.com>
+References: <20190204201854.2328-1-nitesh@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF68060@shsmsx102.ccr.corp.intel.com>
+ <17adc05d-91f9-682b-d9a4-485e6a631422@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF6B52A@shsmsx102.ccr.corp.intel.com>
+ <62b43699-f548-e0da-c944-80702ceb7202@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF6F195@shsmsx102.ccr.corp.intel.com>
+ <19d2d9bd-a9dc-9c5f-6dcc-d456d50b9e10@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <44eff5a4-4fd0-58c6-708c-4e741267e60d@redhat.com>
+Date:   Thu, 14 Feb 2019 11:44:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG4NODE2.st.com
- (10.75.127.11)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_07:,,
- signatures=0
+In-Reply-To: <19d2d9bd-a9dc-9c5f-6dcc-d456d50b9e10@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 14 Feb 2019 10:44:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gabriel Fernandez <gabriel.fernandez@st.com>
+On 14.02.19 11:00, David Hildenbrand wrote:
+> On 14.02.19 10:08, Wang, Wei W wrote:
+>> On Wednesday, February 13, 2019 5:19 PM, David Hildenbrand wrote:
+>>> If you have to resize/alloc/coordinate who will report, you will need locking.
+>>> Especially, I doubt that there is an atomic xbitmap  (prove me wrong :) ).
+>>
+>> Yes, we need change xbitmap to support it.
+>>
+>> Just thought of another option, which would be better:
+>> - xb_preload in prepare_alloc_pages to pre-allocate the bitmap memory;
+>> - xb_set/clear the bit under the zone->lock, i.e. in rmqueue and free_one_page
+> 
+> And how to preload without locking?
+> 
+>>
+>> will not be concurrently called to race on the same bitmap.
+>> And we don't add any new locks to generate new doubts.
+>> Also, we can probably remove the arch_alloc/free_page part.
+>>
+>> For the first step, we could optimize VIRTIO_BALLOON_F_FREE_PAGE_HINT for the live migration optimization:
+>> - just replace alloc_pages(VIRTIO_BALLOON_FREE_PAGE_ALLOC_FLAG,
+>>                            VIRTIO_BALLOON_FREE_PAGE_ORDER)
+>> with get_free_page_hints()
+>>
+>> get_free_page_hints() was designed to clear the bit, and need put_free_page_hints() to set it later after host finishes madvise. For the live migration usage, as host doesn't free the backing host pages, so we can give get_free_page_hints a parameter option to not clear the bit for this usage. It will be simpler and faster.
+>>
+>> I think get_free_page_hints() to read hints via bitmaps should be much faster than that allocation function, which takes around 15us to get a 4MB block. Another big bonus is that we don't need free_pages() to return all the pages back to buddy (it's a quite expensive operation too) when migration is done.
+>>
+>> For the second step, we can improve ballooning, e.g. a new feature VIRTIO_BALLOON_F_ADVANCED_BALLOON to use the same get_free_page_hints() and another put_free_page_hints(), along with the virtio-balloon's report_vq and ack_vq to wait for the host's ack before making the free page ready.
+>> (I think waiting for the host ack is the overhead that the guest has to suffer for enabling memory overcommitment, and even with this v8 patch series it also needs to do that. The optimization method was described yesterday)
+>>
+> 
+> As I already said, I don't like that approach, because it has the
+> fundamental issue of page allocs getting blocked. That does not mean
+> that it is bad, but that I think what Nitesh has is superior in that
+> sense. Of course, things like "how to enable/disable", and much more
+> needs to be clarified.
+> 
+> If you believe in your approach, feel free to come up with a prototype.
+>  Especially the "no global locking" could be tricky in my opinion :)
 
-A copy of LTDC_PX and ETHCK_K (LTDC_K and ETHMAC_K) was introduced in
-stm32mp1 dt-bindings file by mistake.
-These bindings are not used and shouldn't be use to be conform with
-convention name of the stm32mp1 clock IP.
 
-Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
----
- include/dt-bindings/clock/stm32mp1-clks.h | 3 ---
- 1 file changed, 3 deletions(-)
+I want to add that your approach makes sense if we expect that the
+hypervisor will ask for free memory very rarely. Then, blocking during
+page alloc is most probably acceptable. Depending on the setup, this
+might or might not be the case. If you have some guests that are
+allocating/freeing memory continuously, you might want to get back free
+pages fairly often to move them to other guests.
 
-diff --git a/include/dt-bindings/clock/stm32mp1-clks.h b/include/dt-bindings/clock/stm32mp1-clks.h
-index 90ec780bfc68..4cdaf135829c 100644
---- a/include/dt-bindings/clock/stm32mp1-clks.h
-+++ b/include/dt-bindings/clock/stm32mp1-clks.h
-@@ -248,7 +248,4 @@
- 
- #define STM32MP1_LAST_CLK 232
- 
--#define LTDC_K		LTDC_PX
--#define ETHMAC_K	ETHCK_K
--
- #endif /* _DT_BINDINGS_STM32MP1_CLKS_H_ */
+In case the hypervisor asks for free pages, as we are not reporting
+continuously, you would have to somehow report all pages currently free
+to the hypervisor, making sure via the bitmap that they cannot be allocated.
+
+You certainly don't want to track free pages in a bitmap if the
+hypervisor is not asking for free pages, otherwise you will waste
+eventually a big amount of memory tracking page states nobody cares
+about in a xbtimap. So you would have to use another way to initially
+fill the bitmap with free pages (when the hypervisor requests it), while
+making sure to avoid races with pages getting allocated just while you
+are creating the bitmap.
+
 -- 
-2.17.0
 
+Thanks,
+
+David / dhildenb
