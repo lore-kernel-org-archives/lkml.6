@@ -2,145 +2,113 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D08BC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 12:56:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9F4CC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 12:58:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6853A2229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 12:56:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="QZi7V+Fa"
+	by mail.kernel.org (Postfix) with ESMTP id BAB19222B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 12:58:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550149084;
+	bh=+3AKeeRIr7ZsdX2FfRqjA2gzgf6gue7z7ycSYG+ZsJ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=SHvMUuUfBgEl+xcRMlHx8yX1PqWPRcrQ4WyjA6dIrcnzMEKN+nxH+k+v3opXo/nVP
+	 4OJiE7+Eq1pSkq+hHmirBCWMK5ktHAh7YC3cS/z1rFe56SITJOipfiZ67yJtXixDpx
+	 b2Vl++0dBrGDBHXxYOI2aO5emwt6j4DoDELrkdTk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438570AbfBNM4T (ORCPT
+        id S2438577AbfBNM6D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 07:56:19 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:37653 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388215AbfBNM4S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 07:56:18 -0500
-Received: by mail-it1-f195.google.com with SMTP id l131so14003299ita.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 04:56:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Naz9FCzf1rH5LzFaQw/O1btRmOdZ7nny+7TBXg4tchU=;
-        b=QZi7V+FaORpgSTBl1SDpYJw1fLB9lo7PSNHv1iDB9VNCPRJ5DSftSdH/iK3BlC81YB
-         Yc5qbMVnGYP35FQ6hOUD1rjr9ydZ8CErWyoIWH1/16DMHTMukZ0GbGnbSnJJzctTI6B6
-         RSGtKu+9OnxpNDxLL1f96wHgRSGN0x0sflf6X4v41/WuJaEu/WVsnJAsnVX/UFMxSrX0
-         SP8r3fAOVfrX60UeTzJc09KAKyXswvZmBeJPb2K5gw2TyFWKVaAxfmwqDkZCsAGTB7m4
-         A9N59d8b8jRkVTDEy/7rb9KgJ4UiyFNk2/3ropa8MSeeQuKQ9yVvgHICDabYsCbLQK+r
-         zrRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Naz9FCzf1rH5LzFaQw/O1btRmOdZ7nny+7TBXg4tchU=;
-        b=YpL9DGq5w/AA2dGbcVuyFLsRdBsI4taIvtHPmVD3Mxs/aYGoB4ULgvPTm3RTr456eE
-         k17QXl841Ar56paV6F6TpIjlHOfi9orrjPWZRc06YJavPRPDqcN5PBNvjWwZsu/a2VjY
-         V0l9kLXjGh+I/4RSl8e+iw+D3fGGtYpr/eFbp+3dV5DAql9K1ncEe1frcCZC3BxTO37E
-         hf7y944cpFzLALAgIEs7iMRL1B9HGHJAE0MVk8UpC2R5aggo6fc4iYYFK200Ht108vdq
-         t16kWvQzhvF6le0z1m0M8RbJRse0imCPseF7Yl3l6E7bvetKsjNegeAKLqAiCptZPxve
-         9AVA==
-X-Gm-Message-State: AHQUAuaX3iB5yYQ3aYxOak0YjgDtPdxcBPpdGsCGhfOLVPpU6O3BymOB
-        HYoqCGUY4owl00mq5l3/Ej2egmWcp7u3qiSZD4Fzgg==
-X-Google-Smtp-Source: AHgI3IZH6WSDvcG0nUPTCHoLLcxaePz6qJAANdijsV4E1HiC6aMrDz0xevkm5SyOGdLJEjIaaU45vbb1KhABg4wyXKs=
-X-Received: by 2002:a24:9795:: with SMTP id k143mr1760175ite.74.1550148977354;
- Thu, 14 Feb 2019 04:56:17 -0800 (PST)
+        Thu, 14 Feb 2019 07:58:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49108 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388169AbfBNM6D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 07:58:03 -0500
+Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BB5621900;
+        Thu, 14 Feb 2019 12:58:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550149082;
+        bh=+3AKeeRIr7ZsdX2FfRqjA2gzgf6gue7z7ycSYG+ZsJ8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jjzgYCHahay4ZuHCxAq1ZY9z+4xvvsvh/7WtM5gXGuNIN0lx+fVRdAgnWp2FbpISZ
+         BOduHZYCfN8lskZt2boX2+I3rQ5GXL0EnuWg8SodErX3YaCxTAKNe8N6EI8NDqa+AU
+         wl0609/g0YGucHeazbosezkLnBAMWT3vWBM3EthM=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 437E9410D5; Thu, 14 Feb 2019 09:57:59 -0300 (-03)
+Date:   Thu, 14 Feb 2019 09:57:59 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Stephane Eranian <eranian@google.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [RFC/PATCH 00/14] perf record: Add support to store data in
+ directory
+Message-ID: <20190214125759.GS3269@kernel.org>
+References: <20190204202818.GC4794@krava>
+ <CABPqkBQTpt0dhinJZc+mJ-JNvkU2M9DVx1G65ngWxZxk-eGBVA@mail.gmail.com>
+ <20190205133727.GF4794@krava>
+ <20190211101957.GB14253@krava>
+ <CABPqkBSkyHRaXN-oVLuJJ=aPEBfqOAunRUReHsxESnC=KKQuPg@mail.gmail.com>
+ <20190211185306.GD5046@krava>
+ <20190211193202.GG3269@kernel.org>
+ <20190211201831.GE5046@krava>
+ <CABPqkBRdmfOde793id4GEuwD=eYL8TLKe1p8k07xWAh1MPD3AQ@mail.gmail.com>
+ <20190214113450.GC26714@krava>
 MIME-Version: 1.0
-References: <20190212103835.7768-1-brgl@bgdev.pl> <20190212103835.7768-21-brgl@bgdev.pl>
- <86mumyskmg.wl-marc.zyngier@arm.com> <28ca2198-ebe9-43b8-fcd6-c6dbd2939987@ti.com>
-In-Reply-To: <28ca2198-ebe9-43b8-fcd6-c6dbd2939987@ti.com>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Thu, 14 Feb 2019 13:56:06 +0100
-Message-ID: <CAMRc=Md+SPxKvHPz63SW84eSVopTesQ-MhX_yeQZ1OEserptLA@mail.gmail.com>
-Subject: Re: [PATCH v3 20/37] ARM: davinci: aintc: move timer-specific
- irq_set_handler() out of irq.c
-To:     Sekhar Nori <nsekhar@ti.com>
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        David Lechner <david@lechnology.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190214113450.GC26714@krava>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-czw., 14 lut 2019 o 13:44 Sekhar Nori <nsekhar@ti.com> napisa=C5=82(a):
->
-> On 14/02/19 4:27 PM, Marc Zyngier wrote:
-> > On Tue, 12 Feb 2019 10:38:18 +0000,
-> > Bartosz Golaszewski <brgl@bgdev.pl> wrote:
-> >>
-> >> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >>
-> >> I've been unable to figure out exactly why, but it seems that the
-> >> IRQ_TINT1_TINT34 interrupt for timer 1 needs to be handled as a
-> >> level irq, not edge like all others.
-> >>
-> >> Let's move the handler setup out of the aintc driver where it's lived
-> >> since the beginning and into the dm* SoC-specific files where it
-> >> belongs.
-> >>
-> >> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> >> ---
-> >>  arch/arm/mach-davinci/dm355.c  | 8 ++++++++
-> >>  arch/arm/mach-davinci/dm365.c  | 8 ++++++++
-> >>  arch/arm/mach-davinci/dm644x.c | 8 ++++++++
-> >>  arch/arm/mach-davinci/dm646x.c | 8 ++++++++
-> >>  arch/arm/mach-davinci/irq.c    | 3 ---
-> >>  5 files changed, 32 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm3=
-55.c
-> >> index c7cd765114af..a732f2ea1d9a 100644
-> >> --- a/arch/arm/mach-davinci/dm355.c
-> >> +++ b/arch/arm/mach-davinci/dm355.c
-> >> @@ -15,6 +15,7 @@
-> >>  #include <linux/dma-mapping.h>
-> >>  #include <linux/dmaengine.h>
-> >>  #include <linux/init.h>
-> >> +#include <linux/irq.h>
-> >>  #include <linux/irqchip/irq-davinci-aintc.h>
-> >>  #include <linux/platform_data/edma.h>
-> >>  #include <linux/platform_data/gpio-davinci.h>
-> >> @@ -744,6 +745,13 @@ void __init dm355_init_time(void)
-> >>      psc =3D ioremap(DAVINCI_PWR_SLEEP_CNTRL_BASE, SZ_4K);
-> >>      dm355_psc_init(NULL, psc);
-> >>
-> >> +    /*
-> >> +     * Nobody knows why anymore, but this interrupt has been handled =
-as
-> >> +     * a level irq from the very beginning of davinci support in main=
-line
-> >> +     * linux.
-> >> +     */
-> >> +    irq_set_handler(DAVINCI_INTC_IRQ(IRQ_TINT1_TINT34), handle_level_=
-irq);
-> >> +
-> >
-> > I've said it on v2, I'm repeating it on v3. There is no point in
-> > duplicating this pointless hack on and on again. If there is a driver
-> > using this interrupt, move the setup there, and fix the irq_set_type
-> > callback.
-> >
-> > If nothing is using it, remove it altogether.
->
-> Alright, fine with me as well. Dropping the hack is fine. And I think
-> that just boils down to discarding this patch.
->
+Em Thu, Feb 14, 2019 at 12:34:50PM +0100, Jiri Olsa escreveu:
+> On Mon, Feb 11, 2019 at 12:43:22PM -0800, Stephane Eranian wrote:
+> > On Mon, Feb 11, 2019 at 12:18 PM Jiri Olsa <jolsa@redhat.com> wrote:
+> > > I thought having new MMAP3 event version with buildid field in it
+> > > if available and/or enabled by bit in perf_event_attr
 
-Actually this patch should simply remove the call to irq_set_handler()
-from the driver.
+> > I think MMAP3 is a cleaner approach, though it adds yet another MMAP event.
+ 
+> actually I realized this might not help at the end at all
+ 
+> what we do now is that we scan the data (after it's recorded)
 
-Bart
+We wouldn't have to do that scan of the data at the end if we have the
+build-id in the MMAP3 records.
+
+> to get the list of binaries that got touched during the profile
+> and store those in .debug cache based on the build ids
+ 
+> we can't just store ALL of the binaries that the session comes
+> across via mmap events
+
+We don't have to, we never did that at 'perf record' time, this is
+something for 'perf archive' to do, see below.
+
+> I can see the build id in mmap helping to resolve the race
+> issue when some binary change during the profile session and
+> we have no idea and report on wrong one.. but I dont see
+> people complaining about this at all
+
+But with the build id in the MMAPs we wouldn't need to scan anything at
+'perf record' time, just at 'perf archive' time, where we would scan
+everything, and as soon as we find a hit, we add that DSO to the list of
+things we need to put in the tarball.
+
+- Arnaldo
