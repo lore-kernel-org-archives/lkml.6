@@ -2,101 +2,135 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40F91C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81619C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:15:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCA14222A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:13:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dpildr1s"
+	by mail.kernel.org (Postfix) with ESMTP id 5396B222A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:15:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437180AbfBNHNo (ORCPT
+        id S2437193AbfBNHPx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 02:13:44 -0500
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:33425 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731752AbfBNHNo (ORCPT
+        Thu, 14 Feb 2019 02:15:53 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:39276 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388265AbfBNHPx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 02:13:44 -0500
-Received: by mail-vk1-f195.google.com with SMTP id d201so1176785vka.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 23:13:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=obC8XUFC/omwmNLuvSMPxvu4+DEnayxyH/No9CtLai8=;
-        b=Dpildr1sE+WONyIhA+QwPCsJJrvL9CDaCGWyAtruaBThjtDxCB4Qg5tr76gCKlt+gF
-         KjPXLRv3KHybl91+74vbSB5SrdAOCE33s7frTlGXD56ohSTV6g1gHlWeRUPULxg9K2xE
-         hWfQ0Xf3gT4zQvynXCSyUsAj9O9nIsRZOkPWWyWzmEs4O8/0LTyLMHQe2gwG0zJhrZra
-         O7SwJnjAA2VOCAiPkYQNguKFx9ZYE+Rj9XdL3bExz5Z48Z0cbRKkzG/PuyyqVyLrtQt7
-         eOjMxj8RGPiYzYiYvtUt123ces679lA9iXo7RAcdeR/Gpb2lhz/VYFF5lB2mVY0slNti
-         YDKQ==
+        Thu, 14 Feb 2019 02:15:53 -0500
+Received: by mail-lj1-f194.google.com with SMTP id g80so4289117ljg.6;
+        Wed, 13 Feb 2019 23:15:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=obC8XUFC/omwmNLuvSMPxvu4+DEnayxyH/No9CtLai8=;
-        b=DhU2qHTPxoqn9Bf2XpIeUI6NLAEfJX4+DKizWznGlZIDmxjl931dXX39gwTz3mA76S
-         Om8SeRhuzsHFqB9R0oBOaO86Eca0PUJOW5Zz3ghtFUI9HXeKkBkJXkSUe9Q+TftB7rrp
-         TagI9DpOfhdaHhexqe1yi7h13Ppw7fQW1diPS1nrdY+dKa0A/S6FoRYhpv3tsuHHmL9d
-         H+hTHsKLOBetHaDdFIPOUIWLMG9M8TwuqAODKUOmjZdgCazz6xL9RkSnoXNmGeaC9yCj
-         m9GkR9kAbHezJUC/UG/Cn7sF+2IoFone10mLes0wwEuvKqqyOA2K42tJfm5+4qUZftV+
-         IbKA==
-X-Gm-Message-State: AHQUAuZfwMhzoCyBNhQY0tjK3Bmd2KV5zpv3LEb85KIUStSwhpgXPZVu
-        rb93FH1BkL/7TCoFDkwY+fCyryMLkhFACaQqYzc=
-X-Google-Smtp-Source: AHgI3IYXD0uRAypPWGcjehU3noPyWBQdzRBqgMeTNjnt5Fg2A0TGzX6kgj3DRbVZAV4yz562P+XsXdBj2HI0Y5NMJ6k=
-X-Received: by 2002:a1f:9ec9:: with SMTP id h192mr1206303vke.68.1550128422817;
- Wed, 13 Feb 2019 23:13:42 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5dfQ3LkH9ayPR2Af0cmF4zAdTTMzcYz6cLIrbfnS4DQ=;
+        b=AsaPgUBUw4ybyJeI9cIjjWz8cL/OnPirfGyHuSnqScT9aPSQc269HeO7SWBH1Bibm5
+         fv2zjdAbiEN2uwYQIRebIwLcqecKofi9Fx5Wwb6FjLpNpFF22wdU+4NjPf1juY50Uba1
+         n4ULIR7jRCKNqhVTZo4TL5FpcZ72LpatSnwJahJoHGD+JcxuE5vZ8j9xteY7FcwO6DpU
+         zae69X25d5MKPuvnDBaaXdYTBZzUD8tQ4JCwRHjiiXC0WPzbyig1m6NoryFIciondWnP
+         Nm3NzplEVfl0e4VqOdPWyIB2+MWdldJYySH2HQKKEUAQ7UZTh5DyX/issjK/QB6wZ3bQ
+         L/+A==
+X-Gm-Message-State: AHQUAuawSuQQfb/kmC+yU9nHf9fdRncaQkN5Sw7Mv70W+lYGcv8MAUhr
+        SMRnr8PjEMiuJBz/kE7p0bc=
+X-Google-Smtp-Source: AHgI3Iagqqtog6huzhVk53gPNbIOc5PvapC/8xXp8SsTpq1aKoeB9qu7NWb8txzsu5/8/g3mCUI4dg==
+X-Received: by 2002:a2e:899a:: with SMTP id c26-v6mr1319082lji.94.1550128550972;
+        Wed, 13 Feb 2019 23:15:50 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id x2sm105855ljj.79.2019.02.13.23.15.49
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Feb 2019 23:15:50 -0800 (PST)
+Date:   Thu, 14 Feb 2019 09:15:47 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Angus Ainslie <angus@akkea.ca>
+Cc:     mazziesaccount@gmail.com, Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, heikki.haikola@fi.rohmeurope.com,
+        mikko.mutanen@fi.rohmeurope.com, Robin Gong <yibin.gong@nxp.com>,
+        Elven Wang <elven.wang@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        linux-kernel-owner@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] devicetree: bindings: bd718x7: document HW state
+ related ROHM specific properties
+Message-ID: <20190214071547.GD12247@localhost.localdomain>
+References: <cover.1550050645.git.matti.vaittinen@fi.rohmeurope.com>
+ <501fe1a68a9ad0987ddc0d3f559b2bdd1f65a5b7.1550050645.git.matti.vaittinen@fi.rohmeurope.com>
+ <044d28c6ea1f9dd58f4c1942411aaf58@www.akkea.ca>
 MIME-Version: 1.0
-References: <20190211151751.12336-1-oded.gabbay@gmail.com> <20190214071114.GA21381@kroah.com>
-In-Reply-To: <20190214071114.GA21381@kroah.com>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Thu, 14 Feb 2019 09:13:16 +0200
-Message-ID: <CAFCwf12VaYSpCtqyYsTGp2TZDJiJ4bYc4egrRY6mdzaceO_5Cw@mail.gmail.com>
-Subject: Re: [PATCH v4 00/15] Habana Labs kernel driver
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Olof Johansson <olof@lixom.net>, ogabbay@habana.ai,
-        Arnd Bergmann <arnd@arndb.de>, Joe Perches <joe@perches.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <044d28c6ea1f9dd58f4c1942411aaf58@www.akkea.ca>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 9:11 AM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> On Mon, Feb 11, 2019 at 05:17:36PM +0200, Oded Gabbay wrote:
-> > Hello,
-> > This is v4 of the Habana Labs kernel driver patch-set. It contains fixes
-> > according to reviews done on v3, mainly for the command buffer, sysfs and MMU
-> > patches. In addition, patch 2/15 was reduced in size from 4.3MB to 1.4MB.
-> >
-> > The patch-set is rebased on v5.0-rc6.
-> >
-> > Link to v3 cover letter: https://lkml.org/lkml/2019/2/4/1033
-> >
-> > Link to v2 cover letter: https://lkml.org/lkml/2019/1/30/1003
-> >
-> > Link to v1 cover letter: https://lwn.net/Articles/777342/
-> >
-> > I would appricate any feedback, question and/or review.
->
-> There's been some 0-day bot feedback on some of these patches now that I
-> put them in my -testing branch.  So I'm going to drop the patch series
-> from there now and wait for a v5 of the series that hopefully will have
-> those issues fixed :)
->
-> thanks,
->
-> greg k-h
+Hello Angus,
 
-Sure, np.
-Thanks,
-Oded
+Glad to hear from you again =)
+
+On Wed, Feb 13, 2019 at 03:38:40PM -0800, Angus Ainslie wrote:
+> > 
+> >  Optional properties:
+> >  - clock-output-names	: Should contain name for output clock.
+> > +- rohm,reset-snvs-powered : Transfer BD718x7 to SNVS state at reset.
+> > +
+> > +The BD718x7 supports two different HW states as reset target states.
+> > States
+> > +are called as SNVS and READY. At READY state all the PMIC power outputs
+> > go
+> > +down and OTP is reload. At the SNVS state all other logic and external
+> > +devices apart from the SNVS power domain are shut off. Please refer to
+> > NXP
+> > +i.MX8 documentation for further information regarding SNVS state. When
+> > a
+> > +reset is done via SNVS state the PMIC OTP data is not reload. This
+> > cause
+> > +
+> 
+> It looks like there is some text missing here.
+
+Actually, the "This cause" is a leftover from previous version. So
+nothings missing, just something extra :D But well spotted. I'll clean
+this up for next version!
+
+> > diff --git
+> > a/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
+> > b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
+> > index 4b98ca26e61a..4a05cbf915ee 100644
+> > ---
+> > a/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
+> > +++
+> > b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
+> > @@ -27,8 +27,38 @@ BUCK1, BUCK2, BUCK3, BUCK4, BUCK5, BUCK6
+> >  LDO1, LDO2, LDO3, LDO4, LDO5, LDO6
+> > 
+
+[...]
+
+> > +----------------------------------------------------------------------------
+> > +rest	| not supported		| not supported		| not supported
+> > +
+> >  Example:
+> 
+> Could you add an example of the optional properties ?
+
+Sure. I'll do that for next version as well :)
+
+Br,
+	Matti Vaittinen
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
