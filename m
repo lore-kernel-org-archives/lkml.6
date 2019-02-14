@@ -2,176 +2,225 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C8B3C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:03:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D06E7C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:04:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C96F21B68
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:03:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="tG8U1eRm"
+	by mail.kernel.org (Postfix) with ESMTP id 9E39E20675
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:04:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387958AbfBNXDo (ORCPT
+        id S1728652AbfBNXEI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 18:03:44 -0500
-Received: from out002.mailprotect.be ([83.217.72.86]:37507 "EHLO
-        out002.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727327AbfBNXBd (ORCPT
+        Thu, 14 Feb 2019 18:04:08 -0500
+Received: from gateway23.websitewelcome.com ([192.185.50.120]:40644 "EHLO
+        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727327AbfBNXEH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 18:01:33 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:References
-        :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:reply-to:sender:bcc:
-        content-type; bh=hsoeGDjUGXey8ONlL+laSe3sURvv4DnkGAvQi6DeVMc=; b=tG8U1eRmv23g
-        /x+gNPD3GXx2WQf2J//IvABU6Klw4/K3C2WZauWgzxkgXaHEGaeNSRG9znRzXFqQFUlRSe4KkLyzM
-        oRgh9eomLez0LBMyAItjYnO3k/VhU30/CP9gjHveY8BD8A5XKOb5AXMZyALJ+p7Dxzfp3BR96VAnx
-        mplgWhEskt1qQzqSyIZNPTp8BUjdQsf/KW2bNCV7zyBwlBAltyldQlkL++NMnSlcxqdYieHCOIroJ
-        ms8jv7K03J+9IDBqpTnrvkswdZ9iImsSE+atjOBGEG4P4vHPK6nG3TlrUTEyvWBrrddrI8F83BI9V
-        c+boIterNr9KbRVmTrnraw==;
-Received: from smtp-auth.mailprotect.be ([178.208.39.159])
-        by com-mpt-out002.mailprotect.be with esmtp (Exim 4.89)
-        (envelope-from <bvanassche@acm.org>)
-        id 1guQ0S-0000Wr-L1; Fri, 15 Feb 2019 00:01:25 +0100
-Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 0EA84C0482;
-        Fri, 15 Feb 2019 00:01:21 +0100 (CET)
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     peterz@infradead.org
-Cc:     mingo@redhat.com, will.deacon@arm.com, tj@kernel.org,
-        longman@redhat.com, johannes.berg@intel.com,
-        linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
-        Johannes Berg <johannes@sipsolutions.net>
-Subject: [PATCH v7 06/23] locking/lockdep: Make zap_class() remove all matching lock order entries
-Date:   Thu, 14 Feb 2019 15:00:41 -0800
-Message-Id: <20190214230058.196511-7-bvanassche@acm.org>
-X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
-In-Reply-To: <20190214230058.196511-1-bvanassche@acm.org>
-References: <20190214230058.196511-1-bvanassche@acm.org>
+        Thu, 14 Feb 2019 18:04:07 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway23.websitewelcome.com (Postfix) with ESMTP id 78181BAA8
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 17:04:06 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id uQ34gMR7aYTGMuQ34gfksb; Thu, 14 Feb 2019 17:04:06 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.119.20] (port=46938 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1guQ33-001d8J-QB; Thu, 14 Feb 2019 17:04:05 -0600
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Nicolas.Ferre@microchip.com, wg@grandegger.com, mkl@pengutronix.de,
+        davem@davemloft.net, Ludovic.Desroches@microchip.com,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+References: <20190129180612.GA28650@embeddedor>
+ <432a9399-95f4-e988-5cd2-93340f155fa1@microchip.com>
+ <daae008e-35fd-7553-fcb2-7932fe53b959@embeddedor.com>
+ <20190214221703.GQ10129@piout.net>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: [PATCH] can: mark expected switch fall-throughs
+Message-ID: <a8e53868-2b13-b050-7714-e3e24d18cf00@embeddedor.com>
+Date:   Thu, 14 Feb 2019 17:04:03 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <20190214221703.GQ10129@piout.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: 178.208.39.159
-X-SpamExperts-Domain: mailprotect.be
-X-SpamExperts-Username: 178.208.39.128/27
-Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
-X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: Combined (0.02)
-X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5qFgSS9jCK3LSUoCav/J+cJ602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
- q3u0UDjvO1tLifGj39bI0bcPyaJsYTbXCyMe5v8y2H30acbVA7+CsLowAEMLnIs/c915wTAPANfX
- yKo+pvzCeHRww82sG/8HW2me2F11ZDpUG2A5Oiv0I5mALh2L1FvYZOvwUqXjvDk55wR+TsdsSUF6
- GKzdvFr/HXw7HB6/ASdSFy6HwS/kPXDwAtkmamZ68x0sIvfyXcDIKE+0kbt+hzad+8LmAP3D1N2U
- GbvmsuDbvpqB9SNial5u6w2P0n3AP5HxdAj+kw2FxVgE7SkvtWKxkgySOE3GN0ExaDjCWJE9qkQd
- cN59Y08C+1+ciJCAfwA+JGk4n3TFgIfDMShmlQFqCr5hA8xy+28pF/HE/UXip0YpvmqSgtBtsvjK
- 9mpXvZ581yfqNVA0hlu/NpOnaXNvrIp4mRGgQUA9iOUB9gXW15it62GvKaV7puimXuHjFEy4159w
- b450J4XCXsfFdbMPgtsajKwG2cpJ3lvOyWe43aQJV0FQAw4GDaNi9opIpCCZlwPhCSifQg48iasD
- JL+gSQdpc7Qjle0LcSTVPooEuo2QsxqqSZrgzSd/y/UPcC3OGqi0VLzxDmzcG0iKavUv44HfPfc9
- 3SsS4aMXJmiJ2G0eb5ahWSZS8itsoBzU38uNQrbb6O7J//0XCxCMJn8bXo41UD0XUeyeeLgoe8v3
- Ml5+IDYsxJeBk/os5j8abOYt1SAwFTiWFYSlhfdXoL2rBaBWqCutI4g+l6rCWbY0MZcgnbHshzjL
- mWRvvkZRtgBBWwxR0WH0EA9CFU+XZZAji6JOThI+k1ucVCQQ+dji/Nf3amyIr1x1RYIHNNee2LMZ
- auWd3bJLCnhUZijhyP+NAi4z4ocCHqI/c8KjUic/Eh5gmfm8Qixyw/DNQAInR1tPJCnqBScHL8+l
- TGBIVE9xbEkX79v7DEiBILyHFulTt8MZ+2FHzI2tRk9+5zIafXpAwSGPnS32oons44HyMUKLWR7N
- GVchu1/rdU1t/SWu+yxj6TsAI+iDD9vGjzLZdruisfuPhyICICyimEKZnywKt5h6ngx9mFmID8gM
- 9QZDi01IhiaMMDRcCgYQIezXimM8MMGBqfqdqJBJSRulWz3lJxoVd7HeK8WDo27Oo9Jnn2NG+H38
- c/DXtHJOj+IrynVpkScfoGQWOPBVY82M8ECfDTyNS/J0MyNuDItEaHVAyCe015AGfC4N4YKcCY/W
- O55FSnHkew==
-X-Report-Abuse-To: spam@com-mpt-mgt001.mailprotect.be
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.119.20
+X-Source-L: No
+X-Exim-ID: 1guQ33-001d8J-QB
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:46938
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make sure that all lock order entries that refer to a class are removed
-from the list_entries[] array when a kernel module is unloaded.
 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Johannes Berg <johannes@sipsolutions.net>
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
----
- include/linux/lockdep.h  |  1 +
- kernel/locking/lockdep.c | 19 +++++++++++++------
- 2 files changed, 14 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/lockdep.h b/include/linux/lockdep.h
-index 0c38bade84b7..b5e6bfe0ae4a 100644
---- a/include/linux/lockdep.h
-+++ b/include/linux/lockdep.h
-@@ -178,6 +178,7 @@ static inline void lockdep_copy_map(struct lockdep_map *to,
- struct lock_list {
- 	struct list_head		entry;
- 	struct lock_class		*class;
-+	struct lock_class		*links_to;
- 	struct stack_trace		trace;
- 	int				distance;
- 
-diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 404086b23fc7..16657662ca4f 100644
---- a/kernel/locking/lockdep.c
-+++ b/kernel/locking/lockdep.c
-@@ -859,7 +859,8 @@ static struct lock_list *alloc_list_entry(void)
- /*
-  * Add a new dependency to the head of the list:
-  */
--static int add_lock_to_list(struct lock_class *this, struct list_head *head,
-+static int add_lock_to_list(struct lock_class *this,
-+			    struct lock_class *links_to, struct list_head *head,
- 			    unsigned long ip, int distance,
- 			    struct stack_trace *trace)
- {
-@@ -873,6 +874,7 @@ static int add_lock_to_list(struct lock_class *this, struct list_head *head,
- 		return 0;
- 
- 	entry->class = this;
-+	entry->links_to = links_to;
- 	entry->distance = distance;
- 	entry->trace = *trace;
- 	/*
-@@ -1918,14 +1920,14 @@ check_prev_add(struct task_struct *curr, struct held_lock *prev,
- 	 * Ok, all validations passed, add the new lock
- 	 * to the previous lock's dependency list:
- 	 */
--	ret = add_lock_to_list(hlock_class(next),
-+	ret = add_lock_to_list(hlock_class(next), hlock_class(prev),
- 			       &hlock_class(prev)->locks_after,
- 			       next->acquire_ip, distance, trace);
- 
- 	if (!ret)
- 		return 0;
- 
--	ret = add_lock_to_list(hlock_class(prev),
-+	ret = add_lock_to_list(hlock_class(prev), hlock_class(next),
- 			       &hlock_class(next)->locks_before,
- 			       next->acquire_ip, distance, trace);
- 	if (!ret)
-@@ -4119,15 +4121,20 @@ void lockdep_reset(void)
-  */
- static void zap_class(struct lock_class *class)
- {
-+	struct lock_list *entry;
- 	int i;
- 
- 	/*
- 	 * Remove all dependencies this lock is
- 	 * involved in:
- 	 */
--	for (i = 0; i < nr_list_entries; i++) {
--		if (list_entries[i].class == class)
--			list_del_rcu(&list_entries[i].entry);
-+	for (i = 0, entry = list_entries; i < nr_list_entries; i++, entry++) {
-+		if (entry->class != class && entry->links_to != class)
-+			continue;
-+		list_del_rcu(&entry->entry);
-+		/* Clear .class and .links_to to avoid double removal. */
-+		WRITE_ONCE(entry->class, NULL);
-+		WRITE_ONCE(entry->links_to, NULL);
- 	}
- 	/*
- 	 * Unhash the class and remove it from the all_lock_classes list:
--- 
-2.21.0.rc0.258.g878e2cd30e-goog
+On 2/14/19 4:17 PM, Alexandre Belloni wrote:
+> Hi,
+> 
+> On 14/02/2019 15:37:26-0600, Gustavo A. R. Silva wrote:
+>>
+>>
+>> On 1/30/19 2:11 AM, Nicolas.Ferre@microchip.com wrote:
+>>> On 29/01/2019 at 19:06, Gustavo A. R. Silva wrote:
+>>>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>>>> where we are expecting to fall through.
+>>>>
+>>>> This patch fixes the following warnings:
+>>>>
+>>>> drivers/net/can/peak_canfd/peak_pciefd_main.c:668:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>>> drivers/net/can/spi/mcp251x.c:875:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>>> drivers/net/can/usb/peak_usb/pcan_usb.c:422:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>>> drivers/net/can/at91_can.c:895:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>>> drivers/net/can/at91_can.c:953:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>>> drivers/net/can/usb/peak_usb/pcan_usb.c: In function ‘pcan_usb_decode_error’:
+>>>> drivers/net/can/usb/peak_usb/pcan_usb.c:422:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>>>     if (n & PCAN_USB_ERROR_BUS_LIGHT) {
+>>>>        ^
+>>>> drivers/net/can/usb/peak_usb/pcan_usb.c:428:2: note: here
+>>>>    case CAN_STATE_ERROR_WARNING:
+>>>>    ^~~~
+>>>>
+>>>> Warning level 3 was used: -Wimplicit-fallthrough=3
+>>>>
+>>>> This patch is part of the ongoing efforts to enabling
+>>>> -Wimplicit-fallthrough.
+>>>>
+>>>> Notice that in some cases spelling mistakes were fixed.
+>>>> In other cases, the /* fall through */ comment is placed
+>>>> at the bottom of the case statement, which is what GCC
+>>>> is expecting to find.
+>>>>
+>>>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>>>> ---
+>>>>   drivers/net/can/at91_can.c                    | 6 ++++--
+>>>
+>>> For this one:
+>>> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+>>>
+>>
+>> Thanks, Nicolas.
+>>
+> 
+> I though I had a déjà vu but you actually sent the at91 part twice.
+> 
 
+It wasn't intentional.
+
+>> Dave:
+>>
+>> I wonder if you can take this patch.
+>>
+>> Thanks
+>> --
+>> Gustavo
+>>
+>>>>   drivers/net/can/peak_canfd/peak_pciefd_main.c | 2 +-
+>>>>   drivers/net/can/spi/mcp251x.c                 | 3 ++-
+>>>>   drivers/net/can/usb/peak_usb/pcan_usb.c       | 2 +-
+>>>>   4 files changed, 8 insertions(+), 5 deletions(-)
+>>>>
+>>>> diff --git a/drivers/net/can/at91_can.c b/drivers/net/can/at91_can.c
+>>>> index d98c69045b17..1718c20f9c99 100644
+>>>> --- a/drivers/net/can/at91_can.c
+>>>> +++ b/drivers/net/can/at91_can.c
+>>>> @@ -902,7 +902,8 @@ static void at91_irq_err_state(struct net_device *dev,
+>>>>   				CAN_ERR_CRTL_TX_WARNING :
+>>>>   				CAN_ERR_CRTL_RX_WARNING;
+>>>>   		}
+>>>> -	case CAN_STATE_ERROR_WARNING:	/* fallthrough */
+>>>> +		/* fall through */
+>>>> +	case CAN_STATE_ERROR_WARNING:
+>>>>   		/*
+>>>>   		 * from: ERROR_ACTIVE, ERROR_WARNING
+>>>>   		 * to  : ERROR_PASSIVE, BUS_OFF
+>>>> @@ -951,7 +952,8 @@ static void at91_irq_err_state(struct net_device *dev,
+>>>>   		netdev_dbg(dev, "Error Active\n");
+>>>>   		cf->can_id |= CAN_ERR_PROT;
+>>>>   		cf->data[2] = CAN_ERR_PROT_ACTIVE;
+>>>> -	case CAN_STATE_ERROR_WARNING:	/* fallthrough */
+> 
+> Seriously, for that one, you should fix the compiler. The fall through
+
+I'll pass your feedback on to the GCC guys.
+
+> is not implicit, it is actually quite explicit and the warning is simply
+> wrong.
+> 
+> Also, the gcc documentation says that -Wimplicit-fallthrough=3
+> recognizes /* fallthrough */ as a proper fall through comment (and I
+> tested with gcc 8.2).
+> 
+
+Yeah. But that's not the relevant change in this case.  Notice that the
+comment was moved to the very bottom of the previous case.
+
+Thanks
+--
+Gustavo
