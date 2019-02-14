@@ -2,111 +2,86 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C86C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:33:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 480DDC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:36:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C3A5222B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:33:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04D7E2229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:36:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="eYSKGQ/e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406062AbfBNHdt (ORCPT
+        id S2406080AbfBNHgO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 02:33:49 -0500
-Received: from lb3-smtp-cloud7.xs4all.net ([194.109.24.31]:59276 "EHLO
-        lb3-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726955AbfBNHds (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 02:33:48 -0500
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id uBWWgIMxHLMwIuBWZgOLfO; Thu, 14 Feb 2019 08:33:45 +0100
-Subject: Re: [RESEND PATCH v4,1/3] media: dt-bindings: media: add
- 'assigned-clocks' to vcodec examples
-To:     Yunfei Dong <yunfei.dong@mediatek.com>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        Qianqian Yan <qianqian.yan@mediatek.com>
-References: <1550111093-7057-1-git-send-email-yunfei.dong@mediatek.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <3f77d34a-a2a4-a2c1-a4e6-32669ff69357@xs4all.nl>
-Date:   Thu, 14 Feb 2019 08:33:32 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 14 Feb 2019 02:36:14 -0500
+Received: from ozlabs.org ([203.11.71.1]:56855 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726955AbfBNHgO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 02:36:14 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 440Sqv1x5zz9sML;
+        Thu, 14 Feb 2019 18:36:09 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1550129771;
+        bh=XFNYlUhSDJOrHHFLAyfdhnbdXjBfrBCZCu8CUI3Wj5k=;
+        h=Date:From:To:Cc:Subject:From;
+        b=eYSKGQ/eYGobjwh5l4yZ0xkq+TeB/zrXVJYBtQ1YQm2gZ7G9i5DUnvl8yLw+lHc7I
+         /bXvAz8tRWBGaYuvHsqkwJ0g5yqz4UmkEuxwKYjRpp3ZAWq2ENonKOqWgqbdA4iQe/
+         T+Jbrx16w/YIXbtg1rcL0p3rEbmGGiKFa7xhvaaUqQJ0pZo75P3So+txdP2lgg5P3d
+         3zzmVkXyNeGRumKFyGk+H6Imes4JFlrLfOf5BgckdhPQLpp1LFRqy4W2itCcH5z+xX
+         zdBwZVFh9raGfsz0EFr4sFCsMM/9mq0mhQPMtqzDxgMiWW1S9cCUj+yFsF4p9vmr22
+         o2qeff+nwwf1Q==
+Date:   Thu, 14 Feb 2019 18:36:05 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     "Tobin C. Harding" <me@tobin.cc>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the leaks tree
+Message-ID: <20190214183605.3132886d@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <1550111093-7057-1-git-send-email-yunfei.dong@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfBugUWMcmJhaAPPMSjla3U+JKeQ1EE/g/hB7syAzumF6XudhzAvX5uiNYtF9J+g5kf29qqmLLPeh6HBnrvaxXZZYmPAAexBFSRhKLEJxv72lpA6dywQg
- 3VJYP/HEePYZhzT8yzUXUZZMTW7J5QHI3yIB/1SgA9FEnYxwZ/DeF9lPTlleZluGT0Sdz21Tb87akM55Iorw2qtYOFRCVya185Qvj11ULEQEcQKufGfbgslI
- l9bdwhXDOToFFn1+hGD7TSFnA1L8b7zenmNBr7mFzgyESDiCyiy2OBbUlphxwiuYf5uJyXH5GbQTpqouF5lMjHqtHszrVENh/L/K+XFXqo+i5/zO0MnpVKMC
- NvI9LXjhoT9WCsnzq3USVIxQpn4o5dPfbdL3CltMQAynZSwUWaIcbPp6ZLuhl0X7gfXUOud0s/jNgl0VeBQCaz1PxL651hnPlUkIqtdEMG0uDvn22rZkYxHf
- AW96M5Uxtck2hrm/xgpY4PG4nOgB57mfcjUOVRn8857U7W2U3h3vjZB5L0cMqwLOcPnqc/1TColFrVGZlxVjLdu+W9AlE2XeL3MBIDX9vpruP/hbTskt5kse
- kibisxZYa09XkAXmkZffF4vbTpKOXLpzlZePErCqKheVu8Ap0Lwr/ZVejTx6qaJQfKk=
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/c0VxBprFlYC/OObZ89OgnUr"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yunfei Dong,
+--Sig_/c0VxBprFlYC/OObZ89OgnUr
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Why is this series resent? Patches 1 and 3 have been merged in our
-media master tree already.
+Hi Tobin,
 
-Regards,
+Commit
 
-	Hans
+  5d06b3fc8e61 ("leaking_addresses: Completely remove --version flag")
 
-On 2/14/19 3:24 AM, Yunfei Dong wrote:
-> Fix MTK binding document for MT8173 dtsi changed in order
-> to use standard CCF interface.
-> MT8173 SoC from Mediatek.
-> 
-> Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
-> Signed-off-by: Qianqian Yan <qianqian.yan@mediatek.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
->  .../devicetree/bindings/media/mediatek-vcodec.txt  |   13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/media/mediatek-vcodec.txt b/Documentation/devicetree/bindings/media/mediatek-vcodec.txt
-> index 2a615d8..b6b5dde 100644
-> --- a/Documentation/devicetree/bindings/media/mediatek-vcodec.txt
-> +++ b/Documentation/devicetree/bindings/media/mediatek-vcodec.txt
-> @@ -66,6 +66,15 @@ vcodec_dec: vcodec@16000000 {
->                    "vencpll",
->                    "venc_lt_sel",
->                    "vdec_bus_clk_src";
-> +    assigned-clocks = <&topckgen CLK_TOP_VENC_LT_SEL>,
-> +                      <&topckgen CLK_TOP_CCI400_SEL>,
-> +                      <&topckgen CLK_TOP_VDEC_SEL>,
-> +                      <&apmixedsys CLK_APMIXED_VCODECPLL>,
-> +                      <&apmixedsys CLK_APMIXED_VENCPLL>;
-> +    assigned-clock-parents = <&topckgen CLK_TOP_VCODECPLL_370P5>,
-> +                             <&topckgen CLK_TOP_UNIVPLL_D2>,
-> +                             <&topckgen CLK_TOP_VCODECPLL>;
-> +    assigned-clock-rates = <0>, <0>, <0>, <1482000000>, <800000000>;
->    };
->  
->    vcodec_enc: vcodec@18002000 {
-> @@ -105,4 +114,8 @@ vcodec_dec: vcodec@16000000 {
->                    "venc_sel",
->                    "venc_lt_sel_src",
->                    "venc_lt_sel";
-> +    assigned-clocks = <&topckgen CLK_TOP_VENC_SEL>,
-> +                      <&topckgen CLK_TOP_VENC_LT_SEL>;
-> +    assigned-clock-parents = <&topckgen CLK_TOP_VENCPLL_D2>,
-> +                             <&topckgen CLK_TOP_UNIVPLL1_D2>;
->    };
-> 
+is missing a Signed-off-by from its author and committer.
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/c0VxBprFlYC/OObZ89OgnUr
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxlGmUACgkQAVBC80lX
+0Gw8Cgf9HXU4BkTcbrqAZtNeeQxhJJEQFQj92zm/OfpH0aMx7YYz/45YonHNqBhr
+XAfwt3cqX4Di5TuL9b9EjfV1fBpAGYN/YxFDiQ9f162uJ8c+WMN98gW2Ecne9JF6
+03Fo8Z46s6EHsILCC+G1akeDBRBrRB6sYSPFnZklWFw7/ugQ7K+RK9oTnbatDr1l
+qAMIA4TswIak3C2lsAAYCRHYm1m/JEfagS75b4zk4nzRPAaWk6W1CyQ0gahEcWzu
+r8cTC7cXgttYPtNB9rKUlvgNKhCdQ7IwKsE9ZVHrjEgjAxqvS9CYJX0lNbt72EKy
+Y0ROMArDeeUpCHLERHKTi+2+tRURbg==
+=wtQ7
+-----END PGP SIGNATURE-----
+
+--Sig_/c0VxBprFlYC/OObZ89OgnUr--
