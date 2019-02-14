@@ -2,216 +2,265 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FD41C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:31:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C07DDC4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:32:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6C8F222CC
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:31:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89BC2222A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:32:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IopZXxja"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="wBeqv5HA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387878AbfBNBbM (ORCPT
+        id S2388047AbfBNBcX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 20:31:12 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41861 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731789AbfBNBaz (ORCPT
+        Wed, 13 Feb 2019 20:32:23 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:50470 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728073AbfBNBcW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 20:30:55 -0500
-Received: by mail-pl1-f196.google.com with SMTP id k15so2181642pls.8
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 17:30:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=yUOh5urbJ5qKsBwwk9JiS26KJ91s9tOUPSxR5qZLz4c=;
-        b=IopZXxjaiYhOZk3DiEuFXysOr9PyU1OW5shFcoAjWyWQPqzzKxQRq7snvXdol6Yq/0
-         RAme/rEM5+pHeQIx/CdyqRkkIu04+T1xMew7zbKp2dj5yWfo6QyVMNGs6Wqz+8Qiuq2E
-         UWKCqQR1w+VOm9QC1RZy2CGUSozZVf99HEm1w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=yUOh5urbJ5qKsBwwk9JiS26KJ91s9tOUPSxR5qZLz4c=;
-        b=P8fdk9v8FiXnWm33on/YBDDZfxxk5REuRoD8DQfZQ1nxJ1MabS5lj0KmAQxmRwHBQd
-         aXntMte/hs3yRP76EggcM6rNynnNzVSrBGRVsBocNb4TcpfORGaOG2nGQW2BhgOsBEOK
-         Y2SRU+na2UENKvVjIXMHJutDwLtom3Xl+kjWuVPxd9oq3oVSbgnv6n7K45l0H5guJtlA
-         PUyHZTafYKRV1X4gG0mdyTE9cjpigpuPM+nWSqRaa66gWe1FHYIe0PgxVGxvzqlEbHvJ
-         5pws7klC04SWjHKWHnKL5nPry2mNzYmStyjXxdbzn2I6omPNkw7iQl4Y/Vx5sYQKky25
-         ODuQ==
-X-Gm-Message-State: AHQUAuZp7Us24rbrhhqJ8SmfD/yVB1uTH++GPXS122j0i5ljVIk72cTs
-        5+gtfBLrX8vcdxpd60LNjYZdzA==
-X-Google-Smtp-Source: AHgI3IagHH5nYbheS5Y7OhAcpMQHA4CZK4LhO+tqffWsUCWFmoy1vTdSaNNkS/WRKAu890RoBofTJg==
-X-Received: by 2002:a17:902:1aa:: with SMTP id b39mr1350593plb.244.1550107855170;
-        Wed, 13 Feb 2019 17:30:55 -0800 (PST)
-Received: from mka.mtv.corp.google.com ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id p64sm811072pfi.56.2019.02.13.17.30.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 17:30:54 -0800 (PST)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org,
-        Lukasz Luba <l.luba@partner.samsung.com>
-Cc:     Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH 2/4] PM / devfreq: Handle monitor suspend/resume in the devfreq core
-Date:   Wed, 13 Feb 2019 17:30:40 -0800
-Message-Id: <20190214013042.254790-3-mka@chromium.org>
-X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
-In-Reply-To: <20190214013042.254790-1-mka@chromium.org>
-References: <20190214013042.254790-1-mka@chromium.org>
+        Wed, 13 Feb 2019 20:32:22 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1E1T435154335;
+        Thu, 14 Feb 2019 01:32:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=QG0jTDVpSEhIsvVHTjY51M5aGJDrl2PK59ahq/4ZWQE=;
+ b=wBeqv5HA1DTKd9/12GocSoQKSYtA7Sz8KHKZ8dFkiwj8L+QAu/EwDd0jlXfM4R9hBbp0
+ nUB34eRkmcLZFtPpDvU5KxEfpBusCO0XgXQbNVOpfQz5ShentEWSLjX67KVJKwkJ69jF
+ YhosyobDqqYW4b+v0E83+VGCF+BpyLy3kYiOBW2y7W+0hWUYGZSYlQCy4qtHT6wO5297
+ b1/g6DmeDFh5J5ooHFMErntXIUFfe3IlRb9F2m+K9i5eqa2Uv9UGcTFOTCzcfNQb378H
+ yCjajvAYo3jI9mR38JG3lM3L28GMucnhDq1Lh1zlS3L82y/oU0U3RsWExHl0HMPdUzb8 1w== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2qhreknb9u-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Feb 2019 01:32:09 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1E1W8ix011793
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Feb 2019 01:32:08 GMT
+Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1E1W75S005313;
+        Thu, 14 Feb 2019 01:32:07 GMT
+Received: from [192.168.1.164] (/50.38.38.67)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 14 Feb 2019 01:32:07 +0000
+Subject: Re: [PATCH] huegtlbfs: fix races and page leaks during migration
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Davidlohr Bueso <dave@stgolabs.net>, stable@vger.kernel.org
+References: <803d2349-8911-0b47-bc5b-4f2c6cc3f928@oracle.com>
+ <20190212221400.3512-1-mike.kravetz@oracle.com>
+From:   Mike Kravetz <mike.kravetz@oracle.com>
+Message-ID: <74510272-7319-7372-9ea6-ec914734c179@oracle.com>
+Date:   Wed, 13 Feb 2019 17:32:05 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190212221400.3512-1-mike.kravetz@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9166 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902140009
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-devfreq expects governors to call devfreq_monitor_suspend/resume()
-in response to DEVFREQ_GOV_SUSPEND/RESUME events. Since the devfreq
-core itself generates these events and invokes the governor's event
-handler the suspend/resume of the load monitoring can be done in the
-common code.
+On 2/12/19 2:14 PM, Mike Kravetz wrote:
+> 
+> Hugetlb pages can also be leaked at migration time if the pages are
+> associated with a file in an explicitly mounted hugetlbfs filesystem.
+> For example, a test program which hole punches, faults and migrates
+> pages in such a file (1G in size) will eventually fail because it
+> can not allocate a page.  Reported counts and usage at time of failure:
+> 
+> node0
+> 537     free_hugepages
+> 1024    nr_hugepages
+> 0       surplus_hugepages
+> node1
+> 1000    free_hugepages
+> 1024    nr_hugepages
+> 0       surplus_hugepages
+> 
+> Filesystem                         Size  Used Avail Use% Mounted on
+> nodev                              4.0G  4.0G     0 100% /var/opt/hugepool
+> 
+> Note that the filesystem shows 4G of pages used, while actual usage is
+> 511 pages (just under 1G).  Failed trying to allocate page 512.
 
-Call devfreq_monitor_suspend/resume() when the governor reports a
-successful handling of DEVFREQ_GOV_SUSPEND/RESUME and remove these
-calls from the simpleondemand and tegra governors. Make
-devfreq_monitor_suspend/resume() static since these functions are now
-only used by the devfreq core.
+My apologies.  The test scenario described above does not trigger the
+page leak issue fixed with this patch.  It actually triggers another
+undiagnosed and unfixed issue with huge page migration that I will
+be working on.  Sigh!
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+The leak with migration of huge pages in explicitly mounted filesystem
+is still fixed by this patch.  However, the commit message should be
+changed to more accurately reflect testing and observed outcomes.  The
+patch with only commit message changes is below:
+
+From: Mike Kravetz <mike.kravetz@oracle.com>
+Date: Tue, 12 Feb 2019 10:58:28 -0800
+Subject: [PATCH] huegtlbfs: fix races and page leaks during migration
+
+hugetlb pages should only be migrated if they are 'active'.  The routines
+set/clear_page_huge_active() modify the active state of hugetlb pages.
+When a new hugetlb page is allocated at fault time, set_page_huge_active
+is called before the page is locked.  Therefore, another thread could
+race and migrate the page while it is being added to page table by the
+fault code.  This race is somewhat hard to trigger, but can be seen by
+strategically adding udelay to simulate worst case scheduling behavior.
+Depending on 'how' the code races, various BUG()s could be triggered.
+
+To address this issue, simply delay the set_page_huge_active call until
+after the page is successfully added to the page table.
+
+Hugetlb pages can also be leaked at migration time if the pages are
+associated with a file in an explicitly mounted hugetlbfs filesystem.
+For example, consider a two node system with 4GB worth of huge pages
+available.  A program mmaps a 2G file in a hugetlbfs filesystem.  It
+then migrates the pages associated with the file from one node to
+another.  When the program exits, huge page counts are as follows:
+
+node0
+1024    free_hugepages
+1024    nr_hugepages
+
+node1
+0       free_hugepages
+1024    nr_hugepages
+
+Filesystem                         Size  Used Avail Use% Mounted on
+nodev                              4.0G  2.0G  2.0G  50% /var/opt/hugepool
+
+That is as expected.  2G of huge pages are taken from the free_hugepages
+counts, and 2G is the size of the file in the explicitly mounted filesystem.
+If the file is then removed, the counts become:
+
+node0
+1024    free_hugepages
+1024    nr_hugepages
+
+node1
+1024    free_hugepages
+1024    nr_hugepages
+
+Filesystem                         Size  Used Avail Use% Mounted on
+nodev                              4.0G  2.0G  2.0G  50% /var/opt/hugepool
+
+Note that the filesystem still shows 2G of pages used, while there
+actually are no huge pages in use.  The only way to 'fix' the
+filesystem accounting is to unmount the filesystem
+
+If a hugetlb page is associated with an explicitly mounted filesystem,
+this information in contained in the page_private field.  At migration
+time, this information is not preserved.  To fix, simply transfer
+page_private from old to new page at migration time if necessary.
+
+Cc: <stable@vger.kernel.org>
+Fixes: bcc54222309c ("mm: hugetlb: introduce page_huge_active")
+Signed-off-by: Mike Kravetz <mike.kravetz@oracle.com>
 ---
- drivers/devfreq/devfreq.c                 | 18 ++++++++----------
- drivers/devfreq/governor.h                |  2 --
- drivers/devfreq/governor_simpleondemand.c |  8 --------
- drivers/devfreq/tegra-devfreq.c           |  2 --
- 4 files changed, 8 insertions(+), 22 deletions(-)
+ fs/hugetlbfs/inode.c | 12 ++++++++++++
+ mm/hugetlb.c         |  9 ++++++---
+ 2 files changed, 18 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-index 1d3a43f8b3a10..7fab6c4cf719b 100644
---- a/drivers/devfreq/devfreq.c
-+++ b/drivers/devfreq/devfreq.c
-@@ -447,15 +447,13 @@ EXPORT_SYMBOL(devfreq_monitor_stop);
-  * devfreq_monitor_suspend() - Suspend load monitoring of a devfreq instance
-  * @devfreq:	the devfreq instance.
-  *
-- * Helper function to suspend devfreq device load monitoing. Function
-- * to be called from governor in response to DEVFREQ_GOV_SUSPEND
-- * event or when polling interval is set to zero.
-+ * Helper function to suspend devfreq device load monitoring.
-  *
-  * Note: Though this function is same as devfreq_monitor_stop(),
-  * intentionally kept separate to provide hooks for collecting
-  * transition statistics.
-  */
--void devfreq_monitor_suspend(struct devfreq *devfreq)
-+static void devfreq_monitor_suspend(struct devfreq *devfreq)
- {
- 	mutex_lock(&devfreq->lock);
- 	if (devfreq->monitor_state != DEVFREQ_MONITOR_RUNNING) {
-@@ -468,17 +466,14 @@ void devfreq_monitor_suspend(struct devfreq *devfreq)
- 	mutex_unlock(&devfreq->lock);
- 	cancel_delayed_work_sync(&devfreq->work);
- }
--EXPORT_SYMBOL(devfreq_monitor_suspend);
- 
- /**
-  * devfreq_monitor_resume() - Resume load monitoring of a devfreq instance
-  * @devfreq:    the devfreq instance.
-  *
-- * Helper function to resume devfreq device load monitoing. Function
-- * to be called from governor in response to DEVFREQ_GOV_RESUME
-- * event or when polling interval is set to non-zero.
-+ * Helper function to resume devfreq device load monitoring.
-  */
--void devfreq_monitor_resume(struct devfreq *devfreq)
-+static void devfreq_monitor_resume(struct devfreq *devfreq)
- {
- 	unsigned long freq;
- 
-@@ -501,7 +496,6 @@ void devfreq_monitor_resume(struct devfreq *devfreq)
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index 32920a10100e..a7fa037b876b 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -859,6 +859,18 @@ static int hugetlbfs_migrate_page(struct address_space
+*mapping,
+ 	rc = migrate_huge_page_move_mapping(mapping, newpage, page);
+ 	if (rc != MIGRATEPAGE_SUCCESS)
+ 		return rc;
++
++	/*
++	 * page_private is subpool pointer in hugetlb pages.  Transfer to
++	 * new page.  PagePrivate is not associated with page_private for
++	 * hugetlb pages and can not be set here as only page_huge_active
++	 * pages can be migrated.
++	 */
++	if (page_private(page)) {
++		set_page_private(newpage, page_private(page));
++		set_page_private(page, 0);
++	}
++
+ 	if (mode != MIGRATE_SYNC_NO_COPY)
+ 		migrate_page_copy(newpage, page);
+ 	else
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index a80832487981..f859e319e3eb 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -3625,7 +3625,6 @@ static vm_fault_t hugetlb_cow(struct mm_struct *mm, struct
+vm_area_struct *vma,
+ 	copy_user_huge_page(new_page, old_page, address, vma,
+ 			    pages_per_huge_page(h));
+ 	__SetPageUptodate(new_page);
+-	set_page_huge_active(new_page);
+
+ 	mmun_start = haddr;
+ 	mmun_end = mmun_start + huge_page_size(h);
+@@ -3647,6 +3646,7 @@ static vm_fault_t hugetlb_cow(struct mm_struct *mm, struct
+vm_area_struct *vma,
+ 				make_huge_pte(vma, new_page, 1));
+ 		page_remove_rmap(old_page, true);
+ 		hugepage_add_new_anon_rmap(new_page, vma, haddr);
++		set_page_huge_active(new_page);
+ 		/* Make the old page be freed below */
+ 		new_page = old_page;
+ 	}
+@@ -3792,7 +3792,6 @@ static vm_fault_t hugetlb_no_page(struct mm_struct *mm,
+ 		}
+ 		clear_huge_page(page, address, pages_per_huge_page(h));
+ 		__SetPageUptodate(page);
+-		set_page_huge_active(page);
+
+ 		if (vma->vm_flags & VM_MAYSHARE) {
+ 			int err = huge_add_to_page_cache(page, mapping, idx);
+@@ -3863,6 +3862,10 @@ static vm_fault_t hugetlb_no_page(struct mm_struct *mm,
+ 	}
+
+ 	spin_unlock(ptl);
++
++	/* May already be set if not newly allocated page */
++	set_page_huge_active(page);
++
+ 	unlock_page(page);
  out:
- 	mutex_unlock(&devfreq->lock);
- }
--EXPORT_SYMBOL(devfreq_monitor_resume);
- 
- /**
-  * devfreq_interval_update() - Update device devfreq monitoring interval
-@@ -903,6 +897,8 @@ int devfreq_suspend_device(struct devfreq *devfreq)
- 					DEVFREQ_GOV_SUSPEND, NULL);
- 		if (ret)
- 			return ret;
-+
-+		devfreq_monitor_suspend(devfreq);
- 	}
- 
- 	if (devfreq->suspend_freq) {
-@@ -944,6 +940,8 @@ int devfreq_resume_device(struct devfreq *devfreq)
- 					DEVFREQ_GOV_RESUME, NULL);
- 		if (ret)
- 			return ret;
-+
-+		devfreq_monitor_resume(devfreq);
- 	}
- 
- 	return 0;
-diff --git a/drivers/devfreq/governor.h b/drivers/devfreq/governor.h
-index f53339ca610fc..d136792c0cc91 100644
---- a/drivers/devfreq/governor.h
-+++ b/drivers/devfreq/governor.h
-@@ -59,8 +59,6 @@ struct devfreq_governor {
- 
- extern void devfreq_monitor_start(struct devfreq *devfreq);
- extern void devfreq_monitor_stop(struct devfreq *devfreq);
--extern void devfreq_monitor_suspend(struct devfreq *devfreq);
--extern void devfreq_monitor_resume(struct devfreq *devfreq);
- extern void devfreq_interval_update(struct devfreq *devfreq,
- 					unsigned int *delay);
- 
-diff --git a/drivers/devfreq/governor_simpleondemand.c b/drivers/devfreq/governor_simpleondemand.c
-index c0417f0e081e0..52eb0c734b312 100644
---- a/drivers/devfreq/governor_simpleondemand.c
-+++ b/drivers/devfreq/governor_simpleondemand.c
-@@ -103,14 +103,6 @@ static int devfreq_simple_ondemand_handler(struct devfreq *devfreq,
- 		devfreq_interval_update(devfreq, (unsigned int *)data);
- 		break;
- 
--	case DEVFREQ_GOV_SUSPEND:
--		devfreq_monitor_suspend(devfreq);
--		break;
--
--	case DEVFREQ_GOV_RESUME:
--		devfreq_monitor_resume(devfreq);
--		break;
--
- 	default:
- 		break;
- 	}
-diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devfreq.c
-index c59d2eee5d309..79efa1e51bd06 100644
---- a/drivers/devfreq/tegra-devfreq.c
-+++ b/drivers/devfreq/tegra-devfreq.c
-@@ -591,11 +591,9 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
- 
- 	case DEVFREQ_GOV_SUSPEND:
- 		tegra_actmon_disable_interrupts(tegra);
--		devfreq_monitor_suspend(devfreq);
- 		break;
- 
- 	case DEVFREQ_GOV_RESUME:
--		devfreq_monitor_resume(devfreq);
- 		tegra_actmon_enable_interrupts(tegra);
- 		break;
- 	}
+ 	return ret;
+@@ -4097,7 +4100,6 @@ int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm,
+ 	 * the set_pte_at() write.
+ 	 */
+ 	__SetPageUptodate(page);
+-	set_page_huge_active(page);
+
+ 	mapping = dst_vma->vm_file->f_mapping;
+ 	idx = vma_hugecache_offset(h, dst_vma, dst_addr);
+@@ -4165,6 +4167,7 @@ int hugetlb_mcopy_atomic_pte(struct mm_struct *dst_mm,
+ 	update_mmu_cache(dst_vma, dst_addr, dst_pte);
+
+ 	spin_unlock(ptl);
++	set_page_huge_active(page);
+ 	if (vm_shared)
+ 		unlock_page(page);
+ 	ret = 0;
 -- 
-2.20.1.791.gb4d0f1c61a-goog
+2.17.2
 
