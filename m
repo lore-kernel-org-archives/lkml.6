@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDB11C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 03:06:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 168A1C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 03:06:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A25E20811
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 03:06:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D892E20811
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 03:06:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="xa9xx55x"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="YHX966Qj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395215AbfBNDGH (ORCPT
+        id S2395308AbfBNDGI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 22:06:07 -0500
-Received: from conuserg-07.nifty.com ([210.131.2.74]:64387 "EHLO
+        Wed, 13 Feb 2019 22:06:08 -0500
+Received: from conuserg-07.nifty.com ([210.131.2.74]:64384 "EHLO
         conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726271AbfBNDGG (ORCPT
+        with ESMTP id S2394268AbfBNDGG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 13 Feb 2019 22:06:06 -0500
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id x1E35Pg2020814;
-        Thu, 14 Feb 2019 12:05:25 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x1E35Pg2020814
+        by conuserg-07.nifty.com with ESMTP id x1E35Pg8020814;
+        Thu, 14 Feb 2019 12:05:29 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x1E35Pg8020814
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1550113525;
-        bh=yO8RC+IzX+7q6ObGuUgOsgj+kpMFLH2G7hMx94CJuxg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=xa9xx55x3a46jz1CDBYlsEEOL296PAe7Tgo9BkkXj3NBFmssf4NG8Pentf8AbN9u4
-         h1Ozqfic48t7KM6Ws3JxYECl69MbPv1M6bOhoJhCBMUFIADfZRQe18F6FoEcTBar+8
-         6jZ/A7ZsKVHwZeTd07VyBFEKRsinWNwH0NszGYxDQTpQQ4vaNWtwvwAG9l5QZbpjP0
-         6KBUu56t4sa5xPacF5h7NMvHrVDNqnca/uAge8lEVCxlHuD6VBeqoYoO0+N+/Vt5YC
-         NuTl95roarog8CttNiwm6d8vB60wLbk+UXGuCZCg31j9CJg3XOzgP5up7BZOoRuer7
-         hW4tYZzpZuC/g==
+        s=dec2015msa; t=1550113529;
+        bh=9rCnJrZhrNGJF/7A8mlLM75Z8BqThK/fBdPkgtUyRPA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=YHX966QjGfaHOVTquVmuzHmIIdhYCCM6T/lIo243Ly6iBmhF/LJ76ItK3CsAh+GZh
+         A9ionEc55vwALlYZXihilnIQi/q6yBLM4lxAJfWHTQambXxNMch63348VWxCAHj4pJ
+         LC/kCJ4MNa6WgfVj6ROeXAsL8Y9BgGHP6SJ9nCKY7Epspf9kV1jYKN8fUp3zYpv+fS
+         NA5kuV/JTaHvOJd5wFTR522ny/WsOIGwi/ab7QXpJpo8HHtrc0HCnwkrACzdkwa0Zo
+         w8PP+6lp50lVKeUjl5FRxIRhbVM+7cDVxWgRXsCHp8kb5eB1eCdwgHqD9fvajxQQzR
+         sm1dYtn9UQE+A==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     linux-kbuild@vger.kernel.org
@@ -44,123 +44,88 @@ Cc:     Sam Ravnborg <sam@ravnborg.org>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         Michal Marek <michal.lkml@markovi.net>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/8] kbuild: pkg: use -f $(srctree)/Makefile to recurse to top Makefile
-Date:   Thu, 14 Feb 2019 12:05:14 +0900
-Message-Id: <1550113521-23577-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 7/8] kbuild: remove empty rules for makefiles
+Date:   Thu, 14 Feb 2019 12:05:20 +0900
+Message-Id: <1550113521-23577-7-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1550113521-23577-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1550113521-23577-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'$(MAKE) KBUILD_SRC=' changes the working directory back and forth
-between objtree and srctree.
+The previous commit made 'MAKEFLAGS += -rR' effective in the top
+Makefile regardless of O= option, GNU Make versions.
 
-It is better to recurse to the top-level Makefile directly.
+The top Makefile does not need to cancel implicit rules for makefiles.
+
+There is still one place where an empty rule is useful. Since -rR is
+effective only after sub-make, GNU Make would try implicit rules to
+update the top Makefile. Although it is not a big overhead, cancel
+it just in case.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- scripts/package/Makefile |  4 ++--
- scripts/package/builddeb | 10 +++++-----
- scripts/package/buildtar |  2 +-
- scripts/package/mkdebian |  6 ++++--
- 4 files changed, 12 insertions(+), 10 deletions(-)
+ Makefile | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
-diff --git a/scripts/package/Makefile b/scripts/package/Makefile
-index 453fece..aa39c2b 100644
---- a/scripts/package/Makefile
-+++ b/scripts/package/Makefile
-@@ -59,7 +59,7 @@ rpm-pkg: FORCE
- # binrpm-pkg
- # ---------------------------------------------------------------------------
- binrpm-pkg: FORCE
--	$(MAKE) KBUILD_SRC=
-+	$(MAKE) -f $(srctree)/Makefile
- 	$(CONFIG_SHELL) $(MKSPEC) prebuilt > $(objtree)/binkernel.spec
- 	+rpmbuild $(RPMOPTS) --define "_builddir $(objtree)" --target \
- 		$(UTS_MACHINE) -bb $(objtree)/binkernel.spec
-@@ -102,7 +102,7 @@ clean-dirs += $(objtree)/snap/
- # tarball targets
- # ---------------------------------------------------------------------------
- tar%pkg: FORCE
--	$(MAKE) KBUILD_SRC=
-+	$(MAKE) -f $(srctree)/Makefile
- 	$(CONFIG_SHELL) $(srctree)/scripts/package/buildtar $@
+diff --git a/Makefile b/Makefile
+index 25d7d46..f7f1aa1 100644
+--- a/Makefile
++++ b/Makefile
+@@ -37,6 +37,10 @@ ifndef KBUILD_SUBMAKE
+ # (this increases performance and avoids hard-to-debug behaviour)
+ MAKEFLAGS += -rR
  
- clean-dirs += $(objtree)/tar-install/
-diff --git a/scripts/package/builddeb b/scripts/package/builddeb
-index f43a274..8ac25d1 100755
---- a/scripts/package/builddeb
-+++ b/scripts/package/builddeb
-@@ -86,12 +86,12 @@ cp "$($MAKE -s -f $srctree/Makefile image_name)" "$tmpdir/$installed_image_path"
- if grep -q "^CONFIG_OF_EARLY_FLATTREE=y" $KCONFIG_CONFIG ; then
- 	# Only some architectures with OF support have this target
- 	if [ -d "${srctree}/arch/$SRCARCH/boot/dts" ]; then
--		$MAKE KBUILD_SRC= INSTALL_DTBS_PATH="$tmpdir/usr/lib/$packagename" dtbs_install
-+		$MAKE -f $srctree/Makefile INSTALL_DTBS_PATH="$tmpdir/usr/lib/$packagename" dtbs_install
- 	fi
- fi
- 
- if grep -q '^CONFIG_MODULES=y' $KCONFIG_CONFIG ; then
--	INSTALL_MOD_PATH="$tmpdir" $MAKE KBUILD_SRC= modules_install
-+	INSTALL_MOD_PATH="$tmpdir" $MAKE -f $srctree/Makefile modules_install
- 	rm -f "$tmpdir/lib/modules/$version/build"
- 	rm -f "$tmpdir/lib/modules/$version/source"
- 	if [ "$ARCH" = "um" ] ; then
-@@ -113,14 +113,14 @@ if grep -q '^CONFIG_MODULES=y' $KCONFIG_CONFIG ; then
- 		# resign stripped modules
- 		MODULE_SIG_ALL="$(grep -s '^CONFIG_MODULE_SIG_ALL=y' $KCONFIG_CONFIG || true)"
- 		if [ -n "$MODULE_SIG_ALL" ]; then
--			INSTALL_MOD_PATH="$tmpdir" $MAKE KBUILD_SRC= modules_sign
-+			INSTALL_MOD_PATH="$tmpdir" $MAKE -f $srctree/Makefile modules_sign
- 		fi
- 	fi
- fi
- 
- if [ "$ARCH" != "um" ]; then
--	$MAKE headers_check KBUILD_SRC=
--	$MAKE headers_install KBUILD_SRC= INSTALL_HDR_PATH="$libc_headers_dir/usr"
-+	$MAKE -f $srctree/Makefile headers_check
-+	$MAKE -f $srctree/Makefile headers_install INSTALL_HDR_PATH="$libc_headers_dir/usr"
- fi
- 
- # Install the maintainer scripts
-diff --git a/scripts/package/buildtar b/scripts/package/buildtar
-index d624a07..cfd2a4a 100755
---- a/scripts/package/buildtar
-+++ b/scripts/package/buildtar
-@@ -57,7 +57,7 @@ dirs=boot
- # Try to install modules
- #
- if grep -q '^CONFIG_MODULES=y' "${KCONFIG_CONFIG}"; then
--	make ARCH="${ARCH}" O="${objtree}" KBUILD_SRC= INSTALL_MOD_PATH="${tmpdir}" modules_install
-+	make ARCH="${ARCH}" -f ${srctree}/Makefile INSTALL_MOD_PATH="${tmpdir}" modules_install
- 	dirs="$dirs lib"
- fi
- 
-diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-index edcad61..f030961 100755
---- a/scripts/package/mkdebian
-+++ b/scripts/package/mkdebian
-@@ -205,13 +205,15 @@ EOF
- cat <<EOF > debian/rules
- #!$(command -v $MAKE) -f
- 
-+srctree ?= .
++# 'MAKEFLAGS += -rR' does not become immediately effective for old
++# GNU Make versions. Cancel implicit rules for this Makefile.
++$(lastword $(MAKEFILE_LIST)): ;
 +
- build:
- 	\$(MAKE) KERNELRELEASE=${version} ARCH=${ARCH} \
--	KBUILD_BUILD_VERSION=${revision} KBUILD_SRC=
-+	KBUILD_BUILD_VERSION=${revision} -f \$(srctree)/Makefile
+ # Avoid funny character set dependencies
+ unexport LC_ALL
+ LC_COLLATE=C
+@@ -120,9 +124,6 @@ ifeq ("$(origin O)", "command line")
+   KBUILD_OUTPUT := $(O)
+ endif
  
- binary-arch:
- 	\$(MAKE) KERNELRELEASE=${version} ARCH=${ARCH} \
--	KBUILD_BUILD_VERSION=${revision} KBUILD_SRC= intdeb-pkg
-+	KBUILD_BUILD_VERSION=${revision} -f \$(srctree)/Makefile intdeb-pkg
+-# Cancel implicit rules on top Makefile
+-$(CURDIR)/Makefile Makefile: ;
+-
+ ifneq ($(words $(subst :, ,$(CURDIR))), 1)
+   $(error main directory cannot contain spaces nor colons)
+ endif
+@@ -303,8 +304,6 @@ __build_one_by_one:
  
- clean:
- 	rm -rf debian/*tmp debian/files
+ else
+ 
+-# We need some generic definitions (do not try to remake the file).
+-scripts/Kbuild.include: ;
+ include scripts/Kbuild.include
+ 
+ # Read KERNELRELEASE from include/config/kernel.release (if it exists)
+@@ -627,9 +626,6 @@ ifeq ($(may-sync-config),1)
+ # because some architectures define CROSS_COMPILE there.
+ -include include/config/auto.conf.cmd
+ 
+-# To avoid any implicit rule to kick in, define an empty command
+-$(KCONFIG_CONFIG) include/config/auto.conf.cmd: ;
+-
+ # The actual configuration files used during the build are stored in
+ # include/generated/ and include/config/. Update them if .config is newer than
+ # include/config/auto.conf (which mirrors .config).
+@@ -1750,9 +1746,7 @@ cmd_crmodverdir = $(Q)mkdir -p $(MODVERDIR) \
+ # read saved command lines for existing targets
+ existing-targets := $(wildcard $(sort $(targets)))
+ 
+-cmd_files := $(foreach f,$(existing-targets),$(dir $(f)).$(notdir $(f)).cmd)
+-$(cmd_files): ;	# Do not try to update included dependency files
+--include $(cmd_files)
++-include $(foreach f,$(existing-targets),$(dir $(f)).$(notdir $(f)).cmd)
+ 
+ endif   # ifeq ($(config-targets),1)
+ endif   # ifeq ($(mixed-targets),1)
 -- 
 2.7.4
 
