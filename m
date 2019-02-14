@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC1CC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 472A7C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:02:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F938218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:02:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11DCE218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:02:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="KSSYo8i0"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mailprotect.be header.i=@mailprotect.be header.b="AcVghC4+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728217AbfBNXB4 (ORCPT
+        id S2387808AbfBNXCx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 18:01:56 -0500
-Received: from com-out001.mailprotect.be ([83.217.72.83]:53931 "EHLO
-        com-out001.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727880AbfBNXBs (ORCPT
+        Thu, 14 Feb 2019 18:02:53 -0500
+Received: from out002.mailprotect.be ([83.217.72.86]:40267 "EHLO
+        out002.mailprotect.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728165AbfBNXBz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 18:01:48 -0500
+        Thu, 14 Feb 2019 18:01:55 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=mailprotect.be; s=mail; h=Content-Transfer-Encoding:MIME-Version:References
         :In-Reply-To:Message-Id:Date:Subject:Cc:To:From:reply-to:sender:bcc:
-        content-type; bh=736BJJI9Id829g11v7ieOoiScctTBqb5x6byc8O8ni0=; b=KSSYo8i0CSSU
-        2AaKiflZUTubTEL4E+4gS/DoHwlilF+uqeF0CU4GF3wFzMGbNBKh33xhOIyTb7MLKpz4Cc1xSAiL2
-        8Ctr+MO3pGAs1Ro6X5tJ7lIgMUNhUDL3KoFDQ9fFW3klVObQEnFoQV7xUkJzzSlM34EkbnpDhXk8O
-        NIo33r5OjZgwbSPeItN+3NhmEMfNLqT/lciZmrWwwfW4+GEo+SKJOSq2so7T1B7B++1yh3DSnidcD
-        nYigS68QQ77k7CPxrkvtQaw1DY/FXNGPRikYedBZMoAOoTt9GELYr7KWJPL7lc62JOGN4C73P0lLW
-        Ug5y4ZJ0NkCgLbvAFTcTyg==;
+        content-type; bh=Kg05y0DxnXVf1rAGTLAmSg5XgiOY1z3O55rmXiCb5tk=; b=AcVghC4++GJF
+        SUDdkoIXPzG8wdBzB9JG2CfnYmUnkQUz3DyyKkEs8Evk4j6i2fm5FfHJt//tw1BG9Tt9GjcZvlHx7
+        jchEVU8AxXunBz2OYpYFjnBOT+1RHuTP1ZEMscrMQg58koysBjlP42RglE8R+SwZbsViLl3tESe75
+        qEDhDrZBPugMqGhLBSv9V7wxnhTfcH7j8ggQIZmAixhSy92e1j4qks37vQRyVVoVEGXfqQnmLD6ZL
+        kq+wSmpcFc+e51uoRLuegIzqvxlRkDiwi2j1a4T2Jcl+CCZPeJdEyKqmHqDY1i/1crQnW3BBtlwxF
+        LqzMG/aT6CgSv/7X7rQnDw==;
 Received: from smtp-auth.mailprotect.be ([178.208.39.159])
-        by com-mpt-out001.mailprotect.be with esmtp (Exim 4.89)
+        by com-mpt-out002.mailprotect.be with esmtp (Exim 4.89)
         (envelope-from <bvanassche@acm.org>)
-        id 1guQ0g-000DOW-1S; Fri, 15 Feb 2019 00:01:38 +0100
+        id 1guQ0q-0000ms-Ak; Fri, 15 Feb 2019 00:01:48 +0100
 Received: from desktop-bart.svl.corp.google.com (unknown [104.133.8.89])
         (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id 93623C08FC;
-        Fri, 15 Feb 2019 00:01:35 +0100 (CET)
+        by smtp-auth.mailprotect.be (Postfix) with ESMTPSA id E722BC0926;
+        Fri, 15 Feb 2019 00:01:45 +0100 (CET)
 From:   Bart Van Assche <bvanassche@acm.org>
 To:     peterz@infradead.org
 Cc:     mingo@redhat.com, will.deacon@arm.com, tj@kernel.org,
         longman@redhat.com, johannes.berg@intel.com,
         linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>,
         Johannes Berg <johannes@sipsolutions.net>
-Subject: [PATCH v7 12/23] locking/lockdep: Reuse list entries that are no longer in use
-Date:   Thu, 14 Feb 2019 15:00:47 -0800
-Message-Id: <20190214230058.196511-13-bvanassche@acm.org>
+Subject: [PATCH v7 17/23] locking/lockdep: Verify whether lock objects are small enough to be used as class keys
+Date:   Thu, 14 Feb 2019 15:00:52 -0800
+Message-Id: <20190214230058.196511-18-bvanassche@acm.org>
 X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
 In-Reply-To: <20190214230058.196511-1-bvanassche@acm.org>
 References: <20190214230058.196511-1-bvanassche@acm.org>
@@ -59,23 +60,23 @@ X-SpamExperts-Domain: mailprotect.be
 X-SpamExperts-Username: 178.208.39.128/27
 Authentication-Results: mailprotect.be; auth=pass smtp.auth=178.208.39.128/27@mailprotect.be
 X-SpamExperts-Outgoing-Class: ham
-X-SpamExperts-Outgoing-Evidence: Combined (0.02)
+X-SpamExperts-Outgoing-Evidence: Combined (0.07)
 X-Recommended-Action: accept
-X-Filter-ID: EX5BVjFpneJeBchSMxfU5mUfYjbL5ty1v/UUngWPnlx602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
+X-Filter-ID: EX5BVjFpneJeBchSMxfU5vyybTBwZFNaNE/CXFITNxF602E9L7XzfQH6nu9C/Fh9KJzpNe6xgvOx
  q3u0UDjvO1tLifGj39bI0bcPyaJsYTbXCyMe5v8y2H30acbVA7+CsLowAEMLnIs/c915wTAPANfX
  yKo+pvzCeHRww82sG/8HW2me2F11ZDpUG2A5Oiv0I5mALh2L1FvYZOvwUqXjvDk55wR+TsdsSUF6
  GKzdvFr/HXw7HB6/ASdSFy6HwS/kPXDwAtkmamZ68x0sIvfyXcDIKE+0kbt+hzad+8LmAP3D1N2U
  GbvmsuDbvpqB9SNial5u6w2P0n3AP5HxdAj+kw2FxVgE7SkvtWKxkgySOE3GN0ExaDjCWJE9qkQd
- cN59oRO7/PBPSDiDxs11bhdKK1kCAsLDoDtKH0HAWJG1+Vhy+28pF/HE/UXip0YpvmqSgtBtsvjK
- 9mpXvZ581yfqNeeYAkx3ZcmLZYF56A5GPA+gQUA9iOUB9gXW15it62GvKaV7puimXuHjFEy4159w
+ cN59mkGG2u1tfBVga+mxrQwceKido1BuolQ9HBm0o5M3yA5y+28pF/HE/UXip0YpvmqSgtBtsvjK
+ 9mpXvZ581yfqNVA0hlu/NpOnaXNvrIp4mRGgQUA9iOUB9gXW15it62GvKaV7puimXuHjFEy4159w
  b450J4XCXsfFdbMPgtsajKwG2cpJ3lvOyWe43aQJV0FQAw4GDaNi9opIpCCZlwPhCSifQg48iasD
  JL+gSQdpc7Qjle0LcSTVPooEuo2QsxqqSZrgzSd/y/UPcC3OGqi0VLzxDmzcG0iKavUv44HfPfc9
  3SsS4aMXJmiJ2G0eb5ahWSZS8itsoBzU38uNQrbb6O7J//0XCxCMJn8bXo41UD0XUeyeeLgoe8v3
  Ml5+IDYsxJeBk/os5j8abOYt1SAwFTiWFYSlhfdXoL2rBaBWqCutI4g+l6rCWbY0MZcgnbHshzjL
- mWRvvkZRtgBBWwxR0VpXCEqSenvCQusD//B2Ay/sMI2sWxDLHKoH6dsbCFwPr1x1RYIHNNee2LMZ
+ mWRvvkZRtgBBWwxR0WH0EA9CFU+XZZAji6JOThIzqiNYjiBOuBcW2wqK3yI2r1x1RYIHNNee2LMZ
  auWd3bJLCnhUZijhyP+NAi4z4ocCHqI/c8KjUic/Eh5gmfm8Qixyw/DNQAInR1tPJCnqBScHL8+l
- TGBIVE9xbEkX79v7DEiBILyHFulTt8MZ+2FHSVErAoIU4nUSSDjAwZN9DiweCHJOtc3aoyMrLane
- z28hu1/rdU1t/SWu+yxj6TsAI+iDD9vGjzLZdruisfuPhyICICyimEKZnywKt5h6ngx9mFmID8gM
+ TGBIVE9xbEkX79v7DEiBILyHFulTt8MZ+2FHnnujRpkiuNnPi3DrmbeA2Rtj+fVESHz/Odf0H02H
+ 7xchu1/rdU1t/SWu+yxj6TsAI+iDD9vGjzLZdruisfuPhyICICyimEKZnywKt5h6ngx9mFmID8gM
  9QZDi01IhiaMMDRcCgYQIezXimM8MMGBqfqdqJBJSRulWz3lJxoVd7HeK8WDo27Oo9Jnn2NG+H38
  c/DXtHJOj+IrynVpkScfoGQWOPBVY82M8ECfDTyNS/J0MyNuDItEaHVAyCe015AGfC4N4YKcCY/W
  O55FSnHkew==
@@ -85,104 +86,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of abandoning elements of list_entries[] that are no longer in
-use, make alloc_list_entry() reuse array elements that have been freed.
-
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Waiman Long <longman@redhat.com>
 Cc: Johannes Berg <johannes@sipsolutions.net>
 Signed-off-by: Bart Van Assche <bvanassche@acm.org>
 ---
- kernel/locking/lockdep.c | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+ kernel/locking/lockdep.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
 diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
-index 6920f406ee91..4308f0b9ecd5 100644
+index f5df97812dfa..93216e195b4f 100644
 --- a/kernel/locking/lockdep.c
 +++ b/kernel/locking/lockdep.c
-@@ -45,6 +45,7 @@
- #include <linux/hash.h>
- #include <linux/ftrace.h>
- #include <linux/stringify.h>
-+#include <linux/bitmap.h>
- #include <linux/bitops.h>
- #include <linux/gfp.h>
- #include <linux/random.h>
-@@ -132,6 +133,7 @@ static inline int debug_locks_off_graph_unlock(void)
- 
- unsigned long nr_list_entries;
- static struct lock_list list_entries[MAX_LOCKDEP_ENTRIES];
-+static DECLARE_BITMAP(list_entries_in_use, MAX_LOCKDEP_ENTRIES);
- 
- /*
-  * All data structures here are protected by the global debug_lock.
-@@ -907,7 +909,10 @@ register_lock_class(struct lockdep_map *lock, unsigned int subclass, int force)
-  */
- static struct lock_list *alloc_list_entry(void)
+@@ -758,6 +758,17 @@ static bool assign_lock_key(struct lockdep_map *lock)
  {
--	if (nr_list_entries >= MAX_LOCKDEP_ENTRIES) {
-+	int idx = find_first_zero_bit(list_entries_in_use,
-+				      ARRAY_SIZE(list_entries));
+ 	unsigned long can_addr, addr = (unsigned long)lock;
+ 
++#ifdef __KERNEL__
++	/*
++	 * lockdep_free_key_range() assumes that struct lock_class_key
++	 * objects do not overlap. Since we use the address of lock
++	 * objects as class key for static objects, check whether the
++	 * size of lock_class_key objects does not exceed the size of
++	 * the smallest lock object.
++	 */
++	BUILD_BUG_ON(sizeof(struct lock_class_key) > sizeof(raw_spinlock_t));
++#endif
 +
-+	if (idx >= ARRAY_SIZE(list_entries)) {
- 		if (!debug_locks_off_graph_unlock())
- 			return NULL;
- 
-@@ -915,7 +920,9 @@ static struct lock_list *alloc_list_entry(void)
- 		dump_stack();
- 		return NULL;
- 	}
--	return list_entries + nr_list_entries++;
-+	nr_list_entries++;
-+	__set_bit(idx, list_entries_in_use);
-+	return list_entries + idx;
- }
- 
- /*
-@@ -1019,7 +1026,7 @@ static inline void mark_lock_accessed(struct lock_list *lock,
- 	unsigned long nr;
- 
- 	nr = lock - list_entries;
--	WARN_ON(nr >= nr_list_entries); /* Out-of-bounds, input fail */
-+	WARN_ON(nr >= ARRAY_SIZE(list_entries)); /* Out-of-bounds, input fail */
- 	lock->parent = parent;
- 	lock->class->dep_gen_id = lockdep_dependency_gen_id;
- }
-@@ -1029,7 +1036,7 @@ static inline unsigned long lock_accessed(struct lock_list *lock)
- 	unsigned long nr;
- 
- 	nr = lock - list_entries;
--	WARN_ON(nr >= nr_list_entries); /* Out-of-bounds, input fail */
-+	WARN_ON(nr >= ARRAY_SIZE(list_entries)); /* Out-of-bounds, input fail */
- 	return lock->class->dep_gen_id == lockdep_dependency_gen_id;
- }
- 
-@@ -4288,13 +4295,13 @@ static void zap_class(struct pending_free *pf, struct lock_class *class)
- 	 * Remove all dependencies this lock is
- 	 * involved in:
- 	 */
--	for (i = 0, entry = list_entries; i < nr_list_entries; i++, entry++) {
-+	for_each_set_bit(i, list_entries_in_use, ARRAY_SIZE(list_entries)) {
-+		entry = list_entries + i;
- 		if (entry->class != class && entry->links_to != class)
- 			continue;
-+		__clear_bit(i, list_entries_in_use);
-+		nr_list_entries--;
- 		list_del_rcu(&entry->entry);
--		/* Clear .class and .links_to to avoid double removal. */
--		WRITE_ONCE(entry->class, NULL);
--		WRITE_ONCE(entry->links_to, NULL);
- 	}
- 	if (list_empty(&class->locks_after) &&
- 	    list_empty(&class->locks_before)) {
-@@ -4608,6 +4615,7 @@ void __init lockdep_init(void)
- 	       (sizeof(lock_classes) +
- 		sizeof(classhash_table) +
- 		sizeof(list_entries) +
-+		sizeof(list_entries_in_use) +
- 		sizeof(chainhash_table) +
- 		sizeof(delayed_free)
- #ifdef CONFIG_PROVE_LOCKING
+ 	if (__is_kernel_percpu_address(addr, &can_addr))
+ 		lock->key = (void *)can_addr;
+ 	else if (__is_module_percpu_address(addr, &can_addr))
 -- 
 2.21.0.rc0.258.g878e2cd30e-goog
 
