@@ -2,74 +2,121 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ADDAC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:18:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D882C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38E4521B24
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:18:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OblGoiEo"
+	by mail.kernel.org (Postfix) with ESMTP id E319C218FF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:22:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405701AbfBNVR7 (ORCPT
+        id S2403856AbfBNVWI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 16:17:59 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:32980 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392553AbfBNVR6 (ORCPT
+        Thu, 14 Feb 2019 16:22:08 -0500
+Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:52386 "EHLO
+        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387702AbfBNVWI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 16:17:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=1yL8YCNTyPRDZJHx8ppA3BOOOrsNcEeL/DDCwGQrYXE=; b=OblGoiEoqNUCx7iifqcOT3krK
-        r8c5Z+drdTpWgHR50kG0PnEHRAy9TeIXu0EiLwvA7OVY2LFXNXVaF8Qo7cFDyA0G7Xa+0Ol1531F+
-        0bt4sHrt0HFgCu8tRHyUp79MfqISuOfO4kR72LO7t4JeTZ7W1zVmdxcWNVqaT7t5xUzKb/Vl7YjEP
-        CEcFf++SqdUdxGRroRdV51r/tRH2uLX75J5jcqMJB79kVSp6pi0XxIGTkyWYK97zTsUOR3ikPWZQB
-        qH7qDT0PsQI6rhKhdeJDNmFnvIRd0CJ+8nRpGX/A//iDGEvLUs1XDa1PjllyY+PqPQAeIXQwNuYqi
-        evZ1+vQUw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1guOOL-0001kd-Qx; Thu, 14 Feb 2019 21:17:57 +0000
-Date:   Thu, 14 Feb 2019 13:17:57 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>,
-        William Kucharski <william.kucharski@oracle.com>
-Subject: Re: [PATCH v2] page cache: Store only head pages in i_pages
-Message-ID: <20190214211757.GE12668@bombadil.infradead.org>
-References: <20190212183454.26062-1-willy@infradead.org>
- <20190214133004.js7s42igiqc5pgwf@kshutemo-mobl1>
+        Thu, 14 Feb 2019 16:22:08 -0500
+Received: from pps.filterd (m0134421.ppops.net [127.0.0.1])
+        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1ELAxYb006630;
+        Thu, 14 Feb 2019 21:21:52 GMT
+Received: from g2t2353.austin.hpe.com (g2t2353.austin.hpe.com [15.233.44.26])
+        by mx0b-002e3701.pphosted.com with ESMTP id 2qnda0hg5f-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 14 Feb 2019 21:21:52 +0000
+Received: from g2t2360.austin.hpecorp.net (g2t2360.austin.hpecorp.net [16.196.225.135])
+        by g2t2353.austin.hpe.com (Postfix) with ESMTP id 3D8749B;
+        Thu, 14 Feb 2019 21:21:51 +0000 (UTC)
+Received: from hpe.com (teo-eag.americas.hpqcorp.net [10.33.152.10])
+        by g2t2360.austin.hpecorp.net (Postfix) with ESMTP id 248BE44;
+        Thu, 14 Feb 2019 21:21:50 +0000 (UTC)
+Date:   Thu, 14 Feb 2019 15:21:49 -0600
+From:   Dimitri Sivanich <sivanich@hpe.com>
+To:     Hedi Berriche <hedi.berriche@hpe.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-efi@vger.kernel.org,
+        x86@kernel.org, Russ Anderson <rja@hpe.com>,
+        Mike Travis <mike.travis@hpe.com>,
+        Steve Wahl <steve.wahl@hpe.com>, stable@vger.kernel.org
+Subject: Re: [Patch v3 0/4] Protect against concurrent calls into UV BIOS
+Message-ID: <20190214212149.GB5073@hpe.com>
+References: <20190213193413.25560-1-hedi.berriche@hpe.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190214133004.js7s42igiqc5pgwf@kshutemo-mobl1>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20190213193413.25560-1-hedi.berriche@hpe.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902140140
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 04:30:04PM +0300, Kirill A. Shutemov wrote:
->  - migrate_page_move_mapping() has to be converted too.
+For the series:
 
-I think that's as simple as:
+Reviewed-by: Dimitri Sivanich <sivanich@hpe.com>
 
-+++ b/mm/migrate.c
-@@ -465,7 +465,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
- 
-                for (i = 1; i < HPAGE_PMD_NR; i++) {
-                        xas_next(&xas);
--                       xas_store(&xas, newpage + i);
-+                       xas_store(&xas, newpage);
-                }
-        }
- 
-
-or do you see something else I missed?
+On Wed, Feb 13, 2019 at 07:34:09PM +0000, Hedi Berriche wrote:
+> - Changes since v2
+>   Addressed comments from Ard Biesheuvel:
+>  * expose efi_runtime_lock to UV platform only instead of globally
+>  * remove unnecessary #ifdef CONFIG_EFI from bios_uv.c
+> 
+> - Changes since v1:
+>   Addressed comments from Bhupesh Sharma, Thomas Gleixner, and Ard Biesheuvel:
+>  * made __uv_bios_call() static
+>  * moved the efi_enabled() cleanup to its own patchlet
+>  * explained the reason for renaming the efi_runtime_lock semaphore
+>  * dropped the reviewed-bys as they should be given on the mailing list
+>  * Cc'ng stable@vger.kernel.org given the nature of the problem addressed by the patches
+> 
+> ---
+> 
+> Calls into UV BIOS were not being serialised which is wrong as it violates EFI
+> runtime rules, and bad as it does result in all sorts of potentially hard to
+> track down hangs and panics when efi_scratch.prev_mm gets clobbered whenever
+> efi_switch_mm() gets called concurrently from two different CPUs.
+> 
+> Patch #1 removes an unnecessary #ifdef CONFIG_EFI guard from bios_uv.c.
+> 
+> Patch #2 removes uv_bios_call_reentrant() because it's dead code.
+> 
+> Patch #3 is a cleanup that drops test_bit() in favour of the ad hoc efi_enabled().
+> 
+> Patch #4 makes uv_bios_call() variants use the efi_runtime_lock semaphore to
+> protect against concurrency.
+> 
+> Cc: Russ Anderson <rja@hpe.com>
+> Cc: Mike Travis <mike.travis@hpe.com>
+> Cc: Dimitri Sivanich <sivanich@hpe.com>
+> Cc: Steve Wahl <steve.wahl@hpe.com>
+> Cc: stable@vger.kernel.org # v4.9+
+> 
+> Hedi Berriche (4):
+>   x86/platform/UV: remove unnecessary #ifdef CONFIG_EFI
+>   x86/platform/UV: kill uv_bios_call_reentrant() as it has no callers
+>   x86/platform/UV: use efi_enabled() instead of test_bit()
+>   x86/platform/UV: use efi_runtime_lock to serialise BIOS calls
+> 
+>  arch/x86/include/asm/uv/bios.h          | 13 ++++-----
+>  arch/x86/platform/uv/bios_uv.c          | 35 ++++++++++++++-----------
+>  drivers/firmware/efi/runtime-wrappers.c |  7 +++++
+>  3 files changed, 34 insertions(+), 21 deletions(-)
+> 
+> -- 
+> 2.20.1
+> 
