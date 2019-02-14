@@ -2,130 +2,126 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A27A5C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C2C0C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:26:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EDFC222DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:26:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DFD8222DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:26:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550165207;
+	bh=LacniE1A58vVqPHr8Mt2uhP6HHf8ipUuCq3wIgk/0Ro=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=jKODwZyGPtjjOzilv0Ri+rw3KSk3WhYZzwBkn8P4PzO02406UP+4bQbJRBccokyCm
+	 inLj2UBKd+dl9Nxzd/gQmBcvdLSlhk41kBYau9Au9FBcyscXAMmAWwgbV5AAo1vNA0
+	 PWnEYxySrdGBI/1Rq6WdbES2I98yxFfWQ6cQ8HRA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392128AbfBNR0h (ORCPT
+        id S2392343AbfBNR0q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 12:26:37 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:60867 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729965AbfBNR0g (ORCPT
+        Thu, 14 Feb 2019 12:26:46 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46904 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391592AbfBNR0p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 12:26:36 -0500
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1guKmI-0007L2-HG; Thu, 14 Feb 2019 18:26:26 +0100
-Message-ID: <1550165185.2546.48.camel@pengutronix.de>
-Subject: Re: [RFC 5/5] arm64: dts: imx8mq: Add the opp table and the
- cpu-supply nodes
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Angus Ainslie <angus.ainslie@puri.sm>,
-        Anson Huang <anson.huang@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
+        Thu, 14 Feb 2019 12:26:45 -0500
+Received: by mail-pf1-f193.google.com with SMTP id g6so3404492pfh.13;
+        Thu, 14 Feb 2019 09:26:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=f/NObAkhvzcQY08E2b5gCOLNcBbX1oSktpDTQaSRAU8=;
+        b=XniTh4HKdC9DQXSTC2szp5Eyfk4WsRjcmU8JvtHAOQFW/dsBm8zjQcYmAyokJl9FoV
+         A0q9T1ZOlJghabfb1P+E2bo3c0rogJiyUYLQaUdqbhwx0p4vRCAJ3WIaFUrPTGI9MPrO
+         AggJpxEdK3nkVSV+kvg8W9adOmKzR24zTEAe6Mho1pG+tIGKJ2mvcKsPaJK+6dfAUFz7
+         9VS0R4dKpGKrffa6eEkdXJojdMp8N+BvQN2JzT3Gafv4ygdZqdRKxg7N75vfi82WiKok
+         UxWMv75r4BPkaiznW0uIjktmnEdW2SpSCjdlH1vtFyXhdsVW+yFcisZuTWU4Y6SAbP4H
+         2z6g==
+X-Gm-Message-State: AHQUAuZnWZzpwMVvPUOX74QZsppL+ft2KuBH5MYUX7I68Qv6+kbvSwrP
+        ONVdi/TSxWFezIx42IirH+w=
+X-Google-Smtp-Source: AHgI3IZjZr//1SOb5TTNJFasagBUegKVWjMEnU02uQuP9AfuwAunP6J+8FYn3rqcR8D4qbLALR/obA==
+X-Received: by 2002:aa7:85d1:: with SMTP id z17mr5104337pfn.226.1550165204459;
+        Thu, 14 Feb 2019 09:26:44 -0800 (PST)
+Received: from garbanzo.do-not-panic.com (c-73-71-40-85.hsd1.ca.comcast.net. [73.71.40.85])
+        by smtp.gmail.com with ESMTPSA id c4sm2944876pgq.85.2019.02.14.09.26.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 14 Feb 2019 09:26:43 -0800 (PST)
+Received: by garbanzo.do-not-panic.com (sSMTP sendmail emulation); Thu, 14 Feb 2019 09:26:39 -0800
+Date:   Thu, 14 Feb 2019 09:26:39 -0800
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@google.com>, shuah@kernel.org,
+        Joel Stanley <joel@jms.id.au>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Joe Perches <joe@perches.com>, brakmo@fb.com,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Date:   Thu, 14 Feb 2019 18:26:25 +0100
-In-Reply-To: <20190214171806.kufhw7ouguxt5jhq@fsr-ub1664-175>
-References: <1550084693-9797-1-git-send-email-abel.vesa@nxp.com>
-         <1550084693-9797-6-git-send-email-abel.vesa@nxp.com>
-         <1550159428.2546.40.camel@pengutronix.de>
-         <20190214171806.kufhw7ouguxt5jhq@fsr-ub1664-175>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-um@lists.infradead.org, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Rob Herring <robh@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Felix Guo <felixguoxiuping@gmail.com>
+Subject: Re: [RFC v3 14/19] Documentation: kunit: add documentation for KUnit
+Message-ID: <20190214172639.GD11489@garbanzo.do-not-panic.com>
+References: <20181128193636.254378-15-brendanhiggins@google.com>
+ <b4c72234-8c56-6efa-8003-f89d99a9779e@ideasonboard.com>
+ <20181130034525.GP18410@garbanzo.do-not-panic.com>
+ <CAFd5g47Cew6pmebsopjzmkd4RpnnC3zLAUfxCybjdhrO35OBpQ@mail.gmail.com>
+ <0927c42a-8e65-f410-e6ed-27576572577f@ideasonboard.com>
+ <CAFd5g44fKzriEs_pGyANxe7GuC9Ji2SD7EEz76__h8q9jjg8yA@mail.gmail.com>
+ <57c3dc86-236f-e981-249a-8bbfe5c19f0e@ideasonboard.com>
+ <CAFd5g46AEquMKzfrjLDVi+PP5-7aGs6C6pCunGAXDn3VRkJP+g@mail.gmail.com>
+ <eade3052-0aa4-90b4-d55b-8c44556f98bc@ideasonboard.com>
+ <CAFd5g46cO_rZYjqKu6CooKcV-uAsCUJjuib38cQv6WHQS3ooaA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFd5g46cO_rZYjqKu6CooKcV-uAsCUJjuib38cQv6WHQS3ooaA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Donnerstag, den 14.02.2019, 17:18 +0000 schrieb Abel Vesa:
-> On 19-02-14 16:50:28, Lucas Stach wrote:
-> > Hi Abel
-> > 
-> > Am Mittwoch, den 13.02.2019, 19:05 +0000 schrieb Abel Vesa:
-> > > Add the opp table containing only non over drive opps.
-> > > Also add the cpu-supply nodes for the A53 cores in the EVK board.
-> > > 
-> > > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> > > ---
-> > >  arch/arm64/boot/dts/freescale/imx8mq-evk.dts | 17
-> > > +++++++++++++++++
-> > >  arch/arm64/boot/dts/freescale/imx8mq.dtsi    | 23
-> > > +++++++++++++++++++++++
-> > >  2 files changed, 40 insertions(+)
-> > > 
-> > > diff --git a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-> > > b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-> > > index 54737bf..114359e 100644
-> > > --- a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-> > > +++ b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
-> > > @@ -31,6 +31,23 @@
-> > >  		gpio = <&gpio2 19 GPIO_ACTIVE_HIGH>;
-> > >  		enable-active-high;
-> > >  	};
-> > > +
-> > > +};
-> > > +
-> > > +&A53_0 {
-> > > +	cpu-supply = <&sw1a_reg>;
-> > > +};
-> > > +
-> > > +&A53_1 {
-> > > +	cpu-supply = <&sw1a_reg>;
-> > > +};
-> > > +
-> > > +&A53_2 {
-> > > +	cpu-supply = <&sw1a_reg>;
-> > > +};
-> > > +
-> > > +&A53_3 {
-> > > +	cpu-supply = <&sw1a_reg>;
-> > >  };
-> > 
-> > This should be a separate patch.
-> > 
-> 
-> OK, will send as separate patches in the next version.
-> 
-> > And AFAICS this is wrong, sw1a on the MX8M-EVK is the GPU supply,
-> > the
-> > CPU is supplied by a dedicated switcher that is controlled via a
-> > GPIO.
-> > 
-> 
-> Hmm, I think you're right. At least this is what the following
-> document says.
-> 
-> https://www.mouser.com/ds/2/302/IMX8MDQLQEVKHUG-1280333.pdf
-> 
-> So I guess this means there will not be any cpu-supply properties. 
+On Wed, Feb 13, 2019 at 04:17:13PM -0800, Brendan Higgins wrote:
+> On Wed, Feb 13, 2019 at 1:55 PM Kieran Bingham
+> <kieran.bingham@ideasonboard.com> wrote:
+> Oh, yep, you are right. Does that mean we should bother at all with a defconfig?
 
-There is a variable voltage CPU supply, but you need to model it as a
-gpio-regulator in the DT, it's not part of the PMIC provided rails.
+If one wanted a qemu enabled type of kernel and also for kuniut one
+could imply run:
 
-Regards,
-Lucas
+make kvmconfig
+make kunitconfig
 
+That would get what you suggest above of default "bells and whistles"
+and keep the kuniut as a fragment.
+
+Hm, actually the kvmconfig doesn't really enable the required fragments
+for qemu, so perhaps one would be good. It would have the serial stuff
+for instance.
+
+> Luis, I know you said you wanted one. I am thinking just stick with
+> the UML one? The downside there is we then get stuck having to
+> maintain the fragment and the defconfig. I right now (in the new
+> revision I am working on) have the Python kunit_tool copy the
+> defconfig if no kunitconfig is provided and a flag is set. It would be
+> pretty straightforward to make it merge in the fragment instead.
+
+Up to you in the end.
+
+  Luis
