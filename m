@@ -2,204 +2,124 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D87C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 06:09:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC4BBC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 06:11:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F13FB222B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 06:09:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B750B21934
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 06:11:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cadence.com header.i=@cadence.com header.b="YSr77eGp";
-	dkim=pass (1024-bit key) header.d=cadence.com header.i=@cadence.com header.b="P5y6eJUh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LOFZtrC+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405628AbfBNGJF (ORCPT
+        id S2405679AbfBNGLI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 01:09:05 -0500
-Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:58186 "EHLO
-        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726407AbfBNGJE (ORCPT
+        Thu, 14 Feb 2019 01:11:08 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:40521 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726407AbfBNGLH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 01:09:04 -0500
-Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
-        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1E644Ql023499;
-        Wed, 13 Feb 2019 22:08:47 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=proofpoint;
- bh=aRO6RhAjnT7+bkDa99XLRAcx0NoDMRnqtXJsv7GKziU=;
- b=YSr77eGpAnZAWS3aIrGTmAsjo3NnXOj3DAVxzJHU7LMdr2TQnyG2+AQzsvgNPdg+WPGo
- 5wN9Rkywcze/vUsobZ/xrDwQ16j9tgkfy+/2cDYS25qEtNW5NM/s8yGZW/P6LALAWmP6
- DzyQhDeoCvCuWkH6M6kI3hCCUls4iVDXL8/OUsKSWjdrDnNx3qsnvkb6QGXGJFxdrMUF
- Iq6/GUtaRnYuFIIoUIM7Cd3Cy4/YMg0G2KSipY0LcyytDalrK14b4J00AnXIf9+qC1+H
- I7P0+iRvxaxF+GtfCJvUQxOK37Js8eCknvBBpNXlaHgnWTAfUaoMqHCoU5uxVToY/XcL RA== 
-Authentication-Results: cadence.com;
-        spf=pass smtp.mailfrom=pawell@cadence.com
-Received: from nam05-co1-obe.outbound.protection.outlook.com (mail-co1nam05lp2050.outbound.protection.outlook.com [104.47.48.50])
-        by mx0b-0014ca01.pphosted.com with ESMTP id 2qmveqhb25-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Wed, 13 Feb 2019 22:08:47 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aRO6RhAjnT7+bkDa99XLRAcx0NoDMRnqtXJsv7GKziU=;
- b=P5y6eJUhIbK8TGTVgLDe/oZMDTH6UbEUYyY2NidssQnGYrNisfcBboUlB3DrNbczlO+ZQI0c9Eipjz8mjKFLXKrP5E94dDTcS0/XJaLzdFsSqUlOnoP2LrChjRktdag6WsFg/oBDcJ8LjKUJdXx7cr5tfrPt4DKZtbf0EH0QyW8=
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com (52.135.204.159) by
- BYAPR07MB6327.namprd07.prod.outlook.com (20.179.88.94) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.21; Thu, 14 Feb 2019 06:08:45 +0000
-Received: from BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::c87c:4924:afa4:733a]) by BYAPR07MB4709.namprd07.prod.outlook.com
- ([fe80::c87c:4924:afa4:733a%5]) with mapi id 15.20.1622.018; Thu, 14 Feb 2019
- 06:08:45 +0000
-From:   Pawel Laszczak <pawell@cadence.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "hdegoede@redhat.com" <hdegoede@redhat.com>,
-        "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>,
-        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
-        "rogerq@ti.com" <rogerq@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "jbergsagel@ti.com" <jbergsagel@ti.com>,
-        "nsekhar@ti.com" <nsekhar@ti.com>, "nm@ti.com" <nm@ti.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        "peter.chen@nxp.com" <peter.chen@nxp.com>,
-        Pawel Jez <pjez@cadence.com>, Rahul Kumar <kurahul@cadence.com>
-Subject: RE: [PATCH v3 1/6] dt-bindings: add binding for USBSS-DRD controller.
-Thread-Topic: [PATCH v3 1/6] dt-bindings: add binding for USBSS-DRD
- controller.
-Thread-Index: AQHUuVumh/iv/3g2hEy+OcA5M2gRSqXeadCAgAB1ADA=
-Date:   Thu, 14 Feb 2019 06:08:45 +0000
-Message-ID: <BYAPR07MB4709EA63F1374EA24E23C186DD670@BYAPR07MB4709.namprd07.prod.outlook.com>
-References: <1548935553-452-1-git-send-email-pawell@cadence.com>
- <1548935553-452-2-git-send-email-pawell@cadence.com>
- <20190213224841.GA9319@bogus>
-In-Reply-To: <20190213224841.GA9319@bogus>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNccGF3ZWxsXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctZjczMDBhZTQtMzAxZS0xMWU5LTg3MmUtMWM0ZDcwMWRmYmE0XGFtZS10ZXN0XGY3MzAwYWU1LTMwMWUtMTFlOS04NzJlLTFjNGQ3MDFkZmJhNGJvZHkudHh0IiBzej0iMjg3MCIgdD0iMTMxOTQ1OTgxMjA2NDUzNjA2IiBoPSJwdGdNYzZtTnQwV1VRZGFqUWZrRlRraWxwM1k9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
-x-dg-rorf: 
-x-originating-ip: [185.217.253.59]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c6bd87dc-5a47-4c8a-5eeb-08d69242e0a0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB6327;
-x-ms-traffictypediagnostic: BYAPR07MB6327:
-x-microsoft-exchange-diagnostics: 1;BYAPR07MB6327;20:x3T14XnbH7btkOvuOyQmJvcxJhrEhK4v1l5WjC8BrhknT3BOrpwNskLnEFnl0Gk1jhR9Wb91F8ojeAksEeX5mIgaLOXCd1WyrPHFjlfoQsDEZEnNAbGVA9BYBm+a/JXpkFELJSJsmCqDAd2sPObdkttIxRn3+gPLZ2OAnpuiaToKtvYRsmeH7TKgaIvT5zkzYrhI3NpqGP4uCXuRMKFyd9ZGSBCY62DeLJAZ/nPx4ksjIMgC/YFQlmS88yzYcMuH
-x-microsoft-antispam-prvs: <BYAPR07MB6327E8526780A9046CFD9783DD670@BYAPR07MB6327.namprd07.prod.outlook.com>
-x-forefront-prvs: 09480768F8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(396003)(39860400002)(376002)(346002)(36092001)(199004)(189003)(4326008)(71200400001)(97736004)(256004)(476003)(71190400001)(486006)(11346002)(107886003)(106356001)(6246003)(102836004)(6506007)(33656002)(25786009)(446003)(2906002)(105586002)(186003)(26005)(53936002)(478600001)(74316002)(55016002)(76176011)(9686003)(14454004)(305945005)(229853002)(316002)(86362001)(7736002)(6116002)(6916009)(6436002)(99286004)(7416002)(7696005)(54906003)(68736007)(8676002)(8936002)(81156014)(81166006)(3846002)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB6327;H:BYAPR07MB4709.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: cadence.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: pwkvPgenwgsMnveWtBWZ+pErfQ2ReY2V/G02qTkYB+KbLEhsGjS5AfdC1fvT3FvXA7hFpR/kXpimxkEZcq6Q5Q6Oahs1rHVKsovnvkiKuaLrwxNKh42wAI10mScwGhWj7M2pUQCci52iIZD0ncJ5Dx7Z2IHl6JjDaLPWSZ6cgwq3h2rG+sRB6jig6IrxjpDAOtmqQ1wQuunUKFj/FIbSg0/mGnM2sEaIEFwvek1r6+vWJsI8WCjAUssZS7cX0NKa7JvfcTxc/D/4KCOMOyev3GDHCiRWJi33Ellup8t+kjcHudHOKZNt39W3kk0dnY4BerjyMFLnmZwnXbMeKd2iVM7a3175KP9+CwwwmNDHWr0uvjN9dD4AFANG2rImFuW+gL5i0JXy4SJ/pN5ZzhRvz4msTHUfnwBKWalSvkxJZpU=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 14 Feb 2019 01:11:07 -0500
+Received: by mail-it1-f193.google.com with SMTP id i2so11752023ite.5
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 22:11:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hi/QV+SURuABXjVpQ6kWj7ohVbb8Bd7EQiRMott+eZg=;
+        b=LOFZtrC+klsSwa93cdOHN6oiVvVwA+J8KKMUOVOjk/5x/tvdKxtZ9TM1EEM2Jtok3d
+         4nIDCJq3yFiLRTKyJzNBqY+xuuelIUd93pv5Ybe+aEnCKt3acGy9UYS1YWy/g1OdKbrW
+         eEjjplUBRhGHN82kzRRh9hlbNMumRPlGxyfL6Jw+3mpiVZLrkAN8E8NCnoRBSzG2b9yf
+         j8l5GL/OW46Dlc60Dqlv9DNDsEIuzswrPmZGzcbIuiQHrEYa6zYqZiUigH1zFgGDjjLN
+         BTyHOilRPXiV7bZtUkyXuBZ6nsSmyqNenUYEWn/Oum47chPgl8dutTcqcZbjXOu7JY1D
+         bf0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hi/QV+SURuABXjVpQ6kWj7ohVbb8Bd7EQiRMott+eZg=;
+        b=nBwuEric0jA1Noek3iAFJJ4WF5a01owSyrt7+yPsVTFHdCy5zMjq5dWfu7/N5LqjLx
+         oEklLiaop4NsUNoK2Io19lAPmP+mCx3Wyfy6cU5FIWqaZL6KLkAFx6bam+yILuFn8nd8
+         XDbEafG1qEHQIYRAeVaiG8rtdVeFK74yhC/2RJtL0x4r/UG9tzeW+bJQo+IHqONX5yeR
+         GsnzZvoKbAgTa4AyXXzP+LqqXOM+4FGSyLtwXmUvOYsV4xrzZv9ddCD5/iZLk3SUwpx8
+         9RcCrwOWCR5hvQncQN4liOhbk7XYL0r/y1UliuYIzWM/WRy3T+H0A12mVx8OgbeIaO8m
+         zKbA==
+X-Gm-Message-State: AHQUAuZTnDylzwQR7Gl8V7wiiq4NdP87zdREkN0pIyfpde300mbyHNbN
+        /vG+l4/3h+A25pxQIQQi34c=
+X-Google-Smtp-Source: AHgI3IZ+FpMSUKpZBYW2C2piIeAEq0paeCppw2Bht0k0ZBeA7Ews3ks9GkukcrElSN9HjW9Uq/K8Cw==
+X-Received: by 2002:a02:b4b8:: with SMTP id k53mr1143207jaj.56.1550124666670;
+        Wed, 13 Feb 2019 22:11:06 -0800 (PST)
+Received: from ubu-Virtual-Machine (66-188-57-61.dhcp.bycy.mi.charter.com. [66.188.57.61])
+        by smtp.gmail.com with ESMTPSA id z10sm641504ioh.20.2019.02.13.22.11.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Feb 2019 22:11:05 -0800 (PST)
+Date:   Thu, 14 Feb 2019 01:11:03 -0500
+From:   Kimberly Brown <kimbrownkd@gmail.com>
+To:     Stephen Hemminger <stephen@networkplumber.org>
+Cc:     Michael Kelley <mikelley@microsoft.com>,
+        Long Li <longli@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Dexuan Cui <decui@microsoft.com>, devel@linuxdriverproject.org,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] Drivers: hv: vmbus: Display nothing in sysfs if
+ monitor_allocated not set
+Message-ID: <20190214061102.GA22473@ubu-Virtual-Machine>
+References: <cover.1549619051.git.kimbrownkd@gmail.com>
+ <52d58fe5805f2ba2405c9091b4c86033d434d2b9.1549619051.git.kimbrownkd@gmail.com>
+ <20190208143148.052c8d9c@hermes.lan>
+ <20190211070118.GA2977@ubu-Virtual-Machine>
+ <20190211100247.12221570@hermes.lan>
 MIME-Version: 1.0
-X-OriginatorOrg: cadence.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6bd87dc-5a47-4c8a-5eeb-08d69242e0a0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2019 06:08:45.1825
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB6327
-X-Proofpoint-SPF-Result: pass
-X-Proofpoint-SPF-Record: v=spf1 include:_spf.salesforce.com include:mktomail.com
- include:spf-0014ca01.pphosted.com include:spf.protection.outlook.com
- include:auth.msgapp.com include:spf.mandrillapp.com ~all
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
- spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902140045
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190211100247.12221570@hermes.lan>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
->On Thu, Jan 31, 2019 at 11:52:28AM +0000, Pawel Laszczak wrote:
->> This patch aim at documenting USB related dt-bindings for the
->> Cadence USBSS-DRD controller.
->>
->> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
->> ---
->>  .../devicetree/bindings/usb/cdns-usb3.txt     | 33 +++++++++++++++++++
->>  1 file changed, 33 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/usb/cdns-usb3.txt
->>
->> diff --git a/Documentation/devicetree/bindings/usb/cdns-usb3.txt b/Docum=
-entation/devicetree/bindings/usb/cdns-usb3.txt
->> new file mode 100644
->> index 000000000000..6dc38be77f5c
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/usb/cdns-usb3.txt
->> @@ -0,0 +1,33 @@
->> +Binding for the Cadence USBSS-DRD controller
->> +
->> +Required properties:
->> +  - reg: Physical base address and size of the controller's register ar=
-eas.
->> +	 Controller has 3 different regions:
->> +	 region 1 - HOST registers area
->> +	 region 2 - DEVICE registers area
->> +	 region 3 - OTG/DRD registers area
->> +  - reg-names - register memory area names:
->> +	"xhci" - for HOST registers space
->> +	"dev" - for DEVICE registers space
->> +	"otg" - for OTG/DRD registers space
->> +  - compatible: Should contain: "cdns,usb3-1.0.0" or "cdns,usb3-1.0.1"
->> +  - interrupts: Interrupt specifier. Refer to interrupt bindings.
->> +		Driver supports only single interrupt line.
->
->Driver supports or h/w only has 1 interrupt?
+On Mon, Feb 11, 2019 at 10:02:47AM -0800, Stephen Hemminger wrote:
+> On Mon, 11 Feb 2019 02:01:18 -0500
+> Kimberly Brown <kimbrownkd@gmail.com> wrote:
+> 
+> > On Fri, Feb 08, 2019 at 02:32:09PM -0800, Stephen Hemminger wrote:
+> > > On Fri, 8 Feb 2019 05:01:12 -0500
+> > > Kimberly Brown <kimbrownkd@gmail.com> wrote:
+> > > 
+> > > You are right, the current behavior is broken.
+> > > It would be good to add a description of under what conditions
+> > > monitor is not used. Is this some part of a project emulating
+> > > Hyper-V?
+> > >   
+> > 
+> > I'm not sure which conditions determine whether the monitor mechanism is
+> > used. I've searched the Hypervisor TLFS, and I couldn't find any
+> > information. If you have any suggestions for where I can find this
+> > information, please let me know.
+> 
+> The monitor page stuff pre-dates my involvement with Hyper-V. KY might know.
+> But based on comments it looks like it was added to avoid hypercalls
+> for each message. It probably showed up in Windows Server 2012 timeframe.
+> 
+> To test you might want to dig up Windows Server 2008.
+>  
 
-h/w internally has 3 separate interrupt line, but in my testing board=20
-they are ored. So physically driver sees only one h/w interrupt line and=20
-assumes that h/w has single common interrupt line.=20
+It looks like the monitor mechanism has always been used. It's present in the
+earliest commit that I can find: 3e7ee4902fe6 ("add the Hyper-V virtual bus")
+from 2009.
 
->
->> +                This single interrupt is shared between Device,
->> +		host and OTG/DRD part of driver.
->> +
->> +Optional properties:
->> + - maximum-speed : valid arguments are "super-speed", "high-speed" and
->> +                   "full-speed"; refer to usb/generic.txt
->> + - dr_mode: Should be one of "host", "peripheral" or "otg".
->> + - phys: reference to the USB PHY
->> +
->> +Example:
->> +	usb@f3000000 {
->> +		compatible =3D "cdns,usb3";
->
->Doesn't match above.
-Right, should be:
-		Compatible =3D " cdns,usb3-1.0.0", "cdns,usb3-1.0.1";
->
->> +		interrupts =3D <USB_IRQ  7 IRQ_TYPE_LEVEL_HIGH>;
->> +		reg =3D <0xf3000000 0x10000	/* memory area for HOST registers */
->> +			0xf3010000 0x10000	/* memory area for DEVICE registers */
->> +			0xf3020000 0x10000>;	/* memory area for OTG/DRD registers */
->
->Are these really 64KB long? That wastes virtual address space on 32-bit
->systems if not.
+I propose that the following sentences be added to the sysfs documentation for
+the affected attributes:
 
-Yes, on my testing platform it takes 64KB. It's only example, and it could =
-be limited.=20
->
->> +		reg-names =3D "xhci", "dev", "otg";
->> +	};
->> --
->> 2.17.1
->>
-Thanks=20
-Pawel
+"The monitor page mechanism is used for performance critical channels (storage,
+network, etc.). Channels that do not use the monitor page mechanism will return
+EINVAL."
+
+I think that this provides sufficient information for a user to understand why
+opening an affected file can return EINVAL. What do you think?
+
