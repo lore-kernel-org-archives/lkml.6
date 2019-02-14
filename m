@@ -2,173 +2,137 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 093B0C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:43:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A721CC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:44:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C35A8222DC
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:43:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kyFYLvVM"
+	by mail.kernel.org (Postfix) with ESMTP id 799AC2080A
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:44:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731782AbfBNQne (ORCPT
+        id S2388595AbfBNQol convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:43:34 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:39559 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726930AbfBNQnd (ORCPT
+        Thu, 14 Feb 2019 11:44:41 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:38475 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726544AbfBNQok (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 11:43:33 -0500
-Received: by mail-pg1-f193.google.com with SMTP id r11so3317865pgp.6
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:43:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=X/AWYPWQo6K1J1aVloOZCO2rRoIeRf4PJDZGFQ/EOkc=;
-        b=kyFYLvVMXiYQ/Z82bm3zdoAiv4Fc8k47BNwKsXRHQTHBOu5oi94hgL8EXAqIHOcUnx
-         mg1xGwbSOQ5aE7QX+p847765BbLarsgnVEOYvJdP/bQRN1+9GceF/7og7lHe7H3MdtFs
-         EciR02t8A8BeltFGNna10FT+DZhMDnax++PXM=
+        Thu, 14 Feb 2019 11:44:40 -0500
+Received: from mail-pf1-f198.google.com ([209.85.210.198])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1guK7q-0005RB-Ty
+        for linux-kernel@vger.kernel.org; Thu, 14 Feb 2019 16:44:39 +0000
+Received: by mail-pf1-f198.google.com with SMTP id k10so5219550pfi.5
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:44:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=X/AWYPWQo6K1J1aVloOZCO2rRoIeRf4PJDZGFQ/EOkc=;
-        b=XxpVdgspJS72ZXr8GcVa16RNC1OE4LoPc1NqiRmlQn8xeW0NqkwLABEZwhUFiyJ7bE
-         Mu5rOoQ4NLPqU3Tz1RIEZg2GitPG6dwN3KaG6DxK48K3sf5H6ByrOtzJrJExQd2d8VLB
-         8AsLVfmOni+k0qJNzioDmZFR68oR0lBxvZnzNuW5JRQVx8yzzAvC3Gzw2bV6YwKzhDmS
-         l2q8+7E0NE923/LzFMfJEYTmjs/A2T9xEMRm8rRdMwNsfdS3Q58D9fN2Iwh7nG3Rf+fn
-         7v9rVT9Tymdog+KYWW6D9BvnmezuvFyrFPq7gSFeHchRnHEydEen4EA6y9XkGU8RHv7b
-         oOyw==
-X-Gm-Message-State: AHQUAuby8d2eF7rg0K41xKsrL00jMfOERNTPCQp+GstmTX6ycwHGNwBe
-        tpW+wEWyHcW4k97hCE765Wh1SA==
-X-Google-Smtp-Source: AHgI3IYDrPOeLqUxzQ8QOyeMeo7YnqlTQG3vnyBzAw0nuakLdPOARcIplblBSbfpE2FnoLvxhIZn0g==
-X-Received: by 2002:a63:2905:: with SMTP id p5mr4642644pgp.178.1550162612830;
-        Thu, 14 Feb 2019 08:43:32 -0800 (PST)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id l28sm6632634pfi.178.2019.02.14.08.43.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 08:43:32 -0800 (PST)
-Date:   Thu, 14 Feb 2019 08:43:31 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Samuel Dionne-Riel <samuel@dionne-riel.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
-        Graham Christensen <graham@grahamc.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] exec: load_script: Allow interpreter argument truncation
-Message-ID: <20190214164331.GA33450@beast>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=4JVQ4Ym7cPvVnoypNzsvLkoQ+Ld8CW76g5Ltvz0ByQE=;
+        b=EEfiaFkdQB05DyThrmnwk8Oi5P9v8FINDLrTKIgXGLQff2JJUmFiFUwxCrpvpL1DQU
+         jCNUrkPlQ1GSdQRYcIya24FjbUK8k4lPR1Q3A54HKYZ9N8GZtRQi58xupdCmp+x35kIy
+         uFUbCg9sIpJUrG5gAHCmZ52ON9GXY0IbMNgR06OEyQCJeW8UvbO6lea4WDRFYd2dyVGd
+         cKhoDsGSTgXeeJkZ6ZiK3UZ+1BfoVbWutXJUALRwFStyz+0RwbC4oT9MDmzgWqryuxx6
+         AuXdd9q38iRVjuoj/XGxtPvPbXZc7ArmDcq9EMFXsn8xIBt1h/kTmWMpQbGOv8ZhQiaz
+         02cQ==
+X-Gm-Message-State: AHQUAubKTjf8JIAE/t3IRnYEgD1QDu41DZq5EfpyrA6UgaWorv2wY1pT
+        kyLom9RsNkpVkMo9Cw9GmTg+IS0kSTbKIRjcFANb77rJaQYWKAETBEvha3EJe0VfPqNT6rVDQQr
+        YGiPzeZQMVgdjL0nL8kGqjY8RbyDOkFIAZC7SxeksPQ==
+X-Received: by 2002:a65:62d4:: with SMTP id m20mr713080pgv.215.1550162677416;
+        Thu, 14 Feb 2019 08:44:37 -0800 (PST)
+X-Google-Smtp-Source: AHgI3IZDSdxIfaYCn8vBxee2FOhBS93CmDAjdxIkeyqIF4SI49kLuFb1sWoS1P1zrqMkykIhNvfT7w==
+X-Received: by 2002:a65:62d4:: with SMTP id m20mr713052pgv.215.1550162677052;
+        Thu, 14 Feb 2019 08:44:37 -0800 (PST)
+Received: from [192.168.1.215] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
+        by smtp.gmail.com with ESMTPSA id y9sm4053709pfi.74.2019.02.14.08.44.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Feb 2019 08:44:36 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: Issue with commit a99790bf5c7f3d68d8b01e015d3212a98ee7bd57
+From:   Kai Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <CAE6q+i3E1+2BKTUFYQx0ch-cFNHzw0X805U1DMEy7MDiXXh8Sg@mail.gmail.com>
+Date:   Fri, 15 Feb 2019 00:44:33 +0800
+Cc:     David Miller <davem@davemloft.net>,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <3B9B63A0-E3CA-45EF-B291-5EC21F6F64F4@canonical.com>
+References: <CAE6q+i3E1+2BKTUFYQx0ch-cFNHzw0X805U1DMEy7MDiXXh8Sg@mail.gmail.com>
+To:     Elias Rydberg <rydberg1995@gmail.com>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While we want to make sure the kernel doesn't attempt to execute a
-truncated interpreter path, we must allow the interpreter arguments to
-be truncated. Perl, for example, will re-read the script itself to parse
-arguments correctly.
+Hi, 
 
-This documents the parsing steps, and will fail to exec if the string was
-truncated with neither an end-of-line nor any trailing whitespace.
+> On Feb 15, 2019, at 12:17 AM, Elias Rydberg <rydberg1995@gmail.com> wrote:
+> 
+> Dear Kai,
+> 
+> I write to you simply as I do not know exactly who to write, and since you are the author of commit a99790bf5c7f3d68d8b01e015d3212a98ee7bd57. If you are the completely wrong person to contact about this, I do apologize, and ask for you to share a resource guides me in the right direction. As of Dave, I CC you since you signed of the commit as well.
+> 
+> I will try to describe this with as few words as possible.
+> 
+> When upgrading to kernel 4.19 I experiened an issue of the screen starting to flicker, and then turn pitch black, whenever I turned on my wifi module. After som guidance, I found a workaround, namely booting with kernel parameter intel_idle.max_state=4. Not having a lot of experience with the Linux kernel, I thought it might have to do with an individual hardware fault in my machine.
+> 
+> This week I’ve been in contact with another person experiencing the exact same problems, and having the exact same laptop setup. I then investigated further, did my first kernel bisection, and found out that using a kernel with the named commit is causing this behaviour. This is the result from the bisection:
+> 
+> a99790bf5c7f3d68d8b01e015d3212a98ee7bd57 is the first bad commit
+> commit a99790bf5c7f3d68d8b01e015d3212a98ee7bd57
+> Author: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> Date:   Thu Jun 21 16:30:39 2018 +0800
+> 
+> 
+> 
+>     r8169: Reinstate ASPM Support
+> 
+> 
+> 
+>     On Intel platforms (Skylake and newer), ASPM support in r8169 is the
+>     last missing puzzle to let CPU's Package C-State reaches PC8.  Without
+>     ASPM support, the CPU cannot reach beyond PC3. PC8 can save additional
+>     ~3W in comparison with PC3 on a Coffee Lake platform, Dell G3 3779.
+> 
+> 
+> 
+>     This is based on the work from Chunhao Lin <hau@realtek.com>.
+> 
+> 
+> 
+>     Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+>     Signed-off-by: David S. Miller <davem@davemloft.net>
+> 
+> 
+> 
+> :040000 040000 87d4515c14f8eb8cf99b6f47f97ca4db700931c1 e542595c74609136a7094777afb10b83012f6643 M      drivers
+> The spec on my latop is:
+> CPU: Intel i7-8550U
+> Wifi: Intel AC-9260 1730Mbps
+> Memory: 8GB Kingston DDR4 2400MHz
+> SSD: Samsung 970 EVO 500gb
 
-Reported-and-Tested-by: Samuel Dionne-Riel <samuel@dionne-riel.com>
-Fixes: 8099b047ecc4 ("exec: load_script: don't blindly truncate shebang string")
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
-v2:
- - fix 1-byte-too-early-bail-out in truncation detection (Oleg)
- - add Samuel's "tested" tag
----
- fs/binfmt_script.c | 37 +++++++++++++++++++++++++++++++------
- 1 file changed, 31 insertions(+), 6 deletions(-)
+From platforms I’ve seen, if ASPM on r8169 is disabled, the deepest Package C-State on Intel CPU will limit to PC3.
 
-diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
-index d0078cbb718b..fedcbf3e1f1c 100644
---- a/fs/binfmt_script.c
-+++ b/fs/binfmt_script.c
-@@ -20,6 +20,7 @@ static int load_script(struct linux_binprm *bprm)
- 	char *cp;
- 	struct file *file;
- 	int retval;
-+	bool truncated = false, end_of_interp = false;
- 
- 	if ((bprm->buf[0] != '#') || (bprm->buf[1] != '!'))
- 		return -ENOEXEC;
-@@ -42,32 +43,56 @@ static int load_script(struct linux_binprm *bprm)
- 	fput(bprm->file);
- 	bprm->file = NULL;
- 
-+	/*
-+	 * Truncating interpreter arguments is okay: the interpreter
-+	 * can re-read the script to parse them on its own. Truncating
-+	 * the interpreter path itself, though, is bad. Note truncation
-+	 * here, and check for either newline or start of arguments
-+	 * below.
-+	 */
- 	for (cp = bprm->buf+2;; cp++) {
--		if (cp >= bprm->buf + BINPRM_BUF_SIZE)
--			return -ENOEXEC;
--		if (!*cp || (*cp == '\n'))
-+		if (!*cp || (*cp == '\n')) {
-+			end_of_interp = true;
- 			break;
-+		}
-+		if (cp == bprm->buf + BINPRM_BUF_SIZE - 1) {
-+			truncated = true;
-+			break;
-+		}
- 	}
- 	*cp = '\0';
- 
-+	/* Truncate trailing whitespace */
- 	while (cp > bprm->buf) {
- 		cp--;
--		if ((*cp == ' ') || (*cp == '\t'))
-+		if ((*cp == ' ') || (*cp == '\t')) {
-+			end_of_interp = true;
- 			*cp = '\0';
--		else
-+		} else
- 			break;
- 	}
-+	/* Skip leading whitespace */
- 	for (cp = bprm->buf+2; (*cp == ' ') || (*cp == '\t'); cp++);
- 	if (*cp == '\0')
- 		return -ENOEXEC; /* No interpreter name found */
- 	i_name = cp;
- 	i_arg = NULL;
-+	/*
-+	 * Skip until end of string or finding whitespace which
-+	 * signals the start of interpreter arguments.
-+	 */
- 	for ( ; *cp && (*cp != ' ') && (*cp != '\t'); cp++)
- 		/* nothing */ ;
--	while ((*cp == ' ') || (*cp == '\t'))
-+	/* Truncate and skip any whitespace in front of arguments */
-+	while ((*cp == ' ') || (*cp == '\t')) {
-+		end_of_interp = true;
- 		*cp++ = '\0';
-+	}
- 	if (*cp)
- 		i_arg = cp;
-+	/* Fail exec if the name of the interpreter was cut off. */
-+	if (truncated && !end_of_interp)
-+		return -ENOEXEC;
- 	/*
- 	 * OK, we've parsed out the interpreter name and
- 	 * (optional) argument.
--- 
-2.17.1
+If the ASPM on r8169 is enabled, it can reach to PC8 when the display is on, and be able to reach PC10 when display is off.
 
+So the issue seems to be a platform bug - deeper Package C state makes your system unstable.
 
--- 
-Kees Cook
+Please contact the system vendor, the deepest Package C state can be reach should be set by BIOS.
+
+Kai-Heng
+
+> 
+> I’m not sure about the motherboard, but the model of the laptop case (and probably the motherboard) is Clevo N750WU.
+> 
+> Please ask if you need more information and I will provide as much help as I can.
+> 
+> Kind regards,
+> Elias Rydberg
+
