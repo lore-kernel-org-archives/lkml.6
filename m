@@ -2,88 +2,90 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE5EC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:15:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99488C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D113A222D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:15:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="oBL95TvL"
+	by mail.kernel.org (Postfix) with ESMTP id 5BC10222DB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:16:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550157410;
+	bh=0z5xZ1mep1QRc+jvfTZb3wHD/P9rRZ0MyFoyAJmem2A=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:List-ID:From;
+	b=vH6fqQHBEgNW5h7Tj5VsbwmtIL6meGRjEGQOVJjUdWihLiGohXLb4itH9g7QDT7pA
+	 R+/us7/4zSUZmQQSgdM4hPNiP0hv7u4GEfTmZm9+IHB8/lqcqb6SjhdbltdK9kU+mO
+	 8m+FoODwRsbgY0ZT6AE5f7Ud9oO0Z6GwqJXrEJH0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407492AbfBNPPw (ORCPT
+        id S2407498AbfBNPQt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 10:15:52 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:52095 "EHLO vps0.lunn.ch"
+        Thu, 14 Feb 2019 10:16:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404080AbfBNPPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 10:15:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=/tB5nLNpanCnlsRpO4c+hlftNaV2fOzM0V9IOQQXhKI=; b=oBL95TvL1HNJhv2ok+EDpHYC6v
-        KzHV+/vXm2PtZ+wJnZhhb3/TZS0inerdEs3IQuhwE6zPtVLKIA+G0Dll2kEcqWQrDXp2eRPXE2Xg+
-        I9vKxIyau49kBtM0maOw8QLexJm+47G0bWt+1Z03EZ67xnRkYaJnehkBH2UCMHCRmVV4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1guIjk-0002zL-3N; Thu, 14 Feb 2019 16:15:40 +0100
-Date:   Thu, 14 Feb 2019 16:15:40 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Christophe ROULLIER <christophe.roullier@st.com>
-Cc:     "robh@kernel.org" <robh@kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "joabreu@synopsys.com" <joabreu@synopsys.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Peppe CAVALLARO <peppe.cavallaro@st.com>,
-        "linux-stm32@st-md-mailman.stormreply.com" 
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH 2/8] net: ethernet: stmmac: update to support all PHY
- config for stm32mp157c.
-Message-ID: <20190214151540.GG708@lunn.ch>
-References: <1550126763-22669-1-git-send-email-christophe.roullier@st.com>
- <1550126763-22669-3-git-send-email-christophe.roullier@st.com>
- <20190214134040.GA5699@lunn.ch>
- <02cd7773-899f-b28a-ff61-849b17cbe82d@st.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <02cd7773-899f-b28a-ff61-849b17cbe82d@st.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S2389467AbfBNPQs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 10:16:48 -0500
+Received: from tzanussi-mobl (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56154222C9;
+        Thu, 14 Feb 2019 15:16:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550157408;
+        bh=0z5xZ1mep1QRc+jvfTZb3wHD/P9rRZ0MyFoyAJmem2A=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=etfQzo3cqLEIhTES6+kcgATHCMMnmnYqMNEE/dxBTZMIhmjoqxcTCm3IwDgkKrqP4
+         I2KIBSrR280b97wranOMTjhpic7P0yz4ECwwvp0Pgt85oI2XwfsIhCuhvcQWcEkWbm
+         Gnl5hthF76m+xMuJFZSoBWzzGmSbbFKuEgr6bJqo=
+Message-ID: <1550157406.2498.4.camel@kernel.org>
+Subject: Re: [RFC PATCH v2 4/5] tracing: Use tracing error_log with kprobe
+ events (incomplete)
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     rostedt@goodmis.org, tglx@linutronix.de, namhyung@kernel.org,
+        bigeasy@linutronix.de, joel@joelfernandes.org,
+        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org
+Date:   Thu, 14 Feb 2019 09:16:46 -0600
+In-Reply-To: <20190214121359.fff5e00e036fec5bfe39351e@kernel.org>
+References: <cover.1550074795.git.tom.zanussi@linux.intel.com>
+         <db931dea3818fb79a710f7b83cb53b06cf565de1.1550074795.git.tom.zanussi@linux.intel.com>
+         <20190214121359.fff5e00e036fec5bfe39351e@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.1-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Sorry, I've misunderstood your question ;-)
-> 
-> And you spoke about :
-> 
-> case PHY_INTERFACE_MODE_RGMII:
-> case PHY_INTERFACE_MODE_RGMII_ID:
-> case PHY_INTERFACE_MODE_RGMII_RXID:
-> case PHY_INTERFACE_MODE_RGMII_TXID:
-> 
-> So in my setup I've only RGMII interface, so I've never tested 3 others 
-> interfaces (_ID, _RXID, _TXID).
-> 
-> So do I need to add cases in my driver ?
+Hi Masami,
 
-Yes. They all indicate the MAC should be using RGMII.
+On Thu, 2019-02-14 at 12:13 +0900, Masami Hiramatsu wrote:
+> Hi Tom,
+> 
+> On Wed, 13 Feb 2019 12:17:55 -0600
+> Tom Zanussi <zanussi@kernel.org> wrote:
+> 
+> > From: Tom Zanussi <tom.zanussi@linux.intel.com>
+> > 
+> > Here are a few examples of replacing kprobe_events error handling
+> > with
+> > tracing_log_err() from the new tracing error_log mechanism.  Only a
+> > few example errors are converted, and even these are incomplete,
+> > since
+> > I didn't know where to get the current command and used a dummy
+> > string
+> > for those.  Also, these are completely untested, just provided for
+> > RFC purposes.
+> 
+> OK, can I take this over? I would like to try to use this framework.
+> 
 
-This appears to be an old issue, but now would be a good time to fix
-it.
+Sure, be my guest. ;-)
 
-     Andrew
+Thanks,
+
+Tom
+
