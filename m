@@ -2,159 +2,220 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37AA8C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:35:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6166EC10F04
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:36:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 006D12147C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:34:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EciKZRru"
+	by mail.kernel.org (Postfix) with ESMTP id 2C38A2147C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:36:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440238AbfBNVe6 (ORCPT
+        id S2440248AbfBNVgh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 16:34:58 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:35793 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436452AbfBNVe6 (ORCPT
+        Thu, 14 Feb 2019 16:36:37 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:51333 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2395160AbfBNVgh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 16:34:58 -0500
-Received: by mail-yw1-f66.google.com with SMTP id s204so2934129ywg.2;
-        Thu, 14 Feb 2019 13:34:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=cufxpBUZ2PFDaKJUbe1LoYEcfgdJ6Va1j/2T3vLPI/c=;
-        b=EciKZRruenGVLzCQQyf4hCrPesod4TxS48xVqCO/OQd3A8ADKzOPJEdxlznJ38XS5I
-         Cy/VyOkpuo9Lf3hE68Hm3R2UuxR/knaYuG7AxzShCgZkIAqBHtyyYlwt3f1CdJfnk1H+
-         LhhkJZeF48I3GH2RrO+YMEc2sx0siT1icQ3BtWAd5XpbPksgxGOfqUWCPZ3Jrd5PRz19
-         xUpQozn5E6PmA7vzbXPaljg3a5snDlOQQPtfNd4K5ceUJzrM1dxFS8A0GQNoR5+VmqgD
-         FLSbi/BuQ/lnjynHsSCVTzkl4eDDXrC30rNFarFFlSpNN9qnl4yDI8x3pZsYiM2JzNWV
-         9hCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=cufxpBUZ2PFDaKJUbe1LoYEcfgdJ6Va1j/2T3vLPI/c=;
-        b=SZfY+u4eAGc63vKD1gcWS7bIPA9VYxv18hRbTOxcc3uJLWuKadAi+2g2+0mnqIbLA4
-         n78w4atFOBuIvFF+A+QG+c+sXi1gu/XBakRS4NjdCJZZPU3FgDszNYRn3LRY4DKsDaBa
-         gp8FUJRltkFkq+Vj1uxxo2dWC5XMdiSXPOJT6C3wDG9x/ylXaOdAFXcWWYObZo2XbsLt
-         3fXHbAsCGW/S/4T48tNWzumDmS9DbLiEcpABy7Aaj9kA+p96hdVCtApsf6MLGiWG09vC
-         pjomPXDRQ5DnjO8RgG4zuTuRr7ZhFBHXO4q5ZjRsC4jjUyNv1Nbsoz/dggD+NzY9mYiQ
-         dgZg==
-X-Gm-Message-State: AHQUAuZeBz+V2g65G9yoJm8fBjnTV1R6SpROVpJVw/ekGFcdtAH+nUgM
-        LbRWbD4jNepcYLYAsOO53fc=
-X-Google-Smtp-Source: AHgI3IZ8spadDeRFJeGlCSc/QpynJskJQD0mUFDfAyhUxs4qlDWu0catWJoH37jUP6sGj+OpvSk3ng==
-X-Received: by 2002:a81:5c89:: with SMTP id q131mr4982047ywb.90.1550180096879;
-        Thu, 14 Feb 2019 13:34:56 -0800 (PST)
-Received: from localhost.localdomain ([46.216.144.99])
-        by smtp.gmail.com with ESMTPSA id r20sm1369083ywa.13.2019.02.14.13.34.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 13:34:55 -0800 (PST)
-Received: from [127.0.0.1] (helo=jeknote.loshitsa1.net)
-        by localhost.localdomain with esmtp (Exim 4.92-RC4)
-        (envelope-from <jekhor@gmail.com>)
-        id 1guOej-0000i2-EY; Fri, 15 Feb 2019 00:34:53 +0300
-Date:   Fri, 15 Feb 2019 00:34:53 +0300
-From:   Yauhen Kharuzhy <jekhor@gmail.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
- LEDs
-Message-ID: <20190214213453.GA30250@jeknote.loshitsa1.net>
-References: <20190212205901.13037-1-jekhor@gmail.com>
- <20190212205901.13037-2-jekhor@gmail.com>
- <1df39a63-533f-bb68-a056-a0241f148be9@redhat.com>
- <20190213230731.GA8557@amd>
- <42078a81-e32e-81b7-528f-d1adb60d31c3@redhat.com>
- <20190213233806.GA11867@amd>
- <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com>
+        Thu, 14 Feb 2019 16:36:37 -0500
+Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1guOgC-0002C8-3R; Thu, 14 Feb 2019 22:36:24 +0100
+Message-Id: <20190214211759.507891465@linutronix.de>
+User-Agent: quilt/0.65
+Date:   Thu, 14 Feb 2019 21:47:57 +0100
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+        Keith Busch <keith.busch@intel.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Kashyap Desai <kashyap.desai@broadcom.com>,
+        Shivasharan Srikanteshwara 
+        <shivasharan.srikanteshwara@broadcom.com>
+Subject: [patch V5 2/8] genirq/affinity: Store interrupt sets size in struct
+ irq_affinity
+References: <20190214204755.819014197@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+From: Ming Lei <ming.lei@redhat.com>
 
-On Thu, Feb 14, 2019 at 10:57:13AM +0100, Hans de Goede wrote:
+The interrupt affinity spreading mechanism supports to spread out
+affinities for one or more interrupt sets. A interrupt set contains one
+or more interrupts. Each set is mapped to a specific functionality of a
+device, e.g. general I/O queues and read I/O queus of multiqueue block
+devices.
+
+The number of interrupts per set is defined by the driver. It depends on
+the total number of available interrupts for the device, which is
+determined by the PCI capabilites and the availability of underlying CPU
+resources, and the number of queues which the device provides and the
+driver wants to instantiate.
+
+The driver passes initial configuration for the interrupt allocation via
+a pointer to struct irq_affinity.
+
+Right now the allocation mechanism is complex as it requires to have a
+loop in the driver to determine the maximum number of interrupts which
+are provided by the PCI capabilities and the underlying CPU resources.
+This loop would have to be replicated in every driver which wants to
+utilize this mechanism. That's unwanted code duplication and error
+prone.
+
+In order to move this into generic facilities it is required to have a
+mechanism, which allows the recalculation of the interrupt sets and
+their size, in the core code. As the core code does not have any
+knowledge about the underlying device, a driver specific callback will
+be added to struct affinity_desc, which will be invoked by the core
+code. The callback will get the number of available interupts as an
+argument, so the driver can calculate the corresponding number and size
+of interrupt sets.
+
+To support this, two modifications for the handling of struct irq_affinity
+are required:
+
+1) The (optional) interrupt sets size information is contained in a
+   separate array of integers and struct irq_affinity contains a
+   pointer to it.
+
+   This is cumbersome and as the maximum number of interrupt sets is small,
+   there is no reason to have separate storage. Moving the size array into
+   struct affinity_desc avoids indirections and makes the code simpler.
+
+2) At the moment the struct irq_affinity pointer which is handed in from
+   the driver and passed through to several core functions is marked
+   'const'.
+
+   With the upcoming callback to recalculate the number and size of
+   interrupt sets, it's necessary to remove the 'const'
+   qualifier. Otherwise the callback would not be able to update the data.
+
+Implement #1 and store the interrupt sets size in 'struct irq_affinity'.
+
+No functional change.
+
+[ tglx: Fixed the memcpy() size so it won't copy beyond the size of the
+  	source. Fixed the kernel doc comments for struct irq_affinity and
+  	de-'This patch'-ed the changelog ]
+
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+
+---
+ drivers/nvme/host/pci.c   |    7 +++----
+ include/linux/interrupt.h |    9 ++++++---
+ kernel/irq/affinity.c     |   16 ++++++++++++----
+ 3 files changed, 21 insertions(+), 11 deletions(-)
+
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2081,12 +2081,11 @@ static void nvme_calc_io_queues(struct n
+ static int nvme_setup_irqs(struct nvme_dev *dev, unsigned int nr_io_queues)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(dev->dev);
+-	int irq_sets[2];
+ 	struct irq_affinity affd = {
+-		.pre_vectors = 1,
+-		.nr_sets = ARRAY_SIZE(irq_sets),
+-		.sets = irq_sets,
++		.pre_vectors	= 1,
++		.nr_sets	= 2,
+ 	};
++	unsigned int *irq_sets = affd.set_size;
+ 	int result = 0;
+ 	unsigned int irq_queues, this_p_queues;
  
-> > Anyway, in such case I'd propose having rmmod/reboot/poweroff hook
-> > that just sets it to breathing. No need to expose it to userspace.
-> 
-> That assumes that breathing is the default setting on all hardware
-> and again I don't see why not to export this functionality to
-> userspace. Just because something does not fit in the existing
-> API is IMHO not a good reason to not expose it to userspace.
-> 
-> I suggest that we deal with this special case by adding 3 custom
-> sysfs attributes:
-> 
-> 1) "mode" which when read, prints, e.g. :
-> manual [on-when-charging]
-> 
-> With the [] indicating the current mode, and writes accepting
-> all 3 values and updating the hw accordingly.
-> 
-> This format is used in more places in the kernel and allows
-> for the user to easily discover the possible values.
-> 
-> 2) "pattern" which when read, prints, e.g. :
-> on blinking [breathing]
+--- a/include/linux/interrupt.h
++++ b/include/linux/interrupt.h
+@@ -241,20 +241,23 @@ struct irq_affinity_notify {
+ 	void (*release)(struct kref *ref);
+ };
+ 
++#define	IRQ_AFFINITY_MAX_SETS  4
++
+ /**
+  * struct irq_affinity - Description for automatic irq affinity assignements
+  * @pre_vectors:	Don't apply affinity to @pre_vectors at beginning of
+  *			the MSI(-X) vector space
+  * @post_vectors:	Don't apply affinity to @post_vectors at end of
+  *			the MSI(-X) vector space
+- * @nr_sets:		Length of passed in *sets array
+- * @sets:		Number of affinitized sets
++ * @nr_sets:		The number of interrupt sets for which affinity
++ *			spreading is required
++ * @set_size:		Array holding the size of each interrupt set
+  */
+ struct irq_affinity {
+ 	unsigned int	pre_vectors;
+ 	unsigned int	post_vectors;
+ 	unsigned int	nr_sets;
+-	unsigned int	*sets;
++	unsigned int	set_size[IRQ_AFFINITY_MAX_SETS];
+ };
+ 
+ /**
+--- a/kernel/irq/affinity.c
++++ b/kernel/irq/affinity.c
+@@ -238,9 +238,10 @@ static int irq_build_affinity_masks(cons
+  * Returns the irq_affinity_desc pointer or NULL if allocation failed.
+  */
+ struct irq_affinity_desc *
+-irq_create_affinity_masks(unsigned int nvecs, const struct irq_affinity *affd)
++irq_create_affinity_masks(unsigned int nvecs, struct irq_affinity *affd)
+ {
+ 	unsigned int affvecs, curvec, usedvecs, nr_sets, i;
++	unsigned int set_size[IRQ_AFFINITY_MAX_SETS];
+ 	struct irq_affinity_desc *masks = NULL;
+ 
+ 	/*
+@@ -250,6 +251,9 @@ irq_create_affinity_masks(unsigned int n
+ 	if (nvecs == affd->pre_vectors + affd->post_vectors)
+ 		return NULL;
+ 
++	if (WARN_ON_ONCE(affd->nr_sets > IRQ_AFFINITY_MAX_SETS))
++		return NULL;
++
+ 	masks = kcalloc(nvecs, sizeof(*masks), GFP_KERNEL);
+ 	if (!masks)
+ 		return NULL;
+@@ -263,11 +267,15 @@ irq_create_affinity_masks(unsigned int n
+ 	 */
+ 	affvecs = nvecs - affd->pre_vectors - affd->post_vectors;
+ 	nr_sets = affd->nr_sets;
+-	if (!nr_sets)
++	if (!nr_sets) {
+ 		nr_sets = 1;
++		set_size[0] = affvecs;
++	} else {
++		memcpy(set_size, affd->set_size, nr_sets * sizeof(unsigned int));
++	}
+ 
+ 	for (i = 0, usedvecs = 0; i < nr_sets; i++) {
+-		unsigned int this_vecs = affd->sets ? affd->sets[i] : affvecs;
++		unsigned int this_vecs = set_size[i];
+ 		int ret;
+ 
+ 		ret = irq_build_affinity_masks(affd, curvec, this_vecs,
+@@ -314,7 +322,7 @@ unsigned int irq_calc_affinity_vectors(u
+ 		unsigned int i;
+ 
+ 		for (i = 0, set_vecs = 0;  i < affd->nr_sets; i++)
+-			set_vecs += affd->sets[i];
++			set_vecs += affd->set_size[i];
+ 	} else {
+ 		get_online_cpus();
+ 		set_vecs = cpumask_weight(cpu_possible_mask);
 
-Leds class API already has pattern_set()/pattern_get() callbacks
-which can be used for breathing mode set/request. How this API should
-deal with specific 'breathing' sysfs attribute? I like the idea about
-specific 'pattern' attribute because this is very simple, anyway. 
 
-Second issue: the 'pattern' led trigger supports default pattern initialization
-by device properties only, not by hardware request. Setting breathing
-parameters via 'pattern' led trigger may looks too complicated for
-users, given that only one hw-supported option exists. Pattern
-corresponded to hw-supported breating should contain too many
-(brightness, duration) tuples with minimal stepping and has no
-practical sense.
-
-
-If hw-controlled 'breathing' mode is quite common case for leds
-controllers, maybe it makes sense to introduce something like
-'lighting mode' attribute with values 'continuous'/'breathing' without
-clarification of breathing parameters? What do you think about this?
-
-The same question about frequency of breathing setting. Blinking
-frequency can be set with existing API, but not a breathing frequency.
-
-> 
-> 3) "frequency", when read prints, e.g. :
-> 0.25hz [0.5hz] 1hz 2hz
-> Note this controls both the blinking and breathing freq.
-> 
-> Note I've not listed off anywhere, this can be achieved by
-> setting the brightness to 0 as we do with normal leds.
-> 
-> For interactions with other APIs we can do the standard
-> thing where writing 0 to brightness resets things, in this
-> case this would reset mode to manual and pattern to on.
-> 
-> And if the blinking API gets used, then too the mode should
-> be switched to manual, and the pattern obviously becomes
-> blinking.
-> 
-> I believe this will work well with this hardware and
-> nicely allow the user to control all settings.
-> 
-> Regards,
-> 
-> Hans
-
--- 
-Yauhen Kharuzhy
