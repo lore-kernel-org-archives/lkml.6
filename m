@@ -2,474 +2,93 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FABBC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:25:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C439AC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:32:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7796222D0
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:25:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 962BE21904
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:32:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="A5N9JxXi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404789AbfBNCZQ (ORCPT
+        id S2404508AbfBNCcN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 21:25:16 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:23562 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2394080AbfBNCZN (ORCPT
+        Wed, 13 Feb 2019 21:32:13 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:34138 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726325AbfBNCcM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 21:25:13 -0500
-X-UUID: d377ae96ae264cb5a936955000b62a67-20190214
-X-UUID: d377ae96ae264cb5a936955000b62a67-20190214
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <yunfei.dong@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 2120815064; Thu, 14 Feb 2019 10:25:02 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 14 Feb 2019 10:24:57 +0800
-Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 14 Feb 2019 10:24:56 +0800
-From:   Yunfei Dong <yunfei.dong@mediatek.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Yunfei Dong <yunfei.dong@mediatek.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Qianqian Yan <qianqian.yan@mediatek.com>
-Subject: [RESEND PATCH v4,3/3] media: mtk-vcodec: Using common interface to manage vdec/venc clock
-Date:   Thu, 14 Feb 2019 10:24:53 +0800
-Message-ID: <1550111093-7057-3-git-send-email-yunfei.dong@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1550111093-7057-1-git-send-email-yunfei.dong@mediatek.com>
-References: <1550111093-7057-1-git-send-email-yunfei.dong@mediatek.com>
+        Wed, 13 Feb 2019 21:32:12 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1E2NtBo195745;
+        Thu, 14 Feb 2019 02:32:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=c5taJN954cutuswTWfG5U+CDpxpAV+VcPXKP5vYMc6U=;
+ b=A5N9JxXi6NQbXGVEDCLradKDIStkSxEnjXQmQczdWtpy48Us8UHDgqGnJ5904zJPOfRl
+ s/1vocU5HexSPfKkEgEwCVqshQ4aPW1kyOOXJI7LlLks3aZEhXaFxrQhxrEdU8oppkpH
+ 7zqy3GH1Q/ECI77u9aXRuqgDFCtSDvnz2qCnSy9pO0qAqarSxkrhf25c2Gt6N75Cl80I
+ 7l7K8MjfFPigqLTGVARasD4R97FvxlvMeeZGD4n0ukAhECMN3SLHD2Phwg86JlLaUmZJ
+ M6/GhJoAPfeaBdyzvIYwrVWbJpYPC+Orl61E13kYn7HWceGiv/+DeR+uPN6Yn+lHDz/+ kw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2qhree5g6q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Feb 2019 02:32:05 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1E2VxQZ024714
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Feb 2019 02:31:59 GMT
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1E2Vx2Y026853;
+        Thu, 14 Feb 2019 02:31:59 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 13 Feb 2019 18:31:58 -0800
+To:     Evan Green <evgreen@chromium.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Bart Van Assche <bvanassche@acm.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Martin K Petersen <martin.petersen@oracle.com>,
+        Alexis Savery <asavery@chromium.org>,
+        Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] loop: Report EOPNOTSUPP properly
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190207205730.199332-1-evgreen@chromium.org>
+        <20190207205730.199332-2-evgreen@chromium.org>
+Date:   Wed, 13 Feb 2019 21:31:54 -0500
+In-Reply-To: <20190207205730.199332-2-evgreen@chromium.org> (Evan Green's
+        message of "Thu, 7 Feb 2019 12:57:28 -0800")
+Message-ID: <yq1h8d7qew5.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
 Content-Type: text/plain
-X-MTK:  N
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9166 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=683 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902140017
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Vdec: Using standard CCF interface to set parent clock and
-clock rate in dtsi and using common interface to open/close
-video decoder clock.
-Venc: Using standard CCF interface to set parent clock in dtsi
-and using common interface to open/close video encoder clock.
 
-Signed-off-by: Yunfei Dong <yunfei.dong@mediatek.com>
-Signed-off-by: Qianqian Yan <qianqian.yan@mediatek.com>
----
- .../media/platform/mtk-vcodec/mtk_vcodec_dec_pm.c  |  163 +++++++-------------
- drivers/media/platform/mtk-vcodec/mtk_vcodec_drv.h |   31 ++--
- .../media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c  |  104 +++++++------
- 3 files changed, 132 insertions(+), 166 deletions(-)
+Evan,
 
-diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_pm.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_pm.c
-index 79ca03a..7884465 100644
---- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_pm.c
-+++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec_pm.c
-@@ -27,11 +27,14 @@ int mtk_vcodec_init_dec_pm(struct mtk_vcodec_dev *mtkdev)
- 	struct device_node *node;
- 	struct platform_device *pdev;
- 	struct mtk_vcodec_pm *pm;
--	int ret = 0;
-+	struct mtk_vcodec_clk *dec_clk;
-+	struct mtk_vcodec_clk_info *clk_info;
-+	int i = 0, ret = 0;
- 
- 	pdev = mtkdev->plat_dev;
- 	pm = &mtkdev->pm;
- 	pm->mtkdev = mtkdev;
-+	dec_clk = &pm->vdec_clk;
- 	node = of_parse_phandle(pdev->dev.of_node, "mediatek,larb", 0);
- 	if (!node) {
- 		mtk_v4l2_err("of_parse_phandle mediatek,larb fail!");
-@@ -47,52 +50,34 @@ int mtk_vcodec_init_dec_pm(struct mtk_vcodec_dev *mtkdev)
- 	pdev = mtkdev->plat_dev;
- 	pm->dev = &pdev->dev;
- 
--	pm->vcodecpll = devm_clk_get(&pdev->dev, "vcodecpll");
--	if (IS_ERR(pm->vcodecpll)) {
--		mtk_v4l2_err("devm_clk_get vcodecpll fail");
--		ret = PTR_ERR(pm->vcodecpll);
-+	dec_clk->clk_num =
-+		of_property_count_strings(pdev->dev.of_node, "clock-names");
-+	if (dec_clk->clk_num > 0) {
-+		dec_clk->clk_info = devm_kcalloc(&pdev->dev,
-+			dec_clk->clk_num, sizeof(*clk_info),
-+			GFP_KERNEL);
-+		if (!dec_clk->clk_info)
-+			return -ENOMEM;
-+	} else {
-+		mtk_v4l2_err("Failed to get vdec clock count");
-+		return -EINVAL;
- 	}
- 
--	pm->univpll_d2 = devm_clk_get(&pdev->dev, "univpll_d2");
--	if (IS_ERR(pm->univpll_d2)) {
--		mtk_v4l2_err("devm_clk_get univpll_d2 fail");
--		ret = PTR_ERR(pm->univpll_d2);
--	}
--
--	pm->clk_cci400_sel = devm_clk_get(&pdev->dev, "clk_cci400_sel");
--	if (IS_ERR(pm->clk_cci400_sel)) {
--		mtk_v4l2_err("devm_clk_get clk_cci400_sel fail");
--		ret = PTR_ERR(pm->clk_cci400_sel);
--	}
--
--	pm->vdec_sel = devm_clk_get(&pdev->dev, "vdec_sel");
--	if (IS_ERR(pm->vdec_sel)) {
--		mtk_v4l2_err("devm_clk_get vdec_sel fail");
--		ret = PTR_ERR(pm->vdec_sel);
--	}
--
--	pm->vdecpll = devm_clk_get(&pdev->dev, "vdecpll");
--	if (IS_ERR(pm->vdecpll)) {
--		mtk_v4l2_err("devm_clk_get vdecpll fail");
--		ret = PTR_ERR(pm->vdecpll);
--	}
--
--	pm->vencpll = devm_clk_get(&pdev->dev, "vencpll");
--	if (IS_ERR(pm->vencpll)) {
--		mtk_v4l2_err("devm_clk_get vencpll fail");
--		ret = PTR_ERR(pm->vencpll);
--	}
--
--	pm->venc_lt_sel = devm_clk_get(&pdev->dev, "venc_lt_sel");
--	if (IS_ERR(pm->venc_lt_sel)) {
--		mtk_v4l2_err("devm_clk_get venc_lt_sel fail");
--		ret = PTR_ERR(pm->venc_lt_sel);
--	}
--
--	pm->vdec_bus_clk_src = devm_clk_get(&pdev->dev, "vdec_bus_clk_src");
--	if (IS_ERR(pm->vdec_bus_clk_src)) {
--		mtk_v4l2_err("devm_clk_get vdec_bus_clk_src");
--		ret = PTR_ERR(pm->vdec_bus_clk_src);
-+	for (i = 0; i < dec_clk->clk_num; i++) {
-+		clk_info = &dec_clk->clk_info[i];
-+		ret = of_property_read_string_index(pdev->dev.of_node,
-+			"clock-names", i, &clk_info->clk_name);
-+		if (ret) {
-+			mtk_v4l2_err("Failed to get clock name id = %d", i);
-+			return ret;
-+		}
-+		clk_info->vcodec_clk = devm_clk_get(&pdev->dev,
-+			clk_info->clk_name);
-+		if (IS_ERR(clk_info->vcodec_clk)) {
-+			mtk_v4l2_err("devm_clk_get (%d)%s fail", i,
-+				clk_info->clk_name);
-+			return PTR_ERR(clk_info->vcodec_clk);
-+		}
- 	}
- 
- 	pm_runtime_enable(&pdev->dev);
-@@ -125,78 +110,36 @@ void mtk_vcodec_dec_pw_off(struct mtk_vcodec_pm *pm)
- 
- void mtk_vcodec_dec_clock_on(struct mtk_vcodec_pm *pm)
- {
--	int ret;
--
--	ret = clk_set_rate(pm->vcodecpll, 1482 * 1000000);
--	if (ret)
--		mtk_v4l2_err("clk_set_rate vcodecpll fail %d", ret);
--
--	ret = clk_set_rate(pm->vencpll, 800 * 1000000);
--	if (ret)
--		mtk_v4l2_err("clk_set_rate vencpll fail %d", ret);
--
--	ret = clk_prepare_enable(pm->vcodecpll);
--	if (ret)
--		mtk_v4l2_err("clk_prepare_enable vcodecpll fail %d", ret);
--
--	ret = clk_prepare_enable(pm->vencpll);
--	if (ret)
--		mtk_v4l2_err("clk_prepare_enable vencpll fail %d", ret);
--
--	ret = clk_prepare_enable(pm->vdec_bus_clk_src);
--	if (ret)
--		mtk_v4l2_err("clk_prepare_enable vdec_bus_clk_src fail %d",
--				ret);
--
--	ret = clk_prepare_enable(pm->venc_lt_sel);
--	if (ret)
--		mtk_v4l2_err("clk_prepare_enable venc_lt_sel fail %d", ret);
--
--	ret = clk_set_parent(pm->venc_lt_sel, pm->vdec_bus_clk_src);
--	if (ret)
--		mtk_v4l2_err("clk_set_parent venc_lt_sel vdec_bus_clk_src fail %d",
--				ret);
--
--	ret = clk_prepare_enable(pm->univpll_d2);
--	if (ret)
--		mtk_v4l2_err("clk_prepare_enable univpll_d2 fail %d", ret);
--
--	ret = clk_prepare_enable(pm->clk_cci400_sel);
--	if (ret)
--		mtk_v4l2_err("clk_prepare_enable clk_cci400_sel fail %d", ret);
--
--	ret = clk_set_parent(pm->clk_cci400_sel, pm->univpll_d2);
--	if (ret)
--		mtk_v4l2_err("clk_set_parent clk_cci400_sel univpll_d2 fail %d",
--				ret);
--
--	ret = clk_prepare_enable(pm->vdecpll);
--	if (ret)
--		mtk_v4l2_err("clk_prepare_enable vdecpll fail %d", ret);
--
--	ret = clk_prepare_enable(pm->vdec_sel);
--	if (ret)
--		mtk_v4l2_err("clk_prepare_enable vdec_sel fail %d", ret);
--
--	ret = clk_set_parent(pm->vdec_sel, pm->vdecpll);
--	if (ret)
--		mtk_v4l2_err("clk_set_parent vdec_sel vdecpll fail %d", ret);
-+	struct mtk_vcodec_clk *dec_clk = &pm->vdec_clk;
-+	int ret, i = 0;
-+
-+	for (i = 0; i < dec_clk->clk_num; i++) {
-+		ret = clk_prepare_enable(dec_clk->clk_info[i].vcodec_clk);
-+		if (ret) {
-+			mtk_v4l2_err("clk_prepare_enable %d %s fail %d", i,
-+				dec_clk->clk_info[i].clk_name, ret);
-+			goto error;
-+		}
-+	}
- 
- 	ret = mtk_smi_larb_get(pm->larbvdec);
--	if (ret)
-+	if (ret) {
- 		mtk_v4l2_err("mtk_smi_larb_get larbvdec fail %d", ret);
-+		goto error;
-+	}
-+	return;
- 
-+error:
-+	for (i -= 1; i >= 0; i--)
-+		clk_disable_unprepare(dec_clk->clk_info[i].vcodec_clk);
- }
- 
- void mtk_vcodec_dec_clock_off(struct mtk_vcodec_pm *pm)
- {
-+	struct mtk_vcodec_clk *dec_clk = &pm->vdec_clk;
-+	int i = 0;
-+
- 	mtk_smi_larb_put(pm->larbvdec);
--	clk_disable_unprepare(pm->vdec_sel);
--	clk_disable_unprepare(pm->vdecpll);
--	clk_disable_unprepare(pm->univpll_d2);
--	clk_disable_unprepare(pm->clk_cci400_sel);
--	clk_disable_unprepare(pm->venc_lt_sel);
--	clk_disable_unprepare(pm->vdec_bus_clk_src);
--	clk_disable_unprepare(pm->vencpll);
--	clk_disable_unprepare(pm->vcodecpll);
-+	for (i = dec_clk->clk_num - 1; i >= 0; i--)
-+		clk_disable_unprepare(dec_clk->clk_info[i].vcodec_clk);
- }
-diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_drv.h b/drivers/media/platform/mtk-vcodec/mtk_vcodec_drv.h
-index 3cffb38..8aba695 100644
---- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_drv.h
-+++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_drv.h
-@@ -176,22 +176,29 @@ struct mtk_enc_params {
- };
- 
- /**
-+ * struct mtk_vcodec_clk_info - Structure used to store clock name
-+ */
-+struct mtk_vcodec_clk_info {
-+	const char	*clk_name;
-+	struct clk	*vcodec_clk;
-+};
-+
-+/**
-+ * struct mtk_vcodec_clk - Structure used to store vcodec clock information
-+ */
-+struct mtk_vcodec_clk {
-+	struct mtk_vcodec_clk_info	*clk_info;
-+	int	clk_num;
-+};
-+
-+/**
-  * struct mtk_vcodec_pm - Power management data structure
-  */
- struct mtk_vcodec_pm {
--	struct clk	*vdec_bus_clk_src;
--	struct clk	*vencpll;
--
--	struct clk	*vcodecpll;
--	struct clk	*univpll_d2;
--	struct clk	*clk_cci400_sel;
--	struct clk	*vdecpll;
--	struct clk	*vdec_sel;
--	struct clk	*vencpll_d2;
--	struct clk	*venc_sel;
--	struct clk	*univpll1_d2;
--	struct clk	*venc_lt_sel;
-+	struct mtk_vcodec_clk	vdec_clk;
- 	struct device	*larbvdec;
-+
-+	struct mtk_vcodec_clk	venc_clk;
- 	struct device	*larbvenc;
- 	struct device	*larbvenclt;
- 	struct device	*dev;
-diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
-index 7c02504..39375b8 100644
---- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
-+++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
-@@ -27,9 +27,11 @@ int mtk_vcodec_init_enc_pm(struct mtk_vcodec_dev *mtkdev)
- {
- 	struct device_node *node;
- 	struct platform_device *pdev;
--	struct device *dev;
- 	struct mtk_vcodec_pm *pm;
--	int ret = 0;
-+	struct mtk_vcodec_clk *enc_clk;
-+	struct mtk_vcodec_clk_info *clk_info;
-+	int ret = 0, i = 0;
-+	struct device *dev;
- 
- 	pdev = mtkdev->plat_dev;
- 	pm = &mtkdev->pm;
-@@ -37,6 +39,7 @@ int mtk_vcodec_init_enc_pm(struct mtk_vcodec_dev *mtkdev)
- 	pm->mtkdev = mtkdev;
- 	pm->dev = &pdev->dev;
- 	dev = &pdev->dev;
-+	enc_clk = &pm->venc_clk;
- 
- 	node = of_parse_phandle(dev->of_node, "mediatek,larb", 0);
- 	if (!node) {
-@@ -68,28 +71,34 @@ int mtk_vcodec_init_enc_pm(struct mtk_vcodec_dev *mtkdev)
- 	pdev = mtkdev->plat_dev;
- 	pm->dev = &pdev->dev;
- 
--	pm->vencpll_d2 = devm_clk_get(&pdev->dev, "venc_sel_src");
--	if (IS_ERR(pm->vencpll_d2)) {
--		mtk_v4l2_err("devm_clk_get vencpll_d2 fail");
--		ret = PTR_ERR(pm->vencpll_d2);
--	}
--
--	pm->venc_sel = devm_clk_get(&pdev->dev, "venc_sel");
--	if (IS_ERR(pm->venc_sel)) {
--		mtk_v4l2_err("devm_clk_get venc_sel fail");
--		ret = PTR_ERR(pm->venc_sel);
-+	enc_clk->clk_num = of_property_count_strings(pdev->dev.of_node,
-+		"clock-names");
-+	if (enc_clk->clk_num > 0) {
-+		enc_clk->clk_info = devm_kcalloc(&pdev->dev,
-+			enc_clk->clk_num, sizeof(*clk_info),
-+			GFP_KERNEL);
-+		if (!enc_clk->clk_info)
-+			return -ENOMEM;
-+	} else {
-+		mtk_v4l2_err("Failed to get venc clock count");
-+		return -EINVAL;
- 	}
- 
--	pm->univpll1_d2 = devm_clk_get(&pdev->dev, "venc_lt_sel_src");
--	if (IS_ERR(pm->univpll1_d2)) {
--		mtk_v4l2_err("devm_clk_get univpll1_d2 fail");
--		ret = PTR_ERR(pm->univpll1_d2);
--	}
--
--	pm->venc_lt_sel = devm_clk_get(&pdev->dev, "venc_lt_sel");
--	if (IS_ERR(pm->venc_lt_sel)) {
--		mtk_v4l2_err("devm_clk_get venc_lt_sel fail");
--		ret = PTR_ERR(pm->venc_lt_sel);
-+	for (i = 0; i < enc_clk->clk_num; i++) {
-+		clk_info = &enc_clk->clk_info[i];
-+		ret = of_property_read_string_index(pdev->dev.of_node,
-+			"clock-names", i, &clk_info->clk_name);
-+		if (ret) {
-+			mtk_v4l2_err("venc failed to get clk name %d", i);
-+			return ret;
-+		}
-+		clk_info->vcodec_clk = devm_clk_get(&pdev->dev,
-+			clk_info->clk_name);
-+		if (IS_ERR(clk_info->vcodec_clk)) {
-+			mtk_v4l2_err("venc devm_clk_get (%d)%s fail", i,
-+				clk_info->clk_name);
-+			return PTR_ERR(clk_info->vcodec_clk);
-+		}
- 	}
- 
- 	return ret;
-@@ -102,38 +111,45 @@ void mtk_vcodec_release_enc_pm(struct mtk_vcodec_dev *mtkdev)
- 
- void mtk_vcodec_enc_clock_on(struct mtk_vcodec_pm *pm)
- {
--	int ret;
--
--	ret = clk_prepare_enable(pm->venc_sel);
--	if (ret)
--		mtk_v4l2_err("clk_prepare_enable fail %d", ret);
--
--	ret = clk_set_parent(pm->venc_sel, pm->vencpll_d2);
--	if (ret)
--		mtk_v4l2_err("clk_set_parent fail %d", ret);
--
--	ret = clk_prepare_enable(pm->venc_lt_sel);
--	if (ret)
--		mtk_v4l2_err("clk_prepare_enable fail %d", ret);
--
--	ret = clk_set_parent(pm->venc_lt_sel, pm->univpll1_d2);
--	if (ret)
--		mtk_v4l2_err("clk_set_parent fail %d", ret);
-+	struct mtk_vcodec_clk *enc_clk = &pm->venc_clk;
-+	int ret, i = 0;
-+
-+	for (i = 0; i < enc_clk->clk_num; i++) {
-+		ret = clk_prepare_enable(enc_clk->clk_info[i].vcodec_clk);
-+		if (ret) {
-+			mtk_v4l2_err("venc clk_prepare_enable %d %s fail %d", i,
-+				enc_clk->clk_info[i].clk_name, ret);
-+			goto clkerr;
-+		}
-+	}
- 
- 	ret = mtk_smi_larb_get(pm->larbvenc);
--	if (ret)
-+	if (ret) {
- 		mtk_v4l2_err("mtk_smi_larb_get larb3 fail %d", ret);
--
-+		goto larbvencerr;
-+	}
- 	ret = mtk_smi_larb_get(pm->larbvenclt);
--	if (ret)
-+	if (ret) {
- 		mtk_v4l2_err("mtk_smi_larb_get larb4 fail %d", ret);
-+		goto larbvenclterr;
-+	}
-+	return;
- 
-+larbvenclterr:
-+	mtk_smi_larb_put(pm->larbvenc);
-+larbvencerr:
-+clkerr:
-+	for (i -= 1; i >= 0; i--)
-+		clk_disable_unprepare(enc_clk->clk_info[i].vcodec_clk);
- }
- 
- void mtk_vcodec_enc_clock_off(struct mtk_vcodec_pm *pm)
- {
-+	struct mtk_vcodec_clk *enc_clk = &pm->venc_clk;
-+	int i = 0;
-+
- 	mtk_smi_larb_put(pm->larbvenc);
- 	mtk_smi_larb_put(pm->larbvenclt);
--	clk_disable_unprepare(pm->venc_lt_sel);
--	clk_disable_unprepare(pm->venc_sel);
-+	for (i = enc_clk->clk_num - 1; i >= 0; i--)
-+		clk_disable_unprepare(enc_clk->clk_info[i].vcodec_clk);
- }
+> Properly plumb out EOPNOTSUPP from loop driver operations, which may
+> get returned when for instance a discard operation is attempted but
+> not supported by the underlying block device. Before this change,
+> everything was reported in the log as an I/O error, which is scary and
+> not helpful in debugging.
+
+Reviewed-by: Martin K. Petersen <martin.petersen@oracle.com>
+
 -- 
-1.7.9.5
-
+Martin K. Petersen	Oracle Linux Engineering
