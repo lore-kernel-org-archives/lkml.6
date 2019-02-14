@@ -2,264 +2,241 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5695C10F04
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8B0C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:54:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DF9C2229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:54:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="xFxgMtI/"
+	by mail.kernel.org (Postfix) with ESMTP id 90DA72229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:54:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2501967AbfBNOyk (ORCPT
+        id S2502003AbfBNOyv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 09:54:40 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36709 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2439612AbfBNOxN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 09:53:13 -0500
-Received: by mail-wm1-f68.google.com with SMTP id j125so6396703wmj.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 06:53:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=2DeiZ8D7UiVmGGxb7P14iUU29iY/Sp7nuKJSfeun7aM=;
-        b=xFxgMtI/hszP7l26U7gZsptViddGHhwWiNFBsQFQZyWkcfsNodCupCe8LLIGiYnhml
-         Ac9Nn+zEFzWOE+Y0OneQvcX49ZpDeQciCJLY0SYprRNLBCzOc84SlEICqOv/EgdHdvU6
-         q124rwSGhCoERs8iIcxJA2YlARpPVFA43R9bK3TUtWq7e85yvITpdQ0pmFx3R10o6Qma
-         SYeE2qXXt3+llmwLnOIPeXsfwtD8yzRZMHL27R/GOB6TPiD1Zepb391S5B4w4vyqoByt
-         c7b9mrdvYdlAbLEmdVA9giKFIYmlvEceWipUHf7lm8iM5tSlXJjnZ48bfEiReWn2ezT6
-         DSfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=2DeiZ8D7UiVmGGxb7P14iUU29iY/Sp7nuKJSfeun7aM=;
-        b=WGALQL4Fj3UYjvRpVb9X1QTvlq6PG4LmBncoBaRu0y20ZdVBY8ojZFCjV35dsSaOWR
-         p2SNabSARueOj12bJ+B6GQRM9XbmLIxaWDtuRGPEop9lFxrHnn6obAOqs2KvCtcWt0be
-         ZU7ZaU4x2ZB76AZ5caDLwaA0jkz3oysFgybVQQfuskcaA1DfLOXTCb2YoI1YiBo/rLF5
-         vD3RFManwpIQNCp6hibGQ95KSAdusw2rwiWfdxSMTLheI7SRnrQEx9KGAzIVERzfcU/k
-         3ITFTXqM6SknW48Ey/1x+gMPyY2ap0JeqY/+f3LNRmgbYXt4/VMbxs5nVYdTndhZ1laV
-         OcrA==
-X-Gm-Message-State: AHQUAubFixUvMarurGbSjFBpuy1DlxOW0AaZ8i1eewFVEiS4m6ailGUp
-        Wdl5CjPr5+pR9+21WlSiiYqEFA==
-X-Google-Smtp-Source: AHgI3IY42Lw4wsVpj3DXVfjvxsXO49Sdg1UiTsHOVzwnNhqCKFetnJo1H93Ip4H7aOMbLTNq6cLaaw==
-X-Received: by 2002:a1c:14e:: with SMTP id 75mr2868844wmb.48.1550155990511;
-        Thu, 14 Feb 2019 06:53:10 -0800 (PST)
-Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id y20sm4181005wra.51.2019.02.14.06.53.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 06:53:09 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        David Lechner <david@lechnology.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 23/37] ARM: davinci: cp-intc: remove cp_intc.h
-Date:   Thu, 14 Feb 2019 15:52:17 +0100
-Message-Id: <20190214145231.8750-24-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190214145231.8750-1-brgl@bgdev.pl>
-References: <20190214145231.8750-1-brgl@bgdev.pl>
+        Thu, 14 Feb 2019 09:54:51 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52262 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727605AbfBNOyr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 09:54:47 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C072981DF2;
+        Thu, 14 Feb 2019 14:54:46 +0000 (UTC)
+Received: from gondolin (dhcp-192-213.str.redhat.com [10.33.192.213])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E148E10027DA;
+        Thu, 14 Feb 2019 14:54:43 +0000 (UTC)
+Date:   Thu, 14 Feb 2019 15:54:41 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Pierre Morel <pmorel@linux.ibm.com>
+Cc:     borntraeger@de.ibm.com, alex.williamson@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        pasic@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
+Subject: Re: [PATCH v3 1/9] s390: vfio_ap: link the vfio_ap devices to the
+ vfio_ap bus subsystem
+Message-ID: <20190214155441.087d2a68.cohuck@redhat.com>
+In-Reply-To: <1550152269-6317-2-git-send-email-pmorel@linux.ibm.com>
+References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
+        <1550152269-6317-2-git-send-email-pmorel@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 14 Feb 2019 14:54:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Thu, 14 Feb 2019 14:51:01 +0100
+Pierre Morel <pmorel@linux.ibm.com> wrote:
 
-There's no need to have a local header for cp-intc. Move the only
-declaration for a public function to common.h. Move all register
-offsets into the driver source file and drop all unused defines.
-Make cp_intc_of_init() static.
+> Libudev relies on having a subsystem link for non-root devices. To
+> avoid libudev (and potentially other userspace tools) choking on the
+> matrix device let us introduce a vfio_ap bus and with that the vfio_ap
+> bus subsytem, and make the matrix device reside within it.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: David Lechner <david@lechnology.com>
----
- arch/arm/mach-davinci/board-da830-evm.c     |  1 -
- arch/arm/mach-davinci/board-da850-evm.c     |  1 -
- arch/arm/mach-davinci/board-mityomapl138.c  |  1 -
- arch/arm/mach-davinci/board-omapl138-hawk.c |  1 -
- arch/arm/mach-davinci/cp_intc.c             | 20 +++++++-
- arch/arm/mach-davinci/cp_intc.h             | 57 ---------------------
- arch/arm/mach-davinci/include/mach/common.h |  1 +
- 7 files changed, 19 insertions(+), 63 deletions(-)
- delete mode 100644 arch/arm/mach-davinci/cp_intc.h
+How does libudev choke on this? It feels wrong to introduce a bus that
+basically does nothing...
 
-diff --git a/arch/arm/mach-davinci/board-da830-evm.c b/arch/arm/mach-davinci/board-da830-evm.c
-index 7b8c4aeca096..f81c92b9cf07 100644
---- a/arch/arm/mach-davinci/board-da830-evm.c
-+++ b/arch/arm/mach-davinci/board-da830-evm.c
-@@ -39,7 +39,6 @@
- #include <mach/mux.h>
- #include <mach/da8xx.h>
- 
--#include "cp_intc.h"
- #include "irqs.h"
- 
- #define DA830_EVM_PHY_ID		""
-diff --git a/arch/arm/mach-davinci/board-da850-evm.c b/arch/arm/mach-davinci/board-da850-evm.c
-index b0814bd30a1f..1cc49e7bf128 100644
---- a/arch/arm/mach-davinci/board-da850-evm.c
-+++ b/arch/arm/mach-davinci/board-da850-evm.c
-@@ -46,7 +46,6 @@
- #include <mach/da8xx.h>
- #include <mach/mux.h>
- 
--#include "cp_intc.h"
- #include "irqs.h"
- #include "sram.h"
- 
-diff --git a/arch/arm/mach-davinci/board-mityomapl138.c b/arch/arm/mach-davinci/board-mityomapl138.c
-index 8df16e81b69e..eb6a9465f229 100644
---- a/arch/arm/mach-davinci/board-mityomapl138.c
-+++ b/arch/arm/mach-davinci/board-mityomapl138.c
-@@ -27,7 +27,6 @@
- #include <asm/mach-types.h>
- #include <asm/mach/arch.h>
- #include <mach/common.h>
--#include "cp_intc.h"
- #include <mach/da8xx.h>
- #include <linux/platform_data/mtd-davinci.h>
- #include <linux/platform_data/mtd-davinci-aemif.h>
-diff --git a/arch/arm/mach-davinci/board-omapl138-hawk.c b/arch/arm/mach-davinci/board-omapl138-hawk.c
-index 94c4f126ef86..7f852722ff08 100644
---- a/arch/arm/mach-davinci/board-omapl138-hawk.c
-+++ b/arch/arm/mach-davinci/board-omapl138-hawk.c
-@@ -27,7 +27,6 @@
- #include <asm/mach/arch.h>
- 
- #include <mach/common.h>
--#include "cp_intc.h"
- #include <mach/da8xx.h>
- #include <mach/mux.h>
- 
-diff --git a/arch/arm/mach-davinci/cp_intc.c b/arch/arm/mach-davinci/cp_intc.c
-index 4e293cde20fb..82110d332c82 100644
---- a/arch/arm/mach-davinci/cp_intc.c
-+++ b/arch/arm/mach-davinci/cp_intc.c
-@@ -21,7 +21,22 @@
- 
- #include <asm/exception.h>
- #include <mach/common.h>
--#include "cp_intc.h"
-+
-+#define CP_INTC_CTRL			0x04
-+#define CP_INTC_HOST_CTRL		0x0C
-+#define CP_INTC_GLOBAL_ENABLE		0x10
-+#define CP_INTC_SYS_STAT_IDX_CLR	0x24
-+#define CP_INTC_SYS_ENABLE_IDX_SET	0x28
-+#define CP_INTC_SYS_ENABLE_IDX_CLR	0x2C
-+#define CP_INTC_HOST_ENABLE_IDX_SET	0x34
-+#define CP_INTC_HOST_ENABLE_IDX_CLR	0x38
-+#define CP_INTC_PRIO_IDX		0x80
-+#define CP_INTC_SYS_STAT_CLR(n)		(0x0280 + (n << 2))
-+#define CP_INTC_SYS_ENABLE_CLR(n)	(0x0380 + (n << 2))
-+#define CP_INTC_CHAN_MAP(n)		(0x0400 + (n << 2))
-+#define CP_INTC_SYS_POLARITY(n)		(0x0D00 + (n << 2))
-+#define CP_INTC_SYS_TYPE(n)		(0x0D80 + (n << 2))
-+#define CP_INTC_HOST_ENABLE(n)		(0x1500 + (n << 2))
- 
- #define DAVINCI_CP_INTC_PRI_INDX_MASK		GENMASK(9, 0)
- #define DAVINCI_CP_INTC_GPIR_NONE		BIT(31)
-@@ -141,7 +156,8 @@ static const struct irq_domain_ops cp_intc_host_ops = {
- 	.xlate = irq_domain_xlate_onetwocell,
- };
- 
--int __init cp_intc_of_init(struct device_node *node, struct device_node *parent)
-+static int __init cp_intc_of_init(struct device_node *node,
-+				  struct device_node *parent)
- {
- 	u32 num_irq		= davinci_soc_info.intc_irq_num;
- 	u8 *irq_prio		= davinci_soc_info.intc_irq_prios;
-diff --git a/arch/arm/mach-davinci/cp_intc.h b/arch/arm/mach-davinci/cp_intc.h
-deleted file mode 100644
-index 827bbe9baed4..000000000000
---- a/arch/arm/mach-davinci/cp_intc.h
-+++ /dev/null
-@@ -1,57 +0,0 @@
--/*
-- * TI Common Platform Interrupt Controller (cp_intc) definitions
-- *
-- * Author: Steve Chen <schen@mvista.com>
-- * Copyright (C) 2008-2009, MontaVista Software, Inc. <source@mvista.com>
-- *
-- * This file is licensed under the terms of the GNU General Public License
-- * version 2. This program is licensed "as is" without any warranty of any
-- * kind, whether express or implied.
-- */
--#ifndef __ASM_HARDWARE_CP_INTC_H
--#define __ASM_HARDWARE_CP_INTC_H
--
--#define CP_INTC_REV			0x00
--#define CP_INTC_CTRL			0x04
--#define CP_INTC_HOST_CTRL		0x0C
--#define CP_INTC_GLOBAL_ENABLE		0x10
--#define CP_INTC_GLOBAL_NESTING_LEVEL	0x1C
--#define CP_INTC_SYS_STAT_IDX_SET	0x20
--#define CP_INTC_SYS_STAT_IDX_CLR	0x24
--#define CP_INTC_SYS_ENABLE_IDX_SET	0x28
--#define CP_INTC_SYS_ENABLE_IDX_CLR	0x2C
--#define CP_INTC_GLOBAL_WAKEUP_ENABLE	0x30
--#define CP_INTC_HOST_ENABLE_IDX_SET	0x34
--#define CP_INTC_HOST_ENABLE_IDX_CLR	0x38
--#define CP_INTC_PACING_PRESCALE 	0x40
--#define CP_INTC_VECTOR_BASE		0x50
--#define CP_INTC_VECTOR_SIZE		0x54
--#define CP_INTC_VECTOR_NULL		0x58
--#define CP_INTC_PRIO_IDX		0x80
--#define CP_INTC_PRIO_VECTOR		0x84
--#define CP_INTC_SECURE_ENABLE		0x90
--#define CP_INTC_SECURE_PRIO_IDX 	0x94
--#define CP_INTC_PACING_PARAM(n) 	(0x0100 + (n << 4))
--#define CP_INTC_PACING_DEC(n)		(0x0104 + (n << 4))
--#define CP_INTC_PACING_MAP(n)		(0x0108 + (n << 4))
--#define CP_INTC_SYS_RAW_STAT(n) 	(0x0200 + (n << 2))
--#define CP_INTC_SYS_STAT_CLR(n) 	(0x0280 + (n << 2))
--#define CP_INTC_SYS_ENABLE_SET(n)	(0x0300 + (n << 2))
--#define CP_INTC_SYS_ENABLE_CLR(n)	(0x0380 + (n << 2))
--#define CP_INTC_CHAN_MAP(n)		(0x0400 + (n << 2))
--#define CP_INTC_HOST_MAP(n)		(0x0800 + (n << 2))
--#define CP_INTC_HOST_PRIO_IDX(n)	(0x0900 + (n << 2))
--#define CP_INTC_SYS_POLARITY(n) 	(0x0D00 + (n << 2))
--#define CP_INTC_SYS_TYPE(n)		(0x0D80 + (n << 2))
--#define CP_INTC_WAKEUP_ENABLE(n)	(0x0E00 + (n << 2))
--#define CP_INTC_DEBUG_SELECT(n) 	(0x0F00 + (n << 2))
--#define CP_INTC_SYS_SECURE_ENABLE(n)	(0x1000 + (n << 2))
--#define CP_INTC_HOST_NESTING_LEVEL(n)	(0x1100 + (n << 2))
--#define CP_INTC_HOST_ENABLE(n)		(0x1500 + (n << 2))
--#define CP_INTC_HOST_PRIO_VECTOR(n)	(0x1600 + (n << 2))
--#define CP_INTC_VECTOR_ADDR(n)		(0x2000 + (n << 2))
--
--void cp_intc_init(void);
--int cp_intc_of_init(struct device_node *, struct device_node *);
--
--#endif	/* __ASM_HARDWARE_CP_INTC_H */
-diff --git a/arch/arm/mach-davinci/include/mach/common.h b/arch/arm/mach-davinci/include/mach/common.h
-index 14e0e1c40611..3f3f1169d47e 100644
---- a/arch/arm/mach-davinci/include/mach/common.h
-+++ b/arch/arm/mach-davinci/include/mach/common.h
-@@ -22,6 +22,7 @@
- #define DAVINCI_INTC_START		NR_IRQS
- #define DAVINCI_INTC_IRQ(_irqnum)	(DAVINCI_INTC_START + (_irqnum))
- 
-+void cp_intc_init(void);
- void davinci_timer_init(struct clk *clk);
- 
- struct davinci_timer_instance {
--- 
-2.20.1
+> 
+> We restrict the number of allowed devices to a single one.
+> 
+> Doing this we need to suppress the forced link from the matrix device to
+> the vfio_ap driver and we suppress the device_type we do not need
+> anymore.
+> 
+> Since the associated matrix driver is not the vfio_ap driver any more,
+> we have to change the search for the devices on the vfio_ap driver in
+> the function vfio_ap_verify_queue_reserved.
+> 
+> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+> ---
+>  drivers/s390/crypto/vfio_ap_drv.c     | 63 +++++++++++++++++++++++++++++++----
+>  drivers/s390/crypto/vfio_ap_ops.c     |  4 +--
+>  drivers/s390/crypto/vfio_ap_private.h |  1 +
+>  3 files changed, 60 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
+> index 31c6c84..1fd5fe6 100644
+> --- a/drivers/s390/crypto/vfio_ap_drv.c
+> +++ b/drivers/s390/crypto/vfio_ap_drv.c
+> @@ -24,8 +24,9 @@ MODULE_LICENSE("GPL v2");
+>  
+>  static struct ap_driver vfio_ap_drv;
+>  
+> -static struct device_type vfio_ap_dev_type = {
+> -	.name = VFIO_AP_DEV_TYPE_NAME,
+> +struct matrix_driver {
+> +	struct device_driver drv;
+> +	int device_count;
 
+This counter basically ensures that at most one device may bind with
+this driver... you'd still have that device on the bus, though.
+
+>  };
+>  
+>  struct ap_matrix_dev *matrix_dev;
+> @@ -62,6 +63,41 @@ static void vfio_ap_matrix_dev_release(struct device *dev)
+>  	kfree(matrix_dev);
+>  }
+>  
+> +static int matrix_bus_match(struct device *dev, struct device_driver *drv)
+> +{
+> +	return 1;
+> +}
+> +
+> +static struct bus_type matrix_bus = {
+> +	.name = "vfio_ap",
+> +	.match = &matrix_bus_match,
+> +};
+> +
+> +static int matrix_probe(struct device *dev);
+> +static int matrix_remove(struct device *dev);
+> +static struct matrix_driver matrix_driver = {
+> +	.drv = {
+> +		.name = "vfio_ap",
+> +		.bus = &matrix_bus,
+> +		.probe = matrix_probe,
+> +		.remove = matrix_remove,
+> +	},
+> +};
+> +
+> +static int matrix_probe(struct device *dev)
+> +{
+> +	if (matrix_driver.device_count)
+> +		return -EEXIST;
+> +	matrix_driver.device_count++;
+> +	return 0;
+> +}
+> +
+> +static int matrix_remove(struct device *dev)
+> +{
+> +	matrix_driver.device_count--;
+> +	return 0;
+> +}
+> +
+>  static int vfio_ap_matrix_dev_create(void)
+>  {
+>  	int ret;
+> @@ -71,6 +107,10 @@ static int vfio_ap_matrix_dev_create(void)
+>  	if (IS_ERR(root_device))
+>  		return PTR_ERR(root_device);
+>  
+> +	ret = bus_register(&matrix_bus);
+> +	if (ret)
+> +		goto bus_register_err;
+> +
+>  	matrix_dev = kzalloc(sizeof(*matrix_dev), GFP_KERNEL);
+>  	if (!matrix_dev) {
+>  		ret = -ENOMEM;
+> @@ -87,30 +127,41 @@ static int vfio_ap_matrix_dev_create(void)
+>  	mutex_init(&matrix_dev->lock);
+>  	INIT_LIST_HEAD(&matrix_dev->mdev_list);
+>  
+> -	matrix_dev->device.type = &vfio_ap_dev_type;
+>  	dev_set_name(&matrix_dev->device, "%s", VFIO_AP_DEV_NAME);
+>  	matrix_dev->device.parent = root_device;
+> +	matrix_dev->device.bus = &matrix_bus;
+>  	matrix_dev->device.release = vfio_ap_matrix_dev_release;
+> -	matrix_dev->device.driver = &vfio_ap_drv.driver;
+> +	matrix_dev->vfio_ap_drv = &vfio_ap_drv;
+
+Can't you get that structure through matrix_dev->device.driver instead
+when you need it in the function below?
+
+>  
+>  	ret = device_register(&matrix_dev->device);
+>  	if (ret)
+>  		goto matrix_reg_err;
+>  
+> +	ret = driver_register(&matrix_driver.drv);
+> +	if (ret)
+> +		goto matrix_drv_err;
+> +
+
+As you already have several structures that can be registered exactly
+once (the root device, the bus, the driver, ...), you can already be
+sure that there's only one device on the bus, can't you?
+
+>  	return 0;
+>  
+> +matrix_drv_err:
+> +	device_unregister(&matrix_dev->device);
+>  matrix_reg_err:
+>  	put_device(&matrix_dev->device);
+>  matrix_alloc_err:
+> +	bus_unregister(&matrix_bus);
+> +bus_register_err:
+>  	root_device_unregister(root_device);
+> -
+>  	return ret;
+>  }
+>  
+>  static void vfio_ap_matrix_dev_destroy(void)
+>  {
+> +	struct device *root_device = matrix_dev->device.parent;
+> +
+> +	driver_unregister(&matrix_driver.drv);
+>  	device_unregister(&matrix_dev->device);
+> -	root_device_unregister(matrix_dev->device.parent);
+> +	bus_unregister(&matrix_bus);
+> +	root_device_unregister(root_device);
+>  }
+>  
+>  static int __init vfio_ap_init(void)
+> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+> index 272ef42..900b9cf 100644
+> --- a/drivers/s390/crypto/vfio_ap_ops.c
+> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> @@ -198,8 +198,8 @@ static int vfio_ap_verify_queue_reserved(unsigned long *apid,
+>  	qres.apqi = apqi;
+>  	qres.reserved = false;
+>  
+> -	ret = driver_for_each_device(matrix_dev->device.driver, NULL, &qres,
+> -				     vfio_ap_has_queue);
+> +	ret = driver_for_each_device(&matrix_dev->vfio_ap_drv->driver, NULL,
+> +				     &qres, vfio_ap_has_queue);
+>  	if (ret)
+>  		return ret;
+>  
+> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
+> index 5675492..76b7f98 100644
+> --- a/drivers/s390/crypto/vfio_ap_private.h
+> +++ b/drivers/s390/crypto/vfio_ap_private.h
+> @@ -40,6 +40,7 @@ struct ap_matrix_dev {
+>  	struct ap_config_info info;
+>  	struct list_head mdev_list;
+>  	struct mutex lock;
+> +	struct ap_driver  *vfio_ap_drv;
+>  };
+>  
+>  extern struct ap_matrix_dev *matrix_dev;
+
+This feels like a lot of boilerplate code, just to create a bus that
+basically doesn't do anything. I'm surprised that libudev can't deal
+with bus-less devices properly...
