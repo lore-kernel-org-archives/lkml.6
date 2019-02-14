@@ -2,355 +2,145 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCBD2C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BFC5C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:42:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92709222DD
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:42:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="BJxdunS6"
+	by mail.kernel.org (Postfix) with ESMTP id 4A58C222DC
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:42:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408031AbfBNQmD (ORCPT
+        id S2408038AbfBNQmL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:42:03 -0500
-Received: from mail-eopbgr810074.outbound.protection.outlook.com ([40.107.81.74]:58507
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2405240AbfBNQmC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 11:42:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector1-analog-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/CL8zDF+DXfN5u5jbjCAi0AzKnyyaHC8Vwpmmj/u83Q=;
- b=BJxdunS6XdC9FQ8tn4+4kHLnO7rih8QY1T1/CgephyPoprD0gWh0kt9cm5Spe+deKYXI8qxj9+MH6WT+D/k76WMS7ky6PKerVjnhOvFMgd2eRTFy80BFWQrh4IwsKP+2lzMR1FLsUchYMFa6cijyXqt4xNCiDlMpzQQ43QOhAdA=
-Received: from DM5PR03CA0046.namprd03.prod.outlook.com (2603:10b6:4:3b::35) by
- DM5PR03MB3066.namprd03.prod.outlook.com (2603:10b6:4:3c::11) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.16; Thu, 14 Feb 2019 16:41:58 +0000
-Received: from SN1NAM02FT035.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::204) by DM5PR03CA0046.outlook.office365.com
- (2603:10b6:4:3b::35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1622.16 via Frontend
- Transport; Thu, 14 Feb 2019 16:41:58 +0000
-Authentication-Results: spf=pass (sender IP is 137.71.25.55)
- smtp.mailfrom=analog.com; gmx.de; dkim=none (message not signed)
- header.d=none;gmx.de; dmarc=bestguesspass action=none header.from=analog.com;
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
-Received: from nwd2mta1.analog.com (137.71.25.55) by
- SN1NAM02FT035.mail.protection.outlook.com (10.152.72.145) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1580.10
- via Frontend Transport; Thu, 14 Feb 2019 16:41:57 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id x1EGfuXm021586
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Thu, 14 Feb 2019 08:41:56 -0800
-Received: from ben-Latitude-E6540.analog.com (10.50.1.129) by
- NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 14 Feb 2019 11:41:56 -0500
-From:   Beniamin Bia <beniamin.bia@analog.com>
-To:     <jic23@kernel.org>
-CC:     <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <knaack.h@gmx.de>, <pmeerw@pmeerw.net>,
-        <gregkh@linuxfoundation.org>, <linux-iio@vger.kernel.org>,
-        <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>,
-        <biabeniamin@outlook.com>, Beniamin Bia <beniamin.bia@analog.com>
-Subject: [PATCH v2 1/2] staging: iio: frequency: ad9834: Move frequency to standard iio types
-Date:   Thu, 14 Feb 2019 18:41:29 +0200
-Message-ID: <20190214164130.30085-1-beniamin.bia@analog.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 14 Feb 2019 11:42:11 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:61422 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405240AbfBNQmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 11:42:11 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CDD2B81DE4;
+        Thu, 14 Feb 2019 16:42:10 +0000 (UTC)
+Received: from [10.36.112.66] (ovpn-112-66.ams2.redhat.com [10.36.112.66])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 740255D6B6;
+        Thu, 14 Feb 2019 16:42:07 +0000 (UTC)
+Subject: Re: [PATCH] Revert "KVM: Eliminate extra function calls in
+ kvm_get_dirty_log_protect()"
+To:     lantianyu1986@gmail.com
+Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, rkrcmar@redhat.com,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sean.j.christopherson@intel.com
+References: <20190202092027.54890-1-Tianyu.Lan@microsoft.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ mQHhBFRCcBIBDqDGsz4K0zZun3jh+U6Z9wNGLKQ0kSFyjN38gMqU1SfP+TUNQepFHb/Gc0E2
+ CxXPkIBTvYY+ZPkoTh5xF9oS1jqI8iRLzouzF8yXs3QjQIZ2SfuCxSVwlV65jotcjD2FTN04
+ hVopm9llFijNZpVIOGUTqzM4U55sdsCcZUluWM6x4HSOdw5F5Utxfp1wOjD/v92Lrax0hjiX
+ DResHSt48q+8FrZzY+AUbkUS+Jm34qjswdrgsC5uxeVcLkBgWLmov2kMaMROT0YmFY6A3m1S
+ P/kXmHDXxhe23gKb3dgwxUTpENDBGcfEzrzilWueOeUWiOcWuFOed/C3SyijBx3Av/lbCsHU
+ Vx6pMycNTdzU1BuAroB+Y3mNEuW56Yd44jlInzG2UOwt9XjjdKkJZ1g0P9dwptwLEgTEd3Fo
+ UdhAQyRXGYO8oROiuh+RZ1lXp6AQ4ZjoyH8WLfTLf5g1EKCTc4C1sy1vQSdzIRu3rBIjAvnC
+ tGZADei1IExLqB3uzXKzZ1BZ+Z8hnt2og9hb7H0y8diYfEk2w3R7wEr+Ehk5NQsT2MPI2QBd
+ wEv1/Aj1DgUHZAHzG1QN9S8wNWQ6K9DqHZTBnI1hUlkp22zCSHK/6FwUCuYp1zcAEQEAAbQj
+ UGFvbG8gQm9uemluaSA8cGJvbnppbmlAcmVkaGF0LmNvbT6JAg0EEwECACMFAlRCcBICGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRB+FRAMzTZpsbceDp9IIN6BIA0Ol7MoB15E
+ 11kRz/ewzryFY54tQlMnd4xxfH8MTQ/mm9I482YoSwPMdcWFAKnUX6Yo30tbLiNB8hzaHeRj
+ jx12K+ptqYbg+cevgOtbLAlL9kNgLLcsGqC2829jBCUTVeMSZDrzS97ole/YEez2qFpPnTV0
+ VrRWClWVfYh+JfzpXmgyhbkuwUxNFk421s4Ajp3d8nPPFUGgBG5HOxzkAm7xb1cjAuJ+oi/K
+ CHfkuN+fLZl/u3E/fw7vvOESApLU5o0icVXeakfSz0LsygEnekDbxPnE5af/9FEkXJD5EoYG
+ SEahaEtgNrR4qsyxyAGYgZlS70vkSSYJ+iT2rrwEiDlo31MzRo6Ba2FfHBSJ7lcYdPT7bbk9
+ AO3hlNMhNdUhoQv7M5HsnqZ6unvSHOKmReNaS9egAGdRN0/GPDWr9wroyJ65ZNQsHl9nXBqE
+ AukZNr5oJO5vxrYiAuuTSd6UI/xFkjtkzltG3mw5ao2bBpk/V/YuePrJsnPFHG7NhizrxttB
+ nTuOSCMo45pfHQ+XYd5K1+Cv/NzZFNWscm5htJ0HznY+oOsZvHTyGz3v91pn51dkRYN0otqr
+ bQ4tlFFuVjArBZcapSIe6NV8C4cEiSS5AQ0EVEJxcwEIAK+nUrsUz3aP2aBjIrX3a1+C+39R
+ nctpNIPcJjFJ/8WafRiwcEuLjbvJ/4kyM6K7pWUIQftl1P8Woxwb5nqL7zEFHh5I+hKS3haO
+ 5pgco//V0tWBGMKinjqntpd4U4Dl299dMBZ4rRbPvmI8rr63sCENxTnHhTECyHdGFpqSzWzy
+ 97rH68uqMpxbUeggVwYkYihZNd8xt1+lf7GWYNEO/QV8ar/qbRPG6PEfiPPHQd/sldGYavmd
+ //o6TQLSJsvJyJDt7KxulnNT8Q2X/OdEuVQsRT5glLaSAeVAABcLAEnNgmCIGkX7TnQF8a6w
+ gHGrZIR9ZCoKvDxAr7RP6mPeS9sAEQEAAYkDEgQYAQIACQUCVEJxcwIbAgEpCRB+FRAMzTZp
+ scBdIAQZAQIABgUCVEJxcwAKCRC/+9JfeMeug/SlCACl7QjRnwHo/VzENWD9G2VpUOd9eRnS
+ DZGQmPo6Mp3Wy8vL7snGFBfRseT9BevXBSkxvtOnUUV2YbyLmolAODqUGzUI8ViF339poOYN
+ i6Ffek0E19IMQ5+CilqJJ2d5ZvRfaq70LA/Ly9jmIwwX4auvXrWl99/2wCkqnWZI+PAepkcX
+ JRD4KY2fsvRi64/aoQmcxTiyyR7q3/52Sqd4EdMfj0niYJV0Xb9nt8G57Dp9v3Ox5JeWZKXS
+ krFqy1qyEIypIrqcMbtXM7LSmiQ8aJRM4ZHYbvgjChJKR4PsKNQZQlMWGUJO4nVFSkrixc9R
+ Z49uIqQK3b3ENB1QkcdMg9cxsB0Onih8zR+Wp1uDZXnz1ekto+EivLQLqvTjCCwLxxJafwKI
+ bqhQ+hGR9jF34EFur5eWt9jJGloEPVv0GgQflQaE+rRGe+3f5ZDgRe5Y/EJVNhBhKcafcbP8
+ MzmLRh3UDnYDwaeguYmxuSlMdjFL96YfhRBXs8tUw6SO9jtCgBvoOIBDCxxAJjShY4KIvEpK
+ b2hSNr8KxzelKKlSXMtB1bbHbQxiQcerAipYiChUHq1raFc3V0eOyCXK205rLtknJHhM5pfG
+ 6taABGAMvJgm/MrVILIxvBuERj1FRgcgoXtiBmLEJSb7akcrRlqe3MoPTntSTNvNzAJmfWhd
+ SvP0G1WDLolqvX0OtKMppI91AWVu72f1kolJg43wbaKpRJg1GMkKEI3H+jrrlTBrNl/8e20m
+ TElPRDKzPiowmXeZqFSS1A6Azv0TJoo9as+lWF+P4zCXt40+Zhh5hdHO38EV7vFAVG3iuay6
+ 7ToF8Uy7tgc3mdH98WQSmHcn/H5PFYk3xTP3KHB7b0FZPdFPQXBZb9+tJeZBi9gMqcjMch+Y
+ R8dmTcQRQX14bm5nXlBF7VpSOPZMR392LY7wzAvRdhz7aeIUkdO7VelaspFk2nT7wOj1Y6uL
+ nRxQlLkBDQRUQnHuAQgAx4dxXO6/Zun0eVYOnr5GRl76+2UrAAemVv9Yfn2PbDIbxXqLff7o
+ yVJIkw4WdhQIIvvtu5zH24iYjmdfbg8iWpP7NqxUQRUZJEWbx2CRwkMHtOmzQiQ2tSLjKh/c
+ HeyFH68xjeLcinR7jXMrHQK+UCEw6jqi1oeZzGvfmxarUmS0uRuffAb589AJW50kkQK9VD/9
+ QC2FJISSUDnRC0PawGSZDXhmvITJMdD4TjYrePYhSY4uuIV02v028TVAaYbIhxvDY0hUQE4r
+ 8ZbGRLn52bEzaIPgl1p/adKfeOUeMReg/CkyzQpmyB1TSk8lDMxQzCYHXAzwnGi8WU9iuE1P
+ 0wARAQABiQHzBBgBAgAJBQJUQnHuAhsMAAoJEH4VEAzNNmmxp1EOoJy0uZggJm7gZKeJ7iUp
+ eX4eqUtqelUw6gU2daz2hE/jsxsTbC/w5piHmk1H1VWDKEM4bQBTuiJ0bfo55SWsUNN+c9hh
+ IX+Y8LEe22izK3w7mRpvGcg+/ZRG4DEMHLP6JVsv5GMpoYwYOmHnplOzCXHvmdlW0i6SrMsB
+ Dl9rw4AtIa6bRwWLim1lQ6EM3PWifPrWSUPrPcw4OLSwFk0CPqC4HYv/7ZnASVkR5EERFF3+
+ 6iaaVi5OgBd81F1TCvCX2BEyIDRZLJNvX3TOd5FEN+lIrl26xecz876SvcOb5SL5SKg9/rCB
+ ufdPSjojkGFWGziHiFaYhbuI2E+NfWLJtd+ZvWAAV+O0d8vFFSvriy9enJ8kxJwhC0ECbSKF
+ Y+W1eTIhMD3aeAKY90drozWEyHhENf4l/V+Ja5vOnW+gCDQkGt2Y1lJAPPSIqZKvHzGShdh8
+ DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT/ujKaGd4vxG2Ei+MMNDm
+ S1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO53DliFMkVTecLptsXaes
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <c253c775-bc32-7cb4-e090-3f5764ea1285@redhat.com>
+Date:   Thu, 14 Feb 2019 17:42:05 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(376002)(346002)(39860400002)(396003)(2980300002)(3190300001)(189003)(199004)(336012)(2351001)(305945005)(426003)(356004)(246002)(7636002)(44832011)(186003)(48376002)(77096007)(26005)(6666004)(8676002)(476003)(126002)(116002)(2616005)(53416004)(50466002)(106466001)(486006)(50226002)(4326008)(51416003)(36756003)(8936002)(478600001)(1076003)(107886003)(72206003)(106002)(16586007)(316002)(2906002)(54906003)(86362001)(6916009)(7696005)(47776003)(14444005);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR03MB3066;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT035;1:wk2VNnbVYY+IMtWc+sKhwMgSWjryHdo1na+cpTFXLmhfu2A/Tq9cqSw2/dfctj38+6SVZM/3vEanFAB0VZSkIu/ij6P8zTYpgUHhFGdSMdyO3fmzii1OwwVmNAWdeO7s4t3Aq/z7iNb4GiVyMmy3yw==
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 12a9ac41-363f-4827-fde8-08d6929b5626
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4608076)(4709027)(2017052603328)(7153060);SRVR:DM5PR03MB3066;
-X-MS-TrafficTypeDiagnostic: DM5PR03MB3066:
-X-Microsoft-Exchange-Diagnostics: 1;DM5PR03MB3066;20:v1KwUmgdDfaoU3udN8pIbAypjcICRTwpFq7xwLUOyfOVantcurFm7M4zJloqSjuMgO9LgffmyaB/ZFYQ0kDEM01lAmHd/sXGmSdL8nGqsgZK7Ra8Q8SRdlhcAmo5JLYqMmlyirF3NlIx+4X9cp86LgWWyW4y3kZxTYxbfpTvDOvL2foJKP2ndbGibMa4S/VzqLjhti8j+6yjatFAjbNqWwMrLbaSdXz1ekZTgwkvA9kEZjJ0aoIj8Rz3hgDXPIsoyqHTsvV6dsvcuheP3YFkVdwxBKtSxUqT9CN3ZE08oFEGL6kPBYOQao2eZrGjeTcdj2i+sxl0bFiIWDv2GhF31yu43PfM+iV/vUEMGMknpyGQbYrhvfL+IWeIJBTZxDfmDAXBPEvyroRIUXwbPPVBQtVDNdwh8+Xxa8TeDX/AbpyC1r4Uru8ZADudRDbBLcxHgUu9tL3t5uaefeLqu4tT17MfmKCFUGm17Ovz268t2PbsoZlBUk74fN9BtnBgpweT
-X-Microsoft-Antispam-PRVS: <DM5PR03MB30667A53D3C4EFFEDD614FD7F0670@DM5PR03MB3066.namprd03.prod.outlook.com>
-X-Forefront-PRVS: 09480768F8
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM5PR03MB3066;23:LQOKs+BbKTVhltoW9iMXy+l3AkCTX8XQLpsbxGrNa?=
- =?us-ascii?Q?nJUAMJjyB4jJ1MmtJAGPAqIDrq0RlXLq2HV2ADU3Kik+uikJedwbVStsXDQr?=
- =?us-ascii?Q?X88zmBqVBCB37TcUnoOXcfT6bjgmeOr9YSnDQwY+sn3FKpzjzbGq48flBXwm?=
- =?us-ascii?Q?t51zAMZbhWsRuBjcf8hOntBxfq27jbnyUwRQusXZbseXwF9lSqoDAyKtTNUt?=
- =?us-ascii?Q?EBI2LFSJSxOwtZMR+ctvoSoPdABUJrlwFUHIw1itUwBD4Qk99e7kMi/GJPnY?=
- =?us-ascii?Q?EKx1f7YQrH5QCmMSs0v3+q03nxb39zhD8PnpfRft6t9XiPWWs3xbVUc5flSB?=
- =?us-ascii?Q?7F1lNfZb2L4mZ5SCVHxYGwAnbgF3bhw73sD6HSpf/2e7/Nyh0xzM0xuVo1en?=
- =?us-ascii?Q?1XgfYs7DMCkZ3Vvf7cOnacv4zGmioUeQe6xMH3is6N5C/bC9dg4Cqe7aqy3R?=
- =?us-ascii?Q?+lg5y3rubFM3uhF/tZ++ZN7Z69AaU9hPYAOp/COciCBJCvIuIzOlgNLhKKp8?=
- =?us-ascii?Q?Poig2TqiU89PVMrw75+lfTt/iuGrbDI9QGu//9LfwPAxmYzmHA3++YhTkE27?=
- =?us-ascii?Q?IzfcEplw2NAvTpgKEh6jw+kdw9iyxXhskQGhnOS4qB/NdFkJKxfuM/Rh5Kax?=
- =?us-ascii?Q?bSuTweZJ1cPSv0xTBiP8Rn0FLZH6KCEpbEjOCT1xM/KY4Xi9ebAwKzcWC5h5?=
- =?us-ascii?Q?e/lSqy+l4sCDAKolv64clXHXETOJ9NNDAapfMg/dLEGx14eYCOnEEqdKaTUZ?=
- =?us-ascii?Q?ECOHwogYkCfMAOP6jRvC0HCcDOVvjYaHS3CJIr19CZrg8wAmR7P7rQ542dwJ?=
- =?us-ascii?Q?SFinzg8MNwAoe80qLJkIovg7Obp5T4c4lHXD3JFywYSGBZYhT70sCxbeA7MH?=
- =?us-ascii?Q?Vk4GaxRhNiLsXL9fm0u2rUkGZWceOQKkMKajjbU5FdE84fjfYgNBI/Kkk0/N?=
- =?us-ascii?Q?nYbwgbxCA2pzcQRqqYn+NnvL5MSLPfiG3tpXyLJI11pxmoU1LcTcDp8WCksq?=
- =?us-ascii?Q?7nDgPmCl/tLR8QJXABv/bhy8CbwuEAtYKGfU4q3jnVEjM4G1S70PK7NfQgU1?=
- =?us-ascii?Q?A6J2/i6vs5FyjDny/KAyFpG1Q+wOI27eaAcdEXGruOhy8nZaw=3D=3D?=
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: v+9OodkYsEqXFdmn4V7Ck/znrIjNd1VspKjuBNIRCcj2aIKEdfGZ0i2F3auL49HEZiPVqQMpDpdh5pDvrxh3qQVuoOYsd5GklHPJOdxZ/ZNwuCL4evT1eol/ehG4AcY+yaqP7wjVWyzl+Uki/XUNMlA0mnymoDInBYPAkueKsALCc+iUSp1xHX2o0u+WfTG95bIG7nFoi2UxgfE6frVx/4S1/HDxdFa2PaAbGfFrVD1fzKDo0PWkd4TOr/nxgaOE7JqQSuRWptHgrH8mzqo3GcH7s3zLQcQlso/lI2zj+WkxSv5TvLSwd++gmg8So46uGRCwszMmHlX9Tf6mV1P9C1pD+mtA3jYTLFGsxkgF2nd5ik+F27UPY40CnOLcLAtrIu2tJ4yBJKU6lGIGnznZmXruoPsIyPdllz5CdyXQ/BA=
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2019 16:41:57.6421
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12a9ac41-363f-4827-fde8-08d6929b5626
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR03MB3066
+In-Reply-To: <20190202092027.54890-1-Tianyu.Lan@microsoft.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 14 Feb 2019 16:42:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Frequency attribute is added with a standard type from iio framework
-instead of custom attribute. This is a small step towards removing any
-unnecessary custom attribute. Ad9834 will diverge from ad9833 in the
-future, that is why we have two identical arrays for ad9834 and 9833.
+On 02/02/19 10:20, lantianyu1986@gmail.com wrote:
+> From: Lan Tianyu <Tianyu.Lan@microsoft.com>
+> 
+> The value of "dirty_bitmap[i]" is already check before setting its value
+> to mask. The following check of "mask" is redundant. The check of "mask" was
+> introduced by commit 58d2930f4ee3(("KVM: Eliminate extra function calls in
+> kvm_get_dirty_log_protect()"). This patch is to revert the patch.
+> 
+> Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
+> ---
+>  virt/kvm/kvm_main.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index 2bdc827b9ee9..ef06cfb9b52b 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -1200,11 +1200,9 @@ int kvm_get_dirty_log_protect(struct kvm *kvm,
+>  			mask = xchg(&dirty_bitmap[i], 0);
+>  			dirty_bitmap_buffer[i] = mask;
+>  
+> -			if (mask) {
+> -				offset = i * BITS_PER_LONG;
+> -				kvm_arch_mmu_enable_log_dirty_pt_masked(kvm, memslot,
+> -									offset, mask);
+> -			}
+> +			offset = i * BITS_PER_LONG;
+> +			kvm_arch_mmu_enable_log_dirty_pt_masked(kvm, memslot,
+> +								offset, mask);
+>  		}
+>  		spin_unlock(&kvm->mmu_lock);
+>  	}
+> 
 
-Signed-off-by: Beniamin Bia <beniamin.bia@analog.com>
----
-Changes in v2:
-	-the personal email address was replaced by the work email
-	-separate define for frequency channel
-	-address field from channel specification was removed
-	-frequency variables were replaced by an array
-	-specified in comment why we have differente chan_spec for ad9834 and ad9833
-	-enum used for write_frequency function
+Queued, thanks.
 
- drivers/staging/iio/frequency/ad9834.c | 110 ++++++++++++++++++++-----
- 1 file changed, 91 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/staging/iio/frequency/ad9834.c b/drivers/staging/iio/frequency/ad9834.c
-index f036f75d1f22..561617046c20 100644
---- a/drivers/staging/iio/frequency/ad9834.c
-+++ b/drivers/staging/iio/frequency/ad9834.c
-@@ -81,6 +81,8 @@ struct ad9834_state {
- 	struct spi_message		freq_msg;
- 	struct mutex                    lock;   /* protect sensor state */
- 
-+	unsigned long			frequency[2];
-+
- 	/*
- 	 * DMA (thus cache coherency maintenance) requires the
- 	 * transfer buffers to live in their own cache lines.
-@@ -89,6 +91,11 @@ struct ad9834_state {
- 	__be16				freq_data[2];
- };
- 
-+enum ad9834_ch_addr {
-+	AD9834_CHANNEL_ADDRESS0,
-+	AD9834_CHANNEL_ADDRESS1,
-+};
-+
- /**
-  * ad9834_supported_device_ids:
-  */
-@@ -100,6 +107,24 @@ enum ad9834_supported_device_ids {
- 	ID_AD9838,
- };
- 
-+#define AD9833_CHANNEL(chan) {						\
-+		.type = IIO_ALTVOLTAGE,					\
-+		.indexed = 1,						\
-+		.output = 1,						\
-+		.channel = (chan),					\
-+		.info_mask_separate = BIT(IIO_CHAN_INFO_FREQUENCY)	\
-+}
-+
-+static const struct iio_chan_spec ad9833_channels[] = {
-+	AD9833_CHANNEL(0),
-+	AD9833_CHANNEL(1),
-+};
-+
-+static const struct iio_chan_spec ad9834_channels[] = {
-+	AD9833_CHANNEL(0),
-+	AD9833_CHANNEL(1),
-+};
-+
- static unsigned int ad9834_calc_freqreg(unsigned long mclk, unsigned long fout)
- {
- 	unsigned long long freqreg = (u64)fout * (u64)BIT(AD9834_FREQ_BITS);
-@@ -109,10 +134,12 @@ static unsigned int ad9834_calc_freqreg(unsigned long mclk, unsigned long fout)
- }
- 
- static int ad9834_write_frequency(struct ad9834_state *st,
--				  unsigned long addr, unsigned long fout)
-+				  enum ad9834_ch_addr addr,
-+				  unsigned long fout)
- {
- 	unsigned long clk_freq;
- 	unsigned long regval;
-+	int ret;
- 
- 	clk_freq = clk_get_rate(st->mclk);
- 
-@@ -121,13 +148,27 @@ static int ad9834_write_frequency(struct ad9834_state *st,
- 
- 	regval = ad9834_calc_freqreg(clk_freq, fout);
- 
--	st->freq_data[0] = cpu_to_be16(addr | (regval &
--				       RES_MASK(AD9834_FREQ_BITS / 2)));
--	st->freq_data[1] = cpu_to_be16(addr | ((regval >>
--				       (AD9834_FREQ_BITS / 2)) &
--				       RES_MASK(AD9834_FREQ_BITS / 2)));
-+	if (addr == AD9834_CHANNEL_ADDRESS0) {
-+		st->freq_data[0] = cpu_to_be16(AD9834_REG_FREQ0 | (regval &
-+					       RES_MASK(AD9834_FREQ_BITS / 2)));
-+		st->freq_data[1] = cpu_to_be16(AD9834_REG_FREQ0 | ((regval >>
-+					       (AD9834_FREQ_BITS / 2)) &
-+					       RES_MASK(AD9834_FREQ_BITS / 2)));
-+	} else {
-+		st->freq_data[0] = cpu_to_be16(AD9834_REG_FREQ1 | (regval &
-+					       RES_MASK(AD9834_FREQ_BITS / 2)));
-+		st->freq_data[1] = cpu_to_be16(AD9834_REG_FREQ1 | ((regval >>
-+					       (AD9834_FREQ_BITS / 2)) &
-+					       RES_MASK(AD9834_FREQ_BITS / 2)));
-+	}
-+
-+	ret = spi_sync(st->spi, &st->freq_msg);
-+	if (ret)
-+		return ret;
-+
-+	st->frequency[(int)addr] = fout;
- 
--	return spi_sync(st->spi, &st->freq_msg);
-+	return 0;
- }
- 
- static int ad9834_write_phase(struct ad9834_state *st,
-@@ -140,6 +181,39 @@ static int ad9834_write_phase(struct ad9834_state *st,
- 	return spi_sync(st->spi, &st->msg);
- }
- 
-+static int ad9834_read_raw(struct iio_dev *indio_dev,
-+			   struct iio_chan_spec const *chan,
-+			   int *val, int *val2, long mask)
-+{
-+	struct ad9834_state *st = iio_priv(indio_dev);
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_FREQUENCY:
-+		*val = st->frequency[chan->channel];
-+		return IIO_VAL_INT;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int ad9834_write_raw(struct iio_dev *indio_dev,
-+			    struct iio_chan_spec const *chan,
-+			    int val, int val2, long mask)
-+{
-+	struct ad9834_state *st = iio_priv(indio_dev);
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_FREQUENCY:
-+		return ad9834_write_frequency(st,
-+					      (enum ad9834_ch_addr)chan->channel,
-+					      val);
-+	default:
-+		return  -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- static ssize_t ad9834_write(struct device *dev,
- 			    struct device_attribute *attr,
- 			    const char *buf,
-@@ -157,10 +231,6 @@ static ssize_t ad9834_write(struct device *dev,
- 
- 	mutex_lock(&st->lock);
- 	switch ((u32)this_attr->address) {
--	case AD9834_REG_FREQ0:
--	case AD9834_REG_FREQ1:
--		ret = ad9834_write_frequency(st, this_attr->address, val);
--		break;
- 	case AD9834_REG_PHASE0:
- 	case AD9834_REG_PHASE1:
- 		ret = ad9834_write_phase(st, this_attr->address, val);
-@@ -323,8 +393,6 @@ static IIO_DEVICE_ATTR(out_altvoltage0_out1_wavetype_available, 0444,
-  * see dds.h for further information
-  */
- 
--static IIO_DEV_ATTR_FREQ(0, 0, 0200, NULL, ad9834_write, AD9834_REG_FREQ0);
--static IIO_DEV_ATTR_FREQ(0, 1, 0200, NULL, ad9834_write, AD9834_REG_FREQ1);
- static IIO_DEV_ATTR_FREQSYMBOL(0, 0200, NULL, ad9834_write, AD9834_FSEL);
- static IIO_CONST_ATTR_FREQ_SCALE(0, "1"); /* 1Hz */
- 
-@@ -342,8 +410,6 @@ static IIO_DEV_ATTR_OUT_WAVETYPE(0, 0, ad9834_store_wavetype, 0);
- static IIO_DEV_ATTR_OUT_WAVETYPE(0, 1, ad9834_store_wavetype, 1);
- 
- static struct attribute *ad9834_attributes[] = {
--	&iio_dev_attr_out_altvoltage0_frequency0.dev_attr.attr,
--	&iio_dev_attr_out_altvoltage0_frequency1.dev_attr.attr,
- 	&iio_const_attr_out_altvoltage0_frequency_scale.dev_attr.attr,
- 	&iio_dev_attr_out_altvoltage0_phase0.dev_attr.attr,
- 	&iio_dev_attr_out_altvoltage0_phase1.dev_attr.attr,
-@@ -361,8 +427,6 @@ static struct attribute *ad9834_attributes[] = {
- };
- 
- static struct attribute *ad9833_attributes[] = {
--	&iio_dev_attr_out_altvoltage0_frequency0.dev_attr.attr,
--	&iio_dev_attr_out_altvoltage0_frequency1.dev_attr.attr,
- 	&iio_const_attr_out_altvoltage0_frequency_scale.dev_attr.attr,
- 	&iio_dev_attr_out_altvoltage0_phase0.dev_attr.attr,
- 	&iio_dev_attr_out_altvoltage0_phase1.dev_attr.attr,
-@@ -384,11 +448,15 @@ static const struct attribute_group ad9833_attribute_group = {
- };
- 
- static const struct iio_info ad9834_info = {
-+	.write_raw = &ad9834_write_raw,
-+	.read_raw = &ad9834_read_raw,
- 	.attrs = &ad9834_attribute_group,
- 	.driver_module = THIS_MODULE,
- };
- 
- static const struct iio_info ad9833_info = {
-+	.write_raw = &ad9834_write_raw,
-+	.read_raw = &ad9834_read_raw,
- 	.attrs = &ad9833_attribute_group,
- 	.driver_module = THIS_MODULE,
- };
-@@ -435,9 +503,13 @@ static int ad9834_probe(struct spi_device *spi)
- 	switch (st->devid) {
- 	case ID_AD9833:
- 	case ID_AD9837:
-+		indio_dev->channels = ad9833_channels;
-+		indio_dev->num_channels = ARRAY_SIZE(ad9833_channels);
- 		indio_dev->info = &ad9833_info;
- 		break;
- 	default:
-+		indio_dev->channels = ad9834_channels;
-+		indio_dev->num_channels = ARRAY_SIZE(ad9834_channels);
- 		indio_dev->info = &ad9834_info;
- 		break;
- 	}
-@@ -474,11 +546,11 @@ static int ad9834_probe(struct spi_device *spi)
- 		goto error_clock_unprepare;
- 	}
- 
--	ret = ad9834_write_frequency(st, AD9834_REG_FREQ0, 1000000);
-+	ret = ad9834_write_frequency(st, AD9834_CHANNEL_ADDRESS0, 1000000);
- 	if (ret)
- 		goto error_clock_unprepare;
- 
--	ret = ad9834_write_frequency(st, AD9834_REG_FREQ1, 5000000);
-+	ret = ad9834_write_frequency(st, AD9834_CHANNEL_ADDRESS1, 5000000);
- 	if (ret)
- 		goto error_clock_unprepare;
- 
--- 
-2.17.1
-
+Paolo
