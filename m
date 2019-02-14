@@ -2,154 +2,278 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C07C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 12:10:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 295C9C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 12:10:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFFB1218FF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 12:10:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3173218FF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 12:10:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="Fxp8RL5X"
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="OTZlV/TZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388219AbfBNMKY (ORCPT
+        id S2391739AbfBNMKh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 07:10:24 -0500
-Received: from mail-eopbgr10081.outbound.protection.outlook.com ([40.107.1.81]:60495
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728015AbfBNMKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 07:10:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qQXvtCS4f4SwLfqPzHcrX2Vq7NAG/Mu5tTTft1kSskk=;
- b=Fxp8RL5XnWx/mc+9AwjckRSgSnAjI6i2qLREEXvEFeDUvwv5YmYvo7mJ/x9sjBv2iKUQ1fJ4Ckk6T9qArql9ghKja4HNMracwfYjWPgshpCRvS7pNcD+WyGXFAE4OH0c0LEqejqKyufW5/eOtfjVF6Q8hULfOJT+4A4bHjxcaxc=
-Received: from AM6PR05MB5240.eurprd05.prod.outlook.com (20.177.196.214) by
- AM6PR05MB5334.eurprd05.prod.outlook.com (20.177.197.19) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.19; Thu, 14 Feb 2019 12:10:06 +0000
-Received: from AM6PR05MB5240.eurprd05.prod.outlook.com
- ([fe80::3542:889c:3a85:3866]) by AM6PR05MB5240.eurprd05.prod.outlook.com
- ([fe80::3542:889c:3a85:3866%5]) with mapi id 15.20.1601.023; Thu, 14 Feb 2019
- 12:10:06 +0000
-From:   Ido Schimmel <idosch@mellanox.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        "moderated list:ETHERNET BRIDGE" <bridge@lists.linux-foundation.org>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "andrew@lunn.ch" <andrew@lunn.ch>,
-        "vivien.didelot@gmail.com" <vivien.didelot@gmail.com>
-Subject: Re: [PATCH net-next 9/9] net: Get rid of switchdev_port_attr_get()
-Thread-Topic: [PATCH net-next 9/9] net: Get rid of switchdev_port_attr_get()
-Thread-Index: AQHUw+iSQCwOPnWAGUu5pephKEE5faXfNJ4A
-Date:   Thu, 14 Feb 2019 12:10:06 +0000
-Message-ID: <20190214121004.GA10467@splinter>
-References: <20190213220638.1552-1-f.fainelli@gmail.com>
- <20190213220638.1552-10-f.fainelli@gmail.com>
-In-Reply-To: <20190213220638.1552-10-f.fainelli@gmail.com>
-Accept-Language: en-US
+        Thu, 14 Feb 2019 07:10:37 -0500
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:46048 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729933AbfBNMKg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 07:10:36 -0500
+Received: from mailhost.synopsys.com (dc8-mailhost1.synopsys.com [10.13.135.209])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay.synopsys.com (Postfix) with ESMTPS id 44E2A10C1382;
+        Thu, 14 Feb 2019 04:10:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1550146236; bh=IXE4P3fdgx0sgtcbMgaYdSaMhEIIpDb5vPuER83fEt4=;
+        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
+        b=OTZlV/TZGILP1vVh6kPmq/I4nUSi4qszwiGuRsoNAAYVJp1Xc3ylEtrcEMdF9Jy3T
+         XZzpPe+XxD3XCVZq3Fag3RXohTVmiGNeVA2sBel+mk+64IfXD7BDf/kDNh8csi9G7N
+         C9K09aCJWa51UfmK6k0EHxULjxH3c7oUk1n1PeQotYlLwwRu2oyst30wlsSCzl7wPq
+         4YE9+MtVQL3nxGP9w2XGXwlKs+mBoG37xMiOf+pgegBtV8wgL8jW2xSCVxlOzpp4bv
+         ua9lCA9xHgXNX1C0EBvlg/zJYMKR+e62MXGXWldGPYlLSj5fTqPPffOM8ldRT5YKBT
+         OcstpzZSHuGDg==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 8EAACA005D;
+        Thu, 14 Feb 2019 12:10:35 +0000 (UTC)
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 14 Feb 2019 04:05:49 -0800
+Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
+ by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Thu,
+ 14 Feb 2019 13:05:48 +0100
+From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+CC:     Mark Rutland <mark.rutland@arm.com>,
+        Vineet Gupta <vineet.gupta1@synopsys.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        David Laight <David.Laight@ACULAB.COM>,
+        "Arnd Bergmann" <arnd.bergmann@linaro.org>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+Subject: RE: [PATCH] ARC: Explicitly set ARCH_SLAB_MINALIGN = 8
+Thread-Topic: [PATCH] ARC: Explicitly set ARCH_SLAB_MINALIGN = 8
+Thread-Index: AQHUv5zONn7dHynHO02cFkcDzI3gNKXcXZ6AgAADuwCAAARCgIABQZSAgACvHQCAALqoAIAAETfg///4/4CAABIzoA==
+Date:   Thu, 14 Feb 2019 12:05:47 +0000
+Message-ID: <4881796E12491D4BB15146FE0209CE64681DB202@DE02WEMBXB.internal.synopsys.com>
+References: <20190208105519.26750-1-abrodkin@synopsys.com>
+ <81017fe4-b31f-4942-e822-a7b70008b74d@synopsys.com>
+ <f83412d1e7fd4d67b4632c1f81fae963@AcuMS.aculab.com>
+ <bfc65835-21f9-6d5e-791d-ee49113d939c@synopsys.com>
+ <20190213125651.GP32494@hirez.programming.kicks-ass.net>
+ <e6138aeb-9ce4-fbfa-4d6a-b76f189a3e47@synopsys.com>
+ <20190214103140.GG32494@hirez.programming.kicks-ass.net>
+ <4881796E12491D4BB15146FE0209CE64681DB122@DE02WEMBXB.internal.synopsys.com>
+ <20190214110813.GK32494@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190214110813.GK32494@hirez.programming.kicks-ass.net>
+Accept-Language: en-US, ru-RU
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: LNXP265CA0060.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:5d::24) To AM6PR05MB5240.eurprd05.prod.outlook.com
- (2603:10a6:20b:64::22)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=idosch@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [193.47.165.251]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f3dc2288-cb0c-4d42-704e-08d692755b7f
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR05MB5334;
-x-ms-traffictypediagnostic: AM6PR05MB5334:
-x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;AM6PR05MB5334;23:yIvtPt1d2CiaTFInJ0E80JcblNbsT2sM+1VOXEVV9?=
- =?us-ascii?Q?VM9buiOByZAgt7+bITP70FwlPeQSp28XVa1dkuq5lykqRz62ha6L3HUWYsfa?=
- =?us-ascii?Q?u8jbNsFmd7bkyob+6/yI6oQ1TFOKNPUzi9rGZjDnMvAebUlr6qVKjb5MYC4S?=
- =?us-ascii?Q?EYvxdiniUAtgJ9JQM7/X5bJi5qfywhmVs8D/4wbBQfWSrmRHH4H7pLDe8VeY?=
- =?us-ascii?Q?CleVsF2iaJ6iNdlf/XBpKA8riBxcYsJ3CSJZszbAOjB8Z6yd56/hV6gzWw/i?=
- =?us-ascii?Q?RmNwF+KJ/SSvaawStmNn5uY/x7axcXmJBybrWTUGe8Eo69N6/Bra2lK3tq1h?=
- =?us-ascii?Q?mHtdW14t++N3tLhuQ/zjNt0QaWO1u5gri4aZCZtuHYbYSRJSfG9hfdgKSF7w?=
- =?us-ascii?Q?QqcEzttfKi2gfmWj0HuORulHiwC8+2vPQjrhBKNVkOQlj1ErDS5CE15l68qt?=
- =?us-ascii?Q?XE4nrfjFItFjs5688IbpjN+e/dqSj1F8yASdmasc3O47ak38y981an8cWdnB?=
- =?us-ascii?Q?ImbudFw6kWe2PZsR0KXkFYizzm5IVkkielfmY/k2OT0xENnymqgXrTP3RMT0?=
- =?us-ascii?Q?Fu5SjPK30mA959jo0fgG/s7N2t9+oFhTrvEVrZYyPrH4PPQF78BTGhCoyHb6?=
- =?us-ascii?Q?+yZ4+sJkUpsfwQLaWViFHPebmDUQYQFMOuyVevnTnrymS3laIItOFlwYyGiv?=
- =?us-ascii?Q?ZWMTI3y4KiAewaLo879jtPzMCuSm69SUQh8nbYz0cPhWUpcxO3s1xHQGMiUR?=
- =?us-ascii?Q?XipsheCxQG5/VI8gF/moSqiMSzBkrSF4oUHRAKHlvMubAs3brPuTRYPSIcoO?=
- =?us-ascii?Q?WF3b+/34kgR5ojeAAzG1gSceL+pHp1+za1JrUq13F5wSoeobc87A/2tiuDrn?=
- =?us-ascii?Q?TSR5re9tE6nrNC0VzPDsASfELkxfZ5TuNcS+sCwt9JPUHdfh/LqOYf7syMJU?=
- =?us-ascii?Q?K1EglOn9rs+mdLYAigiU9eNtXkaQXteHAwA9Noqix8YxGfS+knqTwiruw95l?=
- =?us-ascii?Q?DwA/qjrPJZIvvwnbnzvYchKM+6bWHFnROEjIDWa4mYgur4ePJ6ewSU4uSc9e?=
- =?us-ascii?Q?8ApCCwhyZE9gGPrZ0GLyWa69uU13i24+yJQBGqj8JafZnlL4ms569dA1N5gM?=
- =?us-ascii?Q?wcpNO5h8CaCxHuqE0W66BfmCY21f6CpviVhFYCk6ud5aHq6L1NgQQjR52C78?=
- =?us-ascii?Q?uWlZGEmUqRjjYByCdVLGNOFABqCwoLxUg8q/xbqevdoUVRkyeMTleCOH3NnP?=
- =?us-ascii?Q?lA5SK5hC9ZaggODc4f2dhY1GF7sGOAgOIqfsN3T?=
-x-microsoft-antispam-prvs: <AM6PR05MB53348D38F7447D830B4C54E2BF670@AM6PR05MB5334.eurprd05.prod.outlook.com>
-x-forefront-prvs: 09480768F8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(346002)(376002)(136003)(39860400002)(366004)(396003)(199004)(189003)(102836004)(8676002)(81156014)(6916009)(186003)(386003)(229853002)(446003)(68736007)(478600001)(66066001)(6246003)(25786009)(81166006)(256004)(6486002)(6506007)(316002)(86362001)(26005)(53936002)(97736004)(6436002)(14454004)(3846002)(6116002)(305945005)(6512007)(9686003)(8936002)(476003)(52116002)(7736002)(105586002)(4326008)(486006)(106356001)(33716001)(11346002)(1076003)(33896004)(2906002)(71190400001)(54906003)(76176011)(99286004)(71200400001)(33656002)(26583001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR05MB5334;H:AM6PR05MB5240.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: qYDKjn9kylkbq61X6i1BXDnOZJwvmE21DXnmz3m0YmCKIzORgDvqJ7z7uGgSiFJLojaCclBMRfmE2MM9Hw/lu6xV0fQWoIO3W1OSAfTn/kNumFAm2fT9J46NOgMwO28lXcvknwzbMdlOKI1Vh8i1+ET3E9nAzrdaThNMpzC6EH0A/jcvVTTqLic9RIdCbVgrBLNPwjYuGwk6xvrRWOlBZM8aaoQhhT27Dwc6WD6a5QU3ofQ44SsrO68rneO+HfZ+6HKw41VN3MsrnQDgC3vGPdLp+MU66XwiGCr0xBxU5bUmrjIy+5u/daLpEDOmKB+83ILgOx+/v2C9NvcxGT3/JmWqsbfnuTIiOIBstY19VzLQu7gQJZ2UyJRed/6v0DDhDoBNrU5oYLo/FxE9acrvQWxoH2QYtK9Ml8Ky4Wu8P3M=
+x-dg-ref: =?us-ascii?Q?PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcYWJyb2RraW5c?=
+ =?us-ascii?Q?YXBwZGF0YVxyb2FtaW5nXDA5ZDg0OWI2LTMyZDMtNGE0MC04NWVlLTZiODRi?=
+ =?us-ascii?Q?YTI5ZTM1Ylxtc2dzXG1zZy1kYjRkOGY4MC0zMDUwLTExZTktYmVkMi0wMGUw?=
+ =?us-ascii?Q?NGM2ZTAzNDJcYW1lLXRlc3RcZGI0ZDhmODEtMzA1MC0xMWU5LWJlZDItMDBl?=
+ =?us-ascii?Q?MDRjNmUwMzQyYm9keS50eHQiIHN6PSI0MTgwIiB0PSIxMzE5NDYxOTU0NTg3?=
+ =?us-ascii?Q?NTE4NTgiIGg9IjNmZmQrNFRFM2JmbWZTU2NDam80ZnA1ZEF2OD0iIGlkPSIi?=
+ =?us-ascii?Q?IGJsPSIwIiBibz0iMSIgY2k9ImNBQUFBRVJIVTFSU1JVRk5DZ1VBQUJRSkFB?=
+ =?us-ascii?Q?QnlmY2lkWGNUVUFla2xqYUVmSEpCUDZTV05vUjhja0U4T0FBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFIQUFBQUNrQ0FBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFFQUFRQUJBQUFBZWZ4U2p3QUFBQUFBQUFBQUFBQUFBSjRBQUFCbUFHa0Fi?=
+ =?us-ascii?Q?Z0JoQUc0QVl3QmxBRjhBY0FCc0FHRUFiZ0J1QUdrQWJnQm5BRjhBZHdCaEFI?=
+ =?us-ascii?Q?UUFaUUJ5QUcwQVlRQnlBR3NBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUVBQUFBQUFBQUFBZ0FBQUFBQW5nQUFBR1lBYndCMUFHNEFaQUJ5QUhrQVh3?=
+ =?us-ascii?Q?QndBR0VBY2dCMEFHNEFaUUJ5QUhNQVh3Qm5BR1lBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFRQUFBQUFBQUFBQ0FB?=
+ =?us-ascii?Q?QUFBQUNlQUFBQVpnQnZBSFVBYmdCa0FISUFlUUJmQUhBQVlRQnlBSFFBYmdC?=
+ =?us-ascii?Q?bEFISUFjd0JmQUhNQVlRQnRBSE1BZFFCdUFHY0FYd0JqQUc4QWJnQm1BQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFCQUFBQUFBQUFBQUlBQUFBQUFKNEFBQUJtQUc4?=
+ =?us-ascii?Q?QWRRQnVBR1FBY2dCNUFGOEFjQUJoQUhJQWRBQnVBR1VBY2dCekFGOEFjd0Jo?=
+ =?us-ascii?Q?QUcwQWN3QjFBRzRBWndCZkFISUFaUUJ6QUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBRUFBQUFBQUFBQUFnQUFBQUFBbmdBQUFHWUFid0IxQUc0QVpBQnlBSGtB?=
+ =?us-ascii?Q?WHdCd0FHRUFjZ0IwQUc0QVpRQnlBSE1BWHdCekFHMEFhUUJqQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQVFBQUFBQUFBQUFD?=
+ =?us-ascii?Q?QUFBQUFBQ2VBQUFBWmdCdkFIVUFiZ0JrQUhJQWVRQmZBSEFBWVFCeUFIUUFi?=
+ =?us-ascii?Q?Z0JsQUhJQWN3QmZBSE1BZEFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUJBQUFBQUFBQUFBSUFBQUFBQUo0QUFBQm1B?=
+ =?us-ascii?Q?RzhBZFFCdUFHUUFjZ0I1QUY4QWNBQmhBSElBZEFCdUFHVUFjZ0J6QUY4QWRB?=
+ =?us-ascii?Q?QnpBRzBBWXdBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFFQUFBQUFBQUFBQWdBQUFBQUFuZ0FBQUdZQWJ3QjFBRzRBWkFCeUFI?=
+ =?us-ascii?Q?a0FYd0J3QUdFQWNnQjBBRzRBWlFCeUFITUFYd0IxQUcwQVl3QUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBUUFBQUFBQUFB?=
+ =?us-ascii?Q?QUNBQUFBQUFDZUFBQUFad0IwQUhNQVh3QndBSElBYndCa0FIVUFZd0IwQUY4?=
+ =?us-ascii?Q?QWRBQnlBR0VBYVFCdUFHa0FiZ0JuQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQkFBQUFBQUFBQUFJQUFBQUFBSjRBQUFC?=
+ =?us-ascii?Q?ekFHRUFiQUJsQUhNQVh3QmhBR01BWXdCdkFIVUFiZ0IwQUY4QWNBQnNBR0VB?=
+ =?us-ascii?Q?YmdBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUVBQUFBQUFBQUFBZ0FBQUFBQW5nQUFBSE1BWVFCc0FHVUFjd0Jm?=
+ =?us-ascii?Q?QUhFQWRRQnZBSFFBWlFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFRQUFBQUFB?=
+ =?us-ascii?Q?QUFBQ0FBQUFBQUNlQUFBQWN3QnVBSEFBY3dCZkFHd0FhUUJqQUdVQWJnQnpB?=
+ =?us-ascii?Q?R1VBWHdCMEFHVUFjZ0J0QUY4QU1RQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFCQUFBQUFBQUFBQUlBQUFBQUFKNEFB?=
+ =?us-ascii?Q?QUJ6QUc0QWNBQnpBRjhBYkFCcEFHTUFaUUJ1QUhNQVpRQmZBSFFBWlFCeUFH?=
+ =?us-ascii?Q?MEFYd0J6QUhRQWRRQmtBR1VBYmdCMEFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBRUFBQUFBQUFBQUFnQUFBQUFBbmdBQUFIWUFad0JmQUdzQVpR?=
+ =?us-ascii?Q?QjVBSGNBYndCeUFHUUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFB?=
+ =?us-ascii?Q?QUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQVFBQUFB?=
+ =?us-ascii?Q?QUFBQUFDQUFBQUFBQT0iLz48L21ldGE+?=
+x-dg-rorf: 
+x-originating-ip: [10.225.15.89]
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <7BD5E98B18EB1941AABCED862FF448CD@eurprd05.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f3dc2288-cb0c-4d42-704e-08d692755b7f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2019 12:10:06.1349
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB5334
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 02:06:38PM -0800, Florian Fainelli wrote:
-> With the bridge no longer calling switchdev_port_attr_get() to obtain
-> the supported bridge port flags from a driver but instead trying to set
-> the bridge port flags directly and relying on driver to reject
-> unsupported configurations, we can effectively get rid of
-> switchdev_port_attr_get() entirely since this was the only place where
-> it was called.
->=20
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
->  Documentation/networking/switchdev.txt                   | 5 ++---
->  drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c | 7 -------
->  drivers/net/ethernet/rocker/rocker_main.c                | 7 -------
->  drivers/staging/fsl-dpaa2/ethsw/ethsw.c                  | 7 -------
->  include/net/switchdev.h                                  | 8 --------
->  net/dsa/slave.c                                          | 7 -------
->  6 files changed, 2 insertions(+), 39 deletions(-)
->=20
-> diff --git a/Documentation/networking/switchdev.txt b/Documentation/netwo=
-rking/switchdev.txt
-> index ea90243340a9..327afe754230 100644
-> --- a/Documentation/networking/switchdev.txt
-> +++ b/Documentation/networking/switchdev.txt
-> @@ -233,9 +233,8 @@ the bridge's FDB.  It's possible, but not optimal, to=
- enable learning on the
->  device port and on the bridge port, and disable learning_sync.
-> =20
->  To support learning and learning_sync port attributes, the driver implem=
-ents
-> -switchdev op switchdev_port_attr_get/set for
-> -SWITCHDEV_ATTR_PORT_ID_BRIDGE_FLAGS. The driver should initialize the at=
-tributes
-> -to the hardware defaults.
-> +switchdev op switchdev_port_attr_set for SWITCHDEV_ATTR_PORT_ID_BRIDGE_F=
-LAGS.
-> +The driver should initialize the attributes to the hardware defaults.
+Hi Peter,
 
-Last sentence is not relevant anymore. learning_sync can also be dropped
+> -----Original Message-----
+> From: linux-snps-arc <linux-snps-arc-bounces@lists.infradead.org> On Beha=
+lf Of Peter Zijlstra
+> Sent: Thursday, February 14, 2019 2:08 PM
+> To: Alexey Brodkin <alexey.brodkin@synopsys.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>; Vineet Gupta <vineet.gupta1@syno=
+psys.com>; linux-
+> kernel@vger.kernel.org; stable@vger.kernel.org; David Laight <David.Laigh=
+t@ACULAB.COM>; Arnd Bergmann
+> <arnd.bergmann@linaro.org>; linux-snps-arc@lists.infradead.org
+> Subject: Re: [PATCH] ARC: Explicitly set ARCH_SLAB_MINALIGN =3D 8
+>=20
+> On Thu, Feb 14, 2019 at 10:44:49AM +0000, Alexey Brodkin wrote:
+> > > On Wed, Feb 13, 2019 at 03:23:36PM -0800, Vineet Gupta wrote:
+> > > > On 2/13/19 4:56 AM, Peter Zijlstra wrote:
+> > > > >
+> > > > > Personally I think u64 and company should already force natural
+> > > > > alignment; but alas.
+> > > >
+> > > > But there is an ISA/ABI angle here too. e.g. On 32-bit ARC, LDD (lo=
+ad double) is
+> > > > allowed to take a 32-bit aligned address to load a register pair. T=
+hus all u64
+> > > > need not be 64-bit aligned (unless attribute aligned 8 etc) hence t=
+he relaxation
+> > > > in ABI (alignment of long long is 4). You could certainly argue tha=
+t we end up
+> > > > undoing some of it anyways by defining things like ARCH_KMALLOC_MIN=
+ALIGN to 8, but
+> > > > still...
+> > >
+> > > So what happens if the data is then split across two cachelines; will=
+ a
+> > > STD vs LDD still be single-copy-atomic? I don't _think_ we rely on th=
+at
+> > > for > sizeof(unsigned long), with the obvious exception of atomic64_t=
+,
+> > > but yuck...
+> >
+> > STD & LDD are simple store/load instructions so there's no problem for
+> > their 64-bit data to be from 2 subsequent cache lines as well as 2 page=
+s
+> > (if we're that unlucky). Or you mean something else?
+>=20
+> u64 x;
+>=20
+> WRITE_ONCE(x, 0x1111111100000000);
+> WRITE_ONCE(x, 0x0000000011111111);
+>=20
+> vs
+>=20
+> t =3D READ_ONCE(x);
+>=20
+> is t allowed to be 0x1111111111111111 ?
+>=20
+> If the data is split between two cachelines, the hardware must do
+> something very funny to avoid that.
+>=20
+> single-copy-atomicity requires that to never happen; IOW no load or
+> store tearing. You must observe 'whole' values, no mixing.
+>=20
+> Linux requires READ_ONCE()/WRITE_ONCE() to be single-copy-atomic for
+> <=3Dsizeof(unsigned long) and atomic*_read()/atomic*_set() for all atomic
+> types. Your atomic64_t alignment should ensure this is so.
+
+Thanks for explanation!
+
+I'm not completely sure about single-copy-atomic for our LDD/STD instructio=
+ns
+(need to check with HW guys) but given above requirement:
+---------------------------->8--------------------------
+READ_ONCE()/WRITE_ONCE() to be single-copy-atomic for <=3Dsizeof(unsigned l=
+ong)
+---------------------------->8--------------------------
+that's OK for them (LDD/STD) to not follow this, right? As they are obvious=
+ly
+longer than "unsigned long".
+
+Though I'm wondering if READ_ONCE()/WRITE_ONCE() could be used on 64-bit da=
+ta
+even on 32-bit arches?
+
+Now as for LLOCKD/SCONDD which implement single instruction 64-bit atomics =
+require
+double-word alignment and so cannot possible span between cache lines.
+
+So what am I missing here?
+
+> So while I think we're fine, I do find hardware instructions that tear
+> yuck (yah, I know, x86...)
+>=20
+> > > So even though it is allowed by the chip; does it really make sense t=
+o
+> > > use this?
+> >
+> > It gives performance benefits when dealing with either 64-bit or even
+> > larger buffers, see how we use it in our string routines like here [1].
+> >
+> > [1] https://urldefense.proofpoint.com/v2/url?u=3Dhttps-
+> 3A__git.kernel.org_pub_scm_linux_kernel_git_torvalds_linux.git_tree_arch_=
+arc_lib_memset-2Darchs.S-
+> 23n81&d=3DDwICAg&c=3DDPL6_X_6JkXFx7AXWqB0tg&r=3DlqdeeSSEes0GFDDl656eViXO7=
+breS55ytWkhpk5R81I&m=3Dm60hCzPFQMtxeg
+> 9HR5zZOJcRFMs6WLFJNSc6TNDqd4Y&s=3DTapp7zbAmYYaTIaO5yKM0yUKfnaURFxdr56TS-J=
+appQ&e=3D
+>=20
+> That doesn't require the ABI alignment crud.
+
+I'm not saying it has something to do with our ABI - that's just how we use=
+ it.
+
+-Alexey
