@@ -2,129 +2,120 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 889BAC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:13:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69F54C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:16:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5679C20836
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:13:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3396221927
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:16:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SLPmARNU"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZPnbWkIa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406558AbfBNSNS (ORCPT
+        id S2405301AbfBNSQC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 13:13:18 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43838 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406496AbfBNSNQ (ORCPT
+        Thu, 14 Feb 2019 13:16:02 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:40542 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728922AbfBNSQC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 13:13:16 -0500
-Received: by mail-pl1-f196.google.com with SMTP id f90so3551420plb.10
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 10:13:15 -0800 (PST)
+        Thu, 14 Feb 2019 13:16:02 -0500
+Received: by mail-lf1-f68.google.com with SMTP id t14so5261160lfk.7
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 10:16:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KC08aLvBr+4Oh14cEtpFriUr4EgUUFtSeVaV8LlSrVA=;
-        b=SLPmARNU2JN9//Z4a8UidPtnkYpl6b6U74JlJydrltSc0TbkUgguDp2tbYG9Yer9tO
-         LBcIsuhRTqEP8hbMjZiolWBRC1S4RaQEbyRuFFNZ45Jdhp/JrztOdykrKY+sus80+wo7
-         QdGadpWdqdN13o2G4Dk4L1Df27n5K7X/yUdiI=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=D9Vj6+WeVlYF1H2fg9mql/6oMEXHu/mgsv8BNTVZHx0=;
+        b=ZPnbWkIaLF1fPpbhVu5fqt9VoWAh7zq9mqH5LmbreMaS/dFp/ga9ADBd1bUPfLNZVt
+         9cmIVEyoT/T8O5y3yiREHXO6gcW+3HJveD69ZJigOCRdO+OvsnNK66RwV3oR7F6BHY0m
+         nx+fInfaHOtcGNGfeA3vdOANp4vbwtRzlSmX4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=KC08aLvBr+4Oh14cEtpFriUr4EgUUFtSeVaV8LlSrVA=;
-        b=lDKlEymBjJemhYYeyOtFJJuHs+NaSzlDzXfDu+l7xQYYyIcMwnkuKreSFHPSjyL/1t
-         tykAlJXJ03Kq55hFgpUfBnsxL/yIojFrjDHal5eRRUtF8CIOSzQwTNX5PUK81EsjM+5f
-         hKOPgQyRTbwprMFzAh+QbHIwvwd075P240b1DkPexBcZnXd5XsuDo1c3DyBNT0ei1hY6
-         l+W8VzS5ByQ0HOL/aJrP7u/0YSqY0y3nD8oQHNo3ua3G23LRGLMFFYl8iESTm4wuVvYT
-         O4GN1iqhGCaCOd3nkkpd/ECzfKZoWx3UOrNy9bzJajsamcPjoTrsJ7qpHvSwkRDc36OS
-         xYcQ==
-X-Gm-Message-State: AHQUAuZCXcCMa2RShs+ExHBP5goGoQMoEtUmJuoAybPkFP5Mi8siofoo
-        tsbRnowh1g6c1cxsxgmzKHLK4w==
-X-Google-Smtp-Source: AHgI3IYhNSFVSJ0c8erX0wD63Ext/3iDCfzgnUlwTHONVz4T9kLmGR4mCI4Lf2YX88InSHGYNtD6hw==
-X-Received: by 2002:a17:902:6681:: with SMTP id e1mr5490698plk.98.1550167995113;
-        Thu, 14 Feb 2019 10:13:15 -0800 (PST)
-Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id y21sm6096349pfi.150.2019.02.14.10.13.13
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=D9Vj6+WeVlYF1H2fg9mql/6oMEXHu/mgsv8BNTVZHx0=;
+        b=nYcy1lHBQ1TJMrppfTJBFnECJ9j7nQ30wK1/qAdcD1mzW/5iz7BnWTAbjhCb93KkHg
+         01ukeE+gEpQZTjJWv0JHkSNq01eGGTCdZttdBDEF0MrK4mrMDNAohrGBKkrnSLmzZooH
+         n4Fibjfn2XH3TMT27w2yZWaVs+7mf/DIzrz/bXfK7RqpKewElkOsC8ZyVa+EFhY3YbhK
+         ys9+UPyYTLa7bGn0SmUjVYd42xMdOiLTop9//NY1Sw7DAad8GK3viyJl4WKNLlNZoIdD
+         4CPxSG1mpCNM6blDPpcwMc/aTUizPM6vKm8mF10WKdeEO9N7HFvvrDW3MxIFcnmSC2JE
+         dsPQ==
+X-Gm-Message-State: AHQUAuYYhnLyP2u8q+0hiWYjxw3UMfdbLUBbwYOjLwQAjEo8x6bIFkrR
+        CCaKnqWO8awmX/V0l59/KtrjH1Wkz24=
+X-Google-Smtp-Source: AHgI3Ib9e8GzOGd3K93YeTi9sZFURrkVQksoLDWl/l9RwIC8HpHg5SNmVe0un/PTPkIFbvEnx2Jj+w==
+X-Received: by 2002:a19:f607:: with SMTP id x7mr3149224lfe.47.1550168159679;
+        Thu, 14 Feb 2019 10:15:59 -0800 (PST)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id q1sm621564lfk.15.2019.02.14.10.15.59
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 10:13:14 -0800 (PST)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>, swboyd@chromium.org,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Len Brown <len.brown@intel.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH 1/2] PM / Domains: Mark "name" const in genpd_dev_pm_attach_by_name()
-Date:   Thu, 14 Feb 2019 10:12:48 -0800
-Message-Id: <20190214181249.2749-1-dianders@chromium.org>
-X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
+        Thu, 14 Feb 2019 10:15:59 -0800 (PST)
+Received: by mail-lj1-f177.google.com with SMTP id v16so6062279ljg.13
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 10:15:59 -0800 (PST)
+X-Received: by 2002:a2e:91c8:: with SMTP id u8mr2287389ljg.185.1550167800344;
+ Thu, 14 Feb 2019 10:10:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1550089932-6888-1-git-send-email-longman@redhat.com>
+ <1550089932-6888-3-git-send-email-longman@redhat.com> <20190214103333.GH32494@hirez.programming.kicks-ass.net>
+ <9e01d4ef-56df-7af8-a0f5-b49644e298bf@redhat.com> <CAHk-=whKmuranma_HUOKBbDJHGmdWZr9MYW-+cmGzsOiJ2N1Sg@mail.gmail.com>
+In-Reply-To: <CAHk-=whKmuranma_HUOKBbDJHGmdWZr9MYW-+cmGzsOiJ2N1Sg@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 14 Feb 2019 10:09:44 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wi03J1jurebJNHPxGCVss7ARAN+2JuVthEGoEx=qkT4dQ@mail.gmail.com>
+Message-ID: <CAHk-=wi03J1jurebJNHPxGCVss7ARAN+2JuVthEGoEx=qkT4dQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] locking/rwsem: Optimize down_read_trylock()
+To:     Waiman Long <longman@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
+        "linux-alpha@vger.kernel.org" <linux-arm-kernel@lists.infradead.org>,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The genpd_dev_pm_attach_by_name() simply takes the name and passes it
-to of_property_match_string() where the argument is "const char *".
-Adding a const here allows a later patch to add a const to
-dev_pm_domain_attach_by_name() which allows drivers to pass in a name
-that was declared "const" in a driver.
+On Thu, Feb 14, 2019 at 9:51 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> The arm64 numbers scaled horribly even before, and that's because
+> there is too much ping-pong, and it's probably because there is no
+> "stickiness" to the cacheline to the core, and thus adding the extra
+> loop can make the ping-pong issue even worse because now there is more
+> of it.
 
-Fixes: 5d6be70add65 ("PM / Domains: Introduce option to attach a device by name to genpd")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
+Actually, if it's using the ll/sc, then I don't see why arm64 should
+even change. It doesn't really even change the pattern: the initial
+load of the value is just replaced with a "ll" that gets a non-zero
+value, and then we re-try without even doing the "sc" part.
 
- drivers/base/power/domain.c | 2 +-
- include/linux/pm_domain.h   | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+End result: exact same "load once, then do ll/sc to update". Just
+using a slightly different instruction pattern.
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 45eafe8cf7dd..2c334c01fc43 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -2483,7 +2483,7 @@ EXPORT_SYMBOL_GPL(genpd_dev_pm_attach_by_id);
-  * power-domain-names DT property. For further description see
-  * genpd_dev_pm_attach_by_id().
-  */
--struct device *genpd_dev_pm_attach_by_name(struct device *dev, char *name)
-+struct device *genpd_dev_pm_attach_by_name(struct device *dev, const char *name)
- {
- 	int index;
- 
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index dd364abb649a..203be5082f33 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -271,7 +271,7 @@ int genpd_dev_pm_attach(struct device *dev);
- struct device *genpd_dev_pm_attach_by_id(struct device *dev,
- 					 unsigned int index);
- struct device *genpd_dev_pm_attach_by_name(struct device *dev,
--					   char *name);
-+					   const char *name);
- #else /* !CONFIG_PM_GENERIC_DOMAINS_OF */
- static inline int of_genpd_add_provider_simple(struct device_node *np,
- 					struct generic_pm_domain *genpd)
-@@ -324,7 +324,7 @@ static inline struct device *genpd_dev_pm_attach_by_id(struct device *dev,
- }
- 
- static inline struct device *genpd_dev_pm_attach_by_name(struct device *dev,
--							 char *name)
-+							 const char *name)
- {
- 	return NULL;
- }
--- 
-2.21.0.rc0.258.g878e2cd30e-goog
+But maybe "ll" does something different to the cacheline than a regular "ld"?
 
+Alternatively, the machine you used is using LSE, and the "swp" thing
+has some horrid behavior when it fails.
+
+So I take it back. I'm actually surprised that arm64 performs worse. I
+don't think it should. But numbers walk, bullshit talks, and it
+clearly does make for worse numbers on arm64.
+
+               Linus
