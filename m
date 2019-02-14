@@ -2,348 +2,113 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DFFDC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 12:41:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 140DFC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 12:44:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C46D12229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 12:41:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7A02222D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 12:44:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550148090;
-	bh=QY1X1OOvnEEnbT2Y/13UGbYvaoiRPXsZimPdi0FRZeg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=mSffR8MkFD/X3O7gzMBQYnbgX+/1L75TIcyamzrHLG5VLCGtRdAX+Ndb/qeFC020J
-	 rdmszIq/cxx7UDI7ks4/xMxb6pGh8xhpEZEjgGHF4BFwUskziQY4/LWnwwYSqXJc73
-	 XDMHvcD+3AvGtZoPaif6Wbxvj16uvB4HplXihZFk=
+	s=default; t=1550148260;
+	bh=ZnGQcL6GzK4LDWsaHASWt27zgKRC2BORrK4vuFLDWe8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=FSj4j3ox/bP/QqF8bxJC1QMU9lE80lUmOwVLUTRNpbjh8hwALVBYkexM/Shn0iCBt
+	 kY7pBdNEfjiG+rBDqxsE3vQ6piEwBzKlShrWCSh51sv2KCdouRSK9gtK9O9+FEZtqH
+	 34404rU+yigL8UMNTFFr4b0pnRIaZx4oVlXnSmIU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392115AbfBNMl3 (ORCPT
+        id S2392568AbfBNMoS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 07:41:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37436 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 07:44:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727958AbfBNMl3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 07:41:29 -0500
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S2394381AbfBNMoP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 07:44:15 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DD7FE222B6;
-        Thu, 14 Feb 2019 12:41:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03A38218FF;
+        Thu, 14 Feb 2019 12:44:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550148087;
-        bh=QY1X1OOvnEEnbT2Y/13UGbYvaoiRPXsZimPdi0FRZeg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Dysk0PCoQkGfY4o5tD0ip/9wp1ZNLt9FYDtb/Q/qrZ21c1TBUVjcpcC1c/9W6HxRm
-         Q1bDiINf+CK2uY11SLXROFdk4AAmIlnswlEuJ+U6U37ZBPuS2ExaOVz2hQLwtfHGUO
-         rNyHeZ44MCpSei6HTaL2Wxc1H7tCMvEkKcaopaRs=
-Received: by mail-lf1-f41.google.com with SMTP id n23so4437871lfl.4;
-        Thu, 14 Feb 2019 04:41:26 -0800 (PST)
-X-Gm-Message-State: AHQUAubkX9xSdiARho3Va7b+Af9n3BKoiswB2TmmY2B2daMrDvHW7f4S
-        sESVDbjy7wvSJNW7wFjQrfg9YoIzaAuDDNViGC4=
-X-Google-Smtp-Source: AHgI3IZYRsRvCBToP0DgGz3LfU5FaREqsVnWo7Z2Q9QXqUlQzO9OLOz0Aq3e80y616JKJSSgbK2jLg3I75FT9hhI1ig=
-X-Received: by 2002:a19:f013:: with SMTP id p19mr2275017lfc.154.1550148084945;
- Thu, 14 Feb 2019 04:41:24 -0800 (PST)
+        s=default; t=1550148254;
+        bh=ZnGQcL6GzK4LDWsaHASWt27zgKRC2BORrK4vuFLDWe8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=muNvwodX5ZUErvrrn46d4wFgT3i27uwxxyFReCrH8fjpZLFL9AmECjCoR4L0eVzNv
+         HjeFuJZuOlG7cN+AvnpvfIwdzLovLA/+ZihNUH3Ekk3pQ8/K2KLUMlcobbZqQleY6Y
+         xl6Vos9Snl90tuzpW8BYAhdgX3wF8cn74GHdTfD4=
+Date:   Thu, 14 Feb 2019 13:44:12 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Nicholas Mc Guire <hofrat@osadl.org>
+Cc:     Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] sysfs.txt: add note on available attribute macros
+Message-ID: <20190214124412.GC17978@kroah.com>
+References: <1550143310-17463-1-git-send-email-hofrat@osadl.org>
 MIME-Version: 1.0
-References: <20190213214052.2427-1-linux.amoon@gmail.com> <20190213214052.2427-2-linux.amoon@gmail.com>
-In-Reply-To: <20190213214052.2427-2-linux.amoon@gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Thu, 14 Feb 2019 13:41:13 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPeyFmKUGwqS1sgf_k2WSx9i0AETjpOLXtsmLFupTpgqnw@mail.gmail.com>
-Message-ID: <CAJKOXPeyFmKUGwqS1sgf_k2WSx9i0AETjpOLXtsmLFupTpgqnw@mail.gmail.com>
-Subject: Re: [RFC 1/2] ARM: dts: exynos: Add proper regulator states for
- suspend-to-mem for odroid-u3
-To:     Anand Moon <linux.amoon@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Pankaj Dubey <pankaj.dubey@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1550143310-17463-1-git-send-email-hofrat@osadl.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Anand,
-
-Thanks for the patch. See comments below.
-
-On Wed, 13 Feb 2019 at 22:41, Anand Moon <linux.amoon@gmail.com> wrote:
->
-> Add suspend-to-mem node to regulator core to be enabled or disabled
-> during system suspend and also support changing the regulator operating
-> mode during runtime and when the system enter sleep mode.
->
-> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+On Thu, Feb 14, 2019 at 12:21:50PM +0100, Nicholas Mc Guire wrote:
+> The common cases of attributes should probably be using the __ATTR_XXX
+> macros to make code more concise and readable but the current sysfs.txt
+> does not point developers to those convenience macros. Further there is
+> no note in sysfs.txt currently explaining why trying to set a sysfs file
+> to mode 0666 will fail.
+> 
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
 > ---
->
-> Changes from previos patch
-> [0] https://patchwork.kernel.org/patch/10712549/
->
-> Set all the WAKEUP source regulator in suspend-on state.
-> LD04, LD012, LD015, LD020, LD022
-> Set all the non used regulator in suspend-odd state
-> LD02, LD03, LD05, LD06, LD07, LD011, LD013, LDO14, LD016
->
-> BUCK5, BUCK6, BUCK7 and not confirable as per driver max77686-regulator
->
-> Tested on microSD card and it resumes correcly after suspend.
-> eMMC is not able to resume after entering into suspend state,
-> which need to be investigated and how to debug more.
-> ---
->  .../boot/dts/exynos4412-odroid-common.dtsi    | 63 +++++++++++++++++++
->  arch/arm/boot/dts/exynos4412-odroidu3.dts     |  3 +
->  2 files changed, 66 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> index 08d3a0a7b4eb..e984461c37d9 100644
-> --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> @@ -288,6 +288,9 @@
->                                 regulator-min-microvolt = <1800000>;
->                                 regulator-max-microvolt = <1800000>;
->                                 regulator-always-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
+> 
+> Note quite sure if this is the right place to place the note on mode 0666 
+> but it should be somewhere as any attempt to set 0666 will be reverted 
+> to 0664.
+> 
+>  Documentation/filesystems/sysfs.txt | 16 ++++++++++++++++
+>  1 file changed, 16 insertions(+)
+> 
+> diff --git a/Documentation/filesystems/sysfs.txt b/Documentation/filesystems/sysfs.txt
+> index 41411b0..c246142 100644
+> --- a/Documentation/filesystems/sysfs.txt
+> +++ b/Documentation/filesystems/sysfs.txt
+> @@ -116,6 +116,22 @@ static struct device_attribute dev_attr_foo = {
+>  	.store = store_foo,
+>  };
+>  
+> +Note as stated in include/linux/kernel.h "OTHER_WRITABLE?  Generally
+> +considered a bad idea." so trying to set a sysfs file writable for
+> +everyone will fail reverting to mode 0664.
+> +
+> +For this common cases sysfs.h provides convenience macros to
+> +make defining attributes easier as well as making code more
+> +concise and readable. The above case could be shortened to:
+> +
+> +static struct device_attribute dev_attr_foo = __ATTR_RW(foo);
+> +
+> +the list of helpers available is:
+> +__ATTR_RO(name): same as above with mode 0444
+> +__ATTR_WO(name): same as above with mode 0200
+> +__ATTR_RO_MODE(name, mode): allowing to pass in a specific mode
+> +__ATTR_RW(name): setting mode to 0644
+> +__ATTR_NULL: which sets the name to NULL
 
-I see my comment from previous patch was not addressed.
+__ATTR_NULL is used to end a list of attributes, no one should actually
+try to use it :)
 
->                         };
->
->                         ldo3_reg: LDO3 {
-> @@ -295,6 +298,9 @@
->                                 regulator-min-microvolt = <1800000>;
->                                 regulator-max-microvolt = <1800000>;
->                                 regulator-always-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
+And really, all the current users of it should be converted to use the
+groups api instead, as it should not be needed.
 
-The same...
+__ATTR_RO_MODE() needs a bit more description as well.
 
->                         };
->
->                         ldo4_reg: LDO4 {
-> @@ -302,6 +308,9 @@
->                                 regulator-min-microvolt = <2800000>;
->                                 regulator-max-microvolt = <2800000>;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-on-in-suspend;
-> +                               };
->                         };
->
->                         ldo5_reg: LDO5 {
-> @@ -310,6 +319,9 @@
->                                 regulator-max-microvolt = <1800000>;
->                                 regulator-always-on;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         ldo6_reg: LDO6 {
-> @@ -317,6 +329,9 @@
->                                 regulator-min-microvolt = <1000000>;
->                                 regulator-max-microvolt = <1000000>;
->                                 regulator-always-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         ldo7_reg: LDO7 {
-> @@ -324,18 +339,27 @@
->                                 regulator-min-microvolt = <1000000>;
->                                 regulator-max-microvolt = <1000000>;
->                                 regulator-always-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         ldo8_reg: LDO8 {
->                                 regulator-name = "VDD10_HDMI_1.0V";
->                                 regulator-min-microvolt = <1000000>;
->                                 regulator-max-microvolt = <1000000>;
-> +                               regulator-state-mem {
-> +                                       regulator-on-in-suspend;
-> +                               };
->                         };
->
->                         ldo10_reg: LDO10 {
->                                 regulator-name = "VDDQ_MIPIHSI_1.8V";
->                                 regulator-min-microvolt = <1800000>;
->                                 regulator-max-microvolt = <1800000>;
-> +                               regulator-state-mem {
-> +                                       regulator-on-in-suspend;
-> +                               };
->                         };
->
->                         ldo11_reg: LDO11 {
-> @@ -343,6 +367,9 @@
->                                 regulator-min-microvolt = <1800000>;
->                                 regulator-max-microvolt = <1800000>;
->                                 regulator-always-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         ldo12_reg: LDO12 {
-> @@ -351,6 +378,9 @@
->                                 regulator-max-microvolt = <3300000>;
->                                 regulator-always-on;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         ldo13_reg: LDO13 {
-> @@ -359,6 +389,9 @@
->                                 regulator-max-microvolt = <1800000>;
->                                 regulator-always-on;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         ldo14_reg: LDO14 {
-> @@ -367,6 +400,9 @@
->                                 regulator-max-microvolt = <1800000>;
->                                 regulator-always-on;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         ldo15_reg: LDO15 {
-> @@ -375,6 +411,9 @@
->                                 regulator-max-microvolt = <1000000>;
->                                 regulator-always-on;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         ldo16_reg: LDO16 {
-> @@ -383,6 +422,9 @@
->                                 regulator-max-microvolt = <1800000>;
->                                 regulator-always-on;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         ldo20_reg: LDO20 {
-> @@ -396,6 +438,9 @@
->                                 regulator-min-microvolt = <2800000>;
->                                 regulator-max-microvolt = <2800000>;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-on-in-suspend;
-> +                               };
+So the idea of documenting these is great, just needs a bit of tweaking.
 
+thanks,
 
-The same... any comments?
-
->                         };
->
->                         ldo22_reg: LDO22 {
-> @@ -405,6 +450,9 @@
->                                  */
->                                 regulator-name = "LDO22";
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-on-in-suspend;
-> +                               };
->                         };
->
->                         ldo25_reg: LDO25 {
-> @@ -413,6 +461,9 @@
->                                 regulator-max-microvolt = <1800000>;
->                                 regulator-always-on;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         buck1_reg: BUCK1 {
-> @@ -421,6 +472,9 @@
->                                 regulator-max-microvolt = <1100000>;
->                                 regulator-always-on;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-
-Again, you did not address my comments.
-
-> +                               };
->                         };
->
->                         buck2_reg: BUCK2 {
-> @@ -429,6 +483,9 @@
->                                 regulator-max-microvolt = <1350000>;
->                                 regulator-always-on;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-on-in-suspend;
-> +                               };
->                         };
->
->                         buck3_reg: BUCK3 {
-> @@ -437,6 +494,9 @@
->                                 regulator-max-microvolt = <1050000>;
->                                 regulator-always-on;
->                                 regulator-boot-on;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
-
-The same...
-
->                         };
->
->                         buck4_reg: BUCK4 {
-> @@ -444,6 +504,9 @@
->                                 regulator-min-microvolt = <900000>;
->                                 regulator-max-microvolt = <1100000>;
->                                 regulator-microvolt-offset = <50000>;
-> +                               regulator-state-mem {
-> +                                       regulator-off-in-suspend;
-> +                               };
->                         };
->
->                         buck5_reg: BUCK5 {
-> diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-> index 2bdf899df436..4ebde09fc51d 100644
-> --- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-> +++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-> @@ -82,6 +82,9 @@
->         regulator-name = "LDO22_VDDQ_MMC4_2.8V";
->         regulator-min-microvolt = <2800000>;
->         regulator-max-microvolt = <2800000>;
-> +       regulator-state-mem {
-> +               regulator-on-in-suspend;
-
-Why?
-
-Best regards,
-Krzysztof
+greg k-h
