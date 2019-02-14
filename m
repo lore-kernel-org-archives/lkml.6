@@ -2,88 +2,145 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CD39C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:44:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9D32C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:45:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F201B206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:44:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="zfLUdDQx"
+	by mail.kernel.org (Postfix) with ESMTP id 7EBE0206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:45:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394131AbfBNCoZ (ORCPT
+        id S2394186AbfBNCpG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 21:44:25 -0500
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:45916 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730369AbfBNCoY (ORCPT
+        Wed, 13 Feb 2019 21:45:06 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:29663 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2388490AbfBNCpG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 21:44:24 -0500
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id C8CD3806A8;
-        Thu, 14 Feb 2019 15:44:21 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1550112261;
-        bh=impbUH9nV+toQTY7M/OP/YMGwFlXyj2IM63BNKJzDAE=;
-        h=From:To:Cc:Subject:Date;
-        b=zfLUdDQxNQmPP/JNIsOLlznlMQLrZ4SsrUdvoLr6hZOjz56seUKrmKDJEBdeOYvLf
-         CPoDHaW6yJy5d2/kcgUFjVS0xEBN8JAHssrtzLEo8SJLa8BIDfm4fyf2jY6bRbzAFM
-         hcMRKs0DtLBijH4hpfrFiwJhgV7VPyn8yL4kRUymOx5z8Ki7+P98fJI48r1UPSIaNy
-         /LGngz+mXPhc7DQWn2tg3newdRnows0o51X/ILblYMx5f7iKr5owsBaGEkurwCpDI1
-         djMrd4vm3TRC1VRhtWfqfrmpOayo65RF2r/kN4NUvHOWByIr6rc37XQF0QGsaWNsJB
-         DcenED29HMa3g==
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5c64d6030000>; Thu, 14 Feb 2019 15:44:20 +1300
-Received: from callums-dl.ws.atlnz.lc (callums-dl.ws.atlnz.lc [10.33.22.12])
-        by smtp (Postfix) with ESMTP id D9C8A13ED33;
-        Thu, 14 Feb 2019 15:44:20 +1300 (NZDT)
-Received: by callums-dl.ws.atlnz.lc (Postfix, from userid 1764)
-        id CBF6F3A0176; Thu, 14 Feb 2019 15:44:20 +1300 (NZDT)
-From:   Callum Sinclair <callum.sinclair@alliedtelesis.co.nz>
-To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
-        nikolay@cumulusnetworks.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     nicolas.dichtel@6wind.com,
-        Callum Sinclair <callum.sinclair@alliedtelesis.co.nz>
-Subject: [PATCH net-next v5] ipmr: ip6mr: Create new sockopt to clear mfc cache or vifs
-Date:   Thu, 14 Feb 2019 15:44:17 +1300
-Message-Id: <20190214024418.21490-1-callum.sinclair@alliedtelesis.co.nz>
-X-Mailer: git-send-email 2.20.1
+        Wed, 13 Feb 2019 21:45:06 -0500
+X-UUID: feeb73da9c024d11a7a5ab6c9aa5cec3-20190214
+X-UUID: feeb73da9c024d11a7a5ab6c9aa5cec3-20190214
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <long.cheng@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1888075440; Thu, 14 Feb 2019 10:44:58 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by mtkmbs03n1.mediatek.inc
+ (172.21.101.181) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 14 Feb
+ 2019 10:44:57 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 14 Feb 2019 10:44:56 +0800
+Message-ID: <1550112296.7678.5.camel@mhfsdcap03>
+Subject: Re: [PATCH v10 1/3] dmaengine: 8250_mtk_dma: add MediaTek uart DMA
+ support
+From:   Long Cheng <long.cheng@mediatek.com>
+To:     Vinod Koul <vkoul@kernel.org>
+CC:     Randy Dunlap <rdunlap@infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Sean Wang <sean.wang@kernel.org>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        YT Shen <yt.shen@mediatek.com>,
+        Zhenbao Liu <zhenbao.liu@mediatek.com>,
+        Long Cheng <long.cheng@mediatek.com>
+Date:   Thu, 14 Feb 2019 10:44:56 +0800
+In-Reply-To: <20190204072154.GJ4296@vkoul-mobl>
+References: <1547781016-890-1-git-send-email-long.cheng@mediatek.com>
+         <1547781016-890-2-git-send-email-long.cheng@mediatek.com>
+         <20190204072154.GJ4296@vkoul-mobl>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-x-atlnz-ls: pat
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Created a way to clear the multicast forwarding cache on a socket
-without having to either remove the entries manually using the delete
-entry socket option or destroy and recreate the multicast socket.
+On Mon, 2019-02-04 at 12:51 +0530, Vinod Koul wrote:
 
-Calling the socket option MRT_FLUSH will allow any combination of the
-four flag options to be cleared.
+Hi Vinod sir,
 
-MRT_FLUSH_MFC will clear all non static mfc entries and clear the unresol=
-ved cache
-MRT_FLUSH_MFC_STATIC will clear all static mfc entries
-MRT_FLUSH_VIFS will clear all non static interfaces
-MRT_FLUSH_VIFS_STATIC will clear all static interfaces.
+> On 18-01-19, 11:10, Long Cheng wrote:
+> > +static enum dma_status mtk_uart_apdma_tx_status(struct dma_chan *chan,
+> > +					 dma_cookie_t cookie,
+> > +					 struct dma_tx_state *txstate)
+> > +{
+> > +	struct mtk_chan *c = to_mtk_uart_apdma_chan(chan);
+> > +	enum dma_status ret;
+> > +	unsigned long flags;
+> > +
+> > +	if (!txstate)
+> > +		return DMA_ERROR;
+> 
+> Why, it is not a mandatory arg!
 
-Callum Sinclair (1):
-  ipmr: ip6mr: Create new sockopt to clear mfc cache or vifs
+Next version, I will remove it.
+> 
+> > +	ret = dma_cookie_status(chan, cookie, txstate);
+> > +	spin_lock_irqsave(&c->vc.lock, flags);
+> > +	if (ret == DMA_IN_PROGRESS) {
+> > +		c->rx_status = mtk_uart_apdma_read(c, VFF_RPT) & VFF_RING_SIZE;
+> > +		dma_set_residue(txstate, c->rx_status);
+> > +	} else if (ret == DMA_COMPLETE && c->dir == DMA_DEV_TO_MEM) {
+> > +		dma_set_residue(txstate, c->rx_status);
+> 
+> what is the point is setting residue to comleted txn, it is zero!
+> 
+> > +	} else {
+> > +		dma_set_residue(txstate, 0);
+> 
+> naah that doesnt sound correct!
+> 
+Next version, I will modify the function.
 
- include/uapi/linux/mroute.h  |  9 ++++-
- include/uapi/linux/mroute6.h |  9 ++++-
- net/ipv4/ipmr.c              | 75 +++++++++++++++++++++-------------
- net/ipv6/ip6mr.c             | 78 +++++++++++++++++++++++-------------
- 4 files changed, 115 insertions(+), 56 deletions(-)
+> > +static void mtk_uart_apdma_config_write(struct dma_chan *chan,
+> > +			       struct dma_slave_config *cfg,
+> > +			       enum dma_transfer_direction dir)
+> > +{
+> > +	struct mtk_chan *c = to_mtk_uart_apdma_chan(chan);
+> > +	struct mtk_uart_apdmadev *mtkd =
+> > +				to_mtk_uart_apdma_dev(c->vc.chan.device);
+> > +	unsigned int tmp;
+> > +
+> > +	if (mtk_uart_apdma_read(c, VFF_EN) == VFF_EN_B)
+> > +		return;
+> > +
+> > +	c->dir = dir;
+> > +
+> > +	if (dir == DMA_DEV_TO_MEM) {
+> > +		tmp = cfg->src_addr_width * 1024;
+> 
+> why multiply by 1024?
+> 
+Next version, I will modify the this, with 'src_port_window_size' &&
+'dst_port_window_size'.
 
---=20
-2.20.1
+> > +static int mtk_uart_apdma_device_pause(struct dma_chan *chan)
+> > +{
+> > +	/* just for check caps pass */
+> > +	return 0;
+> > +}
+> 
+> please remove, this is not a mandatory fn
+
+Can't remove it. Before the mail, i had explained it. in 8250 uart
+framework, will check the function..
+
+thanks.
 
