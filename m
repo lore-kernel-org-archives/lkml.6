@@ -2,117 +2,226 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B288C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 04:14:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EDB4C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 04:42:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32D57206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 04:14:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550117647;
-	bh=6lkY5PyGnJ9IS4BB8+cBysZnw2QiOV49YkdsUkU4tPM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xNN0L5bj8l/5V/dVPwjGUoDfnxdbdnTlVqg2pNN7ot+w0dou2yjYgGr5noaDw3OA+
-	 RB68Z13H/0bglQa6L9ToBMe9RAtjQ5TEgpTV/h0H14/5ZcoHqzDxv5w4Q/tGwTm+qk
-	 +HoCTlxETp6ImbFkpmfJ59FTY2+RYYyjUMa/olhQ=
+	by mail.kernel.org (Postfix) with ESMTP id C9B1821904
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 04:42:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395415AbfBNEOF (ORCPT
+        id S2395424AbfBNEm5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 23:14:05 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:56383 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388757AbfBNEOF (ORCPT
+        Wed, 13 Feb 2019 23:42:57 -0500
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:51229 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727763AbfBNEm5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 23:14:05 -0500
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.nyi.internal (Postfix) with ESMTP id 1424924720;
-        Wed, 13 Feb 2019 23:14:04 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Wed, 13 Feb 2019 23:14:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=gBcNGP
-        qH0pW6WM/WjvYuNQ3Md7avb22E5XXHHdIcohE=; b=WHSaT2eUaD/CCF9nnvRYBw
-        ltl6MoeEjsK3HyvK8wjWd5hKWPbkeP6Y71Z2/+eFf6GN1u9d1K325NIqVakxThyV
-        R3+fu+NJkGwFZ/8Nw0efAlUeKafv52K1sDpW6pJYNf+T1NN8UvoInI8+ec39hCJ1
-        PI2vDGNfufMHjqN/cCVFQ8X0EgbRqLKgmIx3fNFN4IogZc4LqIXM6wYbmU5+QLum
-        vjkvR89717qEyqooXOCXXdJvVbr8IcmC5q8q5YLoFeSq/kaUKi2RprZ1jr4hwzOn
-        vE2ddHDlah7YVyUVua1U0QaTmqj2+ZZ+Dsm1fW3hgPA6qkATWpF7qcpySGGhvllA
-        ==
-X-ME-Sender: <xms:C-tkXClnOqDffsw7s98XoJeVDQttaMsKmDo1tdZ_lRYaOtm8YdlJKA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledruddtgedgieeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfquhhtnecuuegrihhlohhuthemucef
-    tddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvuffkfh
-    ggtggujgfofgesthdtredtofervdenucfhrhhomhepfdfvohgsihhnucevrdcujfgrrhgu
-    ihhnghdfuceothhosghinheskhgvrhhnvghlrdhorhhgqeenucfkphepuddukedrvdduud
-    drudelledruddtgeenucfrrghrrghmpehmrghilhhfrhhomhepthhosghinheskhgvrhhn
-    vghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:C-tkXHrQeDKRb4SYyOV_j88Z3oMeYlzh3beyyKdq3a1jYB7QDB--Sw>
-    <xmx:C-tkXLGVd7KRkSUX_wIAL0bIVSvH3MtLDTphz9wG-LdyleAHP0Nagw>
-    <xmx:C-tkXDwQKjmlBJ0ggSHTDdF2mNjVSUHEhU-deZZZLP2gSGQjpCPHsQ>
-    <xmx:DOtkXP-FaPzsstL982h2ZXIumj2-LbMBzvcQ__qyJ_m5_viHfuoCvA>
-Received: from localhost (ppp118-211-199-104.bras1.syd2.internode.on.net [118.211.199.104])
-        by mail.messagingengine.com (Postfix) with ESMTPA id C8BB5E412E;
-        Wed, 13 Feb 2019 23:14:02 -0500 (EST)
-Date:   Thu, 14 Feb 2019 15:13:49 +1100
-From:   "Tobin C. Harding" <tobin@kernel.org>
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     "Tobin C. Harding" <tobin@kernel.org>,
-        kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] leaking_addresses: Expand tilde in output file name
-Message-ID: <20190214041336.GA23878@eros.localdomain>
-References: <20190207225026.11723-1-tobin@kernel.org>
- <20190207225026.11723-4-tobin@kernel.org>
- <20190207233555.GA5122@cisco>
+        Wed, 13 Feb 2019 23:42:57 -0500
+X-UUID: ad40ba9941264bd1bdd90f0a73efd555-20190214
+X-UUID: ad40ba9941264bd1bdd90f0a73efd555-20190214
+Received: from mtkcas36.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
+        (envelope-from <jitao.shi@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 759461771; Thu, 14 Feb 2019 12:42:48 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33DR.mediatek.inc
+ (172.27.6.106) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 14 Feb
+ 2019 12:42:46 +0800
+Received: from mszsdclx1018.gcn.mediatek.inc (10.16.6.18) by
+ MTKCAS32.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
+ 15.0.1395.4 via Frontend Transport; Thu, 14 Feb 2019 12:42:45 +0800
+From:   Jitao Shi <jitao.shi@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>, <linux-pwm@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <drinkcat@chromium.org>
+CC:     Jitao Shi <jitao.shi@mediatek.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Ajay Kumar <ajaykumar.rs@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Rahul Sharma <rahul.sharma@samsung.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Vincent Palatin <vpalatin@chromium.org>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
+        <cawa.cheng@mediatek.com>, <bibby.hsieh@mediatek.com>,
+        <ck.hu@mediatek.com>, <stonea168@163.com>
+Subject: [PATCH 1/3] drm/mediatek: move mipi_dsi_host_register to probe
+Date:   Thu, 14 Feb 2019 12:42:41 +0800
+Message-ID: <20190214044243.129920-1-jitao.shi@mediatek.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190207233555.GA5122@cisco>
-X-Mailer: Mutt 1.11.3 (2019-02-01)
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 07, 2019 at 04:35:55PM -0700, Tycho Andersen wrote:
-> On Fri, Feb 08, 2019 at 09:50:26AM +1100, Tobin C. Harding wrote:
-> > Currently if user passes an output file to the script via
-> > --output-raw we do not handle expansion of tilde.
-> > 
-> > Use perl function glob() to expand tilde in output file name.
-> > 
-> > Signed-off-by: Tobin C. Harding <tobin@kernel.org>
-> > ---
-> >  scripts/leaking_addresses.pl | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/scripts/leaking_addresses.pl b/scripts/leaking_addresses.pl
-> > index ef9e5b2a1614..ce545ca3fb70 100755
-> > --- a/scripts/leaking_addresses.pl
-> > +++ b/scripts/leaking_addresses.pl
-> > @@ -150,7 +150,7 @@ if (!(is_supported_architecture() or $opt_32bit or $page_offset_32bit)) {
-> >  }
-> >  
-> >  if ($output_raw) {
-> > -	open my $fh, '>', $output_raw or die "$0: $output_raw: $!\n";
-> > +	open my $fh, '>', glob($output_raw) or die "$0: $output_raw: $!\n";
-> 
-> Seems like you might also have the same problem with $input_raw? I
-> wonder if you can just do this in GetOptions somehow, so that all
-> users of these further down in the script don't have to remember to do
-> this.
+DSI panel driver need attach function which is inculde in
+mipi_dsi_host_ops.
 
-I don't know what changed between now and when I first wrote this patch
-(a fair while ago) but I just tested with bash and zsh _without_ this
-patch and tilde was handled fine.
+If mipi_dsi_host_register is not in probe, dsi panel will
+probe fail or more delay.
 
-Dropping this patch, moving the other two onto leaks-next.
+So move the mipi_dsi_host_register to probe from bind.
 
-thanks,
-Tobin.
+Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
+---
+ drivers/gpu/drm/mediatek/mtk_dsi.c | 49 ++++++++++++++++++------------
+ 1 file changed, 30 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
+index 27b507eb4a99..93fa255b4aad 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dsi.c
++++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
+@@ -1045,12 +1045,6 @@ static int mtk_dsi_bind(struct device *dev, struct device *master, void *data)
+ 		return ret;
+ 	}
+ 
+-	ret = mipi_dsi_host_register(&dsi->host);
+-	if (ret < 0) {
+-		dev_err(dev, "failed to register DSI host: %d\n", ret);
+-		goto err_ddp_comp_unregister;
+-	}
+-
+ 	ret = mtk_dsi_create_conn_enc(drm, dsi);
+ 	if (ret) {
+ 		DRM_ERROR("Encoder create failed with %d\n", ret);
+@@ -1060,8 +1054,6 @@ static int mtk_dsi_bind(struct device *dev, struct device *master, void *data)
+ 	return 0;
+ 
+ err_unregister:
+-	mipi_dsi_host_unregister(&dsi->host);
+-err_ddp_comp_unregister:
+ 	mtk_ddp_comp_unregister(drm, &dsi->ddp_comp);
+ 	return ret;
+ }
+@@ -1097,31 +1089,37 @@ static int mtk_dsi_probe(struct platform_device *pdev)
+ 
+ 	dsi->host.ops = &mtk_dsi_ops;
+ 	dsi->host.dev = dev;
++	dsi->dev = dev;
++	ret = mipi_dsi_host_register(&dsi->host);
++	if (ret < 0) {
++		dev_err(dev, "failed to register DSI host: %d\n", ret);
++		return -EPROBE_DEFER;
++	}
+ 
+ 	ret = drm_of_find_panel_or_bridge(dev->of_node, 0, 0,
+ 					  &dsi->panel, &dsi->bridge);
+ 	if (ret)
+-		return ret;
++		goto err_unregister_host;
+ 
+ 	dsi->engine_clk = devm_clk_get(dev, "engine");
+ 	if (IS_ERR(dsi->engine_clk)) {
+ 		ret = PTR_ERR(dsi->engine_clk);
+ 		dev_err(dev, "Failed to get engine clock: %d\n", ret);
+-		return ret;
++		goto err_unregister_host;
+ 	}
+ 
+ 	dsi->digital_clk = devm_clk_get(dev, "digital");
+ 	if (IS_ERR(dsi->digital_clk)) {
+ 		ret = PTR_ERR(dsi->digital_clk);
+ 		dev_err(dev, "Failed to get digital clock: %d\n", ret);
+-		return ret;
++		goto err_unregister_host;
+ 	}
+ 
+ 	dsi->hs_clk = devm_clk_get(dev, "hs");
+ 	if (IS_ERR(dsi->hs_clk)) {
+ 		ret = PTR_ERR(dsi->hs_clk);
+ 		dev_err(dev, "Failed to get hs clock: %d\n", ret);
+-		return ret;
++		goto err_unregister_host;
+ 	}
+ 
+ 	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+@@ -1129,33 +1127,35 @@ static int mtk_dsi_probe(struct platform_device *pdev)
+ 	if (IS_ERR(dsi->regs)) {
+ 		ret = PTR_ERR(dsi->regs);
+ 		dev_err(dev, "Failed to ioremap memory: %d\n", ret);
+-		return ret;
++		goto err_unregister_host;
+ 	}
+ 
+ 	dsi->phy = devm_phy_get(dev, "dphy");
+ 	if (IS_ERR(dsi->phy)) {
+ 		ret = PTR_ERR(dsi->phy);
+ 		dev_err(dev, "Failed to get MIPI-DPHY: %d\n", ret);
+-		return ret;
++		goto err_unregister_host;
+ 	}
+ 
+ 	comp_id = mtk_ddp_comp_get_id(dev->of_node, MTK_DSI);
+ 	if (comp_id < 0) {
+ 		dev_err(dev, "Failed to identify by alias: %d\n", comp_id);
+-		return comp_id;
++		ret = comp_id;
++		goto err_unregister_host;
+ 	}
+ 
+ 	ret = mtk_ddp_comp_init(dev, dev->of_node, &dsi->ddp_comp, comp_id,
+ 				&mtk_dsi_funcs);
+ 	if (ret) {
+ 		dev_err(dev, "Failed to initialize component: %d\n", ret);
+-		return ret;
++		goto err_unregister_host;
+ 	}
+ 
+ 	irq_num = platform_get_irq(pdev, 0);
+ 	if (irq_num < 0) {
+ 		dev_err(&pdev->dev, "failed to request dsi irq resource\n");
+-		return -EPROBE_DEFER;
++		ret = -EPROBE_DEFER;
++		goto err_unregister_host;
+ 	}
+ 
+ 	irq_set_status_flags(irq_num, IRQ_TYPE_LEVEL_LOW);
+@@ -1163,14 +1163,25 @@ static int mtk_dsi_probe(struct platform_device *pdev)
+ 			       IRQF_TRIGGER_LOW, dev_name(&pdev->dev), dsi);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to request mediatek dsi irq\n");
+-		return -EPROBE_DEFER;
++		ret = -EPROBE_DEFER;
++		goto err_unregister_host;
+ 	}
+ 
+ 	init_waitqueue_head(&dsi->irq_wait_queue);
+ 
+ 	platform_set_drvdata(pdev, dsi);
+ 
+-	return component_add(&pdev->dev, &mtk_dsi_component_ops);
++	ret = component_add(&pdev->dev, &mtk_dsi_component_ops);
++	if (ret) {
++		ret = -EPROBE_DEFER;
++		goto err_unregister_host;
++	}
++
++	return 0;
++
++err_unregister_host:
++	mipi_dsi_host_unregister(&dsi->host);
++	return ret;
+ }
+ 
+ static int mtk_dsi_remove(struct platform_device *pdev)
+-- 
+2.20.1
+
