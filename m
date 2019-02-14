@@ -2,80 +2,99 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E74FC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 20:32:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0979C4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 20:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23C3D2192D
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 20:32:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 778F32083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 20:34:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406841AbfBNUcF (ORCPT
+        id S2406902AbfBNUeQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 15:32:05 -0500
-Received: from mga07.intel.com ([134.134.136.100]:9049 "EHLO mga07.intel.com"
+        Thu, 14 Feb 2019 15:34:16 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40180 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394555AbfBNUcF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 15:32:05 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2019 12:32:04 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,370,1544515200"; 
-   d="scan'208";a="116289937"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga006.jf.intel.com with ESMTP; 14 Feb 2019 12:32:04 -0800
-Subject: [PATCH v2] nfit/ars: Allow root to busy-poll the ARS state machine
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     linux-nvdimm@lists.01.org
-Cc:     Erwin Tsaur <erwin.tsaur@oracle.com>, linux-kernel@vger.kernel.org
-Date:   Thu, 14 Feb 2019 12:19:26 -0800
-Message-ID: <155017550946.954637.8586902409974005660.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <155017502147.944049.2893295352368862579.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <155017502147.944049.2893295352368862579.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        id S2406868AbfBNUeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 15:34:15 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D52C880E73;
+        Thu, 14 Feb 2019 20:34:14 +0000 (UTC)
+Received: from redhat.com (unknown [10.20.6.236])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D998C60A9F;
+        Thu, 14 Feb 2019 20:34:13 +0000 (UTC)
+Date:   Thu, 14 Feb 2019 15:34:12 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-ext4 <linux-ext4@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>
+Subject: Re: [Lsf-pc] [LSF/MM TOPIC] The end of the DAX experiment
+Message-ID: <20190214203411.GC3420@redhat.com>
+References: <CAPcyv4jyCDJTpGZB6qVX7_FiaxJfDzWA1cw8dfPjHM2j3j3yqQ@mail.gmail.com>
+ <20190214134622.GG4525@dhcp22.suse.cz>
+ <CAPcyv4gxFKBQ9eVdn+pNEzBXRfw6Qwfmu21H2i5uj-PyFmRAGQ@mail.gmail.com>
+ <20190214191013.GA3420@redhat.com>
+ <CAPcyv4jLTdJyTOy715qvBL_j_deiLoBmu_thkUnFKZKMvZL6hA@mail.gmail.com>
+ <20190214200840.GB12668@bombadil.infradead.org>
+ <CAPcyv4hsDqvrV5yiDq8oWPuWb3WpuCEk_HB4qBxfiDpUwo75QQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPcyv4hsDqvrV5yiDq8oWPuWb3WpuCEk_HB4qBxfiDpUwo75QQ@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 14 Feb 2019 20:34:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ARS implementation implements exponential back-off on the poll
-interval to prevent high-frequency access to the DIMM / platform
-interface. Depending on when the ARS completes the poll interval may
-exceed the completion event by minutes. Allow root to reset the timeout
-each time it probes the status. A one-second timeout is still enforced,
-but root can otherwise can control the poll interval.
+On Thu, Feb 14, 2019 at 12:20:11PM -0800, Dan Williams wrote:
+> On Thu, Feb 14, 2019 at 12:09 PM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Thu, Feb 14, 2019 at 11:31:24AM -0800, Dan Williams wrote:
+> > > On Thu, Feb 14, 2019 at 11:10 AM Jerome Glisse <jglisse@redhat.com> wrote:
+> > > > I am just again working on my struct page mapping patchset as well as
+> > > > the generic page write protection that sits on top. I hope to be able
+> > > > to post the v2 in couple weeks. You can always look at my posting last
+> > > > year to see more details.
+> > >
+> > > Yes, I have that in mind as one of the contenders. However, it's not
+> > > clear to me that its a suitable fit for filesystem-reflink. Others
+> > > have floated the 'page proxy' idea, so it would be good to discuss the
+> > > merits of the general approaches.
+> >
+> > ... and my preferred option of putting pfn entries in the page cache.
+> 
+> Another option to include the discussion.
+> 
+> > Or is that what you meant by "page proxy"?
+> 
+> Page proxy would be an object that a filesystem could allocate to
+> point back to a single physical 'struct page *'. The proxy would
+> contain an override for page->index.
 
-Reported-by: Erwin Tsaur <erwin.tsaur@oracle.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
-Change since v1: Use mod_delayed_work() instead of queue_delayed_work()
-to modify the timeout for existing work.
+Note that generic page write protection has such object, kind of like
+stable_node in KSM. You overwritte page->mapping to point to this
+generic struct which has a pointer to set of callback so that whatever
+is protecting the page can offer API to break protection (break sharing
+here).
 
- drivers/acpi/nfit/core.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+So instead of having struct proxy_page -> struct page you would have the
+reverse: struct page -> struct proxy and so you do not have to change
+much in all the file system beside removing the reliance on page->mapping
+which is what most of my patches are about.
 
-diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-index 934be96dc149..b1ab593a808a 100644
---- a/drivers/acpi/nfit/core.c
-+++ b/drivers/acpi/nfit/core.c
-@@ -1328,6 +1328,12 @@ static ssize_t scrub_show(struct device *dev,
- 		rc = sprintf(buf, "%d%s", acpi_desc->scrub_count,
- 				acpi_desc->scrub_busy
- 				&& !acpi_desc->cancel ? "+\n" : "\n");
-+		/* Allow an admin to poll the busy state at a higher rate */
-+		if (acpi_desc->scrub_busy && !acpi_desc->cancel
-+				&& capable(CAP_SYS_RAWIO)) {
-+			acpi_desc->scrub_tmo = 1;
-+			mod_delayed_work(nfit_wq, &acpi_desc->dwork, HZ);
-+		}
- 		mutex_unlock(&acpi_desc->init_mutex);
- 	}
- 	device_unlock(dev);
-
+Cheers,
+Jérôme
