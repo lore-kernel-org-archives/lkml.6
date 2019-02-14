@@ -2,239 +2,81 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A28FC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FD7C10F04
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:51:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45655222A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:50:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="GKAW8QiQ"
+	by mail.kernel.org (Postfix) with ESMTP id 9CB33222A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:51:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437655AbfBNIuu (ORCPT
+        id S2437668AbfBNIvC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 03:50:50 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:36598 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437642AbfBNIut (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 03:50:49 -0500
-Received: from mailhost.synopsys.com (badc-mailhost1.synopsys.com [10.192.0.17])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay.synopsys.com (Postfix) with ESMTPS id 0372724E157A;
-        Thu, 14 Feb 2019 00:50:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1550134249; bh=9UbyeS93r/o4iFYLCDbfXKzE4alK1T0WZxYx8ZT3yNQ=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=GKAW8QiQqLRMKecudMxLrXWtKY/v1r0PwBjkiK226kmwI4ul5wPmTJUlVLoHXYb3p
-         L05kEQyLRdVVzpkAWJwMiuOzMupByZA+fat1zlH2A/XMxvg14xVmdBhVRtkJXQMxmY
-         eScD/g4YXIoRtMwJD5FOLX/XgZ0oDoK2J5ziytKnN7fHm3r32NLv7B+imSPCrGn6Zx
-         mDnqBsdtuwf4a/R+70+ilJOKo82puLkzTYhYRf2239ZfZAnaN/4KkXymCcZlUz9Ju3
-         QUyeTgizxdSIqN9CRq7sf5H8A/yb05O/kV0oZ4L6lZCOVlVXMlTkJ1B2uTI6nkvvci
-         k4clbMr69E5Rg==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailhost.synopsys.com (Postfix) with ESMTPS id 383D9A0071;
-        Thu, 14 Feb 2019 08:50:46 +0000 (UTC)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 14 Feb 2019 00:50:46 -0800
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0415.000; Thu,
- 14 Feb 2019 09:50:44 +0100
-From:   Alexey Brodkin <alexey.brodkin@synopsys.com>
-To:     Vineet Gupta <vineet.gupta1@synopsys.com>,
-        Peter Zijlstra <peterz@infradead.org>
-CC:     David Laight <David.Laight@ACULAB.COM>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        Arnd Bergmann <arnd.bergmann@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Thu, 14 Feb 2019 03:51:02 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39008 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2436834AbfBNIvC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 03:51:02 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7E7E7EBD;
+        Thu, 14 Feb 2019 00:51:01 -0800 (PST)
+Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C7D303F575;
+        Thu, 14 Feb 2019 00:50:57 -0800 (PST)
+Subject: Re: [PATCH 4.19 00/17] V4.19 backport of more 32-bit arm spectre
+ patches
+To:     David Long <dave.long@linaro.org>, stable@vger.kernel.org,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: RE: [PATCH] ARC: Explicitly set ARCH_SLAB_MINALIGN = 8
-Thread-Topic: [PATCH] ARC: Explicitly set ARCH_SLAB_MINALIGN = 8
-Thread-Index: AQHUv5zONn7dHynHO02cFkcDzI3gNKXcXZ6AgAADuwCAAARCgIABQZSAgACvHQCAAKYKEA==
-Date:   Thu, 14 Feb 2019 08:50:43 +0000
-Message-ID: <4881796E12491D4BB15146FE0209CE64681DB01F@DE02WEMBXB.internal.synopsys.com>
-References: <20190208105519.26750-1-abrodkin@synopsys.com>
- <81017fe4-b31f-4942-e822-a7b70008b74d@synopsys.com>
- <f83412d1e7fd4d67b4632c1f81fae963@AcuMS.aculab.com>
- <bfc65835-21f9-6d5e-791d-ee49113d939c@synopsys.com>
- <20190213125651.GP32494@hirez.programming.kicks-ass.net>
- <e6138aeb-9ce4-fbfa-4d6a-b76f189a3e47@synopsys.com>
-In-Reply-To: <e6138aeb-9ce4-fbfa-4d6a-b76f189a3e47@synopsys.com>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: =?utf-8?B?UEcxbGRHRStQR0YwSUc1dFBTSmliMlI1TG5SNGRDSWdjRDBpWXpwY2RYTmxj?=
- =?utf-8?B?bk5jWVdKeWIyUnJhVzVjWVhCd1pHRjBZVnh5YjJGdGFXNW5YREE1WkRnME9X?=
- =?utf-8?B?STJMVE15WkRNdE5HRTBNQzA0TldWbExUWmlPRFJpWVRJNVpUTTFZbHh0YzJk?=
- =?utf-8?B?elhHMXpaeTA1WWpFeU1UVmlPQzB6TURNMUxURXhaVGt0WW1Wa01pMHdNR1V3?=
- =?utf-8?B?TkdNMlpUQXpOREpjWVcxbExYUmxjM1JjT1dJeE1qRTFZamt0TXpBek5TMHhN?=
- =?utf-8?B?V1U1TFdKbFpESXRNREJsTURSak5tVXdNelF5WW05a2VTNTBlSFFpSUhONlBT?=
- =?utf-8?B?SXpNVFF3SWlCMFBTSXhNekU1TkRZd056ZzBNVGMzTmprNE5qQWlJR2c5SWto?=
- =?utf-8?B?cVJHaEtPV2x0WjBwdFZXTXZRbUp5WVZVMlpuWnJSMDFJYXowaUlHbGtQU0lp?=
- =?utf-8?B?SUdKc1BTSXdJaUJpYnowaU1TSWdZMms5SW1OQlFVRkJSVkpJVlRGU1UxSlZS?=
- =?utf-8?B?azVEWjFWQlFVSlJTa0ZCUTBVeFdtaGtVWE5VVlVGUlJVaFJTMUJKV2k5SFNr?=
- =?utf-8?B?RlJaRUZ2T0dodU9GbHJUMEZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRklRVUZCUVVOclEwRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGRlFVRlJRVUpCUVVGQlpXWjRVMnAzUVVGQlFVRkJRVUZCUVVGQlFVRkJT?=
- =?utf-8?B?alJCUVVGQ2JVRkhhMEZpWjBKb1FVYzBRVmwzUW14QlJqaEJZMEZDYzBGSFJV?=
- =?utf-8?B?RmlaMEoxUVVkclFXSm5RbTVCUmpoQlpIZENhRUZJVVVGYVVVSjVRVWN3UVZs?=
- =?utf-8?B?UlFubEJSM05CUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVWQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlowRkJRVUZCUVc1blFVRkJSMWxCWW5kQ01VRkhORUZhUVVKNVFVaHJRVmgz?=
- =?utf-8?B?UW5kQlIwVkJZMmRDTUVGSE5FRmFVVUo1UVVoTlFWaDNRbTVCUjFsQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRlJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRMEZCUVVGQlFVTmxRVUZCUVZwblFuWkJTRlZCWW1kQ2Ew?=
- =?utf-8?B?RklTVUZsVVVKbVFVaEJRVmxSUW5sQlNGRkJZbWRDYkVGSVNVRmpkMEptUVVo?=
- =?utf-8?B?TlFWbFJRblJCU0UxQlpGRkNkVUZIWTBGWWQwSnFRVWM0UVdKblFtMUJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZDUVVGQlFVRkJRVUZCUVVsQlFVRkJRVUZLTkVGQlFVSnRRVWM0?=
- =?utf-8?B?UVdSUlFuVkJSMUZCWTJkQ05VRkdPRUZqUVVKb1FVaEpRV1JCUW5WQlIxVkJZ?=
- =?utf-8?B?MmRDZWtGR09FRmpkMEpvUVVjd1FXTjNRakZCUnpSQlduZENaa0ZJU1VGYVVV?=
- =?utf-8?B?SjZRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlJVRkJRVUZCUVVGQlFVRm5RVUZCUVVGQmJt?=
- =?utf-8?B?ZEJRVUZIV1VGaWQwSXhRVWMwUVZwQlFubEJTR3RCV0hkQ2QwRkhSVUZqWjBJ?=
- =?utf-8?B?d1FVYzBRVnBSUW5sQlNFMUJXSGRDZWtGSE1FRmhVVUpxUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVkZCUVVGQlFVRkJRVUZE?=
- =?utf-8?B?UVVGQlFVRkJRMlZCUVVGQldtZENka0ZJVlVGaVowSnJRVWhKUVdWUlFtWkJT?=
- =?utf-8?B?RUZCV1ZGQ2VVRklVVUZpWjBKc1FVaEpRV04zUW1aQlNFMUJaRUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVKQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlNVRkJRVUZCUVVvMFFVRkJRbTFCUnpoQlpGRkNkVUZIVVVG?=
- =?utf-8?B?alowSTFRVVk0UVdOQlFtaEJTRWxCWkVGQ2RVRkhWVUZqWjBKNlFVWTRRV1JC?=
- =?utf-8?B?UW5wQlJ6QkJXWGRCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkZRVUZCUVVGQlFVRkJRV2RCUVVGQlFVRnVaMEZCUVVkWlFXSjNR?=
- =?utf-8?B?akZCUnpSQldrRkNlVUZJYTBGWWQwSjNRVWRGUVdOblFqQkJSelJCV2xGQ2VV?=
- =?utf-8?B?RklUVUZZZDBJeFFVY3dRVmwzUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCVVVGQlFVRkJRVUZCUVVOQlFVRkJRVUZEWlVG?=
- =?utf-8?B?QlFVRmFkMEl3UVVoTlFWaDNRbmRCU0VsQlluZENhMEZJVlVGWmQwSXdRVVk0?=
- =?utf-8?B?UVdSQlFubEJSMFZCWVZGQ2RVRkhhMEZpWjBKdVFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFrRkJRVUZCUVVGQlFVRkpR?=
- =?utf-8?B?VUZCUVVGQlNqUkJRVUZDZWtGSFJVRmlRVUpzUVVoTlFWaDNRbWhCUjAxQldY?=
- =?utf-8?B?ZENka0ZJVlVGaVowSXdRVVk0UVdOQlFuTkJSMFZCWW1kQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVVZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCWjBGQlFVRkJRVzVuUVVGQlNFMUJXVkZDYzBGSFZVRmpkMEpt?=
- =?utf-8?B?UVVoRlFXUlJRblpCU0ZGQldsRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGUlFVRkJRVUZCUVVGQlEwRkJRVUZCUVVObFFVRkJRV04zUW5WQlNF?=
- =?utf-8?B?RkJZM2RDWmtGSGQwRmhVVUpxUVVkVlFXSm5RbnBCUjFWQldIZENNRUZIVlVG?=
- =?utf-8?B?alowSjBRVVk0UVUxUlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkNRVUZCUVVGQlFVRkJRVWxCUVVGQlFVRktORUZC?=
- =?utf-8?B?UVVKNlFVYzBRV05CUW5wQlJqaEJZa0ZDY0VGSFRVRmFVVUoxUVVoTlFWcFJR?=
- =?utf-8?B?bVpCU0ZGQldsRkNlVUZITUVGWWQwSjZRVWhSUVdSUlFtdEJSMVZCWW1kQ01F?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUlVGQlFVRkJRVUZCUVVGblFV?=
- =?utf-8?B?RkJRVUZCYm1kQlFVRklXVUZhZDBKbVFVZHpRVnBSUWpWQlNHTkJZbmRDZVVG?=
- =?utf-8?B?SFVVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFWRkJRVUZC?=
- =?utf-8?Q?QUFBQUFDQUFBQUFBQT0iLz48L21ldGE+?=
-x-dg-rorf: 
-x-originating-ip: [10.225.15.89]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Cc:     Will Deacon <will.deacon@arm.com>, Mark Brown <broonie@kernel.org>,
+        linux-kernel@vger.kernel.org
+References: <20190213213223.916-1-dave.long@linaro.org>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <adb6d688-8f30-af8f-bbac-f3e166c84236@arm.com>
+Date:   Thu, 14 Feb 2019 08:50:55 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <20190213213223.916-1-dave.long@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgVmluZWV0LCBQZXRlciwgYWxsLA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+
-IEZyb206IFZpbmVldCBHdXB0YSA8dmd1cHRhQHN5bm9wc3lzLmNvbT4NCj4gU2VudDogVGh1cnNk
-YXksIEZlYnJ1YXJ5IDE0LCAyMDE5IDI6MjQgQU0NCj4gVG86IFBldGVyIFppamxzdHJhIDxwZXRl
-cnpAaW5mcmFkZWFkLm9yZz4NCj4gQ2M6IERhdmlkIExhaWdodCA8RGF2aWQuTGFpZ2h0QEFDVUxB
-Qi5DT00+OyBBbGV4ZXkgQnJvZGtpbiA8YWxleGV5LmJyb2RraW5Ac3lub3BzeXMuY29tPjsgbGlu
-dXgtc25wcy0NCj4gYXJjQGxpc3RzLmluZnJhZGVhZC5vcmc7IEFybmQgQmVyZ21hbm4gPGFybmQu
-YmVyZ21hbm5AbGluYXJvLm9yZz47IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IHN0
-YWJsZUB2Z2VyLmtlcm5lbC5vcmc7IE1hcmsgUnV0bGFuZCA8bWFyay5ydXRsYW5kQGFybS5jb20+
-DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIEFSQzogRXhwbGljaXRseSBzZXQgQVJDSF9TTEFCX01J
-TkFMSUdOID0gOA0KPiANCj4gT24gMi8xMy8xOSA0OjU2IEFNLCBQZXRlciBaaWpsc3RyYSB3cm90
-ZToNCj4gPg0KPiA+IFBlcnNvbmFsbHkgSSB0aGluayB1NjQgYW5kIGNvbXBhbnkgc2hvdWxkIGFs
-cmVhZHkgZm9yY2UgbmF0dXJhbA0KPiA+IGFsaWdubWVudDsgYnV0IGFsYXMuDQo+IA0KPiBCdXQg
-dGhlcmUgaXMgYW4gSVNBL0FCSSBhbmdsZSBoZXJlIHRvby4gZS5nLiBPbiAzMi1iaXQgQVJDLCBM
-REQgKGxvYWQgZG91YmxlKSBpcw0KPiBhbGxvd2VkIHRvIHRha2UgYSAzMi1iaXQgYWxpZ25lZCBh
-ZGRyZXNzIHRvIGxvYWQgYSByZWdpc3RlciBwYWlyLiBUaHVzIGFsbCB1NjQNCj4gbmVlZCBub3Qg
-YmUgNjQtYml0IGFsaWduZWQgKHVubGVzcyBhdHRyaWJ1dGUgYWxpZ25lZCA4IGV0YykgaGVuY2Ug
-dGhlIHJlbGF4YXRpb24NCj4gaW4gQUJJIChhbGlnbm1lbnQgb2YgbG9uZyBsb25nIGlzIDQpLiBZ
-b3UgY291bGQgY2VydGFpbmx5IGFyZ3VlIHRoYXQgd2UgZW5kIHVwDQo+IHVuZG9pbmcgc29tZSBv
-ZiBpdCBhbnl3YXlzIGJ5IGRlZmluaW5nIHRoaW5ncyBsaWtlIEFSQ0hfS01BTExPQ19NSU5BTElH
-TiB0byA4LCBidXQNCj4gc3RpbGwuLi4NCj4gDQo+ID4gSSB0aG91Z2ggdGhhdCB3YXMgcGFydCBv
-ZiB0aGUgcmVhc29uIHdlIGhhdmUgX191NjQNCj4gPiBhbmQgY28uLCBzbyB0aGF0IEFCSSBpcyBp
-bnZhcmlhbnQgdG8ga2VybmVsIGFsaWdubWVudCBjaGFuZ2VzLg0KPiANCj4gQXBwYXJlbnRseSBu
-b3QuDQo+IA0KPiA+Pj4gSSBzdXNwZWN0IHRoZSBzbGFiIGFsbG9jYXRvciBzaG91bGQgYmUgcmV0
-dXJuaW5nIDggYnl0ZSBhbGlnbmVkIGFkZHJlc3Nlcw0KPiA+Pj4gb24gYWxsIHN5c3RlbXMuLi4u
-DQo+ID4+DQo+ID4+IHdoeSA/IEFzIEkgdW5kZXJzdGFuZCBpdCBpcyBzdGlsbCBub3QgZm9vbCBw
-cm9vZiBhZ2FpbnN0IHRoZSBleHBlY3RlZCBhbGlnbm1lbnQgb2YNCj4gPj4gaW5uZXIgbWVtYmVy
-cy4gVGhlcmUgb3VnaHQgdG8gYmUgYSBiZXR0ZXIgd2F5IHRvIGVuZm9yY2UgYWxsIHRoaXMuDQo+
-ID4NCj4gPiBJIGFncmVlIHRoYXQgZm9yIEFSQyBBUkNIX1NMQUJfTUlOQUxJR04gc2hvdWxkIGJl
-IGF0IGxlYXN0IDguDQo+IA0KPiBUaGlzIGlzc3VlIGFzaWRlLCBhcmUgdGhlcmUgb3RoZXIgcmVh
-c29ucyA/IEJlY2F1c2UgbWFraW5nIGl0IDggb24gQVJDIGlzIGp1c3QNCj4gcGVuZGluZyB0aGUg
-ZXZlbnR1YWxpdHkgZm9yIGxhdGVyLg0KDQpCdXQgdGhhdCdzIHByZXR0eSBtdWNoIHRoZSBzYW1l
-IGZvciBvdGhlciAzMi1iaXQgYXJjaGVzIHRoYXQgaGF2ZSA2NC1iaXQgYXRvbWljcw0KbGlrZSBB
-Uk0gZXRjLiBGcm9tIHdoYXQgSSBtYXkgc2VlIGZyb20gQVJNJ3MgZG9jdW1lbnRhdGlvbiBmb3Ig
-TERSRVhEL1NSUkVYRCB0aGV5DQpyZXF1aXJlIGRvdWJsZS13b3JkIGFsaWdubWVudCBvZiBkYXRh
-IGFzIHdlbGwuDQoNClRoYXQgc2FpZCBpZiBmb3Igc29tZSByZWFzb24gYXRvbWljNjRfdCB2YXJp
-YWJsZSBpcyB1bmFsaWduZWQgZXhlY3V0aW9uIG9uDQphbnkgKG9yIGF0IGxlYXN0IG1vc3QpIDMy
-LWJpdCBhcmNoaXRlY3R1cmVzIHdpbGwgbGVhZCB0byBydW4tdGltZSBmYWlsdXJlLA0KaS5lLiB3
-ZSdsbCBrbm93IGFib3V0IGl0IGFuZCB0aGlzIHdpbGwgYmUgZml4ZWQuDQoNCkFuZCB3aGF0IEkn
-bSBkb2luZyBieSB0aGF0IGNoYW5nZSAoQVJDSF9TTEFCX01JTkFMSUdOPTggZm9yIEFSQykgSSdt
-IGp1c3QNCndvcmtpbmctYXJvdW5kIHBlY3VsaWFyaXR5IG9mIEFSQyBBQkkuDQoNCk91dCBvZiBj
-dXJpb3NpdHkgSSBjaGVja2VkIGlmIHRoZXJlJ3JlIGFueSBvdGhlciBvY2N1cnJlbmNlcyBvZiAi
-YWxpbmdvZihsb25nIGxvbmcpIg0KYW5kIHRoZXJlIHNlZW1zIHRvIGJlIGEgY291cGxlIG9mIG1v
-cmU6DQotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLT44LS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0NCiMgZ2l0IGdyZXAgYWxpZ25vZiB8IGdyZXAgImxvbmcgbG9uZyINCg0K
-Li4uDQoNCmtlcm5lbC93b3JrcXVldWUuYzo1NjkzOiAgICAgICAgV0FSTl9PTihfX2FsaWdub2Zf
-XyhzdHJ1Y3QgcG9vbF93b3JrcXVldWUpIDwgX19hbGlnbm9mX18obG9uZyBsb25nKSk7DQptbS9z
-bGFiLmM6MTU1OiNkZWZpbmUgICBSRURaT05FX0FMSUdOICAgICAgICAgICBtYXgoQllURVNfUEVS
-X1dPUkQsIF9fYWxpZ25vZl9fKHVuc2lnbmVkIGxvbmcgbG9uZykpDQptbS9zbGFiLmM6MjAzNDog
-aWYgKHJhbGlnbiA+IF9fYWxpZ25vZl9fKHVuc2lnbmVkIGxvbmcgbG9uZykpDQotLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLT44LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0N
-Cg0KTm90IHJlYWxseSBzdXJlIGhvdyBpbXBvcnRhbnQgaXMgImtlcm5lbC93b3JrcXVldWUuYyIg
-cGFydCBidXQgaW4gY2FzZSBvZiAibW0vc2xhYi5jIg0Kc2hvdWxkbid0IHdlIHVzZSBBUkNIX1NM
-QUJfTUlOQUxJR04gdGhlcmUgaW5zdGVhZCBvZiB0aGF0ICJub3QgdmVyeSBtZWFuaW5nZnVsIiBf
-X2FsaWdub2ZfXyhsb25nIGxvbmcpPw0KDQotQWxleGV5DQo=
+Hi David,
+
+On 13/02/2019 21:32, David Long wrote:
+> From: "David A. Long" <dave.long@linaro.org>
+> 
+> V4.19 backport of spectre patches from Russell M. King's spectre branch.
+> Patches have been kvm-unit-test'ed on an arndale, run through kernelci, and
+> handed off to ARM for functional testing.
+> 
+
+I've reviewed the backports.
+
+For Spectre-v1.1 I also checked we do get the expected code sequence in
+the generated image at the expected locations. So, for patches 1 to 10:
+
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+
+For Spectre-v2 big.Little patches, I managed to test this on TC2 and can
+confirm CPUs pick up the correct mitigation method. So, for patches 11
+to 17:
+
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Tested-by: Julien Thierry <julien.thierry@arm.com>
+
+Thanks,
+
+-- 
+Julien Thierry
