@@ -2,160 +2,97 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2038FC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 04:43:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67AAFC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 04:46:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBC6821904
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 04:43:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2237821904
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 04:46:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BreapajY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395485AbfBNEnH (ORCPT
+        id S2395494AbfBNEqf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 23:43:07 -0500
-Received: from mailgw02.mediatek.com ([1.203.163.81]:24984 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727763AbfBNEnA (ORCPT
+        Wed, 13 Feb 2019 23:46:35 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:41659 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389631AbfBNEqf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 23:43:00 -0500
-X-UUID: 780553ff4fc14a60bccdc2b12ec92391-20190214
-X-UUID: 780553ff4fc14a60bccdc2b12ec92391-20190214
-Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
-        (envelope-from <jitao.shi@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 842673846; Thu, 14 Feb 2019 12:42:54 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33DR.mediatek.inc
- (172.27.6.106) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 14 Feb
- 2019 12:42:52 +0800
-Received: from mszsdclx1018.gcn.mediatek.inc (10.16.6.18) by
- MTKCAS32.mediatek.inc (172.27.4.170) with Microsoft SMTP Server id
- 15.0.1395.4 via Frontend Transport; Thu, 14 Feb 2019 12:42:51 +0800
-From:   Jitao Shi <jitao.shi@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>, <linux-pwm@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <drinkcat@chromium.org>
-CC:     Jitao Shi <jitao.shi@mediatek.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Ajay Kumar <ajaykumar.rs@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Rahul Sharma <rahul.sharma@samsung.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Vincent Palatin <vpalatin@chromium.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
-        <cawa.cheng@mediatek.com>, <bibby.hsieh@mediatek.com>,
-        <ck.hu@mediatek.com>, <stonea168@163.com>
-Subject: [PATCH 3/3] drm/mediatek: add mt8183 dsi driver support
-Date:   Thu, 14 Feb 2019 12:42:43 +0800
-Message-ID: <20190214044243.129920-3-jitao.shi@mediatek.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190214044243.129920-1-jitao.shi@mediatek.com>
-References: <20190214044243.129920-1-jitao.shi@mediatek.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-MTK:  N
+        Wed, 13 Feb 2019 23:46:35 -0500
+Received: by mail-yb1-f195.google.com with SMTP id 18so273206ybf.8
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 20:46:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=hO7DSwxzHlBBi4/zT5cSujpYWgbd+Avp3ABtw3OhI0o=;
+        b=BreapajYsNYQ4iV53Cu619/9OrvYxaeKFZPOy635p/VrN8K1+22TgeMSXf9EEUXkQi
+         a5jRZuCT0nC9LJB9s3MKkir9zogJEydr7v87Z7OqiWMC7D///ZGAkoEdY90c64mpEXEa
+         UShekndl1sXnzblFFx/O0ApEePgmJpKO9Ti6MFdXMWuqt+gacAVoQMJ49wcpN+VbBNwS
+         FIImT3DraDAJXjPZ3rtd2AcxMCegcdi8HU1ojEW5MCTl32poTF0Jk3XhgX8q3P299T39
+         AYaclwCOlZvBz5dBzNUJ8bHYGJEHA5w2Yn4tS5AVtCqqTy25DsOLL6Ib5rutEjqtsm7B
+         nEVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=hO7DSwxzHlBBi4/zT5cSujpYWgbd+Avp3ABtw3OhI0o=;
+        b=CifaFUBnZz4oG6/Oa15xBfOV7mBtIceaWpsIyBe3QbLC/ITnGNbceBzGiI+4bKPeJg
+         Pe9UXrGSALXCZ2YAnjfITUT9oAzKpBxbEQBJZ3ScJt6Wo0QBHX8hUyJP6rEV/ySpee7O
+         NpMMlW72shoH8RyAVxArLDOD/8k24ijLO47AdgdAbpZTn+Sks7W4aQoCgrjDMOQKGPW+
+         3iwQBsIz0F1/O7LcPh2lfmvMeUTQz4eyMO6qQ406ORXJSzZBFR2pfwNd+j6/+IsKG5YK
+         czMFc9ljNpbi+buzuaH128YcXa387VcnydzQMF3U7t2CBPZbaaeireI8EKZMYPo9+GHU
+         OVvQ==
+X-Gm-Message-State: AHQUAuYJqmBww8ziudVpC7EiNQyZJEBYx8nQx6V3pKq2T049kUrR/udm
+        p+9Ln1tH4a02U4MfKvmq4QE=
+X-Google-Smtp-Source: AHgI3Ia0qW8d+5IAkOCsne/sb//c0YA5CTYhITiwzhkwsD67ys0jc9i5eOb9iRlOM4sbeXiMj4Lkeg==
+X-Received: by 2002:a25:ab2a:: with SMTP id u39mr1550311ybi.0.1550119594493;
+        Wed, 13 Feb 2019 20:46:34 -0800 (PST)
+Received: from localhost.localdomain ([191.101.9.198])
+        by smtp.gmail.com with ESMTPSA id s185sm876056yws.69.2019.02.13.20.46.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 20:46:33 -0800 (PST)
+From:   Bo YU <tsu.yubo@gmail.com>
+To:     alexander.deucher@amd.com, christian.koenig@amd.com,
+        David1.Zhou@amd.com, airlied@linux.ie, daniel@ffwll.ch,
+        Rex.Zhu@amd.com, andrey.grodzovsky@amd.com,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Cc:     Bo Yu <tsu.yubo@gmail.com>, amd-gfx@lists.freedesktop.org
+Subject: [PATCH] drm/amdgpu: Error handling issues about CHECKED_RETURN
+Date:   Wed, 13 Feb 2019 23:46:28 -0500
+Message-Id: <20190214044628.26759-1-tsu.yubo@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MT8183 dsi has two changes with mt8173.
-1. Add the register double buffer control, but we no need it, So make
-   it default off.
-2. Add picture size control.
+From: Bo Yu <tsu.yubo@gmail.com>
 
-Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
+Calling "amdgpu_ring_test_helper" without checking return value
+
+Signed-off-by: Bo Yu <tsu.yubo@gmail.com>
 ---
- drivers/gpu/drm/mediatek/mtk_dsi.c | 20 +++++++++++++++++++-
- 1 file changed, 19 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-index 80db02a25cb0..20cb53f05d42 100644
---- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-+++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-@@ -78,6 +78,7 @@
- #define DSI_VBP_NL		0x24
- #define DSI_VFP_NL		0x28
- #define DSI_VACT_NL		0x2C
-+#define DSI_SIZE_CON		0x38
- #define DSI_HSA_WC		0x50
- #define DSI_HBP_WC		0x54
- #define DSI_HFP_WC		0x58
-@@ -131,7 +132,10 @@
- #define VM_CMD_EN			BIT(0)
- #define TS_VFP_EN			BIT(5)
+diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+index 57cb3a51bda7..48465a61516b 100644
+--- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
++++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
+@@ -4728,7 +4728,9 @@ static int gfx_v8_0_cp_test_all_rings(struct amdgpu_device *adev)
  
--#define DSI_CMDQ0		0x180
-+#define DSI_SHADOW_DEBUG	0x190U
-+#define FORCE_COMMIT		BIT(0)
-+#define BYPASS_SHADOW		BIT(1)
-+
- #define CONFIG				(0xff << 0)
- #define SHORT_PACKET			0
- #define LONG_PACKET			2
-@@ -158,6 +162,7 @@ struct phy;
- 
- struct mtk_dsi_driver_data {
- 	const u32 reg_cmdq_off;
-+	bool has_size_ctl;
- };
- 
- struct mtk_dsi {
-@@ -426,6 +431,9 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
- 	writel(vm->vfront_porch, dsi->regs + DSI_VFP_NL);
- 	writel(vm->vactive, dsi->regs + DSI_VACT_NL);
- 
-+	if (dsi->driver_data->has_size_ctl)
-+		writel(vm->vactive << 16 | vm->hactive, dsi->regs + DSI_SIZE_CON);
-+
- 	horizontal_sync_active_byte = (vm->hsync_len * dsi_tmp_buf_bpp - 10);
- 
- 	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
-@@ -595,6 +603,9 @@ static int mtk_dsi_poweron(struct mtk_dsi *dsi)
+ 	for (i = 0; i < adev->gfx.num_compute_rings; i++) {
+ 		ring = &adev->gfx.compute_ring[i];
+-		amdgpu_ring_test_helper(ring);
++		r = amdgpu_ring_test_helper(ring);
++		if (r)
++			return r;
  	}
  
- 	mtk_dsi_enable(dsi);
-+
-+	/* DSI no need this double buffer, disable it when writing register */
-+	writel(FORCE_COMMIT | BYPASS_SHADOW, dsi->regs + DSI_SHADOW_DEBUG);
- 	mtk_dsi_reset_engine(dsi);
- 	mtk_dsi_phy_timconfig(dsi);
- 
-@@ -1090,11 +1101,18 @@ static const struct mtk_dsi_driver_data mt2701_dsi_driver_data = {
- 	.reg_cmdq_off = 0x180,
- };
- 
-+static const struct mtk_dsi_driver_data mt8183_dsi_driver_data = {
-+	.reg_cmdq_off = 0x200,
-+	.has_size_ctl = true,
-+};
-+
- static const struct of_device_id mtk_dsi_of_match[] = {
- 	{ .compatible = "mediatek,mt2701-dsi",
- 	  .data = &mt2701_dsi_driver_data },
- 	{ .compatible = "mediatek,mt8173-dsi",
- 	  .data = &mt8173_dsi_driver_data },
-+	{ .compatible = "mediatek,mt8183-dsi",
-+	  .data = &mt8183_dsi_driver_data },
- 	{ },
- };
- 
+ 	return 0;
 -- 
-2.20.1
+2.11.0
 
