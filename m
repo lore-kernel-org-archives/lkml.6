@@ -2,131 +2,101 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C35C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:26:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E8FBC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:26:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0042222D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:26:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1DB3222D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:26:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dellteam.com header.i=@dellteam.com header.b="ePhMKfA6"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="K9+zw67u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439781AbfBNT0v (ORCPT
+        id S2439771AbfBNT0t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 14:26:51 -0500
-Received: from esa2.dell-outbound.iphmx.com ([68.232.149.220]:53808 "EHLO
-        esa2.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2439736AbfBNT0c (ORCPT
+        Thu, 14 Feb 2019 14:26:49 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33625 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2439737AbfBNT0e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 14:26:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dellteam.com; i=@dellteam.com; q=dns/txt; s=smtpout;
-  t=1550172392; x=1581708392;
-  h=cc:from:to:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=KF5/ZKLPvD3zphF/+bULMEtrWBscpl6jofrPxgRma4k=;
-  b=ePhMKfA6K1IGtaY8SQtieeOi+DhyjuSQeD/ToY+EgZm6gYaV9oDLIBQh
-   l6mXO3w1xQ6YO5vVwTzpgn1sESV5G0smhtahSjMSAeYWLD/3qbPbHzEfD
-   6DyMvCxE2CElg9bfua13eswpMPnyTmsjOUli+0/2CH5vcEc3f+vuXW/GE
-   k=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FyAAAjwGVchyeV50NkGwEBAQEDAQE?=
- =?us-ascii?q?BBwMBAQGBZYJZgRQnCox1ixKCDZoOCwEBLIRAg2YiOBIBAwEBAgEBAgEBAhA?=
- =?us-ascii?q?BAQEKCwkIKS+COiKCbwEBAQMBEig/BQsCAQgYHhBXAgQTCBqCfoFrCJ5mPQJ?=
- =?us-ascii?q?tgQGJBwEBAYIeijiMRIIWg3UuhQFNhRMCjAeLMot1CQWSRyGBbpEFi0mQYgI?=
- =?us-ascii?q?EAgQFAhSBXYF4cIM8gjaOJ0ExgSiOFQGBHgEB?=
-X-IPAS-Result: =?us-ascii?q?A2FyAAAjwGVchyeV50NkGwEBAQEDAQEBBwMBAQGBZYJZg?=
- =?us-ascii?q?RQnCox1ixKCDZoOCwEBLIRAg2YiOBIBAwEBAgEBAgEBAhABAQEKCwkIKS+CO?=
- =?us-ascii?q?iKCbwEBAQMBEig/BQsCAQgYHhBXAgQTCBqCfoFrCJ5mPQJtgQGJBwEBAYIei?=
- =?us-ascii?q?jiMRIIWg3UuhQFNhRMCjAeLMot1CQWSRyGBbpEFi0mQYgIEAgQFAhSBXYF4c?=
- =?us-ascii?q?IM8gjaOJ0ExgSiOFQGBHgEB?=
-Received: from mx0a-00154901.pphosted.com ([67.231.149.39])
-  by esa2.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 14 Feb 2019 13:26:30 -0600
-Received: from pps.filterd (m0142699.ppops.net [127.0.0.1])
-        by mx0a-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1EJE6jw034764;
-        Thu, 14 Feb 2019 14:26:30 -0500
-Received: from esa5.dell-outbound2.iphmx.com (esa5.dell-outbound2.iphmx.com [68.232.153.203])
-        by mx0a-00154901.pphosted.com with ESMTP id 2qnc78rr5p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 14 Feb 2019 14:26:29 -0500
-Cc:     <mr.nuke.me@gmail.com>, <bhelgaas@google.com>,
-        <Austin.Bolen@dell.com>, <keith.busch@intel.com>,
-        <Shyam.Iyer@dell.com>, <gustavo@embeddedor.com>,
-        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Received: from ausxippc106.us.dell.com ([143.166.85.156])
-  by esa5.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 15 Feb 2019 01:26:02 +0600
-X-LoopCount0: from 10.166.134.85
-X-IronPort-AV: E=Sophos;i="5.58,369,1544508000"; 
-   d="scan'208";a="354071790"
-From:   <Alex_Gagniuc@Dellteam.com>
-To:     <lukas@wunner.de>
-Subject: Re: [PATCH] PCI: pciehp: Do not turn off slot if presence comes up
- after link
-Thread-Topic: [PATCH] PCI: pciehp: Do not turn off slot if presence comes up
- after link
-Thread-Index: AQHUvZbN4kEiyNA8xUGy+Uw4G87SXw==
-Date:   Thu, 14 Feb 2019 19:26:28 +0000
-Message-ID: <59479c08d4624ffdb00883813ce80729@ausx13mps321.AMER.DELL.COM>
-References: <20190205210701.25387-1-mr.nuke.me@gmail.com>
- <20190209115849.244u67h7wmn3eb7o@wunner.de>
- <52afa1c45f684dbda6a8771b65583a22@ausx13mps321.AMER.DELL.COM>
- <20190212083031.2no7mzn5xug7nba3@wunner.de>
- <b2fffa5beb7941ebaceb8b8ce6e5b133@ausx13mps321.AMER.DELL.COM>
- <20190213083632.GA3387@wunner.de>
- <205e0fd9995a4f2b80ab370a974b6628@ausx13mps321.AMER.DELL.COM>
- <20190214070100.kvikmkkcrp2d32sm@wunner.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [143.166.11.234]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Thu, 14 Feb 2019 14:26:34 -0500
+Received: by mail-pf1-f195.google.com with SMTP id c123so3596389pfb.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 11:26:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=NCL7zOvAf1NWF05m63CPXM37pS/d93C5nu4kd6BUq+I=;
+        b=K9+zw67ufc8DaaJo+tTQydkpSrx5nlGraeqeSAo3n+X5ceMeAcFS+s+lCDqXhZbCAH
+         KEudWGAC2KiR8BjB8qkOw9YxkdTUyNd0mkTg2gtgWQKt/1hifbYXJ10L1t6qBPOXFbE1
+         W67Bp3DP6NAW4Nt8HFiWxkEnuqEFYqaGYV2bw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=NCL7zOvAf1NWF05m63CPXM37pS/d93C5nu4kd6BUq+I=;
+        b=Z36GPwChWyMS+EqhHb6lloGGRzaQlpzfTRM3Yhw71IdQJPbg4ud8axc6Q52jUyw6NJ
+         YXIM9wRNUIn6O61qAi7asix1A276ubvYUQMdsmF75OrcmXutut+JKDgEBtANy4kY4NmR
+         qzpRW/VR/a1IGjKmNV6OB3cZzp96Z4BtYCLY4yCcMFApYIzB25aw8+XOBsGEIQ0J750e
+         8VkV1pAFTqgFkJYzLajpSSSt4lXfDDy3J6Pc12mVH+7DfUMenRAyuqZSP3MLXQY6e+vV
+         /XMIEyB7+Dvo0TzhgaoWupfkuuk4uhkz0og2sLYwonTSCqaeBs+KBj1wz3LZuZj0afXL
+         YUFA==
+X-Gm-Message-State: AHQUAuZOXT0eI/r6voo8f/dhoS4KZbUWp0v2jpJonR3icteMcoAUUszo
+        r9l5LMsjtJg7eZeX0oFqUQj//g==
+X-Google-Smtp-Source: AHgI3IbMiL/gS1qmVCENxTGERlXMbdvyTc5nPHlKAL3EzoaLl3D4CI3+JAB3CJNEUS0DDrPFt54fxg==
+X-Received: by 2002:a63:fa48:: with SMTP id g8mr1447618pgk.203.1550172393490;
+        Thu, 14 Feb 2019 11:26:33 -0800 (PST)
+Received: from localhost.localdomain ([115.97.184.151])
+        by smtp.gmail.com with ESMTPSA id k71sm8390100pga.44.2019.02.14.11.26.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Feb 2019 11:26:32 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-amarula@amarulasolutions.com,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v8 8/8] drm/sun4i: sun6i_mipi_dsi: Add DSI Generic short write 2 param transfer
+Date:   Fri, 15 Feb 2019 00:55:44 +0530
+Message-Id: <20190214192544.7314-9-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+In-Reply-To: <20190214192544.7314-1-jagan@amarulasolutions.com>
+References: <20190214192544.7314-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=715 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902140128
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/14/19 1:01 AM, Lukas Wunner wrote:=0A=
-> On Wed, Feb 13, 2019 at 06:55:46PM +0000, Alex_Gagniuc@Dellteam.com wrote=
-:=0A=
->> On 2/13/19 2:36 AM, Lukas Wunner wrote:=0A=
->>>> (*) A bit hypothetical: There is no hardware yet implementing the ECN.=
-=0A=
->>>=0A=
->>> Hm, this contradicts Austin Bolen's e-mail of Jan 25 that "Yes, this=0A=
->>> platform disables in-band presence" (when asked whether your host=0A=
->>> controller already adheres to the ECN).=0A=
->>=0A=
->> Both statements are true. The hardware does indeed disable in-band=0A=
->> presence, in a rudimentary way that is not compliant with the ECN -- it=
-=0A=
->> doesn't implement the bits required by the ECN.=0A=
-> =0A=
-> Ugh, can a BIOS update make those machines compliant to the ECN=0A=
-=0A=
-No, that is not possible, I'm told.=0A=
-=0A=
-> or do we need a quirk specifically for them?=0A=
-=0A=
-We might have to.=0A=
-=0A=
-> It should match the spec, which I have no access to.=0A=
-=0A=
-I am as irritated as you that the spec is not readily available for =0A=
-public viewing.=0A=
-=0A=
-Cheers,=0A=
-Alex=0A=
+Short transfer write support for DCS and Generic transfer types
+share similar way to process command sequence in DSI block so
+add generic write 2 param transfer type macro so-that the panels
+which are requesting similar transfer type may process properly.
+
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+index 31cf9c58e98d..3a28d70dbdc1 100644
+--- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
++++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+@@ -918,6 +918,7 @@ static ssize_t sun6i_dsi_transfer(struct mipi_dsi_host *host,
+ 	switch (msg->type) {
+ 	case MIPI_DSI_DCS_SHORT_WRITE:
+ 	case MIPI_DSI_DCS_SHORT_WRITE_PARAM:
++	case MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM:
+ 		ret = sun6i_dsi_dcs_write_short(dsi, msg);
+ 		break;
+ 
+-- 
+2.18.0.321.gffc6fa0e3
+
