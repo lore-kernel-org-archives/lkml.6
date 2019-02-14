@@ -2,78 +2,98 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9AD3C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:34:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99D51C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 923CD2229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:34:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A8A32229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:35:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="q5hSsYK6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406541AbfBNKe5 (ORCPT
+        id S2406594AbfBNKfE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 05:34:57 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40656 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388126AbfBNKe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 05:34:57 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B4E9CEBD;
-        Thu, 14 Feb 2019 02:34:56 -0800 (PST)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 38CC23F575;
-        Thu, 14 Feb 2019 02:34:55 -0800 (PST)
-Date:   Thu, 14 Feb 2019 10:34:52 +0000
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Julien Grall <julien.grall@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-rt-users@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] arm64/fpsimd: Don't disable softirq when touching
- FPSIMD/SVE state
-Message-ID: <20190214103449.GN3567@e103592.cambridge.arm.com>
-References: <20190208165513.8435-1-julien.grall@arm.com>
- <20190213143029.ad2kzg7vtuo3zpjk@linutronix.de>
- <20190213153630.GK3567@e103592.cambridge.arm.com>
- <CAKv+Gu__0uy6Y-EJGSygSYH4RqpLDWMMNFE3yauF_x7-UNcgFQ@mail.gmail.com>
- <20190213165227.7ekekkxazhbaqxoe@linutronix.de>
+        Thu, 14 Feb 2019 05:35:04 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:41278 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405023AbfBNKfE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 05:35:04 -0500
+Received: from zn.tnic (p200300EC2BCDFC0031381CDCD91ACBA1.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:fc00:3138:1cdc:d91a:cba1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id CC64B1EC0375;
+        Thu, 14 Feb 2019 11:35:02 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1550140502;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=fVkCeXnTvGBdbtW9PRJCG4ZdZmCSOOyqZL76iPqI4Zs=;
+        b=q5hSsYK6WfF4oxsoLHhV3AkSjJ3XPxqL2w4Hj5DK5HI5FIoGytUoEjKeL2/Jys2vKdXgm8
+        zRYmSqlaX3RXaeCoLWOUL1BjdbHpoJHdD/1Wa+rQ1l+qhnOmt7uhX5IGSa17j5Izr3r4wk
+        9jFLEtqWBnZgwM2LnQhyJj5gZOAdiHM=
+Date:   Thu, 14 Feb 2019 11:34:57 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jiri Slaby <jslaby@suse.cz>
+Cc:     mingo@redhat.com, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Subject: Re: [PATCH v7 05/28] x86/asm/entry: annotate THUNKs
+Message-ID: <20190214103457.GA12467@zn.tnic>
+References: <20190130124711.12463-1-jslaby@suse.cz>
+ <20190130124711.12463-6-jslaby@suse.cz>
+ <20190209112551.GA5089@zn.tnic>
+ <b75f2a0d-974a-c63b-64f8-8f333991e826@suse.cz>
+ <20190212110501.GB30028@zn.tnic>
+ <6b6aebb5-5f7c-e3b7-545e-3a4558e01e66@suse.cz>
+ <20190212114654.GC30028@zn.tnic>
+ <37e83ece-28c0-a7ec-86a3-b9b5ca2c61f6@suse.cz>
+ <20190212121347.GD30028@zn.tnic>
+ <cd09f00f-7174-4d06-50a2-3cc056b7d763@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190213165227.7ekekkxazhbaqxoe@linutronix.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <cd09f00f-7174-4d06-50a2-3cc056b7d763@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 05:52:27PM +0100, Sebastian Andrzej Siewior wrote:
-> On 2019-02-13 16:40:00 [+0100], Ard Biesheuvel wrote:
-> > > > This is equal what x86 is currently doing. The naming is slightly
-> > > > different, there is irq_fpu_usable().
-> > >
-> > > Yes, I think it's basically the same idea.
-> > >
-> > > It's been evolving a bit on both sides, but is quite similar now.
-> > >
-> > 
-> > may_use_simd() only exists because we have a generic crypto SIMD
-> > helper, and so we needed something arch agnostic to wrap around
-> > irq_fpu_usable()
-> 
-> My question was more if this is helpful and we want to keep or if
-> it would be better to remove it and always disable BH as part of SIMD
-> operations.
+On Thu, Feb 14, 2019 at 11:03:14AM +0100, Jiri Slaby wrote:
+> first results in objtool complaints:
+> > arch/x86/entry/entry_64.o: warning: objtool: .entry.text+0x190: unsupported intra-function call
+> > arch/x86/entry/entry_64.o: warning: objtool: If this is a retpoline, please patch it in with alternatives and annotate it with ANNOTATE_NOSPEC_ALTERNATIVE.
 
-Wouldn't this arbitrarily increase softirq latency?  Unconditionally
-forbidding SIMD in softirq might make more sense.  It depends on how
-important the use cases are...
+objtool can be fixed.
 
-Cheers
----Dave
+> and also the crash is misleading:
+> > BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+> > #PF error: [WRITE] 
+> > PGD 0 P4D 0 
+> > Oops: 0002 [#1] PREEMPT SMP
+> ...
+> > RIP: 0010:__switch_to_asm+0x70/0x80
+
+You have RIP.
+
+But yes, there is some disadvantage of not having global symbols vs
+polluting the ELF symtable with random ones.
+
+If we're going to keep them global, then we should at least make sure
+their names have proper prefix so that at least one can map them to the
+kernel namespace they belong to and there is no confusion when staring
+at stack traces.
+
+Also, they should not be a lot because the places where we do all these
+funky trampoline etc games where a chunk of code is outside of the
+boundaries of a function, are only a couple.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
