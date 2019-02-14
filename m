@@ -2,118 +2,207 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 442A3C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:59:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A951BC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:00:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D828222A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:59:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69670222A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:00:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kk5JI87g"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bQj5ivsm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406375AbfBNJ7K (ORCPT
+        id S2393492AbfBNKA0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 04:59:10 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:44923 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404576AbfBNJ7K (ORCPT
+        Thu, 14 Feb 2019 05:00:26 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44597 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388650AbfBNKAZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 04:59:10 -0500
-Received: by mail-ua1-f66.google.com with SMTP id v9so1801848uar.11
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 01:59:09 -0800 (PST)
+        Thu, 14 Feb 2019 05:00:25 -0500
+Received: by mail-wr1-f65.google.com with SMTP id v16so5725925wrn.11;
+        Thu, 14 Feb 2019 02:00:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7Q0oXiUTaSePAZtvAY9YhhNz5awIypAsPqHV+I2fuRg=;
-        b=Kk5JI87grQ98H6C47ZHKXM9RF1V/ulhYD9OXZKvRb9VEt58owGYVdnMVyY4aaW0HEk
-         aTWipdLNqPPb9uzBTC3COzFhmzj9RXNSWPqS1giaJ1UxmM0vlNT/W64WZv1auKJU8ITA
-         JAJ8ZMijMWM85IRfa+7b6SRoYxtinfZjVVVGJgsPVZ+ox5O+KqbxdvqdhpbH87CXTTtr
-         YNQ3oKrsYZRFmaHLrhcb6AT2svHPbWxlbvvPa6cI9kMC5ECBJhRNoQ3QK3UjZJgGwWFB
-         cubAsHFkIIXui0MHzRVn1yyDo3em0aH9Z15XDaQlxCg7t1DZaMLoDtYZegQRm9QXL1+B
-         dChw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=XN6xUCS+tZmGQkSmGy6ryJ1Zi47H6ia5G0Vkj8uZJkU=;
+        b=bQj5ivsmZHdmK+/W3Cc5ieUJs/rugU/1ses5dj88GO5K4/VWj99r5GAaHrhQrL/fy0
+         vAyoLuJkHySSOIMkZBJF3ITY2jyz21UXd08zp1hCFIX2A3qFG7JTtKFESvzj99E4AHlX
+         9mNt0uSm9t6IFWt0IonKUqia7LHnNcmeYBgBynSdsYYnTnuLxpUFr4tdAtrIZJb9qpWo
+         I2QKpNOAzoZpKoUFqTPWQj5FuXmw3C7xrVbx+s9zq/CV0bcEBR3uqx0ad8iwSVGg6PkP
+         0Gd/xCV1Jps1TddnSMeq4VYXzWAqd/hvWs8E9e9Kc9/xRDQ1YrBnovhYPVm/fjv6kQof
+         WZwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7Q0oXiUTaSePAZtvAY9YhhNz5awIypAsPqHV+I2fuRg=;
-        b=iH4hceL/nLAg/bwOGQV0q6KGzWRarsm2dxIGh6sAwgiR70HAqdTVDbNPtqtKG0QPdH
-         6J/lWkXe59ew02DgXISf8lM+twpFfvspbAwUcTceQPfQ2DpoNinVjt6rmg4v7p5aC9re
-         iqGGfqFziAWuennbfUO7QP6Di2Hw3ZnhFjq67mkU7OeFFtvFWpjWL6W1NON1Nwz4Lk4W
-         87ogvO6OJPIIJFuZ5Ys9SYr4bOcEKd94qvvIYz5qyLmHS2B6SweXecd+Hi7qA31BX/Up
-         bcvpkr5TrKgPQNFFr3qZrzuA2EkoPPXh0eKq7vRDH3pwP4WF0Z1XwJ990+hVt+Gsmjx8
-         gPig==
-X-Gm-Message-State: AHQUAuaVp72FtM/dX6hWhj7QP1oWdTQdwXi5oruIIiox3xya2JYLB6Wg
-        1BslvdApKyByCFN+nJvIZAiTb8r5owJY8UqqrMGS5A==
-X-Google-Smtp-Source: AHgI3Ib28AsG5TRZGqL0NaxEB/Tozn1MO4uRArdSLWzHnKgjqoKbmb22Trnjl1iTqRo5ky8utchhi3SuukAbY5pG1IM=
-X-Received: by 2002:ab0:22d6:: with SMTP id z22mr1438065uam.66.1550138348558;
- Thu, 14 Feb 2019 01:59:08 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=XN6xUCS+tZmGQkSmGy6ryJ1Zi47H6ia5G0Vkj8uZJkU=;
+        b=RALz9Y9QglOv077r+t4twYehRJkA+yWJSZ1irLdDmel1xobnw4evGCQ3Zk0OIPt22b
+         V3aTjRkNnTLk5+lTtzK2jzcAd/gC8ftjCpNC8GuU6or7W+CB0Y1qd3iaN82l6nO0OlTq
+         vrY99aBGzWYW4JyLzOdatsiz8XYDt+0YVjt1nlS9E76pVP8y0OnAX9nX0Oe60lU0Gczz
+         xT/NRlIN50tZlWRTILknCIduNotdqsknjLaV/XODgY+Ja3Y2uW4nk1a+2BcivqMpuN8S
+         TcABxZkmtOaBzYnqZLqDO9aDxuiPsSk+VZyNKhfNMzJ+b27Ez6QCRxvLFxoCR+VJc9c/
+         iRCg==
+X-Gm-Message-State: AHQUAub80UkHcjqxOsK8nJvIYQ89DRXZRWuv7Cdad01stoMGwZFb4MZL
+        Rzl6RMy6kjRYIR0hc0Ojzfo=
+X-Google-Smtp-Source: AHgI3IZHymyK33Jq1slZmcUXBX2W9bJzMFWZlQ1sJwTUvtpyybwojShoCMomxNHxC7VI/f5exxHUZw==
+X-Received: by 2002:adf:ee8e:: with SMTP id b14mr2047002wro.71.1550138422919;
+        Thu, 14 Feb 2019 02:00:22 -0800 (PST)
+Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id t14sm1713142wrr.49.2019.02.14.02.00.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Feb 2019 02:00:22 -0800 (PST)
+Date:   Thu, 14 Feb 2019 11:00:19 +0100
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     Loys Ollivier <lollivier@baylibre.com>
+Cc:     devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 4/4] gnss: add driver for mediatek receivers
+Message-ID: <20190214100019.GA4197@Red>
+References: <1550070569-18588-1-git-send-email-lollivier@baylibre.com>
+ <1550070569-18588-5-git-send-email-lollivier@baylibre.com>
 MIME-Version: 1.0
-References: <20190211151751.12336-1-oded.gabbay@gmail.com> <20190214071114.GA21381@kroah.com>
- <CAFCwf12VaYSpCtqyYsTGp2TZDJiJ4bYc4egrRY6mdzaceO_5Cw@mail.gmail.com>
-In-Reply-To: <CAFCwf12VaYSpCtqyYsTGp2TZDJiJ4bYc4egrRY6mdzaceO_5Cw@mail.gmail.com>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Thu, 14 Feb 2019 11:58:41 +0200
-Message-ID: <CAFCwf11hP89LwKnyjuwnP1KLe0GwL_T=Z+eQ1uUEiPTnJRASpA@mail.gmail.com>
-Subject: Re: [PATCH v4 00/15] Habana Labs kernel driver
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Olof Johansson <olof@lixom.net>, ogabbay@habana.ai,
-        Arnd Bergmann <arnd@arndb.de>, Joe Perches <joe@perches.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1550070569-18588-5-git-send-email-lollivier@baylibre.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 9:13 AM Oded Gabbay <oded.gabbay@gmail.com> wrote:
->
-> On Thu, Feb 14, 2019 at 9:11 AM Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Mon, Feb 11, 2019 at 05:17:36PM +0200, Oded Gabbay wrote:
-> > > Hello,
-> > > This is v4 of the Habana Labs kernel driver patch-set. It contains fixes
-> > > according to reviews done on v3, mainly for the command buffer, sysfs and MMU
-> > > patches. In addition, patch 2/15 was reduced in size from 4.3MB to 1.4MB.
-> > >
-> > > The patch-set is rebased on v5.0-rc6.
-> > >
-> > > Link to v3 cover letter: https://lkml.org/lkml/2019/2/4/1033
-> > >
-> > > Link to v2 cover letter: https://lkml.org/lkml/2019/1/30/1003
-> > >
-> > > Link to v1 cover letter: https://lwn.net/Articles/777342/
-> > >
-> > > I would appricate any feedback, question and/or review.
-> >
-> > There's been some 0-day bot feedback on some of these patches now that I
-> > put them in my -testing branch.  So I'm going to drop the patch series
-> > from there now and wait for a v5 of the series that hopefully will have
-> > those issues fixed :)
-> >
-Hi Greg,
-I looked at the 4 warnings I received from your emails, and they all
-appear in i386 architecture.
-I don't want to support 32-bit kernel and I don't intend to support it.
-Can we just specify in kconfig that we don't support it, and then you
-won't get these warnings ?
-I initially set in kconfig to support only x86_64, and you told me
-(and you were right) not to limit to that. But I do think I would like
-to disable the driver on i386.
+On Wed, Feb 13, 2019 at 04:09:29PM +0100, Loys Ollivier wrote:
+> Add driver for serial-connected Mediatek-based GNSS receivers.
+> 
+> These devices typically boot transmitting vendor specific NMEA output
+> sequences. The serial port bit rate is read from the device tree
+> "current-speed".
+> 
+> Note that the driver uses the generic GNSS serial implementation and
+> therefore essentially only manages power abstracted into three power
+> states: ACTIVE, STANDBY, and OFF.
+> 
+> For mediatek receivers with a main supply and no enable-gpios, this simply
+> means that the main supply is disabled in STANDBY and OFF (the optional
+> backup supply is kept enabled while the driver is bound).
+> 
+> Note that the timepulse-support is left unimplemented.
+> 
+> Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
+> ---
+> v4:
+> No changes
+> 
+> v3:
+> Sorted the Kconfig and Makefile
+> Retained the original Copyright
+> Removed "mediatek,mt3339" compatible.
+> 
+> v2: 
+> Renamed from gtop/Globaltop to mtk/Mediatek.
+> Added "mediatek,mt3339" compatible.
+> 
+>  drivers/gnss/Kconfig  |  13 +++++
+>  drivers/gnss/Makefile |   3 +
+>  drivers/gnss/mtk.c    | 152 ++++++++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 168 insertions(+)
+>  create mode 100644 drivers/gnss/mtk.c
+> 
+> diff --git a/drivers/gnss/Kconfig b/drivers/gnss/Kconfig
+> index 6abc88514512..6d8c8027e1cd 100644
+> --- a/drivers/gnss/Kconfig
+> +++ b/drivers/gnss/Kconfig
+> @@ -15,6 +15,19 @@ if GNSS
+>  config GNSS_SERIAL
+>  	tristate
+>  
+> +config GNSS_MTK_SERIAL
+> +	tristate "Mediatek GNSS receiver support"
+> +	depends on SERIAL_DEV_BUS
+> +	select GNSS_SERIAL
+> +	help
+> +	  Say Y here if you have a Mediatek-based GNSS receiver which uses a
+> +	  serial interface.
+> +
+> +	  To compile this driver as a module, choose M here: the module will
+> +	  be called gnss-mtk.
+> +
+> +	  If unsure, say N.
+> +
+>  config GNSS_SIRF_SERIAL
+>  	tristate "SiRFstar GNSS receiver support"
+>  	depends on SERIAL_DEV_BUS
+> diff --git a/drivers/gnss/Makefile b/drivers/gnss/Makefile
+> index 5cf0ebe0330a..451f11401ecc 100644
+> --- a/drivers/gnss/Makefile
+> +++ b/drivers/gnss/Makefile
+> @@ -9,6 +9,9 @@ gnss-y := core.o
+>  obj-$(CONFIG_GNSS_SERIAL)		+= gnss-serial.o
+>  gnss-serial-y := serial.o
+>  
+> +obj-$(CONFIG_GNSS_MTK_SERIAL)		+= gnss-mtk.o
+> +gnss-mtk-y := mtk.o
+> +
+>  obj-$(CONFIG_GNSS_SIRF_SERIAL)		+= gnss-sirf.o
+>  gnss-sirf-y := sirf.o
+>  
+> diff --git a/drivers/gnss/mtk.c b/drivers/gnss/mtk.c
+> new file mode 100644
+> index 000000000000..a5aad08fb9d7
+> --- /dev/null
+> +++ b/drivers/gnss/mtk.c
+> @@ -0,0 +1,152 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Mediatek GNSS receiver driver
+> + *
+> + * Copyright (C) 2018 Johan Hovold <johan@kernel.org>
+> + */
+> +
+> +#include <linux/errno.h>
+> +#include <linux/gnss.h>
+> +#include <linux/init.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/serdev.h>
+> +
+> +#include "serial.h"
+> +
+> +struct mtk_data {
+> +	struct regulator *v_bckp;
+> +	struct regulator *vcc;
+> +};
+> +
+> +static int mtk_set_active(struct gnss_serial *gserial)
+> +{
+> +	struct mtk_data *data = gnss_serial_get_drvdata(gserial);
+> +	int ret;
+> +
+> +	ret = regulator_enable(data->vcc);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+> +}
 
-Thanks,
-Oded
+Hello
 
+This could be simplified to return regulator_enable(data->vcc);
+Furthermore, after this simplification, the function seems useless.
 
-> > thanks,
-> >
-> > greg k-h
->
-> Sure, np.
-> Thanks,
-> Oded
+Same comment for mtk_set_standby()
+
+Regards
+
