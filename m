@@ -2,153 +2,188 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33FC2C10F04
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67466C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:32:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04E65222E0
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:32:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E1E7222E0
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:32:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550161971;
+	bh=m77rE7/wMUd1pn8crd6Ug8AEy5PbTKoRD6tBjs4D088=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=DaoJkwtPXxjEEUDmjhmA+QQlxMNIFNAd0Jv6EYXMM+IhJdZXJGbwn41AfkBkqqKr7
+	 Ite/JQ3MVV9jfq8sErvNoQhfm5tKPn1piPPzf4gP6xqsp5drQN9nDbwFqNLT5EIrZ+
+	 gynmm7tlzFLtD0/q8yxJ+/7mbhrfEd7H/o9dQv+s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439681AbfBNQcl (ORCPT
+        id S2439689AbfBNQcu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:32:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35064 "EHLO mx1.redhat.com"
+        Thu, 14 Feb 2019 11:32:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728867AbfBNQcj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 11:32:39 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2405161AbfBNQcs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 11:32:48 -0500
+Received: from ziggy.de (unknown [37.223.146.9])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C790AC04BD22;
-        Thu, 14 Feb 2019 16:32:38 +0000 (UTC)
-Received: from [10.36.112.66] (ovpn-112-66.ams2.redhat.com [10.36.112.66])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9722B5ED5B;
-        Thu, 14 Feb 2019 16:32:19 +0000 (UTC)
-Subject: Re: [PATCH V2 3/10] KVM/MMU: Add last_level in the struct
- mmu_spte_page
-To:     lantianyu1986@gmail.com
-Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, christoffer.dall@arm.com,
-        marc.zyngier@arm.com, linux@armlinux.org.uk,
-        catalin.marinas@arm.com, will.deacon@arm.com, jhogan@kernel.org,
-        ralf@linux-mips.org, paul.burton@mips.com, paulus@ozlabs.org,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, rkrcmar@redhat.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
-        michael.h.kelley@microsoft.com, kys@microsoft.com,
-        vkuznets@redhat.com
-References: <20190202013825.51261-1-Tianyu.Lan@microsoft.com>
- <20190202013825.51261-4-Tianyu.Lan@microsoft.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <572a6ce3-23f6-7b16-a070-4d4a81ee4335@redhat.com>
-Date:   Thu, 14 Feb 2019 17:32:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 68C56222DA;
+        Thu, 14 Feb 2019 16:32:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550161967;
+        bh=m77rE7/wMUd1pn8crd6Ug8AEy5PbTKoRD6tBjs4D088=;
+        h=From:To:Cc:Subject:Date:From;
+        b=MPtecKHYHkXnHw4qVA2WnXh/V8ahPRHPR5KVs8d77X0dhofI+H6S7YWsvUFcseVHX
+         Fb7tkXAfjKNNdje21jRFx4Ol/aLkOuw7ZuGASOJ0gvxOrSsaM36fJfX5nb3Pop82c3
+         tDVQdpV84ssBnw4Ee816Aslgk+PVvPF9pqYDF5nI=
+From:   matthias.bgg@kernel.org
+To:     mturquette@baylibre.com, sboyd@kernel.org,
+        kevin-cw.chen@mediatek.com, mars.cheng@mediatek.com
+Cc:     sean.wang@mediatek.com, matthias.bgg@gmail.com, jasu@njomotys.info,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: [PATCH v4 3/3] clk: mediatek: Mark bus and DRAM related clocks as critical
+Date:   Thu, 14 Feb 2019 17:32:42 +0100
+Message-Id: <20190214163242.26259-1-matthias.bgg@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190202013825.51261-4-Tianyu.Lan@microsoft.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 14 Feb 2019 16:32:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/02/19 02:38, lantianyu1986@gmail.com wrote:
-> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-> index ce770b446238..70cafd3f95ab 100644
-> --- a/arch/x86/kvm/mmu.c
-> +++ b/arch/x86/kvm/mmu.c
-> @@ -2918,6 +2918,9 @@ static int set_spte(struct kvm_vcpu *vcpu, u64 *sptep,
->  
->  	if (level > PT_PAGE_TABLE_LEVEL)
->  		spte |= PT_PAGE_SIZE_MASK;
-> +
-> +	sp->last_level = is_last_spte(spte, level);
+From: Jasper Mattsson <jasu@njomotys.info>
 
-Wait, I wasn't thinking straight.  If a struct kvm_mmu_page exists, it
-is never the last level.  Page table entries for the last level do not
-have a struct kvm_mmu_page.
+Currently, DRAM-related clocks are not marked with CLK_IS_CRITICAL
+for MT6797. This causes memory corruption when the system is
+booted without clk_ignore_unused.
+This patch marks MUX ddrphycfg_sel as well as gates infra_dramc_f26m
+and infra_dramc_b_f26m as CLK_IS_CRITICAL.
 
-Therefore you don't need the flag after all.  I suspect your
-calculations in patch 2 are off by one, and you actually need
+Signed-off-by: Jasper Mattsson <jasu@njomotys.info>
+Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
+---
+ drivers/clk/mediatek/clk-mt6797.c | 68 +++++++++++++++++++------------
+ 1 file changed, 43 insertions(+), 25 deletions(-)
 
-	hlist_for_each_entry(sp, range->flush_list, flush_link) {
-		int pages = KVM_PAGES_PER_HPAGE(sp->role.level + 1);
-		...
-	}
-
-For example, if sp->role.level is 1 then the struct kvm_mmu_page is for
-a page containing PTEs and covers an area of 2 MiB.
-
-Thanks,
-
-Paolo
-
->  	if (tdp_enabled)
->  		spte |= kvm_x86_ops->get_mt_mask(vcpu, gfn,
->  			kvm_is_mmio_pfn(pfn));
+diff --git a/drivers/clk/mediatek/clk-mt6797.c b/drivers/clk/mediatek/clk-mt6797.c
+index 5702bc974ed9..c2b46b184b9a 100644
+--- a/drivers/clk/mediatek/clk-mt6797.c
++++ b/drivers/clk/mediatek/clk-mt6797.c
+@@ -324,6 +324,10 @@ static const char * const anc_md32_parents[] = {
+ 	"univpll_d5",
+ };
+ 
++/*
++ * Clock mux ddrphycfg is needed by the DRAM controller. We mark it as
++ * critical as otherwise the system will hang after boot.
++ */
+ static const struct mtk_composite top_muxes[] = {
+ 	MUX(CLK_TOP_MUX_ULPOSC_AXI_CK_MUX_PRE, "ulposc_axi_ck_mux_pre",
+ 	    ulposc_axi_ck_mux_pre_parents, 0x0040, 3, 1),
+@@ -331,8 +335,8 @@ static const struct mtk_composite top_muxes[] = {
+ 	    ulposc_axi_ck_mux_parents, 0x0040, 2, 1),
+ 	MUX(CLK_TOP_MUX_AXI, "axi_sel", axi_parents,
+ 	    0x0040, 0, 2),
+-	MUX(CLK_TOP_MUX_DDRPHYCFG, "ddrphycfg_sel", ddrphycfg_parents,
+-	    0x0040, 16, 2),
++	MUX_FLAGS(CLK_TOP_MUX_DDRPHYCFG, "ddrphycfg_sel", ddrphycfg_parents,
++		  0x0040, 16, 2, CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
+ 	MUX(CLK_TOP_MUX_MM, "mm_sel", mm_parents,
+ 	    0x0040, 24, 2),
+ 	MUX_GATE(CLK_TOP_MUX_PWM, "pwm_sel", pwm_parents, 0x0050, 0, 3, 7),
+@@ -424,33 +428,45 @@ static const struct mtk_gate_regs infra2_cg_regs = {
+ 	.sta_ofs = 0x00b0,
+ };
+ 
+-#define GATE_ICG0(_id, _name, _parent, _shift) {	\
+-	.id = _id,					\
+-	.name = _name,					\
+-	.parent_name = _parent,				\
+-	.regs = &infra0_cg_regs,			\
+-	.shift = _shift,				\
+-	.ops = &mtk_clk_gate_ops_setclr,		\
++#define GATE_ICG0(_id, _name, _parent, _shift) {		\
++	.id = _id,						\
++	.name = _name,						\
++	.parent_name = _parent,					\
++	.regs = &infra0_cg_regs,				\
++	.shift = _shift,					\
++	.ops = &mtk_clk_gate_ops_setclr,			\
+ }
+ 
+-#define GATE_ICG1(_id, _name, _parent, _shift) {	\
+-	.id = _id,					\
+-	.name = _name,					\
+-	.parent_name = _parent,				\
+-	.regs = &infra1_cg_regs,			\
+-	.shift = _shift,				\
+-	.ops = &mtk_clk_gate_ops_setclr,		\
++#define GATE_ICG1(_id, _name, _parent, _shift)			\
++	GATE_ICG1_FLAGS(_id, _name, _parent, _shift, 0)
++
++#define GATE_ICG1_FLAGS(_id, _name, _parent, _shift, _flags) {	\
++	.id = _id,						\
++	.name = _name,						\
++	.parent_name = _parent,					\
++	.regs = &infra1_cg_regs,				\
++	.shift = _shift,					\
++	.ops = &mtk_clk_gate_ops_setclr,			\
++	.flags = _flags,					\
+ }
+ 
+-#define GATE_ICG2(_id, _name, _parent, _shift) {	\
+-	.id = _id,					\
+-	.name = _name,					\
+-	.parent_name = _parent,				\
+-	.regs = &infra2_cg_regs,			\
+-	.shift = _shift,				\
+-	.ops = &mtk_clk_gate_ops_setclr,		\
++#define GATE_ICG2(_id, _name, _parent, _shift)			\
++	GATE_ICG2_FLAGS(_id, _name, _parent, _shift, 0)
++
++#define GATE_ICG2_FLAGS(_id, _name, _parent, _shift, _flags) {	\
++	.id = _id,						\
++	.name = _name,						\
++	.parent_name = _parent,					\
++	.regs = &infra2_cg_regs,				\
++	.shift = _shift,					\
++	.ops = &mtk_clk_gate_ops_setclr,			\
++	.flags = _flags,					\
+ }
+ 
++/*
++ * Clock gates dramc and dramc_b are needed by the DRAM controller.
++ * We mark them as critical as otherwise the system will hang after boot.
++ */
+ static const struct mtk_gate infra_clks[] = {
+ 	GATE_ICG0(CLK_INFRA_PMIC_TMR, "infra_pmic_tmr", "ulposc", 0),
+ 	GATE_ICG0(CLK_INFRA_PMIC_AP, "infra_pmic_ap", "pmicspi_sel", 1),
+@@ -505,7 +521,8 @@ static const struct mtk_gate infra_clks[] = {
+ 	GATE_ICG1(CLK_INFRA_CCIF_AP, "infra_ccif_ap", "axi_sel", 23),
+ 	GATE_ICG1(CLK_INFRA_AUDIO, "infra_audio", "axi_sel", 25),
+ 	GATE_ICG1(CLK_INFRA_CCIF_MD, "infra_ccif_md", "axi_sel", 26),
+-	GATE_ICG1(CLK_INFRA_DRAMC_F26M, "infra_dramc_f26m", "clk26m", 31),
++	GATE_ICG1_FLAGS(CLK_INFRA_DRAMC_F26M, "infra_dramc_f26m",
++			"clk26m", 31, CLK_IS_CRITICAL),
+ 	GATE_ICG2(CLK_INFRA_I2C4, "infra_i2c4", "axi_sel", 0),
+ 	GATE_ICG2(CLK_INFRA_I2C_APPM, "infra_i2c_appm", "axi_sel", 1),
+ 	GATE_ICG2(CLK_INFRA_I2C_GPUPM, "infra_i2c_gpupm", "axi_sel", 2),
+@@ -516,7 +533,8 @@ static const struct mtk_gate infra_clks[] = {
+ 	GATE_ICG2(CLK_INFRA_I2C5, "infra_i2c5", "axi_sel", 7),
+ 	GATE_ICG2(CLK_INFRA_SYS_CIRQ, "infra_sys_cirq", "axi_sel", 8),
+ 	GATE_ICG2(CLK_INFRA_SPI1, "infra_spi1", "spi_sel", 10),
+-	GATE_ICG2(CLK_INFRA_DRAMC_B_F26M, "infra_dramc_b_f26m", "clk26m", 11),
++	GATE_ICG2_FLAGS(CLK_INFRA_DRAMC_B_F26M, "infra_dramc_b_f26m",
++			"clk26m", 11, CLK_IS_CRITICAL),
+ 	GATE_ICG2(CLK_INFRA_ANC_MD32, "infra_anc_md32", "anc_md32_sel", 12),
+ 	GATE_ICG2(CLK_INFRA_ANC_MD32_32K, "infra_anc_md32_32k", "clk26m", 13),
+ 	GATE_ICG2(CLK_INFRA_DVFS_SPM1, "infra_dvfs_spm1", "axi_sel", 15),
+-- 
+2.20.1
 
