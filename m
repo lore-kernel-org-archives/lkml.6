@@ -4,65 +4,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8139DC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:51:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBAD1C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A920222A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:51:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 748AD222A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:51:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cern.onmicrosoft.com header.i=@cern.onmicrosoft.com header.b="JiGWfLZ/"
+	dkim=pass (1024-bit key) header.d=cern.onmicrosoft.com header.i=@cern.onmicrosoft.com header.b="lt6XKJL/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437688AbfBNIvv (ORCPT
+        id S2437719AbfBNIv4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 03:51:51 -0500
-Received: from mail-eopbgr10069.outbound.protection.outlook.com ([40.107.1.69]:12560
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        Thu, 14 Feb 2019 03:51:56 -0500
+Received: from mail-eopbgr20053.outbound.protection.outlook.com ([40.107.2.53]:35386
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728294AbfBNIvv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 03:51:51 -0500
+        id S2437691AbfBNIvy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 03:51:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.onmicrosoft.com;
  s=selector1-cern-ch;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DDAZgYkVYhsafmVcLMETwoZc3dH+0zTh+vH0xDIqy4o=;
- b=JiGWfLZ/zPBLhxAs7+x7Wy+ORiGbCowMlmMNKPjXxYNWSIbftRyrMEdh2+iFY3GLc/uLCz1lz1J9rWWrQWmic+MXgez4wurGBk7+0A5Tnq14a9+rBNZihaCQrpArch8wzmedLQe7lPaf3UP0YlMXgTiPaEcNqjO3l31FfXXRptU=
-Received: from AM5PR0602CA0004.eurprd06.prod.outlook.com
- (2603:10a6:203:a3::14) by AM4PR0601MB2145.eurprd06.prod.outlook.com
- (2603:10a6:200:47::18) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1601.21; Thu, 14 Feb
- 2019 08:51:46 +0000
-Received: from AM5EUR02FT058.eop-EUR02.prod.protection.outlook.com
- (2a01:111:f400:7e1e::203) by AM5PR0602CA0004.outlook.office365.com
- (2603:10a6:203:a3::14) with Microsoft SMTP Server (version=TLS1_2,
+ bh=u3mvBf1dnQ9VhkLGm4ZhRo1M5EFCc7TUZgpQ65QZYwg=;
+ b=lt6XKJL/w0+nF6U8N535qC1vfIDuNmM2DIzkaYuCIlvWE1hsOeUIYAGN0dKSS71BJUTWOGCLhsUyuqYoEzPSvETrjNcKmK1jJMLCNB0L7dOgeRwSOg0okynkWYYJpSdoFAL9hP6ogMPshg9nzQ3d6QS5CN+eRPZKbCPe4Wl+czo=
+Received: from DB6PR0601CA0045.eurprd06.prod.outlook.com (2603:10a6:4:17::31)
+ by AM6PR06MB4722.eurprd06.prod.outlook.com (2603:10a6:20b:31::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1622.16; Thu, 14 Feb
+ 2019 08:51:50 +0000
+Received: from VE1EUR02FT020.eop-EUR02.prod.protection.outlook.com
+ (2a01:111:f400:7e06::205) by DB6PR0601CA0045.outlook.office365.com
+ (2603:10a6:4:17::31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1622.16 via Frontend
- Transport; Thu, 14 Feb 2019 08:51:46 +0000
-Authentication-Results: spf=pass (sender IP is 188.184.36.46)
+ Transport; Thu, 14 Feb 2019 08:51:50 +0000
+Authentication-Results: spf=pass (sender IP is 188.184.36.48)
  smtp.mailfrom=cern.ch; korsgaard.com; dkim=none (message not signed)
  header.d=none;korsgaard.com; dmarc=bestguesspass action=none
  header.from=cern.ch;
 Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
- 188.184.36.46 as permitted sender) receiver=protection.outlook.com;
- client-ip=188.184.36.46; helo=cernmxgwlb4.cern.ch;
-Received: from cernmxgwlb4.cern.ch (188.184.36.46) by
- AM5EUR02FT058.mail.protection.outlook.com (10.152.9.140) with Microsoft SMTP
+ 188.184.36.48 as permitted sender) receiver=protection.outlook.com;
+ client-ip=188.184.36.48; helo=cernmxgwlb4.cern.ch;
+Received: from cernmxgwlb4.cern.ch (188.184.36.48) by
+ VE1EUR02FT020.mail.protection.outlook.com (10.152.12.102) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1580.10 via Frontend Transport; Thu, 14 Feb 2019 08:51:46 +0000
+ 15.20.1580.10 via Frontend Transport; Thu, 14 Feb 2019 08:51:49 +0000
 Received: from cernfe03.cern.ch (188.184.36.39) by cernmxgwlb4.cern.ch
- (188.184.36.46) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 14 Feb
- 2019 09:51:44 +0100
+ (188.184.36.48) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 14 Feb
+ 2019 09:51:49 +0100
 Received: from cwe-513-vol689.cern.ch (188.185.69.206) by smtp.cern.ch
  (188.184.36.52) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 14 Feb
- 2019 09:51:45 +0100
+ 2019 09:51:48 +0100
 From:   Federico Vaga <federico.vaga@cern.ch>
 To:     Peter Korsgaard <peter@korsgaard.com>, Andrew Lunn <andrew@lunn.ch>
 CC:     Peter Rosin <peda@axentia.se>, <linux-i2c@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         Federico Vaga <federico.vaga@cern.ch>
-Subject: [PATCH v7 2/5] i2c: ocores: do not handle IRQ if IF is not set
-Date:   Thu, 14 Feb 2019 09:51:31 +0100
-Message-ID: <20190214085134.12900-3-federico.vaga@cern.ch>
+Subject: [PATCH v7 5/5] i2c: ocores: checkpatch fixes
+Date:   Thu, 14 Feb 2019 09:51:34 +0100
+Message-ID: <20190214085134.12900-6-federico.vaga@cern.ch>
 X-Mailer: git-send-email 2.15.0
 In-Reply-To: <20190214085134.12900-1-federico.vaga@cern.ch>
 References: <20190214085134.12900-1-federico.vaga@cern.ch>
@@ -70,73 +70,149 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [188.185.69.206]
 X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:188.184.36.46;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10001)(10009020)(459900002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM4PR0601MB2145;H:cernmxgwlb4.cern.ch;FPR:;SPF:None;LANG:en;
+X-Forefront-Antispam-Report: CIP:188.184.36.48;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(396003)(136003)(39860400002)(376002)(2980300002)(199004)(189003)(26005)(1076003)(336012)(446003)(2616005)(11346002)(956004)(476003)(126002)(6116002)(426003)(106466001)(16526019)(186003)(44832011)(14444005)(54906003)(36756003)(478600001)(486006)(50466002)(110136005)(107886003)(786003)(48376002)(316002)(16586007)(2906002)(86362001)(305945005)(7636002)(7736002)(246002)(8936002)(74482002)(8676002)(50226002)(4326008)(66066001)(6666004)(47776003)(106002)(53416004)(3846002)(51416003)(76176011)(7696005)(356004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR06MB4722;H:cernmxgwlb4.cern.ch;FPR:;SPF:Pass;LANG:en;PTR:cernmx12.cern.ch;A:1;MX:1;
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 9fe71177-fe65-45fa-2a1d-08d69259a6c7
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4608076)(4709027)(5565046)(2017052603328)(7153060)(7193020);SRVR:AM4PR0601MB2145;
-X-MS-TrafficTypeDiagnostic: AM4PR0601MB2145:
-X-Microsoft-Exchange-Diagnostics: 1;AM4PR0601MB2145;20:rBgUf2PDPf8Urpz4Yyg92Nsg/GSwrwbUuAljPm8xbJGnVePj3ing3RvgREbBv8WU1z1AYnSKAheykNivcjTnbGOyLflHQMBcLHqe72dP6/TbeuZi/9kKYR6urlBgHV8SQLVeb6g+QP/XYVX28rYf6qDZ/ZLNzWDjDfVjRMV3tvdiIfheAtGUmmedYq4vp05sVm4hHrOorQHsbjm9Qaa3LjNeZ9RB+JBhM1asKl9Hm8FjdjCf3WqAfp3VcUK3Xl1nOxM+AEzIFFpgLfcJu0lCAqo1cjizpPlbo9nIqyjkPRV+c3RTGD9J4ZzYwu+um0VUSwynLrutsl3Gey4awl0mZTLetUg8S8T18mZ8ZxnSJPOXNgRYCu0+Nv+XrFR4+ZbeAQEpBlSfF9vxgnm3OiAxALQz5AsbqcF3S1pmDaKydMh2ZxCZm4qiTQnJre0FjXuLPMNpbGD/qRYScMNr8KQ798fl4TRvxsg/EHea4Zvj47BWjukIO1HqnnRQSSkRgVpr;23:TE+RkfHSgsodoVf1hzSjR3Ym6zN+d+TARyhJOF8KazY67bLR8tHBY4t1WAp5a0tQQFOjBXP0MPsxXSolP4ZjNWzEphcmtC2lczZShuhIym4HzZuV70dSTJBihbGdzNMF6nrA8CE9KdCUsyidGCt4eUGjTCgN5s+OSCW7UPwzmv4PnruUdTFTtxNoBLH5vhAh
-X-Microsoft-Antispam-PRVS: <AM4PR0601MB214535D42D14E2F6FC6D4DEBEF670@AM4PR0601MB2145.eurprd06.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: c925a7c6-09f4-485f-9328-08d69259a8d2
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4608076)(4709027)(2017052603328)(7153060)(7193020);SRVR:AM6PR06MB4722;
+X-MS-TrafficTypeDiagnostic: AM6PR06MB4722:
+X-Microsoft-Exchange-Diagnostics: 1;AM6PR06MB4722;20:9I2fL5HsnmBWArPjwOrlIFJnMmwtaq1bi7V+ipMdW3QiG4gLYTyHRNQsP5Hb+mXjd9geb7jSll04eb5YjWM/zJ0DLVDDNanuo0RHgiw0mF8L7kc5BoXcRiQ+NmkZ10Z0kDUTT0+Gr3lE+M3rnDqZBcMK88sKqZFMXiFy38cgFAOy+ByhYrDoSZZ+4uUcIWBwlAC6P9rmcf4Qzw5BbPIwBRHgiRtgJwq/RPDdbvXoVYjKi89MqiD0wVQFM/Ka69Gi+Xr13lmR0KkDg0g8a9bRti6ohus8ElADPilRtqhM2Y+zZLDOZOGVzBnV/X+ffyuE5zdxszAXjn1YIk398NYx1vUDvm3U6hfcjFYNOFoIko2Koo0QSwa781m3pgFL0/k8Ajz7wOPg4UntnEzvqduMDRKRhzZmRsLAQBhnrIgjZhiy86SvSfA11CZZlvWTcuE/R4MK41B/Lx43yr69bqpScmbEZXnJ7ViZjd785ubCYS+MeQqwTINFAY3bTspRpYCQ
+X-Microsoft-Antispam-PRVS: <AM6PR06MB47228AE60BF272CFBA1FF717EF670@AM6PR06MB4722.eurprd06.prod.outlook.com>
 X-Forefront-PRVS: 09480768F8
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM6PR06MB4722;23:sMYvmsgKe6qwshEp3W60pRgT6nzc067GR0QVpoFuH?=
+ =?us-ascii?Q?vPniI0JSfFux8SRzq/EDQSrOhkFcjNwa2L8C7IEKKSs+bfrKLbwTw2MkYevS?=
+ =?us-ascii?Q?9FsZRmMFwsali8UHUbx5levCwMhKFmr7vAL1YzpQW5dM44zhvPgKMbfM/Bdk?=
+ =?us-ascii?Q?eQaZrl0s9i+XleVtolFKzq2DGBh5r3Ume5XhcU4lU43FN1p4q6vvWLl8IXSq?=
+ =?us-ascii?Q?omD4CrUY39MA3I1co/g3ITK9n6HsMvyDjU197txLI7HrIzfGF22nh7ebftuf?=
+ =?us-ascii?Q?JzHTamE4fGD3K8kE5+HwQSsX8OIMxhLHgOkn7BZW9Myy4v76GO9T0eX3C7/2?=
+ =?us-ascii?Q?58IVIESixjWnUUmZ/WXfOzYvlvEoPfmaPwsiLKoHXl/nc+HzeexPJm0sgkh6?=
+ =?us-ascii?Q?HzOfbWu2P0juk7l0KMpvfiGChw5oN1PVf99QJo7ZrX4O7HBtGQ4Uqgp+26WQ?=
+ =?us-ascii?Q?ErzX+Ri+BXJI/bBG6BEeN/Ezc8uOzxzE3kbWKyyd2NAtL6eG34adj4rG927A?=
+ =?us-ascii?Q?djdH1r+aCYxsI9wC+SNTJRz38jE3eNpttApie764z1hAiEcthmoG5rtrvXTV?=
+ =?us-ascii?Q?oTqQ3e74I150ipdVAHyR2tLW+qorCXJtwtH6Pf8EuxW0de77uz0t85y8Ru5Z?=
+ =?us-ascii?Q?x+2d3INjoibmHguxTebPzz7wk8Whvlr5hRRm0ZioIOptbOuD6GDFsAEY/YYI?=
+ =?us-ascii?Q?OaHoobj7UmZNpQ7WDq2CTiIqoyBXEtA6ukWlv1MVhvIV4QNt8PbcdrDhkBPa?=
+ =?us-ascii?Q?Gj5AEIyzgClRkWkif1QVC/LbQyD2MwW25gs116zQ1AVkB7JS2wIEHsvmyUTF?=
+ =?us-ascii?Q?fDPrQc/DhAJs3e0v1PAETD9J/S13FtW9bmi9jlr0tEhPIRJZJhGjED7h1wFB?=
+ =?us-ascii?Q?KxuK8sQqtmM3Dmt/BLPtpNpfwkpNN10XZ1cqVvLjmxTrmyBg6d1Vq0niGNPF?=
+ =?us-ascii?Q?lI68lcpWya++5IqbW1OdLBuRuM7w7pRxTURI0YnjfdfB3fUDBtrDJtEGDNTR?=
+ =?us-ascii?Q?Vx6+aX8ophwOLYejc7yP3yAWAU1u0AcVH9TJpWAM12L4uImMqfZ2yPaP/Kjo?=
+ =?us-ascii?Q?LIsOMmWoy+Ml3dc6gIsKapRSd+bx24b8uCVxtEwiTuP43LTkxpxRet2+0jrg?=
+ =?us-ascii?Q?hKg8seuLTW3lz/23+3pnHTHZTiNP1MYacMuJys9JJsJe9IamtTwbRFexAuKs?=
+ =?us-ascii?Q?SvX9Gkm04lM+4+C7T+48XkbgSYDQEbG1eMQ?=
 X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: gfzLO2kgm/H4aD71D85SnR5kzsolG5/yXPS0EtoSx/5hZaCa8rhDczBEkhT0LuPMOUtoQZ1UvkePadrtktbS8SRgpiI4WUnyO55h0f9HzorlEKahDhYDAI8dZ8+Dz2yhFafSRbSxUYd6q3ZAcBSMfZlmo00MDp3QF0NiYINJb195FekFCT0hr0JV+KFlWyn8GYh6cJV761yjtQQQjGRrNS10klaHsMZwqZG+rapI2DGObV+Nf9/eyx4Yx6DNfHZaZY4XRUy4v1ft3b3IK89+iPqRRyHvOe5iEEif1F6XRppU9K0T5po090DGkihW/fNN9WNP4q/SfF8eOC0PzvfqRtuAqhhjWGogvC7lpZOzRfHd+IMX2TmJ0crXjLHxK9P6xcpD6PmWs1+zm1XFct+U97KOF/zyDUyatOhnbCGxHnGGk3t4s4fdMgPLOn6ZiAABtgVQMK0tvJGPUcbb8WjxAVz9SUy3zMwqqVgTRF0/py7nh/Z53DEVzsTLTz5Xi52qcADm+nxDyJqwBYoojE1zr2DeuW1PHSQS9Be0Wrluhag=
+X-Microsoft-Antispam-Message-Info: QAvQPxAYbANjK8I5hD+/w1B1fVTA219HVD7c0ynsIj+rRgenS7kVU+TMNqRBt9JUXFMsDfMq718/NysD+Vh4N849dlt3PnZvqlGcLSOYaojRrorNTFAAwTYuIVdJiUjhd1fLaprhBX94+hSIIFP3jjBAZP6Vc3gXGI2tgbr8n58OMCJ9erw4Y9AkEN+YJQlyIbO5wLpa9xgaa+6RR22ExcPHaOCzzwilqsPS3aSbx2j3SZeenws5GCC5slMJx/txSFLmyy140hCDFCTF+kvgu2FWOOeHV1x+4j1wtTy3F10TtayPr2Drg1xXpxpcto5j7QDhvCJw6M2JenJJXLOdWbUkktnybb2NZAuqqNx8aZ9pE9x/f0gE2/f8Y9gJxZEawZJMl3gxES7lA/uiJEPySkMfgCgABE77rObWZfMwV8Y=
 X-OriginatorOrg: cern.ch
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2019 08:51:46.4296
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2019 08:51:49.8998
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9fe71177-fe65-45fa-2a1d-08d69259a6c7
+X-MS-Exchange-CrossTenant-Network-Message-Id: c925a7c6-09f4-485f-9328-08d69259a8d2
 X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.46];Helo=[cernmxgwlb4.cern.ch]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.48];Helo=[cernmxgwlb4.cern.ch]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM4PR0601MB2145
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR06MB4722
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the Interrupt Flag (IF) is not set, we should not handle the IRQ:
-- the line can be shared with other devices
-- it can be a spurious interrupt
-
-To avoid reading twice the status register, the ocores_process() function
-expects it to be read by the caller.
+Miscellaneous style fixes from checkpatch
 
 Signed-off-by: Federico Vaga <federico.vaga@cern.ch>
-Acked-by: Peter Korsgaard <peter@korsgaard.com>
 Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 ---
- drivers/i2c/busses/i2c-ocores.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/i2c/busses/i2c-ocores.c | 29 ++++++++++++++++++-----------
+ 1 file changed, 18 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-ocores.c b/drivers/i2c/busses/i2c-ocores.c
-index aa85202..fcc2558 100644
+index 78085a8..b32d67c 100644
 --- a/drivers/i2c/busses/i2c-ocores.c
 +++ b/drivers/i2c/busses/i2c-ocores.c
-@@ -143,10 +143,9 @@ static inline u8 oc_getreg(struct ocores_i2c *i2c, int reg)
- 	return i2c->getreg(i2c, reg);
- }
+@@ -179,8 +179,9 @@ static void ocores_process(struct ocores_i2c *i2c, u8 stat)
+ 			oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_STOP);
+ 			goto out;
+ 		}
+-	} else
++	} else {
+ 		msg->buf[i2c->pos++] = oc_getreg(i2c, OCI2C_DATA);
++	}
  
--static void ocores_process(struct ocores_i2c *i2c)
-+static void ocores_process(struct ocores_i2c *i2c, u8 stat)
- {
- 	struct i2c_msg *msg = i2c->msg;
--	u8 stat = oc_getreg(i2c, OCI2C_STATUS);
- 	unsigned long flags;
+ 	/* end of msg? */
+ 	if (i2c->pos == msg->len) {
+@@ -197,11 +198,11 @@ static void ocores_process(struct ocores_i2c *i2c, u8 stat)
+ 				i2c->state = STATE_START;
  
- 	/*
-@@ -223,8 +222,12 @@ out:
- static irqreturn_t ocores_isr(int irq, void *dev_id)
+ 				oc_setreg(i2c, OCI2C_DATA, addr);
+-				oc_setreg(i2c, OCI2C_CMD,  OCI2C_CMD_START);
++				oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_START);
+ 				goto out;
+-			} else
+-				i2c->state = (msg->flags & I2C_M_RD)
+-					? STATE_READ : STATE_WRITE;
++			}
++			i2c->state = (msg->flags & I2C_M_RD)
++				? STATE_READ : STATE_WRITE;
+ 		} else {
+ 			i2c->state = STATE_DONE;
+ 			oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_STOP);
+@@ -461,13 +462,16 @@ static const struct of_device_id ocores_i2c_match[] = {
+ MODULE_DEVICE_TABLE(of, ocores_i2c_match);
+ 
+ #ifdef CONFIG_OF
+-/* Read and write functions for the GRLIB port of the controller. Registers are
++/*
++ * Read and write functions for the GRLIB port of the controller. Registers are
+  * 32-bit big endian and the PRELOW and PREHIGH registers are merged into one
+- * register. The subsequent registers has their offset decreased accordingly. */
++ * register. The subsequent registers have their offsets decreased accordingly.
++ */
+ static u8 oc_getreg_grlib(struct ocores_i2c *i2c, int reg)
  {
- 	struct ocores_i2c *i2c = dev_id;
-+	u8 stat = oc_getreg(i2c, OCI2C_STATUS);
+ 	u32 rd;
+ 	int rreg = reg;
 +
-+	if (!(stat & OCI2C_STAT_IF))
-+		return IRQ_NONE;
- 
--	ocores_process(i2c);
-+	ocores_process(i2c, stat);
- 
- 	return IRQ_HANDLED;
+ 	if (reg != OCI2C_PRELOW)
+ 		rreg--;
+ 	rd = ioread32be(i2c->base + (rreg << i2c->reg_shift));
+@@ -481,6 +485,7 @@ static void oc_setreg_grlib(struct ocores_i2c *i2c, int reg, u8 value)
+ {
+ 	u32 curr, wr;
+ 	int rreg = reg;
++
+ 	if (reg != OCI2C_PRELOW)
+ 		rreg--;
+ 	if (reg == OCI2C_PRELOW || reg == OCI2C_PREHIGH) {
+@@ -569,7 +574,7 @@ static int ocores_i2c_of_probe(struct platform_device *pdev,
+ 	return 0;
  }
+ #else
+-#define ocores_i2c_of_probe(pdev,i2c) -ENODEV
++#define ocores_i2c_of_probe(pdev, i2c) -ENODEV
+ #endif
+ 
+ static int ocores_i2c_probe(struct platform_device *pdev)
+@@ -686,10 +691,11 @@ err_clk:
+ static int ocores_i2c_remove(struct platform_device *pdev)
+ {
+ 	struct ocores_i2c *i2c = platform_get_drvdata(pdev);
++	u8 ctrl = oc_getreg(i2c, OCI2C_CONTROL);
+ 
+ 	/* disable i2c logic */
+-	oc_setreg(i2c, OCI2C_CONTROL, oc_getreg(i2c, OCI2C_CONTROL)
+-		  & ~(OCI2C_CTRL_EN|OCI2C_CTRL_IEN));
++	ctrl &= ~(OCI2C_CTRL_EN | OCI2C_CTRL_IEN);
++	oc_setreg(i2c, OCI2C_CONTROL, ctrl);
+ 
+ 	/* remove adapter & data */
+ 	i2c_del_adapter(&i2c->adap);
+@@ -707,7 +713,8 @@ static int ocores_i2c_suspend(struct device *dev)
+ 	u8 ctrl = oc_getreg(i2c, OCI2C_CONTROL);
+ 
+ 	/* make sure the device is disabled */
+-	oc_setreg(i2c, OCI2C_CONTROL, ctrl & ~(OCI2C_CTRL_EN|OCI2C_CTRL_IEN));
++	ctrl &= ~(OCI2C_CTRL_EN | OCI2C_CTRL_IEN);
++	oc_setreg(i2c, OCI2C_CONTROL, ctrl);
+ 
+ 	if (!IS_ERR(i2c->clk))
+ 		clk_disable_unprepare(i2c->clk);
 -- 
 2.15.0
 
