@@ -2,113 +2,126 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83054C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C8CC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:26:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 451832229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:23:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F6882229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:26:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="VhubYzw9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436655AbfBNIXq (ORCPT
+        id S2437463AbfBNI0W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 03:23:46 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:40279 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728538AbfBNIXp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 03:23:45 -0500
-Received: by mail-lf1-f65.google.com with SMTP id t14so3883354lfk.7;
-        Thu, 14 Feb 2019 00:23:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MSh+xL7lUIQ+jIOC3psLj/44rfqn2K6Nq1QXFuVwvo0=;
-        b=JKKWugC23GCwqd2f07c3IXYwBepcLN2xlITSEv6KO+MGiOT4dprDxVhdT+uFbNTi/l
-         Dsmi9nmL1dvlTk+nUUjgvJyEaz41+AnBoD11K9SpQ35nEh8fEEhMHWn2uQyAurRjHDdI
-         gfCgMB8PzlOWX/m7dqAQdLEqxkLxK1IuTpJ0WMMJgcWgFe96xsaVYJtJkgWxxQhqEjlg
-         l3tLphdEnWAZBRIFNezzGQcdchyIBx/AmrE9m9jcZzvYckEFNWb8ljjRNplpdCBoutFq
-         HDDELv+5Ustdun+qzjk0IHEBvMZdIMlrSeMEkdp36vWqpLK+Ja7nPLXdBCk1eq5teHzk
-         xIag==
-X-Gm-Message-State: AHQUAuYKGPAg3a+vPQQzc4I5LCAia8UbaUtOMEtY81kiX+mQ88Aqezms
-        X1ougFGWz4aNDs3JHIOpaQ8=
-X-Google-Smtp-Source: AHgI3IbnQhLnR4QZ82PQW5/7lIB+f9ziVYiapzlHfmm2SoKyIMfMGmYWceOeZ5qq2Hj+lUsZgU/Xdw==
-X-Received: by 2002:ac2:4243:: with SMTP id m3mr1469127lfl.5.1550132622696;
-        Thu, 14 Feb 2019 00:23:42 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id h22-v6sm307465ljh.89.2019.02.14.00.23.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 00:23:42 -0800 (PST)
-Date:   Thu, 14 Feb 2019 10:23:39 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Guenter Roeck <linux@roeck-us.net>, mazziesaccount@gmail.com,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, bogdan-petru.chircu-mare@nxp.com
-Subject: Re: [PATCH v9 8/8] watchdog: bd70528: Initial support for ROHM
- BD70528 watchdog block
-Message-ID: <20190214082339.GF12247@localhost.localdomain>
-References: <cover.1550063882.git.matti.vaittinen@fi.rohmeurope.com>
- <5aab97a1d68d131d0c5d37e0a78d3c8147a52e9e.1550063882.git.matti.vaittinen@fi.rohmeurope.com>
- <f11554b9-1842-13bc-7ceb-ca7589eb4518@roeck-us.net>
- <20190214081849.GI1863@dell>
+        Thu, 14 Feb 2019 03:26:22 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:21786 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387959AbfBNI0V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 03:26:21 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 440Txl2cQsz9tykV;
+        Thu, 14 Feb 2019 09:26:19 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=VhubYzw9; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id Qw9cU7uYJVyD; Thu, 14 Feb 2019 09:26:19 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 440Txl1TDkz9tykT;
+        Thu, 14 Feb 2019 09:26:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1550132779; bh=UGOe1QWxBfW7ndQ+5pJ1730NUq1Y6MJhDOUpYpQMxe0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=VhubYzw92naM79UL/+0hi+1+NEcvnnU3bQRHgsGDBfIqBacAR7/iK9YAL6AcenuJf
+         YEkGq9lsGySsSDJasFWezq6po3hyapKUbVThJHkW8IFFpesSPbZsm1lzhHw1avf6wq
+         MI0quGZdL2izttXopZLDeuWbOD0y9bNCjy7DyziQ=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 173748B87D;
+        Thu, 14 Feb 2019 09:26:20 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id 590FFlPJ2vnd; Thu, 14 Feb 2019 09:26:20 +0100 (CET)
+Received: from PO15451 (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 79F0F8B756;
+        Thu, 14 Feb 2019 09:26:19 +0100 (CET)
+Subject: Re: [PATCH 01/11] powerpc: remove dead ifdefs in <asm/checksum.h>
+To:     Christoph Hellwig <hch@lst.de>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-xtensa@linux-xtensa.org, linux-s390@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
+References: <20190213174005.28785-1-hch@lst.de>
+ <20190213174005.28785-2-hch@lst.de>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <e7a2efe3-f56c-7dfd-6613-dc9229556673@c-s.fr>
+Date:   Thu, 14 Feb 2019 09:26:19 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190214081849.GI1863@dell>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20190213174005.28785-2-hch@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 08:18:49AM +0000, Lee Jones wrote:
-> On Wed, 13 Feb 2019, Guenter Roeck wrote:
+
+
+Le 13/02/2019 à 18:39, Christoph Hellwig a écrit :
+> __KERNEL__ is never not defined for non-uapi headers, and GENERIC_CSUM
+> isn't ever set for powerpc either.
+
+GENERIC_CSUM was abandonned by commit d4fde568a34a ("powerpc/64: Use 
+optimized checksum routines on little-endian")
+
+Could you also remove the 'config GENERIC_CSUM' item in 
+arch/powerpc/Kconfig ?
+
+Christophe
+
 > 
-> > On 2/13/19 5:37 AM, Matti Vaittinen wrote:
-> > > Initial support for watchdog block included in ROHM BD70528
-> > > power management IC.
-> > > 
-> > > Configurations for low power states are still to be checked.
-> > > 
-> > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > > Acked-by: Guenter Roeck <linux@roeck-us.net>
-> > > ---
-> > > 
-> > > I maintained the ack from Guenter as only change is to use function
-> > > exported by MFD instead of pointer to function provided by MFD. Please
-> > > let me know if this is not Ok.
-> > > 
-> > 
-> > NP. With functions exported by MFD, my choice would have been to handle
-> > locking there as well with respective locking/unlocking functions exported.
-> > But that is your call to make, not mine.
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>   arch/powerpc/include/asm/checksum.h | 8 +-------
+>   1 file changed, 1 insertion(+), 7 deletions(-)
 > 
-> FWIW, I agree.
-
-Allright. I'll do lock/unclock functions in MFD side and cook up v10 =)
-Linus Walleij found something to fix from GPIO too :) Thanks guys.
-
-Br,
-	Matti Vaittinen
-
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+> diff --git a/arch/powerpc/include/asm/checksum.h b/arch/powerpc/include/asm/checksum.h
+> index a78a57e5058d..37c309500260 100644
+> --- a/arch/powerpc/include/asm/checksum.h
+> +++ b/arch/powerpc/include/asm/checksum.h
+> @@ -1,6 +1,5 @@
+>   #ifndef _ASM_POWERPC_CHECKSUM_H
+>   #define _ASM_POWERPC_CHECKSUM_H
+> -#ifdef __KERNEL__
+>   
+>   /*
+>    * This program is free software; you can redistribute it and/or
+> @@ -9,9 +8,6 @@
+>    * 2 of the License, or (at your option) any later version.
+>    */
+>   
+> -#ifdef CONFIG_GENERIC_CSUM
+> -#include <asm-generic/checksum.h>
+> -#else
+>   #include <linux/bitops.h>
+>   #include <linux/in6.h>
+>   /*
+> @@ -217,6 +213,4 @@ __sum16 csum_ipv6_magic(const struct in6_addr *saddr,
+>   			const struct in6_addr *daddr,
+>   			__u32 len, __u8 proto, __wsum sum);
+>   
+> -#endif
+> -#endif /* __KERNEL__ */
+> -#endif
+> +#endif /* _ASM_POWERPC_CHECKSUM_H */
+> 
