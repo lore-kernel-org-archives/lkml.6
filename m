@@ -2,75 +2,127 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC649C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 12:46:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F05DC4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 12:46:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB0E0218FF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 12:46:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08CB7218FF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 12:46:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406948AbfBNMqa (ORCPT
+        id S2406959AbfBNMqz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 07:46:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60624 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727958AbfBNMqa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 07:46:30 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C0911AE3B;
-        Thu, 14 Feb 2019 12:46:28 +0000 (UTC)
-Date:   Thu, 14 Feb 2019 13:46:27 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     John Ogness <john.ogness@linutronix.de>,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC PATCH v1 03/25] printk-rb: define ring buffer struct and
- initializer
-Message-ID: <20190214124627.pmvsw3hsgvywmn32@pathway.suse.cz>
-References: <20190212143003.48446-1-john.ogness@linutronix.de>
- <20190212143003.48446-4-john.ogness@linutronix.de>
- <20190212144640.GB17291@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190212144640.GB17291@kroah.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+        Thu, 14 Feb 2019 07:46:55 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43076 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727958AbfBNMqz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 07:46:55 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8401D80D;
+        Thu, 14 Feb 2019 04:46:54 -0800 (PST)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F1DCD3F675;
+        Thu, 14 Feb 2019 04:46:51 -0800 (PST)
+Date:   Thu, 14 Feb 2019 12:46:49 +0000
+Message-ID: <86ftsqsfk6.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Murali Karicheri <m-karicheri2@ti.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
+        <linux-pci@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 3/9] PCI: keystone: Use hwirq to get the legacy IRQ number offset
+In-Reply-To: <20190214103138.GA24593@e107981-ln.cambridge.arm.com>
+References: <20190213132629.24790-1-kishon@ti.com>
+        <20190213132629.24790-4-kishon@ti.com>
+        <20190213165739.GE2280@e107981-ln.cambridge.arm.com>
+        <8028b0e2-ac32-4e36-c87d-6f4818f34301@ti.com>
+        <20190214103138.GA24593@e107981-ln.cambridge.arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2019-02-12 15:46:40, Greg Kroah-Hartman wrote:
-> On Tue, Feb 12, 2019 at 03:29:41PM +0100, John Ogness wrote:
-> > See Documentation/printk-ringbuffer.txt for details about the
-> > initializer arguments.
+Hi Lirenzo,
+
+On Thu, 14 Feb 2019 10:31:38 +0000,
+Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote:
 > 
-> You can put that documentation here in the .h file and have it pulled
-> out automatically into the documentation files when they are created.
-> That way you always keep everything in sync properly.
+> [CC'ed MarcZ]
+> 
+> On Thu, Feb 14, 2019 at 10:27:19AM +0530, Kishon Vijay Abraham I wrote:
+> > Hi Lorenzo,
+> > 
+> > On 13/02/19 10:27 PM, Lorenzo Pieralisi wrote:
+> > > On Wed, Feb 13, 2019 at 06:56:23PM +0530, Kishon Vijay Abraham I wrote:
+> > >> ks_pcie_legacy_irq_handler() uses 'virq' to get the IRQ number offset.
+> > >> This offset is used to get the correct IRQ_STATUS register
+> > >> corresponding to the IRQ line that raised the interrupt.
+> > >> There is no guarantee that 'virq' assigned for consecutive hardware
+> > >> IRQ will be contiguous. And this might get us an incorrect IRQ number
+> > >> offset.
+> > >>
+> > >> Fix it here by using 'hwirq' to get the IRQ number offset.
+> > >>
+> > >> Link: https://lkml.kernel.org/r/bb081d21-7c03-0357-4294-7e92d95d838c@arm.com
+> > >> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+> > >> ---
+> > >>  drivers/pci/controller/dwc/pci-keystone.c | 17 +++++++++++++----
+> > >>  1 file changed, 13 insertions(+), 4 deletions(-)
+> > >>
+> > >> diff --git a/drivers/pci/controller/dwc/pci-keystone.c b/drivers/pci/controller/dwc/pci-keystone.c
+> > >> index e8b1d8eca78e..d35ac712a9f8 100644
+> > >> --- a/drivers/pci/controller/dwc/pci-keystone.c
+> > >> +++ b/drivers/pci/controller/dwc/pci-keystone.c
+> > >> @@ -87,7 +87,7 @@ struct keystone_pcie {
+> > >>  	struct dw_pcie		*pci;
+> > >>  	/* PCI Device ID */
+> > >>  	u32			device_id;
+> > >> -	int			legacy_host_irqs[PCI_NUM_INTX];
+> > >> +	int			legacy_host_irq;
+> > >>  	struct			device_node *legacy_intc_np;
+> > >>  
+> > >>  	int			msi_host_irqs[MAX_MSI_HOST_IRQS];
+> > >> @@ -582,11 +582,11 @@ static void ks_pcie_msi_irq_handler(struct irq_desc *desc)
+> > >>   */
+> > >>  static void ks_pcie_legacy_irq_handler(struct irq_desc *desc)
+> > >>  {
+> > >> -	unsigned int irq = irq_desc_get_irq(desc);
+> > >> +	unsigned int irq = desc->irq_data.hwirq;
+> > >>  	struct keystone_pcie *ks_pcie = irq_desc_get_handler_data(desc);
+> > >>  	struct dw_pcie *pci = ks_pcie->pci;
+> > >>  	struct device *dev = pci->dev;
+> > >> -	u32 irq_offset = irq - ks_pcie->legacy_host_irqs[0];
+> > >> +	u32 irq_offset = irq - ks_pcie->legacy_host_irq;
+> > > 
+> > > I think you should use the plain hwirq number (that if I understand
+> > > correctly range in [0,3]) and drop legacy_host_irq.
+> > 
+> > The hwirq is [80, 83] for Keystone. We store legacy_host_irq (for Keystone it
+> > is 80) to get the correct offset in the range [0, 3].
+> 
+> IIUC the _parent_ hw_irq number should be what you need here, Marc (if
+> he has time) can correct me if I am wrong (or what I am suggesting is
+> a violation of IRQ domain bstraction usage).
 
-Yes, please, move the documentation into the sources.
+It isn't pretty, but it is something we already do in some cases (see
+irq-gic-v3-mbi.c::mbi_compose_msi_msg as an infamous example).
 
-It is so easy to get the info via editor+cscope support
-than via an external text file that many people do not
-know about ;-)
+Thanks,
 
-For example, see include/linux/livepatch.h for inspiration.
+	M.
 
-Best Regards,
-Petr
+-- 
+Jazz is not dead, it just smell funny.
