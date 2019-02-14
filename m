@@ -2,102 +2,97 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E245EC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:41:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0CD4C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:42:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0D052229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:41:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84C9D222D2
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:42:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550137271;
-	bh=FPx3PBkPN3ty3Ia6Iq7gPktSnoMRP+VuMlw+4HT+a2M=;
+	s=default; t=1550137331;
+	bh=3y3cokQQMIouqGIaVg2qeuXpZAD3dMQo0WkuCPlzX0M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=pYcvHDobYEQ1jJPGHKrS0kXbT3RkmQhA0s8bbWHmNqxeW6FOiki5e/aFz7I/NkJrT
-	 2FdgEcMyM8WsG6ZiqoHwzteJKA1W1Neu70UnBEk6buZhfuref4SH1SFdLcE030dRsn
-	 TcRsPCChssu+npu3mJ2Aix4BvkwqTErFerTh58mA=
+	b=Jx0+WtbqMtNpm3YPFU08nJS1X3C1DvqHj4YLKv50FiqnR+dNaL7fVh8UJFgaRdqrP
+	 kJsXaYs5GToOe028sRUDwJ/qL2VdVM+SK0OeuttUkfhbTkNAKqP3K4ZVayLE1rWpSD
+	 aNX2Cc/pyaR1Q0hpxTHN0ry6S8ZqUZ5hJomfZkoA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391770AbfBNJlK (ORCPT
+        id S2392762AbfBNJmK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 04:41:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60466 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 04:42:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730685AbfBNJlJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 04:41:09 -0500
+        id S1728194AbfBNJmJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 04:42:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7670C2229F;
-        Thu, 14 Feb 2019 09:41:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E283222A4;
+        Thu, 14 Feb 2019 09:42:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550137268;
-        bh=FPx3PBkPN3ty3Ia6Iq7gPktSnoMRP+VuMlw+4HT+a2M=;
+        s=default; t=1550137329;
+        bh=3y3cokQQMIouqGIaVg2qeuXpZAD3dMQo0WkuCPlzX0M=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=05Ox1cPe31QcBsKPnljDfvfZrWoGPEx4C9r1S08Y2HWAhr8isAL2QI47VnmDUtaMp
-         exi6RzXiPzN+z1x7y6ogthXeZzXDr+1a/MtNUB5wCLVhSM3Ck5KEA+qA8orb2TQLvs
-         yHt8cxJYIkdriFpT8QIsmkCYMhV1XjxhSZLv5jQ0=
-Date:   Thu, 14 Feb 2019 10:41:06 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Vaishali Thakkar <vaishali.thakkar@linaro.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rafael@kernel.org, bjorn.andersson@linaro.org, vkoul@kernel.org
-Subject: Re: [PATCH 3/5] soc: qcom: socinfo: Expose custom attributes
-Message-ID: <20190214094106.GA10895@kroah.com>
-References: <cover.1550114271.git.vaishali.thakkar@linaro.org>
- <297ee5e7840077f0330d4ae02dcd13c2ad97f910.1550114271.git.vaishali.thakkar@linaro.org>
+        b=070Y2BjLfDaEe+eK3vshODuDxRgEKb2z7LwQFFpW4DdE1B7geG7g75wUBfKam1V7p
+         cmpVBtiusERBSC+EJhmF/sYuSXtf6GWGymtuMUPIT6Nwuz0N2QCZ/PxIfrelrFkjjH
+         oate21sgBlVokrm5SwtaUIvHuzIlLYgZCTPdUYOQ=
+Date:   Thu, 14 Feb 2019 10:42:06 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Hyun Kwon <hyun.kwon@xilinx.com>
+Cc:     Laura Abbott <labbott@redhat.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Christian Brauner <christian@brauner.io>,
+        devel@driverdev.osuosl.org, dri-devel@lists.freedesktop.org,
+        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
+        Martijn Coenen <maco@android.com>,
+        Wendy Liang <jliang@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Cyril Chemparathy <cyrilc@xilinx.com>
+Subject: Re: [PATCH 1/1] staging: android: ion: Add the GPL exception for
+ syscalls
+Message-ID: <20190214094206.GB10895@kroah.com>
+References: <1550102506-24731-1-git-send-email-hyun.kwon@xilinx.com>
+ <1550102506-24731-2-git-send-email-hyun.kwon@xilinx.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <297ee5e7840077f0330d4ae02dcd13c2ad97f910.1550114271.git.vaishali.thakkar@linaro.org>
+In-Reply-To: <1550102506-24731-2-git-send-email-hyun.kwon@xilinx.com>
 User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 09:11:49AM +0530, Vaishali Thakkar wrote:
-> +static void socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo)
-> +{
-> +	qcom_socinfo->dbg_root = debugfs_create_dir("qcom_socinfo", NULL);
-> +
-> +	if (!qcom_socinfo->dbg_root) {
-> +		pr_err("Cannot create debugfs directory\n");
-> +		return;
-> +	}
+On Wed, Feb 13, 2019 at 04:01:46PM -0800, Hyun Kwon wrote:
+> Add "WITH Linux-syscall-note" to the license to not put GPL
+> restrictions on user space programs using this header.
+> 
+> Signed-off-by: Hyun Kwon <hyun.kwon@xilinx.com>
+> ---
+>  drivers/staging/android/uapi/ion.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/android/uapi/ion.h b/drivers/staging/android/uapi/ion.h
+> index 5d70098..46c93fc 100644
+> --- a/drivers/staging/android/uapi/ion.h
+> +++ b/drivers/staging/android/uapi/ion.h
+> @@ -1,4 +1,4 @@
+> -/* SPDX-License-Identifier: GPL-2.0 */
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>  /*
+>   * drivers/staging/android/uapi/ion.h
+>   *
+> -- 
+> 2.7.4
+> 
 
-No need to check this at all, just call debugfs_create_dir() and be done
-with it.
-
-
-
-> +
-> +	DEBUGFS_UINT_ADD(raw_version);
-> +	DEBUGFS_UINT_ADD(hardware_platform);
-> +	DEBUGFS_UINT_ADD(platform_version);
-> +	DEBUGFS_UINT_ADD(foundry_id);
-> +	DEBUGFS_HEX_ADD(chip_family);
-> +	DEBUGFS_HEX_ADD(raw_device_family);
-> +	DEBUGFS_HEX_ADD(raw_device_number);
-> +	DEBUGFS_ADD(build_id);
-> +	DEBUGFS_ADD(accessory_chip);
-> +	DEBUGFS_ADD(pmic_model);
-> +	DEBUGFS_ADD(platform_subtype);
-> +	DEBUGFS_ADD(pmic_die_revision);
-> +}
-> +
-> +static void socinfo_debugfs_exit(struct qcom_socinfo *qcom_socinfo)
-> +{
-> +	debugfs_remove_recursive(qcom_socinfo->dbg_root);
-> +}
-> +#else
-> +socinfo_debugfs_init(struct qcom_socinfo *qcom_socinfo) { return 0; }
-> +socinfo_debugfs_exit(struct qcom_socinfo *qcom_socinfo) { return 0; }
-
-These function signatures do not match the ones above :(
-
+Yes, that is the correct thing to do, let me go queue this up.
 
 thanks,
 
