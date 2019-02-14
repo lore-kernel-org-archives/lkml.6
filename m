@@ -2,63 +2,66 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 311A2C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:19:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF0B6C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:19:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0C82222A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:19:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="g/ponYXH"
+	by mail.kernel.org (Postfix) with ESMTP id A8856222A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:19:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389170AbfBNKTN (ORCPT
+        id S2390827AbfBNKTi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 05:19:13 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:53990 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727061AbfBNKTN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 05:19:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=c0kFHfZ84l6hN8EV9uyA/B2ofXSPwbG72w/+ZdCqcD0=; b=g/ponYXHA78ychLKY1mGZ/yXH
-        nNrAmpYw5l8MP5O5jovQqausTg7/zPIrpVjKj0NgBA2PNNWAkq3ZcMTmBy+aJryDnCyg45pKk3yGb
-        qO1cThnn8FBmxVhVMCU8/dR0Hb07aD2kbVfLwNj+t488P6To9vGFLC3fKlwS5eLKHp+aCYrE5yiGm
-        9LaYfuRoFNu+CigGjCLNhqxxw2mPtWHX+agTqdObvVMQ8CRVBep/NYwKWigf2P+UK/PrLXLTXNXjJ
-        h4LVW1lRheTqm/hwCHdmek6WPki+pwbP3O8oHcHyQP+V5/EQMU8pvqn64ksYtPihUrDrGYMTRU1nS
-        RFNGYv3VQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1guE6n-0000h5-Qp; Thu, 14 Feb 2019 10:19:10 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 6DCEF20298375; Thu, 14 Feb 2019 11:19:07 +0100 (CET)
-Date:   Thu, 14 Feb 2019 11:19:07 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Huang Zijiang <huang.zijiang@zte.com.cn>
-Cc:     mingo@redhat.com, linux-kernel@vger.kernel.org,
-        wang.yi59@zte.com.cn
-Subject: Re: [PATCH] sched/core: Remove BUG_ON()
-Message-ID: <20190214101907.GE32494@hirez.programming.kicks-ass.net>
-References: <1550126557-28530-1-git-send-email-huang.zijiang@zte.com.cn>
+        Thu, 14 Feb 2019 05:19:38 -0500
+Received: from relay.sw.ru ([185.231.240.75]:42436 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727061AbfBNKTh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 05:19:37 -0500
+Received: from [172.16.25.169]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1guE79-0004zP-Jo; Thu, 14 Feb 2019 13:19:31 +0300
+Subject: Re: [PATCH 1/4] mm: Move recent_rotated pages calculation to
+ shrink_inactive_list()
+To:     Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc:     akpm@linux-foundation.org, mhocko@suse.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <154998432043.18704.10326447825287153712.stgit@localhost.localdomain>
+ <154998444053.18704.14821278988281142015.stgit@localhost.localdomain>
+ <20190213173327.uhexilxmmztx7fbt@ca-dmjordan1.us.oracle.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <057454bf-5f49-2043-9197-68f99a0501a4@virtuozzo.com>
+Date:   Thu, 14 Feb 2019 13:19:30 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1550126557-28530-1-git-send-email-huang.zijiang@zte.com.cn>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190213173327.uhexilxmmztx7fbt@ca-dmjordan1.us.oracle.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 02:42:37PM +0800, Huang Zijiang wrote:
-> pick_next_task is never return NULL because idle task
-> will return when cpu is idle.
+On 13.02.2019 20:33, Daniel Jordan wrote:
+> On Tue, Feb 12, 2019 at 06:14:00PM +0300, Kirill Tkhai wrote:
+>> Currently, struct reclaim_stat::nr_activate is a local variable,
+>> used only in shrink_page_list(). This patch introduces another
+>> local variable pgactivate to use instead of it, and reuses
+>> nr_activate to account number of active pages.
+>>
+>> Note, that we need nr_activate to be an array, since type of page
+>> may change during shrink_page_list() (see ClearPageSwapBacked()).
+>>
+>> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+>> ---
+>>  include/linux/vmstat.h |    2 +-
+>>  mm/vmscan.c            |   15 +++++++--------
+> 
+> include/trace/events/vmscan.h needs to account for the array-ification of
+> nr_activate too.
 
-And to be sure it does; we have that BUG_ON :-)
+Yeah, thanks.
