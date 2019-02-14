@@ -2,371 +2,136 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51174C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88D96C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:18:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20E7F222DB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:16:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A480222C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:18:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=criteo.com header.i=@criteo.com header.b="ce8qtA17"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407524AbfBNPQz (ORCPT
+        id S2407526AbfBNPSW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 10:16:55 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43836 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2407500AbfBNPQx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 10:16:53 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 46EB7AEDB;
-        Thu, 14 Feb 2019 15:16:51 +0000 (UTC)
-Date:   Thu, 14 Feb 2019 16:16:50 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC PATCH v1 04/25] printk-rb: add writer interface
-Message-ID: <20190214151650.5y337yy2jnnztsc6@pathway.suse.cz>
-References: <20190212143003.48446-1-john.ogness@linutronix.de>
- <20190212143003.48446-5-john.ogness@linutronix.de>
+        Thu, 14 Feb 2019 10:18:22 -0500
+Received: from mx07-00287e01.pphosted.com ([91.207.212.151]:34886 "EHLO
+        mx08-00287e01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2393603AbfBNPSV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 10:18:21 -0500
+Received: from pps.filterd (m0111314.ppops.net [127.0.0.1])
+        by mx08-00287e01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1EF5H23024364;
+        Thu, 14 Feb 2019 16:18:08 +0100
+Received: from eur04-db3-obe.outbound.protection.outlook.com (mail-db3eur04lp2059.outbound.protection.outlook.com [104.47.12.59])
+        by mx08-00287e01.pphosted.com with ESMTP id 2qmva9gwmu-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 14 Feb 2019 16:18:08 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=criteo.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VK1SjIXDhABe+hnzc71luJ270PNIX+dIG/2z4j0Cyuc=;
+ b=ce8qtA17I8VbzqihidF8jSJ6Jm4yiT/0J8pjeM+++zrHRS3RkwFc+Y4WOdKxwDX7DBb4Cr7VZ3ptqaeT3BLDDe+ymTaPvsYqVe22pj4oj4raBMLpMoCgOsDCs+UGbg9Hr6XapxCmoMf/y9Sw9f9Bf70OSp1HFszmI/XrY3N5zeA=
+Received: from VI1PR04MB5629.eurprd04.prod.outlook.com (20.178.125.158) by
+ VI1PR04MB4109.eurprd04.prod.outlook.com (52.133.14.148) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.16; Thu, 14 Feb 2019 15:18:06 +0000
+Received: from VI1PR04MB5629.eurprd04.prod.outlook.com
+ ([fe80::9851:8b8c:f61c:6045]) by VI1PR04MB5629.eurprd04.prod.outlook.com
+ ([fe80::9851:8b8c:f61c:6045%4]) with mapi id 15.20.1622.016; Thu, 14 Feb 2019
+ 15:18:05 +0000
+From:   Erwan Velu <e.velu@criteo.com>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+CC:     Erwan Velu <erwanaliasr1@gmail.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <lenb@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "open list:INTEL PSTATE DRIVER" <linux-pm@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6] cpufreq: intel_pstate: Reporting reasons why driver
+ prematurely exit
+Thread-Topic: [PATCH v6] cpufreq: intel_pstate: Reporting reasons why driver
+ prematurely exit
+Thread-Index: AQHUw5aitGKSKy+IPEu9VYMAMc3KbKXfGNuA///+XgCAAFKPAA==
+Date:   Thu, 14 Feb 2019 15:18:05 +0000
+Message-ID: <4c1e9d87-6e4c-2bca-f069-c071ad561788@criteo.com>
+References: <20190213122105.14270-1-e.velu@criteo.com>
+ <ae38f70b-f352-8567-2dac-5f6c7723a668@criteo.com>
+ <CAJZ5v0geHMDMLqg98BZEGLjNrSRy3juB9y54ots357wVeK-shQ@mail.gmail.com>
+In-Reply-To: <CAJZ5v0geHMDMLqg98BZEGLjNrSRy3juB9y54ots357wVeK-shQ@mail.gmail.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: PR2P264CA0021.FRAP264.PROD.OUTLOOK.COM (2603:10a6:101::33)
+ To VI1PR04MB5629.eurprd04.prod.outlook.com (2603:10a6:803:de::30)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [91.199.242.236]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: eec3e31f-2601-4529-8aee-08d6928f9e6b
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4109;
+x-ms-traffictypediagnostic: VI1PR04MB4109:
+x-microsoft-exchange-diagnostics: =?utf-8?B?MTtWSTFQUjA0TUI0MTA5OzIzOjUvQVJ2ZVFEakFjL1k2ME1YMFhuWDR5V05Z?=
+ =?utf-8?B?NFhIVHp3eW1SYjl5UmloaFk0dEpRc0xIamJrZFdUU2RUZ1ZjUTlRNXRGNCtD?=
+ =?utf-8?B?THpIWnZtWWRseFVzWmhDMEpWSVQ1OHlxbTRHWDZnbDhrN2xZWEdhRUN1M1A4?=
+ =?utf-8?B?bVIvZGRzTFJVWCs0djI2VVlFclBRcjdIdlExOUtOenNlSXZHQTJ5dUFkT1JE?=
+ =?utf-8?B?bE9xZDhVT0N4NVVqVWhGaTU1TFV2NjNweDBDT2FOc0crZmxiTTR4QWE1dkRh?=
+ =?utf-8?B?S0NlTWZ3Z2IweC9iRENwYVZnT01iT0dETGxadURnOVdYcXJIQjJySFdxK1px?=
+ =?utf-8?B?cWIzOCtYdEpLWnlPMEkrUTBIZGl2eXZmeVlWSjU2K2I4all2WjlJdW5lSEhD?=
+ =?utf-8?B?YWNaeW9vQk8yZG5kUGRZZkVWeXlZa296bHcvd3lKTkVTZVNodk5tRlQyTVdL?=
+ =?utf-8?B?VWFhNGQrNm1UWWgxcmZHQWdhZzZrTEp3L2wvcXZZUVl1VTdMbzU0Mjd0UVFo?=
+ =?utf-8?B?Vjc5d2xqUkJ0YXIrVlFKWDVqRGM0L2x4RUpYNVZOdEx6WjdNS3RvOHhmM3d6?=
+ =?utf-8?B?MmZubEpTajZZclJmaXhSTndDL05HbkpWeXBWRVJYcUdzallrQm9lYWpjVDQr?=
+ =?utf-8?B?eHViRGhnaHl6MGNoM1ZUUWx2VWpGSHZUckIxdlA5aGhab3U1K0JxVzBRdmVu?=
+ =?utf-8?B?NkxxQWpWbE92TmpNVGJ3MjdZb2xYS0JHY285VGhHcFlpNE9tOWpyN3lkSFFO?=
+ =?utf-8?B?VVpWNG5rdUNSMnJzNWs0aUR2dXVtU01BSDI3Mk1UcGR6UmZFV2dCa0RsN1Rm?=
+ =?utf-8?B?OEQzWHNONjErZHpOY2F4OSt6emVOL3ZTcXdGQ3Q1R3AzbUxKY210amhFTWl2?=
+ =?utf-8?B?RDh0QWMzQ3htcDFGcEpFYjREZkovb3dZd01jUmlGbUpkYkJYbklJdWdvWEVy?=
+ =?utf-8?B?TTl4VkFnSG9FZExUNWxBZG03ZHBRaHZ3czhsV2Mvdm5CQW5ndXZsQTVScXhT?=
+ =?utf-8?B?VUdTSWllZzhKRnZWbU1PdUVMeW85eFBKRnVpdjBQazFxa3lvb3laaFB5NUtD?=
+ =?utf-8?B?aW1nWmEzSWoxditoMXFGejZPQXpFT3ROQkdvTnhrdkgzRWZPbUlscHlGb2kw?=
+ =?utf-8?B?UFRqZWkwNDVrRlJwZ2pDYmZNUTZISG5vN3NPWkhVNnhTTnZXUWNFMVV6MGla?=
+ =?utf-8?B?cENmL3ZDNmtTNlZCdmRpWHV6bmIwemhzWnBiLzNzdno1enB1cmQ5bXVhbXlz?=
+ =?utf-8?B?cTgyZmFIcTZHUDJzNjQ1NUVWcEROalc4YlB2RzArVmtLVHRDT2lCeHJJc0VH?=
+ =?utf-8?B?Sm9Jak9CVjlSTDluYVZKOVZ1YU1oektPbXNFbmNCZm04U2dpSXZHQzMra0pS?=
+ =?utf-8?B?TFdka3JPdjltZ28ya2tic2xXS0U4aEU5NDZZSGtxU29uMmd3ZXgyTWVmTTFG?=
+ =?utf-8?B?MjhVRitYK3RyNkpTV0ZBQW9nVzFBRzdqaS9kVlVjNUJpMm4rMUFZaEtkRklq?=
+ =?utf-8?B?bWU5Vkk4RlFOanRQemU2ZldZTUpGTkZQam1mWXRPRGdDN3lZVmpHTm1TZlln?=
+ =?utf-8?B?QzRHM1pqSUtYRUIvVzVlTVVFbkVuY1JBMEtpb2pLQVpkVFVQUW1JYVJwdU1S?=
+ =?utf-8?B?enBINmZmRDB1NVhMNXlxMmZhaTFUSkpuRTUxWDUzeVlEOWdXbUxGVWVHc0pn?=
+ =?utf-8?B?ZkV1ZW5HTHVJYVJUVmpSWGUyYWJzRDIrYkZnWWVsb2R5Smp2alZ2N3Vnd3JT?=
+ =?utf-8?B?eFJ3MUpyT3lRS3NBc0l0UT09?=
+x-microsoft-antispam-prvs: <VI1PR04MB4109293C648B754517740587F2670@VI1PR04MB4109.eurprd04.prod.outlook.com>
+x-forefront-prvs: 09480768F8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(346002)(136003)(396003)(39860400002)(199004)(189003)(71200400001)(71190400001)(6512007)(66574012)(478600001)(54906003)(86362001)(2906002)(52116002)(305945005)(25786009)(14454004)(6246003)(105586002)(446003)(8936002)(106356001)(53936002)(31696002)(186003)(4744005)(36756003)(316002)(76176011)(81156014)(81166006)(97736004)(8676002)(4326008)(31686004)(66066001)(14444005)(386003)(6506007)(26005)(7736002)(68736007)(53546011)(3846002)(6116002)(486006)(6916009)(6436002)(2616005)(11346002)(6486002)(99286004)(256004)(102836004)(229853002)(476003);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR04MB4109;H:VI1PR04MB5629.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: criteo.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 6fynOORxRwwJzLGKcERzaD/TbuwgE2nbTfyhfxwFgJF96pHUwPFBpomwybv/glsSuF4UhJWZOgq1gPKZdDg1UWrFS+pNkectOJKdhEaSkBr4gX/5tMsz2oEtNpqQd/JA9JbimQPs9/PualIpHdErUaMJo4np5C6xYvNhp3LfksRtHQDeUa7Y41hG70BjiTDI5RDy2nZWHypaUUVjf6mIltJvZgCncD8u77EFIhAUsKe81u21oga1I945egNDk11kPKKqJ94stSgRNlZRHPGim5+04iXq7iFW777YGA/2HCzNiZpgHRVVtk3yQ3FQsGwFeu52Ty8XKZR3kA/bM+LfpHqfEKgL2m2NI+mNhj65vRDhmgOcy/8WPd3KNiKM3W02r9p1BUcR0QZwqQx9znWBvu7eQhI1o9Vt7VRlspoBxiQ=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8E080BB06FB63D4DBEE4A9627843DD99@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190212143003.48446-5-john.ogness@linutronix.de>
-User-Agent: NeoMutt/20170421 (1.8.2)
+X-OriginatorOrg: criteo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eec3e31f-2601-4529-8aee-08d6928f9e6b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2019 15:18:05.1067
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 2a35d8fd-574d-48e3-927c-8c398e225a01
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4109
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2019-02-12 15:29:42, John Ogness wrote:
-> Add the writer functions prb_reserve() and prb_commit(). These make
-> use of processor-reentrant spin locks to limit the number of possible
-> interruption scenarios for the writers.
-> 
-> Signed-off-by: John Ogness <john.ogness@linutronix.de>
-> ---
->  include/linux/printk_ringbuffer.h |  17 ++++
->  lib/printk_ringbuffer.c           | 172 ++++++++++++++++++++++++++++++++++++++
->  2 files changed, 189 insertions(+)
-> 
-> diff --git a/include/linux/printk_ringbuffer.h b/include/linux/printk_ringbuffer.h
-> index 0e6e8dd0d01e..1aec9d5666b1 100644
-> --- a/include/linux/printk_ringbuffer.h
-> +++ b/include/linux/printk_ringbuffer.h
-> @@ -24,6 +24,18 @@ struct printk_ringbuffer {
->  	atomic_t ctx;
->  };
->  
-> +struct prb_entry {
-> +	unsigned int size;
-> +	u64 seq;
-> +	char data[0];
-> +};
-> +
-> +struct prb_handle {
-> +	struct printk_ringbuffer *rb;
-> +	unsigned int cpu;
-> +	struct prb_entry *entry;
-> +};
-
-Please, add a comment what these structures are for.
-
->  #define DECLARE_STATIC_PRINTKRB_CPULOCK(name)				\
->  static DEFINE_PER_CPU(unsigned long, _##name##_percpu_irqflags);	\
->  static struct prb_cpulock name = {					\
-> @@ -45,6 +57,11 @@ static struct printk_ringbuffer name = {				\
->  	.ctx = ATOMIC_INIT(0),						\
->  }
->  
-> +/* writer interface */
-> +char *prb_reserve(struct prb_handle *h, struct printk_ringbuffer *rb,
-> +		  unsigned int size);
-> +void prb_commit(struct prb_handle *h);
-> +
->  /* utility functions */
->  void prb_lock(struct prb_cpulock *cpu_lock, unsigned int *cpu_store);
->  void prb_unlock(struct prb_cpulock *cpu_lock, unsigned int cpu_store);
-> diff --git a/lib/printk_ringbuffer.c b/lib/printk_ringbuffer.c
-> index 28958b0cf774..90c7f9a9f861 100644
-> --- a/lib/printk_ringbuffer.c
-> +++ b/lib/printk_ringbuffer.c
-> @@ -2,6 +2,14 @@
->  #include <linux/smp.h>
->  #include <linux/printk_ringbuffer.h>
->  
-> +#define PRB_SIZE(rb) (1 << rb->size_bits)
-
-1 -> 1L
-
-> +#define PRB_SIZE_BITMASK(rb) (PRB_SIZE(rb) - 1)
-> +#define PRB_INDEX(rb, lpos) (lpos & PRB_SIZE_BITMASK(rb))
-> +#define PRB_WRAPS(rb, lpos) (lpos >> rb->size_bits)
-> +#define PRB_WRAP_LPOS(rb, lpos, xtra) \
-> +	((PRB_WRAPS(rb, lpos) + xtra) << rb->size_bits)
-
-It took me quite some time to understand the WRAP macros.
-The extra parameter makes it even worse.
-
-I suggest to distinguish the two situation by the macro names.
-For example:
-
-    PRB_THIS_WRAP_START_LPOS(rb, lpos)
-    PRB_NEXT_WRAP_START_LPOS(rb, lpos)
-
-Also they might deserve a comment.
-
-
-> +#define PRB_DATA_ALIGN sizeof(long)
-> +
->  static bool __prb_trylock(struct prb_cpulock *cpu_lock,
->  			  unsigned int *cpu_store)
->  {
-> @@ -75,3 +83,167 @@ void prb_unlock(struct prb_cpulock *cpu_lock, unsigned int cpu_store)
->  
->  	put_cpu();
->  }
-> +
-> +static struct prb_entry *to_entry(struct printk_ringbuffer *rb,
-> +				  unsigned long lpos)
-> +{
-> +	char *buffer = rb->buffer;
-> +	buffer += PRB_INDEX(rb, lpos);
-> +	return (struct prb_entry *)buffer;
-> +}
-> +
-> +static int calc_next(struct printk_ringbuffer *rb, unsigned long tail,
-> +		     unsigned long lpos, int size, unsigned long *calced_next)
-> +{
-
-The function is so tricky that it deserves a comment.
-
-Well, I am getting really lost because of the generic name
-and all the parameters. For example, I wonder what "calced" stands
-for.
-
-I think that it will be much easiser to follow the logic if the entire
-for-cycle around calc_next() is implemented in a single function.
-The function push_tail() should get called from inside this function.
-
-> +	unsigned long next_lpos;
-> +	int ret = 0;
-> +again:
-> +	next_lpos = lpos + size;
-> +	if (next_lpos - tail > PRB_SIZE(rb))
-> +		return -1;
-
-push_tail() should get called here. prb_reserve() should bail
-out when the tail could not get pushed.
-
-> +
-> +	if (PRB_WRAPS(rb, lpos) != PRB_WRAPS(rb, next_lpos)) {
-> +		lpos = PRB_WRAP_LPOS(rb, next_lpos, 0);
-> +		ret |= 1;
-
-This is a strange trick. The function should either return a valid
-lpos that might get reserved or an error. The error means that
-prb_reserve() must fail.
-
-> +		goto again;
-> +	}
-> +
-> +	*calced_next = next_lpos;
-> +	return ret;
-> +}
-> +
-
-/* Try to remove the oldest message */
-> +static bool push_tail(struct printk_ringbuffer *rb, unsigned long tail)
-> +{
-> +	unsigned long new_tail;
-> +	struct prb_entry *e;
-> +	unsigned long head;
-> +
-> +	if (tail != atomic_long_read(&rb->tail))
-> +		return true;
-> +
-> +	e = to_entry(rb, tail);
-> +	if (e->size != -1)
-> +		new_tail = tail + e->size;
-> +	else
-> +		new_tail = PRB_WRAP_LPOS(rb, tail, 1);
-> +
-> +	/* make sure the new tail does not overtake the head */
-> +	head = atomic_long_read(&rb->head);
-> +	if (head - new_tail > PRB_SIZE(rb))
-> +		return false;
-> +
-> +	atomic_long_cmpxchg(&rb->tail, tail, new_tail);
-> +	return true;
-> +}
-> +
-> +/*
-> + * prb_commit: Commit a reserved entry to the ring buffer.
-> + * @h: An entry handle referencing the data entry to commit.
-> + *
-> + * Commit data that has been reserved using prb_reserve(). Once the data
-> + * block has been committed, it can be invalidated at any time. If a writer
-> + * is interested in using the data after committing, the writer should make
-> + * its own copy first or use the prb_iter_ reader functions to access the
-> + * data in the ring buffer.
-> + *
-> + * It is safe to call this function from any context and state.
-> + */
-> +void prb_commit(struct prb_handle *h)
-> +{
-> +	struct printk_ringbuffer *rb = h->rb;
-> +	struct prb_entry *e;
-> +	unsigned long head;
-> +	unsigned long res;
-> +
-> +	for (;;) {
-> +		if (atomic_read(&rb->ctx) != 1) {
-> +			/* the interrupted context will fixup head */
-> +			atomic_dec(&rb->ctx);
-> +			break;
-> +		}
-> +		/* assign sequence numbers before moving head */
-> +		head = atomic_long_read(&rb->head);
-> +		res = atomic_long_read(&rb->reserve);
-> +		while (head != res) {
-> +			e = to_entry(rb, head);
-> +			if (e->size == -1) {
-> +				head = PRB_WRAP_LPOS(rb, head, 1);
-> +				continue;
-> +			}
-> +			e->seq = ++rb->seq;
-> +			head += e->size;
-> +		}
-> +		atomic_long_set_release(&rb->head, res);
-
-This looks realy weird. It looks like you are commiting all
-reserved entries between current head and this entry.
-
-I would expect that every prb_entry has its own flag whether
-it was commited or not. This function should set this flag
-for its own entry. Then it should move the head to the
-first uncommited entry.
-
-It will be racy because because more CPUs might commit their
-own entries in parallel and they might miss each other
-commit flags.
-
-A solution might be to implement prb_push_head() that will
-do the safe thing. Then we could call it here, from klp_push_tail()
-and also from readers. I am still not sure if it will be
-race-free but it looks promissing.
-
-> +		atomic_dec(&rb->ctx);
-
-With the above approach you will not need rb->ctx. It is
-racy anyway, see below.
-
-> +
-> +		if (atomic_long_read(&rb->reserve) == res)
-> +			break;
-> +		atomic_inc(&rb->ctx);
-> +	}
-> +
-> +	prb_unlock(rb->cpulock, h->cpu);
-> +}
-> +
-> +/*
-> + * prb_reserve: Reserve an entry within a ring buffer.
-> + * @h: An entry handle to be setup and reference an entry.
-> + * @rb: A ring buffer to reserve data within.
-> + * @size: The number of bytes to reserve.
-> + *
-> + * Reserve an entry of at least @size bytes to be used by the caller. If
-> + * successful, the data region of the entry belongs to the caller and cannot
-> + * be invalidated by any other task/context. For this reason, the caller
-> + * should call prb_commit() as quickly as possible in order to avoid preventing
-> + * other tasks/contexts from reserving data in the case that the ring buffer
-> + * has wrapped.
-> + *
-> + * It is safe to call this function from any context and state.
-> + *
-> + * Returns a pointer to the reserved entry (and @h is setup to reference that
-> + * entry) or NULL if it was not possible to reserve data.
-> + */
-> +char *prb_reserve(struct prb_handle *h, struct printk_ringbuffer *rb,
-> +		  unsigned int size)
-> +{
-> +	unsigned long tail, res1, res2;
-
-Please, better distinguish res1 and res2, e.g. old_res, new_res.
-
-> +	int ret;
-> +
-> +	if (size == 0)
-> +		return NULL;
-> +	size += sizeof(struct prb_entry);
-> +	size += PRB_DATA_ALIGN - 1;
-> +	size &= ~(PRB_DATA_ALIGN - 1);
-
-The above two lines should get hidden into PRB_ALLIGN_SIZE() or so.
-
-> +	if (size >= PRB_SIZE(rb))
-> +		return NULL;
-> +
-> +	h->rb = rb;
-> +	prb_lock(rb->cpulock, &h->cpu);
-> +
-> +	atomic_inc(&rb->ctx);
-
-This looks racy. NMI could come between prb_lock() and this atomic_inc().
-
-
-> +	do {
-> +		for (;;) {
-> +			tail = atomic_long_read(&rb->tail);
-> +			res1 = atomic_long_read(&rb->reserve);
-> +			ret = calc_next(rb, tail, res1, size, &res2);
-> +			if (ret >= 0)
-> +				break;
-> +			if (!push_tail(rb, tail)) {
-> +				prb_commit(h);
-
-I am a bit confused. Is it commiting a handle that haven't
-been reserved yet? Why, please?
-
-> +				return NULL;
-> +			}
-> +		}
-
-Please, try to refactor the above as commented in calc_next().
-
-> +	} while (!atomic_long_try_cmpxchg_acquire(&rb->reserve, &res1, res2));
-> +
-> +	h->entry = to_entry(rb, res1);
-> +
-> +	if (ret) {
-> +		/* handle wrap */
-
-		/* Write wrapping entry that is part of our reservation. */
-
-> +		h->entry->size = -1;
-> +		h->entry = to_entry(rb, PRB_WRAP_LPOS(rb, res2, 0));
-> +	}
-> +
-> +	h->entry->size = size;
-> +
-> +	return &h->entry->data[0];
-> +}
-
-Best Regards,
-Petr
+DQpMZSAxNC8wMi8yMDE5IMOgIDExOjIyLCBSYWZhZWwgSi4gV3lzb2NraSBhIMOpY3JpdMKgOg0K
+PiBPbiBUaHUsIEZlYiAxNCwgMjAxOSBhdCAxMDoyOCBBTSBFcndhbiBWZWx1IDxlLnZlbHVAY3Jp
+dGVvLmNvbT4gd3JvdGU6DQo+PiBIZXkgcmFmYWVsLA0KPj4NCj4+IERvZXMgdGhlIFY2IGxvb2tz
+IGdvb2QgdG8geW91ID8NCj4gSSd2ZSBxdWV1ZWQgaXQgdXAgd2l0aCBzb21lIG1hbnVhbCBjaGFu
+Z2VzLiAgTm8gbmVlZCB0byB1cGRhdGUuDQoNCk9rLCBjb29sLiBXaGF0IGtpbmQgb2YgY2hhbmdl
+cyA/DQoNCkknZCBsb3ZlIHRvIHVuZGVyc3RhbmQgd2hhdCBJIG1pc3NlZC4NCg0KVGh4LA0KDQpF
+cndhbg0KDQo=
