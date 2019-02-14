@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB061C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:03:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89873C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:03:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ED3F218FF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:03:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F60B218FF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:03:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="D+VWajgN"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="2PAnanOt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393505AbfBNADq (ORCPT
+        id S2404368AbfBNADw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 19:03:46 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:45832 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393480AbfBNADn (ORCPT
+        Wed, 13 Feb 2019 19:03:52 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:56924 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393416AbfBNADm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 19:03:43 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1DNwhvM099390;
-        Thu, 14 Feb 2019 00:02:21 GMT
+        Wed, 13 Feb 2019 19:03:42 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1DNx9xx093658;
+        Thu, 14 Feb 2019 00:02:20 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : in-reply-to :
  references; s=corp-2018-07-02;
- bh=1tfiao/L4nkY1/BQ61imQ3duc4RawqVwLZqH4dWuQjI=;
- b=D+VWajgNZnnbCBmJd6hRmQKSxbcltQMbhcmtC6zmq5GAiZd2odC4bM6E90rcz6FYx3g3
- p7y7UNpH69a0nk3zZf710qRnzwfsm4El++cnOGfwCXpBM+jvTdVH6Sf1YTW1mX20YwrC
- xhahrxss9iSQvxnblHxengOYGhfFgrNit8QWBepNbxggligImNFYyOIvecSsajODeFCA
- QYzSeuNjvM9sbPmvcKLqraQPt2jiXMulJIq2+crPTnfNMyeJj3D2nJzTpOUsVOy0xI7m
- BqAYotYlxCLKc5WX7QxIgpOoO3+kFRcKTeD7C15b1QdehKVErxfhN/MX2ZEDG3Kpwb4g ZA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2qhree55n9-1
+ bh=TQlIsuP1ag8N8cWtIZarXg5qzwt4o6eHPtANA79RWaM=;
+ b=2PAnanOtADcxei1cy8BlTb/qU5ZZ7i0wqibFXPa9bnInPG/bvReURBWdV7oqlHHKB04P
+ eJe2e67nu+luxcdvC3UBRDtvbK4t0fpRO4v+csDCFP/QjO2HMEGx/ANYI0/HgjyJOXBQ
+ A+HhQpvU1Zm+os48RbnhGhjXf13nrybGW9Q+s+JqmKbNdQ6NQ9nWd7faph98x/U5WFsQ
+ GP3HR7Iu2pYrMuqLFfE3A+sddb/2CPIRd3PP80otI32ENy8xTiH9Z0CLXt9neXDuvRjw
+ swjC9f3y4oeNAID085G4bmwvjmiQzHs2QY3PeVUXmX6gdeHyJcTl0BfB9Kn9iJyjhaP4 ZQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2qhrekn4kv-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
         Thu, 14 Feb 2019 00:02:20 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1E02JKR001195
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1E02I6f026212
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Feb 2019 00:02:20 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1E02J3c018809;
         Thu, 14 Feb 2019 00:02:19 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1E02Hqw032540;
+        Thu, 14 Feb 2019 00:02:17 GMT
 Received: from concerto.internal (/24.9.64.241)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 13 Feb 2019 16:02:19 -0800
+        with ESMTP ; Wed, 13 Feb 2019 16:02:16 -0800
 From:   Khalid Aziz <khalid.aziz@oracle.com>
 To:     juergh@gmail.com, tycho@tycho.ws, jsteckli@amazon.de,
         ak@linux.intel.com, torvalds@linux-foundation.org,
@@ -56,9 +56,8 @@ To:     juergh@gmail.com, tycho@tycho.ws, jsteckli@amazon.de,
         akpm@linux-foundation.org, mhocko@suse.com,
         catalin.marinas@arm.com, will.deacon@arm.com, jmorris@namei.org,
         konrad.wilk@oracle.com
-Cc:     Juerg Haefliger <juerg.haefliger@canonical.com>,
-        deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
-        tyhicks@canonical.com, dwmw@amazon.co.uk,
+Cc:     Tycho Andersen <tycho@docker.com>, deepa.srinivasan@oracle.com,
+        chris.hyser@oracle.com, tyhicks@canonical.com, dwmw@amazon.co.uk,
         andrew.cooper3@citrix.com, jcm@redhat.com,
         boris.ostrovsky@oracle.com, kanth.ghatraju@oracle.com,
         oao.m.martins@oracle.com, jmattson@google.com,
@@ -68,10 +67,10 @@ Cc:     Juerg Haefliger <juerg.haefliger@canonical.com>,
         dave.hansen@intel.com, peterz@infradead.org,
         kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
         x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Tycho Andersen <tycho@docker.com>
-Subject: [RFC PATCH v8 10/14] lkdtm: Add test for XPFO
-Date:   Wed, 13 Feb 2019 17:01:33 -0700
-Message-Id: <1af3c61568d36cad4a2b2fece978336620701b86.1550088114.git.khalid.aziz@oracle.com>
+        linux-kernel@vger.kernel.org, Khalid Aziz <khalid.aziz@oracle.com>
+Subject: [RFC PATCH v8 09/14] mm: add a user_virt_to_phys symbol
+Date:   Wed, 13 Feb 2019 17:01:32 -0700
+Message-Id: <b96108404af22ac25a0b62b81d338bf511002f63.1550088114.git.khalid.aziz@oracle.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1550088114.git.khalid.aziz@oracle.com>
 References: <cover.1550088114.git.khalid.aziz@oracle.com>
@@ -79,7 +78,7 @@ In-Reply-To: <cover.1550088114.git.khalid.aziz@oracle.com>
 References: <cover.1550088114.git.khalid.aziz@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9166 signatures=668683
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
  lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
  definitions=main-1902130157
@@ -88,270 +87,123 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Juerg Haefliger <juerg.haefliger@canonical.com>
+From: Tycho Andersen <tycho@docker.com>
 
-This test simply reads from userspace memory via the kernel's linear
-map.
+We need someting like this for testing XPFO. Since it's architecture
+specific, putting it in the test code is slightly awkward, so let's make it
+an arch-specific symbol and export it for use in LKDTM.
 
-v6: * drop an #ifdef, just let the test fail if XPFO is not supported
-    * add XPFO_SMP test to try and test the case when one CPU does an xpfo
-      unmap of an address, that it can't be used accidentally by other
-      CPUs.
-
-Signed-off-by: Juerg Haefliger <juerg.haefliger@canonical.com>
+CC: linux-arm-kernel@lists.infradead.org
+CC: x86@kernel.org
 Signed-off-by: Tycho Andersen <tycho@docker.com>
 Tested-by: Marco Benatto <marco.antonio.780@gmail.com>
-[jsteckli@amazon.de: rebased from v4.13 to v4.19]
-Signed-off-by: Julian Stecklina <jsteckli@amazon.de>
-Tested-by: Khalid Aziz <khalid.aziz@oracle.com>
+Signed-off-by: Khalid Aziz <khalid.aziz@oracle.com>
 ---
- drivers/misc/lkdtm/Makefile |   1 +
- drivers/misc/lkdtm/core.c   |   3 +
- drivers/misc/lkdtm/lkdtm.h  |   5 +
- drivers/misc/lkdtm/xpfo.c   | 194 ++++++++++++++++++++++++++++++++++++
- 4 files changed, 203 insertions(+)
- create mode 100644 drivers/misc/lkdtm/xpfo.c
+v6: * add a definition of user_virt_to_phys in the !CONFIG_XPFO case
+v7: * make user_virt_to_phys a GPL symbol
 
-diff --git a/drivers/misc/lkdtm/Makefile b/drivers/misc/lkdtm/Makefile
-index 951c984de61a..97c6b7818cce 100644
---- a/drivers/misc/lkdtm/Makefile
-+++ b/drivers/misc/lkdtm/Makefile
-@@ -9,6 +9,7 @@ lkdtm-$(CONFIG_LKDTM)		+= refcount.o
- lkdtm-$(CONFIG_LKDTM)		+= rodata_objcopy.o
- lkdtm-$(CONFIG_LKDTM)		+= usercopy.o
- lkdtm-$(CONFIG_LKDTM)		+= stackleak.o
-+lkdtm-$(CONFIG_LKDTM)		+= xpfo.o
+ arch/x86/mm/xpfo.c   | 57 ++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/xpfo.h |  8 +++++++
+ 2 files changed, 65 insertions(+)
+
+diff --git a/arch/x86/mm/xpfo.c b/arch/x86/mm/xpfo.c
+index 6c7502993351..e13b99019c47 100644
+--- a/arch/x86/mm/xpfo.c
++++ b/arch/x86/mm/xpfo.c
+@@ -117,3 +117,60 @@ inline void xpfo_flush_kernel_tlb(struct page *page, int order)
  
- KASAN_SANITIZE_stackleak.o	:= n
- KCOV_INSTRUMENT_rodata.o	:= n
-diff --git a/drivers/misc/lkdtm/core.c b/drivers/misc/lkdtm/core.c
-index 2837dc77478e..25f4ab4ebf50 100644
---- a/drivers/misc/lkdtm/core.c
-+++ b/drivers/misc/lkdtm/core.c
-@@ -185,6 +185,9 @@ static const struct crashtype crashtypes[] = {
- 	CRASHTYPE(USERCOPY_KERNEL),
- 	CRASHTYPE(USERCOPY_KERNEL_DS),
- 	CRASHTYPE(STACKLEAK_ERASING),
-+	CRASHTYPE(XPFO_READ_USER),
-+	CRASHTYPE(XPFO_READ_USER_HUGE),
-+	CRASHTYPE(XPFO_SMP),
- };
- 
- 
-diff --git a/drivers/misc/lkdtm/lkdtm.h b/drivers/misc/lkdtm/lkdtm.h
-index 3c6fd327e166..6b31ff0c7f8f 100644
---- a/drivers/misc/lkdtm/lkdtm.h
-+++ b/drivers/misc/lkdtm/lkdtm.h
-@@ -87,4 +87,9 @@ void lkdtm_USERCOPY_KERNEL_DS(void);
- /* lkdtm_stackleak.c */
- void lkdtm_STACKLEAK_ERASING(void);
- 
-+/* lkdtm_xpfo.c */
-+void lkdtm_XPFO_READ_USER(void);
-+void lkdtm_XPFO_READ_USER_HUGE(void);
-+void lkdtm_XPFO_SMP(void);
+ 	flush_tlb_kernel_range(kaddr, kaddr + (1 << order) * size);
+ }
 +
- #endif
-diff --git a/drivers/misc/lkdtm/xpfo.c b/drivers/misc/lkdtm/xpfo.c
-new file mode 100644
-index 000000000000..d903063bdd0b
---- /dev/null
-+++ b/drivers/misc/lkdtm/xpfo.c
-@@ -0,0 +1,194 @@
-+/*
-+ * This is for all the tests related to XPFO (eXclusive Page Frame Ownership).
++/* Convert a user space virtual address to a physical address.
++ * Shamelessly copied from slow_virt_to_phys() and lookup_address() in
++ * arch/x86/mm/pageattr.c
 + */
-+
-+#include "lkdtm.h"
-+
-+#include <linux/cpumask.h>
-+#include <linux/mman.h>
-+#include <linux/uaccess.h>
-+#include <linux/xpfo.h>
-+#include <linux/kthread.h>
-+
-+#include <linux/delay.h>
-+#include <linux/sched/task.h>
-+
-+#define XPFO_DATA 0xdeadbeef
-+
-+static unsigned long do_map(unsigned long flags)
-+{
-+	unsigned long user_addr, user_data = XPFO_DATA;
-+
-+	user_addr = vm_mmap(NULL, 0, PAGE_SIZE,
-+			    PROT_READ | PROT_WRITE | PROT_EXEC,
-+			    flags, 0);
-+	if (user_addr >= TASK_SIZE) {
-+		pr_warn("Failed to allocate user memory\n");
-+		return 0;
-+	}
-+
-+	if (copy_to_user((void __user *)user_addr, &user_data,
-+			 sizeof(user_data))) {
-+		pr_warn("copy_to_user failed\n");
-+		goto free_user;
-+	}
-+
-+	return user_addr;
-+
-+free_user:
-+	vm_munmap(user_addr, PAGE_SIZE);
-+	return 0;
-+}
-+
-+static unsigned long *user_to_kernel(unsigned long user_addr)
++phys_addr_t user_virt_to_phys(unsigned long addr)
 +{
 +	phys_addr_t phys_addr;
-+	void *virt_addr;
++	unsigned long offset;
++	pgd_t *pgd;
++	p4d_t *p4d;
++	pud_t *pud;
++	pmd_t *pmd;
++	pte_t *pte;
 +
-+	phys_addr = user_virt_to_phys(user_addr);
-+	if (!phys_addr) {
-+		pr_warn("Failed to get physical address of user memory\n");
-+		return NULL;
-+	}
-+
-+	virt_addr = phys_to_virt(phys_addr);
-+	if (phys_addr != virt_to_phys(virt_addr)) {
-+		pr_warn("Physical address of user memory seems incorrect\n");
-+		return NULL;
-+	}
-+
-+	return virt_addr;
-+}
-+
-+static void read_map(unsigned long *virt_addr)
-+{
-+	pr_info("Attempting bad read from kernel address %p\n", virt_addr);
-+	if (*(unsigned long *)virt_addr == XPFO_DATA)
-+		pr_err("FAIL: Bad read succeeded?!\n");
-+	else
-+		pr_err("FAIL: Bad read didn't fail but data is incorrect?!\n");
-+}
-+
-+static void read_user_with_flags(unsigned long flags)
-+{
-+	unsigned long user_addr, *kernel;
-+
-+	user_addr = do_map(flags);
-+	if (!user_addr) {
-+		pr_err("FAIL: map failed\n");
-+		return;
-+	}
-+
-+	kernel = user_to_kernel(user_addr);
-+	if (!kernel) {
-+		pr_err("FAIL: user to kernel conversion failed\n");
-+		goto free_user;
-+	}
-+
-+	read_map(kernel);
-+
-+free_user:
-+	vm_munmap(user_addr, PAGE_SIZE);
-+}
-+
-+/* Read from userspace via the kernel's linear map. */
-+void lkdtm_XPFO_READ_USER(void)
-+{
-+	read_user_with_flags(MAP_PRIVATE | MAP_ANONYMOUS);
-+}
-+
-+void lkdtm_XPFO_READ_USER_HUGE(void)
-+{
-+	read_user_with_flags(MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB);
-+}
-+
-+struct smp_arg {
-+	unsigned long *virt_addr;
-+	unsigned int cpu;
-+};
-+
-+static int smp_reader(void *parg)
-+{
-+	struct smp_arg *arg = parg;
-+	unsigned long *virt_addr;
-+
-+	if (arg->cpu != smp_processor_id()) {
-+		pr_err("FAIL: scheduled on wrong CPU?\n");
++	pgd = pgd_offset(current->mm, addr);
++	if (pgd_none(*pgd))
 +		return 0;
++
++	p4d = p4d_offset(pgd, addr);
++	if (p4d_none(*p4d))
++		return 0;
++
++	if (p4d_large(*p4d) || !p4d_present(*p4d)) {
++		phys_addr = (unsigned long)p4d_pfn(*p4d) << PAGE_SHIFT;
++		offset = addr & ~P4D_MASK;
++		goto out;
 +	}
 +
-+	virt_addr = smp_cond_load_acquire(&arg->virt_addr, VAL != NULL);
-+	read_map(virt_addr);
++	pud = pud_offset(p4d, addr);
++	if (pud_none(*pud))
++		return 0;
 +
-+	return 0;
++	if (pud_large(*pud) || !pud_present(*pud)) {
++		phys_addr = (unsigned long)pud_pfn(*pud) << PAGE_SHIFT;
++		offset = addr & ~PUD_MASK;
++		goto out;
++	}
++
++	pmd = pmd_offset(pud, addr);
++	if (pmd_none(*pmd))
++		return 0;
++
++	if (pmd_large(*pmd) || !pmd_present(*pmd)) {
++		phys_addr = (unsigned long)pmd_pfn(*pmd) << PAGE_SHIFT;
++		offset = addr & ~PMD_MASK;
++		goto out;
++	}
++
++	pte =  pte_offset_kernel(pmd, addr);
++	phys_addr = (phys_addr_t)pte_pfn(*pte) << PAGE_SHIFT;
++	offset = addr & ~PAGE_MASK;
++
++out:
++	return (phys_addr_t)(phys_addr | offset);
 +}
++EXPORT_SYMBOL_GPL(user_virt_to_phys);
+diff --git a/include/linux/xpfo.h b/include/linux/xpfo.h
+index 8b029918a958..117869991d5b 100644
+--- a/include/linux/xpfo.h
++++ b/include/linux/xpfo.h
+@@ -24,6 +24,10 @@ struct page;
+ 
+ #ifdef CONFIG_XPFO
+ 
++#include <linux/dma-mapping.h>
 +
-+#ifdef CONFIG_X86
-+#define XPFO_SMP_KILLED SIGKILL
-+#elif CONFIG_ARM64
-+#define XPFO_SMP_KILLED SIGSEGV
-+#else
-+#error unsupported arch
-+#endif
++#include <linux/types.h>
 +
-+/* The idea here is to read from the kernel's map on a different thread than
-+ * did the mapping (and thus the TLB flushing), to make sure that the page
-+ * faults on other cores too.
-+ */
-+void lkdtm_XPFO_SMP(void)
-+{
-+	unsigned long user_addr, *virt_addr;
-+	struct task_struct *thread;
-+	int ret;
-+	struct smp_arg arg;
+ extern struct page_ext_operations page_xpfo_ops;
+ 
+ void set_kpte(void *kaddr, struct page *page, pgprot_t prot);
+@@ -49,6 +53,8 @@ void xpfo_temp_unmap(const void *addr, size_t size, void **mapping,
+ 
+ bool xpfo_enabled(void);
+ 
++phys_addr_t user_virt_to_phys(unsigned long addr);
 +
-+	if (num_online_cpus() < 2) {
-+		pr_err("not enough to do a multi cpu test\n");
-+		return;
-+	}
+ #else /* !CONFIG_XPFO */
+ 
+ static inline void xpfo_kmap(void *kaddr, struct page *page) { }
+@@ -73,6 +79,8 @@ static inline void xpfo_temp_unmap(const void *addr, size_t size,
+ 
+ static inline bool xpfo_enabled(void) { return false; }
+ 
++static inline phys_addr_t user_virt_to_phys(unsigned long addr) { return 0; }
 +
-+	arg.virt_addr = NULL;
-+	arg.cpu = (smp_processor_id() + 1) % num_online_cpus();
-+	thread = kthread_create(smp_reader, &arg, "lkdtm_xpfo_test");
-+	if (IS_ERR(thread)) {
-+		pr_err("couldn't create kthread? %ld\n", PTR_ERR(thread));
-+		return;
-+	}
-+
-+	kthread_bind(thread, arg.cpu);
-+	get_task_struct(thread);
-+	wake_up_process(thread);
-+
-+	user_addr = do_map(MAP_PRIVATE | MAP_ANONYMOUS);
-+	if (!user_addr)
-+		goto kill_thread;
-+
-+	virt_addr = user_to_kernel(user_addr);
-+	if (!virt_addr) {
-+		/*
-+		 * let's store something that will fail, so we can unblock the
-+		 * thread
-+		 */
-+		smp_store_release(&arg.virt_addr, &arg);
-+		goto free_user;
-+	}
-+
-+	smp_store_release(&arg.virt_addr, virt_addr);
-+
-+	/* there must be a better way to do this. */
-+	while (1) {
-+		if (thread->exit_state)
-+			break;
-+		msleep_interruptible(100);
-+	}
-+
-+free_user:
-+	if (user_addr)
-+		vm_munmap(user_addr, PAGE_SIZE);
-+
-+kill_thread:
-+	ret = kthread_stop(thread);
-+	if (ret != XPFO_SMP_KILLED)
-+		pr_err("FAIL: thread wasn't killed: %d\n", ret);
-+	put_task_struct(thread);
-+}
+ #endif /* CONFIG_XPFO */
+ 
+ #endif /* _LINUX_XPFO_H */
 -- 
 2.17.1
 
