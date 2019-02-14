@@ -2,110 +2,92 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55771C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1492AC4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:12:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 244FE21B68
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:08:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D88DA21B68
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:12:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="LK3eHapj"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZJoXraRw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438127AbfBNWIP (ORCPT
+        id S2438195AbfBNWL7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 17:08:15 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45101 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2395232AbfBNWIO (ORCPT
+        Thu, 14 Feb 2019 17:11:59 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:59578 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404953AbfBNWL7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 17:08:14 -0500
-Received: by mail-pf1-f193.google.com with SMTP id v21so779373pfm.12
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 14:08:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mFDawymT8Zh+E+HOem14TYUCVAe8NsegNwIXcLtnH/8=;
-        b=LK3eHapjO2duzbmPZyml2AAntHc+oCsXsAmOo3RruPUCgn4e1oQ/RTGL1IjLhTk3Bg
-         nsUp4MloY69HY4JkvL/o6uZAwq4aEfit60aCwnjMcKT34tL5QSmuao5f11O7fVKsPoEl
-         eBQ7udFASBf2anMqyQJJYRTOi7lKdktcnUwL2jrRxpmPMeq+iC8zXsWm18DW0z3287ZZ
-         4e3Qvaw+WpYOYZ5V4As/0Clxq5EYE0ADKB8fcxTzUUenhmefNlMWkPMfBtlVeovTGLuk
-         EWQcn87uG9Dm0/5kLzJc3zKogxuVgRNQ8mCciALhhT0nqhePF60DlU6Ayzh0Rt9pwrDh
-         NTjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mFDawymT8Zh+E+HOem14TYUCVAe8NsegNwIXcLtnH/8=;
-        b=nIFfDNhkyudV0FZEwpUR8a/WBcPW7uTf3A9nNvlJ6g1KlHSKaLVDjp/BUXWR+g1CAC
-         b4+IQn776b4S8qNMWPCX8by2tVIY114dsSJJnezI5LNjz+6EMYHQtjoj3BjwCwFCdnKe
-         g6wqxPcpGDUyxBYPSqRuNMIJveAp9tSnXmdxOjHNtv154Pl7crha7wR/WFluXflBQ4bR
-         YMScOb67EkixGZeUtj+OuU7iYYMEoB10Nwnh8PxreFkndBfass4h5pGSp4xquBn0PsxA
-         3IWiYGmUY6KLXC6k+GzJTXF2aMJ+08TV3CxXFbnecZ9VQnHgEnpmlaDHiFyd4WV0lBlM
-         D3cQ==
-X-Gm-Message-State: AHQUAuYxWqBVMINANT35BR/FWl7hr9M53XXgaq0gzkQh2KtLFV9hka/L
-        fBGfBmd9wGpUWlx2VozJH5u7Wg==
-X-Google-Smtp-Source: AHgI3IbI/gzTIQORPKner8uMFyoO6LP7LhzVUUoaOAA5F4X4Rq3yTQfVTS2AgXHcjITlz8fbIPKOcw==
-X-Received: by 2002:a65:47ca:: with SMTP id f10mr2034048pgs.166.1550182094094;
-        Thu, 14 Feb 2019 14:08:14 -0800 (PST)
-Received: from kshutemo-mobl1.localdomain ([192.55.54.45])
-        by smtp.gmail.com with ESMTPSA id z62sm8443131pfi.4.2019.02.14.14.08.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 14:08:13 -0800 (PST)
-Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
-        id 4FF443008A8; Fri, 15 Feb 2019 01:08:10 +0300 (+03)
-Date:   Fri, 15 Feb 2019 01:08:10 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Matthew Wilcox <willy@infradead.org>
+        Thu, 14 Feb 2019 17:11:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Gwc+mvIl4HoO2YfH2m0A8g4VcbExcOq+aBb16LSf1EI=; b=ZJoXraRwEzPwCjFopYp0D/SBf
+        oExrdMzVb4bcoedsPJXTMRiM0f6llqjnv/ND3gdcr+NN16Gq1xGdvVTqEgNNZX38lB+ajiti5MA5t
+        QoqGD5j8TSkMmRlf164otrER2pPPxdHs7/xFdtYUKvWe1CM2uv2056tV38vrfj980Q8nYSb4qeZPD
+        dF/qOaxvuArkL9sJ76rWgnG0MEcIhoYJk5GtmpFDkCWtXadhb69achm2/Zaps8K9G7VAoZf41Fdk1
+        x8bAHEI2bXJ9uISExFkUX+h1zUPiovdWqDjpf2mzLfIBkzHpWLKB8hsFRfWmPNqnMb2owjs0KHqog
+        z1ps54Vxg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1guPEc-0006Mt-7X; Thu, 14 Feb 2019 22:11:58 +0000
+Date:   Thu, 14 Feb 2019 14:11:58 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
 Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>,
         William Kucharski <william.kucharski@oracle.com>
 Subject: Re: [PATCH v2] page cache: Store only head pages in i_pages
-Message-ID: <20190214220810.cs2ecomtrqc6m2ap@kshutemo-mobl1>
+Message-ID: <20190214221158.GF12668@bombadil.infradead.org>
 References: <20190212183454.26062-1-willy@infradead.org>
  <20190214133004.js7s42igiqc5pgwf@kshutemo-mobl1>
  <20190214211757.GE12668@bombadil.infradead.org>
+ <20190214220810.cs2ecomtrqc6m2ap@kshutemo-mobl1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190214211757.GE12668@bombadil.infradead.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190214220810.cs2ecomtrqc6m2ap@kshutemo-mobl1>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 01:17:57PM -0800, Matthew Wilcox wrote:
-> On Thu, Feb 14, 2019 at 04:30:04PM +0300, Kirill A. Shutemov wrote:
-> >  - migrate_page_move_mapping() has to be converted too.
+On Fri, Feb 15, 2019 at 01:08:10AM +0300, Kirill A. Shutemov wrote:
+> On Thu, Feb 14, 2019 at 01:17:57PM -0800, Matthew Wilcox wrote:
+> > On Thu, Feb 14, 2019 at 04:30:04PM +0300, Kirill A. Shutemov wrote:
+> > >  - migrate_page_move_mapping() has to be converted too.
+> > 
+> > I think that's as simple as:
+> > 
+> > +++ b/mm/migrate.c
+> > @@ -465,7 +465,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
+> >  
+> >                 for (i = 1; i < HPAGE_PMD_NR; i++) {
+> >                         xas_next(&xas);
+> > -                       xas_store(&xas, newpage + i);
+> > +                       xas_store(&xas, newpage);
+> >                 }
+> >         }
+> >  
+> > 
+> > or do you see something else I missed?
 > 
-> I think that's as simple as:
+> Looks right to me.
 > 
-> +++ b/mm/migrate.c
-> @@ -465,7 +465,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
->  
->                 for (i = 1; i < HPAGE_PMD_NR; i++) {
->                         xas_next(&xas);
-> -                       xas_store(&xas, newpage + i);
-> +                       xas_store(&xas, newpage);
->                 }
->         }
->  
+> BTW, maybe some add syntax sugar from XArray side?
 > 
-> or do you see something else I missed?
+> Replace the loop and xas_store() before it with:
+> 
+> 		xas_fill(&xas, newpage, 1UL << compound_order(newpage));
+> 
+> or something similar?
 
-Looks right to me.
-
-BTW, maybe some add syntax sugar from XArray side?
-
-Replace the loop and xas_store() before it with:
-
-		xas_fill(&xas, newpage, 1UL << compound_order(newpage));
-
-or something similar?
-
--- 
- Kirill A. Shutemov
+If we were keeping this code longterm, then yes, something like that
+would be great.  I'm hoping this code is a mere stepping stone towards
+using multi-slot entries for the page cache.
