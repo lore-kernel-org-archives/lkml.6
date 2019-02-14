@@ -2,159 +2,95 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A33F0C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:11:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B923DC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:13:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69EF7222B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:11:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DF2F222DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:13:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lXo5CZBL"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="FVdSqcUk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395020AbfBNJLk (ORCPT
+        id S1732263AbfBNJN2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 04:11:40 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:40065 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387453AbfBNJLk (ORCPT
+        Thu, 14 Feb 2019 04:13:28 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34423 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727894AbfBNJN1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 04:11:40 -0500
-Received: by mail-vs1-f66.google.com with SMTP id z18so3200483vso.7;
-        Thu, 14 Feb 2019 01:11:39 -0800 (PST)
+        Thu, 14 Feb 2019 04:13:27 -0500
+Received: by mail-lj1-f196.google.com with SMTP id l5so1153698lje.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 01:13:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eFBWiFIaqtau2CVEYcyX/n7Z0Eb/ey9J9D6DfDHhgzs=;
-        b=lXo5CZBLyz09qu2yMefNbmTEv9ODDQ63Nr7/pO7A4Tfecbc8tRWL0VO+sjk1MMVIGV
-         Pds4mYWbdz5Z3vXKWVHOasiXWH5oTdLG1Yacn+Vt89SaidIlI+NVDGiUVAOrMYA4t79W
-         XwLkB4KhGd3mHKZcJf6J7zN9Zma8ycIZPSSD9X6M4yz4zQf2QrqzUYKU7Wzt7VZU49zz
-         xvC6XXilhC1UZM4c4WhkZoTLMVgs9nHPw+krMkylz/E/e0/lII6yEm1mU0PV4fN6awyJ
-         m+d43bDfjZtclBp7d2MIZiuaYj/ygrn+8umOK/6hviZ3uZsSkxINGXloPRjHIwl/fU+w
-         gT5w==
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=7GxNjqQBu79dZwNGLXUWieDcr/g08J3T4LacRdZmsK0=;
+        b=FVdSqcUkXAW/B+2dIDAKIkYMPkbBN2d57b7exbGprpsILErKuaQSJ/q6buCCFhuUZD
+         nly4zlhvJ/AR4np/YGRPt2hHW7xzZHFjoWvDlCmUKJkMN1kLO3fLmSlM3hx4Lzym7L0x
+         d9JQSjbNURwYJT4iZyIaKqrnaA+03BtY3NUTCvJyXH6Clr5Et0TUlO8ARk8CzGebrnLw
+         BlJR1V4vJ3QHHgZ4Rb0WS/5sWD5+dSCeX4AuZDNLSCtkiOKS+U8fPRhoLHbz81pDA//d
+         Dp3ukRhfYQtAP9LKiF5avrY4x7TirMpDWoc8YAm02pa/Y3f365S2kKtcewCPx11nyDa8
+         x73w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eFBWiFIaqtau2CVEYcyX/n7Z0Eb/ey9J9D6DfDHhgzs=;
-        b=qY9YGvjJ8aK4ZuP+AluLMutooMoK7ATHUsdtDs36xGveG7qEs7FvsLJH4ZmpSdx+3C
-         Yz191XeFjNBNZu57LPiYFAV4Huf5u1NwlXThWKetyzKK8Fp0ENNPNPVlpqtC+o3alGc9
-         waXEBZyxz6vV0dpS1vzPLpZFdSlcj9OwahC+cLqfgB2j+3cgEqw2uIEvg+lTTcX668Fr
-         ev0Tki6gjjc/DHSNnmpYPtMf+MjJb+7d4/lQkZK5Y7no9zQwoKV35/ugKzNJfEweg4VM
-         fU6eOHieUPhhVPD+Z7Yz0/NTK+WO/G29Cq30oU2mCQUDa1oXguuET3MqZF+hemVeJFZp
-         7Q/w==
-X-Gm-Message-State: AHQUAua9g4/PT8iyMCPb4VnDit57ROmOvjgbcs4G4BJhfClFb05qzCBf
-        HxmAkEh0TAoSoca08o/8FQcev800sqdow/2xqoCwlQ==
-X-Google-Smtp-Source: AHgI3Ia2bkMipgD+6KUp7PEUN+/FFL4FgtPyWHqMV1yVk97wsZcM/zTPsglMQF1pQ+Yk1LKK6+59/ArfIyaM4ujlVTo=
-X-Received: by 2002:a67:edca:: with SMTP id e10mr1418794vsp.196.1550135498946;
- Thu, 14 Feb 2019 01:11:38 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7GxNjqQBu79dZwNGLXUWieDcr/g08J3T4LacRdZmsK0=;
+        b=jhjDYiCYWle680CBy9N8a8wO2fcFFztI0AiXnihSUpl0OanZ94YxtmvbdMT//jTIad
+         vzJmepPq1Nk7BIj5z+2nG2gZxgpqFKKi0QInllD0gTPnJPvW03yXtJitwc0WLzhGrnzc
+         1JOpO8e0ShgauEIObwua9BRvM36G9DlpDEEfTnc6nH1I5OHxlk+5xI88o9i3OsW5Izsd
+         oOlnSohiZInsEw2Iwe4dvXBQIsqHBTfHjhURmxpzqkgjQ8DTkKa3CmO7jsa20HBpqckx
+         Y3iJ1dx+ybcQGDDFnFXZ6WJQ5nZFrHwZo2INueekdHs5JEnuhJkBoBNcYRAA4LBtRR3B
+         tGrw==
+X-Gm-Message-State: AHQUAuaj7+wZFKZF7QkCjvvx+k2JpCOEH6CI4QWG3ZsNlaDu/5jQg2qM
+        olWnNd7jQuyco5sUei7Y+l76aA==
+X-Google-Smtp-Source: AHgI3IbflHxZ0yoXKAnLtMcfCYl9J8iToGG9a1Gb7EkoLkwrQ5Fl62SD9gZpmH9VWqLIMxj2NY39jg==
+X-Received: by 2002:a2e:8803:: with SMTP id x3mr1620416ljh.27.1550135605399;
+        Thu, 14 Feb 2019 01:13:25 -0800 (PST)
+Received: from [192.168.0.199] ([31.173.84.50])
+        by smtp.gmail.com with ESMTPSA id f140sm353688lff.41.2019.02.14.01.13.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Feb 2019 01:13:19 -0800 (PST)
+Subject: Re: [PATCH 2/2] net: Replace dev_kfree_skb_any by dev_consume_skb_any
+To:     Huang Zijiang <huang.zijiang@zte.com.cn>,
+        linux-net-drivers@solarflare.com
+Cc:     ecree@solarflare.com, bkenward@solarflare.com, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        wang.yi59@zte.com.cn
+References: <1550126533-28462-1-git-send-email-huang.zijiang@zte.com.cn>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <c523a131-3177-00d8-099f-023c949d6932@cogentembedded.com>
+Date:   Thu, 14 Feb 2019 12:13:08 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <CAOuPNLgaDJm27nECxq1jtny=+ixt=GPf2C7zyDsVgbsLvtDarA@mail.gmail.com>
- <6183c865-2e90-5fb9-9e10-1339ae491b71@codeaurora.org> <CAOuPNLgUvECE6XBjszFggY3efmEBKywzKNWupjfQ2svsCMqd7w@mail.gmail.com>
- <2c91af7d-4580-cedc-70ea-d38c2587c7bf@codeaurora.org>
-In-Reply-To: <2c91af7d-4580-cedc-70ea-d38c2587c7bf@codeaurora.org>
-From:   Pintu Agarwal <pintu.ping@gmail.com>
-Date:   Thu, 14 Feb 2019 14:41:27 +0530
-Message-ID: <CAOuPNLip6rwxC1DdDiCb28d5+uJNE9=ThCn+rjac854GkcnedA@mail.gmail.com>
-Subject: Re: BUG: sleeping function called from invalid context at kernel/locking/rwsem.c:65
-To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rt-users@vger.kernel.org, linux-mm@kvack.org,
-        Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>,
-        "Xenomai@xenomai.org" <xenomai@xenomai.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1550126533-28462-1-git-send-email-huang.zijiang@zte.com.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Sai,
+Hello!
 
-Thanks so much for your help.
+On 14.02.2019 9:42, Huang Zijiang wrote:
 
-On Thu, Feb 14, 2019 at 12:14 AM Sai Prakash Ranjan
-<saiprakash.ranjan@codeaurora.org> wrote:
->
-> Hi,
->
-> On 2/13/2019 8:10 PM, Pintu Agarwal wrote:
-> > OK thanks for your suggestions. sdm845-perf_defconfig did not work for
-> > me. The target did not boot.
->
-> Perf defconfig works fine. You need to enable serial console with below
-> config added to perf defconfig.
->
-> CONFIG_SERIAL_MSM_GENI_CONSOLE=y
->
-Actually for me the kernel does not boot. It stuck in bootloader, with
-"valid dtb not found".
-I did not debug it further.
-Anyways, we can look into this issue later.
+> The skb should be freed by dev_consume_skb_any() efx_tx_tso_fallback()
+                                                   ^ in?
 
-> > However, disabling CONFIG_PANIC_ON_SCHED_BUG works, and I got a root
-> > shell at least.
->
-> >
-> > But this seems to be a work around.
-> > I still get a back trace in kernel logs from many different places.
-> > So, it looks like there is some code in qualcomm specific drivers that
-> > is calling a sleeping method from invalid context.
-> > How to find that...
-> > If this fix is already available in latest version, please let me know.
-> >
->
-> Seems like interrupts are disabled when down_write_killable() is called.
-> It's not the drivers that is calling the sleeping method which can  be
-> seen from the log.
->
-> [   22.140224] [<ffffff88b8ce65a8>] ___might_sleep+0x140/0x188
-> [   22.145862] [<ffffff88b8ce6648>] __might_sleep+0x58/0x90         <---
-> [   22.151249] [<ffffff88b9d43f84>] down_write_killable+0x2c/0x80   <---
-> [   22.157155] [<ffffff88b8e53cd8>] setup_arg_pages+0xb8/0x208      <---
-> [   22.162792] [<ffffff88b8eb7534>] load_elf_binary+0x434/0x1298
-> [   22.168600] [<ffffff88b8e55674>] search_binary_handler+0xac/0x1f0
-> [   22.174763] [<ffffff88b8e560ec>]
-> do_execveat_common.isra.15+0x504/0x6c8
-> [   22.181452] [<ffffff88b8e562f4>] do_execve+0x44/0x58
-> [   22.186481] [<ffffff88b8c84030>] run_init_process+0x38/0x48      <---
-> [   22.192122] [<ffffff88b9d3db1c>] kernel_init+0x8c/0x108
-> [   22.197411] [<ffffff88b8c83f00>] ret_from_fork+0x10/0x50
->
-Yes, these are generic API, and I don't expect any changes in here.
-We don't have this issue in another SOC 4.9 kernel.
-Also I compared these APIs with mainline and there is no major changes here.
-This is just one example.
-This sleep issue is happening from other places as well.
-May be one common similarity may be: during task loading, or switching.
+> when skb is still used. The skb is be replaced by segments, so the
+                                   ^^ will?
 
->  >
->  > This at least proves that there is no issue in core ipipe patches, and
->  > I can proceed.
->
-> I doubt the *IPIPE patches*. You said you removed the configs, but all
-> code are not under IPIPE configs and as I see there are lots of
-> changes to interrupt code in general with ipipe.
->
-We observed that this issue is happening in normal sdm845 kernel as
-well (without ipipe/xenomai patches applied in another branch).
-Another point is, we don't see this issue in another arm64 target such
-as hikey, with same 4.9 kernel.
+> original skb should be consumed(not drop).
+> 
+> Signed-off-by: Huang Zijiang <huang.zijiang@zte.com.cn>
+[...]
 
-> So to actually confirm whether the issue is with qcom drivers or ipipe,
-> please *remove ipipe patches (not just configs)* and boot.
-> Also paste the full dmesg logs for these 2 cases(with and without
-> ipipe).
->
-hmmm. This will be little tough.
-I will try to find sometime to point the exact cause, and share findings here.
-Currently, I am debugging another issue.
-
-Thanks for your help.
-
-
-Regards
+MBR, Sergei
