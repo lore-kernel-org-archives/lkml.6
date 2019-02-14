@@ -2,142 +2,176 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 017BBC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D7EC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:55:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B58CF21B18
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:55:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MO6eQ5LK"
+	by mail.kernel.org (Postfix) with ESMTP id E1EC621B18
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:55:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392863AbfBNVzc (ORCPT
+        id S2406497AbfBNVzq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 16:55:32 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:42585 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387641AbfBNVzc (ORCPT
+        Thu, 14 Feb 2019 16:55:46 -0500
+Received: from gateway20.websitewelcome.com ([192.185.53.25]:46346 "EHLO
+        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387641AbfBNVzp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 16:55:32 -0500
-Received: by mail-qk1-f193.google.com with SMTP id y140so4551654qkb.9
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 13:55:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cfUBORap72Jt0I4QDdDnFCDsVaIdSdBAC4zZgLMxXAM=;
-        b=MO6eQ5LK43KewPrWhYfrBHF6xt5C7OhUvyjBDQzHRxAjfp959MrCPRCP262EBWR9mM
-         wbo7+RjFwsUQZnKmAEwEXv3rI89xJuTUikIEhgD1XU+xXYFKpP3Q+CQDK3YvS3W4v1M8
-         DsQcajHxS7X4O4U214+vGbXlaUGaicIQhwhvtJl6s+Jfqnwku5mHo8R96Gn7gMkbd0lW
-         UruxBUqDg/i9jKt31kPrEvHgniKUm9cM7T14vXFimgsZ9ptn/M8PBZL1q8Mt+CENSMA7
-         SJYdkJ7Jkzc4hyHLpiqsvaUv5Gp8A5RhRjnafLEeJYF6OVWLSvanii+CoGimR4mfFhhc
-         SglQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cfUBORap72Jt0I4QDdDnFCDsVaIdSdBAC4zZgLMxXAM=;
-        b=rtZ4m/mAzizpgLlY48ExaUXk20YKdd6RamDtIH001bfw18HcAJxk8sBpDg4bVx6lpO
-         BpYu0VjzrXJD8KL3+ulfdhrxlB5FthU+GKsVKQl3iy3ighOiPO4waewJUj1Q5UrGduhq
-         ArpEl0La5JAt8/Du+Hctx+ibGy/r5L3ZLp7fbP3JGy9MGT45psl0l26A5VJfYQhxOvzy
-         vSD3EjhOdDZrLCG6kBLkCpucK8e8w18jbqov4wMUImSa1gFs6DOpNumxuZn9hb4emR+j
-         VKnUhjgk5uzK1IVaWMT5LckbAxjdkXkFs9AZa4Ssgwc1ecmI1A5au9wRXeyL7Om3kO0p
-         mdQg==
-X-Gm-Message-State: AHQUAub03Jqw3zbDfjQRmnaZhVb2/+tfv4sEjjTQPceo7yP838rwipUF
-        Qgy4gLYEXI+QW/uCYp7disf3LkLZU6ISYTsq60DohA==
-X-Google-Smtp-Source: AHgI3IYvEgusFeAWFhvLwISke0qcrqOqnDiibZyWx4c8fN9tMwPwXkYrGeOcIwesoJ6ORys8nAYDKOH/rv/pqKqhj9I=
-X-Received: by 2002:a37:cf56:: with SMTP id e83mr4755350qkj.101.1550181331053;
- Thu, 14 Feb 2019 13:55:31 -0800 (PST)
+        Thu, 14 Feb 2019 16:55:45 -0500
+X-Greylist: delayed 1343 seconds by postgrey-1.27 at vger.kernel.org; Thu, 14 Feb 2019 16:55:44 EST
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway20.websitewelcome.com (Postfix) with ESMTP id C0E52400CDE15
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 15:33:20 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id uOdEgFtnliQeruOdEgUxuu; Thu, 14 Feb 2019 15:33:20 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.119.20] (port=41252 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1guOdE-000sZX-5z; Thu, 14 Feb 2019 15:33:20 -0600
+Subject: Re: [PATCH][next] can: at91_can: mark expected switch fall-throughs
+To:     Nicolas.Ferre@microchip.com, wg@grandegger.com, mkl@pengutronix.de,
+        davem@davemloft.net, alexandre.belloni@bootlin.com,
+        Ludovic.Desroches@microchip.com
+Cc:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20190208184444.GA28484@embeddedor>
+ <8119fbe8-5f4b-e45c-6687-ec42aceb3428@microchip.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <79441694-59e4-8c75-87bc-8916779631d1@embeddedor.com>
+Date:   Thu, 14 Feb 2019 15:33:18 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190208183520.30886-1-tkjos@google.com> <20190208183520.30886-2-tkjos@google.com>
- <20190214194540.GA185075@google.com> <CAHRSSEw22kuwLqjXHocBQTv4d5hS1tXi4uirjBhgQ=yGbw9J4g@mail.gmail.com>
- <CAJWu+oqq0s3x7j+gPzSRREj2gjZxzAPS_=XVM4uhC9GjSM9zfw@mail.gmail.com> <20190214212549.GB185075@google.com>
-In-Reply-To: <20190214212549.GB185075@google.com>
-From:   Todd Kjos <tkjos@google.com>
-Date:   Thu, 14 Feb 2019 13:55:19 -0800
-Message-ID: <CAHRSSExEc0uF38wwgtF6JeVgcLiDKiPznK+SmX8fFEL8k-gpVA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/7] binder: create userspace-to-binder-buffer copy function
-To:     Joel Fernandes <joelaf@google.com>
-Cc:     Todd Kjos <tkjos@android.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
-        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Martijn Coenen <maco@google.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Android Kernel Team <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <8119fbe8-5f4b-e45c-6687-ec42aceb3428@microchip.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.119.20
+X-Source-L: No
+X-Exim-ID: 1guOdE-000sZX-5z
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:41252
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 1:25 PM Joel Fernandes <joelaf@google.com> wrote:
->
-> On Thu, Feb 14, 2019 at 03:53:54PM -0500, Joel Fernandes wrote:
-> > On Thu, Feb 14, 2019 at 3:42 PM Todd Kjos <tkjos@google.com> wrote:
-> > >
-> > > On Thu, Feb 14, 2019 at 11:45 AM Joel Fernandes <joelaf@google.com> wrote:
-> > [snip]
-> > > > > + * check_buffer() - verify that buffer/offset is safe to access
-> > > > > + * @alloc: binder_alloc for this proc
-> > > > > + * @buffer: binder buffer to be accessed
-> > > > > + * @offset: offset into @buffer data
-> > > > > + * @bytes: bytes to access from offset
-> > > > > + *
-> > > > > + * Check that the @offset/@bytes are within the size of the given
-> > > > > + * @buffer and that the buffer is currently active and not freeable.
-> > > > > + * Offsets must also be multiples of sizeof(u32). The kernel is
-> > > >
-> > > > In all callers of binder_alloc_copy_user_to_buffer, the alignment of offsets
-> > > > is set to sizeof(void *). Then shouldn't this function check for sizeof(void *)
-> > > > alignment instead of u32?
-> > >
-> > > But there are other callers of check_buffer() later in the series that
-> > > don't require pointer-size alignment. u32 alignment is consistent with
-> > > the alignment requirements of the binder driver before this change.
-> > > The copy functions don't actually need to insist on alignment, but
-> > > these binder buffer objects have always used u32 alignment which has
-> > > been checked in the driver. If user code misaligned it, then errors
-> > > are returned. The alignment checks are really to be consistent with
-> > > previous binder driver behavior.
-> >
-> > Got it, thanks.
->
-> One more thing I wanted to ask is, kmap() will now cause global lock
-> contention because of using spin_lock due to kmap_high().
->
-> Previously the binder driver was made to not use global lock (as you had
-> done). Now these paths will start global locking on 32-bit architectures.
-> Would that degrade performance?
 
-There was a lot of concern about 32-bit performance both for
-lock-contention and the cost of map/unmap operations. Of course,
-32-bit systems are also where the primary win is -- namely avoiding
-vmalloc space depletion. So there was a several months-long evaluation
-period on 32-bit devices by a silicon vendor who did a lot of testing
-across a broad set of benchmarks / workloads to verify the performance
-costs are acceptable. We also ran tests to try to exhaust the kmap
-space with multiple large buffers.
 
-The testing did find that there is some performance degradation for
-large buffer transfers, but there are no cases where this
-significantly impacted a meaningful user workload.
+On 2/11/19 3:03 AM, Nicolas.Ferre@microchip.com wrote:
+> On 08/02/2019 at 19:44, Gustavo A. R. Silva wrote:
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch
+>> cases where we are expecting to fall through.
+>>
+>> Notice that, in this particular case, the /* fall through */
+>> comments are placed at the bottom of the case statement, which
+>> is what GCC is expecting to find.
+>>
+>> Warning level 3 was used: -Wimplicit-fallthrough=3
+>>
+>> This patch is part of the ongoing efforts to enabling
+>> -Wimplicit-fallthrough.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> Looks good to me:
+> Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> 
 
->
-> Are we not using kmap_atomic() in this patch because of any concern that the
-> kmap fixmap space is limited and may run out?
+Thanks, Nicolas.
 
-We're not using the atomic version here since we can't guarantee that
-the loop will be atomic since we are calling copy_from_user(). Later
-in the series, other cases do use kmap_atomic().
+--
+Gustavo
 
->
-> thanks,
->
->  - Joel
->
->
+>> ---
+>>   drivers/net/can/at91_can.c | 6 ++++--
+>>   1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/net/can/at91_can.c b/drivers/net/can/at91_can.c
+>> index d98c69045b17..1718c20f9c99 100644
+>> --- a/drivers/net/can/at91_can.c
+>> +++ b/drivers/net/can/at91_can.c
+>> @@ -902,7 +902,8 @@ static void at91_irq_err_state(struct net_device *dev,
+>>   				CAN_ERR_CRTL_TX_WARNING :
+>>   				CAN_ERR_CRTL_RX_WARNING;
+>>   		}
+>> -	case CAN_STATE_ERROR_WARNING:	/* fallthrough */
+>> +		/* fall through */
+>> +	case CAN_STATE_ERROR_WARNING:
+>>   		/*
+>>   		 * from: ERROR_ACTIVE, ERROR_WARNING
+>>   		 * to  : ERROR_PASSIVE, BUS_OFF
+>> @@ -951,7 +952,8 @@ static void at91_irq_err_state(struct net_device *dev,
+>>   		netdev_dbg(dev, "Error Active\n");
+>>   		cf->can_id |= CAN_ERR_PROT;
+>>   		cf->data[2] = CAN_ERR_PROT_ACTIVE;
+>> -	case CAN_STATE_ERROR_WARNING:	/* fallthrough */
+>> +		/* fall through */
+>> +	case CAN_STATE_ERROR_WARNING:
+>>   		reg_idr = AT91_IRQ_ERRA | AT91_IRQ_WARN | AT91_IRQ_BOFF;
+>>   		reg_ier = AT91_IRQ_ERRP;
+>>   		break;
+>>
+> 
+> 
