@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EA91C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 06:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85C58C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 06:47:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 275D82229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 06:47:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 520B3222CF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 06:47:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437077AbfBNGrZ (ORCPT
+        id S2437095AbfBNGre (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 01:47:25 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:10026 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390389AbfBNGrK (ORCPT
+        Thu, 14 Feb 2019 01:47:34 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:2161 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2390397AbfBNGrJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 01:47:10 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1E6a4Qv025842;
-        Thu, 14 Feb 2019 07:46:50 +0100
+        Thu, 14 Feb 2019 01:47:09 -0500
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1E6aA2G007856;
+        Thu, 14 Feb 2019 07:46:54 +0100
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2qmy1n94aj-1
+        by mx08-00178001.pphosted.com with ESMTP id 2qmxr718n2-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 14 Feb 2019 07:46:49 +0100
+        Thu, 14 Feb 2019 07:46:54 +0100
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 446B131;
-        Thu, 14 Feb 2019 06:46:49 +0000 (GMT)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 60D4331;
+        Thu, 14 Feb 2019 06:46:53 +0000 (GMT)
 Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 222EF2431;
-        Thu, 14 Feb 2019 06:46:49 +0000 (GMT)
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0EA912437;
+        Thu, 14 Feb 2019 06:46:52 +0000 (GMT)
 Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS23.st.com
  (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 14 Feb
- 2019 07:46:48 +0100
+ 2019 07:46:52 +0100
 Received: from localhost (10.201.23.166) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 14 Feb 2019 07:46:48
+ with Microsoft SMTP Server (TLS) id 14.3.361.1; Thu, 14 Feb 2019 07:46:52
  +0100
 From:   Christophe Roullier <christophe.roullier@st.com>
 To:     <robh@kernel.org>, <davem@davemloft.net>, <joabreu@synopsys.com>,
@@ -47,9 +47,9 @@ CC:     <linux-stm32@st-md-mailman.stormreply.com>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
         <christophe.roullier@st.com>, <andrew@lunn.ch>
-Subject: [PATCH  5/8] net: ethernet: stmmac: update to be compatible with MCU family (stm32f4, stm32h7)
-Date:   Thu, 14 Feb 2019 07:46:00 +0100
-Message-ID: <1550126763-22669-6-git-send-email-christophe.roullier@st.com>
+Subject: [PATCH  8/8] ARM: dts: stm32: add syscfg clock support for Ethernet on STM32F429 SoC
+Date:   Thu, 14 Feb 2019 07:46:03 +0100
+Message-ID: <1550126763-22669-9-git-send-email-christophe.roullier@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1550126763-22669-1-git-send-email-christophe.roullier@st.com>
 References: <1550126763-22669-1-git-send-email-christophe.roullier@st.com>
@@ -63,116 +63,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update glue codes to be compatible with MCU family.
+This patch add syscfg clock support for Ethernet of the STM32F429 SoC.
+Needed if bootloader do not manage it.
 
 Signed-off-by: Christophe Roullier <christophe.roullier@st.com>
 ---
- drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c | 51 ++++++++++++++++++-----
- 1 file changed, 41 insertions(+), 10 deletions(-)
+ arch/arm/boot/dts/stm32f429.dtsi | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
-index cee59e8..20a2daa 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-stm32.c
-@@ -6,7 +6,6 @@
-  * License terms:  GNU General Public License (GPL), version 2
-  *
-  */
--
- #include <linux/clk.h>
- #include <linux/kernel.h>
- #include <linux/mfd/syscon.h>
-@@ -119,12 +118,6 @@ static int stm32_dwmac_init(struct plat_stmmacenet_data *plat_dat)
- 	struct stm32_dwmac *dwmac = plat_dat->bsp_priv;
- 	int ret;
- 
--	if (dwmac->ops->set_mode) {
--		ret = dwmac->ops->set_mode(plat_dat);
--		if (ret)
--			return ret;
--	}
--
- 	ret = clk_prepare_enable(dwmac->clk_tx);
- 	if (ret)
- 		return ret;
-@@ -139,13 +132,26 @@ static int stm32_dwmac_init(struct plat_stmmacenet_data *plat_dat)
- 
- 	if (dwmac->ops->clk_prepare) {
- 		ret = dwmac->ops->clk_prepare(dwmac, true);
-+		if (ret)
-+			goto err_clk_disable;
-+	}
-+
-+	if (dwmac->ops->set_mode) {
-+		ret = dwmac->ops->set_mode(plat_dat);
- 		if (ret) {
--			clk_disable_unprepare(dwmac->clk_rx);
--			clk_disable_unprepare(dwmac->clk_tx);
-+			if (dwmac->ops->clk_prepare)
-+				dwmac->ops->clk_prepare(dwmac, false);
-+			goto err_clk_disable;
- 		}
- 	}
- 
- 	return ret;
-+
-+err_clk_disable:
-+	clk_disable_unprepare(dwmac->clk_rx);
-+	clk_disable_unprepare(dwmac->clk_tx);
-+
-+	return ret;
- }
- 
- static int stm32mp1_clk_prepare(struct stm32_dwmac *dwmac, bool prepare)
-@@ -240,7 +246,19 @@ static int stm32mcu_set_mode(struct plat_stmmacenet_data *plat_dat)
- 	}
- 
- 	return regmap_update_bits(dwmac->regmap, reg,
--				 dwmac->ops->syscfg_eth_mask, val);
-+				 dwmac->ops->syscfg_eth_mask, val << 23);
-+}
-+
-+static int stm32mcu_clk_prepare(struct stm32_dwmac *dwmac, bool prepare)
-+{
-+	int ret = 0;
-+
-+	if (prepare)
-+		ret = clk_prepare_enable(dwmac->syscfg_clk);
-+	else
-+		clk_disable_unprepare(dwmac->syscfg_clk);
-+
-+	return ret;
- }
- 
- static void stm32_dwmac_clk_disable(struct stm32_dwmac *dwmac)
-@@ -347,6 +365,17 @@ static int stm32mp1_parse_data(struct stm32_dwmac *dwmac,
- 	return err;
- }
- 
-+static int stm32mcu_parse_data(struct stm32_dwmac *dwmac,
-+			       struct device *dev)
-+{
-+	/*  Clock for sysconfig */
-+	dwmac->syscfg_clk = devm_clk_get(dev, "syscfg-clk");
-+	if (IS_ERR(dwmac->syscfg_clk))
-+		dev_warn(dev, "No syscfg clock provided...\n");
-+
-+	return 0;
-+}
-+
- static int stm32_dwmac_probe(struct platform_device *pdev)
- {
- 	struct plat_stmmacenet_data *plat_dat;
-@@ -493,7 +522,9 @@ static SIMPLE_DEV_PM_OPS(stm32_dwmac_pm_ops,
- 
- static struct stm32_ops stm32mcu_dwmac_data = {
- 	.set_mode = stm32mcu_set_mode,
-+	.clk_prepare = stm32mcu_clk_prepare,
- 	.suspend = stm32mcu_suspend,
-+	.parse_data = stm32mcu_parse_data,
- 	.syscfg_eth_mask = SYSCFG_MCU_ETH_MASK
- };
- 
+diff --git a/arch/arm/boot/dts/stm32f429.dtsi b/arch/arm/boot/dts/stm32f429.dtsi
+index 8d6f028..6f78346 100644
+--- a/arch/arm/boot/dts/stm32f429.dtsi
++++ b/arch/arm/boot/dts/stm32f429.dtsi
+@@ -657,10 +657,12 @@
+ 			reg-names = "stmmaceth";
+ 			interrupts = <61>;
+ 			interrupt-names = "macirq";
+-			clock-names = "stmmaceth", "mac-clk-tx", "mac-clk-rx";
++			clock-names = "stmmaceth", "mac-clk-tx", "mac-clk-rx",
++			"syscfg-clk";
+ 			clocks = <&rcc 0 STM32F4_AHB1_CLOCK(ETHMAC)>,
+ 					<&rcc 0 STM32F4_AHB1_CLOCK(ETHMACTX)>,
+-					<&rcc 0 STM32F4_AHB1_CLOCK(ETHMACRX)>;
++					<&rcc 0 STM32F4_AHB1_CLOCK(ETHMACRX)>,
++					<&rcc 0 STM32F4_APB2_CLOCK(SYSCFG)>;
+ 			st,syscon = <&syscfg 0x4>;
+ 			snps,pbl = <8>;
+ 			snps,mixed-burst;
 -- 
 2.7.4
 
