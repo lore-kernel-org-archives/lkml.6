@@ -2,186 +2,124 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E711C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:41:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70137C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:47:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC0DE21928
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:41:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31E7C21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:47:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BH2Y9U3R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408149AbfBNWlx (ORCPT
+        id S2503439AbfBNWq5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 17:41:53 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47542 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388757AbfBNWlx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 17:41:53 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 599ECA1E43;
-        Thu, 14 Feb 2019 22:41:52 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1FDD85D704;
-        Thu, 14 Feb 2019 22:41:42 +0000 (UTC)
-Date:   Fri, 15 Feb 2019 06:41:37 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-        Keith Busch <keith.busch@intel.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        Kashyap Desai <kashyap.desai@broadcom.com>,
-        Shivasharan Srikanteshwara 
-        <shivasharan.srikanteshwara@broadcom.com>
-Subject: Re: [patch V5 4/8] nvme-pci: Simplify interrupt allocation
-Message-ID: <20190214224136.GA18764@ming.t460p>
-References: <20190214204755.819014197@linutronix.de>
- <20190214211759.699390983@linutronix.de>
+        Thu, 14 Feb 2019 17:46:57 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:32772 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388518AbfBNWq5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 17:46:57 -0500
+Received: by mail-qt1-f194.google.com with SMTP id z39so8914613qtz.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 14:46:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TmlsMQDzed+V09W82Eb/0QmK/oC7HZh3wOPBxNFtO+0=;
+        b=BH2Y9U3RuetGB5ckuoSU36wiRlTadgGbjW5/QYgnB2dNY2YX5R2N9BMzg7XW8WUf9d
+         r60BTy4CuEUNSYZeEuRHWUgg0gEFhV1w4nNhHP0fq6wBukNFOF+CU3wqXCMPxjX8iNv9
+         pNB9NbRYSm0C7MxCMtAxJac13zvr7l4JCNzihT6dMVnlxGOPKaWD/Ha9u0K5T67hcmu4
+         uEYsgx+yWNJI+tBIZyD4lTHr4EDMHadtu5FiS9ebOjhnCzoQq6bGSxol1d3xRGQAcWR3
+         kTNc9FviHdKc35YUZyZZLrtwv6wWQENDBKsXVReMfaNj91hzhE2DWD76pRk7vMKSkOds
+         Uz/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TmlsMQDzed+V09W82Eb/0QmK/oC7HZh3wOPBxNFtO+0=;
+        b=FrATEUzdbigyCJdyGSLovEY0MwaceNzSXk++vCZd9n1lrks3a8J9/WUVlmd9v7zc8O
+         Fdp4vnG+xSqavq/lBTUX+noDInceK+3LVkPeAkYjFnhDHj3TCyPmt+Gqo95hr44JdxeU
+         4LcCXGu5Z/sYhtrCZgIRn2MNoTNMI25T5Lxj+rNbtlVX1cmawkuZJkLsUOa5rQDx24lU
+         pnCqjTxh/wuGkEV+vSqC+JEBv0xZcItfFMaiEARBeWaMXbh5PhMlWKiBJ4ACEwf2Iiwq
+         JI95praDaeUZSHyIYAoBP1+4ZCUvu3JCBrPIW8zrepLTHqSeY2FHEUtMFhQPo3wX+Mjs
+         a0Hg==
+X-Gm-Message-State: AHQUAubkn+Qi2QJJiYOGmkiHiLi0EOiwe8O232/OeKlJtYh1Vn389xCL
+        y7JJLWLppmW4Tecn5UvCXjf7azJjFIjoG+F6vFAhgw==
+X-Google-Smtp-Source: AHgI3IbROh3IMTTiAW9u7z+OAC7pPkg8k+j+er/awzhO8VmKaHokU546jzrMFclwGjKDCKhYPFZxv3yIg3tS59irTvA=
+X-Received: by 2002:ac8:28e4:: with SMTP id j33mr5197502qtj.349.1550184415456;
+ Thu, 14 Feb 2019 14:46:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190214211759.699390983@linutronix.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 14 Feb 2019 22:41:52 +0000 (UTC)
+References: <00000000000048c0060581d8fe23@google.com> <0000000000009e34680581d90c3f@google.com>
+ <CAHRSSEx0ifKf-bA9NGwXak0DhWt6Xfxe+SQgfEEdNcyVAPwb_Q@mail.gmail.com>
+In-Reply-To: <CAHRSSEx0ifKf-bA9NGwXak0DhWt6Xfxe+SQgfEEdNcyVAPwb_Q@mail.gmail.com>
+From:   Todd Kjos <tkjos@google.com>
+Date:   Thu, 14 Feb 2019 14:46:43 -0800
+Message-ID: <CAHRSSEyYx8XLgn+6Vb-a_icEn1xZUKh8=dHTjCHK=6y38gUX6A@mail.gmail.com>
+Subject: Re: kernel BUG at drivers/android/binder_alloc.c:LINE! (2)
+To:     syzbot <syzbot+55de1eb4975dec156d8f@syzkaller.appspotmail.com>
+Cc:     =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        Christian Brauner <christian@brauner.io>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Martijn Coenen <maco@android.com>,
+        syzkaller-bugs@googlegroups.com, Todd Kjos <tkjos@android.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+Content-Type: multipart/mixed; boundary="0000000000006c0ccd0581e26f73"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 09:47:59PM +0100, Thomas Gleixner wrote:
-> From: Ming Lei <ming.lei@redhat.com>
-> 
-> The NVME PCI driver contains a tedious mechanism for interrupt
-> allocation, which is necessary to adjust the number and size of interrupt
-> sets to the maximum available number of interrupts which depends on the
-> underlying PCI capabilities and the available CPU resources.
-> 
-> It works around the former short comings of the PCI and core interrupt
-> allocation mechanims in combination with interrupt sets.
-> 
-> The PCI interrupt allocation function allows to provide a maximum and a
-> minimum number of interrupts to be allocated and tries to allocate as
-> many as possible. This worked without driver interaction as long as there
-> was only a single set of interrupts to handle.
-> 
-> With the addition of support for multiple interrupt sets in the generic
-> affinity spreading logic, which is invoked from the PCI interrupt
-> allocation, the adaptive loop in the PCI interrupt allocation did not
-> work for multiple interrupt sets. The reason is that depending on the
-> total number of interrupts which the PCI allocation adaptive loop tries
-> to allocate in each step, the number and the size of the interrupt sets
-> need to be adapted as well. Due to the way the interrupt sets support was
-> implemented there was no way for the PCI interrupt allocation code or the
-> core affinity spreading mechanism to invoke a driver specific function
-> for adapting the interrupt sets configuration.
-> 
-> As a consequence the driver had to implement another adaptive loop around
-> the PCI interrupt allocation function and calling that with maximum and
-> minimum interrupts set to the same value. This ensured that the
-> allocation either succeeded or immediately failed without any attempt to
-> adjust the number of interrupts in the PCI code.
-> 
-> The core code now allows drivers to provide a callback to recalculate the
-> number and the size of interrupt sets during PCI interrupt allocation,
-> which in turn allows the PCI interrupt allocation function to be called
-> in the same way as with a single set of interrupts. The PCI code handles
-> the adaptive loop and the interrupt affinity spreading mechanism invokes
-> the driver callback to adapt the interrupt set configuration to the
-> current loop value. This replaces the adaptive loop in the driver
-> completely.
-> 
-> Implement the NVME specific callback which adjusts the interrupt sets
-> configuration and remove the adaptive allocation loop.
-> 
-> [ tglx: Simplify the callback further and restore the dropped adjustment of
->   	number of sets ]
-> 
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> 
-> ---
->  drivers/nvme/host/pci.c |  108 ++++++++++++------------------------------------
->  1 file changed, 28 insertions(+), 80 deletions(-)
-> 
-> --- a/drivers/nvme/host/pci.c
-> +++ b/drivers/nvme/host/pci.c
-> @@ -2041,41 +2041,32 @@ static int nvme_setup_host_mem(struct nv
->  	return ret;
->  }
->  
-> -/* irq_queues covers admin queue */
-> -static void nvme_calc_io_queues(struct nvme_dev *dev, unsigned int irq_queues)
-> +/*
-> + * nirqs is the number of interrupts available for write and read
-> + * queues. The core already reserved an interrupt for the admin queue.
-> + */
-> +static void nvme_calc_irq_sets(struct irq_affinity *affd, unsigned int nrirqs)
->  {
-> -	unsigned int this_w_queues = write_queues;
-> -
-> -	WARN_ON(!irq_queues);
-> -
-> -	/*
-> -	 * Setup read/write queue split, assign admin queue one independent
-> -	 * irq vector if irq_queues is > 1.
-> -	 */
-> -	if (irq_queues <= 2) {
-> -		dev->io_queues[HCTX_TYPE_DEFAULT] = 1;
-> -		dev->io_queues[HCTX_TYPE_READ] = 0;
-> -		return;
-> -	}
-> +	struct nvme_dev *dev = affd->priv;
-> +	unsigned int nr_read_queues;
->  
->  	/*
-> -	 * If 'write_queues' is set, ensure it leaves room for at least
-> -	 * one read queue and one admin queue
-> -	 */
-> -	if (this_w_queues >= irq_queues)
-> -		this_w_queues = irq_queues - 2;
-> -
-> -	/*
-> -	 * If 'write_queues' is set to zero, reads and writes will share
-> -	 * a queue set.
-> -	 */
-> -	if (!this_w_queues) {
-> -		dev->io_queues[HCTX_TYPE_DEFAULT] = irq_queues - 1;
-> -		dev->io_queues[HCTX_TYPE_READ] = 0;
-> -	} else {
-> -		dev->io_queues[HCTX_TYPE_DEFAULT] = this_w_queues;
-> -		dev->io_queues[HCTX_TYPE_READ] = irq_queues - this_w_queues - 1;
-> -	}
-> +	 * If only one interrupt is available, combine write and read
-> +	 * queues. If 'write_queues' is set, ensure it leaves room for at
-> +	 * least one read queue.
-> +	 */
-> +	if (nrirqs == 1)
-> +		nr_read_queues = 0;
-> +	else if (write_queues >= nrirqs)
-> +		nr_read_queues = nrirqs - 1;
-> +	else
-> +		nr_read_queues = nrirqs - write_queues;
-> +
-> +	dev->io_queues[HCTX_TYPE_DEFAULT] = nrirqs - nr_read_queues;
-> +	affd->set_size[HCTX_TYPE_DEFAULT] = nrirqs - nr_read_queues;
-> +	dev->io_queues[HCTX_TYPE_READ] = nr_read_queues;
-> +	affd->set_size[HCTX_TYPE_READ] = nr_read_queues;
-> +	affd->nr_sets = nr_read_queues ? 2 : 1;
->  }
+--0000000000006c0ccd0581e26f73
+Content-Type: text/plain; charset="UTF-8"
 
-.calc_sets is called only if more than .pre_vectors is available,
-then dev->io_queues[HCTX_TYPE_DEFAULT] may not be set in case of
-(nvecs == affd->pre_vectors + affd->post_vectors).
+Trying again with the correct branch spec...
 
-Thanks,
-Ming
+On Thu, Feb 14, 2019 at 2:34 PM Todd Kjos <tkjos@google.com> wrote:
+>
+> On Thu, Feb 14, 2019 at 3:35 AM syzbot
+> <syzbot+55de1eb4975dec156d8f@syzkaller.appspotmail.com> wrote:
+> >
+> > syzbot has found a reproducer for the following crash on:
+> >
+> > HEAD commit:    b3418f8bddf4 Add linux-next specific files for 20190214
+> > git tree:       linux-next
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=161d2048c00000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=8a3a37525a677c71
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=55de1eb4975dec156d8f
+> > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11cd2f1f400000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+55de1eb4975dec156d8f@syzkaller.appspotmail.com
+> >
+>
+> Testing a fix:
+>
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+master
+
+--0000000000006c0ccd0581e26f73
+Content-Type: application/octet-stream; name=patch
+Content-Disposition: attachment; filename=patch
+Content-Transfer-Encoding: base64
+Content-ID: <f_js57r4u90>
+X-Attachment-Id: f_js57r4u90
+
+ZGlmZiAtLWdpdCBhL2RyaXZlcnMvYW5kcm9pZC9iaW5kZXIuYyBiL2RyaXZlcnMvYW5kcm9pZC9i
+aW5kZXIuYwppbmRleCAyZGJhNTM5ZWI3OTJjLi44Njg1ODgyZGE2NGNkIDEwMDY0NAotLS0gYS9k
+cml2ZXJzL2FuZHJvaWQvYmluZGVyLmMKKysrIGIvZHJpdmVycy9hbmRyb2lkL2JpbmRlci5jCkBA
+IC0yMDU3LDcgKzIwNTcsNyBAQCBzdGF0aWMgc2l6ZV90IGJpbmRlcl9nZXRfb2JqZWN0KHN0cnVj
+dCBiaW5kZXJfcHJvYyAqcHJvYywKIAlzaXplX3Qgb2JqZWN0X3NpemUgPSAwOwogCiAJcmVhZF9z
+aXplID0gbWluX3Qoc2l6ZV90LCBzaXplb2YoKm9iamVjdCksIGJ1ZmZlci0+ZGF0YV9zaXplIC0g
+b2Zmc2V0KTsKLQlpZiAocmVhZF9zaXplIDwgc2l6ZW9mKCpoZHIpKQorCWlmIChyZWFkX3NpemUg
+PCBzaXplb2YoKmhkcikgfHwgIUlTX0FMSUdORUQob2Zmc2V0LCBzaXplb2YodTMyKSkpCiAJCXJl
+dHVybiAwOwogCWJpbmRlcl9hbGxvY19jb3B5X2Zyb21fYnVmZmVyKCZwcm9jLT5hbGxvYywgb2Jq
+ZWN0LCBidWZmZXIsCiAJCQkJICAgICAgb2Zmc2V0LCByZWFkX3NpemUpOwo=
+--0000000000006c0ccd0581e26f73--
