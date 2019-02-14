@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BA11C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:20:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3061FC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:21:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44B74222A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:20:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0632A222B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:20:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437208AbfBNHUy (ORCPT
+        id S2437223AbfBNHU6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 02:20:54 -0500
-Received: from mga14.intel.com ([192.55.52.115]:65512 "EHLO mga14.intel.com"
+        Thu, 14 Feb 2019 02:20:58 -0500
+Received: from mga06.intel.com ([134.134.136.31]:50524 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388265AbfBNHUx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 02:20:53 -0500
+        id S2388265AbfBNHU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 02:20:57 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 23:20:52 -0800
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 23:20:56 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,367,1544515200"; 
-   d="scan'208";a="320278448"
+   d="scan'208";a="124386095"
 Received: from lftan-mobl.gar.corp.intel.com (HELO ubuntu) ([10.226.248.114])
-  by fmsmga005.fm.intel.com with SMTP; 13 Feb 2019 23:20:48 -0800
-Received: by ubuntu (sSMTP sendmail emulation); Thu, 14 Feb 2019 23:20:47 +0800
+  by fmsmga008.fm.intel.com with SMTP; 13 Feb 2019 23:20:53 -0800
+Received: by ubuntu (sSMTP sendmail emulation); Thu, 14 Feb 2019 23:20:53 +0800
 From:   Ley Foon Tan <ley.foon.tan@intel.com>
 To:     Bjorn Helgaas <bhelgaas@google.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
         devicetree@vger.kernel.org, lftan.linux@gmail.com,
         Ley Foon Tan <ley.foon.tan@intel.com>
-Subject: [PATCH v4 2/3] PCI: altera: Enable driver on ARM64
-Date:   Thu, 14 Feb 2019 23:20:37 +0800
-Message-Id: <1550157638-25112-3-git-send-email-ley.foon.tan@intel.com>
+Subject: [PATCH v4 3/3] dt-bindings: PCI: altera: Add altr,pcie-root-port-2.0
+Date:   Thu, 14 Feb 2019 23:20:38 +0800
+Message-Id: <1550157638-25112-4-git-send-email-ley.foon.tan@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1550157638-25112-1-git-send-email-ley.foon.tan@intel.com>
 References: <1550157638-25112-1-git-send-email-ley.foon.tan@intel.com>
@@ -46,26 +46,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable PCIE_ALTERA on ARM64 platform.
+Add support for altr,pcie-root-port-2.0.
 
 Signed-off-by: Ley Foon Tan <ley.foon.tan@intel.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/pci/controller/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ .../devicetree/bindings/pci/altera-pcie.txt        |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/pci/controller/Kconfig b/drivers/pci/controller/Kconfig
-index 6671946..6012f30 100644
---- a/drivers/pci/controller/Kconfig
-+++ b/drivers/pci/controller/Kconfig
-@@ -175,7 +175,7 @@ config PCIE_IPROC_MSI
+diff --git a/Documentation/devicetree/bindings/pci/altera-pcie.txt b/Documentation/devicetree/bindings/pci/altera-pcie.txt
+index 6c396f1..816b244 100644
+--- a/Documentation/devicetree/bindings/pci/altera-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/altera-pcie.txt
+@@ -1,11 +1,13 @@
+ * Altera PCIe controller
  
- config PCIE_ALTERA
- 	bool "Altera PCIe controller"
--	depends on ARM || NIOS2 || COMPILE_TEST
-+	depends on ARM || NIOS2 || ARM64 || COMPILE_TEST
- 	help
- 	  Say Y here if you want to enable PCIe controller support on Altera
- 	  FPGA.
+ Required properties:
+-- compatible :	should contain "altr,pcie-root-port-1.0"
++- compatible :	should contain "altr,pcie-root-port-1.0" or "altr,pcie-root-port-2.0"
+ - reg:		a list of physical base address and length for TXS and CRA.
++		For "altr,pcie-root-port-2.0", additional HIP base address and length.
+ - reg-names:	must include the following entries:
+ 		"Txs": TX slave port region
+ 		"Cra": Control register access region
++		"Hip": Hard IP region (if "altr,pcie-root-port-2.0")
+ - interrupts:	specifies the interrupt source of the parent interrupt
+ 		controller.  The format of the interrupt specifier depends
+ 		on the parent interrupt controller.
 -- 
 1.7.1
 
