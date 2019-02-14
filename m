@@ -4,41 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0513DC4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:32:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84881C4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:32:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBCEB222DF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:32:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50F8F222DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:32:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550161946;
-	bh=GbMzRensU03GT9hjWsSQCVuqqG+tPntmwIoS4ac4+Fg=;
+	s=default; t=1550161958;
+	bh=es46TivW9Kpxp/jDOK1Lil3w0c11Tvpf4AabeEtZPO4=;
 	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=UeaT5qb7z5K5Lz0cZyyvkSIcFDaLJspYBimZa2HoJSbZsai+jDTg/36MNdeVqnfVT
-	 3w6jMflesJeVRkuAfvHilbseQHUxXDiB4Bau6w0KEYz/qHCGao+uXmw/fIcNuGEEXr
-	 4GmiNmxLi/zzXR8mhRImsrdT8C3zbFUE6Gh4Oupk=
+	b=gZuw94LUQSmiEd6mte6xuBQ8dBa40WHuSkP/XCtfSSEY4vY31rE1cUIld20E14iJe
+	 tMTskDcDBpifRpuf3oFkVV2Lkiom6p5ifskncumczZy4GRYyiU1fzS4VBIMRut48Qz
+	 EWuWKSDXs1vLaV/Q69+KJtz3ub5X2+Hii6xDdiUg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439669AbfBNQcZ (ORCPT
+        id S2407982AbfBNQcg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:32:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36326 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 11:32:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728867AbfBNQcY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 11:32:24 -0500
+        id S1728867AbfBNQcg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 11:32:36 -0500
 Received: from ziggy.de (unknown [37.223.146.9])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18F5F222DA;
-        Thu, 14 Feb 2019 16:32:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A637222DA;
+        Thu, 14 Feb 2019 16:32:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550161944;
-        bh=GbMzRensU03GT9hjWsSQCVuqqG+tPntmwIoS4ac4+Fg=;
+        s=default; t=1550161955;
+        bh=es46TivW9Kpxp/jDOK1Lil3w0c11Tvpf4AabeEtZPO4=;
         h=From:To:Cc:Subject:Date:From;
-        b=T8bZfAGXAiMXSF3lC2oWdTr9u+o2hGATuJby8133xEJI8cPF6Gw4Dmd3pJRfYtDwv
-         NZFtu/Bck1UYCQvphugUn81DUnpe9ZKOgD0klfqEyi5+1kQah2NrZ+ctGG815FVDLh
-         JRPCBBgM6m0/Hdu7R+uAdXAdkFXmiY60b0iKQREM=
+        b=ZkGopDZrRtdv7IYtksHgIvCdA9juJGcDX7uNQ+8Mm6VXScZkCq88sEk7zLHDQf2nG
+         2DBJh3JQa6QAC/Jb3IyVgtF9/NXcbgCiJroyuI8amcREsHC067GYxjWF5FRXwRpvMk
+         rIpLwxxc/5Ii+1m+ZGTHxc2oGUfkq6sjWkmWOSKw=
 From:   matthias.bgg@kernel.org
 To:     mturquette@baylibre.com, sboyd@kernel.org,
         kevin-cw.chen@mediatek.com, mars.cheng@mediatek.com
@@ -46,9 +45,9 @@ Cc:     sean.wang@mediatek.com, matthias.bgg@gmail.com, jasu@njomotys.info,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v4 1/3] clk: mediatek: Add MUX_FLAGS macro
-Date:   Thu, 14 Feb 2019 17:32:18 +0100
-Message-Id: <20190214163218.26148-1-matthias.bgg@kernel.org>
+Subject: [PATCH v4 2/3] clk: mediatek: Add flags to mtk_gate
+Date:   Thu, 14 Feb 2019 17:32:30 +0100
+Message-Id: <20190214163230.26203-1-matthias.bgg@kernel.org>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -59,41 +58,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jasper Mattsson <jasu@njomotys.info>
 
-This is required to mark outputs of certain MUXes as CLK_IS_CRITICAL.
+This is required to mark gates as CLK_IS_CRITICAL.
 
 Signed-off-by: Jasper Mattsson <jasu@njomotys.info>
 Acked-by: Mars Cheng <mars.cheng@mediatek.com>
 Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
 ---
- drivers/clk/mediatek/clk-mtk.h | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/clk/mediatek/clk-gate.c | 4 +++-
+ drivers/clk/mediatek/clk-gate.h | 3 ++-
+ drivers/clk/mediatek/clk-mtk.c  | 2 +-
+ drivers/clk/mediatek/clk-mtk.h  | 1 +
+ 4 files changed, 7 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/clk/mediatek/clk-gate.c b/drivers/clk/mediatek/clk-gate.c
+index 934bf0e45e26..9628d4e7690b 100644
+--- a/drivers/clk/mediatek/clk-gate.c
++++ b/drivers/clk/mediatek/clk-gate.c
+@@ -157,7 +157,8 @@ struct clk *mtk_clk_register_gate(
+ 		int clr_ofs,
+ 		int sta_ofs,
+ 		u8 bit,
+-		const struct clk_ops *ops)
++		const struct clk_ops *ops,
++		unsigned long flags)
+ {
+ 	struct mtk_clk_gate *cg;
+ 	struct clk *clk;
+@@ -172,6 +173,7 @@ struct clk *mtk_clk_register_gate(
+ 	init.parent_names = parent_name ? &parent_name : NULL;
+ 	init.num_parents = parent_name ? 1 : 0;
+ 	init.ops = ops;
++	init.flags = flags;
+ 
+ 	cg->regmap = regmap;
+ 	cg->set_ofs = set_ofs;
+diff --git a/drivers/clk/mediatek/clk-gate.h b/drivers/clk/mediatek/clk-gate.h
+index 72ef89b3ad7b..9f766dfe1d57 100644
+--- a/drivers/clk/mediatek/clk-gate.h
++++ b/drivers/clk/mediatek/clk-gate.h
+@@ -47,6 +47,7 @@ struct clk *mtk_clk_register_gate(
+ 		int clr_ofs,
+ 		int sta_ofs,
+ 		u8 bit,
+-		const struct clk_ops *ops);
++		const struct clk_ops *ops,
++		unsigned long flags);
+ 
+ #endif /* __DRV_CLK_GATE_H */
+diff --git a/drivers/clk/mediatek/clk-mtk.c b/drivers/clk/mediatek/clk-mtk.c
+index 9c0ae4278a94..ef410413bb0b 100644
+--- a/drivers/clk/mediatek/clk-mtk.c
++++ b/drivers/clk/mediatek/clk-mtk.c
+@@ -130,7 +130,7 @@ int mtk_clk_register_gates(struct device_node *node,
+ 				gate->regs->set_ofs,
+ 				gate->regs->clr_ofs,
+ 				gate->regs->sta_ofs,
+-				gate->shift, gate->ops);
++				gate->shift, gate->ops, gate->flags);
+ 
+ 		if (IS_ERR(clk)) {
+ 			pr_err("Failed to register clk %s: %ld\n",
 diff --git a/drivers/clk/mediatek/clk-mtk.h b/drivers/clk/mediatek/clk-mtk.h
-index f83c2bbb677e..daab6ee94788 100644
+index daab6ee94788..987ff2855249 100644
 --- a/drivers/clk/mediatek/clk-mtk.h
 +++ b/drivers/clk/mediatek/clk-mtk.h
-@@ -111,7 +111,11 @@ struct mtk_composite {
- 	MUX_GATE_FLAGS(_id, _name, _parents, _reg, _shift, _width,	\
- 		_gate, CLK_SET_RATE_PARENT)
+@@ -162,6 +162,7 @@ struct mtk_gate {
+ 	const struct mtk_gate_regs *regs;
+ 	int shift;
+ 	const struct clk_ops *ops;
++	unsigned long flags;
+ };
  
--#define MUX(_id, _name, _parents, _reg, _shift, _width) {		\
-+#define MUX(_id, _name, _parents, _reg, _shift, _width)			\
-+	MUX_FLAGS(_id, _name, _parents, _reg,				\
-+		  _shift, _width, CLK_SET_RATE_PARENT)
-+
-+#define MUX_FLAGS(_id, _name, _parents, _reg, _shift, _width, _flags) {	\
- 		.id = _id,						\
- 		.name = _name,						\
- 		.mux_reg = _reg,					\
-@@ -121,7 +125,7 @@ struct mtk_composite {
- 		.divider_shift = -1,					\
- 		.parent_names = _parents,				\
- 		.num_parents = ARRAY_SIZE(_parents),			\
--		.flags = CLK_SET_RATE_PARENT,				\
-+		.flags = _flags,				\
- 	}
- 
- #define DIV_GATE(_id, _name, _parent, _gate_reg, _gate_shift, _div_reg,	\
+ int mtk_clk_register_gates(struct device_node *node,
 -- 
 2.20.1
 
