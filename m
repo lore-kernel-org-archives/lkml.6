@@ -2,191 +2,135 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47528C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:18:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 165B4C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:19:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12ED92077B
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:18:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4E2320823
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:19:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qyM3e1Y2"
+	dkim=pass (2048-bit key) header.d=ndufresne-ca.20150623.gappssmtp.com header.i=@ndufresne-ca.20150623.gappssmtp.com header.b="KvphQnwz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387842AbfBNQSO (ORCPT
+        id S2395397AbfBNQTV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:18:14 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:39418 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726147AbfBNQSO (ORCPT
+        Thu, 14 Feb 2019 11:19:21 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:34935 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730918AbfBNQTT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 11:18:14 -0500
-Received: by mail-it1-f193.google.com with SMTP id l15so2860252iti.4
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:18:13 -0800 (PST)
+        Thu, 14 Feb 2019 11:19:19 -0500
+Received: by mail-qk1-f196.google.com with SMTP id w204so3919976qka.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:19:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=TlrUo1nz8e5UjEpq94TBOhHzkFofvLch+Eitz9P/X5I=;
-        b=qyM3e1Y2NMp9HyAxWyqJlw9SXaIfg+J4UanPqcCWH+9vEXkTi2WJgOA2Iiw6lzdl1V
-         WrP27pkxz11JHMRSpOoCZ1/IjqPwJrTfWRJXbkaBzMt6+M7/O8YcKuf22nDUsbngwzzu
-         luOFWnLux/m3iRDYKaCulWfqtv9y/o+AOmk379cYEaOV/KwoVnqxlSH1GM652nB6dRFd
-         9OPcy4j+YW+fLnbh1l4pOrvy+Rm3tuvRTHm6dZNPsjQwY/ozyss1WfALHyQd4yEMeNdy
-         4ka6aIT6hV7+pmX6WgEvH3GzAXw9jcYXYdY4DoBWqVamfIGRLpoaNR4ANtYynLnDwpRB
-         QV0A==
+        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=AxuHCqH7c+QRUhY3Jid4ATKz6AXdTTJj/yE7k5txmuc=;
+        b=KvphQnwzQ6hxJrUOiBUpJSyK0dNjgTP5ITt7+sdjFElkm00lYkoWceeuKcdJjTpZZ6
+         1/96wcrGhRpkfWGESn8CfVoC9ZLMi6L4D5BanePYHCAKl7iMet2Dy9Gnq3aMsA0aM7t8
+         A6iq54ZISKz/i1xUERGRF3KHOhrNozVkFYIazH5vNRyb93vH6mmddKk/lNX/6ZMZXM9M
+         JKeyuMjUu8JLDUnkvNkFE0IrnTFCaL6gxOc8nG3yyMCXZ8aCfvyih/swfZeSlr05MbDR
+         LbLtv3/+MYHC4Mbhw6g1G//MzEqlEGGHVwXnjl8TgpznUO35E/Zsr5bGij7DqjBRwqYE
+         /Ujw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=TlrUo1nz8e5UjEpq94TBOhHzkFofvLch+Eitz9P/X5I=;
-        b=QsLIaqCqKU+LorynLxsokweOfgPVQahN+AF5a5mNyDb0EFA4TvnMUW7bDlwnPhtRLm
-         SpcDOn6HOD/yStK6uDCgtk0Q6qYlsoEkVJzDkFscsjJpP11Nds+OpaSNeGyWqvZpTyp3
-         ZHPXqFdz0zQUeYaxmDm90m/9qTfwwJ0C3ONAHQh7Nz67OhgZX0rEhCdRa/uDEcIPiYZJ
-         lgabQI2CUGtzIUEWqDv9YPlc7LtL6roOIkwtsVVE+gYo0pp36e2w+2i2PnGlF74ll8JE
-         jWc2Nf/OImFxJPOjLhBsujPYMyS0fVVV25vrH1111SPZZEcpEDvKG0rt8gv9p1lKMIBc
-         fiDw==
-X-Gm-Message-State: AHQUAuYKh4gSxbIvIySCBVjjlw70T09qymGpGcIbAqGdEvAjtuz3qOvb
-        EEpaWM8nP/+1LbTUcQCmcWwSuakWleIp3s63Gw==
-X-Google-Smtp-Source: AHgI3IaI3t2OpJb1Us8EHtDJzIQE6azZFuSiFBRGFYvHqGWr/GB8pA9bvL1pwN3seKIIl00V+5bONrK0RbUeUwNUNUA=
-X-Received: by 2002:a24:3953:: with SMTP id l80mr2663005ita.108.1550161092706;
- Thu, 14 Feb 2019 08:18:12 -0800 (PST)
-MIME-Version: 1.0
-References: <1c2429a4-9df9-40a3-98e0-51577de4bd6a@arm.com> <20190213131720.GU32494@hirez.programming.kicks-ass.net>
- <20190213140025.GB6346@brain-police> <20190213142524.GW32494@hirez.programming.kicks-ass.net>
- <dd33cc20-f335-0e4c-e3f4-02497ecc3710@arm.com> <20190213144145.GY32494@hirez.programming.kicks-ass.net>
- <20190213154532.GQ32534@hirez.programming.kicks-ass.net> <D61C430D-4321-4114-AB85-671A3C7B8EAE@amacapital.net>
- <20190213222146.GC32494@hirez.programming.kicks-ass.net> <D3E1B64D-3E91-4A82-9C3B-92D9EB7326CE@amacapital.net>
- <20190214101429.GD32494@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190214101429.GD32494@hirez.programming.kicks-ass.net>
-From:   Brian Gerst <brgerst@gmail.com>
-Date:   Thu, 14 Feb 2019 11:18:01 -0500
-Message-ID: <CAMzpN2hg+CY+AuF=BtetS2HrMQYdxhBZL9QMvJX4LjAs7vwwAw@mail.gmail.com>
-Subject: Re: [PATCH] sched/x86: Save [ER]FLAGS on context switch
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>,
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=AxuHCqH7c+QRUhY3Jid4ATKz6AXdTTJj/yE7k5txmuc=;
+        b=fgK+lEON+gGgEpfU2FLvTtRVVdKD8RM/iYN36C5kx2L6Zszaeo+Ncz4S7VjfjG2C9P
+         XYMiYIsHivVpiMfttgQWDYBMQp0Xxm8B+JUPVleQpy86sphOCGGtm6gfJLLL+HXxJJ8Y
+         muvUFgAuzJd8dZEbGJi6kdMUU4nm1AK8MYOk/nPQEY4WGaqvxbVnUyJ28WdeTzRl5ZLM
+         Z9Scl/73kSCguJkzGW3lb4IOTywd7oKc40HcIpjdchxJuIedLRVQfs1YhWLp2ipSIWWH
+         mOo1fTsmNPY5UcC64awBSYiYTR6wH7bobrLIJo/gdua/8YUi4hdMq/OfLSoCx8mkrkca
+         XXAA==
+X-Gm-Message-State: AHQUAubdJFbHP81LRADlw9h5uON6cRn+51jAEqFUegh8AaVsjf1du/Ow
+        MskSOYf+8QFNIlFczRkkAzkaug==
+X-Google-Smtp-Source: AHgI3IYgb3YZOLuWe4trND68o2DvKWBNdl+FBr16n3rCZfLhyHzDVzrviq72ySINlIM1iNHWIb0p1Q==
+X-Received: by 2002:a37:8105:: with SMTP id c5mr3465494qkd.116.1550161157696;
+        Thu, 14 Feb 2019 08:19:17 -0800 (PST)
+Received: from skullcanyon ([192.222.193.21])
+        by smtp.gmail.com with ESMTPSA id y11sm2520187qky.2.2019.02.14.08.19.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 14 Feb 2019 08:19:16 -0800 (PST)
+Message-ID: <69347bdc0065b395f44673fea19e2b798c90fbc3.camel@ndufresne.ca>
+Subject: Re: [PATCH 10/10] venus: dec: make decoder compliant with stateful
+ codec API
+From:   Nicolas Dufresne <nicolas@ndufresne.ca>
+To:     Tomasz Figa <tfiga@chromium.org>, Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Morse <james.morse@arm.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, valentin.schneider@arm.com,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Malathi Gottam <mgottam@codeaurora.org>
+Date:   Thu, 14 Feb 2019 11:19:15 -0500
+In-Reply-To: <CAAFQd5CR+_y-d_v4zk9eqWCSxze8gWWsCU0diyA=hOcMxNucJg@mail.gmail.com>
+References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
+         <20190117162008.25217-11-stanimir.varbanov@linaro.org>
+         <CAAFQd5Cm1zyPzJnixwNmWzxn2zh=63YrA+ZzH-arW-VZ_x-Awg@mail.gmail.com>
+         <28069a44-b188-6b89-2687-542fa762c00e@linaro.org>
+         <CAAFQd5BevOV2r1tqmGPnVtdwirGMWU=ZJU85HjfnH-qMyQiyEg@mail.gmail.com>
+         <affce842d4f015e13912b2c3941c9bf02e84d194.camel@ndufresne.ca>
+         <CAAFQd5Ahg4Di+SBd+-kKo4PLVyvqLwcuG6MphU5Rz1PFXVuamQ@mail.gmail.com>
+         <e8a90694c306fde24928a569b7bcb231b86ec73b.camel@ndufresne.ca>
+         <CAAFQd5DFfQRd1VoN7itVXnWGKW_WBKU-sm6vo5CdgjkzjEEkFg@mail.gmail.com>
+         <57419418d377f32d0e6978f4e4171c0da7357cbb.camel@ndufresne.ca>
+         <1548938556.4585.1.camel@pengutronix.de>
+         <CAAFQd5Aih7cWu-cfwBvNdwhHHYEaMF0SFebrYfdNXD9qKu8fxw@mail.gmail.com>
+         <1f8485785a21c0b0e071a3a766ed2cbc727e47f6.camel@ndufresne.ca>
+         <CAAFQd5CPKm1ES8c9Lab63Lr8ZfWRckHmJ99SVRYi6Hpe7hzy+g@mail.gmail.com>
+         <f1e9dc99-4fcb-dee1-4279-ac0cf1d1fd6e@xs4all.nl>
+         <CAAFQd5B+bt3SV_WRw1=2agZk=Q+Enbkv=nXCrbXX=+MNpeSpCg@mail.gmail.com>
+         <cb8cda5d-e714-6019-4a76-3853ea49c4a6@xs4all.nl>
+         <CAAFQd5BZhhX6Cjj7GhbaY_G7ERksyKne6hxKFCuTJoOnamoQ=A@mail.gmail.com>
+         <CAAFQd5CR+_y-d_v4zk9eqWCSxze8gWWsCU0diyA=hOcMxNucJg@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 5:14 AM Peter Zijlstra <peterz@infradead.org> wrote=
-:
->
-> On Wed, Feb 13, 2019 at 02:49:47PM -0800, Andy Lutomirski wrote:
->
-> > Do we need to backport this thing?
->
-> Possibly, just to be safe.
->
-> > The problem can=E2=80=99t be too widespread or we would have heard of i=
-t before.
->
-> Yes, so far we've been lucky.
->
-> ---
-> Subject: sched/x86: Save [ER]FLAGS on context switch
-> From: Peter Zijlstra <peterz@infradead.org>
-> Date: Thu Feb 14 10:30:52 CET 2019
->
-> Effectively revert commit:
->
->   2c7577a75837 ("sched/x86_64: Don't save flags on context switch")
->
-> Specifically because SMAP uses FLAGS.AC which invalidates the claim
-> that the kernel has clean flags.
->
-> In particular; while preemption from interrupt return is fine (the
-> IRET frame on the exception stack contains FLAGS) it breaks any code
-> that does synchonous scheduling, including preempt_enable().
->
-> This has become a significant issue ever since commit:
->
->   5b24a7a2aa20 ("Add 'unsafe' user access functions for batched accesses"=
-)
->
-> provided for means of having 'normal' C code between STAC / CLAC,
-> exposing the FLAGS.AC state. So far this hasn't led to trouble,
-> however fix it before it comes apart.
->
-> Fixes: 5b24a7a2aa20 ("Add 'unsafe' user access functions for batched acce=
-sses")
-> Acked-by: Andy Lutomirski <luto@amacapital.net>
-> Reported-by: Julien Thierry <julien.thierry@arm.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> ---
->  arch/x86/entry/entry_32.S        |    2 ++
->  arch/x86/entry/entry_64.S        |    2 ++
->  arch/x86/include/asm/switch_to.h |    1 +
->  3 files changed, 5 insertions(+)
->
-> --- a/arch/x86/entry/entry_32.S
-> +++ b/arch/x86/entry/entry_32.S
-> @@ -650,6 +650,7 @@ ENTRY(__switch_to_asm)
->         pushl   %ebx
->         pushl   %edi
->         pushl   %esi
-> +       pushfl
->
->         /* switch stack */
->         movl    %esp, TASK_threadsp(%eax)
-> @@ -672,6 +673,7 @@ ENTRY(__switch_to_asm)
->  #endif
->
->         /* restore callee-saved registers */
-> +       popfl
->         popl    %esi
->         popl    %edi
->         popl    %ebx
-> --- a/arch/x86/entry/entry_64.S
-> +++ b/arch/x86/entry/entry_64.S
-> @@ -291,6 +291,7 @@ ENTRY(__switch_to_asm)
->         pushq   %r13
->         pushq   %r14
->         pushq   %r15
-> +       pushfq
->
->         /* switch stack */
->         movq    %rsp, TASK_threadsp(%rdi)
-> @@ -313,6 +314,7 @@ ENTRY(__switch_to_asm)
->  #endif
->
->         /* restore callee-saved registers */
-> +       popfq
->         popq    %r15
->         popq    %r14
->         popq    %r13
-> --- a/arch/x86/include/asm/switch_to.h
-> +++ b/arch/x86/include/asm/switch_to.h
-> @@ -40,6 +40,7 @@ asmlinkage void ret_from_fork(void);
->   * order of the fields must match the code in __switch_to_asm().
->   */
->  struct inactive_task_frame {
-> +       unsigned long flags;
->  #ifdef CONFIG_X86_64
->         unsigned long r15;
->         unsigned long r14;
+Le jeudi 14 février 2019 à 11:43 +0900, Tomasz Figa a écrit :
+> > > > No, I exactly meant the OUTPUT queue. The behavior of s5p-mfc in case
+> > > > of the format not being detected yet is to waits for any pending
+> > > > bitstream buffers to be processed by the decoder before returning an
+> > > > error.
+> > > > 
+> > > > See https://elixir.bootlin.com/linux/v5.0-rc5/source/drivers/media/platform/s5p-mfc/s5p_mfc_dec.c#L329
+> > > 
+> > > It blocks?! That shouldn't happen. Totally against the spec.
+> > > 
+> > 
+> > Yeah and that's what this patch tries to implement in venus as well
+> > and is seemingly required for compatibility with gstreamer...
+> > 
+> 
+> Hans, Nicolas, any thoughts?
 
-flags should be initialized in copy_thread_tls().  I think the new
-stack is zeroed already, but it would be better to explicitly set it.
+Thinking about this, if CODA managed to make it work without this, and
+without the source change event, we should probably study more this
+code and propose to do this instead of blocking (which is the ugly but
+easy solution). I'm sure it was a bit of juggle to pass the information
+correctly from input to output, but that would bring "compatibility"
+with un-ported userspace. If we had a codec specific framework (making
+a wish here), we could handle that for the codec, a bit like the code
+that emulates CROP on top of G/S_SELECTION.
 
---
-Brian Gerst
+Meanwhile, I'm trying to get some time allocated to implement the event
+in GStreamer, as this would be sufficient argument to say that newly
+introduce drivers don't need to care, you just need newer userspace.
+For Venus it's a bit difficult, since they have customers using
+GStreamer already, and it's quite common to run newer kernel with much
+older userspace (and expect the userspace to keep working).
+
+Nicolas
+
