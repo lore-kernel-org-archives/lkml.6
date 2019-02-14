@@ -2,106 +2,105 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=FROM_WORDY,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2ED0C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:45:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A43BEC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:49:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC743222A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:45:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 761C3222A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:49:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437597AbfBNIpZ (ORCPT
+        id S2436831AbfBNIs6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 03:45:25 -0500
-Received: from mail1.bemta25.messagelabs.com ([195.245.230.66]:4874 "EHLO
-        mail1.bemta25.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728294AbfBNIpX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 03:45:23 -0500
-Received: from [46.226.52.200] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-2.bemta.az-b.eu-west-1.aws.symcld.net id 0F/30-04268-89A256C5; Thu, 14 Feb 2019 08:45:12 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLKsWRWlGSWpSXmKPExsUS3ulwWHeGVmq
-  MwaVHqhanWvawW1y5eIjJYurDJ2wW3650MFlc3jWHzaJzVz+rxYbvaxkd2D02fG5i82i99JfN
-  Y+esu+wem1Z1snnse7uMzWP9lqssHp83yQWwR7Fm5iXlVySwZvTsvsBW8Je9omfWIaYGxhNsX
-  YxcHEIC2xglTv/qYIZw1jNKzL3xk6WLkRPIqZBY+vAomM0r4CZx58xrVhCbTcBCYvKJB2wgNo
-  uAqsT3uSvYuxg5OIQFPCTm75IBCYsIdDFKnD/qDTKTWWA+o8S2hVdZIeYISpyc+QRsJrOAhMT
-  BFy+YIXYZSJxe0AgWlxCwl5j+/iozyEwJAX2JxmOxEGFDie+zvkGVmEvs3LGcDVU5ppo/p34y
-  Y6pBZltLXP8wi20Co9gsJNfNQnLdAkamVYwWSUWZ6RkluYmZObqGBga6hoZGuoaW5rqGxqZ6i
-  VW6SXqppbrlqcUluoZ6ieXFesWVuck5KXp5qSWbGIHRmlJwtH0H44/l6YcYJTmYlER5jS+mxA
-  jxJeWnVGYkFmfEF5XmpBYfYpTh4FCS4NXVTI0REixKTU+tSMvMAaYNmLQEB4+SCK8gSJq3uCA
-  xtzgzHSJ1ilFRSpz3MkhCACSRUZoH1wZLVZcYZaWEeRkZGBiEeApSi3IzS1DlXzGKczAqCfMm
-  gkzhycwrgZv+CmgxE9DipyIpIItLEhFSUg2MRVn7eJ6f0jbbNe+lno/eIeZLdUm82wNXpmTni
-  HzMeV1d2L6oL3pq/EXjG6nP/Nc6Gq2bxdi/buK5irS0KakPZM2LIl3PVjge653ktmvDyzfLaj
-  dKuM9aoCAZI7OmoMLVdd1/oT2T3oQoLK4XZJ/0/om+6gPNS3q85lyOqpF7n7R2Ry7NWK2pxFK
-  ckWioxVxUnAgAoMAD9lADAAA=
-X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
-X-Msg-Ref: server-15.tower-288.messagelabs.com!1550133911!2392454!5
-X-Originating-IP: [87.137.64.195]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.31.5; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 12469 invoked from network); 14 Feb 2019 08:45:12 -0000
-Received: from unknown (HELO NB-EX-CASHUB01.diasemi.com) (87.137.64.195)
-  by server-15.tower-288.messagelabs.com with AES128-SHA256 encrypted SMTP; 14 Feb 2019 08:45:12 -0000
-Received: from SW-EX-CASHUB01.diasemi.com (10.20.16.141) by
- NB-EX-CASHUB01.diasemi.com (10.1.16.141) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Thu, 14 Feb 2019 09:45:11 +0100
-Received: from swsrvapps-01.diasemi.com (10.20.28.141) by
- SW-EX-CASHUB01.diasemi.com (10.20.16.140) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 13 Feb 2019 17:47:31 +0000
-Received: by swsrvapps-01.diasemi.com (Postfix, from userid 22379)      id
- A1C223FB79; Wed, 13 Feb 2019 17:47:31 +0000 (GMT)
-Message-ID: <cover.1550079836.git.Adam.Thomson.Opensource@diasemi.com>
-From:   Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-Date:   Wed, 13 Feb 2019 17:47:31 +0000
-Subject: [PATCH 0/2] ASoC: da7219: BCLK and TDM flexibility improvements
-To:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Takashi Iwai <tiwai@suse.com>, Jaroslav Kysela <perex@perex.cz>
-CC:     Akshu Agrawal <Akshu.Agrawal@amd.com>,
-        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
-        Support Opensource <support.opensource@diasemi.com>
+        Thu, 14 Feb 2019 03:48:58 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33002 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388475AbfBNIs6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 03:48:58 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4CC03AAA9;
+        Thu, 14 Feb 2019 08:48:56 +0000 (UTC)
+Date:   Thu, 14 Feb 2019 09:48:55 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     xiang xiao <xiaoxiang781216@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        linux-kernel@vger.kernel.org, Xiang Xiao <xiaoxiang@xiaomi.com>
+Subject: Re: [PATCH] printk: add KERN_NOTIME to skip the timestamp
+Message-ID: <20190214084855.xyug7cmnrybdcmos@pathway.suse.cz>
+References: <1549995065-27597-1-git-send-email-xiaoxiang@xiaomi.com>
+ <20190212144606.4b7cf0f8@gandalf.local.home>
+ <CAH2Cfb-Zd9TKgs52ROVGYg6F_hiN2ieWKwYPkxpVV8St+zwa2A@mail.gmail.com>
+ <20190213084741.5512307a@gandalf.local.home>
+ <CAH2Cfb9YTAf4j7tv4Q5dWM_jQCzsWBo6ufoT=BXYx5qpgcMCNQ@mail.gmail.com>
+ <20190213093154.7af84743@gandalf.local.home>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
-X-KSE-ServerInfo: sw-ex-cashub01.diasemi.com, 9
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 13/02/2019 16:08:00
-X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
-X-KSE-Antivirus-Interceptor-Info: scan successful
-X-KSE-Antivirus-Info: Clean, bases: 14/02/2019 04:08:00
-X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
-X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
-X-EXCLAIMER-MD-CONFIG: 8d172408-bd6a-42b1-8e53-daaedf35a5af
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190213093154.7af84743@gandalf.local.home>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch set updates the driver to be more flexible regarding the BCLK and
-TDM configurations of the device.
+On Wed 2019-02-13 09:31:54, Steven Rostedt wrote:
+> On Wed, 13 Feb 2019 22:00:04 +0800
+> xiang xiao <xiaoxiang781216@gmail.com> wrote:
+> > Here is a sample output with this patch:
+> > [   10.991426] virtio_rpmsg_bus virtio1: rpmsg host is online
+> > [   10.991443] remoteproc remoteproc1: registered virtio1 (type 7)
+> > [   10.991450] remoteproc remoteproc1: remote processor
+> > f9210000.toppwr:sen-rproc is now up
+> > [   10.993715] virtio_rpmsg_bus virtio1: creating channel
+> > rpmsg-ttySENSOR addr 0x1
+> > [   10.994606] virtio_rpmsg_bus virtio1: creating channel rpmsg-ttyGPS addr 0x2
+> > [   10.995236] virtio_rpmsg_bus virtio1: creating channel rpmsg-clk addr 0x3
+> > [   10.995702] virtio_rpmsg_bus virtio1: creating channel rpmsg-syslog addr 0x4
+> > [   10.996197] virtio_rpmsg_bus virtio1: creating channel rpmsg-rtc addr 0x5
+> > [   10.997297] virtio_rpmsg_bus virtio1: creating channel rpmsg-hostfs addr 0x6
+> > [   10.999842] virtio_rpmsg_bus virtio1: creating channel rpmsg-usrsock addr 0x7
+> > [     0.007680] sensor: NuttX sensor 7.28 e3c2ecb Feb 12 2019 16:53:49
+> > arm song/banks
+> > ^^^^^^^^^^^^^
+> > [   11.918177] random: crng init done
+> > [   12.567362] e2fsck: e2fsck 1.42.9 (28-Dec-2013)
+> > 
+> > Without this patch:
+> > [   10.991426] virtio_rpmsg_bus virtio1: rpmsg host is online
+> > [   10.991443] remoteproc remoteproc1: registered virtio1 (type 7)
+> > [   10.991450] remoteproc remoteproc1: remote processor
+> > f9210000.toppwr:sen-rproc is now up
+> > [   10.993715] virtio_rpmsg_bus virtio1: creating channel
+> > rpmsg-ttySENSOR addr 0x1
+> > [   10.994606] virtio_rpmsg_bus virtio1: creating channel rpmsg-ttyGPS addr 0x2
+> > [   10.995236] virtio_rpmsg_bus virtio1: creating channel rpmsg-clk addr 0x3
+> > [   10.995702] virtio_rpmsg_bus virtio1: creating channel rpmsg-syslog addr 0x4
+> > [   10.996197] virtio_rpmsg_bus virtio1: creating channel rpmsg-rtc addr 0x5
+> > [   10.997297] virtio_rpmsg_bus virtio1: creating channel rpmsg-hostfs addr 0x6
+> > [   10.999842] virtio_rpmsg_bus virtio1: creating channel rpmsg-usrsock addr 0x7
+> > [   11.105345][     0.007680] sensor: NuttX sensor 7.28 e3c2ecb Feb 12
+> > 2019 16:53:49 arm song/banks
+> > ^^^^^^^^^^^^^^^^^^^^^^^^^^
+> > [   11.918177] random: crng init done
+> > [   12.567362] e2fsck: e2fsck 1.42.9 (28-Dec-2013)
+> > 
+> > Which one do you think better?
+> 
+> Honestly, the one without the patch.
+> 
+> Seriously, it also makes it easy to see where that message happened
+> with respect to the other printks. With your patch, we would have no
+> idea, and if I was a normal user, unaware of this patch, I would
+> probably submit a bug report claiming that something is wrong with the
+> timestamps.
 
-Previously the BCLK rate was fixed at 64 periods per WCLK, when the codec is
-DAI clock master, but to satisfy devices which prefer a lower rate, and to save
-power, the BCLK rate is now calculated based on hw_params() data.
+Just for record. I agree with Steven and Sergey here. The two clocks
+are too out of sync. "Randomly" and quietly replacing one with
+the other would cause more harm than good from my point of view.
 
-As a fallout of the BCLK efforts it was also apparent that the TDM code could be
-made more flexible as well. The device is capable of automatically detecting
-the BCLK rate when it is clock slave, so previous limitations imposed were
-not necessary. The mask handling is now used as an input to determine the BCLK
-offset to align closer with other examples within ALSA.
-
-Adam Thomson (2):
-  ASoC: da7219: Add support for master mode BCLK rate adjustment
-  ASoC: da7219: Update TDM usage to be more flexible
-
- sound/soc/codecs/da7219.c | 116 +++++++++++++++++++++++++++++-----------------
- sound/soc/codecs/da7219.h |   1 +
- 2 files changed, 74 insertions(+), 43 deletions(-)
-
--- 
-1.9.1
-
+Best Regards,
+Petr
