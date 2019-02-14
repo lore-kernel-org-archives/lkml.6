@@ -2,124 +2,125 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41971C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:08:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3EC2C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FFD7222A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:08:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1FC0222A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:11:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550135493;
+	bh=bXR0zsHW/fz3vQHFQ60PpKS5AitvflLzanXTdrowseI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=nwjX8tudRzrL4r4EybplM48DAZ3bSOn5xeCFq7bu3TvCp2FVZvJWLLTv7nQK0Tfoo
+	 dCE+cfYMoGnKATp/HtXGh01U8J9/yYtJbu2Rd5rD7BQxogFfXqVWSlSjUYMk6HTKbE
+	 7VOCrTkpXkQIW40XEOVgJmwQ6cvJ9Ndx6vhK7SAQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394947AbfBNJIx convert rfc822-to-8bit (ORCPT
+        id S2394964AbfBNJLb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 04:08:53 -0500
-Received: from mga09.intel.com ([134.134.136.24]:29880 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387637AbfBNJIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 04:08:52 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2019 01:08:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,368,1544515200"; 
-   d="scan'208";a="318932935"
-Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
-  by fmsmga006.fm.intel.com with ESMTP; 14 Feb 2019 01:08:50 -0800
-Received: from fmsmsx154.amr.corp.intel.com (10.18.116.70) by
- fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 14 Feb 2019 01:08:50 -0800
-Received: from shsmsx107.ccr.corp.intel.com (10.239.4.96) by
- FMSMSX154.amr.corp.intel.com (10.18.116.70) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Thu, 14 Feb 2019 01:08:50 -0800
-Received: from shsmsx102.ccr.corp.intel.com ([169.254.2.207]) by
- SHSMSX107.ccr.corp.intel.com ([169.254.9.162]) with mapi id 14.03.0415.000;
- Thu, 14 Feb 2019 17:08:48 +0800
-From:   "Wang, Wei W" <wei.w.wang@intel.com>
-To:     'David Hildenbrand' <david@redhat.com>,
-        Nitesh Narayan Lal <nitesh@redhat.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
-        "pagupta@redhat.com" <pagupta@redhat.com>,
-        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
-        "riel@surriel.com" <riel@surriel.com>,
-        "mst@redhat.com" <mst@redhat.com>,
-        "dodgen@google.com" <dodgen@google.com>,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        "dhildenb@redhat.com" <dhildenb@redhat.com>,
-        "aarcange@redhat.com" <aarcange@redhat.com>
-Subject: RE: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
-Thread-Topic: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
-Thread-Index: AQHUvMb57IQCd72gCkOm4okDUKYrcaXb13cw//+SQwCAAKVowIAA64iAgAGk3nA=
-Date:   Thu, 14 Feb 2019 09:08:48 +0000
-Message-ID: <286AC319A985734F985F78AFA26841F73DF6F195@shsmsx102.ccr.corp.intel.com>
-References: <20190204201854.2328-1-nitesh@redhat.com>
- <286AC319A985734F985F78AFA26841F73DF68060@shsmsx102.ccr.corp.intel.com>
- <17adc05d-91f9-682b-d9a4-485e6a631422@redhat.com>
- <286AC319A985734F985F78AFA26841F73DF6B52A@shsmsx102.ccr.corp.intel.com>
- <62b43699-f548-e0da-c944-80702ceb7202@redhat.com>
-In-Reply-To: <62b43699-f548-e0da-c944-80702ceb7202@redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMGQxZDdiMDAtYzY0Yy00NjhhLWI4YzEtOGRjNGU5M2NhYzE0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiXC8xYW1KdUI0MEJPaHR3V3ZpaHNPTHljNWpZcThuTjdUS2N1ZVdxR2k2ZE5UeVRSOEgzZnlNcWRuYzlnQkdFMDAifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Thu, 14 Feb 2019 04:11:31 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:34280 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387453AbfBNJLb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 04:11:31 -0500
+Received: by mail-lj1-f193.google.com with SMTP id l5so1149175lje.1;
+        Thu, 14 Feb 2019 01:11:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qlyVzDfEA60OMhAyNzY62j15XTWQJaeweNTh+9Jieis=;
+        b=Vt4x58iNvINK3zABtOFU7bXbIrDT/TJW+9I2iRUR38AufjaTct8WPvTT8+/k+WeYVc
+         JgVDXQpDXQYsM+iiPF3qiW/bz1Wc5NVVqVEXbSJCorsIQRl+rMYnLWQg9vA8y0RKqVIK
+         vWGiZvUdD1aRyvTeJm7auR/S5vu7NKPUJZfJYmzCrUwYafXSSU9tJ1vGUrNjI6awQBdF
+         YpRZeDDprGhUp486JD0MT3eYYIwPQcxzYBeECM/0GBZ8NDzdtIOgW67erIC8ipppY4KL
+         a6sQgWnmz0uircSH6O294BprIqPqdMOlOIZxxgJelX6Nn7N58TG89Av4P7ueEvue6AiY
+         bd/Q==
+X-Gm-Message-State: AHQUAub3BLuvu1Culgwl/4HhsBsNL6J5NbBmvohI2QhH6yVBpuo+4IsP
+        coIcxnMqhfofpXn17eJNTrw=
+X-Google-Smtp-Source: AHgI3Ia8DWAGct6WEUKkC+jWEuKtY9LMdSV6z8iJhbdm8yHF8nLHZ6XVyGrDF8EL5vEnUc408+gbtw==
+X-Received: by 2002:a2e:6a18:: with SMTP id f24mr1724017ljc.97.1550135489021;
+        Thu, 14 Feb 2019 01:11:29 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id j12sm350468lfg.47.2019.02.14.01.11.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Feb 2019 01:11:27 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1guD3B-0007qD-5L; Thu, 14 Feb 2019 10:11:21 +0100
+Date:   Thu, 14 Feb 2019 10:11:21 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Loys Ollivier <lollivier@baylibre.com>
+Cc:     Johan Hovold <johan@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH v2 2/4] dt-bindings: gnss: add mediatek binding
+Message-ID: <20190214091121.GI28278@localhost>
+References: <1547744074-28308-1-git-send-email-lollivier@baylibre.com>
+ <1547744074-28308-3-git-send-email-lollivier@baylibre.com>
+ <20190125090755.GB3691@localhost>
+ <867eeo7pjm.fsf@baylibre.com>
+ <20190211083349.GU4686@localhost>
+ <86mun2v27r.fsf@baylibre.com>
+ <CALZWD59e356Of+R4H2ZNHJyQcPCQNNdS+1DTc8qNDYp9ZnUpXA@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALZWD59e356Of+R4H2ZNHJyQcPCQNNdS+1DTc8qNDYp9ZnUpXA@mail.gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, February 13, 2019 5:19 PM, David Hildenbrand wrote:
-> If you have to resize/alloc/coordinate who will report, you will need locking.
-> Especially, I doubt that there is an atomic xbitmap  (prove me wrong :) ).
+On Wed, Feb 13, 2019 at 04:24:00PM +0100, Loys Ollivier wrote:
+> On Mon 11 Feb 2019 at 14:17, Loys Ollivier <lollivier@baylibre.com> wrote:
+> > On Mon 11 Feb 2019 at 08:33, Johan Hovold <johan@kernel.org> wrote:
 
-Yes, we need change xbitmap to support it.
+> >> Right, but please do look around for other receivers using this chipset
+> >> so that we can make the binding generic enough to cover those as well
+> >> (e.g. by choosing representative resource names).
+> >>
+> > OK will have a look.
+> 
+> The only mt3339-based receivers I have found are:
+> - [0] Globaltop
+> - [1] Locosys / Pololu
+> They both only provide the UART interface and do not list the I2C/SPI
+> interfaces.
+> 
+> [0] https://cdn-shop.adafruit.com/datasheets/GlobalTop-FGPMMOPA6H-Datasheet-V0A.pdf
+> [1] https://www.pololu.com/file/0J641/LS20030~3_datasheet_v1.3.pdf
 
-Just thought of another option, which would be better:
-- xb_preload in prepare_alloc_pages to pre-allocate the bitmap memory;
-- xb_set/clear the bit under the zone->lock, i.e. in rmqueue and free_one_page
+I found tree more:
 
-So we use the existing zone->lock to guarantee that the xb ops
-will not be concurrently called to race on the same bitmap.
-And we don't add any new locks to generate new doubts.
-Also, we can probably remove the arch_alloc/free_page part.
+ - Globaltop PA6C
 
-For the first step, we could optimize VIRTIO_BALLOON_F_FREE_PAGE_HINT for the live migration optimization:
-- just replace alloc_pages(VIRTIO_BALLOON_FREE_PAGE_ALLOC_FLAG,
-                           VIRTIO_BALLOON_FREE_PAGE_ORDER)
-with get_free_page_hints()
+   - https://cdn-shop.adafruit.com/datasheets/GlobalTop-FGPMMOPA6C-Datasheet-V0A-Preliminary.pdf
 
-get_free_page_hints() was designed to clear the bit, and need put_free_page_hints() to set it later after host finishes madvise. For the live migration usage, as host doesn't free the backing host pages, so we can give get_free_page_hints a parameter option to not clear the bit for this usage. It will be simpler and faster.
+ - Linx RM series
+   - https://linxtechnologies.com/wp/wp-content/uploads/rxm-gps-rm.pdf
 
-I think get_free_page_hints() to read hints via bitmaps should be much faster than that allocation function, which takes around 15us to get a 4MB block. Another big bonus is that we don't need free_pages() to return all the pages back to buddy (it's a quite expensive operation too) when migration is done.
+ - ublox IT530
+   - https://www.u-blox.com/sites/default/files/products/documents/IT530_DataSheet_%28FTX-HW-12008%29.pdf
 
-For the second step, we can improve ballooning, e.g. a new feature VIRTIO_BALLOON_F_ADVANCED_BALLOON to use the same get_free_page_hints() and another put_free_page_hints(), along with the virtio-balloon's report_vq and ack_vq to wait for the host's ack before making the free page ready.
-(I think waiting for the host ack is the overhead that the guest has to suffer for enabling memory overcommitment, and even with this v8 patch series it also needs to do that. The optimization method was described yesterday)
+All with uart-interface only and similar pins names, although the ublox
+device do have some additional features we can worry about later.
 
-> Yes, but as I mentioned this has other drawbacks. Relying on a a guest to free
-> up memory when you really need it is not going to work. 
+As all but the ublox device use VBACKUP for the backup supply, do you
+mind if I change the binding to use "vbackup-supply" instead of
+"v-bckp-supply" (which is a ublox-ism) when applying?
 
-why not working? Host can ask at any time (including when not urgently need it) depending on the admin's configuration.
-
->It might work for
-> some scenarios but should not dictate the design. It is a good start though if
-> it makes things easier.
- > Enabling/disabling free page hintning by the hypervisor via some
-> mechanism is on the other hand a good idea. "I have plenty of free space,
-> don't worry".
-
-Also guests are not treated identically, host can decide whom to offer the free pages first (offering free pages will cause the guest some performance drop).
-
-Best,
-Wei
+Thanks,
+Johan
