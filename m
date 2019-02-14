@@ -2,90 +2,94 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71F29C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:20:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6539C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44E1F2175B
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:20:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEB882177E
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:21:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730022AbfBNWU5 (ORCPT
+        id S1730646AbfBNWVD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 17:20:57 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:40123 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726030AbfBNWU5 (ORCPT
+        Thu, 14 Feb 2019 17:21:03 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:60822 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730063AbfBNWVB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 17:20:57 -0500
-Received: by mail-pf1-f195.google.com with SMTP id h1so3794847pfo.7;
-        Thu, 14 Feb 2019 14:20:57 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=eNot59Zih8i505EAGOmjYWHUfqxiPx7YqpG4rUoQO+4=;
-        b=J94/WzVMiNb8K4tc786Yl/nFlU/1nlTwFW9r1P+KO0j+vNGwomaSjOoEMb1tLNlYhN
-         vXxEVe2okxBOtMLvQ9etIXGB81rHa8EUPn0VRnnVdV9OOBEtHEZZZwuWNJwgNpPLq/3H
-         DvB5D7m+TDlpwMsaEYs9nh+RF5/LHCob/UDkGWdDZ8rMFFpCdL+T/U82JSCEsL7etP6s
-         AdcwbnuxDHqsy+wBpfz2Fs20LytvnxNW24S+JBbOjif6+tmD2o8kFwB90AmM9uAuIXEp
-         Br3qO2AzWn4cvbiTxk+Ufbvn9mDuNHR0BP44Tsmcaoguk6YHczv/OVa6PPAWaR4nEF0C
-         BvRA==
-X-Gm-Message-State: AHQUAubRLTXgJ/zG1dJX3uuRYLSXlrsNZEmsrUnZOK1pnoRe4tSZvXWl
-        cUI80AbCIg9XjTxTTSdCPNw=
-X-Google-Smtp-Source: AHgI3IbluXoMEHV5qIeLZ+YyBArKSnhftdeYQ0VpclbcJaq8a9uwemhvcNA5EKMwA8N2GkxiCDJfWA==
-X-Received: by 2002:a62:1f5c:: with SMTP id f89mr6506775pff.137.1550182856358;
-        Thu, 14 Feb 2019 14:20:56 -0800 (PST)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id b24sm4521620pfe.136.2019.02.14.14.20.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 14:20:55 -0800 (PST)
-Message-ID: <1550182854.31902.75.camel@acm.org>
-Subject: Re: KASAN warning in bt_for_each
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Jens Axboe <axboe@kernel.dk>, Evan Green <evgreen@google.com>
-Cc:     linux-block <linux-block@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Thu, 14 Feb 2019 14:20:54 -0800
-In-Reply-To: <a1471a88-f45b-885d-b62e-a3c539c6583d@kernel.dk>
-References: <CAE=gft4_WiL87FtZnVmZok+oXPjK=GUb5tDUPGQFijddrB0Pbg@mail.gmail.com>
-         <1550172827.93548.5.camel@acm.org>
-         <CAE=gft5GR1xEM1gNQjMyo_wfhs_JUAc2AUHHk5qr36EjaWv1hg@mail.gmail.com>
-         <a1471a88-f45b-885d-b62e-a3c539c6583d@kernel.dk>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
+        Thu, 14 Feb 2019 17:21:01 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id E361314D969C0;
+        Thu, 14 Feb 2019 14:21:00 -0800 (PST)
+Date:   Thu, 14 Feb 2019 14:21:00 -0800 (PST)
+Message-Id: <20190214.142100.1155290437338631379.davem@davemloft.net>
+To:     jannh@google.com
+Cc:     alexander.duyck@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RESEND PATCH net] mm: page_alloc: fix ref bias in
+ page_frag_alloc() for 1-byte allocs
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <CAG48ez3p9kyyON4qDybveNhCNdTPfsvi3hUp7rDQUk-f43xMsQ@mail.gmail.com>
+References: <20190213214559.125666-1-jannh@google.com>
+        <20190214.091328.1687361207100252890.davem@davemloft.net>
+        <CAG48ez3p9kyyON4qDybveNhCNdTPfsvi3hUp7rDQUk-f43xMsQ@mail.gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 14 Feb 2019 14:21:01 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-02-14 at 13:50 -0700, Jens Axboe wrote:
-+AD4 On 2/14/19 1:45 PM, Evan Green wrote:
-+AD4 +AD4 On Thu, Feb 14, 2019 at 11:33 AM Bart Van Assche +ADw-bvanassche+AEA-acm.org+AD4 wrote:
-+AD4 +AD4 +AD4 
-+AD4 +AD4 +AD4 On Thu, 2019-02-14 at 10:04 -0800, Evan Green wrote:
-+AD4 +AD4 +AD4 +AD4 Greetings, block experts+ACE
-+AD4 +AD4 +AD4 +AD4 
-+AD4 +AD4 +AD4 +AD4 I'm trying to track down a KASAN warning I'm seeing in our downstream
-+AD4 +AD4 +AD4 +AD4 4.19 kernel, and I could use a little help. The warning looks like
-+AD4 +AD4 +AD4 +AD4 this:
-+AD4 +AD4 +AD4 +AD4 
-+AD4 +AD4 +AD4 +AD4 +AFs  224.564894+AF0 BUG: KASAN: use-after-free in bt+AF8-for+AF8-each+-0x1ac/0x28c
-+AD4 +AD4 +AD4 +AD4 +AFs  224.571195+AF0 Read of size 8 at addr ffffffc17c621340 by task fio/3851
-+AD4 +AD4 +AD4 +AD4 +AFs  224.577745+AF0
-+AD4 +AD4 +AD4 +AD4 +AFs  224.579320+AF0 CPU: 2 PID: 3851 Comm: fio Tainted: G W 4.19.16 +ACM-398
-+AD4 +AD4 +AD4 
-+AD4 +AD4 +AD4 Please have a look at this e-mail thread:
-+AD4 +AD4 +AD4 https://lore.kernel.org/linux-block/1545261885.185366.488.camel+AEA-acm.org/
-+AD4 +AD4 
-+AD4 +AD4 Oh, yep, that's totally it. Did that patch make it in anywhere?
-+AD4 
-+AD4 It didn't, since I didn't get any response to it.
+From: Jann Horn <jannh@google.com>
+Date: Thu, 14 Feb 2019 22:26:22 +0100
 
-I will have a look. Sorry that I had dropped the ball on that patch.
+> On Thu, Feb 14, 2019 at 6:13 PM David Miller <davem@davemloft.net> wrote:
+>>
+>> From: Jann Horn <jannh@google.com>
+>> Date: Wed, 13 Feb 2019 22:45:59 +0100
+>>
+>> > The basic idea behind ->pagecnt_bias is: If we pre-allocate the maximum
+>> > number of references that we might need to create in the fastpath later,
+>> > the bump-allocation fastpath only has to modify the non-atomic bias value
+>> > that tracks the number of extra references we hold instead of the atomic
+>> > refcount. The maximum number of allocations we can serve (under the
+>> > assumption that no allocation is made with size 0) is nc->size, so that's
+>> > the bias used.
+>> >
+>> > However, even when all memory in the allocation has been given away, a
+>> > reference to the page is still held; and in the `offset < 0` slowpath, the
+>> > page may be reused if everyone else has dropped their references.
+>> > This means that the necessary number of references is actually
+>> > `nc->size+1`.
+>> >
+>> > Luckily, from a quick grep, it looks like the only path that can call
+>> > page_frag_alloc(fragsz=1) is TAP with the IFF_NAPI_FRAGS flag, which
+>> > requires CAP_NET_ADMIN in the init namespace and is only intended to be
+>> > used for kernel testing and fuzzing.
+>> >
+>> > To test for this issue, put a `WARN_ON(page_ref_count(page) == 0)` in the
+>> > `offset < 0` path, below the virt_to_page() call, and then repeatedly call
+>> > writev() on a TAP device with IFF_TAP|IFF_NO_PI|IFF_NAPI_FRAGS|IFF_NAPI,
+>> > with a vector consisting of 15 elements containing 1 byte each.
+>> >
+>> > Signed-off-by: Jann Horn <jannh@google.com>
+>>
+>> Applied and queued up for -stable.
+> 
+> I had sent a v2 at Alexander Duyck's request an hour before you
+> applied the patch (with a minor difference that, in Alexander's
+> opinion, might be slightly more efficient). I guess the net tree
+> doesn't work like the mm tree, where patches can get removed and
+> replaced with newer versions? So if Alexander wants that change
+> (s/size/PAGE_FRAG_CACHE_MAX_SIZE/ in the refcount), someone has to
+> send that as a separate patch?
 
-Bart.
+Yes, please send a follow-up.  Sorry about that.
