@@ -2,270 +2,142 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37300C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:52:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 017BBC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:55:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA31E21916
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:52:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B58CF21B18
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:55:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q7eebrHj"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MO6eQ5LK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438000AbfBNVwt (ORCPT
+        id S2392863AbfBNVzc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 16:52:49 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:37938 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391048AbfBNVws (ORCPT
+        Thu, 14 Feb 2019 16:55:32 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:42585 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387641AbfBNVzc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 16:52:48 -0500
-Received: by mail-ot1-f66.google.com with SMTP id m1so13223212otf.5
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 13:52:48 -0800 (PST)
+        Thu, 14 Feb 2019 16:55:32 -0500
+Received: by mail-qk1-f193.google.com with SMTP id y140so4551654qkb.9
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 13:55:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=DbuOOVJM2wi9bnUw4pC9FyprNA/Yen3KGZHX/2w/up8=;
-        b=q7eebrHjjL98ZBva7V6SwUfWD31B+ajgbmYBjgFXdphG89u4+C21sxZuLPoVfm01hy
-         UdOpn4i4WL3+YZ0Z8rjqIdBsoeXhITtwABJlaIMVAjmQ+bY4yYlScENv7fM3QdUh/cVZ
-         IYo0pNL1h1ebd6p6mqZgn7zV49YXedqZvTIYwTi8gR24f3dtiDd5yjgcsOogVFmP6dQp
-         CULJQ5WlcvZJo/iUD8GLf2BjmKf4JFXHYYZ91EasSrj8sy06JVyFQ/7E+2kq8voqbgVO
-         zQNMrM0y4SuBxcXc4bsbK4PfITG6sUUiosVuPT/uAysxHobUT5q1B/KYy49vmkbsVVgN
-         l1hQ==
+        bh=cfUBORap72Jt0I4QDdDnFCDsVaIdSdBAC4zZgLMxXAM=;
+        b=MO6eQ5LK43KewPrWhYfrBHF6xt5C7OhUvyjBDQzHRxAjfp959MrCPRCP262EBWR9mM
+         wbo7+RjFwsUQZnKmAEwEXv3rI89xJuTUikIEhgD1XU+xXYFKpP3Q+CQDK3YvS3W4v1M8
+         DsQcajHxS7X4O4U214+vGbXlaUGaicIQhwhvtJl6s+Jfqnwku5mHo8R96Gn7gMkbd0lW
+         UruxBUqDg/i9jKt31kPrEvHgniKUm9cM7T14vXFimgsZ9ptn/M8PBZL1q8Mt+CENSMA7
+         SJYdkJ7Jkzc4hyHLpiqsvaUv5Gp8A5RhRjnafLEeJYF6OVWLSvanii+CoGimR4mfFhhc
+         SglQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=DbuOOVJM2wi9bnUw4pC9FyprNA/Yen3KGZHX/2w/up8=;
-        b=R3gwNvDqMlNMZWg9FcNrJKXp9BPQSTElDsHPdcFpw1uAF2QHtvE1IIjv7n6CMOFN6X
-         WYiGET55Anh+s8vU+OWFmKZ7JRZkUZeaRQ2jYwaTF5F2le9W16GoHwpZ9nJDojrhYToN
-         yIrdCPSE1ucnrXSGNsovpVDzQ4KH3D8cRQxIvwB2CfSpT5VqHsP6zmuBhDUG9Z6wdc7j
-         JLuKT+PxhhaUDlru7wWKOo6ncralwxyIVyzJTFl0H0TMXLB7rcme7i6XXZGbGOLcC7Q+
-         dMheLaI0YeC1dL5WxlJ34GlBkMmIWXSdV2ZXWyxOmAz+Zl23xvaKLXvqJmzbkoQy2H34
-         N/tg==
-X-Gm-Message-State: AHQUAuZVLlYLpcZvO6SEQy5IY0xthcbqKUPZu1GYsry3bHOpTi+Wk8+I
-        HGHxy2vvaJILTuwYKHcAFAp6CvH87SHsBUnX6YHllA==
-X-Google-Smtp-Source: AHgI3Ia8FTQLnYJoMJ9oFtOEX74Bfe2F4CWZpgi9CpkpvkaKPLyc5GtizbortOk26RyJ/iGcUEGCnpx5PyRiAztPAno=
-X-Received: by 2002:aca:56ca:: with SMTP id k193mr3899681oib.59.1550181167280;
- Thu, 14 Feb 2019 13:52:47 -0800 (PST)
+        bh=cfUBORap72Jt0I4QDdDnFCDsVaIdSdBAC4zZgLMxXAM=;
+        b=rtZ4m/mAzizpgLlY48ExaUXk20YKdd6RamDtIH001bfw18HcAJxk8sBpDg4bVx6lpO
+         BpYu0VjzrXJD8KL3+ulfdhrxlB5FthU+GKsVKQl3iy3ighOiPO4waewJUj1Q5UrGduhq
+         ArpEl0La5JAt8/Du+Hctx+ibGy/r5L3ZLp7fbP3JGy9MGT45psl0l26A5VJfYQhxOvzy
+         vSD3EjhOdDZrLCG6kBLkCpucK8e8w18jbqov4wMUImSa1gFs6DOpNumxuZn9hb4emR+j
+         VKnUhjgk5uzK1IVaWMT5LckbAxjdkXkFs9AZa4Ssgwc1ecmI1A5au9wRXeyL7Om3kO0p
+         mdQg==
+X-Gm-Message-State: AHQUAub03Jqw3zbDfjQRmnaZhVb2/+tfv4sEjjTQPceo7yP838rwipUF
+        Qgy4gLYEXI+QW/uCYp7disf3LkLZU6ISYTsq60DohA==
+X-Google-Smtp-Source: AHgI3IYvEgusFeAWFhvLwISke0qcrqOqnDiibZyWx4c8fN9tMwPwXkYrGeOcIwesoJ6ORys8nAYDKOH/rv/pqKqhj9I=
+X-Received: by 2002:a37:cf56:: with SMTP id e83mr4755350qkj.101.1550181331053;
+ Thu, 14 Feb 2019 13:55:31 -0800 (PST)
 MIME-Version: 1.0
-References: <20181128193636.254378-1-brendanhiggins@google.com>
- <20181128193636.254378-18-brendanhiggins@google.com> <CAL_Jsq+09Kx7yMBC_Jw45QGmk6U_fp4N6HOZDwYrM4tWw+_dOA@mail.gmail.com>
- <CAFd5g46NehKo=TT4reQ8r74bDTG9BkR=ELg+Q3n5YooUxFwBmA@mail.gmail.com> <CAL_JsqL=NthWW6q==TXjado83AAWuC1jYZ9CR+T9wPtgQLC4hw@mail.gmail.com>
-In-Reply-To: <CAL_JsqL=NthWW6q==TXjado83AAWuC1jYZ9CR+T9wPtgQLC4hw@mail.gmail.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Thu, 14 Feb 2019 13:52:35 -0800
-Message-ID: <CAFd5g44dn-w5s4npCY-8kwj3EvqvFmMP_3SzDzNpHVjiB35fXQ@mail.gmail.com>
-Subject: Re: [RFC v3 17/19] of: unittest: migrate tests to run on KUnit
-To:     Rob Herring <robh@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@google.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>, shuah@kernel.org,
-        Joel Stanley <joel@jms.id.au>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Joe Perches <joe@perches.com>, brakmo@fb.com,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-um@lists.infradead.org, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Knut Omang <knut.omang@oracle.com>
+References: <20190208183520.30886-1-tkjos@google.com> <20190208183520.30886-2-tkjos@google.com>
+ <20190214194540.GA185075@google.com> <CAHRSSEw22kuwLqjXHocBQTv4d5hS1tXi4uirjBhgQ=yGbw9J4g@mail.gmail.com>
+ <CAJWu+oqq0s3x7j+gPzSRREj2gjZxzAPS_=XVM4uhC9GjSM9zfw@mail.gmail.com> <20190214212549.GB185075@google.com>
+In-Reply-To: <20190214212549.GB185075@google.com>
+From:   Todd Kjos <tkjos@google.com>
+Date:   Thu, 14 Feb 2019 13:55:19 -0800
+Message-ID: <CAHRSSExEc0uF38wwgtF6JeVgcLiDKiPznK+SmX8fFEL8k-gpVA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/7] binder: create userspace-to-binder-buffer copy function
+To:     Joel Fernandes <joelaf@google.com>
+Cc:     Todd Kjos <tkjos@android.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Martijn Coenen <maco@google.com>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Android Kernel Team <kernel-team@android.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 12:10 PM Rob Herring <robh@kernel.org> wrote:
+On Thu, Feb 14, 2019 at 1:25 PM Joel Fernandes <joelaf@google.com> wrote:
 >
-> On Tue, Feb 12, 2019 at 7:44 PM Brendan Higgins
-> <brendanhiggins@google.com> wrote:
-> >
-> > On Wed, Nov 28, 2018 at 12:56 PM Rob Herring <robh@kernel.org> wrote:
+> On Thu, Feb 14, 2019 at 03:53:54PM -0500, Joel Fernandes wrote:
+> > On Thu, Feb 14, 2019 at 3:42 PM Todd Kjos <tkjos@google.com> wrote:
 > > >
-> > > On Wed, Nov 28, 2018 at 1:38 PM Brendan Higgins
-> > > <brendanhiggins@google.com> wrote:
+> > > On Thu, Feb 14, 2019 at 11:45 AM Joel Fernandes <joelaf@google.com> wrote:
+> > [snip]
+> > > > > + * check_buffer() - verify that buffer/offset is safe to access
+> > > > > + * @alloc: binder_alloc for this proc
+> > > > > + * @buffer: binder buffer to be accessed
+> > > > > + * @offset: offset into @buffer data
+> > > > > + * @bytes: bytes to access from offset
+> > > > > + *
+> > > > > + * Check that the @offset/@bytes are within the size of the given
+> > > > > + * @buffer and that the buffer is currently active and not freeable.
+> > > > > + * Offsets must also be multiples of sizeof(u32). The kernel is
 > > > >
-> > > > Migrate tests without any cleanup, or modifying test logic in anyway to
-> > > > run under KUnit using the KUnit expectation and assertion API.
+> > > > In all callers of binder_alloc_copy_user_to_buffer, the alignment of offsets
+> > > > is set to sizeof(void *). Then shouldn't this function check for sizeof(void *)
+> > > > alignment instead of u32?
 > > >
-> > > Nice! You beat me to it. This is probably going to conflict with what
-> > > is in the DT tree for 4.21. Also, please Cc the DT list for
-> > > drivers/of/ changes.
-> > >
-> > > Looks good to me, but a few mostly formatting comments below.
+> > > But there are other callers of check_buffer() later in the series that
+> > > don't require pointer-size alignment. u32 alignment is consistent with
+> > > the alignment requirements of the binder driver before this change.
+> > > The copy functions don't actually need to insist on alignment, but
+> > > these binder buffer objects have always used u32 alignment which has
+> > > been checked in the driver. If user code misaligned it, then errors
+> > > are returned. The alignment checks are really to be consistent with
+> > > previous binder driver behavior.
 > >
-> > I just realized that we never talked about your other comments, and I
-> > still have some questions. (Sorry, it was the last thing I looked at
-> > while getting v4 ready.) No worries if you don't get to it before I
-> > send v4 out, I just didn't want you to think I was ignoring you.
-> >
-> > >
-> > > >
-> > > > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> > > > ---
-> > > >  drivers/of/Kconfig    |    1 +
-> > > >  drivers/of/unittest.c | 1405 ++++++++++++++++++++++-------------------
-> > > >  2 files changed, 752 insertions(+), 654 deletions(-)
-> > > >
-> > <snip>
-> > > > diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-> > > > index 41b49716ac75f..a5ef44730ffdb 100644
-> > > > --- a/drivers/of/unittest.c
-> > > > +++ b/drivers/of/unittest.c
-> > <snip>
-> > > > -
-> > > > -static void __init of_unittest_find_node_by_name(void)
-> > > > +static void of_unittest_find_node_by_name(struct kunit *test)
-> > >
-> > > Why do we have to drop __init everywhere? The tests run later?
-> >
-> > From the standpoint of a unit test __init doesn't really make any
-> > sense, right? I know that right now we are running as part of a
-> > kernel, but the goal should be that a unit test is not part of a
-> > kernel and we just include what we need.
+> > Got it, thanks.
 >
-> Well, the test only runs during boot and better to free the space when
-> done with it. There was some desire to make it a kernel module and
-> then we'd also need to get rid of __init too.
+> One more thing I wanted to ask is, kmap() will now cause global lock
+> contention because of using spin_lock due to kmap_high().
 >
-> > Even so, that's the future. For now, I did not put the KUnit
-> > infrastructure in the .init section because I didn't think it belonged
-> > there. In practice, KUnit only knows how to run during the init phase
-> > of the kernel, but I don't think it should be restricted there. You
-> > should be able to run tests whenever you want because you should be
-> > able to test anything right? I figured any restriction on that is
-> > misleading and will potentially get in the way at worst, and
-> > unnecessary at best especially since people shouldn't build a
-> > production kernel with all kinds of unit tests inside.
->
-> More folks will run things if they can be enabled on production
-> kernels. If size is the only issue, modules mitigate that. However,
-> there's probably APIs to test which we don't want to export to
-> modules.
->
-> I think in general, we change things in the kernel when needed, not
-> for something in the future. Changing __init is simple enough to do
-> later.
->
-> OTOH, things get copied and maybe this we don't want copied, so we can
-> remove it if you want to.
+> Previously the binder driver was made to not use global lock (as you had
+> done). Now these paths will start global locking on 32-bit architectures.
+> Would that degrade performance?
 
-Mmmm...I just realized that the patch I sent you the other day makes
-this patch unhappy because unflatten_device_tree is in the .init
-section. So I will need to fix that. I still think that the correct
-course of action is to make KUnit non init. Luis pointed out in
-another thread that to be 100% sure that everything will be properly
-initialized, KUnit must be able to run after all initialization takes
-place.
+There was a lot of concern about 32-bit performance both for
+lock-contention and the cost of map/unmap operations. Of course,
+32-bit systems are also where the primary win is -- namely avoiding
+vmalloc space depletion. So there was a several months-long evaluation
+period on 32-bit devices by a silicon vendor who did a lot of testing
+across a broad set of benchmarks / workloads to verify the performance
+costs are acceptable. We also ran tests to try to exhaust the kmap
+space with multiple large buffers.
+
+The testing did find that there is some performance degradation for
+large buffer transfers, but there are no cases where this
+significantly impacted a meaningful user workload.
 
 >
-> > <snip>
-> > > >
-> > > > -static void __init of_unittest_property_string(void)
-> > > > +static void of_unittest_property_string(struct kunit *test)
-> > > >  {
-> > > >         const char *strings[4];
-> > > >         struct device_node *np;
-> > > >         int rc;
-> > > >
-> > > >         np = of_find_node_by_path("/testcase-data/phandle-tests/consumer-a");
-> > > > -       if (!np) {
-> > > > -               pr_err("No testcase data in device tree\n");
-> > > > -               return;
-> > > > -       }
-> > > > -
-> > > > -       rc = of_property_match_string(np, "phandle-list-names", "first");
-> > > > -       unittest(rc == 0, "first expected:0 got:%i\n", rc);
-> > > > -       rc = of_property_match_string(np, "phandle-list-names", "second");
-> > > > -       unittest(rc == 1, "second expected:1 got:%i\n", rc);
-> > > > -       rc = of_property_match_string(np, "phandle-list-names", "third");
-> > > > -       unittest(rc == 2, "third expected:2 got:%i\n", rc);
-> > > > -       rc = of_property_match_string(np, "phandle-list-names", "fourth");
-> > > > -       unittest(rc == -ENODATA, "unmatched string; rc=%i\n", rc);
-> > > > -       rc = of_property_match_string(np, "missing-property", "blah");
-> > > > -       unittest(rc == -EINVAL, "missing property; rc=%i\n", rc);
-> > > > -       rc = of_property_match_string(np, "empty-property", "blah");
-> > > > -       unittest(rc == -ENODATA, "empty property; rc=%i\n", rc);
-> > > > -       rc = of_property_match_string(np, "unterminated-string", "blah");
-> > > > -       unittest(rc == -EILSEQ, "unterminated string; rc=%i\n", rc);
-> > > > +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
-> > > > +
-> > > > +       KUNIT_EXPECT_EQ(test,
-> > > > +                       of_property_match_string(np,
-> > > > +                                                "phandle-list-names",
-> > > > +                                                "first"),
-> > > > +                       0);
-> > > > +       KUNIT_EXPECT_EQ(test,
-> > > > +                       of_property_match_string(np,
-> > > > +                                                "phandle-list-names",
-> > > > +                                                "second"),
-> > > > +                       1);
-> > >
-> > > Fewer lines on these would be better even if we go over 80 chars.
-> >
-> > On the of_property_match_string(...), I have no opinion. I will do
-> > whatever you like best.
-> >
-> > Nevertheless, as far as the KUNIT_EXPECT_*(...), I do have an opinion: I am
-> > trying to establish a good, readable convention. Given an expect statement
-> > structured as
-> > ```
-> > KUNIT_EXPECT_*(
-> >     test,
-> >     expect_arg_0, ..., expect_arg_n,
-> >     fmt_str, fmt_arg_0, ..., fmt_arg_n)
-> > ```
-> > where `test` is the `struct kunit` context argument, `expect_arg_{0, ..., n}`
-> > are the arguments the expectations is being made about (so in the above example,
-> > `of_property_match_string(...)` and `1`), and `fmt_*` is the optional format
-> > string that comes at the end of some expectations.
-> >
-> > The pattern I had been trying to promote is the following:
-> >
-> > 1) If everything fits on 1 line, do that.
-> > 2) If you must make a line split, prefer to keep `test` on its own line,
-> > `expect_arg_{0, ..., n}` should be kept together, if possible, and the format
-> > string should follow the conventions already most commonly used with format
-> > strings.
-> > 3) If you must split up `expect_arg_{0, ..., n}` each argument should get its
-> > own line and should not share a line with either `test` or any `fmt_*`.
->
-> You'd better write a checkpatch.pl check or else good luck enforcing that. :)
+> Are we not using kmap_atomic() in this patch because of any concern that the
+> kmap fixmap space is limited and may run out?
 
-Absolutely. Well I already had to touch checkpatch.pl for something
-else, so at least I know roughly what I am getting myself into.
+We're not using the atomic version here since we can't guarantee that
+the loop will be atomic since we are calling copy_from_user(). Later
+in the series, other cases do use kmap_atomic().
 
 >
-> > The reason I care about this so much is because expectations should be
-> > extremely easy to read; they are the most important part of a unit
-> > test because they tell you what the test is verifying. I am not
-> > married to the formatting I proposed above, but I want something that
-> > will be extremely easy to identify the arguments that the expectation
-> > is on. Maybe that means that I need to add some syntactic fluff to
-> > make it clearer, I don't know, but this is definitely something we
-> > need to get right, especially in the earliest examples.
+> thanks,
 >
-> Makes sense. I think putting the test (of_property_match_string) on
-> one line furthers the readability.
-
-Fair enough, I tried to apply your comments the best that I could on
-v4, but I think I will probably need to make another pass (especially
-given the init thing).
-
-Anyway, let's continue the discussion on v4.
-
-Cheers
+>  - Joel
+>
+>
