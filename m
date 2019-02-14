@@ -2,117 +2,120 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36EFAC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:16:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D226C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:18:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00C472229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:16:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S7YSI7RT"
+	by mail.kernel.org (Postfix) with ESMTP id 050242229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:18:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394952AbfBNJQW (ORCPT
+        id S2395046AbfBNJSm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 04:16:22 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36732 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388784AbfBNJQW (ORCPT
+        Thu, 14 Feb 2019 04:18:42 -0500
+Received: from relay10.mail.gandi.net ([217.70.178.230]:35003 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388784AbfBNJSl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 04:16:22 -0500
-Received: by mail-wr1-f65.google.com with SMTP id o17so5620427wrw.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 01:16:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=AChgX3u3Rli6twGz1yDeQumcH7RThDK+xOVT4nhaEk0=;
-        b=S7YSI7RT+QeFtmoWOc0H9M+zv+kJMxO0dN/OJefKd/4MAkbxvYwZ2mUHN0/pqOITzO
-         /6PJkViy215KipNT9sPTsNr1Fu3jd55tockcdaxQXZ9bC4ctH2zmHNiB4doYUt9AsOrA
-         SP9L24p19/ASbgn2eQkFAfn/3H4aUqWlSB7hDuvbDR37M4UNBc5KopNRYBhMErIpWO/H
-         pVWgNuuHKEV7Z2NmBCxrhFaaH4WEh0fERz+V/TsXFC4JY9Y0Y34ZobgaMUbUtMqJrNDA
-         FPrKfexQsN0bFoqBy4BK4XaDkiZfTPM6J8cJsFapSHoN10/s4YbbTXpeR+KXTvcfh4k0
-         16MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=AChgX3u3Rli6twGz1yDeQumcH7RThDK+xOVT4nhaEk0=;
-        b=ChSTdxDy38Zl+ykP1iA/+tPMVIVaxAkpN/+PXb0GCXOYLpLeXBNQkQ8hzgPQ3nfRn1
-         +8lxhcf8iU+rPBfMQzuoElxBNRbJPKvfy/VuAn2FwGKoquiOnaozPQEsCZJLa5GyuOxG
-         KtIToLY22FWac9Aa8m8YvXkoSFHPbzVfK8M3aO/bL5/G4wmKwc93vCZVYAiajvXapjii
-         Am0sttPr1GGgGZgSgZqe4h5WgiaZ3GnYJtAwReFUn8UJnDdkZaBYN0WrwtM29DR3M/Pp
-         PSMTpmpXuY23CVSox+k1rrKdUKxkEVQiC0vpFn7Y3aKzq0BkvpvKZBLaBeM33oHTPoDQ
-         oGFg==
-X-Gm-Message-State: AHQUAuYapUJ8Rocl9FDmq4cqyu5grmxquS78H7iJZAPmQN/WCFBAVBFl
-        aNkc6u6NKlGRCaW/8Ekq5fpjaw==
-X-Google-Smtp-Source: AHgI3IYlx/M/oeBxbZiwZg7WFni1Q+g76oFfBJrj8fS3lwhC4EFx9lrwu3PXz7bRyMyHY0vk8Tbtxg==
-X-Received: by 2002:adf:fc49:: with SMTP id e9mr2078906wrs.2.1550135780206;
-        Thu, 14 Feb 2019 01:16:20 -0800 (PST)
-Received: from dell ([2a01:4c8:c:28c9:4c60:37da:d7a:230])
-        by smtp.gmail.com with ESMTPSA id h1sm2264525wmb.0.2019.02.14.01.16.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 01:16:19 -0800 (PST)
-Date:   Thu, 14 Feb 2019 09:16:17 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
+        Thu, 14 Feb 2019 04:18:41 -0500
+Received: from aptenodytes (aaubervilliers-681-1-89-68.w90-88.abo.wanadoo.fr [90.88.30.68])
+        (Authenticated sender: paul.kocialkowski@bootlin.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 7751024000F;
+        Thu, 14 Feb 2019 09:18:38 +0000 (UTC)
+Message-ID: <0b6bd0f8f1ad67e85e00127dbf1b2c7e78efbfd0.camel@bootlin.com>
+Subject: Re: [PATCH] media: cedrus: Forbid setting new formats on busy queues
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] mfd: mxs-lradc: Mark expected switch fall-through
-Message-ID: <20190214091617.GC13737@dell>
-References: <20190211224827.GA28902@embeddedor>
+        linux-sunxi@googlegroups.com
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Date:   Thu, 14 Feb 2019 10:18:38 +0100
+In-Reply-To: <3b24ac73-f891-533f-8563-fe38ba4a83ca@xs4all.nl>
+References: <20190214083731.16230-1-paul.kocialkowski@bootlin.com>
+         <3b24ac73-f891-533f-8563-fe38ba4a83ca@xs4all.nl>
+Organization: Bootlin
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190211224827.GA28902@embeddedor>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 11 Feb 2019, Gustavo A. R. Silva wrote:
+Hi,
 
-> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> cases where we are expecting to fall through.
+On Thu, 2019-02-14 at 09:59 +0100, Hans Verkuil wrote:
+> On 2/14/19 9:37 AM, Paul Kocialkowski wrote:
+> > Check that our queues are not busy before setting the format or return
+> > EBUSY if that's the case. This ensures that our format can't change
+> > once buffers are allocated for the queue.
+> > 
+> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> > ---
+> >  drivers/staging/media/sunxi/cedrus/cedrus_video.c | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
+> > 
+> > diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_video.c b/drivers/staging/media/sunxi/cedrus/cedrus_video.c
+> > index b5cc79389d67..3420a938a613 100644
+> > --- a/drivers/staging/media/sunxi/cedrus/cedrus_video.c
+> > +++ b/drivers/staging/media/sunxi/cedrus/cedrus_video.c
+> > @@ -282,8 +282,15 @@ static int cedrus_s_fmt_vid_cap(struct file *file, void *priv,
+> >  {
+> >  	struct cedrus_ctx *ctx = cedrus_file2ctx(file);
+> >  	struct cedrus_dev *dev = ctx->dev;
+> > +	struct vb2_queue *vq;
+> >  	int ret;
+> >  
+> > +	vq = v4l2_m2m_get_vq(ctx->fh.m2m_ctx, f->type);
+> > +	if (!vq)
+> > +		return -EINVAL;
 > 
-> This patch fixes the following warning:
-> 
-> drivers/mfd/mxs-lradc.c: In function ‘mxs_lradc_probe’:
-> drivers/mfd/mxs-lradc.c:179:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
->     if (lradc->soc == IMX28_LRADC) {
->        ^
-> drivers/mfd/mxs-lradc.c:185:3: note: here
->    default:
->    ^~~~~~~
-> 
-> Warning level 3 was used: -Wimplicit-fallthrough=3
-> 
-> Notice that, in this particular case, the code comment is modified
-> in accordance with what GCC is expecting to find.
-> 
-> This patch is part of the ongoing efforts to enable
-> -Wimplicit-fallthrough.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/mfd/mxs-lradc.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Can this ever happen?
 
-Applied, thanks.
+I guess not, or something would be very wrong.
+I have seen this check around when looking at how other drivers
+implement this, but it does seem overkill.
 
+Should I get rid of it in v2?
+
+Cheers,
+
+Paul
+
+> Regards,
+> 
+> 	Hans
+> 
+> > +	else if (vb2_is_busy(vq))
+> > +		return -EBUSY;
+> > +
+> >  	ret = cedrus_try_fmt_vid_cap(file, priv, f);
+> >  	if (ret)
+> >  		return ret;
+> > @@ -299,8 +306,15 @@ static int cedrus_s_fmt_vid_out(struct file *file, void *priv,
+> >  				struct v4l2_format *f)
+> >  {
+> >  	struct cedrus_ctx *ctx = cedrus_file2ctx(file);
+> > +	struct vb2_queue *vq;
+> >  	int ret;
+> >  
+> > +	vq = v4l2_m2m_get_vq(ctx->fh.m2m_ctx, f->type);
+> > +	if (!vq)
+> > +		return -EINVAL;
+> > +	else if (vb2_is_busy(vq))
+> > +		return -EBUSY;
+> > +
+> >  	ret = cedrus_try_fmt_vid_out(file, priv, f);
+> >  	if (ret)
+> >  		return ret;
+> > 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Paul Kocialkowski, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
+
