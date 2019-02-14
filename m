@@ -2,151 +2,165 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C21DAC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 03:02:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDB11C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 03:06:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A97C206B7
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 03:02:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A25E20811
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 03:06:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SsovpyWy"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="xa9xx55x"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394266AbfBNDCt (ORCPT
+        id S2395215AbfBNDGH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 22:02:49 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:59858 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726271AbfBNDCr (ORCPT
+        Wed, 13 Feb 2019 22:06:07 -0500
+Received: from conuserg-07.nifty.com ([210.131.2.74]:64387 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726271AbfBNDGG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 22:02:47 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1E31nq6101958;
-        Wed, 13 Feb 2019 21:01:49 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1550113309;
-        bh=A7XQA3zt2a28hBXMVTS8u2FtpxkkhqNkmyEQdwc6VDs=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=SsovpyWy1EbGaHyGQMDKeb1xzKmQ1pG13+4ehqtLgZ3unBqdMnh3gKoLN9rWQ4Yuw
-         XoU53H9SIF93ITq9xEkAS/rHqZgOeTftTjfBLoTuNyLCeRq0avwme0ZU2+ivndH9SN
-         p5p1M91IlAJGrWuOJEeiOCYlrUYNd3eQyZN6xVcA=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1E31ndR008092
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 13 Feb 2019 21:01:49 -0600
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 13
- Feb 2019 21:01:49 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 13 Feb 2019 21:01:49 -0600
-Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1E31mth024051;
-        Wed, 13 Feb 2019 21:01:48 -0600
-Subject: Re: [PATCH v2 01/14] dt-bindings: remoteproc: Add TI PRUSS bindings
-To:     Tony Lindgren <tony@atomide.com>, Roger Quadros <rogerq@ti.com>
-CC:     <ohad@wizery.com>, <bjorn.andersson@linaro.org>,
-        <david@lechnology.com>, <nsekhar@ti.com>, <t-kristo@ti.com>,
-        <nsaulnier@ti.com>, <jreeder@ti.com>, <m-karicheri2@ti.com>,
-        <woods.technical@gmail.com>, <linux-omap@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-References: <1549290167-876-1-git-send-email-rogerq@ti.com>
- <1549290167-876-2-git-send-email-rogerq@ti.com>
- <20190204163312.GI5720@atomide.com> <5C5959DB.2090608@ti.com>
- <20190205164132.GT5720@atomide.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <03273340-6477-4276-a0a9-938325c2242c@ti.com>
-Date:   Wed, 13 Feb 2019 21:01:48 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190205164132.GT5720@atomide.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Wed, 13 Feb 2019 22:06:06 -0500
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id x1E35Pg2020814;
+        Thu, 14 Feb 2019 12:05:25 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x1E35Pg2020814
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1550113525;
+        bh=yO8RC+IzX+7q6ObGuUgOsgj+kpMFLH2G7hMx94CJuxg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=xa9xx55x3a46jz1CDBYlsEEOL296PAe7Tgo9BkkXj3NBFmssf4NG8Pentf8AbN9u4
+         h1Ozqfic48t7KM6Ws3JxYECl69MbPv1M6bOhoJhCBMUFIADfZRQe18F6FoEcTBar+8
+         6jZ/A7ZsKVHwZeTd07VyBFEKRsinWNwH0NszGYxDQTpQQ4vaNWtwvwAG9l5QZbpjP0
+         6KBUu56t4sa5xPacF5h7NMvHrVDNqnca/uAge8lEVCxlHuD6VBeqoYoO0+N+/Vt5YC
+         NuTl95roarog8CttNiwm6d8vB60wLbk+UXGuCZCg31j9CJg3XOzgP5up7BZOoRuer7
+         hW4tYZzpZuC/g==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Sam Ravnborg <sam@ravnborg.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/8] kbuild: pkg: use -f $(srctree)/Makefile to recurse to top Makefile
+Date:   Thu, 14 Feb 2019 12:05:14 +0900
+Message-Id: <1550113521-23577-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/5/19 10:41 AM, Tony Lindgren wrote:
-> * Roger Quadros <rogerq@ti.com> [190205 09:40]:
->> On 04/02/19 18:33, Tony Lindgren wrote:
->>>
->>> 	shrdram2: memory@10000 {
->>> 		device_type = "memory";
->>> 		reg = <0x10000 0x3000>;
->>> 	};
->>
->> Shared RAM is not so straight forward. Both PRU firmwares and both application drivers
->> might need to read/write here. The area split is decided by firmware design and there
->> is no hardware protection to prevent from stomping on each others toes.
->>
->> We need a carveout based memory allocator at least I think that can do a
->> allocate(base_offset, size); into shared RAM.
->>
->> This could be used by pru_rproc driver at firmware load time and by application drivers
->> at initialization time.
->>
->> Thoughts?
-> 
-> That sounds sane to me :)
-> 
->>> If the ti,pruss-gp-mux-sel and ti,pru-interrupt-map are
->>> firmware configuration options, maybe leave them out of
->>> the dts completely and make the app-node optional.
->>
->> Yes the app-node is optional. I will mention it.
->>
->> No, ti,pruss-gp-mux-sel and ti,pru-interrupt-map are not firmware options.
->> But these settings are application/firmware specific.
->>
->> ti,pru-interrupt-map specifies the configuration to be used for the INTC interrupt
->> controller.
-> 
-> OK. So just to see if we have a standard solution available already..
-> It sounds a bit similar to what we're doing with omap-wakeupgen.c
-> and stacked interrupts? I wonder if something similar might help
-> here?
-> 
->> ti,pruss-gp-mux-sel is used to configure this register.
->> "Table 30-20. PRUSS_GPCFG0" in http://www.tij.co.jp/jp/lit/ug/spruhz7h/spruhz7h.pdf
->> "29:26 PR1_PRU0_GP_MUX_SEL"
->>
->> It configures how the pins from the PRUSS module are routed internally
->> to the various modules.
+'$(MAKE) KBUILD_SRC=' changes the working directory back and forth
+between objtree and srctree.
 
-Actually, that's not entirely accurate. This is an internal pinmux (not
-controllable per pin, but rather dictates a different sets of groups of
-pins at the PRUSS boundary, which are then again multiplexed at the SoC
-level using the standard padconf/pinmux. It is a single register per
-core into which you can set some values between 0 through 4 IIRC
-(unfortunately the values are also not uniform across the various SoCs).
+It is better to recurse to the top-level Makefile directly.
 
-regards
-Suman
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
->>
->> see "30.2.1 PRU-ICSS I/O Interface"
->> and "Table 30-1. PRU-ICSS1 I/O Signals"
-> 
-> Well these are external signals for PRUSS processor (although not
-> necessarily external signals for the SoC). So why not handle them
-> with a standard pinctlr binding with #pinctrl-cells?
-> 
-> Sure it may not even be the Linux pinctrl framework running on the
-> main SoC handling these pins, but after all you're describing
-> hardware for a processor. Maybe Linus W has some comments on this?
-> 
-> Regards,
-> 
-> Tony
-> 
+ scripts/package/Makefile |  4 ++--
+ scripts/package/builddeb | 10 +++++-----
+ scripts/package/buildtar |  2 +-
+ scripts/package/mkdebian |  6 ++++--
+ 4 files changed, 12 insertions(+), 10 deletions(-)
+
+diff --git a/scripts/package/Makefile b/scripts/package/Makefile
+index 453fece..aa39c2b 100644
+--- a/scripts/package/Makefile
++++ b/scripts/package/Makefile
+@@ -59,7 +59,7 @@ rpm-pkg: FORCE
+ # binrpm-pkg
+ # ---------------------------------------------------------------------------
+ binrpm-pkg: FORCE
+-	$(MAKE) KBUILD_SRC=
++	$(MAKE) -f $(srctree)/Makefile
+ 	$(CONFIG_SHELL) $(MKSPEC) prebuilt > $(objtree)/binkernel.spec
+ 	+rpmbuild $(RPMOPTS) --define "_builddir $(objtree)" --target \
+ 		$(UTS_MACHINE) -bb $(objtree)/binkernel.spec
+@@ -102,7 +102,7 @@ clean-dirs += $(objtree)/snap/
+ # tarball targets
+ # ---------------------------------------------------------------------------
+ tar%pkg: FORCE
+-	$(MAKE) KBUILD_SRC=
++	$(MAKE) -f $(srctree)/Makefile
+ 	$(CONFIG_SHELL) $(srctree)/scripts/package/buildtar $@
+ 
+ clean-dirs += $(objtree)/tar-install/
+diff --git a/scripts/package/builddeb b/scripts/package/builddeb
+index f43a274..8ac25d1 100755
+--- a/scripts/package/builddeb
++++ b/scripts/package/builddeb
+@@ -86,12 +86,12 @@ cp "$($MAKE -s -f $srctree/Makefile image_name)" "$tmpdir/$installed_image_path"
+ if grep -q "^CONFIG_OF_EARLY_FLATTREE=y" $KCONFIG_CONFIG ; then
+ 	# Only some architectures with OF support have this target
+ 	if [ -d "${srctree}/arch/$SRCARCH/boot/dts" ]; then
+-		$MAKE KBUILD_SRC= INSTALL_DTBS_PATH="$tmpdir/usr/lib/$packagename" dtbs_install
++		$MAKE -f $srctree/Makefile INSTALL_DTBS_PATH="$tmpdir/usr/lib/$packagename" dtbs_install
+ 	fi
+ fi
+ 
+ if grep -q '^CONFIG_MODULES=y' $KCONFIG_CONFIG ; then
+-	INSTALL_MOD_PATH="$tmpdir" $MAKE KBUILD_SRC= modules_install
++	INSTALL_MOD_PATH="$tmpdir" $MAKE -f $srctree/Makefile modules_install
+ 	rm -f "$tmpdir/lib/modules/$version/build"
+ 	rm -f "$tmpdir/lib/modules/$version/source"
+ 	if [ "$ARCH" = "um" ] ; then
+@@ -113,14 +113,14 @@ if grep -q '^CONFIG_MODULES=y' $KCONFIG_CONFIG ; then
+ 		# resign stripped modules
+ 		MODULE_SIG_ALL="$(grep -s '^CONFIG_MODULE_SIG_ALL=y' $KCONFIG_CONFIG || true)"
+ 		if [ -n "$MODULE_SIG_ALL" ]; then
+-			INSTALL_MOD_PATH="$tmpdir" $MAKE KBUILD_SRC= modules_sign
++			INSTALL_MOD_PATH="$tmpdir" $MAKE -f $srctree/Makefile modules_sign
+ 		fi
+ 	fi
+ fi
+ 
+ if [ "$ARCH" != "um" ]; then
+-	$MAKE headers_check KBUILD_SRC=
+-	$MAKE headers_install KBUILD_SRC= INSTALL_HDR_PATH="$libc_headers_dir/usr"
++	$MAKE -f $srctree/Makefile headers_check
++	$MAKE -f $srctree/Makefile headers_install INSTALL_HDR_PATH="$libc_headers_dir/usr"
+ fi
+ 
+ # Install the maintainer scripts
+diff --git a/scripts/package/buildtar b/scripts/package/buildtar
+index d624a07..cfd2a4a 100755
+--- a/scripts/package/buildtar
++++ b/scripts/package/buildtar
+@@ -57,7 +57,7 @@ dirs=boot
+ # Try to install modules
+ #
+ if grep -q '^CONFIG_MODULES=y' "${KCONFIG_CONFIG}"; then
+-	make ARCH="${ARCH}" O="${objtree}" KBUILD_SRC= INSTALL_MOD_PATH="${tmpdir}" modules_install
++	make ARCH="${ARCH}" -f ${srctree}/Makefile INSTALL_MOD_PATH="${tmpdir}" modules_install
+ 	dirs="$dirs lib"
+ fi
+ 
+diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
+index edcad61..f030961 100755
+--- a/scripts/package/mkdebian
++++ b/scripts/package/mkdebian
+@@ -205,13 +205,15 @@ EOF
+ cat <<EOF > debian/rules
+ #!$(command -v $MAKE) -f
+ 
++srctree ?= .
++
+ build:
+ 	\$(MAKE) KERNELRELEASE=${version} ARCH=${ARCH} \
+-	KBUILD_BUILD_VERSION=${revision} KBUILD_SRC=
++	KBUILD_BUILD_VERSION=${revision} -f \$(srctree)/Makefile
+ 
+ binary-arch:
+ 	\$(MAKE) KERNELRELEASE=${version} ARCH=${ARCH} \
+-	KBUILD_BUILD_VERSION=${revision} KBUILD_SRC= intdeb-pkg
++	KBUILD_BUILD_VERSION=${revision} -f \$(srctree)/Makefile intdeb-pkg
+ 
+ clean:
+ 	rm -rf debian/*tmp debian/files
+-- 
+2.7.4
 
