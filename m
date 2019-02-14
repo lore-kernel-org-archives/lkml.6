@@ -2,166 +2,273 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4BA1C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49085C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:41:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72F302083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:39:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E35FD222C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:41:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="DkavMxf0";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="ZdxpNN3G"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AYo5ANpU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbfBNAjL (ORCPT
+        id S1727269AbfBNAlV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 19:39:11 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:57236 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726337AbfBNAjL (ORCPT
+        Wed, 13 Feb 2019 19:41:21 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:11688 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726337AbfBNAlU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 19:39:11 -0500
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1E0cTQa023597;
-        Wed, 13 Feb 2019 16:38:58 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=qpP/KdIfG5pR/CDzkwzAnm+87KAsnZ9tqo05PWflvEg=;
- b=DkavMxf0kZppCaWxnTpN5zcFKOIfBZW1QPWsSYkMey7bWVEdjRpNmnZV9dVd1Txyvpmb
- bFj40okVGCBgAGILIt4E18JFc5c/R7HGrxrres05kDu/3vLN1l7FFO+DRL1hiejSMpKr
- e+XrC79aWESu5Ilj80nOz37oh1V1AhGPg1w= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2qmu950hgp-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Wed, 13 Feb 2019 16:38:58 -0800
-Received: from frc-hub03.TheFacebook.com (2620:10d:c021:18::173) by
- frc-hub05.TheFacebook.com (2620:10d:c021:18::175) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Wed, 13 Feb 2019 16:38:57 -0800
-Received: from NAM05-BY2-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.73) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Wed, 13 Feb 2019 16:38:56 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qpP/KdIfG5pR/CDzkwzAnm+87KAsnZ9tqo05PWflvEg=;
- b=ZdxpNN3GsmKxLRw0sptndovhTm+BAS65W5HuMiLWFmFwVnx+Wmi/Kvtz1Sog2OzjlmyWvTwmPnmBtmRZVDMUQcJrrW7sUbbE6MnNBUgs/zEfIOJ8gxkiXravpANdtuZRcsOMGL2PfZohtbr+xyvuL3f82RqbKK9iyRLhwPs59as=
-Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.156.24) by
- BYAPR15MB2999.namprd15.prod.outlook.com (20.178.238.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.16; Thu, 14 Feb 2019 00:38:55 +0000
-Received: from BYAPR15MB2631.namprd15.prod.outlook.com
- ([fe80::ecc7:1a8c:289f:df92]) by BYAPR15MB2631.namprd15.prod.outlook.com
- ([fe80::ecc7:1a8c:289f:df92%3]) with mapi id 15.20.1601.016; Thu, 14 Feb 2019
- 00:38:55 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     Johannes Weiner <hannes@cmpxchg.org>,
-        Roman Gushchin <guroan@gmail.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 0/3] vmalloc enhancements
-Thread-Topic: [PATCH v2 0/3] vmalloc enhancements
-Thread-Index: AQHUwvxltqRw0KKPyU2GUxvyv29fa6XcgNAAgAAd04CAAdazgA==
-Date:   Thu, 14 Feb 2019 00:38:54 +0000
-Message-ID: <20190214003848.GA4898@tower.DHCP.thefacebook.com>
-References: <20190212175648.28738-1-guro@fb.com>
- <20190212184724.GA18339@cmpxchg.org>
- <20190212123409.7ed5c34d68466dbd8b7013a3@linux-foundation.org>
-In-Reply-To: <20190212123409.7ed5c34d68466dbd8b7013a3@linux-foundation.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR03CA0035.namprd03.prod.outlook.com
- (2603:10b6:a02:a8::48) To BYAPR15MB2631.namprd15.prod.outlook.com
- (2603:10b6:a03:152::24)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:200::4:3cbc]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2cb6e3fb-4158-41dd-050c-08d69214cc5f
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BYAPR15MB2999;
-x-ms-traffictypediagnostic: BYAPR15MB2999:
-x-microsoft-exchange-diagnostics: 1;BYAPR15MB2999;20:rO6Dxg0qdO8gQr2Gq3Ln8nIwUMI4+WQHDqw8knVYAguldUdlQtwoFa+Gu+aDe+w7EW8Q4UQUvJeFoP/M1hTzOXzFQ7vzc7pWIis/VnVSO7dVEyRMI1Go2uQAffMmZBFv3DeklPzhP6bvOYnjy0s4MuK1EgzoHYzlftuOfPYM8qs=
-x-microsoft-antispam-prvs: <BYAPR15MB299958CD052FE2ECEE943D0ABE670@BYAPR15MB2999.namprd15.prod.outlook.com>
-x-forefront-prvs: 09480768F8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(396003)(346002)(376002)(136003)(39860400002)(199004)(189003)(81156014)(33896004)(4326008)(8936002)(52116002)(97736004)(386003)(25786009)(6506007)(86362001)(99286004)(6346003)(478600001)(316002)(6246003)(105586002)(14454004)(8676002)(81166006)(54906003)(102836004)(106356001)(1076003)(186003)(6116002)(476003)(33656002)(6436002)(486006)(6486002)(71190400001)(229853002)(14444005)(256004)(9686003)(6512007)(6916009)(53936002)(2906002)(305945005)(46003)(76176011)(7736002)(68736007)(446003)(11346002)(71200400001);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2999;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Nd+XzQ8ZsmJLCTQc8haj9C9LMD1gxU8AS+ofvS7zxYQXz792E9Vs2I9cG+0ImxR45JT6A1itbCRM8qwNQxCsJrwTadWbX+y1TfIixeo2huleQAxRjGmnB441JF6lPPskK9V+Rf0fgUYFeKyiAwY88vUoDBT6l9ioKNb2WCbfakVGsr/eHtLPnRoR/8Vs/4+fJywdkZLX4VmL2CDQkLjYyHNrriCdc4o0mWSzjeEpcBovi45HEBPXDX+PSim7+8WFkZwcDsPnQHZEfxyOp/1uizMGxYxHgaZCKcGVl3X156iYtP48QpW3f2+as1YLu+X9dDlBB6SIau1QLg7JG3AW17ZzuFEjxwDN7R4UgsBLJ/YRwAFQoWaNNwBTzOGshp6kk+RXZs7MGEe193U8Y/y/7Ecw0eMABotEEsr8U7b76Rc=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <66C5D4B9A861674B9DDDAE2FA011711A@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 13 Feb 2019 19:41:20 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190214004117epoutp0129b6c877668463b98a34c723331f7b00~DFCxnK6bE1811118111epoutp012
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 00:41:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190214004117epoutp0129b6c877668463b98a34c723331f7b00~DFCxnK6bE1811118111epoutp012
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1550104877;
+        bh=5FlheUoYItWOb1odSrI4ZWPcrxgWoHqRHSpHhdfX08c=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=AYo5ANpUqjfb7V1o9BctBUvyC4sT0XGqj9eR9FWYOQswSuCQDGD9DB3FArxR3m7dV
+         ZYR5ikjKN08DQZtlwvQd4Y7MVQuojsQOHauV6C6QPSS1+TGpVxTvGBu5lvSp4Utp4P
+         yutLBAsw8ktBuhhLrOeRxVh9eaJwlUvefUCNSRvI=
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.152]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20190214004114epcas1p4d903ad3517b2e365533e6a68d531a30c~DFCvFWifm0650906509epcas1p4v;
+        Thu, 14 Feb 2019 00:41:14 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        36.2B.04288.A29B46C5; Thu, 14 Feb 2019 09:41:14 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20190214004114epcas1p410500a78f1542d5dcb5af9b1292b49f6~DFCuaFSZP0813908139epcas1p4R;
+        Thu, 14 Feb 2019 00:41:14 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190214004114epsmtrp109413fa9c1b9d117c855ec7427f14ac9~DFCuYXHng0114601146epsmtrp1_;
+        Thu, 14 Feb 2019 00:41:14 +0000 (GMT)
+X-AuditID: b6c32a38-bf7ff700000010c0-e1-5c64b92a51e4
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        1A.43.03971.A29B46C5; Thu, 14 Feb 2019 09:41:14 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190214004113epsmtip104aa1808ac745790d5b0abb48f79fae7~DFCuGkMqR2849628496epsmtip1j;
+        Thu, 14 Feb 2019 00:41:13 +0000 (GMT)
+Subject: Re: [PATCH v3 0/7] drivers: devfreq: fix and optimize workqueue
+ mechanism
+To:     Lukasz Luba <l.luba@partner.samsung.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     b.zolnierkie@samsung.com, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
+        s.nawrocki@samsung.com, joel@joelfernandes.org,
+        chris.diamand@arm.com, mka@chromium.org, rostedt@goodmis.org,
+        mingo@redhat.com
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <3657574e-a258-e6cb-9632-9d17b66e7379@samsung.com>
+Date:   Thu, 14 Feb 2019 09:41:13 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.4.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2cb6e3fb-4158-41dd-050c-08d69214cc5f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2019 00:38:54.1421
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2999
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_01:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <80cd346e-a0a3-ff66-40a6-c15fd23ba904@partner.samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAJsWRmVeSWpSXmKPExsWy7bCmrq7WzpQYg4fnTC02zljPajHt02UW
+        i2UNqhZnm96wW9xqkLG4vGsOm8Xn3iOMFmuP3GW3uHRgAZPF5w2PGS1uN65gs9jX8YDJ4vCb
+        dlYHXo8189YwesxuuMji0bLvFrvHwk9fWT0OvtvD5PF+31U2j74tqxg9Pm+SC+CIyrbJSE1M
+        SS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMAbpYSaEsMacUKBSQ
+        WFyspG9nU5RfWpKqkJFfXGKrlFqQklNgWaBXnJhbXJqXrpecn2tlaGBgZApUmJCdceRhVsFb
+        44pJv3ewNjD+1Ohi5OSQEDCR2PXjKUsXIxeHkMAORond31ayQjifGCW6/z1kgnC+MUo8/jyN
+        EaZl2f1udhBbSGAvo8TE8wEQRe8ZJf5t2AJWJCwQIjHz1yYWEFtEIE3ibftdsEnMAh8ZJTYe
+        aAdLsAloSex/cYMNxOYXUJS4+uMxWDOvgJ3EgQVbwOIsAqoSOx5cA4uLCkRIHO59B1UjKHFy
+        5hOwOZwC7hL3um+xgtjMAuISt57MZ4Kw5SWat85mBlksIbCOXeLwpRvMEC+4SHy/+ZUNwhaW
+        eHV8CzuELSXxsr8Nyq6WWHnyCBtEcwejxJb9F1ghEsYS+5dOBtrAAbRBU2L9Ln2IZXwS7772
+        sIKEJQR4JTrahCCqlSUuP7jLBGFLSixu74Ra6yHx8949pgmMirOQvDMLyQuzkLwwC2HZAkaW
+        VYxiqQXFuempxYYFJsixvYkRnJq1LHYw7jnnc4hRgINRiYe3QiglRog1say4MvcQowQHs5II
+        76TNQCHelMTKqtSi/Pii0pzU4kOMpsDQnsgsJZqcD8wbeSXxhqZGxsbGFiaGZqaGhkrivOsd
+        nGOEBNITS1KzU1MLUotg+pg4OKUaGJv+/8sVm8S+2y5AlLsj6s2i8A2hpyMLcnsZ5q92U5A2
+        vb7kTkJN72vDxUH3vpxbaVxwTe71dt/zpyz9PHuun8qS/yeWde9Y1tZjqlEHHfmfGx3kPsMY
+        vOtprP2PO9rsh+cdd2nzm1y00GhqScLZH6qdF+w7e9vjnkRvWb8toa/Bd+nUepsILSWW4oxE
+        Qy3mouJEAOXJHI7jAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFIsWRmVeSWpSXmKPExsWy7bCSnK7WzpQYg9blLBYbZ6xntZj26TKL
+        xbIGVYuzTW/YLW41yFhc3jWHzeJz7xFGi7VH7rJbXDqwgMni84bHjBa3G1ewWezreMBkcfhN
+        O6sDr8eaeWsYPWY3XGTxaNl3i91j4aevrB4H3+1h8ni/7yqbR9+WVYwenzfJBXBEcdmkpOZk
+        lqUW6dslcGUceZhV8Na4YtLvHawNjD81uhg5OSQETCSW3e9m72Lk4hAS2M0o0XvvCCtEQlJi
+        2sWjzF2MHEC2sMThw8UgYSGBt4wSL+/Zg9jCAiESM39tYgGxRQTSJA413AabwyzwkVHi0LMD
+        UEMnMElc/P+DDaSKTUBLYv+LG2A2v4CixNUfjxlBbF4BO4kDC7aAxVkEVCV2PLgGFhcViJD4
+        +HQfE0SNoMTJmU/AtnEKuEvc674FdiizgLrEn3mXmCFscYlbT+YzQdjyEs1bZzNPYBSehaR9
+        FpKWWUhaZiFpWcDIsopRMrWgODc9t9iwwDAvtVyvODG3uDQvXS85P3cTIzhGtTR3MF5eEn+I
+        UYCDUYmHt0IoJUaINbGsuDL3EKMEB7OSCO+kzUAh3pTEyqrUovz4otKc1OJDjNIcLErivE/z
+        jkUKCaQnlqRmp6YWpBbBZJk4OKUaGKUEi58zaKVPmZN9cUkHV0Gq/EnX5YuvuLrPvzThfHo+
+        u/bu+TXBqmEBmr69YfkZcvcnpSx+dVyUX2J5xa65zF/mrnrmk/gw6XnHTv+LVdHazvPXft/O
+        G8Eg3ZPxgYdlWnRL+9XOPAlBN7+W6aGilyp0nBbpbNOJ39W/g0n9irXD7NyjNq27lViKMxIN
+        tZiLihMBLOo8C80CAAA=
+X-CMS-MailID: 20190214004114epcas1p410500a78f1542d5dcb5af9b1292b49f6
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190212222422eucas1p1624203db4db3e495035820dea542e23a
+References: <CGME20190212222422eucas1p1624203db4db3e495035820dea542e23a@eucas1p1.samsung.com>
+        <1550010238-24002-1-git-send-email-l.luba@partner.samsung.com>
+        <d9245497-ec63-4a5d-6c00-0ec2954af735@samsung.com>
+        <80cd346e-a0a3-ff66-40a6-c15fd23ba904@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 12:34:09PM -0800, Andrew Morton wrote:
-> On Tue, 12 Feb 2019 13:47:24 -0500 Johannes Weiner <hannes@cmpxchg.org> w=
-rote:
->=20
-> > On Tue, Feb 12, 2019 at 09:56:45AM -0800, Roman Gushchin wrote:
-> > > The patchset contains few changes to the vmalloc code, which are
-> > > leading to some performance gains and code simplification.
-> > >=20
-> > > Also, it exports a number of pages, used by vmalloc(),
-> > > in /proc/meminfo.
-> > >=20
-> > > Patch (1) removes some redundancy on __vunmap().
-> > > Patch (2) separates memory allocation and data initialization
-> > >   in alloc_vmap_area()
-> > > Patch (3) adds vmalloc counter to /proc/meminfo.
-> > >=20
-> > > v2->v1:
-> > >   - rebased on top of current mm tree
-> > >   - switch from atomic to percpu vmalloc page counter
-> >=20
-> > I don't understand what prompted this change to percpu counters.
-> >=20
-> > All writers already write vmap_area_lock and vmap_area_list, so it's
-> > not really saving much. The for_each_possible_cpu() for /proc/meminfo
-> > on the other hand is troublesome.
->=20
-> percpu_counters would fit here.  They have probably-unneeded locking
-> but I expect that will be acceptable.
->=20
-> And they address the issues with for_each_possible_cpu() avoidance, CPU
-> hotplug and transient negative values.
+Hi Lukasz,
 
-Using existing vmap_area_lock (as Johannes suggested) is also problematic,
-due to different life-cycles of vma_areas and vmalloc pages. A special flag
-will be required to decrease the counter during the lazy deletion of
-vmap_areas. Allocation path will require passing a bool flag through too ma=
-ny
-nested functions. Also it will be semi-accurate, which is probably tolerabl=
-e.
-So, it's doable, but doesn't look nice to me.
+On 19. 2. 13. 오후 8:14, Lukasz Luba wrote:
+> Hi Chanwoo,
+> 
+> On 2/13/19 1:18 AM, Chanwoo Choi wrote:
+>> On 19. 2. 13. 오전 7:23, Lukasz Luba wrote:
+>>> This patch set changes workqueue related features in devfreq framework.
+>>> First patch switches to delayed work instead of deferred.
+>>> The second switches to regular system work and deletes custom 'devfreq'.
+>>>
+>>> Using deferred work in this context might harm the system performance.
+>>> When the CPU enters idle, deferred work is not fired. The devfreq device's
+>>> utilization does not have to be connected with a particular CPU.
+>>> The drivers for GPUs, Network on Chip, cache L3 rely on devfreq governor.
+>>> They all are missing opportunity to check the HW state and react when
+>>> the deferred work is not fired.
+>>> A corner test case, when Dynamic Memory Controller is utilized by CPUs running
+>>> on full speed, might show x5 worse performance if the crucial CPU is in idle.
+>>>
+>>> There was a discussion regarding v2 that the power usage because of waking up
+>>
+>> We have not yet finished the any discussion. We only just had a few reply
+>> and you didn't wait for any reply from other. As I already commented
+>> on exynos5422-dmc series, please don't send the next patch
+>> without any final agreement.
+>>
+>> In this series, patch1/patch2 are same at version 2 patchset.
+>> Even if we need to discuss more them, you just send same patches
+>> without any agreement among reviewers. At least, you have to wait the reply
+>> instead of just sending the new patchset. It is basic review rule on mailing list.
+> I think you are blocking the fixes.
+> Matthias is currently fixing devfreq governors which lack 'case SUSPEND'
+> and he is interested in these v3. I have fixed a month ago issue with
+> system suspend and OPP state of devfreq devices, which Tobias was rising
+> and sending patches a few years ago, but you have blocked them.
 
-So, using a simple per-cpu counter still seems to best option.
-Transient negative value is a valid concern, but easily fixable.
-Are there any other? What's the problem with for_each_possible_cpu()?
-Reading /proc/meminfo is not that hot, no?
+I never blocked any something. I spent many times to review the devfreq patches
+to imporve the devfreq frameworw. In case of Tobias's patch,
+I just suggested other opinion and approach, but he didn't finish them.
 
-Thanks!
+If I blocked some patches for devfreq, why am I review your suspend patch
+and agree them? It is very ridiculous of your thinking.
+
+> 
+> These version is ready for comments regarding 'battery powered devices'.
+> The v3 has introduced approach for 2 polling intervals similar to
+> thermal framework.
+> It also has trace events. The trace events are *really* important in
+> this discussion because we need some measurements.
+> 
+> You said:
+> 'When release the real mobile product like galaxy phone,
+> it is very important issue to remove the unneeded wakeup on idle state.'
+> Was it a real reason for profiling the devfreq framework and core
+> workqueue mechanism? There are embedded devices which are not using
+
+Yes. I think that deferrable workqueue is very important for some case.
+But, on the other hand, it might be always true.
+
+I don't just want to remove the deferrable work. But, I agree that
+to support both delayed and deferrable work according to the
+choice of devfreq device drivers.
+
+If remove the deferrable work, it always wakeup the idle state.
+The device driver never handle them. Someone want to get the
+high-performance but, someone don't want to wakeup from idle state.
+
+On your v2 patchset, just remove the deferrable work without
+any tunable feature. So, I try to discuss them. But, you just
+sent next patches without any discussion. And then, you also
+asked that we had to check the next patches.
+
+It is wrong for review sequence. I have to wait the review
+/discuss before sending the next patches.
+
+Once again,
+I don't just want to remove the deferrable work without
+any tunable interface. But, I agree that to support both
+delayed and deferrable work according to the choice of
+devfreq device drivers.
+
+
+> battery and probably developers were not aware because there was no
+> traces which could give any information about devfreq behavior.
+> Power is important, performance is important but relaying on randomness
+> is not the best solution. As I said earlier, your driver can stuck on
+> highest OPP waiting for next callback which will not come...
+> 
+> Regards,
+> Lukasz
+>>
+>>
+>>> an idle CPU would be too high. In my opinion it won't and fixing bug is more
+>>> important than < 1% more power used [1].
+>>> I have addressed also this issue. In this patch set there is a mechanism
+>>> which prevents from to frequent checks when there is no need.
+>>> When the device enters its lowest state (OPP) the framework sets polling
+>>> interval to 'polling_idle_ms'. In default Kconfig it is 500ms, so 2 times per
+>>> second.
+>>> It is tunable from the sysfs interface per device, thus driver developer can
+>>> experiment and choose best intervals for the system.
+>>>
+>>> Changes:
+>>> v3:
+>>> - reordered first two patches
+>>> - added functionality to lower power consumption when the device is less busy;
+>>>    there is a new polling interval enabled when device enters lowest frequency;
+>>> - added trace events to capture the behaviour of the system
+>>> v2:
+>>> - single patch split into two
+>>> - added cover letter
+>>>
+>>> link for the previous version and discussion:
+>>> https://marc.info/?l=linux-pm&m=154989907416072&w=2
+>>> https://marc.info/?l=linux-pm&m=154904631226997&w=2
+>>>
+>>> Regards,
+>>> Lukasz Luba
+>>>
+>>> [1] https://marc.info/?l=linux-kernel&m=155000641622443&w=2
+>>>
+>>> Lukasz Luba (7):
+>>>    drivers: devfreq: change deferred work into delayed
+>>>    drivers: devfreq: change devfreq workqueue mechanism
+>>>    Kconfig: drivers: devfreq: add default idle polling
+>>>    include: devfreq: add polling_idle_ms to 'profile'
+>>>    drivers: devfreq: add longer polling interval in idle
+>>>    trace: events: add devfreq trace event file
+>>>    drivers: devfreq: add tracing for scheduling work
+>>>
+>>>   MAINTAINERS                               |   1 +
+>>>   drivers/devfreq/Kconfig                   |  13 +++
+>>>   drivers/devfreq/devfreq.c                 | 184 ++++++++++++++++++++++++------
+>>>   drivers/devfreq/governor.h                |   3 +-
+>>>   drivers/devfreq/governor_simpleondemand.c |   6 +-
+>>>   include/linux/devfreq.h                   |   6 +
+>>>   include/trace/events/devfreq.h            |  39 +++++++
+>>>   7 files changed, 218 insertions(+), 34 deletions(-)
+>>>   create mode 100644 include/trace/events/devfreq.h
+>>>
+>>
+>>
+> 
+> 
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
