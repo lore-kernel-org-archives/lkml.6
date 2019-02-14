@@ -2,107 +2,128 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A46C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3818C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:25:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78E99222D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:23:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3A38205F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:25:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BB+YVH9E"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HhlIJr4F"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393677AbfBNAXI (ORCPT
+        id S1730636AbfBNAZy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 19:23:08 -0500
-Received: from ozlabs.org ([203.11.71.1]:41855 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730819AbfBNAXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 19:23:08 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 440HD848JMz9sMx;
-        Thu, 14 Feb 2019 11:23:04 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1550103784;
-        bh=ag5y8Vx0qxY6NS8/1fF2pcYGvT05vR6wfM70wr/s6Mw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=BB+YVH9Evonu1+idaYSeuUn4fy4scb+YA03jSzk+WYw+OpXU9xNRu8it7Ztd+BbcN
-         sb5bBn9Jb4CuperuA0F0OT7vq18pXowsgIbd3wVxKsaZBkgb8g6/odwOauIi5SsSiR
-         HClNch8NJWQdKb16vKhFFV/FYtlYJTMgOBmJgvqC54KQ7ZJI9wT2zsSxE3+G7gX6Uv
-         4GA95XEvUq+fWg5QYkNJd8AF+JF9VO5gI3AjA787idEMURkx/o3+BQfHsQZEnC91Ta
-         a3gocv0AGI9xcrLvAW27fpLSKajZbPkGfu/YGmlhfqarEuQ24Ypsg4tA3uPuBG+ZQx
-         9IS+wnqCLkulw==
-Date:   Thu, 14 Feb 2019 11:23:00 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kaike Wan <kaike.wan@intel.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: linux-next: build warning after merge of the rdma tree
-Message-ID: <20190214112300.41c0c7bd@canb.auug.org.au>
+        Wed, 13 Feb 2019 19:25:54 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:47071 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726250AbfBNAZx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 19:25:53 -0500
+Received: by mail-wr1-f68.google.com with SMTP id l9so4516423wrt.13
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 16:25:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xv22CgztNiptmL1IpEe32/U9BVLPdU1sqDTM5ZydeiE=;
+        b=HhlIJr4FWxNaNivefuJ+bnt6Cq6HW7Q52ilE48ZsQqjbtnHgee4hlqRgSCcjUyQ3d5
+         RBdZpO9q2BMCElpsu8MXwIzHOZe5OUT5V8X7obmacrhhCOGKhX8nOQwKazkEjSUND7xk
+         66AtVE3HBZnXxcev29ErJipHiWd3dzL/rEqAxab/+R7IAKEDZJ8thijXd9ztOjoHl/6C
+         XDXL+vWafOandWWLJMbEb6N1SIHoCLHF4ZsxnBgIJ6z7DVSB23yvsjKxRmeC5yYH+a91
+         NrmImhn+jkl+ZXn5wJdNRaQrjaLJV9E0JojwqpVn7/1xHsCbw/mYOLRJqUsLR/pLYZu+
+         /9CA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xv22CgztNiptmL1IpEe32/U9BVLPdU1sqDTM5ZydeiE=;
+        b=qEqwxXmAvfgt/M1ngar/v+2Gs88rxO4fYO7ORtX5qOjIfu6cBgTstsSuntBKnEIzD0
+         YUkkatA2S4U0pUO4VL7ctyyOuHQW6fMDxaFRKGIreJKuNYQcRxPxfkMFa1eH3Tnb7Ct1
+         aH/iI7KHMCB3rVdfAg4cRPR0a4/Vc3fcFtSvXZLLi6zAOLivFb403ONi5cGP7mx3AsrW
+         ZCilO11ID234/1c9MVdFJES9K3CR+0KFzqIk0zhhyzx8n7DsJDWu63oTT3dMOyO66S64
+         5nkLiu/24xJg3F33GbH9oTIvRO2aiqpCjA5I8vzNQbBEAvR9iJtPMhNThQUDtasc/IkW
+         pKZQ==
+X-Gm-Message-State: AHQUAuYqNYRE0qs9cJBI1ojaxxsGsnjr0dtiiMHMZgJMffDJeHeKJL8g
+        8z2opymDHJwZh8KnVqt3k5AtNA==
+X-Google-Smtp-Source: AHgI3IYd9U0Z1ZibscRpnAuj8JVl1ut7OMIRHjvQVt/fMZsv+OV+uKxcoCfJmTEmRasdp0dHRvhurg==
+X-Received: by 2002:adf:9f54:: with SMTP id f20mr542834wrg.88.1550103951643;
+        Wed, 13 Feb 2019 16:25:51 -0800 (PST)
+Received: from andreyknvl0.muc.corp.google.com ([2a00:79e0:15:13:8ce:d7fa:9f4c:492])
+        by smtp.gmail.com with ESMTPSA id b3sm1442324wme.27.2019.02.13.16.25.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 16:25:50 -0800 (PST)
+From:   Andrey Konovalov <andreyknvl@google.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        kasan-dev@googlegroups.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     Qian Cai <cai@lca.pw>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Andrey Konovalov <andreyknvl@google.com>
+Subject: [PATCH] kasan, slub: fix more conflicts with CONFIG_SLAB_FREELIST_HARDENED
+Date:   Thu, 14 Feb 2019 01:25:47 +0100
+Message-Id: <bf858f26ef32eb7bd24c665755b3aee4bc58d0e4.1550103861.git.andreyknvl@google.com>
+X-Mailer: git-send-email 2.20.1.791.gb4d0f1c61a-goog
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/MSSFTuMe8sp0nPz+it+nlDX"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/MSSFTuMe8sp0nPz+it+nlDX
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+When CONFIG_KASAN_SW_TAGS is enabled, ptr_addr might be tagged.
+Normally, this doesn't cause any issues, as both set_freepointer()
+and get_freepointer() are called with a pointer with the same tag.
+However, there are some issues with CONFIG_SLUB_DEBUG code. For
+example, when __free_slub() iterates over objects in a cache, it
+passes untagged pointers to check_object(). check_object() in turns
+calls get_freepointer() with an untagged pointer, which causes the
+freepointer to be restored incorrectly.
 
-Hi all,
+Add kasan_reset_tag to freelist_ptr(). Also add a detailed comment.
 
-After merging the rdma tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+---
+ mm/slub.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-drivers/infiniband/hw/hfi1/tid_rdma.c: In function 'hfi1_tid_rdma_wqe_inter=
-lock':
-drivers/infiniband/hw/hfi1/tid_rdma.c:3251:3: warning: this statement may f=
-all through [-Wimplicit-fallthrough=3D]
-   switch (prev->wr.opcode) {
-   ^~~~~~
-drivers/infiniband/hw/hfi1/tid_rdma.c:3259:2: note: here
-  case IB_WR_RDMA_READ:
-  ^~~~
+diff --git a/mm/slub.c b/mm/slub.c
+index 80da3a40b74d..c80e6699357c 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -249,7 +249,18 @@ static inline void *freelist_ptr(const struct kmem_cache *s, void *ptr,
+ 				 unsigned long ptr_addr)
+ {
+ #ifdef CONFIG_SLAB_FREELIST_HARDENED
+-	return (void *)((unsigned long)ptr ^ s->random ^ ptr_addr);
++	/*
++	 * When CONFIG_KASAN_SW_TAGS is enabled, ptr_addr might be tagged.
++	 * Normally, this doesn't cause any issues, as both set_freepointer()
++	 * and get_freepointer() are called with a pointer with the same tag.
++	 * However, there are some issues with CONFIG_SLUB_DEBUG code. For
++	 * example, when __free_slub() iterates over objects in a cache, it
++	 * passes untagged pointers to check_object(). check_object() in turns
++	 * calls get_freepointer() with an untagged pointer, which causes the
++	 * freepointer to be restored incorrectly.
++	 */
++	return (void *)((unsigned long)ptr ^ s->random ^
++			(unsigned long)kasan_reset_tag((void *)ptr_addr));
+ #else
+ 	return ptr;
+ #endif
+-- 
+2.20.1.791.gb4d0f1c61a-goog
 
-Introduced by commit
-
-  c6c231175ccd ("IB/hfi1: Add interlock between TID RDMA WRITE and other re=
-quests")
-
-I get this warning because I am building with -Wimplicit-fallthrough
-in attempt to catch new additions early.  The gcc warning can be turned
-off by adding a /* fall through */ comment at the point the fall through
-happens (assuming that the fall through is intentional).
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/MSSFTuMe8sp0nPz+it+nlDX
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxktOQACgkQAVBC80lX
-0GxC0Qf7BVZ2hN4cB9kXnA7InYLEWZvykziVmOsx8qXNrJC/2r+QbEMLTtJhZx9t
-YYyJ8Mq14qoxoXVlsem2fY2ZBlZA/lXJy7og5Lm8ErJC8Ofr27G6jL1AEIQrqflH
-AKXTUJDD9hxUYMYCmdykUGEHOiBoUqjwH+J2l0SLjger2LKwwIjR6x/23/dCZ5dE
-Jd0tRoY1zD/OW1deipStqXVeZT//Cs8iin+5koEF27+16vcjyg375tdedl2sRZLM
-1VGkYYfMQcGkTL0rlYed04SW7snjGao88W8VbZPzX1SEXdptALJOWDWgCrymkl18
-yqPF/LOVsrye6JtVz83Z6U4G/PluqA==
-=umc/
------END PGP SIGNATURE-----
-
---Sig_/MSSFTuMe8sp0nPz+it+nlDX--
