@@ -2,102 +2,114 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31DB9C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:27:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A24CDC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF2FB2229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:27:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FF5B21B68
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:28:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=rajagiritech-edu-in.20150623.gappssmtp.com header.i=@rajagiritech-edu-in.20150623.gappssmtp.com header.b="HKpIFuuo"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NouO1P82"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393734AbfBNS11 (ORCPT
+        id S2394112AbfBNS2P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 13:27:27 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:42334 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393497AbfBNS10 (ORCPT
+        Thu, 14 Feb 2019 13:28:15 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:44138 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727593AbfBNS2P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 13:27:26 -0500
-Received: by mail-qt1-f196.google.com with SMTP id b8so7945716qtr.9
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 10:27:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rajagiritech-edu-in.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WwrYbdyI3iXMxOWcsdMqbFH0v/lw7uNgd4iS3S28kfg=;
-        b=HKpIFuuos6PZX6ja9Am54gXeK5iqVDq+S7qdCXrtbgr8YZnVeijKrwOB49/4IZg0lv
-         P81BhWImbBlr8JykpmrSWVKlNb6otJB+bEcy2rwayuGyH9mRG6ONrFMjDM2Jh9Al6+EB
-         wZADh3Bloo4ekCfMqm0cLO4RyLYt7BP50J0/en/W1TkMEeEFD5KEHMicCvDy4NobNMoi
-         7erutqJL/WtRKKFOsJanX36swVzhZF0e3TSRQS8qxlY7LSVUW3zSuAVELQaNqPXLVurA
-         xsOEd/p0AISk9z6hskWQ1TNEY5a5ZcYfRsdcWUNIIE8WAomNYhN7136jXj3p4Nj/0g+P
-         lkGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WwrYbdyI3iXMxOWcsdMqbFH0v/lw7uNgd4iS3S28kfg=;
-        b=WM2xPSVD0y4+yYSSvJozC3WP0PSSG+DCS1gfePglk0HwGuBrg/YNLeFIkOS7O4BqB8
-         2/anIASR9haQKXyVHqeL9dLtvmALLF/7RahfSWfqwWCvL2ktStOFqcmd0h8cCN5ktxO/
-         QkgVhjJ08nm+yBTAHT6bJXgrUiempOz26MBGKE7zjpGxsXp1rGmqdNrFS27xSjZOPGPv
-         R22lacHwdlDjGxLRi1EXjWe3AwgSAaAAQBXcS2Ipihv3coXhKIT3jGEx939bjBeQgY5z
-         Qq8uydqYvXXK89QdaBgK3AJaCowajdwZYMSC9NzBgJTm0xV8EzmCvXR3HiFPQ/nElEW7
-         JwuQ==
-X-Gm-Message-State: AHQUAuYah1jcT4lxYUZO6iSPqy14on7xUYdmHPz9jgtaA36CNpv4UPOI
-        td6XzRA55hUFKoLZyIui+xcvCjAndIesguTHnQSTpg==
-X-Google-Smtp-Source: AHgI3IYnBssnQMpoZFspD9aup//Uj4OZ2RjzYsky5xPfFgZPxkG/seDisB/PSsdWgRLf0B8rAqss9R3s025zos8F+VU=
-X-Received: by 2002:ac8:2598:: with SMTP id e24mr4360506qte.27.1550168845185;
- Thu, 14 Feb 2019 10:27:25 -0800 (PST)
+        Thu, 14 Feb 2019 13:28:15 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1EIS6js065260;
+        Thu, 14 Feb 2019 12:28:06 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1550168887;
+        bh=Bv2qskVEC6rIqwOJ9GpChKiHBGnkKp3/CuMKmVIOA+I=;
+        h=From:To:CC:Subject:Date;
+        b=NouO1P82xbk2tb+yvy+/FmVKd6DygBD0fbtqmzgF5eZ9awDUC3uyXbbifoKBm4cQg
+         Zb+OYXArlgOBiq44DvmrJc6E8/ouGqaxQgx141jdZqJW0CXCBD8m648aIqJ1Zr+QtP
+         R6XJ+WJd+TeO0kLuVs0gKJguBGTUUDffQ+0+ZyU4=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1EIS6k3085438
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 14 Feb 2019 12:28:06 -0600
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 14
+ Feb 2019 12:28:06 -0600
+Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 14 Feb 2019 12:28:06 -0600
+Received: from legion.dal.desgin.ti.com (legion.dal.design.ti.com [128.247.22.53])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1EIS6xW029440;
+        Thu, 14 Feb 2019 12:28:06 -0600
+Received: from localhost (a0272616local-lt.dhcp.ti.com [172.22.120.181])
+        by legion.dal.desgin.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id x1EIS5U11240;
+        Thu, 14 Feb 2019 12:28:05 -0600 (CST)
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <wg@grandegger.com>, <mkl@pengutronix.de>, <davem@davemloft.net>
+CC:     <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v5 0/5]  M_CAN Framework re-write
+Date:   Thu, 14 Feb 2019 12:27:49 -0600
+Message-ID: <20190214182754.30721-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.12.2
 MIME-Version: 1.0
-References: <20190131183109.10919-1-jeffrin@rajagiritech.edu.in> <20190211214002.GV11489@garbanzo.do-not-panic.com>
-In-Reply-To: <20190211214002.GV11489@garbanzo.do-not-panic.com>
-From:   Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
-Date:   Thu, 14 Feb 2019 23:56:46 +0530
-Message-ID: <CAG=yYwkYwiB1dfDJg=VB_Kd1Hu+i-WrFN8SyKT9hKP55WzyA3w@mail.gmail.com>
-Subject: Re: [PATCH v2] error message found related
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Shuah Khan <shuah@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Your subject is too long.
-ok . i have changed it
+Hello
 
+OK I did not give up on this patch series just got a little preoccupied with
+some other kernel work.  But here is the update per the comments.
 
-> Please upgrade bash?
-anyway now i have an upgraded one.
+It should be understood I broke these out for reviewability.
+For instance the first patch does not compile on its own as including this
+patch should not change the current functionality and it pulls all the io-mapped
+code from the m_can base file to a platfrom file.
 
-here  is a clipping related to the error
----------------------x-------------------x----------------
-Thu Feb 14 23:49:13 IST 2019
-Running test: kmod_test_0007 - run #4
-kmod_test_0005: OK! - loading kmod test
-kmod_test_0005: OK! - Return value: 0 (SUCCESS), expected SUCCESS
-kmod_test_0006: OK! - loading kmod test
-kmod_test_0006: OK! - Return value: 0 (SUCCESS), expected SUCCESS
-./kmod.sh: line 529: [[: 1 0002:3:1 0003:1:1 0004:1:1 0005:10:1
-0006:10:1 0007:5:1 0008:150:1 0009:150:1: syntax error in expression
-(error token is "0002:3:1 0003:1:1 0004:1:1 0005:10:1 0006:10:1
-0007:5:1 0008:150:1 0009:150:1")
-./kmod.sh: line 529: [[: 1 0002:3:1 0003:1:1 0004:1:1 0005:10:1
-0006:10:1 0007:5:1 0008:150:1 0009:150:1: syntax error in expression
-(error token is "0002:3:1 0003:1:1 0004:1:1 0005:10:1 0006:10:1
-0007:5:1 0008:150:1 0009:150:1")
-Test completed
-$
-------------------x---------------------x----------------------
+The next patch "Migrate the m_can code to use the framework"
+is the change to the kernel for the io-mapped conversion from a flat file to use
+the framework.  Finally the rename patch just renames the m_can_priv to 
+m_can_classdev.  I broke this change out specifically for readability of the
+migration patch per comments on the code.
 
+AFAIC the first 3 patches can all be squashed into a single patch.  Or the
+first 2 patches in the series can be re-arranged but then m_can functionality is
+affected in the migration patch.
 
+Again the first 3 patches here are all just for readability and review purposes.
 
+Dan
+
+Dan Murphy (5):
+  can: m_can: Create a m_can platform framework
+  can: m_can: Migrate the m_can code to use the framework
+  can: m_can: Rename m_can_priv to m_can_classdev
+  dt-bindings: can: tcan4x5x: Add DT bindings for TCAN4x5X driver
+  can: tcan4x5x: Add tcan4x5x driver to the kernel
+
+ .../devicetree/bindings/net/can/tcan4x5x.txt  |  37 +
+ drivers/net/can/m_can/Kconfig                 |  14 +-
+ drivers/net/can/m_can/Makefile                |   2 +
+ drivers/net/can/m_can/m_can.c                 | 788 +++++++++---------
+ drivers/net/can/m_can/m_can.h                 | 159 ++++
+ drivers/net/can/m_can/m_can_platform.c        | 198 +++++
+ drivers/net/can/m_can/tcan4x5x.c              | 531 ++++++++++++
+ 7 files changed, 1320 insertions(+), 409 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/can/tcan4x5x.txt
+ create mode 100644 drivers/net/can/m_can/m_can.h
+ create mode 100644 drivers/net/can/m_can/m_can_platform.c
+ create mode 100644 drivers/net/can/m_can/tcan4x5x.c
 
 -- 
-software engineer
-rajagiri school of engineering and technology
+2.20.1.390.gb5101f9297
+
