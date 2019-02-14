@@ -2,105 +2,156 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BB23C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:13:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA74C4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:16:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55FB3218FF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:13:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBDEF218FF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:16:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C1ep7qdT"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="haog/nuW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395432AbfBNVNv (ORCPT
+        id S2437905AbfBNVQz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 16:13:51 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40176 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390474AbfBNVNv (ORCPT
+        Thu, 14 Feb 2019 16:16:55 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:36049 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437841AbfBNVQz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 16:13:51 -0500
-Received: by mail-lj1-f196.google.com with SMTP id w6so1761482ljd.7;
-        Thu, 14 Feb 2019 13:13:50 -0800 (PST)
+        Thu, 14 Feb 2019 16:16:55 -0500
+Received: by mail-it1-f194.google.com with SMTP id h6so16842110itl.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 13:16:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ZChMsRAHP0HW2emBAI7wrSCyLQOM/tkfKHcmHmvItsg=;
-        b=C1ep7qdToipEDkT2jKMT9jNz2FXvqu3KQwe+21P8CgtJTgc6amKRTbN9i3vSVYNJlz
-         CQ3znWkxW3O8Ggt8hsL2CE7QtacdUqtBnsBni0Ia3urR7qgEfVcSbtpprmgVrpjf/4d7
-         TkBSnX+058N4h0cIhweRcoTEAhQbVY0pC/s0Wk00XOoJ4LU0oFqt4n6Ter/3C67dfisz
-         HUAU2JyicSC4FxfP+LCeDj6agWU2YZzhcvS3vNIaD3+FSzp5BSHO4ydGVxA8TkHbD0S1
-         s9EK3kAkqzQScVQQCRabHzbdjwkyWE9cYgRNQWUVkqVLPB/V7HSezYTq2sP/nqhta4NN
-         fuQQ==
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GvPYFe28/mAoQO+bY6nMt8BakmTEWjcsUcqZny6LKyY=;
+        b=haog/nuWNwVzMoU13+bJ0VOVleco8VrScsofzKVQriJp/kpIegpS08FgzPJW6MCcMM
+         umb1am7jn04ZVfp/yOI5y2yZNIPu/vejkxNHZoUsN71HWLQEH7YIx7zv4pBqIcXovU3w
+         JPZM6QRRB7y782DQnTFoAEKXvcAWCZ+X6byTykTsL+dfSL7xz/fpbcUiIBhrukUyvjLi
+         g4eVuY6/2Kdj7uMouqF364Lq2Wvvx9u7FnZJDVv0fv6MtPkEGYCwZRV4qimeeXmvzRZw
+         7OEpCUNx91DhVAacamw53xKewe0hTNal7SlZMnIezgIODwSu4C+aoijN+x+caBgPcoxZ
+         /odw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=ZChMsRAHP0HW2emBAI7wrSCyLQOM/tkfKHcmHmvItsg=;
-        b=HT/C5RDcYJdeKQNK76vKvS4y4Rr3ZAVIbQq13wloZTPvvVNrIe1Us+cNfvRmSj6Sg8
-         PdyooDQsIoSYBrdNF4XunVd5bi/I4bvpPg66OUsVnxlevkZtoeqeoV8MN9ocNMbDqdGo
-         hBxsGMEf9d2tCFuql5PEJ+djg7eotEKxFLm8X+CmUnswTTiq+/tKsyWHiZXK72m88e1Y
-         5SoIgydcxjCttA7Tr/jBEdHiXi3cc5qLE/89xvvOKaRNiejl3dJkzZUeMQ5sMO0mdzQg
-         +inlKMyczeCNk4/b741dlQZPAKWoZj4Yyg6k+4qsftbqK9cu46lGDLpOsi0yLi83oZ3K
-         gc2Q==
-X-Gm-Message-State: AHQUAuZ+w1d+s1xJ4mAbPBbxer3rTpwrS67iUfE4+yYKDz3hyu1ycUoh
-        o8NJ35k3+XLnWvYeRWTv3w8=
-X-Google-Smtp-Source: AHgI3IbDAtYtvy96iV3PtirRgU0/KtP6QXw41bhY5PqPF1FwegsKKn6P2WlvxhJnWWyNwxQ/81Lsow==
-X-Received: by 2002:a2e:5854:: with SMTP id x20-v6mr3620164ljd.31.1550178829521;
-        Thu, 14 Feb 2019 13:13:49 -0800 (PST)
-Received: from [192.168.1.18] (chh67.neoplus.adsl.tpnet.pl. [83.31.5.67])
-        by smtp.gmail.com with ESMTPSA id t12-v6sm642176ljd.47.2019.02.14.13.13.47
+        bh=GvPYFe28/mAoQO+bY6nMt8BakmTEWjcsUcqZny6LKyY=;
+        b=XY/HD4D8Qtyfefi1r/cucLGCVjRJ39/jla/tjhsVFm74nMQSkC+D5uWdhcNYOM9Cn9
+         QhH11JHbKY8uaH+is9HiGh0NFkvdgx+0VXVNH+o9M17G+xyG1OT3mOjfITNmpJOaUMgG
+         cy7dmQOQ0Ld6Srvz6VfM0But1zkfL6ESmlQ4W6BQCXgbs11rg7IU8zDiG8k4ZghoIvTc
+         7+4/c2dKYOKj9CVsYUM/mmIGwFiZsbFmBVqJF3cs/iL+6mG8p3Rp+eD6jiirH57B2Mzk
+         6b4vdTrb0EKJqfrDIEsQ9YHZAbGfu0ndvfw9JG28nmS2/QxMf5OMbAqn/2RMC941vXPp
+         aDkg==
+X-Gm-Message-State: AHQUAuav+8RRkRLVe71f48Ypzv/EqqymVnR+An4xNZYUP7ooMMvoIjuY
+        O13h3SHXnjHU8aYxkYnv2rZXMg==
+X-Google-Smtp-Source: AHgI3IYCX5V8B/n/JHfBn5gh5KmKCeTbBeku15y0Wkk318G3E77K2o5/6CJ6L2HV9dr2oRQlrIFuFg==
+X-Received: by 2002:a24:9a84:: with SMTP id l126mr3836833ite.77.1550179014078;
+        Thu, 14 Feb 2019 13:16:54 -0800 (PST)
+Received: from yuzhao.bld.corp.google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
+        by smtp.gmail.com with ESMTPSA id h2sm1491498itk.0.2019.02.14.13.16.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 13:13:48 -0800 (PST)
-Subject: Re: linux-next: build warning after merge of the leds tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Kazior <michal@plume.com>, Pavel Machek <pavel@ucw.cz>,
-        Anders Roxell <anders.roxell@linaro.org>
-References: <20190214144610.3672e9d7@canb.auug.org.au>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <a741b99c-83ff-547b-90d6-f54f8f7de966@gmail.com>
-Date:   Thu, 14 Feb 2019 22:13:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 14 Feb 2019 13:16:53 -0800 (PST)
+From:   Yu Zhao <yuzhao@google.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nick Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        Yu Zhao <yuzhao@google.com>
+Subject: [PATCH] arm64: mm: enable per pmd page table lock
+Date:   Thu, 14 Feb 2019 14:16:42 -0700
+Message-Id: <20190214211642.2200-1-yuzhao@google.com>
+X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
 MIME-Version: 1.0
-In-Reply-To: <20190214144610.3672e9d7@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen and all,
+Switch from per mm_struct to per pmd page table lock by enabling
+ARCH_ENABLE_SPLIT_PMD_PTLOCK. This provides better granularity for
+large system.
 
-On 2/14/19 4:46 AM, Stephen Rothwell wrote:
-> Hi Jacek,
-> 
-> After merging the leds tree, today's linux-next build (x86_64
-> allmodconfig) produced this warning:
-> 
-> drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_firmware_loaded':
-> drivers/leds/leds-lp55xx-common.c:217:1: warning: label 'out' defined but not used [-Wunused-label]
->   out:
->   ^~~
+I'm not sure if there is contention on mm->page_table_lock. Given
+the option comes at no cost (apart from initializing more spin
+locks), why not enable it now.
 
-Thank you for the heads-up. It's my bad - I didn't use sparse on it.
+Signed-off-by: Yu Zhao <yuzhao@google.com>
+---
+ arch/arm64/Kconfig               |  3 +++
+ arch/arm64/include/asm/pgalloc.h | 12 +++++++++++-
+ arch/arm64/include/asm/tlb.h     |  5 ++++-
+ 3 files changed, 18 insertions(+), 2 deletions(-)
 
-Fixed up the original patch.
-
-> Introduced by commit
-> 
->    905c2157dd19 ("leds: lp55xx: fix null deref on firmware load failure")
-> 
-
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index a4168d366127..104325a1ffc3 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -872,6 +872,9 @@ config ARCH_WANT_HUGE_PMD_SHARE
+ config ARCH_HAS_CACHE_LINE_SIZE
+ 	def_bool y
+ 
++config ARCH_ENABLE_SPLIT_PMD_PTLOCK
++	def_bool y
++
+ config SECCOMP
+ 	bool "Enable seccomp to safely compute untrusted bytecode"
+ 	---help---
+diff --git a/arch/arm64/include/asm/pgalloc.h b/arch/arm64/include/asm/pgalloc.h
+index 52fa47c73bf0..dabba4b2c61f 100644
+--- a/arch/arm64/include/asm/pgalloc.h
++++ b/arch/arm64/include/asm/pgalloc.h
+@@ -33,12 +33,22 @@
+ 
+ static inline pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long addr)
+ {
+-	return (pmd_t *)__get_free_page(PGALLOC_GFP);
++	struct page *page;
++
++	page = alloc_page(PGALLOC_GFP);
++	if (!page)
++		return NULL;
++	if (!pgtable_pmd_page_ctor(page)) {
++		__free_page(page);
++		return NULL;
++	}
++	return page_address(page);
+ }
+ 
+ static inline void pmd_free(struct mm_struct *mm, pmd_t *pmdp)
+ {
+ 	BUG_ON((unsigned long)pmdp & (PAGE_SIZE-1));
++	pgtable_pmd_page_dtor(virt_to_page(pmdp));
+ 	free_page((unsigned long)pmdp);
+ }
+ 
+diff --git a/arch/arm64/include/asm/tlb.h b/arch/arm64/include/asm/tlb.h
+index 106fdc951b6e..4e3becfed387 100644
+--- a/arch/arm64/include/asm/tlb.h
++++ b/arch/arm64/include/asm/tlb.h
+@@ -62,7 +62,10 @@ static inline void __pte_free_tlb(struct mmu_gather *tlb, pgtable_t pte,
+ static inline void __pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmdp,
+ 				  unsigned long addr)
+ {
+-	tlb_remove_table(tlb, virt_to_page(pmdp));
++	struct page *page = virt_to_page(pmdp);
++
++	pgtable_pmd_page_dtor(page);
++	tlb_remove_table(tlb, page);
+ }
+ #endif
+ 
 -- 
-Best regards,
-Jacek Anaszewski
+2.21.0.rc0.258.g878e2cd30e-goog
+
