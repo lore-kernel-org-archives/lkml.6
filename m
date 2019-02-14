@@ -2,117 +2,136 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC9DC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:59:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48B6CC4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:00:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2751222DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:59:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NC0usvaI"
+	by mail.kernel.org (Postfix) with ESMTP id 21366222DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:00:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391317AbfBNQ7u (ORCPT
+        id S2394252AbfBNRAd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:59:50 -0500
-Received: from mail-pl1-f171.google.com ([209.85.214.171]:46565 "EHLO
-        mail-pl1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726891AbfBNQ7t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 11:59:49 -0500
-Received: by mail-pl1-f171.google.com with SMTP id o6so3437760pls.13
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:59:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=6oKGsFl3KFzaCsPTqB4+XI+ENpv9qnKFvpPnyA2yzUk=;
-        b=NC0usvaI5uuSZnbo7c3PXX+jlxXVz8royWn8YUo75Q2AJ0LSKpDuCmuk9YrnyVlWkQ
-         66ZdLYNVWWCl2jg2stQaVsXwdzN2Jgmdb4fkxQHO1cpr9r8cjAWHX9OiiMNtJCI/QfN8
-         7wKtqGRuq5/4DgcDXjNkyy9ZvxAXVrhdeAIIE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=6oKGsFl3KFzaCsPTqB4+XI+ENpv9qnKFvpPnyA2yzUk=;
-        b=E7YLqwXk5PaY/vRt4bFpMSYh+BE8Q7pSt+SRPEvcHmC75bcrP0Maa7PZW1Y2wtM69o
-         O9hLf13yMx+bEoaVFJTKC67cRPQeBEq2fWdPGf4e03rWI3dh8CUU5ZpeKXVaIOWJoFmF
-         wJgibY1kSKkL7Co4TtkyJuCUt69R6eJxARoEo1kN+w4upHe645TR4wSKrwBrmSFcNZ+f
-         vAYiDgiy2GLrqtSKY/MKQvYkBzb+K4/BBuAdqb5mo6n7Zgv0ZZoZ2tMFH0mcJ4hN0EyR
-         rMH3pqMta4o65+5fAMANv2C7EAybglhJUYozIquitsqXdjcNWerKFX2Y2L48WqLrmxKI
-         6kwg==
-X-Gm-Message-State: AHQUAuZbsoGRw7vyOdMx2ghesa/OLrfnJbeJhVD3LaLVnA8bwjX3aYBk
-        +jUDcADlE228L36r45uV8PRjkQ==
-X-Google-Smtp-Source: AHgI3IZ1NkGC2bCiBiPt8Zo2HwrU+mluSlVdjMJ7JeV4Pc5IojmVxBEjCgxwEmhnYb7xG4ipudLB5g==
-X-Received: by 2002:a17:902:5066:: with SMTP id f35mr5253312plh.78.1550163588984;
-        Thu, 14 Feb 2019 08:59:48 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id j5sm3653268pfe.84.2019.02.14.08.59.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 08:59:48 -0800 (PST)
-Date:   Thu, 14 Feb 2019 08:59:47 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Chanwoo Choi <cwchoi00@gmail.com>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Lukasz Luba <l.luba@partner.samsung.com>
-Subject: Re: [PATCH 1/4] PM / devfreq: Track overall load monitor state
- instead of 'stop_polling'
-Message-ID: <20190214165947.GY117604@google.com>
-References: <20190214013042.254790-1-mka@chromium.org>
- <20190214013042.254790-2-mka@chromium.org>
- <CAGTfZH3E+RetMzKxzZNEgYw6=kocdfgRcKSbmP5GfZ4k1j0Cuw@mail.gmail.com>
+        Thu, 14 Feb 2019 12:00:33 -0500
+Received: from ale.deltatee.com ([207.54.116.67]:36462 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727997AbfBNRAd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 12:00:33 -0500
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1guKNC-0004Pd-Uf; Thu, 14 Feb 2019 10:00:32 -0700
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1guKNC-0007G7-Fl; Thu, 14 Feb 2019 10:00:30 -0700
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Kit Chow <kchow@gigaio.com>, Logan Gunthorpe <logang@deltatee.com>,
+        Yinghai Lu <yinghai@kernel.org>
+Date:   Thu, 14 Feb 2019 10:00:27 -0700
+Message-Id: <20190214170028.27862-1-logang@deltatee.com>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGTfZH3E+RetMzKxzZNEgYw6=kocdfgRcKSbmP5GfZ4k1j0Cuw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, bhelgaas@google.com, kchow@gigaio.com, logang@deltatee.com, yinghai@kernel.org
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH 1/2] PCI: Prevent 64-bit resources from being counted in 32-bit bridge region
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chanwoo,
+When using the pci=realloc command line argument, with hpmemsize not
+equal to zero, some hierarchies of 32-bit resources can fail to be
+assigned in some situations. When this happens, the user will see
+some PCI BAR resources being ignored and some PCI Bridge windows
+being left unset. In lspci this may look like:
 
-On Thu, Feb 14, 2019 at 11:25:52PM +0900, Chanwoo Choi wrote:
-> Hi Matthias,
-> 
-> 2019년 2월 14일 (목) 오후 7:16, Matthias Kaehlcke <mka@chromium.org>님이 작성:
-> >
-> > The field ->stop_polling indicates whether load monitoring should be/is
-> > stopped, it is set in devfreq_monitor_suspend(). Change the variable to
-> > hold the general state of load monitoring (stopped, running, suspended).
-> > Besides improving readability of conditions involving the field and this
-> > prepares the terrain for moving some duplicated code from the governors
-> > into the devfreq core.
-> >
-> > Hold the devfreq lock in devfreq_monitor_start/stop() to ensure proper
-> > synchronization.
-> 
-> IMHO, I'm not sure that there are any benefits changing
-> from 'stop_polling' to 'monitor_state'. I have no objections
-> if Myungjoo confirms it.
+  Memory behind bridge: fff00000-000fffff
 
-I agree that as an isolated change there isn't a clear benefit.
-However in the context of the series the change is needed to
-avoid resuming a load monitor that wasn't even started.
+or
 
-In case this series isn't accepted I'd still suggest to change the
-name from 'stop_polling' to 'suspended'. I read 'stop_polling' as a
-call for action, while 'suspended' is a state. IMO at least in some
-contexts conditions using a state is clearer.
+  Region 0: Memory at <ignored> (32-bit, non-prefetchable) [size=256K]
 
-Cheers
+Ignored BARs mean the underlying device will not be usable.
 
-Matthias
+The possible situations where this can happen will be quite varied and
+depend highly on the exact hierarchy and how the realloc code ends up
+trying to assign the regions. It's known to at least require a
+large 64-bit BAR (>1GB) below a PCI bridge.
+
+The cause of this bug is in __pci_bus_size_bridges() which tries to
+calculate the total resource space required for each of the bridge windows
+(typically IO, 64-bit, and 32-bit / non-prefetchable). The code, as
+written, tries to allocate all the 64-bit prefetchable resources
+followed by all the remaining resources. It uses two calls to
+pbus_size_mem() for this. If the first call to pbus_size_mem() fails
+it tries to fit all resources into the 32-bit bridge window and it
+expects the size of the 32-bit bridge window to be multiple GBs which
+will never be assignable under the 4GB limit imposed on it.
+
+There are only two reasons for pbus_size_mem() to fail: if there is no
+64-bit/prefetchable bridge window, or if that window is already
+assigned (in other words, its resource already has a parent set). We know
+the former case can't be true because, in __pci_bus_size_bridges(), it's
+existence is checked before making the call. So if the pbus_size_mem()
+call in question fails, the window must already be assigned, and in this
+case, we still do not want 64-bit resources trying to be sized into the
+32-bit catch-all resource.
+
+So to fix the bug, we must always set mask, type2 and type3 in cases
+where a 64-bit resource exists even if pbus_size_mem() fails.
+
+Reported-by: Kit Chow <kchow@gigaio.com>
+Fixes: 5b28541552ef ("PCI: Restrict 64-bit prefetchable bridge windows to 64-bit resources")
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Yinghai Lu <yinghai@kernel.org>
+---
+ drivers/pci/setup-bus.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
+index ed960436df5e..56b7077f37ff 100644
+--- a/drivers/pci/setup-bus.c
++++ b/drivers/pci/setup-bus.c
+@@ -1265,21 +1265,20 @@ void __pci_bus_size_bridges(struct pci_bus *bus, struct list_head *realloc_head)
+ 		prefmask = IORESOURCE_MEM | IORESOURCE_PREFETCH;
+ 		if (b_res[2].flags & IORESOURCE_MEM_64) {
+ 			prefmask |= IORESOURCE_MEM_64;
+-			ret = pbus_size_mem(bus, prefmask, prefmask,
++			pbus_size_mem(bus, prefmask, prefmask,
+ 				  prefmask, prefmask,
+ 				  realloc_head ? 0 : additional_mem_size,
+ 				  additional_mem_size, realloc_head);
+ 
+ 			/*
+-			 * If successful, all non-prefetchable resources
+-			 * and any 32-bit prefetchable resources will go in
+-			 * the non-prefetchable window.
++			 * Given the existence of a 64-bit resource for this
++			 * bus, all non-prefetchable resources and any 32-bit
++			 * prefetchable resources will go in the
++			 * non-prefetchable window.
+ 			 */
+-			if (ret == 0) {
+-				mask = prefmask;
+-				type2 = prefmask & ~IORESOURCE_MEM_64;
+-				type3 = prefmask & ~IORESOURCE_PREFETCH;
+-			}
++			mask = prefmask;
++			type2 = prefmask & ~IORESOURCE_MEM_64;
++			type3 = prefmask & ~IORESOURCE_PREFETCH;
+ 		}
+ 
+ 		/*
+-- 
+2.19.0
+
