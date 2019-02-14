@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49AE0C10F05
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37637C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C82D8222DD
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:02:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B324A222DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:02:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ruKRko1X"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L7qtxriZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502577AbfBNQCQ (ORCPT
+        id S2407784AbfBNQBm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:02:16 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:43321 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502547AbfBNQBt (ORCPT
+        Thu, 14 Feb 2019 11:01:42 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54547 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2502522AbfBNQBi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 11:01:49 -0500
-Received: by mail-wr1-f66.google.com with SMTP id r2so7027128wrv.10
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:01:45 -0800 (PST)
+        Thu, 14 Feb 2019 11:01:38 -0500
+Received: by mail-wm1-f65.google.com with SMTP id a62so6863570wmh.4
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:01:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9+9WlSl55rwoLdecd3aIgcEm8JqOMbjlRbC5W/zRvJU=;
-        b=ruKRko1Xkw1neOLfydIe+TEDUQr6UHk0E8TpPsL4Qql8ZkfT9NTBPkOoQ815rixTsu
-         Hr1LugFG4bGfmelpaxzOXwtRPW154J2H+Acs9kIE4vvuYde/MxhNdf+vcJVIv7C7qHhX
-         ZgDVrdDVXV/8rBnz8WAGsPN/HBApIbykOcpcDmt2+gM0dAajOJZcoEEywYa3F0N/IyS8
-         oiaONXUiGQWpcTtdmHUP82SmNnR1ZEiAkN54j9S3R1wCsyrzdRoR2IBt5NpuXvceWtEk
-         KMVUfuVH81IbXgenPKnwKZ2mGQ3SuJyfAIisxhMmvclo1LtZqv0OtJcvRjJZsZnbQ+IC
-         Alfg==
+        bh=VzmlpGGO/QDRhTSbAQN+/a5SdpuCCFJSx4xjXxl6wkY=;
+        b=L7qtxriZxqlxWRJ1KnSqjcKKq08EeGnQH5LdIoEF2Bce/0MRDwCN3GLbA7hFcK4c/7
+         9/Qg2ganNelX71TF8+sVJ8+1CWZfMlTDwcbMbKEJ50nn04VZ/534DvbWJpKtDDRd4nmU
+         rWlmmFUTTZKiaCDD/9r/7e+lgWQr3yWuTAGnabr6jM4wDLlxRhoWjpusNtpv99ATAlHv
+         W5i4K2hH6kCm9bYNzgWf23gXoPxmRcOzZgj+CnU+cKHuFUXYq2bZfBQRKjbCpBkYs3Zb
+         u5v/uPAr5Zyk1W//HE1+68W4zY74whT5zUHItjNSUTDs6F0OAn0KlA655IcGILW07h3P
+         NQsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=9+9WlSl55rwoLdecd3aIgcEm8JqOMbjlRbC5W/zRvJU=;
-        b=J62HinDvHybtYAETP35nTIcb3vG+T2l9xJCmEY/jq+2SrtneqJc6fHvIb5Ki4Jw3bx
-         R8ZYCvCno6wS0aRWYPa/N6EG3SZzKRpCLV5dJCORC9nQhbUmwJxj9N8G+UCOhVUaLDt/
-         qwq+Zly2EEhG9JGJhrqx6fPbAZoGDJi5wyuIXTlVZepXueASP3cU6r67VEfp5pqojbXQ
-         /jY3TM0ZJ/npiLws5FB6qxp8G4fcqnKkqlLARf2ysCd8rGwqgt+7uZ0A0/QVhTNGAVmA
-         LTMXIRs+dv6/1Nbuh28ntVZvVWqXHvQh0QI6Kk31dZGB5DD3KDXs6zcfCpwS88Ks8pIQ
-         H5aQ==
-X-Gm-Message-State: AHQUAuYRTTYN8FOw78zSVN0heJJtUFmYULr7StbHIEsSr8niJmwYPUEn
-        uJdZ3samcSrDIkNVvirRem0JSzJp
-X-Google-Smtp-Source: AHgI3IZeOtov+hUnRjF9/RoVybwv6g6VObMORDTb/1ehvD1pzwMdgQPxLq8pYtBl+jFrS1X4OKwAUQ==
-X-Received: by 2002:adf:ef4a:: with SMTP id c10mr3429566wrp.180.1550160103890;
-        Thu, 14 Feb 2019 08:01:43 -0800 (PST)
+        bh=VzmlpGGO/QDRhTSbAQN+/a5SdpuCCFJSx4xjXxl6wkY=;
+        b=jUazEhexxlsFo3bZeNwybi149L2+sHhTUtg2Tqhu22grentby2VGj2nYyGlLL4e2Su
+         xw6wRiSR2SvkccFbMpeh/aMwEcbCOwAzyonNXqkwk9PipqhavVggLnerFUkrYDe29C9C
+         Nm5/k4nSbkszasXHCOhw+BywPiItLGhfnEGD+MJZM63D6j5kbCkpndqa0T3VzB3ooiSR
+         d5kgEs2mdUGPE7vIz1aAvq4GzzN2wCq79FOBd3N4VOe9JPTBCNKqv2TlQLBqs2cfaqfS
+         Pa1SHlgCz3ZdTOTRjl9Kke8pfi6aD9ZOzXHEH1yWKhz03Ll0lY0zbrzRmYJALngz80fJ
+         24bw==
+X-Gm-Message-State: AHQUAua+hoea38tEHiqCqGT4UODjGNTBfE3qBem+oo9IytKt4Cy3EehH
+        7SfTmXQQdK34IGnoqKVs8hY=
+X-Google-Smtp-Source: AHgI3IZLhwwdYNF7ZYOCTLlbMgabchwuE/Vl3xppF/EcR6ZG1zriYrI/un4b6pr3v9VoJUrJb6bLwA==
+X-Received: by 2002:a1c:eb10:: with SMTP id j16mr3058538wmh.64.1550160095030;
+        Thu, 14 Feb 2019 08:01:35 -0800 (PST)
 Received: from ogabbay-VM.habana-labs.com ([31.154.190.6])
-        by smtp.gmail.com with ESMTPSA id u15sm5092855wmu.17.2019.02.14.08.01.42
+        by smtp.gmail.com with ESMTPSA id u15sm5092855wmu.17.2019.02.14.08.01.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 08:01:43 -0800 (PST)
+        Thu, 14 Feb 2019 08:01:34 -0800 (PST)
 From:   Oded Gabbay <oded.gabbay@gmail.com>
 To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
         rppt@linux.ibm.com, olof@lixom.net
 Cc:     ogabbay@habana.ai, arnd@arndb.de, joe@perches.com
-Subject: [PATCH v5 14/15] habanalabs: add debugfs support
-Date:   Thu, 14 Feb 2019 18:01:13 +0200
-Message-Id: <20190214160114.26314-15-oded.gabbay@gmail.com>
+Subject: [PATCH v5 10/15] habanalabs: add device reset support
+Date:   Thu, 14 Feb 2019 18:01:09 +0200
+Message-Id: <20190214160114.26314-11-oded.gabbay@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190214160114.26314-1-oded.gabbay@gmail.com>
 References: <20190214160114.26314-1-oded.gabbay@gmail.com>
@@ -70,1925 +70,1317 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds debugfs support to the driver. It allows the user-space to
-display information that is contained in the internal structures of the
-driver, such as:
-- active command submissions
-- active user virtual memory mappings
-- number of allocated command buffers
+This patch adds support for doing various on-the-fly reset of Goya.
 
-It also enables the user to perform reads and writes through Goya's PCI
-bars.
+The driver supports two types of resets:
+1. soft-reset
+2. hard-reset
+
+Soft-reset is done when the device detects a timeout of a command
+submission that was given to the device. The soft-reset process only resets
+the engines that are relevant for the submission of compute jobs, i.e. the
+DMA channels, the TPCs and the MME. The purpose is to bring the device as
+fast as possible to a working state.
+
+Hard-reset is done in several cases:
+1. After soft-reset is done but the device is not responding
+2. When fatal errors occur inside the device, e.g. ECC error
+3. When the driver is removed
+
+Hard-reset performs a reset of the entire chip except for the PCI
+controller and the PLLs. It is a much longer process then soft-reset but it
+helps to recover the device without the need to reboot the Host.
+
+After hard-reset, the driver will restore the max power attribute and in
+case of manual power management, the frequencies that were set.
+
+This patch also adds two entries to the sysfs, which allows the root user
+to initiate a soft or hard reset.
 
 Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
 Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 ---
 Changes in v5:
-  - Copy user buffer to kernel memory before comparing its contents
-
- .../ABI/testing/debugfs-driver-habanalabs     |  126 ++
- drivers/misc/habanalabs/Makefile              |    2 +
- drivers/misc/habanalabs/command_buffer.c      |    4 +
- drivers/misc/habanalabs/command_submission.c  |   12 +
- drivers/misc/habanalabs/debugfs.c             | 1071 +++++++++++++++++
- drivers/misc/habanalabs/device.c              |    6 +
- drivers/misc/habanalabs/goya/goya.c           |  108 ++
- drivers/misc/habanalabs/goya/goyaP.h          |    5 +
- drivers/misc/habanalabs/habanalabs.h          |  189 +++
- drivers/misc/habanalabs/habanalabs_drv.c      |   16 +-
- drivers/misc/habanalabs/memory.c              |    8 +
- 11 files changed, 1545 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/ABI/testing/debugfs-driver-habanalabs
- create mode 100644 drivers/misc/habanalabs/debugfs.c
-
-diff --git a/Documentation/ABI/testing/debugfs-driver-habanalabs b/Documentation/ABI/testing/debugfs-driver-habanalabs
-new file mode 100644
-index 000000000000..2f5b80be07a3
---- /dev/null
-+++ b/Documentation/ABI/testing/debugfs-driver-habanalabs
-@@ -0,0 +1,126 @@
-+What:           /sys/kernel/debug/habanalabs/hl<n>/addr
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Sets the device address to be used for read or write through
-+                PCI bar. The acceptable value is a string that starts with "0x"
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/command_buffers
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Displays a list with information about the currently allocated
-+                command buffers
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/command_submission
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Displays a list with information about the currently active
-+                command submissions
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/command_submission_jobs
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Displays a list with detailed information about each JOB (CB) of
-+                each active command submission
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/data32
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Allows the root user to read or write directly through the
-+                device's PCI bar. Writing to this file generates a write
-+                transaction while reading from the file generates a read
-+                transcation. This custom interface is needed (instead of using
-+                the generic Linux user-space PCI mapping) because the DDR bar
-+                is very small compared to the DDR memory and only the driver can
-+                move the bar before and after the transaction
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/device
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Enables the root user to set the device to specific state.
-+                Valid values are "disable", "enable", "suspend", "resume".
-+                User can read this property to see the valid values
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/i2c_addr
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Sets I2C device address for I2C transaction that is generated
-+                by the device's CPU
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/i2c_bus
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Sets I2C bus address for I2C transaction that is generated by
-+                the device's CPU
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/i2c_data
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Triggers an I2C transaction that is generated by the device's
-+                CPU. Writing to this file generates a write transaction while
-+                reading from the file generates a read transcation
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/i2c_reg
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Sets I2C register id for I2C transaction that is generated by
-+                the device's CPU
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/led0
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Sets the state of the first S/W led on the device
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/led1
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Sets the state of the second S/W led on the device
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/led2
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Sets the state of the third S/W led on the device
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/mmu
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Displays the hop values and physical address for a given ASID
-+                and virtual address. The user should write the ASID and VA into
-+                the file and then read the file to get the result.
-+                e.g. to display info about VA 0x1000 for ASID 1 you need to do:
-+                echo "1 0x1000" > /sys/kernel/debug/habanalabs/hl0/mmu
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/set_power_state
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Sets the PCI power state. Valid values are "1" for D0 and "2"
-+                for D3Hot
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/userptr
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Displays a list with information about the currently user
-+                pointers (user virtual addresses) that are pinned and mapped
-+                to DMA addresses
-+
-+What:           /sys/kernel/debug/habanalabs/hl<n>/vm
-+Date:           Jan 2019
-+KernelVersion:  5.1
-+Contact:        oded.gabbay@gmail.com
-+Description:    Displays a list with information about all the active virtual
-+                address mappings per ASID
-diff --git a/drivers/misc/habanalabs/Makefile b/drivers/misc/habanalabs/Makefile
-index fd46f8b48bab..c6592db59b25 100644
---- a/drivers/misc/habanalabs/Makefile
-+++ b/drivers/misc/habanalabs/Makefile
-@@ -8,5 +8,7 @@ habanalabs-y := habanalabs_drv.o device.o context.o asid.o habanalabs_ioctl.o \
- 		command_buffer.o hw_queue.o irq.o sysfs.o hwmon.o memory.o \
- 		command_submission.o mmu.o
+  - Fix pointer cast warnings by casting to uintptr_t
  
-+habanalabs-$(CONFIG_DEBUG_FS) += debugfs.o
-+
- include $(src)/goya/Makefile
- habanalabs-y += $(HL_GOYA_FILES)
+ drivers/misc/habanalabs/command_buffer.c   |   9 +-
+ drivers/misc/habanalabs/device.c           | 323 ++++++++++++++++++++-
+ drivers/misc/habanalabs/goya/goya.c        | 226 +++++++++++++-
+ drivers/misc/habanalabs/goya/goya_hwmgr.c  |  18 +-
+ drivers/misc/habanalabs/habanalabs.h       |  52 ++++
+ drivers/misc/habanalabs/habanalabs_drv.c   |   9 +-
+ drivers/misc/habanalabs/habanalabs_ioctl.c |   6 +
+ drivers/misc/habanalabs/hwmon.c            |   4 +-
+ drivers/misc/habanalabs/irq.c              |  31 ++
+ drivers/misc/habanalabs/sysfs.c            |  82 +++++-
+ 10 files changed, 736 insertions(+), 24 deletions(-)
+
 diff --git a/drivers/misc/habanalabs/command_buffer.c b/drivers/misc/habanalabs/command_buffer.c
-index ff970c1ed414..11cec02adc8f 100644
+index 43febaea8a17..ff970c1ed414 100644
 --- a/drivers/misc/habanalabs/command_buffer.c
 +++ b/drivers/misc/habanalabs/command_buffer.c
-@@ -37,6 +37,8 @@ static void cb_release(struct kref *ref)
- 	cb = container_of(ref, struct hl_cb, refcount);
- 	hdev = cb->hdev;
+@@ -90,9 +90,14 @@ int hl_cb_create(struct hl_device *hdev, struct hl_cb_mgr *mgr,
+ 	bool alloc_new_cb = true;
+ 	int rc;
  
-+	hl_debugfs_remove_cb(cb);
-+
- 	cb_do_release(hdev, cb);
- }
- 
-@@ -162,6 +164,8 @@ int hl_cb_create(struct hl_device *hdev, struct hl_cb_mgr *mgr,
- 	*handle = cb->id | HL_MMAP_CB_MASK;
- 	*handle <<= PAGE_SHIFT;
- 
-+	hl_debugfs_add_cb(cb);
-+
- 	return 0;
- 
- release_cb:
-diff --git a/drivers/misc/habanalabs/command_submission.c b/drivers/misc/habanalabs/command_submission.c
-index ff03998d63f1..15943e353012 100644
---- a/drivers/misc/habanalabs/command_submission.c
-+++ b/drivers/misc/habanalabs/command_submission.c
-@@ -153,6 +153,8 @@ static void free_job(struct hl_device *hdev, struct hl_cs_job *job)
- 	list_del(&job->cs_node);
- 	spin_unlock(&cs->job_lock);
- 
-+	hl_debugfs_remove_job(hdev, job);
-+
- 	if (job->ext_queue)
- 		cs_put(cs);
- 
-@@ -216,6 +218,12 @@ static void cs_do_release(struct kref *ref)
- 		}
- 	}
- 
+-	if (hdev->disabled) {
 +	/*
-+	 * Must be called before hl_ctx_put because inside we use ctx to get
-+	 * the device
++	 * Can't use generic function to check this because of special case
++	 * where we create a CB as part of the reset process
 +	 */
-+	hl_debugfs_remove_cs(cs);
-+
- 	hl_ctx_put(cs->ctx);
- 
- 	if (cs->timedout)
-@@ -484,6 +492,8 @@ static int _hl_cs_ioctl(struct hl_fpriv *hpriv, void __user *chunks,
- 
- 	*cs_seq = cs->sequence;
- 
-+	hl_debugfs_add_cs(cs);
-+
- 	/* Validate ALL the CS chunks before submitting the CS */
- 	for (i = 0, parse_cnt = 0 ; i < num_chunks ; i++, parse_cnt++) {
- 		struct hl_cs_chunk *chunk = &cs_chunk_array[i];
-@@ -532,6 +542,8 @@ static int _hl_cs_ioctl(struct hl_fpriv *hpriv, void __user *chunks,
- 		if (job->ext_queue)
- 			cs_get(cs);
- 
-+		hl_debugfs_add_job(hdev, job);
-+
- 		rc = cs_parser(hpriv, job);
- 		if (rc) {
- 			dev_err(hdev->dev,
-diff --git a/drivers/misc/habanalabs/debugfs.c b/drivers/misc/habanalabs/debugfs.c
-new file mode 100644
-index 000000000000..cca12c422c13
---- /dev/null
-+++ b/drivers/misc/habanalabs/debugfs.c
-@@ -0,0 +1,1071 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright 2016-2018 HabanaLabs, Ltd.
-+ * All Rights Reserved.
-+ */
-+
-+#include "habanalabs.h"
-+#include "include/hw_ip/mmu/mmu_general.h"
-+
-+#include <linux/debugfs.h>
-+#include <linux/uaccess.h>
-+
-+#define MMU_ADDR_BUF_SIZE	40
-+#define MMU_ASID_BUF_SIZE	10
-+#define MMU_KBUF_SIZE		(MMU_ADDR_BUF_SIZE + MMU_ASID_BUF_SIZE)
-+
-+static struct dentry *hl_debug_root;
-+
-+static int hl_debugfs_i2c_read(struct hl_device *hdev, u8 i2c_bus, u8 i2c_addr,
-+				u8 i2c_reg, u32 *val)
-+{
-+	struct armcp_packet pkt;
-+	int rc;
-+
-+	if (hl_device_disabled_or_in_reset(hdev))
-+		return 0;
-+
-+	memset(&pkt, 0, sizeof(pkt));
-+
-+	pkt.ctl = ARMCP_PACKET_I2C_RD << ARMCP_PKT_CTL_OPCODE_SHIFT;
-+	pkt.i2c_bus = i2c_bus;
-+	pkt.i2c_addr = i2c_addr;
-+	pkt.i2c_reg = i2c_reg;
-+
-+	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
-+					HL_DEVICE_TIMEOUT_USEC, (long *) val);
-+
-+	if (rc)
-+		dev_err(hdev->dev, "Failed to read from I2C, error %d\n", rc);
-+
-+	return rc;
-+}
-+
-+static int hl_debugfs_i2c_write(struct hl_device *hdev, u8 i2c_bus, u8 i2c_addr,
-+				u8 i2c_reg, u32 val)
-+{
-+	struct armcp_packet pkt;
-+	int rc;
-+
-+	if (hl_device_disabled_or_in_reset(hdev))
-+		return 0;
-+
-+	memset(&pkt, 0, sizeof(pkt));
-+
-+	pkt.ctl = ARMCP_PACKET_I2C_WR << ARMCP_PKT_CTL_OPCODE_SHIFT;
-+	pkt.i2c_bus = i2c_bus;
-+	pkt.i2c_addr = i2c_addr;
-+	pkt.i2c_reg = i2c_reg;
-+	pkt.value = val;
-+
-+	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
-+					HL_DEVICE_TIMEOUT_USEC, NULL);
-+
-+	if (rc)
-+		dev_err(hdev->dev, "Failed to write to I2C, error %d\n", rc);
-+
-+	return rc;
-+}
-+
-+static void hl_debugfs_led_set(struct hl_device *hdev, u8 led, u8 state)
-+{
-+	struct armcp_packet pkt;
-+	int rc;
-+
-+	if (hl_device_disabled_or_in_reset(hdev))
-+		return;
-+
-+	memset(&pkt, 0, sizeof(pkt));
-+
-+	pkt.ctl = ARMCP_PACKET_LED_SET << ARMCP_PKT_CTL_OPCODE_SHIFT;
-+	pkt.led_index = led;
-+	pkt.value = state;
-+
-+	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
-+						HL_DEVICE_TIMEOUT_USEC, NULL);
-+
-+	if (rc)
-+		dev_err(hdev->dev, "Failed to set LED %d, error %d\n", led, rc);
-+}
-+
-+static int command_buffers_show(struct seq_file *s, void *data)
-+{
-+	struct hl_debugfs_entry *entry = s->private;
-+	struct hl_dbg_device_entry *dev_entry = entry->dev_entry;
-+	struct hl_cb *cb;
-+	bool first = true;
-+
-+	spin_lock(&dev_entry->cb_spinlock);
-+
-+	list_for_each_entry(cb, &dev_entry->cb_list, debugfs_list) {
-+		if (first) {
-+			first = false;
-+			seq_puts(s, "\n");
-+			seq_puts(s, " CB ID   CTX ID   CB size    CB RefCnt    mmap?   CS counter\n");
-+			seq_puts(s, "---------------------------------------------------------------\n");
-+		}
-+		seq_printf(s,
-+			"   %03d        %d    0x%08x      %d          %d          %d\n",
-+			cb->id, cb->ctx_id, cb->size,
-+			kref_read(&cb->refcount),
-+			cb->mmap, cb->cs_cnt);
-+	}
-+
-+	spin_unlock(&dev_entry->cb_spinlock);
-+
-+	if (!first)
-+		seq_puts(s, "\n");
-+
-+	return 0;
-+}
-+
-+static int command_submission_show(struct seq_file *s, void *data)
-+{
-+	struct hl_debugfs_entry *entry = s->private;
-+	struct hl_dbg_device_entry *dev_entry = entry->dev_entry;
-+	struct hl_cs *cs;
-+	bool first = true;
-+
-+	spin_lock(&dev_entry->cs_spinlock);
-+
-+	list_for_each_entry(cs, &dev_entry->cs_list, debugfs_list) {
-+		if (first) {
-+			first = false;
-+			seq_puts(s, "\n");
-+			seq_puts(s, " CS ID   CTX ASID   CS RefCnt   Submitted    Completed\n");
-+			seq_puts(s, "------------------------------------------------------\n");
-+		}
-+		seq_printf(s,
-+			"   %llu       %d          %d           %d            %d\n",
-+			cs->sequence, cs->ctx->asid,
-+			kref_read(&cs->refcount),
-+			cs->submitted, cs->completed);
-+	}
-+
-+	spin_unlock(&dev_entry->cs_spinlock);
-+
-+	if (!first)
-+		seq_puts(s, "\n");
-+
-+	return 0;
-+}
-+
-+static int command_submission_jobs_show(struct seq_file *s, void *data)
-+{
-+	struct hl_debugfs_entry *entry = s->private;
-+	struct hl_dbg_device_entry *dev_entry = entry->dev_entry;
-+	struct hl_cs_job *job;
-+	bool first = true;
-+
-+	spin_lock(&dev_entry->cs_job_spinlock);
-+
-+	list_for_each_entry(job, &dev_entry->cs_job_list, debugfs_list) {
-+		if (first) {
-+			first = false;
-+			seq_puts(s, "\n");
-+			seq_puts(s, " JOB ID   CS ID    CTX ASID   H/W Queue\n");
-+			seq_puts(s, "---------------------------------------\n");
-+		}
-+		if (job->cs)
-+			seq_printf(s,
-+				"    %02d       %llu         %d         %d\n",
-+				job->id, job->cs->sequence, job->cs->ctx->asid,
-+				job->hw_queue_id);
-+		else
-+			seq_printf(s,
-+				"    %02d       0         %d         %d\n",
-+				job->id, HL_KERNEL_ASID_ID, job->hw_queue_id);
-+	}
-+
-+	spin_unlock(&dev_entry->cs_job_spinlock);
-+
-+	if (!first)
-+		seq_puts(s, "\n");
-+
-+	return 0;
-+}
-+
-+static int userptr_show(struct seq_file *s, void *data)
-+{
-+	struct hl_debugfs_entry *entry = s->private;
-+	struct hl_dbg_device_entry *dev_entry = entry->dev_entry;
-+	struct hl_userptr *userptr;
-+	char dma_dir[4][30] = {"DMA_BIDIRECTIONAL", "DMA_TO_DEVICE",
-+				"DMA_FROM_DEVICE", "DMA_NONE"};
-+	bool first = true;
-+
-+	spin_lock(&dev_entry->userptr_spinlock);
-+
-+	list_for_each_entry(userptr, &dev_entry->userptr_list, debugfs_list) {
-+		if (first) {
-+			first = false;
-+			seq_puts(s, "\n");
-+			seq_puts(s, " user virtual address     size             dma dir\n");
-+			seq_puts(s, "----------------------------------------------------------\n");
-+		}
-+		seq_printf(s,
-+			"    0x%-14llx      %-10u    %-30s\n",
-+			userptr->addr, userptr->size, dma_dir[userptr->dir]);
-+	}
-+
-+	spin_unlock(&dev_entry->userptr_spinlock);
-+
-+	if (!first)
-+		seq_puts(s, "\n");
-+
-+	return 0;
-+}
-+
-+static int vm_show(struct seq_file *s, void *data)
-+{
-+	struct hl_debugfs_entry *entry = s->private;
-+	struct hl_dbg_device_entry *dev_entry = entry->dev_entry;
-+	struct hl_ctx *ctx;
-+	struct hl_vm *vm;
-+	struct hl_vm_hash_node *hnode;
-+	struct hl_userptr *userptr;
-+	struct hl_vm_phys_pg_pack *phys_pg_pack = NULL;
-+	enum vm_type_t *vm_type;
-+	bool once = true;
-+	int i;
-+
-+	if (!dev_entry->hdev->mmu_enable)
-+		return 0;
-+
-+	spin_lock(&dev_entry->ctx_mem_hash_spinlock);
-+
-+	list_for_each_entry(ctx, &dev_entry->ctx_mem_hash_list, debugfs_list) {
-+		once = false;
-+		seq_puts(s, "\n\n----------------------------------------------------");
-+		seq_puts(s, "\n----------------------------------------------------\n\n");
-+		seq_printf(s, "ctx asid: %u\n", ctx->asid);
-+
-+		seq_puts(s, "\nmappings:\n\n");
-+		seq_puts(s, "    virtual address        size          handle\n");
-+		seq_puts(s, "----------------------------------------------------\n");
-+		mutex_lock(&ctx->mem_hash_lock);
-+		hash_for_each(ctx->mem_hash, i, hnode, node) {
-+			vm_type = hnode->ptr;
-+
-+			if (*vm_type == VM_TYPE_USERPTR) {
-+				userptr = hnode->ptr;
-+				seq_printf(s,
-+					"    0x%-14llx      %-10u\n",
-+					hnode->vaddr, userptr->size);
-+			} else {
-+				phys_pg_pack = hnode->ptr;
-+				seq_printf(s,
-+					"    0x%-14llx      %-10u       %-4u\n",
-+					hnode->vaddr, phys_pg_pack->total_size,
-+					phys_pg_pack->handle);
-+			}
-+		}
-+		mutex_unlock(&ctx->mem_hash_lock);
-+
-+		vm = &ctx->hdev->vm;
-+		spin_lock(&vm->idr_lock);
-+
-+		if (!idr_is_empty(&vm->phys_pg_pack_handles))
-+			seq_puts(s, "\n\nallocations:\n");
-+
-+		idr_for_each_entry(&vm->phys_pg_pack_handles, phys_pg_pack, i) {
-+			if (phys_pg_pack->asid != ctx->asid)
-+				continue;
-+
-+			seq_printf(s, "\nhandle: %u\n", phys_pg_pack->handle);
-+			seq_printf(s, "page size: %u\n\n",
-+						phys_pg_pack->page_size);
-+			seq_puts(s, "   physical address\n");
-+			seq_puts(s, "---------------------\n");
-+			for (i = 0 ; i < phys_pg_pack->npages ; i++) {
-+				seq_printf(s, "    0x%-14llx\n",
-+						phys_pg_pack->pages[i]);
-+			}
-+		}
-+		spin_unlock(&vm->idr_lock);
-+
-+	}
-+
-+	spin_unlock(&dev_entry->ctx_mem_hash_spinlock);
-+
-+	if (!once)
-+		seq_puts(s, "\n");
-+
-+	return 0;
-+}
-+
-+/* these inline functions are copied from mmu.c */
-+static inline u64 get_hop0_addr(struct hl_ctx *ctx)
-+{
-+	return ctx->hdev->asic_prop.mmu_pgt_addr +
-+			(ctx->asid * ctx->hdev->asic_prop.mmu_hop_table_size);
-+}
-+
-+static inline u64 get_hop0_pte_addr(struct hl_ctx *ctx, u64 hop_addr,
-+		u64 virt_addr)
-+{
-+	return hop_addr + ctx->hdev->asic_prop.mmu_pte_size *
-+			((virt_addr & HOP0_MASK) >> HOP0_SHIFT);
-+}
-+
-+static inline u64 get_hop1_pte_addr(struct hl_ctx *ctx, u64 hop_addr,
-+		u64 virt_addr)
-+{
-+	return hop_addr + ctx->hdev->asic_prop.mmu_pte_size *
-+			((virt_addr & HOP1_MASK) >> HOP1_SHIFT);
-+}
-+
-+static inline u64 get_hop2_pte_addr(struct hl_ctx *ctx, u64 hop_addr,
-+		u64 virt_addr)
-+{
-+	return hop_addr + ctx->hdev->asic_prop.mmu_pte_size *
-+			((virt_addr & HOP2_MASK) >> HOP2_SHIFT);
-+}
-+
-+static inline u64 get_hop3_pte_addr(struct hl_ctx *ctx, u64 hop_addr,
-+		u64 virt_addr)
-+{
-+	return hop_addr + ctx->hdev->asic_prop.mmu_pte_size *
-+			((virt_addr & HOP3_MASK) >> HOP3_SHIFT);
-+}
-+
-+static inline u64 get_hop4_pte_addr(struct hl_ctx *ctx, u64 hop_addr,
-+		u64 virt_addr)
-+{
-+	return hop_addr + ctx->hdev->asic_prop.mmu_pte_size *
-+			((virt_addr & HOP4_MASK) >> HOP4_SHIFT);
-+}
-+
-+static inline u64 get_next_hop_addr(u64 curr_pte)
-+{
-+	if (curr_pte & PAGE_PRESENT_MASK)
-+		return curr_pte & PHYS_ADDR_MASK;
-+	else
-+		return ULLONG_MAX;
-+}
-+
-+static int mmu_show(struct seq_file *s, void *data)
-+{
-+	struct hl_debugfs_entry *entry = s->private;
-+	struct hl_dbg_device_entry *dev_entry = entry->dev_entry;
-+	struct hl_device *hdev = dev_entry->hdev;
-+	struct hl_ctx *ctx = hdev->user_ctx;
-+
-+	u64 hop0_addr = 0, hop0_pte_addr = 0, hop0_pte = 0,
-+		hop1_addr = 0, hop1_pte_addr = 0, hop1_pte = 0,
-+		hop2_addr = 0, hop2_pte_addr = 0, hop2_pte = 0,
-+		hop3_addr = 0, hop3_pte_addr = 0, hop3_pte = 0,
-+		hop4_addr = 0, hop4_pte_addr = 0, hop4_pte = 0,
-+		virt_addr = dev_entry->mmu_addr;
-+
-+	if (!hdev->mmu_enable)
-+		return 0;
-+
-+	if (!ctx) {
-+		dev_err(hdev->dev, "no ctx available\n");
-+		return 0;
-+	}
-+
-+	mutex_lock(&ctx->mmu_lock);
-+
-+	/* the following lookup is copied from unmap() in mmu.c */
-+
-+	hop0_addr = get_hop0_addr(ctx);
-+	hop0_pte_addr = get_hop0_pte_addr(ctx, hop0_addr, virt_addr);
-+	hop0_pte = hdev->asic_funcs->read_pte(hdev, hop0_pte_addr);
-+	hop1_addr = get_next_hop_addr(hop0_pte);
-+
-+	if (hop1_addr == ULLONG_MAX)
-+		goto not_mapped;
-+
-+	hop1_pte_addr = get_hop1_pte_addr(ctx, hop1_addr, virt_addr);
-+	hop1_pte = hdev->asic_funcs->read_pte(hdev, hop1_pte_addr);
-+	hop2_addr = get_next_hop_addr(hop1_pte);
-+
-+	if (hop2_addr == ULLONG_MAX)
-+		goto not_mapped;
-+
-+	hop2_pte_addr = get_hop2_pte_addr(ctx, hop2_addr, virt_addr);
-+	hop2_pte = hdev->asic_funcs->read_pte(hdev, hop2_pte_addr);
-+	hop3_addr = get_next_hop_addr(hop2_pte);
-+
-+	if (hop3_addr == ULLONG_MAX)
-+		goto not_mapped;
-+
-+	hop3_pte_addr = get_hop3_pte_addr(ctx, hop3_addr, virt_addr);
-+	hop3_pte = hdev->asic_funcs->read_pte(hdev, hop3_pte_addr);
-+
-+	if (!(hop3_pte & LAST_MASK)) {
-+		hop4_addr = get_next_hop_addr(hop3_pte);
-+
-+		if (hop4_addr == ULLONG_MAX)
-+			goto not_mapped;
-+
-+		hop4_pte_addr = get_hop4_pte_addr(ctx, hop4_addr, virt_addr);
-+		hop4_pte = hdev->asic_funcs->read_pte(hdev, hop4_pte_addr);
-+		if (!(hop4_pte & PAGE_PRESENT_MASK))
-+			goto not_mapped;
-+	} else {
-+		if (!(hop3_pte & PAGE_PRESENT_MASK))
-+			goto not_mapped;
-+	}
-+
-+	seq_printf(s, "asid: %u, virt_addr: 0x%llx\n",
-+			dev_entry->mmu_asid, dev_entry->mmu_addr);
-+
-+	seq_printf(s, "hop0_addr: 0x%llx\n", hop0_addr);
-+	seq_printf(s, "hop0_pte_addr: 0x%llx\n", hop0_pte_addr);
-+	seq_printf(s, "hop0_pte: 0x%llx\n", hop0_pte);
-+
-+	seq_printf(s, "hop1_addr: 0x%llx\n", hop1_addr);
-+	seq_printf(s, "hop1_pte_addr: 0x%llx\n", hop1_pte_addr);
-+	seq_printf(s, "hop1_pte: 0x%llx\n", hop1_pte);
-+
-+	seq_printf(s, "hop2_addr: 0x%llx\n", hop2_addr);
-+	seq_printf(s, "hop2_pte_addr: 0x%llx\n", hop2_pte_addr);
-+	seq_printf(s, "hop2_pte: 0x%llx\n", hop2_pte);
-+
-+	seq_printf(s, "hop3_addr: 0x%llx\n", hop3_addr);
-+	seq_printf(s, "hop3_pte_addr: 0x%llx\n", hop3_pte_addr);
-+	seq_printf(s, "hop3_pte: 0x%llx\n", hop3_pte);
-+
-+	if (!(hop3_pte & LAST_MASK)) {
-+		seq_printf(s, "hop4_addr: 0x%llx\n", hop4_addr);
-+		seq_printf(s, "hop4_pte_addr: 0x%llx\n", hop4_pte_addr);
-+		seq_printf(s, "hop4_pte: 0x%llx\n", hop4_pte);
-+	}
-+
-+	goto out;
-+
-+not_mapped:
-+	dev_err(hdev->dev, "virt addr 0x%llx is not mapped to phys addr\n",
-+			virt_addr);
-+out:
-+	mutex_unlock(&ctx->mmu_lock);
-+
-+	return 0;
-+}
-+
-+static ssize_t mmu_write(struct file *file, const char __user *buf,
-+		size_t count, loff_t *f_pos)
-+{
-+	struct seq_file *s = file->private_data;
-+	struct hl_debugfs_entry *entry = s->private;
-+	struct hl_dbg_device_entry *dev_entry = entry->dev_entry;
-+	struct hl_device *hdev = dev_entry->hdev;
-+	char kbuf[MMU_KBUF_SIZE], asid_kbuf[MMU_ASID_BUF_SIZE],
-+		addr_kbuf[MMU_ADDR_BUF_SIZE];
-+	char *c;
-+	ssize_t rc;
-+
-+	if (!hdev->mmu_enable)
-+		return count;
-+
-+	memset(kbuf, 0, sizeof(kbuf));
-+	memset(asid_kbuf, 0, sizeof(asid_kbuf));
-+	memset(addr_kbuf, 0, sizeof(addr_kbuf));
-+
-+	if (copy_from_user(kbuf, buf, count))
-+		goto err;
-+
-+	kbuf[MMU_KBUF_SIZE - 1] = 0;
-+
-+	c = strchr(kbuf, ' ');
-+	if (!c)
-+		goto err;
-+
-+	memcpy(asid_kbuf, kbuf, c - kbuf);
-+
-+	rc = kstrtouint(asid_kbuf, 10, &dev_entry->mmu_asid);
-+	if (rc)
-+		goto err;
-+
-+	c = strstr(kbuf, " 0x");
-+	if (!c)
-+		goto err;
-+
-+	c += 3;
-+	memcpy(addr_kbuf, c, (kbuf + count) - c);
-+
-+	rc = kstrtoull(addr_kbuf, 16, &dev_entry->mmu_addr);
-+	if (rc)
-+		goto err;
-+
-+	return count;
-+
-+err:
-+	dev_err(hdev->dev, "usage: echo <asid> <0xaddr> > mmu\n");
-+
-+	return -EINVAL;
-+}
-+
-+static ssize_t hl_data_read32(struct file *f, char __user *buf,
-+					size_t count, loff_t *ppos)
-+{
-+	struct hl_dbg_device_entry *entry = file_inode(f)->i_private;
-+	struct hl_device *hdev = entry->hdev;
-+	char tmp_buf[32];
-+	u32 val;
-+	ssize_t rc;
-+
-+	if (*ppos)
-+		return 0;
-+
-+	rc = hdev->asic_funcs->debugfs_read32(hdev, entry->addr, &val);
-+	if (rc) {
-+		dev_err(hdev->dev, "Failed to read from 0x%010llx\n",
-+			entry->addr);
-+		return rc;
-+	}
-+
-+	sprintf(tmp_buf, "0x%08x\n", val);
-+	rc = simple_read_from_buffer(buf, strlen(tmp_buf) + 1, ppos, tmp_buf,
-+			strlen(tmp_buf) + 1);
-+
-+	return rc;
-+}
-+
-+static ssize_t hl_data_write32(struct file *f, const char __user *buf,
-+					size_t count, loff_t *ppos)
-+{
-+	struct hl_dbg_device_entry *entry = file_inode(f)->i_private;
-+	struct hl_device *hdev = entry->hdev;
-+	u32 value;
-+	ssize_t rc;
-+
-+	rc = kstrtouint_from_user(buf, count, 16, &value);
-+	if (rc)
-+		return rc;
-+
-+	rc = hdev->asic_funcs->debugfs_write32(hdev, entry->addr, value);
-+	if (rc) {
-+		dev_err(hdev->dev, "Failed to write 0x%08x to 0x%010llx\n",
-+			value, entry->addr);
-+		return rc;
-+	}
-+
-+	return count;
-+}
-+
-+static ssize_t hl_get_power_state(struct file *f, char __user *buf,
-+		size_t count, loff_t *ppos)
-+{
-+	struct hl_dbg_device_entry *entry = file_inode(f)->i_private;
-+	struct hl_device *hdev = entry->hdev;
-+	char tmp_buf[200];
-+	ssize_t rc;
-+	int i;
-+
-+	if (*ppos)
-+		return 0;
-+
-+	if (hdev->pdev->current_state == PCI_D0)
-+		i = 1;
-+	else if (hdev->pdev->current_state == PCI_D3hot)
-+		i = 2;
-+	else
-+		i = 3;
-+
-+	sprintf(tmp_buf,
-+		"current power state: %d\n1 - D0\n2 - D3hot\n3 - Unknown\n", i);
-+	rc = simple_read_from_buffer(buf, strlen(tmp_buf) + 1, ppos, tmp_buf,
-+			strlen(tmp_buf) + 1);
-+
-+	return rc;
-+}
-+
-+static ssize_t hl_set_power_state(struct file *f, const char __user *buf,
-+					size_t count, loff_t *ppos)
-+{
-+	struct hl_dbg_device_entry *entry = file_inode(f)->i_private;
-+	struct hl_device *hdev = entry->hdev;
-+	u32 value;
-+	ssize_t rc;
-+
-+	rc = kstrtouint_from_user(buf, count, 10, &value);
-+	if (rc)
-+		return rc;
-+
-+	if (value == 1) {
-+		pci_set_power_state(hdev->pdev, PCI_D0);
-+		pci_restore_state(hdev->pdev);
-+		rc = pci_enable_device(hdev->pdev);
-+	} else if (value == 2) {
-+		pci_save_state(hdev->pdev);
-+		pci_disable_device(hdev->pdev);
-+		pci_set_power_state(hdev->pdev, PCI_D3hot);
-+	} else {
-+		dev_dbg(hdev->dev, "invalid power state value %u\n", value);
-+		return -EINVAL;
-+	}
-+
-+	return count;
-+}
-+
-+static ssize_t hl_i2c_data_read(struct file *f, char __user *buf,
-+					size_t count, loff_t *ppos)
-+{
-+	struct hl_dbg_device_entry *entry = file_inode(f)->i_private;
-+	struct hl_device *hdev = entry->hdev;
-+	char tmp_buf[32];
-+	u32 val;
-+	ssize_t rc;
-+
-+	if (*ppos)
-+		return 0;
-+
-+	rc = hl_debugfs_i2c_read(hdev, entry->i2c_bus, entry->i2c_addr,
-+			entry->i2c_reg, &val);
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"Failed to read from I2C bus %d, addr %d, reg %d\n",
-+			entry->i2c_bus, entry->i2c_addr, entry->i2c_reg);
-+		return rc;
-+	}
-+
-+	sprintf(tmp_buf, "0x%02x\n", val);
-+	rc = simple_read_from_buffer(buf, strlen(tmp_buf) + 1, ppos, tmp_buf,
-+			strlen(tmp_buf) + 1);
-+
-+	return rc;
-+}
-+
-+static ssize_t hl_i2c_data_write(struct file *f, const char __user *buf,
-+					size_t count, loff_t *ppos)
-+{
-+	struct hl_dbg_device_entry *entry = file_inode(f)->i_private;
-+	struct hl_device *hdev = entry->hdev;
-+	u32 value;
-+	ssize_t rc;
-+
-+	rc = kstrtouint_from_user(buf, count, 16, &value);
-+	if (rc)
-+		return rc;
-+
-+	rc = hl_debugfs_i2c_write(hdev, entry->i2c_bus, entry->i2c_addr,
-+			entry->i2c_reg, value);
-+	if (rc) {
-+		dev_err(hdev->dev,
-+			"Failed to write 0x%02x to I2C bus %d, addr %d, reg %d\n",
-+			value, entry->i2c_bus, entry->i2c_addr, entry->i2c_reg);
-+		return rc;
-+	}
-+
-+	return count;
-+}
-+
-+static ssize_t hl_led0_write(struct file *f, const char __user *buf,
-+					size_t count, loff_t *ppos)
-+{
-+	struct hl_dbg_device_entry *entry = file_inode(f)->i_private;
-+	struct hl_device *hdev = entry->hdev;
-+	u32 value;
-+	ssize_t rc;
-+
-+	rc = kstrtouint_from_user(buf, count, 10, &value);
-+	if (rc)
-+		return rc;
-+
-+	value = value ? 1 : 0;
-+
-+	hl_debugfs_led_set(hdev, 0, value);
-+
-+	return count;
-+}
-+
-+static ssize_t hl_led1_write(struct file *f, const char __user *buf,
-+					size_t count, loff_t *ppos)
-+{
-+	struct hl_dbg_device_entry *entry = file_inode(f)->i_private;
-+	struct hl_device *hdev = entry->hdev;
-+	u32 value;
-+	ssize_t rc;
-+
-+	rc = kstrtouint_from_user(buf, count, 10, &value);
-+	if (rc)
-+		return rc;
-+
-+	value = value ? 1 : 0;
-+
-+	hl_debugfs_led_set(hdev, 1, value);
-+
-+	return count;
-+}
-+
-+static ssize_t hl_led2_write(struct file *f, const char __user *buf,
-+					size_t count, loff_t *ppos)
-+{
-+	struct hl_dbg_device_entry *entry = file_inode(f)->i_private;
-+	struct hl_device *hdev = entry->hdev;
-+	u32 value;
-+	ssize_t rc;
-+
-+	rc = kstrtouint_from_user(buf, count, 10, &value);
-+	if (rc)
-+		return rc;
-+
-+	value = value ? 1 : 0;
-+
-+	hl_debugfs_led_set(hdev, 2, value);
-+
-+	return count;
-+}
-+
-+static ssize_t hl_device_read(struct file *f, char __user *buf,
-+					size_t count, loff_t *ppos)
-+{
-+	char tmp_buf[200];
-+	ssize_t rc;
-+
-+	if (*ppos)
-+		return 0;
-+
-+	sprintf(tmp_buf,
-+		"Valid values are: disable, enable, suspend, resume\n");
-+	rc = simple_read_from_buffer(buf, strlen(tmp_buf) + 1, ppos, tmp_buf,
-+			strlen(tmp_buf) + 1);
-+
-+	return rc;
-+}
-+
-+static ssize_t hl_device_write(struct file *f, const char __user *buf,
-+				     size_t count, loff_t *ppos)
-+{
-+	struct hl_dbg_device_entry *entry = file_inode(f)->i_private;
-+	struct hl_device *hdev = entry->hdev;
-+	char data[30];
-+
-+	/* don't allow partial writes */
-+	if (*ppos != 0)
-+		return 0;
-+
-+	simple_write_to_buffer(data, 29, ppos, buf, count);
-+
-+	if (strncmp("disable", data, strlen("disable")) == 0) {
-+		hdev->disabled = true;
-+	} else if (strncmp("enable", data, strlen("enable")) == 0) {
-+		hdev->disabled = false;
-+	} else if (strncmp("suspend", data, strlen("suspend")) == 0) {
-+		hdev->asic_funcs->suspend(hdev);
-+	} else if (strncmp("resume", data, strlen("resume")) == 0) {
-+		hdev->asic_funcs->resume(hdev);
-+	} else {
-+		dev_err(hdev->dev,
-+			"Valid values are: disable, enable, suspend, resume\n");
-+		count = -EINVAL;
-+	}
-+
-+	return count;
-+}
-+
-+static const struct file_operations hl_data32b_fops = {
-+	.owner = THIS_MODULE,
-+	.read = hl_data_read32,
-+	.write = hl_data_write32
-+};
-+
-+static const struct file_operations hl_i2c_data_fops = {
-+	.owner = THIS_MODULE,
-+	.read = hl_i2c_data_read,
-+	.write = hl_i2c_data_write
-+};
-+
-+static const struct file_operations hl_power_fops = {
-+	.owner = THIS_MODULE,
-+	.read = hl_get_power_state,
-+	.write = hl_set_power_state
-+};
-+
-+static const struct file_operations hl_led0_fops = {
-+	.owner = THIS_MODULE,
-+	.write = hl_led0_write
-+};
-+
-+static const struct file_operations hl_led1_fops = {
-+	.owner = THIS_MODULE,
-+	.write = hl_led1_write
-+};
-+
-+static const struct file_operations hl_led2_fops = {
-+	.owner = THIS_MODULE,
-+	.write = hl_led2_write
-+};
-+
-+static const struct file_operations hl_device_fops = {
-+	.owner = THIS_MODULE,
-+	.read = hl_device_read,
-+	.write = hl_device_write
-+};
-+
-+static const struct hl_info_list hl_debugfs_list[] = {
-+	{"command_buffers", command_buffers_show, NULL},
-+	{"command_submission", command_submission_show, NULL},
-+	{"command_submission_jobs", command_submission_jobs_show, NULL},
-+	{"userptr", userptr_show, NULL},
-+	{"vm", vm_show, NULL},
-+	{"mmu", mmu_show, mmu_write},
-+};
-+
-+static int hl_debugfs_open(struct inode *inode, struct file *file)
-+{
-+	struct hl_debugfs_entry *node = inode->i_private;
-+
-+	return single_open(file, node->info_ent->show, node);
-+}
-+
-+static ssize_t hl_debugfs_write(struct file *file, const char __user *buf,
-+		size_t count, loff_t *f_pos)
-+{
-+	struct hl_debugfs_entry *node = file->f_inode->i_private;
-+
-+	if (node->info_ent->write)
-+		return node->info_ent->write(file, buf, count, f_pos);
-+	else
-+		return -EINVAL;
-+
-+}
-+
-+static const struct file_operations hl_debugfs_fops = {
-+	.owner = THIS_MODULE,
-+	.open = hl_debugfs_open,
-+	.read = seq_read,
-+	.write = hl_debugfs_write,
-+	.llseek = seq_lseek,
-+	.release = single_release,
-+};
-+
-+void hl_debugfs_add_device(struct hl_device *hdev)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &hdev->hl_debugfs;
-+	int count = ARRAY_SIZE(hl_debugfs_list);
-+	struct hl_debugfs_entry *entry;
-+	struct dentry *ent;
-+	int i;
-+
-+	dev_entry->hdev = hdev;
-+	dev_entry->entry_arr = kmalloc_array(count,
-+					sizeof(struct hl_debugfs_entry),
-+					GFP_KERNEL);
-+	if (!dev_entry->entry_arr)
-+		return;
-+
-+	INIT_LIST_HEAD(&dev_entry->file_list);
-+	INIT_LIST_HEAD(&dev_entry->cb_list);
-+	INIT_LIST_HEAD(&dev_entry->cs_list);
-+	INIT_LIST_HEAD(&dev_entry->cs_job_list);
-+	INIT_LIST_HEAD(&dev_entry->userptr_list);
-+	INIT_LIST_HEAD(&dev_entry->ctx_mem_hash_list);
-+	mutex_init(&dev_entry->file_mutex);
-+	spin_lock_init(&dev_entry->cb_spinlock);
-+	spin_lock_init(&dev_entry->cs_spinlock);
-+	spin_lock_init(&dev_entry->cs_job_spinlock);
-+	spin_lock_init(&dev_entry->userptr_spinlock);
-+	spin_lock_init(&dev_entry->ctx_mem_hash_spinlock);
-+
-+	dev_entry->root = debugfs_create_dir(dev_name(hdev->dev),
-+						hl_debug_root);
-+
-+	debugfs_create_x64("addr",
-+				0644,
-+				dev_entry->root,
-+				&dev_entry->addr);
-+
-+	debugfs_create_file("data32",
-+				0644,
-+				dev_entry->root,
-+				dev_entry,
-+				&hl_data32b_fops);
-+
-+	debugfs_create_file("set_power_state",
-+				0200,
-+				dev_entry->root,
-+				dev_entry,
-+				&hl_power_fops);
-+
-+	debugfs_create_u8("i2c_bus",
-+				0644,
-+				dev_entry->root,
-+				&dev_entry->i2c_bus);
-+
-+	debugfs_create_u8("i2c_addr",
-+				0644,
-+				dev_entry->root,
-+				&dev_entry->i2c_addr);
-+
-+	debugfs_create_u8("i2c_reg",
-+				0644,
-+				dev_entry->root,
-+				&dev_entry->i2c_reg);
-+
-+	debugfs_create_file("i2c_data",
-+				0644,
-+				dev_entry->root,
-+				dev_entry,
-+				&hl_i2c_data_fops);
-+
-+	debugfs_create_file("led0",
-+				0200,
-+				dev_entry->root,
-+				dev_entry,
-+				&hl_led0_fops);
-+
-+	debugfs_create_file("led1",
-+				0200,
-+				dev_entry->root,
-+				dev_entry,
-+				&hl_led1_fops);
-+
-+	debugfs_create_file("led2",
-+				0200,
-+				dev_entry->root,
-+				dev_entry,
-+				&hl_led2_fops);
-+
-+	debugfs_create_file("device",
-+				0200,
-+				dev_entry->root,
-+				dev_entry,
-+				&hl_device_fops);
-+
-+	for (i = 0, entry = dev_entry->entry_arr ; i < count ; i++, entry++) {
-+
-+		ent = debugfs_create_file(hl_debugfs_list[i].name,
-+					0444,
-+					dev_entry->root,
-+					entry,
-+					&hl_debugfs_fops);
-+		entry->dent = ent;
-+		entry->info_ent = &hl_debugfs_list[i];
-+		entry->dev_entry = dev_entry;
-+	}
-+}
-+
-+void hl_debugfs_remove_device(struct hl_device *hdev)
-+{
-+	struct hl_dbg_device_entry *entry = &hdev->hl_debugfs;
-+
-+	debugfs_remove_recursive(entry->root);
-+
-+	mutex_destroy(&entry->file_mutex);
-+	kfree(entry->entry_arr);
-+}
-+
-+void hl_debugfs_add_file(struct hl_fpriv *hpriv)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &hpriv->hdev->hl_debugfs;
-+
-+	mutex_lock(&dev_entry->file_mutex);
-+	list_add(&hpriv->debugfs_list, &dev_entry->file_list);
-+	mutex_unlock(&dev_entry->file_mutex);
-+}
-+
-+void hl_debugfs_remove_file(struct hl_fpriv *hpriv)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &hpriv->hdev->hl_debugfs;
-+
-+	mutex_lock(&dev_entry->file_mutex);
-+	list_del(&hpriv->debugfs_list);
-+	mutex_unlock(&dev_entry->file_mutex);
-+}
-+
-+void hl_debugfs_add_cb(struct hl_cb *cb)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &cb->hdev->hl_debugfs;
-+
-+	spin_lock(&dev_entry->cb_spinlock);
-+	list_add(&cb->debugfs_list, &dev_entry->cb_list);
-+	spin_unlock(&dev_entry->cb_spinlock);
-+}
-+
-+void hl_debugfs_remove_cb(struct hl_cb *cb)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &cb->hdev->hl_debugfs;
-+
-+	spin_lock(&dev_entry->cb_spinlock);
-+	list_del(&cb->debugfs_list);
-+	spin_unlock(&dev_entry->cb_spinlock);
-+}
-+
-+void hl_debugfs_add_cs(struct hl_cs *cs)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &cs->ctx->hdev->hl_debugfs;
-+
-+	spin_lock(&dev_entry->cs_spinlock);
-+	list_add(&cs->debugfs_list, &dev_entry->cs_list);
-+	spin_unlock(&dev_entry->cs_spinlock);
-+}
-+
-+void hl_debugfs_remove_cs(struct hl_cs *cs)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &cs->ctx->hdev->hl_debugfs;
-+
-+	spin_lock(&dev_entry->cs_spinlock);
-+	list_del(&cs->debugfs_list);
-+	spin_unlock(&dev_entry->cs_spinlock);
-+}
-+
-+void hl_debugfs_add_job(struct hl_device *hdev, struct hl_cs_job *job)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &hdev->hl_debugfs;
-+
-+	spin_lock(&dev_entry->cs_job_spinlock);
-+	list_add(&job->debugfs_list, &dev_entry->cs_job_list);
-+	spin_unlock(&dev_entry->cs_job_spinlock);
-+}
-+
-+void hl_debugfs_remove_job(struct hl_device *hdev, struct hl_cs_job *job)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &hdev->hl_debugfs;
-+
-+	spin_lock(&dev_entry->cs_job_spinlock);
-+	list_del(&job->debugfs_list);
-+	spin_unlock(&dev_entry->cs_job_spinlock);
-+}
-+
-+void hl_debugfs_add_userptr(struct hl_device *hdev, struct hl_userptr *userptr)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &hdev->hl_debugfs;
-+
-+	spin_lock(&dev_entry->userptr_spinlock);
-+	list_add(&userptr->debugfs_list, &dev_entry->userptr_list);
-+	spin_unlock(&dev_entry->userptr_spinlock);
-+}
-+
-+void hl_debugfs_remove_userptr(struct hl_device *hdev,
-+				struct hl_userptr *userptr)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &hdev->hl_debugfs;
-+
-+	spin_lock(&dev_entry->userptr_spinlock);
-+	list_del(&userptr->debugfs_list);
-+	spin_unlock(&dev_entry->userptr_spinlock);
-+}
-+
-+void hl_debugfs_add_ctx_mem_hash(struct hl_device *hdev, struct hl_ctx *ctx)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &hdev->hl_debugfs;
-+
-+	spin_lock(&dev_entry->ctx_mem_hash_spinlock);
-+	list_add(&ctx->debugfs_list, &dev_entry->ctx_mem_hash_list);
-+	spin_unlock(&dev_entry->ctx_mem_hash_spinlock);
-+}
-+
-+void hl_debugfs_remove_ctx_mem_hash(struct hl_device *hdev, struct hl_ctx *ctx)
-+{
-+	struct hl_dbg_device_entry *dev_entry = &hdev->hl_debugfs;
-+
-+	spin_lock(&dev_entry->ctx_mem_hash_spinlock);
-+	list_del(&ctx->debugfs_list);
-+	spin_unlock(&dev_entry->ctx_mem_hash_spinlock);
-+}
-+
-+void __init hl_debugfs_init(void)
-+{
-+	hl_debug_root = debugfs_create_dir("habanalabs", NULL);
-+}
-+
-+void hl_debugfs_fini(void)
-+{
-+	debugfs_remove_recursive(hl_debug_root);
-+}
++	if ((hdev->disabled) || ((atomic_read(&hdev->in_reset)) &&
++					(ctx_id != HL_KERNEL_ASID_ID))) {
+ 		dev_warn_ratelimited(hdev->dev,
+-			"Device is disabled. Can't create new CBs\n");
++			"Device is disabled or in reset. Can't create new CBs\n");
+ 		rc = -EBUSY;
+ 		goto out_err;
+ 	}
 diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
-index f302f4bfd926..cf3dda5b8ae4 100644
+index 91b32db5832a..c4b00f7b6010 100644
 --- a/drivers/misc/habanalabs/device.c
 +++ b/drivers/misc/habanalabs/device.c
-@@ -30,6 +30,8 @@ static void hpriv_release(struct kref *ref)
+@@ -11,6 +11,14 @@
+ #include <linux/kthread.h>
+ #include <linux/sched/signal.h>
  
- 	put_pid(hpriv->taskpid);
- 
-+	hl_debugfs_remove_file(hpriv);
++bool hl_device_disabled_or_in_reset(struct hl_device *hdev)
++{
++	if ((hdev->disabled) || (atomic_read(&hdev->in_reset)))
++		return true;
++	else
++		return false;
++}
 +
- 	mutex_destroy(&hpriv->restore_phase_mutex);
+ static void hpriv_release(struct kref *ref)
+ {
+ 	struct hl_fpriv *hpriv;
+@@ -193,6 +201,7 @@ static int device_early_init(struct hl_device *hdev)
  
- 	kfree(hpriv);
-@@ -823,6 +825,8 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
+ 	mutex_init(&hdev->fd_open_cnt_lock);
+ 	mutex_init(&hdev->send_cpu_message_lock);
++	atomic_set(&hdev->in_reset, 0);
+ 	atomic_set(&hdev->fd_open_cnt, 0);
+ 
+ 	return 0;
+@@ -243,6 +252,27 @@ static void set_freq_to_low_job(struct work_struct *work)
+ 			usecs_to_jiffies(HL_PLL_LOW_JOB_FREQ_USEC));
+ }
+ 
++static void hl_device_heartbeat(struct work_struct *work)
++{
++	struct hl_device *hdev = container_of(work, struct hl_device,
++						work_heartbeat.work);
++
++	if (hl_device_disabled_or_in_reset(hdev))
++		goto reschedule;
++
++	if (!hdev->asic_funcs->send_heartbeat(hdev))
++		goto reschedule;
++
++	dev_err(hdev->dev, "Device heartbeat failed!\n");
++	hl_device_reset(hdev, true, false);
++
++	return;
++
++reschedule:
++	schedule_delayed_work(&hdev->work_heartbeat,
++			usecs_to_jiffies(HL_HEARTBEAT_PER_USEC));
++}
++
+ /*
+  * device_late_init - do late stuff initialization for the habanalabs device
+  *
+@@ -278,6 +308,12 @@ static int device_late_init(struct hl_device *hdev)
+ 	schedule_delayed_work(&hdev->work_freq,
+ 			usecs_to_jiffies(HL_PLL_LOW_JOB_FREQ_USEC));
+ 
++	if (hdev->heartbeat) {
++		INIT_DELAYED_WORK(&hdev->work_heartbeat, hl_device_heartbeat);
++		schedule_delayed_work(&hdev->work_heartbeat,
++				usecs_to_jiffies(HL_HEARTBEAT_PER_USEC));
++	}
++
+ 	hdev->late_init_done = true;
+ 
+ 	return 0;
+@@ -295,6 +331,8 @@ static void device_late_fini(struct hl_device *hdev)
+ 		return;
+ 
+ 	cancel_delayed_work_sync(&hdev->work_freq);
++	if (hdev->heartbeat)
++		cancel_delayed_work_sync(&hdev->work_heartbeat);
+ 
+ 	if (hdev->asic_funcs->late_fini)
+ 		hdev->asic_funcs->late_fini(hdev);
+@@ -402,6 +440,260 @@ int hl_device_resume(struct hl_device *hdev)
+ 	return 0;
+ }
+ 
++static void hl_device_hard_reset_pending(struct work_struct *work)
++{
++	struct hl_device_reset_work *device_reset_work =
++		container_of(work, struct hl_device_reset_work, reset_work);
++	struct hl_device *hdev = device_reset_work->hdev;
++	u16 pending_cnt = HL_PENDING_RESET_PER_SEC;
++	struct task_struct *task = NULL;
++
++	/* Flush all processes that are inside hl_open */
++	mutex_lock(&hdev->fd_open_cnt_lock);
++
++	while ((atomic_read(&hdev->fd_open_cnt)) && (pending_cnt)) {
++
++		pending_cnt--;
++
++		dev_info(hdev->dev,
++			"Can't HARD reset, waiting for user to close FD\n");
++		ssleep(1);
++	}
++
++	if (atomic_read(&hdev->fd_open_cnt)) {
++		task = get_pid_task(hdev->user_ctx->hpriv->taskpid,
++					PIDTYPE_PID);
++		if (task) {
++			dev_info(hdev->dev, "Killing user processes\n");
++			send_sig(SIGKILL, task, 1);
++			msleep(100);
++
++			put_task_struct(task);
++		}
++	}
++
++	mutex_unlock(&hdev->fd_open_cnt_lock);
++
++	hl_device_reset(hdev, true, true);
++
++	kfree(device_reset_work);
++}
++
++/*
++ * hl_device_reset - reset the device
++ *
++ * @hdev: pointer to habanalabs device structure
++ * @hard_reset: should we do hard reset to all engines or just reset the
++ *              compute/dma engines
++ *
++ * Block future CS and wait for pending CS to be enqueued
++ * Call ASIC H/W fini
++ * Flush all completions
++ * Re-initialize all internal data structures
++ * Call ASIC H/W init, late_init
++ * Test queues
++ * Enable device
++ *
++ * Returns 0 for success or an error on failure.
++ */
++int hl_device_reset(struct hl_device *hdev, bool hard_reset,
++			bool from_hard_reset_thread)
++{
++	int i, rc;
++
++	if (!hdev->init_done) {
++		dev_err(hdev->dev,
++			"Can't reset before initialization is done\n");
++		return 0;
++	}
++
++	/*
++	 * Prevent concurrency in this function - only one reset should be
++	 * done at any given time. Only need to perform this if we didn't
++	 * get from the dedicated hard reset thread
++	 */
++	if (!from_hard_reset_thread) {
++		/* Block future CS/VM/JOB completion operations */
++		rc = atomic_cmpxchg(&hdev->in_reset, 0, 1);
++		if (rc)
++			return 0;
++
++		/* This also blocks future CS/VM/JOB completion operations */
++		hdev->disabled = true;
++
++		/*
++		 * Flush anyone that is inside the critical section of enqueue
++		 * jobs to the H/W
++		 */
++		hdev->asic_funcs->hw_queues_lock(hdev);
++		hdev->asic_funcs->hw_queues_unlock(hdev);
++
++		dev_err(hdev->dev, "Going to RESET device!\n");
++	}
++
++again:
++	if ((hard_reset) && (!from_hard_reset_thread)) {
++		struct hl_device_reset_work *device_reset_work;
++
++		if (!hdev->pdev) {
++			dev_err(hdev->dev,
++				"Reset action is NOT supported in simulator\n");
++			rc = -EINVAL;
++			goto out_err;
++		}
++
++		hdev->hard_reset_pending = true;
++
++		device_reset_work = kzalloc(sizeof(*device_reset_work),
++						GFP_ATOMIC);
++		if (!device_reset_work) {
++			rc = -ENOMEM;
++			goto out_err;
++		}
++
++		/*
++		 * Because the reset function can't run from interrupt or
++		 * from heartbeat work, we need to call the reset function
++		 * from a dedicated work
++		 */
++		INIT_WORK(&device_reset_work->reset_work,
++				hl_device_hard_reset_pending);
++		device_reset_work->hdev = hdev;
++		schedule_work(&device_reset_work->reset_work);
++
++		return 0;
++	}
++
++	if (hard_reset) {
++		device_late_fini(hdev);
++
++		/*
++		 * Now that the heartbeat thread is closed, flush processes
++		 * which are sending messages to CPU
++		 */
++		mutex_lock(&hdev->send_cpu_message_lock);
++		mutex_unlock(&hdev->send_cpu_message_lock);
++	}
++
++	/*
++	 * Halt the engines and disable interrupts so we won't get any more
++	 * completions from H/W and we won't have any accesses from the
++	 * H/W to the host machine
++	 */
++	hdev->asic_funcs->halt_engines(hdev, hard_reset);
++
++	if (hard_reset) {
++		/* Release kernel context */
++		if (hl_ctx_put(hdev->kernel_ctx) != 1) {
++			dev_err(hdev->dev,
++				"kernel ctx is alive during hard reset\n");
++			rc = -EBUSY;
++			goto out_err;
++		}
++
++		hdev->kernel_ctx = NULL;
++	}
++
++	/* Reset the H/W. It will be in idle state after this returns */
++	hdev->asic_funcs->hw_fini(hdev, hard_reset);
++
++	if (hard_reset)
++		hl_eq_reset(hdev, &hdev->event_queue);
++
++	/* Re-initialize PI,CI to 0 in all queues (hw queue, cq) */
++	hl_hw_queue_reset(hdev, hard_reset);
++	for (i = 0 ; i < hdev->asic_prop.completion_queues_count ; i++)
++		hl_cq_reset(hdev, &hdev->completion_queue[i]);
++
++	/* Finished tear-down, starting to re-initialize */
++
++	if (hard_reset) {
++		/* Allocate the kernel context */
++		hdev->kernel_ctx = kzalloc(sizeof(*hdev->kernel_ctx),
++						GFP_KERNEL);
++		if (!hdev->kernel_ctx) {
++			rc = -ENOMEM;
++			goto out_err;
++		}
++
++		hdev->user_ctx = NULL;
++
++		rc = hl_ctx_init(hdev, hdev->kernel_ctx, true);
++		if (rc) {
++			dev_err(hdev->dev,
++				"failed to init kernel ctx in hard reset\n");
++			kfree(hdev->kernel_ctx);
++			hdev->kernel_ctx = NULL;
++			goto out_err;
++		}
++	}
++
++	rc = hdev->asic_funcs->hw_init(hdev);
++	if (rc) {
++		dev_err(hdev->dev,
++			"failed to initialize the H/W after reset\n");
++		goto out_err;
++	}
++
++	hdev->disabled = false;
++
++	/* Check that the communication with the device is working */
++	rc = hdev->asic_funcs->test_queues(hdev);
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to detect if device is alive after reset\n");
++		goto out_err;
++	}
++
++	if (hard_reset) {
++		rc = device_late_init(hdev);
++		if (rc) {
++			dev_err(hdev->dev,
++				"Failed late init after hard reset\n");
++			goto out_err;
++		}
++
++		hl_set_max_power(hdev, hdev->max_power);
++
++		hdev->hard_reset_pending = false;
++	} else {
++		rc = hdev->asic_funcs->soft_reset_late_init(hdev);
++		if (rc) {
++			dev_err(hdev->dev,
++				"Failed late init after soft reset\n");
++			goto out_err;
++		}
++	}
++
++	atomic_set(&hdev->in_reset, 0);
++
++	if (hard_reset)
++		hdev->hard_reset_cnt++;
++	else
++		hdev->soft_reset_cnt++;
++
++	return 0;
++
++out_err:
++	hdev->disabled = true;
++
++	if (hard_reset) {
++		dev_err(hdev->dev,
++			"Failed to reset! Device is NOT usable\n");
++		hdev->hard_reset_cnt++;
++	} else {
++		dev_err(hdev->dev,
++			"Failed to do soft-reset, trying hard reset\n");
++		hdev->soft_reset_cnt++;
++		hard_reset = true;
++		goto again;
++	}
++
++	atomic_set(&hdev->in_reset, 0);
++
++	return rc;
++}
++
+ /*
+  * hl_device_init - main initialization function for habanalabs device
+  *
+@@ -509,6 +801,12 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
  		goto free_cb_pool;
  	}
  
-+	hl_debugfs_add_device(hdev);
++	if (hdev->asic_funcs->get_hw_state(hdev) == HL_DEVICE_HW_STATE_DIRTY) {
++		dev_info(hdev->dev,
++			"H/W state is dirty, must reset before initializing\n");
++		hdev->asic_funcs->hw_fini(hdev, true);
++	}
 +
- 	if (hdev->asic_funcs->get_hw_state(hdev) == HL_DEVICE_HW_STATE_DIRTY) {
- 		dev_info(hdev->dev,
- 			"H/W state is dirty, must reset before initializing\n");
-@@ -956,6 +960,8 @@ void hl_device_fini(struct hl_device *hdev)
+ 	rc = hdev->asic_funcs->hw_init(hdev);
+ 	if (rc) {
+ 		dev_err(hdev->dev, "failed to initialize the H/W\n");
+@@ -549,6 +847,8 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
+ 	dev_notice(hdev->dev,
+ 		"Successfully added device to habanalabs driver\n");
  
- 	device_late_fini(hdev);
- 
-+	hl_debugfs_remove_device(hdev);
++	hdev->init_done = true;
 +
- 	hl_sysfs_fini(hdev);
+ 	return 0;
  
- 	/*
+ free_cb_pool:
+@@ -596,9 +896,30 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
+  */
+ void hl_device_fini(struct hl_device *hdev)
+ {
+-	int i;
++	int i, rc;
++	ktime_t timeout;
++
+ 	dev_info(hdev->dev, "Removing device\n");
+ 
++	/*
++	 * This function is competing with the reset function, so try to
++	 * take the reset atomic and if we are already in middle of reset,
++	 * wait until reset function is finished. Reset function is designed
++	 * to always finish (could take up to a few seconds in worst case).
++	 */
++
++	timeout = ktime_add_us(ktime_get(),
++				HL_PENDING_RESET_PER_SEC * 1000 * 1000 * 4);
++	rc = atomic_cmpxchg(&hdev->in_reset, 0, 1);
++	while (rc) {
++		usleep_range(50, 200);
++		rc = atomic_cmpxchg(&hdev->in_reset, 0, 1);
++		if (ktime_compare(ktime_get(), timeout) > 0) {
++			WARN(1, "Failed to remove device because reset function did not finish\n");
++			return;
++		}
++	};
++
+ 	/* Mark device as disabled */
+ 	hdev->disabled = true;
+ 
 diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
-index db376f6cbd4e..55f15a0cc236 100644
+index 9639bb325c77..be3ad39cbcf8 100644
 --- a/drivers/misc/habanalabs/goya/goya.c
 +++ b/drivers/misc/habanalabs/goya/goya.c
-@@ -4379,6 +4379,8 @@ int goya_context_switch(struct hl_device *hdev, u32 asid)
- 	job->user_cb_size = cb_size;
- 	job->hw_queue_id = GOYA_QUEUE_ID_DMA_0;
+@@ -129,6 +129,130 @@ static const char *goya_axi_name[GOYA_MAX_INITIATORS] = {
  
-+	hl_debugfs_add_job(hdev, job);
+ #define GOYA_ASYC_EVENT_GROUP_NON_FATAL_SIZE 121
+ 
++static u32 goya_non_fatal_events[GOYA_ASYC_EVENT_GROUP_NON_FATAL_SIZE] = {
++	GOYA_ASYNC_EVENT_ID_PCIE_IF,
++	GOYA_ASYNC_EVENT_ID_TPC0_ECC,
++	GOYA_ASYNC_EVENT_ID_TPC1_ECC,
++	GOYA_ASYNC_EVENT_ID_TPC2_ECC,
++	GOYA_ASYNC_EVENT_ID_TPC3_ECC,
++	GOYA_ASYNC_EVENT_ID_TPC4_ECC,
++	GOYA_ASYNC_EVENT_ID_TPC5_ECC,
++	GOYA_ASYNC_EVENT_ID_TPC6_ECC,
++	GOYA_ASYNC_EVENT_ID_TPC7_ECC,
++	GOYA_ASYNC_EVENT_ID_MME_ECC,
++	GOYA_ASYNC_EVENT_ID_MME_ECC_EXT,
++	GOYA_ASYNC_EVENT_ID_MMU_ECC,
++	GOYA_ASYNC_EVENT_ID_DMA_MACRO,
++	GOYA_ASYNC_EVENT_ID_DMA_ECC,
++	GOYA_ASYNC_EVENT_ID_CPU_IF_ECC,
++	GOYA_ASYNC_EVENT_ID_PSOC_MEM,
++	GOYA_ASYNC_EVENT_ID_PSOC_CORESIGHT,
++	GOYA_ASYNC_EVENT_ID_SRAM0,
++	GOYA_ASYNC_EVENT_ID_SRAM1,
++	GOYA_ASYNC_EVENT_ID_SRAM2,
++	GOYA_ASYNC_EVENT_ID_SRAM3,
++	GOYA_ASYNC_EVENT_ID_SRAM4,
++	GOYA_ASYNC_EVENT_ID_SRAM5,
++	GOYA_ASYNC_EVENT_ID_SRAM6,
++	GOYA_ASYNC_EVENT_ID_SRAM7,
++	GOYA_ASYNC_EVENT_ID_SRAM8,
++	GOYA_ASYNC_EVENT_ID_SRAM9,
++	GOYA_ASYNC_EVENT_ID_SRAM10,
++	GOYA_ASYNC_EVENT_ID_SRAM11,
++	GOYA_ASYNC_EVENT_ID_SRAM12,
++	GOYA_ASYNC_EVENT_ID_SRAM13,
++	GOYA_ASYNC_EVENT_ID_SRAM14,
++	GOYA_ASYNC_EVENT_ID_SRAM15,
++	GOYA_ASYNC_EVENT_ID_SRAM16,
++	GOYA_ASYNC_EVENT_ID_SRAM17,
++	GOYA_ASYNC_EVENT_ID_SRAM18,
++	GOYA_ASYNC_EVENT_ID_SRAM19,
++	GOYA_ASYNC_EVENT_ID_SRAM20,
++	GOYA_ASYNC_EVENT_ID_SRAM21,
++	GOYA_ASYNC_EVENT_ID_SRAM22,
++	GOYA_ASYNC_EVENT_ID_SRAM23,
++	GOYA_ASYNC_EVENT_ID_SRAM24,
++	GOYA_ASYNC_EVENT_ID_SRAM25,
++	GOYA_ASYNC_EVENT_ID_SRAM26,
++	GOYA_ASYNC_EVENT_ID_SRAM27,
++	GOYA_ASYNC_EVENT_ID_SRAM28,
++	GOYA_ASYNC_EVENT_ID_SRAM29,
++	GOYA_ASYNC_EVENT_ID_GIC500,
++	GOYA_ASYNC_EVENT_ID_PLL0,
++	GOYA_ASYNC_EVENT_ID_PLL1,
++	GOYA_ASYNC_EVENT_ID_PLL3,
++	GOYA_ASYNC_EVENT_ID_PLL4,
++	GOYA_ASYNC_EVENT_ID_PLL5,
++	GOYA_ASYNC_EVENT_ID_PLL6,
++	GOYA_ASYNC_EVENT_ID_AXI_ECC,
++	GOYA_ASYNC_EVENT_ID_L2_RAM_ECC,
++	GOYA_ASYNC_EVENT_ID_PSOC_GPIO_05_SW_RESET,
++	GOYA_ASYNC_EVENT_ID_PSOC_GPIO_10_VRHOT_ICRIT,
++	GOYA_ASYNC_EVENT_ID_PCIE_DEC,
++	GOYA_ASYNC_EVENT_ID_TPC0_DEC,
++	GOYA_ASYNC_EVENT_ID_TPC1_DEC,
++	GOYA_ASYNC_EVENT_ID_TPC2_DEC,
++	GOYA_ASYNC_EVENT_ID_TPC3_DEC,
++	GOYA_ASYNC_EVENT_ID_TPC4_DEC,
++	GOYA_ASYNC_EVENT_ID_TPC5_DEC,
++	GOYA_ASYNC_EVENT_ID_TPC6_DEC,
++	GOYA_ASYNC_EVENT_ID_TPC7_DEC,
++	GOYA_ASYNC_EVENT_ID_MME_WACS,
++	GOYA_ASYNC_EVENT_ID_MME_WACSD,
++	GOYA_ASYNC_EVENT_ID_CPU_AXI_SPLITTER,
++	GOYA_ASYNC_EVENT_ID_PSOC_AXI_DEC,
++	GOYA_ASYNC_EVENT_ID_PSOC,
++	GOYA_ASYNC_EVENT_ID_TPC0_KRN_ERR,
++	GOYA_ASYNC_EVENT_ID_TPC1_KRN_ERR,
++	GOYA_ASYNC_EVENT_ID_TPC2_KRN_ERR,
++	GOYA_ASYNC_EVENT_ID_TPC3_KRN_ERR,
++	GOYA_ASYNC_EVENT_ID_TPC4_KRN_ERR,
++	GOYA_ASYNC_EVENT_ID_TPC5_KRN_ERR,
++	GOYA_ASYNC_EVENT_ID_TPC6_KRN_ERR,
++	GOYA_ASYNC_EVENT_ID_TPC7_KRN_ERR,
++	GOYA_ASYNC_EVENT_ID_TPC0_CMDQ,
++	GOYA_ASYNC_EVENT_ID_TPC1_CMDQ,
++	GOYA_ASYNC_EVENT_ID_TPC2_CMDQ,
++	GOYA_ASYNC_EVENT_ID_TPC3_CMDQ,
++	GOYA_ASYNC_EVENT_ID_TPC4_CMDQ,
++	GOYA_ASYNC_EVENT_ID_TPC5_CMDQ,
++	GOYA_ASYNC_EVENT_ID_TPC6_CMDQ,
++	GOYA_ASYNC_EVENT_ID_TPC7_CMDQ,
++	GOYA_ASYNC_EVENT_ID_TPC0_QM,
++	GOYA_ASYNC_EVENT_ID_TPC1_QM,
++	GOYA_ASYNC_EVENT_ID_TPC2_QM,
++	GOYA_ASYNC_EVENT_ID_TPC3_QM,
++	GOYA_ASYNC_EVENT_ID_TPC4_QM,
++	GOYA_ASYNC_EVENT_ID_TPC5_QM,
++	GOYA_ASYNC_EVENT_ID_TPC6_QM,
++	GOYA_ASYNC_EVENT_ID_TPC7_QM,
++	GOYA_ASYNC_EVENT_ID_MME_QM,
++	GOYA_ASYNC_EVENT_ID_MME_CMDQ,
++	GOYA_ASYNC_EVENT_ID_DMA0_QM,
++	GOYA_ASYNC_EVENT_ID_DMA1_QM,
++	GOYA_ASYNC_EVENT_ID_DMA2_QM,
++	GOYA_ASYNC_EVENT_ID_DMA3_QM,
++	GOYA_ASYNC_EVENT_ID_DMA4_QM,
++	GOYA_ASYNC_EVENT_ID_DMA0_CH,
++	GOYA_ASYNC_EVENT_ID_DMA1_CH,
++	GOYA_ASYNC_EVENT_ID_DMA2_CH,
++	GOYA_ASYNC_EVENT_ID_DMA3_CH,
++	GOYA_ASYNC_EVENT_ID_DMA4_CH,
++	GOYA_ASYNC_EVENT_ID_TPC0_BMON_SPMU,
++	GOYA_ASYNC_EVENT_ID_TPC1_BMON_SPMU,
++	GOYA_ASYNC_EVENT_ID_TPC2_BMON_SPMU,
++	GOYA_ASYNC_EVENT_ID_TPC3_BMON_SPMU,
++	GOYA_ASYNC_EVENT_ID_TPC4_BMON_SPMU,
++	GOYA_ASYNC_EVENT_ID_TPC5_BMON_SPMU,
++	GOYA_ASYNC_EVENT_ID_TPC6_BMON_SPMU,
++	GOYA_ASYNC_EVENT_ID_TPC7_BMON_SPMU,
++	GOYA_ASYNC_EVENT_ID_DMA_BM_CH0,
++	GOYA_ASYNC_EVENT_ID_DMA_BM_CH1,
++	GOYA_ASYNC_EVENT_ID_DMA_BM_CH2,
++	GOYA_ASYNC_EVENT_ID_DMA_BM_CH3,
++	GOYA_ASYNC_EVENT_ID_DMA_BM_CH4
++};
 +
- 	parser.ctx_id = HL_KERNEL_ASID_ID;
- 	parser.cs_sequence = 0;
- 	parser.job_id = job->id;
-@@ -4411,6 +4413,7 @@ int goya_context_switch(struct hl_device *hdev, u32 asid)
+ static int goya_armcp_info_get(struct hl_device *hdev);
  
- free_job:
- 	hl_userptr_delete_list(hdev, &job->userptr_list);
-+	hl_debugfs_remove_job(hdev, job);
- 	kfree(job);
- 	cb->cs_cnt--;
+ static void goya_get_fixed_properties(struct hl_device *hdev)
+@@ -2456,6 +2580,14 @@ static int goya_hw_init(struct hl_device *hdev)
+ 	/* Perform read from the device to make sure device is up */
+ 	val = RREG32(mmPCIE_DBI_DEVICE_ID_VENDOR_ID_REG);
  
-@@ -4441,6 +4444,106 @@ void goya_restore_phase_topology(struct hl_device *hdev)
- 	i = RREG32(mmSYNC_MNGR_SOB_OBJ_0);
++	/*
++	 * Let's mark in the H/W that we have reached this point. We check
++	 * this value in the reset_before_init function to understand whether
++	 * we need to reset the chip before doing H/W init. This register is
++	 * cleared by the H/W upon H/W reset
++	 */
++	WREG32(mmPSOC_GLOBAL_CONF_APP_STATUS, HL_DEVICE_HW_STATE_DIRTY);
++
+ 	rc = goya_init_cpu(hdev, GOYA_CPU_TIMEOUT_USEC);
+ 	if (rc) {
+ 		dev_err(hdev->dev, "failed to initialize CPU\n");
+@@ -2584,6 +2716,14 @@ static void goya_hw_fini(struct hl_device *hdev, bool hard_reset)
+ 			"Timeout while waiting for device to reset 0x%x\n",
+ 			status);
+ 
++	if (!hard_reset) {
++		goya->hw_cap_initialized &= ~(HW_CAP_DMA | HW_CAP_MME |
++						HW_CAP_GOLDEN | HW_CAP_TPC);
++		WREG32(mmGIC_DISTRIBUTOR__5_GICD_SETSPI_NSR,
++				GOYA_ASYNC_EVENT_ID_SOFT_RESET);
++		return;
++	}
++
+ 	/* Chicken bit to re-initiate boot sequencer flow */
+ 	WREG32(mmPSOC_GLOBAL_CONF_BOOT_SEQ_RE_START,
+ 		1 << PSOC_GLOBAL_CONF_BOOT_SEQ_RE_START_IND_SHIFT);
+@@ -3193,6 +3333,57 @@ static void goya_print_irq_info(struct hl_device *hdev, u16 event_type)
+ 	}
  }
  
-+/*
-+ * goya_debugfs_read32 - read a 32bit value from a given device address
-+ *
-+ * @hdev:	pointer to hl_device structure
-+ * @addr:	address in device
-+ * @val:	returned value
-+ *
-+ * In case of DDR address that is not mapped into the default aperture that
-+ * the DDR bar exposes, the function will configure the iATU so that the DDR
-+ * bar will be positioned at a base address that allows reading from the
-+ * required address. Configuring the iATU during normal operation can
-+ * lead to undefined behavior and therefore, should be done with extreme care
-+ *
-+ */
-+int goya_debugfs_read32(struct hl_device *hdev, u64 addr, u32 *val)
++static int goya_unmask_irq_arr(struct hl_device *hdev, u32 *irq_arr,
++		size_t irq_arr_size)
 +{
-+	struct asic_fixed_properties *prop = &hdev->asic_prop;
-+	int rc = 0;
++	struct armcp_unmask_irq_arr_packet *pkt;
++	size_t total_pkt_size;
++	long result;
++	int rc;
 +
-+	if ((addr >= CFG_BASE) && (addr < CFG_BASE + CFG_SIZE)) {
-+		*val = RREG32(addr - CFG_BASE);
++	total_pkt_size = sizeof(struct armcp_unmask_irq_arr_packet) +
++			irq_arr_size;
 +
-+	} else if ((addr >= SRAM_BASE_ADDR) &&
-+			(addr < SRAM_BASE_ADDR + SRAM_SIZE)) {
++	/* data should be aligned to 8 bytes in order to ArmCP to copy it */
++	total_pkt_size = (total_pkt_size + 0x7) & ~0x7;
 +
-+		*val = readl(hdev->pcie_bar[SRAM_CFG_BAR_ID] +
-+				(addr - SRAM_BASE_ADDR));
-+
-+	} else if ((addr >= DRAM_PHYS_BASE) &&
-+			(addr < DRAM_PHYS_BASE + hdev->asic_prop.dram_size)) {
-+
-+		u64 bar_base_addr = DRAM_PHYS_BASE +
-+				(addr & ~(prop->dram_pci_bar_size - 0x1ull));
-+
-+		rc = goya_set_ddr_bar_base(hdev, bar_base_addr);
-+		if (!rc) {
-+			*val = readl(hdev->pcie_bar[DDR_BAR_ID] +
-+						(addr - bar_base_addr));
-+
-+			rc = goya_set_ddr_bar_base(hdev, DRAM_PHYS_BASE +
-+				(MMU_PAGE_TABLES_ADDR &
-+					~(prop->dram_pci_bar_size - 0x1ull)));
-+		}
-+	} else {
-+		rc = -EFAULT;
++	/* total_pkt_size is casted to u16 later on */
++	if (total_pkt_size > USHRT_MAX) {
++		dev_err(hdev->dev, "too many elements in IRQ array\n");
++		return -EINVAL;
 +	}
++
++	pkt = kzalloc(total_pkt_size, GFP_KERNEL);
++	if (!pkt)
++		return -ENOMEM;
++
++	pkt->length = irq_arr_size / sizeof(irq_arr[0]);
++	memcpy(&pkt->irqs, irq_arr, irq_arr_size);
++
++	pkt->armcp_pkt.ctl = ARMCP_PACKET_UNMASK_RAZWI_IRQ_ARRAY <<
++						ARMCP_PKT_CTL_OPCODE_SHIFT;
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) pkt,
++			total_pkt_size, HL_DEVICE_TIMEOUT_USEC, &result);
++
++	if (rc)
++		dev_err(hdev->dev, "failed to unmask IRQ array\n");
++
++	kfree(pkt);
 +
 +	return rc;
 +}
 +
-+/*
-+ * goya_debugfs_write32 - write a 32bit value to a given device address
-+ *
-+ * @hdev:	pointer to hl_device structure
-+ * @addr:	address in device
-+ * @val:	returned value
-+ *
-+ * In case of DDR address that is not mapped into the default aperture that
-+ * the DDR bar exposes, the function will configure the iATU so that the DDR
-+ * bar will be positioned at a base address that allows writing to the
-+ * required address. Configuring the iATU during normal operation can
-+ * lead to undefined behavior and therefore, should be done with extreme care
-+ *
-+ */
-+int goya_debugfs_write32(struct hl_device *hdev, u64 addr, u32 val)
++static int goya_soft_reset_late_init(struct hl_device *hdev)
 +{
-+	struct asic_fixed_properties *prop = &hdev->asic_prop;
-+	int rc = 0;
++	/*
++	 * Unmask all IRQs since some could have been received
++	 * during the soft reset
++	 */
++	return goya_unmask_irq_arr(hdev, goya_non_fatal_events,
++			sizeof(goya_non_fatal_events));
++}
 +
-+	if ((addr >= CFG_BASE) && (addr < CFG_BASE + CFG_SIZE)) {
-+		WREG32(addr - CFG_BASE, val);
+ static int goya_unmask_irq(struct hl_device *hdev, u16 event_type)
+ {
+ 	struct armcp_packet pkt;
+@@ -3254,6 +3445,7 @@ void goya_handle_eqe(struct hl_device *hdev, struct hl_eq_entry *eq_entry)
+ 		dev_err(hdev->dev,
+ 			"Received H/W interrupt %d, reset the chip\n",
+ 			event_type);
++		hl_device_reset(hdev, true, false);
+ 		break;
+ 
+ 	case GOYA_ASYNC_EVENT_ID_PCIE_DEC:
+@@ -3319,6 +3511,30 @@ void *goya_get_events_stat(struct hl_device *hdev, u32 *size)
+ 	return goya->events_stat;
+ }
+ 
++int goya_send_heartbeat(struct hl_device *hdev)
++{
++	struct goya_device *goya = hdev->asic_specific;
++	struct armcp_packet hb_pkt;
++	long result;
++	int rc;
 +
-+	} else if ((addr >= SRAM_BASE_ADDR) &&
-+			(addr < SRAM_BASE_ADDR + SRAM_SIZE)) {
++	if (!(goya->hw_cap_initialized & HW_CAP_CPU_Q))
++		return 0;
 +
-+		writel(val, hdev->pcie_bar[SRAM_CFG_BAR_ID] +
-+					(addr - SRAM_BASE_ADDR));
++	memset(&hb_pkt, 0, sizeof(hb_pkt));
 +
-+	} else if ((addr >= DRAM_PHYS_BASE) &&
-+			(addr < DRAM_PHYS_BASE + hdev->asic_prop.dram_size)) {
++	hb_pkt.ctl = ARMCP_PACKET_TEST << ARMCP_PKT_CTL_OPCODE_SHIFT;
++	hb_pkt.value = ARMCP_PACKET_FENCE_VAL;
 +
-+		u64 bar_base_addr = DRAM_PHYS_BASE +
-+				(addr & ~(prop->dram_pci_bar_size - 0x1ull));
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &hb_pkt,
++			sizeof(hb_pkt), HL_DEVICE_TIMEOUT_USEC, &result);
 +
-+		rc = goya_set_ddr_bar_base(hdev, bar_base_addr);
-+		if (!rc) {
-+			writel(val, hdev->pcie_bar[DDR_BAR_ID] +
-+						(addr - bar_base_addr));
-+
-+			rc = goya_set_ddr_bar_base(hdev, DRAM_PHYS_BASE +
-+				(MMU_PAGE_TABLES_ADDR &
-+					~(prop->dram_pci_bar_size - 0x1ull)));
-+		}
-+	} else {
-+		rc = -EFAULT;
-+	}
++	if ((rc) || (result != ARMCP_PACKET_FENCE_VAL))
++		rc = -EIO;
 +
 +	return rc;
 +}
 +
- static u64 goya_read_pte(struct hl_device *hdev, u64 addr)
+ static int goya_armcp_info_get(struct hl_device *hdev)
  {
  	struct goya_device *goya = hdev->asic_specific;
-@@ -4789,6 +4892,8 @@ static int goya_mmu_clear_pgt_range(struct hl_device *hdev)
- 	job->user_cb_size = cb_size;
- 	job->hw_queue_id = GOYA_QUEUE_ID_DMA_0;
+@@ -3464,6 +3680,11 @@ int goya_get_eeprom_data(struct hl_device *hdev, void *data, size_t max_size)
+ 	return rc;
+ }
  
-+	hl_debugfs_add_job(hdev, job);
++static enum hl_device_hw_state goya_get_hw_state(struct hl_device *hdev)
++{
++	return RREG32(mmPSOC_GLOBAL_CONF_APP_STATUS);
++}
 +
- 	parser.ctx_id = HL_KERNEL_ASID_ID;
- 	parser.cs_sequence = 0;
- 	parser.job_id = job->id;
-@@ -4817,6 +4922,7 @@ static int goya_mmu_clear_pgt_range(struct hl_device *hdev)
- 
- free_job:
- 	hl_userptr_delete_list(hdev, &job->userptr_list);
-+	hl_debugfs_remove_job(hdev, job);
- 	kfree(job);
- 	cb->cs_cnt--;
- 
-@@ -5231,6 +5337,8 @@ static const struct hl_asic_funcs goya_funcs = {
- 	.update_eq_ci = goya_update_eq_ci,
- 	.context_switch = goya_context_switch,
- 	.restore_phase_topology = goya_restore_phase_topology,
-+	.debugfs_read32 = goya_debugfs_read32,
-+	.debugfs_write32 = goya_debugfs_write32,
- 	.add_device_attr = goya_add_device_attr,
+ static const struct hl_asic_funcs goya_funcs = {
+ 	.early_init = goya_early_init,
+ 	.early_fini = goya_early_fini,
+@@ -3493,12 +3714,15 @@ static const struct hl_asic_funcs goya_funcs = {
  	.handle_eqe = goya_handle_eqe,
  	.set_pll_profile = goya_set_pll_profile,
-diff --git a/drivers/misc/habanalabs/goya/goyaP.h b/drivers/misc/habanalabs/goya/goyaP.h
-index cc3b26284b59..2623eb1efe3b 100644
---- a/drivers/misc/habanalabs/goya/goyaP.h
-+++ b/drivers/misc/habanalabs/goya/goyaP.h
-@@ -165,6 +165,10 @@ struct goya_device {
- 	u32		hw_cap_initialized;
+ 	.get_events_stat = goya_get_events_stat,
++	.send_heartbeat = goya_send_heartbeat,
+ 	.enable_clock_gating = goya_init_clock_gating,
+ 	.disable_clock_gating = goya_disable_clock_gating,
++	.soft_reset_late_init = goya_soft_reset_late_init,
+ 	.hw_queues_lock = goya_hw_queues_lock,
+ 	.hw_queues_unlock = goya_hw_queues_unlock,
+ 	.get_eeprom_data = goya_get_eeprom_data,
+-	.send_cpu_message = goya_send_cpu_message
++	.send_cpu_message = goya_send_cpu_message,
++	.get_hw_state = goya_get_hw_state
  };
  
-+int goya_debugfs_i2c_read(struct hl_device *hdev, u8 i2c_bus,
-+			u8 i2c_addr, u8 i2c_reg, u32 *val);
-+int goya_debugfs_i2c_write(struct hl_device *hdev, u8 i2c_bus,
-+			u8 i2c_addr, u8 i2c_reg, u32 val);
- int goya_test_cpu_queue(struct hl_device *hdev);
- int goya_send_cpu_message(struct hl_device *hdev, u32 *msg, u16 len,
- 				u32 timeout, long *result);
-@@ -175,6 +179,7 @@ long goya_get_fan_speed(struct hl_device *hdev, int sensor_index, u32 attr);
- long goya_get_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr);
- void goya_set_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr,
- 			long value);
-+void goya_debugfs_led_set(struct hl_device *hdev, u8 led, u8 state);
- void goya_set_pll_profile(struct hl_device *hdev, enum hl_pll_frequency freq);
- void goya_add_device_attr(struct hl_device *hdev,
- 			struct attribute_group *dev_attr_grp);
+ /*
+diff --git a/drivers/misc/habanalabs/goya/goya_hwmgr.c b/drivers/misc/habanalabs/goya/goya_hwmgr.c
+index b524799c62b7..c885b7f9feb3 100644
+--- a/drivers/misc/habanalabs/goya/goya_hwmgr.c
++++ b/drivers/misc/habanalabs/goya/goya_hwmgr.c
+@@ -38,7 +38,7 @@ static ssize_t mme_clk_show(struct device *dev, struct device_attribute *attr,
+ 	struct hl_device *hdev = dev_get_drvdata(dev);
+ 	long value;
+ 
+-	if (hdev->disabled)
++	if (hl_device_disabled_or_in_reset(hdev))
+ 		return -ENODEV;
+ 
+ 	value = hl_get_frequency(hdev, MME_PLL, false);
+@@ -57,7 +57,7 @@ static ssize_t mme_clk_store(struct device *dev, struct device_attribute *attr,
+ 	int rc;
+ 	long value;
+ 
+-	if (hdev->disabled) {
++	if (hl_device_disabled_or_in_reset(hdev)) {
+ 		count = -ENODEV;
+ 		goto fail;
+ 	}
+@@ -87,7 +87,7 @@ static ssize_t tpc_clk_show(struct device *dev, struct device_attribute *attr,
+ 	struct hl_device *hdev = dev_get_drvdata(dev);
+ 	long value;
+ 
+-	if (hdev->disabled)
++	if (hl_device_disabled_or_in_reset(hdev))
+ 		return -ENODEV;
+ 
+ 	value = hl_get_frequency(hdev, TPC_PLL, false);
+@@ -106,7 +106,7 @@ static ssize_t tpc_clk_store(struct device *dev, struct device_attribute *attr,
+ 	int rc;
+ 	long value;
+ 
+-	if (hdev->disabled) {
++	if (hl_device_disabled_or_in_reset(hdev)) {
+ 		count = -ENODEV;
+ 		goto fail;
+ 	}
+@@ -136,7 +136,7 @@ static ssize_t ic_clk_show(struct device *dev, struct device_attribute *attr,
+ 	struct hl_device *hdev = dev_get_drvdata(dev);
+ 	long value;
+ 
+-	if (hdev->disabled)
++	if (hl_device_disabled_or_in_reset(hdev))
+ 		return -ENODEV;
+ 
+ 	value = hl_get_frequency(hdev, IC_PLL, false);
+@@ -155,7 +155,7 @@ static ssize_t ic_clk_store(struct device *dev, struct device_attribute *attr,
+ 	int rc;
+ 	long value;
+ 
+-	if (hdev->disabled) {
++	if (hl_device_disabled_or_in_reset(hdev)) {
+ 		count = -ENODEV;
+ 		goto fail;
+ 	}
+@@ -185,7 +185,7 @@ static ssize_t mme_clk_curr_show(struct device *dev,
+ 	struct hl_device *hdev = dev_get_drvdata(dev);
+ 	long value;
+ 
+-	if (hdev->disabled)
++	if (hl_device_disabled_or_in_reset(hdev))
+ 		return -ENODEV;
+ 
+ 	value = hl_get_frequency(hdev, MME_PLL, true);
+@@ -202,7 +202,7 @@ static ssize_t tpc_clk_curr_show(struct device *dev,
+ 	struct hl_device *hdev = dev_get_drvdata(dev);
+ 	long value;
+ 
+-	if (hdev->disabled)
++	if (hl_device_disabled_or_in_reset(hdev))
+ 		return -ENODEV;
+ 
+ 	value = hl_get_frequency(hdev, TPC_PLL, true);
+@@ -219,7 +219,7 @@ static ssize_t ic_clk_curr_show(struct device *dev,
+ 	struct hl_device *hdev = dev_get_drvdata(dev);
+ 	long value;
+ 
+-	if (hdev->disabled)
++	if (hl_device_disabled_or_in_reset(hdev))
+ 		return -ENODEV;
+ 
+ 	value = hl_get_frequency(hdev, IC_PLL, true);
 diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
-index 759510c96034..23a291d36f95 100644
+index e260586f3bdb..4d5cba225700 100644
 --- a/drivers/misc/habanalabs/habanalabs.h
 +++ b/drivers/misc/habanalabs/habanalabs.h
-@@ -239,6 +239,7 @@ struct hl_cb_mgr {
-  * @refcount: reference counter for usage of the CB.
-  * @hdev: pointer to device this CB belongs to.
-  * @lock: spinlock to protect mmap/cs flows.
-+ * @debugfs_list: node in debugfs list of command buffers.
-  * @pool_list: node in pool list of command buffers.
-  * @kernel_address: Holds the CB's kernel virtual address.
-  * @bus_address: Holds the CB's DMA address.
-@@ -254,6 +255,7 @@ struct hl_cb {
- 	struct kref		refcount;
- 	struct hl_device	*hdev;
- 	spinlock_t		lock;
-+	struct list_head	debugfs_list;
- 	struct list_head	pool_list;
- 	u64			kernel_address;
- 	dma_addr_t		bus_address;
-@@ -454,6 +456,8 @@ enum hl_pll_frequency {
-  * @update_eq_ci: update event queue CI.
-  * @context_switch: called upon ASID context switch.
-  * @restore_phase_topology: clear all SOBs amd MONs.
-+ * @debugfs_read32: debug interface for reading u32 from DRAM/SRAM.
-+ * @debugfs_write32: debug interface for writing u32 to DRAM/SRAM.
-  * @add_device_attr: add ASIC specific device attributes.
+@@ -26,8 +26,12 @@
+ 
+ #define HL_MMAP_CB_MASK			(0x8000000000000000ull >> PAGE_SHIFT)
+ 
++#define HL_PENDING_RESET_PER_SEC	5
++
+ #define HL_DEVICE_TIMEOUT_USEC		1000000 /* 1 s */
+ 
++#define HL_HEARTBEAT_PER_USEC		5000000 /* 5 s */
++
+ #define HL_PLL_LOW_JOB_FREQ_USEC	5000000 /* 5 s */
+ 
+ #define HL_MAX_QUEUES			128
+@@ -62,6 +66,18 @@ struct hw_queue_properties {
+ 	u8			kmd_only;
+ };
+ 
++/**
++ * enum hl_device_hw_state - H/W device state. use this to understand whether
++ *                           to do reset before hw_init or not
++ * @HL_DEVICE_HW_STATE_CLEAN: H/W state is clean. i.e. after hard reset
++ * @HL_DEVICE_HW_STATE_DIRTY: H/W state is dirty. i.e. we started to execute
++ *                            hw_init
++ */
++enum hl_device_hw_state {
++	HL_DEVICE_HW_STATE_CLEAN = 0,
++	HL_DEVICE_HW_STATE_DIRTY
++};
++
+ /**
+  * struct asic_fixed_properties - ASIC specific immutable properties.
+  * @hw_queues_props: H/W queues properties.
+@@ -366,12 +382,15 @@ enum hl_pll_frequency {
   * @handle_eqe: handle event queue entry (IRQ) from ArmCP.
   * @set_pll_profile: change PLL profile (manual/automatic).
-@@ -522,6 +526,8 @@ struct hl_asic_funcs {
- 	void (*update_eq_ci)(struct hl_device *hdev, u32 val);
- 	int (*context_switch)(struct hl_device *hdev, u32 asid);
- 	void (*restore_phase_topology)(struct hl_device *hdev);
-+	int (*debugfs_read32)(struct hl_device *hdev, u64 addr, u32 *val);
-+	int (*debugfs_write32)(struct hl_device *hdev, u64 addr, u32 val);
- 	void (*add_device_attr)(struct hl_device *hdev,
- 				struct attribute_group *dev_attr_grp);
- 	void (*handle_eqe)(struct hl_device *hdev,
-@@ -585,6 +591,7 @@ struct hl_va_range {
-  * @mem_hash_lock: protects the mem_hash.
-  * @mmu_lock: protects the MMU page tables. Any change to the PGT, modifing the
-  *            MMU hash or walking the PGT requires talking this lock
-+ * @debugfs_list: node in debugfs list of contexts.
-  * @cs_sequence: sequence number for CS. Value is assigned to a CS and passed
-  *			to user so user could inquire about CS. It is used as
-  *			index to cs_pending array.
-@@ -609,6 +616,7 @@ struct hl_ctx {
- 	struct hl_va_range	dram_va_range;
- 	struct mutex		mem_hash_lock;
- 	struct mutex		mmu_lock;
-+	struct list_head	debugfs_list;
- 	u64			cs_sequence;
- 	spinlock_t		cs_lock;
- 	atomic64_t		dram_phys_mem;
-@@ -667,6 +675,7 @@ struct hl_userptr {
-  * @fence: pointer to the fence object of this CS.
-  * @work_tdr: delayed work node for TDR.
-  * @mirror_node : node in device mirror list of command submissions.
-+ * @debugfs_list: node in debugfs list of command submissions.
-  * @sequence: the sequence number of this CS.
-  * @submitted: true if CS was submitted to H/W.
-  * @completed: true if CS was completed by device.
-@@ -684,6 +693,7 @@ struct hl_cs {
- 	struct dma_fence	*fence;
- 	struct delayed_work	work_tdr;
- 	struct list_head	mirror_node;
-+	struct list_head	debugfs_list;
- 	u64			sequence;
- 	u8			submitted;
- 	u8			completed;
-@@ -702,6 +712,7 @@ struct hl_cs {
-  * @finish_work: workqueue object to run when job is completed.
-  * @userptr_list: linked-list of userptr mappings that belong to this job and
-  *			wait for completion.
-+ * @debugfs_list: node in debugfs list of command submission jobs.
-  * @id: the id of this job inside a CS.
-  * @hw_queue_id: the id of the H/W queue this job is submitted to.
-  * @user_cb_size: the actual size of the CB we got from the user.
-@@ -715,6 +726,7 @@ struct hl_cs_job {
- 	struct hl_cb		*patched_cb;
- 	struct work_struct	finish_work;
- 	struct list_head	userptr_list;
-+	struct list_head	debugfs_list;
- 	u32			id;
- 	u32			hw_queue_id;
- 	u32			user_cb_size;
-@@ -845,6 +857,7 @@ struct hl_vm {
-  * @ctx: current executing context.
-  * @ctx_mgr: context manager to handle multiple context for this FD.
-  * @cb_mgr: command buffer manager to handle multiple buffers for this FD.
-+ * @debugfs_list: list of relevant ASIC debugfs.
-  * @refcount: number of related contexts.
-  * @restore_phase_mutex: lock for context switch and restore phase.
+  * @get_events_stat: retrieve event queue entries histogram.
++ * @send_heartbeat: send is-alive packet to ArmCP and verify response.
+  * @enable_clock_gating: enable clock gating for reducing power consumption.
+  * @disable_clock_gating: disable clock for accessing registers on HBW.
++ * @soft_reset_late_init: perform certain actions needed after soft reset.
+  * @hw_queues_lock: acquire H/W queues lock.
+  * @hw_queues_unlock: release H/W queues lock.
+  * @get_eeprom_data: retrieve EEPROM data from F/W.
+  * @send_cpu_message: send buffer to ArmCP.
++ * @get_hw_state: retrieve the H/W state
   */
-@@ -855,11 +868,90 @@ struct hl_fpriv {
- 	struct hl_ctx		*ctx; /* TODO: remove for multiple ctx */
- 	struct hl_ctx_mgr	ctx_mgr;
- 	struct hl_cb_mgr	cb_mgr;
-+	struct list_head	debugfs_list;
- 	struct kref		refcount;
- 	struct mutex		restore_phase_mutex;
+ struct hl_asic_funcs {
+ 	int (*early_init)(struct hl_device *hdev);
+@@ -413,14 +432,17 @@ struct hl_asic_funcs {
+ 	void (*set_pll_profile)(struct hl_device *hdev,
+ 			enum hl_pll_frequency freq);
+ 	void* (*get_events_stat)(struct hl_device *hdev, u32 *size);
++	int (*send_heartbeat)(struct hl_device *hdev);
+ 	void (*enable_clock_gating)(struct hl_device *hdev);
+ 	void (*disable_clock_gating)(struct hl_device *hdev);
++	int (*soft_reset_late_init)(struct hl_device *hdev);
+ 	void (*hw_queues_lock)(struct hl_device *hdev);
+ 	void (*hw_queues_unlock)(struct hl_device *hdev);
+ 	int (*get_eeprom_data)(struct hl_device *hdev, void *data,
+ 				size_t max_size);
+ 	int (*send_cpu_message)(struct hl_device *hdev, u32 *msg,
+ 				u16 len, u32 timeout, long *result);
++	enum hl_device_hw_state (*get_hw_state)(struct hl_device *hdev);
  };
  
  
-+/*
-+ * DebugFS
-+ */
-+
+@@ -532,6 +554,16 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
+ 	WREG32(mm##reg, (RREG32(mm##reg) & ~REG_FIELD_MASK(reg, field)) | \
+ 			(val) << REG_FIELD_SHIFT(reg, field))
+ 
 +/**
-+ * struct hl_info_list - debugfs file ops.
-+ * @name: file name.
-+ * @show: function to output information.
-+ * @write: function to write to the file.
-+ */
-+struct hl_info_list {
-+	const char	*name;
-+	int		(*show)(struct seq_file *s, void *data);
-+	ssize_t		(*write)(struct file *file, const char __user *buf,
-+				size_t count, loff_t *f_pos);
-+};
-+
-+/**
-+ * struct hl_debugfs_entry - debugfs dentry wrapper.
-+ * @dent: base debugfs entry structure.
-+ * @info_ent: dentry realted ops.
-+ * @dev_entry: ASIC specific debugfs manager.
-+ */
-+struct hl_debugfs_entry {
-+	struct dentry			*dent;
-+	const struct hl_info_list	*info_ent;
-+	struct hl_dbg_device_entry	*dev_entry;
-+};
-+
-+/**
-+ * struct hl_dbg_device_entry - ASIC specific debugfs manager.
-+ * @root: root dentry.
++ * struct hl_device_reset_work - reset workqueue task wrapper.
++ * @reset_work: reset work to be done.
 + * @hdev: habanalabs device structure.
-+ * @entry_arr: array of available hl_debugfs_entry.
-+ * @file_list: list of available debugfs files.
-+ * @file_mutex: protects file_list.
-+ * @cb_list: list of available CBs.
-+ * @cb_spinlock: protects cb_list.
-+ * @cs_list: list of available CSs.
-+ * @cs_spinlock: protects cs_list.
-+ * @cs_job_list: list of available CB jobs.
-+ * @cs_job_spinlock: protects cs_job_list.
-+ * @userptr_list: list of available userptrs (virtual memory chunk descriptor).
-+ * @userptr_spinlock: protects userptr_list.
-+ * @ctx_mem_hash_list: list of available contexts with MMU mappings.
-+ * @ctx_mem_hash_spinlock: protects cb_list.
-+ * @addr: next address to read/write from/to in read/write32.
-+ * @mmu_addr: next virtual address to translate to physical address in mmu_show.
-+ * @mmu_asid: ASID to use while translating in mmu_show.
-+ * @i2c_bus: generic u8 debugfs file for bus value to use in i2c_data_read.
-+ * @i2c_bus: generic u8 debugfs file for address value to use in i2c_data_read.
-+ * @i2c_bus: generic u8 debugfs file for register value to use in i2c_data_read.
 + */
-+struct hl_dbg_device_entry {
-+	struct dentry			*root;
++struct hl_device_reset_work {
++	struct work_struct		reset_work;
 +	struct hl_device		*hdev;
-+	struct hl_debugfs_entry		*entry_arr;
-+	struct list_head		file_list;
-+	struct mutex			file_mutex;
-+	struct list_head		cb_list;
-+	spinlock_t			cb_spinlock;
-+	struct list_head		cs_list;
-+	spinlock_t			cs_spinlock;
-+	struct list_head		cs_job_list;
-+	spinlock_t			cs_job_spinlock;
-+	struct list_head		userptr_list;
-+	spinlock_t			userptr_spinlock;
-+	struct list_head		ctx_mem_hash_list;
-+	spinlock_t			ctx_mem_hash_spinlock;
-+	u64				addr;
-+	u64				mmu_addr;
-+	u32				mmu_asid;
-+	u8				i2c_bus;
-+	u8				i2c_addr;
-+	u8				i2c_reg;
 +};
 +
-+
- /*
-  * DEVICES
-  */
-@@ -952,6 +1044,7 @@ struct hl_device_reset_work {
-  * @hwmon_dev: H/W monitor device.
-  * @pm_mng_profile: current power management profile.
-  * @hl_chip_info: ASIC's sensors information.
-+ * @hl_debugfs: device's debugfs manager.
+ /**
+  * struct hl_device - habanalabs device structure.
+  * @pdev: pointer to PCI device, can be NULL in case of simulator device.
+@@ -540,6 +572,7 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
+  * @cdev: related char device.
+  * @dev: realted kernel basic device structure.
+  * @work_freq: delayed work to lower device frequency if possible.
++ * @work_heartbeat: delayed work for ArmCP is-alive check.
+  * @asic_name: ASIC specific nmae.
+  * @asic_type: ASIC specific type.
+  * @completion_queue: array of hl_cq.
+@@ -571,6 +604,7 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
   * @cb_pool: list of preallocated CBs.
   * @cb_pool_lock: protects the CB pool.
   * @user_ctx: current user context executing.
-@@ -1017,6 +1110,8 @@ struct hl_device {
- 	enum hl_pm_mng_profile		pm_mng_profile;
- 	struct hwmon_chip_info		hl_chip_info;
++ * @in_reset: is device in reset flow.
+  * @curr_pll_profile: current PLL profile.
+  * @fd_open_cnt: number of open user processes.
+  * @max_power: the max power of the device, as configured by the sysadmin. This
+@@ -578,10 +612,15 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
+  *             value and update the F/W after the re-initialization
+  * @major: habanalabs KMD major.
+  * @high_pll: high PLL profile frequency.
++ * @soft_reset_cnt: number of soft reset since KMD loading.
++ * @hard_reset_cnt: number of hard reset since KMD loading.
+  * @id: device minor.
+  * @disabled: is device disabled.
+  * @late_init_done: is late init stage was done during initialization.
+  * @hwmon_initialized: is H/W monitor sensors was initialized.
++ * @hard_reset_pending: is there a hard reset work pending.
++ * @heartbeat: is heartbeat sanity check towards ArmCP enabled.
++ * @init_done: is the initialization of the device done.
+  */
+ struct hl_device {
+ 	struct pci_dev			*pdev;
+@@ -590,6 +629,7 @@ struct hl_device {
+ 	struct cdev			cdev;
+ 	struct device			*dev;
+ 	struct delayed_work		work_freq;
++	struct delayed_work		work_heartbeat;
+ 	char				asic_name[16];
+ 	enum hl_asic_type		asic_type;
+ 	struct hl_cq			*completion_queue;
+@@ -621,15 +661,21 @@ struct hl_device {
+ 	/* TODO: remove user_ctx for multiple process support */
+ 	struct hl_ctx			*user_ctx;
  
-+	struct hl_dbg_device_entry	hl_debugfs;
-+
- 	struct list_head		cb_pool;
- 	spinlock_t			cb_pool_lock;
++	atomic_t			in_reset;
+ 	atomic_t			curr_pll_profile;
+ 	atomic_t			fd_open_cnt;
+ 	u64				max_power;
+ 	u32				major;
+ 	u32				high_pll;
++	u32				soft_reset_cnt;
++	u32				hard_reset_cnt;
+ 	u16				id;
+ 	u8				disabled;
+ 	u8				late_init_done;
+ 	u8				hwmon_initialized;
++	u8				hard_reset_pending;
++	u8				heartbeat;
++	u8				init_done;
  
-@@ -1254,6 +1349,100 @@ void hl_set_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr,
- u64 hl_get_max_power(struct hl_device *hdev);
- void hl_set_max_power(struct hl_device *hdev, u64 value);
+ 	/* Parameters for bring-up */
+ 	u8				cpu_enable;
+@@ -670,6 +716,7 @@ struct hl_ioctl_desc {
+  */
  
-+#ifdef CONFIG_DEBUG_FS
-+
-+void hl_debugfs_init(void);
-+void hl_debugfs_fini(void);
-+void hl_debugfs_add_device(struct hl_device *hdev);
-+void hl_debugfs_remove_device(struct hl_device *hdev);
-+void hl_debugfs_add_file(struct hl_fpriv *hpriv);
-+void hl_debugfs_remove_file(struct hl_fpriv *hpriv);
-+void hl_debugfs_add_cb(struct hl_cb *cb);
-+void hl_debugfs_remove_cb(struct hl_cb *cb);
-+void hl_debugfs_add_cs(struct hl_cs *cs);
-+void hl_debugfs_remove_cs(struct hl_cs *cs);
-+void hl_debugfs_add_job(struct hl_device *hdev, struct hl_cs_job *job);
-+void hl_debugfs_remove_job(struct hl_device *hdev, struct hl_cs_job *job);
-+void hl_debugfs_add_userptr(struct hl_device *hdev, struct hl_userptr *userptr);
-+void hl_debugfs_remove_userptr(struct hl_device *hdev,
-+				struct hl_userptr *userptr);
-+void hl_debugfs_add_ctx_mem_hash(struct hl_device *hdev, struct hl_ctx *ctx);
-+void hl_debugfs_remove_ctx_mem_hash(struct hl_device *hdev, struct hl_ctx *ctx);
-+
-+#else
-+
-+static inline void __init hl_debugfs_init(void)
-+{
-+}
-+
-+static inline void hl_debugfs_fini(void)
-+{
-+}
-+
-+static inline void hl_debugfs_add_device(struct hl_device *hdev)
-+{
-+}
-+
-+static inline void hl_debugfs_remove_device(struct hl_device *hdev)
-+{
-+}
-+
-+static inline void hl_debugfs_add_file(struct hl_fpriv *hpriv)
-+{
-+}
-+
-+static inline void hl_debugfs_remove_file(struct hl_fpriv *hpriv)
-+{
-+}
-+
-+static inline void hl_debugfs_add_cb(struct hl_cb *cb)
-+{
-+}
-+
-+static inline void hl_debugfs_remove_cb(struct hl_cb *cb)
-+{
-+}
-+
-+static inline void hl_debugfs_add_cs(struct hl_cs *cs)
-+{
-+}
-+
-+static inline void hl_debugfs_remove_cs(struct hl_cs *cs)
-+{
-+}
-+
-+static inline void hl_debugfs_add_job(struct hl_device *hdev,
-+					struct hl_cs_job *job)
-+{
-+}
-+
-+static inline void hl_debugfs_remove_job(struct hl_device *hdev,
-+					struct hl_cs_job *job)
-+{
-+}
-+
-+static inline void hl_debugfs_add_userptr(struct hl_device *hdev,
-+					struct hl_userptr *userptr)
-+{
-+}
-+
-+static inline void hl_debugfs_remove_userptr(struct hl_device *hdev,
-+					struct hl_userptr *userptr)
-+{
-+}
-+
-+static inline void hl_debugfs_add_ctx_mem_hash(struct hl_device *hdev,
-+					struct hl_ctx *ctx)
-+{
-+}
-+
-+static inline void hl_debugfs_remove_ctx_mem_hash(struct hl_device *hdev,
-+					struct hl_ctx *ctx)
-+{
-+}
-+
-+#endif
-+
- /* IOCTLs */
- long hl_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
- int hl_cb_ioctl(struct hl_fpriv *hpriv, void *data);
+ int hl_device_open(struct inode *inode, struct file *filp);
++bool hl_device_disabled_or_in_reset(struct hl_device *hdev);
+ int create_hdev(struct hl_device **dev, struct pci_dev *pdev,
+ 		enum hl_asic_type asic_type, int minor);
+ void destroy_hdev(struct hl_device *hdev);
+@@ -683,6 +730,7 @@ int hl_hw_queue_send_cb_no_cmpl(struct hl_device *hdev, u32 hw_queue_id,
+ 				u32 cb_size, u64 cb_ptr);
+ u32 hl_hw_queue_add_ptr(u32 ptr, u16 val);
+ void hl_hw_queue_inc_ci_kernel(struct hl_device *hdev, u32 hw_queue_id);
++void hl_hw_queue_reset(struct hl_device *hdev, bool hard_reset);
+ 
+ #define hl_queue_inc_ptr(p)		hl_hw_queue_add_ptr(p, 1)
+ #define hl_pi_2_offset(pi)		((pi) & (HL_QUEUE_LENGTH - 1))
+@@ -691,6 +739,8 @@ int hl_cq_init(struct hl_device *hdev, struct hl_cq *q, u32 hw_queue_id);
+ void hl_cq_fini(struct hl_device *hdev, struct hl_cq *q);
+ int hl_eq_init(struct hl_device *hdev, struct hl_eq *q);
+ void hl_eq_fini(struct hl_device *hdev, struct hl_eq *q);
++void hl_cq_reset(struct hl_device *hdev, struct hl_cq *q);
++void hl_eq_reset(struct hl_device *hdev, struct hl_eq *q);
+ irqreturn_t hl_irq_handler_cq(int irq, void *arg);
+ irqreturn_t hl_irq_handler_eq(int irq, void *arg);
+ int hl_asid_init(struct hl_device *hdev);
+@@ -708,6 +758,8 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass);
+ void hl_device_fini(struct hl_device *hdev);
+ int hl_device_suspend(struct hl_device *hdev);
+ int hl_device_resume(struct hl_device *hdev);
++int hl_device_reset(struct hl_device *hdev, bool hard_reset,
++			bool from_hard_reset_thread);
+ void hl_hpriv_get(struct hl_fpriv *hpriv);
+ void hl_hpriv_put(struct hl_fpriv *hpriv);
+ int hl_device_set_frequency(struct hl_device *hdev, enum hl_pll_frequency freq);
 diff --git a/drivers/misc/habanalabs/habanalabs_drv.c b/drivers/misc/habanalabs/habanalabs_drv.c
-index 658dc4588a36..96e0fc9c401f 100644
+index 6260d99ef1ca..0702f6f974eb 100644
 --- a/drivers/misc/habanalabs/habanalabs_drv.c
 +++ b/drivers/misc/habanalabs/habanalabs_drv.c
-@@ -150,6 +150,8 @@ int hl_device_open(struct inode *inode, struct file *filp)
- 	 */
- 	hl_device_set_frequency(hdev, PLL_HIGH);
+@@ -88,9 +88,9 @@ int hl_device_open(struct inode *inode, struct file *filp)
  
-+	hl_debugfs_add_file(hpriv);
+ 	mutex_lock(&hdev->fd_open_cnt_lock);
+ 
+-	if (hdev->disabled) {
++	if (hl_device_disabled_or_in_reset(hdev)) {
+ 		dev_err_ratelimited(hdev->dev,
+-			"Can't open %s because it is disabled\n",
++			"Can't open %s because it is disabled or in reset\n",
+ 			dev_name(hdev->dev));
+ 		mutex_unlock(&hdev->fd_open_cnt_lock);
+ 		return -EPERM;
+@@ -183,6 +183,7 @@ int create_hdev(struct hl_device **dev, struct pci_dev *pdev,
+ 	hdev->cpu_queues_enable = 1;
+ 	hdev->fw_loading = 1;
+ 	hdev->pldm = 0;
++	hdev->heartbeat = 1;
+ 
+ 	/* If CPU is disabled, no point in loading FW */
+ 	if (!hdev->cpu_enable)
+@@ -192,6 +193,10 @@ int create_hdev(struct hl_device **dev, struct pci_dev *pdev,
+ 	if (!hdev->fw_loading)
+ 		hdev->cpu_queues_enable = 0;
+ 
++	/* If CPU queues not enabled, no way to do heartbeat */
++	if (!hdev->cpu_queues_enable)
++		hdev->heartbeat = 0;
 +
- 	return 0;
+ 	hdev->disabled = true;
+ 	hdev->pdev = pdev; /* can be NULL in case of simulator device */
  
- out_err:
-@@ -417,17 +419,20 @@ static int __init hl_init(void)
- 		goto remove_major;
- 	}
+diff --git a/drivers/misc/habanalabs/habanalabs_ioctl.c b/drivers/misc/habanalabs/habanalabs_ioctl.c
+index 71dd1e760a22..f406c3eb6316 100644
+--- a/drivers/misc/habanalabs/habanalabs_ioctl.c
++++ b/drivers/misc/habanalabs/habanalabs_ioctl.c
+@@ -33,6 +33,12 @@ long hl_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+ 	unsigned int usize, asize;
+ 	int retcode;
  
-+	hl_debugfs_init();
++	if (hdev->hard_reset_pending) {
++		dev_crit_ratelimited(hdev->dev,
++			"Device HARD reset pending! Please close FD\n");
++		return -ENODEV;
++	}
 +
- 	rc = pci_register_driver(&hl_pci_driver);
- 	if (rc) {
- 		pr_err("failed to register pci device\n");
--		goto remove_class;
-+		goto remove_debugfs;
- 	}
+ 	if ((nr >= HL_COMMAND_START) && (nr < HL_COMMAND_END)) {
+ 		u32 hl_size;
  
- 	pr_debug("driver loaded\n");
- 
- 	return 0;
- 
--remove_class:
-+remove_debugfs:
-+	hl_debugfs_fini();
- 	class_destroy(hl_class);
- remove_major:
- 	unregister_chrdev_region(MKDEV(hl_major, 0), HL_MAX_MINORS);
-@@ -441,6 +446,13 @@ static void __exit hl_exit(void)
+diff --git a/drivers/misc/habanalabs/hwmon.c b/drivers/misc/habanalabs/hwmon.c
+index 4d60b36dfa21..61b0a2b26c19 100644
+--- a/drivers/misc/habanalabs/hwmon.c
++++ b/drivers/misc/habanalabs/hwmon.c
+@@ -111,7 +111,7 @@ static int hl_read(struct device *dev, enum hwmon_sensor_types type,
  {
- 	pci_unregister_driver(&hl_pci_driver);
+ 	struct hl_device *hdev = dev_get_drvdata(dev);
  
+-	if (hdev->disabled)
++	if (hl_device_disabled_or_in_reset(hdev))
+ 		return -ENODEV;
+ 
+ 	switch (type) {
+@@ -185,7 +185,7 @@ static int hl_write(struct device *dev, enum hwmon_sensor_types type,
+ {
+ 	struct hl_device *hdev = dev_get_drvdata(dev);
+ 
+-	if (hdev->disabled)
++	if (hl_device_disabled_or_in_reset(hdev))
+ 		return -ENODEV;
+ 
+ 	switch (type) {
+diff --git a/drivers/misc/habanalabs/irq.c b/drivers/misc/habanalabs/irq.c
+index 1addcbcee078..4761c3235799 100644
+--- a/drivers/misc/habanalabs/irq.c
++++ b/drivers/misc/habanalabs/irq.c
+@@ -250,6 +250,23 @@ void hl_cq_fini(struct hl_device *hdev, struct hl_cq *q)
+ 			(void *) (uintptr_t) q->kernel_address, q->bus_address);
+ }
+ 
++void hl_cq_reset(struct hl_device *hdev, struct hl_cq *q)
++{
++	q->ci = 0;
++	q->pi = 0;
++
++	atomic_set(&q->free_slots_cnt, HL_CQ_LENGTH);
++
 +	/*
-+	 * Removing debugfs must be after all devices or simulator devices
-+	 * have been removed because otherwise we get a bug in the
-+	 * debugfs module for referencing NULL objects
++	 * It's not enough to just reset the PI/CI because the H/W may have
++	 * written valid completion entries before it was halted and therefore
++	 * we need to clean the actual queues so we won't process old entries
++	 * when the device is operational again
 +	 */
-+	hl_debugfs_fini();
 +
- 	class_destroy(hl_class);
- 	unregister_chrdev_region(MKDEV(hl_major, 0), HL_MAX_MINORS);
- 
-diff --git a/drivers/misc/habanalabs/memory.c b/drivers/misc/habanalabs/memory.c
-index a019f63fda7d..7f7893923996 100644
---- a/drivers/misc/habanalabs/memory.c
-+++ b/drivers/misc/habanalabs/memory.c
-@@ -1289,6 +1289,8 @@ int hl_pin_host_memory(struct hl_device *hdev, u64 addr, u32 size,
- 		goto free_sgt;
- 	}
- 
-+	hl_debugfs_add_userptr(hdev, userptr);
++	memset((void *) (uintptr_t) q->kernel_address, 0, HL_CQ_SIZE_IN_BYTES);
++}
 +
- 	return 0;
- 
- free_sgt:
-@@ -1314,6 +1316,8 @@ int hl_unpin_host_memory(struct hl_device *hdev, struct hl_userptr *userptr)
+ /*
+  * hl_eq_init - main initialization function for an event queue object
+  *
+@@ -292,3 +309,17 @@ void hl_eq_fini(struct hl_device *hdev, struct hl_eq *q)
+ 	hdev->asic_funcs->dma_free_coherent(hdev, HL_EQ_SIZE_IN_BYTES,
+ 			(void *) (uintptr_t) q->kernel_address, q->bus_address);
+ }
++
++void hl_eq_reset(struct hl_device *hdev, struct hl_eq *q)
++{
++	q->ci = 0;
++
++	/*
++	 * It's not enough to just reset the PI/CI because the H/W may have
++	 * written valid completion entries before it was halted and therefore
++	 * we need to clean the actual queues so we won't process old entries
++	 * when the device is operational again
++	 */
++
++	memset((void *) (uintptr_t) q->kernel_address, 0, HL_EQ_SIZE_IN_BYTES);
++}
+diff --git a/drivers/misc/habanalabs/sysfs.c b/drivers/misc/habanalabs/sysfs.c
+index fe865b2e8bab..443045ac3c57 100644
+--- a/drivers/misc/habanalabs/sysfs.c
++++ b/drivers/misc/habanalabs/sysfs.c
+@@ -105,7 +105,7 @@ static ssize_t pm_mng_profile_show(struct device *dev,
  {
- 	struct page **pages;
+ 	struct hl_device *hdev = dev_get_drvdata(dev);
  
-+	hl_debugfs_remove_userptr(hdev, userptr);
-+
- 	if (userptr->dma_mapped)
- 		hdev->asic_funcs->hl_dma_unmap_sg(hdev,
- 				userptr->sgt->sgl,
-@@ -1475,6 +1479,8 @@ int hl_vm_ctx_init_with_ranges(struct hl_ctx *ctx, u64 host_range_start,
- 		goto dram_vm_err;
+-	if (hdev->disabled)
++	if (hl_device_disabled_or_in_reset(hdev))
+ 		return -ENODEV;
+ 
+ 	return sprintf(buf, "%s\n",
+@@ -119,7 +119,7 @@ static ssize_t pm_mng_profile_store(struct device *dev,
+ {
+ 	struct hl_device *hdev = dev_get_drvdata(dev);
+ 
+-	if (hdev->disabled) {
++	if (hl_device_disabled_or_in_reset(hdev)) {
+ 		count = -ENODEV;
+ 		goto out;
  	}
+@@ -163,7 +163,7 @@ static ssize_t high_pll_show(struct device *dev, struct device_attribute *attr,
+ {
+ 	struct hl_device *hdev = dev_get_drvdata(dev);
  
-+	hl_debugfs_add_ctx_mem_hash(hdev, ctx);
+-	if (hdev->disabled)
++	if (hl_device_disabled_or_in_reset(hdev))
+ 		return -ENODEV;
+ 
+ 	return sprintf(buf, "%u\n", hdev->high_pll);
+@@ -176,7 +176,7 @@ static ssize_t high_pll_store(struct device *dev, struct device_attribute *attr,
+ 	long value;
+ 	int rc;
+ 
+-	if (hdev->disabled) {
++	if (hl_device_disabled_or_in_reset(hdev)) {
+ 		count = -ENODEV;
+ 		goto out;
+ 	}
+@@ -260,6 +260,48 @@ static ssize_t preboot_btl_ver_show(struct device *dev,
+ 	return sprintf(buf, "%s\n", hdev->asic_prop.preboot_ver);
+ }
+ 
++static ssize_t soft_reset_store(struct device *dev,
++				struct device_attribute *attr, const char *buf,
++				size_t count)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	long value;
++	int rc;
 +
- 	return 0;
- 
- dram_vm_err:
-@@ -1597,6 +1603,8 @@ void hl_vm_ctx_fini(struct hl_ctx *ctx)
- 	struct hlist_node *tmp_node;
- 	int i;
- 
-+	hl_debugfs_remove_ctx_mem_hash(hdev, ctx);
++	rc = kstrtoul(buf, 0, &value);
 +
- 	if (!hash_empty(ctx->mem_hash))
- 		dev_notice(hdev->dev, "ctx is freed while it has va in use\n");
++	if (rc) {
++		count = -EINVAL;
++		goto out;
++	}
++
++	hl_device_reset(hdev, false, false);
++
++out:
++	return count;
++}
++
++static ssize_t hard_reset_store(struct device *dev,
++				struct device_attribute *attr,
++				const char *buf, size_t count)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	long value;
++	int rc;
++
++	rc = kstrtoul(buf, 0, &value);
++
++	if (rc) {
++		count = -EINVAL;
++		goto out;
++	}
++
++	hl_device_reset(hdev, true, false);
++
++out:
++	return count;
++}
++
+ static ssize_t device_type_show(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
+ {
+@@ -301,7 +343,9 @@ static ssize_t status_show(struct device *dev, struct device_attribute *attr,
+ 	struct hl_device *hdev = dev_get_drvdata(dev);
+ 	char *str;
  
+-	if (hdev->disabled)
++	if (atomic_read(&hdev->in_reset))
++		str = "In reset";
++	else if (hdev->disabled)
+ 		str = "Malfunction";
+ 	else
+ 		str = "Operational";
+@@ -317,13 +361,29 @@ static ssize_t write_open_cnt_show(struct device *dev,
+ 	return sprintf(buf, "%d\n", hdev->user_ctx ? 1 : 0);
+ }
+ 
++static ssize_t soft_reset_cnt_show(struct device *dev,
++		struct device_attribute *attr, char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	return sprintf(buf, "%d\n", hdev->soft_reset_cnt);
++}
++
++static ssize_t hard_reset_cnt_show(struct device *dev,
++		struct device_attribute *attr, char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	return sprintf(buf, "%d\n", hdev->hard_reset_cnt);
++}
++
+ static ssize_t max_power_show(struct device *dev, struct device_attribute *attr,
+ 				char *buf)
+ {
+ 	struct hl_device *hdev = dev_get_drvdata(dev);
+ 	long val;
+ 
+-	if (hdev->disabled)
++	if (hl_device_disabled_or_in_reset(hdev))
+ 		return -ENODEV;
+ 
+ 	val = hl_get_max_power(hdev);
+@@ -338,7 +398,7 @@ static ssize_t max_power_store(struct device *dev,
+ 	unsigned long value;
+ 	int rc;
+ 
+-	if (hdev->disabled) {
++	if (hl_device_disabled_or_in_reset(hdev)) {
+ 		count = -ENODEV;
+ 		goto out;
+ 	}
+@@ -390,12 +450,16 @@ static DEVICE_ATTR_RO(armcp_ver);
+ static DEVICE_ATTR_RO(cpld_ver);
+ static DEVICE_ATTR_RO(device_type);
+ static DEVICE_ATTR_RO(fuse_ver);
++static DEVICE_ATTR_WO(hard_reset);
++static DEVICE_ATTR_RO(hard_reset_cnt);
+ static DEVICE_ATTR_RW(high_pll);
+ static DEVICE_ATTR_RO(infineon_ver);
+ static DEVICE_ATTR_RW(max_power);
+ static DEVICE_ATTR_RO(pci_addr);
+ static DEVICE_ATTR_RW(pm_mng_profile);
+ static DEVICE_ATTR_RO(preboot_btl_ver);
++static DEVICE_ATTR_WO(soft_reset);
++static DEVICE_ATTR_RO(soft_reset_cnt);
+ static DEVICE_ATTR_RO(status);
+ static DEVICE_ATTR_RO(thermal_ver);
+ static DEVICE_ATTR_RO(uboot_ver);
+@@ -413,12 +477,16 @@ static struct attribute *hl_dev_attrs[] = {
+ 	&dev_attr_cpld_ver.attr,
+ 	&dev_attr_device_type.attr,
+ 	&dev_attr_fuse_ver.attr,
++	&dev_attr_hard_reset.attr,
++	&dev_attr_hard_reset_cnt.attr,
+ 	&dev_attr_high_pll.attr,
+ 	&dev_attr_infineon_ver.attr,
+ 	&dev_attr_max_power.attr,
+ 	&dev_attr_pci_addr.attr,
+ 	&dev_attr_pm_mng_profile.attr,
+ 	&dev_attr_preboot_btl_ver.attr,
++	&dev_attr_soft_reset.attr,
++	&dev_attr_soft_reset_cnt.attr,
+ 	&dev_attr_status.attr,
+ 	&dev_attr_thermal_ver.attr,
+ 	&dev_attr_uboot_ver.attr,
 -- 
 2.17.1
 
