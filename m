@@ -2,157 +2,127 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22651C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:32:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19177C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:32:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC371222D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:32:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8226222D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:32:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="0vC64doY"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="LXix7LMm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394170AbfBNTcB (ORCPT
+        id S2436517AbfBNTcw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 14:32:01 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:36170 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389635AbfBNTcA (ORCPT
+        Thu, 14 Feb 2019 14:32:52 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42342 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389635AbfBNTcw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 14:32:00 -0500
-Received: by mail-yb1-f196.google.com with SMTP id o129so1095511yba.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 11:32:00 -0800 (PST)
+        Thu, 14 Feb 2019 14:32:52 -0500
+Received: by mail-pf1-f195.google.com with SMTP id n74so3584458pfi.9
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 11:32:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=ymTetqCxQkH/gWrBLMleTrR9XZQMlMdB3tW36JbLzeo=;
-        b=0vC64doYJxj3u46L57PzC+PF1KMBPV7TsxV5mb9gFTLzelru2Q/8CQaq2zlTgoKjN7
-         HzkHnDOoc55WMEgqaUNN9Af3i0y36vKNQkB9bbj4+moimHQn1mQjBy/iFQ1gLz1+nXLJ
-         aFy+9Lp0069Huzn79TyMlQxO318+rmzZ3SHyYHkzw5wc/kIHqb4foL2bqEzklikT3P/y
-         r9ECSwOP4+2HgsYzDtAypzvXgwJCxi8FpIhg2fWz6VzVIIx4xk1lf5Q00XcV4AM6hOUv
-         vYlRKF3pGicTXHhAY4AT5Hk0qW7WyIWpPYXZLCWN3JjLSBiBXsKyEc3aLdOc9GQTtowy
-         +DHA==
+        bh=BZL+CSDR6gHJLSLkIhVG72Bv6twb5BsbEPP+vcprd2o=;
+        b=LXix7LMmfq5hGoeLnzxUxHoG533C7LuIgqDL7NApe5c+M+1Uc1ynmH6s5H3b+AQ195
+         oWYIeUgb4+PqwiXn+BkH+KNlznPKqcf5brlcsdNswCUyT2Gqw/9GnNk2aO2u1KeI9u8/
+         jNZAyNDEioj/JaQ+u2v2/0nf0s5qw5UuBq9ZA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=ymTetqCxQkH/gWrBLMleTrR9XZQMlMdB3tW36JbLzeo=;
-        b=PwNcyfwipitaYEvpXNXysPVTfQusmSuAK56LTbHH/kvMM+QqeQFS3L5UbWPaEvjXJS
-         2eFvH6dn+sn5627zf5uInVMH6UAwyhsW5dV6QlrcX2k/HII0UWie7Glx7TpjZIdZUMac
-         GeDy6tKI2DPGpekBovuH1vscXx+uA/lnQNmU3S6zZ0trdCpNWTnWfQAB13DrcyUFuaIn
-         Pz61HAbqjvBGNOytNP5+w3b07mjNgcA/vS4u5+wFMMatm6s2Lr4/OgG7hyOghDUsFQM1
-         g/dpMUCVCqZ9rrojaNruhnjD9Q6z/rSa2RrD/niAxElu5sy2PfpbKjIF8EEivH6oLm7t
-         0Vkw==
-X-Gm-Message-State: AHQUAuYPUdnZz5HXjUHYxQAaYNGIJWo3MI9IcUBSZn15QKWXvAzd6kCH
-        jytal3DFRyYKgUokOwrdM0MvF/LuzSo=
-X-Google-Smtp-Source: AHgI3Ia4ziWhxAdP0rAwp3ibPNpx3P7fE9R/9qg9oS915c4CYnZ9kF4h8hHkKUBL54nnyxnm/G7vHg==
-X-Received: by 2002:a25:37cd:: with SMTP id e196mr4610415yba.169.1550172719404;
-        Thu, 14 Feb 2019 11:31:59 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::4:80d4])
-        by smtp.gmail.com with ESMTPSA id a72sm1223823ywh.42.2019.02.14.11.31.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 11:31:58 -0800 (PST)
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        =?UTF-8?q?=C5=81ukasz=20Siudut?= <lsiudut@fb.com>,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com
-Subject: [PATCH] psi: avoid divide-by-zero crash inside virtual machines
-Date:   Thu, 14 Feb 2019 14:31:57 -0500
-Message-Id: <20190214193157.15788-1-hannes@cmpxchg.org>
-X-Mailer: git-send-email 2.20.1
+        bh=BZL+CSDR6gHJLSLkIhVG72Bv6twb5BsbEPP+vcprd2o=;
+        b=ifVCv32Cy/zTj3dHcesPPCWzLyJNB6OsU5W93la1WuKYn0Q8jFq4CdZXEpBAissApG
+         MyawRaeIBtFVq0Wf1AuQYrjuD/uCbqOMdAVddWs4xodYU+SBNUyUN3hR3Nt3IcDeOBSs
+         HniJ9xrDAdht1yspm3IM4pfdbWrVrJTefNj0spsodqin682UjKpwlv8JYihysNreJEs+
+         SKonJ2l6X2Xu0Tu63/F7PUOg6UcSFfQ9FCGKMhGQmSmYjvYUO4tMib5ETCuRq7c7RW1y
+         C1yBYQyZiUE5U4yBATpRzLJmyHcRz+gXnVUDeHTnn2EKwbqJt0w5HxBakMf67O3d/kQ5
+         xMSQ==
+X-Gm-Message-State: AHQUAuZgeVZehyrNeVP0vjUwIyElZemQCyY+mcxteUEIdLQFkBJN8SF5
+        HU45KhwXPPcAlDES4WYEzx92Fw==
+X-Google-Smtp-Source: AHgI3IbV+bc8nAxVayJcVao6/02seww1jKGdVVMBFBYG8yi7ZxWKrnPjnOexYpCyI6YSZIosvpTPHg==
+X-Received: by 2002:a63:2e06:: with SMTP id u6mr1471903pgu.71.1550172771021;
+        Thu, 14 Feb 2019 11:32:51 -0800 (PST)
+Received: from localhost.localdomain ([115.97.184.151])
+        by smtp.gmail.com with ESMTPSA id o23sm10808832pfa.140.2019.02.14.11.32.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Feb 2019 11:32:50 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>
+Cc:     dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-amarula@amarulasolutions.com,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v8 00/10] drm/sun4i: Allwinner MIPI-DSI Burst mode support 
+Date:   Fri, 15 Feb 2019 01:02:27 +0530
+Message-Id: <20190214193236.7504-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We've been seeing hard-to-trigger psi crashes when running inside VM
-instances:
+This is next version changes for Allwinner MIPI-DSI Burst mode support.
 
-[ 1255.840325] divide error: 0000 [#1] SMP PTI
-[ 1255.840325] Modules linked in: [...]
-[ 1255.840325] CPU: 0 PID: 212 Comm: kworker/0:2 Not tainted 4.16.18-119_fbk9_3817_gfe944c98d695 #119
-[ 1255.840325] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.0.0 02/06/2015
-[ 1255.840325] Workqueue: events psi_clock
-[ 1255.840325] RIP: 0010:psi_update_stats+0x270/0x490
-[ 1255.840325] RSP: 0018:ffffc90001117e10 EFLAGS: 00010246
-[ 1255.840325] RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffff8800a35a13f8
-[ 1255.840325] RDX: 0000000000000000 RSI: ffff8800a35a1340 RDI: 0000000000000000
-[ 1255.840325] RBP: 0000000000000658 R08: ffff8800a35a1470 R09: 0000000000000000
-[ 1255.840325] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-[ 1255.840325] R13: 0000000000000000 R14: 0000000000000000 R15: 00000000000f8502
-[ 1255.840325] FS:  0000000000000000(0000) GS:ffff88023fc00000(0000) knlGS:0000000000000000
-[ 1255.840325] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 1255.840325] CR2: 00007fbe370fa000 CR3: 00000000b1e3a000 CR4: 00000000000006f0
-[ 1255.840325] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[ 1255.840325] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[ 1255.840325] Call Trace:
-[ 1255.840325]  psi_clock+0x12/0x50
-[ 1255.840325]  process_one_work+0x1e0/0x390
-[ 1255.840325]  worker_thread+0x2b/0x3c0
-[ 1255.840325]  ? rescuer_thread+0x330/0x330
-[ 1255.840325]  kthread+0x113/0x130
-[ 1255.840325]  ? kthread_create_worker_on_cpu+0x40/0x40
-[ 1255.840325]  ? SyS_exit_group+0x10/0x10
-[ 1255.840325]  ret_from_fork+0x35/0x40
-[ 1255.840325] Code: 48 0f 47 c7 48 01 c2 45 85 e4 48 89 16 0f 85 e6 00 00 00 4c 8b 49 10 4c 8b 51 08 49 69 d9 f2 07 00 00 48 6b c0 64 4c 8b 29 31 d2 <48> f7 f7 49 69 d5 8d 06 00 00 48 89 c5 4c 69 f0 00 98 0b 00 48
+All these changes are grabbed from previous versions[1][2] and grouped
+it in a proper order so-that it can help to review and merge easy.
 
-The Code-line points to `period` being 0 inside update_stats(), and we
-divide by that when calculating that period's pressure percentage.
+Changes for v8:
+- rebase on master
+- rework on commit messages
+- include drq changes from previous version
+Changes for v7:
+- rebase on master
+- collect Merlijn Wajer Tested-by credits.
+Changes for v6:
+- fixed all burst mode patches as per previous version comments
+- rebase on master
+- update proper commit message
+- dropped unneeded comments
+- order the patches that make review easy
+Changes for v5, v4, v3, v2:
+- use proper return value for tcon0 probe
+- add logic to get tcon0 divider values
+- simplify timings code to support burst mode
+- fix drq computation return values
+- update proper commit messages
+- rebase on master
 
-The elapsed period should never be 0. The reason this can happen is
-due to an off-by-one in the idle time / missing period calculation
-combined with a coarse sched_clock() in the virtual machine.
+[1] https://patchwork.kernel.org/cover/10792981/
+[2] https://patchwork.kernel.org/cover/10686655/
 
-The target time for aggregation is advanced into the future on a fixed
-grid to prevent clock drift. So when an aggregation runs after some
-idle period, we can not just set it to "now + psi_period", but have to
-calculate the downtime and advance the target time relative to itself.
+Any inputs?
+Jagan.
 
-However, if the aggregator was disabled exactly one psi_period (ns),
-we drop one idle period in the calculation due to a > when we should
-do >=. In that case, next_update will be advanced from 'now -
-psi_period' to 'now' when it should be moved to 'now + psi_period'.
-The run finishes with last_update == next_update == sched_clock().
+Jagan Teki (10):
+  drm/sun4i: sun6i_mipi_dsi: Compute burst mode loop N1 instruction
+    delay
+  drm/sun4i: sun6i_mipi_dsi: Support instruction loop selection
+  drm/sun4i: sun6i_mipi_dsi: Setup burst mode timings
+  drm/sun4i: sun6i_mipi_dsi: Fix TCON DRQ set bits
+  drm/sun4i: sun6i_mipi_dsi: Simplify drq to support all modes
+  drm/sun4i: tcon: Export get tcon0 routine
+  drm/sun4i: sun6i_mipi_dsi: Probe tcon0 during dsi_bind
+  drm/sun4i: sun6i_mipi_dsi: Setup burst mode
+  drm/sun4i: sun6i_mipi_dsi: Enable trail_inv and trail_fill controls
+  drm/sun4i: sun6i_mipi_dsi: Enable HBP, HSA_HSE for burst mode
 
-With hardware clocks, this exact nanosecond match isn't likely in the
-first place; but if it does happen, the clock will still have moved on
-and the period non-zero by the time the worker runs. A pointlessly
-short period, but besides the extra work, no harm no foul. However, a
-slow sched_clock() like we have on VMs might not have advanced either
-by the time the worker runs again. And when we calculate the elapsed
-period, the result, our pressure divisor, will be 0. Ouch.
+ drivers/gpu/drm/sun4i/sun4i_tcon.c     |   3 +-
+ drivers/gpu/drm/sun4i/sun4i_tcon.h     |   1 +
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 149 ++++++++++++++++++++++---
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h |   1 +
+ 4 files changed, 138 insertions(+), 16 deletions(-)
 
-Fix this by correctly handling the situation when the elapsed time
-between aggregation runs is precisely two periods, and advance the
-expiration timestamp correctly to period into the future.
-
-Reported-by: Łukasz Siudut <lsiudut@fb.com>
-Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
----
- kernel/sched/psi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-index c3484785b179..0e97ca9306ef 100644
---- a/kernel/sched/psi.c
-+++ b/kernel/sched/psi.c
-@@ -322,7 +322,7 @@ static bool update_stats(struct psi_group *group)
- 	expires = group->next_update;
- 	if (now < expires)
- 		goto out;
--	if (now - expires > psi_period)
-+	if (now - expires >= psi_period)
- 		missed_periods = div_u64(now - expires, psi_period);
- 
- 	/*
 -- 
-2.20.1
+2.18.0.321.gffc6fa0e3
 
