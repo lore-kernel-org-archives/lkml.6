@@ -2,146 +2,186 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4712C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:14:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E304C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:15:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A207C2229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:14:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDB312229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:15:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="qZDePCak"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xBBa4RXz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394532AbfBNIOY (ORCPT
+        id S2394550AbfBNIPR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 03:14:24 -0500
-Received: from mout.web.de ([212.227.17.12]:37889 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388919AbfBNIOY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 03:14:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1550132041;
-        bh=uvEiNLmvtbYEiazy+HrVZrIw9zHZXTjAyr4MfWITstU=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=qZDePCak9KQFkox+Ikx8vJjP186AOE4ElHHx4B1aGekcJ2BC6k85TTIaaEvj06VGX
-         iJ81c4K3UCgBnNb9rXMYl5d0Rwt8M5+9bVHs1hj0SYPTNmX2/Z+ILs2y38CU0uWNDF
-         8F6kdUxJiZ6a4l40Z/1uCJ2VXs0K/AmoyDkLMx9Y=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.3] ([93.131.97.110]) by smtp.web.de (mrweb103
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0MejmG-1gjI2r2plw-00ODvj; Thu, 14
- Feb 2019 09:14:01 +0100
-Subject: Re: [v3] Coccinelle: semantic patch for missing put_device()
-To:     Julia Lawall <julia.lawall@lip6.fr>,
-        Wen Yang <wen.yang99@zte.com.cn>
-Cc:     Gilles Muller <Gilles.Muller@lip6.fr>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Wen Yang <yellowriver2010@hotmail.com>,
-        Xue Zhihong <xue.zhihong@zte.com.cn>,
-        Yi Wang <wang.yi59@zte.com.cn>, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Coccinelle <cocci@systeme.lip6.fr>
-References: <1550039015-5587-1-git-send-email-wen.yang99@zte.com.cn>
- <c10e0bf1-4830-7ee4-5b21-70b521dd6c36@web.de>
- <alpine.DEB.2.21.1902132050200.2655@hadrien>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
- +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
- mpVJgXGKkNJ1ey+QOXouzlErVvE2fRh+KXXN1Q7fSmTJlAW9XJYHS3BDHb0uRpymRSX3O+E2
- lA87C7R8qAigPDZi6Z7UmwIA83ZMKXQ5stA0lhPyYgQcM7fh7V4ZYhnR0I5/qkUoxKpqaYLp
- YHBczVP+Zx/zHOM0KQphOMbU7X3c1pmMruoe6ti9uZzqZSLsF+NKXFEPBS665tQr66HJvZvY
- GMDlntZFAZ6xQvCC1r3MGoxEC1tuEa24vPCC9RZ9wk2sY5Csbva0WwYv3WKRZZBv8eIhGMxs
- rcpeGShRFyZ/0BYO53wZAPV1pEhGLLxd8eLN/nEWjJE0ejakPC1H/mt5F+yQBJAzz9JzbToU
- 5jKLu0SugNI18MspJut8AiA1M44CIWrNHXvWsQ+nnBKHDHHYZu7MoXlOmB32ndsfPthR3GSv
- jN7YD4Ad724H8fhRijmC1+RpuSce7w2JLj5cYj4MlccmNb8YUxsE8brY2WkXQYS8Ivse39MX
- BE66MQN0r5DQ6oqgoJ4gHIVBUv/ZwgcmUNS5gQkNCFA0dWXznQARAQABtCZNYXJrdXMgRWxm
- cmluZyA8TWFya3VzLkVsZnJpbmdAd2ViLmRlPokCVAQTAQgAPhYhBHDP0hzibeXjwQ/ITuU9
- Figxg9azBQJYNvsQAhsjBQkJZgGABQsJCAcCBhUICQoLAgQWAgMBAh4BAheAAAoJEOU9Figx
- g9azcyMP/iVihZkZ4VyH3/wlV3nRiXvSreqg+pGPI3c8J6DjP9zvz7QHN35zWM++1yNek7Ar
- OVXwuKBo18ASlYzZPTFJZwQQdkZSV+atwIzG3US50ZZ4p7VyUuDuQQVVqFlaf6qZOkwHSnk+
- CeGxlDz1POSHY17VbJG2CzPuqMfgBtqIU1dODFLpFq4oIAwEOG6fxRa59qbsTLXxyw+PzRaR
- LIjVOit28raM83Efk07JKow8URb4u1n7k9RGAcnsM5/WMLRbDYjWTx0lJ2WO9zYwPgRykhn2
- sOyJVXk9xVESGTwEPbTtfHM+4x0n0gC6GzfTMvwvZ9G6xoM0S4/+lgbaaa9t5tT/PrsvJiob
- kfqDrPbmSwr2G5mHnSM9M7B+w8odjmQFOwAjfcxoVIHxC4Cl/GAAKsX3KNKTspCHR0Yag78w
- i8duH/eEd4tB8twcqCi3aCgWoIrhjNS0myusmuA89kAWFFW5z26qNCOefovCx8drdMXQfMYv
- g5lRk821ZCNBosfRUvcMXoY6lTwHLIDrEfkJQtjxfdTlWQdwr0mM5ye7vd83AManSQwutgpI
- q+wE8CNY2VN9xAlE7OhcmWXlnAw3MJLW863SXdGlnkA3N+U4BoKQSIToGuXARQ14IMNvfeKX
- NphLPpUUnUNdfxAHu/S3tPTc/E/oePbHo794dnEm57LuuQINBFg2+xABEADZg/T+4o5qj4cw
- nd0G5pFy7ACxk28mSrLuva9tyzqPgRZ2bdPiwNXJUvBg1es2u81urekeUvGvnERB/TKekp25
- 4wU3I2lEhIXj5NVdLc6eU5czZQs4YEZbu1U5iqhhZmKhlLrhLlZv2whLOXRlLwi4jAzXIZAu
- 76mT813jbczl2dwxFxcT8XRzk9+dwzNTdOg75683uinMgskiiul+dzd6sumdOhRZR7YBT+xC
- wzfykOgBKnzfFscMwKR0iuHNB+VdEnZw80XGZi4N1ku81DHxmo2HG3icg7CwO1ih2jx8ik0r
- riIyMhJrTXgR1hF6kQnX7p2mXe6K0s8tQFK0ZZmYpZuGYYsV05OvU8yqrRVL/GYvy4Xgplm3
- DuMuC7/A9/BfmxZVEPAS1gW6QQ8vSO4zf60zREKoSNYeiv+tURM2KOEj8tCMZN3k3sNASfoG
- fMvTvOjT0yzMbJsI1jwLwy5uA2JVdSLoWzBD8awZ2X/eCU9YDZeGuWmxzIHvkuMj8FfX8cK/
- 2m437UA877eqmcgiEy/3B7XeHUipOL83gjfq4ETzVmxVswkVvZvR6j2blQVr+MhCZPq83Ota
- xNB7QptPxJuNRZ49gtT6uQkyGI+2daXqkj/Mot5tKxNKtM1Vbr/3b+AEMA7qLz7QjhgGJcie
- qp4b0gELjY1Oe9dBAXMiDwARAQABiQI8BBgBCAAmFiEEcM/SHOJt5ePBD8hO5T0WKDGD1rMF
- Alg2+xACGwwFCQlmAYAACgkQ5T0WKDGD1rOYSw/+P6fYSZjTJDAl9XNfXRjRRyJSfaw6N1pA
- Ahuu0MIa3djFRuFCrAHUaaFZf5V2iW5xhGnrhDwE1Ksf7tlstSne/G0a+Ef7vhUyeTn6U/0m
- +/BrsCsBUXhqeNuraGUtaleatQijXfuemUwgB+mE3B0SobE601XLo6MYIhPh8MG32MKO5kOY
- hB5jzyor7WoN3ETVNQoGgMzPVWIRElwpcXr+yGoTLAOpG7nkAUBBj9n9TPpSdt/npfok9ZfL
- /Q+ranrxb2Cy4tvOPxeVfR58XveX85ICrW9VHPVq9sJf/a24bMm6+qEg1V/G7u/AM3fM8U2m
- tdrTqOrfxklZ7beppGKzC1/WLrcr072vrdiN0icyOHQlfWmaPv0pUnW3AwtiMYngT96BevfA
- qlwaymjPTvH+cTXScnbydfOQW8220JQwykUe+sHRZfAF5TS2YCkQvsyf7vIpSqo/ttDk4+xc
- Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
- x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
- pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <75cad101-727d-2e6b-b6ef-a6a4d0ab4130@web.de>
-Date:   Thu, 14 Feb 2019 09:13:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Thu, 14 Feb 2019 03:15:17 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:44531 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394478AbfBNIPR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 03:15:17 -0500
+Received: by mail-vs1-f66.google.com with SMTP id r201so3094485vsc.11
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 00:15:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Q1vSlE9Et3cfPY2F1A8sGnwrhCQsNEoL0FUxEug8lZc=;
+        b=xBBa4RXz1IjzdL6Lt4V26sxhE7+GX/cw0HWxWUzg2kgnlpVjgh+xAr7uWx4CLoeQ/3
+         5mYnSHXELr3tAZ26gQsVJnMg9651fkcMU/yCKYUIlk013OlDP8tXaHc+EkMA9viA7YfD
+         6p+fscpw5PI7bsP1fdiH7SzSDXFdbiSjEmqg1HASKmCup7vWPBizYvaRIpW13bbpo86b
+         WDowb8IV51W4bnn4Hq+AiEAMswOXGiR+6VIPcTHuDWpeR2uqYvERYkNiTH5XlW+lek9N
+         GfjaDa2jeUZwKfbxg1LAXvw+0n1qUqdXcijXTS6Lz6pnVEsuckPlqr58iaiWx2Y4Gq1s
+         6+OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Q1vSlE9Et3cfPY2F1A8sGnwrhCQsNEoL0FUxEug8lZc=;
+        b=YjTMKMc4p4xfhsERQJyrnllthWknAv0JiwRh7c9rM8SimqRwoFYsO25Vqjqb5yeBiV
+         d0CH0d+nS02FubnzWjqVCKPhEvNe/eNvD8FxZedQjAxWqvUawskzpNN/9u122Ut+r0yy
+         E4EbhfY0g4Ut6vE3ZYjO2+HW/EgPt1uaRSbcx4iVpGRB5HNnFMJPlxETXVP3bpCv4/5J
+         OTVZ2R0Ef3HQnffSMhSPa/JaK2cHUAthNwZQWuuSUdXHzmoG+nI84RI63Sl/ec1CpkY2
+         8tbr7d+9KlZV6td1/0wnfFc++WlsBgzTKiSTaOprGOalq5jiSV1oLlR1Twey1dkD7u0C
+         19Fg==
+X-Gm-Message-State: AHQUAuY24BUhFhHPshs2UEH6DfPjGvJGoV6z6Pu5k780SnBo4g/cPr2p
+        EhwCOoo4fbGc+h3Jhx+YsV3DWmynvvRQC/mJlUDZ5w==
+X-Google-Smtp-Source: AHgI3IZb1SyyZLg12u8rwtuZhCGYI/OQRskQQFBwn36j/LE7FglemYXyDqS16sJgwfH3fDSLVJ+13kvXM558cDuNMyU=
+X-Received: by 2002:a67:b003:: with SMTP id z3mr1479418vse.200.1550132115847;
+ Thu, 14 Feb 2019 00:15:15 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1902132050200.2655@hadrien>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NdzkFnAuNVFgRnhHRKaphDKrTcKJEjVEek0lluUUrzbdodLsrbu
- dcEWJVDvLKxLYP3NG9nxCmSLtaEw5ndao8xEVPjZ2D0O2p54QYMnCPk4ajLUhoOlots9UIy
- 0s8B+8gSk0bL2u32wvx/Zj6vSYrLH/dc15PhjjtjWHG1Xh5atdppRQf85YWM4OO4zsltrv1
- 5WMVfpi61CUqCwNf3oHuQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:6PXK73sdqLM=:rhW2l9V0LYqd2hOJcDYrVD
- 0dfQdyiAovc42cvSdyrrotI9mGCSkt4Ssz6jT/eU1lrHiXs1hUHzMzQk4UoiYVi6dpv2fJZSN
- hWzlkh/54rYPHcMJgm+UPAGgBWBAsDrp5Sd20b/5V5DAy4nS6Jx7MTLbt+TgcCre3Nl5ZUW1f
- Pgm+at4/6+hJWERxt5/xsy88x95DKRUETZ6qVVw9ekrxFeEAYUOYjbsa7d7Lf3CW676sz2HlD
- 2lRmR2N3o98GS6g25xq6PAZt8M8Ac3bJ3eMEkJ7x3Wr4KTX/c9Te4EkDhfDgacBLBVO26U9R2
- UiS/PVV+eJGCsFQD978bOiuMfpbz0bwcN77vEqAGR7yhMjz3VMwUBwrWYZi+AQdr/YvfmLt57
- uAf8/OlkfcJeyomvdFxbeAvUgLvfhMn7Z5miDKgFwOdZnpj0y5qNH4GRPFXQRpOSkav7nJ2Sp
- bQE3OYpqn5t1fUesPFVK1Yu1h5pzXet6qFC+z3AaxfF51eZjaDkehQylmfH0EvD2h5cvaNeDt
- h4f/CQWS3cSKCXdzKA8g/5subcbB5GpHhpGMj24EAkPnfgtC4oIjAeGeKmt3+7bTHIs4ho2z7
- XVdQfUME04fLR+VphIbtuoyTP5180FaH1p/Ra9do4u7bvJwqNSebigyW/bFzuNZXq++Pob2ks
- /UfW7jHBghdG1MaNGToYZu0q/jk5a1yzm3IcxkWzOxEv5p1ykp6PcVRMwijjYFj7n6hMUUaxG
- HcpYVQzGdLmlTgEUAM2eMH3mN4RsJzzH5lEnClR22irLlyPjUpWb11fWqZhuD8K3K5Yraj4hV
- BBcn64/scYSOFEF/BlhhriTaPIAsJfIlZnJI43WHlBDRAqjsqbNg83+z7Qew4OlcqtQdk4vyZ
- 2z48G/NV+0DMJHKrrnjittIQ3ygVJ04dwBFPwm4Di6Du3T00VxnKoaFM+N59FZ8JcTa1TM28B
- T5ql9dADzHw==
+References: <1550048812-29068-1-git-send-email-chaotian.jing@mediatek.com>
+ <CAPDyKFpNEhXT0dD_p85Ab2H_nHtr5r86BLcvkLVUsdwtYLUs4g@mail.gmail.com> <1550110458.16070.30.camel@mhfsdcap03>
+In-Reply-To: <1550110458.16070.30.camel@mhfsdcap03>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 14 Feb 2019 09:14:39 +0100
+Message-ID: <CAPDyKFqncdVs-jB4_46ZhgZP3TGCaUWnOCoNmjfT-kAESY3csw@mail.gmail.com>
+Subject: Re: [PATCH v1] mmc: mmc: Fix HS setting in mmc_hs400_to_hs200()
+To:     Chaotian Jing <chaotian.jing@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Shawn Lin <shawn.lin@rock-chips.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Kyle Roeschley <kyle.roeschley@ni.com>,
+        Hongjie Fang <hongjiefang@asrmicro.com>,
+        Harish Jenny K N <harish_kandiga@mentor.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> +    when !=3D ex =3D \( (T)id \| &id->dev \| get_device(&id->dev) \| (=
-T1)platform_get_drvdata(id) \)
+On Thu, 14 Feb 2019 at 03:14, Chaotian Jing <chaotian.jing@mediatek.com> wrote:
 >
-> There is no need for the disjunction.  There is also no need for the
-> different variables.
+> On Wed, 2019-02-13 at 13:08 +0100, Ulf Hansson wrote:
+> > On Wed, 13 Feb 2019 at 10:07, Chaotian Jing <chaotian.jing@mediatek.com> wrote:
+> > >
+> > > mmc_hs400_to_hs200() begins with the card and host in HS400 mode.
+> > > Therefore, any commands sent to the card should use HS400 timing.
+> > > reduce clock frequency to 50Mhz but without host timming change
+> > > may cause CMD6 response CRC error. because host still running at
+> > > hs400 mode, and it's hard to find a suitable setting for all eMMC
+> > > cards when clock frequency reduced to 50Mhz but card & host still
+> > > in hs400 mode.
+> > > this patch refers to mmc_select_hs400(), make the reduce clock frequency
+> > > after card timing change.
+> > >
+> > > Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
+> > > Fixes: ef3d232245ab ("mmc: mmc: Relax checking for switch errors after HS200 switch")
+> > > ---
+> > >  drivers/mmc/core/mmc.c | 29 +++++++++++++++++++++++------
+> > >  1 file changed, 23 insertions(+), 6 deletions(-)
+> > >
+> > > diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> > > index 09c688f..00adc2d 100644
+> > > --- a/drivers/mmc/core/mmc.c
+> > > +++ b/drivers/mmc/core/mmc.c
+> > > @@ -1239,20 +1239,37 @@ int mmc_hs400_to_hs200(struct mmc_card *card)
+> > >         int err;
+> > >         u8 val;
+> > >
+> > > -       /* Reduce frequency to HS */
+> > > -       max_dtr = card->ext_csd.hs_max_dtr;
+> > > -       mmc_set_clock(host, max_dtr);
+> > > -
+> > >         /* Switch HS400 to HS DDR */
+> > >         val = EXT_CSD_TIMING_HS;
+> > >         err = __mmc_switch(card, EXT_CSD_CMD_SET_NORMAL, EXT_CSD_HS_TIMING,
+> > >                            val, card->ext_csd.generic_cmd6_time, 0,
+> > >                            true, false, true);
+> > > -       if (err)
+> > > -               goto out_err;
+> > > +       /*
+> > > +        * as we are on the way to do re-tune, so if the CMD6 got response CRC
+> > > +        * error, do not treat it as error.
+> > > +        */
+> > > +       if (err) {
+> > > +               if (err == -EILSEQ) {
+> > > +                       /*
+> > > +                        * card will busy after sending out response and host
+> > > +                        * driver may not wait busy de-assert when get
+> > > +                        * response CRC error. so just wait enough time to
+> > > +                        * ensure card leave busy state.
+> > > +                        */
+> > > +                       mmc_delay(card->ext_csd.generic_cmd6_time);
+> > > +                       pr_debug("%s: %s switch to HS got CRC error\n",
+> > > +                                mmc_hostname(host), __func__);
+> > > +               } else {
+> > > +                       goto out_err;
+> > > +               }
+> > > +       }
+> > >
+> > >         mmc_set_timing(host, MMC_TIMING_MMC_DDR52);
+> > >
+> > > +       /* Reduce frequency to HS */
+> > > +       max_dtr = card->ext_csd.hs_max_dtr;
+> > > +       mmc_set_clock(host, max_dtr);
+> > > +
+> >
+> > What Adrian suggested was to not to move this part, but instead, only
+> > allow CRC errors from the CMD6 as above.
+> >
+> > I guess it didn't work for you?
+> >
+> It should work for me. another issue is CMD6 will be sent 3 times at max
 
-Really?
+Alright, let's give it a try then.
 
-Would you like to distinguish the shown assignment expressions anyhow?
+>  err = mmc_wait_for_cmd(host, &cmd, MMC_CMD_RETRIES);
 
+Yeah, that one have I thought about earlier as well.
 
-> Different variables are only needed when the when conditions are on
-> different ...s
+>
+> if the first CMD6 got response CRC error, then Host driver must wait
+> busy signal de-assert before send the next CMD6.
+>
+> So that it really make sense to issue CMD6(R1B) for 3 times ? if host
+> driver did not handle the first CMD6 response CRC error and send second
+> CMD6 directly, then this CMD6 will get timeout due to card still in busy
+> state.
 
-I find that this information will need further clarification.
-Will any additional adjustments become relevant for such SmPL when specifi=
-cations?
+I fully agree with you, I don't think it makes sense to retry - not
+even for any CMD6, because of the busy signalling the card may raise
+afterwards.
 
-Regards,
-Markus
+Perhaps we should start with a simple oneliner patch, giving zero
+instead of MMC_CMD_RETRIES to mmc_wait_for_cmd() and see how that
+plays.
+
+Then on top we can add the special error handling of the CRC errors,
+along the lines of what you suggest.
+
+Does it make sense?
+
+[...]
+
+Kind regards
+Uffe
