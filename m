@@ -2,158 +2,127 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 107B3C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:31:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73483C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:34:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDB4E2070D
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:31:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 461802082F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:34:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405887AbfBNLbv (ORCPT
+        id S2393051AbfBNLe5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 06:31:51 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38322 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387558AbfBNLbu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 06:31:50 -0500
-Received: by mail-ed1-f67.google.com with SMTP id h58so4719062edb.5
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 03:31:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IsHGYw/1NQ1tlRUZNhd3dMpb5nLppXtN2TKdOd5GNfA=;
-        b=s5FHz1geNDD/63Pa2gmDZr7bUPlpju3EqeMEoFEqV/y67Yi0AouW6re83ITTQF6kOe
-         byz4+3ffGA/gE6hM+Vp+jCz3p75JsJXwZQcDdM0awJCfmtmxX/6Afdl9ge46vYJyavBm
-         g4J7Lgxu/ohYocRfBi736JjQuFv/Kq3wZjuCfKfCHrPAUAS2wywPCZYLSekf78c+uf6s
-         iOwaBIrj1zH096tv5wRv8P6nJqMiZ4CXKeS9KW2DnE++gdiRVUHBLRVVGYgpkVlAu8Cp
-         XT9EWY4h0mCUhoEINN9wogDFxSeYHLkHtZK9vTPiDDknS0lNFIfZcnO7mdfx81rp5pig
-         UuaQ==
-X-Gm-Message-State: AHQUAuYooYgo6Z0h20oW/qUKtAEvEKirgllRh6y/iR0eSdnVQY9pQCjS
-        MtpYo4xw2+Y9lxwBJGbEVfdbvg==
-X-Google-Smtp-Source: AHgI3Ib4pMZNxFmVH8yOOTMxg0ezryK/rg3YQ+p41NcWEfdO8KErtz3SYmNdufvFhip119056L34Wg==
-X-Received: by 2002:a17:906:1e43:: with SMTP id i3mr2413967ejj.64.1550143908957;
-        Thu, 14 Feb 2019 03:31:48 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id z60sm587827ede.82.2019.02.14.03.31.47
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 03:31:47 -0800 (PST)
-Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
- LEDs
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Yauhen Kharuzhy <jekhor@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-References: <20190212205901.13037-1-jekhor@gmail.com>
- <20190212205901.13037-2-jekhor@gmail.com>
- <1df39a63-533f-bb68-a056-a0241f148be9@redhat.com> <20190213230731.GA8557@amd>
- <42078a81-e32e-81b7-528f-d1adb60d31c3@redhat.com>
- <20190213233806.GA11867@amd>
- <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com> <20190214111423.GE6132@amd>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <92cf09b8-726d-4f1b-94ba-368a66af2246@redhat.com>
-Date:   Thu, 14 Feb 2019 12:31:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Thu, 14 Feb 2019 06:34:57 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51086 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727231AbfBNLe5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 06:34:57 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 381BC3D945;
+        Thu, 14 Feb 2019 11:34:55 +0000 (UTC)
+Received: from krava (unknown [10.43.17.161])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 21C6060BE7;
+        Thu, 14 Feb 2019 11:34:51 +0000 (UTC)
+Date:   Thu, 14 Feb 2019 12:34:50 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Stephane Eranian <eranian@google.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [RFC/PATCH 00/14] perf record: Add support to store data in
+ directory
+Message-ID: <20190214113450.GC26714@krava>
+References: <CABPqkBTcxkKkxBwLfToenAk0ubp-o08xVq=XqpkfzYHTNqgBkQ@mail.gmail.com>
+ <20190204202818.GC4794@krava>
+ <CABPqkBQTpt0dhinJZc+mJ-JNvkU2M9DVx1G65ngWxZxk-eGBVA@mail.gmail.com>
+ <20190205133727.GF4794@krava>
+ <20190211101957.GB14253@krava>
+ <CABPqkBSkyHRaXN-oVLuJJ=aPEBfqOAunRUReHsxESnC=KKQuPg@mail.gmail.com>
+ <20190211185306.GD5046@krava>
+ <20190211193202.GG3269@kernel.org>
+ <20190211201831.GE5046@krava>
+ <CABPqkBRdmfOde793id4GEuwD=eYL8TLKe1p8k07xWAh1MPD3AQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190214111423.GE6132@amd>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABPqkBRdmfOde793id4GEuwD=eYL8TLKe1p8k07xWAh1MPD3AQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 14 Feb 2019 11:34:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 14-02-19 12:14, Pavel Machek wrote:
-> Hi!
-
-<snip>
-
->> That assumes that breathing is the default setting on all hardware
->> and again I don't see why not to export this functionality to
- >
-> Save the status on boot, then restore it on rmmod/reboot/poweroff? :-).
-
-Which works until the system freezes one time. I believe that
-if we are going to do a LED driver for the charging LED on these
-devices, we MUST offer a way to put it back in its original
-state, even if the state is foo-barred at bootup.
-
->> userspace. Just because something does not fit in the existing
->> API is IMHO not a good reason to not expose it to userspace.
->>
->> I suggest that we deal with this special case by adding 3 custom
->> sysfs attributes:
->>
->> 1) "mode" which when read, prints, e.g. :
->> manual [on-when-charging]
+On Mon, Feb 11, 2019 at 12:43:22PM -0800, Stephane Eranian wrote:
+> On Mon, Feb 11, 2019 at 12:18 PM Jiri Olsa <jolsa@redhat.com> wrote:
+> >
+> > On Mon, Feb 11, 2019 at 04:32:02PM -0300, Arnaldo Carvalho de Melo wrote:
+> > > Em Mon, Feb 11, 2019 at 07:53:06PM +0100, Jiri Olsa escreveu:
+> > > > On Mon, Feb 11, 2019 at 10:34:16AM -0800, Stephane Eranian wrote:
+> > > > > On Mon, Feb 11, 2019 at 2:20 AM Jiri Olsa <jolsa@redhat.com> wrote:
+> > > > > > On Tue, Feb 05, 2019 at 02:37:27PM +0100, Jiri Olsa wrote:
+> > > > > > I think all could be added and worked around with exception
+> > > > > > of BUILD_ID, which we store at the end (after processing
+> > > > > > all data) and we need it early in the report phase
+> > >
+> > > > > Buildids are injected after the fact via perf inject when in pipe mode.
+> > >
+> > > > > > maybe it's time to re-think that buildid -> mmap event
+> > > > > > association again, because it's pain in current implementation
+> > > > > > as well
+> > >
+> > > > > Sure, but what do you propose?
+> > >
+> > > > this:
+> > > >
+> > > > > > looks like bpf code is actualy getting build ids and storing
+> > > > > > it for the callchains in kernel.. we can check if we can do
+> > > > > > something similar for mmap events
+> > >
+> > > kernel/bpf/stackmap.c
+> > >
+> > > /* Parse build ID from 64-bit ELF */
+> > > static int stack_map_get_build_id_64(void *page_addr,
+> > >                                      unsigned char *build_id)
+> > >
+> > > yeah, wasn't aware of that, good thing doing backports, huh? :-)
+> > >
+> > > So do you thing about having a PERF_SAMPLE_BUILDID in sample_type and go
+> > > and stash that thing in PERF_RECORD_MMAP2?
+> >
+> That would be special processing. Normally the sample_type go into
+> each RECORD_SAMPLE.
+> So I would not recommend this approach.
 > 
-> While this allows _user on console_ to control everything using echo,
-> it is not suitable for applications trying to control LEDs.
-> 
-> As there's nothing special about the case here, I believe we should
-> have generic solution here.
-> 
-> My preffered solution would be "hardware" trigger that leaves the LED
-> in hardware control.
+> > I thought having new MMAP3 event version with buildid field in it
+> > if available and/or enabled by bit in perf_event_attr
+> >
+> I think MMAP3 is a cleaner approach, though it adds yet another MMAP event.
 
-As you explained in the parts which I snipped, there are many
-devices which have a similar choice for a LED being under hw or
-user control. I can see how this looks like a trigger and how we
-could use the trigger API for this.
+actually I realized this might not help at the end at all
 
-I believe though, that if we implement a "virtual" (for lack of
-a better word) trigger for this, that this should be done in the
-LED core. I can envision this working like this:
+what we do now is that we scan the data (after it's recorded)
+to get the list of binaries that got touched during the profile
+and store those in .debug cache based on the build ids
 
-1) Add a:
+we can't just store ALL of the binaries that the session comes
+across via mmap events
 
-hw_control_set(struct led_classdev *led_cdev, bool enable_hw_control);
+I can see the build id in mmap helping to resolve the race
+issue when some binary change during the profile session and
+we have no idea and report on wrong one.. but I dont see
+people complaining about this at all
 
-Callback to struct led_classdev which when implemented by a driver
-like the current PMIC LED controller would do what it says.
-
-2) Have the core create and register a virtual hardware trigger the
-first time a LED cdev which has this callback gets registered.
-
-When configured as the trigger for this LED device this trigger calls
-hw_control_set(cdev, true) and when unregistered calls
-hw_control_set(cdev, false)
-
-Taking a quick look at the trigger code, a problem with this is
-that normally any trigger can work with any led device, so this
-"hardware" trigger will show up in the list of possible
-triggers for each device.
-
-This problem can be solved by making the activate method for the
-hardware trigger check the classdev has a hw_control_set callback
-and if not return -EINVAL, or maybe -ENXIO but still this is somewhat
-inconsistent with other triggers, which AFAIK work with any LED.
-
-> Alternatively I could imagine "hardware" sysfs attribute, containing
-> 0/1, with 0==software controlled, 1==hardware controlled.
-
-Hmm, maybe call it "hardware_controlled" instead ? Otherwise this
-would work for me and I would personally prefer this solution. This
-could even be done in the LED core using the hw_control_set callback
-I proposed, to make sure it is handled consistently between devices.
-
-> The rest of attributes would have to be Cove-specific, yes (but still
-> should fit with the rest of LED subsystem).
-
-Right, I see that the triggers attribute already uses the fmt where
-on "cat" all options are listed and the current active one has [] around it,
-so I think the pattern and frequency attributes I proposed should work
-well, although thinking more about this I believe the freq. attribute should
-be called pattern_freq to make clear it applies to blinking / breathing
-set through the pattern attribute.
-
-Regards,
-
-Hans
+jirka
