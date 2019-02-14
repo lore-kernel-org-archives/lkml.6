@@ -2,96 +2,127 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5068C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:23:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 778B7C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:26:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8076A222C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:23:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YP8Y0WMB"
+	by mail.kernel.org (Postfix) with ESMTP id 46777222C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:26:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502043AbfBNPXY (ORCPT
+        id S2502060AbfBNP04 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 10:23:24 -0500
-Received: from mail-ot1-f45.google.com ([209.85.210.45]:33692 "EHLO
-        mail-ot1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404698AbfBNPXY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 10:23:24 -0500
-Received: by mail-ot1-f45.google.com with SMTP id i20so11134799otl.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 07:23:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3nqvRe+zrm5fIjF/fWIXWwavfVKCfBlXl7VecBMIHoA=;
-        b=YP8Y0WMBbl5Ir8rnHiP08cmDcKigZ+OljEX/hfK3ZeHLj8GZ/jrXlgtSZsarIPJVY2
-         3POT4hyAyEvOALTyghKWZjubbh+VbOsfXkJewcbECxBvHqHi2FVAZS1htSJJWo0M2QDv
-         gAoQ5gw0lHzxSvjNZX2RlfV5Qk5l0dTU2B1n80dpeRDGWzTTwnDQo3ayJK1sbyvtwYTX
-         kca2wcFm559KUxRN2f4+Ufpzsm/s65pz23rP+Pobljw5RIr7vpQDN3yO6HCr+1QqFoRh
-         kQsuKlzzJyIMS8EV0Wq1v/UtaKfku5GTPRa+SAR8vz3xNuidJWy7/E9pgsSlgjZtYYpU
-         7fVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3nqvRe+zrm5fIjF/fWIXWwavfVKCfBlXl7VecBMIHoA=;
-        b=SRap/6nwjTm41i8L6XjZn+8XhpcK6+UaM6msDwdIZdNEz61Acylp7QmQmNEEzhm9ds
-         E4ZUKxdgRnTu9ikBg1aU1csIgPoUKuJ3uZWGf4rVpCr6I5h3+9muzo01asa/cGxHYjE/
-         MvqqZLj/VZWuG7ba8dev2BW/4vRMT4X6QN+sl/jm6Spn4XeSULVP4RESLqleT2hpd5mu
-         /sIB7Ubv9yl6G1MsjHgMx3f/ltFc7XO5hB16f6qXImvObZ5vybqMvC54f3kgl4mxG2wN
-         y42dNYZTD+DARPg6+wP1rYGvkKnVmHWx4Np5C/wvJx4/rlNxLTolK+RuKJr/oB7PtsGp
-         h61A==
-X-Gm-Message-State: AHQUAuZkutjmm/nedGN7Uz9aBKAvPewQIsKvSNGVO8EUr9ERJVG2ajhR
-        fs9MOgoFCLhJL01v1ujrDXzgzQJ9Mk6wtCHCdjWetA==
-X-Google-Smtp-Source: AHgI3IbuJHg+saypEeiE4uCZHu+MxiQLki9QdN7HJ+9hiLks7WJ8Tql3dEnkJcDdyH7BK64EG9+RPHkasUV1eXA9ic8=
-X-Received: by 2002:aca:55c1:: with SMTP id j184mr2574266oib.169.1550157803437;
- Thu, 14 Feb 2019 07:23:23 -0800 (PST)
+        Thu, 14 Feb 2019 10:26:56 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41982 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2502018AbfBNP04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 10:26:56 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 032E42D806;
+        Thu, 14 Feb 2019 15:26:55 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2FE5B5D70D;
+        Thu, 14 Feb 2019 15:26:53 +0000 (UTC)
+Subject: Re: [PATCH 03/11] kernel/locks: consolidate RWSEM_GENERIC_* options
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-riscv@lists.infradead.org,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        linux-xtensa@linux-xtensa.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>
+References: <20190213174005.28785-1-hch@lst.de>
+ <20190213174005.28785-4-hch@lst.de>
+ <CAMuHMdW4C1McxL-e7ZSiSOiiE5D=xbBK8FZOwuJ1w0kK3CR1Hg@mail.gmail.com>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <d9aeeedd-ce72-f58f-d858-3e340c073414@redhat.com>
+Date:   Thu, 14 Feb 2019 10:26:52 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20190204220952.30761-1-TheSven73@googlemail.com>
- <CAGXu5jJ0g1FUd3mX=RkJCN=BazaWWybAuapvjngpLcWtz3FQGw@mail.gmail.com>
- <CAGngYiUTJ0TjdTu=UB9yXRJ_mXG8LPmcuBQBDha+T5RHoRUvcQ@mail.gmail.com>
- <CAKdAkRS3mxXO9+60Lu7_3gqN9XN1CYQJGM5fcta1pG8qXm9wqw@mail.gmail.com>
- <CAGngYiWBdXc0VzpjBQmVyKi+E2rVaO2WsoiPLho0bxHnrdiDKw@mail.gmail.com>
- <CANiq72kw1=XhGhy8Ac2R9y3ws_jjo0YogoQ5D=tO+7oat=8swA@mail.gmail.com>
- <CAGngYiUwaWPp7=TTAN3tqPz+D+1GsPDM7uFNYY1XSTYMMm+=aA@mail.gmail.com> <CANiq72=1f7NtehzbzL0G-qHSvORAfeyYXYHjzfBkBQX46VBxsQ@mail.gmail.com>
-In-Reply-To: <CANiq72=1f7NtehzbzL0G-qHSvORAfeyYXYHjzfBkBQX46VBxsQ@mail.gmail.com>
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-Date:   Thu, 14 Feb 2019 10:23:12 -0500
-Message-ID: <CAGngYiUTBQ7Xqm8e-w=fn=8t8grLifsBcRzKEC4prW_+yOAK7w@mail.gmail.com>
-Subject: Re: [RFC v1 0/3] Address potential user-after-free on module unload
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Kees Cook <keescook@chromium.org>, Tejun Heo <tj@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAMuHMdW4C1McxL-e7ZSiSOiiE5D=xbBK8FZOwuJ1w0kK3CR1Hg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 14 Feb 2019 15:26:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Miguel,
-
-On Wed, Feb 13, 2019 at 8:11 PM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
+On 02/14/2019 05:52 AM, Geert Uytterhoeven wrote:
+> On Thu, Feb 14, 2019 at 12:08 AM Christoph Hellwig <hch@lst.de> wrote:
+>> Introduce one central definition of RWSEM_XCHGADD_ALGORITHM and
+>> RWSEM_GENERIC_SPINLOCK in kernel/Kconfig.locks and let architectures
+>> select RWSEM_XCHGADD_ALGORITHM if they want it, otherwise default to
+>> the spinlock version.
+>>
+>> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Note that this conflicts with "[PATCH v4 2/3] locking/rwsem: Remove
+> rwsem-spinlock.c & use rwsem-xadd.c for all archs"
+> https://lore.kernel.org/lkml/1550095217-12047-3-git-send-email-longman@redhat.com/
 >
-> Indeed! Note that I didn't mean to say they are trivial issues or that
-> the solution is simply to replace cancel_delayed_work() with the
-> _sync() version in all cases -- only that it might be a good idea to
-> suggest its existence (instead of only suggesting devm_, because in
-> cases like drivers/auxdisplay/ht16k33.c it may be the simplest fix).
+> Gr{oetje,eeting}s,
 >
+>                         Geert
+>
+Christoph,
 
-I will try to get your suggestion in, as I move forward with this
-Coccinelle script.
+Would you mind dropping just patch 3 from your series?
 
-Cheers,
-Sven
+Thanks,
+Longman
+
