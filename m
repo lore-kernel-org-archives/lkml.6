@@ -2,79 +2,107 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDC05C10F04
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8FA3C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:00:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC904222CC
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:54:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CB9E222A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:00:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437744AbfBNIym (ORCPT
+        id S2394930AbfBNJAE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 03:54:42 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39052 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387827AbfBNIyl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 03:54:41 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 395E4EBD;
-        Thu, 14 Feb 2019 00:54:41 -0800 (PST)
-Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 69F403F575;
-        Thu, 14 Feb 2019 00:54:39 -0800 (PST)
-Subject: Re: [PATCH 4.14 V2 00/17] V4.14 backport of more 32-bit arm spectre
- patches
-To:     David Long <dave.long@linaro.org>, stable@vger.kernel.org,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Will Deacon <will.deacon@arm.com>, Mark Brown <broonie@kernel.org>,
-        linux-kernel@vger.kernel.org
-References: <20190214021022.5313-1-dave.long@linaro.org>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <f6ed07f4-7c04-3922-fb5c-2096015060ba@arm.com>
-Date:   Thu, 14 Feb 2019 08:54:36 +0000
+        Thu, 14 Feb 2019 04:00:04 -0500
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:45644 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728448AbfBNJAD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 04:00:03 -0500
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id uCsAgJ75nLMwIuCsDgOnS0; Thu, 14 Feb 2019 10:00:01 +0100
+Subject: Re: [PATCH] media: cedrus: Forbid setting new formats on busy queues
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20190214083731.16230-1-paul.kocialkowski@bootlin.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <3b24ac73-f891-533f-8563-fe38ba4a83ca@xs4all.nl>
+Date:   Thu, 14 Feb 2019 09:59:58 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190214021022.5313-1-dave.long@linaro.org>
+In-Reply-To: <20190214083731.16230-1-paul.kocialkowski@bootlin.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfOsf53XHYJRoioOKRCLVSF4nXeOBGx7bZjwrFrcoYA6HjM6UjeAluv/3n9Wz55fjd0dyOVIXH8JlgiPqvS6iPRazSpO6Qv7WYC2XYwnwIlg4pugjq1UW
+ ihPWW4QXWOyPdkNrYqOhWvryWE0EfqtS1hsbEwEqtBMm4CdIoK41aQIOtYHlzf0PLJfZZ8DxWVzW5qMA3c+21UicJ9UljHt77ROTsmG1Pc6vCRN9TLjsntWJ
+ ch+WKQUcN27ykfm7ve+g/Q5SUHW5yu2eosE4oPE8LSUz4mdiBqu4tNdqSqk1ZEklhlgA8SLsYbAU/4zQl9rGCTmoZxl524/3IeUwPma42s5GkYcTb/zMzznH
+ H72Yo0PoLVGm6n9UTOoMWvzqWztCxTnsCCb9ZuRSJwqmXJbHIlTraNnfwV9cCiy55o5KJEmGxoGzvbGkQ4i6e4Tsf3vq/otaB/KthZ5GZIpBScHaYH1icZxk
+ pJSkZX4iNPQrwugD
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
-
-On 14/02/2019 02:10, David Long wrote:
-> From: "David A. Long" <dave.long@linaro.org>
+On 2/14/19 9:37 AM, Paul Kocialkowski wrote:
+> Check that our queues are not busy before setting the format or return
+> EBUSY if that's the case. This ensures that our format can't change
+> once buffers are allocated for the queue.
 > 
-> V4.14 backport of spectre patches from Russell M. King's spectre branch.
-> Patches have been kvm-unit-test'ed on an arndale, run through kernelci, and
-> handed off to ARM for functional testing.
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> ---
+>  drivers/staging/media/sunxi/cedrus/cedrus_video.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_video.c b/drivers/staging/media/sunxi/cedrus/cedrus_video.c
+> index b5cc79389d67..3420a938a613 100644
+> --- a/drivers/staging/media/sunxi/cedrus/cedrus_video.c
+> +++ b/drivers/staging/media/sunxi/cedrus/cedrus_video.c
+> @@ -282,8 +282,15 @@ static int cedrus_s_fmt_vid_cap(struct file *file, void *priv,
+>  {
+>  	struct cedrus_ctx *ctx = cedrus_file2ctx(file);
+>  	struct cedrus_dev *dev = ctx->dev;
+> +	struct vb2_queue *vq;
+>  	int ret;
+>  
+> +	vq = v4l2_m2m_get_vq(ctx->fh.m2m_ctx, f->type);
+> +	if (!vq)
+> +		return -EINVAL;
 
-Same as 4.19 backports, I've reviewed these as well.
+Can this ever happen?
 
-For patches 1 to 10 I can also confirm the generated code for the
-mitigation looks sane.
+Regards,
 
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+	Hans
 
-For patches 11 to 17, tested on TC2 and CPUs use the correct method to
-mitigate Spectre-v2.
+> +	else if (vb2_is_busy(vq))
+> +		return -EBUSY;
+> +
+>  	ret = cedrus_try_fmt_vid_cap(file, priv, f);
+>  	if (ret)
+>  		return ret;
+> @@ -299,8 +306,15 @@ static int cedrus_s_fmt_vid_out(struct file *file, void *priv,
+>  				struct v4l2_format *f)
+>  {
+>  	struct cedrus_ctx *ctx = cedrus_file2ctx(file);
+> +	struct vb2_queue *vq;
+>  	int ret;
+>  
+> +	vq = v4l2_m2m_get_vq(ctx->fh.m2m_ctx, f->type);
+> +	if (!vq)
+> +		return -EINVAL;
+> +	else if (vb2_is_busy(vq))
+> +		return -EBUSY;
+> +
+>  	ret = cedrus_try_fmt_vid_out(file, priv, f);
+>  	if (ret)
+>  		return ret;
+> 
 
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
-Tested-by: Julien Thierry <julien.thierry@arm.com>
-
-Thanks,
-
--- 
-Julien Thierry
