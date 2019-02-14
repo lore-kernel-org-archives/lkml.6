@@ -2,98 +2,116 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A07EC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:57:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1788EC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:57:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0361E21928
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:57:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC6B021928
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:57:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QCR+ODqb"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="IYppTwn2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437626AbfBNR5H (ORCPT
+        id S2437702AbfBNR5l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 12:57:07 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:39229 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404197AbfBNR5H (ORCPT
+        Thu, 14 Feb 2019 12:57:41 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:39139 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437678AbfBNR5l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 12:57:07 -0500
-Received: by mail-lj1-f195.google.com with SMTP id g80so6028252ljg.6
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 09:57:06 -0800 (PST)
+        Thu, 14 Feb 2019 12:57:41 -0500
+Received: by mail-it1-f195.google.com with SMTP id l15so3673471iti.4
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 09:57:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2h1/LfmGb7XwFC9p5d9SiH+OPQDRcxnwkOP4FBfWeGM=;
-        b=QCR+ODqbQO8vDwOBlDMtOx3e2qsBK7pJfp1uhfGCER1xneqi5QibSSLPwfLcUWB3Fj
-         tWDgs1Rj9oKVVamkXXrCPKsvOlcVk+mMEVHIDQpgUFQR1UCSL78dO442tZFwklGAWG3w
-         ed9CTj6n0PBpP5WjMikdluHWVRzt7QdAboK+c=
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=gAwFmaS66KcV1AlrCQXElQUh5BqKBi7qdQSZ0HpMOj0=;
+        b=IYppTwn2yxx9bvqMj0vHkrH6ay+c729O4b4HFCMPg9MtT/IlB7+Bn7hBnC7k3DN56X
+         BLaAW56nWMRg1Nzu7XCm43F1cZjHu21eav2duukIekjhLylVo1/R3G15yrcrNCNMs8+c
+         1UA4GPqC7XbiVnpCVbCwxTHDAyDPmbVUSlK70=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2h1/LfmGb7XwFC9p5d9SiH+OPQDRcxnwkOP4FBfWeGM=;
-        b=hwZ/eqwvv/pwAFJ+dALK/XZs2LUodJ1teXpH8DPRFimpLjkNkgs58qJkQMCvfIhMyA
-         TXrKKehubR/1nJUyNXyvewFV5kF1dZPcaYb8qTqrxSdssWYs6XfDiPS/LAiSXBb+X0YB
-         MFlKDQ8rynbRMhjI4vELvMcZp7MW0e6nuRO7+pPEDh5e0LdPbQze5lQq9yvNAWbWwbQX
-         yAAOFiZHkNVwOLV5yOjMja9qtuxJmbNLSOcbVkPJqu3tZ44edXXbzzmCsLyG5tMHAl0N
-         PUALWSn8m8LWPwZKv4sKBhbkrJdAGsRgpXijzQ6xQC2K9kIFNm7ZaimdMZXFFySC0HW+
-         NkOg==
-X-Gm-Message-State: AHQUAub419oVNgj7y18rZHbVpLveXMz6XMxfc1kktYcQNyqubokIoIYM
-        umtQuIzZahOa1StpdmeOIoxLO+V1G+Q=
-X-Google-Smtp-Source: AHgI3IZLiWqfFmfiSGvBh2InQpLcwSAc0ECojSAfOGNvR765HDT5vPo6Hs2k2ALpqGxBe9ZBB0eUug==
-X-Received: by 2002:a2e:5d54:: with SMTP id r81mr2309878ljb.183.1550167024360;
-        Thu, 14 Feb 2019 09:57:04 -0800 (PST)
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
-        by smtp.gmail.com with ESMTPSA id m191sm597159lfe.92.2019.02.14.09.57.02
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=gAwFmaS66KcV1AlrCQXElQUh5BqKBi7qdQSZ0HpMOj0=;
+        b=SNHaiGfZlG5Q1+FPrcxIVSAma6WtSP7u9uPdnn9Z59eKw9vZcTPI/8ljbP3/p3EZ3H
+         VjnOskm9wPgGuUcn9OEVEGwOb0gUL+rkdWmxT5LQrOoEQCxrcal8dAICiLhi7zqOTFML
+         H9jSL8vbCCK+RGMw1BhNvKXJs6KGgUEcW2lHdmhgpZFozS+JUAsT8AnIXZ2dOSmifdbD
+         t4CxxwRXLlrO0JVyuchMh9uRYfgjUWlbAZK3LoY7A1OQhV7RdFeWy0ahwhj2uArtHWmk
+         fodKnpcRAH6G67VZa6Znamj/nxB2SNisqbynDlD0lH52inBeAb7++Hv0/p7r1MXMW2vM
+         lzmQ==
+X-Gm-Message-State: AHQUAuYDq8vo3ekMhsqsSXMhIWB23UTmI12FzK4lJF4QX/6Rw/Zlambt
+        tXGosaqyXj8mYeujHjo2tcylS4GqBfLE/oGm
+X-Google-Smtp-Source: AHgI3IZ0UJKa0urRxDtp7uZXRXOr0T5H9GHJdvZ5xph16p6bBS9JhD6nz5rLvAVsJbgJOz7XasF5Rw==
+X-Received: by 2002:a5e:870c:: with SMTP id y12mr2689241ioj.280.1550167060031;
+        Thu, 14 Feb 2019 09:57:40 -0800 (PST)
+Received: from rj-aorus.ric.broadcom.com ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id t64sm1534178itb.5.2019.02.14.09.57.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 09:57:02 -0800 (PST)
-Received: by mail-lj1-f182.google.com with SMTP id q128so6008420ljb.11
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 09:57:02 -0800 (PST)
-X-Received: by 2002:a2e:89d9:: with SMTP id c25mr3319314ljk.105.1550167022244;
- Thu, 14 Feb 2019 09:57:02 -0800 (PST)
-MIME-Version: 1.0
-References: <CAN1fySViLgrLAHHfTHMef-Bkh73kUHKP-ava6TbgALeSE4LfFw@mail.gmail.com>
- <CAFLxGvwpuxKF4UWdsULwQWo7kgVLMNHC=77dN+w-A0a6avrAXA@mail.gmail.com>
-In-Reply-To: <CAFLxGvwpuxKF4UWdsULwQWo7kgVLMNHC=77dN+w-A0a6avrAXA@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 14 Feb 2019 09:56:46 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjtH5ombebghG-SDNGppJF4a5bZAUqndtZ3tauWjgw5_w@mail.gmail.com>
-Message-ID: <CAHk-=wjtH5ombebghG-SDNGppJF4a5bZAUqndtZ3tauWjgw5_w@mail.gmail.com>
-Subject: Re: Userspace regression in LTS and stable kernels
-To:     Richard Weinberger <richard.weinberger@gmail.com>
-Cc:     Samuel Dionne-Riel <samuel@dionne-riel.com>,
-        LKML <linux-kernel@vger.kernel.org>, graham@grahamc.com,
-        Oleg Nesterov <oleg@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 14 Feb 2019 09:57:39 -0800 (PST)
+From:   Ray Jui <ray.jui@broadcom.com>
+To:     Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>,
+        Ray Jui <ray.jui@broadcom.com>
+Subject: [PATCH v5 0/8] iProc I2C slave mode and NIC mode
+Date:   Thu, 14 Feb 2019 09:57:17 -0800
+Message-Id: <20190214175725.60462-1-ray.jui@broadcom.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 3:37 PM Richard Weinberger
-<richard.weinberger@gmail.com> wrote:
->
-> Your shebang line exceeds BINPRM_BUF_SIZE.
-> Before the said commit the kernel silently truncated the shebang line
-> (and corrupted it),
-> now it tells the user that the line is too long.
+This patch series adds the following support to the iProc I2C driver:
+- Increase maximum read transfer size to 255 bytes
+- I2C slave mode
+- Polling mode
+- NIC I2C mode
 
-It doesn't matter if it "corrupted" things by truncating it. All that
-matters is "it used to work, now it doesn't"
+This patch series is based on kernel v5.0-rc3 and available at:
+https://github.com/Broadcom/arm64-linux.git
+branch: i2c-slave-v5
 
-Yes, maybe it never *should* have worked. And yes, it's sad that
-people apparently had cases that depended on this odd behavior, but
-there we are.
+Changes from v4:
+ - Add more detailed explanations in the device tree binding document
+   changes, to address Rob's review comments
 
-I see that Kees has a patch to fix it up.
+Changes from v3:
+ - Various minor fixes on commit messages and commits
+ - Rebased to v5.0-rc3
 
-            Linus
+Changes from v2:
+ - Address Ray's review comments.
+
+Changes from v1:
+ - Rebased to Linux v5.0.0-rc2
+
+Ray Jui (1):
+  dt-bindings: i2c: iproc: make 'interrupts' optional
+
+Rayagonda Kokatanur (5):
+  i2c: iproc: add polling support
+  i2c: iproc: use wrapper for read/write access
+  dt-bindings: i2c: iproc: add "brcm,iproc-nic-i2c" compatible string
+  i2c: iproc: add NIC I2C support
+  arm64: dts: Stingray: Add NIC i2c device node
+
+Shreesha Rajashekar (2):
+  i2c: iproc: Extend I2C read up to 255 bytes
+  i2c: iproc: Add slave mode support
+
+ .../bindings/i2c/brcm,iproc-i2c.txt           |  17 +-
+ .../boot/dts/broadcom/stingray/stingray.dtsi  |  18 +
+ drivers/i2c/busses/Kconfig                    |   1 +
+ drivers/i2c/busses/i2c-bcm-iproc.c            | 758 +++++++++++++++---
+ 4 files changed, 663 insertions(+), 131 deletions(-)
+
+-- 
+2.17.1
+
