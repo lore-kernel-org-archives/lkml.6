@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 062A0C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 03:44:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2622DC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 03:44:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B09032089F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 03:44:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C32D421B1A
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 03:44:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="R6Cepmj7"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="lFUuD3w7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405326AbfBNDow (ORCPT
+        id S2405532AbfBNDo4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 22:44:52 -0500
-Received: from mail-eopbgr20064.outbound.protection.outlook.com ([40.107.2.64]:55461
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        Wed, 13 Feb 2019 22:44:56 -0500
+Received: from mail-eopbgr80071.outbound.protection.outlook.com ([40.107.8.71]:27424
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2391237AbfBNDou (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 22:44:50 -0500
+        id S2405203AbfBNDoz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 22:44:55 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kDCwze7MSZ/0VU4jDuhIzch9cw/tNFuydaj2r0ScsoA=;
- b=R6Cepmj76lRPTBD/W97uPfGUn5sQKWj1ogyKY9xaRGfNdgBcHRrzagjtkxLrqrWl/FHUMPO91OvYs2tXWBDtwFL8p+YY7bNtyU5L3th5w9N+XWko3ITv7sTAZ6VMiyVH2DoTuNTheEpIv3tbY7NyzccM8nYtCGKpmkjFy48ahqU=
+ bh=HW7KHpBK+2jmFigeY0ZQHsY+bVIdcppRJut0BRKyrcs=;
+ b=lFUuD3w7jlS8f6o3KRjp7Bn+b/cd23PHcpPH8reqyA+1QkcO8JVM7kzXn2/hnf4cRGjQXIsbQBV5Lgl7Is3iwd+sMi/n2Y5047iEw4WBRLEwoCjawep1BuoOohN99jTrL8SjwhG+Uh5kf09kDDD1bG/XGHCg9bR+2KH01cnQjRs=
 Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
- DB3PR0402MB3659.eurprd04.prod.outlook.com (52.134.66.160) with Microsoft SMTP
+ DB3PR0402MB3675.eurprd04.prod.outlook.com (52.134.69.146) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.21; Thu, 14 Feb 2019 03:44:31 +0000
+ 15.20.1601.17; Thu, 14 Feb 2019 03:44:48 +0000
 Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
  ([fe80::14e8:6d2e:fe21:4fd5]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
  ([fe80::14e8:6d2e:fe21:4fd5%3]) with mapi id 15.20.1601.023; Thu, 14 Feb 2019
- 03:44:31 +0000
+ 03:44:48 +0000
 From:   Anson Huang <anson.huang@nxp.com>
 To:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
         "mark.rutland@arm.com" <mark.rutland@arm.com>,
@@ -54,12 +54,11 @@ To:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>
 CC:     dl-linux-imx <linux-imx@nxp.com>
-Subject: [PATCH V2 2/4] firmware: imx: enable imx scu general irq function
-Thread-Topic: [PATCH V2 2/4] firmware: imx: enable imx scu general irq
- function
-Thread-Index: AQHUxBeY1ru6LM154k6AIjlXsKZZtA==
-Date:   Thu, 14 Feb 2019 03:44:31 +0000
-Message-ID: <1550115535-14488-3-git-send-email-Anson.Huang@nxp.com>
+Subject: [PATCH V2 4/4] rtc: imx-sc: add rtc alarm support
+Thread-Topic: [PATCH V2 4/4] rtc: imx-sc: add rtc alarm support
+Thread-Index: AQHUxBei1IUMOqlWBECYcHiTQj2z0g==
+Date:   Thu, 14 Feb 2019 03:44:48 +0000
+Message-ID: <1550115535-14488-5-git-send-email-Anson.Huang@nxp.com>
 References: <1550115535-14488-1-git-send-email-Anson.Huang@nxp.com>
 In-Reply-To: <1550115535-14488-1-git-send-email-Anson.Huang@nxp.com>
 Accept-Language: en-US
@@ -75,234 +74,233 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [119.31.174.66]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 380b0b78-e477-4849-e53b-08d6922eba4b
+x-ms-office365-filtering-correlation-id: 9797883f-f625-4fd5-0cdf-08d6922ec479
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3659;
-x-ms-traffictypediagnostic: DB3PR0402MB3659:
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;DB3PR0402MB3659;23:pWUaDS72ji8SLC7HohfkmRlvBcU0VXpmcX+t9?=
- =?iso-8859-1?Q?9WLnyYTgve7vgHj2BGAbDFt2kcjD6fa8MU3yeKzDEfKpjFf7M3pAXsGQuy?=
- =?iso-8859-1?Q?mD30DOPf4uHfGlSTeKuDaHWZrMsVvqyHEEMGdA+x2m2lfakeW7Kmyxkb1k?=
- =?iso-8859-1?Q?lxopMQ1CFNBmiOyjXMXnFixWR9mGS/LEMFjMN21q9NkVtYCM9OOvp2xz11?=
- =?iso-8859-1?Q?qWsQl/jPfs63iXfODsWGMsOyy1yeSXnDbR/WsEcRt3SWBvZ1w9WEVdFMiH?=
- =?iso-8859-1?Q?vZP84teAZjeXevkbCpHTUYx+IHkfwReMuW2bC39oNtlQ7TWwMaCjElJ3Cy?=
- =?iso-8859-1?Q?c9EaGGsUUhmjN0WzDSp/MKxPjkylcNtMxmjcBdPKYPOCoVjfd5zYOYAPar?=
- =?iso-8859-1?Q?OJiDF0OzDAHWYnPCIx4N8SPn3PGiDffJEVYFAK8TN1SNT4jUpg5IIsUO3A?=
- =?iso-8859-1?Q?H0vVTe1vCmx+/G8+cLKWIu2RvOHsPXqSSH/cUq7qgParuE8zapGGTh8nfV?=
- =?iso-8859-1?Q?o5/r/f97ikviOOOvToi1C8+NpkIKSxO17aEg63PoxJ7MzEdfM90JfAABHV?=
- =?iso-8859-1?Q?WF8JFcb+XS+gPomB2xt02U2MtUBBb0utjSMJdls6GNe4DwbjpcviLUI0jL?=
- =?iso-8859-1?Q?/v22TJftN9Z0rXZ0EvAL4vN/niyAVeKIbnMW54U95tUvVrKPXyajQ/vxgN?=
- =?iso-8859-1?Q?+EdU775N4b/s+CqQCNmWRkIx7gD0TaayvGiCT4ABgWVMP57DXoneOCTrv8?=
- =?iso-8859-1?Q?KHmBCd8uRUnsmefy2xKVYK2IKA7FI/HoloV+A0DdkY4XrJxJx6Kt85w8x2?=
- =?iso-8859-1?Q?8NXUAAoj4XGqg/bmBPpZu2e9TmPz7v98hToNbRddKugIcdz9XzJQikNh81?=
- =?iso-8859-1?Q?vYSnktpfXxxm1Ad6T6C+uqbR6GMQNhuLDoHZbymVJ84hsR8BXMEh9U0Hef?=
- =?iso-8859-1?Q?Zk1y2nDfFoHIN9AmwjwmcwbSy5AnuNKNWDXnFmT/1F8QKAdSnl1Yjvw/zq?=
- =?iso-8859-1?Q?H1D7LYRekLomLFdgigXEBvBEDB2COkyNwCveAzT61gt8gMWy5nHy1P13hs?=
- =?iso-8859-1?Q?OZ+ORBJK0TVZUhA5/yw770XuzQalRWGLQgQbTg7XjQRQDY5ZvSammapU2X?=
- =?iso-8859-1?Q?JPnogkWc8o1PKMbchoN82MKteGQXRT2+OyZtnX5zNYCkkr8wH3ai53T5Ec?=
- =?iso-8859-1?Q?5RK6xstG7m6+4JyKgU9h0B3eQ2Oj+uByYdKEq1BLSuMYXJiSp3CAePN8cK?=
- =?iso-8859-1?Q?NmCiXmf7j5zMWYvubU7NShzPq0uBXEnsZiEEgVhsTuygrjZVaQr85YOEM1?=
- =?iso-8859-1?Q?D/ibeOhVzAgU6Nz9e5hy8Nbv0Tx56+A6ps29Wl3o5lC1SiYLcWq2UPCz1J?=
- =?iso-8859-1?Q?DRhHY3XrvORmW5GF8HAXMtlJ2409sQB4Gn3DxQJY6KBhw+hkxpVCw=3D?=
- =?iso-8859-1?Q?=3D?=
-x-microsoft-antispam-prvs: <DB3PR0402MB365963338780784444B7786DF5670@DB3PR0402MB3659.eurprd04.prod.outlook.com>
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB3PR0402MB3675;
+x-ms-traffictypediagnostic: DB3PR0402MB3675:
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;DB3PR0402MB3675;23:eZXMCdlmgHwNsPEmpG3Px+WZocJyAUOxAzibZ?=
+ =?iso-8859-1?Q?+28BQuykkO+65JlT5/HVYKRXvXnOv7AWzOwAAkQMf6cX/0hd0ODwFbGG75?=
+ =?iso-8859-1?Q?UJIX7mqcA74+Dy9kaMJR7YD1pFdjtWNL54AaR4wCX/iKw/vELJSOkfIriy?=
+ =?iso-8859-1?Q?cFjTHkfVgNkczX7zHF5xNa/hgIGvQq6B0UKRJr3qwYEOXAMMDcCQF9Ive6?=
+ =?iso-8859-1?Q?Ev4QnQI9Y/kFWxMAY8ZOrNfzhP2TEGIOHMSn8cccnDSJNzQ9Yuly3e7LFf?=
+ =?iso-8859-1?Q?Qro552Q1Q4QrjvOGeXeUYRTfd/xBRNq5Lw3qMceq3X7OfaheUJVMWIobBD?=
+ =?iso-8859-1?Q?NFcAr/r8IAq3DBjnEARpWqVeFz6c5AB5vbWtFnMrujL/tDFp9Nl/lK7GxR?=
+ =?iso-8859-1?Q?ryaDsfIWm6r5giQ6hBo1L3meCfi323BAwzhGMKnxE8/NtAmJUkGrAzE1uQ?=
+ =?iso-8859-1?Q?gPwIeBPkMdHXtwxZWzIFBypzxcdPrtZlx+LqQpEYk8lIjqS7FOG0kYNX1/?=
+ =?iso-8859-1?Q?a4ddGR9L0TqHk5DZGWgcbISQoEfvs5/YsXqrB05hdVHi/cQrNV+CknxRvE?=
+ =?iso-8859-1?Q?uk6lJQSrw8j3HeKtpBcguapfa3Z0NXeBkh6DW32iaI6Lzzrh+rX9zc8DK2?=
+ =?iso-8859-1?Q?IZGYADexkb2ziRxvjs7w0D+aUMuiPZOdOtOKwanlTOI67Yp6ucODtmDfkT?=
+ =?iso-8859-1?Q?viC3csEK+3Sswu8YaWwnHi70Bi5ERyk/rWBERbsq+SuCwqhQ5HLuFd2nqC?=
+ =?iso-8859-1?Q?NFp1MmoL9PksWMSJIIRhXqNcTzwxjc8oc6l9pYGbuEpHEpO6syDTNb4i2D?=
+ =?iso-8859-1?Q?MgiC328U7x3K1Ew3zODBv4iV1WwYiiSUwSI5vunPfvGAOqIXOvQakoYyIN?=
+ =?iso-8859-1?Q?kXYWwgdevVnXTwNhdLxx21iPH1kM//SKCDIOcShX2KiYarSZoeak2sSUYm?=
+ =?iso-8859-1?Q?m3W6Mo6EznUVR4zCaf1ISLmEqmpi6F2MnLpLyBdpCOLirqe99e/sEu0SOs?=
+ =?iso-8859-1?Q?vVsf9CkmGasvRXRvoX2RBX7xiKwGsesBmMlJJo9Njc1r1INxjGWF05kFAg?=
+ =?iso-8859-1?Q?v2QfP9Qbn6xPwIFr22+zEsfWiwvXZqbdac2bx9kbuLu9GS4LGjJS/Ib0qF?=
+ =?iso-8859-1?Q?BB+4UbcMxPIm/1/JoPrz4uffO15PobnQgA+QCUsmY10QDxY/oS+7VhlMdh?=
+ =?iso-8859-1?Q?tDhD4NZ+sAJAWnFUPAVZGeCkbDMuAVS/vDSqib5980c+4P66gQSJhmXBYW?=
+ =?iso-8859-1?Q?NcECcdoqVPDBo9iczjE6/eMR45jCe/3QV+L7+bTPOmR79hrV0HuX5qOmln?=
+ =?iso-8859-1?Q?Brxk=3D?=
+x-microsoft-antispam-prvs: <DB3PR0402MB3675D385528E087EBE222558F5670@DB3PR0402MB3675.eurprd04.prod.outlook.com>
 x-forefront-prvs: 09480768F8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(366004)(346002)(39860400002)(376002)(396003)(136003)(199004)(189003)(476003)(2616005)(68736007)(53936002)(52116002)(66066001)(14454004)(76176011)(486006)(86362001)(50226002)(4326008)(26005)(6512007)(2201001)(478600001)(71200400001)(6436002)(8936002)(6486002)(25786009)(446003)(8676002)(71190400001)(81156014)(81166006)(11346002)(186003)(2501003)(105586002)(3846002)(6116002)(386003)(6506007)(99286004)(102836004)(7416002)(316002)(2906002)(305945005)(110136005)(97736004)(7736002)(14444005)(106356001)(256004)(36756003)(921003)(1121003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3659;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(366004)(376002)(346002)(39860400002)(199004)(189003)(76176011)(486006)(97736004)(4326008)(53936002)(256004)(305945005)(3846002)(6512007)(14444005)(36756003)(50226002)(2906002)(476003)(106356001)(446003)(2201001)(8936002)(6116002)(14454004)(11346002)(68736007)(52116002)(71190400001)(71200400001)(478600001)(2616005)(81166006)(7736002)(86362001)(81156014)(8676002)(386003)(7416002)(105586002)(186003)(26005)(6506007)(25786009)(6436002)(102836004)(110136005)(316002)(99286004)(2501003)(66066001)(6486002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3675;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: LmYLh770MDOwOpkLWlNODWE0VBI+aOg5JonEmMXhELdmjdC7B3CsD3eZLmXQN1l57UcK6mWjko6DFu8FLYlwPiBNiwb8YHVkgesImb75TgEGAHyB5Z1b/ACKxT3wahtq7CD99aBFCVWyC4FtV1QeqJV2ov2UgItiXJdEYWnfUOn3IrV+SNQGlkvLmhHDP44Ly15C+ipjPqF53aNrisVU0bLGyPpzWSXAr2zxmjvaH2pxzV0Y4S/cMRAp2Z7LaVL4EW2GyYjHcz3Sd6uxYfPiKIprQCXDSu2Hcb7vI6BzS/wbyAvuhJrZEiYGSOCXH+kISZPGVk/QKPu7ktgxRH34DVkN2BZ7awkGxmV34IMSnum80KGHeNi3UMeAs6tI5nGxITHeRaaLMk252vQSb2cvqAT94cTljBRsn4za3clf6s0=
+x-microsoft-antispam-message-info: sNsRTcLHAgi7WBdL+MAVZdPv6uA0Cg1c6bg8aZEEkWufGRp7SuxRy3/1fbpC0izGw7GCGaL8knS9SD3Eh4cCkwXH9ZSA4d4zSB1CmV8y89mxkzGt0BDjlthiXEAJz1WYLXJ8Fb6M5q+Bu8cCpmK84k6NzbcHsiux/TmbD78scIGtqZbcZ6o5AFZYR/FxuPQM+NPV80myRqFUqXiRzd7YsYMpWUBZVYo3xTPo6aqVDu+tIhNVPIJoa2aq4dRraZXRJ7cuWh0/znLxTEJn/MxaOF/sMSPrlleEvtomBqPveYxZbPro7GB9SleIa3iMig5lpCythbI0ZeB1zLl+T9hVs0cgYbyNOjKvIci+WPafiZyG6+LABTjZtD9hdALsyGJuR/Ks54aZptqToItT46OBjyTeWu3ZmQ8u/8qeht4XPTE=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 380b0b78-e477-4849-e53b-08d6922eba4b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2019 03:44:25.9954
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9797883f-f625-4fd5-0cdf-08d6922ec479
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2019 03:44:43.0385
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3659
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3675
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The System Controller Firmware (SCFW) controls RTC, thermal
-and WDOG etc., these resources' interrupt function are managed
-by SCU. When any IRQ pending, SCU will notify Linux via MU general
-interrupt channel #3, and Linux kernel needs to call SCU APIs
-to get IRQ status and notify each module to handle the interrupt.
-
-Since there is no data transmission for SCU IRQ notification, so
-doorbell mode is used for this MU channel, and SCU driver will
-use notifier mechanism to broadcast to every module which registers
-the SCU block notifier.
+Add i.MX system controller RTC alarm support, the RTC alarm
+is implemented via SIP(silicon provider) runtime service call
+and ARM-Trusted-Firmware will communicate with system controller
+via MU(message unit) IPC to set RTC alarm. When RTC alarm fires,
+system controller will generate a common MU irq event and notify
+system controller RTC driver to handle the irq event.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
-No change since V1.
----
- drivers/firmware/imx/imx-scu.c   | 101 +++++++++++++++++++++++++++++++++++=
+No V1 patch, just add it into the i.MX SC general irq support patch series,
+to support system controller RTC's alarm function and also to provide an
+example of how to use general MU irq, this patch depends on the i.MX SC
+general irq support patch set, so add it into same patch series.
+--
+ drivers/rtc/rtc-imx-sc.c | 100 +++++++++++++++++++++++++++++++++++++++++++=
 ++++
- include/linux/firmware/imx/sci.h |   3 ++
- 2 files changed, 104 insertions(+)
+ 1 file changed, 100 insertions(+)
 
-diff --git a/drivers/firmware/imx/imx-scu.c b/drivers/firmware/imx/imx-scu.=
-c
-index 2bb1a19..e93bea5 100644
---- a/drivers/firmware/imx/imx-scu.c
-+++ b/drivers/firmware/imx/imx-scu.c
-@@ -7,6 +7,7 @@
-  *
+diff --git a/drivers/rtc/rtc-imx-sc.c b/drivers/rtc/rtc-imx-sc.c
+index 60570a2..147545e 100644
+--- a/drivers/rtc/rtc-imx-sc.c
++++ b/drivers/rtc/rtc-imx-sc.c
+@@ -3,6 +3,7 @@
+  * Copyright 2018 NXP.
   */
 =20
 +#include <dt-bindings/firmware/imx/rsrc.h>
- #include <linux/err.h>
- #include <linux/firmware/imx/types.h>
- #include <linux/firmware/imx/ipc.h>
-@@ -21,6 +22,8 @@
+ #include <linux/arm-smccc.h>
+ #include <linux/firmware/imx/sci.h>
+ #include <linux/module.h>
+@@ -11,11 +12,17 @@
+ #include <linux/rtc.h>
 =20
- #define SCU_MU_CHAN_NUM		8
- #define MAX_RX_TIMEOUT		(msecs_to_jiffies(30))
-+#define IMX_SC_IRQ_FUNC_STATUS	2
-+#define IMX_SC_IRQ_NUM_GROUP	6
+ #define IMX_SC_TIMER_FUNC_GET_RTC_SEC1970	9
++#define IMX_SC_TIMER_FUNC_SET_RTC_ALARM		8
+ #define IMX_SC_TIMER_FUNC_SET_RTC_TIME		6
 =20
- struct imx_sc_chan {
- 	struct imx_sc_ipc *sc_ipc;
-@@ -77,7 +80,23 @@ static int imx_sc_linux_errmap[IMX_SC_ERR_LAST] =3D {
- 	-EIO,	 /* IMX_SC_ERR_FAIL */
- };
++#define IMX_SC_IRQ_FUNC_ENABLE			1
++
+ #define IMX_SIP_SRTC			0xC2000002
+ #define IMX_SIP_SRTC_SET_TIME		0x0
 =20
-+struct imx_sc_msg_irq_get_status {
++#define SC_IRQ_GROUP_RTC    2
++#define SC_IRQ_RTC          1
++
+ static struct imx_sc_ipc *rtc_ipc_handle;
+ static struct rtc_device *imx_sc_rtc;
+=20
+@@ -24,6 +31,24 @@ struct imx_sc_msg_timer_get_rtc_time {
+ 	u32 time;
+ } __packed;
+=20
++struct imx_sc_msg_timer_enable_irq {
 +	struct imx_sc_rpc_msg hdr;
-+	union {
-+		struct {
-+			u16 resource;
-+			u8 group;
-+			u8 reserved;
-+		} send;
-+		struct {
-+			u32 status;
-+		} receive;
-+	} data;
++	u32 mask;
++	u16 resource;
++	u8 group;
++	u8 enable;
 +} __packed;
 +
- static struct imx_sc_ipc *imx_sc_ipc_handle;
-+static struct work_struct imx_sc_general_irq_work;
-+static BLOCKING_NOTIFIER_HEAD(imx_scu_notifier_chain);
-=20
- static inline int imx_sc_to_linux_errno(int errno)
++struct imx_sc_msg_timer_rtc_set_alarm {
++	struct imx_sc_rpc_msg hdr;
++	u16 year;
++	u8 mon;
++	u8 day;
++	u8 hour;
++	u8 min;
++	u8 sec;
++} __packed;
++
+ static int imx_sc_rtc_read_time(struct device *dev, struct rtc_time *tm)
  {
-@@ -194,6 +213,86 @@ int imx_scu_call_rpc(struct imx_sc_ipc *sc_ipc, void *=
-msg, bool have_resp)
+ 	struct imx_sc_msg_timer_get_rtc_time msg;
+@@ -60,9 +85,80 @@ static int imx_sc_rtc_set_time(struct device *dev, struc=
+t rtc_time *tm)
+ 	return res.a0;
  }
- EXPORT_SYMBOL(imx_scu_call_rpc);
 =20
-+int imx_scu_register_notifier(struct notifier_block *nb)
++static int imx_sc_rtc_alarm_irq_enable(struct device *dev, unsigned int en=
+able)
 +{
-+	return blocking_notifier_chain_register(&imx_scu_notifier_chain, nb);
-+}
-+EXPORT_SYMBOL(imx_scu_register_notifier);
-+
-+int imx_scu_unregister_notifier(struct notifier_block *nb)
-+{
-+	return blocking_notifier_chain_unregister(&imx_scu_notifier_chain, nb);
-+}
-+EXPORT_SYMBOL(imx_scu_unregister_notifier);
-+
-+static int imx_scu_notifier_call_chain(unsigned long status, u8 *group)
-+{
-+	return blocking_notifier_call_chain(&imx_scu_notifier_chain,
-+					    status, (void *)group);
-+}
-+
-+static void imx_scu_general_irq_work_handler(struct work_struct *work)
-+{
-+	struct imx_sc_msg_irq_get_status msg;
++	struct imx_sc_msg_timer_enable_irq msg;
 +	struct imx_sc_rpc_msg *hdr =3D &msg.hdr;
-+	u32 irq_status;
 +	int ret;
-+	u8 i;
 +
-+	for (i =3D 0; i < IMX_SC_IRQ_NUM_GROUP; i++) {
-+		hdr->ver =3D IMX_SC_RPC_VERSION;
-+		hdr->svc =3D IMX_SC_RPC_SVC_IRQ;
-+		hdr->func =3D IMX_SC_IRQ_FUNC_STATUS;
-+		hdr->size =3D 2;
++	hdr->ver =3D IMX_SC_RPC_VERSION;
++	hdr->svc =3D IMX_SC_RPC_SVC_IRQ;
++	hdr->func =3D IMX_SC_IRQ_FUNC_ENABLE;
++	hdr->size =3D 3;
 +
-+		msg.data.send.resource =3D IMX_SC_R_MU_1A;
-+		msg.data.send.group =3D i;
++	msg.resource =3D IMX_SC_R_MU_1A;
++	msg.group =3D SC_IRQ_GROUP_RTC;
++	msg.mask =3D SC_IRQ_RTC;
++	msg.enable =3D enable;
 +
-+		ret =3D imx_scu_call_rpc(imx_sc_ipc_handle, &msg, true);
-+		if (ret) {
-+			pr_err("get irq status failed, ret %d\n", ret);
-+			return;
-+		}
-+
-+		irq_status =3D msg.data.receive.status;
-+		if (!irq_status)
-+			continue;
-+
-+		imx_scu_notifier_call_chain(irq_status, &i);
-+	}
-+}
-+
-+static void imx_scu_rxdb_callback(struct mbox_client *c, void *msg)
-+{
-+	schedule_work(&imx_sc_general_irq_work);
-+}
-+
-+static int imx_scu_enable_general_irq_channel(struct device *dev)
-+{
-+	struct mbox_client *cl;
-+	struct mbox_chan *ch;
-+	int ret =3D 0;
-+
-+	cl =3D devm_kzalloc(dev, sizeof(*cl), GFP_KERNEL);
-+	if (!cl)
-+		return -ENOMEM;
-+
-+	cl->dev =3D dev;
-+	cl->rx_callback =3D imx_scu_rxdb_callback;
-+
-+	/* SCU general IRQ uses general interrupt channel 3 */
-+	ch =3D mbox_request_channel_byname(cl, "gi3");
-+	if (IS_ERR(ch)) {
-+		ret =3D PTR_ERR(ch);
-+		dev_err(dev, "failed to request mbox chan gi3, ret %d\n", ret);
++	ret =3D imx_scu_call_rpc(rtc_ipc_handle, &msg, true);
++	if (ret) {
++		dev_err(dev, "enable rtc irq failed, ret %d\n", ret);
 +		return ret;
 +	}
 +
-+	INIT_WORK(&imx_sc_general_irq_work, imx_scu_general_irq_work_handler);
-+
-+	return ret;
++	return 0;
 +}
 +
- static int imx_scu_probe(struct platform_device *pdev)
- {
- 	struct device *dev =3D &pdev->dev;
-@@ -246,6 +345,8 @@ static int imx_scu_probe(struct platform_device *pdev)
-=20
- 	imx_sc_ipc_handle =3D sc_ipc;
-=20
-+	imx_scu_enable_general_irq_channel(dev);
++static int imx_sc_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alr=
+m)
++{
++	struct imx_sc_msg_timer_rtc_set_alarm msg;
++	struct imx_sc_rpc_msg *hdr =3D &msg.hdr;
++	int ret;
++	struct rtc_time *alrm_tm =3D &alrm->time;
 +
- 	dev_info(dev, "NXP i.MX SCU Initialized\n");
-=20
- 	return devm_of_platform_populate(dev);
-diff --git a/include/linux/firmware/imx/sci.h b/include/linux/firmware/imx/=
-sci.h
-index ebc5509..9d608db 100644
---- a/include/linux/firmware/imx/sci.h
-+++ b/include/linux/firmware/imx/sci.h
-@@ -15,4 +15,7 @@
-=20
- #include <linux/firmware/imx/svc/misc.h>
- #include <linux/firmware/imx/svc/pm.h>
++	hdr->ver =3D IMX_SC_RPC_VERSION;
++	hdr->svc =3D IMX_SC_RPC_SVC_TIMER;
++	hdr->func =3D IMX_SC_TIMER_FUNC_SET_RTC_ALARM;
++	hdr->size =3D 3;
 +
-+int imx_scu_register_notifier(struct notifier_block *nb);
-+int imx_scu_unregister_notifier(struct notifier_block *nb);
- #endif /* _SC_SCI_H */
++	msg.year =3D alrm_tm->tm_year + 1900;
++	msg.mon =3D alrm_tm->tm_mon + 1;
++	msg.day =3D alrm_tm->tm_mday;
++	msg.hour =3D alrm_tm->tm_hour;
++	msg.min =3D alrm_tm->tm_min;
++	msg.sec =3D alrm_tm->tm_sec;
++
++	ret =3D imx_scu_call_rpc(rtc_ipc_handle, &msg, true);
++	if (ret) {
++		dev_err(dev, "set rtc alarm failed, ret %d\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
+ static const struct rtc_class_ops imx_sc_rtc_ops =3D {
+ 	.read_time =3D imx_sc_rtc_read_time,
+ 	.set_time =3D imx_sc_rtc_set_time,
++	.set_alarm =3D imx_sc_rtc_set_alarm,
++	.alarm_irq_enable =3D imx_sc_rtc_alarm_irq_enable,
++};
++
++static int imx_sc_rtc_alarm_sc_notify(struct notifier_block *nb,
++					unsigned long event, void *group)
++{
++	/* ignore non-rtc irq */
++	if (!((event & SC_IRQ_RTC) && (*(u8 *)group =3D=3D SC_IRQ_GROUP_RTC)))
++		return 0;
++
++	rtc_update_irq(imx_sc_rtc, 1, RTC_IRQF | RTC_AF);
++
++	return 0;
++}
++
++static struct notifier_block imx_sc_rtc_alarm_sc_notifier =3D {
++	.notifier_call =3D imx_sc_rtc_alarm_sc_notify,
+ };
+=20
+ static int imx_sc_rtc_probe(struct platform_device *pdev)
+@@ -73,6 +169,8 @@ static int imx_sc_rtc_probe(struct platform_device *pdev=
+)
+ 	if (ret)
+ 		return ret;
+=20
++	device_init_wakeup(&pdev->dev, true);
++
+ 	imx_sc_rtc =3D devm_rtc_allocate_device(&pdev->dev);
+ 	if (IS_ERR(imx_sc_rtc))
+ 		return PTR_ERR(imx_sc_rtc);
+@@ -87,6 +185,8 @@ static int imx_sc_rtc_probe(struct platform_device *pdev=
+)
+ 		return ret;
+ 	}
+=20
++	imx_scu_register_notifier(&imx_sc_rtc_alarm_sc_notifier);
++
+ 	return 0;
+ }
+=20
 --=20
 2.7.4
 
