@@ -2,116 +2,135 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 828E9C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 05:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45CF4C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 06:00:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FA3F222A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 05:55:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F43D21934
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 06:00:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QASs7rI/"
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="AqFGGKQk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405627AbfBNFzU (ORCPT
+        id S2393683AbfBNGAK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 00:55:20 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:46936 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731876AbfBNFzU (ORCPT
+        Thu, 14 Feb 2019 01:00:10 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:36376 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391894AbfBNGAJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 00:55:20 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1E5sahw138012;
-        Thu, 14 Feb 2019 05:55:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=cSGEIOlxJng5JlamEhdqacudmilQXsYAsuejWXRFWw8=;
- b=QASs7rI/P6pjE9bZjpk2pxrdl85VOJ0deW7A1TLF8Jf2y7Jz/0GRh+c2auT/cE89axJe
- dDk/pWAhkJkd5FgxZw1VYFNBczoX+4QKDiQGKc3bwmK+8fP5+03b2jb1KZDQluLYMwrM
- 9CpGx2igbWSZvtcnhhZMcliWdT32ABDmwKf+NzSEu3v73XkyI4I6LGmAnbu1Z0DgCfIa
- Ht1jbEJ8+c3agelo1Z4R8ROFwq6PIqXjXwQtP7EAgsShO1eXu/P8OBHQTmJkSnBBuMk+
- tMvdA60h9UdbqI430AC4pr6v4Ft0D0i8PuHiadXpZ6a5YP9AboE1BPtzwQXvRSMmQ0lf 4A== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2qhreknyeb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Feb 2019 05:55:13 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1E5t7vd008363
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Feb 2019 05:55:07 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1E5t6jM013849;
-        Thu, 14 Feb 2019 05:55:07 GMT
-Received: from kadam (/41.202.241.28)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 13 Feb 2019 21:55:06 -0800
-Date:   Thu, 14 Feb 2019 08:54:57 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     qla2xxx-upstream@qlogic.com,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: qla2xxx: remove redundant null check on pointer
- sess
-Message-ID: <20190214055457.GA2326@kadam>
-References: <20190213135335.4790-1-colin.king@canonical.com>
+        Thu, 14 Feb 2019 01:00:09 -0500
+Received: by mail-pg1-f194.google.com with SMTP id r124so2479033pgr.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 22:00:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=EyhZ0LXI8S6DO+1lKPJ+3xCo7Hi2M9DApl/OXP8GRG0=;
+        b=AqFGGKQkWIE4m9oWUPQKPfYDWffEV3DD3kw2gte/hIVc+ZOI2ALww287MyZktoOcDi
+         CbpDfqNDDxjQTYKo+HSL1jPCcxgIu0tlHCqsVDa+M5KY9ZBsLFTmv/t2wqc5kisOEAq3
+         Ey9IsWcwZPCXnG/nVFmz7GUhhGKdm8IWeTP2Dk0HwbmuU3cqx7K5BZzuoEE5qUenFwFw
+         FhXuEgKL+2MrnrRuMG0A1nR+NYB/69dpYPvc7V/phtqqydIA5J2EkPID7AxDk9lsLjAP
+         NbaOeXfbMwnJ+uPtI2ATX/eErFA+0vBz71ipAT/cQzRY+HNlZcQmNhta5uk0wuPGbr4p
+         3GKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EyhZ0LXI8S6DO+1lKPJ+3xCo7Hi2M9DApl/OXP8GRG0=;
+        b=Sf9ViAPvpAdBJmj885N4HAugn4Z8C0WEztRTfcOzG/xEz+2t45Cl8WRoHtTp2x0mPI
+         uE0QJLIWjrlt+hgWuT/k8BVELMMeyUExu9Apkqfh+tVmjEE6KIjqvndBN2wINCA8VH4h
+         MP1ZBlzkEjl4q8IoKIpxysT4fJxj+31A1nVKVp1Jsqf7JeY+OKCaRNvyylMcWNiRZ6Pb
+         1nKwK+bjupZ7QYa8RMfmoYxsJVR/YatryEwhQWqwIkf7croqoMWv46Gk3HC3SIIj4MV9
+         eg/kib456aLlUcz1/7w5p8y5LJebLRQlqx/ebDco2xyePEtk76OyLuY0Qrr+dJrnj+DO
+         7Mfw==
+X-Gm-Message-State: AHQUAuZZKUvbGNu2/H8ZATATvhegLLAtMUDheIkotq6kZhu//ZCYeC0Q
+        HJ6hre2Plu3/Tv62XhVXKDnGxg==
+X-Google-Smtp-Source: AHgI3IZsTuAr/2agKNUI6fHNmik1DYYjhaWBR5rn+7baCxky03ZS5RyeSxDZdNqDP/QzwRlb2m6TAA==
+X-Received: by 2002:a62:9f1a:: with SMTP id g26mr2297647pfe.123.1550124008008;
+        Wed, 13 Feb 2019 22:00:08 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id z127sm2288820pfb.80.2019.02.13.22.00.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Feb 2019 22:00:07 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1guA46-00040P-Jk; Wed, 13 Feb 2019 23:00:06 -0700
+Date:   Wed, 13 Feb 2019 23:00:06 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
+        akpm@linux-foundation.org, dave@stgolabs.net, jack@suse.cz,
+        cl@linux.com, linux-mm@kvack.org, kvm@vger.kernel.org,
+        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alex.williamson@redhat.com, paulus@ozlabs.org,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, hao.wu@intel.com,
+        atull@kernel.org, mdf@kernel.org, aik@ozlabs.ru
+Subject: Re: [PATCH 0/5] use pinned_vm instead of locked_vm to account pinned
+ pages
+Message-ID: <20190214060006.GE24692@ziepe.ca>
+References: <20190211224437.25267-1-daniel.m.jordan@oracle.com>
+ <20190211225447.GN24692@ziepe.ca>
+ <20190214015314.GB1151@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190213135335.4790-1-colin.king@canonical.com>
+In-Reply-To: <20190214015314.GB1151@iweiny-DESK2.sc.intel.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9166 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=829 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902140044
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 01:53:35PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Wed, Feb 13, 2019 at 05:53:14PM -0800, Ira Weiny wrote:
+> On Mon, Feb 11, 2019 at 03:54:47PM -0700, Jason Gunthorpe wrote:
+> > On Mon, Feb 11, 2019 at 05:44:32PM -0500, Daniel Jordan wrote:
+> > 
+> > > All five of these places, and probably some of Davidlohr's conversions,
+> > > probably want to be collapsed into a common helper in the core mm for
+> > > accounting pinned pages.  I tried, and there are several details that
+> > > likely need discussion, so this can be done as a follow-on.
+> > 
+> > I've wondered the same..
 > 
-> The null check on pointer sess and the subsequent call is redundant
-> as sess is null on all the the paths that lead to the out_term2 label.
-> Hence the null check and the call can be removed.
+> I'm really thinking this would be a nice way to ensure it gets cleaned up and
+> does not happen again.
 > 
-> Detected by CoverityScan, CID#1420663 ("Logically dead code")
+> Also, by moving it to the core we could better manage any user visible changes.
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/scsi/qla2xxx/qla_target.c | 2 --
->  1 file changed, 2 deletions(-)
+> From a high level, pinned is a subset of locked so it seems like we need a 2
+> sets of helpers.
 > 
-> diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
-> index 6b8c655d9eb4..9af329a5ed90 100644
-> --- a/drivers/scsi/qla2xxx/qla_target.c
-> +++ b/drivers/scsi/qla2xxx/qla_target.c
-> @@ -6396,8 +6396,6 @@ static void qlt_tmr_work(struct qla_tgt *tgt,
->  	return;
->  
->  out_term2:
-> -	if (sess)
-> -		ha->tgt.tgt_ops->put_sess(sess);
+> try_increment_locked_vm(...)
+> decrement_locked_vm(...)
+> 
+> try_increment_pinned_vm(...)
+> decrement_pinned_vm(...)
+> 
+> Where try_increment_pinned_vm() also increments locked_vm...  Of course this
+> may end up reverting the improvement of Davidlohr  Bueso's atomic work...  :-(
+> 
+> Furthermore it would seem better (although I don't know if at all possible) if
+> this were accounted for in core calls which tracked them based on how the pages
+> are being used so that drivers can't call try_increment_locked_vm() and then
+> pin the pages...  Thus getting the account wrong vs what actually happened.
+> 
+> And then in the end we can go back to locked_vm being the value checked against
+> RLIMIT_MEMLOCK.
 
-Several places do:
+Someone would need to understand the bug that was fixed by splitting
+them. 
 
-		sess = NULL;
-		goto out_term2;
+I think it had to do with double accounting pinned and mlocked pages
+and thus delivering a lower than expected limit to userspace.
 
-We could remove the "sess = NULL;" because it's not required now.
+vfio has this bug, RDMA does not. RDMA has a bug where it can
+overallocate locked memory, vfio doesn't.
 
->  	spin_unlock_irqrestore(&ha->tgt.sess_lock, flags);
->  out_term:
->  	qlt_send_term_exchange(ha->base_qpair, NULL, &prm->tm_iocb2, 1, 0);
+Really unclear how to fix this. The pinned/locked split with two
+buckets may be the right way.
 
-regards,
-dan carpenter
+Jason
