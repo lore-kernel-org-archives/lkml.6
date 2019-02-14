@@ -2,189 +2,87 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA877C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:24:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D504DC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:24:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFF4921872
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:24:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FBA62177E
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:24:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550183071;
+	bh=zOjgZtCuBIVqxwjWRLxZZHXtCSlgClis/OVSrHbn33c=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=fkq1c93fjGLB4EHthawFgETRKK+OKuFmB9mZJyiBD1bC3Nbj/+7DRR9xKtIIceGC1
+	 +PSQ+tNe1OHwhENyTW5JCcLZSCaRzS5Sq1hK1cDnCCBCFhDqwbq+0ihS8bz0opiskz
+	 f5ajmKhRSK4nqfwQ4tnLchyR29Uj7EROMVrcOMpY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440526AbfBNWYY (ORCPT
+        id S2406277AbfBNWY3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 17:24:24 -0500
-Received: from kvm5.telegraphics.com.au ([98.124.60.144]:46794 "EHLO
-        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2440477AbfBNWXA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 17:23:00 -0500
-Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
-        id 7FA2629BE2; Thu, 14 Feb 2019 17:22:55 -0500 (EST)
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     linux-m68k@lists.linux-m68k.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <86a3eca8946cbeb648ddbe3ff67b983ece7498d8.1550182390.git.fthain@telegraphics.com.au>
-From:   Finn Thain <fthain@telegraphics.com.au>
-Subject: [PATCH] video/macfb: Remove redundant code
-Date:   Fri, 15 Feb 2019 09:13:10 +1100
+        Thu, 14 Feb 2019 17:24:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44434 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2437973AbfBNWYI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 17:24:08 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5FCB2177E;
+        Thu, 14 Feb 2019 22:24:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550183048;
+        bh=zOjgZtCuBIVqxwjWRLxZZHXtCSlgClis/OVSrHbn33c=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=XJZrj8mnjLkzVkIrCaeAA40iLWx7hbF3h+L7tBJi6YuhKkfjWXb3/ljgqStI0PV7P
+         4xs1tTDcEc5Iokcvw1oZoby8AuFJcimu2txcLYUGHCMr+aJEBgmtXrAykLsQO5tPfF
+         au2pDBMvTtl4MuJZzi++F/NzMtMqlnFVbhkOpNoM=
+Subject: Re: [PATCH 4.20 00/50] 4.20.9-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20190213183655.747168774@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <18da29ff-335c-5885-f941-73c7feff25d8@kernel.org>
+Date:   Thu, 14 Feb 2019 15:24:07 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190213183655.747168774@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The value of info->var.bits_per_pixel get checked in macfb_setcolreg().
-Remove additional checks as they are redundant.
+On 2/13/19 11:38 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.20.9 release.
+> There are 50 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri Feb 15 18:36:30 UTC 2019.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.20.9-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.20.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-macfb_defined.activate gets initialized to FB_ACTIVATE_NOW by the struct
-initializer. Remove redundant assignments.
+Compiled and booted on my test system. No dmesg regressions.
 
-macfb_defined.bits_per_pixel, .width and .height all get assigned
-unconditionally. Remove redundant initializers.
-
-Cc: linux-m68k@lists.linux-m68k.org
-Tested-by: Stan Johnson <userm57@yahoo.com>
-Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
----
- drivers/video/fbdev/macfb.c | 24 ------------------------
- 1 file changed, 24 deletions(-)
-
-diff --git a/drivers/video/fbdev/macfb.c b/drivers/video/fbdev/macfb.c
-index e707e617bf1c..00671055a611 100644
---- a/drivers/video/fbdev/macfb.c
-+++ b/drivers/video/fbdev/macfb.c
-@@ -120,10 +120,7 @@ struct jet_cmap_regs {
- #define PIXEL_TO_MM(a)	(((a)*10)/28)	/* width in mm at 72 dpi */
- 
- static struct fb_var_screeninfo macfb_defined = {
--	.bits_per_pixel	= 8,
- 	.activate	= FB_ACTIVATE_NOW,
--	.width		= -1,
--	.height		= -1,
- 	.right_margin	= 32,
- 	.upper_margin	= 16,
- 	.lower_margin	= 4,
-@@ -201,9 +198,6 @@ static int v8_brazil_setpalette(unsigned int regno, unsigned int red,
- 	unsigned int bpp = info->var.bits_per_pixel;
- 	unsigned long flags;
- 
--	if (bpp > 8)
--		return 1; /* failsafe */
--
- 	local_irq_save(flags);
- 
- 	/* On these chips, the CLUT register numbers are spread out
-@@ -234,9 +228,6 @@ static int rbv_setpalette(unsigned int regno, unsigned int red,
- {
- 	unsigned long flags;
- 
--	if (info->var.bits_per_pixel > 8)
--		return 1; /* failsafe */
--
- 	local_irq_save(flags);
- 
- 	/* From the VideoToolbox driver.  Seems to be saying that
-@@ -353,9 +344,6 @@ static int civic_setpalette(unsigned int regno, unsigned int red,
- 	unsigned long flags;
- 	int clut_status;
- 	
--	if (info->var.bits_per_pixel > 8)
--		return 1; /* failsafe */
--
- 	local_irq_save(flags);
- 
- 	/* Set the register address */
-@@ -688,17 +676,14 @@ static int __init macfb_init(void)
- 		case NUBUS_DRHW_APPLE_MDC:
- 			strcpy(macfb_fix.id, "Mac Disp. Card");
- 			macfb_setpalette = mdc_setpalette;
--			macfb_defined.activate = FB_ACTIVATE_NOW;
- 			break;
- 		case NUBUS_DRHW_APPLE_TFB:
- 			strcpy(macfb_fix.id, "Toby");
- 			macfb_setpalette = toby_setpalette;
--			macfb_defined.activate = FB_ACTIVATE_NOW;
- 			break;
- 		case NUBUS_DRHW_APPLE_JET:
- 			strcpy(macfb_fix.id, "Jet");
- 			macfb_setpalette = jet_setpalette;
--			macfb_defined.activate = FB_ACTIVATE_NOW;
- 			break;
- 		default:
- 			strcpy(macfb_fix.id, "Generic NuBus");
-@@ -731,7 +716,6 @@ static int __init macfb_init(void)
- 			strcpy(macfb_fix.id, "DAFB");
- 			macfb_setpalette = dafb_setpalette;
- 			dafb_cmap_regs = ioremap(DAFB_BASE, 0x1000);
--			macfb_defined.activate = FB_ACTIVATE_NOW;
- 			break;
- 
- 		/*
-@@ -741,7 +725,6 @@ static int __init macfb_init(void)
- 			strcpy(macfb_fix.id, "V8");
- 			macfb_setpalette = v8_brazil_setpalette;
- 			v8_brazil_cmap_regs = ioremap(DAC_BASE, 0x1000);
--			macfb_defined.activate = FB_ACTIVATE_NOW;
- 			break;
- 
- 		/*
-@@ -755,7 +738,6 @@ static int __init macfb_init(void)
- 			strcpy(macfb_fix.id, "Brazil");
- 			macfb_setpalette = v8_brazil_setpalette;
- 			v8_brazil_cmap_regs = ioremap(DAC_BASE, 0x1000);
--			macfb_defined.activate = FB_ACTIVATE_NOW;
- 			break;
- 
- 		/*
-@@ -772,7 +754,6 @@ static int __init macfb_init(void)
- 			strcpy(macfb_fix.id, "Sonora");
- 			macfb_setpalette = v8_brazil_setpalette;
- 			v8_brazil_cmap_regs = ioremap(DAC_BASE, 0x1000);
--			macfb_defined.activate = FB_ACTIVATE_NOW;
- 			break;
- 
- 		/*
-@@ -785,7 +766,6 @@ static int __init macfb_init(void)
- 			strcpy(macfb_fix.id, "RBV");
- 			macfb_setpalette = rbv_setpalette;
- 			rbv_cmap_regs = ioremap(DAC_BASE, 0x1000);
--			macfb_defined.activate = FB_ACTIVATE_NOW;
- 			break;
- 
- 		/*
-@@ -796,7 +776,6 @@ static int __init macfb_init(void)
- 			strcpy(macfb_fix.id, "Civic");
- 			macfb_setpalette = civic_setpalette;
- 			civic_cmap_regs = ioremap(CIVIC_BASE, 0x1000);
--			macfb_defined.activate = FB_ACTIVATE_NOW;
- 			break;
- 
- 		
-@@ -810,7 +789,6 @@ static int __init macfb_init(void)
- 				macfb_setpalette = v8_brazil_setpalette;
- 				v8_brazil_cmap_regs =
- 					ioremap(DAC_BASE, 0x1000);
--				macfb_defined.activate = FB_ACTIVATE_NOW;
- 			}
- 			break;
- 
-@@ -823,7 +801,6 @@ static int __init macfb_init(void)
- 				macfb_setpalette = v8_brazil_setpalette;
- 				v8_brazil_cmap_regs =
- 					ioremap(DAC_BASE, 0x1000);
--				macfb_defined.activate = FB_ACTIVATE_NOW;
- 			}
- 			break;
- 
-@@ -892,7 +869,6 @@ static int __init macfb_init(void)
- 			strcpy(macfb_fix.id, "CSC");
- 			macfb_setpalette = csc_setpalette;
- 			csc_cmap_regs = ioremap(CSC_BASE, 0x1000);
--			macfb_defined.activate = FB_ACTIVATE_NOW;
- 			break;
- 
- 		default:
--- 
-2.19.2
+thanks,
+-- Shuah
 
