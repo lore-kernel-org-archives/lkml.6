@@ -2,152 +2,131 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 974E7C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:26:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22C35C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:26:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 647F721B68
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:26:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0042222D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:26:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="dbkFqMfi"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dellteam.com header.i=@dellteam.com header.b="ePhMKfA6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439759AbfBNT0r (ORCPT
+        id S2439781AbfBNT0v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 14:26:47 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38202 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2439725AbfBNT01 (ORCPT
+        Thu, 14 Feb 2019 14:26:51 -0500
+Received: from esa2.dell-outbound.iphmx.com ([68.232.149.220]:53808 "EHLO
+        esa2.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2439736AbfBNT0c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 14:26:27 -0500
-Received: by mail-pf1-f196.google.com with SMTP id q1so3581781pfi.5
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 11:26:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=l45/w0iXjOS/5kE7BbpDMgm34gyLbKfVsq3DBo0xqe0=;
-        b=dbkFqMfikgxyGeQmRCQmyLfUMr1v9qGRB/1u1KREh4PmaL3FKvldPTGzwqHsTAZriR
-         qTNMVBshoZFnhTqq62vjZdUezp6D3LV4DXsQxSoXWlE7w1p5/nz8K9dHVjUI0uewmm/3
-         Tx6ZYGS+edH/xG+wyuR+MLY2LA5OsTE2FbXxo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=l45/w0iXjOS/5kE7BbpDMgm34gyLbKfVsq3DBo0xqe0=;
-        b=R/t38+EZl6GF6+MiQgpVhPBsU5aHXMuhGrtokrvgtK1qAEaEQar4XbeP0PfnoiIzcg
-         3eFdmiVWkn1MifAVvAH2vKRQZK8uwoNaOXbiwLbxVqyI/Qk5ZseDahGeH2JfihW7UF0O
-         qrSnXGEI5Z+alHLTA+F0Ka1YHDLE3gCChPBGH39iINE4m8KT2YIm81ffONcwiTzcaTBF
-         d/ADeIW7P+DRoIUSpMF7vWrBOTi+QVFpKpWI4NEMvIX6kxv1Cr8N7e729dEX7Noez98R
-         y4lHqzSWiLlAtpOLfkCZfhqWI8V3VMXz2+psyJT+L/jQDHbvV7e5igRoo/3zBwzK3gNC
-         pJxA==
-X-Gm-Message-State: AHQUAuZnyYrV7L/n9RiZXuzE8JfBj1FzLGazxe2s9b8h7UYvHTs/gLup
-        Izo9kYh6c2M4tpszgNL5kLrJsg==
-X-Google-Smtp-Source: AHgI3Ia7Twnq5r7dgW0TFcIF1mUc1g5B8v31Ffn2m2aFBQM1Cv15c3uxxsag0SXtBDHRvwgLsyoMtA==
-X-Received: by 2002:a62:a1a:: with SMTP id s26mr5742054pfi.31.1550172386534;
-        Thu, 14 Feb 2019 11:26:26 -0800 (PST)
-Received: from localhost.localdomain ([115.97.184.151])
-        by smtp.gmail.com with ESMTPSA id k71sm8390100pga.44.2019.02.14.11.26.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 11:26:25 -0800 (PST)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>
-Cc:     dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-amarula@amarulasolutions.com,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v8 6/8] drm/sun4i: sun6i_mipi_dsi: Set proper vblk timing calculation
-Date:   Fri, 15 Feb 2019 00:55:42 +0530
-Message-Id: <20190214192544.7314-7-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
-In-Reply-To: <20190214192544.7314-1-jagan@amarulasolutions.com>
-References: <20190214192544.7314-1-jagan@amarulasolutions.com>
+        Thu, 14 Feb 2019 14:26:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dellteam.com; i=@dellteam.com; q=dns/txt; s=smtpout;
+  t=1550172392; x=1581708392;
+  h=cc:from:to:subject:date:message-id:references:
+   content-transfer-encoding:mime-version;
+  bh=KF5/ZKLPvD3zphF/+bULMEtrWBscpl6jofrPxgRma4k=;
+  b=ePhMKfA6K1IGtaY8SQtieeOi+DhyjuSQeD/ToY+EgZm6gYaV9oDLIBQh
+   l6mXO3w1xQ6YO5vVwTzpgn1sESV5G0smhtahSjMSAeYWLD/3qbPbHzEfD
+   6DyMvCxE2CElg9bfua13eswpMPnyTmsjOUli+0/2CH5vcEc3f+vuXW/GE
+   k=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FyAAAjwGVchyeV50NkGwEBAQEDAQE?=
+ =?us-ascii?q?BBwMBAQGBZYJZgRQnCox1ixKCDZoOCwEBLIRAg2YiOBIBAwEBAgEBAgEBAhA?=
+ =?us-ascii?q?BAQEKCwkIKS+COiKCbwEBAQMBEig/BQsCAQgYHhBXAgQTCBqCfoFrCJ5mPQJ?=
+ =?us-ascii?q?tgQGJBwEBAYIeijiMRIIWg3UuhQFNhRMCjAeLMot1CQWSRyGBbpEFi0mQYgI?=
+ =?us-ascii?q?EAgQFAhSBXYF4cIM8gjaOJ0ExgSiOFQGBHgEB?=
+X-IPAS-Result: =?us-ascii?q?A2FyAAAjwGVchyeV50NkGwEBAQEDAQEBBwMBAQGBZYJZg?=
+ =?us-ascii?q?RQnCox1ixKCDZoOCwEBLIRAg2YiOBIBAwEBAgEBAgEBAhABAQEKCwkIKS+CO?=
+ =?us-ascii?q?iKCbwEBAQMBEig/BQsCAQgYHhBXAgQTCBqCfoFrCJ5mPQJtgQGJBwEBAYIei?=
+ =?us-ascii?q?jiMRIIWg3UuhQFNhRMCjAeLMot1CQWSRyGBbpEFi0mQYgIEAgQFAhSBXYF4c?=
+ =?us-ascii?q?IM8gjaOJ0ExgSiOFQGBHgEB?=
+Received: from mx0a-00154901.pphosted.com ([67.231.149.39])
+  by esa2.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 14 Feb 2019 13:26:30 -0600
+Received: from pps.filterd (m0142699.ppops.net [127.0.0.1])
+        by mx0a-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1EJE6jw034764;
+        Thu, 14 Feb 2019 14:26:30 -0500
+Received: from esa5.dell-outbound2.iphmx.com (esa5.dell-outbound2.iphmx.com [68.232.153.203])
+        by mx0a-00154901.pphosted.com with ESMTP id 2qnc78rr5p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 14 Feb 2019 14:26:29 -0500
+Cc:     <mr.nuke.me@gmail.com>, <bhelgaas@google.com>,
+        <Austin.Bolen@dell.com>, <keith.busch@intel.com>,
+        <Shyam.Iyer@dell.com>, <gustavo@embeddedor.com>,
+        <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Received: from ausxippc106.us.dell.com ([143.166.85.156])
+  by esa5.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 15 Feb 2019 01:26:02 +0600
+X-LoopCount0: from 10.166.134.85
+X-IronPort-AV: E=Sophos;i="5.58,369,1544508000"; 
+   d="scan'208";a="354071790"
+From:   <Alex_Gagniuc@Dellteam.com>
+To:     <lukas@wunner.de>
+Subject: Re: [PATCH] PCI: pciehp: Do not turn off slot if presence comes up
+ after link
+Thread-Topic: [PATCH] PCI: pciehp: Do not turn off slot if presence comes up
+ after link
+Thread-Index: AQHUvZbN4kEiyNA8xUGy+Uw4G87SXw==
+Date:   Thu, 14 Feb 2019 19:26:28 +0000
+Message-ID: <59479c08d4624ffdb00883813ce80729@ausx13mps321.AMER.DELL.COM>
+References: <20190205210701.25387-1-mr.nuke.me@gmail.com>
+ <20190209115849.244u67h7wmn3eb7o@wunner.de>
+ <52afa1c45f684dbda6a8771b65583a22@ausx13mps321.AMER.DELL.COM>
+ <20190212083031.2no7mzn5xug7nba3@wunner.de>
+ <b2fffa5beb7941ebaceb8b8ce6e5b133@ausx13mps321.AMER.DELL.COM>
+ <20190213083632.GA3387@wunner.de>
+ <205e0fd9995a4f2b80ab370a974b6628@ausx13mps321.AMER.DELL.COM>
+ <20190214070100.kvikmkkcrp2d32sm@wunner.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [143.166.11.234]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=715 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902140128
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Like other dsi setup timings, or hblk for that matter vblk would
-also require compute the timings based payload equation along with
-packet overhead.
-
-But, on the other hand vblk computation is also depends on device
-lane number.
-- for 4 lane devices, it is computed based on vtotal, packet overhead
-  along with hblk value.
-- for others devices, it is simply 0
-
-BSP code from BPI-M64-bsp is computing vblk as for 4-lane devices
-(from linux-sunxi
-drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-
-tmp = (ht*dsi_pixel_bits[format]/8)*vt-(4+dsi_hblk+2);
-dsi_vblk = (lane-tmp%lane);
-
-So, update the vblk timing calculation accordingly.
-
-Tested on 2-lane, 4-lane MIPI-DSI LCD panels.
-
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 29 +++++++++++++++++++-------
- 1 file changed, 22 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index a64e6ec00f22..a08dfdcbe9e8 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -446,6 +446,27 @@ static void sun6i_dsi_setup_format(struct sun6i_dsi *dsi,
- 		     SUN6I_DSI_PIXEL_CTL0_FORMAT(fmt));
- }
- 
-+static u16 sun6i_dsi_get_timings_vblk(struct sun6i_dsi *dsi,
-+				      struct drm_display_mode *mode, u16 hblk)
-+{
-+	struct mipi_dsi_device *device = dsi->device;
-+	unsigned int Bpp = mipi_dsi_pixel_format_to_bpp(device->format) / 8;
-+	int tmp;
-+
-+	if (device->lanes != 4)
-+		return 0;
-+
-+	/*
-+	 * The vertical blank is set using a blanking packet (4 bytes +
-+	 * payload + 2 bytes). Its minimal size is therefore 6 bytes
-+	 */
-+#define VBLK_PACKET_OVERHEAD	6
-+	tmp = (mode->htotal * Bpp) * mode->vtotal -
-+	      (hblk + VBLK_PACKET_OVERHEAD);
-+
-+	return (device->lanes - tmp % device->lanes);
-+}
-+
- static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
- 				    struct drm_display_mode *mode)
- {
-@@ -493,13 +514,7 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
- 		   (mode->htotal - (mode->hsync_end - mode->hsync_start)) *
- 		   Bpp - HBLK_PACKET_OVERHEAD);
- 
--	/*
--	 * And I'm not entirely sure what vblk is about. The driver in
--	 * Allwinner BSP is using a rather convoluted calculation
--	 * there only for 4 lanes. However, using 0 (the !4 lanes
--	 * case) even with a 4 lanes screen seems to work...
--	 */
--	vblk = 0;
-+	vblk = sun6i_dsi_get_timings_vblk(dsi, mode, hblk);
- 
- 	/* How many bytes do we need to send all payloads? */
- 	bytes = max_t(size_t, max(max(hfp, hblk), max(hsa, hbp)), vblk);
--- 
-2.18.0.321.gffc6fa0e3
-
+On 2/14/19 1:01 AM, Lukas Wunner wrote:=0A=
+> On Wed, Feb 13, 2019 at 06:55:46PM +0000, Alex_Gagniuc@Dellteam.com wrote=
+:=0A=
+>> On 2/13/19 2:36 AM, Lukas Wunner wrote:=0A=
+>>>> (*) A bit hypothetical: There is no hardware yet implementing the ECN.=
+=0A=
+>>>=0A=
+>>> Hm, this contradicts Austin Bolen's e-mail of Jan 25 that "Yes, this=0A=
+>>> platform disables in-band presence" (when asked whether your host=0A=
+>>> controller already adheres to the ECN).=0A=
+>>=0A=
+>> Both statements are true. The hardware does indeed disable in-band=0A=
+>> presence, in a rudimentary way that is not compliant with the ECN -- it=
+=0A=
+>> doesn't implement the bits required by the ECN.=0A=
+> =0A=
+> Ugh, can a BIOS update make those machines compliant to the ECN=0A=
+=0A=
+No, that is not possible, I'm told.=0A=
+=0A=
+> or do we need a quirk specifically for them?=0A=
+=0A=
+We might have to.=0A=
+=0A=
+> It should match the spec, which I have no access to.=0A=
+=0A=
+I am as irritated as you that the spec is not readily available for =0A=
+public viewing.=0A=
+=0A=
+Cheers,=0A=
+Alex=0A=
