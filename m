@@ -2,210 +2,128 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93E4DC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:06:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 204D3C4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B06B20838
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:06:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC5E020838
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:08:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="D6r1YdPq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392726AbfBNLGd (ORCPT
+        id S2395560AbfBNLIW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 06:06:33 -0500
-Received: from foss.arm.com ([217.140.101.70]:41538 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726365AbfBNLGd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 06:06:33 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AEFEFEBD;
-        Thu, 14 Feb 2019 03:06:32 -0800 (PST)
-Received: from [10.162.0.144] (a075553-lin.blr.arm.com [10.162.0.144])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5E4253F575;
-        Thu, 14 Feb 2019 03:06:29 -0800 (PST)
-Subject: Re: [PATCH v5 3/5] arm64/kvm: context-switch ptrauth registers
-To:     Kristina Martsenko <kristina.martsenko@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
+        Thu, 14 Feb 2019 06:08:22 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:59476 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726365AbfBNLIV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 06:08:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=aWIZyZMmST8ebU3DT/Rlvq66ym1KIAlYo0p9mg3XXYw=; b=D6r1YdPqaEGX911CeKiPT8/19
+        aQHGgLTVFVNO0YU0yKheAnibjZMfiz6wI3YcxORYYn0qBjVKEP16VsTLeVZCAE/gShrgT9ymIESiw
+        Pl5cXj6FNHnORqmPh/xvQtNSsUjOQea/fBuVvOYcyC36dMQucrzp4udjlmOC49vTOY1SIrw1m74Gq
+        31dNWiV0Ra5pCoDgVSLvnjHLmvav03tBKhXgf63LV9w52FNa/tN/1oxB29fqC/xbFDvcLvDKzJZA2
+        SDD8TsIlE+O9CU6SUw57SLYbBry7llFxRxil/kaT2+4WURnk5NCKHJrO/vpQK2z7DOL/42gU/lSs3
+        cIze0QVqA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1guEsJ-0008HC-Ho; Thu, 14 Feb 2019 11:08:15 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D0AD620298565; Thu, 14 Feb 2019 12:08:13 +0100 (CET)
+Date:   Thu, 14 Feb 2019 12:08:13 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Alexey Brodkin <alexey.brodkin@synopsys.com>
+Cc:     David Laight <David.Laight@ACULAB.COM>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        Arnd Bergmann <arnd.bergmann@linaro.org>,
+        Vineet Gupta <vineet.gupta1@synopsys.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-References: <1548658727-14271-1-git-send-email-amit.kachhap@arm.com>
- <1548658727-14271-4-git-send-email-amit.kachhap@arm.com>
- <0a2df488-a80d-ef08-6241-7f4695f2a578@arm.com>
-From:   Amit Daniel Kachhap <amit.kachhap@arm.com>
-Message-ID: <ee8669f7-5c3d-ada3-49f2-0c9b37559553@arm.com>
-Date:   Thu, 14 Feb 2019 16:36:27 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+Subject: Re: [PATCH] ARC: Explicitly set ARCH_SLAB_MINALIGN = 8
+Message-ID: <20190214110813.GK32494@hirez.programming.kicks-ass.net>
+References: <20190208105519.26750-1-abrodkin@synopsys.com>
+ <81017fe4-b31f-4942-e822-a7b70008b74d@synopsys.com>
+ <f83412d1e7fd4d67b4632c1f81fae963@AcuMS.aculab.com>
+ <bfc65835-21f9-6d5e-791d-ee49113d939c@synopsys.com>
+ <20190213125651.GP32494@hirez.programming.kicks-ass.net>
+ <e6138aeb-9ce4-fbfa-4d6a-b76f189a3e47@synopsys.com>
+ <20190214103140.GG32494@hirez.programming.kicks-ass.net>
+ <4881796E12491D4BB15146FE0209CE64681DB122@DE02WEMBXB.internal.synopsys.com>
 MIME-Version: 1.0
-In-Reply-To: <0a2df488-a80d-ef08-6241-7f4695f2a578@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4881796E12491D4BB15146FE0209CE64681DB122@DE02WEMBXB.internal.synopsys.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Feb 14, 2019 at 10:44:49AM +0000, Alexey Brodkin wrote:
+> > On Wed, Feb 13, 2019 at 03:23:36PM -0800, Vineet Gupta wrote:
+> > > On 2/13/19 4:56 AM, Peter Zijlstra wrote:
+> > > >
+> > > > Personally I think u64 and company should already force natural
+> > > > alignment; but alas.
+> > >
+> > > But there is an ISA/ABI angle here too. e.g. On 32-bit ARC, LDD (load double) is
+> > > allowed to take a 32-bit aligned address to load a register pair. Thus all u64
+> > > need not be 64-bit aligned (unless attribute aligned 8 etc) hence the relaxation
+> > > in ABI (alignment of long long is 4). You could certainly argue that we end up
+> > > undoing some of it anyways by defining things like ARCH_KMALLOC_MINALIGN to 8, but
+> > > still...
+> > 
+> > So what happens if the data is then split across two cachelines; will a
+> > STD vs LDD still be single-copy-atomic? I don't _think_ we rely on that
+> > for > sizeof(unsigned long), with the obvious exception of atomic64_t,
+> > but yuck...
+> 
+> STD & LDD are simple store/load instructions so there's no problem for
+> their 64-bit data to be from 2 subsequent cache lines as well as 2 pages
+> (if we're that unlucky). Or you mean something else?
 
-On 2/13/19 11:04 PM, Kristina Martsenko wrote:
-> Hi Amit,
-> 
-> (Please always Cc: everyone who commented on previous versions of the
-> series.)
-> 
-> On 28/01/2019 06:58, Amit Daniel Kachhap wrote:
->> When pointer authentication is supported, a guest may wish to use it.
->> This patch adds the necessary KVM infrastructure for this to work, with
->> a semi-lazy context switch of the pointer auth state.
->>
->> Pointer authentication feature is only enabled when VHE is built
->> into the kernel and present into CPU implementation so only VHE code
->> paths are modified.
->>
->> When we schedule a vcpu, we disable guest usage of pointer
->> authentication instructions and accesses to the keys. While these are
->> disabled, we avoid context-switching the keys. When we trap the guest
->> trying to use pointer authentication functionality, we change to eagerly
->> context-switching the keys, and enable the feature. The next time the
->> vcpu is scheduled out/in, we start again.
->>
->> Pointer authentication consists of address authentication and generic
->> authentication, and CPUs in a system might have varied support for
->> either. Where support for either feature is not uniform, it is hidden
->> from guests via ID register emulation, as a result of the cpufeature
->> framework in the host.
->>
->> Unfortunately, address authentication and generic authentication cannot
->> be trapped separately, as the architecture provides a single EL2 trap
->> covering both. If we wish to expose one without the other, we cannot
->> prevent a (badly-written) guest from intermittently using a feature
->> which is not uniformly supported (when scheduled on a physical CPU which
->> supports the relevant feature). When the guest is scheduled on a
->> physical CPU lacking the feature, these attempts will result in an UNDEF
->> being taken by the guest.
-> 
-> [...]
-> 
->>   /*
->> + * Handle the guest trying to use a ptrauth instruction, or trying to access a
->> + * ptrauth register.
->> + */
->> +void kvm_arm_vcpu_ptrauth_trap(struct kvm_vcpu *vcpu)
->> +{
->> +	if (has_vhe() && kvm_supports_ptrauth())
->> +		kvm_arm_vcpu_ptrauth_enable(vcpu);
->> +	else
->> +		kvm_inject_undefined(vcpu);
->> +}
->> +
->> +/*
->>    * Guest usage of a ptrauth instruction (which the guest EL1 did not turn into
->> - * a NOP).
->> + * a NOP), or guest EL1 access to a ptrauth register.
-> 
-> Doesn't guest EL1 access of ptrauth registers go through trap_ptrauth
-> instead?
-Yes you are right.
-> 
->>    */
->>   static int kvm_handle_ptrauth(struct kvm_vcpu *vcpu, struct kvm_run *run)
->>   {
->> -	/*
->> -	 * We don't currently support ptrauth in a guest, and we mask the ID
->> -	 * registers to prevent well-behaved guests from trying to make use of
->> -	 * it.
->> -	 *
->> -	 * Inject an UNDEF, as if the feature really isn't present.
->> -	 */
->> -	kvm_inject_undefined(vcpu);
->> +	kvm_arm_vcpu_ptrauth_trap(vcpu);
->>   	return 1;
->>   }
->>   
-> 
-> [...]
-> 
->> +static __always_inline bool __hyp_text __ptrauth_is_enabled(struct kvm_vcpu *vcpu)
->> +{
->> +	return IS_ENABLED(CONFIG_ARM64_PTR_AUTH) &&
->> +			vcpu->arch.ctxt.hcr_el2 & (HCR_API | HCR_APK);
->> +}
->> +
->> +void __no_ptrauth __hyp_text __ptrauth_switch_to_guest(struct kvm_vcpu *vcpu,
->> +					  struct kvm_cpu_context *host_ctxt,
->> +					  struct kvm_cpu_context *guest_ctxt)
->> +{
->> +	if (!__ptrauth_is_enabled(vcpu))
->> +		return;
->> +
->> +	ptrauth_keys_store((struct ptrauth_keys *) &host_ctxt->sys_regs[APIAKEYLO_EL1]);
->> +	ptrauth_keys_switch((struct ptrauth_keys *) &guest_ctxt->sys_regs[APIAKEYLO_EL1]);
->> +}
->> +
->> +void __no_ptrauth __hyp_text __ptrauth_switch_to_host(struct kvm_vcpu *vcpu,
-> 
-> We don't call this code in the !VHE case anymore, so are the __hyp_text
-> annotations still needed?
-Yes they can be removed.
-> 
->> +					 struct kvm_cpu_context *host_ctxt,
->> +					 struct kvm_cpu_context *guest_ctxt)
->> +{
->> +	if (!__ptrauth_is_enabled(vcpu))
->> +		return;
->> +
->> +	ptrauth_keys_store((struct ptrauth_keys *) &guest_ctxt->sys_regs[APIAKEYLO_EL1]);
->> +	ptrauth_keys_switch((struct ptrauth_keys *) &host_ctxt->sys_regs[APIAKEYLO_EL1]);
->> +}
-> 
-> [...]
-> 
->> @@ -1040,14 +1066,6 @@ static u64 read_id_reg(struct sys_reg_desc const *r, bool raz)
->>   			kvm_debug("SVE unsupported for guests, suppressing\n");
->>   
->>   		val &= ~(0xfUL << ID_AA64PFR0_SVE_SHIFT);
->> -	} else if (id == SYS_ID_AA64ISAR1_EL1) {
->> -		const u64 ptrauth_mask = (0xfUL << ID_AA64ISAR1_APA_SHIFT) |
->> -					 (0xfUL << ID_AA64ISAR1_API_SHIFT) |
->> -					 (0xfUL << ID_AA64ISAR1_GPA_SHIFT) |
->> -					 (0xfUL << ID_AA64ISAR1_GPI_SHIFT);
->> -		if (val & ptrauth_mask)
->> -			kvm_debug("ptrauth unsupported for guests, suppressing\n");
->> -		val &= ~ptrauth_mask;
-> 
-> If all CPUs support address authentication, but no CPUs support generic
-> authentication, then I think the guest will still see address auth in
-> the ID register and try to use it, but since kvm_supports_ptrauth() ==
-> false, then kvm will enable trapping and inject an undef. So I think we
-> still need to zero the ID register bits here if !kvm_supports_ptrauth().
-Yes even James Morse suggested same thing.
-> 
-> In the following patch, I think we also need to zero the bits if
-> !kvm_arm_vcpu_ptrauth_allowed(), as done in v4 [1], because otherwise
-> the guest will see that ptrauth is available, but will receive an undef
-> when it tries to use it.
-ok.
-> 
-> Regarding the patch in v4, most of the work is passing the vcpu down to
-> read_id_reg(). Dave has a similar patch in his SVE series [2]. I think
-> it might make sense to rebase onto that patch and mention that patch as
-> a dependency in the cover letter.
-Yes it is helpful. Will check it.
+u64 x;
 
-//Amit D
+WRITE_ONCE(x, 0x1111111100000000);
+WRITE_ONCE(x, 0x0000000011111111);
+
+vs
+
+t = READ_ONCE(x);
+
+is t allowed to be 0x1111111111111111 ?
+
+If the data is split between two cachelines, the hardware must do
+something very funny to avoid that.
+
+single-copy-atomicity requires that to never happen; IOW no load or
+store tearing. You must observe 'whole' values, no mixing.
+
+Linux requires READ_ONCE()/WRITE_ONCE() to be single-copy-atomic for
+<=sizeof(unsigned long) and atomic*_read()/atomic*_set() for all atomic
+types. Your atomic64_t alignment should ensure this is so.
+
+So while I think we're fine, I do find hardware instructions that tear
+yuck (yah, I know, x86...)
+
+> > So even though it is allowed by the chip; does it really make sense to
+> > use this?
 > 
-> [1] https://lore.kernel.org/linux-arm-kernel/1545119810-12182-5-git-send-email-amit.kachhap@arm.com/
-> [2] https://lore.kernel.org/linux-arm-kernel/1547757219-19439-11-git-send-email-Dave.Martin@arm.com/
+> It gives performance benefits when dealing with either 64-bit or even
+> larger buffers, see how we use it in our string routines like here [1].
 > 
-> Thanks,
-> Kristina
-> 
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arc/lib/memset-archs.S#n81
+
+That doesn't require the ABI alignment crud.
