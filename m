@@ -2,171 +2,135 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1842EC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:05:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49018C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:07:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D89B821B1C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:05:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 165A221B1C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:07:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pZEm6UUP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406419AbfBNWFe (ORCPT
+        id S2393283AbfBNWHc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 17:05:34 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48596 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406309AbfBNWFc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 17:05:32 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C965FC079C4C;
-        Thu, 14 Feb 2019 22:05:31 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E104860BEC;
-        Thu, 14 Feb 2019 22:05:27 +0000 (UTC)
-Subject: Re: [PATCH v4 0/3] locking/rwsem: Rwsem rearchitecture part 0
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
-        uclinux-h8-devel@lists.sourceforge.jp,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
-        linux-arch@vger.kernel.org, x86@kernel.org,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-References: <1550095217-12047-1-git-send-email-longman@redhat.com>
- <20190214103715.GI32494@hirez.programming.kicks-ass.net>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <5c373ba6-419e-c4d5-965f-a566a6182b28@redhat.com>
-Date:   Thu, 14 Feb 2019 17:05:27 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 14 Feb 2019 17:07:32 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41702 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391475AbfBNWHb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 17:07:31 -0500
+Received: by mail-ot1-f66.google.com with SMTP id u16so13239443otk.8
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 14:07:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4s87I945vp3xG0mbdM3nwNX7yL1kZ/Kd3XYHc/LFqj8=;
+        b=pZEm6UUPmGjv3BwZ8vq+8h8I7M5+2o42o/ZK+94rEJ+3eDeA8g1bKu6FScnnrKTpr8
+         fieW+hPZeKwP0YGLMLFJAOinMdslIfzhqS86z0xACgL1eiOeFvp5qgzSgqCaP38HKnak
+         Edugqn1ScawUoy5ZkH7YKlumvkv2qwaI+kGpyeYV/0386zvfefUO6U/t18IjScl5Ofgl
+         uwB8Vtri1gUCEIQ6pl1onWnsTtnZAzYfrggk0lH4evwsmt/N/N1xWgrmgf690SEJejSs
+         UV15mVH6l2esQ9ULvxZmvo7FCE43v9MlDCUu8E6XUV5uM5k6feSrVH5wW/sGhxz9RHCS
+         y7pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4s87I945vp3xG0mbdM3nwNX7yL1kZ/Kd3XYHc/LFqj8=;
+        b=SVcmdQk5BGi7oCGHcaM9UYaXkvGtqsTTUCVeOA1r0xKqbXEF48U27CLX0ib6zcByjE
+         HJTbJvRjzy0MHaNOcWqCJ9Z1ks6ZaWyKeGa0HnulcdlRhHVXvwQRgMFMngm+/dCEvPZ8
+         hoVrcpnkg1N558pW/MrBbHDvSPC5ggdhBMygHAemFYEJn9XMhUAgEoSNPMX2f09prrDu
+         frSyLachUZf4RSILeX5aKyfOzhScZiNP0zud/Bpi0BTEtRpBaBq8ZCPRyf14+k8AEwMx
+         tmkNJinn6xoumrCshNLwOwnE9u568QiOh7V7QqswqK0e6aOR/yP4Kby6jBxjd025AHb2
+         0dEQ==
+X-Gm-Message-State: AHQUAubtCsBc7PcjxkFL7dx42zS6EwCqiB7PHgDz8GYh9JokoVbP2KZ0
+        A3IN2TTp2aVD3xqv33CNYCMPaF55FIrut5r2t4OklQ==
+X-Google-Smtp-Source: AHgI3IYMELFD9PdYSOsXuSdmGNqMjB3UwWy8Ai3I49903X3bnkqhiNMg0snBsYJ0YFHfj3wZ9tIInIVO1xrENCgTfag=
+X-Received: by 2002:a9d:7493:: with SMTP id t19mr3729381otk.98.1550182049939;
+ Thu, 14 Feb 2019 14:07:29 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190214103715.GI32494@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 14 Feb 2019 22:05:32 +0000 (UTC)
+References: <20181128193636.254378-15-brendanhiggins@google.com>
+ <b4c72234-8c56-6efa-8003-f89d99a9779e@ideasonboard.com> <20181130034525.GP18410@garbanzo.do-not-panic.com>
+ <CAFd5g47Cew6pmebsopjzmkd4RpnnC3zLAUfxCybjdhrO35OBpQ@mail.gmail.com>
+ <0927c42a-8e65-f410-e6ed-27576572577f@ideasonboard.com> <CAFd5g44fKzriEs_pGyANxe7GuC9Ji2SD7EEz76__h8q9jjg8yA@mail.gmail.com>
+ <57c3dc86-236f-e981-249a-8bbfe5c19f0e@ideasonboard.com> <CAFd5g46AEquMKzfrjLDVi+PP5-7aGs6C6pCunGAXDn3VRkJP+g@mail.gmail.com>
+ <eade3052-0aa4-90b4-d55b-8c44556f98bc@ideasonboard.com> <CAFd5g46cO_rZYjqKu6CooKcV-uAsCUJjuib38cQv6WHQS3ooaA@mail.gmail.com>
+ <20190214172639.GD11489@garbanzo.do-not-panic.com>
+In-Reply-To: <20190214172639.GD11489@garbanzo.do-not-panic.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Thu, 14 Feb 2019 14:07:18 -0800
+Message-ID: <CAFd5g46BG=-sjA+ZFz_F-2wEGrD_mhU-W+kHsr1rGsKEv2YtJw@mail.gmail.com>
+Subject: Re: [RFC v3 14/19] Documentation: kunit: add documentation for KUnit
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@google.com>, shuah@kernel.org,
+        Joel Stanley <joel@jms.id.au>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Joe Perches <joe@perches.com>, brakmo@fb.com,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-um@lists.infradead.org, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Rob Herring <robh@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Felix Guo <felixguoxiuping@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMDIvMTQvMjAxOSAwNTozNyBBTSwgUGV0ZXIgWmlqbHN0cmEgd3JvdGU6Cj4gT24gV2Vk
-LCBGZWIgMTMsIDIwMTkgYXQgMDU6MDA6MTRQTSAtMDUwMCwgV2FpbWFuIExvbmcgd3JvdGU6
-Cj4+IHY0Ogo+PiAgLSBSZW1vdmUgcndzZW0tc3BpbmxvY2suYyBhbmQgbWFrZSBhbGwgYXJj
-aHMgdXNlIHJ3c2VtLXhhZGQuYy4KPj4KPj4gdjM6Cj4+ICAtIE9wdGltaXplIF9fZG93bl9y
-ZWFkX3RyeWxvY2soKSBmb3IgdGhlIHVuY29udGVuZGVkIGNhc2UgYXMgc3VnZ2VzdGVkCj4+
-ICAgIGJ5IExpbnVzLgo+Pgo+PiB2MjoKPj4gIC0gQWRkIHBhdGNoIDIgdG8gb3B0aW1pemUg
-X19kb3duX3JlYWRfdHJ5bG9jaygpIGFzIHN1Z2dlc3RlZCBieSBQZXRlclouCj4+ICAtIFVw
-ZGF0ZSBwZXJmb3JtYW5jZSB0ZXN0IGRhdGEgaW4gcGF0Y2ggMS4KPj4KPj4gVGhlIGdvYWwg
-b2YgdGhpcyBwYXRjaHNldCBpcyB0byByZW1vdmUgdGhlIGFyY2hpdGVjdHVyZSBzcGVjaWZp
-YyBmaWxlcwo+PiBmb3IgcndzZW0teGFkZCB0byBtYWtlIGl0IGVhc2VyIHRvIGFkZCBlbmhh
-bmNlbWVudHMgaW4gdGhlIGxhdGVyIHJ3c2VtCj4+IHBhdGNoZXMuIEl0IGFsc28gcmVtb3Zl
-cyB0aGUgbGVnYWN5IHJ3c2VtLXNwaW5sb2NrLmMgZmlsZSBhbmQgbWFrZSBhbGwKPj4gdGhl
-IGFyY2hpdGVjdHVyZXMgdXNlIG9uZSBzaW5nbGUgaW1wbGVtZW50YXRpb24gb2YgcndzZW0g
-LSByd3NlbS14YWRkLmMuCj4+Cj4+IFdhaW1hbiBMb25nICgzKToKPj4gICBsb2NraW5nL3J3
-c2VtOiBSZW1vdmUgYXJjaCBzcGVjaWZpYyByd3NlbSBmaWxlcwo+PiAgIGxvY2tpbmcvcndz
-ZW06IFJlbW92ZSByd3NlbS1zcGlubG9jay5jICYgdXNlIHJ3c2VtLXhhZGQuYyBmb3IgYWxs
-Cj4+ICAgICBhcmNocwo+PiAgIGxvY2tpbmcvcndzZW06IE9wdGltaXplIGRvd25fcmVhZF90
-cnlsb2NrKCkKPiBBY2tlZC1ieTogUGV0ZXIgWmlqbHN0cmEgKEludGVsKSA8cGV0ZXJ6QGlu
-ZnJhZGVhZC5vcmc+Cj4KPiB3aXRoIHRoZSBjYXZlYXQgdGhhdCBJJ20gaGFwcHkgdG8gZXhj
-aGFuZ2UgcGF0Y2ggMyBiYWNrIHRvIG15IGVhcmxpZXIKPiBzdWdnZXN0aW9uIGluIGNhc2Ug
-V2lsbCBleHBlc3NlcyBjb25jZXJucyB3cnQgdGhlIEFSTTY0IHBlcmZvcm1hbmNlIG9mCj4g
-TGludXMnIHN1Z2dlc3Rpb24uCgpJIGluc2VydGVkIGEgZmV3IGxvY2sgZXZlbnQgY291bnRl
-cnMgaW50byB0aGUgcndzZW0gdHJ5bG9jayBjb2RlOgoKc3RhdGljIGlubGluZSBpbnQgX19k
-b3duX3JlYWRfdHJ5bG9jayhzdHJ1Y3Qgcndfc2VtYXBob3JlICpzZW0pCnsKwqDCoMKgwqDC
-oMKgwqAgLyoKwqDCoMKgwqDCoMKgwqDCoCAqIE9wdGltaXplIGZvciB0aGUgY2FzZSB3aGVu
-IHRoZSByd3NlbSBpcyBub3QgbG9ja2VkIGF0IGFsbC4KwqDCoMKgwqDCoMKgwqDCoCAqLwrC
-oMKgwqDCoMKgwqDCoCBsb25nIHRtcCA9IFJXU0VNX1VOTE9DS0VEX1ZBTFVFOwoKwqDCoMKg
-wqDCoMKgwqAgbG9ja2V2ZW50X2luYyhyd3NlbV9ydHJ5bG9jayk7CsKgwqDCoMKgwqDCoMKg
-IGRvIHsKwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIGlmIChhdG9taWNfbG9uZ190
-cnlfY21weGNoZ19hY3F1aXJlKCZzZW0tPmNvdW50LCAmdG1wLArCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqAgdG1wICsgUldTRU1fQUNUSVZFX1JFQURfQklBUykpIHsKwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByd3NlbV9zZXRfcmVhZGVyX293
-bmVkKHNlbSk7CsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAgcmV0dXJuIDE7CsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB9CsKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBsb2NrZXZlbnRfaW5jKHJ3c2VtX3J0cnlsb2NrX3Jl
-dHJ5KTsKwqDCoMKgwqDCoMKgwqAgfSB3aGlsZSAodG1wID49IDApOwrCoMKgwqDCoMKgwqDC
-oCBsb2NrZXZlbnRfaW5jKHJ3c2VtX3J0cnlsb2NrX2ZhaWwpOwrCoMKgwqDCoMKgwqDCoCBy
-ZXR1cm4gMDsKfQoKc3RhdGljIGlubGluZSBpbnQgX19kb3duX3dyaXRlX3RyeWxvY2soc3Ry
-dWN0IHJ3X3NlbWFwaG9yZSAqc2VtKQp7CsKgwqDCoMKgwqDCoMKgIGxvbmcgdG1wOwoKwqDC
-oMKgwqDCoMKgwqAgbG9ja2V2ZW50X2luYyhyd3NlbV93dHJ5bG9jayk7CsKgwqDCoMKgwqDC
-oMKgIHRtcCA9IGF0b21pY19sb25nX2NtcHhjaGdfYWNxdWlyZSgmc2VtLT5jb3VudCwgUldT
-RU1fVU5MT0NLRURfVkFMVUUsCsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoCBSV1NFTV9BQ1RJVkVfV1JJVEVfQklBUyk7CsKgwqDCoMKgwqDCoMKgIGlmICh0
-bXAgPT0gUldTRU1fVU5MT0NLRURfVkFMVUUpIHsKwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgIHJ3c2VtX3NldF9vd25lcihzZW0pOwrCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqAgcmV0dXJuIHRydWU7CsKgwqDCoMKgwqDCoMKgIH0KwqDCoMKgwqDCoMKgwqAgbG9j
-a2V2ZW50X2luYyhyd3NlbV93dHJ5bG9ja19mYWlsKTsKwqDCoMKgwqDCoMKgwqAgcmV0dXJu
-IGZhbHNlOwp9CgpJIGJvb3RlZCB0aGUgbmV3IGtlcm5lbCBvbiBhIDQtc29ja2V0IDU2LWNv
-cmUgMTEyLXRocmVhZCBCcm9hZHdlbGwKc3lzdGVtLiBUaGUgY291bnRlciB2YWx1ZXMKCjEp
-IEFmdGVyIGJvb3R1cDoKCnJ3c2VtX3J0cnlsb2NrPTc4NDAyOQpyd3NlbV9ydHJ5bG9ja19m
-YWlsPTU5CnJ3c2VtX3J0cnlsb2NrX3JldHJ5PTM5NApyd3NlbV93dHJ5bG9jaz0xODI4NApy
-d3NlbV93dHJ5bG9ja19mYWlsPTIzMAoKMikgQWZ0ZXIgcGFyYWxsZWwga2VybmVsIGJ1aWxk
-ICgtajExMik6Cgpyd3NlbV9ydHJ5bG9jaz0zMzg2Njc1NTkKcndzZW1fcnRyeWxvY2tfZmFp
-bD0xOApyd3NlbV9ydHJ5bG9ja19yZXRyeT01MQpyd3NlbV93dHJ5bG9jaz0xNzAxNjMzMgpy
-d3NlbV93dHJ5bG9ja19mYWlsPTk4MDU4CgpBdCBsZWFzdCBmb3IgdGhlc2UgdHdvIHVzZSBj
-YXNlcywgdHJ5LWZvci1vd25lcnNoaXAgYXMgc3VnZ2VzdGVkIGJ5CkxpbnVzIGlzIHRoZSBy
-aWdodCBjaG9pY2UuCgpDaGVlcnMsCkxvbmdtYW4KCg==
+On Thu, Feb 14, 2019 at 9:26 AM Luis Chamberlain <mcgrof@kernel.org> wrote:
+>
+> On Wed, Feb 13, 2019 at 04:17:13PM -0800, Brendan Higgins wrote:
+> > On Wed, Feb 13, 2019 at 1:55 PM Kieran Bingham
+> > <kieran.bingham@ideasonboard.com> wrote:
+> > Oh, yep, you are right. Does that mean we should bother at all with a defconfig?
+>
+> If one wanted a qemu enabled type of kernel and also for kuniut one
+> could imply run:
+>
+> make kvmconfig
+> make kunitconfig
+>
+> That would get what you suggest above of default "bells and whistles"
+> and keep the kuniut as a fragment.
+>
+> Hm, actually the kvmconfig doesn't really enable the required fragments
+> for qemu, so perhaps one would be good. It would have the serial stuff
+> for instance.
+>
+> > Luis, I know you said you wanted one. I am thinking just stick with
+> > the UML one? The downside there is we then get stuck having to
+> > maintain the fragment and the defconfig. I right now (in the new
+> > revision I am working on) have the Python kunit_tool copy the
+> > defconfig if no kunitconfig is provided and a flag is set. It would be
+> > pretty straightforward to make it merge in the fragment instead.
+>
+> Up to you in the end.
+
+I don't really have any opinions on the matter; I don't really use
+defconfigs in any of my workflows. So, I just want whatever is easier
+for people. The thing that makes the most sense to me would be to
+provide a "merge-kunitconfig" option similar to what kselftest does,
+but I don't intend on doing that in the initial patchset, unless
+someone really thinks that I should do it. So in the meantime, I guess
+provide both since that gives people options?
+
+In anycase, I just (finally) sent out v4, so I suggest we continue the
+discussion over there.
+
+Cheers
