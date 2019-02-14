@@ -2,151 +2,386 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2222DC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:39:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34101C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:39:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5A6D2229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:39:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Bc6aPOT6"
+	by mail.kernel.org (Postfix) with ESMTP id EF6CC222A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:39:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395146AbfBNJia (ORCPT
+        id S1732784AbfBNJj4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 04:38:30 -0500
-Received: from mailout3.samsung.com ([203.254.224.33]:43794 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726302AbfBNJi0 (ORCPT
+        Thu, 14 Feb 2019 04:39:56 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34764 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389476AbfBNJjy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 04:38:26 -0500
-Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190214093824epoutp03c48239e62d55b972bb0d36c919a95dac~DMXutoYnZ0714107141epoutp031;
-        Thu, 14 Feb 2019 09:38:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190214093824epoutp03c48239e62d55b972bb0d36c919a95dac~DMXutoYnZ0714107141epoutp031
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1550137104;
-        bh=NtuAGQahGCyd7DCok94cl4TUwN73t3SOacwj64SSrPI=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=Bc6aPOT6BIxSfwALsGlPXXd2AwowR7lpn7pkt+7q+g22HLsA3lagdKOIJfeAe7P6O
-         iRvXdISw2zA7nJNOnAr1sVqo84lJxPUOCPwqvfCY4DDSUilGpt3d4NhDOy0o6Lt6RV
-         xekC34vdq5G1dVBzHVd24ENJJ6N5FvDWy17cmS6I=
-Received: from epsmges2p1.samsung.com (unknown [182.195.42.69]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20190214093823epcas2p4bc9327b44a9c29fe9a4b278478f36494~DMXuYOsxp2520025200epcas2p4K;
-        Thu, 14 Feb 2019 09:38:23 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FC.F8.04138.F07356C5; Thu, 14 Feb 2019 18:38:23 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20190214093822epcas2p11380606cb3272aa4fd56eb55dea8f8c8~DMXtwDnSG1579015790epcas2p1u;
-        Thu, 14 Feb 2019 09:38:22 +0000 (GMT)
-X-AuditID: b6c32a45-60bff7000000102a-c6-5c65370fa324
-Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p2new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id 1B.52.03689.E07356C5; Thu, 14 Feb
-        2019 18:38:22 +0900 (KST)
-Received: from AMDC3061.digital.local ([106.116.147.40]) by mmp2.samsung.com
-        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
-        2014)) with ESMTPA id <0PMW0074FTFANE00@mmp2.samsung.com>; Thu, 14 Feb 2019
-        18:38:22 +0900 (KST)
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-To:     broonie@kernel.org
-Cc:     lgirdwood@gmail.com, krzk@kernel.org, sbkim73@samsung.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v3 Resend 00/13] ASoC: dmaengine updates, secondary CPU DAI
- for Odroid
-Date:   Thu, 14 Feb 2019 10:37:34 +0100
-Message-id: <20190214093747.2414-1-s.nawrocki@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprAIsWRmVeSWpSXmKPExsWy7bCmqS6/eWqMQcMVeYsrFw8xWUx9+ITN
-        4vz5DewW3650MFlc3jWHzeLwm3ZWi4srvjA5sHts+NzE5rFz1l12j02rOtk8+rasYvT4vEku
-        gDWKyyYlNSezLLVI3y6BK+PsoldsBXeEK9a9v8DcwHiZv4uRk0NCwESit3EXexcjF4eQwA5G
-        id1rP7FAON8ZJe6vb2SGqfoyYy0rRGIDo8SeS7vBEkICvxglZp8RArHZBAwleo/2MYLYIgJi
-        ErfndDKDNDALrGSU2LJvExtIQlggQuLjw8NgRSwCqhLf529hBbF5Bawk9rdPYoTYJi+xesMB
-        sGYJga+sErNXHYE6w0Vi0ppdTBC2tMSzVRuhGqoldm3vhmroYJRoubAdqsFa4vDxi2AbmAX4
-        JDoO/wX6lAMozivR0SYEUeIhsW3vJTaIb2Il5i77xDKBUXwBI8MqRrHUguLc9NRiowJDveLE
-        3OLSvHS95PzcTYzgeNJy3cE445zPIUYBDkYlHt4KoZQYIdbEsuLK3EOMEhzMSiK8F41SY4R4
-        UxIrq1KL8uOLSnNSiw8xSnOwKInzPpKeGy0kkJ5YkpqdmlqQWgSTZeLglGpgnLvB/s12If9d
-        bLdPV71v2XfbeLfI27mNC751TO3W1TJZ4Du/9OG9TnOJ8xJGfQcOqTVkxjG82Wz5dimbpM+p
-        +//88pY3TXN/MnnrUfnz+SFJCfVPFx2K+bx9w/yU47K/S56ovJLz1Q3KMGtxvtOpOztceqa2
-        4YSf3w5ufmvhXnAh5/P32b9STJRYijMSDbWYi4oTAd7JI7mjAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKJMWRmVeSWpSXmKPExsVy+t9jQV0+89QYgxenTS2uXDzEZDH14RM2
-        i/PnN7BbfLvSwWRxedccNovDb9pZLS6u+MLkwO6x4XMTm8fOWXfZPTat6mTz6NuyitHj8ya5
-        ANYoLpuU1JzMstQifbsEroyzi16xFdwRrlj3/gJzA+Nl/i5GTg4JAROJLzPWsnYxcnEICaxj
-        lHgz5wcThPOLUeLTw05mkCo2AUOJ3qN9jCC2iICYxO05IHEuDmaBlYwSR76vAksIC0RIPDm/
-        mw3EZhFQlfg+fwsriM0rYCWxv30SI8Q6eYnVGw4wT2DkWsDIsIpRMrWgODc9t9iowCgvtVyv
-        ODG3uDQvXS85P3cTIzAwth3W6t/B+HhJ/CFGAQ5GJR7eCqGUGCHWxLLiytxDjBIczEoivBeN
-        UmOEeFMSK6tSi/Lji0pzUosPMUpzsCiJ8/LnH4sUEkhPLEnNTk0tSC2CyTJxcEo1MHbwerwO
-        3CAV8OfBDAlPjw3CuTcfbIqPfC4878n963ujOaaG2X1qdRX4y/xXIEzZKV4m72v+rncLzIJ8
-        b27N+n8jOW2O5ZLnjGkxE+7YbdO/Hrw02+TZ7QVPAv8dujLr9uI5W2P8dsxMdvpS/P7Zo8cb
-        7l2pv9JvxhB+h/dd0INVy6a5aQsfE5NXYinOSDTUYi4qTgQAs8CyhQgCAAA=
-X-CMS-MailID: 20190214093822epcas2p11380606cb3272aa4fd56eb55dea8f8c8
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20190214093822epcas2p11380606cb3272aa4fd56eb55dea8f8c8
-References: <CGME20190214093822epcas2p11380606cb3272aa4fd56eb55dea8f8c8@epcas2p1.samsung.com>
+        Thu, 14 Feb 2019 04:39:54 -0500
+Received: by mail-lj1-f194.google.com with SMTP id l5so1221243lje.1;
+        Thu, 14 Feb 2019 01:39:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=quyBaIU6Ddi32Uh6PoiwozvbCmVv3pX6F7AcwpsiZ/Y=;
+        b=bcK14zlTqMOq0hHQ3R1iM4QUuczWe2dYJg6daZ0CoXZx4cSdjKAR93h1a5pqI8qWcQ
+         apWrVznuBEm66wVGgPBL4aDx6+DfcKyBTnYxlB2nLZ08YAULiWfNRkwhfAXGrrXHeWRt
+         28Flj+jMlqLDZI38ZzDKnmHqSBmf4DL4zTpo4zMuJX2LXvaCBDM00ViUpk5IrwnedceO
+         a+uGQtL0AaAqQ98HsluWTKJjsHjy2pqx7PIjPMHxVhfuPjvQvB7alIPewjOqwhCi8GUr
+         Hprwx2wzP3ZsqNmriuQ0xtOIzDPGjZ7uM4KsmtqYUKAhVgDW5k3i5I+k+zMZj6jnGipn
+         X7rQ==
+X-Gm-Message-State: AHQUAuZmj1ZWr9l2Dun9ye5WdCgm2B0QyQ4r7+SIdSvFvv2KclIkk6Hw
+        cnovPBFr2bk1+rqa26NsWlndkHXQ
+X-Google-Smtp-Source: AHgI3IbUb4+tg3OPjHXtiMHgMorkEe8sqrxv9oJd+tAixWCPe2jQbe6IbTGgG3duD0EXr7zUyonyxQ==
+X-Received: by 2002:a2e:4504:: with SMTP id s4-v6mr1684619lja.165.1550137189775;
+        Thu, 14 Feb 2019 01:39:49 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id v11sm366725lfb.46.2019.02.14.01.39.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 14 Feb 2019 01:39:49 -0800 (PST)
+Date:   Thu, 14 Feb 2019 11:39:36 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazzisaccount@gmail.com
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, heikki.haikola@fi.rohmeurope.com,
+        mikko.mutanen@fi.rohmeurope.com, Robin Gong <yibin.gong@nxp.com>,
+        Elven Wang <elven.wang@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Angus Ainslie <angus.ainslie@puri.sm>
+Subject: [PATCH v3 3/3] regulator: bd718x7: Support SNVS low power state
+Message-ID: <7da51300c04027a25c9a7dc093d0eb844c923427.1550135853.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1550135853.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1550135853.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a rebased version with the build break fixed and added Krzysztof's 
-Acks. My apologies, I double checked there is no build errors between patches 
-this time.
+read ROHM BD71837 / BD71847 specific device tree bindings for
+controlling the PMIC shutdown/reset states and voltages for
+different HW states. The PMIC was designed to be used with NXP
+i.MX8 SoC and it supports SNVS low power state which seems to
+be typical for NXP i.MX SoCs. However, when SNVS is used we must
+not allow SW to control enabling/disabling those regulators which
+are crucial for system to boot as there is a HW limitation which
+causes SW controlled regulators to be kept shut down after SNVS
+reset.
 
-Below is cover letter text from v2.
+Allow setting the SNVS to be used as reset target state and allow
+marking those regulators which are critical for boot.
 
-This series restores support for the secondary CPU DAI in samsung/i2s.c
-driver and adds support for secondary CPU DAI on Odroid boards.
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
 
-I have added 4 more clean up patches comparing to first version of the
-patch set (16/22...19/22).
+Angus, I would be grateful if you have a chance to test this
+on your system :)
 
-The first patch adds new platform device for the secondary PCM, I tried to
-avoid registering new platform device in probe() as it doesn't play well
-with deferred probing but couldn't find a way to avoid that new device,
-unique devices are needed to register "PCM" components for each CPU DAI.
+ drivers/regulator/bd718x7-regulator.c | 201 +++++++++++++++++++++++++++++-----
+ 1 file changed, 176 insertions(+), 25 deletions(-)
 
-Patches 2/21...11/21 are mostly a clean up, following conversion to single
-component with multiple DAIs, allowing to reference both primary/secondary
-DAI in DT.
+diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
+index ccea133778c8..b2191be49670 100644
+--- a/drivers/regulator/bd718x7-regulator.c
++++ b/drivers/regulator/bd718x7-regulator.c
+@@ -350,6 +350,135 @@ static const struct reg_init bd71837_ldo6_inits[] = {
+ 	},
+ };
+ 
++#define NUM_DVS_BUCKS 4
++
++struct of_dvs_setting {
++	const char *prop;
++	unsigned int reg;
++};
++
++static int set_dvs_levels(const struct of_dvs_setting *dvs,
++			  struct device_node *np,
++			  const struct regulator_desc *desc,
++			  struct regmap *regmap)
++{
++	int ret, i;
++	unsigned int uv;
++
++	ret = of_property_read_u32(np, dvs->prop, &uv);
++	if (ret) {
++		if (ret != -EINVAL)
++			return ret;
++		return 0;
++	}
++
++	for (i = 0; i < desc->n_voltages; i++) {
++		ret = regulator_desc_list_voltage_linear_range(desc, i);
++		if (ret < 0)
++			continue;
++		if (ret == uv) {
++			i <<= ffs(desc->vsel_mask) - 1;
++			ret = regmap_update_bits(regmap, dvs->reg,
++						 DVS_BUCK_RUN_MASK, i);
++			break;
++		}
++	}
++	return ret;
++}
++
++static int buck4_set_hw_dvs_levels(struct device_node *np,
++			    const struct regulator_desc *desc,
++			    struct regulator_config *cfg)
++{
++	int ret, i;
++	const struct of_dvs_setting dvs[] = {
++		{
++			.prop = "rohm,dvs-run-voltage",
++			.reg = BD71837_REG_BUCK4_VOLT_RUN,
++		},
++	};
++
++	for (i = 0; i < ARRAY_SIZE(dvs); i++) {
++		ret = set_dvs_levels(&dvs[i], np, desc, cfg->regmap);
++		if (ret)
++			break;
++	}
++	return ret;
++}
++static int buck3_set_hw_dvs_levels(struct device_node *np,
++			    const struct regulator_desc *desc,
++			    struct regulator_config *cfg)
++{
++	int ret, i;
++	const struct of_dvs_setting dvs[] = {
++		{
++			.prop = "rohm,dvs-run-voltage",
++			.reg = BD71837_REG_BUCK3_VOLT_RUN,
++		},
++	};
++
++	for (i = 0; i < ARRAY_SIZE(dvs); i++) {
++		ret = set_dvs_levels(&dvs[i], np, desc, cfg->regmap);
++		if (ret)
++			break;
++	}
++	return ret;
++}
++
++static int buck2_set_hw_dvs_levels(struct device_node *np,
++			    const struct regulator_desc *desc,
++			    struct regulator_config *cfg)
++{
++	int ret, i;
++	const struct of_dvs_setting dvs[] = {
++		{
++			.prop = "rohm,dvs-run-voltage",
++			.reg = BD718XX_REG_BUCK2_VOLT_RUN,
++		},
++		{
++			.prop = "rohm,dvs-idle-voltage",
++			.reg = BD718XX_REG_BUCK2_VOLT_IDLE,
++		},
++	};
++
++
++
++	for (i = 0; i < ARRAY_SIZE(dvs); i++) {
++		ret = set_dvs_levels(&dvs[i], np, desc, cfg->regmap);
++		if (ret)
++			break;
++	}
++	return ret;
++}
++
++static int buck1_set_hw_dvs_levels(struct device_node *np,
++			    const struct regulator_desc *desc,
++			    struct regulator_config *cfg)
++{
++	int ret, i;
++	const struct of_dvs_setting dvs[] = {
++		{
++			.prop = "rohm,dvs-run-voltage",
++			.reg = BD718XX_REG_BUCK1_VOLT_RUN,
++		},
++		{
++			.prop = "rohm,dvs-idle-voltage",
++			.reg = BD718XX_REG_BUCK1_VOLT_IDLE,
++		},
++		{
++			.prop = "rohm,dvs-suspend-voltage",
++			.reg = BD718XX_REG_BUCK1_VOLT_SUSP,
++		},
++	};
++
++	for (i = 0; i < ARRAY_SIZE(dvs); i++) {
++		ret = set_dvs_levels(&dvs[i], np, desc, cfg->regmap);
++		if (ret)
++			break;
++	}
++	return ret;
++}
++
+ static const struct bd718xx_regulator_data bd71847_regulators[] = {
+ 	{
+ 		.desc = {
+@@ -368,6 +497,7 @@ static const struct bd718xx_regulator_data bd71847_regulators[] = {
+ 			.enable_reg = BD718XX_REG_BUCK1_CTRL,
+ 			.enable_mask = BD718XX_BUCK_EN,
+ 			.owner = THIS_MODULE,
++			.of_parse_cb = buck1_set_hw_dvs_levels,
+ 		},
+ 		.init = {
+ 			.reg = BD718XX_REG_BUCK1_CTRL,
+@@ -391,6 +521,7 @@ static const struct bd718xx_regulator_data bd71847_regulators[] = {
+ 			.enable_reg = BD718XX_REG_BUCK2_CTRL,
+ 			.enable_mask = BD718XX_BUCK_EN,
+ 			.owner = THIS_MODULE,
++			.of_parse_cb = buck2_set_hw_dvs_levels,
+ 		},
+ 		.init = {
+ 			.reg = BD718XX_REG_BUCK2_CTRL,
+@@ -662,6 +793,7 @@ static const struct bd718xx_regulator_data bd71837_regulators[] = {
+ 			.enable_reg = BD718XX_REG_BUCK1_CTRL,
+ 			.enable_mask = BD718XX_BUCK_EN,
+ 			.owner = THIS_MODULE,
++			.of_parse_cb = buck1_set_hw_dvs_levels,
+ 		},
+ 		.init = {
+ 			.reg = BD718XX_REG_BUCK1_CTRL,
+@@ -685,6 +817,7 @@ static const struct bd718xx_regulator_data bd71837_regulators[] = {
+ 			.enable_reg = BD718XX_REG_BUCK2_CTRL,
+ 			.enable_mask = BD718XX_BUCK_EN,
+ 			.owner = THIS_MODULE,
++			.of_parse_cb = buck2_set_hw_dvs_levels,
+ 		},
+ 		.init = {
+ 			.reg = BD718XX_REG_BUCK2_CTRL,
+@@ -708,6 +841,7 @@ static const struct bd718xx_regulator_data bd71837_regulators[] = {
+ 			.enable_reg = BD71837_REG_BUCK3_CTRL,
+ 			.enable_mask = BD718XX_BUCK_EN,
+ 			.owner = THIS_MODULE,
++			.of_parse_cb = buck3_set_hw_dvs_levels,
+ 		},
+ 		.init = {
+ 			.reg = BD71837_REG_BUCK3_CTRL,
+@@ -731,6 +865,7 @@ static const struct bd718xx_regulator_data bd71837_regulators[] = {
+ 			.enable_reg = BD71837_REG_BUCK4_CTRL,
+ 			.enable_mask = BD718XX_BUCK_EN,
+ 			.owner = THIS_MODULE,
++			.of_parse_cb = buck4_set_hw_dvs_levels,
+ 		},
+ 		.init = {
+ 			.reg = BD71837_REG_BUCK4_CTRL,
+@@ -1029,6 +1164,7 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 	};
+ 
+ 	int i, j, err;
++	bool use_snvs;
+ 
+ 	mfd = dev_get_drvdata(pdev->dev.parent);
+ 	if (!mfd) {
+@@ -1055,27 +1191,28 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 			BD718XX_REG_REGLOCK);
+ 	}
+ 
+-	/* At poweroff transition PMIC HW disables EN bit for regulators but
+-	 * leaves SEL bit untouched. So if state transition from POWEROFF
+-	 * is done to SNVS - then all power rails controlled by SW (having
+-	 * SEL bit set) stay disabled as EN is cleared. This may result boot
+-	 * failure if any crucial systems are powered by these rails.
+-	 *
++	use_snvs = of_property_read_bool(pdev->dev.parent->of_node,
++					 "rohm,reset-snvs-powered");
++
++	/*
+ 	 * Change the next stage from poweroff to be READY instead of SNVS
+ 	 * for all reset types because OTP loading at READY will clear SEL
+ 	 * bit allowing HW defaults for power rails to be used
+ 	 */
+-	err = regmap_update_bits(mfd->regmap, BD718XX_REG_TRANS_COND1,
+-				 BD718XX_ON_REQ_POWEROFF_MASK |
+-				 BD718XX_SWRESET_POWEROFF_MASK |
+-				 BD718XX_WDOG_POWEROFF_MASK |
+-				 BD718XX_KEY_L_POWEROFF_MASK,
+-				 BD718XX_POWOFF_TO_RDY);
+-	if (err) {
+-		dev_err(&pdev->dev, "Failed to change reset target\n");
+-		goto err;
+-	} else {
+-		dev_dbg(&pdev->dev, "Changed all resets from SVNS to READY\n");
++	if (!use_snvs) {
++		err = regmap_update_bits(mfd->regmap, BD718XX_REG_TRANS_COND1,
++					 BD718XX_ON_REQ_POWEROFF_MASK |
++					 BD718XX_SWRESET_POWEROFF_MASK |
++					 BD718XX_WDOG_POWEROFF_MASK |
++					 BD718XX_KEY_L_POWEROFF_MASK,
++					 BD718XX_POWOFF_TO_RDY);
++		if (err) {
++			dev_err(&pdev->dev, "Failed to change reset target\n");
++			goto err;
++		} else {
++			dev_dbg(&pdev->dev,
++				"Changed all resets from SVNS to READY\n");
++		}
+ 	}
+ 
+ 	for (i = 0; i < pmic_regulators[mfd->chip_type].r_amount; i++) {
+@@ -1098,19 +1235,33 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 			err = PTR_ERR(rdev);
+ 			goto err;
+ 		}
+-		/* Regulator register gets the regulator constraints and
++
++		/*
++		 * Regulator register gets the regulator constraints and
+ 		 * applies them (set_machine_constraints). This should have
+ 		 * turned the control register(s) to correct values and we
+ 		 * can now switch the control from PMIC state machine to the
+ 		 * register interface
++		 *
++		 * At poweroff transition PMIC HW disables EN bit for
++		 * regulators but leaves SEL bit untouched. So if state
++		 * transition from POWEROFF is done to SNVS - then all power
++		 * rails controlled by SW (having SEL bit set) stay disabled
++		 * as EN is cleared. This will result boot failure if any
++		 * crucial systems are powered by these rails. We don't
++		 * enable SW control for crucial regulators if snvs state is
++		 * used
+ 		 */
+-		err = regmap_update_bits(mfd->regmap, r->init.reg,
+-					 r->init.mask, r->init.val);
+-		if (err) {
+-			dev_err(&pdev->dev,
+-				"Failed to write BUCK/LDO SEL bit for (%s)\n",
+-				desc->name);
+-			goto err;
++		if (!use_snvs || !rdev->constraints->always_on ||
++		    !rdev->constraints->boot_on) {
++			err = regmap_update_bits(mfd->regmap, r->init.reg,
++						 r->init.mask, r->init.val);
++			if (err) {
++				dev_err(&pdev->dev,
++					"Failed to take control for (%s)\n",
++					desc->name);
++				goto err;
++			}
+ 		}
+ 		for (j = 0; j < r->additional_init_amnt; j++) {
+ 			err = regmap_update_bits(mfd->regmap,
+-- 
+2.14.3
 
-The patch set has been tested on Odroid U3, XU3, XU4 and Mini2440
-(s3c2440 non-DT) boards.
-
-Changes since v1 ((addressing Krzysztof's review comments):
- - added a comment, whitespace change in patch 1/21
- - dropped unnecessary new line addition from patch 1/21
-
-Sylwester Nawrocki (13):
-  ASoC: samsung: i2s: Move SFR pointer to common driver data structure
-  ASoC: samsung: i2s: Drop spinlock pointer from i2s_dai data structure
-  ASoC: samsung: i2s: Move IP variant data to common driver data
-    structure
-  ASoC: samsung: i2s: Move quirks data to common driver data structure
-  ASoC: samsung: i2s: Get rid of a static spinlock
-  ASoC: samsung: odroid: Add support for secondary CPU DAI
-  ASoC: samsung: Specify DMA channel names through custom DMA config
-  ASoC: samsung: Drop DAI DMA data chan_name assignments
-  ASoC: dmaengine: Remove unused
-    SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME flag
-  ASoC: samsung: i2s: Simplify pri_dai, sec_dai pointers usage
-  ASoC: samsung: i2s: Change indentation in SAMSUNG_I2S_FMTS definition
-  ASoC: samsung: i2s: Comments clean up
-  ASoC: samsung: i2s: Convert to SPDX License Indentifier
-
- include/sound/dmaengine_pcm.h         |   6 -
- sound/soc/samsung/dmaengine.c         |  12 +-
- sound/soc/samsung/i2s.c               | 297 +++++++++++++-------------
- sound/soc/samsung/odroid.c            | 131 ++++++++----
- sound/soc/samsung/s3c2412-i2s.c       |   4 +-
- sound/soc/samsung/s3c24xx-i2s.c       |   4 +-
- sound/soc/soc-generic-dmaengine-pcm.c |  21 +-
- 7 files changed, 250 insertions(+), 225 deletions(-)
 
 -- 
-2.17.1
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
 
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
