@@ -2,125 +2,136 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39661C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5540C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:32:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B636222DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:32:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="C3JmNXsM"
+	by mail.kernel.org (Postfix) with ESMTP id 8533221928
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:32:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437004AbfBNRcj (ORCPT
+        id S2436870AbfBNRct (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 12:32:39 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:51584 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436957AbfBNRci (ORCPT
+        Thu, 14 Feb 2019 12:32:49 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:47551 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728194AbfBNRcs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 12:32:38 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1EHWKZC045763;
-        Thu, 14 Feb 2019 11:32:20 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1550165540;
-        bh=QdYwA0DkWwGJ/yuFA99S7Mo6Up/bd1aSPwcCrAJHVAA=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=C3JmNXsMbZGjE0BisK3VrxXSDz5S9ppOMvKaWQ3rNQUX4KoeyOG9ICypoIrso7wTL
-         Ovo5j/EZ2VDy/vDb6y1TPMf1okf+uCrBl7ll9oU7vvOich8UbcOWAN7G2e5MVKt2rx
-         tI6LmQKxGYtWUh4gm5xNs9nYiGMnh1WdSbyH6wqw=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1EHWK7v059356
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 14 Feb 2019 11:32:20 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 14
- Feb 2019 11:32:19 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 14 Feb 2019 11:32:19 -0600
-Received: from [172.22.218.10] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1EHWF0k003978;
-        Thu, 14 Feb 2019 11:32:16 -0600
-Subject: Re: [PATCH v5 05/10] dt-bindings: irqchip: Introduce TISCI Interrupt
- router bindings
-To:     Tony Lindgren <tony@atomide.com>
-CC:     <marc.zyngier@arm.com>, Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Device Tree Mailing List <devicetree@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-References: <20190212074237.2875-1-lokeshvutla@ti.com>
- <20190212074237.2875-6-lokeshvutla@ti.com>
- <20190212162247.GK5720@atomide.com>
- <6a274588-0fb6-2ddf-3bcc-f9e4d849ac07@ti.com>
- <20190213152620.GS5720@atomide.com>
- <4791de04-63af-4c5e-db9c-47634fcb8dc9@ti.com>
- <20190214154100.GB5720@atomide.com>
-From:   Lokesh Vutla <lokeshvutla@ti.com>
-Message-ID: <b4e821b3-f2fb-41d8-eb8c-8f4e8a19f77c@ti.com>
-Date:   Thu, 14 Feb 2019 23:02:15 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <20190214154100.GB5720@atomide.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Thu, 14 Feb 2019 12:32:48 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1guKsL-00085S-10; Thu, 14 Feb 2019 18:32:41 +0100
+Message-ID: <1550165560.2546.50.camel@pengutronix.de>
+Subject: Re: [RFC 5/5] arm64: dts: imx8mq: Add the opp table and the
+ cpu-supply nodes
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Abel Vesa <abel.vesa@nxp.com>
+Cc:     Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Angus Ainslie <angus.ainslie@puri.sm>,
+        Anson Huang <anson.huang@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Date:   Thu, 14 Feb 2019 18:32:40 +0100
+In-Reply-To: <1550165185.2546.48.camel@pengutronix.de>
+References: <1550084693-9797-1-git-send-email-abel.vesa@nxp.com>
+         <1550084693-9797-6-git-send-email-abel.vesa@nxp.com>
+         <1550159428.2546.40.camel@pengutronix.de>
+         <20190214171806.kufhw7ouguxt5jhq@fsr-ub1664-175>
+         <1550165185.2546.48.camel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tony,
-	Please do not snip the on going discussion.
-
-On 2/14/2019 9:11 PM, Tony Lindgren wrote:
-> * Lokesh Vutla <lokeshvutla@ti.com> [190214 08:39]:
->> IMHO, device ids are something which can be used in DT. There are many other
->> things like the interrupt ranges etc.. which are discoverable from sysfw and we
->> are implementing it.
+Am Donnerstag, den 14.02.2019, 18:26 +0100 schrieb Lucas Stach:
+> Am Donnerstag, den 14.02.2019, 17:18 +0000 schrieb Abel Vesa:
+> > On 19-02-14 16:50:28, Lucas Stach wrote:
+> > > Hi Abel
+> > > 
+> > > Am Mittwoch, den 13.02.2019, 19:05 +0000 schrieb Abel Vesa:
+> > > > Add the opp table containing only non over drive opps.
+> > > > Also add the cpu-supply nodes for the A53 cores in the EVK
+> > > > board.
+> > > > 
+> > > > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> > > > ---
+> > > >  arch/arm64/boot/dts/freescale/imx8mq-evk.dts | 17
+> > > > +++++++++++++++++
+> > > >  arch/arm64/boot/dts/freescale/imx8mq.dtsi    | 23
+> > > > +++++++++++++++++++++++
+> > > >  2 files changed, 40 insertions(+)
+> > > > 
+> > > > diff --git a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
+> > > > b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
+> > > > index 54737bf..114359e 100644
+> > > > --- a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
+> > > > +++ b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
+> > > > @@ -31,6 +31,23 @@
+> > > >  		gpio = <&gpio2 19 GPIO_ACTIVE_HIGH>;
+> > > >  		enable-active-high;
+> > > >  	};
+> > > > +
+> > > > +};
+> > > > +
+> > > > +&A53_0 {
+> > > > +	cpu-supply = <&sw1a_reg>;
+> > > > +};
+> > > > +
+> > > > +&A53_1 {
+> > > > +	cpu-supply = <&sw1a_reg>;
+> > > > +};
+> > > > +
+> > > > +&A53_2 {
+> > > > +	cpu-supply = <&sw1a_reg>;
+> > > > +};
+> > > > +
+> > > > +&A53_3 {
+> > > > +	cpu-supply = <&sw1a_reg>;
+> > > >  };
+> > > 
+> > > This should be a separate patch.
+> > > 
+> > 
+> > OK, will send as separate patches in the next version.
+> > 
+> > > And AFAICS this is wrong, sw1a on the MX8M-EVK is the GPU supply,
+> > > the
+> > > CPU is supplied by a dedicated switcher that is controlled via a
+> > > GPIO.
+> > > 
+> > 
+> > Hmm, I think you're right. At least this is what the following
+> > document says.
+> > 
+> > https://www.mouser.com/ds/2/302/IMX8MDQLQEVKHUG-1280333.pdf
+> > 
+> > So I guess this means there will not be any cpu-supply properties. 
 > 
-> We need to describe hardware in the device tree, not firmware.
-> 
-> If you have something discoverable from the firmware, you should
-> have the device driver query it from sysfw based on a hardware
-> property, not based on some invented enumeration in the firmware.
+> There is a variable voltage CPU supply, but you need to model it as a
+> gpio-regulator in the DT, it's not part of the PMIC provided rails.
 
-Yes we are already querying sysfw for all the irq ranges that can be
-discoverable. The topic of discussion here is about the parent interrupt
-controller id. I am not sure how you are expecting an id be discoverable
-from system firmware especially with a name.
+In the schematics it's the line called PWM_LED (actually it's just
+GPIO1_IO13) that controls the voltage. This changes the feedback of the
+DCDC switcher, so it can toggle between 0.9V and 1.0V.
 
-> If there is some device to firmware translation needed, hide that
-> into the device driver and keep it out of the device tree.
-
-If preferred this can be moved to of_match_data attached to each
-compatible property. Then for each SoC a new compatible needs to be created.
-
-> 
-> For example, look at the interrupt binding where the interrupt
-> is phandle to the controller and the bit offset from the interrupt
-> controller instance.
-> 
-> You need to use device IO address + bit offset (or register
-> offset) type indexing for device tree here. Something out of
-> the TRM that makes sense to developers.
-> 
-
-
-[1]
-https://github.com/devicetree-org/devicetree-specification/releases/download/v0.2/devicetree-specification-v0.2.pdf
-
-Thanks and regards,
-Lokesh
+Regards,
+Lucas
