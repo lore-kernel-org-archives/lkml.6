@@ -2,213 +2,121 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FC93C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:29:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EFDBC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:30:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08DDC2075B
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:29:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4D632075B
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:30:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PRVRvOC+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438154AbfBNS3T (ORCPT
+        id S2393883AbfBNSaL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 13:29:19 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49132 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726113AbfBNS3S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 13:29:18 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D7EE9EBD;
-        Thu, 14 Feb 2019 10:29:17 -0800 (PST)
-Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C497C3F557;
-        Thu, 14 Feb 2019 10:29:15 -0800 (PST)
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jisheng Zhang <jszhang@marvell.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Eugeniu Rosca <erosca@de.adit-jv.com>,
-        Joshua Frkuska <joshua_frkuska@mentor.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: [PATCH v3] drivers: base: add support to skip power management in device/driver model
-Date:   Thu, 14 Feb 2019 18:29:10 +0000
-Message-Id: <20190214182910.20600-1-sudeep.holla@arm.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 14 Feb 2019 13:30:11 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45355 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725835AbfBNSaK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 13:30:10 -0500
+Received: by mail-pl1-f195.google.com with SMTP id r14so3563834pls.12
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 10:30:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=TEzrBqMLgFPVnf/SXg6Y7hjPdLVUaonVkw86CHiCcIo=;
+        b=PRVRvOC+Iy0iJozUW655DtumItSHb0BZor2PsXfOjaVKXvD4hg9qRN1z/eZGNnt8tb
+         8i1sWgler8M4k7c6oxmrUemeDCVfKt/j85o6/qIeG0Igr3RJIi5wQIGqSaoJzOHtBGvO
+         vfd7FD5KUMxlYXXrxZJS07juJn7RuC3nPEH+I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=TEzrBqMLgFPVnf/SXg6Y7hjPdLVUaonVkw86CHiCcIo=;
+        b=fvW+Mhymvm9TiKCYWIGrODOSFhYr8BT6v6/KQM6EH6I1jleQWnF65hZNWzlUEBiscx
+         dzNPTdO+jsaUFiFbA5IBKIzrVpUAG1SkvvM3LhNJk8AIMhPBpINleT7gePJzqfkR+hkf
+         nOiejzQ+baqNs33eZuXDi7KLiytx3YIifbvKg3/aZRvCv7hs0xXq514jXqHJWdRC8qC6
+         nAK5sOzuOC8035liw6ooCwScrBdo9yyXZZMiUNyJBCWZ5h/EPsbCK+pW7CoN3MlFBVS8
+         QPqFIVEX92GxtG32Y+drfpcQjneGTbuWMOFmCIZyHnEfPxBok/mAsg8b1W2Y77xLTR9y
+         H7ug==
+X-Gm-Message-State: AHQUAub1n0dvXMKwaXb95Jm1npok0AcnLzk77aSi7JI2zQI38JA3Gw5N
+        xFkXO1hnBgPBUFIBI6+lXD6nDQ==
+X-Google-Smtp-Source: AHgI3IYQDJS5gosCW56bUMdc014I/R+9FE1O3bkY5+dYznU6F/C9K0zvrnhJ6wIxEzDsFfndJcI2WA==
+X-Received: by 2002:a17:902:2aaa:: with SMTP id j39mr5675495plb.335.1550169010207;
+        Thu, 14 Feb 2019 10:30:10 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id v11sm4837183pfa.49.2019.02.14.10.30.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 14 Feb 2019 10:30:09 -0800 (PST)
+Date:   Thu, 14 Feb 2019 10:30:09 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Chanwoo Choi <cwchoi00@gmail.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Lukasz Luba <l.luba@partner.samsung.com>
+Subject: Re: [PATCH 3/4] PM / devfreq: Add devfreq_governor_start/stop()
+Message-ID: <20190214183009.GA117604@google.com>
+References: <20190214013042.254790-1-mka@chromium.org>
+ <20190214013042.254790-4-mka@chromium.org>
+ <CAGTfZH0cQhBLDx91VArMQ52z+iJAsfb2Zvk5nJSCqSM=aPhK0A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGTfZH0cQhBLDx91VArMQ52z+iJAsfb2Zvk5nJSCqSM=aPhK0A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All device objects in the driver model contain fields that control the
-handling of various power management activities. However, it's not
-always useful. There are few instances where pseudo devices are added
-to the model just to take advantage of many other features like
-kobjects, udev events, and so on. One such example is cpu devices and
-their caches.
+On Thu, Feb 14, 2019 at 11:12:55PM +0900, Chanwoo Choi wrote:
+> Hi Matthias,
+> 
+> Looks good to me for making the function to remove the duplicate code.
+> But,  When I just tested the kernel build, following warnings occur
+> about devfreq_governor_stop().
+> 
+> In file included from ./include/linux/devfreq.h:16:0,
+>                  from drivers/devfreq/devfreq.c:23:
+> drivers/devfreq/devfreq.c: In function ‘devfreq_governor_stop’:
+> drivers/devfreq/devfreq.c:619:17: warning: format ‘%s’ expects
+> argument of type ‘char *’, but argument 4 has type ‘int’ [-Wformat=]
+>    dev_warn(dev, "%s: Governor %s not stopped: %d\n",
+>                  ^
+> ./include/linux/device.h:1380:22: note: in definition of macro ‘dev_fmt’
+>  #define dev_fmt(fmt) fmt
+>                       ^
+> drivers/devfreq/devfreq.c:619:3: note: in expansion of macro ‘dev_warn’
+>    dev_warn(dev, "%s: Governor %s not stopped: %d\n",
+>    ^
+> drivers/devfreq/devfreq.c:619:17: warning: format ‘%d’ expects a
+> matching ‘int’ argument [-Wformat=]
+>    dev_warn(dev, "%s: Governor %s not stopped: %d\n",
+>                  ^
+> ./include/linux/device.h:1380:22: note: in definition of macro ‘dev_fmt’
+>  #define dev_fmt(fmt) fmt
+>                       ^
+> drivers/devfreq/devfreq.c:619:3: note: in expansion of macro ‘dev_warn’
+>    dev_warn(dev, "%s: Governor %s not stopped: %d\n",
 
-The sysfs for the cpu caches are managed by adding devices with cpu
-as the parent in cpu_device_create() when secondary cpu is brought
-online. Generally when the secondary CPUs are hotplugged back in as part
-of resume from suspend-to-ram, we call cpu_device_create() from the cpu
-hotplug state machine while the cpu device associated with that CPU is
-not yet ready to be resumed as the device_resume() call happens bit
-later. It's not really needed to set the flag is_prepared for cpu
-devices as they are mostly pseudo device and hotplug framework deals
-with state machine and not managed through the cpu device.
+For some reason the warnings don't pop up in my 4.19 build and I
+missed them when compile testing upstream :(
 
-This often results in annoying warning when resuming:
-Enabling non-boot CPUs ...
-CPU1: Booted secondary processor
- cache: parent cpu1 should not be sleeping
-CPU1 is up
-CPU2: Booted secondary processor
- cache: parent cpu2 should not be sleeping
-CPU2 is up
-.... and so on.
+I'll fix the format string in the next version.
 
-So in order to fix these kind of errors, we could just completely avoid
-doing any power management related initialisations and operations if
-they are not used by these devices.
+Thanks for the review and build test!
 
-Lets add no_pm_required flags to indicate that the device doesn't
-require any sort of pm activities and all of them can be completely
-skipped. We can use the same flag to also avoid adding not used *power*
-sysfs entries for these devices. For now, lets use this for cpu cache
-devices.
-
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/base/cpu.c         |  1 +
- drivers/base/power/main.c  |  7 +++++++
- drivers/base/power/sysfs.c |  6 ++++++
- include/linux/device.h     | 10 ++++++++++
- include/linux/pm.h         |  1 +
- 5 files changed, 25 insertions(+)
-
-v2->v3:
-	- renamed no_pm_required to no_pm
-	- fixed the wrong comment in device_pm_add
-	- add missing check in dpm_sysfs_remove reported by Eugeniu
-	- added Ulf's reviewed-by tag
-
-v1->v2:
-	- dropped setting the flag for cpu devices, for now just cpu caches
-	  will make use of this new flag.
-
-RFC->v1:
-	- dropped the idea of adding cpu hotplug callback to deal just
-	  with cpu devices, instead add a new flag in the device pm_info
-	  structure
-
-[RFC] : https://marc.info/?l=linux-pm&m=154842896407904&w=2
-[v1] : https://marc.info/?l=linux-pm&m=154946578717730&w=2
-[v2] : https://marc.info/?l=linux-pm&m=155005931507485&w=2
-
-diff --git a/drivers/base/cpu.c b/drivers/base/cpu.c
-index eb9443d5bae1..6ce93a52bf3f 100644
---- a/drivers/base/cpu.c
-+++ b/drivers/base/cpu.c
-@@ -427,6 +427,7 @@ __cpu_device_create(struct device *parent, void *drvdata,
- 	dev->parent = parent;
- 	dev->groups = groups;
- 	dev->release = device_create_release;
-+	device_set_pm_not_required(dev);
- 	dev_set_drvdata(dev, drvdata);
-
- 	retval = kobject_set_name_vargs(&dev->kobj, fmt, args);
-diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-index 0992e67e862b..6a473004abe6 100644
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -124,6 +124,10 @@ void device_pm_unlock(void)
-  */
- void device_pm_add(struct device *dev)
- {
-+	/* Skip pm setup/initialisation */
-+	if (device_pm_not_required(dev))
-+		return;
-+
- 	pr_debug("PM: Adding info for %s:%s\n",
- 		 dev->bus ? dev->bus->name : "No Bus", dev_name(dev));
- 	device_pm_check_callbacks(dev);
-@@ -142,6 +146,9 @@ void device_pm_add(struct device *dev)
-  */
- void device_pm_remove(struct device *dev)
- {
-+	if (device_pm_not_required(dev))
-+		return;
-+
- 	pr_debug("PM: Removing info for %s:%s\n",
- 		 dev->bus ? dev->bus->name : "No Bus", dev_name(dev));
- 	complete_all(&dev->power.completion);
-diff --git a/drivers/base/power/sysfs.c b/drivers/base/power/sysfs.c
-index d713738ce796..5e8d4867c4da 100644
---- a/drivers/base/power/sysfs.c
-+++ b/drivers/base/power/sysfs.c
-@@ -648,6 +648,10 @@ int dpm_sysfs_add(struct device *dev)
- {
- 	int rc;
-
-+	/* No need to create pm sysfs if explicitly disabled */
-+	if (device_pm_not_required(dev))
-+		return 0;
-+
- 	rc = sysfs_create_group(&dev->kobj, &pm_attr_group);
- 	if (rc)
- 		return rc;
-@@ -727,6 +731,8 @@ void rpm_sysfs_remove(struct device *dev)
-
- void dpm_sysfs_remove(struct device *dev)
- {
-+	if (device_pm_not_required(dev))
-+		return;
- 	sysfs_unmerge_group(&dev->kobj, &pm_qos_latency_tolerance_attr_group);
- 	dev_pm_qos_constraints_destroy(dev);
- 	rpm_sysfs_remove(dev);
-diff --git a/include/linux/device.h b/include/linux/device.h
-index 6cb4640b6160..53028636fe39 100644
---- a/include/linux/device.h
-+++ b/include/linux/device.h
-@@ -1165,6 +1165,16 @@ static inline bool device_async_suspend_enabled(struct device *dev)
- 	return !!dev->power.async_suspend;
- }
-
-+static inline bool device_pm_not_required(struct device *dev)
-+{
-+	return dev->power.no_pm;
-+}
-+
-+static inline void device_set_pm_not_required(struct device *dev)
-+{
-+	dev->power.no_pm = true;
-+}
-+
- static inline void dev_pm_syscore_device(struct device *dev, bool val)
- {
- #ifdef CONFIG_PM_SLEEP
-diff --git a/include/linux/pm.h b/include/linux/pm.h
-index 0bd9de116826..8869ce7b5fa6 100644
---- a/include/linux/pm.h
-+++ b/include/linux/pm.h
-@@ -592,6 +592,7 @@ struct dev_pm_info {
- 	bool			is_suspended:1;	/* Ditto */
- 	bool			is_noirq_suspended:1;
- 	bool			is_late_suspended:1;
-+	bool			no_pm:1;
- 	bool			early_init:1;	/* Owned by the PM core */
- 	bool			direct_complete:1;	/* Owned by the PM core */
- 	u32			driver_flags;
---
-2.17.1
-
+Matthias
