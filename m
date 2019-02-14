@@ -2,187 +2,121 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB38C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:46:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09811C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:47:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDD47222A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:46:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NpGnKFlg";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XhTDONbp"
+	by mail.kernel.org (Postfix) with ESMTP id D83B2222A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:46:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437322AbfBNHqh (ORCPT
+        id S2437345AbfBNHq6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 02:46:37 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:55568 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726358AbfBNHqg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 02:46:36 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5DA1E60886; Thu, 14 Feb 2019 07:46:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550130395;
-        bh=4UWOZAHo8P5HQluG58zpa1sMTmgdpcRHGQVkuLn1LPA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NpGnKFlg6T005Y7+SZYnTnq6nPwYgHVFOpULaAZqMoYJBh0NN3NZPppxly+mKrwA2
-         LeHkmkLvSW/Xa5RFqDGJBnmv45zVZbVsaMIl/sfMi39FxS3679UJZlBoasDTWzsrtl
-         oBJ0r6Qx4FJ9124PCosNYxV4Nzxatecxvh1OUii8=
-Received: from codeaurora.org (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: stummala@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E2DDD605A0;
-        Thu, 14 Feb 2019 07:46:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550130394;
-        bh=4UWOZAHo8P5HQluG58zpa1sMTmgdpcRHGQVkuLn1LPA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XhTDONbpT7oTsDWWBRzzBxU7ROS2IhorXaPvPhySTWE6tc9GEVRsU25V2cpFf6k+H
-         cPmf0NJPqverwcXF8/xotYJs4MgH+9JbZr/687M7bTZ0w6NqtbnjivJzuFIIpcBVo+
-         0tBNQxlPhG+cxI8V/eHA8Wrbw27CS3j5kNXt2Qsc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E2DDD605A0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=stummala@codeaurora.org
-Date:   Thu, 14 Feb 2019 13:16:28 +0530
-From:   Sahitya Tummala <stummala@codeaurora.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] f2fs: do not use mutex lock in atomic context
-Message-ID: <20190214074628.GD7308@codeaurora.org>
-References: <1549267613-9288-1-git-send-email-stummala@codeaurora.org>
- <c98cbfcb-f45d-e9a9-5c2e-6730d0448e82@huawei.com>
+        Thu, 14 Feb 2019 02:46:58 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:44878 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2437330AbfBNHq5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 02:46:57 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 459F262CF30613A63F0B;
+        Thu, 14 Feb 2019 15:46:54 +0800 (CST)
+Received: from linux-ibm.site (10.175.102.37) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 14 Feb 2019 15:46:45 +0800
+From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
+To:     <viresh.kumar@linaro.org>, <rafael@kernel.org>,
+        <gcherianv@gmail.com>, <pprakash@codeaurora.org>,
+        <george.cherian@cavium.com>, <robert.moore@intel.com>
+CC:     <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <guohanjun@huawei.com>, <wangxiongfeng2@huawei.com>,
+        <john.garry@huawei.com>
+Subject: [PATCH v2 1/2] ACPI / CPPC: Add a helper to get desired performance
+Date:   Thu, 14 Feb 2019 15:46:07 +0800
+Message-ID: <1550130368-60513-2-git-send-email-wangxiongfeng2@huawei.com>
+X-Mailer: git-send-email 1.7.12.4
+In-Reply-To: <1550130368-60513-1-git-send-email-wangxiongfeng2@huawei.com>
+References: <1550130368-60513-1-git-send-email-wangxiongfeng2@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c98cbfcb-f45d-e9a9-5c2e-6730d0448e82@huawei.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.37]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 11:25:31AM +0800, Chao Yu wrote:
-> On 2019/2/4 16:06, Sahitya Tummala wrote:
-> > Fix below warning coming because of using mutex lock in atomic context.
-> > 
-> > BUG: sleeping function called from invalid context at kernel/locking/mutex.c:98
-> > in_atomic(): 1, irqs_disabled(): 0, pid: 585, name: sh
-> > Preemption disabled at: __radix_tree_preload+0x28/0x130
-> > Call trace:
-> >  dump_backtrace+0x0/0x2b4
-> >  show_stack+0x20/0x28
-> >  dump_stack+0xa8/0xe0
-> >  ___might_sleep+0x144/0x194
-> >  __might_sleep+0x58/0x8c
-> >  mutex_lock+0x2c/0x48
-> >  f2fs_trace_pid+0x88/0x14c
-> >  f2fs_set_node_page_dirty+0xd0/0x184
-> > 
-> > Do not use f2fs_radix_tree_insert() to avoid doing cond_resched() with
-> > spin_lock() acquired.
-> > 
-> > Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-> > ---
-> >  fs/f2fs/trace.c | 20 +++++++++++++-------
-> >  1 file changed, 13 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/trace.c b/fs/f2fs/trace.c
-> > index ce2a5eb..d0ab533 100644
-> > --- a/fs/f2fs/trace.c
-> > +++ b/fs/f2fs/trace.c
-> > @@ -14,7 +14,7 @@
-> >  #include "trace.h"
-> >  
-> >  static RADIX_TREE(pids, GFP_ATOMIC);
-> > -static struct mutex pids_lock;
-> > +static spinlock_t pids_lock;
-> >  static struct last_io_info last_io;
-> >  
-> >  static inline void __print_last_io(void)
-> > @@ -58,23 +58,29 @@ void f2fs_trace_pid(struct page *page)
-> >  
-> >  	set_page_private(page, (unsigned long)pid);
-> >  
-> > +retry:
-> >  	if (radix_tree_preload(GFP_NOFS))
-> >  		return;
-> >  
-> > -	mutex_lock(&pids_lock);
-> > +	spin_lock(&pids_lock);
-> >  	p = radix_tree_lookup(&pids, pid);
-> >  	if (p == current)
-> >  		goto out;
-> >  	if (p)
-> >  		radix_tree_delete(&pids, pid);
-> >  
-> > -	f2fs_radix_tree_insert(&pids, pid, current);
-> > +	if (radix_tree_insert(&pids, pid, current)) {
-> > +		spin_unlock(&pids_lock);
-> > +		radix_tree_preload_end();
-> > +		cond_resched();
-> > +		goto retry;
-> > +	}
-> >  
-> >  	trace_printk("%3x:%3x %4x %-16s\n",
-> >  			MAJOR(inode->i_sb->s_dev), MINOR(inode->i_sb->s_dev),
-> >  			pid, current->comm);
-> 
-> Hi Sahitya,
-> 
-> Can trace_printk sleep? For safety, how about moving it out of spinlock?
-> 
-Hi Chao,
+This patch add a helper to get the value of desired performance
+register.
 
-Yes, trace_printk() is safe to use in atomic context (unlike printk).
+Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+---
+ drivers/acpi/cppc_acpi.c | 38 ++++++++++++++++++++++++++++++++++++++
+ include/acpi/cppc_acpi.h |  1 +
+ 2 files changed, 39 insertions(+)
 
-Thanks,
-Sahitya.
-
-> Thanks,
-> 
-> >  out:
-> > -	mutex_unlock(&pids_lock);
-> > +	spin_unlock(&pids_lock);
-> >  	radix_tree_preload_end();
-> >  }
-> >  
-> > @@ -119,7 +125,7 @@ void f2fs_trace_ios(struct f2fs_io_info *fio, int flush)
-> >  
-> >  void f2fs_build_trace_ios(void)
-> >  {
-> > -	mutex_init(&pids_lock);
-> > +	spin_lock_init(&pids_lock);
-> >  }
-> >  
-> >  #define PIDVEC_SIZE	128
-> > @@ -147,7 +153,7 @@ void f2fs_destroy_trace_ios(void)
-> >  	pid_t next_pid = 0;
-> >  	unsigned int found;
-> >  
-> > -	mutex_lock(&pids_lock);
-> > +	spin_lock(&pids_lock);
-> >  	while ((found = gang_lookup_pids(pid, next_pid, PIDVEC_SIZE))) {
-> >  		unsigned idx;
-> >  
-> > @@ -155,5 +161,5 @@ void f2fs_destroy_trace_ios(void)
-> >  		for (idx = 0; idx < found; idx++)
-> >  			radix_tree_delete(&pids, pid[idx]);
-> >  	}
-> > -	mutex_unlock(&pids_lock);
-> > +	spin_unlock(&pids_lock);
-> >  }
-> > 
-> 
-
+diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+index 217a782..93588c5 100644
+--- a/drivers/acpi/cppc_acpi.c
++++ b/drivers/acpi/cppc_acpi.c
+@@ -1051,6 +1051,44 @@ static int cpc_write(int cpu, struct cpc_register_resource *reg_res, u64 val)
+ }
+ 
+ /**
++ * cppc_get_desired_perf - Get the value of desired performance register.
++ * @cpunum: CPU from which to get desired performance.
++ * @desired_perf: address of a variable to store the returned desired performance
++ *
++ * Return: 0 for success, -EIO otherwise.
++ */
++int cppc_get_desired_perf(int cpunum, u64 *desired_perf)
++{
++	struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpunum);
++	int pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpunum);
++	struct cpc_register_resource *desired_reg;
++	struct cppc_pcc_data *pcc_ss_data = NULL;
++	int regs_in_pcc = 0;
++
++	desired_reg = &cpc_desc->cpc_regs[DESIRED_PERF];
++
++	if (CPC_IN_PCC(desired_reg)) {
++		if (pcc_ss_id < 0)
++			return -EIO;
++		pcc_ss_data = pcc_data[pcc_ss_id];
++		down_write(&pcc_ss_data->pcc_lock);
++		regs_in_pcc = 1;
++		if (send_pcc_cmd(pcc_ss_id, CMD_READ) < 0) {
++			up_write(&pcc_ss_data->pcc_lock);
++			return -EIO;
++		}
++	}
++
++	cpc_read(cpunum, desired_reg, desired_perf);
++
++	if (regs_in_pcc)
++		up_write(&pcc_ss_data->pcc_lock);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(cppc_get_desired_perf);
++
++/**
+  * cppc_get_perf_caps - Get a CPUs performance capabilities.
+  * @cpunum: CPU from which to get capabilities info.
+  * @perf_caps: ptr to cppc_perf_caps. See cppc_acpi.h
+diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
+index 4f34734..ba6fd72 100644
+--- a/include/acpi/cppc_acpi.h
++++ b/include/acpi/cppc_acpi.h
+@@ -137,6 +137,7 @@ struct cppc_cpudata {
+ 	cpumask_var_t shared_cpu_map;
+ };
+ 
++extern int cppc_get_desired_perf(int cpunum, u64 *desired_perf);
+ extern int cppc_get_perf_ctrs(int cpu, struct cppc_perf_fb_ctrs *perf_fb_ctrs);
+ extern int cppc_set_perf(int cpu, struct cppc_perf_ctrls *perf_ctrls);
+ extern int cppc_get_perf_caps(int cpu, struct cppc_perf_caps *caps);
 -- 
---
-Sent by a consultant of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
+1.7.12.4
+
