@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E946C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:11:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73BACC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:11:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E69D21902
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:11:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FBDC21902
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:11:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VzVvpheq"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jG9k1VfQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390620AbfBNCLl (ORCPT
+        id S2394028AbfBNCLt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 21:11:41 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:46208 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393937AbfBNCKf (ORCPT
+        Wed, 13 Feb 2019 21:11:49 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:39328 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393918AbfBNCKe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 21:10:35 -0500
-Received: by mail-qk1-f195.google.com with SMTP id i5so2680880qkd.13
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 18:10:34 -0800 (PST)
+        Wed, 13 Feb 2019 21:10:34 -0500
+Received: by mail-qk1-f193.google.com with SMTP id x6so2706295qki.6
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 18:10:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=GrDWcqvz4w1IZM4bLnbt43ZL+fuuyvY4dihBlBpjGL0=;
-        b=VzVvpheqp9hL5aBvqV+UN/IEz2gVnF1Cd2GNJPqgtpJxcEv0o4pOTs70+aKuKSm1tU
-         4yuf6fy5j/ngR5niiCDuPZ1urSER5nY8Vu2VyLILOUjXsgbY6uP1q5Sfl2VmFELP1ZhP
-         Ivu61ESd9zhK+pwXou8EBzthzF3fUsbcyyrv9obV29tsQhmk9N4xXNCnunAWNLutaHWA
-         xlR6KTYV/46+gyXMLMErG2nHz841J5HP6jfeLuncyZ4cIWRlkjEpnPP4U7hMjnLqbSeE
-         S3tmG2ohyBEE3oLDehlIhmtR0UcIVft2PQohanK3NDZkTuIcrVUuTn0eD+B/fwtJ8Jp/
-         WjqQ==
+        bh=hBL7Wb0KdnmLsxeoxyLW0Tbkce8RSkol6PC9Ygx296g=;
+        b=jG9k1VfQvhqa9stEBXoUgTnHpRsxJKHOyYG1WWAXTdx1CMzgOPJoBBGUK3dDuJh7Jt
+         InBZGJo4lOLCvI5fafIqykZup//rOWKm1rhQbXJI6Cgp0A6/3aWXP39Wln9mMvJ9Rmj5
+         CzZIFCn1jm0BLYVKl0ftmtfkThwrB67I7iaifVBZG9noOu3KrdPiKNUIqQGHodhc3emd
+         BzthAd+xwHF/wbv+FojoZDOaJHpKD+uLtVrcZFAJkNxjV4KdU5P4H040Mt0tR7UMl4wI
+         3wCjfWy0XONYeVhoqKFxSKt5W8XA69GqUoUNvM00LDjQZPvUvKQcNPVV+g+E8CU8Pp6y
+         lGKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=GrDWcqvz4w1IZM4bLnbt43ZL+fuuyvY4dihBlBpjGL0=;
-        b=dmisAWK2ow2hlyVhDxkDkl7j395VuPYrVF5LCSZR1h+HxlF6Pkzq0NbwcQX/YvL97g
-         WjaczFUO9NDyTRy3QeSv3PXCdGvrPkU1Ty0Kfvd0sr/OuLxG2QBuVrSfWT4sg7YPO9Te
-         w9HUZDtARVVN8/MuXEPHCne2ZacEjESq6kIG/pS0ZxDTwixjPwMpZQCN94nNBIrX3szN
-         LATIk562FjG28gyiYNQ1fXWzIu9RO0119QwiGcme9s2ZktpCyRfsSiKorDvNIUBZjD6y
-         XaXDy6DlvXtzAeqSy8aCfz1vn3qSrg/Gs/a9bvf6aU+PXlVattEoX9DvMZ1FMaoE319Y
-         NAjA==
-X-Gm-Message-State: AHQUAuY3njcNs+7UWCamwMJDNVcG0F+HSuiTwY1j81hi3v+3Q8zq0osT
-        iHIRUsG0aXIvxajxkV191c1piQ==
-X-Google-Smtp-Source: AHgI3IaYYyWqe9n1hfxRFdlH3JFi+4Eec1KQI0gP7QHpfay6mpCKQirj30l/dFG8TeXKP9DcSIgg5g==
-X-Received: by 2002:a37:628a:: with SMTP id w132mr1008754qkb.60.1550110234410;
-        Wed, 13 Feb 2019 18:10:34 -0800 (PST)
-Received: from localhost.localdomain (pool-72-71-243-63.cncdnh.fast00.myfairpoint.net. [72.71.243.63])
-        by smtp.googlemail.com with ESMTPSA id d63sm1091575qka.22.2019.02.13.18.10.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        bh=hBL7Wb0KdnmLsxeoxyLW0Tbkce8RSkol6PC9Ygx296g=;
+        b=cKLgQeFarJ8YNs7fLi0BWaz4BfvMwWJI998X7VaUE3uM1JPSbCqwPhCcIUhP5NRKrV
+         oOSflaDSMI8HC3PU5quemrDsvoGDk8gVbrv9gBLIDHbj/lSRPL7GG2oS2fF4lt5MAyWH
+         5s1NNfgPlZ7AfmEMA5kuEo2JA1xBllJAsCOj3xPIfZiYDmxmezrszp/KDbokmJD0rPkW
+         zPS+zHVOViC1jKTrWnZ2Cr91l2LMHbO/mJaIOwq9XjUoJuJLZBhgqARh1E1snUBdnQ4b
+         pMPFUfmj+UMckG8lb3U+PDEjKJibiqllc56EkcQHUr4/MAW0wIFQwqoGL8Z26PwBDpt9
+         36kw==
+X-Gm-Message-State: AHQUAuaWDTjiDhi2q3YDtJRd5lmvChj+q3kE7P1/TxRXF298QHr7ozOE
+        EyJPqgwxoVFwWAeEqecxvoZpUg==
+X-Google-Smtp-Source: AHgI3IZcpwfSnjhLIPi5nDo695ajgpwp3u6zeBChihrC0pKX9ABdZSdAuhmul8NHt/UhyoAjdzHMqQ==
+X-Received: by 2002:a37:4145:: with SMTP id o66mr920551qka.129.1550110233070;
         Wed, 13 Feb 2019 18:10:33 -0800 (PST)
+Received: from localhost.localdomain (pool-72-71-243-63.cncdnh.fast00.myfairpoint.net. [72.71.243.63])
+        by smtp.googlemail.com with ESMTPSA id d63sm1091575qka.22.2019.02.13.18.10.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 18:10:32 -0800 (PST)
 From:   David Long <dave.long@linaro.org>
 To:     stable@vger.kernel.org,
         Russell King - ARM Linux <linux@armlinux.org.uk>,
@@ -66,9 +66,9 @@ To:     stable@vger.kernel.org,
         Mark Rutland <mark.rutland@arm.com>
 Cc:     Will Deacon <will.deacon@arm.com>, Mark Brown <broonie@kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 4.14 V2 07/17] ARM: 8795/1: spectre-v1.1: use put_user() for __put_user()
-Date:   Wed, 13 Feb 2019 21:10:12 -0500
-Message-Id: <20190214021022.5313-8-dave.long@linaro.org>
+Subject: [PATCH 4.14 V2 06/17] ARM: 8794/1: uaccess: Prevent speculative use of the current addr_limit
+Date:   Wed, 13 Feb 2019 21:10:11 -0500
+Message-Id: <20190214021022.5313-7-dave.long@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190214021022.5313-1-dave.long@linaro.org>
 References: <20190214021022.5313-1-dave.long@linaro.org>
@@ -79,59 +79,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Julien Thierry <julien.thierry@arm.com>
 
-Commit e3aa6243434fd9a82e84bb79ab1abd14f2d9a5a7 upstream.
+Commit 621afc677465db231662ed126ae1f355bf8eac47 upstream.
 
-When Spectre mitigation is required, __put_user() needs to include
-check_uaccess. This is already the case for put_user(), so just make
-__put_user() an alias of put_user().
+A mispredicted conditional call to set_fs could result in the wrong
+addr_limit being forwarded under speculation to a subsequent access_ok
+check, potentially forming part of a spectre-v1 attack using uaccess
+routines.
+
+This patch prevents this forwarding from taking place, but putting heavy
+barriers in set_fs after writing the addr_limit.
+
+Porting commit c2f0ad4fc089cff8 ("arm64: uaccess: Prevent speculative use
+of the current addr_limit").
 
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: David A. Long <dave.long@linaro.org>
 ---
- arch/arm/include/asm/uaccess.h | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+ arch/arm/include/asm/uaccess.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/arch/arm/include/asm/uaccess.h b/arch/arm/include/asm/uaccess.h
-index 7d19584f5c39..cf50b030c62c 100644
+index 4140be431087..7d19584f5c39 100644
 --- a/arch/arm/include/asm/uaccess.h
 +++ b/arch/arm/include/asm/uaccess.h
-@@ -370,6 +370,14 @@ do {									\
- 	__pu_err;							\
- })
- 
-+#ifdef CONFIG_CPU_SPECTRE
-+/*
-+ * When mitigating Spectre variant 1.1, all accessors need to include
-+ * verification of the address space.
-+ */
-+#define __put_user(x, ptr) put_user(x, ptr)
+@@ -69,6 +69,14 @@ extern int __put_user_bad(void);
+ static inline void set_fs(mm_segment_t fs)
+ {
+ 	current_thread_info()->addr_limit = fs;
 +
-+#else
- #define __put_user(x, ptr)						\
- ({									\
- 	long __pu_err = 0;						\
-@@ -377,12 +385,6 @@ do {									\
- 	__pu_err;							\
- })
++	/*
++	 * Prevent a mispredicted conditional call to set_fs from forwarding
++	 * the wrong address limit to access_ok under speculation.
++	 */
++	dsb(nsh);
++	isb();
++
+ 	modify_domain(DOMAIN_KERNEL, fs ? DOMAIN_CLIENT : DOMAIN_MANAGER);
+ }
  
--#define __put_user_error(x, ptr, err)					\
--({									\
--	__put_user_switch((x), (ptr), (err), __put_user_nocheck);	\
--	(void) 0;							\
--})
--
- #define __put_user_nocheck(x, __pu_ptr, __err, __size)			\
- 	do {								\
- 		unsigned long __pu_addr = (unsigned long)__pu_ptr;	\
-@@ -462,6 +464,7 @@ do {									\
- 	: "r" (x), "i" (-EFAULT)				\
- 	: "cc")
- 
-+#endif /* !CONFIG_CPU_SPECTRE */
- 
- #ifdef CONFIG_MMU
- extern unsigned long __must_check
 -- 
 2.17.1
 
