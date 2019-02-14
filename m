@@ -2,108 +2,127 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B95C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:52:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7246C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:53:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46383222D2
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:52:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BD1A222A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:53:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392811AbfBNJwK (ORCPT
+        id S2438070AbfBNJxO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 04:52:10 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59322 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387579AbfBNJwK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 04:52:10 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2349EADF1;
-        Thu, 14 Feb 2019 09:52:08 +0000 (UTC)
-Subject: Re: [PATCH v2] hugetlb: allow to free gigantic pages regardless of
- the configuration
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Alexandre Ghiti <alex@ghiti.fr>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20190213192610.17265-1-alex@ghiti.fr>
- <d367b5c7-eb05-6d0b-f9bf-5b3fc3f392a9@intel.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Message-ID: <bcffa37e-22cd-f0d7-ee85-769c0d54520a@suse.cz>
-Date:   Thu, 14 Feb 2019 10:52:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 14 Feb 2019 04:53:14 -0500
+Received: from mout.kundenserver.de ([212.227.126.133]:52545 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727937AbfBNJxO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 04:53:14 -0500
+Received: from [192.168.1.110] ([77.2.75.124]) by mrelayeu.kundenserver.de
+ (mreue010 [212.227.15.167]) with ESMTPSA (Nemesis) id
+ 1M2w0K-1gvJdO0z4W-003Na2; Thu, 14 Feb 2019 10:53:06 +0100
+Subject: Re: [PATCH 1/2] x86: gpio: AMD G-Series pch gpio platform driver
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Enrico Weigelt, metux IT consult" <info@metux.net>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86 <platform-driver-x86@vger.kernel.org>
+References: <1549588593-4856-1-git-send-email-lkml@metux.net>
+ <CACRpkdaSEZMR7LuLbO1V0k9QEBu4FWxFbq4ZL1pE9dAvNT1z_Q@mail.gmail.com>
+ <f751539b-d844-9ab1-169b-ce6aa0056de6@metux.net>
+ <CACRpkdbvY1FiqmBHj74x4H9XX8SZW7voTMfj5jq-as73_B071Q@mail.gmail.com>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Organization: metux IT consult
+Message-ID: <6f723c65-be90-132d-e714-616a21149fe0@metux.net>
+Date:   Thu, 14 Feb 2019 10:53:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <d367b5c7-eb05-6d0b-f9bf-5b3fc3f392a9@intel.com>
+In-Reply-To: <CACRpkdbvY1FiqmBHj74x4H9XX8SZW7voTMfj5jq-as73_B071Q@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:VBwySvyHr82DeS3HR4C5rGVY86dMJCt5A1ga+wloQLnyA6bEpy5
+ oXjY5o4vgWqEt1WU6Y9LKZNHloQrm/ky7WgYgr6HoSG+xfT7M0eOA78Zjzbi/mqajx5F9gU
+ oO0j8veA+XPN8ReSK3a3mllm1gLPs1nr98aHY+uSn4IYqdg68KXfaN4jGKy/HedaO6UCwzl
+ /RLjyMhO5BGyoI/6wf2pA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:WwKhC28vBDQ=:/xDgd+r99u5OwoJGtLo2gw
+ 0IiZl8HAgoERPoyssgjkLmdpWwf2+J/dsDtkK1WRFidEVgUYO5TOSzRFzdhJKaFpsVePgsiD8
+ PNGaTcVKnotsIvkkD+tDqA3tcU5To+HCRGjQcTOxrLYJnBm1xQCXbtBTRvMkU+XEgaMaQO8hL
+ /0e7DTxUpuET90zZAOHx20vVJA2Hb6wIY7eOt59UKJDj7Z+288sIKOcDI3gtuwagAJNlIhsmd
+ r9RBRxSGhRMKVZKY3ujbsK5UphLOIXpb2pNPCNekoH48FWOEkAzmAtezhEziDnxhXtLukjGvN
+ zTSR6R8Qps0vmkOr1Ju1n5ZuAt1FG4BWo0ODx9lQzO15Osf56to2Kn4hAXT/rkVNNZeJ8ACtW
+ QHDi931bNt4z50dXC69kTUROS3xd0GbgpWMcSOCJgBC5P9Y+/wkz9KDB2d3A7cHnJ4VA5QSIs
+ xvq6n+iYOeG4OTcPfcyOZ/3LnJqzPfT092TCv8Eh+Av+YgNTVRgVyAa1qq3H4GfmKOhAOFIvo
+ HpO+l2h16YxDHiZjf4Ydsq0gFXPY/MyU+JVgByyIOO8a1PnhnS8CGEiceSpjof7Wv0WkNIDLS
+ cRFbJkYg6KY/ztDX+SSwAUxPj1ZA5EYHlJ4I4/5AgHCWPJOV/NQ/FD+pgkMQps7gDFhfqFr9H
+ Uuvlioz28tNUaafFv4AwI6Epre4Lu5z/Y8WZ+vfXWbu0Umu9HnWB7HIiXgQOBORt1QoI0m9ii
+ oMhQ4L05Hgo2ill7fmUSeuCQdWVYCbDw/0RDMo31KbEbifhcoEbrskf+nfI=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/13/19 8:30 PM, Dave Hansen wrote:
->> -#if (defined(CONFIG_MEMORY_ISOLATION) && defined(CONFIG_COMPACTION)) || defined(CONFIG_CMA)
->> +#ifdef CONFIG_COMPACTION_CORE
->>  static __init int gigantic_pages_init(void)
->>  {
->>  	/* With compaction or CMA we can allocate gigantic pages at runtime */
->> diff --git a/fs/Kconfig b/fs/Kconfig
->> index ac474a61be37..8fecd3ea5563 100644
->> --- a/fs/Kconfig
->> +++ b/fs/Kconfig
->> @@ -207,8 +207,9 @@ config HUGETLB_PAGE
->>  config MEMFD_CREATE
->>  	def_bool TMPFS || HUGETLBFS
->>  
->> -config ARCH_HAS_GIGANTIC_PAGE
->> +config COMPACTION_CORE
->>  	bool
->> +	default y if (MEMORY_ISOLATION && MIGRATION) || CMA
-> 
-> This takes a hard dependency (#if) and turns it into a Kconfig *default*
-> that can be overridden.  That seems like trouble.
-> 
-> Shouldn't it be:
-> 
-> config COMPACTION_CORE
-> 	def_bool y
-> 	depends on (MEMORY_ISOLATION && MIGRATION) || CMA
+On 13.02.19 10:02, Linus Walleij wrote:
 
-Agreed. Also I noticed that it now depends on MIGRATION instead of
-COMPACTION. That intention is correct IMHO, but will fail to
-compile/link when both COMPACTION and CMA are disabled, and would need
-more changes in mm/internal.h and mm/compaction.c (possibly just
-replacing CMA in all "if defined CONFIG_COMPACTION || defined
-CONFIG_CMA" instances with COMPACTION_CORE, but there might be more
-problems, wanna try? :)
+Hi,
 
-Also, I realized that COMPACTION_CORE is a wrong name, sorry about that.
-What the config really provides is alloc_contig_range(), so it should be
-named either CONFIG_CMA_CORE (as it provides contiguous memory
-allocation, but not the related reservation and accounting), or
-something like CONFIG_CONTIG_ALLOC. I would also move it from fs/Kconfig
-to mm/Kconfig.
+> What we normally do is expose all the lines from a gpio chip> as kernel abstraction.> > This is because at least in theory this chip
+can be used by> several boards.
+I'm afraid it's a bit more complicated. The register set doesn't
+seem to be linear. I have absolutely no idea what the undocumented
+registers do. For the sake of security, I would hate to see them
+accessible from userland.
 
-Thanks!
+> The chip abstraction does have facilities for masking off
+> unavailable lines: in struct gpio_chip there is .valid_mask
+> and even a callback .init_valid_mask() to set it up.
+
+Okay, but then again I'd need to pass this from the board
+driver into the gpio driver. Feels much easier and safer to
+just pass the registers.
+
+What I perhaps could do: add all documented registers as gpio's
+in the gpio driver and make the board driver a dummy consumer
+for the unused ones.
+
+> So this is what you should use to make existing lines
+> unavailable, do not try to hide them by not exposing
+> registers or line offsets. The abstraction should model
+> the hardware, not the usecase.
+
+According to my information, it is the hardware who dictates that
+non-linear layout. Even the PIN naming is non-linear. And I don't
+like to see this passed to upper layers, or even userland. So,
+at least the gpio driver should only serve the documented gpios
+and present them lineary.
+
+Maybe the holes in the register set are technically also gpios,
+but used by some internal logic and not properly masked out in
+hw - really weird things (possibly damage) could happen.
+
+> FYI there are tons of systems out there that expose a
+> whole range of GPIOs that the developer have no clue
+> where they are connected on the PCB, the most common
+> case is that they are not connected (sometimes not
+> even leaving the chip die) or go to test points. They are
+> very seldom dangerous, in fact I've never seen dangerous
+> GPIOs, just dangerous set-ups of pins already known
+> to be in use for something.
+
+Can't speak about standard ICs/SoCs, but i've seen such things
+in some of my client's fpga designs. For example incomplete
+decoders, gpios attached to internal state machines, etc, etc
+So, I've learned to be *very* cautious with undocumented registers.
+
+
+--mtx
+
+-- 
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
