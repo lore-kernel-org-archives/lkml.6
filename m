@@ -2,114 +2,207 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C14AC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:54:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2537C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3388222A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:54:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91CF5222A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:54:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406779AbfBNKx7 (ORCPT
+        id S2406785AbfBNKyz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 05:53:59 -0500
-Received: from foss.arm.com ([217.140.101.70]:41284 "EHLO foss.arm.com"
+        Thu, 14 Feb 2019 05:54:55 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54304 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726989AbfBNKx6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 05:53:58 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 82601EBD;
-        Thu, 14 Feb 2019 02:53:58 -0800 (PST)
-Received: from [10.162.0.144] (a075553-lin.blr.arm.com [10.162.0.144])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AE3423F575;
-        Thu, 14 Feb 2019 02:53:55 -0800 (PST)
-Subject: Re: [PATCH v5 1/5] arm64: Add utilities to save restore pointer
- authentication keys
-To:     Kristina Martsenko <kristina.martsenko@arm.com>,
-        James Morse <james.morse@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        kvmarm@lists.cs.columbia.edu,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>, linux-kernel@vger.kernel.org
-References: <1548658727-14271-1-git-send-email-amit.kachhap@arm.com>
- <1548658727-14271-2-git-send-email-amit.kachhap@arm.com>
- <88ccd568-f027-6cdf-b4f1-6709d76102c1@arm.com>
- <adbeb25c-fa88-41fd-7819-5f412a762b64@arm.com>
-From:   Amit Daniel Kachhap <amit.kachhap@arm.com>
-Message-ID: <41ab78a2-b2c0-61e9-e582-f2174d4203b5@arm.com>
-Date:   Thu, 14 Feb 2019 16:23:53 +0530
+        id S1726989AbfBNKyz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 05:54:55 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CE3998762F;
+        Thu, 14 Feb 2019 10:54:53 +0000 (UTC)
+Received: from [10.36.112.66] (ovpn-112-66.ams2.redhat.com [10.36.112.66])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 24C715D705;
+        Thu, 14 Feb 2019 10:54:49 +0000 (UTC)
+Subject: Re: [PATCH V4] KVM: x86: Sync the pending Posted-Interrupts
+To:     Luwei Kang <luwei.kang@intel.com>, rkrcmar@redhat.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1550112487-4482-1-git-send-email-luwei.kang@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <d4f8d6c6-bff5-6d72-3db9-05688139e7de@redhat.com>
+Date:   Thu, 14 Feb 2019 11:54:47 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <adbeb25c-fa88-41fd-7819-5f412a762b64@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1550112487-4482-1-git-send-email-luwei.kang@intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 14 Feb 2019 10:54:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 14/02/19 03:48, Luwei Kang wrote:
+> Some Posted-Interrupts from passthrough devices may be lost or
+> overwritten when the vCPU is in runnable state.
+> 
+> The SN (Suppress Notification) of PID (Posted Interrupt Descriptor) will
+> be set when the vCPU is preempted (vCPU in KVM_MP_STATE_RUNNABLE state
+> but not running on physical CPU). If a posted interrupt coming at this
+> time, the irq remmaping facility will set the bit of PIR (Posted
+> Interrupt Requests) without ON (Outstanding Notification).
+> So this interrupt can't be sync to APIC virtualization register and
+> will not be handled by Guest because ON is zero.
+> 
+> Signed-off-by: Luwei Kang <luwei.kang@intel.com>
 
-On 2/13/19 11:02 PM, Kristina Martsenko wrote:
-> On 31/01/2019 16:20, James Morse wrote:
->> Hi Amit,
->>
->> On 28/01/2019 06:58, Amit Daniel Kachhap wrote:
->>> The keys can be switched either inside an assembly or such
->>> functions which do not have pointer authentication checks, so a GCC
->>> attribute is added to enable it.
->>>
->>> A function ptrauth_keys_store is added which is similar to existing
->>> function ptrauth_keys_switch but saves the key values in memory.
->>> This may be useful for save/restore scenarios when CPU changes
->>> privilege levels, suspend/resume etc.
->>
->>
->>> diff --git a/arch/arm64/include/asm/pointer_auth.h b/arch/arm64/include/asm/pointer_auth.h
->>> index 15d4951..98441ce 100644
->>> --- a/arch/arm64/include/asm/pointer_auth.h
->>> +++ b/arch/arm64/include/asm/pointer_auth.h
->>> @@ -11,6 +11,13 @@
->>>   
->>>   #ifdef CONFIG_ARM64_PTR_AUTH
->>>   /*
->>> + * Compile the function without pointer authentication instructions. This
->>> + * allows pointer authentication to be enabled/disabled within the function
->>> + * (but leaves the function unprotected by pointer authentication).
->>> + */
->>> +#define __no_ptrauth	__attribute__((target("sign-return-address=none")))
->>
->> The documentation[0] for this says 'none' is the default. Will this only
->> take-effect once the kernel supports pointer-auth for the host? (Is this just
->> documentation until then?)
-> 
-> Yes, I don't think this should be in this series, since we're not
-> building the kernel with pointer auth yet.
-I added it to stress on some functions which should be pointer 
-authentication safe. Yes this can be dropped and a small comment may 
-also do.
+Queued, thanks.
 
-//Amit D
+Paolo
+
+> ---
+>  arch/x86/kvm/vmx/vmx.c | 26 +++++++++++---------------
+>  arch/x86/kvm/vmx/vmx.h |  6 ++++++
+>  arch/x86/kvm/x86.c     |  2 +-
+>  3 files changed, 18 insertions(+), 16 deletions(-)
 > 
->>
->> ('noptrauth' would fit with 'notrace' slightly better)
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index f6915f1..fe59199 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -1192,21 +1192,6 @@ static void vmx_vcpu_pi_load(struct kvm_vcpu *vcpu, int cpu)
+>  	if (!pi_test_sn(pi_desc) && vcpu->cpu == cpu)
+>  		return;
+>  
+> -	/*
+> -	 * First handle the simple case where no cmpxchg is necessary; just
+> -	 * allow posting non-urgent interrupts.
+> -	 *
+> -	 * If the 'nv' field is POSTED_INTR_WAKEUP_VECTOR, do not change
+> -	 * PI.NDST: pi_post_block will do it for us and the wakeup_handler
+> -	 * expects the VCPU to be on the blocked_vcpu_list that matches
+> -	 * PI.NDST.
+> -	 */
+> -	if (pi_desc->nv == POSTED_INTR_WAKEUP_VECTOR ||
+> -	    vcpu->cpu == cpu) {
+> -		pi_clear_sn(pi_desc);
+> -		return;
+> -	}
+> -
+>  	/* The full case.  */
+>  	do {
+>  		old.control = new.control = pi_desc->control;
+> @@ -1221,6 +1206,17 @@ static void vmx_vcpu_pi_load(struct kvm_vcpu *vcpu, int cpu)
+>  		new.sn = 0;
+>  	} while (cmpxchg64(&pi_desc->control, old.control,
+>  			   new.control) != old.control);
+> +
+> +	/*
+> +	 * Clear SN before reading the bitmap.  The VT-d firmware
+> +	 * writes the bitmap and reads SN atomically (5.2.3 in the
+> +	 * spec), so it doesn't really have a memory barrier that
+> +	 * pairs with this, but we cannot do that and we need one.
+> +	 */
+> +	smp_mb__after_atomic();
+> +
+> +	if (!bitmap_empty((unsigned long *)pi_desc->pir, NR_VECTORS))
+> +		pi_set_on(pi_desc);
+>  }
+>  
+>  /*
+> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
+> index 9932895..a4527e1 100644
+> --- a/arch/x86/kvm/vmx/vmx.h
+> +++ b/arch/x86/kvm/vmx/vmx.h
+> @@ -349,6 +349,12 @@ static inline void pi_set_sn(struct pi_desc *pi_desc)
+>  			(unsigned long *)&pi_desc->control);
+>  }
+>  
+> +static inline void pi_set_on(struct pi_desc *pi_desc)
+> +{
+> +	set_bit(POSTED_INTR_ON,
+> +		(unsigned long *)&pi_desc->control);
+> +}
+> +
+>  static inline void pi_clear_on(struct pi_desc *pi_desc)
+>  {
+>  	clear_bit(POSTED_INTR_ON,
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 3d32b8f..ebd6737 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -7795,7 +7795,7 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
+>  	 * 1) We should set ->mode before checking ->requests.  Please see
+>  	 * the comment in kvm_vcpu_exiting_guest_mode().
+>  	 *
+> -	 * 2) For APICv, we should set ->mode before checking PIR.ON.  This
+> +	 * 2) For APICv, we should set ->mode before checking PID.ON. This
+>  	 * pairs with the memory barrier implicit in pi_test_and_set_on
+>  	 * (see vmx_deliver_posted_interrupt).
+>  	 *
 > 
-> (But worse with e.g. __noreturn, __notrace_funcgraph, __init,
-> __always_inline, __exception. Not sure what the pattern is. Would
-> __noptrauth be better?)
-> 
-> Thanks,
-> Kristina
-> 
->>
->> [0]
->> https://gcc.gnu.org/onlinedocs/gcc/AArch64-Function-Attributes.html#AArch64-Function-Attributes
->>
-> 
+
