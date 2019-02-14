@@ -2,185 +2,87 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0957EC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:05:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 196CDC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:07:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAC8720823
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:05:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C86DA20823
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:07:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="PZM7g//i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439171AbfBNPFb (ORCPT
+        id S2405031AbfBNPHu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 10:05:31 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46311 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387401AbfBNPFb (ORCPT
+        Thu, 14 Feb 2019 10:07:50 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:48672 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387401AbfBNPHu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 10:05:31 -0500
-Received: by mail-ed1-f66.google.com with SMTP id f2so5235941edy.13
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 07:05:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UgC5wxtUFnsU6ZsQzgP5OIPESwXBrDNLWHcm6mEH0mQ=;
-        b=bgGHiEBFFsZHtQc5GwjVTFzx+lW3QUovmimP9UlDCmCwxWmYGez/jK3tCXoQyAfPlu
-         ihdXrM5lwtXJeckXjOFoHzxqQMSOzMPykxGESLijw2heUWDquhhzp8VktA+W3wf8kDrT
-         IQL2ytOt1oTQ3D8Bt4niDjuX04grJISINW3G1hyjja+UwryU+u+K77uMy9LOiNeZFdQz
-         51CGFmY84n5jMek3U1S6T4+hl6bWlr0Iv0lhHUaEtam562nasOb+UUx4RGRFoYPXiOOa
-         G09m/cwu6JTVhKUXKqEPliI6m0p4+MMA7krvJ6o9Xj57SGkKJkKi/ryIBilJPE56aO2k
-         NCQw==
-X-Gm-Message-State: AHQUAuaVF/IIi+65hg/5267eiUjPjddnPfEI9uC9YXsthbaJEzFUvLIY
-        zj6DXHJ/X6TqwOdUzCIRi3qTdQ==
-X-Google-Smtp-Source: AHgI3IYpnE0wnPkxqjFm92MYU/Vm6fChX5QldxDeevdlTZo52QHRWttB/K3XxF3itgVje9rjfGFjyQ==
-X-Received: by 2002:a50:98a6:: with SMTP id j35mr3468561edb.141.1550156728521;
-        Thu, 14 Feb 2019 07:05:28 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id o20sm149210eja.19.2019.02.14.07.05.27
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 07:05:27 -0800 (PST)
-Subject: Re: [PATCH 0/2] extcon: Intel Cherry Trail Whiskey Cove PMIC and
- external charger tweaks
-To:     Yauhen Kharuzhy <jekhor@gmail.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+        Thu, 14 Feb 2019 10:07:50 -0500
+Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay.synopsys.com (Postfix) with ESMTPS id D369B24E1ECF;
+        Thu, 14 Feb 2019 07:07:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1550156869; bh=eert8KNw2jrAOG0R403vNwKbxVOXcgfz8eI3V9Ut2ug=;
+        h=From:To:Cc:Subject:Date:From;
+        b=PZM7g//i3ZxW4ZvY3AduTtDufPLaB1WCNCwyUrYAYkg6LgCuuDZuDnYoh07Fkt0EO
+         PR73zIVquiB4OQlmQ7aYt/yvxWSItOM1HKHHT+kIxAPamLZFWXDhs4OMTdhflmmLa9
+         xoy53XTDwhMoHTNP/QTxRd2e/6JxnNOyvBtLYzhQJn7TJCUIYjYDXOyJHtvj2Pf6hD
+         us/+tQztxaL7/X21h0kdrnAM3/zVsZCw/E0tzu+VdJLQtSgxMhBCFcpc6jtWZuGYtp
+         mHuv9hyjddnSqx6GqV09jqd1OdI7CuS0lgJ9hh8Vbayl+Fbr1Iy8QyMuxrROrem69A
+         o5+Wp6WLovYvg==
+Received: from paltsev-e7480.internal.synopsys.com (unknown [10.121.8.62])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 38F44A0090;
+        Thu, 14 Feb 2019 15:07:47 +0000 (UTC)
+From:   Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
+To:     linux-snps-arc@lists.infradead.org,
+        Vineet Gupta <vineet.gupta1@synopsys.com>
 Cc:     linux-kernel@vger.kernel.org,
-        MyungJoo Ham <myungjoo.ham@samsung.com>
-References: <20190210203649.21691-1-jekhor@gmail.com>
- <7d226dcc-9b9c-941c-7915-53ca123fa3a5@redhat.com>
- <20190214124744.GT9224@smile.fi.intel.com>
- <CAKWEGV7SGDMttB6uHwnkyjWk+bmSmZ-vTSOXHg1UAgLBeqnaXw@mail.gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <1026e999-ecda-7866-6607-3c947a4cb483@redhat.com>
-Date:   Thu, 14 Feb 2019 16:05:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <CAKWEGV7SGDMttB6uHwnkyjWk+bmSmZ-vTSOXHg1UAgLBeqnaXw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        Corentin Labbe <clabbe@baylibre.com>, khilman@baylibre.com,
+        Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
+Subject: [PATCH v2 0/2] ARC: rework U-boot arguments handling
+Date:   Thu, 14 Feb 2019 18:07:43 +0300
+Message-Id: <20190214150745.18773-1-Eugeniy.Paltsev@synopsys.com>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Reworking U-boot args handling and enable uboot support
+unconditionally.
 
-On 14-02-19 15:15, Yauhen Kharuzhy wrote:
-> 
-> 
-> чц, 14 лют 2019, 15.47: карыстальнік Andy Shevchenko <andriy.shevchenko@linux.intel.com <mailto:andriy.shevchenko@linux.intel.com>> напісаў:
-> 
->     On Thu, Feb 14, 2019 at 12:00:44AM +0100, Hans de Goede wrote:
->      > On 10-02-19 21:36, Yauhen Kharuzhy wrote:
-> 
->      > A kind request to the platform-x86 driver maintainers (hi Andy): Please
->      > do not apply these patches until I've been able to test they don't cause
->      > issues elsewhere.
-> 
->     Yes, that's my plan from the day one.
-> 
->     I also asked Yauhen to keep you in Cc list for all patches regarding the
->     platform he is enabling. On his GH page you may find, btw, a pile of patches.
->     I hope we will not get a patch bomb at once.
-> 
-> 
-> 
-> Yes, I plan to propose remained patches only after discussing and accepting already sent series and some reworking.
-> 
-> 
-> The charger-related part will be very discussable.
+Changes v1->v2:
+ * Drop magic number check [in this patch series]
+ * Keep comment about cndline appending
 
-Yes I just took a look at the patches from your kernel-tree at github,
-it seems this is another quite "interesting" Cherry Trail device.
+Changes RFC->v1:
+ * Don't add new ABI contract between kernel and uboot
+ * Eliminate CONFIG_ARC_UBOOT_SUPPORT Kconfig option and
+   enable uboot support unconditionally
+ * Skip invalid U-boot args instead of panic
+ * Check existing U-boot magic value
+ * Improve uboot_arg validating
+ * Minor code changes
 
-Oh if only the engineers who designed these had just use ACPI as intended
-instead of doing a bunch of spaghetti code and duck-taping it all together
-with proprietary / vendor-specific ACPI opregions. Ah well.
+Eugeniy Paltsev (2):
+  ARC: U-boot: check arguments paranoidly
+  ARC: enable uboot support unconditionally
 
-Note I see that your DSDT does not have any *valid* ACPI battery device
-(PNP0C0A dev), so we need to directly talk to the fuel-gauge. I also see
-that you already have some WIP code for this, good.
+ arch/arc/Kconfig                        | 12 -----
+ arch/arc/configs/nps_defconfig          |  1 -
+ arch/arc/configs/vdk_hs38_defconfig     |  1 -
+ arch/arc/configs/vdk_hs38_smp_defconfig |  2 -
+ arch/arc/kernel/head.S                  |  7 ++-
+ arch/arc/kernel/setup.c                 | 96 +++++++++++++++++++++++----------
+ 6 files changed, 70 insertions(+), 49 deletions(-)
 
-Taking a quick peek I also noticed the changes you did for the
-drivers/i2c/busses/i2c-cht-wc.c code instantiating the charger device.
+-- 
+2.14.5
 
-I think it would be better to instead of using DMI matching, to
-actually probe which device is there, you can create a dummy
-client on the adapter after the i2c_add_adapter call using:
-i2c_new_dummy() and then you can do an smbus byte read from
-register 0x14, on the bq24292i which the other devices with a wcove
-pmic have you will get 0xff then since the addresses on the
-bq24292i only go up to 0x0a and on the bq2589x your device has
-you should then actually be able to check the device id you expect.
-
-If you do this, please also read and check the 0x0a device-id register
-of the bq24292i if the 0x14 check fails, I can test this. For the
-bq24292i the expectation is for bits 3-5 to encode the value 3 (011).
-
-If you go this route, I would also advice to change the:
-
-if (acpi_dev_present("INT33FE", NULL, -1)) {
-	....
-}
-
-To:
-
-if (!acpi_dev_present("INT33FE", NULL, -1))
-	goto done;
-
-So that you don't get a too deep indentation level, making
-the end result look something like this:
-
-
-if (!acpi_dev_present("INT33FE", NULL, -1))
-	goto done;
-
-test_client = i2c_new_dummy(&adap->adapter, 0x14);
-// test for bq25892 or bq24292i
-i2c_unregister_device(test_client);
-// register correct device, this must be done after
-// unregister-ing the dummy to avoid an EBUSY error on the address
-
-done:
-platform_set_drvdata(pdev, adap);
-return 0;
-
-###
-
-I would do something similar with the fuel-gauge in
-drivers/platform/x86/intel_cht_int33fe.c, one option would
-be to simply count the number of resources in the ACPI
-resource table for the INT33FE device, versions with
-the Type-C port have 7 resources, where as your INT33FE
-device has only 3.
-
-I'm even thinking that it might be best to rename
-intel_cht_int33fe.c to intel_cht_int33fe_typec.c and add
-a check for the resource table having 7 entries there, then
-you can make a intel_cht_int33fe_micro_usb.c copy and strip
-that mostly empty. Both would bind to the same "INT33FE"
-id and they would both silently bail with -ENODEV if the
-resource-count (or the PTYP value) don't match.
-
-The reason I'm thinking of having 2 drivers is because
-the current intel_cht_int33fe.c is quite special / ugly and
-already has enough ifs.
-
-If you do a stand-alone intel_cht_int33fe_micro_usb.c that can
-hopefully be much simpler.
-
-Andy what is your take on having separate intel_cht_int33fe_typec.c
-and intel_cht_int33fe_micro_usb.c drivers, both binding to
-the "INT33FE" ACPI-ID (with its totally !@#%$#-ed up "API") ?
-
-Having 2 drivers bind to the same id and exit silently with -ENODEV
-is somewhat normal for USB ids where we also sometimes have these
-kinda ID clashes with different devices hiding behind the same id.
-
-Regards,
-
-Hans
