@@ -2,195 +2,88 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 527A9C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D9E5C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:51:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D2272175B
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:47:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FF72218AC
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:51:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550170294;
+	bh=JyWWa/TYeUKwUnwnoOG1g79lawmlfFpG1e39tdIjxgM=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=SC3h0ap1P/NAZ5UOb6+/S1IRqWwJ00wKrdUrsACnMI1zseS5RR5d0vGCcBx8aZQbr
+	 l/NLvByzFo4R8JHbvHOdeZcYL93fvilvT53nu+AXZhpCcf0dXIGBcgE+Am37GvtB7W
+	 pmiqRIbZ5/Tl7t0qSAlbjclTmGg3Q8tM1Sb2s5Tw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438168AbfBNSra (ORCPT
+        id S1732264AbfBNSvc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 13:47:30 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55996 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2404249AbfBNSr3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 13:47:29 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1EIcw1d121912
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 13:47:29 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qnbxv078n-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 13:47:28 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Thu, 14 Feb 2019 18:47:26 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 14 Feb 2019 18:47:22 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1EIlLWG55967832
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 14 Feb 2019 18:47:21 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4BC754C046;
-        Thu, 14 Feb 2019 18:47:21 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4710D4C04A;
-        Thu, 14 Feb 2019 18:47:20 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.92.228])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 14 Feb 2019 18:47:20 +0000 (GMT)
-Subject: Re: [PATCH v2] x86/ima: require signed kernel modules
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        "Bruno E . O . Meneguele" <bmeneg@redhat.com>
-Date:   Thu, 14 Feb 2019 13:47:09 -0500
-In-Reply-To: <20190214175823.GG11489@garbanzo.do-not-panic.com>
-References: <1550060279-8624-1-git-send-email-zohar@linux.ibm.com>
-         <20190214175823.GG11489@garbanzo.do-not-panic.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19021418-0028-0000-0000-00000348A777
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021418-0029-0000-0000-00002406D47C
-Message-Id: <1550170029.4107.29.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902140126
+        Thu, 14 Feb 2019 13:51:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37330 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727377AbfBNSvc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 13:51:32 -0500
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62749218AC;
+        Thu, 14 Feb 2019 18:51:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550170291;
+        bh=JyWWa/TYeUKwUnwnoOG1g79lawmlfFpG1e39tdIjxgM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=q99qNveebRefkW6dm+U1jKUvkkzdq2sDwJ/S7sZnfhKT97cssRoitTQrMajq2pWEZ
+         WUA+aq0ShJAu+CTXUgAsAOwCAS479ivUoJkJIX9j1OLmyDJKInKzQvoTk6812OxKyU
+         WYtAEpuhi9R5rSG4829PDi4Zi3E4CNy4BM1DchvE=
+Date:   Thu, 14 Feb 2019 12:51:28 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     linux-pci@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        "Michael A. Leonetti" <mikealeonetti@gmail.com>,
+        Alex Deucher <alexdeucher@gmail.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Subject: Bug 202511 - amdgpu fails to load saying "Could not allocate 8192
+ bytes percpu data"
+Message-ID: <20190214185128.GL96272@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-02-14 at 09:58 -0800, Luis Chamberlain wrote:
-> On Wed, Feb 13, 2019 at 07:17:59AM -0500, Mimi Zohar wrote:
-> > Require signed kernel modules on systems with secure boot mode enabled.
-> > 
-> > Requiring appended kernel module signatures may be configured, enabled
-> > on the boot command line, or with this patch enabled in secure boot
-> > mode.
+https://bugzilla.kernel.org/show_bug.cgi?id=202511
+
+From reporter (Michael):
+
+> Working on 4.17.19 (which is what I use) but any kernel 4.19* 4.20* I try has this issue. Built amdgpu as a module, when it tries to load it (or I try to modprobe it) I get
 > 
-> But only if IMA is enabled?
+>   amdgpu: Could not allocate 8192 bytes percpu data
+>   ath10k_pci 0000:02:00.0: board_file api 2 bmi_id N/A crc32 8aedfa4a
+>   percpu: allocation failed, size=8192 align=4096 atomic=0, alloc from reserved chunk failed
+>   CPU: 1 PID: 2620 Comm: systemd-udevd Not tainted 4.20.6-gentoo #1
+>   Hardware name: Acer Aspire A315-41/Metapod_RR, BIOS V1.11 10/30/2018
+>   Call Trace:
+>    dump_stack+0x46/0x5b
+>    pcpu_alloc+0x56e/0x590
+>    ? find_module_all+0x4c/0x80
+>    load_module+0xb51/0x1e80
+>    ? wait_woken+0x80/0x80
+>    __se_sys_finit_module+0xe0/0xf0
+>    do_syscall_64+0x4a/0x100
+>    entry_SYSCALL_64_after_hwframe+0x44/0xa9
+>   RIP: 0033:0x7fb64cd77fb9
+>   Code: 00 00 00 75 05 48 83 c4 18 c3 e8 42 a5 01 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 9f 4e 2c 00 f7 d8 64 89 01 48
+>   RSP: 002b:00007ffe5fe76eb8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+>   RAX: ffffffffffffffda RBX: 00005615a81b2c10 RCX: 00007fb64cd77fb9
+>   RDX: 0000000000000000 RSI: 00007fb64dd3c1c5 RDI: 000000000000000f
+>   RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+>   R10: 000000000000000f R11: 0000000000000246 R12: 00005615a81d0290
+>   R13: 00007fb64dd3c1c5 R14: 0000000000020000 R15: 0000000003938700
 
-The patch subject line indicates this is for IMA, but sure I can amend
-the patch description, making it clearer.
-
-> If so, should this statement be true if
-> IMA is disabled?
-
-This patch coordinates the PE and IMA signatures so that both
-signature types aren't required.  Only if
-"CONFIG_KEXEC_VERIFY_SIGNATURE" is not enabled, is an IMA policy rule
-defined.  A custom IMA policy can still define an IMA kexec rule,
-requiring an IMA signature, even if the PE signature is required.
-
-For the case when IMA is disabled and PE signatures are required, then
-there isn't a problem.  The issue is when neither signature
-verification method is enabled.  I'll leave that for someone else to
-address.
-
-> 
-> Either way, this is not clear from the commit log and code, can the
-> commit log be clear if set_module_sig_enforced() will be set if
-> IMA is disabled but secure boot mode enabled?
-> 
-> > This patch defines set_module_sig_enforced().
-> > 
-> > To coordinate between appended kernel module signatures and IMA
-> > signatures, only define an IMA MODULE_CHECK policy rule if
-> > CONFIG_MODULE_SIG is not enabled.
-> > 
-> > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-> > ---
-> > 
-> > Changelog:
-> > - Removed new "sig_required" flag and associated functions, directly set
-> >   sig_enforce.
-> > 
-> >  arch/x86/kernel/ima_arch.c | 9 ++++++++-
-> >  include/linux/module.h     | 1 +
-> >  kernel/module.c            | 5 +++++
-> >  3 files changed, 14 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
-> > index e47cd9390ab4..3fb9847f1cad 100644
-> > --- a/arch/x86/kernel/ima_arch.c
-> > +++ b/arch/x86/kernel/ima_arch.c
-> > @@ -64,12 +64,19 @@ static const char * const sb_arch_rules[] = {
-> >  	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
-> >  #endif /* CONFIG_KEXEC_VERIFY_SIG */
-> >  	"measure func=KEXEC_KERNEL_CHECK",
-> > +#if !IS_ENABLED(CONFIG_MODULE_SIG)
-> > +	"appraise func=MODULE_CHECK appraise_type=imasig",
-> > +#endif
-> > +	"measure func=MODULE_CHECK",
-> >  	NULL
-> >  };
-> >  
-> >  const char * const *arch_get_ima_policy(void)
-> >  {
-> > -	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot())
-> > +	if (IS_ENABLED(CONFIG_IMA_ARCH_POLICY) && arch_ima_get_secureboot()) {
-> > +		if (IS_ENABLED(CONFIG_MODULE_SIG))
-> > +			set_module_sig_enforced();
-> >  		return sb_arch_rules;
-> > +	}
-> >  	return NULL;
-> >  }
-> > diff --git a/include/linux/module.h b/include/linux/module.h
-> > index 8fa38d3e7538..75e2a5c24a2b 100644
-> > --- a/include/linux/module.h
-> > +++ b/include/linux/module.h
-> > @@ -660,6 +660,7 @@ static inline bool is_livepatch_module(struct module *mod)
-> >  #endif /* CONFIG_LIVEPATCH */
-> >  
-> >  bool is_module_sig_enforced(void);
-> > +void set_module_sig_enforced(void);
-> >  
-> >  #else /* !CONFIG_MODULES... */
-> 
-> I think you need the !CONFIG_MODULES definition of set_module_sig_enforced()
-> then...
-
-Good catch, thanks.
-
-> 
-> > diff --git a/kernel/module.c b/kernel/module.c
-> > index 2ad1b5239910..4cb5b733fb18 100644
-> > --- a/kernel/module.c
-> > +++ b/kernel/module.c
-> > @@ -286,6 +286,11 @@ bool is_module_sig_enforced(void)
-> >  }
-> >  EXPORT_SYMBOL(is_module_sig_enforced);
-> >  
-> > +void set_module_sig_enforced(void)
-> > +{
-> > +       sig_enforce = true;
-> > +}
-> 
-> The export is not needed as it is bool eh?
-
-IMA is builtin, so it doesn't need to be exported.
-
-Mimi
-
+Full dmesg and bisection info in the bugzilla.  Any help is welcome.
