@@ -2,154 +2,141 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DEFEC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C676C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:40:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B34C20821
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:38:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="THPJ2HCg"
+	by mail.kernel.org (Postfix) with ESMTP id 15F75222DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:40:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439668AbfBNQiy (ORCPT
+        id S2407983AbfBNQki (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:38:54 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:46253 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405016AbfBNQiy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 11:38:54 -0500
-Received: by mail-vs1-f65.google.com with SMTP id n10so3994854vso.13
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:38:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ayLJXiXvelPmcsTzXKtARiU/ic4/0bzSK2PSIxYKdi8=;
-        b=THPJ2HCg2mOBN6tjeJc65frB4x5tqONWjH9jtb7wQc7pk8rUl2f1GkP395wL/rf5xy
-         L3VjBi3dhMu3ZKWvVY+ydibB6I98SN+rni8BLarOa0OvnPSF28OUB29UYCv8fTPURHGr
-         bZCWPTOkfd31pRDagzP6nmgRBinKP2JWPSIJI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ayLJXiXvelPmcsTzXKtARiU/ic4/0bzSK2PSIxYKdi8=;
-        b=L5yTARdBGqJYA5PSwvS6SznrU2rNBQgy8D45KmdrEMC/ald3EBAyM2yUWchbVwqySs
-         M6jAAEU9XgVZ7V9fwf1I77/NaJTumzahEfg5B5UlkWy+SBftTj2Z6E6WGovO1Jt8cyEn
-         ZqUOIoea1+IrJo1S5d2sdCtPQn5c0BSF5xdlVQ9WpIyaSRwDyeuaMnH7QsbgdiRjtLyy
-         gzfUVADafzD6XK/c0FQHlALURlxSxuvNAvd3l7m5Z3dWahlF5QvaGX2kldaXKr/DL2X2
-         R4HB9nb1+qgmXer95eGv05GY/rDvfwMmwYpaIJVDeVW1ED8aiIOUX9qD2gdnz5s5yFs4
-         4oMQ==
-X-Gm-Message-State: AHQUAubzcEaJWYoDil/FGLnyqrPOIsk0i8bp1LI7HmyBmepI+OdXmxAF
-        BR2vHSrTGy1QFHRaJyZECxKgZvqzKIo=
-X-Google-Smtp-Source: AHgI3IYKZrm/aJu30kYGZYILI/c0cd921JLxTvuGopbCvUORooTW3wjXsdgV8dB1disVey5CSeghuA==
-X-Received: by 2002:a67:b003:: with SMTP id z3mr2699514vse.200.1550162332721;
-        Thu, 14 Feb 2019 08:38:52 -0800 (PST)
-Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com. [209.85.222.48])
-        by smtp.gmail.com with ESMTPSA id f71sm592263vke.41.2019.02.14.08.38.51
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 08:38:51 -0800 (PST)
-Received: by mail-ua1-f48.google.com with SMTP id d2so2240202ual.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:38:51 -0800 (PST)
-X-Received: by 2002:a9f:2709:: with SMTP id a9mr2431240uaa.10.1550162330984;
- Thu, 14 Feb 2019 08:38:50 -0800 (PST)
+        Thu, 14 Feb 2019 11:40:38 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34264 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405016AbfBNQki (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 11:40:38 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 084F3E6A9D;
+        Thu, 14 Feb 2019 16:40:37 +0000 (UTC)
+Received: from [10.36.112.66] (ovpn-112-66.ams2.redhat.com [10.36.112.66])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 074FC600C4;
+        Thu, 14 Feb 2019 16:40:25 +0000 (UTC)
+Subject: Re: [PATCH V2 00/10] X86/KVM/Hyper-V: Add HV ept tlb range list flush
+ support in KVM
+To:     lantianyu1986@gmail.com
+Cc:     Lan Tianyu <Tianyu.Lan@microsoft.com>, benh@kernel.crashing.org,
+        bp@alien8.de, catalin.marinas@arm.com, christoffer.dall@arm.com,
+        devel@linuxdriverproject.org, haiyangz@microsoft.com,
+        hpa@zytor.com, jhogan@kernel.org, kvmarm@lists.cs.columbia.edu,
+        kvm-ppc@vger.kernel.org, kvm@vger.kernel.org, kys@microsoft.com,
+        linux-arm-kernel@lists.infradead.org, linux@armlinux.org.uk,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, marc.zyngier@arm.com,
+        mingo@redhat.com, mpe@ellerman.id.au, paul.burton@mips.com,
+        paulus@ozlabs.org, ralf@linux-mips.org, rkrcmar@redhat.com,
+        sashal@kernel.org, sthemmin@microsoft.com, tglx@linutronix.de,
+        will.deacon@arm.com, x86@kernel.org,
+        michael.h.kelley@microsoft.com, vkuznets@redhat.com
+References: <20190202013825.51261-1-Tianyu.Lan@microsoft.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <3bcfedac-3054-7d5e-24b6-5c98d8171514@redhat.com>
+Date:   Thu, 14 Feb 2019 17:40:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190214012754.GA17326@beast> <20190214160821.GB19102@redhat.com>
-In-Reply-To: <20190214160821.GB19102@redhat.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 14 Feb 2019 08:38:39 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jLb=C=i-jNx6qLuPgGgN=mf0tgpaC6VS8EO6Kac6nnRsA@mail.gmail.com>
-Message-ID: <CAGXu5jLb=C=i-jNx6qLuPgGgN=mf0tgpaC6VS8EO6Kac6nnRsA@mail.gmail.com>
-Subject: Re: [PATCH] exec: load_script: Allow interpreter argument truncation
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Samuel Dionne-Riel <samuel@dionne-riel.com>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Graham Christensen <graham@grahamc.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190202013825.51261-1-Tianyu.Lan@microsoft.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 14 Feb 2019 16:40:37 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 8:08 AM Oleg Nesterov <oleg@redhat.com> wrote:
->
-> On 02/13, Kees Cook wrote:
-> >
-> > While we want to make sure the kernel doesn't attempt to execute a
-> > truncated interpreter path, we must allow the interpreter arguments to
-> > be truncated. Perl, for example, will re-read the script itself to parse
-> > arguments correctly.
->
-> Heh. I still think that 8099b047ecc4 does the right thing.
->
-> But I can't argue with the fact that it caused the regression, so it should
-> be reverted.
->
-> > This documents the parsing steps, and will fail to exec if the string was
-> > truncated with neither an end-of-line nor any trailing whitespace.
->
-> You know, I have already spent 3 hours trying to write something simple and
-> clear, but failed. Still trying...
+On 02/02/19 02:38, lantianyu1986@gmail.com wrote:
+> From: Lan Tianyu <Tianyu.Lan@microsoft.com>
+> 
+> This patchset is to introduce hv ept tlb range list flush function
+> support in the KVM MMU component. Flushing ept tlbs of several address
+> range can be done via single hypercall and new list flush function is
+> used in the kvm_mmu_commit_zap_page() and FNAME(sync_page). This patchset
+> also adds more hv ept tlb range flush support in more KVM MMU function.
+> 
+> Change since v1:
+>        1) Make flush list as a hlist instead of list in order to 
+>        keep struct kvm_mmu_page size.
+>        2) Add last_level flag in the struct kvm_mmu_page instead
+>        of spte pointer
+>        3) Move tlb flush from kvm_mmu_notifier_clear_flush_young() to kvm_age_hva()
+>        4) Use range flush in the kvm_vm_ioctl_get/clear_dirty_log()
 
-That's why I added comments too. It's kind of a weird bit of parsing,
-and has to protect itself from lack of initial NUL-termination. :P
+Looks good except for the confusion on sp->last_level (which was mostly
+mine---sorry about that).  I think it can still make 5.1.
 
-> Nor I can really understand your fix ;) Will try to read it again, just one
-> question for now,
->
-> >       for (cp = bprm->buf+2;; cp++) {
-> > -             if (cp >= bprm->buf + BINPRM_BUF_SIZE)
-> > -                     return -ENOEXEC;
-> > -             if (!*cp || (*cp == '\n'))
-> > +             if (cp == bprm->buf + BINPRM_BUF_SIZE - 1) {
-> > +                     truncated = true;
->
-> Off-by-one, no? "bprm->buf + BINPRM_BUF_SIZE - 1" is the very last char, it can
-> be '\n' or '\0', this should set end_of_interp.
+However, note that I've never received "KVM/MMU: Use tlb range flush  in
+the kvm_age_hva()".
 
-Ah yeah, this bails out one byte too early. As you suggestion, I
-should move that test to after the !*cp || *cp == '\n' test, like so:
-
-        for (cp = bprm->buf+2;; cp++) {
-                if (!*cp || (*cp == '\n')) {
-                        end_of_interp = true;
-                        break;
-                }
-                if (cp == bprm->buf + BINPRM_BUF_SIZE - 1) {
-                        truncated = true;
-                        break;
-                }
-        }
-        *cp = '\0';
-
-> >                       break;
-> > +             }
-> > +             if (!*cp || (*cp == '\n')) {
-> > +                     end_of_interp = true;
-> > +                     break;
-> > +             }
->
-> so unless I am totally confused you should move this block up before the
-> "bprm->buf + BINPRM_BUF_SIZE - 1" check or that check should use
-> "bprm->buf + BINPRM_BUF_SIZE".
->
-> No?
-
-Moving the block is right, dropping the -1 would be lead to the
-post-loop *cp = '\0' writing past the end of the buffer.
-
-With this change, my tests (after gaining an extra byte of available
-interp path name) still pass. I'll send a v2...
-
-Thanks!
-
--- 
-Kees Cook
+Paolo
