@@ -2,103 +2,74 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4126AC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:17:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ADDAC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:18:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 136D2218FF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:17:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38E4521B24
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:18:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OblGoiEo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404264AbfBNVRz (ORCPT
+        id S2405701AbfBNVR7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 16:17:55 -0500
-Received: from mga04.intel.com ([192.55.52.120]:24020 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392553AbfBNVRz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 16:17:55 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2019 13:17:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,370,1544515200"; 
-   d="scan'208";a="134404045"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by orsmga002.jf.intel.com with ESMTP; 14 Feb 2019 13:17:28 -0800
-Date:   Thu, 14 Feb 2019 14:17:15 -0700
-From:   Keith Busch <keith.busch@intel.com>
-To:     "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>
-Cc:     Takao Indoh <indou.takao@fujitsu.com>,
-        Takao Indoh <indou.takao@jp.fujitsu.com>,
-        "sagi@grimberg.me" <sagi@grimberg.me>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "axboe@fb.com" <axboe@fb.com>, "hch@lst.de" <hch@lst.de>
-Subject: Re: [PATCH] nvme: Enable acceleration feature of A64FX processor
-Message-ID: <20190214211715.GA9613@localhost.localdomain>
-References: <20190201124615.16107-1-indou.takao@jp.fujitsu.com>
- <20190201145414.GA22199@localhost.localdomain>
- <20190205124757.GA28465@esprimo>
- <20190205143905.GG22199@localhost.localdomain>
- <AT5PR8401MB1169E9738C0A4754D0190F2FAB670@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
+        Thu, 14 Feb 2019 16:17:59 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:32980 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392553AbfBNVR6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 16:17:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=1yL8YCNTyPRDZJHx8ppA3BOOOrsNcEeL/DDCwGQrYXE=; b=OblGoiEoqNUCx7iifqcOT3krK
+        r8c5Z+drdTpWgHR50kG0PnEHRAy9TeIXu0EiLwvA7OVY2LFXNXVaF8Qo7cFDyA0G7Xa+0Ol1531F+
+        0bt4sHrt0HFgCu8tRHyUp79MfqISuOfO4kR72LO7t4JeTZ7W1zVmdxcWNVqaT7t5xUzKb/Vl7YjEP
+        CEcFf++SqdUdxGRroRdV51r/tRH2uLX75J5jcqMJB79kVSp6pi0XxIGTkyWYK97zTsUOR3ikPWZQB
+        qH7qDT0PsQI6rhKhdeJDNmFnvIRd0CJ+8nRpGX/A//iDGEvLUs1XDa1PjllyY+PqPQAeIXQwNuYqi
+        evZ1+vQUw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1guOOL-0001kd-Qx; Thu, 14 Feb 2019 21:17:57 +0000
+Date:   Thu, 14 Feb 2019 13:17:57 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>,
+        William Kucharski <william.kucharski@oracle.com>
+Subject: Re: [PATCH v2] page cache: Store only head pages in i_pages
+Message-ID: <20190214211757.GE12668@bombadil.infradead.org>
+References: <20190212183454.26062-1-willy@infradead.org>
+ <20190214133004.js7s42igiqc5pgwf@kshutemo-mobl1>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <AT5PR8401MB1169E9738C0A4754D0190F2FAB670@AT5PR8401MB1169.NAMPRD84.PROD.OUTLOOK.COM>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20190214133004.js7s42igiqc5pgwf@kshutemo-mobl1>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 12:44:48PM -0800, Elliott, Robert (Persistent Memory) wrote:
-> 
-> The PCIe and NVMe specifications dosn't standardize a way to tell the device
-> when to use RO, which leads to system workarounds like this.
-> 
-> The Enable Relaxed Ordering bit defined by PCIe tells the device when it
-> cannot use RO, but doesn't advise when it should or shall use RO.
+On Thu, Feb 14, 2019 at 04:30:04PM +0300, Kirill A. Shutemov wrote:
+>  - migrate_page_move_mapping() has to be converted too.
 
-In general, it is always safe to use RO for any memory writes that have
-no order dependency on other RO writes. It's impossible for the PCIe spec
-to standardize what packets may or may not have a such a dependency:
-that is specific to the higher protocol of device, so RO behavior has
-to be out of scope for PCI spec. It only says to don't use it when it
-isn't safe to do so, like for MSI.
+I think that's as simple as:
 
-For NVMe, there is no order dependency on PRP/SGL data since it is
-perfectly valid for the controller to transfer these out-of-order
-already. Letting the memory controller re-order them would also have to
-be spec compliant.
-
-The host is not allowed to assume the data is there until it observes
-the CQE for that command, so the CQE is the only NVMe protocol dev->host
-transfer that has a strict order depenency and not valid for RO (you
-risk data corruption if you do this wrong).
-
-The NVMe spec does't spell this out, but some controller implementations
-do this today anyway. If it is really that confusing to hardware vendors,
-though, I don't think it'd be harmful to propose an ECN to clarify
-appropriate RO usage, and also a plus if it would get more vendors to
-take notice of this optimization.
++++ b/mm/migrate.c
+@@ -465,7 +465,7 @@ int migrate_page_move_mapping(struct address_space *mapping,
  
-> For SCSI Express (SOP+PQI), we were going to allow specifying these
-> on a per-command basis:
-> * TLP attributes (No Snoop, Relaxed Ordering, ID-based Ordering)
-> * TLP processing hints (Processing Hints and Steering Tags)
->
-> to be used by the data transfers for the command. In some systems, one
-> setting per queue or per device might suffice. Transactions to the
-> queues and doorbells require stronger ordering.
-> 
-> For this workaround:
-> * making an extra pass through the SGL to set the address bit is
-> inefficient; it should be done as the SGL is created.
-> * why doesn't it support PRP Lists?
-> * how does this interact with an iommu, if there is one? Must the
-> address with bit 56 also be granted permission, or is that
-> stripped off before any iommu comparisons?
+                for (i = 1; i < HPAGE_PMD_NR; i++) {
+                        xas_next(&xas);
+-                       xas_store(&xas, newpage + i);
++                       xas_store(&xas, newpage);
+                }
+        }
+ 
+
+or do you see something else I missed?
