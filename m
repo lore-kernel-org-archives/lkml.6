@@ -2,137 +2,208 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A721CC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:44:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B89C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:45:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 799AC2080A
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:44:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CB782080A
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:45:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388595AbfBNQol convert rfc822-to-8bit (ORCPT
+        id S2390907AbfBNQpX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:44:41 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:38475 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726544AbfBNQok (ORCPT
+        Thu, 14 Feb 2019 11:45:23 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54242 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726404AbfBNQpW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 11:44:40 -0500
-Received: from mail-pf1-f198.google.com ([209.85.210.198])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1guK7q-0005RB-Ty
-        for linux-kernel@vger.kernel.org; Thu, 14 Feb 2019 16:44:39 +0000
-Received: by mail-pf1-f198.google.com with SMTP id k10so5219550pfi.5
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:44:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=4JVQ4Ym7cPvVnoypNzsvLkoQ+Ld8CW76g5Ltvz0ByQE=;
-        b=EEfiaFkdQB05DyThrmnwk8Oi5P9v8FINDLrTKIgXGLQff2JJUmFiFUwxCrpvpL1DQU
-         jCNUrkPlQ1GSdQRYcIya24FjbUK8k4lPR1Q3A54HKYZ9N8GZtRQi58xupdCmp+x35kIy
-         uFUbCg9sIpJUrG5gAHCmZ52ON9GXY0IbMNgR06OEyQCJeW8UvbO6lea4WDRFYd2dyVGd
-         cKhoDsGSTgXeeJkZ6ZiK3UZ+1BfoVbWutXJUALRwFStyz+0RwbC4oT9MDmzgWqryuxx6
-         AuXdd9q38iRVjuoj/XGxtPvPbXZc7ArmDcq9EMFXsn8xIBt1h/kTmWMpQbGOv8ZhQiaz
-         02cQ==
-X-Gm-Message-State: AHQUAubKTjf8JIAE/t3IRnYEgD1QDu41DZq5EfpyrA6UgaWorv2wY1pT
-        kyLom9RsNkpVkMo9Cw9GmTg+IS0kSTbKIRjcFANb77rJaQYWKAETBEvha3EJe0VfPqNT6rVDQQr
-        YGiPzeZQMVgdjL0nL8kGqjY8RbyDOkFIAZC7SxeksPQ==
-X-Received: by 2002:a65:62d4:: with SMTP id m20mr713080pgv.215.1550162677416;
-        Thu, 14 Feb 2019 08:44:37 -0800 (PST)
-X-Google-Smtp-Source: AHgI3IZDSdxIfaYCn8vBxee2FOhBS93CmDAjdxIkeyqIF4SI49kLuFb1sWoS1P1zrqMkykIhNvfT7w==
-X-Received: by 2002:a65:62d4:: with SMTP id m20mr713052pgv.215.1550162677052;
-        Thu, 14 Feb 2019 08:44:37 -0800 (PST)
-Received: from [192.168.1.215] (220-133-187-190.HINET-IP.hinet.net. [220.133.187.190])
-        by smtp.gmail.com with ESMTPSA id y9sm4053709pfi.74.2019.02.14.08.44.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 08:44:36 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: Issue with commit a99790bf5c7f3d68d8b01e015d3212a98ee7bd57
-From:   Kai Heng Feng <kai.heng.feng@canonical.com>
-In-Reply-To: <CAE6q+i3E1+2BKTUFYQx0ch-cFNHzw0X805U1DMEy7MDiXXh8Sg@mail.gmail.com>
-Date:   Fri, 15 Feb 2019 00:44:33 +0800
-Cc:     David Miller <davem@davemloft.net>,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <3B9B63A0-E3CA-45EF-B291-5EC21F6F64F4@canonical.com>
-References: <CAE6q+i3E1+2BKTUFYQx0ch-cFNHzw0X805U1DMEy7MDiXXh8Sg@mail.gmail.com>
-To:     Elias Rydberg <rydberg1995@gmail.com>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Thu, 14 Feb 2019 11:45:22 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1EGWrC9060328
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 11:45:20 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qnap3fgnn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 11:45:16 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Thu, 14 Feb 2019 16:45:12 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 14 Feb 2019 16:45:08 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1EGj7ek7864820
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 14 Feb 2019 16:45:07 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4706F11C058;
+        Thu, 14 Feb 2019 16:45:07 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9759011C04C;
+        Thu, 14 Feb 2019 16:45:06 +0000 (GMT)
+Received: from [9.152.224.140] (unknown [9.152.224.140])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 14 Feb 2019 16:45:06 +0000 (GMT)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v3 2/9] s390: ap: kvm: setting a hook for PQAP
+ instructions
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     borntraeger@de.ibm.com, alex.williamson@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        pasic@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
+References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
+ <1550152269-6317-3-git-send-email-pmorel@linux.ibm.com>
+ <20190214165407.335b4ec0.cohuck@redhat.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Thu, 14 Feb 2019 17:45:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190214165407.335b4ec0.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19021416-4275-0000-0000-0000030F89DB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021416-4276-0000-0000-0000381DA661
+Message-Id: <2609f072-ab16-429e-8aba-e1af20757c25@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=539 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902140111
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, 
+On 14/02/2019 16:54, Cornelia Huck wrote:
+> On Thu, 14 Feb 2019 14:51:02 +0100
+> Pierre Morel <pmorel@linux.ibm.com> wrote:
+> 
+>> This patch adds interception code for the PQAP instructions,
+>> and a callback inside the KVM arch structure for s390.
+>>
+>> If a VFIO-AP drivers needs to intercept PQAP/AQIC or PQAP/TAPQ
+> 
+> s/drivers/driver/
 
-> On Feb 15, 2019, at 12:17 AM, Elias Rydberg <rydberg1995@gmail.com> wrote:
-> 
-> Dear Kai,
-> 
-> I write to you simply as I do not know exactly who to write, and since you are the author of commit a99790bf5c7f3d68d8b01e015d3212a98ee7bd57. If you are the completely wrong person to contact about this, I do apologize, and ask for you to share a resource guides me in the right direction. As of Dave, I CC you since you signed of the commit as well.
-> 
-> I will try to describe this with as few words as possible.
-> 
-> When upgrading to kernel 4.19 I experiened an issue of the screen starting to flicker, and then turn pitch black, whenever I turned on my wifi module. After som guidance, I found a workaround, namely booting with kernel parameter intel_idle.max_state=4. Not having a lot of experience with the Linux kernel, I thought it might have to do with an individual hardware fault in my machine.
-> 
-> This week I’ve been in contact with another person experiencing the exact same problems, and having the exact same laptop setup. I then investigated further, did my first kernel bisection, and found out that using a kernel with the named commit is causing this behaviour. This is the result from the bisection:
-> 
-> a99790bf5c7f3d68d8b01e015d3212a98ee7bd57 is the first bad commit
-> commit a99790bf5c7f3d68d8b01e015d3212a98ee7bd57
-> Author: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> Date:   Thu Jun 21 16:30:39 2018 +0800
-> 
-> 
-> 
->     r8169: Reinstate ASPM Support
-> 
-> 
-> 
->     On Intel platforms (Skylake and newer), ASPM support in r8169 is the
->     last missing puzzle to let CPU's Package C-State reaches PC8.  Without
->     ASPM support, the CPU cannot reach beyond PC3. PC8 can save additional
->     ~3W in comparison with PC3 on a Coffee Lake platform, Dell G3 3779.
-> 
-> 
-> 
->     This is based on the work from Chunhao Lin <hau@realtek.com>.
-> 
-> 
-> 
->     Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->     Signed-off-by: David S. Miller <davem@davemloft.net>
-> 
-> 
-> 
-> :040000 040000 87d4515c14f8eb8cf99b6f47f97ca4db700931c1 e542595c74609136a7094777afb10b83012f6643 M      drivers
-> The spec on my latop is:
-> CPU: Intel i7-8550U
-> Wifi: Intel AC-9260 1730Mbps
-> Memory: 8GB Kingston DDR4 2400MHz
-> SSD: Samsung 970 EVO 500gb
-
-From platforms I’ve seen, if ASPM on r8169 is disabled, the deepest Package C-State on Intel CPU will limit to PC3.
-
-If the ASPM on r8169 is enabled, it can reach to PC8 when the display is on, and be able to reach PC10 when display is off.
-
-So the issue seems to be a platform bug - deeper Package C state makes your system unstable.
-
-Please contact the system vendor, the deepest Package C state can be reach should be set by BIOS.
-
-Kai-Heng
+thanks. OK
 
 > 
-> I’m not sure about the motherboard, but the model of the laptop case (and probably the motherboard) is Clevo N750WU.
+
+...
+
+>>   #include "kvm-s390.h"
+>>   #include "trace.h"
+>> @@ -592,6 +593,53 @@ static int handle_io_inst(struct kvm_vcpu *vcpu)
+>>   	}
+>>   }
+>>   
+>> +/*
+>> + * handle_pqap: Handling pqap interception
+>> + * @vcpu: the vcpu having issue the pqap instruction
 > 
-> Please ask if you need more information and I will provide as much help as I can.
+> s/issue/issued/
+
+OK. thanks.
+
 > 
-> Kind regards,
-> Elias Rydberg
+>> + *
+>> + * This callback only handles PQAP/AQIC instruction and
+> 
+> Here you only talk about PQAP/AQIC, what about PQAP/TAPQ mentioned in
+> the patch description?
+
+I can add "for now" or "in this patch" or suppress the reference to 
+PAPQ/TAPQ
+
+> 
+>> + * calls a dedicated callback for this instruction if
+>> + * a driver did register one in the CRYPTO satellite of the
+>> + * SIE block.
+>> + *
+>> + * Do not change the behavior if, return -EOPNOTSUPP if:
+>> + * - the hook is not used do not change the behavior.
+> 
+> The hook is not used? Or not set?
+
+I think "is not set" is better.
+
+> (I don't think you need to repeat "do
+> not change the behavior".)
+
+OK
+
+> 
+>> + * - AP instructions are not available or not available to the guest
+>> + * - the instruction is not PQAP with function code indicating
+>> + *   AQIC do not change the previous behavior.
+>> + *
+>> + * For PQAP/AQIC instruction, verify privilege and specifications
+>> + *
+>> + * return the value returned by the callback.
+>> + */
+>> +static int handle_pqap(struct kvm_vcpu *vcpu)
+>> +{
+>> +	uint8_t fc;
+>> +
+>> +	/* Verify that the hook callback is registered */
+>> +	if (!vcpu->kvm->arch.crypto.pqap_hook)
+>> +		return -EOPNOTSUPP;
+>> +	/* Verify that the AP instruction are available */
+>> +	if (!ap_instructions_available())
+>> +		return -EOPNOTSUPP;
+>> +	/* Verify that the guest is allowed to use AP instructions */
+>> +	if (!(vcpu->arch.sie_block->eca & ECA_APIE))
+>> +		return -EOPNOTSUPP;
+>> +	/* Verify that the function code is AQIC */
+>> +	fc = vcpu->run->s.regs.gprs[0] >> 24;
+>> +	if (fc != 0x03)
+>> +		return -EOPNOTSUPP;
+>> +
+>> +	/* PQAP instructions are allowed for guest kernel only */
+>> +	if (vcpu->arch.sie_block->gpsw.mask & PSW_MASK_PSTATE)
+>> +		return kvm_s390_inject_program_int(vcpu, PGM_PRIVILEGED_OP);
+>> +	/* AQIC instruction is allowed only if facility 65 is available */
+>> +	if (!test_kvm_facility(vcpu->kvm, 65))
+>> +		return kvm_s390_inject_program_int(vcpu, PGM_SPECIFICATION);
+>> +	/* All right, call the callback */
+>> +	return vcpu->kvm->arch.crypto.pqap_hook(vcpu);
+> 
+> Can that callback also return -EOPNOTSUPP to order to drop to user
+> space?
+
+Yes.
+Why not?
+
+> 
+>> +}
+>> +
+>>   static int handle_stfl(struct kvm_vcpu *vcpu)
+>>   {
+>>   	int rc;
+>> @@ -878,6 +926,8 @@ int kvm_s390_handle_b2(struct kvm_vcpu *vcpu)
+>>   		return handle_sthyi(vcpu);
+>>   	case 0x7d:
+>>   		return handle_stsi(vcpu);
+>> +	case 0xaf:
+>> +		return handle_pqap(vcpu);
+>>   	case 0xb1:
+>>   		return handle_stfl(vcpu);
+>>   	case 0xb2:
+> 
+
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
 
