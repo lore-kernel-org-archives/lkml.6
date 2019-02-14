@@ -2,144 +2,122 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 679B8C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:10:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E45CC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:10:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36A75222A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:10:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B989222A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:10:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="L/wiytS1"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TUmqxXJ3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404956AbfBNCKs (ORCPT
+        id S2404979AbfBNCKv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 21:10:48 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:35392 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393208AbfBNCKq (ORCPT
+        Wed, 13 Feb 2019 21:10:51 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:36050 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404949AbfBNCKt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 21:10:46 -0500
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id x1E2AN6q021663;
-        Thu, 14 Feb 2019 11:10:24 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x1E2AN6q021663
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1550110224;
-        bh=NSQMTcNaXTqiGZ0wR123OhbEK3fPd6EroBCfbsKBZDs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=L/wiytS1KE2GFAqyWp+pWZst4oRu7NQICSAiU4SjF2UBBJ636ZPq58VeH+AbC7Hj8
-         rgvlpSQU+3b+2QZTtF428FfrAZKYdJj+OhWIqpwW49ZwzKjw4cFlGh5SKBb8gjSC/2
-         CMDrWGa149BKqk4WI/cXTWf5kqtU8nVhQ/5HAMW2lli3hqDTWOVMQGJfLT07m/+GWG
-         kJpLVnKyv/a991Y6EZAOFxWB7C++mnnNduGJpzvp8WtSe7GHP+ykYyjzENQ5pBddz9
-         PhE+XkUdXbPmDnMLsEO10PGehBuZAazzY3J9a3ueE2BDbDMl/rGWEYnRe4VT7Tac/j
-         kkzcxUx716fiw==
-X-Nifty-SrcIP: [209.85.217.46]
-Received: by mail-vs1-f46.google.com with SMTP id r201so2683772vsc.11;
-        Wed, 13 Feb 2019 18:10:24 -0800 (PST)
-X-Gm-Message-State: AHQUAuY5ez+Aw2rumjLNGFaVWueoZ2l/kezg4u2sH9L5m/i26DXdbHVK
-        TqHcGyPQNxksxw649TLVdCVonTOF3bRe72eJnxg=
-X-Google-Smtp-Source: AHgI3IbsKOo5unpK201l/M2bLEIUtuS8Um9p09zc5mH9RGRunZzSCkBK9fPSTH/pUbjo21o9LYzkqrjEdpTpQKNrAjc=
-X-Received: by 2002:a67:7f43:: with SMTP id a64mr715092vsd.155.1550110223142;
- Wed, 13 Feb 2019 18:10:23 -0800 (PST)
-MIME-Version: 1.0
-References: <1549352017-3503-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1549352017-3503-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 14 Feb 2019 11:09:47 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATM-A_+KE59Q2oJTsvd_sgYnkuN4QqXjWdZrB_zxT94MA@mail.gmail.com>
-Message-ID: <CAK7LNATM-A_+KE59Q2oJTsvd_sgYnkuN4QqXjWdZrB_zxT94MA@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: move archive command to scripts/Makefile.lib
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     linux-s390 <linux-s390@vger.kernel.org>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 13 Feb 2019 21:10:49 -0500
+Received: by mail-qt1-f195.google.com with SMTP id p25so4907917qtb.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 18:10:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=IbhWU+vwiJ4ZGll0liBnsU+9mDwJbLZRs9UYNa4vW7U=;
+        b=TUmqxXJ3ic22OfhEe89ZDRixUCnlvjj9uB5CneITxJzkkMRs4WQJb72VlX96SnADhP
+         VTB2pHS0k0VrzNbJ7NecCcw5rLmo7jkFZRwzJimwbIRLJl2JzmXmG8mHtxbI3Hs3lKVj
+         x0Kr2EK1MrrrxyR4tumbtse4V110OGsowoYFJSivydgnmPQLPQHAHuXcM9nDmtTmeJCE
+         V9hOmEexPi2D2xMW5MBKQvah2oQRMMgRYFkjWpILEKE8wRbimcDYjzJSxWMZvLIoqcrL
+         BYhm701/zHf+FaO2fUGdcFVKYR3zbgk2FPE98KatEzZ5cbJkeNOnp1N2z9IFznpLXwQq
+         y5Lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=IbhWU+vwiJ4ZGll0liBnsU+9mDwJbLZRs9UYNa4vW7U=;
+        b=e3OI3CNJoZCV5yXrMSq8M5InAaCDEmSRqhSOzY3AGZ7WzVA1XunDbA8w24AA+/biD9
+         jkfqELFv3kcf4be8MPC3KVWLb4afms9bjvs10RUPD6aXVzPXvu2Ui41BSpGcMkFvQeQV
+         wdp2UsF9hHfk49shX74nx9VOjbfh9uJ61im5JUi/EHRrodYBG86tQqwRvJ3x7CpTaLX8
+         oeeho9BAR51bUuiL6pcKvqPm6Ys1uKQlMN4yulYRSASifAEw9OXHZJgyq5thuf3/1Ecb
+         SbM6yVQ3Ve5N6PjlwUhK9nhEjfbCCfN3ww7jmsdBDr3lywhzmToqr5PrWUWcpXovKiem
+         RFWQ==
+X-Gm-Message-State: AHQUAubvUP4EqV1n3wLi2Hm+ztA8ewXDRjUloAq+UEvHoH47rxWg3lA1
+        BACgluFoX7DuHpc/xohi+lJaAQ==
+X-Google-Smtp-Source: AHgI3IZCqQEjW8+70aks9hLHT5DqKugLFWu2fQpvtcz0+1TLoEgwjoykFxfZCRsuGgFtLTftI4KRhg==
+X-Received: by 2002:ac8:27ba:: with SMTP id w55mr1061465qtw.228.1550110248059;
+        Wed, 13 Feb 2019 18:10:48 -0800 (PST)
+Received: from localhost.localdomain (pool-72-71-243-63.cncdnh.fast00.myfairpoint.net. [72.71.243.63])
+        by smtp.googlemail.com with ESMTPSA id d63sm1091575qka.22.2019.02.13.18.10.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 18:10:47 -0800 (PST)
+From:   David Long <dave.long@linaro.org>
+To:     stable@vger.kernel.org,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Will Deacon <will.deacon@arm.com>, Mark Brown <broonie@kernel.org>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 4.14 V2 17/17] ARM: fix the cockup in the previous patch
+Date:   Wed, 13 Feb 2019 21:10:22 -0500
+Message-Id: <20190214021022.5313-18-dave.long@linaro.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190214021022.5313-1-dave.long@linaro.org>
+References: <20190214021022.5313-1-dave.long@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 5, 2019 at 4:34 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> scripts/Makefile.build and arch/s390/boot/Makefile use the same
-> command (thin archiving with symbol table creation).
->
-> Avoid the code duplication, and move it to scripts/Makefile.lib.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-Applied to linux-kbuild.
+Commit d6951f582cc50ba0ad22ef46b599740966599b14 upstream.
 
+The intention in the previous patch was to only place the processor
+tables in the .rodata section if big.Little was being built and we
+wanted the branch target hardening, but instead (due to the way it
+was tested) it ended up always placing the tables into the .rodata
+section.
 
+Although harmless, let's correct this anyway.
 
->  arch/s390/boot/Makefile | 3 ---
->  scripts/Makefile.build  | 6 +-----
->  scripts/Makefile.lib    | 6 ++++++
->  3 files changed, 7 insertions(+), 8 deletions(-)
->
-> diff --git a/arch/s390/boot/Makefile b/arch/s390/boot/Makefile
-> index 11ca879..c844eaf 100644
-> --- a/arch/s390/boot/Makefile
-> +++ b/arch/s390/boot/Makefile
-> @@ -57,9 +57,6 @@ $(obj)/section_cmp%: vmlinux $(obj)/compressed/vmlinux FORCE
->  $(obj)/compressed/vmlinux: $(obj)/startup.a FORCE
->         $(Q)$(MAKE) $(build)=$(obj)/compressed $@
->
-> -quiet_cmd_ar = AR      $@
-> -      cmd_ar = rm -f $@; $(AR) rcsTP$(KBUILD_ARFLAGS) $@ $(real-prereqs)
-> -
->  $(obj)/startup.a: $(OBJECTS) FORCE
->         $(call if_changed,ar)
->
-> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> index f8e2794..99be01c 100644
-> --- a/scripts/Makefile.build
-> +++ b/scripts/Makefile.build
-> @@ -424,13 +424,9 @@ $(modorder-target): $(subdir-ym) FORCE
->  # Rule to compile a set of .o files into one .a file (with symbol table)
->  #
->  ifdef lib-target
-> -quiet_cmd_link_l_target = AR      $@
-> -
-> -# lib target archives do get a symbol table and index
-> -cmd_link_l_target = rm -f $@; $(AR) rcsTP$(KBUILD_ARFLAGS) $@ $(real-prereqs)
->
->  $(lib-target): $(lib-y) FORCE
-> -       $(call if_changed,link_l_target)
-> +       $(call if_changed,ar)
->
->  targets += $(lib-target)
->
-> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-> index c0abd9a..8a1f64f 100644
-> --- a/scripts/Makefile.lib
-> +++ b/scripts/Makefile.lib
-> @@ -233,6 +233,12 @@ $(obj)/%: $(src)/%_shipped
->  quiet_cmd_ld = LD      $@
->        cmd_ld = $(LD) $(ld_flags) $(real-prereqs) -o $@
->
-> +# Archive
-> +# ---------------------------------------------------------------------------
-> +
-> +quiet_cmd_ar = AR      $@
-> +      cmd_ar = rm -f $@; $(AR) rcsTP$(KBUILD_ARFLAGS) $@ $(real-prereqs)
-> +
->  # Objcopy
->  # ---------------------------------------------------------------------------
->
-> --
-> 2.7.4
->
+Fixes: 3a4d0c2172bc ("ARM: ensure that processor vtables is not lost after boot")
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: David A. Long <dave.long@linaro.org>
+---
+ arch/arm/mm/proc-macros.S | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-
+diff --git a/arch/arm/mm/proc-macros.S b/arch/arm/mm/proc-macros.S
+index 19516fbc2c55..5461d589a1e2 100644
+--- a/arch/arm/mm/proc-macros.S
++++ b/arch/arm/mm/proc-macros.S
+@@ -278,7 +278,7 @@
+  * If we are building for big.Little with branch predictor hardening,
+  * we need the processor function tables to remain available after boot.
+  */
+-#if 1 // defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
++#if defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
+ 	.section ".rodata"
+ #endif
+ 	.type	\name\()_processor_functions, #object
+@@ -316,7 +316,7 @@ ENTRY(\name\()_processor_functions)
+ 	.endif
+ 
+ 	.size	\name\()_processor_functions, . - \name\()_processor_functions
+-#if 1 // defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
++#if defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
+ 	.previous
+ #endif
+ .endm
 -- 
-Best Regards
-Masahiro Yamada
+2.17.1
+
