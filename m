@@ -6,117 +6,102 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D882C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:22:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 661AAC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:22:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E319C218FF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:22:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 391A9218FF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:22:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403856AbfBNVWI (ORCPT
+        id S2437955AbfBNVWm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 16:22:08 -0500
-Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:52386 "EHLO
-        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2387702AbfBNVWI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 16:22:08 -0500
-Received: from pps.filterd (m0134421.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1ELAxYb006630;
-        Thu, 14 Feb 2019 21:21:52 GMT
-Received: from g2t2353.austin.hpe.com (g2t2353.austin.hpe.com [15.233.44.26])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2qnda0hg5f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 14 Feb 2019 21:21:52 +0000
-Received: from g2t2360.austin.hpecorp.net (g2t2360.austin.hpecorp.net [16.196.225.135])
-        by g2t2353.austin.hpe.com (Postfix) with ESMTP id 3D8749B;
-        Thu, 14 Feb 2019 21:21:51 +0000 (UTC)
-Received: from hpe.com (teo-eag.americas.hpqcorp.net [10.33.152.10])
-        by g2t2360.austin.hpecorp.net (Postfix) with ESMTP id 248BE44;
-        Thu, 14 Feb 2019 21:21:50 +0000 (UTC)
-Date:   Thu, 14 Feb 2019 15:21:49 -0600
-From:   Dimitri Sivanich <sivanich@hpe.com>
-To:     Hedi Berriche <hedi.berriche@hpe.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-efi@vger.kernel.org,
-        x86@kernel.org, Russ Anderson <rja@hpe.com>,
-        Mike Travis <mike.travis@hpe.com>,
-        Steve Wahl <steve.wahl@hpe.com>, stable@vger.kernel.org
-Subject: Re: [Patch v3 0/4] Protect against concurrent calls into UV BIOS
-Message-ID: <20190214212149.GB5073@hpe.com>
-References: <20190213193413.25560-1-hedi.berriche@hpe.com>
+        Thu, 14 Feb 2019 16:22:42 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43280 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387702AbfBNVWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 16:22:42 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0B5DF42BDA;
+        Thu, 14 Feb 2019 21:22:41 +0000 (UTC)
+Received: from sky.random (ovpn-120-178.rdu2.redhat.com [10.10.120.178])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 38425611B3;
+        Thu, 14 Feb 2019 21:22:37 +0000 (UTC)
+Date:   Thu, 14 Feb 2019 16:22:36 -0500
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        "Huang, Ying" <ying.huang@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>
+Subject: Re: [PATCH -mm -V7] mm, swap: fix race between swapoff and some swap
+ operations
+Message-ID: <20190214212236.GA10698@redhat.com>
+References: <20190211083846.18888-1-ying.huang@intel.com>
+ <20190214143318.GJ4525@dhcp22.suse.cz>
+ <20190214123002.b921b680fea07bf5f798df79@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190213193413.25560-1-hedi.berriche@hpe.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902140140
+In-Reply-To: <20190214123002.b921b680fea07bf5f798df79@linux-foundation.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 14 Feb 2019 21:22:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For the series:
+Hello,
 
-Reviewed-by: Dimitri Sivanich <sivanich@hpe.com>
+On Thu, Feb 14, 2019 at 12:30:02PM -0800, Andrew Morton wrote:
+> This was discussed to death and I think the changelog explains the
+> conclusions adequately.  swapoff is super-rare so a stop_machine() in
+> that path is appropriate if its use permits more efficiency in the
+> regular swap code paths.  
 
-On Wed, Feb 13, 2019 at 07:34:09PM +0000, Hedi Berriche wrote:
-> - Changes since v2
->   Addressed comments from Ard Biesheuvel:
->  * expose efi_runtime_lock to UV platform only instead of globally
->  * remove unnecessary #ifdef CONFIG_EFI from bios_uv.c
-> 
-> - Changes since v1:
->   Addressed comments from Bhupesh Sharma, Thomas Gleixner, and Ard Biesheuvel:
->  * made __uv_bios_call() static
->  * moved the efi_enabled() cleanup to its own patchlet
->  * explained the reason for renaming the efi_runtime_lock semaphore
->  * dropped the reviewed-bys as they should be given on the mailing list
->  * Cc'ng stable@vger.kernel.org given the nature of the problem addressed by the patches
-> 
-> ---
-> 
-> Calls into UV BIOS were not being serialised which is wrong as it violates EFI
-> runtime rules, and bad as it does result in all sorts of potentially hard to
-> track down hangs and panics when efi_scratch.prev_mm gets clobbered whenever
-> efi_switch_mm() gets called concurrently from two different CPUs.
-> 
-> Patch #1 removes an unnecessary #ifdef CONFIG_EFI guard from bios_uv.c.
-> 
-> Patch #2 removes uv_bios_call_reentrant() because it's dead code.
-> 
-> Patch #3 is a cleanup that drops test_bit() in favour of the ad hoc efi_enabled().
-> 
-> Patch #4 makes uv_bios_call() variants use the efi_runtime_lock semaphore to
-> protect against concurrency.
-> 
-> Cc: Russ Anderson <rja@hpe.com>
-> Cc: Mike Travis <mike.travis@hpe.com>
-> Cc: Dimitri Sivanich <sivanich@hpe.com>
-> Cc: Steve Wahl <steve.wahl@hpe.com>
-> Cc: stable@vger.kernel.org # v4.9+
-> 
-> Hedi Berriche (4):
->   x86/platform/UV: remove unnecessary #ifdef CONFIG_EFI
->   x86/platform/UV: kill uv_bios_call_reentrant() as it has no callers
->   x86/platform/UV: use efi_enabled() instead of test_bit()
->   x86/platform/UV: use efi_runtime_lock to serialise BIOS calls
-> 
->  arch/x86/include/asm/uv/bios.h          | 13 ++++-----
->  arch/x86/platform/uv/bios_uv.c          | 35 ++++++++++++++-----------
->  drivers/firmware/efi/runtime-wrappers.c |  7 +++++
->  3 files changed, 34 insertions(+), 21 deletions(-)
-> 
-> -- 
-> 2.20.1
-> 
+The problem is precisely that the way the stop_machine callback is
+implemented right now (a dummy noop), makes the stop_machine()
+solution fully equivalent to RCU from the fast path point of view. It
+does not permit more efficiency in the fast path which is all we care
+about.
+
+For the slow path point of view the only difference is possibly that
+stop_machine will reach the quiescent state faster (i.e. swapoff may
+return a few dozen milliseconds faster), but nobody cares about the
+latency of swapoff and it's actually nicer if swapoff doesn't stop all
+CPUs on large systems and it uses less CPU overall.
+
+This is why I suggested if we keep using stop_machine() we should not
+use a dummy function whose only purpose is to reach a queiscent state
+(which is something that is more efficiently achieved with the
+syncronize_rcu/sched/kernel RCU API of the day) but we should instead
+try to leverage the UP-like serialization to remove more spinlocks
+from the fast path and convert them to preempt_disable(). However the
+current dummy callback cannot achieve that higher efficiency in the
+fast paths, the code would need to be reshuffled to try to remove at
+least the swap_lock.
+
+If no spinlock is converted to preempt_disable() RCU I don't see the
+point of stop_machine().
+
+On a side note, the cmpxchge machinery I posted to run the function
+simultaneously on all CPUs I think may actually be superflous if using
+cpus=NULL like Hing suggested. Implementation details aside, still the
+idea of stop_machine would be to do those p->swap_map = NULL and
+everything protected by the swap_lock, should be executed inside the
+callback that runs like in a UP system to speedup the fast path
+further.
+
+Thanks,
+Andrea
