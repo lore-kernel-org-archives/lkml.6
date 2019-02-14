@@ -2,116 +2,122 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 211ECC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:09:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D174C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:10:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E417F222A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:09:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vYW4QXUS"
+	by mail.kernel.org (Postfix) with ESMTP id 13DE9222A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:10:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393852AbfBNCJI (ORCPT
+        id S2389457AbfBNCKJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 21:09:08 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:35257 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390663AbfBNCJF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 21:09:05 -0500
-Received: by mail-vs1-f67.google.com with SMTP id e7so2723803vsc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 18:09:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2W8IxqwU5oOVLVpQ7/T8/p48+iqaHtvLrU3SqLj28mg=;
-        b=vYW4QXUSSD3sHoPN6JSArtilgaYIscuK6k7qrKKHczyaYGVELCThNIv+iTnV93Y0fI
-         3qCe3LosKtMzeRY+ElIXuzttv1SQ66a0zgklWPz6TvmoSjdJcZlOAlgpewAVKQrxQKsh
-         yjFEelZSj4Jx2CjZQErkVE9LxYU6QLDv/uJkMyOcU67lLlH1oaAvDBLNrcXOD+jJphbO
-         I3Cr/uAZTVAu99+PqDV5n28ZrFAYAjPu+frZLC9nzZv7PXzfrtplig8YNao5aqvH+Qy8
-         QG8ydLxENnvhYbYlElK1Fg6eAyGw9jXArPid67Y17nikZTbNJSIUCqoYcEPQ7gkA/58o
-         QeGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2W8IxqwU5oOVLVpQ7/T8/p48+iqaHtvLrU3SqLj28mg=;
-        b=Cgbk1YS8Sn2AtFnhkLMvZCIsfzTesH3QJqCGg1rfdTE3w9hAAzGAwGGAz+HWS2gg/P
-         KhgaSDD3GfBZ/xu/Ot46aS5H/KPE77MwFNKweiOs4kn40PpYAwKcqkaxhMWm1G8eu1Yc
-         AbbZiPe8BcG1NF1tGTCO49jjATcruYPaxFSo2spZHLq+qR0AsTBX/oUPaXwO3Qy6ftSi
-         Z+YsTkKIhMEJXqiDt3hmgE1r8GQyCG7jbQwXMFaqX0Q0d6PH4qyK1G7IDYUFuQzWS3h2
-         4T/onNxiyCNtBeHskpHiMqENBUq8yqsb4qjPP+nipPNCLY/PHd1+6v6EQ5RBE+jakYfj
-         4jVg==
-X-Gm-Message-State: AHQUAubAweyUF4gVI8ybL4Ij/u3+8OsmjecClTARPwKPrT2FAwBJXnMm
-        wX6fZT8GXrxKyisElJQkN9yrWBCTq2WmrLCX3XkxHQulJXQ=
-X-Google-Smtp-Source: AHgI3IYbRuIp7LSqt86c78634zDYSKMCDi0RfykMAiMoK1Zhg+aQr6Lmnf2heDvZfA090DQLW3pdF3xGfo8sb4QJwQ4=
-X-Received: by 2002:a67:f715:: with SMTP id m21mr752031vso.51.1550110144476;
- Wed, 13 Feb 2019 18:09:04 -0800 (PST)
+        Wed, 13 Feb 2019 21:10:09 -0500
+Received: from smtp2.provo.novell.com ([137.65.250.81]:43213 "EHLO
+        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726295AbfBNCKI (ORCPT
+        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
+        Wed, 13 Feb 2019 21:10:08 -0500
+Received: from linux-fcij.suse (prv-ext-foundry1int.gns.novell.com [137.65.251.240])
+        by smtp2.provo.novell.com with ESMTP (TLS encrypted); Wed, 13 Feb 2019 19:10:00 -0700
+Subject: Re: linux 4.19.19: md0_raid:1317 blocked for more than 120 seconds.
+To:     Wolfgang Walter <linux@stwm.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, NeilBrown <neilb@suse.com>,
+        linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <2131016.q2kFhguZXe@stwm.de>
+ <0ee180ac-bb43-6c2f-4084-5cc452a18c9d@suse.com> <3057098.nBgIypvgED@stwm.de>
+From:   Guoqing Jiang <gqjiang@suse.com>
+Message-ID: <0c832f67-de10-8872-d3db-6a9f11c97454@suse.com>
+Date:   Thu, 14 Feb 2019 10:09:56 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <1549955366-19930-1-git-send-email-jing.xia@unisoc.com> <19b0aefd-d265-2092-4787-34de20033ec1@redhat.com>
-In-Reply-To: <19b0aefd-d265-2092-4787-34de20033ec1@redhat.com>
-From:   jing xia <jing.xia.mail@gmail.com>
-Date:   Thu, 14 Feb 2019 10:08:53 +0800
-Message-ID: <CAN=25QPaHd9qpH-OK+0LL951=0hwf1frsC7H1O9hGimsyVUKVg@mail.gmail.com>
-Subject: Re: [PATCH] staging: android: ion: Use low_order_gfp_flags for
- smaller allocations
-To:     Laura Abbott <labbott@redhat.com>
-Cc:     Sumit Semwal <sumit.semwal@linaro.org>, gregkh@linuxfoundation.org,
-        arve@android.com, tkjos@android.com, maco@android.com,
-        joel@joelfernandes.org, christian@brauner.io,
-        puck.chen@hisilicon.com, devel@driverdev.osuosl.org,
-        dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
-        linux-kernel@vger.kernel.org, yuming.han@unisoc.com,
-        zhaoyang.huang@unisoc.com, orson.zhai@unisoc.com,
-        wenan.hu@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <3057098.nBgIypvgED@stwm.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks.
 
-On Thu, Feb 14, 2019 at 2:27 AM Laura Abbott <labbott@redhat.com> wrote:
+
+On 2/12/19 7:20 PM, Wolfgang Walter wrote:
+> Am Dienstag, 12. Februar 2019, 16:20:11 schrieb Guoqing Jiang:
+>> On 2/11/19 11:12 PM, Wolfgang Walter wrote:
+>>> With 4.19.19 we see sometimes the following issue (practically only with
+>>> blk_mq, though):
+>>>
+>>> Feb  4 20:04:46 tettnang kernel: [252300.060165] INFO: task md0_raid1:317
+>>> blocked for more than 120 seconds. Feb  4 20:04:46 tettnang kernel:
+>>> [252300.060188]       Not tainted 4.19.19-debian64.all+1.1 #1 Feb  4
+>>> 20:04:46 tettnang kernel: [252300.060197] "echo 0 >
+>>> /proc/sys/kernel/hung_task_timeout_secs" disables this message. Feb  4
+>>> 20:04:46 tettnang kernel: [252300.060207] md0_raid1       D    0   317
+>>>    2 0x80000000 Feb  4 20:04:46 tettnang kernel: [252300.060211] Call
+>>> Trace:
+>>> Feb  4 20:04:46 tettnang kernel: [252300.060222]  ? __schedule+0x2a2/0x8c0
+>>> Feb  4 20:04:46 tettnang kernel: [252300.060226]  ?
+>>> _raw_spin_unlock_irqrestore+0x20/0x40 Feb  4 20:04:46 tettnang kernel:
+>>> [252300.060229]  schedule+0x32/0x90 Feb  4 20:04:46 tettnang kernel:
+>>> [252300.060241]  md_super_wait+0x69/0xa0 [md_mod] Feb  4 20:04:46
+>>> tettnang kernel: [252300.060247]  ? finish_wait+0x80/0x80 Feb  4 20:04:46
+>>> tettnang kernel: [252300.060255]  md_bitmap_wait_writes+0x8e/0xa0
+>>> [md_mod] Feb  4 20:04:46 tettnang kernel: [252300.060263]  ?
+>>> md_bitmap_get_counter+0x42/0xd0 [md_mod] Feb  4 20:04:46 tettnang kernel:
+>>> [252300.060271]  md_bitmap_daemon_work+0x1e8/0x380 [md_mod] Feb  4
+>>> 20:04:46 tettnang kernel: [252300.060278]  ? md_rdev_init+0xb0/0xb0
+>>> [md_mod] Feb  4 20:04:46 tettnang kernel: [252300.060285]
+>>> md_check_recovery+0x26/0x540 [md_mod] Feb  4 20:04:46 tettnang kernel:
+>>> [252300.060290]  raid1d+0x5c/0xf00 [raid1] Feb  4 20:04:46 tettnang
+>>> kernel: [252300.060294]  ? preempt_count_add+0x79/0xb0 Feb  4 20:04:46
+>>> tettnang kernel: [252300.060298]  ? lock_timer_base+0x67/0x80 Feb  4
+>>> 20:04:46 tettnang kernel: [252300.060302]  ?
+>>> _raw_spin_unlock_irqrestore+0x20/0x40 Feb  4 20:04:46 tettnang kernel:
+>>> [252300.060304]  ? try_to_del_timer_sync+0x4d/0x80 Feb  4 20:04:46
+>>> tettnang kernel: [252300.060306]  ? del_timer_sync+0x35/0x40 Feb  4
+>>> 20:04:46 tettnang kernel: [252300.060309]  ? schedule_timeout+0x17a/0x3b0
+>>> Feb  4 20:04:46 tettnang kernel: [252300.060312]  ?
+>>> preempt_count_add+0x79/0xb0 Feb  4 20:04:46 tettnang kernel:
+>>> [252300.060315]  ? _raw_spin_lock_irqsave+0x25/0x50 Feb  4 20:04:46
+>>> tettnang kernel: [252300.060321]  ? md_rdev_init+0xb0/0xb0 [md_mod] Feb
+>>> 4 20:04:46 tettnang kernel: [252300.060327]  ? md_thread+0xf9/0x160
+>>> [md_mod] Feb  4 20:04:46 tettnang kernel: [252300.060330]  ?
+>>> r1bio_pool_alloc+0x20/0x20 [raid1] Feb  4 20:04:46 tettnang kernel:
+>>> [252300.060336]  md_thread+0xf9/0x160 [md_mod] Feb  4 20:04:46 tettnang
+>>> kernel: [252300.060340]  ? finish_wait+0x80/0x80 Feb  4 20:04:46 tettnang
+>>> kernel: [252300.060344]  kthread+0x112/0x130 Feb  4 20:04:46 tettnang
+>>> kernel: [252300.060346]  ? kthread_create_worker_on_cpu+0x70/0x70 Feb  4
+>>> 20:04:46 tettnang kernel: [252300.060350]  ret_from_fork+0x35/0x40
+>>>
+>>> I saw that there was a similar problem with raid10 and an upstream patch
+>>>
+>>> e820d55cb99dd93ac2dc949cf486bb187e5cd70d
+>>> md: fix raid10 hang issue caused by barrier
+>>> by  Guoqing Jiang
+>>>
+>>> I wonder if there is a similar fix needed for raid1?
+>> Seems not, the calltrace tells the previous write superblock IO was not
+>> finish as expected,
+>> there is a report for raid5 which has similar problem with md_super_wait
+>> in the link [1]. Maybe
+>> you can disable blk-mq to narrow down the issue as well.
+> I already did for 4 weeks. I didn't saw this with blk-mq disabled (for scsi
+> and md), though this may be by luck.
+
+Then I guess it maybe related to blk-mq, which scheduler are you used 
+with blk-mq?
+And maybe you can switch it to see if it is caused by specified 
+scheduler or not.
+
+>> [1] |https://bbs.archlinux.org/viewtopic.php?id=243520
+> I found this bug report in debian:
 >
-> On 2/11/19 11:09 PM, Jing Xia wrote:
-> > gfp_flags is always set high_order_gfp_flags even if allocations of
-> > order 0 are made.But for smaller allocations, the system should be able
-> > to reclaim some memory.
-> >
-> > Signed-off-by: Jing Xia <jing.xia@unisoc.com>
-> > Reviewed-by: Yuming Han <yuming.han@unisoc.com>
-> > Reviewed-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> > Reviewed-by: Orson Zhai <orson.zhai@unisoc.com>
-> > ---
-> >   drivers/staging/android/ion/ion_system_heap.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/staging/android/ion/ion_system_heap.c b/drivers/staging/android/ion/ion_system_heap.c
-> > index 0383f75..20f2103 100644
-> > --- a/drivers/staging/android/ion/ion_system_heap.c
-> > +++ b/drivers/staging/android/ion/ion_system_heap.c
-> > @@ -223,10 +223,10 @@ static void ion_system_heap_destroy_pools(struct ion_page_pool **pools)
-> >   static int ion_system_heap_create_pools(struct ion_page_pool **pools)
-> >   {
-> >       int i;
-> > -     gfp_t gfp_flags = low_order_gfp_flags;
-> >
-> >       for (i = 0; i < NUM_ORDERS; i++) {
-> >               struct ion_page_pool *pool;
-> > +             gfp_t gfp_flags = low_order_gfp_flags;
-> >
-> >               if (orders[i] > 4)
-> >                       gfp_flags = high_order_gfp_flags;
-> >
->
-> This was already submitted in
-> https://lore.kernel.org/lkml/1549004386-38778-1-git-send-email-saberlily.xia@hisilicon.com/T/#u
-> (I'm also very behind on Ion e-mail and need to catch up...)
->
-> Laura
+> https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=904822
+
+Thanks, the bug report also said it didn't happen after disable blk-mq.
+
+Regards,
+Guoqing
