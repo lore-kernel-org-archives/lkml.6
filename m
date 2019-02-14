@@ -2,110 +2,126 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7328C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:29:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36466C4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:29:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F3D62070D
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:29:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06A472070D
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:29:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="J91kQpug"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389602AbfBNL3B (ORCPT
+        id S2393920AbfBNL3L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 06:29:01 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40893 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726940AbfBNL3B (ORCPT
+        Thu, 14 Feb 2019 06:29:11 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:55174 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729808AbfBNL3L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 06:29:01 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 4FAD180331; Thu, 14 Feb 2019 12:28:52 +0100 (CET)
-Date:   Thu, 14 Feb 2019 12:28:58 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Yauhen Kharuzhy <jekhor@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
- LEDs
-Message-ID: <20190214112858.GG6132@amd>
-References: <20190212205901.13037-1-jekhor@gmail.com>
- <20190212205901.13037-2-jekhor@gmail.com>
- <1df39a63-533f-bb68-a056-a0241f148be9@redhat.com>
- <20190213230731.GA8557@amd>
- <42078a81-e32e-81b7-528f-d1adb60d31c3@redhat.com>
- <20190213233806.GA11867@amd>
- <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com>
+        Thu, 14 Feb 2019 06:29:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=8y4n+o9Hv/codggya8emxwNTjOMFoKmC5CMGzEsB5lo=; b=J91kQpug93gfsehaWqBdUaNX7
+        zurTZUL4+JzzJoEFzinTvJLUcZjvtAzQUTAW6XGeEyeZYoRxJOdnXrn0XUqSbi8HIRM+3IZy8pve/
+        4kk1Edp9RzAsItTLdw/hvdY5AwjqWP7RA9zA76VNIhGGFOPzHzvme8eEmjQia3qP3cNqAzFx/AfE2
+        jwORxRGFCJSfSYkvbyGpUcJEvMsu5Ppy/zsm5R1ixltq5pbxTQ21Rkf4JKNFBDb7PHYcO8flecFDK
+        896o1MiZPOaSslxF2HapiP0kq3xMZz+S9jbcKGCkhJ5SdRotn11e7eVeiITgcuWxWsGQ2GZKc17nL
+        Mn0bIMNOA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1guFCG-000270-4h; Thu, 14 Feb 2019 11:28:52 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 1DADA20298BF7; Thu, 14 Feb 2019 12:28:49 +0100 (CET)
+Date:   Thu, 14 Feb 2019 12:28:49 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Igor Stoppa <igor.stoppa@gmail.com>
+Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
+        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
+        linux-integrity@vger.kernel.org,
+        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v5 03/12] __wr_after_init: Core and default arch
+Message-ID: <20190214112849.GM32494@hirez.programming.kicks-ass.net>
+References: <cover.1550097697.git.igor.stoppa@huawei.com>
+ <b99f0de701e299b9d25ce8cfffa3387b9687f5fc.1550097697.git.igor.stoppa@huawei.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="gvF4niNJ+uBMJnEh"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <b99f0de701e299b9d25ce8cfffa3387b9687f5fc.1550097697.git.igor.stoppa@huawei.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Feb 14, 2019 at 12:41:32AM +0200, Igor Stoppa wrote:
+> +static inline void *wr_memset(void *p, int c, __kernel_size_t n)
+> +{
+> +	return memset(p, c, n);
+> +}
+> +
+> +static inline void *wr_memcpy(void *p, const void *q, __kernel_size_t n)
+> +{
+> +	return memcpy(p, q, n);
+> +}
+> +
+> +#define wr_assign(var, val)	((var) = (val))
+> +#define wr_rcu_assign_pointer(p, v)	rcu_assign_pointer(p, v)
+> +
+> +#else
+> +
+> +void *wr_memset(void *p, int c, __kernel_size_t n);
+> +void *wr_memcpy(void *p, const void *q, __kernel_size_t n);
+> +
+> +/**
+> + * wr_assign() - sets a write-rare variable to a specified value
+> + * @var: the variable to set
+> + * @val: the new value
+> + *
+> + * Returns: the variable
+> + */
+> +
+> +#define wr_assign(dst, val) ({			\
+> +	typeof(dst) tmp = (typeof(dst))val;	\
+> +						\
+> +	wr_memcpy(&dst, &tmp, sizeof(dst));	\
+> +	dst;					\
+> +})
+> +
+> +/**
+> + * wr_rcu_assign_pointer() - initialize a pointer in rcu mode
+> + * @p: the rcu pointer - it MUST be aligned to a machine word
+> + * @v: the new value
+> + *
+> + * Returns the value assigned to the rcu pointer.
+> + *
+> + * It is provided as macro, to match rcu_assign_pointer()
+> + * The rcu_assign_pointer() is implemented as equivalent of:
+> + *
+> + * smp_mb();
+> + * WRITE_ONCE();
+> + */
+> +#define wr_rcu_assign_pointer(p, v) ({	\
+> +	smp_mb();			\
+> +	wr_assign(p, v);		\
+> +	p;				\
+> +})
 
---gvF4niNJ+uBMJnEh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This requires that wr_memcpy() (through wr_assign) is single-copy-atomic
+for native types. There is not a comment in sight that states this.
 
-Hi!
-
-> >>Basically the charge led has 3 states:
-> >>
-> >>1) Off
-> >>2) On
-> >>3) On when charging
-> >>
-> >>And then when on it has 4 patterns:
-> >>
-> >>1) Permanently off (so still not really on)
-> >>2) Permanently on
-> >>3) Blinking
-> >>4) Breathing
-> >
-> >Ok, so you don't really need to support _both_ off methods.
-> >
-> >Still sounds like a normal LED, with special "yoga-charging" and
-> >"yoga-breathing" triggers. (All the normal triggers should still work,
-> >too.)
->=20
-> Except that when in yoga-charging mode, the user should
-> still be able to select if the LED is simply on when charging,
-> blinking when charging, or breathing when charging.
-
-BTW... all this should really go in the comment to the top of the
-file. It is non-trivial.
-
-> >>The problem is that any changes made are permanent, they
-> >>survice reboots and the default is Breathing, so we need
-> >>a way to restore that which does not involve removing
-> >>the internal battery of these devices.
-
-As should this.... as it is quite unusual.
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---gvF4niNJ+uBMJnEh
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlxlUPoACgkQMOfwapXb+vKDeQCgj8YoCeC9y3msoIYfCsFyGPYh
-sdMAnAtIhoY/uZb8icAAoaBhWoEem8rQ
-=Aczs
------END PGP SIGNATURE-----
-
---gvF4niNJ+uBMJnEh--
+Also, is this true of x86/arm64 memcpy ?
