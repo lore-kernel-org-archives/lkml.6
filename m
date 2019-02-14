@@ -2,128 +2,364 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 204D3C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A25FC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:09:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC5E020838
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:08:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E52520838
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:09:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="D6r1YdPq"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JBTB/0YM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395560AbfBNLIW (ORCPT
+        id S2438463AbfBNLJm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 06:08:22 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:59476 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726365AbfBNLIV (ORCPT
+        Thu, 14 Feb 2019 06:09:42 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:51852 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbfBNLJl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 06:08:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=aWIZyZMmST8ebU3DT/Rlvq66ym1KIAlYo0p9mg3XXYw=; b=D6r1YdPqaEGX911CeKiPT8/19
-        aQHGgLTVFVNO0YU0yKheAnibjZMfiz6wI3YcxORYYn0qBjVKEP16VsTLeVZCAE/gShrgT9ymIESiw
-        Pl5cXj6FNHnORqmPh/xvQtNSsUjOQea/fBuVvOYcyC36dMQucrzp4udjlmOC49vTOY1SIrw1m74Gq
-        31dNWiV0Ra5pCoDgVSLvnjHLmvav03tBKhXgf63LV9w52FNa/tN/1oxB29fqC/xbFDvcLvDKzJZA2
-        SDD8TsIlE+O9CU6SUw57SLYbBry7llFxRxil/kaT2+4WURnk5NCKHJrO/vpQK2z7DOL/42gU/lSs3
-        cIze0QVqA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1guEsJ-0008HC-Ho; Thu, 14 Feb 2019 11:08:15 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D0AD620298565; Thu, 14 Feb 2019 12:08:13 +0100 (CET)
-Date:   Thu, 14 Feb 2019 12:08:13 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Alexey Brodkin <alexey.brodkin@synopsys.com>
-Cc:     David Laight <David.Laight@ACULAB.COM>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        Arnd Bergmann <arnd.bergmann@linaro.org>,
-        Vineet Gupta <vineet.gupta1@synopsys.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH] ARC: Explicitly set ARCH_SLAB_MINALIGN = 8
-Message-ID: <20190214110813.GK32494@hirez.programming.kicks-ass.net>
-References: <20190208105519.26750-1-abrodkin@synopsys.com>
- <81017fe4-b31f-4942-e822-a7b70008b74d@synopsys.com>
- <f83412d1e7fd4d67b4632c1f81fae963@AcuMS.aculab.com>
- <bfc65835-21f9-6d5e-791d-ee49113d939c@synopsys.com>
- <20190213125651.GP32494@hirez.programming.kicks-ass.net>
- <e6138aeb-9ce4-fbfa-4d6a-b76f189a3e47@synopsys.com>
- <20190214103140.GG32494@hirez.programming.kicks-ass.net>
- <4881796E12491D4BB15146FE0209CE64681DB122@DE02WEMBXB.internal.synopsys.com>
+        Thu, 14 Feb 2019 06:09:41 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1EB8lKk018743;
+        Thu, 14 Feb 2019 05:08:47 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1550142527;
+        bh=egkfXFPKT1ratxLO5gmPdkbe0lY5EUdNvgXbZnXx1cM=;
+        h=Subject:To:References:CC:From:Date:In-Reply-To;
+        b=JBTB/0YMnb+e4s5d9sfxYjZrPe9Inp9xQ+dU00HOdNIEkfMkJ7opKo5Gl7iXgc8hY
+         e5ryka/KAMC8Ipj14Q/l7UuXO/dnp5aNPgPbpiqepoJ93Q2q1s6vydaP/w0a+o0XV3
+         jYGb+GwVH4MLwNjT3VhayzEaliCllaF4pAC+qLiI=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1EB8lSJ004807
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 14 Feb 2019 05:08:47 -0600
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 14
+ Feb 2019 05:08:46 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 14 Feb 2019 05:08:46 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1EB8fsp030188;
+        Thu, 14 Feb 2019 05:08:42 -0600
+Subject: Re: [PATCH v2 01/14] dt-bindings: remoteproc: Add TI PRUSS bindings
+To:     Suman Anna <s-anna@ti.com>, <tony@atomide.com>, <ohad@wizery.com>,
+        <bjorn.andersson@linaro.org>
+References: <1549290167-876-1-git-send-email-rogerq@ti.com>
+ <1549290167-876-2-git-send-email-rogerq@ti.com>
+ <16001a6f-faed-ee14-5ade-79d5462f6d51@ti.com>
+CC:     <david@lechnology.com>, <nsekhar@ti.com>, <t-kristo@ti.com>,
+        <nsaulnier@ti.com>, <jreeder@ti.com>, <m-karicheri2@ti.com>,
+        <woods.technical@gmail.com>, <linux-omap@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        Robert Nelson <robertcnelson@gmail.com>, <dan@kulp.com>,
+        Matthijs van Duin <matthijsvanduin@gmail.com>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <5C654C39.2030308@ti.com>
+Date:   Thu, 14 Feb 2019 13:08:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4881796E12491D4BB15146FE0209CE64681DB122@DE02WEMBXB.internal.synopsys.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <16001a6f-faed-ee14-5ade-79d5462f6d51@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 10:44:49AM +0000, Alexey Brodkin wrote:
-> > On Wed, Feb 13, 2019 at 03:23:36PM -0800, Vineet Gupta wrote:
-> > > On 2/13/19 4:56 AM, Peter Zijlstra wrote:
-> > > >
-> > > > Personally I think u64 and company should already force natural
-> > > > alignment; but alas.
-> > >
-> > > But there is an ISA/ABI angle here too. e.g. On 32-bit ARC, LDD (load double) is
-> > > allowed to take a 32-bit aligned address to load a register pair. Thus all u64
-> > > need not be 64-bit aligned (unless attribute aligned 8 etc) hence the relaxation
-> > > in ABI (alignment of long long is 4). You could certainly argue that we end up
-> > > undoing some of it anyways by defining things like ARCH_KMALLOC_MINALIGN to 8, but
-> > > still...
-> > 
-> > So what happens if the data is then split across two cachelines; will a
-> > STD vs LDD still be single-copy-atomic? I don't _think_ we rely on that
-> > for > sizeof(unsigned long), with the obvious exception of atomic64_t,
-> > but yuck...
++Robert, Dan, Matthijs
+
+Hi Suman,
+
+On 14/02/19 04:52, Suman Anna wrote:
+> Hi Roger,
 > 
-> STD & LDD are simple store/load instructions so there's no problem for
-> their 64-bit data to be from 2 subsequent cache lines as well as 2 pages
-> (if we're that unlucky). Or you mean something else?
-
-u64 x;
-
-WRITE_ONCE(x, 0x1111111100000000);
-WRITE_ONCE(x, 0x0000000011111111);
-
-vs
-
-t = READ_ONCE(x);
-
-is t allowed to be 0x1111111111111111 ?
-
-If the data is split between two cachelines, the hardware must do
-something very funny to avoid that.
-
-single-copy-atomicity requires that to never happen; IOW no load or
-store tearing. You must observe 'whole' values, no mixing.
-
-Linux requires READ_ONCE()/WRITE_ONCE() to be single-copy-atomic for
-<=sizeof(unsigned long) and atomic*_read()/atomic*_set() for all atomic
-types. Your atomic64_t alignment should ensure this is so.
-
-So while I think we're fine, I do find hardware instructions that tear
-yuck (yah, I know, x86...)
-
-> > So even though it is allowed by the chip; does it really make sense to
-> > use this?
+> On 2/4/19 8:22 AM, Roger Quadros wrote:
+>> From: Suman Anna <s-anna@ti.com>
+>>
+>> This patch adds the bindings for the Programmable Real-Time Unit
+>> and Industrial Communication Subsystem (PRU-ICSS) present on various
+>> SoCs such as AM33xx, AM437x, AM57xx, Keystone 66AK2G SoC, etc. It is
+>> present on the Davinci based OMAPL138 SoCs and K3 architecture
+>> based AM65x SoCs as well (not covered for now).
+>>
+>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>> Signed-off-by: Roger Quadros <rogerq@ti.com>
+>> ---
+>>  .../devicetree/bindings/soc/ti/ti,pruss.txt        | 212 +++++++++++++++++++++
+>>  1 file changed, 212 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+>> new file mode 100644
+>> index 0000000..5ac76fd
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+>> @@ -0,0 +1,212 @@
+>> +PRU-ICSS on TI SoCs
+>> +===================
+>> +
+>> +The Programmable Real-Time Unit and Industrial Communication Subsystem
+>> +(PRU-ICSS) is present on various TI SoCs such as AM335x, AM437x, Keystone
+>> +66AK2G, etc. A PRUSS consists of dual 32-bit RISC cores (Programmable
+>> +Real-Time Units, or PRUs) with program memory and data memory.
+>> +
+>> +The programmable nature of the PRUs provide flexibility to implement
+>> +custom peripheral interfaces, fast real-time responses, or specialized
+>> +data handling. The common peripheral modules include the following,
+>> +
+>> +  - Enhanced GPIO with async capture and serial support
+>> +  - an Ethernet MII_RT module with two MII ports
+>> +  - an MDIO port to control external Ethernet PHYs
+>> +  - an Industrial Ethernet Peripheral (IEP) to manage/generate Industrial
+>> +    Ethernet functions
+>> +  - an Enhanced Capture Module (eCAP)
+>> +  - a 16550-compatible UART to support PROFIBUS
+>> +  - Interrupt controller with 64 input events and 10 Host interrupts.
+>> +
+>> +A shared Data RAM, if present, can be accessed by both the PRU cores. The
+>> +Interrupt Controller (INTC) and a CFG module are common to both the PRU
+>> +cores.
+>> +
+>> +Various sub-modules within a PRU-ICSS subsystem are represented as individual
+>> +nodes.
+>> +
+>> +PRUSS Node
+>> +=============
+>> +
+>> +This node represents the entire ICSS instance and the various modules are
+>> +contained as children. The PRUSS driver is responsible for managing the
+>> +common resources i.e. DRAM0, DRAM1, SHARED_RAM and CFG space.
+>> +
+>> +Required Properties:
+>> +--------------------
+>> +- compatible     : should be one of,
+>> +                       "ti,am3356-pruss" for AM335x family of SoCs
+>> +                       "ti,am4376-pruss" for AM437x family of SoCs
+>> +                       "ti,am5728-pruss" for AM57xx family of SoCs
+>> +                       "ti,k2g-pruss" for 66AK2G family of SoCs
+>> +- reg            : base address and size for each of the Data RAMs as
+>> +                   mentioned in reg-names, and in the same order as the
+>> +                   reg-names
 > 
-> It gives performance benefits when dealing with either 64-bit or even
-> larger buffers, see how we use it in our string routines like here [1].
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arc/lib/memset-archs.S#n81
+> Hmm, not sure what prompted you to deviate from the design we had on TI
+> SDK kernels. Your revised bindings does not allow us to use this device
+> for the scalability with either UIO/VFIO.
 
-That doesn't require the ABI alignment crud.
+My understanding was that the device tree node will have to be modified
+in any case to support the current uio_pruss.c driver so we don't
+need to add things that we don't need right away.
+
+> 
+> Let's sort this out before you post the next series.
+
+Let's discuss this here so I don't have to explain the whole thing again
+in the next series.
+
+Tony,
+
+Suman is mainly concerned about the following changes in v2
+1) pruss node does not contain reg property representing entire ICSS.
+2) pruss node does not contain interrupts.
+
+Both of these are required if drivers/uio/uio_pruss.c or in future if
+VFIO is to be used.
+
+The beagleboard community is a primary user of this driver and we need to
+find a solution so that PRUSS is usable either via remoteproc or via UIO.
+
+Ideal case should allow user to use either of the drivers by just doing
+a unbind and bind.
+
+I don't have a better idea than having a encapsulating node that has
+the appropriate reg and interrupt properties.
+
+cheers,
+-roger
+
+> 
+> regards
+> Suman
+> 
+>> +- reg-names      : should contain a string(s) from among the following names,
+>> +                   each representing a specific Data RAM region. Some PRU-ICSS
+>> +		   instances on certain SoCs might not have Shared DRAM.
+>> +                       "dram0" for Data RAM0,
+>> +                       "dram1" for Data RAM1,
+>> +                       "shrdram2" for Shared Data RAM,
+>> +- #address-cells : should be 1
+>> +- #size-cells    : should be 1
+>> +- ranges         : no specific range translations required, child nodes have the
+>> +                   same address view as the parent, so should be mentioned without
+>> +                   any value for the property
+>> +
+>> +Optional Properties:
+>> +--------------------
+>> +- no-shared-ram	: Should be present if the instance doesn't have Shared RAM.
+>> +		  e.g. AM4376 ICSS0 instance doesn't have Shared RAM.
+>> +
+>> +The PRUSS node will have one or more of the folowing child nodes.
+>> +
+>> +PRU CORES
+>> +=========
+>> +ICSS typically has 2 PRU cores. These should be represented as remoteproc devices.
+>> +
+>> +INTC node
+>> +=========
+>> +ICSS has one INTC interrupt controller module. This should be represented as
+>> +a standard interrupt-controller node.
+>> +
+>> +CFG, IEP, MII_RT
+>> +================
+>> +The individual sub-modules CFG, IEP and MII_RT are represented as a syscon
+>> +node each with specific node names as below:
+>> +                  "cfg" for CFG sub-module,
+>> +                  "iep" for IEP sub-module,
+>> +                  "mii_rt" for MII-RT sub-module,
+>> +
+>> +See Documentation/devicetree/bindings/mfd/syscon.txt for details.
+>> +
+>> +MDIO
+>> +====
+>> +Each PRUSS has an MDIO module that can be used to control external PHYs. The
+>> +MDIO module used within the PRU-ICSS is an instance of the MDIO Controller
+>> +used in TI Davinci SoCs. Please refer to the corresponding binding document,
+>> +Documentation/devicetree/bindings/net/davinci-mdio.txt for details.
+>> +
+>> +Application/User Nodes
+>> +=======================
+>> +A PRU application/user node typically uses one or more PRU device nodes to
+>> +implement a PRU application/functionality. Each application/client node would
+>> +need a reference to at least a PRU node, and optionally pass some configuration
+>> +parameters.
+>> +
+>> +Required Properties:
+>> +--------------------
+>> +- prus                 : phandles to the PRU nodes used
+>> +
+>> +Optional Properties:
+>> +--------------------
+>> +- firmware-name        : firmwares for the PRU cores, the default firmware
+>> +                         for the core from the PRU node will be used if not
+>> +                         provided. The firmware names should correspond to
+>> +                         the PRU cores listed in the 'prus' property
+>> +- ti,pruss-gp-mux-sel  : array of values for the GP_MUX_SEL under PRUSS_GPCFG
+>> +                         register for a PRU. This selects the internal muxing
+>> +                         scheme for the PRU instance. If not provided, the
+>> +                         default out-of-reset value (0) for the PRU core is
+>> +                         used. Values should correspond to the PRU cores listed
+>> +                         in the 'prus' property
+>> +- ti,pru-interrupt-map : PRU interrupt mappings, containing an array of entries
+>> +                         with each entry consisting of 4 cell-values. First one
+>> +                         is an index towards the "prus" property to identify the
+>> +                         PRU core for the interrupt map, second is the PRU
+>> +                         System Event id, third is the PRU interrupt channel id
+>> +                         and fourth is the PRU host interrupt id. If provided,
+>> +                         this map will supercede any other configuration
+>> +                         provided through firmware
+>> +
+>> +Example:
+>> +========
+>> +1.	/* AM33xx PRU-ICSS */
+>> +
+>> +	pruss: pruss@0 {
+>> +		compatible = "ti,am3356-pruss";
+>> +		reg = <0x0 0x2000>,
+>> +		      <0x2000 0x2000>,
+>> +		      <0x10000 0x3000>;
+>> +		reg-names = "dram0", "dram1",
+>> +			    "shrdram2";
+>> +		#address-cells = <1>;
+>> +		#size-cells = <1>;
+>> +		ranges;
+>> +
+>> +		pruss_cfg: cfg@26000 {
+>> +			compatible = "syscon";
+>> +			reg = <0x26000 0x2000>;
+>> +		};
+>> +
+>> +		pruss_iep: iep@2e000 {
+>> +			compatible = "syscon";
+>> +			reg = <0x2e000 0x31c>;
+>> +		};
+>> +
+>> +		pruss_mii_rt: mii_rt@32000 {
+>> +			compatible = "syscon";
+>> +			reg = <0x32000 0x58>;
+>> +		};
+>> +
+>> +		pruss_intc: intc@20000 {
+>> +			compatible = "ti,am3356-pruss-intc";
+>> +			reg = <0x20000 0x2000>;
+>> +			reg-names = "intc";
+>> +			interrupt-controller;
+>> +			#interrupt-cells = <1>;
+>> +			interrupts = <20 21 22 23 24 25 26 27>;
+>> +			interrupt-names = "host2", "host3", "host4",
+>> +					  "host5", "host6", "host7",
+>> +					  "host8", "host9";
+>> +		};
+>> +
+>> +		pru0: pru@34000 {
+>> +			compatible = "ti,am3356-pru";
+>> +			reg = <0x34000 0x2000>,
+>> +			      <0x22000 0x400>,
+>> +			      <0x22400 0x100>;
+>> +			reg-names = "iram", "control", "debug";
+>> +			gpcfg = <&pruss_cfg 0x8>;
+>> +			firmware-name = "am335x-pru0-fw";
+>> +			interrupt-parent = <&pruss_intc>;
+>> +			interrupts = <16>, <17>;
+>> +			interrupt-names = "vring", "kick";
+>> +		};
+>> +
+>> +		pru1: pru@38000 {
+>> +			compatible = "ti,am3356-pru";
+>> +			reg = <0x38000 0x2000>,
+>> +			      <0x24000 0x400>,
+>> +			      <0x24400 0x100>;
+>> +			reg-names = "iram", "control", "debug";
+>> +			gpcfg = <&pruss_cfg 0xc>;
+>> +			firmware-name = "am335x-pru1-fw";
+>> +			interrupt-parent = <&pruss_intc>;
+>> +			interrupts = <18>, <19>;
+>> +			interrupt-names = "vring", "kick";
+>> +		};
+>> +
+>> +		pruss_mdio: mdio@32400 {
+>> +			compatible = "ti,davinci_mdio";
+>> +			reg = <0x32400 0x90>;
+>> +			clocks = <&dpll_core_m4_ck>;
+>> +			clock-names = "fck";
+>> +			bus_freq = <1000000>;
+>> +			#address-cells = <1>;
+>> +			#size-cells = <0>;
+>> +			status = "disabled";
+>> +		};
+>> +	};
+>> +
+>> +2:	/* PRU application node example */
+>> +	app_node: app_node {
+>> +		prus = <&pru0>, <&pru1>;
+>> +		firmware-name = "pruss-app-fw", "pruss-app-fw-2";
+>> +		ti,pruss-gp-mux-sel = <2>, <1>;
+>> +		/* setup interrupts for prus:
+>> +		   prus[0] => pru1_0: ev=16, chnl=2, host-irq=7,
+>> +		   prus[1] => pru1_1: ev=19, chnl=1, host-irq=3 */
+>> +		ti,pru-interrupt-map = <0 16 2 7 >, <1 19 1 3>;
+>> +	}
+>>
+> 
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
