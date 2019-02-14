@@ -2,117 +2,121 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A06AAC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:33:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64C10C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:34:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BFBB21B18
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:33:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DABA21B18
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:34:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZbGH6/4z"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rOjj091M"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438419AbfBNWdx (ORCPT
+        id S2408121AbfBNWe2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 17:33:53 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42985 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393758AbfBNWdw (ORCPT
+        Thu, 14 Feb 2019 17:34:28 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:43141 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393758AbfBNWe2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 17:33:52 -0500
-Received: by mail-wr1-f68.google.com with SMTP id q18so8250446wrx.9
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 14:33:51 -0800 (PST)
+        Thu, 14 Feb 2019 17:34:28 -0500
+Received: by mail-qt1-f194.google.com with SMTP id y4so8800958qtc.10
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 14:34:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=y7Q+lajtRlAESol5W4A9TP2N6MFs7uDbMW23tI0LGX4=;
-        b=ZbGH6/4zZ4GZuz9UkEgyA9QQYCtFreg+99hNG75mpRPBcFMPXSPxyl06Pg/OJW/wGy
-         6NfwIhuMqSKoJGf17NVpTZ5TNkD1FfF0pQlaivOoDWbDnWnJnHGmWGB5BNrlDsk1LBIT
-         /K6WnNedARPMPKsmS2hKV8y1W9wHh4szPx+T7VJi7CPYhk6BnnIIBtnRI3hpWVL8vJ7l
-         VJS0qJLRZOt/ixFzgJm0NzymY0O8eu3dzOhQBoNK813CvShkdvMSLA02tZ2vsu8mSS5q
-         qNSE5SU0kklFKx9jAb/EAu7WFLQuOSdvM4kxSvPLNGlMbazVhf9RZyBfBsPg3xv6xZAD
-         HzbA==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Os4dMXp/JN1Nc3XgF1tbzn0Bwa6VCs7Hf6YdFUJ4wrk=;
+        b=rOjj091Mk2BQ7qni93XaJxrBrrge2Tgr+rNE7Dqqr3Ho7gxrCBUs/Hrb9y6beAFXZg
+         5rztpbFxRSIR4qbSd2+kFMEzNW7VFDCKGwDbtmeyXxHBev5Q1WiQ6Pd9s5IAgT2rGi1D
+         xL5JNtQNHSODxI8nBWQoLv175KfRkVUwWCBCHoCwkFDRN/85uopTS3Uaw78bkixloHX0
+         EMEizH5D7KuBXNy34NXuHHTPPDgDWxcQj/29/Oh01MVRwBaod7TlN6jsVX1Q6Js6B91W
+         wapQmTuGrE9MwGqSk8HBrog4/oyyGAVDweF36g1+U4FdlD+aHPHAmJIsqN02M7mg2IQf
+         /KtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=y7Q+lajtRlAESol5W4A9TP2N6MFs7uDbMW23tI0LGX4=;
-        b=ub2cObB4KGLpTgnJW+AV9ZeD5yy8lK1YRvYFbZdWWnrlz6e9GVjcq+5c7azrb2IVjo
-         zd6tUbeEG1j0caXEgQ9Ti9lMk9Ds8EN0qSuxlGCBg0wxYiiSncuZL9ERekedFUOXuLCX
-         DBQZHeHKqrscoi5yyVtekrZyosFUgHRfZC38dOf5meGjWVYgOJuee/TI2RmINFaWpH72
-         LtMF6/zGP5x+bmlbRfAc/IGpT1Df+hAxj7Zd2EDswLsU0TdnubWWFId0/wBO1DEcOU6u
-         cPlsu93F9BbdNQcumJpa+dv5YUJCOT01ROhSbQw+GTDQSzBwM9UqjxGFOPsNDLDcGjS8
-         hYEg==
-X-Gm-Message-State: AHQUAuZSDGlOjhIdDwwZHu1md82v9xCVV6uTd3hkbBgqHvh5p86yhzy+
-        PZK/JPIWf8OHTiBzP5WofEV48j+N
-X-Google-Smtp-Source: AHgI3IaXkSj7HM4Qv1i/2nd5hGdKx9czweR1/z0g4sNWDbp0uua8Y0ESyGk27gc4tLSgsaMjb+TsKw==
-X-Received: by 2002:a5d:4a05:: with SMTP id m5mr4694283wrq.46.1550183630619;
-        Thu, 14 Feb 2019 14:33:50 -0800 (PST)
-Received: from ?IPv6:2003:ea:8bf1:e200:4185:fd13:4656:451e? (p200300EA8BF1E2004185FD134656451E.dip0.t-ipconnect.de. [2003:ea:8bf1:e200:4185:fd13:4656:451e])
-        by smtp.googlemail.com with ESMTPSA id w26sm8262793wmc.2.2019.02.14.14.33.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 14:33:49 -0800 (PST)
-Subject: Re: Fix 80d20d35af1e ("nohz: Fix local_timer_softirq_pending()") may
- have revealed another problem
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Frederic Weisbecker <frederic@kernel.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <67ce38dc-1f00-55c6-f9ae-2dec00172cf6@gmail.com>
- <alpine.DEB.2.21.1808241000340.1668@nanos.tec.linutronix.de>
- <20180824143056.GC2730@lerouge>
- <d8fd3322-e982-2c9c-85e3-9b1770357520@gmail.com>
- <20180828022545.GA25943@lerouge>
- <alpine.DEB.2.21.1809271805190.8118@nanos.tec.linutronix.de>
- <20180928131855.GB8795@lerouge>
- <c472b6bf-e4af-d807-e63f-75211ce295bd@gmail.com>
- <20181227065321.GA3749@lerouge>
- <e838fa7f-f43f-7b3c-aae6-edb4f6734964@gmail.com>
- <20190116062408.GA26169@lenoir>
- <f60567f7-fa7e-f424-12e6-b3df7a24c0be@gmail.com>
- <48a2817e-4133-967e-7e57-eea2f547cb01@gmail.com>
- <alpine.DEB.2.21.1902142245170.1646@nanos.tec.linutronix.de>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <fe610ada-c93c-2fec-3f45-3642272bc682@gmail.com>
-Date:   Thu, 14 Feb 2019 23:33:44 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Os4dMXp/JN1Nc3XgF1tbzn0Bwa6VCs7Hf6YdFUJ4wrk=;
+        b=GVAMOCq9FUBJ00PHQrb4dfTFgVU/xZYXcS2OstvHUZowU+0oUyGk6a2xoe0rtz7Mz3
+         HD7wJQSN5g3wR/Z6Xhidx60Os3Af9l56goFhR3QNKghyhuPdaXR7C7zVpRygOVcg/NSN
+         YuHw29GGKmfMzAeQUTA23FzlCbezqRIDzUOR/9AZCRBY4YSdUgYT3APe1kyhMYz6VxQi
+         k1l7Ydk6FHJ6P4uYvwotadgYWkUW43jYAuTszhBFLd7ddqckNDQg8VFFafpPtjYDjjH9
+         SOGCUevMNW7dS9O4QYg4W/EqO1OksOvDDjLQPa/JllAtbKcs75G6/rFHU4LgnRKphqYp
+         lTRQ==
+X-Gm-Message-State: AHQUAuaRhep8neiG1wvB2DxDEiX11aw/bL7RjGnb7F/iVOTClZ5u+721
+        z9R99vrI+Zd/oDikK7O6+sf+jG3/TjsACwKb8Q2MAg==
+X-Google-Smtp-Source: AHgI3IYCAsip/I2Qk2tIqeVyD5ouBAltf8oXdQNbJnoZd69txH9Ul7TeSSwbJfAVFh20DaDIOHp9jeKObGPfCQCSk8Q=
+X-Received: by 2002:ac8:3227:: with SMTP id x36mr5147138qta.56.1550183666648;
+ Thu, 14 Feb 2019 14:34:26 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1902142245170.1646@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <00000000000048c0060581d8fe23@google.com> <0000000000009e34680581d90c3f@google.com>
+In-Reply-To: <0000000000009e34680581d90c3f@google.com>
+From:   Todd Kjos <tkjos@google.com>
+Date:   Thu, 14 Feb 2019 14:34:15 -0800
+Message-ID: <CAHRSSEx0ifKf-bA9NGwXak0DhWt6Xfxe+SQgfEEdNcyVAPwb_Q@mail.gmail.com>
+Subject: Re: kernel BUG at drivers/android/binder_alloc.c:LINE! (2)
+To:     syzbot <syzbot+55de1eb4975dec156d8f@syzkaller.appspotmail.com>
+Cc:     =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        Christian Brauner <christian@brauner.io>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Martijn Coenen <maco@android.com>,
+        syzkaller-bugs@googlegroups.com, Todd Kjos <tkjos@android.com>,
+        Dmitry Vyukov <dvyukov@google.com>
+Content-Type: multipart/mixed; boundary="000000000000c9f9120581e24298"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14.02.2019 22:47, Thomas Gleixner wrote:
-> On Thu, 14 Feb 2019, Heiner Kallweit wrote:
->> On 24.01.2019 20:37, Heiner Kallweit wrote:
->>>>
->>> Hi Frederic,
->>> is the update debug patch still to come?
-> 
-> Heiner, there is a related fix queued in
-> 
->    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/core
-> 
-> See also:
->     https://lkml.kernel.org/r/20190128234625.78241-3-mka@chromium.org
->     https://lkml.kernel.org/r/20190128234625.78241-2-mka@chromium.org
-> 
-> Can you please have a look?
-> 
-Great. And sure, I can test it over the weekend.
+--000000000000c9f9120581e24298
+Content-Type: text/plain; charset="UTF-8"
 
-> Thanks,
-> 
-> 	tglx
-> 
-Rgds, Heiner
+On Thu, Feb 14, 2019 at 3:35 AM syzbot
+<syzbot+55de1eb4975dec156d8f@syzkaller.appspotmail.com> wrote:
+>
+> syzbot has found a reproducer for the following crash on:
+>
+> HEAD commit:    b3418f8bddf4 Add linux-next specific files for 20190214
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=161d2048c00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=8a3a37525a677c71
+> dashboard link: https://syzkaller.appspot.com/bug?extid=55de1eb4975dec156d8f
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11cd2f1f400000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+55de1eb4975dec156d8f@syzkaller.appspotmail.com
+>
+
+Testing a fix:
+
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+linux-next
+
+--000000000000c9f9120581e24298
+Content-Type: application/octet-stream; name=patch
+Content-Disposition: attachment; filename=patch
+Content-Transfer-Encoding: base64
+Content-ID: <f_js574pdo0>
+X-Attachment-Id: f_js574pdo0
+
+CmRpZmYgLS1naXQgYS9kcml2ZXJzL2FuZHJvaWQvYmluZGVyLmMgYi9kcml2ZXJzL2FuZHJvaWQv
+YmluZGVyLmMKaW5kZXggMmRiYTUzOWViNzkyYy4uODY4NTg4MmRhNjRjZCAxMDA2NDQKLS0tIGEv
+ZHJpdmVycy9hbmRyb2lkL2JpbmRlci5jCisrKyBiL2RyaXZlcnMvYW5kcm9pZC9iaW5kZXIuYwpA
+QCAtMjA1Nyw3ICsyMDU3LDcgQEAgc3RhdGljIHNpemVfdCBiaW5kZXJfZ2V0X29iamVjdChzdHJ1
+Y3QgYmluZGVyX3Byb2MgKnByb2MsCiAgICAgICAgc2l6ZV90IG9iamVjdF9zaXplID0gMDsKIAog
+ICAgICAgIHJlYWRfc2l6ZSA9IG1pbl90KHNpemVfdCwgc2l6ZW9mKCpvYmplY3QpLCBidWZmZXIt
+PmRhdGFfc2l6ZSAtIG9mZnNldCk7Ci0gICAgICAgaWYgKHJlYWRfc2l6ZSA8IHNpemVvZigqaGRy
+KSkKKyAgICAgICBpZiAocmVhZF9zaXplIDwgc2l6ZW9mKCpoZHIpIHx8ICFJU19BTElHTkVEKG9m
+ZnNldCwgc2l6ZW9mKHUzMikpKQogICAgICAgICAgICAgICAgcmV0dXJuIDA7CiAgICAgICAgYmlu
+ZGVyX2FsbG9jX2NvcHlfZnJvbV9idWZmZXIoJnByb2MtPmFsbG9jLCBvYmplY3QsIGJ1ZmZlciwK
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBvZmZzZXQsIHJlYWRfc2l6ZSk7
+Cg==
+--000000000000c9f9120581e24298--
