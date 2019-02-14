@@ -2,61 +2,60 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2CA9C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 05:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA49C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 05:55:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DA61222B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 05:48:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8804D222A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 05:55:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VIDT/RpY"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JXMwGF6s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405385AbfBNFsf (ORCPT
+        id S2405579AbfBNFy5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 00:48:35 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:38783 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405212AbfBNFsf (ORCPT
+        Thu, 14 Feb 2019 00:54:57 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:36146 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732648AbfBNFy5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 00:48:35 -0500
-Received: by mail-qt1-f195.google.com with SMTP id 2so5610834qtb.5
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 21:48:34 -0800 (PST)
+        Thu, 14 Feb 2019 00:54:57 -0500
+Received: by mail-qk1-f196.google.com with SMTP id o125so2940225qkf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 21:54:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=fXXN+zBH7ya8AtNFt4E26NRGi0gZRs0b5mumGwT/hcw=;
-        b=VIDT/RpYJfOYxfktW+XoCEI83+hJWm1DoZeyH0P/aw85e/jhCEsaqcxWbgW8o+xmWe
-         L5ztVbm+bnZt8pLAia/lH285ZuPW3jhC6zyOCNjq2/2fDInVdKFFIudwUwm8Fwcjou1L
-         2kK1WNvNzeMuzFPlBQchdBpXT9PIu50oZUk8o=
+        bh=8ZZPTehRx0gCVAGAwGZLdRCyaQhXE0OghMtcZbWUN1k=;
+        b=JXMwGF6sgy9y+WcZoNA2AWmObRpexqFbDrMQ/02+r6JQUTug17v90SxKPvh43Sr7wa
+         0hHMJEDUNY2SA1ROLXAkc9lPs+Ei3Oqs5uXsXotW9nFwFYglLShE17cEyYFVz77CYfYv
+         c71lTWzB4N8yWi0R+J9rta160kzE4DyOq1Zpk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=fXXN+zBH7ya8AtNFt4E26NRGi0gZRs0b5mumGwT/hcw=;
-        b=MbEZfQvet20bydkRIMZgV2mhhNSj07d4iRAgyC1n4dUKhZ6D10nICTe8W9ilbFLLsP
-         Y4LiEPkgfjKtkP8P0PjyKizlf5OrdKdqMj80iz4l1olqL7dm+76LFnVPNQr6AJMw8mBo
-         tSfR77rbf+eizhMZeccfQo7CD9Fct6qfmVUPU/cC6ToS0vJ0BXrUJNKa/VmsmXJALtRl
-         ZyEW8x5QmT7gAAvVvq587EUJ70sXbI1bpKrNu4mkdOtt9uYMsecbI8MtHOP9np9sBCVi
-         rAeDWW8GrHv1TUQF0tEM19yEvg76UPy10660I35vuV/4WGPwxRqFWv8vma22ld9eTpfJ
-         igOw==
-X-Gm-Message-State: AHQUAuZXgUWGvhIzfFxEGF7mnsdLIDkwUZWHxN8VPK6wmzIH3P4RroK9
-        +/vu8pmCjC4ZdoCVCIPTpid0+zNK5bLHDBOsOGl3xQ==
-X-Google-Smtp-Source: AHgI3Iakm5n4cPRUkjKVkKeyqiJeOKC/OiiOo0qoewgbj5eveM2fZw+lnLAVoxSRMmirXgDe4cfMAgoKwh1VP0iHQK0=
-X-Received: by 2002:a0c:8425:: with SMTP id l34mr1562175qva.101.1550123313824;
- Wed, 13 Feb 2019 21:48:33 -0800 (PST)
+        bh=8ZZPTehRx0gCVAGAwGZLdRCyaQhXE0OghMtcZbWUN1k=;
+        b=NkzjvsImKMBOy61tvsB7wCCeuv9cI22xzsYX9PkuNmv1bvMEuQLFg2AlyQRCGh6yOF
+         AbSyh9ivWNnwAeSpLao7C94fU0JjpEIw1DVtbq3ygObkcTmaGjaO1l2bcwTVllazUxsN
+         LsXqfw4VyBWgZh/ApQnjgqTODtKLDFGE5yyusI1Xt9vLWVoniLujHOvb1CstW9Gt8k3R
+         0WIRYQLmcH8wckz5yslVdC5TqcaO0rwTGOC4vmz3GR/5YA9UwwTgZgM7BsO67gcQSiGM
+         Qz5gZJ/TmbntwCaeqEL8s/sdfUlO1J3FtUFcjh3z4NiEE/ei7DgJk9Zkmx8T8IQuZ8oJ
+         Slgw==
+X-Gm-Message-State: AHQUAuYdanTEOMJzS45lmfxdaUvQo4ey2U2xTVXNB41hSlJRZuMhCXzc
+        aqZOCDxWrxIWanRXOJVilWOEguPqMr9wk2DqBYrDXg==
+X-Google-Smtp-Source: AHgI3IamlS+2WnAogCdsL8ldHcyBN+PQiVASgbQh23/ApFCz870ErGq5WVsz2xgBC5rjuMBV8/5v3d6CFP3v4QEbJq4=
+X-Received: by 2002:a37:7885:: with SMTP id t127mr1465362qkc.323.1550123695704;
+ Wed, 13 Feb 2019 21:54:55 -0800 (PST)
 MIME-Version: 1.0
-References: <20190214044243.129920-1-jitao.shi@mediatek.com> <20190214044243.129920-2-jitao.shi@mediatek.com>
-In-Reply-To: <20190214044243.129920-2-jitao.shi@mediatek.com>
+References: <20190214044243.129920-1-jitao.shi@mediatek.com> <20190214044243.129920-3-jitao.shi@mediatek.com>
+In-Reply-To: <20190214044243.129920-3-jitao.shi@mediatek.com>
 From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Thu, 14 Feb 2019 13:48:22 +0800
-Message-ID: <CANMq1KAua2mEfT81Mos5JyxHwUfVmgi5Se3fTPy9QcXyh23Urg@mail.gmail.com>
-Subject: Re: [PATCH 2/3] drm/mediatek: CMDQ reg address of mt8173 is different
- with mt2701
+Date:   Thu, 14 Feb 2019 13:54:44 +0800
+Message-ID: <CANMq1KBR-CpjAtj6qTEjK8PA2DUW3w_-OP_EyE7uoaojGLoGLg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] drm/mediatek: add mt8183 dsi driver support
 To:     Jitao Shi <jitao.shi@mediatek.com>
 Cc:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -91,126 +90,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 12:42 PM Jitao Shi <jitao.shi@mediatek.com> wrote:
+On Thu, Feb 14, 2019 at 12:43 PM Jitao Shi <jitao.shi@mediatek.com> wrote:
 >
-> Config the different CMDQ reg address in driver data.
+> MT8183 dsi has two changes with mt8173.
+> 1. Add the register double buffer control, but we no need it, So make
+>    it default off.
+
+Can you describe a little bit more what this is about? That's shadow
+registers, right?
+
+> 2. Add picture size control.
 >
 > Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
 > ---
->  drivers/gpu/drm/mediatek/mtk_dsi.c | 39 ++++++++++++++++++++++++------
->  1 file changed, 31 insertions(+), 8 deletions(-)
+>  drivers/gpu/drm/mediatek/mtk_dsi.c | 20 +++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
 >
 > diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> index 93fa255b4aad..80db02a25cb0 100644
+> index 80db02a25cb0..20cb53f05d42 100644
 > --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
 > +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> @@ -156,6 +156,10 @@
+> @@ -78,6 +78,7 @@
+>  #define DSI_VBP_NL             0x24
+>  #define DSI_VFP_NL             0x28
+>  #define DSI_VACT_NL            0x2C
+> +#define DSI_SIZE_CON           0x38
+>  #define DSI_HSA_WC             0x50
+>  #define DSI_HBP_WC             0x54
+>  #define DSI_HFP_WC             0x58
+> @@ -131,7 +132,10 @@
+>  #define VM_CMD_EN                      BIT(0)
+>  #define TS_VFP_EN                      BIT(5)
 >
->  struct phy;
->
-> +struct mtk_dsi_driver_data {
-> +       const u32 reg_cmdq_off;
-> +};
+> -#define DSI_CMDQ0              0x180
+
+As I said earlier, move this to 2/3.
+
+> +#define DSI_SHADOW_DEBUG       0x190U
+> +#define FORCE_COMMIT           BIT(0)
+> +#define BYPASS_SHADOW          BIT(1)
 > +
->  struct mtk_dsi {
->         struct mtk_ddp_comp ddp_comp;
->         struct device *dev;
-> @@ -182,6 +186,7 @@ struct mtk_dsi {
->         bool enabled;
->         u32 irq_data;
->         wait_queue_head_t irq_wait_queue;
-> +       struct mtk_dsi_driver_data *driver_data;
+>  #define CONFIG                         (0xff << 0)
+>  #define SHORT_PACKET                   0
+>  #define LONG_PACKET                    2
+> @@ -158,6 +162,7 @@ struct phy;
+>
+>  struct mtk_dsi_driver_data {
+>         const u32 reg_cmdq_off;
+> +       bool has_size_ctl;
 >  };
 >
->  static inline struct mtk_dsi *encoder_to_dsi(struct drm_encoder *e)
-> @@ -934,6 +939,7 @@ static void mtk_dsi_cmdq(struct mtk_dsi *dsi, const struct mipi_dsi_msg *msg)
->         const char *tx_buf = msg->tx_buf;
->         u8 config, cmdq_size, cmdq_off, type = msg->type;
->         u32 reg_val, cmdq_mask, i;
-> +       u32 reg_cmdq_off = dsi->driver_data->reg_cmdq_off;
+>  struct mtk_dsi {
+> @@ -426,6 +431,9 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
+>         writel(vm->vfront_porch, dsi->regs + DSI_VFP_NL);
+>         writel(vm->vactive, dsi->regs + DSI_VACT_NL);
 >
->         if (MTK_DSI_HOST_IS_READ(type))
->                 config = BTA;
-> @@ -953,9 +959,11 @@ static void mtk_dsi_cmdq(struct mtk_dsi *dsi, const struct mipi_dsi_msg *msg)
+> +       if (dsi->driver_data->has_size_ctl)
+> +               writel(vm->vactive << 16 | vm->hactive, dsi->regs + DSI_SIZE_CON);
+> +
+>         horizontal_sync_active_byte = (vm->hsync_len * dsi_tmp_buf_bpp - 10);
+>
+>         if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
+> @@ -595,6 +603,9 @@ static int mtk_dsi_poweron(struct mtk_dsi *dsi)
 >         }
 >
->         for (i = 0; i < msg->tx_len; i++)
-> -               writeb(tx_buf[i], dsi->regs + DSI_CMDQ0 + cmdq_off + i);
-> +               mtk_dsi_mask(dsi, (reg_cmdq_off + cmdq_off + i) & (~0x3U),
-> +                            (0xffUL << (((i + cmdq_off) & 3U) * 8U)),
-> +                            tx_buf[i] << (((i + cmdq_off) & 3U) * 8U));
+>         mtk_dsi_enable(dsi);
+> +
+> +       /* DSI no need this double buffer, disable it when writing register */
 
-I found the writeb call _much_ clearer ... Either switch back to that,
-or create a new mtk_disk_mask_byte function maybe?
+"DSI does not need double buffering, disable it when writing register"
 
+> +       writel(FORCE_COMMIT | BYPASS_SHADOW, dsi->regs + DSI_SHADOW_DEBUG);
+
+So you do this on all MT* variants, is that ok?
+
+>         mtk_dsi_reset_engine(dsi);
+>         mtk_dsi_phy_timconfig(dsi);
 >
-> -       mtk_dsi_mask(dsi, DSI_CMDQ0, cmdq_mask, reg_val);
-> +       mtk_dsi_mask(dsi, reg_cmdq_off, cmdq_mask, reg_val);
-
-You're removing DSI_CMDQ0 usage in this patch, so remove the #define
-in this patch too (instead of doing that in 3/3).
-
->         mtk_dsi_mask(dsi, DSI_CMDQ_SIZE, CMDQ_SIZE, cmdq_size);
->  }
->
-> @@ -1074,10 +1082,27 @@ static const struct component_ops mtk_dsi_component_ops = {
->         .unbind = mtk_dsi_unbind,
+> @@ -1090,11 +1101,18 @@ static const struct mtk_dsi_driver_data mt2701_dsi_driver_data = {
+>         .reg_cmdq_off = 0x180,
 >  };
 >
-> +static const struct mtk_dsi_driver_data mt8173_dsi_driver_data = {
+> +static const struct mtk_dsi_driver_data mt8183_dsi_driver_data = {
 > +       .reg_cmdq_off = 0x200,
+> +       .has_size_ctl = true,
 > +};
 > +
-> +static const struct mtk_dsi_driver_data mt2701_dsi_driver_data = {
-> +       .reg_cmdq_off = 0x180,
-> +};
-> +
-> +static const struct of_device_id mtk_dsi_of_match[] = {
-> +       { .compatible = "mediatek,mt2701-dsi",
-> +         .data = &mt2701_dsi_driver_data },
-> +       { .compatible = "mediatek,mt8173-dsi",
-> +         .data = &mt8173_dsi_driver_data },
-> +       { },
-> +};
-> +
->  static int mtk_dsi_probe(struct platform_device *pdev)
->  {
->         struct mtk_dsi *dsi;
->         struct device *dev = &pdev->dev;
-> +       const struct of_device_id *of_id;
->         struct resource *regs;
->         int irq_num;
->         int comp_id;
-> @@ -1101,6 +1126,10 @@ static int mtk_dsi_probe(struct platform_device *pdev)
->         if (ret)
->                 goto err_unregister_host;
+>  static const struct of_device_id mtk_dsi_of_match[] = {
+>         { .compatible = "mediatek,mt2701-dsi",
+>           .data = &mt2701_dsi_driver_data },
+>         { .compatible = "mediatek,mt8173-dsi",
+>           .data = &mt8173_dsi_driver_data },
+> +       { .compatible = "mediatek,mt8183-dsi",
+> +         .data = &mt8183_dsi_driver_data },
+>         { },
+>  };
 >
-> +       of_id = of_match_device(mtk_dsi_of_match, &pdev->dev);
-> +       dsi->driver_data = (struct mtk_dsi_driver_data *)
-> +                           of_id->data;
-
-This fits in 80 chars. Also, of_id->data is a void*, so no cast needed.
-
-> +
->         dsi->engine_clk = devm_clk_get(dev, "engine");
->         if (IS_ERR(dsi->engine_clk)) {
->                 ret = PTR_ERR(dsi->engine_clk);
-> @@ -1194,12 +1223,6 @@ static int mtk_dsi_remove(struct platform_device *pdev)
->         return 0;
->  }
->
-> -static const struct of_device_id mtk_dsi_of_match[] = {
-> -       { .compatible = "mediatek,mt2701-dsi" },
-> -       { .compatible = "mediatek,mt8173-dsi" },
-> -       { },
-> -};
-
-Any reason you moved this up?
-
-> -
->  struct platform_driver mtk_dsi_driver = {
->         .probe = mtk_dsi_probe,
->         .remove = mtk_dsi_remove,
 > --
 > 2.20.1
 >
