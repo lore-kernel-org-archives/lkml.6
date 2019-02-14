@@ -2,120 +2,159 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC127C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:16:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE862C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:24:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CCB4222D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:16:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F8D4218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:24:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438843AbfBNNQH (ORCPT
+        id S2438857AbfBNNYI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 08:16:07 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:46666 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729596AbfBNNQG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 08:16:06 -0500
-Received: by mail-lf1-f66.google.com with SMTP id f5so4475409lfc.13;
-        Thu, 14 Feb 2019 05:16:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=onJ7kVDUvKCrM+R9JuQDpxkKNjnnLN832FI3hjpWRso=;
-        b=Rn4Cl1/GzUa82LlCZrtjZBRZ/+caPyn/fDHcGp2tzK5rluamX8hDMfoMsxJg9So7Ke
-         3UMeFl3qJYOQfo6UVjYEZRzYLt9akAaYf/dKOwQi2oL0Ftd2z302iZ4cPgH8LyPgKxcq
-         /ew+Umxjfqnex+K3WqNOW/D+jT5eMcYdHazG8eE3/Yvy5xvDqKUN3eani7LHhhjTbcRW
-         GDdImir0UGYQCKYS/7gdRmNPB5rvvdyUCiuCtr1HdByb9aqc+iLM/HKO/uTqVbE0QHUI
-         Y4fvMdzTJnMYXmEtG/sU/wxG2nVPIdTdcC3y41lGOJMtch44ikQIoUXZMQlUnFSOaiQV
-         Lhyw==
-X-Gm-Message-State: AHQUAuZfv9S5PqyDyjTYe7cXL25+NCX0W9MIdzK9bYdu1FYFyVIL6ba9
-        b8l8Aq5eI9UrgW8FsUBF3FY=
-X-Google-Smtp-Source: AHgI3IaonFR06zAohDG5Wl9S5rmkCN8+Uj5fWppUU1Za433kkN8YQgf2FS7HvHPpVGS0nIY2uu4qow==
-X-Received: by 2002:ac2:5288:: with SMTP id q8mr2424062lfm.157.1550150163673;
-        Thu, 14 Feb 2019 05:16:03 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id k21sm460492lfg.51.2019.02.14.05.16.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 05:16:03 -0800 (PST)
-Date:   Thu, 14 Feb 2019 15:15:50 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: [PATCH v10 9/9] regulator: bd70528: drop struct bd70528
-Message-ID: <540fde29249cb6417fb484d0f0f6ebf8a4ac4dd2.1550148989.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1550148989.git.matti.vaittinen@fi.rohmeurope.com>
+        Thu, 14 Feb 2019 08:24:08 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57366 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728582AbfBNNYH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 08:24:07 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 97C44AE8D;
+        Thu, 14 Feb 2019 13:24:04 +0000 (UTC)
+Date:   Thu, 14 Feb 2019 05:23:52 -0800
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org,
+        Linux-sh list <linux-sh@vger.kernel.org>,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-arch <linux-arch@vger.kernel.org>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+Subject: Re: [PATCH-tip 00/22] locking/rwsem: Rework rwsem-xadd & enable new
+ rwsem features
+Message-ID: <20190214132352.wm26r5g632swp34n@linux-r8p5>
+References: <1549566446-27967-1-git-send-email-longman@redhat.com>
+ <CAHk-=wjfyrFBjifzmgMVrkrvEePEPaBTDq7D=f2i5kD2E=SqRQ@mail.gmail.com>
+ <d7476dfb-1653-747b-b865-5597ba5fc1c1@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <cover.1550148989.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <d7476dfb-1653-747b-b865-5597ba5fc1c1@redhat.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As a result of exporting the bd70528 specific locking functions
-we no longer need struct bd70528. Remove references to
-struct bd70528 from bd70528 regulator.
+On Fri, 08 Feb 2019, Waiman Long wrote:
+>I am planning to run more performance test and post the data sometimes
+>next week. Davidlohr is also going to run some of his rwsem performance
+>test on this patchset.
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
+So I ran this series on a 40-core IB 2 socket with various worklods in
+mmtests. Below are some of the interesting ones; full numbers and curves
+at https://linux-scalability.org/rwsem-reader-spinner/
 
-Mark, I proposed to hide the struct bd70528 from sub drivers
-as the RTC lock no longer needs to be visible for sub drivers. So
-please consider applying this to your tree in order to avoid breaking
-it when (if) this series goes via MFD.
+All workloads are with increasing number of threads.
 
- drivers/regulator/bd70528-regulator.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+-- pagefault timings: pft is an artificial pf benchmark (thus reader stress).
+metric is faults/cpu and faults/sec
+                                       v5.0-rc6                 v5.0-rc6
+                                                                    dirty
+Hmean     faults/cpu-1    624224.9815 (   0.00%)   618847.5201 *  -0.86%*
+Hmean     faults/cpu-4    539550.3509 (   0.00%)   547407.5738 *   1.46%*
+Hmean     faults/cpu-7    401470.3461 (   0.00%)   381157.9830 *  -5.06%*
+Hmean     faults/cpu-12   267617.0353 (   0.00%)   271098.5441 *   1.30%*
+Hmean     faults/cpu-21   176194.4641 (   0.00%)   175151.3256 *  -0.59%*
+Hmean     faults/cpu-30   119927.3862 (   0.00%)   120610.1348 *   0.57%*
+Hmean     faults/cpu-40    91203.6820 (   0.00%)    91832.7489 *   0.69%*
+Hmean     faults/sec-1    623292.3467 (   0.00%)   617992.0795 *  -0.85%*
+Hmean     faults/sec-4   2113364.6898 (   0.00%)  2140254.8238 *   1.27%*
+Hmean     faults/sec-7   2557378.4385 (   0.00%)  2450945.7060 *  -4.16%*
+Hmean     faults/sec-12  2696509.8975 (   0.00%)  2747968.9819 *   1.91%*
+Hmean     faults/sec-21  2902892.5639 (   0.00%)  2905923.3881 *   0.10%*
+Hmean     faults/sec-30  2956696.5793 (   0.00%)  2990583.5147 *   1.15%*
+Hmean     faults/sec-40  3422806.4806 (   0.00%)  3352970.3082 *  -2.04%*
+Stddev    faults/cpu-1      2949.5159 (   0.00%)     2802.2712 (   4.99%)
+Stddev    faults/cpu-4     24165.9454 (   0.00%)    15841.1232 (  34.45%)
+Stddev    faults/cpu-7     20914.8351 (   0.00%)    22744.3294 (  -8.75%)
+Stddev    faults/cpu-12    11274.3490 (   0.00%)    14733.3152 ( -30.68%)
+Stddev    faults/cpu-21     2500.1950 (   0.00%)     2200.9518 (  11.97%)
+Stddev    faults/cpu-30     1599.5346 (   0.00%)     1414.0339 (  11.60%)
+Stddev    faults/cpu-40     1473.0181 (   0.00%)     3004.1209 (-103.94%)
+Stddev    faults/sec-1      2655.2581 (   0.00%)     2405.1625 (   9.42%)
+Stddev    faults/sec-4     84042.7234 (   0.00%)    57996.7158 (  30.99%)
+Stddev    faults/sec-7    123656.7901 (   0.00%)   135591.1087 (  -9.65%)
+Stddev    faults/sec-12    97135.6091 (   0.00%)   127054.4926 ( -30.80%)
+Stddev    faults/sec-21    69564.6264 (   0.00%)    65922.6381 (   5.24%)
+Stddev    faults/sec-30    51524.4027 (   0.00%)    56109.4159 (  -8.90%)
+Stddev    faults/sec-40   101927.5280 (   0.00%)   160117.0093 ( -57.09%)
 
-diff --git a/drivers/regulator/bd70528-regulator.c b/drivers/regulator/bd70528-regulator.c
-index 72c7f9aa84f3..30e3ed430a8a 100644
---- a/drivers/regulator/bd70528-regulator.c
-+++ b/drivers/regulator/bd70528-regulator.c
-@@ -246,7 +246,7 @@ static const struct regulator_desc bd70528_desc[] = {
- 
- static int bd70528_probe(struct platform_device *pdev)
- {
--	struct bd70528 *bd70528;
-+	struct rohm_regmap_dev *bd70528;
- 	int i;
- 	struct regulator_config config = {
- 		.dev = pdev->dev.parent,
-@@ -258,7 +258,7 @@ static int bd70528_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	config.regmap = bd70528->chip.regmap;
-+	config.regmap = bd70528->regmap;
- 
- 	for (i = 0; i < ARRAY_SIZE(bd70528_desc); i++) {
- 		struct regulator_dev *rdev;
--- 
-2.14.3
+With the exception of the hicup at 7 threads, things are pretty much in
+the noise region for both metrics.
 
+-- git checkout
 
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
+First metric is total runtime for runs with incremental threads.
 
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+           v5.0-rc6    v5.0-rc6
+                          dirty
+User         218.95      219.07
+System       149.29      146.82
+Elapsed     1574.10     1427.08
+
+In this case there's a non trivial improvement (11%) in overall elapsed time.
+
+-- reaim (which is always succeptible to rwsem changes for both mmap_sem and
+i_mmap)
+                                     v5.0-rc6               v5.0-rc6
+                                                                dirty
+Hmean     compute-1         6674.01 (   0.00%)     6544.28 *  -1.94%*
+Hmean     compute-21       85294.91 (   0.00%)    85524.20 *   0.27%*
+Hmean     compute-41      149674.70 (   0.00%)   149494.58 *  -0.12%*
+Hmean     compute-61      177721.15 (   0.00%)   170507.38 *  -4.06%*
+Hmean     compute-81      181531.07 (   0.00%)   180463.24 *  -0.59%*
+Hmean     compute-101     189024.09 (   0.00%)   187288.86 *  -0.92%*
+Hmean     compute-121     200673.24 (   0.00%)   195327.65 *  -2.66%*
+Hmean     compute-141     213082.29 (   0.00%)   211290.80 *  -0.84%*
+Hmean     compute-161     207764.06 (   0.00%)   204626.68 *  -1.51%*
+
+The 'compute' workload overall takes a small hit.
+
+Hmean     new_dbase-1         60.48 (   0.00%)       60.63 *   0.25%*
+Hmean     new_dbase-21      6590.49 (   0.00%)     6671.81 *   1.23%*
+Hmean     new_dbase-41     14202.91 (   0.00%)    14470.59 *   1.88%*
+Hmean     new_dbase-61     21207.24 (   0.00%)    21067.40 *  -0.66%*
+Hmean     new_dbase-81     25542.40 (   0.00%)    25542.40 *   0.00%*
+Hmean     new_dbase-101    30165.28 (   0.00%)    30046.21 *  -0.39%*
+Hmean     new_dbase-121    33638.33 (   0.00%)    33219.90 *  -1.24%*
+Hmean     new_dbase-141    36723.70 (   0.00%)    37504.52 *   2.13%*
+Hmean     new_dbase-161    42242.51 (   0.00%)    42117.34 *  -0.30%*
+Hmean     shared-1            76.54 (   0.00%)       76.09 *  -0.59%*
+Hmean     shared-21         7535.51 (   0.00%)     5518.75 * -26.76%*
+Hmean     shared-41        17207.81 (   0.00%)    14651.94 * -14.85%*
+Hmean     shared-61        20716.98 (   0.00%)    18667.52 *  -9.89%*
+Hmean     shared-81        27603.83 (   0.00%)    23466.45 * -14.99%*
+Hmean     shared-101       26008.59 (   0.00%)    29536.96 *  13.57%*
+Hmean     shared-121       28354.76 (   0.00%)    43139.39 *  52.14%*
+Hmean     shared-141       38509.25 (   0.00%)    41619.35 *   8.08%*
+Hmean     shared-161       40496.07 (   0.00%)    44303.46 *   9.40%*
+
+Overall there is a small hit (in the noise level but consistent throughout
+many workloads), except git-checkout which does quite well.
+
+Thanks,
+Davidlohr
