@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13520C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 785F4C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:09:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D658E222D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:09:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49561222B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:09:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="egQS5MjY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N4zOorQC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438726AbfBNNJ3 (ORCPT
+        id S2438740AbfBNNJe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 08:09:29 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44485 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406993AbfBNNJ2 (ORCPT
+        Thu, 14 Feb 2019 08:09:34 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:46690 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436747AbfBNNJc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 08:09:28 -0500
-Received: by mail-pl1-f196.google.com with SMTP id p4so3141372plq.11;
-        Thu, 14 Feb 2019 05:09:27 -0800 (PST)
+        Thu, 14 Feb 2019 08:09:32 -0500
+Received: by mail-pg1-f196.google.com with SMTP id w7so3043350pgp.13;
+        Thu, 14 Feb 2019 05:09:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=UVWqQXafZ/X9MCi3U1aPlSOSuzbIbsBPGV8F2Zf93Jg=;
-        b=egQS5MjYIvfK2q+CxooRFAWh4AkS7EqSlpSl077t1wj+eNHqeCl5W+G1qt52k1RuG9
-         zIaHx6kU0VSmisLZPUnMM4mIdhJniH7DuQQDd2AXTfYHf4mEm365kRXyD7/kgSxdCyoR
-         Zq+1JXXDvjiNPCdXA42cI690M3kDIMeus+b47iTeWx2C8WJx6FvqS+4n5n/eCXPLaBxP
-         rWz3Ta67hXhJ34lditXLRNdzj3uLUdNO2+5sBQJXFE5X1NAlU+1WYhMRO4GVOyjL4ONk
-         bJv3V+cgvMMTpQM7lk/LY5wHOJPMEMt462PUolpf7d+IrYv3UHQWFtnQHKU/1IJWKkij
-         H6ZA==
+        bh=+hK5V+00HuBIgvwFBMqvf1caVsLQS7fH30vXRswk3QU=;
+        b=N4zOorQCPStoqHAzK8dkZTKIuQP4g/v0c1TBWu0ordNOpN4aVAkxtt0rp8IsunV+oL
+         JZabue/BQgQ7oyk1EZFxhswYI6N4VS0t8uMNZvLg0klSFmA5pLDU/mDgolH0dEyGqxSm
+         zokMSqu2kCGY+d9fL3j6oEt7yEAEVFngv8Bt9ujBDho+vikddNE8PbjcZmNNm0xK+MCi
+         dWHOIfn8STLExiLjj+3+wW6TT+z4mheqy+c2CSzX3jrz1mNHO5s1nIVyWxsh5+siuqpa
+         pEI56Q2+P7RJ7kS00p3dEpWoSe0rH1mNj+67idrGD5TyQh7qFhQI1MpTdTT5GbonMBbK
+         W8Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=UVWqQXafZ/X9MCi3U1aPlSOSuzbIbsBPGV8F2Zf93Jg=;
-        b=YjWj2gLcgfS2wjvh29Xd+bYaR4VKvEsneA9Gv+3xWol7NKJqukchY5E2Kw/V98+Pu5
-         6DRsTv2s4x42UXbEwsqrchmbwmVTE0uQnz27nVdQ+CS5Nu4GnDZJMEcpaBoJfw4gGLXO
-         cM0ncd42sPub3/9DYjcWFzTf5ZMqBBMfjDiJrCIKp3xRq8mBDQR2YWeqF2JSGFvSsM0X
-         6JYqgawDkJW+h5HH3mXk4H+fEWv+UjGHy2XbVkGn/bg665VJ6XA67nbl+O29W8Vt0c9w
-         Cv6Z/R5po0wvGLxbCHgK/Rtto3ugKb5fDYJNoQw+YCLv2skW4HBKZDl6T7WZzNrjR6pV
-         5v8A==
-X-Gm-Message-State: AHQUAuaf+R3EGU82B9uy6ETtN12i8DtH6gpIlkc9lc4DeeFxfS02lfWg
-        MI3Q8s/fDKKaNmTUDo73lgk=
-X-Google-Smtp-Source: AHgI3IYv1lJgJTzn3LOHLhTgDD5gjpgJxfjbqSReqnB4xq3OJyh24csatJtdeVjAszOfgb0OXEaCaw==
-X-Received: by 2002:a17:902:b48d:: with SMTP id y13mr3973292plr.273.1550149767468;
-        Thu, 14 Feb 2019 05:09:27 -0800 (PST)
+        bh=+hK5V+00HuBIgvwFBMqvf1caVsLQS7fH30vXRswk3QU=;
+        b=SlfDaX5BXePFpTfqHaMnLb6eAVxQXqzP07RXOTQbSKN6RzOCb7P2yXCV1OJZ5Aa+Zn
+         O/Ra4t8jim4KG901G00UWKLhC14QLZ/1s66oH4rN1QsiEDY40cSkq7TQt8HWRk5/6czQ
+         1efSez6xfUZMf1ZP78Vf45SYmggphrIeHwi7yhgjlDN/3TfXE44D9tkdKXRUsjdgUqxc
+         AarWirT2/qKfDu5Ir982dgdALB6Y1E7EEkK7odnI1urIv992h0UO/2SEX4xuisxq+Ue0
+         OnmAPhhFpz9BmETosTrf0tFe7W9/DonM4HaMUYRzM4vCPn/0voGYjYXHnwH/fjcPYZUR
+         UGQA==
+X-Gm-Message-State: AHQUAua1gt5k7/yI1Qk0FuhcOaJsqHk8cToTXa5qFaf2DkTz72ZIZboO
+        qAEqqkDX/EulSabRp5LTTUs=
+X-Google-Smtp-Source: AHgI3IZE6om4PCXUD8l/xFXDXYr2gbJMaFNdC2/Pesiz51GgDeT7X6D+cXbbQrjUMdXMQpgE/YpFtA==
+X-Received: by 2002:a65:47ca:: with SMTP id f10mr3810384pgs.166.1550149771864;
+        Thu, 14 Feb 2019 05:09:31 -0800 (PST)
 Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
-        by smtp.gmail.com with ESMTPSA id o16sm2517286pgv.41.2019.02.14.05.09.26
+        by smtp.gmail.com with ESMTPSA id 15sm3625336pfr.55.2019.02.14.05.09.30
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 05:09:26 -0800 (PST)
+        Thu, 14 Feb 2019 05:09:31 -0800 (PST)
 From:   Yangtao Li <tiny.windzz@gmail.com>
 To:     maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
 Cc:     mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 2/4] arm64: dts: allwinner: h6: pine: Add CPU supply regulator
-Date:   Thu, 14 Feb 2019 08:09:08 -0500
-Message-Id: <20190214130910.9201-3-tiny.windzz@gmail.com>
+Subject: [PATCH 3/4] arm64: dts: allwinner: h6: Add clock to CPU cores
+Date:   Thu, 14 Feb 2019 08:09:09 -0500
+Message-Id: <20190214130910.9201-4-tiny.windzz@gmail.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20190214130910.9201-1-tiny.windzz@gmail.com>
 References: <20190214130910.9201-1-tiny.windzz@gmail.com>
@@ -71,42 +71,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The original pine use the dcdca to supply the CPU cores. According
-to the axp805 spec, the range of dcdca is 0.6 to 1.1v, 1.12 to 1.52v.
-In order to support more CPU frequency, slightly increase the voltage
-maximum and minimum.
+The ARM CPU cores are fed by the CPU clock from the CCU. Add a
+reference to the clock for each CPU core, along with the clock
+transition latency.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-index bdb8470fc8dc..95c81250c2b3 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-@@ -213,8 +213,8 @@
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+index d93a7add67e7..57a1390ecdc2 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
++++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+@@ -26,6 +26,8 @@
+ 			device_type = "cpu";
+ 			reg = <0>;
+ 			enable-method = "psci";
++			clocks = <&ccu CLK_CPUX>; 
++			clock-latency-ns = <244144>; /* 8 32k periods */
+ 		};
  
- 			reg_dcdca: dcdca {
- 				regulator-always-on;
--				regulator-min-microvolt = <810000>;
--				regulator-max-microvolt = <1080000>;
-+				regulator-min-microvolt = <800000>;
-+				regulator-max-microvolt = <1160000>;
- 				regulator-name = "vdd-cpu";
- 			};
+ 		cpu1: cpu@1 {
+@@ -33,6 +35,8 @@
+ 			device_type = "cpu";
+ 			reg = <1>;
+ 			enable-method = "psci";
++			clocks = <&ccu CLK_CPUX>; 
++			clock-latency-ns = <244144>; /* 8 32k periods */
+ 		};
  
-@@ -251,6 +251,10 @@
+ 		cpu2: cpu@2 {
+@@ -40,6 +44,8 @@
+ 			device_type = "cpu";
+ 			reg = <2>;
+ 			enable-method = "psci";
++			clocks = <&ccu CLK_CPUX>; 
++			clock-latency-ns = <244144>; /* 8 32k periods */
+ 		};
+ 
+ 		cpu3: cpu@3 {
+@@ -47,6 +53,8 @@
+ 			device_type = "cpu";
+ 			reg = <3>;
+ 			enable-method = "psci";
++			clocks = <&ccu CLK_CPUX>; 
++			clock-latency-ns = <244144>; /* 8 32k periods */
+ 		};
  	};
- };
  
-+&cpu0 {
-+	cpu-supply = <&reg_dcdca>;
-+};
-+
- &uart0 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&uart0_ph_pins>;
 -- 
 2.17.0
 
