@@ -4,92 +4,94 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D1C7C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:13:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC25C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:14:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B76F2229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:13:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 696E32229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:14:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="decQ0ZtU"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z6HXJpwm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389143AbfBNJN6 (ORCPT
+        id S2391406AbfBNJO5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 04:13:58 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53849 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727894AbfBNJN5 (ORCPT
+        Thu, 14 Feb 2019 04:14:57 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:51585 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726234AbfBNJO4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 04:13:57 -0500
-Received: by mail-wm1-f66.google.com with SMTP id d15so5442003wmb.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 01:13:56 -0800 (PST)
+        Thu, 14 Feb 2019 04:14:56 -0500
+Received: by mail-wm1-f67.google.com with SMTP id b11so5459523wmj.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 01:14:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=f7e3kTZ/h37QMmqsr6zq1fomaVECBSv/YeeeOVLCxjc=;
-        b=decQ0ZtU1AuDmPsSeb/Btky4HOIU3Fsuz8ubE3BsncHneQonWJMfMS5ub5ebMmau5D
-         afs9ZKt/nFOdS+DnXX1OrZ+MPRsGAMa51bzgK0cXwfUBRF0QcqPiQKv3HseZIbuiFlD/
-         Da5E5n6a+IqVfMSJEJx7WiVi88/q5J6DkeTMog7BhB6xq2fUhyX7fJ/z1TFlbr4GFdAI
-         ftR8TqGxgbr0SsneDaUq06Lk8jiM4Amqv9vz4aQXY9G+3CCvbYS5tqeEtBskp2w8cZqM
-         rillOItSLG64vQ1gmvBALeYaBSg5BR8qEQcuKhwMjAFE+uIbaMVAAYOH46KEBSZhHiNL
-         8W6w==
+        bh=IuDRH2Zrek2kUj5JwkJNJicQtZLeUEiGi9otZB0cur4=;
+        b=Z6HXJpwmyX2YnhuZNopWJqoU1wyBXNdCvXZFBOiCMJdHL+gYco2vWE3dbJ84lFEMEH
+         aZprU3WMQ7hLXZcvIP5Nw4mU7Xtj3VSnT32qqAXXndLJc3TOoa5ya9x55PB8rgvtNFeC
+         sk2t4PlA71ibaCUvZRtMULZkxbmik+KiRuk0xntiJUsOUqOhVrWJ4wbzA22dTN7jC4TB
+         5C6C7XYxCY/uJlMti+UljrkozRew+5X4A7KBL9hrR4k3k3Gmzi8LNt/iFoiFyTbUm0Tu
+         HZxelvg93YUaeaVHiWQxtI3AedpUIXoOcYPDyUHlNpgrRW88Dnr6fEcagP4e7TBO0DCn
+         7UHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=f7e3kTZ/h37QMmqsr6zq1fomaVECBSv/YeeeOVLCxjc=;
-        b=UIgpfTpLw2D4utsfc3f9GIOs5ond9gGOgqMeHda+dsQWthpEH2NKQcjKaEj3AlG3GS
-         jDu8kRjQDs+3KAiZSm9qizQsX697hcS1Y6fd0PObDa5YMzGQkzkpv3k1e/c4oiyzSIrA
-         fg1OTkkgJQg4MWpm/LXsJjH21y+uQ/BFrZ7iqdj2fzwAjiLpecUnmRNBZuQXZ2udl3gt
-         x8g7ZgC84Vg+6epb/1FeHGYr6JXTIL53ky3q04zDwZf7/uCBNK1pc/FIljvGKl4H91x5
-         vpAjzfaxsHgT7StfmPmhYlGWfDTO2hmzttpEpENYyhyqilrNx0UKd2dttsN/0ov2tfck
-         SmJw==
-X-Gm-Message-State: AHQUAubdKy7FI7770AHZjcw9lu4d3hVAvenwcXPml+OWFPDWgBpy6DkO
-        SrEbwqeS67wt6spHNBlxR8roF6diegQ=
-X-Google-Smtp-Source: AHgI3IZ3xTqf6hlNByM2OQeFTZV0Cs2atfmCJ4VliuVfqhDo9otdAHBLgy2YZ33NUUWMQpa6HbvUuQ==
-X-Received: by 2002:a1c:eb18:: with SMTP id j24mr1729150wmh.119.1550135635611;
-        Thu, 14 Feb 2019 01:13:55 -0800 (PST)
+        bh=IuDRH2Zrek2kUj5JwkJNJicQtZLeUEiGi9otZB0cur4=;
+        b=aapPnPcHHbBx27Q/6/wara3TxijQRC8ZpPk8Lst5ZmmRlOtLrhjvO6VD/J7I3ZJGkP
+         TUrVrBNLKkz5yjAsyupY0AlY1bx6P2XNkDsl/ABUt51y2fvkANGPLOX0H4HMsmzam32f
+         ci1GAXEDqiW+HoBSO+/wS7tWhhstNoXQ4lfVNGzTD05a354tOdbiT+rq9YXC/0C+DvqV
+         4V7vVkgqFa2z1yQyt6UH8yInxHXfhUQF5HBIG1W89i8rWdZieA5uGUfEjkfqwRrV3ilr
+         t0JzXODK0QhwVIJJ1ouzA7bziq5qZ4kUkKTbfB/MY3BjzvckL6qLXCSSaXdvIdBUcpqC
+         Phtw==
+X-Gm-Message-State: AHQUAuaYkl0WJIf3i5OBAjpLmUfLyw38lT2eIgPE3ij+5RxTBxqe5O7L
+        qf02cpo3KTnV+regeQXBWwXZ0Q==
+X-Google-Smtp-Source: AHgI3IYq8ebzJ2bwYZtrZx2IxIxNkx1RZMYPziNXdLx2CVdrcbx7+HluKeQToxolBJ6HPnwOsE4Ikg==
+X-Received: by 2002:a05:600c:2255:: with SMTP id a21mr1919040wmm.31.1550135694869;
+        Thu, 14 Feb 2019 01:14:54 -0800 (PST)
 Received: from dell ([2a01:4c8:c:28c9:4c60:37da:d7a:230])
-        by smtp.gmail.com with ESMTPSA id x8sm956546wmj.26.2019.02.14.01.13.54
+        by smtp.gmail.com with ESMTPSA id k20sm3526932wre.41.2019.02.14.01.14.53
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 01:13:54 -0800 (PST)
-Date:   Thu, 14 Feb 2019 09:13:51 +0000
+        Thu, 14 Feb 2019 01:14:54 -0800 (PST)
+Date:   Thu, 14 Feb 2019 09:14:51 +0000
 From:   Lee Jones <lee.jones@linaro.org>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     linux-kernel@vger.kernel.org,
-        Emeric Dupont <emeric.dupont@zii.aero>
-Subject: Re: [PATCH v6] mfd: tqmx86: IO controller with i2c, wachdog and gpio
-Message-ID: <20190214091351.GA13737@dell>
-References: <20190208230622.15181-1-andrew@lunn.ch>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Sangbeom Kim <sbkim73@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v2] mfd: sec-core: Cleanup formatting to a consistent
+ style
+Message-ID: <20190214091451.GB13737@dell>
+References: <1549891223-14269-1-git-send-email-krzk@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190208230622.15181-1-andrew@lunn.ch>
+In-Reply-To: <1549891223-14269-1-git-send-email-krzk@kernel.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 09 Feb 2019, Andrew Lunn wrote:
+On Mon, 11 Feb 2019, Krzysztof Kozlowski wrote:
 
-> The QMX86 is a PLD present on some TQ-Systems ComExpress modules. It
-> provides 1 or 2 I2C bus masters, 8 GPIOs and a watchdog timer. Add an
-> MFD which will instantiate the individual drivers.
+> Cleanup the formatting to have consistent style across the file (only
+> white-space issues).  No expected difference in code.
 > 
-> Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
 > ---
->  drivers/mfd/Kconfig  |   8 ++
->  drivers/mfd/Makefile |   1 +
->  drivers/mfd/tqmx86.c | 281 +++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 290 insertions(+)
->  create mode 100644 drivers/mfd/tqmx86.c
+> 
+> Changes since v1:
+> 1. Leave one-liners as is.
+> ---
+>  drivers/mfd/sec-core.c | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
 
 Applied, thanks.
 
