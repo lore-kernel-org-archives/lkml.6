@@ -2,115 +2,110 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BAF1C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 20:23:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67F3AC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 20:26:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23B9A2192B
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 20:23:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39D7C2080A
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 20:26:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503097AbfBNUXR (ORCPT
+        id S2437699AbfBNU0U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 15:23:17 -0500
-Received: from mga01.intel.com ([192.55.52.88]:46310 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390400AbfBNUXQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 15:23:16 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2019 12:23:15 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,369,1544515200"; 
-   d="scan'208";a="299821871"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga005.jf.intel.com with ESMTP; 14 Feb 2019 12:23:15 -0800
-Subject: [PATCH 6/6] nfit/ars: Avoid stale ARS results
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     linux-nvdimm@lists.01.org
-Cc:     Krzysztof Rusocki <krzysztof.rusocki@intel.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 14 Feb 2019 12:10:37 -0800
-Message-ID: <155017503725.944049.1596090801791232896.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <155017500427.944049.2254497897075714747.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <155017500427.944049.2254497897075714747.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+        Thu, 14 Feb 2019 15:26:20 -0500
+Received: from gateway34.websitewelcome.com ([192.185.148.204]:32393 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387975AbfBNU0U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 15:26:20 -0500
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id B2893E1C43A
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 14:26:19 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id uNaNg5g1t2qH7uNaNgdQ9F; Thu, 14 Feb 2019 14:26:19 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.119.20] (port=44914 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1guNaM-000G9J-W0; Thu, 14 Feb 2019 14:26:19 -0600
+Date:   Thu, 14 Feb 2019 14:26:18 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] watchdog: pc87413: Mark expected switch fall-through
+Message-ID: <20190214202618.GA18658@embeddedor>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.119.20
+X-Source-L: No
+X-Exim-ID: 1guNaM-000G9J-W0
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.119.20]:44914
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 15
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Gate ARS result consumption on whether the OS issued start-ARS since the
-previous consumption. The BIOS may only clear its result buffers after a
-successful start-ARS.
+In preparation to enabling -Wimplicit-fallthrough, mark switch
+cases where we are expecting to fall through.
 
-Reported-by: Krzysztof Rusocki <krzysztof.rusocki@intel.com>
-Reported-by: Vishal Verma <vishal.l.verma@intel.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+This patch fixes the following warning:
+
+drivers/watchdog/pc87413_wdt.c: In function ‘pc87413_ioctl’:
+drivers/watchdog/pc87413_wdt.c:439:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   pc87413_refresh();
+   ^~~~~~~~~~~~~~~~~
+drivers/watchdog/pc87413_wdt.c:441:2: note: here
+  case WDIOC_GETTIMEOUT:
+  ^~~~
+
+Warning level 3 was used: -Wimplicit-fallthrough=3
+
+Notice that, in this particular case, the code comment is modified
+in accordance with what GCC is expecting to find.
+
+This patch is part of the ongoing efforts to enable
+-Wimplicit-fallthrough.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- drivers/acpi/nfit/core.c |   17 ++++++++++++++++-
- drivers/acpi/nfit/nfit.h |    1 +
- 2 files changed, 17 insertions(+), 1 deletion(-)
+ drivers/watchdog/pc87413_wdt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-index 612cf5d92e25..2a49051d5317 100644
---- a/drivers/acpi/nfit/core.c
-+++ b/drivers/acpi/nfit/core.c
-@@ -2650,7 +2650,10 @@ static int ars_start(struct acpi_nfit_desc *acpi_desc,
- 
- 	if (rc < 0)
- 		return rc;
--	return cmd_rc;
-+	if (cmd_rc < 0)
-+		return cmd_rc;
-+	set_bit(ARS_VALID, &acpi_desc->scrub_flags);
-+	return 0;
- }
- 
- static int ars_continue(struct acpi_nfit_desc *acpi_desc)
-@@ -2743,6 +2746,17 @@ static int ars_status_process_records(struct acpi_nfit_desc *acpi_desc)
- 	 */
- 	if (ars_status->out_length < 44)
- 		return 0;
-+
-+	/*
-+	 * Ignore potentially stale results that are only refreshed
-+	 * after a start-ARS event.
-+	 */
-+	if (!test_and_clear_bit(ARS_VALID, &acpi_desc->scrub_flags)) {
-+		dev_dbg(acpi_desc->dev, "skip %d stale records\n",
-+				ars_status->num_records);
-+		return 0;
-+	}
-+
- 	for (i = 0; i < ars_status->num_records; i++) {
- 		/* only process full records */
- 		if (ars_status->out_length
-@@ -3226,6 +3240,7 @@ static int acpi_nfit_register_regions(struct acpi_nfit_desc *acpi_desc)
- 	struct nfit_spa *nfit_spa;
- 	int rc;
- 
-+	set_bit(ARS_VALID, &acpi_desc->scrub_flags);
- 	list_for_each_entry(nfit_spa, &acpi_desc->spas, list) {
- 		switch (nfit_spa_type(nfit_spa->spa)) {
- 		case NFIT_SPA_VOLATILE:
-diff --git a/drivers/acpi/nfit/nfit.h b/drivers/acpi/nfit/nfit.h
-index 897ce10192a0..1efd248104e0 100644
---- a/drivers/acpi/nfit/nfit.h
-+++ b/drivers/acpi/nfit/nfit.h
-@@ -213,6 +213,7 @@ struct nfit_mem {
- enum scrub_flags {
- 	ARS_BUSY,
- 	ARS_CANCEL,
-+	ARS_VALID,
- };
- 
- struct acpi_nfit_desc {
+diff --git a/drivers/watchdog/pc87413_wdt.c b/drivers/watchdog/pc87413_wdt.c
+index 06a892e36a8d..2ffa39b46970 100644
+--- a/drivers/watchdog/pc87413_wdt.c
++++ b/drivers/watchdog/pc87413_wdt.c
+@@ -437,7 +437,7 @@ static long pc87413_ioctl(struct file *file, unsigned int cmd,
+ 			return -EINVAL;
+ 		timeout = new_timeout;
+ 		pc87413_refresh();
+-		/* fall through and return the new timeout... */
++		/* fall through - and return the new timeout... */
+ 	case WDIOC_GETTIMEOUT:
+ 		new_timeout = timeout * 60;
+ 		return put_user(new_timeout, uarg.i);
+-- 
+2.20.1
 
