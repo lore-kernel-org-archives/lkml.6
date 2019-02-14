@@ -2,120 +2,127 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84461C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA20C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:16:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 545E92075C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:13:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FB40222B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:16:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=6wind-com.20150623.gappssmtp.com header.i=@6wind-com.20150623.gappssmtp.com header.b="AslHkVKZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404687AbfBNONy convert rfc822-to-8bit (ORCPT
+        id S2388362AbfBNOQU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 09:13:54 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:23258 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2393613AbfBNONy (ORCPT
+        Thu, 14 Feb 2019 09:16:20 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37989 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726213AbfBNOQU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 09:13:54 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-58-cS1Xal03PAGXnZoPo9IHMA-1; Thu, 14 Feb 2019 14:13:51 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu,
- 14 Feb 2019 14:14:34 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 14 Feb 2019 14:14:34 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Peter Zijlstra' <peterz@infradead.org>,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>
-CC:     "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>,
-        Arnd Bergmann <arnd.bergmann@linaro.org>,
-        Vineet Gupta <vineet.gupta1@synopsys.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: RE: [PATCH] ARC: Explicitly set ARCH_SLAB_MINALIGN = 8
-Thread-Topic: [PATCH] ARC: Explicitly set ARCH_SLAB_MINALIGN = 8
-Thread-Index: AQHUwvc8KjF6Xlwy10OvbYFx5kwo16XcaZhggAK74naAADJoAA==
-Date:   Thu, 14 Feb 2019 14:14:34 +0000
-Message-ID: <3b9d2eadfc81422caa0292c7ef1684f1@AcuMS.aculab.com>
-References: <20190208105519.26750-1-abrodkin@synopsys.com>
- <81017fe4-b31f-4942-e822-a7b70008b74d@synopsys.com>
- <f83412d1e7fd4d67b4632c1f81fae963@AcuMS.aculab.com>
- <bfc65835-21f9-6d5e-791d-ee49113d939c@synopsys.com>
- <20190213125651.GP32494@hirez.programming.kicks-ass.net>
- <e6138aeb-9ce4-fbfa-4d6a-b76f189a3e47@synopsys.com>
- <20190214103140.GG32494@hirez.programming.kicks-ass.net>
- <4881796E12491D4BB15146FE0209CE64681DB122@DE02WEMBXB.internal.synopsys.com>
- <20190214110813.GK32494@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190214110813.GK32494@hirez.programming.kicks-ass.net>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Thu, 14 Feb 2019 09:16:20 -0500
+Received: by mail-wr1-f67.google.com with SMTP id v13so6650002wrw.5
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 06:16:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=6wind-com.20150623.gappssmtp.com; s=20150623;
+        h=reply-to:subject:to:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Hh4NnkWKbXg4EnJs40Sev6zsQ/bhX5QcivRqfXoNjZ4=;
+        b=AslHkVKZ/MRwMubrhwHQP09C5Gg6pnl4oAKuRqVuMo1WpAqWrpXKQe3/eQaJObxMCg
+         ywzhhl47NlyW4ovZp/uHsx80/95pfCFG8YqXgABcQIGdJ5AVCWDtSNHmgOpuMhgUQX4L
+         5b20viv3NnrshTMY3AAXCs/Vzy2pIt8s05oZO9Hk/rymm9vUOT2V61QeEYxtUQ95KrTu
+         +nqLZwJ1T4Vir76ye8CUmG1V9crtl3seT99WPsAAGwZb8PD+b5W9OCqAh4MpS/7wW+xT
+         p75q3a4632l90n6shiKkAG16VdIU4M1/ULDnCU108LsVn7Du8uDDXbgEUi4beaphQ9MH
+         Xe4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:reply-to:subject:to:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Hh4NnkWKbXg4EnJs40Sev6zsQ/bhX5QcivRqfXoNjZ4=;
+        b=YxO9BEdloMJfgD97O5mKincjcbSAzZ+iUPnVLzQXvPeMSjh6LLD92fISEeydPlVp4Q
+         AL2rn8dryu7QmIUyYNgExYmNuGnW49fb8W9QmFcEstausfecx4s8QLN2r8M5X+rwLNYC
+         pva53F2n64cW3VR5lnu21EiHHwhuhLlH/Qg872vSgW+8YhPOltDaV0n5XYyjHuZVxCCB
+         sKKgSsComTdKfKC2ai/EXKI3nIldFwPPKzn1GuYH+LNFnl8aAUpvyc3Bo6VQ72Ur3BIc
+         doZetsGkLHwEDYCRN5LJmTPixY5nVarcD50ToXPjVl8gTy5KDwQOP76fZxB+EARfdE3Z
+         8sxQ==
+X-Gm-Message-State: AHQUAuZFfsYGIur/+j7kZxLUDyD79bNSz2JozYq28PIy3WnfP+07Q5Dq
+        Im8h78mEmLKhQqO19B19vJvC07OlZPc=
+X-Google-Smtp-Source: AHgI3IZVB0Q8zL7pnPzIEaArctduaIwA2mv4ZOTMrsqkj/t3h657eVs0Yt6MQGZQp7ggQqi3qomkJg==
+X-Received: by 2002:adf:e30f:: with SMTP id b15mr3009743wrj.0.1550153778317;
+        Thu, 14 Feb 2019 06:16:18 -0800 (PST)
+Received: from ?IPv6:2a01:e35:8b63:dc30:b97b:8aa4:ad2c:2f98? ([2a01:e35:8b63:dc30:b97b:8aa4:ad2c:2f98])
+        by smtp.gmail.com with ESMTPSA id k126sm1722479wme.27.2019.02.14.06.16.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Feb 2019 06:16:16 -0800 (PST)
+Reply-To: nicolas.dichtel@6wind.com
+Subject: Re: [PATCH net-next v5] ipmr: ip6mr: Create new sockopt to clear mfc
+ cache or vifs
+To:     Callum Sinclair <callum.sinclair@alliedtelesis.co.nz>,
+        davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        nikolay@cumulusnetworks.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190214024418.21490-1-callum.sinclair@alliedtelesis.co.nz>
+ <20190214024418.21490-2-callum.sinclair@alliedtelesis.co.nz>
+From:   Nicolas Dichtel <nicolas.dichtel@6wind.com>
+Organization: 6WIND
+Message-ID: <75b01657-456d-8954-55cd-d10d71a23bbe@6wind.com>
+Date:   Thu, 14 Feb 2019 15:16:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-MC-Unique: cS1Xal03PAGXnZoPo9IHMA-1
-X-Mimecast-Spam-Score: 0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <20190214024418.21490-2-callum.sinclair@alliedtelesis.co.nz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra
-> Sent: 14 February 2019 11:08
-> On Thu, Feb 14, 2019 at 10:44:49AM +0000, Alexey Brodkin wrote:
-> > > On Wed, Feb 13, 2019 at 03:23:36PM -0800, Vineet Gupta wrote:
-> > > > On 2/13/19 4:56 AM, Peter Zijlstra wrote:
-> > > > >
-> > > > > Personally I think u64 and company should already force natural
-> > > > > alignment; but alas.
-> > > >
-> > > > But there is an ISA/ABI angle here too. e.g. On 32-bit ARC, LDD (load double) is
-> > > > allowed to take a 32-bit aligned address to load a register pair. Thus all u64
-> > > > need not be 64-bit aligned (unless attribute aligned 8 etc) hence the relaxation
-> > > > in ABI (alignment of long long is 4). You could certainly argue that we end up
-> > > > undoing some of it anyways by defining things like ARCH_KMALLOC_MINALIGN to 8, but
-> > > > still...
-> > >
-> > > So what happens if the data is then split across two cachelines; will a
-> > > STD vs LDD still be single-copy-atomic? I don't _think_ we rely on that
-> > > for > sizeof(unsigned long), with the obvious exception of atomic64_t,
-> > > but yuck...
-> >
-> > STD & LDD are simple store/load instructions so there's no problem for
-> > their 64-bit data to be from 2 subsequent cache lines as well as 2 pages
-> > (if we're that unlucky). Or you mean something else?
+Le 14/02/2019 à 03:44, Callum Sinclair a écrit :
+> Currently the only way to clear the forwarding cache was to delete the
+> entries one by one using the MRT_DEL_MFC socket option or to destroy and
+> recreate the socket.
 > 
-> u64 x;
+> Create a new socket option which with the use of optional flags can
+> clear any combination of multicast entries (static or not static) and
+> multicast vifs (static or not static).
 > 
-> WRITE_ONCE(x, 0x1111111100000000);
-> WRITE_ONCE(x, 0x0000000011111111);
+> Calling the new socket option MRT_FLUSH with the flags MRT_FLUSH_MFC and
+> MRT_FLUSH_VIFS will clear all entries and vifs on the socket except for
+> static entries.
 > 
-> vs
-> 
-> t = READ_ONCE(x);
-> 
-> is t allowed to be 0x1111111111111111 ?
-> 
-> If the data is split between two cachelines, the hardware must do
-> something very funny to avoid that.
+> Signed-off-by: Callum Sinclair <callum.sinclair@alliedtelesis.co.nz>
+Except two minor comments (see below),
+Acked-by: Nicolas Dichtel <nicolas.dichtel@6wind.com>
 
-Never mind cachelines, think about separate pages.
-You'd have to 'lock' both TLB before doing either access.
-Not to mention the fact that the two physical locations could be
-on entirely different memory cards (or whatever).
+[snip]
 
-	David
+> +/* MRT6_FLUSH optional flags */
+> +#define MRT6_FLUSH_MFC	1	/* Flush multicast entries */
+> +#define MRT6_FLUSH_MFC_STATIC	2	/* Flush static multicast entries */
+> +#define MRT6_FLUSH_VIFS	4	/* Flushing multicast vifs */
+> +#define MRT6_FLUSH_VIFS_STATIC	8	/* Flush static multicast vifs */
+vifs are called mifs in ipv6, maybe it's better to keep the consistency with
+MRT6_FLUSH_MIFS and MRT6_FLUSH_MIFS_STATIC.
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+[snip]
 
+> +	if (flags & (MRT6_FLUSH_MFC | MRT6_FLUSH_MFC_STATIC)) {
+> +		list_for_each_entry_safe(c, tmp, &mrt->mfc_cache_list, list) {
+> +			if (((c->mfc_flags & MFC_STATIC) && !(flags & MRT6_FLUSH_MFC_STATIC)) ||
+> +			    (!(c->mfc_flags & MFC_STATIC) && !(flags & MRT6_FLUSH_MFC)))
+> +				continue;
+> +			rhltable_remove(&mrt->mfc_hash, &c->mnode, ip6mr_rht_params);
+> +			list_del_rcu(&c->list);
+> +			call_ip6mr_mfc_entry_notifiers(read_pnet(&mrt->net),
+> +						       FIB_EVENT_ENTRY_DEL,
+> +										   (struct mfc6_cache *)c, mrt->id);
+Two many tabs here.
+
+
+Regards,
+Nicolas
