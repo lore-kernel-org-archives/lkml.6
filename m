@@ -2,116 +2,193 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D42C7C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:00:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12BBFC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:00:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEC95218EA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:00:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDA7B222E1
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:00:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550160030;
+	bh=CNocRRn9H+KwbpUEQ4ggC5ldQlblME094D8kMUOYzhg=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=awKvvDSomxPXoonW9pTsV68OkmaoxGXvljFhcO4DSmHepYN4RNRTnywMGf8i2Lz0i
+	 wUKuAFEjIeOoRYuq3/uyHcW/wIUXPQ8omNNWyXAlUIa4o1I5wDVpm/EoEc5L7MiHPi
+	 m5r3pcBLuPMZfDVO/TTx3iwEDwhhVYSdye1Rh04c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439659AbfBNQAL (ORCPT
+        id S2407744AbfBNQA3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:00:11 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:49416 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2392172AbfBNP7x (ORCPT
+        Thu, 14 Feb 2019 11:00:29 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57446 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407608AbfBNQA2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 10:59:53 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1EFgoTe103936
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 10:59:52 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qnavjatrp-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 10:59:51 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Thu, 14 Feb 2019 15:59:49 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 14 Feb 2019 15:59:46 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1EFxjfa1114552
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 14 Feb 2019 15:59:45 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8AAFD4C046;
-        Thu, 14 Feb 2019 15:59:45 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C3AC44C040;
-        Thu, 14 Feb 2019 15:59:43 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.84])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 14 Feb 2019 15:59:43 +0000 (GMT)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Thu, 14 Feb 2019 17:59:43 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@lst.de>, Palmer Dabbelt <palmer@sifive.com>,
-        Richard Kuo <rkuo@codeaurora.org>, linux-arch@vger.kernel.org,
-        linux-hexagon@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-riscv@lists.infradead.org,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: [PATCH 2/4] hexagon: switch over to generic free_initmem()
-Date:   Thu, 14 Feb 2019 17:59:35 +0200
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1550159977-8949-1-git-send-email-rppt@linux.ibm.com>
-References: <1550159977-8949-1-git-send-email-rppt@linux.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19021415-0028-0000-0000-0000034898F5
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021415-0029-0000-0000-00002406C568
-Message-Id: <1550159977-8949-3-git-send-email-rppt@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=769 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902140109
+        Thu, 14 Feb 2019 11:00:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=JZkS6ENkBzzPdIFqekeT8KuwAWPDo+G8OZ7hP9cxADw=; b=lwni3VMA4O5f
+        nRnOnfCWbzWOpbpdKK8JkFaqaLSWp4Ul9UsDUE1WleoQRZXHj2RAEGDAZ5Z6wO3cATIOZBLy8yF6r
+        A6MwclgmfDdjY9quvb0GQlow8Nj8XlB0ouRziERJaitxqQ9WhlgGFVjhtRCk86JVpkOzyngQI7MMF
+        hyP2A=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1guJR2-0005dV-A2; Thu, 14 Feb 2019 16:00:24 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id AB96D1126F78; Thu, 14 Feb 2019 16:00:23 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Mark Brown <broonie@kernel.org>, Angus Ainslie <angus@akkea.ca>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: add regulator_desc_list_voltage_linear_range" to the regulator tree
+In-Reply-To: 
+X-Patchwork-Hint: ignore
+Message-Id: <20190214160023.AB96D1126F78@debutante.sirena.org.uk>
+Date:   Thu, 14 Feb 2019 16:00:23 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hexagon implementation of free_initmem() is currently empty and marked with
-comment
+The patch
 
- * Todo:  free pages between __init_begin and __init_end; possibly
- * some devtree related stuff as well.
+   regulator: add regulator_desc_list_voltage_linear_range
 
-Switch it to the generic implementation.
+has been applied to the regulator tree at
 
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 6a47b4da551a762217215aeeda22e46469c5868a Mon Sep 17 00:00:00 2001
+From: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Date: Thu, 14 Feb 2019 11:38:05 +0200
+Subject: [PATCH] regulator: add regulator_desc_list_voltage_linear_range
+
+Add regulator_desc_list_voltage_linear_range which can be used
+by drivers for getting the voltages before regulator is registered.
+This may be useful for drivers which need to fetch the voltage
+selectors at device-tree parsing callback.
+
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Acked-by: Mark Brown <broonie@kernel.org>
+Tested-by: Angus Ainslie <angus@akkea.ca>
+Reviewed-by: Angus Ainslie <angus@akkea.ca>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- arch/hexagon/mm/init.c | 10 ----------
- 1 file changed, 10 deletions(-)
+ drivers/regulator/helpers.c      | 39 ++++++++++++++++++++++++--------
+ include/linux/regulator/driver.h |  6 +++++
+ 2 files changed, 35 insertions(+), 10 deletions(-)
 
-diff --git a/arch/hexagon/mm/init.c b/arch/hexagon/mm/init.c
-index 1719ede..41cf342 100644
---- a/arch/hexagon/mm/init.c
-+++ b/arch/hexagon/mm/init.c
-@@ -85,16 +85,6 @@ void __init mem_init(void)
- }
+diff --git a/drivers/regulator/helpers.c b/drivers/regulator/helpers.c
+index 5686a1335bd3..68ac6017ef28 100644
+--- a/drivers/regulator/helpers.c
++++ b/drivers/regulator/helpers.c
+@@ -594,28 +594,30 @@ int regulator_list_voltage_pickable_linear_range(struct regulator_dev *rdev,
+ EXPORT_SYMBOL_GPL(regulator_list_voltage_pickable_linear_range);
  
- /*
-- * free_initmem - frees memory used by stuff declared with __init
-- *
-- * Todo:  free pages between __init_begin and __init_end; possibly
-- * some devtree related stuff as well.
-- */
--void __ref free_initmem(void)
--{
--}
--
--/*
-  * free_initrd_mem - frees...  initrd memory.
-  * @start - start of init memory
-  * @end - end of init memory
+ /**
+- * regulator_list_voltage_linear_range - List voltages for linear ranges
++ * regulator_desc_list_voltage_linear_range - List voltages for linear ranges
+  *
+- * @rdev: Regulator device
++ * @desc: Regulator desc for regulator which volatges are to be listed
+  * @selector: Selector to convert into a voltage
+  *
+  * Regulators with a series of simple linear mappings between voltages
+- * and selectors can set linear_ranges in the regulator descriptor and
+- * then use this function as their list_voltage() operation,
++ * and selectors who have set linear_ranges in the regulator descriptor
++ * can use this function prior regulator registration to list voltages.
++ * This is useful when voltages need to be listed during device-tree
++ * parsing.
+  */
+-int regulator_list_voltage_linear_range(struct regulator_dev *rdev,
+-					unsigned int selector)
++int regulator_desc_list_voltage_linear_range(const struct regulator_desc *desc,
++					     unsigned int selector)
+ {
+ 	const struct regulator_linear_range *range;
+ 	int i;
+ 
+-	if (!rdev->desc->n_linear_ranges) {
+-		BUG_ON(!rdev->desc->n_linear_ranges);
++	if (!desc->n_linear_ranges) {
++		BUG_ON(!desc->n_linear_ranges);
+ 		return -EINVAL;
+ 	}
+ 
+-	for (i = 0; i < rdev->desc->n_linear_ranges; i++) {
+-		range = &rdev->desc->linear_ranges[i];
++	for (i = 0; i < desc->n_linear_ranges; i++) {
++		range = &desc->linear_ranges[i];
+ 
+ 		if (!(selector >= range->min_sel &&
+ 		      selector <= range->max_sel))
+@@ -628,6 +630,23 @@ int regulator_list_voltage_linear_range(struct regulator_dev *rdev,
+ 
+ 	return -EINVAL;
+ }
++EXPORT_SYMBOL_GPL(regulator_desc_list_voltage_linear_range);
++
++/**
++ * regulator_list_voltage_linear_range - List voltages for linear ranges
++ *
++ * @rdev: Regulator device
++ * @selector: Selector to convert into a voltage
++ *
++ * Regulators with a series of simple linear mappings between voltages
++ * and selectors can set linear_ranges in the regulator descriptor and
++ * then use this function as their list_voltage() operation,
++ */
++int regulator_list_voltage_linear_range(struct regulator_dev *rdev,
++					unsigned int selector)
++{
++	return regulator_desc_list_voltage_linear_range(rdev->desc, selector);
++}
+ EXPORT_SYMBOL_GPL(regulator_list_voltage_linear_range);
+ 
+ /**
+diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
+index 7f8345bff4e1..05efe2b057c1 100644
+--- a/include/linux/regulator/driver.h
++++ b/include/linux/regulator/driver.h
+@@ -539,4 +539,10 @@ void *regulator_get_init_drvdata(struct regulator_init_data *reg_init_data);
+ void regulator_lock(struct regulator_dev *rdev);
+ void regulator_unlock(struct regulator_dev *rdev);
+ 
++/*
++ * Helper functions intended to be used by regulator drivers prior registering
++ * their regulators.
++ */
++int regulator_desc_list_voltage_linear_range(const struct regulator_desc *desc,
++					     unsigned int selector);
+ #endif
 -- 
-2.7.4
+2.20.1
 
