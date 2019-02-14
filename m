@@ -2,1252 +2,163 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA1C9C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:37:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FCC9C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:38:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54C11222A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:37:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="C5sWRres"
+	by mail.kernel.org (Postfix) with ESMTP id D8DD2222A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:38:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404800AbfBNChA (ORCPT
+        id S2405064AbfBNCiM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 21:37:00 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:33630 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726325AbfBNChA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 21:37:00 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1E2ZuxG075137;
-        Wed, 13 Feb 2019 20:35:56 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1550111756;
-        bh=JdgQhl+YGJ1YZqmsIkMKnOoVL6Dv/EMSpWfH+pzyoHg=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=C5sWRresYaWvb/H28AdW9AacP69+iy9O9zQ0yTkajZeATKT1VxbiJCWybmt5N9jPz
-         tm8bUd0552KhyP2oEcAciRelNxsTOmF4Jagqp6ODLWbina2ivEjW1E6wVHA6fhD2Dz
-         kIOxNE6eAvCsZgWAU/dctTBt45vet3e4AUkWWIw4=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1E2ZuFW004250
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 13 Feb 2019 20:35:56 -0600
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 13
- Feb 2019 20:35:56 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Wed, 13 Feb 2019 20:35:56 -0600
-Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1E2ZtsP030954;
-        Wed, 13 Feb 2019 20:35:55 -0600
-Subject: Re: [PATCH v2 10/14] remoteproc/pru: Add PRU remoteproc driver
-To:     Roger Quadros <rogerq@ti.com>, <tony@atomide.com>,
-        <ohad@wizery.com>, <bjorn.andersson@linaro.org>
-CC:     <david@lechnology.com>, <nsekhar@ti.com>, <t-kristo@ti.com>,
-        <nsaulnier@ti.com>, <jreeder@ti.com>, <m-karicheri2@ti.com>,
-        <woods.technical@gmail.com>, <linux-omap@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, "Andrew F . Davis" <afd@ti.com>
-References: <1549290167-876-1-git-send-email-rogerq@ti.com>
- <1549290167-876-11-git-send-email-rogerq@ti.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <acf08e5e-d65f-84cf-5d3f-a8e0977933f4@ti.com>
-Date:   Wed, 13 Feb 2019 20:35:55 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 13 Feb 2019 21:38:12 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43912 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726325AbfBNCiM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 21:38:12 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9014DC049D67;
+        Thu, 14 Feb 2019 02:38:10 +0000 (UTC)
+Received: from sky.random (ovpn-120-178.rdu2.redhat.com [10.10.120.178])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 97FC25D6B3;
+        Thu, 14 Feb 2019 02:38:06 +0000 (UTC)
+Date:   Wed, 13 Feb 2019 21:38:05 -0500
+From:   Andrea Arcangeli <aarcange@redhat.com>
+To:     "Huang, Ying" <ying.huang@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        David Rientjes <rientjes@google.com>,
+        Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>
+Subject: Re: [PATCH -mm -V7] mm, swap: fix race between swapoff and some swap
+ operations
+Message-ID: <20190214023805.GA19090@redhat.com>
+References: <20190211083846.18888-1-ying.huang@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1549290167-876-11-git-send-email-rogerq@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190211083846.18888-1-ying.huang@intel.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 14 Feb 2019 02:38:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Roger,
+Hello everyone,
 
-On 2/4/19 8:22 AM, Roger Quadros wrote:
-> From: Suman Anna <s-anna@ti.com>
-> 
-> The Programmable Real-Time Unit Subsystem (PRUSS) consists of
-> dual 32-bit RISC cores (Programmable Real-Time Units, or PRUs)
-> for program execution. This patch adds a remoteproc platform
-> driver for managing the individual PRU RISC cores life cycle.
-> 
-> This remoteproc driver does not have support for error recovery
-> and system suspend/resume features. Different compatibles are
-> used to allow providing scalability for instance-specific device
-> data if needed. The driver uses a default firmware-name retrieved
-> from device-tree, and the firmwares are expected to be present
-> in the standard Linux firmware search paths. They can also be
-> adjusted by userspace if required through the sysfs interface
-> provided by the remoteproc core.
-> 
-> The PRU remoteproc driver uses a client-driven boot methodology
-> - it does _not_ support auto-boot so that the PRU load and boot
-> is dictated by the corresponding client drivers for achieving
-> various usecases. This allows flexibility for the client drivers
-> or applications to set a firmware name (if needed) based on their
-> desired functionality and boot the PRU. The sysfs bind and unbind
-> attributes have also been suppressed so that the PRU devices cannot
-> be unbound and thereby shutdown a PRU from underneath a PRU client
-> driver.
-> 
-> A new entry 'single_step' is added to the remoteproc debugfs dir.
-> The 'single_step' utilizes the single-step execution of the PRU
-> cores. Writing a non-zero value performs a single step, and a
-> zero value restores the PRU to execute in the same mode as the
-> mode before the first single step. (note: if the PRU is halted
-> because of a halt instruction, then no change occurs).
-> 
-> pru_rproc_get() and pru_rproc_put() functions allow client drivers
-> to acquire and release the remoteproc device associated with a PRU core.
-> The PRU cores are treated as resources with only one client owning
-> it at a time.
-> 
-> PRU interrupt mapping can be provided via devicetree using
-> ti,pru-interrupt-map property or via the resource table in the
-> firmware blob. If both are provided, the config in DT takes precedence.
-> For interrupt map via resource table, pru-software-support-package [1]
-> has been historically using version 0 for this. However, the current
-> data structure is not scaleable and is not self sufficient.
-> 1) it hard codes number of channel to host mappings so is not
-> scaleable to newer SoCs than have more of these.
-> 2) it does not contain the event to channel mappings within
-> itself but relies on a pointer to point to another section
-> in data memory. This causes a weird complication that the
-> respective data section must be loaded before we can really
-> use the INTC map.
-> 
-> With this patch we drop support for version 0 and support
-> version 1 which is a more robust and scalable data structure.
-> It should be able to support a sufficiently large number (255) of
-> sysevents, channels and host interrupts and is self contained
-> so it can be used without dependency on order of loading sections.
-
-Hmm, looks like you squashed a whole bunch of patches into this. I would
-prefer some of the logical ones to be separated out just like before,
-makes it easier to review the interfaces.
-
-Looks like you have also changed usage behavior on couple of things and
-dropped some of my original changes. I was not able to test this series
-either on AM335x or on AM57xx to comment more on the behavior (not even
-seeing the pruss devices populated, not sure what pieces are missing still).
-
-> 
-> [1]  git://git.ti.com/pru-software-support-package/pru-software-support-package.git
-> 
-> Signed-off-by: Suman Anna <s-anna@ti.com>
-> Signed-off-by: Andrew F. Davis <afd@ti.com>
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> Signed-off-by: Roger Quadros <rogerq@ti.com>
-> ---
->  drivers/remoteproc/Kconfig           |  14 +
->  drivers/remoteproc/Makefile          |   1 +
->  drivers/remoteproc/pru_rproc.c       | 930 +++++++++++++++++++++++++++++++++++
->  drivers/remoteproc/pru_rproc.h       |  54 ++
->  include/linux/remoteproc/pru_rproc.h |  27 +
->  5 files changed, 1026 insertions(+)
->  create mode 100644 drivers/remoteproc/pru_rproc.c
->  create mode 100644 drivers/remoteproc/pru_rproc.h
->  create mode 100644 include/linux/remoteproc/pru_rproc.h
-> 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index f0abd26..333666e 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -197,6 +197,20 @@ config ST_REMOTEPROC
->  config ST_SLIM_REMOTEPROC
->  	tristate
->  
-> +config PRUSS_REMOTEPROC
-> +	tristate "TI PRUSS remoteproc support"
-> +	depends on TI_PRUSS
-> +	default n
-> +	help
-> +	  Support for TI PRU-ICSS remote processors via the remote processor
-> +	  framework.
-> +
-> +	  Currently supported on AM33xx SoCs.
-> +
-> +	  Say Y or M here to support the Programmable Realtime Unit (PRU)
-> +	  processors on various TI SoCs. It's safe to say N here if you're
-> +	  not interested in the PRU or if you are unsure.
-> +
->  endif # REMOTEPROC
->  
->  endmenu
-> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
-> index ce5d061..88a86cc 100644
-> --- a/drivers/remoteproc/Makefile
-> +++ b/drivers/remoteproc/Makefile
-> @@ -26,3 +26,4 @@ qcom_wcnss_pil-y			+= qcom_wcnss.o
->  qcom_wcnss_pil-y			+= qcom_wcnss_iris.o
->  obj-$(CONFIG_ST_REMOTEPROC)		+= st_remoteproc.o
->  obj-$(CONFIG_ST_SLIM_REMOTEPROC)	+= st_slim_rproc.o
-> +obj-$(CONFIG_PRUSS_REMOTEPROC)		+= pru_rproc.o
-> diff --git a/drivers/remoteproc/pru_rproc.c b/drivers/remoteproc/pru_rproc.c
-> new file mode 100644
-> index 0000000..ddd4b64
-> --- /dev/null
-> +++ b/drivers/remoteproc/pru_rproc.c
-> @@ -0,0 +1,930 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * PRU-ICSS remoteproc driver for various TI SoCs
-> + *
-> + * Copyright (C) 2014-2019 Texas Instruments Incorporated - http://www.ti.com/
-> + *	Suman Anna <s-anna@ti.com>
-> + *	Andrew F. Davis <afd@ti.com>
-> + */
-> +
-> +#include <linux/bitops.h>
-> +#include <linux/debugfs.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irqchip/irq-pruss-intc.h>
-> +#include <linux/mfd/syscon.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/remoteproc.h>
-> +#include <linux/remoteproc/pru_rproc.h>
-> +#include <linux/pruss.h>
-> +
-> +#include "remoteproc_internal.h"
-> +#include "pru_rproc.h"
-> +
-> +/* ELF PAGE ID */
-> +#define PRU_PAGE_IRAM	0
-> +#define PRU_PAGE_DRAM	1
-> +
-> +/* IRAM offsets */
-> +#define PRU0_IRAM_START		0x34000
-> +#define PRU1_IRAM_START		0x38000
-> +#define PRU_IRAM_MASK		0x3ffff
-> +
-> +/* PRU_ICSS_PRU_CTRL registers */
-> +#define PRU_CTRL_CTRL		0x0000
-> +#define PRU_CTRL_STS		0x0004
-> +#define PRU_CTRL_WAKEUP_EN	0x0008
-> +#define PRU_CTRL_CYCLE		0x000C
-> +#define PRU_CTRL_STALL		0x0010
-> +#define PRU_CTRL_CTBIR0		0x0020
-> +#define PRU_CTRL_CTBIR1		0x0024
-> +#define PRU_CTRL_CTPPR0		0x0028
-> +#define PRU_CTRL_CTPPR1		0x002C
-> +
-> +/* CTRL register bit-fields */
-> +#define CTRL_CTRL_SOFT_RST_N	BIT(0)
-> +#define CTRL_CTRL_EN		BIT(1)
-> +#define CTRL_CTRL_SLEEPING	BIT(2)
-> +#define CTRL_CTRL_CTR_EN	BIT(3)
-> +#define CTRL_CTRL_SINGLE_STEP	BIT(8)
-> +#define CTRL_CTRL_RUNSTATE	BIT(15)
-> +
-> +/* PRU_ICSS_PRU_DEBUG registers */
-> +#define PRU_DEBUG_GPREG(x)	(0x0000 + (x) * 4)
-> +#define PRU_DEBUG_CT_REG(x)	(0x0080 + (x) * 4)
-> +
-> +/**
-> + * struct pru_rproc - PRU remoteproc structure
-> + * @id: id of the PRU core within the PRUSS
-> + * @pruss: back-reference to parent PRUSS structure
-> + * @rproc: remoteproc pointer for this PRU core
-> + * @iram_region: PRU IRAM IOMEM
-> + * @ctrl_regmap: regmap to PRU CTRL IOMEM
-> + * @debug_regmap: regmap to PRU DEBUG IOMEM
-> + * @client_np: client device node
-> + * @intc_config: PRU INTC configuration data
-> + * @dram0: PRUSS DRAM0 region
-> + * @dram1: PRUSS DRAM1 region
-> + * @shrdram: PRUSS SHARED RAM region
-> + * @iram_da: device address of Instruction RAM for this PRU
-> + * @pdram_da: device address of primary Data RAM for this PRU
-> + * @sdram_da: device address of secondary Data RAM for this PRU
-> + * @shrdram_da: device address of shared Data RAM
-> + * @cfg: regmap to CFG module
-> + * @gpcfg_reg: offset to gpcfg register of this PRU
-> + * @fw_name: name of firmware image used during loading
-> + * @gpmux_save: saved value for gpmux config
-> + * @dt_irqs: number of irqs configured from DT
-> + * @fw_irqs: number of irqs configured from FW
-> + * @lock: mutex to protect client usage
-> + * @dbg_single_step: debug state variable to set PRU into single step mode
-> + * @ctrl_saved_state: saved CTRL state to return to normal mode
-> + */
-> +struct pru_rproc {
-> +	int id;
-> +	struct pruss *pruss;
-> +	struct rproc *rproc;
-> +	struct pruss_mem_region iram_region;
-> +	struct regmap *ctrl_regmap;
-> +	struct regmap *debug_regmap;
-> +	struct device_node *client_np;
-> +	struct pruss_intc_config intc_config;
-> +	struct pruss_mem_region dram0;
-> +	struct pruss_mem_region dram1;
-> +	struct pruss_mem_region shrdram;
-> +	u32 iram_da;
-> +	u32 pdram_da;
-> +	u32 sdram_da;
-> +	u32 shrdram_da;
-> +	struct regmap *cfg;
-> +	int gpcfg_reg;
-> +	const char *fw_name;
-> +	u8 gpmux_save;
-> +	int dt_irqs;
-> +	int fw_irqs;
-> +	struct mutex lock; /* client access lock */
-> +	bool dbg_single_step;
-> +	u32 ctrl_saved_state;
-> +};
-> +
-> +/**
-> + * pru_rproc_set_firmware() - set firmware for a pru core
-> + * @rproc: the rproc instance of the PRU
-> + * @fw_name: the new firmware name, or NULL if default is desired
-> + */
-> +static int pru_rproc_set_firmware(struct rproc *rproc, const char *fw_name)
-> +{
-> +	struct pru_rproc *pru = rproc->priv;
-> +
-> +	if (!fw_name)
-> +		fw_name = pru->fw_name;
-> +
-> +	return rproc_set_firmware(rproc, fw_name);
-> +}
-> +
-> +/*
-> + * pru_get_gpmux() - get the current GPMUX value for a PRU device
-> + * @pru: pru_rproc instance
-> + * @mux: pointer to store the current mux value into
-> + *
-> + * returns 0 on success, negative error value otherwise.
-> + */
-> +static int pru_get_gpmux(struct pru_rproc *pru, u8 *mux)
-> +{
-> +	int ret;
-> +	unsigned int val;
-> +
-> +	ret = regmap_read(pru->cfg, pru->gpcfg_reg, &val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	*mux = (u8)((val & PRUSS_GPCFG_PRU_MUX_SEL_MASK) >>
-> +		    PRUSS_GPCFG_PRU_MUX_SEL_SHIFT);
-> +
-> +	return 0;
-> +}
-> +
-> +/**
-> + * pru_set_gpmux() - set the GPMUX value for a PRU device
-> + * @pru: pru_rproc instance
-> + * @mux: new mux value for PRU
-> + *
-> + * returns 0 on success, negative error value otherwise.
-> + */
-> +static int pru_set_gpmux(struct pru_rproc *pru, u8 mux)
-> +{
-> +	if (mux >= PRUSS_GP_MUX_SEL_MAX)
-> +		return -EINVAL;
-> +
-> +	return regmap_update_bits(pru->cfg, pru->gpcfg_reg,
-> +				  PRUSS_GPCFG_PRU_MUX_SEL_MASK,
-> +				  (u32)mux << PRUSS_GPCFG_PRU_MUX_SEL_SHIFT);
-> +}
-> +
-> +static int pru_get_intc_dt_config(struct pru_rproc *pru,
-> +				  const char *propname, int index,
-> +				  struct pruss_intc_config *intc_config)
-> +{
-> +	struct device *dev = &pru->rproc->dev;
-> +	struct device_node *np = pru->client_np;
-> +	struct property *prop;
-> +	int ret = 0, entries, i;
-> +	int dt_irqs = 0;
-> +	u32 *arr;
-> +	int max_system_events, max_pru_channels, max_pru_host_ints;
-> +
-> +	max_system_events = MAX_PRU_SYS_EVENTS;
-> +	max_pru_channels = MAX_PRU_CHANNELS;
-> +	max_pru_host_ints = MAX_PRU_CHANNELS;
-> +
-> +	prop = of_find_property(np, propname, NULL);
-> +	if (!prop)
-> +		return 0;
-> +
-> +	entries = of_property_count_u32_elems(np, propname);
-> +	if (entries <= 0 || entries % 4)
-> +		return -EINVAL;
-> +
-> +	arr = kmalloc_array(entries, sizeof(u32), GFP_KERNEL);
-> +	if (!arr)
-> +		return -ENOMEM;
-> +
-> +	ret = of_property_read_u32_array(np, propname, arr, entries);
-> +	if (ret)
-> +		return -EINVAL;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(intc_config->sysev_to_ch); i++)
-> +		intc_config->sysev_to_ch[i] = -1;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(intc_config->ch_to_host); i++)
-> +		intc_config->ch_to_host[i] = -1;
-> +
-> +	for (i = 0; i < entries; i += 4) {
-> +		if (arr[i] != index)
-> +			continue;
-> +
-> +		if (arr[i + 1] < 0 ||
-> +		    arr[i + 1] >= max_system_events) {
-> +			dev_err(dev, "bad sys event %d\n", arr[i + 1]);
-> +			ret = -EINVAL;
-> +			goto err;
-> +		}
-> +
-> +		if (arr[i + 2] < 0 ||
-> +		    arr[i + 2] >= max_pru_channels) {
-> +			dev_err(dev, "bad channel %d\n", arr[i + 2]);
-> +			ret = -EINVAL;
-> +			goto err;
-> +		}
-> +
-> +		if (arr[i + 3] < 0 ||
-> +		    arr[i + 3] >= max_pru_host_ints) {
-> +			dev_err(dev, "bad irq %d\n", arr[i + 3]);
-> +			ret = -EINVAL;
-> +			goto err;
-> +		}
-> +
-> +		intc_config->sysev_to_ch[arr[i + 1]] = arr[i + 2];
-> +		dev_dbg(dev, "sysevt-to-ch[%d] -> %d\n", arr[i + 1],
-> +			arr[i + 2]);
-> +
-> +		intc_config->ch_to_host[arr[i + 2]] = arr[i + 3];
-> +		dev_dbg(dev, "chnl-to-host[%d] -> %d\n", arr[i + 2],
-> +			arr[i + 3]);
-> +
-> +		dt_irqs++;
-> +	}
-> +
-> +	kfree(arr);
-> +	return dt_irqs;
-> +
-> +err:
-> +	kfree(arr);
-> +	return ret;
-> +}
-> +
-> +static struct rproc *__pru_rproc_get(struct device_node *np, int index)
-> +{
-> +	struct device_node *rproc_np = NULL;
-> +	struct platform_device *pdev;
-> +	struct rproc *rproc;
-> +
-> +	rproc_np = of_parse_phandle(np, "prus", index);
-> +	if (!rproc_np || !of_device_is_available(rproc_np))
-> +		return ERR_PTR(-ENODEV);
-> +
-> +	pdev = of_find_device_by_node(rproc_np);
-> +	of_node_put(rproc_np);
-> +
-> +	if (!pdev)
-> +		/* probably PRU not yet probed */
-> +		return ERR_PTR(-EPROBE_DEFER);
-> +
-> +	/* TODO: replace the crude string based check to make sure it is PRU */
-> +	if (!strstr(dev_name(&pdev->dev), "pru")) {
-> +		put_device(&pdev->dev);
-> +		return ERR_PTR(-ENODEV);
-> +	}
-> +
-> +	rproc = platform_get_drvdata(pdev);
-> +	put_device(&pdev->dev);
-> +	if (!rproc)
-> +		return ERR_PTR(-EPROBE_DEFER);
-> +
-> +	get_device(&rproc->dev);
-> +
-> +	return rproc;
-> +}
-> +
-> +/**
-> + * pru_rproc_get() - get the PRU rproc instance from a device node
-> + * @np: the user/client device node
-> + * @index: index to use for the prus property
-> + *
-> + * This function looks through a client device node's "prus" property at index
-> + * @index and returns the rproc handle for a valid PRU remote processor if
-> + * found. The function allows only one user to own the PRU rproc resource at
-> + * a time. Caller must call pru_rproc_put() when done with using the rproc,
-> + * not required if the function returns a failure.
-> + *
-> + * Returns the rproc handle on success, and an ERR_PTR on failure using one
-> + * of the following error values
-> + *    -ENODEV if device is not found
-> + *    -EBUSY if PRU is already acquired by anyone
-> + *    -EPROBE_DEFER is PRU device is not probed yet
-> + */
-> +struct rproc *pru_rproc_get(struct device_node *np, int index)
-> +{
-> +	struct rproc *rproc;
-> +	struct pru_rproc *pru;
-> +	struct device *dev;
-> +	int ret;
-> +	u32 mux;
-> +	const char *fw_name;
-> +
-> +	rproc = __pru_rproc_get(np, index);
-> +	if (IS_ERR(rproc))
-> +		return rproc;
-> +
-> +	pru = rproc->priv;
-> +	dev = &rproc->dev;
-> +
-> +	mutex_lock(&pru->lock);
-> +
-> +	if (pru->client_np) {
-> +		mutex_unlock(&pru->lock);
-> +		put_device(&rproc->dev);
-> +		return ERR_PTR(-EBUSY);
-> +	}
-> +
-> +	pru->client_np = np;
-> +
-> +	mutex_unlock(&pru->lock);
-> +
-> +	ret = pru_get_gpmux(pru, &pru->gpmux_save);
-> +	if (ret) {
-> +		dev_err(dev, "failed to get cfg gpmux: %d\n", ret);
-> +		goto err;
-> +	}
-> +
-> +	ret = of_property_read_u32_index(np, "ti,pruss-gp-mux-sel", index,
-> +					 &mux);
-> +	if (!ret) {
-> +		ret = pru_set_gpmux(pru, mux);
-> +		if (ret) {
-> +			dev_err(dev, "failed to set cfg gpmux: %d\n", ret);
-> +			goto err;
-> +		}
-> +	}
-> +
-> +	ret = of_property_read_string_index(np, "firmware-name", index,
-> +					    &fw_name);
-> +	if (!ret) {
-> +		ret = pru_rproc_set_firmware(rproc, fw_name);
-> +		if (ret) {
-> +			dev_err(dev, "failed to set firmware: %d\n", ret);
-> +			goto err;
-> +		}
-> +	}
-> +
-> +	ret = pru_get_intc_dt_config(pru, "ti,pru-interrupt-map",
-> +				     index, &pru->intc_config);
-> +	if (ret < 0) {
-> +		dev_err(dev, "error getting DT interrupt map: %d\n", ret);
-> +		goto err;
-> +	}
-> +
-> +	pru->dt_irqs = ret;
-> +
-> +	return rproc;
-> +
-> +err:
-> +	pru_rproc_put(rproc);
-> +	return ERR_PTR(ret);
-> +}
-> +EXPORT_SYMBOL_GPL(pru_rproc_get);
-> +
-> +/**
-> + * pru_rproc_put() - release the PRU rproc resource
-> + * @rproc: the rproc resource to release
-> + *
-> + * Releases the PRU rproc resource and makes it available to other
-> + * users.
-> + */
-> +void pru_rproc_put(struct rproc *rproc)
-> +{
-> +	struct pru_rproc *pru;
-> +
-> +	if (IS_ERR_OR_NULL(rproc))
-> +		return;
-> +
-> +	/* TODO: replace the crude string based check to make sure it is PRU */
-> +	if (!strstr(dev_name(rproc->dev.parent), "pru"))
-> +		return;
-> +
-> +	pru = rproc->priv;
-> +	if (!pru->client_np)
-> +		return;
-> +
-> +	pru_rproc_set_firmware(rproc, NULL);
-> +	pru_set_gpmux(pru, pru->gpmux_save);
-> +
-> +	mutex_lock(&pru->lock);
-> +	pru->client_np = NULL;
-> +	mutex_unlock(&pru->lock);
-> +
-> +	put_device(&rproc->dev);
-> +}
-> +EXPORT_SYMBOL_GPL(pru_rproc_put);
-> +
-> +/*
-> + * Control PRU single-step mode
-> + *
-> + * This is a debug helper function used for controlling the single-step
-> + * mode of the PRU. The PRU Debug registers are not accessible when the
-> + * PRU is in RUNNING state.
-> + *
-> + * Writing a non-zero value sets the PRU into single-step mode irrespective
-> + * of its previous state. The PRU mode is saved only on the first set into
-> + * a single-step mode. Writing a zero value will restore the PRU into its
-> + * original mode.
-> + */
-> +static int pru_rproc_debug_ss_set(void *data, u64 val)
-> +{
-> +	struct rproc *rproc = data;
-> +	struct pru_rproc *pru = rproc->priv;
-> +	u32 reg_val;
-> +	bool debug_ss;
-> +
-> +	debug_ss = !!val;
-> +	if (!debug_ss && !pru->dbg_single_step)
-> +		return 0;
-> +
-> +	regmap_read(pru->ctrl_regmap, PRU_CTRL_CTRL, &reg_val);
-> +
-> +	if (debug_ss && !pru->dbg_single_step)
-> +		pru->ctrl_saved_state = reg_val;
-> +
-> +	if (debug_ss)
-> +		reg_val |= CTRL_CTRL_SINGLE_STEP | CTRL_CTRL_EN;
-> +	else
-> +		reg_val = pru->ctrl_saved_state;
-> +
-> +	pru->dbg_single_step = debug_ss;
-> +	regmap_write(pru->ctrl_regmap, PRU_CTRL_CTRL, reg_val);
-> +
-> +	return 0;
-> +}
-> +
-> +static int pru_rproc_debug_ss_get(void *data, u64 *val)
-> +{
-> +	struct rproc *rproc = data;
-> +	struct pru_rproc *pru = rproc->priv;
-> +
-> +	*val = pru->dbg_single_step;
-> +
-> +	return 0;
-> +}
-> +DEFINE_SIMPLE_ATTRIBUTE(pru_rproc_debug_ss_fops, pru_rproc_debug_ss_get,
-> +			pru_rproc_debug_ss_set, "%llu\n");
-> +
-> +/*
-> + * Create PRU-specific debugfs entries
-> + *
-> + * The entries are created only if the parent remoteproc debugfs directory
-> + * exists, and will be cleaned up by the remoteproc core.
-> + */
-> +static void pru_rproc_create_debug_entries(struct rproc *rproc)
-> +{
-> +	if (!rproc->dbg_dir)
-> +		return;
-> +
-> +	debugfs_create_file("single_step", 0600, rproc->dbg_dir,
-> +			    rproc, &pru_rproc_debug_ss_fops);
-> +}
-> +
-> +static void *pru_d_da_to_va(struct pru_rproc *pru, u32 da, int len);
-> +
-> +/*
-> + * parse the custom interrupt map resource and save the intc_config
-> + * for use when booting the processor.
-> + */
-> +static int pru_handle_vendor_intrmap(struct rproc *rproc,
-> +				     struct fw_rsc_pruss_intrmap *rsc)
-> +{
-> +	int fw_irqs = 0, i, ret = 0;
-> +	u8 *arr;
-> +	struct device *dev = &rproc->dev;
-> +	struct pru_rproc *pru = rproc->priv;
-> +
-> +	dev_dbg(dev, "vendor rsc intc: version %d\n", rsc->version);
-> +
+On Mon, Feb 11, 2019 at 04:38:46PM +0800, Huang, Ying wrote:
+> @@ -2386,7 +2463,17 @@ static void enable_swap_info(struct swap_info_struct *p, int prio,
+>  	frontswap_init(p->type, frontswap_map);
+>  	spin_lock(&swap_lock);
+>  	spin_lock(&p->lock);
+> -	 _enable_swap_info(p, prio, swap_map, cluster_info);
+> +	setup_swap_info(p, prio, swap_map, cluster_info);
+> +	spin_unlock(&p->lock);
+> +	spin_unlock(&swap_lock);
 > +	/*
-> +	 * 0 was prototyping version. Not supported.
-> +	 * 1 is currently supported version.
+> +	 * Guarantee swap_map, cluster_info, etc. fields are used
+> +	 * between get/put_swap_device() only if SWP_VALID bit is set
 > +	 */
-> +	if (rsc->version == 0 || rsc->version > 1) {
-> +		dev_err(dev, "Unsupported version %d\n", rsc->version);
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* DT provided INTC config takes precedence */
-> +	if (pru->dt_irqs) {
-> +		dev_info(dev, "INTC config in DT and FW. Using DT config.\n");
-> +		return 0;
-> +	}
-> +
-> +	arr = rsc->data;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(pru->intc_config.sysev_to_ch); i++)
-> +		pru->intc_config.sysev_to_ch[i] = -1;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(pru->intc_config.ch_to_host); i++)
-> +		pru->intc_config.ch_to_host[i] = -1;
-> +
-> +	for (i = 0; i < rsc->num_maps * 3; i += 3) {
-> +		if (arr[i] < 0 ||
-> +		    arr[i] >= MAX_PRU_SYS_EVENTS) {
-> +			dev_err(dev, "bad sys event %d\n", arr[i]);
-> +			ret = -EINVAL;
-> +			goto err;
-> +		}
-> +
-> +		if (arr[i + 1] < 0 ||
-> +		    arr[i + 1] >= MAX_PRU_CHANNELS) {
-> +			dev_err(dev, "bad channel %d\n", arr[i + 1]);
-> +			ret = -EINVAL;
-> +			goto err;
-> +		}
-> +
-> +		if (arr[i + 2] < 0 ||
-> +		    arr[i + 2] >= MAX_PRU_CHANNELS) {
-> +			dev_err(dev, "bad host irq %d\n", arr[i + 2]);
-> +				ret = -EINVAL;
-> +			goto err;
-> +		}
-> +
-> +		pru->intc_config.sysev_to_ch[arr[i]] = arr[i + 1];
-> +		dev_dbg(dev, "sysevt-to-ch[%d] -> %d\n", arr[i],
-> +			arr[i + 1]);
-> +
-> +		pru->intc_config.ch_to_host[arr[i + 1]] = arr[i + 2];
-> +		dev_dbg(dev, "chnl-to-host[%d] -> %d\n", arr[i + 1],
-> +			arr[i + 2]);
-> +
-> +		fw_irqs++;
-> +	}
-> +
-> +	pru->fw_irqs = fw_irqs;
-> +	return 0;
-> +
-> +err:
-> +	pru->fw_irqs = 0;
-> +	return ret;
-> +}
-> +
-> +/* PRU-specific vendor resource handler */
-> +static int pru_rproc_handle_vendor_rsc(struct rproc *rproc,
-> +				       struct fw_rsc_vendor *ven_rsc)
-> +{
-> +	struct device *dev = rproc->dev.parent;
-> +	int ret = -EINVAL;
-> +
-> +	struct fw_rsc_pruss_intrmap *rsc;
-> +
-> +	rsc = (struct fw_rsc_pruss_intrmap *)ven_rsc->data;
-> +
-> +	switch (rsc->type) {
-> +	case PRUSS_RSC_INTRS:
-> +		ret = pru_handle_vendor_intrmap(rproc, rsc);
-> +		break;
-> +	default:
-> +		dev_err(dev, "%s: cannot handle unknown type %d\n", __func__,
-> +			rsc->type);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +/* start a PRU core */
-> +static int pru_rproc_start(struct rproc *rproc)
-> +{
-> +	struct device *dev = &rproc->dev;
-> +	struct pru_rproc *pru = rproc->priv;
-> +	u32 val;
-> +	int ret;
-> +
-> +	dev_dbg(dev, "starting PRU%d: entry-point = 0x%x\n",
-> +		pru->id, (rproc->bootaddr >> 2));
-> +
-> +	if (pru->dt_irqs || pru->fw_irqs) {
-> +		ret = pruss_intc_configure(rproc->dev.parent,
-> +					   &pru->intc_config);
-> +		if (ret) {
-> +			dev_err(dev, "failed to configure intc %d\n", ret);
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	val = CTRL_CTRL_EN | ((rproc->bootaddr >> 2) << 16);
-> +	regmap_write(pru->ctrl_regmap, PRU_CTRL_CTRL, val);
-> +
-> +	return 0;
-> +}
-> +
-> +/* stop/disable a PRU core */
-> +static int pru_rproc_stop(struct rproc *rproc)
-> +{
-> +	struct device *dev = &rproc->dev;
-> +	struct pru_rproc *pru = rproc->priv;
-> +
-> +	dev_dbg(dev, "stopping PRU%d\n", pru->id);
-> +	regmap_update_bits(pru->ctrl_regmap, PRU_CTRL_CTRL, CTRL_CTRL_EN, 0);
-> +
-> +	/* undo INTC config */
-> +	if (pru->dt_irqs || pru->fw_irqs)
-> +		pruss_intc_unconfigure(rproc->dev.parent, &pru->intc_config);
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Convert PRU device address (data spaces only) to kernel virtual address
-> + *
-> + * Each PRU has access to all data memories within the PRUSS, accessible at
-> + * different ranges. So, look through both its primary and secondary Data
-> + * RAMs as well as any shared Data RAM to convert a PRU device address to
-> + * kernel virtual address. Data RAM0 is primary Data RAM for PRU0 and Data
-> + * RAM1 is primary Data RAM for PRU1.
-> + */
-> +static void *pru_d_da_to_va(struct pru_rproc *pru, u32 da, int len)
-> +{
-> +	struct pruss_mem_region dram0, dram1, shrd_ram;
-> +	u32 offset;
-> +	void *va = NULL;
-> +
-> +	if (len <= 0)
-> +		return NULL;
-> +
-> +	dram0 = pru->dram0;
-> +	dram1 = pru->dram1;
-> +	/* PRU1 has its local RAM addresses reversed */
-> +	if (pru->id == 1)
-> +		swap(dram0, dram1);
-> +	shrd_ram = pru->shrdram;
-> +
-> +	if (da >= pru->pdram_da && da + len <= pru->pdram_da + dram0.size) {
-> +		offset = da - pru->pdram_da;
-> +		va = (__force void *)(dram0.va + offset);
-> +	} else if (da >= pru->sdram_da &&
-> +		   da + len <= pru->sdram_da + dram1.size) {
-> +		offset = da - pru->sdram_da;
-> +		va = (__force void *)(dram1.va + offset);
-> +	} else if (da >= pru->shrdram_da &&
-> +		   da + len <= pru->shrdram_da + shrd_ram.size) {
-> +		offset = da - pru->shrdram_da;
-> +		va = (__force void *)(shrd_ram.va + offset);
-> +	}
-> +
-> +	return va;
-> +}
-> +
-> +/*
-> + * Convert PRU device address (instruction space) to kernel virtual address
-> + *
-> + * A PRU does not have an unified address space. Each PRU has its very own
-> + * private Instruction RAM, and its device address is identical to that of
-> + * its primary Data RAM device address.
-> + */
-> +static void *pru_i_da_to_va(struct pru_rproc *pru, u32 da, int len)
-> +{
-> +	u32 offset;
-> +	void *va = NULL;
-> +
-> +	if (len <= 0)
-> +		return NULL;
-> +
-> +	if (da >= pru->iram_da &&
-> +	    da + len <= pru->iram_da + pru->iram_region.size) {
-> +		offset = da - pru->iram_da;
-> +		va = (__force void *)(pru->iram_region.va + offset);
-> +	}
-> +
-> +	return va;
-> +}
-> +
-> +/* PRU-specific address translator */
-> +static void *pru_da_to_va(struct rproc *rproc, u64 da, int len, int map)
-> +{
-> +	struct pru_rproc *pru = rproc->priv;
-> +	void *va;
-> +
-> +	switch (map) {
-> +	case PRU_PAGE_IRAM:
-> +		va = pru_i_da_to_va(pru, da, len);
-> +		break;
-> +	case PRU_PAGE_DRAM:
-> +		va = pru_d_da_to_va(pru, da, len);
-> +		break;
-> +	default:
-> +		dev_info(&rproc->dev, "%s: invalid page %d\n", __func__, map);
-> +		return 0;
-> +	};
-> +
-> +	return va;
-> +}
-> +
-> +static struct rproc_ops pru_rproc_ops = {
-> +	.start			= pru_rproc_start,
-> +	.stop			= pru_rproc_stop,
-> +	.da_to_va		= pru_da_to_va,
-> +	.handle_vendor_rsc	= pru_rproc_handle_vendor_rsc,
-> +};
-> +
-> +static int pru_rproc_set_id(struct pru_rproc *pru)
-> +{
-> +	int ret = 0;
-> +	u32 iram_start = pru->iram_region.pa & PRU_IRAM_MASK;
-> +
-> +	if (iram_start == PRU0_IRAM_START)
-> +		pru->id = 0;
-> +	else if (iram_start == PRU1_IRAM_START)
-> +		pru->id = 1;
-> +	else
-> +		ret = -EINVAL;
-> +
-> +	return ret;
-> +}
-> +
-> +static struct regmap_config pru_ctrl_regmap_config = {
-> +	.name = "ctrl",
-> +	.reg_bits = 32,
-> +	.reg_stride = 4,
-> +	.val_bits = 32,
-> +	.max_register = PRU_CTRL_CTPPR1,
-> +};
-> +
-> +static struct regmap_config pru_debug_regmap_config = {
-> +	.name = "debug",
-> +	.reg_bits = 32,
-> +	.reg_stride = 4,
-> +	.val_bits = 32,
-> +	.max_register = PRU_DEBUG_CT_REG(31),
-> +};
-> +
-> +static int pru_rproc_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev->of_node;
-> +	struct platform_device *ppdev = to_platform_device(dev->parent);
-> +	struct pru_rproc *pru;
-> +	const char *fw_name;
-> +	struct rproc *rproc = NULL;
-> +	struct resource *res;
-> +	int ret;
-> +	void __iomem *va;
-> +
-> +	if (!np) {
-> +		dev_err(dev, "Non-DT platform device not supported\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	ret = of_property_read_string(np, "firmware-name", &fw_name);
-> +	if (ret) {
-> +		dev_err(dev, "unable to retrieve firmware-name %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	rproc = rproc_alloc(dev, pdev->name, &pru_rproc_ops, fw_name,
-> +			    sizeof(*pru));
-> +	if (!rproc) {
-> +		dev_err(dev, "rproc_alloc failed\n");
-> +		return -ENOMEM;
-> +	}
-> +
-> +	pru = rproc->priv;
-> +	pru->cfg = syscon_regmap_lookup_by_phandle(np, "gpcfg");
-> +	if (IS_ERR(pru->cfg)) {
-> +		if (PTR_ERR(pru->cfg) != -EPROBE_DEFER)
-> +			dev_err(dev, "can't get gpcfg syscon regmap\n");
-> +
-> +		return PTR_ERR(pru->cfg);
-> +	}
-> +
-> +	if (of_property_read_u32_index(np, "gpcfg", 1, &pru->gpcfg_reg)) {
-> +		dev_err(dev, "couldn't get gpcfg reg. offset\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* error recovery is not supported for PRUs */
-> +	rproc->recovery_disabled = true;
-> +
-> +	/*
-> +	 * rproc_add will auto-boot the processor normally, but this is
-> +	 * not desired with PRU client driven boot-flow methodology. A PRU
-> +	 * application/client driver will boot the corresponding PRU
-> +	 * remote-processor as part of its state machine either through
-> +	 * the remoteproc sysfs interface or through the equivalent kernel API
-> +	 */
-> +	rproc->auto_boot = false;
-> +
-> +	pru->pruss = platform_get_drvdata(ppdev);
-> +	pru->rproc = rproc;
-> +	pru->fw_name = fw_name;
-> +	mutex_init(&pru->lock);
-> +
-> +	ret = pruss_request_mem_region(pru->pruss, PRUSS_MEM_DRAM0,
-> +				       &pru->dram0);
-> +	if (ret) {
-> +		dev_err(dev, "couldn't get PRUSS DRAM0: %d\n", ret);
-> +		return ret;
-> +	}
-> +	pruss_release_mem_region(pru->pruss, &pru->dram0);
-> +
-> +	ret = pruss_request_mem_region(pru->pruss, PRUSS_MEM_DRAM1,
-> +				       &pru->dram1);
-> +	if (ret) {
-> +		dev_err(dev, "couldn't get PRUSS DRAM1: %d\n", ret);
-> +		return ret;
-> +	}
-> +	pruss_release_mem_region(pru->pruss, &pru->dram1);
-> +
-> +	ret = pruss_request_mem_region(pru->pruss, PRUSS_MEM_SHRD_RAM2,
-> +				       &pru->shrdram);
-> +	if (ret) {
-> +		dev_err(dev, "couldn't get PRUSS Shared RAM: %d\n", ret);
-> +		return ret;
-> +	}
-> +	pruss_release_mem_region(pru->pruss, &pru->shrdram);
+> +	stop_machine(swap_onoff_stop, NULL, cpu_online_mask);
 
-Are you doing this because now you don't have access to the pruss
-structure?
+Should cpu_online_mask be read while holding cpus_read_lock?
 
-> +
-> +	/* XXX: get this from match data if different in the future */
-> +	pru->iram_da = 0;
-> +	pru->pdram_da = 0;
-> +	pru->sdram_da = 0x2000;
-> +	pru->shrdram_da = 0x10000;
-> +
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "iram");
-> +	pru->iram_region.va = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(pru->iram_region.va)) {
-> +		ret = PTR_ERR(pru->iram_region.va);
-> +		dev_err(dev, "failed to get iram resource: %d\n", ret);
-> +		goto free_rproc;
-> +	}
-> +
-> +	pru->iram_region.pa = res->start;
-> +	pru->iram_region.size = resource_size(res);
-> +
-> +	dev_dbg(dev, "iram: pa %pa size 0x%zx va %p\n",
-> +		&pru->iram_region.pa, pru->iram_region.size,
-> +		pru->iram_region.va);
-> +
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "control");
-> +	va = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(va)) {
-> +		ret = PTR_ERR(va);
-> +		dev_err(dev, "failed to get control resource: %d\n", ret);
-> +		goto free_rproc;
-> +	}
-> +
-> +	pru->ctrl_regmap = devm_regmap_init_mmio(dev, va,
-> +						 &pru_ctrl_regmap_config);
-> +	if (IS_ERR(pru->ctrl_regmap)) {
-> +		ret = PTR_ERR(pru->ctrl_regmap);
-> +		dev_err(dev, "CTRL regmap init failed: %d\n", ret);
-> +		goto free_rproc;
-> +	}
-> +
-> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "debug");
-> +	va = devm_ioremap_resource(dev, res);
-> +	if (IS_ERR(va)) {
-> +		ret = PTR_ERR(va);
-> +		dev_err(dev, "failed to get debug resource: %d\n", ret);
-> +		goto free_rproc;
-> +	}
-> +	pru->debug_regmap = devm_regmap_init_mmio(dev, va,
-> +						  &pru_debug_regmap_config);
-> +	if (IS_ERR(pru->debug_regmap)) {
-> +		ret = PTR_ERR(pru->debug_regmap);
-> +		dev_err(dev, "DEBUG regmap init failed: %d\n", ret);
-> +		goto free_rproc;
-> +	}
+	cpus_read_lock();
+	err = __stop_machine(swap_onoff_stop, NULL, cpu_online_mask);
+	cpus_read_unlock();
 
-I am not a big fan of this regmap conversion. Using it just for the sake
-of leveraging regmap debugfs seems overkill, where does the debugfs
-files show up for that? Also, I had logic around when the registers can
-be accessed, so not sure if you have tested the behavior when the PRUs
-are executing.
+I missed what the exact motivation was for the switch from
+rcu_read_lock()/syncrhonize_rcu() to preempt_disable()/stop_machine().
 
-> +
-> +	ret = pru_rproc_set_id(pru);
-> +	if (ret < 0)
-> +		goto free_rproc;
-> +
-> +	platform_set_drvdata(pdev, rproc);
-> +
-> +	ret = rproc_add(pru->rproc);
-> +	if (ret) {
-> +		dev_err(dev, "rproc_add failed: %d\n", ret);
-> +		goto free_rproc;
-> +	}
-> +
-> +	pru_rproc_create_debug_entries(rproc);
-> +
-> +	dev_info(dev, "PRU rproc node %s probed successfully\n", np->full_name);
-> +
-> +	return 0;
-> +
-> +free_rproc:
-> +	rproc_free(rproc);
-> +	return ret;
-> +}
-> +
-> +static int pru_rproc_remove(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct rproc *rproc = platform_get_drvdata(pdev);
-> +
-> +	dev_info(dev, "%s: removing rproc %s\n", __func__, rproc->name);
-> +
-> +	rproc_del(rproc);
-> +	rproc_free(rproc);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id pru_rproc_match[] = {
-> +	{ .compatible = "ti,am3356-pru", },
-> +	{ .compatible = "ti,am4376-pru", },
-> +	{ .compatible = "ti,am5728-pru", },
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, pru_rproc_match);
-> +
-> +static struct platform_driver pru_rproc_driver = {
-> +	.driver = {
-> +		.name   = "pru-rproc",
-> +		.of_match_table = pru_rproc_match,
-> +		.suppress_bind_attrs = true,
-> +	},
-> +	.probe  = pru_rproc_probe,
-> +	.remove = pru_rproc_remove,
-> +};
-> +module_platform_driver(pru_rproc_driver);
-> +
-> +MODULE_AUTHOR("Suman Anna <s-anna@ti.com>");
-> +MODULE_DESCRIPTION("PRU-ICSS Remote Processor Driver");
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/remoteproc/pru_rproc.h b/drivers/remoteproc/pru_rproc.h
-> new file mode 100644
-> index 0000000..bbcf392
-> --- /dev/null
-> +++ b/drivers/remoteproc/pru_rproc.h
-> @@ -0,0 +1,54 @@
-> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
-> +/*
-> + * PRUSS Remote Processor specific types
-> + *
-> + * Copyright (C) 2014-2019 Texas Instruments Incorporated - http://www.ti.com/
-> + * All rights reserved.
-> + */
-> +
-> +#ifndef _PRU_REMOTEPROC_H_
-> +#define _PRU_REMOTEPROC_H_
-> +
-> +/**
-> + * enum pruss_rsc_types - PRU specific resource types
-> + *
-> + * @PRUSS_RSC_INTRS: Resource holding information on PRU PINTC configuration
-> + * @PRUSS_RSC_MAX: Indicates end of known/defined PRU resource types.
-> + *		   This should be the last definition.
-> + *
-> + * Introduce new custom resource types before PRUSS_RSC_MAX.
-> + */
-> +enum pruss_rsc_types {
-> +	PRUSS_RSC_INTRS	= 1,
-> +	PRUSS_RSC_MAX	= 2,
-> +};
-> +
-> +/**
-> + * struct fw_rsc_pruss_intrmap - vendor resource to define PRU interrupts
-> + * @type: should be PRUSS_RSC_INTRS
-> + * @version: should be 1 or greater. 0 was for prototyping and is not supported
-> + * @num_maps: number of interrupt mappings that follow
-> + * @data: Array of 'num_maps' mappings.
-> + *		Each mapping is a triplet {s, c, h}
-> + *		s - system event id
-> + *		c - channel id
-> + *		h - host interrupt id
-> + *
-> + * PRU system events are mapped to channels, and these channels are mapped
-> + * to host interrupts. Events can be mapped to channels in a one-to-one or
-> + * many-to-one ratio (multiple events per channel), and channels can be
-> + * mapped to host interrupts in a one-to-one or many-to-one ratio (multiple
-> + * channels per interrupt).
-> + *
-> + * This resource is variable length due to the nature of INTC map.
-> + * The below data structure is scalable so it can support sufficiently
-> + * large number of sysevents and hosts.
-> + */
-> +struct fw_rsc_pruss_intrmap {
-> +	u16 type;
-> +	u16 version;
-> +	u8 num_maps;
-> +	u8 data[];
+It looks like the above stop_machine all it does is to reach a
+quiescent point, when you've RCU that already can reach the quiescent
+point without an explicit stop_machine.
 
-I can comment more on this once I get a testable version, but I explored
-this idea initially before abandoning this. We would want to prefer
-using as small an amount of memory as possible, as the resource table
-has to be loaded into memory. The channel to host mapping need to be
-defined only once for a channel, and not needed for every event.
+The reason both implementations are basically looking the same is that
+stop_machine dummy call of swap_onoff_stop() { /* noop */ } will only
+reach a quiescent point faster than RCU, but it's otherwise
+functionally identical to RCU, but it's extremely more expensive. If
+it wasn't functionally identical stop_machine() couldn't be used as a
+drop in replacement of synchronize_sched() in the previous patch.
 
-Also, I am not sure if your current logic is handling the resource size
-availability check with this open-ended structure definition.
+I don't see the point of worrying about the synchronize_rcu latency in
+swapoff when RCU is basically identical and not more complex.
 
-regards
-Suman
+So to be clear, I'm not against stop_machine() but with stop_machine()
+method invoked in all CPUs, you can actually do more than RCU and you
+can remove real locking not just reach a quiescent point.
 
-> +} __packed;
-> +
-> +#endif	/* _PRU_REMOTEPROC_H_ */
-> diff --git a/include/linux/remoteproc/pru_rproc.h b/include/linux/remoteproc/pru_rproc.h
-> new file mode 100644
-> index 0000000..841da09
-> --- /dev/null
-> +++ b/include/linux/remoteproc/pru_rproc.h
-> @@ -0,0 +1,27 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/**
-> + * PRU-ICSS Remote Subsystem user interfaces
-> + *
-> + * Copyright (C) 2019 Texas Instruments Incorporated - http://www.ti.com
-> + */
-> +
-> +#ifndef __LINUX_REMOTEPROC_PRU_RPROC_H
-> +#define __LINUX_REMOTEPROC_PRU_RPROC_H
-> +
-> +#if IS_ENABLED(CONFIG_PRUSS_REMOTEPROC)
-> +
-> +struct rproc *pru_rproc_get(struct device_node *node, int index);
-> +void pru_rproc_put(struct rproc *rproc);
-> +
-> +#else
-> +
-> +static inline struct rproc *pru_rproc_get(struct device_node *node, int index)
-> +{
-> +	return ERR_PTR(-ENOTSUPP);
-> +}
-> +
-> +static inline void pru_rproc_put(struct rproc *rproc) { }
-> +
-> +#endif /* CONFIG_PRUSS_REMOTEPROC */
-> +
-> +#endif /* __LINUX_REMOTEPROC_PRU_RPROC_H */
-> 
+With stop_machine() the code would need reshuffling around so that the
+actual p->swap_map = NULL happens inside stop_machine, not outside
+like with RCU.
 
+With RCU all code stays concurrent at all times, simply the race is
+controlled, as opposed with stop_machine() you can make fully
+serialize and run like in UP temporarily (vs all preempt_disable()
+section at least).
+
+For example nr_swapfiles could in theory become a constant under
+preempt_disable() with stop_machine() without having to take a
+swap_lock.
+
+swap_onoff_stop can be implemented like this:
+
+enum {
+	FIRST_STOP_MACHINE_INIT,
+	FIRST_STOP_MACHINE_START,
+	FIRST_STOP_MACHINE_END,
+};
+static int first_stop_machine;
+static int swap_onoff_stop(void *data)
+{
+	struct swap_stop_machine *swsm = (struct swap_stop_machine *)data;
+	int first;
+
+	first = cmpxchg(&first_stop_machine, FIRST_STOP_MACHINE_INIT,
+			FIRST_STOP_MACHINE_START);
+	if (first == FIRST_STOP_MACHINE_INIT) {
+		swsm->p->swap_map = NULL;
+		/* add more stuff here until swap_lock goes away */
+		smp_wmb();
+		WRITE_ONCE(first_stop_machine, FIRST_STOP_MACHINE_END);
+	} else {
+		do {
+			cpu_relax();
+		} while (READ_ONCE(first_stop_machine) !=
+			 FIRST_STOP_MACHINE_END);
+		smp_rmb();
+	}
+
+	return 0;
+}
+
+stop_machine invoked with a method like above, will guarantee while we
+set p->swap_map to NULL (and while we do nr_swapfiles++) nothing else
+can run, no even interrupts, so some lock may just disappear. Only NMI
+and SMI could possibly run concurrently with the swsm->p->swap_map =
+NULL operation.
+
+If we've to keep swap_onoff_stop() a dummy function run on all CPUs
+just to reach a quiescent point, then I don't see why
+the synchronize_rcu() (or synchronize_sched or synchronize_kernel or
+whatever it is called right now, but still RCU) solution isn't
+preferable.
+
+Thanks,
+Andrea
