@@ -2,130 +2,121 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 792C4C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:01:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0768BC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:02:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 463F82229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:01:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="HVqgYLXv"
+	by mail.kernel.org (Postfix) with ESMTP id C24052229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:02:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550152941;
+	bh=hX9pWkxgVzMfutIVf1friNZvd9QbP9PurqC/eXn/pTM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=K4jhW+Flsdmi541ZXFrqv6ulOqMedDBZanDin0V/IyXAu5o4vLieSxR7RL0QmCIXZ
+	 SoYfHzv8+7pai9B4Fk7BJuQqJJqd69yjgK70juVK+E3qMpE5EiLnOv1A1XsuOsiadR
+	 7FjEvLvjkAnw0y4rNBxTc8V5Gd+XIGEG6jvTdj/A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439143AbfBNOBy (ORCPT
+        id S2439148AbfBNOCU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 09:01:54 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:33020 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2395115AbfBNOAl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 09:00:41 -0500
-Received: by mail-wm1-f66.google.com with SMTP id h22so4378930wmb.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 06:00:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=KouBHCieDSV7idkFJwAAq2H7EglJYSpQY5o99NkrtdQ=;
-        b=HVqgYLXvPJPcpIoBiW40YjVbYUeYGMMBLaPYTxQDS1iNsho/7p7VRhfZJauap0YgPJ
-         +41lFayAOTi5T/wbEyUpFKAeNzVIsdWU0ORhsNPWNPnhkc652759e5zMGe5e8j/72SOo
-         cVKb09atQBxRIk2bO1u3XgRXybH8CrEZrY8A16sQc6tnpNbMdQB9ftLV4YG227/3bhu6
-         6HjsvMiizLy8Im4ZsAG+24Veyj7EXO9k4/ty42utwJbrQfTWHL7Zrh+TZV5VXBQydJ6z
-         R7YbKch9mFEO1oIn8z2fvNbP1BxojHSJpJ4cfEK5Uw7Pq1GScKegrQ5EkqPLYb1oo2SX
-         N50w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KouBHCieDSV7idkFJwAAq2H7EglJYSpQY5o99NkrtdQ=;
-        b=co0Bw55TLoAzYqSUyMkRKO8SZCQCOdA4V7IdzX9STPFHyhsqEl+Kzf8L+MK/PyRWWu
-         jHnxkTCrYSxBqiMsw8I8h8Hdopfd2k/Qpk+DKWesP5CsCfGuyq3qHI9WzO0itVmah+RS
-         M6IHrMjJSrmTKGjKVtUK5q8zTowKhifL1k1SA6LzvUaKtuSifG3EB+PplogPoyqUVTHH
-         O9+vDmOgve0SunNi3+uuw8uv1UXdSyfzYYuj3SPecFPQe42IRLeaVeR5HpcCwPQTzNC2
-         nhatw0jdM98VlE9P+bqWa62GR5i6UGPibaEZIeMi2+wdDhvbh/a7s5zc/p+5V+HYNxVb
-         2vUA==
-X-Gm-Message-State: AHQUAuaweeR+TCWMAeLjvcR1zQFMMW4bUGPP0slKKgsq5PFDqyTqA+ii
-        JbFNewmUTq/x29xz5PsaUta1/g==
-X-Google-Smtp-Source: AHgI3IYoOwzAI3EqqjaUJafuaJu68nQAAx9lDeBKFSa0iZXYTN3HUkWXbd9Jum2ZmJI4liXu/+NYhw==
-X-Received: by 2002:a1c:6788:: with SMTP id b130mr3065123wmc.102.1550152839793;
-        Thu, 14 Feb 2019 06:00:39 -0800 (PST)
-Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id h142sm3395677wme.33.2019.02.14.06.00.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 06:00:39 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v6 02/11] dt-bindings: power: supply: add DT bindings for max77650
-Date:   Thu, 14 Feb 2019 15:00:13 +0100
-Message-Id: <20190214140022.19201-3-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190214140022.19201-1-brgl@bgdev.pl>
-References: <20190214140022.19201-1-brgl@bgdev.pl>
+        Thu, 14 Feb 2019 09:02:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40318 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389393AbfBNOCT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 09:02:19 -0500
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69082222D7;
+        Thu, 14 Feb 2019 14:02:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550152938;
+        bh=hX9pWkxgVzMfutIVf1friNZvd9QbP9PurqC/eXn/pTM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=pV7SIqXwcq7UBg7gwWpdmTFkPN7h8GVcZ7gEVgLg3MrhQ9kQNRPQug6L7kjAeWfiO
+         liFchfzwF9NFGkkW7nGkQ7MyPCg99vO+zpLD2Gh4LYwKD2ZCMKbHeP6h9rguuFeqdC
+         kEzIPgALWyXpHLUH8gzC9QgPU3mYRsKtGvSVFC/0=
+Received: by mail-qt1-f175.google.com with SMTP id y20so6841885qtm.13;
+        Thu, 14 Feb 2019 06:02:18 -0800 (PST)
+X-Gm-Message-State: AHQUAuaLrgMMTcCMwFm2wCoDGhQKw+t3MqEvhdEUdq6sJpwNTkQWEsxL
+        SzFGgLhtBm+Oq4SHsx07g8FFGv6PIpim/lVoJA==
+X-Google-Smtp-Source: AHgI3IYx+ALS17jgxLkv693q9nJ0Uc8AvrIdj0TNhfDOfUSAO+Ybt4k4QiVhipWDHP+klWPCEOCV+S1UtbL3GIiT12Q=
+X-Received: by 2002:ac8:2f4e:: with SMTP id k14mr3106313qta.76.1550152937642;
+ Thu, 14 Feb 2019 06:02:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190204231554.87666-1-ray.jui@broadcom.com> <20190204231554.87666-7-ray.jui@broadcom.com>
+ <20190213211807.GA20560@bogus> <6de51a50-cd7c-dbf8-15d8-8d2fd441d831@broadcom.com>
+In-Reply-To: <6de51a50-cd7c-dbf8-15d8-8d2fd441d831@broadcom.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 14 Feb 2019 08:02:06 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+aH=SGD+NJWNaWKnZm3Y396ro7E_Px_Ud3NnzOYB+eGQ@mail.gmail.com>
+Message-ID: <CAL_Jsq+aH=SGD+NJWNaWKnZm3Y396ro7E_Px_Ud3NnzOYB+eGQ@mail.gmail.com>
+Subject: Re: [PATCH v4 6/8] dt-bindings: i2c: iproc: add "brcm,iproc-nic-i2c"
+ compatible string
+To:     Ray Jui <ray.jui@broadcom.com>
+Cc:     Wolfram Sang <wsa@the-dreams.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Wed, Feb 13, 2019 at 4:09 PM Ray Jui <ray.jui@broadcom.com> wrote:
+>
+>
+>
+> On 2/13/2019 1:18 PM, Rob Herring wrote:
+> > On Mon, Feb 04, 2019 at 03:15:52PM -0800, Ray Jui wrote:
+> >> From: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+> >>
+> >> Update iProc I2C binding document to add new compatible string
+> >> "brcm,iproc-nic-i2c". Optional property "brcm,ape-hsls-addr-mask" is
+> >> also added that allows configuration of the host view into the APE's
+> >> address for "brcm,iproc-nic-i2c"
+> >>
+> >> Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
+> >> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
+> >> ---
+> >>  Documentation/devicetree/bindings/i2c/brcm,iproc-i2c.txt | 5 ++++-
+> >>  1 file changed, 4 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/i2c/brcm,iproc-i2c.txt b/Documentation/devicetree/bindings/i2c/brcm,iproc-i2c.txt
+> >> index d3a3620b1f06..02e82d20239e 100644
+> >> --- a/Documentation/devicetree/bindings/i2c/brcm,iproc-i2c.txt
+> >> +++ b/Documentation/devicetree/bindings/i2c/brcm,iproc-i2c.txt
+> >> @@ -3,7 +3,7 @@ Broadcom iProc I2C controller
+> >>  Required properties:
+> >>
+> >>  - compatible:
+> >> -    Must be "brcm,iproc-i2c"
+> >> +    Must be "brcm,iproc-i2c" or "brcm,iproc-nic-i2c"
+> >>
+> >>  - reg:
+> >>      Define the base and range of the I/O address space that contain the iProc
+> >> @@ -24,6 +24,9 @@ Optional properties:
+> >>      Should contain the I2C interrupt. If unspecified, driver will fall back to
+> >>      polling mode
+> >>
+> >> +- brcm,ape-hsls-addr-mask:
+> >> +    Required for "brcm,iproc-nic-i2c". Host view of address mask into the
+> >> +    'APE' co-processor
+> >
+> > What's the data type and size? What are valid values?
+>
+> It's an unsigned u32 mask value. An example of a valid value is for
+> example 0x03400000. Do you want any of these added to the paragraph above?
 
-Add the DT binding document for the battery charger module of max77650.
+Yes. Bindings should define constraints.
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
----
- .../power/supply/max77650-charger.txt         | 27 +++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/power/supply/max77650-charger.txt
-
-diff --git a/Documentation/devicetree/bindings/power/supply/max77650-charger.txt b/Documentation/devicetree/bindings/power/supply/max77650-charger.txt
-new file mode 100644
-index 000000000000..d25c95369616
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/supply/max77650-charger.txt
-@@ -0,0 +1,27 @@
-+Battery charger driver for MAX77650 PMIC from Maxim Integrated.
-+
-+This module is part of the MAX77650 MFD device. For more details
-+see Documentation/devicetree/bindings/mfd/max77650.txt.
-+
-+The charger is represented as a sub-node of the PMIC node on the device tree.
-+
-+Required properties:
-+--------------------
-+- compatible:		Must be "maxim,max77650-charger"
-+
-+Optional properties:
-+--------------------
-+- min-microvolt:	Minimum CHGIN regulation voltage (in microvolts). Must be
-+			one of: 4000000, 4100000, 4200000, 4300000, 4400000,
-+			4500000, 4600000, 4700000.
-+- curr-lim-microamp:	CHGIN input current limit (in microamps). Must be one of:
-+			95000, 190000, 285000, 380000, 475000.
-+
-+Example:
-+--------
-+
-+	charger {
-+		compatible = "maxim,max77650-charger";
-+		min-microvolt = <4200000>;
-+		curr-lim-microamp = <285000>;
-+	};
--- 
-2.20.1
-
+Rob
