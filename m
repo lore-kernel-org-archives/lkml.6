@@ -2,86 +2,147 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64BB6C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93FA3C10F04
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:24:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 338AF2177E
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:24:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550183079;
-	bh=OYcWn65EOb1IhQEMeaG5vIZZpSwz1Vwx2QjVXCmNcCM=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=h/MCBdyk5t092+QRXUUJrBXDCH4z+nnBfp7ucYbmAA6YtHarInn/ei91+PJtnGxiA
-	 sde5s9DKI5JZY1wWIfdHKms9X29V/fruHkykT2cAjIKYjvHUJmd6DG/ooOODlGmLZX
-	 Jw6cTqZm9Y+gORbupxlPR1aT+n3se1EOvz+OVt44=
+	by mail.kernel.org (Postfix) with ESMTP id 69D2F2177E
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:24:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440540AbfBNWY0 (ORCPT
+        id S2406437AbfBNWYk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 17:24:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43532 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2440495AbfBNWXV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 17:23:21 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C16D2175B;
-        Thu, 14 Feb 2019 22:23:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550183000;
-        bh=OYcWn65EOb1IhQEMeaG5vIZZpSwz1Vwx2QjVXCmNcCM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=uPO4P72yMN+PwiUIbzlNPqshUw2Mo4KPApAZKxY7Bw+t0FDsFefqZOKU2+K2JcnAN
-         nFlr6fG3Ad2rX+yhYGDGz15rZw/1yyE/JQxS9qNW346RWvunHmlXHCE6hCHowkQMJB
-         HxR2+605xHPsw0EhPG3jYomBwsDbvIDiwnUkl3x0=
-Subject: Re: [PATCH 4.19 00/44] 4.19.22-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20190213183651.648060257@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <5e0d67f4-1891-587f-251a-52d41d78957a@kernel.org>
-Date:   Thu, 14 Feb 2019 15:23:19 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 14 Feb 2019 17:24:40 -0500
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:55550 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2440524AbfBNWYZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 17:24:25 -0500
+Received: from relay12.mail.gandi.net (unknown [217.70.178.232])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id D0D063A4B86;
+        Thu, 14 Feb 2019 23:17:06 +0100 (CET)
+Received: from localhost (lfbn-lyo-1-149-219.w86-202.abo.wanadoo.fr [86.202.231.219])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id C7A34200009;
+        Thu, 14 Feb 2019 22:17:03 +0000 (UTC)
+Date:   Thu, 14 Feb 2019 23:17:03 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Nicolas.Ferre@microchip.com, wg@grandegger.com, mkl@pengutronix.de,
+        davem@davemloft.net, Ludovic.Desroches@microchip.com,
+        linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] can: mark expected switch fall-throughs
+Message-ID: <20190214221703.GQ10129@piout.net>
+References: <20190129180612.GA28650@embeddedor>
+ <432a9399-95f4-e988-5cd2-93340f155fa1@microchip.com>
+ <daae008e-35fd-7553-fcb2-7932fe53b959@embeddedor.com>
 MIME-Version: 1.0
-In-Reply-To: <20190213183651.648060257@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <daae008e-35fd-7553-fcb2-7932fe53b959@embeddedor.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/13/19 11:38 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.22 release.
-> There are 44 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Hi,
+
+On 14/02/2019 15:37:26-0600, Gustavo A. R. Silva wrote:
 > 
-> Responses should be made by Fri Feb 15 18:36:28 UTC 2019.
-> Anything received after that time might be too late.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.22-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> and the diffstat can be found below.
+> On 1/30/19 2:11 AM, Nicolas.Ferre@microchip.com wrote:
+> > On 29/01/2019 at 19:06, Gustavo A. R. Silva wrote:
+> >> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> >> where we are expecting to fall through.
+> >>
+> >> This patch fixes the following warnings:
+> >>
+> >> drivers/net/can/peak_canfd/peak_pciefd_main.c:668:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> >> drivers/net/can/spi/mcp251x.c:875:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> >> drivers/net/can/usb/peak_usb/pcan_usb.c:422:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> >> drivers/net/can/at91_can.c:895:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> >> drivers/net/can/at91_can.c:953:15: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> >> drivers/net/can/usb/peak_usb/pcan_usb.c: In function ‘pcan_usb_decode_error’:
+> >> drivers/net/can/usb/peak_usb/pcan_usb.c:422:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> >>     if (n & PCAN_USB_ERROR_BUS_LIGHT) {
+> >>        ^
+> >> drivers/net/can/usb/peak_usb/pcan_usb.c:428:2: note: here
+> >>    case CAN_STATE_ERROR_WARNING:
+> >>    ^~~~
+> >>
+> >> Warning level 3 was used: -Wimplicit-fallthrough=3
+> >>
+> >> This patch is part of the ongoing efforts to enabling
+> >> -Wimplicit-fallthrough.
+> >>
+> >> Notice that in some cases spelling mistakes were fixed.
+> >> In other cases, the /* fall through */ comment is placed
+> >> at the bottom of the case statement, which is what GCC
+> >> is expecting to find.
+> >>
+> >> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> >> ---
+> >>   drivers/net/can/at91_can.c                    | 6 ++++--
+> > 
+> > For this one:
+> > Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+> > 
 > 
-> thanks,
-> 
-> greg k-h
+> Thanks, Nicolas.
 > 
 
-Compiled and booted on my test system. No dmesg regressions.
+I though I had a déjà vu but you actually sent the at91 part twice.
 
-thanks,
--- Shuah
+> Dave:
+> 
+> I wonder if you can take this patch.
+> 
+> Thanks
+> --
+> Gustavo
+> 
+> >>   drivers/net/can/peak_canfd/peak_pciefd_main.c | 2 +-
+> >>   drivers/net/can/spi/mcp251x.c                 | 3 ++-
+> >>   drivers/net/can/usb/peak_usb/pcan_usb.c       | 2 +-
+> >>   4 files changed, 8 insertions(+), 5 deletions(-)
+> >>
+> >> diff --git a/drivers/net/can/at91_can.c b/drivers/net/can/at91_can.c
+> >> index d98c69045b17..1718c20f9c99 100644
+> >> --- a/drivers/net/can/at91_can.c
+> >> +++ b/drivers/net/can/at91_can.c
+> >> @@ -902,7 +902,8 @@ static void at91_irq_err_state(struct net_device *dev,
+> >>   				CAN_ERR_CRTL_TX_WARNING :
+> >>   				CAN_ERR_CRTL_RX_WARNING;
+> >>   		}
+> >> -	case CAN_STATE_ERROR_WARNING:	/* fallthrough */
+> >> +		/* fall through */
+> >> +	case CAN_STATE_ERROR_WARNING:
+> >>   		/*
+> >>   		 * from: ERROR_ACTIVE, ERROR_WARNING
+> >>   		 * to  : ERROR_PASSIVE, BUS_OFF
+> >> @@ -951,7 +952,8 @@ static void at91_irq_err_state(struct net_device *dev,
+> >>   		netdev_dbg(dev, "Error Active\n");
+> >>   		cf->can_id |= CAN_ERR_PROT;
+> >>   		cf->data[2] = CAN_ERR_PROT_ACTIVE;
+> >> -	case CAN_STATE_ERROR_WARNING:	/* fallthrough */
+
+Seriously, for that one, you should fix the compiler. The fall through
+is not implicit, it is actually quite explicit and the warning is simply
+wrong.
+
+Also, the gcc documentation says that -Wimplicit-fallthrough=3
+recognizes /* fallthrough */ as a proper fall through comment (and I
+tested with gcc 8.2).
+
+The matching regex is [ \t.!]*([Ee]lse,? |[Ii]ntentional(ly)? )?
+fall(s | |-)?thr(ough|u)[ \t.!]*(-[^\n\r]*)?
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
