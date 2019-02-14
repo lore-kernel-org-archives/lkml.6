@@ -2,190 +2,116 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFA49C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 05:55:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 828E9C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 05:55:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8804D222A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 05:55:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FA3F222A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 05:55:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JXMwGF6s"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QASs7rI/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405579AbfBNFy5 (ORCPT
+        id S2405627AbfBNFzU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 00:54:57 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:36146 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732648AbfBNFy5 (ORCPT
+        Thu, 14 Feb 2019 00:55:20 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:46936 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731876AbfBNFzU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 00:54:57 -0500
-Received: by mail-qk1-f196.google.com with SMTP id o125so2940225qkf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 21:54:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8ZZPTehRx0gCVAGAwGZLdRCyaQhXE0OghMtcZbWUN1k=;
-        b=JXMwGF6sgy9y+WcZoNA2AWmObRpexqFbDrMQ/02+r6JQUTug17v90SxKPvh43Sr7wa
-         0hHMJEDUNY2SA1ROLXAkc9lPs+Ei3Oqs5uXsXotW9nFwFYglLShE17cEyYFVz77CYfYv
-         c71lTWzB4N8yWi0R+J9rta160kzE4DyOq1Zpk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8ZZPTehRx0gCVAGAwGZLdRCyaQhXE0OghMtcZbWUN1k=;
-        b=NkzjvsImKMBOy61tvsB7wCCeuv9cI22xzsYX9PkuNmv1bvMEuQLFg2AlyQRCGh6yOF
-         AbSyh9ivWNnwAeSpLao7C94fU0JjpEIw1DVtbq3ygObkcTmaGjaO1l2bcwTVllazUxsN
-         LsXqfw4VyBWgZh/ApQnjgqTODtKLDFGE5yyusI1Xt9vLWVoniLujHOvb1CstW9Gt8k3R
-         0WIRYQLmcH8wckz5yslVdC5TqcaO0rwTGOC4vmz3GR/5YA9UwwTgZgM7BsO67gcQSiGM
-         Qz5gZJ/TmbntwCaeqEL8s/sdfUlO1J3FtUFcjh3z4NiEE/ei7DgJk9Zkmx8T8IQuZ8oJ
-         Slgw==
-X-Gm-Message-State: AHQUAuYdanTEOMJzS45lmfxdaUvQo4ey2U2xTVXNB41hSlJRZuMhCXzc
-        aqZOCDxWrxIWanRXOJVilWOEguPqMr9wk2DqBYrDXg==
-X-Google-Smtp-Source: AHgI3IamlS+2WnAogCdsL8ldHcyBN+PQiVASgbQh23/ApFCz870ErGq5WVsz2xgBC5rjuMBV8/5v3d6CFP3v4QEbJq4=
-X-Received: by 2002:a37:7885:: with SMTP id t127mr1465362qkc.323.1550123695704;
- Wed, 13 Feb 2019 21:54:55 -0800 (PST)
+        Thu, 14 Feb 2019 00:55:20 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1E5sahw138012;
+        Thu, 14 Feb 2019 05:55:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=cSGEIOlxJng5JlamEhdqacudmilQXsYAsuejWXRFWw8=;
+ b=QASs7rI/P6pjE9bZjpk2pxrdl85VOJ0deW7A1TLF8Jf2y7Jz/0GRh+c2auT/cE89axJe
+ dDk/pWAhkJkd5FgxZw1VYFNBczoX+4QKDiQGKc3bwmK+8fP5+03b2jb1KZDQluLYMwrM
+ 9CpGx2igbWSZvtcnhhZMcliWdT32ABDmwKf+NzSEu3v73XkyI4I6LGmAnbu1Z0DgCfIa
+ Ht1jbEJ8+c3agelo1Z4R8ROFwq6PIqXjXwQtP7EAgsShO1eXu/P8OBHQTmJkSnBBuMk+
+ tMvdA60h9UdbqI430AC4pr6v4Ft0D0i8PuHiadXpZ6a5YP9AboE1BPtzwQXvRSMmQ0lf 4A== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2qhreknyeb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Feb 2019 05:55:13 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1E5t7vd008363
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Feb 2019 05:55:07 GMT
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1E5t6jM013849;
+        Thu, 14 Feb 2019 05:55:07 GMT
+Received: from kadam (/41.202.241.28)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 13 Feb 2019 21:55:06 -0800
+Date:   Thu, 14 Feb 2019 08:54:57 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     qla2xxx-upstream@qlogic.com,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: qla2xxx: remove redundant null check on pointer
+ sess
+Message-ID: <20190214055457.GA2326@kadam>
+References: <20190213135335.4790-1-colin.king@canonical.com>
 MIME-Version: 1.0
-References: <20190214044243.129920-1-jitao.shi@mediatek.com> <20190214044243.129920-3-jitao.shi@mediatek.com>
-In-Reply-To: <20190214044243.129920-3-jitao.shi@mediatek.com>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Thu, 14 Feb 2019 13:54:44 +0800
-Message-ID: <CANMq1KBR-CpjAtj6qTEjK8PA2DUW3w_-OP_EyE7uoaojGLoGLg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] drm/mediatek: add mt8183 dsi driver support
-To:     Jitao Shi <jitao.shi@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>, linux-pwm@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Ajay Kumar <ajaykumar.rs@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Rahul Sharma <rahul.sharma@samsung.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Vincent Palatin <vpalatin@chromium.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        devicetree@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>, srv_heupstream@mediatek.com,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        Eddie Huang <eddie.huang@mediatek.com>,
-        cawa cheng <cawa.cheng@mediatek.com>,
-        =?UTF-8?B?QmliYnkgSHNpZWggKOisnea/n+mBoCk=?= 
-        <bibby.hsieh@mediatek.com>, CK HU <ck.hu@mediatek.com>,
-        stonea168@163.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190213135335.4790-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9166 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=829 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902140044
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 12:43 PM Jitao Shi <jitao.shi@mediatek.com> wrote:
->
-> MT8183 dsi has two changes with mt8173.
-> 1. Add the register double buffer control, but we no need it, So make
->    it default off.
-
-Can you describe a little bit more what this is about? That's shadow
-registers, right?
-
-> 2. Add picture size control.
->
-> Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
+On Wed, Feb 13, 2019 at 01:53:35PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> The null check on pointer sess and the subsequent call is redundant
+> as sess is null on all the the paths that lead to the out_term2 label.
+> Hence the null check and the call can be removed.
+> 
+> Detected by CoverityScan, CID#1420663 ("Logically dead code")
+> 
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
->  drivers/gpu/drm/mediatek/mtk_dsi.c | 20 +++++++++++++++++++-
->  1 file changed, 19 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> index 80db02a25cb0..20cb53f05d42 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> @@ -78,6 +78,7 @@
->  #define DSI_VBP_NL             0x24
->  #define DSI_VFP_NL             0x28
->  #define DSI_VACT_NL            0x2C
-> +#define DSI_SIZE_CON           0x38
->  #define DSI_HSA_WC             0x50
->  #define DSI_HBP_WC             0x54
->  #define DSI_HFP_WC             0x58
-> @@ -131,7 +132,10 @@
->  #define VM_CMD_EN                      BIT(0)
->  #define TS_VFP_EN                      BIT(5)
->
-> -#define DSI_CMDQ0              0x180
+>  drivers/scsi/qla2xxx/qla_target.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+> index 6b8c655d9eb4..9af329a5ed90 100644
+> --- a/drivers/scsi/qla2xxx/qla_target.c
+> +++ b/drivers/scsi/qla2xxx/qla_target.c
+> @@ -6396,8 +6396,6 @@ static void qlt_tmr_work(struct qla_tgt *tgt,
+>  	return;
+>  
+>  out_term2:
+> -	if (sess)
+> -		ha->tgt.tgt_ops->put_sess(sess);
 
-As I said earlier, move this to 2/3.
+Several places do:
 
-> +#define DSI_SHADOW_DEBUG       0x190U
-> +#define FORCE_COMMIT           BIT(0)
-> +#define BYPASS_SHADOW          BIT(1)
-> +
->  #define CONFIG                         (0xff << 0)
->  #define SHORT_PACKET                   0
->  #define LONG_PACKET                    2
-> @@ -158,6 +162,7 @@ struct phy;
->
->  struct mtk_dsi_driver_data {
->         const u32 reg_cmdq_off;
-> +       bool has_size_ctl;
->  };
->
->  struct mtk_dsi {
-> @@ -426,6 +431,9 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
->         writel(vm->vfront_porch, dsi->regs + DSI_VFP_NL);
->         writel(vm->vactive, dsi->regs + DSI_VACT_NL);
->
-> +       if (dsi->driver_data->has_size_ctl)
-> +               writel(vm->vactive << 16 | vm->hactive, dsi->regs + DSI_SIZE_CON);
-> +
->         horizontal_sync_active_byte = (vm->hsync_len * dsi_tmp_buf_bpp - 10);
->
->         if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
-> @@ -595,6 +603,9 @@ static int mtk_dsi_poweron(struct mtk_dsi *dsi)
->         }
->
->         mtk_dsi_enable(dsi);
-> +
-> +       /* DSI no need this double buffer, disable it when writing register */
+		sess = NULL;
+		goto out_term2;
 
-"DSI does not need double buffering, disable it when writing register"
+We could remove the "sess = NULL;" because it's not required now.
 
-> +       writel(FORCE_COMMIT | BYPASS_SHADOW, dsi->regs + DSI_SHADOW_DEBUG);
+>  	spin_unlock_irqrestore(&ha->tgt.sess_lock, flags);
+>  out_term:
+>  	qlt_send_term_exchange(ha->base_qpair, NULL, &prm->tm_iocb2, 1, 0);
 
-So you do this on all MT* variants, is that ok?
-
->         mtk_dsi_reset_engine(dsi);
->         mtk_dsi_phy_timconfig(dsi);
->
-> @@ -1090,11 +1101,18 @@ static const struct mtk_dsi_driver_data mt2701_dsi_driver_data = {
->         .reg_cmdq_off = 0x180,
->  };
->
-> +static const struct mtk_dsi_driver_data mt8183_dsi_driver_data = {
-> +       .reg_cmdq_off = 0x200,
-> +       .has_size_ctl = true,
-> +};
-> +
->  static const struct of_device_id mtk_dsi_of_match[] = {
->         { .compatible = "mediatek,mt2701-dsi",
->           .data = &mt2701_dsi_driver_data },
->         { .compatible = "mediatek,mt8173-dsi",
->           .data = &mt8173_dsi_driver_data },
-> +       { .compatible = "mediatek,mt8183-dsi",
-> +         .data = &mt8183_dsi_driver_data },
->         { },
->  };
->
-> --
-> 2.20.1
->
+regards,
+dan carpenter
