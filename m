@@ -2,198 +2,214 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D84CC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:17:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C576EC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05E362080A
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:17:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 889AC2080A
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:17:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=dialogsemiconductor.onmicrosoft.com header.i=@dialogsemiconductor.onmicrosoft.com header.b="QF5Z0GNa"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pOhIU8FW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404913AbfBNORZ (ORCPT
+        id S2393399AbfBNORv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 09:17:25 -0500
-Received: from mail1.bemta26.messagelabs.com ([85.158.142.117]:53345 "EHLO
-        mail1.bemta26.messagelabs.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726202AbfBNORY (ORCPT
+        Thu, 14 Feb 2019 09:17:51 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:37339 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726202AbfBNORv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 09:17:24 -0500
-Received: from [85.158.142.194] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
-        by server-6.bemta.az-b.eu-central-1.aws.symcld.net id CA/94-16347-D68756C5; Thu, 14 Feb 2019 14:17:17 +0000
-X-Brightmail-Tracker: H4sIAAAAAAAAA1WSe0hTYRjG/c45OzuVJ45T8204oVVGly3FLif
-  qD8suKwqKQqKkOtOTG2xz7ZIziMyyyBEFmaU0N0u6zRKMslwXC6NWiWk3yyDNmSkJjm507xzP
-  7PLf73ue93ve9/t4KVzxmFRSvMvB2yycSU2OJAzTyTSNycVnpQSCU9iOw0GM3XWilmRL/FcI9
-  nr4PMY+ajhGssdPFuNsqOoBli7X+eqcusrgKt0NT41cd+VzoVz3vi5ppWydzGjR57k2yQwBdy
-  tmbVO5Oj/ZCpFPVYJGUARTi8PR8gUlaCSlYEoxuHG6XiYduhE0+98gsYpkWDh0t5MUOY4xQUt
-  ReEjHmQ4E9Y2LRY5llkJZOISkmmXQN9BDlCBK4MXwsDtTajYR7n0oH4qhGQ72BPZEen1B8Kzq
-  DC4aI5h0qL9TKhMZMSr4sNOPS70S4EXIi4kMDAPVV1twieOhr/tnpJ6HYFE7kvRp0PwsFGE1V
-  HqaIqyCNq87witg/+sBJA4BTA+CH5e/YsOXG3q7CIlZqHYXR1gJd1tvy6QLgRh41RcmJcMKdZ
-  W9kdREeFpaFdHDMrh0barICiYbBj3NcklPgrP7u4iDaGrFP4+rED4MZyZDbcN0SR4Hpe4uecX
-  Qh8VAsDxE+BBxFrF6mzHX4DBzRpMmNSVFk5qappmlmTlby23T6LW8U5PNWxw2TjC1XL5day8w
-  Z5tytBbeUYeE3crZQs65jHyncm+hsRSmjqd1C/ksxWh9Xk6BgbMbNtqcJt5+CyVSlBrojHzBi
-  7Hxubxrs9EkLOiwDVS0Oo6u2irYtN3Kme3GXMm6h9KoxuNdHpwauNnrwRWEJc/CKxPoNWISI5
-  YanJY/QcPL3oZUylgaRUVFKaKtvM1sdPzv96MECqlj6XwxJdpocfzp1y+Mggmj9MTliKM4uL+
-  WshAVFF7YN/hz0rjuAO0/3zG3vf60u2KG3hqf9GV+9ZLdyycU7PjW4v/xHfN5f01by29vb0w4
-  Ei7PTBmT1VrTX7l+6b6y79pN8+TN6/I3jNe+HSz7GM7ufNr0pPbAu4wiXc3FLcnn3M+9O/cmZ
-  qzqH3V/0cvVDq/zWvBQ+grwmYuT5y662qQm7AYudQpus3O/AeUbAIDnAwAA
-X-Env-Sender: Adam.Thomson.Opensource@diasemi.com
-X-Msg-Ref: server-18.tower-239.messagelabs.com!1550153836!1270977!1
-X-Originating-IP: [104.47.6.51]
-X-SYMC-ESS-Client-Auth: mailfrom-relay-check=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.31.5; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 26275 invoked from network); 14 Feb 2019 14:17:16 -0000
-Received: from mail-ve1eur02lp2051.outbound.protection.outlook.com (HELO EUR02-VE1-obe.outbound.protection.outlook.com) (104.47.6.51)
-  by server-18.tower-239.messagelabs.com with AES256-GCM-SHA384 encrypted SMTP; 14 Feb 2019 14:17:16 -0000
+        Thu, 14 Feb 2019 09:17:51 -0500
+Received: by mail-qt1-f194.google.com with SMTP id a48so6979842qtb.4;
+        Thu, 14 Feb 2019 06:17:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=dialogsemiconductor.onmicrosoft.com; s=selector1-diasemi-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YqCUTzAuYSvN3qlff5715Q5rU5FesxvMFo9RD0ORssM=;
- b=QF5Z0GNaE/SGon7dmSXnfrQBdkeB7dzbE8NlJfY9GFEL4V+cNIOHcoIlii1l/WF/iO7HMo/WuR7lttgty9MzqwJwbD6etLqpVXZCrWjFWV3/wliE343u7rMKFzpcqNNxY2X188A4NnSXsGAWGpkazImGY6zd9PMpF1Nft84iTYg=
-Received: from AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM (10.169.154.17) by
- AM5PR1001MB1154.EURPRD10.PROD.OUTLOOK.COM (10.169.155.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.22; Thu, 14 Feb 2019 14:17:14 +0000
-Received: from AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::10f2:a1bd:4f0d:f118]) by AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::10f2:a1bd:4f0d:f118%8]) with mapi id 15.20.1601.023; Thu, 14 Feb 2019
- 14:17:14 +0000
-From:   Adam Thomson <Adam.Thomson.Opensource@diasemi.com>
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Kyle Tso <kyletso@google.com>
-CC:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Badhri Jagan Sridharan <badhri@google.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] usb: typec: tcpm: Export partner Source Capabilities
-Thread-Topic: [PATCH] usb: typec: tcpm: Export partner Source Capabilities
-Thread-Index: AQHUuRincvQr57cnO02hlC0TTWv4QKXI87UAgBMc1ciAAFraAIADAWPw
-Date:   Thu, 14 Feb 2019 14:17:14 +0000
-Message-ID: <AM5PR1001MB0994B54049DDCF2CE376263A80670@AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM>
-References: <20190131035411.53576-1-kyletso@google.com>
- <20190131070238.GA4500@kroah.com>
- <CAGZ6i=07EOHqd3r9y1MpYn_e1nFeYGt_wp9arhMZWWeTBm-udA@mail.gmail.com>
- <20190212105421.GA23271@kroah.com>
- <c838e214-4888-c708-6a7c-a8de6ecb5282@roeck-us.net>
-In-Reply-To: <c838e214-4888-c708-6a7c-a8de6ecb5282@roeck-us.net>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.225.80.228]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: d9c2e0db-cb15-42c3-e7e6-08d692871e5a
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:AM5PR1001MB1154;
-x-ms-traffictypediagnostic: AM5PR1001MB1154:
-x-ms-exchange-sharedmailbox-routingagent-processed: True
-x-ms-exchange-purlcount: 1
-x-microsoft-exchange-diagnostics: =?utf-8?B?MTtBTTVQUjEwMDFNQjExNTQ7MjM6UHJiT3Y0SzdUY1VlTTFESDllemFyVHZ5?=
- =?utf-8?B?ejE0emxxQ29DcXBkWllzeW02UjFzbnM4VmdPUy9HNE5yT0toYlMrdjNQNEs3?=
- =?utf-8?B?eWYvZjIyMk9PU21seHZVSnJsMjlFcHZCM2FLY2c0Z2NvR3pwTVd0M09ncHFm?=
- =?utf-8?B?NFFjQUViYzR2SUw3dkV4d015ZzhjRzZoRzZXMDlZRERWRFJsR2JoeGlZaGc2?=
- =?utf-8?B?d0JabnpvejRSblc4Ujl3L3RSYXVmV1kxUlE4VitWS1lhU3N0WmFZbElvbjRG?=
- =?utf-8?B?MnY0clJPTHVhd0NyYmgvMVR3SWoyUW1mZm9RSGo5c2xlNXRsODVLL2Y4Tjhq?=
- =?utf-8?B?dExkVHFRVGpsU09qVFE1VGVMS1RuZ1BUVlR4OG1QZ2ZuaXQva0tMekxveXZP?=
- =?utf-8?B?R1p5RXZiNVlXSmV5WVdWbEV0ZEtVQzRhbnV1ZzFzYjFISjlzaDJRM0ZxeENs?=
- =?utf-8?B?Q2lCVFdIL2pQY2YyWTNMWTg1N3JHS3NpNU9MY3lvTVNxT0JDWnJFVjBNUi9i?=
- =?utf-8?B?WHlCUEUwZGI2ZFNSS00vSmhpbEZ4eGpiNFJSMEQxR050NTJHeis0aW90alo1?=
- =?utf-8?B?NXdFdnRFOG1kd0FaRXUzOHJNQ280bXVCbnpxcHRxcVBYMmJrbzhMOVlSWnZV?=
- =?utf-8?B?VkNKcDAvaVdaL3o5WVJBM0RJNndVajJ2TWZKaXFaVGNxSDFtdFNBcVdMYjhu?=
- =?utf-8?B?RkZQcFRyVEZYS011Z1JYZEtySFY1aSt2NTE4VXJMcW52MTEwWElheW96RUg4?=
- =?utf-8?B?TXhmUUFFY0VrYVRPdnFKQVUycXRoaitrRVYrcmswcERyWWt1d01PM096a2hs?=
- =?utf-8?B?YzdzeHNEdzJ2c215NHFaU1ZiMUI0eEpxYVk3NTdNY01Vb1dTTXhjNGd4cmtC?=
- =?utf-8?B?MktmRFVWaURxSmpsWXd2MlhPamhaTVp0RFhqUTZUY05venA2SnM0dkhWVzdu?=
- =?utf-8?B?V1kvVzhOZHdvNzZQZDdTU29kamxjZHlPUkd4M1ZYalJPRG0wb0FHMWpCTDFZ?=
- =?utf-8?B?WUUwNk9ocDVDcDNxSndicnhIWlBIQ1IzOEVPOHpJWHF6OGs4UWhITFg5OEY4?=
- =?utf-8?B?TTh5SW0yMUFieDl3d2VDOXFrM2xJTmZWc3BKY1JTWWZRMXF3dXVCRUN1c1Rm?=
- =?utf-8?B?bWZnNmZ1cWdDdEZiWHpuVGhLVEMwM01EUG4yb3JBVjZlRm4rYWtsNVJyMzJN?=
- =?utf-8?B?amJMWUxjUE1jcldvKzBFcVpqM2ZoMFIrZ3BROUVNbW1LWTN0K2ZBRGR3ZHF2?=
- =?utf-8?B?NHhta2pQdS9mK3hrM2xvVkdNcnVLc1h0TmU0SnMyUnNuemc5aWY5aFptTnp5?=
- =?utf-8?B?L1lnK3MzbDFSZFg3Q3FkSC9JcDR2YjZpVWNDcE40QUVzSE5wUE5QZXZSSGFv?=
- =?utf-8?B?a1lOTFJOeUNPVGtpZFhmK2hxMGFSS1EvQnhlemJoRkJYOFVOYityTGx5YUcr?=
- =?utf-8?B?c3JGNUFkZFd0TGduUnQxbXFkbmpUdHZxRTNDemNYQjRDOVhPaGJHSTFtWEJk?=
- =?utf-8?B?bFRGUjFteVlRa24zdGhNaEFraWNOcHBhZnlHek5NaDIxcnM4SWZINU1WczFL?=
- =?utf-8?B?OElKb3kwLzhueERHQkVHSHp5OXZLR3RlTmpaWTVLbVZxQzJQaVV0bTRVcWJJ?=
- =?utf-8?B?T1FOMFZaZDdwU1RVN0poaXV2c2tVUE9RL3M5bnpaelZIcENHZk1kR29EenJ3?=
- =?utf-8?B?bGpIem0vWVJiS1NjZkQxVWNFUEpBbDRXVHRVWHFVallRRnVSMTJIbmNTNTRh?=
- =?utf-8?Q?8F+JzUKeV2KYcL7mAxTYV6+84ewRTje2OpplVyI=3D?=
-x-microsoft-antispam-prvs: <AM5PR1001MB1154210893C934F0CBA07828A7670@AM5PR1001MB1154.EURPRD10.PROD.OUTLOOK.COM>
-x-forefront-prvs: 09480768F8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(376002)(346002)(136003)(39850400004)(189003)(199004)(26005)(105586002)(6116002)(3846002)(81156014)(81166006)(8676002)(186003)(110136005)(54906003)(6506007)(53546011)(316002)(102836004)(55236004)(2906002)(93886005)(33656002)(476003)(97736004)(486006)(14444005)(256004)(446003)(66066001)(11346002)(99286004)(8936002)(76176011)(7696005)(106356001)(7736002)(53936002)(305945005)(4326008)(6306002)(6246003)(71190400001)(71200400001)(14454004)(68736007)(86362001)(74316002)(478600001)(72206003)(25786009)(966005)(229853002)(6436002)(55016002)(9686003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR1001MB1154;H:AM5PR1001MB0994.EURPRD10.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-received-spf: None (protection.outlook.com: diasemi.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: rx5XOBBgKImc0zw2p/2oge5mLTzyrsTk47f5TaVIrxwclZBsRD0TaR+AqFmqz8jrUg/+pGxw/4qMdKdbHwxO1Mrfh5EhY3gm5IcbRozWAuMWG2+uxfbeW+nV+yPvB1qeE4W2DB1St6HyteVEtFXyGcE06Z+Wsc0sR3VS1bPsOhCA1F7TN7hEENmQVIVzCdUmKBDHwMCgzIO0VvhDrtL+6bWbJUF4PIlbNN9oWfBEPFWwqlHmP8UO6dfDga6iOqXX9whcI6hb7XlIlk0aY9WL8gBvofQ5anV7/UgrtvGTlNRvz00JZ+jkvY9Xyf0xdxN1n+PN15CRqepLSFwLaehJYv/xFLUnvppBD2WWnACXt160KN2veapybolQP+gJ8x+e4Xi7owM+8AOy8Ku1paZd//Aw/V2m2TVxIZJ0k8kRo/s=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=w4n6iEM9APaFfr5snt6a8qSzZFjhCXJFt+JQZk91uns=;
+        b=pOhIU8FWKdkw0FBGyQIiqJfSUlqIF5dfAnm7/+Wyraa9f9gtGZMRJrWs5TN/BRMsJT
+         9FMkgwu9KbK9EKuRY4fRgJb5udcmy5PtTbHxL56mjVKRXhKWebhxcwYkxT1xCWU4O+WX
+         eURswQgwO912LrV57McpVqoI9las5dJ5IJ7xCNI2tUT9HwprCSEQAhOwIN6Y5aPpKEq1
+         lVmV+64msMM7UU+cFKQduwLsOsqi/8xoPbWYYBEtJRpBt+EWlGpMijtLoiNWWPq8JvMh
+         o/nk7a4RLKRakDIXQ6472qRKM8nzgpaxLgSGE9hqwiUwk2NJi0ilNlyiIX7/aRao0vWl
+         ca2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=w4n6iEM9APaFfr5snt6a8qSzZFjhCXJFt+JQZk91uns=;
+        b=eBvx5XHPnOW0RN9sTG/p2dmwGKUBLPszsUmWap2Q+Gd85T/uxUmtfDM6qZfh+LACTt
+         5+nOxtTQdSJD8NBi48WkYxu/seMDGu/5IeTkW1PiDxhR5/R6APOrTdWHcikxHqS+ulTw
+         LyZ6UwmHtovmGjGF+8wWkLYLpoyN6O4ijXXIF8i4Jx9Y4gBrGRqvgQburzX7Mptb5gd2
+         2Sw6AksdKeUwtupGutWralwMNlng8ZJsYkLWfsx+5dWqGBwh5+ANOwzApy/5pPOWoioD
+         0Fzz12ZKsLD986OrspPJBPEJAioKecRXWSJIo3MVME5B0Xg0xbNZm4kPCiwVcDxX/mty
+         JqSQ==
+X-Gm-Message-State: AHQUAuaP/m4/Podj+Xko20fTkpc751Fjc+3SkcLOsnbz8LP5M6XQpgf3
+        QbSMh3ksG4PioRnLJV26Jvs=
+X-Google-Smtp-Source: AHgI3Ibt+sraEeAyera6CTgW1fsL92kkG7wyQZMNBeZpe43Nt99PK30LA3dLj6iIqco73J1QBq1TqQ==
+X-Received: by 2002:ac8:3332:: with SMTP id t47mr3188203qta.52.1550153869428;
+        Thu, 14 Feb 2019 06:17:49 -0800 (PST)
+Received: from localhost.localdomain ([168.194.160.109])
+        by smtp.gmail.com with ESMTPSA id m41sm1878343qtc.58.2019.02.14.06.17.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 14 Feb 2019 06:17:48 -0800 (PST)
+Received: by localhost.localdomain (Postfix, from userid 1000)
+        id 03770180A9D; Thu, 14 Feb 2019 12:17:45 -0200 (-02)
+Date:   Thu, 14 Feb 2019 12:17:45 -0200
+From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To:     Xin Long <lucien.xin@gmail.com>
+Cc:     syzbot <syzbot+7823fa3f3e2d69341ea8@syzkaller.appspotmail.com>,
+        davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
+        linux-sctp@vger.kernel.org, network dev <netdev@vger.kernel.org>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Vlad Yasevich <vyasevich@gmail.com>
+Subject: Re: KASAN: use-after-free Read in sctp_outq_tail
+Message-ID: <20190214141745.GL13621@localhost.localdomain>
+References: <0000000000002015db0581b71858@google.com>
+ <CADvbK_dndFMxyUZk=k8qEy9=PNbLc81F++2L0fbdtUdbupq4Xg@mail.gmail.com>
+ <20190213135157.GJ10665@localhost.localdomain>
+ <CADvbK_fwUdU3_CWBFYfw+ZeOLvEF9p6koP2FUdo+m0SCqGN+Ug@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: diasemi.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d9c2e0db-cb15-42c3-e7e6-08d692871e5a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2019 14:17:14.5436
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 511e3c0e-ee96-486e-a2ec-e272ffa37b7c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR1001MB1154
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADvbK_fwUdU3_CWBFYfw+ZeOLvEF9p6koP2FUdo+m0SCqGN+Ug@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMTIgRmVicnVhcnkgMjAxOSAxNjoyMCwgR3VlbnRlciBSb2VjayB3cm90ZToNCg0KPiBPbiAy
-LzEyLzE5IDI6NTQgQU0sIEdyZWcgS0ggd3JvdGU6DQo+ID4gT24gVHVlLCBGZWIgMTIsIDIwMTkg
-YXQgMDY6Mjk6MzlQTSArMDgwMCwgS3lsZSBUc28gd3JvdGU6DQo+ID4+IE9uIFRodSwgSmFuIDMx
-LCAyMDE5IGF0IDM6MDIgUE0gR3JlZyBLSCA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+DQo+
-IHdyb3RlOg0KPiA+Pg0KPiA+Pj4gT24gVGh1LCBKYW4gMzEsIDIwMTkgYXQgMTE6NTQ6MTFBTSAr
-MDgwMCwgS3lsZSBUc28gd3JvdGU6DQo+ID4+Pj4gUHJvdmlkZSBhIGZ1bmN0aW9uIHRvIGdldCB0
-aGUgcGFydG5lciBTb3VyY2UgQ2FwYWJpbGl0aWVzLg0KPiA+Pj4+DQo+ID4+Pj4gU2lnbmVkLW9m
-Zi1ieTogS3lsZSBUc28gPGt5bGV0c29AZ29vZ2xlLmNvbT4NCj4gPj4+PiAtLS0NCj4gPj4+PiAg
-IGRyaXZlcnMvdXNiL3R5cGVjL3RjcG0vdGNwbS5jIHwgMjMgKysrKysrKysrKysrKysrKysrKysr
-KysNCj4gPj4+PiAgIGluY2x1ZGUvbGludXgvdXNiL3RjcG0uaCAgICAgIHwgIDEgKw0KPiA+Pj4+
-ICAgMiBmaWxlcyBjaGFuZ2VkLCAyNCBpbnNlcnRpb25zKCspDQo+ID4+Pj4NCj4gPj4+PiBkaWZm
-IC0tZ2l0IGEvZHJpdmVycy91c2IvdHlwZWMvdGNwbS90Y3BtLmMNCj4gPj4+IGIvZHJpdmVycy91
-c2IvdHlwZWMvdGNwbS90Y3BtLmMNCj4gPj4+PiBpbmRleCBmMWQzZTU0MjEwZGYuLjI5Y2Q4NGJh
-OTk2MCAxMDA2NDQNCj4gPj4+PiAtLS0gYS9kcml2ZXJzL3VzYi90eXBlYy90Y3BtL3RjcG0uYw0K
-PiA+Pj4+ICsrKyBiL2RyaXZlcnMvdXNiL3R5cGVjL3RjcG0vdGNwbS5jDQo+ID4+Pj4gQEAgLTQ0
-OTQsNiArNDQ5NCwyOSBAQCBpbnQgdGNwbV91cGRhdGVfc2lua19jYXBhYmlsaXRpZXMoc3RydWN0
-DQo+ID4+PiB0Y3BtX3BvcnQgKnBvcnQsIGNvbnN0IHUzMiAqcGRvLA0KPiA+Pj4+ICAgfQ0KPiA+
-Pj4+ICAgRVhQT1JUX1NZTUJPTF9HUEwodGNwbV91cGRhdGVfc2lua19jYXBhYmlsaXRpZXMpOw0K
-PiA+Pj4+DQo+ID4+Pj4gKy8qDQo+ID4+Pj4gKyAqIERvbid0IGNhbGwgdGhpcyBmdW5jdGlvbiBp
-biBpbnRlcnJ1cHQgY29udGV4dC4gQ2FsbGVyIG5lZWRzIHRvDQo+ID4+Pj4gK2ZyZWUNCj4gPj4+
-IHRoZQ0KPiA+Pj4+ICsgKiBtZW1vcnkgaXRzZWxmLg0KPiA+Pj4+ICsgKi8NCj4gPj4+PiAraW50
-IHRjcG1fZ2V0X3BhcnRuZXJfc3JjX2NhcHMoc3RydWN0IHRjcG1fcG9ydCAqcG9ydCwgdTMyDQo+
-ID4+Pj4gKyoqc3JjX3Bkbykgew0KPiA+Pj4+ICsgICAgIHVuc2lnbmVkIGludCBucl9wZG87DQo+
-ID4+Pj4gKw0KPiA+Pj4+ICsgICAgIGlmIChwb3J0LT5ucl9zb3VyY2VfY2FwcyA9PSAwKQ0KPiA+
-Pj4+ICsgICAgICAgICAgICAgcmV0dXJuIC1FTk9EQVRBOw0KPiA+Pj4+ICsNCj4gPj4+PiArICAg
-ICAqc3JjX3BkbyA9IGtjYWxsb2MocG9ydC0+bnJfc291cmNlX2NhcHMsIHNpemVvZih1MzIpLCBH
-RlBfS0VSTkVMKTsNCj4gPj4+PiArICAgICBpZiAoIXNyY19wZG8pDQo+ID4+Pj4gKyAgICAgICAg
-ICAgICByZXR1cm4gLUVOT01FTTsNCj4gPj4+PiArDQo+ID4+Pj4gKyAgICAgbXV0ZXhfbG9jaygm
-cG9ydC0+bG9jayk7DQo+ID4+Pj4gKyAgICAgbnJfcGRvID0gdGNwbV9jb3B5X3Bkb3MoKnNyY19w
-ZG8sIHBvcnQtPnNvdXJjZV9jYXBzLA0KPiA+Pj4+ICsgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIHBvcnQtPm5yX3NvdXJjZV9jYXBzKTsNCj4gPj4+PiArICAgICBtdXRleF91bmxvY2soJnBv
-cnQtPmxvY2spOw0KPiA+Pj4+ICsgICAgIHJldHVybiBucl9wZG87DQo+ID4+Pj4gK30NCj4gPj4+
-PiArRVhQT1JUX1NZTUJPTF9HUEwodGNwbV9nZXRfcGFydG5lcl9zcmNfY2Fwcyk7DQo+ID4+Pg0K
-PiA+Pj4gV2UgZG9uJ3QgYWRkIG5ldyBmdW5jdGlvbnMgdGhhdCBubyBvbmUgdXNlcyA6KA0KPiA+
-Pj4NCj4gPj4+DQo+ID4+IFRoaXMgZnVuY3Rpb24gaXMgdXNlZnVsIGlmIHRoZSBQRCBEZXZpY2Ug
-UG9saWN5IE1hbmFnZXIgaXMNCj4gPj4gaW1wbGVtZW50ZWQgb3V0c2lkZSBvZiBUQ1BNLg0KPiA+
-PiBJbiB0aGlzIHNpdHVhdGlvbiwgRGV2aWNlIFBvbGljeSBNYW5hZ2VyIG5lZWRzIHRvIGtub3cg
-dGhlIHBhcnRuZXINCj4gPj4gY2FwYWJpbGl0aWVzIHRvIG9wdGltaXplIHRoZSBjaGFyZ2luZyBw
-cm9jZXNzLg0KPiA+DQo+ID4gQW5kIHdoZXJlIGlzIHRoYXQgY29kZT8NCj4gPg0KPiANCj4gQWdy
-ZWVkIC0gdGhhdCBjb2RlIHNob3VsZCBiZSBzZW50IHVwc3RyZWFtIGFzIHdlbGwgdG8gbGV0IHVz
-IHNlZSB0aGUgZW50aXJlDQo+IGNvbnRleHQuDQo+IA0KPiA+PiBUYWtlIGV4aXN0aW5nIGZ1bmN0
-aW9ucyBpbiBUQ1BNIGZvciBleGFtcGxlOg0KPiA+PiBGdW5jdGlvbiAidGNwbV91cGRhdGVfc2lu
-a19jYXBhYmlsaXRpZXMiIGFuZA0KPiA+PiAidGNwbV91cGRhdGVfc291cmNlX2NhcGFiaWxpdGll
-cyIgYXJlIGV4cG9zZWQgYXMgd2VsbC4gQW5kIG5vIG9uZQ0KPiA+PiB1c2VzIHRoZW0gbm93Lg0K
-PiA+DQo+ID4gR3JlYXQsIGxldCdzIGdvIGRlbGV0ZSB0aGVtIG5vdywgd2Ugc2hvdWxkIG5vdCBo
-YXZlIGFwaXMgdGhhdCBubyBvbmUNCj4gPiB1c2VzLiAgVGhpcyBpc24ndCBhIG5ldyB0aGluZy4u
-Lg0KPiA+DQo+IA0KPiBJIHNlbnQgYSBwYXRjaCB0byBkbyBqdXN0IHRoYXQuIFF1aXRlIGZyYW5r
-bHkgSSBkb24ndCByZWNhbCB3aHkgSSB0aG91Z2h0IHRob3NlDQo+IGZ1bmN0aW9ucyBtaWdodCBi
-ZSBuZWVkZWQuDQoNCkFzIGEgbWluZCBqb2cgLSBodHRwczovL2xrbWwub3JnL2xrbWwvMjAxNy8x
-MS8yNy8xMjU2IDopDQo=
+On Thu, Feb 14, 2019 at 10:03:30PM +0800, Xin Long wrote:
+> On Wed, Feb 13, 2019 at 9:52 PM Marcelo Ricardo Leitner
+> <marcelo.leitner@gmail.com> wrote:
+> >
+> > On Wed, Feb 13, 2019 at 12:35:56PM +0800, Xin Long wrote:
+> > > On Wed, Feb 13, 2019 at 4:00 AM syzbot
+> > > <syzbot+7823fa3f3e2d69341ea8@syzkaller.appspotmail.com> wrote:
+> > > >
+> > > > Hello,
+> > > >
+> > > > syzbot found the following crash on:
+> > > >
+> > > > HEAD commit:    d4104460aec1 Add linux-next specific files for 20190211
+> > > > git tree:       linux-next
+> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=14140124c00000
+> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=c8a112d3b0d6719b
+> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=7823fa3f3e2d69341ea8
+> > > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> > > >
+> > > > Unfortunately, I don't have any reproducer for this crash yet.
+> > > >
+> > > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > > Reported-by: syzbot+7823fa3f3e2d69341ea8@syzkaller.appspotmail.com
+> > > >
+> > > > ==================================================================
+> > > > BUG: KASAN: use-after-free in list_add_tail include/linux/list.h:93 [inline]
+> > > > BUG: KASAN: use-after-free in sctp_outq_tail_data net/sctp/outqueue.c:105
+> > > > [inline]
+> > > > BUG: KASAN: use-after-free in sctp_outq_tail+0x816/0x930
+> > > > net/sctp/outqueue.c:313
+> > > > Read of size 8 at addr ffff88807b19a7b8 by task syz-executor.0/30745
+> > > I think https://patchwork.ozlabs.org/patch/1040500/ will fix this.
+> >
+> > I don't think so. Seems it will switch from use-after-free to NULL deref
+> > instead with that patch.
+> It will allocate ext for the stream if its ext is NULL in
+> sctp_sendmsg_to_asoc(), the new data will work fine. As for
+
+Ehh, right!
+
+> the old data on the surplus streams, it has been dropped in
+> sctp_stream_outq_migrate().
+
+Yep.
+
+> 
+> >
+> > > > CPU: 1 PID: 30745 Comm: syz-executor.0 Not tainted 5.0.0-rc5-next-20190211
+> > > > #32
+> > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > > > Google 01/01/2011
+> > > > Call Trace:
+> > > >   __dump_stack lib/dump_stack.c:77 [inline]
+> > > >   dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+> > > >   print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+> > > >   kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+> > > >   __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:132
+> > > >   list_add_tail include/linux/list.h:93 [inline]
+> > > >   sctp_outq_tail_data net/sctp/outqueue.c:105 [inline]
+> > > >   sctp_outq_tail+0x816/0x930 net/sctp/outqueue.c:313
+> > > >   sctp_cmd_send_msg net/sctp/sm_sideeffect.c:1109 [inline]
+> > > >   sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1784 [inline]
+> > > >   sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
+> > > >   sctp_do_sm+0x68e/0x5380 net/sctp/sm_sideeffect.c:1191
+> > > >   sctp_primitive_SEND+0xa0/0xd0 net/sctp/primitive.c:178
+> > > >   sctp_sendmsg_to_asoc+0xa63/0x17b0 net/sctp/socket.c:1955
+> >
+> > sctp_sendmsg_to_asoc()
+> > ...
+> >         if (sinfo->sinfo_stream >= asoc->stream.outcnt) {
+> >                 err = -EINVAL;
+> >                 goto err;
+> >         }
+> >
+> >         if (unlikely(!SCTP_SO(&asoc->stream, sinfo->sinfo_stream)->ext)) {
+> > ...
+> >
+> > It should have aborted even if an old ->ext was still there because
+> > outcnt is correctly updated. So somehow outcnt was wrong here.
+> >
+> > sctp_stream_init()
+> > ...
+> >         /* Filter out chunks queued on streams that won't exist anymore */
+> >         sched->unsched_all(stream);
+> >         sctp_stream_outq_migrate(stream, NULL, outcnt);   <--- [A]
+> >         sched->sched_all(stream);
+> >
+> >         ret = sctp_stream_alloc_out(stream, outcnt, gfp); <--- [B]
+> >         if (ret)
+> >                 goto out;
+> >
+> >         stream->outcnt = outcnt;                          <--- [C]
+> > ...
+> >
+> > We have a problem here because [A] is freeing ->ext, but [B] can fail (ENOMEM),
+> > which would lead it to not update outcnt in [C] even after the
+> > changes already performed in [A].
+> >
+> > It should handle the freeing of ->ext in sctp_stream_alloc_out()
+> > instead, or allocate the flexarray earlier (so it can bail out before
+> > freeing stuff).
+> Agree that it's better to do:
+>         sched->unsched_all(stream);
+>         sctp_stream_outq_migrate(stream, NULL, outcnt);
+>         sched->sched_all(stream);
+> after the flexarray allocation.
+> 
+> Just sctp_stream_alloc_out() can not be used here anymore, as
+> stream->out will be set in it.
+
+What about carving out a sctp_stream_init_out() ? Like
+
+	 struct flex_array *new_out;
+
+	/* just allocate it, nothing more */
+         new_out = sctp_stream_alloc_out(outcnt, gfp);
+         if (!new_out)
+	 	goto out;
+
+         /* Filter out chunks queued on streams that won't exist anymore */
+         sched->unsched_all(stream);
+         sctp_stream_outq_migrate(stream, NULL, outcnt);
+         sched->sched_all(stream);
+
+	/* initialization stuff, and it can't fail anymore */
+         sctp_stream_init_out(stream, outcnt, new_out);
+
+This may hurt a bit more with the genradix migration, but then we
+don't end up dropping data for nothing.
+
