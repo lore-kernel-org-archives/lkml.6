@@ -2,178 +2,101 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D0EC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:12:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40F91C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:13:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E30E8222B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:12:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCA14222A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:13:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LstBb9Pw"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dpildr1s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730946AbfBNHMk (ORCPT
+        id S2437180AbfBNHNo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 02:12:40 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44870 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725975AbfBNHMj (ORCPT
+        Thu, 14 Feb 2019 02:13:44 -0500
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:33425 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731752AbfBNHNo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 02:12:39 -0500
-Received: by mail-pl1-f194.google.com with SMTP id p4so2652131plq.11
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 23:12:39 -0800 (PST)
+        Thu, 14 Feb 2019 02:13:44 -0500
+Received: by mail-vk1-f195.google.com with SMTP id d201so1176785vka.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 23:13:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UFUxl+Fljm7yqlfrAchzNpMXHkNbSIOG02QGuZvFWpc=;
-        b=LstBb9Pwynk2kwzMvrgXvs01+bT8CIfvaeQWBGiPjcTgGkiZG3EBCQ1e3WAJuAJ0XA
-         Rjp/z13BhWFFiNsKmyf+kqdTy8ob4ULuXOpP6B1dIUADF+NF/F2589qkuO7TdJ4KZJWX
-         1R9Na5rIPM4dxxlAdsspWrYFOw6iJtWKylQaEmoRCAU6gUyIhBG/5lJcCLyIpiqPkGZ6
-         9alBpsHe75yhfA+Ih1hrUfZ3GquiFKfA8x1kufhWyampHnUIEEw5vw8o8MR1kcZO65OS
-         bpFyPZO7pFN3xhuvNBE4zeLurmt1b3zjnJ9PJ3jjKKLd61XgC1C4U9l/IQLncUgedIel
-         /huw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=obC8XUFC/omwmNLuvSMPxvu4+DEnayxyH/No9CtLai8=;
+        b=Dpildr1sE+WONyIhA+QwPCsJJrvL9CDaCGWyAtruaBThjtDxCB4Qg5tr76gCKlt+gF
+         KjPXLRv3KHybl91+74vbSB5SrdAOCE33s7frTlGXD56ohSTV6g1gHlWeRUPULxg9K2xE
+         hWfQ0Xf3gT4zQvynXCSyUsAj9O9nIsRZOkPWWyWzmEs4O8/0LTyLMHQe2gwG0zJhrZra
+         O7SwJnjAA2VOCAiPkYQNguKFx9ZYE+Rj9XdL3bExz5Z48Z0cbRKkzG/PuyyqVyLrtQt7
+         eOjMxj8RGPiYzYiYvtUt123ces679lA9iXo7RAcdeR/Gpb2lhz/VYFF5lB2mVY0slNti
+         YDKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UFUxl+Fljm7yqlfrAchzNpMXHkNbSIOG02QGuZvFWpc=;
-        b=R/CVvyehA5rUzpSsF2IyV9jTWGy9EWGzOjTSm8S9EuQojBAjszNlpPgnRvyaCpzjLR
-         LUcbOcs2SM5FeMXIi0nDm/k/lYlhLyd2iSicOw0LwZ9BulDjtNCs2aCVW9fieEmzdb5z
-         T7jsvYyNrw+F2dfPQQoI1eAhyi6PPV0rfyYDTmiX1WHF+tEwpF2bl96PthCdDTADogkF
-         w/LLMeqk6+TA0a9PQiV0fUYQRwNfDIwAaob4qxYeNfQa1fXZsWN5lkdmrq7C0s+U6T+C
-         SL1qHdciSDSYO59pJSSCp0eRGPdhJ1KTxJcJEz/g9/cu6ohdj6kuhLbbsK0DRs4hOJLX
-         M7dA==
-X-Gm-Message-State: AHQUAuYrwlbynknt9tWrcJGNm5r/eq8yhxrpWO3BfbphM2/GuE7sBwyT
-        3iPKyHzUKHw61JDfyqnCCpS1HQ==
-X-Google-Smtp-Source: AHgI3Ib4ToWIHPDvYuqj7oSDLZt95BaIPm9ck5ZYpZgPoYIFFOk+ystVUKtsvCu42axUckdhp+vXuA==
-X-Received: by 2002:a17:902:e087:: with SMTP id cb7mr2585329plb.313.1550128359043;
-        Wed, 13 Feb 2019 23:12:39 -0800 (PST)
-Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id y12sm1937330pgh.38.2019.02.13.23.12.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 23:12:38 -0800 (PST)
-Date:   Thu, 14 Feb 2019 12:42:33 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V4 1/2] arm64: dts: freescale: imx8qxp: add cpu opp table
-Message-ID: <20190214071233.7uypqihkfasxqyw6@vireshk-i7>
-References: <1550108915-574-1-git-send-email-Anson.Huang@nxp.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=obC8XUFC/omwmNLuvSMPxvu4+DEnayxyH/No9CtLai8=;
+        b=DhU2qHTPxoqn9Bf2XpIeUI6NLAEfJX4+DKizWznGlZIDmxjl931dXX39gwTz3mA76S
+         Om8SeRhuzsHFqB9R0oBOaO86Eca0PUJOW5Zz3ghtFUI9HXeKkBkJXkSUe9Q+TftB7rrp
+         TagI9DpOfhdaHhexqe1yi7h13Ppw7fQW1diPS1nrdY+dKa0A/S6FoRYhpv3tsuHHmL9d
+         H+hTHsKLOBetHaDdFIPOUIWLMG9M8TwuqAODKUOmjZdgCazz6xL9RkSnoXNmGeaC9yCj
+         m9GkR9kAbHezJUC/UG/Cn7sF+2IoFone10mLes0wwEuvKqqyOA2K42tJfm5+4qUZftV+
+         IbKA==
+X-Gm-Message-State: AHQUAuZfwMhzoCyBNhQY0tjK3Bmd2KV5zpv3LEb85KIUStSwhpgXPZVu
+        rb93FH1BkL/7TCoFDkwY+fCyryMLkhFACaQqYzc=
+X-Google-Smtp-Source: AHgI3IYXD0uRAypPWGcjehU3noPyWBQdzRBqgMeTNjnt5Fg2A0TGzX6kgj3DRbVZAV4yz562P+XsXdBj2HI0Y5NMJ6k=
+X-Received: by 2002:a1f:9ec9:: with SMTP id h192mr1206303vke.68.1550128422817;
+ Wed, 13 Feb 2019 23:13:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1550108915-574-1-git-send-email-Anson.Huang@nxp.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+References: <20190211151751.12336-1-oded.gabbay@gmail.com> <20190214071114.GA21381@kroah.com>
+In-Reply-To: <20190214071114.GA21381@kroah.com>
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+Date:   Thu, 14 Feb 2019 09:13:16 +0200
+Message-ID: <CAFCwf12VaYSpCtqyYsTGp2TZDJiJ4bYc4egrRY6mdzaceO_5Cw@mail.gmail.com>
+Subject: Re: [PATCH v4 00/15] Habana Labs kernel driver
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Olof Johansson <olof@lixom.net>, ogabbay@habana.ai,
+        Arnd Bergmann <arnd@arndb.de>, Joe Perches <joe@perches.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14-02-19, 01:54, Anson Huang wrote:
-> Add i.MX8QXP CPU opp table to support cpufreq.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> No change since V3.
-> ---
->  arch/arm64/boot/dts/freescale/imx8qxp.dtsi | 25 +++++++++++++++++++++++++
->  1 file changed, 25 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-> index 4021f25..593e2db 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/imx8qxp.dtsi
-> @@ -34,6 +34,10 @@
->  			reg = <0x0 0x0>;
->  			enable-method = "psci";
->  			next-level-cache = <&A35_L2>;
-> +			clocks = <&clk IMX_A35_CLK>;
-> +			clock-latency = <61036>;
+On Thu, Feb 14, 2019 at 9:11 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> On Mon, Feb 11, 2019 at 05:17:36PM +0200, Oded Gabbay wrote:
+> > Hello,
+> > This is v4 of the Habana Labs kernel driver patch-set. It contains fixes
+> > according to reviews done on v3, mainly for the command buffer, sysfs and MMU
+> > patches. In addition, patch 2/15 was reduced in size from 4.3MB to 1.4MB.
+> >
+> > The patch-set is rebased on v5.0-rc6.
+> >
+> > Link to v3 cover letter: https://lkml.org/lkml/2019/2/4/1033
+> >
+> > Link to v2 cover letter: https://lkml.org/lkml/2019/1/30/1003
+> >
+> > Link to v1 cover letter: https://lwn.net/Articles/777342/
+> >
+> > I would appricate any feedback, question and/or review.
+>
+> There's been some 0-day bot feedback on some of these patches now that I
+> put them in my -testing branch.  So I'm going to drop the patch series
+> from there now and wait for a v5 of the series that hopefully will have
+> those issues fixed :)
+>
+> thanks,
+>
+> greg k-h
 
-Who uses this value ? And why is it different from the one mentioned
-in the OPP table ?
-
-> +			#cooling-cells = <2>;
-
-clocks and cooling-cells must be defined for all the CPUs.
-
-> +			operating-points-v2 = <&a35_0_opp_table>;
->  		};
->  
->  		A35_1: cpu@1 {
-> @@ -42,6 +46,7 @@
->  			reg = <0x0 0x1>;
->  			enable-method = "psci";
->  			next-level-cache = <&A35_L2>;
-> +			operating-points-v2 = <&a35_0_opp_table>;
->  		};
->  
->  		A35_2: cpu@2 {
-> @@ -50,6 +55,7 @@
->  			reg = <0x0 0x2>;
->  			enable-method = "psci";
->  			next-level-cache = <&A35_L2>;
-> +			operating-points-v2 = <&a35_0_opp_table>;
->  		};
->  
->  		A35_3: cpu@3 {
-> @@ -58,6 +64,7 @@
->  			reg = <0x0 0x3>;
->  			enable-method = "psci";
->  			next-level-cache = <&A35_L2>;
-> +			operating-points-v2 = <&a35_0_opp_table>;
->  		};
->  
->  		A35_L2: l2-cache0 {
-> @@ -65,6 +72,24 @@
->  		};
->  	};
->  
-> +	a35_0_opp_table: opp-table {
-> +		compatible = "operating-points-v2";
-> +		opp-shared;
-> +
-> +		opp-900000000 {
-> +			opp-hz = /bits/ 64 <900000000>;
-> +			opp-microvolt = <1000000>;
-> +			clock-latency-ns = <150000>;
-> +		};
-> +
-> +		opp-1200000000 {
-> +			opp-hz = /bits/ 64 <1200000000>;
-> +			opp-microvolt = <1100000>;
-> +			clock-latency-ns = <150000>;
-> +			opp-suspend;
-
-You want to go to a higher frequency on suspend ?
-
-> +		};
-> +	};
-> +
->  	gic: interrupt-controller@51a00000 {
->  		compatible = "arm,gic-v3";
->  		reg = <0x0 0x51a00000 0 0x10000>, /* GIC Dist */
-> -- 
-> 2.7.4
-
--- 
-viresh
+Sure, np.
+Thanks,
+Oded
