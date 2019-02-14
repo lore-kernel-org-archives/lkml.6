@@ -2,120 +2,150 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E16B9C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F948C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:43:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA69F222A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:42:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2D1E222A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:43:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550140985;
+	bh=fahtXq3DVKL0vXCvKJOXinAYJ3+kxzScXhki9IFX4dI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=RbLmKMHMo+k1WBWyz18XUhc+iCgsYSPXXFtUzBJgwXPe/iT7mkrkRcg3dncYwKPRC
+	 /lu+xeeAba8ursTyQECyC9t1gLRYFrIcl3PwEAOtL+rUGCCtaJ4FswN1AQD866sNMp
+	 MicGFmxUGTivAnTTN3qRIXeDsLGCsJOirgHmx948=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438495AbfBNKmt (ORCPT
+        id S2406700AbfBNKnD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 05:42:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55010 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2438491AbfBNKmp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 05:42:45 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E7FA7B0BA;
-        Thu, 14 Feb 2019 10:42:43 +0000 (UTC)
-From:   Juergen Gross <jgross@suse.com>
-To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org, linux-mm@kvack.org
-Cc:     boris.ostrovsky@oracle.com, sstabellini@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        Juergen Gross <jgross@suse.com>
-Subject: [PATCH v3 1/2] x86: respect memory size limiting via mem= parameter
-Date:   Thu, 14 Feb 2019 11:42:39 +0100
-Message-Id: <20190214104240.24428-2-jgross@suse.com>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20190214104240.24428-1-jgross@suse.com>
-References: <20190214104240.24428-1-jgross@suse.com>
+        Thu, 14 Feb 2019 05:43:03 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:33377 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394286AbfBNKnC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 05:43:02 -0500
+Received: by mail-ot1-f68.google.com with SMTP id i20so9759713otl.0;
+        Thu, 14 Feb 2019 02:43:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RSC7FfOp1eL3+/dELdJD9KCYfJPiqPMHcMMMOYxa89A=;
+        b=Vhvwbb+2SJy9sMbZRbeHh+ZAIU7HReuImsI0kOqa579l7S4a/pCJeTCnaaYTRZgkWy
+         7vkCmLhtddRGRQGzrBsKuySHXDR14272G2LNw1xo4SbMYeFSk/4ej6qxMUkgpYwDJuMo
+         Yqf4QYpyy0dZRuluSlfJgb2Qkitmt2ZB00y7PbWl6Cd0PQCIks6zKy02qqPwVUutpXi+
+         u5Yc4rFe/rspGA7ZYJmXwxzX6knZcBErmJWQ6LZWb6/o0rCo/flI3WTsRZaU2O2aDuPc
+         +xD0iNHeaVwe3Av9nZIs1Uo1WVqLs8n8eG8TeeD9d1jCHWhTe7HFvsur/LF+lBlQfUwT
+         lY5w==
+X-Gm-Message-State: AHQUAuZev8t5x/xpKfLrMHTEsJkcG8Ej18i3E/hUAb29EFoPI6xEqYlK
+        dZriCylbPHMvlPOstXBuh7QN/ye9z4D+eZrGUyQ=
+X-Google-Smtp-Source: AHgI3IYjNDAnrA4i4gmx9VI6xwBkZp4/AL2HD4rDKLoJ//d8HzzpYcgzfcimfRRsbu7dCeY2jBxIu9SvMKtIK26xpzQ=
+X-Received: by 2002:a9d:638c:: with SMTP id w12mr1923290otk.139.1550140980784;
+ Thu, 14 Feb 2019 02:43:00 -0800 (PST)
+MIME-Version: 1.0
+References: <1550130368-60513-1-git-send-email-wangxiongfeng2@huawei.com> <1550130368-60513-2-git-send-email-wangxiongfeng2@huawei.com>
+In-Reply-To: <1550130368-60513-2-git-send-email-wangxiongfeng2@huawei.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 14 Feb 2019 11:42:49 +0100
+Message-ID: <CAJZ5v0husvV--mD_8B9cXx6-rD1677s6zT6tcjwk3Dg-dNPAxw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] ACPI / CPPC: Add a helper to get desired performance
+To:     Xiongfeng Wang <wangxiongfeng2@huawei.com>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>, gcherianv@gmail.com,
+        Prashanth Prakash <pprakash@codeaurora.org>,
+        George Cherian <george.cherian@cavium.com>,
+        Robert Moore <robert.moore@intel.com>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        John Garry <john.garry@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When limiting memory size via kernel parameter "mem=" this should be
-respected even in case of memory made accessible via a PCI card.
+On Thu, Feb 14, 2019 at 8:46 AM Xiongfeng Wang
+<wangxiongfeng2@huawei.com> wrote:
+>
+> This patch add a helper to get the value of desired performance
+> register.
+>
+> Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+> ---
+>  drivers/acpi/cppc_acpi.c | 38 ++++++++++++++++++++++++++++++++++++++
+>  include/acpi/cppc_acpi.h |  1 +
+>  2 files changed, 39 insertions(+)
+>
+> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+> index 217a782..93588c5 100644
+> --- a/drivers/acpi/cppc_acpi.c
+> +++ b/drivers/acpi/cppc_acpi.c
+> @@ -1051,6 +1051,44 @@ static int cpc_write(int cpu, struct cpc_register_resource *reg_res, u64 val)
+>  }
+>
+>  /**
+> + * cppc_get_desired_perf - Get the value of desired performance register.
+> + * @cpunum: CPU from which to get desired performance.
+> + * @desired_perf: address of a variable to store the returned desired performance
+> + *
+> + * Return: 0 for success, -EIO otherwise.
+> + */
+> +int cppc_get_desired_perf(int cpunum, u64 *desired_perf)
+> +{
+> +       struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpunum);
+> +       int pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpunum);
+> +       struct cpc_register_resource *desired_reg;
+> +       struct cppc_pcc_data *pcc_ss_data = NULL;
+> +       int regs_in_pcc = 0;
 
-Today this kind of memory won't be made usable in initial memory
-setup as the memory won't be visible in E820 map, but it might be
-added when adding PCI devices due to corresponding ACPI table entries.
+It would be better to use bool here, but it would be even better to
+not try to avoid calling cpc_read() in two branches.
 
-Not respecting "mem=" can be corrected by adding a global max_mem_size
-variable set by parse_memopt() which will result in rejecting adding
-memory areas resulting in a memory size above the allowed limit.
+> +
+> +       desired_reg = &cpc_desc->cpc_regs[DESIRED_PERF];
+> +
+> +       if (CPC_IN_PCC(desired_reg)) {
 
-Signed-off-by: Juergen Gross <jgross@suse.com>
-Acked-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/kernel/e820.c         | 5 +++++
- include/linux/memory_hotplug.h | 2 ++
- mm/memory_hotplug.c            | 6 ++++++
- 3 files changed, 13 insertions(+)
+    int ret = 0;
 
-diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-index 50895c2f937d..e67513e2cbbb 100644
---- a/arch/x86/kernel/e820.c
-+++ b/arch/x86/kernel/e820.c
-@@ -14,6 +14,7 @@
- #include <linux/acpi.h>
- #include <linux/firmware-map.h>
- #include <linux/sort.h>
-+#include <linux/memory_hotplug.h>
- 
- #include <asm/e820/api.h>
- #include <asm/setup.h>
-@@ -881,6 +882,10 @@ static int __init parse_memopt(char *p)
- 
- 	e820__range_remove(mem_size, ULLONG_MAX - mem_size, E820_TYPE_RAM, 1);
- 
-+#ifdef CONFIG_MEMORY_HOTPLUG
-+	max_mem_size = mem_size;
-+#endif
-+
- 	return 0;
- }
- early_param("mem", parse_memopt);
-diff --git a/include/linux/memory_hotplug.h b/include/linux/memory_hotplug.h
-index 368267c1b71b..cfd12078172a 100644
---- a/include/linux/memory_hotplug.h
-+++ b/include/linux/memory_hotplug.h
-@@ -100,6 +100,8 @@ extern void __online_page_free(struct page *page);
- 
- extern int try_online_node(int nid);
- 
-+extern u64 max_mem_size;
-+
- extern bool memhp_auto_online;
- /* If movable_node boot option specified */
- extern bool movable_node_enabled;
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 124e794867c5..519f9db063ff 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -96,10 +96,16 @@ void mem_hotplug_done(void)
- 	cpus_read_unlock();
- }
- 
-+u64 max_mem_size = U64_MAX;
-+
- /* add this memory to iomem resource */
- static struct resource *register_memory_resource(u64 start, u64 size)
- {
- 	struct resource *res, *conflict;
-+
-+	if (start + size > max_mem_size)
-+		return ERR_PTR(-E2BIG);
-+
- 	res = kzalloc(sizeof(struct resource), GFP_KERNEL);
- 	if (!res)
- 		return ERR_PTR(-ENOMEM);
--- 
-2.16.4
+> +               if (pcc_ss_id < 0)
+> +                       return -EIO;
+> +               pcc_ss_data = pcc_data[pcc_ss_id];
+> +               down_write(&pcc_ss_data->pcc_lock);
 
+    if (send_pcc_cmd(pcc_ss_id, CMD_READ) >= 0)
+            cpc_read(cpunum, desired_reg, desired_perf);
+    else
+            ret = -EIO;
+
+    up_write(&pcc_ss_data->pcc_lock);
+    return ret;
+
+> +               regs_in_pcc = 1;
+> +               if (send_pcc_cmd(pcc_ss_id, CMD_READ) < 0) {
+> +                       up_write(&pcc_ss_data->pcc_lock);
+> +                       return -EIO;
+> +               }
+> +       }
+
+cpc_read(cpunum, desired_reg, desired_perf);
+return 0;
+
+> +
+> +       cpc_read(cpunum, desired_reg, desired_perf);
+> +
+> +       if (regs_in_pcc)
+> +               up_write(&pcc_ss_data->pcc_lock);
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(cppc_get_desired_perf);
+> +
+> +/**
+>   * cppc_get_perf_caps - Get a CPUs performance capabilities.
+>   * @cpunum: CPU from which to get capabilities info.
+>   * @perf_caps: ptr to cppc_perf_caps. See cppc_acpi.h
