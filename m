@@ -2,223 +2,146 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 402B3C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:22:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D43EC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:22:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC6EA222C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:22:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00E64222D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:22:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=cern.onmicrosoft.com header.i=@cern.onmicrosoft.com header.b="eqiTrGkZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407539AbfBNPWY (ORCPT
+        id S2501934AbfBNPWa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 10:22:24 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:12989 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404698AbfBNPWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 10:22:23 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 03422C04D283;
-        Thu, 14 Feb 2019 15:22:22 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5BFF35D6B6;
-        Thu, 14 Feb 2019 15:22:19 +0000 (UTC)
-Subject: Re: [PATCH-tip 00/22] locking/rwsem: Rework rwsem-xadd & enable new
- rwsem features
-To:     Davidlohr Bueso <dave@stgolabs.net>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-References: <1549566446-27967-1-git-send-email-longman@redhat.com>
- <CAHk-=wjfyrFBjifzmgMVrkrvEePEPaBTDq7D=f2i5kD2E=SqRQ@mail.gmail.com>
- <d7476dfb-1653-747b-b865-5597ba5fc1c1@redhat.com>
- <20190214132352.wm26r5g632swp34n@linux-r8p5>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- xsFNBFgsZGsBEAC3l/RVYISY3M0SznCZOv8aWc/bsAgif1H8h0WPDrHnwt1jfFTB26EzhRea
- XQKAJiZbjnTotxXq1JVaWxJcNJL7crruYeFdv7WUJqJzFgHnNM/upZuGsDIJHyqBHWK5X9ZO
- jRyfqV/i3Ll7VIZobcRLbTfEJgyLTAHn2Ipcpt8mRg2cck2sC9+RMi45Epweu7pKjfrF8JUY
- r71uif2ThpN8vGpn+FKbERFt4hW2dV/3awVckxxHXNrQYIB3I/G6mUdEZ9yrVrAfLw5M3fVU
- CRnC6fbroC6/ztD40lyTQWbCqGERVEwHFYYoxrcGa8AzMXN9CN7bleHmKZrGxDFWbg4877zX
- 0YaLRypme4K0ULbnNVRQcSZ9UalTvAzjpyWnlnXCLnFjzhV7qsjozloLTkZjyHimSc3yllH7
- VvP/lGHnqUk7xDymgRHNNn0wWPuOpR97J/r7V1mSMZlni/FVTQTRu87aQRYu3nKhcNJ47TGY
- evz/U0ltaZEU41t7WGBnC7RlxYtdXziEn5fC8b1JfqiP0OJVQfdIMVIbEw1turVouTovUA39
- Qqa6Pd1oYTw+Bdm1tkx7di73qB3x4pJoC8ZRfEmPqSpmu42sijWSBUgYJwsziTW2SBi4hRjU
- h/Tm0NuU1/R1bgv/EzoXjgOM4ZlSu6Pv7ICpELdWSrvkXJIuIwARAQABzR9Mb25nbWFuIExv
- bmcgPGxsb25nQHJlZGhhdC5jb20+wsF/BBMBAgApBQJYLGRrAhsjBQkJZgGABwsJCAcDAgEG
- FQgCCQoLBBYCAwECHgECF4AACgkQbjBXZE7vHeYwBA//ZYxi4I/4KVrqc6oodVfwPnOVxvyY
- oKZGPXZXAa3swtPGmRFc8kGyIMZpVTqGJYGD9ZDezxpWIkVQDnKM9zw/qGarUVKzElGHcuFN
- ddtwX64yxDhA+3Og8MTy8+8ZucM4oNsbM9Dx171bFnHjWSka8o6qhK5siBAf9WXcPNogUk4S
- fMNYKxexcUayv750GK5E8RouG0DrjtIMYVJwu+p3X1bRHHDoieVfE1i380YydPd7mXa7FrRl
- 7unTlrxUyJSiBc83HgKCdFC8+ggmRVisbs+1clMsK++ehz08dmGlbQD8Fv2VK5KR2+QXYLU0
- rRQjXk/gJ8wcMasuUcywnj8dqqO3kIS1EfshrfR/xCNSREcv2fwHvfJjprpoE9tiL1qP7Jrq
- 4tUYazErOEQJcE8Qm3fioh40w8YrGGYEGNA4do/jaHXm1iB9rShXE2jnmy3ttdAh3M8W2OMK
- 4B/Rlr+Awr2NlVdvEF7iL70kO+aZeOu20Lq6mx4Kvq/WyjZg8g+vYGCExZ7sd8xpncBSl7b3
- 99AIyT55HaJjrs5F3Rl8dAklaDyzXviwcxs+gSYvRCr6AMzevmfWbAILN9i1ZkfbnqVdpaag
- QmWlmPuKzqKhJP+OMYSgYnpd/vu5FBbc+eXpuhydKqtUVOWjtp5hAERNnSpD87i1TilshFQm
- TFxHDzbOwU0EWCxkawEQALAcdzzKsZbcdSi1kgjfce9AMjyxkkZxcGc6Rhwvt78d66qIFK9D
- Y9wfcZBpuFY/AcKEqjTo4FZ5LCa7/dXNwOXOdB1Jfp54OFUqiYUJFymFKInHQYlmoES9EJEU
- yy+2ipzy5yGbLh3ZqAXyZCTmUKBU7oz/waN7ynEP0S0DqdWgJnpEiFjFN4/ovf9uveUnjzB6
- lzd0BDckLU4dL7aqe2ROIHyG3zaBMuPo66pN3njEr7IcyAL6aK/IyRrwLXoxLMQW7YQmFPSw
- drATP3WO0x8UGaXlGMVcaeUBMJlqTyN4Swr2BbqBcEGAMPjFCm6MjAPv68h5hEoB9zvIg+fq
- M1/Gs4D8H8kUjOEOYtmVQ5RZQschPJle95BzNwE3Y48ZH5zewgU7ByVJKSgJ9HDhwX8Ryuia
- 79r86qZeFjXOUXZjjWdFDKl5vaiRbNWCpuSG1R1Tm8o/rd2NZ6l8LgcK9UcpWorrPknbE/pm
- MUeZ2d3ss5G5Vbb0bYVFRtYQiCCfHAQHO6uNtA9IztkuMpMRQDUiDoApHwYUY5Dqasu4ZDJk
- bZ8lC6qc2NXauOWMDw43z9He7k6LnYm/evcD+0+YebxNsorEiWDgIW8Q/E+h6RMS9kW3Rv1N
- qd2nFfiC8+p9I/KLcbV33tMhF1+dOgyiL4bcYeR351pnyXBPA66ldNWvABEBAAHCwWUEGAEC
- AA8FAlgsZGsCGwwFCQlmAYAACgkQbjBXZE7vHeYxSQ/+PnnPrOkKHDHQew8Pq9w2RAOO8gMg
- 9Ty4L54CsTf21Mqc6GXj6LN3WbQta7CVA0bKeq0+WnmsZ9jkTNh8lJp0/RnZkSUsDT9Tza9r
- GB0svZnBJMFJgSMfmwa3cBttCh+vqDV3ZIVSG54nPmGfUQMFPlDHccjWIvTvyY3a9SLeamaR
- jOGye8MQAlAD40fTWK2no6L1b8abGtziTkNh68zfu3wjQkXk4kA4zHroE61PpS3oMD4AyI9L
- 7A4Zv0Cvs2MhYQ4Qbbmafr+NOhzuunm5CoaRi+762+c508TqgRqH8W1htZCzab0pXHRfywtv
- 0P+BMT7vN2uMBdhr8c0b/hoGqBTenOmFt71tAyyGcPgI3f7DUxy+cv3GzenWjrvf3uFpxYx4
- yFQkUcu06wa61nCdxXU/BWFItryAGGdh2fFXnIYP8NZfdA+zmpymJXDQeMsAEHS0BLTVQ3+M
- 7W5Ak8p9V+bFMtteBgoM23bskH6mgOAw6Cj/USW4cAJ8b++9zE0/4Bv4iaY5bcsL+h7TqQBH
- Lk1eByJeVooUa/mqa2UdVJalc8B9NrAnLiyRsg72Nurwzvknv7anSgIkL+doXDaG21DgCYTD
- wGA5uquIgb8p3/ENgYpDPrsZ72CxVC2NEJjJwwnRBStjJOGQX4lV1uhN1XsZjBbRHdKF2W9g
- weim8xU=
-Organization: Red Hat
-Message-ID: <9860a0c2-1f24-a00f-fdea-89e55a07c571@redhat.com>
-Date:   Thu, 14 Feb 2019 10:22:18 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 14 Feb 2019 10:22:30 -0500
+Received: from mail-eopbgr40064.outbound.protection.outlook.com ([40.107.4.64]:35616
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2404698AbfBNPW3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 10:22:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.onmicrosoft.com;
+ s=selector1-cern-ch;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qA6wnO/edSjaUoWyIRbxkdUJ9Ugrp77Y2faFycUq+ow=;
+ b=eqiTrGkZAm4PjPR4wSqQxbVdMriIqGCbUC9c0YpE0pSyW8Q5clIO1uwG4ksrw9dzOnfIrjQ6t4OW39n9Nq6fMTgw6s0EeT6SX7Q8PZOHxe2yhDym6Kmbf4VHkaLfNHMGzm9+QWid3XA0GlnHCrgt0WgUPx49K+9CDeCRNV1pBcA=
+Received: from AM5PR0602CA0020.eurprd06.prod.outlook.com
+ (2603:10a6:203:a3::30) by DB7PR06MB4725.eurprd06.prod.outlook.com
+ (2603:10a6:10:56::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1622.16; Thu, 14 Feb
+ 2019 15:22:26 +0000
+Received: from AM5EUR02FT055.eop-EUR02.prod.protection.outlook.com
+ (2a01:111:f400:7e1e::204) by AM5PR0602CA0020.outlook.office365.com
+ (2603:10a6:203:a3::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1622.16 via Frontend
+ Transport; Thu, 14 Feb 2019 15:22:26 +0000
+Authentication-Results: spf=pass (sender IP is 188.184.36.46)
+ smtp.mailfrom=cern.ch; perches.com; dkim=none (message not signed)
+ header.d=none;perches.com; dmarc=bestguesspass action=none
+ header.from=cern.ch;
+Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
+ 188.184.36.46 as permitted sender) receiver=protection.outlook.com;
+ client-ip=188.184.36.46; helo=cernmxgwlb4.cern.ch;
+Received: from cernmxgwlb4.cern.ch (188.184.36.46) by
+ AM5EUR02FT055.mail.protection.outlook.com (10.152.9.191) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1580.10 via Frontend Transport; Thu, 14 Feb 2019 15:22:26 +0000
+Received: from cernfe02.cern.ch (188.184.36.47) by cernmxgwlb4.cern.ch
+ (188.184.36.46) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 14 Feb
+ 2019 16:22:24 +0100
+Received: from pcbe13614.localnet (2001:1458:202:121::100:40) by smtp.cern.ch
+ (2001:1458:201:66::100:14) with Microsoft SMTP Server (TLS) id 14.3.408.0;
+ Thu, 14 Feb 2019 16:22:22 +0100
+From:   Federico Vaga <federico.vaga@cern.ch>
+To:     Joe Perches <joe@perches.com>
+Reply-To: <federico.vaga@cern.ch>
+CC:     Andy Whitcroft <apw@canonical.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: report: scripts: checkpatch: Spell Checker Does Not Run with '-f'
+Date:   Thu, 14 Feb 2019 16:22:23 +0100
+Message-ID: <18906867.g0OWnkFYVf@pcbe13614>
+In-Reply-To: <d9ad7fb05178dd9afb4906cacdb03f86802c23c3.camel@perches.com>
+References: <3030138.e1gdHPWlgN@pcbe13614> <2899994.xJFnvJAAA5@pcbe13614> <d9ad7fb05178dd9afb4906cacdb03f86802c23c3.camel@perches.com>
 MIME-Version: 1.0
-In-Reply-To: <20190214132352.wm26r5g632swp34n@linux-r8p5>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 14 Feb 2019 15:22:22 +0000 (UTC)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Originating-IP: [2001:1458:202:121::100:40]
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:188.184.36.46;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10001)(10009020)(459900002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR06MB4725;H:cernmxgwlb4.cern.ch;FPR:;SPF:None;LANG:en;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 6332a037-c283-4503-374d-08d692903a1d
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4608076)(4709027)(5565046)(2017052603328)(7153060)(7193020);SRVR:DB7PR06MB4725;
+X-MS-TrafficTypeDiagnostic: DB7PR06MB4725:
+X-Microsoft-Exchange-Diagnostics: 1;DB7PR06MB4725;20:oAb0sDd/FniOFQkUdhPly778zZU2FbHD9Hp4FRh77IDYgx1nx0qjeHIksobhM7VlKP3ZmaLX24/p8FWJCU4sT094yvhI+SFlweOlcd7T/63JsV1B0hBg91i1kQBt0QX/Om4uXrJCieFxNLcupdoN2edqso8vlhuMZheMPnkIq/txhR6hAAsD1jEP0etorXMhQOc1SrDPDG8zsh9bS115BtYzajLZojWM4rSJXXVOWQt8PaNNoW0tMrccg3pXlY9+3L6pyPVMYBIyUw3WfB89w0FzUAXGhiWjCSGnXtRxd8XxXooiVE4F9OX1IKg9ogtc8PX3l6eNa+J5iZzDqyAtTsEzWhRxxYsn+HDXMMSc7xXIz0GKRJkeH6wRgC6THeCwWZFjTXgPdd2oJaBJaxTiEWiQyOcpZ1jN+2tckICEeqeyDACXXhAfV7PXkya1gPE+8BhxVUTek7xITsonJLPDY/xB4S5Nu39zaNhO9iXu68rfOTIzkmMrO4B9g7i1hgb2;23:axZeP/UFAcQkZHgxXJcvldvKBjQQhXTVkoB94LH5vqEPSNSlLY0lmkAgFbABjtqyRfykMFaCLdnNvgzubqJzTIfTtzxukCjqtf9nd7EMzbTlCb0GD3dGu9YjFIcZhWu6WLu8tIsx+3WxtIxt/QzsHzVfKSgToCGJvfiaIJuXiJKI5z89msCV9HIo4aFaYgCY
+X-Microsoft-Antispam-PRVS: <DB7PR06MB47253C2684D78CC046E380B3EF670@DB7PR06MB4725.eurprd06.prod.outlook.com>
+X-Forefront-PRVS: 09480768F8
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: gH7ZBQWZpgmBOc3F11z985Ip11kFtTQjFBMlGrNyBHKnhDWZS5HS7+tb7wNb4zucSm5GJF1eU76xjGnDUIKHFFJV253/5B8XSkiTdVQAvIWMpGldQFIeEiqoSOVM2kz+RoWV6PaWuYWuiTTd5OCVewJpnLv0UYG0R1cnBv7xwzDLXBwwmgMYguS9TrkjSP+3AJnajy8mAdTTByEjPLsGsa2VZRgapR0M99qa5KQBK5vuhQVzYHk43251z0BWSsHTjsrk6Iw44KY+ZGoRmk54SAclYKGS+rhKbg5GGSe1nX9dSRFrZfFGUZDYMWVtrcZPcRghhqjJv7m9cDHOa1qoDhmJEPbYw14l8brDU1lySVX7VOcUJguo5ugBZCIkIl0PUPgJCkP4vkAspUBbmiUtpxi0cC2seLQtAPdwaK5/t+AJLOSJ7aMMri23+otCIhLsXx203HAX77z4eS0LlV8BBRqeylPWWCGxK6TR1dQcmigdLqhcERArE0AiwIphIE+3aidLA1BHdbciJKEuJQsbwIaK8Li454kgmVmq0X2ctU0=
+X-OriginatorOrg: cern.ch
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2019 15:22:26.4981
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6332a037-c283-4503-374d-08d692903a1d
+X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.46];Helo=[cernmxgwlb4.cern.ch]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR06MB4725
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/14/2019 08:23 AM, Davidlohr Bueso wrote:
-> On Fri, 08 Feb 2019, Waiman Long wrote:
->> I am planning to run more performance test and post the data sometimes
->> next week. Davidlohr is also going to run some of his rwsem performance
->> test on this patchset.
->
-> So I ran this series on a 40-core IB 2 socket with various worklods in
-> mmtests. Below are some of the interesting ones; full numbers and curves
-> at https://linux-scalability.org/rwsem-reader-spinner/
->
-> All workloads are with increasing number of threads.
->
-> -- pagefault timings: pft is an artificial pf benchmark (thus reader
-> stress).
-> metric is faults/cpu and faults/sec
->                                       v5.0-rc6                 v5.0-rc6
->                                                                    dirty
-> Hmean     faults/cpu-1    624224.9815 (   0.00%)   618847.5201 *  -0.86%*
-> Hmean     faults/cpu-4    539550.3509 (   0.00%)   547407.5738 *   1.46%*
-> Hmean     faults/cpu-7    401470.3461 (   0.00%)   381157.9830 *  -5.06%*
-> Hmean     faults/cpu-12   267617.0353 (   0.00%)   271098.5441 *   1.30%*
-> Hmean     faults/cpu-21   176194.4641 (   0.00%)   175151.3256 *  -0.59%*
-> Hmean     faults/cpu-30   119927.3862 (   0.00%)   120610.1348 *   0.57%*
-> Hmean     faults/cpu-40    91203.6820 (   0.00%)    91832.7489 *   0.69%*
-> Hmean     faults/sec-1    623292.3467 (   0.00%)   617992.0795 *  -0.85%*
-> Hmean     faults/sec-4   2113364.6898 (   0.00%)  2140254.8238 *   1.27%*
-> Hmean     faults/sec-7   2557378.4385 (   0.00%)  2450945.7060 *  -4.16%*
-> Hmean     faults/sec-12  2696509.8975 (   0.00%)  2747968.9819 *   1.91%*
-> Hmean     faults/sec-21  2902892.5639 (   0.00%)  2905923.3881 *   0.10%*
-> Hmean     faults/sec-30  2956696.5793 (   0.00%)  2990583.5147 *   1.15%*
-> Hmean     faults/sec-40  3422806.4806 (   0.00%)  3352970.3082 *  -2.04%*
-> Stddev    faults/cpu-1      2949.5159 (   0.00%)     2802.2712 (   4.99%)
-> Stddev    faults/cpu-4     24165.9454 (   0.00%)    15841.1232 (  34.45%)
-> Stddev    faults/cpu-7     20914.8351 (   0.00%)    22744.3294 (  -8.75%)
-> Stddev    faults/cpu-12    11274.3490 (   0.00%)    14733.3152 ( -30.68%)
-> Stddev    faults/cpu-21     2500.1950 (   0.00%)     2200.9518 (  11.97%)
-> Stddev    faults/cpu-30     1599.5346 (   0.00%)     1414.0339 (  11.60%)
-> Stddev    faults/cpu-40     1473.0181 (   0.00%)     3004.1209 (-103.94%)
-> Stddev    faults/sec-1      2655.2581 (   0.00%)     2405.1625 (   9.42%)
-> Stddev    faults/sec-4     84042.7234 (   0.00%)    57996.7158 (  30.99%)
-> Stddev    faults/sec-7    123656.7901 (   0.00%)   135591.1087 (  -9.65%)
-> Stddev    faults/sec-12    97135.6091 (   0.00%)   127054.4926 ( -30.80%)
-> Stddev    faults/sec-21    69564.6264 (   0.00%)    65922.6381 (   5.24%)
-> Stddev    faults/sec-30    51524.4027 (   0.00%)    56109.4159 (  -8.90%)
-> Stddev    faults/sec-40   101927.5280 (   0.00%)   160117.0093 ( -57.09%)
->
-> With the exception of the hicup at 7 threads, things are pretty much in
-> the noise region for both metrics.
->
-> -- git checkout
->
-> First metric is total runtime for runs with incremental threads.
->
->           v5.0-rc6    v5.0-rc6
->                          dirty
-> User         218.95      219.07
-> System       149.29      146.82
-> Elapsed     1574.10     1427.08
->
-> In this case there's a non trivial improvement (11%) in overall
-> elapsed time.
->
-> -- reaim (which is always succeptible to rwsem changes for both
-> mmap_sem and
-> i_mmap)
->                                     v5.0-rc6               v5.0-rc6
->                                                                dirty
-> Hmean     compute-1         6674.01 (   0.00%)     6544.28 *  -1.94%*
-> Hmean     compute-21       85294.91 (   0.00%)    85524.20 *   0.27%*
-> Hmean     compute-41      149674.70 (   0.00%)   149494.58 *  -0.12%*
-> Hmean     compute-61      177721.15 (   0.00%)   170507.38 *  -4.06%*
-> Hmean     compute-81      181531.07 (   0.00%)   180463.24 *  -0.59%*
-> Hmean     compute-101     189024.09 (   0.00%)   187288.86 *  -0.92%*
-> Hmean     compute-121     200673.24 (   0.00%)   195327.65 *  -2.66%*
-> Hmean     compute-141     213082.29 (   0.00%)   211290.80 *  -0.84%*
-> Hmean     compute-161     207764.06 (   0.00%)   204626.68 *  -1.51%*
->
-> The 'compute' workload overall takes a small hit.
->
-> Hmean     new_dbase-1         60.48 (   0.00%)       60.63 *   0.25%*
-> Hmean     new_dbase-21      6590.49 (   0.00%)     6671.81 *   1.23%*
-> Hmean     new_dbase-41     14202.91 (   0.00%)    14470.59 *   1.88%*
-> Hmean     new_dbase-61     21207.24 (   0.00%)    21067.40 *  -0.66%*
-> Hmean     new_dbase-81     25542.40 (   0.00%)    25542.40 *   0.00%*
-> Hmean     new_dbase-101    30165.28 (   0.00%)    30046.21 *  -0.39%*
-> Hmean     new_dbase-121    33638.33 (   0.00%)    33219.90 *  -1.24%*
-> Hmean     new_dbase-141    36723.70 (   0.00%)    37504.52 *   2.13%*
-> Hmean     new_dbase-161    42242.51 (   0.00%)    42117.34 *  -0.30%*
-> Hmean     shared-1            76.54 (   0.00%)       76.09 *  -0.59%*
-> Hmean     shared-21         7535.51 (   0.00%)     5518.75 * -26.76%*
-> Hmean     shared-41        17207.81 (   0.00%)    14651.94 * -14.85%*
-> Hmean     shared-61        20716.98 (   0.00%)    18667.52 *  -9.89%*
-> Hmean     shared-81        27603.83 (   0.00%)    23466.45 * -14.99%*
-> Hmean     shared-101       26008.59 (   0.00%)    29536.96 *  13.57%*
-> Hmean     shared-121       28354.76 (   0.00%)    43139.39 *  52.14%*
-> Hmean     shared-141       38509.25 (   0.00%)    41619.35 *   8.08%*
-> Hmean     shared-161       40496.07 (   0.00%)    44303.46 *   9.40%*
->
-> Overall there is a small hit (in the noise level but consistent
-> throughout
-> many workloads), except git-checkout which does quite well.
->
-> Thanks,
-> Davidlohr
+On Thursday, February 14, 2019 4:19:36 PM CET Joe Perches wrote:
+> On Thu, 2019-02-14 at 16:03 +0100, Federico Vaga wrote:
+> > On Thursday, February 14, 2019 3:44:55 PM CET Joe Perches wrote:
+> > > On Thu, 2019-02-14 at 13:48 +0100, Federico Vaga wrote:
+> > > > Hello,
+> > > > 
+> > > > Recently I have produce a couple of patches but I get different
+> > > > warnings
+> > > > if I run checkpatch on the file (-f) or if I run it of a patch file.
+> > > > In
+> > > > particular, the problem I found is with the spell checker which seems
+> > > > to
+> > > > run only when the option '-f' is not used. I am wandering if there are
+> > > > other similar cases.
+> > > > 
+> > > > I do not know Perl, so I cannot investigate more, but I have a
+> > > > practical
+> > > > example. I have this simple patch applied on my tree that introduces a
+> > > > spell
+> > > 
+> > > > error:
+> > > If you want spelling fixes on files you have to use --strict
+> > 
+> > Thanks
+> > 
+> > Is it a design choice to have different checks enabled with '-f'?
+> 
+> Yes.
+> 
+> It was for a minimization of churn.
 
-Thanks for running the patch through your performance tests.
+Thank you for the information.
 
-Cheers,
-Longman
+> commit 66b47b4a9dad00e45c049d79966de9a3a1f4d337
+> Author: Kees Cook <keescook@chromium.org>
+> Date:   Mon Oct 13 15:51:57 2014 -0700
+> 
+>     checkpatch: look for common misspellings
+> 
+>     Check for misspellings, based on Debian's lintian list.  Several false
+>     positives were removed, and several additional words added that were
+>     common in the kernel:
+> 
+>             backword backwords
+>             invalide valide
+>             recieves
+>             singed unsinged
+> 
+>     While going back and fixing existing spelling mistakes isn't a high
+>     priority, it'd be nice to try to catch them before they hit the tree.
+
+
+
 
