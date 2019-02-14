@@ -2,90 +2,58 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7411C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81EB6C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E8BB222A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:53:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5748E206B7
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:54:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437766AbfBNIxB (ORCPT
+        id S2436857AbfBNIyU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 03:53:01 -0500
-Received: from shell.v3.sk ([90.176.6.54]:59871 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389867AbfBNIxB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 03:53:01 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id F1833100ED6;
-        Thu, 14 Feb 2019 09:52:57 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id PWQjJmebuczF; Thu, 14 Feb 2019 09:52:55 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 409DD100EFE;
-        Thu, 14 Feb 2019 09:52:55 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id LamlzKzO1lnT; Thu, 14 Feb 2019 09:52:54 +0100 (CET)
-Received: from nedofet.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 38350100ED6;
-        Thu, 14 Feb 2019 09:52:54 +0100 (CET)
-Message-ID: <50fa8c81950e8bb2583a65bfd920bdf574c9abc1.camel@v3.sk>
-Subject: Re: [PATCH] gpio: pxa: avoid attempting to set pin direction via
- pinctrl on MMP2
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        linux-gpio@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Pavel Machek <pavel@ucw.cz>
-Date:   Thu, 14 Feb 2019 09:52:52 +0100
-In-Reply-To: <CACRpkdYyT20Um+5bDAiZAfB-A3M+q5DpUQS31+CkLUSb+qpQOw@mail.gmail.com>
-References: <20190213230618.1907-1-lkundrak@v3.sk>
-         <CACRpkdYyT20Um+5bDAiZAfB-A3M+q5DpUQS31+CkLUSb+qpQOw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 14 Feb 2019 03:54:20 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35180 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387827AbfBNIyU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 03:54:20 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 958DDAFCA;
+        Thu, 14 Feb 2019 08:54:18 +0000 (UTC)
+From:   Andreas Schwab <schwab@suse.de>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-xtensa@linux-xtensa.org, linux-s390@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 01/11] powerpc: remove dead ifdefs in <asm/checksum.h>
+References: <20190213174005.28785-1-hch@lst.de>
+        <20190213174005.28785-2-hch@lst.de>
+X-Yow:  With YOU, I can be MYSELF..  We don't NEED Dan Rather..
+Date:   Thu, 14 Feb 2019 09:54:17 +0100
+In-Reply-To: <20190213174005.28785-2-hch@lst.de> (Christoph Hellwig's message
+        of "Wed, 13 Feb 2019 18:39:55 +0100")
+Message-ID: <mvma7iyrbra.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.91 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-02-14 at 09:13 +0100, Linus Walleij wrote:
-> On Thu, Feb 14, 2019 at 12:06 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
-> 
-> > Similarly to PXA3xx, pinctrl-single can't set pin direction on MMP2 either.
-> > See also: commit 9dabfdd84bdfa ("gpio: pxa: disable pinctrl calls for
-> > PXA3xx")
-> > 
-> > Fixes: a770d946371e ("gpio: pxa: add pin control gpio direction and request")
-> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> > Acked-by: Pavel Machek <pavel@ucw.cz>
-> 
-> Patch applied for fixes.
-> 
-> Should this even go into stable?
+On Feb 13 2019, Christoph Hellwig <hch@lst.de> wrote:
 
-I would tend to think it should.
+> __KERNEL__ is never not defined for non-uapi headers, and GENERIC_CSUM
 
-This caused a regression for MMP2 platforms that don't use a pinctrl
-driver, and none of them do.
+"... never not ... non-..."  That's a bit too negative, I think.  :-)
 
-On the other hand it went unnoticed since v4.5.
+Andreas.
 
-I've seen stable maintainers pick up fixes even when stable@ wasn't
-Cc'd. I guess they apply some heuristics and perhaps look at Fixes:
-tags to identify bugfixes?
-
-> Yours,
-> Linus Walleij
-
-Lubo
-
+-- 
+Andreas Schwab, SUSE Labs, schwab@suse.de
+GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+"And now for something completely different."
