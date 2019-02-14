@@ -2,86 +2,189 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19868C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:25:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61EAEC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:27:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D08DE21B24
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:25:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="xmcCQWPv"
+	by mail.kernel.org (Postfix) with ESMTP id 367C621B68
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:27:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393011AbfBNSZT (ORCPT
+        id S2393319AbfBNS1W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 13:25:19 -0500
-Received: from mail-ot1-f42.google.com ([209.85.210.42]:42519 "EHLO
-        mail-ot1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732475AbfBNSZT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 13:25:19 -0500
-Received: by mail-ot1-f42.google.com with SMTP id i5so12120066oto.9
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 10:25:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+LwC+e/wfz0phwsvG3UA7Kxyo8TmV6yoBd0ExF7DlW4=;
-        b=xmcCQWPvi1tk0wx/+640HuxnyKNJnavefeN7OquFeviACdB+I3NqbWlo91L0PAtpu5
-         dkfsZFDXpnac5GQj9mR2JyrCdE/nqvVjjuapSYOpnTfpXQR4W8KdcCMmxx1Pw1FW+GdK
-         hAyEznua/qD92KaKxMW+Gctzoswj4JliVw0t2unJCsxP2hq0mko/o8H15ftbOrKjwHDz
-         V9vBTsDewBKoMSXzSFz1CIGExWB5ziAQOqO/lz2VshL6FqIdKqyZiQtYSMx3/b58rAKr
-         WGs3KpMu2COOGyiAlGnMEgIbtBpudxVMdesC5okQpMLayZvGJxjzt3MK2ngjUfCbF6Bk
-         Tx9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+LwC+e/wfz0phwsvG3UA7Kxyo8TmV6yoBd0ExF7DlW4=;
-        b=kt9zDY6LsLvzvJI3xsGzdcOR+sp+mMm+8/KqDHGcS7M7M2H4I7te1TtmFG1b27wkhi
-         54Dl9CvTe5GZkB4ZSm8vebwjZGdM/v5hTBza5oIE1PJbkH5eYLxv6BpZ/83JPX2abO6k
-         iNnp/ICjXX4BH7edgu8oL78lwk94VnPJ3kPuLufzj6LEPy5PjUZ+bv8ONg1iKceoycsN
-         Ee0idKlBFo5vo+OBjwTFRvC+5rLAurEjW/AxOVdg991RoRVrPwZRqeFITR+0/3vuJ3QW
-         IwuDWBeUSUnx93NqGMTjhgxcZVjTh6jgA1Z9ebF4NFahqnqechXcCgtnkH7S646ZCU+8
-         v48g==
-X-Gm-Message-State: AHQUAuZazrRRbI9+6VoUmGC8VTmrwOLz9zhBFAANB11iJsUgtQJvBGfp
-        zRro1sl2srk8iLUqRYF9mhDLVzjyz5LVj9V1c5rmuoVd
-X-Google-Smtp-Source: AHgI3IbnVCugpE3Z3TuIXgzzpIW2bhHG1b8KnucO+K5F+0eWFNyJPwJNhrQScGtCUaNp7Uq9wSjup/Hte5V+E7+tXnM=
-X-Received: by 2002:a9d:4c85:: with SMTP id m5mr1976349otf.367.1550168718363;
- Thu, 14 Feb 2019 10:25:18 -0800 (PST)
+        Thu, 14 Feb 2019 13:27:22 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42706 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727954AbfBNS1W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 13:27:22 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7466558580;
+        Thu, 14 Feb 2019 18:27:21 +0000 (UTC)
+Received: from [10.36.116.102] (ovpn-116-102.ams2.redhat.com [10.36.116.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5E1E717D38;
+        Thu, 14 Feb 2019 18:27:17 +0000 (UTC)
+Subject: Re: [PATCH v2] vfio_pci: Enable memory accesses before calling
+ pci_map_rom
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     eric.auger.pro@gmail.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+References: <20190213110610.4834-1-eric.auger@redhat.com>
+ <20190213105200.1deafb62@w520.home>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <015103e3-c317-22f3-e209-f5ccf890bafb@redhat.com>
+Date:   Thu, 14 Feb 2019 19:27:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <CAPcyv4jyCDJTpGZB6qVX7_FiaxJfDzWA1cw8dfPjHM2j3j3yqQ@mail.gmail.com>
- <20190214134622.GG4525@dhcp22.suse.cz>
-In-Reply-To: <20190214134622.GG4525@dhcp22.suse.cz>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 14 Feb 2019 10:25:07 -0800
-Message-ID: <CAPcyv4gxFKBQ9eVdn+pNEzBXRfw6Qwfmu21H2i5uj-PyFmRAGQ@mail.gmail.com>
-Subject: Re: [Lsf-pc] [LSF/MM TOPIC] The end of the DAX experiment
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     lsf-pc@lists.linux-foundation.org,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190213105200.1deafb62@w520.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 14 Feb 2019 18:27:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 5:46 AM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Wed 06-02-19 13:12:59, Dan Williams wrote:
-> [...]
-> > * Userfaultfd for file-backed mappings and DAX
->
-> I assume that other topics are meant to be FS track but this one is MM,
-> right?
+Hi Alex,
 
-Yes, but I think it is the lowest priority of all the noted sub-topics
-in this proposal. The DAX-reflink discussion, where a given
-physical-page may need to be mapped into multiple inodes at different
-offsets, might be more fruitful to have as a joint discussion with MM.
+On 2/13/19 6:52 PM, Alex Williamson wrote:
+> On Wed, 13 Feb 2019 12:06:10 +0100
+> Eric Auger <eric.auger@redhat.com> wrote:
+> 
+>> pci_map_rom/pci_get_rom_size() performs memory access in the ROM.
+>> In case the Memory Space accesses were disabled, readw() is likely to
+>> crash the host with a synchronous external abort (aarch64).
+> 
+> As implied in response to Konrad, the likeliness really depends on the
+> whole platform, not just the CPU architecture.  It's a class of
+> problems that depends on OS control or error handling, which we simply
+> don't have on many systems.  But we can fix this instance of it.
+
+Agreed, I just hit this issue on one specific aarch64 machine
+> 
+>> In case memory accesses were disabled, re-enable them before the call
+>> and disable them back again just after.
+>>
+>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+> 
+> This has been around since the beginning, but maybe a Fixes tag would
+> be useful:
+> 
+> Fixes: 89e1f7d4c66d ("vfio: Add PCI device driver")
+OK
+> 
+>>
+>> ---
+>>
+>> v1 -> v2:
+>> - also re-enable in case of error
+>> ---
+>>  drivers/vfio/pci/vfio_pci.c | 17 ++++++++++++++++-
+>>  1 file changed, 16 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+>> index ff60bd1ea587..721aa55424a4 100644
+>> --- a/drivers/vfio/pci/vfio_pci.c
+>> +++ b/drivers/vfio/pci/vfio_pci.c
+>> @@ -706,8 +706,10 @@ static long vfio_pci_ioctl(void *device_data,
+>>  			break;
+>>  		case VFIO_PCI_ROM_REGION_INDEX:
+>>  		{
+>> +			bool mem_access_disabled;
+>>  			void __iomem *io;
+>>  			size_t size;
+>> +			u16 cmd;
+>>  
+>>  			info.offset = VFIO_PCI_INDEX_TO_OFFSET(info.index);
+>>  			info.flags = 0;
+>> @@ -723,15 +725,28 @@ static long vfio_pci_ioctl(void *device_data,
+>>  					break;
+>>  			}
+>>  
+>> +			pci_read_config_word(pdev, PCI_COMMAND, &cmd);
+>> +			mem_access_disabled = !(cmd & PCI_COMMAND_MEMORY);
+>> +			if (mem_access_disabled) {
+>> +				cmd |= PCI_COMMAND_MEMORY;
+>> +				pci_write_config_word(pdev, PCI_COMMAND, cmd);
+>> +			}
+>> +
+>>  			/* Is it really there? */
+>>  			io = pci_map_rom(pdev, &size);
+>>  			if (!io || !size) {
+>>  				info.size = 0;
+>> -				break;
+>> +				goto rom_info_out;
+>>  			}
+>>  			pci_unmap_rom(pdev, io);
+>>  
+>>  			info.flags = VFIO_REGION_INFO_FLAG_READ;
+>> +rom_info_out:
+>> +			if (mem_access_disabled) {
+>> +				cmd &= ~PCI_COMMAND_MEMORY;
+>> +				pci_write_config_word(pdev, PCI_COMMAND, cmd);
+>> +			}
+>> +
+>>  			break;
+>>  		}
+>>  		case VFIO_PCI_VGA_REGION_INDEX:
+> 
+> I don't think we need to be so timid about the command register and we
+> can also avoid the goto by modifying the test (testing io and size in
+> the original is probably overly paranoid), perhaps simply:
+Yes looks fine.
+
+Do you want to respin or do you prefer I do?
+
+Thanks
+
+Eric
+> 
+> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+> index ff60bd1ea587..659b7c1ea8fb 100644
+> --- a/drivers/vfio/pci/vfio_pci.c
+> +++ b/drivers/vfio/pci/vfio_pci.c
+> @@ -708,6 +708,7 @@ static long vfio_pci_ioctl(void *device_data,
+>  		{
+>  			void __iomem *io;
+>  			size_t size;
+> +			u16 orig_cmd;
+>  
+>  			info.offset = VFIO_PCI_INDEX_TO_OFFSET(info.index);
+>  			info.flags = 0;
+> @@ -723,15 +724,23 @@ static long vfio_pci_ioctl(void *device_data,
+>  					break;
+>  			}
+>  
+> -			/* Is it really there? */
+> +			/*
+> +			 * Is it really there?  Enable memory decode for
+> +			 * implicit access in pci_map_rom().
+> +			 */
+> +			pci_read_config_word(pdev, PCI_COMMAND, &orig_cmd);
+> +			pci_write_config_word(pdev, PCI_COMMAND,
+> +					      orig_cmd | PCI_COMMAND_MEMORY);
+> +
+>  			io = pci_map_rom(pdev, &size);
+> -			if (!io || !size) {
+> +			if (io) {
+> +				info.flags = VFIO_REGION_INFO_FLAG_READ;
+> +				pci_unmap_rom(pdev, io);
+> +			} else
+>  				info.size = 0;
+> -				break;
+> -			}
+> -			pci_unmap_rom(pdev, io);
+>  
+> -			info.flags = VFIO_REGION_INFO_FLAG_READ;
+> +			pci_write_config_word(pdev, PCI_COMMAND, orig_cmd);
+> +
+>  			break;
+>  		}
+>  		case VFIO_PCI_VGA_REGION_INDEX:
+> 
