@@ -6,92 +6,108 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DC25C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36EFAC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:16:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 696E32229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:14:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00C472229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:16:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z6HXJpwm"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S7YSI7RT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391406AbfBNJO5 (ORCPT
+        id S2394952AbfBNJQW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 04:14:57 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51585 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726234AbfBNJO4 (ORCPT
+        Thu, 14 Feb 2019 04:16:22 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36732 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388784AbfBNJQW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 04:14:56 -0500
-Received: by mail-wm1-f67.google.com with SMTP id b11so5459523wmj.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 01:14:55 -0800 (PST)
+        Thu, 14 Feb 2019 04:16:22 -0500
+Received: by mail-wr1-f65.google.com with SMTP id o17so5620427wrw.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 01:16:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=IuDRH2Zrek2kUj5JwkJNJicQtZLeUEiGi9otZB0cur4=;
-        b=Z6HXJpwmyX2YnhuZNopWJqoU1wyBXNdCvXZFBOiCMJdHL+gYco2vWE3dbJ84lFEMEH
-         aZprU3WMQ7hLXZcvIP5Nw4mU7Xtj3VSnT32qqAXXndLJc3TOoa5ya9x55PB8rgvtNFeC
-         sk2t4PlA71ibaCUvZRtMULZkxbmik+KiRuk0xntiJUsOUqOhVrWJ4wbzA22dTN7jC4TB
-         5C6C7XYxCY/uJlMti+UljrkozRew+5X4A7KBL9hrR4k3k3Gmzi8LNt/iFoiFyTbUm0Tu
-         HZxelvg93YUaeaVHiWQxtI3AedpUIXoOcYPDyUHlNpgrRW88Dnr6fEcagP4e7TBO0DCn
-         7UHw==
+        bh=AChgX3u3Rli6twGz1yDeQumcH7RThDK+xOVT4nhaEk0=;
+        b=S7YSI7RT+QeFtmoWOc0H9M+zv+kJMxO0dN/OJefKd/4MAkbxvYwZ2mUHN0/pqOITzO
+         /6PJkViy215KipNT9sPTsNr1Fu3jd55tockcdaxQXZ9bC4ctH2zmHNiB4doYUt9AsOrA
+         SP9L24p19/ASbgn2eQkFAfn/3H4aUqWlSB7hDuvbDR37M4UNBc5KopNRYBhMErIpWO/H
+         pVWgNuuHKEV7Z2NmBCxrhFaaH4WEh0fERz+V/TsXFC4JY9Y0Y34ZobgaMUbUtMqJrNDA
+         FPrKfexQsN0bFoqBy4BK4XaDkiZfTPM6J8cJsFapSHoN10/s4YbbTXpeR+KXTvcfh4k0
+         16MA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=IuDRH2Zrek2kUj5JwkJNJicQtZLeUEiGi9otZB0cur4=;
-        b=aapPnPcHHbBx27Q/6/wara3TxijQRC8ZpPk8Lst5ZmmRlOtLrhjvO6VD/J7I3ZJGkP
-         TUrVrBNLKkz5yjAsyupY0AlY1bx6P2XNkDsl/ABUt51y2fvkANGPLOX0H4HMsmzam32f
-         ci1GAXEDqiW+HoBSO+/wS7tWhhstNoXQ4lfVNGzTD05a354tOdbiT+rq9YXC/0C+DvqV
-         4V7vVkgqFa2z1yQyt6UH8yInxHXfhUQF5HBIG1W89i8rWdZieA5uGUfEjkfqwRrV3ilr
-         t0JzXODK0QhwVIJJ1ouzA7bziq5qZ4kUkKTbfB/MY3BjzvckL6qLXCSSaXdvIdBUcpqC
-         Phtw==
-X-Gm-Message-State: AHQUAuaYkl0WJIf3i5OBAjpLmUfLyw38lT2eIgPE3ij+5RxTBxqe5O7L
-        qf02cpo3KTnV+regeQXBWwXZ0Q==
-X-Google-Smtp-Source: AHgI3IYq8ebzJ2bwYZtrZx2IxIxNkx1RZMYPziNXdLx2CVdrcbx7+HluKeQToxolBJ6HPnwOsE4Ikg==
-X-Received: by 2002:a05:600c:2255:: with SMTP id a21mr1919040wmm.31.1550135694869;
-        Thu, 14 Feb 2019 01:14:54 -0800 (PST)
+        bh=AChgX3u3Rli6twGz1yDeQumcH7RThDK+xOVT4nhaEk0=;
+        b=ChSTdxDy38Zl+ykP1iA/+tPMVIVaxAkpN/+PXb0GCXOYLpLeXBNQkQ8hzgPQ3nfRn1
+         +8lxhcf8iU+rPBfMQzuoElxBNRbJPKvfy/VuAn2FwGKoquiOnaozPQEsCZJLa5GyuOxG
+         KtIToLY22FWac9Aa8m8YvXkoSFHPbzVfK8M3aO/bL5/G4wmKwc93vCZVYAiajvXapjii
+         Am0sttPr1GGgGZgSgZqe4h5WgiaZ3GnYJtAwReFUn8UJnDdkZaBYN0WrwtM29DR3M/Pp
+         PSMTpmpXuY23CVSox+k1rrKdUKxkEVQiC0vpFn7Y3aKzq0BkvpvKZBLaBeM33oHTPoDQ
+         oGFg==
+X-Gm-Message-State: AHQUAuYapUJ8Rocl9FDmq4cqyu5grmxquS78H7iJZAPmQN/WCFBAVBFl
+        aNkc6u6NKlGRCaW/8Ekq5fpjaw==
+X-Google-Smtp-Source: AHgI3IYlx/M/oeBxbZiwZg7WFni1Q+g76oFfBJrj8fS3lwhC4EFx9lrwu3PXz7bRyMyHY0vk8Tbtxg==
+X-Received: by 2002:adf:fc49:: with SMTP id e9mr2078906wrs.2.1550135780206;
+        Thu, 14 Feb 2019 01:16:20 -0800 (PST)
 Received: from dell ([2a01:4c8:c:28c9:4c60:37da:d7a:230])
-        by smtp.gmail.com with ESMTPSA id k20sm3526932wre.41.2019.02.14.01.14.53
+        by smtp.gmail.com with ESMTPSA id h1sm2264525wmb.0.2019.02.14.01.16.18
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 01:14:54 -0800 (PST)
-Date:   Thu, 14 Feb 2019 09:14:51 +0000
+        Thu, 14 Feb 2019 01:16:19 -0800 (PST)
+Date:   Thu, 14 Feb 2019 09:16:17 +0000
 From:   Lee Jones <lee.jones@linaro.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Sangbeom Kim <sbkim73@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v2] mfd: sec-core: Cleanup formatting to a consistent
- style
-Message-ID: <20190214091451.GB13737@dell>
-References: <1549891223-14269-1-git-send-email-krzk@kernel.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH] mfd: mxs-lradc: Mark expected switch fall-through
+Message-ID: <20190214091617.GC13737@dell>
+References: <20190211224827.GA28902@embeddedor>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1549891223-14269-1-git-send-email-krzk@kernel.org>
+In-Reply-To: <20190211224827.GA28902@embeddedor>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 11 Feb 2019, Krzysztof Kozlowski wrote:
+On Mon, 11 Feb 2019, Gustavo A. R. Silva wrote:
 
-> Cleanup the formatting to have consistent style across the file (only
-> white-space issues).  No expected difference in code.
+> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> cases where we are expecting to fall through.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> This patch fixes the following warning:
 > 
+> drivers/mfd/mxs-lradc.c: In function ‘mxs_lradc_probe’:
+> drivers/mfd/mxs-lradc.c:179:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>     if (lradc->soc == IMX28_LRADC) {
+>        ^
+> drivers/mfd/mxs-lradc.c:185:3: note: here
+>    default:
+>    ^~~~~~~
+> 
+> Warning level 3 was used: -Wimplicit-fallthrough=3
+> 
+> Notice that, in this particular case, the code comment is modified
+> in accordance with what GCC is expecting to find.
+> 
+> This patch is part of the ongoing efforts to enable
+> -Wimplicit-fallthrough.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > ---
-> 
-> Changes since v1:
-> 1. Leave one-liners as is.
-> ---
->  drivers/mfd/sec-core.c | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
+>  drivers/mfd/mxs-lradc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Applied, thanks.
 
