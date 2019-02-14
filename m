@@ -2,60 +2,60 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBA46C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:54:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1AFAC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:54:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA4672229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:54:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E1742229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:54:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="jTAXyTPL"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Rvul6yt7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2501948AbfBNOyb (ORCPT
+        id S2501977AbfBNOyl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 09:54:31 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44790 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2439626AbfBNOxP (ORCPT
+        Thu, 14 Feb 2019 09:54:41 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46158 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2439561AbfBNOxJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 09:53:15 -0500
-Received: by mail-wr1-f66.google.com with SMTP id v16so6761887wrn.11
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 06:53:14 -0800 (PST)
+        Thu, 14 Feb 2019 09:53:09 -0500
+Received: by mail-wr1-f68.google.com with SMTP id l9so6753697wrt.13
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 06:53:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=OE+68BkD2Gvi09w8U3xAg2OuU34U9g+A9X06DXSG8XE=;
-        b=jTAXyTPLTWqRzAtWn1anu+O6hZZ2wZzyOgCyW/hbQdl5Fh/Js5PA4Bl90yyqSRd6aw
-         I6rM/rz4zLpk/r+vvkWumqm0p/9aD+wm44zty5cT8SGRurLl+oJq8Rii3YcGaALUnWeE
-         gI1w03TYFz8z3OYWreBVwRWXXRBBz0E1Wk8IINsqIv0BtzmkGrv99TSx4i9F+BbcdZet
-         M28ZN8zqqqCUqhfVqmTw4RZeki9ddO7XN8v5Emc6Ldn0GqbWDp471GlFkQ7Hr8kJWHw6
-         ODcZLhUUuvcPU1kMRMrvE4J7p/DM3Pc9wTUgVralXVdzVAIuqC/ooI38uze2nbloO6mo
-         O9lw==
+        bh=aM1xrGIBo2FFuSsmFTHMz/H1xNta7gzJkLnZYdQJhl0=;
+        b=Rvul6yt72Uwr3bRtEJcC6I1BHBHLO17zBhrTDZp+43ywZo0tX7Nc1nfQaV1nQfdMg9
+         KAqsCKeRnHEk33COzaf+0D3Oyn+V5g6J+4tKCe3/EZaqVfUWINfzl64oqlqrF4FW/C0V
+         qer9hhgHSjxeAoMmS1Cj0HHYaQt73qlwQVo5OV9pDV++fYAVvxDrFsgYWOgMe1LztAKX
+         u2Lp9BWwY8O7llkhdOY6DUMADHclTrCF2I7jdLPTAFKRKG9L88TX8GW+x6+Ef4XjjO8G
+         2j6rwfOQ/uixpmalXr20n2FaTk6ugI2Qq4zPtCiH3uGPwYXc7VHcLPt7pR+p0baDy0mu
+         dpHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=OE+68BkD2Gvi09w8U3xAg2OuU34U9g+A9X06DXSG8XE=;
-        b=S/xaty5shtgMiEl/sMNwOzmwLRknWrvi8vo/VP16L6MT5p0EVFsyqwyAQ5yMrf3Ysq
-         Ce45W+0mOqWf6rjwCtAvpO/I8LZl/IKQQUxn664hST6IBNIbZ57ulTCTP8p2hpqFhmbh
-         NNZnOOPOneU61lhCwnEUaPCTnj5lD/2hsPR8X1gPWqOpUe2yg74VffpHkPcHaIHx54Je
-         w0O55wavPkEqUN6JoJjlsAMU1r9weZvwGUu84uoMwWeNhncnUf1QAR2+RUuL34R5st+A
-         kxM4Z1kUxSHB0YxLabuvpObXPhnN/kGGZnnNaf01DC48BudOUIZ2aZNTGEn0ymR3Cwhm
-         Ybnw==
-X-Gm-Message-State: AHQUAua4zURbA3o5+WIAzfXPpNvWJq6rEMB+sER+eykObMmOIneat5bS
-        JaSTApBoQCQW/zmUzKif2Yl65w==
-X-Google-Smtp-Source: AHgI3IbHAY2GwczLfThqqvZt9x46tlcD4f+vcadcSdLOv8SbxeW5ET9tG5negrKdNbd1b1KEZRCDLQ==
-X-Received: by 2002:a5d:434c:: with SMTP id u12mr3249843wrr.14.1550155993849;
-        Thu, 14 Feb 2019 06:53:13 -0800 (PST)
+        bh=aM1xrGIBo2FFuSsmFTHMz/H1xNta7gzJkLnZYdQJhl0=;
+        b=EwNis4+6fiTrs+xy2LMCyHHmxA505XOF0Eqi6gw8qo7p3yR6qujz048qJVDDuGjx1U
+         gvIKNoKDFPT7e+dQT86E+Yy0E+G2Av//6dJS106dCF4sgSMpy4CK+c+c8an+jlL6qE22
+         Is8S/jPEkmSd61QcSCPJmzBrWzZLXOPA+7m0DJLqZeGl05u6vxP28aDlgJ43MG/o34eC
+         n0o+Y2lhUcDJ/ifRKi+Ql09BLxF9kc1i/loZW7MZM9EW6l9dSrlDtAnfQhDPE23sP8H1
+         yXd+vISklZBehGhX2M3qVYzmEEu+xOfsxeDmavWDM0yv1uqOBtVt4974oGlG/uJAP5+u
+         JciQ==
+X-Gm-Message-State: AHQUAuaQt6P2uoZ78dEAjvkaazwAYmoW2ihTA0NLnROIJFZ+Lob9UbQ3
+        3VWO6BRZLHYqbrm3Xlg3xkqizw==
+X-Google-Smtp-Source: AHgI3IYrmPhX6LitBswpX2LropaG4cWp7UbgyexCuEbIsp79u6SnchGmw2yORC9r4/JJ/EwEmejPcw==
+X-Received: by 2002:a5d:5506:: with SMTP id b6mr3015045wrv.33.1550155988226;
+        Thu, 14 Feb 2019 06:53:08 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id y20sm4181005wra.51.2019.02.14.06.53.12
+        by smtp.gmail.com with ESMTPSA id y20sm4181005wra.51.2019.02.14.06.53.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 06:53:13 -0800 (PST)
+        Thu, 14 Feb 2019 06:53:07 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sekhar Nori <nsekhar@ti.com>,
@@ -66,9 +66,9 @@ To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         David Lechner <david@lechnology.com>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v4 26/37] ARM: davinci: cp-intc: add the new config structures for da8xx SoCs
-Date:   Thu, 14 Feb 2019 15:52:20 +0100
-Message-Id: <20190214145231.8750-27-brgl@bgdev.pl>
+Subject: [PATCH v4 21/37] ARM: davinci: aintc: remove unnecessary includes
+Date:   Thu, 14 Feb 2019 15:52:15 +0100
+Message-Id: <20190214145231.8750-22-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190214145231.8750-1-brgl@bgdev.pl>
 References: <20190214145231.8750-1-brgl@bgdev.pl>
@@ -81,71 +81,29 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Add the new-style config structures for da8xx SoCs. They will be used
-once we make the cp-intc driver stop using davinci_soc_info.
+These includes are no longer required. Remove them.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: David Lechner <david@lechnology.com>
 ---
- arch/arm/mach-davinci/da830.c | 10 ++++++++++
- arch/arm/mach-davinci/da850.c | 10 ++++++++++
- 2 files changed, 20 insertions(+)
+ arch/arm/mach-davinci/irq.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
-index 5cfd30c57429..38af72be1a85 100644
---- a/arch/arm/mach-davinci/da830.c
-+++ b/arch/arm/mach-davinci/da830.c
-@@ -12,6 +12,7 @@
- #include <linux/clk/davinci.h>
- #include <linux/gpio.h>
- #include <linux/init.h>
-+#include <linux/irqchip/irq-davinci-cp-intc.h>
- #include <linux/platform_data/gpio-davinci.h>
+diff --git a/arch/arm/mach-davinci/irq.c b/arch/arm/mach-davinci/irq.c
+index 92b6e653d8cb..810ccc4fe476 100644
+--- a/arch/arm/mach-davinci/irq.c
++++ b/arch/arm/mach-davinci/irq.c
+@@ -12,10 +12,6 @@
+ #include <linux/io.h>
+ #include <linux/irqdomain.h>
  
- #include <asm/mach/map.h>
-@@ -821,6 +822,15 @@ void __init da830_init(void)
- 	WARN(!da8xx_syscfg0_base, "Unable to map syscfg0 module");
- }
+-#include <mach/hardware.h>
+-#include <mach/cputype.h>
+-#include <mach/common.h>
+-#include <asm/mach/irq.h>
+ #include <asm/exception.h>
  
-+static const struct davinci_cp_intc_config da830_cp_intc_config = {
-+	.reg = {
-+		.start		= DA8XX_CP_INTC_BASE,
-+		.end		= DA8XX_CP_INTC_BASE + SZ_8K - 1,
-+		.flags		= IORESOURCE_MEM,
-+	},
-+	.num_irqs		= DA830_N_CP_INTC_IRQ,
-+};
-+
- void __init da830_init_irq(void)
- {
- 	cp_intc_init();
-diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
-index 6df6994c0f26..9a3ce68c0de4 100644
---- a/arch/arm/mach-davinci/da850.c
-+++ b/arch/arm/mach-davinci/da850.c
-@@ -18,6 +18,7 @@
- #include <linux/cpufreq.h>
- #include <linux/gpio.h>
- #include <linux/init.h>
-+#include <linux/irqchip/irq-davinci-cp-intc.h>
- #include <linux/mfd/da8xx-cfgchip.h>
- #include <linux/platform_data/clk-da8xx-cfgchip.h>
- #include <linux/platform_data/clk-davinci-pll.h>
-@@ -759,6 +760,15 @@ void __init da850_init(void)
- 	WARN(!da8xx_syscfg1_base, "Unable to map syscfg1 module");
- }
- 
-+static const struct davinci_cp_intc_config da850_cp_intc_config = {
-+	.reg = {
-+		.start		= DA8XX_CP_INTC_BASE,
-+		.end		= DA8XX_CP_INTC_BASE + SZ_8K - 1,
-+		.flags		= IORESOURCE_MEM,
-+	},
-+	.num_irqs		= DA850_N_CP_INTC_IRQ,
-+};
-+
- void __init da850_init_irq(void)
- {
- 	cp_intc_init();
+ #define DAVINCI_AINTC_FIQ_REG0		0x00
 -- 
 2.20.1
 
