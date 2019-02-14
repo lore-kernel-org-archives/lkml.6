@@ -2,132 +2,159 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD53C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:32:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37AA8C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:35:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6B8921B24
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:32:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 006D12147C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:34:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EciKZRru"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440222AbfBNVcK (ORCPT
+        id S2440238AbfBNVe6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 16:32:10 -0500
-Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:46044 "EHLO
-        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2392871AbfBNVcI (ORCPT
+        Thu, 14 Feb 2019 16:34:58 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:35793 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436452AbfBNVe6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 16:32:08 -0500
-Received: from pps.filterd (m0134425.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1ELQhpY005571;
-        Thu, 14 Feb 2019 21:31:51 GMT
-Received: from g4t3426.houston.hpe.com (g4t3426.houston.hpe.com [15.241.140.75])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2qnedr8uhj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 14 Feb 2019 21:31:51 +0000
-Received: from g9t2301.houston.hpecorp.net (g9t2301.houston.hpecorp.net [16.220.97.129])
-        by g4t3426.houston.hpe.com (Postfix) with ESMTP id 9A8B070;
-        Thu, 14 Feb 2019 21:31:50 +0000 (UTC)
-Received: from [16.214.130.214] (unknown [16.214.130.214])
-        by g9t2301.houston.hpecorp.net (Postfix) with ESMTP id 094314B;
-        Thu, 14 Feb 2019 21:31:48 +0000 (UTC)
-Subject: Re: [Patch v3 0/4] Protect against concurrent calls into UV BIOS
-To:     Dimitri Sivanich <sivanich@hpe.com>,
-        Hedi Berriche <hedi.berriche@hpe.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-efi@vger.kernel.org,
-        x86@kernel.org, Russ Anderson <rja@hpe.com>,
-        Steve Wahl <steve.wahl@hpe.com>, stable@vger.kernel.org
-References: <20190213193413.25560-1-hedi.berriche@hpe.com>
- <20190214212149.GB5073@hpe.com>
-From:   Mike Travis <mike.travis@hpe.com>
-Message-ID: <6d2c7655-a8f4-e2ef-1479-f43e707c6a86@hpe.com>
-Date:   Thu, 14 Feb 2019 13:31:48 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 14 Feb 2019 16:34:58 -0500
+Received: by mail-yw1-f66.google.com with SMTP id s204so2934129ywg.2;
+        Thu, 14 Feb 2019 13:34:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=cufxpBUZ2PFDaKJUbe1LoYEcfgdJ6Va1j/2T3vLPI/c=;
+        b=EciKZRruenGVLzCQQyf4hCrPesod4TxS48xVqCO/OQd3A8ADKzOPJEdxlznJ38XS5I
+         Cy/VyOkpuo9Lf3hE68Hm3R2UuxR/knaYuG7AxzShCgZkIAqBHtyyYlwt3f1CdJfnk1H+
+         LhhkJZeF48I3GH2RrO+YMEc2sx0siT1icQ3BtWAd5XpbPksgxGOfqUWCPZ3Jrd5PRz19
+         xUpQozn5E6PmA7vzbXPaljg3a5snDlOQQPtfNd4K5ceUJzrM1dxFS8A0GQNoR5+VmqgD
+         FLSbi/BuQ/lnjynHsSCVTzkl4eDDXrC30rNFarFFlSpNN9qnl4yDI8x3pZsYiM2JzNWV
+         9hCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=cufxpBUZ2PFDaKJUbe1LoYEcfgdJ6Va1j/2T3vLPI/c=;
+        b=SZfY+u4eAGc63vKD1gcWS7bIPA9VYxv18hRbTOxcc3uJLWuKadAi+2g2+0mnqIbLA4
+         n78w4atFOBuIvFF+A+QG+c+sXi1gu/XBakRS4NjdCJZZPU3FgDszNYRn3LRY4DKsDaBa
+         gp8FUJRltkFkq+Vj1uxxo2dWC5XMdiSXPOJT6C3wDG9x/ylXaOdAFXcWWYObZo2XbsLt
+         3fXHbAsCGW/S/4T48tNWzumDmS9DbLiEcpABy7Aaj9kA+p96hdVCtApsf6MLGiWG09vC
+         pjomPXDRQ5DnjO8RgG4zuTuRr7ZhFBHXO4q5ZjRsC4jjUyNv1Nbsoz/dggD+NzY9mYiQ
+         dgZg==
+X-Gm-Message-State: AHQUAuZeBz+V2g65G9yoJm8fBjnTV1R6SpROVpJVw/ekGFcdtAH+nUgM
+        LbRWbD4jNepcYLYAsOO53fc=
+X-Google-Smtp-Source: AHgI3IZ8spadDeRFJeGlCSc/QpynJskJQD0mUFDfAyhUxs4qlDWu0catWJoH37jUP6sGj+OpvSk3ng==
+X-Received: by 2002:a81:5c89:: with SMTP id q131mr4982047ywb.90.1550180096879;
+        Thu, 14 Feb 2019 13:34:56 -0800 (PST)
+Received: from localhost.localdomain ([46.216.144.99])
+        by smtp.gmail.com with ESMTPSA id r20sm1369083ywa.13.2019.02.14.13.34.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 14 Feb 2019 13:34:55 -0800 (PST)
+Received: from [127.0.0.1] (helo=jeknote.loshitsa1.net)
+        by localhost.localdomain with esmtp (Exim 4.92-RC4)
+        (envelope-from <jekhor@gmail.com>)
+        id 1guOej-0000i2-EY; Fri, 15 Feb 2019 00:34:53 +0300
+Date:   Fri, 15 Feb 2019 00:34:53 +0300
+From:   Yauhen Kharuzhy <jekhor@gmail.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
+ LEDs
+Message-ID: <20190214213453.GA30250@jeknote.loshitsa1.net>
+References: <20190212205901.13037-1-jekhor@gmail.com>
+ <20190212205901.13037-2-jekhor@gmail.com>
+ <1df39a63-533f-bb68-a056-a0241f148be9@redhat.com>
+ <20190213230731.GA8557@amd>
+ <42078a81-e32e-81b7-528f-d1adb60d31c3@redhat.com>
+ <20190213233806.GA11867@amd>
+ <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20190214212149.GB5073@hpe.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902140141
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi!
 
-
-On 2/14/2019 1:21 PM, Dimitri Sivanich wrote:
-> For the series:
+On Thu, Feb 14, 2019 at 10:57:13AM +0100, Hans de Goede wrote:
+ 
+> > Anyway, in such case I'd propose having rmmod/reboot/poweroff hook
+> > that just sets it to breathing. No need to expose it to userspace.
 > 
-> Reviewed-by: Dimitri Sivanich <sivanich@hpe.com>
+> That assumes that breathing is the default setting on all hardware
+> and again I don't see why not to export this functionality to
+> userspace. Just because something does not fit in the existing
+> API is IMHO not a good reason to not expose it to userspace.
+> 
+> I suggest that we deal with this special case by adding 3 custom
+> sysfs attributes:
+> 
+> 1) "mode" which when read, prints, e.g. :
+> manual [on-when-charging]
+> 
+> With the [] indicating the current mode, and writes accepting
+> all 3 values and updating the hw accordingly.
+> 
+> This format is used in more places in the kernel and allows
+> for the user to easily discover the possible values.
+> 
+> 2) "pattern" which when read, prints, e.g. :
+> on blinking [breathing]
 
-As well as I:
+Leds class API already has pattern_set()/pattern_get() callbacks
+which can be used for breathing mode set/request. How this API should
+deal with specific 'breathing' sysfs attribute? I like the idea about
+specific 'pattern' attribute because this is very simple, anyway. 
 
-Reviewed-by: Mike Travis <mike.travis@hpe.com>
+Second issue: the 'pattern' led trigger supports default pattern initialization
+by device properties only, not by hardware request. Setting breathing
+parameters via 'pattern' led trigger may looks too complicated for
+users, given that only one hw-supported option exists. Pattern
+corresponded to hw-supported breating should contain too many
+(brightness, duration) tuples with minimal stepping and has no
+practical sense.
+
+
+If hw-controlled 'breathing' mode is quite common case for leds
+controllers, maybe it makes sense to introduce something like
+'lighting mode' attribute with values 'continuous'/'breathing' without
+clarification of breathing parameters? What do you think about this?
+
+The same question about frequency of breathing setting. Blinking
+frequency can be set with existing API, but not a breathing frequency.
 
 > 
-> On Wed, Feb 13, 2019 at 07:34:09PM +0000, Hedi Berriche wrote:
->> - Changes since v2
->>    Addressed comments from Ard Biesheuvel:
->>   * expose efi_runtime_lock to UV platform only instead of globally
->>   * remove unnecessary #ifdef CONFIG_EFI from bios_uv.c
->>
->> - Changes since v1:
->>    Addressed comments from Bhupesh Sharma, Thomas Gleixner, and Ard Biesheuvel:
->>   * made __uv_bios_call() static
->>   * moved the efi_enabled() cleanup to its own patchlet
->>   * explained the reason for renaming the efi_runtime_lock semaphore
->>   * dropped the reviewed-bys as they should be given on the mailing list
->>   * Cc'ng stable@vger.kernel.org given the nature of the problem addressed by the patches
->>
->> ---
->>
->> Calls into UV BIOS were not being serialised which is wrong as it violates EFI
->> runtime rules, and bad as it does result in all sorts of potentially hard to
->> track down hangs and panics when efi_scratch.prev_mm gets clobbered whenever
->> efi_switch_mm() gets called concurrently from two different CPUs.
->>
->> Patch #1 removes an unnecessary #ifdef CONFIG_EFI guard from bios_uv.c.
->>
->> Patch #2 removes uv_bios_call_reentrant() because it's dead code.
->>
->> Patch #3 is a cleanup that drops test_bit() in favour of the ad hoc efi_enabled().
->>
->> Patch #4 makes uv_bios_call() variants use the efi_runtime_lock semaphore to
->> protect against concurrency.
->>
->> Cc: Russ Anderson <rja@hpe.com>
->> Cc: Mike Travis <mike.travis@hpe.com>
->> Cc: Dimitri Sivanich <sivanich@hpe.com>
->> Cc: Steve Wahl <steve.wahl@hpe.com>
->> Cc: stable@vger.kernel.org # v4.9+
->>
->> Hedi Berriche (4):
->>    x86/platform/UV: remove unnecessary #ifdef CONFIG_EFI
->>    x86/platform/UV: kill uv_bios_call_reentrant() as it has no callers
->>    x86/platform/UV: use efi_enabled() instead of test_bit()
->>    x86/platform/UV: use efi_runtime_lock to serialise BIOS calls
->>
->>   arch/x86/include/asm/uv/bios.h          | 13 ++++-----
->>   arch/x86/platform/uv/bios_uv.c          | 35 ++++++++++++++-----------
->>   drivers/firmware/efi/runtime-wrappers.c |  7 +++++
->>   3 files changed, 34 insertions(+), 21 deletions(-)
->>
->> -- 
->> 2.20.1
->>
+> 3) "frequency", when read prints, e.g. :
+> 0.25hz [0.5hz] 1hz 2hz
+> Note this controls both the blinking and breathing freq.
+> 
+> Note I've not listed off anywhere, this can be achieved by
+> setting the brightness to 0 as we do with normal leds.
+> 
+> For interactions with other APIs we can do the standard
+> thing where writing 0 to brightness resets things, in this
+> case this would reset mode to manual and pattern to on.
+> 
+> And if the blinking API gets used, then too the mode should
+> be switched to manual, and the pattern obviously becomes
+> blinking.
+> 
+> I believe this will work well with this hardware and
+> nicely allow the user to control all settings.
+> 
+> Regards,
+> 
+> Hans
+
+-- 
+Yauhen Kharuzhy
