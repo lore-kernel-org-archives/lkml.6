@@ -2,127 +2,185 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 778B7C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:26:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE8EC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:27:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46777222C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:26:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26BF0222C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:27:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=stwm.de header.i=@stwm.de header.b="U1Eawyj6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502060AbfBNP04 (ORCPT
+        id S2502073AbfBNP1Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 10:26:56 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41982 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2502018AbfBNP04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 10:26:56 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 032E42D806;
-        Thu, 14 Feb 2019 15:26:55 +0000 (UTC)
-Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2FE5B5D70D;
-        Thu, 14 Feb 2019 15:26:53 +0000 (UTC)
-Subject: Re: [PATCH 03/11] kernel/locks: consolidate RWSEM_GENERIC_* options
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-riscv@lists.infradead.org,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        linux-xtensa@linux-xtensa.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>
-References: <20190213174005.28785-1-hch@lst.de>
- <20190213174005.28785-4-hch@lst.de>
- <CAMuHMdW4C1McxL-e7ZSiSOiiE5D=xbBK8FZOwuJ1w0kK3CR1Hg@mail.gmail.com>
-From:   Waiman Long <longman@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- weim8xU=
-Organization: Red Hat
-Message-ID: <d9aeeedd-ce72-f58f-d858-3e340c073414@redhat.com>
-Date:   Thu, 14 Feb 2019 10:26:52 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 14 Feb 2019 10:27:25 -0500
+Received: from mailin.studentenwerk.mhn.de ([141.84.225.229]:51568 "EHLO
+        email.studentenwerk.mhn.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2407551AbfBNP1Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 10:27:24 -0500
+Received: from mailhub.studentenwerk.mhn.de (mailhub.studentenwerk.mhn.de [127.0.0.1])
+        by email.studentenwerk.mhn.de (Postfix) with ESMTP id 440gHb0XxlzRhSK;
+        Thu, 14 Feb 2019 16:27:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stwm.de;
+        s=stwm-20170627; t=1550158043;
+        bh=zWZc5prG9PG/gbLgwFpHQXgXSX3bPKTrNUpmOt+TsBw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=U1Eawyj6aOC4zQq0jVuA5NoQciwRlLPpK1dq436DfXO2woGT6tl5C3VbucphAwWDe
+         zSwMUiiyBVkoPNUxBRtLAE1lSVGaCD8JOwnd9mY7GD6giWHXm6U++zZGyDElFQOJyP
+         gx6eZR4RAGoTt5u1UJnSdF+GCQ7ni+Yty+jtcpcnJHZ4ChBzsIQcy4jXwE6/aoqaM0
+         9rbGGxW+LaonHXAtH5wH57AarVEYcsUUGy6lu0mT0Wy4V4iuok8ngNtyodqEWhoO4X
+         sBvBsO3n/e4RIPslV1Y0OBQJcVnSo/wDg5xasbhF3j0vWUwkdUNglPZkdV/QyOgDBx
+         BAsYSDqFDKHGQ==
+From:   Wolfgang Walter <linux@stwm.de>
+To:     Guoqing Jiang <gqjiang@suse.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, NeilBrown <neilb@suse.com>,
+        linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: linux 4.19.19: md0_raid:1317 blocked for more than 120 seconds.
+Date:   Thu, 14 Feb 2019 16:27:22 +0100
+Message-ID: <3877135.KJXZSZYZ1L@stwm.de>
+User-Agent: KMail/4.14.3 (Linux/4.18.12-041812-generic; KDE/4.14.13; x86_64; ; )
+In-Reply-To: <0c832f67-de10-8872-d3db-6a9f11c97454@suse.com>
+References: <2131016.q2kFhguZXe@stwm.de> <3057098.nBgIypvgED@stwm.de> <0c832f67-de10-8872-d3db-6a9f11c97454@suse.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdW4C1McxL-e7ZSiSOiiE5D=xbBK8FZOwuJ1w0kK3CR1Hg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 14 Feb 2019 15:26:55 +0000 (UTC)
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/14/2019 05:52 AM, Geert Uytterhoeven wrote:
-> On Thu, Feb 14, 2019 at 12:08 AM Christoph Hellwig <hch@lst.de> wrote:
->> Introduce one central definition of RWSEM_XCHGADD_ALGORITHM and
->> RWSEM_GENERIC_SPINLOCK in kernel/Kconfig.locks and let architectures
->> select RWSEM_XCHGADD_ALGORITHM if they want it, otherwise default to
->> the spinlock version.
->>
->> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Note that this conflicts with "[PATCH v4 2/3] locking/rwsem: Remove
-> rwsem-spinlock.c & use rwsem-xadd.c for all archs"
-> https://lore.kernel.org/lkml/1550095217-12047-3-git-send-email-longman@redhat.com/
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-Christoph,
+Am Donnerstag, 14. Februar 2019, 10:09:56 schrieb Guoqing Jiang:
+> On 2/12/19 7:20 PM, Wolfgang Walter wrote:
+> > Am Dienstag, 12. Februar 2019, 16:20:11 schrieb Guoqing Jiang:
+> >> On 2/11/19 11:12 PM, Wolfgang Walter wrote:
+> >>> With 4.19.19 we see sometimes the following issue (practically on=
+ly with
+> >>> blk_mq, though):
+> >>>=20
+> >>> Feb  4 20:04:46 tettnang kernel: [252300.060165] INFO: task
+> >>> md0_raid1:317
+> >>> blocked for more than 120 seconds. Feb  4 20:04:46 tettnang kerne=
+l:
+> >>> [252300.060188]       Not tainted 4.19.19-debian64.all+1.1 #1 Feb=
+  4
+> >>> 20:04:46 tettnang kernel: [252300.060197] "echo 0 >
+> >>> /proc/sys/kernel/hung_task_timeout_secs" disables this message. F=
+eb  4
+> >>> 20:04:46 tettnang kernel: [252300.060207] md0_raid1       D    0 =
+  317
+> >>>=20
+> >>>    2 0x80000000 Feb  4 20:04:46 tettnang kernel: [252300.060211] =
+Call
+> >>>=20
+> >>> Trace:
+> >>> Feb  4 20:04:46 tettnang kernel: [252300.060222]  ?
+> >>> __schedule+0x2a2/0x8c0
+> >>> Feb  4 20:04:46 tettnang kernel: [252300.060226]  ?
+> >>> _raw_spin_unlock_irqrestore+0x20/0x40 Feb  4 20:04:46 tettnang ke=
+rnel:
+> >>> [252300.060229]  schedule+0x32/0x90 Feb  4 20:04:46 tettnang kern=
+el:
+> >>> [252300.060241]  md_super_wait+0x69/0xa0 [md_mod] Feb  4 20:04:46=
 
-Would you mind dropping just patch 3 from your series?
+> >>> tettnang kernel: [252300.060247]  ? finish_wait+0x80/0x80 Feb  4
+> >>> 20:04:46
+> >>> tettnang kernel: [252300.060255]  md_bitmap_wait_writes+0x8e/0xa0=
 
-Thanks,
-Longman
+> >>> [md_mod] Feb  4 20:04:46 tettnang kernel: [252300.060263]  ?
+> >>> md_bitmap_get_counter+0x42/0xd0 [md_mod] Feb  4 20:04:46 tettnang=
 
+> >>> kernel:
+> >>> [252300.060271]  md_bitmap_daemon_work+0x1e8/0x380 [md_mod] Feb  =
+4
+> >>> 20:04:46 tettnang kernel: [252300.060278]  ? md_rdev_init+0xb0/0x=
+b0
+> >>> [md_mod] Feb  4 20:04:46 tettnang kernel: [252300.060285]
+> >>> md_check_recovery+0x26/0x540 [md_mod] Feb  4 20:04:46 tettnang ke=
+rnel:
+> >>> [252300.060290]  raid1d+0x5c/0xf00 [raid1] Feb  4 20:04:46 tettna=
+ng
+> >>> kernel: [252300.060294]  ? preempt_count_add+0x79/0xb0 Feb  4 20:=
+04:46
+> >>> tettnang kernel: [252300.060298]  ? lock_timer_base+0x67/0x80 Feb=
+  4
+> >>> 20:04:46 tettnang kernel: [252300.060302]  ?
+> >>> _raw_spin_unlock_irqrestore+0x20/0x40 Feb  4 20:04:46 tettnang ke=
+rnel:
+> >>> [252300.060304]  ? try_to_del_timer_sync+0x4d/0x80 Feb  4 20:04:4=
+6
+> >>> tettnang kernel: [252300.060306]  ? del_timer_sync+0x35/0x40 Feb =
+ 4
+> >>> 20:04:46 tettnang kernel: [252300.060309]  ?
+> >>> schedule_timeout+0x17a/0x3b0
+> >>> Feb  4 20:04:46 tettnang kernel: [252300.060312]  ?
+> >>> preempt_count_add+0x79/0xb0 Feb  4 20:04:46 tettnang kernel:
+> >>> [252300.060315]  ? _raw_spin_lock_irqsave+0x25/0x50 Feb  4 20:04:=
+46
+> >>> tettnang kernel: [252300.060321]  ? md_rdev_init+0xb0/0xb0 [md_mo=
+d] Feb
+> >>> 4 20:04:46 tettnang kernel: [252300.060327]  ? md_thread+0xf9/0x1=
+60
+> >>> [md_mod] Feb  4 20:04:46 tettnang kernel: [252300.060330]  ?
+> >>> r1bio_pool_alloc+0x20/0x20 [raid1] Feb  4 20:04:46 tettnang kerne=
+l:
+> >>> [252300.060336]  md_thread+0xf9/0x160 [md_mod] Feb  4 20:04:46 te=
+ttnang
+> >>> kernel: [252300.060340]  ? finish_wait+0x80/0x80 Feb  4 20:04:46
+> >>> tettnang
+> >>> kernel: [252300.060344]  kthread+0x112/0x130 Feb  4 20:04:46 tett=
+nang
+> >>> kernel: [252300.060346]  ? kthread_create_worker_on_cpu+0x70/0x70=
+ Feb  4
+> >>> 20:04:46 tettnang kernel: [252300.060350]  ret_from_fork+0x35/0x4=
+0
+> >>>=20
+> >>> I saw that there was a similar problem with raid10 and an upstrea=
+m patch
+> >>>=20
+> >>> e820d55cb99dd93ac2dc949cf486bb187e5cd70d
+> >>> md: fix raid10 hang issue caused by barrier
+> >>> by  Guoqing Jiang
+> >>>=20
+> >>> I wonder if there is a similar fix needed for raid1?
+> >>=20
+> >> Seems not, the calltrace tells the previous write superblock IO wa=
+s not
+> >> finish as expected,
+> >> there is a report for raid5 which has similar problem with md_supe=
+r_wait
+> >> in the link [1]. Maybe
+> >> you can disable blk-mq to narrow down the issue as well.
+> >=20
+> > I already did for 4 weeks. I didn't saw this with blk-mq disabled (=
+for
+> > scsi
+> > and md), though this may be by luck.
+>=20
+> Then I guess it maybe related to blk-mq, which scheduler are you used=
+
+> with blk-mq?
+> And maybe you can switch it to see if it is caused by specified
+> scheduler or not.
+
+mq-deadline for SCSI and none for md and dm.
+
+>=20
+> >> [1] |https://bbs.archlinux.org/viewtopic.php?id=3D243520
+> >=20
+> > I found this bug report in debian:
+> >=20
+> > https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=3D904822
+>=20
+> Thanks, the bug report also said it didn't happen after disable blk-m=
+q.
+>=20
+
+Regards,
+--=20
+Wolfgang Walter
+Studentenwerk M=FCnchen
+Anstalt des =F6ffentlichen Rechts
