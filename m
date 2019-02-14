@@ -2,163 +2,96 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FCC9C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:38:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B84AEC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:40:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8DD2222A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:38:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85F7E222A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:40:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="wYJW99JV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405064AbfBNCiM (ORCPT
+        id S2394126AbfBNCkC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 21:38:12 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43912 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726325AbfBNCiM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 21:38:12 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9014DC049D67;
-        Thu, 14 Feb 2019 02:38:10 +0000 (UTC)
-Received: from sky.random (ovpn-120-178.rdu2.redhat.com [10.10.120.178])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 97FC25D6B3;
-        Thu, 14 Feb 2019 02:38:06 +0000 (UTC)
-Date:   Wed, 13 Feb 2019 21:38:05 -0500
-From:   Andrea Arcangeli <aarcange@redhat.com>
-To:     "Huang, Ying" <ying.huang@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        David Rientjes <rientjes@google.com>,
-        Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-Subject: Re: [PATCH -mm -V7] mm, swap: fix race between swapoff and some swap
- operations
-Message-ID: <20190214023805.GA19090@redhat.com>
-References: <20190211083846.18888-1-ying.huang@intel.com>
+        Wed, 13 Feb 2019 21:40:02 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:40564 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726325AbfBNCkB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 21:40:01 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1E2dMSs010721;
+        Thu, 14 Feb 2019 02:39:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=LwB5hh0FheSm+snXyf4ObgxM0IXBXnHxQeNUTE7dtwg=;
+ b=wYJW99JVLOT7YemNn7uv6TIwDciYMsOedRfM5B0+cceNOzS3/23inAX4J6fZVDpWLrM7
+ sUX2eKdfuyYm9UFaIuSZ/NpYPIOQylclnmWCHSmf6YsBqMU3sgf7opyLUJ5JN0tiQy8/
+ SmRY7PFoonkYh2mHsvjgV86zWkMtlyf1njkyq3OcjfPJ4gpM8AXFF5MbsK9Eu4TK602J
+ ByE+lqV7OPVN7lKS/gxkrCFKBavhtgQs/+Jmhkt4qNcG9Qm5aP4emwmJcp0zpHtQSGqe
+ 9Hbrkl714jnjkwNCfG4eVtcwWGpqd54IC9A5XhmQFTHL9e290fKW5BdyjOawfsD73dc1 4w== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2qhre5neu2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Feb 2019 02:39:54 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1E2dsd0031412
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Feb 2019 02:39:54 GMT
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1E2drIB008945;
+        Thu, 14 Feb 2019 02:39:53 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 13 Feb 2019 18:39:53 -0800
+To:     Evan Green <evgreen@chromium.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Bart Van Assche <bvanassche@acm.org>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Martin K Petersen <martin.petersen@oracle.com>,
+        Alexis Savery <asavery@chromium.org>,
+        Ming Lei <ming.lei@redhat.com>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] loop: Better discard support for block devices
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20190207205730.199332-1-evgreen@chromium.org>
+        <20190207205730.199332-3-evgreen@chromium.org>
+Date:   Wed, 13 Feb 2019 21:39:50 -0500
+In-Reply-To: <20190207205730.199332-3-evgreen@chromium.org> (Evan Green's
+        message of "Thu, 7 Feb 2019 12:57:29 -0800")
+Message-ID: <yq1d0nvqeix.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211083846.18888-1-ying.huang@intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 14 Feb 2019 02:38:11 +0000 (UTC)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9166 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=725 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902140018
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello everyone,
 
-On Mon, Feb 11, 2019 at 04:38:46PM +0800, Huang, Ying wrote:
-> @@ -2386,7 +2463,17 @@ static void enable_swap_info(struct swap_info_struct *p, int prio,
->  	frontswap_init(p->type, frontswap_map);
->  	spin_lock(&swap_lock);
->  	spin_lock(&p->lock);
-> -	 _enable_swap_info(p, prio, swap_map, cluster_info);
-> +	setup_swap_info(p, prio, swap_map, cluster_info);
-> +	spin_unlock(&p->lock);
-> +	spin_unlock(&swap_lock);
-> +	/*
-> +	 * Guarantee swap_map, cluster_info, etc. fields are used
-> +	 * between get/put_swap_device() only if SWP_VALID bit is set
-> +	 */
-> +	stop_machine(swap_onoff_stop, NULL, cpu_online_mask);
+Evan,
 
-Should cpu_online_mask be read while holding cpus_read_lock?
+> If the backing device for a loop device is a block device, then mirror
+> the discard properties of the underlying block device into the loop
+> device. While in there, differentiate between REQ_OP_DISCARD and
+> REQ_OP_WRITE_ZEROES, which are different for block devices, but which
+> the loop device had just been lumping together.
 
-	cpus_read_lock();
-	err = __stop_machine(swap_onoff_stop, NULL, cpu_online_mask);
-	cpus_read_unlock();
+Bubbling up the queue limits from the backing device is fine. However,
+I'm not sure why you are requiring a filesystem to be on a
+discard-capable device for REQ_OP_DISCARD to have an effect? Punching a
+hole in a file is semantically the same as discarding.
 
-I missed what the exact motivation was for the switch from
-rcu_read_lock()/syncrhonize_rcu() to preempt_disable()/stop_machine().
-
-It looks like the above stop_machine all it does is to reach a
-quiescent point, when you've RCU that already can reach the quiescent
-point without an explicit stop_machine.
-
-The reason both implementations are basically looking the same is that
-stop_machine dummy call of swap_onoff_stop() { /* noop */ } will only
-reach a quiescent point faster than RCU, but it's otherwise
-functionally identical to RCU, but it's extremely more expensive. If
-it wasn't functionally identical stop_machine() couldn't be used as a
-drop in replacement of synchronize_sched() in the previous patch.
-
-I don't see the point of worrying about the synchronize_rcu latency in
-swapoff when RCU is basically identical and not more complex.
-
-So to be clear, I'm not against stop_machine() but with stop_machine()
-method invoked in all CPUs, you can actually do more than RCU and you
-can remove real locking not just reach a quiescent point.
-
-With stop_machine() the code would need reshuffling around so that the
-actual p->swap_map = NULL happens inside stop_machine, not outside
-like with RCU.
-
-With RCU all code stays concurrent at all times, simply the race is
-controlled, as opposed with stop_machine() you can make fully
-serialize and run like in UP temporarily (vs all preempt_disable()
-section at least).
-
-For example nr_swapfiles could in theory become a constant under
-preempt_disable() with stop_machine() without having to take a
-swap_lock.
-
-swap_onoff_stop can be implemented like this:
-
-enum {
-	FIRST_STOP_MACHINE_INIT,
-	FIRST_STOP_MACHINE_START,
-	FIRST_STOP_MACHINE_END,
-};
-static int first_stop_machine;
-static int swap_onoff_stop(void *data)
-{
-	struct swap_stop_machine *swsm = (struct swap_stop_machine *)data;
-	int first;
-
-	first = cmpxchg(&first_stop_machine, FIRST_STOP_MACHINE_INIT,
-			FIRST_STOP_MACHINE_START);
-	if (first == FIRST_STOP_MACHINE_INIT) {
-		swsm->p->swap_map = NULL;
-		/* add more stuff here until swap_lock goes away */
-		smp_wmb();
-		WRITE_ONCE(first_stop_machine, FIRST_STOP_MACHINE_END);
-	} else {
-		do {
-			cpu_relax();
-		} while (READ_ONCE(first_stop_machine) !=
-			 FIRST_STOP_MACHINE_END);
-		smp_rmb();
-	}
-
-	return 0;
-}
-
-stop_machine invoked with a method like above, will guarantee while we
-set p->swap_map to NULL (and while we do nr_swapfiles++) nothing else
-can run, no even interrupts, so some lock may just disappear. Only NMI
-and SMI could possibly run concurrently with the swsm->p->swap_map =
-NULL operation.
-
-If we've to keep swap_onoff_stop() a dummy function run on all CPUs
-just to reach a quiescent point, then I don't see why
-the synchronize_rcu() (or synchronize_sched or synchronize_kernel or
-whatever it is called right now, but still RCU) solution isn't
-preferable.
-
-Thanks,
-Andrea
+-- 
+Martin K. Petersen	Oracle Linux Engineering
