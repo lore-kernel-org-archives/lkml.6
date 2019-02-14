@@ -2,93 +2,96 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B9DAC4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:53:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D62C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:54:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E694921904
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:53:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EC6120811
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:54:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392020AbfBNBxZ (ORCPT
+        id S2392189AbfBNByP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 20:53:25 -0500
-Received: from mga14.intel.com ([192.55.52.115]:45167 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732776AbfBNBxY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 20:53:24 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 17:53:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,367,1544515200"; 
-   d="scan'208";a="116051781"
-Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
-  by orsmga006.jf.intel.com with ESMTP; 13 Feb 2019 17:53:22 -0800
-Date:   Wed, 13 Feb 2019 17:53:14 -0800
-From:   Ira Weiny <ira.weiny@intel.com>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
-        akpm@linux-foundation.org, dave@stgolabs.net, jack@suse.cz,
-        cl@linux.com, linux-mm@kvack.org, kvm@vger.kernel.org,
-        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
-        alex.williamson@redhat.com, paulus@ozlabs.org,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, hao.wu@intel.com,
-        atull@kernel.org, mdf@kernel.org, aik@ozlabs.ru
-Subject: Re: [PATCH 0/5] use pinned_vm instead of locked_vm to account pinned
- pages
-Message-ID: <20190214015314.GB1151@iweiny-DESK2.sc.intel.com>
-References: <20190211224437.25267-1-daniel.m.jordan@oracle.com>
- <20190211225447.GN24692@ziepe.ca>
+        Wed, 13 Feb 2019 20:54:15 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:36998 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728246AbfBNByO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 20:54:14 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 0C08CB086F2D889174B8;
+        Thu, 14 Feb 2019 09:54:13 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 14 Feb 2019 09:54:03 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     VMware Graphics <linux-graphics-maintainer@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] drm/vmwgfx: Remove set but not used variable 'restart'
+Date:   Thu, 14 Feb 2019 02:08:04 +0000
+Message-ID: <20190214020804.22935-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190211225447.GN24692@ziepe.ca>
-User-Agent: Mutt/1.11.1 (2018-12-01)
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 03:54:47PM -0700, Jason Gunthorpe wrote:
-> On Mon, Feb 11, 2019 at 05:44:32PM -0500, Daniel Jordan wrote:
-> 
-> > All five of these places, and probably some of Davidlohr's conversions,
-> > probably want to be collapsed into a common helper in the core mm for
-> > accounting pinned pages.  I tried, and there are several details that
-> > likely need discussion, so this can be done as a follow-on.
-> 
-> I've wondered the same..
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-I'm really thinking this would be a nice way to ensure it gets cleaned up and
-does not happen again.
+drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c: In function 'vmw_cmdbuf_work_func':
+drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c:514:7: warning:
+ variable 'restart' set but not used [-Wunused-but-set-variable]
 
-Also, by moving it to the core we could better manage any user visible changes.
+It not used any more after commit dc366364c4ef ("drm/vmwgfx: Fix multiple
+command buffer context use")
 
-From a high level, pinned is a subset of locked so it seems like we need a 2
-sets of helpers.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-try_increment_locked_vm(...)
-decrement_locked_vm(...)
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c
+index 70dab55e7888..ed15655eacd2 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c
+@@ -511,17 +511,14 @@ static void vmw_cmdbuf_work_func(struct work_struct *work)
+ 		container_of(work, struct vmw_cmdbuf_man, work);
+ 	struct vmw_cmdbuf_header *entry, *next;
+ 	uint32_t dummy;
+-	bool restart[SVGA_CB_CONTEXT_MAX];
+ 	bool send_fence = false;
+ 	struct list_head restart_head[SVGA_CB_CONTEXT_MAX];
+ 	int i;
+ 	struct vmw_cmdbuf_context *ctx;
+ 	bool global_block = false;
+ 
+-	for_each_cmdbuf_ctx(man, i, ctx) {
++	for_each_cmdbuf_ctx(man, i, ctx)
+ 		INIT_LIST_HEAD(&restart_head[i]);
+-		restart[i] = false;
+-	}
+ 
+ 	mutex_lock(&man->error_mutex);
+ 	spin_lock(&man->lock);
+@@ -533,7 +530,6 @@ static void vmw_cmdbuf_work_func(struct work_struct *work)
+ 		const char *cmd_name;
+ 
+ 		list_del_init(&entry->list);
+-		restart[entry->cb_context] = true;
+ 		global_block = true;
+ 
+ 		if (!vmw_cmd_describe(header, &error_cmd_size, &cmd_name)) {
 
-try_increment_pinned_vm(...)
-decrement_pinned_vm(...)
 
-Where try_increment_pinned_vm() also increments locked_vm...  Of course this
-may end up reverting the improvement of Davidlohr  Bueso's atomic work...  :-(
-
-Furthermore it would seem better (although I don't know if at all possible) if
-this were accounted for in core calls which tracked them based on how the pages
-are being used so that drivers can't call try_increment_locked_vm() and then
-pin the pages...  Thus getting the account wrong vs what actually happened.
-
-And then in the end we can go back to locked_vm being the value checked against
-RLIMIT_MEMLOCK.
-
-Ira
 
