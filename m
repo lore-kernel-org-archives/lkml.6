@@ -2,148 +2,185 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5446CC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9091AC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:36:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24787222DC
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:36:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="g4M8cFGj"
+	by mail.kernel.org (Postfix) with ESMTP id 6066221928
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:36:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437411AbfBNRgv (ORCPT
+        id S2437446AbfBNRgz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 12:36:51 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:44976 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732277AbfBNRgs (ORCPT
+        Thu, 14 Feb 2019 12:36:55 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:36970 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2437416AbfBNRgy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 12:36:48 -0500
-Received: by mail-ed1-f66.google.com with SMTP id b20so5668438edw.11
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 09:36:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ryRC4W/SA5dnQCgYQdvbKL45VGQoqpZT+NFh8c9Rb0I=;
-        b=g4M8cFGjJsYULIePc+YAzDxv9Q1Jn5NGPBH5cGIhkbSuMsp6t9AqUmRl7+BwbYC8eX
-         EqmuilLKK0NZ6TL40QjzDZaY6LM5cVcy6iR38Dq4hXT729L3grO6WYQcevkD0wCYmrQz
-         SbiCmaWrLy5QPVwclGbOiHj9Vju3I+Aos64g8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ryRC4W/SA5dnQCgYQdvbKL45VGQoqpZT+NFh8c9Rb0I=;
-        b=i+T4mk9vXIZUFIIQvQBSZgcVWM7vtHO1Cv6KxYvlvR/aCquxvWaLpqrr5ZNVhocFO2
-         U56nBBV1/hpB1X0ISDsasvQ+pHPq4S7G/7qFmZIlQw2n73PTaSxdWk8VYNLrMp6+T3bD
-         E9ILcgeJrk0U+Nc4POH2R0v9qC8pQtshOItnGSBDTBN4CcGS8j6zxj5AK66VKe8rKecZ
-         OxEwoPXkpxD0QXtISryqeaQg8PUKsBaFWFyGLtGD0qkFYBgauhnZMbZNjq5zhZVmghqI
-         qEcRpgu7spE852F89EBUgy/slN4/4yxrLwk9CnN8IlbmcB3Y37vtRF0WQ4K11dLmAFFF
-         1Ogw==
-X-Gm-Message-State: AHQUAubaxPcPAxNxyuuZ11VSAYGAS9xwLRXEp4MyDA6g14ZmZVqAOwFo
-        LfvBDsm7oLsI15CMDSw/RlRAwQ==
-X-Google-Smtp-Source: AHgI3Ib7bHgeOFreWspwUxtqqjRsnvGYB8RrCKmzKT4Vlh/VjJ0HZd6XAb8PTnbT/eOeMZC+5hOzlQ==
-X-Received: by 2002:a17:906:a456:: with SMTP id cb22mr3633823ejb.80.1550165806455;
-        Thu, 14 Feb 2019 09:36:46 -0800 (PST)
-Received: from [10.136.8.252] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id j4sm646599ejx.75.2019.02.14.09.36.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 09:36:45 -0800 (PST)
-Subject: Re: [PATCH v4 3/8] dt-bindings: i2c: iproc: make 'interrupts'
- optional
-To:     Rob Herring <robh@kernel.org>
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
-References: <20190204231554.87666-1-ray.jui@broadcom.com>
- <20190204231554.87666-4-ray.jui@broadcom.com> <20190213211651.GA10705@bogus>
- <796d9a96-f3f9-cb9a-faa3-4baf0e72da65@broadcom.com>
- <CAL_JsqK+QLRp7LqkMzQCXdLPaJU3fbiNWU_uyuPFJ4qDkP=siA@mail.gmail.com>
-From:   Ray Jui <ray.jui@broadcom.com>
-Message-ID: <e17b1cd0-8ffb-d014-bcce-57a3ca227506@broadcom.com>
-Date:   Thu, 14 Feb 2019 09:36:42 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Thu, 14 Feb 2019 12:36:54 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1EHYTDr115395
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 12:36:53 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qncg0hsev-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 12:36:53 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Thu, 14 Feb 2019 17:36:50 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 14 Feb 2019 17:36:49 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1EHalAH2621728
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 14 Feb 2019 17:36:47 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5E80311C05B;
+        Thu, 14 Feb 2019 17:36:47 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C3E5E11C050;
+        Thu, 14 Feb 2019 17:36:46 +0000 (GMT)
+Received: from [9.152.224.140] (unknown [9.152.224.140])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 14 Feb 2019 17:36:46 +0000 (GMT)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v3 1/9] s390: vfio_ap: link the vfio_ap devices to the
+ vfio_ap bus subsystem
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     borntraeger@de.ibm.com, alex.williamson@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        pasic@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
+References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
+ <1550152269-6317-2-git-send-email-pmorel@linux.ibm.com>
+ <20190214155441.087d2a68.cohuck@redhat.com>
+ <9403117a-04a6-8f69-2a61-f96d35a59555@linux.ibm.com>
+ <20190214175730.4ab609ae.cohuck@redhat.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Thu, 14 Feb 2019 18:36:46 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <CAL_JsqK+QLRp7LqkMzQCXdLPaJU3fbiNWU_uyuPFJ4qDkP=siA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190214175730.4ab609ae.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19021417-0008-0000-0000-000002C08816
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021417-0009-0000-0000-0000222CAB8E
+Message-Id: <9200b1f8-874f-ffa7-bef0-19ca570d7ac1@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902140119
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2/14/2019 6:16 AM, Rob Herring wrote:
-> On Wed, Feb 13, 2019 at 4:06 PM Ray Jui <ray.jui@broadcom.com> wrote:
->>
->> Hi Rob,
->>
->> On 2/13/2019 1:16 PM, Rob Herring wrote:
->>> On Mon, Feb 04, 2019 at 03:15:49PM -0800, Ray Jui wrote:
->>>> In prep for the introduction of polling mode into the driver, update the
->>>> binding document to make the 'interrupts' property optional
->>>>
->>>> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
->>>> Signed-off-by: Rayagonda Kokatanur <rayagonda.kokatanur@broadcom.com>
->>>> ---
->>>>  .../devicetree/bindings/i2c/brcm,iproc-i2c.txt         | 10 +++++++---
->>>>  1 file changed, 7 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/i2c/brcm,iproc-i2c.txt b/Documentation/devicetree/bindings/i2c/brcm,iproc-i2c.txt
->>>> index 81f982ccca31..d3a3620b1f06 100644
->>>> --- a/Documentation/devicetree/bindings/i2c/brcm,iproc-i2c.txt
->>>> +++ b/Documentation/devicetree/bindings/i2c/brcm,iproc-i2c.txt
->>>> @@ -9,9 +9,6 @@ Required properties:
->>>>      Define the base and range of the I/O address space that contain the iProc
->>>>      I2C controller registers
->>>>
->>>> -- interrupts:
->>>> -    Should contain the I2C interrupt
->>>> -
->>>>  - clock-frequency:
->>>>      This is the I2C bus clock. Need to be either 100000 or 400000
->>>>
->>>> @@ -21,6 +18,13 @@ Required properties:
->>>>  - #size-cells:
->>>>      Always 0
->>>>
->>>> +Optional properties:
->>>> +
->>>> +- interrupts:
->>>> +    Should contain the I2C interrupt. If unspecified, driver will fall back to
->>>> +    polling mode
->>>
->>> What determines when you want to use polling mode? I'm not sure DT
->>> is the best way to control this unless it's really a property of
->>> the h/w. Driver behavior is really outside the scope of the DT. u-boot
->>> would use polling even if an interrupt is specified, for example.
->>>
->> It's tied to the particular revision of the I2C controller, i.e., the
->> iProc NIC i2c controller does not have interrupt line wired. In this
->> case, the behavior is determined by the DT compatible string of the
->> iProc I2C device. I thought that it makes sense to now move the
->> 'interrupts' property to be under "Optional" than "Required" which is
->> basically what this change is.
+On 14/02/2019 17:57, Cornelia Huck wrote:
+> On Thu, 14 Feb 2019 16:47:30 +0100 Pierre Morel
+> <pmorel@linux.ibm.com> wrote:
 > 
-> Okay, please put this detail into the commit msg.
+>> On 14/02/2019 15:54, Cornelia Huck wrote:
+>>> On Thu, 14 Feb 2019 14:51:01 +0100 Pierre Morel
+>>> <pmorel@linux.ibm.com> wrote:
+> 
+>>>> +++ b/drivers/s390/crypto/vfio_ap_drv.c @@ -24,8 +24,9 @@
+>>>> MODULE_LICENSE("GPL v2");
+>>>> 
+>>>> static struct ap_driver vfio_ap_drv;
+>>>> 
+>>>> -static struct device_type vfio_ap_dev_type = { -	.name =
+>>>> VFIO_AP_DEV_TYPE_NAME, +struct matrix_driver { +	struct
+>>>> device_driver drv; +	int device_count;
+>>> 
+>>> This counter basically ensures that at most one device may bind
+>>> with this driver... you'd still have that device on the bus,
+>>> though.
+>> 
+>> yes, this is what is wanted: this driver can only support one
+>> device. May be another matrix driver can support one or more other
+>> devices.
+>> 
+>> I should update comment message my be.
+>> 
+>>> 
+>>>> };
+>>>> 
+>>>> struct ap_matrix_dev *matrix_dev;
+>> 
+>>>> 
+>>>> -	matrix_dev->device.type = &vfio_ap_dev_type; 
+>>>> dev_set_name(&matrix_dev->device, "%s", VFIO_AP_DEV_NAME); 
+>>>> matrix_dev->device.parent = root_device; +
+>>>> matrix_dev->device.bus = &matrix_bus; 
+>>>> matrix_dev->device.release = vfio_ap_matrix_dev_release; -
+>>>> matrix_dev->device.driver = &vfio_ap_drv.driver; +
+>>>> matrix_dev->vfio_ap_drv = &vfio_ap_drv;
+>>> 
+>>> Can't you get that structure through matrix_dev->device.driver
+>>> instead when you need it in the function below?
+>> 
+>> Not anymore. We have two different drivers and devices matrix_drv
+>> <-> matrix_dev and vfio_ap_drv <-> ap_devices
+>> 
+>> The driver behind the matrix_dev->dev->driver is matrix_drv what is
+>> needed here is vfio_ap_drv.
+> 
+> Wait, we had tacked a driver for ap devices unto a matrix device,
+> which is not on the ap bus?
 
-Will do! Thanks.
+...yes -(
+
+> Maybe that's what trips libudev? >
+> (And reading further in the current code, it seems we clear that 
+> structure _after_ the matrix device had been setup, so how can that 
+> even work? Where am I confused?)
+
+On device_register there were no bus, so the core just do not look for a 
+driver and this field was nor tested nor overwritten.
 
 > 
-> Rob
+>> 
+>>> 
+>>>> 
+>>>> ret = device_register(&matrix_dev->device); if (ret) goto
+>>>> matrix_reg_err;
+>>>> 
+>>>> +	ret = driver_register(&matrix_driver.drv); +	if (ret) +		goto
+>>>> matrix_drv_err; +
+>>> 
+>>> As you already have several structures that can be registered
+>>> exactly once (the root device, the bus, the driver, ...), you can
+>>> already be sure that there's only one device on the bus, can't
+>>> you?
+>> 
+>> hum, no I don't think so, no device can register before this module
+>> is loaded, but what does prevent a device to register later from
+>> another module?
 > 
+> Not unless you export the interface, I guess.
+> 
+
+:) definitively right
+thanks, this will simplify the code in the next version.
+I will take the patch away from this series to get the way to stable as 
+Christian requested.
+
+Regards,
+Pierre
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
+
