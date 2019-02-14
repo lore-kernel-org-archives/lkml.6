@@ -2,265 +2,96 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C3EC4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:17:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EFA8C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:17:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CB9921920
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:17:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4295521920
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:17:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IZVe9ONz"
+	dkim=pass (1024-bit key) header.d=fjfi.cvut.cz header.i=@fjfi.cvut.cz header.b="GfsS2YJC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404920AbfBNARk (ORCPT
+        id S2393658AbfBNARz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 19:17:40 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:42615 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404871AbfBNARZ (ORCPT
+        Wed, 13 Feb 2019 19:17:55 -0500
+Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:47642 "EHLO
+        mailgw1.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727054AbfBNARJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 19:17:25 -0500
-Received: by mail-ot1-f67.google.com with SMTP id i5so7551474oto.9
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 16:17:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m7aBDlQWGsN3Phi3AaL00hhkwtfOlM9hu5nouhuH620=;
-        b=IZVe9ONz8LRuomZliWsdt7m40LUZZHt7BJEmqgnBRs1YnBh+OH6UHfWmnIqEJU9fM0
-         pMOqrx2dt3UaCY2SyjthDN4+Gne7JzrOfLBJ22pB35YoIPEw+rD0WJ4TqrzmGI+PRT7x
-         WLUYrD6lPeAjubQi5NdZqHicg9z/d1e3zNjIuu41y36dv2LLanfdqFzCgxMKoTGhmS8V
-         Kzllhu1KwbbUqdGXUZRskEvyVnPVEgNuVyuxwZjCFC1PlvulORJA7539DfhhkJ0rXNAb
-         AyOgmxZ4GSiw3Wpwpt5bABwpT7Gg39TVAmbz+xPiri/0RHeoGD7xBS9KXZms0T6RMS0N
-         OmSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m7aBDlQWGsN3Phi3AaL00hhkwtfOlM9hu5nouhuH620=;
-        b=WroU3ScpP6dXf8Gx4xoFkjmc88vF8+zm9pp3G44hzYSnBIs+fpLvfJc+MrGftQd8PO
-         5rZXBrPUDV4IFsj/+8v1pAUzjZUotY6ASeBOf9PvzCExfH5TakaUFtjdvyR8k6uoRQae
-         CbMVGhK/bXYU2WhA3SrxETI41yv+qsvI8gRR5hfU0FcHrRDFYa0fQa0LA/kVknqDjJYp
-         gzTWRlPAzsS1Lm/DDr5q0tJ7jBFkZqKw7xtCaBa0PIxYQ2szkpGPyHmz8Ap+w8VOqFsy
-         9f7pnJg58wJNzVdhd3Mn0z574DSCkVJ4TKhRrw80lwoIHJo0Zdf1uPaUJKlxsTFoEWan
-         6pmw==
-X-Gm-Message-State: AHQUAuYaxAOJdXf2qmbWi+UJM+oxvwfs7sP3GWi+/7kBNS/pTv2u0axs
-        /odx79dKLI9rVeM0vI151WwPtEvNAeDDrwEokxwBvQ==
-X-Google-Smtp-Source: AHgI3IYoTUjtZoPl66To/u0nQVDH+XlLBnEgyGazw74NYVfzOUPxbOkHghV0hqc1JzrIW8iODw0OuRcJxPZcnXfKbJ0=
-X-Received: by 2002:a9d:6206:: with SMTP id g6mr535086otj.338.1550103444177;
- Wed, 13 Feb 2019 16:17:24 -0800 (PST)
-MIME-Version: 1.0
-References: <20181128193636.254378-1-brendanhiggins@google.com>
- <20181128193636.254378-15-brendanhiggins@google.com> <b4c72234-8c56-6efa-8003-f89d99a9779e@ideasonboard.com>
- <20181130034525.GP18410@garbanzo.do-not-panic.com> <CAFd5g47Cew6pmebsopjzmkd4RpnnC3zLAUfxCybjdhrO35OBpQ@mail.gmail.com>
- <0927c42a-8e65-f410-e6ed-27576572577f@ideasonboard.com> <CAFd5g44fKzriEs_pGyANxe7GuC9Ji2SD7EEz76__h8q9jjg8yA@mail.gmail.com>
- <57c3dc86-236f-e981-249a-8bbfe5c19f0e@ideasonboard.com> <CAFd5g46AEquMKzfrjLDVi+PP5-7aGs6C6pCunGAXDn3VRkJP+g@mail.gmail.com>
- <eade3052-0aa4-90b4-d55b-8c44556f98bc@ideasonboard.com>
-In-Reply-To: <eade3052-0aa4-90b4-d55b-8c44556f98bc@ideasonboard.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Wed, 13 Feb 2019 16:17:13 -0800
-Message-ID: <CAFd5g46cO_rZYjqKu6CooKcV-uAsCUJjuib38cQv6WHQS3ooaA@mail.gmail.com>
-Subject: Re: [RFC v3 14/19] Documentation: kunit: add documentation for KUnit
-To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Kees Cook <keescook@google.com>, shuah@kernel.org,
-        Joel Stanley <joel@jms.id.au>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Joe Perches <joe@perches.com>, brakmo@fb.com,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Bird, Timothy" <Tim.Bird@sony.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jeff Dike <jdike@addtoit.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-um@lists.infradead.org, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Rob Herring <robh@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Knut Omang <knut.omang@oracle.com>,
-        Felix Guo <felixguoxiuping@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 13 Feb 2019 19:17:09 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id 6FD6BAA274;
+        Thu, 14 Feb 2019 01:17:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
+        s=20151024; t=1550103426; i=@fjfi.cvut.cz;
+        bh=nh5BvuROgH138HfFZ0O9KjzSpFfM22JsrR5RGPXeSLQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=GfsS2YJC52dQgCuCl5WbmJNlzVvjqoxEPylgjwBgnZJUyf7dQ7MW9n0SXNoY2yUHb
+         xlLMZy6qr/+1SQuTdbiEFVVvs5Uh8BbadIi2xQSyqEOSm06sH596H48EWryheZpOfn
+         w/Gi6i5sQFf6LIOdHT0hIjbV6WX4YLco6/MjxH/w=
+X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
+Received: from mailgw1.fjfi.cvut.cz ([127.0.0.1])
+        by localhost (mailgw1.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
+        with ESMTP id 3Z8xL7XRNRQq; Thu, 14 Feb 2019 01:16:56 +0100 (CET)
+Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id 9B723AA28C;
+        Thu, 14 Feb 2019 01:16:56 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz 9B723AA28C
+Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
+        id 71A516004E; Thu, 14 Feb 2019 01:16:56 +0100 (CET)
+From:   David Kozub <zub@linux.fjfi.cvut.cz>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        Scott Bauer <sbauer@plzdonthack.me>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
+        David Kozub <zub@linux.fjfi.cvut.cz>
+Subject: [PATCH 09/16] block: sed-opal: print failed function address
+Date:   Thu, 14 Feb 2019 01:16:01 +0100
+Message-Id: <1550103368-4605-10-git-send-email-zub@linux.fjfi.cvut.cz>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1550103368-4605-1-git-send-email-zub@linux.fjfi.cvut.cz>
+References: <1550103368-4605-1-git-send-email-zub@linux.fjfi.cvut.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 1:55 PM Kieran Bingham
-<kieran.bingham@ideasonboard.com> wrote:
->
-> Hi Brendan,
->
-> On 12/02/2019 22:10, Brendan Higgins wrote:
-> > On Mon, Feb 11, 2019 at 4:16 AM Kieran Bingham
-> > <kieran.bingham@ideasonboard.com> wrote:
-> >>
-> >> Hi Brendan,
-> >>
-> >> On 09/02/2019 00:56, Brendan Higgins wrote:
-> >>> On Thu, Dec 6, 2018 at 4:16 AM Kieran Bingham
-> >>> <kieran.bingham@ideasonboard.com> wrote:
-> >>>>
-> >>>> Hi Brendan,
-> >>>>
-> >>>> On 03/12/2018 23:53, Brendan Higgins wrote:
-> >>>>> On Thu, Nov 29, 2018 at 7:45 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> >>>>>>
-> >>>>>> On Thu, Nov 29, 2018 at 01:56:37PM +0000, Kieran Bingham wrote:
-> >>>>>>> Hi Brendan,
-> >>>>>>>
-> >>>>>>> Please excuse the top posting, but I'm replying here as I'm following
-> >>>>>>> the section "Creating a kunitconfig" in Documentation/kunit/start.rst.
-> >>>>>>>
-> >>>>>>> Could the three line kunitconfig file live under say
-> >>>>>>>        arch/um/configs/kunit_defconfig?
-> >>>>
-> >>>>
-> >>>> Further consideration to this topic - I mentioned putting it in
-> >>>>   arch/um/configs
-> >>>>
-> >>>> - but I think this is wrong.
-> >>>>
-> >>>> We now have a location for config-fragments, which is essentially what
-> >>>> this is, under kernel/configs
-> >>>>
-> >>>> So perhaps an addition as :
-> >>>>
-> >>>>  kernel/configs/kunit.config
-> >>>>
-> >>>> Would be more appropriate - and less (UM) architecture specific.
-> >>>
-> >>> Sorry for the long radio silence.
-> >>>
-> >>> I just got around to doing this and I found that there are some
-> >>> configs that are desirable to have when running KUnit under x86 in a
-> >>> VM, but not UML.
-> >>
-> >> Should this behaviour you mention be handled by the KCONFIG depends flags?
-> >>
-> >> depends on (KUMIT & UML)
-> >> or
-> >> depends on (KUNIT & !UML)
-> >>
-> >> or such?
-> >
-> > Not really. Anything that is strictly necessary to run KUnit on an
-> > architectures should of course be turned on as a dependency like you
-> > suggest, but I am talking about stuff that you would probably want to
-> > get yourself going, but is by no means necessary.
-> >
-> >>
-> >> An example of which configs you are referring to would help to
-> >> understand the issue perhaps.
-> >>
-> >
-> > For example, you might want to enable a serial console that is known
-> > to work with a fairly generic qemu setup when building for x86:
-> > CONFIG_SERIAL_8250=y
-> > CONFIG_SERIAL_8250_CONSOLE=y
-> >
-> > Obviously not a dependency, and not even particularly useful to people
-> > who know what they are doing, but to someone who is new or just wants
-> > something to work out of the box would probably want that.
->
-> It sounds like that would be a config fragment for qemu ?
->
-> Although - perhaps this is already covered by the following fragment:
->    kernel/configs/kvm_guest.config
->
+From: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
 
-Oh, yep, you are right. Does that mean we should bother at all with a defconfig?
+Add function address (and if available its symbol) to the message if a
+step function fails.
 
-Luis, I know you said you wanted one. I am thinking just stick with
-the UML one? The downside there is we then get stuck having to
-maintain the fragment and the defconfig. I right now (in the new
-revision I am working on) have the Python kunit_tool copy the
-defconfig if no kunitconfig is provided and a flag is set. It would be
-pretty straightforward to make it merge in the fragment instead.
+Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+Signed-off-by: David Kozub <zub@linux.fjfi.cvut.cz>
+Reviewed-by: Scott Bauer <sbauer@plzdonthack.me>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Jon Derrick <jonathan.derrick@intel.com
+---
+ block/sed-opal.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-All that being said, I think I am going to drop the arch/x86
-defconfig, since I think we all agree that it is not very useful, but
-keep the UML defconfig and the fragment. That will at least given
-something concrete to discuss.
+diff --git a/block/sed-opal.c b/block/sed-opal.c
+index 5cb8034b53c8..1f246200b574 100644
+--- a/block/sed-opal.c
++++ b/block/sed-opal.c
+@@ -394,8 +394,8 @@ static int next(struct opal_dev *dev)
+ 
+ 		error = step->fn(dev, step->data);
+ 		if (error) {
+-			pr_debug("Error on step function: %d with error %d: %s\n",
+-				 state, error,
++			pr_debug("Step %d (%pS) failed with error %d: %s\n",
++				 state, step->fn, error,
+ 				 opal_error_to_human(error));
+ 
+ 			/* For each OPAL command we do a discovery0 then we
+-- 
+2.20.1
 
->
-> >>> So should we have one that goes in with
-> >>> config-fragments and others that go into architectures? Another idea,
-> >>> it would be nice to have a KUnit config that runs all known tests
-> >>
-> >> This might also be a config option added to the tests directly like
-> >> COMPILE_TEST perhaps?
-> >
-> > That just allows a bunch of drivers to be compiled, it does not
-> > actually go through and turn the configs on, right? I mean, there is
-> > no a priori way to know that there is a configuration which spans all
-> > possible options available under COMPILE_TEST, right? Maybe I
-> > misunderstand what you are suggesting...
->
-> Bah - you're right of course. I was mis-remembering the functionality of
-> COMPILE_TEST as if it were some sort of 'select' but it's just an enable..
->
-> Sorry for the confusion.
->
-
-No problem, I thought for a second that was a good example too (and I
-wish it were. It would make my life so much easier!). I remember
-getting emails with a COMPILE_TEST config attached that demonstrates
-an invalid build caused by my changes, presumably that email bot just
-tries random configs with a new change until it finds one that breaks.
-
->
-> >> (Not sure what that would be called though ... KUNIT_RUNTIME_TEST?)
-> >>
-> >> I think that might be more maintainable as otherwise each new test would
-> >> have to modify the {min,def}{config,fragment} ...
-> >>
-> >
-> > Looking at kselftest-merge, they just start out with a set of
-> > fragments in which the union should contain all tests and then merge
-> > it with a base .config (probably intended to be $(ARCH)_defconfig).
-> > However, I don't know if that is the state of the art.
-> >
-> >>
-> >>> (this probably won't work in practice once we start testing mutually
-> >>> exclusive things or things with lots of ifdeffery, but it probably
-> >>> something we should try to maintain as best as we can?); this probably
-> >>> shouldn't go in with the fragments, right?
-> >>
-> >> Sounds like we agree there :)
-> >
-> > Totally. Long term we will need something a lot more sophisticated
-> > than anything under discussion here. I was talking about this with
-> > Luis on another thread:
-> > https://groups.google.com/forum/#!topic/kunit-dev/EQ1x0SzrUus (feel
-> > free to chime in!). Nevertheless, that's a really hard problem and I
-> > figure some variant of defconfigs and config fragments will work well
-> > enough until we reach that point.
-> >
-> >>
-> >>>
-> >>> I will be sending another revision out soon, but I figured I might be
-> >>> able to catch you before I did so.
-> >>
-> >> Thanks for thinking of me.
-> >
-> > How can I forget? You have been super helpful!
-> >
-> >> I hope I managed to reply in time to help and not hinder your progress.
-> >
-> > Yep, no trouble at all. You are the one helping me :-)
-> >
-> > Thanks!
-> >
->
-> --
-> Regards
-> --
-> Kieran
