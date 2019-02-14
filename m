@@ -2,187 +2,274 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE8EC4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:08:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4066C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:11:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4DBB222DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:08:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="JOKwebFD"
+	by mail.kernel.org (Postfix) with ESMTP id 73B80222DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 15:11:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407358AbfBNPIA (ORCPT
+        id S2404828AbfBNPLl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 10:08:00 -0500
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:51440 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406320AbfBNPHx (ORCPT
+        Thu, 14 Feb 2019 10:11:41 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51004 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389062AbfBNPLk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 10:07:53 -0500
-Received: from mailhost.synopsys.com (dc2-mailhost2.synopsys.com [10.12.135.162])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by smtprelay.synopsys.com (Postfix) with ESMTPS id 920A410C147C;
-        Thu, 14 Feb 2019 07:07:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1550156873; bh=NoiNAa22J10pan+AWkCcCRfLZPGEaQROdX+ERdes3NM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JOKwebFDU6LuRnC9+APMKq3fCiaIkFD3ppt2rDeKwmwcJZzdCIIAk6wEAmi1GeeM5
-         nmdZCpV8nOjCI0KrBABGx3OaKv1a2bT7ty4x5olWxNpGpV11LJRqLvtYpnSIRzUpEf
-         MM0QCO1ZPeksFZVR+M1bk5GkOFAnZ7PsRGbQNj4GgVlp9I0er0ok4w+nzmOf0qiRPV
-         vNep6YwCuOZWs67pi592/QQnBR+PUnE/l1R19LxU+/OfFLLeyD9yl8gBL1HP34ndFm
-         iTpSDXsHGMUl4oIP6542cJL44iplgU+XsxzEuUW0caacvVROfK2ZJrdR6s5Di7JkHx
-         5EEuqEV5F+Blg==
-Received: from paltsev-e7480.internal.synopsys.com (unknown [10.121.8.62])
-        by mailhost.synopsys.com (Postfix) with ESMTP id D7FDFA0091;
-        Thu, 14 Feb 2019 15:07:51 +0000 (UTC)
-From:   Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org,
-        Vineet Gupta <vineet.gupta1@synopsys.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        Corentin Labbe <clabbe@baylibre.com>, khilman@baylibre.com,
-        Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
-Subject: [PATCH v2 2/2] ARC: enable uboot support unconditionally
-Date:   Thu, 14 Feb 2019 18:07:45 +0300
-Message-Id: <20190214150745.18773-3-Eugeniy.Paltsev@synopsys.com>
-X-Mailer: git-send-email 2.14.5
-In-Reply-To: <20190214150745.18773-1-Eugeniy.Paltsev@synopsys.com>
-References: <20190214150745.18773-1-Eugeniy.Paltsev@synopsys.com>
+        Thu, 14 Feb 2019 10:11:40 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1EFAPQu098596
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 10:11:39 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qn9tpw3ev-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 10:11:37 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Thu, 14 Feb 2019 15:09:43 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 14 Feb 2019 15:09:40 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1EF9cDk3015072
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 14 Feb 2019 15:09:39 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E0E5811C050;
+        Thu, 14 Feb 2019 15:09:38 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5292711C04C;
+        Thu, 14 Feb 2019 15:09:38 +0000 (GMT)
+Received: from [9.152.224.140] (unknown [9.152.224.140])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 14 Feb 2019 15:09:38 +0000 (GMT)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v3 1/9] s390: vfio_ap: link the vfio_ap devices to the
+ vfio_ap bus subsystem
+To:     Christian Borntraeger <borntraeger@de.ibm.com>
+Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        pasic@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
+References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
+ <1550152269-6317-2-git-send-email-pmorel@linux.ibm.com>
+ <8d4a76f9-9cc8-691f-b1ae-ec6e95324e74@de.ibm.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Thu, 14 Feb 2019 16:09:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <8d4a76f9-9cc8-691f-b1ae-ec6e95324e74@de.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19021415-0012-0000-0000-000002F5BC12
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021415-0013-0000-0000-0000212D398D
+Message-Id: <38519183-5668-d05a-6d27-19d85858323c@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902140106
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After reworking U-boot args handling code and adding paranoid
-arguments check we can eliminate CONFIG_ARC_UBOOT_SUPPORT and
-enable uboot support unconditionally.
+On 14/02/2019 16:01, Christian Borntraeger wrote:
+> 
+> 
+> On 14.02.2019 14:51, Pierre Morel wrote:
+>> Libudev relies on having a subsystem link for non-root devices. To
+>> avoid libudev (and potentially other userspace tools) choking on the
+>> matrix device let us introduce a vfio_ap bus and with that the vfio_ap
+>> bus subsytem, and make the matrix device reside within it.
+>>
+>> We restrict the number of allowed devices to a single one.
+>>
+>> Doing this we need to suppress the forced link from the matrix device to
+>> the vfio_ap driver and we suppress the device_type we do not need
+>> anymore.
+>>
+>> Since the associated matrix driver is not the vfio_ap driver any more,
+>> we have to change the search for the devices on the vfio_ap driver in
+>> the function vfio_ap_verify_queue_reserved.
+>>
+>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+> 
+> Didnt you want to a add a reported-by?
 
-For JTAG case we can assume that core registers will come up
-reset value of 0 or in worst case we rely on user passing
-'-on=clear_regs' to Metaware debugger.
+Yes, forgot it.
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
----
- arch/arc/Kconfig                        | 12 ------------
- arch/arc/configs/nps_defconfig          |  1 -
- arch/arc/configs/vdk_hs38_defconfig     |  1 -
- arch/arc/configs/vdk_hs38_smp_defconfig |  2 --
- arch/arc/kernel/head.S                  |  2 --
- arch/arc/kernel/setup.c                 |  2 --
- 6 files changed, 20 deletions(-)
+Reported-by: Marc Hartmayer <mhartmay@linux.ibm.com>
+Reported-by: Christian Borntraeger <borntraeger@de.ibm.com>
 
-diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-index 376366a7db81..f9534417b201 100644
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -191,7 +191,6 @@ config NR_CPUS
- 
- config ARC_SMP_HALT_ON_RESET
- 	bool "Enable Halt-on-reset boot mode"
--	default y if ARC_UBOOT_SUPPORT
- 	help
- 	  In SMP configuration cores can be configured as Halt-on-reset
- 	  or they could all start at same time. For Halt-on-reset, non
-@@ -515,17 +514,6 @@ config ARC_DBG_TLB_PARANOIA
- 
- endif
- 
--config ARC_UBOOT_SUPPORT
--	bool "Support uboot arg Handling"
--	help
--	  ARC Linux by default checks for uboot provided args as pointers to
--	  external cmdline or DTB. This however breaks in absence of uboot,
--	  when booting from Metaware debugger directly, as the registers are
--	  not zeroed out on reset by mdb and/or ARCv2 based cores. The bogus
--	  registers look like uboot args to kernel which then chokes.
--	  So only enable the uboot arg checking/processing if users are sure
--	  of uboot being in play.
--
- config ARC_BUILTIN_DTB_NAME
- 	string "Built in DTB"
- 	help
-diff --git a/arch/arc/configs/nps_defconfig b/arch/arc/configs/nps_defconfig
-index 6e84060e7c90..621f59407d76 100644
---- a/arch/arc/configs/nps_defconfig
-+++ b/arch/arc/configs/nps_defconfig
-@@ -31,7 +31,6 @@ CONFIG_ARC_CACHE_LINE_SHIFT=5
- # CONFIG_ARC_HAS_LLSC is not set
- CONFIG_ARC_KVADDR_SIZE=402
- CONFIG_ARC_EMUL_UNALIGNED=y
--CONFIG_ARC_UBOOT_SUPPORT=y
- CONFIG_PREEMPT=y
- CONFIG_NET=y
- CONFIG_UNIX=y
-diff --git a/arch/arc/configs/vdk_hs38_defconfig b/arch/arc/configs/vdk_hs38_defconfig
-index 1e59a2e9c602..e447ace6fa1c 100644
---- a/arch/arc/configs/vdk_hs38_defconfig
-+++ b/arch/arc/configs/vdk_hs38_defconfig
-@@ -13,7 +13,6 @@ CONFIG_PARTITION_ADVANCED=y
- CONFIG_ARC_PLAT_AXS10X=y
- CONFIG_AXS103=y
- CONFIG_ISA_ARCV2=y
--CONFIG_ARC_UBOOT_SUPPORT=y
- CONFIG_ARC_BUILTIN_DTB_NAME="vdk_hs38"
- CONFIG_PREEMPT=y
- CONFIG_NET=y
-diff --git a/arch/arc/configs/vdk_hs38_smp_defconfig b/arch/arc/configs/vdk_hs38_smp_defconfig
-index b5c3f6c54b03..c82cdb10aaf4 100644
---- a/arch/arc/configs/vdk_hs38_smp_defconfig
-+++ b/arch/arc/configs/vdk_hs38_smp_defconfig
-@@ -15,8 +15,6 @@ CONFIG_AXS103=y
- CONFIG_ISA_ARCV2=y
- CONFIG_SMP=y
- # CONFIG_ARC_TIMERS_64BIT is not set
--# CONFIG_ARC_SMP_HALT_ON_RESET is not set
--CONFIG_ARC_UBOOT_SUPPORT=y
- CONFIG_ARC_BUILTIN_DTB_NAME="vdk_hs38_smp"
- CONFIG_PREEMPT=y
- CONFIG_NET=y
-diff --git a/arch/arc/kernel/head.S b/arch/arc/kernel/head.S
-index d45b862be05c..6fb1a35f9a29 100644
---- a/arch/arc/kernel/head.S
-+++ b/arch/arc/kernel/head.S
-@@ -90,7 +90,6 @@ ENTRY(stext)
- 	st.ab   0, [r5, 4]
- 1:
- 
--#ifdef CONFIG_ARC_UBOOT_SUPPORT
- 	; Uboot - kernel ABI
- 	;    r0 = [0] No uboot interaction, [1] cmdline in r2, [2] DTB in r2
- 	;    r1 = magic number (always zero as of now)
-@@ -98,7 +97,6 @@ ENTRY(stext)
- 	; These are handled later in handle_uboot_args()
- 	st	r0, [@uboot_tag]
- 	st	r2, [@uboot_arg]
--#endif
- 
- 	; setup "current" tsk and optionally cache it in dedicated r25
- 	mov	r9, @init_task
-diff --git a/arch/arc/kernel/setup.c b/arch/arc/kernel/setup.c
-index 88a885db9bb8..dbab88c8bbb3 100644
---- a/arch/arc/kernel/setup.c
-+++ b/arch/arc/kernel/setup.c
-@@ -487,7 +487,6 @@ void __init handle_uboot_args(void)
- 	bool use_embedded_dtb = true;
- 	bool append_cmdline = false;
- 
--#ifdef CONFIG_ARC_UBOOT_SUPPORT
- 	/* check that we know this tag */
- 	if (uboot_tag != UBOOT_TAG_NONE &&
- 	    uboot_tag != UBOOT_TAG_CMDLINE &&
-@@ -513,7 +512,6 @@ void __init handle_uboot_args(void)
- 		append_cmdline = true;
- 
- ignore_uboot_args:
--#endif
- 
- 	if (use_embedded_dtb) {
- 		machine_desc = setup_machine_fdt(__dtb_start);
+
+
+>> ---
+> 
+> 
+>>   drivers/s390/crypto/vfio_ap_drv.c     | 63 +++++++++++++++++++++++++++++++----
+>>   drivers/s390/crypto/vfio_ap_ops.c     |  4 +--
+>>   drivers/s390/crypto/vfio_ap_private.h |  1 +
+>>   3 files changed, 60 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
+>> index 31c6c84..1fd5fe6 100644
+>> --- a/drivers/s390/crypto/vfio_ap_drv.c
+>> +++ b/drivers/s390/crypto/vfio_ap_drv.c
+>> @@ -24,8 +24,9 @@ MODULE_LICENSE("GPL v2");
+>>   
+>>   static struct ap_driver vfio_ap_drv;
+>>   
+>> -static struct device_type vfio_ap_dev_type = {
+>> -	.name = VFIO_AP_DEV_TYPE_NAME,
+>> +struct matrix_driver {
+>> +	struct device_driver drv;
+>> +	int device_count;
+>>   };
+>>   
+>>   struct ap_matrix_dev *matrix_dev;
+>> @@ -62,6 +63,41 @@ static void vfio_ap_matrix_dev_release(struct device *dev)
+>>   	kfree(matrix_dev);
+>>   }
+>>   
+>> +static int matrix_bus_match(struct device *dev, struct device_driver *drv)
+>> +{
+>> +	return 1;
+>> +}
+>> +
+>> +static struct bus_type matrix_bus = {
+>> +	.name = "vfio_ap",
+>> +	.match = &matrix_bus_match,
+>> +};
+>> +
+>> +static int matrix_probe(struct device *dev);
+>> +static int matrix_remove(struct device *dev);
+>> +static struct matrix_driver matrix_driver = {
+>> +	.drv = {
+>> +		.name = "vfio_ap",
+>> +		.bus = &matrix_bus,
+>> +		.probe = matrix_probe,
+>> +		.remove = matrix_remove,
+>> +	},
+>> +};
+>> +
+>> +static int matrix_probe(struct device *dev)
+>> +{
+>> +	if (matrix_driver.device_count)
+>> +		return -EEXIST;
+>> +	matrix_driver.device_count++;
+>> +	return 0;
+>> +}
+>> +
+>> +static int matrix_remove(struct device *dev)
+>> +{
+>> +	matrix_driver.device_count--;
+>> +	return 0;
+>> +}
+>> +
+>>   static int vfio_ap_matrix_dev_create(void)
+>>   {
+>>   	int ret;
+>> @@ -71,6 +107,10 @@ static int vfio_ap_matrix_dev_create(void)
+>>   	if (IS_ERR(root_device))
+>>   		return PTR_ERR(root_device);
+>>   
+>> +	ret = bus_register(&matrix_bus);
+>> +	if (ret)
+>> +		goto bus_register_err;
+>> +
+>>   	matrix_dev = kzalloc(sizeof(*matrix_dev), GFP_KERNEL);
+>>   	if (!matrix_dev) {
+>>   		ret = -ENOMEM;
+>> @@ -87,30 +127,41 @@ static int vfio_ap_matrix_dev_create(void)
+>>   	mutex_init(&matrix_dev->lock);
+>>   	INIT_LIST_HEAD(&matrix_dev->mdev_list);
+>>   
+>> -	matrix_dev->device.type = &vfio_ap_dev_type;
+>>   	dev_set_name(&matrix_dev->device, "%s", VFIO_AP_DEV_NAME);
+>>   	matrix_dev->device.parent = root_device;
+>> +	matrix_dev->device.bus = &matrix_bus;
+>>   	matrix_dev->device.release = vfio_ap_matrix_dev_release;
+>> -	matrix_dev->device.driver = &vfio_ap_drv.driver;
+>> +	matrix_dev->vfio_ap_drv = &vfio_ap_drv;
+>>   
+>>   	ret = device_register(&matrix_dev->device);
+>>   	if (ret)
+>>   		goto matrix_reg_err;
+>>   
+>> +	ret = driver_register(&matrix_driver.drv);
+>> +	if (ret)
+>> +		goto matrix_drv_err;
+>> +
+>>   	return 0;
+>>   
+>> +matrix_drv_err:
+>> +	device_unregister(&matrix_dev->device);
+>>   matrix_reg_err:
+>>   	put_device(&matrix_dev->device);
+>>   matrix_alloc_err:
+>> +	bus_unregister(&matrix_bus);
+>> +bus_register_err:
+>>   	root_device_unregister(root_device);
+>> -
+>>   	return ret;
+>>   }
+>>   
+>>   static void vfio_ap_matrix_dev_destroy(void)
+>>   {
+>> +	struct device *root_device = matrix_dev->device.parent;
+>> +
+>> +	driver_unregister(&matrix_driver.drv);
+>>   	device_unregister(&matrix_dev->device);
+>> -	root_device_unregister(matrix_dev->device.parent);
+>> +	bus_unregister(&matrix_bus);
+>> +	root_device_unregister(root_device);
+>>   }
+>>   
+>>   static int __init vfio_ap_init(void)
+>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+>> index 272ef42..900b9cf 100644
+>> --- a/drivers/s390/crypto/vfio_ap_ops.c
+>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+>> @@ -198,8 +198,8 @@ static int vfio_ap_verify_queue_reserved(unsigned long *apid,
+>>   	qres.apqi = apqi;
+>>   	qres.reserved = false;
+>>   
+>> -	ret = driver_for_each_device(matrix_dev->device.driver, NULL, &qres,
+>> -				     vfio_ap_has_queue);
+>> +	ret = driver_for_each_device(&matrix_dev->vfio_ap_drv->driver, NULL,
+>> +				     &qres, vfio_ap_has_queue);
+>>   	if (ret)
+>>   		return ret;
+>>   
+>> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
+>> index 5675492..76b7f98 100644
+>> --- a/drivers/s390/crypto/vfio_ap_private.h
+>> +++ b/drivers/s390/crypto/vfio_ap_private.h
+>> @@ -40,6 +40,7 @@ struct ap_matrix_dev {
+>>   	struct ap_config_info info;
+>>   	struct list_head mdev_list;
+>>   	struct mutex lock;
+>> +	struct ap_driver  *vfio_ap_drv;
+>>   };
+>>   
+>>   extern struct ap_matrix_dev *matrix_dev;
+>>
+
+
 -- 
-2.14.5
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
 
