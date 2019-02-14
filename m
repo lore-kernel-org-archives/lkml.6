@@ -2,138 +2,270 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07BC5C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:42:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8700C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:42:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCE2F222DC
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:42:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63EF8222DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:42:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=criteo.com header.i=@criteo.com header.b="WcpwtNEp"
+	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="UGv0uxmX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408060AbfBNQm1 (ORCPT
+        id S2408066AbfBNQml (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:42:27 -0500
-Received: from mx08-00287e01.pphosted.com ([62.209.51.156]:56886 "EHLO
-        mx07-00287e01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727643AbfBNQm0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 11:42:26 -0500
-Received: from pps.filterd (m0111315.ppops.net [127.0.0.1])
-        by mx07-00287e01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1EGeFLe002413;
-        Thu, 14 Feb 2019 17:42:14 +0100
-Received: from eur03-ve1-obe.outbound.protection.outlook.com (mail-ve1eur03lp2056.outbound.protection.outlook.com [104.47.9.56])
-        by mx07-00287e01.pphosted.com with ESMTP id 2qmy9s0tu3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 14 Feb 2019 17:42:14 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=criteo.com;
- s=selector1;
+        Thu, 14 Feb 2019 11:42:41 -0500
+Received: from mail-eopbgr730052.outbound.protection.outlook.com ([40.107.73.52]:54899
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2391003AbfBNQmj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 11:42:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector1-analog-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HIjDLxx3Sim+RaHvjabeWNcB6N0XypSE5YZsXoXczGo=;
- b=WcpwtNEpbmh6Hz91eHUyYclRLm+Ko6M/S+aAc2hqH2r3gfR5w+31rfl+/LsHKs/R39FRqA8YAUfcc0jNvNVgE6vDRh92fjBRsurCJxuXdcCOjXEBK+O+DRQeyjbP3gj038VuuZxfKBILn0D3LII4HA1IA1UbVhYKtw8Aly+27aQ=
-Received: from VI1PR04MB5629.eurprd04.prod.outlook.com (20.178.125.158) by
- VI1PR04MB5216.eurprd04.prod.outlook.com (20.177.51.205) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.16; Thu, 14 Feb 2019 16:42:10 +0000
-Received: from VI1PR04MB5629.eurprd04.prod.outlook.com
- ([fe80::9851:8b8c:f61c:6045]) by VI1PR04MB5629.eurprd04.prod.outlook.com
- ([fe80::9851:8b8c:f61c:6045%4]) with mapi id 15.20.1622.016; Thu, 14 Feb 2019
- 16:42:10 +0000
-From:   Erwan Velu <e.velu@criteo.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-CC:     Erwan Velu <erwanaliasr1@gmail.com>,
-        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Len Brown <lenb@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "open list:INTEL PSTATE DRIVER" <linux-pm@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6] cpufreq: intel_pstate: Reporting reasons why driver
- prematurely exit
-Thread-Topic: [PATCH v6] cpufreq: intel_pstate: Reporting reasons why driver
- prematurely exit
-Thread-Index: AQHUw5aitGKSKy+IPEu9VYMAMc3KbKXfGNuA///+XgCAAGoMAA==
-Date:   Thu, 14 Feb 2019 16:42:10 +0000
-Message-ID: <8158d558-bbcd-fabe-6c8a-8de840807dc0@criteo.com>
-References: <20190213122105.14270-1-e.velu@criteo.com>
- <ae38f70b-f352-8567-2dac-5f6c7723a668@criteo.com>
- <CAJZ5v0geHMDMLqg98BZEGLjNrSRy3juB9y54ots357wVeK-shQ@mail.gmail.com>
-In-Reply-To: <CAJZ5v0geHMDMLqg98BZEGLjNrSRy3juB9y54ots357wVeK-shQ@mail.gmail.com>
-Accept-Language: fr-FR, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: LO2P265CA0206.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:9e::26) To VI1PR04MB5629.eurprd04.prod.outlook.com
- (2603:10a6:803:de::30)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [91.199.242.236]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 65dbd9df-087c-46b7-4cc7-08d6929b5d2d
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5216;
-x-ms-traffictypediagnostic: VI1PR04MB5216:
-x-microsoft-exchange-diagnostics: =?utf-8?B?MTtWSTFQUjA0TUI1MjE2OzIzOm4zNTQwNlJFak9zbGVYMVE3clhTQ0pTaU9E?=
- =?utf-8?B?eDR3cXZFRTdOUncvbmFYbVdSTko5alFhUmtqTlFRanZpSmxrVHg5eTJMRjJE?=
- =?utf-8?B?MTBNZDZaYTFhSTc1L2srSndveVZKK1pBdWRRV2tjMXNTek1DTzNqUEtRV2hu?=
- =?utf-8?B?emVuUkF1ZEJqS2pwU3RRVHFWbXdoSSs2ZHdwL1dKZmk1cCtPZGVtQksyVnlo?=
- =?utf-8?B?NEN3dWNBQ01CSTg3SHZwUEZyQXJOZHJJS1lPZEhnNWZ2TThyL0JEdi9CRk5q?=
- =?utf-8?B?QlJKSEJpU3AzTGRJd1dreWhWTHl3L3BSdGk4TDZPNCtLdkhBQ1FDbEYzZjh3?=
- =?utf-8?B?T2llU3BKTFdFVEZCMWNKb3Vqak9FZXJyTStFOGdoWU0yUHJvTGZZZVJXU3Z4?=
- =?utf-8?B?cmNoOURwREY2ZE5aZlVNWHJac3lxTjBBUHVybDNJMVQzMllKQ1Bxdk42aGhF?=
- =?utf-8?B?SlhDUEphOVc3cFY2dVhKbU5Vd1k0TzZodDFhQ0VKMEQ0SGlBYWErQ0tyZGxo?=
- =?utf-8?B?NFhBYVdMY1lqVi9SWHVlT3ZWKzJBZmpxeU8wWEFXTHhjeGhBQXRCWFFmd3Ru?=
- =?utf-8?B?S2sxakFWc3c2bXVScjZEdVdrSXZoZmtkVWJWdFFnYjlZZm83dk5kZXNGTWJz?=
- =?utf-8?B?K2pXVWVQZVFhWWd3dUVySmgwbmJ4SkgrMk4xTkxPbFJIZlpyVWIyQkVQWk5G?=
- =?utf-8?B?QTNiRisxZ3NzbDgzL0dhSVh0a2Y5TjRzazU2Z0Z4aitZWWMwVDl2Q3pDeThK?=
- =?utf-8?B?SmpIODNybC9MMTlWdjI2dyt1QnBHYUhTSlk5Ui9JU09NS3NHMUlTRGRCdXRC?=
- =?utf-8?B?S0UzSUJpT015STBkZGRFNGEwc0xFTmFhTjVKWElOTWFFNTk5TnBYR0FaWlcw?=
- =?utf-8?B?Uy9pTUkvd1FucG05Zmdrc3ZiSDdXcjZzOGVRZ1lzaWZRQjlTcTBYTGMySEJJ?=
- =?utf-8?B?bmtDclRRYTdWNmFHNXl1T0Y1R3FYMFc0a3FTUmhsKzZ4cmt1R3VVRHZZQS9w?=
- =?utf-8?B?S3ZFVzZjUWxUbU5QM1ArL3RmeDN1dktxOUx1c3o4dVc4TS84eWFzQnFjekdw?=
- =?utf-8?B?WFdPTDd6YmJ2cjI5M00zOHEwQUEwdVBwcGpENHhZMmRGUlJSZlQ1bmFic3Jt?=
- =?utf-8?B?Y0pBYUg4ak1WWTJEdGlwV1I2ODhXSTMwUFBKQW5mVGc0bHdHb0g2N3QvZXky?=
- =?utf-8?B?Z2dQeTUyd3VaRTZVaUgweCtpdTluWm9WakhwMWZSc1FwYkxWMzNtWnVIdlNw?=
- =?utf-8?B?VGc1OXZzWWNMekRiU0ExNnVFQlNFQm9KeFZuWFZWSVVXV2dCNmFEKytZdlpX?=
- =?utf-8?B?bGltRXNZK29xZm1zNnBBRHo2YWRwR0tmNUsyOG80S0RQTmlmVEQ3R2NpOU9k?=
- =?utf-8?B?SXVKZXA2am9ub0ZMRUsyUTd3Lys1ZmlnS3FHa09YOW92WGFmQlJiOUpaWVlM?=
- =?utf-8?B?NFhkTkRiRXNVMWdnV0FrZnI3M2RYR08vNk9PcnhwblpNT1h6R2U1QlFYTVNF?=
- =?utf-8?B?TXJZNDdWcmFUcWM2ai94cm96Z1c2ZGU5b2NpTmsvOWRuQmdHK1dyeVJFWFJj?=
- =?utf-8?B?elhkVGpyVHZFaGJyYkZ4dWFJL3pjT0crWGhkQndBaUR2Uk1teGlBNC95RU9P?=
- =?utf-8?B?WkNLMVVzVGd3QzZnWTh1dmNOZFc0RkY1Z3dDRnJuNjZXZ0RodzdtTElJbGkw?=
- =?utf-8?Q?4mcQjqqCa0kYBBWlyTQYtAbVeSlAVgV4duTAzxh?=
-x-microsoft-antispam-prvs: <VI1PR04MB52165156FA22DB3236B3A71FF2670@VI1PR04MB5216.eurprd04.prod.outlook.com>
-x-forefront-prvs: 09480768F8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(376002)(39860400002)(366004)(136003)(199004)(189003)(6916009)(4326008)(25786009)(2906002)(52116002)(476003)(446003)(66066001)(11346002)(6506007)(386003)(76176011)(2616005)(186003)(486006)(102836004)(6246003)(26005)(36756003)(105586002)(99286004)(53936002)(97736004)(478600001)(71190400001)(316002)(31686004)(14454004)(81156014)(6512007)(256004)(6436002)(229853002)(68736007)(86362001)(31696002)(71200400001)(305945005)(81166006)(6116002)(3846002)(6486002)(14444005)(4744005)(8676002)(66574012)(7736002)(8936002)(106356001)(54906003);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR04MB5216;H:VI1PR04MB5629.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: criteo.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: yljGRLhKWLY7ilrUNfdjfBNHDGVIZOUoUP6QKK+y+AGzk6IbeGrRM0gwWkYbCGYthVmXy6lOCqniB5+WaIwcoRnoeNGkxnCf+oUNC+pk+gM9l3xi4HR6Mk2OPzOlkUooC/U2+5J0BcRNeCP2+7ppckmvT/lbB4nGhGP1FkRH4WNxLZfXsQJ0C3oYZ3JCUZHjGt1s5CF+VfRveOyn8PAK7pyPdJIMZtOSMt6q1CRSEtjApOjSyidTPS11HeYjSgPprD/55vygeMmEcaz0AXjoXkt40ZGOXTH7kuQ933C+75hgcPPT50xcxu7YCwoNtOxgC7pEF/wQ4nWSuY6j/L/BqIMw/t/CyRQUQ5X8rV+D15oV8AI0U6jZjHeAH1zKlqhci+Aod4ZQOv2EGoxxnuxyEAfviU9UgJBimb+ID3b8Feo=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <AF0E74F8E8D3A04D90BBA2FE55580C16@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+ bh=NkpgmJ7AOd4kaONzecoLxjhjDuUHwCBz95Nqa0+NfHA=;
+ b=UGv0uxmXyPZ89eeGikhXdgdxt8YhOwSmzoiMSqIHRfSWvv0cByUERCKM3vijN9HKxFb+cP7PraqBBWlz43LyfS5fXZ73DFWnL72Ro5Kx1mV/imhEW/qiazgBXrgDqs4sU10WN9+ZBEV2QVJHkRtoy2prPSBbFCewxvNq3FAd4ik=
+Received: from MWHPR03CA0028.namprd03.prod.outlook.com (2603:10b6:301:3b::17)
+ by BN7PR03MB3748.namprd03.prod.outlook.com (2603:10b6:408:23::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1622.16; Thu, 14 Feb
+ 2019 16:42:34 +0000
+Received: from BL2NAM02FT017.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::205) by MWHPR03CA0028.outlook.office365.com
+ (2603:10b6:301:3b::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1622.16 via Frontend
+ Transport; Thu, 14 Feb 2019 16:42:34 +0000
+Authentication-Results: spf=pass (sender IP is 137.71.25.57)
+ smtp.mailfrom=analog.com; gmx.de; dkim=none (message not signed)
+ header.d=none;gmx.de; dmarc=bestguesspass action=none header.from=analog.com;
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.57 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.57; helo=nwd2mta2.analog.com;
+Received: from nwd2mta2.analog.com (137.71.25.57) by
+ BL2NAM02FT017.mail.protection.outlook.com (10.152.77.174) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1580.10
+ via Frontend Transport; Thu, 14 Feb 2019 16:42:30 +0000
+Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
+        by nwd2mta2.analog.com (8.13.8/8.13.8) with ESMTP id x1EGgTle017053
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Thu, 14 Feb 2019 08:42:29 -0800
+Received: from ben-Latitude-E6540.analog.com (10.50.1.129) by
+ NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 14 Feb 2019 11:42:29 -0500
+From:   Beniamin Bia <beniamin.bia@analog.com>
+To:     <jic23@kernel.org>
+CC:     <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
+        <knaack.h@gmx.de>, <pmeerw@pmeerw.net>,
+        <gregkh@linuxfoundation.org>, <linux-iio@vger.kernel.org>,
+        <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>,
+        <biabeniamin@outlook.com>, Beniamin Bia <beniamin.bia@analog.com>
+Subject: [PATCH v2 2/2] staging: iio: frequency: ad9834: Move phase and scale to standard iio attribute
+Date:   Thu, 14 Feb 2019 18:41:30 +0200
+Message-ID: <20190214164130.30085-2-beniamin.bia@analog.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190214164130.30085-1-beniamin.bia@analog.com>
+References: <20190214164130.30085-1-beniamin.bia@analog.com>
 MIME-Version: 1.0
-X-OriginatorOrg: criteo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 65dbd9df-087c-46b7-4cc7-08d6929b5d2d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2019 16:42:09.5386
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.57;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(376002)(396003)(136003)(39860400002)(2980300002)(3190300001)(199004)(189003)(186003)(106466001)(478600001)(106002)(54906003)(336012)(4326008)(2351001)(50466002)(14444005)(53416004)(86362001)(356004)(6666004)(26005)(77096007)(2616005)(446003)(476003)(486006)(2906002)(116002)(126002)(426003)(44832011)(11346002)(76176011)(48376002)(36756003)(107886003)(1076003)(8936002)(51416003)(7696005)(246002)(6916009)(316002)(50226002)(16586007)(72206003)(8676002)(305945005)(7636002)(47776003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR03MB3748;H:nwd2mta2.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail11.analog.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;BL2NAM02FT017;1:/c/sCwQVcKGIaIDKt5C5nurICfkryHOeUofu1Xyy5M2xdUdGd7sC5Z4+kaNwWWFlCMU3Vtbn3MLuqukbMe0/RwU8X8emqNwoW8wnWgxBHiKPgPpgmr3AGOA6lQMKb2N45UcGY6+TnodoNFUuZ7g7+A==
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 5a7c4d05-b46f-494f-faf0-08d6929b6b1d
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4608076)(4709027)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:BN7PR03MB3748;
+X-MS-TrafficTypeDiagnostic: BN7PR03MB3748:
+X-Microsoft-Exchange-Diagnostics: 1;BN7PR03MB3748;20:wGZs9Yyg1vtrOM6lkGQbYZk3qAy69anXCmKPDnWp1bUA4NbnBxxGFzq4pCqqJe1lgAdhQs8wkIhirHm/DUgvnOs6a7OUEMq8ZKZpRrJpaIWh/W/WU04GSWPNqjK+GsmIPuTfMxL9Lwh+ZjwXgLVsy1/41T6Vq5dsq7u+f3l5kVyqPnW7a7ZzZdz4E4CRNowAzj9+RQ84Ph4FJMDZm2o7kgkJc9T0cHzzKLCyzj6LnN6cB3KnE9/xnLswdH2oqsFo15+sRcW0lHFv0x91NSjzLIxC+vlgg8lHTfIMqvB3Dk9p+rLzLWJPbb75QAL3/tfqkTDXmu1SyZHwveY36eOrIa6ByTgYJqBRUK5T0BG2H2PHqNkWZq97siIlN3cxzqgmsfjbOri7rx6SkoERnhz3+zYXLzoaIK33MDT9g4KMuGaNJzzs3cgWdPO1JHJomp8nldHTT1Akl5PP0IfILogD8jOJhUqu1QiJ3jAKY0RU2Ojae8w1u3m+pCNkBcd7vwTr
+X-Microsoft-Antispam-PRVS: <BN7PR03MB37488DCD72BA28B1E8BF4E07F0670@BN7PR03MB3748.namprd03.prod.outlook.com>
+X-Forefront-PRVS: 09480768F8
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN7PR03MB3748;23:wCHCnB2bYh85AfgEwGbxIaV+8LOM7AT+8ydLbMMKE?=
+ =?us-ascii?Q?ZPoHMYQS3eQizFjFsfXV5zzoo021P7vGXzkEp3Zh1nagrZnNmiKAO24DzkYh?=
+ =?us-ascii?Q?/2G1DIN6eqI0BJJP1uOQr7BGOxqN+9Q9+uEqZPBAQJ/gUZ9a+EIwRz+jn/Kq?=
+ =?us-ascii?Q?P3SbKPtj8Bu+Ez9kD2cKZ2j8TcqrPpp/wkIGkS+6QzLFj3Q9rZZPwSzfsIBw?=
+ =?us-ascii?Q?jFG8Ji2ztFXCJJGm3gfwwG72h6UwLzA41/kNVnPlWfJYKCEgXNvy4HVdkCdG?=
+ =?us-ascii?Q?m2nfJNEpzLEDgRWrHzDVLwx6KYPwl1XBJfJNB250euD881VAlhl5t20bf/NQ?=
+ =?us-ascii?Q?gq9SPJ2IVqc7MgIHwo7HpG8XgXRky4up4Q2Swp2mcK1aeeaCNqJlsWIPj0ak?=
+ =?us-ascii?Q?TcV1dE1ImHQDcgKvQE7MfyEteRaQ/URdvArBXugzZZ3tPsYsC9AFIhM8P0H0?=
+ =?us-ascii?Q?SQoC5nhttYaiQ0N3FELa19rKJvIliLmWDwdAHurQhzjJjpF8sXVzR3W+bJcK?=
+ =?us-ascii?Q?sg2t4X4QRebz7KWAi0G8fVj9VqQdDt4HGvo2QfF211OlT/rW+G2WqMWXDy1i?=
+ =?us-ascii?Q?xGKvXZRyeLNLNk4g6zp44sPMu3FVdE7KuBGSVeR0i3MpTkiAIqOU7GhR4bAC?=
+ =?us-ascii?Q?irm++Z1SkCX0m/391qeiAfvSfoOBYloTsLXWJIwM+bNTMaUGhHCBCfgAura/?=
+ =?us-ascii?Q?6L4RZD3+2z1RGyveTHa1uizHdXQRwE9ErkPzjTEpiIupr0PFGFksEWIFQrr8?=
+ =?us-ascii?Q?wAOi/RC5hVrPj8aRQzRo4W55WDhUGXWvJ3AfpgYnXt+OSsujLMIdK1atTDE6?=
+ =?us-ascii?Q?85dckeGbDwQpIIl5vp/IIHjYmdwU4+N9pYSJl95UHQVz3ZkuR9tem6Sfd8B6?=
+ =?us-ascii?Q?N/hyHGqvafghjt07aylWunI6+A/hJf/uwEA/CWPnn/3DvBVhJc506Mc9rKZ0?=
+ =?us-ascii?Q?joz9jvNDIVkzE48Rayu9VR9zkTEKMXJHKI7qAYh4IwPHCNEBiQWrSyMNjMFW?=
+ =?us-ascii?Q?nwkkbjUyaLkJ+zs4mCU95lr+sCmG0tE2gcu97Eoi2+y1sYFubcjJ+1tYJFwn?=
+ =?us-ascii?Q?DBke8vlshK/e3of+cl1RoG6CHb5vkCCRqcR3M0Sd+fD5Xyhd3rFU7rKZUEnm?=
+ =?us-ascii?Q?8D46nC5Q6c5pl0dXzidpBcL/aVF4S1r?=
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: HrQtPd0gKEtWGw6KbV7+ylyWG6lve8Y3mpa8r4Cpnhoe3JXXDWbYl8Y5EhTmy4z6Nz/d86M9oG4CBYsJSmfv7rjj7pH64IFHUZ6y0Zu4vBWlq/wdahMqk8NIcxNFTq8wVzSMbaxR1y0Lt889GRW+3OE7zvX9sraoyGovbcsNSSXPKNoAr/I8lEMWu4FriqBAcyg2qvUpmsXI2/+zSpz9veg9dTJ9bMOR8Raq1beKeDjuxnyot9yACH4c2bkYcXnHmOzg5h+WwUnf1axoI3E9lN6GmlJSFTuaye4kGunkvDPja/WZ5Io+eLRHYhhS0kEUJd19raNyDBqgw7V4TzMx4r1Fm3XeBMaPXjRzSQoJSX3JqRqV14M1I0APSAeT0nEcb7hxYKqPdsF1jfsk61j4F0kzUd1Luibw1Hrxh57kpNU=
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Feb 2019 16:42:30.1270
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 2a35d8fd-574d-48e3-927c-8c398e225a01
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5216
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a7c4d05-b46f-494f-faf0-08d6929b6b1d
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.57];Helo=[nwd2mta2.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR03MB3748
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQpMZSAxNC8wMi8yMDE5IMOgIDExOjIyLCBSYWZhZWwgSi4gV3lzb2NraSBhIMOpY3JpdMKgOg0K
-PiBJJ3ZlIHF1ZXVlZCBpdCB1cCB3aXRoIHNvbWUgbWFudWFsIGNoYW5nZXMuICBObyBuZWVkIHRv
-IHVwZGF0ZS4NCg0KQXMgdGhpcyBjb3VsZCBoZWxwIHRyb3VibGVzaG9vdGluZyBwbGF0Zm9ybXMg
-YW5kIGFzIHNvbWUgY29tbWl0cyBsaWtlIA0KdGhlIFBTUyBvbmUgb24gUHJvbGlhbnQgc2VydmVy
-cyB3ZXJlIGJhY2twb3J0ZWQgdG8gc3RhYmxlLCBJIHdvdWxkIA0Kc3VyZWx5IG1ha2Ugc2Vuc2Ug
-dG8gYmFja3BvcnQgaXQgdG8gdGhlIG90aGVyIHN0YWJsZS4NCg0KSSBrbm93IHRoaXMgaXMgb25s
-eSBhIHRyaXZpYWwgcHJpbnQgcGF0Y2ggYnV0IGFzIG15IGluaXRpYWwgaXNzdWUgDQpzdGFydGVk
-IHdpdGggc29tZSBvZiB0aGUgNC4xNCBzZXJpZSwgaXQgY291bGQgYmUgbmljZSB0byBoYXZlIGl0
-IHRvby4NCg0KRXJ3YW4sDQoNCg==
+The custom phase and scale attributes were moved to standard iio types.
+
+Signed-off-by: Beniamin Bia <beniamin.bia@analog.com>
+---
+Changes in v2:
+	-the personal email address was replaced by the work email
+	-separate define for every phase channel
+	-enum used for write_phase functions
+	-phase variables were replaced by an array
+
+ drivers/staging/iio/frequency/ad9834.c | 53 ++++++++++++++++----------
+ 1 file changed, 32 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/staging/iio/frequency/ad9834.c b/drivers/staging/iio/frequency/ad9834.c
+index 561617046c20..4366b6121154 100644
+--- a/drivers/staging/iio/frequency/ad9834.c
++++ b/drivers/staging/iio/frequency/ad9834.c
+@@ -82,6 +82,7 @@ struct ad9834_state {
+ 	struct mutex                    lock;   /* protect sensor state */
+ 
+ 	unsigned long			frequency[2];
++	unsigned long			phase[2];
+ 
+ 	/*
+ 	 * DMA (thus cache coherency maintenance) requires the
+@@ -113,6 +114,8 @@ enum ad9834_supported_device_ids {
+ 		.output = 1,						\
+ 		.channel = (chan),					\
+ 		.info_mask_separate = BIT(IIO_CHAN_INFO_FREQUENCY)	\
++						| BIT(IIO_CHAN_INFO_PHASE),\
++		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),	\
+ }
+ 
+ static const struct iio_chan_spec ad9833_channels[] = {
+@@ -172,13 +175,26 @@ static int ad9834_write_frequency(struct ad9834_state *st,
+ }
+ 
+ static int ad9834_write_phase(struct ad9834_state *st,
+-			      unsigned long addr, unsigned long phase)
++			      enum ad9834_ch_addr addr,
++			      unsigned long phase)
+ {
++	int ret;
++
+ 	if (phase > BIT(AD9834_PHASE_BITS))
+ 		return -EINVAL;
+-	st->data = cpu_to_be16(addr | phase);
+ 
+-	return spi_sync(st->spi, &st->msg);
++	if (addr == AD9834_CHANNEL_ADDRESS0)
++		st->data = cpu_to_be16(AD9834_REG_PHASE0 | phase);
++	else
++		st->data = cpu_to_be16(AD9834_REG_PHASE1 | phase);
++
++	ret = spi_sync(st->spi, &st->msg);
++	if (ret)
++		return ret;
++
++	st->phase[(int)addr] = phase;
++
++	return 0;
+ }
+ 
+ static int ad9834_read_raw(struct iio_dev *indio_dev,
+@@ -191,6 +207,13 @@ static int ad9834_read_raw(struct iio_dev *indio_dev,
+ 	case IIO_CHAN_INFO_FREQUENCY:
+ 		*val = st->frequency[chan->channel];
+ 		return IIO_VAL_INT;
++	case IIO_CHAN_INFO_PHASE:
++		*val = st->phase[chan->channel];
++		return IIO_VAL_INT;
++	case IIO_CHAN_INFO_SCALE:
++		/*1 hz */
++		*val = 1;
++		return IIO_VAL_INT;
+ 	}
+ 
+ 	return -EINVAL;
+@@ -207,6 +230,10 @@ static int ad9834_write_raw(struct iio_dev *indio_dev,
+ 		return ad9834_write_frequency(st,
+ 					      (enum ad9834_ch_addr)chan->channel,
+ 					      val);
++	case IIO_CHAN_INFO_PHASE:
++		return ad9834_write_phase(st,
++					  (enum ad9834_ch_addr)chan->channel,
++					  val);
+ 	default:
+ 		return  -EINVAL;
+ 	}
+@@ -231,10 +258,6 @@ static ssize_t ad9834_write(struct device *dev,
+ 
+ 	mutex_lock(&st->lock);
+ 	switch ((u32)this_attr->address) {
+-	case AD9834_REG_PHASE0:
+-	case AD9834_REG_PHASE1:
+-		ret = ad9834_write_phase(st, this_attr->address, val);
+-		break;
+ 	case AD9834_OPBITEN:
+ 		if (st->control & AD9834_MODE) {
+ 			ret = -EINVAL;  /* AD9843 reserved mode */
+@@ -394,12 +417,8 @@ static IIO_DEVICE_ATTR(out_altvoltage0_out1_wavetype_available, 0444,
+  */
+ 
+ static IIO_DEV_ATTR_FREQSYMBOL(0, 0200, NULL, ad9834_write, AD9834_FSEL);
+-static IIO_CONST_ATTR_FREQ_SCALE(0, "1"); /* 1Hz */
+ 
+-static IIO_DEV_ATTR_PHASE(0, 0, 0200, NULL, ad9834_write, AD9834_REG_PHASE0);
+-static IIO_DEV_ATTR_PHASE(0, 1, 0200, NULL, ad9834_write, AD9834_REG_PHASE1);
+ static IIO_DEV_ATTR_PHASESYMBOL(0, 0200, NULL, ad9834_write, AD9834_PSEL);
+-static IIO_CONST_ATTR_PHASE_SCALE(0, "0.0015339808"); /* 2PI/2^12 rad*/
+ 
+ static IIO_DEV_ATTR_PINCONTROL_EN(0, 0200, NULL,
+ 	ad9834_write, AD9834_PIN_SW);
+@@ -410,10 +429,6 @@ static IIO_DEV_ATTR_OUT_WAVETYPE(0, 0, ad9834_store_wavetype, 0);
+ static IIO_DEV_ATTR_OUT_WAVETYPE(0, 1, ad9834_store_wavetype, 1);
+ 
+ static struct attribute *ad9834_attributes[] = {
+-	&iio_const_attr_out_altvoltage0_frequency_scale.dev_attr.attr,
+-	&iio_dev_attr_out_altvoltage0_phase0.dev_attr.attr,
+-	&iio_dev_attr_out_altvoltage0_phase1.dev_attr.attr,
+-	&iio_const_attr_out_altvoltage0_phase_scale.dev_attr.attr,
+ 	&iio_dev_attr_out_altvoltage0_pincontrol_en.dev_attr.attr,
+ 	&iio_dev_attr_out_altvoltage0_frequencysymbol.dev_attr.attr,
+ 	&iio_dev_attr_out_altvoltage0_phasesymbol.dev_attr.attr,
+@@ -427,10 +442,6 @@ static struct attribute *ad9834_attributes[] = {
+ };
+ 
+ static struct attribute *ad9833_attributes[] = {
+-	&iio_const_attr_out_altvoltage0_frequency_scale.dev_attr.attr,
+-	&iio_dev_attr_out_altvoltage0_phase0.dev_attr.attr,
+-	&iio_dev_attr_out_altvoltage0_phase1.dev_attr.attr,
+-	&iio_const_attr_out_altvoltage0_phase_scale.dev_attr.attr,
+ 	&iio_dev_attr_out_altvoltage0_frequencysymbol.dev_attr.attr,
+ 	&iio_dev_attr_out_altvoltage0_phasesymbol.dev_attr.attr,
+ 	&iio_dev_attr_out_altvoltage0_out_enable.dev_attr.attr,
+@@ -554,11 +565,11 @@ static int ad9834_probe(struct spi_device *spi)
+ 	if (ret)
+ 		goto error_clock_unprepare;
+ 
+-	ret = ad9834_write_phase(st, AD9834_REG_PHASE0, 512);
++	ret = ad9834_write_phase(st, AD9834_CHANNEL_ADDRESS0, 512);
+ 	if (ret)
+ 		goto error_clock_unprepare;
+ 
+-	ret = ad9834_write_phase(st, AD9834_REG_PHASE1, 1024);
++	ret = ad9834_write_phase(st, AD9834_CHANNEL_ADDRESS1, 1024);
+ 	if (ret)
+ 		goto error_clock_unprepare;
+ 
+-- 
+2.17.1
+
