@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE62C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:01:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89CD5C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79DA1222D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:01:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 553FA222D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:01:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="ryNYoZhi"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="J5iGyv0r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439127AbfBNOB1 (ORCPT
+        id S2439012AbfBNOAr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 09:01:27 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37550 "EHLO
+        Thu, 14 Feb 2019 09:00:47 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:39901 "EHLO
         mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2439014AbfBNOAt (ORCPT
+        with ESMTP id S2391964AbfBNOAo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 09:00:49 -0500
-Received: by mail-wm1-f68.google.com with SMTP id x10so6148344wmg.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 06:00:47 -0800 (PST)
+        Thu, 14 Feb 2019 09:00:44 -0500
+Received: by mail-wm1-f68.google.com with SMTP id f16so6193488wmh.4
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 06:00:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=uC7FxxS2wp1iUoe71AD1Xynm51q8h8X8Jk/cpIfyG5s=;
-        b=ryNYoZhiVNL+91Au2A6X5VhuAW18CQUayxWWdDxWX8D+CUemGry3x+rvC/dP8mh6aN
-         MFfyLrNJQtSn64yBVzLITWAVfAtpFK01nXCT9yL+iCbiNzdlRes6jGPR/Schco++hxnC
-         B4ox9Yr9MXZZRDWoKoMLaYBc5hBjYXvXGeivX7Rgi5fXI6NZ982j6WREVUdamL9THzOL
-         XgbbkTabPNgm4u/SUOf4+q3YFwCbxSANyXoUjyVK6QXHD7JWgHahVwEK7AhMCywMa9Lr
-         iRkrEoaUrD6KdG/0+8Af4RMoegXM/C0DWPjgHHN+1WGi+gz3EEjsRRsvGWwnXcWt6clc
-         VczQ==
+        bh=QKNCVQXWN6oEf8giX8idUUq1TytMK5c/qkMs8Fw701U=;
+        b=J5iGyv0rqkwIpFFbJRbK+qzrq75T9AtKK3Dmo0azpNmAlG+5q66D4A4vyM2vQmTDg0
+         P3/SXxl0/Eh8OqMhgIM6zchBqSGLxP/l9isxNUQzrvWwTaTlK7ty+Evm3ADbi2dWzuRd
+         7P9uHifEXSoXa1eDO8+ymUjSpXpEIWu9mxNZxBctNybfsU/+NB6sBbovJ3m3yqdxkhrg
+         5xSYO+G6qooB6lOTI/gd0DPYdI+bwahV/Akg4p/EPXOPEQl2ySetAthpSLZUP7BbSQvb
+         lJwR09U85Pix9tRhEbuKRnntBn6AlPfsR7JNoheDzz2y2Edgj04/xsEWTuSVjh4t/MaN
+         xvvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=uC7FxxS2wp1iUoe71AD1Xynm51q8h8X8Jk/cpIfyG5s=;
-        b=KpJu1co6LbjQ8+2pFztKls9mf2evt3OQlUj7o8aW8MQUGxt3KnWWbOoOu8jx4w0Tyy
-         ivG7nKTsThj4gf3YL6n4EHpfuzCM9Bl0qWhDbVAqLtxPoevVZb+11WSWQArBsRbAZsFT
-         ecjnSkBiK0U7yYdkD6dKnnLSbfE+svhBEjlxpcm5unuEu6HeUtJKtwU7gN/7TastpLV9
-         CFr6eKmHc/grGRB/Tej/L/bRyF3TH7X6z98PmjHp2ybVpzszFvk2hv3BtIUN23/SqM9X
-         VfQwbVHYqHngp8NhR/oHxCBs3xXJVkq9M92MYsfo/ZIdjLGM1lw9I4vKJeR/GQEd6sXL
-         n87A==
-X-Gm-Message-State: AHQUAuZzrdRRi7Nc+v6+IHulZKcSAGXqMEO8kfR/Z4m/2ffu844xsnL7
-        SCEy1TMiHUGwqERUSoaSbEryeA==
-X-Google-Smtp-Source: AHgI3IamTaqpSBQB/zkLgWkD65j5w0T6aas21S18ZzvWGAqRi0/RdVjrepvDbsqhy9ndB7iwkZor1w==
-X-Received: by 2002:a1c:b10a:: with SMTP id a10mr2821668wmf.148.1550152846846;
-        Thu, 14 Feb 2019 06:00:46 -0800 (PST)
+        bh=QKNCVQXWN6oEf8giX8idUUq1TytMK5c/qkMs8Fw701U=;
+        b=ZAEgJaWBZoR2G+3uacZZzDyc/uCSEmVBpvDBHcvABKW91/jwvCBxFlNYa4JozzFjRV
+         wxgLQiTrZujwoGxPp6+qw7F/v/G+pFTUEQBnxBgA0YSpBHnBn5aTpbkAO4W5l+9CR6kl
+         g349pnaVfQAPJW+y9jAkieG3j+IKJDzNvZVz5MmT1m8O8G1e4Tov6yfomIpSi9ERYTmR
+         fQEo9wDdMwoagvHLR6QQ58YrfFrw0REPHnKtyEZZL0S2pVQFKg36HxRCEjyyeQXNjgQp
+         wGMC+1D5EX5zax4H4z4Q6Edww8V3tq9sb7aAvquJbKpTOc6N481C3rZUx1maevirSz6Q
+         RWBA==
+X-Gm-Message-State: AHQUAuYZYVM+s1BZslFJtZhVKokG/CZyMSRwOS+Wp1Lrn4Dd169E9nLj
+        m4amU0PMaxCyde4zVSqVJHu9Nw==
+X-Google-Smtp-Source: AHgI3IaaYZnNXy+LsFbmSaEWk0gbylen2SNKkZg86HhWw/nzlej2ZlYjOK8igcQ4RDfEYFFcy9saEA==
+X-Received: by 2002:a1c:ca01:: with SMTP id a1mr2798916wmg.124.1550152841208;
+        Thu, 14 Feb 2019 06:00:41 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id h142sm3395677wme.33.2019.02.14.06.00.45
+        by smtp.gmail.com with ESMTPSA id h142sm3395677wme.33.2019.02.14.06.00.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 06:00:46 -0800 (PST)
+        Thu, 14 Feb 2019 06:00:40 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -69,10 +69,11 @@ To:     Rob Herring <robh+dt@kernel.org>,
 Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-input@vger.kernel.org,
         linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v6 07/11] power: supply: max77650: add support for battery charger
-Date:   Thu, 14 Feb 2019 15:00:18 +0100
-Message-Id: <20190214140022.19201-8-brgl@bgdev.pl>
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Rob Herring <robh@kernel.org>
+Subject: [PATCH v6 03/11] dt-bindings: leds: add DT bindings for max77650
+Date:   Thu, 14 Feb 2019 15:00:14 +0100
+Message-Id: <20190214140022.19201-4-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190214140022.19201-1-brgl@bgdev.pl>
 References: <20190214140022.19201-1-brgl@bgdev.pl>
@@ -85,418 +86,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Add basic support for the battery charger for max77650 PMIC.
+Add the DT binding document for the LEDs module of max77650.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/power/supply/Kconfig            |   7 +
- drivers/power/supply/Makefile           |   1 +
- drivers/power/supply/max77650-charger.c | 366 ++++++++++++++++++++++++
- 3 files changed, 374 insertions(+)
- create mode 100644 drivers/power/supply/max77650-charger.c
+ .../bindings/leds/leds-max77650.txt           | 57 +++++++++++++++++++
+ 1 file changed, 57 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/leds-max77650.txt
 
-diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
-index e901b9879e7e..0230c96fa94d 100644
---- a/drivers/power/supply/Kconfig
-+++ b/drivers/power/supply/Kconfig
-@@ -499,6 +499,13 @@ config CHARGER_DETECTOR_MAX14656
- 	  Revision 1.2 and can be found e.g. in Kindle 4/5th generation
- 	  readers and certain LG devices.
- 
-+config CHARGER_MAX77650
-+	tristate "Maxim MAX77650 battery charger driver"
-+	depends on MFD_MAX77650
-+	help
-+	  Say Y to enable support for the battery charger control of MAX77650
-+	  PMICs.
-+
- config CHARGER_MAX77693
- 	tristate "Maxim MAX77693 battery charger driver"
- 	depends on MFD_MAX77693
-diff --git a/drivers/power/supply/Makefile b/drivers/power/supply/Makefile
-index b731c2a9b695..b73eb8c5c1a9 100644
---- a/drivers/power/supply/Makefile
-+++ b/drivers/power/supply/Makefile
-@@ -70,6 +70,7 @@ obj-$(CONFIG_CHARGER_MANAGER)	+= charger-manager.o
- obj-$(CONFIG_CHARGER_LTC3651)	+= ltc3651-charger.o
- obj-$(CONFIG_CHARGER_MAX14577)	+= max14577_charger.o
- obj-$(CONFIG_CHARGER_DETECTOR_MAX14656)	+= max14656_charger_detector.o
-+obj-$(CONFIG_CHARGER_MAX77650)	+= max77650-charger.o
- obj-$(CONFIG_CHARGER_MAX77693)	+= max77693_charger.o
- obj-$(CONFIG_CHARGER_MAX8997)	+= max8997_charger.o
- obj-$(CONFIG_CHARGER_MAX8998)	+= max8998_charger.o
-diff --git a/drivers/power/supply/max77650-charger.c b/drivers/power/supply/max77650-charger.c
+diff --git a/Documentation/devicetree/bindings/leds/leds-max77650.txt b/Documentation/devicetree/bindings/leds/leds-max77650.txt
 new file mode 100644
-index 000000000000..1abaeec9ddd3
+index 000000000000..3a67115cc1da
 --- /dev/null
-+++ b/drivers/power/supply/max77650-charger.c
-@@ -0,0 +1,366 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (C) 2018 BayLibre SAS
-+// Author: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-+//
-+// Battery charger driver for MAXIM 77650/77651 charger/power-supply.
++++ b/Documentation/devicetree/bindings/leds/leds-max77650.txt
+@@ -0,0 +1,57 @@
++LED driver for MAX77650 PMIC from Maxim Integrated.
 +
-+#include <linux/i2c.h>
-+#include <linux/interrupt.h>
-+#include <linux/mfd/max77650.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/power_supply.h>
-+#include <linux/regmap.h>
++This module is part of the MAX77650 MFD device. For more details
++see Documentation/devicetree/bindings/mfd/max77650.txt.
 +
-+#define MAX77650_CHARGER_ENABLED		BIT(0)
-+#define MAX77650_CHARGER_DISABLED		0x00
-+#define MAX77650_CHARGER_CHG_EN_MASK		BIT(0)
++The LED controller is represented as a sub-node of the PMIC node on
++the device tree.
 +
-+#define MAX77650_CHG_DETAILS_MASK		GENMASK(7, 4)
-+#define MAX77650_CHG_DETAILS_BITS(_reg) \
-+		(((_reg) & MAX77650_CHG_DETAILS_MASK) >> 4)
++This device has three current sinks.
 +
-+/* Charger is OFF. */
-+#define MAX77650_CHG_OFF			0x00
-+/* Charger is in prequalification mode. */
-+#define MAX77650_CHG_PREQ			0x01
-+/* Charger is in fast-charge constant current mode. */
-+#define MAX77650_CHG_ON_CURR			0x02
-+/* Charger is in JEITA modified fast-charge constant-current mode. */
-+#define MAX77650_CHG_ON_CURR_JEITA		0x03
-+/* Charger is in fast-charge constant-voltage mode. */
-+#define MAX77650_CHG_ON_VOLT			0x04
-+/* Charger is in JEITA modified fast-charge constant-voltage mode. */
-+#define MAX77650_CHG_ON_VOLT_JEITA		0x05
-+/* Charger is in top-off mode. */
-+#define MAX77650_CHG_ON_TOPOFF			0x06
-+/* Charger is in JEITA modified top-off mode. */
-+#define MAX77650_CHG_ON_TOPOFF_JEITA		0x07
-+/* Charger is done. */
-+#define MAX77650_CHG_DONE			0x08
-+/* Charger is JEITA modified done. */
-+#define MAX77650_CHG_DONE_JEITA			0x09
-+/* Charger is suspended due to a prequalification timer fault. */
-+#define MAX77650_CHG_SUSP_PREQ_TIM_FAULT	0x0a
-+/* Charger is suspended due to a fast-charge timer fault. */
-+#define MAX77650_CHG_SUSP_FAST_CHG_TIM_FAULT	0x0b
-+/* Charger is suspended due to a battery temperature fault. */
-+#define MAX77650_CHG_SUSP_BATT_TEMP_FAULT	0x0c
++Required properties:
++--------------------
++- compatible:		Must be "maxim,max77650-led"
++- #address-cells:	Must be <1>.
++- #size-cells:		Must be <0>.
 +
-+#define MAX77650_CHGIN_DETAILS_MASK		GENMASK(3, 2)
-+#define MAX77650_CHGIN_DETAILS_BITS(_reg) \
-+		(((_reg) & MAX77650_CHGIN_DETAILS_MASK) >> 2)
++Each LED is represented as a sub-node of the LED-controller node. Up to
++three sub-nodes can be defined.
 +
-+#define MAX77650_CHGIN_UNDERVOLTAGE_LOCKOUT	0x00
-+#define MAX77650_CHGIN_OVERVOLTAGE_LOCKOUT	0x01
-+#define MAX77650_CHGIN_OKAY			0x11
++Required properties of the sub-node:
++------------------------------------
 +
-+#define MAX77650_CHARGER_CHG_MASK	BIT(1)
-+#define MAX77650_CHARGER_CHG_CHARGING(_reg) \
-+		(((_reg) & MAX77650_CHARGER_CHG_MASK) > 1)
++- reg:			Must be <0>, <1> or <2>.
 +
-+#define MAX77650_CHARGER_VCHGIN_MIN_MASK	0xc0
-+#define MAX77650_CHARGER_VCHGIN_MIN_SHIFT(_val)	((_val) << 5)
++Optional properties of the sub-node:
++------------------------------------
 +
-+#define MAX77650_CHARGER_ICHGIN_LIM_MASK	0x1c
-+#define MAX77650_CHARGER_ICHGIN_LIM_SHIFT(_val)	((_val) << 2)
++- label:		See Documentation/devicetree/bindings/leds/common.txt
++- linux,default-trigger: See Documentation/devicetree/bindings/leds/common.txt
 +
-+struct max77650_charger_data {
-+	struct regmap *map;
-+	struct device *dev;
-+};
++For more details, please refer to the generic GPIO DT binding document
++<devicetree/bindings/gpio/gpio.txt>.
 +
-+static enum power_supply_property max77650_charger_properties[] = {
-+	POWER_SUPPLY_PROP_STATUS,
-+	POWER_SUPPLY_PROP_ONLINE,
-+	POWER_SUPPLY_PROP_CHARGE_TYPE
-+};
++Example:
++--------
 +
-+static const unsigned int max77650_charger_vchgin_min_table[] = {
-+	4000000, 4100000, 4200000, 4300000, 4400000, 4500000, 4600000, 4700000
-+};
++	leds {
++		compatible = "maxim,max77650-led";
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+static const unsigned int max77650_charger_ichgin_lim_table[] = {
-+	95000, 190000, 285000, 380000, 475000
-+};
++		led@0 {
++			reg = <0>;
++			label = "blue:usr0";
++		};
 +
-+static int max77650_charger_set_vchgin_min(struct max77650_charger_data *chg,
-+					   unsigned int val)
-+{
-+	int i, rv;
++		led@1 {
++			reg = <1>;
++			label = "red:usr1";
++			linux,default-trigger = "heartbeat";
++		};
 +
-+	for (i = 0; i < ARRAY_SIZE(max77650_charger_vchgin_min_table); i++) {
-+		if (val == max77650_charger_vchgin_min_table[i]) {
-+			rv = regmap_update_bits(chg->map,
-+					MAX77650_REG_CNFG_CHG_B,
-+					MAX77650_CHARGER_VCHGIN_MIN_MASK,
-+					MAX77650_CHARGER_VCHGIN_MIN_SHIFT(i));
-+			if (rv)
-+				return rv;
-+
-+			return 0;
-+		}
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int max77650_charger_set_ichgin_lim(struct max77650_charger_data *chg,
-+					   unsigned int val)
-+{
-+	int i, rv;
-+
-+	for (i = 0; i < ARRAY_SIZE(max77650_charger_ichgin_lim_table); i++) {
-+		if (val == max77650_charger_ichgin_lim_table[i]) {
-+			rv = regmap_update_bits(chg->map,
-+					MAX77650_REG_CNFG_CHG_B,
-+					MAX77650_CHARGER_ICHGIN_LIM_MASK,
-+					MAX77650_CHARGER_ICHGIN_LIM_SHIFT(i));
-+			if (rv)
-+				return rv;
-+
-+			return 0;
-+		}
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int max77650_charger_enable(struct max77650_charger_data *chg)
-+{
-+	int rv;
-+
-+	rv = regmap_update_bits(chg->map,
-+				MAX77650_REG_CNFG_CHG_B,
-+				MAX77650_CHARGER_CHG_EN_MASK,
-+				MAX77650_CHARGER_ENABLED);
-+	if (rv)
-+		dev_err(chg->dev, "unable to enable the charger: %d\n", rv);
-+
-+	return rv;
-+}
-+
-+static int max77650_charger_disable(struct max77650_charger_data *chg)
-+{
-+	int rv;
-+
-+	rv = regmap_update_bits(chg->map,
-+				MAX77650_REG_CNFG_CHG_B,
-+				MAX77650_CHARGER_CHG_EN_MASK,
-+				MAX77650_CHARGER_DISABLED);
-+	if (rv)
-+		dev_err(chg->dev, "unable to disable the charger: %d\n", rv);
-+
-+	return rv;
-+}
-+
-+static irqreturn_t max77650_charger_check_status(int irq, void *data)
-+{
-+	struct max77650_charger_data *chg = data;
-+	int rv, reg;
-+
-+	rv = regmap_read(chg->map, MAX77650_REG_STAT_CHG_B, &reg);
-+	if (rv) {
-+		dev_err(chg->dev,
-+			"unable to read the charger status: %d\n", rv);
-+		return IRQ_HANDLED;
-+	}
-+
-+	switch (MAX77650_CHGIN_DETAILS_BITS(reg)) {
-+	case MAX77650_CHGIN_UNDERVOLTAGE_LOCKOUT:
-+		dev_err(chg->dev, "undervoltage lockout detected, disabling charger\n");
-+		max77650_charger_disable(chg);
-+		break;
-+	case MAX77650_CHGIN_OVERVOLTAGE_LOCKOUT:
-+		dev_err(chg->dev, "overvoltage lockout detected, disabling charger\n");
-+		max77650_charger_disable(chg);
-+		break;
-+	case MAX77650_CHGIN_OKAY:
-+		max77650_charger_enable(chg);
-+		break;
-+	default:
-+		/* May be 0x10 - debouncing */
-+		break;
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int max77650_charger_get_property(struct power_supply *psy,
-+					 enum power_supply_property psp,
-+					 union power_supply_propval *val)
-+{
-+	struct max77650_charger_data *chg = power_supply_get_drvdata(psy);
-+	int rv, reg;
-+
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_STATUS:
-+		rv = regmap_read(chg->map, MAX77650_REG_STAT_CHG_B, &reg);
-+		if (rv)
-+			return rv;
-+
-+		if (MAX77650_CHARGER_CHG_CHARGING(reg)) {
-+			val->intval = POWER_SUPPLY_STATUS_CHARGING;
-+			break;
-+		}
-+
-+		switch (MAX77650_CHG_DETAILS_BITS(reg)) {
-+		case MAX77650_CHG_OFF:
-+		case MAX77650_CHG_SUSP_PREQ_TIM_FAULT:
-+		case MAX77650_CHG_SUSP_FAST_CHG_TIM_FAULT:
-+		case MAX77650_CHG_SUSP_BATT_TEMP_FAULT:
-+			val->intval = POWER_SUPPLY_STATUS_NOT_CHARGING;
-+			break;
-+		case MAX77650_CHG_PREQ:
-+		case MAX77650_CHG_ON_CURR:
-+		case MAX77650_CHG_ON_CURR_JEITA:
-+		case MAX77650_CHG_ON_VOLT:
-+		case MAX77650_CHG_ON_VOLT_JEITA:
-+		case MAX77650_CHG_ON_TOPOFF:
-+		case MAX77650_CHG_ON_TOPOFF_JEITA:
-+			val->intval = POWER_SUPPLY_STATUS_CHARGING;
-+			break;
-+		case MAX77650_CHG_DONE:
-+			val->intval = POWER_SUPPLY_STATUS_FULL;
-+			break;
-+		default:
-+			val->intval = POWER_SUPPLY_STATUS_UNKNOWN;
-+		}
-+		break;
-+	case POWER_SUPPLY_PROP_ONLINE:
-+		rv = regmap_read(chg->map, MAX77650_REG_STAT_CHG_B, &reg);
-+		if (rv)
-+			return rv;
-+
-+		val->intval = MAX77650_CHARGER_CHG_CHARGING(reg);
-+		break;
-+	case POWER_SUPPLY_PROP_CHARGE_TYPE:
-+		rv = regmap_read(chg->map, MAX77650_REG_STAT_CHG_B, &reg);
-+		if (rv)
-+			return rv;
-+
-+		if (!MAX77650_CHARGER_CHG_CHARGING(reg)) {
-+			val->intval = POWER_SUPPLY_CHARGE_TYPE_NONE;
-+			break;
-+		}
-+
-+		switch (MAX77650_CHG_DETAILS_BITS(reg)) {
-+		case MAX77650_CHG_PREQ:
-+		case MAX77650_CHG_ON_CURR:
-+		case MAX77650_CHG_ON_CURR_JEITA:
-+		case MAX77650_CHG_ON_VOLT:
-+		case MAX77650_CHG_ON_VOLT_JEITA:
-+			val->intval = POWER_SUPPLY_CHARGE_TYPE_FAST;
-+			break;
-+		case MAX77650_CHG_ON_TOPOFF:
-+		case MAX77650_CHG_ON_TOPOFF_JEITA:
-+			val->intval = POWER_SUPPLY_CHARGE_TYPE_TRICKLE;
-+			break;
-+		default:
-+			val->intval = POWER_SUPPLY_CHARGE_TYPE_UNKNOWN;
-+		}
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct power_supply_desc max77650_battery_desc = {
-+	.name		= "max77650",
-+	.type		= POWER_SUPPLY_TYPE_USB,
-+	.get_property	= max77650_charger_get_property,
-+	.properties	= max77650_charger_properties,
-+	.num_properties	= ARRAY_SIZE(max77650_charger_properties),
-+};
-+
-+static int max77650_charger_probe(struct platform_device *pdev)
-+{
-+	struct power_supply_config pscfg = {};
-+	struct max77650_charger_data *chg;
-+	struct power_supply *battery;
-+	struct device *dev, *parent;
-+	int rv, chg_irq, chgin_irq;
-+	unsigned int prop;
-+
-+	dev = &pdev->dev;
-+	parent = dev->parent;
-+
-+	chg = devm_kzalloc(dev, sizeof(*chg), GFP_KERNEL);
-+	if (!chg)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, chg);
-+
-+	chg->map = dev_get_regmap(parent, NULL);
-+	if (!chg->map)
-+		return -ENODEV;
-+
-+	chg->dev = dev;
-+
-+	pscfg.of_node = dev->of_node;
-+	pscfg.drv_data = chg;
-+
-+	chg_irq = platform_get_irq_byname(pdev, "CHG");
-+	if (chg_irq < 0)
-+		return chg_irq;
-+
-+	chgin_irq = platform_get_irq_byname(pdev, "CHGIN");
-+	if (chgin_irq < 0)
-+		return chgin_irq;
-+
-+	rv = devm_request_any_context_irq(dev, chg_irq,
-+					  max77650_charger_check_status,
-+					  IRQF_ONESHOT, "chg", chg);
-+	if (rv < 0)
-+		return rv;
-+
-+	rv = devm_request_any_context_irq(dev, chgin_irq,
-+					  max77650_charger_check_status,
-+					  IRQF_ONESHOT, "chgin", chg);
-+	if (rv < 0)
-+		return rv;
-+
-+	battery = devm_power_supply_register(dev,
-+					     &max77650_battery_desc, &pscfg);
-+	if (IS_ERR(battery))
-+		return PTR_ERR(battery);
-+
-+	rv = of_property_read_u32(dev->of_node, "min-microvolt", &prop);
-+	if (rv == 0) {
-+		rv = max77650_charger_set_vchgin_min(chg, prop);
-+		if (rv)
-+			return rv;
-+	}
-+
-+	rv = of_property_read_u32(dev->of_node, "curr-lim-microamp", &prop);
-+	if (rv == 0) {
-+		rv = max77650_charger_set_ichgin_lim(chg, prop);
-+		if (rv)
-+			return rv;
-+	}
-+
-+	return max77650_charger_enable(chg);
-+}
-+
-+static int max77650_charger_remove(struct platform_device *pdev)
-+{
-+	struct max77650_charger_data *chg = platform_get_drvdata(pdev);
-+
-+	return max77650_charger_disable(chg);
-+}
-+
-+static struct platform_driver max77650_charger_driver = {
-+	.driver = {
-+		.name = "max77650-charger",
-+	},
-+	.probe = max77650_charger_probe,
-+	.remove = max77650_charger_remove,
-+};
-+module_platform_driver(max77650_charger_driver);
-+
-+MODULE_DESCRIPTION("MAXIM 77650/77651 charger driver");
-+MODULE_AUTHOR("Bartosz Golaszewski <bgolaszewski@baylibre.com>");
-+MODULE_LICENSE("GPL v2");
++		led@2 {
++			reg = <2>;
++			label = "green:usr2";
++		};
++	};
 -- 
 2.20.1
 
