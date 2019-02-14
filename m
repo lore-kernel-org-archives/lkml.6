@@ -2,83 +2,97 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C6A6C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 12:22:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5F1AC4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 12:23:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EED0121900
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 12:22:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD4E72073D
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 12:23:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389544AbfBNMWb (ORCPT
+        id S2403887AbfBNMX5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 07:22:31 -0500
-Received: from smtp3-g21.free.fr ([212.27.42.3]:52031 "EHLO smtp3-g21.free.fr"
+        Thu, 14 Feb 2019 07:23:57 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58482 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726485AbfBNMWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 07:22:31 -0500
-Received: from [192.168.108.68] (unknown [213.36.7.13])
-        (Authenticated sender: marc.w.gonzalez)
-        by smtp3-g21.free.fr (Postfix) with ESMTPSA id 9062413F88A;
-        Thu, 14 Feb 2019 13:22:08 +0100 (CET)
-Subject: Re: [PATCH -next 3/3] qcom: ssbi-gpio: correct boundary conditions in
- pm8xxx_domain_translate
-To:     Brian Masney <masneyb@onstation.org>, linus.walleij@linaro.org
-Cc:     sboyd@kernel.org, lee.jones@linaro.org, andy.gross@linaro.org,
-        david.brown@linaro.org, bjorn.andersson@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org
-References: <20190214013641.9740-1-masneyb@onstation.org>
- <20190214013641.9740-3-masneyb@onstation.org>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <82660bd6-200f-ec3a-cf78-9b6aec34f2a3@free.fr>
-Date:   Thu, 14 Feb 2019 13:22:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190214013641.9740-3-masneyb@onstation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726485AbfBNMX5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 07:23:57 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8018A15554;
+        Thu, 14 Feb 2019 12:23:56 +0000 (UTC)
+Received: from localhost (ovpn-8-24.pek2.redhat.com [10.72.8.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2A8D1611A1;
+        Thu, 14 Feb 2019 12:23:51 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>, Bjorn Helgaas <helgaas@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, Keith Busch <keith.busch@intel.com>,
+        Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH V4 0/4] genirq/affinity: add .calc_sets for improving IRQ allocation & spread
+Date:   Thu, 14 Feb 2019 20:23:43 +0800
+Message-Id: <20190214122347.17372-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 14 Feb 2019 12:23:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/02/2019 02:36, Brian Masney wrote:
+Hi,
 
-> SSBI GPIOs are numbered 1..ngpio, so the boundary check in
-> pm8xxx_domain_translate() is off by one. This patch corrects that check.
-> 
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
-> ---
-> Originally found by Bjorn Andersson in spmi-gpio.
-> 
-> Linus: For your ib-qcom-ssbi branch.
-> 
->  drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-> index 84a232450000..10575d6e2ba5 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-> @@ -710,7 +710,8 @@ static int pm8xxx_domain_translate(struct irq_domain *domain,
->  	struct pm8xxx_gpio *pctrl = container_of(domain->host_data,
->  						 struct pm8xxx_gpio, chip);
->  
-> -	if (fwspec->param_count != 2 || fwspec->param[0] >= pctrl->chip.ngpio)
-> +	if (fwspec->param_count != 2 || fwspec->param[0] < 1 ||
-> +	    fwspec->param[0] > pctrl->chip.ngpio)
->  		return -EINVAL;
->  
->  	*hwirq = fwspec->param[0] - PM8XXX_GPIO_PHYSICAL_OFFSET;
+Currently pre-caculated set vectors are provided by driver for
+allocating & spread vectors. This way only works when drivers passes
+same 'max_vecs' and 'min_vecs' to pci_alloc_irq_vectors_affinity(),
+also requires driver to retry the allocating & spread.
 
-I would write (using the wrap-around behavior for unsigned int)
+As Bjorn and Keith mentioned, the current usage & interface for irq sets
+is a bit awkward because the retrying should have been avoided by providing
+one resonable 'min_vecs'. However, if 'min_vecs' isn't same with
+'max_vecs', number of the allocated vectors is unknown before calling
+pci_alloc_irq_vectors_affinity(), then each set's vectors can't be
+pre-caculated.
 
-	if (fwspec->param_count != 2 || fwspec->param[0] - 1 >= pctrl->chip.ngpio)
-		return -EINVAL;
+Add a new callback of .calc_sets into 'struct irq_affinity' so that
+driver can caculate set vectors after IRQ vector is allocated and
+before spread IRQ vectors.
 
-Regards.
+V4:
+	- re-writen changelogs by Thomas Gleixner
+	- merge patch of removing 'const' into the patch
+	for adding new callback
+ 
+V3:
+	- don't mark 'affd' as const in related functions
+	- add sanity check on affd->nr_sets
+	- remove the local variable of 'nr_sets' in irq_create_affinity_masks
+	- set .nr_sets as 2 in nvme
+	- update comment in msi.c
+
+V2:
+	- add .calc_sets instead of .setup_affinity() which is easy to
+	be abused by drivers
+
+Ming Lei (4):
+  genirq/affinity: store interrupt sets size in 'struct irq_affinity'
+  genirq/affinity: add new callback for caculating interrupt sets size
+  nvme-pci: Simplify interrupt allocation
+  PCI: Document .calc_sets as required in case of multiple interrupt
+    sets
+
+ drivers/nvme/host/pci.c   | 63 ++++++++++++-----------------------------------
+ drivers/pci/msi.c         | 32 +++++++++++++-----------
+ include/linux/interrupt.h | 13 +++++++---
+ include/linux/pci.h       |  4 +--
+ kernel/irq/affinity.c     | 26 ++++++++++++-------
+ 5 files changed, 62 insertions(+), 76 deletions(-)
+
+-- 
+2.9.5
+
