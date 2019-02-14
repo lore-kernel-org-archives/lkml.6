@@ -2,155 +2,211 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA0D9C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:47:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D33BEC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:50:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7F5A21904
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:47:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D0E521904
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:50:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="l5Ns9i+u"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="fWzf4TNN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391579AbfBNBrF (ORCPT
+        id S2391664AbfBNBu0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 20:47:05 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:34470 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732989AbfBNBrE (ORCPT
+        Wed, 13 Feb 2019 20:50:26 -0500
+Received: from conuserg-07.nifty.com ([210.131.2.74]:50509 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726392AbfBNBu0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 20:47:04 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1E1iCen164153;
-        Thu, 14 Feb 2019 01:46:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=Mv4loqm46Z/QYiGEHUXmuNKDhUS254UKT2WUxryVk2A=;
- b=l5Ns9i+utIL6ouIO9ODcBGb2oeY93cHhqOnXNv/2L29/pPR6gQtogJBiAgwh9JhEDnjk
- wLlOschNbcSVtu+yXoUJxhfVmiT3SZtitv+c1TY9bBFbmXPPifAIQ26UFWXPYn2VeyOA
- t1sCPrQF35sCdHoaNM0IkQRSGsnGhj+uuzNbBnADT5NFt+6SaiaIhmk8/H2f/SjqB3ux
- VAtut17mZKE7D1xJYhg4MYAamNzc/xnS19gNPYqcuh4xK/EcbwSrYHfeV3KQxxbpZGcF
- gHNPfmILcXaqPIqICyTc+1tpU59yPJviu5ZqCH/DVUKgA33dg0idbbLEBXSe7gnGISOW Qg== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2qhreknc7d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Feb 2019 01:46:18 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1E1kI9Z027465
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Feb 2019 01:46:18 GMT
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1E1kEMH002971;
-        Thu, 14 Feb 2019 01:46:14 GMT
-Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 14 Feb 2019 01:46:14 +0000
-Date:   Wed, 13 Feb 2019 20:46:34 -0500
-From:   Daniel Jordan <daniel.m.jordan@oracle.com>
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, akpm@linux-foundation.org,
-        dave@stgolabs.net, jack@suse.cz, cl@linux.com, linux-mm@kvack.org,
-        kvm@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, paulus@ozlabs.org,
-        benh@kernel.crashing.org, mpe@ellerman.id.au, hao.wu@intel.com,
-        atull@kernel.org, mdf@kernel.org, aik@ozlabs.ru,
-        peterz@infradead.org
-Subject: Re: [PATCH 1/5] vfio/type1: use pinned_vm instead of locked_vm to
- account pinned pages
-Message-ID: <20190214014634.kxjiwzelczlskeo6@ca-dmjordan1.us.oracle.com>
-References: <20190211224437.25267-1-daniel.m.jordan@oracle.com>
- <20190211224437.25267-2-daniel.m.jordan@oracle.com>
- <20190211225620.GO24692@ziepe.ca>
- <20190211231152.qflff6g2asmkb6hr@ca-dmjordan1.us.oracle.com>
- <20190212114110.17bc8a14@w520.home>
- <20190213002650.kav7xc4r2xs5f3ef@ca-dmjordan1.us.oracle.com>
- <20190213130330.76ef1987@w520.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190213130330.76ef1987@w520.home>
-User-Agent: NeoMutt/20180323-268-5a959c
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9166 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902140011
+        Wed, 13 Feb 2019 20:50:26 -0500
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id x1E1mU1f030693;
+        Thu, 14 Feb 2019 10:48:30 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x1E1mU1f030693
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1550108911;
+        bh=0BvUdvCRw6PHAEM4VEzTZq100sYqySqWIxigW0cVcLM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=fWzf4TNNn/shTYGZ7qsdt21aRq1IBwEDxBlCliK/k2ABtep601ErBHSs/zLtXTMtx
+         S6Bki/FtMoE/2pIaIrubwC5vnPnM2eeV35zhOFKKdyKcwwRF8Ut7Fb4YDxkhv8elRr
+         DrRl/qnv/Cam6XkTZdpFlUQi0WzGXtE1w1cqd+4EXXCPcez85R5CL0erM3Rx/3hr2u
+         z8/CU4qhpHtz11IXUSjvyG/QmeJW8smxo+v0Qj7Qct0Pok+/SOgswbvn+PUX1iLeEf
+         kjMxacVuaV8A0f2sdTQwl1OyR2EKaebgkM8dfmZQDVGRJHdF9M9rlTwaH2xrLFCO7H
+         6Ed1ElISGJ36Q==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Alexander Popov <alex.popov@linux.com>,
+        Kees Cook <keescook@chromium.org>, linux-doc@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org,
+        Dan Williams <dan.j.williams@intel.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Richard Guy Briggs <rgb@redhat.com>
+Subject: [PATCH v2] kernel/configs: use .incbin directive to embed config_data.gz
+Date:   Thu, 14 Feb 2019 10:48:13 +0900
+Message-Id: <1550108893-21226-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 01:03:30PM -0700, Alex Williamson wrote:
-> Daniel Jordan <daniel.m.jordan@oracle.com> wrote:
-> > On Tue, Feb 12, 2019 at 11:41:10AM -0700, Alex Williamson wrote:
-> > > This still makes me nervous because we have userspace dependencies on
-> > > setting process locked memory.  
-> > 
-> > Could you please expand on this?  Trying to get more context.
-> 
-> VFIO is a userspace driver interface and the pinned/locked page
-> accounting we're doing here is trying to prevent a user from exceeding
-> their locked memory limits.  Thus a VM management tool or unprivileged
-> userspace driver needs to have appropriate locked memory limits
-> configured for their use case.  Currently we do not have a unified
-> accounting scheme, so if a page is mlock'd by the user and also mapped
-> through VFIO for DMA, it's accounted twice, these both increment
-> locked_vm and userspace needs to manage that.  If pinned memory
-> and locked memory are now two separate buckets and we're only comparing
-> one of them against the locked memory limit, then it seems we have
-> effectively doubled the user's locked memory for this use case, as
-> Jason questioned.  The user could mlock one page and DMA map another,
-> they're both "locked", but now they only take one slot in each bucket.
+This slightly optimizes the kernel/configs.c build.
 
-Right, yes.  Should have been more specific.  I was after a concrete use case
-where this would happen (sounded like you may have had a specific tool in
-mind).
+bin2c is not very efficient because it converts a data file into a
+huge array to embed it into a *.c file.
 
-But it doesn't matter.  I understand your concern and agree that, given the
-possibility that accounting in _some_ tool can be affected, we should fix
-accounting before changing user visible behavior.  I can start a separate
-discussion, having opened the can of worms again :)
+Instead, we can use the .incbin directive.
 
-> If we continue forward with using a separate bucket here, userspace
-> could infer that accounting is unified and lower the user's locked
-> memory limit, or exploit the gap that their effective limit might
-> actually exceed system memory.  In the former case, if we do eventually
-> correct to compare the total of the combined buckets against the user's
-> locked memory limits, we'll break users that have adapted their locked
-> memory limits to meet the apparent needs.  In the latter case, the
-> inconsistent accounting is potentially an attack vector.
+Also, this simplifies the code; Makefile is cleaner, and the way to
+get the offset/size of the config_data.gz is more straightforward.
 
-Makes sense.
+I used the "asm" statement in *.c instead of splitting it into *.S
+because MODULE_* tags are not supported in *.S files.
 
-> > > There's a user visible difference if we
-> > > account for them in the same bucket vs separate.  Perhaps we're
-> > > counting in the wrong bucket now, but if we "fix" that and userspace
-> > > adapts, how do we ever go back to accounting both mlocked and pinned
-> > > memory combined against rlimit?  Thanks,  
-> > 
-> > PeterZ posted an RFC that addresses this point[1].  It kept pinned_vm and
-> > locked_vm accounting separate, but allowed the two to be added safely to be
-> > compared against RLIMIT_MEMLOCK.
-> 
-> Unless I'm incorrect in the concerns above, I don't see how we can
-> convert vfio before this occurs.
->  
-> > Anyway, until some solution is agreed on, are there objections to converting
-> > locked_vm to an atomic, to avoid user-visible changes, instead of switching
-> > locked_vm users to pinned_vm?
-> 
-> Seems that as long as we have separate buckets that are compared
-> individually to rlimit that we've got problems, it's just a matter of
-> where they're exposed based on which bucket is used for which
-> interface.  Thanks,
+I also cleaned up kernel/.gitignore; "config_data.gz" is unneeded
+because the top-level .gitignore takes care of the "*.gz" pattern.
 
-Indeed.  But for now, any concern with simply changing the type of the
-currently used counter to an atomic, to reduce mmap_sem usage?  This is just an
-implementation detail, invisible to userspace.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+Changes in v2:
+  - The .section directive in v1 accidentally moved executable code
+    from .text into .rodata (reported by kbuild test robot).
+    .pushsection and .popsection should be used here.
+
+ Documentation/dontdiff |  1 -
+ kernel/.gitignore      |  2 --
+ kernel/Makefile        | 11 +----------
+ kernel/configs.c       | 42 ++++++++++++++++++++----------------------
+ 4 files changed, 21 insertions(+), 35 deletions(-)
+
+diff --git a/Documentation/dontdiff b/Documentation/dontdiff
+index 2228fcc..ef25a06 100644
+--- a/Documentation/dontdiff
++++ b/Documentation/dontdiff
+@@ -106,7 +106,6 @@ compile.h*
+ conf
+ config
+ config-*
+-config_data.h*
+ config.mak
+ config.mak.autogen
+ conmakehash
+diff --git a/kernel/.gitignore b/kernel/.gitignore
+index b3097bd..6e69910 100644
+--- a/kernel/.gitignore
++++ b/kernel/.gitignore
+@@ -1,7 +1,5 @@
+ #
+ # Generated files
+ #
+-config_data.h
+-config_data.gz
+ timeconst.h
+ hz.bc
+diff --git a/kernel/Makefile b/kernel/Makefile
+index 6aa7543..6c57e78 100644
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -116,17 +116,8 @@ obj-$(CONFIG_GCC_PLUGIN_STACKLEAK) += stackleak.o
+ KASAN_SANITIZE_stackleak.o := n
+ KCOV_INSTRUMENT_stackleak.o := n
+ 
+-$(obj)/configs.o: $(obj)/config_data.h
++$(obj)/configs.o: $(obj)/config_data.gz
+ 
+ targets += config_data.gz
+ $(obj)/config_data.gz: $(KCONFIG_CONFIG) FORCE
+ 	$(call if_changed,gzip)
+-
+-filechk_ikconfiggz = \
+-	echo "static const char kernel_config_data[] __used = MAGIC_START"; \
+-	cat $< | scripts/bin2c; \
+-	echo "MAGIC_END;"
+-
+-targets += config_data.h
+-$(obj)/config_data.h: $(obj)/config_data.gz FORCE
+-	$(call filechk,ikconfiggz)
+diff --git a/kernel/configs.c b/kernel/configs.c
+index 2df132b..b062425 100644
+--- a/kernel/configs.c
++++ b/kernel/configs.c
+@@ -30,37 +30,35 @@
+ #include <linux/init.h>
+ #include <linux/uaccess.h>
+ 
+-/**************************************************/
+-/* the actual current config file                 */
+-
+ /*
+- * Define kernel_config_data and kernel_config_data_size, which contains the
+- * wrapped and compressed configuration file.  The file is first compressed
+- * with gzip and then bounded by two eight byte magic numbers to allow
+- * extraction from a binary kernel image:
+- *
+- *   IKCFG_ST
+- *   <image>
+- *   IKCFG_ED
++ * "IKCFG_ST" and "IKCFG_ED" are used to extract the config data from
++ * a binary kernel image or a module. See scripts/extract-ikconfig.
+  */
+-#define MAGIC_START	"IKCFG_ST"
+-#define MAGIC_END	"IKCFG_ED"
+-#include "config_data.h"
+-
+-
+-#define MAGIC_SIZE (sizeof(MAGIC_START) - 1)
+-#define kernel_config_data_size \
+-	(sizeof(kernel_config_data) - 1 - MAGIC_SIZE * 2)
++asm (
++"	.pushsection .rodata, \"a\"		\n"
++"	.ascii \"IKCFG_ST\"			\n"
++"	.global kernel_config_data		\n"
++"kernel_config_data:				\n"
++"	.incbin \"kernel/config_data.gz\"	\n"
++"	.global kernel_config_data_end		\n"
++"kernel_config_data_end:			\n"
++"	.ascii \"IKCFG_ED\"			\n"
++"	.popsection				\n"
++);
+ 
+ #ifdef CONFIG_IKCONFIG_PROC
+ 
++extern char kernel_config_data;
++extern char kernel_config_data_end;
++
+ static ssize_t
+ ikconfig_read_current(struct file *file, char __user *buf,
+ 		      size_t len, loff_t * offset)
+ {
+ 	return simple_read_from_buffer(buf, len, offset,
+-				       kernel_config_data + MAGIC_SIZE,
+-				       kernel_config_data_size);
++				       &kernel_config_data,
++				       &kernel_config_data_end -
++				       &kernel_config_data);
+ }
+ 
+ static const struct file_operations ikconfig_file_ops = {
+@@ -79,7 +77,7 @@ static int __init ikconfig_init(void)
+ 	if (!entry)
+ 		return -ENOMEM;
+ 
+-	proc_set_size(entry, kernel_config_data_size);
++	proc_set_size(entry, &kernel_config_data_end - &kernel_config_data);
+ 
+ 	return 0;
+ }
+-- 
+2.7.4
+
