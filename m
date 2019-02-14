@@ -2,165 +2,101 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D371C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:00:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB75C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:01:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3059222A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:00:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 566B8222A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:01:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="H949i6Ip";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="LgTbepYn"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QQ/Obm2m"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393763AbfBNCAr (ORCPT
+        id S2393787AbfBNCBK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 21:00:47 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:48572 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727539AbfBNCAq (ORCPT
+        Wed, 13 Feb 2019 21:01:10 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:44996 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727539AbfBNCBK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 21:00:46 -0500
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1E20Xsm005392;
-        Wed, 13 Feb 2019 18:00:34 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=HBHJrDQfafml37jlCXLrGKZmsXpxKxFrdorDxj7aO6s=;
- b=H949i6Ipq5wDVyoRCFM1igaT6ivdKY0Br0xBLW9nvZUWHD6z+T/c/djcfDi56DHygoRh
- LiYsm5zPGgDFtUOxGctXOK/b4SxdToj4lyS5p4UGwCWfZx/lUbA7Pr3jMkzVIbytIaLB
- QHBpHIstoUfmktV6BBjEt5PwghHyZlJiO6E= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2qmvrv0dh1-2
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Wed, 13 Feb 2019 18:00:34 -0800
-Received: from frc-mbx07.TheFacebook.com (2620:10d:c0a1:f82::31) by
- frc-hub03.TheFacebook.com (2620:10d:c021:18::173) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Wed, 13 Feb 2019 18:00:14 -0800
-Received: from frc-hub04.TheFacebook.com (2620:10d:c021:18::174) by
- frc-mbx07.TheFacebook.com (2620:10d:c0a1:f82::31) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Wed, 13 Feb 2019 18:00:14 -0800
-Received: from NAM04-CO1-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.74) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Wed, 13 Feb 2019 18:00:14 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HBHJrDQfafml37jlCXLrGKZmsXpxKxFrdorDxj7aO6s=;
- b=LgTbepYnjoAFfK9SYFv3IlVuSl/DfWb7PReckeoiiOfgqvJc/OqtkzcV+bb4HddevlodcYE35+znt6vOOB/01dLR4wklIlNIh/LF9Vh6ds+2X/yVNavdN7/v2KbGrSLQrx9PvxYPDamaJLaR32fvf9ZBL+nZbY2oWw2mt0/QQMc=
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.2.19) by
- MWHPR15MB1664.namprd15.prod.outlook.com (10.175.141.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.16; Thu, 14 Feb 2019 01:59:56 +0000
-Received: from MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::ec0e:4a05:81f8:7df9]) by MWHPR15MB1165.namprd15.prod.outlook.com
- ([fe80::ec0e:4a05:81f8:7df9%4]) with mapi id 15.20.1601.023; Thu, 14 Feb 2019
- 01:59:55 +0000
-From:   Song Liu <songliubraving@fb.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     "lsf-pc@lists.linux-foundation.org" 
-        <lsf-pc@lists.linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-raid <linux-raid@vger.kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>
-Subject: Re: [LSF/MM TOPIC] (again) THP for file systems
-Thread-Topic: [LSF/MM TOPIC] (again) THP for file systems
-Thread-Index: AQHUw+d91LnZv2+dn0iH+77xUzeGLKXeaKSAgAAhgQA=
-Date:   Thu, 14 Feb 2019 01:59:55 +0000
-Message-ID: <843818E0-C7E8-451E-A5B1-DAF0F120BD5A@fb.com>
-References: <77A00946-D70D-469D-963D-4C4EA20AE4FA@fb.com>
- <20190213235959.GX12668@bombadil.infradead.org>
-In-Reply-To: <20190213235959.GX12668@bombadil.infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3445.102.3)
-x-originating-ip: [2620:10d:c090:180::1:757a]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e68b61ed-9cfc-471b-33b2-08d692201e06
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1664;
-x-ms-traffictypediagnostic: MWHPR15MB1664:
-x-ms-exchange-purlcount: 2
-x-microsoft-exchange-diagnostics: 1;MWHPR15MB1664;20:gGdmQOqdcoAWbkYV1ejN+RigJQAFvq/kVi8jxshKfDHqGSfCUoxBuJMv1nmxbIM3/Znc1clztdyNwDAaxxCen4FJquBFrbmnAgSt5UVf4F+RltwUWlL4BNwsot2Uoj1/fRiSX2WPbwxlNFNegJx2mapNlbaCg3FYO8Unu1/OLiU=
-x-microsoft-antispam-prvs: <MWHPR15MB16645FB96114342A2A6A0AD8B3670@MWHPR15MB1664.namprd15.prod.outlook.com>
-x-forefront-prvs: 09480768F8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(366004)(136003)(346002)(376002)(396003)(189003)(199004)(51914003)(71190400001)(6916009)(11346002)(476003)(46003)(2616005)(446003)(6506007)(57306001)(186003)(6486002)(229853002)(71200400001)(478600001)(6116002)(6436002)(486006)(6512007)(6306002)(4326008)(14454004)(25786009)(53546011)(102836004)(68736007)(97736004)(36756003)(86362001)(6246003)(82746002)(105586002)(106356001)(256004)(316002)(81156014)(33656002)(54906003)(8676002)(50226002)(53936002)(83716004)(8936002)(966005)(99286004)(2906002)(81166006)(7736002)(305945005)(76176011);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1664;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: WxjhtRndmtAH3EsyXP3tmq2sWZzcpWgmVnPittg29ShtYm6G8KpID09JoMitXhXrQJpFF43PRZ9fgCZuS2z+AaMlaGL64SKFLURkPimiiW2uY9Cnep5R0LF/JnvWN4wat5rG/yilM1Gcn/mhtE8muJLiTeYMctR/Yt5SE/n0AZZkkUe6g8TsMc7G8BexfMLVk03tnxzQLEqpFbzg691hd2qycjWL+07o1DMtfb5oD3Bu9yJWaf/YLZQUYqgBJ0WWIOKOiRfbhYsGNtYif328PYcOFm8Xs7gh1nR6X08bNQD6Iao8Lmwn3aHjyS/8T+53v2UP9m2fBVix/C2JBfFD3gFkeLI/7ofOW1gZwiOuJ5phWSnKU04QaYYfzyWDwx6rGPQApio8kfO/Wix6wfACtKFdyp8ogbmPdofnnWbDHPU=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <050ED4B99A554F4AACE4A77BAE0F3527@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Wed, 13 Feb 2019 21:01:10 -0500
+Received: by mail-lj1-f196.google.com with SMTP id q128so3767373ljb.11
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 18:01:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YIVs/3U1xIoAZ/7FXZLgFeys0AzDq8ylDN1dFU4vUGc=;
+        b=QQ/Obm2mx5TulPtrGzsyeVbXY8nGSnHseiko2rrub8MrUUoMyZ5dLH38TQ2ehSyWj3
+         uCkuBNVRFQxB5rcDF+WrEzuH7cbIppPUK7JfMnfL4ocYwIU8Z+6u0Xwl9Ospqq4RHCAb
+         9h2TERAGJh4oZlmaZ7eGf9TBzuYwP/XL96j9W7BJAsrlYqpJMWr0qYJsyMzktYjqIkev
+         BYUgMYnVNA/9+C6IKIkUlK4m/7Bn6ZQrS3Oye4aSp+24kJ9+JKrPVL8TrwHNrCetGJI0
+         R539y2WeNE6yh1LItWt/73t9aXQFH8CNiknwNByMmVGrHISedVFcdjBP6teoTI31TJl+
+         m2nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YIVs/3U1xIoAZ/7FXZLgFeys0AzDq8ylDN1dFU4vUGc=;
+        b=CckAVknRH3tfF/32uIaTUVcJmYAG5cr2bqrQggjmc3cT7bIjzjdXtUkKwLWuNraoVH
+         0h7oTZQ3r5uadpNkV1VXAIs6locqjIyYHiUGQK2N2GTTwQENv58l0N3RUy1GlTihlzXv
+         PN0vGI0iCDBUotw4VO7LRbr2024dCnDg+k7SUdMCSBxdf8WmGydt9eNka2ntFrbvzuqX
+         alc11z5fxqKF4o5Sffb/fJnB22gvPRVf2jYjIbvALTdfmJI0QO1JW7+AcqjzuZjfYObr
+         5fcb1SkAMFoaGDXyQopIRAZ0Id3i/ugTMVY2+M0QaqJviK8OxB4kFZr/pNHmP+UdKVU7
+         mRfg==
+X-Gm-Message-State: AHQUAuaK/HZuUKBAyWlel/yBIk1HKpUW2eRFXlevkoG8Nk/7wn1fRlqT
+        YV4S52FyKp3i2LJ2o7eDR84zEJ2CM1rtc5OUWia4rw==
+X-Google-Smtp-Source: AHgI3IZrygtCUmzMGJnDvTfRPewbFN4tHxZnc7/2bJafAXRh08ntJvtX0BA0yuhH17qcJxqPQnZQgZmPV0A15WdWbBk=
+X-Received: by 2002:a2e:6a18:: with SMTP id f24mr700565ljc.97.1550109667919;
+ Wed, 13 Feb 2019 18:01:07 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: e68b61ed-9cfc-471b-33b2-08d692201e06
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2019 01:59:55.8664
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1664
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_01:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+References: <3d1f18412a927f69c733b6ed31659b7770610442.1550062410.git.baolin.wang@linaro.org>
+ <CAK8P3a1Ad+u9DHXkAe=p6pzCm0b24wvh8NH+Y3n6RRup7maBuA@mail.gmail.com>
+In-Reply-To: <CAK8P3a1Ad+u9DHXkAe=p6pzCm0b24wvh8NH+Y3n6RRup7maBuA@mail.gmail.com>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Thu, 14 Feb 2019 10:00:56 +0800
+Message-ID: <CAMz4kuKBym0A126Yo+=hQdZDb1U4ivO_g6YawxzLU-KjZdfbvg@mail.gmail.com>
+Subject: Re: [PATCH] mfd: sc27xx: Use SoC compatible string for PMIC devices
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Lee Jones <lee.jones@linaro.org>, Mark Brown <broonie@kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Lyra Zhang <zhang.lyra@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 13 Feb 2019 at 22:28, Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Wed, Feb 13, 2019 at 1:57 PM Baolin Wang <baolin.wang@linaro.org> wrote:
+> >
+> > We should use SoC compatible string in stead of wildcard string for
+> > PMIC child devices.
+> >
+> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>
+> Looks good. I had a look at arch/arm64/boot/dts/sprd/sc2731.dtsi
+> as well, which contains lines such as
+>
+> compatible = "sprd,sc27xx-efuse", "sprd,sc2731-efuse";
+>
+> which fortunately work with both variants of the driver.
+> Just to make sure we have the same understanding though:
+>
+> - Other drivers will leave out the 27xx part and just do
+>   compatible = sprd,sc2732-efuse", "sprd,sc2731-efuse";
+>
+> - When you specific a generic name (such as the sc2731 part),
+>   the more specific one (e.g. sc2732) needs to come /first/.
+>   The current DT appears to have those mixed up.
 
+Yes, that's the conclusion we made. And I've send patches to remove
+the 27xx part in drivers. Thanks for your help.
 
-> On Feb 13, 2019, at 3:59 PM, Matthew Wilcox <willy@infradead.org> wrote:
->=20
-> On Wed, Feb 13, 2019 at 10:00:10PM +0000, Song Liu wrote:
->> I would like to discuss remaining work to bring THP to (non-tmpfs) file =
-systems.
->> This topic has been discussed multiple times in previous LSF/MM summits =
-[1][2].
->> However, there hasn't been much progress since late 2017 (the latest wor=
-k I can
->> find is by Kirill A. Shutemov [3]).
->=20
-> ... this was literally just discussed.
->=20
-> Feel free to review
-> https://lore.kernel.org/lkml/20190212183454.26062-1-willy@infradead.org/
->=20
-> with particular reference to the last three paragraphs of
-> https://lore.kernel.org/lkml/20190208042448.GB21860@bombadil.infradead.or=
-g/
-
-Thanks for the pointers! I will read the patches and related code. =20
-
->=20
->> Therefore, we would like discuss (for one more time) what is needed to b=
-ring
->> THP to file systems like ext4, xfs, btrfs, etc. Once we are aligned on t=
-he
->> direction, we are more than happy to commit time and resource to make it=
- happen.
->=20
-> I believe the direction is clear.  It needs people to do the work.
-> We're critically short of reviewers.  I got precious little review of
-> the original XArray work, which made Andrew nervous and delayed its
-> integration.  Now I'm getting little review of the followup patches
-> to lay the groundwork for filesystems to support larger page sizes.
-> I have very little patience for this situation.
-
-I don't feel I am a qualified reviewer for MM patches, yet. But I will=20
-try my best to catch up.=20
-
-Thanks again,
-Song=
+-- 
+Baolin Wang
+Best Regards
