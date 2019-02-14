@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A874AC10F00
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:16:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 094B0C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:16:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E4762146E
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:16:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE154222C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:16:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fjfi.cvut.cz header.i=@fjfi.cvut.cz header.b="q5AAW7Ad"
+	dkim=pass (1024-bit key) header.d=fjfi.cvut.cz header.i=@fjfi.cvut.cz header.b="0TlO4WI/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404667AbfBNAQt (ORCPT
+        id S2404693AbfBNAQw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 19:16:49 -0500
-Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:47226 "EHLO
+        Wed, 13 Feb 2019 19:16:52 -0500
+Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:47288 "EHLO
         mailgw1.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727054AbfBNAQs (ORCPT
+        with ESMTP id S2404671AbfBNAQu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 19:16:48 -0500
+        Wed, 13 Feb 2019 19:16:50 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id 8236AAA285;
-        Thu, 14 Feb 2019 01:16:45 +0100 (CET)
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id 54F21AA288;
+        Thu, 14 Feb 2019 01:16:49 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
-        s=20151024; t=1550103405; i=@fjfi.cvut.cz;
-        bh=CV/lUT7VJkI5FIlbMOcrEXFkZgRToBUYw3ufyzqSN2Q=;
+        s=20151024; t=1550103409; i=@fjfi.cvut.cz;
+        bh=K/khPWUzrOCStJ0JQ5+KjgdA/LjpugJdhhEMHZhWsuo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=q5AAW7AdxkiYHQlOve0ldMCdX2rTuUedBbqNg8BqGI4WHV/IgJNibtGuQKfjsKaFe
-         zjNlsTpXjb21zHCZAEMiSlEsWNbofmMG8boYfXeAeXd6ggTgc6f9qCBhAdcJTa+xlw
-         6V3wBprxy7L4WNBr4lPi8sINbVkV5HEBD+19QvQQ=
+        b=0TlO4WI/T7sky4O5xar2U8YQz2n0oY3ey41FUsECa5NifoCmMnKZ7QZz7Lqu0aUBV
+         waVZ6Mo7T6Rw5PXWMf4l+zw4KiZEV1gPBQ5ocEl22oJRfyodxp/ROnW/rdPD2/RyO+
+         0oeMZ8GfjQcmEPb0LsSRBC4lEZ3uXrVC47EMd5YU=
 X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
 Received: from mailgw1.fjfi.cvut.cz ([127.0.0.1])
         by localhost (mailgw1.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
-        with ESMTP id LBu2eDisybra; Thu, 14 Feb 2019 01:16:42 +0100 (CET)
+        with ESMTP id WdnP775j0wLR; Thu, 14 Feb 2019 01:16:45 +0100 (CET)
 Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id D8892AA26F;
-        Thu, 14 Feb 2019 01:16:41 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz D8892AA26F
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id 37F88AA274;
+        Thu, 14 Feb 2019 01:16:45 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz 37F88AA274
 Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
-        id 88B6A6004E; Thu, 14 Feb 2019 01:16:41 +0100 (CET)
+        id 110E76004E; Thu, 14 Feb 2019 01:16:45 +0100 (CET)
 From:   David Kozub <zub@linux.fjfi.cvut.cz>
 To:     Jens Axboe <axboe@kernel.dk>,
         Jonathan Derrick <jonathan.derrick@intel.com>,
@@ -52,9 +52,9 @@ To:     Jens Axboe <axboe@kernel.dk>,
         linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
         David Kozub <zub@linux.fjfi.cvut.cz>
-Subject: [PATCH 02/16] block: sed-opal: fix typos and formatting
-Date:   Thu, 14 Feb 2019 01:15:54 +0100
-Message-Id: <1550103368-4605-3-git-send-email-zub@linux.fjfi.cvut.cz>
+Subject: [PATCH 03/16] block: sed-opal: use correct macro for method length
+Date:   Thu, 14 Feb 2019 01:15:55 +0100
+Message-Id: <1550103368-4605-4-git-send-email-zub@linux.fjfi.cvut.cz>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1550103368-4605-1-git-send-email-zub@linux.fjfi.cvut.cz>
 References: <1550103368-4605-1-git-send-email-zub@linux.fjfi.cvut.cz>
@@ -63,122 +63,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This should make no change in functionality.
-The formatting changes were triggered by checkpatch.pl.
+From: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
 
+Also the values of OPAL_UID_LENGTH and OPAL_METHOD_LENGTH are the same,
+it is weird to use OPAL_UID_LENGTH for the definition of the methods.
+
+Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
 Signed-off-by: David Kozub <zub@linux.fjfi.cvut.cz>
 Reviewed-by: Scott Bauer <sbauer@plzdonthack.me>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Jon Derrick <jonathan.derrick@intel.com>
 ---
- block/sed-opal.c              | 18 ++++++++++--------
- include/uapi/linux/sed-opal.h |  2 +-
- 2 files changed, 11 insertions(+), 9 deletions(-)
+ block/sed-opal.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/block/sed-opal.c b/block/sed-opal.c
-index 119640897293..d12a910e06cb 100644
+index d12a910e06cb..e59ae364f1ef 100644
 --- a/block/sed-opal.c
 +++ b/block/sed-opal.c
-@@ -157,7 +157,7 @@ static const u8 opaluid[][OPAL_UID_LENGTH] = {
- 
- 	/* C_PIN_TABLE object ID's */
- 
--        [OPAL_C_PIN_MSID] =
-+	[OPAL_C_PIN_MSID] =
- 		{ 0x00, 0x00, 0x00, 0x0B, 0x00, 0x00, 0x84, 0x02},
- 	[OPAL_C_PIN_SID] =
- 		{ 0x00, 0x00, 0x00, 0x0B, 0x00, 0x00, 0x00, 0x01},
-@@ -551,7 +551,6 @@ static void add_medium_atom_header(struct opal_dev *cmd, bool bytestring,
- 
- static void add_token_u64(int *err, struct opal_dev *cmd, u64 number)
- {
--
- 	size_t len;
- 	int msb;
- 
-@@ -623,7 +622,7 @@ static int build_locking_range(u8 *buffer, size_t length, u8 lr)
- static int build_locking_user(u8 *buffer, size_t length, u8 lr)
- {
- 	if (length > OPAL_UID_LENGTH) {
--		pr_debug("Can't build locking range user, Length OOB\n");
-+		pr_debug("Can't build locking range user. Length OOB\n");
- 		return -ERANGE;
- 	}
- 
-@@ -1324,6 +1323,7 @@ static int start_SIDASP_opal_session(struct opal_dev *dev, void *data)
- 
- 	if (!key) {
- 		const struct opal_key *okey = data;
-+
- 		ret = start_generic_opal_session(dev, OPAL_SID_UID,
- 						 OPAL_ADMINSP_UID,
- 						 okey->key,
-@@ -1341,6 +1341,7 @@ static int start_SIDASP_opal_session(struct opal_dev *dev, void *data)
- static int start_admin1LSP_opal_session(struct opal_dev *dev, void *data)
- {
- 	struct opal_key *key = data;
-+
- 	return start_generic_opal_session(dev, OPAL_ADMIN1_UID,
- 					  OPAL_LOCKINGSP_UID,
- 					  key->key, key->key_len);
-@@ -1714,7 +1715,7 @@ static int lock_unlock_locking_range(struct opal_dev *dev, void *data)
- 		write_locked = 0;
- 		break;
- 	case OPAL_LK:
--		/* vars are initalized to locked */
-+		/* vars are initialized to locked */
- 		break;
- 	default:
- 		pr_debug("Tried to set an invalid locking state... returning to uland\n");
-@@ -1775,7 +1776,7 @@ static int lock_unlock_locking_range_sum(struct opal_dev *dev, void *data)
- 		write_locked = 0;
- 		break;
- 	case OPAL_LK:
--		/* vars are initalized to locked */
-+		/* vars are initialized to locked */
- 		break;
- 	default:
- 		pr_debug("Tried to set an invalid locking state.\n");
-@@ -1854,7 +1855,7 @@ static int get_lsp_lifecycle_cont(struct opal_dev *dev)
- 		return error;
- 
- 	lc_status = response_get_u64(&dev->parsed, 4);
--	/* 0x08 is Manufacured Inactive */
-+	/* 0x08 is Manufactured Inactive */
- 	/* 0x09 is Manufactured */
- 	if (lc_status != OPAL_MANUFACTURED_INACTIVE) {
- 		pr_debug("Couldn't determine the status of the Lifecycle state\n");
-@@ -2225,7 +2226,7 @@ static int __opal_lock_unlock(struct opal_dev *dev,
- static int __opal_set_mbr_done(struct opal_dev *dev, struct opal_key *key)
- {
- 	u8 mbr_done_tf = OPAL_TRUE;
--	const struct opal_step mbrdone_step [] = {
-+	const struct opal_step mbrdone_step[] = {
- 		{ opal_discovery0, },
- 		{ start_admin1LSP_opal_session, key },
- 		{ set_mbr_done, &mbr_done_tf },
-@@ -2276,7 +2277,8 @@ static int opal_take_ownership(struct opal_dev *dev, struct opal_key *opal)
- 	return ret;
- }
- 
--static int opal_activate_lsp(struct opal_dev *dev, struct opal_lr_act *opal_lr_act)
-+static int opal_activate_lsp(struct opal_dev *dev,
-+			     struct opal_lr_act *opal_lr_act)
- {
- 	const struct opal_step active_steps[] = {
- 		{ opal_discovery0, },
-diff --git a/include/uapi/linux/sed-opal.h b/include/uapi/linux/sed-opal.h
-index 627624d35030..e092e124dd16 100644
---- a/include/uapi/linux/sed-opal.h
-+++ b/include/uapi/linux/sed-opal.h
-@@ -58,7 +58,7 @@ struct opal_key {
- struct opal_lr_act {
- 	struct opal_key key;
- 	__u32 sum;
--	__u8    num_lrs;
-+	__u8 num_lrs;
- 	__u8 lr[OPAL_MAX_LRS];
- 	__u8 align[2]; /* Align to 8 byte boundary */
- };
+@@ -181,7 +181,7 @@ static const u8 opaluid[][OPAL_UID_LENGTH] = {
+  * Derived from: TCG_Storage_Architecture_Core_Spec_v2.01_r1.00
+  * Section: 6.3 Assigned UIDs
+  */
+-static const u8 opalmethod[][OPAL_UID_LENGTH] = {
++static const u8 opalmethod[][OPAL_METHOD_LENGTH] = {
+ 	[OPAL_PROPERTIES] =
+ 		{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x01 },
+ 	[OPAL_STARTSESSION] =
 -- 
 2.20.1
 
