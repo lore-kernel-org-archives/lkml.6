@@ -2,92 +2,106 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D27F0C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:04:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1999AC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:06:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4AB9222A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:04:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6DD3222A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:06:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="bb6U8QkU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406393AbfBNKEs (ORCPT
+        id S1729049AbfBNKGO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 05:04:48 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34073 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387663AbfBNKEr (ORCPT
+        Thu, 14 Feb 2019 05:06:14 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:18759 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbfBNKGN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 05:04:47 -0500
-Received: by mail-ed1-f65.google.com with SMTP id b3so4543820ede.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 02:04:46 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Sdq/xPWrFQPnFX96tIhCA42cOhxAnf+ayG8BSFYnesg=;
-        b=OXdYrXbO8p5tXRauteXDM52wwXBFv2ChK+3vcTknux5LfEBcWQAJ+qrot9YmnwOxfc
-         xrXXQ1jpKRk/FJxGMukK55gILB51bfJ6Y+Y4He2GJaQFYUco52MVIeuG4IwMoFxFXtAj
-         wMWZJrWIAJgE7wpPM88Vdt1Eq13JPHFDH1SdSBB+vsFjk7NDs002Nv4nJCpqdwLbbDMR
-         WiXGnPZkXBrq/sF+bZsfll4Dv++6jB/ZqgAy1MMct1FPIjoqhArCMEuKIVz/zfXA6vna
-         4n7Zz1j3r/+DiNk/6BY9UyoF1rKHpKGuhcA+EvK9o/dpk7upxDVgSb3DUcvQG7Qgq4GT
-         GZdg==
-X-Gm-Message-State: AHQUAubaaWixDJzsO6SI33JJL9tFDI0K/3vmWjnrA9wZdiwmr/Hph0Pk
-        cyVShRNpNEiLAm4S66gPaHvDiNuy2/w=
-X-Google-Smtp-Source: AHgI3IbCOvQxnrZiE7DpOBbI4prtIRZDD5Tc/Kh4p+65cdmCYWIehIBaNw23t6IkpvbMg4iWV7wkuQ==
-X-Received: by 2002:a50:9e0a:: with SMTP id z10mr2311414ede.39.1550138685975;
-        Thu, 14 Feb 2019 02:04:45 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id v1sm523774eds.47.2019.02.14.02.04.44
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 02:04:45 -0800 (PST)
-Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
- LEDs
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Yauhen Kharuzhy <jekhor@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-References: <20190212205901.13037-1-jekhor@gmail.com>
- <20190212205901.13037-2-jekhor@gmail.com>
- <1df39a63-533f-bb68-a056-a0241f148be9@redhat.com>
-Message-ID: <079efdd4-2259-1e6f-48dd-5876f2bd7a93@redhat.com>
-Date:   Thu, 14 Feb 2019 11:04:44 +0100
+        Thu, 14 Feb 2019 05:06:13 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c653d980000>; Thu, 14 Feb 2019 02:06:17 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 14 Feb 2019 02:06:12 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 14 Feb 2019 02:06:12 -0800
+Received: from [10.21.132.148] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 14 Feb
+ 2019 10:06:10 +0000
+Subject: Re: [PATCH 4.14 00/35] 4.14.100-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20190213183706.176685027@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <182ff2cd-e6dc-8bc5-14fd-2b1bc9f85ae7@nvidia.com>
+Date:   Thu, 14 Feb 2019 10:06:08 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <1df39a63-533f-bb68-a056-a0241f148be9@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20190213183706.176685027@linuxfoundation.org>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1550138777; bh=iiCddkBbbuKWIoz1YKkrjRuCjVMnMeQ240yA8zEiyfI=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=bb6U8QkUHIwtIyHKIvlD7evlXJB5XGAzhHS1W/rDNln2cuYOTJwvAiV0/t4M4dRax
+         J0gFHOoaEuLjPtuKfSnFc4WpaKaSlyl1Xe4/S5Qv2CIvTvXvO06MS/p8LTDAebJX8j
+         3Ux2zxv284D5bobARUMm+u1Y6N39fKY7b8fCk3+vURE6pG1GfCH/kdnLBUPAkus7YV
+         2mzwc6LdNwsNkKPfRwz2Pk0Jco/bUwVj7cona6i9VHBKkAYVSxCmo+LzusIqpELoZy
+         3JEhl511lj8C39bjEMHzaFb4JO9aYMlzDEopjTQ9+HFrGzgwXdo/V0NDax9sjud6s/
+         XZ0dTavBfX7iQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 13-02-19 23:43, Hans de Goede wrote:
-> Hi,
+On 13/02/2019 18:37, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.100 release.
+> There are 35 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> On 12-02-19 21:59, Yauhen Kharuzhy wrote:
->> Add support for LEDs connected to the Intel Cherry Trail Whiskey Cove
->> PMIC. Charger and general-purpose leds are supported. Hardware blinking
->> is implemented, breathing is not.
->>
->> This driver was tested with Lenovo Yoga Book notebook.
+> Responses should be made by Fri Feb 15 18:36:47 UTC 2019.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.100-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+All tests are passing for Tegra ...
 
-<snip>
+Test results for stable-v4.14:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    14 tests:	14 pass, 0 fail
 
-> Note that in my experience the "charging" mode only works
-> when bits 0-1 have the value 10.
+Linux version:	4.14.100-rc1-g3a58a4d
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-Ok, scrap that I don't know where this info in my notes
-came from (probably user error), the power-on-reset
-value for bits 0-1 is 00 and then the hw controls the
-charging LED just fine. So your code is right, bit 0
-switches between hw-control (0) and user-control (1) and
-bit 1 is on/off when user-control is enabled.
+Cheers
+Jon
 
-Regards,
-
-Hans
+-- 
+nvpublic
