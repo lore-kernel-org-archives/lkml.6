@@ -2,87 +2,98 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49038C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:45:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93F2FC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:47:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23C642229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:45:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C6702229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:47:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550155651;
+	bh=dMHtbJkMPXU7BFMdN4BrtKMH1r3PCHroPbC7YSnC0kU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=XEyjt0NO2PjMcsW4tPvVkEevFVCFKhX6v7Umux+N6JEk2NNs0FN67iikUXTCOov+3
+	 quKDwTNHI7+gHrK8+DOCiRKNV0+dEUKF1Nx8UuQG1MGpQFd7pFSMAcNd3OgKOu1DG1
+	 lxryzF1awlMxg5tmbnFnW4IUrsjZEkHibyncixOs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439315AbfBNOo7 (ORCPT
+        id S2439319AbfBNOra (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 09:44:59 -0500
-Received: from smtprelay0085.hostedemail.com ([216.40.44.85]:51643 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2439303AbfBNOo7 (ORCPT
+        Thu, 14 Feb 2019 09:47:30 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47936 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436978AbfBNOr3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 09:44:59 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 717A5100E86C0;
-        Thu, 14 Feb 2019 14:44:57 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: milk93_4846db7892745
-X-Filterd-Recvd-Size: 2268
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf10.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 14 Feb 2019 14:44:56 +0000 (UTC)
-Message-ID: <4a6844c41d187d113e0c54dd156ba91c2635c361.camel@perches.com>
-Subject: Re: report: scripts: checkpatch: Spell Checker Does Not Run with
- '-f'
-From:   Joe Perches <joe@perches.com>
-To:     federico.vaga@cern.ch, Andy Whitcroft <apw@canonical.com>,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 14 Feb 2019 06:44:55 -0800
-In-Reply-To: <3030138.e1gdHPWlgN@pcbe13614>
-References: <3030138.e1gdHPWlgN@pcbe13614>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 14 Feb 2019 09:47:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=dMHtbJkMPXU7BFMdN4BrtKMH1r3PCHroPbC7YSnC0kU=; b=RAoOlAG2bxd6gnAxso2qAWKns
+        9Ef1MUMwSZ+9dICH2duQWVffSCmVIoaAVDcg3lz9GxZ/R4vMB72rTrd0EYPTBS5Fc2hhp58h3JXEB
+        tB8BszG/2iFB21Zgn+et/lI14EaA9/5WJkLQWgpZ+3KFL2vVdxP2uRNTAnedG3CZ074u0=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1guIIO-000568-GC; Thu, 14 Feb 2019 14:47:24 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id C9D9B1126F78; Thu, 14 Feb 2019 14:47:23 +0000 (GMT)
+Date:   Thu, 14 Feb 2019 14:47:23 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     sbkim73@samsung.com, alsa-devel@alsa-project.org,
+        lgirdwood@gmail.com, krzk@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 Resend 09/13] ASoC: dmaengine: Remove unused
+ SND_DMAENGINE_PCM_FLAG_CUSTOM_CHANNEL_NAME flag
+Message-ID: <20190214144723.GB11988@sirena.org.uk>
+References: <20190214093747.2414-1-s.nawrocki@samsung.com>
+ <CGME20190214093847epcas2p1056c7371ba485f375a9d408ea45078e4@epcas2p1.samsung.com>
+ <20190214093747.2414-10-s.nawrocki@samsung.com>
+ <20190214130747.GA11988@sirena.org.uk>
+ <94582faf-3054-9b40-8c15-15b70f984286@samsung.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="8GpibOaaTibBMecb"
+Content-Disposition: inline
+In-Reply-To: <94582faf-3054-9b40-8c15-15b70f984286@samsung.com>
+X-Cookie: Bones: "The man's DEAD, Jim!"
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-02-14 at 13:48 +0100, Federico Vaga wrote:
-> Hello,
-> 
-> Recently I have produce a couple of patches but I get different warnings if I 
-> run checkpatch on the file (-f) or if I run it of a patch file. In particular, 
-> the problem I found is with the spell checker which seems to run only when the 
-> option '-f' is not used. I am wandering if there are other similar cases.
-> 
-> I do not know Perl, so I cannot investigate more, but I have a practical 
-> example. I have this simple patch applied on my tree that introduces a spell 
-> error:
 
-If you want spelling fixes on files you have to use --strict
+--8GpibOaaTibBMecb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> From: Federico Vaga <federico.vaga@cern.ch>
-> Date: Thu, 14 Feb 2019 13:29:39 +0100
-> Subject: [PATCH] script: checkpatch: buggy(?) output with -f option
-> 
-> Signed-off-by: Federico Vaga <federico.vaga@cern.ch>
-> ---
->  drivers/i2c/busses/i2c-ocores.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-ocores.c b/drivers/i2c/busses/i2c-ocores.c
-> index b32d67c..f4deb90 100644
-> --- a/drivers/i2c/busses/i2c-ocores.c
-> +++ b/drivers/i2c/busses/i2c-ocores.c
-> @@ -301,7 +301,7 @@ static int ocores_poll_wait(struct ocores_i2c *i2c)
->  		/* on going transfer */
->  		mask = OCI2C_STAT_TIP;
->  		/*
-> -		 * We wait for the data to be transferred (8bit),
-> +		 * We wait for the data to be transfered (8bit),
->  		 * then we start polling on the ACK/NACK bit
->  		 */
->  		udelay((8 * 1000) / i2c->bus_clock_khz);
+On Thu, Feb 14, 2019 at 03:32:38PM +0100, Sylwester Nawrocki wrote:
 
+> Hm, looks like we need still to keep that data structure field, but=20
+> remaining part of the patch could be applied. Do you want me to=20
+> resend it with chan_name removal part dropped?
+
+Please resend.
+
+--8GpibOaaTibBMecb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxlf3sACgkQJNaLcl1U
+h9Dd+wf7B7ZIMmY5ipI415Ue3HfBHNnUClUqoTZ3CiLtqZhLt7fWKljOtbB37nnl
+JjpDKk5wDvQvPWltRQ7mDFB9NUX3HfxL2Z/XQ9vTcXzNjamou0bYyoUrO3AvDsyW
+xeus7Ga6YBMnOee8ZT+jLX74mrFVXn23pcvQY0irJvc7jWM6+oHtInuxjUL3IX4m
+dehRi5OlEmoh+vvZLAabm9uz0haw9rsnTsF4wp3OArX+D0nns1TBfwsAJFYsivSA
+qg2qgZ0YO3y4BfEVFQzX1nsbW1feuk18Y8AG7nrp/pAsnASRCT39S1IzGkll3mLD
+7NjGUiisJtgDrXGYsHmnDC33f7MQeA==
+=6Epj
+-----END PGP SIGNATURE-----
+
+--8GpibOaaTibBMecb--
