@@ -5,59 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E974C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:19:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C416C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15441222B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:19:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C065A2229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:19:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uYfZktnt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rQroV7vh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436945AbfBNJTA (ORCPT
+        id S2436962AbfBNJTo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 04:19:00 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:34782 "EHLO
+        Thu, 14 Feb 2019 04:19:44 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:37399 "EHLO
         mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436914AbfBNJS7 (ORCPT
+        with ESMTP id S2391262AbfBNJTn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 04:18:59 -0500
-Received: by mail-ed1-f68.google.com with SMTP id b3so4435259ede.1;
-        Thu, 14 Feb 2019 01:18:57 -0800 (PST)
+        Thu, 14 Feb 2019 04:19:43 -0500
+Received: by mail-ed1-f68.google.com with SMTP id m12so4409665edv.4;
+        Thu, 14 Feb 2019 01:19:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=rXTeYHYmqp/a+nGoO9vOdzHC6A2hPi35ISWiIRXhGtY=;
-        b=uYfZktntFoc9Tm13NTs7qFiKA5QYcTL+xwfy4ns2UEV9SxyOe+mcxIGTyk1obCryi8
-         zaKYKtc/SbyZ7P8v05iQljoOAZOwFhh2x5iebdArMpUHQPRicGgkrSPvllaZPeO9o/11
-         VKxnFjSiPQcSVMPVZixkeDP60BqUcnFMBHZLADWC3WRLrn6fL7t0wSw7npzyThVqv9eY
-         nactkVfLh9PxHlk7KJduFfKBB2lHv2P3rG29dQcpBhqp1u8LDmwRaYmPEJ/UUKYn+fFt
-         386YZH6BXIZZPv4iJt8EHPT5mE66aKi8gOrcEtRROqxGAfNHlzMjhvXq7le39hUg7Plm
-         J8Tg==
+        bh=F4/Uk85YdLfb/5vq54BeuL1Rzkfay1lvqgtIo3/3R8s=;
+        b=rQroV7vhDRCxF6KdNzYamBAE8g6qU5nRd81TUlErY5xizWy5FYzvbui/6Rcd0Rc3z8
+         w9dgrG8xKVAdg+e9ku1kDEme01QNsY3VToVXhaaDYXfziZwdbUg0UBy7wiA+NW/lAzJC
+         kzudrRuML4vkdWt8IRa6aDl+9lcOaCo5awxgUV9aovnL+8TPPANEuhEFua3n6z52jPV2
+         G58cWBwPxY7U1zJIjCNToWqE9fIXTO6vVa+Synep2wlkCDaPSC4LDGpjcfI7UQO9gCNx
+         d6JghpfX2CRymK2Ybx86Q+/yXCPw+RhBy8h7S1ZjirlP7V1scKpH+7zWN5EG9isMIDRm
+         zaOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=rXTeYHYmqp/a+nGoO9vOdzHC6A2hPi35ISWiIRXhGtY=;
-        b=uTOLy1X95AEqD28lCVJ5rUUYX1Y95F8QHHrBLtTrunSo2+jFwHzuJ+3CXIqLV94/08
-         ufSvfSVA0n/HuS5NQiEY7+RUNNf46vleAvQfhStonBVWC7VDcpvYOWSD/w7C0l5hmYDP
-         3N5khg2VrxK7DS72M0QlQTEbgpHbk2dRK5JuUv1WKytRe6ML+qjbrssV8YxSTcUc9Vdo
-         KDfjGhDbBrgJw7/cecFIEsGe0FCOy2qoiD2DEsA1AU8wlWRoFnp5flRqsfeDm+rirdSW
-         kRz96qlu9JRxEjRkaiEop1EGiaUMu4eUooNpUdL2dhSX6+d1SpNnZir4B2CSKjk7lzJY
-         CHiQ==
-X-Gm-Message-State: AHQUAuYoiCM9xNQItAkjtdR9wamfEvfQuv8sUORJ+4ixh1RIegO9FyEV
-        2ykiMg8gbxhC0lZOEGMX38E=
-X-Google-Smtp-Source: AHgI3IbR9g1yllLyj0kGGCp7PpmZ+2hMXKk7RfIEr7cqo3eg8NxAcXUk5BCXXeNcZRXQ2wqHSl4jKA==
-X-Received: by 2002:a17:906:701:: with SMTP id y1-v6mr2053418ejb.59.1550135936515;
-        Thu, 14 Feb 2019 01:18:56 -0800 (PST)
+        bh=F4/Uk85YdLfb/5vq54BeuL1Rzkfay1lvqgtIo3/3R8s=;
+        b=D9i7q1AKfFhHPnm+2DkHiGFynrLQUr/ADQiS6v0TP8tEvOUSyb5KaapdlgpK3yrI15
+         hUET7KwiQjaxi1BVuXSaQ8NsrpGy4OoC/38erusGsOVLBoNd8KIVfl3NBLp60jpy1RaU
+         SJmVb4k6PhZhoSv2YI2bzs6WZLC6XBfa/bTH0655kUuBlwllrTgx4XEo7dVo5gNjmBD+
+         ZStBzu07i20k3JpFRbGKMN0kZtfY9/wiO3/jUCJTxVtj7GP7hTp8TjPyObtV4S8t8Xgx
+         vi/ZTKRysJqVwGgEW6AMdAJlDo/kRn3ctlbyoAUp+XGevIL77GrjpXDOaygUPubb7+cP
+         Y48g==
+X-Gm-Message-State: AHQUAublSjhDCbJiBs/5VTmhWv81ZMMoxvwkF+6tdXe5+6G/GJ5PGKV3
+        tcT5UnyIWZkO0pYBYgVcd40=
+X-Google-Smtp-Source: AHgI3IYcd830OO1Lb5XSf9m+q3hhV2UrP2BQ/RISZUVKt2oIru8QfNaE9zrctiH7BSDTM3Q/hDQvGw==
+X-Received: by 2002:a17:906:4ccc:: with SMTP id q12mr2050845ejt.201.1550135980715;
+        Thu, 14 Feb 2019 01:19:40 -0800 (PST)
 Received: from ziggy.stardust ([37.223.146.9])
-        by smtp.gmail.com with ESMTPSA id b11sm507080eds.68.2019.02.14.01.18.53
+        by smtp.gmail.com with ESMTPSA id y20sm416226ejj.48.2019.02.14.01.19.39
         (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 01:18:53 -0800 (PST)
+        Thu, 14 Feb 2019 01:19:40 -0800 (PST)
 Subject: Re: [PATCH v2 1/1] dt-bindings: dmaengine: Add MediaTek Command-Queue
  DMA controller bindings
 To:     shun-chih.yu@mediatek.com, Sean Wang <sean.wang@mediatek.com>,
@@ -164,8 +164,8 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp3mlIFZ6fsEKI
  AN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHcUXI+r2JwH1CJ
  jrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <e6e7ab27-257d-f0fc-f107-94bff92294cc@gmail.com>
-Date:   Thu, 14 Feb 2019 10:18:52 +0100
+Message-ID: <17980f11-dcbf-b033-c525-613a3b3ed62c@gmail.com>
+Date:   Thu, 14 Feb 2019 10:19:38 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.3
 MIME-Version: 1.0
@@ -231,7 +231,10 @@ MTK_CQDMA_NR_PCHANS in case the property is not present.
 
 Does this mean that you have to resources at base = 0x0 with different length?
 
-Regards,
+For the next time, please send driver and binding description in one series (two
+patches). That makes things easier to review.
+
+Thanks,
 Matthias
 
 > +		interrupts = <GIC_SPI 113 IRQ_TYPE_LEVEL_LOW>,
