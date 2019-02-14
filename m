@@ -2,204 +2,232 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B2F0C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:52:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DAA9C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:52:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3124A2229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:52:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3ECDE2229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:52:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YAck+mNs"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Z9uYQUai"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439441AbfBNOwV (ORCPT
+        id S2439472AbfBNOwq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 09:52:21 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:38906 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729035AbfBNOwU (ORCPT
+        Thu, 14 Feb 2019 09:52:46 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34542 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2439446AbfBNOwo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 09:52:20 -0500
-Received: by mail-it1-f195.google.com with SMTP id l66so4840765itg.3;
-        Thu, 14 Feb 2019 06:52:19 -0800 (PST)
+        Thu, 14 Feb 2019 09:52:44 -0500
+Received: by mail-wr1-f67.google.com with SMTP id f14so6830386wrg.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 06:52:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+EGt+v5ZyVvPKwVW3emNjKEWeGsO2xJtAz1zaHUXrBU=;
-        b=YAck+mNs/CPhSATtPY3A+HQ1SQVRWX6LVgVNMp3RMAlrd36W4KQ0FybFxm5aco7jPl
-         7ohcscM3KZrSCLBBeZJxxigV7BmH6OlqlOsiOuxDHTp3sd7utq+Abvf6zKtFd0pix/SN
-         /xecmi5kYK67GEgq7DW9WdNHMc40SkJqtexz6KjtAJ+MMS/CbaDqerur98Y65j68cTD9
-         j6YHk/mU0lHLAhVKpmAlvDf/SUmJhBx5xeYeIJwCs1oE5GKeIKEmJySWd5+8TOfL/GMk
-         obARw/CmdSQa3ESsdgu1w7JaWNzVv+MtoQ7iApfRutp0sKlhexqjp0ORfontJEam8vI1
-         IdGQ==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ydVa7PNkM43h9/VNVc1q4z6TOP5eV6ZftDClDqu9GEs=;
+        b=Z9uYQUaiHWbW5uG+XDl7d3b9P+RcwozLGXV6wqNWM0MqGwzJBeP+Hj8Y/smWPUoVdT
+         P180KN7eGx+YcPDXEt6c3KvCcDVc/Y+7AXwt4eb9SlhzFRxJu30WgoCJJemUnzvItLd8
+         onG/PNd9UTj3gm8RUNGnEJe1tcs9brdKZ6QjPnrWQZm6rC/O2i+36Of8+rUEM8cmQ9d4
+         HX9xOh4Lg7KuVUZ87yamcilfdrkPao0Yk0RpgckdnFTx7xFNmJKScnYX49dyS76X/u8P
+         S6sY7kjCMV9tRoDyUIwuuyhYbPNcVZXAjn6k1N9+fp1Vmcr0aKf2bcy8R8II/STMyZEt
+         yuog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+EGt+v5ZyVvPKwVW3emNjKEWeGsO2xJtAz1zaHUXrBU=;
-        b=dSlwOyPmOA9Wpnw89jCiYDxFJmlbDSiXFxO7So+c2YYMPXIjRy0y7pmLNpNw+9BgCJ
-         WPr6v7tKviFFOY0KhEEjt0GpNVHiyO/soW4SKsM7sW2CUPcpLQWRKNGW8gRDtdjiv+5V
-         QIIjs2m6BbK+TjMbVo1+Z9JVIiQl5SusXgUOyrA0Aa5a41XaGCfopqEIdCQWz2j67Dg8
-         n1zw5rVtSY3gU5UIEtCx0+v7xrF/LPxe+gRCMJs5lInUJV9+WwlH2wmZjnbQynlOn0ux
-         sx+/68fteti+pSU7joU1gm3v4oAKSVx3v4vim4Ju6tz2TIz0uv3SBMSYYmCwnIbB45Zq
-         FryA==
-X-Gm-Message-State: AHQUAuaFNevZbe3L/0xTns5ET1twdREeEQnI/FDUZJArySYDKYHQ/X6o
-        VVuqAEBJdFRa2oHOglX+g/+4XUhGTtaHusIDJ94=
-X-Google-Smtp-Source: AHgI3IY0C6Q/oztInKZQxwyd8k+COA306ww4jbwsIY03ZnBRkG6j/9fn3yyHQktGFWb1K6Y0nT0EJ+UQIh8nft81mcY=
-X-Received: by 2002:a6b:c545:: with SMTP id v66mr1752509iof.40.1550155938783;
- Thu, 14 Feb 2019 06:52:18 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ydVa7PNkM43h9/VNVc1q4z6TOP5eV6ZftDClDqu9GEs=;
+        b=j9RhD/rmQG4gF7+fFI8il3Tn+Q0Q566Pcc3qZNZvu1HHMxkJLApjnwP5hcBiz/al/t
+         CdFMr+pUW2i1wlHWH7+CTlRz/+xzPDGwsBv6b6ZzcfIY4JX5RZ+vW7YSBm063yAqOC3l
+         g1EyMvXqo7DYOjo6uQK4fcnglP+QINAZYNXeyCJUNwsQMnPHLHs8WbvzSiKV7cI7a5W2
+         HBWkvsCfM5q1stVwzvRBq+BWFwHvywh9yu9Qw5mbmm3fRGFg71hOmmt57d6ZsuyN3RAT
+         Qi/mKalWEZAKmxdnK8gwiwnzC6u3LonrESORSpt2WxlthQSiAAUfz3R870LyeKWQx9qy
+         xM3A==
+X-Gm-Message-State: AHQUAub49yHqmrTwkEJUWQI7jpB20yD8lBLKWdfxezooYWwl3TztNwiJ
+        APWNkXqmbrFBcKovn3U4FcSRRw==
+X-Google-Smtp-Source: AHgI3IaCUhhWRljTj+UsKnZyCcYWOMld3NyJEWtK1U3Qrm4x0wmfOjtUg/PL/MMSa2KH5JToZu9LZA==
+X-Received: by 2002:a5d:574e:: with SMTP id q14mr3092967wrw.200.1550155962191;
+        Thu, 14 Feb 2019 06:52:42 -0800 (PST)
+Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
+        by smtp.gmail.com with ESMTPSA id y20sm4181005wra.51.2019.02.14.06.52.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Feb 2019 06:52:41 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        David Lechner <david@lechnology.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH v4 00/37] ARM: davinci: modernize the irq support
+Date:   Thu, 14 Feb 2019 15:51:54 +0100
+Message-Id: <20190214145231.8750-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190214130910.9201-1-tiny.windzz@gmail.com> <20190214130910.9201-5-tiny.windzz@gmail.com>
- <20190214143842.nqsh6trwdjxq2ecd@flea>
-In-Reply-To: <20190214143842.nqsh6trwdjxq2ecd@flea>
-From:   Frank Lee <tiny.windzz@gmail.com>
-Date:   Thu, 14 Feb 2019 22:52:16 +0800
-Message-ID: <CAEExFWuxrVC1J0g93R3ifaDxOGy-20B4jftoHw932V7+wqhtxw@mail.gmail.com>
-Subject: Re: [PATCH 4/4] arm64: dts: allwinner: h6: Add CPU Operating
- Performance Points table
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, robh+dt@kernel.org,
-        mark.rutland@arm.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 10:38 PM Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
->
-> Hi,
->
-> On Thu, Feb 14, 2019 at 08:09:10AM -0500, Yangtao Li wrote:
-> > Add an OPP (Operating Performance Points) table for the CPU cores to
-> > enable DVFS (Dynamic Voltage & Frequency Scaling) on the H6. This
-> > information comes from github.
-> >
-> > Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> > ---
-> >  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 61 ++++++++++++++++++++
-> >  1 file changed, 61 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-> > index 57a1390ecdc2..46a4a69eb38f 100644
-> > --- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-> > @@ -28,6 +28,8 @@
-> >                       enable-method = "psci";
-> >                       clocks = <&ccu CLK_CPUX>;
-> >                       clock-latency-ns = <244144>; /* 8 32k periods */
-> > +                     operating-points-v2 = <&cpu_opp_table>;
-> > +                     #cooling-cells = <2>;
-> >               };
-> >
-> >               cpu1: cpu@1 {
-> > @@ -37,6 +39,8 @@
-> >                       enable-method = "psci";
-> >                       clocks = <&ccu CLK_CPUX>;
-> >                       clock-latency-ns = <244144>; /* 8 32k periods */
-> > +                     operating-points-v2 = <&cpu_opp_table>;
-> > +                     #cooling-cells = <2>;
-> >               };
-> >
-> >               cpu2: cpu@2 {
-> > @@ -46,6 +50,8 @@
-> >                       enable-method = "psci";
-> >                       clocks = <&ccu CLK_CPUX>;
-> >                       clock-latency-ns = <244144>; /* 8 32k periods */
-> > +                     operating-points-v2 = <&cpu_opp_table>;
-> > +                     #cooling-cells = <2>;
-> >               };
-> >
-> >               cpu3: cpu@3 {
-> > @@ -55,6 +61,61 @@
-> >                       enable-method = "psci";
-> >                       clocks = <&ccu CLK_CPUX>;
-> >                       clock-latency-ns = <244144>; /* 8 32k periods */
-> > +                     operating-points-v2 = <&cpu_opp_table>;
-> > +                     #cooling-cells = <2>;
-> > +             };
-> > +     };
-> > +
-> > +     cpu_opp_table: opp_table {
-> > +             compatible = "operating-points-v2";
-> > +             opp-shared;
-> > +
-> > +             opp@480000000 {
-> > +                     opp-hz = /bits/ 64 <480000000>;
-> > +                     opp-microvolt = <800000 800000 880000>;
-> > +                     clock-latency-ns = <244144>; /* 8 32k periods */
-> > +             };
-> > +
-> > +             opp@720000000 {
-> > +                     opp-hz = /bits/ 64 <720000000>;
-> > +                     opp-microvolt = <800000 800000 880000>;
-> > +                     clock-latency-ns = <244144>; /* 8 32k periods */
-> > +             };
-> > +
-> > +             opp@816000000 {
-> > +                     opp-hz = /bits/ 64 <816000000>;
-> > +                     opp-microvolt = <800000 800000 880000>;
-> > +                     clock-latency-ns = <244144>; /* 8 32k periods */
-> > +             };
-> > +
-> > +             opp@888000000 {
-> > +                     opp-hz = /bits/ 64 <888000000>;
-> > +                     opp-microvolt = <800000 800000 940000>;
-> > +                     clock-latency-ns = <244144>; /* 8 32k periods */
-> > +             };
-> > +
-> > +             opp@1080000000 {
-> > +                     opp-hz = /bits/ 64 <1080000000>;
-> > +                     opp-microvolt = <840000 840000 1060000>;
-> > +                     clock-latency-ns = <244144>; /* 8 32k periods */
-> > +             };
-> > +
-> > +             opp@1320000000 {
-> > +                     opp-hz = /bits/ 64 <1320000000>;
-> > +                     opp-microvolt = <900000 900000 1160000>;
-> > +                     clock-latency-ns = <244144>; /* 8 32k periods */
-> > +             };
-> > +
-> > +             opp@1488000000 {
-> > +                     opp-hz = /bits/ 64 <1488000000>;
-> > +                     opp-microvolt = <960000 960000 1160000>;
-> > +                     clock-latency-ns = <244144>; /* 8 32k periods */
-> > +             };
-> > +
-> > +             opp@1800000000 {
-> > +                     opp-hz = /bits/ 64 <1800000000>;
-> > +                     opp-microvolt = <1060000 1060000 1160000>;
-> > +                     clock-latency-ns = <244144>; /* 8 32k periods */
->
-> So we definitely want to have that tested, especially since cpufreq
-> can lead to all kind of hard to debug errors (brown-outs, CPU lockups,
-> cache corruption, etc.). I good way to test that would be to use
-> cpufreq-ljt-stress-test here:
-> https://github.com/ssvb/cpuburn-arm/blob/master/cpufreq-ljt-stress-test
->
-> I'm especially worried about the higher frequencies that will probably
-> make the SoC heat too much
-Indeed, in order to avoid this situation, it is best to have cpu cooling
-support(But now it does not support thermal driver? ).
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
+This series ports the davinci platform to using SPARSE_IRQ, cleans up
+the irqchip drivers and moves them over to drivers/irqchip.
 
-In this case, perhaps we should remove the frequency beyond a certain
-range to avoid the CPU being too hot?
+The series can be logically split into five parts. The first patch
+preemptively fixes a problem in an input driver that would have caused
+problems later. Patches (2-9) aim at introducing support for SPARSE_IRQ.
+They contain a couple changes required for that functionality and do some
+cleanup at the end.
 
-Yangtao
->
-> Maxime
->
-> --
-> Maxime Ripard, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+Third part (10-22) makes the aintc driver suitable for drivers/irqchip
+and eventually moves it over there.
+
+Part 4 (23-36) does the same for the cp-intc driver.
+
+Last patch removes unnecessary code.
+
+The series has been tested on da850-lcdk (for cp-intc) and
+dm365-evm (for aintc).
+
+v1 -> v2:
+- made commit messages readable without reading the subject line first
+- collected David's Reviewed-by tags for patches that haven been
+  significantly modified since v1
+- added handling of spurious interrupts in cp-intc
+- added comments explaining the irq handlers (C versions translated from
+  assembly)
+- dropped the patches removing the hardware interrupt numbers from
+  the priority tables
+- don't remove irqs.h, make it a local header instead
+- rearranged the patches in order not to remove the code added
+  by earlier ones
+- renamed d*_init_irqs to d*_init_irq to fit the name of the relevant
+  callback in machine info struct
+- fixed license identifiers where needed
+- added comments to config structures for irqchip drivers
+- fixed all off-by-one errors in resource sizes
+- clarified the comments on the weird handling of IRQ_TINT1_TINT34 as level
+  irq and added missing calls to irq_set_handler() to dm3* SoCs
+- fixed one function that was missing a correct prefix in cp_intc
+- return value variables should be called ret not rv
+- added a patch converting calls to _raw_readl/writel() to their _relaxed
+  counterparts
+- fixed the commit message prefix in patches that belong to the irqchip
+  subsystem
+
+v2 -> v3:
+- added a patch preventing a build problem in davinci_keyscan driver
+- converted another usage of 'int rv' to 'int ret'
+- don't use __raw_readl/writel() in new patches, but leave patches converting
+  previous uses
+- drop a stray newline in usb.c when removing irqs.h
+- when unifying the error handling: use specific messages instead of WARN_ON()
+- do the above for aintc as well
+- add patches adding calls to request_mem_region() to both drivers
+
+v3 -> v4:
+- fixed a commit message in one of the "unify error reporting" patches
+- entirely remove the level irq handler setting for dm* boards
+
+Bartosz Golaszewski (37):
+  input: davinci_keyscan: remove unnecessary includes
+  ARM: davinci: remove intc_host_map from davinci_soc_info struct
+  ARM: davinci: aintc: use irq domain
+  ARM: davinci: select GENERIC_IRQ_MULTI_HANDLER
+  ARM: davinci: remove davinci_intc_type
+  ARM: davinci: pull davinci_intc_base into the respective intc drivers
+  ARM: davinci: wrap HW interrupt numbers with a macro
+  ARM: davinci: select SPARSE_IRQ
+  ARM: davinci: make irqs.h a local header
+  ARM: davinci: aintc: drop GPL license boilerplate
+  ARM: davinci: aintc: wrap davinci_irq_init() with a helper
+  ARM: davinci: aintc: use a common prefix for symbols in the driver
+  ARM: davinci: aintc: drop the 00 prefix from register offsets
+  ARM: davinci: aintc: use readl/writel_relaxed()
+  irqchip: davinci-aintc: add a new config structure
+  ARM: davinci: aintc: use the new irqchip config structure in dm* SoCs
+  ARM: davinci: aintc: use the new config structure
+  ARM: davinci: aintc: unify error handling
+  ARM: davinci: aintc: request memory region before remapping it
+  ARM: davinci: aintc: remove the timer-specific irq_set_handler()
+  ARM: davinci: aintc: remove unnecessary includes
+  irqchip: davinci-aintc: move the driver to drivers/irqchip
+  ARM: davinci: cp-intc: remove cp_intc.h
+  ARM: davinci: cp-intc: add a wrapper around cp_intc_init()
+  irqchip: davinci-cp-intc: add a new config structure
+  ARM: davinci: cp-intc: add the new config structures for da8xx SoCs
+  ARM: davinci: cp-intc: use a common prefix for all symbols
+  ARM: davinci: cp-intc: convert all hex numbers to lowercase
+  ARM: davinci: cp-intc: use the new-style config structure
+  ARM: davinci: cp-intc: request the memory region before remapping it
+  ARM: davinci: cp-intc: improve coding style
+  ARM: davinci: cp-intc: unify error handling
+  ARM: davinci: cp-intc: use readl/writel_relaxed()
+  ARM: davinci: cp-intc: drop GPL license boilerplate
+  ARM: davinci: cp-intc: remove redundant comments
+  irqchip: davinci-cp-intc: move the driver to drivers/irqchip
+  ARM: davinci: remove intc related fields from davinci_soc_info
+
+ arch/arm/Kconfig                              |   2 +
+ arch/arm/mach-davinci/Kconfig                 |  19 +-
+ arch/arm/mach-davinci/Makefile                |   3 -
+ arch/arm/mach-davinci/asp.h                   |   8 +-
+ arch/arm/mach-davinci/board-da830-evm.c       |   5 +-
+ arch/arm/mach-davinci/board-da850-evm.c       |   5 +-
+ arch/arm/mach-davinci/board-dm355-evm.c       |   2 +-
+ arch/arm/mach-davinci/board-dm355-leopard.c   |   2 +-
+ arch/arm/mach-davinci/board-dm365-evm.c       |   2 +-
+ arch/arm/mach-davinci/board-dm644x-evm.c      |   8 +-
+ arch/arm/mach-davinci/board-dm646x-evm.c      |   7 +-
+ arch/arm/mach-davinci/board-mityomapl138.c    |   3 +-
+ arch/arm/mach-davinci/board-neuros-osd2.c     |   2 +-
+ arch/arm/mach-davinci/board-omapl138-hawk.c   |   3 +-
+ arch/arm/mach-davinci/board-sffsdr.c          |   2 +-
+ arch/arm/mach-davinci/common.c                |   3 -
+ arch/arm/mach-davinci/cp_intc.c               | 215 ---------------
+ arch/arm/mach-davinci/cp_intc.h               |  57 ----
+ arch/arm/mach-davinci/da830.c                 | 128 ++-------
+ arch/arm/mach-davinci/da850.c                 | 154 ++---------
+ arch/arm/mach-davinci/davinci.h               |   4 +
+ arch/arm/mach-davinci/devices-da8xx.c         | 147 +++++-----
+ arch/arm/mach-davinci/devices.c               |  40 +--
+ arch/arm/mach-davinci/dm355.c                 |  78 +++---
+ arch/arm/mach-davinci/dm365.c                 | 102 ++++---
+ arch/arm/mach-davinci/dm644x.c                |  68 +++--
+ arch/arm/mach-davinci/dm646x.c                |  82 +++---
+ arch/arm/mach-davinci/include/mach/common.h   |  14 +-
+ arch/arm/mach-davinci/include/mach/da8xx.h    |   2 +
+ .../mach-davinci/include/mach/entry-macro.S   |  39 ---
+ arch/arm/mach-davinci/irq.c                   | 117 --------
+ .../mach-davinci/{include/mach => }/irqs.h    |   4 -
+ arch/arm/mach-davinci/usb-da8xx.c             |   9 +-
+ arch/arm/mach-davinci/usb.c                   |  13 +-
+ drivers/input/keyboard/davinci_keyscan.c      |   4 -
+ drivers/irqchip/Kconfig                       |  10 +
+ drivers/irqchip/Makefile                      |   2 +
+ drivers/irqchip/irq-davinci-aintc.c           | 163 +++++++++++
+ drivers/irqchip/irq-davinci-cp-intc.c         | 260 ++++++++++++++++++
+ include/linux/irqchip/irq-davinci-aintc.h     |  27 ++
+ include/linux/irqchip/irq-davinci-cp-intc.h   |  25 ++
+ 41 files changed, 880 insertions(+), 960 deletions(-)
+ delete mode 100644 arch/arm/mach-davinci/cp_intc.c
+ delete mode 100644 arch/arm/mach-davinci/cp_intc.h
+ delete mode 100644 arch/arm/mach-davinci/include/mach/entry-macro.S
+ delete mode 100644 arch/arm/mach-davinci/irq.c
+ rename arch/arm/mach-davinci/{include/mach => }/irqs.h (98%)
+ create mode 100644 drivers/irqchip/irq-davinci-aintc.c
+ create mode 100644 drivers/irqchip/irq-davinci-cp-intc.c
+ create mode 100644 include/linux/irqchip/irq-davinci-aintc.h
+ create mode 100644 include/linux/irqchip/irq-davinci-cp-intc.h
+
+-- 
+2.20.1
+
