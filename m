@@ -2,176 +2,75 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72664C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:03:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F7CC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:03:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 402012229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:03:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vi3XylTj"
+	by mail.kernel.org (Postfix) with ESMTP id 5E46421927
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:03:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392925AbfBNODp (ORCPT
+        id S2393125AbfBNOD6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 09:03:45 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:36596 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390733AbfBNODo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 09:03:44 -0500
-Received: by mail-it1-f194.google.com with SMTP id h6so13286132itl.1;
-        Thu, 14 Feb 2019 06:03:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+iB84plduXNkNDw8SYCPoxY6/XXdsrjGcy1G6JgSDkw=;
-        b=Vi3XylTjjYtnAi+txFf7JXTw/qcllRwN5AQHEmk3YFaTZOAfCI5GtEnThpaB5lC4Qp
-         Xh8JPT0sCK8rKSbKe/8UYvKlDbXeqeGJJWZbGfmjI3jt6yAhx3xDDKTc25gcVyO/OpAl
-         OimpDGOM+i78ix6y/0UN/pZZV6rOSBIs9Hna0QbFYw43Igq3eBXTi3Xodn7ZRnB/y+NO
-         gPO8i3+2bVmY/ALamUh7Os+zGJ7tW+rc3oQPKEdAub9LlhaH9bO+GDG8MrB+KsNz47nG
-         k0djiblMlOHoKA+vmvSN6y/Br0cyoHE5T1mz5Aek80xnN14GEsPXqP8LaY3PRH76meF8
-         IIrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+iB84plduXNkNDw8SYCPoxY6/XXdsrjGcy1G6JgSDkw=;
-        b=QatDA6BT7y38zu6S5Fnojd0pUkxVV1NdMt94OBKAL2EkhW08an6eDzl4IlwqO6Hmp0
-         Kg+XROtxyIJexQIeuMeaBbVri6XWCIXqKxKaLcpjP7FLQSuQ12legLguuInWy3kB1c24
-         L03tXvJIAhoUnlmPpgPN6hXHyaJyZ5p5bRF7Bql6PUieODlUZDjLgDpAROEE1sJWucm8
-         tQJ4+dly7lxald8w0WiDM9CjSP4eRIDC0hx54yPBG49CnUXmN0yqsRBOOZmlNYAjMlGU
-         /aZMAkR3zqReInYsaUghD2WAx8o+j9BSY4jZJdGldZyqNPZ7bc4cgFSuqDBToLudg7h6
-         EKUg==
-X-Gm-Message-State: AHQUAuZ8rfPAu0ZKMT6U4/Q6b9w6bLCOUgYyj0en7aLpB6dY8FdsHEAM
-        NRgXrz7QO3shGCXsAFKMjjLQmpCFgJsCOOSdnmE=
-X-Google-Smtp-Source: AHgI3IZaKqNWK6KpzWtNtN7Xfv7MApTZ1/dLq+fwaVt0EkWgCZKw4LwlIVLYNPp3DnRG1m/srZU+Lv/1MBVv6e0ugmY=
-X-Received: by 2002:a24:280a:: with SMTP id h10mr1896360ith.103.1550153022375;
- Thu, 14 Feb 2019 06:03:42 -0800 (PST)
-MIME-Version: 1.0
-References: <0000000000002015db0581b71858@google.com> <CADvbK_dndFMxyUZk=k8qEy9=PNbLc81F++2L0fbdtUdbupq4Xg@mail.gmail.com>
- <20190213135157.GJ10665@localhost.localdomain>
-In-Reply-To: <20190213135157.GJ10665@localhost.localdomain>
-From:   Xin Long <lucien.xin@gmail.com>
-Date:   Thu, 14 Feb 2019 22:03:30 +0800
-Message-ID: <CADvbK_fwUdU3_CWBFYfw+ZeOLvEF9p6koP2FUdo+m0SCqGN+Ug@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in sctp_outq_tail
-To:     Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Cc:     syzbot <syzbot+7823fa3f3e2d69341ea8@syzkaller.appspotmail.com>,
-        davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
-        linux-sctp@vger.kernel.org, network dev <netdev@vger.kernel.org>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Vlad Yasevich <vyasevich@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 14 Feb 2019 09:03:58 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44010 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390733AbfBNOD5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 09:03:57 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 24E4680D;
+        Thu, 14 Feb 2019 06:03:57 -0800 (PST)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 735223F675;
+        Thu, 14 Feb 2019 06:03:55 -0800 (PST)
+Date:   Thu, 14 Feb 2019 14:03:52 +0000
+Message-ID: <86bm3esbzr.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     guoren@kernel.org
+Cc:     arnd@arndb.de, robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, Guo Ren <ren_guo@c-sky.com>
+Subject: Re: [PATCH 01/10] irqchip/csky: Support csky,dh7k SOC intc driver
+In-Reply-To: <1548764669-16656-1-git-send-email-guoren@kernel.org>
+References: <1548764669-16656-1-git-send-email-guoren@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 9:52 PM Marcelo Ricardo Leitner
-<marcelo.leitner@gmail.com> wrote:
->
-> On Wed, Feb 13, 2019 at 12:35:56PM +0800, Xin Long wrote:
-> > On Wed, Feb 13, 2019 at 4:00 AM syzbot
-> > <syzbot+7823fa3f3e2d69341ea8@syzkaller.appspotmail.com> wrote:
-> > >
-> > > Hello,
-> > >
-> > > syzbot found the following crash on:
-> > >
-> > > HEAD commit:    d4104460aec1 Add linux-next specific files for 20190211
-> > > git tree:       linux-next
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=14140124c00000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=c8a112d3b0d6719b
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=7823fa3f3e2d69341ea8
-> > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > >
-> > > Unfortunately, I don't have any reproducer for this crash yet.
-> > >
-> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > > Reported-by: syzbot+7823fa3f3e2d69341ea8@syzkaller.appspotmail.com
-> > >
-> > > ==================================================================
-> > > BUG: KASAN: use-after-free in list_add_tail include/linux/list.h:93 [inline]
-> > > BUG: KASAN: use-after-free in sctp_outq_tail_data net/sctp/outqueue.c:105
-> > > [inline]
-> > > BUG: KASAN: use-after-free in sctp_outq_tail+0x816/0x930
-> > > net/sctp/outqueue.c:313
-> > > Read of size 8 at addr ffff88807b19a7b8 by task syz-executor.0/30745
-> > I think https://patchwork.ozlabs.org/patch/1040500/ will fix this.
->
-> I don't think so. Seems it will switch from use-after-free to NULL deref
-> instead with that patch.
-It will allocate ext for the stream if its ext is NULL in
-sctp_sendmsg_to_asoc(), the new data will work fine. As for
-the old data on the surplus streams, it has been dropped in
-sctp_stream_outq_migrate().
+On Tue, 29 Jan 2019 12:24:20 +0000,
+guoren@kernel.org wrote:
+> 
+> From: Guo Ren <ren_guo@c-sky.com>
+> 
+> C-SKY dh7k SOC use simple APB interrupt controller and most of driver's
+> implementation codes could be reused in csky-apb-intc.c. So merge them
+> together.
+> 
+> Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+> ---
+>  drivers/irqchip/irq-csky-apb-intc.c | 95 +++++++++++++++++++++++++++++++++----
+>  1 file changed, 85 insertions(+), 10 deletions(-)
+> 
 
->
-> > > CPU: 1 PID: 30745 Comm: syz-executor.0 Not tainted 5.0.0-rc5-next-20190211
-> > > #32
-> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > > Google 01/01/2011
-> > > Call Trace:
-> > >   __dump_stack lib/dump_stack.c:77 [inline]
-> > >   dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-> > >   print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
-> > >   kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
-> > >   __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:132
-> > >   list_add_tail include/linux/list.h:93 [inline]
-> > >   sctp_outq_tail_data net/sctp/outqueue.c:105 [inline]
-> > >   sctp_outq_tail+0x816/0x930 net/sctp/outqueue.c:313
-> > >   sctp_cmd_send_msg net/sctp/sm_sideeffect.c:1109 [inline]
-> > >   sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1784 [inline]
-> > >   sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
-> > >   sctp_do_sm+0x68e/0x5380 net/sctp/sm_sideeffect.c:1191
-> > >   sctp_primitive_SEND+0xa0/0xd0 net/sctp/primitive.c:178
-> > >   sctp_sendmsg_to_asoc+0xa63/0x17b0 net/sctp/socket.c:1955
->
-> sctp_sendmsg_to_asoc()
-> ...
->         if (sinfo->sinfo_stream >= asoc->stream.outcnt) {
->                 err = -EINVAL;
->                 goto err;
->         }
->
->         if (unlikely(!SCTP_SO(&asoc->stream, sinfo->sinfo_stream)->ext)) {
-> ...
->
-> It should have aborted even if an old ->ext was still there because
-> outcnt is correctly updated. So somehow outcnt was wrong here.
->
-> sctp_stream_init()
-> ...
->         /* Filter out chunks queued on streams that won't exist anymore */
->         sched->unsched_all(stream);
->         sctp_stream_outq_migrate(stream, NULL, outcnt);   <--- [A]
->         sched->sched_all(stream);
->
->         ret = sctp_stream_alloc_out(stream, outcnt, gfp); <--- [B]
->         if (ret)
->                 goto out;
->
->         stream->outcnt = outcnt;                          <--- [C]
-> ...
->
-> We have a problem here because [A] is freeing ->ext, but [B] can fail (ENOMEM),
-> which would lead it to not update outcnt in [C] even after the
-> changes already performed in [A].
->
-> It should handle the freeing of ->ext in sctp_stream_alloc_out()
-> instead, or allocate the flexarray earlier (so it can bail out before
-> freeing stuff).
-Agree that it's better to do:
-        sched->unsched_all(stream);
-        sctp_stream_outq_migrate(stream, NULL, outcnt);
-        sched->sched_all(stream);
-after the flexarray allocation.
+So this patch series seems to contain both core c-sky stuff as well as
+irqchip updates.
 
-Just sctp_stream_alloc_out() can not be used here anymore, as
-stream->out will be set in it.
+Please send an irqchip series that I can take standalone. If there are
+dependencies, please state so in the cover letter, and we'll work out
+something. Please make sure that everybody gets at least the cover
+letter (I didn't receive one for this series).
+
+Thanks,
+
+	M.
+
+-- 
+Jazz is not dead, it just smell funny.
