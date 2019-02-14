@@ -2,150 +2,150 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B99CC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:38:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31053C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:39:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08F1D222DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:38:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F348C222DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:39:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GajKadLu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rbguojB5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393108AbfBNRis (ORCPT
+        id S2437588AbfBNRj5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 12:38:48 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50746 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729725AbfBNRio (ORCPT
+        Thu, 14 Feb 2019 12:39:57 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:42348 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2437540AbfBNRjy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 12:38:44 -0500
-Received: by mail-wm1-f67.google.com with SMTP id x7so7172462wmj.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 09:38:42 -0800 (PST)
+        Thu, 14 Feb 2019 12:39:54 -0500
+Received: by mail-qt1-f193.google.com with SMTP id b8so7761224qtr.9
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 09:39:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xzxb2/6sF1ujNDtDRfGaGMN4dEjiv01x5MSAjKDEmmA=;
-        b=GajKadLuglcuOcO6N0R7S0CVX1DDXLtMkOwGWFMbI1HsxnpCoeD4WHTHr0yC6DeS3h
-         WrTCLXWB1e1oG7Xwn5QgohwLpjOctFpkSUvbx+hq2yly8CqZfldaHATQaiM17oArxi4Z
-         QbX7XsSy0dv3Ev+DdTnJ1/b7vb2aMvSrun2n1addlynmU6hVlAgwkE8yTHnjADZVTk5l
-         FSt1Cdiuzeaeyn6dP7F2vTgmgVAh5rrWqZ2ZPGEOMlodjHBJv6FxnF2UthrAn6uJwhKC
-         e/KkIzd3MKE024BwAJLcbdoB9pMQ8oPbqQB5lfxMAWv6XsflQjjzdj4IzaQ1iJXilBUk
-         Pheg==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ANs0KXyVl1itNeqe46nRlAralSJekcIJY9UIIgxw9oQ=;
+        b=rbguojB5aTsDrlXZcUbRrsjwObxyS5Iz6JOvp6dXq3lmeKjgB0bilmvGMMSKW3osgv
+         +ex059Ss749IyBSgFkYyAVRO4AatmXwB6d4BhhlRZ/2rXuyaqDi15BpKRp5XCKJjhjqH
+         9Ew3KetirOR2RDRYmUB7bB/cyOK8aWGNAnoqnj5hyryLskF7uagL1C7gfkinH/K1JucZ
+         3SuF6QDpqGHvIE1meKS61z7448WJD2TzGX6XsHicGif1DGqYg9wm/Ptjtc5ep6wqSPVr
+         uUO/LZvaMmDO5CuDawuEy0WR0oP5GXFA5OOyufOGFjLDLuMvY8436GNOApUgf/67m990
+         xwKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xzxb2/6sF1ujNDtDRfGaGMN4dEjiv01x5MSAjKDEmmA=;
-        b=Q+TVm/S8Zy5EiacylwNq182sykg+ftCG5xzGVOYM0ewdvbc93y54t0Vbs0qpSfVAUu
-         61TQz6MRF6gn9Xev1tgtRbAJS765bqKptSj9pGeskSsBQnrptFlis6sfiDaH0JNv4QM8
-         FRqTAHmH3Hs1QeNGigdoCB/8OHGP8ihRW2jHSMBDGqwTDyhNmLFNsA5QWhPfdf+CfoY6
-         GdGpH4dBHIJ3QW8q58h+Etm4TtCVjO/w0cu1HaLZJ/0ANiwkXlD37wbDWVAu5RDu/wD3
-         5nxB64gaQUWbe+Hytj7SzXfMQ7i48J1E/MGTQW3lpwAwDEqLrOiy+m+oy7G8irhk3hlv
-         FyWw==
-X-Gm-Message-State: AHQUAubfQewcdBUPlrHlE1t4PMbSQzSG8vGHRcGD03qg9pct8Q/LpFUn
-        59CjTtWdjxp9zWBZKRx/C8ItQ5KEJ+Uu/nxfa0uWtQ==
-X-Google-Smtp-Source: AHgI3IZULAHbyiperuNIZpAdh8f7W6MDfQitE0PP0jl+2r9ndWnotiILJuIjYSMIlFraWAPiTatQKTCSIDDetU7N9n0=
-X-Received: by 2002:a1c:eb10:: with SMTP id j16mr3346247wmh.64.1550165921766;
- Thu, 14 Feb 2019 09:38:41 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ANs0KXyVl1itNeqe46nRlAralSJekcIJY9UIIgxw9oQ=;
+        b=a5w+ChE1TbSlCcPApOhlnfykQz/Sx4jv/w7L+uQ4OLr0TTrkDyK2cpNFelQH5o35r/
+         HMyeo/nPNQRSJRVIKmtheKr1HIfzgwXrEK7v3vt+elFswGHs82c2Lg5zNRYX+uhb3fOe
+         bwHy5+ShkFONiwtVfFZbNsz/C/GxnK1xV6QxSE5mKf0vUxB7BQG4xwdHwlpjes0EgkhN
+         FjVo4POEHlA1YmW+cin0gpDqTHaWQFeLJ80afkKMzCZbFKU+6ftpaWTKvEcgUVM82GO7
+         9lBVFC4lA/6PjBU3/th/kdUONBK0DD/UR0tx6Rr8d6c7NV31OiiM5ARwXr8l4Q+USgLD
+         tmdA==
+X-Gm-Message-State: AHQUAubCDuX8NzI9mNUqSHEoR6Sby1FyTJfb2HiihhVdqz5hVWW+8LmI
+        ZqP5fwX3+uCJliP38P4bTw==
+X-Google-Smtp-Source: AHgI3IbVouU/x7JjlXXaM16Alkr33sfzl40j5htGSYte3VtVqNEy60aK0YZBAY1mpR/n9FPpOo0E8Q==
+X-Received: by 2002:a0c:98c8:: with SMTP id g8mr4004554qvd.161.1550165993403;
+        Thu, 14 Feb 2019 09:39:53 -0800 (PST)
+Received: from gabell (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id o4sm1639140qke.30.2019.02.14.09.39.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 14 Feb 2019 09:39:52 -0800 (PST)
+Date:   Thu, 14 Feb 2019 12:39:46 -0500
+From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "kirill@shutemov.name Thomas Gleixner" <tglx@linutronix.de>,
+        x86@kernel.org, Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        linux-kernel@vger.kernel.org, Chao Fan <fanc.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v2] x86/mm: Adjust the padding size for KASLR
+Message-ID: <20190214173945.utbawbfbdjkw7dif@gabell>
+References: <20190212013118.28203-1-msys.mizuma@gmail.com>
+ <20190214101236.GE14858@MiWiFi-R3L-srv>
 MIME-Version: 1.0
-References: <20190128214408.25442-1-afd@ti.com>
-In-Reply-To: <20190128214408.25442-1-afd@ti.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Thu, 14 Feb 2019 09:38:29 -0800
-Message-ID: <CALAqxLXb53nsBJtb958sMzpr-fnXxqFE0s2B6YJzoGcswv50wg@mail.gmail.com>
-Subject: Re: [PATCH v2] staging: android: ion: Allocate from heap ID directly
- without mask
-To:     "Andrew F. Davis" <afd@ti.com>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Liam Mark <lmark@codeaurora.org>,
-        Brian Starkey <Brian.Starkey@arm.com>,
-        devel@driverdev.osuosl.org, lkml <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190214101236.GE14858@MiWiFi-R3L-srv>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 1:44 PM Andrew F. Davis <afd@ti.com> wrote:
->
-> Previously the heap to allocate from was selected by a mask of allowed
-> heap types. This may have been done as a primitive form of constraint
-> solving, the first heap type that matched any set bit of the heap mask
-> was allocated from, unless that heap was excluded by having its heap
-> ID bit not set in the separate passed in heap ID mask.
->
-> The heap type does not really represent constraints that should be
-> matched against to begin with. So the patch [0] removed the the heap type
-> mask matching but unfortunately left the heap ID mask check (possibly by
-> mistake or to preserve API). Therefor we now only have a mask of heap
-> IDs, but heap IDs are unique identifiers and have nothing to do with the
-> underlying heap, so mask matching is not useful here. This also limits us
-> to 32 heaps total in a system.
->
-> With the heap query API users can find the right heap based on type or
-> name themselves then just supply the ID for that heap. Remove heap ID
-> mask and allow users to specify heap ID directly by its number.
+Hi Baoquan,
 
-Sorry for the very late reply. I just dug this out of my spam box.
+Thank you for your review.
 
-While this seems like a reasonable cleanup (ABI pain aside), I'm
-curious as to other then the 32-heap limitation, what other benefits
-this brings?
-My hesitancy is that we still have fixed number to heap mapping.
+On Thu, Feb 14, 2019 at 06:12:36PM +0800, Baoquan He wrote:
+> Hi Masa,
+> 
+> On 02/11/19 at 08:31pm, Masayoshi Mizuma wrote:
+> > From: Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>
+> > 
+> > The system sometimes crashes while memory hot-adding on KASLR
+> > enabled system. The crash happens because the regions pointed by
+> > kaslr_regions[].base are overwritten by the hot-added memory.
+> > 
+> > It happens because of the padding size for kaslr_regions[].base isn't
+> > enough for the system whose physical memory layout has huge space for
+> > memory hotplug. kaslr_regions[].base points "actual installed
+> > memory size + padding" or higher address. So, if the "actual + padding"
+> > is lower address than the maximum memory address, which means the memory
+> > address reachable by memory hot-add, kaslr_regions[].base is destroyed by
+> > the overwritten.
+> > 
+> >   address
+> >     ^
+> >     |------- maximum memory address (Hotplug)
+> >     |                                    ^
+> >     |------- kaslr_regions[0].base       | Hotadd-able region
+> >     |     ^                              |
+> >     |     | padding                      |
+> >     |     V                              V
+> >     |------- actual memory address (Installed on boot)
+> >     |
+> > 
+> > Fix it by getting the maximum memory address from SRAT and store
+> > the value in boot_param, then set the padding size while kaslr
+> > initializing if the default padding size isn't enough.
+> 
+> Thanks for the effort on fixing this KASLR&hotplug conflict issue.
+> I roughly go through this patch, seems three parts are contained:
+>  
+> 1) Wrap up the SRAT travesing code into subtable_parse();
+> 2) Add a field max_addr in struct boot_params, and get the max address
+>    from SRAT and write it into boot_params->max_addr;
+> 3) Add kaslr_padding() to adjust the padding size for the direct
+> mapping. 
+> 
+> So could you split them into three patches for better reviewing?
 
-Curious how this fits in (or if it would still be necessary) if we
-finally moved to previously discussed per-heap device-nodes idea,
-which is interesting to me as it avoids a fixed enumeration of heaps
-in the kernel (and also allows for per heap permissions).
+Yes, I will split into the three.
 
+> 
+> Another thing is for the 3rd part, I also queued several patches in my
+> local branch, they are code bug fix patches, and several clean up
+> patches suggested by Ingo and Kirill. They can be found here:
+> 
+> https://github.com/baoquan-he/linux/commits/kaslar-mm-bug-fix
+> 
+> In my local patches, Ingo suggested opening code get_padding(), and
+> about the SGI UV bug, he suggested adding another function to calculate
+> the needed size for the direct mapping region. So I am wondering if you
+> can rebase the part 3 on top of it, or you add a new function to
+> calculate the size for the direct mapping region so that I can rebase on
+> top of your patch and reuse it.
+> 
+> What do you think about it?
 
-> I know this is an ABI break, but we are in staging so lets get this over
-> with now rather than limit ourselves later.
->
-> [0] commit 2bb9f5034ec7 ("gpu: ion: Remove heapmask from client")
->
-> Signed-off-by: Andrew F. Davis <afd@ti.com>
-> ---
->
-> This also means we don't need to store the available heaps in a plist,
-> we only operation we care about is lookup, so a better data structure
-> should be chosen at some point, regular list or xarray maybe?
->
-> This is base on -next as to be on top of the other taken Ion patches.
->
-> Changes from v1:
->  - Fix spelling in commit message
->  - Cleanup logic per Brian's suggestion
->
+OK, I will rebase my patches on top of your patch.
+Could you add CCing me when you post your patches?
 
-Some thoughts, as this ABI break has the potential to be pretty painful.
-
-1) Unfortunately, this ABI is exposed *through* libion via
-ion_alloc/ion_alloc_fd out to gralloc implementations. Which means it
-will have a wider impact to vendor userland code.
-
-2) For patches that cause ABI breaks, it might be good to make it
-clear in the commit what the userland impact looks like in userspace,
-possibly with an example, so the poor folks who bisect down the change
-as breaking their system in a year or so have a clear example as to
-what they need to change in their code.
-
-3) Also, its not clear how a given userland should distinguish between
-the different ABIs.  We already have logic in libion to distinguish
-between pre-4.12 legacy and post-4.12 implementations (using implicit
-ion_free() behavior). I don't see any such check we can make with this
-code. Adding another ABI version may require we provide an actual
-interface version ioctl.
-
-
-thanks
--john
+Thanks!
+Masa
