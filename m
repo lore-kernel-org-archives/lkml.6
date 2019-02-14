@@ -2,92 +2,92 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB398C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:48:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E496BC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:51:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A15CB222A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:48:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7880222A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:51:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ICpS4Jyy"
+	dkim=pass (2048-bit key) header.d=plume-com.20150623.gappssmtp.com header.i=@plume-com.20150623.gappssmtp.com header.b="ep4DnSJR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437442AbfBNHs0 (ORCPT
+        id S2391362AbfBNHvV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 02:48:26 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:41524 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437428AbfBNHsZ (ORCPT
+        Thu, 14 Feb 2019 02:51:21 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55262 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727511AbfBNHvU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 02:48:25 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1E7i48V029171;
-        Thu, 14 Feb 2019 07:48:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=bheLtZPV7pm0gY8PJ5wrEfJzea3Duu04eNSgouxwohA=;
- b=ICpS4Jyynk4Mw0HFyYC9iCHp7VY0oDsKLIr2LWp8TxIfJPx402bJr8maqICi4faCKRil
- 8MzDnuLcMLG+NRodudXpi2Ac9BZyVmeDypZW0HgtxV+j0cDcaPen/FaKiesJrPHpgqYa
- eza/Hn3YsbQ2vB6sH9ufJeoLiUlMA4ZCADQoDLkSjt65CZE34vrFufQfQrScF5H13RMM
- y2SC0mF9LJjSR6niJE471AUqHz31tRDVYxUKZosJP3VpfsxAo25uujP1OgXW41fLPvv3
- 2dvFY9WwMBNZWiCi+NMxlWvmQQYvNDupaqUknSW5ywQ6GJBAFXnygemx1qrFQyKqiJ5b Tg== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2120.oracle.com with ESMTP id 2qhree6csb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Feb 2019 07:48:11 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1E7mAjx020057
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Feb 2019 07:48:11 GMT
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1E7mA6v024127;
-        Thu, 14 Feb 2019 07:48:10 GMT
-Received: from kadam (/41.202.241.28)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 14 Feb 2019 07:48:09 +0000
-Date:   Thu, 14 Feb 2019 10:48:01 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Julia Lawall <julia.lawall@lip6.fr>
-Cc:     Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
-        codalist@telemann.coda.cs.cmu.edu, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fs/coda: get rid of CODA_ALLOC()
-Message-ID: <20190214074801.GC2304@kadam>
-References: <20190214065848.GB21768@kadam>
- <alpine.DEB.2.21.1902140804170.2466@hadrien>
+        Thu, 14 Feb 2019 02:51:20 -0500
+Received: by mail-wm1-f66.google.com with SMTP id a62so5184810wmh.4
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 23:51:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=plume-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=4mrGdA8lAcFKq3RYZ1R4Y1lGoezzM2yOq4vHEHmXyF0=;
+        b=ep4DnSJRvFd2Gm+eoMvP+dJb6V/Wm8lQ2UdAeJsN//pIbZ4HcZcHAQa6pq2ZKinSHG
+         ybUobpgEnCivHKm1SZ5X0bhHre3KRBITz9Vr16clfvv2rgz3K1CUSZxiPZWCZyXUNgAQ
+         +0ef1Cvi+B9S5/pkT05u71kW4kz7Q89h1/OWhgsQ4mmtFif/gva/Dn8eJGUSKQ7bjZlD
+         9SXL3v3RVlv0VgD47B29JzOMrYeJ75HnrqKwIVUgJTjjKKNFYTlMq9klUqsXHzL1ypQO
+         yEpn4yMimdIQR7E7lS/Wp6drWSYqFpEeOIKgIZy4U1oOdmjs9FaW5LiEyfSWgeOY0IFI
+         JVhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=4mrGdA8lAcFKq3RYZ1R4Y1lGoezzM2yOq4vHEHmXyF0=;
+        b=p1LErAGvJTXvFmJ3z1GNkv//bkxl+M5SPRJkK810wHWi9z7MblotznbBTDxhN9xYcf
+         FnObEmIIp+xD3wu657BokO7NLrcPczamaBoFiH+AN0zkal+jfiIm9qQFTkDT9DtAIjxo
+         Y9XUiSKNyFiSD6AjcpAe10/JVdHP+YlAuErKArcea5WR8m0l3P03QC5X30nNKqKySllF
+         U1iAdVI82CxgKlj16izPG4vgjPu86h/5/2+cOcYOebM40p/ePiw7xmwbWHkt6mDoLlNN
+         EPaYzuxGRyRYef0A04+Ppd2genhpFIM7M1zApinnJcb8vw+KAqolnjIc+iVTXaJr84Dx
+         T/7A==
+X-Gm-Message-State: AHQUAuYJzxHmg4JNhv7j616+92E6zjNmfcEwcQ0sgNL2ILwiIBdcUmYI
+        bbFDdc/hE2Zz2tv50GpeblSQvT+qHOcWaSR7XgGJACE3
+X-Google-Smtp-Source: AHgI3IbhJ+u6XwFHnOQcCT+1GyuHrInlRUs0oY3xMlbeKBKI8nhVDHdtUZyo7bYeqcBO1wTpwMDT5iKjQhWQA3VGo3w=
+X-Received: by 2002:a7b:c18d:: with SMTP id y13mr1566213wmi.50.1550130678735;
+ Wed, 13 Feb 2019 23:51:18 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1902140804170.2466@hadrien>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9166 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=601 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902140058
+References: <20190214144610.3672e9d7@canb.auug.org.au>
+In-Reply-To: <20190214144610.3672e9d7@canb.auug.org.au>
+From:   Michal Kazior <michal@plume.com>
+Date:   Thu, 14 Feb 2019 08:51:07 +0100
+Message-ID: <CABqz6Wz_J7xJwzYc7xaHJ87t6Uzzvkrn2x7M0ij6C6JbSOm82w@mail.gmail.com>
+Subject: Re: linux-next: build warning after merge of the leds tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 08:04:43AM +0100, Julia Lawall wrote:
-> 
-> 
-> On Thu, 14 Feb 2019, Dan Carpenter wrote:
-> 
-> > These days we have kvzalloc() so we can delete CODA_ALLOC().
-> 
-> Maybe it would be better to get rid fo CODA_FREE as well?
-> 
+On Thu, Feb 14, 2019 at 4:46 AM Stephen Rothwell <sfr@canb.auug.org.au> wro=
+te:
+>
+> Hi Jacek,
+>
+> After merging the leds tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+>
+> drivers/leds/leds-lp55xx-common.c: In function 'lp55xx_firmware_loaded':
+> drivers/leds/leds-lp55xx-common.c:217:1: warning: label 'out' defined but=
+ not used [-Wunused-label]
+>  out:
+>  ^~~
+>
+> Introduced by commit
+>
+>   905c2157dd19 ("leds: lp55xx: fix null deref on firmware load failure")
 
-Actually, you're right.  CODA_FREE() is especially weird  without a
-CODA_ALLOC().  But let me send that as a second patch.
+I'm sorry guys, that's my fault. Let me fix that.
 
-regards,
-dan carpenter
 
+Micha=C5=82
