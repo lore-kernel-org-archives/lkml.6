@@ -2,96 +2,73 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44D62C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:54:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 989C5C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:54:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EC6120811
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:54:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FB5721904
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:54:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392189AbfBNByP (ORCPT
+        id S2392339AbfBNByg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 20:54:15 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:36998 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728246AbfBNByO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 20:54:14 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 0C08CB086F2D889174B8;
-        Thu, 14 Feb 2019 09:54:13 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 14 Feb 2019 09:54:03 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     VMware Graphics <linux-graphics-maintainer@vmware.com>,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-CC:     YueHaibing <yuehaibing@huawei.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] drm/vmwgfx: Remove set but not used variable 'restart'
-Date:   Thu, 14 Feb 2019 02:08:04 +0000
-Message-ID: <20190214020804.22935-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        Wed, 13 Feb 2019 20:54:36 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:59308 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728032AbfBNByg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 20:54:36 -0500
+X-UUID: a376d6289f334b4193666d8d5b816656-20190214
+X-UUID: a376d6289f334b4193666d8d5b816656-20190214
+Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <qii.wang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 559263774; Thu, 14 Feb 2019 09:54:30 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31N2.mediatek.inc
+ (172.27.4.87) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 14 Feb
+ 2019 09:54:29 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 14 Feb 2019 09:54:28 +0800
+Message-ID: <1550109268.30065.13.camel@mhfsdcap03>
+Subject: Re: [PATCH v3 5/6] dt-bindings: i2c: Add Mediatek MT8183 i2c binding
+From:   Qii Wang <qii.wang@mediatek.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+CC:     <linux-i2c@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, <leilk.liu@mediatek.com>,
+        <ryder.lee@mediatek.com>, <xinping.qian@mediatek.com>,
+        <liguo.zhang@mediatek.com>
+Date:   Thu, 14 Feb 2019 09:54:28 +0800
+In-Reply-To: <20190205131641.GF12401@kunai>
+References: <1548057574-8061-1-git-send-email-qii.wang@mediatek.com>
+         <1548057574-8061-6-git-send-email-qii.wang@mediatek.com>
+         <20190205131641.GF12401@kunai>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On Tue, 2019-02-05 at 14:16 +0100, Wolfram Sang wrote:
+> > +  - mediatek,share-i3c: i3c controller can share i2c function.
+> 
+> I am not happy with this binding. There must be a better way of using
+> the I3C controller in I2C mode. I think it would be easier to tell if we
+> had an I3C driver to see how it implements I2C fallback there. Is the
+> I3C driver on the way?
+> 
 
-drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c: In function 'vmw_cmdbuf_work_func':
-drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c:514:7: warning:
- variable 'restart' set but not used [-Wunused-but-set-variable]
-
-It not used any more after commit dc366364c4ef ("drm/vmwgfx: Fix multiple
-command buffer context use")
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
-
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c b/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c
-index 70dab55e7888..ed15655eacd2 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_cmdbuf.c
-@@ -511,17 +511,14 @@ static void vmw_cmdbuf_work_func(struct work_struct *work)
- 		container_of(work, struct vmw_cmdbuf_man, work);
- 	struct vmw_cmdbuf_header *entry, *next;
- 	uint32_t dummy;
--	bool restart[SVGA_CB_CONTEXT_MAX];
- 	bool send_fence = false;
- 	struct list_head restart_head[SVGA_CB_CONTEXT_MAX];
- 	int i;
- 	struct vmw_cmdbuf_context *ctx;
- 	bool global_block = false;
- 
--	for_each_cmdbuf_ctx(man, i, ctx) {
-+	for_each_cmdbuf_ctx(man, i, ctx)
- 		INIT_LIST_HEAD(&restart_head[i]);
--		restart[i] = false;
--	}
- 
- 	mutex_lock(&man->error_mutex);
- 	spin_lock(&man->lock);
-@@ -533,7 +530,6 @@ static void vmw_cmdbuf_work_func(struct work_struct *work)
- 		const char *cmd_name;
- 
- 		list_del_init(&entry->list);
--		restart[entry->cb_context] = true;
- 		global_block = true;
- 
- 		if (!vmw_cmd_describe(header, &error_cmd_size, &cmd_name)) {
-
-
+I am very sorry for the late reply due to the Chinese New Year holiday.
+After confirmation, for I2C mode in I3C controller, we will push an I3C
+driver to implement I2C fallback there later, and we will remove
+"mediatek,share-i3c" for i2c controller driver in the next patch.
 
