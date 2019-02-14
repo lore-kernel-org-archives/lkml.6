@@ -2,132 +2,181 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 702C4C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D1A4C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:06:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43086222A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:04:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F53F222A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 07:06:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fezhFOzk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406004AbfBNHEq (ORCPT
+        id S2437163AbfBNHG4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 02:04:46 -0500
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:26126 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389635AbfBNHEq (ORCPT
+        Thu, 14 Feb 2019 02:06:56 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40083 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389635AbfBNHGz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 02:04:46 -0500
-X-IronPort-AV: E=Sophos;i="5.58,367,1544482800"; 
-   d="scan'208";a="369343814"
-Received: from abo-58-107-68.mrs.modulonet.fr (HELO hadrien) ([85.68.107.58])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2019 08:04:43 +0100
-Date:   Thu, 14 Feb 2019 08:04:43 +0100 (CET)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-cc:     Jan Harkes <jaharkes@cs.cmu.edu>, coda@cs.cmu.edu,
-        codalist@telemann.coda.cs.cmu.edu, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] fs/coda: get rid of CODA_ALLOC()
-In-Reply-To: <20190214065848.GB21768@kadam>
-Message-ID: <alpine.DEB.2.21.1902140804170.2466@hadrien>
-References: <20190214065848.GB21768@kadam>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 14 Feb 2019 02:06:55 -0500
+Received: by mail-pl1-f193.google.com with SMTP id bj4so2647859plb.7
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 23:06:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=B0JpBEP/kqdEJ6A0qCpZeMb+CbuKfKtosIH8fe0qiac=;
+        b=fezhFOzkHiwPJE231UQzta+6JF/xyB7x5/krCqqQwrDGhIexBTBW3/yaXR39/GrRup
+         B0M2wM7px+PlQrmx0FgiL4oZD8L7TU7RwUSv9OnfkPBwmApCoyv6PyvT27S94H9oFiqA
+         7G9DxmT+4ur6yLVZ9YV7qDz/t5iWL2W1JypJuub9pyWvZhhgt9LFVj6Ab+QctM2nExGh
+         3Km2JoWu38oVhmMNEnEEoZPj+IKPA4bZLM330C1vIZlkPkUMRXwyYaVDUugf1kSeKVOk
+         Z+lEYkkC9ee/yrKXS5pHDiXbKsVVQ2gLlJLgS29i/2mb8Wfhedvta2mSSvBANG405gPV
+         7Dow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=B0JpBEP/kqdEJ6A0qCpZeMb+CbuKfKtosIH8fe0qiac=;
+        b=Mi3/H8Oqk1br4JCBjrgmCICjZL1rRPZzGu9yHq0gNFaPoERBUoxDCkAw/sM4hi7Faz
+         YFFPRGUq+YBwoM+zWg0shyppJwwOkV1DqHionEgoHc0XPBx5w2PlVqqd96Pcvm2MegkG
+         oooAhKlRpTVRXHJjiEzgDsdzNqghZ+qMbjO4LuxMge9sP21gJXGPiH30ABgpNOBURm4q
+         duVP4NZ9tcPslk/z30cvOsC446ZccBtWeH5DLmvaI+KHDxHrGngmR0c5EyhzKZZlXVnj
+         eVbdU8HyNDWvraOwvvMJQ7jiRDDW2F7s82bgxAATmACKKnWwC+fV5GiCuiTavxIsOwtg
+         SphA==
+X-Gm-Message-State: AHQUAuZfugfx3Tuf+VNFNH+xJ7i5W75sguP4rgE1UFXVSa0JRIUUWRii
+        tvLZQYfpEEfKhhdCMk0nVaf3aw==
+X-Google-Smtp-Source: AHgI3IbfhKUq448Rt0yIi5dNUJKI8Xg00ExD07UrKZVotpevqKaYxER82u984TueB3MapbK2lk+8UQ==
+X-Received: by 2002:a17:902:28e6:: with SMTP id f93mr2541850plb.239.1550128014900;
+        Wed, 13 Feb 2019 23:06:54 -0800 (PST)
+Received: from localhost ([122.172.102.63])
+        by smtp.gmail.com with ESMTPSA id h128sm1591040pgc.15.2019.02.13.23.06.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 23:06:53 -0800 (PST)
+Date:   Thu, 14 Feb 2019 12:36:48 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Yu Chen <yu.c.chen@intel.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        linux-acpi@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][RFC] ACPI: add "processor.broadcast_ppc" hook to
+ broadcast  _PPC to all online CPUs
+Message-ID: <20190214070648.pvsavc46iivub4hy@vireshk-i7>
+References: <20190209120232.21582-1-yu.c.chen@intel.com>
+ <20190211103307.rccddkso3f5s3yko@vireshk-i7>
+ <20190213165538.GB30385@chenyu-office.sh.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190213165538.GB30385@chenyu-office.sh.intel.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 14-02-19, 00:55, Yu Chen wrote:
+> Hi Viresh,
+> On Mon, Feb 11, 2019 at 04:03:07PM +0530, Viresh Kumar wrote:
+> > On 09-02-19, 20:02, Chen Yu wrote:
+> > > On Dell Inc. XPS13 9333, the BIOS changes the value of
+> > > MSR_IA32_MISC_ENABLE_TURBO_DISABLE at runtime (e.g., when
+> > > the power source changes), the maximum frequency of the
+> > > CPU is not updated accordingly. This is due to the policy's
+> > > cpuinfo.max is not updated when _PPC notifier fires.
+> > > 
+> > > Fix this problem by updating the policy's cpuinfo.max
+> > > and broadcast the _PPC notifier to all online CPUs.
+> > > 
+> > > Link: https://bugzilla.kernel.org/show_bug.cgi?id=200759
+> > > Reported-and-tested-by: Gabriele Mazzotta <gabriele.mzt@gmail.com>
+> > > Originally-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+> > > Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+> > > ---
+> > >  drivers/acpi/processor_perflib.c | 16 ++++++++++++++--
+> > >  drivers/cpufreq/cpufreq.c        |  2 ++
+> > >  drivers/cpufreq/intel_pstate.c   | 15 ++++++++++++++-
+> > >  3 files changed, 30 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/drivers/acpi/processor_perflib.c b/drivers/acpi/processor_perflib.c
+> > > index a303fd0e108c..737dbf5aa7f7 100644
+> > > --- a/drivers/acpi/processor_perflib.c
+> > > +++ b/drivers/acpi/processor_perflib.c
+> > > @@ -63,6 +63,10 @@ module_param(ignore_ppc, int, 0644);
+> > >  MODULE_PARM_DESC(ignore_ppc, "If the frequency of your machine gets wrongly" \
+> > >  		 "limited by BIOS, this should help");
+> > >  
+> > > +static int broadcast_ppc;
+> > > +module_param(broadcast_ppc, int, 0644);
+> > > +MODULE_PARM_DESC(broadcast_ppc, "Broadcast the ppc to all online CPUs");
+> > > +
+> > >  #define PPC_REGISTERED   1
+> > >  #define PPC_IN_USE       2
+> > >  
+> > > @@ -180,8 +184,16 @@ void acpi_processor_ppc_has_changed(struct acpi_processor *pr, int event_flag)
+> > >  		else
+> > >  			acpi_processor_ppc_ost(pr->handle, 0);
+> > >  	}
+> > > -	if (ret >= 0)
+> > > -		cpufreq_update_policy(pr->id);
+> > > +	if (ret >= 0) {
+> > > +		if (broadcast_ppc) {
+> > > +			int cpu;
+> > > +
+> > > +			for_each_possible_cpu(cpu)
+> > > +				cpufreq_update_policy(cpu);
+> > > +		} else {
+> > > +			cpufreq_update_policy(pr->id);
+> > > +		}
+> > > +	}
+> > >  }
+> > >  
+> > >  int acpi_processor_get_bios_limit(int cpu, unsigned int *limit)
+> > > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> > > index e35a886e00bc..95e08816b512 100644
+> > > --- a/drivers/cpufreq/cpufreq.c
+> > > +++ b/drivers/cpufreq/cpufreq.c
+> > > @@ -2237,6 +2237,8 @@ static int cpufreq_set_policy(struct cpufreq_policy *policy,
+> > >  
+> > >  	policy->min = new_policy->min;
+> > >  	policy->max = new_policy->max;
+> > > +	policy->cpuinfo.max_freq = new_policy->cpuinfo.max_freq;
+> > > +	policy->cpuinfo.min_freq = new_policy->cpuinfo.min_freq;
+> > >  	trace_cpu_frequency_limits(policy);
+> > >  
+> > >  	policy->cached_target_freq = UINT_MAX;
+> > > diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+> > > index dd66decf2087..e1881313c396 100644
+> > > --- a/drivers/cpufreq/intel_pstate.c
+> > > +++ b/drivers/cpufreq/intel_pstate.c
+> > > @@ -2081,11 +2081,24 @@ static void intel_pstate_adjust_policy_max(struct cpufreq_policy *policy,
+> > >  
+> > >  static int intel_pstate_verify_policy(struct cpufreq_policy *policy)
+> > >  {
+> > > +	int max_freq;
+> > >  	struct cpudata *cpu = all_cpu_data[policy->cpu];
+> > >  
+> > >  	update_turbo_state();
+> > > +	max_freq = intel_pstate_get_max_freq(cpu);
+> > > +
+> > > +	if (acpi_ppc && policy->max == policy->cpuinfo.max_freq &&
+> > 
+> > Why do have this check for policy->max here ?
+> >
+> Thanks for looking at this change, I've replied to another email in detail of
+> the scenario that, this is due to corner case that if the system boots
+> with battery and plug the AC after boot up, the cpufreq max limit will not
+> increase even the turbo has been enabled after the AC plugged.
 
+Yeah, but I asked a different question I believe, why is this
+comparison necessary ?
 
-On Thu, 14 Feb 2019, Dan Carpenter wrote:
+policy->max == policy->cpuinfo.max_freq
 
-> These days we have kvzalloc() so we can delete CODA_ALLOC().
-
-Maybe it would be better to get rid fo CODA_FREE as well?
-
-julia
-
->
-> I made a couple related changes in coda_psdev_write().  First, I
-> added some error handling to avoid a NULL dereference if the allocation
-> failed.  Second, I used kvmalloc() instead of kvzalloc() because we
-> copy over the memory on the next line so there is no need to zero it
-> first.
->
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-> ---
->  fs/coda/coda_linux.h | 10 ----------
->  fs/coda/psdev.c      |  6 +++++-
->  fs/coda/upcall.c     |  4 ++--
->  3 files changed, 7 insertions(+), 13 deletions(-)
->
-> diff --git a/fs/coda/coda_linux.h b/fs/coda/coda_linux.h
-> index 126155cadfa9..1ea9521e79d7 100644
-> --- a/fs/coda/coda_linux.h
-> +++ b/fs/coda/coda_linux.h
-> @@ -63,16 +63,6 @@ unsigned short coda_flags_to_cflags(unsigned short);
->  void coda_sysctl_init(void);
->  void coda_sysctl_clean(void);
->
-> -#define CODA_ALLOC(ptr, cast, size) do { \
-> -    if (size < PAGE_SIZE) \
-> -        ptr = kzalloc((unsigned long) size, GFP_KERNEL); \
-> -    else \
-> -        ptr = (cast)vzalloc((unsigned long) size); \
-> -    if (!ptr) \
-> -	pr_warn("kernel malloc returns 0 at %s:%d\n", __FILE__, __LINE__); \
-> -} while (0)
-> -
-> -
->  #define CODA_FREE(ptr, size) kvfree((ptr))
->
->  /* inode to cnode access functions */
-> diff --git a/fs/coda/psdev.c b/fs/coda/psdev.c
-> index c5234c21b539..49d44a485c9a 100644
-> --- a/fs/coda/psdev.c
-> +++ b/fs/coda/psdev.c
-> @@ -124,7 +124,11 @@ static ssize_t coda_psdev_write(struct file *file, const char __user *buf,
->  				hdr.opcode, hdr.unique);
->  		        nbytes = size;
->  		}
-> -		CODA_ALLOC(dcbuf, union outputArgs *, nbytes);
-> +		dcbuf = kvmalloc(nbytes, GFP_KERNEL);
-> +		if (!dcbuf) {
-> +			retval = -ENOMEM;
-> +			goto out;
-> +		}
->  		if (copy_from_user(dcbuf, buf, nbytes)) {
->  			CODA_FREE(dcbuf, nbytes);
->  			retval = -EFAULT;
-> diff --git a/fs/coda/upcall.c b/fs/coda/upcall.c
-> index 1175a1722411..203f029bcdc3 100644
-> --- a/fs/coda/upcall.c
-> +++ b/fs/coda/upcall.c
-> @@ -46,7 +46,7 @@ static void *alloc_upcall(int opcode, int size)
->  {
->  	union inputArgs *inp;
->
-> -	CODA_ALLOC(inp, union inputArgs *, size);
-> +	inp = kvzalloc(size, GFP_KERNEL);
->          if (!inp)
->  		return ERR_PTR(-ENOMEM);
->
-> @@ -743,7 +743,7 @@ static int coda_upcall(struct venus_comm *vcp,
->  	sig_req = kmalloc(sizeof(struct upc_req), GFP_KERNEL);
->  	if (!sig_req) goto exit;
->
-> -	CODA_ALLOC((sig_req->uc_data), char *, sizeof(struct coda_in_hdr));
-> +	sig_req->uc_data = kvzalloc(sizeof(struct coda_in_hdr), GFP_KERNEL);
->  	if (!sig_req->uc_data) {
->  		kfree(sig_req);
->  		goto exit;
-> --
-> 2.17.1
->
->
+-- 
+viresh
