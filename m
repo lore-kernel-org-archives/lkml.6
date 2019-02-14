@@ -2,173 +2,208 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C77EC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B94CCC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:59:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E98D4222B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:52:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89C912229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:59:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438983AbfBNNwb (ORCPT
+        id S2387709AbfBNN66 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 08:52:31 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:46078 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2392377AbfBNNvT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 08:51:19 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1EDjGk5129560
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:51:18 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qn7ycxvrp-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:51:17 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Thu, 14 Feb 2019 13:51:15 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 14 Feb 2019 13:51:11 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1EDpABD23461926
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 14 Feb 2019 13:51:10 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EEBDC4204C;
-        Thu, 14 Feb 2019 13:51:09 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 66CFB4204B;
-        Thu, 14 Feb 2019 13:51:09 +0000 (GMT)
-Received: from morel-ThinkPad-W530.boeblingen.de.ibm.com (unknown [9.152.224.140])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 14 Feb 2019 13:51:09 +0000 (GMT)
-From:   Pierre Morel <pmorel@linux.ibm.com>
-To:     borntraeger@de.ibm.com
-Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
-        pasic@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
-Subject: [PATCH v3 0/9] [RFC] vfio: ap: ioctl definitions for AP Queue Interrupt Control
-Date:   Thu, 14 Feb 2019 14:51:00 +0100
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 19021413-0016-0000-0000-000002566EEF
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021413-0017-0000-0000-000032B09F19
-Message-Id: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=565 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902140098
+        Thu, 14 Feb 2019 08:58:58 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:33166 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726924AbfBNN66 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 08:58:58 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 7B17DED6FA612E3667D8;
+        Thu, 14 Feb 2019 21:58:30 +0800 (CST)
+Received: from [127.0.0.1] (10.184.52.56) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Thu, 14 Feb 2019
+ 21:58:23 +0800
+Subject: Re: [PATCH v2 2/2] cpufreq / cppc: Work around for Hisilicon CPPC
+ cpufreq
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
+CC:     Viresh Kumar <viresh.kumar@linaro.org>, <gcherianv@gmail.com>,
+        "Prashanth Prakash" <pprakash@codeaurora.org>,
+        George Cherian <george.cherian@cavium.com>,
+        Robert Moore <robert.moore@intel.com>,
+        "ACPI Devel Maling List" <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hanjun Guo <guohanjun@huawei.com>,
+        John Garry <john.garry@huawei.com>
+References: <1550130368-60513-1-git-send-email-wangxiongfeng2@huawei.com>
+ <1550130368-60513-3-git-send-email-wangxiongfeng2@huawei.com>
+ <CAJZ5v0j03Dj7XSbTNcu7Ew2SekdpTw2hrWT_L+5ZcdRUep7ppw@mail.gmail.com>
+From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
+Message-ID: <86a1eddc-01aa-f32a-9bef-c18c7649149b@huawei.com>
+Date:   Thu, 14 Feb 2019 21:58:21 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CAJZ5v0j03Dj7XSbTNcu7Ew2SekdpTw2hrWT_L+5ZcdRUep7ppw@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.184.52.56]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch implement PQAP/AQIC interception in KVM.
-
-To implement this we need to add a new structure, vfio_ap_queue,to be
-able to retrieve the mediated device associated with a queue and specific
-values needed to register/unregister the interrupt structures:
- - APQN: to be able to issue the commands and search for queue structures
- - NIB : to unpin the NIB on clear IRQ
- - ISC : to unregister with the GIB interface
- - MATRIX: a pointer to the matrix mediated device
- - DEV: a pointer to the AP queue device from AP bus.
 
 
-1) Phase 1, probe and remove from vfio_ap_queue
+On 2019/2/14 18:58, Rafael J. Wysocki wrote:
+> On Thu, Feb 14, 2019 at 8:46 AM Xiongfeng Wang
+> <wangxiongfeng2@huawei.com> wrote:
+>>
+>> Hisilicon chips do not support delivered performance counter register
+>> and reference performance counter register. But the platform can
+>> calculate the real performance using its own method. This patch provide
+>> a workaround for this problem, and other platforms can also use this
+>> workaround framework. We reuse the desired performance register to
+>> store the real performance calculated by the platform. After the
+>> platform finished the frequency adjust, it gets the real performance and
+>> writes it into desired performance register. OS can use it to calculate
+>> the real frequency.
+>>
+>> Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
+>> ---
+>>  drivers/cpufreq/cppc_cpufreq.c | 70 ++++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 70 insertions(+)
+>>
+>> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+>> index fd25c21c..da96fec 100644
+>> --- a/drivers/cpufreq/cppc_cpufreq.c
+>> +++ b/drivers/cpufreq/cppc_cpufreq.c
+>> @@ -33,6 +33,16 @@
+>>  /* Offest in the DMI processor structure for the max frequency */
+>>  #define DMI_PROCESSOR_MAX_SPEED  0x14
+>>
+>> +struct cppc_workaround_info {
+>> +       char oem_id[ACPI_OEM_ID_SIZE +1];
+>> +       char oem_table_id[ACPI_OEM_TABLE_ID_SIZE + 1];
+>> +       u32 oem_revision;
+>> +       unsigned int (*get_rate)(unsigned int cpu);
+>> +};
+>> +
+>> +/* CPPC workaround for get_rate callback */
+>> +unsigned int (*cppc_wa_get_rate)(unsigned int cpu);
+>> +
+> 
+> First off, please don't split the workaround material into two parts.
+> IOW, the other new function added below can go here just fine IMO.
+> 
+>>  /*
+>>   * These structs contain information parsed from per CPU
+>>   * ACPI _CPC structures.
+>> @@ -334,6 +344,9 @@ static unsigned int cppc_cpufreq_get_rate(unsigned int cpunum)
+>>         struct cppc_cpudata *cpu = all_cpu_data[cpunum];
+>>         int ret;
+>>
+>> +       if (cppc_wa_get_rate)
+>> +               return cppc_wa_get_rate(cpunum);
+> 
+> Second, what is the value of using the function pointer above?
+> 
+> All we need for now is a flag to indicate whether or not to call
+> hisi_cppc_cpufreq_get_rate() here and return its return value.
 
-The vfio_ap_queue structures are dynamically allocated when a queue
-is probed by the ap_vfio_driver.
-It is linked to the ap_queue device as the driver data.
-We store the APQN of the ap_queue device inside the vfio_ap_queue.
-The vfio_ap_queue are free during remove.
+How about adding a pointer of 'struct cppc_workaround_info' to indicate whether we have
+found a matches workaround ?
+If I use a flag, I will need another variable to indicate which item of the workaround array 'wa_info'
+to use.
 
+Thanks,
+Xiongfeng
 
-2) Phase 2, assignment of vfio_ap_queue to a mediated device
-
-When the VFIO device is opened the queues are associated to
-the mediated device, at the same time the CRYCB is setup.
-
-When the device is closed or if a queue is removed the queue is
-dissociated from the mediated device, as the same time the
-CRYCB is cleared.
-
-Two new functions are used for this: associate/disassociate.
-
-
-3) Phase 3 intercepting the PQAP/AQIC instruction
-
-On interception of the PQAP/AQIC instruction, the interception code
-makes sure the pqap_hook is initialized and allowed to be called
-and call it.
-Otherwise it reports the usual -EOPNOTSUPP return code to let
-QEMU handle the fault.
-  
-the pqap callback search for the queue asociated with the APQN
-stored in the register 0, setting the code to "illegal APQN"
-if the vfio_ap_queue can not be found.
-
-Depending on the "i" bit of the register 1, the pqap callback
-setup or clear the interruption by calling the host format PQAP/AQIC
-instruction.
-When seting up the interruption it uses the NIB and the guest ISC
-provided by the guest and the host ISC provided by the registration
-to the GIB code, pin the NIB and also stores ISC and NIB inside
-the vfio_ap_queue structure.
-When clearing the interrupt it retrieves the host ISC to unregister
-with the GIB code and unpin the NIB.
-
-There is a QEMU patch which is needed to enable the PQAP/AQIC
-facility in the guest.
-
-Posted in qemu-devel@nongnu.org as:
-Message-Id: <1550146494-21085-1-git-send-email-pmorel@linux.ibm.com>
-
-
-4) Phase 4 clean dissociation from the mediated device on remove
-
-On removing of the AP device the remove callback is called.
-To be sure that the guest will not access the queue anymore
-we clear the APID CRYCB bit.
-Cleaning the APID, over the APQI, is chosen because the architecture
-specifies that only the APID can be dynamically changed outside IPL.
-After this the queue is zeroes, care is taken to correctly wait until
-the queue is empty.
-
-
-
-Pierre Morel (9):
-  s390: vfio_ap: link the vfio_ap devices to the vfio_ap bus subsystem
-  s390: ap: kvm: setting a hook for PQAP instructions
-  s390: ap: new vfio_ap_queue structure
-  s390: ap: tools to find a queue with a specific APQN
-  s390: ap: tools to associate a queue to a matrix
-  vfio: ap: register IOMMU VFIO notifier
-  s390: ap: implement PAPQ AQIC interception in kernel
-  s390: ap: Cleanup on removing the AP device
-  s390: ap: kvm: add AP Queue Interruption Control facility
-
- arch/s390/include/asm/kvm_host.h      |   1 +
- arch/s390/kvm/priv.c                  |  50 +++++
- arch/s390/tools/gen_facilities.c      |   1 +
- drivers/s390/crypto/ap_bus.h          |   1 +
- drivers/s390/crypto/vfio_ap_drv.c     | 178 ++++++++++++++++-
- drivers/s390/crypto/vfio_ap_ops.c     | 363 +++++++++++++++++++++++++++++++++-
- drivers/s390/crypto/vfio_ap_private.h |  12 ++
- 7 files changed, 593 insertions(+), 13 deletions(-)
-
--- 
-2.7.4
+> 
+>> +
+>>         ret = cppc_get_perf_ctrs(cpunum, &fb_ctrs_t0);
+>>         if (ret)
+>>                 return ret;
+>> @@ -357,6 +370,61 @@ static unsigned int cppc_cpufreq_get_rate(unsigned int cpunum)
+>>         .name = "cppc_cpufreq",
+>>  };
+>>
+>> +/*
+>> + * HISI platform does not support delivered performance counter and
+>> + * reference performance counter. It can calculate the performance using the
+>> + * platform specific mechanism. We reuse the desired performance register to
+>> + * store the real performance calculated by the platform.
+>> + */
+>> +static unsigned int hisi_cppc_cpufreq_get_rate(unsigned int cpunum)
+>> +{
+>> +       struct cppc_cpudata *cpudata = all_cpu_data[cpunum];
+>> +       u64 desired_perf;
+>> +       int ret;
+>> +
+>> +       ret = cppc_get_desired_perf(cpunum, &desired_perf);
+>> +       if (ret < 0)
+>> +               return -EIO;
+>> +
+>> +       return cppc_cpufreq_perf_to_khz(cpudata, desired_perf);
+>> +}
+>> +
+>> +static struct cppc_workaround_info wa_info[] = {
+>> +       {
+>> +               .oem_id         = "HISI  ",
+>> +               .oem_table_id   = "HIP07   ",
+>> +               .oem_revision   = 0,
+>> +               .get_rate = hisi_cppc_cpufreq_get_rate,
+>> +       }, {
+>> +               .oem_id         = "HISI  ",
+>> +               .oem_table_id   = "HIP08   ",
+>> +               .oem_revision   = 0,
+>> +               .get_rate = hisi_cppc_cpufreq_get_rate,
+>> +       }
+>> +};
+>> +
+>> +static int cppc_check_workaround(void)
+> 
+> And this function can be a void one.
+> 
+> 
+>> +{
+>> +       struct acpi_table_header *tbl;
+>> +       acpi_status status = AE_OK;
+>> +       int i;
+>> +
+>> +       status = acpi_get_table(ACPI_SIG_PCCT, 0, &tbl);
+>> +       if (ACPI_FAILURE(status) || !tbl)
+>> +               return -EINVAL;
+>> +
+>> +       for (i = 0; i < ARRAY_SIZE(wa_info); i++) {
+>> +               if (!memcmp(wa_info[i].oem_id, tbl->oem_id, ACPI_OEM_ID_SIZE) &&
+>> +                   !memcmp(wa_info[i].oem_table_id, tbl->oem_table_id, ACPI_OEM_TABLE_ID_SIZE) &&
+>> +                   wa_info[i].oem_revision == tbl->oem_revision) {
+>> +                       cppc_wa_get_rate = wa_info[i].get_rate;
+>> +                       return 0;
+>> +               }
+>> +       }
+>> +
+>> +       return -ENODEV;
+>> +}
+>> +
+>>  static int __init cppc_cpufreq_init(void)
+>>  {
+>>         int i, ret = 0;
+>> @@ -386,6 +454,8 @@ static int __init cppc_cpufreq_init(void)
+>>                 goto out;
+>>         }
+>>
+>> +       cppc_check_workaround();
+>> +
+>>         ret = cpufreq_register_driver(&cppc_cpufreq_driver);
+>>         if (ret)
+>>                 goto out;
+>> --
+> 
+> .
+> 
 
