@@ -2,78 +2,82 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39CEDC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:01:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58796C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D6C7222DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:01:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E959222DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 17:02:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437225AbfBNRBK (ORCPT
+        id S2390040AbfBNRCd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 12:01:10 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:56484 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2437188AbfBNRBJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 12:01:09 -0500
-Received: from localhost (96-89-128-221-static.hfc.comcastbusiness.net [96.89.128.221])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6B53714D5ECCD;
-        Thu, 14 Feb 2019 09:01:08 -0800 (PST)
-Date:   Thu, 14 Feb 2019 09:01:07 -0800 (PST)
-Message-Id: <20190214.090107.1088098621242009425.davem@davemloft.net>
-To:     jose.abreu@synopsys.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        joao.pinto@synopsys.com, peppe.cavallaro@st.com,
-        alexandre.torgue@st.com
-Subject: Re: [PATCH net] net: stmmac: Fix NAPI poll in TX path when in
- multi-queue
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <a264c48823687434e4d18aeb5830707e00c64250.1550077162.git.joabreu@synopsys.com>
-References: <a264c48823687434e4d18aeb5830707e00c64250.1550077162.git.joabreu@synopsys.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 14 Feb 2019 09:01:08 -0800 (PST)
+        Thu, 14 Feb 2019 12:02:33 -0500
+Received: from sauhun.de ([88.99.104.3]:54220 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727648AbfBNRCd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 12:02:33 -0500
+Received: from localhost (unknown [83.221.228.209])
+        by pokefinder.org (Postfix) with ESMTPSA id 5E4372C2817;
+        Thu, 14 Feb 2019 18:02:31 +0100 (CET)
+Date:   Thu, 14 Feb 2019 18:02:30 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     John Sperbeck <jsperbeck@google.com>
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, rostedt@goodmis.org
+Subject: Re: [PATCH v3] i2c: core-smbus: don't trace smbus_reply data on
+ errors
+Message-ID: <20190214170230.dvm4i2wxmgxij4bg@ninjato>
+References: <20190213034057.244716-1-jsperbeck@google.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="phfr5v3ila4kfyxj"
+Content-Disposition: inline
+In-Reply-To: <20190213034057.244716-1-jsperbeck@google.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jose Abreu <jose.abreu@synopsys.com>
-Date: Wed, 13 Feb 2019 18:00:43 +0100
 
-> Commit 8fce33317023 introduced the concept of NAPI per-channel and
-> independent cleaning of TX path.
-> 
-> This is currently breaking performance in some cases. The scenario
-> happens when all packets are being received in Queue 0 but the TX is
-> performed in Queue != 0.
-> 
-> I didn't look very deep but it seems that NAPI for Queue 0 will clean
-> the RX path but as TX is in different NAPI, this last one is called at a
-> slower rate which kills performance in TX. I suspect this is due to TX
-> cleaning takes much longer than RX and because NAPI will get canceled
-> once we return with 0 budget consumed (e.g. when TX is still not done it
-> will return 0 budget).
-> 
-> Fix this by looking at all TX channels in NAPI poll function.
-> 
-> Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-> Fixes: 8fce33317023 ("net: stmmac: Rework coalesce timer and fix multi-queue races")
+--phfr5v3ila4kfyxj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-No this isn't right.
+On Tue, Feb 12, 2019 at 07:40:57PM -0800, John Sperbeck wrote:
+> If an smbus transfer fails, there's no guarantee that the output
+> buffer was written.  So, avoid trying to show the output buffer when
+> tracing after an error.  This was 'mostly harmless', but would trip
+> up kasan checking if left-over cruft in byte 0 is a large length,
+> causing us to read from unwritten memory.
+>=20
+> Signed-off-by: John Sperbeck <jsperbeck@google.com>
 
-The TX interrupt events for Queue != 0 should clean up the TX packets
-on those queues.
+Applied to for-next, thanks!
 
-Furthermore you are breaking the locality of the TX processing.
 
-I'm not applying this, sorry.
+--phfr5v3ila4kfyxj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxlnyYACgkQFA3kzBSg
+KbZaEw/+NZvurPqjr3PWQqctg8PTGEw4RgkftxoIXmazaed8cCYoj3XpqQ0EP8jZ
+Ur+GbUtMaPpO7bUjSG2jmlMeKW8kxJXFy9HwtSlZYBMK6GH/Yy4UqqPEPK+FAQt9
+sIPzrnRMeGb4yxQY7fH9E/O0xHoR35cszDdwkwfhF31dpIrZAuFwDumSP6LdHeTs
+9QKK/R1+gCegEArc4n+mb0Xpla7FLV03VD8DlEnUY8vvhWQyprmr1UK6SZ1r+HvD
+AHTrM34kgrSBXSD28GP5s+r9AvdUgMvMRmHol9Ph8Mt2sp9ndwMs+IRL3OEsHBAw
+22eBPJI7UixhQHWw03dbJ5jsd9J3SmTvD6KWoF5jyTqW9sd01vknob8fdOkH5Ec6
+jnXSG4ixes9ILqHO+B+MQfhOnHxgXPE4NJGbktzdKCOHvajKiIplSDhZsBgTvmL9
+ELj4tuBcifBfYGbeZDO6hwSLacwULrcGqMv4iMRMyQRnHWFvvHjpZPqucHgRCbJP
+DSxaINCgfcsS4W8Cmd1FhrmsaHgk1WbbN0MkfuqjEkGtuGH6ld+10ENZArnxZU6F
+kOZtyYKuj5oKw/Ayx0LJbHcDPNTYMjLqypmPjOrxtMMwDzG+qGqX2gaS1bQy6QP8
+O52fD4NVHNkcIAtA+ROjGeqeOHYM3nWWBu01F2VmmER/s+yAx3Q=
+=uqJ3
+-----END PGP SIGNATURE-----
+
+--phfr5v3ila4kfyxj--
