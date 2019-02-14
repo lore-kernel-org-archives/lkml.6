@@ -2,364 +2,115 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A25FC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:09:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74BF3C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:11:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E52520838
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:09:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JBTB/0YM"
+	by mail.kernel.org (Postfix) with ESMTP id 41D3F222D2
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:11:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438463AbfBNLJm (ORCPT
+        id S1729786AbfBNLLl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 06:09:42 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:51852 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbfBNLJl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 06:09:41 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1EB8lKk018743;
-        Thu, 14 Feb 2019 05:08:47 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1550142527;
-        bh=egkfXFPKT1ratxLO5gmPdkbe0lY5EUdNvgXbZnXx1cM=;
-        h=Subject:To:References:CC:From:Date:In-Reply-To;
-        b=JBTB/0YMnb+e4s5d9sfxYjZrPe9Inp9xQ+dU00HOdNIEkfMkJ7opKo5Gl7iXgc8hY
-         e5ryka/KAMC8Ipj14Q/l7UuXO/dnp5aNPgPbpiqepoJ93Q2q1s6vydaP/w0a+o0XV3
-         jYGb+GwVH4MLwNjT3VhayzEaliCllaF4pAC+qLiI=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1EB8lSJ004807
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 14 Feb 2019 05:08:47 -0600
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 14
- Feb 2019 05:08:46 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 14 Feb 2019 05:08:46 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1EB8fsp030188;
-        Thu, 14 Feb 2019 05:08:42 -0600
-Subject: Re: [PATCH v2 01/14] dt-bindings: remoteproc: Add TI PRUSS bindings
-To:     Suman Anna <s-anna@ti.com>, <tony@atomide.com>, <ohad@wizery.com>,
-        <bjorn.andersson@linaro.org>
-References: <1549290167-876-1-git-send-email-rogerq@ti.com>
- <1549290167-876-2-git-send-email-rogerq@ti.com>
- <16001a6f-faed-ee14-5ade-79d5462f6d51@ti.com>
-CC:     <david@lechnology.com>, <nsekhar@ti.com>, <t-kristo@ti.com>,
-        <nsaulnier@ti.com>, <jreeder@ti.com>, <m-karicheri2@ti.com>,
-        <woods.technical@gmail.com>, <linux-omap@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        Robert Nelson <robertcnelson@gmail.com>, <dan@kulp.com>,
-        Matthijs van Duin <matthijsvanduin@gmail.com>
-From:   Roger Quadros <rogerq@ti.com>
-Message-ID: <5C654C39.2030308@ti.com>
-Date:   Thu, 14 Feb 2019 13:08:41 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
-MIME-Version: 1.0
-In-Reply-To: <16001a6f-faed-ee14-5ade-79d5462f6d51@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Thu, 14 Feb 2019 06:11:41 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41636 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725781AbfBNLLl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 06:11:41 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 939D0EBD;
+        Thu, 14 Feb 2019 03:11:40 -0800 (PST)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 626F23F675;
+        Thu, 14 Feb 2019 03:11:33 -0800 (PST)
+Date:   Thu, 14 Feb 2019 11:11:27 +0000
+Message-ID: <86k1i2sjz4.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        David Lechner <david@lechnology.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v3 32/37] ARM: davinci: cp-intc: unify error handling
+In-Reply-To: <20190212103835.7768-33-brgl@bgdev.pl>
+References: <20190212103835.7768-1-brgl@bgdev.pl>
+        <20190212103835.7768-33-brgl@bgdev.pl>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Robert, Dan, Matthijs
-
-Hi Suman,
-
-On 14/02/19 04:52, Suman Anna wrote:
-> Hi Roger,
+On Tue, 12 Feb 2019 10:38:30 +0000,
+Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 > 
-> On 2/4/19 8:22 AM, Roger Quadros wrote:
->> From: Suman Anna <s-anna@ti.com>
->>
->> This patch adds the bindings for the Programmable Real-Time Unit
->> and Industrial Communication Subsystem (PRU-ICSS) present on various
->> SoCs such as AM33xx, AM437x, AM57xx, Keystone 66AK2G SoC, etc. It is
->> present on the Davinci based OMAPL138 SoCs and K3 architecture
->> based AM65x SoCs as well (not covered for now).
->>
->> Signed-off-by: Suman Anna <s-anna@ti.com>
->> Signed-off-by: Roger Quadros <rogerq@ti.com>
->> ---
->>  .../devicetree/bindings/soc/ti/ti,pruss.txt        | 212 +++++++++++++++++++++
->>  1 file changed, 212 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
->>
->> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
->> new file mode 100644
->> index 0000000..5ac76fd
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
->> @@ -0,0 +1,212 @@
->> +PRU-ICSS on TI SoCs
->> +===================
->> +
->> +The Programmable Real-Time Unit and Industrial Communication Subsystem
->> +(PRU-ICSS) is present on various TI SoCs such as AM335x, AM437x, Keystone
->> +66AK2G, etc. A PRUSS consists of dual 32-bit RISC cores (Programmable
->> +Real-Time Units, or PRUs) with program memory and data memory.
->> +
->> +The programmable nature of the PRUs provide flexibility to implement
->> +custom peripheral interfaces, fast real-time responses, or specialized
->> +data handling. The common peripheral modules include the following,
->> +
->> +  - Enhanced GPIO with async capture and serial support
->> +  - an Ethernet MII_RT module with two MII ports
->> +  - an MDIO port to control external Ethernet PHYs
->> +  - an Industrial Ethernet Peripheral (IEP) to manage/generate Industrial
->> +    Ethernet functions
->> +  - an Enhanced Capture Module (eCAP)
->> +  - a 16550-compatible UART to support PROFIBUS
->> +  - Interrupt controller with 64 input events and 10 Host interrupts.
->> +
->> +A shared Data RAM, if present, can be accessed by both the PRU cores. The
->> +Interrupt Controller (INTC) and a CFG module are common to both the PRU
->> +cores.
->> +
->> +Various sub-modules within a PRU-ICSS subsystem are represented as individual
->> +nodes.
->> +
->> +PRUSS Node
->> +=============
->> +
->> +This node represents the entire ICSS instance and the various modules are
->> +contained as children. The PRUSS driver is responsible for managing the
->> +common resources i.e. DRAM0, DRAM1, SHARED_RAM and CFG space.
->> +
->> +Required Properties:
->> +--------------------
->> +- compatible     : should be one of,
->> +                       "ti,am3356-pruss" for AM335x family of SoCs
->> +                       "ti,am4376-pruss" for AM437x family of SoCs
->> +                       "ti,am5728-pruss" for AM57xx family of SoCs
->> +                       "ti,k2g-pruss" for 66AK2G family of SoCs
->> +- reg            : base address and size for each of the Data RAMs as
->> +                   mentioned in reg-names, and in the same order as the
->> +                   reg-names
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> Hmm, not sure what prompted you to deviate from the design we had on TI
-> SDK kernels. Your revised bindings does not allow us to use this device
-> for the scalability with either UIO/VFIO.
+> Use WARN_ON() on eny error in cp-intc initialization and drop all
+> custom error messages.
 
-My understanding was that the device tree node will have to be modified
-in any case to support the current uio_pruss.c driver so we don't
-need to add things that we don't need right away.
+This isn't what this patch is doing.
+
+Thanks,
+
+	M.
 
 > 
-> Let's sort this out before you post the next series.
-
-Let's discuss this here so I don't have to explain the whole thing again
-in the next series.
-
-Tony,
-
-Suman is mainly concerned about the following changes in v2
-1) pruss node does not contain reg property representing entire ICSS.
-2) pruss node does not contain interrupts.
-
-Both of these are required if drivers/uio/uio_pruss.c or in future if
-VFIO is to be used.
-
-The beagleboard community is a primary user of this driver and we need to
-find a solution so that PRUSS is usable either via remoteproc or via UIO.
-
-Ideal case should allow user to use either of the drivers by just doing
-a unbind and bind.
-
-I don't have a better idea than having a encapsulating node that has
-the appropriate reg and interrupt properties.
-
-cheers,
--roger
-
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> Reviewed-by: David Lechner <david@lechnology.com>
+> ---
+>  arch/arm/mach-davinci/cp_intc.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
 > 
-> regards
-> Suman
-> 
->> +- reg-names      : should contain a string(s) from among the following names,
->> +                   each representing a specific Data RAM region. Some PRU-ICSS
->> +		   instances on certain SoCs might not have Shared DRAM.
->> +                       "dram0" for Data RAM0,
->> +                       "dram1" for Data RAM1,
->> +                       "shrdram2" for Shared Data RAM,
->> +- #address-cells : should be 1
->> +- #size-cells    : should be 1
->> +- ranges         : no specific range translations required, child nodes have the
->> +                   same address view as the parent, so should be mentioned without
->> +                   any value for the property
->> +
->> +Optional Properties:
->> +--------------------
->> +- no-shared-ram	: Should be present if the instance doesn't have Shared RAM.
->> +		  e.g. AM4376 ICSS0 instance doesn't have Shared RAM.
->> +
->> +The PRUSS node will have one or more of the folowing child nodes.
->> +
->> +PRU CORES
->> +=========
->> +ICSS typically has 2 PRU cores. These should be represented as remoteproc devices.
->> +
->> +INTC node
->> +=========
->> +ICSS has one INTC interrupt controller module. This should be represented as
->> +a standard interrupt-controller node.
->> +
->> +CFG, IEP, MII_RT
->> +================
->> +The individual sub-modules CFG, IEP and MII_RT are represented as a syscon
->> +node each with specific node names as below:
->> +                  "cfg" for CFG sub-module,
->> +                  "iep" for IEP sub-module,
->> +                  "mii_rt" for MII-RT sub-module,
->> +
->> +See Documentation/devicetree/bindings/mfd/syscon.txt for details.
->> +
->> +MDIO
->> +====
->> +Each PRUSS has an MDIO module that can be used to control external PHYs. The
->> +MDIO module used within the PRU-ICSS is an instance of the MDIO Controller
->> +used in TI Davinci SoCs. Please refer to the corresponding binding document,
->> +Documentation/devicetree/bindings/net/davinci-mdio.txt for details.
->> +
->> +Application/User Nodes
->> +=======================
->> +A PRU application/user node typically uses one or more PRU device nodes to
->> +implement a PRU application/functionality. Each application/client node would
->> +need a reference to at least a PRU node, and optionally pass some configuration
->> +parameters.
->> +
->> +Required Properties:
->> +--------------------
->> +- prus                 : phandles to the PRU nodes used
->> +
->> +Optional Properties:
->> +--------------------
->> +- firmware-name        : firmwares for the PRU cores, the default firmware
->> +                         for the core from the PRU node will be used if not
->> +                         provided. The firmware names should correspond to
->> +                         the PRU cores listed in the 'prus' property
->> +- ti,pruss-gp-mux-sel  : array of values for the GP_MUX_SEL under PRUSS_GPCFG
->> +                         register for a PRU. This selects the internal muxing
->> +                         scheme for the PRU instance. If not provided, the
->> +                         default out-of-reset value (0) for the PRU core is
->> +                         used. Values should correspond to the PRU cores listed
->> +                         in the 'prus' property
->> +- ti,pru-interrupt-map : PRU interrupt mappings, containing an array of entries
->> +                         with each entry consisting of 4 cell-values. First one
->> +                         is an index towards the "prus" property to identify the
->> +                         PRU core for the interrupt map, second is the PRU
->> +                         System Event id, third is the PRU interrupt channel id
->> +                         and fourth is the PRU host interrupt id. If provided,
->> +                         this map will supercede any other configuration
->> +                         provided through firmware
->> +
->> +Example:
->> +========
->> +1.	/* AM33xx PRU-ICSS */
->> +
->> +	pruss: pruss@0 {
->> +		compatible = "ti,am3356-pruss";
->> +		reg = <0x0 0x2000>,
->> +		      <0x2000 0x2000>,
->> +		      <0x10000 0x3000>;
->> +		reg-names = "dram0", "dram1",
->> +			    "shrdram2";
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		ranges;
->> +
->> +		pruss_cfg: cfg@26000 {
->> +			compatible = "syscon";
->> +			reg = <0x26000 0x2000>;
->> +		};
->> +
->> +		pruss_iep: iep@2e000 {
->> +			compatible = "syscon";
->> +			reg = <0x2e000 0x31c>;
->> +		};
->> +
->> +		pruss_mii_rt: mii_rt@32000 {
->> +			compatible = "syscon";
->> +			reg = <0x32000 0x58>;
->> +		};
->> +
->> +		pruss_intc: intc@20000 {
->> +			compatible = "ti,am3356-pruss-intc";
->> +			reg = <0x20000 0x2000>;
->> +			reg-names = "intc";
->> +			interrupt-controller;
->> +			#interrupt-cells = <1>;
->> +			interrupts = <20 21 22 23 24 25 26 27>;
->> +			interrupt-names = "host2", "host3", "host4",
->> +					  "host5", "host6", "host7",
->> +					  "host8", "host9";
->> +		};
->> +
->> +		pru0: pru@34000 {
->> +			compatible = "ti,am3356-pru";
->> +			reg = <0x34000 0x2000>,
->> +			      <0x22000 0x400>,
->> +			      <0x22400 0x100>;
->> +			reg-names = "iram", "control", "debug";
->> +			gpcfg = <&pruss_cfg 0x8>;
->> +			firmware-name = "am335x-pru0-fw";
->> +			interrupt-parent = <&pruss_intc>;
->> +			interrupts = <16>, <17>;
->> +			interrupt-names = "vring", "kick";
->> +		};
->> +
->> +		pru1: pru@38000 {
->> +			compatible = "ti,am3356-pru";
->> +			reg = <0x38000 0x2000>,
->> +			      <0x24000 0x400>,
->> +			      <0x24400 0x100>;
->> +			reg-names = "iram", "control", "debug";
->> +			gpcfg = <&pruss_cfg 0xc>;
->> +			firmware-name = "am335x-pru1-fw";
->> +			interrupt-parent = <&pruss_intc>;
->> +			interrupts = <18>, <19>;
->> +			interrupt-names = "vring", "kick";
->> +		};
->> +
->> +		pruss_mdio: mdio@32400 {
->> +			compatible = "ti,davinci_mdio";
->> +			reg = <0x32400 0x90>;
->> +			clocks = <&dpll_core_m4_ck>;
->> +			clock-names = "fck";
->> +			bus_freq = <1000000>;
->> +			#address-cells = <1>;
->> +			#size-cells = <0>;
->> +			status = "disabled";
->> +		};
->> +	};
->> +
->> +2:	/* PRU application node example */
->> +	app_node: app_node {
->> +		prus = <&pru0>, <&pru1>;
->> +		firmware-name = "pruss-app-fw", "pruss-app-fw-2";
->> +		ti,pruss-gp-mux-sel = <2>, <1>;
->> +		/* setup interrupts for prus:
->> +		   prus[0] => pru1_0: ev=16, chnl=2, host-irq=7,
->> +		   prus[1] => pru1_1: ev=19, chnl=1, host-irq=3 */
->> +		ti,pru-interrupt-map = <0 16 2 7 >, <1 19 1 3>;
->> +	}
->>
+> diff --git a/arch/arm/mach-davinci/cp_intc.c b/arch/arm/mach-davinci/cp_intc.c
+> index 25221dfe8a20..1bf11fa8be76 100644
+> --- a/arch/arm/mach-davinci/cp_intc.c
+> +++ b/arch/arm/mach-davinci/cp_intc.c
+> @@ -177,8 +177,10 @@ davinci_cp_intc_do_init(const struct davinci_cp_intc_config *config,
+>  
+>  	davinci_cp_intc_base = ioremap(config->reg.start,
+>  				       resource_size(&config->reg));
+> -	if (WARN_ON(!davinci_cp_intc_base))
+> +	if (!davinci_cp_intc_base) {
+> +		pr_err("%s: unable to ioremap register range\n", __func__);
+>  		return -EINVAL;
+> +	}
+>  
+>  	davinci_cp_intc_write(0, DAVINCI_CP_INTC_GLOBAL_ENABLE);
+>  
+> @@ -210,8 +212,9 @@ davinci_cp_intc_do_init(const struct davinci_cp_intc_config *config,
+>  
+>  	irq_base = irq_alloc_descs(-1, 0, config->num_irqs, 0);
+>  	if (irq_base < 0) {
+> -		pr_warn("Couldn't allocate IRQ numbers\n");
+> -		irq_base = 0;
+> +		pr_err("%s: unable to allocate interrupt descriptors: %d\n",
+> +		       __func__, irq_base);
+> +		return irq_base;
+>  	}
+>  
+>  	/* create a legacy host */
+> @@ -220,7 +223,7 @@ davinci_cp_intc_do_init(const struct davinci_cp_intc_config *config,
+>  					&davinci_cp_intc_irq_domain_ops, NULL);
+>  
+>  	if (!davinci_cp_intc_irq_domain) {
+> -		pr_err("cp_intc: failed to allocate irq host!\n");
+> +		pr_err("%s: unable to create an interrupt domain\n", __func__);
+>  		return -EINVAL;
+>  	}
+>  
+> -- 
+> 2.20.1
 > 
 
 -- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Jazz is not dead, it just smell funny.
