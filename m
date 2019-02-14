@@ -2,199 +2,125 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07301C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6CA4C4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:16:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1061218FF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:06:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DE662146E
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 00:16:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="mcr+aLBj"
+	dkim=pass (1024-bit key) header.d=fjfi.cvut.cz header.i=@fjfi.cvut.cz header.b="xggxs3Jd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404609AbfBNAGj (ORCPT
+        id S2404621AbfBNAQi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 19:06:39 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:51450 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404370AbfBNAGg (ORCPT
+        Wed, 13 Feb 2019 19:16:38 -0500
+Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:46962 "EHLO
+        mailgw1.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727054AbfBNAQi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 19:06:36 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1DNwsZ2100568;
-        Thu, 14 Feb 2019 00:01:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references : in-reply-to :
- references; s=corp-2018-07-02;
- bh=BnvBthvqyUR+BETbLnaqcFAixVQhrRUG4KWFDYKw33s=;
- b=mcr+aLBjXAXSptqDtlz0VxxfWE1bq8ULxWcJo1ATX2NiCgH2AWLADjbr/HqYkpk9odGK
- ChvFnz1ZxMVxKCJ0jfXdJW5TYWVBwj+Ty3/i6pxWwCEiACxkvV13/+T2YmPTX1CBTwJG
- UBQhh1BtAVY8KyQ7Wk/NDQM5Umuvxs3VEJF2d3Xv4chhe+jqnXx8PoRI61KUxuMIHH1j
- hzaCrG4RkCU1W8fxes/FLLMZ7uQSL15sc1ZI1d0I09k3vAa0Q8LpfMdnyskkbMB7yMLc
- eVkiHdh8fE/ZM3EnxXIAPz7Bn0aTkW7mrmcxMY3krFlvZUEFc5Jyqgv8meeyiWbyIGX9 Lw== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2qhre5n3u2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Feb 2019 00:01:59 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1E01wVi031042
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Feb 2019 00:01:58 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1E01tie014301;
-        Thu, 14 Feb 2019 00:01:56 GMT
-Received: from concerto.internal (/24.9.64.241)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 13 Feb 2019 16:01:55 -0800
-From:   Khalid Aziz <khalid.aziz@oracle.com>
-To:     juergh@gmail.com, tycho@tycho.ws, jsteckli@amazon.de,
-        ak@linux.intel.com, torvalds@linux-foundation.org,
-        liran.alon@oracle.com, keescook@google.com,
-        akpm@linux-foundation.org, mhocko@suse.com,
-        catalin.marinas@arm.com, will.deacon@arm.com, jmorris@namei.org,
-        konrad.wilk@oracle.com
-Cc:     Tycho Andersen <tycho@docker.com>, deepa.srinivasan@oracle.com,
-        chris.hyser@oracle.com, tyhicks@canonical.com, dwmw@amazon.co.uk,
-        andrew.cooper3@citrix.com, jcm@redhat.com,
-        boris.ostrovsky@oracle.com, kanth.ghatraju@oracle.com,
-        oao.m.martins@oracle.com, jmattson@google.com,
-        pradeep.vincent@oracle.com, john.haxby@oracle.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com, hch@lst.de,
-        steven.sistare@oracle.com, labbott@redhat.com, luto@kernel.org,
-        dave.hansen@intel.com, peterz@infradead.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [RFC PATCH v8 01/14] mm: add MAP_HUGETLB support to vm_mmap
-Date:   Wed, 13 Feb 2019 17:01:24 -0700
-Message-Id: <ec8d9101bea98360ef1f4c7cb5bb0450859c213b.1550088114.git.khalid.aziz@oracle.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1550088114.git.khalid.aziz@oracle.com>
-References: <cover.1550088114.git.khalid.aziz@oracle.com>
-In-Reply-To: <cover.1550088114.git.khalid.aziz@oracle.com>
-References: <cover.1550088114.git.khalid.aziz@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9166 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902130157
+        Wed, 13 Feb 2019 19:16:38 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id AC3B5AA25C;
+        Thu, 14 Feb 2019 01:16:32 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
+        s=20151024; t=1550103392; i=@fjfi.cvut.cz;
+        bh=ZgX2nu1prNMPmkfY6EX7uBMchoXtJY1ojL8lA0W+e5s=;
+        h=From:To:Cc:Subject:Date;
+        b=xggxs3Jd0ux2NEbJCIJ4Kr50kHfv6xs+CjDAHrE+lmBN7zWQHxLjQ2IkjGc0zWplV
+         tVxta7/pW9i71DjnX53tRsptzRTO1KFPfoCBT2CTnU31wdK7vXQUxiGjKUVcXR46nl
+         AiCiTnZCSuuwTmaXCbfCUlHFwUT4qhgRDDb2ZNMY=
+X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
+Received: from mailgw1.fjfi.cvut.cz ([127.0.0.1])
+        by localhost (mailgw1.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
+        with ESMTP id fORW3nzi69Ok; Thu, 14 Feb 2019 01:16:27 +0100 (CET)
+Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id 6F218AA230;
+        Thu, 14 Feb 2019 01:16:26 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz 6F218AA230
+Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
+        id 488AB6004E; Thu, 14 Feb 2019 01:16:26 +0100 (CET)
+From:   David Kozub <zub@linux.fjfi.cvut.cz>
+To:     Jens Axboe <axboe@kernel.dk>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        Scott Bauer <sbauer@plzdonthack.me>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
+        David Kozub <zub@linux.fjfi.cvut.cz>
+Subject: [PATCH 00/16] sed-opal: fix shadow MBR enable/disable and clean up code
+Date:   Thu, 14 Feb 2019 01:15:52 +0100
+Message-Id: <1550103368-4605-1-git-send-email-zub@linux.fjfi.cvut.cz>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tycho Andersen <tycho@docker.com>
+This patch series contains various code cleanup and fixes for Opal SED support.
+It's been created by taking a part of the original patch series by Jonas and me
+(PATCHv4 block: sed-opal: support shadow MBR done flag and write) [1], as
+suggested by Christoph in [2].
 
-vm_mmap is exported, which means kernel modules can use it. In particular,
-for testing XPFO support, we want to use it with the MAP_HUGETLB flag, so
-let's support it via vm_mmap.
+The most important patch is the first one where I tried to fix the shadow MBR
+enable/disable issue we discussed in [3]. This change goes against Christoph's
+original propsal in [4] but I think - in light of the issue and keeping in mind
+the planned addition of an IOCTL specifically for toggling the done flag - that
+passing just OPAL_TRUE or OPAL_FALSE to set_mbr_done and set_mbr_enable_disable
+is more useful and also more understandable. Maybe this change is superfluous if
+Scott found the time to submit his take on the fix. (?)
 
-Signed-off-by: Tycho Andersen <tycho@docker.com>
-Tested-by: Marco Benatto <marco.antonio.780@gmail.com>
-Tested-by: Khalid Aziz <khalid.aziz@oracle.com>
----
- include/linux/mm.h |  2 ++
- mm/mmap.c          | 19 +------------------
- mm/util.c          | 32 ++++++++++++++++++++++++++++++++
- 3 files changed, 35 insertions(+), 18 deletions(-)
+I tried to include all the feedback from the v4 review[1]. I also added some
+more trivial changes (11/16 as suggested in [4]) and also 13/16 motivated by the
+same idea - that's why I again reached the magical number of 16 patches.
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 5411de93a363..30bddc7b3c75 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2361,6 +2361,8 @@ struct vm_unmapped_area_info {
- extern unsigned long unmapped_area(struct vm_unmapped_area_info *info);
- extern unsigned long unmapped_area_topdown(struct vm_unmapped_area_info *info);
- 
-+struct file *map_hugetlb_setup(unsigned long *len, unsigned long flags);
-+
- /*
-  * Search for an unmapped address range.
-  *
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 6c04292e16a7..c668d7d27c2b 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1582,24 +1582,7 @@ unsigned long ksys_mmap_pgoff(unsigned long addr, unsigned long len,
- 		if (unlikely(flags & MAP_HUGETLB && !is_file_hugepages(file)))
- 			goto out_fput;
- 	} else if (flags & MAP_HUGETLB) {
--		struct user_struct *user = NULL;
--		struct hstate *hs;
--
--		hs = hstate_sizelog((flags >> MAP_HUGE_SHIFT) & MAP_HUGE_MASK);
--		if (!hs)
--			return -EINVAL;
--
--		len = ALIGN(len, huge_page_size(hs));
--		/*
--		 * VM_NORESERVE is used because the reservations will be
--		 * taken when vm_ops->mmap() is called
--		 * A dummy user value is used because we are not locking
--		 * memory so no accounting is necessary
--		 */
--		file = hugetlb_file_setup(HUGETLB_ANON_FILE, len,
--				VM_NORESERVE,
--				&user, HUGETLB_ANONHUGE_INODE,
--				(flags >> MAP_HUGE_SHIFT) & MAP_HUGE_MASK);
-+		file = map_hugetlb_setup(&len, flags);
- 		if (IS_ERR(file))
- 			return PTR_ERR(file);
- 	}
-diff --git a/mm/util.c b/mm/util.c
-index 8bf08b5b5760..536c14cf88ba 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -357,6 +357,29 @@ unsigned long vm_mmap_pgoff(struct file *file, unsigned long addr,
- 	return ret;
- }
- 
-+struct file *map_hugetlb_setup(unsigned long *len, unsigned long flags)
-+{
-+	struct user_struct *user = NULL;
-+	struct hstate *hs;
-+
-+	hs = hstate_sizelog((flags >> MAP_HUGE_SHIFT) & MAP_HUGE_MASK);
-+	if (!hs)
-+		return ERR_PTR(-EINVAL);
-+
-+	*len = ALIGN(*len, huge_page_size(hs));
-+
-+	/*
-+	 * VM_NORESERVE is used because the reservations will be
-+	 * taken when vm_ops->mmap() is called
-+	 * A dummy user value is used because we are not locking
-+	 * memory so no accounting is necessary
-+	 */
-+	return hugetlb_file_setup(HUGETLB_ANON_FILE, *len,
-+			VM_NORESERVE,
-+			&user, HUGETLB_ANONHUGE_INODE,
-+			(flags >> MAP_HUGE_SHIFT) & MAP_HUGE_MASK);
-+}
-+
- unsigned long vm_mmap(struct file *file, unsigned long addr,
- 	unsigned long len, unsigned long prot,
- 	unsigned long flag, unsigned long offset)
-@@ -366,6 +389,15 @@ unsigned long vm_mmap(struct file *file, unsigned long addr,
- 	if (unlikely(offset_in_page(offset)))
- 		return -EINVAL;
- 
-+	if (flag & MAP_HUGETLB) {
-+		if (file)
-+			return -EINVAL;
-+
-+		file = map_hugetlb_setup(&len, flag);
-+		if (IS_ERR(file))
-+			return PTR_ERR(file);
-+	}
-+
- 	return vm_mmap_pgoff(file, addr, len, prot, flag, offset >> PAGE_SHIFT);
- }
- EXPORT_SYMBOL(vm_mmap);
+I kept the reviewed-by/acked-by tags where the changes were trivial but I
+removed them where I thought a re-review would be useful.
+
+I plan to submit the remaining patches from the original series (these that add
+new Opal IOCTLs) after this fix and cleanup is accepted.
+
+I did a brief test toggling shadow MBR and unlocking a locking range. I will try
+to do more thorough tests - but I will not get to it before the beginning of the
+next week. It would be great if this could get some more testing. Especially the
+unlock from suspend part - that's something I don't have set up and I have not
+tested.
+
+The series applies on v5.0-rc6.
+
+[1] https://lore.kernel.org/lkml/1549054223-12220-1-git-send-email-zub@linux.fjfi.cvut.cz/
+[2] https://lore.kernel.org/lkml/20190204150415.GO31132@infradead.org/
+[3] https://lore.kernel.org/lkml/alpine.LRH.2.21.1902072247060.29258@linux.fjfi.cvut.cz/
+[4] https://lore.kernel.org/lkml/20190204145244.GJ31132@infradead.org/
+
+David Kozub (12):
+  block: sed-opal: fix IOC_OPAL_ENABLE_DISABLE_MBR
+  block: sed-opal: fix typos and formatting
+  block: sed-opal: close parameter list in cmd_finalize
+  block: sed-opal: unify cmd start
+  block: sed-opal: unify error handling of responses
+  block: sed-opal: reuse response_get_token to decrease code duplication
+  block: sed-opal: add token for OPAL_LIFECYCLE
+  block: sed-opal: unify retrieval of table columns
+  block: sed-opal: use named Opal tokens instead of integer literals
+  block: sed-opal: pass steps via argument rather than via opal_dev
+  block: sed-opal: don't repeat opal_discovery0 in each steps array
+  block: sed-opal: rename next to execute_steps
+
+Jonas Rabenstein (4):
+  block: sed-opal: use correct macro for method length
+  block: sed-opal: unify space check in add_token_*
+  block: sed-opal: print failed function address
+  block: sed-opal: split generation of bytestring header and content
+
+ block/opal_proto.h            |   2 +
+ block/sed-opal.c              | 716 ++++++++++++++--------------------
+ include/uapi/linux/sed-opal.h |   2 +-
+ 3 files changed, 287 insertions(+), 433 deletions(-)
+
 -- 
-2.17.1
+2.20.1
 
