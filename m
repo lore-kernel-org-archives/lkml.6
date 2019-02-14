@@ -2,87 +2,99 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BAB0C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:29:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C133FC10F04
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:30:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43D212177E
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:29:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 908CB2177E
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:30:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550143850;
+	bh=WAPsltihHCdxQSkqS987ZvzQsi1u/Rzq/cqKtvhshG4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=CEF9lMzYORDNBNvOo+pR+Eh5RMiDklXSuLg4ZPvuPx3STSnERUVKFcI/hldmZU3Ut
+	 j8+WEcCsKH85OFWF/nULsO3vgtrU60TzknQ/pT9GNJhXzdK4P9wW3iVkJBCfIet7JK
+	 h6luE4BcE07jG5TCUBZfAQMd78k51BFOHErsV4ic=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394907AbfBNL3k (ORCPT
+        id S2394123AbfBNLat (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 06:29:40 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:49388 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729808AbfBNL3k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 06:29:40 -0500
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1guFCp-0004PT-GM; Thu, 14 Feb 2019 12:29:27 +0100
-Date:   Thu, 14 Feb 2019 12:29:20 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Aubrey Li <aubrey.li@linux.intel.com>
-cc:     mingo@redhat.com, peterz@infradead.org, hpa@zytor.com,
-        ak@linux.intel.com, tim.c.chen@linux.intel.com,
-        dave.hansen@intel.com, arjan@linux.intel.com, aubrey.li@intel.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v11 2/3] x86,/proc/pid/status: Add AVX-512 usage elapsed
- time
-In-Reply-To: <20190213023748.6614-2-aubrey.li@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1902141212400.1561@nanos.tec.linutronix.de>
-References: <20190213023748.6614-1-aubrey.li@linux.intel.com> <20190213023748.6614-2-aubrey.li@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Thu, 14 Feb 2019 06:30:49 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55866 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729808AbfBNLas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 06:30:48 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 8D35FAC7A;
+        Thu, 14 Feb 2019 11:30:47 +0000 (UTC)
+Date:   Thu, 14 Feb 2019 12:30:47 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] MAINTAINERS: add entry for memblock
+Message-ID: <20190214113047.GB4525@dhcp22.suse.cz>
+References: <20190214093630.GC9063@rapoport-lnx>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190214093630.GC9063@rapoport-lnx>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 13 Feb 2019, Aubrey Li wrote:
-
-> AVX-512 components use could cause core turbo frequency drop. So
-> it's useful to expose AVX-512 usage elapsed time as a heuristic hint
-> for the user space job scheduler to cluster the AVX-512 using tasks
-> together.
+On Thu 14-02-19 11:36:31, Mike Rapoport wrote:
+> Hi,
 > 
-> Example:
-> $ cat /proc/pid/status | grep AVX512_elapsed_ms
-> AVX512_elapsed_ms:      1020
+> I was surprised to see lots of activity around memblock (beside the churn
+> I create there), so I'm going to look after it.
 > 
-> The number '1020' denotes 1020 millisecond elapsed since last time
-> context switch the off-CPU task using AVX-512 components, thus the
+> >From 7b3d02797ef18fb1c515f32125fb9b0055a312de Mon Sep 17 00:00:00 2001
+> From: Mike Rapoport <rppt@linux.ibm.com>
+> Date: Thu, 14 Feb 2019 11:21:26 +0200
+> Subject: [PATCH] MAINTAINERS: add entry for memblock
+> 
+> Add entry for memblock in MAINTAINERS file
 
-I know what you are trying to say, but this sentence does not parse. So
-what you want to say is:
+It is great that this code gains an official maintainer finaly. Thanks
+for stepping in.
 
-  This means that 1020 milliseconds have elapsed since the AVX512 usage of
-  the task was detected when the task was scheduled out.
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
 
-Aside of that 1020ms is hardly evidence for real AVX512 usage, so you want
-to come up with a better example than that.
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-But that makes me think about the usefulness of this hint in general.
+> ---
+>  MAINTAINERS | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 41ce5f4ad838..4e870d8b31af 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -9792,6 +9792,14 @@ F:	kernel/sched/membarrier.c
+>  F:	include/uapi/linux/membarrier.h
+>  F:	arch/powerpc/include/asm/membarrier.h
+>  
+> +MEMBLOCK
+> +M:	Mike Rapoport <rppt@linux.ibm.com>
+> +L:	linux-mm@kvack.org
+> +S:	Maintained
+> +F:	include/linux/memblock.h
+> +F:	mm/memblock.c
+> +F:	Documentation/core-api/boot-time-mm.rst
+> +
+>  MEMORY MANAGEMENT
+>  L:	linux-mm@kvack.org
+>  W:	http://www.linux-mm.org
+> -- 
+> 2.7.4
 
-A AVX512 using task which runs alone on a CPU, is going to have either no
-AVX512 usage recorded at all or the time elapsed since the last recording
-is absurdly long. IOW, this needs crystal ball magic to decode because
-there is no correlation between that elapsed time and the time when the
-last context switch happened simply because that time is not available in
-/proc/$PID/status. Sure you can oracle it out from /proc/$PID/stat with
-even more crystal ball magic, but there is no explanation at all.
-
-There may be use case scenarios where this crystal ball prediction is
-actually useful, but the inaccuracy of that information and the possible
-pitfalls for any user space application which uses it need to be documented
-in detail. Without that, this is going to cause more trouble and confusion
-than benefit.
-
-Thanks,
-
-	tglx
+-- 
+Michal Hocko
+SUSE Labs
