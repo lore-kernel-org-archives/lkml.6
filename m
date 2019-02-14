@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C378DC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0B84C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:01:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B2A82229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:01:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70A422229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:01:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="gTCgFho7"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="DO/9XQUm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439139AbfBNOBj (ORCPT
+        id S2395295AbfBNOAo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 09:01:39 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40772 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438978AbfBNOAp (ORCPT
+        Thu, 14 Feb 2019 09:00:44 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38330 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391981AbfBNOAk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 09:00:45 -0500
-Received: by mail-wr1-f68.google.com with SMTP id q1so6577877wrp.7
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 06:00:44 -0800 (PST)
+        Thu, 14 Feb 2019 09:00:40 -0500
+Received: by mail-wr1-f66.google.com with SMTP id v13so6589293wrw.5
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 06:00:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=rD/Z65OnYoppq/ikSxqUpjeEOremUITKG7uIaduTeV4=;
-        b=gTCgFho7zo/veyoui1W9bvplodyAUd1b04B19jU298EYa2SsV4BWgz/23WmBUvOvAi
-         fwgRsJffRaRxJYjwgSwV6H3hCzMwjbGsU94koPJxPNIOefHQ2LL52Rgdb7AtilKWqmW0
-         ZitUDRL8A6rd+6ozFB6LlPD5SHPYFiuKw5w1nx3M5JDSq7OlJi7WVeHyb0xMsBFFmK04
-         lfwPJY1kez09+1URhoWJS/I4moaijbPeJi9i39zZu7s4orN9qOQeqdO2svcETnuauFxn
-         pwgWfQrJDrD4XmQ+nN2UY9tzlxKeztzA99wYnSzT9+fKBePxhAv8ObJwBSOPwB5HRheX
-         bMqA==
+        bh=GccRuQFRqaVkBzcusF5ev7XeftbkUHIeHQdHXzkyWfM=;
+        b=DO/9XQUmfVfOY620y7LQDI7qMwLysvUZWgPJ440lJx0Ax+iNA/OaT7oyhRwOORsVjy
+         srAWoKET5dIH45ZlReNH29HpMRqsfe9JTxAZ0MORLDiSz1buQJhmaGpjN9ggOf5KqwRZ
+         BYOUBvZojLcpHDkAo6kPvSi0tD2GUDeOorKlgSsFEs1VWzwOD9lTjuRHdTAwuFQIGpzz
+         lcxK3LPkXfNpjO4sET7WeWmoph57UaGTW98XCfgWKUF85T0nFp8fFENJmg21knBGlcQF
+         NIEpDHzYjX+usmhlcQX9gSoDetfv10bJCOxH1CVN1qrrq4ypF0Cm1qvHjOA/xwfO2pjo
+         UGzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=rD/Z65OnYoppq/ikSxqUpjeEOremUITKG7uIaduTeV4=;
-        b=f1TawFMOTQEPatne1NKScMspBDpkqJ1ND7sLzX1BO9Q7WqUuKUExwOij4sKonJSi2G
-         E93Oz+EzzAEsHBh3np85B6KJXW3RHMeRvf8wRJESIPihnSjkqg49hSsXn4mtSWMdPZzK
-         F8fuEf9Hu/KfoUvE7PP/warhNfW279/uTKCxVyrr5tamqhrsuaGMy64n/AiMmzdgEbea
-         FKLx+nSwD5W26rhfYZI6yAEmifHFqIo0hppTIz/gvxHfURw+zp5trvieGetbqDTgiC46
-         BpIkgVW+G2aOgQxgcTYKTnpMnWmkS8+85t1IQrGnCQEB0P8BdVLTUTKgK53SdqnWkz7+
-         tjDg==
-X-Gm-Message-State: AHQUAuZVfifxI+g2Cj2aKeT8P3zug063+GVHGNckbaxpAI61Q68u6xUK
-        v95DnK9TC1SFNtc3XozTlItjEw==
-X-Google-Smtp-Source: AHgI3IYccfpg672+aKnS7Pnxwnja+i8dtvQUAyVPxCFJsa/p/QIqpaWlODJf+ZkYv4XEGSU3KJvuQg==
-X-Received: by 2002:a5d:4dd0:: with SMTP id f16mr3087778wru.127.1550152843984;
-        Thu, 14 Feb 2019 06:00:43 -0800 (PST)
+        bh=GccRuQFRqaVkBzcusF5ev7XeftbkUHIeHQdHXzkyWfM=;
+        b=oVNf+NwgiMk50aC7qcLTpS1gp4TdAvmZMNbawUHi2XvQU78JOJvGvyl0cdPTGd3QNp
+         x7oaQ27XCi3VNYVvUZoZ4rtwmD++eFPwmVM9p/6iHsIgjK6LwnwqN3mvIY9PvJf6OkVf
+         2H+tIHqHlvhCfIMkDRQcOtP4Ah7uS8jmKysVVbWM6AwjZX0wGoUm5NkvkpxRF9AMb0De
+         HosKQ+knmtM3OKankpYyesg03T6fzSAwOyBO/MuSCKmL4AAmYQIh1/zWARghKH1C3xmO
+         msNwJQxDakDaIH07/qXhYJuRUIh3dETrzQdAzaXIgYwNBuS9lkG1wUN+F6oovW2cdOnK
+         9xUw==
+X-Gm-Message-State: AHQUAubBkXJ/iysmNoXp8JoSjXknXMf8CymL/brfvhEViqxm3SBmL1zx
+        wTDdns2qaRq5GQIH2AuDpZCVWw==
+X-Google-Smtp-Source: AHgI3IYKNOaqYyAhxj+U0/dHFZhx6MkzavyyIb2QmJuotNT33H0opYFSpwDu1Slsg7VoMmw+6iHqXg==
+X-Received: by 2002:adf:9061:: with SMTP id h88mr2983406wrh.65.1550152838301;
+        Thu, 14 Feb 2019 06:00:38 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id h142sm3395677wme.33.2019.02.14.06.00.42
+        by smtp.gmail.com with ESMTPSA id h142sm3395677wme.33.2019.02.14.06.00.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 06:00:43 -0800 (PST)
+        Thu, 14 Feb 2019 06:00:37 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -70,9 +70,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-input@vger.kernel.org,
         linux-leds@vger.kernel.org, linux-pm@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v6 05/11] mfd: core: document mfd_add_devices()
-Date:   Thu, 14 Feb 2019 15:00:16 +0100
-Message-Id: <20190214140022.19201-6-brgl@bgdev.pl>
+Subject: [PATCH v6 01/11] dt-bindings: mfd: add DT bindings for max77650
+Date:   Thu, 14 Feb 2019 15:00:12 +0100
+Message-Id: <20190214140022.19201-2-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190214140022.19201-1-brgl@bgdev.pl>
 References: <20190214140022.19201-1-brgl@bgdev.pl>
@@ -85,38 +85,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Add a kernel doc for mfd_add_devices().
+Add a DT binding document for max77650 ultra-low power PMIC. This
+describes the core mfd device and the GPIO module.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/mfd/mfd-core.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ .../devicetree/bindings/mfd/max77650.txt      | 46 +++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/max77650.txt
 
-diff --git a/drivers/mfd/mfd-core.c b/drivers/mfd/mfd-core.c
-index 94e3f32ce935..0898a8db1747 100644
---- a/drivers/mfd/mfd-core.c
-+++ b/drivers/mfd/mfd-core.c
-@@ -269,6 +269,20 @@ static int mfd_add_device(struct device *parent, int id,
- 	return ret;
- }
- 
-+/**
-+ * mfd_add_devices - register a set of child devices
-+ *
-+ * @parent: Parent device for all sub-nodes.
-+ * @id: Platform device id. If >= 0, each sub-device will have its cell_id
-+ *      added to this number and use it as the platform device id.
-+ * @cells: Array of mfd cells describing sub-devices.
-+ * @n_devs: Number of sub-devices to register.
-+ * @mem_base: Parent register range resource for sub-devices.
-+ * @irq_base: Base of the range of virtual interrupt numbers allocated for
-+ *            this MFD device. Unused if @domain is specified.
-+ * @domain: Interrupt domain used to create mappings for HW interrupt numbers
-+ *          specificed in sub-devices' IRQ resources.
-+ */
- int mfd_add_devices(struct device *parent, int id,
- 		    const struct mfd_cell *cells, int n_devs,
- 		    struct resource *mem_base,
+diff --git a/Documentation/devicetree/bindings/mfd/max77650.txt b/Documentation/devicetree/bindings/mfd/max77650.txt
+new file mode 100644
+index 000000000000..b529d8d19335
+--- /dev/null
++++ b/Documentation/devicetree/bindings/mfd/max77650.txt
+@@ -0,0 +1,46 @@
++MAX77650 ultra low-power PMIC from Maxim Integrated.
++
++Required properties:
++-------------------
++- compatible:		Must be "maxim,max77650"
++- reg:			I2C device address.
++- interrupts:		The interrupt on the parent the controller is
++			connected to.
++- interrupt-controller: Marks the device node as an interrupt controller.
++- #interrupt-cells:	Must be <2>.
++
++- gpio-controller:	Marks the device node as a gpio controller.
++- #gpio-cells:		Must be <2>. The first cell is the pin number and
++			the second cell is used to specify the gpio active
++			state.
++
++Optional properties:
++--------------------
++gpio-line-names:	Single string containing the name of the GPIO line.
++
++The GPIO-controller module is represented as part of the top-level PMIC
++node. The device exposes a single GPIO line.
++
++For device-tree bindings of other sub-modules (regulator, power supply,
++LEDs and onkey) refer to the binding documents under the respective
++sub-system directories.
++
++For more details on GPIO bindings, please refer to the generic GPIO DT
++binding document <devicetree/bindings/gpio/gpio.txt>.
++
++Example:
++--------
++
++	pmic@48 {
++		compatible = "maxim,max77650";
++		reg = <0x48>;
++
++		interrupt-controller;
++		interrupt-parent = <&gpio2>;
++		#interrupt-cells = <2>;
++		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
++
++		gpio-controller;
++		#gpio-cells = <2>;
++		gpio-line-names = "max77650-charger";
++	};
 -- 
 2.20.1
 
