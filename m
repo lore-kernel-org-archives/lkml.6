@@ -2,141 +2,132 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3872FC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:32:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD53C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:32:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 121132229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:32:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6B8921B24
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:32:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440207AbfBNVb7 (ORCPT
+        id S2440222AbfBNVcK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 16:31:59 -0500
-Received: from foss.arm.com ([217.140.101.70]:51058 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392871AbfBNVb6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 16:31:58 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF0CEEBD;
-        Thu, 14 Feb 2019 13:31:57 -0800 (PST)
-Received: from [192.168.1.123] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 89E103F557;
-        Thu, 14 Feb 2019 13:31:55 -0800 (PST)
-Subject: Re: [PATCH] iommu/arm-smmu: Allow disabling bypass via kernel config
-To:     Douglas Anderson <dianders@chromium.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Will Deacon <will.deacon@arm.com>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        evgreen@chromium.org, tfiga@chromium.org,
-        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20190214204433.155715-1-dianders@chromium.org>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <4238ceb7-d286-9ef9-39b6-b2e0571f2981@arm.com>
-Date:   Thu, 14 Feb 2019 21:31:46 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Thu, 14 Feb 2019 16:32:10 -0500
+Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:46044 "EHLO
+        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2392871AbfBNVcI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 16:32:08 -0500
+Received: from pps.filterd (m0134425.ppops.net [127.0.0.1])
+        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1ELQhpY005571;
+        Thu, 14 Feb 2019 21:31:51 GMT
+Received: from g4t3426.houston.hpe.com (g4t3426.houston.hpe.com [15.241.140.75])
+        by mx0b-002e3701.pphosted.com with ESMTP id 2qnedr8uhj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 14 Feb 2019 21:31:51 +0000
+Received: from g9t2301.houston.hpecorp.net (g9t2301.houston.hpecorp.net [16.220.97.129])
+        by g4t3426.houston.hpe.com (Postfix) with ESMTP id 9A8B070;
+        Thu, 14 Feb 2019 21:31:50 +0000 (UTC)
+Received: from [16.214.130.214] (unknown [16.214.130.214])
+        by g9t2301.houston.hpecorp.net (Postfix) with ESMTP id 094314B;
+        Thu, 14 Feb 2019 21:31:48 +0000 (UTC)
+Subject: Re: [Patch v3 0/4] Protect against concurrent calls into UV BIOS
+To:     Dimitri Sivanich <sivanich@hpe.com>,
+        Hedi Berriche <hedi.berriche@hpe.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-efi@vger.kernel.org,
+        x86@kernel.org, Russ Anderson <rja@hpe.com>,
+        Steve Wahl <steve.wahl@hpe.com>, stable@vger.kernel.org
+References: <20190213193413.25560-1-hedi.berriche@hpe.com>
+ <20190214212149.GB5073@hpe.com>
+From:   Mike Travis <mike.travis@hpe.com>
+Message-ID: <6d2c7655-a8f4-e2ef-1479-f43e707c6a86@hpe.com>
+Date:   Thu, 14 Feb 2019 13:31:48 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190214204433.155715-1-dianders@chromium.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+In-Reply-To: <20190214212149.GB5073@hpe.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902140141
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Doug,
 
-On 2019-02-14 8:44 pm, Douglas Anderson wrote:
-> Right now the only way to disable the iommu bypass for the ARM SMMU is
-> with the kernel command line parameter 'arm-smmu.disable_bypass'.
+
+On 2/14/2019 1:21 PM, Dimitri Sivanich wrote:
+> For the series:
 > 
-> In general kernel command line parameters make sense for things that
-> someone would like to tweak without rebuilding the kernel or for very
-> basic communication between the bootloader and the kernel, but are
-> awkward for other things.  Specifically:
-> * Human parsing of the kernel command line can be difficult since it's
->    just a big runon space separated line of text.
-> * If every bit of the system was configured via the kernel command
->    line the kernel command line would get very large and even more
->    unwieldly.
-> * Typically there are not easy ways in build systems to adjust the
->    kernel command line for config-like options.
-> 
-> Let's introduce a new config option that allows us to disable the
-> iommu bypass without affecting the existing default nor the existing
-> ability to adjust the configuration via kernel command line.
+> Reviewed-by: Dimitri Sivanich <sivanich@hpe.com>
 
-I say let's just flip the default - for a while now it's been one of 
-those "oh yeah, we should probably do that" things that gets instantly 
-forgotten again, so some 3rd-party demand is plenty to convince me :)
+As well as I:
 
-There are few reasons to allow unmatched stream bypass, and even fewer 
-good ones, so I'd be happy to shift the command-line burden over to the 
-esoteric cases at this point, and consider the config option in future 
-if anyone from that camp pops up and screams hard enough.
-
-Cheers,
-Robin.
+Reviewed-by: Mike Travis <mike.travis@hpe.com>
 
 > 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
-> 
->   drivers/iommu/Kconfig    | 22 ++++++++++++++++++++++
->   drivers/iommu/arm-smmu.c |  3 ++-
->   2 files changed, 24 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-> index 46fcd75d4364..c614beab08f8 100644
-> --- a/drivers/iommu/Kconfig
-> +++ b/drivers/iommu/Kconfig
-> @@ -359,6 +359,28 @@ config ARM_SMMU
->   	  Say Y here if your SoC includes an IOMMU device implementing
->   	  the ARM SMMU architecture.
->   
-> +config ARM_SMMU_DISABLE_BYPASS_BY_DEFAULT
-> +	bool "Default to disabling bypass on ARM SMMU v1 and v2"
-> +	depends on ARM_SMMU
-> +	default n
-> +	help
-> +	  Say Y here to (by default) disable bypass streams such that
-> +	  incoming transactions from devices that are not attached to
-> +	  an iommu domain will report an abort back to the device and
-> +	  will not be allowed to pass through the SMMU.
-> +
-> +	  Historically the ARM SMMU v1 and v2 driver has defaulted
-> +	  to allow bypass by default but it could be disabled with
-> +	  the parameter 'arm-smmu.disable_bypass'.  The parameter is
-> +	  still present and can be used to override this config
-> +	  option, but this config option allows you to disable bypass
-> +	  without bloating the kernel command line.
-> +
-> +	  Disabling bypass is more secure but presumably will break
-> +	  old systems.
-> +
-> +	  Say N if unsure.
-> +
->   config ARM_SMMU_V3
->   	bool "ARM Ltd. System MMU Version 3 (SMMUv3) Support"
->   	depends on ARM64
-> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-> index 045d93884164..930c07635956 100644
-> --- a/drivers/iommu/arm-smmu.c
-> +++ b/drivers/iommu/arm-smmu.c
-> @@ -110,7 +110,8 @@ static int force_stage;
->   module_param(force_stage, int, S_IRUGO);
->   MODULE_PARM_DESC(force_stage,
->   	"Force SMMU mappings to be installed at a particular stage of translation. A value of '1' or '2' forces the corresponding stage. All other values are ignored (i.e. no stage is forced). Note that selecting a specific stage will disable support for nested translation.");
-> -static bool disable_bypass;
-> +static bool disable_bypass =
-> +	IS_ENABLED(CONFIG_ARM_SMMU_DISABLE_BYPASS_BY_DEFAULT);
->   module_param(disable_bypass, bool, S_IRUGO);
->   MODULE_PARM_DESC(disable_bypass,
->   	"Disable bypass streams such that incoming transactions from devices that are not attached to an iommu domain will report an abort back to the device and will not be allowed to pass through the SMMU.");
-> 
+> On Wed, Feb 13, 2019 at 07:34:09PM +0000, Hedi Berriche wrote:
+>> - Changes since v2
+>>    Addressed comments from Ard Biesheuvel:
+>>   * expose efi_runtime_lock to UV platform only instead of globally
+>>   * remove unnecessary #ifdef CONFIG_EFI from bios_uv.c
+>>
+>> - Changes since v1:
+>>    Addressed comments from Bhupesh Sharma, Thomas Gleixner, and Ard Biesheuvel:
+>>   * made __uv_bios_call() static
+>>   * moved the efi_enabled() cleanup to its own patchlet
+>>   * explained the reason for renaming the efi_runtime_lock semaphore
+>>   * dropped the reviewed-bys as they should be given on the mailing list
+>>   * Cc'ng stable@vger.kernel.org given the nature of the problem addressed by the patches
+>>
+>> ---
+>>
+>> Calls into UV BIOS were not being serialised which is wrong as it violates EFI
+>> runtime rules, and bad as it does result in all sorts of potentially hard to
+>> track down hangs and panics when efi_scratch.prev_mm gets clobbered whenever
+>> efi_switch_mm() gets called concurrently from two different CPUs.
+>>
+>> Patch #1 removes an unnecessary #ifdef CONFIG_EFI guard from bios_uv.c.
+>>
+>> Patch #2 removes uv_bios_call_reentrant() because it's dead code.
+>>
+>> Patch #3 is a cleanup that drops test_bit() in favour of the ad hoc efi_enabled().
+>>
+>> Patch #4 makes uv_bios_call() variants use the efi_runtime_lock semaphore to
+>> protect against concurrency.
+>>
+>> Cc: Russ Anderson <rja@hpe.com>
+>> Cc: Mike Travis <mike.travis@hpe.com>
+>> Cc: Dimitri Sivanich <sivanich@hpe.com>
+>> Cc: Steve Wahl <steve.wahl@hpe.com>
+>> Cc: stable@vger.kernel.org # v4.9+
+>>
+>> Hedi Berriche (4):
+>>    x86/platform/UV: remove unnecessary #ifdef CONFIG_EFI
+>>    x86/platform/UV: kill uv_bios_call_reentrant() as it has no callers
+>>    x86/platform/UV: use efi_enabled() instead of test_bit()
+>>    x86/platform/UV: use efi_runtime_lock to serialise BIOS calls
+>>
+>>   arch/x86/include/asm/uv/bios.h          | 13 ++++-----
+>>   arch/x86/platform/uv/bios_uv.c          | 35 ++++++++++++++-----------
+>>   drivers/firmware/efi/runtime-wrappers.c |  7 +++++
+>>   3 files changed, 34 insertions(+), 21 deletions(-)
+>>
+>> -- 
+>> 2.20.1
+>>
