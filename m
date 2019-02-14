@@ -2,116 +2,105 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04591C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 20:53:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D635AC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 20:54:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBE4B21B24
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 20:53:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9997721B24
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 20:54:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="zXoQYJGm"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HNweZ4ek"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503263AbfBNUxt (ORCPT
+        id S2503283AbfBNUyK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 15:53:49 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:43447 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2395284AbfBNUxq (ORCPT
+        Thu, 14 Feb 2019 15:54:10 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:46763 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2503272AbfBNUyH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 15:53:46 -0500
-Received: by mail-yw1-f66.google.com with SMTP id u200so2866261ywu.10
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 12:53:45 -0800 (PST)
+        Thu, 14 Feb 2019 15:54:07 -0500
+Received: by mail-qt1-f193.google.com with SMTP id y20so8453369qtm.13
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 12:54:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=nq3kS1AhtC4YfUavpJUvV3F1g90XhP6yXjx2z1YEeRw=;
-        b=zXoQYJGmlEutrnMtRSMXJIfZ3GPdihFFgxNuYwhHNAeztOd7HHY1ufLdrS3yTVYvWL
-         tg5R4IbkYwPPE5GazMCCpvM9omvznAqZvsPcIYNpgJgJYOdY5DWvko2caqwTd7JXq/Ra
-         TJbdElkjp151GJ5ebowG0Y52BiWo85n9StNfui7yIW837fue8H6uiPSMMB2Zt26qlgsV
-         yDPvoxG5vUcN1laSmAeHiyZ5c+P2E4n5x0rYxKzNFuA0CNErPTzu8o/gVyN166+PeXp4
-         9oBfHGHeEurikJVHgHNPMjUVprZKIz5t8MGd2vo4IQ55DL8GkTvtP0aR0Tp+PXPxXvWG
-         CYyg==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=UCLVnnyIkJIWvIhkOPIRsD33pAc3xGCaA+qxojDDFcU=;
+        b=HNweZ4ekICrK1dMJckkHky0IfhFJG7awGpHHiVA4BQEjj59YzXP8wUeABVurl2oVKY
+         vxsWLEowwv3rcDCJ0lgCttyo+aWohmQyATDEgvLNQ5UcLfAByJw8ppnzJVOa1PcVWHt9
+         Z0YhdyoL9rcHKbIZAj3zix6AnpDuPTBO3dOs4ebj5k+96Vlt6a+ipsM4dAqKmQ4BZohj
+         rJLliqBxdhq9SEC0nJvYy57Yu+J34xA3+fVwg5ITNPmJpwI8/1XRUyQTJvsij6TwhfFL
+         HZalyUHm4vO7/tmz56+5HPNeMOZ1klG3unwyqCPvZXYPcc02HsAzfAS9ebGfIZQdBToZ
+         xgtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nq3kS1AhtC4YfUavpJUvV3F1g90XhP6yXjx2z1YEeRw=;
-        b=g0gLZPCuWTL0Da7eUfjxKL8jvOSwgoBycagn4D0FSpzhAQ++AiDyVtAI1cKZkkp/5q
-         Q5R/oX8ApVGQMxxJqEcuviZFE22VIg0siVAIZZeRdJDpVpxIyON3Xeg3RM5EiKcQ6nKo
-         UzqL8R2Uox5NjGE4rBb4+80mB543TWzs10Dd5iXCNChtLAlG85W5mRdy1E23RSlq0Pf9
-         rgbI+GSixUsKzLpxb1jlmK3/0EySb9nqMIOxLBned879U+z+L/xDTecWiXoaAenkmBxy
-         6108dXPAN0kzQVFBzKRInMolNAOQ/DZT77XdsTfxgWWzgLeiQJVDrl8NXEaguWyr4xBL
-         BBMQ==
-X-Gm-Message-State: AHQUAuaHCWcpo0J/DkvJh2edf1fPylCK25JZ7KkvgNY3EOFpUL5wS4ts
-        WEb/v6vxAXiKO52X/l5ItRHeRg==
-X-Google-Smtp-Source: AHgI3IZ8fmrK7eYAabzpiKPfkZUY4i19xx17UceTONnpXgEr0xDfMbeQuCRklSaGWBKCrSALT3FxLg==
-X-Received: by 2002:a81:ee07:: with SMTP id l7mr4999106ywm.489.1550177625008;
-        Thu, 14 Feb 2019 12:53:45 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::4:80d4])
-        by smtp.gmail.com with ESMTPSA id 10sm961572ywv.96.2019.02.14.12.53.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 12:53:44 -0800 (PST)
-Date:   Thu, 14 Feb 2019 15:53:43 -0500
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        =?utf-8?Q?=C5=81ukasz?= Siudut <lsiudut@fb.com>,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com
-Subject: Re: [PATCH] psi: avoid divide-by-zero crash inside virtual machines
-Message-ID: <20190214205343.GA17084@cmpxchg.org>
-References: <20190214193157.15788-1-hannes@cmpxchg.org>
- <20190214115855.76869aecd777fbd37d48f45c@linux-foundation.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=UCLVnnyIkJIWvIhkOPIRsD33pAc3xGCaA+qxojDDFcU=;
+        b=nSmuHDueDyLy7LpQEZlzlFEiW4JFXmp81W2GPpX87+vYlFbNCtE9FjQ1XSc4Kow65a
+         mF0B6crdTL/MKYQpkPvMmYWkEFvXwh7UCpEHdcvrIbNKRbhGNrPFkiUwvQZY1OyQMrzh
+         QGEdhTNW5CpxURq3ZYmq9ro00lJDSwrkx8A1OBSeMjj+1chySaKDhfxOAOXj2tsKyuuh
+         TkEvnY+qJeyXcxlqs8SkEHew/VM4vygR2ubgpNmu0MKbeh/VPBNAtdwHfkGVZOCoEmCS
+         95dHXWVkO10ACbXsNYLajDaQlfI8f5n1+lgj4nGOQzesmjHOUNoJHafbtlzlrajoN2EE
+         fpRA==
+X-Gm-Message-State: AHQUAuYpQoQ9U/1B+UqWei3oZcA3ek2tDnecHqoCMgOBowCOY6nPpV3+
+        n6VaTdxdKdJf+siN9DC/PoBnUq1zUPszAGTNLhj/7f0nK6c=
+X-Google-Smtp-Source: AHgI3IYtSpawrGAZnxJu0OCOREkFq8SNc3WaLDX2BggIuRtTVeVUoOZbXjDkz+etAtA4nJWe6nysQgggvRtqhQW3wK8=
+X-Received: by 2002:ac8:44d3:: with SMTP id b19mr4878279qto.304.1550177645750;
+ Thu, 14 Feb 2019 12:54:05 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190214115855.76869aecd777fbd37d48f45c@linux-foundation.org>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+References: <20190208183520.30886-1-tkjos@google.com> <20190208183520.30886-2-tkjos@google.com>
+ <20190214194540.GA185075@google.com> <CAHRSSEw22kuwLqjXHocBQTv4d5hS1tXi4uirjBhgQ=yGbw9J4g@mail.gmail.com>
+In-Reply-To: <CAHRSSEw22kuwLqjXHocBQTv4d5hS1tXi4uirjBhgQ=yGbw9J4g@mail.gmail.com>
+From:   Joel Fernandes <joelaf@google.com>
+Date:   Thu, 14 Feb 2019 15:53:54 -0500
+Message-ID: <CAJWu+oqq0s3x7j+gPzSRREj2gjZxzAPS_=XVM4uhC9GjSM9zfw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/7] binder: create userspace-to-binder-buffer copy function
+To:     Todd Kjos <tkjos@google.com>
+Cc:     Todd Kjos <tkjos@android.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
+        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Martijn Coenen <maco@google.com>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Android Kernel Team <kernel-team@android.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 11:58:55AM -0800, Andrew Morton wrote:
-> On Thu, 14 Feb 2019 14:31:57 -0500 Johannes Weiner <hannes@cmpxchg.org> wrote:
-> 
-> > --- a/kernel/sched/psi.c
-> > +++ b/kernel/sched/psi.c
-> > @@ -322,7 +322,7 @@ static bool update_stats(struct psi_group *group)
-> >  	expires = group->next_update;
-> >  	if (now < expires)
-> >  		goto out;
-> > -	if (now - expires > psi_period)
-> > +	if (now - expires >= psi_period)
-> >  		missed_periods = div_u64(now - expires, psi_period);
-> >  
-> >  	/*
-> 
-> It seems appropriate to use time_after64() and friends in this code.
+On Thu, Feb 14, 2019 at 3:42 PM Todd Kjos <tkjos@google.com> wrote:
+>
+> On Thu, Feb 14, 2019 at 11:45 AM Joel Fernandes <joelaf@google.com> wrote:
+[snip]
+> > > + * check_buffer() - verify that buffer/offset is safe to access
+> > > + * @alloc: binder_alloc for this proc
+> > > + * @buffer: binder buffer to be accessed
+> > > + * @offset: offset into @buffer data
+> > > + * @bytes: bytes to access from offset
+> > > + *
+> > > + * Check that the @offset/@bytes are within the size of the given
+> > > + * @buffer and that the buffer is currently active and not freeable.
+> > > + * Offsets must also be multiples of sizeof(u32). The kernel is
+> >
+> > In all callers of binder_alloc_copy_user_to_buffer, the alignment of offsets
+> > is set to sizeof(void *). Then shouldn't this function check for sizeof(void *)
+> > alignment instead of u32?
+>
+> But there are other callers of check_buffer() later in the series that
+> don't require pointer-size alignment. u32 alignment is consistent with
+> the alignment requirements of the binder driver before this change.
+> The copy functions don't actually need to insist on alignment, but
+> these binder buffer objects have always used u32 alignment which has
+> been checked in the driver. If user code misaligned it, then errors
+> are returned. The alignment checks are really to be consistent with
+> previous binder driver behavior.
 
-These timestamps are all sourced from sched_clock(), which is defined
-to be monotonic and never wrap in practice. From the "sched_clock()"
-section in Documentation/timers/timekeeping.txt:
+Got it, thanks.
 
-	"This function shall return the number of nanoseconds since
-	 the system was started."
-
-	"The sched_clock() function may wrap only on unsigned long
-	 long boundaries, i.e. after 64 bits. Since this is a
-	 nanosecond value this will mean it wraps after circa 585
-	 years. (For most practical systems this means "never".)"
-
-As far as readability goes, I have to say I find the naked comparisons
-a bit easier to understand (and I'm glad we can use those here since
-the code is already complicated):
-
-	if (now < expires)
-
-vs.
-
-	if (time_before64(now, expires))
-
-These macros always have me double check the argument order.
+ - Joel
