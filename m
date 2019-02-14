@@ -2,138 +2,246 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D85DC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 05:00:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1393C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 05:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7B50222C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 05:00:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95780222C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 05:02:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cZy9SDpJ"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EVwaLG5k"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726313AbfBNFAK (ORCPT
+        id S1726794AbfBNFCC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 00:00:10 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:29743 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbfBNFAJ (ORCPT
+        Thu, 14 Feb 2019 00:02:02 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:49257 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726535AbfBNFCB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 00:00:09 -0500
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190214050007epoutp0120c14545219185ad24b92524839decb7~DIkws8dt72862728627epoutp013
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 05:00:07 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190214050007epoutp0120c14545219185ad24b92524839decb7~DIkws8dt72862728627epoutp013
+        Thu, 14 Feb 2019 00:02:01 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190214050159epoutp03d065b057c75abf020ead34c168287f9c~DImY0FfAa0034100341epoutp03a
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 05:01:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190214050159epoutp03d065b057c75abf020ead34c168287f9c~DImY0FfAa0034100341epoutp03a
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1550120407;
-        bh=F8YM528KelIj1eFihOY1iV7CQ1dPgc9DCXWq79BTBvw=;
-        h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-        b=cZy9SDpJEAollU4RALDtcRbKUoXU5GTFVjJd+1h0uxO7VuFpJtz6spiIsXMxMOtNZ
-         xmbdGREz+vCRbisnp0YrPVFvB2pcnJI/PBVNzH4v5MsXs2CjfrxQW0olUaQDkrl5Eo
-         6MWEmfRc2fQ0dBykpZOjaFAMTRY/8ERPxQwkx4f0=
-Received: from epsmges5p2new.samsung.com (unknown [182.195.40.195]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20190214050004epcas5p3398b5697205c90ce8654d2012a41ef49~DIkuPGqvl2349323493epcas5p39;
-        Thu, 14 Feb 2019 05:00:04 +0000 (GMT)
-X-AuditID: b6c32a4a-aefff70000001029-59-5c64f5d4754f
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3D.1A.04137.4D5F46C5; Thu, 14 Feb 2019 14:00:04 +0900 (KST)
-Mime-Version: 1.0
-Subject: RE: Re: [PATCH v4 6/6] RISC-V: Free-up initrd in free_initrd_mem()
-Reply-To: chandan.vn@samsung.com
-From:   CHANDAN VN <chandan.vn@samsung.com>
-To:     Mike Rapoport <rppt@linux.ibm.com>,
-        Christoph Hellwig <hch@infradead.org>
-CC:     Anup Patel <Anup.Patel@wdc.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <20190213180557.GA15270@rapoport-lnx>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20190214050004epcms5p4d2157380c40e9b218fb0eeb376b3cb7c@epcms5p4>
-Date:   Thu, 14 Feb 2019 10:30:04 +0530
-X-CMS-MailID: 20190214050004epcms5p4d2157380c40e9b218fb0eeb376b3cb7c
-Content-Transfer-Encoding: quoted-printable
+        s=mail20170921; t=1550120519;
+        bh=jDA70eQaicai9JsUYh1vmLN778BbVHBl4FFTfnLvFIU=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=EVwaLG5kks70UlFpXcsoZLUc/zS66uuUq9rmxiQolLBcnA68i3BZfw72IzbeJ0Zdb
+         4jU80aeZK2AINv5jfDFP9l1htle+r6QZ0H+8ScCmhHydLngAWOb12zuLs6nnDuBoxB
+         cK83uKBg0O5VZWmdmSZ0oEaPXbgk5KHrCEvjRluk=
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.154]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190214050155epcas1p26aef811aa934bb0fe2452a7d704e052f~DImVItCNd1566315663epcas1p2H;
+        Thu, 14 Feb 2019 05:01:55 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        EF.4E.04288.346F46C5; Thu, 14 Feb 2019 14:01:55 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190214050154epcas1p2d03b2794217738362b46666e83871dda~DImUnOABF3136831368epcas1p22;
+        Thu, 14 Feb 2019 05:01:54 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190214050154epsmtrp2516c24b920786fa7b6d900a6a7707c62~DImUchtzR1630016300epsmtrp2B;
+        Thu, 14 Feb 2019 05:01:54 +0000 (GMT)
+X-AuditID: b6c32a38-c0fff700000010c0-4c-5c64f643f7e5
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        7C.8D.03601.246F46C5; Thu, 14 Feb 2019 14:01:54 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190214050154epsmtip2b03a2c499f8857cf51770278e8b5226d~DImUIwFqv0808008080epsmtip2W;
+        Thu, 14 Feb 2019 05:01:54 +0000 (GMT)
+Subject: Re: [PATCH v3 6/7] trace: events: add devfreq trace event file
+To:     Lukasz Luba <l.luba@partner.samsung.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        b.zolnierkie@samsung.com, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
+        s.nawrocki@samsung.com, joel@joelfernandes.org,
+        chris.diamand@arm.com, mka@chromium.org, mingo@redhat.com
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <3e44ca8a-a72b-8bdd-e702-00c927bd3c06@samsung.com>
+Date:   Thu, 14 Feb 2019 14:01:53 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <fb5d5359-7663-f119-f28f-7be820e1108d@partner.samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHJsWRmVeSWpSXmKPExsWy7bCmnq7zt5QYg+/HWSw2zljPajHt02UW
+        i2UNqhZnm96wW9xqkLG4vGsOm8Xn3iOMFmuP3GW3uHRgAZPF5w2PGS1uN65gs9jX8YDJ4vCb
+        dlYHXo8189YwesxuuMji0bLvFrvHwk9fWT0OvtvD5PF+31U2j74tqxg9Pm+SC+CIyrbJSE1M
+        SS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMAbpYSaEsMacUKBSQ
+        WFyspG9nU5RfWpKqkJFfXGKrlFqQklNgWaBXnJhbXJqXrpecn2tlaGBgZApUmJCd0bTuL0vB
+        HdmKj98WsDUw/hPvYuTkkBAwkWg78ZWpi5GLQ0hgB6NE381F7BDOJ0aJuds/QznfGCVezvjH
+        DNNyfcMlJhBbSGAvo8SbT24QRe8ZJW693wpWJCzgLrH56gEWEFtEIESi+f9ENhCbWWAak8Ss
+        CYkgNpuAlsT+FzfA4vwCihJXfzxmBLF5Bewkbj+aBBTn4GARUJWY9MgRJCwqECFxuPcdVImg
+        xMmZT8DGcwKt+nVoOtR4cYlbT+YzQdjyEs1bZzOD3CYhsIldYsecSYwgMyUEXCSaV4dC/CIs
+        8er4FnYIW0ri87u9bBB2tcTKk0fYIHo7GCW27L/ACpEwlti/dDITyBxmAU2J9bv0IXbxSbz7
+        2sMKMZ5XoqNNCKJaWeLyg7tMELakxOL2TqjxHhIbjn9mncCoOAvJN7OQfDALyQezEJYtYGRZ
+        xSiWWlCcm55abFhgghzXmxjBaVnLYgfjnnM+hxgFOBiVeHgrhFJihFgTy4orcw8xSnAwK4nw
+        Kn4ECvGmJFZWpRblxxeV5qQWH2I0BYb1RGYp0eR8YM7IK4k3NDUyNja2MDE0MzU0VBLnXe/g
+        HCMkkJ5YkpqdmlqQWgTTx8TBKdXAWJyjLmN8/1Y99+fJh8p71L8ebZktp1pyiP3rPwU2MZuH
+        JscU22f5bQ9Ya7GZOfPw5//3Wy7tWHKlt3s1c/X3Vdb7zO8vzQiafUvK1v/Xohcvz9wpuN50
+        YZbGodPGLuc8pqVyV9S8T2D3+L9smuzH+bz1G8xvnt3w1DNrWnBT3PudIUVcX+dv6lZiKc5I
+        NNRiLipOBAAa99k/4QMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNIsWRmVeSWpSXmKPExsWy7bCSvK7Tt5QYgxcdYhYbZ6xntZj26TKL
+        xbIGVYuzTW/YLW41yFhc3jWHzeJz7xFGi7VH7rJbXDqwgMni84bHjBa3G1ewWezreMBkcfhN
+        O6sDr8eaeWsYPWY3XGTxaNl3i91j4aevrB4H3+1h8ni/7yqbR9+WVYwenzfJBXBEcdmkpOZk
+        lqUW6dslcGU0rfvLUnBHtuLjtwVsDYz/xLsYOTkkBEwkrm+4xNTFyMUhJLCbUWLhhwOsEAlJ
+        iWkXjzJ3MXIA2cIShw8XQ9S8ZZR4+uY/C0iNsIC7xOarB8BsEYEQie3/OsAGMQtMY5I4e3E9
+        K0THaSaJKz++MYFUsQloSex/cYMNxOYXUJS4+uMxI4jNK2AncfvRJDaQbSwCqhKTHjmChEUF
+        IiQ+Pt3HBFEiKHFy5hOwZZxAi38dmg42hllAXeLPvEvMELa4xK0n85kgbHmJ5q2zmScwCs9C
+        0j4LScssJC2zkLQsYGRZxSiZWlCcm55bbFhglJdarlecmFtcmpeul5yfu4kRHKVaWjsYT5yI
+        P8QowMGoxMOrIJASI8SaWFZcmXuIUYKDWUmEV/EjUIg3JbGyKrUoP76oNCe1+BCjNAeLkjiv
+        fP6xSCGB9MSS1OzU1ILUIpgsEwenVAOjGvc5U60uvRnt3okav3o3cFl1xx/Oyf3TXXDN6nDS
+        k0eHK3f1JR7QTZqqYXRjnu7aeUcXtR5s1hS5mNwj3s3wxlBTf4WMUgDvVoaQf4YyZk3b/A5z
+        8zRdCwqY387RddLo4ZPKspu9f5uW75WICrp/pCN+D6P5z/OO7UsMGWdXeT/yur7L54cSS3FG
+        oqEWc1FxIgAQTd5RzgIAAA==
+X-CMS-MailID: 20190214050154epcas1p2d03b2794217738362b46666e83871dda
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrCJsWRmVeSWpSXmKPExsWy7bCmlu6VrykxBpv2KVo8+TCRzWLr71ns
-        FotWfGexOD1hEZPFyj0/mCwu75rDZrHtcwubxeYJC1gt2mbxW9yY0sBm8fLjCRYHbo8189Yw
-        ehzu+MLusXmFlseERQcYPTYvqfd4v+8qm8el5uvsHp83yXm0H+hmCuCMyrHJSE1MSS1SSM1L
-        zk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMAbpVSaEsMacUKBSQWFyspG9n
-        U5RfWpKqkJFfXGKrlFqQklNgaFSgV5yYW1yal66XnJ9rZWhgYGQKVJmQk7Hsz1v2gt2iFftn
-        rWZpYHwn0sXIySEhYCJx/8dDpi5GLg4hgd2MEqunz2LtYuTg4BUQlPi7QxikRljAW2JFz0F2
-        EFtIQEHiyJu1LBBxbYmuw2/AbDYBTYkT86aB1YgI+EusvfqXHWQms0A3s8SOfzeZIZbxSsxo
-        f8oCYUtLbF++lRHE5hQwktix+DwTRFxU4ubqt+ww9vtj8xkhbBGJ1ntnoeYISjz4uZsRZs6K
-        tVtYQJZJCLQzSqy4s5AJwpnAKNG3aAtUh7nE45ubwTbwCvhKzL77lQ3EZhFQlZgxcwPURS4S
-        Z/5/AoszA722bOFrZlBIMAO9tn6XPkSYT6L39xMmmGd2zIOxVST+vV4KZUtJXLzyDcr2kJh5
-        aBULJHTPMklc2beJZQKj/CxEAM9Csm0WwrYFjMyrGCVTC4pz01OLTQuM8lLLkaN1EyM4xWp5
-        7WBcds7nEKMAB6MSD2+FUEqMEGtiWXFl7iFGCQ5mJRFexY9AId6UxMqq1KL8+KLSnNTiQ4ym
-        QH9PZJYSTc4Hpv+8knhDUyMzMwNLA1NjCzNDJXHeubJzo4UE0hNLUrNTUwtSi2D6mDg4pRoY
-        E5InTVVrmyR6VY01oW/ifufAh5XXZq10cxNkvLNOSyf1VVtD4aIn3rw+mywMpefPipPZdaii
-        KZM17XG4QIyV/sWgtpPBOzIypi18lP8o5v2C4/sOVU/dcSwv4c+mCZevGH/dtFyp84l9jaNm
-        UPBk9ai3hxWcYjYH3jP79335qrXdUedq4vR8lFiKMxINtZiLihMB0At0H8cDAAA=
+CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190213180621epcas4p44685b5689a3fcfbe63453e808f502548
-References: <20190213180557.GA15270@rapoport-lnx>
-        <20190213063127.28703-1-anup.patel@wdc.com>
-        <20190213063127.28703-7-anup.patel@wdc.com>
-        <20190213064419.GA27012@infradead.org> <20190213073835.GA18267@rapoport-lnx>
-        <20190213175415.GA11635@infradead.org>
-        <CGME20190213180621epcas4p44685b5689a3fcfbe63453e808f502548@epcms5p4>
+X-CMS-RootMailID: 20190212222437eucas1p198db6fca1f1ba3056d93c57327dd48ed
+References: <1550010238-24002-1-git-send-email-l.luba@partner.samsung.com>
+        <CGME20190212222437eucas1p198db6fca1f1ba3056d93c57327dd48ed@eucas1p1.samsung.com>
+        <1550010238-24002-7-git-send-email-l.luba@partner.samsung.com>
+        <20190212181415.1156e542@gandalf.local.home>
+        <fb5d5359-7663-f119-f28f-7be820e1108d@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Lukasz,
 
-> On=C2=A0Wed,=C2=A0Feb=C2=A013,=C2=A02019=C2=A0at=C2=A009:54:15AM=C2=A0-08=
-00,=C2=A0Christoph=C2=A0Hellwig=C2=A0wrote:=0D=0A>=20>=C2=A0On=C2=A0Wed,=C2=
-=A0Feb=C2=A013,=C2=A02019=C2=A0at=C2=A009:38:36AM=C2=A0+0200,=C2=A0Mike=C2=
-=A0Rapoport=C2=A0wrote:=0D=0A>=20>=C2=A0>=C2=A0memblock_free()=C2=A0is=C2=
-=A0has=C2=A0no=C2=A0real=C2=A0effect=C2=A0at=C2=A0this=C2=A0point,=C2=A0no=
-=C2=A0idea=C2=A0why=C2=A0arm64=0D=0A>=20>=C2=A0>=C2=A0calls=C2=A0it.=0D=0A>=
-=20>=C2=A0=0D=0A>=20>=C2=A0Looks=C2=A0like=C2=A0the=C2=A0call=C2=A0was=C2=
-=A0added=C2=A0fairly=C2=A0recently=C2=A0by:=0D=0A>=20>=C2=A0=0D=0A>=20>=C2=
-=A0commit=C2=A005c58752f9dce11e396676eb731a620541590ed0=0D=0A>=20>=C2=A0Aut=
-hor:=C2=A0CHANDAN=C2=A0VN=C2=A0<chandan.vn=40samsung.com>=0D=0A>=20>=C2=A0D=
-ate:=C2=A0=C2=A0=C2=A0Mon=C2=A0Apr=C2=A030=C2=A009:50:18=C2=A02018=C2=A0+05=
-30=0D=0A>=20>=C2=A0=0D=0A>=20>=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0arm64:=C2=A0To=
-=C2=A0remove=C2=A0initrd=C2=A0reserved=C2=A0area=C2=A0entry=C2=A0from=C2=A0=
-memblock=0D=0A>=20>=C2=A0=0D=0A>=20>=C2=A0which=C2=A0claims=C2=A0it=C2=A0is=
-=C2=A0to=C2=A0work=C2=A0around=C2=A0the=C2=A0initrd=C2=A0being=C2=A0display=
-ed=C2=A0in=0D=0A>=20>=C2=A0/sys/kernel/debug/memblock/reserved.=0D=0A>=20>=
-=C2=A0=0D=0A>=20>=C2=A0I=C2=A0really=C2=A0think=C2=A0we=C2=A0need=C2=A0to=
-=C2=A0have=C2=A0common=C2=A0behavior=C2=A0there=C2=A0-=C2=A0either=C2=A0do=
-=C2=A0this=0D=0A>=20>=C2=A0for=C2=A0all=C2=A0architectures=C2=A0or=C2=A0non=
-e.=C2=A0=C2=A0I've=C2=A0just=C2=A0sent=C2=A0a=C2=A0series=C2=A0that=0D=0A>=
-=20>=C2=A0consolidates=C2=A0all=C2=A0but=C2=A0a=C2=A0handful=C2=A0of=C2=A0t=
-he=C2=A0free_initrd_mem,=C2=A0so=C2=A0implementing=0D=0A>=20>=C2=A0any=C2=
-=A0common=C2=A0behavior=C2=A0on=C2=A0top=C2=A0of=C2=A0that=C2=A0would=C2=A0=
-be=C2=A0good.=0D=0A>=C2=A0=0D=0A>=20I've=C2=A0just=C2=A0started=C2=A0to=C2=
-=A0look=C2=A0into=C2=A0it=C2=A0today=C2=A0:)=0D=0A>=20I'll=C2=A0reply=C2=A0=
-on=C2=A0that=C2=A0thread.=0D=0A=0D=0AINITRD=20reserved=20area=20entry=20is=
-=20not=20removed=20from=20memblock=0D=0Aeven=20though=20initrd=20reserved=
-=20area=20is=20freed.=20The=20same=20can=20be=0D=0Achecked=20from=20/sys/ke=
-rnel/debug/memblock/reserved.=0D=0AWe=20did=20not=20face=20this=20issue=20o=
-n=20arm32=20architecture.=0D=0AThough=20the=20changes=20which=20i=20had=20s=
-ubmitted=20does=20not=20fix=20any=20memory=20leak,=0D=0Ait=20does=20make=20=
-sure=20that=20the=20entries=20freed=20from=20memblock=20are=20actually=20re=
-moved=0D=0Afrom=20the=20sys=20entry=20as=20well.=20=0D=0AAlso=20the=20imple=
-mentation=20of=20arm64=20is=20quite=20different=20from=20arm32.=20I=20feel=
-=20a=20generic=20=0D=0Aimplementation=20can=20be=20taken=20up=20only=20if=
-=20its=20a=20real=20necessity.
+On 19. 2. 13. 오후 10:35, Lukasz Luba wrote:
+> Hi Steven,
+> 
+> On 2/13/19 12:14 AM, Steven Rostedt wrote:
+>> On Tue, 12 Feb 2019 23:23:57 +0100
+>> Lukasz Luba <l.luba@partner.samsung.com> wrote:
+>>
+>>> The patch adds a new file for with trace events for devfreq
+>>> framework. They are used for performance analysis of the framework.
+>>> It also contains updates in MAINTAINERS file adding new entry for
+>>> devfreq maintainers.
+>>>
+>>> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+>>> ---
+>>>   MAINTAINERS                    |  1 +
+>>>   include/trace/events/devfreq.h | 39 +++++++++++++++++++++++++++++++++++++++
+>>>   2 files changed, 40 insertions(+)
+>>>   create mode 100644 include/trace/events/devfreq.h
+>>>
+>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>> index 9919840..c042fda 100644
+>>> --- a/MAINTAINERS
+>>> +++ b/MAINTAINERS
+>>> @@ -4447,6 +4447,7 @@ S:	Maintained
+>>>   F:	drivers/devfreq/
+>>>   F:	include/linux/devfreq.h
+>>>   F:	Documentation/devicetree/bindings/devfreq/
+>>> +F:	include/trace/events/devfreq.h
+>>>   
+>>>   DEVICE FREQUENCY EVENT (DEVFREQ-EVENT)
+>>>   M:	Chanwoo Choi <cw00.choi@samsung.com>
+>>> diff --git a/include/trace/events/devfreq.h b/include/trace/events/devfreq.h
+>>> new file mode 100644
+>>> index 0000000..fec9304
+>>> --- /dev/null
+>>> +++ b/include/trace/events/devfreq.h
+>>> @@ -0,0 +1,39 @@
+>>> +/* SPDX-License-Identifier: GPL-2.0 */
+>>> +#undef TRACE_SYSTEM
+>>> +#define TRACE_SYSTEM devfreq
+>>> +
+>>> +#if !defined(_TRACE_DEVFREQ_H) || defined(TRACE_HEADER_MULTI_READ)
+>>> +#define _TRACE_DEVFREQ_H
+>>> +
+>>> +#include <linux/devfreq.h>
+>>> +#include <linux/tracepoint.h>
+>>> +
+>>> +TRACE_EVENT(devfreq_monitor,
+>>> +	TP_PROTO(const char *dev_name, unsigned long freq,
+>>> +		 unsigned int polling_ms, unsigned long busy_time,
+>>> +		 unsigned long total_time),
+>>> +
+>>> +	TP_ARGS(dev_name, freq, polling_ms, busy_time, total_time),
+>>> +
+>>> +	TP_STRUCT__entry(
+>>> +		__string(dev_name, dev_name)
+>>> +		__field(unsigned long, freq)
+>>> +		__field(unsigned int, polling_ms)
+>>> +		__field(unsigned int, load)
+>>> +	),
+>>> +
+>>> +	TP_fast_assign(
+>>> +		__assign_str(dev_name, dev_name);
+>>> +		__entry->freq = freq;
+>>> +		__entry->polling_ms = polling_ms;
+>>> +		__entry->load = (100 * busy_time) / total_time;
+>>
+>> How critical is the code that this trace event is called in. If it is
+>> not that critical (it is a slow path), then this is fine, but if this
+>> is not a slow path (something triggered 100 HZ or less), then I would
+>> recommend moving the above calculation to TP_printk(). A divide is a
+>> slow operation, and is best to do that in the post processing. The
+>> current location does the divide at the time of the tracepoint is
+>> called.
+> I wasn't aware of these two stages, good to know.
+> I will move it to TP_printk().
+>>
+>> I would also have a check to make sure that total_time is not zero
+>> here, otherwise that could be bad.
+>>
+>> 		__entry->busy_time = busy_time;
+>> 		__entry->total_time = total_time;
+>>
+> 
+>>> +	),
+>>> +
+>>> +	TP_printk("dev_name=%s freq=%lu polling_ms=%u load=%u",
+>>
+>>
+>>> +		__get_str(dev_name), __entry->freq, __entry->polling_ms,
+>>
+>> 		__entry->total_time == 0 ? 100 :
+>> 			__entry->busy_time / __entry->total_time)
+> Thank you for the review.
+> I will add this check.
+> 
+> Regards,
+> Lukasz
+>>
+>> -- Steve
+>>
+>>> +		__entry->load)
+>>> +);
+>>> +#endif /* _TRACE_DEVFREQ_H */
+>>> +
+>>> +/* This part must be outside protection */
+>>> +#include <trace/define_trace.h>
+>>
+>>
+>>
+> 
+> 
+
+I agree that trace point is necessary for devfreq framework.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
