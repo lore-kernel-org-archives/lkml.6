@@ -2,103 +2,86 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34388C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 20:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A1A5C4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 20:30:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03D4721916
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 20:27:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="W5e493JJ"
+	by mail.kernel.org (Postfix) with ESMTP id F299B21916
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 20:30:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439949AbfBNU1P (ORCPT
+        id S2439950AbfBNUaJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 15:27:15 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:46138 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387975AbfBNU1O (ORCPT
+        Thu, 14 Feb 2019 15:30:09 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33990 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387975AbfBNUaJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 15:27:14 -0500
-Received: by mail-ot1-f66.google.com with SMTP id w25so12718042otm.13
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 12:27:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=e/JRwKrg8/8VAJgIzEUmtU1uEot958tbEqNIlIy4wyI=;
-        b=W5e493JJl2wUI1oORnwCgfhtYqH01QelSVUr+eKHBB55XsDY/PUMLQogJ5QBw8o44d
-         m46B1eOq7zYXv2pGpGcq3XY8h4L576Nm1YG9NWmCLB0oMyibgQuoKmOoBZm5pWZj7dTo
-         40wY2hzgrX2RhOJIeOC/9Vu0/AlzgvycQFES0G9dXLBRM96JHfNnWTHE6XTwLscCgcaR
-         J/GAjTqmvucpIvutD5Vbk7ZpRqurRegsj0kuedkPUHu8eLbDr1y5hNoT4RsGTXa4Tp4d
-         6LWgq8TpldmZDsDeIAWStmNISMIDhSO2S7WL3w5mQbgIO6fPbgZFZEeWsGN7Ir3ZX9w4
-         Q7PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=e/JRwKrg8/8VAJgIzEUmtU1uEot958tbEqNIlIy4wyI=;
-        b=CP6WAQBdiQpZlRVj4vjYJK/bPAun/DuKNSE32CP+Pae+7d4gIwgIaip+F7XDioE8ax
-         l2IRKAIQUV9KockbXYb0Sxd6YFGbkzATFlr/WHNyeJW02nsr3oMNLhL+XC/6t/Ip0Pm7
-         vZYTJHc/7oDB34VCl6gorDVKNAnXsH5X9HSRXp8Ju25Ixm4FtLY0AzOI9UFln1EqhNJ6
-         h1Eh+nmrh82l+NjTEB8G5DytTww2Q8SbyeHKC8EcA2bBC5gmIvV1HrnDpiOkLdijfgVN
-         kSPtIv1/FeSSMwSNSQkyKKCEkoT1sU47l6E1qE23sONvA+IGY5oKvokHW3yQnVTGelMR
-         zw7A==
-X-Gm-Message-State: AHQUAuYS+fT15kn2b1do2P55lk4CEIKV3C+2xF8HbrJ9u8e+k4I4iLBP
-        UlEm45KSxattpysARy77PMsOfOjw+4aycRsh/J8YIw==
-X-Google-Smtp-Source: AHgI3IaLe5WpFZIpm3Fj7x9RyAn/ABNHVViHdagsklSm/o7ppQ1P1RouPknN+Mehp2zoJSgkprLALEOgNGPvNTS9lys=
-X-Received: by 2002:a9d:7493:: with SMTP id t19mr3463144otk.98.1550176033658;
- Thu, 14 Feb 2019 12:27:13 -0800 (PST)
-MIME-Version: 1.0
-References: <155017500427.944049.2254497897075714747.stgit@dwillia2-desk3.amr.corp.intel.com>
- <155017502147.944049.2893295352368862579.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <155017502147.944049.2893295352368862579.stgit@dwillia2-desk3.amr.corp.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 14 Feb 2019 12:27:02 -0800
-Message-ID: <CAPcyv4g83aNP_CF+hygCEQ=9dRL9beC7vGGLQDg9=rMy2+nPfQ@mail.gmail.com>
-Subject: Re: [PATCH 3/6] nfit/ars: Allow root to busy-poll the ARS state machine
-To:     linux-nvdimm <linux-nvdimm@lists.01.org>
-Cc:     Erwin Tsaur <erwin.tsaur@oracle.com>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 14 Feb 2019 15:30:09 -0500
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9C690AD1;
+        Thu, 14 Feb 2019 20:30:07 +0000 (UTC)
+Date:   Thu, 14 Feb 2019 12:30:02 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     "Huang, Ying" <ying.huang@intel.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>
+Subject: Re: [PATCH -mm -V7] mm, swap: fix race between swapoff and some
+ swap operations
+Message-Id: <20190214123002.b921b680fea07bf5f798df79@linux-foundation.org>
+In-Reply-To: <20190214143318.GJ4525@dhcp22.suse.cz>
+References: <20190211083846.18888-1-ying.huang@intel.com>
+        <20190214143318.GJ4525@dhcp22.suse.cz>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 12:23 PM Dan Williams <dan.j.williams@intel.com> wrote:
->
-> The ARS implementation implements exponential back-off on the poll
-> interval to prevent high-frequency access to the DIMM / platform
-> interface. Depending on when the ARS completes the poll interval may
-> exceed the completion event by minutes. Allow root to reset the timeout
-> each time it probes the status. A one-second timeout is still enforced,
-> but root can otherwise can control the poll interval.
->
-> Reported-by: Erwin Tsaur <erwin.tsaur@oracle.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  drivers/acpi/nfit/core.c |    6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-> index 934be96dc149..5ec0e19760ea 100644
-> --- a/drivers/acpi/nfit/core.c
-> +++ b/drivers/acpi/nfit/core.c
-> @@ -1328,6 +1328,12 @@ static ssize_t scrub_show(struct device *dev,
->                 rc = sprintf(buf, "%d%s", acpi_desc->scrub_count,
->                                 acpi_desc->scrub_busy
->                                 && !acpi_desc->cancel ? "+\n" : "\n");
-> +               /* Allow an admin to poll the busy state at a higher rate */
-> +               if (acpi_desc->scrub_busy && !acpi_desc->cancel
-> +                               && capable(CAP_SYS_RAWIO)) {
-> +                       acpi_desc->scrub_tmo = 1;
-> +                       queue_delayed_work(nfit_wq, &acpi_desc->dwork, HZ);
+On Thu, 14 Feb 2019 15:33:18 +0100 Michal Hocko <mhocko@kernel.org> wrote:
 
-Whoops, just realized this should be mod_delayed_work().
-queue_delayed_work() is a nop if the work is already scheduled. v2
-inbound.
+> > Because swapoff() is very rare code path, to make the normal path runs as
+> > fast as possible, disabling preemption + stop_machine() instead of
+> > reference count is used to implement get/put_swap_device().  From
+> > get_swap_device() to put_swap_device(), the preemption is disabled, so
+> > stop_machine() in swapoff() will wait until put_swap_device() is called.
+> > 
+> > In addition to swap_map, cluster_info, etc.  data structure in the struct
+> > swap_info_struct, the swap cache radix tree will be freed after swapoff,
+> > so this patch fixes the race between swap cache looking up and swapoff
+> > too.
+> > 
+> > Races between some other swap cache usages protected via disabling
+> > preemption and swapoff are fixed too via calling stop_machine() between
+> > clearing PageSwapCache() and freeing swap cache data structure.
+> > 
+> > Alternative implementation could be replacing disable preemption with
+> > rcu_read_lock_sched and stop_machine() with synchronize_sched().
+> 
+> using stop_machine is generally discouraged. It is a gross
+> synchronization.
+
+This was discussed to death and I think the changelog explains the
+conclusions adequately.  swapoff is super-rare so a stop_machine() in
+that path is appropriate if its use permits more efficiency in the
+regular swap code paths.  
+
+> Besides that, since when do we have this problem?
+
+What problem??
