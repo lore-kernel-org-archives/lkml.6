@@ -2,124 +2,144 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFECFC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:10:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 679B8C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:10:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CB6B222A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:10:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36A75222A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 02:10:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RLOAOGsE"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="L/wiytS1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404790AbfBNCKp (ORCPT
+        id S2404956AbfBNCKs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 21:10:45 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:36082 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404352AbfBNCKn (ORCPT
+        Wed, 13 Feb 2019 21:10:48 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:35392 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393208AbfBNCKq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 21:10:43 -0500
-Received: by mail-qk1-f194.google.com with SMTP id o125so2722220qkf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 18:10:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yWztxODyJk70cOjZaLMqULYccaSLR3ZRrSr0GSnJD8Q=;
-        b=RLOAOGsE5nSbSM6/Fdwv4fbbCUUDxoH87XcZiZPt8XPUpEg2LeQDlKEdX9eejNMth4
-         D5sjkt3JIQB0/O4sBhzjI4Xv7TxMEI42fBR97qAQ9cEEOuR65FFVZMWXkwlG4nqVNzAA
-         EfPJTUnOXNxNhhGH/5tgmpP6UVQJQzNHJNQG11QqTJiwiawxa4GLUSjj/KP/VFlVej/W
-         VH/WPb8HzrrPBx/qXezHkdtF475W0RFdZVJpXxwJlA2vwLfNvMv2HhvzF+lq3iAEzPht
-         kZ6B1lO/XSu80dqNSmIygnLp8yzaVcaN/IW8WA1AkCzfWWk8IfZjAPiFnb07WJNIi7Cs
-         hoKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=yWztxODyJk70cOjZaLMqULYccaSLR3ZRrSr0GSnJD8Q=;
-        b=ZfIWKDjA6jujmuJP+5uVeQVWvRIT6FvH8DcrTNE70Ip1pI6OAMIktB8mAgFNdwrZO2
-         gtfPma4SthjAi0WuvrCe/WQ8vqzZo5+4XCzFJdUJgYr8AsuR63e0k70UXBCDqB2HJaxh
-         0GGWnP31A4JG5C6Id+n8xy5+dEUixQSrNcKh6OpNgMFS4E9Dwp9SyLCo/7Dcn7S1wbFZ
-         csbHaZ7z930Q7XNnQqyLtz9lPnvkV5t5bH2DCQSz7wc0Ptjr8rYfpn+/3/qrG5FeKJdV
-         GrditHdbxqtxUzu8+YleIx+rARja7r0oNW0XFd5gZf8gvyHTmX+3k4ka+ZxPjr9qvMHI
-         pfxg==
-X-Gm-Message-State: AHQUAuZmRuopRc220HIdeM8iyJHlaKuJnKkKAmxNBg+Ixpv0aSJ74Zo4
-        lW6+yyEpryUfj0ZpNaoOSpYYJA==
-X-Google-Smtp-Source: AHgI3IaOdEJlYGfGZFJ03LySCXK9Oa2itBY1PUrqSCZa559Bzvv8O1a10Md03zQeqa4HrWam4yA2fQ==
-X-Received: by 2002:a37:b405:: with SMTP id d5mr980783qkf.162.1550110242675;
-        Wed, 13 Feb 2019 18:10:42 -0800 (PST)
-Received: from localhost.localdomain (pool-72-71-243-63.cncdnh.fast00.myfairpoint.net. [72.71.243.63])
-        by smtp.googlemail.com with ESMTPSA id d63sm1091575qka.22.2019.02.13.18.10.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 18:10:42 -0800 (PST)
-From:   David Long <dave.long@linaro.org>
-To:     stable@vger.kernel.org,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Will Deacon <will.deacon@arm.com>, Mark Brown <broonie@kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4.14 V2 13/17] ARM: clean up per-processor check_bugs method call
-Date:   Wed, 13 Feb 2019 21:10:18 -0500
-Message-Id: <20190214021022.5313-14-dave.long@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190214021022.5313-1-dave.long@linaro.org>
-References: <20190214021022.5313-1-dave.long@linaro.org>
+        Wed, 13 Feb 2019 21:10:46 -0500
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x1E2AN6q021663;
+        Thu, 14 Feb 2019 11:10:24 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x1E2AN6q021663
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1550110224;
+        bh=NSQMTcNaXTqiGZ0wR123OhbEK3fPd6EroBCfbsKBZDs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=L/wiytS1KE2GFAqyWp+pWZst4oRu7NQICSAiU4SjF2UBBJ636ZPq58VeH+AbC7Hj8
+         rgvlpSQU+3b+2QZTtF428FfrAZKYdJj+OhWIqpwW49ZwzKjw4cFlGh5SKBb8gjSC/2
+         CMDrWGa149BKqk4WI/cXTWf5kqtU8nVhQ/5HAMW2lli3hqDTWOVMQGJfLT07m/+GWG
+         kJpLVnKyv/a991Y6EZAOFxWB7C++mnnNduGJpzvp8WtSe7GHP+ykYyjzENQ5pBddz9
+         PhE+XkUdXbPmDnMLsEO10PGehBuZAazzY3J9a3ueE2BDbDMl/rGWEYnRe4VT7Tac/j
+         kkzcxUx716fiw==
+X-Nifty-SrcIP: [209.85.217.46]
+Received: by mail-vs1-f46.google.com with SMTP id r201so2683772vsc.11;
+        Wed, 13 Feb 2019 18:10:24 -0800 (PST)
+X-Gm-Message-State: AHQUAuY5ez+Aw2rumjLNGFaVWueoZ2l/kezg4u2sH9L5m/i26DXdbHVK
+        TqHcGyPQNxksxw649TLVdCVonTOF3bRe72eJnxg=
+X-Google-Smtp-Source: AHgI3IbsKOo5unpK201l/M2bLEIUtuS8Um9p09zc5mH9RGRunZzSCkBK9fPSTH/pUbjo21o9LYzkqrjEdpTpQKNrAjc=
+X-Received: by 2002:a67:7f43:: with SMTP id a64mr715092vsd.155.1550110223142;
+ Wed, 13 Feb 2019 18:10:23 -0800 (PST)
+MIME-Version: 1.0
+References: <1549352017-3503-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1549352017-3503-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 14 Feb 2019 11:09:47 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATM-A_+KE59Q2oJTsvd_sgYnkuN4QqXjWdZrB_zxT94MA@mail.gmail.com>
+Message-ID: <CAK7LNATM-A_+KE59Q2oJTsvd_sgYnkuN4QqXjWdZrB_zxT94MA@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: move archive command to scripts/Makefile.lib
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     linux-s390 <linux-s390@vger.kernel.org>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russell King <rmk+kernel@armlinux.org.uk>
+On Tue, Feb 5, 2019 at 4:34 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> scripts/Makefile.build and arch/s390/boot/Makefile use the same
+> command (thin archiving with symbol table creation).
+>
+> Avoid the code duplication, and move it to scripts/Makefile.lib.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-Commit 945aceb1db8885d3a35790cf2e810f681db52756 upstream.
+Applied to linux-kbuild.
 
-Call the per-processor type check_bugs() method in the same way as we
-do other per-processor functions - move the "processor." detail into
-proc-fns.h.
 
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: David A. Long <dave.long@linaro.org>
----
- arch/arm/include/asm/proc-fns.h | 1 +
- arch/arm/kernel/bugs.c          | 4 ++--
- 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/include/asm/proc-fns.h b/arch/arm/include/asm/proc-fns.h
-index e25f4392e1b2..30c499146320 100644
---- a/arch/arm/include/asm/proc-fns.h
-+++ b/arch/arm/include/asm/proc-fns.h
-@@ -99,6 +99,7 @@ extern void cpu_do_suspend(void *);
- extern void cpu_do_resume(void *);
- #else
- #define cpu_proc_init			processor._proc_init
-+#define cpu_check_bugs			processor.check_bugs
- #define cpu_proc_fin			processor._proc_fin
- #define cpu_reset			processor.reset
- #define cpu_do_idle			processor._do_idle
-diff --git a/arch/arm/kernel/bugs.c b/arch/arm/kernel/bugs.c
-index 7be511310191..d41d3598e5e5 100644
---- a/arch/arm/kernel/bugs.c
-+++ b/arch/arm/kernel/bugs.c
-@@ -6,8 +6,8 @@
- void check_other_bugs(void)
- {
- #ifdef MULTI_CPU
--	if (processor.check_bugs)
--		processor.check_bugs();
-+	if (cpu_check_bugs)
-+		cpu_check_bugs();
- #endif
- }
- 
+>  arch/s390/boot/Makefile | 3 ---
+>  scripts/Makefile.build  | 6 +-----
+>  scripts/Makefile.lib    | 6 ++++++
+>  3 files changed, 7 insertions(+), 8 deletions(-)
+>
+> diff --git a/arch/s390/boot/Makefile b/arch/s390/boot/Makefile
+> index 11ca879..c844eaf 100644
+> --- a/arch/s390/boot/Makefile
+> +++ b/arch/s390/boot/Makefile
+> @@ -57,9 +57,6 @@ $(obj)/section_cmp%: vmlinux $(obj)/compressed/vmlinux FORCE
+>  $(obj)/compressed/vmlinux: $(obj)/startup.a FORCE
+>         $(Q)$(MAKE) $(build)=$(obj)/compressed $@
+>
+> -quiet_cmd_ar = AR      $@
+> -      cmd_ar = rm -f $@; $(AR) rcsTP$(KBUILD_ARFLAGS) $@ $(real-prereqs)
+> -
+>  $(obj)/startup.a: $(OBJECTS) FORCE
+>         $(call if_changed,ar)
+>
+> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+> index f8e2794..99be01c 100644
+> --- a/scripts/Makefile.build
+> +++ b/scripts/Makefile.build
+> @@ -424,13 +424,9 @@ $(modorder-target): $(subdir-ym) FORCE
+>  # Rule to compile a set of .o files into one .a file (with symbol table)
+>  #
+>  ifdef lib-target
+> -quiet_cmd_link_l_target = AR      $@
+> -
+> -# lib target archives do get a symbol table and index
+> -cmd_link_l_target = rm -f $@; $(AR) rcsTP$(KBUILD_ARFLAGS) $@ $(real-prereqs)
+>
+>  $(lib-target): $(lib-y) FORCE
+> -       $(call if_changed,link_l_target)
+> +       $(call if_changed,ar)
+>
+>  targets += $(lib-target)
+>
+> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+> index c0abd9a..8a1f64f 100644
+> --- a/scripts/Makefile.lib
+> +++ b/scripts/Makefile.lib
+> @@ -233,6 +233,12 @@ $(obj)/%: $(src)/%_shipped
+>  quiet_cmd_ld = LD      $@
+>        cmd_ld = $(LD) $(ld_flags) $(real-prereqs) -o $@
+>
+> +# Archive
+> +# ---------------------------------------------------------------------------
+> +
+> +quiet_cmd_ar = AR      $@
+> +      cmd_ar = rm -f $@; $(AR) rcsTP$(KBUILD_ARFLAGS) $@ $(real-prereqs)
+> +
+>  # Objcopy
+>  # ---------------------------------------------------------------------------
+>
+> --
+> 2.7.4
+>
+
+
 -- 
-2.17.1
-
+Best Regards
+Masahiro Yamada
