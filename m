@@ -7,311 +7,278 @@ X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9657C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:38:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1025DC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:38:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A21FA222A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:38:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC5BC2229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:38:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PhmHorRL"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="RuKz0EPL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437814AbfBNJie (ORCPT
+        id S2437863AbfBNJij (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 04:38:34 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:31064 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2395144AbfBNJic (ORCPT
+        Thu, 14 Feb 2019 04:38:39 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:43876 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2395173AbfBNJie (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 04:38:32 -0500
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190214093829epoutp040e692b47ca725f96d90f2d1a61a8d1b7~DMXznjF-41377113771epoutp04F;
-        Thu, 14 Feb 2019 09:38:29 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190214093829epoutp040e692b47ca725f96d90f2d1a61a8d1b7~DMXznjF-41377113771epoutp04F
+        Thu, 14 Feb 2019 04:38:34 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190214093831epoutp03aa7d99acdd89ee30019ba56bc2b3837c~DMX1-cgn40834508345epoutp03T;
+        Thu, 14 Feb 2019 09:38:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190214093831epoutp03aa7d99acdd89ee30019ba56bc2b3837c~DMX1-cgn40834508345epoutp03T
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1550137109;
-        bh=g26M3vvo7rFQlqLQajT+REpGD/4KuQLx8Lv9IuQdqVM=;
+        s=mail20170921; t=1550137111;
+        bh=ksBuew1Xn57azxYCc3VjsmJS9DByah38YvNWRM7BLGs=;
         h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=PhmHorRLbw+0631Nl5sVIz5aP/UzcaH8DDxex/efLHG2Jc8aN4FCuqgTRtQLwQI5k
-         3Y42wUMx3YCCL0wUbLCFAAPzO9kyEbEGWNtRAowpl+wSTRy3f5v0l8SN/E2H3zVw8B
-         y/roNpkWjVTjSFywLa1wN3DIbczDd3zk3esfz85w=
-Received: from epsmges2p3.samsung.com (unknown [182.195.42.71]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-        20190214093829epcas2p34d2123e7b1e7d5600a591112e15c7c15~DMXzZ421X2153321533epcas2p32;
-        Thu, 14 Feb 2019 09:38:29 +0000 (GMT)
-Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C4.FC.04134.417356C5; Thu, 14 Feb 2019 18:38:29 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20190214093828epcas2p444b9d819fefb0eb730a716589a00218b~DMXy333hr1746217462epcas2p4K;
-        Thu, 14 Feb 2019 09:38:28 +0000 (GMT)
-X-AuditID: b6c32a47-8abff70000001026-43-5c6537147b88
-Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p2new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id 9B.52.03689.417356C5; Thu, 14 Feb
-        2019 18:38:28 +0900 (KST)
+        b=RuKz0EPLGtdVKG9Xzb0FbuCzAmNheCK6C4pz+vko5N+C1ycXSg21Fc4jI1bgsge1h
+         i7VSMC5f1NxZ0m8z0unAsRTfvuaE6w9KEuxPL9UmNCvm0jqMH0zM9hwpSvpraNnQi6
+         WPw0Vz6N2frUW0XRFrHiBFf45XJTHxxajG1QG2Xw=
+Received: from epsmges1p4.samsung.com (unknown [182.195.42.56]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190214093831epcas1p1e948fc50b9af6bd621dc3e13b67dceff~DMX1xT7IL1434214342epcas1p1W;
+        Thu, 14 Feb 2019 09:38:31 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        E6.14.04288.717356C5; Thu, 14 Feb 2019 18:38:31 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190214093831epcas1p2a42c5b95424a251e7ae38dd21c1a4696~DMX1YBA9l2983229832epcas1p2L;
+        Thu, 14 Feb 2019 09:38:31 +0000 (GMT)
+X-AuditID: b6c32a38-c0fff700000010c0-7a-5c653717c251
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id 0A.F3.04015.617356C5; Thu, 14 Feb
+        2019 18:38:31 +0900 (KST)
 Received: from AMDC3061.digital.local ([106.116.147.40]) by mmp2.samsung.com
         (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
         2014)) with ESMTPA id <0PMW0074FTFANE00@mmp2.samsung.com>; Thu, 14 Feb 2019
-        18:38:28 +0900 (KST)
+        18:38:30 +0900 (KST)
 From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
 To:     broonie@kernel.org
 Cc:     lgirdwood@gmail.com, krzk@kernel.org, sbkim73@samsung.com,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v3 Resend 02/13] ASoC: samsung: i2s: Drop spinlock pointer
- from i2s_dai data structure
-Date:   Thu, 14 Feb 2019 10:37:36 +0100
-Message-id: <20190214093747.2414-3-s.nawrocki@samsung.com>
+Subject: [PATCH v3 Resend 03/13] ASoC: samsung: i2s: Move IP variant data to
+ common driver data structure
+Date:   Thu, 14 Feb 2019 10:37:37 +0100
+Message-id: <20190214093747.2414-4-s.nawrocki@samsung.com>
 X-Mailer: git-send-email 2.17.1
 In-reply-to: <20190214093747.2414-1-s.nawrocki@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDIsWRmVeSWpSXmKPExsWy7bCmha6oeWqMwdtpjBZXLh5ispj68Amb
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDIsWRmVeSWpSXmKPExsWy7bCmvq64eWqMQf8KOYsrFw8xWUx9+ITN
+        4vz5DewW3650MFlc3jWHzeLwm3ZWi4srvjA5sHts+NzE5rFz1l12j02rOtk8+rasYvT4vEku
+        gDWKyyYlNSezLLVI3y6BK+PDh7UsBS/NKpYuvsfewDhJt4uRk0NCwETiW/Mq1i5GLg4hgR2M
+        EtM2tLNAON8ZJe5deMoEU3X4+QM2iMQGRom5/+cyQji/GCWWbNzFCFLFJmAo0Xu0D8wWERCT
+        uD2nkxmkiFlgJaPEln2b2EASwgLZEh8uz2MGsVkEVCVu3/wE1MDBwStgJXFvSQrENnmJ1RsO
+        gJVwClhLzNy0HWyZhEAPm8TxDe1QJ7lILN//mxmkV0JAWuLSUVuIcLXEru3dzBD1HYwSLRe2
+        M0MkrCUOH7/ICmIzC/BJvPvawwrRyyvR0SYEUeIh8bP9CDvEY32MEg+vrGSewCixgJFhFaNY
+        akFxbnpqsWGBiV5xYm5xaV66XnJ+7iZGcJxpWexg3HPO5xCjAAejEg9vhVBKjBBrYllxZe4h
+        RgkOZiUR3otGqTFCvCmJlVWpRfnxRaU5qcWHGKU5WJTEedc7OMcICaQnlqRmp6YWpBbBZJk4
+        OKUaGPNWS3ctMnbrDBMOdezr+GD9rz0mQeJqz+62uMnT9gZlnjs+YU7oir2KkwzW3o/WvV3Q
+        0bDmZLuMkfrF4vP/bxuc/Ngq8HNew9/WaSvVvR+y7LsfvOhN00neD5+84t4ceHrr96GKWYa2
+        1Zx+bi/Onv+0mI91yt4HDB/dvk7IMznqx7jxqNqNCR5KLMUZiYZazEXFiQDy6sW6rwIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmluLIzCtJLcpLzFFi42I5/e+xoK64eWqMwecTbBZXLh5ispj68Amb
         xfnzG9gtvl3pYLK4vGsOm8XhN+2sFhdXfGFyYPfY8LmJzWPnrLvsHptWdbJ59G1ZxejxeZNc
-        AGsUl01Kak5mWWqRvl0CV8bKL2cYC7ZbVbT/W8fSwDjfoIuRk0NCwETi7ZefjCC2kMAORok/
-        /wq6GLmA7O+MErNePmCCKdo2YS0jRGIDo0Rb23V2COcXo8Tj57vAqtgEDCV6j/aBjRIREJO4
-        PaeTGaSIWWAlo8SWfZvYQBLCAhkSzz/vAWtgEVCVaJ85F6yBV8BK4tedg1Dr5CVWbzjADGJz
-        ClhLzNy0HWy1hEAPm8SV/1eZIYpcJM69WcQKYUtLPFu1kRHCrpbYtb2bGaKhg1Gi5cJ2qAZr
-        icPHL4I1MAvwSXQc/gv0AwdQnFeio00IwvSQePksHOKzPkaJ3yvvM05glFjAyLCKUSy1oDg3
-        PbXYqMBYrzgxt7g0L10vOT93EyM4zrTcdzBuO+dziFGAg1GJh7dCKCVGiDWxrLgy9xCjBAez
-        kgjvRaPUGCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8D6XnRgsJpCeWpGanphakFsFkmTg4pRoY
-        c2OO+TvU/bwR/Tq+6r/ekq1T/V/Vvr/ptr9opvUP5v9lulvemhw80ZeuGP5TVnXla6vTqfM7
-        XNILEqfKXIoXLPJ9lXB23uqN/EHRDezKBRo6BjNP2d88tnLC8ulPbE/HH7FdV6pWxpZvMy/q
-        PNdWvYdpqVdLHDJvzr6ttdZry+E9Ah+vV6z9psRSnJFoqMVcVJwIALpr0WKvAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupmluLIzCtJLcpLzFFi42I5/e+xoK6IeWqMwZ3dYhZXLh5ispj68Amb
-        xfnzG9gtvl3pYLK4vGsOm8XhN+2sFhdXfGFyYPfY8LmJzWPnrLvsHptWdbJ59G1ZxejxeZNc
-        AGsUl01Kak5mWWqRvl0CV8bKL2cYC7ZbVbT/W8fSwDjfoIuRk0NCwERi24S1jF2MXBxCAusY
-        Jfa9XMAM4fxilDi/tYUFpIpNwFCi92gfI4gtIiAmcXtOJ1gRs8BKRokj31cBJTg4hAUyJPbc
-        TgapYRFQlWifOResnlfASuLXnYNMENvkJVZvOMAMYnMKWEvM3LQdrFUIqGbdofIJjDwLGBlW
-        MUqmFhTnpucWGxUY5aWW6xUn5haX5qXrJefnbmIEBtG2w1r9OxgfL4k/xCjAwajEw1shlBIj
-        xJpYVlyZe4hRgoNZSYT3olFqjBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe/vxjkUIC6Yklqdmp
-        qQWpRTBZJg5OqQbG6vxMDuHVX8/rJDCufcaya9WpRLGQ//HrHqixcnps6Xv6596paXY6Xuq7
-        zkaWTYraY3yzL5jbs3vaKuVrTrPXnE3SPP+BWcVLQSfqd/yxzOmhO299/P7MQmmFxtqMwuVz
-        Oz8GbelfvlPJ7raYfwXL1stPlpd4R5e8ttS8UJQ00d7hjmay2I0dSizFGYmGWsxFxYkAsU7K
-        NB4CAAA=
-X-CMS-MailID: 20190214093828epcas2p444b9d819fefb0eb730a716589a00218b
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20190214093828epcas2p444b9d819fefb0eb730a716589a00218b
+        AGsUl01Kak5mWWqRvl0CV8aHD2tZCl6aVSxdfI+9gXGSbhcjJ4eEgInE4ecP2LoYuTiEBNYx
+        Smzqvc4O4fxilLj07wgbSBWbgKFE79E+RhBbREBM4vacTmaQImaBlYwSR76vAksIC2RLfLg8
+        jxnEZhFQlbh98xNQnIODV8BK4t6SFIht8hKrNxwAK+EUsJaYuWk7WIkQUMm6Q+UTGHkWMDKs
+        YpRMLSjOTc8tNiowzEst1ytOzC0uzUvXS87P3cQIDKJth7X6djDeXxJ/iFGAg1GJh1dBICVG
+        iDWxrLgy9xCjBAezkgjvRaPUGCHelMTKqtSi/Pii0pzU4kOM0hwsSuK8t/OORQoJpCeWpGan
+        phakFsFkmTg4pRoYt04ra5W6tOXzlgs97tMzJ7qod5nKeLWen5dzrTT42/0QI/YGjts3UtIt
+        Voiys8bv+qv3fNP+n8f579+9c7N4/Y3utBcn/11VnMitEvqQ93GNxffdho3OzopzdZXmLDb0
+        32h90W66rVMZz7wkv0OHV2ibPOBnWnvt5SHbnbs9765y3DD7ovZTIyWW4oxEQy3mouJEAJMr
+        JmweAgAA
+X-CMS-MailID: 20190214093831epcas1p2a42c5b95424a251e7ae38dd21c1a4696
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20190214093831epcas1p2a42c5b95424a251e7ae38dd21c1a4696
 References: <20190214093747.2414-1-s.nawrocki@samsung.com>
-        <CGME20190214093828epcas2p444b9d819fefb0eb730a716589a00218b@epcas2p4.samsung.com>
+        <CGME20190214093831epcas1p2a42c5b95424a251e7ae38dd21c1a4696@epcas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As we now have the 'priv' pointer in most of the places we can use
-priv->lock directly, dropping extra indirection in the SFR region
-spinlock access.
+The IP variant data is another thing common for both DAIs, move it
+to the driver's common data structure.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- sound/soc/samsung/i2s.c | 51 +++++++++++++++++++----------------------
- 1 file changed, 24 insertions(+), 27 deletions(-)
+ sound/soc/samsung/i2s.c | 42 ++++++++++++++++++++---------------------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
 
 diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 3f8955608a94..cf8615e23879 100644
+index cf8615e23879..0c4c4de8c7e9 100644
 --- a/sound/soc/samsung/i2s.c
 +++ b/sound/soc/samsung/i2s.c
-@@ -87,8 +87,6 @@ struct i2s_dai {
+@@ -85,7 +85,6 @@ struct i2s_dai {
+ 	struct snd_dmaengine_dai_dma_data idma_playback;
+ 	dma_filter_fn filter;
  	u32	quirks;
- 	const struct samsung_i2s_variant_regs *variant_regs;
+-	const struct samsung_i2s_variant_regs *variant_regs;
  
--	spinlock_t *lock;
--
  	struct samsung_i2s_priv *priv;
  };
+@@ -122,6 +121,8 @@ struct samsung_i2s_priv {
+ 	u32 suspend_i2scon;
+ 	u32 suspend_i2spsr;
  
-@@ -103,7 +101,7 @@ struct samsung_i2s_priv {
- 	void __iomem *addr;
++	const struct samsung_i2s_variant_regs *variant_regs;
++
+ 	/* The clock provider's data */
+ 	struct clk *clk_table[3];
+ 	struct clk_onecell_data clk_data;
+@@ -146,7 +147,7 @@ static inline bool is_slave(struct i2s_dai *i2s)
+ 	struct samsung_i2s_priv *priv = i2s->priv;
  
- 	/* Spinlock protecting access to the device's registers */
--	spinlock_t spinlock;
-+	spinlock_t lock;
+ 	u32 mod = readl(priv->addr + I2SMOD);
+-	return (mod & (1 << i2s->variant_regs->mss_off)) ? true : false;
++	return (mod & (1 << priv->variant_regs->mss_off)) ? true : false;
+ }
  
- 	/* CPU DAIs and their corresponding drivers */
- 	struct i2s_dai *dai;
-@@ -527,9 +525,9 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai, int clk_id, unsigned int rfs,
+ /* If this interface of the controller is transmitting data */
+@@ -261,8 +262,8 @@ static inline unsigned get_rfs(struct i2s_dai *i2s)
+ 	struct samsung_i2s_priv *priv = i2s->priv;
+ 	u32 rfs;
  
- 	pm_runtime_get_sync(dai->dev);
+-	rfs = readl(priv->addr + I2SMOD) >> i2s->variant_regs->rfs_off;
+-	rfs &= i2s->variant_regs->rfs_mask;
++	rfs = readl(priv->addr + I2SMOD) >> priv->variant_regs->rfs_off;
++	rfs &= priv->variant_regs->rfs_mask;
  
--	spin_lock_irqsave(i2s->lock, flags);
-+	spin_lock_irqsave(&priv->lock, flags);
- 	mod = readl(priv->addr + I2SMOD);
--	spin_unlock_irqrestore(i2s->lock, flags);
-+	spin_unlock_irqrestore(&priv->lock, flags);
- 
- 	switch (clk_id) {
- 	case SAMSUNG_I2S_OPCLK:
-@@ -624,11 +622,11 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai, int clk_id, unsigned int rfs,
- 		goto err;
- 	}
- 
--	spin_lock_irqsave(i2s->lock, flags);
-+	spin_lock_irqsave(&priv->lock, flags);
- 	mod = readl(priv->addr + I2SMOD);
- 	mod = (mod & ~mask) | val;
- 	writel(mod, priv->addr + I2SMOD);
--	spin_unlock_irqrestore(i2s->lock, flags);
-+	spin_unlock_irqrestore(&priv->lock, flags);
- done:
- 	pm_runtime_put(dai->dev);
- 
-@@ -709,7 +707,7 @@ static int i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
- 	}
- 
- 	pm_runtime_get_sync(dai->dev);
--	spin_lock_irqsave(i2s->lock, flags);
-+	spin_lock_irqsave(&priv->lock, flags);
- 	mod = readl(priv->addr + I2SMOD);
- 	/*
- 	 * Don't change the I2S mode if any controller is active on this
-@@ -717,7 +715,7 @@ static int i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
- 	 */
- 	if (any_active(i2s) &&
- 		((mod & (sdf_mask | lrp_rlow | mod_slave)) != tmp)) {
--		spin_unlock_irqrestore(i2s->lock, flags);
-+		spin_unlock_irqrestore(&priv->lock, flags);
- 		pm_runtime_put(dai->dev);
- 		dev_err(&i2s->pdev->dev,
- 				"%s:%d Other DAI busy\n", __func__, __LINE__);
-@@ -727,7 +725,7 @@ static int i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
- 	mod &= ~(sdf_mask | lrp_rlow | mod_slave);
- 	mod |= tmp;
- 	writel(mod, priv->addr + I2SMOD);
--	spin_unlock_irqrestore(i2s->lock, flags);
-+	spin_unlock_irqrestore(&priv->lock, flags);
- 	pm_runtime_put(dai->dev);
- 
- 	return 0;
-@@ -812,11 +810,11 @@ static int i2s_hw_params(struct snd_pcm_substream *substream,
- 		return -EINVAL;
- 	}
- 
--	spin_lock_irqsave(i2s->lock, flags);
-+	spin_lock_irqsave(&priv->lock, flags);
- 	mod = readl(priv->addr + I2SMOD);
- 	mod = (mod & ~mask) | val;
- 	writel(mod, priv->addr + I2SMOD);
--	spin_unlock_irqrestore(i2s->lock, flags);
-+	spin_unlock_irqrestore(&priv->lock, flags);
- 
- 	snd_soc_dai_init_dma_data(dai, &i2s->dma_playback, &i2s->dma_capture);
- 
-@@ -944,6 +942,7 @@ static int config_setup(struct i2s_dai *i2s)
- static int i2s_trigger(struct snd_pcm_substream *substream,
- 	int cmd, struct snd_soc_dai *dai)
+ 	switch (rfs) {
+ 	case 7: return 192;
+@@ -281,9 +282,9 @@ static inline void set_rfs(struct i2s_dai *i2s, unsigned rfs)
  {
-+	struct samsung_i2s_priv *priv = snd_soc_dai_get_drvdata(dai);
- 	int capture = (substream->stream == SNDRV_PCM_STREAM_CAPTURE);
- 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
- 	struct i2s_dai *i2s = to_info(rtd->cpu_dai);
-@@ -954,10 +953,10 @@ static int i2s_trigger(struct snd_pcm_substream *substream,
- 	case SNDRV_PCM_TRIGGER_RESUME:
- 	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
- 		pm_runtime_get_sync(dai->dev);
--		spin_lock_irqsave(i2s->lock, flags);
-+		spin_lock_irqsave(&priv->lock, flags);
+ 	struct samsung_i2s_priv *priv = i2s->priv;
+ 	u32 mod = readl(priv->addr + I2SMOD);
+-	int rfs_shift = i2s->variant_regs->rfs_off;
++	int rfs_shift = priv->variant_regs->rfs_off;
  
- 		if (config_setup(i2s)) {
--			spin_unlock_irqrestore(i2s->lock, flags);
-+			spin_unlock_irqrestore(&priv->lock, flags);
- 			return -EINVAL;
- 		}
+-	mod &= ~(i2s->variant_regs->rfs_mask << rfs_shift);
++	mod &= ~(priv->variant_regs->rfs_mask << rfs_shift);
  
-@@ -966,12 +965,12 @@ static int i2s_trigger(struct snd_pcm_substream *substream,
- 		else
- 			i2s_txctrl(i2s, 1);
+ 	switch (rfs) {
+ 	case 192:
+@@ -321,8 +322,8 @@ static inline unsigned get_bfs(struct i2s_dai *i2s)
+ 	struct samsung_i2s_priv *priv = i2s->priv;
+ 	u32 bfs;
  
--		spin_unlock_irqrestore(i2s->lock, flags);
-+		spin_unlock_irqrestore(&priv->lock, flags);
- 		break;
- 	case SNDRV_PCM_TRIGGER_STOP:
- 	case SNDRV_PCM_TRIGGER_SUSPEND:
- 	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
--		spin_lock_irqsave(i2s->lock, flags);
-+		spin_lock_irqsave(&priv->lock, flags);
+-	bfs = readl(priv->addr + I2SMOD) >> i2s->variant_regs->bfs_off;
+-	bfs &= i2s->variant_regs->bfs_mask;
++	bfs = readl(priv->addr + I2SMOD) >> priv->variant_regs->bfs_off;
++	bfs &= priv->variant_regs->bfs_mask;
  
- 		if (capture) {
- 			i2s_rxctrl(i2s, 0);
-@@ -981,7 +980,7 @@ static int i2s_trigger(struct snd_pcm_substream *substream,
- 			i2s_fifo(i2s, FIC_TXFLUSH);
- 		}
+ 	switch (bfs) {
+ 	case 8: return 256;
+@@ -343,7 +344,7 @@ static inline void set_bfs(struct i2s_dai *i2s, unsigned bfs)
+ 	struct samsung_i2s_priv *priv = i2s->priv;
+ 	u32 mod = readl(priv->addr + I2SMOD);
+ 	int tdm = i2s->quirks & QUIRK_SUPPORTS_TDM;
+-	int bfs_shift = i2s->variant_regs->bfs_off;
++	int bfs_shift = priv->variant_regs->bfs_off;
  
--		spin_unlock_irqrestore(i2s->lock, flags);
-+		spin_unlock_irqrestore(&priv->lock, flags);
- 		pm_runtime_put(dai->dev);
- 		break;
- 	}
-@@ -1081,13 +1080,13 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
- 	i2s->rfs = 0;
- 	i2s->bfs = 0;
- 
--	spin_lock_irqsave(i2s->lock, flags);
-+	spin_lock_irqsave(&priv->lock, flags);
- 	i2s_txctrl(i2s, 0);
- 	i2s_rxctrl(i2s, 0);
- 	i2s_fifo(i2s, FIC_TXFLUSH);
- 	i2s_fifo(other, FIC_TXFLUSH);
- 	i2s_fifo(i2s, FIC_RXFLUSH);
--	spin_unlock_irqrestore(i2s->lock, flags);
-+	spin_unlock_irqrestore(&priv->lock, flags);
- 
- 	/* Gate CDCLK by default */
- 	if (!is_opened(other))
-@@ -1108,9 +1107,9 @@ static int samsung_i2s_dai_remove(struct snd_soc_dai *dai)
- 
- 	if (!is_secondary(i2s)) {
- 		if (i2s->quirks & QUIRK_NEED_RSTCLR) {
--			spin_lock_irqsave(i2s->lock, flags);
-+			spin_lock_irqsave(&priv->lock, flags);
- 			writel(0, priv->addr + I2SCON);
--			spin_unlock_irqrestore(i2s->lock, flags);
-+			spin_unlock_irqrestore(&priv->lock, flags);
- 		}
+ 	/* Non-TDM I2S controllers do not support BCLK > 48 * FS */
+ 	if (!tdm && bfs > 48) {
+@@ -351,7 +352,7 @@ static inline void set_bfs(struct i2s_dai *i2s, unsigned bfs)
+ 		return;
  	}
  
-@@ -1317,13 +1316,13 @@ static int i2s_register_clock_provider(struct samsung_i2s_priv *priv)
- 				ARRAY_SIZE(p_names),
- 				CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT,
- 				priv->addr + I2SMOD, reg_info->rclksrc_off,
--				1, 0, i2s->lock);
-+				1, 0, &priv->lock);
+-	mod &= ~(i2s->variant_regs->bfs_mask << bfs_shift);
++	mod &= ~(priv->variant_regs->bfs_mask << bfs_shift);
  
- 		priv->clk_table[CLK_I2S_RCLK_PSR] = clk_register_divider(dev,
- 				i2s_clk_name[CLK_I2S_RCLK_PSR],
- 				i2s_clk_name[CLK_I2S_RCLK_SRC],
- 				CLK_SET_RATE_PARENT,
--				priv->addr + I2SPSR, 8, 6, 0, i2s->lock);
-+				priv->addr + I2SPSR, 8, 6, 0, &priv->lock);
+ 	switch (bfs) {
+ 	case 48:
+@@ -408,7 +409,7 @@ static void i2s_txctrl(struct i2s_dai *i2s, int on)
+ {
+ 	struct samsung_i2s_priv *priv = i2s->priv;
+ 	void __iomem *addr = priv->addr;
+-	int txr_off = i2s->variant_regs->txr_off;
++	int txr_off = priv->variant_regs->txr_off;
+ 	u32 con = readl(addr + I2SCON);
+ 	u32 mod = readl(addr + I2SMOD) & ~(3 << txr_off);
  
- 		p_names[0] = i2s_clk_name[CLK_I2S_RCLK_PSR];
- 		priv->clk_data.clk_num = 2;
-@@ -1333,7 +1332,7 @@ static int i2s_register_clock_provider(struct samsung_i2s_priv *priv)
- 				i2s_clk_name[CLK_I2S_CDCLK], p_names[0],
- 				CLK_SET_RATE_PARENT,
- 				priv->addr + I2SMOD, reg_info->cdclkcon_off,
--				CLK_GATE_SET_TO_DISABLE, i2s->lock);
-+				CLK_GATE_SET_TO_DISABLE, &priv->lock);
+@@ -459,7 +460,7 @@ static void i2s_rxctrl(struct i2s_dai *i2s, int on)
+ {
+ 	struct samsung_i2s_priv *priv = i2s->priv;
+ 	void __iomem *addr = priv->addr;
+-	int txr_off = i2s->variant_regs->txr_off;
++	int txr_off = priv->variant_regs->txr_off;
+ 	u32 con = readl(addr + I2SCON);
+ 	u32 mod = readl(addr + I2SMOD) & ~(3 << txr_off);
  
- 	priv->clk_data.clk_num += 1;
- 	priv->clk_data.clks = priv->clk_table;
-@@ -1411,8 +1410,7 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+@@ -516,7 +517,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai, int clk_id, unsigned int rfs,
+ 	struct samsung_i2s_priv *priv = snd_soc_dai_get_drvdata(dai);
+ 	struct i2s_dai *i2s = to_info(dai);
+ 	struct i2s_dai *other = get_other_dai(i2s);
+-	const struct samsung_i2s_variant_regs *i2s_regs = i2s->variant_regs;
++	const struct samsung_i2s_variant_regs *i2s_regs = priv->variant_regs;
+ 	unsigned int cdcon_mask = 1 << i2s_regs->cdclkcon_off;
+ 	unsigned int rsrc_mask = 1 << i2s_regs->rclksrc_off;
+ 	u32 mod, mask, val = 0;
+@@ -644,9 +645,9 @@ static int i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 	u32 mod, tmp = 0;
+ 	unsigned long flags;
  
- 	pri_dai = &priv->dai[SAMSUNG_I2S_ID_PRIMARY - 1];
+-	lrp_shift = i2s->variant_regs->lrp_off;
+-	sdf_shift = i2s->variant_regs->sdf_off;
+-	mod_slave = 1 << i2s->variant_regs->mss_off;
++	lrp_shift = priv->variant_regs->lrp_off;
++	sdf_shift = priv->variant_regs->sdf_off;
++	mod_slave = 1 << priv->variant_regs->mss_off;
  
--	spin_lock_init(&priv->spinlock);
--	pri_dai->lock = &priv->spinlock;
-+	spin_lock_init(&priv->lock);
+ 	sdf_mask = MOD_SDF_MASK << sdf_shift;
+ 	lrp_rlow = MOD_LR_RLOW << lrp_shift;
+@@ -1023,7 +1024,6 @@ i2s_delay(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
+ 	struct i2s_dai *i2s = to_info(dai);
+ 	u32 reg = readl(priv->addr + I2SFIC);
+ 	snd_pcm_sframes_t delay;
+-	const struct samsung_i2s_variant_regs *i2s_regs = i2s->variant_regs;
  
- 	if (!np) {
- 		if (i2s_pdata == NULL) {
-@@ -1474,7 +1472,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 	WARN_ON(!pm_runtime_active(dai->dev));
+ 
+@@ -1032,7 +1032,7 @@ i2s_delay(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
+ 	else if (is_secondary(i2s))
+ 		delay = FICS_TXCOUNT(readl(priv->addr + I2SFICS));
+ 	else
+-		delay = (reg >> i2s_regs->ftx0cnt_off) & 0x7f;
++		delay = (reg >> priv->variant_regs->ftx0cnt_off) & 0x7f;
+ 
+ 	return delay;
+ }
+@@ -1281,7 +1281,7 @@ static int i2s_register_clock_provider(struct samsung_i2s_priv *priv)
+ 	const char *p_names[2] = { NULL };
+ 	struct device *dev = &priv->pdev->dev;
+ 	struct i2s_dai *i2s = samsung_i2s_get_pri_dai(dev);
+-	const struct samsung_i2s_variant_regs *reg_info = i2s->variant_regs;
++	const struct samsung_i2s_variant_regs *reg_info = priv->variant_regs;
+ 	const char *i2s_clk_name[ARRAY_SIZE(i2s_clk_desc)];
+ 	struct clk *rclksrc;
+ 	int ret, i;
+@@ -1400,6 +1400,8 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
++	priv->variant_regs = i2s_dai_data->i2s_variant_regs;
++
+ 	quirks = np ? i2s_dai_data->quirks : i2s_pdata->type.quirks;
+ 	num_dais = (quirks & QUIRK_SEC_DAI) ? 2 : 1;
+ 	priv->pdev = pdev;
+@@ -1458,7 +1460,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
+ 	pri_dai->dma_playback.addr_width = 4;
+ 	pri_dai->dma_capture.addr_width = 4;
+ 	pri_dai->quirks = quirks;
+-	pri_dai->variant_regs = i2s_dai_data->i2s_variant_regs;
+ 	pri_dai->priv = priv;
+ 
+ 	if (quirks & QUIRK_PRI_6CHAN)
+@@ -1472,7 +1473,6 @@ static int samsung_i2s_probe(struct platform_device *pdev)
  	if (quirks & QUIRK_SEC_DAI) {
  		sec_dai = &priv->dai[SAMSUNG_I2S_ID_SECONDARY - 1];
  
--		sec_dai->lock = &priv->spinlock;
- 		sec_dai->variant_regs = pri_dai->variant_regs;
+-		sec_dai->variant_regs = pri_dai->variant_regs;
  		sec_dai->dma_playback.addr = regs_base + I2STXDS;
  		sec_dai->dma_playback.chan_name = "tx-sec";
+ 
 -- 
 2.17.1
 
