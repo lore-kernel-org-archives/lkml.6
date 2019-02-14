@@ -2,91 +2,93 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23DEFC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:30:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 275B2C4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:30:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1E5A2229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:30:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02B492229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:30:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392989AbfBNK37 (ORCPT
+        id S2393159AbfBNKal (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 05:29:59 -0500
-Received: from foss.arm.com ([217.140.101.70]:40530 "EHLO foss.arm.com"
+        Thu, 14 Feb 2019 05:30:41 -0500
+Received: from relay.sw.ru ([185.231.240.75]:42820 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389571AbfBNK37 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 05:29:59 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5DE68EBD;
-        Thu, 14 Feb 2019 02:29:58 -0800 (PST)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D95A3F575;
-        Thu, 14 Feb 2019 02:29:56 -0800 (PST)
-Date:   Thu, 14 Feb 2019 10:29:53 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Eugeniu Rosca <erosca@de.adit-jv.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jisheng Zhang <jszhang@marvell.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Joshua Frkuska <joshua_frkuska@mentor.com>,
-        Eugeniu Rosca <roscaeugeniu@gmail.com>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v2] drivers: base: add support to skip power management
- in device/driver model
-Message-ID: <20190214102953.GB28361@e107155-lin>
-References: <20190213120137.23354-1-sudeep.holla@arm.com>
- <20190213223849.GA26335@vmlxhi-102.adit-jv.com>
+        id S2388383AbfBNKal (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 05:30:41 -0500
+Received: from [172.16.25.169]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1guEHu-00051w-Bd; Thu, 14 Feb 2019 13:30:38 +0300
+Subject: Re: [PATCH 2/4] mm: Move nr_deactivate accounting to
+ shrink_active_list()
+To:     Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc:     akpm@linux-foundation.org, mhocko@suse.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <154998432043.18704.10326447825287153712.stgit@localhost.localdomain>
+ <154998444590.18704.9387109537711017589.stgit@localhost.localdomain>
+ <20190213191348.tpwwu3m7o3cmg7ma@ca-dmjordan1.us.oracle.com>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <4e6627e9-ef49-9636-cc36-ccba295ad9bf@virtuozzo.com>
+Date:   Thu, 14 Feb 2019 13:30:38 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190213223849.GA26335@vmlxhi-102.adit-jv.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190213191348.tpwwu3m7o3cmg7ma@ca-dmjordan1.us.oracle.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 11:38:49PM +0100, Eugeniu Rosca wrote:
-> Hello Sudeep,
->
-> I appreciate your efforts. Currently, this patch generates below
-> warnings during s2ram on R-Car H3-Salvator-X:
->
-> [ 46.874214] PM: suspend entry (deep)
-> [ 46.878211] PM: Syncing filesystems ... done.
-> [ 46.989148] Freezing user space processes ... (elapsed 0.004 seconds) done.
-> [ 47.000428] OOM killer disabled.
-> [ 47.003895] Freezing remaining freezable tasks ... (elapsed 0.003 seconds) done.
-> [ 47.226363] PM: suspend devices took 0.210 seconds
-> [ 47.280553] Disabling non-boot CPUs ...
-> [ 47.289157] ------------[ cut here ]------------
-> [ 47.294524] sysfs group 'power' not found for kobject 'index0'
-> [ 47.300622] WARNING: CPU: 1 PID: 14 at fs/sysfs/group.c:256 sysfs_remove_group+0x78/0xc4
-> ---snip---
-> [ 47.550425] sysfs group 'power' not found for kobject 'index1'
-> ---snip---
-> [ 47.807005] sysfs group 'power' not found for kobject 'index2'
-> ---snip---
-> [ 48.063703] sysfs group 'power' not found for kobject 'cache'
-> ---snip---
->
+On 13.02.2019 22:13, Daniel Jordan wrote:
+> On Tue, Feb 12, 2019 at 06:14:05PM +0300, Kirill Tkhai wrote:
+>> We know, which LRU is not active.
+> 
+> s/,//
+> 
+>>
+>> Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+>> ---
+>>  mm/vmscan.c |   10 ++++------
+>>  1 file changed, 4 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/mm/vmscan.c b/mm/vmscan.c
+>> index 84542004a277..8d7d55e71511 100644
+>> --- a/mm/vmscan.c
+>> +++ b/mm/vmscan.c
+>> @@ -2040,12 +2040,6 @@ static unsigned move_active_pages_to_lru(struct lruvec *lruvec,
+>>  		}
+>>  	}
+>>  
+>> -	if (!is_active_lru(lru)) {
+>> -		__count_vm_events(PGDEACTIVATE, nr_moved);
+>> -		count_memcg_events(lruvec_memcg(lruvec), PGDEACTIVATE,
+>> -				   nr_moved);
+>> -	}
+>> -
+>>  	return nr_moved;
+>>  }
+>>  
+>> @@ -2137,6 +2131,10 @@ static void shrink_active_list(unsigned long nr_to_scan,
+>>  
+>>  	nr_activate = move_active_pages_to_lru(lruvec, &l_active, &l_hold, lru);
+>>  	nr_deactivate = move_active_pages_to_lru(lruvec, &l_inactive, &l_hold, lru - LRU_ACTIVE);
+>> +
+>> +	__count_vm_events(PGDEACTIVATE, nr_deactivate);
+>> +	__count_memcg_events(lruvec_memcg(lruvec), PGDEACTIVATE, nr_deactivate);
+> 
+> Nice, you're using the irq-unsafe one since irqs are already disabled.  I guess
+> this was missed in c3cc39118c361.  Do you want to insert a patch before this
+> one that converts all instances of this pattern in vmscan.c over?
 
-Thanks for the report, looks like I am not able to reproduce this, will
-check if I am missing something while testing.
+I had that in plan, but I'm not sure I want to do that in this patchset. Maybe,
+something next later on top of this.
 
-> Complete log and .config are shared in
-> https://gist.github.com/erosca/da9ea551033a503121de61049d77b834
->
-
-Thanks again, much appreciated for providing full log.
-
---
-Regards,
-Sudeep
+> There's a similar oversight in lru_lazyfree_fn with count_memcg_page_event, but
+> that'd mean __count_memcg_page_event which is probably overkill.
