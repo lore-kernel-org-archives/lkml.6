@@ -2,275 +2,138 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85FDDC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93C39C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:35:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 412DE21902
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:34:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59B4821902
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:35:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LRrlFMqs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388432AbfBNBeV convert rfc822-to-8bit (ORCPT
+        id S2388982AbfBNBfd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 20:34:21 -0500
-Received: from szxga08-in.huawei.com ([45.249.212.255]:53852 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728073AbfBNBeV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 20:34:21 -0500
-Received: from DGGEMM405-HUB.china.huawei.com (unknown [172.30.72.54])
-        by Forcepoint Email with ESMTP id 846197B2D9206E023798;
-        Thu, 14 Feb 2019 09:34:18 +0800 (CST)
-Received: from DGGEMM528-MBX.china.huawei.com ([169.254.8.114]) by
- DGGEMM405-HUB.china.huawei.com ([10.3.20.213]) with mapi id 14.03.0415.000;
- Thu, 14 Feb 2019 09:34:16 +0800
-From:   "liujian (CE)" <liujian56@huawei.com>
-To:     Tokunori Ikegami <ikegami.t@gmail.com>,
-        "'Sobon, Przemyslaw'" <psobon@amazon.com>,
-        'Boris Brezillon' <boris.brezillon@collabora.com>
-CC:     "keescook@chromium.org" <keescook@chromium.org>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "joakim.tjernlund@infinera.com" <joakim.tjernlund@infinera.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "ikegami_to@yahoo.co.jp" <ikegami_to@yahoo.co.jp>
-Subject: RE: Re: [PATCH] cfi: fix deadloop in cfi_cmdset_0002.c
- do_write_buffer
-Thread-Topic: Re: [PATCH] cfi: fix deadloop in cfi_cmdset_0002.c
- do_write_buffer
-Thread-Index: AQHUuWkt1Ktbb1R8x0aeT193FccfoKXNO3aAgAACWYCABA2QAIACQc+AgADriICAAA4wAIAA9AiAgAkb77A=
-Date:   Thu, 14 Feb 2019 01:34:16 +0000
-Message-ID: <4F88C5DDA1E80143B232E89585ACE27D026236F3@DGGEMM528-MBX.china.huawei.com>
-References: <1548977439-318904-1-git-send-email-liujian56@huawei.com>
- <20190203092645.18d1495b@bbrezillon> <20190203093509.269bf1e1@bbrezillon>
- <acd16b85676e4d1d89f3acfbeda30107@EX13D07UWA001.ant.amazon.com>
- <20190207095635.0fc3b411@kernel.org>
- <193621849.44066.1549580387922.JavaMail.yahoo@mail.yahoo.co.jp>
- <632ed76bd3844ceab75066d1f30a7115@EX13D07UWA001.ant.amazon.com>
- <149101d4bfb9$fdc5a330$f950e990$@gmail.com>
-In-Reply-To: <149101d4bfb9$fdc5a330$f950e990$@gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.177.97.126]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Wed, 13 Feb 2019 20:35:33 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:40977 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728073AbfBNBfd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 20:35:33 -0500
+Received: by mail-vs1-f68.google.com with SMTP id m20so2168010vsq.8
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 17:35:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TmLwR9SK/L1ub2UqKIynjD9SpCt7lvovD4KgOt1r+rU=;
+        b=LRrlFMqs4PNqzFONzIHrAsLYDpDm76ciPQW/c1v1+nkQAgYIsjEOfy81BPAtnmqXIb
+         7zF3wWA105tOgP72dSF2w+eY0GJxEN8A9IlP2OjOIPv2Pl7aftkoyA5h2wReh9xKrshQ
+         EcNc1CS0OEYEWTRtu+gagMv+LTXWrSa8//z3A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TmLwR9SK/L1ub2UqKIynjD9SpCt7lvovD4KgOt1r+rU=;
+        b=A1ntPLZvJtFafWQ7vZbvCiJ4ngEkx8CRS8qq79Oz5qdxDcoaXXFKdW8097237Qxuj5
+         Qr9eJ1Ab1gS+CpTE46advvQYc1b8FavlkjceyAwA8ekEml2wYtXjMd3sgqqCx4psLVvI
+         NDMe3hK2xhqQOzBka9D+48vdQf/b/62IitDV2czNReRWutNE65ZIrWDv+cRBtYzvARWu
+         u4vS5x9zwhOzjZPKbes5CctU15aXslKxeXAf4oC1ZN9M2QHaO1rssDBD/thHOuyPwxSM
+         tywk2E/CVZY/PmOEDbG1AbED4uogsUHY/tSg9b6NDqfv4E1TPNillnX51BBpfMAfDEzP
+         lDQQ==
+X-Gm-Message-State: AHQUAuZCgyoSwMSWqwCg4u81AzN62keHapvMXAVB0v62iZqoATEjZP3f
+        SytqXQS12IsFuLcYTf9jFlfzst2epFo=
+X-Google-Smtp-Source: AHgI3IbXTcSgjR/UJsVtJR+ryqaUTZcq/H1JX83VsXaSBVa4nscB0d5jKqJLoNksxEWS3YM5iJL2KA==
+X-Received: by 2002:a67:ea02:: with SMTP id g2mr677065vso.205.1550108131732;
+        Wed, 13 Feb 2019 17:35:31 -0800 (PST)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id 2sm134244vsd.13.2019.02.13.17.35.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Feb 2019 17:35:30 -0800 (PST)
+Received: by mail-ua1-f47.google.com with SMTP id j8so1472511uae.13
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 17:35:30 -0800 (PST)
+X-Received: by 2002:ab0:74cb:: with SMTP id f11mr642242uaq.14.1550108129914;
+ Wed, 13 Feb 2019 17:35:29 -0800 (PST)
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+References: <CAN1fySViLgrLAHHfTHMef-Bkh73kUHKP-ava6TbgALeSE4LfFw@mail.gmail.com>
+ <CAFLxGvwpuxKF4UWdsULwQWo7kgVLMNHC=77dN+w-A0a6avrAXA@mail.gmail.com>
+ <CAN1fySXjLUYFw2JGQQ5xxqjX+6kygzqgUc6Oj-sbtq=ZjgfLTA@mail.gmail.com>
+ <CAGXu5jJoqnX54JnHZDVxO4NRCsT6sLH4+-TPk8GqCSVp0mFNLw@mail.gmail.com> <CAN1fySW2mTaHmj7_uon_xZBVgPeEuYCD8e+JGOSKNwokmgZ7yg@mail.gmail.com>
+In-Reply-To: <CAN1fySW2mTaHmj7_uon_xZBVgPeEuYCD8e+JGOSKNwokmgZ7yg@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Wed, 13 Feb 2019 17:35:17 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jKXUhYB9xBLMWTvJiJEVPyRd=RsZTOCSvbNv7i6pEhtmg@mail.gmail.com>
+Message-ID: <CAGXu5jKXUhYB9xBLMWTvJiJEVPyRd=RsZTOCSvbNv7i6pEhtmg@mail.gmail.com>
+Subject: Re: Userspace regression in LTS and stable kernels
+To:     Samuel Dionne-Riel <samuel@dionne-riel.com>
+Cc:     Richard Weinberger <richard.weinberger@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Graham Christensen <graham@grahamc.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Feb 13, 2019 at 5:27 PM Samuel Dionne-Riel
+<samuel@dionne-riel.com> wrote:
+> If I understand right, you're asking whether it should return NOEXEC
+> if, of the first 128 bytes of the shebang, there are no spaces, but a
+> too long shebang? I wouldn't know for sure. The behaviour would
+> change. Instead failing due to trying to execute a shortened path, it
+> would fall back to the shell interpreter interpreting the file, which,
+> due to the inclusion of a specific shebang, might be a wrong
+> assumption still. Here I believe it's still in the "undefined
+> behaviour" territory, but one where it fails early for the userspace.
 
+The original problem that was trying to be fixed here was to disallow
+execution of a truncated interpreter path. It was assumed argument
+truncate was just as bad, but it's not, since the interpreter can (and
+does!) re-read the script to get the right arguments.
 
+So, I've sent a fix-up patch that should disallow the path truncation,
+but pass through the argument truncation as before. This passes all
+the tests I built:
 
-Best Regards,
-liujian
+$ ls -l /AAA*/perl
+-rwxr-xr-x 1 root root 129 Feb 13 17:17
+/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/perl
+-rwxr-xr-x 1 root root 129 Feb 13 17:17
+/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/perl
+-rwxr-xr-x 1 root root 129 Feb 13 17:17
+/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/perl
+-rwxr-xr-x 1 root root 129 Feb 13 17:17
+/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/perl
+-rwxr-xr-x 1 root root 129 Feb 13 17:17
+/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/perl
 
+$ ./test.pl
+Arg # 0 : /nix/store/mbwav8kz8b3y471wjsybgzw84mrh4js9-perl-5.28.1/bin/perl
+Arg # 1 : -I/nix/store/x6yyav38jgr924nkna62q3pkp0dgmzlx-perl5.28.1-Fi
+Arg # 2 : ./test.pl
+$ ./AAAA.pl
+Error: no such file "I should fail to run huge interp\n"
+$ ./A128.pl
+Error: no such file "I should fail to run 128 byte buf interp\n"
+$ ./A127.pl
+Error: no such file "I should fail to run 127 byte buf interp\n"
+$ ./A126.pl
+Arg # 0 : '/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/perl'
+Arg # 1 : './A126.pl'
+$ ./A125space.pl
+Arg # 0 : '/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/perl'
+Arg # 1 : './A125space.pl'
 
-> -----Original Message-----
-> From: Tokunori Ikegami [mailto:ikegami.t@gmail.com]
-> Sent: Friday, February 08, 2019 10:24 PM
-> To: 'Sobon, Przemyslaw' <psobon@amazon.com>; 'Boris Brezillon'
-> <boris.brezillon@collabora.com>
-> Cc: keescook@chromium.org; marek.vasut@gmail.com; richard@nod.at;
-> linux-kernel@vger.kernel.org; joakim.tjernlund@infinera.com;
-> linux-mtd@lists.infradead.org; computersforpeace@gmail.com;
-> dwmw2@infradead.org; liujian (CE) <liujian56@huawei.com>;
-> ikegami_to@yahoo.co.jp
-> Subject: RE: Re: [PATCH] cfi: fix deadloop in cfi_cmdset_0002.c
-> do_write_buffer
-> 
-> Hi Przemek-san,
-> 
-> Thank you so much for your explanation.
-> 
-> > I have seen a case myself where a value was written, chip changed
-> > state to "ready" but when I was reading the value was incorrect.
-> 
-> I also know the similar issues for the both buffer and word write.
-> Both issues were able to reproduce the write error behavior.
->   Note: The word write issue is able to reproduce now also.
-> 
-> Those were resolved by using chip_good() instead to check the state.
-> 
-> > This can happen as result of intermittent issue with flash. It is hard
-> > to fall into scenario when testing on limited number of devices but
-> > with large enough population you can see that.
-> 
-> If possible I would like to know the issue detail and its cause also.
-> 
-> > Another situation
-> > is when a flash chip reaches its maximum number of writes. So for
-> > example a chip is designed for 100k writes to a page. Once you reach
-> > that number of writes you can have invalid data written to flash but
-> > chip itself reports everything was good and switches to "ready" state.
-> 
-> Yes I see.
-> 
-> Regards,
-> Ikegami
-> 
-> > -----Original Message-----
-> > From: linux-mtd [mailto:linux-mtd-bounces@lists.infradead.org] On
-> > Behalf Of Sobon, Przemyslaw
-> > Sent: Friday, February 8, 2019 8:51 AM
-> > To: ikegami_to@yahoo.co.jp; Boris Brezillon
-> > Cc: keescook@chromium.org; marek.vasut@gmail.com;
-> > ikegami@allied-telesis.co.jp; richard@nod.at;
-> > linux-kernel@vger.kernel.org; joakim.tjernlund@infinera.com;
-> > linux-mtd@lists.infradead.org; computersforpeace@gmail.com;
-> > dwmw2@infradead.org; Liu Jian
-> > Subject: RE: Re: [PATCH] cfi: fix deadloop in cfi_cmdset_0002.c
-> > do_write_buffer
-> >
-> > Hi Ikegami,
-> >
-> > I have seen a case myself where a value was written, chip changed
-> > state to "ready" but when I was reading the value was incorrect.
-> > This can happen as result of intermittent issue with flash. It is hard
-> > to fall into scenario when testing on limited number of devices but
-> > with large enough population you can see that. Another situation is
-> > when a flash chip reaches its maximum number of writes. So for example
-> > a chip is designed for 100k writes to a page. Once you reach that
-> > number of writes you can have invalid data written to flash but chip
-> > itself reports everything was good and switches to "ready" state.
-> >
-> > Hope this explanation is clear. Please let me know.
-> >
-> > Regards,
-> > Przemek
-> >
-> > > -----Original Message-----
-> > > From: ikegami_to@yahoo.co.jp <ikegami_to@yahoo.co.jp>
-> > > Sent: Thursday, February 7, 2019 3:00 PM
-> > >
-> > > Hi Przemek-san,
-> > >
-> > > Could you please explain the case detail that the value is written
-> > incorrectly?
-> > > I think that the value is only written correctly except a bug.
-> > >
-> > > Regards,
-> > > Ikegami
-> > >
-> > > --- boris.brezillon@collabora.com wrote --- :
-> > > > Hi Sobon,
-> > > >
-> > > > On Tue, 5 Feb 2019 22:28:44 +0000
-> > > > "Sobon, Przemyslaw" <psobon@amazon.com> wrote:
-> > > >
-> > > > > > From: Boris Brezillon <bbrezillon@kernel.org>
-> > > > > > Sent: Sunday, February 3, 2019 12:35 AM
-> > > > > > > +Przemyslaw
-> > > > > > >
-> > > > > > > On Fri, 1 Feb 2019 07:30:39 +0800 Liu Jian
-> > > > > > > <liujian56@huawei.com> wrote:
-> > > > > > >
-> > > > > > > > In function do_write_buffer(), in the for loop, there is a
-> > > > > > > > case
-> > > > > > > > chip_ready() returns 1 while chip_good() returns 0, so it
-> > > > > > > > never break the loop.
-> > > > > > > > To fix this, chip_good() is enough and it should timeout
-> > > > > > > > if
-> > it
-> > > > > > > > stay bad for a while.
-> > > > > > >
-> > > > > > > Looks like Przemyslaw reported and fixed the same problem.
-> > > > > > >
-> > > > > > > >
-> > > > > > > > Fixes: dfeae1073583(mtd: cfi_cmdset_0002: Change write
-> > > > > > > > buffer to check correct value)
-> > > > > > >
-> > > > > > > Can you put the Fixes tag on a single, and the format is
-> > > > > > >
-> > > > > > > Fixes: <hash> ("message")
-> > > > > > >
-> > > > > > > > Signed-off-by: Yi Huaijie <yihuaijie@huawei.com>
-> > > > > > > > Signed-off-by: Liu Jian <liujian56@huawei.com>
-> > > > > > >
-> > > > > > > [1]http://patchwork.ozlabs.org/patch/1025566/
-> > > > > > >
+Are you able to test the patch and report back?
 
-So, do I need to send a v2 patch? Or use Przemyslaw's new patch http://patchwork.ozlabs.org/patch/1038395/
+Thanks again for bringing this to our attention!
 
-> > > > > > > > ---
-> > > > > > > >  drivers/mtd/chips/cfi_cmdset_0002.c | 6 +++---
-> > > > > > > >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > > > > > > >
-> > > > > > > > diff --git a/drivers/mtd/chips/cfi_cmdset_0002.c
-> > > > > > > > b/drivers/mtd/chips/cfi_cmdset_0002.c
-> > > > > > > > index 72428b6..818e94b 100644
-> > > > > > > > --- a/drivers/mtd/chips/cfi_cmdset_0002.c
-> > > > > > > > +++ b/drivers/mtd/chips/cfi_cmdset_0002.c
-> > > > > > > > @@ -1876,14 +1876,14 @@ static int __xipram
-> > do_write_buffer(struct map_info *map, struct flchip *chip,
-> > > > > > > >              continue;
-> > > > > > > >          }
-> > > > > > > >
-> > > > > > > > -        if (time_after(jiffies, timeo) && !chip_ready(map,
-> > adr))
-> > > > > > > > -            break;
-> > > > > > > > -
-> > > > > > > >          if (chip_good(map, adr, datum)) {
-> > > > > > > >              xip_enable(map, chip, adr);
-> > > > > > > >              goto op_done;
-> > > > > > > >          }
-> > > > > > > >
-> > > > > > > > +        if (time_after(jiffies, timeo))
-> > > > > > > > +            break;
-> > > > > > > > +
-> > > > > > > >          /* Latency issues. Drop the lock, wait a while
-> > > > > > > > and
-> > retry */
-> > > > > > > >          UDELAY(map, chip, adr, 1);
-> > > > > > > >      }
-> > > > > > >
-> > > > > >
-> > > > > > BTW, the patch itself looks good to me. Ikegami, can you
-> > > > > > confirm
-> > it does the right thing?
-> > > > > >
-> > > > > > Thanks,
-> > > > > >
-> > > > > > Boris
-> > > > > >
-> > > > >
-> > > > > One comment to this patch. If value is written incorrectly
-> > > > > quickly we will be stuck in the loop even though nothing is going to
-> change.
-> > > > > For example a value was written incorrectly after 1us, the loop
-> > > > > was set to 1ms, function will return after 1ms, this solution is
-> > > > > not optimized for performance. I considered same when working on
-> > > > > this
-> > change and decided to do it different way.
-> > > >
-> > > > Seems like you're right if we assume that checking for GOOD state
-> > > > does not require a delay after the READY check, but if that's not
-> > > > the case and an extra delay is actually required, you might end up
-> > > > with a BAD status while it could have turned GOOD at some point
-> > > > with the 'check only for GOOD state until we timeout' approach.
-> > > >
-> > > > TBH, I don't know how CFI flashes work, so I'll let you guys sort
-> > > > this out.
-> > > >
-> > > > Regards,
-> > > >
-> > > > Boris
-> > > >
-> > > > ______________________________________________________
-> > > > Linux MTD discussion mailing list
-> > > > http://lists.infradead.org/mailman/listinfo/linux-mtd/
-> > > >
-> > >
-> > >
-> > ______________________________________________________
-> > Linux MTD discussion mailing list
-> > http://lists.infradead.org/mailman/listinfo/linux-mtd/
-
+-- 
+Kees Cook
