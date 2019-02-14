@@ -2,182 +2,156 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B25C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:38:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5740C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:38:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E23702229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:38:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7476B222CC
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:38:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HvWKikLj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405431AbfBNJiV (ORCPT
+        id S2395109AbfBNJiZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 04:38:21 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38129 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387493AbfBNJiU (ORCPT
+        Thu, 14 Feb 2019 04:38:25 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44180 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392466AbfBNJiY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 04:38:20 -0500
-Received: by mail-lj1-f196.google.com with SMTP id j19so3839681ljg.5;
-        Thu, 14 Feb 2019 01:38:18 -0800 (PST)
+        Thu, 14 Feb 2019 04:38:24 -0500
+Received: by mail-wr1-f66.google.com with SMTP id v16so5647832wrn.11
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 01:38:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=kjkynXhQHgQqAMBKbIBJ2Fa5JpTV0s6khppBIggmVK8=;
+        b=HvWKikLjzC6XvOsgplMLQNBTiivtSIbw8CT5a5fbHhn1fLPrDb96Ki4bZT1/VvlgXZ
+         HBGK0eVnZvKS6KRflf/5IDnUODpFhyxdjTckV+1JlueN+//4UTy8QB1gQjtp5Js9Gkv4
+         MmQHhqW1DyyVAa6mb+TslTx1JI75u/o32lcjjHyDeeXApMTGSoXlWvkc+wComROZHp8O
+         /e1J17bsasJS7VNbzNAUx5Qb26rlmpbazbmiYVtFppxvAX9+dyhiLd+mir031QxbxJav
+         5OjA19P3vNJeTDvlIpzmDrLnW++U4NOUZHJDBsx8HE/in/v/lANZaFBTUTlI9efn1+nI
+         4uuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8hEaEVrQitaEiHCPJ7ev/yjepvXCaOjpNx837mbGc7U=;
-        b=YlIP6nGivJh6UwM+McCAXeNuv9br/iNnVMyei3dFwEjlZrKWoDWQA7oqd+t7LDpSFl
-         Bkql/r2XJ9VE1Bgsvry/FtLebZP4t0iSDPkqqkpJQLQacvzaqPi8LjCqvLZLD4+5uDdG
-         ovRntoQrb76zP4RXqBskZlqif4AFwG7RjlYcMXEj/1J/M2VQYfbMEcXLJi6uJ/Ns8AJk
-         tTyHIp+YG0n0In8dJoOGufbfCkl1SYl8fR1F0XTjlIj+qm3Ea36geBgCNoOZVA2aZXco
-         mZGfBHUmGkQ09L8FwT6uVI2oIatqjQnVLAeh5OXM8lcNjDHOz9pIjFggsBGPmDmwL240
-         Uy9Q==
-X-Gm-Message-State: AHQUAubNa17B1BkfKsrBf12iIaXh/LNwk/2yHPxLSJ6KjQkOh8f1sy4r
-        jG0kiT3y1iIm5EDF/zEwzOHMz4Ym
-X-Google-Smtp-Source: AHgI3IZJEH+1q/krk9gzfYP1h2MgyVAi2TfyNEEGa7LKqEZJlZb1Y3HnaMEdc/WuhlFs/2FRxGwnvw==
-X-Received: by 2002:a2e:9897:: with SMTP id b23-v6mr1867805ljj.142.1550137097670;
-        Thu, 14 Feb 2019 01:38:17 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id l27sm371280lfk.6.2019.02.14.01.38.16
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=kjkynXhQHgQqAMBKbIBJ2Fa5JpTV0s6khppBIggmVK8=;
+        b=aWDB5XFP10Dw34dj0e42/O8V+SVnflbUEPVFHiWxKWEiNAX370rBaY46xKPGdRv15q
+         ogtBwvTpYeflI/cLEMoA4lICamAs6OEPEtd0o31m+8L3eTHwr9w2kBJL/xWoBbWHt4Vt
+         orcvukRYfqUoWGTDuuYNi4GWF6ROKHoknVKyhvxnC7Je1mFZ+Li6aIxNIwDUn/18GZuY
+         GsTiUY9CeIhj8R/QeTVu1RVIz97HVmYFpf7tQPkafaHvA98Rus+is/RjFQzu9d/dnhv1
+         W7LWVGmgu071Q9yO9eUZSvlwOyeipEcfsnYtZAfEgGypu60lWJG7XIpXa0JWeu+qkGxC
+         ghlg==
+X-Gm-Message-State: AHQUAuY9jhBFIFUdX8dqSh7OyFi50Ut+tJX3DL4mU/0/tbC6Vy9+ZXw5
+        1ZtAEBo1zhwWZiYhwAoS1tISTA==
+X-Google-Smtp-Source: AHgI3IYXKyL8dd2fvFvv/7aRm3HTfNxQUUM5z4Ed6arYZm91oNC8jNVVMAISUHeuGaNobHQiUqRrNg==
+X-Received: by 2002:adf:f805:: with SMTP id s5mr2031830wrp.234.1550137102033;
+        Thu, 14 Feb 2019 01:38:22 -0800 (PST)
+Received: from dell ([2a01:4c8:c:28c9:4c60:37da:d7a:230])
+        by smtp.gmail.com with ESMTPSA id w23sm1707223wmc.38.2019.02.14.01.38.21
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 01:38:17 -0800 (PST)
-Date:   Thu, 14 Feb 2019 11:38:05 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     matti.vaittinen@fi.rohmeurope.com, mazzisaccount@gmail.com
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, heikki.haikola@fi.rohmeurope.com,
-        mikko.mutanen@fi.rohmeurope.com, Robin Gong <yibin.gong@nxp.com>,
-        Elven Wang <elven.wang@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Angus Ainslie <angus.ainslie@puri.sm>
-Subject: [PATCH v3 2/3] regulator: add
- regulator_desc_list_voltage_linear_range
-Message-ID: <82443305a32c1e4b8a1ae383f5291ff544bcaf45.1550135853.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1550135853.git.matti.vaittinen@fi.rohmeurope.com>
+        Thu, 14 Feb 2019 01:38:21 -0800 (PST)
+Date:   Thu, 14 Feb 2019 09:38:19 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Virendra Kakade <virendra.kakade@ni.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        sre@kernel.org, moritz.fischer@ettus.com
+Subject: Re: [RFC 3/6] power: supply: Ettus Research E31x charger driver
+Message-ID: <20190214093819.GG13737@dell>
+References: <20190212010143.3729-1-virendra.kakade@ni.com>
+ <20190212010143.3729-4-virendra.kakade@ni.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <cover.1550135853.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190212010143.3729-4-virendra.kakade@ni.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add regulator_desc_list_voltage_linear_range which can be used
-by drivers for getting the voltages before regulator is registered.
-This may be useful for drivers which need to fetch the voltage
-selectors at device-tree parsing callback.
+On Mon, 11 Feb 2019, Virendra Kakade wrote:
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Acked-by: Mark Brown <broonie@kernel.org>
----
+> Document bindings for the E31x devices charger.
+> 
+> Signed-off-by: Virendra Kakade <virendra.kakade@ni.com>
+> ---
+>  Documentation/devicetree/bindings/mfd/e31x-pmu.txt |  8 ++++++++
+>  .../bindings/power/supply/e31x-charger.txt         | 14 ++++++++++++++
+>  2 files changed, 22 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/supply/e31x-charger.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/e31x-pmu.txt b/Documentation/devicetree/bindings/mfd/e31x-pmu.txt
+> index ebb5625f6c74..3798886578ba 100644
+> --- a/Documentation/devicetree/bindings/mfd/e31x-pmu.txt
+> +++ b/Documentation/devicetree/bindings/mfd/e31x-pmu.txt
+> @@ -4,11 +4,19 @@ Required properties:
+>  - compatible : Must be "ni,e31x-pmu"
+>  - regmap     : Must be <&regmapnode>
+>  
+> +e31x-pmu has a sub-device called e31x-charger.
+> +
+> +For the e31x-charger properties please refer to:
+> +Documentation/device-tree/bindings/power/supply/e31x-charger.txt
 
-Mark, I converted your:
-"This seems fine." from RFC patch v1 into acked-by. This should
-be unchanged. Please let me know if that's not Ok.
+Use relative path, so:
 
- drivers/regulator/helpers.c      | 39 +++++++++++++++++++++++++++++----------
- include/linux/regulator/driver.h |  6 ++++++
- 2 files changed, 35 insertions(+), 10 deletions(-)
+  ../power/supply/e31x-charger.txt
 
-diff --git a/drivers/regulator/helpers.c b/drivers/regulator/helpers.c
-index 5686a1335bd3..68ac6017ef28 100644
---- a/drivers/regulator/helpers.c
-+++ b/drivers/regulator/helpers.c
-@@ -594,28 +594,30 @@ int regulator_list_voltage_pickable_linear_range(struct regulator_dev *rdev,
- EXPORT_SYMBOL_GPL(regulator_list_voltage_pickable_linear_range);
- 
- /**
-- * regulator_list_voltage_linear_range - List voltages for linear ranges
-+ * regulator_desc_list_voltage_linear_range - List voltages for linear ranges
-  *
-- * @rdev: Regulator device
-+ * @desc: Regulator desc for regulator which volatges are to be listed
-  * @selector: Selector to convert into a voltage
-  *
-  * Regulators with a series of simple linear mappings between voltages
-- * and selectors can set linear_ranges in the regulator descriptor and
-- * then use this function as their list_voltage() operation,
-+ * and selectors who have set linear_ranges in the regulator descriptor
-+ * can use this function prior regulator registration to list voltages.
-+ * This is useful when voltages need to be listed during device-tree
-+ * parsing.
-  */
--int regulator_list_voltage_linear_range(struct regulator_dev *rdev,
--					unsigned int selector)
-+int regulator_desc_list_voltage_linear_range(const struct regulator_desc *desc,
-+					     unsigned int selector)
- {
- 	const struct regulator_linear_range *range;
- 	int i;
- 
--	if (!rdev->desc->n_linear_ranges) {
--		BUG_ON(!rdev->desc->n_linear_ranges);
-+	if (!desc->n_linear_ranges) {
-+		BUG_ON(!desc->n_linear_ranges);
- 		return -EINVAL;
- 	}
- 
--	for (i = 0; i < rdev->desc->n_linear_ranges; i++) {
--		range = &rdev->desc->linear_ranges[i];
-+	for (i = 0; i < desc->n_linear_ranges; i++) {
-+		range = &desc->linear_ranges[i];
- 
- 		if (!(selector >= range->min_sel &&
- 		      selector <= range->max_sel))
-@@ -628,6 +630,23 @@ int regulator_list_voltage_linear_range(struct regulator_dev *rdev,
- 
- 	return -EINVAL;
- }
-+EXPORT_SYMBOL_GPL(regulator_desc_list_voltage_linear_range);
-+
-+/**
-+ * regulator_list_voltage_linear_range - List voltages for linear ranges
-+ *
-+ * @rdev: Regulator device
-+ * @selector: Selector to convert into a voltage
-+ *
-+ * Regulators with a series of simple linear mappings between voltages
-+ * and selectors can set linear_ranges in the regulator descriptor and
-+ * then use this function as their list_voltage() operation,
-+ */
-+int regulator_list_voltage_linear_range(struct regulator_dev *rdev,
-+					unsigned int selector)
-+{
-+	return regulator_desc_list_voltage_linear_range(rdev->desc, selector);
-+}
- EXPORT_SYMBOL_GPL(regulator_list_voltage_linear_range);
- 
- /**
-diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
-index 7f8345bff4e1..05efe2b057c1 100644
---- a/include/linux/regulator/driver.h
-+++ b/include/linux/regulator/driver.h
-@@ -539,4 +539,10 @@ void *regulator_get_init_drvdata(struct regulator_init_data *reg_init_data);
- void regulator_lock(struct regulator_dev *rdev);
- void regulator_unlock(struct regulator_dev *rdev);
- 
-+/*
-+ * Helper functions intended to be used by regulator drivers prior registering
-+ * their regulators.
-+ */
-+int regulator_desc_list_voltage_linear_range(const struct regulator_desc *desc,
-+					     unsigned int selector);
- #endif
--- 
-2.14.3
+>  Example:
+>  
+>  pmu {
+>  	compatible = "ni,e31x-pmu";
+>  	regmap = <&devctrl>;
+>  	status = "okay";
 
+'\n' here.
+
+> +	charger: charger@0{
+> +		compatible = "ni,e31x-charger";
+> +	};
+>  };
+>  
+> diff --git a/Documentation/devicetree/bindings/power/supply/e31x-charger.txt b/Documentation/devicetree/bindings/power/supply/e31x-charger.txt
+> new file mode 100644
+> index 000000000000..ae9fedcbf1b2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/supply/e31x-charger.txt
+> @@ -0,0 +1,14 @@
+> +Ettus Research/National Instruments  E31x Devices Charger
+
+Too many spaces.
+
+> +All E31x devices have to be connected to an external power supply
+> +charger to charge the in-built battery or supply power.
+> +Some capability is provided to monitor this charger.
+
+Why the linefeed here?  Take "Some" up to the previous line.
+
+> +Required properties:
+> +- compatible: Must be "ni,e31x-charger"
+> +
+> +Example:
+> +
+> +charger: charger@0{
+> +	compatible = "ni,e31x-charger";
+> +};
+
+Not sure this really requires documentation.  Seems kinda simple.
+
+I'll leave that up to Rob et al.
 
 -- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
