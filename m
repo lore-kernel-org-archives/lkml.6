@@ -4,111 +4,100 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB290C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:56:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20A5EC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:56:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86C71222A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:56:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1287222C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:56:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="V94OLrF3"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="udO5+wPI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392848AbfBNB43 (ORCPT
+        id S2392953AbfBNB4l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 20:56:29 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:40561 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732533AbfBNB42 (ORCPT
+        Wed, 13 Feb 2019 20:56:41 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:43499 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392852AbfBNB4l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 20:56:28 -0500
-Received: by mail-qk1-f196.google.com with SMTP id y16so2693436qki.7
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 17:56:27 -0800 (PST)
+        Wed, 13 Feb 2019 20:56:41 -0500
+Received: by mail-lj1-f194.google.com with SMTP id z20so2771664ljj.10
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 17:56:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3CGkQT7h8Gsjs+mnP8a/TLO+n94REOr+hRiFIimk1wY=;
-        b=V94OLrF3GzIKHTK8ENOjh+EcyFT4Cs0IHIonz0lHss1imeLhbyKo1NtNqOViFIBhwC
-         MOpANeLX5y8Ef9b8t+RYbyDfM/URfIsoQnduvVSBSx6QZ3lD2zrnnKPWDeFnEEkgNuwE
-         cZPuCFXyIOsbe1ZfXw0wN86i2n6gc8mVCsptN9BQxACkns9DJJ06RqXGqQzGMWEK7jTb
-         7f5chmTyDSEMgu7sK7pVtXuNR5WEZiZhIYw3GKZmiVkBgHlrVIMNQ3x1NU0ny8leJDoU
-         x9BVrPNnwc/siVUYjock6uEXkpe3ZZTHNbybs6FWS/ZHvnDsjLKt1uTXaj+lpZj8HRIg
-         R8Gg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vE7YI1+jpF5FB3wbYkt2nJv6AYL+YBfSQ5+TzTwVsl8=;
+        b=udO5+wPIBTYdeajBV3p4KSC/1FuLKSpWJCvhBUHybjbZb3ocibgFiZ4Joxz2x9Hqw1
+         yptzru6jRDGlhRtSICAV+cKObWDdzc/EOJoCBnFV1QfBarZIKbpQFqjeKnbRkHNqRfry
+         w93BZv5DjX7kZ0aDDMa1njMIpMD0okjODVS9ozP7VTzavUPkDaf4wtUFYsNfhL/aS12V
+         jHoOimqFtP5wc6toyUaiuvs7oillZKsunxW27SXflyYVJqCxc9i/gh3o4r6cqfkVT5dX
+         Pfl2JpEADQGhAMIZb2qYEEhBeJIm3+svBlTKa+IksFvtoL4oFl7mxU0FWKjeJP/AFR/e
+         AeQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3CGkQT7h8Gsjs+mnP8a/TLO+n94REOr+hRiFIimk1wY=;
-        b=jmnb8NxABPv/Ts8v8D6ySNtldPb8LLdCr0VK8cowWWtsrFouO6VND0Bw/zYRREQOXy
-         dwinhKpzQbB4isEuaGiG1uflGZ0SLNpYSsJ1T4pTLIYQRYtISVc3bde1dUC4q+CN4h09
-         o5iGmvib53s3IXdSh57+QHe8htTG6r+iV7wmLp7D5aF/upSAjbR4zbHLbEiK57C3YL6h
-         mGl9pGtLOtnasV3qDeTboG3NVnR27pRfxSh52UqL0iIK3eDkQkneS+b4urYR8GhhyxuM
-         Y332/Y/O2OJlFZFwyNmz6pdI+Gv12YesJqyo5GYKQ201sn67wjFJVQxG0PA4oe3hlKHb
-         lZSA==
-X-Gm-Message-State: AHQUAuZRghoAIv92Kv/RD+9BKbkP4NFsXzkqp4Kd1VlAcWwtGLAXE43V
-        UkvGwuzIutiFb3zD7b8mXFGywg==
-X-Google-Smtp-Source: AHgI3IYCzJNRF4MvwhSX1BX9K5QGZEqqnvfISRM/7ZAiUwGzaHzTtHfFbzqRMWIt/8Zrl/w46VbOXA==
-X-Received: by 2002:a37:b46:: with SMTP id 67mr909438qkl.161.1550109387183;
-        Wed, 13 Feb 2019 17:56:27 -0800 (PST)
-Received: from ovpn-120-150.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id a19sm56287qth.50.2019.02.13.17.56.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Feb 2019 17:56:26 -0800 (PST)
-Subject: Re: [PATCH] kasan, slub: fix more conflicts with
- CONFIG_SLAB_FREELIST_HARDENED
-To:     Andrey Konovalov <andreyknvl@google.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        kasan-dev <kasan-dev@googlegroups.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>
-References: <bf858f26ef32eb7bd24c665755b3aee4bc58d0e4.1550103861.git.andreyknvl@google.com>
- <CAAeHK+z=ft93RNx7rvq1QFr3kiOFVzBVACEFN4fL8nbEVOEXKA@mail.gmail.com>
-From:   Qian Cai <cai@lca.pw>
-Message-ID: <d3cc9a82-d51c-e493-da2e-94903d5330a6@lca.pw>
-Date:   Wed, 13 Feb 2019 20:56:25 -0500
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.3
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vE7YI1+jpF5FB3wbYkt2nJv6AYL+YBfSQ5+TzTwVsl8=;
+        b=qoObjkZyI5idqOvtf2VW7Gd4GuLx63DC0WaP8jI7+RNzliU/uWdIQdARUdx5hlJlFA
+         XkwS534BczZrA/JaLkEtsUJ8e2ejb3RtP6oFIxb5f5AhaZXIp6r1Psfui3Q9pK8GEGGj
+         bfnTSyZwF0MiQf1QAU3G8lfkCXApSPt14zN9ExKZz4//7TSWHTVHKDF37z4qrsqBAkos
+         aWa0N1V8JmB2wMaE143p1r/XRM9IMXI1XJsFXBlt2uHH1Y9T0O/XuyNpr1Xd56VI9847
+         z0iHhRGSA6hgd2m4R7L+iU6zpXYJI5/ZgFqiDIObySGhivssHYTcx4RNdCU+n7OfDTUW
+         FudQ==
+X-Gm-Message-State: AHQUAubtOj0dlA+k6yxE1mFbTrmW5GcfuD4zpmdvr3y1s4eovmvRzJV3
+        rGLcCgSuBtqdpUYiVl1jEZ9VQg4ytd2vGrcfnPKGzg==
+X-Google-Smtp-Source: AHgI3IYknKajOolFCf7n/uhfd3liGBSlNzqLUCIzka1X1PZK1LiUPGgVFObyELcOutHdWysAZsIKXEG6xUxmkmgcwWk=
+X-Received: by 2002:a2e:868c:: with SMTP id l12-v6mr693138lji.90.1550109398924;
+ Wed, 13 Feb 2019 17:56:38 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAAeHK+z=ft93RNx7rvq1QFr3kiOFVzBVACEFN4fL8nbEVOEXKA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <cover.1550060543.git.baolin.wang@linaro.org> <f34970a034946bacda19202e2ce9973ca732c925.1550060544.git.baolin.wang@linaro.org>
+ <CAK8P3a38=4JZvqPi8f8Mpup2P70c+_xsM48-b35BVRYWGeHp9w@mail.gmail.com>
+In-Reply-To: <CAK8P3a38=4JZvqPi8f8Mpup2P70c+_xsM48-b35BVRYWGeHp9w@mail.gmail.com>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Thu, 14 Feb 2019 09:56:26 +0800
+Message-ID: <CAMz4kuJ3-tjXUKk0Hcr3gJLRNmg1REe4NPm3AaXc=Nq21AKzZg@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] arm64: dts: sprd: Remove wildcard compatible string
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Olof Johansson <olof@lixom.net>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Lyra Zhang <zhang.lyra@gmail.com>,
+        DTML <devicetree@vger.kernel.org>, arm-soc <arm@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, 13 Feb 2019 at 22:32, Arnd Bergmann <arnd@arndb.de> wrote:
+>
+> On Wed, Feb 13, 2019 at 1:34 PM Baolin Wang <baolin.wang@linaro.org> wrote:
+> >
+> > Remove wildcard compatible string.
+> >
+> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+>
+>
+> Looks good to me. It does break using the new dtb file on older kernels,
+> but I suppose this is not a case we care much about yet on your
+> platform, given that both the dts file sand the drivers in the
+> kernel are still  work in progress.
+
+Right. Thanks for your reviewing.
+
+>
+> I had started the other reply I just sent before I saw this new mail.
+>
+>     Arnd
 
 
-On 2/13/19 7:27 PM, Andrey Konovalov wrote:
-> On Thu, Feb 14, 2019 at 1:25 AM Andrey Konovalov <andreyknvl@google.com> wrote:
->>
->> When CONFIG_KASAN_SW_TAGS is enabled, ptr_addr might be tagged.
->> Normally, this doesn't cause any issues, as both set_freepointer()
->> and get_freepointer() are called with a pointer with the same tag.
->> However, there are some issues with CONFIG_SLUB_DEBUG code. For
->> example, when __free_slub() iterates over objects in a cache, it
->> passes untagged pointers to check_object(). check_object() in turns
->> calls get_freepointer() with an untagged pointer, which causes the
->> freepointer to be restored incorrectly.
->>
->> Add kasan_reset_tag to freelist_ptr(). Also add a detailed comment.
->>
->> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-> 
-> Reported-by: Qian Cai <cai@lca.pw>
 
-Tested-by: Qian Cai <cai@lca.pw>
+-- 
+Baolin Wang
+Best Regards
