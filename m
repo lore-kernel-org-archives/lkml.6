@@ -2,470 +2,155 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30A8FC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:43:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA0D9C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:47:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7DF721904
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:43:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7F5A21904
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 01:47:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="l5Ns9i+u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391231AbfBNBnp (ORCPT
+        id S2391579AbfBNBrF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 20:43:45 -0500
-Received: from mga11.intel.com ([192.55.52.93]:11444 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390871AbfBNBnp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 20:43:45 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Feb 2019 17:39:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,367,1544515200"; 
-   d="scan'208";a="114766256"
-Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
-  by orsmga007.jf.intel.com with ESMTP; 13 Feb 2019 17:39:38 -0800
-Cc:     baolu.lu@linux.intel.com,
-        "ashok.raj@intel.com" <ashok.raj@intel.com>,
-        "sanjay.k.kumar@intel.com" <sanjay.k.kumar@intel.com>,
-        "jacob.jun.pan@intel.com" <jacob.jun.pan@intel.com>,
-        "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "yi.l.liu@intel.com" <yi.l.liu@intel.com>,
-        "yi.y.sun@intel.com" <yi.y.sun@intel.com>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        "tiwei.bie@intel.com" <tiwei.bie@intel.com>,
-        "xin.zeng@intel.com" <xin.zeng@intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: Re: [PATCH v6 1/9] iommu: Add APIs for multiple domains per device
-To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>
-References: <20190213040301.23021-1-baolu.lu@linux.intel.com>
- <20190213040301.23021-2-baolu.lu@linux.intel.com>
- <1735d302-8fab-68b5-d016-01731546fd36@arm.com>
-From:   Lu Baolu <baolu.lu@linux.intel.com>
-Message-ID: <53660512-df41-6398-0923-47f224a7b0ef@linux.intel.com>
-Date:   Thu, 14 Feb 2019 09:34:45 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Wed, 13 Feb 2019 20:47:05 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:34470 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732989AbfBNBrE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Feb 2019 20:47:04 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1E1iCen164153;
+        Thu, 14 Feb 2019 01:46:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=Mv4loqm46Z/QYiGEHUXmuNKDhUS254UKT2WUxryVk2A=;
+ b=l5Ns9i+utIL6ouIO9ODcBGb2oeY93cHhqOnXNv/2L29/pPR6gQtogJBiAgwh9JhEDnjk
+ wLlOschNbcSVtu+yXoUJxhfVmiT3SZtitv+c1TY9bBFbmXPPifAIQ26UFWXPYn2VeyOA
+ t1sCPrQF35sCdHoaNM0IkQRSGsnGhj+uuzNbBnADT5NFt+6SaiaIhmk8/H2f/SjqB3ux
+ VAtut17mZKE7D1xJYhg4MYAamNzc/xnS19gNPYqcuh4xK/EcbwSrYHfeV3KQxxbpZGcF
+ gHNPfmILcXaqPIqICyTc+1tpU59yPJviu5ZqCH/DVUKgA33dg0idbbLEBXSe7gnGISOW Qg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2qhreknc7d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Feb 2019 01:46:18 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1E1kI9Z027465
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Feb 2019 01:46:18 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1E1kEMH002971;
+        Thu, 14 Feb 2019 01:46:14 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 14 Feb 2019 01:46:14 +0000
+Date:   Wed, 13 Feb 2019 20:46:34 -0500
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>, akpm@linux-foundation.org,
+        dave@stgolabs.net, jack@suse.cz, cl@linux.com, linux-mm@kvack.org,
+        kvm@vger.kernel.org, kvm-ppc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, paulus@ozlabs.org,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, hao.wu@intel.com,
+        atull@kernel.org, mdf@kernel.org, aik@ozlabs.ru,
+        peterz@infradead.org
+Subject: Re: [PATCH 1/5] vfio/type1: use pinned_vm instead of locked_vm to
+ account pinned pages
+Message-ID: <20190214014634.kxjiwzelczlskeo6@ca-dmjordan1.us.oracle.com>
+References: <20190211224437.25267-1-daniel.m.jordan@oracle.com>
+ <20190211224437.25267-2-daniel.m.jordan@oracle.com>
+ <20190211225620.GO24692@ziepe.ca>
+ <20190211231152.qflff6g2asmkb6hr@ca-dmjordan1.us.oracle.com>
+ <20190212114110.17bc8a14@w520.home>
+ <20190213002650.kav7xc4r2xs5f3ef@ca-dmjordan1.us.oracle.com>
+ <20190213130330.76ef1987@w520.home>
 MIME-Version: 1.0
-In-Reply-To: <1735d302-8fab-68b5-d016-01731546fd36@arm.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190213130330.76ef1987@w520.home>
+User-Agent: NeoMutt/20180323-268-5a959c
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9166 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902140011
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jean,
-
-On 2/13/19 7:55 PM, Jean-Philippe Brucker wrote:
-> Hi,
+On Wed, Feb 13, 2019 at 01:03:30PM -0700, Alex Williamson wrote:
+> Daniel Jordan <daniel.m.jordan@oracle.com> wrote:
+> > On Tue, Feb 12, 2019 at 11:41:10AM -0700, Alex Williamson wrote:
+> > > This still makes me nervous because we have userspace dependencies on
+> > > setting process locked memory.  
+> > 
+> > Could you please expand on this?  Trying to get more context.
 > 
-> I have a few boring nits and one question below
+> VFIO is a userspace driver interface and the pinned/locked page
+> accounting we're doing here is trying to prevent a user from exceeding
+> their locked memory limits.  Thus a VM management tool or unprivileged
+> userspace driver needs to have appropriate locked memory limits
+> configured for their use case.  Currently we do not have a unified
+> accounting scheme, so if a page is mlock'd by the user and also mapped
+> through VFIO for DMA, it's accounted twice, these both increment
+> locked_vm and userspace needs to manage that.  If pinned memory
+> and locked memory are now two separate buckets and we're only comparing
+> one of them against the locked memory limit, then it seems we have
+> effectively doubled the user's locked memory for this use case, as
+> Jason questioned.  The user could mlock one page and DMA map another,
+> they're both "locked", but now they only take one slot in each bucket.
 
-Thanks a lot for reviewing my patch.
+Right, yes.  Should have been more specific.  I was after a concrete use case
+where this would happen (sounded like you may have had a specific tool in
+mind).
 
+But it doesn't matter.  I understand your concern and agree that, given the
+possibility that accounting in _some_ tool can be affected, we should fix
+accounting before changing user visible behavior.  I can start a separate
+discussion, having opened the can of worms again :)
+
+> If we continue forward with using a separate bucket here, userspace
+> could infer that accounting is unified and lower the user's locked
+> memory limit, or exploit the gap that their effective limit might
+> actually exceed system memory.  In the former case, if we do eventually
+> correct to compare the total of the combined buckets against the user's
+> locked memory limits, we'll break users that have adapted their locked
+> memory limits to meet the apparent needs.  In the latter case, the
+> inconsistent accounting is potentially an attack vector.
+
+Makes sense.
+
+> > > There's a user visible difference if we
+> > > account for them in the same bucket vs separate.  Perhaps we're
+> > > counting in the wrong bucket now, but if we "fix" that and userspace
+> > > adapts, how do we ever go back to accounting both mlocked and pinned
+> > > memory combined against rlimit?  Thanks,  
+> > 
+> > PeterZ posted an RFC that addresses this point[1].  It kept pinned_vm and
+> > locked_vm accounting separate, but allowed the two to be added safely to be
+> > compared against RLIMIT_MEMLOCK.
 > 
-> On 13/02/2019 04:02, Lu Baolu wrote:
->> Sharing a physical PCI device in a finer-granularity way
->> is becoming a consensus in the industry. IOMMU vendors
->> are also engaging efforts to support such sharing as well
->> as possible. Among the efforts, the capability of support
->> finer-granularity DMA isolation is a common requirement
->> due to the security consideration. With finer-granularity
->> DMA isolation, all DMA requests out of or to a subset of
->> a physical PCI device can be protected by the IOMMU.
+> Unless I'm incorrect in the concerns above, I don't see how we can
+> convert vfio before this occurs.
+>  
+> > Anyway, until some solution is agreed on, are there objections to converting
+> > locked_vm to an atomic, to avoid user-visible changes, instead of switching
+> > locked_vm users to pinned_vm?
 > 
-> That last sentence seems strange, how about "With finer-granularity DMA
-> isolation, subsets of a PCI function can be isolated from each others by
-> the IOMMU."
+> Seems that as long as we have separate buckets that are compared
+> individually to rlimit that we've got problems, it's just a matter of
+> where they're exposed based on which bucket is used for which
+> interface.  Thanks,
 
-Yours looks better. Thanks!
-
-> 
->> As a
->> result, there is a request in software to attach multiple
->> domains to a physical PCI device. One example of such use
->> model is the Intel Scalable IOV [1] [2]. The Intel vt-d
->> 3.0 spec [3] introduces the scalable mode which enables
->> PASID granularity DMA isolation.
->>
->> This adds the APIs to support multiple domains per device.
->> In order to ease the discussions, we call it 'a domain in
->> auxiliary mode' or simply 'auxiliary domain' when multiple
->> domains are attached to a physical device.
->>
->> The APIs include:
->>
->> * iommu_dev_has_feature(dev, IOMMU_DEV_FEAT_AUX)
->>    - Check whether both IOMMU and device support IOMMU aux
->>      domain feature. Below aux-domain specific interfaces
->>      are available only after this returns true.
-> 
-> s/after/if/ since calling has_feature() shouldn't be a prerequisite to
-> using the aux-domain interface (unlike calling enable_feature()).
-
-After reconsideration, I think my comments about this API isn't
-correct. It should be like,
-
-* iommu_dev_has_feature(dev, IOMMU_DEV_FEAT_AUX)
-   - Detect both IOMMU and PCI endpoint devices supporting the feature
-     (aux-domain here) without host driver dependency.
-
-* iommu_dev_feature_enabled(dev, IOMMU_DEV_FEAT_AUX)
-   - Check the enabling status of the feature (aux-domain here). The
-     aux-domain interfaces are available only if this returns true.
-
-> 
->>
->> * iommu_dev_enable/disable_feature(dev, IOMMU_DEV_FEAT_AUX)
->>    - Enable/disable device specific aux-domain feature.
->>
->> * iommu_dev_feature_enabled(dev, IOMMU_DEV_FEAT_AUX)
->>    - Check whether the aux domain specific feature enabled or
->>      not.
-> 
-> "is enabled"
-
-Sure.
-
-> 
->>
->> * iommu_aux_attach_device(domain, dev)
->>    - Attaches @domain to @dev in the auxiliary mode. Multiple
->>      domains could be attached to a single device in the
->>      auxiliary mode with each domain representing an isolated
->>      address space for an assignable subset of the device.
->>
->> * iommu_aux_detach_device(domain, dev)
->>    - Detach @domain which has been attached to @dev in the
->>      auxiliary mode.
->>
->> * iommu_aux_get_pasid(domain, dev)
->>    - Return ID used for finer-granularity DMA translation.
->>      For the Intel Scalable IOV usage model, this will be
->>      a PASID. The device which supports Scalable IOV needs
->>      to write this ID to the device register so that DMA
->>      requests could be tagged with a right PASID prefix.
->>
->> This has been updated with the latest proposal from Joerg
->> posted here [5].
->>
->> Many people involved in discussions of this design.
->>
->> Kevin Tian <kevin.tian@intel.com>
->> Liu Yi L <yi.l.liu@intel.com>
->> Ashok Raj <ashok.raj@intel.com>
->> Sanjay Kumar <sanjay.k.kumar@intel.com>
->> Jacob Pan <jacob.jun.pan@linux.intel.com>
->> Alex Williamson <alex.williamson@redhat.com>
->> Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
->> Joerg Roedel <joro@8bytes.org>
->>
->> and some discussions can be found here [4] [5].
->>
->> [1]
->> https://software.intel.com/en-us/download/intel-scalable-io-virtualization-technical-specification
->> [2] https://schd.ws/hosted_files/lc32018/00/LC3-SIOV-final.pdf
->> [3]
->> https://software.intel.com/en-us/download/intel-virtualization-technology-for-directed-io-architecture-specification
->> [4] https://lkml.org/lkml/2018/7/26/4
->> [5] https://www.spinics.net/lists/iommu/msg31874.html
->>
->> Cc: Ashok Raj <ashok.raj@intel.com>
->> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
->> Cc: Kevin Tian <kevin.tian@intel.com>
->> Cc: Liu Yi L <yi.l.liu@intel.com>
->> Suggested-by: Kevin Tian <kevin.tian@intel.com>
->> Suggested-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
->> Suggested-by: Joerg Roedel <jroedel@suse.de>
->> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
->> ---
->>   drivers/iommu/iommu.c | 91 +++++++++++++++++++++++++++++++++++++++++++
->>   include/linux/iommu.h | 70 +++++++++++++++++++++++++++++++++
->>   2 files changed, 161 insertions(+)
->>
->> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
->> index 3ed4db334341..d0b323e8357f 100644
->> --- a/drivers/iommu/iommu.c
->> +++ b/drivers/iommu/iommu.c
->> @@ -2033,3 +2033,94 @@ int iommu_fwspec_add_ids(struct device *dev, u32
->> *ids, int num_ids)
->>           return 0;
->>   }
->>   EXPORT_SYMBOL_GPL(iommu_fwspec_add_ids);
->> +
->> +/*
->> + * Per device IOMMU features.
->> + */
->> +bool iommu_dev_has_feature(struct device *dev, enum iommu_dev_features
->> feat)
->> +{
->> +       const struct iommu_ops *ops = dev->bus->iommu_ops;
->> +
->> +       if (ops && ops->dev_has_feat)
->> +               return ops->dev_has_feat(dev, feat);
->> +
->> +       return false;
->> +}
->> +EXPORT_SYMBOL_GPL(iommu_dev_has_feature);
->> +
->> +int iommu_dev_enable_feature(struct device *dev, enum
->> iommu_dev_features feat)
->> +{
->> +       const struct iommu_ops *ops = dev->bus->iommu_ops;
->> +
->> +       if (ops && ops->dev_enable_feat)
->> +               return ops->dev_enable_feat(dev, feat);
->> +
->> +       return -ENODEV;
->> +}
->> +EXPORT_SYMBOL_GPL(iommu_dev_enable_feature);
->> +
->> +int iommu_dev_disable_feature(struct device *dev, enum
->> iommu_dev_features feat)
->> +{
->> +       const struct iommu_ops *ops = dev->bus->iommu_ops;
->> +
->> +       if (ops && ops->dev_disable_feat)
->> +               return ops->dev_disable_feat(dev, feat);
->> +
->> +       return -ENODEV;
->> +}
->> +EXPORT_SYMBOL_GPL(iommu_dev_disable_feature);
->> +
->> +bool iommu_dev_feature_enabled(struct device *dev, enum
->> iommu_dev_features feat)
->> +{
->> +       const struct iommu_ops *ops = dev->bus->iommu_ops;
->> +
->> +       if (ops && ops->dev_feat_enabled)
->> +               return ops->dev_feat_enabled(dev, feat);
->> +
->> +       return false;
->> +}
->> +EXPORT_SYMBOL_GPL(iommu_dev_feature_enabled);
->> +
->> +/*
->> + * Aux-domain specific attach/detach.
->> + *
->> + * Only works if iommu_dev_has_feature(dev, IOMMU_DEV_FEAT_AUX) returns
->> true.
-> 
-> Rather "Only works if iommu_dev_feature_enabled(dev, AUX) returns true"?
-
-Yes. I will change this and above.
-
-> 
->> + * Also, as long as domains are attached to a device through this
->> interface,
->> + * any tries to call iommu_attach_device() should fail
->> (iommu_detach_device()
->> + * can't fail, so we fail on the tryint to re-attach). This should make
-> 
-> "when trying to re-attach"
-
-Sure.
-
-> 
->> us safe
->> + * against a device being attached to a guest as a whole while there
->> are still
->> + * pasid users on it (aux and sva).
-> 
-> A related question: is calling iommu_dev_disable_feat(dev, AUX) enough
-> to detach all auxiliary domains? I guess device drivers will always need
-> to tidy contexts up one by one, so maybe iommu_dev_disable_feat(dev,
-> AUX) can return -EBUSY in this case? I think we need to specify this in
-> a comment so device drivers know how to clean up.
-
-Yes, -EBUSY sounds better.
-
-iommu_dev_disable_feat() will not detach all aux-domains, it requires
-the device drivers to do so before calling it. So if it sees anything
-not cleaned up, it should return -EBUSY. And we should put it as a
-comment for this API so that the device drivers know it.
-
-> 
-> Thanks,
-> Jean
-
-Best regards,
-Lu Baolu
-
-> 
->> + */
->> +int iommu_aux_attach_device(struct iommu_domain *domain, struct device
->> *dev)
->> +{
->> +       int ret = -ENODEV;
->> +
->> +       if (domain->ops->aux_attach_dev)
->> +               ret = domain->ops->aux_attach_dev(domain, dev);
->> +
->> +       if (!ret)
->> +               trace_attach_device_to_domain(dev);
->> +
->> +       return ret;
->> +}
->> +EXPORT_SYMBOL_GPL(iommu_aux_attach_device);
->> +
->> +void iommu_aux_detach_device(struct iommu_domain *domain, struct device
->> *dev)
->> +{
->> +       if (domain->ops->aux_detach_dev) {
->> +               domain->ops->aux_detach_dev(domain, dev);
->> +               trace_detach_device_from_domain(dev);
->> +       }
->> +}
->> +EXPORT_SYMBOL_GPL(iommu_aux_detach_device);
->> +
->> +int iommu_aux_get_pasid(struct iommu_domain *domain, struct device *dev)
->> +{
->> +       int ret = -ENODEV;
->> +
->> +       if (domain->ops->aux_get_pasid)
->> +               ret = domain->ops->aux_get_pasid(domain, dev);
->> +
->> +       return ret;
->> +}
->> +EXPORT_SYMBOL_GPL(iommu_aux_get_pasid);
->> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
->> index e90da6b6f3d1..831eb29b35c5 100644
->> --- a/include/linux/iommu.h
->> +++ b/include/linux/iommu.h
->> @@ -156,6 +156,11 @@ struct iommu_resv_region {
->>           enum iommu_resv_type    type;
->>   };
->>   
->> +/* Per device IOMMU features */
->> +enum iommu_dev_features {
->> +       IOMMU_DEV_FEAT_AUX,     /* Aux-domain feature */
->> +};
->> +
->>   #ifdef CONFIG_IOMMU_API
->>   
->>   /**
->> @@ -183,6 +188,11 @@ struct iommu_resv_region {
->>    * @domain_window_enable: Configure and enable a particular window for
->> a domain
->>    * @domain_window_disable: Disable a particular window for a domain
->>    * @of_xlate: add OF master IDs to iommu grouping
->> + * @dev_has/enable/disable_feat: per device entries to check/enable/disable
->> + *                               iommu specific features.
->> + * @dev_feat_enabled: check enabled feature
->> + * @aux_attach/detach_dev: aux-domain specific attach/detach entries.
->> + * @aux_get_pasid: get the pasid given an aux-domain
->>    * @pgsize_bitmap: bitmap of all possible supported page sizes
->>    */
->>   struct iommu_ops {
->> @@ -226,6 +236,17 @@ struct iommu_ops {
->>           int (*of_xlate)(struct device *dev, struct of_phandle_args *args);
->>           bool (*is_attach_deferred)(struct iommu_domain *domain, struct
->> device *dev);
->>   
->> +       /* Per device IOMMU features */
->> +       bool (*dev_has_feat)(struct device *dev, enum iommu_dev_features f);
->> +       bool (*dev_feat_enabled)(struct device *dev, enum
->> iommu_dev_features f);
->> +       int (*dev_enable_feat)(struct device *dev, enum
->> iommu_dev_features f);
->> +       int (*dev_disable_feat)(struct device *dev, enum
->> iommu_dev_features f);
->> +
->> +       /* Aux-domain specific attach/detach entries */
->> +       int (*aux_attach_dev)(struct iommu_domain *domain, struct device
->> *dev);
->> +       void (*aux_detach_dev)(struct iommu_domain *domain, struct
->> device *dev);
->> +       int (*aux_get_pasid)(struct iommu_domain *domain, struct device
->> *dev);
->> +
->>           unsigned long pgsize_bitmap;
->>   };
->>   
->> @@ -412,6 +433,14 @@ static inline void dev_iommu_fwspec_set(struct
->> device *dev,
->>   int iommu_probe_device(struct device *dev);
->>   void iommu_release_device(struct device *dev);
->>   
->> +bool iommu_dev_has_feature(struct device *dev, enum iommu_dev_features f);
->> +int iommu_dev_enable_feature(struct device *dev, enum
->> iommu_dev_features f);
->> +int iommu_dev_disable_feature(struct device *dev, enum
->> iommu_dev_features f);
->> +bool iommu_dev_feature_enabled(struct device *dev, enum
->> iommu_dev_features f);
->> +int iommu_aux_attach_device(struct iommu_domain *domain, struct device
->> *dev);
->> +void iommu_aux_detach_device(struct iommu_domain *domain, struct device
->> *dev);
->> +int iommu_aux_get_pasid(struct iommu_domain *domain, struct device *dev);
->> +
->>   #else /* CONFIG_IOMMU_API */
->>   
->>   struct iommu_ops {};
->> @@ -696,6 +725,47 @@ const struct iommu_ops
->> *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
->>           return NULL;
->>   }
->>   
->> +static inline bool
->> +iommu_dev_has_feature(struct device *dev, enum iommu_dev_features feat)
->> +{
->> +       return false;
->> +}
->> +
->> +static inline bool
->> +iommu_dev_feature_enabled(struct device *dev, enum iommu_dev_features feat)
->> +{
->> +       return false;
->> +}
->> +
->> +static inline int
->> +iommu_dev_enable_feature(struct device *dev, enum iommu_dev_features feat)
->> +{
->> +       return -ENODEV;
->> +}
->> +
->> +static inline int
->> +iommu_dev_disable_feature(struct device *dev, enum iommu_dev_features feat)
->> +{
->> +       return -ENODEV;
->> +}
->> +
->> +static inline int
->> +iommu_aux_attach_device(struct iommu_domain *domain, struct device *dev)
->> +{
->> +       return -ENODEV;
->> +}
->> +
->> +static inline void
->> +iommu_aux_detach_device(struct iommu_domain *domain, struct device *dev)
->> +{
->> +}
->> +
->> +static inline int
->> +iommu_aux_get_pasid(struct iommu_domain *domain, struct device *dev)
->> +{
->> +       return -ENODEV;
->> +}
->> +
->>   #endif /* CONFIG_IOMMU_API */
->>   
->>   #ifdef CONFIG_IOMMU_DEBUGFS
->> -- 
->> 2.17.1
->>
-> 
-> 
+Indeed.  But for now, any concern with simply changing the type of the
+currently used counter to an atomic, to reduce mmap_sem usage?  This is just an
+implementation detail, invisible to userspace.
