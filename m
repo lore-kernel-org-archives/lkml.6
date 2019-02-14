@@ -2,77 +2,143 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC619C4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:33:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0F18C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82EDA222D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:33:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAA6320675
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:34:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406352AbfBNTdv (ORCPT
+        id S2438345AbfBNTeV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 14:33:51 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:40159 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbfBNTdu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 14:33:50 -0500
-Received: by mail-pf1-f194.google.com with SMTP id h1so3588906pfo.7;
-        Thu, 14 Feb 2019 11:33:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=2so8kiOFENLyPAkFgv1ffYpBNdVb7L0+z9Dwof+vfOo=;
-        b=O8xnYIRrQ3tH6qY+rBXYOwOlvd3/pZ/nsvSnU4BuzvV80r6dtiO9bmGZ7+USFPfOVZ
-         osWKc9c5eYUx5jis+WGdVrgw1FcC9wpjm+G1QZqzOYMFYDWMknQLzlqS8Zjt8grwzWku
-         9Sq2KBd9TI4tAOz/pUqDbv98DKf8AnFzspm3SN8MdRGqvVD1pN9Wgs/p5VvFd/PxlSvW
-         1X24j6LqbaJBJHkvOrSyCD93glge/RZElPvvbzE4Kfp5zcPS6470uylad6Sxu9H3vnlF
-         lyN++iV2ZlCiJaNyUaZqdwTAArftzK+5c0PFq11iVPH7eRG49KgCOax1R0xzi6cbE24K
-         0JuQ==
-X-Gm-Message-State: AHQUAuYpgVBVooWMe7irgPangPXEf9bsdJMJKlgsAZnYE+fIUaeAFHOw
-        5E0PS++FMKY5e9yzLBhPQhs=
-X-Google-Smtp-Source: AHgI3IaIbeUWh55fIGeN4DUxMv+KYMjLKJeaaZNr+m/dZ27nIwJ78/AdOJh9ccBkwZqWLEyJYvrh4Q==
-X-Received: by 2002:a63:a:: with SMTP id 10mr1462650pga.121.1550172829716;
-        Thu, 14 Feb 2019 11:33:49 -0800 (PST)
-Received: from ?IPv6:2620:15c:2c1:200:fb9c:664d:d2ad:c9b5? ([2620:15c:2c1:200:fb9c:664d:d2ad:c9b5])
-        by smtp.gmail.com with ESMTPSA id 64sm4371786pff.101.2019.02.14.11.33.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 11:33:48 -0800 (PST)
-Message-ID: <1550172827.93548.5.camel@acm.org>
-Subject: Re: KASAN warning in bt_for_each
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Evan Green <evgreen@google.com>,
-        linux-block <linux-block@vger.kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, Jens Axboe <axboe@kernel.dk>
-Date:   Thu, 14 Feb 2019 11:33:47 -0800
-In-Reply-To: <CAE=gft4_WiL87FtZnVmZok+oXPjK=GUb5tDUPGQFijddrB0Pbg@mail.gmail.com>
-References: <CAE=gft4_WiL87FtZnVmZok+oXPjK=GUb5tDUPGQFijddrB0Pbg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 14 Feb 2019 14:34:21 -0500
+Received: from mga01.intel.com ([192.55.52.88]:42914 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388779AbfBNTeU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 14:34:20 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2019 11:34:03 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,369,1544515200"; 
+   d="scan'208";a="116276999"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga006.jf.intel.com with ESMTP; 14 Feb 2019 11:33:59 -0800
+Date:   Thu, 14 Feb 2019 11:33:53 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Daniel Jordan <daniel.m.jordan@oracle.com>,
+        akpm@linux-foundation.org, dave@stgolabs.net, jack@suse.cz,
+        cl@linux.com, linux-mm@kvack.org, kvm@vger.kernel.org,
+        kvm-ppc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alex.williamson@redhat.com, paulus@ozlabs.org,
+        benh@kernel.crashing.org, mpe@ellerman.id.au, hao.wu@intel.com,
+        atull@kernel.org, mdf@kernel.org, aik@ozlabs.ru
+Subject: Re: [PATCH 0/5] use pinned_vm instead of locked_vm to account pinned
+ pages
+Message-ID: <20190214193352.GA7512@iweiny-DESK2.sc.intel.com>
+References: <20190211224437.25267-1-daniel.m.jordan@oracle.com>
+ <20190211225447.GN24692@ziepe.ca>
+ <20190214015314.GB1151@iweiny-DESK2.sc.intel.com>
+ <20190214060006.GE24692@ziepe.ca>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190214060006.GE24692@ziepe.ca>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-02-14 at 10:04 -0800, Evan Green wrote:
-+AD4 Greetings, block experts+ACE
-+AD4 
-+AD4 I'm trying to track down a KASAN warning I'm seeing in our downstream
-+AD4 4.19 kernel, and I could use a little help. The warning looks like
-+AD4 this:
-+AD4 
-+AD4 +AFs  224.564894+AF0 BUG: KASAN: use-after-free in bt+AF8-for+AF8-each+-0x1ac/0x28c
-+AD4 +AFs  224.571195+AF0 Read of size 8 at addr ffffffc17c621340 by task fio/3851
-+AD4 +AFs  224.577745+AF0
-+AD4 +AFs  224.579320+AF0 CPU: 2 PID: 3851 Comm: fio Tainted: G W 4.19.16 +ACM-398
+On Wed, Feb 13, 2019 at 11:00:06PM -0700, Jason Gunthorpe wrote:
+> On Wed, Feb 13, 2019 at 05:53:14PM -0800, Ira Weiny wrote:
+> > On Mon, Feb 11, 2019 at 03:54:47PM -0700, Jason Gunthorpe wrote:
+> > > On Mon, Feb 11, 2019 at 05:44:32PM -0500, Daniel Jordan wrote:
+> > > 
+> > > > All five of these places, and probably some of Davidlohr's conversions,
+> > > > probably want to be collapsed into a common helper in the core mm for
+> > > > accounting pinned pages.  I tried, and there are several details that
+> > > > likely need discussion, so this can be done as a follow-on.
+> > > 
+> > > I've wondered the same..
+> > 
+> > I'm really thinking this would be a nice way to ensure it gets cleaned up and
+> > does not happen again.
+> > 
+> > Also, by moving it to the core we could better manage any user visible changes.
+> > 
+> > From a high level, pinned is a subset of locked so it seems like we need a 2
+> > sets of helpers.
+> > 
+> > try_increment_locked_vm(...)
+> > decrement_locked_vm(...)
+> > 
+> > try_increment_pinned_vm(...)
+> > decrement_pinned_vm(...)
+> > 
+> > Where try_increment_pinned_vm() also increments locked_vm...  Of course this
+> > may end up reverting the improvement of Davidlohr  Bueso's atomic work...  :-(
+> > 
+> > Furthermore it would seem better (although I don't know if at all possible) if
+> > this were accounted for in core calls which tracked them based on how the pages
+> > are being used so that drivers can't call try_increment_locked_vm() and then
+> > pin the pages...  Thus getting the account wrong vs what actually happened.
+> > 
+> > And then in the end we can go back to locked_vm being the value checked against
+> > RLIMIT_MEMLOCK.
+> 
+> Someone would need to understand the bug that was fixed by splitting
+> them. 
+>
 
-Please have a look at this e-mail thread:
-https://lore.kernel.org/linux-block/1545261885.185366.488.camel+AEA-acm.org/
+My suggestion above assumes that splitting them is required/correct.  To be
+fair I've not dug into if this is true or not, but I trust Christopher.
 
-Bart.
+What I have found is this commit:
+
+bc3e53f682d9 mm: distinguish between mlocked and pinned pages
+
+I think that commit introduced the bug (for IB) which at the time may have been
+"ok" because many users of IB at the time were HPC/MPI users and I don't think
+MPI does a lot of _separate_ mlock operations so the count of locked_vm was
+probably negligible.  Alternatively, the clusters I've worked on in the past
+had compute nodes set with RLIMIT_MEMLOCK to 'unlimited' whilst running MPI
+applications on compute nodes of a cluster...  :-/
+
+I think what Christopher did was probably ok for the internal tracking but we
+_should_ have had something which summed the 2 for RLIMIT_MEMLOCK checking at
+that time to be 100% correct?  Christopher do you remember why you did not do
+that?
+
+[1] http://lkml.kernel.org/r/20130524140114.GK23650@twins.programming.kicks-ass.net
+
+> 
+> I think it had to do with double accounting pinned and mlocked pages
+> and thus delivering a lower than expected limit to userspace.
+> 
+> vfio has this bug, RDMA does not. RDMA has a bug where it can
+> overallocate locked memory, vfio doesn't.
+
+Wouldn't vfio also be able to overallocate if the user had RDMA pinned pages?
+
+I think the problem is that if the user calls mlock on a large range then both
+vfio and RDMA could potentially overallocate even with this fix.  This was your
+initial email to Daniel, I think...  And Alex's concern.
+
+> 
+> Really unclear how to fix this. The pinned/locked split with two
+> buckets may be the right way.
+
+Are you suggesting that we have 2 user limits?
+
+Ira
+
+> 
+> Jason
