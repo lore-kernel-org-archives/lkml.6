@@ -6,59 +6,63 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06470C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01F78C10F04
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B944D21B1C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:05:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B15B121B1C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 22:05:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406306AbfBNWFW (ORCPT
+        id S2404925AbfBNWFT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 17:05:22 -0500
-Received: from mout.kundenserver.de ([217.72.192.73]:58777 "EHLO
+        Thu, 14 Feb 2019 17:05:19 -0500
+Received: from mout.kundenserver.de ([217.72.192.73]:50323 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388829AbfBNWFS (ORCPT
+        with ESMTP id S1726307AbfBNWFR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 17:05:18 -0500
+        Thu, 14 Feb 2019 17:05:17 -0500
 Received: from orion.localdomain ([77.2.75.124]) by mrelayeu.kundenserver.de
  (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MuUrM-1hCLUC2kCo-00rZfQ; Thu, 14 Feb 2019 23:05:10 +0100
+ 1MzQXu-1hGDMk1bHc-00vPQM; Thu, 14 Feb 2019 23:05:10 +0100
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-gpio@vger.kernel.org, linus.walleij@linaro.org,
         bgolaszewski@baylibre.com, andy@infradead.org,
         platform-driver-x86@vger.kernel.org
-Subject: [PATCH v3 2/2] x86: pcengines apuv2 gpio/leds/keys platform driver
-Date:   Thu, 14 Feb 2019 23:04:57 +0100
-Message-Id: <1550181897-2596-3-git-send-email-info@metux.net>
+Subject: [PATCH v3 1/2] gpio: AMD G-Series PCH gpio driver
+Date:   Thu, 14 Feb 2019 23:04:56 +0100
+Message-Id: <1550181897-2596-2-git-send-email-info@metux.net>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1550181897-2596-1-git-send-email-info@metux.net>
 References: <1550091448-28578-1-git-send-email-info@metux.net>
  <1550181897-2596-1-git-send-email-info@metux.net>
-X-Provags-ID: V03:K1:BUEoMG+S8FgSPfPC/M8LX9r6D2NC4ysqCZqPFzTfvlGqn2sBNfx
- SscWmd/AFKpwVtio5VeFsaaGXrSxeG3z+BC+T0GXvKncGlDTuninSNg/Rs57xzbDwg5O/zy
- mp8ChoKTSEu3s31nI2mFqeXa19J8zG2H5eh5nDXwo0TcoLOxSFsVgBDnTYzIPNmJunr9Ori
- cK/Oq9m6FeDWmv3ypqCrg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:wWjIaPYpngM=:8xhcyu/a09xmV2DBnHriOY
- 9896LOXUqrWp/9x1BhtZLM4DjTdUgDFbaRp+5HVgb+FDpQRufpYVWn0DXn9e1WU67uez5Ho0F
- tax0glA+nYRdB7xn9AEkJ50EYssBocDrSK2EhIJU2uWydtjnD0n+1gxZeXnfMMHIFZbtauOs3
- gA9VK0y87WFSpLKxlHRn+bfDDqJ6wllyAjOsBQg25vSMwsp3oWp20jxqSh0Xa2mu2sps638vf
- 6xq1q2jvLOWkR04+exNie5JVCxezqQscTMyhv8BLg/4Nrev3AvmLIUKwqd2QvQi0FCB1x9nHH
- osm5UHehILRvk0+0bAwHuNk8LThC8h64ev6twM1z8q6dkMsqx3zNQDqbQX0Z/ai/EJwvf5Obm
- 4hNI8RhLXaZpKyaj4b1RhJxtD5O1LpBcoYhu1z49qlBgIOVErJ+GobUrHrQaP7NYGN6vEXSQy
- Qd/BpIiVhg7I4Rg9VDdrBSMQDBDYxSz3pqy1SkMAQBYCLHVxoYMHfjrLqd7M6256ilGWOlWzy
- iM9vrSwLvDy+0inbOtr+YQyPsTX6o6yTvlUI0LMI4kmUWUMThToo/2prvpiy0VNpA/kqsc0IW
- eDQH6FB838uLRIYTbnfGMy1odD/tDcCMSlJNBHxm2Y02X+51FAezswBj0nAWepxzYS+g81scl
- skDDWtBfVM34eZN+gLc+Mr0+h9eyJOC9UTPtV6x9SW/H6urHXF7n7ZpdjG54aJ6xOfZWNAeVk
- hR6vlgBe0CzuK37kQZx2Dd+TY1slNQ8v6vYV7Q==
+X-Provags-ID: V03:K1:+hexGdvcoQjGUDRnhwynaxMdLrPi/Pbl3p8aP4f5zPxsMR5C3ev
+ 70Lzc65hjyOKlhaGAEpOwdH7EZ74N9GzUP1KuB41rWQ7EEoQYxjGoj8SBdhtnuUq5sJTia7
+ EHWgcv3FZMI4J7ZF/fQaVhG3OMXUh/wdy/EEVh/q+O8Jpq699RULUlkgLw6KbwTe3FvQ+JU
+ egPo6sbVHcxLuRn/WxiXw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:yHWMtA0CYgg=:ijujEhqFPy4RfXSz2dxNVT
+ 5qjFfmF51KHJW7gY1XqKVSuUf1QjMDapfU9nVsUkBt7VYZ9xUCiqJ9uTwxTMp3BHJN04nkkCK
+ IK3k8sFSrQJmN9HD5W2dbgo9OnwfYtT4LtGkwsm244sLHY2FMv6kqWEFrWAIj/Xcg6lqXVIjn
+ Z2AQSQz8AgW1iGRcaNtw3A3Gs63437Llbu9x5yQYijISJxdckOiRq1Wv1NiTDg0IEL/fIbM7y
+ Myod0PaAy69IlYF7QKdaevljQYyXusziWmHNjFOr2fnQ2nACivE6xEipyTq5Ies0BO4dTF1RK
+ O++Ga4kLudqv03mDK3G4gTnckEE1HsZS5gnOcKFkGuGTVYdxxVPSkXceqdF6TrJRwWOnn6fH2
+ EvndUps9p1lFXyWFzrdPzESLdRRqgqbgvW2BHCDz2wEwHUM2LI3UdDNFDH+RrWezauNtmFQpF
+ tKht+V8hUbdWYQfIbWLV0013ETbazvptXkwtliFI+B+wbPrEI91NhTTo8mwi0OQJp+0tpXKUd
+ tPX0ScxEpgARjNce7wIiLHdTqmVeTRp/w7DvQZg6Nf40gAW5KpzURILtYgfeioXMfcDeQ0ofc
+ Q0ledcHxoOriRuhGWwnhmW1SkWxeKpFTcMuaWgKDe4KY5a+HNihWGjPiLBYt4mglzHLQWHzRj
+ QFgid5CoRkoO1Q2T+pY65Rjp+4ojIzlM4Qz31tZNjPrQQrvLfj/LGGDYXOLlGKTSGN2XFFD0V
+ kP0XK41ef4XI3RuGtDZKau4bLGzpqPSAA2gTtg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Driver for PCengines APUv2 board's front LEDs and Button,
-which are attached to AMD PCH GPIOs. Due to lack of dedicated
-ACPI entry, detecting the board via DMI.
+GPIO platform driver for the AMD G-series PCH (eg. on GX-412TC)
+
+This driver doesn't registers itself automatically, as it needs to
+be provided with platform specific configuration, provided by some
+board driver setup code.
+
+Didn't implement oftree probing yet, as it's rarely found on x86.
 
 Cc: linux-gpio@vger.kernel.org
 Cc: linus.walleij@linaro.org
@@ -69,328 +73,306 @@ Cc: platform-driver-x86@vger.kernel.org
 
 Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- MAINTAINERS                            |   5 +
- drivers/platform/x86/Kconfig           |  12 ++
- drivers/platform/x86/Makefile          |   1 +
- drivers/platform/x86/pcengines-apuv2.c | 261 +++++++++++++++++++++++++++++++++
- 4 files changed, 279 insertions(+)
- create mode 100644 drivers/platform/x86/pcengines-apuv2.c
+ MAINTAINERS                                     |   7 +
+ drivers/gpio/Kconfig                            |  10 ++
+ drivers/gpio/Makefile                           |   1 +
+ drivers/gpio/gpio-amd-fch.c                     | 182 ++++++++++++++++++++++++
+ include/linux/platform_data/gpio/gpio-amd-fch.h |  46 ++++++
+ 5 files changed, 246 insertions(+)
+ create mode 100644 drivers/gpio/gpio-amd-fch.c
+ create mode 100644 include/linux/platform_data/gpio/gpio-amd-fch.h
 
 diff --git a/MAINTAINERS b/MAINTAINERS
-index d286e7d..d39e029 100644
+index 41ce5f4..d286e7d 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -11522,6 +11522,11 @@ F:	lib/parman.c
- F:	lib/test_parman.c
- F:	include/linux/parman.h
+@@ -766,6 +766,13 @@ S:	Supported
+ F:	Documentation/hwmon/fam15h_power
+ F:	drivers/hwmon/fam15h_power.c
  
-+PC ENGINES APU BOARD DRIVER
++AMD FCH GPIO DRIVER
 +M:	Enrico Weigelt, metux IT consult <info@metux.net>
++L:	linux-gpio@vger.kernel.org
 +S:	Maintained
-+F:	drivers/platform/x86/pcengines-apuv2.c
++F:	drivers/gpio/gpio-amd-fch.c
++F:	include/linux/platform_data/gpio/gpio-amd-fch.h
 +
- PC87360 HARDWARE MONITORING DRIVER
- M:	Jim Cromie <jim.cromie@gmail.com>
- L:	linux-hwmon@vger.kernel.org
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index b5e9db8..851ea92 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -1303,6 +1303,18 @@ config HUAWEI_WMI
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called huawei-wmi.
+ AMD GEODE CS5536 USB DEVICE CONTROLLER DRIVER
+ L:	linux-geode@lists.infradead.org (moderated for non-subscribers)
+ S:	Orphan
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index b5a2845..a3e47c8 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -654,6 +654,16 @@ config GPIO_LOONGSON1
+ 	help
+ 	  Say Y or M here to support GPIO on Loongson1 SoCs.
  
-+config PCENGINES_APU2
-+	tristate "PC Engines APUv2/3 front button and LEDs driver"
-+	select GPIO_AMD_FCH
-+	select KEYBOARD_GPIO_POLLED
-+	select LEDS_GPIO
++config GPIO_AMD_FCH
++	tristate "GPIO support for AMD Fusion Controller Hub (G-series SOCs)"
++	select GPIO_GENERIC
 +	help
-+	  This driver provides support for the front button and LEDs on
-+	  PC Engines APUv2/APUv3 board.
++	  This option enables driver for GPIO on AMDs Fusion Controller Hub,
++	  as found on G-series SOCs (eg. GX-412TC)
 +
-+	  To compile this driver as a module, choose M here: the module
-+	  will be called pcengines-apuv2.
-+
- endif # X86_PLATFORM_DEVICES
++	  Note: This driver doesn't registers itself automatically, as it
++	  needs to be provided with platform specific configuration.
++	  (See eg. CONFIG_PCENGINES_APU2.)
+ endmenu
  
- config PMC_ATOM
-diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-index ce8da26..86cb766 100644
---- a/drivers/platform/x86/Makefile
-+++ b/drivers/platform/x86/Makefile
-@@ -96,3 +96,4 @@ obj-$(CONFIG_INTEL_TURBO_MAX_3) += intel_turbo_max_3.o
- obj-$(CONFIG_INTEL_CHTDC_TI_PWRBTN)	+= intel_chtdc_ti_pwrbtn.o
- obj-$(CONFIG_I2C_MULTI_INSTANTIATE)	+= i2c-multi-instantiate.o
- obj-$(CONFIG_INTEL_ATOMISP2_PM)	+= intel_atomisp2_pm.o
-+obj-$(CONFIG_PCENGINES_APU2)	+= pcengines-apuv2.o
-diff --git a/drivers/platform/x86/pcengines-apuv2.c b/drivers/platform/x86/pcengines-apuv2.c
+ menu "Port-mapped I/O GPIO drivers"
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 37628f8..bb48fd2 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -27,6 +27,7 @@ obj-$(CONFIG_GPIO_ADP5520)	+= gpio-adp5520.o
+ obj-$(CONFIG_GPIO_ADP5588)	+= gpio-adp5588.o
+ obj-$(CONFIG_GPIO_ALTERA)  	+= gpio-altera.o
+ obj-$(CONFIG_GPIO_ALTERA_A10SR)	+= gpio-altera-a10sr.o
++obj-$(CONFIG_GPIO_AMD_FCH)	+= gpio-amd-fch.o
+ obj-$(CONFIG_GPIO_AMD8111)	+= gpio-amd8111.o
+ obj-$(CONFIG_GPIO_AMDPT)	+= gpio-amdpt.o
+ obj-$(CONFIG_GPIO_ARIZONA)	+= gpio-arizona.o
+diff --git a/drivers/gpio/gpio-amd-fch.c b/drivers/gpio/gpio-amd-fch.c
 new file mode 100644
-index 0000000..dcb084f
+index 0000000..1bf3c7b
 --- /dev/null
-+++ b/drivers/platform/x86/pcengines-apuv2.c
-@@ -0,0 +1,261 @@
++++ b/drivers/gpio/gpio-amd-fch.c
+@@ -0,0 +1,182 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +
 +/*
-+ * PC-Engines APUv2/APUv3 board platform driver
-+ * for gpio buttons and LEDs
++ * GPIO driver for the AMD G series FCH (eg. GX-412TC)
 + *
 + * Copyright (C) 2018 metux IT consult
-+ * Author: Enrico Weigelt <info@metux.net>
++ * Author: Enrico Weigelt, metux IT consult <info@metux.net>
++ *
 + */
 +
-+#define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
-+
-+#include <linux/dmi.h>
 +#include <linux/err.h>
++#include <linux/io.h>
 +#include <linux/kernel.h>
-+#include <linux/leds.h>
 +#include <linux/module.h>
 +#include <linux/platform_device.h>
-+#include <linux/gpio_keys.h>
-+#include <linux/gpio/machine.h>
-+#include <linux/input.h>
++#include <linux/gpio/driver.h>
 +#include <linux/platform_data/gpio/gpio-amd-fch.h>
 +
-+/*
-+ * NOTE: this driver only supports APUv2/3 - not APUv1, as this one
-+ * has completely different register layouts
-+ */
++#define AMD_FCH_MMIO_BASE		0xFED80000
++#define AMD_FCH_GPIO_BANK0_BASE		0x1500
++#define AMD_FCH_GPIO_SIZE		0x0300
 +
-+/* register mappings */
-+#define APU2_GPIO_REG_LED1		AMD_FCH_GPIO_REG_GPIO57
-+#define APU2_GPIO_REG_LED2		AMD_FCH_GPIO_REG_GPIO58
-+#define APU2_GPIO_REG_LED3		AMD_FCH_GPIO_REG_GPIO59_DEVSLP1
-+#define APU2_GPIO_REG_MODESW		AMD_FCH_GPIO_REG_GPIO32_GE1
-+#define APU2_GPIO_REG_SIMSWAP		AMD_FCH_GPIO_REG_GPIO33_GE2
++#define AMD_FCH_GPIO_FLAG_DIRECTION	BIT(23)
++#define AMD_FCH_GPIO_FLAG_WRITE		BIT(22)
++#define AMD_FCH_GPIO_FLAG_READ		BIT(16)
 +
-+/* order in which the gpio lines are defined in the register list */
-+#define APU2_GPIO_LINE_LED1		0
-+#define APU2_GPIO_LINE_LED2		1
-+#define APU2_GPIO_LINE_LED3		2
-+#define APU2_GPIO_LINE_MODESW		3
-+#define APU2_GPIO_LINE_SIMSWAP		4
++static const struct resource amd_fch_gpio_iores =
++	DEFINE_RES_MEM_NAMED(
++		AMD_FCH_MMIO_BASE + AMD_FCH_GPIO_BANK0_BASE,
++		AMD_FCH_GPIO_SIZE,
++		"amd-fch-gpio-iomem");
 +
-+/* gpio device */
-+
-+static int apu2_gpio_regs[] = {
-+	[APU2_GPIO_LINE_LED1]		= APU2_GPIO_REG_LED1,
-+	[APU2_GPIO_LINE_LED2]		= APU2_GPIO_REG_LED2,
-+	[APU2_GPIO_LINE_LED3]		= APU2_GPIO_REG_LED3,
-+	[APU2_GPIO_LINE_MODESW]		= APU2_GPIO_REG_MODESW,
-+	[APU2_GPIO_LINE_SIMSWAP]	= APU2_GPIO_REG_SIMSWAP,
++struct amd_fch_gpio_priv {
++	struct platform_device		*pdev;
++	struct gpio_chip		gc;
++	void __iomem			*base;
++	struct amd_fch_gpio_pdata	*pdata;
 +};
 +
-+static const char * const apu2_gpio_names[] = {
-+	[APU2_GPIO_LINE_LED1]		= "front-led1",
-+	[APU2_GPIO_LINE_LED2]		= "front-led2",
-+	[APU2_GPIO_LINE_LED3]		= "front-led3",
-+	[APU2_GPIO_LINE_MODESW]		= "front-button",
-+	[APU2_GPIO_LINE_SIMSWAP]	= "simswap",
-+};
-+
-+static const struct amd_fch_gpio_pdata board_apu2 = {
-+	.gpio_num	= ARRAY_SIZE(apu2_gpio_regs),
-+	.gpio_reg	= apu2_gpio_regs,
-+	.gpio_names	= apu2_gpio_names,
-+};
-+
-+/* gpio leds device */
-+
-+static const struct gpio_led apu2_leds[] = {
-+	{ .name = "apu:green:1" },
-+	{ .name = "apu:green:2" },
-+	{ .name = "apu:green:3" }
-+};
-+
-+static const struct gpio_led_platform_data apu2_leds_pdata = {
-+	.num_leds	= ARRAY_SIZE(apu2_leds),
-+	.leds		= apu2_leds,
-+};
-+
-+struct gpiod_lookup_table gpios_led_table = {
-+	.dev_id = "leds-gpio",
-+	.table = {
-+		GPIO_LOOKUP_IDX(AMD_FCH_GPIO_DRIVER_NAME, APU2_GPIO_LINE_LED1,
-+				NULL, 0, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX(AMD_FCH_GPIO_DRIVER_NAME, APU2_GPIO_LINE_LED2,
-+				NULL, 1, GPIO_ACTIVE_LOW),
-+		GPIO_LOOKUP_IDX(AMD_FCH_GPIO_DRIVER_NAME, APU2_GPIO_LINE_LED3,
-+				NULL, 2, GPIO_ACTIVE_LOW),
-+	}
-+};
-+
-+/* gpio keyboard device */
-+
-+static struct gpio_keys_button apu2_keys_buttons[] = {
-+	{
-+		.code			= KEY_SETUP,
-+		.active_low		= 1,
-+		.desc			= "front button",
-+		.type			= EV_KEY,
-+		.debounce_interval	= 10,
-+		.value			= 1,
-+	},
-+};
-+
-+static const struct gpio_keys_platform_data apu2_keys_pdata = {
-+	.buttons	= apu2_keys_buttons,
-+	.nbuttons	= ARRAY_SIZE(apu2_keys_buttons),
-+	.poll_interval	= 100,
-+	.rep		= 0,
-+	.name		= "apu2-keys",
-+};
-+
-+struct gpiod_lookup_table gpios_key_table = {
-+	.dev_id = "gpio-keys-polled",
-+	.table = {
-+		GPIO_LOOKUP_IDX(AMD_FCH_GPIO_DRIVER_NAME, APU2_GPIO_LINE_MODESW,
-+				NULL, 0, GPIO_ACTIVE_LOW),
-+	}
-+};
-+
-+/* board setup */
-+
-+/* note: matching works on string prefix, so "apu2" must come before "apu" */
-+static const struct dmi_system_id apu_gpio_dmi_table[] __initconst = {
-+
-+	/* APU2 w/ legacy bios < 4.0.8 */
-+	{
-+		.ident		= "apu2",
-+		.matches	= {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "APU2")
-+		},
-+		.driver_data	= (void *)&board_apu2,
-+	},
-+	/* APU2 w/ legacy bios >= 4.0.8 */
-+	{
-+		.ident		= "apu2",
-+		.matches	= {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "apu2")
-+		},
-+		.driver_data	= (void *)&board_apu2,
-+	},
-+	/* APU2 w/ maainline bios */
-+	{
-+		.ident		= "apu2",
-+		.matches	= {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu2")
-+		},
-+		.driver_data	= (void *)&board_apu2,
-+	},
-+
-+	/* APU3 w/ legacy bios < 4.0.8 */
-+	{
-+		.ident		= "apu3",
-+		.matches	= {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "APU3")
-+		},
-+		.driver_data = (void *)&board_apu2,
-+	},
-+	/* APU3 w/ legacy bios >= 4.0.8 */
-+	{
-+		.ident       = "apu3",
-+		.matches     = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "apu3")
-+		},
-+		.driver_data = (void *)&board_apu2,
-+	},
-+	/* APU3 w/ mainline bios */
-+	{
-+		.ident       = "apu3",
-+		.matches     = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu3")
-+		},
-+		.driver_data = (void *)&board_apu2,
-+	},
-+	{}
-+};
-+
-+static struct platform_device *apu_gpio_pdev;
-+static struct platform_device *apu_leds_pdev;
-+static struct platform_device *apu_keys_pdev;
-+
-+static struct platform_device * __init apu_create_pdev(
-+	const char *name,
-+	const void *pdata,
-+	size_t sz)
++static void *amd_fch_gpio_addr(struct amd_fch_gpio_priv *priv,
++			       unsigned int gpio)
 +{
-+	struct platform_device *pdev;
-+
-+	pdev = platform_device_register_resndata(NULL,
-+		name,
-+		PLATFORM_DEVID_NONE,
-+		NULL,
-+		0,
-+		pdata,
-+		sz);
-+
-+	if (IS_ERR(pdev))
-+		pr_err("failed registering %s: %ld\n", name, PTR_ERR(pdev));
-+
-+	return pdev;
++	return priv->base + priv->pdata->gpio_reg[gpio]*sizeof(u32);
 +}
 +
-+static int __init apu_board_init(void)
++static int amd_fch_gpio_direction_input(struct gpio_chip *gc,
++					unsigned int offset)
 +{
-+	int rc;
-+	const struct dmi_system_id *id;
++	unsigned long flags;
++	struct amd_fch_gpio_priv *priv = gpiochip_get_data(gc);
++	void *ptr = amd_fch_gpio_addr(priv, offset);
 +
-+	id = dmi_first_match(apu_gpio_dmi_table);
-+	if (!id) {
-+		pr_err("failed to detect apu board via dmi\n");
-+		return -ENODEV;
-+	}
-+
-+	gpiod_add_lookup_table(&gpios_led_table);
-+	gpiod_add_lookup_table(&gpios_key_table);
-+
-+	apu_gpio_pdev = apu_create_pdev(
-+		AMD_FCH_GPIO_DRIVER_NAME,
-+		id->driver_data,
-+		sizeof(struct amd_fch_gpio_pdata));
-+
-+	apu_leds_pdev = apu_create_pdev(
-+		"leds-gpio",
-+		&apu2_leds_pdata,
-+		sizeof(apu2_leds_pdata));
-+
-+	apu_keys_pdev = apu_create_pdev(
-+		"gpio-keys-polled",
-+		&apu2_keys_pdata,
-+		sizeof(apu2_keys_pdata));
++	spin_lock_irqsave(&priv->gc.bgpio_lock, flags);
++	writel_relaxed(readl_relaxed(ptr) & ~AMD_FCH_GPIO_FLAG_DIRECTION, ptr);
++	spin_unlock_irqrestore(&priv->gc.bgpio_lock, flags);
 +
 +	return 0;
 +}
 +
-+static void __exit apu_board_exit(void)
++static int amd_fch_gpio_direction_output(struct gpio_chip *gc,
++					 unsigned int gpio, int value)
 +{
-+	gpiod_remove_lookup_table(&gpios_led_table);
-+	gpiod_remove_lookup_table(&gpios_key_table);
++	unsigned long flags;
++	struct amd_fch_gpio_priv *priv = gpiochip_get_data(gc);
++	void *ptr = amd_fch_gpio_addr(priv, gpio);
 +
-+	platform_device_unregister(apu_keys_pdev);
-+	platform_device_unregister(apu_leds_pdev);
-+	platform_device_unregister(apu_gpio_pdev);
++	spin_lock_irqsave(&priv->gc.bgpio_lock, flags);
++	writel_relaxed(readl_relaxed(ptr) | AMD_FCH_GPIO_FLAG_DIRECTION, ptr);
++	spin_unlock_irqrestore(&priv->gc.bgpio_lock, flags);
++
++	return 0;
 +}
 +
-+module_init(apu_board_init);
-+module_exit(apu_board_exit);
++static int amd_fch_gpio_get_direction(struct gpio_chip *gc, unsigned int gpio)
++{
++	int ret;
++	unsigned long flags;
++	struct amd_fch_gpio_priv *priv = gpiochip_get_data(gc);
++	void *ptr = amd_fch_gpio_addr(priv, gpio);
++
++	spin_lock_irqsave(&priv->gc.bgpio_lock, flags);
++	ret = (readl_relaxed(ptr) & AMD_FCH_GPIO_FLAG_DIRECTION);
++	spin_unlock_irqrestore(&priv->gc.bgpio_lock, flags);
++
++	return ret;
++}
++
++static void amd_fch_gpio_set(struct gpio_chip *gc,
++			     unsigned int gpio, int value)
++{
++	unsigned long flags;
++	struct amd_fch_gpio_priv *priv = gpiochip_get_data(gc);
++	void *ptr = amd_fch_gpio_addr(priv, gpio);
++	u32 mask;
++
++	spin_lock_irqsave(&priv->gc.bgpio_lock, flags);
++
++	mask = readl_relaxed(ptr);
++	if (value)
++		mask |= AMD_FCH_GPIO_FLAG_WRITE;
++	else
++		mask &= ~AMD_FCH_GPIO_FLAG_WRITE;
++	writel_relaxed(mask, ptr);
++
++	spin_unlock_irqrestore(&priv->gc.bgpio_lock, flags);
++}
++
++static int amd_fch_gpio_get(struct gpio_chip *gc,
++			    unsigned int offset)
++{
++	unsigned long flags;
++	int ret;
++	struct amd_fch_gpio_priv *priv = gpiochip_get_data(gc);
++	void *ptr = amd_fch_gpio_addr(priv, offset);
++
++	spin_lock_irqsave(&priv->gc.bgpio_lock, flags);
++	ret = (readl_relaxed(ptr) & AMD_FCH_GPIO_FLAG_READ);
++	spin_unlock_irqrestore(&priv->gc.bgpio_lock, flags);
++
++	return ret;
++}
++
++static int amd_fch_gpio_request(struct gpio_chip *chip,
++				unsigned int gpio_pin)
++{
++	return 0;
++}
++
++static int amd_fch_gpio_probe(struct platform_device *pdev)
++{
++	struct amd_fch_gpio_priv *priv;
++	struct amd_fch_gpio_pdata *pdata;
++
++	pdata = dev_get_platdata(&pdev->dev);
++	if (!pdata) {
++		dev_err(&pdev->dev, "no platform_data\n");
++		return -ENOENT;
++	}
++
++	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->pdata	= pdata;
++	priv->pdev	= pdev;
++
++	priv->gc.owner			= THIS_MODULE;
++	priv->gc.parent			= &pdev->dev;
++	priv->gc.label			= dev_name(&pdev->dev);
++	priv->gc.ngpio			= priv->pdata->gpio_num;
++	priv->gc.names			= priv->pdata->gpio_names;
++	priv->gc.request		= amd_fch_gpio_request;
++	priv->gc.direction_input	= amd_fch_gpio_direction_input;
++	priv->gc.direction_output	= amd_fch_gpio_direction_output;
++	priv->gc.get_direction		= amd_fch_gpio_get_direction;
++	priv->gc.get			= amd_fch_gpio_get;
++	priv->gc.set			= amd_fch_gpio_set;
++
++	spin_lock_init(&priv->gc.bgpio_lock);
++
++	priv->base = devm_ioremap_resource(&pdev->dev, &amd_fch_gpio_iores);
++	if (IS_ERR(priv->base))
++		return PTR_ERR(priv->base);
++
++	platform_set_drvdata(pdev, priv);
++
++	return devm_gpiochip_add_data(&pdev->dev, &priv->gc, priv);
++}
++
++static struct platform_driver amd_fch_gpio_driver = {
++	.driver = {
++		.name = AMD_FCH_GPIO_DRIVER_NAME,
++	},
++	.probe = amd_fch_gpio_probe,
++};
++
++module_platform_driver(amd_fch_gpio_driver);
 +
 +MODULE_AUTHOR("Enrico Weigelt, metux IT consult <info@metux.net>");
-+MODULE_DESCRIPTION("PC Engines APUv2/APUv3 board GPIO/LED/keys driver");
++MODULE_DESCRIPTION("AMD G-series FCH GPIO driver");
 +MODULE_LICENSE("GPL");
-+MODULE_DEVICE_TABLE(dmi, apu_gpio_dmi_table);
-+MODULE_ALIAS("platform:pcengines-apuv2");
-+MODULE_SOFTDEP("pre: platform:" AMD_FCH_GPIO_DRIVER_NAME);
-+MODULE_SOFTDEP("pre: platform:leds-gpio");
-+MODULE_SOFTDEP("pre: platform:gpio_keys_polled");
++MODULE_ALIAS("platform:" AMD_FCH_GPIO_DRIVER_NAME);
+diff --git a/include/linux/platform_data/gpio/gpio-amd-fch.h b/include/linux/platform_data/gpio/gpio-amd-fch.h
+new file mode 100644
+index 0000000..a867637
+--- /dev/null
++++ b/include/linux/platform_data/gpio/gpio-amd-fch.h
+@@ -0,0 +1,46 @@
++/* SPDX-License-Identifier: GPL+ */
++
++/*
++ * AMD FCH gpio driver platform-data
++ *
++ * Copyright (C) 2018 metux IT consult
++ * Author: Enrico Weigelt <info@metux.net>
++ *
++ */
++
++#ifndef __LINUX_PLATFORM_DATA_GPIO_AMD_FCH_H
++#define __LINUX_PLATFORM_DATA_GPIO_AMD_FCH_H
++
++#define AMD_FCH_GPIO_DRIVER_NAME "gpio_amd_fch"
++
++/*
++ * gpio register index definitions
++ */
++#define AMD_FCH_GPIO_REG_GPIO49		0x40
++#define AMD_FCH_GPIO_REG_GPIO50		0x41
++#define AMD_FCH_GPIO_REG_GPIO51		0x42
++#define AMD_FCH_GPIO_REG_GPIO59_DEVSLP0	0x43
++#define AMD_FCH_GPIO_REG_GPIO57		0x44
++#define AMD_FCH_GPIO_REG_GPIO58		0x45
++#define AMD_FCH_GPIO_REG_GPIO59_DEVSLP1	0x46
++#define AMD_FCH_GPIO_REG_GPIO64		0x47
++#define AMD_FCH_GPIO_REG_GPIO68		0x48
++#define AMD_FCH_GPIO_REG_GPIO66_SPKR	0x5B
++#define AMD_FCH_GPIO_REG_GPIO71		0x4D
++#define AMD_FCH_GPIO_REG_GPIO32_GE1	0x59
++#define AMD_FCH_GPIO_REG_GPIO33_GE2	0x5A
++#define AMT_FCH_GPIO_REG_GEVT22		0x09
++
++/*
++ * struct amd_fch_gpio_pdata - GPIO chip platform data
++ * @gpio_num: number of entries
++ * @gpio_reg: array of gpio registers
++ * @gpio_names: array of gpio names
++ */
++struct amd_fch_gpio_pdata {
++	int			gpio_num;
++	int			*gpio_reg;
++	const char * const	*gpio_names;
++};
++
++#endif /* __LINUX_PLATFORM_DATA_GPIO_AMD_FCH_H */
 -- 
 1.9.1
 
