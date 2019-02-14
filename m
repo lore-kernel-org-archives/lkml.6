@@ -2,90 +2,136 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0399C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:49:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DED6C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:50:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B4DD222A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:49:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E9C721916
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:50:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EjMe/8Uu"
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20150623.gappssmtp.com header.i=@networkplumber-org.20150623.gappssmtp.com header.b="VykqiQNx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439873AbfBNTto (ORCPT
+        id S2439881AbfBNTuY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 14:49:44 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46771 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728119AbfBNTto (ORCPT
+        Thu, 14 Feb 2019 14:50:24 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36018 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728119AbfBNTuY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 14:49:44 -0500
-Received: by mail-lj1-f194.google.com with SMTP id v16so6300946ljg.13;
-        Thu, 14 Feb 2019 11:49:42 -0800 (PST)
+        Thu, 14 Feb 2019 14:50:24 -0500
+Received: by mail-pf1-f194.google.com with SMTP id n22so3621867pfa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 11:50:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=9mizv2u1bnhIcxX/vcld3ggF1yKDboB9WACUavwBk6k=;
-        b=EjMe/8UuZVL9JR+gTHIxhMryuWg0SBkqnCM85DvEoQFf8YOYP/tjBg5tZBeRkajh7u
-         jKERvS1b3vQYlo7GVRIFlLMzoXNrwmO5jl3rYP9YmmFxY4WVAqJ3h1LOzqh1BP+UISKx
-         7g+JKG2b8BKePerOWOZ2zrg62oxWO5iIEEQBI/+AwLUjQ92aI3T5mKp9NaIeaDo2YhaR
-         JR1adsR6YxwTE4fSFm6flkgTnpjuU8hB8r4iTDATRq0BVS+hXdApiq6lPGkDplL8flhV
-         Cn3/oqWgZYw0G44+g349LRb37JCZ1Jx5nOIxvTMLIuQSN9O/eY4pWyOffCnybJ2o1sMS
-         Mz5Q==
+        d=networkplumber-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=DRcmb7eavvaVqSXi/lEiGq5CIgT11mtyDTh1QEVcHHQ=;
+        b=VykqiQNxuRGS97c+HvlKah4Zm7eRgRhjVcG9SD+h0A4hMzVOlsUxAI2XnN6J56/pao
+         07nIPAH+7fq4K4tL51zh6rAiD5Xg0Ye3ux9KmbffV4U+WWy0ZYTNeKsNTVwh3v2PhjTA
+         rGzhBD1s6jwzDh5sOIaxeqiw0ggie9uO4WnXo1BxgAkJWTzZibrHqYV3DhkuKSEU2pzU
+         FVdK4Ptsd5XDCQf+yJ8UF0eRL6F/KouYCzpBix3T61oppqB1JtYIYCYvfeBloynQeM8C
+         lAvqri+XXekCVCLUPZFMYFx1Fh7QJnOUcVLQrSyvgms96Np4Xuq/KGasC9FOyss/BB5A
+         F0Fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=9mizv2u1bnhIcxX/vcld3ggF1yKDboB9WACUavwBk6k=;
-        b=L9E12zw9exUMFuSI+7vInepA95f+jp0/zLszh6u7eTNIwQrhSdCsaiMStwqccRVbcD
-         sFeIkSIatS+qQanvKaGLFezKXzvr0c7tuWJyK6fXISKZ/o1vCu6O3sHHtWtSnY+Mx5yx
-         vE1chqcGmSLAD0ary/awKD5UNiIP1L1OFqchVT56Y/joDwWOeWlnGgxTXipdj5mMStMk
-         iwI1plA4vL/IQpiqED0RLalmW5+9PIuDreOwRoHxdZjmDDKb0gwkyOf9Oys/ZRcNuWiT
-         vNofVO7N8ZZCqte6By1BU8eBZvZG3YcyL9TEnmjeaD6UsaTfR10eU+z85qsgpzAxlPU+
-         BwUw==
-X-Gm-Message-State: AHQUAuZN2XFUAVfvkupxSz9OlpFs2uLT+tryhfTNPmxUZCEt9mvdjHfA
-        ZHodZP4KQ5NXRRRIPgcuc335sjNcYa0=
-X-Google-Smtp-Source: AHgI3IbbZT9iYS34Bvy8KdD3t3ZnKQVcD8k1VXNKlDKKhr/92fU6+LgkstLix75w2sn1HCSFXjr8lA==
-X-Received: by 2002:a2e:918d:: with SMTP id f13mr3731204ljg.151.1550173781915;
-        Thu, 14 Feb 2019 11:49:41 -0800 (PST)
-Received: from im-mac (pool-109-191-226-91.is74.ru. [109.191.226.91])
-        by smtp.gmail.com with ESMTPSA id v24-v6sm616115ljj.65.2019.02.14.11.49.39
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 14 Feb 2019 11:49:41 -0800 (PST)
-Message-ID: <ea2674fa03e861f72bf7f4f65a049243527948c7.camel@gmail.com>
-Subject: Re: [RFC PATCH 1/4] watchdog: hpwdt: Don't disable watchdog on NMI
-From:   Ivan Mironov <mironov.ivan@gmail.com>
-To:     Jerry.Hoemann@hpe.com
-Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Date:   Fri, 15 Feb 2019 00:49:38 +0500
-In-Reply-To: <20190208012658.GF28168@anatevka>
-References: <20190114023617.10656-1-mironov.ivan@gmail.com>
-         <20190114023617.10656-2-mironov.ivan@gmail.com>
-         <20190116022731.GD18342@anatevka>
-         <84950aa0d194f28389f3bb209154ddc26e96c6de.camel@gmail.com>
-         <20190208012658.GF28168@anatevka>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=DRcmb7eavvaVqSXi/lEiGq5CIgT11mtyDTh1QEVcHHQ=;
+        b=o/CDp+svxm1ZlAMhLOXjyj0pLkfXkMtouZB1kGP4Q/bSlz6TgCWaO8susoPtNK3Xos
+         JaYsJPhI0aUZKArHymtNsHv6s1h7qMeCKaEhgjlYfMnkpm2J3UMQ9TKEQEKOUQZ7d3Nx
+         Le6Am+5AGKn0UlVO0mPxDIwfsJ5riV6QysJwNlGJh6CBnpiEO5EbzrqFS6To2t+3fX+V
+         u2KvCEBLWWjygzQ10u0MO5GDo7z9qCwv/3OaVmPqpp0Q7ykk8spffDti0lmDsxqm60Nz
+         ySFA1qGWK+JxBjBm3ebks1H8DFUdaD833Zem3SUYVN4xvgYGa8EPMrpDqZtbaxH5M/TE
+         7Few==
+X-Gm-Message-State: AHQUAubV6haG68U10uvNyksJdeRUsZfe11Shg2/+znZmpvGSePJ+cQ5P
+        V+wXuV6k6AmKzN5kzIknezwQjA==
+X-Google-Smtp-Source: AHgI3IYmo0aVTIMqDporUSJbj3VVRPr6DaTYCvJogDs1f3Z8dm+R4HZD+NBwCzwlnLGrBGLtcU3noA==
+X-Received: by 2002:a65:40c5:: with SMTP id u5mr1517416pgp.46.1550173823002;
+        Thu, 14 Feb 2019 11:50:23 -0800 (PST)
+Received: from shemminger-XPS-13-9360 (204-195-22-127.wavecable.com. [204.195.22.127])
+        by smtp.gmail.com with ESMTPSA id e24sm4320839pfi.153.2019.02.14.11.50.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 14 Feb 2019 11:50:22 -0800 (PST)
+Date:   Thu, 14 Feb 2019 11:50:19 -0800
+From:   Stephen Hemminger <stephen@networkplumber.org>
+To:     Kimberly Brown <kimbrownkd@gmail.com>
+Cc:     Michael Kelley <mikelley@microsoft.com>,
+        Long Li <longli@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Dexuan Cui <decui@microsoft.com>, devel@linuxdriverproject.org,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] Drivers: hv: vmbus: Display nothing in sysfs if
+ monitor_allocated not set
+Message-ID: <20190214115019.0e914fa5@shemminger-XPS-13-9360>
+In-Reply-To: <20190214061102.GA22473@ubu-Virtual-Machine>
+References: <cover.1549619051.git.kimbrownkd@gmail.com>
+        <52d58fe5805f2ba2405c9091b4c86033d434d2b9.1549619051.git.kimbrownkd@gmail.com>
+        <20190208143148.052c8d9c@hermes.lan>
+        <20190211070118.GA2977@ubu-Virtual-Machine>
+        <20190211100247.12221570@hermes.lan>
+        <20190214061102.GA22473@ubu-Virtual-Machine>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-02-07 at 18:26 -0700, Jerry Hoemann wrote:
-> The name is not the best given its current use, but I'm not sure a
-> name change would be allowed.
-> 
-> However, I will send a patch to update the documentation in Kconfig.
-> 
-> 
+On Thu, 14 Feb 2019 01:11:03 -0500
+Kimberly Brown <kimbrownkd@gmail.com> wrote:
 
-Thanks!
+> On Mon, Feb 11, 2019 at 10:02:47AM -0800, Stephen Hemminger wrote:
+> > On Mon, 11 Feb 2019 02:01:18 -0500
+> > Kimberly Brown <kimbrownkd@gmail.com> wrote:
+> >   
+> > > On Fri, Feb 08, 2019 at 02:32:09PM -0800, Stephen Hemminger wrote:  
+> > > > On Fri, 8 Feb 2019 05:01:12 -0500
+> > > > Kimberly Brown <kimbrownkd@gmail.com> wrote:
+> > > > 
+> > > > You are right, the current behavior is broken.
+> > > > It would be good to add a description of under what conditions
+> > > > monitor is not used. Is this some part of a project emulating
+> > > > Hyper-V?
+> > > >     
+> > > 
+> > > I'm not sure which conditions determine whether the monitor mechanism is
+> > > used. I've searched the Hypervisor TLFS, and I couldn't find any
+> > > information. If you have any suggestions for where I can find this
+> > > information, please let me know.  
+> > 
+> > The monitor page stuff pre-dates my involvement with Hyper-V. KY might know.
+> > But based on comments it looks like it was added to avoid hypercalls
+> > for each message. It probably showed up in Windows Server 2012 timeframe.
+> > 
+> > To test you might want to dig up Windows Server 2008.
+> >    
+> 
+> It looks like the monitor mechanism has always been used. It's present in the
+> earliest commit that I can find: 3e7ee4902fe6 ("add the Hyper-V virtual bus")
+> from 2009.
+> 
+> I propose that the following sentences be added to the sysfs documentation for
+> the affected attributes:
+> 
+> "The monitor page mechanism is used for performance critical channels (storage,
+> network, etc.). Channels that do not use the monitor page mechanism will return
+> EINVAL."
+> 
+> I think that this provides sufficient information for a user to understand why
+> opening an affected file can return EINVAL. What do you think?
 
+Thanks for following up. I agree with you EINVAL works as a solution.
+My understanding is that their are two ways a channel can work. The first one is
+for the guest to send a hyper call to the host to indicate when data is available.
+The other is for the guest to indicate by setting a bit in shared memory with host.
+
+The shared memory approach reduces host/guest overhead and allows for more opportunities
+for batching in the ring. The host checks the shared memory on a polling interval
+defined in the latency field.
+
+The hypercall method does not use the monitor page. It has lower latency (no polling).
