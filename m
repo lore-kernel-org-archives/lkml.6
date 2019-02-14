@@ -2,232 +2,106 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C92C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF46BC10F04
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:59:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F1C1222C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:58:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FB66222C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:59:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="wP5jmQEC"
+	dkim=pass (1024-bit key) header.d=eworm.de header.i=@eworm.de header.b="T9vbGtV6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392276AbfBNO6g (ORCPT
+        id S2403994AbfBNO76 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 09:58:36 -0500
-Received: from node.akkea.ca ([192.155.83.177]:54422 "EHLO node.akkea.ca"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730957AbfBNO6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 09:58:36 -0500
-Received: by node.akkea.ca (Postfix, from userid 33)
-        id 2DD314E204B; Thu, 14 Feb 2019 14:58:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1550156315; bh=lWkxbbLD3ALNJoMMzjDuWcjI06MQbG+Pg48J1Mker34=;
-        h=To:Subject:Date:From:Cc:In-Reply-To:References;
-        b=wP5jmQECSOQu8qyhJyo/Go5fivB4ciiHsasPLTjB0QWnyBe2/CtPWEuXS6ptnKBdE
-         35jvLtP+k4cXN7ZBhIuekUSm+NSxH3fcUr/RRv+wTfiWxirDksUok48X+2052zmppQ
-         AsedioKR391VKmbP9tKhtXmLK7gSh5sABidgfaqo=
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Subject: Re: [PATCH v3 1/3] devicetree: bindings: bd718x7: document HW state  related ROHM specific properties
-X-PHP-Originating-Script: 1000:rcube.php
+        Thu, 14 Feb 2019 09:59:58 -0500
+Received: from mx.mylinuxtime.de ([195.201.174.144]:42512 "EHLO
+        mx.mylinuxtime.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387737AbfBNO75 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 09:59:57 -0500
+X-Greylist: delayed 372 seconds by postgrey-1.27 at vger.kernel.org; Thu, 14 Feb 2019 09:59:55 EST
+Received: from leda (unknown [87.190.244.126])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mx.mylinuxtime.de (Postfix) with ESMTPSA id DF605B84E5;
+        Thu, 14 Feb 2019 15:53:41 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mx.mylinuxtime.de DF605B84E5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=eworm.de; s=mail;
+        t=1550156022; bh=IELbpAkMQeDpo9ICafWaIbA+Fchxu72eNctZXgMtD2k=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References;
+        b=T9vbGtV6gfkcXRD2eQl8oTr08S6Du/BajfEYzRTSepF1KCBqIspU9LgRRR1QFQ2Ui
+         EiE9nuBIJKmJ0advEGKF1POTblZUdRGsCbrjLF27kI5nI2M4vnTAMrRi2ZNxSl9ze/
+         o32VhW4+yF7VciwBv8ZF5Oxke9XJlh6ixKXZxxp0=
+Date:   Thu, 14 Feb 2019 15:53:35 +0100
+From:   Christian Hesse <list@eworm.de>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: Linux 4.20.8
+Message-ID: <20190214155335.6112f334@leda>
+In-Reply-To: <20190212201812.GB11553@kroah.com>
+References: <20190212201812.GB11553@kroah.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+X-Face: %O:rCSk<c"<MpJ:yn<>HSKf7^4uF|FD$9$I0}g$nbnS1{DYPvs#:,~e`).mzj\$P9]V!WCveE/XdbL,L!{)6v%x4<jA|JaB-SKm74~Wa1m;|\QFlOg>\Bt!b#{;dS&h"7l=ow'^({02!2%XOugod|u*mYBVm-OS:VpZ"ZrRA4[Q&zye,^j;ftj!Hxx\1@;LM)Pz)|B%1#sfF;s;,N?*K*^)
+Face:   iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAGFBMVEUZFRFENy6KVTKEd23CiGHeqofJvrX4+vdHgItOAAAACXBIWXMAAA3XAAAN1wFCKJt4AAACUklEQVQ4y2VUTZeqMAxNxXG2Io5uGd64L35unbF9ax0b3OLxgFs4PcLff0lBHeb1QIq5uelNCEJNq/TIFGyeC+iugH0WJr+B1MvzWASpuP4CYHOB0VfoDdddwA7OIFQIEHjXDiCtV5e9QX0WMu8AG0mB7g7WP4GqeqVdsi4vv/5kFBvaF/zD7zDquL4DxbrDGDyAsgNYOsJOYzth4Q9ZF6iLV+6TLAT1pi2kuvgAtZxSjoG8cL+8vIn251uoe1OOEWwbIPU04gHsmMsoxyyhYsD2FdIigF1yxaVbBuSOCAlCoX324I7wNMhrO1bhOLsRoA6DC6wQ5eQiSG5BiWQfM4gN+uItQTRDMaJUhVbGyKWCuaaUGSVFVKpl4PdoDn3yY8J+YxQxyhlHfoYOyPgyDcO+cSQK6Bvabjcy2nwRo3pxgA8jslnCuYw23ESOzHAPYwo4ITNQMaOO+RGPEGhSlPEZBh2jmBEjQ5cKbxmr0ruAe/WCriUxW76I8T3h7vqY5VR5wXLdERodg2rHEzdxxk5KpXTL4FwnarvndKM5/MWDY5CuBBdQ+3/0ivsUJHicuHd+Xh3jOdBL+FjSGq4SPCwco+orpWlERRTNo7BHCvbNXFVSIQMp+P5QsIL9upmr8kMTUOfxEHoanwzKRcNAe76WbjBwex/RkdHu48xT5YqP70DaMOhBcTHmAVDxLaBdle93oJy1QKFUh2GXT4am+YH/GGel1CeI98GdMXsytjCKIq/9cMrlgxFCROv+3/BU1fijNpcVD6DxE8VfLBaxUGr1D5usgDYdjwiPAAAAAElFTkSuQmCC
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 14 Feb 2019 06:58:35 -0800
-From:   Angus Ainslie <angus@akkea.ca>
-Cc:     mazzisaccount@gmail.com, Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, heikki.haikola@fi.rohmeurope.com,
-        mikko.mutanen@fi.rohmeurope.com, Robin Gong <yibin.gong@nxp.com>,
-        Elven Wang <elven.wang@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Angus Ainslie <angus.ainslie@puri.sm>,
-        linux-kernel-owner@vger.kernel.org
-In-Reply-To: <6ed4238fb083f52de0f5f013647b2334bad8ebe4.1550135853.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1550135853.git.matti.vaittinen@fi.rohmeurope.com>
- <6ed4238fb083f52de0f5f013647b2334bad8ebe4.1550135853.git.matti.vaittinen@fi.rohmeurope.com>
-Message-ID: <b5d87fef13b16e8b5da8bd88958c6d74@www.akkea.ca>
-X-Sender: angus@akkea.ca
-User-Agent: Roundcube Webmail/1.1.3
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/PD/4NWemPiiplKw8pNBAdO_"; protocol="application/pgp-signature"
+Authentication-Results: mx.mylinuxtime.de;
+        auth=pass smtp.auth=mail@eworm.de smtp.mailfrom=list@eworm.de
+X-Rspamd-Server: mx
+X-Stat-Signature: ukqycochxkw8edmcpwqz57ckyjc8jrdy
+X-Rspamd-Queue-Id: DF605B84E5
+X-Spamd-Result: default: False [-4.65 / 15.00];
+         ARC_NA(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         RCPT_COUNT_THREE(0.00)[3];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MIME_GOOD(-0.20)[multipart/signed,text/plain];
+         TO_DN_SOME(0.00)[];
+         NEURAL_HAM(-2.95)[-0.985,0];
+         SIGNED_PGP(-2.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MID_RHS_NOT_FQDN(0.50)[];
+         ASN(0.00)[asn:3320, ipnet:87.128.0.0/10, country:DE];
+         RCVD_TLS_ALL(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-02-14 01:34, Matti Vaittinen wrote:
-> Add ROHM BD71837 / BD71847 specific device tree bindings for
-> controlling the PMIC shutdown/reset states and voltages for
-> different HW states. The PMIC was designed to be used with NXP
-> i.MX8 SoC and it supports SNVS low power state which seems to
-> be typical for NXP i.MX SoCs. However, when SNVS is used we must
-> not allow SW to control enabling/disabling those regulators which
-> are crucial for system to boot as there is a HW limitation which
-> causes SW controlled regulators to be kept shut down after SNVS
-> reset.
-> 
-> Allow setting the SNVS to be used as reset target state and allow
-> marking those regulators which are critical for boot.
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+--Sig_/PD/4NWemPiiplKw8pNBAdO_
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-One small nit below
+Greg KH <gregkh@linuxfoundation.org> on Tue, 2019/02/12 21:18:
+> I'm announcing the release of the 4.20.8 kernel.
 
-Tested-by: Angus Ainslie <angus@akkea.ca>
-Reviewed-by: Angus Ainslie <angus@akkea.ca>
+Versions 4.20.7 and 4.20.8 are missing signatures in git notes. Can you
+please add (or push) them? Thanks!
+--=20
+main(a){char*c=3D/*    Schoene Gruesse                         */"B?IJj;MEH"
+"CX:;",b;for(a/*    Best regards             my address:    */=3D0;b=3Dc[a+=
++];)
+putchar(b-1/(/*    Chris            cc -ox -xc - && ./x    */b/42*2-3)*42);}
 
-> ---
->  .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 17 ++++++++++
->  .../bindings/regulator/rohm,bd71837-regulator.txt  | 38 
-> ++++++++++++++++++++++
->  2 files changed, 55 insertions(+)
-> 
-> diff --git
-> a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-> b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-> index a4b056761eaa..d5f68ac78d15 100644
-> --- a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-> +++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
-> @@ -23,6 +23,20 @@ Required properties:
-> 
->  Optional properties:
->  - clock-output-names	: Should contain name for output clock.
-> +- rohm,reset-snvs-powered : Transfer BD718x7 to SNVS state at reset.
-> +
-> +The BD718x7 supports two different HW states as reset target states. 
-> States
-> +are called as SNVS and READY. At READY state all the PMIC power 
-> outputs go
-> +down and OTP is reload. At the SNVS state all other logic and external
-> +devices apart from the SNVS power domain are shut off. Please refer to 
-> NXP
-> +i.MX8 documentation for further information regarding SNVS state. When 
-> a
-> +reset is done via SNVS state the PMIC OTP data is not reload. This 
-> causes
+--Sig_/PD/4NWemPiiplKw8pNBAdO_
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Typo s/reload/reloaded/
+-----BEGIN PGP SIGNATURE-----
 
-> +power outputs that have been under SW control to stay down when reset 
-> has
-> +switched power state to SNVS. If reset is done via READY state the 
-> power
-> +outputs will be returned to HW control by OTP loading. Thus the reset
-> +target state is set to READY by default. If SNVS state is used the 
-> boot
-> +crucial regulators must have the regulator-always-on and 
-> regulator-boot-on
-> +properties set in regulator node.
-> 
->  Example:
-> 
-> @@ -43,6 +57,7 @@ Example:
->  		#clock-cells = <0>;
->  		clocks = <&osc 0>;
->  		clock-output-names = "bd71837-32k-out";
-> +		rohm,reset-snvs-powered;
-> 
->  		regulators {
->  			buck1: BUCK1 {
-> @@ -50,8 +65,10 @@ Example:
->  				regulator-min-microvolt = <700000>;
->  				regulator-max-microvolt = <1300000>;
->  				regulator-boot-on;
-> +				regulator-always-on;
->  				regulator-ramp-delay = <1250>;
->  			};
-> +			// [...]
->  		};
->  	};
-> 
-> diff --git
-> a/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
-> b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
-> index 4b98ca26e61a..cbce62c22b60 100644
-> --- 
-> a/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
-> +++ 
-> b/Documentation/devicetree/bindings/regulator/rohm,bd71837-regulator.txt
-> @@ -27,8 +27,38 @@ BUCK1, BUCK2, BUCK3, BUCK4, BUCK5, BUCK6
->  LDO1, LDO2, LDO3, LDO4, LDO5, LDO6
-> 
->  Optional properties:
-> +- rohm,dvs-run-voltage		: PMIC default "RUN" state voltage in uV.
-> +				  See below table for bucks which support this.
-> +- rohm,dvs-idle-voltage		: PMIC default "IDLE" state voltage in uV.
-> +				  See below table for bucks which support this.
-> +- rohm,dvs-suspend-voltage	: PMIC default "SUSPEND" state voltage in 
-> uV.
-> +				  See below table for bucks which support this.
->  - Any optional property defined in bindings/regulator/regulator.txt
-> 
-> +Supported default DVS states:
-> +
-> +BD71837:
-> +buck	| dvs-run-voltage	| dvs-idle-voltage	| dvs-suspend-voltage
-> +-----------------------------------------------------------------------------
-> +1	| supported		| supported		| supported
-> +----------------------------------------------------------------------------
-> +2	| supported		| supported		| not supported
-> +----------------------------------------------------------------------------
-> +3	| supported		| not supported		| not supported
-> +----------------------------------------------------------------------------
-> +4	| supported		| not supported		| not supported
-> +----------------------------------------------------------------------------
-> +rest	| not supported		| not supported		| not supported
-> +
-> +BD71847:
-> +buck	| dvs-run-voltage	| dvs-idle-voltage	| dvs-suspend-voltage
-> +-----------------------------------------------------------------------------
-> +1	| supported		| supported		| supported
-> +----------------------------------------------------------------------------
-> +2	| supported		| supported		| not supported
-> +----------------------------------------------------------------------------
-> +rest	| not supported		| not supported		| not supported
-> +
->  Example:
->  regulators {
->  	buck1: BUCK1 {
-> @@ -36,7 +66,11 @@ regulators {
->  		regulator-min-microvolt = <700000>;
->  		regulator-max-microvolt = <1300000>;
->  		regulator-boot-on;
-> +		regulator-always-on;
->  		regulator-ramp-delay = <1250>;
-> +		rohm,dvs-run-voltage = <900000>;
-> +		rohm,dvs-idle-voltage = <850000>;
-> +		rohm,dvs-suspend-voltage = <800000>;
->  	};
->  	buck2: BUCK2 {
->  		regulator-name = "buck2";
-> @@ -45,18 +79,22 @@ regulators {
->  		regulator-boot-on;
->  		regulator-always-on;
->  		regulator-ramp-delay = <1250>;
-> +		rohm,dvs-run-voltage = <1000000>;
-> +		rohm,dvs-idle-voltage = <900000>;
->  	};
->  	buck3: BUCK3 {
->  		regulator-name = "buck3";
->  		regulator-min-microvolt = <700000>;
->  		regulator-max-microvolt = <1300000>;
->  		regulator-boot-on;
-> +		rohm,dvs-run-voltage = <1000000>;
->  	};
->  	buck4: BUCK4 {
->  		regulator-name = "buck4";
->  		regulator-min-microvolt = <700000>;
->  		regulator-max-microvolt = <1300000>;
->  		regulator-boot-on;
-> +		rohm,dvs-run-voltage = <1000000>;
->  	};
->  	buck5: BUCK5 {
->  		regulator-name = "buck5";
-> --
-> 2.14.3
+iQEzBAEBCAAdFiEEXHmveYAHrRp+prOviUUh18yA9HYFAlxlgO8ACgkQiUUh18yA
+9HYr9wf9ENcFi5HCp9S9CJZ1kYkP2Gj/WcxLL/F5sXZKeMjzxn5a8H9YoytiXpX3
+O77x//gRc/YdsiA+FJRoeMv7HREoxtPM8X6EPtGLQgy44CyGEY8sSJfl/LpRtle/
+rYcbKDkt7mJfZ9Ttq5n2P89AEQrGSjc/iz8Z3+A01N8SeRJ+a3+BF6yTD/l0TtnC
+VJ10DXj8LHq5p8CWxUpxNtMJtD0NNgzyBcLRRh7UPBlkEjvKvYb7pxEVU72MrpY2
+9d9tAGCmPwjZv8DO05Gclq4pgt8Z8UvYSRi0qOQ4BAExVWIj6q3rqvmo9XLHtqfu
+9m/8u9coU27uMeQbAQO99evM9HsZ9g==
+=n5MI
+-----END PGP SIGNATURE-----
 
+--Sig_/PD/4NWemPiiplKw8pNBAdO_--
