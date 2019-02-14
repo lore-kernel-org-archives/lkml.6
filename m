@@ -2,111 +2,135 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82A81C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:07:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD1ACC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:07:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5571A21B24
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:07:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE48621B24
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 19:07:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gXYsCMMj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405681AbfBNTH2 (ORCPT
+        id S2438265AbfBNTHo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 14:07:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46634 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393773AbfBNTH2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 14:07:28 -0500
-Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEFE921B24;
-        Thu, 14 Feb 2019 19:07:26 +0000 (UTC)
-Date:   Thu, 14 Feb 2019 14:07:25 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
+        Thu, 14 Feb 2019 14:07:44 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36686 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726146AbfBNTHn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 14:07:43 -0500
+Received: by mail-pl1-f194.google.com with SMTP id g9so3643205plo.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 11:07:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RN08I6AKaVchZKykU9iAboTLsRwihOJdMxf//APS2CI=;
+        b=gXYsCMMjeYfJAfCG7smMdj7Sewkb7Dq6P58Z/EMK3VD42X9pSPGrW3+/iGHS5pSG/O
+         OZn0RwKIBZ1EBYDMatXmJzdEo/s8RhAAk+Zvgh4OzjGPYrZEv9ZxmmQQi6TOJe8W4W2Y
+         WsQg8+bOG2J8z/1gYfQYtR3WE6oRJnvy7DONY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RN08I6AKaVchZKykU9iAboTLsRwihOJdMxf//APS2CI=;
+        b=gcDLEfSzYX2yUiW/lyzV6vJIxYiWRvS2d7Cbtt73I1C+UbPE5Lsnaz+ftzMxc6pbCG
+         nTIDFnimLcB9Y6P5DZAx7MS6jltq7w8zv918bM1jZ2A1GQ5mlM87K+jrbPEl2+4AW32A
+         znyvNlKGLwu09EMS7Bd7myvBYOsqanulateNzdmEJrLunToUpnXhxgO19bkK/JqgM4Jr
+         z2BkzadFSwDocJNTZlQ3pdyoM8J1xDuZA0mKrXA3Qxs2pe0475xaatayUMWH+OPGvqfp
+         hnFFQqsCXW6+RgbSHFYWIUS00wFWItlJBDKU0Lzq3WocLYf+29AbkHYEYqu8eTPN34fz
+         eEfw==
+X-Gm-Message-State: AHQUAuZ/ecmiT4Rlvk/E/43WGW0GD7FQKg4BXsnPg7QuvkBH7s1UssY9
+        iKfcPB86mPV+YR0tjDuIiMB3rQ==
+X-Google-Smtp-Source: AHgI3IaQzfLXbYu0Waup8Ds4dBVoe65ojNDT6FiUOy1ZWELWQ2OJ8NmnTnF40MCgZNpE1SE7BTsn+w==
+X-Received: by 2002:a17:902:5601:: with SMTP id h1mr5959711pli.160.1550171262651;
+        Thu, 14 Feb 2019 11:07:42 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id 184sm6182445pfe.106.2019.02.14.11.07.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 14 Feb 2019 11:07:41 -0800 (PST)
+Date:   Thu, 14 Feb 2019 11:07:41 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
 To:     Lukasz Luba <l.luba@partner.samsung.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        b.zolnierkie@samsung.com, myungjoo.ham@samsung.com,
-        cw00.choi@samsung.com, kyungmin.park@samsung.com,
-        m.szyprowski@samsung.com, s.nawrocki@samsung.com, mka@chromium.org,
-        mingo@redhat.com
-Subject: Re: [PATCH 2/2] drivers: devfreq: add tracing for scheduling work
-Message-ID: <20190214140725.307d493c@gandalf.local.home>
-In-Reply-To: <1550170676-14173-3-git-send-email-l.luba@partner.samsung.com>
-References: <1550170676-14173-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20190214185811eucas1p1e2f44d59495296fbfed42f28a2c897a0@eucas1p1.samsung.com>
-        <1550170676-14173-3-git-send-email-l.luba@partner.samsung.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: Re: [PATCH 4/4] PM / devfreq: Handle monitor start/stop in the
+ devfreq core
+Message-ID: <20190214190741.GC117604@google.com>
+References: <20190214013042.254790-1-mka@chromium.org>
+ <CGME20190214013154epcas1p31326fdc127b3a75d566426e4f785121b@epcas1p3.samsung.com>
+ <20190214013042.254790-5-mka@chromium.org>
+ <1771fe9e-c107-f133-7b39-f4d7dbb004c5@partner.samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1771fe9e-c107-f133-7b39-f4d7dbb004c5@partner.samsung.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 14 Feb 2019 19:57:56 +0100
-Lukasz Luba <l.luba@partner.samsung.com> wrote:
+Hi Lukasz,
 
-> This patch add basic tracing of the devfreq workqueue and delayed work.
-> It aims to capture changes of the polling intervals and device state.
+On Thu, Feb 14, 2019 at 07:01:36PM +0100, Lukasz Luba wrote:
+> Hi Matthias,
 > 
-> Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
-> ---
->  drivers/devfreq/devfreq.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> index 0ae3de7..c9714fd 100644
-> --- a/drivers/devfreq/devfreq.c
-> +++ b/drivers/devfreq/devfreq.c
-> @@ -29,6 +29,9 @@
->  #include <linux/of.h>
->  #include "governor.h"
->  
-> +#define CREATE_TRACE_POINTS
-> +#include <trace/events/devfreq.h>
-> +
->  static struct class *devfreq_class;
->  
->  /*
-> @@ -394,6 +397,11 @@ static void devfreq_monitor(struct work_struct *work)
->  	queue_delayed_work(devfreq_wq, &devfreq->work,
->  				msecs_to_jiffies(devfreq->profile->polling_ms));
->  	mutex_unlock(&devfreq->lock);
-> +
-> +	trace_devfreq_monitor(dev_name(&devfreq->dev), devfreq->previous_freq,
-> +			      devfreq->profile->polling_ms,
-> +			      devfreq->last_status.busy_time,
-> +			      devfreq->last_status.total_time);
+> I have compiled and run your changes on Odroid xu3 and v5.0-rc6.
+> There are kernel warnings because of mutex not held in function
+> devfreq_monitor_[start|stop]() in use cases:
+>   1) a few times during registration of new devices devfreq_add_device()
+>   2) poking the device from sysfs
 
-I would pass just devfreq into the tracepoint (it will be less work by
-gcc in this code path), and do all this work in the TP__fast_assign()
+Thanks testing!
 
-The string can still handle this with:
+I messed up carrying over changes from my v4.19 device kernel
+to the tree used for upstreaming :(
 
-		__string(dev_name, dev_name(&devfreq->dev))
+Do you still see warnings with the below patch?
 
-And assigned:
+Thanks
 
-		__assign_str(dev_name, dev_name(&devfreq->dev))
+Matthias
 
-But the rest of fast assign should be:
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index a42c37543c190..866fe711b43ca 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -440,7 +440,6 @@ static void devfreq_monitor_stop(struct devfreq *devfreq)
 
-	TP_fast_assign(
-		__entry->freq = devfreq->previous_freq;
-		__entry->busy_time = devfreq->last_status.busy_time;
-		__entry->total_time = devfreq->last_status.total_time;
-		__entry->polling_ms = devfreq->profile->polling_ms;
-		__assign_str(dev_name, dev_name(&deqfreq->dev));
-	}
+        mutex_lock(&devfreq->lock);
+        devfreq->monitor_state = DEVFREQ_MONITOR_STOPPED;
+-       mutex_unlock(&devfreq->lock);
+ }
 
--- Steve
+ /**
+@@ -596,7 +595,9 @@ static int governor_start(struct devfreq *devfreq)
+                return err;
+        }
 
->  }
->  
->  /**
++       mutex_lock(&devfreq->lock);
+        devfreq_monitor_start(devfreq);
++       mutex_unlock(&devfreq->lock);
 
+        return 0;
+ }
+@@ -614,7 +615,9 @@ static int governor_stop(struct devfreq *devfreq)
+                 "mutex must *not* be held by the caller\n"))
+                return -EINVAL;
+
++       mutex_lock(&devfreq->lock);
+        devfreq_monitor_stop(devfreq);
++       mutex_unlock(&devfreq->lock);
+
+        err = devfreq->governor->event_handler(devfreq, DEVFREQ_GOV_STOP, NULL);
+        if (err) {
