@@ -2,377 +2,157 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E00C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:20:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E2CFC4360F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:21:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87343222DF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:20:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C767C222DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:21:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="G/GVgAFZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502689AbfBNQUl (ORCPT
+        id S2502695AbfBNQVL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:20:41 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:56396 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2502662AbfBNQUk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 11:20:40 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1EGJsig073401
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 11:20:38 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qnbnb0v1c-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 11:20:37 -0500
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Thu, 14 Feb 2019 16:20:21 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 14 Feb 2019 16:20:15 -0000
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1EGKEj058392708
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 14 Feb 2019 16:20:14 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A12D9A4057;
-        Thu, 14 Feb 2019 16:20:14 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B43D8A4051;
-        Thu, 14 Feb 2019 16:20:13 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.84])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 14 Feb 2019 16:20:13 +0000 (GMT)
-Date:   Thu, 14 Feb 2019 18:20:12 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Guan Xuetao <gxt@pku.edu.cn>,
-        linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/8] initramfs: proide a generic free_initrd_mem
- implementation
-References: <20190213174621.29297-1-hch@lst.de>
- <20190213174621.29297-8-hch@lst.de>
+        Thu, 14 Feb 2019 11:21:11 -0500
+Received: from mail-eopbgr1400125.outbound.protection.outlook.com ([40.107.140.125]:56745
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2394009AbfBNQVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 11:21:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-bp-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=D7AY9zfnVGKsgUXUOwjtZxbR+DXQfuoj0UehVP2R7UQ=;
+ b=G/GVgAFZMnrZdRx/sOrk4O56BE55OkCK293giEIas/dwtqYBqv++B6m69PrTB3cAILslAQgI7ohNvOfHmt5Zms+32iWRUD4LY42R2FGZw27zT6fgGQASEZT1sJaNxQUVebkmgjGW3/6y4VJOeBugfzdPiMiooETpE5iNyjfmubY=
+Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com (52.133.163.147) by
+ TY1PR01MB1610.jpnprd01.prod.outlook.com (52.133.162.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.19; Thu, 14 Feb 2019 16:21:02 +0000
+Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com
+ ([fe80::9c4b:5b3e:212f:354e]) by TY1PR01MB1770.jpnprd01.prod.outlook.com
+ ([fe80::9c4b:5b3e:212f:354e%3]) with mapi id 15.20.1601.023; Thu, 14 Feb 2019
+ 16:21:02 +0000
+From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Simon Horman <horms@verge.net.au>
+CC:     Biju Das <biju.das@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thierry Reding <treding@nvidia.com>,
+        =?iso-8859-2?Q?Andreas_F=E4rber?= <afaerber@suse.de>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Johan Hovold <johan@kernel.org>,
+        Lukasz Majewski <lukma@denx.de>,
+        Michal Simek <monstr@monstr.eu>,
+        =?iso-8859-2?Q?Michal_Vok=E1=E8?= <michal.vokac@ysoft.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Ben Whitten <ben.whitten@gmail.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ebiharaml@si-linux.co.jp" <ebiharaml@si-linux.co.jp>
+Subject: RE: [PATCH 01/11] dt-bindings: Add vendor prefix for Silicon Linux.
+Thread-Topic: [PATCH 01/11] dt-bindings: Add vendor prefix for Silicon Linux.
+Thread-Index: AQHUrcqn7iCjVkUVBUihzBp2UqLnOqXfpZYQ
+Date:   Thu, 14 Feb 2019 16:21:02 +0000
+Message-ID: <TY1PR01MB1770A46D7FA45A8AFA923DADC0670@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1547663874-29411-2-git-send-email-fabrizio.castro@bp.renesas.com>
+In-Reply-To: <1547663874-29411-2-git-send-email-fabrizio.castro@bp.renesas.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
+x-originating-ip: [193.141.220.21]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 4985b6a9-b2e4-442f-3917-08d692986989
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:TY1PR01MB1610;
+x-ms-traffictypediagnostic: TY1PR01MB1610:
+x-ms-exchange-purlcount: 1
+x-microsoft-exchange-diagnostics: 1;TY1PR01MB1610;20:l6BGst7vjLDHK1Hd6UoOyY27Uc/5dPBRLxzRV0ml+ndbblrjOmxPaFGT1zCYluTTMeG0MEKhVsLKOjSdPPdpVMb5XtaLuLZjDoeLY2JJW86WiUJOoYnAxx/mRwaPryutBPBZBXOvuJscvOSEsUICRqBJZ67zzfjuVKh/+LXT/a0=
+x-microsoft-antispam-prvs: <TY1PR01MB16101140F848564B15C46C26C0670@TY1PR01MB1610.jpnprd01.prod.outlook.com>
+x-forefront-prvs: 09480768F8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(136003)(346002)(376002)(366004)(189003)(199004)(102836004)(53936002)(186003)(53546011)(76176011)(33656002)(446003)(486006)(25786009)(66066001)(3846002)(11346002)(6506007)(7696005)(26005)(53386004)(476003)(6116002)(44832011)(4326008)(6246003)(97736004)(256004)(2906002)(8676002)(68736007)(81156014)(229853002)(478600001)(71200400001)(7416002)(6436002)(81166006)(8936002)(413944005)(966005)(7736002)(6306002)(9686003)(305945005)(86362001)(55016002)(316002)(54906003)(74316002)(14454004)(110136005)(99286004)(106356001)(71190400001)(105586002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1610;H:TY1PR01MB1770.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
+received-spf: None (protection.outlook.com: bp.renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: crmJU/w6SveERKyFvgk4J6pZGGTaLewk1SyoO+/PL1jFUzBppRh4hmeGmHG96PcYEHGVEUuo/BU3UN/wvPtBbU7gPAI/wj7HKplrryKHbH3jzAXyNLqqg9GKDBfOcmZw/8xfr1Vr4CxOtfsp/EScQYu/ZTHnFhEBvvlKOYvrvuO1EPtPbo8qR0wiCAbSh6/Nv/VqJVK5Fxkor8i5DfJZTx8BNKfMblmgvwfhFObZ6xUub/TMdZ864gfhxJRmzuFAywq7QzQsDQYDflSHkyU7hTioxU1dfxMhVQUAuiuF3DugykPaYA0mXCKFvzW3MmQ1IsPWj4GYGlTOmWSAj34Egh/JWyNzIaKlQTZrAanhbU6YeVtCkLftZsZaqusRRqZV65kubDw+LUOTPg1huwcnJLhlM8w2aRRXhZXO3WhFS6o=
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190213174621.29297-8-hch@lst.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19021416-0012-0000-0000-000002F5C2C9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021416-0013-0000-0000-0000212D408D
-Message-Id: <20190214162011.GH9063@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=963 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902140111
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4985b6a9-b2e4-442f-3917-08d692986989
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2019 16:21:02.2128
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1610
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Subject: initramfs: proide a generic free_initrd_mem implementation
+Dear All,
 
-Nit:                ^ provide
+Who is the best person for taking this patch?
 
-On Wed, Feb 13, 2019 at 06:46:20PM +0100, Christoph Hellwig wrote:
-> For most architectures free_initrd_mem just expands to the same
-> free_reserved_area call.  Provide that as a generic implementation
-> marked __weak.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Thanks,
+Fab
+
+> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Sent: 16 January 2019 18:38
+> Subject: [PATCH 01/11] dt-bindings: Add vendor prefix for Silicon Linux.
+>
+> From: Biju Das <biju.das@bp.renesas.com>
+>
+> Add Silicon Linux to the list of devicetree vendor prefixes.
+>
+> Website: http://www.si-linux.co.jp
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
 > ---
->  arch/alpha/mm/init.c      | 8 --------
->  arch/arc/mm/init.c        | 7 -------
->  arch/c6x/mm/init.c        | 7 -------
->  arch/h8300/mm/init.c      | 8 --------
->  arch/m68k/mm/init.c       | 7 -------
->  arch/microblaze/mm/init.c | 7 -------
->  arch/nds32/mm/init.c      | 7 -------
->  arch/nios2/mm/init.c      | 7 -------
->  arch/openrisc/mm/init.c   | 7 -------
->  arch/parisc/mm/init.c     | 7 -------
->  arch/powerpc/mm/mem.c     | 7 -------
->  arch/sh/mm/init.c         | 7 -------
->  arch/um/kernel/mem.c      | 7 -------
->  arch/unicore32/mm/init.c  | 7 -------
->  init/initramfs.c          | 5 +++++
->  15 files changed, 5 insertions(+), 100 deletions(-)
-> 
-> diff --git a/arch/alpha/mm/init.c b/arch/alpha/mm/init.c
-> index a42fc5c4db89..97f4940f11e3 100644
-> --- a/arch/alpha/mm/init.c
-> +++ b/arch/alpha/mm/init.c
-> @@ -291,11 +291,3 @@ free_initmem(void)
->  {
->  	free_initmem_default(-1);
->  }
-> -
-> -#ifdef CONFIG_BLK_DEV_INITRD
-> -void
-> -free_initrd_mem(unsigned long start, unsigned long end)
-> -{
-> -	free_reserved_area((void *)start, (void *)end, -1, "initrd");
-> -}
-> -#endif
-> diff --git a/arch/arc/mm/init.c b/arch/arc/mm/init.c
-> index e1ab2d7f1d64..c357a3bd1532 100644
-> --- a/arch/arc/mm/init.c
-> +++ b/arch/arc/mm/init.c
-> @@ -214,10 +214,3 @@ void __ref free_initmem(void)
->  {
->  	free_initmem_default(-1);
->  }
-> -
-> -#ifdef CONFIG_BLK_DEV_INITRD
-> -void __init free_initrd_mem(unsigned long start, unsigned long end)
-> -{
-> -	free_reserved_area((void *)start, (void *)end, -1, "initrd");
-> -}
-> -#endif
-> diff --git a/arch/c6x/mm/init.c b/arch/c6x/mm/init.c
-> index af5ada0520be..5504b71254f6 100644
-> --- a/arch/c6x/mm/init.c
-> +++ b/arch/c6x/mm/init.c
-> @@ -67,13 +67,6 @@ void __init mem_init(void)
->  	mem_init_print_info(NULL);
->  }
-> 
-> -#ifdef CONFIG_BLK_DEV_INITRD
-> -void __init free_initrd_mem(unsigned long start, unsigned long end)
-> -{
-> -	free_reserved_area((void *)start, (void *)end, -1, "initrd");
-> -}
-> -#endif
-> -
->  void __init free_initmem(void)
->  {
->  	free_initmem_default(-1);
-> diff --git a/arch/h8300/mm/init.c b/arch/h8300/mm/init.c
-> index 6519252ac4db..2eff00de2b78 100644
-> --- a/arch/h8300/mm/init.c
-> +++ b/arch/h8300/mm/init.c
-> @@ -101,14 +101,6 @@ void __init mem_init(void)
->  	mem_init_print_info(NULL);
->  }
-> 
-> -
-> -#ifdef CONFIG_BLK_DEV_INITRD
-> -void free_initrd_mem(unsigned long start, unsigned long end)
-> -{
-> -	free_reserved_area((void *)start, (void *)end, -1, "initrd");
-> -}
-> -#endif
-> -
->  void
->  free_initmem(void)
->  {
-> diff --git a/arch/m68k/mm/init.c b/arch/m68k/mm/init.c
-> index 933c33e76a48..c62e41563bb9 100644
-> --- a/arch/m68k/mm/init.c
-> +++ b/arch/m68k/mm/init.c
-> @@ -144,10 +144,3 @@ void __init mem_init(void)
->  	init_pointer_tables();
->  	mem_init_print_info(NULL);
->  }
-> -
-> -#ifdef CONFIG_BLK_DEV_INITRD
-> -void free_initrd_mem(unsigned long start, unsigned long end)
-> -{
-> -	free_reserved_area((void *)start, (void *)end, -1, "initrd");
-> -}
-> -#endif
-> diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
-> index b17fd8aafd64..3bd32de46abb 100644
-> --- a/arch/microblaze/mm/init.c
-> +++ b/arch/microblaze/mm/init.c
-> @@ -186,13 +186,6 @@ void __init setup_memory(void)
->  	paging_init();
->  }
-> 
-> -#ifdef CONFIG_BLK_DEV_INITRD
-> -void free_initrd_mem(unsigned long start, unsigned long end)
-> -{
-> -	free_reserved_area((void *)start, (void *)end, -1, "initrd");
-> -}
-> -#endif
-> -
->  void free_initmem(void)
->  {
->  	free_initmem_default(-1);
-> diff --git a/arch/nds32/mm/init.c b/arch/nds32/mm/init.c
-> index 253f79fc7196..c02e10ac5e76 100644
-> --- a/arch/nds32/mm/init.c
-> +++ b/arch/nds32/mm/init.c
-> @@ -249,13 +249,6 @@ void free_initmem(void)
->  	free_initmem_default(-1);
->  }
-> 
-> -#ifdef CONFIG_BLK_DEV_INITRD
-> -void free_initrd_mem(unsigned long start, unsigned long end)
-> -{
-> -	free_reserved_area((void *)start, (void *)end, -1, "initrd");
-> -}
-> -#endif
-> -
->  void __set_fixmap(enum fixed_addresses idx,
->  			       phys_addr_t phys, pgprot_t flags)
->  {
-> diff --git a/arch/nios2/mm/init.c b/arch/nios2/mm/init.c
-> index 16cea5776b87..60736a725883 100644
-> --- a/arch/nios2/mm/init.c
-> +++ b/arch/nios2/mm/init.c
-> @@ -82,13 +82,6 @@ void __init mmu_init(void)
->  	flush_tlb_all();
->  }
-> 
-> -#ifdef CONFIG_BLK_DEV_INITRD
-> -void __init free_initrd_mem(unsigned long start, unsigned long end)
-> -{
-> -	free_reserved_area((void *)start, (void *)end, -1, "initrd");
-> -}
-> -#endif
-> -
->  void __ref free_initmem(void)
->  {
->  	free_initmem_default(-1);
-> diff --git a/arch/openrisc/mm/init.c b/arch/openrisc/mm/init.c
-> index d157310eb377..d0d94a4391d4 100644
-> --- a/arch/openrisc/mm/init.c
-> +++ b/arch/openrisc/mm/init.c
-> @@ -221,13 +221,6 @@ void __init mem_init(void)
->  	return;
->  }
-> 
-> -#ifdef CONFIG_BLK_DEV_INITRD
-> -void free_initrd_mem(unsigned long start, unsigned long end)
-> -{
-> -	free_reserved_area((void *)start, (void *)end, -1, "initrd");
-> -}
-> -#endif
-> -
->  void free_initmem(void)
->  {
->  	free_initmem_default(-1);
-> diff --git a/arch/parisc/mm/init.c b/arch/parisc/mm/init.c
-> index 059187a3ded7..1b445e206ca8 100644
-> --- a/arch/parisc/mm/init.c
-> +++ b/arch/parisc/mm/init.c
-> @@ -935,10 +935,3 @@ void flush_tlb_all(void)
->  	spin_unlock(&sid_lock);
->  }
->  #endif
-> -
-> -#ifdef CONFIG_BLK_DEV_INITRD
-> -void free_initrd_mem(unsigned long start, unsigned long end)
-> -{
-> -	free_reserved_area((void *)start, (void *)end, -1, "initrd");
-> -}
-> -#endif
-> diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
-> index 33cc6f676fa6..976c706a64e2 100644
-> --- a/arch/powerpc/mm/mem.c
-> +++ b/arch/powerpc/mm/mem.c
-> @@ -388,13 +388,6 @@ void free_initmem(void)
->  	free_initmem_default(POISON_FREE_INITMEM);
->  }
-> 
-> -#ifdef CONFIG_BLK_DEV_INITRD
-> -void __init free_initrd_mem(unsigned long start, unsigned long end)
-> -{
-> -	free_reserved_area((void *)start, (void *)end, -1, "initrd");
-> -}
-> -#endif
-> -
->  /*
->   * This is called when a page has been modified by the kernel.
->   * It just marks the page as not i-cache clean.  We do the i-cache
-> diff --git a/arch/sh/mm/init.c b/arch/sh/mm/init.c
-> index a8e5c0e00fca..2fa824336ec2 100644
-> --- a/arch/sh/mm/init.c
-> +++ b/arch/sh/mm/init.c
-> @@ -410,13 +410,6 @@ void free_initmem(void)
->  	free_initmem_default(-1);
->  }
-> 
-> -#ifdef CONFIG_BLK_DEV_INITRD
-> -void free_initrd_mem(unsigned long start, unsigned long end)
-> -{
-> -	free_reserved_area((void *)start, (void *)end, -1, "initrd");
-> -}
-> -#endif
-> -
->  #ifdef CONFIG_MEMORY_HOTPLUG
->  int arch_add_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap,
->  		bool want_memblock)
-> diff --git a/arch/um/kernel/mem.c b/arch/um/kernel/mem.c
-> index 799b571a8f88..48b24b63b10d 100644
-> --- a/arch/um/kernel/mem.c
-> +++ b/arch/um/kernel/mem.c
-> @@ -172,13 +172,6 @@ void free_initmem(void)
->  {
->  }
-> 
-> -#ifdef CONFIG_BLK_DEV_INITRD
-> -void free_initrd_mem(unsigned long start, unsigned long end)
-> -{
-> -	free_reserved_area((void *)start, (void *)end, -1, "initrd");
-> -}
-> -#endif
-> -
->  /* Allocate and free page tables. */
-> 
->  pgd_t *pgd_alloc(struct mm_struct *mm)
-> diff --git a/arch/unicore32/mm/init.c b/arch/unicore32/mm/init.c
-> index e3f4f791e10a..01271ce52ef9 100644
-> --- a/arch/unicore32/mm/init.c
-> +++ b/arch/unicore32/mm/init.c
-> @@ -316,10 +316,3 @@ void free_initmem(void)
->  {
->  	free_initmem_default(-1);
->  }
-> -
-> -#ifdef CONFIG_BLK_DEV_INITRD
-> -void free_initrd_mem(unsigned long start, unsigned long end)
-> -{
-> -	free_reserved_area((void *)start, (void *)end, -1, "initrd");
-> -}
-> -#endif
-> diff --git a/init/initramfs.c b/init/initramfs.c
-> index cf8bf014873f..f3aaa58ac63d 100644
-> --- a/init/initramfs.c
-> +++ b/init/initramfs.c
-> @@ -527,6 +527,11 @@ extern unsigned long __initramfs_size;
->  #include <linux/initrd.h>
->  #include <linux/kexec.h>
-> 
-> +void __weak free_initrd_mem(unsigned long start, unsigned long end)
-> +{
-> +	free_reserved_area((void *)start, (void *)end, -1, "initrd");
-> +}
-> +
->  #ifdef CONFIG_KEXEC_CORE
->  static bool kexec_free_initrd(void)
->  {
-> -- 
-> 2.20.1
-> 
+>  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Docu=
+mentation/devicetree/bindings/vendor-prefixes.txt
+> index 4b1a2a8..02a7037 100644
+> --- a/Documentation/devicetree/bindings/vendor-prefixes.txt
+> +++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+> @@ -344,6 +344,7 @@ sgxSGX Sensortech
+>  sharpSharp Corporation
+>  shimafujiShimafuji Electric, Inc.
+>  si-enSi-En Technology Ltd.
+> +si-linuxSilicon Linux Corporation
+>  sifiveSiFive, Inc.
+>  sigmaSigma Designs, Inc.
+>  siiSeiko Instruments, Inc.
+> --
+> 2.7.4
 
--- 
-Sincerely yours,
-Mike.
 
+
+Renesas Electronics Europe GmbH,Geschaeftsfuehrer/President : Michael Hanna=
+wald, Sitz der Gesellschaft/Registered office: Duesseldorf, Arcadiastrasse =
+10, 40472 Duesseldorf, Germany,Handelsregister/Commercial Register: Duessel=
+dorf, HRB 3708 USt-IDNr./Tax identification no.: DE 119353406 WEEE-Reg.-Nr.=
+/WEEE reg. no.: DE 14978647
