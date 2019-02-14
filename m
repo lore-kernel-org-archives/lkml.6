@@ -2,101 +2,80 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE588C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:57:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB233C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:57:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC459222DD
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:57:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC55B222DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:57:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437100AbfBNQ5F (ORCPT
+        id S2502840AbfBNQ5T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:57:05 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41952 "EHLO mx1.redhat.com"
+        Thu, 14 Feb 2019 11:57:19 -0500
+Received: from sauhun.de ([88.99.104.3]:54140 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2502797AbfBNQ5D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 11:57:03 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7E33F7EBC1;
-        Thu, 14 Feb 2019 16:57:03 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C86EB101960D;
-        Thu, 14 Feb 2019 16:56:52 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 1/9] keys: Invalidate used request_key authentication
- keys
-From:   David Howells <dhowells@redhat.com>
-To:     keyrings@vger.kernel.org
-Cc:     linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        rgb@redhat.com, dhowells@redhat.com, linux-kernel@vger.kernel.org
-Date:   Thu, 14 Feb 2019 16:56:50 +0000
-Message-ID: <155016341076.11489.17906138075234365532.stgit@warthog.procyon.org.uk>
-In-Reply-To: <155016339876.11489.901851271827069026.stgit@warthog.procyon.org.uk>
-References: <155016339876.11489.901851271827069026.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        id S2502823AbfBNQ5T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 11:57:19 -0500
+Received: from localhost (unknown [83.221.228.209])
+        by pokefinder.org (Postfix) with ESMTPSA id 8FBAD2C2817;
+        Thu, 14 Feb 2019 17:57:17 +0100 (CET)
+Date:   Thu, 14 Feb 2019 17:57:17 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Federico Vaga <federico.vaga@cern.ch>
+Cc:     Peter Korsgaard <peter@korsgaard.com>,
+        Andrew Lunn <andrew@lunn.ch>, Peter Rosin <peda@axentia.se>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/5] i2c: ocores: improvements
+Message-ID: <20190214165717.gr2ujb26x5papwep@ninjato>
+References: <20190214085134.12900-1-federico.vaga@cern.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 14 Feb 2019 16:57:03 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="q7zkhe3ilfb4wtbd"
+Content-Disposition: inline
+In-Reply-To: <20190214085134.12900-1-federico.vaga@cern.ch>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Invalidate used request_key authentication keys rather than revoking them
-so that they get cleaned up immediately rather than potentially hanging
-around.  There doesn't seem any need to keep the revoked keys around.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+--q7zkhe3ilfb4wtbd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
- security/keys/key.c         |    4 ++--
- security/keys/request_key.c |    2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+On Thu, Feb 14, 2019 at 09:51:29AM +0100, Federico Vaga wrote:
+>=20
+> This patch set provides improvements to the i2c-ocore driver.
+>=20
+> [V6 -> V7]
+> - restore accidentally removed 'reviewed-by' tags in changelog
 
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 696f1c092c50..d705b950ce2a 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -459,7 +459,7 @@ static int __key_instantiate_and_link(struct key *key,
- 
- 			/* disable the authorisation key */
- 			if (authkey)
--				key_revoke(authkey);
-+				key_invalidate(authkey);
- 
- 			if (prep->expiry != TIME64_MAX) {
- 				key->expiry = prep->expiry;
-@@ -607,7 +607,7 @@ int key_reject_and_link(struct key *key,
- 
- 		/* disable the authorisation key */
- 		if (authkey)
--			key_revoke(authkey);
-+			key_invalidate(authkey);
- 	}
- 
- 	mutex_unlock(&key_construction_mutex);
-diff --git a/security/keys/request_key.c b/security/keys/request_key.c
-index 3f56a312dd35..7e935553af2b 100644
---- a/security/keys/request_key.c
-+++ b/security/keys/request_key.c
-@@ -224,7 +224,7 @@ static int construct_key(struct key *key, const void *callout_info,
- 	/* check that the actor called complete_request_key() prior to
- 	 * returning an error */
- 	WARN_ON(ret < 0 &&
--		!test_bit(KEY_FLAG_REVOKED, &authkey->flags));
-+		!test_bit(KEY_FLAG_INVALIDATED, &authkey->flags));
- 
- 	key_put(authkey);
- 	kleave(" = %d", ret);
+Series applied to for-next, thanks!
 
+
+--q7zkhe3ilfb4wtbd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxlnewACgkQFA3kzBSg
+KbatDw/9ErjD838FhrEXP6pC3yWuz6ZJ40mPOV2lY6uFwQVsruoHLsLTg4B0uB3K
+W/CG/kRdPABB7ExWn7hr9OvIv1+Jpa4YeliO1hgXILC3VPEQSd6BbPx6W4wBgAQu
+q9TKXzYGUncG+l+/eBpBKF79EttEODb+kMLCsWafm0rmR32ToBIwRLvWgUp7w5uA
+iP50HRbC5Npxc9hnGfRlmNFCilmEijCYPHchSqRaEQ7D7okHPdxtYRT7bGaVooLe
+NToCZHwIUf6K5o+Mx0diP2d2PEDhrBAiNiyH21ouXCu1l0iki6LdA4mRSL/5luSW
+zpSTwY7ZeBZbfQgwNAAsb/tBJ1ugVRYRCu99TqyJl16+KIeLosJcRz5NO+8v8TOb
+wR0ZuLiDDkTR/yzUSootfTpsrIM/ecYQbVW37kQ2RsLXBPcqdi61z/3lM9i+eFCN
+T84vyYmspKCt2iMNeEgDPWgFrd2TG3kbZRwhdu/JVqNwSKkGPqFJi6ejTk5PN6xD
+vTICvWEoM1ngtigJkNQp14G6Y1D1yNGBYJMNyq3xbb/dVJ8DJQxLWUaJFNtbnN01
+CYeIRlO1CfOZseOYvP5celsMaXqLM9gKhVZPurtHxwLfIZe4dlV2xt+uDTBJhWxV
+BLnfi71+OWACMYixsZ3VDnqVpAg9K+y/3W0l1uAQFUB73a4kvDo=
+=iroc
+-----END PGP SIGNATURE-----
+
+--q7zkhe3ilfb4wtbd--
