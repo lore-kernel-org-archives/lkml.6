@@ -2,135 +2,141 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76568C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:31:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3872FC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:32:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32B2321B24
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:31:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HeoDAzz2"
+	by mail.kernel.org (Postfix) with ESMTP id 121132229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 21:32:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2440194AbfBNVbM (ORCPT
+        id S2440207AbfBNVb7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 16:31:12 -0500
-Received: from mail-ua1-f51.google.com ([209.85.222.51]:41056 "EHLO
-        mail-ua1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392871AbfBNVbM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 16:31:12 -0500
-Received: by mail-ua1-f51.google.com with SMTP id z24so2527616ual.8
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 13:31:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=l6oJdwKsksPx604/yJJd+mEudQ0YUiZ9cBn0VKX9KVI=;
-        b=HeoDAzz20Jg3BhMTwCELmwvtDztUVJysAZ0ZwaJJqJuWLeVPT9Y0l4YfrRuav+cLA3
-         qeFPKrPbeE3anBsBAdYEhCY3k5kWsNm208xeAwA9KhMCapnzUvq6krMSSBDcj0dkhzWx
-         sHSWVHunQGFH46/osaeyv1Ziz9m104vlqOeYsjTTu6rgrO7bgWEmtZW039DQ2rpOQbNz
-         Iw2cjVlB6Y1QUZv5A53N0ZStsA5vnAqugFv4u2seMrIthSRXiFfacRRhEsU+1VdY3ZvS
-         jM4JzggKCyyjUVXeTroVmAgxlGlASocQmtut2mbiN12Kn7uheBu+HssaLvn6ohhW3g/E
-         JyHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=l6oJdwKsksPx604/yJJd+mEudQ0YUiZ9cBn0VKX9KVI=;
-        b=AEHIjEptVRzTURLszfM8MRinvaZrf93pEagAEyOyATZNxK3dfjn1c9VH1+aUtYTokY
-         hUDBg0AlmjZPL8fPWwDPH+SkmQ0COyc1fedqkYgZ/uXgKQeEgpL8wKoUSEm6IU2tcaOn
-         ua5CX/dT1GM9FgYcmQNuIzA28ffk95qo3chrtJC/zFnazuQABw4VpcN6SkL0nmxoCfn2
-         UwCMhl0R/zvuDXtB42g9mtfhZFEbliUWiN1capJEDgGnFbMhi46ANBAJV6cbN9ELDaIC
-         uSwgGx044pZswSBC6gJZ9t3KcgyeAqCkMfemr2kTA7nGS+fH73yNfjKaFo/bEKM5/5xp
-         Yt+g==
-X-Gm-Message-State: AHQUAua4fUDBCMoyVjUDwFVLiJEfGKwxP2/P6MpDVbeRDLCpThcUOMzc
-        758tYOP3SuKw1HICFYnNlpiAOhoELK6AbAW7NzyKvA==
-X-Google-Smtp-Source: AHgI3IarmW+I2egRChm3a8P8cZ7kujnrp4wDgJZoTHzshoCBW9Ye4HCi7zIcGHTh2viraYKM8Yu0DJ14L54FS8JtDZ0=
-X-Received: by 2002:ab0:5590:: with SMTP id v16mr3172848uaa.132.1550179870532;
- Thu, 14 Feb 2019 13:31:10 -0800 (PST)
+        Thu, 14 Feb 2019 16:31:59 -0500
+Received: from foss.arm.com ([217.140.101.70]:51058 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392871AbfBNVb6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 16:31:58 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CF0CEEBD;
+        Thu, 14 Feb 2019 13:31:57 -0800 (PST)
+Received: from [192.168.1.123] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 89E103F557;
+        Thu, 14 Feb 2019 13:31:55 -0800 (PST)
+Subject: Re: [PATCH] iommu/arm-smmu: Allow disabling bypass via kernel config
+To:     Douglas Anderson <dianders@chromium.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        evgreen@chromium.org, tfiga@chromium.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20190214204433.155715-1-dianders@chromium.org>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <4238ceb7-d286-9ef9-39b6-b2e0571f2981@arm.com>
+Date:   Thu, 14 Feb 2019 21:31:46 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <20190205133727.GF4794@krava> <20190211101957.GB14253@krava>
- <CABPqkBSkyHRaXN-oVLuJJ=aPEBfqOAunRUReHsxESnC=KKQuPg@mail.gmail.com>
- <20190211185306.GD5046@krava> <20190211193202.GG3269@kernel.org>
- <20190211201831.GE5046@krava> <CABPqkBRdmfOde793id4GEuwD=eYL8TLKe1p8k07xWAh1MPD3AQ@mail.gmail.com>
- <20190214113450.GC26714@krava> <20190214125759.GS3269@kernel.org>
- <20190214132638.GB13095@krava> <20190214135958.GB7074@kernel.org>
-In-Reply-To: <20190214135958.GB7074@kernel.org>
-From:   Stephane Eranian <eranian@google.com>
-Date:   Thu, 14 Feb 2019 13:30:59 -0800
-Message-ID: <CABPqkBS1LQFV7=DS1-LJVWPo-x=cK9X6iFa=eRHuQKAukwv-OQ@mail.gmail.com>
-Subject: Re: [RFC/PATCH 00/14] perf record: Add support to store data in directory
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Andi Kleen <ak@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190214204433.155715-1-dianders@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 6:00 AM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> Em Thu, Feb 14, 2019 at 02:26:38PM +0100, Jiri Olsa escreveu:
-> > On Thu, Feb 14, 2019 at 09:57:59AM -0300, Arnaldo Carvalho de Melo wrote:
-> > > But with the build id in the MMAPs we wouldn't need to scan anything at
-> > > 'perf record' time, just at 'perf archive' time, where we would scan
-> > > everything, and as soon as we find a hit, we add that DSO to the list of
-> > > things we need to put in the tarball.
->
-> > ok.. it might little change the expected behavour in that you will not
-> > have .debug cache populated until you run perf archive.. some profile
-> > data might stop report after you reinstall the binary..
->
-Today perf record does collect the buildids once monitor is completed,
-it does one
-pass over the perf.data file looking for MMAP records, or at least in
-the version I am
-more familiar with.
+Hi Doug,
 
-> Well, nothing prevents us from continuing to, in 'perf record', go thru
-> the perf.data just collected to populate the .debug cache, its just that
-> we would do it just for that, for populating the cache, we wouldn't
-> _have_ to do that for collecting the buildids.
+On 2019-02-14 8:44 pm, Douglas Anderson wrote:
+> Right now the only way to disable the iommu bypass for the ARM SMMU is
+> with the kernel command line parameter 'arm-smmu.disable_bypass'.
+> 
+> In general kernel command line parameters make sense for things that
+> someone would like to tweak without rebuilding the kernel or for very
+> basic communication between the bootloader and the kernel, but are
+> awkward for other things.  Specifically:
+> * Human parsing of the kernel command line can be difficult since it's
+>    just a big runon space separated line of text.
+> * If every bit of the system was configured via the kernel command
+>    line the kernel command line would get very large and even more
+>    unwieldly.
+> * Typically there are not easy ways in build systems to adjust the
+>    kernel command line for config-like options.
+> 
+> Let's introduce a new config option that allows us to disable the
+> iommu bypass without affecting the existing default nor the existing
+> ability to adjust the configuration via kernel command line.
 
-Sure, for compatibility reasons.
-In pipe mode, this would also avoid the need for perf inject -b -i -,
-which is a win.
+I say let's just flip the default - for a while now it's been one of 
+those "oh yeah, we should probably do that" things that gets instantly 
+forgotten again, so some 3rd-party demand is plenty to convince me :)
 
-perf archive is useful if you do not have a way to locate the binary using  only
-the buildid on the analysis machine.
->
-> > on the other hand '.debug' cache would stop growing uncontrolably..
-> > so I think I'd be ok with this
->
-I agree!
+There are few reasons to allow unmatched stream bypass, and even fewer 
+good ones, so I'd be happy to shift the command-line burden over to the 
+esoteric cases at this point, and consider the config option in future 
+if anyone from that camp pops up and screams hard enough.
 
-> That is another problem, and one that has to be solved in a way similar
-> to ccache's --max-size option.
->
-> The .debug cache is useful for various workflows, but may get in the way
-> for some others, which is why we have ways to disable it.
->
-Correct.
+Cheers,
+Robin.
 
-> For instance, when working on some project it is handy to have copies of
-> binaries saved so that older perf.data files can find a file that was
-> rewritten by the compiler when doing changes in it, etc.
->
-> With the .debug cache and if using -g, we can get the older copy of the
-> binary _and_ its sources, annotation for older versions continue to
-> work, etc.
->
-> - Arnaldo
+> 
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+> 
+>   drivers/iommu/Kconfig    | 22 ++++++++++++++++++++++
+>   drivers/iommu/arm-smmu.c |  3 ++-
+>   2 files changed, 24 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+> index 46fcd75d4364..c614beab08f8 100644
+> --- a/drivers/iommu/Kconfig
+> +++ b/drivers/iommu/Kconfig
+> @@ -359,6 +359,28 @@ config ARM_SMMU
+>   	  Say Y here if your SoC includes an IOMMU device implementing
+>   	  the ARM SMMU architecture.
+>   
+> +config ARM_SMMU_DISABLE_BYPASS_BY_DEFAULT
+> +	bool "Default to disabling bypass on ARM SMMU v1 and v2"
+> +	depends on ARM_SMMU
+> +	default n
+> +	help
+> +	  Say Y here to (by default) disable bypass streams such that
+> +	  incoming transactions from devices that are not attached to
+> +	  an iommu domain will report an abort back to the device and
+> +	  will not be allowed to pass through the SMMU.
+> +
+> +	  Historically the ARM SMMU v1 and v2 driver has defaulted
+> +	  to allow bypass by default but it could be disabled with
+> +	  the parameter 'arm-smmu.disable_bypass'.  The parameter is
+> +	  still present and can be used to override this config
+> +	  option, but this config option allows you to disable bypass
+> +	  without bloating the kernel command line.
+> +
+> +	  Disabling bypass is more secure but presumably will break
+> +	  old systems.
+> +
+> +	  Say N if unsure.
+> +
+>   config ARM_SMMU_V3
+>   	bool "ARM Ltd. System MMU Version 3 (SMMUv3) Support"
+>   	depends on ARM64
+> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+> index 045d93884164..930c07635956 100644
+> --- a/drivers/iommu/arm-smmu.c
+> +++ b/drivers/iommu/arm-smmu.c
+> @@ -110,7 +110,8 @@ static int force_stage;
+>   module_param(force_stage, int, S_IRUGO);
+>   MODULE_PARM_DESC(force_stage,
+>   	"Force SMMU mappings to be installed at a particular stage of translation. A value of '1' or '2' forces the corresponding stage. All other values are ignored (i.e. no stage is forced). Note that selecting a specific stage will disable support for nested translation.");
+> -static bool disable_bypass;
+> +static bool disable_bypass =
+> +	IS_ENABLED(CONFIG_ARM_SMMU_DISABLE_BYPASS_BY_DEFAULT);
+>   module_param(disable_bypass, bool, S_IRUGO);
+>   MODULE_PARM_DESC(disable_bypass,
+>   	"Disable bypass streams such that incoming transactions from devices that are not attached to an iommu domain will report an abort back to the device and will not be allowed to pass through the SMMU.");
+> 
