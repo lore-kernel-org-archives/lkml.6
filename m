@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6495AC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:51:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD6B1C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:51:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33038222D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:51:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 958C9222B6
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:51:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404025AbfBNNvU (ORCPT
+        id S2407115AbfBNNvY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 08:51:20 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46112 "EHLO
+        Thu, 14 Feb 2019 08:51:24 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:46430 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2392390AbfBNNvT (ORCPT
+        by vger.kernel.org with ESMTP id S2404062AbfBNNvV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 08:51:19 -0500
+        Thu, 14 Feb 2019 08:51:21 -0500
 Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1EDiQQV112906
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:51:18 -0500
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1EDiR6A112969
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:51:20 -0500
 Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qn94b1wju-1
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qn94b1wmk-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:51:18 -0500
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 08:51:20 -0500
 Received: from localhost
         by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Thu, 14 Feb 2019 13:51:15 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        Thu, 14 Feb 2019 13:51:17 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
         by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 14 Feb 2019 13:51:13 -0000
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1EDpBnA61145196
+        Thu, 14 Feb 2019 13:51:14 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1EDpD7u4981200
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 14 Feb 2019 13:51:11 GMT
+        Thu, 14 Feb 2019 13:51:13 GMT
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 91E2842041;
-        Thu, 14 Feb 2019 13:51:11 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 285D942042;
+        Thu, 14 Feb 2019 13:51:13 +0000 (GMT)
 Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0C46842047;
-        Thu, 14 Feb 2019 13:51:11 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id A181142045;
+        Thu, 14 Feb 2019 13:51:12 +0000 (GMT)
 Received: from morel-ThinkPad-W530.boeblingen.de.ibm.com (unknown [9.152.224.140])
         by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 14 Feb 2019 13:51:10 +0000 (GMT)
+        Thu, 14 Feb 2019 13:51:12 +0000 (GMT)
 From:   Pierre Morel <pmorel@linux.ibm.com>
 To:     borntraeger@de.ibm.com
 Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
@@ -55,192 +55,133 @@ Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
         kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
         pasic@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
         heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
-Subject: [PATCH v3 1/9] s390: vfio_ap: link the vfio_ap devices to the vfio_ap bus subsystem
-Date:   Thu, 14 Feb 2019 14:51:01 +0100
+Subject: [PATCH v3 2/9] s390: ap: kvm: setting a hook for PQAP instructions
+Date:   Thu, 14 Feb 2019 14:51:02 +0100
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
 References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19021413-0008-0000-0000-000002C072A5
+x-cbid: 19021413-0008-0000-0000-000002C072A6
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021413-0009-0000-0000-0000222C9545
-Message-Id: <1550152269-6317-2-git-send-email-pmorel@linux.ibm.com>
+x-cbparentid: 19021413-0009-0000-0000-0000222C9546
+Message-Id: <1550152269-6317-3-git-send-email-pmorel@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=567 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1902140098
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Libudev relies on having a subsystem link for non-root devices. To
-avoid libudev (and potentially other userspace tools) choking on the
-matrix device let us introduce a vfio_ap bus and with that the vfio_ap
-bus subsytem, and make the matrix device reside within it.
+This patch adds interception code for the PQAP instructions,
+and a callback inside the KVM arch structure for s390.
 
-We restrict the number of allowed devices to a single one.
+If a VFIO-AP drivers needs to intercept PQAP/AQIC or PQAP/TAPQ
+instructions, the driver will initialize the callback inside
+the kvm_arch structure to be called when the interception of a
+PQAP instruction occurs.
 
-Doing this we need to suppress the forced link from the matrix device to
-the vfio_ap driver and we suppress the device_type we do not need
-anymore.
-
-Since the associated matrix driver is not the vfio_ap driver any more,
-we have to change the search for the devices on the vfio_ap driver in
-the function vfio_ap_verify_queue_reserved.
+If the callback is not initialized, the code still returns
+-EOPNOTSUPP to let userland handle the instruction as it used to.
 
 Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+Reviewed-by: Tony Krowiak <akrowiak@linux.ibm.com>
 ---
- drivers/s390/crypto/vfio_ap_drv.c     | 63 +++++++++++++++++++++++++++++++----
- drivers/s390/crypto/vfio_ap_ops.c     |  4 +--
- drivers/s390/crypto/vfio_ap_private.h |  1 +
- 3 files changed, 60 insertions(+), 8 deletions(-)
+ arch/s390/include/asm/kvm_host.h |  1 +
+ arch/s390/kvm/priv.c             | 50 ++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 51 insertions(+)
 
-diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
-index 31c6c84..1fd5fe6 100644
---- a/drivers/s390/crypto/vfio_ap_drv.c
-+++ b/drivers/s390/crypto/vfio_ap_drv.c
-@@ -24,8 +24,9 @@ MODULE_LICENSE("GPL v2");
+diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
+index c5f5156..49cc8b0 100644
+--- a/arch/s390/include/asm/kvm_host.h
++++ b/arch/s390/include/asm/kvm_host.h
+@@ -719,6 +719,7 @@ struct kvm_s390_cpu_model {
  
- static struct ap_driver vfio_ap_drv;
- 
--static struct device_type vfio_ap_dev_type = {
--	.name = VFIO_AP_DEV_TYPE_NAME,
-+struct matrix_driver {
-+	struct device_driver drv;
-+	int device_count;
- };
- 
- struct ap_matrix_dev *matrix_dev;
-@@ -62,6 +63,41 @@ static void vfio_ap_matrix_dev_release(struct device *dev)
- 	kfree(matrix_dev);
+ struct kvm_s390_crypto {
+ 	struct kvm_s390_crypto_cb *crycb;
++	int (*pqap_hook)(struct kvm_vcpu *vcpu);
+ 	__u32 crycbd;
+ 	__u8 aes_kw;
+ 	__u8 dea_kw;
+diff --git a/arch/s390/kvm/priv.c b/arch/s390/kvm/priv.c
+index 8679bd7..72fdc21 100644
+--- a/arch/s390/kvm/priv.c
++++ b/arch/s390/kvm/priv.c
+@@ -27,6 +27,7 @@
+ #include <asm/io.h>
+ #include <asm/ptrace.h>
+ #include <asm/sclp.h>
++#include <asm/ap.h>
+ #include "gaccess.h"
+ #include "kvm-s390.h"
+ #include "trace.h"
+@@ -592,6 +593,53 @@ static int handle_io_inst(struct kvm_vcpu *vcpu)
+ 	}
  }
  
-+static int matrix_bus_match(struct device *dev, struct device_driver *drv)
++/*
++ * handle_pqap: Handling pqap interception
++ * @vcpu: the vcpu having issue the pqap instruction
++ *
++ * This callback only handles PQAP/AQIC instruction and
++ * calls a dedicated callback for this instruction if
++ * a driver did register one in the CRYPTO satellite of the
++ * SIE block.
++ *
++ * Do not change the behavior if, return -EOPNOTSUPP if:
++ * - the hook is not used do not change the behavior.
++ * - AP instructions are not available or not available to the guest
++ * - the instruction is not PQAP with function code indicating
++ *   AQIC do not change the previous behavior.
++ *
++ * For PQAP/AQIC instruction, verify privilege and specifications
++ *
++ * return the value returned by the callback.
++ */
++static int handle_pqap(struct kvm_vcpu *vcpu)
 +{
-+	return 1;
++	uint8_t fc;
++
++	/* Verify that the hook callback is registered */
++	if (!vcpu->kvm->arch.crypto.pqap_hook)
++		return -EOPNOTSUPP;
++	/* Verify that the AP instruction are available */
++	if (!ap_instructions_available())
++		return -EOPNOTSUPP;
++	/* Verify that the guest is allowed to use AP instructions */
++	if (!(vcpu->arch.sie_block->eca & ECA_APIE))
++		return -EOPNOTSUPP;
++	/* Verify that the function code is AQIC */
++	fc = vcpu->run->s.regs.gprs[0] >> 24;
++	if (fc != 0x03)
++		return -EOPNOTSUPP;
++
++	/* PQAP instructions are allowed for guest kernel only */
++	if (vcpu->arch.sie_block->gpsw.mask & PSW_MASK_PSTATE)
++		return kvm_s390_inject_program_int(vcpu, PGM_PRIVILEGED_OP);
++	/* AQIC instruction is allowed only if facility 65 is available */
++	if (!test_kvm_facility(vcpu->kvm, 65))
++		return kvm_s390_inject_program_int(vcpu, PGM_SPECIFICATION);
++	/* All right, call the callback */
++	return vcpu->kvm->arch.crypto.pqap_hook(vcpu);
 +}
 +
-+static struct bus_type matrix_bus = {
-+	.name = "vfio_ap",
-+	.match = &matrix_bus_match,
-+};
-+
-+static int matrix_probe(struct device *dev);
-+static int matrix_remove(struct device *dev);
-+static struct matrix_driver matrix_driver = {
-+	.drv = {
-+		.name = "vfio_ap",
-+		.bus = &matrix_bus,
-+		.probe = matrix_probe,
-+		.remove = matrix_remove,
-+	},
-+};
-+
-+static int matrix_probe(struct device *dev)
-+{
-+	if (matrix_driver.device_count)
-+		return -EEXIST;
-+	matrix_driver.device_count++;
-+	return 0;
-+}
-+
-+static int matrix_remove(struct device *dev)
-+{
-+	matrix_driver.device_count--;
-+	return 0;
-+}
-+
- static int vfio_ap_matrix_dev_create(void)
+ static int handle_stfl(struct kvm_vcpu *vcpu)
  {
- 	int ret;
-@@ -71,6 +107,10 @@ static int vfio_ap_matrix_dev_create(void)
- 	if (IS_ERR(root_device))
- 		return PTR_ERR(root_device);
- 
-+	ret = bus_register(&matrix_bus);
-+	if (ret)
-+		goto bus_register_err;
-+
- 	matrix_dev = kzalloc(sizeof(*matrix_dev), GFP_KERNEL);
- 	if (!matrix_dev) {
- 		ret = -ENOMEM;
-@@ -87,30 +127,41 @@ static int vfio_ap_matrix_dev_create(void)
- 	mutex_init(&matrix_dev->lock);
- 	INIT_LIST_HEAD(&matrix_dev->mdev_list);
- 
--	matrix_dev->device.type = &vfio_ap_dev_type;
- 	dev_set_name(&matrix_dev->device, "%s", VFIO_AP_DEV_NAME);
- 	matrix_dev->device.parent = root_device;
-+	matrix_dev->device.bus = &matrix_bus;
- 	matrix_dev->device.release = vfio_ap_matrix_dev_release;
--	matrix_dev->device.driver = &vfio_ap_drv.driver;
-+	matrix_dev->vfio_ap_drv = &vfio_ap_drv;
- 
- 	ret = device_register(&matrix_dev->device);
- 	if (ret)
- 		goto matrix_reg_err;
- 
-+	ret = driver_register(&matrix_driver.drv);
-+	if (ret)
-+		goto matrix_drv_err;
-+
- 	return 0;
- 
-+matrix_drv_err:
-+	device_unregister(&matrix_dev->device);
- matrix_reg_err:
- 	put_device(&matrix_dev->device);
- matrix_alloc_err:
-+	bus_unregister(&matrix_bus);
-+bus_register_err:
- 	root_device_unregister(root_device);
--
- 	return ret;
- }
- 
- static void vfio_ap_matrix_dev_destroy(void)
- {
-+	struct device *root_device = matrix_dev->device.parent;
-+
-+	driver_unregister(&matrix_driver.drv);
- 	device_unregister(&matrix_dev->device);
--	root_device_unregister(matrix_dev->device.parent);
-+	bus_unregister(&matrix_bus);
-+	root_device_unregister(root_device);
- }
- 
- static int __init vfio_ap_init(void)
-diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-index 272ef42..900b9cf 100644
---- a/drivers/s390/crypto/vfio_ap_ops.c
-+++ b/drivers/s390/crypto/vfio_ap_ops.c
-@@ -198,8 +198,8 @@ static int vfio_ap_verify_queue_reserved(unsigned long *apid,
- 	qres.apqi = apqi;
- 	qres.reserved = false;
- 
--	ret = driver_for_each_device(matrix_dev->device.driver, NULL, &qres,
--				     vfio_ap_has_queue);
-+	ret = driver_for_each_device(&matrix_dev->vfio_ap_drv->driver, NULL,
-+				     &qres, vfio_ap_has_queue);
- 	if (ret)
- 		return ret;
- 
-diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
-index 5675492..76b7f98 100644
---- a/drivers/s390/crypto/vfio_ap_private.h
-+++ b/drivers/s390/crypto/vfio_ap_private.h
-@@ -40,6 +40,7 @@ struct ap_matrix_dev {
- 	struct ap_config_info info;
- 	struct list_head mdev_list;
- 	struct mutex lock;
-+	struct ap_driver  *vfio_ap_drv;
- };
- 
- extern struct ap_matrix_dev *matrix_dev;
+ 	int rc;
+@@ -878,6 +926,8 @@ int kvm_s390_handle_b2(struct kvm_vcpu *vcpu)
+ 		return handle_sthyi(vcpu);
+ 	case 0x7d:
+ 		return handle_stsi(vcpu);
++	case 0xaf:
++		return handle_pqap(vcpu);
+ 	case 0xb1:
+ 		return handle_stfl(vcpu);
+ 	case 0xb2:
 -- 
 2.7.4
 
