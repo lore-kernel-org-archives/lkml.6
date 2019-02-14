@@ -2,92 +2,132 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7481C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 03:14:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C9AC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 03:16:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2F3B2070C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 03:14:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6E212070C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 03:16:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="apQl9Lu+"
+	dkim=pass (2048-bit key) header.d=dionne-riel-com.20150623.gappssmtp.com header.i=@dionne-riel-com.20150623.gappssmtp.com header.b="P+6OmcYb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405372AbfBNDOd (ORCPT
+        id S2395322AbfBNDQR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Feb 2019 22:14:33 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:41334 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390020AbfBNDOc (ORCPT
+        Wed, 13 Feb 2019 22:16:17 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:40514 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390020AbfBNDQQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Feb 2019 22:14:32 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1E33urw027500;
-        Thu, 14 Feb 2019 03:14:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
- from : references : date : in-reply-to : message-id : mime-version :
- content-type; s=corp-2018-07-02;
- bh=q42QLD1W5S2AT774vyKhI2wEJCz7Uxahxfv3PjCHl6A=;
- b=apQl9Lu+bo9bUqFcq2471/8vt+s+odhUN9s8v9ZvkPyO/403lxvCmhUlupihZ62uSqy6
- DZ8Ej/CiQbUKuRI+u51fK/ZLH6wTIujw2XAJB6jSJ3zCnF//C7veMGzG+P/Xji2bD9r/
- pU6FJ3QVjRFsxamoLR/wLHt/HroniJrsRxQg97YZGO0rGrs9/3Rjtc4Ad6JdhgcRVBM1
- ++QvTM+XuJk9KlfmKQ9LPaooEEqUKhGgENDDaWk9HC6S9WIB7iUz+Wz4zZFNdBW2ox4P
- REG6V6KwIjpHP1e+TCyNGarGVQprwu6GPBTGOTjIQ4vAFKYzz/0f10eHsW6IcOsV1U6D Ow== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2130.oracle.com with ESMTP id 2qhre5nhdn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Feb 2019 03:14:25 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1E3EO2H004374
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Feb 2019 03:14:25 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1E3EOiF012481;
-        Thu, 14 Feb 2019 03:14:24 GMT
-Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 14 Feb 2019 03:14:23 +0000
-To:     Rob Herring <robh@kernel.org>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        linux-scsi@vger.kernel.org, Meelis Roos <mroos@linux.ee>
-Subject: Re: [PATCH] scsi: qlogicpti: Use of_node_name_eq for node name comparisons
-From:   "Martin K. Petersen" <martin.petersen@oracle.com>
-Organization: Oracle Corporation
-References: <20190213160829.3923-1-robh@kernel.org>
-Date:   Wed, 13 Feb 2019 22:14:21 -0500
-In-Reply-To: <20190213160829.3923-1-robh@kernel.org> (Rob Herring's message of
-        "Wed, 13 Feb 2019 10:08:29 -0600")
-Message-ID: <yq11s4bqcxe.fsf@oracle.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 13 Feb 2019 22:16:16 -0500
+Received: by mail-lj1-f195.google.com with SMTP id z25-v6so3897295ljk.7
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Feb 2019 19:16:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dionne-riel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=oz7mEj1PyPdx47Z542OOOgMZTRRN8i/r2FlwV9qjH0c=;
+        b=P+6OmcYbYKJ57aI0Qdfe6Jdd4pzvGMItLtYB0gXWsrsFzA22IBrKDyqmvsmJjLbM3n
+         4Rb6n+0ZnUYYfj9moaVWffpFJfjSrKSNvXyspj83AKBn8LC4SPgKs+lxsEUa41e2lHY0
+         SoNtAburXbjTibaAXd9qMDHA3HqyFy+uo/gIUHxpwEcERBS4t+RIn5m12RiqfW1nNTtP
+         1GIt8zua8Vf/5SfnfTixlHaGANt7iXcH4lH3wVF0J0UJb9zP2kTal4bJhl8eDLjFv2SV
+         Fbg3i1ObNMn8SCuFx8biFN0JvL/AGfsIcDKjd490H2XCjC452UyHAid9orQLLRLsCfM4
+         tqAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=oz7mEj1PyPdx47Z542OOOgMZTRRN8i/r2FlwV9qjH0c=;
+        b=SzPgaLIn6VDaWFI5zcmHatQ9CCU7+xp/Rx2VTL1QnKM3yE69QueTIOCnJd6KV39rwJ
+         b3QeGYNmTZ+0O6uC9htYry235Zw8wxTec7Y5P4AgGzgajs6umYD+93vQHL1Gv/V6SR2L
+         WVb0cBfhYacq+ZCd+31cxUtGbmokZL1lD//QaW5i1zp2vI1rEYsgxhV9srZ/1Fpzx0S4
+         IIZawkGofsv68UR/75Xmvg6OkJQGVpUZn0O3dFkhHq05sTNSqnNSWcfv4yh5hGkbe2s8
+         PwGx/uWW2581j6MsMFWrLvfKg1rHzRxuWO2Zupcu22+WG4HQAZDRAV5OgZBUN7ADQV3/
+         +E5Q==
+X-Gm-Message-State: AHQUAuY3h4dXcpBlvpbtvred3SRS4NY2+PnZupwcrEkM1aHOxbI1wdTT
+        GSxanZPiEiryIXQaHWjckl2EkdLMwPaoMJ97WWB+OQ==
+X-Google-Smtp-Source: AHgI3IYNSS5B1bvIwNNwjZKIRmaYk6tcdXUsFw4nXKMPCmtuKQXHj6rNSZoD0R2ReyawhQH7HzBwhlCZd88dcSY06+g=
+X-Received: by 2002:a2e:4601:: with SMTP id t1-v6mr808018lja.111.1550114174813;
+ Wed, 13 Feb 2019 19:16:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9166 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=721 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902140020
+Received: by 2002:ab3:5612:0:0:0:0:0 with HTTP; Wed, 13 Feb 2019 19:16:13
+ -0800 (PST)
+In-Reply-To: <CAGXu5jKXUhYB9xBLMWTvJiJEVPyRd=RsZTOCSvbNv7i6pEhtmg@mail.gmail.com>
+References: <CAN1fySViLgrLAHHfTHMef-Bkh73kUHKP-ava6TbgALeSE4LfFw@mail.gmail.com>
+ <CAFLxGvwpuxKF4UWdsULwQWo7kgVLMNHC=77dN+w-A0a6avrAXA@mail.gmail.com>
+ <CAN1fySXjLUYFw2JGQQ5xxqjX+6kygzqgUc6Oj-sbtq=ZjgfLTA@mail.gmail.com>
+ <CAGXu5jJoqnX54JnHZDVxO4NRCsT6sLH4+-TPk8GqCSVp0mFNLw@mail.gmail.com>
+ <CAN1fySW2mTaHmj7_uon_xZBVgPeEuYCD8e+JGOSKNwokmgZ7yg@mail.gmail.com> <CAGXu5jKXUhYB9xBLMWTvJiJEVPyRd=RsZTOCSvbNv7i6pEhtmg@mail.gmail.com>
+From:   Samuel Dionne-Riel <samuel@dionne-riel.com>
+Date:   Wed, 13 Feb 2019 22:16:13 -0500
+Message-ID: <CAN1fySWW7y=nt72kHKydG-KrcrZhsj0YKZExyRc_OmAb_+QqAg@mail.gmail.com>
+Subject: Re: Userspace regression in LTS and stable kernels
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Richard Weinberger <richard.weinberger@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Graham Christensen <graham@grahamc.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 13/02/2019, Kees Cook <keescook@chromium.org> wrote:
+> The original problem that was trying to be fixed here was to disallow
+> execution of a truncated interpreter path. It was assumed argument
+> truncate was just as bad, but it's not, since the interpreter can (and
+> does!) re-read the script to get the right arguments.
+>
+> So, I've sent a fix-up patch that should disallow the path truncation,
+> but pass through the argument truncation as before. This passes all
+> the tests I built:
+>
+> [...]
+>
+> Are you able to test the patch and report back?
 
-Rob,
+The patch works as implemented. It also fixes the specific regression
+which affected NixOS. This was verified to work once applied to 4.14
+in our testing infra. Confidence is high enough that I don't think I
+need to test other LTS/stable versions.
 
-> -	qpti->is_pti = strcmp(qpti->prom_name, "QLGC,isp");
-> +	qpti->is_pti = !of_node_name_eq(op->dev.of_node, "QLGC,isp");
 
-The apparent polarity inversion made me blink but it appears to be
-correct (is_pti is set if it's not an isp controller). Makes me wonder
-if the driver is doing the right thing for a "SUNW,isp", though...
+Though, I have one minor doubt in mind. Looking at man 2 execve,
 
-Meelis: Do you have anything that identifies itself as SUNW,isp?
+ENOEXEC
+   An executable is not in a recognized format, is for the wrong
+   architecture, or has some other format error that means it cannot
+be executed.
 
-In any case: Applied to 5.1/scsi-queue.
+I can see "or some other format error" could be misapplied to mean
+ENOEXEC on failure to read the shebang, but I'm thinking it's kinda
+abusing the meaning behind the failure. The format was recognized, as
+a shebang, but it was impossible to use the shebang. If I were to
+misuse an error code, I would probably misuse ENAMETOOLONG. I'm still
+doubting ENOEXEC is safe to not cause issues since a truncated
+interpreter name (not shebang) will end up with a different behaviour
+than expected in the exec(3) userspace scenario, where with ENOEXEC
+the shell will be used instead of failing.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+Though, this is a different face to the same root regression reported
+here; our initial issue with the regression can be deemed fully
+resolved with the patch.
+
+In all cases, I think the man page will need an update to describe the
+new failure mode with truncated shebangs, and describe the non-failure
+mode when truncating arguments.
+
+
+> Thanks again for bringing this to our attention!
+
+Thanks for the quick turnaround!
+
+--=20
+=E2=80=94 Samuel Dionne-Riel
