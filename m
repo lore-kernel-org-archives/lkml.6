@@ -2,125 +2,86 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 754FBC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:33:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2AC8C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D3F6222A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:33:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="u5k3ijkR";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tZsVn8Cz"
+	by mail.kernel.org (Postfix) with ESMTP id 70E1E2229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 08:34:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394634AbfBNIdv (ORCPT
+        id S2394678AbfBNIeQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 03:33:51 -0500
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:39493 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388618AbfBNIdv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 03:33:51 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id C0A4C23B09;
-        Thu, 14 Feb 2019 03:33:49 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Thu, 14 Feb 2019 03:33:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
-        :from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm2; bh=vFPd37LZbMcPnKi3DY/of7ed0Wx
-        CuHCJq/PTXTEj56o=; b=u5k3ijkRXAa2zWU8Ec2x1QCRZpAZhJLnZ99aWA2ZD10
-        eCDCr3dLEw2XdIVMOyToXcoCbO8paBFQDTinfJpGwu2S42vNjk6LJYm/PRQVF+Hb
-        +K87nae6Q6IvxmZWmTtTn6ZPhXqhX+bpoAegvT3p1moX+Ehb5oeVC1uhAzXS6pUd
-        LRhJyPDPLM/64il+xaqQVXEQ/lfgcsqakODYRzk10hmheOpXdCJYrY/uiIYMOym8
-        5ZdBRPnaZooczdgLdu5/emNEb99QS7tStZgKhxJjKHRXy72YBPAJAQxBAFZhUhTr
-        t5/uGCkEtpO/u7mKrWyCBZvHmmiCg8c3P8gZfK3J1iQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=vFPd37
-        LZbMcPnKi3DY/of7ed0WxCuHCJq/PTXTEj56o=; b=tZsVn8Czm3jgha0SZllFQJ
-        6byzwgdjjHI/fpq+uBuD56X/BXEiQRas3t3/zz3s+nITAjWb3mcdWDW1S91n5S2C
-        gUtXQj6vT+1xsNcPDsmvVUq+LsYasTqroMS530D0ahC77Yoyq+EFQw3fdOJuyDv3
-        EnJLBItjXEeh7Gv42xb6p+zbNrGtgyGf8H3tzSsWO6zo4FgxXXaMFcTXnGqC+QCe
-        wV/Ur21B6RjDGMYxB+wBUXcaDUhkJuXf4b2KSSqnVZGGkVRlozgrvHYgmdRUQUew
-        OPC/D6Lh/KFtX2x3XgS+Mt9oNidT4Yhl5qK4DIzdqyPaSZqxkdI3skVaZ+d3EW5A
-        ==
-X-ME-Sender: <xms:7CdlXBHt7azdpZtU9sHYFd5J8rNkrR41JSvKCpUnm7QYu0nNk_cfUw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledruddtgedguddulecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecu
-    fedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnegfrhhlucfvnfffucdlfe
-    dtmdenucfjughrpeffhffvuffkfhggtggujgfofgesghdtreerofervdenucfhrhhomhep
-    fdfvohgsihhnucevrdcujfgrrhguihhnghdfuceomhgvsehtohgsihhnrdgttgeqnecukf
-    hppeduudekrddvuddurdduleelrddutdegnecurfgrrhgrmhepmhgrihhlfhhrohhmpehm
-    vgesthhosghinhdrtggtnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:7CdlXAkNj3HIcPSrj44B-1Za5uwcs2nfcNF0NhQcbcVM5efiARMQeg>
-    <xmx:7CdlXMdFLEv1VkihGsW2LrGPYwFr9O61NNq-efzY07EG_03TEn3yCw>
-    <xmx:7CdlXKZt-ZzLJyu92s7lXsETsksG_e1f3qd89rOjVnGob6EowfOaUw>
-    <xmx:7SdlXLhESg5axY8yMED9tT5aMaNjJ7PvQEbIOZc2NGI8hr3kryAIpw>
-Received: from localhost (ppp118-211-199-104.bras1.syd2.internode.on.net [118.211.199.104])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 9928B10310;
-        Thu, 14 Feb 2019 03:33:47 -0500 (EST)
-Date:   Thu, 14 Feb 2019 19:33:35 +1100
-From:   "Tobin C. Harding" <me@tobin.cc>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: Signed-off-by missing for commit in the leaks tree
-Message-ID: <20190214083335.GA3053@eros.localdomain>
-References: <20190214183605.3132886d@canb.auug.org.au>
+        Thu, 14 Feb 2019 03:34:16 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:25240 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2394645AbfBNIeP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 03:34:15 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B9022A0B42;
+        Thu, 14 Feb 2019 08:34:15 +0000 (UTC)
+Received: from krava (unknown [10.43.17.161])
+        by smtp.corp.redhat.com (Postfix) with SMTP id E92B154500;
+        Thu, 14 Feb 2019 08:34:12 +0000 (UTC)
+Date:   Thu, 14 Feb 2019 09:34:11 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Bo YU <tsu.yubo@gmail.com>
+Cc:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf trace: Fix potential USE_AFTER_FREE  problem
+Message-ID: <20190214083411.GA25842@krava>
+References: <20190214052356.26884-1-tsu.yubo@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="u3/rZRmxL6MmkK24"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190214183605.3132886d@canb.auug.org.au>
-X-Mailer: Mutt 1.11.3 (2019-02-01)
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190214052356.26884-1-tsu.yubo@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 14 Feb 2019 08:34:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Feb 14, 2019 at 12:23:56AM -0500, Bo YU wrote:
+> From: Bo Yu <tsu.yubo@gmail.com>
+> 
+> There is a freed pointer "evsel", so fix it.
+> 
+> Detected by CoverityScan, CID#1442595("Memory-illegalaccesses
+> (USE_AFTER_FREE)")
+> Fixes: 6ab3bc240ade4("perf trace: Support multiple "vfs_getname" probes")
+> 
+> Signed-off-by: Bo Yu <tsu.yubo@gmail.com>
+> ---
+>  tools/perf/builtin-trace.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index b36061cd1ab8..4036b20a1067 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -2515,7 +2515,7 @@ static size_t trace__fprintf_thread_summary(struct trace *trace, FILE *fp);
+>  static bool perf_evlist__add_vfs_getname(struct perf_evlist *evlist)
+>  {
+>  	bool found = false;
+> -	struct perf_evsel *evsel, *tmp;
+> +	struct perf_evsel *evsel = NULL, *tmp;
 
---u3/rZRmxL6MmkK24
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+hum, I can't see how this change could matter,
+could you pelase explain?
 
-On Thu, Feb 14, 2019 at 06:36:05PM +1100, Stephen Rothwell wrote:
-> Hi Tobin,
->=20
-> Commit
->=20
->   5d06b3fc8e61 ("leaking_addresses: Completely remove --version flag")
->=20
-> is missing a Signed-off-by from its author and committer.
+jirka
 
-Thanks, fixed.
-
-	Tobin
-
-
---u3/rZRmxL6MmkK24
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEc/+jpUAIMPwyplf8QL+eTCadZgcFAlxlJ9sACgkQQL+eTCad
-Zgdy8A/8DxMAK2W0fTnqiOFd/W/cU1295Av8IUBdKBrgXlDaiSzIJLaCN29EQwE+
-Ku4xiHgBPzSqbkif+UfbHnPLEH7yxRjg8+2VGx3Q8QUm1Fh4s0jBurPXX1iDe5lx
-BwTehd+ruEREdZaOafA2DRT3+yKo/OiVRkDmrjl7SG6fmDiYiO91bVfjv8aJqNEg
-4PJZnUI6qeI0V2ASZVtWqUfZp8vqVKCBNQHOrPRUFsIOIbxItM06VGHAZNsKkbzp
-DM+aNDOGHklq3mv11dv5nC5ydVr+NetnLkDaqZkZd3EbIr20DkrGpoOYiqj4rV+f
-4ZwX76tDv6+GD5QEQJ7HmKIBneDHQp6DnRhMRk13UvkgBCG+3QTelo0hWgVspoZW
-f5Uu/hhC/pfoERMESgk56/L7rJENaHQGtw60+zDMhsJLeWMGiW3/f2oj703IuCwn
-Xvki5IoKftSdsiUBgWmYZcy+MlygDfZrzfaBUoDTnO2GZ5m3GwIZKIpdzEPO+i5x
-KqTcg7TSe75JnZbO0hIHXuJm5moIVbaa17jyOoqDHh8MHrCicIPi7OxO2KoFjiXa
-drriAYZFIr2XRirQOAHqZAH+I7eGSep0/yvh9LZR60Xp8U7ez920tcU1q08b1u4r
-482lLY/U1HntoDhTI8NOFM9ZeuaByKAkWOanlfYC/DT/oLfKSZE=
-=fzEN
------END PGP SIGNATURE-----
-
---u3/rZRmxL6MmkK24--
+>  	struct parse_events_error err = { .idx = 0, };
+>  	int ret = parse_events(evlist, "probe:vfs_getname*", &err);
+>  
+> -- 
+> 2.11.0
+> 
