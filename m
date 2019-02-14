@@ -2,159 +2,138 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDFC3C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A2DC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:33:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C140B2229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:33:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CD622229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:33:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bSpx1tff"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406534AbfBNKd2 (ORCPT
+        id S2406583AbfBNKdq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 05:33:28 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50284 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2404171AbfBNKd2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 05:33:28 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E63B7AF6E;
-        Thu, 14 Feb 2019 10:33:25 +0000 (UTC)
-Date:   Thu, 14 Feb 2019 11:33:24 +0100
-From:   Petr Mladek <pmladek@suse.com>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
+        Thu, 14 Feb 2019 05:33:46 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:34630 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404171AbfBNKdq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 05:33:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=vDu94xn1oAM+sMbizgi+8P4bASl0cSHLy/8cGHt1spU=; b=bSpx1tffFFjQ9XwCly5V2uy4l
+        OurixB2Qe39xoEcivRbLI3UxKpTc+00+w5+01aU9ifKS9RKoyRoQIPHDpROL4xqW7+P4/kHwWGfQ+
+        hmLlI3Luim8bpDRlNPI7solsQ21Q6LGuqzjbWj3Ybb22aGzkBKrGiQGijzMYNe8pT8Dt0afUuwryr
+        mamxbtcd7/ujoShuZ6Uvb5LBEBdwbWifNfrUoGg8pa5W9BWCtUHvqz1uLRsy279KcvEuW8CZDl2YW
+        HlJ7+fJ/drKoaDw6HFZawRWWy4hT9BYYC8vGxn2pXM+Qb4wPUsJ1PsoGHHuqpIGASa2ogGT+juR0o
+        35gHo1c+w==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1guEKk-0004r6-UD; Thu, 14 Feb 2019 10:33:35 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 6F3DE20298375; Thu, 14 Feb 2019 11:33:33 +0100 (CET)
+Date:   Thu, 14 Feb 2019 11:33:33 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-arch@vger.kernel.org, x86@kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC PATCH v1 02/25] printk-rb: add prb locking functions
-Message-ID: <20190214103324.viexpifsyons5qya@pathway.suse.cz>
-References: <20190212143003.48446-1-john.ogness@linutronix.de>
- <20190212143003.48446-3-john.ogness@linutronix.de>
- <20190213154541.wvft64nf352vghou@pathway.suse.cz>
- <87pnrvs707.fsf@linutronix.de>
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+Subject: Re: [PATCH v3 2/2] locking/rwsem: Optimize down_read_trylock()
+Message-ID: <20190214103333.GH32494@hirez.programming.kicks-ass.net>
+References: <1550089932-6888-1-git-send-email-longman@redhat.com>
+ <1550089932-6888-3-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87pnrvs707.fsf@linutronix.de>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <1550089932-6888-3-git-send-email-longman@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 2019-02-13 22:39:20, John Ogness wrote:
-> On 2019-02-13, Petr Mladek <pmladek@suse.com> wrote:
-> >> +/*
-> >> + * prb_unlock: Perform a processor-reentrant spin unlock.
-> >> + * @cpu_lock: A pointer to the lock object.
-> >> + * @cpu_store: A "flags" object storing lock status information.
-> >> + *
-> >> + * Release the lock. The calling processor must be the owner of the lock.
-> >> + *
-> >> + * It is safe to call this function from any context and state.
-> >> + */
-> >> +void prb_unlock(struct prb_cpulock *cpu_lock, unsigned int cpu_store)
-> >> +{
-> >> +	unsigned long *flags;
-> >> +	unsigned int cpu;
-> >> +
-> >> +	cpu = atomic_read(&cpu_lock->owner);
-> >> +	atomic_set_release(&cpu_lock->owner, cpu_store);
-> >> +
-> >> +	if (cpu_store == -1) {
-> >> +		flags = per_cpu_ptr(cpu_lock->irqflags, cpu);
-> >> +		local_irq_restore(*flags);
-> >> +	}
-> >
-> > cpu_store looks like an implementation detail. The caller
-> > needs to remember it to handle the nesting properly.
+On Wed, Feb 13, 2019 at 03:32:12PM -0500, Waiman Long wrote:
+> Modify __down_read_trylock() to optimize for an unlocked rwsem and make
+> it generate slightly better code.
 > 
-> It's really no different than "flags" in irqsave/irqrestore.
+> Before this patch, down_read_trylock:
 > 
-> > We could achieve the same with a recursion counter hidden
-> > in struct prb_lock.
+>    0x0000000000000000 <+0>:     callq  0x5 <down_read_trylock+5>
+>    0x0000000000000005 <+5>:     jmp    0x18 <down_read_trylock+24>
+>    0x0000000000000007 <+7>:     lea    0x1(%rdx),%rcx
+>    0x000000000000000b <+11>:    mov    %rdx,%rax
+>    0x000000000000000e <+14>:    lock cmpxchg %rcx,(%rdi)
+>    0x0000000000000013 <+19>:    cmp    %rax,%rdx
+>    0x0000000000000016 <+22>:    je     0x23 <down_read_trylock+35>
+>    0x0000000000000018 <+24>:    mov    (%rdi),%rdx
+>    0x000000000000001b <+27>:    test   %rdx,%rdx
+>    0x000000000000001e <+30>:    jns    0x7 <down_read_trylock+7>
+>    0x0000000000000020 <+32>:    xor    %eax,%eax
+>    0x0000000000000022 <+34>:    retq
+>    0x0000000000000023 <+35>:    mov    %gs:0x0,%rax
+>    0x000000000000002c <+44>:    or     $0x3,%rax
+>    0x0000000000000030 <+48>:    mov    %rax,0x20(%rdi)
+>    0x0000000000000034 <+52>:    mov    $0x1,%eax
+>    0x0000000000000039 <+57>:    retq
 > 
-> The only way I see how that could be implemented is if the cmpxchg
-> encoded the cpu owner and counter into a single integer. (Upper half as
-> counter, lower half as cpu owner.) Both fields would need to be updated
-> with a single cmpxchg. The critical cmpxchg being the one where the CPU
-> becomes unlocked (counter goes from 1 to 0 and cpu owner goes from N to
-> -1).
+> After patch, down_read_trylock:
+> 
+>    0x0000000000000000 <+0>:	callq  0x5 <down_read_trylock+5>
+>    0x0000000000000005 <+5>:	xor    %eax,%eax
+>    0x0000000000000007 <+7>:	lea    0x1(%rax),%rdx
+>    0x000000000000000b <+11>:	lock cmpxchg %rdx,(%rdi)
+>    0x0000000000000010 <+16>:	jne    0x29 <down_read_trylock+41>
+>    0x0000000000000012 <+18>:	mov    %gs:0x0,%rax
+>    0x000000000000001b <+27>:	or     $0x3,%rax
+>    0x000000000000001f <+31>:	mov    %rax,0x20(%rdi)
+>    0x0000000000000023 <+35>:	mov    $0x1,%eax
+>    0x0000000000000028 <+40>:	retq
+>    0x0000000000000029 <+41>:	test   %rax,%rax
+>    0x000000000000002c <+44>:	jns    0x7 <down_read_trylock+7>
+>    0x000000000000002e <+46>:	xor    %eax,%eax
+>    0x0000000000000030 <+48>:	retq
+> 
+> By using a rwsem microbenchmark, the down_read_trylock() rate (with a
+> load of 10 to lengthen the lock critical section) on a x86-64 system
+> before and after the patch were:
+> 
+>                  Before Patch    After Patch
+>    # of Threads     rlock           rlock
+>    ------------     -----           -----
+>         1           14,496          14,716
+>         2            8,644           8,453
+> 	4            6,799           6,983
+> 	8            5,664           7,190
+> 
+> On a ARM64 system, the performance results were:
+> 
+>                  Before Patch    After Patch
+>    # of Threads     rlock           rlock
+>    ------------     -----           -----
+>         1           23,676          24,488
+>         2            7,697           9,502
+>         4            4,945           3,440
+>         8            2,641           1,603
 
-The atomic operations are tricky. I feel other lost in them.
-Well, I still think that it might easier to detect nesting
-on the same CPU, see below.
+Urgh, yes LL/SC is the obvious exception that can actually do better
+here :/
 
-Also there is no need to store irq flags in per-CPU variable.
-Only the first owner of the lock need to store the flags. The others
-are spinning or nested.
-
-struct prb_cpulock {
-	atomic_t		owner;
-	unsigned int		flags;
-	int			nesting; /* intialized to 0 */
-};
-
-void prb_lock(struct prb_cpulock *cpu_lock)
-{
-	unsigned int flags;
-	int cpu;
-
-	/*
-	 * The next condition might be valid only when
-	 * we are nested on the same CPU. It means
-	 * the IRQs are already disabled and no
-	 * memory barrier is needed.
-	 */
-	if (cpu_lock->owner == smp_processor_id()) {
-		cpu_lock->nested++;
-		return;
-	}
-
-	/* Not nested. Take the lock */
-	local_irq_save(flags);
-	cpu = smp_processor_id();
-
-	for (;;) {
-		if (atomic_try_cmpxchg_acquire(&cpu_lock->owner,
-					       -1, cpu)) {
-			cpu_lock->flags = flags;
-			break;
-		}
-
-		cpu_relax();
-	}
-}
-
-void prb_unlock(struct prb_cpulock *cpu_lock)
-{
-	unsigned int flags;
-
-	if (cpu_lock->nested)
-		cpu_lock->nested--;
-		return;
-	}
-
-	/* We must be the first lock owner */
-	flags = cpu_lock->flags;
-	atomic_set_release(&cpu_lock->owner, -1);
-	local_irq_restore(flags);
-}
-
-Or do I miss anything?
-
-Best Regards,
-Petr
+Will, what say you?
