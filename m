@@ -2,90 +2,91 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C1EC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:29:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23DEFC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:30:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D0462229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:29:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1E5A2229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:30:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733281AbfBNK3F (ORCPT
+        id S2392989AbfBNK37 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 05:29:05 -0500
-Received: from relay.sw.ru ([185.231.240.75]:42772 "EHLO relay.sw.ru"
+        Thu, 14 Feb 2019 05:29:59 -0500
+Received: from foss.arm.com ([217.140.101.70]:40530 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726148AbfBNK3F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 05:29:05 -0500
-Received: from [172.16.25.169]
-        by relay.sw.ru with esmtp (Exim 4.91)
-        (envelope-from <ktkhai@virtuozzo.com>)
-        id 1guEGN-00050x-1u; Thu, 14 Feb 2019 13:29:03 +0300
-Subject: Re: [PATCH 4/4] mm: Generalize putback scan functions
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc:     akpm@linux-foundation.org, mhocko@suse.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <154998432043.18704.10326447825287153712.stgit@localhost.localdomain>
- <154998445694.18704.16751838197928455484.stgit@localhost.localdomain>
- <20190213192011.62vmk5wyvxufcn4k@ca-dmjordan1.us.oracle.com>
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-Message-ID: <0add6f90-371d-c95b-7032-49f323f96b02@virtuozzo.com>
-Date:   Thu, 14 Feb 2019 13:29:01 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S2389571AbfBNK37 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 05:29:59 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5DE68EBD;
+        Thu, 14 Feb 2019 02:29:58 -0800 (PST)
+Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D95A3F575;
+        Thu, 14 Feb 2019 02:29:56 -0800 (PST)
+Date:   Thu, 14 Feb 2019 10:29:53 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Eugeniu Rosca <erosca@de.adit-jv.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jisheng Zhang <jszhang@marvell.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Joshua Frkuska <joshua_frkuska@mentor.com>,
+        Eugeniu Rosca <roscaeugeniu@gmail.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v2] drivers: base: add support to skip power management
+ in device/driver model
+Message-ID: <20190214102953.GB28361@e107155-lin>
+References: <20190213120137.23354-1-sudeep.holla@arm.com>
+ <20190213223849.GA26335@vmlxhi-102.adit-jv.com>
 MIME-Version: 1.0
-In-Reply-To: <20190213192011.62vmk5wyvxufcn4k@ca-dmjordan1.us.oracle.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190213223849.GA26335@vmlxhi-102.adit-jv.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13.02.2019 22:20, Daniel Jordan wrote:
-> On Tue, Feb 12, 2019 at 06:14:16PM +0300, Kirill Tkhai wrote:
->> +static unsigned noinline_for_stack move_pages_to_lru(struct lruvec *lruvec,
->> +						     struct list_head *list)
->>  {
->>  	struct pglist_data *pgdat = lruvec_pgdat(lruvec);
->> +	int nr_pages, nr_moved = 0;
->>  	LIST_HEAD(pages_to_free);
->> +	struct page *page;
->> +	enum lru_list lru;
->>  
->> -	/*
->> -	 * Put back any unfreeable pages.
->> -	 */
->> -	while (!list_empty(page_list)) {
->> -		struct page *page = lru_to_page(page_list);
->> -		int lru;
->> -
->> -		VM_BUG_ON_PAGE(PageLRU(page), page);
->> -		list_del(&page->lru);
->> +	while (!list_empty(list)) {
->> +		page = lru_to_page(list);
->>  		if (unlikely(!page_evictable(page))) {
->> +			list_del_init(&page->lru);
->>  			spin_unlock_irq(&pgdat->lru_lock);
->>  			putback_lru_page(page);
->>  			spin_lock_irq(&pgdat->lru_lock);
->>  			continue;
->>  		}
->> -
->>  		lruvec = mem_cgroup_page_lruvec(page, pgdat);
->>  
->> +		VM_BUG_ON_PAGE(PageLRU(page), page);
-> 
-> Nit, but moving the BUG down here weakens it a little bit since we miss
-> checking it if the page is unevictable.
+On Wed, Feb 13, 2019 at 11:38:49PM +0100, Eugeniu Rosca wrote:
+> Hello Sudeep,
+>
+> I appreciate your efforts. Currently, this patch generates below
+> warnings during s2ram on R-Car H3-Salvator-X:
+>
+> [ 46.874214] PM: suspend entry (deep)
+> [ 46.878211] PM: Syncing filesystems ... done.
+> [ 46.989148] Freezing user space processes ... (elapsed 0.004 seconds) done.
+> [ 47.000428] OOM killer disabled.
+> [ 47.003895] Freezing remaining freezable tasks ... (elapsed 0.003 seconds) done.
+> [ 47.226363] PM: suspend devices took 0.210 seconds
+> [ 47.280553] Disabling non-boot CPUs ...
+> [ 47.289157] ------------[ cut here ]------------
+> [ 47.294524] sysfs group 'power' not found for kobject 'index0'
+> [ 47.300622] WARNING: CPU: 1 PID: 14 at fs/sysfs/group.c:256 sysfs_remove_group+0x78/0xc4
+> ---snip---
+> [ 47.550425] sysfs group 'power' not found for kobject 'index1'
+> ---snip---
+> [ 47.807005] sysfs group 'power' not found for kobject 'index2'
+> ---snip---
+> [ 48.063703] sysfs group 'power' not found for kobject 'cache'
+> ---snip---
+>
 
-Yeah, this is bad.
- 
-> Maybe worth pointing out in the changelog that the main difference from
-> combining these two functions is that we're now checking for !page_evictable
-> coming from shrink_active_list, which shouldn't change any behavior since that
-> path works with evictable pages only.
+Thanks for the report, looks like I am not able to reproduce this, will
+check if I am missing something while testing.
 
-Sounds good.
+> Complete log and .config are shared in
+> https://gist.github.com/erosca/da9ea551033a503121de61049d77b834
+>
+
+Thanks again, much appreciated for providing full log.
+
+--
+Regards,
+Sudeep
