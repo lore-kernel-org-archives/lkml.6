@@ -2,874 +2,196 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA83FC10F05
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB6AC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:11:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66700222B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:11:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAC36222D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 13:11:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="Ga6d2gkQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438800AbfBNNLd (ORCPT
+        id S2438813AbfBNNLy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 08:11:33 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:38071 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731764AbfBNNLc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 08:11:32 -0500
-Received: by mail-lf1-f65.google.com with SMTP id n15so4500761lfe.5;
-        Thu, 14 Feb 2019 05:11:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mig2GAdVAl+sSHRheal0D33GSbkLWwOLAi2Im53+Jiw=;
-        b=LKU2cs+3B50gtTrs48aHL6fBrpiF8++eVGbY312ZZMcVIij2qSwJDIyQgYQY6Xrrug
-         zfOov2Ee4eM3bl3n9Oe1g91T8g3M3zTJLLNAuLP/MhMblQqR3tEQb8N27ERa0HOldIHM
-         Ne+Y+BFTOusCjk38USJjy6mSdxV8tzqMa2fQ1qb8V15+kcRutVJG3INO66W34AC4z5rY
-         5DE4UPblsyO8doVzG/WEzY4bqennqu8bLHu5N8P9uYLsYnSIGAQbvbFfY7aleJdIL6wb
-         uK9ZkC5e22lSsnU0jQoyF9AkoaDRpuYzfIcZaQKNKp/ntNXPkO+7pNHhVoVUwD5NNXe7
-         gLzA==
-X-Gm-Message-State: AHQUAuZQiQYmItdVnTFIP8LvT0veM+RvkmiUUoqXT8zPRszPfECKkz5F
-        A46/nYwA7GapUUR8+pOaZrw=
-X-Google-Smtp-Source: AHgI3IZ+3ean358SBl0VJ3uOgAen8JvNVK1MYXYQj604+SfrspWKFWavjH2rCxuALXxol8wXRvZZRA==
-X-Received: by 2002:a19:5601:: with SMTP id k1mr2108058lfb.99.1550149887674;
-        Thu, 14 Feb 2019 05:11:27 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 15-v6sm470726lje.18.2019.02.14.05.11.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 05:11:27 -0800 (PST)
-Date:   Thu, 14 Feb 2019 15:11:14 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
-        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, bogdan-petru.chircu-mare@nxp.com
-Subject: [PATCH v10 7/9] power: supply: Initial support for ROHM BD70528 PMIC
- charger block
-Message-ID: <7625539a2e4326cfed81b57af5a992c6a10a7d86.1550148989.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1550148989.git.matti.vaittinen@fi.rohmeurope.com>
+        Thu, 14 Feb 2019 08:11:54 -0500
+Received: from mail-eopbgr150084.outbound.protection.outlook.com ([40.107.15.84]:49095
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731764AbfBNNLx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 08:11:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wAY+bonFh6ivtbjOPXMXkuk9C2B287LoDQOniKarWDc=;
+ b=Ga6d2gkQyCRVVGcVe5Qt9xzX1iGxo+InUynduIGAWft9XjshKx9aI0ZNIU5LtrmldPMlEf6/JzIc+6ebR4tO4rdHG7QTKEt0VqYP61CWt3l2FZtUDE11wA+bG1htfJFv7CEEUsZ7mGlP84sAauMkyKwHri5SKKaxq25huDhCerY=
+Received: from AM6PR05MB5240.eurprd05.prod.outlook.com (20.177.196.214) by
+ AM6PR05MB5960.eurprd05.prod.outlook.com (20.179.0.91) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.19; Thu, 14 Feb 2019 13:11:47 +0000
+Received: from AM6PR05MB5240.eurprd05.prod.outlook.com
+ ([fe80::3542:889c:3a85:3866]) by AM6PR05MB5240.eurprd05.prod.outlook.com
+ ([fe80::3542:889c:3a85:3866%5]) with mapi id 15.20.1601.023; Thu, 14 Feb 2019
+ 13:11:47 +0000
+From:   Ido Schimmel <idosch@mellanox.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        "moderated list:ETHERNET BRIDGE" <bridge@lists.linux-foundation.org>,
+        Jiri Pirko <jiri@mellanox.com>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        "vivien.didelot@gmail.com" <vivien.didelot@gmail.com>
+Subject: Re: [PATCH net-next 3/9] mlxsw: spectrum: Check bridge flags during
+ prepare phase
+Thread-Topic: [PATCH net-next 3/9] mlxsw: spectrum: Check bridge flags during
+ prepare phase
+Thread-Index: AQHUw+iBKvpL63SHLkiIkWWqyb1xRaXfRdeA
+Date:   Thu, 14 Feb 2019 13:11:46 +0000
+Message-ID: <20190214131143.GA12064@splinter>
+References: <20190213220638.1552-1-f.fainelli@gmail.com>
+ <20190213220638.1552-4-f.fainelli@gmail.com>
+In-Reply-To: <20190213220638.1552-4-f.fainelli@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: LO2P265CA0145.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:9::13) To AM6PR05MB5240.eurprd05.prod.outlook.com
+ (2603:10a6:20b:64::22)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=idosch@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [193.47.165.251]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: a6ad30ca-f68e-4031-fc2d-08d6927df886
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM6PR05MB5960;
+x-ms-traffictypediagnostic: AM6PR05MB5960:
+x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;AM6PR05MB5960;23:FwtEXxKTk5aVj4NPL0WAUsVuQun0rX45kSoLlrZ+j?=
+ =?us-ascii?Q?rxHZIKvj7Bs0V+j8GDFbsiAPGH0aSxHTRrjYDCLohhbn5OPN85DwBP/UoiCj?=
+ =?us-ascii?Q?XkKq0mdKYCMlMVxZYyDNWD7PoF/pqRnX6k41sP9uHmwSjg+sa5CvFx8WnSht?=
+ =?us-ascii?Q?CNbNaPvIxaFWATjvTuy8af0687g7584GNlHKpjyJuTsvXsvu+aKAiBKmt3ZI?=
+ =?us-ascii?Q?kGStr45aQtT1Bgh3AP+bQAdKPfBhe4KpBNmIiIVkDHlC+/tUbS6qOubu30b+?=
+ =?us-ascii?Q?abiFCk7ncK12Pv9ExzvUqJm1H5AfVf2qTgVKvfUjWsTDlVBTmcQNxMyaf7Ng?=
+ =?us-ascii?Q?ZDHBqA1tM8DxHrBb8TeUPW2iKBAnmyqI83ZfDApdDUFqg10yI5UzdT5hN+UK?=
+ =?us-ascii?Q?3qz4xWlGhklalvTBXJK8TPxnlwaiqXS5XJ3QyYLFArVQe4RxJ1lqgS3knRto?=
+ =?us-ascii?Q?rn+x1eNrXlGivOYTh+6bI63/fKszb0wxRUW6Jy5s7Ommr27YVJ2HjWIIASM0?=
+ =?us-ascii?Q?gxNDGLCwEXXrLRV3NuRrRsE+qab5ybEMUK+Qb7x2il/P38Fn0zi4bDZM9ybO?=
+ =?us-ascii?Q?QPctwMyQyuxPcbsbXi8z0Z+y+yuI3jAFVqybBV3BR09xrOVvo0vktAOb4vWI?=
+ =?us-ascii?Q?tR2JtJaJD05WQEwdWYgV+iAvrNzB9tSyZSzLDdwZE608T8madvUWYWkmoWxS?=
+ =?us-ascii?Q?5d3hsfHA4g4wToJ9vVkyTvbjZPUxwJHyqfRQgpkK2+P1kHyqnR67uE0hDMnh?=
+ =?us-ascii?Q?zY31P/3mBDEVxJ54Mcd+Ue9A1ZDmkOfjd2f1oA3j9vmOKnMqZt3FTRQkxnt/?=
+ =?us-ascii?Q?I+gqaGJNRVE8GI1OaebDKbgqgBtmzWm4ySxVfC98qHoQNrufJlrZ86xedmLn?=
+ =?us-ascii?Q?YkIpq5ODz+xYw+4T0h4tj/p+DpxHK7VW+AKOpZWEIaNIXysiEcaH0PZzlS3s?=
+ =?us-ascii?Q?zMjoQnEfNlvwjTdrjMoaNVsaEJsD3P4X9fOAMsQ3+lC0HYuMijowkpKPh2Xl?=
+ =?us-ascii?Q?H0GnIVQxK0yMf0rYbugpWm9MaF625ATFeVaKCvL0pLH/sLnR6eQz8hzfSmus?=
+ =?us-ascii?Q?8nd2E31g8sbP2xpfVmZlqh9Iu4iyMvUb6RsIeoNdAXuMcAd/79E4gCAGE5Q2?=
+ =?us-ascii?Q?9GbD7ecy/wQrZs9UdWaO5U2KAjMMJn6N6fv28VXiZ8WgYT6J7yHUXKXCZ5+o?=
+ =?us-ascii?Q?XzbMtUKFFNogU7H7HIBKzCqISKYePkB04FqK9aji/7WMPc1dRU97UGiq3Wxb?=
+ =?us-ascii?Q?qJgE3NiT8eXppF0ifA=3D?=
+x-microsoft-antispam-prvs: <AM6PR05MB59605AEDFE9445B0F5421266BF670@AM6PR05MB5960.eurprd05.prod.outlook.com>
+x-forefront-prvs: 09480768F8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(39860400002)(136003)(396003)(366004)(346002)(376002)(189003)(199004)(229853002)(81156014)(33656002)(52116002)(446003)(53936002)(11346002)(6246003)(8936002)(186003)(81166006)(8676002)(6506007)(386003)(97736004)(76176011)(486006)(102836004)(478600001)(25786009)(2906002)(54906003)(7736002)(66066001)(71190400001)(305945005)(106356001)(9686003)(316002)(71200400001)(68736007)(6512007)(26005)(33896004)(105586002)(476003)(6436002)(99286004)(256004)(1076003)(6916009)(33716001)(86362001)(4326008)(3846002)(6116002)(6486002)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR05MB5960;H:AM6PR05MB5240.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: h5bztNMkZfUkSby1ndvUy/JGkP7jMdGK47nVzaFtOVHYyDCol6IPf2vrNcYFO3H+5bZc9oRB4Ds/Hk4edCcxSB5nUm03PV7vVIUDJ4/drr/0hfkU5y7fOMvFqPL39ypRzMvapPkynjVvyl7S7ttQ433CbOa6m2f7KM6A9JZR8K9tiTybDEvt/c2B6rhT+GT4bgFyGlJ6ftfS3BhAbAUfFlCLHGgv8HxYDK+ZP+CKdhCSQibovi/8NWIgsQ5iZ7g+5+i5xU8LnuvOzwNRzzbszLMs8Z9/4SjAQmdyyv4Oq6WHvwCJyjDb6qdbxNp7MV2zjWsypuQv4JyTjw4U/Zo1D1Ej2XLjFH/C/xOu4Qh4iEDSJf49JV79ySjfFz6qk9hrJ69vU+PrESP+RpGTs6IXxSU/RRuLE3hNlh2KhkmUYn8=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <BB8CC15313445A4F83537A62675CD75F@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1550148989.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a6ad30ca-f68e-4031-fc2d-08d6927df886
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2019 13:11:45.5465
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB5960
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ROHM BD70528 PMIC includes battery charger block. Support charger
-staus queries and doing few basic settings like input current limit
-and charging current.
+On Wed, Feb 13, 2019 at 02:06:32PM -0800, Florian Fainelli wrote:
+> In preparation for getting rid of switchdev_port_attr_get(), have mlxsw
+> check for the bridge flags being set through switchdev_port_attr_set()
+> when the SWITCHDEV_ATTR_ID_PORT_PRE_BRIDGE_FLAGS attribute identifier is
+> used.
+>=20
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>  .../ethernet/mellanox/mlxsw/spectrum_switchdev.c   | 14 +++++++++++---
+>  1 file changed, 11 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c b/d=
+rivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+> index 1f492b7dbea8..7616eab50035 100644
+> --- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+> +++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+> @@ -598,13 +598,17 @@ mlxsw_sp_bridge_port_learning_set(struct mlxsw_sp_p=
+ort *mlxsw_sp_port,
+>  static int mlxsw_sp_port_attr_br_flags_set(struct mlxsw_sp_port *mlxsw_s=
+p_port,
+>  					   struct switchdev_trans *trans,
+>  					   struct net_device *orig_dev,
+> -					   unsigned long brport_flags)
+> +					   unsigned long brport_flags,
+> +					   bool pre_set)
+>  {
+>  	struct mlxsw_sp_bridge_port *bridge_port;
+>  	int err;
+> =20
+> -	if (switchdev_trans_ph_prepare(trans))
+> +	if (switchdev_trans_ph_prepare(trans) && pre_set) {
+> +		if (brport_flags & ~(BR_LEARNING | BR_FLOOD | BR_MCAST_FLOOD))
+> +			return -EOPNOTSUPP;
+>  		return 0;
+> +	}
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/power/supply/Kconfig           |   9 +
- drivers/power/supply/Makefile          |   1 +
- drivers/power/supply/bd70528-charger.c | 745 +++++++++++++++++++++++++++++++++
- 3 files changed, 755 insertions(+)
- create mode 100644 drivers/power/supply/bd70528-charger.c
+When we get SWITCHDEV_ATTR_ID_PORT_PRE_BRIDGE_FLAGS we only want to
+perform a check. With this code in case it's not prepare phase, then we
+continue to set the flags. Better do:
 
-diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
-index e901b9879e7e..903c97a67bf0 100644
---- a/drivers/power/supply/Kconfig
-+++ b/drivers/power/supply/Kconfig
-@@ -660,4 +660,13 @@ config FUEL_GAUGE_SC27XX
- 	 Say Y here to enable support for fuel gauge with SC27XX
- 	 PMIC chips.
- 
-+config CHARGER_BD70528
-+	tristate "ROHM bd70528 charger driver"
-+	depends on MFD_ROHM_BD70528
-+	default n
-+	help
-+	 Say Y here to enable support for getting battery status
-+	 information and altering charger configurations from charger
-+	 block of the ROHM BD70528 Power Management IC.
-+
- endif # POWER_SUPPLY
-diff --git a/drivers/power/supply/Makefile b/drivers/power/supply/Makefile
-index b731c2a9b695..c60387b04bfa 100644
---- a/drivers/power/supply/Makefile
-+++ b/drivers/power/supply/Makefile
-@@ -87,3 +87,4 @@ obj-$(CONFIG_AXP288_CHARGER)	+= axp288_charger.o
- obj-$(CONFIG_CHARGER_CROS_USBPD)	+= cros_usbpd-charger.o
- obj-$(CONFIG_CHARGER_SC2731)	+= sc2731_charger.o
- obj-$(CONFIG_FUEL_GAUGE_SC27XX)	+= sc27xx_fuel_gauge.o
-+obj-$(CONFIG_CHARGER_BD70528)	+= bd70528-charger.o
-diff --git a/drivers/power/supply/bd70528-charger.c b/drivers/power/supply/bd70528-charger.c
-new file mode 100644
-index 000000000000..5abc5ba97ee7
---- /dev/null
-+++ b/drivers/power/supply/bd70528-charger.c
-@@ -0,0 +1,745 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+//
-+// Copyright (C) 2018 ROHM Semiconductors
-+//
-+// power-supply driver for ROHM BD70528 PMIC
-+
-+/*
-+ * BD70528 charger HW state machine.
-+ *
-+ * The thermal shutdown state is not drawn. From any other state but
-+ * battery error and suspend it is possible to go to TSD/TMP states
-+ * if temperature is out of bounds.
-+ *
-+ *  CHG_RST = H
-+ *  or CHG_EN=L
-+ *  or (DCIN2_UVLO=L && DCIN1_UVLO=L)
-+ *  or (DCIN2_OVLO=H & DCIN1_UVKLO=L)
-+ *
-+ *  +--------------+         +--------------+
-+ *  |              |         |              |
-+ *  |  Any state   +-------> |    Suspend   |
-+ *  |              |         |              |
-+ *  +--------------+         +------+-------+
-+ *                                  |
-+ *  CHG_EN = H && BAT_DET = H &&    |
-+ *  No errors (temp, bat_ov, UVLO,  |
-+ *  OVLO...)                        |
-+ *                                  |
-+ *  BAT_OV or             +---------v----------+
-+ *  (DBAT && TTRI)        |                    |
-+ *      +-----------------+   Trickle Charge   | <---------------+
-+ *      |                 |                    |                 |
-+ *      |                 +-------+------------+                 |
-+ *      |                         |                              |
-+ *      |                         |     ^                        |
-+ *      |        V_BAT > VTRI_TH  |     |  VBAT < VTRI_TH - 50mV |
-+ *      |                         |     |                        |
-+ *      |                         v     |                        |
-+ *      |                               |                        |
-+ *      |     BAT_OV or      +----------+----+                   |
-+ *      |     (DBAT && TFST) |               |                   |
-+ *      |   +----------------+  Fast Charge  |                   |
-+ *      |   |                |               |                   |
-+ *      v   v                +----+----------+                   |
-+ *                                |                              |
-+ *+----------------+   ILIM_DET=L |    ^ ILIM_DET                |
-+ *|                |   & CV_DET=H |    | or CV_DET=L             |
-+ *|  Battery Error |   & VBAT >   |    | or VBAT < VRECHG_TH     |
-+ *|                |   VRECHG_TH  |    | or IBAT  > IFST/x       |
-+ *+----------------+   & IBAT <   |    |                         |
-+ *                     IFST/x     v    |                         |
-+ *       ^                             |                         |
-+ *       |                   +---------+-+                       |
-+ *       |                   |           |                       |
-+ *       +-------------------+  Top OFF  |                       |
-+ *  BAT_OV = H or            |           |                       |
-+ *  (DBAT && TFST)           +-----+-----+                       |
-+ *                                 |                             |
-+ *           Stay top-off for 15s  |                             |
-+ *                                 v                             |
-+ *                                                               |
-+ *                            +--------+                         |
-+ *                            |        |                         |
-+ *                            |  Done  +-------------------------+
-+ *                            |        |
-+ *                            +--------+   VBAT < VRECHG_TH
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/interrupt.h>
-+#include <linux/mfd/rohm-bd70528.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/power_supply.h>
-+
-+#define CHG_STAT_SUSPEND	0x0
-+#define CHG_STAT_TRICKLE	0x1
-+#define CHG_STAT_FAST		0x3
-+#define CHG_STAT_TOPOFF		0xe
-+#define CHG_STAT_DONE		0xf
-+#define CHG_STAT_OTP_TRICKLE	0x10
-+#define CHG_STAT_OTP_FAST	0x11
-+#define CHG_STAT_OTP_DONE	0x12
-+#define CHG_STAT_TSD_TRICKLE	0x20
-+#define CHG_STAT_TSD_FAST	0x21
-+#define CHG_STAT_TSD_TOPOFF	0x22
-+#define CHG_STAT_BAT_ERR	0x7f
-+
-+static const char *bd70528_charger_model = "BD70528";
-+static const char *bd70528_charger_manufacturer = "ROHM Semiconductors";
-+
-+#define BD_ERR_IRQ_HND(_name_, _wrn_)					\
-+static irqreturn_t bd0528_##_name_##_interrupt(int irq, void *arg)	\
-+{									\
-+	struct power_supply *psy = (struct power_supply *)arg;		\
-+									\
-+	power_supply_changed(psy);					\
-+	dev_err(&psy->dev, (_wrn_));					\
-+									\
-+	return IRQ_HANDLED;						\
-+}
-+
-+#define BD_INFO_IRQ_HND(_name_, _wrn_)					\
-+static irqreturn_t bd0528_##_name_##_interrupt(int irq, void *arg)	\
-+{									\
-+	struct power_supply *psy = (struct power_supply *)arg;		\
-+									\
-+	power_supply_changed(psy);					\
-+	dev_dbg(&psy->dev, (_wrn_));					\
-+									\
-+	return IRQ_HANDLED;						\
-+}
-+
-+#define BD_IRQ_HND(_name_) bd0528_##_name_##_interrupt
-+
-+struct bd70528_psy {
-+	struct rohm_regmap_dev chip;
-+	struct power_supply *psy;
-+};
-+
-+BD_ERR_IRQ_HND(BAT_OV_DET, "Battery overvoltage detected\n");
-+BD_ERR_IRQ_HND(DBAT_DET, "Dead battery detected\n");
-+BD_ERR_IRQ_HND(COLD_DET, "Battery cold\n");
-+BD_ERR_IRQ_HND(HOT_DET, "Battery hot\n");
-+BD_ERR_IRQ_HND(CHG_TSD, "Charger thermal shutdown\n");
-+BD_ERR_IRQ_HND(DCIN2_OV_DET, "DCIN2 overvoltage detected\n");
-+
-+BD_INFO_IRQ_HND(BAT_OV_RES, "Battery voltage back to normal\n");
-+BD_INFO_IRQ_HND(COLD_RES, "Battery temperature back to normal\n");
-+BD_INFO_IRQ_HND(HOT_RES, "Battery temperature back to normal\n");
-+BD_INFO_IRQ_HND(BAT_RMV, "Battery removed\n");
-+BD_INFO_IRQ_HND(BAT_DET, "Battery detected\n");
-+BD_INFO_IRQ_HND(DCIN2_OV_RES, "DCIN2 voltage back to normal\n");
-+BD_INFO_IRQ_HND(DCIN2_RMV, "DCIN2 removed\n");
-+BD_INFO_IRQ_HND(DCIN2_DET, "DCIN2 detected\n");
-+BD_INFO_IRQ_HND(DCIN1_RMV, "DCIN1 removed\n");
-+BD_INFO_IRQ_HND(DCIN1_DET, "DCIN1 detected\n");
-+
-+struct irq_name_pair {
-+	const char *n;
-+	irqreturn_t (*h)(int irq, void *arg);
-+};
-+
-+static int bd70528_get_irqs(struct platform_device *pdev,
-+			    struct bd70528_psy *bdpsy)
-+{
-+	int irq, i, ret;
-+	unsigned int mask;
-+	struct irq_name_pair bd70528_chg_irqs[] = {
-+		{ .n = "bd70528-bat-ov-res", .h = BD_IRQ_HND(BAT_OV_RES) },
-+		{ .n = "bd70528-bat-ov-det", .h = BD_IRQ_HND(BAT_OV_DET) },
-+		{ .n = "bd70528-bat-dead", .h = BD_IRQ_HND(DBAT_DET) },
-+		{ .n = "bd70528-bat-warmed", .h = BD_IRQ_HND(COLD_RES) },
-+		{ .n = "bd70528-bat-cold", .h = BD_IRQ_HND(COLD_DET) },
-+		{ .n = "bd70528-bat-cooled", .h = BD_IRQ_HND(HOT_RES) },
-+		{ .n = "bd70528-bat-hot", .h = BD_IRQ_HND(HOT_DET) },
-+		{ .n = "bd70528-chg-tshd", .h = BD_IRQ_HND(CHG_TSD) },
-+		{ .n = "bd70528-bat-removed", .h = BD_IRQ_HND(BAT_RMV) },
-+		{ .n = "bd70528-bat-detected", .h = BD_IRQ_HND(BAT_DET) },
-+		{ .n = "bd70528-dcin2-ov-res", .h = BD_IRQ_HND(DCIN2_OV_RES) },
-+		{ .n = "bd70528-dcin2-ov-det", .h = BD_IRQ_HND(DCIN2_OV_DET) },
-+		{ .n = "bd70528-dcin2-removed", .h = BD_IRQ_HND(DCIN2_RMV) },
-+		{ .n = "bd70528-dcin2-detected", .h = BD_IRQ_HND(DCIN2_DET) },
-+		{ .n = "bd70528-dcin1-removed", .h = BD_IRQ_HND(DCIN1_RMV) },
-+		{ .n = "bd70528-dcin1-detected", .h = BD_IRQ_HND(DCIN1_DET) },
-+	};
-+
-+	for (i = 0; i < ARRAY_SIZE(bd70528_chg_irqs); i++) {
-+		irq = platform_get_irq_byname(pdev, bd70528_chg_irqs[i].n);
-+		if (irq < 0) {
-+			dev_err(&pdev->dev, "Bad IRQ information for %s (%d)\n",
-+				bd70528_chg_irqs[i].n, irq);
-+			return irq;
-+		}
-+		ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
-+						bd70528_chg_irqs[i].h,
-+						IRQF_ONESHOT,
-+						bd70528_chg_irqs[i].n,
-+						bdpsy->psy);
-+
-+		if (ret)
-+			return ret;
-+	}
-+	/*
-+	 * BD70528 irq controller is not touching the main mask register.
-+	 * So enable the charger block interrupts at main level. We can just
-+	 * leave them enabled as irq-controller should disable irqs
-+	 * from sub-registers when IRQ is disabled or freed.
-+	 */
-+	mask = BD70528_REG_INT_BAT1_MASK | BD70528_REG_INT_BAT2_MASK;
-+	ret = regmap_update_bits(bdpsy->chip.regmap,
-+				 BD70528_REG_INT_MAIN_MASK, mask, 0);
-+	if (ret)
-+		dev_err(&pdev->dev, "Failed to enable charger IRQs\n");
-+
-+	return ret;
-+}
-+
-+static int bd70528_get_charger_status(struct bd70528_psy *bdpsy, int *val)
-+{
-+	int ret;
-+	unsigned int v;
-+
-+	ret = regmap_read(bdpsy->chip.regmap, BD70528_REG_CHG_CURR_STAT, &v);
-+	if (ret) {
-+		dev_err(bdpsy->chip.dev, "Charger state read failure %d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	switch (v & BD70528_MASK_CHG_STAT) {
-+	case CHG_STAT_SUSPEND:
-+	/* Maybe we should check the CHG_TTRI_EN? */
-+	case CHG_STAT_OTP_TRICKLE:
-+	case CHG_STAT_OTP_FAST:
-+	case CHG_STAT_OTP_DONE:
-+	case CHG_STAT_TSD_TRICKLE:
-+	case CHG_STAT_TSD_FAST:
-+	case CHG_STAT_TSD_TOPOFF:
-+	case CHG_STAT_BAT_ERR:
-+		*val = POWER_SUPPLY_STATUS_NOT_CHARGING;
-+		break;
-+	case CHG_STAT_DONE:
-+		*val = POWER_SUPPLY_STATUS_FULL;
-+		break;
-+	case CHG_STAT_TRICKLE:
-+	case CHG_STAT_FAST:
-+	case CHG_STAT_TOPOFF:
-+		*val = POWER_SUPPLY_STATUS_CHARGING;
-+		break;
-+	default:
-+		*val = POWER_SUPPLY_STATUS_UNKNOWN;
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
-+static int bd70528_get_charge_type(struct bd70528_psy *bdpsy, int *val)
-+{
-+	int ret;
-+	unsigned int v;
-+
-+	ret = regmap_read(bdpsy->chip.regmap, BD70528_REG_CHG_CURR_STAT, &v);
-+	if (ret) {
-+		dev_err(bdpsy->chip.dev, "Charger state read failure %d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	switch (v & BD70528_MASK_CHG_STAT) {
-+	case CHG_STAT_TRICKLE:
-+		*val = POWER_SUPPLY_CHARGE_TYPE_TRICKLE;
-+		break;
-+	case CHG_STAT_FAST:
-+	case CHG_STAT_TOPOFF:
-+		*val = POWER_SUPPLY_CHARGE_TYPE_FAST;
-+		break;
-+	case CHG_STAT_DONE:
-+	case CHG_STAT_SUSPEND:
-+	/* Maybe we should check the CHG_TTRI_EN? */
-+	case CHG_STAT_OTP_TRICKLE:
-+	case CHG_STAT_OTP_FAST:
-+	case CHG_STAT_OTP_DONE:
-+	case CHG_STAT_TSD_TRICKLE:
-+	case CHG_STAT_TSD_FAST:
-+	case CHG_STAT_TSD_TOPOFF:
-+	case CHG_STAT_BAT_ERR:
-+		*val = POWER_SUPPLY_CHARGE_TYPE_NONE;
-+		break;
-+	default:
-+		*val = POWER_SUPPLY_CHARGE_TYPE_UNKNOWN;
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
-+static int bd70528_get_battery_health(struct bd70528_psy *bdpsy, int *val)
-+{
-+	int ret;
-+	unsigned int v;
-+
-+	ret = regmap_read(bdpsy->chip.regmap, BD70528_REG_CHG_BAT_STAT, &v);
-+	if (ret) {
-+		dev_err(bdpsy->chip.dev, "Battery state read failure %d\n",
-+			ret);
-+		return ret;
-+	}
-+	/* No battery? */
-+	if (!(v & BD70528_MASK_CHG_BAT_DETECT))
-+		*val = POWER_SUPPLY_HEALTH_DEAD;
-+	else if (v & BD70528_MASK_CHG_BAT_OVERVOLT)
-+		*val = POWER_SUPPLY_HEALTH_OVERVOLTAGE;
-+	else if (v & BD70528_MASK_CHG_BAT_TIMER)
-+		*val = POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE;
-+	else
-+		*val = POWER_SUPPLY_HEALTH_GOOD;
-+
-+	return 0;
-+}
-+
-+static int bd70528_get_online(struct bd70528_psy *bdpsy, int *val)
-+{
-+	int ret;
-+	unsigned int v;
-+
-+	ret = regmap_read(bdpsy->chip.regmap, BD70528_REG_CHG_IN_STAT, &v);
-+	if (ret) {
-+		dev_err(bdpsy->chip.dev, "DC1 IN state read failure %d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	*val = (v & BD70528_MASK_CHG_DCIN1_UVLO) ? 1 : 0;
-+
-+	return 0;
-+}
-+
-+static int bd70528_get_present(struct bd70528_psy *bdpsy, int *val)
-+{
-+	int ret;
-+	unsigned int v;
-+
-+	ret = regmap_read(bdpsy->chip.regmap, BD70528_REG_CHG_BAT_STAT, &v);
-+	if (ret) {
-+		dev_err(bdpsy->chip.dev, "Battery state read failure %d\n",
-+			ret);
-+		return ret;
-+	}
-+
-+	*val = (v & BD70528_MASK_CHG_BAT_DETECT) ? 1 : 0;
-+
-+	return 0;
-+}
-+
-+struct linear_range {
-+	int min;
-+	int step;
-+	int vals;
-+	int low_sel;
-+};
-+
-+struct linear_range current_limit_ranges[] = {
-+	{
-+		.min = 5,
-+		.step = 1,
-+		.vals = 36,
-+		.low_sel = 0,
-+	},
-+	{
-+		.min = 40,
-+		.step = 5,
-+		.vals = 5,
-+		.low_sel = 0x23,
-+	},
-+	{
-+		.min = 60,
-+		.step = 20,
-+		.vals = 8,
-+		.low_sel = 0x27,
-+	},
-+	{
-+		.min = 200,
-+		.step = 50,
-+		.vals = 7,
-+		.low_sel = 0x2e,
-+	}
-+};
-+
-+/*
-+ * BD70528 would support setting and getting own charge current/
-+ * voltage for low temperatures. The driver currently only reads
-+ * the charge current at room temperature. We do set both though.
-+ */
-+struct linear_range warm_charge_curr[] = {
-+	{
-+		.min = 10,
-+		.step = 10,
-+		.vals = 20,
-+		.low_sel = 0,
-+	},
-+	{
-+		.min = 200,
-+		.step = 25,
-+		.vals = 13,
-+		.low_sel = 0x13,
-+	},
-+};
-+
-+/*
-+ * Cold charge current selectors are identical to warm charge current
-+ * selectors. The difference is that only smaller currents are available
-+ * at cold charge range.
-+ */
-+#define MAX_COLD_CHG_CURR_SEL 0x15
-+#define MAX_WARM_CHG_CURR_SEL 0x1f
-+#define MIN_CHG_CURR_SEL 0x0
-+
-+static int find_value_for_selector_low(struct linear_range *r, int selectors,
-+				       unsigned int sel, unsigned int *val)
-+{
-+	int i;
-+
-+	for (i = 0; i < selectors; i++) {
-+		if (r[i].low_sel <= sel && r[i].low_sel + r[i].vals >= sel) {
-+			*val = r[i].min + (sel - r[i].low_sel) * r[i].step;
-+			return 0;
-+		}
-+
-+	}
-+	return -EINVAL;
-+}
-+
-+/*
-+ * For BD70528 voltage/current limits we happily accept any value which
-+ * belongs the range. We could check if value matching the selector is
-+ * desired by computing the range min + (sel - sel_low) * range step - but
-+ * I guess it is enough if we use voltage/current which is closest (below)
-+ * the requested?
-+ */
-+static int find_selector_for_value_low(struct linear_range *r, int selectors,
-+				       unsigned int val, unsigned int *sel,
-+				       bool *found)
-+{
-+	int i;
-+	int ret = -EINVAL;
-+
-+	*found = false;
-+	for (i = 0; i < selectors; i++) {
-+		if (r[i].min <= val) {
-+			if (r[i].min + r[i].step * r[i].vals >= val) {
-+				*found = true;
-+				*sel = r[i].low_sel + (val - r[i].min) /
-+				       r[i].step;
-+				ret = 0;
-+				break;
-+			}
-+			/*
-+			 * If the range max is smaller than requested
-+			 * we can set the max supported value from range
-+			 */
-+			*sel = r[i].low_sel + r[i].vals;
-+			ret = 0;
-+		}
-+	}
-+	return ret;
-+}
-+
-+static int get_charge_current(struct bd70528_psy *bdpsy, int *ma)
-+{
-+	unsigned int sel;
-+	int ret;
-+
-+	ret = regmap_read(bdpsy->chip.regmap, BD70528_REG_CHG_CHG_CURR_WARM,
-+			  &sel);
-+	if (ret) {
-+		dev_err(bdpsy->chip.dev,
-+			"Charge current reading failed (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	sel &= BD70528_MASK_CHG_CHG_CURR;
-+
-+	ret = find_value_for_selector_low(&warm_charge_curr[0],
-+					  ARRAY_SIZE(warm_charge_curr), sel,
-+					  ma);
-+	if (ret) {
-+		dev_err(bdpsy->chip.dev,
-+			"Unknown charge current value 0x%x\n",
-+			sel);
-+	}
-+
-+	return ret;
-+}
-+
-+static int get_current_limit(struct bd70528_psy *bdpsy, int *ma)
-+{
-+	unsigned int sel;
-+	int ret;
-+
-+	ret = regmap_read(bdpsy->chip.regmap, BD70528_REG_CHG_DCIN_ILIM,
-+			  &sel);
-+
-+	if (ret) {
-+		dev_err(bdpsy->chip.dev,
-+			"Input current limit reading failed (%d)\n", ret);
-+		return ret;
-+	}
-+
-+	sel &= BD70528_MASK_CHG_DCIN_ILIM;
-+
-+	ret = find_value_for_selector_low(&current_limit_ranges[0],
-+					  ARRAY_SIZE(current_limit_ranges), sel,
-+					  ma);
-+
-+	if (ret) {
-+		/* Unspecified values mean 500 mA */
-+		*ma = 500;
-+	}
-+	return 0;
-+}
-+
-+static enum power_supply_property bd70528_charger_props[] = {
-+	POWER_SUPPLY_PROP_STATUS,
-+	POWER_SUPPLY_PROP_CHARGE_TYPE,
-+	POWER_SUPPLY_PROP_HEALTH,
-+	POWER_SUPPLY_PROP_PRESENT,
-+	POWER_SUPPLY_PROP_ONLINE,
-+	POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT,
-+	POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT,
-+	POWER_SUPPLY_PROP_MODEL_NAME,
-+	POWER_SUPPLY_PROP_MANUFACTURER,
-+};
-+
-+static int bd70528_charger_get_property(struct power_supply *psy,
-+					enum power_supply_property psp,
-+					union power_supply_propval *val)
-+{
-+	struct bd70528_psy *bdpsy = power_supply_get_drvdata(psy);
-+	int ret = 0;
-+
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_STATUS:
-+		return bd70528_get_charger_status(bdpsy, &val->intval);
-+	case POWER_SUPPLY_PROP_CHARGE_TYPE:
-+		return bd70528_get_charge_type(bdpsy, &val->intval);
-+	case POWER_SUPPLY_PROP_HEALTH:
-+		return bd70528_get_battery_health(bdpsy, &val->intval);
-+	case POWER_SUPPLY_PROP_PRESENT:
-+		return bd70528_get_present(bdpsy, &val->intval);
-+	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
-+		ret = get_current_limit(bdpsy, &val->intval);
-+		val->intval *= 1000;
-+		return ret;
-+	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
-+		ret = get_charge_current(bdpsy, &val->intval);
-+		val->intval *= 1000;
-+		return ret;
-+	case POWER_SUPPLY_PROP_ONLINE:
-+		return bd70528_get_online(bdpsy, &val->intval);
-+	case POWER_SUPPLY_PROP_MODEL_NAME:
-+		val->strval = bd70528_charger_model;
-+		return 0;
-+	case POWER_SUPPLY_PROP_MANUFACTURER:
-+		val->strval = bd70528_charger_manufacturer;
-+		return 0;
-+	default:
-+		break;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int bd70528_prop_is_writable(struct power_supply *psy,
-+				    enum power_supply_property psp)
-+{
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
-+	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
-+		return 1;
-+	default:
-+		break;
-+	}
-+	return 0;
-+}
-+
-+
-+
-+static int set_charge_current(struct bd70528_psy *bdpsy, int ma)
-+{
-+	unsigned int reg;
-+	int ret = 0, tmpret;
-+	bool found;
-+
-+	if (ma > 500) {
-+		dev_warn(bdpsy->chip.dev,
-+			 "Requested charge current %u exceed maximum (500mA)\n",
-+			 ma);
-+		reg = MAX_WARM_CHG_CURR_SEL;
-+		goto set;
-+	}
-+	if (ma < 10) {
-+		dev_err(bdpsy->chip.dev,
-+			"Requested charge current %u smaller than min (10mA)\n",
-+			 ma);
-+		reg = MIN_CHG_CURR_SEL;
-+		ret = -EINVAL;
-+		goto set;
-+	}
-+
-+	ret = find_selector_for_value_low(&warm_charge_curr[0],
-+					  ARRAY_SIZE(warm_charge_curr), ma,
-+					  &reg, &found);
-+	if (ret) {
-+		reg = MIN_CHG_CURR_SEL;
-+		goto set;
-+	}
-+	if (!found) {
-+		/* There was a gap in supported values and we hit it */
-+		dev_warn(bdpsy->chip.dev,
-+			 "Unsupported charge current %u mA\n", ma);
-+	}
-+set:
-+
-+	tmpret = regmap_update_bits(bdpsy->chip.regmap,
-+				    BD70528_REG_CHG_CHG_CURR_WARM,
-+				    BD70528_MASK_CHG_CHG_CURR, reg);
-+	if (tmpret)
-+		dev_err(bdpsy->chip.dev,
-+			"Charge current write failure (%d)\n", tmpret);
-+
-+	if (reg > MAX_COLD_CHG_CURR_SEL)
-+		reg = MAX_COLD_CHG_CURR_SEL;
-+
-+	if (!tmpret)
-+		tmpret = regmap_update_bits(bdpsy->chip.regmap,
-+					    BD70528_REG_CHG_CHG_CURR_COLD,
-+					    BD70528_MASK_CHG_CHG_CURR, reg);
-+
-+	if (!ret)
-+		ret = tmpret;
-+
-+	return ret;
-+}
-+
-+#define MAX_CURR_LIMIT_SEL 0x34
-+#define MIN_CURR_LIMIT_SEL 0x0
-+
-+static int set_current_limit(struct bd70528_psy *bdpsy, int ma)
-+{
-+	unsigned int reg;
-+	int ret = 0, tmpret;
-+	bool found;
-+
-+	if (ma > 500) {
-+		dev_warn(bdpsy->chip.dev,
-+			 "Requested current limit %u exceed maximum (500mA)\n",
-+			 ma);
-+		reg = MAX_CURR_LIMIT_SEL;
-+		goto set;
-+	}
-+	if (ma < 5) {
-+		dev_err(bdpsy->chip.dev,
-+			"Requested current limit %u smaller than min (5mA)\n",
-+			ma);
-+		reg = MIN_CURR_LIMIT_SEL;
-+		ret = -EINVAL;
-+		goto set;
-+	}
-+
-+	ret = find_selector_for_value_low(&current_limit_ranges[0],
-+					  ARRAY_SIZE(current_limit_ranges), ma,
-+					  &reg, &found);
-+	if (ret) {
-+		reg = MIN_CURR_LIMIT_SEL;
-+		goto set;
-+	}
-+	if (!found) {
-+		/* There was a gap in supported values and we hit it ?*/
-+		dev_warn(bdpsy->chip.dev, "Unsupported current limit %umA\n",
-+			 ma);
-+	}
-+
-+set:
-+	tmpret = regmap_update_bits(bdpsy->chip.regmap,
-+				    BD70528_REG_CHG_DCIN_ILIM,
-+				    BD70528_MASK_CHG_DCIN_ILIM, reg);
-+
-+	if (!ret)
-+		ret = tmpret;
-+
-+	return ret;
-+}
-+
-+static int bd70528_charger_set_property(struct power_supply *psy,
-+					enum power_supply_property psp,
-+					const union power_supply_propval *val)
-+{
-+	struct bd70528_psy *bdpsy = power_supply_get_drvdata(psy);
-+
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
-+		return set_current_limit(bdpsy, val->intval / 1000);
-+	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
-+		return set_charge_current(bdpsy, val->intval / 1000);
-+	default:
-+		break;
-+	}
-+	return -EINVAL;
-+}
-+
-+static const struct power_supply_desc bd70528_charger_desc = {
-+	.name		= "bd70528-charger",
-+	.type		= POWER_SUPPLY_TYPE_BATTERY,
-+	.properties	= bd70528_charger_props,
-+	.num_properties	= ARRAY_SIZE(bd70528_charger_props),
-+	.get_property	= bd70528_charger_get_property,
-+	.set_property	= bd70528_charger_set_property,
-+	.property_is_writeable	= bd70528_prop_is_writable,
-+};
-+
-+static int bd70528_power_probe(struct platform_device *pdev)
-+{
-+	struct rohm_regmap_dev *mfd;
-+	struct bd70528_psy *bdpsy;
-+	struct power_supply_config cfg = {};
-+
-+	mfd = dev_get_drvdata(pdev->dev.parent);
-+	if (!mfd) {
-+		dev_err(&pdev->dev, "No MFD driver data\n");
-+		return -EINVAL;
-+	}
-+	bdpsy = devm_kzalloc(&pdev->dev, sizeof(*bdpsy), GFP_KERNEL);
-+	if (!bdpsy)
-+		return -ENOMEM;
-+	bdpsy->chip = *mfd;
-+	bdpsy->chip.dev = &pdev->dev;
-+
-+	platform_set_drvdata(pdev, bdpsy);
-+	cfg.drv_data = bdpsy;
-+	cfg.of_node = pdev->dev.parent->of_node;
-+
-+	bdpsy->psy = devm_power_supply_register(&pdev->dev,
-+						&bd70528_charger_desc, &cfg);
-+	if (IS_ERR(bdpsy->psy)) {
-+		dev_err(&pdev->dev, "failed: power supply register\n");
-+		return PTR_ERR(bdpsy->psy);
-+	}
-+
-+	return bd70528_get_irqs(pdev, bdpsy);
-+}
-+
-+static struct platform_driver bd70528_power = {
-+	.driver = {
-+		.name = "bd70528-power"
-+	},
-+	.probe = bd70528_power_probe,
-+};
-+
-+module_platform_driver(bd70528_power);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("BD70528 power-supply driver");
-+MODULE_LICENSE("GPL");
--- 
-2.14.3
+if (pre_set) {
+	if (switchdev_trans_ph_commit(trans))
+		return 0;
+	// perform check here
+}
 
-
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+> =20
+>  	bridge_port =3D mlxsw_sp_bridge_port_find(mlxsw_sp_port->mlxsw_sp->brid=
+ge,
+>  						orig_dev);
+> @@ -833,6 +837,7 @@ static int mlxsw_sp_port_attr_set(struct net_device *=
+dev,
+>  				  struct switchdev_trans *trans)
+>  {
+>  	struct mlxsw_sp_port *mlxsw_sp_port =3D netdev_priv(dev);
+> +	bool pre_set =3D false;
+>  	int err;
+> =20
+>  	switch (attr->id) {
+> @@ -841,10 +846,13 @@ static int mlxsw_sp_port_attr_set(struct net_device=
+ *dev,
+>  						       attr->orig_dev,
+>  						       attr->u.stp_state);
+>  		break;
+> +	case SWITCHDEV_ATTR_ID_PORT_PRE_BRIDGE_FLAGS:
+> +		pre_set =3D true;	/* fall through */
+>  	case SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS:
+>  		err =3D mlxsw_sp_port_attr_br_flags_set(mlxsw_sp_port, trans,
+>  						      attr->orig_dev,
+> -						      attr->u.brport_flags);
+> +						      attr->u.brport_flags,
+> +						      pre_set);
+>  		break;
+>  	case SWITCHDEV_ATTR_ID_BRIDGE_AGEING_TIME:
+>  		err =3D mlxsw_sp_port_attr_br_ageing_set(mlxsw_sp_port, trans,
+> --=20
+> 2.17.1
+>=20
