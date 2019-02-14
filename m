@@ -2,206 +2,115 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BECEFC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:23:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6408BC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:24:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DD1B222B6
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:23:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3773920663
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 11:24:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405745AbfBNLXA (ORCPT
+        id S2405758AbfBNLYA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 06:23:00 -0500
-Received: from foss.arm.com ([217.140.101.70]:41790 "EHLO foss.arm.com"
+        Thu, 14 Feb 2019 06:24:00 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58246 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726405AbfBNLXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 06:23:00 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4C283EBD;
-        Thu, 14 Feb 2019 03:22:59 -0800 (PST)
-Received: from [10.1.199.35] (e107154-lin.cambridge.arm.com [10.1.199.35])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3EECD3F675;
-        Thu, 14 Feb 2019 03:22:54 -0800 (PST)
-Subject: Re: [RFC][PATCH 0/3] arm64 relaxed ABI
-To:     Evgenii Stepanov <eugenis@google.com>,
-        Dave Martin <Dave.Martin@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Shuah Khan <shuah@kernel.org>, Ingo Molnar <mingo@kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Branislav Rankov <Branislav.Rankov@arm.com>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-References: <CAAeHK+xPZ-Z9YUAq=3+hbjj4uyJk32qVaxZkhcSAHYC4mHAkvQ@mail.gmail.com>
- <20181212150230.GH65138@arrakis.emea.arm.com>
- <CAAeHK+zxYJDJ7DJuDAOuOMgGvckFwMAoVUTDJzb6MX3WsXhRTQ@mail.gmail.com>
- <20181218175938.GD20197@arrakis.emea.arm.com>
- <20181219125249.GB22067@e103592.cambridge.arm.com>
- <9bbacb1b-6237-f0bb-9bec-b4cf8d42bfc5@arm.com>
- <CAFKCwrhH5R3e5ntX0t-gxcE6zzbCNm06pzeFfYEN2K13c5WLTg@mail.gmail.com>
- <20190212180223.GD199333@arrakis.emea.arm.com>
- <20190213145834.GJ3567@e103592.cambridge.arm.com>
- <90c54249-00dd-f8dd-6873-6bb8615c2c8a@arm.com>
- <20190213174318.GM3567@e103592.cambridge.arm.com>
- <CAFKCwrgV0VNJ_jEU79XwkX0o7qLFcqh3MbVMg2=Vs8VKYyY9=Q@mail.gmail.com>
-From:   Kevin Brodsky <kevin.brodsky@arm.com>
-Message-ID: <8047504c-3b9d-0c46-c0cf-9d584f5ca241@arm.com>
-Date:   Thu, 14 Feb 2019 11:22:52 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        id S2389603AbfBNLYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 06:24:00 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1F3F037F46;
+        Thu, 14 Feb 2019 11:24:00 +0000 (UTC)
+Received: from krava (unknown [10.43.17.161])
+        by smtp.corp.redhat.com (Postfix) with SMTP id BFF0B608AE;
+        Thu, 14 Feb 2019 11:23:58 +0000 (UTC)
+Date:   Thu, 14 Feb 2019 12:23:57 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+        alexander.shishkin@linux.intel.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf trace: Fix potential USE_AFTER_FREE  problem
+Message-ID: <20190214112357.GB26714@krava>
+References: <20190214052356.26884-1-tsu.yubo@gmail.com>
+ <20190214083411.GA25842@krava>
+ <20190214102238.nobo5vfsvmlyjyhv@yubo-2>
 MIME-Version: 1.0
-In-Reply-To: <CAFKCwrgV0VNJ_jEU79XwkX0o7qLFcqh3MbVMg2=Vs8VKYyY9=Q@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-GB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190214102238.nobo5vfsvmlyjyhv@yubo-2>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 14 Feb 2019 11:24:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/02/2019 21:41, Evgenii Stepanov wrote:
-> On Wed, Feb 13, 2019 at 9:43 AM Dave Martin <Dave.Martin@arm.com> wrote:
->> On Wed, Feb 13, 2019 at 04:42:11PM +0000, Kevin Brodsky wrote:
->>> (+Cc other people with MTE experience: Branislav, Ruben)
->> [...]
->>
->>>> I'm wondering whether we can piggy-back on existing concepts.
->>>>
->>>> We could say that recolouring memory is safe when and only when
->>>> unmapping of the page or removing permissions on the page (via
->>>> munmap/mremap/mprotect) would be safe.  Otherwise, the resulting
->>>> behaviour of the process is undefined.
->>> Is that a sufficient requirement? I don't think that anything prevents you
->>> from using mprotect() on say [vvar], but we don't necessarily want to map
->>> [vvar] as tagged. I'm not sure it's easy to define what "safe" would mean
->>> here.
->> I think the origin rules have to apply too: [vvar] is not a regular,
->> private page but a weird, shared thing mapped for you by the kernel.
->>
->> Presumably userspace _cannot_ do mprotect(PROT_WRITE) on it.
->>
->> I'm also assuming that userspace cannot recolour memory in read-only
->> pages.  That sounds bad if there's no way to prevent it.
-> That sounds like something we would like to do to catch out of bounds
-> read of .rodata globals.
-> Another potentially interesting use case for MTE is infinite hardware
-> watchpoints - that would require trapping reads for individual tagging
-> granules, include those in read-only binary segment.
+On Thu, Feb 14, 2019 at 05:22:39AM -0500, YU Bo wrote:
+> Hi,
+> On Thu, Feb 14, 2019 at 09:34:11AM +0100, Jiri Olsa wrote:
+> > On Thu, Feb 14, 2019 at 12:23:56AM -0500, Bo YU wrote:
+> > > From: Bo Yu <tsu.yubo@gmail.com>
+> > > 
+> > > There is a freed pointer "evsel", so fix it.
+> > > 
+> > > Detected by CoverityScan, CID#1442595("Memory-illegalaccesses
+> > > (USE_AFTER_FREE)")
+> > > Fixes: 6ab3bc240ade4("perf trace: Support multiple "vfs_getname" probes")
+> > > 
+> > > Signed-off-by: Bo Yu <tsu.yubo@gmail.com>
+> > > ---
+> > >  tools/perf/builtin-trace.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> > > index b36061cd1ab8..4036b20a1067 100644
+> > > --- a/tools/perf/builtin-trace.c
+> > > +++ b/tools/perf/builtin-trace.c
+> > > @@ -2515,7 +2515,7 @@ static size_t trace__fprintf_thread_summary(struct trace *trace, FILE *fp);
+> > >  static bool perf_evlist__add_vfs_getname(struct perf_evlist *evlist)
+> > >  {
+> > >  	bool found = false;
+> > > -	struct perf_evsel *evsel, *tmp;
+> > > +	struct perf_evsel *evsel = NULL, *tmp;
+> > 
+> > hum, I can't see how this change could matter,
+> > could you pelase explain
+> First, this is a warning reported by CoverityScan,but in fact i do not how
+> to answer your question :(.
 
-I think we should keep this discussion for a later, separate thread. Vincenzo's 
-proposal is about allowing userspace to pass tags at the syscall interface. The set 
-of mappings allowed to be tagged by userspace (in MTE) should be contained in the set 
-of mappings that userspace can pass tagged pointers to (at the syscall interface), 
-but they are not necessarily the same. Private read-only mappings are an edge case 
-(you can pass tagged pointers to them, the memory may or may not be mapped as tagged, 
-but in any case it is not possible to change the memory tags via such mapping).
+I understand that, however at the same time I think
+it's good to have an idea what the patch is doing ;-)
 
->
->> [...]
->>
->>>> It might be reasonable to do the check in access_ok() and skip it in
->>>> __put_user() etc.
->>>>
->>>> (I seem to remember some separate discussion about abolishing
->>>> __put_user() and friends though, due to the accident risk they pose.)
->>> Keep in mind that with MTE, there is no need to do any explicit check when
->>> accessing user memory via a user-provided pointer. The tagged user pointer
->>> is directly passed to copy_*_user() or put_user(). If the load/store causes
->>> a tag fault, then it is handled just like a page fault (i.e. invoking the
->>> fixup handler). As far as I can tell, there's no need to do anything special
->>> in access_ok() in that case.
->>>
->>> [The above applies to precise mode. In imprecise mode, some more work will
->>> be needed after the load/store to check whether a tag fault happened.]
->> Fair enough, I'm a bit hazy on the details as of right now..
->>
->> [...]
->>
->>> There are many possible ways to deploy MTE, and debugging is just one of
->>> them. For instance, you may want to turn on heap colouring for some
->>> processes in the system, including in production.
->> To implement enforceable protection, or as a diagnostic tool for when
->> something goes wrong?
->>
->> In the latter case it's still OK for the kernel's tag checking not to be
->> exhaustive.
->>
->>> Regarding those cases where it is impossible to check tags at the point of
->>> accessing user memory, it is indeed possible to check the memory tags at the
->>> point of stripping the tag from the user pointer. Given that some MTE
->>> use-cases favour performance over tag check coverage, the ideal approach
->>> would be to make these checks configurable (e.g. check one granule, check
->>> all of them, or check none). I don't know how feasible this is in practice.
->> Check all granules of a massive DMA buffer?
->>
->> That doesn't sounds feasible without explicit support in the hardware to
->> have the DMA check tags itself as the memory is accessed.  MTE by itself
->> doesn't provide for this IIUC (at least, it would require support in the
->> platform, not just the CPU).
->>
->> We do not want to bake any assumptions into the ABI about whether a
->> given data transfer may or may not be offloaded to DMA.  That feels
->> like a slippery slope.
->>
->> Providing we get the checks for free in put_user/get_user/
->> copy_{to,from}_user(), those will cover a lot of cases though, for
->> non-bulk-IO cases.
->>
->>
->> My assumption has been that at this point in time we are mainly aiming
->> to support the debug/diagnostic use cases today.
+> Second, if i remember right, temporary element of list_for_each_entry_safe
+> should be initialized with NULL otherwise it will complain via gcc.
+> Please correct me :)
 
-MTE can be used both for diagnostics (imprecise mode is especially suitable for 
-that), and to halt execution when something wrong is detected. Even in the latter 
-case, one cannot expect exhaustive checking from MTE, because the way it works is 
-fundamentally statistical; an invalid pointer may by chance have the right tag to 
-access the given location. So again, I think that a best-effort approach is 
-appropriate when the kernel accesses user memory, in terms of checking that tags match.
+hum, from quick look:
 
-More specifically, different use-cases come with different tradeoffs (performance / 
-tag check coverage). That's why I am suggesting that in the cases where tag checks 
-would need to be done _explicitly_ (before losing the user-provided tag), it would be 
-nice to be able to choose how much should be checked. I am not suggesting that always 
-checking all the granules by default is sane. Maybe checking just the first granule 
-is the right default.
+	perf_evlist__add_vfs_getname
+		struct perf_evsel *evsel;
 
-I don't think we need to get to the bottom of this specific aspect at this point. 
-This ABI proposal is not about memory tagging, so there is no need to specify how or 
-when tag checking is done. As long as this ABI allows tagged pointers, pointing to 
-mappings that could be potentially tagged, to be passed to syscalls, I don't think 
-further relaxations are needed to enable memory tagging.
+		evlist__for_each_entry_safe(evlist, evsel, tmp)
+		-> __evlist__for_each_entry_safe(&(evlist)->entries, tmp, evsel)
 
-Kevin
+		__evlist__for_each_entry_safe(list, tmp, evsel) \
+		-> list_for_each_entry_safe(evsel, tmp, list, node)
 
->>
->> At least, those are the low(ish)-hanging fruit.
->>
->> Others are better placed than me to comment on the goals here.
->>
->> Cheers
->> ---Dave
+		list_for_each_entry_safe(pos, n, head, member)                  \
+		-> for (pos = list_first_entry(head, typeof(*pos), member),        \
+			n = list_next_entry(pos, member);                       \
+			&pos->member != (head);                                    \
+			pos = n, n = list_next_entry(n, member))
 
+
+unless I'm missing something 'evsel' is being initialized
+in the for loop init section with this statement:
+
+  pos = list_first_entry(head, typeof(*pos), member)
+
+
+jirka
