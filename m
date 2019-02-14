@@ -2,216 +2,208 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFAADC4360F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56EAAC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:57:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 902FB222A4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:57:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D054222A4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 09:57:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="P5JRl78S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392838AbfBNJ5S (ORCPT
+        id S2406321AbfBNJ5f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 04:57:18 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40089 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391766AbfBNJ5R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 04:57:17 -0500
-Received: by mail-ed1-f67.google.com with SMTP id 10so4485750eds.7
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 01:57:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/Ebk+2kIarklLhqgQO+2gWIzyVDyuZvDlafJbIyQspA=;
-        b=Mji2DI/ET4KLsc1oyjJJ0DirI7g8WBsJOx1zEabKJOFZDkYmmakfGCHq5Sy4lI642f
-         vC2r8HhtzOvgy4Y4P5F2ufnOV9ruLUOSNkJnRDuVBXg08+DGhcL6cbJwQZ1luwj/lmvI
-         OyE+2AWZNWVU34ez3L6FG27QYHW0+3jZRg2i9FGs8BSAW+zKQiTFDHFb89QRUJesYfA6
-         JRK1kaAWC4Jxr9Jew9m1Dhy7kvDYbr2be5PuFua4cqO3RpJ5r+UTYSwysWiVlLBdGjfY
-         OUq1IvKos0KlVuK6vXXnBgzkTyBVZZIo36+fJKMbswXycepqOvUVsfD6rn4B7m1YSv/Q
-         arvg==
-X-Gm-Message-State: AHQUAuZcWUDGhvdEkY48eamVVACQba8Mn2RdC3W7zYZ5BtPR88uBjA/P
-        RhG9uk9N1cm1UZT5jXHTsHugNw==
-X-Google-Smtp-Source: AHgI3IbY3CgynZUfsKyAK1u7lP8q8qAFiwFhbAIKaJlSkEVUlm684M35djjTO1b5shFtqqbQgp4G9Q==
-X-Received: by 2002:a17:906:9a2:: with SMTP id q2mr2152279eje.40.1550138235321;
-        Thu, 14 Feb 2019 01:57:15 -0800 (PST)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id m13sm561095edd.2.2019.02.14.01.57.14
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 01:57:14 -0800 (PST)
-Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
- LEDs
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Yauhen Kharuzhy <jekhor@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-References: <20190212205901.13037-1-jekhor@gmail.com>
- <20190212205901.13037-2-jekhor@gmail.com>
- <1df39a63-533f-bb68-a056-a0241f148be9@redhat.com> <20190213230731.GA8557@amd>
- <42078a81-e32e-81b7-528f-d1adb60d31c3@redhat.com>
- <20190213233806.GA11867@amd>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com>
-Date:   Thu, 14 Feb 2019 10:57:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <20190213233806.GA11867@amd>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+        Thu, 14 Feb 2019 04:57:35 -0500
+Received: from mail-eopbgr40056.outbound.protection.outlook.com ([40.107.4.56]:35922
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2391766AbfBNJ5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 04:57:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9YrgM2b8NCAdCvgKnBUdKOmfbYe8ywf3KDDPouGklZM=;
+ b=P5JRl78S39wVfefG2aOil11P3v8TFg8hBPksLHQSjcTG9WWapRRGZooBXmvznr5ySd5aCzO3DqzbpcfYBoPjHUKfM0MPrVDLBzYFIcP7QhURxLmVvAPK44LILcZmV3KgHEswCzdrV0MDxeqJkldJdObrvRAkX1h/94K8xG23+fY=
+Received: from DB7PR04MB4618.eurprd04.prod.outlook.com (52.135.138.152) by
+ DB7PR04MB4300.eurprd04.prod.outlook.com (52.135.131.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.22; Thu, 14 Feb 2019 09:57:29 +0000
+Received: from DB7PR04MB4618.eurprd04.prod.outlook.com
+ ([fe80::2083:76ce:c2b6:6a39]) by DB7PR04MB4618.eurprd04.prod.outlook.com
+ ([fe80::2083:76ce:c2b6:6a39%4]) with mapi id 15.20.1601.023; Thu, 14 Feb 2019
+ 09:57:29 +0000
+From:   Joakim Zhang <qiangqing.zhang@nxp.com>
+To:     "mkl@pengutronix.de" <mkl@pengutronix.de>,
+        "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>
+CC:     "wg@grandegger.com" <wg@grandegger.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH] can: flexcan: add TX support for variable payload size
+Thread-Topic: [PATCH] can: flexcan: add TX support for variable payload size
+Thread-Index: AQHUkeZs7DN/5MKD9Eu238RlkbDYTKWzNv+ggCw8iyA=
+Date:   Thu, 14 Feb 2019 09:57:29 +0000
+Message-ID: <DB7PR04MB461820F73D210E33EF60E99CE6670@DB7PR04MB4618.eurprd04.prod.outlook.com>
+References: <20181212064419.18613-1-qiangqing.zhang@nxp.com>
+ <DB7PR04MB46185CFC0AE2641366B0A51EE6830@DB7PR04MB4618.eurprd04.prod.outlook.com>
+In-Reply-To: <DB7PR04MB46185CFC0AE2641366B0A51EE6830@DB7PR04MB4618.eurprd04.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=qiangqing.zhang@nxp.com; 
+x-originating-ip: [119.31.174.71]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 86780f8b-b824-4c59-39d9-08d69262d500
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB4300;
+x-ms-traffictypediagnostic: DB7PR04MB4300:
+x-microsoft-exchange-diagnostics: =?gb2312?B?MTtEQjdQUjA0TUI0MzAwOzIzOmkzUXhrdHFkMGtETnEybGFvemR4L2FDOXcx?=
+ =?gb2312?B?SnRhSmJRWVJaMDN0SXZYUm8vWGx0RnhZMnB5Sm9IbDRoakhjNFFCSTUrb0hv?=
+ =?gb2312?B?TTFGZlBlTTFtQnU2VUExMkFNZlZYMUZ5NGRxMzhNYW1FdVpZRmh0MDVEV2FU?=
+ =?gb2312?B?WUZLb0g2MWY0M0ppZTNqTzNqeldieFRLaUlFTG5GSUxLdGVhWEJIUzVkRTEw?=
+ =?gb2312?B?eWRtNm00bStOZ1ZJMkJUdi9XcEtiNzd1N0pyb3d6VzR1cTRBMDgwbVVyWW1h?=
+ =?gb2312?B?MWgyWm5lM0RNZ2daUGN2bFZLNUp3SC9WTzlFUDd0UEdlU0svc1ExbEs4OUVI?=
+ =?gb2312?B?YVRqSDd2RU9Hek9aRmptdGM1T0hSeXNSZ3ZNazBMT2JJcVcxaVNEVEZCcWdi?=
+ =?gb2312?B?WjYzZ3kvTEE1R0J3ME5CRjR4Y0x5aUpFUzFOeHVmbkhMWW5BKzJ2dWYvS3Qw?=
+ =?gb2312?B?WndkTWlRLzRIeDhSQ2RDN1RsdzNoeEk5RWk5eGQvZThQb0NkMEY3OGoydVRX?=
+ =?gb2312?B?UzVFTjRGV2FLSENIekdRbFpneVlhUlBFTFZTbmFjTWVyeUtFaGI0eWhFSGFQ?=
+ =?gb2312?B?ZGtFTmRjSWYwUlNEL0NaYjdqdDkxRUVWMFpPOElXOTVCVi9WWENGYUZnV0lN?=
+ =?gb2312?B?WkNBV2RBRkN0Mjl3MWVzUzA3Zm9Sbm9yY1JwaENlYWdLMmQweElxRWlzV1VJ?=
+ =?gb2312?B?M0VsZk05ZWtCWk56emticGs1R2VPSThmaGxDcTZ2L0F3UUlUT0w3aXlUQlgv?=
+ =?gb2312?B?RjRwUFgzRk1kUlBvN0t0VVJoaXVFKytnVWNpYTRDTGtyMXJLUlc0Q0k5OU9i?=
+ =?gb2312?B?eGV5TXZOMktvSjUySU1Gd1FuNXpEd0Viank1VkpCd3pkTW9MK0RtekVYYk9V?=
+ =?gb2312?B?ODFacWpDeHo1RCs2QnpaOG1rdjlUaFNZdGpockkxNVdOSHk1RXZOQ054Nmox?=
+ =?gb2312?B?UWYxc2tTKzYvaW15cmVuWXhrMERFVWFzT1dHSlhJelU1bjVLRkoxbkkweFhu?=
+ =?gb2312?B?N2NGTkNiZ0JMb0ovb2VPSEZKam9uMjk4bnZxOWczT0tZaGswWW4yb1U3K25n?=
+ =?gb2312?B?Y2dXYXl0L2F3czh2SGt1ODJNZ1oxSTZwV2k5ZWt4SWR3Wmk1S1QwOXNJWFZ0?=
+ =?gb2312?B?TDRMWlN5eFVnZTBZODN0emYveitQNC9MMGREd1Jvbmx1THRScVRHSVZzVGVX?=
+ =?gb2312?B?TmM4Tjh5OWNmNVY0SjY3ZkhNcnY5djlEd1FQUy9rdHByMFlWcGhHUy9kS3R3?=
+ =?gb2312?B?YVpjenRTVWc0VlRYdjFjem8zQnkwbjZTNjhRdGpyWGRXVEt4WGEwcnA5Lzd2?=
+ =?gb2312?B?bEp1OWk3MUxWbjRiaW0zSlhaYk9QR0J6dTlxRVoya1VsSUpQNEEwTU0vMmVS?=
+ =?gb2312?B?bm1aMkN3bjhoZUJyUHJhend2MnRrdnFlT2wzUWlVTTNOWVEyTjJTMHI4bXJh?=
+ =?gb2312?B?UUQ3UzZBZGVnMnpzcitpSHJwN05nYnpwZHhLMS9OV0N4WjVvYkdWNUpBakpr?=
+ =?gb2312?B?MnhxOEdzcVpMYTg5NjZLRTMrNEtJcTV5QmpNSGZQK1ZPWVFxeEJUYkNTaENQ?=
+ =?gb2312?B?QTBFUnl6bTEwdnNrL0RhZjFSRWdyZzE3ZHA4ZmNpRzBTaDVBMDFyMHZoWFpH?=
+ =?gb2312?B?Ymg1OGoxOHZEeHhURkFGUlNEU3VtdjJHbmJyc0RGZWtyK3JrMklpMzBObzg4?=
+ =?gb2312?Q?yDdd3Bckug2nGll4n0=3D?=
+x-microsoft-antispam-prvs: <DB7PR04MB43007E368833FC2F975D6AFDE6670@DB7PR04MB4300.eurprd04.prod.outlook.com>
+x-forefront-prvs: 09480768F8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(376002)(39860400002)(346002)(366004)(136003)(199004)(189003)(13464003)(256004)(81166006)(8936002)(316002)(76176011)(110136005)(8676002)(106356001)(105586002)(26005)(25786009)(33656002)(55016002)(2501003)(2906002)(71190400001)(4326008)(6246003)(7736002)(74316002)(305945005)(186003)(97736004)(99286004)(6436002)(54906003)(81156014)(7696005)(478600001)(53936002)(6116002)(3846002)(11346002)(68736007)(486006)(446003)(229853002)(66066001)(14454004)(9686003)(569044001)(71200400001)(6506007)(86362001)(476003)(102836004)(53546011);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4300;H:DB7PR04MB4618.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Emxbjk2DiNy5DHFXRqKQRcwCmj7MPIjZUlNIK+g6sZ9BvYxYIX6VFnT9EPwv6YYqMGXx1hKUG3NNrXPeEshjaRA+SAJj8s00XrOVTMwlY8UyoSOshS9Uyhljmrww5hIxIhgcUEjSyIAh7MoZQxcSCC/wA2e8V6ClBIu+euvPbRnPv4+GSJ2gCjjAp3eUkPXRjmBYpMTrULoOaT8UUaJGsVe5vfRKFtzwVRGctNqzs/zaUJar21EkhWEJTEPS9iX5cRRf2i98Hy/LPloCGh2kFiN5Gk8n9Ur8rdP45ZsmDin4PdhqltwGciShd1FxDLm9iOdcqpnnQzRAVUiwDcy7MHO5NLxm7ZGxg6eE5He6yEFlwtq6G+suPjU6vbK7eXPN4AQOiLd+o/pjJ7KXnlpjPFy3En75jjoi2gnPha2/FFQ=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86780f8b-b824-4c59-39d9-08d69262d500
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Feb 2019 09:57:29.6845
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4300
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 14-02-19 00:38, Pavel Machek wrote:
-> Hi!
-> 
-> 
->>> Agreed.
->>>
->>>> I believe it would be best to add a custom "mode" attribute
->>>> to the led classdev, with "manual" and "on-when-charging"
->>>> modes, this would then control bits 0-1 of reg 0x5e1f and
->>>> by default these bits should be left as is when the driver
->>>> loads.
->>>
->>> No. This is not first hardware when we have something like this, and
->>> we need something generic here.
->>>
->>> One possibility would be magic "hardware drives this led"
->>> trigger. Hmm? (Jacek disliked this idea before, but maybe we can
->>> convince him).
->>>
->>> Generic "is this driven by hardware or not" attribute might be
->>> possible, too... but its interaction with triggers/brightness/etc
->>> would be confusing.
->>
->> In this case the interaction is not that tricky, but it will
->> likely be different per led controller, so I do not think that
->> we can ever come up with a truely generic solution.
->>
->> Basically the charge led has 3 states:
->>
->> 1) Off
->> 2) On
->> 3) On when charging
->>
->> And then when on it has 4 patterns:
->>
->> 1) Permanently off (so still not really on)
->> 2) Permanently on
->> 3) Blinking
->> 4) Breathing
-> 
-> Ok, so you don't really need to support _both_ off methods.
-> 
-> Still sounds like a normal LED, with special "yoga-charging" and
-> "yoga-breathing" triggers. (All the normal triggers should still work,
-> too.)
-
-Except that when in yoga-charging mode, the user should
-still be able to select if the LED is simply on when charging,
-blinking when charging, or breathing when charging.
-
-Given that there are 2 independent settings model-ing this
-as a trigger does not work well. Also the trigger names should
-not contain yoga as the PMIC in question is used in other
-devices too.
-
-I really think we should not try to shoe-horn special cases
-like this into the generic API and just use custom sysfs
-attributes for this. Like for example how the kbd-backlight
-led classdev from the dell-laptop has custom attributes to
-select if the timeout for going off on keyboard/mouse activity
-and another custom attribute to select if only the keyboard or
-both the keyboard and mouse count as relevant activity.
-
-Triggers are great for when we actually want to add a link
-between an event coming from some part of code in the kernel,
-to a LED classdevice, so that that event can control the LED.
-
-Trying to shoe-horn all sort of other stuff into this API
-just does not work well IMHO and is abuse of the original
-LED trigger API.
-
->> These 4 patterns can be selected when on, independent
->> of being perma-on or ondemand-on
-> 
-> Yeah, but we don't really want to expose that to userspace.
-
-I disagree I see no reason if we are adding a driver for
-this why the user should not be able to select if the
-LED is on, blinking or glowing when charging.
-
->>>> As for the 0x5e20 settings, I believe another custom
->>>> sysfs attribute, called "breathing" would be a good idea to
->>>> export the breathing functionality.
->>>
->>> We have "pattern" trigger that can do this kind of stuff in
->>> software. But I'm not sure if this is worth supporting.
->>
->> The problem is that any changes made are permanent, they
->> survice reboots and the default is Breathing, so we need
->> a way to restore that which does not involve removing
->> the internal battery of these devices.
-> 
-> Wow. Now that's a broken hardware.
-
-The PMIC is attached to the battery and retaining the state
-of the logic controlling the charging LED when off seems sane
-to me.
-
-Arguably the firmware should set some sane defaults on boot,
-but at least on the 2 devices with this PMIC I have it does
-not do this.
-
-> Anyway, in such case I'd propose having rmmod/reboot/poweroff hook
-> that just sets it to breathing. No need to expose it to userspace.
-
-That assumes that breathing is the default setting on all hardware
-and again I don't see why not to export this functionality to
-userspace. Just because something does not fit in the existing
-API is IMHO not a good reason to not expose it to userspace.
-
-I suggest that we deal with this special case by adding 3 custom
-sysfs attributes:
-
-1) "mode" which when read, prints, e.g. :
-manual [on-when-charging]
-
-With the [] indicating the current mode, and writes accepting
-all 3 values and updating the hw accordingly.
-
-This format is used in more places in the kernel and allows
-for the user to easily discover the possible values.
-
-2) "pattern" which when read, prints, e.g. :
-on blinking [breathing]
-
-3) "frequency", when read prints, e.g. :
-0.25hz [0.5hz] 1hz 2hz
-Note this controls both the blinking and breathing freq.
-
-Note I've not listed off anywhere, this can be achieved by
-setting the brightness to 0 as we do with normal leds.
-
-For interactions with other APIs we can do the standard
-thing where writing 0 to brightness resets things, in this
-case this would reset mode to manual and pattern to on.
-
-And if the blinking API gets used, then too the mode should
-be switched to manual, and the pattern obviously becomes
-blinking.
-
-I believe this will work well with this hardware and
-nicely allow the user to control all settings.
-
-Regards,
-
-Hans
+DQpLaW5kbHkgUGluZy4uLg0KDQpCZXN0IFJlZ2FyZHMsDQpKb2FraW0gWmhhbmcNCg0KPiAtLS0t
+LU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBKb2FraW0gWmhhbmcNCj4gU2VudDogMjAx
+OcTqMdTCMTfI1SAxNDoyNg0KPiBUbzogbWtsQHBlbmd1dHJvbml4LmRlOyBsaW51eC1jYW5Admdl
+ci5rZXJuZWwub3JnDQo+IENjOiB3Z0BncmFuZGVnZ2VyLmNvbTsgbmV0ZGV2QHZnZXIua2VybmVs
+Lm9yZzsNCj4gbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsgZGwtbGludXgtaW14IDxsaW51
+eC1pbXhAbnhwLmNvbT4NCj4gU3ViamVjdDogUkU6IFtQQVRDSF0gY2FuOiBmbGV4Y2FuOiBhZGQg
+VFggc3VwcG9ydCBmb3IgdmFyaWFibGUgcGF5bG9hZCBzaXplDQo+IA0KPiANCj4gS2luZGx5IFBp
+bmcuLi4NCj4gDQo+IEJlc3QgUmVnYXJkcywNCj4gSm9ha2ltIFpoYW5nDQo+IA0KPiA+IC0tLS0t
+T3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+ID4gRnJvbTogSm9ha2ltIFpoYW5nDQo+ID4gU2VudDog
+MjAxOMTqMTLUwjEyyNUgMTQ6NDcNCj4gPiBUbzogbWtsQHBlbmd1dHJvbml4LmRlOyBsaW51eC1j
+YW5Admdlci5rZXJuZWwub3JnDQo+ID4gQ2M6IHdnQGdyYW5kZWdnZXIuY29tOyBuZXRkZXZAdmdl
+ci5rZXJuZWwub3JnOw0KPiA+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGRsLWxpbnV4
+LWlteCA8bGludXgtaW14QG54cC5jb20+OyBKb2FraW0NCj4gPiBaaGFuZyA8cWlhbmdxaW5nLnpo
+YW5nQG54cC5jb20+DQo+ID4gU3ViamVjdDogW1BBVENIXSBjYW46IGZsZXhjYW46IGFkZCBUWCBz
+dXBwb3J0IGZvciB2YXJpYWJsZSBwYXlsb2FkDQo+ID4gc2l6ZQ0KPiA+DQo+ID4gTm93IHRoZSBG
+bGV4Q0FOIGRyaXZlciBhbHdheXMgdXNlIGxhc3QgbWFpbGJveCBmb3IgVFgsIGl0IHdpbGwgd29y
+aw0KPiA+IHdlbGwgd2hlbiBNQiBwYXlsb2FkIHNpemUgaXMgOC8xNiBieXRlcy4NCj4gPiBUWCBt
+YWlsYm94IHdvdWxkIGNoYW5nZSB0byAxMyB3aGVuIE1CIHBheWxvYWQgc2l6ZSBpcyA2NCBieXRl
+cyB0bw0KPiA+IHN1cHBvcnQgQ0FORkQuIFNvIHdlIG1heSBuZWVkIHRvIHNldCBpZmxhZyByZWdp
+c3RlciB0byBhZGQgc3VwcG9ydCBmb3INCj4gPiB2YXJpYWJsZSBwYXlsb2FkIHNpemUuDQo+ID4N
+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBKb2FraW0gWmhhbmcgPHFpYW5ncWluZy56aGFuZ0BueHAuY29t
+Pg0KPiA+IC0tLQ0KPiA+ICBkcml2ZXJzL25ldC9jYW4vZmxleGNhbi5jIHwgNDINCj4gPiArKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0NCj4gPiAgMSBmaWxlIGNoYW5nZWQs
+IDMyIGluc2VydGlvbnMoKyksIDEwIGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBh
+L2RyaXZlcnMvbmV0L2Nhbi9mbGV4Y2FuLmMgYi9kcml2ZXJzL25ldC9jYW4vZmxleGNhbi5jDQo+
+ID4gaW5kZXgNCj4gPiAwZjM2ZWFmZTNhYzEuLjEzZmQwODVmY2Y4NCAxMDA2NDQNCj4gPiAtLS0g
+YS9kcml2ZXJzL25ldC9jYW4vZmxleGNhbi5jDQo+ID4gKysrIGIvZHJpdmVycy9uZXQvY2FuL2Zs
+ZXhjYW4uYw0KPiA+IEBAIC0xNDEsNyArMTQxLDkgQEANCj4gPiAgI2RlZmluZSBGTEVYQ0FOX1RY
+X01CX1JFU0VSVkVEX09GRl9GSUZPCQk4DQo+ID4gICNkZWZpbmUgRkxFWENBTl9UWF9NQl9SRVNF
+UlZFRF9PRkZfVElNRVNUQU1QCTANCj4gPiAgI2RlZmluZSBGTEVYQ0FOX1JYX01CX09GRl9USU1F
+U1RBTVBfRklSU1QNCj4gPiAJKEZMRVhDQU5fVFhfTUJfUkVTRVJWRURfT0ZGX1RJTUVTVEFNUCAr
+IDEpDQo+ID4gLSNkZWZpbmUgRkxFWENBTl9JRkxBR19NQih4KQkJQklUKCh4KSAmIDB4MWYpDQo+
+ID4gKyNkZWZpbmUgRkxFWENBTl9JRkxBRzFfTUJfTlVNCQkzMg0KPiA+ICsjZGVmaW5lIEZMRVhD
+QU5fSUZMQUcxX01CKHgpCQlCSVQoeCkNCj4gPiArI2RlZmluZSBGTEVYQ0FOX0lGTEFHMl9NQih4
+KQkJQklUKCh4KSAmIDB4MWYpDQo+ID4gICNkZWZpbmUgRkxFWENBTl9JRkxBR19SWF9GSUZPX09W
+RVJGTE9XCUJJVCg3KQ0KPiA+ICAjZGVmaW5lIEZMRVhDQU5fSUZMQUdfUlhfRklGT19XQVJOCUJJ
+VCg2KQ0KPiA+ICAjZGVmaW5lIEZMRVhDQU5fSUZMQUdfUlhfRklGT19BVkFJTEFCTEUJQklUKDUp
+DQo+ID4gQEAgLTgyMiw5ICs4MjQsMTUgQEAgc3RhdGljIGlubGluZSB1NjQNCj4gPiBmbGV4Y2Fu
+X3JlYWRfcmVnX2lmbGFnX3J4KHN0cnVjdCBmbGV4Y2FuX3ByaXYgKnByaXYpDQo+ID4gIAlzdHJ1
+Y3QgZmxleGNhbl9yZWdzIF9faW9tZW0gKnJlZ3MgPSBwcml2LT5yZWdzOw0KPiA+ICAJdTMyIGlm
+bGFnMSwgaWZsYWcyOw0KPiA+DQo+ID4gLQlpZmxhZzIgPSBwcml2LT5yZWFkKCZyZWdzLT5pZmxh
+ZzIpICYgcHJpdi0+cmVnX2ltYXNrMl9kZWZhdWx0ICYNCj4gPiAtCQl+RkxFWENBTl9JRkxBR19N
+Qihwcml2LT50eF9tYl9pZHgpOw0KPiA+IC0JaWZsYWcxID0gcHJpdi0+cmVhZCgmcmVncy0+aWZs
+YWcxKSAmIHByaXYtPnJlZ19pbWFzazFfZGVmYXVsdDsNCj4gPiArCWlmIChwcml2LT50eF9tYl9p
+ZHggPj0gRkxFWENBTl9JRkxBRzFfTUJfTlVNKSB7DQo+ID4gKwkJaWZsYWcyID0gcHJpdi0+cmVh
+ZCgmcmVncy0+aWZsYWcyKSAmIHByaXYtPnJlZ19pbWFzazJfZGVmYXVsdCAmDQo+ID4gKwkJCX5G
+TEVYQ0FOX0lGTEFHMl9NQihwcml2LT50eF9tYl9pZHgpOw0KPiA+ICsJCWlmbGFnMSA9IHByaXYt
+PnJlYWQoJnJlZ3MtPmlmbGFnMSkgJiBwcml2LT5yZWdfaW1hc2sxX2RlZmF1bHQ7DQo+ID4gKwl9
+IGVsc2Ugew0KPiA+ICsJCWlmbGFnMiA9IHByaXYtPnJlYWQoJnJlZ3MtPmlmbGFnMikgJiBwcml2
+LT5yZWdfaW1hc2syX2RlZmF1bHQ7DQo+ID4gKwkJaWZsYWcxID0gcHJpdi0+cmVhZCgmcmVncy0+
+aWZsYWcxKSAmIHByaXYtPnJlZ19pbWFzazFfZGVmYXVsdCAmDQo+ID4gKwkJCX5GTEVYQ0FOX0lG
+TEFHMV9NQihwcml2LT50eF9tYl9pZHgpOw0KPiA+ICsJfQ0KPiA+DQo+ID4gIAlyZXR1cm4gKHU2
+NClpZmxhZzIgPDwgMzIgfCBpZmxhZzE7DQo+ID4gIH0NCj4gPiBAQCAtODM2LDcgKzg0NCw4IEBA
+IHN0YXRpYyBpcnFyZXR1cm5fdCBmbGV4Y2FuX2lycShpbnQgaXJxLCB2b2lkICpkZXZfaWQpDQo+
+ID4gIAlzdHJ1Y3QgZmxleGNhbl9wcml2ICpwcml2ID0gbmV0ZGV2X3ByaXYoZGV2KTsNCj4gPiAg
+CXN0cnVjdCBmbGV4Y2FuX3JlZ3MgX19pb21lbSAqcmVncyA9IHByaXYtPnJlZ3M7DQo+ID4gIAlp
+cnFyZXR1cm5fdCBoYW5kbGVkID0gSVJRX05PTkU7DQo+ID4gLQl1MzIgcmVnX2lmbGFnMiwgcmVn
+X2VzcjsNCj4gPiArCXUzMiByZWdfdHhfaWZsYWcsIHR4X2lmbGFnX2lkeCwgcmVnX2VzcjsNCj4g
+PiArCXZvaWQgX19pb21lbSAqcmVnX2lmbGFnOw0KPiA+ICAJZW51bSBjYW5fc3RhdGUgbGFzdF9z
+dGF0ZSA9IHByaXYtPmNhbi5zdGF0ZTsNCj4gPg0KPiA+ICAJLyogcmVjZXB0aW9uIGludGVycnVw
+dCAqLw0KPiA+IEBAIC04NzAsMTAgKzg3OSwxOCBAQCBzdGF0aWMgaXJxcmV0dXJuX3QgZmxleGNh
+bl9pcnEoaW50IGlycSwgdm9pZCAqZGV2X2lkKQ0KPiA+ICAJCX0NCj4gPiAgCX0NCj4gPg0KPiA+
+IC0JcmVnX2lmbGFnMiA9IHByaXYtPnJlYWQoJnJlZ3MtPmlmbGFnMik7DQo+ID4gKwlpZiAocHJp
+di0+dHhfbWJfaWR4ID49IEZMRVhDQU5fSUZMQUcxX01CX05VTSkgew0KPiA+ICsJCXJlZ190eF9p
+ZmxhZyA9IHByaXYtPnJlYWQoJnJlZ3MtPmlmbGFnMik7DQo+ID4gKwkJdHhfaWZsYWdfaWR4ID0g
+RkxFWENBTl9JRkxBRzJfTUIocHJpdi0+dHhfbWJfaWR4KTsNCj4gPiArCQlyZWdfaWZsYWcgPSAm
+cmVncy0+aWZsYWcyOw0KPiA+ICsJfSBlbHNlIHsNCj4gPiArCQlyZWdfdHhfaWZsYWcgPSBwcml2
+LT5yZWFkKCZyZWdzLT5pZmxhZzEpOw0KPiA+ICsJCXR4X2lmbGFnX2lkeCA9IEZMRVhDQU5fSUZM
+QUcxX01CKHByaXYtPnR4X21iX2lkeCk7DQo+ID4gKwkJcmVnX2lmbGFnID0gJnJlZ3MtPmlmbGFn
+MTsNCj4gPiArCX0NCj4gPg0KPiA+ICAJLyogdHJhbnNtaXNzaW9uIGNvbXBsZXRlIGludGVycnVw
+dCAqLw0KPiA+IC0JaWYgKHJlZ19pZmxhZzIgJiBGTEVYQ0FOX0lGTEFHX01CKHByaXYtPnR4X21i
+X2lkeCkpIHsNCj4gPiArCWlmIChyZWdfdHhfaWZsYWcgJiB0eF9pZmxhZ19pZHgpIHsNCj4gPiAg
+CQl1MzIgcmVnX2N0cmwgPSBwcml2LT5yZWFkKCZwcml2LT50eF9tYi0+Y2FuX2N0cmwpOw0KPiA+
+DQo+ID4gIAkJaGFuZGxlZCA9IElSUV9IQU5ETEVEOw0KPiA+IEBAIC04ODUsNyArOTAyLDcgQEAg
+c3RhdGljIGlycXJldHVybl90IGZsZXhjYW5faXJxKGludCBpcnEsIHZvaWQgKmRldl9pZCkNCj4g
+PiAgCQkvKiBhZnRlciBzZW5kaW5nIGEgUlRSIGZyYW1lIE1CIGlzIGluIFJYIG1vZGUgKi8NCj4g
+PiAgCQlwcml2LT53cml0ZShGTEVYQ0FOX01CX0NPREVfVFhfSU5BQ1RJVkUsDQo+ID4gIAkJCSAg
+ICAmcHJpdi0+dHhfbWItPmNhbl9jdHJsKTsNCj4gPiAtCQlwcml2LT53cml0ZShGTEVYQ0FOX0lG
+TEFHX01CKHByaXYtPnR4X21iX2lkeCksICZyZWdzLT5pZmxhZzIpOw0KPiA+ICsJCXByaXYtPndy
+aXRlKHR4X2lmbGFnX2lkeCwgcmVnX2lmbGFnKTsNCj4gPiAgCQluZXRpZl93YWtlX3F1ZXVlKGRl
+dik7DQo+ID4gIAl9DQo+ID4NCj4gPiBAQCAtMTI0NCw4ICsxMjYxLDEzIEBAIHN0YXRpYyBpbnQg
+ZmxleGNhbl9vcGVuKHN0cnVjdCBuZXRfZGV2aWNlICpkZXYpDQo+ID4gIAlwcml2LT50eF9tYl9p
+ZHggPSBwcml2LT5tYl9jb3VudCAtIDE7DQo+ID4gIAlwcml2LT50eF9tYiA9IGZsZXhjYW5fZ2V0
+X21iKHByaXYsIHByaXYtPnR4X21iX2lkeCk7DQo+ID4NCj4gPiAtCXByaXYtPnJlZ19pbWFzazFf
+ZGVmYXVsdCA9IDA7DQo+ID4gLQlwcml2LT5yZWdfaW1hc2syX2RlZmF1bHQgPSBGTEVYQ0FOX0lG
+TEFHX01CKHByaXYtPnR4X21iX2lkeCk7DQo+ID4gKwlpZiAocHJpdi0+dHhfbWJfaWR4ID49IEZM
+RVhDQU5fSUZMQUcxX01CX05VTSkgew0KPiA+ICsJCXByaXYtPnJlZ19pbWFzazFfZGVmYXVsdCA9
+IDA7DQo+ID4gKwkJcHJpdi0+cmVnX2ltYXNrMl9kZWZhdWx0ID0gRkxFWENBTl9JRkxBRzJfTUIo
+cHJpdi0+dHhfbWJfaWR4KTsNCj4gPiArCX0gZWxzZSB7DQo+ID4gKwkJcHJpdi0+cmVnX2ltYXNr
+MV9kZWZhdWx0ID0gRkxFWENBTl9JRkxBRzFfTUIocHJpdi0+dHhfbWJfaWR4KTsNCj4gPiArCQlw
+cml2LT5yZWdfaW1hc2syX2RlZmF1bHQgPSAwOw0KPiA+ICsJfQ0KPiA+DQo+ID4gIAlwcml2LT5v
+ZmZsb2FkLm1haWxib3hfcmVhZCA9IGZsZXhjYW5fbWFpbGJveF9yZWFkOw0KPiA+DQo+ID4gLS0N
+Cj4gPiAyLjE3LjENCg0K
