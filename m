@@ -2,168 +2,223 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE26CC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:58:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF17C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:58:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 977D9222DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:58:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="lDrEQKFe"
+	by mail.kernel.org (Postfix) with ESMTP id EB830222DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 16:58:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2503012AbfBNQ6R (ORCPT
+        id S2503023AbfBNQ6X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 11:58:17 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:48052 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392616AbfBNQ6P (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 11:58:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=0e+gB6fIsqwUb8MPCklC+SrhwwbaVqLzW/0+KOgy6Lk=; b=lDrEQKFetYDhLqis2bOf2jFAQ
-        iLmL5yJE57/0O8I0DCH+zYouyAMr6XjtHrArX/L3XSUXgiWYG0xzy2bZXP93hI9MbX37FEWP4RCzD
-        DQd8+8ta4lV1DrZw1S3Rf9rm7VjD6TRHZb0bvelOAD3/ST6tvUgF3i/1H+qQ+K7EQfAMwj/gmxrWJ
-        IKEtRCJFhkzo5Ik7LmuS14OhtI+nuXpm9mgvqehNCQatmJGnglhVX41e6sd3kXHUlhFLnp5/EGMZv
-        l6AczsFYRuO3ZOK8lw2cxApc+/6Smyz+vUhCULnpD5tXyA5H7UMYrlIg7qS7PI2AAC3W8bxiUHv+y
-        qZlWxeHZQ==;
-Received: from shell.armlinux.org.uk ([2001:4d48:ad52:3201:5054:ff:fe00:4ec]:54460)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1guKKx-0004xM-84; Thu, 14 Feb 2019 16:58:11 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1guKKt-0003sq-UA; Thu, 14 Feb 2019 16:58:07 +0000
-Date:   Thu, 14 Feb 2019 16:58:07 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-samsung-soc@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marian Mihailescu <mihailescu2m@gmail.com>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>
-Subject: Re: [PATCH] ARM: pm: fix HYP/SVC mode mismatch when MCPM is used
-Message-ID: <20190214165807.eq34njmunqhrdvxx@shell.armlinux.org.uk>
-References: <CGME20190214143126eucas1p126506139ef72c1685654c8dac8957b3d@eucas1p1.samsung.com>
- <20190214143114.24356-1-m.szyprowski@samsung.com>
+        Thu, 14 Feb 2019 11:58:23 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52554 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2395387AbfBNQ6Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 11:58:16 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CC7A281F2F;
+        Thu, 14 Feb 2019 16:58:15 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C7FC1608E3;
+        Thu, 14 Feb 2019 16:58:10 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [RFC PATCH 7/9] keys: Network namespace domain tag
+From:   David Howells <dhowells@redhat.com>
+To:     keyrings@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        rgb@redhat.com, dhowells@redhat.com, linux-kernel@vger.kernel.org
+Date:   Thu, 14 Feb 2019 16:58:10 +0000
+Message-ID: <155016349003.11489.982193310795564945.stgit@warthog.procyon.org.uk>
+In-Reply-To: <155016339876.11489.901851271827069026.stgit@warthog.procyon.org.uk>
+References: <155016339876.11489.901851271827069026.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190214143114.24356-1-m.szyprowski@samsung.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 14 Feb 2019 16:58:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 03:31:14PM +0100, Marek Szyprowski wrote:
-> MCPM does a soft reset of the CPUs and uses common cpu_resume() routine to
-> perform low-level platform initialization. This results in a try to install
-> HYP stubs for the second time for each CPU and results in false HYP/SVC
-> mode mismatch detection. The HYP stubs are already installed at the
-> beginning of the kernel initialization on the boot CPU (head.S) or in the
-> secondary_startup() for other CPUs. To fix this issue MCPM code should use
-> a cpu_resume() routine without HYP stubs installation.
-> 
-> This change fixes HYP/SVC mode mismatch on Samsung Exynos5422-based Odroid
-> XU3/XU4/HC1 boards.
-> 
-> Fixes: 3721924c8154 ("ARM: 8081/1: MCPM: provide infrastructure to allow for MCPM loopback")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  arch/arm/common/mcpm_entry.c   |  2 +-
->  arch/arm/include/asm/suspend.h |  1 +
->  arch/arm/kernel/sleep.S        | 11 +++++++++++
->  3 files changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/common/mcpm_entry.c b/arch/arm/common/mcpm_entry.c
-> index ad574d20415c..1b1b82b37ce0 100644
-> --- a/arch/arm/common/mcpm_entry.c
-> +++ b/arch/arm/common/mcpm_entry.c
-> @@ -381,7 +381,7 @@ static int __init nocache_trampoline(unsigned long _arg)
->  	unsigned int cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
->  	phys_reset_t phys_reset;
->  
-> -	mcpm_set_entry_vector(cpu, cluster, cpu_resume);
-> +	mcpm_set_entry_vector(cpu, cluster, cpu_resume_no_hyp);
->  	setup_mm_for_reboot();
->  
->  	__mcpm_cpu_going_down(cpu, cluster);
-> diff --git a/arch/arm/include/asm/suspend.h b/arch/arm/include/asm/suspend.h
-> index 452bbdcbcc83..506314265c6f 100644
-> --- a/arch/arm/include/asm/suspend.h
-> +++ b/arch/arm/include/asm/suspend.h
-> @@ -10,6 +10,7 @@ struct sleep_save_sp {
->  };
->  
->  extern void cpu_resume(void);
-> +extern void cpu_resume_no_hyp(void);
->  extern void cpu_resume_arm(void);
->  extern int cpu_suspend(unsigned long, int (*)(unsigned long));
->  
-> diff --git a/arch/arm/kernel/sleep.S b/arch/arm/kernel/sleep.S
-> index a8257fc9cf2a..b856d183691e 100644
-> --- a/arch/arm/kernel/sleep.S
-> +++ b/arch/arm/kernel/sleep.S
-> @@ -122,6 +122,11 @@ ENDPROC(cpu_resume_after_mmu)
->  
->  #ifdef CONFIG_MMU
->  	.arm
-> +#ifdef CONFIG_MCPM
-> +ENTRY(cpu_resume_no_hyp)
-> +ARM_BE8(setend be)			@ ensure we are in BE mode
-> +	b	0f
+Create key domain tags for network namespaces and make it possible to
+automatically tag keys that are used by networked services (e.g. AF_RXRPC,
+AFS, DNS) with the default network namespace if not set by the caller.
 
-What if the kernel is built for Thumb?  You'll be branching to thumb
-code at the '0' label - don't you need to do the same that
-cpu_resume_arm does below?
+This allows keys with the same description but in different namespaces to
+coexist within a keyring.
 
-> +#endif
->  ENTRY(cpu_resume_arm)
->   THUMB(	badr	r9, 1f		)	@ Kernel is entered in ARM.
->   THUMB(	bx	r9		)	@ If this is a Thumb-2 kernel,
-> @@ -135,6 +140,9 @@ ARM_BE8(setend be)			@ ensure we are in BE mode
->  	bl	__hyp_stub_install_secondary
->  #endif
->  	safe_svcmode_maskall r1
-> +#ifdef CONFIG_MCPM
-> +0:
-> +#endif
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: netdev@vger.kernel.org
+cc: linux-nfs@vger.kernel.org
+cc: linux-cifs@vger.kernel.org
+cc: linux-afs@lists.infradead.org
+---
 
-You don't need to conditionalise this.  I'd also use a symbol rather
-than a numeric label given that safe_svcmode_maskall is a macro that
-also uses numeric labels.
+ include/linux/key-type.h    |    3 +++
+ include/net/net_namespace.h |    4 ++++
+ net/core/net_namespace.c    |   18 ++++++++++++++++++
+ net/dns_resolver/dns_key.c  |    1 +
+ net/rxrpc/key.c             |    2 ++
+ security/keys/keyring.c     |    7 ++++++-
+ 6 files changed, 34 insertions(+), 1 deletion(-)
 
->  	mov	r1, #0
->  	ALT_SMP(mrc p15, 0, r0, c0, c0, 5)
->  	ALT_UP_B(1f)
-> @@ -163,6 +171,9 @@ ENDPROC(cpu_resume)
->  
->  #ifdef CONFIG_MMU
->  ENDPROC(cpu_resume_arm)
-> +#endif
-> +#ifdef CONFIG_MCPM
-> +ENDPROC(cpu_resume_no_hyp)
->  #endif
->  
->  	.align 2
-> -- 
-> 2.17.1
-> 
-> 
+diff --git a/include/linux/key-type.h b/include/linux/key-type.h
+index e49d1de0614e..2148a6bf58f1 100644
+--- a/include/linux/key-type.h
++++ b/include/linux/key-type.h
+@@ -74,6 +74,9 @@ struct key_type {
+ 	 */
+ 	size_t def_datalen;
+ 
++	unsigned int flags;
++#define KEY_TYPE_NET_DOMAIN	0x00000001 /* Keys of this type have a net namespace domain */
++
+ 	/* vet a description */
+ 	int (*vet_description)(const char *description);
+ 
+diff --git a/include/net/net_namespace.h b/include/net/net_namespace.h
+index 99d4148e0f90..7b31b9eb461b 100644
+--- a/include/net/net_namespace.h
++++ b/include/net/net_namespace.h
+@@ -44,6 +44,7 @@ struct net_generic;
+ struct uevent_sock;
+ struct netns_ipvs;
+ struct bpf_prog;
++struct key_subject;
+ 
+ 
+ #define NETDEV_HASHBITS    8
+@@ -69,6 +70,9 @@ struct net {
+ 						 */
+ 	struct llist_node	cleanup_list;	/* namespaces on death row */
+ 
++#ifdef CONFIG_KEYS
++	struct key_tag		*key_domain;	/* Key domain of operation tag */
++#endif
+ 	struct user_namespace   *user_ns;	/* Owning user namespace */
+ 	struct ucounts		*ucounts;
+ 	spinlock_t		nsid_lock;
+diff --git a/net/core/net_namespace.c b/net/core/net_namespace.c
+index b02fb19df2cc..bcce7728593c 100644
+--- a/net/core/net_namespace.c
++++ b/net/core/net_namespace.c
+@@ -38,9 +38,16 @@ EXPORT_SYMBOL_GPL(net_namespace_list);
+ DECLARE_RWSEM(net_rwsem);
+ EXPORT_SYMBOL_GPL(net_rwsem);
+ 
++#ifdef CONFIG_KEYS
++static struct key_tag init_net_key_domain = { .usage = REFCOUNT_INIT(1) };
++#endif
++
+ struct net init_net = {
+ 	.count		= REFCOUNT_INIT(1),
+ 	.dev_base_head	= LIST_HEAD_INIT(init_net.dev_base_head),
++#ifdef CONFIG_KEYS
++	.key_domain	= &init_net_key_domain,
++#endif
+ };
+ EXPORT_SYMBOL(init_net);
+ 
+@@ -385,10 +392,20 @@ static struct net *net_alloc(void)
+ 	if (!net)
+ 		goto out_free;
+ 
++#ifdef CONFIG_KEYS
++	net->key_domain = kzalloc(sizeof(struct key_tag), GFP_KERNEL);
++	if (!net->key_domain)
++		goto out_free_2;
++#endif
++
+ 	rcu_assign_pointer(net->gen, ng);
+ out:
+ 	return net;
+ 
++#ifdef CONFIG_KEYS
++out_free_2:
++	kmem_cache_free(net_cachep, net);
++#endif
+ out_free:
+ 	kfree(ng);
+ 	goto out;
+@@ -565,6 +582,7 @@ static void cleanup_net(struct work_struct *work)
+ 	list_for_each_entry_safe(net, tmp, &net_exit_list, exit_list) {
+ 		list_del_init(&net->exit_list);
+ 		dec_net_namespaces(net->ucounts);
++		key_remove_domain(net->key_domain);
+ 		put_user_ns(net->user_ns);
+ 		net_drop_ns(net);
+ 	}
+diff --git a/net/dns_resolver/dns_key.c b/net/dns_resolver/dns_key.c
+index a65d553e730d..3e1a90669006 100644
+--- a/net/dns_resolver/dns_key.c
++++ b/net/dns_resolver/dns_key.c
+@@ -314,6 +314,7 @@ static long dns_resolver_read(const struct key *key,
+ 
+ struct key_type key_type_dns_resolver = {
+ 	.name		= "dns_resolver",
++	.flags		= KEY_TYPE_NET_DOMAIN,
+ 	.preparse	= dns_resolver_preparse,
+ 	.free_preparse	= dns_resolver_free_preparse,
+ 	.instantiate	= generic_key_instantiate,
+diff --git a/net/rxrpc/key.c b/net/rxrpc/key.c
+index e7f6b8823eb6..2722189ec273 100644
+--- a/net/rxrpc/key.c
++++ b/net/rxrpc/key.c
+@@ -43,6 +43,7 @@ static long rxrpc_read(const struct key *, char __user *, size_t);
+  */
+ struct key_type key_type_rxrpc = {
+ 	.name		= "rxrpc",
++	.flags		= KEY_TYPE_NET_DOMAIN,
+ 	.preparse	= rxrpc_preparse,
+ 	.free_preparse	= rxrpc_free_preparse,
+ 	.instantiate	= generic_key_instantiate,
+@@ -58,6 +59,7 @@ EXPORT_SYMBOL(key_type_rxrpc);
+  */
+ struct key_type key_type_rxrpc_s = {
+ 	.name		= "rxrpc_s",
++	.flags		= KEY_TYPE_NET_DOMAIN,
+ 	.vet_description = rxrpc_vet_description_s,
+ 	.preparse	= rxrpc_preparse_s,
+ 	.free_preparse	= rxrpc_free_preparse_s,
+diff --git a/security/keys/keyring.c b/security/keys/keyring.c
+index 916a52d54e1b..d16c4470e2a0 100644
+--- a/security/keys/keyring.c
++++ b/security/keys/keyring.c
+@@ -16,10 +16,12 @@
+ #include <linux/security.h>
+ #include <linux/seq_file.h>
+ #include <linux/err.h>
++#include <linux/nsproxy.h>
+ #include <keys/keyring-type.h>
+ #include <keys/user-type.h>
+ #include <linux/assoc_array_priv.h>
+ #include <linux/uaccess.h>
++#include <net/net_namespace.h>
+ #include "internal.h"
+ 
+ /*
+@@ -226,7 +228,10 @@ void key_set_index_key(struct keyring_index_key *index_key)
+ 
+ 	memcpy(index_key->desc, index_key->description, n);
+ 
+-	index_key->domain_tag = &default_domain_tag;
++	if (index_key->type->flags & KEY_TYPE_NET_DOMAIN)
++		index_key->domain_tag = current->nsproxy->net_ns->key_domain;
++	else
++		index_key->domain_tag = &default_domain_tag;
+ 	hash_key_type_and_desc(index_key);
+ }
+ 
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
