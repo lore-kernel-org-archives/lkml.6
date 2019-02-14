@@ -2,99 +2,148 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E0D5C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34D3CC43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D90FD222A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:26:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EDED20835
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 10:27:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2438301AbfBNK05 (ORCPT
+        id S2438326AbfBNK1Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 05:26:57 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:9499 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391423AbfBNK0r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 05:26:47 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1EAQRL0011458;
-        Thu, 14 Feb 2019 11:26:29 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2qmy1na9uw-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Thu, 14 Feb 2019 11:26:29 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 50D0041;
-        Thu, 14 Feb 2019 10:26:27 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node3.st.com [10.75.127.15])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 0BA584E11;
-        Thu, 14 Feb 2019 10:26:27 +0000 (GMT)
-Received: from localhost (10.75.127.46) by SFHDAG5NODE3.st.com (10.75.127.15)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 14 Feb 2019 11:26:26
- +0100
-From:   Fabrice Gasnier <fabrice.gasnier@st.com>
-To:     <thierry.reding@gmail.com>, <robh+dt@kernel.org>
-CC:     <u.kleine-koenig@pengutronix.de>, <tduszyns@gmail.com>,
-        <mark.rutland@arm.com>, <alexandre.torgue@st.com>,
-        <mcoquelin.stm32@gmail.com>, <fabrice.gasnier@st.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-Subject: [PATCH v4 0/3] Add PM support to STM32 LP Timer drivers
-Date:   Thu, 14 Feb 2019 11:25:48 +0100
-Message-ID: <1550139951-25788-1-git-send-email-fabrice.gasnier@st.com>
-X-Mailer: git-send-email 1.9.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG8NODE2.st.com (10.75.127.23) To SFHDAG5NODE3.st.com
- (10.75.127.15)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-14_07:,,
- signatures=0
+        Thu, 14 Feb 2019 05:27:24 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:40446 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392559AbfBNK1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 05:27:24 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9964DEBD;
+        Thu, 14 Feb 2019 02:27:23 -0800 (PST)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 80B303F575;
+        Thu, 14 Feb 2019 02:27:21 -0800 (PST)
+Date:   Thu, 14 Feb 2019 10:27:17 +0000
+Message-ID: <86tvh6sm0q.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= 
+        <u.kleine-koenig@pengutronix.de>, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v3 1/7] irq/irq_sim: provide irq_sim_get_type()
+In-Reply-To: <20190212131600.18960-2-brgl@bgdev.pl>
+References: <20190212131600.18960-1-brgl@bgdev.pl>
+        <20190212131600.18960-2-brgl@bgdev.pl>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series adds power management support for STM32 LP Timer:
-- PWM driver
-- Document the pinctrl states for sleep mode
+On Tue, 12 Feb 2019 13:15:54 +0000,
+Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> 
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> Provide a helper that allows users to retrieve the current irq type
+> of dummy interrupts.
+> 
+> Internally: store the type in the line context when the irq_set_type()
+> callback is called.
+> 
+> This is required by the gpio-mockup module which wants to track the
+> state of GPIO lines and simulate rising and falling edge interrupts.
+> 
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> ---
+>  include/linux/irq_sim.h |  2 ++
+>  kernel/irq/irq_sim.c    | 23 +++++++++++++++++++++++
+>  2 files changed, 25 insertions(+)
+> 
+> diff --git a/include/linux/irq_sim.h b/include/linux/irq_sim.h
+> index 4500d453a63e..c73be0a2c15c 100644
+> --- a/include/linux/irq_sim.h
+> +++ b/include/linux/irq_sim.h
+> @@ -22,6 +22,7 @@ struct irq_sim_work_ctx {
+>  struct irq_sim_irq_ctx {
+>  	int			irqnum;
+>  	bool			enabled;
+> +	int			type;
+>  };
+>  
+>  struct irq_sim {
+> @@ -37,5 +38,6 @@ int devm_irq_sim_init(struct device *dev, struct irq_sim *sim,
+>  void irq_sim_fini(struct irq_sim *sim);
+>  void irq_sim_fire(struct irq_sim *sim, unsigned int offset);
+>  int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset);
+> +unsigned int irq_sim_get_type(struct irq_sim *sim, unsigned int offset);
+>  
+>  #endif /* _LINUX_IRQ_SIM_H */
+> diff --git a/kernel/irq/irq_sim.c b/kernel/irq/irq_sim.c
+> index 98a20e1594ce..74561a0dca65 100644
+> --- a/kernel/irq/irq_sim.c
+> +++ b/kernel/irq/irq_sim.c
+> @@ -25,10 +25,20 @@ static void irq_sim_irqunmask(struct irq_data *data)
+>  	irq_ctx->enabled = true;
+>  }
+>  
+> +static int irq_sim_set_type(struct irq_data *data, unsigned int type)
+> +{
+> +	struct irq_sim_irq_ctx *irq_ctx = irq_data_get_irq_chip_data(data);
+> +
+> +	irq_ctx->type = type;
+> +
+> +	return 0;
+> +}
 
-It also adds device link between the PWM consumer and the PWM provider.
-This allows proper sequencing for suspend/resume (e.g. user will likely
-do a pwm_disable() before the PWM provider suspend executes), see [1].
+In the cover letter, you say you only support edge. And yet you don't
+reject any of the level configuration. That's not right.
 
-[1] https://lkml.org/lkml/2019/2/5/770
+> +
+>  static struct irq_chip irq_sim_irqchip = {
+>  	.name		= "irq_sim",
+>  	.irq_mask	= irq_sim_irqmask,
+>  	.irq_unmask	= irq_sim_irqunmask,
+> +	.irq_set_type	= irq_sim_set_type,
+>  };
+>  
+>  static void irq_sim_handle_irq(struct irq_work *work)
+> @@ -180,3 +190,16 @@ int irq_sim_irqnum(struct irq_sim *sim, unsigned int offset)
+>  	return sim->irqs[offset].irqnum;
+>  }
+>  EXPORT_SYMBOL_GPL(irq_sim_irqnum);
+> +
+> +/**
+> + * irq_sim_get_type - Get the type configuration for a dummy interrupt.
+> + *
+> + * @sim:        The interrupt simulator object.
+> + * @offset:     Offset of the simulated interrupt for which to retrieve
+> + *              the type.
+> + */
+> +unsigned int irq_sim_get_type(struct irq_sim *sim, unsigned int offset)
+> +{
+> +	return sim->irqs[offset].type;
+> +}
+> +EXPORT_SYMBOL_GPL(irq_sim_get_type);
 
----
-Changes in v4:
-- improve error handling when adding the PWM consumer device link.
+This just shows that the way you have architected the whole thing is
+backward. The irq_set_type callback should push the configuration
+wherever it makes sense instead of offering a retrieving API exposing
+random bits of the data structures.
 
-Changes in v3:
-- Move the device_link_add() call to of_pwm_get() as discussed with Uwe.
+Thanks,
 
-Changes in v2:
-- Don't disable PWM channel in PWM provider: rather refuse to suspend
-  and report an error as suggested by Uwe and Thierry.
-- Add patch 3/3 to propose device link addition.
-- No updates for STM32 LP Timer IIO driver. Patches can be send separately.
-
-Fabrice Gasnier (3):
-  dt-bindings: pwm-stm32-lp: document pinctrl sleep state
-  pwm: stm32-lp: Add power management support
-  pwm: core: add consumer device link
-
- .../devicetree/bindings/pwm/pwm-stm32-lp.txt       |  9 ++--
- drivers/pwm/core.c                                 | 50 ++++++++++++++++++++--
- drivers/pwm/pwm-stm32-lp.c                         | 25 +++++++++++
- include/linux/pwm.h                                |  6 ++-
- 4 files changed, 82 insertions(+), 8 deletions(-)
+	M.
 
 -- 
-1.9.1
-
+Jazz is not dead, it just smell funny.
