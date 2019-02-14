@@ -2,397 +2,120 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3782C43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6939AC10F04
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:35:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E26721B68
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:35:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30D8D21B68
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 18:35:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NnHKDAoP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o4nLKrWH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389976AbfBNSfG (ORCPT
+        id S2394272AbfBNSfg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 13:35:06 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:40041 "EHLO
+        Thu, 14 Feb 2019 13:35:36 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:39365 "EHLO
         mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726443AbfBNSfG (ORCPT
+        with ESMTP id S1726443AbfBNSff (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 13:35:06 -0500
-Received: by mail-ot1-f67.google.com with SMTP id s5so12204842oth.7;
-        Thu, 14 Feb 2019 10:35:05 -0800 (PST)
+        Thu, 14 Feb 2019 13:35:35 -0500
+Received: by mail-ot1-f67.google.com with SMTP id n8so12217304otl.6;
+        Thu, 14 Feb 2019 10:35:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=fUnkOqkP+lBT8YabWNtqwczvSIOggUSareKuDeSX5K4=;
-        b=NnHKDAoPXq2QSP0cf5oPksTx0TTuMaoP5XYkS573P3BMwiEqHQ5/y6pj6hLK8/4w4u
-         8LWW5wJgysrtqWAYX9WvDhtkAE9glFVfu2XD2s6wcbxdKv3c5HG6B7HlEPofkiiYnZYi
-         t8f+ignWuPKpeRFCjX8pAmn0j5iiQVIhhPpqIW5WzxM7DT3508r5JpMvpiYSjLZk+wNo
-         B5ibyod+gvMwe82LAUR/mYBt0T3eZydP6dcSKQ65U7JXaITNIifp2PRdFWBeUpQbGDsy
-         UyZCdUVVGp0LSRQjov6hpUtuHYLAbOt8U4/pBIsqEr+mSWMgUJ8hs6pzSfYvIJpno4ae
-         oWyg==
+        bh=ZPffygpbzAIrA6qiombVt6omSPrZ204apL0F6W9Y0lA=;
+        b=o4nLKrWH5/JS6AoRWA4Rs11/G9oEUtrUbRFNebPR7HNQbIprHqRX//Tcaux2+K9eb3
+         IWTq0qvnSYWtV43Tr/V6ndVgyIIgPyTe9k+oOazpGfn8FdeT9eNKu7HU0T7fPI17qUbb
+         Ahd+zvfDIjLDytVndSCl59bgv6lWb6Di3qbVF5GtxOI9v3D80l+KzdgQ1h+Gnwgh31Ad
+         J4tOQbu08eX/v10zzjvhTi9OezCkgArPljJ9GgA8CENJ4Ae4TTcxR1Ndijs6oRaKhZfe
+         tLQergfSFjB/RIisQMvgHUzf+SDezY+vBPshPcodS1O40SKgDJ0Zj3FQLcUsK6hVe+FQ
+         ZSmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=fUnkOqkP+lBT8YabWNtqwczvSIOggUSareKuDeSX5K4=;
-        b=lsnFWSnGPV3t3J8HjkJhL9RHxL8kKze/5N5Kt/0PYjhuFUT+Thsi9Vh8ApWbTdPYvn
-         hk4WKkrGndLvYfV2nOBzzzKSvomZo881ekyDTUnZjmwZAt7cHcxRCOeKnKA8cj/L0fpU
-         rnF+bE7UEJTvQCAyJyzZ5hpPYYXorpUXaPgtpLfivD8aj07YXARyOZO3B7EmGWplJsmo
-         qjHcc+7O4sMi5Ua51ztUhlnLUFP/4NaC6AdpLhkvc2ICR+QpTzVmyYvRT1VWSe+3StQ8
-         0dn4jevh3ZMp8LXZXcCfqvO69/VF4pBRVvQ907ZV1qsrtTOG3TXV1ynE82GmPo4QODAH
-         fNvQ==
-X-Gm-Message-State: AHQUAubboYlvXq0ObKVXpmw8G2wZl2jtfQBako/NpMXr1mzXx1EXTGxT
-        7zXfsYczGHHPKhRz95Y0hrD6nly+fTTmhcWZy0Q=
-X-Google-Smtp-Source: AHgI3IYXQd3PGXNPZvIN87V3A9BR1tXWrPdV6xnCmMCkSjzrNSsblc2fK6l0BKQtSNUjE/XTTlIn8a9WrLfFi7zcFm4=
-X-Received: by 2002:a9d:c61:: with SMTP id 88mr3302161otr.335.1550169304636;
- Thu, 14 Feb 2019 10:35:04 -0800 (PST)
+        bh=ZPffygpbzAIrA6qiombVt6omSPrZ204apL0F6W9Y0lA=;
+        b=lhJObWMcPWsrjHXqJT45rdg0rQPKaeSRR1L7zdgCywA/za+QEPFrFz8gkP4tCpsakc
+         B/A8ZD6OxH7PQ8Yztd8XJigLTGY7CEecKLJii7Dss6F2ZArPXTXFHVuTNq1FNAT/JTO1
+         TIPmZsa4y6PL3tfxjh17raXdY0rSa96LHMmMvyqDTcCxqBkUyuqu+OMNPAMlU57epk1p
+         jLMvYi2IVi3UHb941Ohn80kaOHJAq+1byogaXsjoV1/MIkyQq1T7PofLj/v665YJR2vl
+         x8gdoPvQk+7qslBd8wDzV3+96Vzuz6vaMzs8iZInIah/jLGb208XgXzynKRNwl6IhMB/
+         uptg==
+X-Gm-Message-State: AHQUAuaXVFtPetP3EbWNs87w6GFFX+AFgq14fBGSEFCLqhewTeLRgOwJ
+        4hpvuJDyGh32vRt8wduRkwb3kn5KP8lQI4YhjNz55g==
+X-Google-Smtp-Source: AHgI3IY6bRO5WW8ZElp74U3yCER0TpLY4DIONrmAQ/skNCR4Mkn+oR1dkJoaRAohz0aQuQj1NiDbozPmASShpOzvJFg=
+X-Received: by 2002:a9d:6b94:: with SMTP id b20mr3152589otq.42.1550169334527;
+ Thu, 14 Feb 2019 10:35:34 -0800 (PST)
 MIME-Version: 1.0
-References: <20190213214052.2427-1-linux.amoon@gmail.com> <20190213214052.2427-2-linux.amoon@gmail.com>
- <CAJKOXPeyFmKUGwqS1sgf_k2WSx9i0AETjpOLXtsmLFupTpgqnw@mail.gmail.com>
-In-Reply-To: <CAJKOXPeyFmKUGwqS1sgf_k2WSx9i0AETjpOLXtsmLFupTpgqnw@mail.gmail.com>
-From:   Anand Moon <linux.amoon@gmail.com>
-Date:   Fri, 15 Feb 2019 00:04:54 +0530
-Message-ID: <CANAwSgQB-=iwX1L0m6N=dbe6jbfUMYyjgna_QMmJyggj6rxzwQ@mail.gmail.com>
-Subject: Re: [RFC 1/2] ARM: dts: exynos: Add proper regulator states for
- suspend-to-mem for odroid-u3
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Pankaj Dubey <pankaj.dubey@samsung.com>
+References: <CAM43=SO6bdDAEULEPArfgdbjLAYDo9OiPBa8gL4fsSg7Dky=gA@mail.gmail.com>
+ <1549736341.2971.7.camel@HansenPartnership.com> <CAM43=SPUMzOLRmkoT+DQSpzu2DYRTyOhU6o8KRUU_Q902o2e1Q@mail.gmail.com>
+ <1549813472.4142.3.camel@HansenPartnership.com> <3380ed8e-ae02-96f2-142b-7cce09459df8@kernel.dk>
+In-Reply-To: <3380ed8e-ae02-96f2-142b-7cce09459df8@kernel.dk>
+From:   Mikael Pettersson <mikpelinux@gmail.com>
+Date:   Thu, 14 Feb 2019 19:35:22 +0100
+Message-ID: <CAM43=SOwS8A1Tv33QtQU=qmYVBMbpsaz67QOdKcD5ZHQg=wBQw@mail.gmail.com>
+Subject: Re: [5.0-rc5 regression] "scsi: kill off the legacy IO path" causes 5
+ minute delay during boot on Sun Blade 2500
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Linux SPARC Kernel Mailing List 
+        <sparclinux@vger.kernel.org>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hi Krzysztof,
-
-Thanks fro your review comments.
-
-On Thu, 14 Feb 2019 at 18:11, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+On Sun, Feb 10, 2019 at 5:05 PM Jens Axboe <axboe@kernel.dk> wrote:
 >
-> Hi Anand,
+> On 2/10/19 8:44 AM, James Bottomley wrote:
+> > On Sun, 2019-02-10 at 10:17 +0100, Mikael Pettersson wrote:
+> >> On Sat, Feb 9, 2019 at 7:19 PM James Bottomley
+> >> <James.Bottomley@hansenpartnership.com> wrote:
+> > [...]
+> >>> I think the reason for this is that the block mq path doesn't feed
+> >>> the kernel entropy pool correctly, hence the need to install an
+> >>> entropy gatherer for systems that don't have other good random
+> >>> number sources.
+> >>
+> >> That does sound plausible, I admit I didn't even consider the
+> >> possibility that the old block I/O path also was an entropy source.
+> >
+> > In theory, the new one should be as well since the rotational entropy
+> > collector is on the SCSI completion path.   I'd seen the same problem
+> > but had assumed it was something someone had done to our internal
+> > entropy pool and thus hadn't bisected it.
 >
-> Thanks for the patch. See comments below.
+> The difference is that the old stack included ADD_RANDOM by default,
+> so this check:
 >
-> On Wed, 13 Feb 2019 at 22:41, Anand Moon <linux.amoon@gmail.com> wrote:
-> >
-> > Add suspend-to-mem node to regulator core to be enabled or disabled
-> > during system suspend and also support changing the regulator operating
-> > mode during runtime and when the system enter sleep mode.
-> >
-> > Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Cc: Krzysztof Kozlowski <krzk@kernel.org>
-> > Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > ---
-> >
-> > Changes from previos patch
-> > [0] https://patchwork.kernel.org/patch/10712549/
-> >
-> > Set all the WAKEUP source regulator in suspend-on state.
-> > LD04, LD012, LD015, LD020, LD022
-> > Set all the non used regulator in suspend-odd state
-> > LD02, LD03, LD05, LD06, LD07, LD011, LD013, LDO14, LD016
-> >
-> > BUCK5, BUCK6, BUCK7 and not confirable as per driver max77686-regulator
-> >
-> > Tested on microSD card and it resumes correcly after suspend.
-> > eMMC is not able to resume after entering into suspend state,
-> > which need to be investigated and how to debug more.
-> > ---
-> >  .../boot/dts/exynos4412-odroid-common.dtsi    | 63 +++++++++++++++++++
-> >  arch/arm/boot/dts/exynos4412-odroidu3.dts     |  3 +
-> >  2 files changed, 66 insertions(+)
-> >
-> > diff --git a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> > index 08d3a0a7b4eb..e984461c37d9 100644
-> > --- a/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> > +++ b/arch/arm/boot/dts/exynos4412-odroid-common.dtsi
-> > @@ -288,6 +288,9 @@
-> >                                 regulator-min-microvolt = <1800000>;
-> >                                 regulator-max-microvolt = <1800000>;
-> >                                 regulator-always-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
+>         if (blk_queue_add_random(q))
+>                 add_disk_randomness(req->rq_disk);
 >
-> I see my comment from previous patch was not addressed.
-
-I left this unchanged since this regulator is not active linked and used.
-Ok I will change this to regulator-on-in-suspend,
-
-From documentation device tree binding regulator.txt
-"- regulator-always-on: boolean, regulator should never be disabled"
-
-But some regulator switches to a low power mode under light current loads
-and the device automatically switches back to a fast response mode as the
-output load increases.
-
->
-> >                         };
-> >
-> >                         ldo3_reg: LDO3 {
-> > @@ -295,6 +298,9 @@
-> >                                 regulator-min-microvolt = <1800000>;
-> >                                 regulator-max-microvolt = <1800000>;
-> >                                 regulator-always-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
->
-> The same...
-
-Ok I will change this to regulator-on-in-suspend,
-
->
-> >                         };
-> >
-> >                         ldo4_reg: LDO4 {
-> > @@ -302,6 +308,9 @@
-> >                                 regulator-min-microvolt = <2800000>;
-> >                                 regulator-max-microvolt = <2800000>;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-on-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo5_reg: LDO5 {
-> > @@ -310,6 +319,9 @@
-> >                                 regulator-max-microvolt = <1800000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo6_reg: LDO6 {
-> > @@ -317,6 +329,9 @@
-> >                                 regulator-min-microvolt = <1000000>;
-> >                                 regulator-max-microvolt = <1000000>;
-> >                                 regulator-always-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo7_reg: LDO7 {
-> > @@ -324,18 +339,27 @@
-> >                                 regulator-min-microvolt = <1000000>;
-> >                                 regulator-max-microvolt = <1000000>;
-> >                                 regulator-always-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo8_reg: LDO8 {
-> >                                 regulator-name = "VDD10_HDMI_1.0V";
-> >                                 regulator-min-microvolt = <1000000>;
-> >                                 regulator-max-microvolt = <1000000>;
-> > +                               regulator-state-mem {
-> > +                                       regulator-on-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo10_reg: LDO10 {
-> >                                 regulator-name = "VDDQ_MIPIHSI_1.8V";
-> >                                 regulator-min-microvolt = <1800000>;
-> >                                 regulator-max-microvolt = <1800000>;
-> > +                               regulator-state-mem {
-> > +                                       regulator-on-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo11_reg: LDO11 {
-> > @@ -343,6 +367,9 @@
-> >                                 regulator-min-microvolt = <1800000>;
-> >                                 regulator-max-microvolt = <1800000>;
-> >                                 regulator-always-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo12_reg: LDO12 {
-> > @@ -351,6 +378,9 @@
-> >                                 regulator-max-microvolt = <3300000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo13_reg: LDO13 {
-> > @@ -359,6 +389,9 @@
-> >                                 regulator-max-microvolt = <1800000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo14_reg: LDO14 {
-> > @@ -367,6 +400,9 @@
-> >                                 regulator-max-microvolt = <1800000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo15_reg: LDO15 {
-> > @@ -375,6 +411,9 @@
-> >                                 regulator-max-microvolt = <1000000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo16_reg: LDO16 {
-> > @@ -383,6 +422,9 @@
-> >                                 regulator-max-microvolt = <1800000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo20_reg: LDO20 {
-> > @@ -396,6 +438,9 @@
-> >                                 regulator-min-microvolt = <2800000>;
-> >                                 regulator-max-microvolt = <2800000>;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-on-in-suspend;
-> > +                               };
+> in scsi_end_request() would be true, and we'd add the randomness. For
+> sd, it seems to set it just fine for non-rotational drives. Could this
+> be because other devices don't? Maybe the below makes a difference.
 >
 >
-> The same... any comments?
+> diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+> index 6d65ac584eba..60e029911755 100644
+> --- a/drivers/scsi/scsi_lib.c
+> +++ b/drivers/scsi/scsi_lib.c
+> @@ -1881,6 +1881,7 @@ struct request_queue *scsi_mq_alloc_queue(struct scsi_device *sdev)
+>         sdev->request_queue->queuedata = sdev;
+>         __scsi_init_queue(sdev->host, sdev->request_queue);
+>         blk_queue_flag_set(QUEUE_FLAG_SCSI_PASSTHROUGH, sdev->request_queue);
+> +       blk_queue_flag_set(QUEUE_FLAG_ADD_RANDOM, sdev->request_queue);
+>         return sdev->request_queue;
+>  }
 
-I left this on for mshc_0 (emmc) regulator,
-since I could not get suspend resume working on eMMc
+This patch eliminates my 5 minute boot-up delay problem.
 
->
-> >                         };
-> >
-> >                         ldo22_reg: LDO22 {
-> > @@ -405,6 +450,9 @@
-> >                                  */
-> >                                 regulator-name = "LDO22";
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-on-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         ldo25_reg: LDO25 {
-> > @@ -413,6 +461,9 @@
-> >                                 regulator-max-microvolt = <1800000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         buck1_reg: BUCK1 {
-> > @@ -421,6 +472,9 @@
-> >                                 regulator-max-microvolt = <1100000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
->
-> Again, you did not address my comments.
->
-
-Buck1 support entering into LPM setting,
-But I will set this to regulator-on-in-suspend; in next patch.
-
-> > +                               };
-> >                         };
-> >
-> >                         buck2_reg: BUCK2 {
-> > @@ -429,6 +483,9 @@
-> >                                 regulator-max-microvolt = <1350000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-on-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         buck3_reg: BUCK3 {
-> > @@ -437,6 +494,9 @@
-> >                                 regulator-max-microvolt = <1050000>;
-> >                                 regulator-always-on;
-> >                                 regulator-boot-on;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
->
-> The same...
-
-Buck3 support entering into LPM setting,
-But I will set this to regulator-on-in-suspend; in next patch.
-
->
-> >                         };
-> >
-> >                         buck4_reg: BUCK4 {
-> > @@ -444,6 +504,9 @@
-> >                                 regulator-min-microvolt = <900000>;
-> >                                 regulator-max-microvolt = <1100000>;
-> >                                 regulator-microvolt-offset = <50000>;
-> > +                               regulator-state-mem {
-> > +                                       regulator-off-in-suspend;
-> > +                               };
-> >                         };
-> >
-> >                         buck5_reg: BUCK5 {
-> > diff --git a/arch/arm/boot/dts/exynos4412-odroidu3.dts b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-> > index 2bdf899df436..4ebde09fc51d 100644
-> > --- a/arch/arm/boot/dts/exynos4412-odroidu3.dts
-> > +++ b/arch/arm/boot/dts/exynos4412-odroidu3.dts
-> > @@ -82,6 +82,9 @@
-> >         regulator-name = "LDO22_VDDQ_MMC4_2.8V";
-> >         regulator-min-microvolt = <2800000>;
-> >         regulator-max-microvolt = <2800000>;
-> > +       regulator-state-mem {
-> > +               regulator-on-in-suspend;
->
-> Why?
->
-
-I chose not to disable mshc_0 (emmc) regulator,
-since I could not get suspend resume working on eMMC.
-
-> Best regards,
-> Krzysztof
-
-Best Regards
-
--Anand
+/Mikael
