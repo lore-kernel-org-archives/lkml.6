@@ -2,194 +2,97 @@ Return-Path: <SRS0=fxkz=QV=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA43DC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:06:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0F9C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:07:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8C8521A80
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:06:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61DB921A80
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 23:07:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="X4PmYtR3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728743AbfBNXGd (ORCPT
+        id S1728765AbfBNXHd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 18:06:33 -0500
-Received: from gateway21.websitewelcome.com ([192.185.45.228]:38405 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725975AbfBNXGc (ORCPT
+        Thu, 14 Feb 2019 18:07:33 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:33832 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725975AbfBNXHd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 18:06:32 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id 4C011400D2838
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 17:06:31 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id uQ5PgolDb4FKpuQ5Pg93Tc; Thu, 14 Feb 2019 17:06:31 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=47304 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1guQ5O-001eAf-QN; Thu, 14 Feb 2019 17:06:30 -0600
-Subject: Re: [PATCH] HID: wacom: Mark expected switch fall-through
-To:     Ping Cheng <pinglinux@gmail.com>, Jiri Kosina <jikos@kernel.org>
-Cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input <linux-input@vger.kernel.org>,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Jason Gerecke <killertofu@gmail.com>,
-        Ping Cheng <ping.cheng@wacom.com>
-References: <20190211220422.GA22137@embeddedor>
- <nycvar.YFH.7.76.1902140006510.11598@cbobk.fhfr.pm>
- <CAF8JNh+EzcCoOvyTm59p99Cg_3S4adGcnpKs4QkpZStsU=XURA@mail.gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <4c5597dd-ba95-10ff-c28a-e969f87aa773@embeddedor.com>
-Date:   Thu, 14 Feb 2019 17:06:29 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 14 Feb 2019 18:07:33 -0500
+Received: by mail-lf1-f68.google.com with SMTP id u21so5827983lfu.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 15:07:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7hlg+eKh/auF+5WjWvtMwFbY0os3KJiNPz+CKE17eCw=;
+        b=X4PmYtR3b/vLVV8Rq+SsVlH05Njyet7+8JGlkL3Jhl5QjSCrvwxuOjJ7egjO0cAFUa
+         MuWWobHTOiWwulA73H6UsLZHzP0psulbboA/BU3mHHAeWgbGvcK0Ef5wB2oOwKBYmZNx
+         r2ZqugF4hMyZe80qdKWIoYTEgTUOKltWectYY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7hlg+eKh/auF+5WjWvtMwFbY0os3KJiNPz+CKE17eCw=;
+        b=Jb8nTl/BIF1jKNFf3+ToC7+Lh1SqlNZ7y5XiN21VmZ+DUvYPFR9kyzgKU48TWMgKCp
+         K39RD/9AD558Ijuo5fMCd2r2W0FQOQcTkeQyRPhirykSix8XlxXM6E94n67nreOAIpqu
+         WuCKZgUbAomjrFrz4TmoV+9fVsrvnbDTRFniqWB07u2r3oFtSk+lRMG6zxkG/QiWv3d1
+         PYZblQU4SF9MNwmfre/tAJxtMDMqc3S4FN9YcwwN46+Zgph40I4PjmdehfdZh2c86aj3
+         bPEf0qARQ/M0ZfMHg7ec+HzEMRpZxsQHw1ZK1AmvlS37EW/PR0mqM8UVLjDmxe/1Xums
+         OIXQ==
+X-Gm-Message-State: AHQUAuZ8V4/7fN/pHLmk1XiOC99u8nyPj+2HqwMwMzgwjjiGKavvkIiP
+        0OuclE4wy9e4DWdZc2m3j+e/Nsbl2Ao=
+X-Google-Smtp-Source: AHgI3IYzDUEL9z6v+YIDGDMGi/WAvfnlyJ6hC4HZOPA+o/zDYNholperIMuWhRVL1PUbsqXWC3wC7Q==
+X-Received: by 2002:ac2:43c6:: with SMTP id u6mr3884073lfl.102.1550185650861;
+        Thu, 14 Feb 2019 15:07:30 -0800 (PST)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
+        by smtp.gmail.com with ESMTPSA id r80sm729339lff.33.2019.02.14.15.07.29
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Feb 2019 15:07:29 -0800 (PST)
+Received: by mail-lf1-f43.google.com with SMTP id f5so5780685lfc.13
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 15:07:29 -0800 (PST)
+X-Received: by 2002:a19:ae0a:: with SMTP id f10mr3621252lfc.1.1550185648629;
+ Thu, 14 Feb 2019 15:07:28 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAF8JNh+EzcCoOvyTm59p99Cg_3S4adGcnpKs4QkpZStsU=XURA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1guQ5O-001eAf-QN
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:47304
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 16
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20190214164331.GA33450@beast> <CAHk-=wg+Bc1Qmp0VBqPQq=_4=SgbN6jRvPtrme8-ieobpM16iw@mail.gmail.com>
+ <CAGXu5jLYJyz+afGrMp_KbvL2xiwg3h6Cz_q6fQjXL9gpbej7QA@mail.gmail.com>
+In-Reply-To: <CAGXu5jLYJyz+afGrMp_KbvL2xiwg3h6Cz_q6fQjXL9gpbej7QA@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 14 Feb 2019 15:07:12 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgNt+Pm89Cqp5onH2dQN2ddAV-GU5ZftgrBpupx3h+juA@mail.gmail.com>
+Message-ID: <CAHk-=wgNt+Pm89Cqp5onH2dQN2ddAV-GU5ZftgrBpupx3h+juA@mail.gmail.com>
+Subject: Re: [PATCH v2] exec: load_script: Allow interpreter argument truncation
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Samuel Dionne-Riel <samuel@dionne-riel.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Richard Weinberger <richard.weinberger@gmail.com>,
+        Graham Christensen <graham@grahamc.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Feb 14, 2019 at 10:10 AM Kees Cook <keescook@chromium.org> wrote:>
+> We certainly can, but we'll still need to fix the "don't exec a
+> truncated interpreter path" problem (which this fixes).
+>
+> I'm happy to do it as two steps instead: revert, then a separate fix
+> to land in the merge window?
 
+I think that's better. It should also be fairly easy: just look for
+whitespace in the truncated output (in the place where we already
+check for the "oh, we truncated")
 
-On 2/14/19 4:33 PM, Ping Cheng wrote:
-> On Thu, Feb 14, 2019 at 6:01 AM Jiri Kosina <jikos@kernel.org> wrote:
-> 
->> On Mon, 11 Feb 2019, Gustavo A. R. Silva wrote:
->>
->>> In preparation to enabling -Wimplicit-fallthrough, mark switch
->>> cases where we are expecting to fall through.
->>>
->>> This patch fixes the following warning:
->>>
->>> drivers/hid/wacom_wac.c: In function
->> ‘wacom_setup_pen_input_capabilities’:
->>> drivers/hid/wacom_wac.c:3506:3: warning: this statement may fall through
->> [-Wimplicit-fallthrough=]
->>>    __clear_bit(ABS_MISC, input_dev->absbit);
->>>    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>> drivers/hid/wacom_wac.c:3508:2: note: here
->>>   case WACOM_MO:
->>>   ^~~~
->>>
->>> Warning level 3 was used: -Wimplicit-fallthrough=3
->>>
->>> This patch is part of the ongoing efforts to enable
->>> -Wimplicit-fallthrough.
->>>
->>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>
->> Let's CC Jason and Ping to make sure it's really intended :)
->>
-> 
-> Yes, it was intended. You can have my Acked-by: Ping Cheng <
-> ping.cheng@wacom.com>
-> 
+It's even possible that somebody depends on a truncated interpreter
+executable name. Unlikely, but possiible. So I'd rather just revert,
+and re-try the smaller approach for 5.1.
 
-Great.
-
-Thanks, Ping.
-
---
-Gustavo
-
-> Cheers,
-> Ping
-> 
-> 
->>
->>> ---
->>>  drivers/hid/wacom_wac.c | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/drivers/hid/wacom_wac.c b/drivers/hid/wacom_wac.c
->>> index 72477e872324..5ecda99bf431 100644
->>> --- a/drivers/hid/wacom_wac.c
->>> +++ b/drivers/hid/wacom_wac.c
->>> @@ -3504,6 +3504,7 @@ int wacom_setup_pen_input_capabilities(struct
->> input_dev *input_dev,
->>>       switch (features->type) {
->>>       case GRAPHIRE_BT:
->>>               __clear_bit(ABS_MISC, input_dev->absbit);
->>> +             /* fall through */
->>>
->>>       case WACOM_MO:
->>>       case WACOM_G4:
->>> --
->>> 2.20.1
->>>
->>
->> --
->> Jiri Kosina
->> SUSE Labs
->>
->>
-> 
+               Linus
