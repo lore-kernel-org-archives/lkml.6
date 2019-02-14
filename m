@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F4CC43381
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54CA0C43381
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:50:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A24792229F
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:50:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 218A02229F
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Feb 2019 14:50:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XpWeH7lS"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="utApWRdu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2439369AbfBNOuA (ORCPT
+        id S2439393AbfBNOuF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 09:50:00 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:44879 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407275AbfBNOty (ORCPT
+        Thu, 14 Feb 2019 09:50:05 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:37916 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407306AbfBNOt4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 09:49:54 -0500
-Received: by mail-qt1-f195.google.com with SMTP id n32so7046480qte.11
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 06:49:54 -0800 (PST)
+        Thu, 14 Feb 2019 09:49:56 -0500
+Received: by mail-qt1-f194.google.com with SMTP id 2so7101912qtb.5
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 06:49:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=OZ3w/jmfXs2wPitKzfdSFG0201b2pR2doaOOTk38mKc=;
-        b=XpWeH7lS5H+3J1QFhvbSoyLLqklA1vROnnRDJ+ITFcNghqk16goR7jMGIqnWxYUYDq
-         dWz3W6p4SH88in/qqqxTriIULi9n42o5qOcDnM0/MAVT/EXCOdqrYcqBZpsXhrhqoK5R
-         i8HjtnTeuHQL/s4D8tihJJ/oJvH7Hy9o8c7KJIRhFXMhvAcAP5tfgPbWMevhTFoNN5TL
-         1s+rpeBTOh0uJvabSCOQ3BSUtJliKCOFkip48o10bT0wH7ZeVDxZ1gAG3Llv2ysWPtVB
-         Dd1bfJkaJBuha5Q/GT/vUG+UMxbKebFjaRpWr1nH8dXYO633/6rgeqb+AlFOW1YFKJy3
-         Cpng==
+        bh=WbXTq/rv4PTCxNmHyDWfQL5ZTTgJSJ1C6Vt+iGpdItk=;
+        b=utApWRduTafCEFGv8UAoII0fePrHnB33bW4J/MQptc0lsPlgbmsQ1qtVb9MMnHkiUL
+         jrG56n4yCy1KuQKwHn4C7PKyJQXFEZS5hgjDLQURUyl00zgciW4Q5N1OzrNmK8McMQ2H
+         uINaH6/BILlntPaPi7xE7VW8OK3XLqrFyJ/lgNq97H8EUNjVLBQRLzU5ObT0bNF1+rOy
+         6aX6UGmbyx9RygbF1jSSymTia1hAYqBrytu/G1gDS/NyR/XF/3TSdVWJ88UERuGSf3Jp
+         +VOBXow+YpZ41THXI4CWgyBRMzm1xG1vbBWtviB8faOYMxJG2JXS85I4nlF/SnF4cy1R
+         Kwng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=OZ3w/jmfXs2wPitKzfdSFG0201b2pR2doaOOTk38mKc=;
-        b=DhpA5wxDXvo69mc3+jIit51cgiQpINs55y928hQvZo3MT6VCs4WQRhiYNHbySgCFp4
-         Fd8xvyJRLJxHQQEU5HX5MkrH1a7mO1Em0WDtKMA3x4DPVriDROYRvk6nsGJ1zASbOj69
-         zV95BbEQX/YAWv6+Dx74/Pbmnim/mkJCYVMDo0PuFI291a1UvfwoHQ9Ulc46nBU5KrgS
-         672yt4I996UaysqITQw+oESj2rPsUz3kQC1ONCgT8QLCaavMTogFGlCmexUEFWyOhZan
-         ENrv1I/nb5nVAzw00YALKIz0jw+VKBpA+MkhFv28cFnVu3MozVS57gQ2luREm0ECkgGX
-         EBzw==
-X-Gm-Message-State: AHQUAubiVbB9v79+DPDFAVx2fQ2mmIZNc7QOSTBbRWUcj/nd5o/4EoZr
-        LWFGNbyAF+TPO5gJ/LUlWyJhfA==
-X-Google-Smtp-Source: AHgI3IYDvHYEt1JOmFbHDHNBdaYonXbEGuQH4Yfe08E2etAt8PWdzu/HrFH+WXBCCyJrBbjKfP2gyA==
-X-Received: by 2002:ac8:1413:: with SMTP id k19mr786554qtj.134.1550155793586;
-        Thu, 14 Feb 2019 06:49:53 -0800 (PST)
+        bh=WbXTq/rv4PTCxNmHyDWfQL5ZTTgJSJ1C6Vt+iGpdItk=;
+        b=RZTVmXDdHQphDVrFlB2j42E+E1GembMr6UZk9S9suVlsAMdZEdn+zQImaZg+nIBOYK
+         77sxrcUBFcHmCo9cV4sLUM2bgV0rKdU/y7DlcVrSMeEKn6+zZ6X6aL8SmnPydmM3bbhn
+         L4NuhrBqjtRu/NrYGzLCOcVtJ0yeowPmgD31CkDQb5+os81/TXWGQo8B3QE2UXGfUrQY
+         tdNroHKNnqnsbcte4K6tHhU18Tf9DX+PQ+NBoMsCu7znZoBMIMKOk+XvsZhiuH7Ck3En
+         ulSJo2OZeIL44TyRi+QJUx0KHmD0P6PtKfjQl8owAAxfHPyDE1jM0fEYGnmGH+kdKs3W
+         /WnQ==
+X-Gm-Message-State: AHQUAuYsgc/GSa6WXmBY2Uxn/58QyCm9KWLL7vMlta7CNA0Rdsu4dM/S
+        mtxzDHcyTNjkNEsg0SOFe1zC4g==
+X-Google-Smtp-Source: AHgI3IbFz1iUbRoxfRgmOdWkz41vaur9A+BtxGrF6mFztB6uoGLcDn0JYna6uhIqtASfYo0eIOjmPg==
+X-Received: by 2002:ac8:b0e:: with SMTP id e14mr3403862qti.336.1550155794878;
+        Thu, 14 Feb 2019 06:49:54 -0800 (PST)
 Received: from localhost.localdomain (pool-72-71-243-63.cncdnh.fast00.myfairpoint.net. [72.71.243.63])
-        by smtp.googlemail.com with ESMTPSA id k66sm1498919qkc.25.2019.02.14.06.49.52
+        by smtp.googlemail.com with ESMTPSA id k66sm1498919qkc.25.2019.02.14.06.49.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 06:49:53 -0800 (PST)
+        Thu, 14 Feb 2019 06:49:54 -0800 (PST)
 From:   David Long <dave.long@linaro.org>
 To:     stable@vger.kernel.org,
         Russell King - ARM Linux <linux@armlinux.org.uk>,
@@ -66,9 +66,9 @@ To:     stable@vger.kernel.org,
         Mark Rutland <mark.rutland@arm.com>
 Cc:     Will Deacon <will.deacon@arm.com>, Mark Brown <broonie@kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 4.9 15/16] ARM: ensure that processor vtables is not lost after boot
-Date:   Thu, 14 Feb 2019 09:49:29 -0500
-Message-Id: <20190214144930.27539-16-dave.long@linaro.org>
+Subject: [PATCH 4.9 16/16] ARM: fix the cockup in the previous patch
+Date:   Thu, 14 Feb 2019 09:49:30 -0500
+Message-Id: <20190214144930.27539-17-dave.long@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190214144930.27539-1-dave.long@linaro.org>
 References: <20190214144930.27539-1-dave.long@linaro.org>
@@ -79,52 +79,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Russell King <rmk+kernel@armlinux.org.uk>
 
-Commit 3a4d0c2172bcf15b7a3d9d498b2b355f9864286b upstream.
+Commit d6951f582cc50ba0ad22ef46b599740966599b14 upstream.
 
-Marek Szyprowski reported problems with CPU hotplug in current kernels.
-This was tracked down to the processor vtables being located in an
-init section, and therefore discarded after kernel boot, despite being
-required after boot to properly initialise the non-boot CPUs.
+The intention in the previous patch was to only place the processor
+tables in the .rodata section if big.Little was being built and we
+wanted the branch target hardening, but instead (due to the way it
+was tested) it ended up always placing the tables into the .rodata
+section.
 
-Arrange for these tables to end up in .rodata when required.
+Although harmless, let's correct this anyway.
 
-Reported-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
-Fixes: 383fb3ee8024 ("ARM: spectre-v2: per-CPU vtables to work around big.Little systems")
+Fixes: 3a4d0c2172bc ("ARM: ensure that processor vtables is not lost after boot")
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: David A. Long <dave.long@linaro.org>
 ---
- arch/arm/mm/proc-macros.S | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm/mm/proc-macros.S | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/mm/proc-macros.S b/arch/arm/mm/proc-macros.S
-index 7d9176c4a21d..7be1d7921342 100644
+index 7be1d7921342..f8bb65032b79 100644
 --- a/arch/arm/mm/proc-macros.S
 +++ b/arch/arm/mm/proc-macros.S
-@@ -275,6 +275,13 @@
- 	.endm
- 
- .macro define_processor_functions name:req, dabort:req, pabort:req, nommu=0, suspend=0, bugs=0
-+/*
-+ * If we are building for big.Little with branch predictor hardening,
-+ * we need the processor function tables to remain available after boot.
-+ */
-+#if 1 // defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
-+	.section ".rodata"
-+#endif
+@@ -279,7 +279,7 @@
+  * If we are building for big.Little with branch predictor hardening,
+  * we need the processor function tables to remain available after boot.
+  */
+-#if 1 // defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
++#if defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
+ 	.section ".rodata"
+ #endif
  	.type	\name\()_processor_functions, #object
- 	.align 2
- ENTRY(\name\()_processor_functions)
-@@ -310,6 +317,9 @@ ENTRY(\name\()_processor_functions)
+@@ -317,7 +317,7 @@ ENTRY(\name\()_processor_functions)
  	.endif
  
  	.size	\name\()_processor_functions, . - \name\()_processor_functions
-+#if 1 // defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
-+	.previous
-+#endif
+-#if 1 // defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
++#if defined(CONFIG_BIG_LITTLE) && defined(CONFIG_HARDEN_BRANCH_PREDICTOR)
+ 	.previous
+ #endif
  .endm
- 
- .macro define_cache_functions name:req
 -- 
 2.17.1
 
