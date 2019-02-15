@@ -2,95 +2,124 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F0B1C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:31:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B27C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:37:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AE8B222A1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:31:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB567222A1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:37:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=itmarketsintelligence-com.20150623.gappssmtp.com header.i=@itmarketsintelligence-com.20150623.gappssmtp.com header.b="IP3zf2dM"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="BJxmEkrK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731258AbfBOTbR (ORCPT
+        id S1731566AbfBOThW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 14:31:17 -0500
-Received: from mail-qt1-f200.google.com ([209.85.160.200]:54215 "EHLO
-        mail-qt1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730613AbfBOTbR (ORCPT
+        Fri, 15 Feb 2019 14:37:22 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:40361 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730613AbfBOThV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 14:31:17 -0500
-Received: by mail-qt1-f200.google.com with SMTP id k37so9961055qtb.20
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 11:31:16 -0800 (PST)
+        Fri, 15 Feb 2019 14:37:21 -0500
+Received: by mail-it1-f195.google.com with SMTP id i2so26084697ite.5
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 11:37:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=itmarketsintelligence-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:message-id:date:subject:from:to;
-        bh=Z0tkzToy63MSaLYsw4NHH5Pc9MUwcTwslQQ8+TymNvE=;
-        b=IP3zf2dMOOrESEYDNqw7cEr552bCxWxaRcTIdJYWaVLAJVl0anMYr9pvSmRQeKEESG
-         QPcwzzrAgD6WKV3kEt7K4egmGNUXgqVyp4vg2yih5l3CaLKtWdiM0H7bDw26ud0Snc6u
-         YGOMIwLP4/CSJ+MRJvG9PxReFSP3U3bEvdYQnBGjKq76zmaD4E7nmH8Q9R1kq9o59U9e
-         1V+GxN+2lE8wnyHl1G27yM8gJijbFk7NE2Rf5dKGsMbfnOg1Wu+G06BGOralActo3cgD
-         sA75NopGJPBAoAiO4UvBX+Z2GiHmNzCaEWYoDL5zZ0yViZPGCICCxS0WW3fa+RaslIMg
-         XR6A==
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aOSC8ZzkPCXB6WyoycrO9I7WjBSurknF8CSDyuQMuwQ=;
+        b=BJxmEkrKTtLBxqiiTZTRpxbFj2xyLTKbacgro11C4Az8g6PqUfCPE6CF+pLWKWSuCj
+         YLA8+2qWfO0d1ctKZDB8Pn8wIDyAb3mTs2Wq+W8RJDXmXveKfKz5Ts6ARAUgay5WGSWD
+         Q+foTz6lzgWxhDNHg/RooLL2k84x/LiOTLyT0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:message-id:date:subject:from:to;
-        bh=Z0tkzToy63MSaLYsw4NHH5Pc9MUwcTwslQQ8+TymNvE=;
-        b=ENyHVuaj2v7I4jUJVSSo0togKa1kutVdnBYhS2dtXj+TYhB9KzKcyv4nfZZL3bzEV8
-         f8UlZtSFfzPUeVc66g/xVX3zGHJhjsUSWwC63DSE5uBmLAC3Se0avV5ztpAzD0nHsznh
-         OIS35slowNSK0tDTsHxCkt0eoQ/EvonZpYTz+iNjvAyx4XxZAZ2TgspwVR8dVVEFM21X
-         JSYVv8TSg37grJljY9Po6c56GmQ3uDuqnTHHM3jPbsLUCB0l/OKbbz3mJg9I9ZLaJ7RE
-         1NuGzmLPf95hNR6H284tmGis75ii9xfa8N2GzRd8pNJS5b1R5u/EP3lILebGxZTNuJaK
-         F1fg==
-X-Gm-Message-State: AHQUAubU2LoXPxHsoh15iWQl45WExVnF2TRQkhavzylJUZkH4qFVKSvO
-        UJLAHABMd68c/K+AezDvGYSuUJ/apNhp
-X-Google-Smtp-Source: AHgI3IYwRzhg45B2llM5/gLlWxDg16n340Cfus78If8+3/4oEJrwABxqMfyWguPWD2lXXQDwmmoY8mOFew==
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aOSC8ZzkPCXB6WyoycrO9I7WjBSurknF8CSDyuQMuwQ=;
+        b=ZGwIwS4INhd+Ev31j/5mZ0WCDci2jkaiVGvw+BS9yI3mrnXyJDtdp6lUEVi4C8dndB
+         Kllpivuva5+N0xvabXLktDB1Y8YxwOdMaruyXC0hfK96YLE5WSk1CzH97iEoN4m2WF16
+         TKLjmQcIfF++tXhIG012olkAQTp3sFyV7O1uUKg4hIu2e36ZuLKTYFDVphCLOc+GQ62k
+         6c6OKhuz4XZrJejOeOelhMUy8UrGtmVIsc1LETSpO5OYfwbpnJnt4RbFPEsqGzE0/tEv
+         nvFa0PpdAWqIjsGiOIIjpcqHwPiGz0wd8Wr3Ho4VXC6Pj1L6FhkN7pSTC4V34AczpGSz
+         XKEQ==
+X-Gm-Message-State: AHQUAubglOLy2yr0B1S8p3KzNRY0d9WLd0z+6ho6otTAewK3DmzLvZ32
+        vkTD/V+SuRSiX3gMnywdWSNb7dAMp9gVnIP/hq7hAw==
+X-Google-Smtp-Source: AHgI3IYTObnlggwGkTQ2WRCe9gBMEsne4EQK/lC5WAFH1qcM9/jUub3W+2pb7FqZ30CUIWXx2uIZTMtxqfsSJB4Qis4=
+X-Received: by 2002:a6b:b790:: with SMTP id h138mr6264910iof.114.1550259440391;
+ Fri, 15 Feb 2019 11:37:20 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:ac8:362e:: with SMTP id m43mr6362308qtb.53.1550259076319;
- Fri, 15 Feb 2019 11:31:16 -0800 (PST)
-Message-ID: <0000000000008dcf750581f3d18c@google.com>
-Date:   Fri, 15 Feb 2019 19:31:16 +0000
-Subject: Decision makers contact list
-From:   martha.evans@itmarketsintelligence.com
-To:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <20190214192544.7314-1-jagan@amarulasolutions.com> <20190214192544.7314-8-jagan@amarulasolutions.com>
+In-Reply-To: <20190214192544.7314-8-jagan@amarulasolutions.com>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Sat, 16 Feb 2019 01:07:08 +0530
+Message-ID: <CAMty3ZDqnVBkcT5kiKf-pKGccEuQR0xtBXBgB2-_XFXkRKi+_A@mail.gmail.com>
+Subject: Re: [PATCH v8 7/8] drm/sun4i: sun6i_mipi_dsi: Refactor vertical video
+ start delay
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-amarula@amarulasolutions.com,
+        Michael Trimarchi <michael@amarulasolutions.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, Feb 15, 2019 at 12:56 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>
+> Vertical video start delay is computed by excluding vertical porch
+> value from total vertical timings, but the current driver excluding
+> vertical porch along with vertical sync values from total vertical
+> timings resulting wrong start delay.
+>
+> This patch trying to update the video start delay by subtracting
+> vertical porch from vertical total, on the other hand it added 1
+> extra start_delay line for TCON based on the Allwinner BSP reference.
+>
+> BSP code form BPI-M64-bsp is computing video start delay as
+> (from linux-sunxi/
+> drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
+>
+> u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
+> => (panel->lcd_vt) - panel->lcd_y - (panel->lcd_vbp)
+> => (timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y)
+>    - panel->lcd_y - (panel->lcd_vbp)
+> => timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y
+>                              - panel->lcd_y - panel->lcd_vbp
+> => timmings->ver_front_porch
+>
+> So, update the start delay computation accordingly.
+>
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+>  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 19 ++++++++++++++++++-
+>  1 file changed, 18 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> index a08dfdcbe9e8..31cf9c58e98d 100644
+> --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> @@ -358,7 +358,24 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
+>  static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
+>                                            struct drm_display_mode *mode)
+>  {
+> -       return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
+> +       u32 vfp, start_delay;
+> +
+> +       /* vertical front porch */
+> +       vfp = mode->vsync_start - mode->vdisplay;
+> +
+> +       /* start_delay = vertical total - vertical front porch */
+> +       start_delay = mode->vtotal - vfp;
+> +
+> +       /* add extra 1 delay line for TCON, as per Allwinner BSP */
+> +       start_delay = 1;
 
-Would you be interested in targeting Cybersecurity Users across the globe  
-for your Q1 marketing strategy?
+This has to be += 1;
 
-Here is how we can help you:
-
-Security users by vendor: Cisco, Juniper, Check Point, Aruba Networks,  
-Symantec and many others.
-
-Security users by security solution: Email, SIEM, Firewall, UTM, Endpoint,  
-DDoS, IAM, Cloud security, App security, Web security, Vulnerability, VPN,  
-Authentication and many others.
-
-Cloud users of IaaS, PaaS and SaaS: AWS, Azure, Rackspace, vCloud,  
-Salesforce, Jira, ServiceNow, SharePoint, Office 365, Box, Workday,  
-SuccessFactors and many others.
-
-For Channel and Partner: MSP, MSSP and CSP companies decision makers,  
-Industry specific IT security decision makers Banks, Credit unions,  
-Insurance, Education, Healthcare, Retail, Manufacturing, Government, Oil  
-and Gas and many others.
-
-We can customize this list as per your specific technology, revenue size of  
-companies and job titles from those companies.
-
-Await for your positive response!
-
-Thanks,
-Martha Evans
-
-If not, I would be happy to update my notes I just need to hear from you  
-first!
+Typo change while re-basing, I will fix this in next version.
