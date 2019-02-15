@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2441C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4586C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8844421B68
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8088206BA
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196671;
-	bh=UQtZ/xPv5SVvDmOfXm3oaPed7JqTH7fjVh359hv7WjA=;
+	s=default; t=1550196676;
+	bh=u8Wx9GsMXcZZYeBBNGwlq656t69YYYMVAFRicoNjviU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oZlyBmFzsxelYOwIGnwWt905M7+gI/mdvQDLWRP+A0p3A9NcgxJhXBv4bwJuMm0zQ
-	 o42vJvZgI3UCnF5MaJmVJe6K4n64/+7Sy3B4TSZi9VxyhqI7Op85H2suDWW5HuqyhJ
-	 20fYBwMewsXFTQA95Qu/6LJEdnhAe2JXl27Pu6EE=
+	b=sKLgaknfD5YFfLZNyVPd8f+LsrtYzzfF5MzozGcavsV77pg4zH8sNzqdFFdR2mEe5
+	 5q2P9EOaXzbXyvZteQocfnjBQ2nbxJcKZoqQCRFwshbqq1S8VcXo7Sbbjzanma5bKw
+	 BeRqH/XQiGzdHmwMVCEIjZha25m0vBmYYnffO5t8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732185AbfBOCLJ (ORCPT
+        id S1732211AbfBOCLP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:11:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51176 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:11:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732159AbfBOCLG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:11:06 -0500
+        id S1726362AbfBOCLM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:11:12 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D7BDD222D0;
-        Fri, 15 Feb 2019 02:11:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 006AD21934;
+        Fri, 15 Feb 2019 02:11:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196665;
-        bh=UQtZ/xPv5SVvDmOfXm3oaPed7JqTH7fjVh359hv7WjA=;
+        s=default; t=1550196671;
+        bh=u8Wx9GsMXcZZYeBBNGwlq656t69YYYMVAFRicoNjviU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L/sBGxCWZJUQQr6Pt/5uhW/LWvgXQ8kO3XBuMBZkkdE9sIoUz5t+eN/OHFKOKr/5o
-         F+vX9TH+FCotv8ZBe/IM1tm/GxZu9ij0wt/0uewQtmfkRXKRVk0xF6KqM9EHs/f/Su
-         yO6X1cyZlhh0It+RSU91S1pnlStjUAjDdosN2pCM=
+        b=YjuSEg5RzyUfef3PtMlhD7zPmXHqILj2ViaH6TV2qoHgshsjgjXzUybilbAchVAHb
+         8tcMf22ZlpVBq0468BMbRTJ3eLzFHA2/KS4y1/xzbZR2rauXhtZobhDrJK4ibtf6UC
+         nPm6yc7PcYRSdkEJ6xjOiS+BpIgFsqK/mdoLIKHc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+Cc:     Ben Gardon <bgardon@google.com>,
         Paolo Bonzini <pbonzini@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 74/77] KVM: nSVM: clear events pending from svm_complete_interrupts() when exiting to L1
-Date:   Thu, 14 Feb 2019 21:08:52 -0500
-Message-Id: <20190215020855.176727-74-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 75/77] kvm: selftests: Fix region overlap check in kvm_util
+Date:   Thu, 14 Feb 2019 21:08:53 -0500
+Message-Id: <20190215020855.176727-75-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
 References: <20190215020855.176727-1-sashal@kernel.org>
@@ -57,46 +58,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Ben Gardon <bgardon@google.com>
 
-[ Upstream commit 619ad846fc3452adaf71ca246c5aa711e2055398 ]
+[ Upstream commit 94a980c39c8e3f8abaff5d3b5bbcd4ccf1c02c4f ]
 
-kvm-unit-tests' eventinj "NMI failing on IDT" test results in NMI being
-delivered to the host (L1) when it's running nested. The problem seems to
-be: svm_complete_interrupts() raises 'nmi_injected' flag but later we
-decide to reflect EXIT_NPF to L1. The flag remains pending and we do NMI
-injection upon entry so it got delivered to L1 instead of L2.
+Fix a call to userspace_mem_region_find to conform to its spec of
+taking an inclusive, inclusive range. It was previously being called
+with an inclusive, exclusive range. Also remove a redundant region bounds
+check in vm_userspace_mem_region_add. Region overlap checking is already
+performed by the call to userspace_mem_region_find.
 
-It seems that VMX code solves the same issue in prepare_vmcs12(), this was
-introduced with code refactoring in commit 5f3d5799974b ("KVM: nVMX: Rework
-event injection and recovery").
+Tested: Compiled tools/testing/selftests/kvm with -static
+	Ran all resulting test binaries on an Intel Haswell test machine
+	All tests passed
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Ben Gardon <bgardon@google.com>
+Reviewed-by: Jim Mattson <jmattson@google.com>
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/svm.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ tools/testing/selftests/kvm/lib/kvm_util.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index cea8f8c03e8c..3411c32a8770 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -3401,6 +3401,14 @@ static int nested_svm_vmexit(struct vcpu_svm *svm)
- 	kvm_mmu_reset_context(&svm->vcpu);
- 	kvm_mmu_load(&svm->vcpu);
- 
-+	/*
-+	 * Drop what we picked up for L2 via svm_complete_interrupts() so it
-+	 * doesn't end up in L1.
-+	 */
-+	svm->vcpu.arch.nmi_injected = false;
-+	kvm_clear_exception_queue(&svm->vcpu);
-+	kvm_clear_interrupt_queue(&svm->vcpu);
-+
- 	return 0;
- }
- 
+diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+index 1b41e71283d5..6ee49133ad22 100644
+--- a/tools/testing/selftests/kvm/lib/kvm_util.c
++++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+@@ -532,7 +532,7 @@ void vm_userspace_mem_region_add(struct kvm_vm *vm,
+ 	 * already exist.
+ 	 */
+ 	region = (struct userspace_mem_region *) userspace_mem_region_find(
+-		vm, guest_paddr, guest_paddr + npages * vm->page_size);
++		vm, guest_paddr, (guest_paddr + npages * vm->page_size) - 1);
+ 	if (region != NULL)
+ 		TEST_ASSERT(false, "overlapping userspace_mem_region already "
+ 			"exists\n"
+@@ -548,15 +548,10 @@ void vm_userspace_mem_region_add(struct kvm_vm *vm,
+ 		region = region->next) {
+ 		if (region->region.slot == slot)
+ 			break;
+-		if ((guest_paddr <= (region->region.guest_phys_addr
+-				+ region->region.memory_size))
+-			&& ((guest_paddr + npages * vm->page_size)
+-				>= region->region.guest_phys_addr))
+-			break;
+ 	}
+ 	if (region != NULL)
+ 		TEST_ASSERT(false, "A mem region with the requested slot "
+-			"or overlapping physical memory range already exists.\n"
++			"already exists.\n"
+ 			"  requested slot: %u paddr: 0x%lx npages: 0x%lx\n"
+ 			"  existing slot: %u paddr: 0x%lx size: 0x%lx",
+ 			slot, guest_paddr, npages,
 -- 
 2.19.1
 
