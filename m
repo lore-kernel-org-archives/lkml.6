@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 625B5C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:56:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B15F5C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:56:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2485F222D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:56:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C1A4222D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:56:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387556AbfBOT4m (ORCPT
+        id S2387955AbfBOT4r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 14:56:42 -0500
-Received: from mga07.intel.com ([134.134.136.100]:29120 "EHLO mga07.intel.com"
+        Fri, 15 Feb 2019 14:56:47 -0500
+Received: from mga17.intel.com ([192.55.52.151]:30606 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732893AbfBOT4l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 14:56:41 -0500
+        id S1732893AbfBOT4q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 14:56:46 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Feb 2019 11:56:40 -0800
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Feb 2019 11:56:46 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,373,1544515200"; 
-   d="scan'208";a="275404803"
+   d="scan'208";a="147224681"
 Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga004.jf.intel.com with ESMTP; 15 Feb 2019 11:56:40 -0800
-Subject: [PATCH v2 3/6] nfit/ars: Remove ars_start_flags
+  by fmsmga001.fm.intel.com with ESMTP; 15 Feb 2019 11:56:45 -0800
+Subject: [PATCH v2 4/6] nfit/ars: Introduce scrub_flags
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     linux-nvdimm@lists.01.org
-Cc:     Toshi Kani <toshi.kani@hpe.com>, vishal.l.verma@intel.com,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 15 Feb 2019 11:44:02 -0800
-Message-ID: <155025984267.1043225.13642468395161111076.stgit@dwillia2-desk3.amr.corp.intel.com>
+Cc:     vishal.l.verma@intel.com, linux-kernel@vger.kernel.org
+Date:   Fri, 15 Feb 2019 11:44:07 -0800
+Message-ID: <155025984777.1043225.11995149236324481755.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <155025982726.1043225.15436410616433285475.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <155025982726.1043225.15436410616433285475.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
@@ -46,47 +45,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ars_start_flags property of 'struct acpi_nfit_desc' is no longer
-used since ARS_REQ_SHORT and ARS_REQ_LONG were added.
+In preparation for introducing new flags to gate whether ARS results are
+stale, or poll the completion state, convert the existing flags to an
+unsigned long with enumerated values. This conversion allows the flags
+to be atomically updated outside of ->init_mutex.
 
-Cc: Toshi Kani <toshi.kani@hpe.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- drivers/acpi/nfit/core.c |   10 +++++-----
- drivers/acpi/nfit/nfit.h |    1 -
- 2 files changed, 5 insertions(+), 6 deletions(-)
+ drivers/acpi/nfit/core.c |   30 +++++++++++++++++-------------
+ drivers/acpi/nfit/nfit.h |    8 ++++++--
+ 2 files changed, 23 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-index 934be96dc149..9a23ae74e82b 100644
+index 9a23ae74e82b..90312892093e 100644
 --- a/drivers/acpi/nfit/core.c
 +++ b/drivers/acpi/nfit/core.c
-@@ -2651,11 +2651,11 @@ static int ars_continue(struct acpi_nfit_desc *acpi_desc)
- 	struct nvdimm_bus_descriptor *nd_desc = &acpi_desc->nd_desc;
- 	struct nd_cmd_ars_status *ars_status = acpi_desc->ars_status;
+@@ -1317,19 +1317,23 @@ static ssize_t scrub_show(struct device *dev,
+ 		struct device_attribute *attr, char *buf)
+ {
+ 	struct nvdimm_bus_descriptor *nd_desc;
++	struct acpi_nfit_desc *acpi_desc;
+ 	ssize_t rc = -ENXIO;
++	bool busy;
  
--	memset(&ars_start, 0, sizeof(ars_start));
--	ars_start.address = ars_status->restart_address;
--	ars_start.length = ars_status->restart_length;
--	ars_start.type = ars_status->type;
--	ars_start.flags = acpi_desc->ars_start_flags;
-+	ars_start = (struct nd_cmd_ars_start) {
-+		.address = ars_status->restart_address,
-+		.length = ars_status->restart_length,
-+		.type = ars_status->type,
-+	};
- 	rc = nd_desc->ndctl(nd_desc, NULL, ND_CMD_ARS_START, &ars_start,
- 			sizeof(ars_start), &cmd_rc);
- 	if (rc < 0)
+ 	device_lock(dev);
+ 	nd_desc = dev_get_drvdata(dev);
+-	if (nd_desc) {
+-		struct acpi_nfit_desc *acpi_desc = to_acpi_desc(nd_desc);
+-
+-		mutex_lock(&acpi_desc->init_mutex);
+-		rc = sprintf(buf, "%d%s", acpi_desc->scrub_count,
+-				acpi_desc->scrub_busy
+-				&& !acpi_desc->cancel ? "+\n" : "\n");
+-		mutex_unlock(&acpi_desc->init_mutex);
++	if (!nd_desc) {
++		device_unlock(dev);
++		return rc;
+ 	}
++	acpi_desc = to_acpi_desc(nd_desc);
++
++	mutex_lock(&acpi_desc->init_mutex);
++	busy = test_bit(ARS_BUSY, &acpi_desc->scrub_flags)
++		&& !test_bit(ARS_CANCEL, &acpi_desc->scrub_flags);
++	rc = sprintf(buf, "%d%s", acpi_desc->scrub_count, busy ? "+\n" : "\n");
++	mutex_unlock(&acpi_desc->init_mutex);
+ 	device_unlock(dev);
+ 	return rc;
+ }
+@@ -3072,7 +3076,7 @@ static unsigned int __acpi_nfit_scrub(struct acpi_nfit_desc *acpi_desc,
+ 
+ 	lockdep_assert_held(&acpi_desc->init_mutex);
+ 
+-	if (acpi_desc->cancel)
++	if (test_bit(ARS_CANCEL, &acpi_desc->scrub_flags))
+ 		return 0;
+ 
+ 	if (query_rc == -EBUSY) {
+@@ -3146,7 +3150,7 @@ static void __sched_ars(struct acpi_nfit_desc *acpi_desc, unsigned int tmo)
+ {
+ 	lockdep_assert_held(&acpi_desc->init_mutex);
+ 
+-	acpi_desc->scrub_busy = 1;
++	set_bit(ARS_BUSY, &acpi_desc->scrub_flags);
+ 	/* note this should only be set from within the workqueue */
+ 	if (tmo)
+ 		acpi_desc->scrub_tmo = tmo;
+@@ -3162,7 +3166,7 @@ static void notify_ars_done(struct acpi_nfit_desc *acpi_desc)
+ {
+ 	lockdep_assert_held(&acpi_desc->init_mutex);
+ 
+-	acpi_desc->scrub_busy = 0;
++	clear_bit(ARS_BUSY, &acpi_desc->scrub_flags);
+ 	acpi_desc->scrub_count++;
+ 	if (acpi_desc->scrub_count_state)
+ 		sysfs_notify_dirent(acpi_desc->scrub_count_state);
+@@ -3451,7 +3455,7 @@ int acpi_nfit_ars_rescan(struct acpi_nfit_desc *acpi_desc,
+ 	struct nfit_spa *nfit_spa;
+ 
+ 	mutex_lock(&acpi_desc->init_mutex);
+-	if (acpi_desc->cancel) {
++	if (test_bit(ARS_CANCEL, &acpi_desc->scrub_flags)) {
+ 		mutex_unlock(&acpi_desc->init_mutex);
+ 		return 0;
+ 	}
+@@ -3530,7 +3534,7 @@ void acpi_nfit_shutdown(void *data)
+ 	mutex_unlock(&acpi_desc_lock);
+ 
+ 	mutex_lock(&acpi_desc->init_mutex);
+-	acpi_desc->cancel = 1;
++	set_bit(ARS_CANCEL, &acpi_desc->scrub_flags);
+ 	cancel_delayed_work_sync(&acpi_desc->dwork);
+ 	mutex_unlock(&acpi_desc->init_mutex);
+ 
 diff --git a/drivers/acpi/nfit/nfit.h b/drivers/acpi/nfit/nfit.h
-index 33691aecfcee..871fb3de3b30 100644
+index 871fb3de3b30..897ce10192a0 100644
 --- a/drivers/acpi/nfit/nfit.h
 +++ b/drivers/acpi/nfit/nfit.h
-@@ -223,7 +223,6 @@ struct acpi_nfit_desc {
- 	struct list_head idts;
- 	struct nvdimm_bus *nvdimm_bus;
- 	struct device *dev;
--	u8 ars_start_flags;
- 	struct nd_cmd_ars_status *ars_status;
- 	struct nfit_spa *scrub_spa;
- 	struct delayed_work dwork;
+@@ -210,6 +210,11 @@ struct nfit_mem {
+ 	int family;
+ };
+ 
++enum scrub_flags {
++	ARS_BUSY,
++	ARS_CANCEL,
++};
++
+ struct acpi_nfit_desc {
+ 	struct nvdimm_bus_descriptor nd_desc;
+ 	struct acpi_table_header acpi_header;
+@@ -231,8 +236,7 @@ struct acpi_nfit_desc {
+ 	unsigned int max_ars;
+ 	unsigned int scrub_count;
+ 	unsigned int scrub_mode;
+-	unsigned int scrub_busy:1;
+-	unsigned int cancel:1;
++	unsigned long scrub_flags;
+ 	unsigned long dimm_cmd_force_en;
+ 	unsigned long bus_cmd_force_en;
+ 	unsigned long bus_nfit_cmd_force_en;
 
