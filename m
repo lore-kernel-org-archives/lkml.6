@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE2DC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ACCCC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:41:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACB19222F7
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:40:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7119C222FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:41:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393154AbfBOJkX (ORCPT
+        id S2393179AbfBOJk7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:40:23 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:40113 "EHLO
+        Fri, 15 Feb 2019 04:40:59 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:38141 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390412AbfBOJkX (ORCPT
+        with ESMTP id S2390412AbfBOJk6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 04:40:23 -0500
+        Fri, 15 Feb 2019 04:40:58 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1F9e5tI1118371
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1F9eiYh1118439
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 15 Feb 2019 01:40:05 -0800
+        Fri, 15 Feb 2019 01:40:44 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1F9e5Fi1118365;
-        Fri, 15 Feb 2019 01:40:05 -0800
-Date:   Fri, 15 Feb 2019 01:40:05 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1F9eh7r1118436;
+        Fri, 15 Feb 2019 01:40:43 -0800
+Date:   Fri, 15 Feb 2019 01:40:43 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Mathieu Poirier <tipbot@zytor.com>
-Message-ID: <tip-fc7ac4138cf5ab76850bca2b9a8f43449c762a37@git.kernel.org>
-Cc:     leo.yan@linaro.org, suzuki.poulose@arm.com, hpa@zytor.com,
-        peterz@infradead.org, jolsa@redhat.com, tglx@linutronix.de,
-        mathieu.poirier@linaro.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, acme@redhat.com
-Reply-To: linux-kernel@vger.kernel.org, acme@redhat.com, mingo@kernel.org,
-          mathieu.poirier@linaro.org, jolsa@redhat.com, tglx@linutronix.de,
-          hpa@zytor.com, leo.yan@linaro.org, suzuki.poulose@arm.com,
-          peterz@infradead.org
-In-Reply-To: <20190212171618.25355-3-mathieu.poirier@linaro.org>
-References: <20190212171618.25355-3-mathieu.poirier@linaro.org>
+Message-ID: <tip-d3267ad43dd8b3778f9b3deb9a3946c844bdc9dc@git.kernel.org>
+Cc:     mathieu.poirier@linaro.org, leo.yan@linaro.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, acme@redhat.com,
+        jolsa@redhat.com, tglx@linutronix.de, peterz@infradead.org,
+        mingo@kernel.org, suzuki.poulose@arm.com
+Reply-To: mingo@kernel.org, tglx@linutronix.de, peterz@infradead.org,
+          suzuki.poulose@arm.com, mathieu.poirier@linaro.org,
+          linux-kernel@vger.kernel.org, leo.yan@linaro.org, hpa@zytor.com,
+          jolsa@redhat.com, acme@redhat.com
+In-Reply-To: <20190212171618.25355-4-mathieu.poirier@linaro.org>
+References: <20190212171618.25355-4-mathieu.poirier@linaro.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf cs-etm: Remove unused structure field "time"
- and "timestamp"
-Git-Commit-ID: fc7ac4138cf5ab76850bca2b9a8f43449c762a37
+Subject: [tip:perf/core] perf cs-etm: Fix wrong return values in error path
+Git-Commit-ID: d3267ad43dd8b3778f9b3deb9a3946c844bdc9dc
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,17 +58,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  fc7ac4138cf5ab76850bca2b9a8f43449c762a37
-Gitweb:     https://git.kernel.org/tip/fc7ac4138cf5ab76850bca2b9a8f43449c762a37
+Commit-ID:  d3267ad43dd8b3778f9b3deb9a3946c844bdc9dc
+Gitweb:     https://git.kernel.org/tip/d3267ad43dd8b3778f9b3deb9a3946c844bdc9dc
 Author:     Mathieu Poirier <mathieu.poirier@linaro.org>
-AuthorDate: Tue, 12 Feb 2019 10:16:07 -0700
+AuthorDate: Tue, 12 Feb 2019 10:16:08 -0700
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Thu, 14 Feb 2019 15:18:06 -0300
 
-perf cs-etm: Remove unused structure field "time" and "timestamp"
+perf cs-etm: Fix wrong return values in error path
 
-Field "time" and "timestamp" in structure cs_etm_queue are no longer
-used and need to be removed.
+Function cs_etm__mem_access() is supposed to return a u32 but the error
+path returns negative values at a couple of places, something that really
+throws off the clients using it.  Fix the situation by return '0'.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Jiri Olsa <jolsa@redhat.com>
@@ -77,67 +77,31 @@ Cc: Leo Yan <leo.yan@linaro.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Suzuki K Poulouse <suzuki.poulose@arm.com>
 Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/20190212171618.25355-3-mathieu.poirier@linaro.org
+Link: http://lkml.kernel.org/r/20190212171618.25355-4-mathieu.poirier@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/cs-etm.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ tools/perf/util/cs-etm.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index ebd68eb43da9..1d9419a0cf0c 100644
+index 1d9419a0cf0c..f396fee9bb95 100644
 --- a/tools/perf/util/cs-etm.c
 +++ b/tools/perf/util/cs-etm.c
-@@ -69,8 +69,6 @@ struct cs_etm_queue {
- 	unsigned int queue_nr;
- 	pid_t pid, tid;
- 	int cpu;
--	u64 time;
--	u64 timestamp;
- 	u64 offset;
- 	u64 period_instructions;
- 	struct branch_stack *last_branch;
-@@ -82,7 +80,7 @@ struct cs_etm_queue {
+@@ -324,7 +324,7 @@ static u32 cs_etm__mem_access(struct cs_etm_queue *etmq, u64 address,
+ 	struct	 addr_location al;
  
- static int cs_etm__update_queues(struct cs_etm_auxtrace *etm);
- static int cs_etm__process_timeless_queues(struct cs_etm_auxtrace *etm,
--					   pid_t tid, u64 time_);
-+					   pid_t tid);
+ 	if (!etmq)
+-		return -1;
++		return 0;
  
- /* PTMs ETMIDR [11:8] set to b0011 */
- #define ETMIDR_PTM_VERSION 0x00000300
-@@ -234,7 +232,7 @@ static int cs_etm__flush_events(struct perf_session *session,
- 	if (ret < 0)
- 		return ret;
+ 	machine = etmq->etm->machine;
+ 	cpumode = cs_etm__cpu_mode(etmq, address);
+@@ -332,7 +332,7 @@ static u32 cs_etm__mem_access(struct cs_etm_queue *etmq, u64 address,
+ 	thread = etmq->thread;
+ 	if (!thread) {
+ 		if (cpumode != PERF_RECORD_MISC_KERNEL)
+-			return -EINVAL;
++			return 0;
+ 		thread = etmq->etm->unknown_thread;
+ 	}
  
--	return cs_etm__process_timeless_queues(etm, -1, MAX_TIMESTAMP - 1);
-+	return cs_etm__process_timeless_queues(etm, -1);
- }
- 
- static void cs_etm__free_queue(void *priv)
-@@ -1583,7 +1581,7 @@ static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
- }
- 
- static int cs_etm__process_timeless_queues(struct cs_etm_auxtrace *etm,
--					   pid_t tid, u64 time_)
-+					   pid_t tid)
- {
- 	unsigned int i;
- 	struct auxtrace_queues *queues = &etm->queues;
-@@ -1593,7 +1591,6 @@ static int cs_etm__process_timeless_queues(struct cs_etm_auxtrace *etm,
- 		struct cs_etm_queue *etmq = queue->priv;
- 
- 		if (etmq && ((tid == -1) || (etmq->tid == tid))) {
--			etmq->time = time_;
- 			cs_etm__set_pid_tid_cpu(etm, queue);
- 			cs_etm__run_decoder(etmq);
- 		}
-@@ -1637,8 +1634,7 @@ static int cs_etm__process_event(struct perf_session *session,
- 
- 	if (event->header.type == PERF_RECORD_EXIT)
- 		return cs_etm__process_timeless_queues(etm,
--						       event->fork.tid,
--						       sample->time);
-+						       event->fork.tid);
- 
- 	return 0;
- }
