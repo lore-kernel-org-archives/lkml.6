@@ -2,131 +2,229 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 993BEC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:23:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32482C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:23:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A6E121A80
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:23:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E70F421A80
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:23:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MshO6e6/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388704AbfBOKXC (ORCPT
+        id S2393681AbfBOKXf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 05:23:02 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44483 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388071AbfBOKXB (ORCPT
+        Fri, 15 Feb 2019 05:23:35 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:52354 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388223AbfBOKXe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 05:23:01 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1guadu-0006rX-9h; Fri, 15 Feb 2019 11:22:50 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1guads-0006Oy-2E; Fri, 15 Feb 2019 11:22:48 +0100
-Date:   Fri, 15 Feb 2019 11:22:48 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Claudiu.Beznea@microchip.com
-Cc:     fabrice.gasnier@st.com, thierry.reding@gmail.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, alexandre.torgue@st.com,
-        tduszyns@gmail.com, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org, mcoquelin.stm32@gmail.com,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 3/3] pwm: core: add consumer device link
-Message-ID: <20190215102248.i2mggrw74lgs2owq@pengutronix.de>
-References: <1550055012-23348-1-git-send-email-fabrice.gasnier@st.com>
- <1550055012-23348-4-git-send-email-fabrice.gasnier@st.com>
- <f6fecafc-3946-9680-c58b-a20aa46e8e71@microchip.com>
+        Fri, 15 Feb 2019 05:23:34 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190215102332euoutp01380e48cd468c34884e4a860a4b2b00cd~DgobiXP082479924799euoutp01c
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 10:23:32 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190215102332euoutp01380e48cd468c34884e4a860a4b2b00cd~DgobiXP082479924799euoutp01c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1550226212;
+        bh=Xgs4ECjK2w2EGc1IdmngDs3q2ZGicewg2WMbPX5mPK8=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=MshO6e6/oWOzB8evWhSqlgQgrfhWTzM9GlC4wMBGGJ3qyBW8GihHXTvZqew0RR0b9
+         AQqx0jFo86D3eBBH67wlCUIn/TE8jibxLrvE5ygtligKz1TZFKR1o4lNbDRo7yTwaN
+         RjMY9iTf+3sA/Osqi0gtnODH1DX1nAZ3TnbV6Fb8=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190215102331eucas1p2abebf11a2874539bacbb273af36ef610~DgoarAooA2803828038eucas1p2u;
+        Fri, 15 Feb 2019 10:23:31 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 5C.2F.04806.323966C5; Fri, 15
+        Feb 2019 10:23:31 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190215102330eucas1p1107316a33f3cf5ab7347d0e2eb088516~DgoZvncKb0580005800eucas1p1f;
+        Fri, 15 Feb 2019 10:23:30 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190215102330eusmtrp170f252a98f16f630dec5f40cfc6fea33~DgoZhJW1z0652206522eusmtrp1L;
+        Fri, 15 Feb 2019 10:23:30 +0000 (GMT)
+X-AuditID: cbfec7f5-34dff700000012c6-f1-5c66932393a3
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 39.9C.04284.223966C5; Fri, 15
+        Feb 2019 10:23:30 +0000 (GMT)
+Received: from [106.116.147.30] (unknown [106.116.147.30]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190215102329eusmtip23cf2ffe37c0b6db7b58c0bc386c48d49~DgoY-ZqNK0079700797eusmtip2O;
+        Fri, 15 Feb 2019 10:23:29 +0000 (GMT)
+Subject: Re: [PATCH] ARM: pm: fix HYP/SVC mode mismatch when MCPM is used
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-samsung-soc@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marian Mihailescu <mihailescu2m@gmail.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <7548bc35-caef-0737-be39-5ddb8e097f67@samsung.com>
+Date:   Fri, 15 Feb 2019 11:23:28 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+        Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f6fecafc-3946-9680-c58b-a20aa46e8e71@microchip.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20190214165807.eq34njmunqhrdvxx@shell.armlinux.org.uk>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrOKsWRmVeSWpSXmKPExsWy7djPc7rKk9NiDDae4LPYOGM9q8XP9i1M
+        FufPb2C32PT4GqvF5V1z2CxmnN/HZHFo6l5Gi/XTfrJafHr2j91ixuSXbA5cHpevXWT2eH+j
+        ld1j56y77B6bVnWyedy5tofNY/OSeo++LasYPT5vkgvgiOKySUnNySxLLdK3S+DK+LzkCnPB
+        G/mKNRuPMTcwfpPsYuTkkBAwkdg0aQZbFyMXh5DACkaJI6cns0M4Xxgl3v9vgMp8ZpTYsv0K
+        kMMB1vLrbAJEfDmjxLODf1kgnPeMEhe2bGYEmSss4CmxpOMAK0iDiICVxIUeDZAaZoHPTBL/
+        fnxjBalhEzCU6HrbxQZi8wrYSSxrXwNmswioSrz5eYwFxBYViJGYcu4IO0SNoMTJmU/A4pwC
+        LhKnt21hBrGZBeQltr+dA2WLS9x6Mp8J4rdH7BI37uhD2C4S/cv6mCFsYYlXx7ewQ9gyEqcn
+        94A9ICHQzCjRPmMWO4TTwyixdc4ONogqa4nDxy+CfcMsoCmxfhfUUEeJbzdWMkFChU/ixltB
+        iBv4JCZtm84MEeaV6GgTgqhWk5h1fB3c2oMXLjFPYFSaheSzWUi+mYXkm1kIexcwsqxiFE8t
+        Lc5NTy02zkst1ytOzC0uzUvXS87P3cQITF6n/x3/uoNx35+kQ4wCHIxKPLwrMlJjhFgTy4or
+        cw8xSnAwK4nwLupKixHiTUmsrEotyo8vKs1JLT7EKM3BoiTOW83wIFpIID2xJDU7NbUgtQgm
+        y8TBKdXAGGhv2Z0QK9R9S9727re5Z1793GrN/ESXb4qtr7R85kT5ItG9X19Y/nB8EO0saPzK
+        zXVBmWOncERo8XSprRkanUwdxe/mHXVJ//psq2O2pLnr1/27nvBsuBYh7cw8Y6vd0guntSyd
+        xL4lTjYMMTGW/bcn/kx1Tt0ZjXnlS3Ss+a7MN401nsGtxFKckWioxVxUnAgAdle861oDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrJIsWRmVeSWpSXmKPExsVy+t/xe7pKk9NiDN4+ELfYOGM9q8XP9i1M
+        FufPb2C32PT4GqvF5V1z2CxmnN/HZHFo6l5Gi/XTfrJafHr2j91ixuSXbA5cHpevXWT2eH+j
+        ld1j56y77B6bVnWyedy5tofNY/OSeo++LasYPT5vkgvgiNKzKcovLUlVyMgvLrFVija0MNIz
+        tLTQMzKx1DM0No+1MjJV0rezSUnNySxLLdK3S9DL+LzkCnPBG/mKNRuPMTcwfpPsYuTgkBAw
+        kfh1NqGLkYtDSGApo8SuE8vZuxg5geIyEienNbBC2MISf651sUEUvWWUaH0ykwkkISzgKbGk
+        4wAryCARASuJCz0aIDXMAl+ZJCZ838oO0XCaUeLW9AvMIA1sAoYSXW9BJnFy8ArYSSxrXwNm
+        swioSrz5eYwFZJCoQIzE1XOMECWCEidnPmEBsTkFXCROb9sCNoZZQF3iz7xLULa8xPa3c6Bs
+        cYlbT+YzTWAUmoWkfRaSlllIWmYhaVnAyLKKUSS1tDg3PbfYUK84Mbe4NC9dLzk/dxMjMFq3
+        Hfu5eQfjpY3BhxgFOBiVeHhXZKTGCLEmlhVX5h5ilOBgVhLhXdSVFiPEm5JYWZValB9fVJqT
+        WnyI0RTot4nMUqLJ+cBEklcSb2hqaG5haWhubG5sZqEkznveoDJKSCA9sSQ1OzW1ILUIpo+J
+        g1OqgbGaMaDHX0DywuuXi03en5KSelh5d6mAVqL8TbXgAsY330/Kd4i/O/7ygfqTi+m3F384
+        djBa5FWXntvfE32JSl4mgfVZTcfEsrjeb8ny6AnLL0j+3L3X1M5w4qyTs6/xXjlQ1tTYkbNF
+        cdLci7m9PSXL5i9aPPnSnW6BHxrP5W/9fZ5QEqfyeIISS3FGoqEWc1FxIgDzBLqW7AIAAA==
+X-CMS-MailID: 20190215102330eucas1p1107316a33f3cf5ab7347d0e2eb088516
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190214143126eucas1p126506139ef72c1685654c8dac8957b3d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190214143126eucas1p126506139ef72c1685654c8dac8957b3d
+References: <CGME20190214143126eucas1p126506139ef72c1685654c8dac8957b3d@eucas1p1.samsung.com>
+        <20190214143114.24356-1-m.szyprowski@samsung.com>
+        <20190214165807.eq34njmunqhrdvxx@shell.armlinux.org.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 09:23:48AM +0000, Claudiu.Beznea@microchip.com wrote:
-> 
-> 
-> On 13.02.2019 12:50, Fabrice Gasnier wrote:
-> > Add a device link between the PWM consumer and the PWM provider. This
-> > enforces the PWM user to get suspended before the PWM provider. It
-> > allows proper synchronization of suspend/resume sequences: the PWM user
-> > is responsible for properly stopping PWM, before the provider gets
-> > suspended: see [1]. Add the device link in:
-> > - of_pwm_get()
-> > - pwm_get()
-> > - devm_ variants
-> > as it requires a reference to the device for the PWM consumer.
-> > 
-> > [1] https://lkml.org/lkml/2019/2/5/770
-> > 
-> > Suggested-by: Thierry Reding <thierry.reding@gmail.com>
-> > Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
-> > ---
-> > Changes in v3:
-> > - add struct device to of_get_pwm() arguments to handle device link from
-> >   there.
-> > ---
-> >  drivers/pwm/core.c  | 14 +++++++++++---
-> >  include/linux/pwm.h |  6 ++++--
-> >  2 files changed, 15 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-> > index 1581f6a..8cb5d4bc 100644
-> > --- a/drivers/pwm/core.c
-> > +++ b/drivers/pwm/core.c
-> > @@ -638,6 +638,7 @@ static struct pwm_chip *of_node_to_pwmchip(struct device_node *np)
-> >  
-> >  /**
-> >   * of_pwm_get() - request a PWM via the PWM framework
-> > + * @dev: device for PWM consumer
-> >   * @np: device node to get the PWM from
-> >   * @con_id: consumer name
-> >   *
-> > @@ -655,7 +656,8 @@ static struct pwm_chip *of_node_to_pwmchip(struct device_node *np)
-> >   * Returns: A pointer to the requested PWM device or an ERR_PTR()-encoded
-> >   * error code on failure.
-> >   */
-> > -struct pwm_device *of_pwm_get(struct device_node *np, const char *con_id)
-> > +struct pwm_device *of_pwm_get(struct device *dev, struct device_node *np,
-> > +			      const char *con_id)
-> >  {
-> >  	struct pwm_device *pwm = NULL;
-> >  	struct of_phandle_args args;
-> > @@ -689,6 +691,9 @@ struct pwm_device *of_pwm_get(struct device_node *np, const char *con_id)
-> >  	if (IS_ERR(pwm))
-> >  		goto put;
-> >  
-> > +	if (!device_link_add(dev, pwm->chip->dev, DL_FLAG_AUTOREMOVE_CONSUMER))
-> > +		pr_debug("%s(): device link not added\n", __func__);
-> > +
-> 
-> Just asking... will this mechanism also be working for PWMs requested via
-> sysfs? At a first look it seems not.
 
-No, but I would not expect a problem because AFAIU userspace is
-suspended before kernel devices. However as userspace might not notice
-the suspend it probably fails to stop the pwm and so will likely prevent
-the suspend.
+On 2019-02-14 17:58, Russell King - ARM Linux admin wrote:
+> On Thu, Feb 14, 2019 at 03:31:14PM +0100, Marek Szyprowski wrote:
+>> MCPM does a soft reset of the CPUs and uses common cpu_resume() routine to
+>> perform low-level platform initialization. This results in a try to install
+>> HYP stubs for the second time for each CPU and results in false HYP/SVC
+>> mode mismatch detection. The HYP stubs are already installed at the
+>> beginning of the kernel initialization on the boot CPU (head.S) or in the
+>> secondary_startup() for other CPUs. To fix this issue MCPM code should use
+>> a cpu_resume() routine without HYP stubs installation.
+>>
+>> This change fixes HYP/SVC mode mismatch on Samsung Exynos5422-based Odroid
+>> XU3/XU4/HC1 boards.
+>>
+>> Fixes: 3721924c8154 ("ARM: 8081/1: MCPM: provide infrastructure to allow for MCPM loopback")
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>>  arch/arm/common/mcpm_entry.c   |  2 +-
+>>  arch/arm/include/asm/suspend.h |  1 +
+>>  arch/arm/kernel/sleep.S        | 11 +++++++++++
+>>  3 files changed, 13 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm/common/mcpm_entry.c b/arch/arm/common/mcpm_entry.c
+>> index ad574d20415c..1b1b82b37ce0 100644
+>> --- a/arch/arm/common/mcpm_entry.c
+>> +++ b/arch/arm/common/mcpm_entry.c
+>> @@ -381,7 +381,7 @@ static int __init nocache_trampoline(unsigned long _arg)
+>>  	unsigned int cluster = MPIDR_AFFINITY_LEVEL(mpidr, 1);
+>>  	phys_reset_t phys_reset;
+>>  
+>> -	mcpm_set_entry_vector(cpu, cluster, cpu_resume);
+>> +	mcpm_set_entry_vector(cpu, cluster, cpu_resume_no_hyp);
+>>  	setup_mm_for_reboot();
+>>  
+>>  	__mcpm_cpu_going_down(cpu, cluster);
+>> diff --git a/arch/arm/include/asm/suspend.h b/arch/arm/include/asm/suspend.h
+>> index 452bbdcbcc83..506314265c6f 100644
+>> --- a/arch/arm/include/asm/suspend.h
+>> +++ b/arch/arm/include/asm/suspend.h
+>> @@ -10,6 +10,7 @@ struct sleep_save_sp {
+>>  };
+>>  
+>>  extern void cpu_resume(void);
+>> +extern void cpu_resume_no_hyp(void);
+>>  extern void cpu_resume_arm(void);
+>>  extern int cpu_suspend(unsigned long, int (*)(unsigned long));
+>>  
+>> diff --git a/arch/arm/kernel/sleep.S b/arch/arm/kernel/sleep.S
+>> index a8257fc9cf2a..b856d183691e 100644
+>> --- a/arch/arm/kernel/sleep.S
+>> +++ b/arch/arm/kernel/sleep.S
+>> @@ -122,6 +122,11 @@ ENDPROC(cpu_resume_after_mmu)
+>>  
+>>  #ifdef CONFIG_MMU
+>>  	.arm
+>> +#ifdef CONFIG_MCPM
+>> +ENTRY(cpu_resume_no_hyp)
+>> +ARM_BE8(setend be)			@ ensure we are in BE mode
+>> +	b	0f
+> What if the kernel is built for Thumb?  You'll be branching to thumb
+> code at the '0' label - don't you need to do the same that
+> cpu_resume_arm does below?
+
+Maybe yes, but I don't get how did it work so far. Current version of
+the cpu_resume() doesn't check the CPU ARM/Thumb mode. Such version is
+used by MCPM, blSwitcher and various suspend/resume code from
+arch/arm/mach-*. The mode check is in the cpu_resume_arm(), which is
+used only by two SoC drivers in drivers/soc). Does it mean that most of
+the current cpu_resume() users are wrong?
+
+I've didn't try building Thumb kernel so far to check that.
+
+>> +#endif
+>>  ENTRY(cpu_resume_arm)
+>>   THUMB(	badr	r9, 1f		)	@ Kernel is entered in ARM.
+>>   THUMB(	bx	r9		)	@ If this is a Thumb-2 kernel,
+>> @@ -135,6 +140,9 @@ ARM_BE8(setend be)			@ ensure we are in BE mode
+>>  	bl	__hyp_stub_install_secondary
+>>  #endif
+>>  	safe_svcmode_maskall r1
+>> +#ifdef CONFIG_MCPM
+>> +0:
+>> +#endif
+> You don't need to conditionalise this.  I'd also use a symbol rather
+> than a numeric label given that safe_svcmode_maskall is a macro that
+> also uses numeric labels.
+
+Okay.
+
+>>  	mov	r1, #0
+>>  	ALT_SMP(mrc p15, 0, r0, c0, c0, 5)
+>>  	ALT_UP_B(1f)
+>> @@ -163,6 +171,9 @@ ENDPROC(cpu_resume)
+>>  
+>>  #ifdef CONFIG_MMU
+>>  ENDPROC(cpu_resume_arm)
+>> +#endif
+>> +#ifdef CONFIG_MCPM
+>> +ENDPROC(cpu_resume_no_hyp)
+>>  #endif
+>>  
+>>  	.align 2
+>> -- 
+>> 2.17.1
 
 Best regards
-Uwe
-
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
