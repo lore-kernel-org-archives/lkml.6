@@ -2,202 +2,116 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26940C4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 03:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90561C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 03:47:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DED9720836
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 03:39:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E89F21925
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 03:47:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="zHNn4JAs"
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="yqwZX+ej"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730655AbfBODjL (ORCPT
+        id S1730794AbfBODrZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 22:39:11 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:40118 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbfBODjL (ORCPT
+        Thu, 14 Feb 2019 22:47:25 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:41589 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728870AbfBODrY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 22:39:11 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1F3cjb2010008;
-        Fri, 15 Feb 2019 03:39:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=OxLfLn0OqCm+09E7Z+vz/hjCwnW23QMenkiBNtawLqM=;
- b=zHNn4JAsxKqIbz+6xVTSM6TksKnHLp8QC1U0WDnvdczgokQp2InwSkTjvJ3lC+U4zrp8
- G6MGWqxjkw6/yo7rBb9OO9OO4Paqt03N/YO+EMs7BmADRdQHkaKbsHwgh8BCAFhsIZCH
- hAhN1qQywrNP8VbSJpq3nGHLfFgkOlGrGBqSgmHGskanU0ad1kWyRMquT0vkQZxHsKp7
- HhgRLiEOcD/27k/9JohsWSkBl7snkQVZZcC8CDk3w1Cof2Cw3k3L74MGKMFwedIk8BmH
- fQdGoxH1S6FZxq7qszztr4+h4js5jCHm7Uy++S7+++phcOujsk3rzTlBmNqCc4MbQfZ1 bg== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2qhrekuge3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Feb 2019 03:39:05 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1F3d4PO006075
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Feb 2019 03:39:04 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1F3d3p4006030;
-        Fri, 15 Feb 2019 03:39:03 GMT
-Received: from [10.182.71.8] (/10.182.71.8)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 15 Feb 2019 03:39:03 +0000
-Subject: Re: [PATCH V2] blk-mq: insert rq with DONTPREP to hctx dispatch list
- when requeue
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Damien Le Moal <damien.lemoal@wdc.com>
-References: <1549936585-1702-1-git-send-email-jianchao.w.wang@oracle.com>
- <20190215020049.GA21045@ming.t460p>
- <07260476-307a-efdc-63aa-95ea0a3e7489@oracle.com>
- <20190215031401.GD21045@ming.t460p>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <85432d26-22de-fa87-67d3-4292f780d5aa@oracle.com>
-Date:   Fri, 15 Feb 2019 11:41:25 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 14 Feb 2019 22:47:24 -0500
+Received: by mail-qt1-f193.google.com with SMTP id v10so9466205qtp.8
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 19:47:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wE+3Ji0lIUUtQUWa2u/PMxfoCPxtSZUNLG8hQWwDVrU=;
+        b=yqwZX+ejnGADwhi7L7vco3QTMSii8Q3pAbe5w6fs/vt1zjo0KwozAapaVPNC7EFUgI
+         oYFkb9JNH5woya8yeq9RxISahyqKFMzo1eTImHyv4ggkOR8jr3ehndWm2acJJZZqKnmr
+         lT6SOWdnCiVpt9pjFq25YrjphGxEphPj6GMp8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wE+3Ji0lIUUtQUWa2u/PMxfoCPxtSZUNLG8hQWwDVrU=;
+        b=Z5ScShhD9RPeOmEb/orbuAGv1/1hqvSYLhF/adW7ou2KTvHlZjhBFFXv9GpBgrK8fq
+         fcY7RWOr69yIB+gELmn5RuPQ3g/3vZUC8l90Tb53oymZQcPr6trUdMRC516j40M83J0C
+         r0ydOC1biaB4SnbA+uG5YKZj6Yt2qr4BR45UWIrsdjWcFawYR3VjcDNBqqG2ff77Bak5
+         qozF3Ha+3kckq11IvvnHHhmj8ttMTrPthIs8s2c8BUcsK0DFkJ8BB7NPa8zXXudZyBVp
+         +zeTCc9I9XFMstrekCP+nFngiR/slhELCrxOH8emNjmopXF1FlShGSeQdhcCKUv39i1B
+         FA9w==
+X-Gm-Message-State: AHQUAuY3GvI4FqGsnZmtvfwfCEp7CgYcwo2FxB96feHjCiBFf6QXPu/2
+        54BY8GciAqh1tvMFqxsjECrLaw==
+X-Google-Smtp-Source: AHgI3IZQZ/AKEZo5PCXNIgmeZoyI0NZJRsaIVrpe/VADmtKmtUI+/Sfdftdhxy52stkLdupqj6vXPA==
+X-Received: by 2002:ac8:67d3:: with SMTP id r19mr5786483qtp.196.1550202442794;
+        Thu, 14 Feb 2019 19:47:22 -0800 (PST)
+Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
+        by smtp.gmail.com with ESMTPSA id o5sm2172644qkb.66.2019.02.14.19.47.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 14 Feb 2019 19:47:21 -0800 (PST)
+Date:   Thu, 14 Feb 2019 22:47:20 -0500
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, ast@kernel.org,
+        atishp04@gmail.com, dancol@google.com,
+        Dan Williams <dan.j.williams@intel.com>,
+        gregkh@linuxfoundation.org, Jonathan Corbet <corbet@lwn.net>,
+        karim.yaghmour@opersys.com, Kees Cook <keescook@chromium.org>,
+        kernel-team@android.com, linux-doc@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Manoj Rao <linux@manojrajarao.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        paulmck@linux.vnet.ibm.com,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        rdunlap@infradead.org, rostedt@goodmis.org,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, yhs@fb.com
+Subject: Re: [PATCH v2 1/2] Provide in-kernel headers for making it easy to
+ extend the kernel
+Message-ID: <20190215034720.GA230433@google.com>
+References: <20190211143600.15021-1-joel@joelfernandes.org>
+ <20190215031926.ljzluy2cfxp64u6o@ast-mbp>
 MIME-Version: 1.0
-In-Reply-To: <20190215031401.GD21045@ming.t460p>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9167 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902150024
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190215031926.ljzluy2cfxp64u6o@ast-mbp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Feb 14, 2019 at 07:19:29PM -0800, Alexei Starovoitov wrote:
+> On Mon, Feb 11, 2019 at 09:35:59AM -0500, Joel Fernandes (Google) wrote:
+> > Introduce in-kernel headers and other artifacts which are made available
+> > as an archive through proc (/proc/kheaders.txz file). This archive makes
+> > it possible to build kernel modules, run eBPF programs, and other
+> > tracing programs that need to extend the kernel for tracing purposes
+> > without any dependency on the file system having headers and build
+> > artifacts.
+> > 
+> > On Android and embedded systems, it is common to switch kernels but not
+> > have kernel headers available on the file system. Raw kernel headers
+> > also cannot be copied into the filesystem like they can be on other
+> > distros, due to licensing and other issues. There's no linux-headers
+> > package on Android. Further once a different kernel is booted, any
+> > headers stored on the file system will no longer be useful. By storing
+> > the headers as a compressed archive within the kernel, we can avoid these
+> > issues that have been a hindrance for a long time.
+> 
+> The set looks good to me and since the main use case is building bpf progs
+> I can route it via bpf-next tree if there are no objections.
+> Masahiro, could you please ack it?
+> 
 
+Yes, eBPF is one of the usecases. After this, I am also planning to send
+patches to BCC so that it can use this feature when compiling C to eBPF.
 
-On 2/15/19 11:14 AM, Ming Lei wrote:
-> On Fri, Feb 15, 2019 at 10:34:39AM +0800, jianchao.wang wrote:
->> Hi Ming
->>
->> Thanks for your kindly response.
->>
->> On 2/15/19 10:00 AM, Ming Lei wrote:
->>> On Tue, Feb 12, 2019 at 09:56:25AM +0800, Jianchao Wang wrote:
->>>> When requeue, if RQF_DONTPREP, rq has contained some driver
->>>> specific data, so insert it to hctx dispatch list to avoid any
->>>> merge. Take scsi as example, here is the trace event log (no
->>>> io scheduler, because RQF_STARTED would prevent merging),
->>>>
->>>>    kworker/0:1H-339   [000] ...1  2037.209289: block_rq_insert: 8,0 R 4096 () 32768 + 8 [kworker/0:1H]
->>>> scsi_inert_test-1987  [000] ....  2037.220465: block_bio_queue: 8,0 R 32776 + 8 [scsi_inert_test]
->>>> scsi_inert_test-1987  [000] ...2  2037.220466: block_bio_backmerge: 8,0 R 32776 + 8 [scsi_inert_test]
->>>>    kworker/0:1H-339   [000] ....  2047.220913: block_rq_issue: 8,0 R 8192 () 32768 + 16 [kworker/0:1H]
->>>> scsi_inert_test-1996  [000] ..s1  2047.221007: block_rq_complete: 8,0 R () 32768 + 8 [0]
->>>> scsi_inert_test-1996  [000] .Ns1  2047.221045: block_rq_requeue: 8,0 R () 32776 + 8 [0]
->>>>    kworker/0:1H-339   [000] ...1  2047.221054: block_rq_insert: 8,0 R 4096 () 32776 + 8 [kworker/0:1H]
->>>>    kworker/0:1H-339   [000] ...1  2047.221056: block_rq_issue: 8,0 R 4096 () 32776 + 8 [kworker/0:1H]
->>>> scsi_inert_test-1986  [000] ..s1  2047.221119: block_rq_complete: 8,0 R () 32776 + 8 [0]
->>>>
->>>> (32768 + 8) was requeued by scsi_queue_insert and had RQF_DONTPREP.
->>>
->>> scsi_mq_requeue_cmd() does uninit the request before requeuing, but
->>> __scsi_queue_insert doesn't do that.
->>
->> Yes.
->> scsi layer use both of them.
->>
->>>
->>>
->>>> Then it was merged with (32776 + 8) and issued. Due to RQF_DONTPREP,
->>>> the sdb only contained the part of (32768 + 8), then only that part
->>>> was completed. The lucky thing was that scsi_io_completion detected
->>>> it and requeued the remaining part. So we didn't get corrupted data.
->>>> However, the requeue of (32776 + 8) is not expected.
->>>>
->>>> Suggested-by: Jens Axboe <axboe@kernel.dk>
->>>> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
->>>> ---
->>>> V2:
->>>>  - refactor the code based on Jens' suggestion
->>>>
->>>>  block/blk-mq.c | 12 ++++++++++--
->>>>  1 file changed, 10 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/block/blk-mq.c b/block/blk-mq.c
->>>> index 8f5b533..9437a5e 100644
->>>> --- a/block/blk-mq.c
->>>> +++ b/block/blk-mq.c
->>>> @@ -737,12 +737,20 @@ static void blk_mq_requeue_work(struct work_struct *work)
->>>>  	spin_unlock_irq(&q->requeue_lock);
->>>>  
->>>>  	list_for_each_entry_safe(rq, next, &rq_list, queuelist) {
->>>> -		if (!(rq->rq_flags & RQF_SOFTBARRIER))
->>>> +		if (!(rq->rq_flags & (RQF_SOFTBARRIER | RQF_DONTPREP)))
->>>>  			continue;
->>>>  
->>>>  		rq->rq_flags &= ~RQF_SOFTBARRIER;
->>>>  		list_del_init(&rq->queuelist);
->>>> -		blk_mq_sched_insert_request(rq, true, false, false);
->>>> +		/*
->>>> +		 * If RQF_DONTPREP, rq has contained some driver specific
->>>> +		 * data, so insert it to hctx dispatch list to avoid any
->>>> +		 * merge.
->>>> +		 */
->>>> +		if (rq->rq_flags & RQF_DONTPREP)
->>>> +			blk_mq_request_bypass_insert(rq, false);
->>>> +		else
->>>> +			blk_mq_sched_insert_request(rq, true, false, false);
->>>>  	}
->>>
->>> Suppose it is one WRITE request to zone device, this way might break
->>> the order.
->>
->> I'm not sure about this.
->> Since the request is dispatched, it should hold and zone write lock.
->> And also mq-deadline doesn't have a .requeue_request, zone write lock
->> wouldn't be released during requeue.
-> 
-> You are right, looks I misunderstood the zone write lock, sorry for
-> the noise.
-> 
->>
->> IMO, this requeue action is similar with what blk_mq_dispatch_rq_list does.
->> The latter one also issues the request to underlying driver and requeue rqs
->> on dispatch_list if get BLK_STS_SOURCE or BLK_STS_DEV_SOURCE.
->>
->> And in addition, RQF_STARTED is set by io scheduler .dispatch_request and
->> it could be stop merging as RQF_NOMERGE_FLAGS contains it. 
-> 
-> Yes, that is correct.
-> 
-> Then another question is:
-> 
-> Why don't always requeue request in this way so that it can be simplified
-> into one code path?
-> 
-> 1) in block legacy code, blk_requeue_request() doesn't insert the
-> request into scheduler queue, and simply put the request into
-> q->queue_head.
-> 
-> 2) blk_mq_requeue_request() is basically run from completion context for
-> handling very unusual cases(partial completion, error, timeout, ...),
-> and there shouldn't have benefit to schedule/merge requeued request.
+Thanks!
 
-Actually, I'm also confused about questions above when I looked into the code before :)
+ - Joel
 
-> 
-> 3) RQF_DONTPREP is like a driver private flag, and read/write by driver
-> only before this patch.
-
-Yes, indeed.
-And it tells us there is driver specific data in the request.
-
-Thanks
-Jianchao
