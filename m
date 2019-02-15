@@ -2,29 +2,29 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 043EDC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:03:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 270E0C4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:03:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7EAB222E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:03:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6161222DF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:03:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="llx8nrNY"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="g99XmDGv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393116AbfBOWDt (ORCPT
+        id S2404155AbfBOWDx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 17:03:49 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:13541 "EHLO
+        Fri, 15 Feb 2019 17:03:53 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:13533 "EHLO
         hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393088AbfBOWDt (ORCPT
+        with ESMTP id S1728776AbfBOWDu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 17:03:49 -0500
+        Fri, 15 Feb 2019 17:03:50 -0500
 Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c6737470002>; Fri, 15 Feb 2019 14:03:51 -0800
+        id <B5c6737470001>; Fri, 15 Feb 2019 14:03:51 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate102.nvidia.com (PGP Universal service);
   Fri, 15 Feb 2019 14:03:48 -0800
@@ -45,192 +45,251 @@ CC:     Dave Hansen <dave.hansen@linux.intel.com>,
         Mark Hairgrove <mhairgrove@nvidia.com>,
         Nitin Gupta <nigupta@nvidia.com>,
         David Nellans <dnellans@nvidia.com>, Zi Yan <ziy@nvidia.com>
-Subject: [RFC PATCH 02/31] mm: migrate: Add THP exchange support.
-Date:   Fri, 15 Feb 2019 14:03:05 -0800
-Message-ID: <20190215220334.29298-3-ziy@nvidia.com>
+Subject: [RFC PATCH 00/31] Generating physically contiguous memory after page allocation
+Date:   Fri, 15 Feb 2019 14:03:03 -0800
+Message-ID: <20190215220334.29298-1-ziy@nvidia.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190215220334.29298-1-ziy@nvidia.com>
-References: <20190215220334.29298-1-ziy@nvidia.com>
 MIME-Version: 1.0
 X-Originating-IP: [172.20.13.39]
 X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
  HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1550268231; bh=AK8H5tpJ34j47t7xdPUWcNrKavgktr5lUYER4OwE6o4=;
+        t=1550268231; bh=PwAD888+nxx/Wnfyu0U2CK68HaihH5P14l67i4Nat7o=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:X-Originating-IP:
-         X-ClientProxiedBy:Content-Transfer-Encoding:Content-Type;
-        b=llx8nrNYNyWAE9nMxnvaGVyiU6nNWXM9c63gW31afUQku2afncl5z2iFqFdrFKAdW
-         MBkHBNmhaxoQw2LCootR2cHJ0kqgsQO0OjfABw7A9iuSucSndYl0ZcSfKg56AVzJSv
-         NKy87FTDJ2owxBMBT14yW9N0n3n2ZYfK+1oBB5Huf9R6HCm4ey7MxK5XKvIiE0BQzh
-         gJW0b/b+Jx2Xoen9iWY0845hNMm84tuHAgqHha9mh4qdQO3lawBmjTTo30uAygaKu8
-         iMAtqmtpUcv784RnR4Nk5i/nC0PqIMWgPxucrbFc4rd7/KTQk3FlOPvCopGP1yFkwX
-         VnNhO1hCqWkTw==
+         MIME-Version:X-Originating-IP:X-ClientProxiedBy:Content-Type:
+         Content-Transfer-Encoding;
+        b=g99XmDGvWJMJ51nDd2p1OlD8qzNJGklMnV68ZO7Hv8u4+Em+7TzNydsNiIk7UTRbR
+         buV2brDUEeLBn3z9xYshJo686JbO7x9Ut2T/YOUkGh1BJgAFeik2N7mhgpWx24rEJY
+         qcu5JeNDifh1t4ePu4zKi3zHcuJCdyrYangX19+U1l/iPTxHVRkJydaKb0unpLbEIk
+         U894BCIeGGR7qBadeIJqQJXlbJmMqzp7RiWNBdohDcQLbaHa1FYiRfMogHf5AEqa2j
+         6NqvFeUjSlPGDNr7SdUOEYeRPRZNeUHJxVi15UwG8nQtifStwBlwL5hAKg9L1ycQ4u
+         +dZdsdASgWEcQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for exchange between two THPs.
+Hi all,
 
-Signed-off-by: Zi Yan <ziy@nvidia.com>
----
- mm/exchange.c | 47 ++++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 38 insertions(+), 9 deletions(-)
+This patchset produces physically contiguous memory by moving in-use pages
+without allocating any new pages. It targets two scenarios that complements
+khugepaged use cases: 1) avoiding page reclaim and memory compaction when t=
+he
+system is under memory pressure because this patchset does not allocate any=
+ new
+pages, 2) generating pages larger than 2^MAX_ORDER without changing the bud=
+dy
+allocator.
 
-diff --git a/mm/exchange.c b/mm/exchange.c
-index a607348cc6f4..8cf286fc0f10 100644
---- a/mm/exchange.c
-+++ b/mm/exchange.c
-@@ -48,7 +48,8 @@ struct page_flags {
- 	unsigned int page_swapcache:1;
- 	unsigned int page_writeback:1;
- 	unsigned int page_private:1;
--	unsigned int __pad:3;
-+	unsigned int page_doublemap:1;
-+	unsigned int __pad:2;
- };
-=20
-=20
-@@ -125,20 +126,23 @@ static void exchange_huge_page(struct page *dst, stru=
-ct page *src)
- static void exchange_page_flags(struct page *to_page, struct page *from_pa=
-ge)
- {
- 	int from_cpupid, to_cpupid;
--	struct page_flags from_page_flags, to_page_flags;
-+	struct page_flags from_page_flags =3D {0}, to_page_flags =3D {0};
- 	struct mem_cgroup *to_memcg =3D page_memcg(to_page),
- 					  *from_memcg =3D page_memcg(from_page);
-=20
- 	from_cpupid =3D page_cpupid_xchg_last(from_page, -1);
-=20
--	from_page_flags.page_error =3D TestClearPageError(from_page);
-+	from_page_flags.page_error =3D PageError(from_page);
-+	if (from_page_flags.page_error)
-+		ClearPageError(from_page);
- 	from_page_flags.page_referenced =3D TestClearPageReferenced(from_page);
- 	from_page_flags.page_uptodate =3D PageUptodate(from_page);
- 	ClearPageUptodate(from_page);
- 	from_page_flags.page_active =3D TestClearPageActive(from_page);
- 	from_page_flags.page_unevictable =3D TestClearPageUnevictable(from_page);
- 	from_page_flags.page_checked =3D PageChecked(from_page);
--	ClearPageChecked(from_page);
-+	if (from_page_flags.page_checked)
-+		ClearPageChecked(from_page);
- 	from_page_flags.page_mappedtodisk =3D PageMappedToDisk(from_page);
- 	ClearPageMappedToDisk(from_page);
- 	from_page_flags.page_dirty =3D PageDirty(from_page);
-@@ -148,18 +152,22 @@ static void exchange_page_flags(struct page *to_page,=
- struct page *from_page)
- 	clear_page_idle(from_page);
- 	from_page_flags.page_swapcache =3D PageSwapCache(from_page);
- 	from_page_flags.page_writeback =3D test_clear_page_writeback(from_page);
-+	from_page_flags.page_doublemap =3D PageDoubleMap(from_page);
-=20
-=20
- 	to_cpupid =3D page_cpupid_xchg_last(to_page, -1);
-=20
--	to_page_flags.page_error =3D TestClearPageError(to_page);
-+	to_page_flags.page_error =3D PageError(to_page);
-+	if (to_page_flags.page_error)
-+		ClearPageError(to_page);
- 	to_page_flags.page_referenced =3D TestClearPageReferenced(to_page);
- 	to_page_flags.page_uptodate =3D PageUptodate(to_page);
- 	ClearPageUptodate(to_page);
- 	to_page_flags.page_active =3D TestClearPageActive(to_page);
- 	to_page_flags.page_unevictable =3D TestClearPageUnevictable(to_page);
- 	to_page_flags.page_checked =3D PageChecked(to_page);
--	ClearPageChecked(to_page);
-+	if (to_page_flags.page_checked)
-+		ClearPageChecked(to_page);
- 	to_page_flags.page_mappedtodisk =3D PageMappedToDisk(to_page);
- 	ClearPageMappedToDisk(to_page);
- 	to_page_flags.page_dirty =3D PageDirty(to_page);
-@@ -169,6 +177,7 @@ static void exchange_page_flags(struct page *to_page, s=
-truct page *from_page)
- 	clear_page_idle(to_page);
- 	to_page_flags.page_swapcache =3D PageSwapCache(to_page);
- 	to_page_flags.page_writeback =3D test_clear_page_writeback(to_page);
-+	to_page_flags.page_doublemap =3D PageDoubleMap(to_page);
-=20
- 	/* set to_page */
- 	if (from_page_flags.page_error)
-@@ -195,6 +204,8 @@ static void exchange_page_flags(struct page *to_page, s=
-truct page *from_page)
- 		set_page_young(to_page);
- 	if (from_page_flags.page_is_idle)
- 		set_page_idle(to_page);
-+	if (from_page_flags.page_doublemap)
-+		SetPageDoubleMap(to_page);
-=20
- 	/* set from_page */
- 	if (to_page_flags.page_error)
-@@ -221,6 +232,8 @@ static void exchange_page_flags(struct page *to_page, s=
-truct page *from_page)
- 		set_page_young(from_page);
- 	if (to_page_flags.page_is_idle)
- 		set_page_idle(from_page);
-+	if (to_page_flags.page_doublemap)
-+		SetPageDoubleMap(from_page);
-=20
- 	/*
- 	 * Copy NUMA information to the new page, to prevent over-eager
-@@ -280,6 +293,7 @@ static int exchange_page_move_mapping(struct address_sp=
-ace *to_mapping,
-=20
- 	VM_BUG_ON_PAGE(to_mapping !=3D page_mapping(to_page), to_page);
- 	VM_BUG_ON_PAGE(from_mapping !=3D page_mapping(from_page), from_page);
-+	VM_BUG_ON(PageCompound(from_page) !=3D PageCompound(to_page));
-=20
- 	if (!to_mapping) {
- 		/* Anonymous page without mapping */
-@@ -600,7 +614,6 @@ static int unmap_and_exchange(struct page *from_page,
- 	to_mapping =3D to_page->mapping;
- 	from_index =3D from_page->index;
- 	to_index =3D to_page->index;
--
- 	/*
- 	 * Corner case handling:
- 	 * 1. When a new swap-cache page is read into, it is added to the LRU
-@@ -691,6 +704,23 @@ static int unmap_and_exchange(struct page *from_page,
- 	return rc;
- }
-=20
-+static bool can_be_exchanged(struct page *from, struct page *to)
-+{
-+	if (PageCompound(from) !=3D PageCompound(to))
-+		return false;
-+
-+	if (PageHuge(from) !=3D PageHuge(to))
-+		return false;
-+
-+	if (PageHuge(from) || PageHuge(to))
-+		return false;
-+
-+	if (compound_order(from) !=3D compound_order(to))
-+		return false;
-+
-+	return true;
-+}
-+
- /*
-  * Exchange pages in the exchange_list
-  *
-@@ -751,9 +781,8 @@ static int exchange_pages(struct list_head *exchange_li=
-st,
- 			continue;
- 		}
-=20
--		/* TODO: compound page not supported */
- 		/* to_page can be file-backed page  */
--		if (PageCompound(from_page) ||
-+		if (!can_be_exchanged(from_page, to_page) ||
- 			page_mapping(from_page)
- 			) {
- 			++failed;
---=20
+To demonstrate its use, I add very basic 1GB THP support and enable promoti=
+ng
+512 2MB THPs to a 1GB THP in my patchset. Promoting 512 4KB pages to a 2MB
+THP is also implemented.
+
+The patches are on top of v5.0-rc5. They are posted as part of my upcoming
+LSF/MM proposal.
+
+Motivation=C2=A0
+----=C2=A0
+
+The goal of this patchset is to provide alternative way of generating physi=
+cally
+contiguous memory and making it available as arbitrary sized large pages. T=
+his
+patchset generates physically contiguous memory/arbitrary size pages after =
+pages
+are allocated by moving virtually-contiguous pages to become physically
+contiguous at any size, thus it does not require changes to memory allocato=
+rs.
+On the other hand, it works only for moveable pages, so it also faces the s=
+ame
+fragmentation issues as memory compaction, i.e., if non-moveable pages spre=
+ad
+across the entire memory, this patchset can only generate contiguity betwee=
+n
+any two non-moveable pages.=C2=A0
+
+Large pages and physically contiguous memory are important to devices, such=
+ as
+GPUs, FPGAs, NICs and RDMA controllers, because they can often achieve bett=
+er
+performance when operating on large pages. The same can be said of CPU
+performance, of course, but there is an important difference: GPUs and
+high-throughput devices often take a more severe performance hit, in the ev=
+ent
+of a TLB miss and subsequent page table walks, as compared to a CPU. The ef=
+fect
+is sufficiently large that such devices *really* want a highly reliable way=
+ to
+allocate large pages to minimize the number of potential TLB misses and the=
+ time
+spent on the induced page table walks.=C2=A0
+
+Vendors (like Oracle, Mellanox, IBM, NVIDIA) are interested in generating
+physically contiguous memory beyond THP sizes and looking for solutions [1]=
+,[2],[3].
+This patchset provides an alternative approach, compared to allocating
+physically contiguous memory at page allocation time, to generating physica=
+lly
+contiguous memory after pages are allocated. This approach can avoid page
+reclaim and memory compaction, which happen during the process of page
+allocation, but still produces comparable physically contiguous memory.=C2=
+=A0
+
+In terms of THPs, it helps, but we are interested in even larger contiguous
+ranges (or page size support) to further reduce the address translation ove=
+rheads.
+With this patchset, we can generate pages larger than PMD-level THPs withou=
+t
+requiring MAX_ORDER changes in the buddy allocators.=C2=A0
+
+
+Patch structure=C2=A0
+----=C2=A0
+
+The patchset I developed to generate physically contiguous memory/arbitrary
+sized pages merely moves pages around. There are three components in this
+patchset:
+
+1) a new page migration mechanism, called exchange pages, that exchanges th=
+e
+content of two in-use pages instead of performing two back-to-back page
+migration. It saves on overheads and avoids page reclaim and memory compact=
+ion
+in the page allocation path, although it is not strictly required if enough
+free memory is available in the system.
+
+2) a new mechanism that utilizes both page migration and exchange pages to
+produce physically contiguous memory/arbitrary sized pages without allocati=
+ng
+any new pages, unlike what khugepaged does. It works on per-VMA basis, crea=
+ting
+physically contiguous memory out of each VMA, which is virtually contiguous=
+.
+A simple range tree is used to ensure no two VMAs are overlapping with each
+other in the physical address space.
+
+3) a use case of the new physically contiguous memory producing mechanism t=
+hat
+generates 1GB THPs by migrating and exchanging pages and promoting 512
+contiguous 2MB THPs to a 1GB THP, although even larger physically contiguou=
+s
+memory ranges can be generated. The 1GB THP implement is very basic, which =
+can
+handle 1GB THP faults when buddy allocator is modified to allocate 1GB page=
+s,
+support 1GB THP split to 2MB THP and in-place promotion from 2MB THP to 1GB=
+ THP,
+and PMD/PTE-mapped 1GB THP. These are not fully tested.
+
+
+[1] https://lwn.net/Articles/736170/=C2=A0
+[2] https://lwn.net/Articles/753167/=C2=A0
+[3] https://blogs.nvidia.com/blog/2018/06/08/worlds-fastest-exascale-ai-sup=
+ercomputer-summit/=C2=A0
+
+Zi Yan (31):
+  mm: migrate: Add exchange_pages to exchange two lists of pages.
+  mm: migrate: Add THP exchange support.
+  mm: migrate: Add tmpfs exchange support.
+  mm: add mem_defrag functionality.
+  mem_defrag: split a THP if either src or dst is THP only.
+  mm: Make MAX_ORDER configurable in Kconfig for buddy allocator.
+  mm: deallocate pages with order > MAX_ORDER.
+  mm: add pagechain container for storing multiple pages.
+  mm: thp: 1GB anonymous page implementation.
+  mm: proc: add 1GB THP kpageflag.
+  mm: debug: print compound page order in dump_page().
+  mm: stats: Separate PMD THP and PUD THP stats.
+  mm: thp: 1GB THP copy on write implementation.
+  mm: thp: handling 1GB THP reference bit.
+  mm: thp: add 1GB THP split_huge_pud_page() function.
+  mm: thp: check compound_mapcount of PMD-mapped PUD THPs at free time.
+  mm: thp: split properly PMD-mapped PUD THP to PTE-mapped PUD THP.
+  mm: page_vma_walk: teach it about PMD-mapped PUD THP.
+  mm: thp: 1GB THP support in try_to_unmap().
+  mm: thp: split 1GB THPs at page reclaim.
+  mm: thp: 1GB zero page shrinker.
+  mm: thp: 1GB THP follow_p*d_page() support.
+  mm: support 1GB THP pagemap support.
+  sysctl: add an option to only print the head page virtual address.
+  mm: thp: add a knob to enable/disable 1GB THPs.
+  mm: thp: promote PTE-mapped THP to PMD-mapped THP.
+  mm: thp: promote PMD-mapped PUD pages to PUD-mapped PUD pages.
+  mm: vmstats: add page promotion stats.
+  mm: madvise: add madvise options to split PMD and PUD THPs.
+  mm: mem_defrag: thp: PMD THP and PUD THP in-place promotion support.
+  sysctl: toggle to promote PUD-mapped 1GB THP or not.
+
+ arch/x86/Kconfig                       |   15 +
+ arch/x86/entry/syscalls/syscall_64.tbl |    1 +
+ arch/x86/include/asm/pgalloc.h         |   69 +
+ arch/x86/include/asm/pgtable.h         |   20 +
+ arch/x86/include/asm/sparsemem.h       |    4 +-
+ arch/x86/mm/pgtable.c                  |   38 +
+ drivers/base/node.c                    |    3 +
+ fs/exec.c                              |    4 +
+ fs/proc/meminfo.c                      |    2 +
+ fs/proc/page.c                         |    2 +
+ fs/proc/task_mmu.c                     |   47 +-
+ include/asm-generic/pgtable.h          |  110 +
+ include/linux/huge_mm.h                |   78 +-
+ include/linux/khugepaged.h             |    1 +
+ include/linux/ksm.h                    |    5 +
+ include/linux/mem_defrag.h             |   60 +
+ include/linux/memcontrol.h             |    5 +
+ include/linux/mm.h                     |   34 +
+ include/linux/mm_types.h               |    5 +
+ include/linux/mmu_notifier.h           |   13 +
+ include/linux/mmzone.h                 |    1 +
+ include/linux/page-flags.h             |   79 +-
+ include/linux/pagechain.h              |   73 +
+ include/linux/rmap.h                   |   10 +-
+ include/linux/sched/coredump.h         |    4 +
+ include/linux/swap.h                   |    2 +
+ include/linux/syscalls.h               |    3 +
+ include/linux/vm_event_item.h          |   33 +
+ include/uapi/asm-generic/mman-common.h |   15 +
+ include/uapi/linux/kernel-page-flags.h |    2 +
+ kernel/events/uprobes.c                |    4 +-
+ kernel/fork.c                          |   14 +
+ kernel/sysctl.c                        |  101 +-
+ mm/Makefile                            |    2 +
+ mm/compaction.c                        |   17 +-
+ mm/debug.c                             |    8 +-
+ mm/exchange.c                          |  878 +++++++
+ mm/filemap.c                           |    8 +
+ mm/gup.c                               |   60 +-
+ mm/huge_memory.c                       | 3360 ++++++++++++++++++++----
+ mm/hugetlb.c                           |    4 +-
+ mm/internal.h                          |   46 +
+ mm/khugepaged.c                        |    7 +-
+ mm/ksm.c                               |   39 +-
+ mm/madvise.c                           |  121 +
+ mm/mem_defrag.c                        | 1941 ++++++++++++++
+ mm/memcontrol.c                        |   13 +
+ mm/memory.c                            |   55 +-
+ mm/migrate.c                           |   14 +-
+ mm/mmap.c                              |   29 +
+ mm/page_alloc.c                        |  108 +-
+ mm/page_vma_mapped.c                   |  129 +-
+ mm/pgtable-generic.c                   |   78 +-
+ mm/rmap.c                              |  283 +-
+ mm/swap.c                              |   38 +
+ mm/swap_slots.c                        |    2 +
+ mm/swapfile.c                          |    4 +-
+ mm/userfaultfd.c                       |    2 +-
+ mm/util.c                              |    7 +
+ mm/vmscan.c                            |   55 +-
+ mm/vmstat.c                            |   32 +
+ 61 files changed, 7452 insertions(+), 745 deletions(-)
+ create mode 100644 include/linux/mem_defrag.h
+ create mode 100644 include/linux/pagechain.h
+ create mode 100644 mm/exchange.c
+ create mode 100644 mm/mem_defrag.c
+
+--
 2.20.1
 
