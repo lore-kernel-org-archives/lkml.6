@@ -2,208 +2,154 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE1BC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:18:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5939C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:25:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DCD321B1A
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:18:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88B7E21900
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:25:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436687AbfBOLSG (ORCPT
+        id S2394010AbfBOLZV convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 06:18:06 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35480 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729086AbfBOLSD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 06:18:03 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5C3C8C0E012A;
-        Fri, 15 Feb 2019 11:18:02 +0000 (UTC)
-Received: from localhost (ovpn-8-22.pek2.redhat.com [10.72.8.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6D2E95F9C1;
-        Fri, 15 Feb 2019 11:18:01 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>,
-        Omar Sandoval <osandov@fb.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
-        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com,
-        Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH V15 18/18] block: kill BLK_MQ_F_SG_MERGE
-Date:   Fri, 15 Feb 2019 19:13:24 +0800
-Message-Id: <20190215111324.30129-19-ming.lei@redhat.com>
-In-Reply-To: <20190215111324.30129-1-ming.lei@redhat.com>
-References: <20190215111324.30129-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 15 Feb 2019 11:18:02 +0000 (UTC)
+        Fri, 15 Feb 2019 06:25:21 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32893 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726321AbfBOLZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 06:25:21 -0500
+Received: from lhreml708-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id C238539BD91D82D9D915;
+        Fri, 15 Feb 2019 11:25:19 +0000 (GMT)
+Received: from lhreml702-chm.china.huawei.com (10.201.108.51) by
+ lhreml708-cah.china.huawei.com (10.201.108.49) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 15 Feb 2019 11:25:19 +0000
+Received: from lhreml702-chm.china.huawei.com (10.201.108.51) by
+ lhreml702-chm.china.huawei.com (10.201.108.51) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Fri, 15 Feb 2019 11:25:19 +0000
+Received: from lhreml702-chm.china.huawei.com ([10.201.68.197]) by
+ lhreml702-chm.china.huawei.com ([10.201.68.197]) with mapi id 15.01.1591.008;
+ Fri, 15 Feb 2019 11:25:18 +0000
+From:   Salil Mehta <salil.mehta@huawei.com>
+To:     John Garry <john.garry@huawei.com>,
+        Huang Zijiang <huang.zijiang@zte.com.cn>,
+        "Zhuangyuzeng (Yisen)" <yisen.zhuang@huawei.com>
+CC:     "davem@davemloft.net" <davem@davemloft.net>,
+        "lipeng (Y)" <lipeng321@huawei.com>,
+        liuyonglong <liuyonglong@huawei.com>,
+        yuehaibing <yuehaibing@huawei.com>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "wangxi (M)" <wangxi11@huawei.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "wang.yi59@zte.com.cn" <wang.yi59@zte.com.cn>,
+        Linuxarm <linuxarm@huawei.com>
+Subject: RE: [PATCH] net: hns: Fix object reference leaks in
+ hns_dsaf_roce_reset()
+Thread-Topic: [PATCH] net: hns: Fix object reference leaks in
+ hns_dsaf_roce_reset()
+Thread-Index: AQHUxDBEhCVMlZMv6EeAXB5DT3ZcMKXgsKCAgAAGiyA=
+Date:   Fri, 15 Feb 2019 11:25:18 +0000
+Message-ID: <11b3bcdf50ee435587fbfad6043e49bc@huawei.com>
+References: <1550126505-28394-1-git-send-email-huang.zijiang@zte.com.cn>
+ <b20d235c-779c-77bd-e69f-2d63ffd79ec1@huawei.com>
+In-Reply-To: <b20d235c-779c-77bd-e69f-2d63ffd79ec1@huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.202.226.60]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QUEUE_FLAG_NO_SG_MERGE has been killed, so kill BLK_MQ_F_SG_MERGE too.
+> From: John Garry
+> Sent: Friday, February 15, 2019 10:52 AM
+> 
+> On 14/02/2019 06:41, Huang Zijiang wrote:
+> > The of_find_device_by_node() takes a reference to the underlying device
+> > structure, we should release that reference.
+> 
+> of_find_device_by_node() is not called for every path, so is this change proper:
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Omar Sandoval <osandov@fb.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- block/blk-mq-debugfs.c       | 1 -
- drivers/block/loop.c         | 2 +-
- drivers/block/nbd.c          | 2 +-
- drivers/block/rbd.c          | 2 +-
- drivers/block/skd_main.c     | 1 -
- drivers/block/xen-blkfront.c | 2 +-
- drivers/md/dm-rq.c           | 2 +-
- drivers/mmc/core/queue.c     | 3 +--
- drivers/scsi/scsi_lib.c      | 2 +-
- include/linux/blk-mq.h       | 1 -
- 10 files changed, 7 insertions(+), 11 deletions(-)
 
-diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
-index 697d6213c82b..c39247c5ddb6 100644
---- a/block/blk-mq-debugfs.c
-+++ b/block/blk-mq-debugfs.c
-@@ -249,7 +249,6 @@ static const char *const alloc_policy_name[] = {
- static const char *const hctx_flag_name[] = {
- 	HCTX_FLAG_NAME(SHOULD_MERGE),
- 	HCTX_FLAG_NAME(TAG_SHARED),
--	HCTX_FLAG_NAME(SG_MERGE),
- 	HCTX_FLAG_NAME(BLOCKING),
- 	HCTX_FLAG_NAME(NO_SCHED),
- };
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 8ef583197414..3d63ad036398 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1937,7 +1937,7 @@ static int loop_add(struct loop_device **l, int i)
- 	lo->tag_set.queue_depth = 128;
- 	lo->tag_set.numa_node = NUMA_NO_NODE;
- 	lo->tag_set.cmd_size = sizeof(struct loop_cmd);
--	lo->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	lo->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
- 	lo->tag_set.driver_data = lo;
- 
- 	err = blk_mq_alloc_tag_set(&lo->tag_set);
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index 7c9a949e876b..32a7ba1674b7 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -1571,7 +1571,7 @@ static int nbd_dev_add(int index)
- 	nbd->tag_set.numa_node = NUMA_NO_NODE;
- 	nbd->tag_set.cmd_size = sizeof(struct nbd_cmd);
- 	nbd->tag_set.flags = BLK_MQ_F_SHOULD_MERGE |
--		BLK_MQ_F_SG_MERGE | BLK_MQ_F_BLOCKING;
-+		BLK_MQ_F_BLOCKING;
- 	nbd->tag_set.driver_data = nbd;
- 
- 	err = blk_mq_alloc_tag_set(&nbd->tag_set);
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 1e92b61d0bd5..abe9e1c89227 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -3988,7 +3988,7 @@ static int rbd_init_disk(struct rbd_device *rbd_dev)
- 	rbd_dev->tag_set.ops = &rbd_mq_ops;
- 	rbd_dev->tag_set.queue_depth = rbd_dev->opts->queue_depth;
- 	rbd_dev->tag_set.numa_node = NUMA_NO_NODE;
--	rbd_dev->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	rbd_dev->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
- 	rbd_dev->tag_set.nr_hw_queues = 1;
- 	rbd_dev->tag_set.cmd_size = sizeof(struct work_struct);
- 
-diff --git a/drivers/block/skd_main.c b/drivers/block/skd_main.c
-index ab893a7571a2..7d3ad6c22ee5 100644
---- a/drivers/block/skd_main.c
-+++ b/drivers/block/skd_main.c
-@@ -2843,7 +2843,6 @@ static int skd_cons_disk(struct skd_device *skdev)
- 		skdev->sgs_per_request * sizeof(struct scatterlist);
- 	skdev->tag_set.numa_node = NUMA_NO_NODE;
- 	skdev->tag_set.flags = BLK_MQ_F_SHOULD_MERGE |
--		BLK_MQ_F_SG_MERGE |
- 		BLK_ALLOC_POLICY_TO_MQ_FLAG(BLK_TAG_ALLOC_FIFO);
- 	skdev->tag_set.driver_data = skdev;
- 	rc = blk_mq_alloc_tag_set(&skdev->tag_set);
-diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
-index 0ed4b200fa58..d43a5677ccbc 100644
---- a/drivers/block/xen-blkfront.c
-+++ b/drivers/block/xen-blkfront.c
-@@ -977,7 +977,7 @@ static int xlvbd_init_blk_queue(struct gendisk *gd, u16 sector_size,
- 	} else
- 		info->tag_set.queue_depth = BLK_RING_SIZE(info);
- 	info->tag_set.numa_node = NUMA_NO_NODE;
--	info->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	info->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
- 	info->tag_set.cmd_size = sizeof(struct blkif_req);
- 	info->tag_set.driver_data = info;
- 
-diff --git a/drivers/md/dm-rq.c b/drivers/md/dm-rq.c
-index 4eb5f8c56535..b2f8eb2365ee 100644
---- a/drivers/md/dm-rq.c
-+++ b/drivers/md/dm-rq.c
-@@ -527,7 +527,7 @@ int dm_mq_init_request_queue(struct mapped_device *md, struct dm_table *t)
- 	md->tag_set->ops = &dm_mq_ops;
- 	md->tag_set->queue_depth = dm_get_blk_mq_queue_depth();
- 	md->tag_set->numa_node = md->numa_node_id;
--	md->tag_set->flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	md->tag_set->flags = BLK_MQ_F_SHOULD_MERGE;
- 	md->tag_set->nr_hw_queues = dm_get_blk_mq_nr_hw_queues();
- 	md->tag_set->driver_data = md;
- 
-diff --git a/drivers/mmc/core/queue.c b/drivers/mmc/core/queue.c
-index 35cc138b096d..cc19e71c71d4 100644
---- a/drivers/mmc/core/queue.c
-+++ b/drivers/mmc/core/queue.c
-@@ -410,8 +410,7 @@ int mmc_init_queue(struct mmc_queue *mq, struct mmc_card *card)
- 	else
- 		mq->tag_set.queue_depth = MMC_QUEUE_DEPTH;
- 	mq->tag_set.numa_node = NUMA_NO_NODE;
--	mq->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE |
--			    BLK_MQ_F_BLOCKING;
-+	mq->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_BLOCKING;
- 	mq->tag_set.nr_hw_queues = 1;
- 	mq->tag_set.cmd_size = sizeof(struct mmc_queue_req);
- 	mq->tag_set.driver_data = mq;
-diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-index 6d65ac584eba..6cadbe945bdb 100644
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -1899,7 +1899,7 @@ int scsi_mq_setup_tags(struct Scsi_Host *shost)
- 	shost->tag_set.queue_depth = shost->can_queue;
- 	shost->tag_set.cmd_size = cmd_size;
- 	shost->tag_set.numa_node = NUMA_NO_NODE;
--	shost->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	shost->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
- 	shost->tag_set.flags |=
- 		BLK_ALLOC_POLICY_TO_MQ_FLAG(shost->hostt->tag_alloc_policy);
- 	shost->tag_set.driver_data = shost;
-diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
-index 0e030f5f76b6..b0c814bcc7e3 100644
---- a/include/linux/blk-mq.h
-+++ b/include/linux/blk-mq.h
-@@ -218,7 +218,6 @@ struct blk_mq_ops {
- enum {
- 	BLK_MQ_F_SHOULD_MERGE	= 1 << 0,
- 	BLK_MQ_F_TAG_SHARED	= 1 << 1,
--	BLK_MQ_F_SG_MERGE	= 1 << 2,
- 	BLK_MQ_F_BLOCKING	= 1 << 5,
- 	BLK_MQ_F_NO_SCHED	= 1 << 6,
- 	BLK_MQ_F_ALLOC_POLICY_START_BIT = 8,
--- 
-2.9.5
+It looks okay to me and with the suggested device reference is being
+released from every possible error leg in the function. Could you be
+more specific which error path is not being addressed?
 
+
+
+> 	/* find the platform device corresponding to fwnode */
+> 	if (is_of_node(dsaf_fwnode)) {
+> 		pdev = of_find_device_by_node(to_of_node(dsaf_fwnode));
+
+
+This will get the reference to the device, which needs to be
+released later.
+
+
+> 	} else if (is_acpi_device_node(dsaf_fwnode)) {
+> 		pdev = hns_dsaf_find_platform_device(dsaf_fwnode);
+
+
+This will also get the reference to the device when bus_find_device()
+gets called and returns the 'device'. Therefore, this needs to be
+released as well using put_device()
+
+
+
+> 	} else {
+> 		pr_err("fwnode is neither OF or ACPI type\n");
+> 		return -EINVAL;
+> 	}
+> 
+> 	/* check if we were a success in fetching pdev */
+> 	if (!pdev) {
+> 		pr_err("couldn't find platform device for node\n");
+> 		return -ENODEV;
+> 	}
+> 
+> 	/* retrieve the dsaf_device from the driver data */
+> 	dsaf_dev = dev_get_drvdata(&pdev->dev);
+> 	if (!dsaf_dev) {
+> 		dev_err(&pdev->dev, "dsaf_dev is NULL\n");
+> 		return -ENODEV;
+> 	}
+> 
+> John
+
+
+[...]
+
+> > --- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
+> > +++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
+> > @@ -3081,6 +3081,7 @@ int hns_dsaf_roce_reset(struct fwnode_handle *dsaf_fwnode, bool dereset)
+> >  	dsaf_dev = dev_get_drvdata(&pdev->dev);
+> >  	if (!dsaf_dev) {
+> >  		dev_err(&pdev->dev, "dsaf_dev is NULL\n");
+> > +		put_device(&pdev->dev);
+
+
+This looks okay.
+
+
+> >  		return -ENODEV;
+> >  	}
+> >
+> > @@ -3088,6 +3089,7 @@ int hns_dsaf_roce_reset(struct fwnode_handle *dsaf_fwnode, bool dereset)
+> >  	if (AE_IS_VER1(dsaf_dev->dsaf_ver)) {
+> >  		dev_err(dsaf_dev->dev, "%s v1 chip doesn't support RoCE!\n",
+> >  			dsaf_dev->ae_dev.name);
+> > +		put_device(&pdev->dev);
+
+
+This looks okay.
+
+
+Salil.
