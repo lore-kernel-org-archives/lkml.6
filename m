@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B17C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:39:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA10C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:39:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B3ED222DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:39:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D177222DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:39:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="amdDkZu+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rH0kGM+L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393922AbfBOWjq (ORCPT
+        id S2393968AbfBOWjw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 17:39:46 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52247 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393400AbfBOWjm (ORCPT
+        Fri, 15 Feb 2019 17:39:52 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55414 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392391AbfBOWjv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 17:39:42 -0500
-Received: by mail-wm1-f66.google.com with SMTP id m1so11620869wml.2
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 14:39:38 -0800 (PST)
+        Fri, 15 Feb 2019 17:39:51 -0500
+Received: by mail-wm1-f65.google.com with SMTP id r17so11502010wmh.5
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 14:39:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=n1U0Jk5gj8PrQyfZbspCy6KRFTwkTpo9WVTpbHhhCNM=;
-        b=amdDkZu+TABVMaICBXYYxAs0y3KBboD3lWDym8O2eRrfUApz7Sg2klEY/8Ny96i0HP
-         k2iAjVY2YGOlyQ8jHDfmmo8e50ffZlFipvnJHPjC+UfHKJpe0V/ih0mVJFNscEAbNW2A
-         kgVuqgMdWmw5HqHsc6N4RT4hf/GirkKnrXAD6vKcSygP1+LXMwW+9iVtA/g9rZQKqWEn
-         mUxi2HVGh662Zg+6XDbpzxh/OzQBAzuoCqowjpy5e/QIcS639kvCLFw9ixRfG2DKTkgL
-         X7i8Rxc4r4WeCjMr30NwxImyq2kYPsEFQuhi2jeX2vNodf/Wn+gDf+F9hjkEyJdJEaho
-         Uo1Q==
+        bh=4RTb1kL9ozOAOsLV6/OMrAsXCeAhbAi/LU7Q9twqEFA=;
+        b=rH0kGM+LePtQ/kuI7Sev0VbXrl4XchGAzhTLkKD1w/HLRqxQXil8QobzZ1bMEo/6ep
+         CeOXtTJhw79F2ezM7/j90eXcOgqv+KENx/HwEizTnFNPZPdn5CBE0BB4lE+emBq/ri83
+         BcnYMDFoDHcGk82prjOGIiChJnhOUB0eEDNkWjH5CO5JWti1S5ukW05HuX5d84pmDPuX
+         ACfTeZIzN0WAW9Nw2VfHw1Wt0sGD8EOiZjPcA73nxsMSyTvFL0MnTFQarH8LM4yKHJgi
+         EvjpmjQui04wKMlTCp/Imp4+07I4uXFBlDpdm+rJEmEq8EnfXBRSVJJCmK13xOmuiBok
+         cWdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=n1U0Jk5gj8PrQyfZbspCy6KRFTwkTpo9WVTpbHhhCNM=;
-        b=o+3iMXS1dVe0PWkQZpRTVxkQujhSJZ5dIX+CJyrTgT4B1kuQBeNIFQCCjFXs8zxdOL
-         YhYAeegIav49Af9yMLGIfTCBO7WXF1MvEm0d0puagcdEgwLqev4OC6YhIKeyuV1hSTk2
-         ExaTGcp20l6dgWD/c+02RNt+yyepB2Veg065iiASwoMj5V9KpEG/s/70eHH8NkMwI6yk
-         zRk9uIgayMTKHJggBKX1zi4byX+SUUl7mSsnQBvfUDXCmK8rwhiNv6eLCHn2XJ3RqPoB
-         kUeZyJxznmlYi/tJfHjPxvYTX1yDqKK+82bMBtLeKeyR4qhKLoXsa8CU9Y3akoAgKsjt
-         Pn2g==
-X-Gm-Message-State: AHQUAuYat9dNPQlvtDJMdM5Fq4QT8hjdOxWgk/qPm6MJMEC5gLXdLQd+
-        rEKcSHWqKT0RjeBNRX41LjE=
-X-Google-Smtp-Source: AHgI3IaEBq1SwwJYhsNKwsj9KOSWVu2l4I+HGZcFfiZ6qfZ8LCu3wvVjIloAnyan3dHGRl5gicWudg==
-X-Received: by 2002:a05:600c:2102:: with SMTP id u2mr8152161wml.152.1550270376956;
-        Fri, 15 Feb 2019 14:39:36 -0800 (PST)
+        bh=4RTb1kL9ozOAOsLV6/OMrAsXCeAhbAi/LU7Q9twqEFA=;
+        b=OGg7Amtlz103wNn5yzimZuK7rAIu9NoCVzz6YibSl92k2Jq7AOurYjQ3/vE+KMea/Q
+         IoHphWewWQ4fqL2tJvOsCif+lK2rbuKVpSm3uvpCS/zp79A0nUxXQUoIOR8eSfUSoVZm
+         VVZdgoWagdi7zY1YuqxqZO4VGm0PxzOoT9XuzyyxQQlNfywcOsYeqv1VqZHyPhyC8M4Q
+         Jhp/xMvsUd8rkCNO9ZcF+BqZHg2X+PjLVghv1AA9Uxx6SnkzzFF3JHKysirFF6g1yKk7
+         HmcWxfgc2P+2X7734DkTCbq4HKsCXN/UU0Kp2ZxpvsQC7/gNEQ9woiI6JBj17ZgObvPE
+         /GNA==
+X-Gm-Message-State: AHQUAuYkEfK/oMLV1E7FaiUd0qRiDyWWPKqEO2/xgH6q2hFWLY3deP2W
+        k/CjPT6Fky9iDq5nwILUc4Q=
+X-Google-Smtp-Source: AHgI3IZ+wtr2jMTb6Hj1QXauAWDRNKlQ+T3t9Ec8Gd/13e6ebOEsiJnCDfHOFcvsIYizaVDyg55Hdg==
+X-Received: by 2002:a7b:c442:: with SMTP id l2mr7977202wmi.140.1550270385781;
+        Fri, 15 Feb 2019 14:39:45 -0800 (PST)
 Received: from goyamonster.habana-labs.com ([31.154.181.186])
-        by smtp.gmail.com with ESMTPSA id b197sm14652609wmd.23.2019.02.15.14.39.35
+        by smtp.gmail.com with ESMTPSA id b197sm14652609wmd.23.2019.02.15.14.39.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Feb 2019 14:39:36 -0800 (PST)
+        Fri, 15 Feb 2019 14:39:45 -0800 (PST)
 From:   Oded Gabbay <oded.gabbay@gmail.com>
 To:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
         rppt@linux.ibm.com, olof@lixom.net
 Cc:     ogabbay@habana.ai, arnd@arndb.de, joe@perches.com
-Subject: [PATCH v6 04/15] habanalabs: add context and ASID modules
-Date:   Sat, 16 Feb 2019 00:39:14 +0200
-Message-Id: <20190215223925.16351-5-oded.gabbay@gmail.com>
+Subject: [PATCH v6 09/15] habanalabs: add sysfs and hwmon support
+Date:   Sat, 16 Feb 2019 00:39:19 +0200
+Message-Id: <20190215223925.16351-10-oded.gabbay@gmail.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20190215223925.16351-1-oded.gabbay@gmail.com>
 References: <20190215223925.16351-1-oded.gabbay@gmail.com>
@@ -70,20 +70,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds two modules - ASID and context.
+This patch add the sysfs and hwmon entries that are exposed by the driver.
 
-Each user process that opens a device's file must have at least one
-context before it is able to "work" with the device. Each context has its
-own device address-space and contains information about its runtime state
-(its active command submissions).
+Goya has several sensors, from various categories such as temperature,
+voltage, current, etc. The driver exposes those sensors in the standard
+hwmon mechanism.
 
-To have address-space separation between contexts, each context is assigned
-a unique ASID, which stands for "address-space id". Goya supports up to
-1024 ASIDs.
+In addition, the driver exposes a couple of interfaces in sysfs, both for
+configuration and for providing status of the device or driver.
 
-Currently, the driver doesn't support multiple contexts. Therefore, the
-user doesn't need to actively create a context. A "primary context" is
-created automatically when the user opens the device's file.
+The configuration attributes is for Power Management:
+- Automatic or manual
+- Frequency value when moving to high frequency mode
+- Maximum power the device is allowed to consume
+
+The rest of the attributes are read-only and provide the following
+information:
+- Versions of the various firmwares running on the device
+- Contents of the device's EEPROM
+- The device type (currently only Goya is supported)
+- PCI address of the device (to allow user-space to connect between
+  /dev/hlX to PCI address)
+- Status of the device (operational, malfunction, in_reset)
+- How many processes are open on the device's file
 
 Reviewed-by: Mike Rapoport <rppt@linux.ibm.com>
 Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
@@ -91,330 +100,437 @@ Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
 Changes in v6:
   - Only include headers needed for compilation
   - Update copyright years
+  - hl_device holds a pointer to hwmon_chip_info struct instead of an instance
  
- drivers/misc/habanalabs/Makefile         |   2 +-
- drivers/misc/habanalabs/asid.c           |  57 +++++++++
- drivers/misc/habanalabs/context.c        | 154 +++++++++++++++++++++++
- drivers/misc/habanalabs/device.c         |  47 +++++++
- drivers/misc/habanalabs/habanalabs.h     |  71 +++++++++++
- drivers/misc/habanalabs/habanalabs_drv.c |  46 ++++++-
- 6 files changed, 374 insertions(+), 3 deletions(-)
- create mode 100644 drivers/misc/habanalabs/asid.c
- create mode 100644 drivers/misc/habanalabs/context.c
+ .../ABI/testing/sysfs-driver-habanalabs       | 190 +++++++
+ drivers/misc/habanalabs/Makefile              |   2 +-
+ drivers/misc/habanalabs/device.c              | 163 ++++++
+ drivers/misc/habanalabs/goya/Makefile         |   2 +-
+ drivers/misc/habanalabs/goya/goya.c           | 230 +++++++++
+ drivers/misc/habanalabs/goya/goyaP.h          |  21 +
+ drivers/misc/habanalabs/goya/goya_hwmgr.c     | 254 ++++++++++
+ drivers/misc/habanalabs/habanalabs.h          | 102 ++++
+ drivers/misc/habanalabs/habanalabs_drv.c      |   7 +
+ drivers/misc/habanalabs/hwmon.c               | 452 +++++++++++++++++
+ drivers/misc/habanalabs/sysfs.c               | 468 ++++++++++++++++++
+ 11 files changed, 1889 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-habanalabs
+ create mode 100644 drivers/misc/habanalabs/goya/goya_hwmgr.c
+ create mode 100644 drivers/misc/habanalabs/hwmon.c
+ create mode 100644 drivers/misc/habanalabs/sysfs.c
 
+diff --git a/Documentation/ABI/testing/sysfs-driver-habanalabs b/Documentation/ABI/testing/sysfs-driver-habanalabs
+new file mode 100644
+index 000000000000..78b2bcf316a3
+--- /dev/null
++++ b/Documentation/ABI/testing/sysfs-driver-habanalabs
+@@ -0,0 +1,190 @@
++What:           /sys/class/habanalabs/hl<n>/armcp_kernel_ver
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Version of the Linux kernel running on the device's CPU
++
++What:           /sys/class/habanalabs/hl<n>/armcp_ver
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Version of the application running on the device's CPU
++
++What:           /sys/class/habanalabs/hl<n>/cpld_ver
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Version of the Device's CPLD F/W
++
++What:           /sys/class/habanalabs/hl<n>/device_type
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Displays the code name of the device according to its type.
++                The supported values are: "GOYA"
++
++What:           /sys/class/habanalabs/hl<n>/eeprom
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    A binary file attribute that contains the contents of the
++                on-board EEPROM
++
++What:           /sys/class/habanalabs/hl<n>/fuse_ver
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Displays the device's version from the eFuse
++
++What:           /sys/class/habanalabs/hl<n>/hard_reset
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Interface to trigger a hard-reset operation for the device.
++                Hard-reset will reset ALL internal components of the device
++                except for the PCI interface and the internal PLLs
++
++What:           /sys/class/habanalabs/hl<n>/hard_reset_cnt
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Displays how many times the device have undergone a hard-reset
++                operation since the driver was loaded
++
++What:           /sys/class/habanalabs/hl<n>/high_pll
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Allows the user to set the maximum clock frequency for MME, TPC
++                and IC when the power management profile is set to "automatic".
++
++What:           /sys/class/habanalabs/hl<n>/ic_clk
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Allows the user to set the maximum clock frequency of the
++                Interconnect fabric. Writes to this parameter affect the device
++                only when the power management profile is set to "manual" mode.
++                The device IC clock might be set to lower value then the
++                maximum. The user should read the ic_clk_curr to see the actual
++                frequency value of the IC
++
++What:           /sys/class/habanalabs/hl<n>/ic_clk_curr
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Displays the current clock frequency of the Interconnect fabric
++
++What:           /sys/class/habanalabs/hl<n>/infineon_ver
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Version of the Device's power supply F/W code
++
++What:           /sys/class/habanalabs/hl<n>/max_power
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Allows the user to set the maximum power consumption of the
++                device in milliwatts.
++
++What:           /sys/class/habanalabs/hl<n>/mme_clk
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Allows the user to set the maximum clock frequency of the
++                MME compute engine. Writes to this parameter affect the device
++                only when the power management profile is set to "manual" mode.
++                The device MME clock might be set to lower value then the
++                maximum. The user should read the mme_clk_curr to see the actual
++                frequency value of the MME
++
++What:           /sys/class/habanalabs/hl<n>/mme_clk_curr
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Displays the current clock frequency of the MME compute engine
++
++What:           /sys/class/habanalabs/hl<n>/pci_addr
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Displays the PCI address of the device. This is needed so the
++                user would be able to open a device based on its PCI address
++
++What:           /sys/class/habanalabs/hl<n>/pm_mng_profile
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Power management profile. Values are "auto", "manual". In "auto"
++                mode, the driver will set the maximum clock frequency to a high
++                value when a user-space process opens the device's file (unless
++                it was already opened by another process). The driver will set
++                the max clock frequency to a low value when there are no user
++                processes that are opened on the device's file. In "manual"
++                mode, the user sets the maximum clock frequency by writing to
++                ic_clk, mme_clk and tpc_clk
++
++
++What:           /sys/class/habanalabs/hl<n>/preboot_btl_ver
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Version of the device's preboot F/W code
++
++What:           /sys/class/habanalabs/hl<n>/soft_reset
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Interface to trigger a soft-reset operation for the device.
++                Soft-reset will reset only the compute and DMA engines of the
++                device
++
++What:           /sys/class/habanalabs/hl<n>/soft_reset_cnt
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Displays how many times the device have undergone a soft-reset
++                operation since the driver was loaded
++
++What:           /sys/class/habanalabs/hl<n>/status
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Status of the card: "Operational", "Malfunction", "In reset".
++
++What:           /sys/class/habanalabs/hl<n>/thermal_ver
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Version of the Device's thermal daemon
++
++What:           /sys/class/habanalabs/hl<n>/tpc_clk
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Allows the user to set the maximum clock frequency of the
++                TPC compute engines. Writes to this parameter affect the device
++                only when the power management profile is set to "manual" mode.
++                The device TPC clock might be set to lower value then the
++                maximum. The user should read the tpc_clk_curr to see the actual
++                frequency value of the TPC
++
++What:           /sys/class/habanalabs/hl<n>/tpc_clk_curr
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Displays the current clock frequency of the TPC compute engines
++
++What:           /sys/class/habanalabs/hl<n>/uboot_ver
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Version of the u-boot running on the device's CPU
++
++What:           /sys/class/habanalabs/hl<n>/write_open_cnt
++Date:           Jan 2019
++KernelVersion:  5.1
++Contact:        oded.gabbay@gmail.com
++Description:    Displays the total number of user processes that are currently
++                opened on the device's file
 diff --git a/drivers/misc/habanalabs/Makefile b/drivers/misc/habanalabs/Makefile
-index 6f1ead69bd77..3ffbadc2ca01 100644
+index c07f3ccb57dc..b5607233d216 100644
 --- a/drivers/misc/habanalabs/Makefile
 +++ b/drivers/misc/habanalabs/Makefile
-@@ -4,7 +4,7 @@
- 
+@@ -5,7 +5,7 @@
  obj-m	:= habanalabs.o
  
--habanalabs-y := habanalabs_drv.o device.o
-+habanalabs-y := habanalabs_drv.o device.o context.o asid.o
+ habanalabs-y := habanalabs_drv.o device.o context.o asid.o habanalabs_ioctl.o \
+-		command_buffer.o hw_queue.o irq.o
++		command_buffer.o hw_queue.o irq.o sysfs.o hwmon.o
  
  include $(src)/goya/Makefile
  habanalabs-y += $(HL_GOYA_FILES)
-diff --git a/drivers/misc/habanalabs/asid.c b/drivers/misc/habanalabs/asid.c
-new file mode 100644
-index 000000000000..f54e7971a762
---- /dev/null
-+++ b/drivers/misc/habanalabs/asid.c
-@@ -0,0 +1,57 @@
-+// SPDX-License-Identifier: GPL-2.0
+diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
+index 20f4b980fbb4..f879de310915 100644
+--- a/drivers/misc/habanalabs/device.c
++++ b/drivers/misc/habanalabs/device.c
+@@ -9,6 +9,7 @@
+ 
+ #include <linux/pci.h>
+ #include <linux/delay.h>
++#include <linux/hwmon.h>
+ 
+ static void hpriv_release(struct kref *ref)
+ {
+@@ -188,6 +189,13 @@ static int device_early_init(struct hl_device *hdev)
+ 		goto free_cq_wq;
+ 	}
+ 
++	hdev->hl_chip_info = kzalloc(sizeof(struct hwmon_chip_info),
++					GFP_KERNEL);
++	if (!hdev->hl_chip_info) {
++		rc = -ENOMEM;
++		goto free_eq_wq;
++	}
++
+ 	hl_cb_mgr_init(&hdev->kernel_cb_mgr);
+ 
+ 	mutex_init(&hdev->fd_open_cnt_lock);
+@@ -196,6 +204,8 @@ static int device_early_init(struct hl_device *hdev)
+ 
+ 	return 0;
+ 
++free_eq_wq:
++	destroy_workqueue(hdev->eq_wq);
+ free_cq_wq:
+ 	destroy_workqueue(hdev->cq_wq);
+ asid_fini:
+@@ -219,6 +229,8 @@ static void device_early_fini(struct hl_device *hdev)
+ 
+ 	hl_cb_mgr_fini(hdev, &hdev->kernel_cb_mgr);
+ 
++	kfree(hdev->hl_chip_info);
++
+ 	destroy_workqueue(hdev->eq_wq);
+ 	destroy_workqueue(hdev->cq_wq);
+ 
+@@ -230,6 +242,118 @@ static void device_early_fini(struct hl_device *hdev)
+ 	mutex_destroy(&hdev->fd_open_cnt_lock);
+ }
+ 
++static void set_freq_to_low_job(struct work_struct *work)
++{
++	struct hl_device *hdev = container_of(work, struct hl_device,
++						work_freq.work);
++
++	if (atomic_read(&hdev->fd_open_cnt) == 0)
++		hl_device_set_frequency(hdev, PLL_LOW);
++
++	schedule_delayed_work(&hdev->work_freq,
++			usecs_to_jiffies(HL_PLL_LOW_JOB_FREQ_USEC));
++}
 +
 +/*
-+ * Copyright 2016-2019 HabanaLabs, Ltd.
-+ * All Rights Reserved.
++ * device_late_init - do late stuff initialization for the habanalabs device
++ *
++ * @hdev: pointer to habanalabs device structure
++ *
++ * Do stuff that either needs the device H/W queues to be active or needs
++ * to happen after all the rest of the initialization is finished
 + */
-+
-+#include "habanalabs.h"
-+
-+#include <linux/slab.h>
-+
-+int hl_asid_init(struct hl_device *hdev)
++static int device_late_init(struct hl_device *hdev)
 +{
-+	hdev->asid_bitmap = kcalloc(BITS_TO_LONGS(hdev->asic_prop.max_asid),
-+					sizeof(*hdev->asid_bitmap), GFP_KERNEL);
-+	if (!hdev->asid_bitmap)
-+		return -ENOMEM;
-+
-+	mutex_init(&hdev->asid_mutex);
-+
-+	/* ASID 0 is reserved for KMD */
-+	set_bit(0, hdev->asid_bitmap);
-+
-+	return 0;
-+}
-+
-+void hl_asid_fini(struct hl_device *hdev)
-+{
-+	mutex_destroy(&hdev->asid_mutex);
-+	kfree(hdev->asid_bitmap);
-+}
-+
-+unsigned long hl_asid_alloc(struct hl_device *hdev)
-+{
-+	unsigned long found;
-+
-+	mutex_lock(&hdev->asid_mutex);
-+
-+	found = find_first_zero_bit(hdev->asid_bitmap,
-+					hdev->asic_prop.max_asid);
-+	if (found == hdev->asic_prop.max_asid)
-+		found = 0;
-+	else
-+		set_bit(found, hdev->asid_bitmap);
-+
-+	mutex_unlock(&hdev->asid_mutex);
-+
-+	return found;
-+}
-+
-+void hl_asid_free(struct hl_device *hdev, unsigned long asid)
-+{
-+	if (WARN((asid == 0 || asid >= hdev->asic_prop.max_asid),
-+						"Invalid ASID %lu", asid))
-+		return;
-+	clear_bit(asid, hdev->asid_bitmap);
-+}
-diff --git a/drivers/misc/habanalabs/context.c b/drivers/misc/habanalabs/context.c
-new file mode 100644
-index 000000000000..de1258e7a6e6
---- /dev/null
-+++ b/drivers/misc/habanalabs/context.c
-@@ -0,0 +1,154 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * Copyright 2016-2019 HabanaLabs, Ltd.
-+ * All Rights Reserved.
-+ */
-+
-+#include "habanalabs.h"
-+
-+#include <linux/slab.h>
-+
-+static void hl_ctx_fini(struct hl_ctx *ctx)
-+{
-+	struct hl_device *hdev = ctx->hdev;
-+
-+	if (ctx->asid != HL_KERNEL_ASID_ID)
-+		hl_asid_free(hdev, ctx->asid);
-+}
-+
-+void hl_ctx_do_release(struct kref *ref)
-+{
-+	struct hl_ctx *ctx;
-+
-+	ctx = container_of(ref, struct hl_ctx, refcount);
-+
-+	dev_dbg(ctx->hdev->dev, "Now really releasing context %d\n", ctx->asid);
-+
-+	hl_ctx_fini(ctx);
-+
-+	if (ctx->hpriv)
-+		hl_hpriv_put(ctx->hpriv);
-+
-+	kfree(ctx);
-+}
-+
-+int hl_ctx_create(struct hl_device *hdev, struct hl_fpriv *hpriv)
-+{
-+	struct hl_ctx_mgr *mgr = &hpriv->ctx_mgr;
-+	struct hl_ctx *ctx;
 +	int rc;
 +
-+	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-+	if (!ctx) {
-+		rc = -ENOMEM;
-+		goto out_err;
-+	}
++	INIT_DELAYED_WORK(&hdev->work_freq, set_freq_to_low_job);
++	hdev->high_pll = hdev->asic_prop.high_pll;
 +
-+	rc = hl_ctx_init(hdev, ctx, false);
-+	if (rc)
-+		goto free_ctx;
++	/* force setting to low frequency */
++	atomic_set(&hdev->curr_pll_profile, PLL_LOW);
 +
-+	hl_hpriv_get(hpriv);
-+	ctx->hpriv = hpriv;
++	if (hdev->pm_mng_profile == PM_AUTO)
++		hdev->asic_funcs->set_pll_profile(hdev, PLL_LOW);
++	else
++		hdev->asic_funcs->set_pll_profile(hdev, PLL_LAST);
 +
-+	/* TODO: remove for multiple contexts */
-+	hpriv->ctx = ctx;
-+	hdev->user_ctx = ctx;
-+
-+	mutex_lock(&mgr->ctx_lock);
-+	rc = idr_alloc(&mgr->ctx_handles, ctx, 1, 0, GFP_KERNEL);
-+	mutex_unlock(&mgr->ctx_lock);
-+
-+	if (rc < 0) {
-+		dev_err(hdev->dev, "Failed to allocate IDR for a new CTX\n");
-+		hl_ctx_free(hdev, ctx);
-+		goto out_err;
-+	}
-+
-+	return 0;
-+
-+free_ctx:
-+	kfree(ctx);
-+out_err:
-+	return rc;
-+}
-+
-+void hl_ctx_free(struct hl_device *hdev, struct hl_ctx *ctx)
-+{
-+	if (kref_put(&ctx->refcount, hl_ctx_do_release) == 1)
-+		return;
-+
-+	dev_warn(hdev->dev,
-+		"Context %d closed or terminated but its CS are executing\n",
-+		ctx->asid);
-+}
-+
-+int hl_ctx_init(struct hl_device *hdev, struct hl_ctx *ctx, bool is_kernel_ctx)
-+{
-+	ctx->hdev = hdev;
-+
-+	kref_init(&ctx->refcount);
-+
-+	if (is_kernel_ctx) {
-+		ctx->asid = HL_KERNEL_ASID_ID; /* KMD gets ASID 0 */
-+	} else {
-+		ctx->asid = hl_asid_alloc(hdev);
-+		if (!ctx->asid) {
-+			dev_err(hdev->dev, "No free ASID, failed to create context\n");
-+			return -ENOMEM;
++	if (hdev->asic_funcs->late_init) {
++		rc = hdev->asic_funcs->late_init(hdev);
++		if (rc) {
++			dev_err(hdev->dev,
++				"failed late initialization for the H/W\n");
++			return rc;
 +		}
 +	}
 +
-+	dev_dbg(hdev->dev, "Created context with ASID %u\n", ctx->asid);
++	schedule_delayed_work(&hdev->work_freq,
++			usecs_to_jiffies(HL_PLL_LOW_JOB_FREQ_USEC));
++
++	hdev->late_init_done = true;
 +
 +	return 0;
 +}
 +
-+void hl_ctx_get(struct hl_device *hdev, struct hl_ctx *ctx)
++/*
++ * device_late_fini - finalize all that was done in device_late_init
++ *
++ * @hdev: pointer to habanalabs device structure
++ *
++ */
++static void device_late_fini(struct hl_device *hdev)
 +{
-+	kref_get(&ctx->refcount);
-+}
++	if (!hdev->late_init_done)
++		return;
 +
-+int hl_ctx_put(struct hl_ctx *ctx)
-+{
-+	return kref_put(&ctx->refcount, hl_ctx_do_release);
++	cancel_delayed_work_sync(&hdev->work_freq);
++
++	if (hdev->asic_funcs->late_fini)
++		hdev->asic_funcs->late_fini(hdev);
++
++	hdev->late_init_done = false;
 +}
 +
 +/*
-+ * hl_ctx_mgr_init - initialize the context manager
++ * hl_device_set_frequency - set the frequency of the device
 + *
-+ * @mgr: pointer to context manager structure
++ * @hdev: pointer to habanalabs device structure
++ * @freq: the new frequency value
 + *
-+ * This manager is an object inside the hpriv object of the user process.
-+ * The function is called when a user process opens the FD.
++ * Change the frequency if needed.
++ * We allose to set PLL to low only if there is no user process
++ * Returns 0 if no change was done, otherwise returns 1;
 + */
-+void hl_ctx_mgr_init(struct hl_ctx_mgr *mgr)
++int hl_device_set_frequency(struct hl_device *hdev, enum hl_pll_frequency freq)
 +{
-+	mutex_init(&mgr->ctx_lock);
-+	idr_init(&mgr->ctx_handles);
-+}
++	enum hl_pll_frequency old_freq =
++			(freq == PLL_HIGH) ? PLL_LOW : PLL_HIGH;
++	int ret;
 +
-+/*
-+ * hl_ctx_mgr_fini - finalize the context manager
-+ *
-+ * @hdev: pointer to device structure
-+ * @mgr: pointer to context manager structure
-+ *
-+ * This function goes over all the contexts in the manager and frees them.
-+ * It is called when a process closes the FD.
-+ */
-+void hl_ctx_mgr_fini(struct hl_device *hdev, struct hl_ctx_mgr *mgr)
-+{
-+	struct hl_ctx *ctx;
-+	struct idr *idp;
-+	u32 id;
++	if (hdev->pm_mng_profile == PM_MANUAL)
++		return 0;
 +
-+	idp = &mgr->ctx_handles;
++	ret = atomic_cmpxchg(&hdev->curr_pll_profile, old_freq, freq);
++	if (ret == freq)
++		return 0;
 +
-+	idr_for_each_entry(idp, ctx, id)
-+		hl_ctx_free(hdev, ctx);
-+
-+	idr_destroy(&mgr->ctx_handles);
-+	mutex_destroy(&mgr->ctx_lock);
-+}
-diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
-index a4feaa784db3..2423588ecf22 100644
---- a/drivers/misc/habanalabs/device.c
-+++ b/drivers/misc/habanalabs/device.c
-@@ -22,6 +22,12 @@ static void hpriv_release(struct kref *ref)
- 	put_pid(hpriv->taskpid);
- 
- 	kfree(hpriv);
-+
-+	/* Now the FD is really closed */
-+	atomic_dec(&hdev->fd_open_cnt);
-+
-+	/* This allows a new user context to open the device */
-+	hdev->user_ctx = NULL;
- }
- 
- void hl_hpriv_get(struct hl_fpriv *hpriv)
-@@ -46,6 +52,8 @@ static int hl_device_release(struct inode *inode, struct file *filp)
- {
- 	struct hl_fpriv *hpriv = filp->private_data;
- 
-+	hl_ctx_mgr_fini(hpriv->hdev, &hpriv->ctx_mgr);
-+
- 	filp->private_data = NULL;
- 
- 	hl_hpriv_put(hpriv);
-@@ -137,7 +145,20 @@ static int device_early_init(struct hl_device *hdev)
- 	if (rc)
- 		return rc;
- 
-+	rc = hl_asid_init(hdev);
-+	if (rc)
-+		goto early_fini;
-+
-+	mutex_init(&hdev->fd_open_cnt_lock);
-+	atomic_set(&hdev->fd_open_cnt, 0);
-+
- 	return 0;
-+
-+early_fini:
-+	if (hdev->asic_funcs->early_fini)
-+		hdev->asic_funcs->early_fini(hdev);
-+
-+	return rc;
- }
- 
- /*
-@@ -149,9 +170,12 @@ static int device_early_init(struct hl_device *hdev)
- static void device_early_fini(struct hl_device *hdev)
- {
- 
-+	hl_asid_fini(hdev);
-+
- 	if (hdev->asic_funcs->early_fini)
- 		hdev->asic_funcs->early_fini(hdev);
- 
-+	mutex_destroy(&hdev->fd_open_cnt_lock);
- }
- 
- /*
-@@ -245,11 +269,30 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
- 	if (rc)
- 		goto early_fini;
- 
-+	/* Allocate the kernel context */
-+	hdev->kernel_ctx = kzalloc(sizeof(*hdev->kernel_ctx), GFP_KERNEL);
-+	if (!hdev->kernel_ctx) {
-+		rc = -ENOMEM;
-+		goto sw_fini;
++	/*
++	 * in case we want to lower frequency, check if device is not
++	 * opened. We must have a check here to workaround race condition with
++	 * hl_device_open
++	 */
++	if ((freq == PLL_LOW) && (atomic_read(&hdev->fd_open_cnt) > 0)) {
++		atomic_set(&hdev->curr_pll_profile, PLL_HIGH);
++		return 0;
 +	}
 +
-+	hdev->user_ctx = NULL;
++	dev_dbg(hdev->dev, "Changing device frequency to %s\n",
++		freq == PLL_HIGH ? "high" : "low");
 +
-+	rc = hl_ctx_init(hdev, hdev->kernel_ctx, true);
++	hdev->asic_funcs->set_pll_profile(hdev, freq);
++
++	return 1;
++}
++
+ /*
+  * hl_device_suspend - initiate device suspend
+  *
+@@ -390,6 +514,12 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
+ 		goto release_ctx;
+ 	}
+ 
++	rc = hl_sysfs_init(hdev);
 +	if (rc) {
-+		dev_err(hdev->dev, "failed to initialize kernel context\n");
-+		goto free_ctx;
++		dev_err(hdev->dev, "failed to initialize sysfs\n");
++		goto free_cb_pool;
++	}
++
+ 	rc = hdev->asic_funcs->hw_init(hdev);
+ 	if (rc) {
+ 		dev_err(hdev->dev, "failed to initialize the H/W\n");
+@@ -407,11 +537,38 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
+ 		goto out_disabled;
+ 	}
+ 
++	/* After test_queues, KMD can start sending messages to device CPU */
++
++	rc = device_late_init(hdev);
++	if (rc) {
++		dev_err(hdev->dev, "Failed late initialization\n");
++		rc = 0;
++		goto out_disabled;
++	}
++
++	dev_info(hdev->dev, "Found %s device with %lluGB DRAM\n",
++		hdev->asic_name,
++		hdev->asic_prop.dram_size / 1024 / 1024 / 1024);
++
++	/*
++	 * hl_hwmon_init must be called after device_late_init, because only
++	 * there we get the information from the device about which
++	 * hwmon-related sensors the device supports
++	 */
++	rc = hl_hwmon_init(hdev);
++	if (rc) {
++		dev_err(hdev->dev, "Failed to initialize hwmon\n");
++		rc = 0;
++		goto out_disabled;
 +	}
 +
  	dev_notice(hdev->dev,
@@ -422,240 +538,1861 @@ index a4feaa784db3..2423588ecf22 100644
  
  	return 0;
  
-+free_ctx:
-+	kfree(hdev->kernel_ctx);
-+sw_fini:
-+	hdev->asic_funcs->sw_fini(hdev);
- early_fini:
- 	device_early_fini(hdev);
- release_device:
-@@ -282,6 +325,10 @@ void hl_device_fini(struct hl_device *hdev)
++free_cb_pool:
++	hl_cb_pool_fini(hdev);
+ release_ctx:
+ 	if (hl_ctx_put(hdev->kernel_ctx) != 1)
+ 		dev_err(hdev->dev,
+@@ -461,6 +618,12 @@ void hl_device_fini(struct hl_device *hdev)
  	/* Mark device as disabled */
  	hdev->disabled = true;
  
-+	/* Release kernel context */
-+	if ((hdev->kernel_ctx) && (hl_ctx_put(hdev->kernel_ctx) != 1))
-+		dev_err(hdev->dev, "kernel ctx is still alive\n");
++	hl_hwmon_fini(hdev);
 +
- 	/* Call ASIC S/W finalize function */
- 	hdev->asic_funcs->sw_fini(hdev);
- 
-diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
-index 5076e680a73c..ca8171ca3a04 100644
---- a/drivers/misc/habanalabs/habanalabs.h
-+++ b/drivers/misc/habanalabs/habanalabs.h
-@@ -70,6 +70,8 @@ struct asic_fixed_properties {
- 
- 
- #define HL_QUEUE_LENGTH			256
++	device_late_fini(hdev);
 +
++	hl_sysfs_fini(hdev);
 +
- /*
-  * ASICs
-  */
-@@ -117,6 +119,39 @@ struct hl_asic_funcs {
- 					void *cpu_addr, dma_addr_t dma_handle);
- };
+ 	/*
+ 	 * Halt the engines and disable interrupts so we won't get any more
+ 	 * completions from H/W and we won't have any accesses from the
+diff --git a/drivers/misc/habanalabs/goya/Makefile b/drivers/misc/habanalabs/goya/Makefile
+index 7ae221696de9..e458e5ba500b 100644
+--- a/drivers/misc/habanalabs/goya/Makefile
++++ b/drivers/misc/habanalabs/goya/Makefile
+@@ -1,3 +1,3 @@
+ subdir-ccflags-y += -I$(src)
  
+-HL_GOYA_FILES :=  goya/goya.o goya/goya_security.o
++HL_GOYA_FILES :=  goya/goya.o goya/goya_security.o goya/goya_hwmgr.o
+diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
+index 603027895d82..d46925d921a3 100644
+--- a/drivers/misc/habanalabs/goya/goya.c
++++ b/drivers/misc/habanalabs/goya/goya.c
+@@ -11,6 +11,7 @@
+ #include <linux/pci.h>
+ #include <linux/genalloc.h>
+ #include <linux/firmware.h>
++#include <linux/hwmon.h>
+ #include <linux/io-64-nonatomic-lo-hi.h>
+ #include <linux/io-64-nonatomic-hi-lo.h>
+ 
+@@ -119,6 +120,8 @@ static const char *goya_axi_name[GOYA_MAX_INITIATORS] = {
+ 
+ #define GOYA_ASYC_EVENT_GROUP_NON_FATAL_SIZE 121
+ 
++static int goya_armcp_info_get(struct hl_device *hdev);
++
+ static void goya_get_fixed_properties(struct hl_device *hdev)
+ {
+ 	struct asic_fixed_properties *prop = &hdev->asic_prop;
+@@ -166,6 +169,7 @@ static void goya_get_fixed_properties(struct hl_device *hdev)
+ 	prop->num_of_events = GOYA_ASYNC_EVENT_ID_SIZE;
+ 	prop->cb_pool_cb_cnt = GOYA_CB_POOL_CB_CNT;
+ 	prop->cb_pool_cb_size = GOYA_CB_POOL_CB_SIZE;
++	prop->max_power_default = MAX_POWER_DEFAULT;
+ 	prop->tpc_enabled_mask = TPC_ENABLED_MASK;
+ 
+ 	prop->high_pll = PLL_HIGH_DEFAULT;
+@@ -559,6 +563,89 @@ int goya_early_fini(struct hl_device *hdev)
+ 	return 0;
+ }
+ 
++/*
++ * goya_fetch_psoc_frequency - Fetch PSOC frequency values
++ *
++ * @hdev: pointer to hl_device structure
++ *
++ */
++static void goya_fetch_psoc_frequency(struct hl_device *hdev)
++{
++	struct asic_fixed_properties *prop = &hdev->asic_prop;
++
++	prop->psoc_pci_pll_nr = RREG32(mmPSOC_PCI_PLL_NR);
++	prop->psoc_pci_pll_nf = RREG32(mmPSOC_PCI_PLL_NF);
++	prop->psoc_pci_pll_od = RREG32(mmPSOC_PCI_PLL_OD);
++	prop->psoc_pci_pll_div_factor = RREG32(mmPSOC_PCI_PLL_DIV_FACTOR_1);
++}
 +
 +/*
-+ * CONTEXTS
++ * goya_late_init - GOYA late initialization code
++ *
++ * @hdev: pointer to hl_device structure
++ *
++ * Get ArmCP info and send message to CPU to enable PCI access
++ */
++static int goya_late_init(struct hl_device *hdev)
++{
++	struct asic_fixed_properties *prop = &hdev->asic_prop;
++	struct goya_device *goya = hdev->asic_specific;
++	int rc;
++
++	rc = goya->armcp_info_get(hdev);
++	if (rc) {
++		dev_err(hdev->dev, "Failed to get armcp info\n");
++		return rc;
++	}
++
++	/* Now that we have the DRAM size in ASIC prop, we need to check
++	 * its size and configure the DMA_IF DDR wrap protection (which is in
++	 * the MMU block) accordingly. The value is the log2 of the DRAM size
++	 */
++	WREG32(mmMMU_LOG2_DDR_SIZE, ilog2(prop->dram_size));
++
++	rc = goya_send_pci_access_msg(hdev, ARMCP_PACKET_ENABLE_PCI_ACCESS);
++	if (rc) {
++		dev_err(hdev->dev, "Failed to enable PCI access from CPU\n");
++		return rc;
++	}
++
++	WREG32(mmGIC_DISTRIBUTOR__5_GICD_SETSPI_NSR,
++			GOYA_ASYNC_EVENT_ID_INTS_REGISTER);
++
++	goya_fetch_psoc_frequency(hdev);
++
++	return 0;
++}
++
++/*
++ * goya_late_fini - GOYA late tear-down code
++ *
++ * @hdev: pointer to hl_device structure
++ *
++ * Free sensors allocated structures
++ */
++void goya_late_fini(struct hl_device *hdev)
++{
++	const struct hwmon_channel_info **channel_info_arr;
++	int i = 0;
++
++	if (!hdev->hl_chip_info->info)
++		return;
++
++	channel_info_arr = hdev->hl_chip_info->info;
++
++	while (channel_info_arr[i]) {
++		kfree(channel_info_arr[i]->config);
++		kfree(channel_info_arr[i]);
++		i++;
++	}
++
++	kfree(channel_info_arr);
++
++	hdev->hl_chip_info->info = NULL;
++}
++
+ /*
+  * goya_sw_init - Goya software initialization code
+  *
+@@ -576,9 +663,15 @@ static int goya_sw_init(struct hl_device *hdev)
+ 		return -ENOMEM;
+ 
+ 	goya->test_cpu_queue = goya_test_cpu_queue;
++	goya->armcp_info_get = goya_armcp_info_get;
+ 
+ 	/* according to goya_init_iatu */
+ 	goya->ddr_bar_cur_addr = DRAM_PHYS_BASE;
++
++	goya->mme_clk = GOYA_PLL_FREQ_LOW;
++	goya->tpc_clk = GOYA_PLL_FREQ_LOW;
++	goya->ic_clk = GOYA_PLL_FREQ_LOW;
++
+ 	hdev->asic_specific = goya;
+ 
+ 	/* Create DMA pool for small allocations */
+@@ -3217,6 +3310,87 @@ void *goya_get_events_stat(struct hl_device *hdev, u32 *size)
+ 	return goya->events_stat;
+ }
+ 
++static int goya_armcp_info_get(struct hl_device *hdev)
++{
++	struct goya_device *goya = hdev->asic_specific;
++	struct asic_fixed_properties *prop = &hdev->asic_prop;
++	struct armcp_packet pkt;
++	void *armcp_info_cpu_addr;
++	dma_addr_t armcp_info_dma_addr;
++	u64 dram_size;
++	long result;
++	int rc;
++
++	if (!(goya->hw_cap_initialized & HW_CAP_CPU_Q))
++		return 0;
++
++	armcp_info_cpu_addr =
++			hdev->asic_funcs->cpu_accessible_dma_pool_alloc(hdev,
++			sizeof(struct armcp_info), &armcp_info_dma_addr);
++	if (!armcp_info_cpu_addr) {
++		dev_err(hdev->dev,
++			"Failed to allocate DMA memory for ArmCP info packet\n");
++		return -ENOMEM;
++	}
++
++	memset(armcp_info_cpu_addr, 0, sizeof(struct armcp_info));
++
++	memset(&pkt, 0, sizeof(pkt));
++
++	pkt.ctl = ARMCP_PACKET_INFO_GET << ARMCP_PKT_CTL_OPCODE_SHIFT;
++	pkt.addr = armcp_info_dma_addr + prop->host_phys_base_address;
++	pkt.data_max_size = sizeof(struct armcp_info);
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++			GOYA_ARMCP_INFO_TIMEOUT, &result);
++
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to send armcp info pkt, error %d\n", rc);
++		goto out;
++	}
++
++	memcpy(&prop->armcp_info, armcp_info_cpu_addr,
++			sizeof(prop->armcp_info));
++
++	dram_size = prop->armcp_info.dram_size;
++	if (dram_size) {
++		if ((!is_power_of_2(dram_size)) ||
++				(dram_size < DRAM_PHYS_DEFAULT_SIZE)) {
++			dev_err(hdev->dev,
++				"F/W reported invalid DRAM size %llu. Trying to use default size\n",
++				dram_size);
++			dram_size = DRAM_PHYS_DEFAULT_SIZE;
++		}
++
++		prop->dram_size = dram_size;
++		prop->dram_end_address = prop->dram_base_address + dram_size;
++	}
++
++	rc = hl_build_hwmon_channel_info(hdev, prop->armcp_info.sensors);
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to build hwmon channel info, error %d\n", rc);
++		rc = -EFAULT;
++		goto out;
++	}
++
++out:
++	hdev->asic_funcs->cpu_accessible_dma_pool_free(hdev,
++			sizeof(struct armcp_info), armcp_info_cpu_addr);
++
++	return rc;
++}
++
++static void goya_init_clock_gating(struct hl_device *hdev)
++{
++
++}
++
++static void goya_disable_clock_gating(struct hl_device *hdev)
++{
++
++}
+ 
+ static void goya_hw_queues_lock(struct hl_device *hdev)
+ {
+@@ -3232,9 +3406,60 @@ static void goya_hw_queues_unlock(struct hl_device *hdev)
+ 	spin_unlock(&goya->hw_queues_lock);
+ }
+ 
++int goya_get_eeprom_data(struct hl_device *hdev, void *data, size_t max_size)
++{
++	struct goya_device *goya = hdev->asic_specific;
++	struct asic_fixed_properties *prop = &hdev->asic_prop;
++	struct armcp_packet pkt;
++	void *eeprom_info_cpu_addr;
++	dma_addr_t eeprom_info_dma_addr;
++	long result;
++	int rc;
++
++	if (!(goya->hw_cap_initialized & HW_CAP_CPU_Q))
++		return 0;
++
++	eeprom_info_cpu_addr =
++			hdev->asic_funcs->cpu_accessible_dma_pool_alloc(hdev,
++					max_size, &eeprom_info_dma_addr);
++	if (!eeprom_info_cpu_addr) {
++		dev_err(hdev->dev,
++			"Failed to allocate DMA memory for EEPROM info packet\n");
++		return -ENOMEM;
++	}
++
++	memset(eeprom_info_cpu_addr, 0, max_size);
++
++	memset(&pkt, 0, sizeof(pkt));
++
++	pkt.ctl = ARMCP_PACKET_EEPROM_DATA_GET << ARMCP_PKT_CTL_OPCODE_SHIFT;
++	pkt.addr = eeprom_info_dma_addr + prop->host_phys_base_address;
++	pkt.data_max_size = max_size;
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++			GOYA_ARMCP_EEPROM_TIMEOUT, &result);
++
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to send armcp EEPROM pkt, error %d\n", rc);
++		goto out;
++	}
++
++	/* result contains the actual size */
++	memcpy(data, eeprom_info_cpu_addr, min((size_t)result, max_size));
++
++out:
++	hdev->asic_funcs->cpu_accessible_dma_pool_free(hdev, max_size,
++			eeprom_info_cpu_addr);
++
++	return rc;
++}
++
+ static const struct hl_asic_funcs goya_funcs = {
+ 	.early_init = goya_early_init,
+ 	.early_fini = goya_early_fini,
++	.late_init = goya_late_init,
++	.late_fini = goya_late_fini,
+ 	.sw_init = goya_sw_init,
+ 	.sw_fini = goya_sw_fini,
+ 	.hw_init = goya_hw_init,
+@@ -3255,10 +3480,15 @@ static const struct hl_asic_funcs goya_funcs = {
+ 	.cpu_accessible_dma_pool_alloc = goya_cpu_accessible_dma_pool_alloc,
+ 	.cpu_accessible_dma_pool_free = goya_cpu_accessible_dma_pool_free,
+ 	.update_eq_ci = goya_update_eq_ci,
++	.add_device_attr = goya_add_device_attr,
+ 	.handle_eqe = goya_handle_eqe,
++	.set_pll_profile = goya_set_pll_profile,
+ 	.get_events_stat = goya_get_events_stat,
++	.enable_clock_gating = goya_init_clock_gating,
++	.disable_clock_gating = goya_disable_clock_gating,
+ 	.hw_queues_lock = goya_hw_queues_lock,
+ 	.hw_queues_unlock = goya_hw_queues_unlock,
++	.get_eeprom_data = goya_get_eeprom_data,
+ 	.send_cpu_message = goya_send_cpu_message
+ };
+ 
+diff --git a/drivers/misc/habanalabs/goya/goyaP.h b/drivers/misc/habanalabs/goya/goyaP.h
+index 7cd007d3cb0b..fa6ef506a638 100644
+--- a/drivers/misc/habanalabs/goya/goyaP.h
++++ b/drivers/misc/habanalabs/goya/goyaP.h
+@@ -47,7 +47,10 @@
+ 
+ #define PLL_HIGH_DEFAULT		1575000000	/* 1.575 GHz */
+ 
++#define MAX_POWER_DEFAULT		200000		/* 200W */
++
+ #define GOYA_ARMCP_INFO_TIMEOUT		10000000	/* 10s */
++#define GOYA_ARMCP_EEPROM_TIMEOUT	10000000	/* 10s */
+ 
+ #define DRAM_PHYS_DEFAULT_SIZE		0x100000000ull	/* 4GB */
+ 
+@@ -148,9 +151,15 @@ enum goya_fw_component {
+ 
+ struct goya_device {
+ 	int (*test_cpu_queue)(struct hl_device *hdev);
++	int (*armcp_info_get)(struct hl_device *hdev);
+ 
+ 	/* TODO: remove hw_queues_lock after moving to scheduler code */
+ 	spinlock_t	hw_queues_lock;
++
++	u64		mme_clk;
++	u64		tpc_clk;
++	u64		ic_clk;
++
+ 	u64		ddr_bar_cur_addr;
+ 	u32		events_stat[GOYA_ASYNC_EVENT_ID_SIZE];
+ 	u32		hw_cap_initialized;
+@@ -159,6 +168,18 @@ struct goya_device {
+ int goya_test_cpu_queue(struct hl_device *hdev);
+ int goya_send_cpu_message(struct hl_device *hdev, u32 *msg, u16 len,
+ 				u32 timeout, long *result);
++long goya_get_temperature(struct hl_device *hdev, int sensor_index, u32 attr);
++long goya_get_voltage(struct hl_device *hdev, int sensor_index, u32 attr);
++long goya_get_current(struct hl_device *hdev, int sensor_index, u32 attr);
++long goya_get_fan_speed(struct hl_device *hdev, int sensor_index, u32 attr);
++long goya_get_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr);
++void goya_set_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr,
++			long value);
++void goya_set_pll_profile(struct hl_device *hdev, enum hl_pll_frequency freq);
++void goya_add_device_attr(struct hl_device *hdev,
++			struct attribute_group *dev_attr_grp);
+ void goya_init_security(struct hl_device *hdev);
++u64 goya_get_max_power(struct hl_device *hdev);
++void goya_set_max_power(struct hl_device *hdev, u64 value);
+ 
+ #endif /* GOYAP_H_ */
+diff --git a/drivers/misc/habanalabs/goya/goya_hwmgr.c b/drivers/misc/habanalabs/goya/goya_hwmgr.c
+new file mode 100644
+index 000000000000..157a204ae7c5
+--- /dev/null
++++ b/drivers/misc/habanalabs/goya/goya_hwmgr.c
+@@ -0,0 +1,254 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Copyright 2016-2019 HabanaLabs, Ltd.
++ * All Rights Reserved.
 + */
 +
-+#define HL_KERNEL_ASID_ID	0
++#include "goyaP.h"
 +
++void goya_set_pll_profile(struct hl_device *hdev, enum hl_pll_frequency freq)
++{
++	struct goya_device *goya = hdev->asic_specific;
++
++	switch (freq) {
++	case PLL_HIGH:
++		hl_set_frequency(hdev, MME_PLL, hdev->high_pll);
++		hl_set_frequency(hdev, TPC_PLL, hdev->high_pll);
++		hl_set_frequency(hdev, IC_PLL, hdev->high_pll);
++		break;
++	case PLL_LOW:
++		hl_set_frequency(hdev, MME_PLL, GOYA_PLL_FREQ_LOW);
++		hl_set_frequency(hdev, TPC_PLL, GOYA_PLL_FREQ_LOW);
++		hl_set_frequency(hdev, IC_PLL, GOYA_PLL_FREQ_LOW);
++		break;
++	case PLL_LAST:
++		hl_set_frequency(hdev, MME_PLL, goya->mme_clk);
++		hl_set_frequency(hdev, TPC_PLL, goya->tpc_clk);
++		hl_set_frequency(hdev, IC_PLL, goya->ic_clk);
++		break;
++	default:
++		dev_err(hdev->dev, "unknown frequency setting\n");
++	}
++}
++
++static ssize_t mme_clk_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	long value;
++
++	if (hdev->disabled)
++		return -ENODEV;
++
++	value = hl_get_frequency(hdev, MME_PLL, false);
++
++	if (value < 0)
++		return value;
++
++	return sprintf(buf, "%lu\n", value);
++}
++
++static ssize_t mme_clk_store(struct device *dev, struct device_attribute *attr,
++				const char *buf, size_t count)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	struct goya_device *goya = hdev->asic_specific;
++	int rc;
++	long value;
++
++	if (hdev->disabled) {
++		count = -ENODEV;
++		goto fail;
++	}
++
++	if (hdev->pm_mng_profile == PM_AUTO) {
++		count = -EPERM;
++		goto fail;
++	}
++
++	rc = kstrtoul(buf, 0, &value);
++
++	if (rc) {
++		count = -EINVAL;
++		goto fail;
++	}
++
++	hl_set_frequency(hdev, MME_PLL, value);
++	goya->mme_clk = value;
++
++fail:
++	return count;
++}
++
++static ssize_t tpc_clk_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	long value;
++
++	if (hdev->disabled)
++		return -ENODEV;
++
++	value = hl_get_frequency(hdev, TPC_PLL, false);
++
++	if (value < 0)
++		return value;
++
++	return sprintf(buf, "%lu\n", value);
++}
++
++static ssize_t tpc_clk_store(struct device *dev, struct device_attribute *attr,
++				const char *buf, size_t count)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	struct goya_device *goya = hdev->asic_specific;
++	int rc;
++	long value;
++
++	if (hdev->disabled) {
++		count = -ENODEV;
++		goto fail;
++	}
++
++	if (hdev->pm_mng_profile == PM_AUTO) {
++		count = -EPERM;
++		goto fail;
++	}
++
++	rc = kstrtoul(buf, 0, &value);
++
++	if (rc) {
++		count = -EINVAL;
++		goto fail;
++	}
++
++	hl_set_frequency(hdev, TPC_PLL, value);
++	goya->tpc_clk = value;
++
++fail:
++	return count;
++}
++
++static ssize_t ic_clk_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	long value;
++
++	if (hdev->disabled)
++		return -ENODEV;
++
++	value = hl_get_frequency(hdev, IC_PLL, false);
++
++	if (value < 0)
++		return value;
++
++	return sprintf(buf, "%lu\n", value);
++}
++
++static ssize_t ic_clk_store(struct device *dev, struct device_attribute *attr,
++				const char *buf, size_t count)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	struct goya_device *goya = hdev->asic_specific;
++	int rc;
++	long value;
++
++	if (hdev->disabled) {
++		count = -ENODEV;
++		goto fail;
++	}
++
++	if (hdev->pm_mng_profile == PM_AUTO) {
++		count = -EPERM;
++		goto fail;
++	}
++
++	rc = kstrtoul(buf, 0, &value);
++
++	if (rc) {
++		count = -EINVAL;
++		goto fail;
++	}
++
++	hl_set_frequency(hdev, IC_PLL, value);
++	goya->ic_clk = value;
++
++fail:
++	return count;
++}
++
++static ssize_t mme_clk_curr_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	long value;
++
++	if (hdev->disabled)
++		return -ENODEV;
++
++	value = hl_get_frequency(hdev, MME_PLL, true);
++
++	if (value < 0)
++		return value;
++
++	return sprintf(buf, "%lu\n", value);
++}
++
++static ssize_t tpc_clk_curr_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	long value;
++
++	if (hdev->disabled)
++		return -ENODEV;
++
++	value = hl_get_frequency(hdev, TPC_PLL, true);
++
++	if (value < 0)
++		return value;
++
++	return sprintf(buf, "%lu\n", value);
++}
++
++static ssize_t ic_clk_curr_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	long value;
++
++	if (hdev->disabled)
++		return -ENODEV;
++
++	value = hl_get_frequency(hdev, IC_PLL, true);
++
++	if (value < 0)
++		return value;
++
++	return sprintf(buf, "%lu\n", value);
++}
++
++static DEVICE_ATTR_RW(ic_clk);
++static DEVICE_ATTR_RO(ic_clk_curr);
++static DEVICE_ATTR_RW(mme_clk);
++static DEVICE_ATTR_RO(mme_clk_curr);
++static DEVICE_ATTR_RW(tpc_clk);
++static DEVICE_ATTR_RO(tpc_clk_curr);
++
++static struct attribute *goya_dev_attrs[] = {
++	&dev_attr_ic_clk.attr,
++	&dev_attr_ic_clk_curr.attr,
++	&dev_attr_mme_clk.attr,
++	&dev_attr_mme_clk_curr.attr,
++	&dev_attr_tpc_clk.attr,
++	&dev_attr_tpc_clk_curr.attr,
++	NULL,
++};
++
++void goya_add_device_attr(struct hl_device *hdev,
++			struct attribute_group *dev_attr_grp)
++{
++	dev_attr_grp->attrs = goya_dev_attrs;
++}
+diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
+index b3731b2bab17..7ec1d0908053 100644
+--- a/drivers/misc/habanalabs/habanalabs.h
++++ b/drivers/misc/habanalabs/habanalabs.h
+@@ -23,6 +23,8 @@
+ 
+ #define HL_DEVICE_TIMEOUT_USEC		1000000 /* 1 s */
+ 
++#define HL_PLL_LOW_JOB_FREQ_USEC	5000000 /* 5 s */
++
+ #define HL_MAX_QUEUES			128
+ 
+ struct hl_device;
+@@ -58,6 +60,8 @@ struct hw_queue_properties {
+ /**
+  * struct asic_fixed_properties - ASIC specific immutable properties.
+  * @hw_queues_props: H/W queues properties.
++ * @armcp_info: received various information from ArmCP regarding the H/W. e.g.
++ *		available sensors.
+  * @uboot_ver: F/W U-boot version.
+  * @preboot_ver: F/W Preboot version.
+  * @sram_base_address: SRAM physical start address.
+@@ -70,6 +74,7 @@ struct hw_queue_properties {
+  * @dram_pci_bar_size: size of PCI bar towards DRAM.
+  * @host_phys_base_address: base physical address of host memory for
+  *				transactions that the device generates.
++ * @max_power_default: max power of the device after reset
+  * @va_space_host_start_address: base address of virtual memory range for
+  *                               mapping host memory.
+  * @va_space_host_end_address: end address of virtual memory range for
+@@ -82,6 +87,10 @@ struct hw_queue_properties {
+  * @sram_size: total size of SRAM.
+  * @max_asid: maximum number of open contexts (ASIDs).
+  * @num_of_events: number of possible internal H/W IRQs.
++ * @psoc_pci_pll_nr: PCI PLL NR value.
++ * @psoc_pci_pll_nf: PCI PLL NF value.
++ * @psoc_pci_pll_od: PCI PLL OD value.
++ * @psoc_pci_pll_div_factor: PCI PLL DIV FACTOR 1 value.
+  * @completion_queues_count: number of completion queues.
+  * @high_pll: high PLL frequency used by the device.
+  * @cb_pool_cb_cnt: number of CBs in the CB pool.
+@@ -90,6 +99,7 @@ struct hw_queue_properties {
+  */
+ struct asic_fixed_properties {
+ 	struct hw_queue_properties	hw_queues_props[HL_MAX_QUEUES];
++	struct armcp_info	armcp_info;
+ 	char			uboot_ver[VERSION_MAX_LEN];
+ 	char			preboot_ver[VERSION_MAX_LEN];
+ 	u64			sram_base_address;
+@@ -101,6 +111,7 @@ struct asic_fixed_properties {
+ 	u64			dram_size;
+ 	u64			dram_pci_bar_size;
+ 	u64			host_phys_base_address;
++	u64			max_power_default;
+ 	u64			va_space_host_start_address;
+ 	u64			va_space_host_end_address;
+ 	u64			va_space_dram_start_address;
+@@ -109,6 +120,10 @@ struct asic_fixed_properties {
+ 	u32			sram_size;
+ 	u32			max_asid;
+ 	u32			num_of_events;
++	u32			psoc_pci_pll_nr;
++	u32			psoc_pci_pll_nf;
++	u32			psoc_pci_pll_od;
++	u32			psoc_pci_pll_div_factor;
+ 	u32			high_pll;
+ 	u32			cb_pool_cb_cnt;
+ 	u32			cb_pool_cb_size;
+@@ -282,11 +297,37 @@ enum hl_asic_type {
+ 	ASIC_INVALID
+ };
+ 
 +/**
-+ * struct hl_ctx - user/kernel context.
-+ * @hpriv: pointer to the private (KMD) data of the process (fd).
-+ * @hdev: pointer to the device structure.
-+ * @refcount: reference counter for the context. Context is released only when
-+ *		this hits 0l. It is incremented on CS and CS_WAIT.
-+ * @asid: context's unique address space ID in the device's MMU.
++ * enum hl_pm_mng_profile - power management profile.
++ * @PM_AUTO: internal clock is set by KMD.
++ * @PM_MANUAL: internal clock is set by the user.
++ * @PM_LAST: last power management type.
 + */
-+struct hl_ctx {
-+	struct hl_fpriv		*hpriv;
-+	struct hl_device	*hdev;
-+	struct kref		refcount;
-+	u32			asid;
++enum hl_pm_mng_profile {
++	PM_AUTO = 1,
++	PM_MANUAL,
++	PM_LAST
 +};
 +
 +/**
-+ * struct hl_ctx_mgr - for handling multiple contexts.
-+ * @ctx_lock: protects ctx_handles.
-+ * @ctx_handles: idr to hold all ctx handles.
++ * enum hl_pll_frequency - PLL frequency.
++ * @PLL_HIGH: high frequency.
++ * @PLL_LOW: low frequency.
++ * @PLL_LAST: last frequency values that were configured by the user.
 + */
-+struct hl_ctx_mgr {
-+	struct mutex		ctx_lock;
-+	struct idr		ctx_handles;
++enum hl_pll_frequency {
++	PLL_HIGH = 1,
++	PLL_LOW,
++	PLL_LAST
 +};
++
+ /**
+  * struct hl_asic_funcs - ASIC specific functions that are can be called from
+  *                        common code.
+  * @early_init: sets up early driver state (pre sw_init), doesn't configure H/W.
+  * @early_fini: tears down what was done in early_init.
++ * @late_init: sets up late driver/hw state (post hw_init) - Optional.
++ * @late_fini: tears down what was done in late_init (pre hw_fini) - Optional.
+  * @sw_init: sets up driver state, does not configure H/W.
+  * @sw_fini: tears down driver state, does not configure H/W.
+  * @hw_init: sets up the H/W state.
+@@ -316,15 +357,22 @@ enum hl_asic_type {
+  * @cpu_accessible_dma_pool_alloc: allocate CPU PQ packet from DMA pool.
+  * @cpu_accessible_dma_pool_free: free CPU PQ packet from DMA pool.
+  * @update_eq_ci: update event queue CI.
++ * @add_device_attr: add ASIC specific device attributes.
+  * @handle_eqe: handle event queue entry (IRQ) from ArmCP.
++ * @set_pll_profile: change PLL profile (manual/automatic).
+  * @get_events_stat: retrieve event queue entries histogram.
++ * @enable_clock_gating: enable clock gating for reducing power consumption.
++ * @disable_clock_gating: disable clock for accessing registers on HBW.
+  * @hw_queues_lock: acquire H/W queues lock.
+  * @hw_queues_unlock: release H/W queues lock.
++ * @get_eeprom_data: retrieve EEPROM data from F/W.
+  * @send_cpu_message: send buffer to ArmCP.
+  */
+ struct hl_asic_funcs {
+ 	int (*early_init)(struct hl_device *hdev);
+ 	int (*early_fini)(struct hl_device *hdev);
++	int (*late_init)(struct hl_device *hdev);
++	void (*late_fini)(struct hl_device *hdev);
+ 	int (*sw_init)(struct hl_device *hdev);
+ 	int (*sw_fini)(struct hl_device *hdev);
+ 	int (*hw_init)(struct hl_device *hdev);
+@@ -353,11 +401,19 @@ struct hl_asic_funcs {
+ 	void (*cpu_accessible_dma_pool_free)(struct hl_device *hdev,
+ 				size_t size, void *vaddr);
+ 	void (*update_eq_ci)(struct hl_device *hdev, u32 val);
++	void (*add_device_attr)(struct hl_device *hdev,
++				struct attribute_group *dev_attr_grp);
+ 	void (*handle_eqe)(struct hl_device *hdev,
+ 				struct hl_eq_entry *eq_entry);
++	void (*set_pll_profile)(struct hl_device *hdev,
++			enum hl_pll_frequency freq);
+ 	void* (*get_events_stat)(struct hl_device *hdev, u32 *size);
++	void (*enable_clock_gating)(struct hl_device *hdev);
++	void (*disable_clock_gating)(struct hl_device *hdev);
+ 	void (*hw_queues_lock)(struct hl_device *hdev);
+ 	void (*hw_queues_unlock)(struct hl_device *hdev);
++	int (*get_eeprom_data)(struct hl_device *hdev, void *data,
++				size_t max_size);
+ 	int (*send_cpu_message)(struct hl_device *hdev, u32 *msg,
+ 				u16 len, u32 timeout, long *result);
+ };
+@@ -404,6 +460,8 @@ struct hl_cs_job {
+ 	struct work_struct	finish_work;
+ 	u32			id;
+ };
 +
 +
  /*
   * FILE PRIVATE STRUCTURE
   */
-@@ -126,12 +161,16 @@ struct hl_asic_funcs {
-  * @hdev: habanalabs device structure.
-  * @filp: pointer to the given file structure.
-  * @taskpid: current process ID.
-+ * @ctx: current executing context.
-+ * @ctx_mgr: context manager to handle multiple context for this FD.
-  * @refcount: number of related contexts.
-  */
- struct hl_fpriv {
- 	struct hl_device	*hdev;
- 	struct file		*filp;
- 	struct pid		*taskpid;
-+	struct hl_ctx		*ctx; /* TODO: remove for multiple ctx */
-+	struct hl_ctx_mgr	ctx_mgr;
- 	struct kref		refcount;
- };
+@@ -469,6 +527,8 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
+ 	WREG32(mm##reg, (RREG32(mm##reg) & ~REG_FIELD_MASK(reg, field)) | \
+ 			(val) << REG_FIELD_SHIFT(reg, field))
  
-@@ -185,13 +224,24 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
++struct hwmon_chip_info;
++
+ /**
+  * struct hl_device - habanalabs device structure.
+  * @pdev: pointer to PCI device, can be NULL in case of simulator device.
+@@ -476,6 +536,7 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
+  * @rmmio: configuration area address on SRAM.
+  * @cdev: related char device.
   * @dev: realted kernel basic device structure.
++ * @work_freq: delayed work to lower device frequency if possible.
   * @asic_name: ASIC specific nmae.
   * @asic_type: ASIC specific type.
-+ * @kernel_ctx: KMD context structure.
-  * @dma_pool: DMA pool for small allocations.
-  * @cpu_accessible_dma_mem: KMD <-> ArmCP shared memory CPU address.
-  * @cpu_accessible_dma_address: KMD <-> ArmCP shared memory DMA address.
-  * @cpu_accessible_dma_pool: KMD <-> ArmCP shared memory pool.
-+ * @asid_bitmap: holds used/available ASIDs.
-+ * @asid_mutex: protects asid_bitmap.
-+ * @fd_open_cnt_lock: lock for updating fd_open_cnt in hl_device_open. Although
-+ *                    fd_open_cnt is atomic, we need this lock to serialize
-+ *                    the open function because the driver currently supports
-+ *                    only a single process at a time. In addition, we need a
-+ *                    lock here so we can flush user processes which are opening
-+ *                    the device while we are trying to hard reset it
+  * @completion_queue: array of hl_cq.
+@@ -501,13 +562,23 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
   * @asic_prop: ASIC specific immutable properties.
   * @asic_funcs: ASIC specific functions.
   * @asic_specific: ASIC specific information to use only from ASIC files.
-+ * @user_ctx: current user context executing.
-+ * @fd_open_cnt: number of open user processes.
++ * @hwmon_dev: H/W monitor device.
++ * @pm_mng_profile: current power management profile.
++ * @hl_chip_info: ASIC's sensors information.
+  * @cb_pool: list of preallocated CBs.
+  * @cb_pool_lock: protects the CB pool.
+  * @user_ctx: current user context executing.
++ * @curr_pll_profile: current PLL profile.
+  * @fd_open_cnt: number of open user processes.
++ * @max_power: the max power of the device, as configured by the sysadmin. This
++ *             value is saved so in case of hard-reset, KMD will restore this
++ *             value and update the F/W after the re-initialization
   * @major: habanalabs KMD major.
++ * @high_pll: high PLL profile frequency.
   * @id: device minor.
   * @disabled: is device disabled.
-@@ -204,13 +254,21 @@ struct hl_device {
++ * @late_init_done: is late init stage was done during initialization.
++ * @hwmon_initialized: is H/W monitor sensors was initialized.
+  */
+ struct hl_device {
+ 	struct pci_dev			*pdev;
+@@ -515,6 +586,7 @@ struct hl_device {
+ 	void __iomem			*rmmio;
+ 	struct cdev			cdev;
  	struct device			*dev;
++	struct delayed_work		work_freq;
  	char				asic_name[16];
  	enum hl_asic_type		asic_type;
-+	struct hl_ctx			*kernel_ctx;
- 	struct dma_pool			*dma_pool;
- 	void				*cpu_accessible_dma_mem;
- 	dma_addr_t			cpu_accessible_dma_address;
- 	struct gen_pool			*cpu_accessible_dma_pool;
-+	unsigned long			*asid_bitmap;
-+	struct mutex			asid_mutex;
-+	/* TODO: remove fd_open_cnt_lock for multiple process support */
-+	struct mutex			fd_open_cnt_lock;
+ 	struct hl_cq			*completion_queue;
+@@ -536,16 +608,25 @@ struct hl_device {
  	struct asic_fixed_properties	asic_prop;
  	const struct hl_asic_funcs	*asic_funcs;
  	void				*asic_specific;
-+	/* TODO: remove user_ctx for multiple process support */
-+	struct hl_ctx			*user_ctx;
-+	atomic_t			fd_open_cnt;
++	struct device			*hwmon_dev;
++	enum hl_pm_mng_profile		pm_mng_profile;
++	struct hwmon_chip_info		*hl_chip_info;
+ 
+ 	struct list_head		cb_pool;
+ 	spinlock_t			cb_pool_lock;
+ 
+ 	/* TODO: remove user_ctx for multiple process support */
+ 	struct hl_ctx			*user_ctx;
++
++	atomic_t			curr_pll_profile;
+ 	atomic_t			fd_open_cnt;
++	u64				max_power;
  	u32				major;
++	u32				high_pll;
  	u16				id;
  	u8				disabled;
-@@ -258,10 +316,23 @@ int hl_poll_timeout_memory(struct hl_device *hdev, u64 addr, u32 timeout_us,
- int hl_poll_timeout_device_memory(struct hl_device *hdev, void __iomem *addr,
- 				u32 timeout_us, u32 *val);
++	u8				late_init_done;
++	u8				hwmon_initialized;
  
-+int hl_asid_init(struct hl_device *hdev);
-+void hl_asid_fini(struct hl_device *hdev);
-+unsigned long hl_asid_alloc(struct hl_device *hdev);
-+void hl_asid_free(struct hl_device *hdev, unsigned long asid);
-+
-+int hl_ctx_create(struct hl_device *hdev, struct hl_fpriv *hpriv);
-+void hl_ctx_free(struct hl_device *hdev, struct hl_ctx *ctx);
-+int hl_ctx_init(struct hl_device *hdev, struct hl_ctx *ctx, bool is_kernel_ctx);
-+int hl_ctx_put(struct hl_ctx *ctx);
-+void hl_ctx_mgr_init(struct hl_ctx_mgr *mgr);
-+void hl_ctx_mgr_fini(struct hl_device *hdev, struct hl_ctx_mgr *mgr);
- int hl_device_init(struct hl_device *hdev, struct class *hclass);
- void hl_device_fini(struct hl_device *hdev);
- int hl_device_suspend(struct hl_device *hdev);
+ 	/* Parameters for bring-up */
+ 	u8				cpu_enable;
+@@ -626,6 +707,15 @@ int hl_device_suspend(struct hl_device *hdev);
  int hl_device_resume(struct hl_device *hdev);
-+void hl_hpriv_get(struct hl_fpriv *hpriv);
-+void hl_hpriv_put(struct hl_fpriv *hpriv);
+ void hl_hpriv_get(struct hl_fpriv *hpriv);
+ void hl_hpriv_put(struct hl_fpriv *hpriv);
++int hl_device_set_frequency(struct hl_device *hdev, enum hl_pll_frequency freq);
++int hl_build_hwmon_channel_info(struct hl_device *hdev,
++		struct armcp_sensor *sensors_arr);
++
++int hl_sysfs_init(struct hl_device *hdev);
++void hl_sysfs_fini(struct hl_device *hdev);
++
++int hl_hwmon_init(struct hl_device *hdev);
++void hl_hwmon_fini(struct hl_device *hdev);
+ 
+ int hl_cb_create(struct hl_device *hdev, struct hl_cb_mgr *mgr, u32 cb_size,
+ 		u64 *handle, int ctx_id);
+@@ -642,6 +732,18 @@ int hl_cb_pool_fini(struct hl_device *hdev);
  
  void goya_set_asic_funcs(struct hl_device *hdev);
  
++long hl_get_frequency(struct hl_device *hdev, u32 pll_index, bool curr);
++void hl_set_frequency(struct hl_device *hdev, u32 pll_index, u64 freq);
++long hl_get_temperature(struct hl_device *hdev, int sensor_index, u32 attr);
++long hl_get_voltage(struct hl_device *hdev, int sensor_index, u32 attr);
++long hl_get_current(struct hl_device *hdev, int sensor_index, u32 attr);
++long hl_get_fan_speed(struct hl_device *hdev, int sensor_index, u32 attr);
++long hl_get_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr);
++void hl_set_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr,
++			long value);
++u64 hl_get_max_power(struct hl_device *hdev);
++void hl_set_max_power(struct hl_device *hdev, u64 value);
++
+ /* IOCTLs */
+ long hl_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
+ int hl_cb_ioctl(struct hl_fpriv *hpriv, void *data);
 diff --git a/drivers/misc/habanalabs/habanalabs_drv.c b/drivers/misc/habanalabs/habanalabs_drv.c
-index edf626b2b7b1..6fddd801aca3 100644
+index 93576249307b..4f3d68395b98 100644
 --- a/drivers/misc/habanalabs/habanalabs_drv.c
 +++ b/drivers/misc/habanalabs/habanalabs_drv.c
-@@ -70,6 +70,7 @@ int hl_device_open(struct inode *inode, struct file *filp)
- {
- 	struct hl_device *hdev;
- 	struct hl_fpriv *hpriv;
-+	int rc;
+@@ -127,6 +127,13 @@ int hl_device_open(struct inode *inode, struct file *filp)
  
- 	mutex_lock(&hl_devs_idr_lock);
- 	hdev = idr_find(&hl_devs_idr, iminor(inode));
-@@ -81,9 +82,33 @@ int hl_device_open(struct inode *inode, struct file *filp)
- 		return -ENXIO;
- 	}
- 
-+	mutex_lock(&hdev->fd_open_cnt_lock);
-+
-+	if (hdev->disabled) {
-+		dev_err_ratelimited(hdev->dev,
-+			"Can't open %s because it is disabled\n",
-+			dev_name(hdev->dev));
-+		mutex_unlock(&hdev->fd_open_cnt_lock);
-+		return -EPERM;
-+	}
-+
-+	if (atomic_read(&hdev->fd_open_cnt)) {
-+		dev_info_ratelimited(hdev->dev,
-+			"Device %s is already attached to application\n",
-+			dev_name(hdev->dev));
-+		mutex_unlock(&hdev->fd_open_cnt_lock);
-+		return -EBUSY;
-+	}
-+
-+	atomic_inc(&hdev->fd_open_cnt);
-+
-+	mutex_unlock(&hdev->fd_open_cnt_lock);
-+
- 	hpriv = kzalloc(sizeof(*hpriv), GFP_KERNEL);
--	if (!hpriv)
--		return -ENOMEM;
-+	if (!hpriv) {
-+		rc = -ENOMEM;
-+		goto close_device;
-+	}
- 
- 	hpriv->hdev = hdev;
- 	filp->private_data = hpriv;
-@@ -91,9 +116,26 @@ int hl_device_open(struct inode *inode, struct file *filp)
- 	kref_init(&hpriv->refcount);
- 	nonseekable_open(inode, filp);
- 
-+	hl_ctx_mgr_init(&hpriv->ctx_mgr);
-+
-+	rc = hl_ctx_create(hdev, hpriv);
-+	if (rc) {
-+		dev_err(hdev->dev, "Failed to open FD (CTX fail)\n");
-+		goto out_err;
-+	}
-+
  	hpriv->taskpid = find_get_pid(current->pid);
  
++	/*
++	 * Device is IDLE at this point so it is legal to change PLLs. There
++	 * is no need to check anything because if the PLL is already HIGH, the
++	 * set function will return without doing anything
++	 */
++	hl_device_set_frequency(hdev, PLL_HIGH);
++
  	return 0;
-+
-+out_err:
-+	filp->private_data = NULL;
-+	hl_ctx_mgr_fini(hpriv->hdev, &hpriv->ctx_mgr);
-+	kfree(hpriv);
-+
-+close_device:
-+	atomic_dec(&hdev->fd_open_cnt);
-+	return rc;
- }
  
- /*
+ out_err:
+diff --git a/drivers/misc/habanalabs/hwmon.c b/drivers/misc/habanalabs/hwmon.c
+new file mode 100644
+index 000000000000..13843112e146
+--- /dev/null
++++ b/drivers/misc/habanalabs/hwmon.c
+@@ -0,0 +1,452 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Copyright 2016-2019 HabanaLabs, Ltd.
++ * All Rights Reserved.
++ */
++
++#include "habanalabs.h"
++
++#include <linux/pci.h>
++#include <linux/hwmon.h>
++
++#define SENSORS_PKT_TIMEOUT		100000	/* 100ms */
++#define HWMON_NR_SENSOR_TYPES		(hwmon_pwm + 1)
++
++int hl_build_hwmon_channel_info(struct hl_device *hdev,
++				struct armcp_sensor *sensors_arr)
++{
++	u32 counts[HWMON_NR_SENSOR_TYPES] = {0};
++	u32 *sensors_by_type[HWMON_NR_SENSOR_TYPES] = {0};
++	u32 sensors_by_type_next_index[HWMON_NR_SENSOR_TYPES] = {0};
++	struct hwmon_channel_info **channels_info;
++	u32 num_sensors_for_type, num_active_sensor_types = 0,
++			arr_size = 0, *curr_arr;
++	enum hwmon_sensor_types type;
++	int rc, i, j;
++
++	for (i = 0 ; i < ARMCP_MAX_SENSORS ; i++) {
++		type = sensors_arr[i].type;
++
++		if ((type == 0) && (sensors_arr[i].flags == 0))
++			break;
++
++		if (type >= HWMON_NR_SENSOR_TYPES) {
++			dev_err(hdev->dev,
++				"Got wrong sensor type %d from device\n", type);
++			return -EINVAL;
++		}
++
++		counts[type]++;
++		arr_size++;
++	}
++
++	for (i = 0 ; i < HWMON_NR_SENSOR_TYPES ; i++) {
++		if (counts[i] == 0)
++			continue;
++
++		num_sensors_for_type = counts[i] + 1;
++		curr_arr = kcalloc(num_sensors_for_type, sizeof(*curr_arr),
++				GFP_KERNEL);
++		if (!curr_arr) {
++			rc = -ENOMEM;
++			goto sensors_type_err;
++		}
++
++		num_active_sensor_types++;
++		sensors_by_type[i] = curr_arr;
++	}
++
++	for (i = 0 ; i < arr_size ; i++) {
++		type = sensors_arr[i].type;
++		curr_arr = sensors_by_type[type];
++		curr_arr[sensors_by_type_next_index[type]++] =
++				sensors_arr[i].flags;
++	}
++
++	channels_info = kcalloc(num_active_sensor_types + 1,
++			sizeof(*channels_info), GFP_KERNEL);
++	if (!channels_info) {
++		rc = -ENOMEM;
++		goto channels_info_array_err;
++	}
++
++	for (i = 0 ; i < num_active_sensor_types ; i++) {
++		channels_info[i] = kzalloc(sizeof(*channels_info[i]),
++				GFP_KERNEL);
++		if (!channels_info[i]) {
++			rc = -ENOMEM;
++			goto channel_info_err;
++		}
++	}
++
++	for (i = 0, j = 0 ; i < HWMON_NR_SENSOR_TYPES ; i++) {
++		if (!sensors_by_type[i])
++			continue;
++
++		channels_info[j]->type = i;
++		channels_info[j]->config = sensors_by_type[i];
++		j++;
++	}
++
++	hdev->hl_chip_info->info =
++			(const struct hwmon_channel_info **)channels_info;
++
++	return 0;
++
++channel_info_err:
++	for (i = 0 ; i < num_active_sensor_types ; i++)
++		if (channels_info[i]) {
++			kfree(channels_info[i]->config);
++			kfree(channels_info[i]);
++		}
++	kfree(channels_info);
++channels_info_array_err:
++sensors_type_err:
++	for (i = 0 ; i < HWMON_NR_SENSOR_TYPES ; i++)
++		kfree(sensors_by_type[i]);
++
++	return rc;
++}
++
++static int hl_read(struct device *dev, enum hwmon_sensor_types type,
++			u32 attr, int channel, long *val)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	if (hdev->disabled)
++		return -ENODEV;
++
++	switch (type) {
++	case hwmon_temp:
++		switch (attr) {
++		case hwmon_temp_input:
++		case hwmon_temp_max:
++		case hwmon_temp_crit:
++		case hwmon_temp_max_hyst:
++		case hwmon_temp_crit_hyst:
++			break;
++		default:
++			return -EINVAL;
++		}
++
++		*val = hl_get_temperature(hdev, channel, attr);
++		break;
++	case hwmon_in:
++		switch (attr) {
++		case hwmon_in_input:
++		case hwmon_in_min:
++		case hwmon_in_max:
++			break;
++		default:
++			return -EINVAL;
++		}
++
++		*val = hl_get_voltage(hdev, channel, attr);
++		break;
++	case hwmon_curr:
++		switch (attr) {
++		case hwmon_curr_input:
++		case hwmon_curr_min:
++		case hwmon_curr_max:
++			break;
++		default:
++			return -EINVAL;
++		}
++
++		*val = hl_get_current(hdev, channel, attr);
++		break;
++	case hwmon_fan:
++		switch (attr) {
++		case hwmon_fan_input:
++		case hwmon_fan_min:
++		case hwmon_fan_max:
++			break;
++		default:
++			return -EINVAL;
++		}
++		*val = hl_get_fan_speed(hdev, channel, attr);
++		break;
++	case hwmon_pwm:
++		switch (attr) {
++		case hwmon_pwm_input:
++		case hwmon_pwm_enable:
++			break;
++		default:
++			return -EINVAL;
++		}
++		*val = hl_get_pwm_info(hdev, channel, attr);
++		break;
++	default:
++		return -EINVAL;
++	}
++	return 0;
++}
++
++static int hl_write(struct device *dev, enum hwmon_sensor_types type,
++			u32 attr, int channel, long val)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	if (hdev->disabled)
++		return -ENODEV;
++
++	switch (type) {
++	case hwmon_pwm:
++		switch (attr) {
++		case hwmon_pwm_input:
++		case hwmon_pwm_enable:
++			break;
++		default:
++			return -EINVAL;
++		}
++		hl_set_pwm_info(hdev, channel, attr, val);
++		break;
++	default:
++		return -EINVAL;
++	}
++	return 0;
++}
++
++static umode_t hl_is_visible(const void *data, enum hwmon_sensor_types type,
++				u32 attr, int channel)
++{
++	switch (type) {
++	case hwmon_temp:
++		switch (attr) {
++		case hwmon_temp_input:
++		case hwmon_temp_max:
++		case hwmon_temp_max_hyst:
++		case hwmon_temp_crit:
++		case hwmon_temp_crit_hyst:
++			return 0444;
++		}
++		break;
++	case hwmon_in:
++		switch (attr) {
++		case hwmon_in_input:
++		case hwmon_in_min:
++		case hwmon_in_max:
++			return 0444;
++		}
++		break;
++	case hwmon_curr:
++		switch (attr) {
++		case hwmon_curr_input:
++		case hwmon_curr_min:
++		case hwmon_curr_max:
++			return 0444;
++		}
++		break;
++	case hwmon_fan:
++		switch (attr) {
++		case hwmon_fan_input:
++		case hwmon_fan_min:
++		case hwmon_fan_max:
++			return 0444;
++		}
++		break;
++	case hwmon_pwm:
++		switch (attr) {
++		case hwmon_pwm_input:
++		case hwmon_pwm_enable:
++			return 0644;
++		}
++		break;
++	default:
++		break;
++	}
++	return 0;
++}
++
++static const struct hwmon_ops hl_hwmon_ops = {
++	.is_visible = hl_is_visible,
++	.read = hl_read,
++	.write = hl_write
++};
++
++long hl_get_temperature(struct hl_device *hdev, int sensor_index, u32 attr)
++{
++	struct armcp_packet pkt;
++	long result;
++	int rc;
++
++	memset(&pkt, 0, sizeof(pkt));
++
++	pkt.ctl = ARMCP_PACKET_TEMPERATURE_GET << ARMCP_PKT_CTL_OPCODE_SHIFT;
++	pkt.sensor_index = sensor_index;
++	pkt.type = attr;
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++			SENSORS_PKT_TIMEOUT, &result);
++
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to get temperature from sensor %d, error %d\n",
++			sensor_index, rc);
++		result = 0;
++	}
++
++	return result;
++}
++
++long hl_get_voltage(struct hl_device *hdev, int sensor_index, u32 attr)
++{
++	struct armcp_packet pkt;
++	long result;
++	int rc;
++
++	memset(&pkt, 0, sizeof(pkt));
++
++	pkt.ctl = ARMCP_PACKET_VOLTAGE_GET << ARMCP_PKT_CTL_OPCODE_SHIFT;
++	pkt.sensor_index = sensor_index;
++	pkt.type = attr;
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++					SENSORS_PKT_TIMEOUT, &result);
++
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to get voltage from sensor %d, error %d\n",
++			sensor_index, rc);
++		result = 0;
++	}
++
++	return result;
++}
++
++long hl_get_current(struct hl_device *hdev, int sensor_index, u32 attr)
++{
++	struct armcp_packet pkt;
++	long result;
++	int rc;
++
++	memset(&pkt, 0, sizeof(pkt));
++
++	pkt.ctl = ARMCP_PACKET_CURRENT_GET << ARMCP_PKT_CTL_OPCODE_SHIFT;
++	pkt.sensor_index = sensor_index;
++	pkt.type = attr;
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++					SENSORS_PKT_TIMEOUT, &result);
++
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to get current from sensor %d, error %d\n",
++			sensor_index, rc);
++		result = 0;
++	}
++
++	return result;
++}
++
++long hl_get_fan_speed(struct hl_device *hdev, int sensor_index, u32 attr)
++{
++	struct armcp_packet pkt;
++	long result;
++	int rc;
++
++	memset(&pkt, 0, sizeof(pkt));
++
++	pkt.ctl = ARMCP_PACKET_FAN_SPEED_GET << ARMCP_PKT_CTL_OPCODE_SHIFT;
++	pkt.sensor_index = sensor_index;
++	pkt.type = attr;
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++					SENSORS_PKT_TIMEOUT, &result);
++
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to get fan speed from sensor %d, error %d\n",
++			sensor_index, rc);
++		result = 0;
++	}
++
++	return result;
++}
++
++long hl_get_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr)
++{
++	struct armcp_packet pkt;
++	long result;
++	int rc;
++
++	memset(&pkt, 0, sizeof(pkt));
++
++	pkt.ctl = ARMCP_PACKET_PWM_GET << ARMCP_PKT_CTL_OPCODE_SHIFT;
++	pkt.sensor_index = sensor_index;
++	pkt.type = attr;
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++					SENSORS_PKT_TIMEOUT, &result);
++
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to get pwm info from sensor %d, error %d\n",
++			sensor_index, rc);
++		result = 0;
++	}
++
++	return result;
++}
++
++void hl_set_pwm_info(struct hl_device *hdev, int sensor_index, u32 attr,
++			long value)
++{
++	struct armcp_packet pkt;
++	int rc;
++
++	memset(&pkt, 0, sizeof(pkt));
++
++	pkt.ctl = ARMCP_PACKET_PWM_SET << ARMCP_PKT_CTL_OPCODE_SHIFT;
++	pkt.sensor_index = sensor_index;
++	pkt.type = attr;
++	pkt.value = value;
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++					SENSORS_PKT_TIMEOUT, NULL);
++
++	if (rc)
++		dev_err(hdev->dev,
++			"Failed to set pwm info to sensor %d, error %d\n",
++			sensor_index, rc);
++}
++
++int hl_hwmon_init(struct hl_device *hdev)
++{
++	struct device *dev = hdev->pdev ? &hdev->pdev->dev : hdev->dev;
++	int rc;
++
++	if ((hdev->hwmon_initialized) || !(hdev->fw_loading))
++		return 0;
++
++	if (hdev->hl_chip_info->info) {
++		hdev->hl_chip_info->ops = &hl_hwmon_ops;
++
++		hdev->hwmon_dev = hwmon_device_register_with_info(dev,
++				"habanalabs", hdev, hdev->hl_chip_info, NULL);
++		if (IS_ERR(hdev->hwmon_dev)) {
++			rc = PTR_ERR(hdev->hwmon_dev);
++			dev_err(hdev->dev,
++				"Unable to register hwmon device: %d\n", rc);
++			return rc;
++		}
++
++		dev_info(hdev->dev, "%s: add sensors information\n",
++			dev_name(hdev->hwmon_dev));
++
++		hdev->hwmon_initialized = true;
++	} else {
++		dev_info(hdev->dev, "no available sensors\n");
++	}
++
++	return 0;
++}
++
++void hl_hwmon_fini(struct hl_device *hdev)
++{
++	if (!hdev->hwmon_initialized)
++		return;
++
++	hwmon_device_unregister(hdev->hwmon_dev);
++}
+diff --git a/drivers/misc/habanalabs/sysfs.c b/drivers/misc/habanalabs/sysfs.c
+new file mode 100644
+index 000000000000..20481fd9ed20
+--- /dev/null
++++ b/drivers/misc/habanalabs/sysfs.c
+@@ -0,0 +1,468 @@
++// SPDX-License-Identifier: GPL-2.0
++
++/*
++ * Copyright 2016-2019 HabanaLabs, Ltd.
++ * All Rights Reserved.
++ */
++
++#include "habanalabs.h"
++
++#include <linux/pci.h>
++
++#define SET_CLK_PKT_TIMEOUT	200000	/* 200ms */
++#define SET_PWR_PKT_TIMEOUT	400000	/* 400ms */
++
++long hl_get_frequency(struct hl_device *hdev, u32 pll_index, bool curr)
++{
++	struct armcp_packet pkt;
++	long result;
++	int rc;
++
++	memset(&pkt, 0, sizeof(pkt));
++
++	if (curr)
++		pkt.ctl = ARMCP_PACKET_FREQUENCY_CURR_GET <<
++						ARMCP_PKT_CTL_OPCODE_SHIFT;
++	else
++		pkt.ctl = ARMCP_PACKET_FREQUENCY_GET <<
++						ARMCP_PKT_CTL_OPCODE_SHIFT;
++	pkt.pll_index = pll_index;
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++						SET_CLK_PKT_TIMEOUT, &result);
++
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to get frequency of PLL %d, error %d\n",
++			pll_index, rc);
++		result = rc;
++	}
++
++	return result;
++}
++
++void hl_set_frequency(struct hl_device *hdev, u32 pll_index, u64 freq)
++{
++	struct armcp_packet pkt;
++	int rc;
++
++	memset(&pkt, 0, sizeof(pkt));
++
++	pkt.ctl = ARMCP_PACKET_FREQUENCY_SET << ARMCP_PKT_CTL_OPCODE_SHIFT;
++	pkt.pll_index = pll_index;
++	pkt.value = freq;
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++					SET_CLK_PKT_TIMEOUT, NULL);
++
++	if (rc)
++		dev_err(hdev->dev,
++			"Failed to set frequency to PLL %d, error %d\n",
++			pll_index, rc);
++}
++
++u64 hl_get_max_power(struct hl_device *hdev)
++{
++	struct armcp_packet pkt;
++	long result;
++	int rc;
++
++	memset(&pkt, 0, sizeof(pkt));
++
++	pkt.ctl = ARMCP_PACKET_MAX_POWER_GET << ARMCP_PKT_CTL_OPCODE_SHIFT;
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++						SET_PWR_PKT_TIMEOUT, &result);
++
++	if (rc) {
++		dev_err(hdev->dev, "Failed to get max power, error %d\n", rc);
++		result = rc;
++	}
++
++	return result;
++}
++
++void hl_set_max_power(struct hl_device *hdev, u64 value)
++{
++	struct armcp_packet pkt;
++	int rc;
++
++	memset(&pkt, 0, sizeof(pkt));
++
++	pkt.ctl = ARMCP_PACKET_MAX_POWER_SET << ARMCP_PKT_CTL_OPCODE_SHIFT;
++	pkt.value = value;
++
++	rc = hdev->asic_funcs->send_cpu_message(hdev, (u32 *) &pkt, sizeof(pkt),
++					SET_PWR_PKT_TIMEOUT, NULL);
++
++	if (rc)
++		dev_err(hdev->dev, "Failed to set max power, error %d\n", rc);
++}
++
++static ssize_t pm_mng_profile_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	if (hdev->disabled)
++		return -ENODEV;
++
++	return sprintf(buf, "%s\n",
++			(hdev->pm_mng_profile == PM_AUTO) ? "auto" :
++			(hdev->pm_mng_profile == PM_MANUAL) ? "manual" :
++			"unknown");
++}
++
++static ssize_t pm_mng_profile_store(struct device *dev,
++		struct device_attribute *attr, const char *buf, size_t count)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	if (hdev->disabled) {
++		count = -ENODEV;
++		goto out;
++	}
++
++	mutex_lock(&hdev->fd_open_cnt_lock);
++
++	if (atomic_read(&hdev->fd_open_cnt) > 0) {
++		dev_err(hdev->dev,
++			"Can't change PM profile while user process is opened on the device\n");
++		count = -EPERM;
++		goto unlock_mutex;
++	}
++
++	if (strncmp("auto", buf, strlen("auto")) == 0) {
++		/* Make sure we are in LOW PLL when changing modes */
++		if (hdev->pm_mng_profile == PM_MANUAL) {
++			atomic_set(&hdev->curr_pll_profile, PLL_HIGH);
++			hl_device_set_frequency(hdev, PLL_LOW);
++			hdev->pm_mng_profile = PM_AUTO;
++		}
++	} else if (strncmp("manual", buf, strlen("manual")) == 0) {
++		/* Make sure we are in LOW PLL when changing modes */
++		if (hdev->pm_mng_profile == PM_AUTO) {
++			flush_delayed_work(&hdev->work_freq);
++			hdev->pm_mng_profile = PM_MANUAL;
++		}
++	} else {
++		dev_err(hdev->dev, "value should be auto or manual\n");
++		count = -EINVAL;
++		goto unlock_mutex;
++	}
++
++unlock_mutex:
++	mutex_unlock(&hdev->fd_open_cnt_lock);
++out:
++	return count;
++}
++
++static ssize_t high_pll_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	if (hdev->disabled)
++		return -ENODEV;
++
++	return sprintf(buf, "%u\n", hdev->high_pll);
++}
++
++static ssize_t high_pll_store(struct device *dev, struct device_attribute *attr,
++				const char *buf, size_t count)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	long value;
++	int rc;
++
++	if (hdev->disabled) {
++		count = -ENODEV;
++		goto out;
++	}
++
++	rc = kstrtoul(buf, 0, &value);
++
++	if (rc) {
++		count = -EINVAL;
++		goto out;
++	}
++
++	hdev->high_pll = value;
++
++out:
++	return count;
++}
++
++static ssize_t uboot_ver_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	return sprintf(buf, "%s\n", hdev->asic_prop.uboot_ver);
++}
++
++static ssize_t armcp_kernel_ver_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	return sprintf(buf, "%s", hdev->asic_prop.armcp_info.kernel_version);
++}
++
++static ssize_t armcp_ver_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	return sprintf(buf, "%s\n", hdev->asic_prop.armcp_info.armcp_version);
++}
++
++static ssize_t cpld_ver_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	return sprintf(buf, "0x%08x\n",
++			hdev->asic_prop.armcp_info.cpld_version);
++}
++
++static ssize_t infineon_ver_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	return sprintf(buf, "0x%04x\n",
++			hdev->asic_prop.armcp_info.infineon_version);
++}
++
++static ssize_t fuse_ver_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	return sprintf(buf, "%s\n", hdev->asic_prop.armcp_info.fuse_version);
++}
++
++static ssize_t thermal_ver_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	return sprintf(buf, "%s", hdev->asic_prop.armcp_info.thermal_version);
++}
++
++static ssize_t preboot_btl_ver_show(struct device *dev,
++				struct device_attribute *attr, char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	return sprintf(buf, "%s\n", hdev->asic_prop.preboot_ver);
++}
++
++static ssize_t device_type_show(struct device *dev,
++		struct device_attribute *attr, char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	char *str;
++
++	switch (hdev->asic_type) {
++	case ASIC_GOYA:
++		str = "GOYA";
++		break;
++	default:
++		dev_err(hdev->dev, "Unrecognized ASIC type %d\n",
++				hdev->asic_type);
++		return -EINVAL;
++	}
++
++	return sprintf(buf, "%s\n", str);
++}
++
++static ssize_t pci_addr_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	/* Use dummy, fixed address for simulator */
++	if (!hdev->pdev)
++		return sprintf(buf, "0000:%02d:00.0\n", hdev->id);
++
++	return sprintf(buf, "%04x:%02x:%02x.%x\n",
++			pci_domain_nr(hdev->pdev->bus),
++			hdev->pdev->bus->number,
++			PCI_SLOT(hdev->pdev->devfn),
++			PCI_FUNC(hdev->pdev->devfn));
++}
++
++static ssize_t status_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	char *str;
++
++	if (hdev->disabled)
++		str = "Malfunction";
++	else
++		str = "Operational";
++
++	return sprintf(buf, "%s\n", str);
++}
++
++static ssize_t write_open_cnt_show(struct device *dev,
++		struct device_attribute *attr, char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++
++	return sprintf(buf, "%d\n", hdev->user_ctx ? 1 : 0);
++}
++
++static ssize_t max_power_show(struct device *dev, struct device_attribute *attr,
++				char *buf)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	long val;
++
++	if (hdev->disabled)
++		return -ENODEV;
++
++	val = hl_get_max_power(hdev);
++
++	return sprintf(buf, "%lu\n", val);
++}
++
++static ssize_t max_power_store(struct device *dev,
++		struct device_attribute *attr, const char *buf, size_t count)
++{
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	unsigned long value;
++	int rc;
++
++	if (hdev->disabled) {
++		count = -ENODEV;
++		goto out;
++	}
++
++	rc = kstrtoul(buf, 0, &value);
++
++	if (rc) {
++		count = -EINVAL;
++		goto out;
++	}
++
++	hdev->max_power = value;
++	hl_set_max_power(hdev, value);
++
++out:
++	return count;
++}
++
++static ssize_t eeprom_read_handler(struct file *filp, struct kobject *kobj,
++			struct bin_attribute *attr, char *buf, loff_t offset,
++			size_t max_size)
++{
++	struct device *dev = container_of(kobj, struct device, kobj);
++	struct hl_device *hdev = dev_get_drvdata(dev);
++	char *data;
++	int rc;
++
++	if (!max_size)
++		return -EINVAL;
++
++	data = kzalloc(max_size, GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	rc = hdev->asic_funcs->get_eeprom_data(hdev, data, max_size);
++	if (rc)
++		goto out;
++
++	memcpy(buf, data, max_size);
++
++out:
++	kfree(data);
++
++	return max_size;
++}
++
++static DEVICE_ATTR_RO(armcp_kernel_ver);
++static DEVICE_ATTR_RO(armcp_ver);
++static DEVICE_ATTR_RO(cpld_ver);
++static DEVICE_ATTR_RO(device_type);
++static DEVICE_ATTR_RO(fuse_ver);
++static DEVICE_ATTR_RW(high_pll);
++static DEVICE_ATTR_RO(infineon_ver);
++static DEVICE_ATTR_RW(max_power);
++static DEVICE_ATTR_RO(pci_addr);
++static DEVICE_ATTR_RW(pm_mng_profile);
++static DEVICE_ATTR_RO(preboot_btl_ver);
++static DEVICE_ATTR_RO(status);
++static DEVICE_ATTR_RO(thermal_ver);
++static DEVICE_ATTR_RO(uboot_ver);
++static DEVICE_ATTR_RO(write_open_cnt);
++
++static struct bin_attribute bin_attr_eeprom = {
++	.attr = {.name = "eeprom", .mode = (0444)},
++	.size = PAGE_SIZE,
++	.read = eeprom_read_handler
++};
++
++static struct attribute *hl_dev_attrs[] = {
++	&dev_attr_armcp_kernel_ver.attr,
++	&dev_attr_armcp_ver.attr,
++	&dev_attr_cpld_ver.attr,
++	&dev_attr_device_type.attr,
++	&dev_attr_fuse_ver.attr,
++	&dev_attr_high_pll.attr,
++	&dev_attr_infineon_ver.attr,
++	&dev_attr_max_power.attr,
++	&dev_attr_pci_addr.attr,
++	&dev_attr_pm_mng_profile.attr,
++	&dev_attr_preboot_btl_ver.attr,
++	&dev_attr_status.attr,
++	&dev_attr_thermal_ver.attr,
++	&dev_attr_uboot_ver.attr,
++	&dev_attr_write_open_cnt.attr,
++	NULL,
++};
++
++static struct bin_attribute *hl_dev_bin_attrs[] = {
++	&bin_attr_eeprom,
++	NULL
++};
++
++static struct attribute_group hl_dev_attr_group = {
++	.attrs = hl_dev_attrs,
++	.bin_attrs = hl_dev_bin_attrs,
++};
++
++static struct attribute_group hl_dev_clks_attr_group;
++
++static const struct attribute_group *hl_dev_attr_groups[] = {
++	&hl_dev_attr_group,
++	&hl_dev_clks_attr_group,
++	NULL,
++};
++
++int hl_sysfs_init(struct hl_device *hdev)
++{
++	int rc;
++
++	hdev->pm_mng_profile = PM_AUTO;
++	hdev->max_power = hdev->asic_prop.max_power_default;
++
++	hdev->asic_funcs->add_device_attr(hdev, &hl_dev_clks_attr_group);
++
++	rc = device_add_groups(hdev->dev, hl_dev_attr_groups);
++	if (rc) {
++		dev_err(hdev->dev,
++			"Failed to add groups to device, error %d\n", rc);
++		return rc;
++	}
++
++	return 0;
++}
++
++void hl_sysfs_fini(struct hl_device *hdev)
++{
++	device_remove_groups(hdev->dev, hl_dev_attr_groups);
++}
 -- 
 2.18.0
 
