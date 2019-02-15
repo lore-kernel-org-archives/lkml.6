@@ -2,210 +2,193 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01869C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:26:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB217C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:29:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3A2D20840
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:26:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="RXMf1eOp"
+	by mail.kernel.org (Postfix) with ESMTP id 7270F20840
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:29:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730136AbfBOA0i (ORCPT
+        id S1730164AbfBOA3s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 19:26:38 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:39462 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725924AbfBOA0h (ORCPT
+        Thu, 14 Feb 2019 19:29:48 -0500
+Received: from gateway24.websitewelcome.com ([192.185.51.196]:39086 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729730AbfBOA3s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 19:26:37 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1F0NxWQ080444;
-        Fri, 15 Feb 2019 00:26:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=x8efIcoM9twPEFd/Vw8XPz+PDVMcLou9Ii5COike/IU=;
- b=RXMf1eOp6+NThPx6AYbKVfqhCzDnqikhVHrdXls5myIqpk50omgS13HrMMG3zuXWQMTu
- AiEMP5lTsdGXlDYegBVVd479+K3S6BvE41XmxcCyTGc98BSH+gvO0moHofoHyaPCZtCj
- O9K/EjLQCUp5uuVTiwlqd2PaONkOAFw/i623NLe3YCYyE074eLPMYkxnibZtrkFhwkgn
- 69prfKVioeADoprbSMcscV1YvJzw7XYrm4gEEexGwUcllS4CMZRkz7yVWP0I9VrN6vjh
- LKPcFO5nyoYqeUaKYmV6fzG3daOXLWf0+/3mG6UOS6D2QyvzK4WLpDC0Nq2pBGmmCnEX Sw== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2qhreeb30f-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Feb 2019 00:26:33 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1F0QXSE025133
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Feb 2019 00:26:33 GMT
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1F0QWVZ016811;
-        Fri, 15 Feb 2019 00:26:32 GMT
-Received: from localhost (/10.159.142.29)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 15 Feb 2019 00:26:32 +0000
-Date:   Thu, 14 Feb 2019 16:26:31 -0800
-From:   "Darrick J. Wong" <darrick.wong@oracle.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Matej Kupljen <matej.kupljen@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, hughd@google.com
-Subject: Re: tmpfs inode leakage when opening file with O_TMP_FILE
-Message-ID: <20190215002631.GB6474@magnolia>
-References: <CAHMF36F4JN44Y-yMnxw36A8cO0yVUQhAkvJDcj_gbWbsuUAA5A@mail.gmail.com>
- <20190214154402.5d204ef2aa109502761ab7a0@linux-foundation.org>
+        Thu, 14 Feb 2019 19:29:48 -0500
+Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id D4E057D0E
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 18:29:46 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id uRNyg95jQ2qH7uRNyggnno; Thu, 14 Feb 2019 18:29:46 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.119.20] (port=54054 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1guRNy-002JKK-C7; Thu, 14 Feb 2019 18:29:46 -0600
+To:     Jens Axboe <axboe@kernel.dk>,
+        Philipp Reisner <philipp.reisner@linbit.com>,
+        Lars Ellenberg <lars.ellenberg@linbit.com>
+Cc:     drbd-dev@lists.linbit.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
+References: <20190212212820.GA15942@embeddedor>
+ <4a4429a8-56d4-b349-444c-282246537121@kernel.dk>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ mQINBFssHAwBEADIy3ZoPq3z5UpsUknd2v+IQud4TMJnJLTeXgTf4biSDSrXn73JQgsISBwG
+ 2Pm4wnOyEgYUyJd5tRWcIbsURAgei918mck3tugT7AQiTUN3/5aAzqe/4ApDUC+uWNkpNnSV
+ tjOx1hBpla0ifywy4bvFobwSh5/I3qohxDx+c1obd8Bp/B/iaOtnq0inli/8rlvKO9hp6Z4e
+ DXL3PlD0QsLSc27AkwzLEc/D3ZaqBq7ItvT9Pyg0z3Q+2dtLF00f9+663HVC2EUgP25J3xDd
+ 496SIeYDTkEgbJ7WYR0HYm9uirSET3lDqOVh1xPqoy+U9zTtuA9NQHVGk+hPcoazSqEtLGBk
+ YE2mm2wzX5q2uoyptseSNceJ+HE9L+z1KlWW63HhddgtRGhbP8pj42bKaUSrrfDUsicfeJf6
+ m1iJRu0SXYVlMruGUB1PvZQ3O7TsVfAGCv85pFipdgk8KQnlRFkYhUjLft0u7CL1rDGZWDDr
+ NaNj54q2CX9zuSxBn9XDXvGKyzKEZ4NY1Jfw+TAMPCp4buawuOsjONi2X0DfivFY+ZsjAIcx
+ qQMglPtKk/wBs7q2lvJ+pHpgvLhLZyGqzAvKM1sVtRJ5j+ARKA0w4pYs5a5ufqcfT7dN6TBk
+ LXZeD9xlVic93Ju08JSUx2ozlcfxq+BVNyA+dtv7elXUZ2DrYwARAQABtCxHdXN0YXZvIEEu
+ IFIuIFNpbHZhIDxndXN0YXZvQGVtYmVkZGVkb3IuY29tPokCPQQTAQgAJwUCWywcDAIbIwUJ
+ CWYBgAULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRBHBbTLRwbbMZ6tEACk0hmmZ2FWL1Xi
+ l/bPqDGFhzzexrdkXSfTTZjBV3a+4hIOe+jl6Rci/CvRicNW4H9yJHKBrqwwWm9fvKqOBAg9
+ obq753jydVmLwlXO7xjcfyfcMWyx9QdYLERTeQfDAfRqxir3xMeOiZwgQ6dzX3JjOXs6jHBP
+ cgry90aWbaMpQRRhaAKeAS14EEe9TSIly5JepaHoVdASuxklvOC0VB0OwNblVSR2S5i5hSsh
+ ewbOJtwSlonsYEj4EW1noQNSxnN/vKuvUNegMe+LTtnbbocFQ7dGMsT3kbYNIyIsp42B5eCu
+ JXnyKLih7rSGBtPgJ540CjoPBkw2mCfhj2p5fElRJn1tcX2McsjzLFY5jK9RYFDavez5w3lx
+ JFgFkla6sQHcrxH62gTkb9sUtNfXKucAfjjCMJ0iuQIHRbMYCa9v2YEymc0k0RvYr43GkA3N
+ PJYd/vf9vU7VtZXaY4a/dz1d9dwIpyQARFQpSyvt++R74S78eY/+lX8wEznQdmRQ27kq7BJS
+ R20KI/8knhUNUJR3epJu2YFT/JwHbRYC4BoIqWl+uNvDf+lUlI/D1wP+lCBSGr2LTkQRoU8U
+ 64iK28BmjJh2K3WHmInC1hbUucWT7Swz/+6+FCuHzap/cjuzRN04Z3Fdj084oeUNpP6+b9yW
+ e5YnLxF8ctRAp7K4yVlvA7kCDQRbLBwMARAAsHCE31Ffrm6uig1BQplxMV8WnRBiZqbbsVJB
+ H1AAh8tq2ULl7udfQo1bsPLGGQboJSVN9rckQQNahvHAIK8ZGfU4Qj8+CER+fYPp/MDZj+t0
+ DbnWSOrG7z9HIZo6PR9z4JZza3Hn/35jFggaqBtuydHwwBANZ7A6DVY+W0COEU4of7CAahQo
+ 5NwYiwS0lGisLTqks5R0Vh+QpvDVfuaF6I8LUgQR/cSgLkR//V1uCEQYzhsoiJ3zc1HSRyOP
+ otJTApqGBq80X0aCVj1LOiOF4rrdvQnj6iIlXQssdb+WhSYHeuJj1wD0ZlC7ds5zovXh+FfF
+ l5qH5RFY/qVn3mNIVxeO987WSF0jh+T5ZlvUNdhedGndRmwFTxq2Li6GNMaolgnpO/CPcFpD
+ jKxY/HBUSmaE9rNdAa1fCd4RsKLlhXda+IWpJZMHlmIKY8dlUybP+2qDzP2lY7kdFgPZRU+e
+ zS/pzC/YTzAvCWM3tDgwoSl17vnZCr8wn2/1rKkcLvTDgiJLPCevqpTb6KFtZosQ02EGMuHQ
+ I6Zk91jbx96nrdsSdBLGH3hbvLvjZm3C+fNlVb9uvWbdznObqcJxSH3SGOZ7kCHuVmXUcqoz
+ ol6ioMHMb+InrHPP16aVDTBTPEGwgxXI38f7SUEn+NpbizWdLNz2hc907DvoPm6HEGCanpcA
+ EQEAAYkCJQQYAQgADwUCWywcDAIbDAUJCWYBgAAKCRBHBbTLRwbbMdsZEACUjmsJx2CAY+QS
+ UMebQRFjKavwXB/xE7fTt2ahuhHT8qQ/lWuRQedg4baInw9nhoPE+VenOzhGeGlsJ0Ys52sd
+ XvUjUocKgUQq6ekOHbcw919nO5L9J2ejMf/VC/quN3r3xijgRtmuuwZjmmi8ct24TpGeoBK4
+ WrZGh/1hAYw4ieARvKvgjXRstcEqM5thUNkOOIheud/VpY+48QcccPKbngy//zNJWKbRbeVn
+ imua0OpqRXhCrEVm/xomeOvl1WK1BVO7z8DjSdEBGzbV76sPDJb/fw+y+VWrkEiddD/9CSfg
+ fBNOb1p1jVnT2mFgGneIWbU0zdDGhleI9UoQTr0e0b/7TU+Jo6TqwosP9nbk5hXw6uR5k5PF
+ 8ieyHVq3qatJ9K1jPkBr8YWtI5uNwJJjTKIA1jHlj8McROroxMdI6qZ/wZ1ImuylpJuJwCDC
+ ORYf5kW61fcrHEDlIvGc371OOvw6ejF8ksX5+L2zwh43l/pKkSVGFpxtMV6d6J3eqwTafL86
+ YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
+ GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: [PATCH] drbd_receiver: mark expected switch fall-throughs
+Message-ID: <ab24df46-b6eb-bdb0-54fb-40ef4afa0527@embeddedor.com>
+Date:   Thu, 14 Feb 2019 18:29:45 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190214154402.5d204ef2aa109502761ab7a0@linux-foundation.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9167 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902150001
+In-Reply-To: <4a4429a8-56d4-b349-444c-282246537121@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.119.20
+X-Source-L: No
+X-Exim-ID: 1guRNy-002JKK-C7
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:54054
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 6
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[cc the shmem maintainer and the mm list]
 
-On Thu, Feb 14, 2019 at 03:44:02PM -0800, Andrew Morton wrote:
-> (cc linux-fsdevel)
+
+On 2/12/19 3:36 PM, Jens Axboe wrote:
+> On 2/12/19 2:28 PM, Gustavo A. R. Silva wrote:
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch
+>> cases where we are expecting to fall through.
+>>
+>> This patch fixes the following warnings:
+>>
+>> drivers/block/drbd/drbd_receiver.c: In function ‘drbd_asb_recover_0p’:
+>> drivers/block/drbd/drbd_receiver.c:3093:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>    if (self == 1 && peer == 0) {
+>>       ^
+>> drivers/block/drbd/drbd_receiver.c:3098:2: note: here
+>>   case ASB_DISCARD_OLDER_PRI:
+>>   ^~~~
+>> drivers/block/drbd/drbd_receiver.c:3120:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>    if (after_sb_0p == ASB_DISCARD_ZERO_CHG)
+>>       ^
+>> drivers/block/drbd/drbd_receiver.c:3123:2: note: here
+>>   case ASB_DISCARD_LEAST_CHG:
+>>   ^~~~
+>>
+>> Warning level 3 was used: -Wimplicit-fallthrough=3
+>>
+>> Notice that in some cases, the code comment is modified in
+>> accordance with what GCC is expecting to find.
+>>
+>> This patch is part of the ongoing efforts to enable
+>> -Wimplicit-fallthrough.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>>  drivers/block/drbd/drbd_receiver.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+>> index c7ad88d91a09..78bb763a367d 100644
+>> --- a/drivers/block/drbd/drbd_receiver.c
+>> +++ b/drivers/block/drbd/drbd_receiver.c
+>> @@ -3094,7 +3094,7 @@ static int drbd_asb_recover_0p(struct drbd_peer_device *peer_device) __must_hold
+>>  			rv =  1;
+>>  			break;
+>>  		}
+>> -		/* Else fall through to one of the other strategies... */
+>> +		/* Else fall through - to one of the other strategies... */
+>>  	case ASB_DISCARD_OLDER_PRI:
+>>  		if (self == 0 && peer == 1) {
+>>  			rv = 1;
+>> @@ -3119,7 +3119,7 @@ static int drbd_asb_recover_0p(struct drbd_peer_device *peer_device) __must_hold
+>>  		}
+>>  		if (after_sb_0p == ASB_DISCARD_ZERO_CHG)
+>>  			break;
+>> -		/* else: fall through */
+>> +		/* Else fall through */
 > 
-> On Mon, 11 Feb 2019 15:18:11 +0100 Matej Kupljen <matej.kupljen@gmail.com> wrote:
+> This is getting really silly, as these two hunks both aptly demonstrate. Can
+> we please inject some sanity into this fall through witch hunt?
 > 
-> > Hi,
-> > 
-> > it seems that when opening file on file system that is mounted on
-> > tmpfs with the O_TMPFILE flag and using linkat call after that, it
-> > uses 2 inodes instead of 1.
-> > 
-> > This is simple test case:
-> > 
-> > #include <sys/types.h>
-> > #include <sys/stat.h>
-> > #include <fcntl.h>
-> > #include <unistd.h>
-> > #include <string.h>
-> > #include <stdio.h>
-> > #include <stdlib.h>
-> > #include <linux/limits.h>
-> > #include <errno.h>
-> > 
-> > #define TEST_STRING     "Testing\n"
-> > 
-> > #define TMP_PATH        "/tmp/ping/"
-> > #define TMP_FILE        "file.txt"
-> > 
-> > 
-> > int main(int argc, char* argv[])
-> > {
-> >         char path[PATH_MAX];
-> >         int fd;
-> >         int rc;
-> > 
-> >         fd = open(TMP_PATH, __O_TMPFILE | O_RDWR,
-> >                         S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP |
-> > S_IROTH | S_IWOTH);
-> > 
-> >         rc = write(fd, TEST_STRING, strlen(TEST_STRING));
-> > 
-> >         snprintf(path, PATH_MAX,  "/proc/self/fd/%d", fd);
-> >         linkat(AT_FDCWD, path, AT_FDCWD, TMP_PATH TMP_FILE, AT_SYMLINK_FOLLOW);
-> >         close(fd);
-> > 
-> >         return 0;
-> > }
-> > 
-> > I have checked indoes with "df -i" tool. The first inode is used when
-> > the call to open is executed and the second one when the call to
-> > linkat is executed.
-> > It is not decreased when close is executed.
-> > 
-> > I have also tested this on an ext4 mounted fs and there only one inode is used.
-> > 
-> > I tested this on:
-> > $ cat /etc/lsb-release
-> > DISTRIB_ID=Ubuntu
-> > DISTRIB_RELEASE=18.04
-> > DISTRIB_CODENAME=bionic
-> > DISTRIB_DESCRIPTION="Ubuntu 18.04.1 LTS"
-> > 
-> > $ uname -a
-> > Linux Orion 4.15.0-43-generic #46-Ubuntu SMP Thu Dec 6 14:45:28 UTC
-> > 2018 x86_64 x86_64 x86_64 GNU/Linux
 
-Heh, tmpfs and its weird behavior where each new link counts as a new
-inode because "each new link needs a new dentry, pinning lowmem, and
-tmpfs dentries cannot be pruned until they are unlinked."
+No witch hunt here.  This work has proved to be very valuable. I've fixed years-old
+bugs thanks to this effort.
 
-It seems to have this behavior on 5.0-rc6 too:
+> The last hunk is updating ANOTHER patch that also attempted to silence this
+> stuff.
+> 
 
-$ /bin/df -i /tmp ; ./c ; /bin/df -i /tmp
-Filesystem      Inodes IUsed   IFree IUse% Mounted on
-tmp            1019110    17 1019093    1% /tmp
-Filesystem      Inodes IUsed   IFree IUse% Mounted on
-tmp            1019110    19 1019091    1% /tmp
+Yeah. Sorry about that.
 
-Probably because shmem_tmpfile -> shmem_get_inode -> shmem_reserve_inode
-which decrements ifree when we create the tmpfile, and then the
-d_tmpfile decrements i_nlink to zero.  Now we have iused=1, nlink=0,
-assuming iused=itotal-ifree like usual.
+Previously, I was using level 2: -Wimplicit-fallthrough=2, but this time I'm
+using level 3: -Wimplicit-fallthrough=3, which is stricter and maps to -Wextra.
 
-Then the linkat call does:
+Thanks
+--
+Gustavo
 
-shmem_link -> shmem_reserve_inode
-
-which decrements ifree again and increments i_nlink to 1.  Now we have
-iused=2, nlink=1.
-
-The program exits, which closes the file.  /tmp/ping/file.txt still
-exists and we haven't evicted inodes yet, so nothing much happens.
-
-But then I added in rm -rf /tmp/ping/file.txt to see what happens.
-shmem_unlink contains this:
-
-	if (inode->i_nlink > 1 && !S_ISDIR(inode->i_mode))
-		shmem_free_inode(inode->i_sb);
-
-So shmem_iunlink *doesnt* decrement ifree but does drop the nlink, so
-our state is now iused=2, nlink=0.
-
-Now we evict the inode, which decrements ifree, so iused=1 and the inode
-goes away.  Oops, we just leaked an ifree.
-
-I /think/ the proper fix is to change shmem_link to decrement ifree only
-if the inode has nonzero nlink, e.g.
-
-	/*
-	 * No ordinary (disk based) filesystem counts links as inodes;
-	 * but each new link needs a new dentry, pinning lowmem, and
-	 * tmpfs dentries cannot be pruned until they are unlinked.  If
-	 * we're linking an O_TMPFILE file into the tmpfs we can skip
-	 * this because there's still only one link to the inode.
-	 */
-	if (inode->i_nlink > 0) {
-		ret = shmem_reserve_inode(inode->i_sb);
-		if (ret)
-			goto out;
-	}
-
-Says me who was crawling around poking at O_TMPFILE behavior all morning.
-Not sure if that's right; what happens to the old dentry?
-
---D
-
-> > If you need any more information, please let me know.
-> > 
-> > And please CC me when replying, I am not subscribed to the list.
-> > 
-> > Thanks and BR,
-> > Matej
