@@ -2,193 +2,73 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 892DEC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B889C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:21:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B49A2192D
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:15:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="npQFcA5+"
+	by mail.kernel.org (Postfix) with ESMTP id 62EC321A80
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:21:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731479AbfBOOPB (ORCPT
+        id S1728970AbfBOOVP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 09:15:01 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:5456 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726324AbfBOOPB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 09:15:01 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c66c9680000>; Fri, 15 Feb 2019 06:15:04 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 15 Feb 2019 06:14:59 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 15 Feb 2019 06:14:59 -0800
-Received: from [10.21.132.148] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 15 Feb
- 2019 14:14:56 +0000
-Subject: Re: [PATCH 2/2] driver core: Fix possible supplier PM-usage counter
- imbalance
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lukas Wunner <lukas@wunner.de>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-References: <5510642.nRbR3bcduN@aspire.rjw.lan>
- <9351473.C2nPJoyFsE@aspire.rjw.lan>
- <2ed95b05-317c-59bb-498a-b5481e54bcf6@nvidia.com>
- <23147304.zVnvcQtZVR@aspire.rjw.lan>
- <03cb05e4-5d34-3669-1ce9-bb8710c70c95@nvidia.com>
-Message-ID: <71d5b9e0-8906-eded-f8bd-9a9023e54eb9@nvidia.com>
-Date:   Fri, 15 Feb 2019 14:14:54 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <03cb05e4-5d34-3669-1ce9-bb8710c70c95@nvidia.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1550240104; bh=QHLvf2kAtRLdCg9LxIHTdGmok2BFcNgoPRRgnqUK5Gg=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=npQFcA5+PGdptoiFTtXvf2sqW9u11fZbjSwkJ1Pf2nJkAr79xinaDr98O46kFiHpg
-         2pydDdFoXJlOV3qWe2QIyPtNnAjk0HQ5TJEXLwUWZGg8xZao4kUvgyXvBXLZNbAAWH
-         /eV7QzUgjHmO6SJIivOokhFKgoBop3GZliOrLHBP3t2lkfixqhjup1EYbNcZSNWfVJ
-         duh5gAOCbiWYBfViyR3YNgWD3hj2VDZezrGCRFz6wwvAuxmoeQjX2dXZmNtOF4PCS0
-         08eF5zgQ5vDS8cMvHF1mvaVN74o6QN/t3lKw5DJ26I/ZRSN0U3dr5knkQCkXEv64gO
-         x9UPkaFTtaI0w==
+        Fri, 15 Feb 2019 09:21:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49268 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726107AbfBOOVP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 09:21:15 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5EEB2192D;
+        Fri, 15 Feb 2019 14:21:14 +0000 (UTC)
+Received: from rostedt by gandalf.local.home with local (Exim 4.92-RC5)
+        (envelope-from <rostedt@goodmis.org>)
+        id 1gueMb-00069u-QG; Fri, 15 Feb 2019 09:21:13 -0500
+Message-Id: <20190215142015.860423791@goodmis.org>
+User-Agent: quilt/0.65
+Date:   Fri, 15 Feb 2019 09:20:15 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH 0/2] [GIT PULL] tracing: Two more fixes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 15/02/2019 13:21, Jon Hunter wrote:
-> 
-> On 15/02/2019 12:06, Rafael J. Wysocki wrote:
->> On Friday, February 15, 2019 12:00:27 PM CET Jon Hunter wrote:
->>> Hi Rafael,
->>>
->>> On 12/02/2019 12:08, Rafael J. Wysocki wrote:
->>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>>
->>>> If a stateless device link to a certain supplier with
->>>> DL_FLAG_PM_RUNTIME set in the flags is added and then removed by the
->>>> consumer driver's probe callback, the supplier's PM-runtime usage
->>>> counter will be nonzero after that which effectively causes the
->>>> supplier to remain "always on" going forward.
->>>>
->>>> Namely, device_link_add() called to add the link invokes
->>>> device_link_rpm_prepare() which notices that the consumer driver is
->>>> probing, so it increments the supplier's PM-runtime usage counter
->>>> with the assumption that the link will stay around until
->>>> pm_runtime_put_suppliers() is called by driver_probe_device(),
->>>> but if the link goes away before that point, the supplier's
->>>> PM-runtime usage counter will remain nonzero.
->>>>
->>>> To prevent that from happening, first rework pm_runtime_get_suppliers()
->>>> and pm_runtime_put_suppliers() to use the rpm_active refounts of device
->>>> links and make the latter only drop rpm_active and the supplier's
->>>> PM-runtime usage counter for each link by one, unless rpm_active is
->>>> one already for it.  Next, modify device_link_add() to bump up the
->>>> new link's rpm_active refcount and the suppliers PM-runtime usage
->>>> counter by two, to prevent pm_runtime_put_suppliers(), if it is
->>>> called subsequently, from suspending the supplier prematurely (in
->>>> case its PM-runtime usage counter goes down to 0 in there).
->>>>
->>>> Due to the way rpm_put_suppliers() works, this change does not
->>>> affect runtime suspend of the consumer ends of new device links (or,
->>>> generally, device links for which DL_FLAG_PM_RUNTIME has just been
->>>> set).
->>>>
->>>> Fixes: e2f3cd831a28 ("driver core: Fix handling of runtime PM flags in device_link_add()")
->>>> Reported-by: Ulf Hansson <ulf.hansson@linaro.org> 
->>>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>> ---
->>>>
->>>> Note that the issue had been there before commit e2f3cd831a28, but it was
->>>> overlooked by that commit and this change is a fix on top of it, so make
->>>> the Fixes: tag point to commit e2f3cd831a28 (instead of an earlier one
->>>> that the patch will not be applicable to).
->>> I noticed that yesterday's and today's -next were no longer booting on
->>> one of our Tegra boards (Tegra210 Jetson TX2) because networking is
->>> failing. The ethernet chip is a USB device and looking at the bootlogs I
->>> can see that the Tegra XHCI driver is failing ...
->>>
->>>  tegra-xusb 70090000.usb: xHCI host controller not responding, assume dead
->>>  tegra-xusb 70090000.usb: HC died; cleaning up
->>>
->>> The Tegra XHCI driver uses multiple power-domains and uses
->>> device_link_add() to attach them. So now I am wondering if there is
->>> something that we have got wrong in our implementation. However, I don't
->>> see the device being probed deferred on boot or anything like that.
->>>
->>> The driver in question is drivers/usb/host/xhci-tegra.c and we add the
->>> links in the function tegra_xusb_powerdomain_init() which is before RPM
->>> is enabled. Let me know if you have any thoughts.
->>
->> Please try the appended patch on top of the $subject one (provided that
->> reverting the $subject patch makes the problem go away).
-> 
-> Thanks and yes to confirm, reverting the $subject patch on top of next
-> does make the issue go away.
-> 
->> ---
->>  drivers/base/power/runtime.c |    9 ++++++---
->>  1 file changed, 6 insertions(+), 3 deletions(-)
->>
->> Index: linux-pm/drivers/base/power/runtime.c
->> ===================================================================
->> --- linux-pm.orig/drivers/base/power/runtime.c
->> +++ linux-pm/drivers/base/power/runtime.c
->> @@ -1675,9 +1675,12 @@ void pm_runtime_put_suppliers(struct dev
->>  	idx = device_links_read_lock();
->>  
->>  	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node)
->> -		if (link->flags & DL_FLAG_PM_RUNTIME &&
->> -		    refcount_dec_not_one(&link->rpm_active))
->> -			pm_runtime_put(link->supplier);
->> +		if (link->flags & DL_FLAG_PM_RUNTIME) {
->> +			if (refcount_dec_not_one(&link->rpm_active))
->> +				pm_runtime_put(link->supplier);
->> +			else
->> +				pm_request_idle(link->supplier);
->> +		}
->>  
->>  	device_links_read_unlock(idx);
->>  }
-> 
-> I will try this now and report back in a bit.
+Linus,
 
-I tried this on top of next, but unfortunately the same issue still
-persists and so this did not fix it. Let me know if there is any debug I
-can add/enable.
+Two more tracing fixes
 
-Cheers
-Jon
+ - Have kprobes not use copy_from_user to access kernel addresses
+   as this is now considered a security issue.
 
--- 
-nvpublic
+ - Put back the entries counter in the tracing output that was accidentally
+   removed.
+
+Please pull the latest trace-v5.0-rc4-2 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/rostedt/linux-trace.git
+trace-v5.0-rc4-2
+
+Tag SHA1: bf7473622f886c893f828195c0e7febc0b6c7e1f
+Head SHA1: 177a0fd380f825734f0307d6c5d4da5a0a9445ce
+
+
+Changbin Du (1):
+      kprobe: Do not use uaccess functions to access kernel memory
+
+Quentin Perret (1):
+      tracing: Fix number of entries in trace header
+
+----
+ kernel/trace/trace.c        |  2 ++
+ kernel/trace/trace_kprobe.c | 10 +---------
+ 2 files changed, 3 insertions(+), 9 deletions(-)
