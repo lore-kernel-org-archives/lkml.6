@@ -2,168 +2,110 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7CDCC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 21:25:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7001C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 21:28:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 651112192C
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 21:25:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hEPWweyY"
+	by mail.kernel.org (Postfix) with ESMTP id 8D105222D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 21:28:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550266085;
+	bh=FinDzfO9NFbLMTj3fYKJj6bEymQZrYIJ9z9gXWgH2/Q=;
+	h=To:In-Reply-To:Subject:References:Cc:From:Date:List-ID:From;
+	b=FkksNGQw9SPChX471VsJym6KSpovyNsmQWtdGCDpCZ4n7/BLGxCwKPNClVIK1XH8n
+	 il6Ut3m7nxheDRKv08afs4HTzxjVG8esU0DkPpJL4QXHVMJjkS4Zph06ot0zpQNMwt
+	 Xt7nIddkFh74hCYkuVZzD5m/hB7MC4M+VKX5jLyA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392186AbfBOVZC (ORCPT
+        id S2392254AbfBOV2E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 16:25:02 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35627 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732447AbfBOVZC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 16:25:02 -0500
-Received: by mail-wm1-f68.google.com with SMTP id t200so11123316wmt.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 13:25:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=y0eNnBFBktbtxDxrzUPCKk05GafV7DZx/ivyVqIoqsg=;
-        b=hEPWweyYvV5qvXYIqQ796fTLMOb7hWgcdPsTIGElX64WbhuVyYKgU6kR/AgPRghzU4
-         X5wNOYTSGQ/SWCT6HiSy8cQd37mRljTyPOtDE/+TEUs88A3mcNy8FuJ4RtqBg+/XtmiB
-         VgMc9qaGs4Gx2V3prDYzT3rfjEVV+JJOUGNmdNXCzrOvteQazXDjNEzGmaqR0iNdKt5c
-         k8yzhFgOeFoRiMb2dvi/onRx40E5ERjWKNQJ0tHw99zX2aSye1dxUur1lr601wx+yxbQ
-         J8rhwXoz7eqMto1mlN/RmLqnBXnHM8ybWTooCEcC6WClwbbpcef/pKp5ZMlWP+lDj1UX
-         LYOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y0eNnBFBktbtxDxrzUPCKk05GafV7DZx/ivyVqIoqsg=;
-        b=hO8WHqepj8doN59DQtx0xCmnptGYN6snlHvp3UQ7UfilQSjRZg1MZThERH45TGP0FO
-         1oT0kb6SmCxME4Z82G8HXAl4xHpW4RNl5kTjcWyRU1JPirrTV//mPc/XWdvFpO6jnVIX
-         JzDQrhOD8S1zdIyCr8VVKyLQxV/PVN8J1dWwpSyCbsIAdJ/Dw5g39QBPEHKIiR01WIfA
-         0GoDvdYy5O1bJ+E3Kbe9Xtxga6pUhcjse/7iodI3LiB9jVXdCvZmkOMDxXx+N3Spt5Sx
-         2ajf2gwwCOC59Pq6EDWPVJT+ceDcCXZ9BIVq9CT5mFHiWr6LK/ci1fo9ufCw3RxTT3Vb
-         RU4g==
-X-Gm-Message-State: AHQUAua94YyuvdFciFINOmMTHVR8T3xTSS363PxU2dG/7NWtcZHOjj54
-        IHbuGWACXxPdyjyj1TanJlB2KcxJstscL84EMhxpgQ==
-X-Google-Smtp-Source: AHgI3IZmguYXipKQMfTuOXjJkooyZs6/vm6XCA0gbIJMwjWcl4FQQhqeJE3rpXCRNEiMaKQAT6dUCt+KjXTyGosMqUU=
-X-Received: by 2002:a1c:f71a:: with SMTP id v26mr7355333wmh.131.1550265899784;
- Fri, 15 Feb 2019 13:24:59 -0800 (PST)
+        Fri, 15 Feb 2019 16:28:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56382 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2392197AbfBOV2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 16:28:03 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27B4C222BE;
+        Fri, 15 Feb 2019 21:28:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550266083;
+        bh=FinDzfO9NFbLMTj3fYKJj6bEymQZrYIJ9z9gXWgH2/Q=;
+        h=To:In-Reply-To:Subject:References:Cc:From:Date:From;
+        b=jPmnuLF4Z7fJrQJNV1/Y3sVgQPbx9zIl7NGkcEd8cFFv9YUhKHi9b1g6MT0eOEJFc
+         wH+PhcPOsfSXvBsCkUUAYZ432y7VUco23G+t9aX15V5i6ny0odeUZbwIAELCFRkP4n
+         L1q+lgpRS1CePflme+Pxv1ef4rH0XV72fO4Isy70=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20180430031222.mapajgwprkkr6p36@sultan-box> <201804301721.JEar9rKK%fengguang.wu@intel.com>
- <20180430151229.pen4kay5qjbrg2f3@sultan-box>
-In-Reply-To: <20180430151229.pen4kay5qjbrg2f3@sultan-box>
-From:   Sultan Alsawaf <sultanxda@gmail.com>
-Date:   Fri, 15 Feb 2019 13:24:48 -0800
-Message-ID: <CAME=51PpCSD61=f5oC-zO3o1VrrusZob4fyfN_KZt1P5Omkj8w@mail.gmail.com>
-Subject: Re: [PATCH] random: remove unused argument from add_interrupt_randomness()
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     Brian Masney <masneyb@onstation.org>
+In-Reply-To: <20190215134733.GA21208@basecamp>
+User-Agent: alot/0.8
+Subject: Re: [PATCH v2 05/11] mfd: pm8xxx: disassociate old virq if hwirq mapping already exists
+Message-ID: <155026608236.115909.9007817366859489104@swboyd.mtv.corp.google.com>
+References: <20190208021631.30252-1-masneyb@onstation.org> <20190208021631.30252-6-masneyb@onstation.org> <155020988635.115909.8353948296231202388@swboyd.mtv.corp.google.com> <20190215134733.GA21208@basecamp>
+Cc:     andy.gross@linaro.org, bjorn.andersson@linaro.org,
+        lee.jones@linaro.org, linus.walleij@linaro.org,
+        marc.zyngier@arm.com, tglx@linutronix.de, shawnguo@kernel.org,
+        dianders@chromium.org, linux-gpio@vger.kernel.org,
+        nicolas.dechesne@linaro.org, niklas.cassel@linaro.org,
+        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        thierry.reding@gmail.com, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+Date:   Fri, 15 Feb 2019 13:28:02 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is still an issue in the latest kernel version.
+Quoting Brian Masney (2019-02-15 05:47:33)
+> On Thu, Feb 14, 2019 at 09:51:26PM -0800, Stephen Boyd wrote:
+> > > diff --git a/drivers/mfd/qcom-pm8xxx.c b/drivers/mfd/qcom-pm8xxx.c
+> > > index 8eb2528793f9..2f99a98ccee5 100644
+> > > --- a/drivers/mfd/qcom-pm8xxx.c
+> > > +++ b/drivers/mfd/qcom-pm8xxx.c
+> > > @@ -380,6 +380,12 @@ static void pm8xxx_irq_domain_map(struct pm_irq_=
+chip *chip,
+> > >                                   struct irq_domain *domain, unsigned=
+ int irq,
+> > >                                   irq_hw_number_t hwirq, unsigned int=
+ type)
+> > >  {
+> > > +       unsigned int old_virq;
+> > > +
+> > > +       old_virq =3D irq_find_mapping(domain, hwirq);
+> > > +       if (old_virq)
+> > > +               irq_domain_disassociate(domain, old_virq);
+> >=20
+> > Is it possible to pass 'true' for the 'realloc' argument to
+> > __irq_domain_alloc_irqs() and then this disassociate change isn't
+> > needed?
+>=20
+> The kernel doc for __irq_domain_alloc_irqs() says that the realloc
+> parameter is mainly to support legacy IRQs. I don't think its a good
+> idea to add new code that'll stay past the end of this patch series
+> on top of that legacy interface.
+>=20
 
-Sultan
+Ok. The other side of the argument is that this is the only user of
+irq_domain_disassociate(), which may also be some sort of legacy
+interface that isn't supposed to be used. Looking at the commit that
+exposed it, it seems to be that it's there for legacy reasons.
 
-On Mon, Apr 30, 2018 at 8:12 AM Sultan Alsawaf <sultanxda@gmail.com> wrote:
->
-> From a872cf4f0bb57a7bb3c95ea557082fb7733344f8 Mon Sep 17 00:00:00 2001
-> From: Sultan Alsawaf <sultanxda@gmail.com>
-> Date: Sun, 29 Apr 2018 20:04:35 -0700
-> Subject: [PATCH] random: remove unused argument from
->  add_interrupt_randomness()
->
-> The irq_flags parameter is not used. Remove it.
->
-> Signed-off-by: Sultan Alsawaf <sultanxda@gmail.com>
-> ---
->  drivers/char/random.c  | 4 ++--
->  drivers/hv/hv.c        | 2 +-
->  drivers/hv/vmbus_drv.c | 2 +-
->  include/linux/random.h | 2 +-
->  kernel/irq/handle.c    | 2 +-
->  5 files changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/char/random.c b/drivers/char/random.c
-> index 3cd3aae24d6d..125c1f545277 100644
-> --- a/drivers/char/random.c
-> +++ b/drivers/char/random.c
-> @@ -131,7 +131,7 @@
->   *     void add_device_randomness(const void *buf, unsigned int size);
->   *     void add_input_randomness(unsigned int type, unsigned int code,
->   *                                unsigned int value);
-> - *     void add_interrupt_randomness(int irq, int irq_flags);
-> + *     void add_interrupt_randomness(int irq);
->   *     void add_disk_randomness(struct gendisk *disk);
->   *
->   * add_device_randomness() is for adding data to the random pool that
-> @@ -1189,7 +1189,7 @@ static __u32 get_reg(struct fast_pool *f, struct pt_regs *regs)
->         return *ptr;
->  }
->
-> -void add_interrupt_randomness(int irq, int irq_flags)
-> +void add_interrupt_randomness(int irq)
->  {
->         struct entropy_store    *r;
->         struct fast_pool        *fast_pool = this_cpu_ptr(&irq_randomness);
-> diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
-> index 9b82549cbbc8..4b76ba23d666 100644
-> --- a/drivers/hv/hv.c
-> +++ b/drivers/hv/hv.c
-> @@ -115,7 +115,7 @@ static void hv_stimer0_isr(void)
->
->         hv_cpu = this_cpu_ptr(hv_context.cpu_context);
->         hv_cpu->clk_evt->event_handler(hv_cpu->clk_evt);
-> -       add_interrupt_randomness(stimer0_vector, 0);
-> +       add_interrupt_randomness(stimer0_vector);
->  }
->
->  static int hv_ce_set_next_event(unsigned long delta,
-> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
-> index b10fe26c4891..41f4116f8c31 100644
-> --- a/drivers/hv/vmbus_drv.c
-> +++ b/drivers/hv/vmbus_drv.c
-> @@ -1015,7 +1015,7 @@ static void vmbus_isr(void)
->                         tasklet_schedule(&hv_cpu->msg_dpc);
->         }
->
-> -       add_interrupt_randomness(HYPERVISOR_CALLBACK_VECTOR, 0);
-> +       add_interrupt_randomness(HYPERVISOR_CALLBACK_VECTOR);
->  }
->
->
-> diff --git a/include/linux/random.h b/include/linux/random.h
-> index 2ddf13b4281e..210400258fef 100644
-> --- a/include/linux/random.h
-> +++ b/include/linux/random.h
-> @@ -32,7 +32,7 @@ static inline void add_latent_entropy(void) {}
->
->  extern void add_input_randomness(unsigned int type, unsigned int code,
->                                  unsigned int value) __latent_entropy;
-> -extern void add_interrupt_randomness(int irq, int irq_flags) __latent_entropy;
-> +extern void add_interrupt_randomness(int irq) __latent_entropy;
->
->  extern void get_random_bytes(void *buf, int nbytes);
->  extern int wait_for_random_bytes(void);
-> diff --git a/kernel/irq/handle.c b/kernel/irq/handle.c
-> index 38554bc35375..e2f7afcb1ae6 100644
-> --- a/kernel/irq/handle.c
-> +++ b/kernel/irq/handle.c
-> @@ -188,7 +188,7 @@ irqreturn_t handle_irq_event_percpu(struct irq_desc *desc)
->
->         retval = __handle_irq_event_percpu(desc, &flags);
->
-> -       add_interrupt_randomness(desc->irq_data.irq, flags);
-> +       add_interrupt_randomness(desc->irq_data.irq);
->
->         if (!noirqdebug)
->                 note_interrupt(desc, retval);
-> --
-> 2.14.1
+commit 43a775916d63d1c822107b39987192ca5ced445c
+Author: Jiang Liu <jiang.liu@linux.intel.com>
+Date:   Mon Jun 9 16:20:05 2014 +0800
+
+    genirq: Export irq_domain_disassociate() to architecture interrupt driv=
+ers
+   =20
+    Export irq_domain_disassociate() to architecture interrupt drivers,
+    so it could be used to handle legacy IRQ descriptors on x86.
+
+So maybe we should just use the realloc argument and bury the
+disassociate API in irqdomain.c because it's not supposed to be used?
+Or does the realloc path not work for some reason?
