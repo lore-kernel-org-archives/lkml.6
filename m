@@ -2,140 +2,138 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DE0C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:38:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67CBBC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:40:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 365ED21925
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:38:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 364192192B
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:40:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="SjJb+ti8";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="JdpF17kN"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Iy55SPZ0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728964AbfBOQiM (ORCPT
+        id S1729150AbfBOQj6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 11:38:12 -0500
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:55008 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726214AbfBOQiM (ORCPT
+        Fri, 15 Feb 2019 11:39:58 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:46307 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726214AbfBOQj6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 11:38:12 -0500
-Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1FGWt8b005408;
-        Fri, 15 Feb 2019 08:38:09 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : content-type : content-id :
- content-transfer-encoding : mime-version; s=facebook;
- bh=oILiAclxTDisBTUNOB4lM3TfY0Ee+VDWLB/xhSdB5Qw=;
- b=SjJb+ti8zYy2bWjOfA6Gh8RyDC6hpHkolz7QHm+t+eqpA/RDu+zb1kbc9eksYHg0UBFF
- r/iExueO54nY5+U9753FkyxMC8kh42BcWUKEGzPfcKjOpT0g2B1ETHubVMcA7Uioo+85
- b332gycafljq62QHfp5zxtq7WOyUYqphaRk= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2qp0txg22w-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Fri, 15 Feb 2019 08:38:09 -0800
-Received: from prn-hub02.TheFacebook.com (2620:10d:c081:35::126) by
- prn-hub01.TheFacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Fri, 15 Feb 2019 08:38:07 -0800
-Received: from NAM03-BY2-obe.outbound.protection.outlook.com (192.168.54.28)
- by o365-in.thefacebook.com (192.168.16.26) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
- via Frontend Transport; Fri, 15 Feb 2019 08:38:07 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oILiAclxTDisBTUNOB4lM3TfY0Ee+VDWLB/xhSdB5Qw=;
- b=JdpF17kNHk4UY7QcNGLRNC/6behcDcuUUwcKf/zgr2naseV7AisFdh/1mrZbXL/L7g7Ti29bvaTyihZhNV+QypMD9WgGXor0oUecSae62l9lV5M3P1QLrqxGZSlbuCeFuYOLwBTHz5c1/CkciqEoON7mWQA2nqhdSBFZDWjvo9w=
-Received: from MWHPR15MB1134.namprd15.prod.outlook.com (10.175.2.12) by
- MWHPR15MB1693.namprd15.prod.outlook.com (10.175.141.151) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.19; Fri, 15 Feb 2019 16:38:05 +0000
-Received: from MWHPR15MB1134.namprd15.prod.outlook.com
- ([fe80::93f:b6fe:a6e9:80dc]) by MWHPR15MB1134.namprd15.prod.outlook.com
- ([fe80::93f:b6fe:a6e9:80dc%8]) with mapi id 15.20.1601.023; Fri, 15 Feb 2019
- 16:38:05 +0000
-From:   Dave Watson <davejwatson@fb.com>
-To:     "lsf-pc@lists.linux-foundation.org" 
-        <lsf-pc@lists.linux-foundation.org>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Maged Michael <magedmichael@fb.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [LSF/MM TOPIC] Improve performance of fget/fput
-Thread-Topic: [LSF/MM TOPIC] Improve performance of fget/fput
-Thread-Index: AQHUxUzTqmvWMcBbakqADGu841l6Tg==
-Date:   Fri, 15 Feb 2019 16:38:05 +0000
-Message-ID: <20190215163852.6ls6bchssazma6bm@davejwatson-mba.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: NeoMutt/20180716
-x-clientproxiedby: BYAPR08CA0045.namprd08.prod.outlook.com
- (2603:10b6:a03:117::22) To MWHPR15MB1134.namprd15.prod.outlook.com
- (2603:10b6:320:22::12)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:180::1:5b6b]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 937aeb10-44f2-4279-d6b0-08d69363f492
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1693;
-x-ms-traffictypediagnostic: MWHPR15MB1693:
-x-microsoft-exchange-diagnostics: 1;MWHPR15MB1693;20:004eTB3wBN9EasGDlcpi5/JlQcufGjjWApEx0bb1cniwMhQgyAb4zfD+yYF9OygsLR3pZoHlbablub7+K4bz2v0mtGJac9lnpAs771mn15M/6Gr1QEAubTVQwLaKAVz18tjHUrr6A00JJhYYlVGj/hzRJx4b378YOCou7ozciHM=
-x-microsoft-antispam-prvs: <MWHPR15MB16937596A9754DB8DEE58DAFDD600@MWHPR15MB1693.namprd15.prod.outlook.com>
-x-forefront-prvs: 09497C15EB
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(376002)(346002)(136003)(396003)(366004)(199004)(189003)(7736002)(386003)(8936002)(99286004)(102836004)(6506007)(52116002)(81166006)(33896004)(14454004)(2906002)(98436002)(2501003)(25786009)(561944003)(81156014)(53936002)(8676002)(105586002)(106356001)(2351001)(5640700003)(6916009)(6486002)(71200400001)(71190400001)(6436002)(4326008)(256004)(97736004)(6116002)(478600001)(305945005)(9686003)(6512007)(476003)(316002)(486006)(1076003)(68736007)(54906003)(86362001)(58126008)(46003)(186003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1693;H:MWHPR15MB1134.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: f7Uo61VHvsEGrirHwGzqpDGuZB+6Ltw5ofoiBeSK8EP8pagxzMOT1OQa5YjO+hG+LyDOY+6ffxEm8fKAdOwysMpzmIxCl42Oew7ZkF/EB5yiyvaaY87VEVWzJWTQgXvSRBlnFx5QgQpan5UiMjjm14a8JPHoU83qNd7HHqsPOCC7pIMd5ErbfDKEcFoJ2Jf+ys+vJoHg62jdhB8Et+NJ9N0p66Hb12wYTLdqbE38wtdDqkAuz9x9bAcb1hH96yDJAb39yl4wGzC3IMGXDpZhHUFaeqrYCZaZ2HQ0vqk8KnkknPJxO1GsgHYOlrPiojRuRZPqe+VrQIbdPxBZ9gy24PvhTD8BbiPxx63TdwIJs4C5J5sHRmayVFHdXTLp6fqNo/0W1k6Mp0bpUMEdkUqwHuP28WyNBrF0yOjYK5D8e/A=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3D753BDD5C51904C81AE759469E1EF38@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Fri, 15 Feb 2019 11:39:58 -0500
+Received: by mail-lj1-f193.google.com with SMTP id v16so8862875ljg.13
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 08:39:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VxhDXCq/XG63Fm2q09H9BDB5XSF2RvxSHOs58SOGrxE=;
+        b=Iy55SPZ0M9/eNB6yqqqQ3HjIddZb0D45Y3Z/mzsAbGpNO/5xu9vOIlwKsscMV4LMcu
+         Vml3kLLawm13HXts1zZIWC87ocSBjvD/a3unJIaaBwzf4umZ/WqD5qi0ZKH2mOSVPziB
+         z0frax+ZWvHyhsIo6WMOFz0IdOO8hl7J/InkQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VxhDXCq/XG63Fm2q09H9BDB5XSF2RvxSHOs58SOGrxE=;
+        b=Ym8rbnAH9S9PNs0cCKFzE5ZbIiiLgtgWobtCSWB4T8jVGd3aeb5WKZa6L3/eyw9ThN
+         mxVcxi+gc5w6xdDDYvVjEjoY9MsURF9ApY1rFLKQOyvMEueafMoFooXygCYeoY4TQiLZ
+         YhoCl45QB2bBK5WH3+VjY1qX8algjCiMrOgohO6hxCfgRFH0Ra440LhKmCNYYsXgby6/
+         9VHldLeY2N8eOSzeziFTiIvCbBSgVysRdJhgW0WTnF2Uyzi0WXesFUREefa+S4unkIO1
+         i5ns5AyJ1KOatd0AGdNUd8mmWafh0j2QPrH2ToRwE+oDZfn9jDznRMCnW2ury8b4KhVQ
+         DHtg==
+X-Gm-Message-State: AHQUAubF9nuYhZpfzILxM2LqyBxPiTiZOjtrNSOgsfMzYXppx+WgiDul
+        2YkRBt3iFTXCoX8ybQYwDQctZgHpuhY=
+X-Google-Smtp-Source: AHgI3IaAk8eixgDnEovcFRNln9U4kHNLdUXEq2bAh6P3CeMefpA91KJmUQfPLihp1idf5Hnfwg0Faw==
+X-Received: by 2002:a2e:3509:: with SMTP id z9-v6mr6105852ljz.28.1550248795521;
+        Fri, 15 Feb 2019 08:39:55 -0800 (PST)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id n21sm1686464lfb.81.2019.02.15.08.39.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Feb 2019 08:39:54 -0800 (PST)
+Received: by mail-lj1-f172.google.com with SMTP id w6so4128259ljd.7
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 08:39:54 -0800 (PST)
+X-Received: by 2002:a2e:91c8:: with SMTP id u8mr5305570ljg.185.1550248793963;
+ Fri, 15 Feb 2019 08:39:53 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 937aeb10-44f2-4279-d6b0-08d69363f492
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Feb 2019 16:38:02.3744
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1693
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-15_12:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+References: <20190215031758.GA18776@beast> <CAHk-=wg7DRUqWvbCS2dm=mpdSNJry92Fo0OHDVi67bi8BMqt4A@mail.gmail.com>
+ <CAGXu5jLi+zcOoi+Ti=OyR3MfF8s_S35EEmT_DoCzYPepOcn+Ow@mail.gmail.com>
+ <CAGXu5jJXFP-1rEeYtMfqrSUz2oz8TWcjr89zL6-MPsNS7rwywg@mail.gmail.com> <20190215161851.GA8804@redhat.com>
+In-Reply-To: <20190215161851.GA8804@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 15 Feb 2019 08:39:37 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjk29MeO9PuyirONZMr75-H6LtfNe6WghOXT7n+f5-RTA@mail.gmail.com>
+Message-ID: <CAHk-=wjk29MeO9PuyirONZMr75-H6LtfNe6WghOXT7n+f5-RTA@mail.gmail.com>
+Subject: Re: [PATCH v3] exec: load_script: Do not exec truncated interpreter path
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Samuel Dionne-Riel <samuel@dionne-riel.com>,
+        Richard Weinberger <richard.weinberger@gmail.com>,
+        Graham Christensen <graham@grahamc.com>,
+        Michal Hocko <mhocko@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="000000000000adb93e0581f16c44"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In some of our hottest network services, fget_light + fput overhead
-can represent 1-2% of the processes' total CPU usage.  I'd like to
-discuss ways to reduce this overhead.
+--000000000000adb93e0581f16c44
+Content-Type: text/plain; charset="UTF-8"
 
-One proposal we have been testing is removing the refcount increment
-and decrement, and using some sort of safe memory reclamation
-instead. The hottest callers include recvmsg, sendmsg, epoll_wait, etc
-- mostly networking calls, often used on non-blocking sockets.  Often
-we are only incrementing and decrementing the refcount for a very
-short period of time, ideally we wouldn't adjust the refcount unless
-we know we are going to block.
+On Fri, Feb 15, 2019 at 8:18 AM Oleg Nesterov <oleg@redhat.com> wrote:
+>
+> Not sure. Consider a script file which has a single line
+>
+>         #!/path/to/interpreter
+>
+> WITHOUT '\n' at the end.
 
-We could use RCU, but we would have to be particularly careful that
-none of these calls ever block, or ensure that we increment the
-refcount at the blocking locations.  As an alternative to RCU, hazard
-pointers have similar overhead to SRCU, and could work equally well on
-blocking or nonblocking syscalls without additional changes.
+Heh. I'm not sure how valid that is, but it's an interesting case for sure.
 
-(There were also recent related discussions on SCM_RIGHTS refcount
-cycle issues, which is the other half of a file* gc)
+But it's actually fairly easy to fix with the franken-approach I did
+that combines mine and Kees' patches.
 
-There might also be ways to rearrange the file* struct or fd table so
-that we're not taking so many cache misses for sockfd_lookup_light,
-since for sockets we don't use most of the file* struct at all.
+Does this work?
 
+                  Linus
+
+--000000000000adb93e0581f16c44
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_js6a2sss0>
+X-Attachment-Id: f_js6a2sss0
+
+IGZzL2JpbmZtdF9zY3JpcHQuYyB8IDMwICsrKysrKysrKysrKysrKysrKysrKysrKysrKystLQog
+MSBmaWxlIGNoYW5nZWQsIDI4IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0pCgpkaWZmIC0t
+Z2l0IGEvZnMvYmluZm10X3NjcmlwdC5jIGIvZnMvYmluZm10X3NjcmlwdC5jCmluZGV4IDdjZGUz
+ZjQ2YWQyNi4uNDFiZTE1NzAxMzgzIDEwMDY0NAotLS0gYS9mcy9iaW5mbXRfc2NyaXB0LmMKKysr
+IGIvZnMvYmluZm10X3NjcmlwdC5jCkBAIC0xNCw2ICsxNCwyOSBAQAogI2luY2x1ZGUgPGxpbnV4
+L2Vyci5oPgogI2luY2x1ZGUgPGxpbnV4L2ZzLmg+CiAKKy8qCisgKiBEbyB3ZSBoYXZlIGEgdGVy
+bWluYXRpbmcgY2hhcmFjdGVyIGJldHdlZW4gJ2ZpcnN0JyBhbmQgJ2xhc3QnCisgKiAoaW5jbHVz
+aXZlKS4gVGhpcyBpcyB0aGUgIndlIGFyZSB0cnVuY2F0aW5nIHRoZSBzY3JpcHQgY29tbWFuZAor
+ICogbGluZSIgY2FzZSwgYW5kIHdlIGtub3cgZmlyc3QgPCBsYXN0LgorICoKKyAqIFdlIHNraXAg
+bGVhZGluZyB3aGl0ZXNwYWNlLCBhbmQgdGhlbiB2ZXJpZnkgdGhlcmUncyBhIHNwYWNlL3RhYgor
+ICogb3IgTlVMIGJlZm9yZSB0aGUgZW5kLgorICovCitzdGF0aWMgaW5saW5lIGJvb2wgdGFic3Bj
+KGNoYXIgYykgeyByZXR1cm4gYyA9PSAnICcgfHwgYyA9PSAnXHQnOyB9CitzdGF0aWMgaW5saW5l
+IGJvb2wgbm9fdGFiX29yX3NwYWNlKGNvbnN0IGNoYXIgKmZpcnN0LCBjb25zdCBjaGFyICpsYXN0
+KQoreworCS8vIFNraXAgbGVhZGluZyBzcGFjZQorCWZvciAoO3RhYnNwYygqZmlyc3QpIDsgZmly
+c3QrKykKKwkJaWYgKCEqZmlyc3QgfHwgZmlyc3QgPT0gbGFzdCkKKwkJCXJldHVybiBmYWxzZTsJ
+Ly8gb25seSBzcGFjZQorCS8vIE9rLCAnZmlyc3QnIHBvaW50cyB0byBmaXJzdCBub24tc3BjL3Rh
+Yi9OVUwKKwkvLyBDYW4gd2UgZmluZCBhbm90aGVyIHRlcm1pbmF0b3IgYWZ0ZXIgdGhpcz8KKwl3
+aGlsZSAoKytmaXJzdCA8PSBsYXN0KQorCQlpZiAoISpmaXJzdCB8fCB0YWJzcGMoKmZpcnN0KSkK
+KwkJCXJldHVybiB0cnVlOworCXJldHVybiBmYWxzZTsKK30KKwogc3RhdGljIGludCBsb2FkX3Nj
+cmlwdChzdHJ1Y3QgbGludXhfYmlucHJtICpicHJtKQogewogCWNvbnN0IGNoYXIgKmlfYXJnLCAq
+aV9uYW1lOwpAQCAtNDIsOSArNjUsMTIgQEAgc3RhdGljIGludCBsb2FkX3NjcmlwdChzdHJ1Y3Qg
+bGludXhfYmlucHJtICpicHJtKQogCWZwdXQoYnBybS0+ZmlsZSk7CiAJYnBybS0+ZmlsZSA9IE5V
+TEw7CiAKLQlicHJtLT5idWZbQklOUFJNX0JVRl9TSVpFIC0gMV0gPSAnXDAnOwotCWlmICgoY3Ag
+PSBzdHJjaHIoYnBybS0+YnVmLCAnXG4nKSkgPT0gTlVMTCkKKwljcCA9IHN0cm5jaHIoYnBybS0+
+YnVmLCBCSU5QUk1fQlVGX1NJWkUsICdcbicpOworCWlmICghY3ApIHsKIAkJY3AgPSBicHJtLT5i
+dWYrQklOUFJNX0JVRl9TSVpFLTE7CisJCWlmIChub190YWJfb3Jfc3BhY2UoYnBybS0+YnVmKzIs
+IGNwKSkKKwkJCXJldHVybiAtRU5PRVhFQzsKKwl9CiAJKmNwID0gJ1wwJzsKIAl3aGlsZSAoY3Ag
+PiBicHJtLT5idWYpIHsKIAkJY3AtLTsK
+--000000000000adb93e0581f16c44--
