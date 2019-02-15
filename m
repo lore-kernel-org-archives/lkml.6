@@ -2,90 +2,101 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD71C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 23:16:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9B8BC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 23:26:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7283F222E6
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 23:16:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="IGu5/K7t"
+	by mail.kernel.org (Postfix) with ESMTP id BA92D222D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 23:26:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388092AbfBOXP7 (ORCPT
+        id S2388347AbfBOX0D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 18:15:59 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35761 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726451AbfBOXP6 (ORCPT
+        Fri, 15 Feb 2019 18:26:03 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:46814 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388134AbfBOX0C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 18:15:58 -0500
-Received: by mail-pg1-f195.google.com with SMTP id s198so5504748pgs.2
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 15:15:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=a/xCWpPO4dz3VeuOc/NfK8EyXiCDOjR5lA+mhjZkfV4=;
-        b=IGu5/K7tG7NeesRq1DAVK/bnQcwgiQBlaBY0fH3YdE+0oIUiza42BuiYbMqif4fnbI
-         GSlCN+UjV1WUhA56a9u2AKY4IIRy+0A/EhVemyCijnOMSY6AV8C1Ou4PBRXMSUfEWJRK
-         Tf2gZzKHrhHo1FdQrdpOXWglZxFM3530pfp+uyCFaKRLYwYod+3RNaGlafmJroJNvnH/
-         DOpm9tkPCANp47Km3nZX0XRGdEpWVOo+4FH5s/lSqWI9IINnMn8dmExN+vjqyX+G3uWT
-         r2mcp0I9WZpYncPS/SUc0ox6t+4rr395nHu2yKy48oU66p1JA9na+4Nrn1AHmcFzCXbZ
-         YR3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=a/xCWpPO4dz3VeuOc/NfK8EyXiCDOjR5lA+mhjZkfV4=;
-        b=hn5bG60xPza5MLy4jGOl7KY6JF9Oc2zr6+kk/mE9ncFFPXCCICXr8wUIiXi5oEa9z/
-         rW4NqCWXYKR0rClZPHSyn9Vjgi1BQPIHaNxYtyhgnOSmaqtFuegR9x0lf1XXrZXns7dM
-         bdgGVqLsIOCi9l6f5AnmqHpCDxk1M+CpZ7Lowb/XrYmMT8JxvxjK4heiOSg9fxtxDHYv
-         upUZI7vT83Kx8OImDrCQusgZRbYA3Qn6RnKxVTaiGSpBThWmGJ4jhok3mcatGvczoIbw
-         B0ohmB5E73IFA0ks+sgkRCqHW6eDbKhPx7wpKyvSUjzx1WwR2gtLk3loQRCLQ+5yJuvP
-         DMAg==
-X-Gm-Message-State: AHQUAubb5mK/sfwND5uZnoGSKoZAiLpqQ0jSBFG/oPDp0Pv1d/y4Cp3I
-        uEoZ6Pj5zGR/IM43LkRuUuHqkA==
-X-Google-Smtp-Source: AHgI3IZX1O7yQLtX4uzcrYuO7zkypczEXlHzmOIX5x/DBGa0Bkf1VA8/KOLURGHWNzGp83wlrlepRA==
-X-Received: by 2002:a65:6210:: with SMTP id d16mr7507604pgv.34.1550272557734;
-        Fri, 15 Feb 2019 15:15:57 -0800 (PST)
-Received: from localhost ([2601:602:9200:a1a5:100f:5904:cb2b:8631])
-        by smtp.googlemail.com with ESMTPSA id c4sm17086739pfm.151.2019.02.15.15.15.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 15 Feb 2019 15:15:56 -0800 (PST)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Julien Masson <jmasson@baylibre.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org,
-        Jiri Slaby <jslaby@suse.com>,
-        Julien Masson <jmasson@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] tty: serial: meson_uart: Add support for kernel debugger
-In-Reply-To: <86k1ibv74r.fsf@baylibre.com>
-References: <86k1ibv74r.fsf@baylibre.com>
-Date:   Fri, 15 Feb 2019 15:15:56 -0800
-Message-ID: <7htvh4iqxf.fsf@baylibre.com>
+        Fri, 15 Feb 2019 18:26:02 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 4E31180455; Sat, 16 Feb 2019 00:25:54 +0100 (CET)
+Date:   Sat, 16 Feb 2019 00:26:00 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Jacek Anaszewski <j.anaszewski@samsung.com>,
+        Yauhen Kharuzhy <jekhor@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
+ LEDs
+Message-ID: <20190215232600.GA21591@amd>
+References: <20190212205901.13037-2-jekhor@gmail.com>
+ <1df39a63-533f-bb68-a056-a0241f148be9@redhat.com>
+ <20190213230731.GA8557@amd>
+ <42078a81-e32e-81b7-528f-d1adb60d31c3@redhat.com>
+ <20190213233806.GA11867@amd>
+ <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com>
+ <20190214111423.GE6132@amd>
+ <92cf09b8-726d-4f1b-94ba-368a66af2246@redhat.com>
+ <20190214122840.GA21860@amd>
+ <6beed61c-1fc6-6525-e873-a8978f5fbffb@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="LZvS9be/3tNcYl/X"
+Content-Disposition: inline
+In-Reply-To: <6beed61c-1fc6-6525-e873-a8978f5fbffb@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Julien Masson <jmasson@baylibre.com> writes:
 
-> The kgdb invokes the poll_put_char and poll_get_char when communicating
-> with the host. This patch implement the serial polling hooks for the
-> meson_uart to be used for KGDB debugging over serial line.
->
-> Signed-off-by: Julien Masson <jmasson@baylibre.com>
+--LZvS9be/3tNcYl/X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Looks good, and very useful thanks!
+On Fri 2019-02-15 22:41:31, Jacek Anaszewski wrote:
+> Hi Pavel,
+>=20
+> On 2/14/19 1:28 PM, Pavel Machek wrote:
+> >Hi!
+> >
+> >Jacek, could we get you to comment here? I'd prefer "hardware" trigger...
+>=20
+> What prevents use from using pattern trigger with its hw_pattern file?
+>=20
+> Do you remember drivers/leds/leds-sc27xx-bltc.c and its breathing mode,
+> for which pattern trigger was introduced?
 
-I'm adding this to a testing branch which will get included into the
-'integ' branch of my amlogic tree for some broader testing.
+Yes, we can do that.
 
-Kevin
+But forget heartbeat and blinking now.
+
+Problem I'm getting at is that this LED can either be software
+controlled (showing for example disk activity) or it can show whether
+the battery is charging (autonomously, in hardware, will work even
+after kernel crash).
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--LZvS9be/3tNcYl/X
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlxnSogACgkQMOfwapXb+vIFEwCghiDqFaTxqIxtznmzoZHQnXrB
+J2AAoLuDQcYHggxlTOlNt/WTMKUR/1MI
+=Sc/n
+-----END PGP SIGNATURE-----
+
+--LZvS9be/3tNcYl/X--
