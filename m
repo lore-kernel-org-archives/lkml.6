@@ -2,153 +2,145 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C1DC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:05:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B715C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:11:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C4C92192B
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:05:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550257541;
-	bh=LqlPcCo9lG1dpPq1I4m4LJFkkEIIEFdDUAqzCdnMRcE=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=0hRl1tDo5wLI9DxtYtAWGtMyRxMF3q8djdlh24eXE8Y1yOnivw4LmDS2ulL7XhE61
-	 4eF5A4TIwDv5sSFYBYFg5B4aQ4Xdu40gu4+kHcllfBevYVdqRNssLtsjM9S9zsx+dA
-	 LPrfFGUnPuC3i2v4iJ9OPFxqOwPCP0NvV4fS9/6Q=
+	by mail.kernel.org (Postfix) with ESMTP id 140022192B
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:11:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ex3frOk+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732792AbfBOTFj (ORCPT
+        id S1732821AbfBOTLM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 14:05:39 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:34233 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726654AbfBOTFj (ORCPT
+        Fri, 15 Feb 2019 14:11:12 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40446 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726654AbfBOTLL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 14:05:39 -0500
-Received: by mail-yb1-f194.google.com with SMTP id j62so4213620ybb.1;
-        Fri, 15 Feb 2019 11:05:38 -0800 (PST)
+        Fri, 15 Feb 2019 14:11:11 -0500
+Received: by mail-wm1-f67.google.com with SMTP id t15so2558339wmi.5
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 11:11:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=542kMV/M+F4ke2Nez4pG0EO/cK2G2uhP23eV8bg4uGc=;
-        b=fqohBaoCh6j07OJSvNB8YJkGy7d7sCxJdAaXOMg30nSbXziT7y+/S7HPkzBp6tv5w+
-         4jtBehbmIspbhohxS9FyV/e2dwR2scC7ZpC3s2Bl6Ybj4qu8PEFgAspIEyvzVIjcOfaP
-         +vOGLsHhI0UIvoH3WvYEXBJ5q2LAY5AloHoXnKtT0ao/23j1Y2Z6CgwyyHQqahMRP5R1
-         LoaaDrFQvxX3f3xGdS7bw4CIJj25lYnf+HUBqesdGzEYESkRDd86qs2zqwJOJ/p2pguE
-         pAp0v9FP7bVkWKMFGa9uHOJiTXm1sFOStnuow7/yDaN3Q97YYAPA4VudCAXI2ldAK0Op
-         ur0g==
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=hRDcLrUuOTqhOZr37htjBDSKJ0KM/4qYtesCfk9S0Gg=;
+        b=ex3frOk+LWyLoedLdVjtHIwqWE5NWHkhHFyam5L3kjrbNtWHZu9np3eE9J5PWVWIxx
+         tShPzhXXpCRd6ishVQ0CjYLSFQfCK0tzzXv6xIPBeBmOm4isOosZnzYGKqUb/aYoJ0iT
+         7CL2MZRZ7ttMli60DxurHd4qZtjBCBG5KpTbA3R9x82P4nXXCUXAGsw2Zfa8PyiOFUwF
+         KF27qmpk5cvR6pUKLEaKuawEDk1Ry0X2QSXy/6D/eV94syHXBrHEy1xazdjNRBkbbemt
+         Jf8wjGD1jS3D3KYcdtinlO6z1Ba8TenmMmU5Thhob0aMDbttX3iLUksH9Br2vSXBx+e3
+         ooWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=542kMV/M+F4ke2Nez4pG0EO/cK2G2uhP23eV8bg4uGc=;
-        b=G+wCPaYy471p8fq30IXNa0TK/Dtpz+dkt3NTG6vjRavL0zAY45PJyolC3jYUCB1M3R
-         5FQfN5zVc+z/dDrunQrNT3kovBaM7r/HEStCBHPbMtEIzGLeIPeFlELxB5ATFEqm2fTi
-         EsS5MjFqy3Vq/c+rmFXvVdtMufzeJCa2nnoka+KuYLp/u3xuzPUWLu5RFEI8iHsEk7Fy
-         snC8vUBcv9gAN+xEI2rn4p1fRdujnf9r0KOHr7wBfCqUdyyNLcWRckWM+Df8PkTdbK68
-         EXZAyIMrCinrtP/GbLe5Ye0JfVhFOhCe4elFh8Gv6D62yleuLJZk8QloeyKOCCqAg2oZ
-         kP+w==
-X-Gm-Message-State: AHQUAub8FtbfW6/j5F1tC/6Kv9ugkkju+DJjZSn4QoU0B8bUqe/7F/WN
-        hN4tyh7OZ8kTznGKvPG9Gq8=
-X-Google-Smtp-Source: AHgI3IYMUC0OK4+5xnNXmafOJaja9su2sx87jrRy4aXEYhHQXbaJItVJw97xK6I6rZquAR6NtFVo0g==
-X-Received: by 2002:a25:208a:: with SMTP id g132mr9268729ybg.470.1550257538285;
-        Fri, 15 Feb 2019 11:05:38 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::5:2c70])
-        by smtp.gmail.com with ESMTPSA id l73sm2626457ywl.72.2019.02.15.11.05.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Feb 2019 11:05:37 -0800 (PST)
-Date:   Fri, 15 Feb 2019 11:05:35 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>
-Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: [PATCH cgroup/for-5.0] cgroup, rstat: Don't flush subtree root
- unless necessary
-Message-ID: <20190215190535.GR50184@devbig004.ftw2.facebook.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=hRDcLrUuOTqhOZr37htjBDSKJ0KM/4qYtesCfk9S0Gg=;
+        b=GoyrKc1LFJMwC6fl30B+xvq5I9aD+Lpo3L4BM1JOrbKi+69YGUv1Gam2DSHhDe0Uxv
+         NC0PVu3/l9reCvBPb1TOUEZ5aQpmBB6khHfTnoPsWDFkBkweqJHtWOU7tM18w0+EpJBv
+         4Zu/mSelLI3L1/5tXsQo8OEDgWX7J7FruZUMB8eTa51zpDKgyAJ9d2ku+jVTehy1MOmv
+         E93mze9/mFqFx6+YZIhSjdA62023mJ1rpID6k0+qayipE9tKBlTBtee4qjf3u1TSNAFk
+         mVXv00JxGBQADn7pRufLuz1W5nUhlIq9dMWZB9hxqm4A7ZQ2B72DUDt5PYQBNJeFoxZk
+         eeDA==
+X-Gm-Message-State: AHQUAua41ea758LsAljqo4AOt8ggszBhA39/HVWWHWgD/JwgtJ5nuIvu
+        RSE8A7YHbGuiS6N98pHn31Q=
+X-Google-Smtp-Source: AHgI3IbZ+JBg8Oi/px/7SViimPy0q/AnA8MGfAiQhBvrgmeWrEbh7thqQxIddu0cKVcR6uDLHGA57Q==
+X-Received: by 2002:a1c:2ec4:: with SMTP id u187mr7205674wmu.29.1550257869709;
+        Fri, 15 Feb 2019 11:11:09 -0800 (PST)
+Received: from gmail.com (79.108.96.12.dyn.user.ono.com. [79.108.96.12])
+        by smtp.gmail.com with ESMTPSA id b197sm13814101wmd.23.2019.02.15.11.11.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 15 Feb 2019 11:11:08 -0800 (PST)
+Date:   Fri, 15 Feb 2019 20:10:59 +0100
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Martin Sebor <msebor@gcc.gnu.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Jessica Yu <jeyu@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        James Morris <james.morris@microsoft.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Borislav Petkov <bp@suse.de>, Matt Mullins <mmullins@fb.com>,
+        Vincent Whitchurch <vincent.whitchurch@axis.com>,
+        WANG Chao <chao.wang@ucloud.cn>
+Subject: [GIT PULL] Compiler Attributes for v5.0-rc7
+Message-ID: <20190215191059.GA24082@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+User-Agent: elm/2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From b4ff1b44bcd384d22fcbac6ebaf9cc0d33debe50 Mon Sep 17 00:00:00 2001
-From: Tejun Heo <tj@kernel.org>
-Date: Fri, 15 Feb 2019 11:01:31 -0800
+Hi Linus,
 
-cgroup_rstat_cpu_pop_updated() is used to traverse the updated cgroups
-on flush.  While it was only visiting updated ones in the subtree, it
-was visiting @root unconditionally.  We can easily check whether @root
-is updated or not by looking at its ->updated_next just as with the
-cgroups in the subtree.
+Please pull these changes to clean up the new GCC 9 warnings coming from
+-Wmissing-attributes. With this, we can avoid disabling them.
 
-* Remove the unnecessary cgroup_parent() test.  The system root cgroup
-  is never updated and thus its ->updated_next is always NULL.  No
-  need to test whether cgroup_parent() exists in addition to
-  ->updated_next.
+The patches have been for quite in -next in several forms/shapes during
+the iterations we did.
 
-* Terminate traverse if ->updated_next is NULL.  This can only happen
-  for subtree @root and there's no reason to visit it if it's not
-  marked updated.
+Cheers,
+Miguel
 
-This reduces cpu consumption when reading a lot of rstat backed files.
-In a micro benchmark reading stat from ~1600 cgroups, the sys time was
-lowered by >40%.
+The following changes since commit 8834f5600cf3c8db365e18a3d5cac2c2780c81e5:
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
----
-Hello,
+  Linux 5.0-rc5 (2019-02-03 13:48:04 -0800)
 
-I'm applying this on for-5.0.  It's a fairly straight forward
-optimization.
+are available in the Git repository at:
 
-Thanks.
+  https://github.com/ojeda/linux.git tags/compiler-attributes-for-linus-v5.0-rc7
 
- kernel/cgroup/rstat.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+for you to fetch changes up to a6e60d84989fa0e91db7f236eda40453b0e44afa:
 
-diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
-index d503d1a9007c..bb95a35e8c2d 100644
---- a/kernel/cgroup/rstat.c
-+++ b/kernel/cgroup/rstat.c
-@@ -87,7 +87,6 @@ static struct cgroup *cgroup_rstat_cpu_pop_updated(struct cgroup *pos,
- 						   struct cgroup *root, int cpu)
- {
- 	struct cgroup_rstat_cpu *rstatc;
--	struct cgroup *parent;
- 
- 	if (pos == root)
- 		return NULL;
-@@ -115,8 +114,8 @@ static struct cgroup *cgroup_rstat_cpu_pop_updated(struct cgroup *pos,
- 	 * However, due to the way we traverse, @pos will be the first
- 	 * child in most cases. The only exception is @root.
- 	 */
--	parent = cgroup_parent(pos);
--	if (parent && rstatc->updated_next) {
-+	if (rstatc->updated_next) {
-+		struct cgroup *parent = cgroup_parent(pos);
- 		struct cgroup_rstat_cpu *prstatc = cgroup_rstat_cpu(parent, cpu);
- 		struct cgroup_rstat_cpu *nrstatc;
- 		struct cgroup **nextp;
-@@ -140,9 +139,12 @@ static struct cgroup *cgroup_rstat_cpu_pop_updated(struct cgroup *pos,
- 		 * updated stat.
- 		 */
- 		smp_mb();
-+
-+		return pos;
- 	}
- 
--	return pos;
-+	/* only happens for @root */
-+	return NULL;
- }
- 
- /* see cgroup_rstat_flush() */
--- 
-2.17.1
+  include/linux/module.h: copy __init/__exit attrs to init/cleanup_module (2019-02-15 19:52:56 +0100)
 
+----------------------------------------------------------------
+Compiler Attributes: Clean the new GCC 9 -Wmissing-attributes warnings
+
+The upcoming GCC 9 release extends the -Wmissing-attributes warnings
+(enabled by -Wall) to C and aliases: it warns when particular function
+attributes are missing in the aliases but not in their target, e.g.:
+
+    void __cold f(void) {}
+    void __alias("f") g(void);
+
+diagnoses:
+
+    warning: 'g' specifies less restrictive attribute than
+    its target 'f': 'cold' [-Wmissing-attributes]
+
+These patch series clean these new warnings. Most of them are caused
+by the module_init/exit macros.
+
+Link: https://lore.kernel.org/lkml/20190125104353.2791-1-labbott@redhat.com/
+
+----------------------------------------------------------------
+Miguel Ojeda (3):
+      lib/crc32.c: mark crc32_le_base/__crc32c_le_base aliases as __pure
+      Compiler Attributes: add support for __copy (gcc >= 9)
+      include/linux/module.h: copy __init/__exit attrs to init/cleanup_module
+
+ include/linux/compiler_attributes.h | 14 ++++++++++++++
+ include/linux/module.h              |  4 ++--
+ lib/crc32.c                         |  4 ++--
+ 3 files changed, 18 insertions(+), 4 deletions(-)
