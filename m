@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98BA2C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:40:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 460EEC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:41:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6562B21B1C
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:40:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11C4D2089F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:41:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Eqshanoj"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f/UVc6Im"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405756AbfBOKkw (ORCPT
+        id S2405777AbfBOKk6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 05:40:52 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43657 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405686AbfBOKks (ORCPT
+        Fri, 15 Feb 2019 05:40:58 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51623 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405722AbfBOKkt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 05:40:48 -0500
-Received: by mail-wr1-f68.google.com with SMTP id r2so9771385wrv.10
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 02:40:47 -0800 (PST)
+        Fri, 15 Feb 2019 05:40:49 -0500
+Received: by mail-wm1-f66.google.com with SMTP id b11so9451621wmj.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 02:40:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Z0yitGNScO3IMqqGpNFQGrqpaVO41izEagUP+rK/RW0=;
-        b=EqshanojYFFhuFNfGt/bKnBYOSX0wxmtWHR7LzmBDusYiy5PxKR06tjoZwQiqiBcgS
-         6/08mcP1PeD0G+Enem4/2+db3IbSkr3qhhUI6tFXFr0f2VmgIm85iy/lPuR9nTnMc4gm
-         SWT72HgFf13ckiQzDsoUt19ePaAxmZhfm2DqQQUR32HvLp3KKncFZ1Z50fLuTtgOMpXv
-         q2fvtDyXzjU/P5v2Wz7D7FtzRDG9ojs39knu2H8fCKRm3oqxB5/PG1txdoZVKr6QenWT
-         GP8fGBSa+sa/JFHbXqUjRapNk3IQzm5XRXSAQBOgekojnX2omyOcBI+n5SlXEp6D2KKK
-         Rhww==
+        bh=weY+02WyQtYURWgOqk/sehPDo0eed1gHxxbmbDDrodg=;
+        b=f/UVc6ImQ+JYHzqD6YxuotULEey2fKgeyS3yYswfkwkQ9bkfh0X4X6Udrw3ghBr/f1
+         XFB9SrcCgYYlzMbn/588tI//Am87IzkoG+Jt1HOOQx/IU28j0D83f3MnGEoDThxzGNfk
+         SB84ayWhGNu/wCM8b6gEl/zfAWk4alNJ11HYh/LI2Exirx8KGMSTVNXJ+Mi7Pe3A+NxW
+         4fugOhb3MmE1KoYJd1XJL8+2L6o5oAixOvB6RPGUP6f6MEyhBwATkjYrZd8QjWUyg+tL
+         XAWzgyvJvL7XrkF4a8LUtfYVS5OmyUVYXuheANUFw5/nmqICMUhZMyZhLSwp3YTwRfUu
+         IjIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Z0yitGNScO3IMqqGpNFQGrqpaVO41izEagUP+rK/RW0=;
-        b=rov3scas0cvy5GXZj0du4vNVK3qqw7KhB26GydfyC+P9L2h4+atANWjkKndWH50eAv
-         UeAKYbp6Cy5p5FkmHavn2hie3VLRCJ5Vx8rTzh4Dg7oVRCO+H0xUkUvdnYRFWS8RvIqS
-         B+fC6lgR++W8XNPYtbzLXcKuxdEqrUj/fMxhJiaLKxPt8wvD3pfTZS83QI8zWVQ/3OGu
-         3ViTZsR4J+OlQSq/gp9RVaNqF17cRmIkPPIcLaxELiZe4sq8tKt3kE3NAC5vwZirskQ1
-         LWT1awMTYrPzEF0lfkKDxTO+KzxXZoAvAMrnHg7AKRDpCuHpAypoKX1DmxY4zmt6pe4Q
-         tHHw==
-X-Gm-Message-State: AHQUAubJjqS+K2b1GVNdqAJLaqvFnoNJnzk63AfE3/I+Bs13ELVE6Fdw
-        ca4oqonTX7DhEJR3ePDDtmyr1IhfJYg=
-X-Google-Smtp-Source: AHgI3Ibg9/FzQ/Be2pKnyKJM6ECX2+c7L7HFt+Xl3wRhFfMcCX7/1ntPQJ7gj/qLZj3ydouQnbJpSw==
-X-Received: by 2002:adf:fecd:: with SMTP id q13mr6318933wrs.3.1550227246976;
-        Fri, 15 Feb 2019 02:40:46 -0800 (PST)
+        bh=weY+02WyQtYURWgOqk/sehPDo0eed1gHxxbmbDDrodg=;
+        b=On1XDDv7vvQRIvv7ZZHqbXjMP4tj/cDjZZtyTrAHiPn9WcsUO5zDs37g2/DWr6TcAd
+         qLVsK8FJq3bY9AvtkqUCMq/Mlham0Dt/NDzRs66nwHCKqSMzvbMo0eyLYUkLK/Ft9iPo
+         AjVhjA7+RWn/53jlGrgVUJf0412krlLq+1Ul5tXsHxvsYYFptXG6PHw72ZeFxMtC+MqH
+         QiyjvZ2/Ike5/vo1bp8yrDeCWzGZb+lsr5z9yxoNFTvShndR3Mj91pXydqPcWeCOUuKl
+         Esj89osH4THJi/Aql2GmhPT96uIOw3KgmTZ16d47Pa8jASCdUdmnfl3RUMhOn0pYAuZJ
+         eSQQ==
+X-Gm-Message-State: AHQUAuaVqgwwv+d7dFRvgUwvxeHCdUfJG/hIT7HJGIKPSmQVswyyv4Ms
+        OuOo03Km+k4V7fnMgSTY2Br7OfBd3B8=
+X-Google-Smtp-Source: AHgI3Ibs8O+U+Dp8EkWM2PgpV1vdshA7g+D7a04x/EDW3qQ5nG8O9QMblnwXO4pYYm8EmKYyXY8Qqg==
+X-Received: by 2002:a7b:c3cf:: with SMTP id t15mr5894201wmj.103.1550227248097;
+        Fri, 15 Feb 2019 02:40:48 -0800 (PST)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id v4sm6525577wme.6.2019.02.15.02.40.46
+        by smtp.gmail.com with ESMTPSA id v4sm6525577wme.6.2019.02.15.02.40.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 15 Feb 2019 02:40:46 -0800 (PST)
+        Fri, 15 Feb 2019 02:40:47 -0800 (PST)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH 1/2] misc: fastrpc: select CONFIG_DMA_SHARED_BUFFER
-Date:   Fri, 15 Feb 2019 10:40:06 +0000
-Message-Id: <20190215104007.27103-2-srinivas.kandagatla@linaro.org>
+        Thierry Escande <thierry.escande@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH 2/2] misc: fastrpc: Fix device_open when no session is available
+Date:   Fri, 15 Feb 2019 10:40:07 +0000
+Message-Id: <20190215104007.27103-3-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190215104007.27103-1-srinivas.kandagatla@linaro.org>
 References: <20190215104007.27103-1-srinivas.kandagatla@linaro.org>
@@ -74,47 +74,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fastrpc is a dma buf exporter as well, so select the corresponding
-DMA_SHARED_BUFFER config to fix below compilation errors on platforms
-without this config.
+From: Thierry Escande <thierry.escande@linaro.org>
 
-ld: drivers/misc/fastrpc.o: in function 'fastrpc_free_map':
-fastrpc.c:(.text+0xbe): undefined reference to 'dma_buf_unmap_attachment'
-ld: fastrpc.c:(.text+0xcb): undefined reference to 'dma_buf_detach'
-ld: fastrpc.c:(.text+0xd4): undefined reference to 'dma_buf_put'
-ld: drivers/misc/fastrpc.o: in function 'fastrpc_map_create':
-fastrpc.c:(.text+0xb2b): undefined reference to 'dma_buf_get'
-ld: fastrpc.c:(.text+0xb47): undefined reference to 'dma_buf_attach'
-ld: fastrpc.c:(.text+0xb61): undefined reference to 'dma_buf_map_attachment'
-ld: fastrpc.c:(.text+0xc36): undefined reference to 'dma_buf_put'
-ld: fastrpc.c:(.text+0xc48): undefined reference to 'dma_buf_detach'
-ld: drivers/misc/fastrpc.o: in function 'fastrpc_device_ioctl':
-fastrpc.c:(.text+0x1756): undefined reference to 'dma_buf_get'
-ld: fastrpc.c:(.text+0x1776): undefined reference to 'dma_buf_put'
-ld: fastrpc.c:(.text+0x1780): undefined reference to 'dma_buf_put'
-ld: fastrpc.c:(.text+0x1abf): undefined reference to 'dma_buf_export'
-ld: fastrpc.c:(.text+0x1ae7): undefined reference to 'dma_buf_fd'
-ld: fastrpc.c:(.text+0x1cb5): undefined reference to 'dma_buf_put'
-ld: fastrpc.c:(.text+0x1cca): undefined reference to 'dma_buf_put'
+This change fixes fastrpc_device_open() when no session is available and
+return an error in such case.
 
-Reported-by: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/misc/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/misc/fastrpc.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index 7e0726253755..53cd16f795d6 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -299,6 +299,7 @@ config QCOM_FASTRPC
- 	tristate "Qualcomm FastRPC"
- 	depends on ARCH_QCOM || COMPILE_TEST
- 	depends on RPMSG
-+	select DMA_SHARED_BUFFER
- 	help
- 	  Provides a communication mechanism that allows for clients to
- 	  make remote method invocations across processor boundary to
+diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+index 4b0db33896df..89aec17738ef 100644
+--- a/drivers/misc/fastrpc.c
++++ b/drivers/misc/fastrpc.c
+@@ -1016,10 +1016,19 @@ static int fastrpc_device_open(struct inode *inode, struct file *filp)
+ 	INIT_LIST_HEAD(&fl->user);
+ 	fl->tgid = current->tgid;
+ 	fl->cctx = cctx;
++
++	fl->sctx = fastrpc_session_alloc(cctx);
++	if (!fl->sctx) {
++		dev_err(&cctx->rpdev->dev, "No session available\n");
++		mutex_destroy(&fl->mutex);
++		kfree(fl);
++
++		return -EBUSY;
++	}
++
+ 	spin_lock(&cctx->lock);
+ 	list_add_tail(&fl->user, &cctx->users);
+ 	spin_unlock(&cctx->lock);
+-	fl->sctx = fastrpc_session_alloc(cctx);
+ 
+ 	return 0;
+ }
 -- 
 2.20.1
 
