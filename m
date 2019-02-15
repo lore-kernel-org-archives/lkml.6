@@ -2,148 +2,113 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4ECF3C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A61C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:20:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1014B206BA
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:20:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="PZ2iUB8S"
+	by mail.kernel.org (Postfix) with ESMTP id 1A58C20643
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:20:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550197238;
+	bh=KHDTZ9u370Mfakkg/FZyhwqDWTrSRwHxXxvT3DgxIIs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=cD//TeNSL1DEv9QYReylbjzsGmhBdDQk0Bk9167tgKq/w0QRFsB3nu9GIPKNQ8zn6
+	 LWVdw8c1I1GefkVYS22ZRkFNfsxHqoqcHEahxSKiY0zO95pTchDecEERubzNaha0Uy
+	 4pDp5+RgpBAfx8IreAYdEDJ+SIOBS8fXJAoowqVM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732800AbfBOCUZ (ORCPT
+        id S2405601AbfBOCPQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:20:25 -0500
-Received: from ozlabs.org ([203.11.71.1]:49491 "EHLO ozlabs.org"
+        Thu, 14 Feb 2019 21:15:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732722AbfBOCUX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:20:23 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        id S2405499AbfBOCPK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:15:10 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 440xmw3NKTz9s5c;
-        Fri, 15 Feb 2019 13:20:16 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1550197219;
-        bh=cJ1StWJoYoxwNVVgd5wB4XJ2CTXeotSiQXqKEV6/I9M=;
-        h=Date:From:To:Cc:Subject:From;
-        b=PZ2iUB8Sjhstog8ujLPizGCLDDDF1Hpl4yraRDABSBth5TUyufPcnMK1/LGZqICRv
-         JC0oB+Xgyd+sU5aVU4KNPVzp4eLJ2N3pMGK1aFHZGBUu2+Q2w7R1mlFPV02aEVmROt
-         I72hgYJzofoeTd0PoAMu7TRYQ9m3O+G6Vvyn8pJ2w2xmVSdxlqq/sIok725DyEsv7Y
-         0SeUXVdBE0OKi9dwbiqsMamoAslPWopQeucVH+l46mF4KCnDEvNh5W++9l4LKu9VeG
-         XteoC8dzTDEg5WvUc56cPU9hxl5UsPhpkZ0Vd1KV3nhdX18KV0T8pnkzIaKS3aDNsk
-         ZHcmiU8s9ZqJw==
-Date:   Fri, 15 Feb 2019 13:20:10 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: linux-next: manual merge of the tip tree with the net-next tree
-Message-ID: <20190215132010.4de0a147@canb.auug.org.au>
+        by mail.kernel.org (Postfix) with ESMTPSA id 27CCF20643;
+        Fri, 15 Feb 2019 02:15:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550196909;
+        bh=KHDTZ9u370Mfakkg/FZyhwqDWTrSRwHxXxvT3DgxIIs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=kzSK1AYhUi07valXCIqkPPgl5vSyfIMrbydUTz+5CUn9QYvf/eTHU0rmmnnd2OGP6
+         L23QT70yV5UDNeQa6l51aHLj/j1ye+tF8Z87Ed0vzGhT39HoxDwMbqhUIi6xEU6Lm4
+         M3jXhekeBJJbq+CvW4QO2CfkSlLhicZcSDHDm2RU=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 26/27] svm: Fix AVIC incomplete IPI emulation
+Date:   Thu, 14 Feb 2019 21:14:23 -0500
+Message-Id: <20190215021424.178979-26-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190215021424.178979-1-sashal@kernel.org>
+References: <20190215021424.178979-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/9FWfBac/dO6B=nET7GE3zPN"; protocol="application/pgp-signature"
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/9FWfBac/dO6B=nET7GE3zPN
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
 
-Hi all,
+[ Upstream commit bb218fbcfaaa3b115d4cd7a43c0ca164f3a96e57 ]
 
-Today's linux-next merge of the tip tree got a conflict in:
+In case of incomplete IPI with invalid interrupt type, the current
+SVM driver does not properly emulate the IPI, and fails to boot
+FreeBSD guests with multiple vcpus when enabling AVIC.
 
-  include/uapi/linux/time.h
+Fix this by update APIC ICR high/low registers, which also
+emulate sending the IPI.
 
-between commits:
-
-  bcb3fc3247e5 ("arch: sparc: Override struct __kernel_old_timeval")
-  ca5e9aba753e ("time: Add time_types.h")
-
-from the net-next tree and commit:
-
-  c70a772fda11 ("y2038: remove struct definition redirects")
-
-from the tip tree.
-
-I fixed it up (I used the net-next tree version of this file and applied
-the following patch) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 15 Feb 2019 13:16:41 +1100
-Subject: [PATCH] time: fix up for "y2038: remove struct definition redirect=
-s"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/uapi/linux/time_types.h | 4 ----
- 1 file changed, 4 deletions(-)
+ arch/x86/kvm/svm.c | 19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
 
-diff --git a/include/uapi/linux/time_types.h b/include/uapi/linux/time_type=
-s.h
-index 459070c61d47..27bfc8fc6904 100644
---- a/include/uapi/linux/time_types.h
-+++ b/include/uapi/linux/time_types.h
-@@ -4,19 +4,15 @@
-=20
- #include <linux/types.h>
-=20
--#ifndef __kernel_timespec
- struct __kernel_timespec {
- 	__kernel_time64_t       tv_sec;                 /* seconds */
- 	long long               tv_nsec;                /* nanoseconds */
- };
--#endif
-=20
--#ifndef __kernel_itimerspec
- struct __kernel_itimerspec {
- 	struct __kernel_timespec it_interval;    /* timer period */
- 	struct __kernel_timespec it_value;       /* timer expiration */
- };
--#endif
-=20
- /*
-  * legacy timeval structure, only embedded in structures that
---=20
-2.20.1
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index fa1b0e3c8a06..31df05fcbc61 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -3932,25 +3932,14 @@ static int avic_incomplete_ipi_interception(struct vcpu_svm *svm)
+ 		kvm_lapic_reg_write(apic, APIC_ICR, icrl);
+ 		break;
+ 	case AVIC_IPI_FAILURE_TARGET_NOT_RUNNING: {
+-		int i;
+-		struct kvm_vcpu *vcpu;
+-		struct kvm *kvm = svm->vcpu.kvm;
+ 		struct kvm_lapic *apic = svm->vcpu.arch.apic;
+ 
+ 		/*
+-		 * At this point, we expect that the AVIC HW has already
+-		 * set the appropriate IRR bits on the valid target
+-		 * vcpus. So, we just need to kick the appropriate vcpu.
++		 * Update ICR high and low, then emulate sending IPI,
++		 * which is handled when writing APIC_ICR.
+ 		 */
+-		kvm_for_each_vcpu(i, vcpu, kvm) {
+-			bool m = kvm_apic_match_dest(vcpu, apic,
+-						     icrl & KVM_APIC_SHORT_MASK,
+-						     GET_APIC_DEST_FIELD(icrh),
+-						     icrl & KVM_APIC_DEST_MASK);
+-
+-			if (m && !avic_vcpu_is_running(vcpu))
+-				kvm_vcpu_wake_up(vcpu);
+-		}
++		kvm_lapic_reg_write(apic, APIC_ICR2, icrh);
++		kvm_lapic_reg_write(apic, APIC_ICR, icrl);
+ 		break;
+ 	}
+ 	case AVIC_IPI_FAILURE_INVALID_TARGET:
+-- 
+2.19.1
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/9FWfBac/dO6B=nET7GE3zPN
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxmIdoACgkQAVBC80lX
-0GwjRgf/dAIpzTvcmRj5TSKxqsYb4hZrVGnPeFSXLsolv4QMrF1yxPEFMQToVjSy
-E10VDWFqmu3K901yrM0g+Rqu8TT9zvuTCrf/96bUhDNBZfDvYG92MEZtPoVeMACK
-mddlPRuRymhLw/PBHwEZ5q3fcJdBNL/kV4qE0xyz5Wh8r3uA8v9DYw5xnbRKqyD0
-NUYMrVkoGJgCAY4h4tICC+DQ2+h47ATbkno4qWTnMvNU73e019tcOaOFqGFsGjyh
-MOG9B7lGbchUoIfd8on4J6GiTnaq3bVATdbUhWwUTy1fesQ8xuzVhKnSCT7JH/n6
-hsAZAJG+R9MY7ARqTyjHh/pqPORzJw==
-=Rzu9
------END PGP SIGNATURE-----
-
---Sig_/9FWfBac/dO6B=nET7GE3zPN--
