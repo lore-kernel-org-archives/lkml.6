@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A80E1C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:09:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D650C4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:09:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72F31222D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:09:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEA3E222DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:09:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b="BQ6h4EMP";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="3v/Qhodh"
+	dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b="A4ujf58V";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZBrE7Vyw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393246AbfBOWJT (ORCPT
+        id S2393279AbfBOWJW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 17:09:19 -0500
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:54111 "EHLO
+        Fri, 15 Feb 2019 17:09:22 -0500
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:43575 "EHLO
         wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2393199AbfBOWJS (ORCPT
+        by vger.kernel.org with ESMTP id S2393247AbfBOWJU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 17:09:18 -0500
+        Fri, 15 Feb 2019 17:09:20 -0500
 Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.west.internal (Postfix) with ESMTP id 4C83B31E4;
-        Fri, 15 Feb 2019 17:09:16 -0500 (EST)
+        by mailout.west.internal (Postfix) with ESMTP id DA113328F;
+        Fri, 15 Feb 2019 17:09:18 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Fri, 15 Feb 2019 17:09:17 -0500
+  by compute3.internal (MEProxy); Fri, 15 Feb 2019 17:09:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sent.com; h=from
         :to:cc:subject:date:message-id:in-reply-to:references:reply-to
-        :mime-version:content-transfer-encoding; s=fm2; bh=jPUMl05hp4GyY
-        NPKyUU/j1/LhtwQWzBCTR2KiGtIjhE=; b=BQ6h4EMPTg4jJ0R72Qup5JbWpeCpy
-        dzOaqn8Ww8vNnPWA3Gsra+/513+QVm3TnPdfFClO5KVwub/InOwz/Mnx+T3N6UKN
-        /zRSRUSUzkx8O9RHe9QTJM4nfusej/0Ti0wJrf5Sl6JgqKJ+B54Xy3qM0E3BqAX8
-        rmKpUXAZCFfpVvSoATLHZdgBtA6r1XW823RVM9iqQ+4PZfU4RF5yNVGIzGo++IJz
-        HMLLR4odcMaEAp126CPnk0kJXug+Apz9T1VpbD/iYyYitRDC+NoJgXgeJMTT+6OW
-        47thcQNkT0SIPHA4jQAeZSBheymoaWDiQ1y8jJb3iA1HRWuqR0RfYdkXw==
+        :mime-version:content-transfer-encoding; s=fm2; bh=rMjYn468lmWbJ
+        J/Y9UnoFTDhCSw4u+AQXz4D4ksBw0s=; b=A4ujf58V1MFEFOPLdNKwAJHAyesXQ
+        SQ34q5PKA3J4Rfuw1dW3pWYteDdWQpzuBYEfB2WGmgiveEW3p4lqNVtmgs3lpeOW
+        Ci8Jcp72+T1q/C3kicjr86sJfKICROGfrf0apD97U8oL4oZFwv00Ln3SOdNh+pe/
+        r9D18oGy9SvezbjLwItFw05IvtZUm5rokh02KTUv4s7RgYZeX8tEgDzoBx7qYzA0
+        zBDHwRlzmNqpp3ZyEGlnP7N/ROp+WMG5I5nVbM3O0pU9FWsHK3KH6WBuVk128JeW
+        Kb8HclfadEkbyofFGyq1j7qXN5Fyx4dGJCo2pVRqAVOJbPJd+t44nI9aA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:reply-to:subject
         :to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=jPUMl05hp4GyYNPKyUU/j1/LhtwQWzBCTR2KiGtIjhE=; b=3v/Qhodh
-        InEnJMOf3bLckfH9lSJhVQmHnWX/0B2Q4Y2ByWqwrlIcXJI1yMDZA4FMUEpAz6Kx
-        sfD4ukW/MRGzTnI79jbXaeyWKo2EQZGiANrOZuQYzvQD6rYitA4xMo6t5vS6ahzJ
-        3I9793OkBllaXj2mne6aJa3FsPJOcenUyqAnotNAri7k6anYgC4rvS/19Pj/XCA1
-        aVNGKgwn/IzSH5TefCaI3OM0otU2R8Y7nSWLtwDINEAvFntb5FWDjla1Jgy4A2IZ
-        JkxolW+rRHnJxQMfM4ms+Avce8xytqW+AcfcBqskAyhcUP9ue4lvzQRCp2zTONBk
-        AP4rId/C4vq3rA==
-X-ME-Sender: <xms:izhnXI2VS_dBz3PTw5P-TXklNjLd6zOWXhdreeZRjPzC1vLC1OQrTg>
+        fm2; bh=rMjYn468lmWbJJ/Y9UnoFTDhCSw4u+AQXz4D4ksBw0s=; b=ZBrE7Vyw
+        38eugooyUyUUG1AKmaXNOP5GWjtIEhS3NB3jWp1ADXoCuy1Q0TFL5ISc7QS4RNaG
+        jxGOdKluNN4kFtDYvt6CRg5Pbm6PhRPGq2+6PP4uy0Uc1DqGcuxI0e3OtSSna69K
+        OEOYi1czI4SoArwx51Dp+B/JbNRF7o2a5/MwnnAF7QBnR5jU315NYwGEsPViMxVB
+        ilI5UfGFIz1mDVzdzE2bk6LrO3aPzShgbIfylrbGLviAI/sFJQVAXKD5NqhlcbML
+        QD+DKp15ej7KfEnMbcCzIATWLfPJ9jVfdzIlX58sHegkX2ncao6ZfVKgsGXls7wr
+        0HZXDk0SLwJQgQ==
+X-ME-Sender: <xms:jjhnXMy4FuyMaJcKEe46UiCuRvL1FgVJBaTTELGrKcoaGKZtTDHyIQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledruddtjedgudehkecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecu
     fedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkf
@@ -57,13 +57,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledruddtjedgudehkecutefuodetgg
     sehsvghnthdrtghomheqnecukfhppedvudeirddvvdekrdduuddvrddvvdenucfrrghrrg
     hmpehmrghilhhfrhhomhepiihirdihrghnsehsvghnthdrtghomhenucevlhhushhtvghr
     ufhiiigvpeel
-X-ME-Proxy: <xmx:izhnXOmkVow0n8y0cz-_ZyaQGo2NgB2uPKL0XTzY0LqmvA0n64DazA>
-    <xmx:izhnXH7Qrf3gF0SLW019gYpvTUzhv4lfKKKE8aHfhkFNuNfBFtb03w>
-    <xmx:izhnXKz_Tx3reWpKobQgpVDDOwIVxBdhjb2hSgR7ly3WfRRYDmd2sA>
-    <xmx:izhnXG99W0ghHBSXKoI7-i4_UBblNpSFENIUXYo-iou4aRgks6ne9g>
+X-ME-Proxy: <xmx:jjhnXDtVpWgZMVc4Lxeulwl1ZlxUyRX9jTcd97wTr5Vdthim9sXCqA>
+    <xmx:jjhnXKkoL3NSZLrSJhwSC1Gr48XY7ofmUfQ-zBTbX7XBhCDLtNZkRA>
+    <xmx:jjhnXDjVtViafyp8hzIWLw-0oE7rYQzXT4q6d3U-YVMdywz4Dsv55Q>
+    <xmx:jjhnXN0L8XQ-OZWS4w97pXFH5Ul6_BkC89bCz8fXpLAC4hTFyVH4ww>
 Received: from nvrsysarch5.nvidia.com (thunderhill.nvidia.com [216.228.112.22])
-        by mail.messagingengine.com (Postfix) with ESMTPA id E04D5E4680;
-        Fri, 15 Feb 2019 17:09:13 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id E7EA2E462B;
+        Fri, 15 Feb 2019 17:09:16 -0500 (EST)
 From:   Zi Yan <zi.yan@sent.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
@@ -76,9 +76,9 @@ Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         Mark Hairgrove <mhairgrove@nvidia.com>,
         Nitin Gupta <nigupta@nvidia.com>,
         David Nellans <dnellans@nvidia.com>, Zi Yan <ziy@nvidia.com>
-Subject: [RFC PATCH 10/31] mm: proc: add 1GB THP kpageflag.
-Date:   Fri, 15 Feb 2019 14:08:35 -0800
-Message-Id: <20190215220856.29749-11-zi.yan@sent.com>
+Subject: [RFC PATCH 12/31] mm: stats: Separate PMD THP and PUD THP stats.
+Date:   Fri, 15 Feb 2019 14:08:37 -0800
+Message-Id: <20190215220856.29749-13-zi.yan@sent.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190215220856.29749-1-zi.yan@sent.com>
 References: <20190215220856.29749-1-zi.yan@sent.com>
@@ -92,39 +92,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Zi Yan <ziy@nvidia.com>
 
-Bit 27 is used to identify 1GB THP.
+PMD THPs and PUD THPs are shown in separate stats.
 
 Signed-off-by: Zi Yan <ziy@nvidia.com>
 ---
- fs/proc/page.c                         | 2 ++
- include/uapi/linux/kernel-page-flags.h | 2 ++
- 2 files changed, 4 insertions(+)
+ drivers/base/node.c | 5 +++--
+ fs/proc/meminfo.c   | 3 ++-
+ 2 files changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/fs/proc/page.c b/fs/proc/page.c
-index 40b05e0d4274..5d1471a6082a 100644
---- a/fs/proc/page.c
-+++ b/fs/proc/page.c
-@@ -138,6 +138,8 @@ u64 stable_page_flags(struct page *page)
- 			u |= 1 << KPF_ZERO_PAGE;
- 			u |= 1 << KPF_THP;
- 		}
-+		if (compound_order(head) == HPAGE_PUD_ORDER)
-+			u |= 1 << KPF_PUD_THP;
- 	} else if (is_zero_pfn(page_to_pfn(page)))
- 		u |= 1 << KPF_ZERO_PAGE;
+diff --git a/drivers/base/node.c b/drivers/base/node.c
+index f21d2235bf97..5d947a17b61b 100644
+--- a/drivers/base/node.c
++++ b/drivers/base/node.c
+@@ -127,6 +127,7 @@ static ssize_t node_read_meminfo(struct device *dev,
+ 		       "Node %d SUnreclaim:     %8lu kB\n"
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ 		       "Node %d AnonHugePages:  %8lu kB\n"
++		       "Node %d AnonHugePages(1GB):  %8lu kB\n"
+ 		       "Node %d ShmemHugePages: %8lu kB\n"
+ 		       "Node %d ShmemPmdMapped: %8lu kB\n"
+ #endif
+@@ -150,8 +151,8 @@ static ssize_t node_read_meminfo(struct device *dev,
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ 		       ,
+ 		       nid, K(node_page_state(pgdat, NR_ANON_THPS) *
+-				       HPAGE_PMD_NR) +
+-				    K(node_page_state(pgdat, NR_ANON_THPS_PUD) *
++				       HPAGE_PMD_NR),
++			   nid, K(node_page_state(pgdat, NR_ANON_THPS_PUD) *
+ 				       HPAGE_PUD_NR),
+ 		       nid, K(node_page_state(pgdat, NR_SHMEM_THPS) *
+ 				       HPAGE_PMD_NR),
+diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
+index 9d127e440e4c..44a4d2dbd1d4 100644
+--- a/fs/proc/meminfo.c
++++ b/fs/proc/meminfo.c
+@@ -131,7 +131,8 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
  
-diff --git a/include/uapi/linux/kernel-page-flags.h b/include/uapi/linux/kernel-page-flags.h
-index 21b9113c69da..743bd730917d 100644
---- a/include/uapi/linux/kernel-page-flags.h
-+++ b/include/uapi/linux/kernel-page-flags.h
-@@ -36,5 +36,7 @@
- #define KPF_ZERO_PAGE		24
- #define KPF_IDLE		25
- #define KPF_PGTABLE		26
-+#define KPF_PUD_THP		27
-+
- 
- #endif /* _UAPILINUX_KERNEL_PAGE_FLAGS_H */
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ 	show_val_kb(m, "AnonHugePages:  ",
+-		    global_node_page_state(NR_ANON_THPS) * HPAGE_PMD_NR +
++		    global_node_page_state(NR_ANON_THPS) * HPAGE_PMD_NR);
++	show_val_kb(m, "AnonHugePages(1GB):  ",
+ 			global_node_page_state(NR_ANON_THPS_PUD) * HPAGE_PUD_NR);
+ 	show_val_kb(m, "ShmemHugePages: ",
+ 		    global_node_page_state(NR_SHMEM_THPS) * HPAGE_PMD_NR);
 -- 
 2.20.1
 
