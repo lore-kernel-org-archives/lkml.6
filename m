@@ -2,117 +2,90 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3012AC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:18:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FB8EC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:20:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0C422190C
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:18:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ASf2CcNO"
+	by mail.kernel.org (Postfix) with ESMTP id 1827E21927
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:20:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727678AbfBORSW (ORCPT
+        id S1728518AbfBORU3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 12:18:22 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34242 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfBORSW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 12:18:22 -0500
-Received: by mail-ed1-f65.google.com with SMTP id b3so8615393ede.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 09:18:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HKRUq4h/ue0wDp79fBlnuukqhRIoARGpcxTy9wm7Zis=;
-        b=ASf2CcNOJTffmlwufsEVtqnURgoZhUWsIDpV1Wt0PApsRlxlsyrrNTCLmzQopxBv35
-         1GSzieZUR6nIwIwljPzoxD8BaDcMyejsmefnAwYzC7nEJUP9MQfDUeZ7IuvyWu0S93oR
-         doynVHl4EX/rPKARWof6UYQncthF6eCgN8fN4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HKRUq4h/ue0wDp79fBlnuukqhRIoARGpcxTy9wm7Zis=;
-        b=dLE6dFEgGkqOP34qBdJZW+bnVHxvFjsN+UKw1I05Cjjkdlm8bMpnnSSW6i7tn4qJ3w
-         dxgZz51L073byrzFtWJBr7n+eunGSN/HtJzLNNJRIXdDmb30/AVfeB/nDn+nSny6RNYc
-         XgTHyUxeziCLB0ExpAXbwAJk8JqQ9hNrSST6OOEiI22pyorsE4gV7OdIVqoRK6/mo1oi
-         HpoBzmCY/soWb2VkwCrFfk8sJ9EZyTS8uxdHJfEz49eEecoBhYhNFgmr1uuvjMwB4+Uz
-         MjYmHstc7RFbTErwyChg7gdfKS0geSOjYONS/JqyNLlCYpOnFIBvxKLXrQbNMdD4+ZVA
-         +MuA==
-X-Gm-Message-State: AHQUAuYY0HAaJy/VGPsB5SZFrAw9WpLdTwdERGIQBHJidlfH7b0dpQlh
-        waWqW1ROoifXXj31xAqqS57cjPTL3Xs=
-X-Google-Smtp-Source: AHgI3IYopWWKXXV4WWJFpusT/5CvyTtEGe6+C1VJlsX3UtbXKx6rPD/U+Cwp32O6xOcQ0vRWv7Pfnw==
-X-Received: by 2002:a50:b744:: with SMTP id g62mr8558320ede.14.1550251099588;
-        Fri, 15 Feb 2019 09:18:19 -0800 (PST)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com. [209.85.128.46])
-        by smtp.gmail.com with ESMTPSA id c5sm1715090edm.36.2019.02.15.09.18.17
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Feb 2019 09:18:17 -0800 (PST)
-Received: by mail-wm1-f46.google.com with SMTP id t200so10357525wmt.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 09:18:17 -0800 (PST)
-X-Received: by 2002:a7b:cb18:: with SMTP id u24mr6921394wmj.138.1550251096655;
- Fri, 15 Feb 2019 09:18:16 -0800 (PST)
-MIME-Version: 1.0
-References: <20190213140025.GB6346@brain-police> <20190213142524.GW32494@hirez.programming.kicks-ass.net>
- <dd33cc20-f335-0e4c-e3f4-02497ecc3710@arm.com> <20190213144145.GY32494@hirez.programming.kicks-ass.net>
- <20190213154532.GQ32534@hirez.programming.kicks-ass.net> <D61C430D-4321-4114-AB85-671A3C7B8EAE@amacapital.net>
- <20190213222146.GC32494@hirez.programming.kicks-ass.net> <D3E1B64D-3E91-4A82-9C3B-92D9EB7326CE@amacapital.net>
- <20190214101429.GD32494@hirez.programming.kicks-ass.net> <CAMzpN2hg+CY+AuF=BtetS2HrMQYdxhBZL9QMvJX4LjAs7vwwAw@mail.gmail.com>
- <20190214193432.GR32477@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190214193432.GR32477@hirez.programming.kicks-ass.net>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 15 Feb 2019 09:18:00 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgj9yUAhTz8n__s-gHnHJw4fznBbLAfne4EO4n6RukgcA@mail.gmail.com>
-Message-ID: <CAHk-=wgj9yUAhTz8n__s-gHnHJw4fznBbLAfne4EO4n6RukgcA@mail.gmail.com>
-Subject: Re: [PATCH] sched/x86: Save [ER]FLAGS on context switch
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Brian Gerst <brgerst@gmail.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-alpha@vger.kernel.org" <linux-arm-kernel@lists.infradead.org>,
+        Fri, 15 Feb 2019 12:20:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42358 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726180AbfBORU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 12:20:29 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 719D121925;
+        Fri, 15 Feb 2019 17:20:27 +0000 (UTC)
+Date:   Fri, 15 Feb 2019 12:20:26 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Daniel Bristot de Oliveira <bristot@redhat.com>
+Cc:     Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Morse <james.morse@arm.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, valentin.schneider@arm.com,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jiri Kosina <jkosina@suse.cz>,
         Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bp@alien8.de>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Chris von Recklinghausen <crecklin@redhat.com>,
+        Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
+        Marcelo Tosatti <mtosatti@redhat.com>,
+        Clark Williams <williams@redhat.com>, x86@kernel.org
+Subject: Re: [PATCH V4 7/9] x86/alternative: Batch of patch operations
+Message-ID: <20190215122026.3642d5b7@gandalf.local.home>
+In-Reply-To: <23408225-1768-d01e-4fd6-24289ef673ae@redhat.com>
+References: <cover.1549308412.git.bristot@redhat.com>
+        <84e6b00634085f0fca721e4e7e5aaf43cd062564.1549308412.git.bristot@redhat.com>
+        <20190214125330.GB12467@zn.tnic>
+        <20190214090620.1ee73a36@gandalf.local.home>
+        <20190214143030.GB4423@zn.tnic>
+        <20190214094011.6e8a22eb@gandalf.local.home>
+        <23408225-1768-d01e-4fd6-24289ef673ae@redhat.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 11:34 AM Peter Zijlstra <peterz@infradead.org> wrote:
+On Fri, 15 Feb 2019 17:00:49 +0100
+Daniel Bristot de Oliveira <bristot@redhat.com> wrote:
+
+> On 2/14/19 3:40 PM, Steven Rostedt wrote:
+> > On Thu, 14 Feb 2019 15:30:30 +0100
+> > Borislav Petkov <bp@alien8.de> wrote:
+> >   
+> >>> 	void *trampoline;    
+> >>
+> >> Well, it ain't a trampoline either. It is a "temporary location to go to while
+> >> patching is going on".  
+> > 
+> > 	void *detour;
+> >   
+> 
+> The comment on top of text_poke_bp() defines:
+> 
+> handler:    address to jump to when the temporary breakpoint is hit
+> 
+> so, how about tmp_jump_addr?
+> 
+> well, detour works as well :-)
+> 
+> thoughts?
+> 
 >
-> Something like the below, right?
->
-> +       frame->flags = 0;
-> +       frame->flags = 0;
 
-Those are not valid flag values.
+"detour" sounds cool.
 
-Can you popf them? Yes.
-
-Do they make sense? No.
-
-It has the IF flag clear, for example. Is that intentional? If it is,
-it should likely be documented. Because IF clear means "interrupts
-disabled". Are the places that load flags in irq disabled regions?
-Maybe they are, maybe they aren't, but shouldn't this be something
-that is made explicit, rather than "oh, let's initialize to zero like
-all the other registers we don't care about".
-
-Because a zero initializer for eflags really is odd.
-
-             Linus
+-- Steve
