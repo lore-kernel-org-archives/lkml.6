@@ -5,64 +5,64 @@ X-Spam-Level:
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3316C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91A7AC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:44:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B3EE222D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:44:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EBAE222D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:44:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vNuDOMtk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZIjTmsvr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404521AbfBOWoQ (ORCPT
+        id S2404558AbfBOWoX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 17:44:16 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38102 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728083AbfBOWoO (ORCPT
+        Fri, 15 Feb 2019 17:44:23 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45460 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404529AbfBOWoU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 17:44:14 -0500
-Received: by mail-pf1-f196.google.com with SMTP id q1so5501899pfi.5;
-        Fri, 15 Feb 2019 14:44:14 -0800 (PST)
+        Fri, 15 Feb 2019 17:44:20 -0500
+Received: by mail-pl1-f195.google.com with SMTP id r14so5623001pls.12;
+        Fri, 15 Feb 2019 14:44:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:from:to:cc:date:message-id:in-reply-to:references
          :user-agent:mime-version:content-transfer-encoding;
-        bh=fS5mmi3aRfTJ9ZPKh6Kon1+z1mp8jA2r8sJju4C3jM0=;
-        b=vNuDOMtkrRDcjIvM34cWSAhjWi7DaxwrterHweE+q54fWc02gttbQplAgtkMGyNr6v
-         I5pndMGUmeOkbofpoyaC97EwN9KzR1zRBpflpPCI4ARgg0U/hKqTN5fW/AAaVda5cPfZ
-         b84zF7FusWmjRjReR0vFfP4DUVPL+NOQrm11mSwHc0lMmzzBlO5rVR3JbrZBzQYP4z9Z
-         pSnur8hx54zXmmXBWSlybPJts2l7U/YLOxfeYgjVP7MN/Z3tg0kQXzf12oKaS5gBGVfi
-         5dHYwYCUulJb8mFugGLJFCLbloov8VTOs3L5D93afRafxF7f6CmjDrdfK1wGeEMjcNL0
-         7o2g==
+        bh=arIO7gLw9RNNWVmh9ZBQTlhTkHHBOY3pzYGT4D5o+8I=;
+        b=ZIjTmsvrt5YtKJrEdwLrMAsf8mEpOCRVG4XnZE8f7/hixv5N7BRMfMLC4D3pJAZU5e
+         zDX1nfa2aClf0rW49OWbWzCHEAuT7rgox8H2VqyAQOj8LBNSKMNivmSfgzQfNEgj9ZXS
+         dL0b/FNTt9g9fffYzkj+FWPlK3q4HnjUqrTIZKpWUip7e2WEWqOfKXI/313nSJteQ5aS
+         jEZSX5dHjTyTNrzcpAk9guHcEJV8tL/mUGxHX6rBEVL08EVwZUqqgmXn8y9z65H/RXoD
+         c3whsxGpq3rOX2XENIYxBED5hmv9EcsgBSL3oIs9w1+/7s1H38keMlCVVDkdZrN3Z/bh
+         8wEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:from:to:cc:date:message-id:in-reply-to
          :references:user-agent:mime-version:content-transfer-encoding;
-        bh=fS5mmi3aRfTJ9ZPKh6Kon1+z1mp8jA2r8sJju4C3jM0=;
-        b=JENf4tWcDx6RyleXtkKJMFWp5P41lJvUtuuVrq+PI+wE76DaIoIFQRG2U1djDmez8m
-         ftUnxvCZNCWGvsFwY5/+a9G5GVjhae79omD1vghgwbMFe9avM3IpAo5zcjkYrKTRjDk3
-         MeW/V7qv8nSKAfACeTGv2dD7fHGNrKcB8mA+BKzfi2lm3VVKFYig9dlYtOm5A8tGt/e9
-         8y3xaV2RQjBVS+tR7WK2tvupG8JDGZc54GJeyDgum55wW5tRmi9xJAFtjD64BTz+7wFp
-         C6Bb+mYkXlBVGRKOmU8jRHnMZnzQAsnNQkZR//RJnoL5qJLyxm0vjclJs0sgCSEMeccw
-         15Hg==
-X-Gm-Message-State: AHQUAuYJCJRvNzIZKblr1lW/a9u8iY2qM2nA4a/34HlqVoW1fw3EIHmR
-        61RihBkRRm7V6q4SmL3Xbcm2Bi7z
-X-Google-Smtp-Source: AHgI3IYkBCGWWOk/DvbdZfHFtmtakVD4J0yB5p0EAn9j1LbuYjzDRQBwv3wF7ASJB+gqPc/s6VK9MA==
-X-Received: by 2002:a65:65c9:: with SMTP id y9mr7720172pgv.438.1550270653333;
-        Fri, 15 Feb 2019 14:44:13 -0800 (PST)
+        bh=arIO7gLw9RNNWVmh9ZBQTlhTkHHBOY3pzYGT4D5o+8I=;
+        b=ehwNhCDqNjHdxA87cbKgZKiPT4R++z9UUtCNurJzzqqR6p7/+HNe7TLQW4w5G6/dUX
+         7hGryD6NqKFqH1EWcyXMTz1tH8ZtQ97PuLyV/r5T1CnvQ2wiFD1atccgj7EDwzlQnHFW
+         Zn6R1c5diewIl3DSPGPB3g++xf8UY8Mzbo0uNPPh0rVvhi8a56B0W201w2e4/bovm89Z
+         yHGqQpOulR78kiALqfH9pE8zInZwHDHUUj6oyGF/5pF6Q9nzSdUjJs9/R+/icI2x4Mzu
+         siyEO+Ag39vWerQE2CztL1ryHWY5kxs1wPuEoyqEVFtNun7wWxW1O8civtgnt5sFAto7
+         DtHg==
+X-Gm-Message-State: AHQUAuYYNIvv/OD7wOZEk98ltqYRnr2dK9i/nL4NgDSpSZw5yv6YEdC9
+        J1DqrH+7upW7uSyv9XL0VYLq8/sb
+X-Google-Smtp-Source: AHgI3IZk++qbJ+Aw0T8SCVNVtUqt7mSJ6jHdTi9IXyXzVQ9vrAXgtGDbDZi10JSxCZ04o03LLc1tdA==
+X-Received: by 2002:a17:902:4124:: with SMTP id e33mr12577981pld.236.1550270659310;
+        Fri, 15 Feb 2019 14:44:19 -0800 (PST)
 Received: from localhost.localdomain ([2001:470:b:9c3:9e5c:8eff:fe4f:f2d0])
-        by smtp.gmail.com with ESMTPSA id 10sm11721400pfq.146.2019.02.15.14.44.12
+        by smtp.gmail.com with ESMTPSA id s16sm16887803pfk.166.2019.02.15.14.44.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Feb 2019 14:44:12 -0800 (PST)
-Subject: [net PATCH 1/2] mm: Use fixed constant in page_frag_alloc instead
- of size + 1
+        Fri, 15 Feb 2019 14:44:18 -0800 (PST)
+Subject: [net PATCH 2/2] net: Do not allocate page fragments that are not
+ skb aligned
 From:   Alexander Duyck <alexander.duyck@gmail.com>
 To:     netdev@vger.kernel.org, davem@davemloft.net
 Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org, jannh@google.com
-Date:   Fri, 15 Feb 2019 14:44:12 -0800
-Message-ID: <20190215224412.16881.89296.stgit@localhost.localdomain>
+Date:   Fri, 15 Feb 2019 14:44:18 -0800
+Message-ID: <20190215224418.16881.69031.stgit@localhost.localdomain>
 In-Reply-To: <20190215223741.16881.84864.stgit@localhost.localdomain>
 References: <20190215223741.16881.84864.stgit@localhost.localdomain>
 User-Agent: StGit/0.17.1-dirty
@@ -76,50 +76,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 
-This patch replaces the size + 1 value introduced with the recent fix for 1
-byte allocs with a constant value.
+This patch addresses the fact that there are drivers, specifically tun,
+that will call into the network page fragment allocators with buffer sizes
+that are not cache aligned. Doing this could result in data alignment
+and DMA performance issues as these fragment pools are also shared with the
+skb allocator and any other devices that will use napi_alloc_frags or
+netdev_alloc_frags.
 
-The idea here is to reduce code overhead as the previous logic would have
-to read size into a register, then increment it, and write it back to
-whatever field was being used. By using a constant we can avoid those
-memory reads and arithmetic operations in favor of just encoding the
-maximum value into the operation itself.
-
-Fixes: 2c2ade81741c ("mm: page_alloc: fix ref bias in page_frag_alloc() for 1-byte allocs")
+Fixes: ffde7328a36d ("net: Split netdev_alloc_frag into __alloc_page_frag and add __napi_alloc_frag")
+Reported-by: Jann Horn <jannh@google.com>
 Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 ---
- mm/page_alloc.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ net/core/skbuff.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index ebb35e4d0d90..37ed14ad0b59 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -4857,11 +4857,11 @@ void *page_frag_alloc(struct page_frag_cache *nc,
- 		/* Even if we own the page, we do not use atomic_set().
- 		 * This would break get_page_unless_zero() users.
- 		 */
--		page_ref_add(page, size);
-+		page_ref_add(page, PAGE_FRAG_CACHE_MAX_SIZE);
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index 26d848484912..2415d9cb9b89 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -356,6 +356,8 @@ static void *__netdev_alloc_frag(unsigned int fragsz, gfp_t gfp_mask)
+  */
+ void *netdev_alloc_frag(unsigned int fragsz)
+ {
++	fragsz = SKB_DATA_ALIGN(fragsz);
++
+ 	return __netdev_alloc_frag(fragsz, GFP_ATOMIC);
+ }
+ EXPORT_SYMBOL(netdev_alloc_frag);
+@@ -369,6 +371,8 @@ static void *__napi_alloc_frag(unsigned int fragsz, gfp_t gfp_mask)
  
- 		/* reset page count bias and offset to start of new frag */
- 		nc->pfmemalloc = page_is_pfmemalloc(page);
--		nc->pagecnt_bias = size + 1;
-+		nc->pagecnt_bias = PAGE_FRAG_CACHE_MAX_SIZE + 1;
- 		nc->offset = size;
- 	}
- 
-@@ -4877,10 +4877,10 @@ void *page_frag_alloc(struct page_frag_cache *nc,
- 		size = nc->size;
- #endif
- 		/* OK, page count is 0, we can safely set it */
--		set_page_count(page, size + 1);
-+		set_page_count(page, PAGE_FRAG_CACHE_MAX_SIZE + 1);
- 
- 		/* reset page count bias and offset to start of new frag */
--		nc->pagecnt_bias = size + 1;
-+		nc->pagecnt_bias = PAGE_FRAG_CACHE_MAX_SIZE + 1;
- 		offset = size - fragsz;
- 	}
- 
+ void *napi_alloc_frag(unsigned int fragsz)
+ {
++	fragsz = SKB_DATA_ALIGN(fragsz);
++
+ 	return __napi_alloc_frag(fragsz, GFP_ATOMIC);
+ }
+ EXPORT_SYMBOL(napi_alloc_frag);
 
