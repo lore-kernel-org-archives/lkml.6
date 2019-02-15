@@ -2,105 +2,187 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B717CC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:47:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF088C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:49:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 836112190C
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:47:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F80E2192D
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:49:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Nh0jObm1"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="h9OUIip/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732371AbfBOPrW (ORCPT
+        id S2388220AbfBOPth (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 10:47:22 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:38924 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726113AbfBOPrV (ORCPT
+        Fri, 15 Feb 2019 10:49:37 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:52508 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731311AbfBOPtf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 10:47:21 -0500
-Received: by mail-vs1-f65.google.com with SMTP id e16so6041078vsq.6
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 07:47:21 -0800 (PST)
+        Fri, 15 Feb 2019 10:49:35 -0500
+Received: by mail-it1-f193.google.com with SMTP id r11so25096755itc.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 07:49:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PnFpHSwVq5mXaCRX9TbyXPOst3rjSPY2Hoy3E+B8Ftk=;
-        b=Nh0jObm1RI10kPU3y7N6oXejhm4Flv/VcpIoTz8zb8hQ/6ZFCon8jd2OCzxgoy7xaH
-         MIM40ZJTR1WPSK5Pdv90jIBqthU4J+bW/zmnl04Giktg78gBOyZulmfmiH6xkN/Z+rkN
-         lEByoevmoaFugF4CB8T1dC0xs+zA+yuCirmDU=
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=gxvfq5TL/2HmGfmAumLfCM1Ftb4XqCEsXRfcSZF+1T0=;
+        b=h9OUIip/xw+IU3EFOgAuJ2mEtH+VQuLeB4N2O2e5L27iYvYrtP6ekFwJsYUVSR8Bs1
+         V392XnrQeNAUy7rzEK5X9RjrKX8vmLHjqRiG5HONgjRm2+fOgE6f7wJuvX6QtuzsWOdF
+         MfkNy1spvU8KVAOhzx2gB7lsHkND6yni833wB9wMTVzynMNMNsVhVjpfEHZ2/3qGsz9D
+         rXvPlMf1e6MpwVMTBVf+gHJWXTWyumwVlENzGzRya5qqopY95rsZqVKBmvI+tskX1FeI
+         khsRD7p9S2INbR0YIRanHv6C+VCXUUdEVjlIFSQ4S3sSSa7xj2Un1EU661Qgk61bbUHy
+         K1+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PnFpHSwVq5mXaCRX9TbyXPOst3rjSPY2Hoy3E+B8Ftk=;
-        b=JMug4TEyo+MDBu1bDSceOkxCatkUDNSerj7dyp/1XAtTyFmIwmT444ullN8dvKGk3x
-         MDtSkSGzzHWHtaQKDW/Hj9eK5kD3CdpW5QNSjKkI4kIZHCg3DZj/eM5oATc+31KHLqsn
-         x+0ljIAMYUuALb4xgQs3wah7KpmI0OJXtB7UM9Sy/qHlKIYreJaVwprAdmdvd+ZkCsgC
-         G5hDbBY+hOwTReSOQqZwxgBAuVvqkuldlTfsnWO17RiJ7NaK8VAVDd0qPGEOjoLsQAfv
-         swqz05xagrk40Ww1eEcUKB498SS1KEhqKRzGyXPGiwoiQj382cc7njOr9qdALCO+pyD7
-         71ow==
-X-Gm-Message-State: AHQUAuYwXbrsb2XU7TW8AhAzocZWjR5UbXr+m2qc/M0BzEW97XFP1JXJ
-        T67KdfVo/ILWNxvaV/F5u9oIfSswby4=
-X-Google-Smtp-Source: AHgI3IYG5SFFgVM0Y0wAVI0E+e4CJD/Tupf6ljAzhji8H99HDWcTLvFVgPFvqDAPYeQwvA9z8bU1GQ==
-X-Received: by 2002:a67:e889:: with SMTP id x9mr5415528vsn.182.1550245640393;
-        Fri, 15 Feb 2019 07:47:20 -0800 (PST)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
-        by smtp.gmail.com with ESMTPSA id j64sm1193190vkj.3.2019.02.15.07.47.19
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=gxvfq5TL/2HmGfmAumLfCM1Ftb4XqCEsXRfcSZF+1T0=;
+        b=QxzKSlKjav3aRy+zdidNerbJM2jYSW7boXS/jpFVqSLrCe0skc8QlmzCFXdu89kTL0
+         G5L+v/xqccrd3Y4Dp+iQTzIA7R4ox8gKEc3TvrUaJVqns+ekT8QEaPb6ibR3qNToF7lr
+         jzjvsLAe27lIM5uTftlSHW0VQjAjV7HMFFRiFWMYAHiWJdCr9Afakocnzi4qCUr+9UwO
+         qMQh5VTfhFGxeSOzHmPh2X6GV0d4ygjdB4ASpVnkMZJ42xMxRFAKIdElMmvrFA3HnM/+
+         2GFwt2r4/30rBrteCVPvaQsuqQDykcohso909NLMdbQSyENVqcWxht+9YUYqpggicSZa
+         MX8g==
+X-Gm-Message-State: AHQUAuYflC50dwTIi63v1RwOUeYW/e+47NAdktBkzyC6kU0gZj4XSq67
+        ImUysi8N5RW3NlNTni9TiRbcrg==
+X-Google-Smtp-Source: AHgI3IaV0Q9G5s5V1+OIQRz7sTqwSOWc1UGhJpRZNN56AkN2+6GPnd9+jvWg/bVCGoDtKm+mPdu3Pg==
+X-Received: by 2002:a02:984d:: with SMTP id x13mr4966711jaj.140.1550245774598;
+        Fri, 15 Feb 2019 07:49:34 -0800 (PST)
+Received: from [192.168.1.158] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id w186sm2639569itb.15.2019.02.15.07.49.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Feb 2019 07:47:19 -0800 (PST)
-Received: by mail-vs1-f54.google.com with SMTP id i15so3436815vsd.10
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 07:47:19 -0800 (PST)
-X-Received: by 2002:a67:1505:: with SMTP id 5mr5255799vsv.20.1550245639052;
- Fri, 15 Feb 2019 07:47:19 -0800 (PST)
+        Fri, 15 Feb 2019 07:49:33 -0800 (PST)
+Subject: Re: [PATCH V15 00/18] block: support multi-page bvec
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>,
+        Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+References: <20190215111324.30129-1-ming.lei@redhat.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <c52b6a8b-d1d4-67ff-f81c-371d09cc6d5b@kernel.dk>
+Date:   Fri, 15 Feb 2019 08:49:31 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190214181249.2749-1-dianders@chromium.org> <20190215030205.g6ntaiec3kscsaoi@vireshk-i7>
-In-Reply-To: <20190215030205.g6ntaiec3kscsaoi@vireshk-i7>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 15 Feb 2019 07:47:06 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=WH9zg62ME5Atk2NDXX8rLn0qMY3-P1U8jqDr4Th_BX_Q@mail.gmail.com>
-Message-ID: <CAD=FV=WH9zg62ME5Atk2NDXX8rLn0qMY3-P1U8jqDr4Th_BX_Q@mail.gmail.com>
-Subject: Re: [PATCH 1/2] PM / Domains: Mark "name" const in genpd_dev_pm_attach_by_name()
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>, linux-pm@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pavel Machek <pavel@ucw.cz>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190215111324.30129-1-ming.lei@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-On Thu, Feb 14, 2019 at 7:02 PM Viresh Kumar <viresh.kumar@linaro.org> wrote:
->
-> On 14-02-19, 10:12, Douglas Anderson wrote:
-> > The genpd_dev_pm_attach_by_name() simply takes the name and passes it
-> > to of_property_match_string() where the argument is "const char *".
-> > Adding a const here allows a later patch to add a const to
-> > dev_pm_domain_attach_by_name() which allows drivers to pass in a name
-> > that was declared "const" in a driver.
-> >
-> > Fixes: 5d6be70add65 ("PM / Domains: Introduce option to attach a device by name to genpd")
->
-> Not sure if this should be counted as a fix.
+On 2/15/19 4:13 AM, Ming Lei wrote:
+> Hi,
+> 
+> This patchset brings multi-page bvec into block layer:
+> 
+> 1) what is multi-page bvec?
+> 
+> Multipage bvecs means that one 'struct bio_bvec' can hold multiple pages
+> which are physically contiguous instead of one single page used in linux
+> kernel for long time.
+> 
+> 2) why is multi-page bvec introduced?
+> 
+> Kent proposed the idea[1] first. 
+> 
+> As system's RAM becomes much bigger than before, and huge page, transparent
+> huge page and memory compaction are widely used, it is a bit easy now
+> to see physically contiguous pages from fs in I/O. On the other hand, from
+> block layer's view, it isn't necessary to store intermediate pages into bvec,
+> and it is enough to just store the physicallly contiguous 'segment' in each
+> io vector.
+> 
+> Also huge pages are being brought to filesystem and swap [2][6], we can
+> do IO on a hugepage each time[3], which requires that one bio can transfer
+> at least one huge page one time. Turns out it isn't flexiable to change
+> BIO_MAX_PAGES simply[3][5]. Multipage bvec can fit in this case very well.
+> As we saw, if CONFIG_THP_SWAP is enabled, BIO_MAX_PAGES can be configured
+> as much bigger, such as 512, which requires at least two 4K pages for holding
+> the bvec table.
+> 
+> With multi-page bvec:
+> 
+> - Inside block layer, both bio splitting and sg map can become more
+> efficient than before by just traversing the physically contiguous
+> 'segment' instead of each page.
+> 
+> - segment handling in block layer can be improved much in future since it
+> should be quite easy to convert multipage bvec into segment easily. For
+> example, we might just store segment in each bvec directly in future.
+> 
+> - bio size can be increased and it should improve some high-bandwidth IO
+> case in theory[4].
+> 
+> - there is opportunity in future to improve memory footprint of bvecs. 
+> 
+> 3) how is multi-page bvec implemented in this patchset?
+> 
+> Patch 1 ~ 3 parpares for supporting multi-page bvec. 
+> 
+> Patches 4 ~ 14 implement multipage bvec in block layer:
+> 
+> 	- put all tricks into bvec/bio/rq iterators, and as far as
+> 	drivers and fs use these standard iterators, they are happy
+> 	with multipage bvec
+> 
+> 	- introduce bio_for_each_bvec() to iterate over multipage bvec for splitting
+> 	bio and mapping sg
+> 
+> 	- keep current bio_for_each_segment*() to itereate over singlepage bvec and
+> 	make sure current users won't be broken; especailly, convert to this
+> 	new helper prototype in single patch 21 given it is bascially a mechanism
+> 	conversion
+> 
+> 	- deal with iomap & xfs's sub-pagesize io vec in patch 13
+> 
+> 	- enalbe multipage bvec in patch 14 
+> 
+> Patch 15 redefines BIO_MAX_PAGES as 256.
+> 
+> Patch 16 documents usages of bio iterator helpers.
+> 
+> Patch 17~18 kills NO_SG_MERGE.
+> 
+> These patches can be found in the following git tree:
+> 
+> 	git:  https://github.com/ming1/linux.git  v5.0-blk_mp_bvec_v14
+                                                                   ^^^
 
-I'm OK if the "Fixes" is stripped when applying or if someone tells me
-to re-post without the Fixes--just let me know.  In general I do a lot
-of cherry-picks from upstream and I appreciate the Fixes tag helping
-to link patches together.  In this case if I picked the original patch
-I'd definitely want this one too.  Certainly, though, CCing stable
-would make no sense in this case.  ;-)
+v15?
 
--Doug
+> Lots of test(blktest, xfstests, ltp io, ...) have been run with this patchset,
+> and not see regression.
+> 
+> Thanks Christoph for reviewing the early version and providing very good
+> suggestions, such as: introduce bio_init_with_vec_table(), remove another
+> unnecessary helpers for cleanup and so on.
+> 
+> Thanks Chritoph and Omar for reviewing V10/V11/V12, and provides lots of
+> helpful comments.
+
+Applied, thanks Ming. Let's hope it sticks!
+
+-- 
+Jens Axboe
+
