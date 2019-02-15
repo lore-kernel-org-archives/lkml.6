@@ -2,92 +2,118 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BE1DC4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:10:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB118C10F06
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:10:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 653062192C
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:10:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 890E821916
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:10:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550221817;
+	bh=gHKhT8eieWjF74KO2wgW5Hm/27IXGYrWzVhdvwy+GQQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=b8S2y4Ov3enhklV/Ac8yzwnSAXi9RP4hnSOOr+o4X0bG47InOq6DyXRrwQl7Kpbot
+	 rRHgK9QgheMo1ysE+t11GDSoRdhfPg+2MV3/3MiwL4W1t5Azus8gjEKV99C4jtx4Gn
+	 V1PYKb2xFlNvZaQqxPKRMQLtnqqIuKOSJxh7OG0w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404212AbfBOJKE (ORCPT
+        id S2392153AbfBOJKF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:10:04 -0500
-Received: from sauhun.de ([88.99.104.3]:60384 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388927AbfBOJKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 04:10:01 -0500
-Received: from localhost (unknown [83.221.228.209])
-        by pokefinder.org (Postfix) with ESMTPSA id 310A02E3551;
-        Fri, 15 Feb 2019 10:10:00 +0100 (CET)
-Date:   Fri, 15 Feb 2019 10:09:59 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Hsin-Yi Wang <hsinyi@chromium.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jun Gao <jun.gao@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>, linux-i2c@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: mediatek: modify threshold passed to
- i2c_get_dma_safe_msg_buf()
-Message-ID: <20190215090959.soxkf3ho3or2geme@ninjato>
-References: <20190215090202.157100-1-hsinyi@chromium.org>
+        Fri, 15 Feb 2019 04:10:05 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38812 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389014AbfBOJKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 04:10:02 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5E509ABAC;
+        Fri, 15 Feb 2019 09:10:01 +0000 (UTC)
+Date:   Fri, 15 Feb 2019 10:10:00 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, stable@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Richard Weinberger <richard.weinberger@gmail.com>,
+        Samuel Dionne-Riel <samuel@dionne-riel.com>,
+        LKML <linux-kernel@vger.kernel.org>, graham@grahamc.com,
+        Oleg Nesterov <oleg@redhat.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: Userspace regression in LTS and stable kernels
+Message-ID: <20190215091000.GT4525@dhcp22.suse.cz>
+References: <CAN1fySViLgrLAHHfTHMef-Bkh73kUHKP-ava6TbgALeSE4LfFw@mail.gmail.com>
+ <CAFLxGvwpuxKF4UWdsULwQWo7kgVLMNHC=77dN+w-A0a6avrAXA@mail.gmail.com>
+ <CAHk-=wjtH5ombebghG-SDNGppJF4a5bZAUqndtZ3tauWjgw5_w@mail.gmail.com>
+ <20190214122027.c0df36282d65dc9979248117@linux-foundation.org>
+ <20190215070022.GD14473@kroah.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="z7e24ofik27zxdzz"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190215090202.157100-1-hsinyi@chromium.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190215070022.GD14473@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri 15-02-19 08:00:22, Greg KH wrote:
+> On Thu, Feb 14, 2019 at 12:20:27PM -0800, Andrew Morton wrote:
+> > On Thu, 14 Feb 2019 09:56:46 -0800 Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> > 
+> > > On Wed, Feb 13, 2019 at 3:37 PM Richard Weinberger
+> > > <richard.weinberger@gmail.com> wrote:
+> > > >
+> > > > Your shebang line exceeds BINPRM_BUF_SIZE.
+> > > > Before the said commit the kernel silently truncated the shebang line
+> > > > (and corrupted it),
+> > > > now it tells the user that the line is too long.
+> > > 
+> > > It doesn't matter if it "corrupted" things by truncating it. All that
+> > > matters is "it used to work, now it doesn't"
+> > > 
+> > > Yes, maybe it never *should* have worked. And yes, it's sad that
+> > > people apparently had cases that depended on this odd behavior, but
+> > > there we are.
+> > > 
+> > > I see that Kees has a patch to fix it up.
+> > > 
+> > 
+> > Greg, I think we have a problem here.
+> > 
+> > 8099b047ecc431518 ("exec: load_script: don't blindly truncate shebang
+> > string") wasn't marked for backporting.  And, presumably as a
+> > consequence, Kees's fix "exec: load_script: allow interpreter argument
+> > truncation" was not marked for backporting.
+> > 
+> > 8099b047ecc431518 hasn't even appeared in a Linus released kernel, yet
+> > it is now present in 4.9.x, 4.14.x, 4.19.x and 4.20.x.
+> 
+> It came in 5.0-rc1, so it fits the "in a Linus released kernel"
+> requirement.  If we are to wait until it shows up in a -final, that
+> would be months too late for almost all of these types of patches that
+> are picked up.
 
---z7e24ofik27zxdzz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+rc1 is just a too early. Waiting few more rcs or even a final release
+for something that people do not see as an issue should be just fine.
+Consider this particular patch and tell me why it had to be rushed in
+the first place. The original code was broken for _years_ but I do not
+remember anybody would be complaining.
 
-On Fri, Feb 15, 2019 at 05:02:02PM +0800, Hsin-Yi Wang wrote:
-> i2c_get_dma_safe_msg_buf() allocates space based on msg->len. If threshol=
-d is
-> 0 and msg->len is also 0, function makes zero-length allocation, which re=
-turns
-> a special ZERO_SIZE_PTR instead of a NULL pointer, and this will cause la=
-ter
-> code to fail. Modify the threshold to > 0 so the function returns NULL po=
-inter.
->=20
-> Fixes: fc66b39fe36a ("i2c: mediatek: Use DMA safe buffers for i2c transac=
-tions")
-> Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
+> > I don't know if Oleg considered backporting that patch.  I certainly
+> > did (I always do), and I decided against doing so.  Yet there it is.
+> 
+> This came in through Sasha's tools, which give people a week or so to
+> say "hey, this isn't a stable patch!" and it seems everyone ignored that
+> :(
 
-Right. But we need to fix i2c_get_dma_safe_msg_buf(), so it will be
-handled for all callers. Do you want to add a check if msg->len is 0 or
-shall I? Both fine for me.
+I thought we were through this already. Automagic autoselection of
+patches in the core kernel (or mmotm tree patches in particular) is too
+dangerous. We try hard to consider each and every patch for stable. Even
+if something slips through then it is much more preferred to ask for a
+stable backport in the respective email thread and wait for a conclusion
+before adding it.
 
-
---z7e24ofik27zxdzz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxmgecACgkQFA3kzBSg
-KbbmfBAAqYW+JvwMtjirjdXC3UPcneALX9Iw2pOiZ2zmKVFJp27osp1IkQyxPDgW
-WvJ1+0O2l2+YLM1HMxhQKZVSsULwUD8CaltGxlKypNQZa/ka8kWOffsOUODldueC
-bqddzNomrk5OCmkywbbcAq4iVcxfLRffnrjqtP+CXHqxi5OIG5cNclI5u5zjnuOY
-rEg7fu2p9p0wXS6fSfEW0iK84XKfbAkcyxJLryEx8o5QDAvow99wmFjJ3x9deKFf
-UNcoRYUgyZK+DXQF0SUr1EuEOStuXC8yoKncyuYD7rfRIMQBU0Q/YDy3TnWj5Fa3
-AI07nksJ+Swqzu3hn158vKvqMRkX9n+C6BSBgajGE/mAMffIHXuDTfxpNOkDDqri
-FaVtITfGcp/s3aLCu8vFoyuyK05LV0xt7RGqMt4mglFU/dMXvRkKEyDmLx3ASdIl
-7S2fO8ldd5DPTAKnpBJnEhxD1x2YdPqn0o8lMYMXPkIk1+6tFakXB7ACBJ4b5oJf
-CBUzj/2aYGJ9RH5AEW+BVXnTrKwBTs885zmZkgHM/FxgusV6t1srPXImocRVvyQC
-KtGiVLYW34c3x72ONu/09kPocbRJubyWUsCntSDWfIBuRkcQXmfbroNRq2SEFlGA
-hy18Oc7VKRxSqrRs8V4ibmcpEY7BcMydmFC4aelBei3mCz1nHms=
-=Jioo
------END PGP SIGNATURE-----
-
---z7e24ofik27zxdzz--
+-- 
+Michal Hocko
+SUSE Labs
