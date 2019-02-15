@@ -2,88 +2,75 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67915C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5BA1C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:36:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EB6F21920
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:34:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A22DF2192C
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:35:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550216158;
+	bh=wrvDthyafpgMx4xB1/UjUawSo+msKKMkFuIt9hJfFEY=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
+	b=QYvg7j1238MWp/rjyqNW/Zs9p5rSkRYO748dDQWbGskttgyqL9hkpUplBxyDZh4eh
+	 rFcH4zlgRjcqe6Dzw6v4tXdyAH8rWm5bsKP5iboE/rDFF0v+G6DaD9zbTUCeJesRyN
+	 QRg/OQ3xwj34DXhuA54fPF5OVV6OMclvGoG+1W+g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389974AbfBOHeX (ORCPT
+        id S2390036AbfBOHfm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 02:34:23 -0500
-Received: from www.osadl.org ([62.245.132.105]:47006 "EHLO www.osadl.org"
+        Fri, 15 Feb 2019 02:35:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727993AbfBOHeX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 02:34:23 -0500
-Received: from debian01.hofrr.at (178.115.242.59.static.drei.at [178.115.242.59])
-        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id x1F7YCNR007759;
-        Fri, 15 Feb 2019 08:34:12 +0100
-From:   Nicholas Mc Guire <hofrat@osadl.org>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nicholas Mc Guire <hofrat@osadl.org>
-Subject: [PATCH V2] sysfs.txt: add note on available attribute macros
-Date:   Fri, 15 Feb 2019 08:29:48 +0100
-Message-Id: <1550215788-19883-1-git-send-email-hofrat@osadl.org>
-X-Mailer: git-send-email 2.1.4
+        id S2389982AbfBOHfm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 02:35:42 -0500
+Received: from pobox.suse.cz (prg-ext-pat.suse.com [213.151.95.130])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 402BC204FD;
+        Fri, 15 Feb 2019 07:35:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550216138;
+        bh=wrvDthyafpgMx4xB1/UjUawSo+msKKMkFuIt9hJfFEY=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+        b=xJnH07r8puCwqAF9AF8RYMLzn1Ic25oqA8piZgwBKt4wXB/2LrKVAarUrTg0wieMe
+         z2k0lIvS9fgGndvkQms8Q+0YjpyuiYQ4tQiyUUHMFuVd9EMNphDNYOYKPUv7iMZ9wr
+         MTDfPNR90TnegZoigcF4Z8RPoaPKP/HG88NOmFxM=
+Date:   Fri, 15 Feb 2019 08:35:23 +0100 (CET)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     james broadus <jbroadus@gmail.com>
+cc:     Kai Heng Feng <kai.heng.feng@canonical.com>,
+        Benjamin Tissoires <benjamin.tissoires@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Fix resume for ELAN2097 touchscreen.
+In-Reply-To: <CAKgEEwteam5TCWAUtgQKxQpTzTk3+_DktmqwxZTLa=w3xt5i8Q@mail.gmail.com>
+Message-ID: <nycvar.YFH.7.76.1902150834180.11598@cbobk.fhfr.pm>
+References: <20190211070040.4569-1-jbroadus@gmail.com> <nycvar.YFH.7.76.1902140036400.11598@cbobk.fhfr.pm> <CAKgEEwteam5TCWAUtgQKxQpTzTk3+_DktmqwxZTLa=w3xt5i8Q@mail.gmail.com>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The common cases of attributes wrappers should probably be using the
-__ATTR_XXX macros to make code more concise and readable but the current
-sysfs.txt does not point developers to those convenience macros. Further
-there is no note in sysfs.txt currently explaining why trying to set a
-sysfs file to mode 0666 will fail respectively revert to 0664.
+On Thu, 14 Feb 2019, james broadus wrote:
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
----
+> > This should be fixed in hid.git#for-5.1/i2c-hid already by commit
+> > 1475af255e18f. Could you please confirm that?
+> >
+> 
+> Hi Jiri. That change mutes the log messages, but I'm still counting 
+> around 35000 interrupts per second after resume and touch does not work. 
+> With the reset, the device works properly.
 
-V2: the descriptions were not too helpful as noted by 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    so lets see if V2 is any better...
+Ah, I see. Should your patch then actually replace 1475af255e18f?
 
- Documentation/filesystems/sysfs.txt | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Thanks,
 
-diff --git a/Documentation/filesystems/sysfs.txt b/Documentation/filesystems/sysfs.txt
-index 41411b0..b003123 100644
---- a/Documentation/filesystems/sysfs.txt
-+++ b/Documentation/filesystems/sysfs.txt
-@@ -116,6 +116,27 @@ static struct device_attribute dev_attr_foo = {
- 	.store = store_foo,
- };
- 
-+Note as stated in include/linux/kernel.h "OTHER_WRITABLE?  Generally
-+considered a bad idea." so trying to set a sysfs file writable for
-+everyone will fail reverting to RO mode for "Others".
-+
-+For the common cases sysfs.h provides convenience macros to make
-+defining attributes easier as well as making code more concise and
-+readable. The above case could be shortened to:
-+
-+static struct device_attribute dev_attr_foo = __ATTR_RW(foo);
-+
-+the list of helpers available to define your wrapper function is:
-+__ATTR_RO(name): assumes default name_show and mode 0444
-+__ATTR_WO(name): assumes a name_store only and is restricted to mode
-+                 0200 that is root write access only.
-+__ATTR_RO_MODE(name, mode): fore more restrictive RO access currently
-+                 only use case is the EFI System Resource Table
-+                 (see drivers/firmware/efi/esrt.c)
-+__ATTR_RW(name): assumes default name_show, name_store and setting
-+                 mode to 0644.
-+__ATTR_NULL: which sets the name to NULL and is used as end of list
-+                 indicator (see: kernel/workqueue.c)
- 
- Subsystem-Specific Callbacks
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 -- 
-2.1.4
+Jiri Kosina
+SUSE Labs
 
