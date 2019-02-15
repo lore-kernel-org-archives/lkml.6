@@ -6,48 +6,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B98B4C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 430A5C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:15:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 840C2222D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:14:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F068920643
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:14:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196897;
-	bh=fZoCcxYO86jc4mJ80ja+JtKpmsDGHneADMmUwxJ6Yg8=;
+	s=default; t=1550196900;
+	bh=HJmHWlRT7E9JAVchLSOV4zQwGXe5Ze8O/aXsu6ih8ns=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uYDfoEa5l/oEkPVlCfM9Ok6ms6woJuK9hTvrCPbRCBJz2Xc0D2qsLICsHIwkMO11z
-	 NTpQuwicJEmRsIHt79zC+6Tp3k+TgTEAqNddgzfgWWPCEN+mF2zJZkSxd283UsNU9r
-	 qB+hWwcCEXHGbmWlkKLybr9oP1We9zj6aPKIaBgE=
+	b=VhJWcGHluEVcq5VeFCM1TJM7OXRnlU8e4gkXCP5P1cAgwXohMDeKF2Qkocvw43OnD
+	 r/sVTJiDn04xCMGgd1AR+rvpweVtN3cJ4+z7dV63yoGZa55/iobnZOS+VKe2lAIW0q
+	 AWGRGjAsStfnJ+yn7fUHphvG+LaMQvnSg5+TDxZE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387417AbfBOCOy (ORCPT
+        id S2391851AbfBOCO6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:14:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54696 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:14:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405262AbfBOCOv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:14:51 -0500
+        id S2405297AbfBOCOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:14:54 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D17720643;
-        Fri, 15 Feb 2019 02:14:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A91962229F;
+        Fri, 15 Feb 2019 02:14:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196891;
-        bh=fZoCcxYO86jc4mJ80ja+JtKpmsDGHneADMmUwxJ6Yg8=;
+        s=default; t=1550196893;
+        bh=HJmHWlRT7E9JAVchLSOV4zQwGXe5Ze8O/aXsu6ih8ns=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zuPY3qrkMbwdUMn4oyXDIyAw1iBqRDxStsQLPMgZSGQZPpm7c5TRH9nFy42IWPXDx
-         dpgIwpbD+if8DZU+KocBuKpIeS6/KBtAhztDW2sggyUMI9u6Oll3yarj5AJvK70O/G
-         ekjXr2zjDPtsLOAzz44gP5wg4Yz0fxOXwkYH97s8=
+        b=QIbQO0uioWBOgtloG1dgv6UA55IMElzxYdvdsu1L7tv7IGpr9U/IeHBhgtGbZHHfi
+         5ay7n9RfkBEAaCsfEwPO5eQQhM7cALDJgdPDa5dpgqMTGdWnXjo5uo/vMAL89aTw5H
+         Y1p42Y4B9t6XUTDI85Ym1L/cTvdBGY/0dJP4hy+A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Xie Yongji <xieyongji@baidu.com>, Zhang Yu <zhangyu31@baidu.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 13/27] locking/rwsem: Fix (possible) missed wakeup
-Date:   Thu, 14 Feb 2019 21:14:10 -0500
-Message-Id: <20190215021424.178979-13-sashal@kernel.org>
+Cc:     Tomonori Sakita <tomonori.sakita@sord.co.jp>,
+        Atsushi Nemoto <atsushi.nemoto@sord.co.jp>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 15/27] serial: fsl_lpuart: fix maximum acceptable baud rate with over-sampling
+Date:   Thu, 14 Feb 2019 21:14:12 -0500
+Message-Id: <20190215021424.178979-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021424.178979-1-sashal@kernel.org>
 References: <20190215021424.178979-1-sashal@kernel.org>
@@ -59,63 +58,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xie Yongji <xieyongji@baidu.com>
+From: Tomonori Sakita <tomonori.sakita@sord.co.jp>
 
-[ Upstream commit e158488be27b157802753a59b336142dc0eb0380 ]
+[ Upstream commit 815d835b7ba46685c316b000013367dacb2b461b ]
 
-Because wake_q_add() can imply an immediate wakeup (cmpxchg failure
-case), we must not rely on the wakeup being delayed. However, commit:
+Using over-sampling ratio, lpuart can accept baud rate upto uartclk / 4.
 
-  e38513905eea ("locking/rwsem: Rework zeroing reader waiter->task")
-
-relies on exactly that behaviour in that the wakeup must not happen
-until after we clear waiter->task.
-
-[ peterz: Added changelog. ]
-
-Signed-off-by: Xie Yongji <xieyongji@baidu.com>
-Signed-off-by: Zhang Yu <zhangyu31@baidu.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: e38513905eea ("locking/rwsem: Rework zeroing reader waiter->task")
-Link: https://lkml.kernel.org/r/1543495830-2644-1-git-send-email-xieyongji@baidu.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Tomonori Sakita <tomonori.sakita@sord.co.jp>
+Signed-off-by: Atsushi Nemoto <atsushi.nemoto@sord.co.jp>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/locking/rwsem-xadd.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/tty/serial/fsl_lpuart.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
-index a4112dfcd0fb..be06c45cbe4f 100644
---- a/kernel/locking/rwsem-xadd.c
-+++ b/kernel/locking/rwsem-xadd.c
-@@ -195,15 +195,22 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
- 		woken++;
- 		tsk = waiter->task;
- 
--		wake_q_add(wake_q, tsk);
-+		get_task_struct(tsk);
- 		list_del(&waiter->list);
- 		/*
--		 * Ensure that the last operation is setting the reader
-+		 * Ensure calling get_task_struct() before setting the reader
- 		 * waiter to nil such that rwsem_down_read_failed() cannot
- 		 * race with do_exit() by always holding a reference count
- 		 * to the task to wakeup.
- 		 */
- 		smp_store_release(&waiter->task, NULL);
-+		/*
-+		 * Ensure issuing the wakeup (either by us or someone else)
-+		 * after setting the reader waiter to nil.
-+		 */
-+		wake_q_add(wake_q, tsk);
-+		/* wake_q_add() already take the task ref */
-+		put_task_struct(tsk);
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index e2ec04904f54..0cf4fe6cb4d1 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -1490,7 +1490,7 @@ lpuart32_set_termios(struct uart_port *port, struct ktermios *termios,
  	}
  
- 	adjustment = woken * RWSEM_ACTIVE_READ_BIAS - adjustment;
+ 	/* ask the core to calculate the divisor */
+-	baud = uart_get_baud_rate(port, termios, old, 50, port->uartclk / 16);
++	baud = uart_get_baud_rate(port, termios, old, 50, port->uartclk / 4);
+ 
+ 	spin_lock_irqsave(&sport->port.lock, flags);
+ 
 -- 
 2.19.1
 
