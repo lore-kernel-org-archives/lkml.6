@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8FFC4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19EA5C4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:40:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F10B321A80
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:40:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAF492229F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:40:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550198422;
-	bh=AlT1FIsaHGqXQQZrjEMpCuAnOm73kd5vjfGJQDSHJyg=;
+	s=default; t=1550198423;
+	bh=TON0jWu7Z48cGnW3MRq5Cs1m2Hlpe+QDwDUQJgb6nwg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Bg0xb945HhKwV8ah85lNPWFgElXVI9QrV31ikXrD0ZFizDvRRBbRz1O0aoRlMRXt+
-	 VBPIDx5MCrwAgQ7CK5/azNYTdj4tJ6qvzOk8yyiTfhjn4AB76G8qHG7oCGfQPlJG3b
-	 11Drt/NLex/h2zqISBuMZ5JvUQV2WgwVJLCbkTmI=
+	b=Y22uqVf3c6ImrcMOdqYBZTvvnsjMExZVneoktfMO1D1MJmbGXuLayeTXDn/BCpPy5
+	 C8ZBXzU1aW/6/rh1eMFBCZl4eLp2qgDF9JmsdJZrX3Ku9bAei4DVV4WDBf+lwETOAJ
+	 zozPv4KwwDS/aEHFLARVqUKWK7tO5ypdKru21agc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389890AbfBOCKC (ORCPT
+        id S1730656AbfBOCkV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:10:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50004 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:40:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388861AbfBOCJx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:09:53 -0500
+        id S2389888AbfBOCKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:10:02 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8EE7921B68;
-        Fri, 15 Feb 2019 02:09:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B377F21B68;
+        Fri, 15 Feb 2019 02:10:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196592;
-        bh=AlT1FIsaHGqXQQZrjEMpCuAnOm73kd5vjfGJQDSHJyg=;
+        s=default; t=1550196601;
+        bh=TON0jWu7Z48cGnW3MRq5Cs1m2Hlpe+QDwDUQJgb6nwg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qUGkQ0n9WLvX76o1EGVz58w0q/zzdwth7RirL/TBB+ywLwooUnmwkWqqRV+SmKTUd
-         RUm13hA9QAJwNOu1MAxaVKlVopy0aZ0IBgC/MPdOQnw1yCXqZ6PYKfuU44zKdjRtRF
-         wjDHO3ZcEAUviph+7y91Z1MGYc3mthMa07lx6KSw=
+        b=fWA/Wyw/EM0JCXqQsin/TcQVGB/UVujjuqUTfREHJncbuRn5rHgtRnKqBhB5XVK4i
+         1nHCCSAygq1LlCwgDgWJ+v/cMloSR4UpYRIKpxsE9D/r9ulWCLn43IIm9D9RHTiCQi
+         V4VU4pBJt+h6i7u3DIA3IvCrhFgvw2X4d+CUduaE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vineet Gupta <vgupta@synopsys.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-snps-arc@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.20 33/77] ARC: show_regs: lockdep: avoid page allocator...
-Date:   Thu, 14 Feb 2019 21:08:11 -0500
-Message-Id: <20190215020855.176727-33-sashal@kernel.org>
+Cc:     Prateek Sood <prsood@codeaurora.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 37/77] sched/wait: Fix rcuwait_wake_up() ordering
+Date:   Thu, 14 Feb 2019 21:08:15 -0500
+Message-Id: <20190215020855.176727-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
 References: <20190215020855.176727-1-sashal@kernel.org>
@@ -58,141 +60,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vineet Gupta <vgupta@synopsys.com>
+From: Prateek Sood <prsood@codeaurora.org>
 
-[ Upstream commit ab6c03676cb190156603cf4c5ecf97aa406c9c53 ]
+[ Upstream commit 6dc080eeb2ba01973bfff0d79844d7a59e12542e ]
 
-and use smaller/on-stack buffer instead
+For some peculiar reason rcuwait_wake_up() has the right barrier in
+the comment, but not in the code.
 
-The motivation for this change was lockdep splat like below.
+This mistake has been observed to cause a deadlock in the following
+situation:
 
-| potentially unexpected fatal signal 11.
-| BUG: sleeping function called from invalid context at ../mm/page_alloc.c:4317
-| in_atomic(): 1, irqs_disabled(): 0, pid: 57, name: segv
-| no locks held by segv/57.
-| Preemption disabled at:
-| [<8182f17e>] get_signal+0x4a6/0x7c4
-| CPU: 0 PID: 57 Comm: segv Not tainted 4.17.0+ #23
-|
-| Stack Trace:
-|  arc_unwind_core.constprop.1+0xd0/0xf4
-|  __might_sleep+0x1f6/0x234
-|  __get_free_pages+0x174/0xca0
-|  show_regs+0x22/0x330
-|  get_signal+0x4ac/0x7c4     # print_fatal_signals() -> preempt_disable()
-|  do_signal+0x30/0x224
-|  resume_user_mode_begin+0x90/0xd8
+    P1					P2
 
-So signal handling core calls show_regs() with preemption disabled but
-an ensuing GFP_KERNEL page allocator call is flagged by lockdep.
+    percpu_up_read()			percpu_down_write()
+      rcu_sync_is_idle() // false
+					  rcu_sync_enter()
+					  ...
+      __percpu_up_read()
 
-We could have switched to GFP_NOWAIT, but turns out that is not enough
-anways and eliding page allocator call leads to less code and
-instruction traces to sift thru when debugging pesky crashes.
+[S] ,-  __this_cpu_dec(*sem->read_count)
+    |   smp_rmb();
+[L] |   task = rcu_dereference(w->task) // NULL
+    |
+    |				    [S]	    w->task = current
+    |					    smp_mb();
+    |				    [L]	    readers_active_check() // fail
+    `-> <store happens here>
 
-FWIW, this patch doesn't cure the lockdep splat (which next patch does).
+Where the smp_rmb() (obviously) fails to constrain the store.
 
-Reviewed-by: William Kucharski <william.kucharski@oracle.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+[ peterz: Added changelog. ]
+
+Signed-off-by: Prateek Sood <prsood@codeaurora.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Acked-by: Davidlohr Bueso <dbueso@suse.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 8f95c90ceb54 ("sched/wait, RCU: Introduce rcuwait machinery")
+Link: https://lkml.kernel.org/r/1543590656-7157-1-git-send-email-prsood@codeaurora.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arc/kernel/troubleshoot.c | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+ kernel/exit.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arc/kernel/troubleshoot.c b/arch/arc/kernel/troubleshoot.c
-index e8d9fb452346..5c6663321e87 100644
---- a/arch/arc/kernel/troubleshoot.c
-+++ b/arch/arc/kernel/troubleshoot.c
-@@ -18,6 +18,8 @@
- #include <asm/arcregs.h>
- #include <asm/irqflags.h>
- 
-+#define ARC_PATH_MAX	256
-+
- /*
-  * Common routine to print scratch regs (r0-r12) or callee regs (r13-r25)
-  *   -Prints 3 regs per line and a CR.
-@@ -58,11 +60,12 @@ static void show_callee_regs(struct callee_regs *cregs)
- 	print_reg_file(&(cregs->r13), 13);
- }
- 
--static void print_task_path_n_nm(struct task_struct *tsk, char *buf)
-+static void print_task_path_n_nm(struct task_struct *tsk)
- {
- 	char *path_nm = NULL;
- 	struct mm_struct *mm;
- 	struct file *exe_file;
-+	char buf[ARC_PATH_MAX];
- 
- 	mm = get_task_mm(tsk);
- 	if (!mm)
-@@ -72,7 +75,7 @@ static void print_task_path_n_nm(struct task_struct *tsk, char *buf)
- 	mmput(mm);
- 
- 	if (exe_file) {
--		path_nm = file_path(exe_file, buf, 255);
-+		path_nm = file_path(exe_file, buf, ARC_PATH_MAX-1);
- 		fput(exe_file);
- 	}
- 
-@@ -80,10 +83,9 @@ static void print_task_path_n_nm(struct task_struct *tsk, char *buf)
- 	pr_info("Path: %s\n", !IS_ERR(path_nm) ? path_nm : "?");
- }
- 
--static void show_faulting_vma(unsigned long address, char *buf)
-+static void show_faulting_vma(unsigned long address)
- {
- 	struct vm_area_struct *vma;
--	char *nm = buf;
- 	struct mm_struct *active_mm = current->active_mm;
- 
- 	/* can't use print_vma_addr() yet as it doesn't check for
-@@ -96,8 +98,11 @@ static void show_faulting_vma(unsigned long address, char *buf)
- 	 * if the container VMA is not found
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 55b4fa6d01eb..d607e23fd0c3 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -307,7 +307,7 @@ void rcuwait_wake_up(struct rcuwait *w)
+ 	 *        MB (A)	      MB (B)
+ 	 *    [L] cond		  [L] tsk
  	 */
- 	if (vma && (vma->vm_start <= address)) {
-+		char buf[ARC_PATH_MAX];
-+		char *nm = "?";
-+
- 		if (vma->vm_file) {
--			nm = file_path(vma->vm_file, buf, PAGE_SIZE - 1);
-+			nm = file_path(vma->vm_file, buf, ARC_PATH_MAX-1);
- 			if (IS_ERR(nm))
- 				nm = "?";
- 		}
-@@ -173,13 +178,8 @@ void show_regs(struct pt_regs *regs)
- {
- 	struct task_struct *tsk = current;
- 	struct callee_regs *cregs;
--	char *buf;
+-	smp_rmb(); /* (B) */
++	smp_mb(); /* (B) */
  
--	buf = (char *)__get_free_page(GFP_KERNEL);
--	if (!buf)
--		return;
--
--	print_task_path_n_nm(tsk, buf);
-+	print_task_path_n_nm(tsk);
- 	show_regs_print_info(KERN_INFO);
- 
- 	show_ecr_verbose(regs);
-@@ -189,7 +189,7 @@ void show_regs(struct pt_regs *regs)
- 		(void *)regs->blink, (void *)regs->ret);
- 
- 	if (user_mode(regs))
--		show_faulting_vma(regs->ret, buf); /* faulting code, not data */
-+		show_faulting_vma(regs->ret); /* faulting code, not data */
- 
- 	pr_info("[STAT32]: 0x%08lx", regs->status32);
- 
-@@ -221,8 +221,6 @@ void show_regs(struct pt_regs *regs)
- 	cregs = (struct callee_regs *)current->thread.callee_reg;
- 	if (cregs)
- 		show_callee_regs(cregs);
--
--	free_page((unsigned long)buf);
- }
- 
- void show_kernel_fault_diag(const char *str, struct pt_regs *regs,
+ 	/*
+ 	 * Avoid using task_rcu_dereference() magic as long as we are careful,
 -- 
 2.19.1
 
