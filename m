@@ -2,146 +2,161 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D695C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E9F3C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:42:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1AFD222F7
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:42:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550223730;
-	bh=xVwvASenV8exPMH1zlKo67nSHUggDBWoAs7OttSlO2k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=SA5nnm1xvdWcqcUsRceHdUBQaXU0GBUE3TTiRLk+04v/cJyWRWkhZaytWBj1UaUjy
-	 3AsLGotl1ueEznyaads/+auGmnDSziECRy5Lld9lWd9dXWdnyEjpTimpjA/hkpfSX8
-	 UAWbvs+HE+z4efdFeo4SDB9TkxOsykE0Yuo69NdA=
+	by mail.kernel.org (Postfix) with ESMTP id 36D2C222F7
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:42:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405208AbfBOJmJ (ORCPT
+        id S2405230AbfBOJmP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:42:09 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58328 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2405116AbfBOJmI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 04:42:08 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5DCF4AFBF;
-        Fri, 15 Feb 2019 09:42:06 +0000 (UTC)
-Date:   Fri, 15 Feb 2019 10:42:05 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
-        Samuel Dionne-Riel <samuel@dionne-riel.com>,
-        LKML <linux-kernel@vger.kernel.org>, graham@grahamc.com,
-        Oleg Nesterov <oleg@redhat.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: Re: Userspace regression in LTS and stable kernels
-Message-ID: <20190215094205.GW4525@dhcp22.suse.cz>
-References: <CAN1fySViLgrLAHHfTHMef-Bkh73kUHKP-ava6TbgALeSE4LfFw@mail.gmail.com>
- <CAFLxGvwpuxKF4UWdsULwQWo7kgVLMNHC=77dN+w-A0a6avrAXA@mail.gmail.com>
- <CAHk-=wjtH5ombebghG-SDNGppJF4a5bZAUqndtZ3tauWjgw5_w@mail.gmail.com>
- <20190214122027.c0df36282d65dc9979248117@linux-foundation.org>
- <20190215070022.GD14473@kroah.com>
- <20190215091000.GT4525@dhcp22.suse.cz>
- <20190215092013.GA32575@kroah.com>
+        Fri, 15 Feb 2019 04:42:15 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:52081 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389363AbfBOJmP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 04:42:15 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1F9g03i1118555
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Fri, 15 Feb 2019 01:42:00 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1F9g0o01118549;
+        Fri, 15 Feb 2019 01:42:00 -0800
+Date:   Fri, 15 Feb 2019 01:42:00 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Mathieu Poirier <tipbot@zytor.com>
+Message-ID: <tip-ae4d9f5236439ef08f9963f39d5984959b1ae04d@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, leo.yan@linaro.org,
+        suzuki.poulose@arm.com, acme@redhat.com, mingo@kernel.org,
+        mathieu.poirier@linaro.org, hpa@zytor.com, peterz@infradead.org,
+        jolsa@redhat.com, tglx@linutronix.de
+Reply-To: tglx@linutronix.de, jolsa@redhat.com, peterz@infradead.org,
+          mathieu.poirier@linaro.org, mingo@kernel.org, acme@redhat.com,
+          hpa@zytor.com, leo.yan@linaro.org, linux-kernel@vger.kernel.org,
+          suzuki.poulose@arm.com
+In-Reply-To: <20190212171618.25355-6-mathieu.poirier@linaro.org>
+References: <20190212171618.25355-6-mathieu.poirier@linaro.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf cs-etm: Fix memory leak in error path
+Git-Commit-ID: ae4d9f5236439ef08f9963f39d5984959b1ae04d
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <20190215092013.GA32575@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 15-02-19 10:20:13, Greg KH wrote:
-> On Fri, Feb 15, 2019 at 10:10:00AM +0100, Michal Hocko wrote:
-> > On Fri 15-02-19 08:00:22, Greg KH wrote:
-> > > On Thu, Feb 14, 2019 at 12:20:27PM -0800, Andrew Morton wrote:
-> > > > On Thu, 14 Feb 2019 09:56:46 -0800 Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> > > > 
-> > > > > On Wed, Feb 13, 2019 at 3:37 PM Richard Weinberger
-> > > > > <richard.weinberger@gmail.com> wrote:
-> > > > > >
-> > > > > > Your shebang line exceeds BINPRM_BUF_SIZE.
-> > > > > > Before the said commit the kernel silently truncated the shebang line
-> > > > > > (and corrupted it),
-> > > > > > now it tells the user that the line is too long.
-> > > > > 
-> > > > > It doesn't matter if it "corrupted" things by truncating it. All that
-> > > > > matters is "it used to work, now it doesn't"
-> > > > > 
-> > > > > Yes, maybe it never *should* have worked. And yes, it's sad that
-> > > > > people apparently had cases that depended on this odd behavior, but
-> > > > > there we are.
-> > > > > 
-> > > > > I see that Kees has a patch to fix it up.
-> > > > > 
-> > > > 
-> > > > Greg, I think we have a problem here.
-> > > > 
-> > > > 8099b047ecc431518 ("exec: load_script: don't blindly truncate shebang
-> > > > string") wasn't marked for backporting.  And, presumably as a
-> > > > consequence, Kees's fix "exec: load_script: allow interpreter argument
-> > > > truncation" was not marked for backporting.
-> > > > 
-> > > > 8099b047ecc431518 hasn't even appeared in a Linus released kernel, yet
-> > > > it is now present in 4.9.x, 4.14.x, 4.19.x and 4.20.x.
-> > > 
-> > > It came in 5.0-rc1, so it fits the "in a Linus released kernel"
-> > > requirement.  If we are to wait until it shows up in a -final, that
-> > > would be months too late for almost all of these types of patches that
-> > > are picked up.
-> > 
-> > rc1 is just a too early. Waiting few more rcs or even a final release
-> > for something that people do not see as an issue should be just fine.
-> > Consider this particular patch and tell me why it had to be rushed in
-> > the first place. The original code was broken for _years_ but I do not
-> > remember anybody would be complaining.
-> 
-> This patch was in 4.20.10, which was released on Feb 12 while 5.0-rc1
-> came out on Jan 6.  Over a month delay.
+Commit-ID:  ae4d9f5236439ef08f9963f39d5984959b1ae04d
+Gitweb:     https://git.kernel.org/tip/ae4d9f5236439ef08f9963f39d5984959b1ae04d
+Author:     Mathieu Poirier <mathieu.poirier@linaro.org>
+AuthorDate: Tue, 12 Feb 2019 10:16:10 -0700
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 14 Feb 2019 15:18:06 -0300
 
-Obviously not long enough.
+perf cs-etm: Fix memory leak in error path
 
-> > > > I don't know if Oleg considered backporting that patch.  I certainly
-> > > > did (I always do), and I decided against doing so.  Yet there it is.
-> > > 
-> > > This came in through Sasha's tools, which give people a week or so to
-> > > say "hey, this isn't a stable patch!" and it seems everyone ignored that
-> > > :(
-> > 
-> > I thought we were through this already. Automagic autoselection of
-> > patches in the core kernel (or mmotm tree patches in particular) is too
-> > dangerous. We try hard to consider each and every patch for stable. Even
-> > if something slips through then it is much more preferred to ask for a
-> > stable backport in the respective email thread and wait for a conclusion
-> > before adding it.
-> 
-> We have a list of blacklisted files/subsystems for people that do not
-> want this to happen to their area of the kernel.  The patch seemed to
-> make sense, and it passed all known tests that we currently have.
+Memory allocated for variable 't_params' isn't released properly in the
+error path of function cs_etm_queue *cs_etm__alloc_queue() and
+cs_etm__dump_event(), something this patch addresses.
 
-Yes, the patch makes sense (I wouldn't give my acked-by otherwise). But
-this is one of the area where things that make sense might still break
-because it is hard to assume what userspace depends on.
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Leo Yan <leo.yan@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Suzuki K Poulouse <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/20190212171618.25355-6-mathieu.poirier@linaro.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/cs-etm.c | 20 +++++++++++++-------
+ 1 file changed, 13 insertions(+), 7 deletions(-)
 
-> Sometimes things will slip through like this, it happens.  And really, a
-> 3 day turn-around-time to resolve this is pretty good, don't you think?
-
-Yes, but that doesn't make any difference on the fact that this was not
-marked for stable and I still think this is not a stable material - at
-least not at this moment.
-
-> It also seems like we need another test to catch this problem from ever
-> happening again :)
-
-Agreed on this.
--- 
-Michal Hocko
-SUSE Labs
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 3011c6cae531..aac07f950074 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -175,6 +175,10 @@ static void cs_etm__dump_event(struct cs_etm_auxtrace *etm,
+ 
+ 	/* Use metadata to fill in trace parameters for trace decoder */
+ 	t_params = zalloc(sizeof(*t_params) * etm->num_cpu);
++
++	if (!t_params)
++		return;
++
+ 	for (i = 0; i < etm->num_cpu; i++) {
+ 		if (etm->metadata[i][CS_ETM_MAGIC] == __perf_cs_etmv3_magic) {
+ 			u32 etmidr = etm->metadata[i][CS_ETM_ETMIDR];
+@@ -206,14 +210,12 @@ static void cs_etm__dump_event(struct cs_etm_auxtrace *etm,
+ 	/* Set decoder parameters to simply print the trace packets */
+ 	if (cs_etm__init_decoder_params(&d_params, NULL,
+ 					CS_ETM_OPERATION_PRINT))
+-		return;
++		goto out_free;
+ 
+ 	decoder = cs_etm_decoder__new(etm->num_cpu, &d_params, t_params);
+ 
+-	zfree(&t_params);
+-
+ 	if (!decoder)
+-		return;
++		goto out_free;
+ 	do {
+ 		size_t consumed;
+ 
+@@ -228,6 +230,9 @@ static void cs_etm__dump_event(struct cs_etm_auxtrace *etm,
+ 	} while (buffer_used < buffer->size);
+ 
+ 	cs_etm_decoder__free(decoder);
++
++out_free:
++	zfree(&t_params);
+ }
+ 
+ static int cs_etm__flush_events(struct perf_session *session,
+@@ -379,7 +384,7 @@ static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm,
+ {
+ 	int i;
+ 	struct cs_etm_decoder_params d_params;
+-	struct cs_etm_trace_params  *t_params;
++	struct cs_etm_trace_params  *t_params = NULL;
+ 	struct cs_etm_queue *etmq;
+ 	size_t szp = sizeof(struct cs_etm_packet);
+ 
+@@ -461,8 +466,6 @@ static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm,
+ 
+ 	etmq->decoder = cs_etm_decoder__new(etm->num_cpu, &d_params, t_params);
+ 
+-	zfree(&t_params);
+-
+ 	if (!etmq->decoder)
+ 		goto out_free;
+ 
+@@ -475,6 +478,8 @@ static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm,
+ 					      cs_etm__mem_access))
+ 		goto out_free_decoder;
+ 
++	zfree(&t_params);
++
+ 	etmq->offset = 0;
+ 	etmq->period_instructions = 0;
+ 
+@@ -483,6 +488,7 @@ static struct cs_etm_queue *cs_etm__alloc_queue(struct cs_etm_auxtrace *etm,
+ out_free_decoder:
+ 	cs_etm_decoder__free(etmq->decoder);
+ out_free:
++	zfree(&t_params);
+ 	zfree(&etmq->event_buf);
+ 	zfree(&etmq->last_branch);
+ 	zfree(&etmq->last_branch_rb);
