@@ -2,249 +2,138 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CA9EC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:31:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF46BC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:34:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 040D42192D
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:31:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EC4A2192D
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:34:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RFcj0djA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732172AbfBOObC (ORCPT
+        id S1732540AbfBOOer (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 09:31:02 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48340 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730368AbfBOObC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 09:31:02 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 03ED3C0B2C7F;
-        Fri, 15 Feb 2019 14:31:00 +0000 (UTC)
-Received: from sandy.ghostprotocols.net (ovpn-112-32.phx2.redhat.com [10.3.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D4F5926E7C;
-        Fri, 15 Feb 2019 14:30:59 +0000 (UTC)
-Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
-        id D0E2C55C4; Fri, 15 Feb 2019 12:30:55 -0200 (BRST)
-Date:   Fri, 15 Feb 2019 12:30:55 -0200
-From:   Arnaldo Carvalho de Melo <acme@redhat.com>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ast@kernel.org, daniel@iogearbox.net, kernel-team@fb.com,
-        peterz@infradead.org, jolsa@kernel.org, namhyung@kernel.org
-Subject: Re: [PATCH v2 perf,bpf 07/11] perf, bpf: save btf in a rbtree in
- perf_env
-Message-ID: <20190215143055.GE5784@redhat.com>
-References: <20190214235624.2579307-1-songliubraving@fb.com>
- <20190215000010.2590505-1-songliubraving@fb.com>
- <20190215000010.2590505-6-songliubraving@fb.com>
+        Fri, 15 Feb 2019 09:34:47 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:52467 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726310AbfBOOeq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 09:34:46 -0500
+Received: by mail-it1-f196.google.com with SMTP id r11so24500340itc.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 06:34:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ojihXwYJZXpueZiM1yAaMkX88J1QXCnqKd3YiH6Zt2k=;
+        b=RFcj0djAEfAfndouItnBtiHQcA1dN4Bsdwjt+GPvXcp0EfV16VSmVUOhiLJ5djfJvF
+         mnOIfyvFYdk6gdLhV22bNR9AILesB6BetNQPbXNfg2zR6h/BeXQ3piJGPahfCFX5/9nb
+         gD9Pchbg3NXYATK36PvMhgnUxpUSQd7B/VuOr5zj9QLMmZtX8feDNOkavBF3a3Ie1Fez
+         3DZXh8U41DaWfqdO5B2tll7WugP9QcIuKpiHVHMEMJfL9O3OWzCaX4NCi1g4EQBTK6Th
+         QVNt7xW+abdAJk5Yw8y/Ix5aIjmby0tKCyGsLAwH0DJ4a11WHptaZaiTR5VVMkQoCeNF
+         SQjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ojihXwYJZXpueZiM1yAaMkX88J1QXCnqKd3YiH6Zt2k=;
+        b=I/8Cxcz5CwyZFuBq6TfH1Msb6+eE9aGoPrtgsOg/vw0TmHY4db6Gct4fqYOHx41Ihg
+         li89xo3tMvOi+gPchZzFyevFaf11nLDxfJxkKW9fOnyoJSFjeU5uUdGB2CQs5C8GKfgb
+         beKTp/wLNdFwmTd5AY3dxnIN5uo+vDnSJ/CSKgXmTPxtsHpZhJ2GiGTOEp5ua3xmJ1PD
+         15KYZe56eGryx+eAIDmT7aIh+pzOprUo42vluKVWDULn3f1pNAIL6rdofHxqwx/SAPWn
+         Gl5OzOF3gWcnrHgdvWCkIA1rMtGk/S8/9q+FXEHh6teI+zWDlQSHI7A5tIJToAq3UK9l
+         l+jA==
+X-Gm-Message-State: AHQUAubj+5uF54lrcpZxqaXAAw2aeXzzHFEYFVzdhU8h7pN/xBEVk+sh
+        FhYijNBzppVu7x68v/kmxtu4mgSAo1Jet4yWPzXwjrg=
+X-Google-Smtp-Source: AHgI3IZX7unmXPPynnlAgBjT/+QOx8cWc93xL81cnkXDLfw5dwo3J4DGawrMlTaIW/zu9QPFpeKPelbKZl4OxU2LicQ=
+X-Received: by 2002:a24:d04:: with SMTP id 4mr4823672itx.19.1550241285756;
+ Fri, 15 Feb 2019 06:34:45 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190215000010.2590505-6-songliubraving@fb.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 15 Feb 2019 14:31:01 +0000 (UTC)
+References: <20190213140025.GB6346@brain-police> <20190213142524.GW32494@hirez.programming.kicks-ass.net>
+ <dd33cc20-f335-0e4c-e3f4-02497ecc3710@arm.com> <20190213144145.GY32494@hirez.programming.kicks-ass.net>
+ <20190213154532.GQ32534@hirez.programming.kicks-ass.net> <D61C430D-4321-4114-AB85-671A3C7B8EAE@amacapital.net>
+ <20190213222146.GC32494@hirez.programming.kicks-ass.net> <D3E1B64D-3E91-4A82-9C3B-92D9EB7326CE@amacapital.net>
+ <20190214101429.GD32494@hirez.programming.kicks-ass.net> <CAMzpN2hg+CY+AuF=BtetS2HrMQYdxhBZL9QMvJX4LjAs7vwwAw@mail.gmail.com>
+ <20190214193432.GR32477@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190214193432.GR32477@hirez.programming.kicks-ass.net>
+From:   Brian Gerst <brgerst@gmail.com>
+Date:   Fri, 15 Feb 2019 09:34:33 -0500
+Message-ID: <CAMzpN2g54zWYOAzmJdUm+1ziivkciLEeSDp4+b89KHkO4Lem+A@mail.gmail.com>
+Subject: Re: [PATCH] sched/x86: Save [ER]FLAGS on context switch
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morse <james.morse@arm.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, valentin.schneider@arm.com,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Feb 14, 2019 at 04:00:08PM -0800, Song Liu escreveu:
-> btf contains information necessary to annotate bpf programs. This patch
-> saves btf for bpf programs loaded in the system.
-> 
-> Signed-off-by: Song Liu <songliubraving@fb.com>
+On Thu, Feb 14, 2019 at 2:34 PM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Thu, Feb 14, 2019 at 11:18:01AM -0500, Brian Gerst wrote:
+>
+> > > --- a/arch/x86/include/asm/switch_to.h
+> > > +++ b/arch/x86/include/asm/switch_to.h
+> > > @@ -40,6 +40,7 @@ asmlinkage void ret_from_fork(void);
+> > >   * order of the fields must match the code in __switch_to_asm().
+> > >   */
+> > >  struct inactive_task_frame {
+> > > +       unsigned long flags;
+> > >  #ifdef CONFIG_X86_64
+> > >         unsigned long r15;
+> > >         unsigned long r14;
+> >
+> > flags should be initialized in copy_thread_tls().  I think the new
+> > stack is zeroed already, but it would be better to explicitly set it.
+>
+> Ah indeed. I somehow misread that code and thought we got initialized
+> with a copy of current.
+>
+> Something like the below, right?
+>
 > ---
->  tools/perf/util/bpf-event.c | 22 +++++++++++++
->  tools/perf/util/bpf-event.h |  7 ++++
->  tools/perf/util/env.c       | 65 +++++++++++++++++++++++++++++++++++++
->  tools/perf/util/env.h       |  3 ++
->  4 files changed, 97 insertions(+)
-> 
-> diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
-> index ead599bc4f4e..37a5b8134e00 100644
-> --- a/tools/perf/util/bpf-event.c
-> +++ b/tools/perf/util/bpf-event.c
-> @@ -30,6 +30,27 @@ int machine__process_bpf_event(struct machine *machine __maybe_unused,
->  	return 0;
->  }
->  
-> +static int perf_fetch_btf(struct perf_env *env, u32 btf_id, struct btf *btf)
+>
+> --- a/arch/x86/kernel/process_32.c
+> +++ b/arch/x86/kernel/process_32.c
+> @@ -127,6 +127,7 @@ int copy_thread_tls(unsigned long clone_
+>         struct task_struct *tsk;
+>         int err;
+>
+> +       frame->flags = 0;
+>         frame->bp = 0;
+>         frame->ret_addr = (unsigned long) ret_from_fork;
+>         p->thread.sp = (unsigned long) fork_frame;
+> --- a/arch/x86/kernel/process_64.c
+> +++ b/arch/x86/kernel/process_64.c
+> @@ -392,6 +392,7 @@ int copy_thread_tls(unsigned long clone_
+>         childregs = task_pt_regs(p);
+>         fork_frame = container_of(childregs, struct fork_frame, regs);
+>         frame = &fork_frame->frame;
+> +       frame->flags = 0;
+>         frame->bp = 0;
+>         frame->ret_addr = (unsigned long) ret_from_fork;
+>         p->thread.sp = (unsigned long) fork_frame;
 
-Please use perf_env__fetch_bpf
+Yes, this looks good.
 
-> +{
-> +	struct btf_node *node;
-> +	u32 data_size;
-> +	const void *data;
-> +
-> +	data = btf__get_raw_data(btf, &data_size);
-> +
-> +	node = malloc(data_size + sizeof(struct btf_node));
-> +
-> +	if (!node)
-> +		return -1;
-> +
-> +	node->id = btf_id;
-> +	node->data_size = data_size;
-> +	memcpy(node->data, data, data_size);
-> +
-> +	perf_env__insert_btf(env, node);
-
-Just like you did above :-)
-
-> +	return 0;
-> +}
-> +
->  /*
->   * Synthesize PERF_RECORD_KSYMBOL and PERF_RECORD_BPF_EVENT for one bpf
->   * program. One PERF_RECORD_BPF_EVENT is generated for the program. And
-> @@ -109,6 +130,7 @@ static int perf_event__synthesize_one_bpf_prog(struct perf_session *session,
->  			goto out;
->  		}
->  		has_btf = true;
-> +		perf_fetch_btf(env, info->btf_id, btf);
->  	}
->  
->  	/* Synthesize PERF_RECORD_KSYMBOL */
-> diff --git a/tools/perf/util/bpf-event.h b/tools/perf/util/bpf-event.h
-> index 11e6730b6105..60ce24e4e5c6 100644
-> --- a/tools/perf/util/bpf-event.h
-> +++ b/tools/perf/util/bpf-event.h
-> @@ -20,6 +20,13 @@ struct bpf_prog_info_node {
->  	struct rb_node			rb_node;
->  };
->  
-> +struct btf_node {
-> +	struct rb_node	rb_node;
-> +	u32		id;
-> +	u32		data_size;
-> +	char		data[];
-> +};
-> +
->  #ifdef HAVE_LIBBPF_SUPPORT
->  int machine__process_bpf_event(struct machine *machine, union perf_event *event,
->  			       struct perf_sample *sample);
-> diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
-> index 665b6fe3c7b2..6f9e3d4b94bc 100644
-> --- a/tools/perf/util/env.c
-> +++ b/tools/perf/util/env.c
-> @@ -61,6 +61,57 @@ struct bpf_prog_info_node *perf_env__find_bpf_prog_info(struct perf_env *env,
->  	return node;
->  }
->  
-> +void perf_env__insert_btf(struct perf_env *env, struct btf_node *btf_node)
-> +{
-> +	struct rb_node *parent = NULL;
-> +	__u32 btf_id = btf_node->id;
-> +	struct btf_node *node;
-> +	struct rb_node **p;
-> +
-> +	down_write(&env->bpf_info_lock);
-> +	p = &env->btfs.rb_node;
-> +
-> +	while (*p != NULL) {
-> +		parent = *p;
-> +		node = rb_entry(parent, struct btf_node, rb_node);
-> +		if (btf_id < node->id) {
-> +			p = &(*p)->rb_left;
-> +		} else if (btf_id > node->id) {
-> +			p = &(*p)->rb_right;
-> +		} else {
-> +			pr_debug("duplicated btf %u\n", btf_id);
-
-			goto out:
-
-> +			up_write(&env->bpf_info_lock);
-> +			return;
-> +		}
-> +	}
-> +
-> +	rb_link_node(&btf_node->rb_node, parent, p);
-> +	rb_insert_color(&btf_node->rb_node, &env->btfs);
-out:
-> +	up_write(&env->bpf_info_lock);
-> +}
-> +
-> +struct btf_node *perf_env__find_btf(struct perf_env *env, __u32 btf_id)
-> +{
-> +	struct btf_node *node = NULL;
-> +	struct rb_node *n;
-> +
-> +	down_read(&env->bpf_info_lock);
-> +	n = env->btfs.rb_node;
-> +
-> +	while (n) {
-> +		node = rb_entry(n, struct btf_node, rb_node);
-> +		if (btf_id < node->id)
-> +			n = n->rb_left;
-> +		else if (btf_id > node->id)
-> +			n = n->rb_right;
-> +		else
-> +			break;
-> +	}
-> +
-> +	up_read(&env->bpf_info_lock);
-> +	return node;
-> +}
-> +
->  /* purge data in bpf_prog_infos tree */
->  static void purge_bpf_info(struct perf_env *env)
-
-The above should've been perf_env__purge_bpf()
-
->  {
-> @@ -80,6 +131,19 @@ static void purge_bpf_info(struct perf_env *env)
->  		rb_erase_init(&node->rb_node, root);
->  		free(node);
->  	}
-> +
-> +	root = &env->btfs;
-> +	next = rb_first(root);
-> +
-> +	while (next) {
-> +		struct btf_node *node;
-> +
-> +		node = rb_entry(next, struct btf_node, rb_node);
-> +		next = rb_next(&node->rb_node);
-> +		rb_erase_init(&node->rb_node, root);
-> +		free(node);
-> +	}
-> +
->  	up_write(&env->bpf_info_lock);
->  }
->  
-> @@ -117,6 +181,7 @@ void perf_env__exit(struct perf_env *env)
->  static void init_bpf_rb_trees(struct perf_env *env)
->  {
->  	env->bpf_prog_infos = RB_ROOT;
-> +	env->btfs = RB_ROOT;
->  	init_rwsem(&env->bpf_info_lock);
->  }
->  
-> diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
-> index a6d25e91bc98..f0c74255423c 100644
-> --- a/tools/perf/util/env.h
-> +++ b/tools/perf/util/env.h
-> @@ -74,6 +74,7 @@ struct perf_env {
->  	 */
->  	struct rw_semaphore	bpf_info_lock;
->  	struct rb_root		bpf_prog_infos;
-> +	struct rb_root		btfs;
->  };
->  
->  extern struct perf_env perf_env;
-> @@ -94,4 +95,6 @@ void perf_env__insert_bpf_prog_info(struct perf_env *env,
->  				    struct bpf_prog_info_node *info_node);
->  struct bpf_prog_info_node *perf_env__find_bpf_prog_info(struct perf_env *env,
->  							__u32 prog_id);
-> +void perf_env__insert_btf(struct perf_env *env, struct btf_node *btf_node);
-> +struct btf_node *perf_env__find_btf(struct perf_env *env, __u32 btf_id);
->  #endif /* __PERF_ENV_H */
-> -- 
-> 2.17.1
+--
+Brian Gerst
