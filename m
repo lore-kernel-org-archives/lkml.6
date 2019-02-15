@@ -2,93 +2,69 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB97CC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:54:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 911BBC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:57:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFB5B21B18
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:54:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="KnQSPs4Y"
+	by mail.kernel.org (Postfix) with ESMTP id 5FED421920
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:57:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436807AbfBOLyr (ORCPT
+        id S2394565AbfBOL5I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 06:54:47 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42602 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436791AbfBOLyq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 06:54:46 -0500
-Received: by mail-pg1-f195.google.com with SMTP id d72so4714171pga.9
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 03:54:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=IP2ayeMTXzwtnF6W0mknXowsCXTPovKKTcL3wAxl0Xo=;
-        b=KnQSPs4Yf0xAStHN+9X7/ZXRXaUvDPGeWt2zKaPjje7rktLdkU5MHOg0wSEpNnyee4
-         HtNjlhPnlBav3uXolmjReliDxb6g+cJFqvTTTEV6LaJAHjuwMKUeB1oHUDmRbT2HnpzZ
-         a44RiPWFgHferScnjxsJwLzXBjOkaHQT6kkoiHwaEXx02MkKROjOnOIthOgw5Cio8viD
-         N6REU0QwUHaBPJnBBkuD6HNZoOQJ1PeDAxQBESXjU0ZX4h7gtQz4y1W7AXH5mcVf0Zeh
-         bhEVCBG5fnkvT4E1vGlGxia8y9q32ggM9o5VHXilX6s1gryOxgmjkvFmOkgtepe96Ysw
-         KGJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=IP2ayeMTXzwtnF6W0mknXowsCXTPovKKTcL3wAxl0Xo=;
-        b=UYGhsRQwmyr8xIyf21+0NrPrNJdvQ6TZGSrsJx+x4GI/HxtP/sQ3rKvGFYuu1s5nFS
-         1yaJwtnF9zIbHkvK+frWuXV1BXsOEUkRtF8KQcjSvfpg4OJWp2/bjPChWrlJ5cse2Hxr
-         OHbvQpZ8MnTa/CoN8G1rWuWZ59h94rNJq1DPp6no+v1xdOOObDJPtk/I6V2J2vNV8K6k
-         ltTnO35Rx0OBvQuSMrGwtJbavygeFnHClnwyxp1MDcolxKBCK//WcRKv4g1cP+MDkIWn
-         B6Dg4Z+ZJ5KROzFtlL3MZQO4WhYghwVEU/D9vzbyVOkJLmA0ULPbEMMMzQqEXztx6TVK
-         hmbg==
-X-Gm-Message-State: AHQUAuarANdb4aN/C/SQqCMIhw49dxluZKy//zd78gsOhTp9akMA9BMF
-        FC8HtZ6EMHCVPl2isQhBgQxGjbJryzc=
-X-Google-Smtp-Source: AHgI3IbjzVrpakKQKbwY9Ov/qCpWYl+m7+neC2iyW8h9UlKoytmz2cZWQiJmW2+B5uOphNJcCTE79A==
-X-Received: by 2002:a63:f412:: with SMTP id g18mr5072803pgi.262.1550231685429;
-        Fri, 15 Feb 2019 03:54:45 -0800 (PST)
-Received: from localhost.localdomain (36-239-208-250.dynamic-ip.hinet.net. [36.239.208.250])
-        by smtp.gmail.com with ESMTPSA id y6sm8495434pfd.104.2019.02.15.03.54.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Feb 2019 03:54:44 -0800 (PST)
-From:   Axel Lin <axel.lin@ingics.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Tim Harvey <tharvey@gateworks.com>, Marek Vasut <marex@denx.de>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH 2/2] regulator: ltc3676: Fix module description
-Date:   Fri, 15 Feb 2019 19:54:21 +0800
-Message-Id: <20190215115421.4811-2-axel.lin@ingics.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190215115421.4811-1-axel.lin@ingics.com>
-References: <20190215115421.4811-1-axel.lin@ingics.com>
+        Fri, 15 Feb 2019 06:57:08 -0500
+Received: from mga12.intel.com ([192.55.52.136]:25055 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730972AbfBOL5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 06:57:08 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Feb 2019 03:57:08 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,372,1544515200"; 
+   d="scan'208";a="134556841"
+Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
+  by orsmga002.jf.intel.com with ESMTP; 15 Feb 2019 03:57:05 -0800
+From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To:     Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        jolsa@redhat.com,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Subject: [PATCH v0 0/2] perf: Address range filtering fixes
+Date:   Fri, 15 Feb 2019 13:56:53 +0200
+Message-Id: <20190215115655.63469-1-alexander.shishkin@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver is for LTC3676 rather than LTC1376.
+Hi Peter,
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/regulator/ltc3676.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+These are bugfixes for the address range filtering. One had been posted
+before [1], but fell through the cracks. One was discovered and originally
+patched by Adrian recently. Both can be theoretically backported all the
+way to v4.7, but that may require manual conflict resolution and the
+benefits are not clear.
 
-diff --git a/drivers/regulator/ltc3676.c b/drivers/regulator/ltc3676.c
-index 549a1a243870..e6d66e492b85 100644
---- a/drivers/regulator/ltc3676.c
-+++ b/drivers/regulator/ltc3676.c
-@@ -389,5 +389,5 @@ static struct i2c_driver ltc3676_driver = {
- module_i2c_driver(ltc3676_driver);
- 
- MODULE_AUTHOR("Tim Harvey <tharvey@gateworks.com>");
--MODULE_DESCRIPTION("Regulator driver for Linear Technology LTC1376");
-+MODULE_DESCRIPTION("Regulator driver for Linear Technology LTC3676");
- MODULE_LICENSE("GPL v2");
+[1] https://marc.info/?l=linux-kernel&m=153900881208142
+
+Alexander Shishkin (2):
+  perf: Copy parent's address filter offsets on clone
+  perf, pt, coresight: Fix address filters for vmas with non-zero offset
+
+ arch/x86/events/intel/pt.c                    |  9 +-
+ .../hwtracing/coresight/coresight-etm-perf.c  |  7 +-
+ include/linux/perf_event.h                    |  7 +-
+ kernel/events/core.c                          | 90 ++++++++++++-------
+ 4 files changed, 74 insertions(+), 39 deletions(-)
+
 -- 
-2.17.1
+2.20.1
 
