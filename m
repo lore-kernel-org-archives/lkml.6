@@ -2,79 +2,85 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A8EC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:12:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67460C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:14:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D68B521A80
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:12:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30ECC20685
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:14:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437203AbfBOOMK (ORCPT
+        id S2406162AbfBOOOI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 09:12:10 -0500
-Received: from honk.sigxcpu.org ([24.134.29.49]:44673 "EHLO honk.sigxcpu.org"
+        Fri, 15 Feb 2019 09:14:08 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41548 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726838AbfBOOL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 09:11:59 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 7154DFB04;
-        Fri, 15 Feb 2019 15:11:57 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
-Received: from honk.sigxcpu.org ([127.0.0.1])
-        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id fKVRYMpwFlcI; Fri, 15 Feb 2019 15:11:56 +0100 (CET)
-Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 529B748DC2; Fri, 15 Feb 2019 15:11:53 +0100 (CET)
-From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Bastien Nocera <hadess@hadess.net>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 3/3] input: goodix: Print values in case of inconsistencies
-Date:   Fri, 15 Feb 2019 15:11:53 +0100
-Message-Id: <c2f48f779b64478cb7e0c63e3a2ee19e160d1292.1550239328.git.agx@sigxcpu.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <cover.1550239328.git.agx@sigxcpu.org>
-References: <cover.1550239328.git.agx@sigxcpu.org>
+        id S1726352AbfBOOOI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 09:14:08 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CB245A0B99;
+        Fri, 15 Feb 2019 14:14:07 +0000 (UTC)
+Received: from sandy.ghostprotocols.net (ovpn-112-32.phx2.redhat.com [10.3.112.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 198345D9CA;
+        Fri, 15 Feb 2019 14:14:07 +0000 (UTC)
+Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
+        id 8D6EE55C4; Fri, 15 Feb 2019 12:14:07 -0200 (BRST)
+Date:   Fri, 15 Feb 2019 12:14:07 -0200
+From:   Arnaldo Carvalho de Melo <acme@redhat.com>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, kernel-team@fb.com,
+        peterz@infradead.org, jolsa@kernel.org, namhyung@kernel.org
+Subject: Re: [PATCH v2 perf,bpf 01/11] perf, bpf: consider events with
+ attr.bpf_event as side-band events
+Message-ID: <20190215141407.GA5784@redhat.com>
+References: <20190214235624.2579307-1-songliubraving@fb.com>
+ <20190214235840.2587123-1-songliubraving@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190214235840.2587123-1-songliubraving@fb.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 15 Feb 2019 14:14:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-"Invalid config" gives little idea what's wrong. Print the values that
-must not be 0 so we know which ones are off.
+Em Thu, Feb 14, 2019 at 03:58:40PM -0800, Song Liu escreveu:
+> Events with bpf_event should be considered as side-band event, as they
+> carry information about BPF programs.
+> 
+> Fixes: 6ee52e2a3fe4 ("perf, bpf: Introduce PERF_RECORD_BPF_EVENT")
+> Signed-off-by: Song Liu <songliubraving@fb.com>
+> ---
+>  kernel/events/core.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 0a8dab322111..9403bdda5f8c 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -4238,7 +4238,8 @@ static bool is_sb_event(struct perf_event *event)
+>  	if (attr->mmap || attr->mmap_data || attr->mmap2 ||
+>  	    attr->comm || attr->comm_exec ||
+>  	    attr->task || attr->ksymbol ||
+> -	    attr->context_switch)
+> +	    attr->context_switch ||
+> +	    attr->bpf_event)
 
-Signed-off-by: Guido Günther <agx@sigxcpu.org>
----
- drivers/input/touchscreen/goodix.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+What about attr->ksymbol?
 
-diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
-index 47b1ced41576..f57d82220a88 100644
---- a/drivers/input/touchscreen/goodix.c
-+++ b/drivers/input/touchscreen/goodix.c
-@@ -693,7 +693,9 @@ static int goodix_configure_dev(struct goodix_ts_data *ts)
- 	touchscreen_parse_properties(ts->input_dev, true, &ts->prop);
- 
- 	if (!ts->prop.max_x || !ts->prop.max_y || !ts->max_touch_num) {
--		dev_err(&ts->client->dev, "Invalid config, using defaults\n");
-+		dev_err(&ts->client->dev,
-+			"Invalid config (%d, %d, %d), using defaults\n",
-+			ts->prop.max_x, ts->prop.max_y, ts->max_touch_num);
- 		ts->prop.max_x = GOODIX_MAX_WIDTH - 1;
- 		ts->prop.max_y = GOODIX_MAX_HEIGHT - 1;
- 		ts->max_touch_num = GOODIX_MAX_CONTACTS;
--- 
-2.20.1
+- Arnaldo
 
+>  		return true;
+>  	return false;
+>  }
+> -- 
+> 2.17.1
