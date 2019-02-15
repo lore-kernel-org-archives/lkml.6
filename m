@@ -4,51 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19EA5C4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:40:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16B8AC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:40:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAF492229F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:40:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC6FA2192B
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:40:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550198423;
-	bh=TON0jWu7Z48cGnW3MRq5Cs1m2Hlpe+QDwDUQJgb6nwg=;
+	s=default; t=1550198437;
+	bh=2K0MItoCg0hnOi1BYWUODwaGFGgRj3BR7iSEEWFpinY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Y22uqVf3c6ImrcMOdqYBZTvvnsjMExZVneoktfMO1D1MJmbGXuLayeTXDn/BCpPy5
-	 C8ZBXzU1aW/6/rh1eMFBCZl4eLp2qgDF9JmsdJZrX3Ku9bAei4DVV4WDBf+lwETOAJ
-	 zozPv4KwwDS/aEHFLARVqUKWK7tO5ypdKru21agc=
+	b=AOndQmdn3nAUItv/YZ77eOjpCSpO/vQnXL+Rt7PFcjbLLk9oqlqSnBT/rO7XHColD
+	 JdN3MV3TItTV7n84iVwE3yGYYIWmA0KsVvBhGnmmL2dKFmOH9RZrqtsnp9qlWe01vi
+	 zI9LZ2AGa/Lwb2MbOIb+nG5ANfNQSc9HOQ5pT93I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730656AbfBOCkV (ORCPT
+        id S1730778AbfBOCkg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:40:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50182 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:40:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50092 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389888AbfBOCKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:10:02 -0500
+        id S2389129AbfBOCJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:09:58 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B377F21B68;
-        Fri, 15 Feb 2019 02:10:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11B7D21B68;
+        Fri, 15 Feb 2019 02:09:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196601;
-        bh=TON0jWu7Z48cGnW3MRq5Cs1m2Hlpe+QDwDUQJgb6nwg=;
+        s=default; t=1550196597;
+        bh=2K0MItoCg0hnOi1BYWUODwaGFGgRj3BR7iSEEWFpinY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fWA/Wyw/EM0JCXqQsin/TcQVGB/UVujjuqUTfREHJncbuRn5rHgtRnKqBhB5XVK4i
-         1nHCCSAygq1LlCwgDgWJ+v/cMloSR4UpYRIKpxsE9D/r9ulWCLn43IIm9D9RHTiCQi
-         V4VU4pBJt+h6i7u3DIA3IvCrhFgvw2X4d+CUduaE=
+        b=iC4g+1xmxzH03ZDRZzXYULcbA3CJnN65zv7cYkuso4rL83//V06zPzJAm4w+aKU2U
+         Kb7OflP1mA1KQhRGJsWSKbj+5tac5/bJOK6VhMm2VJQEzH+x0QCqzHlCeyKhodyusN
+         toOjh6dDMAWKuujs/HAx995+/ZUKQSMiRvVoRUnk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Prateek Sood <prsood@codeaurora.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 37/77] sched/wait: Fix rcuwait_wake_up() ordering
-Date:   Thu, 14 Feb 2019 21:08:15 -0500
-Message-Id: <20190215020855.176727-37-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, devel@driverdev.osuosl.org
+Subject: [PATCH AUTOSEL 4.20 35/77] staging: rtl8723bs: Fix build error with Clang when inlining is disabled
+Date:   Thu, 14 Feb 2019 21:08:13 -0500
+Message-Id: <20190215020855.176727-35-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
 References: <20190215020855.176727-1-sashal@kernel.org>
@@ -60,65 +58,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Prateek Sood <prsood@codeaurora.org>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 6dc080eeb2ba01973bfff0d79844d7a59e12542e ]
+[ Upstream commit 97715058b70da1262fd07798c8b2e3e894f759dd ]
 
-For some peculiar reason rcuwait_wake_up() has the right barrier in
-the comment, but not in the code.
+When CONFIG_NO_AUTO_INLINE was present in linux-next (which added
+'-fno-inline-functions' to KBUILD_CFLAGS), an allyesconfig build with
+Clang failed at the modpost stage:
 
-This mistake has been observed to cause a deadlock in the following
-situation:
+ERROR: "is_broadcast_mac_addr" [drivers/staging/rtl8723bs/r8723bs.ko] undefined!
+ERROR: "is_zero_mac_addr" [drivers/staging/rtl8723bs/r8723bs.ko] undefined!
+ERROR: "is_multicast_mac_addr" [drivers/staging/rtl8723bs/r8723bs.ko] undefined!
 
-    P1					P2
+These functions were marked as extern inline, meaning that if inlining
+doesn't happen, the function will be undefined, as it is above.
 
-    percpu_up_read()			percpu_down_write()
-      rcu_sync_is_idle() // false
-					  rcu_sync_enter()
-					  ...
-      __percpu_up_read()
+This happens to work with GCC because the '-fno-inline-functions' option
+respects the __inline attribute so all instances of these functions are
+inlined as expected and the definition doesn't actually matter. However,
+with Clang and '-fno-inline-functions', a function has to be marked with
+the __always_inline attribute to be considered for inlining, which none
+of these functions are. Clang tries to find the symbol definition
+elsewhere as it was told and fails, which trickles down to modpost.
 
-[S] ,-  __this_cpu_dec(*sem->read_count)
-    |   smp_rmb();
-[L] |   task = rcu_dereference(w->task) // NULL
-    |
-    |				    [S]	    w->task = current
-    |					    smp_mb();
-    |				    [L]	    readers_active_check() // fail
-    `-> <store happens here>
+To make sure that this code compiles regardless of compiler and make the
+intention of the code clearer, use 'static' to ensure these functions
+are always defined, regardless of inlining. Additionally, silence a
+checkpatch warning by switching from '__inline' to 'inline'.
 
-Where the smp_rmb() (obviously) fails to constrain the store.
-
-[ peterz: Added changelog. ]
-
-Signed-off-by: Prateek Sood <prsood@codeaurora.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Acked-by: Davidlohr Bueso <dbueso@suse.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 8f95c90ceb54 ("sched/wait, RCU: Introduce rcuwait machinery")
-Link: https://lkml.kernel.org/r/1543590656-7157-1-git-send-email-prsood@codeaurora.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/exit.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8723bs/include/ieee80211.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 55b4fa6d01eb..d607e23fd0c3 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -307,7 +307,7 @@ void rcuwait_wake_up(struct rcuwait *w)
- 	 *        MB (A)	      MB (B)
- 	 *    [L] cond		  [L] tsk
- 	 */
--	smp_rmb(); /* (B) */
-+	smp_mb(); /* (B) */
+diff --git a/drivers/staging/rtl8723bs/include/ieee80211.h b/drivers/staging/rtl8723bs/include/ieee80211.h
+index bcc8dfa8e672..9efb4dcb9d3a 100644
+--- a/drivers/staging/rtl8723bs/include/ieee80211.h
++++ b/drivers/staging/rtl8723bs/include/ieee80211.h
+@@ -850,18 +850,18 @@ enum ieee80211_state {
+ #define IP_FMT "%pI4"
+ #define IP_ARG(x) (x)
  
- 	/*
- 	 * Avoid using task_rcu_dereference() magic as long as we are careful,
+-extern __inline int is_multicast_mac_addr(const u8 *addr)
++static inline int is_multicast_mac_addr(const u8 *addr)
+ {
+         return ((addr[0] != 0xff) && (0x01 & addr[0]));
+ }
+ 
+-extern __inline int is_broadcast_mac_addr(const u8 *addr)
++static inline int is_broadcast_mac_addr(const u8 *addr)
+ {
+ 	return ((addr[0] == 0xff) && (addr[1] == 0xff) && (addr[2] == 0xff) &&   \
+ 		(addr[3] == 0xff) && (addr[4] == 0xff) && (addr[5] == 0xff));
+ }
+ 
+-extern __inline int is_zero_mac_addr(const u8 *addr)
++static inline int is_zero_mac_addr(const u8 *addr)
+ {
+ 	return ((addr[0] == 0x00) && (addr[1] == 0x00) && (addr[2] == 0x00) &&   \
+ 		(addr[3] == 0x00) && (addr[4] == 0x00) && (addr[5] == 0x00));
 -- 
 2.19.1
 
