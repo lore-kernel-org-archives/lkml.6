@@ -2,294 +2,115 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 270E0C4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:03:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEBDEC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:03:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6161222DF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:03:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FC4320645
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:03:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="g99XmDGv"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jKZkj40v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404155AbfBOWDx (ORCPT
+        id S2404207AbfBOWDz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 17:03:53 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:13533 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728776AbfBOWDu (ORCPT
+        Fri, 15 Feb 2019 17:03:55 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:56001 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404140AbfBOWDx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 17:03:50 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c6737470001>; Fri, 15 Feb 2019 14:03:51 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 15 Feb 2019 14:03:48 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 15 Feb 2019 14:03:48 -0800
-Received: from nvrsysarch5.nvidia.com (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 15 Feb
- 2019 22:03:48 +0000
-From:   Zi Yan <ziy@nvidia.com>
-To:     <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-CC:     Dave Hansen <dave.hansen@linux.intel.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Mark Hairgrove <mhairgrove@nvidia.com>,
-        Nitin Gupta <nigupta@nvidia.com>,
-        David Nellans <dnellans@nvidia.com>, Zi Yan <ziy@nvidia.com>
-Subject: [RFC PATCH 00/31] Generating physically contiguous memory after page allocation
-Date:   Fri, 15 Feb 2019 14:03:03 -0800
-Message-ID: <20190215220334.29298-1-ziy@nvidia.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1550268231; bh=PwAD888+nxx/Wnfyu0U2CK68HaihH5P14l67i4Nat7o=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         MIME-Version:X-Originating-IP:X-ClientProxiedBy:Content-Type:
-         Content-Transfer-Encoding;
-        b=g99XmDGvWJMJ51nDd2p1OlD8qzNJGklMnV68ZO7Hv8u4+Em+7TzNydsNiIk7UTRbR
-         buV2brDUEeLBn3z9xYshJo686JbO7x9Ut2T/YOUkGh1BJgAFeik2N7mhgpWx24rEJY
-         qcu5JeNDifh1t4ePu4zKi3zHcuJCdyrYangX19+U1l/iPTxHVRkJydaKb0unpLbEIk
-         U894BCIeGGR7qBadeIJqQJXlbJmMqzp7RiWNBdohDcQLbaHa1FYiRfMogHf5AEqa2j
-         6NqvFeUjSlPGDNr7SdUOEYeRPRZNeUHJxVi15UwG8nQtifStwBlwL5hAKg9L1ycQ4u
-         +dZdsdASgWEcQ==
+        Fri, 15 Feb 2019 17:03:53 -0500
+Received: by mail-it1-f195.google.com with SMTP id z131so17375623itf.5;
+        Fri, 15 Feb 2019 14:03:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=YiI2FuvoVFdph8NWAUBbcJ+J2guAKi5W60RsKn8MqIk=;
+        b=jKZkj40vu1/+/g6BqSV8njnqBALGyOawUyIIcdg33euAqkQi7dEouJTusQCpyYhnOr
+         xuWdU490zatGcfKQO3OLNhAFiXov6X9x5ZFed4UXQRvh18eGxk5SZWIgj5EUW+RP7jXs
+         S6Zh2zMOYC2mrImts228/VHBJ4y1j1bPetpVNHsCoDbwuaAuKh536u4kPFMC7h8+p4+M
+         gWmtYzeswMch/L1zhmNFnseg675Z+SVP16OcYBSBob1o0HEqFZaEWzKasuDp/OOCRTHr
+         9/ugVjj0ajzsVDSQRDKTan2jr1fsGEKf827//soafX5vMAgPMbhUBMeDoi0htRwXDaJH
+         nRTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=YiI2FuvoVFdph8NWAUBbcJ+J2guAKi5W60RsKn8MqIk=;
+        b=ln8WEQZD3oldRbkdsFavHg2hJVN0nSyQM60U/c9pT+apZYkbAiuvKqaXLDcN0gmuzg
+         /MvYCSBdUGFtypgqByaMiBpDnukakuXivlQ50U4TNVJv8Kvgq327u9qgj2zw7yUGFuBx
+         XOMsEHW3CinQUTO9/of5YESEs0qTP4cnLlvXUnwQKZuPIueVwHDP3jspr9+TxDPBH61T
+         CoA+DjmZQweFxJvGFaVxQCB0iGG0M9XuqN3/z5NbjZMvTL6EK4OiP0iyg9U17z0sXhxC
+         XQZ+socx/dCjGswGUTIIq1LPFrV9tnHWVnDzzRYsRzr3mhAL7kVFbvMYewc38PY9/26Z
+         Feqg==
+X-Gm-Message-State: AHQUAuYu+ibgKRvKzSSrkrbLeDmr8bJaELUrsb27elPAmDhn2BBoHRXE
+        AnPYLvldER1/+k4Id9Iin83gLca6
+X-Google-Smtp-Source: AHgI3Iaz/BTXEpaam5w/sZLvDaxRjRFZAVoSFkVV2eRNVWSLqOvgJq0jG2EKdO8ENTTQ7kom1iWI9w==
+X-Received: by 2002:a5d:91d3:: with SMTP id k19mr7103643ior.258.1550268231179;
+        Fri, 15 Feb 2019 14:03:51 -0800 (PST)
+Received: from svens-asus.arcx.com ([184.94.50.30])
+        by smtp.gmail.com with ESMTPSA id y12sm2748429ion.62.2019.02.15.14.03.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Feb 2019 14:03:50 -0800 (PST)
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+X-Google-Original-From: Sven Van Asbroeck <TheSven73@gmail.com>
+To:     Sebastian Reichel <sre@kernel.org>
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: [PATCH] max17042_battery: fix potential use-after-free on device remove
+Date:   Fri, 15 Feb 2019 17:03:44 -0500
+Message-Id: <20190215220344.16604-1-TheSven73@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+The work which is scheduled on a POR boot is potentially left
+pending or running until after the device module is removed,
+which could result in a use-after-free.
 
-This patchset produces physically contiguous memory by moving in-use pages
-without allocating any new pages. It targets two scenarios that complements
-khugepaged use cases: 1) avoiding page reclaim and memory compaction when t=
-he
-system is under memory pressure because this patchset does not allocate any=
- new
-pages, 2) generating pages larger than 2^MAX_ORDER without changing the bud=
-dy
-allocator.
+Fix by registering a cancel/sync callback, which gets executed as
+part of standard resource unwinding.
 
-To demonstrate its use, I add very basic 1GB THP support and enable promoti=
-ng
-512 2MB THPs to a 1GB THP in my patchset. Promoting 512 4KB pages to a 2MB
-THP is also implemented.
+This issue was detected with the help of Coccinelle.
 
-The patches are on top of v5.0-rc5. They are posted as part of my upcoming
-LSF/MM proposal.
+Cc: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
+---
+ drivers/power/supply/max17042_battery.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-Motivation=C2=A0
-----=C2=A0
-
-The goal of this patchset is to provide alternative way of generating physi=
-cally
-contiguous memory and making it available as arbitrary sized large pages. T=
-his
-patchset generates physically contiguous memory/arbitrary size pages after =
-pages
-are allocated by moving virtually-contiguous pages to become physically
-contiguous at any size, thus it does not require changes to memory allocato=
-rs.
-On the other hand, it works only for moveable pages, so it also faces the s=
-ame
-fragmentation issues as memory compaction, i.e., if non-moveable pages spre=
-ad
-across the entire memory, this patchset can only generate contiguity betwee=
-n
-any two non-moveable pages.=C2=A0
-
-Large pages and physically contiguous memory are important to devices, such=
- as
-GPUs, FPGAs, NICs and RDMA controllers, because they can often achieve bett=
-er
-performance when operating on large pages. The same can be said of CPU
-performance, of course, but there is an important difference: GPUs and
-high-throughput devices often take a more severe performance hit, in the ev=
-ent
-of a TLB miss and subsequent page table walks, as compared to a CPU. The ef=
-fect
-is sufficiently large that such devices *really* want a highly reliable way=
- to
-allocate large pages to minimize the number of potential TLB misses and the=
- time
-spent on the induced page table walks.=C2=A0
-
-Vendors (like Oracle, Mellanox, IBM, NVIDIA) are interested in generating
-physically contiguous memory beyond THP sizes and looking for solutions [1]=
-,[2],[3].
-This patchset provides an alternative approach, compared to allocating
-physically contiguous memory at page allocation time, to generating physica=
-lly
-contiguous memory after pages are allocated. This approach can avoid page
-reclaim and memory compaction, which happen during the process of page
-allocation, but still produces comparable physically contiguous memory.=C2=
-=A0
-
-In terms of THPs, it helps, but we are interested in even larger contiguous
-ranges (or page size support) to further reduce the address translation ove=
-rheads.
-With this patchset, we can generate pages larger than PMD-level THPs withou=
-t
-requiring MAX_ORDER changes in the buddy allocators.=C2=A0
-
-
-Patch structure=C2=A0
-----=C2=A0
-
-The patchset I developed to generate physically contiguous memory/arbitrary
-sized pages merely moves pages around. There are three components in this
-patchset:
-
-1) a new page migration mechanism, called exchange pages, that exchanges th=
-e
-content of two in-use pages instead of performing two back-to-back page
-migration. It saves on overheads and avoids page reclaim and memory compact=
-ion
-in the page allocation path, although it is not strictly required if enough
-free memory is available in the system.
-
-2) a new mechanism that utilizes both page migration and exchange pages to
-produce physically contiguous memory/arbitrary sized pages without allocati=
-ng
-any new pages, unlike what khugepaged does. It works on per-VMA basis, crea=
-ting
-physically contiguous memory out of each VMA, which is virtually contiguous=
-.
-A simple range tree is used to ensure no two VMAs are overlapping with each
-other in the physical address space.
-
-3) a use case of the new physically contiguous memory producing mechanism t=
-hat
-generates 1GB THPs by migrating and exchanging pages and promoting 512
-contiguous 2MB THPs to a 1GB THP, although even larger physically contiguou=
-s
-memory ranges can be generated. The 1GB THP implement is very basic, which =
-can
-handle 1GB THP faults when buddy allocator is modified to allocate 1GB page=
-s,
-support 1GB THP split to 2MB THP and in-place promotion from 2MB THP to 1GB=
- THP,
-and PMD/PTE-mapped 1GB THP. These are not fully tested.
-
-
-[1] https://lwn.net/Articles/736170/=C2=A0
-[2] https://lwn.net/Articles/753167/=C2=A0
-[3] https://blogs.nvidia.com/blog/2018/06/08/worlds-fastest-exascale-ai-sup=
-ercomputer-summit/=C2=A0
-
-Zi Yan (31):
-  mm: migrate: Add exchange_pages to exchange two lists of pages.
-  mm: migrate: Add THP exchange support.
-  mm: migrate: Add tmpfs exchange support.
-  mm: add mem_defrag functionality.
-  mem_defrag: split a THP if either src or dst is THP only.
-  mm: Make MAX_ORDER configurable in Kconfig for buddy allocator.
-  mm: deallocate pages with order > MAX_ORDER.
-  mm: add pagechain container for storing multiple pages.
-  mm: thp: 1GB anonymous page implementation.
-  mm: proc: add 1GB THP kpageflag.
-  mm: debug: print compound page order in dump_page().
-  mm: stats: Separate PMD THP and PUD THP stats.
-  mm: thp: 1GB THP copy on write implementation.
-  mm: thp: handling 1GB THP reference bit.
-  mm: thp: add 1GB THP split_huge_pud_page() function.
-  mm: thp: check compound_mapcount of PMD-mapped PUD THPs at free time.
-  mm: thp: split properly PMD-mapped PUD THP to PTE-mapped PUD THP.
-  mm: page_vma_walk: teach it about PMD-mapped PUD THP.
-  mm: thp: 1GB THP support in try_to_unmap().
-  mm: thp: split 1GB THPs at page reclaim.
-  mm: thp: 1GB zero page shrinker.
-  mm: thp: 1GB THP follow_p*d_page() support.
-  mm: support 1GB THP pagemap support.
-  sysctl: add an option to only print the head page virtual address.
-  mm: thp: add a knob to enable/disable 1GB THPs.
-  mm: thp: promote PTE-mapped THP to PMD-mapped THP.
-  mm: thp: promote PMD-mapped PUD pages to PUD-mapped PUD pages.
-  mm: vmstats: add page promotion stats.
-  mm: madvise: add madvise options to split PMD and PUD THPs.
-  mm: mem_defrag: thp: PMD THP and PUD THP in-place promotion support.
-  sysctl: toggle to promote PUD-mapped 1GB THP or not.
-
- arch/x86/Kconfig                       |   15 +
- arch/x86/entry/syscalls/syscall_64.tbl |    1 +
- arch/x86/include/asm/pgalloc.h         |   69 +
- arch/x86/include/asm/pgtable.h         |   20 +
- arch/x86/include/asm/sparsemem.h       |    4 +-
- arch/x86/mm/pgtable.c                  |   38 +
- drivers/base/node.c                    |    3 +
- fs/exec.c                              |    4 +
- fs/proc/meminfo.c                      |    2 +
- fs/proc/page.c                         |    2 +
- fs/proc/task_mmu.c                     |   47 +-
- include/asm-generic/pgtable.h          |  110 +
- include/linux/huge_mm.h                |   78 +-
- include/linux/khugepaged.h             |    1 +
- include/linux/ksm.h                    |    5 +
- include/linux/mem_defrag.h             |   60 +
- include/linux/memcontrol.h             |    5 +
- include/linux/mm.h                     |   34 +
- include/linux/mm_types.h               |    5 +
- include/linux/mmu_notifier.h           |   13 +
- include/linux/mmzone.h                 |    1 +
- include/linux/page-flags.h             |   79 +-
- include/linux/pagechain.h              |   73 +
- include/linux/rmap.h                   |   10 +-
- include/linux/sched/coredump.h         |    4 +
- include/linux/swap.h                   |    2 +
- include/linux/syscalls.h               |    3 +
- include/linux/vm_event_item.h          |   33 +
- include/uapi/asm-generic/mman-common.h |   15 +
- include/uapi/linux/kernel-page-flags.h |    2 +
- kernel/events/uprobes.c                |    4 +-
- kernel/fork.c                          |   14 +
- kernel/sysctl.c                        |  101 +-
- mm/Makefile                            |    2 +
- mm/compaction.c                        |   17 +-
- mm/debug.c                             |    8 +-
- mm/exchange.c                          |  878 +++++++
- mm/filemap.c                           |    8 +
- mm/gup.c                               |   60 +-
- mm/huge_memory.c                       | 3360 ++++++++++++++++++++----
- mm/hugetlb.c                           |    4 +-
- mm/internal.h                          |   46 +
- mm/khugepaged.c                        |    7 +-
- mm/ksm.c                               |   39 +-
- mm/madvise.c                           |  121 +
- mm/mem_defrag.c                        | 1941 ++++++++++++++
- mm/memcontrol.c                        |   13 +
- mm/memory.c                            |   55 +-
- mm/migrate.c                           |   14 +-
- mm/mmap.c                              |   29 +
- mm/page_alloc.c                        |  108 +-
- mm/page_vma_mapped.c                   |  129 +-
- mm/pgtable-generic.c                   |   78 +-
- mm/rmap.c                              |  283 +-
- mm/swap.c                              |   38 +
- mm/swap_slots.c                        |    2 +
- mm/swapfile.c                          |    4 +-
- mm/userfaultfd.c                       |    2 +-
- mm/util.c                              |    7 +
- mm/vmscan.c                            |   55 +-
- mm/vmstat.c                            |   32 +
- 61 files changed, 7452 insertions(+), 745 deletions(-)
- create mode 100644 include/linux/mem_defrag.h
- create mode 100644 include/linux/pagechain.h
- create mode 100644 mm/exchange.c
- create mode 100644 mm/mem_defrag.c
-
---
-2.20.1
+diff --git a/drivers/power/supply/max17042_battery.c b/drivers/power/supply/max17042_battery.c
+index 2a8d75e5e930..581c6bd23388 100644
+--- a/drivers/power/supply/max17042_battery.c
++++ b/drivers/power/supply/max17042_battery.c
+@@ -995,6 +995,13 @@ static const struct power_supply_desc max17042_no_current_sense_psy_desc = {
+ 	.num_properties	= ARRAY_SIZE(max17042_battery_props) - 2,
+ };
+ 
++static void max17042_stop_work(void *data)
++{
++	struct max17042_chip *chip = data;
++
++	cancel_work_sync(&chip->work);
++}
++
+ static int max17042_probe(struct i2c_client *client,
+ 			const struct i2c_device_id *id)
+ {
+@@ -1101,6 +1108,9 @@ static int max17042_probe(struct i2c_client *client,
+ 	regmap_read(chip->regmap, MAX17042_STATUS, &val);
+ 	if (val & STATUS_POR_BIT) {
+ 		INIT_WORK(&chip->work, max17042_init_worker);
++		ret = devm_add_action(&client->dev, max17042_stop_work, chip);
++		if (ret)
++			return ret;
+ 		schedule_work(&chip->work);
+ 	} else {
+ 		chip->init_complete = 1;
+-- 
+2.17.1
 
