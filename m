@@ -2,174 +2,379 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D973C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 01:06:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C530DC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 01:09:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00ABC21934
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 01:06:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8224D20840
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 01:09:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Srzqd+nD"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NFriWFj1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729172AbfBOBGm (ORCPT
+        id S1730259AbfBOBJx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 20:06:42 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44877 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726052AbfBOBGl (ORCPT
+        Thu, 14 Feb 2019 20:09:53 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:54194 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726052AbfBOBJx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 20:06:41 -0500
-Received: by mail-pf1-f194.google.com with SMTP id u6so3977303pfh.11;
-        Thu, 14 Feb 2019 17:06:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=8tEkel44IVdcHQ8lsgzrLMyzLctIKO+ndUdbIrBUS/I=;
-        b=Srzqd+nDwzyfmNJX8hQmg7F1pxp+nh4rAnGTLMJ8TG79mS774dNxiHVGW+NNe7n7+l
-         1Alh7TEF8E1jIo9Ms4thEjM5TKJWrjRS4FPFoiQ9Gb3070wjqe4+TvafK7ov1WcJp2m4
-         pxV5VmHZeXkgtxPRiaIsGCvFBjzAcz7BuMDu9tupxnNbXQ/NpM2mf439WA2pXck6/olO
-         3Qpo/oesowJLi2Q8BARs+p3uUbSoPLyjZv1BbODDtPrC7VRB6G3BIspb2WJXi1xJxnrD
-         /gXI46zBH8jvwd7A18UlOlQFhyE0k45DzW7Lv5ZRDLH2WOVWGjJqiUhU1RMZalkqI6XW
-         cT5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=8tEkel44IVdcHQ8lsgzrLMyzLctIKO+ndUdbIrBUS/I=;
-        b=augYgee/F3FyUi/4A5+QM3eHjSq9NcKEtGv6plihAPVxcZKrP8M6lYpYHOsAhyiJ2s
-         hmcmTk/xmUU9hnNVKZGTXAVHexmD8fl3iOV7isda9UFP/nPBK2gF3D/Ij4evmrE0LJuG
-         hFzp+8sMMfmt75j35ewlWFZZYJ3k6NFyBb/rJMnG4FJ3UrgYkB2hXJySSdkMv+1nBdlB
-         nHPc1Pe4tDdHrPIG94mOesVkzdHRb1dhXuLwBZ5ytLTEO2uCPUr8Zw7ip9AExaH9B+gf
-         b1lZ9XLzkvEZuRdI6ApY6Uu8X1Tvd2ivNg9DfXnDUi/jUfClwHDbF4tXLjNyTFmWf3Oj
-         KalA==
-X-Gm-Message-State: AHQUAubJ79JUPNRgSKUJNsCx0Z2lfsIemCgQeBYhQwQQ7TRGyNWmlwlu
-        dZLPBVd4pzkPSgDTR/HzH/E=
-X-Google-Smtp-Source: AHgI3IZyhkoqygC6MrrEV+9LBGKd2Aof8Q5BXinNfDSopoPrY95pO8XS3z/EZs0GGoBvicus9+HK7Q==
-X-Received: by 2002:a63:8048:: with SMTP id j69mr2733248pgd.432.1550192800241;
-        Thu, 14 Feb 2019 17:06:40 -0800 (PST)
-Received: from [10.67.48.220] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id z13sm5949418pgf.84.2019.02.14.17.06.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 17:06:39 -0800 (PST)
-Subject: Re: [PATCH net] net: stmmac: Fix NAPI poll in TX path when in
- multi-queue
-To:     David Miller <davem@davemloft.net>, jose.abreu@synopsys.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        joao.pinto@synopsys.com, peppe.cavallaro@st.com,
-        alexandre.torgue@st.com
-References: <a264c48823687434e4d18aeb5830707e00c64250.1550077162.git.joabreu@synopsys.com>
- <20190214.090107.1088098621242009425.davem@davemloft.net>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
-Message-ID: <f8da6c15-991f-b774-a856-d3e8e45a33b6@gmail.com>
-Date:   Thu, 14 Feb 2019 17:06:23 -0800
+        Thu, 14 Feb 2019 20:09:53 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1F190RX085991;
+        Thu, 14 Feb 2019 19:09:00 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1550192940;
+        bh=9NsKspRYF1rWp5Ht4xaqdnt4nvbU0mRZJouoOhnprS4=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=NFriWFj1m5O/Htg2Kz0qAMLEfe6VhTd+G6TckAmZY+ma3I6dMbyzgaTOR6vyzwqaS
+         Muvef/QTAhlbvCrFEUQjpfsE6RFc/+XBwAhey9GCSmjEOhyOB6OhWW0MHijR6HmbLR
+         bMaLCRMXpYglwZ8WKdPEuHgeZAzL3apZDE8q8OoY=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1F18xvc067937
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 14 Feb 2019 19:09:00 -0600
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 14
+ Feb 2019 19:08:59 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 14 Feb 2019 19:08:59 -0600
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1F18xFG014196;
+        Thu, 14 Feb 2019 19:08:59 -0600
+Subject: Re: [PATCH v2 01/14] dt-bindings: remoteproc: Add TI PRUSS bindings
+To:     Roger Quadros <rogerq@ti.com>, <tony@atomide.com>,
+        <ohad@wizery.com>, <bjorn.andersson@linaro.org>
+CC:     <david@lechnology.com>, <nsekhar@ti.com>, <t-kristo@ti.com>,
+        <nsaulnier@ti.com>, <jreeder@ti.com>, <m-karicheri2@ti.com>,
+        <woods.technical@gmail.com>, <linux-omap@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>,
+        Robert Nelson <robertcnelson@gmail.com>, <dan@kulp.com>,
+        Matthijs van Duin <matthijsvanduin@gmail.com>
+References: <1549290167-876-1-git-send-email-rogerq@ti.com>
+ <1549290167-876-2-git-send-email-rogerq@ti.com>
+ <16001a6f-faed-ee14-5ade-79d5462f6d51@ti.com> <5C654C39.2030308@ti.com>
+From:   Suman Anna <s-anna@ti.com>
+Message-ID: <9b8d98af-26fe-0591-c576-85c998535ad7@ti.com>
+Date:   Thu, 14 Feb 2019 19:08:59 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190214.090107.1088098621242009425.davem@davemloft.net>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <5C654C39.2030308@ti.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/14/19 9:01 AM, David Miller wrote:
-> From: Jose Abreu <jose.abreu@synopsys.com>
-> Date: Wed, 13 Feb 2019 18:00:43 +0100
-> 
->> Commit 8fce33317023 introduced the concept of NAPI per-channel and
->> independent cleaning of TX path.
->>
->> This is currently breaking performance in some cases. The scenario
->> happens when all packets are being received in Queue 0 but the TX is
->> performed in Queue != 0.
->>
->> I didn't look very deep but it seems that NAPI for Queue 0 will clean
->> the RX path but as TX is in different NAPI, this last one is called at a
->> slower rate which kills performance in TX. I suspect this is due to TX
->> cleaning takes much longer than RX and because NAPI will get canceled
->> once we return with 0 budget consumed (e.g. when TX is still not done it
->> will return 0 budget).
->>
->> Fix this by looking at all TX channels in NAPI poll function.
->>
->> Signed-off-by: Jose Abreu <joabreu@synopsys.com>
->> Fixes: 8fce33317023 ("net: stmmac: Rework coalesce timer and fix multi-queue races")
-> 
-> No this isn't right.
-> 
-> The TX interrupt events for Queue != 0 should clean up the TX packets
-> on those queues.
-> 
-> Furthermore you are breaking the locality of the TX processing.
-> 
-> I'm not applying this, sorry.
+Hi Roger,
 
-Agreed, why don't you create per-queue NAPI instances such that they are
-all independent and can complete their TX completion/RX processing
-entirely separately?
--- 
-Florian
+On 2/14/19 5:08 AM, Roger Quadros wrote:
+> +Robert, Dan, Matthijs
+> 
+> Hi Suman,
+> 
+> On 14/02/19 04:52, Suman Anna wrote:
+>> Hi Roger,
+>>
+>> On 2/4/19 8:22 AM, Roger Quadros wrote:
+>>> From: Suman Anna <s-anna@ti.com>
+>>>
+>>> This patch adds the bindings for the Programmable Real-Time Unit
+>>> and Industrial Communication Subsystem (PRU-ICSS) present on various
+>>> SoCs such as AM33xx, AM437x, AM57xx, Keystone 66AK2G SoC, etc. It is
+>>> present on the Davinci based OMAPL138 SoCs and K3 architecture
+>>> based AM65x SoCs as well (not covered for now).
+>>>
+>>> Signed-off-by: Suman Anna <s-anna@ti.com>
+>>> Signed-off-by: Roger Quadros <rogerq@ti.com>
+>>> ---
+>>>  .../devicetree/bindings/soc/ti/ti,pruss.txt        | 212 +++++++++++++++++++++
+>>>  1 file changed, 212 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+>>> new file mode 100644
+>>> index 0000000..5ac76fd
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.txt
+>>> @@ -0,0 +1,212 @@
+>>> +PRU-ICSS on TI SoCs
+>>> +===================
+>>> +
+>>> +The Programmable Real-Time Unit and Industrial Communication Subsystem
+>>> +(PRU-ICSS) is present on various TI SoCs such as AM335x, AM437x, Keystone
+>>> +66AK2G, etc. A PRUSS consists of dual 32-bit RISC cores (Programmable
+>>> +Real-Time Units, or PRUs) with program memory and data memory.
+>>> +
+>>> +The programmable nature of the PRUs provide flexibility to implement
+>>> +custom peripheral interfaces, fast real-time responses, or specialized
+>>> +data handling. The common peripheral modules include the following,
+>>> +
+>>> +  - Enhanced GPIO with async capture and serial support
+>>> +  - an Ethernet MII_RT module with two MII ports
+>>> +  - an MDIO port to control external Ethernet PHYs
+>>> +  - an Industrial Ethernet Peripheral (IEP) to manage/generate Industrial
+>>> +    Ethernet functions
+>>> +  - an Enhanced Capture Module (eCAP)
+>>> +  - a 16550-compatible UART to support PROFIBUS
+>>> +  - Interrupt controller with 64 input events and 10 Host interrupts.
+>>> +
+>>> +A shared Data RAM, if present, can be accessed by both the PRU cores. The
+>>> +Interrupt Controller (INTC) and a CFG module are common to both the PRU
+>>> +cores.
+>>> +
+>>> +Various sub-modules within a PRU-ICSS subsystem are represented as individual
+>>> +nodes.
+>>> +
+>>> +PRUSS Node
+>>> +=============
+>>> +
+>>> +This node represents the entire ICSS instance and the various modules are
+>>> +contained as children. The PRUSS driver is responsible for managing the
+>>> +common resources i.e. DRAM0, DRAM1, SHARED_RAM and CFG space.
+>>> +
+>>> +Required Properties:
+>>> +--------------------
+>>> +- compatible     : should be one of,
+>>> +                       "ti,am3356-pruss" for AM335x family of SoCs
+>>> +                       "ti,am4376-pruss" for AM437x family of SoCs
+>>> +                       "ti,am5728-pruss" for AM57xx family of SoCs
+>>> +                       "ti,k2g-pruss" for 66AK2G family of SoCs
+>>> +- reg            : base address and size for each of the Data RAMs as
+>>> +                   mentioned in reg-names, and in the same order as the
+>>> +                   reg-names
+>>
+>> Hmm, not sure what prompted you to deviate from the design we had on TI
+>> SDK kernels. Your revised bindings does not allow us to use this device
+>> for the scalability with either UIO/VFIO.
+> 
+> My understanding was that the device tree node will have to be modified
+> in any case to support the current uio_pruss.c driver so we don't
+> need to add things that we don't need right away.
+
+Well, the previous design allows it to scale (as in add new properties
+if needed to satisfy the UIO case) maintaining compatibility, but your
+current binding does not even allow that. The modification you are
+saying that can be done in the future cannot be done without breaking
+the binding ABI with your current design.
+
+> 
+>>
+>> Let's sort this out before you post the next series.
+> 
+> Let's discuss this here so I don't have to explain the whole thing again
+> in the next series.
+
+Yeah, thanks for the below summary.
+
+regards
+Suman
+
+> 
+> Tony,
+> 
+> Suman is mainly concerned about the following changes in v2
+> 1) pruss node does not contain reg property representing entire ICSS.
+> 2) pruss node does not contain interrupts.
+> 
+> Both of these are required if drivers/uio/uio_pruss.c or in future if
+> VFIO is to be used.
+> 
+> The beagleboard community is a primary user of this driver and we need to
+> find a solution so that PRUSS is usable either via remoteproc or via UIO.
+> 
+> Ideal case should allow user to use either of the drivers by just doing
+> a unbind and bind.
+> 
+> I don't have a better idea than having a encapsulating node that has
+> the appropriate reg and interrupt properties.
+> 
+> cheers,
+> -roger
+> 
+>>
+>> regards
+>> Suman
+>>
+>>> +- reg-names      : should contain a string(s) from among the following names,
+>>> +                   each representing a specific Data RAM region. Some PRU-ICSS
+>>> +		   instances on certain SoCs might not have Shared DRAM.
+>>> +                       "dram0" for Data RAM0,
+>>> +                       "dram1" for Data RAM1,
+>>> +                       "shrdram2" for Shared Data RAM,
+>>> +- #address-cells : should be 1
+>>> +- #size-cells    : should be 1
+>>> +- ranges         : no specific range translations required, child nodes have the
+>>> +                   same address view as the parent, so should be mentioned without
+>>> +                   any value for the property
+>>> +
+>>> +Optional Properties:
+>>> +--------------------
+>>> +- no-shared-ram	: Should be present if the instance doesn't have Shared RAM.
+>>> +		  e.g. AM4376 ICSS0 instance doesn't have Shared RAM.
+>>> +
+>>> +The PRUSS node will have one or more of the folowing child nodes.
+>>> +
+>>> +PRU CORES
+>>> +=========
+>>> +ICSS typically has 2 PRU cores. These should be represented as remoteproc devices.
+>>> +
+>>> +INTC node
+>>> +=========
+>>> +ICSS has one INTC interrupt controller module. This should be represented as
+>>> +a standard interrupt-controller node.
+>>> +
+>>> +CFG, IEP, MII_RT
+>>> +================
+>>> +The individual sub-modules CFG, IEP and MII_RT are represented as a syscon
+>>> +node each with specific node names as below:
+>>> +                  "cfg" for CFG sub-module,
+>>> +                  "iep" for IEP sub-module,
+>>> +                  "mii_rt" for MII-RT sub-module,
+>>> +
+>>> +See Documentation/devicetree/bindings/mfd/syscon.txt for details.
+>>> +
+>>> +MDIO
+>>> +====
+>>> +Each PRUSS has an MDIO module that can be used to control external PHYs. The
+>>> +MDIO module used within the PRU-ICSS is an instance of the MDIO Controller
+>>> +used in TI Davinci SoCs. Please refer to the corresponding binding document,
+>>> +Documentation/devicetree/bindings/net/davinci-mdio.txt for details.
+>>> +
+>>> +Application/User Nodes
+>>> +=======================
+>>> +A PRU application/user node typically uses one or more PRU device nodes to
+>>> +implement a PRU application/functionality. Each application/client node would
+>>> +need a reference to at least a PRU node, and optionally pass some configuration
+>>> +parameters.
+>>> +
+>>> +Required Properties:
+>>> +--------------------
+>>> +- prus                 : phandles to the PRU nodes used
+>>> +
+>>> +Optional Properties:
+>>> +--------------------
+>>> +- firmware-name        : firmwares for the PRU cores, the default firmware
+>>> +                         for the core from the PRU node will be used if not
+>>> +                         provided. The firmware names should correspond to
+>>> +                         the PRU cores listed in the 'prus' property
+>>> +- ti,pruss-gp-mux-sel  : array of values for the GP_MUX_SEL under PRUSS_GPCFG
+>>> +                         register for a PRU. This selects the internal muxing
+>>> +                         scheme for the PRU instance. If not provided, the
+>>> +                         default out-of-reset value (0) for the PRU core is
+>>> +                         used. Values should correspond to the PRU cores listed
+>>> +                         in the 'prus' property
+>>> +- ti,pru-interrupt-map : PRU interrupt mappings, containing an array of entries
+>>> +                         with each entry consisting of 4 cell-values. First one
+>>> +                         is an index towards the "prus" property to identify the
+>>> +                         PRU core for the interrupt map, second is the PRU
+>>> +                         System Event id, third is the PRU interrupt channel id
+>>> +                         and fourth is the PRU host interrupt id. If provided,
+>>> +                         this map will supercede any other configuration
+>>> +                         provided through firmware
+>>> +
+>>> +Example:
+>>> +========
+>>> +1.	/* AM33xx PRU-ICSS */
+>>> +
+>>> +	pruss: pruss@0 {
+>>> +		compatible = "ti,am3356-pruss";
+>>> +		reg = <0x0 0x2000>,
+>>> +		      <0x2000 0x2000>,
+>>> +		      <0x10000 0x3000>;
+>>> +		reg-names = "dram0", "dram1",
+>>> +			    "shrdram2";
+>>> +		#address-cells = <1>;
+>>> +		#size-cells = <1>;
+>>> +		ranges;
+>>> +
+>>> +		pruss_cfg: cfg@26000 {
+>>> +			compatible = "syscon";
+>>> +			reg = <0x26000 0x2000>;
+>>> +		};
+>>> +
+>>> +		pruss_iep: iep@2e000 {
+>>> +			compatible = "syscon";
+>>> +			reg = <0x2e000 0x31c>;
+>>> +		};
+>>> +
+>>> +		pruss_mii_rt: mii_rt@32000 {
+>>> +			compatible = "syscon";
+>>> +			reg = <0x32000 0x58>;
+>>> +		};
+>>> +
+>>> +		pruss_intc: intc@20000 {
+>>> +			compatible = "ti,am3356-pruss-intc";
+>>> +			reg = <0x20000 0x2000>;
+>>> +			reg-names = "intc";
+>>> +			interrupt-controller;
+>>> +			#interrupt-cells = <1>;
+>>> +			interrupts = <20 21 22 23 24 25 26 27>;
+>>> +			interrupt-names = "host2", "host3", "host4",
+>>> +					  "host5", "host6", "host7",
+>>> +					  "host8", "host9";
+>>> +		};
+>>> +
+>>> +		pru0: pru@34000 {
+>>> +			compatible = "ti,am3356-pru";
+>>> +			reg = <0x34000 0x2000>,
+>>> +			      <0x22000 0x400>,
+>>> +			      <0x22400 0x100>;
+>>> +			reg-names = "iram", "control", "debug";
+>>> +			gpcfg = <&pruss_cfg 0x8>;
+>>> +			firmware-name = "am335x-pru0-fw";
+>>> +			interrupt-parent = <&pruss_intc>;
+>>> +			interrupts = <16>, <17>;
+>>> +			interrupt-names = "vring", "kick";
+>>> +		};
+>>> +
+>>> +		pru1: pru@38000 {
+>>> +			compatible = "ti,am3356-pru";
+>>> +			reg = <0x38000 0x2000>,
+>>> +			      <0x24000 0x400>,
+>>> +			      <0x24400 0x100>;
+>>> +			reg-names = "iram", "control", "debug";
+>>> +			gpcfg = <&pruss_cfg 0xc>;
+>>> +			firmware-name = "am335x-pru1-fw";
+>>> +			interrupt-parent = <&pruss_intc>;
+>>> +			interrupts = <18>, <19>;
+>>> +			interrupt-names = "vring", "kick";
+>>> +		};
+>>> +
+>>> +		pruss_mdio: mdio@32400 {
+>>> +			compatible = "ti,davinci_mdio";
+>>> +			reg = <0x32400 0x90>;
+>>> +			clocks = <&dpll_core_m4_ck>;
+>>> +			clock-names = "fck";
+>>> +			bus_freq = <1000000>;
+>>> +			#address-cells = <1>;
+>>> +			#size-cells = <0>;
+>>> +			status = "disabled";
+>>> +		};
+>>> +	};
+>>> +
+>>> +2:	/* PRU application node example */
+>>> +	app_node: app_node {
+>>> +		prus = <&pru0>, <&pru1>;
+>>> +		firmware-name = "pruss-app-fw", "pruss-app-fw-2";
+>>> +		ti,pruss-gp-mux-sel = <2>, <1>;
+>>> +		/* setup interrupts for prus:
+>>> +		   prus[0] => pru1_0: ev=16, chnl=2, host-irq=7,
+>>> +		   prus[1] => pru1_1: ev=19, chnl=1, host-irq=3 */
+>>> +		ti,pru-interrupt-map = <0 16 2 7 >, <1 19 1 3>;
+>>> +	}
+>>>
+>>
+> 
+
