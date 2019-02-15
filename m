@@ -2,106 +2,70 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A30AC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:57:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFBACC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:58:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40C7721924
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:57:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DF9C222BE
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:58:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729773AbfBOQ5T (ORCPT
+        id S1729847AbfBOQ6i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 11:57:19 -0500
-Received: from gateway30.websitewelcome.com ([192.185.150.24]:18016 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726122AbfBOQ5T (ORCPT
+        Fri, 15 Feb 2019 11:58:38 -0500
+Received: from mail-qt1-f176.google.com ([209.85.160.176]:38059 "EHLO
+        mail-qt1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726122AbfBOQ6i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 11:57:19 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id CC50534122
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 10:57:18 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ugnegWJepiQerugneglDtA; Fri, 15 Feb 2019 10:57:18 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=49582 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gugnd-002pMP-Ql; Fri, 15 Feb 2019 10:57:17 -0600
-Date:   Fri, 15 Feb 2019 10:57:17 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] drm/amd/powerplay/smu7_hwmgr: Mark expected switch
- fall-throughs
-Message-ID: <20190215165717.GA30554@embeddedor>
+        Fri, 15 Feb 2019 11:58:38 -0500
+Received: by mail-qt1-f176.google.com with SMTP id 2so11630400qtb.5
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 08:58:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BnmqEcnVe22uqilIXW6353Oi+MEwnNIwNE+n77BIoys=;
+        b=eKzu3j0xRASvx7ZWStmeiqmhCIpkrKpKpTUxi9QIvR+Im0Yh8PNasiwixHSK4ChuLi
+         qIsySfVtkvSCTqsUxpVW3L76l53dvsDdBUM8LmF9ECpVGU7TJjINikEY8V5waMAmRFzZ
+         XCbd1uSUjXT44E3Q83TFZddgVJxydRlbXZZch8bTdN3+TKgte8d+OeEQugYt+uobQKLr
+         xfPgulKinSk70n1oQBniiG39toDNTXNfp5PTcn5FycdK2OKf9D/moLs4sL+K8nAr53qP
+         JkIG3MFUabQF0zcBZ1XvWIKIfZb/+/HujIZ9YoLKAYMszOZnvH5CBo9G0YzDwtH4kARu
+         jPwQ==
+X-Gm-Message-State: AHQUAua6nCY0v5YUK83uuPWQp30gK39pnz1kbWZzaw7ok5kI99PPO0gY
+        w5EIgNmmWfNGYwLtoaPq6nMCyhdrRJm1H6Ty7Zq3uA==
+X-Google-Smtp-Source: AHgI3Ib5CwljJQuLh7lcAZOmNriuFJ6O+ikTT5hEwKeyTDVSlArny4wfaT7T/2dUNcYKZkiRDvOpTpnq6P/FWXfaKpU=
+X-Received: by 2002:a0c:c60f:: with SMTP id v15mr7903362qvi.40.1550249917555;
+ Fri, 15 Feb 2019 08:58:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gugnd-002pMP-Ql
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.119.20]:49582
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 67
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20190204085629.GA14098@jax.urgonet>
+In-Reply-To: <20190204085629.GA14098@jax.urgonet>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 15 Feb 2019 17:58:21 +0100
+Message-ID: <CAK8P3a3-fq8YnkYgCB=+PWV88mfamf5ySi1s0yWcEDtKrjqRxA@mail.gmail.com>
+Subject: Re: [GIT PULL] tee subsys for v5.1
+To:     Jens Wiklander <jens.wiklander@linaro.org>
+Cc:     arm-soc <arm@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch
-cases where we are expecting to fall through.
+On Mon, Feb 4, 2019 at 9:56 AM Jens Wiklander <jens.wiklander@linaro.org> wrote:
+>
+> Hello arm-soc maintainers,
+>
+> Please pull this TEE subsystem enhancement. A tee bus driver framework
+> is introduced in order to support an OP-TEE based RNG driver.
+>
+> The last commit makes changes under drivers/char/hw_random which
+> also are acked by that maintainer.
+>
 
-Warning level 3 was used: -Wimplicit-fallthrough=3
+Pulled into arm/drivers, thanks!
 
-This patch is part of the ongoing efforts to enable
--Wimplicit-fallthrough.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-index c8f5c00dd1e7..48187acac59e 100644
---- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu7_hwmgr.c
-@@ -3681,10 +3681,12 @@ static int smu7_request_link_speed_change_before_state_change(
- 			data->force_pcie_gen = PP_PCIEGen2;
- 			if (current_link_speed == PP_PCIEGen2)
- 				break;
-+			/* fall through */
- 		case PP_PCIEGen2:
- 			if (0 == amdgpu_acpi_pcie_performance_request(hwmgr->adev, PCIE_PERF_REQ_GEN2, false))
- 				break;
- #endif
-+			/* fall through */
- 		default:
- 			data->force_pcie_gen = smu7_get_current_pcie_speed(hwmgr);
- 			break;
--- 
-2.20.1
-
+    Arnd
