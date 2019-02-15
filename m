@@ -2,179 +2,107 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2390C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:48:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 134ABC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 03:02:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70B472192B
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:48:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC0132192C
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 03:02:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XmSId1gK"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N2UbqpTR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387584AbfBOCsi (ORCPT
+        id S1727997AbfBODCM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:48:38 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34537 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726388AbfBOCsi (ORCPT
+        Thu, 14 Feb 2019 22:02:12 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:43838 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726038AbfBODCM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:48:38 -0500
-Received: by mail-pl1-f194.google.com with SMTP id w4so4196987plz.1;
-        Thu, 14 Feb 2019 18:48:38 -0800 (PST)
+        Thu, 14 Feb 2019 22:02:12 -0500
+Received: by mail-pf1-f194.google.com with SMTP id q17so4104984pfh.10
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 19:02:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=YTTXry/F9FnlP7Ccd0qOJUjRwJ9EBC8s025sh3jkVd8=;
-        b=XmSId1gKD+zcMzzQwZN/nKV0g+u0mAd7rGeZQldRufewjEicKtHuYqcKk78zfYTwU8
-         Mx4ei3LDd4zMs7GbC7f1dHS3htRyAztp8zfwIqqJGt16rap32Ob05a1iGfguoB0aSBcW
-         vRZpGgi4FtmcasRuodL4jP5SmMFOreGMtZKNeLjq/DHb/TQ4tKwmi14xzSQ5ayrLF4yq
-         KZeeQVc1HfMv5xhjuHY+dss+duciyxXmiCI729u2wes8eBpqC8hn9iDiN9lIR1h4EEE3
-         WxQIpu0P3wDF/VRBM+nERo4Zkz8k2xxYP/UMIJsvn6PWXF5L6hUWYFnD2AnzgZKjnCpL
-         nFMA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+mYBDXcQURYSYQDCc87+R5sN/LwABa+hRgvYSMc6Iko=;
+        b=N2UbqpTRG2flXF7SzDeA/+wdel+cMyZU7emN20njVw1e6udZI8ig3jGEiR5XpcKo+p
+         y2QncWKfTdHFV4CKJpT28GbLkHzeI2J51lCvv5goAYFrMf2XmH8t5KAl0zFcxU5GkHPl
+         TA6kuDRSZKgl2XwTS5414CQYgZ4Y0lsrtFVAcm6kODXuDCctezCf+NSO4MXRwzO0D1RB
+         0tQYkG75ZjQFJqHPBLR82QnWoZ2bThHCp/55T/n8BCS68Na4NE57xIgdLhFvaom3MxaN
+         i7z+3u95mtYxUDljunMhAKIjpIN459fdJlIoAX2DEqHNW2OfvS+X0/4uxmotVsWzW45S
+         W0ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=YTTXry/F9FnlP7Ccd0qOJUjRwJ9EBC8s025sh3jkVd8=;
-        b=RKcOIvY/EH636KYmpzfigMTxPj1BdHdUx3tHCzlYB1VEZGfJ4KTUAWl4f6MoM+2Ari
-         UlF8J6pKpa4Ld3VpU/QAZtAOaJH+7lGnF1Ht/KGAKNlolwdKXjixOB6bzNEg1iEfvISu
-         hIwvW91I/2IH0ce4lz42r5v1S5UVX6ClOO891PmKYHcC1o6ml7bsWrNhw0IIpzWD816v
-         pQpoZAPdiUKmtB85sl6OHSA9HnhGWgrvdNejDwhnzaDpE3ETPofikN9TUVAOjzS8BL+d
-         xJYqT6pAvAGpBG/w9Q0XbqnqD0RnsUp0cwvo+3gq7+VQScApFzrZMvb1xmNY3qVxqASf
-         jC1g==
-X-Gm-Message-State: AHQUAuaQU7jg/uRhDTPJiWWmNqqhJ/ZJ1mvv9fz+/dezMKIiuro6hW+y
-        GeGAkLya3xPNIYt7qKwFw+s=
-X-Google-Smtp-Source: AHgI3Ibf0LoCcnRNBMoVpx55coJIoDN79ZB6KBTEX8AkCX/7aqraxUvycjUMqGoxGkbJtnOeXGtfUw==
-X-Received: by 2002:a17:902:2a0a:: with SMTP id i10mr7513031plb.323.1550198917870;
-        Thu, 14 Feb 2019 18:48:37 -0800 (PST)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id c124sm5389962pfb.3.2019.02.14.18.48.36
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+mYBDXcQURYSYQDCc87+R5sN/LwABa+hRgvYSMc6Iko=;
+        b=txfC5x6wucJcN1WEjbDuxz8Agkjh4JZwyuuI3RiX8lvWcBT+mCb+ocYR9dXczPv9LO
+         EwcREQx0dHC/4kNl8R6PPrgWgiuL45uC+VfkO6ncfd18GTdj0bsbCzZc1bCdVhtSGJa0
+         p1W/JpVFlvKXGpggwS1KxtCy2sJpvw+E2QV9A87J2Q2Z+AVJgZFXc9RmQoBCaf34Blvj
+         XdqhnL7w08+PJECaYJySFoGK0YY0h9m90z1fc9YyUPNNA2vZa5kqmIOzfjamSH+Q3o3d
+         6KkpmTFG5mDWyc2YcrSkxTsTAiJqvG+FSFncbAk5QjIQHK1VmlfLSS4kNVjITksdzIZE
+         x2xA==
+X-Gm-Message-State: AHQUAuboFqkfe97Ocmjx8HsXG7ab8Rm6NHiHIqd5WlVdQXhONXUWsu/C
+        fAeKDMAZ94mAViEd1ArXt8VI6g==
+X-Google-Smtp-Source: AHgI3IZCE2rUfBlTQFy5mSifPWnyMNwWalA3yaHDw3LpLq1MT710D9V//x8Z09qLcmB1DRKSCTMTDQ==
+X-Received: by 2002:a63:f201:: with SMTP id v1mr3009787pgh.232.1550199731122;
+        Thu, 14 Feb 2019 19:02:11 -0800 (PST)
+Received: from localhost ([122.172.102.63])
+        by smtp.gmail.com with ESMTPSA id z9sm10386367pfd.99.2019.02.14.19.02.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 18:48:37 -0800 (PST)
-Subject: Re: [PATCH v1 1/1] of: unittest: unflatten device tree on UML when
- testing
-To:     Brendan Higgins <brendanhiggins@google.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190212185305.112847-1-brendanhiggins@google.com>
- <20190212185305.112847-2-brendanhiggins@google.com>
- <4cb7ca12-ce60-7516-b7eb-aef08f607acc@gmail.com>
- <CAFd5g441+6ATUKcNz7OstAB6Qd2BqeDh77SNnGUpZGBNvgysmg@mail.gmail.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <bfa00740-9b67-58f9-6273-3de98de952f6@gmail.com>
-Date:   Thu, 14 Feb 2019 18:48:35 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 14 Feb 2019 19:02:09 -0800 (PST)
+Date:   Fri, 15 Feb 2019 08:32:05 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-arm-msm@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>, swboyd@chromium.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Len Brown <len.brown@intel.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 1/2] PM / Domains: Mark "name" const in
+ genpd_dev_pm_attach_by_name()
+Message-ID: <20190215030205.g6ntaiec3kscsaoi@vireshk-i7>
+References: <20190214181249.2749-1-dianders@chromium.org>
 MIME-Version: 1.0
-In-Reply-To: <CAFd5g441+6ATUKcNz7OstAB6Qd2BqeDh77SNnGUpZGBNvgysmg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190214181249.2749-1-dianders@chromium.org>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/14/19 5:26 PM, Brendan Higgins wrote:
-> On Thu, Feb 14, 2019 at 4:10 PM Frank Rowand <frowand.list@gmail.com> wrote:
->>
->> On 2/12/19 10:53 AM, Brendan Higgins wrote:
->>> UML supports enabling OF, and is useful for running the device tree
->>> tests, so add support for unflattening device tree blobs so we can
->>> actually use it.
->>>
->>> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
->>> ---
->>>  drivers/of/unittest.c | 3 +++
->>>  1 file changed, 3 insertions(+)
->>>
->>> diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
->>> index 84427384654d5..effa4e2b9d992 100644
->>> --- a/drivers/of/unittest.c
->>> +++ b/drivers/of/unittest.c
->>> @@ -2527,6 +2527,9 @@ static int __init of_unittest(void)
->>>       }
->>>       of_node_put(np);
->>>
->>> +     if (IS_ENABLED(CONFIG_UML))
->>> +             unflatten_device_tree();
->>> +
->>>       pr_info("start of unittest - you will see error messages\n");
->>>       of_unittest_check_tree_linkage();
->>>       of_unittest_check_phandles();
->>>
->>
->> (Insert my usual disclaimer that I am clueless about UML, I still need to learn
->> about it...)
->>
->> This does not look correct to me.
->>
->> A few lines earlier in of_unittest(), the live devicetree needs to exist for
->> unittest_data_data() and a few of_*() functions to succeed.  So it seems
->> that the unflatten_device_tree() for uml should be at the beginning of
->> of_unittest().
+On 14-02-19, 10:12, Douglas Anderson wrote:
+> The genpd_dev_pm_attach_by_name() simply takes the name and passes it
+> to of_property_match_string() where the argument is "const char *".
+> Adding a const here allows a later patch to add a const to
+> dev_pm_domain_attach_by_name() which allows drivers to pass in a name
+> that was declared "const" in a driver.
 > 
-> It is true that other functions ahead of it depend on the presence of
-> a device tree, but an unflattened tree does get linked in somewhere
-> else. Despite that, this is needed for overlay_base_root. I got
-> similar behavior if you don't link in a flattened device tree on x86.
-> Thus, the order in which you call them doesn't actually seem to
-> matter. I found no difference from changing the order in UML myself.
+> Fixes: 5d6be70add65 ("PM / Domains: Introduce option to attach a device by name to genpd")
+
+Not sure if this should be counted as a fix.
+
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
 > 
-> Without my patch we get the following error,
-> ### dt-test ### FAIL of_unittest_overlay_high_level():2372
-> overlay_base_root not initialized
-> ### dt-test ### end of unittest - 219 passed, 1 failed
-> 
-> With my patch we get:
-> ### dt-test ### end of unittest - 224 passed, 0 failed
+>  drivers/base/power/domain.c | 2 +-
+>  include/linux/pm_domain.h   | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
 
-Thanks for reporting both the failure and the success cases,
-that helps me understand a little bit better.
+For both the patches:
 
-If instead of the above patch, if you add the following (untested,
-not even compile tested) to the beginning of of_unittest():
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-	if (IS_ENABLED(CONFIG_UML))
-		unittest_unflatten_overlay_base();
-
-does that also result in a good test result of:
-
-	### dt-test ### end of unittest - 224 passed, 0 failed
-
-I think I need to find some time to build and boot a UML kernel soon.
-
-My current _guess_ is that the original problem was not a failure to
-unflatten any present devicetree in UML but instead that the UML
-kernel does not call unflatten_device_tree() and thus fails to
-indirectly call unittest_unflatten_overlay_base(), which is
-called by unflatten_device_tree().
-
-unittest_unflatten_overlay_base() is an unfortunate wart that I
-added, but I don't have a better alternative yet.
-
--Frank
-
-> 
-> I used the following .config for these results:
-> CONFIG_OF=y
-> CONFIG_OF_UNITTEST=y
-> CONFIG_OF_OVERLAY=y
-> CONFIG_I2C=y
-> CONFIG_I2C_MUX=y
-> 
->>
->> Rob, if I am correct please revert this patch.
->>
-> 
-> Cheers
-> 
-
+-- 
+viresh
