@@ -2,105 +2,125 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C484C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:16:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67DCAC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:16:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E7F121B18
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:16:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B1092177B
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:16:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="s9jAQbIc"
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="alV+jLns"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733172AbfBOPQF (ORCPT
+        id S2388323AbfBOPQr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 10:16:05 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:38430 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729628AbfBOPQE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 10:16:04 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1FFEkwX031255;
-        Fri, 15 Feb 2019 09:14:46 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1550243686;
-        bh=kr/yj/ET7r+MTu59LeUQG+eCRdcH88hQiZBun5d/RDU=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=s9jAQbIc4BvxFBIZuhqT4iyuxWR88VBhtiWxosS87aDcitHiCux0HSHV4eIJHzvnV
-         eMflI+N8NzPUolahJcfoZtX9gqExBtwonCAqEpavd2ERlxHU7Ii/NzNNt3JTFyYCZw
-         1vN49eXiysZhMN7CaENRobCq/qSUshqtDXi2dVdM=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1FFEkPS055739
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 15 Feb 2019 09:14:46 -0600
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 15
- Feb 2019 09:14:46 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 15 Feb 2019 09:14:45 -0600
-Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1FFEgd4021428;
-        Fri, 15 Feb 2019 09:14:43 -0600
-Subject: Re: [PATCH v4 00/37] ARM: davinci: modernize the irq support
-To:     Bartosz Golaszewski <brgl@bgdev.pl>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        David Lechner <david@lechnology.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-References: <20190214145231.8750-1-brgl@bgdev.pl>
-From:   Sekhar Nori <nsekhar@ti.com>
-Message-ID: <afb69b1f-0c6b-7109-9e1d-edc49adf40f2@ti.com>
-Date:   Fri, 15 Feb 2019 20:44:42 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190214145231.8750-1-brgl@bgdev.pl>
-Content-Type: text/plain; charset="utf-8"
+        Fri, 15 Feb 2019 10:16:47 -0500
+Received: from mail-eopbgr30042.outbound.protection.outlook.com ([40.107.3.42]:58329
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727663AbfBOPQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 10:16:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dNNZCbGO5LbrtC5C4tcy/yhDDog8p+a71zmq6zcKO6A=;
+ b=alV+jLnsp5QYeEivA3NqL+BPBS6UTpjYgM4NuxTilRTXbfPBA2jxONBeplSHUihRpy01aI7tOlqtwAypQyIm4fWAmvJtplXXgy0+W+Q1MLRjBnXGzyNglGtZEsEf1C5ys/dOejmfLEGKdRhgl2Z6z3QpNTTv9pvjwrVU8voM7qk=
+Received: from AM6PR05MB5240.eurprd05.prod.outlook.com (20.177.196.214) by
+ AM6PR05MB6566.eurprd05.prod.outlook.com (20.179.18.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.16; Fri, 15 Feb 2019 15:16:42 +0000
+Received: from AM6PR05MB5240.eurprd05.prod.outlook.com
+ ([fe80::3542:889c:3a85:3866]) by AM6PR05MB5240.eurprd05.prod.outlook.com
+ ([fe80::3542:889c:3a85:3866%5]) with mapi id 15.20.1601.023; Fri, 15 Feb 2019
+ 15:16:42 +0000
+From:   Ido Schimmel <idosch@mellanox.com>
+To:     Colin King <colin.king@canonical.com>
+CC:     Jiri Pirko <jiri@mellanox.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH][next] mlxsw: core: fix spelling mistake "temprature" ->
+ "temperature"
+Thread-Topic: [PATCH][next] mlxsw: core: fix spelling mistake "temprature" ->
+ "temperature"
+Thread-Index: AQHUxUDLgbgCGr1IbUe6IiajOPixQKXg+GOA
+Date:   Fri, 15 Feb 2019 15:16:42 +0000
+Message-ID: <20190215151639.GC18851@splinter>
+References: <20190215151153.17206-1-colin.king@canonical.com>
+In-Reply-To: <20190215151153.17206-1-colin.king@canonical.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM6PR07CA0023.eurprd07.prod.outlook.com
+ (2603:10a6:209:2a::36) To AM6PR05MB5240.eurprd05.prod.outlook.com
+ (2603:10a6:20b:64::22)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=idosch@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [79.176.7.115]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e390cc93-a88b-411e-f9af-08d69358971c
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR05MB6566;
+x-ms-traffictypediagnostic: AM6PR05MB6566:
+x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;AM6PR05MB6566;23:GBOLTD1Gchw9jWR5jIKr5SWv6N307JnPHA0upafXG?=
+ =?us-ascii?Q?HPEOh2t04NU+dZxVtMAjBgQbOMQkpYpjbtY/0SSz4EAKDQY7thBEAe2h//L9?=
+ =?us-ascii?Q?bOVLNe88hhgE8TiqocygILeLsJdJVNaLf2Su4vS/r6Iio/y2Kz6BLTz7Iry5?=
+ =?us-ascii?Q?7PeZ87eyf3wJCwuCcnmlViKo1CfRHnE7WQxygaOhG0PNWkvsWdo+vogrvQqy?=
+ =?us-ascii?Q?CkD2gLq7N4eO5ZKOWyaB/LkMuoBbUDvrzHPKJAvrHes1jKzsCmb6ny3CpwEN?=
+ =?us-ascii?Q?6P0AgSroJcM7nrMe/of0p5j+HAi+d/kvbi6TIIy0RSfv7RsZh+oMHmgAvyMP?=
+ =?us-ascii?Q?86RylVkoVxlSee4S0rw+3eCSE0BE3Yb0wuzgpUjdoMpn5ek6zQfCmgyD3eOT?=
+ =?us-ascii?Q?vx6M1stQjJfBrMjvNjfG+zHSrIGKgbFONYMHjhxAxdncmb/goIDCBa9HBC8H?=
+ =?us-ascii?Q?zkAMd176qHbl6oGFGnVztzcrEHF/RUABNHMKy2u/1KCNfcWOwOKZdiJnfsuh?=
+ =?us-ascii?Q?8opPyoK2Q6CtS8hpKmaO+PyXSiu7Ki2ZDF58oag/AssRYXMRisat4AHNl+a/?=
+ =?us-ascii?Q?sqBnGVlxqX4t1ugDsYwoho6EyoCVB7pZVJDPGkxJ5IUr1GUe2GsQpKG//vlE?=
+ =?us-ascii?Q?NC/UzhRlMixMdSCNXzdVLu6JniQHbTS2xVqqWkoZNofp6NZQfDkrGJ50MVWu?=
+ =?us-ascii?Q?peZqmEXlD0UACtXVZmWIm13SaO8MakUGBo3Wj5aMjwUQ1pyMj3aY3qDMljqx?=
+ =?us-ascii?Q?OAPVaSx/dxjJ8pOBVecKsVOlo90MfcgKMdUjHeE1SdZo76UtoSiZBkWX/7qx?=
+ =?us-ascii?Q?7Zdp52LLF7aP9r/KWlwqExTBE4S//Pe97QQdYjIrW8At5FjLEIfCxJiKXAQM?=
+ =?us-ascii?Q?wxYzy5ni7IYUgtGwDcfePdP9ay36M+tcyccHZ4q7A3ERbRv6HRuczxnPUlWS?=
+ =?us-ascii?Q?MpihOkqwTobgRmyibBJp+QbxN2iK74ZZ3HHFt0asLAuODiWZ9IZ9oAlCMeKF?=
+ =?us-ascii?Q?texLcwEZas1YjmtbWIobn7lky85ylxpwiTgrxuOr/5Z8DNOgLKbrAr7mHmCi?=
+ =?us-ascii?Q?xeMmCLc5GA90RpT0gd5kl7VrNC+7DOzVA6bRG2ap1plRCIIQgWq2tKxI40B9?=
+ =?us-ascii?Q?h/XfsIu8uvi0B4ORy/SAwlXc2wHfDRt576+HAE5F8r5qorApC79tVBx74nks?=
+ =?us-ascii?Q?CLTOEMZ0J3N0q/KnRIPamZTYIOLXgQ+D6XBMAitPPa/pvEJ3w2CizJ6y8Neb?=
+ =?us-ascii?Q?tKJwNCqRjd878qgZ+0gQVoWx6qvyIboy8MqnF7zaGCTPRV2uzE+17+yGE28J?=
+ =?us-ascii?B?Zz09?=
+x-microsoft-antispam-prvs: <AM6PR05MB6566233ECC25B9E9BF90D8B3BF600@AM6PR05MB6566.eurprd05.prod.outlook.com>
+x-forefront-prvs: 09497C15EB
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(396003)(366004)(39860400002)(376002)(346002)(136003)(189003)(199004)(81156014)(1076003)(14454004)(97736004)(9686003)(8936002)(186003)(7736002)(386003)(305945005)(558084003)(478600001)(486006)(52116002)(6436002)(229853002)(26005)(68736007)(11346002)(105586002)(6506007)(476003)(33896004)(6512007)(6486002)(8676002)(6916009)(86362001)(99286004)(446003)(76176011)(25786009)(53936002)(4326008)(6116002)(3846002)(66066001)(316002)(54906003)(71190400001)(81166006)(256004)(71200400001)(33716001)(102836004)(106356001)(6246003)(2906002)(33656002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR05MB6566;H:AM6PR05MB5240.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: GLAA3X7wycEOxj3vVvOReaYW9Q9PIJQh3lF9q3UD4YTX7oaa1pC+W7tfXret2KZCrB3l4yw+7e/0b6JIm4gyhIupPqppF/45lXrIxWEI8gs5mrqroq5cDnfADN8XhHJlUiYNPBL86793FE3INx8mMy7V3z2QUk0aU45tdUrsCdrODHHpWBNo18CxER50blpD+Y0tHLx/ZlXTjGC83Q/hcDBkFO9zPvEFclrzFOWt3itnAJ7WeDeU2T96tdxJsnCMtNVBSWcBJqEv5j+hhX4rnQGxn+4g+Kv8HzUQL7+ybU4kodZzM/LVIyZmtwoB+j1M7gFOR7lwPulNATujXZmI1dJv1KQwnPlzmY/SCVDS8BcpVfKJTxh2xNK9MbWoZyODeUfxmVAmIEt6IB+o/LKB5NbgF0YfihVQYA4p0a5ZjhE=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <42E2E64ABD7B4B48B18646015F6C78F8@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e390cc93-a88b-411e-f9af-08d69358971c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Feb 2019 15:16:41.8125
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB6566
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Marc,
+On Fri, Feb 15, 2019 at 03:11:53PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> There is a spelling mistake in several dev_err messages, fix these.
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-On 14/02/19 8:21 PM, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> This series ports the davinci platform to using SPARSE_IRQ, cleans up
-> the irqchip drivers and moves them over to drivers/irqchip.
-> 
-> The series can be logically split into five parts. The first patch
-> preemptively fixes a problem in an input driver that would have caused
-> problems later. Patches (2-9) aim at introducing support for SPARSE_IRQ.
-> They contain a couple changes required for that functionality and do some
-> cleanup at the end.
-> 
-> Third part (10-22) makes the aintc driver suitable for drivers/irqchip
-> and eventually moves it over there.
-> 
-> Part 4 (23-36) does the same for the cp-intc driver.
-> 
-> Last patch removes unnecessary code.
-> 
-> The series has been tested on da850-lcdk (for cp-intc) and
-> dm365-evm (for aintc).
+Reviewed-by: Ido Schimmel <idosch@mellanox.com>
 
-Do you have any further comments? If no, I would like to apply for v5.1
-with your ack.
-
-Thanks,
-Sekhar
+Thanks!
