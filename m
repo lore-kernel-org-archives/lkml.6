@@ -2,101 +2,79 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=CHARSET_FARAWAY_HEADER,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 697BBC4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67D7AC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:17:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DB6321920
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:11:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D0BD21B1C
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:17:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403932AbfBOILq convert rfc822-to-8bit (ORCPT
+        id S2403999AbfBOIRn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 03:11:46 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:43286 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390540AbfBOILq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 03:11:46 -0500
-Received: by mail-ot1-f67.google.com with SMTP id n71so15129661ota.10
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 00:11:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=3cA10avh2RJqVKzPkWhDR1H+JTQFljMSI7C8GFBdv68=;
-        b=A39PI9XlvE4TLxdTv/iDNW7rpx52s/cKDHDbL3jPpJS28sazivQ2tSmwz6IUAAPd9G
-         cZ9BA+keR762FH0guvTdZ21dokOzI0dJ53Jm75Gewe49jcB658xo5WH1Nfz2Htjj4hLU
-         Xp9cJFK5ms7wuHYAsKVsxPA0agxAwxXuAa5dYZIzYqTMpU+iLYC38gNF4+a/Yb8+QN3k
-         G5T1JokFQIqWjqnmccXyLIKjKeD1ZSnN3WJx/c7njoQMyqaHf06UEC60074l+iWe3Qz9
-         0jMqkGMShl2Vxpb64LvDvW4TKfn3CrIyWrlMrmsc1So7kyLlXuP8GpWl1tnQydCNpl0L
-         qwnQ==
-X-Gm-Message-State: AHQUAuafuAjV/hFBY7Sp5M6qSYFpIriojHpG3usjWcyK1pmmXSDA2hOW
-        2PRwIEKbYKBKLePSB4nCNFQG607CxY65LScLQIM=
-X-Google-Smtp-Source: AHgI3IZHGRbHp85QSkjsm/PAG/vOAXBxQ6nW2o9ez2D+Wch/1sVS8llpq8a4EHj6Z+hG1Zdy1CikmZcMS/w2H6j2vxQ=
-X-Received: by 2002:a9d:730d:: with SMTP id e13mr4671323otk.281.1550218305450;
- Fri, 15 Feb 2019 00:11:45 -0800 (PST)
+        Fri, 15 Feb 2019 03:17:43 -0500
+Received: from szxga08-in.huawei.com ([45.249.212.255]:39266 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726008AbfBOIRm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 03:17:42 -0500
+Received: from DGGEMA405-HUB.china.huawei.com (unknown [172.30.72.53])
+        by Forcepoint Email with ESMTP id B5C208B2A1A9FFB50115;
+        Fri, 15 Feb 2019 16:17:39 +0800 (CST)
+Received: from DGGEMA503-MBX.china.huawei.com ([169.254.1.64]) by
+ DGGEMA405-HUB.china.huawei.com ([10.3.20.46]) with mapi id 14.03.0415.000;
+ Fri, 15 Feb 2019 16:17:36 +0800
+From:   "chenzefeng (A)" <chenzefeng2@huawei.com>
+To:     Jiri Kosina <jikos@kernel.org>
+CC:     "hjl.tools@gmail.com" <hjl.tools@gmail.com>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "sjenning@redhat.com" <sjenning@redhat.com>,
+        "vojtech@suse.com" <vojtech@suse.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "live-patching@vger.kernel.org" <live-patching@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: =?gb2312?B?tPC4tDogW1BBVENIXSB4ODY6IGxpdmVwYXRjaDogVHJlYXQgUl9YODZfNjRf?=
+ =?gb2312?B?UExUMzIgYXMgUl9YODZfNjRfUEMzMg==?=
+Thread-Topic: [PATCH] x86: livepatch: Treat R_X86_64_PLT32 as R_X86_64_PC32
+Thread-Index: AdTE0VS6YxuMC8nAT2u21pUoQUU8y///1zKA//9wvuA=
+Date:   Fri, 15 Feb 2019 08:17:36 +0000
+Message-ID: <79A62BFA453EFB42B7A4E40AD8F3A2264F2A889B@DGGEMA503-MBX.china.huawei.com>
+References: <79A62BFA453EFB42B7A4E40AD8F3A2264F2A872D@DGGEMA503-MBX.china.huawei.com>
+ <nycvar.YFH.7.76.1902150826400.11598@cbobk.fhfr.pm>
+In-Reply-To: <nycvar.YFH.7.76.1902150826400.11598@cbobk.fhfr.pm>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.57.50.95]
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20181208154624.6504-1-malat@debian.org>
-In-Reply-To: <20181208154624.6504-1-malat@debian.org>
-From:   Mathieu Malaterre <malat@debian.org>
-Date:   Fri, 15 Feb 2019 09:11:34 +0100
-Message-ID: <CA+7wUswJy0z_+aytawQv6+1pOVvH2z8SfOz1sxziHtgjqZ1F9g@mail.gmail.com>
-Subject: Re: [PATCH] powerpc/ptrace: Add prototype for function pt_regs_check
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Dec 8, 2018 at 4:46 PM Mathieu Malaterre <malat@debian.org> wrote:
->
-> `pt_regs_check` is a dummy function, its purpose is to break the build
-> if struct pt_regs and struct user_pt_regs don't match.
->
-> This function has no functionnal purpose, and will get eliminated at
-> link time or after init depending on CONFIG_LD_DEAD_CODE_DATA_ELIMINATION
->
-> This commit adds a prototype to fix warning at W=1:
->
->   arch/powerpc/kernel/ptrace.c:3339:13: error: no previous prototype for ‘pt_regs_check’ [-Werror=missing-prototypes]
->
-> Suggested-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> ---
->  arch/powerpc/kernel/ptrace.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/arch/powerpc/kernel/ptrace.c b/arch/powerpc/kernel/ptrace.c
-> index a398999d0770..341c0060b4c8 100644
-> --- a/arch/powerpc/kernel/ptrace.c
-> +++ b/arch/powerpc/kernel/ptrace.c
-> @@ -3338,6 +3338,10 @@ void do_syscall_trace_leave(struct pt_regs *regs)
->         user_enter();
->  }
->
-> +void __init pt_regs_check(void);
-> +/* dummy function, its purpose is to break the build if struct pt_regs and
-> + * struct user_pt_regs don't match.
-> + */
-
-Another trick which seems to work with GCC is:
-
--void __init pt_regs_check(void)
-+static inline void __init pt_regs_check(void)
-
->  void __init pt_regs_check(void)
->  {
->         BUILD_BUG_ON(offsetof(struct pt_regs, gpr) !=
-> --
-> 2.19.2
->
+SEksIEppcmkgS29zaW5hLA0KDQpPbiBGcmksIDE1IEZlYiAyMDE5LCBKaXJpIEtvc2luYSB3cm90
+ZToNCj5PbiBGcmksIDE1IEZlYiAyMDE5LCBjaGVuemVmZW5nIChBKSB3cm90ZToNCg0KPj4gT24g
+eDg2LTY0LCBmb3IgMzItYml0IFBDLXJlbGFjaXZlIGJyYW5jaGVzLCB3ZSBjYW4gZ2VuZXJhdGUg
+UExUMzIgDQo+PiByZWxvY2F0aW9uLCBpbnN0ZWFkIG9mIFBDMzIgcmVsb2NhdGlvbi4gYW5kIFJf
+WDg2XzY0X1BMVDMyIGNhbiBiZSANCj4+IHRyZWF0ZWQgdGhlIHNhbWUgYXMgUl9YODZfNjRfUEMz
+MiBzaW5jZSBsaW51eCBrZXJuZWwgZG9lc24ndCB1c2UgUExULg0KPj4gDQo+PiBJbiBsaW51eCA0
+LjQgY29tbWl0IGIyMWViZjJmYjRjZCAoIng4NjogVHJlYXQgUl9YODZfNjRfUExUMzIgYXMNCj4+
+IFJfWDg2XzY0X1BDMzIiKSBiZWVuIGZpeGVkIGZvciB0aGUgbW9kdWxlIGxvYWRpbmcsIGJ1dCBu
+b3QgZml4ZWQgZm9yIA0KPj4gbGl2ZXBhdGNoIHJlbG9jYXRpb24sIHdoaWNoIHdpbGwgZmFpbCB0
+byBsb2FkIGxpdmVwYXRjaCB3aXRoIHRoZSBlcnJvciANCj4+IG1lc3NhZ2UgYXMgZm9sbG93OiBy
+ZWxvY2F0aW9uIGZhaWxlZCBmb3Igc3ltYm9sIDxzeW1ib2wgbmFtZT4gYXQgDQo+PiA8c3ltYm9s
+DQo+PiBhZGRyZXNzPg0KPj4gDQo+PiBTaWduZWQtb2ZmLWJ5OiBjaGVuemVmZW5nIDxjaGVuemVm
+ZW5nMkBodWF3ZWkuY29tPg0KDQo+V2hhdCBrZXJuZWwgdmVyc2lvbiBpcyB0aGlzIHBhdGNoIGJh
+c2VkIG9uPyBXZSd2ZSBnb3QgcmlkIG9mIHg4Ni1zcGVjaWZpYyBtb2R1bGUgbG9hZGluZyBzdHVi
+IGFuZCBvZmZsb2FkZWQgYWxsIHRoZSByZWxvY2F0aW9uIGhhbmRsaW5nIHRvIGdlbmVyaWMga21v
+ZCBsb2FkZXIgbG9uZyB0aW1lIGFnby4NCg0KVGhlIHBhdGNoIGlzIGJhc2VkIG9uIGtlcm5lbCB2
+ZXJzaW9uIExpbnV4IDQuNC4xNzQuDQoNClRoYW5rcy4NCmNoZW56ZWZlbmcNCg0K
