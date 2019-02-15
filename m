@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D9BCC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:54:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76751C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:54:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36A62222D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:54:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CA70222D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:54:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fHJi0B45"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s5Txl0w0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394162AbfBOWyZ (ORCPT
+        id S2394194AbfBOWyg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 17:54:25 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35417 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403879AbfBOWx0 (ORCPT
+        Fri, 15 Feb 2019 17:54:36 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34379 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394098AbfBOWxW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 17:53:26 -0500
-Received: by mail-pl1-f194.google.com with SMTP id p8so5656279plo.2;
-        Fri, 15 Feb 2019 14:53:26 -0800 (PST)
+        Fri, 15 Feb 2019 17:53:22 -0500
+Received: by mail-pf1-f195.google.com with SMTP id j18so5522501pfe.1;
+        Fri, 15 Feb 2019 14:53:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=VDGmRMfeqZv9NxuAeBQdbUzJUsHV0xq2Pnb3Ma6yPoU=;
-        b=fHJi0B45dpX2nXBWIkj7n3csq8XA3GJLOSf315HQEMWlPPy4SQujmTv8qbRGV3YBVu
-         AJZTtb5w3vxVwBoRm+nCexc7xqBPHXXkddRtnOr4cNqB7m7RfdPytw6NMrRQUHyHkm0h
-         VXeVDzisTdNpAfag4yEVSjzq/BgPqnMZDGGZYL/Kl/2dUDO/Gt1pO/ROoGkQp7+6ef9u
-         JCm1npFS938zhKmgaLEPIumpPH6hWU8uzL+jImgNY4kihFf0twkjlIV20J9yv83Gkmsp
-         Z8DlSz2KfTtAlbtm/C+uDBKtU2QgQ1FYNLzAK76IxmELr+Eyb/msyOujzxA6F5J6x0XY
-         Jh/Q==
+        bh=Y8cTug1MK//k9Db5o5+0BQipNr3buFiSVSYrdmVTLt0=;
+        b=s5Txl0w08kvB8rj/qhwE8TSWEgp5Pv+gpFpYiLq9AcCIsSRkIp7AGb227mXMKAmEvQ
+         oEwl6VcefRBKfq/AONU9fLscQIEHODKVXT31KnnZU4wOpjJutyoqlnt7ir4MREEcM2zY
+         757a2pxH49+RWT3hlwxCN/UOKaoUyKK3iNf0iSAl/TcW9Zruf7LW5UMsg5V+zopNdFCs
+         Ge5z/WxPQQMOQ1Z3mCROh4RTMGnvNZWpKKQMXvfWw3mgjNcu/euCHtGhPZ6PtVvBkIVz
+         W15vz7lS9lY8xt1oxpHAJeT+OszxemQQjKr2Ssbh1wHXLvFRS1L7aly2rQYc7u9r2SxQ
+         a3Ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=VDGmRMfeqZv9NxuAeBQdbUzJUsHV0xq2Pnb3Ma6yPoU=;
-        b=lEfljHHQlG79cROt/IcQHNXoAtqlmqFwJ0gMqrzO91Eqx4xq6ioX73WmRCzAAliRuz
-         m7zBoSbOHQ+mqkTJH2WWexX+BClvrEzLVtDCF8k0NRK2rTBPgd5CVbnvrvOiVVnrlltf
-         GwvAoLzumo5Su5AIphhMmnobjgHHzMTMsRHCK0di2dNJ/dZ2mYudIuGQEc3maWtgoqT4
-         ePaovHO92AOc30pc/qKSYZervQwbTLrfbWEbE235jbmgAKzGqX1TsLm3FGPIkBOzJnZt
-         QQYGnSeiqWMQKq2OnaMRwJhnP67dM/W5AQw50QPuLo+Xg8aLT7IAbq9f4vcHX5pCPhGM
-         fe4w==
-X-Gm-Message-State: AHQUAuZjTZ61cAIO8sIGo72yiR4HSYjiITeIXDUL34ZDw/Phrje0nvDO
-        2ww0F+YA1a9wa3AELNmu/1r3KsY0
-X-Google-Smtp-Source: AHgI3IYExsjGZGgMZythUEinhQXDH0azMb5/UK0vIAWYOeJntw8HdG04ym59tCbjPSA2zZWOBowMrw==
-X-Received: by 2002:a17:902:860a:: with SMTP id f10mr12467915plo.136.1550271205863;
-        Fri, 15 Feb 2019 14:53:25 -0800 (PST)
+        bh=Y8cTug1MK//k9Db5o5+0BQipNr3buFiSVSYrdmVTLt0=;
+        b=i8K5llg7dvHsINVdD1aDR+t+inCtn3xgLeWpFmID5OYqokdXQV1xYYlkvaKXpnWxjg
+         z/IlDSnbc2zuYLsukhY6WrWW7T9WEadRsIKQAUGMcRGi51Cdica4wAy05Vrg3JMbwPEA
+         w+zKhhzGyBW77eiMN0W4rf9i5bPMnvXEI0O5OgaJafnlMCLygjHtvcP24jPGWCj0lBVs
+         B2mMsr/pm1TXsZvR/reKzMnDjka3h2zzKaEkPg8BFtvVCGgA7BeMusROm7QfxcZCtKts
+         AmoXur3uIQ57RK+X2Use/g8nufWBdDR1qNfOpZYQmim93/actWdWPzrC0lNLp9l6J2IS
+         9xsQ==
+X-Gm-Message-State: AHQUAuYYeV1p880hlrL1g9osZVTXJwCz4Ta+GW6zIn80Z5+MzfvuvKla
+        u2SydMbtCiq8RvH0N/KwUqRphjrj
+X-Google-Smtp-Source: AHgI3IYBfnsMDyH9khWQY2kSPHbFcDsEfonNacKv1F0B/vz+BQ1ns1JAgsYflwhgh3oJv7BKqvnZ/g==
+X-Received: by 2002:a63:6c43:: with SMTP id h64mr7188341pgc.22.1550271201323;
+        Fri, 15 Feb 2019 14:53:21 -0800 (PST)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id d129sm9719905pfc.31.2019.02.15.14.53.24
+        by smtp.gmail.com with ESMTPSA id d129sm9719905pfc.31.2019.02.15.14.53.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Feb 2019 14:53:25 -0800 (PST)
+        Fri, 15 Feb 2019 14:53:20 -0800 (PST)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     netdev@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -64,9 +64,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         devel@driverdev.osuosl.org (open list:STAGING SUBSYSTEM),
         bridge@lists.linux-foundation.org (moderated list:ETHERNET BRIDGE),
         jiri@mellanox.com, andrew@lunn.ch, vivien.didelot@gmail.com
-Subject: [PATCH net-next v2 5/9] net: dsa: Add setter for SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS
-Date:   Fri, 15 Feb 2019 14:53:09 -0800
-Message-Id: <20190215225313.32303-6-f.fainelli@gmail.com>
+Subject: [PATCH net-next v2 2/9] net: switchdev: Add PORT_PRE_BRIDGE_FLAGS
+Date:   Fri, 15 Feb 2019 14:53:06 -0800
+Message-Id: <20190215225313.32303-3-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190215225313.32303-1-f.fainelli@gmail.com>
 References: <20190215225313.32303-1-f.fainelli@gmail.com>
@@ -75,85 +75,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for removing SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS_SUPPORT,
-add support for a function that processes the
-SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS and
-SWITCHDEV_ATTR_ID_PORT_PRE_BRIDGE_FLAGS attributes and returns not
-supported for any flag set, since DSA does not currently support
-toggling those bridge port attributes (yet).
+In preparation for removing switchdev_port_attr_get(), introduce
+PORT_PRE_BRIDGE_FLAGS which will be called through
+switchdev_port_attr_set(), in the caller's context (possibly atomic) and
+which must be checked by the switchdev driver in order to return whether
+the operation is supported or not.
+
+This is entirely analoguous to how the BRIDGE_FLAGS_SUPPORT works,
+except it goes through a set() instead of get().
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- net/dsa/dsa_priv.h |  6 ++++++
- net/dsa/port.c     | 17 +++++++++++++++++
- net/dsa/slave.c    |  9 +++++++++
- 3 files changed, 32 insertions(+)
+ include/net/switchdev.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/net/dsa/dsa_priv.h b/net/dsa/dsa_priv.h
-index 1f4972dab9f2..3d58dc4f4d46 100644
---- a/net/dsa/dsa_priv.h
-+++ b/net/dsa/dsa_priv.h
-@@ -150,6 +150,12 @@ int dsa_port_vlan_filtering(struct dsa_port *dp, bool vlan_filtering,
- 			    struct switchdev_trans *trans);
- int dsa_port_ageing_time(struct dsa_port *dp, clock_t ageing_clock,
- 			 struct switchdev_trans *trans);
-+int dsa_port_bridge_port_pre_flags_set(struct dsa_port *dp,
-+				       unsigned long brport_flags,
-+				       struct switchdev_trans *trans);
-+int dsa_port_bridge_port_flags_set(struct dsa_port *dp,
-+				   unsigned long brport_flags,
-+				   struct switchdev_trans *trans);
- int dsa_port_fdb_add(struct dsa_port *dp, const unsigned char *addr,
- 		     u16 vid);
- int dsa_port_fdb_del(struct dsa_port *dp, const unsigned char *addr,
-diff --git a/net/dsa/port.c b/net/dsa/port.c
-index 2d7e01b23572..c67a329d4414 100644
---- a/net/dsa/port.c
-+++ b/net/dsa/port.c
-@@ -177,6 +177,23 @@ int dsa_port_ageing_time(struct dsa_port *dp, clock_t ageing_clock,
- 	return dsa_port_notify(dp, DSA_NOTIFIER_AGEING_TIME, &info);
- }
- 
-+int dsa_port_bridge_port_pre_flags_set(struct dsa_port *dp,
-+				       unsigned long brport_flags,
-+				       struct switchdev_trans *trans)
-+{
-+	if (switchdev_trans_ph_prepare(trans))
-+		return 0;
-+
-+	return -EINVAL;
-+}
-+
-+int dsa_port_bridge_port_flags_set(struct dsa_port *dp,
-+				   unsigned long brport_flags,
-+				   struct switchdev_trans *trans)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
- int dsa_port_fdb_add(struct dsa_port *dp, const unsigned char *addr,
- 		     u16 vid)
- {
-diff --git a/net/dsa/slave.c b/net/dsa/slave.c
-index 2e5e7c04821b..d3370e840956 100644
---- a/net/dsa/slave.c
-+++ b/net/dsa/slave.c
-@@ -295,6 +295,15 @@ static int dsa_slave_port_attr_set(struct net_device *dev,
- 	case SWITCHDEV_ATTR_ID_BRIDGE_AGEING_TIME:
- 		ret = dsa_port_ageing_time(dp, attr->u.ageing_time, trans);
- 		break;
-+	case SWITCHDEV_ATTR_ID_PORT_PRE_BRIDGE_FLAGS:
-+		ret = dsa_port_bridge_port_pre_flags_set(dp,
-+							 attr->u.brport_flags,
-+							 trans);
-+		break;
-+	case SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS:
-+		ret = dsa_port_bridge_port_flags_set(dp, attr->u.brport_flags,
-+						     trans);
-+		break;
- 	default:
- 		ret = -EOPNOTSUPP;
- 		break;
+diff --git a/include/net/switchdev.h b/include/net/switchdev.h
+index 5e87b54c5dc5..de72b0a3867f 100644
+--- a/include/net/switchdev.h
++++ b/include/net/switchdev.h
+@@ -46,6 +46,7 @@ enum switchdev_attr_id {
+ 	SWITCHDEV_ATTR_ID_PORT_STP_STATE,
+ 	SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS,
+ 	SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS_SUPPORT,
++	SWITCHDEV_ATTR_ID_PORT_PRE_BRIDGE_FLAGS,
+ 	SWITCHDEV_ATTR_ID_PORT_MROUTER,
+ 	SWITCHDEV_ATTR_ID_BRIDGE_AGEING_TIME,
+ 	SWITCHDEV_ATTR_ID_BRIDGE_VLAN_FILTERING,
+@@ -61,7 +62,7 @@ struct switchdev_attr {
+ 	void (*complete)(struct net_device *dev, int err, void *priv);
+ 	union {
+ 		u8 stp_state;				/* PORT_STP_STATE */
+-		unsigned long brport_flags;		/* PORT_BRIDGE_FLAGS */
++		unsigned long brport_flags;		/* PORT_{PRE}_BRIDGE_FLAGS */
+ 		unsigned long brport_flags_support;	/* PORT_BRIDGE_FLAGS_SUPPORT */
+ 		bool mrouter;				/* PORT_MROUTER */
+ 		clock_t ageing_time;			/* BRIDGE_AGEING_TIME */
 -- 
 2.17.1
 
