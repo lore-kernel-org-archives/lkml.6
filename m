@@ -2,276 +2,209 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE186C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 21:59:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A498C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 21:59:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D7122192C
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 21:59:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="PsPdinbT"
+	by mail.kernel.org (Postfix) with ESMTP id 00F40222DF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 21:59:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732517AbfBOV7L (ORCPT
+        id S2388583AbfBOV7q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 16:59:11 -0500
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:48404 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728033AbfBOV7L (ORCPT
+        Fri, 15 Feb 2019 16:59:46 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50918 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387500AbfBOV7p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 16:59:11 -0500
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1FLv8l3027214
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 13:59:10 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=Wc7a9qP6Vxx8ER0wOcOGskdZiqhaz8FWnNFLY3xTQ+0=;
- b=PsPdinbTbpNGo/jir59/GenK2wqr9WTw/5Ov3hNUhxKPeqySfIMI4IhIgHeN4RD+HoF8
- c+wMMhoXpp+Hdkfas43vRlcf0kQ99/Oe6ASo3cCAK85V0DQpSz5iIf0TkI+Bzwu0H/v1
- 5fxqJCmWdAhe/+1qeYYCF0SuN5hBEHqPQh0= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2qp3fj8fwk-19
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 13:59:10 -0800
-Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::126) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
- Fri, 15 Feb 2019 13:54:12 -0800
-Received: by devbig006.ftw2.facebook.com (Postfix, from userid 4523)
-        id 62B7962E20EE; Fri, 15 Feb 2019 13:54:10 -0800 (PST)
-Smtp-Origin-Hostprefix: devbig
-From:   Song Liu <songliubraving@fb.com>
-Smtp-Origin-Hostname: devbig006.ftw2.facebook.com
-To:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <ast@kernel.org>, <daniel@iogearbox.net>, <kernel-team@fb.com>,
-        <peterz@infradead.org>, <acme@redhat.com>, <jolsa@kernel.org>,
-        <namhyung@kernel.org>, Song Liu <songliubraving@fb.com>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH v3 perf,bpf 06/11] perf, bpf: save bpf_prog_info information as headers to perf.data
-Date:   Fri, 15 Feb 2019 13:53:49 -0800
-Message-ID: <20190215215354.3114006-7-songliubraving@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190215215354.3114006-1-songliubraving@fb.com>
-References: <20190215215354.3114006-1-songliubraving@fb.com>
-X-FB-Internal: Safe
+        Fri, 15 Feb 2019 16:59:45 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1FLnpNI091288
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 16:59:44 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qp5me8b33-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 16:59:43 -0500
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Fri, 15 Feb 2019 21:59:42 -0000
+Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 15 Feb 2019 21:59:38 -0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1FLxYQd24314028
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Feb 2019 21:59:35 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D2E96AE05C;
+        Fri, 15 Feb 2019 21:59:34 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2BCBBAE060;
+        Fri, 15 Feb 2019 21:59:34 +0000 (GMT)
+Received: from [9.80.239.175] (unknown [9.80.239.175])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 15 Feb 2019 21:59:34 +0000 (GMT)
+Subject: Re: [PATCH v3 1/9] s390: vfio_ap: link the vfio_ap devices to the
+ vfio_ap bus subsystem
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     pmorel@linux.ibm.com, borntraeger@de.ibm.com,
+        alex.williamson@redhat.com, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, kvm@vger.kernel.org,
+        frankja@linux.ibm.com, pasic@linux.ibm.com, david@redhat.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        freude@linux.ibm.com, mimu@linux.ibm.com
+References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
+ <1550152269-6317-2-git-send-email-pmorel@linux.ibm.com>
+ <20190214155441.087d2a68.cohuck@redhat.com>
+ <9403117a-04a6-8f69-2a61-f96d35a59555@linux.ibm.com>
+ <20190214175730.4ab609ae.cohuck@redhat.com>
+ <9200b1f8-874f-ffa7-bef0-19ca570d7ac1@linux.ibm.com>
+ <eac03540-a499-fa0f-1a4a-b5cc99030775@linux.ibm.com>
+ <20190215101118.5417d725.cohuck@redhat.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Fri, 15 Feb 2019 16:59:33 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20190215101118.5417d725.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 19021521-0052-0000-0000-0000038B4492
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010604; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000280; SDB=6.01161587; UDB=6.00606354; IPR=6.00942148;
+ MB=3.00025604; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-15 21:59:40
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021521-0053-0000-0000-00005FDC4AEB
+Message-Id: <f38c99e6-bb25-9179-e4cd-20ba8482111f@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-15_16:,,
  signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902150143
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch enables perf-record to save bpf_prog_info information as
-headers to perf.data. A new header type HEADER_BPF_PROG_INFO is
-introduced for this data.
+On 2/15/19 4:11 AM, Cornelia Huck wrote:
+> On Thu, 14 Feb 2019 13:30:59 -0500
+> Tony Krowiak <akrowiak@linux.ibm.com> wrote:
+> 
+>> On 2/14/19 12:36 PM, Pierre Morel wrote:
+>>> On 14/02/2019 17:57, Cornelia Huck wrote:
+>>>> On Thu, 14 Feb 2019 16:47:30 +0100 Pierre Morel
+>>>> <pmorel@linux.ibm.com> wrote:
+>>>>   
+>>>>> On 14/02/2019 15:54, Cornelia Huck wrote:
+>>>>>> On Thu, 14 Feb 2019 14:51:01 +0100 Pierre Morel
+>>>>>> <pmorel@linux.ibm.com> wrote:
+> 
+>>>>>>> -    matrix_dev->device.type = &vfio_ap_dev_type;
+>>>>>>> dev_set_name(&matrix_dev->device, "%s", VFIO_AP_DEV_NAME);
+>>>>>>> matrix_dev->device.parent = root_device; +
+>>>>>>> matrix_dev->device.bus = &matrix_bus; matrix_dev->device.release =
+>>>>>>> vfio_ap_matrix_dev_release; -
+>>>>>>> matrix_dev->device.driver = &vfio_ap_drv.driver; +
+>>>>>>> matrix_dev->vfio_ap_drv = &vfio_ap_drv;
+>>>>>>
+>>>>>> Can't you get that structure through matrix_dev->device.driver
+>>>>>> instead when you need it in the function below?
+>>>>>
+>>>>> Not anymore. We have two different drivers and devices matrix_drv
+>>>>> <-> matrix_dev and vfio_ap_drv <-> ap_devices
+>>>>>
+>>>>> The driver behind the matrix_dev->dev->driver is matrix_drv what is
+>>>>> needed here is vfio_ap_drv.
+>>>>
+>>>> Wait, we had tacked a driver for ap devices unto a matrix device,
+>>>> which is not on the ap bus?
+>>
+>> It's really a bit more complicated than that. Without going into a
+>> lengthy description of the history of AP passthrough support, suffice it
+>> to say that we needed a device to serve as the parent of each mediated
+>> device used to configure a matrix of AP adapter IDs and domain indexes
+>> identifying the devices to which a guest would be granted access. The
+>> AP devices themselves are attached to the AP bus, but the matrix device
+>> is an artificial (virtual?) device whose sole purpose in life is to
+>> serve as an anchor for the mediated devices whose sysfs interfaces are
+>> created and managed by the vfio_ap device driver. The matrix device
+>> itself is created by the vfio_ap device driver - when it is initialized
+>> - for that purpose. In hindsight, maybe there was a better way to
+>> implement this, but neither this patch nor this discussion belongs in
+>> this series. It distracts from discussion of interrupt support which is
+>> the sole purpose of the patch series.
+> 
+> The we-need-a-parent part is fine; but whatever we're doing with that
+> driver just looks wrong, so that even the new bus that basically does
+> nothing looks better...
 
-Signed-off-by: Song Liu <songliubraving@fb.com>
----
- tools/perf/util/header.c | 136 ++++++++++++++++++++++++++++++++++++++-
- tools/perf/util/header.h |   1 +
- 2 files changed, 136 insertions(+), 1 deletion(-)
+I believe there might be a much better way to handle this which is why
+I objected to this patch being delivered with this series, which
+provides AP interrupt support. Quite simply, this patch has no
+relationship to interrupt support and should be considered as an item
+unto itself. To conduct a review within the context of interrupt
+support distracts focus from the pertinent subject matter.
 
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index dec6d218c31c..0889ad797940 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -18,6 +18,7 @@
- #include <sys/utsname.h>
- #include <linux/time64.h>
- #include <dirent.h>
-+#include <bpf/libbpf.h>
- 
- #include "evlist.h"
- #include "evsel.h"
-@@ -39,6 +40,7 @@
- #include "tool.h"
- #include "time-utils.h"
- #include "units.h"
-+#include "bpf-event.h"
- 
- #include "sane_ctype.h"
- 
-@@ -1080,6 +1082,51 @@ static int write_clockid(struct feat_fd *ff,
- 			sizeof(ff->ph->env.clockid_res_ns));
- }
- 
-+static int write_bpf_prog_info(struct feat_fd *ff,
-+			       struct perf_evlist *evlist __maybe_unused)
-+{
-+	struct perf_env *env = &ff->ph->env;
-+	struct rb_root *root;
-+	struct rb_node *next;
-+	u32 count = 0;
-+	int ret;
-+
-+	down_read(&env->bpf_progs.bpf_info_lock);
-+
-+	root = &env->bpf_progs.bpf_prog_infos;
-+	next = rb_first(root);
-+	while (next) {
-+		++count;
-+		next = rb_next(next);
-+	}
-+
-+	ret = do_write(ff, &count, sizeof(count));
-+
-+	if (ret < 0)
-+		goto out;
-+
-+	next = rb_first(root);
-+	while (next) {
-+		struct bpf_prog_info_node *node;
-+		size_t len;
-+
-+		node = rb_entry(next, struct bpf_prog_info_node, rb_node);
-+		next = rb_next(&node->rb_node);
-+		len = sizeof(struct bpf_prog_info_linear) +
-+			node->info_linear->data_len;
-+
-+		/* before writing to file, translate address to offset */
-+		bpf_program__bpil_addr_to_offs(node->info_linear);
-+		ret = do_write(ff, node->info_linear, len);
-+		bpf_program__bpil_offs_to_addr(node->info_linear);
-+		if (ret < 0)
-+			goto out;
-+	}
-+out:
-+	up_read(&env->bpf_progs.bpf_info_lock);
-+	return ret;
-+}
-+
- static int cpu_cache_level__sort(const void *a, const void *b)
- {
- 	struct cpu_cache_level *cache_a = (struct cpu_cache_level *)a;
-@@ -1560,6 +1607,29 @@ static void print_clockid(struct feat_fd *ff, FILE *fp)
- 		ff->ph->env.clockid_res_ns * 1000);
- }
- 
-+static void print_bpf_prog_info(struct feat_fd *ff, FILE *fp)
-+{
-+	struct perf_env *env = &ff->ph->env;
-+	struct rb_root *root;
-+	struct rb_node *next;
-+
-+	down_read(&env->bpf_progs.bpf_info_lock);
-+
-+	root = &env->bpf_progs.bpf_prog_infos;
-+	next = rb_first(root);
-+
-+	while (next) {
-+		struct bpf_prog_info_node *node;
-+
-+		node = rb_entry(next, struct bpf_prog_info_node, rb_node);
-+		next = rb_next(&node->rb_node);
-+		fprintf(fp, "# bpf_prog_info of id %u\n",
-+			node->info_linear->info.id);
-+	}
-+
-+	up_read(&env->bpf_progs.bpf_info_lock);
-+}
-+
- static void free_event_desc(struct perf_evsel *events)
- {
- 	struct perf_evsel *evsel;
-@@ -2592,6 +2662,69 @@ static int process_clockid(struct feat_fd *ff,
- 	return 0;
- }
- 
-+static int process_bpf_prog_info(struct feat_fd *ff,
-+				 void *data __maybe_unused)
-+{
-+	struct bpf_prog_info_linear *info_linear;
-+	struct bpf_prog_info_node *info_node;
-+	struct perf_env *env = &ff->ph->env;
-+	u32 count, i;
-+	int err = -1;
-+
-+	if (do_read_u32(ff, &count))
-+		return -1;
-+
-+	down_write(&env->bpf_progs.bpf_info_lock);
-+
-+	for (i = 0; i < count; ++i) {
-+		u32 info_len, data_len;
-+
-+		info_linear = NULL;
-+		info_node = NULL;
-+		if (do_read_u32(ff, &info_len))
-+			goto out;
-+		if (do_read_u32(ff, &data_len))
-+			goto out;
-+
-+		if (info_len > sizeof(struct bpf_prog_info)) {
-+			pr_warning("detected invalid bpf_prog_info\n");
-+			goto out;
-+		}
-+
-+		info_linear = malloc(sizeof(struct bpf_prog_info_linear) +
-+				     data_len);
-+		if (!info_linear)
-+			goto out;
-+		info_linear->info_len = sizeof(struct bpf_prog_info);
-+		info_linear->data_len = data_len;
-+		if (do_read_u64(ff, (u64 *)(&info_linear->arrays)))
-+			goto out;
-+		if (__do_read(ff, &info_linear->info, info_len))
-+			goto out;
-+		if (info_len < sizeof(struct bpf_prog_info))
-+			memset(((void *)(&info_linear->info)) + info_len, 0,
-+			       sizeof(struct bpf_prog_info) - info_len);
-+
-+		if (__do_read(ff, info_linear->data, data_len))
-+			goto out;
-+		info_node = malloc(sizeof(struct bpf_prog_info_node));
-+		if (!info_node)
-+			goto out;
-+
-+		/* after reading from file, translate offset to address */
-+		bpf_program__bpil_offs_to_addr(info_linear);
-+		info_node->info_linear = info_linear;
-+		perf_env__insert_bpf_prog_info(env, info_node);
-+	}
-+
-+	return 0;
-+out:
-+	free(info_linear);
-+	free(info_node);
-+	up_write(&env->bpf_progs.bpf_info_lock);
-+	return err;
-+}
-+
- struct feature_ops {
- 	int (*write)(struct feat_fd *ff, struct perf_evlist *evlist);
- 	void (*print)(struct feat_fd *ff, FILE *fp);
-@@ -2651,7 +2784,8 @@ static const struct feature_ops feat_ops[HEADER_LAST_FEATURE] = {
- 	FEAT_OPN(CACHE,		cache,		true),
- 	FEAT_OPR(SAMPLE_TIME,	sample_time,	false),
- 	FEAT_OPR(MEM_TOPOLOGY,	mem_topology,	true),
--	FEAT_OPR(CLOCKID,       clockid,        false)
-+	FEAT_OPR(CLOCKID,       clockid,        false),
-+	FEAT_OPR(BPF_PROG_INFO, bpf_prog_info,  false)
- };
- 
- struct header_print_data {
-diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
-index 0d553ddca0a3..0785c91b4c3a 100644
---- a/tools/perf/util/header.h
-+++ b/tools/perf/util/header.h
-@@ -39,6 +39,7 @@ enum {
- 	HEADER_SAMPLE_TIME,
- 	HEADER_MEM_TOPOLOGY,
- 	HEADER_CLOCKID,
-+	HEADER_BPF_PROG_INFO,
- 	HEADER_LAST_FEATURE,
- 	HEADER_FEAT_BITS	= 256,
- };
--- 
-2.17.1
+> 
+>>
+>>>
+>>> ...yes -(
+>>>    
+>>>> Maybe that's what trips libudev? >
+>>>> (And reading further in the current code, it seems we clear that
+>>>> structure _after_ the matrix device had been setup, so how can that
+>>>> even work? Where am I confused?)
+>>>
+>>> On device_register there were no bus, so the core just do not look for a
+>>> driver and this field was nor tested nor overwritten.
+> 
+> Hm... so has the callback in driver_for_each_device() in
+> vfio_ap_verify_queue_reserved() ever been invoked at all? It seems this
+> patch fixes more than just libudev issues...
+
+It is this patch that rendered the driver_for_each_device() in
+vfio_ap_verify_queue_reserved() erroneous. That function gets called
+every time an adapter or domain is assigned to the mdev. This patch
+introduced the problem with driver_for_each_device().
+
+> 
+>>>    
+>>>>   
+>>>>>   
+>>>>>>   
+>>>>>>>
+>>>>>>> ret = device_register(&matrix_dev->device); if (ret) goto
+>>>>>>> matrix_reg_err;
+>>>>>>>
+>>>>>>> +    ret = driver_register(&matrix_driver.drv); +    if (ret)
+>>>>>>> +        goto
+>>>>>>> matrix_drv_err; +
+>>>>>>
+>>>>>> As you already have several structures that can be registered
+>>>>>> exactly once (the root device, the bus, the driver, ...), you can
+>>>>>> already be sure that there's only one device on the bus, can't
+>>>>>> you?
+>>>>>
+>>>>> hum, no I don't think so, no device can register before this module
+>>>>> is loaded, but what does prevent a device to register later from
+>>>>> another module?
+>>>>
+>>>> Not unless you export the interface, I guess.
+>>>>   
+>>>
+>>> :) definitively right
+>>> thanks, this will simplify the code in the next version.
+>>> I will take the patch away from this series to get the way to stable as
+>>> Christian requested.
+> 
+> Yeah, makes sense.
+> 
 
