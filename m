@@ -2,120 +2,224 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1DB7C10F02
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E6DC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:39:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEAFC2192C
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:37:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QnKSRHdI"
+	by mail.kernel.org (Postfix) with ESMTP id DCDAF2082F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:38:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390141AbfBOHhv (ORCPT
+        id S2390194AbfBOHip (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 02:37:51 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34601 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728823AbfBOHhu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 02:37:50 -0500
-Received: by mail-pg1-f195.google.com with SMTP id i130so4421514pgd.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 23:37:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4ss0OJ5BCI4F+c8Tn3mN8EpXhDNG3dZjBEBOVvg5GYo=;
-        b=QnKSRHdI7j/4NE1JJs1G/HgSEfjKlc04T3AMk3v7angqLRKNNkSt10cHmnQaafY9oc
-         p7giF1HAYDoK5L7wF5TqQOMG2XzIS3J4UWauIMWAO7fCXVt0JFWk/U/oftdhi0vZ5hZW
-         nyaB2y5NGOuAe88BOfdbqTTna0a13LYCrZHklvJEZJvM53U+dclhYhrdlMGcfd4PdBNv
-         CpVFqEZ6isCq2m7o+ggohnanQQ78PWV/a3WwSuJ4YzsdFGAxYrgOZkX8v37V6hmWoYxw
-         K38uPtF46aLbkFerxgQByKH1I3MvA7lMGchgjNIak7TQlDis1STVzXzAPxXJ21xmdm8Z
-         SW8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4ss0OJ5BCI4F+c8Tn3mN8EpXhDNG3dZjBEBOVvg5GYo=;
-        b=f1dsSjXF1FTevZWFMZnoaiNTtSl92eb5DV7bNa/ELjUnjKQtXSQRePfAj+ogk9alO4
-         ohRBN5U3ACucg7uzcLnFQM2cQynXFlNunDayUL1xRG7ueQA8t20mBvOt4DHLbP+iinT4
-         OKwok65ks9OgJ0jJ1DEigQjD1whHlIqsMF3vuKDgYGZXLRbUn0NQLMwbHD1VJOHPeuBk
-         InP/8Poi1pjc6HRwnljF14aXjKqUcczmj3N01cV5jRmhRZBlo2qmVlkFmU1NH9h6hXJo
-         02kz/PZ7SaSRrDL0bhy9RZW7Lzq3JS8d0fvPRJMYJf2vlgP3ysSSROCOTjVe6V2tyn8r
-         4dow==
-X-Gm-Message-State: AHQUAubKUqpF7VaSPockI5bR6uzdJzGt2Om8OcAP5tnbkjrreAsR4W/u
-        pr+bw5Am4oB7SeJgTvD9QF8=
-X-Google-Smtp-Source: AHgI3IbmIs9kstanvYsfH89FM86un6uslYJO+zS1lu31Z/b3ycAp7EDRCu70RdouroNHmG0e/3aeiA==
-X-Received: by 2002:a63:5922:: with SMTP id n34mr4124308pgb.435.1550216268956;
-        Thu, 14 Feb 2019 23:37:48 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id k128sm5974558pfc.34.2019.02.14.23.37.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 23:37:48 -0800 (PST)
-Date:   Thu, 14 Feb 2019 23:37:46 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        David Lechner <david@lechnology.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH v4 01/37] input: davinci_keyscan: remove unnecessary
- includes
-Message-ID: <20190215073746.GA187705@dtor-ws>
-References: <20190214145231.8750-1-brgl@bgdev.pl>
- <20190214145231.8750-2-brgl@bgdev.pl>
+        Fri, 15 Feb 2019 02:38:45 -0500
+Received: from relay.sw.ru ([185.231.240.75]:56670 "EHLO relay.sw.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728823AbfBOHio (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 02:38:44 -0500
+Received: from [172.16.25.169]
+        by relay.sw.ru with esmtp (Exim 4.91)
+        (envelope-from <ktkhai@virtuozzo.com>)
+        id 1guY50-0002o1-1m; Fri, 15 Feb 2019 10:38:38 +0300
+Subject: [PATCH v2.5 1/4] mm: Move recent_rotated pages calculation to
+ shrink_inactive_list()
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     daniel.m.jordan@oracle.com, mhocko@suse.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <155014039859.28944.1726860521114076369.stgit@localhost.localdomain>
+ <155014052145.28944.16497030123804725057.stgit@localhost.localdomain>
+ <20190214125759.97558dd947057db0397eb95e@linux-foundation.org>
+From:   Kirill Tkhai <ktkhai@virtuozzo.com>
+Message-ID: <eea82417-9cbe-b89c-385c-c2ae5d77de4d@virtuozzo.com>
+Date:   Fri, 15 Feb 2019 10:38:37 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190214145231.8750-2-brgl@bgdev.pl>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190214125759.97558dd947057db0397eb95e@linux-foundation.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 03:51:55PM +0100, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> 
-> The mach/ and asm/ includes are not needed in davinci_keyscan, but they
-> will cause build problems once we make mach/irqs.h a private header for
-> mach-davinci.
-> 
-> Remove all unused header includes.
-> 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+mm: Move recent_rotated pages calculation to shrink_inactive_list()
 
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+From: Kirill Tkhai <ktkhai@virtuozzo.com>
 
-> ---
->  drivers/input/keyboard/davinci_keyscan.c | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/drivers/input/keyboard/davinci_keyscan.c b/drivers/input/keyboard/davinci_keyscan.c
-> index b20a5d044caa..b4db72f833ca 100644
-> --- a/drivers/input/keyboard/davinci_keyscan.c
-> +++ b/drivers/input/keyboard/davinci_keyscan.c
-> @@ -32,10 +32,6 @@
->  #include <linux/errno.h>
->  #include <linux/slab.h>
->  
-> -#include <asm/irq.h>
-> -
-> -#include <mach/hardware.h>
-> -#include <mach/irqs.h>
->  #include <linux/platform_data/keyscan-davinci.h>
->  
->  /* Key scan registers */
-> -- 
-> 2.20.1
-> 
+The patch moves the calculation from putback_inactive_pages()
+to shrink_inactive_list(). This makes putback_inactive_pages()
+looking more similar to move_active_pages_to_lru().
 
--- 
-Dmitry
+To do that, we account activated pages in reclaim_stat::nr_activate.
+Since a page may change its LRU type from anon to file cache
+inside shrink_page_list() (see ClearPageSwapBacked()), we have to
+account pages for the both types. So, nr_activate becomes an array.
+
+Previously we used nr_activate to account PGACTIVATE events, but now
+we account them into pgactivate variable (since they are about
+number of pages in general, not about sum of hpage_nr_pages).
+
+Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+
+v2.5: Update comment.
+v2:   Update trace events.
+---
+ .../trace/postprocess/trace-vmscan-postprocess.pl  |    7 ++++---
+ include/linux/vmstat.h                             |    2 +-
+ include/trace/events/vmscan.h                      |   13 ++++++++-----
+ mm/vmscan.c                                        |   15 +++++++--------
+ 4 files changed, 20 insertions(+), 17 deletions(-)
+
+diff --git a/Documentation/trace/postprocess/trace-vmscan-postprocess.pl b/Documentation/trace/postprocess/trace-vmscan-postprocess.pl
+index 66bfd8396877..995da15b16ca 100644
+--- a/Documentation/trace/postprocess/trace-vmscan-postprocess.pl
++++ b/Documentation/trace/postprocess/trace-vmscan-postprocess.pl
+@@ -113,7 +113,7 @@ my $regex_kswapd_wake_default = 'nid=([0-9]*) order=([0-9]*)';
+ my $regex_kswapd_sleep_default = 'nid=([0-9]*)';
+ my $regex_wakeup_kswapd_default = 'nid=([0-9]*) zid=([0-9]*) order=([0-9]*) gfp_flags=([A-Z_|]*)';
+ my $regex_lru_isolate_default = 'isolate_mode=([0-9]*) classzone_idx=([0-9]*) order=([0-9]*) nr_requested=([0-9]*) nr_scanned=([0-9]*) nr_skipped=([0-9]*) nr_taken=([0-9]*) lru=([a-z_]*)';
+-my $regex_lru_shrink_inactive_default = 'nid=([0-9]*) nr_scanned=([0-9]*) nr_reclaimed=([0-9]*) nr_dirty=([0-9]*) nr_writeback=([0-9]*) nr_congested=([0-9]*) nr_immediate=([0-9]*) nr_activate=([0-9]*) nr_ref_keep=([0-9]*) nr_unmap_fail=([0-9]*) priority=([0-9]*) flags=([A-Z_|]*)';
++my $regex_lru_shrink_inactive_default = 'nid=([0-9]*) nr_scanned=([0-9]*) nr_reclaimed=([0-9]*) nr_dirty=([0-9]*) nr_writeback=([0-9]*) nr_congested=([0-9]*) nr_immediate=([0-9]*) nr_activate_anon=([0-9]*) nr_activate_file=([0-9]*) nr_ref_keep=([0-9]*) nr_unmap_fail=([0-9]*) priority=([0-9]*) flags=([A-Z_|]*)';
+ my $regex_lru_shrink_active_default = 'lru=([A-Z_]*) nr_scanned=([0-9]*) nr_rotated=([0-9]*) priority=([0-9]*)';
+ my $regex_writepage_default = 'page=([0-9a-f]*) pfn=([0-9]*) flags=([A-Z_|]*)';
+ 
+@@ -212,7 +212,8 @@ $regex_lru_shrink_inactive = generate_traceevent_regex(
+ 			"vmscan/mm_vmscan_lru_shrink_inactive",
+ 			$regex_lru_shrink_inactive_default,
+ 			"nid", "nr_scanned", "nr_reclaimed", "nr_dirty", "nr_writeback",
+-			"nr_congested", "nr_immediate", "nr_activate", "nr_ref_keep",
++			"nr_congested", "nr_immediate", "nr_activate_anon",
++			"nr_activate_file", "nr_ref_keep",
+ 			"nr_unmap_fail", "priority", "flags");
+ $regex_lru_shrink_active = generate_traceevent_regex(
+ 			"vmscan/mm_vmscan_lru_shrink_active",
+@@ -407,7 +408,7 @@ sub process_events {
+ 			}
+ 
+ 			my $nr_reclaimed = $3;
+-			my $flags = $12;
++			my $flags = $13;
+ 			my $file = 0;
+ 			if ($flags =~ /RECLAIM_WB_FILE/) {
+ 				$file = 1;
+diff --git a/include/linux/vmstat.h b/include/linux/vmstat.h
+index 2db8d60981fe..bdeda4b079fe 100644
+--- a/include/linux/vmstat.h
++++ b/include/linux/vmstat.h
+@@ -26,7 +26,7 @@ struct reclaim_stat {
+ 	unsigned nr_congested;
+ 	unsigned nr_writeback;
+ 	unsigned nr_immediate;
+-	unsigned nr_activate;
++	unsigned nr_activate[2];
+ 	unsigned nr_ref_keep;
+ 	unsigned nr_unmap_fail;
+ };
+diff --git a/include/trace/events/vmscan.h b/include/trace/events/vmscan.h
+index a1cb91342231..4f0e45e90cfc 100644
+--- a/include/trace/events/vmscan.h
++++ b/include/trace/events/vmscan.h
+@@ -358,7 +358,8 @@ TRACE_EVENT(mm_vmscan_lru_shrink_inactive,
+ 		__field(unsigned long, nr_writeback)
+ 		__field(unsigned long, nr_congested)
+ 		__field(unsigned long, nr_immediate)
+-		__field(unsigned long, nr_activate)
++		__field(unsigned int, nr_activate0)
++		__field(unsigned int, nr_activate1)
+ 		__field(unsigned long, nr_ref_keep)
+ 		__field(unsigned long, nr_unmap_fail)
+ 		__field(int, priority)
+@@ -373,20 +374,22 @@ TRACE_EVENT(mm_vmscan_lru_shrink_inactive,
+ 		__entry->nr_writeback = stat->nr_writeback;
+ 		__entry->nr_congested = stat->nr_congested;
+ 		__entry->nr_immediate = stat->nr_immediate;
+-		__entry->nr_activate = stat->nr_activate;
++		__entry->nr_activate0 = stat->nr_activate[0];
++		__entry->nr_activate1 = stat->nr_activate[1];
+ 		__entry->nr_ref_keep = stat->nr_ref_keep;
+ 		__entry->nr_unmap_fail = stat->nr_unmap_fail;
+ 		__entry->priority = priority;
+ 		__entry->reclaim_flags = trace_shrink_flags(file);
+ 	),
+ 
+-	TP_printk("nid=%d nr_scanned=%ld nr_reclaimed=%ld nr_dirty=%ld nr_writeback=%ld nr_congested=%ld nr_immediate=%ld nr_activate=%ld nr_ref_keep=%ld nr_unmap_fail=%ld priority=%d flags=%s",
++	TP_printk("nid=%d nr_scanned=%ld nr_reclaimed=%ld nr_dirty=%ld nr_writeback=%ld nr_congested=%ld nr_immediate=%ld nr_activate_anon=%d nr_activate_file=%d nr_ref_keep=%ld nr_unmap_fail=%ld priority=%d flags=%s",
+ 		__entry->nid,
+ 		__entry->nr_scanned, __entry->nr_reclaimed,
+ 		__entry->nr_dirty, __entry->nr_writeback,
+ 		__entry->nr_congested, __entry->nr_immediate,
+-		__entry->nr_activate, __entry->nr_ref_keep,
+-		__entry->nr_unmap_fail, __entry->priority,
++		__entry->nr_activate0, __entry->nr_activate1,
++		__entry->nr_ref_keep, __entry->nr_unmap_fail,
++		__entry->priority,
+ 		show_reclaim_flags(__entry->reclaim_flags))
+ );
+ 
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index ac4806f0f332..84542004a277 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1107,6 +1107,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+ 	LIST_HEAD(ret_pages);
+ 	LIST_HEAD(free_pages);
+ 	unsigned nr_reclaimed = 0;
++	unsigned pgactivate = 0;
+ 
+ 	memset(stat, 0, sizeof(*stat));
+ 	cond_resched();
+@@ -1466,8 +1467,10 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+ 			try_to_free_swap(page);
+ 		VM_BUG_ON_PAGE(PageActive(page), page);
+ 		if (!PageMlocked(page)) {
++			int type = page_is_file_cache(page);
+ 			SetPageActive(page);
+-			stat->nr_activate++;
++			pgactivate++;
++			stat->nr_activate[type] += hpage_nr_pages(page);
+ 			count_memcg_page_event(page, PGACTIVATE);
+ 		}
+ keep_locked:
+@@ -1482,7 +1485,7 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+ 	free_unref_page_list(&free_pages);
+ 
+ 	list_splice(&ret_pages, page_list);
+-	count_vm_events(PGACTIVATE, stat->nr_activate);
++	count_vm_events(PGACTIVATE, pgactivate);
+ 
+ 	return nr_reclaimed;
+ }
+@@ -1807,7 +1810,6 @@ static int too_many_isolated(struct pglist_data *pgdat, int file,
+ static noinline_for_stack void
+ putback_inactive_pages(struct lruvec *lruvec, struct list_head *page_list)
+ {
+-	struct zone_reclaim_stat *reclaim_stat = &lruvec->reclaim_stat;
+ 	struct pglist_data *pgdat = lruvec_pgdat(lruvec);
+ 	LIST_HEAD(pages_to_free);
+ 
+@@ -1833,11 +1835,6 @@ putback_inactive_pages(struct lruvec *lruvec, struct list_head *page_list)
+ 		lru = page_lru(page);
+ 		add_page_to_lru_list(page, lruvec, lru);
+ 
+-		if (is_active_lru(lru)) {
+-			int file = is_file_lru(lru);
+-			int numpages = hpage_nr_pages(page);
+-			reclaim_stat->recent_rotated[file] += numpages;
+-		}
+ 		if (put_page_testzero(page)) {
+ 			__ClearPageLRU(page);
+ 			__ClearPageActive(page);
+@@ -1945,6 +1942,8 @@ shrink_inactive_list(unsigned long nr_to_scan, struct lruvec *lruvec,
+ 		count_memcg_events(lruvec_memcg(lruvec), PGSTEAL_DIRECT,
+ 				   nr_reclaimed);
+ 	}
++	reclaim_stat->recent_rotated[0] = stat.nr_activate[0];
++	reclaim_stat->recent_rotated[1] = stat.nr_activate[1];
+ 
+ 	putback_inactive_pages(lruvec, &page_list);
+ 
+
