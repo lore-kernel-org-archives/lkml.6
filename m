@@ -2,278 +2,105 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C97F5C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 23:36:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A5CFC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 23:38:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8970F2192D
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 23:36:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27B3D222DF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 23:38:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388921AbfBOXga (ORCPT
+        id S2389120AbfBOXig (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 18:36:30 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33244 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388721AbfBOXga (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 18:36:30 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1FNO9Ch018118
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 18:36:29 -0500
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qp5ymj8x4-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 18:36:28 -0500
-Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Fri, 15 Feb 2019 23:36:28 -0000
-Received: from b03cxnp07028.gho.boulder.ibm.com (9.17.130.15)
-        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 15 Feb 2019 23:36:25 -0000
-Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
-        by b03cxnp07028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1FNaK9k24641582
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Feb 2019 23:36:20 GMT
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 525306A047;
-        Fri, 15 Feb 2019 23:36:20 +0000 (GMT)
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8D7D16A04D;
-        Fri, 15 Feb 2019 23:36:18 +0000 (GMT)
-Received: from [9.80.239.175] (unknown [9.80.239.175])
-        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Fri, 15 Feb 2019 23:36:18 +0000 (GMT)
-Subject: Re: [PATCH v3 8/9] s390: ap: Cleanup on removing the AP device
-To:     Pierre Morel <pmorel@linux.ibm.com>, borntraeger@de.ibm.com
-Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, frankja@linux.ibm.com, pasic@linux.ibm.com,
-        david@redhat.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
-References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
- <1550152269-6317-9-git-send-email-pmorel@linux.ibm.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Fri, 15 Feb 2019 18:36:17 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 15 Feb 2019 18:38:36 -0500
+Received: from mga04.intel.com ([192.55.52.120]:52883 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388691AbfBOXig (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 18:38:36 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Feb 2019 15:38:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,374,1544515200"; 
+   d="scan'208";a="134717010"
+Received: from iweiny-desk2.sc.intel.com ([10.3.52.157])
+  by orsmga002.jf.intel.com with ESMTP; 15 Feb 2019 15:38:34 -0800
+Date:   Fri, 15 Feb 2019 15:38:29 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Christopher Lameter <cl@linux.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>, Doug Ledford <dledford@redhat.com>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving
+ longterm-GUP usage by RDMA
+Message-ID: <20190215233828.GB30818@iweiny-DESK2.sc.intel.com>
+References: <CAPcyv4iHso+PqAm-4NfF0svoK4mELJMSWNp+vsG43UaW1S2eew@mail.gmail.com>
+ <20190211180654.GB24692@ziepe.ca>
+ <20190214202622.GB3420@redhat.com>
+ <20190214205049.GC12668@bombadil.infradead.org>
+ <20190214213922.GD3420@redhat.com>
+ <20190215011921.GS20493@dastard>
+ <01000168f1d25e3a-2857236c-a7cc-44b8-a5f3-f51c2cfe6ce4-000000@email.amazonses.com>
+ <20190215180852.GJ12668@bombadil.infradead.org>
+ <01000168f26d9e0c-aef3255a-5059-4657-b241-dae66663bbea-000000@email.amazonses.com>
+ <20190215220031.GB8001@ziepe.ca>
 MIME-Version: 1.0
-In-Reply-To: <1550152269-6317-9-git-send-email-pmorel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19021523-0012-0000-0000-0000170BBBDA
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010604; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000280; SDB=6.01161619; UDB=6.00606373; IPR=6.00942180;
- MB=3.00025605; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-15 23:36:27
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021523-0013-0000-0000-00005637E73E
-Message-Id: <e5c18c62-97bd-95d7-1fa4-8b149bd62e6d@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-15_16:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902150150
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190215220031.GB8001@ziepe.ca>
+User-Agent: Mutt/1.11.1 (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/14/19 8:51 AM, Pierre Morel wrote:
-> When the device is remove, we must make sure to
-> clear the interruption and reset the AP device.
+On Fri, Feb 15, 2019 at 03:00:31PM -0700, Jason Gunthorpe wrote:
+> On Fri, Feb 15, 2019 at 06:31:36PM +0000, Christopher Lameter wrote:
+> > On Fri, 15 Feb 2019, Matthew Wilcox wrote:
+> > 
+> > > > Since RDMA is something similar: Can we say that a file that is used for
+> > > > RDMA should not use the page cache?
+> > >
+> > > That makes no sense.  The page cache is the standard synchronisation point
+> > > for filesystems and processes.  The only problems come in for the things
+> > > which bypass the page cache like O_DIRECT and DAX.
+> > 
+> > It makes a lot of sense since the filesystems play COW etc games with the
+> > pages and RDMA is very much like O_DIRECT in that the pages are modified
+> > directly under I/O. It also bypasses the page cache in case you have
+> > not noticed yet.
 > 
-> We also need to clear the CRYCB of the guest.
+> It is quite different, O_DIRECT modifies the physical blocks on the
+> storage, bypassing the memory copy.
+>
+
+Really?  I thought O_DIRECT allowed the block drivers to write to/from user
+space buffers.  But the _storage_ was still under the control of the block
+drivers?
+
+>
+> RDMA modifies the memory copy.
 > 
-> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-> ---
->   drivers/s390/crypto/vfio_ap_drv.c     | 92 +++++++++++++++++++++++++++++++++++
->   drivers/s390/crypto/vfio_ap_ops.c     |  2 +-
->   drivers/s390/crypto/vfio_ap_private.h |  2 +
->   3 files changed, 95 insertions(+), 1 deletion(-)
+> pages are necessary to do RDMA, and those pages have to be flushed to
+> disk.. So I'm not seeing how it can be disconnected from the page
+> cache?
+
+I don't disagree with this.
+
+Ira
+
 > 
-> diff --git a/drivers/s390/crypto/vfio_ap_drv.c b/drivers/s390/crypto/vfio_ap_drv.c
-> index 03153e6..50428be 100644
-> --- a/drivers/s390/crypto/vfio_ap_drv.c
-> +++ b/drivers/s390/crypto/vfio_ap_drv.c
-> @@ -5,6 +5,7 @@
->    * Copyright IBM Corp. 2018
->    *
->    * Author(s): Tony Krowiak <akrowiak@linux.ibm.com>
-> + *	      Pierre Morel <pmorel@linux.ibm.com>
->    */
->   
->   #include <linux/module.h>
-> @@ -12,6 +13,8 @@
->   #include <linux/slab.h>
->   #include <linux/string.h>
->   #include <asm/facility.h>
-> +#include <linux/bitops.h>
-> +#include <linux/kvm_host.h>
->   #include "vfio_ap_private.h"
->   
->   #define VFIO_AP_ROOT_NAME "vfio_ap"
-> @@ -64,6 +67,88 @@ static int vfio_ap_queue_dev_probe(struct ap_device *apdev)
->   	return 0;
->   }
->   
-> +/*
-> + * vfio_ap_drain_queue
-> + * @q: the queue to drain
-> + *
-> + * This function waits until the queue is empty.
-> + */
-> +static void vfio_ap_drain_queue(struct vfio_ap_queue *q)
-> +{
-> +	struct ap_queue_status status;
-> +	int retry = 20;
-> +
-> +	status = ap_tapq(q->apqn, NULL);
-> +	while (!status.queue_empty && retry--)  {
-> +		msleep(200);
-> +		status = ap_tapq(q->apqn, NULL);
-> +	}
-> +	if (retry <= 0) {
-> +		pr_warn("%s: queue not empty after zapq on apqn 0x%04x\n",
-> +			__func__, q->apqn);
-> +	}
-> +}
-> +
-> +/*
-> + * vfio_ap_zapq
-> + * @q: The queue to zerro
-> + *
-> + * It is best effort, no return value is done, however on success
-> + * we will drain the queue before getting the queue back to the
-> + * AP bus.
-> + */
-> +static void vfio_ap_zapq(struct vfio_ap_queue *q)
-> +{
-> +	struct ap_queue_status status;
-> +	int retry = 20;
-> +
-> +	do {
-> +		status = ap_zapq(q->apqn);
-> +		switch (status.response_code) {
-> +		case AP_RESPONSE_RESET_IN_PROGRESS:
-> +		case AP_RESPONSE_BUSY:
-> +			msleep(20);
-> +			break;
-> +		default:
-> +			pr_warn("%s: zapq error %02x on apqn 0x%04x\n",
-> +				__func__, status.response_code, q->apqn);
-> +			return;
-> +		case AP_RESPONSE_NORMAL:
-> +			vfio_ap_drain_queue(q);
-> +			return;
-> +		}
-> +	} while (retry--);
-> +	pr_warn("%s: zapq retry count exceeded code %02x on apqn 0x%04x\n",
-> +		__func__, status.response_code, q->apqn);
-> +}
-> +
-> +/**
-> + * vfio_ap_update_crycb
-> + * @q: A pointer to the queue being removed
-> + *
-> + * We clear the APID of the queue, making this queue unusable for the guest.
-> + * After this function we can reset the queue without to fear a race with
-> + * the guest to access the queue again.
-> + * We do not fear race with the host as we still get the device.
-> + */
-> +static void vfio_ap_update_crycb(struct vfio_ap_queue *q)
-> +{
-> +	struct ap_matrix_mdev *matrix_mdev = q->matrix;
-> +
-> +	if (!matrix_mdev)
-> +		return;
-> +
-> +	clear_bit_inv(AP_QID_CARD(q->apqn), matrix_mdev->matrix.apm);
-> +
-> +	if (!matrix_mdev->kvm)
-> +		return;
-> +
-> +	kvm_arch_crypto_set_masks(matrix_mdev->kvm,
-> +				  matrix_mdev->matrix.apm,
-> +				  matrix_mdev->matrix.aqm,
-> +				  matrix_mdev->matrix.adm);
-> +}
-> +
->   /**
->    * vfio_ap_queue_dev_remove:
->    *
-> @@ -74,6 +159,13 @@ static void vfio_ap_queue_dev_remove(struct ap_device *apdev)
->   	struct vfio_ap_queue *q;
->   
->   	q = dev_get_drvdata(&apdev->device);
-> +	if (!q)
-> +		return;
-> +
-> +	vfio_ap_update_crycb(q);
-
-The root user is warned in the Limitations section of the vfio-ap.txt
-doc delivered with the AP pass-through support warns that the
-administrator (i.e., root user) should ensure that AP devices are not
-removed without taking proper care to ensure they are not in use by a
-guest. I am currently working on a patch set to handle this, so this
-may simply get ripped out when those patches are integrated. That may
-very well be simultaneously with this patch series as I plan on posting
-those soon.
-
-If this call is to remain, then you ought to update the vfio-ap.txt
-document to let users know that when queues are unbound, the guests
-will lose access to them unbeknown to the admin of the guest.
-
-> +	vfio_ap_zapq(q);
-
-One last thing. I've explained before that prior to the AP bus
-invoking this remove callback, it flushes and zeroizes the
-queue. Why do you insist it needs to be done again in the remove
-callback?
-
-> +
-> +	vfio_ap_free_irq(q);
->   	kfree(q);
->   }
->   
-> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-> index 5664cf3..7ec957c 100644
-> --- a/drivers/s390/crypto/vfio_ap_ops.c
-> +++ b/drivers/s390/crypto/vfio_ap_ops.c
-> @@ -85,7 +85,7 @@ static void vfio_ap_put_queue(struct vfio_ap_queue *q)
->    * Unregister the ISC from the GIB alert
->    * Clear the vfio_ap_queue intern fields
->    */
-> -static void vfio_ap_free_irq(struct vfio_ap_queue *q)
-> +void vfio_ap_free_irq(struct vfio_ap_queue *q)
->   {
->   	unsigned long pfn = q->nib >> PAGE_SHIFT;
->   
-> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
-> index 16c99e9..d108c6d 100644
-> --- a/drivers/s390/crypto/vfio_ap_private.h
-> +++ b/drivers/s390/crypto/vfio_ap_private.h
-> @@ -4,6 +4,7 @@
->    *
->    * Author(s): Tony Krowiak <akrowiak@linux.ibm.com>
->    *	      Halil Pasic <pasic@linux.ibm.com>
-> + *	      Pierre Morel <pmorel@linux.ibm.com>
->    *
->    * Copyright IBM Corp. 2018
->    */
-> @@ -95,4 +96,5 @@ struct vfio_ap_queue {
->   	unsigned long nib;
->   	unsigned char isc;
->   };
-> +void vfio_ap_free_irq(struct vfio_ap_queue *q);
->   #endif /* _VFIO_AP_PRIVATE_H_ */
-> 
-
+> Jason
