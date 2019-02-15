@@ -2,145 +2,142 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE91CC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 142CCC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:07:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D79D21920
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:05:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KkNDYPij"
+	by mail.kernel.org (Postfix) with ESMTP id DC58F21900
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:07:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404692AbfBOMFC (ORCPT
+        id S2405314AbfBOMHg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 07:05:02 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:60413 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732769AbfBOMFB (ORCPT
+        Fri, 15 Feb 2019 07:07:36 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:46406 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728672AbfBOMHf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 07:05:01 -0500
-Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190215120458epoutp02c1c4ebfb602d9ab423f3d9d8843a215f~DiA-8OB9_2859428594epoutp02C;
-        Fri, 15 Feb 2019 12:04:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190215120458epoutp02c1c4ebfb602d9ab423f3d9d8843a215f~DiA-8OB9_2859428594epoutp02C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1550232299;
-        bh=Uwaa1rjbJZ0Om2UnYtRndIlKJF2ZcCeQFOuh4ONLdeQ=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=KkNDYPijEjymdjR0ccjhVo9Fhe5uJ9Y7pww+6yo1AY+Fovm1zphgNAXqRWcW9xcLt
-         yjoO7HzM09l9nnpUMqXAM/IaDQ3oobdDqGIe5E7uu+dqa3lXXk9JJSk946Y0LkytaF
-         mZAGudMainv8jW9FluRkSCCkBPuA5sgyvHm9Bo5c=
-Received: from epsmges2p2.samsung.com (unknown [182.195.42.70]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-        20190215120457epcas2p3a7e6a6e225ec02439642795053947fa0~DiA_koNN12648926489epcas2p3z;
-        Fri, 15 Feb 2019 12:04:57 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B3.35.04136.9EAA66C5; Fri, 15 Feb 2019 21:04:57 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
-        20190215120457epcas2p3cd14657fc2159c058ab6448c10a47648~DiA_M0MlO2650226502epcas2p3m;
-        Fri, 15 Feb 2019 12:04:57 +0000 (GMT)
-X-AuditID: b6c32a46-2bfff70000001028-63-5c66aae99413
-Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p2new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id 75.32.03689.8EAA66C5; Fri, 15 Feb
-        2019 21:04:56 +0900 (KST)
-Received: from AMDC3061.digital.local ([106.116.147.40]) by mmp2.samsung.com
-        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
-        2014)) with ESMTPA id <0PMY00C45UVSQ530@mmp2.samsung.com>; Fri, 15 Feb 2019
-        21:04:56 +0900 (KST)
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-To:     broonie@kernel.org
-Cc:     lgirdwood@gmail.com, krzk@kernel.org, sbkim73@samsung.com,
-        m.szyprowski@samsung.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ASoC: samsung: odroid: Add missing DAPM routes
-Date:   Fri, 15 Feb 2019 13:04:22 +0100
-Message-id: <20190215120422.22907-1-s.nawrocki@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCIsWRmVeSWpSXmKPExsWy7bCmme7LVWkxBst+yFpcuXiIyWLqwyds
-        FufPb2C3+Halg8ni8q45bBZrj9xltzj8pp3V4uKKL0wOHB4bPjexeeycdZfdY9OqTjaPvi2r
-        GD0+b5ILYI3isklJzcksSy3St0vgyuhbupO1YC5fxdODr5gaGA9ydzFyckgImEg0H3/F1MXI
-        xSEksINR4v/XJawQzndGiV+XQDIQVe9OvYOq2sAoseroSWaQhJDAL0aJKwdNQWw2AUOJ3qN9
-        jCC2iICYxO05ncwgDcwChxklDt5pYQdJCAvYS2yfd4QVxGYRUJV4eOgyUJyDg1fAWmLOa2uI
-        ZfISqzccAOuVEPjJKjFr1RRWiISLxMOL21kgbGmJZ6s2MkLY1RK7tndDNXQwSrRc2M4MkbCW
-        OHz8IlgzswCfRMfhv2DLJAR4JTrahCBKPCRafp9gh3gmVmLOmSamCYziCxgZVjGKpRYU56an
-        FhsVGOkVJ+YWl+al6yXn525iBMeVltsOxiXnfA4xCnAwKvHwrshIjRFiTSwrrsw9xCjBwawk
-        wiuxPC1GiDclsbIqtSg/vqg0J7X4EKM0B4uSOO9D6bnRQgLpiSWp2ampBalFMFkmDk6pBsaZ
-        nF82m1+Xe36jryb01pLPl/ut4mYE/bpy7Ldd2arNx5I1b6QnBIkUs9gnCVWqMlToq94y2Hyv
-        a/LcWVvFA1/XndnI93sX27p45rP1H1c+f/epl63zsqN729pJm9807zC++7f4MWvzFo54NcM5
-        39lmiPnx3fi7dhKnTE7gWsZ60QkzXsUvXhWqxFKckWioxVxUnAgAd+ukdKcCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBJMWRmVeSWpSXmKPExsVy+t9jQd0Xq9JiDKadtbG4cvEQk8XUh0/Y
-        LM6f38Bu8e1KB5PF5V1z2CzWHrnLbnH4TTurxcUVX5gcODw2fG5i89g56y67x6ZVnWwefVtW
-        MXp83iQXwBrFZZOSmpNZllqkb5fAldG3dCdrwVy+iqcHXzE1MB7k7mLk5JAQMJF4d+odUxcj
-        F4eQwDpGibMrm1kgnF+MEn/2nGcHqWITMJToPdrHCGKLCIhJ3J7TyQxiMwscZpS4uCIIxBYW
-        sJfYPu8IK4jNIqAq8fDQZaBeDg5eAWuJOa+tIZbJS6zecIB5AiPXAkaGVYySqQXFuem5xUYF
-        Rnmp5XrFibnFpXnpesn5uZsYgeGx7bBW/w7Gx0viDzEKcDAq8fCuyEiNEWJNLCuuzD3EKMHB
-        rCTCK7E8LUaINyWxsiq1KD++qDQntfgQozQHi5I4L3/+sUghgfTEktTs1NSC1CKYLBMHp1QD
-        Y2p4JcOLzEVvGVoWnRFs/RrbunKHtTyX/IYWV97WH4pBP46dEfnscG7RP6ep27lOHtBUzO9J
-        cQy2vK+g9X/p9a7kQ2wtEuaKrfzteslfN6nLr800YEi/qGl1SNC5oVNr25bpPnMzJN3qtP8v
-        MMpSnr80RsLvW23AlzlvlzE5K+u+Ol0mM79ciaU4I9FQi7moOBEAbO6x1wsCAAA=
-X-CMS-MailID: 20190215120457epcas2p3cd14657fc2159c058ab6448c10a47648
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20190215120457epcas2p3cd14657fc2159c058ab6448c10a47648
-References: <CGME20190215120457epcas2p3cd14657fc2159c058ab6448c10a47648@epcas2p3.samsung.com>
+        Fri, 15 Feb 2019 07:07:35 -0500
+Received: from 79.184.254.36.ipv4.supernova.orange.pl (79.184.254.36) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
+ id 4d23098976f09112; Fri, 15 Feb 2019 13:07:33 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lukas Wunner <lukas@wunner.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH 2/2] driver core: Fix possible supplier PM-usage counter imbalance
+Date:   Fri, 15 Feb 2019 13:06:12 +0100
+Message-ID: <23147304.zVnvcQtZVR@aspire.rjw.lan>
+In-Reply-To: <2ed95b05-317c-59bb-498a-b5481e54bcf6@nvidia.com>
+References: <5510642.nRbR3bcduN@aspire.rjw.lan> <9351473.C2nPJoyFsE@aspire.rjw.lan> <2ed95b05-317c-59bb-498a-b5481e54bcf6@nvidia.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With old DTS there will be missing DAPM routes linking BE with CODECs.
-Add those routes in the card driver so sound works properly on Odroid
-XU3/4 also without DTS updates enabling the secondary PCM.
+On Friday, February 15, 2019 12:00:27 PM CET Jon Hunter wrote:
+> Hi Rafael,
+> 
+> On 12/02/2019 12:08, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > 
+> > If a stateless device link to a certain supplier with
+> > DL_FLAG_PM_RUNTIME set in the flags is added and then removed by the
+> > consumer driver's probe callback, the supplier's PM-runtime usage
+> > counter will be nonzero after that which effectively causes the
+> > supplier to remain "always on" going forward.
+> > 
+> > Namely, device_link_add() called to add the link invokes
+> > device_link_rpm_prepare() which notices that the consumer driver is
+> > probing, so it increments the supplier's PM-runtime usage counter
+> > with the assumption that the link will stay around until
+> > pm_runtime_put_suppliers() is called by driver_probe_device(),
+> > but if the link goes away before that point, the supplier's
+> > PM-runtime usage counter will remain nonzero.
+> > 
+> > To prevent that from happening, first rework pm_runtime_get_suppliers()
+> > and pm_runtime_put_suppliers() to use the rpm_active refounts of device
+> > links and make the latter only drop rpm_active and the supplier's
+> > PM-runtime usage counter for each link by one, unless rpm_active is
+> > one already for it.  Next, modify device_link_add() to bump up the
+> > new link's rpm_active refcount and the suppliers PM-runtime usage
+> > counter by two, to prevent pm_runtime_put_suppliers(), if it is
+> > called subsequently, from suspending the supplier prematurely (in
+> > case its PM-runtime usage counter goes down to 0 in there).
+> > 
+> > Due to the way rpm_put_suppliers() works, this change does not
+> > affect runtime suspend of the consumer ends of new device links (or,
+> > generally, device links for which DL_FLAG_PM_RUNTIME has just been
+> > set).
+> > 
+> > Fixes: e2f3cd831a28 ("driver core: Fix handling of runtime PM flags in device_link_add()")
+> > Reported-by: Ulf Hansson <ulf.hansson@linaro.org> 
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> > 
+> > Note that the issue had been there before commit e2f3cd831a28, but it was
+> > overlooked by that commit and this change is a fix on top of it, so make
+> > the Fixes: tag point to commit e2f3cd831a28 (instead of an earlier one
+> > that the patch will not be applicable to).
+> I noticed that yesterday's and today's -next were no longer booting on
+> one of our Tegra boards (Tegra210 Jetson TX2) because networking is
+> failing. The ethernet chip is a USB device and looking at the bootlogs I
+> can see that the Tegra XHCI driver is failing ...
+> 
+>  tegra-xusb 70090000.usb: xHCI host controller not responding, assume dead
+>  tegra-xusb 70090000.usb: HC died; cleaning up
+> 
+> The Tegra XHCI driver uses multiple power-domains and uses
+> device_link_add() to attach them. So now I am wondering if there is
+> something that we have got wrong in our implementation. However, I don't
+> see the device being probed deferred on boot or anything like that.
+> 
+> The driver in question is drivers/usb/host/xhci-tegra.c and we add the
+> links in the function tegra_xusb_powerdomain_init() which is before RPM
+> is enabled. Let me know if you have any thoughts.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
----
-This patch might require my previous patch
-"ASoC: samsung: odroid: Ensure proper sample rate on pri/sec PCM"
-to apply cleanly.
----
- sound/soc/samsung/odroid.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Please try the appended patch on top of the $subject one (provided that
+reverting the $subject patch makes the problem go away).
 
-diff --git a/sound/soc/samsung/odroid.c b/sound/soc/samsung/odroid.c
-index 941e8c3f67a4..5b2bcd1d3450 100644
---- a/sound/soc/samsung/odroid.c
-+++ b/sound/soc/samsung/odroid.c
-@@ -149,6 +149,12 @@ static const struct snd_soc_ops odroid_card_be_ops = {
- 	.trigger = odroid_card_be_trigger,
- };
+---
+ drivers/base/power/runtime.c |    9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+Index: linux-pm/drivers/base/power/runtime.c
+===================================================================
+--- linux-pm.orig/drivers/base/power/runtime.c
++++ linux-pm/drivers/base/power/runtime.c
+@@ -1675,9 +1675,12 @@ void pm_runtime_put_suppliers(struct dev
+ 	idx = device_links_read_lock();
  
-+/* DAPM routes for backward compatibility with old DTS */
-+static const struct snd_soc_dapm_route odroid_dapm_routes[] = {
-+	{ "I2S Playback", NULL, "Mixer DAI TX" },
-+	{ "HiFi Playback", NULL, "Mixer DAI TX" },
-+};
-+
- static struct snd_soc_dai_link odroid_card_dais[] = {
- 	{
- 		/* Primary FE <-> BE link */
-@@ -237,11 +243,15 @@ static int odroid_audio_probe(struct platform_device *pdev)
- 	/*
- 	 * For backwards compatibility create the secondary CPU DAI link only
- 	 * if there are 2 CPU DAI entries in the cpu sound-dai property in DT.
-+	 * Also add required DAPM routes not available in old DTS.
- 	 */
- 	num_pcms = of_count_phandle_with_args(cpu, "sound-dai",
- 					      "#sound-dai-cells");
--	if (num_pcms == 1)
-+	if (num_pcms == 1) {
-+		card->dapm_routes = odroid_dapm_routes;
-+		card->num_dapm_routes = ARRAY_SIZE(odroid_dapm_routes);
- 		card->num_links--;
-+	}
+ 	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node)
+-		if (link->flags & DL_FLAG_PM_RUNTIME &&
+-		    refcount_dec_not_one(&link->rpm_active))
+-			pm_runtime_put(link->supplier);
++		if (link->flags & DL_FLAG_PM_RUNTIME) {
++			if (refcount_dec_not_one(&link->rpm_active))
++				pm_runtime_put(link->supplier);
++			else
++				pm_request_idle(link->supplier);
++		}
  
- 	for (i = 0; i < num_pcms; i++, link += 2) {
- 		ret = of_parse_phandle_with_args(cpu, "sound-dai",
--- 
-2.17.1
+ 	device_links_read_unlock(idx);
+ }
 
