@@ -2,117 +2,117 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6434C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3012AC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:18:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB9B52190C
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:16:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0C422190C
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:18:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ASf2CcNO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728814AbfBORQi (ORCPT
+        id S1727678AbfBORSW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 12:16:38 -0500
-Received: from mga01.intel.com ([192.55.52.88]:49256 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726028AbfBORQh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 12:16:37 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Feb 2019 09:16:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,373,1544515200"; 
-   d="scan'208";a="138945667"
-Received: from unknown (HELO [10.7.201.17]) ([10.7.201.17])
-  by orsmga001.jf.intel.com with ESMTP; 15 Feb 2019 09:16:36 -0800
-Subject: Re: [PATCH 13/13] x86: mm: Convert dump_pagetables to use
- walk_page_range
-To:     Steven Price <steven.price@arm.com>, linux-mm@kvack.org
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will.deacon@arm.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190215170235.23360-1-steven.price@arm.com>
- <20190215170235.23360-14-steven.price@arm.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <59a6d402-e383-b9d0-499a-7d65b9a2d402@intel.com>
-Date:   Fri, 15 Feb 2019 09:16:37 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 15 Feb 2019 12:18:22 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:34242 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbfBORSW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 12:18:22 -0500
+Received: by mail-ed1-f65.google.com with SMTP id b3so8615393ede.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 09:18:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HKRUq4h/ue0wDp79fBlnuukqhRIoARGpcxTy9wm7Zis=;
+        b=ASf2CcNOJTffmlwufsEVtqnURgoZhUWsIDpV1Wt0PApsRlxlsyrrNTCLmzQopxBv35
+         1GSzieZUR6nIwIwljPzoxD8BaDcMyejsmefnAwYzC7nEJUP9MQfDUeZ7IuvyWu0S93oR
+         doynVHl4EX/rPKARWof6UYQncthF6eCgN8fN4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HKRUq4h/ue0wDp79fBlnuukqhRIoARGpcxTy9wm7Zis=;
+        b=dLE6dFEgGkqOP34qBdJZW+bnVHxvFjsN+UKw1I05Cjjkdlm8bMpnnSSW6i7tn4qJ3w
+         dxgZz51L073byrzFtWJBr7n+eunGSN/HtJzLNNJRIXdDmb30/AVfeB/nDn+nSny6RNYc
+         XgTHyUxeziCLB0ExpAXbwAJk8JqQ9hNrSST6OOEiI22pyorsE4gV7OdIVqoRK6/mo1oi
+         HpoBzmCY/soWb2VkwCrFfk8sJ9EZyTS8uxdHJfEz49eEecoBhYhNFgmr1uuvjMwB4+Uz
+         MjYmHstc7RFbTErwyChg7gdfKS0geSOjYONS/JqyNLlCYpOnFIBvxKLXrQbNMdD4+ZVA
+         +MuA==
+X-Gm-Message-State: AHQUAuYY0HAaJy/VGPsB5SZFrAw9WpLdTwdERGIQBHJidlfH7b0dpQlh
+        waWqW1ROoifXXj31xAqqS57cjPTL3Xs=
+X-Google-Smtp-Source: AHgI3IYopWWKXXV4WWJFpusT/5CvyTtEGe6+C1VJlsX3UtbXKx6rPD/U+Cwp32O6xOcQ0vRWv7Pfnw==
+X-Received: by 2002:a50:b744:: with SMTP id g62mr8558320ede.14.1550251099588;
+        Fri, 15 Feb 2019 09:18:19 -0800 (PST)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com. [209.85.128.46])
+        by smtp.gmail.com with ESMTPSA id c5sm1715090edm.36.2019.02.15.09.18.17
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Feb 2019 09:18:17 -0800 (PST)
+Received: by mail-wm1-f46.google.com with SMTP id t200so10357525wmt.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 09:18:17 -0800 (PST)
+X-Received: by 2002:a7b:cb18:: with SMTP id u24mr6921394wmj.138.1550251096655;
+ Fri, 15 Feb 2019 09:18:16 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190215170235.23360-14-steven.price@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190213140025.GB6346@brain-police> <20190213142524.GW32494@hirez.programming.kicks-ass.net>
+ <dd33cc20-f335-0e4c-e3f4-02497ecc3710@arm.com> <20190213144145.GY32494@hirez.programming.kicks-ass.net>
+ <20190213154532.GQ32534@hirez.programming.kicks-ass.net> <D61C430D-4321-4114-AB85-671A3C7B8EAE@amacapital.net>
+ <20190213222146.GC32494@hirez.programming.kicks-ass.net> <D3E1B64D-3E91-4A82-9C3B-92D9EB7326CE@amacapital.net>
+ <20190214101429.GD32494@hirez.programming.kicks-ass.net> <CAMzpN2hg+CY+AuF=BtetS2HrMQYdxhBZL9QMvJX4LjAs7vwwAw@mail.gmail.com>
+ <20190214193432.GR32477@hirez.programming.kicks-ass.net>
+In-Reply-To: <20190214193432.GR32477@hirez.programming.kicks-ass.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 15 Feb 2019 09:18:00 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgj9yUAhTz8n__s-gHnHJw4fznBbLAfne4EO4n6RukgcA@mail.gmail.com>
+Message-ID: <CAHk-=wgj9yUAhTz8n__s-gHnHJw4fznBbLAfne4EO4n6RukgcA@mail.gmail.com>
+Subject: Re: [PATCH] sched/x86: Save [ER]FLAGS on context switch
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Brian Gerst <brgerst@gmail.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Julien Thierry <julien.thierry@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-alpha@vger.kernel.org" <linux-arm-kernel@lists.infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Morse <james.morse@arm.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, valentin.schneider@arm.com,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/15/19 9:02 AM, Steven Price wrote:
->  arch/x86/mm/dump_pagetables.c | 281 ++++++++++++++++++----------------
->  1 file changed, 146 insertions(+), 135 deletions(-)
+On Thu, Feb 14, 2019 at 11:34 AM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> Something like the below, right?
+>
+> +       frame->flags = 0;
+> +       frame->flags = 0;
 
-I'll look through this in more detail in a bit.  But, I'm a bit bummed
-out by the diffstat.  When I see patches add a bunch of infrastructure,
-I *really* hope for code simplification.
+Those are not valid flag values.
 
-Looking at the diff, I think it gets there.  The code you add is
-simpler than the code you remove.  But, the diffstat is misleading.
+Can you popf them? Yes.
 
-I'd probably address this disparity for each patch in the changelogs.
+Do they make sense? No.
+
+It has the IF flag clear, for example. Is that intentional? If it is,
+it should likely be documented. Because IF clear means "interrupts
+disabled". Are the places that load flags in irq disabled regions?
+Maybe they are, maybe they aren't, but shouldn't this be something
+that is made explicit, rather than "oh, let's initialize to zero like
+all the other registers we don't care about".
+
+Because a zero initializer for eflags really is odd.
+
+             Linus
