@@ -4,50 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94614C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:31:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED83C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:31:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6165D20840
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:31:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39C8A20840
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:31:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197882;
-	bh=J67Vt12geolshGvCQ5737yLG1eJWIMHZWnqYpI5sOBk=;
+	s=default; t=1550197886;
+	bh=5kaMNCHp606wM9T12sg0DOT1GGZW9U6u0Gthxa5AiD4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mUaZmRzv7S4jliKcCTQ5zVHZVa9cBM8HH8CyjVZsnW1ff1zPJWcv5rKCd/7TCxeO0
-	 yBTExrMaZXUQz44ONBog/xkRQ9h3hKp8s4kBbfTUpOkIBj15MLzk9TiYlC9uS9WqAW
-	 be6YvFb13QOx1GevZ8zQnlovBgRYdBd28S8X2HTY=
+	b=1JhetkLLk9HNBKr7rHjJEPhKuoqCqODIEeTkKK7WBO+/65f6GE/XX4oz9BxBFkNup
+	 fEK92WGdxHJ61qiFRNdv2NW+t9GIv51norWG/ukqV+Pl/D3R9STZ/KcamndXkWDNjb
+	 Y9AN9AqAYWohFID9ekDunUJGnGoDEYN53bvYHOO8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391153AbfBOCMg (ORCPT
+        id S1731489AbfBOCbZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:12:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52506 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:31:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391078AbfBOCM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:12:28 -0500
+        id S2389650AbfBOCMg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:12:36 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F3B5206BA;
-        Fri, 15 Feb 2019 02:12:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DAB421B68;
+        Fri, 15 Feb 2019 02:12:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196747;
-        bh=J67Vt12geolshGvCQ5737yLG1eJWIMHZWnqYpI5sOBk=;
+        s=default; t=1550196756;
+        bh=5kaMNCHp606wM9T12sg0DOT1GGZW9U6u0Gthxa5AiD4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MPB5REvF9ee3lwtIujZSHJOtJEh1fhcpoHb8bE5JBAPnimWFGl1y5MiLbpGZVKZZn
-         oZ0kf1uniogmEplJe+AGO9BbzxApva4kTV2E3f2VdTt2zPsUOkwgyKTEyvFBZS6Rp7
-         I6mS/dcm2wyzpxgHmvB/UqwwfGB6YYKzJdWHXFWc=
+        b=GJVzeIJNRcKvObSEkb8C+rjtpEE4/X7ZeNAYL/SWoxQT9BJlzxz7hN5jcVTiLv8TU
+         bHpjei8QE1CdxWdv92pWRJ1fXx9ZCalWAI5Ag9hZoVzWi1gLioZcKn7sPRKUyxjdmR
+         EgOvItwZpi5tZ4bqJWQTK6MHbR4W2wfyBLhv5TOo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ming Lei <ming.lei@redhat.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        NeilBrown <neilb@suse.com>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>, linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 41/65] block: cover another queue enter recursion via BIO_QUEUE_ENTERED
-Date:   Thu, 14 Feb 2019 21:10:57 -0500
-Message-Id: <20190215021121.177674-41-sashal@kernel.org>
+Cc:     Varun Prakash <varun@chelsio.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 45/65] scsi: csiostor: fix NULL pointer dereference in csio_vport_set_state()
+Date:   Thu, 14 Feb 2019 21:11:01 -0500
+Message-Id: <20190215021121.177674-45-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -59,78 +57,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Varun Prakash <varun@chelsio.com>
 
-[ Upstream commit 698cef173983b086977e633e46476e0f925ca01e ]
+[ Upstream commit fe35a40e675473eb65f2f5462b82770f324b5689 ]
 
-Except for blk_queue_split(), bio_split() is used for splitting bio too,
-then the remained bio is often resubmit to queue via generic_make_request().
-So the same queue enter recursion exits in this case too. Unfortunatley
-commit cd4a4ae4683dc2 doesn't help this case.
+Assign fc_vport to ln->fc_vport before calling csio_fcoe_alloc_vnp() to
+avoid a NULL pointer dereference in csio_vport_set_state().
 
-This patch covers the above case by setting BIO_QUEUE_ENTERED before calling
-q->make_request_fn.
+ln->fc_vport is dereferenced in csio_vport_set_state().
 
-In theory the per-bio flag is used to simulate one stack variable, it is
-just fine to clear it after q->make_request_fn is returned. Especially
-the same bio can't be submitted from another context.
-
-Fixes: cd4a4ae4683dc2 ("block: don't use blocking queue entered for recursive bio submits")
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: NeilBrown <neilb@suse.com>
-Reviewed-by:  Mike Snitzer <snitzer@redhat.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Varun Prakash <varun@chelsio.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/blk-core.c  | 11 +++++++++++
- block/blk-merge.c | 10 ----------
- 2 files changed, 11 insertions(+), 10 deletions(-)
+ drivers/scsi/csiostor/csio_attr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index eb8b52241453..a9fde80606d7 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -2454,7 +2454,18 @@ blk_qc_t generic_make_request(struct bio *bio)
- 			/* Create a fresh bio_list for all subordinate requests */
- 			bio_list_on_stack[1] = bio_list_on_stack[0];
- 			bio_list_init(&bio_list_on_stack[0]);
-+
-+			/*
-+			 * Since we're recursing into make_request here, ensure
-+			 * that we mark this bio as already having entered the queue.
-+			 * If not, and the queue is going away, we can get stuck
-+			 * forever on waiting for the queue reference to drop. But
-+			 * that will never happen, as we're already holding a
-+			 * reference to it.
-+			 */
-+			bio_set_flag(bio, BIO_QUEUE_ENTERED);
- 			ret = q->make_request_fn(q, bio);
-+			bio_clear_flag(bio, BIO_QUEUE_ENTERED);
+diff --git a/drivers/scsi/csiostor/csio_attr.c b/drivers/scsi/csiostor/csio_attr.c
+index 8a004036e3d7..9bd2bd8dc2be 100644
+--- a/drivers/scsi/csiostor/csio_attr.c
++++ b/drivers/scsi/csiostor/csio_attr.c
+@@ -594,12 +594,12 @@ csio_vport_create(struct fc_vport *fc_vport, bool disable)
+ 	}
  
- 			/* sort new bios into those for a lower level
- 			 * and those for the same level
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index 2e042190a4f1..ba7f732c519e 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -211,16 +211,6 @@ void blk_queue_split(struct request_queue *q, struct bio **bio)
- 		/* there isn't chance to merge the splitted bio */
- 		split->bi_opf |= REQ_NOMERGE;
+ 	fc_vport_set_state(fc_vport, FC_VPORT_INITIALIZING);
++	ln->fc_vport = fc_vport;
  
--		/*
--		 * Since we're recursing into make_request here, ensure
--		 * that we mark this bio as already having entered the queue.
--		 * If not, and the queue is going away, we can get stuck
--		 * forever on waiting for the queue reference to drop. But
--		 * that will never happen, as we're already holding a
--		 * reference to it.
--		 */
--		bio_set_flag(*bio, BIO_QUEUE_ENTERED);
--
- 		bio_chain(split, *bio);
- 		trace_block_split(q, split, (*bio)->bi_iter.bi_sector);
- 		generic_make_request(*bio);
+ 	if (csio_fcoe_alloc_vnp(hw, ln))
+ 		goto error;
+ 
+ 	*(struct csio_lnode **)fc_vport->dd_data = ln;
+-	ln->fc_vport = fc_vport;
+ 	if (!fc_vport->node_name)
+ 		fc_vport->node_name = wwn_to_u64(csio_ln_wwnn(ln));
+ 	if (!fc_vport->port_name)
 -- 
 2.19.1
 
