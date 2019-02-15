@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30305C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:33:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D24FDC10F04
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:33:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBFF220840
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:33:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3E6E20840
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:33:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550198030;
-	bh=vT1Coe+uTKY7WyKmDFgT9baF9t702twQ/EnGifizVwg=;
+	s=default; t=1550198034;
+	bh=ZvcuN1XWV49X7kbMeKYFklVK5XcY2TZ/Aqo0prOc6Yw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=moV+PeDLyH5FY/tsUjtz1pEEDL6Q3h64iL/4scor7nfSf7AYK/I5ufhHTord+IujA
-	 njP2AVsPK5eSFivsMBhzgLTzLXm0Fu2j8xzsgf06kNd8oCm6uFRDmdVi2HBnK72gEE
-	 X/9NK9BQYV+Y7nwlzOZF3R6bpL9SOLwn1zmsUuk4=
+	b=ve26VyoX/Hpnp5endmdUyCHTVIweseyryDV6zUq8JiRxvuKg+vWI49+fbPjbrxERU
+	 hA3HMpw05faJK0JXSLN6NWEKXYdguL+jYaZIE0Nu8H1vH8zMav8RLZ+2kuPq1FxEa2
+	 LlsbuoveOCj0GT+Ecbb5b+nfn6F2AsMhxR0ts+/I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388518AbfBOCds (ORCPT
+        id S2390846AbfBOCLw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:33:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51934 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:11:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390862AbfBOCLx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:11:53 -0500
+        id S2404028AbfBOCLs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:11:48 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 51D3421934;
-        Fri, 15 Feb 2019 02:11:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A93121B68;
+        Fri, 15 Feb 2019 02:11:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196713;
-        bh=vT1Coe+uTKY7WyKmDFgT9baF9t702twQ/EnGifizVwg=;
+        s=default; t=1550196707;
+        bh=ZvcuN1XWV49X7kbMeKYFklVK5XcY2TZ/Aqo0prOc6Yw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kadL/POkszp+ZJF4WOjWC6d8oLUU91kUJBENPdC8pXAG+qPLUzJkPmxuDUPFpWUTm
-         UclYGNvetilFdOqP8VjUiwJkFP4yKco2uJUBNGTet2+A1bmXgOk26aNU3sJQCGgmzb
-         ffqj0wTpRwldYIbki5M173ZbZln2zpZ6YCjJ3CoI=
+        b=zMr+vpOfNPM7CI4/hsbySojMHctos14YBxl+s8WJ1XkzZhpL6yGcO7rPoShUeHRO6
+         P9luCpmk2lswwa+68VjHsv1HlaTjne00itN2roR0oA1SOsP7iEBxCoehoSPVQ5fD3R
+         vQF95WmGMpi4S2SjkeM5pLRr2Q+tnycFRmVJfR2s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alison Schofield <alison.schofield@intel.com>,
-        Shuah Khan <shuah@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 19/65] selftests/vm/gup_benchmark.c: match gup struct to kernel
-Date:   Thu, 14 Feb 2019 21:10:35 -0500
-Message-Id: <20190215021121.177674-19-sashal@kernel.org>
+Cc:     Shuming Fan <shumingf@realtek.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 16/65] ASoC: rt5682: Fix PLL source register definitions
+Date:   Thu, 14 Feb 2019 21:10:32 -0500
+Message-Id: <20190215021121.177674-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -58,36 +58,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alison Schofield <alison.schofield@intel.com>
+From: Shuming Fan <shumingf@realtek.com>
 
-[ Upstream commit 91cd63d320f84dcbf21d4327f31f7e1f85adebd0 ]
+[ Upstream commit ee7ea2a9a318a89d21b156dc75e54d53904bdbe5 ]
 
-An expansion field was added to the kernel copy of this structure for
-future use. See mm/gup_benchmark.c.
+Fix typo which causes headphone no sound while using BCLK
+as PLL source.
 
-Add the same expansion field here, so that the IOCTL command decodes
-correctly. Otherwise, it fails with EINVAL.
-
-Signed-off-by: Alison Schofield <alison.schofield@intel.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Shuah Khan <shuah@kernel.org>
+Signed-off-by: Shuming Fan <shumingf@realtek.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/vm/gup_benchmark.c | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/codecs/rt5682.h | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/tools/testing/selftests/vm/gup_benchmark.c b/tools/testing/selftests/vm/gup_benchmark.c
-index 36df55132036..9601bc24454d 100644
---- a/tools/testing/selftests/vm/gup_benchmark.c
-+++ b/tools/testing/selftests/vm/gup_benchmark.c
-@@ -22,6 +22,7 @@ struct gup_benchmark {
- 	__u64 size;
- 	__u32 nr_pages_per_call;
- 	__u32 flags;
-+	__u64 expansion[10];	/* For future use */
- };
+diff --git a/sound/soc/codecs/rt5682.h b/sound/soc/codecs/rt5682.h
+index 8068140ebe3f..cdd659f4df93 100644
+--- a/sound/soc/codecs/rt5682.h
++++ b/sound/soc/codecs/rt5682.h
+@@ -849,18 +849,18 @@
+ #define RT5682_SCLK_SRC_PLL2			(0x2 << 13)
+ #define RT5682_SCLK_SRC_SDW			(0x3 << 13)
+ #define RT5682_SCLK_SRC_RCCLK			(0x4 << 13)
+-#define RT5682_PLL1_SRC_MASK			(0x3 << 10)
+-#define RT5682_PLL1_SRC_SFT			10
+-#define RT5682_PLL1_SRC_MCLK			(0x0 << 10)
+-#define RT5682_PLL1_SRC_BCLK1			(0x1 << 10)
+-#define RT5682_PLL1_SRC_SDW			(0x2 << 10)
+-#define RT5682_PLL1_SRC_RC			(0x3 << 10)
+-#define RT5682_PLL2_SRC_MASK			(0x3 << 8)
+-#define RT5682_PLL2_SRC_SFT			8
+-#define RT5682_PLL2_SRC_MCLK			(0x0 << 8)
+-#define RT5682_PLL2_SRC_BCLK1			(0x1 << 8)
+-#define RT5682_PLL2_SRC_SDW			(0x2 << 8)
+-#define RT5682_PLL2_SRC_RC			(0x3 << 8)
++#define RT5682_PLL2_SRC_MASK			(0x3 << 10)
++#define RT5682_PLL2_SRC_SFT			10
++#define RT5682_PLL2_SRC_MCLK			(0x0 << 10)
++#define RT5682_PLL2_SRC_BCLK1			(0x1 << 10)
++#define RT5682_PLL2_SRC_SDW			(0x2 << 10)
++#define RT5682_PLL2_SRC_RC			(0x3 << 10)
++#define RT5682_PLL1_SRC_MASK			(0x3 << 8)
++#define RT5682_PLL1_SRC_SFT			8
++#define RT5682_PLL1_SRC_MCLK			(0x0 << 8)
++#define RT5682_PLL1_SRC_BCLK1			(0x1 << 8)
++#define RT5682_PLL1_SRC_SDW			(0x2 << 8)
++#define RT5682_PLL1_SRC_RC			(0x3 << 8)
  
- int main(int argc, char **argv)
+ 
+ 
 -- 
 2.19.1
 
