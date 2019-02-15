@@ -4,55 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EE2CC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B09ABC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:48:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E309B222DB
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:48:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80CB3222D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:48:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550191710;
-	bh=6LdzrCVx8YqnpmPcRdemWeu0Aj6Lfc4MEov3VXtbxS4=;
+	s=default; t=1550191714;
+	bh=2pKrDYAeeE/fz0EJf5Y7i+ibSlJwnzzIc/8ob0HaFdg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iewsAJjV27uZ0zknuwwXnpORMvKfTm8kThMjaFosfTN5ud4MBzJXbw5kD6katS+9t
-	 oTEmGdEVe1WtB9iange/sBfTZNVcqBMGJrdrePRK4UEOIxmpjfzoxaeaMYN13FDO7Q
-	 Rl/bcIfW6Hz+CTrR2YICgwTTszlh9IDhs3sER5bA=
+	b=h5bUYwjjsq+4zl3ueKQP1FQEpw2drhuHDwOnNo4KqQXe9YhONwA3sapvWjHctFW2d
+	 Au13OggE0MzYyEKqWw+Slw+/QpFnLgGbkcsQA9L0bY82So9l7HiX2lIp2Nnp+NUpKS
+	 N2us/6y2Nd0OWdcNy/ebYaPsZhHHPLSX370nl2C8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389667AbfBOAs1 (ORCPT
+        id S2389708AbfBOAsc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 19:48:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47516 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 19:48:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389617AbfBOAsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 19:48:24 -0500
+        id S2389617AbfBOAs3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 19:48:29 -0500
 Received: from quaco.ghostprotocols.net (unknown [189.40.103.31])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8511A222A1;
-        Fri, 15 Feb 2019 00:48:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D59C62229F;
+        Fri, 15 Feb 2019 00:48:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550191704;
-        bh=6LdzrCVx8YqnpmPcRdemWeu0Aj6Lfc4MEov3VXtbxS4=;
+        s=default; t=1550191708;
+        bh=2pKrDYAeeE/fz0EJf5Y7i+ibSlJwnzzIc/8ob0HaFdg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xwhLmUcpYFD23RrowCfeVr66BAmigTql/10xm+6AD7Rlx3E6d1mVK/YeawQok3boj
-         t273uf9QOKK/WSVN8POqfY3zGjBbZ0V4LzsK7GOnzQ6FfaywWj5XeKYvEjNpKY+d3l
-         tV7FUVmi7LbcxGHNtYUSzIfSrXcwxe6ICFJQioFI=
+        b=cvsA/q6+Coq6rctz7LsFh+rRyy3bJeCytgNzlDhhNZS2yqnLLG64vRwWjlRQ7/4bp
+         OWyeRRQ79QK10LCJsmg/NVfSRe+LM2cyZ/PNFWDuL0KsyL81JnFfoOeHUWUCbMmlAU
+         Gdg+6Bwqseh2HAiQzvqt0IYQg7s7ge5BwyBSXlSM=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Jiri Olsa <jolsa@redhat.com>, Leo Yan <leo.yan@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Suzuki K Poulouse <suzuki.poulose@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 35/43] perf cs-etm: Modularize auxtrace_buffer fetch function
-Date:   Thu, 14 Feb 2019 21:45:31 -0300
-Message-Id: <20190215004539.23571-36-acme@kernel.org>
+Subject: [PATCH 36/43] perf tools: Compile perf with libperf-in.o instead of libperf.a
+Date:   Thu, 14 Feb 2019 21:45:32 -0300
+Message-Id: <20190215004539.23571-37-acme@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215004539.23571-1-acme@kernel.org>
 References: <20190215004539.23571-1-acme@kernel.org>
@@ -63,85 +59,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
+From: Jiri Olsa <jolsa@kernel.org>
 
-Making the auxtrace_buffer fetch function modular so that it can be
-called from different decoding context (timeless vs. non-timeless),
-avoiding to repeat code.
+There's no need for perf build to use libperf.a,
+we can use directly libperf-in.o.
 
-No change in functionality is introduced by this patch.
+The libperf.a stays as a target if needed:
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Leo Yan <leo.yan@linaro.org>
+  $ make libperf.a
+  ...
+    CC       util/pmu.o
+    CC       util/pmu-flex.o
+    LD       util/libperf-in.o
+    LD       libperf-in.o
+    AR       libperf.a
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Suzuki K Poulouse <suzuki.poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/20190212171618.25355-14-mathieu.poirier@linaro.org
+Link: http://lkml.kernel.org/r/20190213123246.4015-2-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/cs-etm.c | 41 ++++++++++++++++++++++++++++------------
- 1 file changed, 29 insertions(+), 12 deletions(-)
+ tools/perf/Makefile.perf | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index f607bc58bd03..110804936fc3 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -1152,6 +1152,32 @@ static int cs_etm__end_block(struct cs_etm_queue *etmq)
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index c2ccc54618d1..93de7c7b8007 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -346,7 +346,7 @@ export PERL_PATH
  
- 	return 0;
- }
-+/*
-+ * cs_etm__get_data_block: Fetch a block from the auxtrace_buffer queue
-+ *			   if need be.
-+ * Returns:	< 0	if error
-+ *		= 0	if no more auxtrace_buffer to read
-+ *		> 0	if the current buffer isn't empty yet
-+ */
-+static int cs_etm__get_data_block(struct cs_etm_queue *etmq)
-+{
-+	int ret;
+ LIB_FILE=$(OUTPUT)libperf.a
+ 
+-PERFLIBS = $(LIB_FILE) $(LIBAPI) $(LIBTRACEEVENT) $(LIBSUBCMD)
++PERFLIBS = $(LIBAPI) $(LIBTRACEEVENT) $(LIBSUBCMD)
+ ifndef NO_LIBBPF
+   PERFLIBS += $(LIBBPF)
+ endif
+@@ -549,6 +549,8 @@ JEVENTS_IN    := $(OUTPUT)pmu-events/jevents-in.o
+ 
+ PMU_EVENTS_IN := $(OUTPUT)pmu-events/pmu-events-in.o
+ 
++LIBPERF_IN := $(OUTPUT)libperf-in.o
 +
-+	if (!etmq->buf_len) {
-+		ret = cs_etm__get_trace(etmq);
-+		if (ret <= 0)
-+			return ret;
-+		/*
-+		 * We cannot assume consecutive blocks in the data file
-+		 * are contiguous, reset the decoder to force re-sync.
-+		 */
-+		ret = cs_etm_decoder__reset(etmq->decoder);
-+		if (ret)
-+			return ret;
-+	}
+ export JEVENTS
+ 
+ build := -f $(srctree)/tools/build/Makefile.build dir=. obj
+@@ -565,9 +567,12 @@ $(JEVENTS): $(JEVENTS_IN)
+ $(PMU_EVENTS_IN): $(JEVENTS) FORCE
+ 	$(Q)$(MAKE) -f $(srctree)/tools/build/Makefile.build dir=pmu-events obj=pmu-events
+ 
+-$(OUTPUT)perf: $(PERFLIBS) $(PERF_IN) $(PMU_EVENTS_IN) $(LIBTRACEEVENT_DYNAMIC_LIST)
++$(LIBPERF_IN): prepare FORCE
++	$(Q)$(MAKE) $(build)=libperf
 +
-+	return etmq->buf_len;
-+}
++$(OUTPUT)perf: $(PERFLIBS) $(PERF_IN) $(PMU_EVENTS_IN) $(LIBPERF_IN) $(LIBTRACEEVENT_DYNAMIC_LIST)
+ 	$(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $(LIBTRACEEVENT_DYNAMIC_LIST_LDFLAGS) \
+-		$(PERF_IN) $(PMU_EVENTS_IN) $(LIBS) -o $@
++		$(PERF_IN) $(PMU_EVENTS_IN) $(LIBPERF_IN) $(LIBS) -o $@
  
- static bool cs_etm__is_svc_instr(struct cs_etm_queue *etmq,
- 				 struct cs_etm_packet *packet,
-@@ -1591,18 +1617,9 @@ static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
+ $(GTK_IN): FORCE
+ 	$(Q)$(MAKE) $(build)=gtk
+@@ -683,11 +688,6 @@ endif
  
- 	/* Go through each buffer in the queue and decode them one by one */
- 	while (1) {
--		if (!etmq->buf_len) {
--			err = cs_etm__get_trace(etmq);
--			if (err <= 0)
--				return err;
--			/*
--			 * We cannot assume consecutive blocks in the data file
--			 * are contiguous, reset the decoder to force re-sync.
--			 */
--			err = cs_etm_decoder__reset(etmq->decoder);
--			if (err != 0)
--				return err;
--		}
-+		err = cs_etm__get_data_block(etmq);
-+		if (err <= 0)
-+			return err;
+ $(patsubst perf-%,%.o,$(PROGRAMS)): $(wildcard */*.h)
  
- 		/* Run trace decoder until buffer consumed or end of trace */
- 		do {
+-LIBPERF_IN := $(OUTPUT)libperf-in.o
+-
+-$(LIBPERF_IN): prepare FORCE
+-	$(Q)$(MAKE) $(build)=libperf
+-
+ $(LIB_FILE): $(LIBPERF_IN)
+ 	$(QUIET_AR)$(RM) $@ && $(AR) rcs $@ $(LIBPERF_IN) $(LIB_OBJS)
+ 
 -- 
 2.19.1
 
