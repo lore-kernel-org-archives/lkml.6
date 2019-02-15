@@ -7,51 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5FE7C10F04
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:10:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE431C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:10:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B19D222C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:10:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF5462229F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:10:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196624;
-	bh=xgDfpH2l43JGOkzUTQ7lPb7C8kiridv7NZFQqC7pwJA=;
+	s=default; t=1550196626;
+	bh=d4gbIeZC91ZTxIDuoQcQgg9PCqtubcjoweccGLNMwDQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pnh8DLDtop0ZXlzXktWSj67UMQna16FL2AqBBRq8UPWyyNbPMgIcbNjaAyWOC3dkj
-	 XXlpkP/kCw0XpEcHl5vOLUqanU2Hva3k6v/ZuirwE8X2CQSfOTqBGjcUSsjw+P7zgn
-	 WgSpIsC723lugCQwKtD8GRESgN08lIjVS5hKpO0E=
+	b=trHqEu1OnfCnMszmhO/+dPAW2cSiPtHzLT+RjgaINEd71cOOC8qSNHhvwvHwlqEa/
+	 5XGZzTKYq/s5bjnSbqLT+pAJymlQBvT1lu/IsYd5tGo7Bn/aG6KBdDZ3iOWOdsXcU6
+	 cDc0iDfu74ufYpuKR7g82p49IQTnQODvtcBPIe1I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390292AbfBOCKW (ORCPT
+        id S2390361AbfBOCKZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:10:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50390 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:10:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390248AbfBOCKR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:10:17 -0500
+        id S2390279AbfBOCKX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:10:23 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C892D222D0;
-        Fri, 15 Feb 2019 02:10:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBBBF2229F;
+        Fri, 15 Feb 2019 02:10:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196616;
-        bh=xgDfpH2l43JGOkzUTQ7lPb7C8kiridv7NZFQqC7pwJA=;
+        s=default; t=1550196621;
+        bh=d4gbIeZC91ZTxIDuoQcQgg9PCqtubcjoweccGLNMwDQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JkJzdfFkhWcTfdz+dxUpwicdRZL6BqmhHDaoXoiCSY/3lxAHLeOvog9EnshYUO5p7
-         sDfM3FQDdnU1LJTPFh1d6CKfsir8ez/yWJ6/dfFx+AuRxiBRuxd0m4tg/Pu7ofOk/O
-         HGixPbHf2jDNKFpGLp8AbwjuSKIXshaUGDkkNUTQ=
+        b=iO7EkztHBD9GWEJ0uxToewUhfzk933AX6iyl3yytlIkqJ11u82EQMgtUgrBKQP2YF
+         Cerlyj/r14BK8H5nEoysN/LLWVqeGgsvLoIfzU7gX5BntfJ7wEjv+lLsm6Af8+tCVz
+         JazRcTxRuQtE9wBEBTHXZGKzZEJTioSpkVL0WlO8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Ernesto=20A=2E=20Fern=C3=A1ndez?= 
-        <ernesto.mnd.fernandez@gmail.com>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 48/77] direct-io: allow direct writes to empty inodes
-Date:   Thu, 14 Feb 2019 21:08:26 -0500
-Message-Id: <20190215020855.176727-48-sashal@kernel.org>
+Cc:     Tejun Heo <tj@kernel.org>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: [PATCH AUTOSEL 4.20 50/77] writeback: synchronize sync(2) against cgroup writeback membership switches
+Date:   Thu, 14 Feb 2019 21:08:28 -0500
+Message-Id: <20190215020855.176727-50-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
 References: <20190215020855.176727-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,52 +58,167 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+From: Tejun Heo <tj@kernel.org>
 
-[ Upstream commit 8b9433eb4de3c26a9226c981c283f9f4896ae030 ]
+[ Upstream commit 7fc5854f8c6efae9e7624970ab49a1eac2faefb1 ]
 
-On a DIO_SKIP_HOLES filesystem, the ->get_block() method is currently
-not allowed to create blocks for an empty inode.  This confusion comes
-from trying to bit shift a negative number, so check the size of the
-inode first.
+sync_inodes_sb() can race against cgwb (cgroup writeback) membership
+switches and fail to writeback some inodes.  For example, if an inode
+switches to another wb while sync_inodes_sb() is in progress, the new
+wb might not be visible to bdi_split_work_to_wbs() at all or the inode
+might jump from a wb which hasn't issued writebacks yet to one which
+already has.
 
-The problem is most visible for hfsplus, because the fallback to
-buffered I/O doesn't happen and the write fails with EIO.  This is in
-part the fault of the module, because it gives a wrong return value on
-->get_block(); that will be fixed in a separate patch.
+This patch adds backing_dev_info->wb_switch_rwsem to synchronize cgwb
+switch path against sync_inodes_sb() so that sync_inodes_sb() is
+guaranteed to see all the target wbs and inodes can't jump wbs to
+escape syncing.
 
-Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+v2: Fixed misplaced rwsem init.  Spotted by Jiufei.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Reported-by: Jiufei Xue <xuejiufei@gmail.com>
+Link: http://lkml.kernel.org/r/dc694ae2-f07f-61e1-7097-7c8411cee12d@gmail.com
+Acked-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/direct-io.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/fs-writeback.c                | 40 ++++++++++++++++++++++++++++++--
+ include/linux/backing-dev-defs.h |  1 +
+ mm/backing-dev.c                 |  1 +
+ 3 files changed, 40 insertions(+), 2 deletions(-)
 
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index 41a0e97252ae..7d3f2c1d141d 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -679,6 +679,7 @@ static int get_more_blocks(struct dio *dio, struct dio_submit *sdio,
- 	unsigned long fs_count;	/* Number of filesystem-sized blocks */
- 	int create;
- 	unsigned int i_blkbits = sdio->blkbits + sdio->blkfactor;
-+	loff_t i_size;
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index b40168fcc94a..36855c1f8daf 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -331,11 +331,22 @@ struct inode_switch_wbs_context {
+ 	struct work_struct	work;
+ };
  
++static void bdi_down_write_wb_switch_rwsem(struct backing_dev_info *bdi)
++{
++	down_write(&bdi->wb_switch_rwsem);
++}
++
++static void bdi_up_write_wb_switch_rwsem(struct backing_dev_info *bdi)
++{
++	up_write(&bdi->wb_switch_rwsem);
++}
++
+ static void inode_switch_wbs_work_fn(struct work_struct *work)
+ {
+ 	struct inode_switch_wbs_context *isw =
+ 		container_of(work, struct inode_switch_wbs_context, work);
+ 	struct inode *inode = isw->inode;
++	struct backing_dev_info *bdi = inode_to_bdi(inode);
+ 	struct address_space *mapping = inode->i_mapping;
+ 	struct bdi_writeback *old_wb = inode->i_wb;
+ 	struct bdi_writeback *new_wb = isw->new_wb;
+@@ -343,6 +354,12 @@ static void inode_switch_wbs_work_fn(struct work_struct *work)
+ 	struct page *page;
+ 	bool switched = false;
+ 
++	/*
++	 * If @inode switches cgwb membership while sync_inodes_sb() is
++	 * being issued, sync_inodes_sb() might miss it.  Synchronize.
++	 */
++	down_read(&bdi->wb_switch_rwsem);
++
  	/*
- 	 * If there was a memory error and we've overwritten all the
-@@ -708,8 +709,8 @@ static int get_more_blocks(struct dio *dio, struct dio_submit *sdio,
- 		 */
- 		create = dio->op == REQ_OP_WRITE;
- 		if (dio->flags & DIO_SKIP_HOLES) {
--			if (fs_startblk <= ((i_size_read(dio->inode) - 1) >>
--							i_blkbits))
-+			i_size = i_size_read(dio->inode);
-+			if (i_size && fs_startblk <= (i_size - 1) >> i_blkbits)
- 				create = 0;
- 		}
+ 	 * By the time control reaches here, RCU grace period has passed
+ 	 * since I_WB_SWITCH assertion and all wb stat update transactions
+@@ -428,6 +445,8 @@ static void inode_switch_wbs_work_fn(struct work_struct *work)
+ 	spin_unlock(&new_wb->list_lock);
+ 	spin_unlock(&old_wb->list_lock);
  
++	up_read(&bdi->wb_switch_rwsem);
++
+ 	if (switched) {
+ 		wb_wakeup(new_wb);
+ 		wb_put(old_wb);
+@@ -468,9 +487,18 @@ static void inode_switch_wbs(struct inode *inode, int new_wb_id)
+ 	if (inode->i_state & I_WB_SWITCH)
+ 		return;
+ 
++	/*
++	 * Avoid starting new switches while sync_inodes_sb() is in
++	 * progress.  Otherwise, if the down_write protected issue path
++	 * blocks heavily, we might end up starting a large number of
++	 * switches which will block on the rwsem.
++	 */
++	if (!down_read_trylock(&bdi->wb_switch_rwsem))
++		return;
++
+ 	isw = kzalloc(sizeof(*isw), GFP_ATOMIC);
+ 	if (!isw)
+-		return;
++		goto out_unlock;
+ 
+ 	/* find and pin the new wb */
+ 	rcu_read_lock();
+@@ -504,12 +532,14 @@ static void inode_switch_wbs(struct inode *inode, int new_wb_id)
+ 	 * Let's continue after I_WB_SWITCH is guaranteed to be visible.
+ 	 */
+ 	call_rcu(&isw->rcu_head, inode_switch_wbs_rcu_fn);
+-	return;
++	goto out_unlock;
+ 
+ out_free:
+ 	if (isw->new_wb)
+ 		wb_put(isw->new_wb);
+ 	kfree(isw);
++out_unlock:
++	up_read(&bdi->wb_switch_rwsem);
+ }
+ 
+ /**
+@@ -887,6 +917,9 @@ fs_initcall(cgroup_writeback_init);
+ 
+ #else	/* CONFIG_CGROUP_WRITEBACK */
+ 
++static void bdi_down_write_wb_switch_rwsem(struct backing_dev_info *bdi) { }
++static void bdi_up_write_wb_switch_rwsem(struct backing_dev_info *bdi) { }
++
+ static struct bdi_writeback *
+ locked_inode_to_wb_and_lock_list(struct inode *inode)
+ 	__releases(&inode->i_lock)
+@@ -2413,8 +2446,11 @@ void sync_inodes_sb(struct super_block *sb)
+ 		return;
+ 	WARN_ON(!rwsem_is_locked(&sb->s_umount));
+ 
++	/* protect against inode wb switch, see inode_switch_wbs_work_fn() */
++	bdi_down_write_wb_switch_rwsem(bdi);
+ 	bdi_split_work_to_wbs(bdi, &work, false);
+ 	wb_wait_for_completion(bdi, &done);
++	bdi_up_write_wb_switch_rwsem(bdi);
+ 
+ 	wait_sb_inodes(sb);
+ }
+diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
+index c31157135598..07e02d6df5ad 100644
+--- a/include/linux/backing-dev-defs.h
++++ b/include/linux/backing-dev-defs.h
+@@ -190,6 +190,7 @@ struct backing_dev_info {
+ 	struct radix_tree_root cgwb_tree; /* radix tree of active cgroup wbs */
+ 	struct rb_root cgwb_congested_tree; /* their congested states */
+ 	struct mutex cgwb_release_mutex;  /* protect shutdown of wb structs */
++	struct rw_semaphore wb_switch_rwsem; /* no cgwb switch while syncing */
+ #else
+ 	struct bdi_writeback_congested *wb_congested;
+ #endif
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index 8a8bb8796c6c..72e6d0c55cfa 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -689,6 +689,7 @@ static int cgwb_bdi_init(struct backing_dev_info *bdi)
+ 	INIT_RADIX_TREE(&bdi->cgwb_tree, GFP_ATOMIC);
+ 	bdi->cgwb_congested_tree = RB_ROOT;
+ 	mutex_init(&bdi->cgwb_release_mutex);
++	init_rwsem(&bdi->wb_switch_rwsem);
+ 
+ 	ret = wb_init(&bdi->wb, bdi, 1, GFP_KERNEL);
+ 	if (!ret) {
 -- 
 2.19.1
 
