@@ -2,85 +2,90 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54A54C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 03:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A39FC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 03:31:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 251E32192D
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 03:21:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7C1A206C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 03:31:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729805AbfBODVS (ORCPT
+        id S1730220AbfBODbV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 22:21:18 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3211 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726010AbfBODVR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 22:21:17 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 5FA9629EF71154F10FE9;
-        Fri, 15 Feb 2019 11:21:15 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.408.0; Fri, 15 Feb 2019 11:21:09 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Eric Anholt <eric@anholt.net>, David Airlie <airlied@linux.ie>,
-        "Daniel Vetter" <daniel@ffwll.ch>
-CC:     YueHaibing <yuehaibing@huawei.com>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] drm: Remove set but not used variable 'gem'
-Date:   Fri, 15 Feb 2019 03:35:07 +0000
-Message-ID: <20190215033507.103232-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        Thu, 14 Feb 2019 22:31:21 -0500
+Received: from nautica.notk.org ([91.121.71.147]:48203 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726010AbfBODbU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 22:31:20 -0500
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 9AB7CC009; Fri, 15 Feb 2019 04:31:17 +0100 (CET)
+Date:   Fri, 15 Feb 2019 04:31:02 +0100
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Tom Herbert <tom@herbertland.com>
+Cc:     David Miller <davem@davemloft.net>, doronrk@fb.com,
+        Tom Herbert <tom@quantonium.net>,
+        Dave Watson <davejwatson@fb.com>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] kcm: remove any offset before parsing messages
+Message-ID: <20190215033102.GA3099@nautica>
+References: <1536657703-27577-1-git-send-email-asmadeus@codewreck.org>
+ <20180912053642.GA2912@nautica>
+ <20180917.184502.447385458615284933.davem@davemloft.net>
+ <20180918015723.GA26300@nautica>
+ <20181031025657.GA17861@nautica>
+ <20190215010029.GA10899@nautica>
+ <CALx6S35HBKgtYkFde_AhCMPRtZfcVYfCYf=mLKjWSLLAfhMHyQ@mail.gmail.com>
+ <20190215015705.GA17974@nautica>
+ <CALx6S37MZadJ=PaAd+SSv9hxSX9kFTmTUtijPGA39JCx3PYq1Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CALx6S37MZadJ=PaAd+SSv9hxSX9kFTmTUtijPGA39JCx3PYq1Q@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Tom Herbert wrote on Thu, Feb 14, 2019:
+> > This second patch[2] (the current thread) now does an extra clone if
+> > there is an offset, but the problem really isn't in the clone but the
+> > pull itself that can fail and return NULL when there is memory pressure.
+> > For some reason I hadn't been able to reproduce that behaviour with
+> > strparser doing the pull, but I assume it would also be possible to hit
+> > in extreme situations, I'm not sure...
+>
+> This option looks the best to me, at least as a way to fix the issue
+> without requiring a change to the API. If the pull fails, doesn't that
+> just mean that the parser fails? Is there some behavior with this
+> patch that is not being handled gracefully?
 
-drivers/gpu/drm/vc4/vc4_txp.c: In function 'vc4_txp_connector_atomic_check':
-drivers/gpu/drm/vc4/vc4_txp.c:252:29: warning:
- variable 'gem' set but not used [-Wunused-but-set-variable]
-  struct drm_gem_cma_object *gem;
-                             ^
+Yes, the parser fails with -ENOMEM ; that is not handled gracefully at
+all: from a user point of view, the connection just hangs (recvmsg never
+returns), without so much as a message in dmesg either.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/gpu/drm/vc4/vc4_txp.c | 3 ---
- 1 file changed, 3 deletions(-)
+It took me a while to figure out what failed exactly as I did indeed
+expect strparser/kcm to handle that better, but ultimately as things
+stand if the parser fails it calls strp_parser_err() with the error
+which ends up in strp_abort_strp that should call
+sk->sk_error_report(sk) but in kcm case sk is the csk and I guess
+failing csk does not make a pending recv on the kcm sock to fail...
 
-diff --git a/drivers/gpu/drm/vc4/vc4_txp.c b/drivers/gpu/drm/vc4/vc4_txp.c
-index aa279b5b0de7..afb1c4ec4f18 100644
---- a/drivers/gpu/drm/vc4/vc4_txp.c
-+++ b/drivers/gpu/drm/vc4/vc4_txp.c
-@@ -249,7 +249,6 @@ static int vc4_txp_connector_atomic_check(struct drm_connector *conn,
- 					struct drm_connector_state *conn_state)
- {
- 	struct drm_crtc_state *crtc_state;
--	struct drm_gem_cma_object *gem;
- 	struct drm_framebuffer *fb;
- 	int i;
- 
-@@ -275,8 +274,6 @@ static int vc4_txp_connector_atomic_check(struct drm_connector *conn,
- 	if (i == ARRAY_SIZE(drm_fmts))
- 		return -EINVAL;
- 
--	gem = drm_fb_cma_get_gem_obj(fb, 0);
--
- 	/* Pitch must be aligned on 16 bytes. */
- 	if (fb->pitches[0] & GENMASK(3, 0))
- 		return -EINVAL;
+I'm not sure whether propagating the error to the upper socket is the
+right thing to do, kcm is meant to be able to work with multiple
+underlying sockets so I feel we must be cautious about that, but
+strparser might be able to retry somehow.
+This is what I said below:
+> > [,,,]
+> >  - the current patch, that I could only get to fail with KASAN, but does
+> > complexify kcm a bit; this also does not fix bpf sockmap at all.
+> > Would still require to fix the hang, so make strparser retry a few times
+> > if strp->cb.parse_msg failed maybe? Or at least get the error back to
+> > userspace somehow.
 
-
-
-
-
+Thanks,
+-- 
+Dominique
