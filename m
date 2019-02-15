@@ -2,127 +2,92 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8AA3C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FDBDC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACFF421929
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:42:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3A60221929
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:43:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="i5Z7czdL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DKkcru9t"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437159AbfBONm4 (ORCPT
+        id S2390021AbfBONnZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 08:42:56 -0500
-Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:43904 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726906AbfBONmy (ORCPT
+        Fri, 15 Feb 2019 08:43:25 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:34609 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726050AbfBONnZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 08:42:54 -0500
-Received: from mailhost1.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 4CCA810C054F;
-        Fri, 15 Feb 2019 05:42:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1550238174; bh=Ov8YlC2lWgVVrMBMhFClxVkRw59bMNUxJGwN+PVozqw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=i5Z7czdLEFz2cH+QXdche2/OwtJB1W2nm7bqBzBsossy0Xth6ukjCktXok4395w6z
-         zgZ63sBqaMIXhB36YRE3VWT+GlW6vPn9L2Bn+eyx7dBHPnCI8qh3GcZzIKz7r46IMs
-         uN7bU7OuIWNyvCfBllQVk4B1RF16vAvCcse1GAn2VqnKpR/XohXMxoLTZ8eV8LzakS
-         l5d0TxLhpnyat3CKh4JB8lyCwe2NAjECSOvbiFG9ZgnymqPSBYT6meKoHMVJ4o51qD
-         xw4up1Nl3bit1fsk0xzVEf1EV2RWqnh1Zrdq1EnFeReDMc5Dj7wRGrpqY7kSWLREgl
-         /f5P58iHi57Cw==
-Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by mailhost1.synopsys.com (Postfix) with ESMTP id AB33D534C;
-        Fri, 15 Feb 2019 05:42:22 -0800 (PST)
-From:   Jose Abreu <jose.abreu@synopsys.com>
-To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jose Abreu <jose.abreu@synopsys.com>,
-        Joao Pinto <joao.pinto@synopsys.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Subject: [PATCH net-next 3/3] net: stmmac: dwxgmac2: Also use TBU interrupt to clean TX path
-Date:   Fri, 15 Feb 2019 14:42:07 +0100
-Message-Id: <3fd9188875c502aeff3648be199289009bcf9055.1550237884.git.joabreu@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1550237884.git.joabreu@synopsys.com>
-References: <cover.1550237884.git.joabreu@synopsys.com>
-In-Reply-To: <cover.1550237884.git.joabreu@synopsys.com>
-References: <cover.1550237884.git.joabreu@synopsys.com>
+        Fri, 15 Feb 2019 08:43:25 -0500
+Received: by mail-it1-f194.google.com with SMTP id d125so4721202ith.1;
+        Fri, 15 Feb 2019 05:43:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZT6xTx/Tgx/TnfNjqPjVMOvQTzotlx5VZkqNpMggYoo=;
+        b=DKkcru9tmok39Nu7b5ynGxf0cih89l0SZJxRxKMhD65wBMYlam1bLQjlDlld11cx3Q
+         vfleGcK6W8rBrFrIY16TxkG8crkFhCo17rVPqyJlu9Vk6qZ+hdjteqb0wRxe+BPLhXm3
+         uGgecR8YpL+fY1wKcxcEefS8t63wcEyUActeczdNSezNld8JgoVFZXaWdH4W2nXKeOGK
+         xAkt04WUJi9VeK1e5JuV+QF95Y7gLU5cHzj32+3sjZWKk+X119rIv56zEPasWUtDMRh+
+         phqzq2W07y6ZE07u5O0dcZkDOAfUt2rkIriy51Rr+tbmhXiYh7b14LFOMJGOu/nYQ/ji
+         osRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZT6xTx/Tgx/TnfNjqPjVMOvQTzotlx5VZkqNpMggYoo=;
+        b=J4cQY/PIrHS7cI2zhGL2nxBILT0MMTQLFRpU1XgSwVmn4gqtzXpv6pgRYAK84Fonyv
+         LTp9eOf8NUWi/EarHnJoAVVIXFSWGOiKtkZPOTQsCsZol93N+L8hdqQ6iMfP+vZZAUvs
+         wVEa83Ac36NfHMBOfgLm2XLzA3L85ImQPeiUBb2yDW/vbToXIVS9BeNc9jXpV9+r05Jt
+         OxoNOTIBkoL+RfuEzFszAlTRejyUjlDBdPft7kjsqqZnh+lTZ5+/ZExB3MSuv51fqKMU
+         vjcnYg9j5vLpi61cebjFUnrUtOVYdb3t5IJHgCDmlIEAb2xI54U2BCkKpejlvz0w+0Wv
+         XWGQ==
+X-Gm-Message-State: AHQUAubZxV0TQpjmROLUuLCFHHHfgc+0sobl7RFqaI5TyjYRDSCVrMy4
+        p8w9g0C2X9Trfut0x07R6sf0k6MERZeJKDTEybI=
+X-Google-Smtp-Source: AHgI3IbVG2jp6sePJV7mSOIIajatGM8tsu40pGOoXaT3oZLo1QB4EVLTc582iHNNXRFukCCK197wIKrlkhtDlKLPbO8=
+X-Received: by 2002:a24:e44:: with SMTP id 65mr4407476ite.154.1550238204201;
+ Fri, 15 Feb 2019 05:43:24 -0800 (PST)
+MIME-Version: 1.0
+References: <1549290167-876-1-git-send-email-rogerq@ti.com>
+ <1549290167-876-2-git-send-email-rogerq@ti.com> <16001a6f-faed-ee14-5ade-79d5462f6d51@ti.com>
+ <5C654C39.2030308@ti.com>
+In-Reply-To: <5C654C39.2030308@ti.com>
+From:   Matthijs van Duin <matthijsvanduin@gmail.com>
+Date:   Fri, 15 Feb 2019 14:43:13 +0100
+Message-ID: <CAALWOA_7QvtDeNZjXTwbT10MeWJ5wF776mENbX5w1DZHDNVVhA@mail.gmail.com>
+Subject: Re: [PATCH v2 01/14] dt-bindings: remoteproc: Add TI PRUSS bindings
+To:     Roger Quadros <rogerq@ti.com>
+Cc:     Suman Anna <s-anna@ti.com>, Tony Lindgren <tony@atomide.com>,
+        ohad@wizery.com, bjorn.andersson@linaro.org,
+        David Lechner <david@lechnology.com>, nsekhar@ti.com,
+        Tero Kristo <t-kristo@ti.com>, nsaulnier@ti.com,
+        jreeder@ti.com, m-karicheri2@ti.com, woods.technical@gmail.com,
+        linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Robert Nelson <robertcnelson@gmail.com>, dan@kulp.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TBU interrupt is a normal interrupt and can be used to trigger the
-cleaning of TX path. Lets check if it's active in DMA interrupt handler.
+On Thu, 14 Feb 2019 at 12:08, Roger Quadros <rogerq@ti.com> wrote:
+> The beagleboard community is a primary user of this driver and we need to
+> find a solution so that PRUSS is usable either via remoteproc or via UIO.
 
-While at it, refactor a little bit the function:
-	- Don't check if RI is enabled because at function exit we will
-	  only clear the interrupts that are enabled so, no event will
-	  be missed.
+While being able to switch drivers without changing the DT by forcibly
+binding a different driver would definitely be a nice feature, and
+would have been possible with the older remoteproc-pru bindings, I
+think it's a stretch to say this "needs" a solution. Right now, in
+practice, selection between uio-pruss and remoteproc-pru is done
+simply by modifying the device tree appropriately (typically by having
+u-boot apply an overlay to the DT), and I don't think anyone views
+this as unduly burdensome?
 
-In my tests withe XGMAC2 this increased performance.
-
-Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Cc: Joao Pinto <jpinto@synopsys.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-Cc: Alexandre Torgue <alexandre.torgue@st.com>
----
- drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h     | 4 +++-
- drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c | 8 +++-----
- 2 files changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-index d6bb953685fa..37d5e6fe7473 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h
-@@ -193,9 +193,10 @@
- #define XGMAC_AIE			BIT(14)
- #define XGMAC_RBUE			BIT(7)
- #define XGMAC_RIE			BIT(6)
-+#define XGMAC_TBUE			BIT(2)
- #define XGMAC_TIE			BIT(0)
- #define XGMAC_DMA_INT_DEFAULT_EN	(XGMAC_NIE | XGMAC_AIE | XGMAC_RBUE | \
--					XGMAC_RIE | XGMAC_TIE)
-+					XGMAC_RIE | XGMAC_TBUE | XGMAC_TIE)
- #define XGMAC_DMA_CH_Rx_WATCHDOG(x)	(0x0000313c + (0x80 * (x)))
- #define XGMAC_RWT			GENMASK(7, 0)
- #define XGMAC_DMA_CH_STATUS(x)		(0x00003160 + (0x80 * (x)))
-@@ -204,6 +205,7 @@
- #define XGMAC_FBE			BIT(12)
- #define XGMAC_RBU			BIT(7)
- #define XGMAC_RI			BIT(6)
-+#define XGMAC_TBU			BIT(2)
- #define XGMAC_TPS			BIT(1)
- #define XGMAC_TI			BIT(0)
- 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
-index c5e25580a43f..2ba712b48a89 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
-@@ -283,12 +283,10 @@ static int dwxgmac2_dma_interrupt(void __iomem *ioaddr,
- 		x->normal_irq_n++;
- 
- 		if (likely(intr_status & XGMAC_RI)) {
--			if (likely(intr_en & XGMAC_RIE)) {
--				x->rx_normal_irq_n++;
--				ret |= handle_rx;
--			}
-+			x->rx_normal_irq_n++;
-+			ret |= handle_rx;
- 		}
--		if (likely(intr_status & XGMAC_TI)) {
-+		if (likely(intr_status & (XGMAC_TI | XGMAC_TBU))) {
- 			x->tx_normal_irq_n++;
- 			ret |= handle_tx;
- 		}
--- 
-2.7.4
-
+Matthijs
