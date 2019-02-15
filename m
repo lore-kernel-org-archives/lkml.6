@@ -2,89 +2,108 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60BD5C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 018D5C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:44:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32124222A1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:43:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550249035;
-	bh=dMk+fZ++jd3sL6Z+huDx2quzIAZAjyN1XYmHTeKIEVA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ZhL5pL8rJ5TIuvEJXHk0vjdUsShZsM6pQfFOUQTvUKjuH4mgz8Col9yJrt2zdeJZZ
-	 RgTR6EPXAhUjwFT/Xd11K3aiSsW97rRUrmfwlDFeeid3BRywfwFKWBVm0fXFUrvj02
-	 t2BJ+xDyozpJLawYFhaR0MLwKW9Fzg/rR78wwMPY=
+	by mail.kernel.org (Postfix) with ESMTP id C489721B18
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:44:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="Ji+mUi6s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729590AbfBOQnx (ORCPT
+        id S2387464AbfBOQoF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 11:43:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33222 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726597AbfBOQnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 11:43:53 -0500
-Received: from quaco.ghostprotocols.net (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 940A72192B;
-        Fri, 15 Feb 2019 16:43:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550249032;
-        bh=dMk+fZ++jd3sL6Z+huDx2quzIAZAjyN1XYmHTeKIEVA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JJWKfD9x2Ic8pcVJ0Mj+E/hL8uhQDlOcIrLFhpnwpvqfnV/oKRK08f959kfgzmB2F
-         m9c6iJgCmghh50HUsNAnsI0eSYJBtQ1ahIuOol+XqFHWlxwOVGkgg5EMJ2YS0IOxB2
-         J1UssVS7sLrFvUU/3vJ8Fs0n13VuG0qyw/9h7UXI=
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id EE864410D5; Fri, 15 Feb 2019 13:43:49 -0300 (-03)
-Date:   Fri, 15 Feb 2019 13:43:49 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Tommi Rantala <tt.rantala@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Tommi Rantala <tommi.t.rantala@nokia.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Kim Phillips <kim.phillips@arm.com>
-Subject: Re: [PATCH] perf tests shell: Skip trace+probe_vfs_getname.sh if
- built without trace support
-Message-ID: <20190215164349.GA31177@kernel.org>
-References: <20190215134253.11454-1-tt.rantala@gmail.com>
+        Fri, 15 Feb 2019 11:44:05 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:38221 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726597AbfBOQoE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 11:44:04 -0500
+Received: by mail-ot1-f66.google.com with SMTP id m1so17555261otf.5
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 08:44:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JNENtSq4gtxSa3KhUxwbO4/tTxp+QyVteb5iFUg4fdQ=;
+        b=Ji+mUi6sP/fpcE4FWTKDKj5H+WF5Sqtemi0Y6sfsH0jOkRheQfDZAhe53ZlP2km2W6
+         JhlWY1GsdrHr9Sj1LxAY2D5FXqT3I6i9Iw4qoWS2s7EfaeUEH1q4nqrOs2vemWsNgMEX
+         hIPBNH3uqgDsIkYzJGjpTc3A2f9gIbR5HGrouHrYYQ2E9/FAhXeStT0OOubH7j5ElNVz
+         L3FiRkzWaBN8fxBQVN+1LRBrJTNIdD7E0ekfXx2BnzxjAatiPLlsIlcigPzXP8P6MtKL
+         wW13NibjcmlV8A6KCrtvKq3azra2fgslt3bFK9ixesl/i8Fgb7YCh58+7I2lKzG5rhXR
+         JlsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JNENtSq4gtxSa3KhUxwbO4/tTxp+QyVteb5iFUg4fdQ=;
+        b=h/tjBqoWWOFXTAq0M1YVH/FXmrDzVb6POU4LNrnQ4nh5hcDgFhEqJ0TTY2YF1lL88N
+         3cgH77ZnOWbWNEWTDRz5l1TxEh0cFBMvRRVdpDsOTVSFmqM3VFhvjRbTYykUAniZr/AA
+         UyqzlZvjnGpIzei5/A7pKfWoaBOwJkm+MYp82V1/f4/1DRoK7sMrCCoDQKUpAlxT1JDn
+         UFTHLmuRSDIE1PB75nQfrS04T6R7+/Ytrrp7+WiAcLQNpiG8cbKSsPbDzFtii7Zwn4P+
+         lPDF/FVsdqlxANbO2mym5OE2vPnXez14M4LgQCQh2CSPmBdtalCpHqFUO+Zw98HHl+V7
+         yR7g==
+X-Gm-Message-State: AHQUAubPE0s5Zz8jO43Ex5Dm7lK2raIN+jKrIykAWe0DlxupSDx76YNQ
+        YyLo83N/EKaM0z+Ln/Y/7JzAZbXVd2MSGIk2xq/DQw==
+X-Google-Smtp-Source: AHgI3IYxu3zjAaC3jdX2BoRSp0v3vL/4kxzlhNB6jGTSVK2f/1tFzfrQAIVOhdn3yHyOKH/qFbF8oRPwTnWhBoHmxPE=
+X-Received: by 2002:a9d:37b7:: with SMTP id x52mr6663593otb.214.1550249043856;
+ Fri, 15 Feb 2019 08:44:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190215134253.11454-1-tt.rantala@gmail.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <155017502147.944049.2893295352368862579.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <155017550946.954637.8586902409974005660.stgit@dwillia2-desk3.amr.corp.intel.com>
+In-Reply-To: <155017550946.954637.8586902409974005660.stgit@dwillia2-desk3.amr.corp.intel.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 15 Feb 2019 08:43:52 -0800
+Message-ID: <CAPcyv4jVK-0F4BrSEb5VBn+Bq_qa4Ex5a=O=FGYdVYccf4hhzg@mail.gmail.com>
+Subject: Re: [PATCH v2] nfit/ars: Allow root to busy-poll the ARS state machine
+To:     linux-nvdimm <linux-nvdimm@lists.01.org>
+Cc:     Erwin Tsaur <erwin.tsaur@oracle.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Feb 15, 2019 at 03:42:46PM +0200, Tommi Rantala escreveu:
-> From: Tommi Rantala <tommi.t.rantala@nokia.com>
-> 
-> If perf was built without trace support, trace+probe_vfs_getname.sh
-> fails:
-> 
->   # perf trace -h
->   perf: 'trace' is not a perf-command. See 'perf --help'
-> 
->   # perf test 64
->   64: Check open filename arg using perf trace + vfs_getname: FAILED!
-> 
-> Check trace support, so that we'll skip the test:
-> 
->   # perf test 64
->   64: Check open filename arg using perf trace + vfs_getname: Skip
+On Thu, Feb 14, 2019 at 12:32 PM Dan Williams <dan.j.williams@intel.com> wrote:
+>
+> The ARS implementation implements exponential back-off on the poll
+> interval to prevent high-frequency access to the DIMM / platform
+> interface. Depending on when the ARS completes the poll interval may
+> exceed the completion event by minutes. Allow root to reset the timeout
+> each time it probes the status. A one-second timeout is still enforced,
+> but root can otherwise can control the poll interval.
+>
+> Reported-by: Erwin Tsaur <erwin.tsaur@oracle.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+> Change since v1: Use mod_delayed_work() instead of queue_delayed_work()
+> to modify the timeout for existing work.
+>
+>  drivers/acpi/nfit/core.c |    6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
+> index 934be96dc149..b1ab593a808a 100644
+> --- a/drivers/acpi/nfit/core.c
+> +++ b/drivers/acpi/nfit/core.c
+> @@ -1328,6 +1328,12 @@ static ssize_t scrub_show(struct device *dev,
+>                 rc = sprintf(buf, "%d%s", acpi_desc->scrub_count,
+>                                 acpi_desc->scrub_busy
+>                                 && !acpi_desc->cancel ? "+\n" : "\n");
+> +               /* Allow an admin to poll the busy state at a higher rate */
+> +               if (acpi_desc->scrub_busy && !acpi_desc->cancel
+> +                               && capable(CAP_SYS_RAWIO)) {
+> +                       acpi_desc->scrub_tmo = 1;
+> +                       mod_delayed_work(nfit_wq, &acpi_desc->dwork, HZ);
+> +               }
 
-Thanks, applied.
-
-- Arnaldo
+I added support to ndctl to specify a poll-interval to 'ndctl
+wait-scrub'. The support highlighted an infinite loop problem as
+mod_delayed_work() called in a loop prevented the workqueue from ever
+running. A revised patch-set adds a new ARS_POLL flag to ensure that
+the workqueue runs at least once after every mod_delayed_work().
