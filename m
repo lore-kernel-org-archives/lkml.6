@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4A6AC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:32:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9D3BC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:32:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7828320840
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:32:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B959B2175B
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:32:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197932;
-	bh=fN2XnFGzLwwH3E2ehx6lmj7EfzP0FMi4IijoSizqSHc=;
+	s=default; t=1550197944;
+	bh=bwkn+GV5MTWFQ4YNcQ6AHRIJTNO+w7D0O+MEwkDzqwE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Al97XCgzzcz6U93ppLN2sgHu/wOdLcWxcM2i/vV2JBJcrXBg5tdCI96B4UoG47Kwp
-	 GoNP8sjySYgmsSedH/4WQI1jXL/swSQ/Evfu5QewSvq6OoG9n2l5XMWSyg7Z6f9mSU
-	 e6swqfAgqcT2z8DvUgql1ZRQelfho38LBJrDttxk=
+	b=inIESAh3uZ5efnC5Byb4i11KTfmWlVi/jOEo4YdjJNm7mg0qidoYUxCuv1TMm4gLd
+	 zJ1XRtXpgJ/BcNUxdHp/C7x3q5lXGWoI5Hy/XRGB1RfWYcoOQDQgRhOc+oMek+7uGj
+	 cjFz0NFF/r3IOI7pkbMhGI2QSotuzQHuPueEElp4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733262AbfBOCcL (ORCPT
+        id S2387581AbfBOCcW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:32:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52420 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:32:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404248AbfBOCMX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:12:23 -0500
+        id S2404154AbfBOCMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:12:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D86D621934;
-        Fri, 15 Feb 2019 02:12:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F12E206BA;
+        Fri, 15 Feb 2019 02:12:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196742;
-        bh=fN2XnFGzLwwH3E2ehx6lmj7EfzP0FMi4IijoSizqSHc=;
+        s=default; t=1550196735;
+        bh=bwkn+GV5MTWFQ4YNcQ6AHRIJTNO+w7D0O+MEwkDzqwE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nIn+XxKUu9VJ532gbrHVTPdiKUp2H00WGX7tYt2zCoLtO/kmVslF8OG8CAc1FD07S
-         /HqQ7yEG8zeGjdCzJBZ9xNECpqBLhSopN48Q7gwW90u035Mhd7GrmJ6n4cvKXDRVTU
-         H4FURZQL6l7bYIcA8Dd67hDMF0p9eE21TQF7Uv7A=
+        b=TlsU/EVsrqUlcJwlrnMBDEzbaP8VzL83wbMn3Mvk8U6mFPHPjhPLKMaQxQKVuZL5T
+         7rxaA/mqNJXg6dlnovLiPATSebI5LOyDNvzpj0E6hHcve9TWEayfrVxnTzoWDuvS4p
+         YVyRgpcQyEariNrysZAh4552qFJ4MoLIHupz3UBQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tomonori Sakita <tomonori.sakita@sord.co.jp>,
-        Atsushi Nemoto <atsushi.nemoto@sord.co.jp>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 37/65] serial: fsl_lpuart: fix maximum acceptable baud rate with over-sampling
-Date:   Thu, 14 Feb 2019 21:10:53 -0500
-Message-Id: <20190215021121.177674-37-sashal@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 32/65] futex: Fix (possible) missed wakeup
+Date:   Thu, 14 Feb 2019 21:10:48 -0500
+Message-Id: <20190215021121.177674-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -58,33 +59,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomonori Sakita <tomonori.sakita@sord.co.jp>
+From: Peter Zijlstra <peterz@infradead.org>
 
-[ Upstream commit 815d835b7ba46685c316b000013367dacb2b461b ]
+[ Upstream commit b061c38bef43406df8e73c5be06cbfacad5ee6ad ]
 
-Using over-sampling ratio, lpuart can accept baud rate upto uartclk / 4.
+We must not rely on wake_q_add() to delay the wakeup; in particular
+commit:
 
-Signed-off-by: Tomonori Sakita <tomonori.sakita@sord.co.jp>
-Signed-off-by: Atsushi Nemoto <atsushi.nemoto@sord.co.jp>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+  1d0dcb3ad9d3 ("futex: Implement lockless wakeups")
+
+moved wake_q_add() before smp_store_release(&q->lock_ptr, NULL), which
+could result in futex_wait() waking before observing ->lock_ptr ==
+NULL and going back to sleep again.
+
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 1d0dcb3ad9d3 ("futex: Implement lockless wakeups")
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/fsl_lpuart.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/futex.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 3f8d1274fc85..61003eedd7cd 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -1691,7 +1691,7 @@ lpuart32_set_termios(struct uart_port *port, struct ktermios *termios,
- 	}
+diff --git a/kernel/futex.c b/kernel/futex.c
+index f89abca89513..3d31b04a5dea 100644
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -1444,11 +1444,7 @@ static void mark_wake_futex(struct wake_q_head *wake_q, struct futex_q *q)
+ 	if (WARN(q->pi_state || q->rt_waiter, "refusing to wake PI futex\n"))
+ 		return;
  
- 	/* ask the core to calculate the divisor */
--	baud = uart_get_baud_rate(port, termios, old, 50, port->uartclk / 16);
-+	baud = uart_get_baud_rate(port, termios, old, 50, port->uartclk / 4);
+-	/*
+-	 * Queue the task for later wakeup for after we've released
+-	 * the hb->lock. wake_q_add() grabs reference to p.
+-	 */
+-	wake_q_add(wake_q, p);
++	get_task_struct(p);
+ 	__unqueue_futex(q);
+ 	/*
+ 	 * The waiting task can free the futex_q as soon as q->lock_ptr = NULL
+@@ -1458,6 +1454,13 @@ static void mark_wake_futex(struct wake_q_head *wake_q, struct futex_q *q)
+ 	 * plist_del in __unqueue_futex().
+ 	 */
+ 	smp_store_release(&q->lock_ptr, NULL);
++
++	/*
++	 * Queue the task for later wakeup for after we've released
++	 * the hb->lock. wake_q_add() grabs reference to p.
++	 */
++	wake_q_add(wake_q, p);
++	put_task_struct(p);
+ }
  
- 	spin_lock_irqsave(&sport->port.lock, flags);
- 
+ /*
 -- 
 2.19.1
 
