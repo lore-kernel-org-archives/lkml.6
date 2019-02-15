@@ -2,148 +2,131 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3080C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D9DC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:08:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92D4021A80
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:00:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4179221A80
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:08:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="htOXUgJk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mF96k0Ab"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393685AbfBOLAf (ORCPT
+        id S2394000AbfBOLH7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 06:00:35 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:12897 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726160AbfBOLAe (ORCPT
+        Fri, 15 Feb 2019 06:07:59 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37937 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393771AbfBOLH7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 06:00:34 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c669bd50001>; Fri, 15 Feb 2019 03:00:37 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 15 Feb 2019 03:00:32 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 15 Feb 2019 03:00:32 -0800
-Received: from [10.21.132.148] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 15 Feb
- 2019 11:00:29 +0000
-Subject: Re: [PATCH 2/2] driver core: Fix possible supplier PM-usage counter
- imbalance
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lukas Wunner <lukas@wunner.de>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-References: <5510642.nRbR3bcduN@aspire.rjw.lan>
- <9351473.C2nPJoyFsE@aspire.rjw.lan>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <2ed95b05-317c-59bb-498a-b5481e54bcf6@nvidia.com>
-Date:   Fri, 15 Feb 2019 11:00:27 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 15 Feb 2019 06:07:59 -0500
+Received: by mail-wr1-f67.google.com with SMTP id v13so9889112wrw.5;
+        Fri, 15 Feb 2019 03:07:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DHreN7FmvfNjJM3uXrYhnaHzqQk+jmY9ofZPntDTasI=;
+        b=mF96k0AbTJhNZCfTcEsvKSncScD1ZXwuN6JBD8+SmL9l6B9W9wbYM/MNfWu9EVfvyK
+         qsZ3SjgifMyROTc155lHthisuXMNbHX9hi8KeFmm1M51Tibk2pe9//OOOl/6zgtsALA6
+         QLf4rx8W+QCJ69hQBg10yi/mNvAKjeyE3iy8GxMshPtAyrbzTtvPvmrokqcR8mNEiPi5
+         yFQk0mv6IDS/v950tFSS+yjupdYiMaQGHg7UqNbzDotndW4Z5eob1DrcXZ/7CKAdsigd
+         0BgRcgzmKkn4qG+W2drHveKivVBz+kziQacK1KFAiE76889N2cdu7koKJ6z7XSNOzYdt
+         iuEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DHreN7FmvfNjJM3uXrYhnaHzqQk+jmY9ofZPntDTasI=;
+        b=HOF7Om4N8pfgDljVa5bXdVzOv6oQfT8J2CpCLt8PesjcR8f6CSWUM9rpymmK6P1Mom
+         b3h4kjrX6U9aosZjd/X3ctxTOUZUrqy1443cRTEAN4RPDGwG8/3RPnh/3anTZ9guAbxE
+         4g4hgkpSaQZwpWx7XpfK5HVXZr7625+7ffnLi3lv724oOu8lcAFRoA40WyjdgMXkDaUR
+         Oqw2vjwEtg9TdDBQiA9833RMf44g4LKqD5ZTyM6+E+dvJ/8vGKS5ztaV0jIgOkydl3Iw
+         bPlQDA25Ifpb3FRFzz6Kk8NrAWGwYyu7p5pmu8Y4K8HczkZU1KkdczwEuRO6OLk/RuGH
+         rHUQ==
+X-Gm-Message-State: AHQUAubYjvIMkgznvZDnVq4V/L0m+4fcmx0Tajxcetbm0yqA6KFHwz+8
+        1EToqucMNidZRf1ABRJIwvgKR3v8+7jim35Wiv4=
+X-Google-Smtp-Source: AHgI3IZKH68DrdTcf1gIsMsZukuofUUR2cx420By69f0NaWIFbm6xY/eUgsqqrzWZVTyy3PGN0rhyyGX1aiFYjcMlB8=
+X-Received: by 2002:a5d:5504:: with SMTP id b4mr3800825wrv.291.1550228877049;
+ Fri, 15 Feb 2019 03:07:57 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <9351473.C2nPJoyFsE@aspire.rjw.lan>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1550228437; bh=4LRVG+p/BayEahjiKUItR8XDJZbQ8zqnIZoOsf0G9j0=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=htOXUgJkIvtY+JfltpqNrmURhPl/4mUxnXZZr1SGiZM5QXPGGl2lfyzoMzCrrfQpU
-         ESmc5yx0ApxBYhlBGOKoOOAVRx/+dzi2Yl+7usTQEv/xdE6nsN6t9dMWRQl9jtUSbo
-         y23G9Q9L/xZBrWFlbOH1ES/zubW8vvfbGW3hjDDjQm2B6o2tGCEVV7gpFpCVURzL2b
-         UKFWjXl/Aufn0DG6P1VISn3Q8y6SxDmOParIrZe7MHo8PsmzqbtWjJQVhCEG0z29CX
-         oEXuzKxLOHzqDwhs5HopRP7JN0YKfYiVJU9n09vsSQBJE+QNPkj26MIT9MdB45CWis
-         ZRoCimGB6xHiQ==
+References: <20190129195214.30272-1-sxauwsk@163.com>
+In-Reply-To: <20190129195214.30272-1-sxauwsk@163.com>
+From:   Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
+Date:   Fri, 15 Feb 2019 16:37:46 +0530
+Message-ID: <CAKfKVtELqoNNJB0qB88ghGoVrdV2-Ez1DjvmT3dZifntdV0GQg@mail.gmail.com>
+Subject: Re: [PATCH] i2c: cadence: try reset when master receive error interrupts
+To:     sxauwsk <sxauwsk@163.com>
+Cc:     Michal Simek <michal.simek@xilinx.com>,
+        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rafael,
+Hi Sxauwsk,
 
-On 12/02/2019 12:08, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> If a stateless device link to a certain supplier with
-> DL_FLAG_PM_RUNTIME set in the flags is added and then removed by the
-> consumer driver's probe callback, the supplier's PM-runtime usage
-> counter will be nonzero after that which effectively causes the
-> supplier to remain "always on" going forward.
-> 
-> Namely, device_link_add() called to add the link invokes
-> device_link_rpm_prepare() which notices that the consumer driver is
-> probing, so it increments the supplier's PM-runtime usage counter
-> with the assumption that the link will stay around until
-> pm_runtime_put_suppliers() is called by driver_probe_device(),
-> but if the link goes away before that point, the supplier's
-> PM-runtime usage counter will remain nonzero.
-> 
-> To prevent that from happening, first rework pm_runtime_get_suppliers()
-> and pm_runtime_put_suppliers() to use the rpm_active refounts of device
-> links and make the latter only drop rpm_active and the supplier's
-> PM-runtime usage counter for each link by one, unless rpm_active is
-> one already for it.  Next, modify device_link_add() to bump up the
-> new link's rpm_active refcount and the suppliers PM-runtime usage
-> counter by two, to prevent pm_runtime_put_suppliers(), if it is
-> called subsequently, from suspending the supplier prematurely (in
-> case its PM-runtime usage counter goes down to 0 in there).
-> 
-> Due to the way rpm_put_suppliers() works, this change does not
-> affect runtime suspend of the consumer ends of new device links (or,
-> generally, device links for which DL_FLAG_PM_RUNTIME has just been
-> set).
-> 
-> Fixes: e2f3cd831a28 ("driver core: Fix handling of runtime PM flags in device_link_add()")
-> Reported-by: Ulf Hansson <ulf.hansson@linaro.org> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Wed, Jan 30, 2019 at 3:13 PM sxauwsk <sxauwsk@163.com> wrote:
+>
+> When the adapter receive error interrupts, such as NACK, arbitration lost,
+> cdns_i2c_master_xfer return to the caller directly instead of resuming
+> the adapter which resulted in the adapter being out of control.
+>
+> So when driver detect err_status then try to repair and fix it.
+>
+> Signed-off-by: sxauwsk <sxauwsk@163.com>
 > ---
-> 
-> Note that the issue had been there before commit e2f3cd831a28, but it was
-> overlooked by that commit and this change is a fix on top of it, so make
-> the Fixes: tag point to commit e2f3cd831a28 (instead of an earlier one
-> that the patch will not be applicable to).
-I noticed that yesterday's and today's -next were no longer booting on
-one of our Tegra boards (Tegra210 Jetson TX2) because networking is
-failing. The ethernet chip is a USB device and looking at the bootlogs I
-can see that the Tegra XHCI driver is failing ...
+>  drivers/i2c/busses/i2c-cadence.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-cadence.c b/drivers/i2c/busses/i2c-cadence.c
+> index b13605718291..e10048d7524a 100644
+> --- a/drivers/i2c/busses/i2c-cadence.c
+> +++ b/drivers/i2c/busses/i2c-cadence.c
+> @@ -548,10 +548,6 @@ static int cdns_i2c_process_msg(struct cdns_i2c *id, struct i2c_msg *msg,
+>         cdns_i2c_writereg(CDNS_I2C_IXR_ALL_INTR_MASK,
+>                           CDNS_I2C_IDR_OFFSET);
+>
+> -       /* If it is bus arbitration error, try again */
+> -       if (id->err_status & CDNS_I2C_IXR_ARB_LOST)
+> -               return -EAGAIN;
+> -
+>         return 0;
+>  }
+>
+> @@ -617,13 +613,19 @@ static int cdns_i2c_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+>                         id->bus_hold_flag = 0;
+>
+>                 ret = cdns_i2c_process_msg(id, msgs, adap);
+> -               if (ret)
+> +               if (!ret)
+>                         goto out;
+>
+In case  the Arbitration error happend  the cdns_i2c_process_msg would return 0
+and we will miss the check  below.
 
- tegra-xusb 70090000.usb: xHCI host controller not responding, assume dead
- tegra-xusb 70090000.usb: HC died; cleaning up
+Am I missing something ?
 
-The Tegra XHCI driver uses multiple power-domains and uses
-device_link_add() to attach them. So now I am wondering if there is
-something that we have got wrong in our implementation. However, I don't
-see the device being probed deferred on boot or anything like that.
-
-The driver in question is drivers/usb/host/xhci-tegra.c and we add the
-links in the function tegra_xusb_powerdomain_init() which is before RPM
-is enabled. Let me know if you have any thoughts.
-
-Cheers
-Jon
-
--- 
-nvpublic
+>                 /* Report the other error interrupts to application */
+>                 if (id->err_status) {
+>                         cdns_i2c_master_reset(adap);
+>
+> +                       /* If it is bus arbitration error, try again */
+> +                       if (id->err_status & CDNS_I2C_IXR_ARB_LOST) {
+> +                               ret = -EAGAIN;
+> +                               goto out;
+> +                       }
+> +
+>                         if (id->err_status & CDNS_I2C_IXR_NACK) {
+>                                 ret = -ENXIO;
+>                                 goto out;
+> --
+> 2.19.2
+>
+>
