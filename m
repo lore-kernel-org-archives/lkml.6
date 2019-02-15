@@ -2,120 +2,105 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD10BC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 20:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFE2BC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 20:39:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA32F222D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 20:38:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD36F21924
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 20:39:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TTSl4Ggq"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="wv6bEB26"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390375AbfBOUiw (ORCPT
+        id S2390590AbfBOUjW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 15:38:52 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:34698 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727198AbfBOUiv (ORCPT
+        Fri, 15 Feb 2019 15:39:22 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:49016 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727198AbfBOUjW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 15:38:51 -0500
-Received: by mail-qk1-f194.google.com with SMTP id a15so6557217qkc.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 12:38:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=VKDTq32tHQd8+HaOp4Alna3elHrfcsH7L4bE3HH+oS8=;
-        b=TTSl4GgqBMPMmNmTgOsjeptcSr/SRPhZzsMMIyuhuHLA+uhnFWqCc9iz/dRytozt+J
-         8Qw+AJAVx4PG4pa28v86a/GWQrLfa6CtI4irNuVab6kQIed7km4bCyQubaz8MlXu1xDy
-         Y6HAAml3Gv7VW6A+rYcrCegJXJ8UdMYN6qxB745JJLEj9r5U6pvT+pZ7KPESvtD3q4pk
-         dg1NCHwHytvEUHiU7t1+xRF/P2COFxbuubXNe0h0uPcqCiUZBjqvNA0nxnBc4OyQeZhc
-         G+vsaRVfRZceYaNC0d7KtMZaMhADEs76NhQckMJV8gEVl/T0j6dDvG7cnO5ybjxcwdCz
-         JDfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VKDTq32tHQd8+HaOp4Alna3elHrfcsH7L4bE3HH+oS8=;
-        b=M6ZnP4ajLlJAXrcycXHWvALrk1gZAMvZjBqrnbv18N501IB/kDwNRmrhFtprZutOLs
-         bNwOf3eGrdG9PqmghdByY3JtGtT5RoC/gL6npoXo3nEng45QOBJGDXDvNDor0hdhosFC
-         J8W0N6dbbEobijOGB9Lh/pXLXOValKSzIKJfUANllkEDdeLSPRlZd1Z2xHeXuOXZfw3j
-         qDB/oZrZXSJCVnVhBFLIBUWWBu+cAVTrTSb336czhjhJ+P70ZhNi/R5ii8Z3Yj7vsa9f
-         smb39DBytd+pODj/F2D6x49FDqtN7YE5ssEoxIOXOF4sWb+3MVx5DBfoQv2zgXkgJ4wQ
-         4Bmw==
-X-Gm-Message-State: AHQUAuYHqCPjzNe+M3zEMKDMhTtI/9IK3AGnbCSa3Qbh8Y4u+4+6PO78
-        /p73FNHCs9AArfG/p5x0q+M=
-X-Google-Smtp-Source: AHgI3Ibifu8WVM2y/+d93PbPuAKpJEnkZDS/GstIlnar8ZAJUoNz2Gdtk7B0AIDVOzjx5Y6YVudlpQ==
-X-Received: by 2002:a37:457:: with SMTP id 84mr8228000qke.303.1550263130202;
-        Fri, 15 Feb 2019 12:38:50 -0800 (PST)
-Received: from nessie (pool-100-15-144-194.washdc.fios.verizon.net. [100.15.144.194])
-        by smtp.gmail.com with ESMTPSA id d50sm5612686qta.31.2019.02.15.12.38.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 15 Feb 2019 12:38:49 -0800 (PST)
-Date:   Fri, 15 Feb 2019 20:30:07 +0000
-From:   Dan Robertson <danlrobertson89@gmail.com>
-To:     Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc:     Jan Kiszka <jan.kiszka@siemens.com>, felipe.balbi@linux.intel.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] scripts/gdb: fix linux constants
-Message-ID: <20190215203006.GA593@nessie>
-References: <20190215191713.GA28287@nessie>
- <07923abd-117d-2a33-2700-7db0840eacad@ideasonboard.com>
+        Fri, 15 Feb 2019 15:39:22 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1FKdGJ7062143;
+        Fri, 15 Feb 2019 20:39:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=rNtnO7rrhauRz+civhMrk0zTJ+CPDxwnD/u/os2j5wE=;
+ b=wv6bEB26lL2CSNHY6O6O/J5Yb4U9YrV7plIBrbZAIALvEiingOLKroZ2Pn4BtR49u8Kn
+ 8BCIpW3j8o6263qqbqQ6OKZw74WuH3Hm7W8TQ35zIRUA5voJ5hP6YYfKRTg8SluMnKJd
+ bD7vxsMseRLf+z6QknR3QN7m/zLs5KHKrro0mfvALFl6D+Ii6qUgsc8+aDQYsW3r/yTC
+ 3DKVBUyKeNoEtw73kpb/o7RKXd/ZmnyROx7pdLg4EllbJdtdFeekuhLQw9yOMQOMEBrF
+ xJeQomlaC+BR+xm2V/Bqi5Ytld1f/nv3kDYcVgDcR3B0XYJrEZ/AlUi77GGD5Xltp3Ji 2w== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2qhreeg05s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Feb 2019 20:39:16 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1FKd7Wa005035
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Feb 2019 20:39:07 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1FKd6pF008310;
+        Fri, 15 Feb 2019 20:39:06 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 15 Feb 2019 20:39:05 +0000
+Date:   Fri, 15 Feb 2019 15:39:27 -0500
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>
+Cc:     akpm@linux-foundation.org, daniel.m.jordan@oracle.com,
+        mhocko@suse.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] mm: Generalize putback scan functions
+Message-ID: <20190215203926.ldpfniqwpn7rtqif@ca-dmjordan1.us.oracle.com>
+References: <155014039859.28944.1726860521114076369.stgit@localhost.localdomain>
+ <155014053725.28944.7960592286711533914.stgit@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="uAKRQypu60I7Lcqm"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <07923abd-117d-2a33-2700-7db0840eacad@ideasonboard.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <155014053725.28944.7960592286711533914.stgit@localhost.localdomain>
+User-Agent: NeoMutt/20180323-268-5a959c
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9168 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=851 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902150136
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Feb 14, 2019 at 01:35:37PM +0300, Kirill Tkhai wrote:
+> +static unsigned noinline_for_stack move_pages_to_lru(struct lruvec *lruvec,
+> +						     struct list_head *list)
+>  {
+>  	struct pglist_data *pgdat = lruvec_pgdat(lruvec);
+> +	int nr_pages, nr_moved = 0;
+>  	LIST_HEAD(pages_to_free);
+> +	struct page *page;
+> +	enum lru_list lru;
+>  
+> -	/*
+> -	 * Put back any unfreeable pages.
+> -	 */
+> -	while (!list_empty(page_list)) {
+> -		struct page *page = lru_to_page(page_list);
+> -		int lru;
+> -
+> +	while (!list_empty(list)) {
+> +		page = lru_to_page(list);
+>  		VM_BUG_ON_PAGE(PageLRU(page), page);
+> -		list_del(&page->lru);
+>  		if (unlikely(!page_evictable(page))) {
+> +			list_del_init(&page->lru);
 
---uAKRQypu60I7Lcqm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Why change to list_del_init?  It's more special than list_del but doesn't seem
+needed since the page is list_add()ed later.
 
-Kieran,
-
-> This commit was pipped to the post by a similar patch [0] from Felipe Balbi
-
-No problem! I probably should watch the LKML closer.
-
-Go with the patch from Felipe, but like you men there is definitely no need
-for the `include linux/fs.h` now.
-
-Thanks for the tip on the Fixes tag. As a kernel newbie tips like this are
-appreciated.
-
-Cheers,
-
-Dan
-
---uAKRQypu60I7Lcqm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEF5dO2RaKc5C+SCJ9RcSmUsR+QqUFAlxnIU4ACgkQRcSmUsR+
-QqXflA//WsccYUFAps0ZHCBw+dozFcl46fopHC4AhuMJ+ZsDBLhldcVgL9Ru2A3B
-tmanWN3mgMkdy+Ll17KJQzqugdAGEdIPicrkH+wN00PQu0Tt+Vc8VPYzk+3eq06h
-AAAjGJlFGzqThdVVBWQHb2UeiPw0LhkZrRu8h/xNWPYYa2au9CLw3RQl4Tk9iblh
-wLL2KKn80PKe4hIXQz1NM4EVTc85MFsQZ5gJjZIFblLQzmqxHJ4a/aY/F08ivLiQ
-+2UYQKZzW7k1lgLvzbCQGCQ2RkF9XTCzJZ7qRTLDYdbavsNfBZHvhm/XZV0KZVtP
-yFAnD4AgfddLwj+CARL4YN5PeSfwRA4B5oTNaDmSJ8k5PLjXPtbtYTGxeIB0puXG
-1eDXIdFyJk3iNdtl4mHN3F+ZA6UGn+wGvE+ML8Z/yviTI1pZgIGNX42RNQ4h1Md/
-RC+2faDD1QHyFlw8fJ4xkkRgjN8aKiyD4morS5GSIOzlt3+bYIRkJO8ayMD58C1B
-SOy7VZ86AP5VutchGu02U3NEBmjaXqYLTzSzuRIzKE6gRA6CBYlCmqdMNVARGfEm
-o6MRHauI89wuh7oJhOS75M+I1Z4Vh7WetsFQvXIscN64uZMu+njmD7v0lnF/tf4K
-ldsVm+y3fq7eYaJJoB8FNLzvNjcvhix5RsrUIBREz+tkGlXkwxs=
-=x3iU
------END PGP SIGNATURE-----
-
---uAKRQypu60I7Lcqm--
+That postprocess script from patch 1 seems kinda broken before this series, and
+still is.  Not that it should block this change.  Out of curiosity did you get
+it to run?
