@@ -2,99 +2,131 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E12DC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:17:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 993BEC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:23:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F72E21A80
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:17:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A6E121A80
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:23:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387679AbfBOKRB (ORCPT
+        id S2388704AbfBOKXC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 05:17:01 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:36548 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726202AbfBOKRB (ORCPT
+        Fri, 15 Feb 2019 05:23:02 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:44483 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388071AbfBOKXB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 05:17:01 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1FAG0N9015339;
-        Fri, 15 Feb 2019 11:16:49 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2qmwsus558-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 15 Feb 2019 11:16:49 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id CAE8F3A;
-        Fri, 15 Feb 2019 10:16:48 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 860D02CD4;
-        Fri, 15 Feb 2019 10:16:48 +0000 (GMT)
-Received: from [10.201.21.58] (10.75.127.45) by SFHDAG3NODE2.st.com
- (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 15 Feb
- 2019 11:16:48 +0100
-Subject: Re: [PATCH v2 0/2] Add STM32MP157 discovery boards support
-To:     Maxime Coquelin <mcoquelin.stm32@gmail.com>, <arnd@arndb.de>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-kernel@vger.kernel.org>
-References: <1549357625-7229-1-git-send-email-alexandre.torgue@st.com>
-From:   Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <243cc4f0-6910-82ea-9c0a-929faee168a5@st.com>
-Date:   Fri, 15 Feb 2019 11:16:47 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 15 Feb 2019 05:23:01 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1guadu-0006rX-9h; Fri, 15 Feb 2019 11:22:50 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1guads-0006Oy-2E; Fri, 15 Feb 2019 11:22:48 +0100
+Date:   Fri, 15 Feb 2019 11:22:48 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Claudiu.Beznea@microchip.com
+Cc:     fabrice.gasnier@st.com, thierry.reding@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, alexandre.torgue@st.com,
+        tduszyns@gmail.com, linux-kernel@vger.kernel.org,
+        linux-pwm@vger.kernel.org, mcoquelin.stm32@gmail.com,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 3/3] pwm: core: add consumer device link
+Message-ID: <20190215102248.i2mggrw74lgs2owq@pengutronix.de>
+References: <1550055012-23348-1-git-send-email-fabrice.gasnier@st.com>
+ <1550055012-23348-4-git-send-email-fabrice.gasnier@st.com>
+ <f6fecafc-3946-9680-c58b-a20aa46e8e71@microchip.com>
 MIME-Version: 1.0
-In-Reply-To: <1549357625-7229-1-git-send-email-alexandre.torgue@st.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.45]
-X-ClientProxiedBy: SFHDAG7NODE1.st.com (10.75.127.19) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-15_07:,,
- signatures=0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f6fecafc-3946-9680-c58b-a20aa46e8e71@microchip.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 15, 2019 at 09:23:48AM +0000, Claudiu.Beznea@microchip.com wrote:
+> 
+> 
+> On 13.02.2019 12:50, Fabrice Gasnier wrote:
+> > Add a device link between the PWM consumer and the PWM provider. This
+> > enforces the PWM user to get suspended before the PWM provider. It
+> > allows proper synchronization of suspend/resume sequences: the PWM user
+> > is responsible for properly stopping PWM, before the provider gets
+> > suspended: see [1]. Add the device link in:
+> > - of_pwm_get()
+> > - pwm_get()
+> > - devm_ variants
+> > as it requires a reference to the device for the PWM consumer.
+> > 
+> > [1] https://lkml.org/lkml/2019/2/5/770
+> > 
+> > Suggested-by: Thierry Reding <thierry.reding@gmail.com>
+> > Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+> > ---
+> > Changes in v3:
+> > - add struct device to of_get_pwm() arguments to handle device link from
+> >   there.
+> > ---
+> >  drivers/pwm/core.c  | 14 +++++++++++---
+> >  include/linux/pwm.h |  6 ++++--
+> >  2 files changed, 15 insertions(+), 5 deletions(-)
+> > 
+> > diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+> > index 1581f6a..8cb5d4bc 100644
+> > --- a/drivers/pwm/core.c
+> > +++ b/drivers/pwm/core.c
+> > @@ -638,6 +638,7 @@ static struct pwm_chip *of_node_to_pwmchip(struct device_node *np)
+> >  
+> >  /**
+> >   * of_pwm_get() - request a PWM via the PWM framework
+> > + * @dev: device for PWM consumer
+> >   * @np: device node to get the PWM from
+> >   * @con_id: consumer name
+> >   *
+> > @@ -655,7 +656,8 @@ static struct pwm_chip *of_node_to_pwmchip(struct device_node *np)
+> >   * Returns: A pointer to the requested PWM device or an ERR_PTR()-encoded
+> >   * error code on failure.
+> >   */
+> > -struct pwm_device *of_pwm_get(struct device_node *np, const char *con_id)
+> > +struct pwm_device *of_pwm_get(struct device *dev, struct device_node *np,
+> > +			      const char *con_id)
+> >  {
+> >  	struct pwm_device *pwm = NULL;
+> >  	struct of_phandle_args args;
+> > @@ -689,6 +691,9 @@ struct pwm_device *of_pwm_get(struct device_node *np, const char *con_id)
+> >  	if (IS_ERR(pwm))
+> >  		goto put;
+> >  
+> > +	if (!device_link_add(dev, pwm->chip->dev, DL_FLAG_AUTOREMOVE_CONSUMER))
+> > +		pr_debug("%s(): device link not added\n", __func__);
+> > +
+> 
+> Just asking... will this mechanism also be working for PWMs requested via
+> sysfs? At a first look it seems not.
 
+No, but I would not expect a problem because AFAIU userspace is
+suspended before kernel devices. However as userspace might not notice
+the suspend it probably fails to stop the pwm and so will likely prevent
+the suspend.
 
-On 2/5/19 10:07 AM, Alexandre Torgue wrote:
-> This patch series add support of two new discovery boards based on
-> STM32MP157 MPU: stm32mp157a-dk1 and stm32mp157c-dk2.
-> 
-> stm32mp157a-dk1 board embeds a STM32MP157a SOC with AC package (TFBGA361,
-> 148 ios) and 512MB of DDR3. Several connections are available on this boards:
-> 4*USB2.0, 1*USB2.0 typeC, SDcard, RJ45, HDMI, Arduino connector, ...
-> 
-> stm32mp157c-dk2 board complements stm32mp157a-dk1 board with a display panel
-> (otm8009a) and a Murata Wifi/BT combo. It embeds a STM32MP157c SOC with AC
-> package.
-> 
-> Those patches enable basic support for a kernel boot.
-> 
-> regards
-> Alex
-> 
-> Alexandre Torgue (2):
->    ARM: dts: stm32: add initial support of stm32mp157a-dk1 board
->    ARM: dts: stm32: add initial support of stm32mp157c-dk2 board
-> 
->   arch/arm/boot/dts/Makefile            |  2 +
->   arch/arm/boot/dts/stm32mp157a-dk1.dts | 77 +++++++++++++++++++++++++++++++++++
->   arch/arm/boot/dts/stm32mp157c-dk2.dts | 75 ++++++++++++++++++++++++++++++++++
->   3 files changed, 154 insertions(+)
->   create mode 100644 arch/arm/boot/dts/stm32mp157a-dk1.dts
->   create mode 100644 arch/arm/boot/dts/stm32mp157c-dk2.dts
-> 
+Best regards
+Uwe
 
-Series applied on stm32-next.
-
-Regards
-Alex
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
