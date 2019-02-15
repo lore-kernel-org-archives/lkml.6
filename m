@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDA98C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:35:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8604EC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:35:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 900EF21927
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:35:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B19721927
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:35:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550198155;
-	bh=jFHWkWRw26p02TRN15v96mLRgiaZCiVc7qw9ncNPpZI=;
+	s=default; t=1550198159;
+	bh=E9ZK8Dte9OCSoUfF8/3j1kFQPkY9l+mmzYlnyaLt0qU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PKCfqm1BDQEKFYlRhVnO1Wa55j/k2D86HKy4+IMxZPpBFtVLNMLlOd/XyxSBLYcBI
-	 OLjZPhkDSpFjnPKTk4sjjUADmXEJFUSRyEZryFAqxJwVjX6oFY58/Rfn2db+yUsaeM
-	 Y49Ils2Pint4PSUqCSQSP6ICgmFv4tiqrp2FHXA4=
+	b=Tcfv9khyVdngs/4ooUqH7jCKGTndMfPEFNP6WvcjVsujXF5hDrh1ZYu1Ri1KVXoGg
+	 7r1Qv2WK31xxrXA0x8S0MQL5wZQIAjyzJbt0IY9aaU64BwGnqLTPcsMm8OwlTnwX+r
+	 TYGe61dtK7K/1p1Pz2d6VlsuKWXT8s9NiuA6din8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732085AbfBOCLC (ORCPT
+        id S1728691AbfBOCf6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:11:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51072 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:35:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731997AbfBOCK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:10:58 -0500
+        id S1732069AbfBOCLB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:11:01 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1545222A1;
-        Fri, 15 Feb 2019 02:10:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 056C821B68;
+        Fri, 15 Feb 2019 02:10:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196658;
-        bh=jFHWkWRw26p02TRN15v96mLRgiaZCiVc7qw9ncNPpZI=;
+        s=default; t=1550196660;
+        bh=E9ZK8Dte9OCSoUfF8/3j1kFQPkY9l+mmzYlnyaLt0qU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1AMY7SNpDXWFv50h2lBFirw240QwYB8QCGEy6RL/cV/eh1P8G6UiwDnvrL5gGJD6N
-         u4mZANeW3qe2k1YRBD3qtj/mRrkKHOSxYmcQQhzR2bzA1vCHylIFgz115IqdtakEbz
-         6wO09K+f07JrlYAiOQVWbWRdSV58tN+sGD/17EDk=
+        b=F31mJ0oopQ7Borjpho8NnRF908iCyqcB35X40jcfgQev3s+jTOwqeiNRQMEOrfoLw
+         dPdc90GgERXy7SxtC5sdoaIteqeVPK8U7LvPnxqk98cf/p3vbLVsWI0EsbBV9j5vuM
+         7pviAp4sOaDJ1vlMGYJwOPWPNPNQS4QKdJ74eWVM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Maciej=20=C5=BBenczykowski?= <maze@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 68/77] net: dev_is_mac_header_xmit() true for ARPHRD_RAWIP
-Date:   Thu, 14 Feb 2019 21:08:46 -0500
-Message-Id: <20190215020855.176727-68-sashal@kernel.org>
+Cc:     Balaji Pothunoori <bpothuno@codeaurora.org>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 70/77] mac80211: don't initiate TDLS connection if station is not associated to AP
+Date:   Thu, 14 Feb 2019 21:08:48 -0500
+Message-Id: <20190215020855.176727-70-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
 References: <20190215020855.176727-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,33 +58,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maciej Żenczykowski <maze@google.com>
+From: Balaji Pothunoori <bpothuno@codeaurora.org>
 
-[ Upstream commit 3b707c3008cad04604c1f50e39f456621821c414 ]
+[ Upstream commit 7ed5285396c257fd4070b1e29e7b2341aae2a1ce ]
 
-__bpf_redirect() and act_mirred checks this boolean
-to determine whether to prefix an ethernet header.
+Following call trace is observed while adding TDLS peer entry in driver
+during TDLS setup.
 
-Signed-off-by: Maciej Żenczykowski <maze@google.com>
-Acked-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Call Trace:
+[<c1301476>] dump_stack+0x47/0x61
+[<c10537d2>] __warn+0xe2/0x100
+[<fa22415f>] ? sta_apply_parameters+0x49f/0x550 [mac80211]
+[<c1053895>] warn_slowpath_null+0x25/0x30
+[<fa22415f>] sta_apply_parameters+0x49f/0x550 [mac80211]
+[<fa20ad42>] ? sta_info_alloc+0x1c2/0x450 [mac80211]
+[<fa224623>] ieee80211_add_station+0xe3/0x160 [mac80211]
+[<c1876fe3>] nl80211_new_station+0x273/0x420
+[<c170f6d9>] genl_rcv_msg+0x219/0x3c0
+[<c170f4c0>] ? genl_rcv+0x30/0x30
+[<c170ee7e>] netlink_rcv_skb+0x8e/0xb0
+[<c170f4ac>] genl_rcv+0x1c/0x30
+[<c170e8aa>] netlink_unicast+0x13a/0x1d0
+[<c170ec18>] netlink_sendmsg+0x2d8/0x390
+[<c16c5acd>] sock_sendmsg+0x2d/0x40
+[<c16c6369>] ___sys_sendmsg+0x1d9/0x1e0
+
+Fixing this by allowing TDLS setup request only when we have completed
+association.
+
+Signed-off-by: Balaji Pothunoori <bpothuno@codeaurora.org>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/if_arp.h | 1 +
- 1 file changed, 1 insertion(+)
+ net/mac80211/cfg.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/include/linux/if_arp.h b/include/linux/if_arp.h
-index 6756fea18b69..e44746de95cd 100644
---- a/include/linux/if_arp.h
-+++ b/include/linux/if_arp.h
-@@ -54,6 +54,7 @@ static inline bool dev_is_mac_header_xmit(const struct net_device *dev)
- 	case ARPHRD_IPGRE:
- 	case ARPHRD_VOID:
- 	case ARPHRD_NONE:
-+	case ARPHRD_RAWIP:
- 		return false;
- 	default:
- 		return true;
+diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
+index 818aa0060349..04337e6be7f0 100644
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@ -1490,6 +1490,10 @@ static int ieee80211_add_station(struct wiphy *wiphy, struct net_device *dev,
+ 	if (params->sta_flags_set & BIT(NL80211_STA_FLAG_TDLS_PEER))
+ 		sta->sta.tdls = true;
+ 
++	if (sta->sta.tdls && sdata->vif.type == NL80211_IFTYPE_STATION &&
++	    !sdata->u.mgd.associated)
++		return -EINVAL;
++
+ 	err = sta_apply_parameters(local, sta, params);
+ 	if (err) {
+ 		sta_info_free(local, sta);
 -- 
 2.19.1
 
