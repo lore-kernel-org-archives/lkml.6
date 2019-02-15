@@ -2,84 +2,113 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B93BCC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:16:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88C61C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:16:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8057B21924
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:16:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FF462192B
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:16:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727549AbfBOQQe (ORCPT
+        id S1728421AbfBOQQk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 11:16:34 -0500
-Received: from muru.com ([72.249.23.125]:39028 "EHLO muru.com"
+        Fri, 15 Feb 2019 11:16:40 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34696 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726000AbfBOQQe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 11:16:34 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id E1EF580C0;
-        Fri, 15 Feb 2019 16:16:42 +0000 (UTC)
-Date:   Fri, 15 Feb 2019 08:16:29 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Lokesh Vutla <lokeshvutla@ti.com>
-Cc:     marc.zyngier@arm.com, Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, tglx@linutronix.de,
-        jason@lakedaemon.net,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org,
-        Device Tree Mailing List <devicetree@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: Re: [PATCH v5 05/10] dt-bindings: irqchip: Introduce TISCI Interrupt
- router bindings
-Message-ID: <20190215161629.GK5720@atomide.com>
-References: <20190212074237.2875-1-lokeshvutla@ti.com>
- <20190212074237.2875-6-lokeshvutla@ti.com>
- <20190212162247.GK5720@atomide.com>
- <6a274588-0fb6-2ddf-3bcc-f9e4d849ac07@ti.com>
- <20190213152620.GS5720@atomide.com>
- <4791de04-63af-4c5e-db9c-47634fcb8dc9@ti.com>
- <20190214154100.GB5720@atomide.com>
- <b4e821b3-f2fb-41d8-eb8c-8f4e8a19f77c@ti.com>
- <20190214174612.GF5720@atomide.com>
- <171e8597-2156-747d-d024-7b4bfc6f9186@ti.com>
+        id S1726000AbfBOQQg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 11:16:36 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BC941FD3C2;
+        Fri, 15 Feb 2019 16:16:35 +0000 (UTC)
+Received: from laptop.redhat.com (ovpn-116-102.ams2.redhat.com [10.36.116.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F323660C6F;
+        Fri, 15 Feb 2019 16:16:27 +0000 (UTC)
+From:   Eric Auger <eric.auger@redhat.com>
+To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        alex.williamson@redhat.com
+Subject: [PATCH v3] vfio_pci: Enable memory accesses before calling pci_map_rom
+Date:   Fri, 15 Feb 2019 17:16:06 +0100
+Message-Id: <20190215161606.32334-1-eric.auger@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <171e8597-2156-747d-d024-7b4bfc6f9186@ti.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 15 Feb 2019 16:16:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+pci_map_rom/pci_get_rom_size() performs memory access in the ROM.
+In case the Memory Space accesses were disabled, readw() is likely
+to trigger a synchronous external abort on some platforms.
 
-* Lokesh Vutla <lokeshvutla@ti.com> [190214 18:03]:
-> On 2/14/2019 11:16 PM, Tony Lindgren wrote:
-> > But I'd rather have a proper hardware based phandle + index
-> > type mapping in the dts if possible though.
-> 
-> The idea about sysfw here is that Linux is not aware of anything about
-> this device(Interrupt Router). It cannot even access any of its
-> registers. As a user Linux should know who is the parent to which the
-> Interrut router output should be configured. Then query sysfw about the
-> range of gic irqs allocated to it. Now for configuration, Linux should
-> pass the the input to interrupt router, gic irq no, and gic id(by which
-> sysfw uniquely identifies GIC interrupt controller with the SoC).  Based
-> on these parameters Interrupt Router registers gets configured.
+In case memory accesses were disabled, re-enable them before the
+call and disable them back again just after.
 
-If the interrupt router hardawre is hidden away from Linux,
-just leave it out of the device tree completely and have the
-interrupt controller driver request the routing.
+Fixes: 89e1f7d4c66d ("vfio: Add PCI device driver")
 
-The dts node for the interrupt controller should describe a
-proper Linux device, that is with reg entries and so on.
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+Suggested-by: Alex Williamson <alex.williamson@redhat.com>
 
-Regards,
+---
+v2 -> v3:
+- follow Alex re-writing
 
-Tony
+v1 -> v2:
+- also re-enable in case of error
+---
+ drivers/vfio/pci/vfio_pci.c | 25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+index ff60bd1ea587..4b0d30f1eabc 100644
+--- a/drivers/vfio/pci/vfio_pci.c
++++ b/drivers/vfio/pci/vfio_pci.c
+@@ -708,6 +708,7 @@ static long vfio_pci_ioctl(void *device_data,
+ 		{
+ 			void __iomem *io;
+ 			size_t size;
++			u16 orig_cmd;
+ 
+ 			info.offset = VFIO_PCI_INDEX_TO_OFFSET(info.index);
+ 			info.flags = 0;
+@@ -723,15 +724,23 @@ static long vfio_pci_ioctl(void *device_data,
+ 					break;
+ 			}
+ 
+-			/* Is it really there? */
+-			io = pci_map_rom(pdev, &size);
+-			if (!io || !size) {
+-				info.size = 0;
+-				break;
+-			}
+-			pci_unmap_rom(pdev, io);
++			/*
++			 * Is it really there?  Enable memory decode for
++			 * implicit access in pci_map_rom().
++			 */
++			pci_read_config_word(pdev, PCI_COMMAND, &orig_cmd);
++			pci_write_config_word(pdev, PCI_COMMAND,
++					      orig_cmd | PCI_COMMAND_MEMORY);
+ 
+-			info.flags = VFIO_REGION_INFO_FLAG_READ;
++			io = pci_map_rom(pdev, &size);
++			if (io) {
++				info.flags = VFIO_REGION_INFO_FLAG_READ;
++				pci_unmap_rom(pdev, io);
++			} else {
++				info.size = 0;
++			}
++
++			pci_write_config_word(pdev, PCI_COMMAND, orig_cmd);
+ 			break;
+ 		}
+ 		case VFIO_PCI_VGA_REGION_INDEX:
+-- 
+2.20.1
+
