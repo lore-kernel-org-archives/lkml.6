@@ -4,66 +4,63 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D8FC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:48:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8C0C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:48:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8142D21A80
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:47:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46022222DE
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:48:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="O3bs5ZdH"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ge/iLjf4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389639AbfBOIrj (ORCPT
+        id S2391411AbfBOIry (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 03:47:39 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:42948 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728761AbfBOIrh (ORCPT
+        Fri, 15 Feb 2019 03:47:54 -0500
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:59350 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728761AbfBOIry (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 03:47:37 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1F8l45F009427;
-        Fri, 15 Feb 2019 02:47:04 -0600
+        Fri, 15 Feb 2019 03:47:54 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1F8loxG012681;
+        Fri, 15 Feb 2019 02:47:50 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1550220424;
-        bh=nUJepTBtTwngvi6oNNkiaprUXgTouPzurWm6N7pL0Qo=;
+        s=ti-com-17Q1; t=1550220470;
+        bh=Hvyaajb+MHjAv7ncOUByb/REVL+23wPdwzLOY+aeQvk=;
         h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=O3bs5ZdHdFbv+U/iFhy82Gb8IBttho4URzllTvOZKrxd4oJYdg2LMGxmLe4QcvFCw
-         IgubyvMVV5dJHXBTLW5Uda7LVBLwJAbHWX1INVPG2ra2hDbTmCR7ZFtQp3y4YK9Al3
-         9bs8NmysBNV6dseoyR653YpelQ42STajPfBey8Zw=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1F8l47Z111923
+        b=ge/iLjf4U1pKxjcxR9TuvOs+gEyDWoLnxUgsBpIdrnPRDcCnpO72VVrvuGUZQrnKE
+         HFNHM39tQo2m6HvHuCmLbWpNLDG8zsXcOBjUV7QvNlt4hZj2Zq/kpUeQURv18wjRWX
+         dI938Y1x3T8G/BCFIFRVLBEqRj+kC3EAwhsz9r6M=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1F8loqN036647
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 15 Feb 2019 02:47:04 -0600
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+        Fri, 15 Feb 2019 02:47:50 -0600
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 15
- Feb 2019 02:47:02 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_0,
+ Feb 2019 02:47:49 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 15 Feb 2019 02:47:02 -0600
+ Fri, 15 Feb 2019 02:47:49 -0600
 Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1F8kx90019290;
-        Fri, 15 Feb 2019 02:46:59 -0600
-Subject: Re: [PATCH] arm64: dts: ti: k3-am65: Add MSMC RAM node
-To:     Roger Quadros <rogerq@ti.com>
-CC:     <robh+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Nishanth Menon <nm@ti.com>, Lokesh Vutla <lokeshvutla@ti.com>,
-        "Andrew F . Davis" <afd@ti.com>
-References: <1547199855-16374-1-git-send-email-rogerq@ti.com>
- <5C5980B6.4010502@ti.com>
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1F8ll80020171;
+        Fri, 15 Feb 2019 02:47:48 -0600
+Subject: Re: [PATCH] arm64: dts: ti: k3-am65-mcu: Add ADC nodes
+To:     Vignesh R <vigneshr@ti.com>
+CC:     Nishanth Menon <nm@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190212122237.10976-1-vigneshr@ti.com>
 From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <a2227e9f-dd47-cc33-b0f2-0be682462d36@ti.com>
-Date:   Fri, 15 Feb 2019 10:46:49 +0200
+Message-ID: <53e9327d-e941-820e-d83c-d6c5ccf25e26@ti.com>
+Date:   Fri, 15 Feb 2019 10:47:37 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <5C5980B6.4010502@ti.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+In-Reply-To: <20190212122237.10976-1-vigneshr@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
@@ -72,72 +69,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/02/2019 14:25, Roger Quadros wrote:
+On 12/02/2019 14:22, Vignesh R wrote:
+> TI AM654 SoC has two ADC instances in the MCU domain. Add DT nodes for
+> the same.
+> 
+> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> ---
 > Tero,
 > 
-> On 11/01/19 11:44, Roger Quadros wrote:
->> The AM65 SoC has 2MB MSMC RAM. Add this as a mmio-sram
->> node so drivers can use it via genpool API.
->>
->> Following areas are marked reserved:
->> - Lower 128KB for ATF
->> - 64KB@0xf0000 for SYSFW
->> - Upper 1MB for cache
->>
->> The reserved locations are subject to change at runtime by
->> the bootloader.
->>
->> Cc: Nishanth Menon <nm@ti.com>
->> Cc: Lokesh Vutla <lokeshvutla@ti.com>
->> Cc: Andrew F. Davis <afd@ti.com>
->> Signed-off-by: Roger Quadros <rogerq@ti.com>
-> 
-> Is this patch good to pick for -next?
+> Could you also pick up DT bindings here: https://patchwork.kernel.org/patch/10751429/
+> All the Acks are in place.
 
-Queued for 5.1, thanks.
+Queued for 5.1, including the dt-binding.
 
--Tero
+Thanks, Tero
 
 > 
-> cheers,
-> -roger
+>   arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi       | 30 +++++++++++++++++++
+>   .../arm64/boot/dts/ti/k3-am654-base-board.dts | 12 ++++++++
+>   2 files changed, 42 insertions(+)
 > 
->> ---
->>   arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 20 ++++++++++++++++++++
->>   1 file changed, 20 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
->> index 272cf8f..5a18150 100644
->> --- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
->> +++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
->> @@ -6,6 +6,26 @@
->>    */
->>   
->>   &cbass_main {
->> +	msmc_ram: sram@70000000 {
->> +		compatible = "mmio-sram";
->> +		reg = <0x0 0x70000000 0x0 0x200000>;
->> +		#address-cells = <1>;
->> +		#size-cells = <1>;
->> +		ranges = <0x0 0x0 0x70000000 0x200000>;
->> +
->> +		atf-sram@0 {
->> +			reg = <0x0 0x20000>;
->> +		};
->> +
->> +		sysfw-sram@f0000 {
->> +			reg = <0xf0000 0x10000>;
->> +		};
->> +
->> +		l3cache-sram@100000 {
->> +			reg = <0x100000 0x100000>;
->> +		};
->> +	};
->> +
->>   	gic500: interrupt-controller@1800000 {
->>   		compatible = "arm,gic-v3";
->>   		#address-cells = <2>;
->>
+> diff --git a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
+> index 593f718e8fb5..6f7d2b316ded 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
+> @@ -57,4 +57,34 @@
+>   		#address-cells = <1>;
+>   		#size-cells = <0>;
+>   	};
+> +
+> +	tscadc0: tscadc@40200000 {
+> +		compatible = "ti,am654-tscadc", "ti,am3359-tscadc";
+> +		reg = <0x0 0x40200000 0x0 0x1000>;
+> +		interrupts = <GIC_SPI 580 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&k3_clks 0 2>;
+> +		assigned-clocks = <&k3_clks 0 2>;
+> +		assigned-clock-rates = <60000000>;
+> +		clock-names = "adc_tsc_fck";
+> +
+> +		adc {
+> +			#io-channel-cells = <1>;
+> +			compatible = "ti,am654-adc", "ti,am3359-adc";
+> +		};
+> +	};
+> +
+> +	tscadc1: tscadc@40210000 {
+> +		compatible = "ti,am654-tscadc", "ti,am3359-tscadc";
+> +		reg = <0x0 0x40210000 0x0 0x1000>;
+> +		interrupts = <GIC_SPI 581 IRQ_TYPE_LEVEL_HIGH>;
+> +		clocks = <&k3_clks 1 2>;
+> +		assigned-clocks = <&k3_clks 1 2>;
+> +		assigned-clock-rates = <60000000>;
+> +		clock-names = "adc_tsc_fck";
+> +
+> +		adc {
+> +			#io-channel-cells = <1>;
+> +			compatible = "ti,am654-adc", "ti,am3359-adc";
+> +		};
+> +	};
+>   };
+> diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
+> index e41fc3a5987b..fb6df5c8f85b 100644
+> --- a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
+> @@ -163,3 +163,15 @@
+>   		#size-cells= <1>;
+>   	};
+>   };
+> +
+> +&tscadc0 {
+> +	adc {
+> +		ti,adc-channels = <0 1 2 3 4 5 6 7>;
+> +	};
+> +};
+> +
+> +&tscadc1 {
+> +	adc {
+> +		ti,adc-channels = <0 1 2 3 4 5 6 7>;
+> +	};
+> +};
 > 
 
 --
