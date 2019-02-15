@@ -2,107 +2,95 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BDC1C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:23:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5CD0C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:23:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53FF620821
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:23:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B137620821
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:23:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XT/mPfsD"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UiVo4pqy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404195AbfBOIW7 (ORCPT
+        id S2404217AbfBOIXJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 03:22:59 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:36879 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403860AbfBOIW7 (ORCPT
+        Fri, 15 Feb 2019 03:23:09 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:35150 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2403860AbfBOIXI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 03:22:59 -0500
-Received: by mail-it1-f196.google.com with SMTP id l131so21335414ita.2;
-        Fri, 15 Feb 2019 00:22:58 -0800 (PST)
+        Fri, 15 Feb 2019 03:23:08 -0500
+Received: by mail-lf1-f68.google.com with SMTP id v7so6564477lfd.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 00:23:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=rNN8ycMkfIDlILiOoDG6JxU5FPIMQ8gR3UP9GLcGRlM=;
-        b=XT/mPfsDFeI0dkV2jm1ERLqN4NVtL0OMs1yTjFmwgTU5525tGVbpCDTcB9m2mdijfE
-         oUNtpDIgHEANqNJ6zlQmRYz3Kt6kfyORYgfDAGYNyQcT5nqbyg9lguO3aFTxuQc/OYF+
-         3jxeG6CC6xuo2iaCPuc7mafR3YmZ0MRtsT9MyGzr4N1eiFod3SD1DDtggBZbXbaV+2ux
-         EHhWYqhGpo9L3n6FDs3TbvtoBYPgYnCggx2yIUoX+0AqZSkWx/fCsa0o8Er8OP/7Gvo1
-         xGA5fj4pOXoARlkMNKYAwVCSmNiznkDUCvQ4nlPyK9vs+aVUhhRqyG8R2UI25xZt8UW6
-         E8EA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=T1tBKGN1H5lG/C+HY/K2C7ZASAqwT6X2GQqc3PODpfk=;
+        b=UiVo4pqyyU9MWRu+9njOoJfq7+Wd14w2irbjvr++Dpn+fX3eqqspk9t1YadbIeSUPF
+         M6m3qBHh7FJljn4m459uS/DDYJUXuJ3fcgtnZQmAfwefvk4b5WjK09KlHCX8ucgr/w6q
+         sxifB/1mH5I+7O4NJbCZnNZAcThJRSNSs43KUG1jx/83ypalbe8UK8TFInZqWWlZCGCe
+         uwvkTt3gDgdfqre/rfUOAk29+UxIcu+JRnxfpHzylgYQxK00xY9HHkEOVXBr7wW2/Sx9
+         LRKLuEmRxS7oLuMbgExWYYXFdQMxQsvrUTcLufihb9bHt339pemBNcHG7bEVuLnaS3mM
+         xWpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=rNN8ycMkfIDlILiOoDG6JxU5FPIMQ8gR3UP9GLcGRlM=;
-        b=R0eMTxL33WU/+IsOAr8N1r9SCb5NUTtEUVIqPN/YTdl8IiLOtmH7gZx75/EdgzF7Ty
-         X79d/nHl2f5UyHXI6l22UNjqS/JVi5Z4L80yZ2rM5ZgaXAcBIHHDn6NzW+W6iLFBHmh2
-         BrKq82AAxpjt+cFTZiN3zl39IuLEMgtdNZtkapZ4oSaKJo56GNhRhP+GmZec83H/tPQQ
-         +Fi88E4Wwt9ZSmGtxHHR81aygqd7Eu+5FaH4uc7EuQzaKcdBFuuODpT4dWsI+YQiaiFZ
-         nvsAY1Fd/IpeLCq7WYWqqNm97iqTgP/N+SfnbYw9TL1QXY4fM5/KaMeYvWEoMyP2OHhD
-         7sGg==
-X-Gm-Message-State: AHQUAuZIwx9C1edWVbDjvp0P7gUEbGizOsR9ixjrsfT2T30LtdRDyIb/
-        /i7cSXAUTWzS1/wZ/uxTag==
-X-Google-Smtp-Source: AHgI3IZ2Uc8/S5ovLLKhgtHkgPheZ+vkXdOxttS65RZl/eM5ofGIWboq9XuR3jrX9hMYDeC83KaZAw==
-X-Received: by 2002:a05:660c:814:: with SMTP id j20mr3979684itk.20.1550218978051;
-        Fri, 15 Feb 2019 00:22:58 -0800 (PST)
-Received: from ip-172-31-35-247.us-east-2.compute.internal (ec2-52-15-165-154.us-east-2.compute.amazonaws.com. [52.15.165.154])
-        by smtp.gmail.com with ESMTPSA id m25sm370619iti.16.2019.02.15.00.22.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Feb 2019 00:22:57 -0800 (PST)
-From:   Rundong Ge <rdong.ge@gmail.com>
-To:     andrew@lunn.ch
-Cc:     vivien.didelot@gmail.com, f.fainelli@gmail.com,
-        davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rdong.ge@gmail.com
-Subject: [PATCH] net: dsa: Implement flow_dissect callback for tag_dsa.
-Date:   Fri, 15 Feb 2019 08:22:53 +0000
-Message-Id: <20190215082253.2682-1-rdong.ge@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=T1tBKGN1H5lG/C+HY/K2C7ZASAqwT6X2GQqc3PODpfk=;
+        b=NjkB3u9LbLinN/Xe/oL2OObeZCU8pCV4HorGK1ypz8uKlGtXFlLZe77N7OvvY66muW
+         1wmaGsRr3dMx6eRret+KFzioUzICwY+vYDUj2k01QDaIKe+GcMdvHuR1XjgnmCZZdtCH
+         egNlfwOYus7KaWnb/9yPKSsm3y9L7ltGGzos1EsueKhfxEs3F5TbehW7cCECwIwBsM53
+         USU7SVq4fBEXP1kSrz4+9VJEMLP5RSdKl0dyaKnJPNS4R4PapZaxKZRmf1ha6d9KSG6d
+         PnLiPzoi8ixfTn80wArB7XA2WmjXNEg5wWIx7d1iAYJoi6nVFDZKXwsFKazHc4xhkT5W
+         Gc8w==
+X-Gm-Message-State: AHQUAuZgedYV5q2QsZ7pqbiXyq2OfHpbEE4aFk4gPJtPaqRESnuTfBLk
+        KsUXWeNs0lVDJI7xLp/cVk6a+4Nffik=
+X-Google-Smtp-Source: AHgI3Ia6kESOeQY0pHDQ7H5z+okbcIjWyyxb3ocbLe0mG3JPV16fqDiOVnzXcNGiAwy/ukweQgJOuw==
+X-Received: by 2002:ac2:5230:: with SMTP id i16mr4755388lfl.63.1550218986296;
+        Fri, 15 Feb 2019 00:23:06 -0800 (PST)
+Received: from jax.urgonet (h-84-105.A175.priv.bahnhof.se. [79.136.84.105])
+        by smtp.gmail.com with ESMTPSA id u11sm1120708lfb.85.2019.02.15.00.23.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 15 Feb 2019 00:23:05 -0800 (PST)
+Date:   Fri, 15 Feb 2019 09:23:03 +0100
+From:   Jens Wiklander <jens.wiklander@linaro.org>
+To:     Jerome Forissier <jerome.forissier@linaro.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tee: optee: update optee_msg.h and optee_smc.h to dual
+ license
+Message-ID: <20190215082302.GA29317@jax.urgonet>
+References: <1549640526-10935-1-git-send-email-jerome.forissier@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1549640526-10935-1-git-send-email-jerome.forissier@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RPS not work for DSA devices since the 'skb_get_hash'
-will always get the invalid hash for dsa tagged packets.
+Hi Jerome,
 
-"[PATCH] tag_mtk: add flow_dissect callback to the ops struct"
-introduced the flow_dissect callback to get the right hash for
-MTK tagged packet. And tag_dsa also needs to implement
-the callback.
+On Fri, Feb 08, 2019 at 04:42:06PM +0100, Jerome Forissier wrote:
+> The files optee_msg.h and optee_smc.h (under drivers/tee/optee) contain
+> information originating from the OP-TEE OS project [1] [2], where the
+> licensing terms are BSD 2-Clause. Therefore, apply a dual license to
+> those files.
+> 
+> [1] https://github.com/OP-TEE/optee_os/blob/master/core/include/optee_msg.h
+> [2] https://github.com/OP-TEE/optee_os/blob/master/core/arch/arm/include/sm/optee_smc.h
+> 
+> Signed-off-by: Jerome Forissier <jerome.forissier@linaro.org>
 
-Signed-off-by: Rundong Ge <rdong.ge@gmail.com>
----
- net/dsa/tag_dsa.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+I'll pick this up.
 
-diff --git a/net/dsa/tag_dsa.c b/net/dsa/tag_dsa.c
-index 8b2f92e..67ff3fa 100644
---- a/net/dsa/tag_dsa.c
-+++ b/net/dsa/tag_dsa.c
-@@ -146,8 +146,17 @@ static struct sk_buff *dsa_rcv(struct sk_buff *skb, struct net_device *dev,
- 	return skb;
- }
- 
-+static int dsa_tag_flow_dissect(const struct sk_buff *skb, __be16 *proto,
-+				int *offset)
-+{
-+	*offset = 4;
-+	*proto = ((__be16 *)skb->data)[1];
-+	return 0;
-+}
-+
- const struct dsa_device_ops dsa_netdev_ops = {
- 	.xmit	= dsa_xmit,
- 	.rcv	= dsa_rcv,
-+	.flow_dissect   = dsa_tag_flow_dissect,
- 	.overhead = DSA_HLEN,
- };
--- 
-1.8.3.1
+I'm prefixing the two link lines with "Link:" to avoid the checkpatch
+warning.
 
+Thanks,
+Jens
