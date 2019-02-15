@@ -4,66 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73685C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8D63C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:14:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 456622192C
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:14:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0AC6222A1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:14:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="bKmg92sU"
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="UdfnkLw0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732067AbfBOSOi (ORCPT
+        id S2388606AbfBOSOm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 13:14:38 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:33759 "EHLO
+        Fri, 15 Feb 2019 13:14:42 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:36388 "EHLO
         mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731847AbfBOSOc (ORCPT
+        with ESMTP id S1731904AbfBOSOg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 13:14:32 -0500
-Received: by mail-yb1-f195.google.com with SMTP id w2so4158937ybi.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 10:14:31 -0800 (PST)
+        Fri, 15 Feb 2019 13:14:36 -0500
+Received: by mail-yb1-f195.google.com with SMTP id o129so2381416yba.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 10:14:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=NSVRB4KCxOzLiCcKtVzLdp3bqBiDRMqjw6+T+tZutHo=;
-        b=bKmg92sUiX5H/aar4+WmpOfQmxy/hG1c2YHfPUxNtki4sheyTomFyVrzH9ntdCRAyx
-         WMef03M9PiBmcDvaDgiyaJdE3worIGUODUmyeQUiwXDn71kT5mpQ3K+F72km/7vMxHgy
-         qyAJdWh9IBCOY7HBWtwuWspK227bmgvl9cvZEw+iU4fXonyASI0DzvnLcU5B1GD8iu3h
-         JZfIHl+MyP1yGWCCOHxU3Tfh3CSQNvbxVXxC3+vnDvUWdFnamgPTq9sckkgQalxoa1zn
-         9+Ox8YJd/kmPVpOlKAcgEfei6I5y+YerssXk7839LFJ9gDZAAkteIWz8EFKtCe3v+15h
-         CBUQ==
+        bh=m8WChnDGiJjl3dG7Qy7BcuERcz0zJgVAywmHmi4mw/w=;
+        b=UdfnkLw0LmmTMvDdh9ElM17TqIoS3oWEjsSyoG4o6RGsaPK+fs4daWXmy0W/V7D+78
+         Ob2Pc5U21jjOaaMkxoMxu9tYDRhLSY2CL/sI5SGMTfBDcQdRvqtWJ1c9dngW43CxCbTv
+         9p4H2xQVSXhBxNYvad1mhG4sR3iDigfmHjGeDfRaTU+7XjGsyeFxL22FLqvWeI/UsRbR
+         PTdCQwKwdVXH+yJAh1ngZAjeqZ2nUBqtDoA+jtJ5gStQMocaU9AuCbQLZYLint5d9dxj
+         S9J7e7kCePwD2WfXXOsu+GBqZ9GNU0PIVhs0jDdsSLfjoGX15iGR18dpmrWWhqj3O5UO
+         DL0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=NSVRB4KCxOzLiCcKtVzLdp3bqBiDRMqjw6+T+tZutHo=;
-        b=ApMh5Ik1s0fU0AGzNtkw0E7I9fdnOtfGoJyjW7GVA5oJ39QV9LTB/RYJtFkh0PHIeo
-         6T86TdYh/sjz21NKg0k5yE/mFuKBpdCmOg8+zp7wWg6ZTHUoAYlu+BZ42ZxwFpCntoMH
-         G9docVYw5nuYK1FI0QQnQsTse3Qqivmqz97YczotRVAfuaRLAPmdaiiLc3OWevo7IeSu
-         ccZlZ5qkxmRXVqUjdxWvVvJxDDI58g5F4xrPUTG/N8gUY31aMBsNPjSPrViWi8zrn21n
-         /inL6tSHFOm6HKoTcE1pHTrxhiC6NDtU5/bLhVR64OU/r0fqG1CeuB0W/C4+odDbYe4f
-         CgZw==
-X-Gm-Message-State: AHQUAubqUxCukz4Cp3nQ2sUGkWb1PAOHVau1MNrM8KQgcZaQmr3UAsJP
-        ryAp43p23+mUHXZl7Y8M+hxmLQ==
-X-Google-Smtp-Source: AHgI3IbpwW5Q4dPkw9VzQm4AkpJI/omhQBlFnrFV+tByaOQ7rIM3b+THxwDztmiDkRMQVJE8hFe0rQ==
-X-Received: by 2002:a25:6e8b:: with SMTP id j133mr8968247ybc.220.1550254471365;
-        Fri, 15 Feb 2019 10:14:31 -0800 (PST)
+        bh=m8WChnDGiJjl3dG7Qy7BcuERcz0zJgVAywmHmi4mw/w=;
+        b=uiAv1D4Qj6kAgIUowTSuQqSgALDnF8V7RadEBzLEyaaEPBtyouWqsjhiV5LPqPPvjf
+         Kp+xcvkYNB+DYv+YNN7/QfDm4ZTLGEDRpaobdD7twplxlR1pH1t/azoQoaA7Ym7VVTyG
+         NMJ4bhC6XsFJHuM8TjAq89DqGqv5qIw4djh+qVcdDsUrBJoornfNQ8v0beoOKTqF6qTP
+         yNkc1xPhCBvQ6QlBUG7b8yAyUcrA8fTOhSb72IPC8m+jDPGFueA8mhTTD1pVE56MHHF6
+         JWnNVoYPfg2IIBYbZisfxlSw27Bg7jaIOxQvOG4oo6cxA8N1xG1pu8ax6DUapEgKJQ6i
+         MesA==
+X-Gm-Message-State: AHQUAub3Lo8Lvw/JoRRd7Wbnfq7Tyl2z/KdwlDpOJPQ42Rj25FwO9HTV
+        3/ZV3yFUeCeOeK30Ki9UCbzb3Q==
+X-Google-Smtp-Source: AHgI3IZ8yDwTc7PxyKzJo3tl350n3p72QNy9yMJQXMoHx1G4LbQACYtj2tYCy+gNRFU1vjZ6WO77cw==
+X-Received: by 2002:a25:b287:: with SMTP id k7mr2048404ybj.9.1550254474721;
+        Fri, 15 Feb 2019 10:14:34 -0800 (PST)
 Received: from localhost ([2620:10d:c091:200::4:33c1])
-        by smtp.gmail.com with ESMTPSA id h205sm4730096ywh.85.2019.02.15.10.14.30
+        by smtp.gmail.com with ESMTPSA id m127sm2369379ywf.68.2019.02.15.10.14.33
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 15 Feb 2019 10:14:30 -0800 (PST)
+        Fri, 15 Feb 2019 10:14:34 -0800 (PST)
 From:   Johannes Weiner <hannes@cmpxchg.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Tejun Heo <tj@kernel.org>, linux-mm@kvack.org,
         cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-team@fb.com
-Subject: [PATCH 1/6] mm: memcontrol: track LRU counts in the vmstats array
-Date:   Fri, 15 Feb 2019 13:14:20 -0500
-Message-Id: <20190215181425.32624-2-hannes@cmpxchg.org>
+Subject: [PATCH 3/6] mm: memcontrol: replace node summing with memcg_page_state()
+Date:   Fri, 15 Feb 2019 13:14:22 -0500
+Message-Id: <20190215181425.32624-4-hannes@cmpxchg.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190215181425.32624-1-hannes@cmpxchg.org>
 References: <20190215181425.32624-1-hannes@cmpxchg.org>
@@ -74,36 +74,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The memcg code currently maintains private per-zone breakdowns of the
-LRU counters. This is necessary for reclaim decisions which are still
-zone-based, but there are a variety of users of these counters that
-only want the aggregate per-lruvec or per-memcg LRU counts, and they
-need to painfully sum up the zone counters on each request for that.
-
-These would be better served using the memcg vmstats arrays, which
-track VM statistics at the desired scope already. They just don't have
-the LRU counts right now.
-
-So to kick off the conversion, begin tracking LRU counts in those.
+Instead of adding up the node counters, use memcg_page_state() to get
+the memcg state directly. This is a bit cheaper and more stream-lined.
 
 Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
 ---
- include/linux/mm_inline.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/memcontrol.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
-index 04ec454d44ce..6f2fef7b0784 100644
---- a/include/linux/mm_inline.h
-+++ b/include/linux/mm_inline.h
-@@ -29,7 +29,7 @@ static __always_inline void __update_lru_size(struct lruvec *lruvec,
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index a04177f25758..4d573f4e1759 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -739,10 +739,13 @@ static unsigned long mem_cgroup_nr_lru_pages(struct mem_cgroup *memcg,
+ 			unsigned int lru_mask)
  {
- 	struct pglist_data *pgdat = lruvec_pgdat(lruvec);
+ 	unsigned long nr = 0;
+-	int nid;
++	enum lru_list lru;
  
--	__mod_node_page_state(pgdat, NR_LRU_BASE + lru, nr_pages);
-+	__mod_lruvec_state(lruvec, NR_LRU_BASE + lru, nr_pages);
- 	__mod_zone_page_state(&pgdat->node_zones[zid],
- 				NR_ZONE_LRU_BASE + lru, nr_pages);
+-	for_each_node_state(nid, N_MEMORY)
+-		nr += mem_cgroup_node_nr_lru_pages(memcg, nid, lru_mask);
++	for_each_lru(lru) {
++		if (!(BIT(lru) & lru_mask))
++			continue;
++		nr += memcg_page_state(memcg, NR_LRU_BASE + lru);
++	}
+ 	return nr;
  }
+ 
 -- 
 2.20.1
 
