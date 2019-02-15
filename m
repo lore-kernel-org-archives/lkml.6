@@ -2,145 +2,139 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B715C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:11:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF3DDC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 140022192B
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:11:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BCC421900
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:17:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ex3frOk+"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="N1SQinY5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732821AbfBOTLM (ORCPT
+        id S1732905AbfBOTRP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 14:11:12 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40446 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726654AbfBOTLL (ORCPT
+        Fri, 15 Feb 2019 14:17:15 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:51358 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726654AbfBOTRO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 14:11:11 -0500
-Received: by mail-wm1-f67.google.com with SMTP id t15so2558339wmi.5
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 11:11:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=hRDcLrUuOTqhOZr37htjBDSKJ0KM/4qYtesCfk9S0Gg=;
-        b=ex3frOk+LWyLoedLdVjtHIwqWE5NWHkhHFyam5L3kjrbNtWHZu9np3eE9J5PWVWIxx
-         tShPzhXXpCRd6ishVQ0CjYLSFQfCK0tzzXv6xIPBeBmOm4isOosZnzYGKqUb/aYoJ0iT
-         7CL2MZRZ7ttMli60DxurHd4qZtjBCBG5KpTbA3R9x82P4nXXCUXAGsw2Zfa8PyiOFUwF
-         KF27qmpk5cvR6pUKLEaKuawEDk1Ry0X2QSXy/6D/eV94syHXBrHEy1xazdjNRBkbbemt
-         Jf8wjGD1jS3D3KYcdtinlO6z1Ba8TenmMmU5Thhob0aMDbttX3iLUksH9Br2vSXBx+e3
-         ooWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=hRDcLrUuOTqhOZr37htjBDSKJ0KM/4qYtesCfk9S0Gg=;
-        b=GoyrKc1LFJMwC6fl30B+xvq5I9aD+Lpo3L4BM1JOrbKi+69YGUv1Gam2DSHhDe0Uxv
-         NC0PVu3/l9reCvBPb1TOUEZ5aQpmBB6khHfTnoPsWDFkBkweqJHtWOU7tM18w0+EpJBv
-         4Zu/mSelLI3L1/5tXsQo8OEDgWX7J7FruZUMB8eTa51zpDKgyAJ9d2ku+jVTehy1MOmv
-         E93mze9/mFqFx6+YZIhSjdA62023mJ1rpID6k0+qayipE9tKBlTBtee4qjf3u1TSNAFk
-         mVXv00JxGBQADn7pRufLuz1W5nUhlIq9dMWZB9hxqm4A7ZQ2B72DUDt5PYQBNJeFoxZk
-         eeDA==
-X-Gm-Message-State: AHQUAua41ea758LsAljqo4AOt8ggszBhA39/HVWWHWgD/JwgtJ5nuIvu
-        RSE8A7YHbGuiS6N98pHn31Q=
-X-Google-Smtp-Source: AHgI3IbZ+JBg8Oi/px/7SViimPy0q/AnA8MGfAiQhBvrgmeWrEbh7thqQxIddu0cKVcR6uDLHGA57Q==
-X-Received: by 2002:a1c:2ec4:: with SMTP id u187mr7205674wmu.29.1550257869709;
-        Fri, 15 Feb 2019 11:11:09 -0800 (PST)
-Received: from gmail.com (79.108.96.12.dyn.user.ono.com. [79.108.96.12])
-        by smtp.gmail.com with ESMTPSA id b197sm13814101wmd.23.2019.02.15.11.11.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 15 Feb 2019 11:11:08 -0800 (PST)
-Date:   Fri, 15 Feb 2019 20:10:59 +0100
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Martin Sebor <msebor@gcc.gnu.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Jessica Yu <jeyu@kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        James Morris <james.morris@microsoft.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Borislav Petkov <bp@suse.de>, Matt Mullins <mmullins@fb.com>,
-        Vincent Whitchurch <vincent.whitchurch@axis.com>,
-        WANG Chao <chao.wang@ucloud.cn>
-Subject: [GIT PULL] Compiler Attributes for v5.0-rc7
-Message-ID: <20190215191059.GA24082@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: elm/2
+        Fri, 15 Feb 2019 14:17:14 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id D65C98EE235;
+        Fri, 15 Feb 2019 11:17:13 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Tr1HqR5hTIJi; Fri, 15 Feb 2019 11:17:13 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 4BB708EE10C;
+        Fri, 15 Feb 2019 11:17:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1550258233;
+        bh=ZcQo684pyd8jOtiDQZLm9UhOtL4FAORSIvKrJR1kZ3A=;
+        h=Subject:From:To:Cc:Date:From;
+        b=N1SQinY5xadTWYJLZ8Thkmhl8NjxqOwhbrI+jGAyBkHNDvoEJj5gsXTuyiubmTAEW
+         55YNGi3gdL2XzFGEuaRwJxqfyr7EVAFSEJQpwZKh8vRGQJAGYi3rK6o3xYfkDGpVH5
+         tJ2G6L/UN8jaKtCbsJMlXwPD76h6yjtfGAvVFKGw=
+Message-ID: <1550258231.3406.15.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 5.0-rc
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Fri, 15 Feb 2019 11:17:11 -0800
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Two fairly small fixes: the qla one is a panic inducing use after free
+and the entropy fix may seem minor but it has had huge userspace impact
+thanks to an unrelated change in openssl that causes sshd to refuse
+logins until it has enough entropy for the session keys, which causes
+tens of minutes delay before the affected systems allow logins after
+reboot.
 
-Please pull these changes to clean up the new GCC 9 warnings coming from
--Wmissing-attributes. With this, we can avoid disabling them.
+The patch is available here:
 
-The patches have been for quite in -next in several forms/shapes during
-the iterations we did.
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-Cheers,
-Miguel
+The short changelog is:
 
-The following changes since commit 8834f5600cf3c8db365e18a3d5cac2c2780c81e5:
+Bill Kuzeja (1):
+      scsi: qla2xxx: Fix panic from use after free in qla2x00_async_tm_cmd
 
-  Linux 5.0-rc5 (2019-02-03 13:48:04 -0800)
+James Bottomley (1):
+      scsi: sd: fix entropy gathering for most rotational disks
 
-are available in the Git repository at:
+And the diffstat:
 
-  https://github.com/ojeda/linux.git tags/compiler-attributes-for-linus-v5.0-rc7
+ drivers/scsi/qla2xxx/qla_init.c |  4 ++--
+ drivers/scsi/sd.c               | 12 +++++++++---
+ 2 files changed, 11 insertions(+), 5 deletions(-)
 
-for you to fetch changes up to a6e60d84989fa0e91db7f236eda40453b0e44afa:
+With full diff below.
 
-  include/linux/module.h: copy __init/__exit attrs to init/cleanup_module (2019-02-15 19:52:56 +0100)
+James
 
-----------------------------------------------------------------
-Compiler Attributes: Clean the new GCC 9 -Wmissing-attributes warnings
+---
 
-The upcoming GCC 9 release extends the -Wmissing-attributes warnings
-(enabled by -Wall) to C and aliases: it warns when particular function
-attributes are missing in the aliases but not in their target, e.g.:
-
-    void __cold f(void) {}
-    void __alias("f") g(void);
-
-diagnoses:
-
-    warning: 'g' specifies less restrictive attribute than
-    its target 'f': 'cold' [-Wmissing-attributes]
-
-These patch series clean these new warnings. Most of them are caused
-by the module_init/exit macros.
-
-Link: https://lore.kernel.org/lkml/20190125104353.2791-1-labbott@redhat.com/
-
-----------------------------------------------------------------
-Miguel Ojeda (3):
-      lib/crc32.c: mark crc32_le_base/__crc32c_le_base aliases as __pure
-      Compiler Attributes: add support for __copy (gcc >= 9)
-      include/linux/module.h: copy __init/__exit attrs to init/cleanup_module
-
- include/linux/compiler_attributes.h | 14 ++++++++++++++
- include/linux/module.h              |  4 ++--
- lib/crc32.c                         |  4 ++--
- 3 files changed, 18 insertions(+), 4 deletions(-)
+diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
+index 364bb52ed2a6..109587e62983 100644
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -1785,13 +1785,13 @@ qla2x00_async_tm_cmd(fc_port_t *fcport, uint32_t flags, uint32_t lun,
+ 
+ 		/* Issue Marker IOCB */
+ 		qla2x00_marker(vha, vha->hw->req_q_map[0],
+-		    vha->hw->rsp_q_map[0], sp->fcport->loop_id, lun,
++		    vha->hw->rsp_q_map[0], fcport->loop_id, lun,
+ 		    flags == TCF_LUN_RESET ? MK_SYNC_ID_LUN : MK_SYNC_ID);
+ 	}
+ 
+ done_free_sp:
+ 	sp->free(sp);
+-	sp->fcport->flags &= ~FCF_ASYNC_SENT;
++	fcport->flags &= ~FCF_ASYNC_SENT;
+ done:
+ 	return rval;
+ }
+diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
+index b2da8a00ec33..5464d467e23e 100644
+--- a/drivers/scsi/sd.c
++++ b/drivers/scsi/sd.c
+@@ -2951,9 +2951,6 @@ static void sd_read_block_characteristics(struct scsi_disk *sdkp)
+ 	if (rot == 1) {
+ 		blk_queue_flag_set(QUEUE_FLAG_NONROT, q);
+ 		blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, q);
+-	} else {
+-		blk_queue_flag_clear(QUEUE_FLAG_NONROT, q);
+-		blk_queue_flag_set(QUEUE_FLAG_ADD_RANDOM, q);
+ 	}
+ 
+ 	if (sdkp->device->type == TYPE_ZBC) {
+@@ -3090,6 +3087,15 @@ static int sd_revalidate_disk(struct gendisk *disk)
+ 	if (sdkp->media_present) {
+ 		sd_read_capacity(sdkp, buffer);
+ 
++		/*
++		 * set the default to rotational.  All non-rotational devices
++		 * support the block characteristics VPD page, which will
++		 * cause this to be updated correctly and any device which
++		 * doesn't support it should be treated as rotational.
++		 */
++		blk_queue_flag_clear(QUEUE_FLAG_NONROT, q);
++		blk_queue_flag_set(QUEUE_FLAG_ADD_RANDOM, q);
++
+ 		if (scsi_device_supports_vpd(sdp)) {
+ 			sd_read_block_provisioning(sdkp);
+ 			sd_read_block_limits(sdkp);
