@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1EAFC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D465CC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:21:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89DA720643
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:21:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99BBF20643
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:21:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197261;
-	bh=Gogn2uu0QPNMo6yTWi+PUFg7+KBqkPyfqIrY0fucQBY=;
+	s=default; t=1550197271;
+	bh=e0Y7LJADeVMuJ+mO1s/4mB5ItRHgoGsPN8tILdPKlmA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qWRGtSKJdlGeusmKElV81HxkOuaQmY2TD3hi9mSgu/5j/7MJ4j7Mto3FCsXKG0iG4
-	 C1+jfuQKDhPGT1iHdPuvMXcP1BeJC5S6Pu6h3lc/RcXINj+ohhkJiCBDn+vSyz+RSz
-	 XydkYi4KK5bLTgXtew4hthv0QHjQvEj9V6ugFvBc=
+	b=QUVxKED4X+PgdOb85p38JQ7BfOCdPu3h9/JI2+GHY3/DUgqmCS1MdrI3xTICvNJxF
+	 rmp+EX0B1h9SyKm7d4B+9liRhb8gYiB5WES7xVlrOrmH3Q5DiiQl32A/Q3ly9bGTe8
+	 PEvc48POIieo9jaMBIadcXBK794L+vjHGAETqMXI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405487AbfBOCPI (ORCPT
+        id S1732939AbfBOCVJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:15:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54908 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:21:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405308AbfBOCPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:15:04 -0500
+        id S2405453AbfBOCPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:15:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E48DA20643;
-        Fri, 15 Feb 2019 02:15:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 947872229F;
+        Fri, 15 Feb 2019 02:15:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196903;
-        bh=Gogn2uu0QPNMo6yTWi+PUFg7+KBqkPyfqIrY0fucQBY=;
+        s=default; t=1550196907;
+        bh=e0Y7LJADeVMuJ+mO1s/4mB5ItRHgoGsPN8tILdPKlmA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YS5EZVuEZ8xc7Hov4JrLMG258ZPJpXmhvOJVobwL6qFOvuWmPgiVdjynftOTWuV9A
-         oHDGaWj5YMbGCd6qPHgMz70zuBmrqHxC6fsbuhZtygVfQPL17+mCtf5YnOQw8YNkay
-         8wUghTujA/kGb+p2Q1k8g05+zU0RY+CLC90VPtk4=
+        b=A8bB2czGxvRjQumT6s8W3uKdIGSBCECmSNesYlx01eEqOEVOo9GL0dyok+2KNQGt9
+         hSnUxXNDbquGOs3s+ip+O5LyXGPedCje6ZdeuUqkOBtKg22asl3kpX2CuMpG9qen7y
+         JM0pbOSZCGyhPsNOqmcZi2BL5nYNRf5boVbpKebg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Zhang Run <zhang.run@zte.com.cn>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 21/27] net: usb: asix: ax88772_bind return error when hw_reset fail
-Date:   Thu, 14 Feb 2019 21:14:18 -0500
-Message-Id: <20190215021424.178979-21-sashal@kernel.org>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 24/27] mac80211: Add attribute aligned(2) to struct 'action'
+Date:   Thu, 14 Feb 2019 21:14:21 -0500
+Message-Id: <20190215021424.178979-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021424.178979-1-sashal@kernel.org>
 References: <20190215021424.178979-1-sashal@kernel.org>
@@ -59,63 +59,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhang Run <zhang.run@zte.com.cn>
+From: Mathieu Malaterre <malat@debian.org>
 
-[ Upstream commit 6eea3527e68acc22483f4763c8682f223eb90029 ]
+[ Upstream commit 7c53eb5d87bc21464da4268c3c0c47457b6d9c9b ]
 
-The ax88772_bind() should return error code immediately when the PHY
-was not reset properly through ax88772a_hw_reset().
-Otherwise, The asix_get_phyid() will block when get the PHY
-Identifier from the PHYSID1 MII registers through asix_mdio_read()
-due to the PHY isn't ready. Furthermore, it will produce a lot of
-error message cause system crash.As follows:
-asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to write
- reg index 0x0000: -71
-asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to send
- software reset: ffffffb9
-asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to write
- reg index 0x0000: -71
-asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to enable
- software MII access
-asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to read
- reg index 0x0000: -71
-asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to write
- reg index 0x0000: -71
-asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to enable
- software MII access
-asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to read
- reg index 0x0000: -71
-...
+During refactor in commit 9e478066eae4 ("mac80211: fix MU-MIMO
+follow-MAC mode") a new struct 'action' was declared with packed
+attribute as:
 
-Signed-off-by: Zhang Run <zhang.run@zte.com.cn>
-Reviewed-by: Yang Wei <yang.wei9@zte.com.cn>
-Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+  struct {
+          struct ieee80211_hdr_3addr hdr;
+          u8 category;
+          u8 action_code;
+  } __packed action;
+
+But since struct 'ieee80211_hdr_3addr' is declared with an aligned
+keyword as:
+
+  struct ieee80211_hdr {
+  	__le16 frame_control;
+  	__le16 duration_id;
+  	u8 addr1[ETH_ALEN];
+  	u8 addr2[ETH_ALEN];
+  	u8 addr3[ETH_ALEN];
+  	__le16 seq_ctrl;
+  	u8 addr4[ETH_ALEN];
+  } __packed __aligned(2);
+
+Solve the ambiguity of placing aligned structure in a packed one by
+adding the aligned(2) attribute to struct 'action'.
+
+This removes the following warning (W=1):
+
+  net/mac80211/rx.c:234:2: warning: alignment 1 of 'struct <anonymous>' is less than 2 [-Wpacked-not-aligned]
+
+Cc: Johannes Berg <johannes.berg@intel.com>
+Suggested-by: Johannes Berg <johannes@sipsolutions.net>
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/asix_devices.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ net/mac80211/rx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
-index 5be6b67492d5..393fd3ed6b94 100644
---- a/drivers/net/usb/asix_devices.c
-+++ b/drivers/net/usb/asix_devices.c
-@@ -729,8 +729,13 @@ static int ax88772_bind(struct usbnet *dev, struct usb_interface *intf)
- 	asix_read_cmd(dev, AX_CMD_STATMNGSTS_REG, 0, 0, 1, &chipcode, 0);
- 	chipcode &= AX_CHIPCODE_MASK;
+diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
+index fdbfdb04abe8..10e8b85e017f 100644
+--- a/net/mac80211/rx.c
++++ b/net/mac80211/rx.c
+@@ -216,7 +216,7 @@ static void ieee80211_handle_mu_mimo_mon(struct ieee80211_sub_if_data *sdata,
+ 		struct ieee80211_hdr_3addr hdr;
+ 		u8 category;
+ 		u8 action_code;
+-	} __packed action;
++	} __packed __aligned(2) action;
  
--	(chipcode == AX_AX88772_CHIPCODE) ? ax88772_hw_reset(dev, 0) :
--					    ax88772a_hw_reset(dev, 0);
-+	ret = (chipcode == AX_AX88772_CHIPCODE) ? ax88772_hw_reset(dev, 0) :
-+						  ax88772a_hw_reset(dev, 0);
-+
-+	if (ret < 0) {
-+		netdev_dbg(dev->net, "Failed to reset AX88772: %d\n", ret);
-+		return ret;
-+	}
- 
- 	/* Read PHYID register *AFTER* the PHY was reset properly */
- 	phyid = asix_get_phyid(dev);
+ 	if (!sdata)
+ 		return;
 -- 
 2.19.1
 
