@@ -2,101 +2,147 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C3C0C4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:26:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB84DC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 092FC2192D
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:26:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A3712192D
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:29:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="KSNOoqqs"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="wPzQQIA3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389214AbfBOP0v (ORCPT
+        id S1732882AbfBOP3D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 10:26:51 -0500
-Received: from a9-99.smtp-out.amazonses.com ([54.240.9.99]:59600 "EHLO
-        a9-99.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726773AbfBOP0v (ORCPT
+        Fri, 15 Feb 2019 10:29:03 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:52834 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726773AbfBOP3D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 10:26:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1550244409;
-        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=ph+Ox1e7xNScZGS+VdWAQM0Ff/E6RjNkQYhIunoJh5I=;
-        b=KSNOoqqsLE+r8KYX2OGbVKpGlhsa+Ylr4yLduMXvPZjEz1KtCJCrXjbXi05MCABz
-        GfKhX70kQFfDTpoB3XA0etFSJKc3qzbKiYMlp8/e0SZ/sM66h8/4m0+1mqYIrp4Ss5v
-        X7EU6bVAeo2r2h9wXORmJ3AkbZYhtBwR8GhooEac=
-Date:   Fri, 15 Feb 2019 15:26:49 +0000
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-cc:     Ira Weiny <ira.weiny@intel.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        akpm@linux-foundation.org, dave@stgolabs.net, jack@suse.cz,
-        linux-mm@kvack.org, kvm@vger.kernel.org, kvm-ppc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alex.williamson@redhat.com,
-        paulus@ozlabs.org, benh@kernel.crashing.org, mpe@ellerman.id.au,
-        hao.wu@intel.com, atull@kernel.org, mdf@kernel.org, aik@ozlabs.ru
-Subject: Re: [PATCH 0/5] use pinned_vm instead of locked_vm to account pinned
- pages
-In-Reply-To: <20190214221629.GD1739@ziepe.ca>
-Message-ID: <01000168f1c4718d-91714478-72d3-47cd-ae36-2d781947ebde-000000@email.amazonses.com>
-References: <20190211224437.25267-1-daniel.m.jordan@oracle.com> <20190211225447.GN24692@ziepe.ca> <20190214015314.GB1151@iweiny-DESK2.sc.intel.com> <20190214060006.GE24692@ziepe.ca> <20190214193352.GA7512@iweiny-DESK2.sc.intel.com> <20190214201231.GC1739@ziepe.ca>
- <20190214214650.GB7512@iweiny-DESK2.sc.intel.com> <20190214221629.GD1739@ziepe.ca>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 15 Feb 2019 10:29:03 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1FFShN2191365;
+        Fri, 15 Feb 2019 15:28:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=Z+eMDofUZc99xt6XGv0e2GJUggGifpKgkO9s9DQYTR4=;
+ b=wPzQQIA3jI8U3QoKMPRGpCiBvFzEHN4gd8Sn6a0l/4lKDgKCn2x8lPjymZsvKLxH9h0Y
+ 4X4fiuE42z65X9RiuRfGkvCsiJsKPKh2O4k7wCoQy1td2TyWDOzCvPVqKnsMdjFdoqA7
+ Q+arHcsQ0YsNFBw1Dri2T6Cg0rVgoaaqGGgP4F3akHq/wS+zlUztcbXCOHBQrh4dB+lD
+ /Fgo/aUTCV8mDnmpgS2EaIKiYpO/mJSbQY5gT5vBOxYFhUqbtAomE5wHlG6NM8zbnCFq
+ 7LF96eTV3ailDYtJL7HxmENb/8vjxqRd3sTYAtTyaj3VeXbQX41NWQpu0them3FR2aw5 Gg== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2qhre5xe5b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Feb 2019 15:28:42 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1FFSaDB020728
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Feb 2019 15:28:37 GMT
+Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1FFSatR011294;
+        Fri, 15 Feb 2019 15:28:36 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 15 Feb 2019 15:28:36 +0000
+Subject: Re: [Xen-devel][PATCH 1/2] xen/gntdev: Do not destroy context while
+ dma-bufs are in use
+To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        jgross@suse.com
+Cc:     Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20190214142321.1138-1-andr2000@gmail.com>
+ <143411a8-385d-2cce-9211-22ba7db25a15@oracle.com>
+ <1c8d1612-f1b9-b080-2d11-432d811b25d1@gmail.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ mQINBFH8CgsBEAC0KiOi9siOvlXatK2xX99e/J3OvApoYWjieVQ9232Eb7GzCWrItCzP8FUV
+ PQg8rMsSd0OzIvvjbEAvaWLlbs8wa3MtVLysHY/DfqRK9Zvr/RgrsYC6ukOB7igy2PGqZd+M
+ MDnSmVzik0sPvB6xPV7QyFsykEgpnHbvdZAUy/vyys8xgT0PVYR5hyvhyf6VIfGuvqIsvJw5
+ C8+P71CHI+U/IhsKrLrsiYHpAhQkw+Zvyeml6XSi5w4LXDbF+3oholKYCkPwxmGdK8MUIdkM
+ d7iYdKqiP4W6FKQou/lC3jvOceGupEoDV9botSWEIIlKdtm6C4GfL45RD8V4B9iy24JHPlom
+ woVWc0xBZboQguhauQqrBFooHO3roEeM1pxXjLUbDtH4t3SAI3gt4dpSyT3EvzhyNQVVIxj2
+ FXnIChrYxR6S0ijSqUKO0cAduenhBrpYbz9qFcB/GyxD+ZWY7OgQKHUZMWapx5bHGQ8bUZz2
+ SfjZwK+GETGhfkvNMf6zXbZkDq4kKB/ywaKvVPodS1Poa44+B9sxbUp1jMfFtlOJ3AYB0WDS
+ Op3d7F2ry20CIf1Ifh0nIxkQPkTX7aX5rI92oZeu5u038dHUu/dO2EcuCjl1eDMGm5PLHDSP
+ 0QUw5xzk1Y8MG1JQ56PtqReO33inBXG63yTIikJmUXFTw6lLJwARAQABtDNCb3JpcyBPc3Ry
+ b3Zza3kgKFdvcmspIDxib3Jpcy5vc3Ryb3Zza3lAb3JhY2xlLmNvbT6JAjgEEwECACIFAlH8
+ CgsCGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEIredpCGysGyasEP/j5xApopUf4g
+ 9Fl3UxZuBx+oduuw3JHqgbGZ2siA3EA4bKwtKq8eT7ekpApn4c0HA8TWTDtgZtLSV5IdH+9z
+ JimBDrhLkDI3Zsx2CafL4pMJvpUavhc5mEU8myp4dWCuIylHiWG65agvUeFZYK4P33fGqoaS
+ VGx3tsQIAr7MsQxilMfRiTEoYH0WWthhE0YVQzV6kx4wj4yLGYPPBtFqnrapKKC8yFTpgjaK
+ jImqWhU9CSUAXdNEs/oKVR1XlkDpMCFDl88vKAuJwugnixjbPFTVPyoC7+4Bm/FnL3iwlJVE
+ qIGQRspt09r+datFzPqSbp5Fo/9m4JSvgtPp2X2+gIGgLPWp2ft1NXHHVWP19sPgEsEJXSr9
+ tskM8ScxEkqAUuDs6+x/ISX8wa5Pvmo65drN+JWA8EqKOHQG6LUsUdJolFM2i4Z0k40BnFU/
+ kjTARjrXW94LwokVy4x+ZYgImrnKWeKac6fMfMwH2aKpCQLlVxdO4qvJkv92SzZz4538az1T
+ m+3ekJAimou89cXwXHCFb5WqJcyjDfdQF857vTn1z4qu7udYCuuV/4xDEhslUq1+GcNDjAhB
+ nNYPzD+SvhWEsrjuXv+fDONdJtmLUpKs4Jtak3smGGhZsqpcNv8nQzUGDQZjuCSmDqW8vn2o
+ hWwveNeRTkxh+2x1Qb3GT46uuQINBFH8CgsBEADGC/yx5ctcLQlB9hbq7KNqCDyZNoYu1HAB
+ Hal3MuxPfoGKObEktawQPQaSTB5vNlDxKihezLnlT/PKjcXC2R1OjSDinlu5XNGc6mnky03q
+ yymUPyiMtWhBBftezTRxWRslPaFWlg/h/Y1iDuOcklhpr7K1h1jRPCrf1yIoxbIpDbffnuyz
+ kuto4AahRvBU4Js4sU7f/btU+h+e0AcLVzIhTVPIz7PM+Gk2LNzZ3/on4dnEc/qd+ZZFlOQ4
+ KDN/hPqlwA/YJsKzAPX51L6Vv344pqTm6Z0f9M7YALB/11FO2nBB7zw7HAUYqJeHutCwxm7i
+ BDNt0g9fhviNcJzagqJ1R7aPjtjBoYvKkbwNu5sWDpQ4idnsnck4YT6ctzN4I+6lfkU8zMzC
+ gM2R4qqUXmxFIS4Bee+gnJi0Pc3KcBYBZsDK44FtM//5Cp9DrxRQOh19kNHBlxkmEb8kL/pw
+ XIDcEq8MXzPBbxwHKJ3QRWRe5jPNpf8HCjnZz0XyJV0/4M1JvOua7IZftOttQ6KnM4m6WNIZ
+ 2ydg7dBhDa6iv1oKdL7wdp/rCulVWn8R7+3cRK95SnWiJ0qKDlMbIN8oGMhHdin8cSRYdmHK
+ kTnvSGJNlkis5a+048o0C6jI3LozQYD/W9wq7MvgChgVQw1iEOB4u/3FXDEGulRVko6xCBU4
+ SQARAQABiQIfBBgBAgAJBQJR/AoLAhsMAAoJEIredpCGysGyfvMQAIywR6jTqix6/fL0Ip8G
+ jpt3uk//QNxGJE3ZkUNLX6N786vnEJvc1beCu6EwqD1ezG9fJKMl7F3SEgpYaiKEcHfoKGdh
+ 30B3Hsq44vOoxR6zxw2B/giADjhmWTP5tWQ9548N4VhIZMYQMQCkdqaueSL+8asp8tBNP+TJ
+ PAIIANYvJaD8xA7sYUXGTzOXDh2THWSvmEWWmzok8er/u6ZKdS1YmZkUy8cfzrll/9hiGCTj
+ u3qcaOM6i/m4hqtvsI1cOORMVwjJF4+IkC5ZBoeRs/xW5zIBdSUoC8L+OCyj5JETWTt40+lu
+ qoqAF/AEGsNZTrwHJYu9rbHH260C0KYCNqmxDdcROUqIzJdzDKOrDmebkEVnxVeLJBIhYZUd
+ t3Iq9hdjpU50TA6sQ3mZxzBdfRgg+vaj2DsJqI5Xla9QGKD+xNT6v14cZuIMZzO7w0DoojM4
+ ByrabFsOQxGvE0w9Dch2BDSI2Xyk1zjPKxG1VNBQVx3flH37QDWpL2zlJikW29Ws86PHdthh
+ Fm5PY8YtX576DchSP6qJC57/eAAe/9ztZdVAdesQwGb9hZHJc75B+VNm4xrh/PJO6c1THqdQ
+ 19WVJ+7rDx3PhVncGlbAOiiiE3NOFPJ1OQYxPKtpBUukAlOTnkKE6QcA4zckFepUkfmBV1wM
+ Jg6OxFYd01z+a+oL
+Message-ID: <eddff494-8cc7-f796-156e-e2e9e3d2daae@oracle.com>
+Date:   Fri, 15 Feb 2019 10:28:31 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2019.02.15-54.240.9.99
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+In-Reply-To: <1c8d1612-f1b9-b080-2d11-432d811b25d1@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9168 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902150106
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 14 Feb 2019, Jason Gunthorpe wrote:
+On 2/15/19 10:07 AM, Oleksandr Andrushchenko wrote:
+> On 2/15/19 5:03 PM, Boris Ostrovsky wrote:
+>> On 2/14/19 9:23 AM, Oleksandr Andrushchenko wrote:
+>>>     /* DMA buffer export support. */
+>>> @@ -311,6 +317,7 @@ static void dmabuf_exp_release(struct kref *kref)
+>>>         dmabuf_exp_wait_obj_signal(gntdev_dmabuf->priv, gntdev_dmabuf);
+>>>       list_del(&gntdev_dmabuf->next);
+>>> +    fput(gntdev_dmabuf->priv->filp);
+>>>       kfree(gntdev_dmabuf);
+>>>   }
+>>>   @@ -423,6 +430,7 @@ static int dmabuf_exp_from_pages(struct
+>>> gntdev_dmabuf_export_args *args)
+>>>       mutex_lock(&args->dmabuf_priv->lock);
+>>>       list_add(&gntdev_dmabuf->next, &args->dmabuf_priv->exp_list);
+>>>       mutex_unlock(&args->dmabuf_priv->lock);
+>>> +    get_file(gntdev_dmabuf->priv->filp);
+>> Not fget()?
+> fget wants file descriptor [1] and returns struct file *,
+> but we already have struct file*, so I use get_file [2]
+> which does what I need - increments the reference counter
+> on the file
 
-> On Thu, Feb 14, 2019 at 01:46:51PM -0800, Ira Weiny wrote:
->
-> > > > > Really unclear how to fix this. The pinned/locked split with two
-> > > > > buckets may be the right way.
-> > > >
-> > > > Are you suggesting that we have 2 user limits?
-> > >
-> > > This is what RDMA has done since CL's patch.
-> >
-> > I don't understand?  What is the other _user_ limit (other than
-> > RLIMIT_MEMLOCK)?
->
-> With todays implementation RLIMIT_MEMLOCK covers two user limits,
-> total number of pinned pages and total number of mlocked pages. The
-> two are different buckets and not summed.
 
-Applications were failing at some point because they were effectively
-summed up. If you mlocked/pinned a dataset of more than half the memory of
-a system then things would get really weird.
-
-Also there is the possibility of even more duplication because pages can
-be pinned by multiple kernel subsystems. So you could get more than
-doubling of the number.
-
-The sane thing was to account them separately so that mlocking and
-pinning worked without apps failing and then wait for another genius
-to find out how to improve the situation by getting the pinned page mess
-under control.
-
-It is not even advisable to check pinned pages against any limit because
-pages can be pinned by multiple subsystems.
-
-The main problem here is that we only have a refcount to indicate pinning
-and no way to clearly distinguish long term from short pins. In order to
-really fix this issue we would need to have a list of subsystems that have
-taken long term pins on a page. But doing so would waste a lot of memory
-and cause a significant performance regression.
-
-And the discussions here seem to be meandering around these issues.
-Nothing really that convinces me that we have a clean solution at hand.
-
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
