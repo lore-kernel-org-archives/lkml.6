@@ -2,137 +2,68 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F652C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:01:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE70BC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:01:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2315222BE
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:01:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550250112;
-	bh=pp+wmEv3ANp/fDK4HXKIUnVQx1QFxRC3pyodGuUqlmU=;
-	h=To:In-Reply-To:Subject:References:Cc:From:Date:List-ID:From;
-	b=zuohQUfaBRBju6t3GrBtPIZy3EALddk8a4rh/oX2d3h2DPILEhY3vJA6M9SbkZeM+
-	 514kjVvN8ecrDh+nlEvvqA2HgrwDcec4EFhayFL5iWeIEj8EKnb90uk847bi+rvbfU
-	 AlrGw2ybNvMgAV+YTYiWle7dEVPlod9+RYOm98zc=
+	by mail.kernel.org (Postfix) with ESMTP id AC1F521924
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:01:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="J8m8LJd3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389088AbfBORBv (ORCPT
+        id S1730140AbfBORB6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 12:01:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47532 "EHLO mail.kernel.org"
+        Fri, 15 Feb 2019 12:01:58 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:54153 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728374AbfBORBu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 12:01:50 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BF2C21924;
-        Fri, 15 Feb 2019 17:01:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550250109;
-        bh=pp+wmEv3ANp/fDK4HXKIUnVQx1QFxRC3pyodGuUqlmU=;
-        h=To:In-Reply-To:Subject:References:Cc:From:Date:From;
-        b=RF0EEMvQmDCsUkoxsDC8plKYznJyXMPNXzqs6Pid5tsmWNr8j+/KVCdvjlri/ZrK4
-         8U776fU1ew6ulhVbo9ph/KEBHGYhEa+qeMkDYKp98LvkWAjCCulX3Yvz4SQgLaUHSz
-         GI46s1eQ3787JVMyZ6ZFtJAymuUO6Z9QlDNXkNh8=
-Content-Type: text/plain; charset="utf-8"
+        id S1726458AbfBORB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 12:01:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=Py2su8RzV13xDHnbmKHfqOETJQ5bPdnq2ClFAX+lQjw=; b=J8m8LJd318Ld2MdywzNqSjSZVT
+        ZyDUYI7I4Uv7qtM2rzUyhv2gKrlRoWO5Rh2y6xOhAO36+SUrvrnoVt++L79T9Ki836US/OzKZcy3b
+        Wdf5V9gZTgJmydjZP8KG+R9rWzCNl4tEp6q/M7THMtC27JsY66kE5iJdbgp6oeey0Q8M=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gugs5-00085s-Gx; Fri, 15 Feb 2019 18:01:53 +0100
+Date:   Fri, 15 Feb 2019 18:01:53 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH] net: phy: xgmiitorgmii: Support generic PHY status read
+Message-ID: <20190215170153.GR708@lunn.ch>
+References: <20190215161708.18645-1-paul.kocialkowski@bootlin.com>
+ <20190215162344.GQ708@lunn.ch>
+ <e8928afbb43cc8fffbb9b9034b2a94907fef596d.camel@bootlin.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <9e86b95eb8c9e3c0454d3aeebac15e354298c815.camel@baylibre.com>
-User-Agent: alot/0.8
-Subject: Re: [PATCH 2/9] clk: Introduce get_parent_hw clk op
-Message-ID: <155025010824.115909.1113764424081649980@swboyd.mtv.corp.google.com>
-References: <20190129061021.94775-1-sboyd@kernel.org> <20190129061021.94775-3-sboyd@kernel.org> <e303573aefeaf6a7e3a4b1d820e801354ff900b4.camel@baylibre.com> <154879654428.136743.10048771201181501034@swboyd.mtv.corp.google.com> <ff76dcdb4ceb3209619e5348ed7b575a8ae9df8d.camel@baylibre.com> <154888381385.169292.12776041058756822056@swboyd.mtv.corp.google.com> <97c2375f41fe7dabc4d71f66c9808912eb0ce611.camel@baylibre.com> <154941131193.169292.7500057932043013834@swboyd.mtv.corp.google.com> <9e86b95eb8c9e3c0454d3aeebac15e354298c815.camel@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>
-From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Fri, 15 Feb 2019 09:01:48 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e8928afbb43cc8fffbb9b9034b2a94907fef596d.camel@bootlin.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jerome Brunet (2019-02-13 01:16:18)
-> On Tue, 2019-02-05 at 16:01 -0800, Stephen Boyd wrote:
-> > >=20
-> > > I really don't understand why you insist on keeping this special case=
- for
-> > > num_parent =3D=3D 1, when we know it is not coherent.
-> > >=20
-> > > Considering, that I already proposed the fix, what is the effort here=
- ?
-> > > If it is fixing the driver that rely this weird thing, I'd be happy t=
-o do
-> > > it.
-> > >=20
-> > >=20
-> >=20
-> > Ok. I'm happy to merge your patch to always call the .get_parent clk op
-> > when num_parents > 0, but please fix all the drivers and analyze all the
-> > implementations of .get_parent to make sure that they aren't broken by
-> > the change in behavior. Furthermore, please add a debug/warning message
-> > into the code when .get_parent returns a number outside of the range of
-> > [0, num_parents) so that they can be converted to use .get_parent_hw
-> > instead.
->=20
-> Fair enough.
->=20
-> >  Ideally there wouldn't be anything returning a parent index
-> > outside the range of possible parents from .get_parent because this
-> > analysis of drivers would find those implementations and migrate them to
-> > .get_parent_hw instead.
-> >=20
-> > In parallel, I'd like to convert all drivers to use .get_parent_hw
-> > instead of .get_parent and then remove the .get_parent clk op right
-> > away.=20
->=20
-> Fine by me. Of course step #1 is not required if you get this is in befor=
-e.
-> As long as things are coherent, I'm happy :)
+> > How about using phy_read_status()?
+> 
+> Thanks fo rthe suggestion! Though I don't that would work here since
+> our priv->phy_drv != phydev->drv, so it looks like we need to be
+> breaking it down in the driver.
 
-Ok. So does it mean you want everything to be converted over the
-.get_parent_hw and then all problems are solved? I think I can use
-Coccinelle to convert the callers to pass the index straight into
-clk_hw_get_parent_by_index(). I've also stacked a patch on top of this
-series to make that API accept a negative index so I can directly chain
-that call after the index is figured out.
+Ahm, yes. I forgot how this driver works.
 
->=20
-> > I'll start a sweep of the users of clk_hw_get_parent_by_index() (I
-> > see 50 calls in the tree right now) and see if I can convert them to
-> > handle errors returned from that API, probably by just continuing and
-> > ignoring errors. I'll start doing the same conversion for .round_rate
-> > and .determine_rate so that we can get rid of that duplicate clk op as
-> > well. Hopefully that's a mostly mechanical conversion.
->=20
-> This would be nice !
-
-Great! This isn't as easy to script, but it looks like I'll be bombing
-the list with hundreds of patches soon.
-
->=20
-> >=20
-> > For now I'll move this patch to the end of this series so that it
-> > doesn't hold things up otherwise.
->=20
-> It could even be separate series ? with the migration you mentionned abov=
-e ?
->=20
-
-Yes that's fine to be a different series. I've reordered the patches now
-so this patch comes last and I've also fixed up all callers of
-clk_hw_get_parent_by_index() to handle the error case, with lots of
-checks for IS_ERR_OR_NULL(). I've also made that API return an error now
-and realized that this patch series needs to only do the fallback to the
-'fallback' string when there isn't a direct pointer and when the DT
-lookup fails with -ENOENT. We should assume that other errors mean that
-something is wrong and the lookup actually failed vs. it being a DT
-property that hasn't been implemented yet. Hopefully this is clearer
-when I repost this series.
-
+     Andrew
