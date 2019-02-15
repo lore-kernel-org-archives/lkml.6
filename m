@@ -2,103 +2,119 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9075C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:43:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0BA1C4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:44:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B99612089F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:43:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FA93217F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:44:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Vth31cBs"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EoumtdMW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730195AbfBOKnr (ORCPT
+        id S2405805AbfBOKoj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 05:43:47 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:35877 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729925AbfBOKnr (ORCPT
+        Fri, 15 Feb 2019 05:44:39 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35958 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729925AbfBOKoi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 05:43:47 -0500
-Received: by mail-it1-f196.google.com with SMTP id h6so20975589itl.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 02:43:46 -0800 (PST)
+        Fri, 15 Feb 2019 05:44:38 -0500
+Received: by mail-wm1-f67.google.com with SMTP id j125so9142623wmj.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 02:44:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=uivGbSiXEQOpFxzRP1Er6b88Pvgzr9mkKYga4UclYYY=;
-        b=Vth31cBsvgohEbL6fkFmJxauSF3dkTrIL9QQMg9pZtde32g5P44WMetvV2/+IXkULb
-         +SgVkKGTZtt6q17mQ/y7vFLo5YOSzY/Ypc/8cPecGM2HE7KJkUl+ntDZsZLauWY61PSN
-         avc2TDVi3gNDL2bGVtH0kBmLQRcV13dl2P6xbmK92kpyA21QhBp5pXzX+DbdhNnzXN0E
-         0FSMO6E3yPOF8LzhWB0bke1jCE2EOgKXEWeYVJoz7NVsqrR4QvUW31ZVE/shJRBwfY+K
-         bjunU8H1RghqyAbs7FFKguaiCH0TM5k0Oiw8xOfNSGm2oFQ4RmSl5cslMt/6Bp/oq8kl
-         9/6g==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=qUuLlEE5Q2koJzCqTmzBLqwiL5p0RjZAe3xDJW/0IW0=;
+        b=EoumtdMWqu7DCuu4Htoqan0BeyZLmdmaT0U9OXpqjrcDp4Vc542cDgSBchWpQhvSQ4
+         1gxqskTK8VZkniRlcds0ze6JL/VH6R5gfEhbrs/Pe/46UUgwqUSYOWt7QykidOxqW6Si
+         ohsU3uqpdxjdQa9JRPk4GMoKUS4oF6trvlgTdYu8UEHuGZy5eby4igyBWM/ZW+vJa7qe
+         wA3h+sop6mRPKh3cBlf7wMz1TDbnM0v/vNo7GCST1VcvJ+XnsVobr6hM3Sd1Z3csV27l
+         iwJQAD5nK7mdbz6xhwssLQar5oWP4yUVctaqm95LPHeq+fsNzptQsW/f2E9ToPq1ckud
+         /6WQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=uivGbSiXEQOpFxzRP1Er6b88Pvgzr9mkKYga4UclYYY=;
-        b=CwX0L4ChWfzOO7oSyCjQKZbd9D4oDTNBRaIPg/OU/QD/1rSiEZD/7AjEvgDicAMV0F
-         CVLsCSYaEcoDc36PqHMOxuVuCvbg5LSW8l9QRfElrrVD8+8KlyfzXSrsi4wIyyS2Uuy6
-         Yxj7GxahpE7WfGLhIQA3IZ0Fc49fPmJecUuAsyCt9ktkjkLb7PmDVFcExfodyLTfwD4G
-         SjlJSWg1OedJhgNh5dN2XMlgdpAkj9yVlje0ESdhmuyjj2MlN2OdnNFWQBisSDGep9dH
-         g9J5tgyPAgvYRLD3JbjPUHG/E9C4RpehCpHBvhXEE1aLCDYEq2pYfBsSih/aydk8/nsi
-         iNng==
-X-Gm-Message-State: AHQUAuZd07A8mzSobbwhD+M3bhjc1FfjXPVoH6jiKG93NoKy4Ytpfcg1
-        LkShKk3DpTVedDieo6yQKsM89Vw0QCq2w1P/Rc7+Mdw8
-X-Google-Smtp-Source: AHgI3IZB29HkOOMAYesu+V3ThY9QdZiW+UgWdVW29nIG73WO4wGt21bzf6y+RRbNfVGIFr/zFeMtrQee8164dhfogN0=
-X-Received: by 2002:a02:9d55:: with SMTP id m21mr4736863jal.24.1550227426427;
- Fri, 15 Feb 2019 02:43:46 -0800 (PST)
-MIME-Version: 1.0
-References: <20190214162349.22740-1-brgl@bgdev.pl> <e566b4ba-0f3e-052a-bf08-ad881cf7b7c0@linaro.org>
- <CAMRc=MdW47YspeOv+9U6h9Ps35S0As2yBVXPdiwJFXNg_hMZZg@mail.gmail.com> <2ef927a7-0698-3d2f-797f-b9f742bce905@linaro.org>
-In-Reply-To: <2ef927a7-0698-3d2f-797f-b9f742bce905@linaro.org>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 15 Feb 2019 11:43:35 +0100
-Message-ID: <CAMRc=Mdxw+YMOuUYPB3NvEJw=u7TWxrGsLLE7R8i_0mJY7ZO_A@mail.gmail.com>
-Subject: Re: [PATCH] nvmem: core: fix the return value check when calling the
- notifier chain
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=qUuLlEE5Q2koJzCqTmzBLqwiL5p0RjZAe3xDJW/0IW0=;
+        b=HyBDmeMltsmQFe2PMAKi21Ac513d29Xj00n9+DT3Lb6NlxjukEYlvrmd2AWx2c3+1Y
+         LSazroIPycQ7gmIZb/itZOi/B9jrDwKj+rd9jc9bxrvq4nvJKyvMJOPIvsf2sHISriLO
+         FsfriPbbajWT9p9+5I12T3IqGXklSYZpiUprDguwlBoW2O/+la5ORUtCcQOyOcMT4uMf
+         0+XX8JKd/xDeE3svgrkXXQlMicQwjjwlQsnquwjCO5pCKCR+148pI9S/ZeCitnHNAert
+         LNUaWbes4ZxxbgJBlgOp4ngTgbfCYkZLa9EPmiMa8+XzbPg0u/p62z2pWmAZvepkdjwn
+         pkBA==
+X-Gm-Message-State: AHQUAubbluiwkLchZlWIvOB32EV97HXim8hSHts0xcUBYAQ58ILA0dZQ
+        VdkeEiTkoGB1kDfAxthL44cOAA==
+X-Google-Smtp-Source: AHgI3IaqGTaXpusueaipWKnq/d5AZMXYOm/VykERtFt7frUE44AHzKYcI1e+NslnZ0Mv50zBwTFxOQ==
+X-Received: by 2002:a7b:c777:: with SMTP id x23mr6284037wmk.71.1550227476333;
+        Fri, 15 Feb 2019 02:44:36 -0800 (PST)
+Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id q12sm2693163wmf.2.2019.02.15.02.44.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Feb 2019 02:44:35 -0800 (PST)
+Subject: Re: [PATCH] nvmem: core: don't check the return value of notifier
+ chain call
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        stable@vger.kernel.org
+References: <20190215104259.30732-1-brgl@bgdev.pl>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <4c60a96c-7995-fd12-39b6-990ae0ffad4f@linaro.org>
+Date:   Fri, 15 Feb 2019 10:44:34 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190215104259.30732-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pt., 15 lut 2019 o 11:26 Srinivas Kandagatla
-<srinivas.kandagatla@linaro.org> napisa=C5=82(a):
->
->
->
-> On 15/02/2019 09:41, Bartosz Golaszewski wrote:
-> >> rval will be masked with STOP MASK, so the above statement could be
-> >> false even if we have error.
-> >> So you should consider returning an errono which can be understood by =
-user:
-> >>
-> >> may be something like this:
-> >>
-> >> if (rval & NOTIFY_STOP_MASK) {
-> >>          rval =3D notifier_to_errno(rval);
-> >>          goto err_remove_cells
-> >> }
-> >>
-> > Actually I'm now thinking we can remove this check at all - most users
-> > never check the return values of notifier chain calls. This function
-> > cannot fail in itself. What do you think?
-> Thats even better, I was about to suggest the same on the fact that we
-> should allow nvmem provider to register to be successful irrespective of
-> the notifier callback failures.
->
-> --srini
 
-Right, I sent a different patch.
 
-Bart
+On 15/02/2019 10:42, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> 
+> blocking_notifier_call_chain() returns the value returned by the last
+> registered callback. A positive return value doesn't indicate an error
+> and an nvmem device should correctly register irrespective of any
+> notifier callback failures. Drop the retval check.
+> 
+> Fixes: bee1138bea15 ("nvmem: add a notifier chain")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+
+Thanks for the fix!
+
+Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+
+> ---
+>   drivers/nvmem/core.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+> index f7301bb4ef3b..3ce65927e11c 100644
+> --- a/drivers/nvmem/core.c
+> +++ b/drivers/nvmem/core.c
+> @@ -686,9 +686,7 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
+>   	if (rval)
+>   		goto err_remove_cells;
+>   
+> -	rval = blocking_notifier_call_chain(&nvmem_notifier, NVMEM_ADD, nvmem);
+> -	if (rval)
+> -		goto err_remove_cells;
+> +	blocking_notifier_call_chain(&nvmem_notifier, NVMEM_ADD, nvmem);
+>   
+>   	return nvmem;
+>   
+> 
