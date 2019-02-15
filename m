@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D04C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:12:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1D9DC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:12:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F26521934
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:12:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A00B121B1C
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:12:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196727;
-	bh=sHOffNftr5cojCLr4zTtyl8CXbnnKArh2igKxuogNS4=;
+	s=default; t=1550196730;
+	bh=AlT1FIsaHGqXQQZrjEMpCuAnOm73kd5vjfGJQDSHJyg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=b48qw8j46Emt5k9Y2WMPKW9+r/e0lg/sT6aT6JH1lZkipWzZS/mayGlh+aKYSKyga
-	 Ij/IV/mZ4k0kDRPjBnD0brdU6maGHPveovKq/1GBehPqAOaIFBkNjswkJLDmtlkGYL
-	 tNs9RphopgBW2+VNH0/PtVU6Vtztj1m0/9n2O72o=
+	b=qEuHWL+5SmoE9GsIsMkN6rybrQ9BE/JKIQe/XU81oKcCyA4H0tiutwHOSF7QJiJWh
+	 YqD0QzNcX8Eowqt8BrGkw1o77tXt2hqkF+UzTKenCKDRpsKceQli/UExVW91Tkzrks
+	 8t3wTsXjg57X/WhrG6xR1hmdanZRJVvXvN5/a/oc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390993AbfBOCMF (ORCPT
+        id S2391027AbfBOCMI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:12:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52050 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:12:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52092 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390882AbfBOCMC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:12:02 -0500
+        id S2389114AbfBOCME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:12:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 05D9E21B1C;
-        Fri, 15 Feb 2019 02:11:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40FDF21B68;
+        Fri, 15 Feb 2019 02:12:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196720;
-        bh=sHOffNftr5cojCLr4zTtyl8CXbnnKArh2igKxuogNS4=;
+        s=default; t=1550196722;
+        bh=AlT1FIsaHGqXQQZrjEMpCuAnOm73kd5vjfGJQDSHJyg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G6V85fViX0yaTEIn0LPIYZmwGKirUqt0jy151Q5vjRbg04IX8O54g7y8Fm8HbWy3/
-         FpE6Wq0Y7TL1VISHRW7vH+t6fuDfmhrdMwrdSmutfS5uNFuqnV6iw5/oAkddiZSdqT
-         pRonE9y6/ySUiBCxdkiZuRAssA8mkIcbfUIwcfNQ=
+        b=yyOBgayGjwsY8U3n+K2U/Ik631si4xF4j6Rto4uW4eWHuWuOiAA/909Ab0R8eJxfN
+         qtysIzYS6j81M9guV8pOKUXYAhS2YcBfHvr41hQHE0sVl8vB+CfWWDrujFnhRYLJdI
+         83qKekfoGfujy6JLWE+TRwX828PlqUDbq2jN92rM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
+Cc:     Vineet Gupta <vgupta@synopsys.com>,
         Sasha Levin <sashal@kernel.org>,
         linux-snps-arc@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 25/65] ARC: fix __ffs return value to avoid build warnings
-Date:   Thu, 14 Feb 2019 21:10:41 -0500
-Message-Id: <20190215021121.177674-25-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 26/65] ARC: show_regs: lockdep: avoid page allocator...
+Date:   Thu, 14 Feb 2019 21:10:42 -0500
+Message-Id: <20190215021121.177674-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -59,74 +58,141 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+From: Vineet Gupta <vgupta@synopsys.com>
 
-[ Upstream commit 4e868f8419cb4cb558c5d428e7ab5629cef864c7 ]
+[ Upstream commit ab6c03676cb190156603cf4c5ecf97aa406c9c53 ]
 
-|  CC      mm/nobootmem.o
-|In file included from ./include/asm-generic/bug.h:18:0,
-|                 from ./arch/arc/include/asm/bug.h:32,
-|                 from ./include/linux/bug.h:5,
-|                 from ./include/linux/mmdebug.h:5,
-|                 from ./include/linux/gfp.h:5,
-|                 from ./include/linux/slab.h:15,
-|                 from mm/nobootmem.c:14:
-|mm/nobootmem.c: In function '__free_pages_memory':
-|./include/linux/kernel.h:845:29: warning: comparison of distinct pointer types lacks a cast
-|   (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
-|                             ^
-|./include/linux/kernel.h:859:4: note: in expansion of macro '__typecheck'
-|   (__typecheck(x, y) && __no_side_effects(x, y))
-|    ^~~~~~~~~~~
-|./include/linux/kernel.h:869:24: note: in expansion of macro '__safe_cmp'
-|  __builtin_choose_expr(__safe_cmp(x, y), \
-|                        ^~~~~~~~~~
-|./include/linux/kernel.h:878:19: note: in expansion of macro '__careful_cmp'
-| #define min(x, y) __careful_cmp(x, y, <)
-|                   ^~~~~~~~~~~~~
-|mm/nobootmem.c:104:11: note: in expansion of macro 'min'
-|   order = min(MAX_ORDER - 1UL, __ffs(start));
+and use smaller/on-stack buffer instead
 
-Change __ffs return value from 'int' to 'unsigned long' as it
-is done in other implementations (like asm-generic, x86, etc...)
-to avoid build-time warnings in places where type is strictly
-checked.
+The motivation for this change was lockdep splat like below.
 
-As __ffs may return values in [0-31] interval changing return
-type to unsigned is valid.
+| potentially unexpected fatal signal 11.
+| BUG: sleeping function called from invalid context at ../mm/page_alloc.c:4317
+| in_atomic(): 1, irqs_disabled(): 0, pid: 57, name: segv
+| no locks held by segv/57.
+| Preemption disabled at:
+| [<8182f17e>] get_signal+0x4a6/0x7c4
+| CPU: 0 PID: 57 Comm: segv Not tainted 4.17.0+ #23
+|
+| Stack Trace:
+|  arc_unwind_core.constprop.1+0xd0/0xf4
+|  __might_sleep+0x1f6/0x234
+|  __get_free_pages+0x174/0xca0
+|  show_regs+0x22/0x330
+|  get_signal+0x4ac/0x7c4     # print_fatal_signals() -> preempt_disable()
+|  do_signal+0x30/0x224
+|  resume_user_mode_begin+0x90/0xd8
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+So signal handling core calls show_regs() with preemption disabled but
+an ensuing GFP_KERNEL page allocator call is flagged by lockdep.
+
+We could have switched to GFP_NOWAIT, but turns out that is not enough
+anways and eliding page allocator call leads to less code and
+instruction traces to sift thru when debugging pesky crashes.
+
+FWIW, this patch doesn't cure the lockdep splat (which next patch does).
+
+Reviewed-by: William Kucharski <william.kucharski@oracle.com>
 Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arc/include/asm/bitops.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arc/kernel/troubleshoot.c | 26 ++++++++++++--------------
+ 1 file changed, 12 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arc/include/asm/bitops.h b/arch/arc/include/asm/bitops.h
-index 8da87feec59a..99e6d8948f4a 100644
---- a/arch/arc/include/asm/bitops.h
-+++ b/arch/arc/include/asm/bitops.h
-@@ -340,7 +340,7 @@ static inline __attribute__ ((const)) int __fls(unsigned long x)
- /*
-  * __ffs: Similar to ffs, but zero based (0-31)
-  */
--static inline __attribute__ ((const)) int __ffs(unsigned long word)
-+static inline __attribute__ ((const)) unsigned long __ffs(unsigned long word)
- {
- 	if (!word)
- 		return word;
-@@ -400,9 +400,9 @@ static inline __attribute__ ((const)) int ffs(unsigned long x)
- /*
-  * __ffs: Similar to ffs, but zero based (0-31)
-  */
--static inline __attribute__ ((const)) int __ffs(unsigned long x)
-+static inline __attribute__ ((const)) unsigned long __ffs(unsigned long x)
- {
--	int n;
-+	unsigned long n;
+diff --git a/arch/arc/kernel/troubleshoot.c b/arch/arc/kernel/troubleshoot.c
+index e8d9fb452346..5c6663321e87 100644
+--- a/arch/arc/kernel/troubleshoot.c
++++ b/arch/arc/kernel/troubleshoot.c
+@@ -18,6 +18,8 @@
+ #include <asm/arcregs.h>
+ #include <asm/irqflags.h>
  
- 	asm volatile(
- 	"	ffs.f	%0, %1		\n"  /* 0:31; 31(Z) if src 0 */
++#define ARC_PATH_MAX	256
++
+ /*
+  * Common routine to print scratch regs (r0-r12) or callee regs (r13-r25)
+  *   -Prints 3 regs per line and a CR.
+@@ -58,11 +60,12 @@ static void show_callee_regs(struct callee_regs *cregs)
+ 	print_reg_file(&(cregs->r13), 13);
+ }
+ 
+-static void print_task_path_n_nm(struct task_struct *tsk, char *buf)
++static void print_task_path_n_nm(struct task_struct *tsk)
+ {
+ 	char *path_nm = NULL;
+ 	struct mm_struct *mm;
+ 	struct file *exe_file;
++	char buf[ARC_PATH_MAX];
+ 
+ 	mm = get_task_mm(tsk);
+ 	if (!mm)
+@@ -72,7 +75,7 @@ static void print_task_path_n_nm(struct task_struct *tsk, char *buf)
+ 	mmput(mm);
+ 
+ 	if (exe_file) {
+-		path_nm = file_path(exe_file, buf, 255);
++		path_nm = file_path(exe_file, buf, ARC_PATH_MAX-1);
+ 		fput(exe_file);
+ 	}
+ 
+@@ -80,10 +83,9 @@ static void print_task_path_n_nm(struct task_struct *tsk, char *buf)
+ 	pr_info("Path: %s\n", !IS_ERR(path_nm) ? path_nm : "?");
+ }
+ 
+-static void show_faulting_vma(unsigned long address, char *buf)
++static void show_faulting_vma(unsigned long address)
+ {
+ 	struct vm_area_struct *vma;
+-	char *nm = buf;
+ 	struct mm_struct *active_mm = current->active_mm;
+ 
+ 	/* can't use print_vma_addr() yet as it doesn't check for
+@@ -96,8 +98,11 @@ static void show_faulting_vma(unsigned long address, char *buf)
+ 	 * if the container VMA is not found
+ 	 */
+ 	if (vma && (vma->vm_start <= address)) {
++		char buf[ARC_PATH_MAX];
++		char *nm = "?";
++
+ 		if (vma->vm_file) {
+-			nm = file_path(vma->vm_file, buf, PAGE_SIZE - 1);
++			nm = file_path(vma->vm_file, buf, ARC_PATH_MAX-1);
+ 			if (IS_ERR(nm))
+ 				nm = "?";
+ 		}
+@@ -173,13 +178,8 @@ void show_regs(struct pt_regs *regs)
+ {
+ 	struct task_struct *tsk = current;
+ 	struct callee_regs *cregs;
+-	char *buf;
+ 
+-	buf = (char *)__get_free_page(GFP_KERNEL);
+-	if (!buf)
+-		return;
+-
+-	print_task_path_n_nm(tsk, buf);
++	print_task_path_n_nm(tsk);
+ 	show_regs_print_info(KERN_INFO);
+ 
+ 	show_ecr_verbose(regs);
+@@ -189,7 +189,7 @@ void show_regs(struct pt_regs *regs)
+ 		(void *)regs->blink, (void *)regs->ret);
+ 
+ 	if (user_mode(regs))
+-		show_faulting_vma(regs->ret, buf); /* faulting code, not data */
++		show_faulting_vma(regs->ret); /* faulting code, not data */
+ 
+ 	pr_info("[STAT32]: 0x%08lx", regs->status32);
+ 
+@@ -221,8 +221,6 @@ void show_regs(struct pt_regs *regs)
+ 	cregs = (struct callee_regs *)current->thread.callee_reg;
+ 	if (cregs)
+ 		show_callee_regs(cregs);
+-
+-	free_page((unsigned long)buf);
+ }
+ 
+ void show_kernel_fault_diag(const char *str, struct pt_regs *regs,
 -- 
 2.19.1
 
