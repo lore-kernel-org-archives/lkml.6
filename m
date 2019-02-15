@@ -4,51 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78455C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:10:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A30C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47F08222A1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:10:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C04BA222D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196656;
-	bh=taHRrWg463N4CcT0ZVY0mg81gGQl/3TpkBfJW4XrlFQ=;
+	s=default; t=1550196660;
+	bh=YizPXQ9O2g4UGq3v7B2rEW7KqMxKK/TFvRQi63R+Jzw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KGSMtH9tizZM9cDphmQzDjTEb6+3hgj9veZLS1QivHmTtQ5RZoqj1zIIM/CXwQGEa
-	 e1t2R0OkH66sQqhQ24v5Qb9USRQUlpaVnSfJcWRJ50WNPSL8ou3U8K7y0755FRfw57
-	 iShvcbEX3KPLaaxoDG/nv0ZUd+G7vtEtpWNyzt70=
+	b=0EOjStVCew/EQggTYTcNo0qoAMeNzGbZXnvHGO15f61/S9OZo5OBAWa0npcWOuaTm
+	 bDr2opUyTj+YqsX0DXvawZjeLqPAxVAT9b+Mds8Kb28IKFvMQIxboL+wznVtoLxuEt
+	 nsfYlQM9bE2N8FtZWbIfULcKZpZ+tioy74NZOIiI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731977AbfBOCKy (ORCPT
+        id S1732016AbfBOCK7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:10:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50956 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:10:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731924AbfBOCKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:10:51 -0500
+        id S1731951AbfBOCKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:10:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF8B821B68;
-        Fri, 15 Feb 2019 02:10:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 546AA222A1;
+        Fri, 15 Feb 2019 02:10:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196650;
-        bh=taHRrWg463N4CcT0ZVY0mg81gGQl/3TpkBfJW4XrlFQ=;
+        s=default; t=1550196653;
+        bh=YizPXQ9O2g4UGq3v7B2rEW7KqMxKK/TFvRQi63R+Jzw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1lFH/P+cw2ZtAx3SnBRe27qu+CsTYnetYRdxsu4TIQuuPMiEyat8LwOlvHEl5RKd7
-         N2YaFVjlV7yf0Uvxx8C4bMe/H5m9zGa52KP3bMF8azXS2w8eonZ4aGBVLgFt2YPQ+W
-         HXEIWTW60wNRXFqJIw1JsS8iM1PujkY5oxewMbPo=
+        b=crQpU7ywiPa9JcRXTJNO4/QWIHsHi8kuPyo+Ksf1LEGMU56Srue0Ey/vLkwqRlyX8
+         B2zg0xgBNtU+t0cLZNoEitwjQ5ZDEoqSkV+SDK26sq8OqZN8BkVocUjAB948BWuZSl
+         IlE68J076tIRHwPQicnKO+JNALdV2x8x/VGcgbDg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.20 64/77] drm/msm: avoid unused function warning
-Date:   Thu, 14 Feb 2019 21:08:42 -0500
-Message-Id: <20190215020855.176727-64-sashal@kernel.org>
+Cc:     Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 66/77] CIFS: Fix mounts if the client is low on credits
+Date:   Thu, 14 Feb 2019 21:08:44 -0500
+Message-Id: <20190215020855.176727-66-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
 References: <20190215020855.176727-1-sashal@kernel.org>
@@ -60,65 +57,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Pavel Shilovsky <pshilov@microsoft.com>
 
-[ Upstream commit a840f690d3c6f2f27425ca7e7bd2d635cdec07d7 ]
+[ Upstream commit 6a9cbdd1ceca1dc2359ddf082efe61b97c3e752b ]
 
-drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c:368:13: error: 'dpu_plane_danger_signal_ctrl' defined but not used [-Werror=unused-function]
+If the server doesn't grant us at least 3 credits during the mount
+we won't be able to complete it because query path info operation
+requires 3 credits. Use the cached file handle if possible to allow
+the mount to succeed.
 
-Fixes: 7b2e7adea732 ("drm/msm/dpu: Make dpu_plane_danger_signal_ctrl void")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-Signed-off-by: Rob Clark <robdclark@gmail.com>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 26 +++++++++++------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ fs/cifs/smb2inode.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-index f549daf30fe6..1d155a7cb08c 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-@@ -365,19 +365,6 @@ static void _dpu_plane_set_qos_ctrl(struct drm_plane *plane,
- 			&pdpu->pipe_qos_cfg);
- }
+diff --git a/fs/cifs/smb2inode.c b/fs/cifs/smb2inode.c
+index a8999f930b22..057d2034209f 100644
+--- a/fs/cifs/smb2inode.c
++++ b/fs/cifs/smb2inode.c
+@@ -294,6 +294,8 @@ smb2_query_path_info(const unsigned int xid, struct cifs_tcon *tcon,
+ 	int rc;
+ 	struct smb2_file_all_info *smb2_data;
+ 	__u32 create_options = 0;
++	struct cifs_fid fid;
++	bool no_cached_open = tcon->nohandlecache;
  
--static void dpu_plane_danger_signal_ctrl(struct drm_plane *plane, bool enable)
--{
--	struct dpu_plane *pdpu = to_dpu_plane(plane);
--	struct dpu_kms *dpu_kms = _dpu_plane_get_kms(plane);
--
--	if (!pdpu->is_rt_pipe)
--		return;
--
--	pm_runtime_get_sync(&dpu_kms->pdev->dev);
--	_dpu_plane_set_qos_ctrl(plane, enable, DPU_PLANE_QOS_PANIC_CTRL);
--	pm_runtime_put_sync(&dpu_kms->pdev->dev);
--}
--
- /**
-  * _dpu_plane_set_ot_limit - set OT limit for the given plane
-  * @plane:		Pointer to drm plane
-@@ -1271,6 +1258,19 @@ static void dpu_plane_reset(struct drm_plane *plane)
- }
+ 	*adjust_tz = false;
+ 	*symlink = false;
+@@ -302,6 +304,21 @@ smb2_query_path_info(const unsigned int xid, struct cifs_tcon *tcon,
+ 			    GFP_KERNEL);
+ 	if (smb2_data == NULL)
+ 		return -ENOMEM;
++
++	/* If it is a root and its handle is cached then use it */
++	if (!strlen(full_path) && !no_cached_open) {
++		rc = open_shroot(xid, tcon, &fid);
++		if (rc)
++			goto out;
++		rc = SMB2_query_info(xid, tcon, fid.persistent_fid,
++				     fid.volatile_fid, smb2_data);
++		close_shroot(&tcon->crfid);
++		if (rc)
++			goto out;
++		move_smb2_info_to_cifs(data, smb2_data);
++		goto out;
++	}
++
+ 	if (backup_cred(cifs_sb))
+ 		create_options |= CREATE_OPEN_BACKUP_INTENT;
  
- #ifdef CONFIG_DEBUG_FS
-+static void dpu_plane_danger_signal_ctrl(struct drm_plane *plane, bool enable)
-+{
-+	struct dpu_plane *pdpu = to_dpu_plane(plane);
-+	struct dpu_kms *dpu_kms = _dpu_plane_get_kms(plane);
-+
-+	if (!pdpu->is_rt_pipe)
-+		return;
-+
-+	pm_runtime_get_sync(&dpu_kms->pdev->dev);
-+	_dpu_plane_set_qos_ctrl(plane, enable, DPU_PLANE_QOS_PANIC_CTRL);
-+	pm_runtime_put_sync(&dpu_kms->pdev->dev);
-+}
-+
- static ssize_t _dpu_plane_danger_read(struct file *file,
- 			char __user *buff, size_t count, loff_t *ppos)
- {
 -- 
 2.19.1
 
