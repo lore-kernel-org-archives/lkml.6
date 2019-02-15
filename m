@@ -2,43 +2,43 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F408C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0079C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:47:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E53D222A1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:47:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 900B8222A1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:47:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550191628;
-	bh=Ak7FcdJs/9GypGO3/vqefFY8amWrqdMTWi7oPapMsPc=;
+	s=default; t=1550191631;
+	bh=XBAu5QzOJtsgdEUo+CIUU3DnQZcgGDL0fJUWjg0CPsM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VDInazpC2nuWSoQ7AleUzDxLtYMfPFcySbAyyczpaBULltAYOFH8uoTRDaMvMlGCZ
-	 kbpcvaGaF8kKYWCpCCZ+Y8DROhnqafwcUdp4Ym/OScQQimEV86iM7PBAgYYMU8VzHE
-	 X8nOqx6WECOMDI+OvCuBdYHUOiLkiCgrna/fTpss=
+	b=nw4crVNYfm6AsRR7VgtRNzWBWPFuK9pP5TLcNg77OVZYH5MoN9BOqhBVW8COrXgvU
+	 doJWKYW5efVnhbGlXgqbWx+HVwsChAOJvcFpG8kkERrYGRsETV3XV01lt7DFcysxO7
+	 91O4HPT0Dte5sOxJZCC5+bl/zPaI/5ZJB/o9brbY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388954AbfBOArG (ORCPT
+        id S2388991AbfBOArJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 19:47:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45676 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 19:47:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388876AbfBOArC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 19:47:02 -0500
+        id S2388945AbfBOArG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 19:47:06 -0500
 Received: from quaco.ghostprotocols.net (unknown [189.40.103.31])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2438321B68;
-        Fri, 15 Feb 2019 00:46:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35B222229F;
+        Fri, 15 Feb 2019 00:47:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550191621;
-        bh=Ak7FcdJs/9GypGO3/vqefFY8amWrqdMTWi7oPapMsPc=;
+        s=default; t=1550191625;
+        bh=XBAu5QzOJtsgdEUo+CIUU3DnQZcgGDL0fJUWjg0CPsM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qXOIq81qPg4rethSlHmlbj7h6uNAfz38Juk5V4/sAVf77Y4VOTnO5nU/aUbcmp2nx
-         bHtsIildN0AZElsg/cJDekF2IH7nflHNIX20tT8q8w7dyHLu7fZTBeplQ+/YnNewlC
-         ytiCulkh4C1jzfOrvVznLc9bcEGpHGuh7RmGgo/Y=
+        b=Ub2pg6R72FE8QahqMwsoW+t5xzKGFwZHN5Msv6feyXQr2eVfjjhnabvw87tS1k5r6
+         SAaQPoCh0LAaEV4822etp8q/GpQ0GpPzOCAq0UCq62/LMo+i92STl4EXjgk5bXWo+s
+         5Gxt+kw/wq9CwfMQp7axj178uoYAF+Hi+/H5V9So=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
@@ -46,17 +46,16 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH 17/43] tools build: Add -lrt to FEATURE_CHECK_LDFLAGS-libaio
-Date:   Thu, 14 Feb 2019 21:45:13 -0300
-Message-Id: <20190215004539.23571-18-acme@kernel.org>
+        =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
+        <lclaudio@redhat.com>, Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 18/43] perf trace: Filter out gnome-terminal* parent
+Date:   Thu, 14 Feb 2019 21:45:14 -0300
+Message-Id: <20190215004539.23571-19-acme@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215004539.23571-1-acme@kernel.org>
 References: <20190215004539.23571-1-acme@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -65,43 +64,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Since we need it to resolve the AIO symbols, otherwise we fail with:
+Just like it does with 'sshd', to reduce the feedback loop when doing
+system wide tracing on on a gnome GUI.
 
-  $ cat /tmp/build/perf/feature/test-all.make.output
-  /usr/bin/ld: /tmp/ccEqrj36.o: undefined reference to symbol 'aio_return64@@GLIBC_2.2.5'
-  /usr/bin/ld: //usr/lib64/librt.so.1: error adding symbols: DSO missing from command line
-  collect2: error: ld returned 1 exit status
-  $
-
-When we added the aio support in 'perf record' only the test-libaio.bin
-target got the -lrt, i.e. the feature detection slow path. Fix it.
+Need to figure out how to auto-filter the calls to other UI components
+tho.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Fixes: 2a07d814747b ("tools build feature: Check if libaio is available")
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-rjopq5y92itgokppdhe8sc6z@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Makefile.config | 2 ++
- 1 file changed, 2 insertions(+)
+ tools/perf/builtin-trace.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index b441c88cafa1..e6360d47e73a 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -218,6 +218,8 @@ FEATURE_CHECK_LDFLAGS-libpython := $(PYTHON_EMBED_LDOPTS)
- FEATURE_CHECK_CFLAGS-libpython-version := $(PYTHON_EMBED_CCOPTS)
- FEATURE_CHECK_LDFLAGS-libpython-version := $(PYTHON_EMBED_LDOPTS)
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index a9b51f59ab54..68a01e624ad3 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -2771,7 +2771,8 @@ static int trace__set_filter_loop_pids(struct trace *trace)
+ 		if (parent == NULL)
+ 			break;
  
-+FEATURE_CHECK_LDFLAGS-libaio = -lrt
-+
- CFLAGS += -fno-omit-frame-pointer
- CFLAGS += -ggdb3
- CFLAGS += -funwind-tables
+-		if (!strcmp(thread__comm_str(parent), "sshd")) {
++		if (!strcmp(thread__comm_str(parent), "sshd") ||
++		    strstarts(thread__comm_str(parent), "gnome-terminal")) {
+ 			pids[nr++] = parent->tid;
+ 			break;
+ 		}
 -- 
 2.19.1
 
