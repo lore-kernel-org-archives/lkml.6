@@ -2,91 +2,89 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33152C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:25:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74783C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:25:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFF6B21924
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:25:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="hUbaNlyu"
+	by mail.kernel.org (Postfix) with ESMTP id 458EC21924
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:25:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393773AbfBOKZH (ORCPT
+        id S2393823AbfBOKZk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 05:25:07 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:46750 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726202AbfBOKZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 05:25:06 -0500
-Received: from zn.tnic (p200300EC2BCDA500C8964896D8752F51.dip0.t-ipconnect.de [IPv6:2003:ec:2bcd:a500:c896:4896:d875:2f51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0B37E1EC0324;
-        Fri, 15 Feb 2019 11:25:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1550226305;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=HSghZJ6Q0lV+Tg14QtkPolDDA+QQ13lLFmUiGEXiTqQ=;
-        b=hUbaNlyuQwkHOerqPlNswNAPzrAOlfzRrgN39q9++Tse1fLQKgK1iggUp3GeMt6E5De9CG
-        tnB2k22q6m3oA88K6BhkxQDghxmy4obQPhnuFJbwfPFBSVW+9XOiBNAq4OGMtwcNSmVIpV
-        BGiEOBLLxT/lMiVIACUdqwNlniUD3aw=
-Date:   Fri, 15 Feb 2019 11:24:58 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Dave Young <dyoung@redhat.com>
-Cc:     bhe@redhat.com, Jerry Hoemann <jerry.hoemann@hpe.com>,
-        x86@kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Pingfan Liu <kernelfans@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, yinghai@kernel.org,
-        vgoyal@redhat.com
-Subject: Re: [PATCHv7] x86/kdump: bugfix, make the behavior of crashkernel=X
- consistent with kaslr
-Message-ID: <20190215102458.GD10433@zn.tnic>
-References: <20190125134518.GA23595@dhcp-128-65.nay.redhat.com>
- <20190125140823.GC27998@zn.tnic>
- <20190131075907.GB19091@dhcp-128-65.nay.redhat.com>
- <20190131105732.GC6749@zn.tnic>
- <20190131222732.GA946@anatevka>
- <20190131234740.GO6749@zn.tnic>
- <20190204223016.GB11986@anatevka>
- <20190205081552.GG21801@zn.tnic>
- <20190206120804.GC10062@dhcp-128-65.nay.redhat.com>
- <20190211204816.GB21473@dhcp-128-65.nay.redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190211204816.GB21473@dhcp-128-65.nay.redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 15 Feb 2019 05:25:40 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:34015 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392402AbfBOKZk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 05:25:40 -0500
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1guagV-00078g-Jj; Fri, 15 Feb 2019 11:25:31 +0100
+Message-ID: <1550226330.4531.10.camel@pengutronix.de>
+Subject: Re: [PATCH v2 1/2] dt-bindings: reset: Add HI3670 reset controller
+ binding
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        xuwei5@hisilicon.com, robh+dt@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, guodong.xu@linaro.org,
+        john.stultz@linaro.org
+Date:   Fri, 15 Feb 2019 11:25:30 +0100
+In-Reply-To: <20190215054955.788-2-manivannan.sadhasivam@linaro.org>
+References: <20190215054955.788-1-manivannan.sadhasivam@linaro.org>
+         <20190215054955.788-2-manivannan.sadhasivam@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 04:48:16AM +0800, Dave Young wrote:
-> Even we make it automatic in kernel, but we have to have some default
-> value for swiotlb in case crashkernel can not find a free region under 4G.
-> So this default value can not work for every use cases, people need 
-> manually use crashkernel=,low and crashkernel=,high in case
-> crashkernel=X does not work.
+On Fri, 2019-02-15 at 11:19 +0530, Manivannan Sadhasivam wrote:
+> HI3670 SoC is architecturally same as the HI3660 SoC. Hence, the same
+> driver is reused for HI3670 SoC and the binding is documented here which
+> uses the fallback approach.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> ---
+>  .../devicetree/bindings/reset/hisilicon,hi3660-reset.txt   | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/reset/hisilicon,hi3660-reset.txt b/Documentation/devicetree/bindings/reset/hisilicon,hi3660-reset.txt
+> index 2bf3344b2a02..2df4bddeb688 100644
+> --- a/Documentation/devicetree/bindings/reset/hisilicon,hi3660-reset.txt
+> +++ b/Documentation/devicetree/bindings/reset/hisilicon,hi3660-reset.txt
+> @@ -5,11 +5,12 @@ Please also refer to reset.txt in this directory for common reset
+>  controller binding usage.
+>  
+>  The reset controller registers are part of the system-ctl block on
+> -hi3660 SoC.
+> +hi3660 and hi3670 SoCs.
+>  
+>  Required properties:
+> -- compatible: should be
+> -		 "hisilicon,hi3660-reset"
+> +- compatible: should be one of the following:
+> +		 "hisilicon,hi3660-reset" for HI3660
+> +		 "hisilicon,hi3670-reset", "hisilicon,hi3660-reset" for HI3670
+>  - hisi,rst-syscon: phandle of the reset's syscon.
+>  - #reset-cells : Specifies the number of cells needed to encode a
+>    reset source.  The type shall be a <u32> and the value shall be 2.
 
-Why would the user need to find swiotlb range? The kernel has all the
-information it requires at its finger tips in order to decide properly.
+Thank you, I think it makes sense for this to be merged together with
+the other patch via the linux-hisi tree.
 
-The user wants a crashkernel range, the kernel tries the low range =>
-no workie, then it tries the next range => workie but needs to allocate
-swiotlb range so that DMA can happen too. Doh, then the kernel does
-allocate that too.
+Acked-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-Why would the user need to do anything here?!
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+regards
+Philipp
