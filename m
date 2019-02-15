@@ -7,134 +7,118 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB18EC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:28:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF6AC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:32:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75D6921924
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:28:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEB0D21924
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:32:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g9Y9aZ4K"
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="RiWrh+FO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729351AbfBOK2d (ORCPT
+        id S2393891AbfBOKcE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 05:28:33 -0500
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:46197 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727012AbfBOK2b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 05:28:31 -0500
-Received: by mail-vk1-f195.google.com with SMTP id j68so2102666vke.13
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 02:28:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fLBd3lhZPfXWMH7Ws28iyP7cbmLb4ZgLVBr3D/WvZKU=;
-        b=g9Y9aZ4K7fz42Ls6vZS0HdjFuG+W5XAuB+UXyA8B+my0s4owUijZQ5q423wHpJvj+R
-         DmgGUoqXEMaI8W/ztT9ReESSroTPNfOd38EOovBrGtXvbOnfDLo1rGXDbBnOVCPiv7Du
-         S/fiNruzTWtxPiEyppBcy9L+Gr2mhjKdfD5m97y7Er527lpTPmbNu8kpW1ut+f6OyI5M
-         csiSc0JGb93zfl4PFG27euQc559F0o6P113HXA5O1EbAQklEIwI/bV90FAJUfROCR8dP
-         uGF5dPA9ixG6QFcqzC/12bXqwlutCvT1jU+T4rTCSzeqBpG3BcFtetdH30aMdxuXVwDl
-         brJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fLBd3lhZPfXWMH7Ws28iyP7cbmLb4ZgLVBr3D/WvZKU=;
-        b=ibQ/loUO0vuMfTxFyTmuR2qYmPfMn7LP3mvfpnCuuGQBo1qnxuThivqm6aSC4GnzJI
-         SFyIrHJwY/7YiiTgEmW8VF4a5BTax2lYg9wm1UQnaPWEFRNqfU24jXmx3LaOnWGJ/Wa5
-         8h7QKbIBepyb9HfulHZEQOVeyd1qUHd9n4xInFkq5RAyngiT6xex9MnrcHm63eCBl8np
-         ftvENyx3+nK4wU8pz90PVqmRzUfavL6U5QBOPwQeDiGwyww4jymqucJHyZLoEeqOrlDW
-         N+W7YkJG5VPbVMTQEJq8lvQ7Vk9RpS4OLx9uV48dmfzbQoYiyZ9V+jsqg2LZT5wElIgG
-         v8GQ==
-X-Gm-Message-State: AHQUAub6910Vqb0hAT8gVVLBgL7jFd96098xmS5zw19U1VVyQ9nFu3Ms
-        gOBv46VgpWeoONOUhGupKYzsBRyU6e37wYlZ2GGTJg==
-X-Google-Smtp-Source: AHgI3IZ2QL1QAe9kob+NyrFfaj5kFTeFY8cZFOeoBoXqWycTnNnSRsVZkMVca99N/Vgs+k+QfgHE4bVF2LKz9T5+S1I=
-X-Received: by 2002:a1f:9042:: with SMTP id s63mr4427887vkd.17.1550226510162;
- Fri, 15 Feb 2019 02:28:30 -0800 (PST)
-MIME-Version: 1.0
-References: <20190214181249.2749-1-dianders@chromium.org>
-In-Reply-To: <20190214181249.2749-1-dianders@chromium.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 15 Feb 2019 11:27:54 +0100
-Message-ID: <CAPDyKFpw8Fwgc8QjjhjuxcW7zJp1-kqcKC4RAs65S8Jr5H=uYA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] PM / Domains: Mark "name" const in genpd_dev_pm_attach_by_name()
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pavel Machek <pavel@ucw.cz>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 15 Feb 2019 05:32:04 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:4914 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729041AbfBOKcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 05:32:03 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 4418hK4CZjz9vKJR;
+        Fri, 15 Feb 2019 11:32:01 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=RiWrh+FO; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id 8lJroyzzw07R; Fri, 15 Feb 2019 11:32:01 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 4418hK33jYz9vKJQ;
+        Fri, 15 Feb 2019 11:32:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1550226721; bh=0LsjQXsFR7u2QA2fan6IaM94xyhDrYTz7OGdGsB9Emk=;
+        h=From:Subject:To:Cc:Date:From;
+        b=RiWrh+FOc6yGmskIoge/WmHArfLWyd5/1/GU0qOJ4YhkbxePbxNHPvuioVxDw9dTY
+         nxipIbqurP2iVYoGQu6L+Pr21lgmvFUNeMXm7g6zZdqe0XFFWXycZEy8U8itSdo/J5
+         q1gmLgcPsnAnWRDaj9JYe1PniV1QZFFwshV3SBtE=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 76A6A8B8C8;
+        Fri, 15 Feb 2019 11:32:02 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id QyiQiM68n5Iw; Fri, 15 Feb 2019 11:32:02 +0100 (CET)
+Received: from po16846vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 5C9CB8B8B5;
+        Fri, 15 Feb 2019 11:32:02 +0100 (CET)
+Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 4082D6A49A; Fri, 15 Feb 2019 10:32:02 +0000 (UTC)
+Message-Id: <3695e169b0367503f3a424d4862cba5a247fabf4.1550226577.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc: drop unused GENERIC_CSUM Kconfig item
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 15 Feb 2019 10:32:02 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 14 Feb 2019 at 19:13, Douglas Anderson <dianders@chromium.org> wrote:
->
-> The genpd_dev_pm_attach_by_name() simply takes the name and passes it
-> to of_property_match_string() where the argument is "const char *".
-> Adding a const here allows a later patch to add a const to
-> dev_pm_domain_attach_by_name() which allows drivers to pass in a name
-> that was declared "const" in a driver.
->
-> Fixes: 5d6be70add65 ("PM / Domains: Introduce option to attach a device by name to genpd")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Commit d4fde568a34a ("powerpc/64: Use optimized checksum routines on
+little-endian") converted last powerpc user of GENERIC_CSUM.
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+This patch does a final cleanup dropping the Kconfig GENERIC_CSUM
+option which is always 'n', and associated piece of code in
+asm/checksum.h
 
-Kind regards
-Uffe
+Fixes: d4fde568a34a ("powerpc/64: Use optimized checksum routines on little-endian")
+Reported-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/Kconfig                | 3 ---
+ arch/powerpc/include/asm/checksum.h | 4 ----
+ 2 files changed, 7 deletions(-)
 
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 08908219fba9..849b0d5ac3d1 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -251,9 +251,6 @@ config PPC_BARRIER_NOSPEC
+     default y
+     depends on PPC_BOOK3S_64 || PPC_FSL_BOOK3E
+ 
+-config GENERIC_CSUM
+-	def_bool n
+-
+ config EARLY_PRINTK
+ 	bool
+ 	default y
+diff --git a/arch/powerpc/include/asm/checksum.h b/arch/powerpc/include/asm/checksum.h
+index a78a57e5058d..72a65d744a28 100644
+--- a/arch/powerpc/include/asm/checksum.h
++++ b/arch/powerpc/include/asm/checksum.h
+@@ -9,9 +9,6 @@
+  * 2 of the License, or (at your option) any later version.
+  */
+ 
+-#ifdef CONFIG_GENERIC_CSUM
+-#include <asm-generic/checksum.h>
+-#else
+ #include <linux/bitops.h>
+ #include <linux/in6.h>
+ /*
+@@ -217,6 +214,5 @@ __sum16 csum_ipv6_magic(const struct in6_addr *saddr,
+ 			const struct in6_addr *daddr,
+ 			__u32 len, __u8 proto, __wsum sum);
+ 
+-#endif
+ #endif /* __KERNEL__ */
+ #endif
+-- 
+2.13.3
 
-> ---
->
->  drivers/base/power/domain.c | 2 +-
->  include/linux/pm_domain.h   | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index 45eafe8cf7dd..2c334c01fc43 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -2483,7 +2483,7 @@ EXPORT_SYMBOL_GPL(genpd_dev_pm_attach_by_id);
->   * power-domain-names DT property. For further description see
->   * genpd_dev_pm_attach_by_id().
->   */
-> -struct device *genpd_dev_pm_attach_by_name(struct device *dev, char *name)
-> +struct device *genpd_dev_pm_attach_by_name(struct device *dev, const char *name)
->  {
->         int index;
->
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index dd364abb649a..203be5082f33 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -271,7 +271,7 @@ int genpd_dev_pm_attach(struct device *dev);
->  struct device *genpd_dev_pm_attach_by_id(struct device *dev,
->                                          unsigned int index);
->  struct device *genpd_dev_pm_attach_by_name(struct device *dev,
-> -                                          char *name);
-> +                                          const char *name);
->  #else /* !CONFIG_PM_GENERIC_DOMAINS_OF */
->  static inline int of_genpd_add_provider_simple(struct device_node *np,
->                                         struct generic_pm_domain *genpd)
-> @@ -324,7 +324,7 @@ static inline struct device *genpd_dev_pm_attach_by_id(struct device *dev,
->  }
->
->  static inline struct device *genpd_dev_pm_attach_by_name(struct device *dev,
-> -                                                        char *name)
-> +                                                        const char *name)
->  {
->         return NULL;
->  }
-> --
-> 2.21.0.rc0.258.g878e2cd30e-goog
->
