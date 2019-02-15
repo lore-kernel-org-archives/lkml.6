@@ -4,56 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0596EC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E467C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:12:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C643021934
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32EE121934
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:12:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196717;
-	bh=txooyQ8Rpj+IpdBFbXidhxz9DY3Rs8IPSu7DRDsgYtM=;
+	s=default; t=1550196722;
+	bh=dVAiIHuw0E+PlsXSgmiKkIGI7JFclc6jl/VfrJkywmo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zMztw3bCLzReOK04B7QMpFyYZ7QYKeBu+0LbC+qTfLjmo3gMlYYPDqwxahDbZ+H6t
-	 yNOCssbklzw23TAaKDtGseI4uVe1z8p8Sm8JVcaPfcfnyslnfL7c3ju4ShSDkXWSsP
-	 BaxIg6wg6tzOX6OL03Nt/QKU/0Vts8sAq+RfIJ5s=
+	b=HysIzmUFBft544DC4mnJj6VvnXWlh9iPWvrMj161tF16BALDXvPd3fpLDEwnOtki8
+	 etG4DULhwJpEgt2U7N5MIyY5F6oyAdgxeYWERfruO79ND3BUFfpBnVWSzh1eNYNcSE
+	 sxgLK6t7oSWmCW8Yzt2wHKfDL86xRDMuSFKmdg9k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390891AbfBOCL4 (ORCPT
+        id S2390952AbfBOCMA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:11:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51894 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:12:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389268AbfBOCLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:11:52 -0500
+        id S2390882AbfBOCLy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:11:54 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E5B6222D7;
-        Fri, 15 Feb 2019 02:11:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D2C621B68;
+        Fri, 15 Feb 2019 02:11:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196710;
-        bh=txooyQ8Rpj+IpdBFbXidhxz9DY3Rs8IPSu7DRDsgYtM=;
+        s=default; t=1550196714;
+        bh=dVAiIHuw0E+PlsXSgmiKkIGI7JFclc6jl/VfrJkywmo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wbUgBzsBLzaLW/Ysm9D8Hc5pQERYMrKyZ3g0F8fFDoScEyRhDrhhZCfR4vyD1PSrW
-         aH4kx+G9TAWhkWrXCfrQoZWmyErUwQI43tfc1lxIUNVTqrY2HcV1ItwyJIwsblBP2Y
-         2beKkqekHSlENLHssm5LyGhHEQxE9tSBdpYKYRwY=
+        b=ZZV+WLufPpFd0JxmS9UMvynPHj/2X/7Be9v9TgHai/T6effssrbw0rDcPltpcTX+b
+         aLwVKmYuCXH75qJs1R3YiO2X2k85XB7WS3yQcs2sbt8fC0FzuGqWmnEpCKiyBdG7Bk
+         jbBjET+QRASY5/t9YIYQsQKPosb396ycf1enjMTk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Silvio Cesare <silvio.cesare@gmail.com>,
-        Timur Tabi <timur@kernel.org>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Kees Cook <keescook@chromium.org>,
-        Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>,
-        Willy Tarreau <w@1wt.eu>, Sasha Levin <sashal@kernel.org>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.19 18/65] ASoC: imx-audmux: change snprintf to scnprintf for possible overflow
-Date:   Thu, 14 Feb 2019 21:10:34 -0500
-Message-Id: <20190215021121.177674-18-sashal@kernel.org>
+Cc:     Alban Bedel <albeu@free.fr>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 20/65] phy: ath79-usb: Fix the power on error path
+Date:   Thu, 14 Feb 2019 21:10:36 -0500
+Message-Id: <20190215021121.177674-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -65,117 +58,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Silvio Cesare <silvio.cesare@gmail.com>
+From: Alban Bedel <albeu@free.fr>
 
-[ Upstream commit c407cd008fd039320d147088b52d0fa34ed3ddcb ]
+[ Upstream commit 009808154c69c48d5b41fc8cf5ad5ab5704efd8f ]
 
-Change snprintf to scnprintf. There are generally two cases where using
-snprintf causes problems.
+In the power on function the error path doesn't return the suspend
+override to its proper state. It should should deassert this reset
+line to enable the suspend override.
 
-1) Uses of size += snprintf(buf, SIZE - size, fmt, ...)
-In this case, if snprintf would have written more characters than what the
-buffer size (SIZE) is, then size will end up larger than SIZE. In later
-uses of snprintf, SIZE - size will result in a negative number, leading
-to problems. Note that size might already be too large by using
-size = snprintf before the code reaches a case of size += snprintf.
-
-2) If size is ultimately used as a length parameter for a copy back to user
-space, then it will potentially allow for a buffer overflow and information
-disclosure when size is greater than SIZE. When the size is used to index
-the buffer directly, we can have memory corruption. This also means when
-size = snprintf... is used, it may also cause problems since size may become
-large.  Copying to userspace is mitigated by the HARDENED_USERCOPY kernel
-configuration.
-
-The solution to these issues is to use scnprintf which returns the number of
-characters actually written to the buffer, so the size variable will never
-exceed SIZE.
-
-Signed-off-by: Silvio Cesare <silvio.cesare@gmail.com>
-Cc: Timur Tabi <timur@kernel.org>
-Cc: Nicolin Chen <nicoleotsuka@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Xiubo Li <Xiubo.Lee@gmail.com>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Greg KH <greg@kroah.com>
-Signed-off-by: Willy Tarreau <w@1wt.eu>
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Alban Bedel <albeu@free.fr>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/fsl/imx-audmux.c | 24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ drivers/phy/qualcomm/phy-ath79-usb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/fsl/imx-audmux.c b/sound/soc/fsl/imx-audmux.c
-index 392d5eef356d..99e07b01a2ce 100644
---- a/sound/soc/fsl/imx-audmux.c
-+++ b/sound/soc/fsl/imx-audmux.c
-@@ -86,49 +86,49 @@ static ssize_t audmux_read_file(struct file *file, char __user *user_buf,
- 	if (!buf)
- 		return -ENOMEM;
+diff --git a/drivers/phy/qualcomm/phy-ath79-usb.c b/drivers/phy/qualcomm/phy-ath79-usb.c
+index 6fd6e07ab345..f7d64f3910b4 100644
+--- a/drivers/phy/qualcomm/phy-ath79-usb.c
++++ b/drivers/phy/qualcomm/phy-ath79-usb.c
+@@ -31,7 +31,7 @@ static int ath79_usb_phy_power_on(struct phy *phy)
  
--	ret = snprintf(buf, PAGE_SIZE, "PDCR: %08x\nPTCR: %08x\n",
-+	ret = scnprintf(buf, PAGE_SIZE, "PDCR: %08x\nPTCR: %08x\n",
- 		       pdcr, ptcr);
+ 	err = reset_control_deassert(priv->reset);
+ 	if (err && priv->no_suspend_override)
+-		reset_control_assert(priv->no_suspend_override);
++		reset_control_deassert(priv->no_suspend_override);
  
- 	if (ptcr & IMX_AUDMUX_V2_PTCR_TFSDIR)
--		ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 				"TxFS output from %s, ",
- 				audmux_port_string((ptcr >> 27) & 0x7));
- 	else
--		ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 				"TxFS input, ");
- 
- 	if (ptcr & IMX_AUDMUX_V2_PTCR_TCLKDIR)
--		ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 				"TxClk output from %s",
- 				audmux_port_string((ptcr >> 22) & 0x7));
- 	else
--		ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 				"TxClk input");
- 
--	ret += snprintf(buf + ret, PAGE_SIZE - ret, "\n");
-+	ret += scnprintf(buf + ret, PAGE_SIZE - ret, "\n");
- 
- 	if (ptcr & IMX_AUDMUX_V2_PTCR_SYN) {
--		ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 				"Port is symmetric");
- 	} else {
- 		if (ptcr & IMX_AUDMUX_V2_PTCR_RFSDIR)
--			ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 					"RxFS output from %s, ",
- 					audmux_port_string((ptcr >> 17) & 0x7));
- 		else
--			ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 					"RxFS input, ");
- 
- 		if (ptcr & IMX_AUDMUX_V2_PTCR_RCLKDIR)
--			ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 					"RxClk output from %s",
- 					audmux_port_string((ptcr >> 12) & 0x7));
- 		else
--			ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 					"RxClk input");
- 	}
- 
--	ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+	ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 			"\nData received from %s\n",
- 			audmux_port_string((pdcr >> 13) & 0x7));
- 
+ 	return err;
+ }
 -- 
 2.19.1
 
