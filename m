@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 177CAC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50CE0C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:34:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1E0C21927
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:34:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1487D21927
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:34:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550198066;
-	bh=y5Vtc8YidNoTw9PwpTl6UrIpFn1CINVZFcLTZgF8b44=;
+	s=default; t=1550198073;
+	bh=6FhqouOx5RLYnCpIatPtkGWwPIuwLtryM35X9sPg/vY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UOEtqDzMGFfKE6tUwR3LAb6K2mV11L0KdzeLKWOUIjmaOkOJObs1byimqlncXpE9F
-	 tnIgBHVy1/gvRo8Y2xFh2n98JkgVFBcfwzrfJEWSXJTuAIPdbqNOOfxKsDRX1bR+yF
-	 PP6i6rfXLjrKgyQAJju6V1crHpWrI7j9obF4gpkQ=
+	b=GgzSdnYQsXwDn0CPs5/X0s7/kIAsdwyH7RKysOAH96cPlDZYMIwr2TQ/vF/fsst94
+	 ZPEv0BfZOSRF6aBw02vg4Esomf3dzw4CzmD0I3aUH2Ox/gvKmYTckBMiLAv1hYxope
+	 hRP052Wz2hRXqPXza+MTn16B8MgqdD+oVh439tHE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388887AbfBOCeZ (ORCPT
+        id S2403912AbfBOCLl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:34:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51714 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:11:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403957AbfBOCLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:11:43 -0500
+        id S2403839AbfBOCLh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:11:37 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75F9621B68;
-        Fri, 15 Feb 2019 02:11:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FD0C206BA;
+        Fri, 15 Feb 2019 02:11:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196702;
-        bh=y5Vtc8YidNoTw9PwpTl6UrIpFn1CINVZFcLTZgF8b44=;
+        s=default; t=1550196697;
+        bh=6FhqouOx5RLYnCpIatPtkGWwPIuwLtryM35X9sPg/vY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F0YstYm2v5jQA903Q2gcTJd4vSDa70bVVh4oj4dSnyoXTEFvAP/fiiyXLT80ZqqMU
-         Ehc0LAHnUVb2U9zHUzK4UhRQsWkqRiWvXzCdJ4hE3rDPf2qMEfmEqxQdv6FQvq1D8h
-         mU71OFXsxfVLhMC1PgwgqStpbFFyCeuG3otOyQ+w=
+        b=u2GAsAYp6kNZfntPyf7QECFNmW85x5q9geTy6jsuOkKszkXEwI1RQqoqRoEwXNwcP
+         RrIWLJjgUYVNVZABkaPhzAlZ/5MlpmeuIFtfEH5NdPuPs89xZAkaqErg7463SwlpJo
+         2fhQfbbVdfCF7qu9LbWz2MwRBuB1nMeMWXKekjdQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Shuah Khan <shuah@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        linux-rtc@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 12/65] selftests: rtc: rtctest: fix alarm tests
-Date:   Thu, 14 Feb 2019 21:10:28 -0500
-Message-Id: <20190215021121.177674-12-sashal@kernel.org>
+Cc:     Bo He <bo.he@intel.com>, Yu Wang <yu.y.wang@intel.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 09/65] usb: dwc3: gadget: synchronize_irq dwc irq in suspend
+Date:   Thu, 14 Feb 2019 21:10:25 -0500
+Message-Id: <20190215021121.177674-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -58,50 +57,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Bo He <bo.he@intel.com>
 
-[ Upstream commit fdac94489c4d247088b3885875b39b3e1eb621ef ]
+[ Upstream commit 01c10880d24291a96a4ab0da773e3c5ce4d12da8 ]
 
-Return values for select are not checked properly and timeouts may not be
-detected.
+We see dwc3 endpoint stopped by unwanted irq during
+suspend resume test, which is caused dwc3 ep can't be started
+with error "No Resource".
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Shuah Khan <shuah@kernel.org>
+Here, add synchronize_irq before suspend to sync the
+pending IRQ handlers complete.
+
+Signed-off-by: Bo He <bo.he@intel.com>
+Signed-off-by: Yu Wang <yu.y.wang@intel.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/rtc/rtctest.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/usb/dwc3/gadget.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/testing/selftests/rtc/rtctest.c b/tools/testing/selftests/rtc/rtctest.c
-index e20b017e7073..dea4e3d6d9e1 100644
---- a/tools/testing/selftests/rtc/rtctest.c
-+++ b/tools/testing/selftests/rtc/rtctest.c
-@@ -145,15 +145,12 @@ TEST_F(rtc, alarm_alm_set) {
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index d8bf9307901e..3baca4d4435a 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -3270,6 +3270,8 @@ int dwc3_gadget_suspend(struct dwc3 *dwc)
+ 	dwc3_disconnect_gadget(dwc);
+ 	__dwc3_gadget_stop(dwc);
  
- 	rc = select(self->fd + 1, &readfds, NULL, NULL, &tv);
- 	ASSERT_NE(-1, rc);
--	EXPECT_NE(0, rc);
-+	ASSERT_NE(0, rc);
++	synchronize_irq(dwc->irq_gadget);
++
+ 	return 0;
+ }
  
- 	/* Disable alarm interrupts */
- 	rc = ioctl(self->fd, RTC_AIE_OFF, 0);
- 	ASSERT_NE(-1, rc);
- 
--	if (rc == 0)
--		return;
--
- 	rc = read(self->fd, &data, sizeof(unsigned long));
- 	ASSERT_NE(-1, rc);
- 	TH_LOG("data: %lx", data);
-@@ -202,7 +199,7 @@ TEST_F(rtc, alarm_wkalm_set) {
- 
- 	rc = select(self->fd + 1, &readfds, NULL, NULL, &tv);
- 	ASSERT_NE(-1, rc);
--	EXPECT_NE(0, rc);
-+	ASSERT_NE(0, rc);
- 
- 	rc = read(self->fd, &data, sizeof(unsigned long));
- 	ASSERT_NE(-1, rc);
 -- 
 2.19.1
 
