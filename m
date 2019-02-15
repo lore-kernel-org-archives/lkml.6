@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED83C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB17DC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:31:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39C8A20840
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:31:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAA7B20840
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:31:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197886;
-	bh=5kaMNCHp606wM9T12sg0DOT1GGZW9U6u0Gthxa5AiD4=;
+	s=default; t=1550197892;
+	bh=DEMIOuBcLUP1oyQcFUatrVmvbRNZj1LAyKWt59j2gkM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1JhetkLLk9HNBKr7rHjJEPhKuoqCqODIEeTkKK7WBO+/65f6GE/XX4oz9BxBFkNup
-	 fEK92WGdxHJ61qiFRNdv2NW+t9GIv51norWG/ukqV+Pl/D3R9STZ/KcamndXkWDNjb
-	 Y9AN9AqAYWohFID9ekDunUJGnGoDEYN53bvYHOO8=
+	b=0iH1YyI2Xv+7f0Pckj0Lms6ExzM9FLZz95jOQCaSvYaAqeBFhssHQQPwe9GtbiwW3
+	 5jQ48elMUtFheEI2KTrz4bgiduP+q4n8fLJ94y9hxk5MW+8PgcHyJocsA9r4vPigGU
+	 uDfkF4jlown6Tc27pjgYiLp9h7H8pBEB/mXvlgNY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731489AbfBOCbZ (ORCPT
+        id S1731864AbfBOCbb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:31:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52632 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:31:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389650AbfBOCMg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:12:36 -0500
+        id S2404299AbfBOCMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:12:34 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DAB421B68;
-        Fri, 15 Feb 2019 02:12:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E344921934;
+        Fri, 15 Feb 2019 02:12:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196756;
-        bh=5kaMNCHp606wM9T12sg0DOT1GGZW9U6u0Gthxa5AiD4=;
+        s=default; t=1550196753;
+        bh=DEMIOuBcLUP1oyQcFUatrVmvbRNZj1LAyKWt59j2gkM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GJVzeIJNRcKvObSEkb8C+rjtpEE4/X7ZeNAYL/SWoxQT9BJlzxz7hN5jcVTiLv8TU
-         bHpjei8QE1CdxWdv92pWRJ1fXx9ZCalWAI5Ag9hZoVzWi1gLioZcKn7sPRKUyxjdmR
-         EgOvItwZpi5tZ4bqJWQTK6MHbR4W2wfyBLhv5TOo=
+        b=y4ytk3fSx8zr/QwkIEmkYVM4xeBqcKyy0d+YBL5lxRkUOit75/JPcIgkFqBt6Zl3D
+         KlI9ivyvNerpF8Qv5ngor3rHzzQ5nGyxuawx5pDYw+OOJW3PJumr6Bp/kgLsdPPaLC
+         cmHwdk8DOvbh6qHG5nct/XY4/2HZ4Ao28+KHEoGw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Varun Prakash <varun@chelsio.com>,
+Cc:     "Ewan D. Milne" <emilne@redhat.com>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 45/65] scsi: csiostor: fix NULL pointer dereference in csio_vport_set_state()
-Date:   Thu, 14 Feb 2019 21:11:01 -0500
-Message-Id: <20190215021121.177674-45-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 44/65] scsi: lpfc: nvmet: avoid hang / use-after-free when destroying targetport
+Date:   Thu, 14 Feb 2019 21:11:00 -0500
+Message-Id: <20190215021121.177674-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -57,40 +58,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Varun Prakash <varun@chelsio.com>
+From: "Ewan D. Milne" <emilne@redhat.com>
 
-[ Upstream commit fe35a40e675473eb65f2f5462b82770f324b5689 ]
+[ Upstream commit c41f59884be5cca293ed61f3d64637dbba3a6381 ]
 
-Assign fc_vport to ln->fc_vport before calling csio_fcoe_alloc_vnp() to
-avoid a NULL pointer dereference in csio_vport_set_state().
+We cannot wait on a completion object in the lpfc_nvme_targetport structure
+in the _destroy_targetport() code path because the NVMe/fc transport will
+free that structure immediately after the .targetport_delete() callback.
+This results in a use-after-free, and a hang if slub_debug=FZPU is enabled.
 
-ln->fc_vport is dereferenced in csio_vport_set_state().
+Fix this by putting the completion on the stack.
 
-Signed-off-by: Varun Prakash <varun@chelsio.com>
+Signed-off-by: Ewan D. Milne <emilne@redhat.com>
+Acked-by: James Smart <james.smart@broadcom.com>
 Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/csiostor/csio_attr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/scsi/lpfc/lpfc_nvmet.c | 8 +++++---
+ drivers/scsi/lpfc/lpfc_nvmet.h | 2 +-
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/scsi/csiostor/csio_attr.c b/drivers/scsi/csiostor/csio_attr.c
-index 8a004036e3d7..9bd2bd8dc2be 100644
---- a/drivers/scsi/csiostor/csio_attr.c
-+++ b/drivers/scsi/csiostor/csio_attr.c
-@@ -594,12 +594,12 @@ csio_vport_create(struct fc_vport *fc_vport, bool disable)
+diff --git a/drivers/scsi/lpfc/lpfc_nvmet.c b/drivers/scsi/lpfc/lpfc_nvmet.c
+index b766afe10d3d..e2575c8ec93e 100644
+--- a/drivers/scsi/lpfc/lpfc_nvmet.c
++++ b/drivers/scsi/lpfc/lpfc_nvmet.c
+@@ -1003,7 +1003,8 @@ lpfc_nvmet_targetport_delete(struct nvmet_fc_target_port *targetport)
+ 	struct lpfc_nvmet_tgtport *tport = targetport->private;
+ 
+ 	/* release any threads waiting for the unreg to complete */
+-	complete(&tport->tport_unreg_done);
++	if (tport->phba->targetport)
++		complete(tport->tport_unreg_cmp);
+ }
+ 
+ static void
+@@ -1700,6 +1701,7 @@ lpfc_nvmet_destroy_targetport(struct lpfc_hba *phba)
+ 	struct lpfc_nvmet_tgtport *tgtp;
+ 	struct lpfc_queue *wq;
+ 	uint32_t qidx;
++	DECLARE_COMPLETION_ONSTACK(tport_unreg_cmp);
+ 
+ 	if (phba->nvmet_support == 0)
+ 		return;
+@@ -1709,9 +1711,9 @@ lpfc_nvmet_destroy_targetport(struct lpfc_hba *phba)
+ 			wq = phba->sli4_hba.nvme_wq[qidx];
+ 			lpfc_nvmet_wqfull_flush(phba, wq, NULL);
+ 		}
+-		init_completion(&tgtp->tport_unreg_done);
++		tgtp->tport_unreg_cmp = &tport_unreg_cmp;
+ 		nvmet_fc_unregister_targetport(phba->targetport);
+-		wait_for_completion_timeout(&tgtp->tport_unreg_done, 5);
++		wait_for_completion_timeout(&tport_unreg_cmp, 5);
+ 		lpfc_nvmet_cleanup_io_context(phba);
  	}
+ 	phba->targetport = NULL;
+diff --git a/drivers/scsi/lpfc/lpfc_nvmet.h b/drivers/scsi/lpfc/lpfc_nvmet.h
+index 1aaff63f1f41..0ec1082ce7ef 100644
+--- a/drivers/scsi/lpfc/lpfc_nvmet.h
++++ b/drivers/scsi/lpfc/lpfc_nvmet.h
+@@ -34,7 +34,7 @@
+ /* Used for NVME Target */
+ struct lpfc_nvmet_tgtport {
+ 	struct lpfc_hba *phba;
+-	struct completion tport_unreg_done;
++	struct completion *tport_unreg_cmp;
  
- 	fc_vport_set_state(fc_vport, FC_VPORT_INITIALIZING);
-+	ln->fc_vport = fc_vport;
- 
- 	if (csio_fcoe_alloc_vnp(hw, ln))
- 		goto error;
- 
- 	*(struct csio_lnode **)fc_vport->dd_data = ln;
--	ln->fc_vport = fc_vport;
- 	if (!fc_vport->node_name)
- 		fc_vport->node_name = wwn_to_u64(csio_ln_wwnn(ln));
- 	if (!fc_vport->port_name)
+ 	/* Stats counters - lpfc_nvmet_unsol_ls_buffer */
+ 	atomic_t rcv_ls_req_in;
 -- 
 2.19.1
 
