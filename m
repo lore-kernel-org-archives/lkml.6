@@ -4,55 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6410BC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B20C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:46:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34DD1222C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:46:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E606B222A1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:46:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550191611;
-	bh=kcG82EwS90zSs1OGXf/4oXgc3GD5RV1udOPgVs9Dang=;
+	s=default; t=1550191616;
+	bh=sf6eyqs764o2p8sAsJKoLLz3/3gQIb+fthj9dkOwfXc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PqwDspgkktk29/hX6krhVdnmO6F8LDwVM3mPTyr/YLJfhod8EVazJUOxNZ+VxQW7N
-	 9Uu3LbUdMwLG9t7jBXWPNY7Uwx2QU7CU3OK++nwJo/DdM573h/dKWIGmjGyvUio9eP
-	 yqoXiKOucbQqsMPJlAntcaZ0hg3JBqbRRWDWzc8I=
+	b=Dt4KOPhSwaF2+Elmp27LVpmbm2VN4ciig3wEswd+NP3Bi/DYCRZCV3PcERWyWwZSk
+	 TMOvZ5VrXpApY2cEb0v8v1ckS+SE1tHc3i30X9jiLfPSlSw3tb2i9FY9aA1v9TW7w7
+	 yd3j0Uq3pbx70+VjaAXEmUeOpms89YJ3zpn7emiQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388759AbfBOAqt (ORCPT
+        id S2388845AbfBOAqy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 19:46:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45322 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 19:46:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388679AbfBOAqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 19:46:47 -0500
+        id S2388679AbfBOAqv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 19:46:51 -0500
 Received: from quaco.ghostprotocols.net (unknown [189.40.103.31])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 431C2222D9;
-        Fri, 15 Feb 2019 00:46:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E21C2229F;
+        Fri, 15 Feb 2019 00:46:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550191606;
-        bh=kcG82EwS90zSs1OGXf/4oXgc3GD5RV1udOPgVs9Dang=;
+        s=default; t=1550191610;
+        bh=sf6eyqs764o2p8sAsJKoLLz3/3gQIb+fthj9dkOwfXc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bdr1SfN8XmPWkh3lDRmVg/xCTFFwoT4YXDIykoj0dv0H45VuDmU9+DFUUZuWiRyPR
-         CPCWMRK8kBbjGdRJoVPtvDgCwLQFLeI0lKujRBpt5I37OzzDi0X0rxncgISx/CInNX
-         tkPzrNpBxy5MUez93l8yW70PtMfWk3RV332i4PGs=
+        b=mnwRPrIJRyrMCdnZy6qx6Uzv/hyR3sS/3YFOzQlq9njiQVk3eEOuSdDTs/JFMMkYa
+         yjjl8NfTKSfgQsvy5gh5JQmvKtYjEWr8fOd98fN6jT+X0iTbQNOCV7EJudmqu/qF1t
+         As7FpKudEWqtBeCpMK0kBda1vmiv812AP+FaPHpE=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Subject: [PATCH 13/43] tools feature: Undef _GNU_SOURCE at the end of feature tests
-Date:   Thu, 14 Feb 2019 21:45:09 -0300
-Message-Id: <20190215004539.23571-14-acme@kernel.org>
+        Adrian Hunter <adrian.hunter@intel.com>,
+        =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
+        <lclaudio@redhat.com>, Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 14/43] perf beauty ioctl cmd: The 'fd' arg is signed
+Date:   Thu, 14 Feb 2019 21:45:10 -0300
+Message-Id: <20190215004539.23571-15-acme@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215004539.23571-1-acme@kernel.org>
 References: <20190215004539.23571-1-acme@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -61,50 +64,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Since we get all the tests in a single .c file for a first test,
-tools/build/feature/test-all.c, if individual tests set that define and
-fail to undef it at its end, then it the test-all.c build will fail due
-to defining _GNU_SOURCE multiple times, getting us to the slow path,
-so undef it at the end in tests that define it.
+It is possible to pass a negative number as the fd and that has to be
+handled, so stop using 'unsigned int fd' in the ioctl syscall 'cmd'
+beautifier.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-w6s00jfo1xabgphzczadl59b@git.kernel.org
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-b7qwa0l19dswa09h3s41akfu@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/build/feature/test-get_current_dir_name.c | 1 +
- tools/build/feature/test-libpython.c            | 1 +
- tools/build/feature/test-setns.c                | 1 +
- 3 files changed, 3 insertions(+)
+ tools/perf/trace/beauty/ioctl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/build/feature/test-get_current_dir_name.c b/tools/build/feature/test-get_current_dir_name.c
-index 573000f93212..c3c201691b4f 100644
---- a/tools/build/feature/test-get_current_dir_name.c
-+++ b/tools/build/feature/test-get_current_dir_name.c
-@@ -8,3 +8,4 @@ int main(void)
- 	free(get_current_dir_name());
- 	return 0;
- }
-+#undef _GNU_SOURCE
-diff --git a/tools/build/feature/test-libpython.c b/tools/build/feature/test-libpython.c
-index 0c1641b0d9a7..371c9113e49d 100644
---- a/tools/build/feature/test-libpython.c
-+++ b/tools/build/feature/test-libpython.c
-@@ -7,3 +7,4 @@ int main(void)
- 
- 	return 0;
- }
-+#undef _GNU_SOURCE
-diff --git a/tools/build/feature/test-setns.c b/tools/build/feature/test-setns.c
-index 1f714d2a658b..4a1581ae7a55 100644
---- a/tools/build/feature/test-setns.c
-+++ b/tools/build/feature/test-setns.c
-@@ -5,3 +5,4 @@ int main(void)
+diff --git a/tools/perf/trace/beauty/ioctl.c b/tools/perf/trace/beauty/ioctl.c
+index 620350d41209..52242fa4072b 100644
+--- a/tools/perf/trace/beauty/ioctl.c
++++ b/tools/perf/trace/beauty/ioctl.c
+@@ -175,7 +175,7 @@ static size_t ioctl__scnprintf_cmd(unsigned long cmd, char *bf, size_t size, boo
+ size_t syscall_arg__scnprintf_ioctl_cmd(char *bf, size_t size, struct syscall_arg *arg)
  {
- 	return setns(0, 0);
- }
-+#undef _GNU_SOURCE
+ 	unsigned long cmd = arg->val;
+-	unsigned int fd = syscall_arg__val(arg, 0);
++	int fd = syscall_arg__val(arg, 0);
+ 	struct file *file = thread__files_entry(arg->thread, fd);
+ 
+ 	if (file != NULL) {
 -- 
 2.19.1
 
