@@ -2,32 +2,33 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2D1CC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:12:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 711B6C4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:12:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C2CA2192D
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:12:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C58A222A1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:12:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405933AbfBOOMA (ORCPT
+        id S2437186AbfBOOMD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 09:12:00 -0500
-Received: from honk.sigxcpu.org ([24.134.29.49]:44667 "EHLO honk.sigxcpu.org"
+        Fri, 15 Feb 2019 09:12:03 -0500
+Received: from honk.sigxcpu.org ([24.134.29.49]:44675 "EHLO honk.sigxcpu.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729136AbfBOOL6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 09:11:58 -0500
+        id S2405514AbfBOOMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 09:12:00 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 4CDDFFB02;
-        Fri, 15 Feb 2019 15:11:56 +0100 (CET)
+        by honk.sigxcpu.org (Postfix) with ESMTP id B8D4DFB05;
+        Fri, 15 Feb 2019 15:11:58 +0100 (CET)
 X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
 Received: from honk.sigxcpu.org ([127.0.0.1])
         by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id BYd1oskSEwld; Fri, 15 Feb 2019 15:11:55 +0100 (CET)
+        with ESMTP id EKDJlwlJj3iu; Fri, 15 Feb 2019 15:11:53 +0100 (CET)
 Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 4566848DC0; Fri, 15 Feb 2019 15:11:53 +0100 (CET)
+        id 4A4AA48DC3; Fri, 15 Feb 2019 15:11:53 +0100 (CET)
 From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
 To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -38,9 +39,9 @@ To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         linux-input@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 2/3] dt-bindings: input: Refer to touchscreen.txt for goodix ts
-Date:   Fri, 15 Feb 2019 15:11:52 +0100
-Message-Id: <99085b90c327193f6bdb9b0a505daa6a9848e1c6.1550239328.git.agx@sigxcpu.org>
+Subject: [PATCH v3 1/3] input: goodix - support Goodix gt5688
+Date:   Fri, 15 Feb 2019 15:11:51 +0100
+Message-Id: <f342ad633683716cd2acb99b819da76c06ce0850.1550239328.git.agx@sigxcpu.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <cover.1550239328.git.agx@sigxcpu.org>
 References: <cover.1550239328.git.agx@sigxcpu.org>
@@ -52,40 +53,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Refer to touchscreen.txt for generic touch properties. This avoids
-duplication and we're using the generic code to parse these in the
-driver. While at that add touchscreen-size-{x,y} which are respected by
-the driver as well.
+From what I've seen in vendor trees it's fine to treat this as gt1x¹.
+Tested on the Purism Librem 5 Devkit (Rocktech JH057N00900 panel).
+
+[1]: https://github.com/TadiT7/android_kernel_mtk-4.4/tree/master/drivers/input/touchscreen/mediatek/GT5688
 
 Signed-off-by: Guido Günther <agx@sigxcpu.org>
+Reviewed-by: Bastien Nocera <hadess@hadess.net>
 ---
- .../bindings/input/touchscreen/goodix.txt           | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ Documentation/devicetree/bindings/input/touchscreen/goodix.txt | 1 +
+ drivers/input/touchscreen/goodix.c                             | 2 ++
+ 2 files changed, 3 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-index 57d3d8870a09..8cf0b4d38a7e 100644
+index f7e95c52f3c7..57d3d8870a09 100644
 --- a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
 +++ b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-@@ -19,11 +19,14 @@ Optional properties:
-  - irq-gpios		: GPIO pin used for IRQ. The driver uses the
- 			  interrupt gpio pin as output to reset the device.
-  - reset-gpios		: GPIO pin used for reset
--
-- - touchscreen-inverted-x  : X axis is inverted (boolean)
-- - touchscreen-inverted-y  : Y axis is inverted (boolean)
-- - touchscreen-swapped-x-y : X and Y axis are swapped (boolean)
--                             (swapping is done after inverting the axis)
-+ - touchscreen-inverted-x
-+ - touchscreen-inverted-y
-+ - touchscreen-size-x
-+ - touchscreen-size-y
-+ - touchscreen-swapped-x-y
-+
-+The touchscreen-* properties are documented in touchscreen.txt in this
-+directory.
+@@ -3,6 +3,7 @@ Device tree bindings for Goodix GT9xx series touchscreen controller
+ Required properties:
  
- Example:
+  - compatible		: Should be "goodix,gt1151"
++				 or "goodix,gt5688"
+ 				 or "goodix,gt911"
+ 				 or "goodix,gt9110"
+ 				 or "goodix,gt912"
+diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
+index f2d9c2c41885..47b1ced41576 100644
+--- a/drivers/input/touchscreen/goodix.c
++++ b/drivers/input/touchscreen/goodix.c
+@@ -216,6 +216,7 @@ static const struct goodix_chip_data *goodix_get_chip_data(u16 id)
+ {
+ 	switch (id) {
+ 	case 1151:
++	case 5688:
+ 		return &gt1x_chip_data;
  
+ 	case 911:
+@@ -942,6 +943,7 @@ MODULE_DEVICE_TABLE(acpi, goodix_acpi_match);
+ #ifdef CONFIG_OF
+ static const struct of_device_id goodix_of_match[] = {
+ 	{ .compatible = "goodix,gt1151" },
++	{ .compatible = "goodix,gt5688" },
+ 	{ .compatible = "goodix,gt911" },
+ 	{ .compatible = "goodix,gt9110" },
+ 	{ .compatible = "goodix,gt912" },
 -- 
 2.20.1
 
