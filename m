@@ -2,135 +2,137 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 472C1C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 01:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87DD1C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 01:26:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15BA121B18
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 01:25:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53F6A21B18
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 01:26:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KysuK/Hw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730752AbfBOBZe (ORCPT
+        id S1730770AbfBOB0e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 20:25:34 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:52022 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725939AbfBOBZd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 20:25:33 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 32509802DB9B8445CEDB;
-        Fri, 15 Feb 2019 09:25:31 +0800 (CST)
-Received: from [127.0.0.1] (10.184.52.56) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Fri, 15 Feb 2019
- 09:25:23 +0800
-Subject: Re: [PATCH v2 2/2] cpufreq / cppc: Work around for Hisilicon CPPC
- cpufreq
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-CC:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>, <gcherianv@gmail.com>,
-        Prashanth Prakash <pprakash@codeaurora.org>,
-        George Cherian <george.cherian@cavium.com>,
-        "Robert Moore" <robert.moore@intel.com>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hanjun Guo <guohanjun@huawei.com>,
-        John Garry <john.garry@huawei.com>
-References: <1550130368-60513-1-git-send-email-wangxiongfeng2@huawei.com>
- <CAJZ5v0j03Dj7XSbTNcu7Ew2SekdpTw2hrWT_L+5ZcdRUep7ppw@mail.gmail.com>
- <86a1eddc-01aa-f32a-9bef-c18c7649149b@huawei.com>
- <2813657.1l3PCoQO4Z@aspire.rjw.lan>
-From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
-Message-ID: <8baf1617-6037-2645-bc8a-a6dcf8f7f53b@huawei.com>
-Date:   Fri, 15 Feb 2019 09:25:21 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        Thu, 14 Feb 2019 20:26:34 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:36736 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbfBOB0e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 20:26:34 -0500
+Received: by mail-ot1-f68.google.com with SMTP id v62so5149293otb.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 17:26:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6uz0kUsZLOlyc/GsvAXtmKx3gYn3eTJy5dFjv86Wxg0=;
+        b=KysuK/HwzYui1rqiNnrZVF3yeoDzVUDktPelt2MN2ez+sYxdKyBc0LoYbWB/1D0zwg
+         /0G+dI9oaSVJ2skEdxHAYvtfwJ/4tzqrGxmJmtNG3h0ZdBNPZXW8jz7wsq8VwN8NuP0d
+         +fo9g9M7RD03uwqj38t2JtROgBLmjwnMoLIxNhnxW02zeLGyNvbHZlAsfF8zAJmRAxVK
+         ER77k86HW3G4bvpFmKYPVjRGV5B9cdoyrH75UyBnFiMEmqxWgbuRY6EYDrlzymtoY0mm
+         SjHQ1uE4mjnkXjO9Nt+b18hRM88N7Zpl1UbEQh64SvaTtV0bcyKPFVqvUavpyLgvxCKF
+         r1qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6uz0kUsZLOlyc/GsvAXtmKx3gYn3eTJy5dFjv86Wxg0=;
+        b=sp1H4mN0FrcSVGd1i67u6j12v3Nnm9d4nt07adfUUPD1FrHandhm5mPn9OCi9klEXf
+         MnpoV0D5Ig13qC8sRlakcgSSzCc6XGA/1SdKvQct+19CFd6PnrlhmXfqbpsOehABtovC
+         vYWjJfLWjmmZxPliVCzO5ZKfQQjR1qr+H6wqZt7u7c4G2fvXVsUfIT4qfL7zTkqqQZdY
+         ZbAEKuO4J9xm6tk4tyNJ9j3cnvM9AIbGOhCPNXKM5+MWqVc2l2cHwrxYAee/lp9cjBbg
+         7w7wAKwR+grw7ofQeJ5HrA81tPF71ehmhWKij9MQ0sECz0KXyzlbVwXzbkWT9phArmR4
+         3JFg==
+X-Gm-Message-State: AHQUAuZ5ygeshRs9kDoqubEvxo3KVAye9yEmIBh2uFeSSz3/I5MPkB+b
+        +zV73DL57UnpsRHFmkvTe889VPJcCoDC1Yc+loOZWw==
+X-Google-Smtp-Source: AHgI3Ib6+3Vr9Gbya3LpY9yJE+KDUdpmO3Q6cGJnYQg/UPIMBerHNd7MAFAiq7CsZLlhXLnQff76Yg6Dzq5MHmYHsi0=
+X-Received: by 2002:a9d:7597:: with SMTP id s23mr4192113otk.25.1550193993193;
+ Thu, 14 Feb 2019 17:26:33 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <2813657.1l3PCoQO4Z@aspire.rjw.lan>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.184.52.56]
-X-CFilter-Loop: Reflected
+References: <20190212185305.112847-1-brendanhiggins@google.com>
+ <20190212185305.112847-2-brendanhiggins@google.com> <4cb7ca12-ce60-7516-b7eb-aef08f607acc@gmail.com>
+In-Reply-To: <4cb7ca12-ce60-7516-b7eb-aef08f607acc@gmail.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Thu, 14 Feb 2019 17:26:21 -0800
+Message-ID: <CAFd5g441+6ATUKcNz7OstAB6Qd2BqeDh77SNnGUpZGBNvgysmg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] of: unittest: unflatten device tree on UML when testing
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Feb 14, 2019 at 4:10 PM Frank Rowand <frowand.list@gmail.com> wrote:
+>
+> On 2/12/19 10:53 AM, Brendan Higgins wrote:
+> > UML supports enabling OF, and is useful for running the device tree
+> > tests, so add support for unflattening device tree blobs so we can
+> > actually use it.
+> >
+> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> > ---
+> >  drivers/of/unittest.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+> > index 84427384654d5..effa4e2b9d992 100644
+> > --- a/drivers/of/unittest.c
+> > +++ b/drivers/of/unittest.c
+> > @@ -2527,6 +2527,9 @@ static int __init of_unittest(void)
+> >       }
+> >       of_node_put(np);
+> >
+> > +     if (IS_ENABLED(CONFIG_UML))
+> > +             unflatten_device_tree();
+> > +
+> >       pr_info("start of unittest - you will see error messages\n");
+> >       of_unittest_check_tree_linkage();
+> >       of_unittest_check_phandles();
+> >
+>
+> (Insert my usual disclaimer that I am clueless about UML, I still need to learn
+> about it...)
+>
+> This does not look correct to me.
+>
+> A few lines earlier in of_unittest(), the live devicetree needs to exist for
+> unittest_data_data() and a few of_*() functions to succeed.  So it seems
+> that the unflatten_device_tree() for uml should be at the beginning of
+> of_unittest().
 
+It is true that other functions ahead of it depend on the presence of
+a device tree, but an unflattened tree does get linked in somewhere
+else. Despite that, this is needed for overlay_base_root. I got
+similar behavior if you don't link in a flattened device tree on x86.
+Thus, the order in which you call them doesn't actually seem to
+matter. I found no difference from changing the order in UML myself.
 
-On 2019/2/15 7:15, Rafael J. Wysocki wrote:
-> On Thursday, February 14, 2019 2:58:21 PM CET Xiongfeng Wang wrote:
->>
->> On 2019/2/14 18:58, Rafael J. Wysocki wrote:
->>> On Thu, Feb 14, 2019 at 8:46 AM Xiongfeng Wang
->>> <wangxiongfeng2@huawei.com> wrote:
->>>>
->>>> Hisilicon chips do not support delivered performance counter register
->>>> and reference performance counter register. But the platform can
->>>> calculate the real performance using its own method. This patch provide
->>>> a workaround for this problem, and other platforms can also use this
->>>> workaround framework. We reuse the desired performance register to
->>>> store the real performance calculated by the platform. After the
->>>> platform finished the frequency adjust, it gets the real performance and
->>>> writes it into desired performance register. OS can use it to calculate
->>>> the real frequency.
->>>>
->>>> Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
->>>> ---
->>>>  drivers/cpufreq/cppc_cpufreq.c | 70 ++++++++++++++++++++++++++++++++++++++++++
->>>>  1 file changed, 70 insertions(+)
->>>>
->>>> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
->>>> index fd25c21c..da96fec 100644
->>>> --- a/drivers/cpufreq/cppc_cpufreq.c
->>>> +++ b/drivers/cpufreq/cppc_cpufreq.c
->>>> @@ -33,6 +33,16 @@
->>>>  /* Offest in the DMI processor structure for the max frequency */
->>>>  #define DMI_PROCESSOR_MAX_SPEED  0x14
->>>>
->>>> +struct cppc_workaround_info {
->>>> +       char oem_id[ACPI_OEM_ID_SIZE +1];
->>>> +       char oem_table_id[ACPI_OEM_TABLE_ID_SIZE + 1];
->>>> +       u32 oem_revision;
->>>> +       unsigned int (*get_rate)(unsigned int cpu);
->>>> +};
->>>> +
->>>> +/* CPPC workaround for get_rate callback */
->>>> +unsigned int (*cppc_wa_get_rate)(unsigned int cpu);
->>>> +
->>>
->>> First off, please don't split the workaround material into two parts.
->>> IOW, the other new function added below can go here just fine IMO.
->>>
->>>>  /*
->>>>   * These structs contain information parsed from per CPU
->>>>   * ACPI _CPC structures.
->>>> @@ -334,6 +344,9 @@ static unsigned int cppc_cpufreq_get_rate(unsigned int cpunum)
->>>>         struct cppc_cpudata *cpu = all_cpu_data[cpunum];
->>>>         int ret;
->>>>
->>>> +       if (cppc_wa_get_rate)
->>>> +               return cppc_wa_get_rate(cpunum);
->>>
->>> Second, what is the value of using the function pointer above?
->>>
->>> All we need for now is a flag to indicate whether or not to call
->>> hisi_cppc_cpufreq_get_rate() here and return its return value.
->>
->> How about adding a pointer of 'struct cppc_workaround_info' to indicate whether we have
->> found a matches workaround ?
->> If I use a flag, I will need another variable to indicate which item of the workaround array 'wa_info'
->> to use.
-> 
-> And why do you need to distinguish one of them from the other?
+Without my patch we get the following error,
+### dt-test ### FAIL of_unittest_overlay_high_level():2372
+overlay_base_root not initialized
+### dt-test ### end of unittest - 219 passed, 1 failed
+
+With my patch we get:
+### dt-test ### end of unittest - 224 passed, 0 failed
+
+I used the following .config for these results:
+CONFIG_OF=y
+CONFIG_OF_UNITTEST=y
+CONFIG_OF_OVERLAY=y
+CONFIG_I2C=y
+CONFIG_I2C_MUX=y
+
+>
+> Rob, if I am correct please revert this patch.
 >
 
-I was thinking about future extension. Different platform may have different implementation
-of 'get_rate' in the future.
-
-> 
-> .
-> 
-
+Cheers
