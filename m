@@ -2,141 +2,140 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0DA5C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DE0C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:38:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C032821925
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:37:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 365ED21925
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:38:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="SjJb+ti8";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="JdpF17kN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729282AbfBOQhF (ORCPT
+        id S1728964AbfBOQiM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 11:37:05 -0500
-Received: from mail-it1-f198.google.com ([209.85.166.198]:51272 "EHLO
-        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728226AbfBOQhE (ORCPT
+        Fri, 15 Feb 2019 11:38:12 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:55008 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726214AbfBOQiM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 11:37:04 -0500
-Received: by mail-it1-f198.google.com with SMTP id r85so16620372itc.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 08:37:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=kl6JM2GHeB1Q0ks4RYSeuqJL3U45gykCORj6keUl4Sc=;
-        b=Uf0ycMm8qe4zpyeS9MSRVjOQ//fifnf+qE4BqBlHQpcpXIRrx60okzWSms5nzLj0XF
-         SBG5VhbpO5f115TbAFinIFLA2P5ojEv4D2IcoGXLnE0gJi7a1NflXZ7/O+oRJLWbl2b4
-         gJMoWPAytdB+13yAkTYKYR03I03JsCAD7qXtGz0kcRAmeDa0EOX2UVbYRm16y5mUJogn
-         Ekrc4UE5XOmg/kBsm3fLQLBrZI61KJRw5QLj4afqxFIXcL/EL6qTVFLqSP7SzHOuEwhl
-         umzzhTt82Zt8DhtI34HUooen9l6rAL86F4+Ns2KNF/QNCRHhN8S9FtscR+bxAIjiQd5x
-         IJqA==
-X-Gm-Message-State: AHQUAuZCryfD1L4imgw2mVywAo5zCBQG09KwBdVtBJ2CPddsJk2Cw5Rx
-        ax/VtHdk258ex6xNHghvSu10dWUaO8QPTY6oNJaTIRnUArkD
-X-Google-Smtp-Source: AHgI3IbGv85Bb+v0NjSWzcT08BH90+G4TbzDUAnKgWbiTuCb7NlOJ7rR8qZNDCVmH6dh4GMcHKMfsLDzoeCiwiVtjlBRkp4vTobh
+        Fri, 15 Feb 2019 11:38:12 -0500
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1FGWt8b005408;
+        Fri, 15 Feb 2019 08:38:09 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : content-type : content-id :
+ content-transfer-encoding : mime-version; s=facebook;
+ bh=oILiAclxTDisBTUNOB4lM3TfY0Ee+VDWLB/xhSdB5Qw=;
+ b=SjJb+ti8zYy2bWjOfA6Gh8RyDC6hpHkolz7QHm+t+eqpA/RDu+zb1kbc9eksYHg0UBFF
+ r/iExueO54nY5+U9753FkyxMC8kh42BcWUKEGzPfcKjOpT0g2B1ETHubVMcA7Uioo+85
+ b332gycafljq62QHfp5zxtq7WOyUYqphaRk= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2qp0txg22w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Fri, 15 Feb 2019 08:38:09 -0800
+Received: from prn-hub02.TheFacebook.com (2620:10d:c081:35::126) by
+ prn-hub01.TheFacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Fri, 15 Feb 2019 08:38:07 -0800
+Received: from NAM03-BY2-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.26) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Fri, 15 Feb 2019 08:38:07 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oILiAclxTDisBTUNOB4lM3TfY0Ee+VDWLB/xhSdB5Qw=;
+ b=JdpF17kNHk4UY7QcNGLRNC/6behcDcuUUwcKf/zgr2naseV7AisFdh/1mrZbXL/L7g7Ti29bvaTyihZhNV+QypMD9WgGXor0oUecSae62l9lV5M3P1QLrqxGZSlbuCeFuYOLwBTHz5c1/CkciqEoON7mWQA2nqhdSBFZDWjvo9w=
+Received: from MWHPR15MB1134.namprd15.prod.outlook.com (10.175.2.12) by
+ MWHPR15MB1693.namprd15.prod.outlook.com (10.175.141.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.19; Fri, 15 Feb 2019 16:38:05 +0000
+Received: from MWHPR15MB1134.namprd15.prod.outlook.com
+ ([fe80::93f:b6fe:a6e9:80dc]) by MWHPR15MB1134.namprd15.prod.outlook.com
+ ([fe80::93f:b6fe:a6e9:80dc%8]) with mapi id 15.20.1601.023; Fri, 15 Feb 2019
+ 16:38:05 +0000
+From:   Dave Watson <davejwatson@fb.com>
+To:     "lsf-pc@lists.linux-foundation.org" 
+        <lsf-pc@lists.linux-foundation.org>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Maged Michael <magedmichael@fb.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [LSF/MM TOPIC] Improve performance of fget/fput
+Thread-Topic: [LSF/MM TOPIC] Improve performance of fget/fput
+Thread-Index: AQHUxUzTqmvWMcBbakqADGu841l6Tg==
+Date:   Fri, 15 Feb 2019 16:38:05 +0000
+Message-ID: <20190215163852.6ls6bchssazma6bm@davejwatson-mba.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: NeoMutt/20180716
+x-clientproxiedby: BYAPR08CA0045.namprd08.prod.outlook.com
+ (2603:10b6:a03:117::22) To MWHPR15MB1134.namprd15.prod.outlook.com
+ (2603:10b6:320:22::12)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:180::1:5b6b]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 937aeb10-44f2-4279-d6b0-08d69363f492
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1693;
+x-ms-traffictypediagnostic: MWHPR15MB1693:
+x-microsoft-exchange-diagnostics: 1;MWHPR15MB1693;20:004eTB3wBN9EasGDlcpi5/JlQcufGjjWApEx0bb1cniwMhQgyAb4zfD+yYF9OygsLR3pZoHlbablub7+K4bz2v0mtGJac9lnpAs771mn15M/6Gr1QEAubTVQwLaKAVz18tjHUrr6A00JJhYYlVGj/hzRJx4b378YOCou7ozciHM=
+x-microsoft-antispam-prvs: <MWHPR15MB16937596A9754DB8DEE58DAFDD600@MWHPR15MB1693.namprd15.prod.outlook.com>
+x-forefront-prvs: 09497C15EB
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(376002)(346002)(136003)(396003)(366004)(199004)(189003)(7736002)(386003)(8936002)(99286004)(102836004)(6506007)(52116002)(81166006)(33896004)(14454004)(2906002)(98436002)(2501003)(25786009)(561944003)(81156014)(53936002)(8676002)(105586002)(106356001)(2351001)(5640700003)(6916009)(6486002)(71200400001)(71190400001)(6436002)(4326008)(256004)(97736004)(6116002)(478600001)(305945005)(9686003)(6512007)(476003)(316002)(486006)(1076003)(68736007)(54906003)(86362001)(58126008)(46003)(186003);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1693;H:MWHPR15MB1134.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: f7Uo61VHvsEGrirHwGzqpDGuZB+6Ltw5ofoiBeSK8EP8pagxzMOT1OQa5YjO+hG+LyDOY+6ffxEm8fKAdOwysMpzmIxCl42Oew7ZkF/EB5yiyvaaY87VEVWzJWTQgXvSRBlnFx5QgQpan5UiMjjm14a8JPHoU83qNd7HHqsPOCC7pIMd5ErbfDKEcFoJ2Jf+ys+vJoHg62jdhB8Et+NJ9N0p66Hb12wYTLdqbE38wtdDqkAuz9x9bAcb1hH96yDJAb39yl4wGzC3IMGXDpZhHUFaeqrYCZaZ2HQ0vqk8KnkknPJxO1GsgHYOlrPiojRuRZPqe+VrQIbdPxBZ9gy24PvhTD8BbiPxx63TdwIJs4C5J5sHRmayVFHdXTLp6fqNo/0W1k6Mp0bpUMEdkUqwHuP28WyNBrF0yOjYK5D8e/A=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3D753BDD5C51904C81AE759469E1EF38@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Received: by 2002:a6b:6b09:: with SMTP id g9mr7668902ioc.22.1550248623489;
- Fri, 15 Feb 2019 08:37:03 -0800 (PST)
-Date:   Fri, 15 Feb 2019 08:37:03 -0800
-In-Reply-To: <0000000000000655c0057cd141f1@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008447a10581f162b3@google.com>
-Subject: Re: WARNING: locking bug in __queue_work
-From:   syzbot <syzbot+6174a6c5eba4b3cdd606@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+X-MS-Exchange-CrossTenant-Network-Message-Id: 937aeb10-44f2-4279-d6b0-08d69363f492
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Feb 2019 16:38:02.3744
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1693
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-15_12:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+In some of our hottest network services, fget_light + fput overhead
+can represent 1-2% of the processes' total CPU usage.  I'd like to
+discuss ways to reduce this overhead.
 
-HEAD commit:    cb5b020a8d38 Revert "exec: load_script: don't blindly trun..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12b68c8f400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ee434566c893c7b1
-dashboard link: https://syzkaller.appspot.com/bug?extid=6174a6c5eba4b3cdd606
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11635d24c00000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12f2ed58c00000
+One proposal we have been testing is removing the refcount increment
+and decrement, and using some sort of safe memory reclamation
+instead. The hottest callers include recvmsg, sendmsg, epoll_wait, etc
+- mostly networking calls, often used on non-blocking sockets.  Often
+we are only incrementing and decrementing the refcount for a very
+short period of time, ideally we wouldn't adjust the refcount unless
+we know we are going to block.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+6174a6c5eba4b3cdd606@syzkaller.appspotmail.com
+We could use RCU, but we would have to be particularly careful that
+none of these calls ever block, or ensure that we increment the
+refcount at the blocking locations.  As an alternative to RCU, hazard
+pointers have similar overhead to SRCU, and could work equally well on
+blocking or nonblocking syscalls without additional changes.
 
-Own node identity ac1414aa, cluster identity 4711
-New replicast peer: 172.20.20.187
-Enabled bearer <udp:syz1>, priority 10
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(class_idx > MAX_LOCKDEP_KEYS)
-WARNING: CPU: 0 PID: 7892 at kernel/locking/lockdep.c:3315  
-__lock_acquire+0x13bf/0x4700 kernel/locking/lockdep.c:3315
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 7892 Comm: syz-executor432 Not tainted 5.0.0-rc6+ #72
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  panic+0x2cb/0x65c kernel/panic.c:214
-  __warn.cold+0x20/0x45 kernel/panic.c:571
-  report_bug+0x263/0x2b0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  fixup_bug arch/x86/kernel/traps.c:173 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
-  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:290
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
-RIP: 0010:__lock_acquire+0x13bf/0x4700 kernel/locking/lockdep.c:3315
-Code: 8b 1d 69 a5 05 08 45 85 db 0f 85 d6 f4 ff ff 48 c7 c6 e0 a3 6b 87 48  
-c7 c7 40 78 6b 87 44 89 9c 24 98 00 00 00 e8 df 29 ec ff <0f> 0b 44 8b 9c  
-24 98 00 00 00 e9 af f4 ff ff 8b 3d dc 67 fe 08 85
-RSP: 0018:ffff8880a5467250 EFLAGS: 00010086
-RAX: 0000000000000000 RBX: 00000000339133e8 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff815a9266 RDI: ffffed1014a8ce3c
-RBP: ffff8880a5467418 R08: ffff888092346380 R09: fffffbfff1133341
-R10: fffffbfff1133340 R11: ffffffff88999a03 R12: ffff888092346c40
-R13: ffff888092346c4a R14: 00000000339133e8 R15: ffff888092346380
-  lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:3841
-  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-  _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:144
-  spin_lock include/linux/spinlock.h:329 [inline]
-  __queue_work+0x23d/0x1180 kernel/workqueue.c:1437
-  __queue_delayed_work+0x1d6/0x270 kernel/workqueue.c:1542
-  mod_delayed_work_on+0xd8/0x200 kernel/workqueue.c:1616
-  mod_delayed_work include/linux/workqueue.h:542 [inline]
-  addrconf_mod_dad_work+0x3f/0xa0 net/ipv6/addrconf.c:328
-  addrconf_dad_start+0x76/0xb0 net/ipv6/addrconf.c:3976
-  inet6_addr_add+0x4e4/0x970 net/ipv6/addrconf.c:2930
-  inet6_rtm_newaddr+0xb9f/0x14c0 net/ipv6/addrconf.c:4757
-  rtnetlink_rcv_msg+0x465/0xb00 net/core/rtnetlink.c:5130
-  netlink_rcv_skb+0x17a/0x460 net/netlink/af_netlink.c:2477
-  rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5148
-  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0x536/0x720 net/netlink/af_netlink.c:1336
-  netlink_sendmsg+0x8ae/0xd70 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xdd/0x130 net/socket.c:631
-  __sys_sendto+0x262/0x380 net/socket.c:1786
-  __do_sys_sendto net/socket.c:1798 [inline]
-  __se_sys_sendto net/socket.c:1794 [inline]
-  __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1794
-  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x404073
-Code: ff 0f 83 d0 0a 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00  
-83 3d 1d 1f 3f 00 00 75 17 49 89 ca b8 2c 00 00 00 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 a1 0a 00 00 c3 48 83 ec 08 e8 57 01 00 00
-RSP: 002b:00000000007efa18 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000404073
-RDX: 0000000000000040 RSI: 00000000007f0070 RDI: 0000000000000003
-RBP: 00000000007efa80 R08: 00000000007efa20 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000003
-R13: 00000000004abc6c R14: 0000000000000000 R15: 0000000000000006
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+(There were also recent related discussions on SCM_RIGHTS refcount
+cycle issues, which is the other half of a file* gc)
+
+There might also be ways to rearrange the file* struct or fd table so
+that we're not taking so many cache misses for sockfd_lookup_light,
+since for sockets we don't use most of the file* struct at all.
 
