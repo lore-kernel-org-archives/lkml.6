@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8263C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C4F6C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 951262229F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECBCA21B68
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196698;
-	bh=XX8gkTWfydJ2h2LV3tckAphKi35817hiwi8/g5LwD/U=;
+	s=default; t=1550196705;
+	bh=qC0RSnOCCWtnYCg5kfjmc0+UBUtfchOlbidDHTizRaw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zMBj5uPdqaAvl30/nboNeNbEO74+SL9Mpcu7Zul548JY60UqF85c2KOnXaCBtUGL2
-	 SlK/CCwjvG+Hz4573Zp7bebk6ELl/69FsiWwCIldrff5rcD39fwfhot8BQWArwn1yi
-	 ZQv5/px+466NCDt1wdOmA5qab1aIgnLuBonMMAXY=
+	b=1TU7On0/yms1Qt6t3fXJD2sOb14cLY/OvtZS2qAInAAzsydWFerRyhAhZvd0Nzd++
+	 Tel8Q4ACTY20qT21fXLvyU3SchcZyNxUd2yPgFt9zi8e7nqgAwIwxZ20Ohqh3NywW4
+	 c31RvhbBJCqRknjR4RDqoaKJBtVK52ECX5MxQ3OM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403835AbfBOCLh (ORCPT
+        id S2403974AbfBOCLn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:11:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51546 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:11:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390794AbfBOCLb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:11:31 -0500
+        id S2403860AbfBOCLj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:11:39 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF732222D4;
-        Fri, 15 Feb 2019 02:11:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9352D21934;
+        Fri, 15 Feb 2019 02:11:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196690;
-        bh=XX8gkTWfydJ2h2LV3tckAphKi35817hiwi8/g5LwD/U=;
+        s=default; t=1550196698;
+        bh=qC0RSnOCCWtnYCg5kfjmc0+UBUtfchOlbidDHTizRaw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pLDb1UuuMqNzNV1vdUQlFLgVr4ojm8T5O3fBDCd+Hkxjo6fBGVUYCQI2VY5w+YlSz
-         T0LksEaBe9VfVTpYWWsxjpftDpg+JZ/raBeAkmVTr2jZRaoSIbwBaDQfyprlSYi9Hl
-         4b1vsVaZL3ZUm/GEGOapyxv/OH/QN4/fwy1rFeAY=
+        b=A+KsD2LyYjlVTRpamb3tFIIQLpLWnWJYimock9sz62D8wPVJ/Fm2nU71HouOLLu93
+         TkSFMyTW2zQEWP6rJehe9QdriZMraP0jvse/Z0EIRjhaN0wVGOAVxD1d1x99iUzmH8
+         BR+VDSDymiIR/NdaZVOx1K5GU7O2xoNzz3AjtGc8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 05/65] clk: tegra: dfll: Fix a potential Oop in remove()
-Date:   Thu, 14 Feb 2019 21:10:21 -0500
-Message-Id: <20190215021121.177674-5-sashal@kernel.org>
+Cc:     Zeng Tao <prime.zeng@hisilicon.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 10/65] usb: dwc3: gadget: Fix the uninitialized link_state when udc starts
+Date:   Thu, 14 Feb 2019 21:10:26 -0500
+Message-Id: <20190215021121.177674-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -58,38 +58,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Zeng Tao <prime.zeng@hisilicon.com>
 
-[ Upstream commit d39eca547f3ec67140a5d765a426eb157b978a59 ]
+[ Upstream commit 88b1bb1f3b88e0bf20b05d543a53a5b99bd7ceb6 ]
 
-If tegra_dfll_unregister() fails then "soc" is an error pointer.  We
-should just return instead of dereferencing it.
+Currently the link_state is uninitialized and the default value is 0(U0)
+before the first time we start the udc, and after we start the udc then
+ stop the udc, the link_state will be undefined.
+We may have the following warnings if we start the udc again with
+an undefined link_state:
 
-Fixes: 1752c9ee23fb ("clk: tegra: dfll: Fix drvdata overwriting issue")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+WARNING: CPU: 0 PID: 327 at drivers/usb/dwc3/gadget.c:294 dwc3_send_gadget_ep_cmd+0x304/0x308
+dwc3 100e0000.hidwc3_0: wakeup failed --> -22
+[...]
+Call Trace:
+[<c010f270>] (unwind_backtrace) from [<c010b3d8>] (show_stack+0x10/0x14)
+[<c010b3d8>] (show_stack) from [<c034a4dc>] (dump_stack+0x84/0x98)
+[<c034a4dc>] (dump_stack) from [<c0118000>] (__warn+0xe8/0x100)
+[<c0118000>] (__warn) from [<c0118050>](warn_slowpath_fmt+0x38/0x48)
+[<c0118050>] (warn_slowpath_fmt) from [<c0442ec0>](dwc3_send_gadget_ep_cmd+0x304/0x308)
+[<c0442ec0>] (dwc3_send_gadget_ep_cmd) from [<c0445e68>](dwc3_ep0_start_trans+0x48/0xf4)
+[<c0445e68>] (dwc3_ep0_start_trans) from [<c0446750>](dwc3_ep0_out_start+0x64/0x80)
+[<c0446750>] (dwc3_ep0_out_start) from [<c04451c0>](__dwc3_gadget_start+0x1e0/0x278)
+[<c04451c0>] (__dwc3_gadget_start) from [<c04452e0>](dwc3_gadget_start+0x88/0x10c)
+[<c04452e0>] (dwc3_gadget_start) from [<c045ee54>](udc_bind_to_driver+0x88/0xbc)
+[<c045ee54>] (udc_bind_to_driver) from [<c045f29c>](usb_gadget_probe_driver+0xf8/0x140)
+[<c045f29c>] (usb_gadget_probe_driver) from [<bf005424>](gadget_dev_desc_UDC_store+0xac/0xc4 [libcomposite])
+[<bf005424>] (gadget_dev_desc_UDC_store [libcomposite]) from[<c023d8e0>] (configfs_write_file+0xd4/0x160)
+[<c023d8e0>] (configfs_write_file) from [<c01d51e8>] (__vfs_write+0x1c/0x114)
+[<c01d51e8>] (__vfs_write) from [<c01d5ff4>] (vfs_write+0xa4/0x168)
+[<c01d5ff4>] (vfs_write) from [<c01d6d40>] (SyS_write+0x3c/0x90)
+[<c01d6d40>] (SyS_write) from [<c0107400>] (ret_fast_syscall+0x0/0x3c)
+
+Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/usb/dwc3/gadget.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-index 269d3595758b..edc31bb56674 100644
---- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -133,9 +133,11 @@ static int tegra124_dfll_fcpu_remove(struct platform_device *pdev)
- 	struct tegra_dfll_soc_data *soc;
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index 3baca4d4435a..766492332c6f 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -1860,6 +1860,7 @@ static int __dwc3_gadget_start(struct dwc3 *dwc)
  
- 	soc = tegra_dfll_unregister(pdev);
--	if (IS_ERR(soc))
-+	if (IS_ERR(soc)) {
- 		dev_err(&pdev->dev, "failed to unregister DFLL: %ld\n",
- 			PTR_ERR(soc));
-+		return PTR_ERR(soc);
-+	}
+ 	/* begin to receive SETUP packets */
+ 	dwc->ep0state = EP0_SETUP_PHASE;
++	dwc->link_state = DWC3_LINK_STATE_SS_DIS;
+ 	dwc3_ep0_out_start(dwc);
  
- 	tegra_cvb_remove_opp_table(soc->dev, soc->cvb, soc->max_freq);
- 
+ 	dwc3_gadget_enable_irq(dwc);
 -- 
 2.19.1
 
