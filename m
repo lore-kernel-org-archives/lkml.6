@@ -5,51 +5,52 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A47B7C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:11:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41EA2C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:11:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A935222D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:11:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B20B222D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:11:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b="NboxJUb4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="V5O/6hnz"
+	dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b="LMQQ6Foj";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OIv/vxn8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393309AbfBOWJY (ORCPT
+        id S2393779AbfBOWLI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 17:09:24 -0500
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:50951 "EHLO
+        Fri, 15 Feb 2019 17:11:08 -0500
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:36083 "EHLO
         wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2393266AbfBOWJW (ORCPT
+        by vger.kernel.org with ESMTP id S2393204AbfBOWJT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 17:09:22 -0500
+        Fri, 15 Feb 2019 17:09:19 -0500
 Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.west.internal (Postfix) with ESMTP id 68849310A;
-        Fri, 15 Feb 2019 17:09:20 -0500 (EST)
+        by mailout.west.internal (Postfix) with ESMTP id 7BBD7310A;
+        Fri, 15 Feb 2019 17:09:17 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Fri, 15 Feb 2019 17:09:21 -0500
+  by compute3.internal (MEProxy); Fri, 15 Feb 2019 17:09:18 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sent.com; h=from
         :to:cc:subject:date:message-id:in-reply-to:references:reply-to
-        :mime-version:content-transfer-encoding; s=fm2; bh=6izkSh0QkhVkd
-        lYUdv/QvNmi6VpmN/HVg2zSBUK92No=; b=NboxJUb4JJbErEEjJuHEaXojREiBj
-        IoGoDAYLyW9M4ZlbXDLD5a4W8IWjKO0Lx/GTmmtBGOVdE/IgQi/QNUaq55/aIrxS
-        rfsX3qFXTjklZIOjgrvQ8pnEC/BVBzTtlkPotu+d4rHZKzVsclO7/1srDu3xjcws
-        mcpveWVzvfWxQdEra7EDSuGQ4jlnBG52NRa5E6/oeK792X1izyhuWiqJWXFflZzr
-        bGoZvbegF31pe+hYlJATS0O3Xbta4fiBppVpWO1O/kc/ghnjUeAgRGKoea6T7QTb
-        685QmxY2A/JbgfJikJFEHWANCEyIWszkcoUh87eCOtGz9a+pDVNR91RdQ==
+        :mime-version:content-transfer-encoding; s=fm2; bh=s+M9Q1Dn/74r7
+        Hqs3gLQcg1STi/Xk0kU2xFV7ZybJ5M=; b=LMQQ6FojPBEWUxYcZyupLkHS7Gi6/
+        lCmVLgDcfuWz9E42THOfhFiodqUK9AGh/8qXtf2Oz92BOz8GBlswGNkO10eAsI8p
+        MnPC+Z6phDvGEVAQJx3NS0hZBEIrm+Zykik8xVKRicMjNuMx/Q5Pseh/BkMkdOPE
+        mVyJTbEZepYPiFmRSwzOYwIyafdxqPSjfy8tMAvmCxtYnm+Y5m7FfyqLmSfsD7be
+        gHmAJQ+E9QlOo7671DKVipxixMf2koJcueOM/TJhVPBR2JG35KIyWX93ehf6wXz+
+        HmTH5oKrFuZVcMTORI4XtdgikLmA6D3ixeLcAvtgo6XjQ+Wyo8Olt3AEg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:reply-to:subject
         :to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=6izkSh0QkhVkdlYUdv/QvNmi6VpmN/HVg2zSBUK92No=; b=V5O/6hnz
-        5DVgh0AQ+oFk/xn02eM91U6It3D895X9V5Ru8KPmXp30Hx1BOLt+nEtLby5e9l4K
-        twJRM8vyfAzvVv2GNSMerTUpAMtDZLa1MjeoWQlUnx97nA12lLv/23sLeqIVQ+hN
-        7aBGO/QT1yd6lgJJZqTbzsOBEkjDvA9MPAOqLLZRz38wdN+cyoqUKkAq12oi3Sgp
-        qO2bAGFxFuwDFILE4F3BXCss//2W1QPIGgA8DCEeo/6LV072rKcXcKZ2QflJhOuc
-        yoQYgpfqltmK+2IGR4Srp7BeDLGFLzsw6+yHLLrarsRTrTU7gJf8p+LWMRN5nzDZ
-        +mbPucr9aPVIcg==
-X-ME-Sender: <xms:jzhnXLM_CoCVjN9Htlvp_bw55_2FXYYhQ4twD_N-hRiSIWLRXObtLA>
+        fm2; bh=s+M9Q1Dn/74r7Hqs3gLQcg1STi/Xk0kU2xFV7ZybJ5M=; b=OIv/vxn8
+        z8uHrE0XwEs5J3iyx9QT7uKYL6ToBVMAWN5DFv8SVn3iTZNUSJa8TdtF/FnfxOuW
+        ydrpe04VTkGrfL2oJenrQ5PVE1XQ0mc5KNg3vxskG6exsbG63ILI6X+rRapRgWHH
+        WaHKW16CkiQF1x7giugKKyZPqsUr9bh2OQTSCV7JPYHe/CwzqTd+aNnYtMASt+vs
+        HLA4JPfbL8CjOvnHUBvbESMGVjEzXx4Ar7HNpQl+4aggb0Gyi2rJXOu0E8F2cZ1T
+        4tU6/j3coPB5+DfUjENijh2Nd+dv0CucbaI06/1vRIFVfLjSTxVRasibOPW5C5gr
+        OLmyU8z8PTtlAg==
+X-ME-Sender: <xms:jDhnXBCcq1om_2qetgpMaysLFy25EP24mNfLi1FrawSH3G4DmaAtZg>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledruddtjedgudehkecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecu
     fedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkf
@@ -57,13 +58,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledruddtjedgudehkecutefuodetgg
     sehsvghnthdrtghomheqnecukfhppedvudeirddvvdekrdduuddvrddvvdenucfrrghrrg
     hmpehmrghilhhfrhhomhepiihirdihrghnsehsvghnthdrtghomhenucevlhhushhtvghr
     ufhiiigvpeel
-X-ME-Proxy: <xmx:jzhnXFpfVE6BGzQkKkAjg8u-Mj65r6-Y-zEZATVEMbJxxyJM36O1rg>
-    <xmx:jzhnXAMoLQnI-ue2yUgkL31zJGsu_n-Zf4F-hFvXPxlYH3k7qsjfHg>
-    <xmx:jzhnXJ93mC53NoXZPjzsjf0d7TLhdpVGAhyZqQD9O2GwGRYLW0l61Q>
-    <xmx:jzhnXBaOaxmycjrFY3eBcg6HSGImfs3TMQxkwf-cf06lU-3vvkP_7A>
+X-ME-Proxy: <xmx:jDhnXJlFYof067REGB9rlsC2amOjXGIKIobFc_GXDpJeS29aY-Lvlw>
+    <xmx:jDhnXLozpyq_wKigPm5JLVtE3CgxRON_INRvmMBAWUCvE6vxgHJINQ>
+    <xmx:jDhnXD6VjRIjEv5oawlrTA6Zchmp3QzFpVexlg8959mVhH7F6-2KqQ>
+    <xmx:jThnXNZATm-XiCR9VxyMSGa5OKynws_2l_gCJuikAmxKVfn9sgPIEQ>
 Received: from nvrsysarch5.nvidia.com (thunderhill.nvidia.com [216.228.112.22])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 4AB1DE46AB;
-        Fri, 15 Feb 2019 17:09:18 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 922BBE4511;
+        Fri, 15 Feb 2019 17:09:15 -0500 (EST)
 From:   Zi Yan <zi.yan@sent.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
@@ -76,9 +77,9 @@ Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         Mark Hairgrove <mhairgrove@nvidia.com>,
         Nitin Gupta <nigupta@nvidia.com>,
         David Nellans <dnellans@nvidia.com>, Zi Yan <ziy@nvidia.com>
-Subject: [RFC PATCH 13/31] mm: thp: 1GB THP copy on write implementation.
-Date:   Fri, 15 Feb 2019 14:08:38 -0800
-Message-Id: <20190215220856.29749-14-zi.yan@sent.com>
+Subject: [RFC PATCH 11/31] mm: debug: print compound page order in dump_page().
+Date:   Fri, 15 Feb 2019 14:08:36 -0800
+Message-Id: <20190215220856.29749-12-zi.yan@sent.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190215220856.29749-1-zi.yan@sent.com>
 References: <20190215220856.29749-1-zi.yan@sent.com>
@@ -92,431 +93,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Zi Yan <ziy@nvidia.com>
 
-COW on 1GB THPs will fall back to 2MB THPs if 1GB THP is not available.
+Since we have more than just PMD-level THPs, printing compound page
+order is helpful to check the actual compound page sizes.
 
 Signed-off-by: Zi Yan <ziy@nvidia.com>
 ---
- arch/x86/include/asm/pgalloc.h |   9 +
- include/linux/huge_mm.h        |   5 +
- mm/huge_memory.c               | 319 ++++++++++++++++++++++++++++++++-
- mm/memory.c                    |   2 +-
- 4 files changed, 331 insertions(+), 4 deletions(-)
+ mm/debug.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/include/asm/pgalloc.h b/arch/x86/include/asm/pgalloc.h
-index 6e29ad9b9d7f..ebcb022f6bb9 100644
---- a/arch/x86/include/asm/pgalloc.h
-+++ b/arch/x86/include/asm/pgalloc.h
-@@ -110,6 +110,15 @@ static inline void pmd_populate(struct mm_struct *mm, pmd_t *pmd,
- 
- #define pmd_pgtable(pmd) pmd_page(pmd)
- 
-+static inline void pud_populate_with_pgtable(struct mm_struct *mm, pud_t *pud,
-+				struct page *pte)
-+{
-+	unsigned long pfn = page_to_pfn(pte);
+diff --git a/mm/debug.c b/mm/debug.c
+index 0abb987dad9b..21d211d7776c 100644
+--- a/mm/debug.c
++++ b/mm/debug.c
+@@ -68,8 +68,12 @@ void __dump_page(struct page *page, const char *reason)
+ 	pr_warn("page:%px count:%d mapcount:%d mapping:%px index:%#lx",
+ 		  page, page_ref_count(page), mapcount,
+ 		  page->mapping, page_to_pgoff(page));
+-	if (PageCompound(page))
+-		pr_cont(" compound_mapcount: %d", compound_mapcount(page));
++	if (PageCompound(page)) {
++		struct page *head = compound_head(page);
 +
-+	paravirt_alloc_pmd(mm, pfn);
-+	set_pud(pud, __pud(((pteval_t)pfn << PAGE_SHIFT) | _PAGE_TABLE));
-+}
-+
- #if CONFIG_PGTABLE_LEVELS > 2
- static inline pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long addr)
- {
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index c6272e6ffc35..02419fa91e12 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -19,6 +19,7 @@ extern int copy_huge_pud(struct mm_struct *dst_mm, struct mm_struct *src_mm,
- #ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
- extern void huge_pud_set_accessed(struct vm_fault *vmf, pud_t orig_pud);
- extern int do_huge_pud_anonymous_page(struct vm_fault *vmf);
-+extern int do_huge_pud_wp_page(struct vm_fault *vmf, pud_t orig_pud);
- #else
- static inline void huge_pud_set_accessed(struct vm_fault *vmf, pud_t orig_pud)
- {
-@@ -27,6 +28,10 @@ extern int do_huge_pud_anonymous_page(struct vm_fault *vmf)
- {
- 	return VM_FAULT_FALLBACK;
- }
-+extern int do_huge_pud_wp_page(struct vm_fault *vmf, pud_t orig_pud)
-+{
-+	return VM_FAULT_FALLBACK;
-+}
- #endif
- 
- extern vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf, pmd_t orig_pmd);
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index cad4ef01f607..0a006592f3fe 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1284,7 +1284,12 @@ int copy_huge_pud(struct mm_struct *dst_mm, struct mm_struct *src_mm,
- {
- 	spinlock_t *dst_ptl, *src_ptl;
- 	pud_t pud;
--	int ret;
-+	pmd_t *pmd_pgtable = NULL;
-+	int ret = -ENOMEM;
-+
-+	pmd_pgtable = pmd_alloc_one_page_with_ptes(vma->vm_mm, addr);
-+	if (unlikely(!pmd_pgtable))
-+		goto out;
- 
- 	dst_ptl = pud_lock(dst_mm, dst_pud);
- 	src_ptl = pud_lockptr(src_mm, src_pud);
-@@ -1292,8 +1297,13 @@ int copy_huge_pud(struct mm_struct *dst_mm, struct mm_struct *src_mm,
- 
- 	ret = -EAGAIN;
- 	pud = *src_pud;
--	if (unlikely(!pud_trans_huge(pud) && !pud_devmap(pud)))
-+	if (unlikely(!pud_trans_huge(pud) && !pud_devmap(pud))) {
-+		pmd_free_page_with_ptes(dst_mm, pmd_pgtable);
- 		goto out_unlock;
++		pr_cont(" compound_mapcount: %d, order: %d", compound_mapcount(page),
++				compound_order(head));
 +	}
-+
-+	if (pud_devmap(pud))
-+		pmd_free_page_with_ptes(dst_mm, pmd_pgtable);
- 
- 	/*
- 	 * When page table lock is held, the huge zero pud should not be
-@@ -1301,7 +1311,32 @@ int copy_huge_pud(struct mm_struct *dst_mm, struct mm_struct *src_mm,
- 	 * a page table.
- 	 */
- 	if (is_huge_zero_pud(pud)) {
--		/* No huge zero pud yet */
-+		struct page *zero_page;
-+		/*
-+		 * get_huge_zero_page() will never allocate a new page here,
-+		 * since we already have a zero page to copy. It just takes a
-+		 * reference.
-+		 */
-+		zero_page = mm_get_huge_pud_zero_page(dst_mm);
-+		set_huge_pud_zero_page(virt_to_page(pmd_pgtable),
-+			dst_mm, vma, addr, dst_pud, zero_page);
-+		ret = 0;
-+		goto out_unlock;
-+	}
-+
-+	if (pud_trans_huge(pud)) {
-+		struct page *src_page;
-+		int i;
-+
-+		src_page = pud_page(pud);
-+		VM_BUG_ON_PAGE(!PageHead(src_page), src_page);
-+		get_page(src_page);
-+		page_dup_rmap(src_page, true);
-+		add_mm_counter(dst_mm, MM_ANONPAGES, HPAGE_PUD_NR);
-+		mm_inc_nr_pmds(dst_mm);
-+		for (i = 0; i < (1<<(HPAGE_PUD_ORDER - HPAGE_PMD_ORDER)); i++)
-+			mm_inc_nr_ptes(dst_mm);
-+		pgtable_trans_huge_pud_deposit(dst_mm, dst_pud, virt_to_page(pmd_pgtable));
- 	}
- 
- 	pudp_set_wrprotect(src_mm, addr, src_pud);
-@@ -1312,6 +1347,7 @@ int copy_huge_pud(struct mm_struct *dst_mm, struct mm_struct *src_mm,
- out_unlock:
- 	spin_unlock(src_ptl);
- 	spin_unlock(dst_ptl);
-+out:
- 	return ret;
- }
- 
-@@ -1335,6 +1371,283 @@ void huge_pud_set_accessed(struct vm_fault *vmf, pud_t orig_pud)
- unlock:
- 	spin_unlock(vmf->ptl);
- }
-+
-+static int do_huge_pud_wp_page_fallback(struct vm_fault *vmf, pud_t orig_pud,
-+		struct page *page)
-+{
-+	struct vm_area_struct *vma = vmf->vma;
-+	unsigned long haddr = vmf->address & HPAGE_PUD_MASK;
-+	struct mem_cgroup *memcg;
-+	pgtable_t pgtable, pmd_pgtable;
-+	pud_t _pud;
-+	int ret = 0, i, j;
-+	struct page **pages;
-+	struct mmu_notifier_range range;
-+
-+	pages = kmalloc(sizeof(struct page *) * HPAGE_PUD_NR,
-+			GFP_KERNEL);
-+	if (unlikely(!pages)) {
-+		ret |= VM_FAULT_OOM;
-+		goto out;
-+	}
-+
-+	pmd_pgtable = pte_alloc_order(vma->vm_mm, haddr,
-+		HPAGE_PUD_ORDER - HPAGE_PMD_ORDER);
-+	if (!pmd_pgtable) {
-+		ret |= VM_FAULT_OOM;
-+		goto out_kfree_pages;
-+	}
-+
-+	for (i = 0; i < (1<<(HPAGE_PUD_ORDER-HPAGE_PMD_ORDER)); i++) {
-+		pages[i] = alloc_page_vma_node(GFP_TRANSHUGE, vma,
-+					       vmf->address, page_to_nid(page));
-+		if (unlikely(!pages[i] ||
-+			     mem_cgroup_try_charge(pages[i], vma->vm_mm,
-+				     GFP_KERNEL, &memcg, true))) {
-+			if (pages[i])
-+				put_page(pages[i]);
-+			while (--i >= 0) {
-+				memcg = (void *)page_private(pages[i]);
-+				set_page_private(pages[i], 0);
-+				mem_cgroup_cancel_charge(pages[i], memcg,
-+						true);
-+				put_page(pages[i]);
-+			}
-+			kfree(pages);
-+			pte_free_order(vma->vm_mm, pmd_pgtable,
-+				HPAGE_PMD_ORDER - HPAGE_PMD_ORDER);
-+			ret |= VM_FAULT_OOM;
-+			goto out;
-+		}
-+		count_vm_event(THP_FAULT_ALLOC);
-+		set_page_private(pages[i], (unsigned long)memcg);
-+		prep_transhuge_page(pages[i]);
-+	}
-+
-+	for (i = 0; i < (1<<(HPAGE_PUD_ORDER-HPAGE_PMD_ORDER)); i++) {
-+		for (j = 0; j < HPAGE_PMD_NR; j++) {
-+			copy_user_highpage(pages[i] + j, page + i * HPAGE_PMD_NR + j,
-+					   haddr + PAGE_SIZE * (i * HPAGE_PMD_NR + j), vma);
-+			cond_resched();
-+		}
-+		__SetPageUptodate(pages[i]);
-+	}
-+
-+	mmu_notifier_range_init(&range, vma->vm_mm, haddr,
-+				haddr + HPAGE_PUD_SIZE);
-+	mmu_notifier_invalidate_range_start(&range);
-+
-+	vmf->ptl = pud_lock(vma->vm_mm, vmf->pud);
-+	if (unlikely(!pud_same(*vmf->pud, orig_pud)))
-+		goto out_free_pages;
-+	VM_BUG_ON_PAGE(!PageHead(page), page);
-+
-+	/*
-+	 * Leave pmd empty until pte is filled note we must notify here as
-+	 * concurrent CPU thread might write to new page before the call to
-+	 * mmu_notifier_invalidate_range_end() happens which can lead to a
-+	 * device seeing memory write in different order than CPU.
-+	 *
-+	 * See Documentation/vm/mmu_notifier.txt
-+	 */
-+	pmdp_huge_clear_flush_notify(vma, haddr, vmf->pmd);
-+
-+	pgtable = pgtable_trans_huge_pud_withdraw(vma->vm_mm, vmf->pud);
-+	pud_populate_with_pgtable(vma->vm_mm, &_pud, pgtable);
-+
-+	for (i = 0; i < (1<<(HPAGE_PUD_ORDER-HPAGE_PMD_ORDER));
-+		 i++, haddr += (PAGE_SIZE * HPAGE_PMD_NR)) {
-+		pmd_t entry;
-+
-+		entry = mk_huge_pmd(pages[i], vma->vm_page_prot);
-+		entry = maybe_pmd_mkwrite(pmd_mkdirty(entry), vma);
-+		memcg = (void *)page_private(pages[i]);
-+		set_page_private(pages[i], 0);
-+		page_add_new_anon_rmap(pages[i], vmf->vma, haddr, true);
-+		mem_cgroup_commit_charge(pages[i], memcg, false, true);
-+		lru_cache_add_active_or_unevictable(pages[i], vma);
-+		vmf->pmd = pmd_offset(&_pud, haddr);
-+		VM_BUG_ON(!pmd_none(*vmf->pmd));
-+		pgtable_trans_huge_deposit(vma->vm_mm, vmf->pmd, &pmd_pgtable[i]);
-+		set_pmd_at(vma->vm_mm, haddr, vmf->pmd, entry);
-+	}
-+	kfree(pages);
-+
-+	smp_wmb(); /* make pte visible before pmd */
-+	pud_populate_with_pgtable(vma->vm_mm, vmf->pud, pgtable);
-+	page_remove_rmap(page, true);
-+	spin_unlock(vmf->ptl);
-+
-+	/*
-+	 * No need to double call mmu_notifier->invalidate_range() callback as
-+	 * the above pmdp_huge_clear_flush_notify() did already call it.
-+	 */
-+	mmu_notifier_invalidate_range_only_end(&range);
-+
-+	ret |= VM_FAULT_WRITE;
-+	put_page(page);
-+
-+out:
-+	return ret;
-+
-+out_free_pages:
-+	spin_unlock(vmf->ptl);
-+	mmu_notifier_invalidate_range_end(&range);
-+	for (i = 0; i < (1<<(HPAGE_PUD_ORDER-HPAGE_PMD_ORDER)); i++) {
-+		memcg = (void *)page_private(pages[i]);
-+		set_page_private(pages[i], 0);
-+		mem_cgroup_cancel_charge(pages[i], memcg, true);
-+		put_page(pages[i]);
-+	}
-+out_kfree_pages:
-+	kfree(pages);
-+	goto out;
-+}
-+
-+int do_huge_pud_wp_page(struct vm_fault *vmf, pud_t orig_pud)
-+{
-+	struct vm_area_struct *vma = vmf->vma;
-+	struct page *page = NULL, *new_page;
-+	struct mem_cgroup *memcg;
-+	unsigned long haddr = vmf->address & HPAGE_PUD_MASK;
-+	struct mmu_notifier_range range;
-+	gfp_t huge_gfp;			/* for allocation and charge */
-+	int ret = 0;
-+
-+	vmf->ptl = pud_lockptr(vma->vm_mm, vmf->pud);
-+	VM_BUG_ON_VMA(!vma->anon_vma, vma);
-+	if (is_huge_zero_pud(orig_pud))
-+		goto alloc;
-+	spin_lock(vmf->ptl);
-+	if (unlikely(!pud_same(*vmf->pud, orig_pud)))
-+		goto out_unlock;
-+
-+	page = pud_page(orig_pud);
-+	VM_BUG_ON_PAGE(!PageCompound(page) || !PageHead(page), page);
-+	/*
-+	 * We can only reuse the page if nobody else maps the huge page or it's
-+	 * part.
-+	 */
-+	if (!trylock_page(page)) {
-+		get_page(page);
-+		spin_unlock(vmf->ptl);
-+		lock_page(page);
-+		spin_lock(vmf->ptl);
-+		if (unlikely(!pud_same(*vmf->pud, orig_pud))) {
-+			unlock_page(page);
-+			put_page(page);
-+			goto out_unlock;
-+		}
-+		put_page(page);
-+	}
-+	if (reuse_swap_page(page, NULL)) {
-+		pud_t entry;
-+
-+		entry = pud_mkyoung(orig_pud);
-+		entry = maybe_pud_mkwrite(pud_mkdirty(entry), vma);
-+		if (pudp_set_access_flags(vma, haddr, vmf->pud, entry,  1))
-+			update_mmu_cache_pud(vma, vmf->address, vmf->pud);
-+		ret |= VM_FAULT_WRITE;
-+		unlock_page(page);
-+		goto out_unlock;
-+	}
-+	unlock_page(page);
-+	get_page(page);
-+	spin_unlock(vmf->ptl);
-+alloc:
-+	if (transparent_hugepage_enabled(vma) &&
-+	    !transparent_hugepage_debug_cow()) {
-+		huge_gfp = alloc_hugepage_direct_gfpmask(vma);
-+		new_page = alloc_hugepage_vma(huge_gfp, vma, haddr, HPAGE_PUD_ORDER);
-+	} else
-+		new_page = NULL;
-+
-+	if (likely(new_page)) {
-+		prep_transhuge_page(new_page);
-+	} else {
-+		if (!page) {
-+			WARN(1, "%s: split_huge_page\n", __func__);
-+			split_huge_pud(vma, vmf->pud, vmf->address);
-+			ret |= VM_FAULT_FALLBACK;
-+		} else {
-+			ret = do_huge_pud_wp_page_fallback(vmf, orig_pud, page);
-+			if (ret & VM_FAULT_OOM) {
-+				WARN(1, "%s: split_huge_page after wp fallback\n", __func__);
-+				split_huge_pud(vma, vmf->pud, vmf->address);
-+				ret |= VM_FAULT_FALLBACK;
-+			}
-+			put_page(page);
-+		}
-+		count_vm_event(THP_FAULT_FALLBACK_PUD);
-+		goto out;
-+	}
-+
-+	if (unlikely(mem_cgroup_try_charge(new_page, vma->vm_mm,
-+					huge_gfp, &memcg, true))) {
-+		put_page(new_page);
-+		WARN(1, "%s: split_huge_page after mem cgroup failed\n", __func__);
-+		split_huge_pud(vma, vmf->pud, vmf->address);
-+		if (page)
-+			put_page(page);
-+		ret |= VM_FAULT_FALLBACK;
-+		count_vm_event(THP_FAULT_FALLBACK_PUD);
-+		goto out;
-+	}
-+
-+	count_vm_event(THP_FAULT_ALLOC_PUD);
-+
-+	if (!page)
-+		clear_huge_page(new_page, vmf->address, HPAGE_PUD_NR);
-+	else
-+		copy_user_huge_page(new_page, page, haddr, vma, HPAGE_PUD_NR);
-+	__SetPageUptodate(new_page);
-+
-+	mmu_notifier_range_init(&range, vma->vm_mm, haddr,
-+				haddr + HPAGE_PUD_SIZE);
-+	mmu_notifier_invalidate_range_start(&range);
-+
-+	spin_lock(vmf->ptl);
-+	if (page)
-+		put_page(page);
-+	if (unlikely(!pud_same(*vmf->pud, orig_pud))) {
-+		spin_unlock(vmf->ptl);
-+		mem_cgroup_cancel_charge(new_page, memcg, true);
-+		put_page(new_page);
-+		goto out_mn;
-+	} else {
-+		pud_t entry;
-+
-+		entry = mk_huge_pud(new_page, vma->vm_page_prot);
-+		entry = maybe_pud_mkwrite(pud_mkdirty(entry), vma);
-+		pudp_huge_clear_flush_notify(vma, haddr, vmf->pud);
-+		page_add_new_anon_rmap(new_page, vma, haddr, true);
-+		mem_cgroup_commit_charge(new_page, memcg, false, true);
-+		lru_cache_add_active_or_unevictable(new_page, vma);
-+		set_pud_at(vma->vm_mm, haddr, vmf->pud, entry);
-+		update_mmu_cache_pud(vma, vmf->address, vmf->pud);
-+		if (!page) {
-+			add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PUD_NR);
-+		} else {
-+			VM_BUG_ON_PAGE(!PageHead(page), page);
-+			page_remove_rmap(page, true);
-+			put_page(page);
-+		}
-+		ret |= VM_FAULT_WRITE;
-+	}
-+	spin_unlock(vmf->ptl);
-+out_mn:
-+	/*
-+	 * No need to double call mmu_notifier->invalidate_range() callback as
-+	 * the above pmdp_huge_clear_flush_notify() did already call it.
-+	 */
-+	mmu_notifier_invalidate_range_only_end(&range);
-+out:
-+	return ret;
-+out_unlock:
-+	spin_unlock(vmf->ptl);
-+	return ret;
-+}
-+
- #endif /* CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD */
- 
- void huge_pmd_set_accessed(struct vm_fault *vmf, pmd_t orig_pmd)
-diff --git a/mm/memory.c b/mm/memory.c
-index 177478d5ee47..3608b5436519 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -3722,7 +3722,7 @@ static vm_fault_t wp_huge_pud(struct vm_fault *vmf, pud_t orig_pud)
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
- 	/* No support for anonymous transparent PUD pages yet */
- 	if (vma_is_anonymous(vmf->vma))
--		return VM_FAULT_FALLBACK;
-+		return do_huge_pud_wp_page(vmf, orig_pud);
- 	if (vmf->vma->vm_ops->huge_fault)
- 		return vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PUD);
- #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+ 	pr_cont("\n");
+ 	if (PageAnon(page))
+ 		pr_warn("anon ");
 -- 
 2.20.1
 
