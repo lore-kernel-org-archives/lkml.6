@@ -7,48 +7,44 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1F84C10F02
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C73FEC43381
 	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:47:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE326222EC
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:39:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED5B4222F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:39:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404656AbfBOJjI (ORCPT
+        id S2405056AbfBOJjk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:39:08 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:48307 "EHLO
+        Fri, 15 Feb 2019 04:39:40 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:54191 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391708AbfBOJjI (ORCPT
+        with ESMTP id S2390412AbfBOJjk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 04:39:08 -0500
+        Fri, 15 Feb 2019 04:39:40 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1F9clG31117957
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1F9dQkJ1118222
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 15 Feb 2019 01:38:47 -0800
+        Fri, 15 Feb 2019 01:39:26 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1F9clwa1117953;
-        Fri, 15 Feb 2019 01:38:47 -0800
-Date:   Fri, 15 Feb 2019 01:38:47 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1F9dPtH1118219;
+        Fri, 15 Feb 2019 01:39:25 -0800
+Date:   Fri, 15 Feb 2019 01:39:25 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-rexc248jorf5b4l3qjn888cz@git.kernel.org>
-Cc:     eranian@google.com, acme@redhat.com, namhyung@kernel.org,
-        adrian.hunter@intel.com, hpa@zytor.com, sukadev@linux.vnet.ibm.com,
-        sonnyrao@chromium.org, johnmccutchan@google.com, cel@us.ibm.com,
-        jolsa@kernel.org, tglx@linutronix.de, mingo@kernel.org,
-        peterz@infradead.org, linux-kernel@vger.kernel.org,
-        dsahern@gmail.com, pawel.moll@arm.com, ak@linux.intel.com
-Reply-To: acme@redhat.com, namhyung@kernel.org, eranian@google.com,
-          sukadev@linux.vnet.ibm.com, sonnyrao@chromium.org, hpa@zytor.com,
-          johnmccutchan@google.com, cel@us.ibm.com,
-          adrian.hunter@intel.com, mingo@kernel.org, peterz@infradead.org,
-          linux-kernel@vger.kernel.org, jolsa@kernel.org,
-          tglx@linutronix.de, dsahern@gmail.com, ak@linux.intel.com,
-          pawel.moll@arm.com
+From:   tip-bot for Mathieu Poirier <tipbot@zytor.com>
+Message-ID: <tip-b611f63bb1b7ba20e87d9d0d7af88d247bcf98eb@git.kernel.org>
+Cc:     leo.yan@linaro.org, suzuki.poulose@arm.com, peterz@infradead.org,
+        mingo@kernel.org, acme@redhat.com, tglx@linutronix.de,
+        jolsa@redhat.com, mathieu.poirier@linaro.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com
+Reply-To: mathieu.poirier@linaro.org, hpa@zytor.com,
+          linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          jolsa@redhat.com, acme@redhat.com, mingo@kernel.org,
+          leo.yan@linaro.org, suzuki.poulose@arm.com, peterz@infradead.org
+In-Reply-To: <20190212171618.25355-2-mathieu.poirier@linaro.org>
+References: <20190212171618.25355-2-mathieu.poirier@linaro.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf build: Add missing
- FEATURE_CHECK_LDFLAGS-libcrypto
-Git-Commit-ID: 271402a3e97e3b9a4ce1e322a5f66c493122e1ec
+Subject: [tip:perf/core] perf cs-etm: Remove unused structure field "state"
+Git-Commit-ID: b611f63bb1b7ba20e87d9d0d7af88d247bcf98eb
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -62,86 +58,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  271402a3e97e3b9a4ce1e322a5f66c493122e1ec
-Gitweb:     https://git.kernel.org/tip/271402a3e97e3b9a4ce1e322a5f66c493122e1ec
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 12 Feb 2019 16:19:45 -0300
+Commit-ID:  b611f63bb1b7ba20e87d9d0d7af88d247bcf98eb
+Gitweb:     https://git.kernel.org/tip/b611f63bb1b7ba20e87d9d0d7af88d247bcf98eb
+Author:     Mathieu Poirier <mathieu.poirier@linaro.org>
+AuthorDate: Tue, 12 Feb 2019 10:16:06 -0700
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 14 Feb 2019 15:18:05 -0300
+CommitDate: Thu, 14 Feb 2019 15:18:06 -0300
 
-perf build: Add missing FEATURE_CHECK_LDFLAGS-libcrypto
+perf cs-etm: Remove unused structure field "state"
 
-When the libcrypto feature test was added we forgot to add its
-FEATURE_CHECK_LDFLAGS pointing to the library needed to link with the
-test-all.bin feature test fast path binary, so even when it was
-introduced we got this:
+Field "state" in structure cs_etm_queue is no longer used and needs
+to be removed.
 
-  $ cat /tmp/build/perf/feature/test-all.make.output
-  /usr/bin/ld: /tmp/ccjKeJJU.o: in function `main_test_libcrypto':
-  /home/acme/git/perf/tools/build/feature/test-libcrypto.c:10: undefined reference to `MD5_Init'
-  /usr/bin/ld: /home/acme/git/perf/tools/build/feature/test-libcrypto.c:11: undefined reference to `MD5_Update'
-  /usr/bin/ld: /home/acme/git/perf/tools/build/feature/test-libcrypto.c:12: undefined reference to `MD5_Final'
-  /usr/bin/ld: /home/acme/git/perf/tools/build/feature/test-libcrypto.c:14: undefined reference to `SHA1'
-  collect2: error: ld returned 1 exit status
-  $ cat /tmp/build/perf/feature/test-libcrypto.
-  test-libcrypto.bin          test-libcrypto.d            test-libcrypto.make.output
-  $ cat /tmp/build/perf/feature/test-libcrypto.make.output
-  $
-
-Fix it, so that we keep the fast path, which, at this point, will fail
-with the unwind-ARCH feature tests, that will be fixed in a followup
-patch:
-
-  $ make -C tools/perf O=/tmp/build/perf
-  ...                     libcrypto: [ on  ]
-   <SNIP>
-  $ cat /tmp/build/perf/feature/test-all.make.output
-  $ ldd /tmp/build/perf/feature/test-all.bin | grep libcrypto
-	libcrypto.so.1.1 => /lib64/libcrypto.so.1.1 (0x00007f9892805000)
-  $
-  $ grep libcrypto /tmp/build/perf/FEATURE-DUMP
-  feature-libcrypto=1
-  $
-
-With the unwind-ARCH tests fixed, we now finally manage to get
-test-all.bin built and linked with the features it tests, among them the
-ones fixed in this patchkit:
-
-  $ ldd /tmp/build/perf/feature/test-all.bin  | egrep 'unwind|crypto'
-	libcrypto.so.1.1 => /lib64/libcrypto.so.1.1 (0x00007f95cf2b8000)
-	libunwind-x86_64.so.8 => /lib64/libunwind-x86_64.so.8 (0x00007f95cf294000)
-	libunwind.so.8 => /lib64/libunwind.so.8 (0x00007f95cf278000)
-  $
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Carl Love <cel@us.ibm.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: John McCutchan <johnmccutchan@google.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Pawel Moll <pawel.moll@arm.com>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Leo Yan <leo.yan@linaro.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sonny Rao <sonnyrao@chromium.org>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-Fixes: 8ee4646038e4 ("perf build: Add libcrypto feature detection")
-Link: https://lkml.kernel.org/n/tip-rexc248jorf5b4l3qjn888cz@git.kernel.org
+Cc: Suzuki K Poulouse <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/20190212171618.25355-2-mathieu.poirier@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Makefile.config | 2 ++
- 1 file changed, 2 insertions(+)
+ tools/perf/util/cs-etm.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index 4b735042cad7..0f11d5891301 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -114,6 +114,8 @@ FEATURE_CHECK_LDFLAGS-libunwind-aarch64 = -lunwind -lunwind-aarch64
- FEATURE_CHECK_LDFLAGS-libunwind-x86 = -lunwind -llzma -lunwind-x86
- FEATURE_CHECK_LDFLAGS-libunwind-x86_64 = -lunwind -llzma -lunwind-x86_64
- 
-+FEATURE_CHECK_LDFLAGS-libcrypto = -lcrypto
-+
- ifdef CSINCLUDES
-   LIBOPENCSD_CFLAGS := -I$(CSINCLUDES)
- endif
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 0b11d653cfbe..ebd68eb43da9 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -65,7 +65,6 @@ struct cs_etm_queue {
+ 	struct thread *thread;
+ 	struct cs_etm_decoder *decoder;
+ 	struct auxtrace_buffer *buffer;
+-	const struct cs_etm_state *state;
+ 	union perf_event *event_buf;
+ 	unsigned int queue_nr;
+ 	pid_t pid, tid;
