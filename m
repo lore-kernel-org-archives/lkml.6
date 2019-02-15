@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA6BBC4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81D74C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:26:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A9BE2073D
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:26:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5095C2073D
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:26:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197607;
-	bh=fP+Wu8nBfd7C9PqpepZH1S8Em8FMnQz4W9HFcyCP5f0=;
+	s=default; t=1550197612;
+	bh=R4ydpTG7smk2eD9Q5j50t0WgvISxBKqJsmDhBwhzhPI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RCFmal34z7PNkV7si0OydeSbgMYRz2Y+xvQEBt2vZfFv2xfq2UzuFMM0pX7azTXXB
-	 HupUDODmSzbhLIKt9dkiLbwB+ft4o21dx1XWcuOPBNSalT+AvFzq908PRYAm9jkSoF
-	 rVggyh+HJL7fvZMdN+ODSeGFLSfP5JwDIY2/iR3k=
+	b=YTTQe+Qq1noHAhmODAHKhKEghlUKmvJna6X6gtOUBxMSMQ99v5aogQhbgy5MthGLR
+	 JWH2eEk6cE5ufdihTdABfQuLyuCTI5zkHsL0adkyaZiS/HPJSco/24ScJek6CTdPwM
+	 0fbZtI97nszkcvm33yUklE6VmPzXk+bWDxOkTFyU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404846AbfBOCNr (ORCPT
+        id S1729880AbfBOC0u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:13:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53664 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:26:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53710 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391435AbfBOCNo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:13:44 -0500
+        id S2404821AbfBOCNr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:13:47 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75D6F206BA;
-        Fri, 15 Feb 2019 02:13:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C226206BA;
+        Fri, 15 Feb 2019 02:13:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196823;
-        bh=fP+Wu8nBfd7C9PqpepZH1S8Em8FMnQz4W9HFcyCP5f0=;
+        s=default; t=1550196826;
+        bh=R4ydpTG7smk2eD9Q5j50t0WgvISxBKqJsmDhBwhzhPI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l9AxJCHkQhyO4Jw3EHSkv1FEpPOhaAWqb8cJW7X/xWxbzZVan83bF6QB7ZYUJHHst
-         JGJoUODLqUJVJ03ZbpTypOTSE3sBM1lKiABJNDmtg2Mwx8OJHkqDcr6OR8QSVghKqh
-         N49G9m/0e/KwWWjvlIgxHtTT+JgIlSIY44A9eBS0=
+        b=wR+ENp60EgI0hNup/pmGZkyZlBHHZYQBMqfCG1IVLRItYFYlVJoaeH+IELxT5s2ve
+         PxGunzDO5KHRLt8y1KMPf+8E05rsf38dm4qxyAgSlVt4/xfbsvvwGfu3Z1b9/sdGEt
+         wx88Exd/8XZcZPvLYqXt8VZF0fIUeSsL4qtqTqDs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Aaron Hill <aa1ronham@gmail.com>, Zhang Rui <rui.zhang@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 16/40] drivers: thermal: int340x_thermal: Fix sysfs race condition
-Date:   Thu, 14 Feb 2019 21:12:49 -0500
-Message-Id: <20190215021313.178476-16-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, devel@driverdev.osuosl.org
+Subject: [PATCH AUTOSEL 4.14 17/40] staging: rtl8723bs: Fix build error with Clang when inlining is disabled
+Date:   Thu, 14 Feb 2019 21:12:50 -0500
+Message-Id: <20190215021313.178476-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021313.178476-1-sashal@kernel.org>
 References: <20190215021313.178476-1-sashal@kernel.org>
@@ -57,113 +58,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aaron Hill <aa1ronham@gmail.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 129699bb8c7572106b5bbb2407c2daee4727ccad ]
+[ Upstream commit 97715058b70da1262fd07798c8b2e3e894f759dd ]
 
-Changes since V1:
-* Use dev_info instead of printk
-* Use dev_warn instead of BUG_ON
+When CONFIG_NO_AUTO_INLINE was present in linux-next (which added
+'-fno-inline-functions' to KBUILD_CFLAGS), an allyesconfig build with
+Clang failed at the modpost stage:
 
-Previously, sysfs_create_group was called before all initialization had
-fully run - specifically, before pci_set_drvdata was called. Since the
-sysctl group is visible to userspace as soon as sysfs_create_group
-returns, a small window of time existed during which a process could read
-from an uninitialized/partially-initialized device.
+ERROR: "is_broadcast_mac_addr" [drivers/staging/rtl8723bs/r8723bs.ko] undefined!
+ERROR: "is_zero_mac_addr" [drivers/staging/rtl8723bs/r8723bs.ko] undefined!
+ERROR: "is_multicast_mac_addr" [drivers/staging/rtl8723bs/r8723bs.ko] undefined!
 
-This commit moves the creation of the sysctl group to after all
-initialized is completed. This ensures that it's impossible for
-userspace to read from a sysctl file before initialization has fully
-completed.
+These functions were marked as extern inline, meaning that if inlining
+doesn't happen, the function will be undefined, as it is above.
 
-To catch any future regressions, I've added a check to ensure
-that proc_thermal_emum_mode is never PROC_THERMAL_NONE when a process
-tries to read from a sysctl file. Previously, the aforementioned race
-condition could result in the 'else' branch
-running while PROC_THERMAL_NONE was set,
-leading to a null pointer deference.
+This happens to work with GCC because the '-fno-inline-functions' option
+respects the __inline attribute so all instances of these functions are
+inlined as expected and the definition doesn't actually matter. However,
+with Clang and '-fno-inline-functions', a function has to be marked with
+the __always_inline attribute to be considered for inlining, which none
+of these functions are. Clang tries to find the symbol definition
+elsewhere as it was told and fails, which trickles down to modpost.
 
-Signed-off-by: Aaron Hill <aa1ronham@gmail.com>
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+To make sure that this code compiles regardless of compiler and make the
+intention of the code clearer, use 'static' to ensure these functions
+are always defined, regardless of inlining. Additionally, silence a
+checkpatch warning by switching from '__inline' to 'inline'.
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../processor_thermal_device.c                | 28 ++++++++++---------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+ drivers/staging/rtl8723bs/include/ieee80211.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/thermal/int340x_thermal/processor_thermal_device.c b/drivers/thermal/int340x_thermal/processor_thermal_device.c
-index c6ab7db8c8e2..c344a3783625 100644
---- a/drivers/thermal/int340x_thermal/processor_thermal_device.c
-+++ b/drivers/thermal/int340x_thermal/processor_thermal_device.c
-@@ -77,7 +77,12 @@ static ssize_t power_limit_##index##_##suffix##_show(struct device *dev, \
- 	struct pci_dev *pci_dev; \
- 	struct platform_device *pdev; \
- 	struct proc_thermal_device *proc_dev; \
--\
-+	\
-+	if (proc_thermal_emum_mode == PROC_THERMAL_NONE) { \
-+		dev_warn(dev, "Attempted to get power limit before device was initialized!\n"); \
-+		return 0; \
-+	} \
-+	\
- 	if (proc_thermal_emum_mode == PROC_THERMAL_PLATFORM_DEV) { \
- 		pdev = to_platform_device(dev); \
- 		proc_dev = platform_get_drvdata(pdev); \
-@@ -291,11 +296,6 @@ static int proc_thermal_add(struct device *dev,
- 	*priv = proc_priv;
+diff --git a/drivers/staging/rtl8723bs/include/ieee80211.h b/drivers/staging/rtl8723bs/include/ieee80211.h
+index 73ce63770c3c..fa9c80fc7773 100644
+--- a/drivers/staging/rtl8723bs/include/ieee80211.h
++++ b/drivers/staging/rtl8723bs/include/ieee80211.h
+@@ -1008,18 +1008,18 @@ enum ieee80211_state {
+ #define IP_FMT "%pI4"
+ #define IP_ARG(x) (x)
  
- 	ret = proc_thermal_read_ppcc(proc_priv);
--	if (!ret) {
--		ret = sysfs_create_group(&dev->kobj,
--					 &power_limit_attribute_group);
--
--	}
- 	if (ret)
- 		return ret;
- 
-@@ -309,8 +309,7 @@ static int proc_thermal_add(struct device *dev,
- 
- 	proc_priv->int340x_zone = int340x_thermal_zone_add(adev, ops);
- 	if (IS_ERR(proc_priv->int340x_zone)) {
--		ret = PTR_ERR(proc_priv->int340x_zone);
--		goto remove_group;
-+		return PTR_ERR(proc_priv->int340x_zone);
- 	} else
- 		ret = 0;
- 
-@@ -324,9 +323,6 @@ static int proc_thermal_add(struct device *dev,
- 
- remove_zone:
- 	int340x_thermal_zone_remove(proc_priv->int340x_zone);
--remove_group:
--	sysfs_remove_group(&proc_priv->dev->kobj,
--			   &power_limit_attribute_group);
- 
- 	return ret;
- }
-@@ -357,7 +353,10 @@ static int int3401_add(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, proc_priv);
- 	proc_thermal_emum_mode = PROC_THERMAL_PLATFORM_DEV;
- 
--	return 0;
-+	dev_info(&pdev->dev, "Creating sysfs group for PROC_THERMAL_PLATFORM_DEV\n");
-+
-+	return sysfs_create_group(&pdev->dev.kobj,
-+					 &power_limit_attribute_group);
+-extern __inline int is_multicast_mac_addr(const u8 *addr)
++static inline int is_multicast_mac_addr(const u8 *addr)
+ {
+         return ((addr[0] != 0xff) && (0x01 & addr[0]));
  }
  
- static int int3401_remove(struct platform_device *pdev)
-@@ -434,7 +433,10 @@ static int  proc_thermal_pci_probe(struct pci_dev *pdev,
- 			dev_err(&pdev->dev, "No auxiliary DTSs enabled\n");
- 	}
- 
--	return 0;
-+	dev_info(&pdev->dev, "Creating sysfs group for PROC_THERMAL_PCI\n");
-+
-+	return sysfs_create_group(&pdev->dev.kobj,
-+					 &power_limit_attribute_group);
+-extern __inline int is_broadcast_mac_addr(const u8 *addr)
++static inline int is_broadcast_mac_addr(const u8 *addr)
+ {
+ 	return ((addr[0] == 0xff) && (addr[1] == 0xff) && (addr[2] == 0xff) &&   \
+ 		(addr[3] == 0xff) && (addr[4] == 0xff) && (addr[5] == 0xff));
  }
  
- static void  proc_thermal_pci_remove(struct pci_dev *pdev)
+-extern __inline int is_zero_mac_addr(const u8 *addr)
++static inline int is_zero_mac_addr(const u8 *addr)
+ {
+ 	return ((addr[0] == 0x00) && (addr[1] == 0x00) && (addr[2] == 0x00) &&   \
+ 		(addr[3] == 0x00) && (addr[4] == 0x00) && (addr[5] == 0x00));
 -- 
 2.19.1
 
