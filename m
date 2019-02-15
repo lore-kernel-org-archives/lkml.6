@@ -2,101 +2,84 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5A6AC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 21:42:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A2BCC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 21:43:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACCC3222E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 21:42:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5F2B222DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 21:43:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392414AbfBOVmp (ORCPT
+        id S2392484AbfBOVnD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 16:42:45 -0500
-Received: from gateway36.websitewelcome.com ([192.185.194.2]:33257 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727724AbfBOVmo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 16:42:44 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 61208400F21E9
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 14:57:03 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ulFrgSAqJ2qH7ulFrgzi2G; Fri, 15 Feb 2019 15:42:43 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=57170 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gulFq-000ria-Vt; Fri, 15 Feb 2019 15:42:43 -0600
-Date:   Fri, 15 Feb 2019 15:42:42 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Adaptec OEM Raid Solutions <aacraid@microsemi.com>,
-        "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Raghava Aditya Renukunta 
-        <RaghavaAditya.Renukunta@microsemi.com>
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] scsi: aacraid: Fix missing break in switch statement
-Message-ID: <20190215214242.GA8393@embeddedor>
+        Fri, 15 Feb 2019 16:43:03 -0500
+Received: from sauhun.de ([88.99.104.3]:36650 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727724AbfBOVnD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 16:43:03 -0500
+Received: from localhost (unknown [195.52.228.164])
+        by pokefinder.org (Postfix) with ESMTPSA id AD58C2E3551;
+        Fri, 15 Feb 2019 22:43:00 +0100 (CET)
+Date:   Fri, 15 Feb 2019 22:42:59 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] i2c: tegra: change phrasing, "fallbacking" to
+ "falling back"
+Message-ID: <20190215214259.lijzlwaelm3najwr@ninjato>
+References: <20190215153126.18575-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cydg23admer3cmh5"
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gulFq-000ria-Vt
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.119.20]:57170
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20190215153126.18575-1-colin.king@canonical.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add missing break statement and fix identation issue.
 
-This bug was found thanks to the ongoing efforts to enable
--Wimplicit-fallthrough.
+--cydg23admer3cmh5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fixes: 9cb62fa24e0d ("aacraid: Log firmware AIF messages")
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/scsi/aacraid/commsup.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+On Fri, Feb 15, 2019 at 03:31:26PM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+>=20
+> The phrasing in two dev_err messages is using fallbacking which
+> os less understandable than "falling back", so fix this up.
+>=20
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-diff --git a/drivers/scsi/aacraid/commsup.c b/drivers/scsi/aacraid/commsup.c
-index 0bdc6b0f725f..e67e032936ef 100644
---- a/drivers/scsi/aacraid/commsup.c
-+++ b/drivers/scsi/aacraid/commsup.c
-@@ -1303,8 +1303,9 @@ static void aac_handle_aif(struct aac_dev * dev, struct fib * fibptr)
- 				  ADD : DELETE;
- 				break;
- 			}
--			case AifBuManagerEvent:
--				aac_handle_aif_bu(dev, aifcmd);
-+			break;
-+		case AifBuManagerEvent:
-+			aac_handle_aif_bu(dev, aifcmd);
- 			break;
- 		}
- 
--- 
-2.20.1
+Applied to for-next, thanks!
 
+
+--cydg23admer3cmh5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxnMl4ACgkQFA3kzBSg
+KbbuyQ/+MbAm4ZxfTLByL3Bler1Blvc9fJOX5r3PFhmKT4oKXhC9i21188LEW7VY
+hXcoZT9xpQtBjzUpo+1M5SyHXBF60gY9CFbrogQ18qbyJxW5KfxIoJbwPHLRZ0kQ
+aawr+Qo3pBm8X/+NwMuSTlNxcUHN4jhNZ1Od1mwvmqln5O1WTVCXzNQYCrE3ifyi
+kLCL4/Y0FHjTZrYksUFMYUA3uYhoaKb8xBNW4qxrETclEJSEvne5MN+K4WIbO/90
++DDz+83dX1Xnn7Eyy5j1WQ+eRgswoKl8K9iOlCcXVlgejXgOCYthbdLGdQRqZdq8
+89BuXvZygaPNvaAoIhZ5xZmQc5z20g7pUOS3MghwSCwUELK2AweHd7CwSvaxz4YD
+ptm9vdwlvbHBnMT3TXjwLFdgtF/uLhpmcuXLv6VHx4e4LM7OMXvvRu+uOUOvpgX9
+g5pYhZRLT7+Xr6piQDZ1AYDGYrzH0WBM6VDz7uHq38I8JTWDNmrIhgA/QP3eqtqW
+J5wGxFdyz8yX+dTHCOtANTxjYNKgAMe1zCHYtvBSz6/eI6srZ0r/kN94sV9mlYwK
+AkoFzQoMgOFTJGGBkoHsmD+9uYoySbUpIukt+CmUCJo7/9aE8qGq656jz6tlZst+
++xao2NUDWhENDjEFWQdkxlShUDnd0UT1miMH43vCl6bp772RjtE=
+=3c33
+-----END PGP SIGNATURE-----
+
+--cydg23admer3cmh5--
