@@ -2,49 +2,53 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC719C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 04:35:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5766DC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 04:52:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81D602192D
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 04:35:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2747E2073D
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 04:52:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731451AbfBOEf4 (ORCPT
+        id S1731510AbfBOEtp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 23:35:56 -0500
-Received: from mga05.intel.com ([192.55.52.43]:19471 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727231AbfBOEf4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 23:35:56 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Feb 2019 20:35:55 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,371,1544515200"; 
-   d="scan'208";a="319218099"
-Received: from cli6-desk1.ccr.corp.intel.com (HELO [10.239.161.118]) ([10.239.161.118])
-  by fmsmga006.fm.intel.com with ESMTP; 14 Feb 2019 20:35:53 -0800
-Subject: Re: [PATCH v11 2/3] x86,/proc/pid/status: Add AVX-512 usage elapsed
- time
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     mingo@redhat.com, peterz@infradead.org, hpa@zytor.com,
-        ak@linux.intel.com, tim.c.chen@linux.intel.com,
-        dave.hansen@intel.com, arjan@linux.intel.com, aubrey.li@intel.com,
-        linux-kernel@vger.kernel.org
-References: <20190213023748.6614-1-aubrey.li@linux.intel.com>
- <20190213023748.6614-2-aubrey.li@linux.intel.com>
- <alpine.DEB.2.21.1902141212400.1561@nanos.tec.linutronix.de>
-From:   "Li, Aubrey" <aubrey.li@linux.intel.com>
-Message-ID: <85b22e16-fffc-7ebe-2ab1-3b6fe7e036ab@linux.intel.com>
-Date:   Fri, 15 Feb 2019 12:35:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.1
+        Thu, 14 Feb 2019 23:49:45 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54568 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726300AbfBOEto (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 23:49:44 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EA741A78;
+        Thu, 14 Feb 2019 20:49:43 -0800 (PST)
+Received: from [10.162.0.144] (a075553-lin.blr.arm.com [10.162.0.144])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9513D3F589;
+        Thu, 14 Feb 2019 20:49:40 -0800 (PST)
+Subject: Re: [PATCH v5 4/5] arm64/kvm: add a userspace option to enable
+ pointer authentication
+To:     Kristina Martsenko <kristina.martsenko@arm.com>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>
+References: <1548658727-14271-1-git-send-email-amit.kachhap@arm.com>
+ <1548658727-14271-5-git-send-email-amit.kachhap@arm.com>
+ <a9b22dcf-2238-344f-0b7b-b4a9de7c562c@arm.com>
+From:   Amit Daniel Kachhap <amit.kachhap@arm.com>
+Message-ID: <6f341bd4-299b-8cc5-2509-f3598a78e4c6@arm.com>
+Date:   Fri, 15 Feb 2019 10:19:38 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1902141212400.1561@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <a9b22dcf-2238-344f-0b7b-b4a9de7c562c@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -52,114 +56,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/2/14 19:29, Thomas Gleixner wrote:
-> On Wed, 13 Feb 2019, Aubrey Li wrote:
-> 
->> AVX-512 components use could cause core turbo frequency drop. So
->> it's useful to expose AVX-512 usage elapsed time as a heuristic hint
->> for the user space job scheduler to cluster the AVX-512 using tasks
->> together.
+Hi,
+
+On 2/13/19 11:05 PM, Kristina Martsenko wrote:
+> On 28/01/2019 06:58, Amit Daniel Kachhap wrote:
+>> This feature will allow the KVM guest to allow the handling of
+>> pointer authentication instructions or to treat them as undefined
+>> if not set. It uses the existing vcpu API KVM_ARM_VCPU_INIT to
+>> supply this parameter instead of creating a new API.
 >>
->> Example:
->> $ cat /proc/pid/status | grep AVX512_elapsed_ms
->> AVX512_elapsed_ms:      1020
->>
->> The number '1020' denotes 1020 millisecond elapsed since last time
->> context switch the off-CPU task using AVX-512 components, thus the
+>> A new register is not created to pass this parameter via
+>> SET/GET_ONE_REG interface as just a flag (KVM_ARM_VCPU_PTRAUTH)
+>> supplied is enough to enable this feature.
 > 
-> I know what you are trying to say, but this sentence does not parse. So
-> what you want to say is:
+> [...]
 > 
->   This means that 1020 milliseconds have elapsed since the AVX512 usage of
->   the task was detected when the task was scheduled out.
-
-Thanks, will refine this.
-
+>> diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
+>> index b200c14..b6950df 100644
+>> --- a/arch/arm/include/asm/kvm_host.h
+>> +++ b/arch/arm/include/asm/kvm_host.h
+>> @@ -346,6 +346,10 @@ static inline int kvm_arm_have_ssbd(void)
+>>   static inline void kvm_vcpu_load_sysregs(struct kvm_vcpu *vcpu) {}
+>>   static inline void kvm_vcpu_put_sysregs(struct kvm_vcpu *vcpu) {}
+>>   static inline void kvm_arm_vcpu_ptrauth_reset(struct kvm_vcpu *vcpu) {}
+>> +static inline bool kvm_arm_vcpu_ptrauth_allowed(struct kvm_vcpu *vcpu)
+>> +{
+>> +	return false;
+>> +}
 > 
-> Aside of that 1020ms is hardly evidence for real AVX512 usage, so you want
-> to come up with a better example than that.
-
-Oh, I wrote a simple benchmark to loop {AVX ops a while and non-AVX ops a while},
-So this is expected. Yeah, I should use real AVX512 usage. Below is tensorflow
-output to train a neural network model to classify images (HZ = 250 on my side).
-Will change to use this example.
-
-$ while [ 1 ]; do cat /proc/83226/status | grep AVX; sleep 1; done
-AVX512_elapsed_ms:	4
-AVX512_elapsed_ms:	16
-AVX512_elapsed_ms:	12
-AVX512_elapsed_ms:	12
-AVX512_elapsed_ms:	16
-AVX512_elapsed_ms:	8
-AVX512_elapsed_ms:	8
-AVX512_elapsed_ms:	4
-AVX512_elapsed_ms:	4
-AVX512_elapsed_ms:	12
-AVX512_elapsed_ms:	0
-AVX512_elapsed_ms:	16
-AVX512_elapsed_ms:	4
-AVX512_elapsed_ms:	0
-AVX512_elapsed_ms:	8
-AVX512_elapsed_ms:	8
-AVX512_elapsed_ms:	4
-
+> It seems like this is only ever called from arm64 code, so do we need an
+> arch/arm/ definition?
+Yes not required. Nice catch.
 > 
-> But that makes me think about the usefulness of this hint in general.
+>> +/**
+>> + * kvm_arm_vcpu_ptrauth_allowed - checks if ptrauth feature is present in vcpu
+>> + *
+>> + * @vcpu: The VCPU pointer
+>> + *
+>> + * This function will be used to enable/disable ptrauth in guest as configured
+>> + * by the KVM userspace API.
+>> + */
+>> +bool kvm_arm_vcpu_ptrauth_allowed(struct kvm_vcpu *vcpu)
+>> +{
+>> +	return test_bit(KVM_ARM_VCPU_PTRAUTH, vcpu->arch.features);
+>> +}
 > 
-> A AVX512 using task which runs alone on a CPU, is going to have either no
-> AVX512 usage recorded at all or the time elapsed since the last recording
-> is absurdly long.
-
-I did an experiment of this, please correct me if I was wrong.
-
-I isolate CPU103, and run a AVX512 micro benchmark(spin AVX512 ops) on it.
-
-$ cat /proc/cmdline 
-root=UUID=e6503b72-57d7-433a-ab09-a4b9a39e9128 ro isolcpus=103
-
-I still saw context switch
-aubrey@aubrey-skl:~$ sudo trace-cmd report --cpu 103
-cpus=104
-        avx_demo-6985  [103]  5055.442432: sched_switch:         avx_demo:6985 [120] R ==> migration/103:527 [0]
-   migration/103-527   [103]  5055.442434: sched_switch:         migration/103:527 [0] S ==> avx_demo:6985 [120]
-        avx_demo-6985  [103]  5059.442430: sched_switch:         avx_demo:6985 [120] R ==> migration/103:527 [0]
-   migration/103-527   [103]  5059.442432: sched_switch:         migration/103:527 [0] S ==> avx_demo:6985 [120]
-        avx_demo-6985  [103]  5063.442430: sched_switch:         avx_demo:6985 [120] R ==> migration/103:527 [0]
-   migration/103-527   [103]  5063.442431: sched_switch:         migration/103:527 [0] S ==> avx_demo:6985 [120]
-        avx_demo-6985  [103]  5067.442430: sched_switch:         avx_demo:6985 [120] R ==> migration/103:527 [0]
-   migration/103-527   [103]  5067.442431: sched_switch:         migration/103:527 [0] S ==> avx_demo:6985 [120]
-
-It looks like some kernel threads still participant context switch on the isolated
-CPU, like above one, each CPU has one migration daemon to do migration jobs.
-
-Under this scenario, the elapsed time becomes longer than normal indeed, see below:
-
-$ while [ 1 ]; do cat /proc/6985/status | grep AVX; sleep 1; done
-AVX512_elapsed_ms:	3432
-AVX512_elapsed_ms:	440
-AVX512_elapsed_ms:	1444
-AVX512_elapsed_ms:	2448
-AVX512_elapsed_ms:	3456
-AVX512_elapsed_ms:	460
-AVX512_elapsed_ms:	1464
-AVX512_elapsed_ms:	2468
-
-But AFAIK, google's Heracles do a 15s polling, so this worst case is still acceptable.?
-
->IOW, this needs crystal ball magic to decode because
-> there is no correlation between that elapsed time and the time when the
-> last context switch happened simply because that time is not available in
-> /proc/$PID/status. Sure you can oracle it out from /proc/$PID/stat with
-> even more crystal ball magic, but there is no explanation at all.
+> I'm not sure, but should there also be something like
 > 
-> There may be use case scenarios where this crystal ball prediction is
-> actually useful, but the inaccuracy of that information and the possible
-> pitfalls for any user space application which uses it need to be documented
-> in detail. Without that, this is going to cause more trouble and confusion
-> than benefit.
+> if (test_bit(KVM_ARM_VCPU_PTRAUTH, vcpu->arch.features) &&
+>      !kvm_supports_ptrauth())
+> 	return -EINVAL;
 > 
-Not sure if the above experiment addressed your concern, please correct me if
-I totally misunderstood.
+> in kvm_reset_vcpu?
+Yes makes sense. I missed it and with Dave martin patch this may be done 
+cleanly.
 
 Thanks,
--Aubrey
+Amit D
+
+> 
+> Thanks,
+> Kristina
+> 
