@@ -2,110 +2,82 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E72C9C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC10C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:59:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C22C62190C
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:59:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66C3121927
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:59:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390987AbfBOP7F (ORCPT
+        id S2391018AbfBOP75 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 10:59:05 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:33034 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2403823AbfBOP7D (ORCPT
+        Fri, 15 Feb 2019 10:59:57 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:45724 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726308AbfBOP75 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 10:59:03 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1FFuZlU000922;
-        Fri, 15 Feb 2019 16:58:51 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2qmy1njc1e-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 15 Feb 2019 16:58:51 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D454C34;
-        Fri, 15 Feb 2019 15:58:50 +0000 (GMT)
-Received: from Webmail-eu.st.com (gpxdag5node5.st.com [10.75.127.78])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7E84F599E;
-        Fri, 15 Feb 2019 15:58:50 +0000 (GMT)
-Received: from localhost (10.75.127.49) by GPXDAG5NODE5.st.com (10.75.127.78)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 15 Feb 2019 16:58:49
- +0100
-From:   Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-CC:     <linux-stm32@st-md-mailman.stormreply.com>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
-        Philippe Cornu <philippe.cornu@st.com>
-Subject: [PATCH v1 3/3] ARM: dts: stm32: enable Vivante GPU support on stm32mp157c-dk1 board
-Date:   Fri, 15 Feb 2019 16:58:36 +0100
-Message-ID: <1550246316-9747-4-git-send-email-pierre-yves.mordret@st.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1550246316-9747-1-git-send-email-pierre-yves.mordret@st.com>
-References: <1550246316-9747-1-git-send-email-pierre-yves.mordret@st.com>
+        Fri, 15 Feb 2019 10:59:57 -0500
+Received: by mail-qt1-f193.google.com with SMTP id d18so1322467qtg.12;
+        Fri, 15 Feb 2019 07:59:56 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YpVzP9kdDCuEe8ZJvld+w9pheSBC5BIslIPsLpg4a44=;
+        b=nz80dY8Ui/nbRRvnWr/T5SBYiFtZhfaK/7UNroMlGvIgjS2ehNMgGosgXFTA4C9fcV
+         g/9KxXtSDrJJYeMbSKpbps3OwXIkpIXnOeMYcry9VdYJRJs5loLAP2LBPKKVO6E/To80
+         BTOjDVtbkhtjfwfYxcr6yV7yprRTzNXid2Sj0+WA4WTMYEHu7aAahAfQ3IEMNEFrrKEo
+         1xxri1atzzq+jluEHSVvypmv4qdI3L6+jDT8Z7Mau3PPoP2Fo7/xl4QmhRKdHQ64M9G4
+         viYijyft0vX8sjh3cQOFke3VVBzgrCyb9wNBQl9VWOJiTaOnfmn7Osq6TI81nUPhtqVx
+         SdYQ==
+X-Gm-Message-State: AHQUAuYyXugxOUFz6ZRdhzuhsaV8gzhwyG0eTbAUdH+WUFjLNieDjAne
+        3T8ffdutWl1CbXiLbh5EowpjsTw1ZvPXx+p0D/o=
+X-Google-Smtp-Source: AHgI3IaUvl0vHvm2sK4y0OZDCteVzglabacER6/sXCtFFISYv5hUfWdEwEhq5AjU80mKtcModU9EB5or2giNX/uFEic=
+X-Received: by 2002:ac8:1d12:: with SMTP id d18mr7979677qtl.343.1550246396406;
+ Fri, 15 Feb 2019 07:59:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.75.127.49]
-X-ClientProxiedBy: SFHDAG5NODE2.st.com (10.75.127.14) To GPXDAG5NODE5.st.com
- (10.75.127.78)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-15_12:,,
- signatures=0
+References: <20190201191720.20464-1-krzk@kernel.org>
+In-Reply-To: <20190201191720.20464-1-krzk@kernel.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 15 Feb 2019 16:59:40 +0100
+Message-ID: <CAK8P3a3rr+==e5iZm_9hscE6ar18rCnmC69NWrV1ZEjxu9H=ew@mail.gmail.com>
+Subject: Re: [GIT PULL 1/2] ARM: defconfig: Samsung for v5.1
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Olof Johansson <olof@lixom.net>, arm-soc <arm@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable Vivante GPU driver for stm32mp157c-dk1 and dk2 boards.
+On Fri, Feb 1, 2019 at 8:17 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> The following changes since commit bfeffd155283772bbe78c6a05dec7c0128ee500c:
+>
+>   Linux 5.0-rc1 (2019-01-06 17:08:20 -0800)
+>
+> are available in the Git repository at:
+>
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-defconfig-5.1
+>
+> for you to fetch changes up to 25c390ec22167f896dbf5fb61b869ad05ce273ff:
+>
+>   ARM: s5pv210_defconfig: Enable cpufreq (2019-01-13 10:31:17 +0100)
+>
+> ----------------------------------------------------------------
+> Samsung defconfig changes for v5.1
+>
+> Enable more drivers in s5pv210 defconfig for Aries family of mobile
+> devices (e.g. Samsung Galaxy S).
 
-Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
----
- arch/arm/boot/dts/stm32mp157a-dk1.dts | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Pulled into arm/defconfig, thanks!
 
-diff --git a/arch/arm/boot/dts/stm32mp157a-dk1.dts b/arch/arm/boot/dts/stm32mp157a-dk1.dts
-index 873a80e..fb2ee06 100644
---- a/arch/arm/boot/dts/stm32mp157a-dk1.dts
-+++ b/arch/arm/boot/dts/stm32mp157a-dk1.dts
-@@ -27,6 +27,17 @@
- 		reg = <0xc0000000 0x20000000>;
- 	};
- 
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		gpu_reserved: gpu@dc000000 {
-+			reg = <0xdc000000 0x4000000>;
-+			no-map;
-+		};
-+	};
-+
- 	led {
- 		compatible = "gpio-leds";
- 		blue {
-@@ -57,6 +68,11 @@
- 	};
- };
- 
-+&gpu {
-+	contiguous-area = <&gpu_reserved>;
-+	status = "okay";
-+};
-+
- &iwdg2 {
- 	timeout-sec = <32>;
- 	status = "okay";
--- 
-2.7.4
-
+     Arnd
