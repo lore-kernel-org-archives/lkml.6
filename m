@@ -2,291 +2,160 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 344BFC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 06:07:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D59C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 06:15:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 002D121B68
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 06:07:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4497A214DA
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 06:15:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RSGrlphS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388231AbfBOGHn (ORCPT
+        id S2388408AbfBOGPO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 01:07:43 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:56498 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1733137AbfBOGHg (ORCPT
+        Fri, 15 Feb 2019 01:15:14 -0500
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:35242 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725838AbfBOGPN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 01:07:36 -0500
-X-UUID: 12b37a7c3dcc4b26ae84fac6de050e57-20190215
-X-UUID: 12b37a7c3dcc4b26ae84fac6de050e57-20190215
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <erin.lo@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 96151995; Fri, 15 Feb 2019 14:07:19 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 15 Feb 2019 14:07:17 +0800
-Received: from mtkslt303.mediatek.inc (10.21.14.116) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 15 Feb 2019 14:07:17 +0800
-From:   Erin Lo <erin.lo@mediatek.com>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-CC:     <devicetree@vger.kernel.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>,
-        <linux-kernel@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <yingjoe.chen@mediatek.com>, <erin.lo@mediatek.com>,
-        <mars.cheng@mediatek.com>, <eddie.huang@mediatek.com>,
-        <linux-clk@vger.kernel.org>,
-        Mengqi Zhang <Mengqi.Zhang@mediatek.com>
-Subject: [PATCH v7 6/6] arm64: dts: mt8183: add spi node
-Date:   Fri, 15 Feb 2019 14:02:38 +0800
-Message-ID: <1550210558-30516-7-git-send-email-erin.lo@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1550210558-30516-1-git-send-email-erin.lo@mediatek.com>
-References: <1550210558-30516-1-git-send-email-erin.lo@mediatek.com>
+        Fri, 15 Feb 2019 01:15:13 -0500
+Received: by mail-vk1-f194.google.com with SMTP id l136so1994173vke.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 22:15:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=h4SdvpqGw3iuobgUcx19rFrv3lHuJOBe9urWJjGRD/4=;
+        b=RSGrlphSJVERzE5SaFXHjSZlHl28z24mIi9QmfRNgw+c0D7KozclgvntR+Cs4DYOCW
+         cXufXpaWe2QlTyZolAE/iNHSCiETASoDxGu8339g60sGkUOEB7/hpg9lWJxBZy9kXjfl
+         1t/5ijjkYI4XXbRzpmLhBRn7ZuKmOUraAxeCE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=h4SdvpqGw3iuobgUcx19rFrv3lHuJOBe9urWJjGRD/4=;
+        b=UouD+nZRIQ8jsageij4nMEKXyaCTD9eFHhi3mcWXKvqlzGz5V3AVnaYD5xyQGfuDf2
+         3AxcUqzbW8QdYASOmzJYacxNHkNGVDies3jZQzU4elL/w+me6Buv9cC5Su1Ie8H0Hagr
+         h4tkH06qB14BBzvrkYYthNwsE/1yB2cRUJgBhyGBCK0vTuOiEH3wV39GODM6IdOX35fi
+         J1JNl/uLJ5Y2hulaV3Jp77KTDydfEgLOGZ7gZ9UsdkpTj1Jl7VtQGF5gh9rVFhku10/j
+         Wu2xLJdJ6PFFIE8qEBog6IIc9K76JSxdiP/yk6Pvck0IWzYJSlYxsCR9HeHcrB7k5I+X
+         thvQ==
+X-Gm-Message-State: AHQUAubknHREIQzOSBSNuY93CLy6veg8Unnpt1FV1fbR/dK9/cLyH7GW
+        RyXP2eA6p8F46iaFcOHSpNsK2YUbeGU=
+X-Google-Smtp-Source: AHgI3IalroLFpC5s77gx/8v7EZLiMWPPn+Mi1GlyyFVj2Tq63EgGk6hBF7zuGDRipfdpQBKn/jiChw==
+X-Received: by 2002:a1f:dd45:: with SMTP id u66mr4128802vkg.10.1550211311875;
+        Thu, 14 Feb 2019 22:15:11 -0800 (PST)
+Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com. [209.85.221.175])
+        by smtp.gmail.com with ESMTPSA id o6sm735066vkb.15.2019.02.14.22.15.10
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Feb 2019 22:15:10 -0800 (PST)
+Received: by mail-vk1-f175.google.com with SMTP id b6so888108vkf.8
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 22:15:10 -0800 (PST)
+X-Received: by 2002:a1f:8e49:: with SMTP id q70mr4246226vkd.40.1550211309930;
+ Thu, 14 Feb 2019 22:15:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+References: <20190215031758.GA18776@beast> <CAHk-=wg7DRUqWvbCS2dm=mpdSNJry92Fo0OHDVi67bi8BMqt4A@mail.gmail.com>
+In-Reply-To: <CAHk-=wg7DRUqWvbCS2dm=mpdSNJry92Fo0OHDVi67bi8BMqt4A@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 14 Feb 2019 22:14:56 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jLi+zcOoi+Ti=OyR3MfF8s_S35EEmT_DoCzYPepOcn+Ow@mail.gmail.com>
+Message-ID: <CAGXu5jLi+zcOoi+Ti=OyR3MfF8s_S35EEmT_DoCzYPepOcn+Ow@mail.gmail.com>
+Subject: Re: [PATCH v3] exec: load_script: Do not exec truncated interpreter path
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Samuel Dionne-Riel <samuel@dionne-riel.com>,
+        Richard Weinberger <richard.weinberger@gmail.com>,
+        Graham Christensen <graham@grahamc.com>,
+        Michal Hocko <mhocko@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add spi DTS node to the mt8183 and mt8183-evb.
+On Thu, Feb 14, 2019 at 8:49 PM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+>
+>
+> On Thu, Feb 14, 2019, 19:18 Kees Cook <keescook@chromium.org wrote:
+>>
+>>
+>>  fs/binfmt_script.c | 97 +++++++++++++++++++++++++++++++++++++++-------
+>>  1 file changed, 82 insertions(+), 15 deletions(-)
+>
+> No, why?
 
-Signed-off-by: Mengqi Zhang <Mengqi.Zhang@mediatek.com>
-Signed-off-by: Erin Lo <erin.lo@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt8183-evb.dts | 105 ++++++++++++++++++++++++++++
- arch/arm64/boot/dts/mediatek/mt8183.dtsi    |  79 +++++++++++++++++++++
- 2 files changed, 184 insertions(+)
+In my defense, 56 of those 82 lines are comments. ;)
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-index 9b52559..b12c6ea 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
-@@ -26,6 +26,111 @@
- 	};
- };
- 
-+&pio {
-+	spi_pins_0: spi0{
-+		pins_spi{
-+			pinmux = <PINMUX_GPIO85__FUNC_SPI0_MI>,
-+				 <PINMUX_GPIO86__FUNC_SPI0_CSB>,
-+				 <PINMUX_GPIO87__FUNC_SPI0_MO>,
-+				 <PINMUX_GPIO88__FUNC_SPI0_CLK>;
-+			bias-disable;
-+		};
-+	};
+>> -       if ((cp = strchr(bprm->buf, '\n')) == NULL)
+>> -               cp = bprm->buf+BINPRM_BUF_SIZE-1;
+>
+>
+> This statement when we've not seen a newline should simply get a "is there at least a whitespace in there somewhere" test. Nothing more than that, afaik.
+
+Unfortunately I don't think this is true for two reasons. First, the
+leading spaces don't indicate that we won't later truncate the
+interpreter path.
+
+i.e. this is valid:
+"#!    /usr/bin/perl"
+but this could get truncated, even though we see whitespace:
+"#!    /some/insane/nfs/or/hexified/path/longer/than/127/bytes"
+
+The only way we know the interpreter wasn't truncated in the
+no-newline case is if we see whitespace after first skipping any
+leading whitespace, and it seemed really ugly to add a special scan
+there. This is what I had for that, minus comments:
+
+diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
+index 7cde3f46ad26..6d7ef98bc949 100644
+--- a/fs/binfmt_script.c
++++ b/fs/binfmt_script.c
+@@ -43,8 +43,18 @@ static int load_script(struct linux_binprm *bprm)
+        bprm->file = NULL;
+
+        bprm->buf[BINPRM_BUF_SIZE - 1] = '\0';
+-       if ((cp = strchr(bprm->buf, '\n')) == NULL)
+-               cp = bprm->buf+BINPRM_BUF_SIZE-1;
++       if ((cp = strchr(bprm->buf, '\n')) == NULL) {
++               bool whitespace = false;
 +
-+	spi_pins_1: spi1{
-+		pins_spi{
-+			pinmux = <PINMUX_GPIO161__FUNC_SPI1_A_MI>,
-+				 <PINMUX_GPIO162__FUNC_SPI1_A_CSB>,
-+				 <PINMUX_GPIO163__FUNC_SPI1_A_MO>,
-+				 <PINMUX_GPIO164__FUNC_SPI1_A_CLK>;
-+			bias-disable;
-+		};
-+	};
-+
-+	spi_pins_2: spi2{
-+		pins_spi{
-+			pinmux = <PINMUX_GPIO0__FUNC_SPI2_CSB>,
-+				 <PINMUX_GPIO1__FUNC_SPI2_MO>,
-+				 <PINMUX_GPIO2__FUNC_SPI2_CLK>,
-+				 <PINMUX_GPIO94__FUNC_SPI2_MI>;
-+			bias-disable;
-+		};
-+	};
-+
-+	spi_pins_3: spi3{
-+		pins_spi{
-+			pinmux = <PINMUX_GPIO21__FUNC_SPI3_MI>,
-+				 <PINMUX_GPIO22__FUNC_SPI3_CSB>,
-+				 <PINMUX_GPIO23__FUNC_SPI3_MO>,
-+				 <PINMUX_GPIO24__FUNC_SPI3_CLK>;
-+			bias-disable;
-+		};
-+	};
-+
-+	spi_pins_4: spi4{
-+		pins_spi{
-+			pinmux = <PINMUX_GPIO17__FUNC_SPI4_MI>,
-+				 <PINMUX_GPIO18__FUNC_SPI4_CSB>,
-+				 <PINMUX_GPIO19__FUNC_SPI4_MO>,
-+				 <PINMUX_GPIO20__FUNC_SPI4_CLK>;
-+			bias-disable;
-+		};
-+	};
-+
-+	spi_pins_5: spi5{
-+		pins_spi{
-+			pinmux = <PINMUX_GPIO13__FUNC_SPI5_MI>,
-+				 <PINMUX_GPIO14__FUNC_SPI5_CSB>,
-+				 <PINMUX_GPIO15__FUNC_SPI5_MO>,
-+				 <PINMUX_GPIO16__FUNC_SPI5_CLK>;
-+			bias-disable;
-+		};
-+	};
-+};
-+
-+&spi0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi_pins_0>;
-+	mediatek,pad-select = <0>;
-+	status = "okay";
-+};
-+
-+&spi1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi_pins_1>;
-+	mediatek,pad-select = <0>;
-+	status = "okay";
-+};
-+
-+&spi2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi_pins_2>;
-+	mediatek,pad-select = <0>;
-+	status = "okay";
-+};
-+
-+&spi3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi_pins_3>;
-+	mediatek,pad-select = <0>;
-+	status = "okay";
-+};
-+
-+&spi4 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi_pins_4>;
-+	mediatek,pad-select = <0>;
-+	status = "okay";
-+};
-+
-+&spi5 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&spi_pins_5>;
-+	mediatek,pad-select = <0>;
-+	status = "okay";
-+
-+};
-+
- &uart0 {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index 1bd1399..165b859 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -8,6 +8,7 @@
- #include <dt-bindings/clock/mt8183-clk.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include "mt8183-pinfunc.h"
- 
- / {
- 	compatible = "mediatek,mt8183";
-@@ -267,6 +268,84 @@
- 			status = "disabled";
- 		};
- 
-+		spi0: spi@1100a000 {
-+			compatible = "mediatek,mt8183-spi";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0 0x1100a000 0 0x1000>;
-+			interrupts = <GIC_SPI 120 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&topckgen CLK_TOP_SYSPLL_D5_D2>,
-+				 <&topckgen CLK_TOP_MUX_SPI>,
-+				 <&infracfg CLK_INFRA_SPI0>;
-+			clock-names = "parent-clk", "sel-clk", "spi-clk";
-+			status = "disabled";
-+		};
-+
-+		spi1: spi@11010000 {
-+			compatible = "mediatek,mt8183-spi";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0 0x11010000 0 0x1000>;
-+			interrupts = <GIC_SPI 124 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&topckgen CLK_TOP_SYSPLL_D5_D2>,
-+				 <&topckgen CLK_TOP_MUX_SPI>,
-+				 <&infracfg CLK_INFRA_SPI1>;
-+			clock-names = "parent-clk", "sel-clk", "spi-clk";
-+			status = "disabled";
-+		};
-+
-+		spi2: spi@11012000 {
-+			compatible = "mediatek,mt8183-spi";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0 0x11012000 0 0x1000>;
-+			interrupts = <GIC_SPI 129 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&topckgen CLK_TOP_SYSPLL_D5_D2>,
-+				 <&topckgen CLK_TOP_MUX_SPI>,
-+				 <&infracfg CLK_INFRA_SPI2>;
-+			clock-names = "parent-clk", "sel-clk", "spi-clk";
-+			status = "disabled";
-+		};
-+
-+		spi3: spi@11013000 {
-+			compatible = "mediatek,mt8183-spi";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0 0x11013000 0 0x1000>;
-+			interrupts = <GIC_SPI 130 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&topckgen CLK_TOP_SYSPLL_D5_D2>,
-+				 <&topckgen CLK_TOP_MUX_SPI>,
-+				 <&infracfg CLK_INFRA_SPI3>;
-+			clock-names = "parent-clk", "sel-clk", "spi-clk";
-+			status = "disabled";
-+		};
-+
-+		spi4: spi@11018000 {
-+			compatible = "mediatek,mt8183-spi";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0 0x11018000 0 0x1000>;
-+			interrupts = <GIC_SPI 134 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&topckgen CLK_TOP_SYSPLL_D5_D2>,
-+				 <&topckgen CLK_TOP_MUX_SPI>,
-+				 <&infracfg CLK_INFRA_SPI4>;
-+			clock-names = "parent-clk", "sel-clk", "spi-clk";
-+			status = "disabled";
-+		};
-+
-+		spi5: spi@11019000 {
-+			compatible = "mediatek,mt8183-spi";
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0 0x11019000 0 0x1000>;
-+			interrupts = <GIC_SPI 135 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&topckgen CLK_TOP_SYSPLL_D5_D2>,
-+				 <&topckgen CLK_TOP_MUX_SPI>,
-+				 <&infracfg CLK_INFRA_SPI5>;
-+			clock-names = "parent-clk", "sel-clk", "spi-clk";
-+			status = "disabled";
-+		};
-+
- 		audiosys: syscon@11220000 {
- 			compatible = "mediatek,mt8183-audiosys", "syscon";
- 			reg = <0 0x11220000 0 0x1000>;
++               for (cp = bprm->buf+2; cp < bprm->buf+BINPRM_BUF_SIZE-1 &&
++                                      ((*cp == ' ') || (*cp == '\t')); cp++);
++               for (; cp < bprm->buf+BINPRM_BUF_SIZE-1; cp++) {
++                       if ((*cp == ' ') || (*cp == '\t'))
++                               whitespace = true;
++               }
++               if (!whitespace)
++                       return -ENOEXEC; /* Interpreter truncated */
++       }
+        *cp = '\0';
+        while (cp > bprm->buf) {
+                cp--;
+
+But, as it turns out, the above is actually wrong too (yay for my test
+cases): the NUL termination before the loop (line 45) may blow away
+the newline at byte 127. So we need to actually manually scan for the
+newline while doing the out-of-bounds checking. (This was part of
+Oleg's original "don't blindly truncate" rationale in the reverted
+patch.)
+
+I had also tried building some state machine to walk the bytes and do
+everything in a single pass, but it was horrible. In another attempt I
+tried converting as much to using "standard" C string routines
+(isspace(), strchr(), strsep(), etc), but that was even more terrible.
+
+So I opted to keep most of the existing logic but add the places where
+tests were needed (along with comments describing wtf is happening
+along the way). Anyway, I'm open to suggestions, obviously. :)
+
 -- 
-1.9.1
-
+Kees Cook
