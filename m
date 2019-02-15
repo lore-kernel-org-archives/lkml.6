@@ -2,119 +2,83 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2173C4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFB20C4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:01:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CCC321B1A
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:01:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DA9C21B1A
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:01:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731315AbfBOCBH (ORCPT
+        id S1731373AbfBOCBk convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:01:07 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43398 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726360AbfBOCBF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:01:05 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A35AFC0AC371;
-        Fri, 15 Feb 2019 02:01:03 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-28.pek2.redhat.com [10.72.8.28])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4EA8A5D6B6;
-        Fri, 15 Feb 2019 02:00:55 +0000 (UTC)
-Date:   Fri, 15 Feb 2019 10:00:51 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jianchao Wang <jianchao.w.wang@oracle.com>
-Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Damien Le Moal <damien.lemoal@wdc.com>
-Subject: Re: [PATCH V2] blk-mq: insert rq with DONTPREP to hctx dispatch list
- when requeue
-Message-ID: <20190215020049.GA21045@ming.t460p>
-References: <1549936585-1702-1-git-send-email-jianchao.w.wang@oracle.com>
+        Thu, 14 Feb 2019 21:01:40 -0500
+Received: from szxga08-in.huawei.com ([45.249.212.255]:58334 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726435AbfBOCBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:01:39 -0500
+Received: from DGGEMA403-HUB.china.huawei.com (unknown [172.30.72.54])
+        by Forcepoint Email with ESMTP id 6625C6B72CD48228C24F;
+        Fri, 15 Feb 2019 10:01:37 +0800 (CST)
+Received: from DGGEMA503-MBX.china.huawei.com ([169.254.1.64]) by
+ DGGEMA403-HUB.china.huawei.com ([10.3.20.44]) with mapi id 14.03.0415.000;
+ Fri, 15 Feb 2019 10:01:31 +0800
+From:   "chenzefeng (A)" <chenzefeng2@huawei.com>
+To:     "hjl.tools@gmail.com" <hjl.tools@gmail.com>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "sjenning@redhat.com" <sjenning@redhat.com>,
+        "jikos@kernel.org" <jikos@kernel.org>,
+        "vojtech@suse.com" <vojtech@suse.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+CC:     "x86@kernel.org" <x86@kernel.org>,
+        "live-patching@vger.kernel.org" <live-patching@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "chengjian (D)" <cj.chengjian@huawei.com>
+Subject: [PATCH] x86: livepatch: Treat R_X86_64_PLT32 as R_X86_64_PC32
+Thread-Topic: [PATCH] x86: livepatch: Treat R_X86_64_PLT32 as R_X86_64_PC32
+Thread-Index: AdTE0VS6YxuMC8nAT2u21pUoQUU8yw==
+Date:   Fri, 15 Feb 2019 02:01:31 +0000
+Message-ID: <79A62BFA453EFB42B7A4E40AD8F3A2264F2A872D@DGGEMA503-MBX.china.huawei.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.57.50.95]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1549936585-1702-1-git-send-email-jianchao.w.wang@oracle.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 15 Feb 2019 02:01:04 +0000 (UTC)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Feb 12, 2019 at 09:56:25AM +0800, Jianchao Wang wrote:
-> When requeue, if RQF_DONTPREP, rq has contained some driver
-> specific data, so insert it to hctx dispatch list to avoid any
-> merge. Take scsi as example, here is the trace event log (no
-> io scheduler, because RQF_STARTED would prevent merging),
-> 
->    kworker/0:1H-339   [000] ...1  2037.209289: block_rq_insert: 8,0 R 4096 () 32768 + 8 [kworker/0:1H]
-> scsi_inert_test-1987  [000] ....  2037.220465: block_bio_queue: 8,0 R 32776 + 8 [scsi_inert_test]
-> scsi_inert_test-1987  [000] ...2  2037.220466: block_bio_backmerge: 8,0 R 32776 + 8 [scsi_inert_test]
->    kworker/0:1H-339   [000] ....  2047.220913: block_rq_issue: 8,0 R 8192 () 32768 + 16 [kworker/0:1H]
-> scsi_inert_test-1996  [000] ..s1  2047.221007: block_rq_complete: 8,0 R () 32768 + 8 [0]
-> scsi_inert_test-1996  [000] .Ns1  2047.221045: block_rq_requeue: 8,0 R () 32776 + 8 [0]
->    kworker/0:1H-339   [000] ...1  2047.221054: block_rq_insert: 8,0 R 4096 () 32776 + 8 [kworker/0:1H]
->    kworker/0:1H-339   [000] ...1  2047.221056: block_rq_issue: 8,0 R 4096 () 32776 + 8 [kworker/0:1H]
-> scsi_inert_test-1986  [000] ..s1  2047.221119: block_rq_complete: 8,0 R () 32776 + 8 [0]
-> 
-> (32768 + 8) was requeued by scsi_queue_insert and had RQF_DONTPREP.
+On x86-64, for 32-bit PC-relacive branches, we can generate PLT32 relocation, instead of PC32 relocation. and R_X86_64_PLT32 can be treated the same as R_X86_64_PC32 since linux kernel doesn't use PLT.
 
-scsi_mq_requeue_cmd() does uninit the request before requeuing, but
-__scsi_queue_insert doesn't do that.
+In linux 4.4 commit b21ebf2fb4cd ("x86: Treat R_X86_64_PLT32 as R_X86_64_PC32") been fixed for the module loading, but not fixed for livepatch relocation, which will fail to load livepatch with the error message as follow:
+relocation failed for symbol <symbol name> at <symbol address>
 
+Signed-off-by: chenzefeng <chenzefeng2@huawei.com>
+---
+ arch/x86/kernel/livepatch.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> Then it was merged with (32776 + 8) and issued. Due to RQF_DONTPREP,
-> the sdb only contained the part of (32768 + 8), then only that part
-> was completed. The lucky thing was that scsi_io_completion detected
-> it and requeued the remaining part. So we didn't get corrupted data.
-> However, the requeue of (32776 + 8) is not expected.
-> 
-> Suggested-by: Jens Axboe <axboe@kernel.dk>
-> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
-> ---
-> V2:
->  - refactor the code based on Jens' suggestion
-> 
->  block/blk-mq.c | 12 ++++++++++--
->  1 file changed, 10 insertions(+), 2 deletions(-)
-> 
-> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> index 8f5b533..9437a5e 100644
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -737,12 +737,20 @@ static void blk_mq_requeue_work(struct work_struct *work)
->  	spin_unlock_irq(&q->requeue_lock);
->  
->  	list_for_each_entry_safe(rq, next, &rq_list, queuelist) {
-> -		if (!(rq->rq_flags & RQF_SOFTBARRIER))
-> +		if (!(rq->rq_flags & (RQF_SOFTBARRIER | RQF_DONTPREP)))
->  			continue;
->  
->  		rq->rq_flags &= ~RQF_SOFTBARRIER;
->  		list_del_init(&rq->queuelist);
-> -		blk_mq_sched_insert_request(rq, true, false, false);
-> +		/*
-> +		 * If RQF_DONTPREP, rq has contained some driver specific
-> +		 * data, so insert it to hctx dispatch list to avoid any
-> +		 * merge.
-> +		 */
-> +		if (rq->rq_flags & RQF_DONTPREP)
-> +			blk_mq_request_bypass_insert(rq, false);
-> +		else
-> +			blk_mq_sched_insert_request(rq, true, false, false);
->  	}
+diff --git a/arch/x86/kernel/livepatch.c b/arch/x86/kernel/livepatch.c index d1d35cc..579f8f8 100644
+--- a/arch/x86/kernel/livepatch.c
++++ b/arch/x86/kernel/livepatch.c
+@@ -58,6 +58,7 @@ int klp_write_module_reloc(struct module *mod, unsigned long type,
+ 		val = (s32)value;
+ 		break;
+ 	case R_X86_64_PC32:
++	case R_X86_64_PLT32:
+ 		val = (u32)(value - loc);
+ 		break;
+ 	default:
+--
+1.8.5.6
 
-Suppose it is one WRITE request to zone device, this way might break
-the order.
-
-
-Thanks,
-Ming
