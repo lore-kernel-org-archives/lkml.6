@@ -7,58 +7,59 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87A8EC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 594CAC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:28:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61BBB21929
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:28:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D56321929
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:28:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437006AbfBOM23 (ORCPT
+        id S2437022AbfBOM2c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 07:28:29 -0500
-Received: from mout.gmx.net ([212.227.17.20]:35221 "EHLO mout.gmx.net"
+        Fri, 15 Feb 2019 07:28:32 -0500
+Received: from mout.gmx.net ([212.227.17.22]:37663 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729332AbfBOM21 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 07:28:27 -0500
+        id S1729332AbfBOM2a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 07:28:30 -0500
 Received: from localhost.localdomain ([218.18.229.179]) by mail.gmx.com
  (mrgmx103 [212.227.17.174]) with ESMTPSA (Nemesis) id
- 0MHH3P-1gptlr0ISZ-00E7bi; Fri, 15 Feb 2019 13:28:24 +0100
+ 0LZzY9-1hMEm90UPd-00lmbI; Fri, 15 Feb 2019 13:28:29 +0100
 From:   Chengguang Xu <cgxu519@gmx.com>
 To:     gregkh@linuxfoundation.org
 Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
         Chengguang Xu <cgxu519@gmx.com>
-Subject: [PATCH v2 3/4] chardev: code cleanup for __register_chrdev_region()
-Date:   Fri, 15 Feb 2019 20:27:13 +0800
-Message-Id: <20190215122714.28842-3-cgxu519@gmx.com>
+Subject: [PATCH v2 4/4] chardev: update comment based on the code
+Date:   Fri, 15 Feb 2019 20:27:14 +0800
+Message-Id: <20190215122714.28842-4-cgxu519@gmx.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190215122714.28842-1-cgxu519@gmx.com>
 References: <20190215122714.28842-1-cgxu519@gmx.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:NX9feo77qaDNYt9vub7pm0v/+JuJ3oOpCeMsZxTuZEAHrmnzl8i
- OWn+qw/F/751cAEBIGqZ4t/1okagY4+DaXBk3doJPaOh9v9iviRsQfowpixS776Kru04ZBN
- VpBdfuxgDHfpmhe1Q1FmtXNOjeSU+/tjB9+s6QCHvIgS3e0wIEvXO2PAvUS5yU3uS3x6GWj
- wYrn2Rl9YHwgFdHv490WQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:GSu2pvZnJcU=:S9rTQZgyVxHT5dUEC5aqqE
- Ng9tgw6t/iSu8FO3esHOiil+4WMGxyHnwj8xceck1sM5/ReazR/13Z+uu10lj1gZv7tSlmvd/
- 3Wj4JpUy3G8XruKRJg19V1CKvFr4w8cmvjO0XpIHlAiblf18wuIz9NlwLVLF3bCwgY171EeWL
- zoRXLLsAJIrup5O0SiUAAEWvS2b0UhCYedely8GHbtsyb1BlYQ8Xfll49FXpDLDgtY/VvshkY
- 2pfATQHxGEFX+LR3QKzmTe8u9H4IQrkFHajUt2PZ/KT3x3QlObVPa3Z36N0xrDaBtdG0vs1XZ
- zgIdb+ix0+1j3OIyG7cVIpPjIOzIX+1GgKxt+UxP6P8JdXvT5rgheo37DWicI3uuxJdVhnB+2
- uVUMeW69eNaoysei/QVy16r6qZ6RphInQIeBkwIMVWFCeBA6jhEnvDNcs+Su1bkShonff8o63
- 7kJo9x+fOQsYP6zBNOa/iRdKFUkkUTxLO+7lV8cdgz05wBLaAHbl8BWc9TtFSDWX3P6ZnaC1D
- kQYD/8K5KUm4UuD0g3hVSrm6klIIg5GGmbxd9OQYcNoemQRSl9aiUUEUkDiap3n0QLKf1fP2G
- 9chRQ3kUNyEDvZuNGOwFqQWN6JOaOxaqR2RKFttPvvCIMezoYYzSV7GSeXF1GfIDMi/mt6xzw
- yB1AcebwAr7iT5vcgWE0r/mSPOIiT5wweNuyYXq+ii7dgxZBIIdy0RAzV2m9nb3Nf/ksWj+7s
- tq7Nreqiapxt0rUibwjg691G+rKtEgB5MGBFpk3VN3fEr8qElhbd6NzKPx7RYrPy4mp/yVhRe
- d8htBRSxWnMEKGgYph3pOYNtaRr7uA8lRZvv6oopuMi2KCEcYfC92+uWaIQjW8JFpag2WgQDj
- DDc0gaRFrXRsEezfeHr+xJ8zxK5OcO8mzgZPu2ylj1zkKu5nBqAZOwD8BTyB4c
+X-Provags-ID: V03:K1:JANIsnEaDaHcePR1uQXq1zE51XpIfxqTUi4CGeRsD50QXLEwbk/
+ y4Ln7Wg938Jsa7lZU+vdTvejEQ4lccLNmAuPuRrrO4qsCrWpZVqJ1eK92YGQPUOJxhc9uxs
+ 78PLVM/4yhkIRyDDUz38ERGh518QK8Z0HBThy0Nn2tU2i0nYZzgfb+HuAWWJbiJWyVBvsi+
+ r4zcFPDVFJmB4JydAx25g==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:ct0mahYv3HA=:fOv3IUkEFTnEkXAjyuX6L0
+ TNK1IZM/vfMvxHt6RbZZakgPov3hfpyuXJLHURFsbWVez5fiH0f3VybpaTWUKxGuWkyjovD0L
+ JUB4v8EiP6mkXsp7gzzxbbjQdURuvlVhnR4t0G09UaViisgU4uJs1eWmNnBcFyJktDGS2YUR5
+ qQyrVOOiKBeuiqeW5eLkxa+tWIEdG2L4LZHAKBiF/KAzygk0w1XhZDgIEMzsybfeVUbyRwKl7
+ WNTwALVo/FsoX+UaCfAtIJ6JYJMI5AWH2kdC+rzkq8G62z04gtYSQ2B2IlvmEE7Sk8xQ0eOG7
+ rgij7qQrDSHaeuVEtzBB4/RKJuHaZ3LT5hNeW8p3x25e84yJ99aJFmK6xVDyWTiYj6BZqJE9E
+ hx/go4M2Fs3CF1awIoMF/3KjoRsAGrZFNf3P6hbPvfH2RB3voFSJZXn3LxehPnyw0wqHkCHeg
+ VWSJVVB6ASalPR0peT8aeaCeoVEJq23KrDs4OsKxqDvb1snkosD6pyCp6ZQ0joJO7GOm7bHK2
+ xjTeQpHnL7s3ZHXzuQNsbizQYfOBD7IJKIAN8IFuNkrVOtVHJW1ne20/TwbPOOCa7jax5BpOG
+ 5Wm+f4giDsBXYIYHYTNU5c4GYumpwJ99ubDXgrAeWJpbSd42nEZStdorUmAiar6dbD5pJ7lO/
+ c1ozMbH1lbEP8zjDGiU7zqfrcSCHvfJAjgiJQ1OvCiGEOEzGvF3nYbTcOtJ7Gu4bMqCnGrCHX
+ TcbtUIy1Hxfe/vNt6ly/WVqjXon6UO7wlRdfoYY8n5TWClqW/CdI6dWGmL2X6cYisKZdpTCxP
+ mcqiCGzlQwBYvJ/wrJxX+m9t9s0y1/uq48QIMu0vHLf01l1HQbnmGt8mOfe+ZgQDEMlPGMBMJ
+ k0ANXOKse8Y7whpof8n9DxAA2n8/8q7uQUSuYfKBQmWEwhf3OfcysZ7vtyknus
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It's just code cleanup, not functional change.
+The function comment of __register_chrdev_region()
+is out of date, so update it based on the code.
 
 Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
 ---
@@ -66,108 +67,30 @@ v1->v2:
 - Split fix and cleanup patches.
 - Remove printing minor range in chrdev_show().
 
- fs/char_dev.c | 69 +++++++++++++++++++++------------------------------
- 1 file changed, 28 insertions(+), 41 deletions(-)
+ fs/char_dev.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
 diff --git a/fs/char_dev.c b/fs/char_dev.c
-index 6803e98414f1..bd2bf1fd847e 100644
+index bd2bf1fd847e..d18cad28c1c3 100644
 --- a/fs/char_dev.c
 +++ b/fs/char_dev.c
-@@ -100,10 +100,16 @@ static struct char_device_struct *
+@@ -88,13 +88,10 @@ static int find_dynamic_major(void)
+ /*
+  * Register a single major with a specified minor range.
+  *
+- * If major == 0 this functions will dynamically allocate a major and return
+- * its number.
+- *
+- * If major > 0 this function will attempt to reserve the passed range of
+- * minors and will return zero on success.
++ * If major == 0 this function will dynamically allocate an unused major.
++ * If major > 0 this function will attempt to reserve the range of minors
++ * with given major.
+  *
+- * Returns a -ve errno on failure.
+  */
+ static struct char_device_struct *
  __register_chrdev_region(unsigned int major, unsigned int baseminor,
- 			   int minorct, const char *name)
- {
--	struct char_device_struct *cd, **cp;
--	int ret = 0;
-+	struct char_device_struct *cd, *curr, *prev = NULL;
-+	int ret = -EBUSY;
- 	int i;
- 
-+	if (major >= CHRDEV_MAJOR_MAX) {
-+		pr_err("CHRDEV \"%s\" major requested (%u) is greater than the maximum (%u)\n",
-+		       name, major, CHRDEV_MAJOR_MAX-1);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
- 	if (minorct > MINORMASK + 1 - baseminor) {
- 		pr_err("CHRDEV \"%s\" minor range requested (%u-%u) is out of range of maximum range (%u-%u) for a single major\n",
- 			name, baseminor, baseminor + minorct - 1, 0, MINORMASK);
-@@ -126,55 +132,36 @@ __register_chrdev_region(unsigned int major, unsigned int baseminor,
- 		major = ret;
- 	}
- 
--	if (major >= CHRDEV_MAJOR_MAX) {
--		pr_err("CHRDEV \"%s\" major requested (%u) is greater than the maximum (%u)\n",
--		       name, major, CHRDEV_MAJOR_MAX-1);
--		ret = -EINVAL;
--		goto out;
--	}
--
--	cd->major = major;
--	cd->baseminor = baseminor;
--	cd->minorct = minorct;
--	strlcpy(cd->name, name, sizeof(cd->name));
--
- 	i = major_to_index(major);
-+	for (curr = chrdevs[i]; curr; prev = curr, curr = curr->next) {
-+		if (curr->major < major)
-+			continue;
- 
--	for (cp = &chrdevs[i]; *cp; cp = &(*cp)->next)
--		if ((*cp)->major > major ||
--		    ((*cp)->major == major &&
--		     (((*cp)->baseminor >= baseminor) ||
--		      ((*cp)->baseminor + (*cp)->minorct > baseminor))))
-+		if (curr->major > major)
- 			break;
- 
--	/* Check for overlapping minor ranges.  */
--	if (*cp && (*cp)->major == major) {
--		int old_min = (*cp)->baseminor;
--		int old_max = (*cp)->baseminor + (*cp)->minorct - 1;
--		int new_min = baseminor;
--		int new_max = baseminor + minorct - 1;
-+		if (curr->baseminor + curr->minorct <= baseminor)
-+			continue;
- 
--		/* New driver overlaps from the left.  */
--		if (new_max >= old_min && new_max <= old_max) {
--			ret = -EBUSY;
--			goto out;
--		}
-+		if (curr->baseminor >= baseminor + minorct)
-+			break;
- 
--		/* New driver overlaps from the right.  */
--		if (new_min <= old_max && new_min >= old_min) {
--			ret = -EBUSY;
--			goto out;
--		}
-+		goto out;
-+	}
- 
--		if (new_min < old_min && new_max > old_max) {
--			ret = -EBUSY;
--			goto out;
--		}
-+	cd->major = major;
-+	cd->baseminor = baseminor;
-+	cd->minorct = minorct;
-+	strlcpy(cd->name, name, sizeof(cd->name));
- 
-+	if (!prev) {
-+		cd->next = curr;
-+		chrdevs[i] = cd;
-+	} else {
-+		cd->next = prev->next;
-+		prev->next = cd;
- 	}
- 
--	cd->next = *cp;
--	*cp = cd;
- 	mutex_unlock(&chrdevs_lock);
- 	return cd;
- out:
 -- 
 2.20.1
 
