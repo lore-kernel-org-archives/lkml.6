@@ -4,50 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A4CC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:30:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 267B9C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:30:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F030420840
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:30:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E933020840
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:30:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197803;
-	bh=5+7x3q8RdW0GEJgGwSGI9Vyvh3PwH0HjYorp57NGYBk=;
+	s=default; t=1550197820;
+	bh=Wb0I43kT1FzP9mnX602sQTz4Hxk0NvBFPw8oBH3QYuM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=azuGbeawjrop0T5pKR+5Iv/6YNofEZcF/OYqLK6m8d0JXuc26W/Taxh1eDTCrjNz1
-	 4C8uvoJ3QEwd/K/RZlqSWr4wsu23SwGuxNKsoJovKQ4yM5EprLB5oXN/rlTavVf3XV
-	 KYRS/zo0wfSwibLXmkNpX+DsETk5RCVduaYx1r7E=
+	b=rsiBA8RQnJ2TDeuAvg3NhBeq9EQhFRBR5zjpDKUh75WchvgcofLCOc2QKSRT8PaTA
+	 GgZeoqfQP6VQeRaI15/XbnnLrTztZpot3LWhgCAVbMrywv+T4z1h4gphSr8P2o0qQd
+	 Y8XOyLYBNg3L5VEeIWhrfYrCsb6wzp7fZpvUhZrg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730820AbfBOCaB (ORCPT
+        id S1730864AbfBOCaS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:30:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52974 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:30:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391286AbfBOCNA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:13:00 -0500
+        id S2391213AbfBOCMx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:12:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 232D521B1C;
-        Fri, 15 Feb 2019 02:12:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E10E21934;
+        Fri, 15 Feb 2019 02:12:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196779;
-        bh=5+7x3q8RdW0GEJgGwSGI9Vyvh3PwH0HjYorp57NGYBk=;
+        s=default; t=1550196773;
+        bh=Wb0I43kT1FzP9mnX602sQTz4Hxk0NvBFPw8oBH3QYuM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TXe5/Ua7X2LIHkmTdwKn6gkutmeZzXo8bv5IlzjNPnefnN6/cmjUR6rR65AnnYTKU
-         S+/9O1XsYMG7Ebf1rEHx+LjSx3/msSPdhA4/YPeVfuQ08wdjAFJrVJofX1SHpdeAxc
-         yd0ylTqB4oKWIXNHSHs4jSegXeCc/GqKXBStNE/A=
+        b=JGHPhpE49LaxUOlUP7jZoA4Dj4oB6PnZjBakdOus0e8+B1r9o/06YN7VD7Bw2mNR7
+         S+18BeWefSRMeEUeg7/yDhZEvJoBD56H11Um/Th8FRDwcr2gY0kFPE+6euRH1eu93R
+         yCoojNDlvHKWfRKgWrFCHBBjRSbfc2yquQMCCxnQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Thomas Falcon <tlfalcon@linux.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 58/65] ibmveth: Do not process frames after calling napi_reschedule
-Date:   Thu, 14 Feb 2019 21:11:14 -0500
-Message-Id: <20190215021121.177674-58-sashal@kernel.org>
+Cc:     Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 55/65] CIFS: Do not assume one credit for async responses
+Date:   Thu, 14 Feb 2019 21:11:11 -0500
+Message-Id: <20190215021121.177674-55-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -59,43 +57,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Falcon <tlfalcon@linux.ibm.com>
+From: Pavel Shilovsky <pshilov@microsoft.com>
 
-[ Upstream commit e95d22c69b2c130ccce257b84daf283fd82d611e ]
+[ Upstream commit 0fd1d37b0501efc6e295f56ab55cdaff784aa50c ]
 
-The IBM virtual ethernet driver's polling function continues
-to process frames after rescheduling NAPI, resulting in a warning
-if it exhausted its budget. Do not restart polling after calling
-napi_reschedule. Instead let frames be processed in the following
-instance.
+If we don't receive a response we can't assume that the server
+granted one credit. Assume zero credits in such cases.
 
-Signed-off-by: Thomas Falcon <tlfalcon@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/ibm/ibmveth.c | 2 --
- 1 file changed, 2 deletions(-)
+ fs/cifs/smb2pdu.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/ibm/ibmveth.c b/drivers/net/ethernet/ibm/ibmveth.c
-index 91f48c078073..f70cb4d3c684 100644
---- a/drivers/net/ethernet/ibm/ibmveth.c
-+++ b/drivers/net/ethernet/ibm/ibmveth.c
-@@ -1314,7 +1314,6 @@ static int ibmveth_poll(struct napi_struct *napi, int budget)
- 	unsigned long lpar_rc;
- 	u16 mss = 0;
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index 8a01e89ff827..1e5a1171212f 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -2814,9 +2814,10 @@ smb2_echo_callback(struct mid_q_entry *mid)
+ {
+ 	struct TCP_Server_Info *server = mid->callback_data;
+ 	struct smb2_echo_rsp *rsp = (struct smb2_echo_rsp *)mid->resp_buf;
+-	unsigned int credits_received = 1;
++	unsigned int credits_received = 0;
  
--restart_poll:
- 	while (frames_processed < budget) {
- 		if (!ibmveth_rxq_pending_buffer(adapter))
- 			break;
-@@ -1402,7 +1401,6 @@ static int ibmveth_poll(struct napi_struct *napi, int budget)
- 		    napi_reschedule(napi)) {
- 			lpar_rc = h_vio_signal(adapter->vdev->unit_address,
- 					       VIO_IRQ_DISABLE);
--			goto restart_poll;
- 		}
- 	}
+-	if (mid->mid_state == MID_RESPONSE_RECEIVED)
++	if (mid->mid_state == MID_RESPONSE_RECEIVED
++	    || mid->mid_state == MID_RESPONSE_MALFORMED)
+ 		credits_received = le16_to_cpu(rsp->sync_hdr.CreditRequest);
  
+ 	DeleteMidQEntry(mid);
+@@ -3073,7 +3074,7 @@ smb2_readv_callback(struct mid_q_entry *mid)
+ 	struct TCP_Server_Info *server = tcon->ses->server;
+ 	struct smb2_sync_hdr *shdr =
+ 				(struct smb2_sync_hdr *)rdata->iov[0].iov_base;
+-	unsigned int credits_received = 1;
++	unsigned int credits_received = 0;
+ 	struct smb_rqst rqst = { .rq_iov = rdata->iov,
+ 				 .rq_nvec = 2,
+ 				 .rq_pages = rdata->pages,
+@@ -3112,6 +3113,9 @@ smb2_readv_callback(struct mid_q_entry *mid)
+ 		task_io_account_read(rdata->got_bytes);
+ 		cifs_stats_bytes_read(tcon, rdata->got_bytes);
+ 		break;
++	case MID_RESPONSE_MALFORMED:
++		credits_received = le16_to_cpu(shdr->CreditRequest);
++		/* fall through */
+ 	default:
+ 		if (rdata->result != -ENODATA)
+ 			rdata->result = -EIO;
+@@ -3305,7 +3309,7 @@ smb2_writev_callback(struct mid_q_entry *mid)
+ 	struct cifs_tcon *tcon = tlink_tcon(wdata->cfile->tlink);
+ 	unsigned int written;
+ 	struct smb2_write_rsp *rsp = (struct smb2_write_rsp *)mid->resp_buf;
+-	unsigned int credits_received = 1;
++	unsigned int credits_received = 0;
+ 
+ 	switch (mid->mid_state) {
+ 	case MID_RESPONSE_RECEIVED:
+@@ -3333,6 +3337,9 @@ smb2_writev_callback(struct mid_q_entry *mid)
+ 	case MID_RETRY_NEEDED:
+ 		wdata->result = -EAGAIN;
+ 		break;
++	case MID_RESPONSE_MALFORMED:
++		credits_received = le16_to_cpu(rsp->sync_hdr.CreditRequest);
++		/* fall through */
+ 	default:
+ 		wdata->result = -EIO;
+ 		break;
 -- 
 2.19.1
 
