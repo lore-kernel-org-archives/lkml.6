@@ -2,94 +2,134 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F485C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:02:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C70E0C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:02:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3ACC21A80
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:02:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D39C21B18
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:02:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394813AbfBONCJ (ORCPT
+        id S2394829AbfBONCM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 08:02:09 -0500
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:48022
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726864AbfBONCJ (ORCPT
+        Fri, 15 Feb 2019 08:02:12 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:57204 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727303AbfBONCL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 08:02:09 -0500
-X-IronPort-AV: E=Sophos;i="5.58,372,1544482800"; 
-   d="scan'208";a="296307215"
-Received: from vaio-julia.rsr.lip6.fr ([132.227.76.33])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Feb 2019 14:02:06 +0100
-Date:   Fri, 15 Feb 2019 14:02:05 +0100 (CET)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Markus Elfring <Markus.Elfring@web.de>
-cc:     Wen Yang <wen.yang99@zte.com.cn>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Yi Wang <wang.yi59@zte.com.cn>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wen Yang <yellowriver2010@hotmail.com>,
-        Cheng Shengyu <cheng.shengyu@zte.com.cn>,
-        cocci@systeme.lip6.fr, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v5] Coccinelle: semantic code search for missing
- put_device()
-In-Reply-To: <94e4b3e6-87a4-aea2-dfef-44d308f0fb4f@web.de>
-Message-ID: <alpine.DEB.2.20.1902151400440.3617@hadrien>
-References: <1550217319-40418-1-git-send-email-wen.yang99@zte.com.cn> <94e4b3e6-87a4-aea2-dfef-44d308f0fb4f@web.de>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Fri, 15 Feb 2019 08:02:11 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id E0F088036F; Fri, 15 Feb 2019 14:02:01 +0100 (CET)
+Date:   Fri, 15 Feb 2019 14:02:07 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Yauhen Kharuzhy <jekhor@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
+ LEDs
+Message-ID: <20190215130207.GB32198@amd>
+References: <1df39a63-533f-bb68-a056-a0241f148be9@redhat.com>
+ <20190213230731.GA8557@amd>
+ <42078a81-e32e-81b7-528f-d1adb60d31c3@redhat.com>
+ <20190213233806.GA11867@amd>
+ <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com>
+ <20190214111423.GE6132@amd>
+ <92cf09b8-726d-4f1b-94ba-368a66af2246@redhat.com>
+ <2b6faaa5-b21e-a512-de7d-ca21be5045fc@gmail.com>
+ <20190214230307.GA17358@amd>
+ <2a5e2002-e5f1-6da3-8a43-317801b69657@redhat.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323329-662799820-1550235726=:3617"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="v9Ux+11Zm5mwPlX6"
+Content-Disposition: inline
+In-Reply-To: <2a5e2002-e5f1-6da3-8a43-317801b69657@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---8323329-662799820-1550235726=:3617
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
 
+--v9Ux+11Zm5mwPlX6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi!
 
-On Fri, 15 Feb 2019, Markus Elfring wrote:
+> >Hardware can automatically control the LED according to the charging
+> >status, or it can be used as normal software-controlled LED.
+> >
+> >I believe we should use trigger to select if hardware controls it or
+> >not (and then add driver-specific files to describe the
+> >details). Other proposal is in the mail thread, too.
+>=20
+> Right, so there are really 2 orthogonal issues here:
 
-> > +@search exists@
-> > +local idexpression id;
-> > +expression x,e,e1;
-> > +position p1,p2;
-> > +type T,T1,T2,T3;
-> > +@@
-> > +
-> > +id = of_find_device_by_node@p1(x)
-> > +... when != e = id
-> > +if (id == NULL || ...) { ... return ...; }
-> > +... when != put_device(&id->dev)
-> …
-> > +    when != if (id) { ... put_device(&id->dev) ... }
-> …
->
-> I would interpret this SmPL code in the way that the if statement
-> for the pointer check is “optional” in this line.
-> Is it an extra and redundant SmPL specification when the reference
-> release function could eventually be found just anywhere within
-> an implementation?
+For completeness, there are actually 3 issues:
 
-The proposed when code is correct.  It is not redundant, because it checks
-for a particular control-flow pattern.
+> 1) With this hardware the LED is either turned on/off automatically
+> by the PMIC based on charging state; or it is under user control.
+>=20
+> This is different from the led_classdev_notify_brightness_hw_changed
+> case, where the hardware may update the state underneath the driver,
+> but the driver can still always update the state itself. In this case
+> if the LED is in hw-control mode then the driver cannot turn it on/off.
+>=20
+> Pavel suggested modeling this with a new "hardware' trigger, where
+> setting the trigger to this trigger will enable the hw-controlled
+> mode and setting any other trigger will switch thing to the user-controll=
+ed
+> mode.
+>=20
+> 2) This hardware can do blinking / breathing. There are various issues wi=
+th
+> this:
+>=20
+> 2.1) Blinking is more or less covered by the timer trigger. But breathing=
+ is
+> not the pattern trigger is a poor match since there is only 1 fixed patte=
+rn
+>=20
+> 2.2) The supported blinking frequencies are very limited, so it might be =
+better
+> to keep the standard software blinking mode and have a special sysfs attr=
+ibute
+> to select the hardware blink support
+>=20
+> 2.3) The user can also select between continuous on / blinking / breathing
+> when the LED is under hardware control (it will then be on / blinking / b=
+reathing)
+> when charging.
 
-julia
+3) Your hardware supports "composed" triggers:
 
->
->
-> Will a need evolve to develop a similar source code search approach
-> for safer resource management with other function combinations?
->
-> Regards,
-> Markus
->
---8323329-662799820-1550235726=:3617--
+You can do "breathing while charging", can do "blinking while
+charging" and you probably could do "blinking while disk is active" or
+"breathing while microphone is muted".
+
+We don't have such support in LED subsystem, AFAICT. Anyway, I'd say
+3) Does not need to be solved now...
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--v9Ux+11Zm5mwPlX6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlxmuE8ACgkQMOfwapXb+vLudQCgqQS77n5Tsm6sjJ5KCzmEdqP/
+qxUAn06KMMaz2kPH8f+lqCCXxQJT+vyT
+=tSOZ
+-----END PGP SIGNATURE-----
+
+--v9Ux+11Zm5mwPlX6--
