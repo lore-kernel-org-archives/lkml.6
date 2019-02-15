@@ -2,75 +2,69 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDDC3C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:09:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB8A5C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:10:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7B0621924
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:09:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 795DD222D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:10:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550250605;
+	bh=iXMEOiAv1vU3KHQvNPAzMs1Dy+gWtacEYhND3tJYL/c=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=V35qhL6Q2EwHrnCUkkP9rBUyouCtgyDIlooNdlLVjMJAAkyFQF90QyBPIIzwrNckU
+	 +uDhehAbGKddmEXozeHcDNBkHjLqSfsdCu20THSr29U2pbbY0m4fWh3sgXIQ32Ybjv
+	 W2Gj6iMyq9fLFZeHiqLbang6hBP+kMheAtool54c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728515AbfBORJB (ORCPT
+        id S1727924AbfBORKE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 12:09:01 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43912 "EHLO mx1.redhat.com"
+        Fri, 15 Feb 2019 12:10:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726000AbfBORI7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 12:08:59 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1C4D359444;
-        Fri, 15 Feb 2019 17:08:59 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.152])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 5F6BA60C69;
-        Fri, 15 Feb 2019 17:08:57 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri, 15 Feb 2019 18:08:58 +0100 (CET)
-Date:   Fri, 15 Feb 2019 18:08:55 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Samuel Dionne-Riel <samuel@dionne-riel.com>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
-        Graham Christensen <graham@grahamc.com>,
-        Michal Hocko <mhocko@suse.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] exec: load_script: Do not exec truncated interpreter
- path
-Message-ID: <20190215170855.GB8804@redhat.com>
-References: <20190215031758.GA18776@beast>
- <CAHk-=wg7DRUqWvbCS2dm=mpdSNJry92Fo0OHDVi67bi8BMqt4A@mail.gmail.com>
- <CAGXu5jLi+zcOoi+Ti=OyR3MfF8s_S35EEmT_DoCzYPepOcn+Ow@mail.gmail.com>
- <CAGXu5jJXFP-1rEeYtMfqrSUz2oz8TWcjr89zL6-MPsNS7rwywg@mail.gmail.com>
- <20190215161851.GA8804@redhat.com>
- <CAHk-=wjk29MeO9PuyirONZMr75-H6LtfNe6WghOXT7n+f5-RTA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjk29MeO9PuyirONZMr75-H6LtfNe6WghOXT7n+f5-RTA@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 15 Feb 2019 17:08:59 +0000 (UTC)
+        id S1726144AbfBORKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 12:10:03 -0500
+Subject: Re: [GIT PULL] signal fixes for v5.0-rc7
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550250603;
+        bh=iXMEOiAv1vU3KHQvNPAzMs1Dy+gWtacEYhND3tJYL/c=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=UtK2fCJtBwHjlQKe5Hf67S/PMAuWNO0ouEw4MJo5XAtBU9G2KM8x88Pf/up2dnW1Q
+         cUDhpviKaKDX9QlDexe1IT/HxRymxjDNsvg2+zFG0tVGzhD0x5XO2x44Bw+gcj5MYH
+         NuGuEEAMH95sykJs25qQ56YI4v70z1gZXzTbHKak=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <87pnru2io6.fsf@xmission.com>
+References: <87pnru2io6.fsf@xmission.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <87pnru2io6.fsf@xmission.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git
+ for-linus
+X-PR-Tracked-Commit-Id: cf43a757fd49442bc38f76088b70c2299eed2c2f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 02d75040897f37e43cc6df9a7084ecdd20526f1a
+Message-Id: <155025060309.11780.14710612938853392300.pr-tracker-bot@kernel.org>
+Date:   Fri, 15 Feb 2019 17:10:03 +0000
+To:     ebiederm@xmission.com (Eric W. Biederman)
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+        Ivan Delalande <colona@arista.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/15, Linus Torvalds wrote:
->
-> +static inline bool tabspc(char c) { return c == ' ' || c == '\t'; }
-> +static inline bool no_tab_or_space(const char *first, const char *last)
-> +{
-> +	// Skip leading space
-> +	for (;tabspc(*first) ; first++)
-> +		if (!*first || first == last)
-                    ^^^^^^^
-well, given that tabspc(*first) is true, I don't think that *first == 0
-is ever possible ;)
+The pull request you sent on Thu, 14 Feb 2019 14:56:25 -0600:
 
-Oleg.
+> git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git for-linus
 
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/02d75040897f37e43cc6df9a7084ecdd20526f1a
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
