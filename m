@@ -2,211 +2,153 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8BBFC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:38:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 321D8C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:41:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92B662192D
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:38:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA5E12192D
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:41:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rXpOhQ/g"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="j9Gw3aw0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732752AbfBOOiH (ORCPT
+        id S2392225AbfBOOlw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 09:38:07 -0500
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:38352 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729482AbfBOOiG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 09:38:06 -0500
-Received: by mail-vk1-f196.google.com with SMTP id x140so2276502vke.5
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 06:38:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oJHQ2FurCtuTJLkPxi5192L8GxeFs8MeKxFgyYj0yrw=;
-        b=rXpOhQ/gIAFHs2d0uI+saOWjnYBEK0uxH3giP/LGRW4Th6lLuvO0e16PRYYdpIuJ3K
-         pETiwX+Nr6gcZKa7rN6M4gd0LSV4e5np5hHm+R7/if4ZCBLUp68QAM0VRLZClJ9wwAfK
-         PqeT46Ifl3HWerODkJ2CPyCXRzY4svA4WScg+AAsdB53tj7evLyQTQ7HowWvyNQGiYmt
-         08oKI/3bJBcYjgb9niiauqiQFxCXSD18LYt/AUkkNPriBTEmKXnw+3NJN9qiENAMS7BY
-         XEW4/7GdYfIUXUoc/pWO8MSXkojIBipcJ4Nv7Mr+GboAW5sK7Np9DdGBoXmTugZc8Ken
-         PgKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oJHQ2FurCtuTJLkPxi5192L8GxeFs8MeKxFgyYj0yrw=;
-        b=pqJ4SipjFlZ4K+/FT9XtOp5mCbrFhv20Y8E2MYJY9VdyJqreKuApTrFEnm+K0PgndG
-         SD0pfRFea9U7HjZKo4dt9quyy2Jch+x5a24I3Ij8fx1YO2ZdsyIJ3YkCMbDtmf1o+EvR
-         GhbEGCm4wgmclXShRP6aR7y06TU40gAHymwZw+uTUfE0QS9K4CKkOBUz8ZqoLfJUKD2u
-         IBGnj2DLfgQndlr6u089z5tiLNRDORM/zXO3rEvwwisW93DjmmaDCYimm3qjkKIpsyCZ
-         HpQ8QvcUVPnCyiC3Bbtievc55zbsr9jK9KVXHIo28lqDd73z8JsRPelx+92fTWp37DPX
-         PMHw==
-X-Gm-Message-State: AHQUAuZSALD+LFMFzQs3RgFO3df59qZ4wQiHyArHLwfzmfDxRox3yrV2
-        j4fUPn6uyKLUNsJin7JIMCWnrEfAGXczhattg4G+YQ==
-X-Google-Smtp-Source: AHgI3IYOjqbeh/mb9Fc0L8YtynZD5nNnHKa+dT8Mt+L2Wgm4TRmq7yPMRj03NRT0fGlfYlSKtSidI/C2q1o76UGHims=
-X-Received: by 2002:a1f:9042:: with SMTP id s63mr4966461vkd.17.1550241484954;
- Fri, 15 Feb 2019 06:38:04 -0800 (PST)
+        Fri, 15 Feb 2019 09:41:52 -0500
+Received: from mail-eopbgr00045.outbound.protection.outlook.com ([40.107.0.45]:60048
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2387515AbfBOOlw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 09:41:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3U7gU+TLwJ9yh/IZqBptRDOJ4Njji7BTTzXJKb8fOIg=;
+ b=j9Gw3aw0oU4wgp7e2sQGuzaT6adMO8hl+L8XbsKBxp/K7lvetbNSo0KwTsY1t+mIs2d/gkWpAp7LuZfvyGSQ2RyqkrisgE6NgHPOZc1MckDP4aHLp5siScbaTtoQuSqOKI0FUfNQjeRKQ4fzoZ91TYNENWYJ6U+DfXBzM/evCUg=
+Received: from VI1PR04MB4880.eurprd04.prod.outlook.com (20.177.49.153) by
+ VI1PR04MB4174.eurprd04.prod.outlook.com (52.134.30.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.17; Fri, 15 Feb 2019 14:41:47 +0000
+Received: from VI1PR04MB4880.eurprd04.prod.outlook.com
+ ([fe80::3d48:4560:6982:4c32]) by VI1PR04MB4880.eurprd04.prod.outlook.com
+ ([fe80::3d48:4560:6982:4c32%3]) with mapi id 15.20.1601.023; Fri, 15 Feb 2019
+ 14:41:47 +0000
+From:   Claudiu Manoil <claudiu.manoil@nxp.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     Shawn Guo <shawnguo@kernel.org>, Leo Li <leoyang.li@nxp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Alexandru Marginean <alexandru.marginean@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net-next v2 3/3] enetc: Add ENETC PF level external MDIO
+ support
+Thread-Topic: [PATCH net-next v2 3/3] enetc: Add ENETC PF level external MDIO
+ support
+Thread-Index: AQHUxRa2xfAoHsNatECZeGrGwDGmUaXg3FCAgAAPfPA=
+Date:   Fri, 15 Feb 2019 14:41:47 +0000
+Message-ID: <VI1PR04MB488080895C871B6B3ABA571D96600@VI1PR04MB4880.eurprd04.prod.outlook.com>
+References: <1550225414-12125-1-git-send-email-claudiu.manoil@nxp.com>
+ <1550225414-12125-4-git-send-email-claudiu.manoil@nxp.com>
+ <20190215133459.GH5699@lunn.ch>
+In-Reply-To: <20190215133459.GH5699@lunn.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=claudiu.manoil@nxp.com; 
+x-originating-ip: [86.34.165.90]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e18b633c-c1c1-4738-bd77-08d69353b6c0
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4174;
+x-ms-traffictypediagnostic: VI1PR04MB4174:
+x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;VI1PR04MB4174;23:HGabyH9cr78tsrJyumilkISD8DSaQK4Na/2MmrADl?=
+ =?us-ascii?Q?i+oPEyC10HpGkYkFgoDuCehNSTvP5I5c+0kolXwFNiRXzfXE5NCoeDR9LYab?=
+ =?us-ascii?Q?KWTe8yS6sPLvUFWaZsk0jSQloSiS9zrgxFYrmZTQsM0uSM5wedZvWT1WvfuE?=
+ =?us-ascii?Q?SvLZEXHx/o/LXpvVrv84dV/0EEI2ohnC6WT4CZs7H0KmSncuj4jN3aS7WJHN?=
+ =?us-ascii?Q?cduYPQjCji4WMb9iapDAuM1G7HhQdd6073I1VcNGpwvpdRWqnMgpTnY4wqCp?=
+ =?us-ascii?Q?dYY1K7lIVNWLN9nKtDpwBA/yx0lwjQuX8ob5tolRupyB16Uo/OYsrhtyow09?=
+ =?us-ascii?Q?9/x/CiRqDjqXdLWHUuUCT3EJjAm9jkellEageKdpfe0FZRSZ0AW2YXhiH13t?=
+ =?us-ascii?Q?8o9J2qPVSLtX9cjmgaInGAGVTtxZv9cuq8E7m5RJqJaNSoGRYIsTlQR4d4/J?=
+ =?us-ascii?Q?wmx9MnbMcMAxCT6a2IEUuGdrBVF2tqwkJPL7DTOR6IyqnvBL0lUDQxE207dR?=
+ =?us-ascii?Q?zAPGVcOwQW3xJi20Ro/MyAEB4YCZ+4D2ULZZlfI+RWBvo1R2dfvxwaSjwU4N?=
+ =?us-ascii?Q?PNTbENl+foiq+wbQefAKi66DZLVO3Xn39i3VimAFMpS+4eWejyx4qRt0r4MI?=
+ =?us-ascii?Q?FQnB/R+E7EcGhyhaYmTYZ/0nNhjzeGj/IFd+0PPuxYbYp0m3TSN4AtAB+lZo?=
+ =?us-ascii?Q?dVM1dQVI8nU76ytz5q7t/jtQ1FnQV9lQRmr0/UzAIFm34BO86fN4UktsUQdB?=
+ =?us-ascii?Q?+NXuChburA1QlEZ9FX1O3EClIMrJVG4ivKb+MtHS/DncN1ue2Fc2l9sKwgzR?=
+ =?us-ascii?Q?vcQe9v5Kha1H1vl1dR1I9G17O/UsjiwtI4no6KOYgrr6ekbearp5HeUpa19E?=
+ =?us-ascii?Q?v4hHeaTGQ3Wt05Pa5K3PCojR7FBlJpZzI9bUaSGCXM2YLhik08jz914vHlyD?=
+ =?us-ascii?Q?ohwccGYv2fnqh4mh//pTcr6Keva3LRXIRK8kuNMP6ytZGuAmIfTCg3Nt2Osa?=
+ =?us-ascii?Q?3GhOge9PyDDA7KmCR6frm8EqJG5QpB51BZrA8fJeIyIP8KFUKUQDI5WfttTL?=
+ =?us-ascii?Q?vCJK1aoYdIhcQ+f/AS1CvLn5HNc+IJoEssxM5tcKxY4uUKcrFb9oLNqk68of?=
+ =?us-ascii?Q?Y3xioPr0iUgX91pK51/xKpFnLCQd3xCWlfU7h5N5cePBq4zIxI3AHe8iu/K3?=
+ =?us-ascii?Q?/Z8VAR8VEcKt8CbQGrxLXwz5ecMsY6DAEqq?=
+x-microsoft-antispam-prvs: <VI1PR04MB4174D6E2E2AA227D7FE4E97196600@VI1PR04MB4174.eurprd04.prod.outlook.com>
+x-forefront-prvs: 09497C15EB
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(39860400002)(396003)(376002)(366004)(199004)(189003)(13464003)(8936002)(6436002)(81166006)(8676002)(86362001)(68736007)(305945005)(81156014)(6916009)(478600001)(54906003)(6116002)(3846002)(74316002)(316002)(102836004)(6506007)(26005)(186003)(99286004)(7696005)(76176011)(14454004)(25786009)(256004)(11346002)(486006)(4326008)(476003)(446003)(105586002)(33656002)(55016002)(9686003)(106356001)(53936002)(6246003)(97736004)(71200400001)(71190400001)(7736002)(44832011)(66066001)(229853002)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4174;H:VI1PR04MB4880.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: QdsvHuRuRi1DF9v7DGLl2qYGnYPjNpj2IRzdHCGqZyzjIFwjLU3XGR9A9U84+8SrWqAV43qfYg+irNReW+AtIRNKJaQfGXu88jkwBbnVbI4RX1jo3V3I1G1Fs/E2fzUjokv32KQFlk1RV11B9MZGO0c1hi72+ATJQzeWxf9gIKJUUjdy7QpzNWWD3Ncj00LgPUs0f82xN9aSG7OaGRQX0EGWkB71YAyGEyBDhm0KytDsMCTN359+ZZaF9aNRXgmoiFGxt1Q1MF0E1GztVxJ/zEDLOdhBp2/TalSo4Bbr3vM4kDlRnIO31HGyVrYO9aIgmF9/ZKYk8XZjRZe3T6UtsM8u9rjUFj2i96jzxpTSuRIhUrWcB923GRa1MAMuO5YRXJ1Gc2cxWyaIRTlHG51wMdS7oOA7z9vU3QlOmHe9q8c=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <5510642.nRbR3bcduN@aspire.rjw.lan> <9351473.C2nPJoyFsE@aspire.rjw.lan>
- <2ed95b05-317c-59bb-498a-b5481e54bcf6@nvidia.com>
-In-Reply-To: <2ed95b05-317c-59bb-498a-b5481e54bcf6@nvidia.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 15 Feb 2019 15:37:28 +0100
-Message-ID: <CAPDyKFoAtviRYuFxJLNrD_J0bGbMTca3O8EN8THg6+d3BNq3vQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] driver core: Fix possible supplier PM-usage counter imbalance
-To:     Jon Hunter <jonathanh@nvidia.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lukas Wunner <lukas@wunner.de>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-tegra <linux-tegra@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e18b633c-c1c1-4738-bd77-08d69353b6c0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Feb 2019 14:41:47.6066
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4174
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 15 Feb 2019 at 12:00, Jon Hunter <jonathanh@nvidia.com> wrote:
+
+
+>-----Original Message-----
+>From: Andrew Lunn <andrew@lunn.ch>
+>Sent: Friday, February 15, 2019 3:35 PM
+>To: Claudiu Manoil <claudiu.manoil@nxp.com>
+>Cc: Shawn Guo <shawnguo@kernel.org>; Leo Li <leoyang.li@nxp.com>; David S =
+.
+>Miller <davem@davemloft.net>; Alexandru Marginean
+><alexandru.marginean@nxp.com>; linux-arm-kernel@lists.infradead.org;
+>devicetree@vger.kernel.org; netdev@vger.kernel.org; linux-
+>kernel@vger.kernel.org
+>Subject: Re: [PATCH net-next v2 3/3] enetc: Add ENETC PF level external MD=
+IO
+>support
 >
-> Hi Rafael,
+>On Fri, Feb 15, 2019 at 12:10:14PM +0200, Claudiu Manoil wrote:
+>> Each ENETC PF has its own MDIO interface, the corresponding
+>> MDIO registers are mapped in the ENETC's Port register block.
+>> The current patch adds a driver for these PF level MDIO buses,
+>> so that each PF can manage directly its own external link.
+>>
+>> Signed-off-by: Alex Marginean <alexandru.marginean@nxp.com>
+>> Signed-off-by: Claudiu Manoil <claudiu.manoil@nxp.com>
+>> ---
+>> v2 - used readx_poll_timeout()
+>>    - added mdio node child to the port node
 >
-> On 12/02/2019 12:08, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > If a stateless device link to a certain supplier with
-> > DL_FLAG_PM_RUNTIME set in the flags is added and then removed by the
-> > consumer driver's probe callback, the supplier's PM-runtime usage
-> > counter will be nonzero after that which effectively causes the
-> > supplier to remain "always on" going forward.
-> >
-> > Namely, device_link_add() called to add the link invokes
-> > device_link_rpm_prepare() which notices that the consumer driver is
-> > probing, so it increments the supplier's PM-runtime usage counter
-> > with the assumption that the link will stay around until
-> > pm_runtime_put_suppliers() is called by driver_probe_device(),
-> > but if the link goes away before that point, the supplier's
-> > PM-runtime usage counter will remain nonzero.
-> >
-> > To prevent that from happening, first rework pm_runtime_get_suppliers()
-> > and pm_runtime_put_suppliers() to use the rpm_active refounts of device
-> > links and make the latter only drop rpm_active and the supplier's
-> > PM-runtime usage counter for each link by one, unless rpm_active is
-> > one already for it.  Next, modify device_link_add() to bump up the
-> > new link's rpm_active refcount and the suppliers PM-runtime usage
-> > counter by two, to prevent pm_runtime_put_suppliers(), if it is
-> > called subsequently, from suspending the supplier prematurely (in
-> > case its PM-runtime usage counter goes down to 0 in there).
-> >
-> > Due to the way rpm_put_suppliers() works, this change does not
-> > affect runtime suspend of the consumer ends of new device links (or,
-> > generally, device links for which DL_FLAG_PM_RUNTIME has just been
-> > set).
-> >
-> > Fixes: e2f3cd831a28 ("driver core: Fix handling of runtime PM flags in device_link_add()")
-> > Reported-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >
-> > Note that the issue had been there before commit e2f3cd831a28, but it was
-> > overlooked by that commit and this change is a fix on top of it, so make
-> > the Fixes: tag point to commit e2f3cd831a28 (instead of an earlier one
-> > that the patch will not be applicable to).
-> I noticed that yesterday's and today's -next were no longer booting on
-> one of our Tegra boards (Tegra210 Jetson TX2) because networking is
-> failing. The ethernet chip is a USB device and looking at the bootlogs I
-> can see that the Tegra XHCI driver is failing ...
+>Hi Claudiu
 >
->  tegra-xusb 70090000.usb: xHCI host controller not responding, assume dead
->  tegra-xusb 70090000.usb: HC died; cleaning up
+>Please document this in the device tree binding.
 >
-> The Tegra XHCI driver uses multiple power-domains and uses
-> device_link_add() to attach them. So now I am wondering if there is
-> something that we have got wrong in our implementation. However, I don't
-> see the device being probed deferred on boot or anything like that.
->
-> The driver in question is drivers/usb/host/xhci-tegra.c and we add the
-> links in the function tegra_xusb_powerdomain_init() which is before RPM
-> is enabled. Let me know if you have any thoughts.
 
-If you are willing to help debugging then I am offering my assistance.
+Hi,
+I don't really see what bindings would need to be documented, as the node
+names and properties used so far are common.  Like, the "mdio" node name
+is common, the enetc ports are "pci" nodes, nothing special for these.
+What's missing?
 
-I would start by enabling CONFIG_PM_ADVANCED_DEBUG, which gives you
-some more information about the runtime PM state of the device, like
-the usage count for example.
-I would also add a couple of prints in
-tegra_xusb_runtime_suspend|resume() and in the ->power_on|off()
-callbacks for the corresponding genpds, to see when those gets called.
-
-While I was testing $subject patch I also used a local debug patch,
-which adds a sysfs node that can be used to get the state of linked
-suppliers for a consumer device. Feel free to use it, attached below.
-
-Of course, the interesting part is the comparison of what happens with
-and without $subject patch.
-
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Mon, 11 Feb 2019 15:37:44 +0100
-Subject: [PATCH] PM / Runtime: Add sysfs for runtime counting of suppliers
-
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/base/power/sysfs.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
-
-diff --git a/drivers/base/power/sysfs.c b/drivers/base/power/sysfs.c
-index d713738ce796..ce5c188cdf54 100644
---- a/drivers/base/power/sysfs.c
-+++ b/drivers/base/power/sysfs.c
-@@ -537,6 +537,25 @@ static ssize_t runtime_enabled_show(struct device *dev,
- }
- static DEVICE_ATTR_RO(runtime_enabled);
-
-+static ssize_t runtime_suppliers_show(struct device *dev,
-+                                 struct device_attribute *attr, char *buf)
-+{
-+       struct device_link *link;
-+       int chars = 0;
-+
-+       list_for_each_entry_rcu(link, &dev->links.suppliers, c_node) {
-+
-+               if (!(link->flags & DL_FLAG_PM_RUNTIME))
-+                       continue;
-+
-+               chars += sprintf(buf + chars, "%s %d\n",
-+                               dev_name(link->supplier),
-+                               refcount_read(&link->rpm_active));
-+       }
-+       return chars;
-+}
-+static DEVICE_ATTR_RO(runtime_suppliers);
-+
- #ifdef CONFIG_PM_SLEEP
- static ssize_t async_show(struct device *dev, struct device_attribute *attr,
-                          char *buf)
-@@ -572,6 +591,7 @@ static struct attribute *power_attrs[] = {
-        &dev_attr_runtime_usage.attr,
-        &dev_attr_runtime_active_kids.attr,
-        &dev_attr_runtime_enabled.attr,
-+       &dev_attr_runtime_suppliers.attr,
- #endif /* CONFIG_PM_ADVANCED_DEBUG */
-        NULL,
- };
--- 
-2.17.1
-
-Kind regards
-Uffe
+Regards,
+Claudiu
