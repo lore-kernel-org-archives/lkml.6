@@ -2,104 +2,66 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D8EC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:47:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DAADC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:49:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8058222A1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:47:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550256435;
-	bh=gC+EeGymE0az1ng07H/vLR7IfB3r3tQ8zEotPd3Gjbo=;
-	h=To:In-Reply-To:Subject:References:Cc:From:Date:List-ID:From;
-	b=m8PgxKhG3J0vWPfQBsIm4gqy9tInx/+9HVp6gM29j3F35U23ZDqIRXeO/ozQSjZeQ
-	 PtO0axErLUXsaGS7RyOVh9U9BKO5zaQnJpwQ/4GqSagRqQFMYfR0T/5DNXtKjTZQyh
-	 rw7TiWzC0iTucT0q5ltcCKAMYEu37ZCoVdylWSqU=
+	by mail.kernel.org (Postfix) with ESMTP id 4644E222A1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:49:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732484AbfBOSrO (ORCPT
+        id S1732512AbfBOStJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 13:47:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50672 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726891AbfBOSrN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 13:47:13 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCEF221929;
-        Fri, 15 Feb 2019 18:47:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550256432;
-        bh=gC+EeGymE0az1ng07H/vLR7IfB3r3tQ8zEotPd3Gjbo=;
-        h=To:In-Reply-To:Subject:References:Cc:From:Date:From;
-        b=IUeITKXWTH4E6j+4mrNzKLHZ+jHOYAEk52HVhGTB406byGGfycEavDkQB9xAX3vUu
-         OI48l75TvDqylfJJb0Lt6C1QsLIMzQlwwPuVAAuLY4570up1/ugPqRw82jhGWFobSR
-         weMpMX9N80FmwtiQ8gJ/zeR9TMEOxh1TkrCQZnLg=
-Content-Type: text/plain; charset="utf-8"
+        Fri, 15 Feb 2019 13:49:09 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37648 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726891AbfBOStJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 13:49:09 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A6F1EA78;
+        Fri, 15 Feb 2019 10:49:08 -0800 (PST)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6FA9E3F589;
+        Fri, 15 Feb 2019 10:49:06 -0800 (PST)
+Date:   Fri, 15 Feb 2019 18:49:04 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Waiman Long <longman@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+Subject: Re: [PATCH 00/10] locking/rwsem: Rwsem rearchitecture part 1
+Message-ID: <20190215184904.GD15084@fuggles.cambridge.arm.com>
+References: <1550017627-14504-1-git-send-email-longman@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <41f8f325-2738-3995-1fc8-354a9412041e@codeaurora.org>
-User-Agent: alot/0.8
-Subject: Re: [PATCH 2/9] clk: Introduce get_parent_hw clk op
-Message-ID: <155025643198.115909.9355230466710329335@swboyd.mtv.corp.google.com>
-References: <20190129061021.94775-1-sboyd@kernel.org> <20190129061021.94775-3-sboyd@kernel.org> <41f8f325-2738-3995-1fc8-354a9412041e@codeaurora.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>
-From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Fri, 15 Feb 2019 10:47:11 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1550017627-14504-1-git-send-email-longman@redhat.com>
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jeffrey Hugo (2019-02-11 08:09:00)
-> On 1/28/2019 11:10 PM, Stephen Boyd wrote:
->=20
-> > +static int clk_init_parent(struct clk_core *core)
-> > +{
-> > +     core->parent =3D __clk_init_parent(core, true);
-> > +     if (IS_ERR(core->parent))
-> > +             return PTR_ERR(core->parent);
-> > +
-> > +     /*
-> > +      * Populate core->parent if parent has already been clk_core_init=
-'d. If
-> > +      * parent has not yet been clk_core_init'd then place clk in the =
-orphan
-> > +      * list.  If clk doesn't have any parents then place it in the ro=
-ot
-> > +      * clk list.
-> > +      *
-> > +      * Every time a new clk is clk_init'd then we walk the list of or=
-phan
-> > +      * clocks and re-parent any that are children of the clock curren=
-tly
-> > +      * being clk_init'd.
-> > +      */
-> > +     if (core->parent) {
-> > +             hlist_add_head(&core->child_node,
-> > +                             &core->parent->children);
-> > +             core->orphan =3D core->parent->orphan;
-> > +     } else if (!core->num_parents) {
-> > +             hlist_add_head(&core->child_node, &clk_root_list);
-> > +             core->orphan =3D false;
-> > +     } else {
-> > +             hlist_add_head(&core->child_node, &clk_orphan_list);
->=20
-> Missing "core->orphan =3D true;"?
-> The snippet below had that line.  Its not clear why it appears to be=20
-> dropped here.
->=20
+On Tue, Feb 12, 2019 at 07:26:57PM -0500, Waiman Long wrote:
+> This is part 1 of a 3-part (0/1/2) series to rearchitect the internal
+> operation of rwsem. This depends on the part 0 patches sent out previously
+> 
+> https://lore.kernel.org/lkml/1549913486-16799-1-git-send-email-longman@redhat.com
+> 
+> This part lays the foundation for part 2 without making any functional
+> changes. This part includes the following changes:
 
-Hmm. Weird. I think I may have been getting ahead of myself and moving
-the orphan updating code into __clk_init_parent(). I can't remember why
-though, so I guess I'll go all the way and move it all into
-__clk_init_parent() now. Thanks for pointing it out.
+Did you post part 2 anywhere? I can't seem to find it for some reason.
 
+Cheers,
+
+Will
