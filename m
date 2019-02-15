@@ -3,150 +3,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40CBDC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:12:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2ABBC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:12:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14FAC21924
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:12:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A843222BE
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:12:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392464AbfBOQMG (ORCPT
+        id S2392510AbfBOQMI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Feb 2019 11:12:08 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:59257 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392446AbfBOQMG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 15 Feb 2019 11:12:06 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46436 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388701AbfBOQME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 11:12:04 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2E58EC0AE662;
-        Fri, 15 Feb 2019 16:12:04 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0617D5D6A9;
-        Fri, 15 Feb 2019 16:12:01 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 25/27] keys: Provide a way to ask for the container
- keyring
-From:   David Howells <dhowells@redhat.com>
-To:     keyrings@vger.kernel.org, trond.myklebust@hammerspace.com,
-        sfrench@samba.org
-Cc:     linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        rgb@redhat.com, dhowells@redhat.com, linux-kernel@vger.kernel.org
-Date:   Fri, 15 Feb 2019 16:11:58 +0000
-Message-ID: <155024711895.21651.13875852239032339316.stgit@warthog.procyon.org.uk>
-In-Reply-To: <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
-References: <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 15 Feb 2019 16:12:04 +0000 (UTC)
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gug5n-0006VR-TY; Fri, 15 Feb 2019 17:11:59 +0100
+Message-ID: <1550247118.2546.56.camel@pengutronix.de>
+Subject: Re: [PATCH v1 1/3] ARM: dts: stm32: Add Vivante GPU support on
+ STM32MP157c
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>
+Cc:     devicetree@vger.kernel.org, Philippe Cornu <philippe.cornu@st.com>,
+        linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org
+Date:   Fri, 15 Feb 2019 17:11:58 +0100
+In-Reply-To: <1550246316-9747-2-git-send-email-pierre-yves.mordret@st.com>
+References: <1550246316-9747-1-git-send-email-pierre-yves.mordret@st.com>
+         <1550246316-9747-2-git-send-email-pierre-yves.mordret@st.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide a constant that can be used in place of a key ID to indicate the
-keyring belonging to the current process's container.  Used as:
+Hi Pierre-Yves,
 
-	key_serial_t container_keyring =
-		keyctl_get_key_ID(KEY_SPEC_CONTAINER_KEYRING, 0);
+Am Freitag, den 15.02.2019, 16:58 +0100 schrieb Pierre-Yves MORDRET:
+> Append Vivante GPU DT configuration.
+> 
+> Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+> ---
+>  arch/arm/boot/dts/stm32mp157c.dtsi | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+> index f8bbfff..29540bc 100644
+> --- a/arch/arm/boot/dts/stm32mp157c.dtsi
+> +++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+> @@ -1106,6 +1106,16 @@
+> >  			status = "disabled";
+> >  		};
+>  
+> +		gpu: gpu@59000000 {
+> +			compatible = "vivante,gc";
+> +			reg = <0x59000000 0x800>;
+> +			interrupts = <GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&rcc GPU>, <&rcc GPU_K>;
+> +			clock-names = "bus" ,"core";
 
-Note that this is merely a 'macro' for the ID of the keyring.  To be able
-to actually do anything with it requires the keyring to grant appropriate
-permissions to the denizens of the container.
+Is this a 2D only core? If it is also 3D capable the binding says you
+need to specify the shader clock (may be the same clock feeding the
+core).
 
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+Regards,
+Lucas
 
- include/uapi/linux/keyctl.h  |    1 +
- samples/vfs/test-container.c |   15 +++++++++++++++
- security/keys/process_keys.c |    7 +++++++
- 3 files changed, 23 insertions(+)
-
-diff --git a/include/uapi/linux/keyctl.h b/include/uapi/linux/keyctl.h
-index 7136d14dd4d7..89ab609f774c 100644
---- a/include/uapi/linux/keyctl.h
-+++ b/include/uapi/linux/keyctl.h
-@@ -88,6 +88,7 @@ enum key_ace_standard_subject {
- #define KEY_SPEC_GROUP_KEYRING		-6	/* - key ID for GID-specific keyring */
- #define KEY_SPEC_REQKEY_AUTH_KEY	-7	/* - key ID for assumed request_key auth key */
- #define KEY_SPEC_REQUESTOR_KEYRING	-8	/* - key ID for request_key() dest keyring */
-+#define KEY_SPEC_CONTAINER_KEYRING	-9	/* - key ID for current->container's keyring */
- 
- /* request-key default keyrings */
- #define KEY_REQKEY_DEFL_NO_CHANGE		-1
-diff --git a/samples/vfs/test-container.c b/samples/vfs/test-container.c
-index 7b2081693fce..4716dd50b696 100644
---- a/samples/vfs/test-container.c
-+++ b/samples/vfs/test-container.c
-@@ -20,6 +20,7 @@
- #include <sys/stat.h>
- #include <keyutils.h>
- 
-+#define KEY_SPEC_CONTAINER_KEYRING	-9	/* - key ID for current->container's keyring */
- #define KEYCTL_CONTAINER_INTERCEPT	31	/* Intercept upcalls inside a container */
- #define KEYCTL_SET_CONTAINER_KEYRING	35	/* Attach a keyring to a container */
- #define KEYCTL_GRANT_PERMISSION		36	/* Grant a permit to a key */
-@@ -160,6 +161,8 @@ static inline int fork_into_container(int containerfd)
- static __attribute__((noreturn))
- void container_init(void)
- {
-+	key_serial_t ckey;
-+
- 	if (0) {
- 		/* Do a bit of debugging on the container. */
- 		struct dirent **dlist;
-@@ -203,6 +206,12 @@ void container_init(void)
- 		exit(1);
- 	}
- 
-+	ckey = keyctl_get_keyring_ID(KEY_SPEC_CONTAINER_KEYRING, 0);
-+	if (ckey == -1)
-+		perror("keyctl_get_keyring_ID");
-+	else
-+		printf("Container keyring %d\n", ckey);
-+	
- 	setenv("PS1", "container>", 1);
- 	execl("/bin/bash", "bash", NULL);
- 	perror("execl");
-@@ -310,6 +319,12 @@ int main(int argc, char *argv[])
- 		exit(1);
- 	}
- 
-+	if (keyctl(KEYCTL_GRANT_PERMISSION, keyring,
-+		   KEY_ACE_SUBJ_STANDARD, KEY_ACE_OWNER, 0) < 0) {
-+		perror("keyctl_grant/s");
-+		exit(1);
-+	}
-+
- 	if (keyctl(KEYCTL_SET_CONTAINER_KEYRING, cfd, keyring) < 0) {
- 		perror("keyctl_set_container_keyring");
- 		exit(1);
-diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
-index f296a1cc979a..f8f580a760c9 100644
---- a/security/keys/process_keys.c
-+++ b/security/keys/process_keys.c
-@@ -725,6 +725,13 @@ key_ref_t lookup_user_key(key_serial_t id, unsigned long lflags,
- 		key_ref = make_key_ref(key, 1);
- 		break;
- 
-+	case KEY_SPEC_CONTAINER_KEYRING:
-+		key = current->container->keyring;
-+		if (!key)
-+			goto error;
-+		key_ref = make_key_ref(key, 0);
-+		goto error;
-+
- 	default:
- 		key_ref = ERR_PTR(-EINVAL);
- 		if (id < 1)
-
+> +			resets = <&rcc GPU_R>;
+> +			status = "disabled";
+> +		};
+> +
+>  		dsi: dsi@5a000000 {
+>  			compatible = "st,stm32-dsi";
+>  			reg = <0x5a000000 0x800>;
