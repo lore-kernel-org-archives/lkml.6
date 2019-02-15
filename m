@@ -2,147 +2,210 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B877DC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 04:21:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84F30C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 04:28:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 837632192C
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 04:21:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47BAF21927
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 04:28:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Gye/jHNF"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nY/mViTB";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nY/mViTB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731324AbfBOEVF (ORCPT
+        id S1731383AbfBOE2W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 23:21:05 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41309 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727330AbfBOEVF (ORCPT
+        Thu, 14 Feb 2019 23:28:22 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:40358 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726505AbfBOE2W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 23:21:05 -0500
-Received: by mail-wr1-f67.google.com with SMTP id x10so8829712wrs.8
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 20:21:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3RJUQALfhh0Z+nvhG34lMCIvDNcnO8WzcexCEEVtxyA=;
-        b=Gye/jHNFgsaYcDDt7SwgEShPGqbyFPWKndxghZmdx76Tehmqi9gGzsPodSSwwLvpsD
-         Kc9nhRfLM0jACKEXVzK3LzAJoOr2H4yRhgg+BJzfI4iAfYr8GW81PHdkBYdGxUOgg5FD
-         7VmJCT6MLKOdTMhRS7HqlPxIJOWl4le8mg8AI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3RJUQALfhh0Z+nvhG34lMCIvDNcnO8WzcexCEEVtxyA=;
-        b=oAYYXB0YS3WKXKzl065YYHvcaBmdQPsiiuK0vz9JHUF7syVwEkucb+d+BDrjeLtFcX
-         OdJqJcRSNe1PZ0zpePUvJFT5qbNStPYTLdG6rDj05Ee6fR5itUpd1Tf71o/v/sTWP7vf
-         /wUHgbHp46SlPL0CUb52N7zJJCT8/tTV+trkjoYwYk2yIXN84TflW7u/2sWbg5+pykQP
-         PKKY8qsYrQ7e/HdZpi0mKaCeypiKpbvmAoAftENiefPSmmnzxhCiPEL0PSbVCqPWSbJl
-         wTAPhVQ0D3azTgu4SmCmMiY3RaHgvFjuvnAz7Q8b0W5P9yVnbdZl7sECV3RrwQ4xOD7f
-         jRgg==
-X-Gm-Message-State: AHQUAua2g6ZbN6IQbT7mKO6rXHyE+3il7KYjvHjt3CIenUxgL2EB2eia
-        3b/l7A6gaigdOgkzyanjlj8qxoocEJCGMldaZFVl2Q==
-X-Google-Smtp-Source: AHgI3Ib51h/wHkRYv0eitf4FpYL77KSOxGGRPojSm5DY7U3x2tK+P7W5MvWfyqhv/PTdk/TaYUsDPcUOamtLjjLabNw=
-X-Received: by 2002:adf:9ecc:: with SMTP id b12mr5181629wrf.83.1550204463210;
- Thu, 14 Feb 2019 20:21:03 -0800 (PST)
+        Thu, 14 Feb 2019 23:28:22 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id EA4F0608C6; Fri, 15 Feb 2019 04:28:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550204900;
+        bh=RwA7y6DsMzPi1XDOP4IN7dhv91jHJnbtW3ei8vY76e0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=nY/mViTBBXSDX3zCqy6uHYhINLcsmap6DgBWrQy18jX1vzxQT7Fmt+d1AjdhX7/3s
+         fjD2dVV/VNl+hLh+arA92ZSOdtKToV6iYwJEpC4K9/FDDxcpDzb6NrvCigMjvSDpEu
+         Bb8JWdrOnb8+o/zWhmpwSSirBXB86t0J6WoulKDY=
+Received: from [10.206.24.232] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: riteshh@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1BB8160709;
+        Fri, 15 Feb 2019 04:28:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550204900;
+        bh=RwA7y6DsMzPi1XDOP4IN7dhv91jHJnbtW3ei8vY76e0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=nY/mViTBBXSDX3zCqy6uHYhINLcsmap6DgBWrQy18jX1vzxQT7Fmt+d1AjdhX7/3s
+         fjD2dVV/VNl+hLh+arA92ZSOdtKToV6iYwJEpC4K9/FDDxcpDzb6NrvCigMjvSDpEu
+         Bb8JWdrOnb8+o/zWhmpwSSirBXB86t0J6WoulKDY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1BB8160709
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=riteshh@codeaurora.org
+Subject: Re: [f2fs-dev] [PATCH] f2fs: do not use mutex lock in atomic context
+To:     Chao Yu <chao@kernel.org>,
+        Sahitya Tummala <stummala@codeaurora.org>,
+        Chao Yu <yuchao0@huawei.com>
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+References: <1549267613-9288-1-git-send-email-stummala@codeaurora.org>
+ <c98cbfcb-f45d-e9a9-5c2e-6730d0448e82@huawei.com>
+ <20190214074628.GD7308@codeaurora.org>
+ <5650af07-c55d-fcb4-ca98-eca45248392d@kernel.org>
+From:   Ritesh Harjani <riteshh@codeaurora.org>
+Message-ID: <77c63bf6-069c-704c-220a-b50d997d2463@codeaurora.org>
+Date:   Fri, 15 Feb 2019 09:58:15 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <1546505734-24527-1-git-send-email-srinath.mannam@broadcom.com>
- <a6113115-453c-4606-f99d-c79263d8f4bb@broadcom.com> <20190205235811.GA19687@localhost.localdomain>
-In-Reply-To: <20190205235811.GA19687@localhost.localdomain>
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-Date:   Fri, 15 Feb 2019 09:50:51 +0530
-Message-ID: <CABe79T4bcNs9efLRt1OsTekT+9PHq837x0fngf0kGUdkC5mMsA@mail.gmail.com>
-Subject: Re: [PATCH v6 0/3] Stingray thermal driver support
-To:     Eduardo Valentin <edubezval@gmail.com>
-Cc:     Ray Jui <ray.jui@broadcom.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5650af07-c55d-fcb4-ca98-eca45248392d@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eduardo,
 
-Could you please provide your review comments?
+On 2/14/2019 9:40 PM, Chao Yu wrote:
+> On 2019-2-14 15:46, Sahitya Tummala wrote:
+>> On Wed, Feb 13, 2019 at 11:25:31AM +0800, Chao Yu wrote:
+>>> On 2019/2/4 16:06, Sahitya Tummala wrote:
+>>>> Fix below warning coming because of using mutex lock in atomic context.
+>>>>
+>>>> BUG: sleeping function called from invalid context at kernel/locking/mutex.c:98
+>>>> in_atomic(): 1, irqs_disabled(): 0, pid: 585, name: sh
+>>>> Preemption disabled at: __radix_tree_preload+0x28/0x130
+>>>> Call trace:
+>>>>   dump_backtrace+0x0/0x2b4
+>>>>   show_stack+0x20/0x28
+>>>>   dump_stack+0xa8/0xe0
+>>>>   ___might_sleep+0x144/0x194
+>>>>   __might_sleep+0x58/0x8c
+>>>>   mutex_lock+0x2c/0x48
+>>>>   f2fs_trace_pid+0x88/0x14c
+>>>>   f2fs_set_node_page_dirty+0xd0/0x184
+>>>>
+>>>> Do not use f2fs_radix_tree_insert() to avoid doing cond_resched() with
+>>>> spin_lock() acquired.
+>>>>
+>>>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+>>>> ---
+>>>>   fs/f2fs/trace.c | 20 +++++++++++++-------
+>>>>   1 file changed, 13 insertions(+), 7 deletions(-)
+>>>>
+>>>> diff --git a/fs/f2fs/trace.c b/fs/f2fs/trace.c
+>>>> index ce2a5eb..d0ab533 100644
+>>>> --- a/fs/f2fs/trace.c
+>>>> +++ b/fs/f2fs/trace.c
+>>>> @@ -14,7 +14,7 @@
+>>>>   #include "trace.h"
+>>>>   
+>>>>   static RADIX_TREE(pids, GFP_ATOMIC);
+>>>> -static struct mutex pids_lock;
+>>>> +static spinlock_t pids_lock;
+>>>>   static struct last_io_info last_io;
+>>>>   
+>>>>   static inline void __print_last_io(void)
+>>>> @@ -58,23 +58,29 @@ void f2fs_trace_pid(struct page *page)
+>>>>   
+>>>>   	set_page_private(page, (unsigned long)pid);
+>>>>   
+>>>> +retry:
+>>>>   	if (radix_tree_preload(GFP_NOFS))
+>>>>   		return;
+>>>>   
+>>>> -	mutex_lock(&pids_lock);
+>>>> +	spin_lock(&pids_lock);
+>>>>   	p = radix_tree_lookup(&pids, pid);
+>>>>   	if (p == current)
+>>>>   		goto out;
+>>>>   	if (p)
+>>>>   		radix_tree_delete(&pids, pid);
+>>>>   
+>>>> -	f2fs_radix_tree_insert(&pids, pid, current);
 
-Regards,
-Srinath.
+Do you know why do we have a retry logic here? When anyways we have 
+called for radix_tree_delete with pid key?
+Which should ensure the slot is empty, no?
+Then why in the original code (f2fs_radix_tree_insert), we were 
+retrying. For what condition a retry was needed?
 
-On Wed, Feb 6, 2019 at 5:28 AM Eduardo Valentin <edubezval@gmail.com> wrote:
+Regards
+Ritesh
+
+
+>>>> +	if (radix_tree_insert(&pids, pid, current)) {
+>>>> +		spin_unlock(&pids_lock);
+>>>> +		radix_tree_preload_end();
+>>>> +		cond_resched();
+>>>> +		goto retry;
+>>>> +	}
+>>>>   
+>>>>   	trace_printk("%3x:%3x %4x %-16s\n",
+>>>>   			MAJOR(inode->i_sb->s_dev), MINOR(inode->i_sb->s_dev),
+>>>>   			pid, current->comm);
+>>> Hi Sahitya,
+>>>
+>>> Can trace_printk sleep? For safety, how about moving it out of spinlock?
+>>>
+>> Hi Chao,
+>>
+>> Yes, trace_printk() is safe to use in atomic context (unlike printk).
+> Hi Sahitya,
 >
-> Hello,
+> Thanks for your confirmation. :)
 >
-> On Mon, Feb 04, 2019 at 04:16:19PM -0800, Ray Jui wrote:
-> > Hi Zhang/Eduardo,
-> >
-> > Can this patch series be merged? It looks like Srinath has addressed all
-> > review comments?
+> Reviewed-by: Chao Yu <yuchao0@huawei.com>
 >
-> I will take a look. Side note, thermal patches are reviewed on
-> linux-pm@vger.kernel.org. Copying that list it does help because that
-> is how the patches get assigned in patchwork.kernel.org.
+> Thanks,
 >
-> >
-> > The following tag should be added to the binding document patch:
-> >
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> >
-> > Thanks,
-> >
-> > Ray
-> >
-> > On 1/3/2019 12:55 AM, Srinath Mannam wrote:
-> > > These patches adds the stingray thermal driver and its
-> > > corresponding DT nodes with documentation.
-> > >
-> > > Changes from v5
-> > >   - Addressed Eduardo Valentin comments.
-> > >
-> > > Changes from v4
-> > >   - Addressed Rob Herring comments on DT parameters and
-> > >     thermal driver architecture.
-> > >   - Removed brcm,max-crit-temp DT parameter
-> > >   - Changed driver to thermal sensor registration model.
-> > >   - Added trip DT properties.
-> > >
-> > > Changes from v3
-> > >   - Addressed Daniel lezcano comments.
-> > >   - Elaborated commit description of thermal driver patch.
-> > >   - Added brcm,max-crit-temp DT parameter.
-> > >
-> > > Changes from v2:
-> > >   - All stingray TMON DT nodes are combine together into single.
-> > >     Temperature registers are combined into one mem resource.
-> > >     brcm,tmon-mask parameter has available TMONs mask value.
-> > >   - All available TMONs are initialized together in single
-> > >     instance of driver probe call.
-> > >
-> > > Changes from v1:
-> > >   - Fixed auto build sparce warning.
-> > >
-> > > Pramod Kumar (3):
-> > >   dt-bindings: thermal: Add binding document for SR thermal
-> > >   thermal: broadcom: Add Stingray thermal driver
-> > >   arm64: dts: stingray: Add Stingray Thermal DT support.
-> > >
-> > >  .../bindings/thermal/brcm,sr-thermal.txt           | 105 ++++++++++++++++++
-> > >  .../arm64/boot/dts/broadcom/stingray/stingray.dtsi |  89 +++++++++++++++
-> > >  drivers/thermal/Kconfig                            |   3 +-
-> > >  drivers/thermal/broadcom/Kconfig                   |   9 ++
-> > >  drivers/thermal/broadcom/Makefile                  |   1 +
-> > >  drivers/thermal/broadcom/sr-thermal.c              | 122 +++++++++++++++++++++
-> > >  6 files changed, 328 insertions(+), 1 deletion(-)
-> > >  create mode 100644 Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
-> > >  create mode 100644 drivers/thermal/broadcom/sr-thermal.c
-> > >
+>> Thanks,
+>> Sahitya.
+>>
+>>> Thanks,
+>>>
+>>>>   out:
+>>>> -	mutex_unlock(&pids_lock);
+>>>> +	spin_unlock(&pids_lock);
+>>>>   	radix_tree_preload_end();
+>>>>   }
+>>>>   
+>>>> @@ -119,7 +125,7 @@ void f2fs_trace_ios(struct f2fs_io_info *fio, int flush)
+>>>>   
+>>>>   void f2fs_build_trace_ios(void)
+>>>>   {
+>>>> -	mutex_init(&pids_lock);
+>>>> +	spin_lock_init(&pids_lock);
+>>>>   }
+>>>>   
+>>>>   #define PIDVEC_SIZE	128
+>>>> @@ -147,7 +153,7 @@ void f2fs_destroy_trace_ios(void)
+>>>>   	pid_t next_pid = 0;
+>>>>   	unsigned int found;
+>>>>   
+>>>> -	mutex_lock(&pids_lock);
+>>>> +	spin_lock(&pids_lock);
+>>>>   	while ((found = gang_lookup_pids(pid, next_pid, PIDVEC_SIZE))) {
+>>>>   		unsigned idx;
+>>>>   
+>>>> @@ -155,5 +161,5 @@ void f2fs_destroy_trace_ios(void)
+>>>>   		for (idx = 0; idx < found; idx++)
+>>>>   			radix_tree_delete(&pids, pid[idx]);
+>>>>   	}
+>>>> -	mutex_unlock(&pids_lock);
+>>>> +	spin_unlock(&pids_lock);
+>>>>   }
+>>>>
+>
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
