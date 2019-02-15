@@ -5,107 +5,120 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75062C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:54:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD680C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:55:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CFEE222A1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:54:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A96C3222A1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:55:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403825AbfBOSy3 (ORCPT
+        id S2403870AbfBOSzh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 13:54:29 -0500
-Received: from foss.arm.com ([217.140.101.70]:37778 "EHLO foss.arm.com"
+        Fri, 15 Feb 2019 13:55:37 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59582 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727277AbfBOSy3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 13:54:29 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0F9C2A78;
-        Fri, 15 Feb 2019 10:54:29 -0800 (PST)
-Received: from [192.168.100.241] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1A7BD3F589;
-        Fri, 15 Feb 2019 10:54:28 -0800 (PST)
-Subject: Re: [PATCH v4 03/12] arm64: Remove the ability to build a kernel
- without ssbd
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Andre Przywara <andre.przywara@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, stefan.wahren@i2se.com,
-        mlangsdo@redhat.com, suzuki.poulose@arm.com, marc.zyngier@arm.com,
-        julien.thierry@arm.com, will.deacon@arm.com,
-        linux-kernel@vger.kernel.org, steven.price@arm.com,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        kvmarm@lists.cs.columbia.edu, ykaukab@suse.de, dave.martin@arm.com,
-        shankerd@codeaurora.org
-References: <20190125180711.1970973-1-jeremy.linton@arm.com>
- <20190125180711.1970973-4-jeremy.linton@arm.com>
- <20190130180415.0cab24e0@donnerap.cambridge.arm.com>
- <20190215182037.GI100037@arrakis.emea.arm.com>
-From:   Jeremy Linton <jeremy.linton@arm.com>
-Message-ID: <7fa79e1a-3b35-520a-676b-031030108c50@arm.com>
-Date:   Fri, 15 Feb 2019 12:54:22 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S2403761AbfBOSzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 13:55:36 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2DC44C0ADB59;
+        Fri, 15 Feb 2019 18:55:35 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 878FC102497F;
+        Fri, 15 Feb 2019 18:55:32 +0000 (UTC)
+Subject: Re: [PATCH 00/10] locking/rwsem: Rwsem rearchitecture part 1
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+References: <1550017627-14504-1-git-send-email-longman@redhat.com>
+ <20190215184904.GD15084@fuggles.cambridge.arm.com>
+From:   Waiman Long <longman@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ weim8xU=
+Organization: Red Hat
+Message-ID: <a3b2e39c-597b-916f-8503-eb811583ea95@redhat.com>
+Date:   Fri, 15 Feb 2019 13:55:31 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20190215182037.GI100037@arrakis.emea.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <20190215184904.GD15084@fuggles.cambridge.arm.com>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 15 Feb 2019 18:55:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-
-Thanks for taking a look at this:
-
-On 2/15/19 12:20 PM, Catalin Marinas wrote:
-> On Wed, Jan 30, 2019 at 06:04:15PM +0000, Andre Przywara wrote:
->> On Fri, 25 Jan 2019 12:07:02 -0600
->> Jeremy Linton <jeremy.linton@arm.com> wrote:
->>> Buried behind EXPERT is the ability to build a kernel without
->>> SSBD, this needlessly clutters up the code as well as creates
->>> the opportunity for bugs. It also removes the kernel's ability
->>> to determine if the machine its running on is vulnerable.
+On 02/15/2019 01:49 PM, Will Deacon wrote:
+> On Tue, Feb 12, 2019 at 07:26:57PM -0500, Waiman Long wrote:
+>> This is part 1 of a 3-part (0/1/2) series to rearchitect the internal
+>> operation of rwsem. This depends on the part 0 patches sent out previously
 >>
->> I don't know the original motivation for this config option, typically
->> they are not around for no reason.
->> I see the benefit of dropping those config options, but we want to make
->> sure that people don't start hacking around to remove them again.
+>> https://lore.kernel.org/lkml/1549913486-16799-1-git-send-email-longman@redhat.com
 >>
->>> Since its also possible to disable it at boot time, lets remove
->>> the config option.
->>
->> Given the level of optimisation a compiler can do with the state being
->> known at compile time, I would imagine that it's not the same (though
->> probably very close).
->>
->> But that's not my call, it would be good to hear some maintainer's
->> opinion on this.
-> 
-> Having spoken to Will, we'd rather keep the config options if possible.
-> Even if they are behind EXPERT and default y, they come in handy when
-> debugging.
-> 
-> Can we still have the sysfs information regardless of whether the config
-> is enabled or not? IOW, move the #ifdefs around to always have the
-> detection while being able to disable the actual workarounds via config?
+>> This part lays the foundation for part 2 without making any functional
+>> changes. This part includes the following changes:
+> Did you post part 2 anywhere? I can't seem to find it for some reason.
+>
+> Cheers,
+>
+> Will
 
-Yes, that is possible, but the ifdef'ing gets even worse. (see v3).
+I haven't posted the part 2 yet. I will need to repost part 1 to work
+with part 0 v4.
 
-> Are the code paths between config and cmdline disabling identical? At a
-> quick look I got the impression they are not exactly the same.
-
-No, they do vary slightly. For debugging I would expect that the CONFIG 
-disabled code paths to be the one that accumulates bugs over time. The 
-command line options just force the runtime vulnerable/not-vulnerable 
-decision, which should be the code paths in general use. For benchmark 
-the run-time options are also a better choice because they don't have 
-any 2nd order affects caused by code alignment/etc changes.
-
-Maybe your implying the CONFIG_ options should basically force the 
-command line? That both reduces the code paths, and simplifies the 
-ifdef'ing.
-
-
+-Longman
 
