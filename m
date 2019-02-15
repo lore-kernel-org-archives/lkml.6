@@ -2,74 +2,99 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB53C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:03:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BF92C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:04:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6D7C206BB
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:02:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D79B9206BB
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:04:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="2xQN4FpO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391185AbfBOICm (ORCPT
+        id S2403890AbfBOIEM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 03:02:42 -0500
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:61873 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2391063AbfBOICl (ORCPT
+        Fri, 15 Feb 2019 03:04:12 -0500
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:32866 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbfBOIEL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 03:02:41 -0500
-X-IronPort-AV: E=Sophos;i="5.58,372,1544482800"; 
-   d="scan'208";a="369523313"
-Received: from abo-58-107-68.mrs.modulonet.fr (HELO hadrien) ([85.68.107.58])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Feb 2019 09:02:18 +0100
-Date:   Fri, 15 Feb 2019 09:02:18 +0100 (CET)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Markus Elfring <Markus.Elfring@web.de>
-cc:     Wen Yang <wen.yang99@zte.com.cn>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Yi Wang <wang.yi59@zte.com.cn>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wen Yang <yellowriver2010@hotmail.com>,
-        Cheng Shengyu <cheng.shengyu@zte.com.cn>,
-        cocci@systeme.lip6.fr, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [v4] coccinelle: semantic patch for missing put_device()
-In-Reply-To: <f4bc7f71-efee-5e0f-3209-82681ddc85be@web.de>
-Message-ID: <alpine.DEB.2.21.1902150900270.2896@hadrien>
-References: <201902151452197117145@zte.com.cn> <alpine.DEB.2.21.1902150754380.2896@hadrien> <f4bc7f71-efee-5e0f-3209-82681ddc85be@web.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 15 Feb 2019 03:04:11 -0500
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id x1F83tTl011351;
+        Fri, 15 Feb 2019 17:03:56 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x1F83tTl011351
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1550217836;
+        bh=kHKbz0gOv35Ah/QQhnBmrwbYc/guOMnBm5JbWFvPQrQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=2xQN4FpOTqwbGcbGEAXjXa1e5FmcwxC1oMXIrbgyonBS8oOg+OxMYYj+BopMRwQT2
+         mfw1/xYm6D1zg3Jl1C31m+Ty3OMt76hWZWvEgERXHeIj2NcKWorfDmF3TsCMkG+kmV
+         D5lmyddj5bl8AR/fmRgqcJkGu+rHpx8disQoPAG7PIQGDTjlmxhrWBR6qn0Lrj/zSj
+         xZFb5vpuG14b/GJNk7w1iGxO3LypxIGQ7iBEYW4S7j6HXSq57Eeha0stlVVn3CI20y
+         J3tnZLR9VoaZxOcVYKN52ouG3lFuy0066/ATAokp1APUpVobxNlfeXM8t5yX8v+jL2
+         8DfVCzOym/fsw==
+X-Nifty-SrcIP: [209.85.217.44]
+Received: by mail-vs1-f44.google.com with SMTP id r201so5263610vsc.11;
+        Fri, 15 Feb 2019 00:03:56 -0800 (PST)
+X-Gm-Message-State: AHQUAuZvCKVBHzvYPUVWXQ+XNKD+cTQnGvYQZZr1llwA1nTBv6l8+fNz
+        WteTdxmi1YOOMb/n5Z96Wr6or0s7PjK65+UFLC8=
+X-Google-Smtp-Source: AHgI3Iahfm5Xcwy0sIHWy0ApJ/yAOiV7JONTiN2xT2/kKwRTRvgfCpC9tfWmVJeNXL9iAgxPRe2CjirFE+7P4rhB788=
+X-Received: by 2002:a67:7f43:: with SMTP id a64mr4278793vsd.155.1550217835117;
+ Fri, 15 Feb 2019 00:03:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20190213174005.28785-1-hch@lst.de> <20190213174005.28785-10-hch@lst.de>
+In-Reply-To: <20190213174005.28785-10-hch@lst.de>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 15 Feb 2019 17:03:19 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQL-7fMadH1R2SrmwJyDBRoCiECJ-WSJrztO2o+wkV06w@mail.gmail.com>
+Message-ID: <CAK7LNAQL-7fMadH1R2SrmwJyDBRoCiECJ-WSJrztO2o+wkV06w@mail.gmail.com>
+Subject: Re: [PATCH 09/11] lib: consolidate the GENERIC_CSUM symbol
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-xtensa@linux-xtensa.org,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-riscv@lists.infradead.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Fri, 15 Feb 2019, Markus Elfring wrote:
-
-> >> So I plan to modify the following to capture both cases:
-> >> -local idexpression id;
-> >> +expression id;
-> >
-> > I'm not sure that this is a good idea.
+On Thu, Feb 14, 2019 at 2:41 AM Christoph Hellwig <hch@lst.de> wrote:
 >
-> Why have you got doubts here?
+> Add one definition to lib/Kconfig and let the architectures
+> select if it supported.
 >
->
-> > There is likely no need for a put in the latter case.
->
-> I have got understanding difficulties for such information.
-> What did you try to express with this sentence finally?
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-The whole goal of the semantic patch is to ensure that put_device is
-called when needed.  If the value is stored in a structure, then someone
-else will likely take care of calling put_device later when the structure
-is destroyed.
 
-julia
+
+> diff --git a/arch/unicore32/Kconfig b/arch/unicore32/Kconfig
+> index 52b4d48e351a..9de1d983a99a 100644
+> --- a/arch/unicore32/Kconfig
+> +++ b/arch/unicore32/Kconfig
+> @@ -29,9 +29,6 @@ config UNICORE32
+>           designs licensed by PKUnity Ltd.
+>           Please see web page at <http://www.pkunity.com/>.
+>
+> -config GENERIC_CSUM
+> -       def_bool y
+> -
+>  config NO_IOPORT_MAP
+>         bool
+>
+
+
+
+You missed to add 'select GENERIC_CSUM' for unicore32.
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
