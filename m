@@ -2,142 +2,221 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61747C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F23DC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:53:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EA0C21872
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:51:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09D8A21917
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:52:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="dvaWzyv3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gBJsiwhF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390663AbfBOHuy (ORCPT
+        id S2403772AbfBOHwg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 02:50:54 -0500
-Received: from mout.web.de ([212.227.17.11]:40981 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390576AbfBOHuy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 02:50:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1550217030;
-        bh=Mp1YKJjyFwpNLa2lYkucozRFX0Fh137UEplkaCv/rzI=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=dvaWzyv3IlJD+uW7GFhysPqZz7ChDRwAk/ADCEr3SlhiKGuJl4/Amn/0HHj0fs8Ob
-         FP2lxJmZsfajeOEPePYnQOvC0CnPpUIE2XnD3jmnY4sIMfqmcUymm5/xw8bru5fptB
-         LT80/UxUZMCan5iqbb58fZNIeaPq/MIGZH4yCnEg=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.3] ([78.48.88.109]) by smtp.web.de (mrweb102
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0LoHgL-1halmJ1e8H-00gFV4; Fri, 15
- Feb 2019 08:50:30 +0100
-Subject: Re: [v4] coccinelle: semantic patch for missing put_device()
-To:     Julia Lawall <julia.lawall@lip6.fr>
-Cc:     Wen Yang <wen.yang99@zte.com.cn>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Yi Wang <wang.yi59@zte.com.cn>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wen Yang <yellowriver2010@hotmail.com>,
-        Cheng Shengyu <cheng.shengyu@zte.com.cn>,
-        cocci@systeme.lip6.fr, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <201902151452197117145@zte.com.cn>
- <alpine.DEB.2.21.1902150754380.2896@hadrien>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <f4bc7f71-efee-5e0f-3209-82681ddc85be@web.de>
-Date:   Fri, 15 Feb 2019 08:50:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Fri, 15 Feb 2019 02:52:36 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37980 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726167AbfBOHwf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 02:52:35 -0500
+Received: by mail-wm1-f68.google.com with SMTP id v26so8596156wmh.3;
+        Thu, 14 Feb 2019 23:52:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=tp9dCTQxksO246/bg8Clezg+jkh0IFjsiwXgqzdeyzs=;
+        b=gBJsiwhFLp083iwATpNTvNjERoh3f5a/Gp1s+1n50lYT/UY1YOihcMRfukMsuqpEbD
+         vUkV4FS+PtdEvH0ocmVqc49WHVNz3WDrFW+U0WmjL0/faq7RS1ExKyhASvCS4/JRRePP
+         ocu8jc9qeHO4PYqO5jYEA7csuwYtb7ZKqgBWSDI6jR+f6OJ9Vg7SFMLKbXYU1ereyNAl
+         S6NnckMCvwLVrfcfd78zzRaQnp7/NicPhuRkSSiQimgy4jlOzpLDZtRSIZG3qoK/bXeO
+         ZQNOSuX1AcR2P19r+hH1+KyIo3Ji/Z20y4edUz5CRFLr1Xzyz9HewTYJI+q36HdzN0su
+         ccUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=tp9dCTQxksO246/bg8Clezg+jkh0IFjsiwXgqzdeyzs=;
+        b=tJHS5te+Q51902OO+U6MxRaODXJUB+Zqgz+vzVpOmF/WxCMv1qbPt4+zVSyKgxOGhu
+         9KVFvnmPoaxNqZyIBp7jYmk9xnWqTfRk2esz7vIctwjfxOSdN0h7NYrmoZytSWJdA76d
+         MbVqClHALGTA7DQt4JvciMq9mnEazJp7M0XUy6Zs0QI1cvEFfyfzXysqUt28yiShr6kB
+         obk/n+Fqx5gPK0q05v/a+6efeqscNNwbfrGidRcPumrAJxTDgGRU3ibnak65pBKZ6fYM
+         HFEFIPIs63+lIVYv1si0t3RiE7IJGxIjL5w3eL8psZMbWF+tzWT4PHop6ogXKAa08ZJo
+         mrBw==
+X-Gm-Message-State: AHQUAuauIPJn5e3smXxTjMm7JSXg+UGbXu6N31Ymbqyb62hHSk291weG
+        ng1mGoGTexEZboZUnfEiPjgsBbiiku1B6A4r448=
+X-Google-Smtp-Source: AHgI3Ia3t2Zh3Q/Fe7eC9lkrK0jID6T04kKER+Y+BRKdmB49WJtlgOXbu3cMoPxtPljISKH4aGNeUk3OJvqL6qF/Dus=
+X-Received: by 2002:a1c:cc0d:: with SMTP id h13mr5378698wmb.85.1550217153117;
+ Thu, 14 Feb 2019 23:52:33 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1902150754380.2896@hadrien>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:7QwjKMrz5fwOOuUMEP9B3fkz/ZFsb0Xj8TBB24+W4IuoyvLE0mT
- YcPRjuHKv6+TP0BTvMESilieiI0izIqOAHeQtH9n0PpN3qitzgM2s3WeJebb2CXAosdwXZ/
- 5dqhO8YNL9Fe9AVKQcvtNLntrzyWgqmjtGp7o/w1JQiHk7k7Y/G3u9NgSAV1nL1da3gf9f0
- +K5SyVqvKx79WlZj59yBQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:0SdTSi+OOL4=:wMXSXje3Re6yzBrZMT6zQ5
- FqlmVpyT/qFPrxC0azIGZceANuCYI94VfZsGSQZphfE7kioPravhYIykfal2ovztqbSbgE5ow
- 8RVGYoFS8EKSCUEZaz146zQcJx47dy2BQ7Ce6YVfS7XE/xZF8Ep+fDsAeIaBkvcuDH44OilpZ
- L9KsSGWUZ4NTNDRcnr8mBxZUyH8yB3LP88FAmiS4HS9ocNfTHvbVGd/+MuRc3TTz9e2vwv+A/
- pJuGpjjalIB7jXAvYn90CG8xF4Lr7vZ+fQP3TpOVfr/58DR+azvaoILJlBvpEptB0yNdQJYFm
- sW37C5ZOvoCjoAGTqF5Dg1NW/ardPPsYwV1crYA1GV+BLkCjwnD4qMz1W4b+qvD6mOnJh3Ccv
- CFd9kCW29zgQzi1Ah66HspvvPM5PAE+Bz2+IYKmb8KmTo3opOw9XaW9enH0NC2dSUQx0mx0OO
- fd1zbLAjxFAw8ksco/etCeNUrf9pMMhTXCFJcFdgr9i6RdbPIT/LjYKIg0gmOGLaYkMXbwYiG
- LiKV8u4GUU9jEV8q/Zp14jiwPzEYmxw0VXzf4nmmpTkAdBVqa4quz9P/JR8Hh66dXxDQjzLyA
- SfCYzmHvkQTyvR1v4+q1vxy7fCaj+6hM6tD7PCLZLMFuwNZKHPw9flbCJKsOxJQ89grbnKQae
- 3e61+6YAz9rSV8udA1neDlUxqVckiNSB+PKtU39jukS2mKxzvS0403ta8k31d0TCdJ1J42fvI
- 5tU00V6Ga5m7d1/MOynUlznmg1rXiTy2TnbZCz0veQx7ZAnVQobPdb7XOlBniVSgHwvsZnNwF
- bAL3gpKrCb/Vex4OfHMK94kl7g/lgQuBmLCFpp61fWni8W3v07jjgYz1HcyZk7z3HKl6QczAj
- kAauMbyTp9pepaJK9AabE6g2GhkSYkrbhFQW9tOHFJbkhcC/n3jbmVUV7+ZKp71z04Utm9wnb
- +Bro/jXG29w==
+References: <20190211170751.1687-1-sedat.dilek@credativ.de>
+ <20190211175306.GA16698@archlinux-ryzen> <CA+icZUXjyWkVYoW7HwXTXm5wz1E0KJWhH9uiwGJeODUFzB0DJQ@mail.gmail.com>
+ <20190212224242.GA29735@archlinux-ryzen> <0a37de95-a440-12a7-d99d-72d815f0b56f@suse.de>
+In-Reply-To: <0a37de95-a440-12a7-d99d-72d815f0b56f@suse.de>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Fri, 15 Feb 2019 08:52:21 +0100
+Message-ID: <CA+icZUWS7t0CmPAw5wQk7o2f5K68DOcVbMTOOpk77XxB8ed6=w@mail.gmail.com>
+Subject: Re: [PATCH RFC v2] fcoe: make use of fip_mode enum complete
+To:     Hannes Reinecke <hare@suse.de>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Sedat Dilek <sedat.dilek@credativ.de>,
+        QLogic-Storage-Upstream@qlogic.com,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Johannes Thumshirn <jth@kernel.org>,
+        QLogic-Storage-Upstream@cavium.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Lukas Bulwahn <lukas.bulwahn@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Hannes Reinecke <hare@suse.com>,
+        Johannes Thumshirn <jthumshirn@suse.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->> So I plan to modify the following to capture both cases:
->> -local idexpression id;
->> +expression id;
+On Fri, Feb 15, 2019 at 8:35 AM Hannes Reinecke <hare@suse.de> wrote:
 >
-> I'm not sure that this is a good idea.
+> On 2/12/19 11:42 PM, Nathan Chancellor wrote:
+> > On Tue, Feb 12, 2019 at 08:50:04AM +0100, Sedat Dilek wrote:
+> >> On Mon, Feb 11, 2019 at 6:53 PM Nathan Chancellor
+> >> <natechancellor@gmail.com> wrote:
+> >>>
+> >>> On Mon, Feb 11, 2019 at 06:07:51PM +0100, Sedat Dilek wrote:
+> >>>> From: Sedat Dilek <sedat.dilek@gmail.com>
+> >>>>
+> >>>> commit 1917d42d14b7 ("fcoe: use enum for fip_mode") introduces a separate
+> >>>> enum for the fip_mode that shall be used during initialisation handling
+> >>>> until it is passed to fcoe_ctrl_link_up to set the initial fip_state.
+> >>>> That change was incomplete and gcc quietly converted in various places
+> >>>> between the fip_mode and the fip_state enum values with implicit enum
+> >>>> conversions, which fortunately cannot cause any issues in the actual
+> >>>> code's execution.
+> >>>>
+> >>>> clang however warns about these implicit enum conversions in the scsi
+> >>>> drivers. This commit consolidates the use of the two enums, guided by
+> >>>> clang's enum-conversion warnings.
+> >>>>
+> >>>> This commit now completes the use of the fip_mode:
+> >>>> It expects and uses fip_mode in {bnx2fc,fcoe}_interface_create and
+> >>>> fcoe_ctlr_init, and it explicitly converts from fip_mode to fip_state
+> >>>> only at the single point in fcoe_ctlr_link_up.
+> >>>>
+> >>>> To eliminate that adding or removing values from fip_mode or fip_state enum
+> >>>> break the right mapping of values, all fip_mode values are assigned to
+> >>>> their fip_state counterparts.
+> >>>>
+> >>>> Link: https://github.com/ClangBuiltLinux/linux/issues/151
+> >>>> Fixes: 1917d42d14b7 ("fcoe: use enum for fip_mode")
+> >>>> Reported-by: Dmitry Golovin "Twisted Pair in my Hair" <dima@golovin.in>
+> >>>> CC: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+> >>>> CC: Nick Desaulniers <ndesaulniers@google.com>
+> >>>> CC: Nathan Chancellor <natechancellor@gmail.com>
+> >>>> CC: Hannes Reinecke <hare@suse.com>
+> >>>> Suggested-by: Johannes Thumshirn <jthumshirn@suse.de>
+> >>>> ---
+> >>>>
+> >>>> [ v2:
+> >>>>     - Based on the original patch by Lukas Bulwahn
+> >>>>     - Suggestion by Johannes T. [1] required some changes:
+> >>>>       + s/case FIP_ST_VMMP_START/case FIP_ST_V*N*MP_START
+> >>>>       + s/return FIP_ST_AUTO/return FIP_MODE_AUTO
+> >>>>     - Add Link to ClangBuiltLinux issue #151
+> >>>>     - S-o-b line later when there is an OK from the FCoE maintainers
+> >>>>
+> >>>> NOTE: Compile-tested against Linux-v5.0-rc6 with LLVM/Clang from Git with
+> >>>>        experimental asm-goto support via executing:
+> >>>>        $ make V=1 CC=clang-9 HOSTCC=clang-9 drivers/scsi/fcoe/
+> >>>>
+> >>>> [1] https://marc.info/?l=linux-scsi&m=154745527612152&w=2
+> >>>>
+> >>>>    -dileks ]
+> >>>>
+> >>>>   drivers/scsi/bnx2fc/bnx2fc_fcoe.c  |  2 +-
+> >>>>   drivers/scsi/fcoe/fcoe.c           |  2 +-
+> >>>>   drivers/scsi/fcoe/fcoe_ctlr.c      |  4 ++--
+> >>>>   drivers/scsi/fcoe/fcoe_transport.c |  2 +-
+> >>>>   drivers/scsi/qedf/qedf_main.c      |  2 +-
+> >>>>   include/scsi/libfcoe.h             | 22 ++++++++++++++++++++--
+> >>>>   6 files changed, 26 insertions(+), 8 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+> >>>> index 2e4e7159ebf9..a75e74ad1698 100644
+> >>>> --- a/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+> >>>> +++ b/drivers/scsi/bnx2fc/bnx2fc_fcoe.c
+> >>>> @@ -1438,7 +1438,7 @@ static struct bnx2fc_hba *bnx2fc_hba_create(struct cnic_dev *cnic)
+> >>>>   static struct bnx2fc_interface *
+> >>>>   bnx2fc_interface_create(struct bnx2fc_hba *hba,
+> >>>>                        struct net_device *netdev,
+> >>>> -                     enum fip_state fip_mode)
+> >>>> +                     enum fip_mode fip_mode)
+> >>>>   {
+> >>>>        struct fcoe_ctlr_device *ctlr_dev;
+> >>>>        struct bnx2fc_interface *interface;
+> >>>> diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
+> >>>> index cd19be3f3405..8ba8862d3292 100644
+> >>>> --- a/drivers/scsi/fcoe/fcoe.c
+> >>>> +++ b/drivers/scsi/fcoe/fcoe.c
+> >>>> @@ -389,7 +389,7 @@ static int fcoe_interface_setup(struct fcoe_interface *fcoe,
+> >>>>    * Returns: pointer to a struct fcoe_interface or NULL on error
+> >>>>    */
+> >>>>   static struct fcoe_interface *fcoe_interface_create(struct net_device *netdev,
+> >>>> -                                                 enum fip_state fip_mode)
+> >>>> +                                                 enum fip_mode fip_mode)
+> >>>>   {
+> >>>>        struct fcoe_ctlr_device *ctlr_dev;
+> >>>>        struct fcoe_ctlr *ctlr;
+> >>>> diff --git a/drivers/scsi/fcoe/fcoe_ctlr.c b/drivers/scsi/fcoe/fcoe_ctlr.c
+> >>>> index 54da3166da8d..a52d3ad94876 100644
+> >>>> --- a/drivers/scsi/fcoe/fcoe_ctlr.c
+> >>>> +++ b/drivers/scsi/fcoe/fcoe_ctlr.c
+> >>>> @@ -147,7 +147,7 @@ static void fcoe_ctlr_map_dest(struct fcoe_ctlr *fip)
+> >>>>    * fcoe_ctlr_init() - Initialize the FCoE Controller instance
+> >>>>    * @fip: The FCoE controller to initialize
+> >>>>    */
+> >>>> -void fcoe_ctlr_init(struct fcoe_ctlr *fip, enum fip_state mode)
+> >>>> +void fcoe_ctlr_init(struct fcoe_ctlr *fip, enum fip_mode mode)
+> >>>>   {
+> >>>>        fcoe_ctlr_set_state(fip, FIP_ST_LINK_WAIT);
+> >>>>        fip->mode = mode;
+> >>>> @@ -454,7 +454,7 @@ void fcoe_ctlr_link_up(struct fcoe_ctlr *fip)
+> >>>>                mutex_unlock(&fip->ctlr_mutex);
+> >>>>                fc_linkup(fip->lp);
+> >>>>        } else if (fip->state == FIP_ST_LINK_WAIT) {
+> >>>> -             fcoe_ctlr_set_state(fip, fip->mode);
+> >>>> +             fcoe_ctlr_set_state(fip, (enum fip_state) fip->mode);
+> >>>>                switch (fip->mode) {
+> >>>>                default:
+> >>>>                        LIBFCOE_FIP_DBG(fip, "invalid mode %d\n", fip->mode);
+>
+> Watch out for this one.
+> fip_mode != fip_state.
+>
+> This arguably is an error even now; it might _just_ work if we have
+> fip->mode == FIP_MODE_FABRIC, but we probably will be getting
+> interesting results when fip->mode == FIP_MODE_VN2VN ...
+>
+> We should rather call
+>
+> fcoe_ctrl_set_state(fip, FIP_ST_AUTO)
+>
+> here and update it to NON_FIP in the switch statement itself.
+> But I'll have to think about it some more to figure out what would
+> happen for VN2VN mode.
+>
+> Will be sending an updated patch.
+>
+> Cheers,
+>
+> Hannes
 
-Why have you got doubts here?
-
-
-> There is likely no need for a put in the latter case.
-
-I have got understanding difficulties for such information.
-What did you try to express with this sentence finally?
+Thanks Hannes for taking care.
 
 Regards,
-Markus
+- Sedat -
