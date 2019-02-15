@@ -2,94 +2,101 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE60C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:55:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC05FC10F02
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:58:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13F0521925
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:55:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GLBl4o6u"
+	by mail.kernel.org (Postfix) with ESMTP id B8AC021925
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:58:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730231AbfBORzx (ORCPT
+        id S1730500AbfBOR6f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 12:55:53 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39459 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728956AbfBORzx (ORCPT
+        Fri, 15 Feb 2019 12:58:35 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33464 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729605AbfBOR6f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 12:55:53 -0500
-Received: by mail-lj1-f196.google.com with SMTP id g80so9093839ljg.6
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 09:55:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zvIZ7gSrQe9nGlalSisXMMrnlq9A9OjDbPuH9/neOM8=;
-        b=GLBl4o6uVqKKbN7PVX/9TpVRffkLB8HCNKtW81uT339JK8VXyX3VxqFdCcihrgZoTO
-         IEAdfaFqN9UTG9mdL1E1T+QZDVJD5ZE6nZWHg5C1KIdquJGjYjf7+NnYZl8dppXJZW2X
-         HWcLixNcqYo/FwsRHuHNtALKXcHlMeVwxYhmw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zvIZ7gSrQe9nGlalSisXMMrnlq9A9OjDbPuH9/neOM8=;
-        b=j7p0NXBcWJr/uMIldy3Biuw+2q54GyMY68lmN3cGLJN7HRRYgLhvz1e7IrzA7X6k19
-         83Cjzw/Q/RC/Bjdr+q9QG7IYfVRDVldiFFdWKgwcOb+JoHMjecRfilSuk2OVS39ZvZG7
-         IyHHOdI/9azKfWFCOGyPoW8+olunCLb8N+WobAySaHwBeQeVUbPlrMUUByvWYx2keT9d
-         AA+A366eNRmW6JlvHeZu6iCsM1WcDY+0FWVep2gKjX+zNm0zjm7R8uh7AcyqRWPBm1mB
-         G64zPAI4IFHV7as6xTIxmx35d89VNMCYEalhxIWEBsWoJJ0T91DXPNlf1Kr7o7VnW9g4
-         2XbQ==
-X-Gm-Message-State: AHQUAub7HZfixS8XgW0D/H4TN7zIlN1UcowQHh7WfIHnpD2VtzdthnHg
-        zooIXkJQ7xePYXDkCQfK5A9gVssSEAc=
-X-Google-Smtp-Source: AHgI3IbR4IR0OEFyDecinBdezIwZzgJzQVTdNdT1uJene58eUeSmoeeTIS1HxarwySsfIGTAcvvUnw==
-X-Received: by 2002:a2e:4d7:: with SMTP id a84mr3929073ljf.86.1550253350526;
-        Fri, 15 Feb 2019 09:55:50 -0800 (PST)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id q131sm1513163lfe.95.2019.02.15.09.55.49
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Feb 2019 09:55:49 -0800 (PST)
-Received: by mail-lf1-f48.google.com with SMTP id u21so7842529lfu.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 09:55:49 -0800 (PST)
-X-Received: by 2002:a19:d250:: with SMTP id j77mr6195107lfg.21.1550253349133;
- Fri, 15 Feb 2019 09:55:49 -0800 (PST)
-MIME-Version: 1.0
-References: <20190215174712.372898450@goodmis.org> <20190215174945.557218316@goodmis.org>
-In-Reply-To: <20190215174945.557218316@goodmis.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 15 Feb 2019 09:55:32 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjP4bEYCFaKZVG4kLWmYBctyfsW9jjhC91tiTk9WwB8Rg@mail.gmail.com>
-Message-ID: <CAHk-=wjP4bEYCFaKZVG4kLWmYBctyfsW9jjhC91tiTk9WwB8Rg@mail.gmail.com>
-Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
- kernel memory that can fault
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        stable <stable@vger.kernel.org>,
-        Changbin Du <changbin.du@gmail.com>
+        Fri, 15 Feb 2019 12:58:35 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1FHtHZC021436
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 12:58:34 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qp1rbhaf9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 12:58:34 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
+        Fri, 15 Feb 2019 17:58:31 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 15 Feb 2019 17:58:28 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1FHwR7L2228508
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Feb 2019 17:58:27 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0D75A52052;
+        Fri, 15 Feb 2019 17:58:27 +0000 (GMT)
+Received: from localhost.localdomain (unknown [9.80.92.223])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 0D1C25204F;
+        Fri, 15 Feb 2019 17:58:25 +0000 (GMT)
+Subject: Re: [PATCH v3] x86/ima: require signed kernel modules
+From:   Mimi Zohar <zohar@linux.ibm.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Seth Forshee <seth.forshee@canonical.com>,
+        "Bruno E . O . Meneguele" <bmeneg@redhat.com>
+Date:   Fri, 15 Feb 2019 12:58:15 -0500
+In-Reply-To: <20190215170144.GH11489@garbanzo.do-not-panic.com>
+References: <1550249418-7986-1-git-send-email-zohar@linux.ibm.com>
+         <20190215170144.GH11489@garbanzo.do-not-panic.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19021517-0020-0000-0000-000003174E94
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021517-0021-0000-0000-000021688570
+Message-Id: <1550253495.7468.0.camel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-15_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=888 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902150122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 9:49 AM Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> From: Changbin Du <changbin.du@gmail.com>
->
-> The userspace can ask kprobe to intercept strings at any memory address,
-> including invalid kernel address.
+On Fri, 2019-02-15 at 09:01 -0800, Luis Chamberlain wrote:
+> On Fri, Feb 15, 2019 at 11:50:18AM -0500, Mimi Zohar wrote:
+> > Have the IMA architecture specific policy require signed kernel modules
+> > on systems with secure boot mode enabled; and coordinate the different
+> > signature verification methods, so only one signature is required.
+> > 
+> > Requiring appended kernel module signatures may be configured, enabled
+> > on the boot command line, or with this patch enabled in secure boot
+> > mode.  This patch defines set_module_sig_enforced().
+> > 
+> > To coordinate between appended kernel module signatures and IMA
+> > signatures, only define an IMA MODULE_CHECK policy rule if
+> > CONFIG_MODULE_SIG is not enabled.  A custom IMA policy may still define
+> > and require an IMA signature.
+> > 
+> > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> 
+> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
-Again, this is not about a "kernel address" at all.
+Thanks!
 
-It's neither a kernel address _nor_ a user address.  It's an invalid
-address entirely, and there is nothing that makes it "kernel".
-
-Please don't talk about "invalid kernel addresses" when it is no such thing.
-
-                      Linus
