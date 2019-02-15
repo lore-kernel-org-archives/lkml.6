@@ -2,113 +2,177 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66FD8C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D746CC4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:52:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40CE6222D4
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:50:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A147A222C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:52:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550245925;
+	bh=/8u+4vzVn7OrGpRgk2ietCEFCy+i+XryCDzK5wg3M9Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=JpTc3vpYFbEElZdJq3QVHOhm57HPeplqicAmvMG9SiRWQxhsIxA5xBTqhjFVNZm6w
+	 T25DK/l5exjNUbjpxsrNeKIgaftyIhAtx04MsQMjBFIO8YuP0+2SR1NmtPjrIJv/w7
+	 QRtnDzTKi9Yiw8Dq6EwYykHZOnk0naOgfSWmUZE4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388482AbfBOPu3 (ORCPT
+        id S1732342AbfBOPwD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 10:50:29 -0500
-Received: from foss.arm.com ([217.140.101.70]:34096 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726146AbfBOPu3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 10:50:29 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9069CEBD;
-        Fri, 15 Feb 2019 07:50:28 -0800 (PST)
-Received: from [10.1.197.21] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 29B563F557;
-        Fri, 15 Feb 2019 07:50:26 -0800 (PST)
-From:   Kristina Martsenko <kristina.martsenko@arm.com>
-Subject: Re: [PATCH v5 2/5] arm64/kvm: preserve host HCR_EL2/MDCR_EL2 value
-To:     Amit Daniel Kachhap <amit.kachhap@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>
-References: <1548658727-14271-1-git-send-email-amit.kachhap@arm.com>
- <1548658727-14271-3-git-send-email-amit.kachhap@arm.com>
- <8de32a89-4aa1-bffb-78dd-45feddc9216e@arm.com>
- <1a2534b9-6d3b-caac-ff05-7795b7a2d725@arm.com>
-Message-ID: <7ec2f950-7587-5ecd-6caa-c2fd091ad22c@arm.com>
-Date:   Fri, 15 Feb 2019 15:50:21 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 15 Feb 2019 10:52:03 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54550 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726146AbfBOPwD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 10:52:03 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 076AAB009;
+        Fri, 15 Feb 2019 15:52:00 +0000 (UTC)
+Date:   Fri, 15 Feb 2019 16:52:00 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Richard Weinberger <richard.weinberger@gmail.com>,
+        Samuel Dionne-Riel <samuel@dionne-riel.com>,
+        LKML <linux-kernel@vger.kernel.org>, graham@grahamc.com,
+        Oleg Nesterov <oleg@redhat.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: Userspace regression in LTS and stable kernels
+Message-ID: <20190215155200.GB4525@dhcp22.suse.cz>
+References: <CAN1fySViLgrLAHHfTHMef-Bkh73kUHKP-ava6TbgALeSE4LfFw@mail.gmail.com>
+ <CAFLxGvwpuxKF4UWdsULwQWo7kgVLMNHC=77dN+w-A0a6avrAXA@mail.gmail.com>
+ <CAHk-=wjtH5ombebghG-SDNGppJF4a5bZAUqndtZ3tauWjgw5_w@mail.gmail.com>
+ <20190214122027.c0df36282d65dc9979248117@linux-foundation.org>
+ <20190215070022.GD14473@kroah.com>
+ <20190215091000.GT4525@dhcp22.suse.cz>
+ <20190215092013.GA32575@kroah.com>
+ <20190215094205.GW4525@dhcp22.suse.cz>
+ <20190215151912.GA10616@sasha-vm>
 MIME-Version: 1.0
-In-Reply-To: <1a2534b9-6d3b-caac-ff05-7795b7a2d725@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190215151912.GA10616@sasha-vm>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/02/2019 11:03, Amit Daniel Kachhap wrote:
-> Hi,
+On Fri 15-02-19 10:19:12, Sasha Levin wrote:
+> On Fri, Feb 15, 2019 at 10:42:05AM +0100, Michal Hocko wrote:
+> > On Fri 15-02-19 10:20:13, Greg KH wrote:
+> > > On Fri, Feb 15, 2019 at 10:10:00AM +0100, Michal Hocko wrote:
+> > > > On Fri 15-02-19 08:00:22, Greg KH wrote:
+> > > > > On Thu, Feb 14, 2019 at 12:20:27PM -0800, Andrew Morton wrote:
+> > > > > > On Thu, 14 Feb 2019 09:56:46 -0800 Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> > > > > >
+> > > > > > > On Wed, Feb 13, 2019 at 3:37 PM Richard Weinberger
+> > > > > > > <richard.weinberger@gmail.com> wrote:
+> > > > > > > >
+> > > > > > > > Your shebang line exceeds BINPRM_BUF_SIZE.
+> > > > > > > > Before the said commit the kernel silently truncated the shebang line
+> > > > > > > > (and corrupted it),
+> > > > > > > > now it tells the user that the line is too long.
+> > > > > > >
+> > > > > > > It doesn't matter if it "corrupted" things by truncating it. All that
+> > > > > > > matters is "it used to work, now it doesn't"
+> > > > > > >
+> > > > > > > Yes, maybe it never *should* have worked. And yes, it's sad that
+> > > > > > > people apparently had cases that depended on this odd behavior, but
+> > > > > > > there we are.
+> > > > > > >
+> > > > > > > I see that Kees has a patch to fix it up.
+> > > > > > >
+> > > > > >
+> > > > > > Greg, I think we have a problem here.
+> > > > > >
+> > > > > > 8099b047ecc431518 ("exec: load_script: don't blindly truncate shebang
+> > > > > > string") wasn't marked for backporting.  And, presumably as a
+> > > > > > consequence, Kees's fix "exec: load_script: allow interpreter argument
+> > > > > > truncation" was not marked for backporting.
+> > > > > >
+> > > > > > 8099b047ecc431518 hasn't even appeared in a Linus released kernel, yet
+> > > > > > it is now present in 4.9.x, 4.14.x, 4.19.x and 4.20.x.
+> > > > >
+> > > > > It came in 5.0-rc1, so it fits the "in a Linus released kernel"
+> > > > > requirement.  If we are to wait until it shows up in a -final, that
+> > > > > would be months too late for almost all of these types of patches that
+> > > > > are picked up.
+> > > >
+> > > > rc1 is just a too early. Waiting few more rcs or even a final release
+> > > > for something that people do not see as an issue should be just fine.
+> > > > Consider this particular patch and tell me why it had to be rushed in
+> > > > the first place. The original code was broken for _years_ but I do not
+> > > > remember anybody would be complaining.
+> > > 
+> > > This patch was in 4.20.10, which was released on Feb 12 while 5.0-rc1
+> > > came out on Jan 6.  Over a month delay.
+> > 
+> > Obviously not long enough.
 > 
-> On 2/13/19 11:04 PM, Kristina Martsenko wrote:
->> On 28/01/2019 06:58, Amit Daniel Kachhap wrote:
->>> When restoring HCR_EL2 for the host, KVM uses HCR_HOST_VHE_FLAGS, which
->>> is a constant value. This works today, as the host HCR_EL2 value is
->>> always the same, but this will get in the way of supporting extensions
->>> that require HCR_EL2 bits to be set conditionally for the host.
->>>
->>> To allow such features to work without KVM having to explicitly handle
->>> every possible host feature combination, this patch has KVM save/restore
->>> the host HCR when switching to/from a guest HCR. The saving of the
->>> register is done once during cpu hypervisor initialization state and is
->>> just restored after switch from guest.
->>
->> Why is this patch needed? I couldn't find anything in this series that
->> sets HCR_EL2 conditionally for the host. It seems like the kernel still
->> always sets it to HCR_HOST_VHE_FLAGS/HCR_HOST_NVHE_FLAGS.
+> You're assuming that if we wouldn't have taken this patch to stable
+> somehow someone else would notice this bug and fix it.
 > 
-> This patch is not directly related to pointer authentication but just a
-> helper to optimize save/restore. In this way save may be avoided for
-> each switch and only restore is done. Patch 3 does sets HCR_EL2 in VHE_RUN.
+> What test do we have that would catch this? Which testsuite tests for
+> long shebang lines? Where is the test added together with this patch
+> that covers this and similar cases?
 
-Patch 3 sets the HCR_EL2.{API,APK} bits for the *guest*, not the host.
-This patch here adds saving/restoring for the *host* HCR_EL2. As far as
-I can tell, the value of the host HCR_EL2 never changes.
+The test is the "users out there". Right now we do not have any
+specialized test case because we haven't even realized it might break
+something. The main difference between breaking on the bleeding edge vs.
+stable tree is that people running on bleeding edge are more likely to
+expect a breakage while stable users would most likely prefer to not be
+guinea pigs and have, well stable trees.
+[...]
 
-Regarding save/restore, currently the kernel never saves the host
-HCR_EL2, because it always restores HCR_EL2 to HCR_HOST_{,N}VHE_FLAGS (a
-constant value!) when returning to the host. With this patch, we
-effectively just save HCR_HOST_{,N}VHE_FLAGS into kvm_host_cpu_state,
-and restore it from there when returning to the host.
+> > > We have a list of blacklisted files/subsystems for people that do not
+> > > want this to happen to their area of the kernel.  The patch seemed to
+> > > make sense, and it passed all known tests that we currently have.
+> > 
+> > Yes, the patch makes sense (I wouldn't give my acked-by otherwise). But
+> > this is one of the area where things that make sense might still break
+> > because it is hard to assume what userspace depends on.
+> 
+> Great, so the solution is to just not take these things into stable at
+> all?
 
-Unless we actually change the host HCR_EL2 value to something other than
-HCR_HOST_{,N}VHE_FLAGS somewhere in this series, this patch is unnecessary.
+No, but if the patch author and the maintainer have considered the
+stable tree and haven't found convincing arguments to mark for stable
+then it is likely that the patch doesn't need an urgent backporting.
 
->>
->> Looking back at v2 of the userspace pointer auth series, it seems that
->> the API/APK bits were set conditionally [1], so this patch would have
->> been needed to preserve HCR_EL2. But as of v3 of that series, the bits
->> have been set unconditionally through HCR_HOST_NVHE_FLAGS [2].
->>
->> Is there something else I've missed?
-> Now HCR_EL2 is modified during switch time and NHVE doesnt support
-> ptrauth so [2] doesn't makes sense.
+> The solution should be to add tests to the patches that go in there
+> to verify their correctness and that they don't regress in the future.
+> 
+> If you're really concerned about subsystems being brittle the solution
+> is to improve their testing rather push stuff in and hope nothing
+> explodes.
+> 
+> On one hand you Ack it saying it looks great to you and should be
+> merged, but on the other hand you're saying that you don't really trust
+> the patch?
 
-In case of NVHE, we do support pointer auth in the *host* userspace, so
-the patch [2] is necessary. In case of NVHE we do not support pointer
-auth for KVM *guests*.
+No. But I didn't consider it a stable material. You just do not really
+need all the patches in the stable, right? I have already said that this
+code is there for ages and fixing it is good to have for future but
+considering that nobody was really complaining then a backporting just
+adds a risk and as it turned out that risk was really not zero.
 
-Thanks,
-Kristina
+> Really, if I wouldn't pick this patch now what do you think would have
+> happened? It would just pop up in a few months as we roll our stable
+> kernel forward.
 
->> [1] https://lore.kernel.org/linux-arm-kernel/20171127163806.31435-6-mark.rutland@arm.com/
->> [2] https://lore.kernel.org/linux-arm-kernel/20180417183735.56985-5-mark.rutland@arm.com/
+and that would be a different kernel version and people kinda expect
+bugs with newer versions. This is not the case with the stable update.
 
+But I guess we are just repeating the same discussion over and over. Our
+expectations about what the stable kernel should be differs a lot. I
+would like to see fewer but only important fixes while you would like to
+take as many fixes as possible. 
+-- 
+Michal Hocko
+SUSE Labs
