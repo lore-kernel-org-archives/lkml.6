@@ -4,100 +4,235 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74130C10F02
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 04:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC309C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 04:57:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4210621924
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 04:55:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D66C21924
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 04:57:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="InlORRX3"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IKeEb0j6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388439AbfBOEzk (ORCPT
+        id S1731526AbfBOE5D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 23:55:40 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41611 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388317AbfBOEzi (ORCPT
+        Thu, 14 Feb 2019 23:57:03 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35259 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726120AbfBOE5C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 23:55:38 -0500
-Received: by mail-pl1-f193.google.com with SMTP id k15so4327128pls.8
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 20:55:38 -0800 (PST)
+        Thu, 14 Feb 2019 23:57:02 -0500
+Received: by mail-pf1-f194.google.com with SMTP id z15so4255645pfa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 20:57:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=Qupsk1SvP4uPjxCdck7dbvtWJL9P1nZ/WFvQV4WBoGU=;
-        b=InlORRX3RrOUc0zLLRa/Xsg4FSwWz4g70IyYD6jLfw/ceXZCJ+aczzC3rJh9ANZqZP
-         IbuXEnXT2fuoCeAh/l+AzWj9EMJSc0pHifYn3F26cKyTe/FKDF7fxF0nEfDGPJ5e37dZ
-         M4OSm7LkyX1ydAVSj4bUEr48qWfnk0OhQZBFKBuv6HKVpw8/WJC3UvFbnJJ9hH2qZ1F2
-         bKrMOO8xICpDov07xvoLh23j6jGvctIf6T7z07eXxqf8CuidlDIv9RSaX/4GCbILTu9i
-         yPNFg4mjDh846Q3VtTwz0wyhtIL1xoJIV3k3owhMRaEgD5bqvNm+7zObU6ZVQbGMnv5S
-         jK4w==
+        h=from:to:cc:subject:date:message-id;
+        bh=kSA1TWJhCcW942nec5H5KUTcw9lD/Qj1J6bxw+KVpGs=;
+        b=IKeEb0j6DAR83CuSjVdt+YyIhrkgUdVyBUvbEEJELqkUf4I5O2LdHtKSQF3GXDVXr8
+         p+lBX83Z8AvVqicqN6dgQpD90KQr6K48FvDCOEOuqkW+KYy9yRqDXj7PC2yKwQ7bsSJA
+         kf6eR03uJ2NwVMbFYaGO08gzKuLMJ5dOQwZcfRP8oxrJWlps6mpeosxAbOA0+Mksm341
+         HpsUizT8a2SB9VvjXR6BMuDHyDh5i8VRHiVbIffyNCG7PIQ0ojP8GrEw23oylLkbfTSo
+         n+f0ZEXu3X7tk8LvrL+bY22Ljry9OscxM/fZtUz5oaYUs9KlH+y5fir2gCmRAhtcTi5C
+         koJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=Qupsk1SvP4uPjxCdck7dbvtWJL9P1nZ/WFvQV4WBoGU=;
-        b=V4FsJ+78Kf7Ip3FjL5OPELsVp8GSBuKy19cThoTuaGEHLxjIxn8v+F8amcRkQwsxYJ
-         LEYq4TsFeisK6x9u3u3SxxJsCT9SSLlUwLWdNLokyVTx3UWk/lMa9YqZw4hRDMxBCUTI
-         jcok7QjESVF5hjNqa/IYGqCsi+5FfVulWRyhj8Rn5k7x+qMPI/7wvU5hgo9M0nePX5DD
-         OvYgwGMihoIb/Q4rsOIbTFQm5gDF9r0QWhv36xxmfCVWOSm1rA4RANQZQkPmNZFMV2tj
-         w+3Vd4BX2rqTjzer5X7dqXugY78hsRd1L9enaHhgzUjV8MFnsI3yRYVxXIdipg+sTpfR
-         5baA==
-X-Gm-Message-State: AHQUAuaIGkDFGJ0GWWXTEfcmLo2WLhEPObYshPac7vJOZ9M5rgZi5NYh
-        U9Mtodjlz+7K5MlmOYj4uAgwiA==
-X-Google-Smtp-Source: AHgI3IaPsjcSyqQY0+3ZxpMLEfbf2UCoNDUwJeTMduzvBwNtwvQMqWm75S3M6Ok7ylDpmZE99y+5oA==
-X-Received: by 2002:a17:902:6e0f:: with SMTP id u15mr8038993plk.175.1550206538248;
-        Thu, 14 Feb 2019 20:55:38 -0800 (PST)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id o1sm8600106pgn.63.2019.02.14.20.55.34
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 14 Feb 2019 20:55:37 -0800 (PST)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com
-Cc:     orsonzhai@gmail.com, zhang.lyra@gmail.com, baolin.wang@linaro.org,
-        broonie@kernel.org, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] gpio: sprd: Change to use SoC compatible string
-Date:   Fri, 15 Feb 2019 12:55:19 +0800
-Message-Id: <ad2fbe222ad715b3f7e6e093a7f822743e465f9a.1550201284.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <3818909a5d6f956ef30ff25cfc42f7550d062086.1550201284.git.baolin.wang@linaro.org>
-References: <3818909a5d6f956ef30ff25cfc42f7550d062086.1550201284.git.baolin.wang@linaro.org>
-In-Reply-To: <3818909a5d6f956ef30ff25cfc42f7550d062086.1550201284.git.baolin.wang@linaro.org>
-References: <3818909a5d6f956ef30ff25cfc42f7550d062086.1550201284.git.baolin.wang@linaro.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=kSA1TWJhCcW942nec5H5KUTcw9lD/Qj1J6bxw+KVpGs=;
+        b=UgRRrkFAFiz3W0RrUNX6LdWgfyUPTgO0f/y1dexPqf1rEUuE7KsKlJDtfX8p5POVlu
+         p199JCyLwWPf+PL7sXubVVNX6zL9zjaKXpjPwyO/8QmYMTKO5JQy8AZnT9Rn/sC/wT1P
+         58RVpjcDLVcPAc1rFw/Xu8+FwnXOYJqmL+fEqLgo2rt689qpcARsTs0ZzONjcrdKP+jt
+         MA6QOIdfi6vMibpKJpmyRdP7JUOpAqX+wTusFoeHOlkz83xKqkRpLTdtyarel4fBF60R
+         oXm1GX5vV2OxI4XbCmLcH1a679Hx3vrG+R6mqasF8NESTA6r+mVKzIqLZ11yPCTIfFUv
+         0+TQ==
+X-Gm-Message-State: AHQUAuaEAq/4dPIxOsePdvGOCLwZ+uqnsxb5SyJYncEwcRkLX9eu5i9b
+        eTxc7wcMOMEuMKacINOagfiH
+X-Google-Smtp-Source: AHgI3IYEo2fZJzhKYguqyf8Kkk3NMjRd9PiChuOsx5/5A+QXOd7rdaa/TR826KA2AgI9mwkoiO9rJQ==
+X-Received: by 2002:a63:6ac5:: with SMTP id f188mr3592785pgc.165.1550206621218;
+        Thu, 14 Feb 2019 20:57:01 -0800 (PST)
+Received: from localhost.localdomain ([2409:4072:98a:c91:14c4:f458:9909:7fad])
+        by smtp.gmail.com with ESMTPSA id y12sm9021267pgh.38.2019.02.14.20.56.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Feb 2019 20:57:00 -0800 (PST)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     heiko@sntech.de
+Cc:     linux-rockchip@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, ezequiel@collabora.com,
+        tom@vamrs.com, dev@vamrs.com, linux-kernel@vger.kernel.org,
+        mani@kernel.org, pbrobinson@gmail.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2] arm64: dts: rockchip: Add on-board WiFi/BT support for Rock960 boards
+Date:   Fri, 15 Feb 2019 10:26:48 +0530
+Message-Id: <20190215045648.26380-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change to use SoC compatible string instead of wildcard string.
+Add on-board WiFi/BT support for Rock960 boards such as Rock960 based
+on AP6356S and Ficus based on AP6354 wireless modules.
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
----
-Changes from v1:
- - None.
----
- drivers/gpio/gpio-pmic-eic-sprd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Firmwares for the respective boards are available here:
 
-diff --git a/drivers/gpio/gpio-pmic-eic-sprd.c b/drivers/gpio/gpio-pmic-eic-sprd.c
-index ac573da..24228cf 100644
---- a/drivers/gpio/gpio-pmic-eic-sprd.c
-+++ b/drivers/gpio/gpio-pmic-eic-sprd.c
-@@ -364,7 +364,7 @@ static int sprd_pmic_eic_probe(struct platform_device *pdev)
- }
+http://people.linaro.org/~manivannan.sadhasivam/rock960_wifi/
+http://people.linaro.org/~manivannan.sadhasivam/ficus_wifi/
+
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+
+Changes in v2:
+
+* Added address and size cells property to sdio0 node
+
+ .../boot/dts/rockchip/rk3399-rock960.dtsi     | 98 ++++++++++++++++++-
+ 1 file changed, 97 insertions(+), 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
+index 56abbb08c133..d33cd441dee9 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi
+@@ -9,6 +9,15 @@
+ #include "rk3399-opp.dtsi"
  
- static const struct of_device_id sprd_pmic_eic_of_match[] = {
--	{ .compatible = "sprd,sc27xx-eic", },
-+	{ .compatible = "sprd,sc2731-eic", },
- 	{ /* end of list */ }
+ / {
++	sdio_pwrseq: sdio-pwrseq {
++		compatible = "mmc-pwrseq-simple";
++		clocks = <&rk808 1>;
++		clock-names = "ext_clock";
++		pinctrl-names = "default";
++		pinctrl-0 = <&wifi_enable_h>;
++		reset-gpios = <&gpio0 RK_PB2 GPIO_ACTIVE_LOW>;
++	};
++
+ 	vcc1v8_s0: vcc1v8-s0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "vcc1v8_s0";
+@@ -362,6 +371,20 @@
  };
- MODULE_DEVICE_TABLE(of, sprd_pmic_eic_of_match);
+ 
+ &pinctrl {
++	bt {
++		bt_enable_h: bt-enable-h {
++			rockchip,pins = <0 RK_PB1 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		bt_host_wake_l: bt-host-wake-l {
++			rockchip,pins = <0 RK_PA4 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		bt_wake_l: bt-wake-l {
++			rockchip,pins = <2 RK_PD3 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
+ 	sdmmc {
+ 		sdmmc_bus1: sdmmc-bus1 {
+ 			rockchip,pins =
+@@ -387,6 +410,26 @@
+ 		};
+ 	};
+ 
++	sdio0 {
++		sdio0_bus4: sdio0-bus4 {
++			rockchip,pins =
++				<2 20 RK_FUNC_1 &pcfg_pull_up_20ma>,
++				<2 21 RK_FUNC_1 &pcfg_pull_up_20ma>,
++				<2 22 RK_FUNC_1 &pcfg_pull_up_20ma>,
++				<2 23 RK_FUNC_1 &pcfg_pull_up_20ma>;
++		};
++
++		sdio0_cmd: sdio0-cmd {
++			rockchip,pins =
++				<2 24 RK_FUNC_1 &pcfg_pull_up_20ma>;
++		};
++
++		sdio0_clk: sdio0-clk {
++			rockchip,pins =
++				<2 25 RK_FUNC_1 &pcfg_pull_none_20ma>;
++		};
++	};
++
+ 	pmic {
+ 		pmic_int_l: pmic-int-l {
+ 			rockchip,pins =
+@@ -403,6 +446,19 @@
+ 				<1 14 RK_FUNC_GPIO &pcfg_pull_down>;
+ 		};
+ 	};
++
++	sdio-pwrseq {
++		wifi_enable_h: wifi-enable-h {
++			rockchip,pins =
++				<0 RK_PB2 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
++
++	wifi {
++		wifi_host_wake_l: wifi-host-wake-l {
++			rockchip,pins = <0 RK_PA3 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
+ };
+ 
+ &pwm2 {
+@@ -413,6 +469,35 @@
+ 	status = "okay";
+ };
+ 
++&sdio0 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	clock-frequency = <50000000>;
++	bus-width = <4>;
++	cap-sdio-irq;
++	cap-sd-highspeed;
++	no-emmc;
++	keep-power-in-suspend;
++	mmc-pwrseq = <&sdio_pwrseq>;
++	non-removable;
++	num-slots = <1>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&sdio0_bus4 &sdio0_cmd &sdio0_clk>;
++	sd-uhs-sdr104;
++
++	status = "okay";
++
++	brcmf: wifi@1 {
++		compatible = "brcm,bcm4329-fmac";
++		reg = <1>;
++		interrupt-parent = <&gpio0>;
++		interrupts = <RK_PA3 GPIO_ACTIVE_HIGH>;
++		interrupt-names = "host-wake";
++		pinctrl-names = "default";
++		pinctrl-0 = <&wifi_host_wake_l>;
++	};
++};
++
+ &sdhci {
+ 	bus-width = <8>;
+ 	mmc-hs400-1_8v;
+@@ -439,8 +524,19 @@
+ 
+ &uart0 {
+ 	pinctrl-names = "default";
+-	pinctrl-0 = <&uart0_xfer &uart0_cts>;
++	pinctrl-0 = <&uart0_xfer &uart0_cts &uart0_rts>;
+ 	status = "okay";
++
++	bluetooth {
++		compatible = "brcm,bcm43438-bt";
++		clocks = <&rk808 1>;
++		clock-names = "ext_clock";
++		device-wakeup-gpios = <&gpio2 RK_PD3 GPIO_ACTIVE_HIGH>;
++		host-wakeup-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_HIGH>;
++		shutdown-gpios = <&gpio0 RK_PB1 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&bt_host_wake_l &bt_wake_l &bt_enable_h>;
++	};
+ };
+ 
+ &uart2 {
 -- 
-1.7.9.5
+2.17.1
 
