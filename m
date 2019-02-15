@@ -2,110 +2,188 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8767C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:24:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7933EC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:25:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8665C20838
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:24:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550222688;
-	bh=pEzY6W6Kg4HlbD5Ls0bj277mIMf3T8ixBKKT9MfdksM=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=cVkluZ5/9YzvG+H9baW3dwnBZwEZAZkT0sHtKdboNRRLPwIwalzfbdCu33wFTqgs1
-	 vC1TGrdI2dwzuZyidDKNdKvkBRKsseLufHgQZr9gPFiRgifzAMEEHzHvP2slu/YWB/
-	 cYdSCy7l2cGXei5s/IfRVkLCqU6n1OCwQE10AcDg=
+	by mail.kernel.org (Postfix) with ESMTP id 4F79A21A80
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:24:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389773AbfBOJYk (ORCPT
+        id S2391935AbfBOJYy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:24:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54306 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726473AbfBOJYj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 04:24:39 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98C4621925;
-        Fri, 15 Feb 2019 09:24:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550222676;
-        bh=pEzY6W6Kg4HlbD5Ls0bj277mIMf3T8ixBKKT9MfdksM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=yHlRCS70bhwYHKMz0dZk+u2mWqPKVT/eEAfaEesw70VC3gk8EBYx/pMtGBmJGX8Ym
-         Z4y7/ZQrlGSj43yzjhwolQrRg/oWfUXy7cKi91yckVWIAKfFQcg1OtP0SLsrqwdUOd
-         aFyLvSIeVGWDgtA4fBO1ykaF57EaGA3JdEYlUBzk=
-Date:   Fri, 15 Feb 2019 10:24:10 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Linux 4.19.23
-Message-ID: <20190215092410.GA1387@kroah.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mYCpIKhGyMATD0i+"
-Content-Disposition: inline
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        Fri, 15 Feb 2019 04:24:54 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56804 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726473AbfBOJYy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 04:24:54 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 62187A78;
+        Fri, 15 Feb 2019 01:24:53 -0800 (PST)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5EB043F557;
+        Fri, 15 Feb 2019 01:24:46 -0800 (PST)
+Date:   Fri, 15 Feb 2019 09:24:36 +0000
+Message-ID: <868syhs8tn.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, <linux-block@vger.kernel.org>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        <linux-nvme@lists.infradead.org>, <linux-pci@vger.kernel.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Kashyap Desai <kashyap.desai@broadcom.com>,
+        Shivasharan Srikanteshwara 
+        <shivasharan.srikanteshwara@broadcom.com>
+Subject: Re: [patch V5 4/8] nvme-pci: Simplify interrupt allocation
+In-Reply-To: <20190214211759.699390983@linutronix.de>
+References: <20190214204755.819014197@linutronix.de>
+        <20190214211759.699390983@linutronix.de>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 14 Feb 2019 20:47:59 +0000,
+Thomas Gleixner <tglx@linutronix.de> wrote:
+> 
+> From: Ming Lei <ming.lei@redhat.com>
+> 
+> The NVME PCI driver contains a tedious mechanism for interrupt
+> allocation, which is necessary to adjust the number and size of interrupt
+> sets to the maximum available number of interrupts which depends on the
+> underlying PCI capabilities and the available CPU resources.
+> 
+> It works around the former short comings of the PCI and core interrupt
+> allocation mechanims in combination with interrupt sets.
+> 
+> The PCI interrupt allocation function allows to provide a maximum and a
+> minimum number of interrupts to be allocated and tries to allocate as
+> many as possible. This worked without driver interaction as long as there
+> was only a single set of interrupts to handle.
+> 
+> With the addition of support for multiple interrupt sets in the generic
+> affinity spreading logic, which is invoked from the PCI interrupt
+> allocation, the adaptive loop in the PCI interrupt allocation did not
+> work for multiple interrupt sets. The reason is that depending on the
+> total number of interrupts which the PCI allocation adaptive loop tries
+> to allocate in each step, the number and the size of the interrupt sets
+> need to be adapted as well. Due to the way the interrupt sets support was
+> implemented there was no way for the PCI interrupt allocation code or the
+> core affinity spreading mechanism to invoke a driver specific function
+> for adapting the interrupt sets configuration.
+> 
+> As a consequence the driver had to implement another adaptive loop around
+> the PCI interrupt allocation function and calling that with maximum and
+> minimum interrupts set to the same value. This ensured that the
+> allocation either succeeded or immediately failed without any attempt to
+> adjust the number of interrupts in the PCI code.
+> 
+> The core code now allows drivers to provide a callback to recalculate the
+> number and the size of interrupt sets during PCI interrupt allocation,
+> which in turn allows the PCI interrupt allocation function to be called
+> in the same way as with a single set of interrupts. The PCI code handles
+> the adaptive loop and the interrupt affinity spreading mechanism invokes
+> the driver callback to adapt the interrupt set configuration to the
+> current loop value. This replaces the adaptive loop in the driver
+> completely.
+> 
+> Implement the NVME specific callback which adjusts the interrupt sets
+> configuration and remove the adaptive allocation loop.
+> 
+> [ tglx: Simplify the callback further and restore the dropped adjustment of
+>   	number of sets ]
+> 
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> 
+> ---
+>  drivers/nvme/host/pci.c |  108 ++++++++++++------------------------------------
+>  1 file changed, 28 insertions(+), 80 deletions(-)
+> 
+> --- a/drivers/nvme/host/pci.c
+> +++ b/drivers/nvme/host/pci.c
+> @@ -2041,41 +2041,32 @@ static int nvme_setup_host_mem(struct nv
+>  	return ret;
+>  }
+>  
+> -/* irq_queues covers admin queue */
+> -static void nvme_calc_io_queues(struct nvme_dev *dev, unsigned int irq_queues)
+> +/*
+> + * nirqs is the number of interrupts available for write and read
+> + * queues. The core already reserved an interrupt for the admin queue.
+> + */
+> +static void nvme_calc_irq_sets(struct irq_affinity *affd, unsigned int nrirqs)
+>  {
+> -	unsigned int this_w_queues = write_queues;
+> -
+> -	WARN_ON(!irq_queues);
+> -
+> -	/*
+> -	 * Setup read/write queue split, assign admin queue one independent
+> -	 * irq vector if irq_queues is > 1.
+> -	 */
+> -	if (irq_queues <= 2) {
+> -		dev->io_queues[HCTX_TYPE_DEFAULT] = 1;
+> -		dev->io_queues[HCTX_TYPE_READ] = 0;
+> -		return;
+> -	}
+> +	struct nvme_dev *dev = affd->priv;
+> +	unsigned int nr_read_queues;
+>  
+>  	/*
+> -	 * If 'write_queues' is set, ensure it leaves room for at least
+> -	 * one read queue and one admin queue
+> -	 */
+> -	if (this_w_queues >= irq_queues)
+> -		this_w_queues = irq_queues - 2;
+> -
+> -	/*
+> -	 * If 'write_queues' is set to zero, reads and writes will share
+> -	 * a queue set.
+> -	 */
+> -	if (!this_w_queues) {
+> -		dev->io_queues[HCTX_TYPE_DEFAULT] = irq_queues - 1;
+> -		dev->io_queues[HCTX_TYPE_READ] = 0;
+> -	} else {
+> -		dev->io_queues[HCTX_TYPE_DEFAULT] = this_w_queues;
+> -		dev->io_queues[HCTX_TYPE_READ] = irq_queues - this_w_queues - 1;
+> -	}
+> +	 * If only one interrupt is available, combine write and read
+> +	 * queues. If 'write_queues' is set, ensure it leaves room for at
+> +	 * least one read queue.
 
---mYCpIKhGyMATD0i+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+[Full disclaimer: I only have had two coffees this morning, and it is
+only at the fourth that my brain is able to kick in...]
 
-I'm announcing the release of the 4.19.23 kernel.
+I don't know much about NVME, but I feel like there is a small
+disconnect between the code and the above comment, which says "leave
+room for at least one read queue"...
 
-All users of the 4.19 kernel series must upgrade.
+> +	 */
+> +	if (nrirqs == 1)
+> +		nr_read_queues = 0;
+> +	else if (write_queues >= nrirqs)
+> +		nr_read_queues = nrirqs - 1;
 
-The updated 4.19.y git tree can be found at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linux-4.19.y
-and can be browsed at the normal kernel.org git web browser:
-	http://git.kernel.org/?p=linux/kernel/git/stable/linux-stable.git;a=summary
+... while this seem to ensure that we carve out one write queue out of
+the irq set. It looks like a departure from the original code, which
+would set nr_read_queues to 1 in that particular case.
 
-thanks,
+Thanks,
 
-greg k-h
+	M.
 
-------------
-
- Makefile           |    2 +-
- fs/binfmt_script.c |   10 +++-------
- 2 files changed, 4 insertions(+), 8 deletions(-)
-
-Greg Kroah-Hartman (1):
-      Linux 4.19.23
-
-Linus Torvalds (1):
-      Revert "exec: load_script: don't blindly truncate shebang string"
-
-
---mYCpIKhGyMATD0i+
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlxmhToACgkQONu9yGCS
-aT6JRRAArGixOTwYcymskqvVDMbaIg94hWMQo9CNNfCbVxtMJOvgJvdXRctOHxDi
-S+23hJMvTAHxtvq4UWrfnNyB5niiTG60orrt5jt1VqwkrZg5qvUk51e91npNdB7K
-a6vu/IVSo/COpm36ZZ8V1sC0xBx2mNZwpY+E52MCZujgnHwumhDFP+JW9/znEfQg
-HotEPLpzZ/FuwEL41DOG6ppVBsahBW8xR6LihC4zQgk2ezLI3BGpb7+Yn4nzDNNX
-0fN8UAjEsqQPctKpFEp31qeqGT6+iXysA0XAwNwG+W+QazZbet2uTBsMU5cZwXJa
-icoQcSMwJwYAvQEvT6LAJ3/b6PWIda/cT7ajFcA4IrYZDj359XNjZbaoJ9AP5buz
-Jd9rMKqcmRkju33eWcuctBCLveJH14vpgVP2tcwAVceTRe18X4QgRfsdwcv0uEQT
-IEPHUoCI4N8sNPH7E8WOiC+6/mMlGarGn+U/oxJlonADq5RrV9QaIyr993eYBQgP
-UFHtm4jFoc/QAdoQYurnwzr0C4uXb3anxB29vJ/N5iYM0KwEl/z37ZIKBijddOnN
-ARJmMefs8VzUkcfoixnoRCjn+eLHFgVplgb0EncPTAJocBT7V8mrJ1iX0arFjiyW
-iVqLbhXV6z6oq2Tjtix1eJfsH/m/p4Q1OZnS/D6zasjanTBSq4A=
-=iK1z
------END PGP SIGNATURE-----
-
---mYCpIKhGyMATD0i+--
+-- 
+Jazz is not dead, it just smell funny.
