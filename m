@@ -2,885 +2,181 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4125FC10F02
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:49:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF4DFC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:50:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E43F92070D
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:49:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D4472070D
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:50:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JU3uVxN3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393518AbfBOJt1 (ORCPT
+        id S2405344AbfBOJuA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:49:27 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:47377 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393491AbfBOJt0 (ORCPT
+        Fri, 15 Feb 2019 04:50:00 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:33831 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726881AbfBOJt7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 04:49:26 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1F9n9Il1121419
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 15 Feb 2019 01:49:09 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1F9n9fS1121416;
-        Fri, 15 Feb 2019 01:49:09 -0800
-Date:   Fri, 15 Feb 2019 01:49:09 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-5ff328836dfde0cef9f28c8b8791a90a36d7a183@git.kernel.org>
-Cc:     namhyung@kernel.org, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, peterz@infradead.org, acme@redhat.com,
-        jolsa@kernel.org, tglx@linutronix.de,
-        alexander.shishkin@linux.intel.com
-Reply-To: namhyung@kernel.org, peterz@infradead.org, mingo@kernel.org,
-          hpa@zytor.com, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-          acme@redhat.com, tglx@linutronix.de,
-          alexander.shishkin@linux.intel.com
-In-Reply-To: <20190213123246.4015-4-jolsa@kernel.org>
-References: <20190213123246.4015-4-jolsa@kernel.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tools: Rename build libperf to perf
-Git-Commit-ID: 5ff328836dfde0cef9f28c8b8791a90a36d7a183
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 15 Feb 2019 04:49:59 -0500
+Received: by mail-ot1-f67.google.com with SMTP id 98so15619228oty.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 01:49:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZXm5+/gsOXGIPIhmQii8U4FW92DPwvJV91xcsb7t5do=;
+        b=JU3uVxN3pLK2/fLiCMb0TOILOhsBwJxc0+b4YwDYHin4Qtz89WA738OWYrYbvdFrTT
+         GSCFiGi3BSL3Dzy69gl/KML0E2LmvGwCjERlHEWF/AZrT5GCdBZ30/+v5edLaTvhoKGg
+         qc3XnNGuENyL+XhbviDiuETh68IEQLHTExtzUYN7qd3becGeQYsUb4NIXuh2M6v3Dvz4
+         834SySmZaIeCNuJEhuPzKr/cU3X/OEu1oNuS2OsQYYwchO32VvYP1H/uccR0jRqcKxcC
+         vAlTLEBzV3rEC62sOnRafU+TFN8tEcCqNxc9Y0I7mfYQNoZcD1LXtNPKGDpaUSsFgkV4
+         9CNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZXm5+/gsOXGIPIhmQii8U4FW92DPwvJV91xcsb7t5do=;
+        b=jvJ01Y+u0RBWaChjFZ4DI/rnLgQZXaRxs5MnVGvTo8VbDuCDcTFr/WbsYwnI+1fzDJ
+         Ue22RuUaoJW2CXAbI80bPJL9m2hQ5mHp5Wyg2LqJ4dLDvozPIFZvZ751beuPtXJzbJA5
+         ojAJKRVUpn5++WlHICg6WAmLI+BfRrNfP2WaMZn9ARCIIEI7yHCIDHpk7EIBQP48bZ4h
+         rGFTJ+azatEW00EXeq3jnf2k6nuaWjrF2YLMsEXcnLLXlRtiL8ti42RqM9VOwjP4Bu/Z
+         7YTNrv6sPyjkdApps3UTYCfnPMHCzV0qms3HvXS/71EsCEzu9Fv3BHwGwRaN+WT+2xHC
+         W7xg==
+X-Gm-Message-State: AHQUAuYUQ5/AM5pT1VgKtP2Qu8M0Y9Tipw7B0aQ2sjLA7qqJVZLhDWsh
+        jAGAfbm6QH9Jeq/0PxKWZ5iqccDGBUsDBaWGUWrQmA==
+X-Google-Smtp-Source: AHgI3IZQdW6jbjEXYQit37TBM8QppDFhaEeh7I3Nt2dpPztSZf8mEGGhu94I7/wA9avvlvf8XkD5q+K53RzQd0+2fP4=
+X-Received: by 2002:a9d:6401:: with SMTP id h1mr5031198otl.230.1550224197655;
+ Fri, 15 Feb 2019 01:49:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <20190212185305.112847-1-brendanhiggins@google.com>
+ <20190212185305.112847-2-brendanhiggins@google.com> <4cb7ca12-ce60-7516-b7eb-aef08f607acc@gmail.com>
+ <CAFd5g441+6ATUKcNz7OstAB6Qd2BqeDh77SNnGUpZGBNvgysmg@mail.gmail.com> <bfa00740-9b67-58f9-6273-3de98de952f6@gmail.com>
+In-Reply-To: <bfa00740-9b67-58f9-6273-3de98de952f6@gmail.com>
+From:   Brendan Higgins <brendanhiggins@google.com>
+Date:   Fri, 15 Feb 2019 01:49:45 -0800
+Message-ID: <CAFd5g44HkBLJmK8e4F+iaGPg1FEzubGtcUW-251GAOv1UmE5rg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/1] of: unittest: unflatten device tree on UML when testing
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5ff328836dfde0cef9f28c8b8791a90a36d7a183
-Gitweb:     https://git.kernel.org/tip/5ff328836dfde0cef9f28c8b8791a90a36d7a183
-Author:     Jiri Olsa <jolsa@kernel.org>
-AuthorDate: Wed, 13 Feb 2019 13:32:39 +0100
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 14 Feb 2019 15:18:08 -0300
+On Thu, Feb 14, 2019 at 6:48 PM Frank Rowand <frowand.list@gmail.com> wrote:
+>
+> On 2/14/19 5:26 PM, Brendan Higgins wrote:
+> > On Thu, Feb 14, 2019 at 4:10 PM Frank Rowand <frowand.list@gmail.com> wrote:
+> >>
+> >> On 2/12/19 10:53 AM, Brendan Higgins wrote:
+> >>> UML supports enabling OF, and is useful for running the device tree
+> >>> tests, so add support for unflattening device tree blobs so we can
+> >>> actually use it.
+> >>>
+> >>> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> >>> ---
+> >>>  drivers/of/unittest.c | 3 +++
+> >>>  1 file changed, 3 insertions(+)
+> >>>
+> >>> diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+> >>> index 84427384654d5..effa4e2b9d992 100644
+> >>> --- a/drivers/of/unittest.c
+> >>> +++ b/drivers/of/unittest.c
+> >>> @@ -2527,6 +2527,9 @@ static int __init of_unittest(void)
+> >>>       }
+> >>>       of_node_put(np);
+> >>>
+> >>> +     if (IS_ENABLED(CONFIG_UML))
+> >>> +             unflatten_device_tree();
+> >>> +
+> >>>       pr_info("start of unittest - you will see error messages\n");
+> >>>       of_unittest_check_tree_linkage();
+> >>>       of_unittest_check_phandles();
+> >>>
+> >>
+> >> (Insert my usual disclaimer that I am clueless about UML, I still need to learn
+> >> about it...)
+> >>
+> >> This does not look correct to me.
+> >>
+> >> A few lines earlier in of_unittest(), the live devicetree needs to exist for
+> >> unittest_data_data() and a few of_*() functions to succeed.  So it seems
+> >> that the unflatten_device_tree() for uml should be at the beginning of
+> >> of_unittest().
+> >
+> > It is true that other functions ahead of it depend on the presence of
+> > a device tree, but an unflattened tree does get linked in somewhere
+> > else. Despite that, this is needed for overlay_base_root. I got
+> > similar behavior if you don't link in a flattened device tree on x86.
+> > Thus, the order in which you call them doesn't actually seem to
+> > matter. I found no difference from changing the order in UML myself.
+> >
+> > Without my patch we get the following error,
+> > ### dt-test ### FAIL of_unittest_overlay_high_level():2372
+> > overlay_base_root not initialized
+> > ### dt-test ### end of unittest - 219 passed, 1 failed
+> >
+> > With my patch we get:
+> > ### dt-test ### end of unittest - 224 passed, 0 failed
+>
+> Thanks for reporting both the failure and the success cases,
+> that helps me understand a little bit better.
+>
+> If instead of the above patch, if you add the following (untested,
+> not even compile tested) to the beginning of of_unittest():
+>
+>         if (IS_ENABLED(CONFIG_UML))
+>                 unittest_unflatten_overlay_base();
+>
+> does that also result in a good test result of:
+>
+>         ### dt-test ### end of unittest - 224 passed, 0 failed
 
-perf tools: Rename build libperf to perf
+Yep, I just tried it. It works as you suspected.
 
-Rename build libperf to perf, because it's used to build perf.
+>
+> I think I need to find some time to build and boot a UML kernel soon.
 
-The libperf build object name will be used for libperf library.
+It's really no big deal, just copy the .config I sent and build with
+`make ARCH=um` then you "boot" the kernel with `./linux` (note this
+will mess up your terminal settings); that's it! (Shameless plug: you
+can also try it out with the KUnit patchset with
+`./tools/testing/kunit/kunit.py --timeout=30 --jobs=12 --defconfig`,
+which builds the kernel with a pretty similar config, boots the
+kernel, and then parses the output for you. ;-) )
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20190213123246.4015-4-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/Build                                |  10 +-
- tools/perf/arch/Build                           |   4 +-
- tools/perf/arch/arm/Build                       |   4 +-
- tools/perf/arch/arm/tests/Build                 |   8 +-
- tools/perf/arch/arm/util/Build                  |   8 +-
- tools/perf/arch/arm64/Build                     |   4 +-
- tools/perf/arch/arm64/tests/Build               |   6 +-
- tools/perf/arch/arm64/util/Build                |  12 +-
- tools/perf/arch/nds32/Build                     |   2 +-
- tools/perf/arch/nds32/util/Build                |   2 +-
- tools/perf/arch/powerpc/Build                   |   4 +-
- tools/perf/arch/powerpc/tests/Build             |   6 +-
- tools/perf/arch/powerpc/util/Build              |  18 +-
- tools/perf/arch/s390/Build                      |   2 +-
- tools/perf/arch/s390/util/Build                 |  12 +-
- tools/perf/arch/sh/Build                        |   2 +-
- tools/perf/arch/sh/util/Build                   |   2 +-
- tools/perf/arch/sparc/Build                     |   2 +-
- tools/perf/arch/sparc/util/Build                |   2 +-
- tools/perf/arch/x86/Build                       |   4 +-
- tools/perf/arch/x86/tests/Build                 |  14 +-
- tools/perf/arch/x86/util/Build                  |  30 +--
- tools/perf/arch/xtensa/Build                    |   2 +-
- tools/perf/arch/xtensa/util/Build               |   2 +-
- tools/perf/scripts/Build                        |   4 +-
- tools/perf/scripts/perl/Perf-Trace-Util/Build   |   2 +-
- tools/perf/scripts/python/Perf-Trace-Util/Build |   2 +-
- tools/perf/trace/beauty/Build                   |  26 +--
- tools/perf/ui/Build                             |  18 +-
- tools/perf/ui/browsers/Build                    |  10 +-
- tools/perf/ui/tui/Build                         |   8 +-
- tools/perf/util/Build                           | 276 ++++++++++++------------
- tools/perf/util/c++/Build                       |   4 +-
- tools/perf/util/cs-etm-decoder/Build            |   2 +-
- tools/perf/util/intel-pt-decoder/Build          |   2 +-
- tools/perf/util/scripting-engines/Build         |   4 +-
- 36 files changed, 260 insertions(+), 260 deletions(-)
+>
+> My current _guess_ is that the original problem was not a failure to
+> unflatten any present devicetree in UML but instead that the UML
+> kernel does not call unflatten_device_tree() and thus fails to
+> indirectly call unittest_unflatten_overlay_base(), which is
+> called by unflatten_device_tree().
 
-diff --git a/tools/perf/Build b/tools/perf/Build
-index e5232d567611..5f392dbb88fc 100644
---- a/tools/perf/Build
-+++ b/tools/perf/Build
-@@ -46,10 +46,10 @@ CFLAGS_builtin-trace.o	   += -DSTRACE_GROUPS_DIR="BUILD_STR($(STRACE_GROUPS_DIR_
- CFLAGS_builtin-report.o	   += -DTIPDIR="BUILD_STR($(tipdir_SQ))"
- CFLAGS_builtin-report.o	   += -DDOCDIR="BUILD_STR($(srcdir_SQ)/Documentation)"
- 
--libperf-y += util/
--libperf-y += arch/
--libperf-y += ui/
--libperf-y += scripts/
--libperf-$(CONFIG_TRACE) += trace/beauty/
-+perf-y += util/
-+perf-y += arch/
-+perf-y += ui/
-+perf-y += scripts/
-+perf-$(CONFIG_TRACE) += trace/beauty/
- 
- gtk-y += ui/gtk/
-diff --git a/tools/perf/arch/Build b/tools/perf/arch/Build
-index d9b6af837c7d..688818844c11 100644
---- a/tools/perf/arch/Build
-+++ b/tools/perf/arch/Build
-@@ -1,2 +1,2 @@
--libperf-y += common.o
--libperf-y += $(SRCARCH)/
-+perf-y += common.o
-+perf-y += $(SRCARCH)/
-diff --git a/tools/perf/arch/arm/Build b/tools/perf/arch/arm/Build
-index 41bf61da476a..36222e64bbf7 100644
---- a/tools/perf/arch/arm/Build
-+++ b/tools/perf/arch/arm/Build
-@@ -1,2 +1,2 @@
--libperf-y += util/
--libperf-$(CONFIG_DWARF_UNWIND) += tests/
-+perf-y += util/
-+perf-$(CONFIG_DWARF_UNWIND) += tests/
-diff --git a/tools/perf/arch/arm/tests/Build b/tools/perf/arch/arm/tests/Build
-index d9ae2733f9cc..bc8e97380c82 100644
---- a/tools/perf/arch/arm/tests/Build
-+++ b/tools/perf/arch/arm/tests/Build
-@@ -1,5 +1,5 @@
--libperf-y += regs_load.o
--libperf-y += dwarf-unwind.o
--libperf-y += vectors-page.o
-+perf-y += regs_load.o
-+perf-y += dwarf-unwind.o
-+perf-y += vectors-page.o
- 
--libperf-y += arch-tests.o
-+perf-y += arch-tests.o
-diff --git a/tools/perf/arch/arm/util/Build b/tools/perf/arch/arm/util/Build
-index e64c5f216448..296f0eac5e18 100644
---- a/tools/perf/arch/arm/util/Build
-+++ b/tools/perf/arch/arm/util/Build
-@@ -1,6 +1,6 @@
--libperf-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-$(CONFIG_DWARF) += dwarf-regs.o
- 
--libperf-$(CONFIG_LOCAL_LIBUNWIND)    += unwind-libunwind.o
--libperf-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
-+perf-$(CONFIG_LOCAL_LIBUNWIND)    += unwind-libunwind.o
-+perf-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
- 
--libperf-$(CONFIG_AUXTRACE) += pmu.o auxtrace.o cs-etm.o
-+perf-$(CONFIG_AUXTRACE) += pmu.o auxtrace.o cs-etm.o
-diff --git a/tools/perf/arch/arm64/Build b/tools/perf/arch/arm64/Build
-index 41bf61da476a..36222e64bbf7 100644
---- a/tools/perf/arch/arm64/Build
-+++ b/tools/perf/arch/arm64/Build
-@@ -1,2 +1,2 @@
--libperf-y += util/
--libperf-$(CONFIG_DWARF_UNWIND) += tests/
-+perf-y += util/
-+perf-$(CONFIG_DWARF_UNWIND) += tests/
-diff --git a/tools/perf/arch/arm64/tests/Build b/tools/perf/arch/arm64/tests/Build
-index 883c57ff0c08..41707fea74b3 100644
---- a/tools/perf/arch/arm64/tests/Build
-+++ b/tools/perf/arch/arm64/tests/Build
-@@ -1,4 +1,4 @@
--libperf-y += regs_load.o
--libperf-y += dwarf-unwind.o
-+perf-y += regs_load.o
-+perf-y += dwarf-unwind.o
- 
--libperf-y += arch-tests.o
-+perf-y += arch-tests.o
-diff --git a/tools/perf/arch/arm64/util/Build b/tools/perf/arch/arm64/util/Build
-index 68f8a8eb3ad0..3cde540d2fcf 100644
---- a/tools/perf/arch/arm64/util/Build
-+++ b/tools/perf/arch/arm64/util/Build
-@@ -1,10 +1,10 @@
--libperf-y += header.o
--libperf-y += sym-handling.o
--libperf-$(CONFIG_DWARF)     += dwarf-regs.o
--libperf-$(CONFIG_LOCAL_LIBUNWIND) += unwind-libunwind.o
--libperf-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
-+perf-y += header.o
-+perf-y += sym-handling.o
-+perf-$(CONFIG_DWARF)     += dwarf-regs.o
-+perf-$(CONFIG_LOCAL_LIBUNWIND) += unwind-libunwind.o
-+perf-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
- 
--libperf-$(CONFIG_AUXTRACE) += ../../arm/util/pmu.o \
-+perf-$(CONFIG_AUXTRACE) += ../../arm/util/pmu.o \
- 			      ../../arm/util/auxtrace.o \
- 			      ../../arm/util/cs-etm.o \
- 			      arm-spe.o
-diff --git a/tools/perf/arch/nds32/Build b/tools/perf/arch/nds32/Build
-index 54afe4a467e7..e4e5f33c84d8 100644
---- a/tools/perf/arch/nds32/Build
-+++ b/tools/perf/arch/nds32/Build
-@@ -1 +1 @@
--libperf-y += util/
-+perf-y += util/
-diff --git a/tools/perf/arch/nds32/util/Build b/tools/perf/arch/nds32/util/Build
-index ca623bbf993c..d0bc205fe49a 100644
---- a/tools/perf/arch/nds32/util/Build
-+++ b/tools/perf/arch/nds32/util/Build
-@@ -1 +1 @@
--libperf-y += header.o
-+perf-y += header.o
-diff --git a/tools/perf/arch/powerpc/Build b/tools/perf/arch/powerpc/Build
-index db52fa22d3a1..a7dd46a5b678 100644
---- a/tools/perf/arch/powerpc/Build
-+++ b/tools/perf/arch/powerpc/Build
-@@ -1,2 +1,2 @@
--libperf-y += util/
--libperf-y += tests/
-+perf-y += util/
-+perf-y += tests/
-diff --git a/tools/perf/arch/powerpc/tests/Build b/tools/perf/arch/powerpc/tests/Build
-index d827ef384b33..3526ab0af9f9 100644
---- a/tools/perf/arch/powerpc/tests/Build
-+++ b/tools/perf/arch/powerpc/tests/Build
-@@ -1,4 +1,4 @@
--libperf-$(CONFIG_DWARF_UNWIND) += regs_load.o
--libperf-$(CONFIG_DWARF_UNWIND) += dwarf-unwind.o
-+perf-$(CONFIG_DWARF_UNWIND) += regs_load.o
-+perf-$(CONFIG_DWARF_UNWIND) += dwarf-unwind.o
- 
--libperf-y += arch-tests.o
-+perf-y += arch-tests.o
-diff --git a/tools/perf/arch/powerpc/util/Build b/tools/perf/arch/powerpc/util/Build
-index ba98bd006488..7cf0b8803097 100644
---- a/tools/perf/arch/powerpc/util/Build
-+++ b/tools/perf/arch/powerpc/util/Build
-@@ -1,11 +1,11 @@
--libperf-y += header.o
--libperf-y += sym-handling.o
--libperf-y += kvm-stat.o
--libperf-y += perf_regs.o
--libperf-y += mem-events.o
-+perf-y += header.o
-+perf-y += sym-handling.o
-+perf-y += kvm-stat.o
-+perf-y += perf_regs.o
-+perf-y += mem-events.o
- 
--libperf-$(CONFIG_DWARF) += dwarf-regs.o
--libperf-$(CONFIG_DWARF) += skip-callchain-idx.o
-+perf-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-$(CONFIG_DWARF) += skip-callchain-idx.o
- 
--libperf-$(CONFIG_LIBUNWIND) += unwind-libunwind.o
--libperf-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
-+perf-$(CONFIG_LIBUNWIND) += unwind-libunwind.o
-+perf-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
-diff --git a/tools/perf/arch/s390/Build b/tools/perf/arch/s390/Build
-index 54afe4a467e7..e4e5f33c84d8 100644
---- a/tools/perf/arch/s390/Build
-+++ b/tools/perf/arch/s390/Build
-@@ -1 +1 @@
--libperf-y += util/
-+perf-y += util/
-diff --git a/tools/perf/arch/s390/util/Build b/tools/perf/arch/s390/util/Build
-index 4a233683c684..22797f043b84 100644
---- a/tools/perf/arch/s390/util/Build
-+++ b/tools/perf/arch/s390/util/Build
-@@ -1,9 +1,9 @@
--libperf-y += header.o
--libperf-y += kvm-stat.o
-+perf-y += header.o
-+perf-y += kvm-stat.o
- 
--libperf-$(CONFIG_DWARF) += dwarf-regs.o
--libperf-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
-+perf-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
- 
--libperf-y += machine.o
-+perf-y += machine.o
- 
--libperf-$(CONFIG_AUXTRACE) += auxtrace.o
-+perf-$(CONFIG_AUXTRACE) += auxtrace.o
-diff --git a/tools/perf/arch/sh/Build b/tools/perf/arch/sh/Build
-index 54afe4a467e7..e4e5f33c84d8 100644
---- a/tools/perf/arch/sh/Build
-+++ b/tools/perf/arch/sh/Build
-@@ -1 +1 @@
--libperf-y += util/
-+perf-y += util/
-diff --git a/tools/perf/arch/sh/util/Build b/tools/perf/arch/sh/util/Build
-index 954e287bbb89..e813e618954b 100644
---- a/tools/perf/arch/sh/util/Build
-+++ b/tools/perf/arch/sh/util/Build
-@@ -1 +1 @@
--libperf-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-$(CONFIG_DWARF) += dwarf-regs.o
-diff --git a/tools/perf/arch/sparc/Build b/tools/perf/arch/sparc/Build
-index 54afe4a467e7..e4e5f33c84d8 100644
---- a/tools/perf/arch/sparc/Build
-+++ b/tools/perf/arch/sparc/Build
-@@ -1 +1 @@
--libperf-y += util/
-+perf-y += util/
-diff --git a/tools/perf/arch/sparc/util/Build b/tools/perf/arch/sparc/util/Build
-index 954e287bbb89..e813e618954b 100644
---- a/tools/perf/arch/sparc/util/Build
-+++ b/tools/perf/arch/sparc/util/Build
-@@ -1 +1 @@
--libperf-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-$(CONFIG_DWARF) += dwarf-regs.o
-diff --git a/tools/perf/arch/x86/Build b/tools/perf/arch/x86/Build
-index db52fa22d3a1..a7dd46a5b678 100644
---- a/tools/perf/arch/x86/Build
-+++ b/tools/perf/arch/x86/Build
-@@ -1,2 +1,2 @@
--libperf-y += util/
--libperf-y += tests/
-+perf-y += util/
-+perf-y += tests/
-diff --git a/tools/perf/arch/x86/tests/Build b/tools/perf/arch/x86/tests/Build
-index 586849ff83a0..3d83d0c6982d 100644
---- a/tools/perf/arch/x86/tests/Build
-+++ b/tools/perf/arch/x86/tests/Build
-@@ -1,8 +1,8 @@
--libperf-$(CONFIG_DWARF_UNWIND) += regs_load.o
--libperf-$(CONFIG_DWARF_UNWIND) += dwarf-unwind.o
-+perf-$(CONFIG_DWARF_UNWIND) += regs_load.o
-+perf-$(CONFIG_DWARF_UNWIND) += dwarf-unwind.o
- 
--libperf-y += arch-tests.o
--libperf-y += rdpmc.o
--libperf-y += perf-time-to-tsc.o
--libperf-$(CONFIG_AUXTRACE) += insn-x86.o
--libperf-$(CONFIG_X86_64) += bp-modify.o
-+perf-y += arch-tests.o
-+perf-y += rdpmc.o
-+perf-y += perf-time-to-tsc.o
-+perf-$(CONFIG_AUXTRACE) += insn-x86.o
-+perf-$(CONFIG_X86_64) += bp-modify.o
-diff --git a/tools/perf/arch/x86/util/Build b/tools/perf/arch/x86/util/Build
-index 844b8f335532..7aab0be5fc5f 100644
---- a/tools/perf/arch/x86/util/Build
-+++ b/tools/perf/arch/x86/util/Build
-@@ -1,18 +1,18 @@
--libperf-y += header.o
--libperf-y += tsc.o
--libperf-y += pmu.o
--libperf-y += kvm-stat.o
--libperf-y += perf_regs.o
--libperf-y += group.o
--libperf-y += machine.o
--libperf-y += event.o
-+perf-y += header.o
-+perf-y += tsc.o
-+perf-y += pmu.o
-+perf-y += kvm-stat.o
-+perf-y += perf_regs.o
-+perf-y += group.o
-+perf-y += machine.o
-+perf-y += event.o
- 
--libperf-$(CONFIG_DWARF) += dwarf-regs.o
--libperf-$(CONFIG_BPF_PROLOGUE) += dwarf-regs.o
-+perf-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-$(CONFIG_BPF_PROLOGUE) += dwarf-regs.o
- 
--libperf-$(CONFIG_LOCAL_LIBUNWIND)    += unwind-libunwind.o
--libperf-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
-+perf-$(CONFIG_LOCAL_LIBUNWIND)    += unwind-libunwind.o
-+perf-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
- 
--libperf-$(CONFIG_AUXTRACE) += auxtrace.o
--libperf-$(CONFIG_AUXTRACE) += intel-pt.o
--libperf-$(CONFIG_AUXTRACE) += intel-bts.o
-+perf-$(CONFIG_AUXTRACE) += auxtrace.o
-+perf-$(CONFIG_AUXTRACE) += intel-pt.o
-+perf-$(CONFIG_AUXTRACE) += intel-bts.o
-diff --git a/tools/perf/arch/xtensa/Build b/tools/perf/arch/xtensa/Build
-index 54afe4a467e7..e4e5f33c84d8 100644
---- a/tools/perf/arch/xtensa/Build
-+++ b/tools/perf/arch/xtensa/Build
-@@ -1 +1 @@
--libperf-y += util/
-+perf-y += util/
-diff --git a/tools/perf/arch/xtensa/util/Build b/tools/perf/arch/xtensa/util/Build
-index 954e287bbb89..e813e618954b 100644
---- a/tools/perf/arch/xtensa/util/Build
-+++ b/tools/perf/arch/xtensa/util/Build
-@@ -1 +1 @@
--libperf-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-$(CONFIG_DWARF) += dwarf-regs.o
-diff --git a/tools/perf/scripts/Build b/tools/perf/scripts/Build
-index 41efd7e368b3..68d4b54574ad 100644
---- a/tools/perf/scripts/Build
-+++ b/tools/perf/scripts/Build
-@@ -1,2 +1,2 @@
--libperf-$(CONFIG_LIBPERL)   += perl/Perf-Trace-Util/
--libperf-$(CONFIG_LIBPYTHON) += python/Perf-Trace-Util/
-+perf-$(CONFIG_LIBPERL)   += perl/Perf-Trace-Util/
-+perf-$(CONFIG_LIBPYTHON) += python/Perf-Trace-Util/
-diff --git a/tools/perf/scripts/perl/Perf-Trace-Util/Build b/tools/perf/scripts/perl/Perf-Trace-Util/Build
-index 34faecf774ae..db0036129307 100644
---- a/tools/perf/scripts/perl/Perf-Trace-Util/Build
-+++ b/tools/perf/scripts/perl/Perf-Trace-Util/Build
-@@ -1,4 +1,4 @@
--libperf-y += Context.o
-+perf-y += Context.o
- 
- CFLAGS_Context.o += $(PERL_EMBED_CCOPTS) -Wno-redundant-decls -Wno-strict-prototypes
- CFLAGS_Context.o += -Wno-unused-parameter -Wno-nested-externs -Wno-undef
-diff --git a/tools/perf/scripts/python/Perf-Trace-Util/Build b/tools/perf/scripts/python/Perf-Trace-Util/Build
-index aefc15c9444a..7d0e33ce6aba 100644
---- a/tools/perf/scripts/python/Perf-Trace-Util/Build
-+++ b/tools/perf/scripts/python/Perf-Trace-Util/Build
-@@ -1,3 +1,3 @@
--libperf-y += Context.o
-+perf-y += Context.o
- 
- CFLAGS_Context.o += $(PYTHON_EMBED_CCOPTS) -Wno-redundant-decls -Wno-strict-prototypes -Wno-unused-parameter -Wno-nested-externs
-diff --git a/tools/perf/trace/beauty/Build b/tools/perf/trace/beauty/Build
-index 637365099b7d..85f328ddf897 100644
---- a/tools/perf/trace/beauty/Build
-+++ b/tools/perf/trace/beauty/Build
-@@ -1,15 +1,15 @@
--libperf-y += clone.o
--libperf-y += fcntl.o
--libperf-y += flock.o
-+perf-y += clone.o
-+perf-y += fcntl.o
-+perf-y += flock.o
- ifeq ($(SRCARCH),$(filter $(SRCARCH),x86))
--libperf-y += ioctl.o
-+perf-y += ioctl.o
- endif
--libperf-y += kcmp.o
--libperf-y += mount_flags.o
--libperf-y += pkey_alloc.o
--libperf-y += arch_prctl.o
--libperf-y += prctl.o
--libperf-y += renameat.o
--libperf-y += sockaddr.o
--libperf-y += socket.o
--libperf-y += statx.o
-+perf-y += kcmp.o
-+perf-y += mount_flags.o
-+perf-y += pkey_alloc.o
-+perf-y += arch_prctl.o
-+perf-y += prctl.o
-+perf-y += renameat.o
-+perf-y += sockaddr.o
-+perf-y += socket.o
-+perf-y += statx.o
-diff --git a/tools/perf/ui/Build b/tools/perf/ui/Build
-index 0a73538c0441..3aff83c3275f 100644
---- a/tools/perf/ui/Build
-+++ b/tools/perf/ui/Build
-@@ -1,14 +1,14 @@
--libperf-y += setup.o
--libperf-y += helpline.o
--libperf-y += progress.o
--libperf-y += util.o
--libperf-y += hist.o
--libperf-y += stdio/hist.o
-+perf-y += setup.o
-+perf-y += helpline.o
-+perf-y += progress.o
-+perf-y += util.o
-+perf-y += hist.o
-+perf-y += stdio/hist.o
- 
- CFLAGS_setup.o += -DLIBDIR="BUILD_STR($(LIBDIR))"
- 
--libperf-$(CONFIG_SLANG) += browser.o
--libperf-$(CONFIG_SLANG) += browsers/
--libperf-$(CONFIG_SLANG) += tui/
-+perf-$(CONFIG_SLANG) += browser.o
-+perf-$(CONFIG_SLANG) += browsers/
-+perf-$(CONFIG_SLANG) += tui/
- 
- CFLAGS_browser.o += -DENABLE_SLFUTURE_CONST
-diff --git a/tools/perf/ui/browsers/Build b/tools/perf/ui/browsers/Build
-index de223f5bed58..8fee56b46502 100644
---- a/tools/perf/ui/browsers/Build
-+++ b/tools/perf/ui/browsers/Build
-@@ -1,8 +1,8 @@
--libperf-y += annotate.o
--libperf-y += hists.o
--libperf-y += map.o
--libperf-y += scripts.o
--libperf-y += header.o
-+perf-y += annotate.o
-+perf-y += hists.o
-+perf-y += map.o
-+perf-y += scripts.o
-+perf-y += header.o
- 
- CFLAGS_annotate.o += -DENABLE_SLFUTURE_CONST
- CFLAGS_hists.o    += -DENABLE_SLFUTURE_CONST
-diff --git a/tools/perf/ui/tui/Build b/tools/perf/ui/tui/Build
-index 9e4c6ca41a9f..f916df33a1a7 100644
---- a/tools/perf/ui/tui/Build
-+++ b/tools/perf/ui/tui/Build
-@@ -1,4 +1,4 @@
--libperf-y += setup.o
--libperf-y += util.o
--libperf-y += helpline.o
--libperf-y += progress.o
-+perf-y += setup.o
-+perf-y += util.o
-+perf-y += helpline.o
-+perf-y += progress.o
-diff --git a/tools/perf/util/Build b/tools/perf/util/Build
-index a36e6e5a6f4f..ca0741c91903 100644
---- a/tools/perf/util/Build
-+++ b/tools/perf/util/Build
-@@ -1,162 +1,162 @@
--libperf-y += annotate.o
--libperf-y += block-range.o
--libperf-y += build-id.o
--libperf-y += config.o
--libperf-y += ctype.o
--libperf-y += db-export.o
--libperf-y += env.o
--libperf-y += event.o
--libperf-y += evlist.o
--libperf-y += evsel.o
--libperf-y += evsel_fprintf.o
--libperf-y += find_bit.o
--libperf-y += get_current_dir_name.o
--libperf-y += kallsyms.o
--libperf-y += levenshtein.o
--libperf-y += llvm-utils.o
--libperf-y += mmap.o
--libperf-y += memswap.o
--libperf-y += parse-events.o
--libperf-y += perf_regs.o
--libperf-y += path.o
--libperf-y += print_binary.o
--libperf-y += rbtree.o
--libperf-y += libstring.o
--libperf-y += bitmap.o
--libperf-y += hweight.o
--libperf-y += smt.o
--libperf-y += strbuf.o
--libperf-y += string.o
--libperf-y += strlist.o
--libperf-y += strfilter.o
--libperf-y += top.o
--libperf-y += usage.o
--libperf-y += dso.o
--libperf-y += symbol.o
--libperf-y += symbol_fprintf.o
--libperf-y += color.o
--libperf-y += color_config.o
--libperf-y += metricgroup.o
--libperf-y += header.o
--libperf-y += callchain.o
--libperf-y += values.o
--libperf-y += debug.o
--libperf-y += machine.o
--libperf-y += map.o
--libperf-y += pstack.o
--libperf-y += session.o
--libperf-y += sample-raw.o
--libperf-y += s390-sample-raw.o
--libperf-$(CONFIG_TRACE) += syscalltbl.o
--libperf-y += ordered-events.o
--libperf-y += namespaces.o
--libperf-y += comm.o
--libperf-y += thread.o
--libperf-y += thread_map.o
--libperf-y += trace-event-parse.o
--libperf-y += parse-events-flex.o
--libperf-y += parse-events-bison.o
--libperf-y += pmu.o
--libperf-y += pmu-flex.o
--libperf-y += pmu-bison.o
--libperf-y += trace-event-read.o
--libperf-y += trace-event-info.o
--libperf-y += trace-event-scripting.o
--libperf-y += trace-event.o
--libperf-y += svghelper.o
--libperf-y += sort.o
--libperf-y += hist.o
--libperf-y += util.o
--libperf-y += xyarray.o
--libperf-y += cpumap.o
--libperf-y += cgroup.o
--libperf-y += target.o
--libperf-y += rblist.o
--libperf-y += intlist.o
--libperf-y += vdso.o
--libperf-y += counts.o
--libperf-y += stat.o
--libperf-y += stat-shadow.o
--libperf-y += stat-display.o
--libperf-y += record.o
--libperf-y += srcline.o
--libperf-y += srccode.o
--libperf-y += data.o
--libperf-y += tsc.o
--libperf-y += cloexec.o
--libperf-y += call-path.o
--libperf-y += rwsem.o
--libperf-y += thread-stack.o
--libperf-$(CONFIG_AUXTRACE) += auxtrace.o
--libperf-$(CONFIG_AUXTRACE) += intel-pt-decoder/
--libperf-$(CONFIG_AUXTRACE) += intel-pt.o
--libperf-$(CONFIG_AUXTRACE) += intel-bts.o
--libperf-$(CONFIG_AUXTRACE) += arm-spe.o
--libperf-$(CONFIG_AUXTRACE) += arm-spe-pkt-decoder.o
--libperf-$(CONFIG_AUXTRACE) += s390-cpumsf.o
-+perf-y += annotate.o
-+perf-y += block-range.o
-+perf-y += build-id.o
-+perf-y += config.o
-+perf-y += ctype.o
-+perf-y += db-export.o
-+perf-y += env.o
-+perf-y += event.o
-+perf-y += evlist.o
-+perf-y += evsel.o
-+perf-y += evsel_fprintf.o
-+perf-y += find_bit.o
-+perf-y += get_current_dir_name.o
-+perf-y += kallsyms.o
-+perf-y += levenshtein.o
-+perf-y += llvm-utils.o
-+perf-y += mmap.o
-+perf-y += memswap.o
-+perf-y += parse-events.o
-+perf-y += perf_regs.o
-+perf-y += path.o
-+perf-y += print_binary.o
-+perf-y += rbtree.o
-+perf-y += libstring.o
-+perf-y += bitmap.o
-+perf-y += hweight.o
-+perf-y += smt.o
-+perf-y += strbuf.o
-+perf-y += string.o
-+perf-y += strlist.o
-+perf-y += strfilter.o
-+perf-y += top.o
-+perf-y += usage.o
-+perf-y += dso.o
-+perf-y += symbol.o
-+perf-y += symbol_fprintf.o
-+perf-y += color.o
-+perf-y += color_config.o
-+perf-y += metricgroup.o
-+perf-y += header.o
-+perf-y += callchain.o
-+perf-y += values.o
-+perf-y += debug.o
-+perf-y += machine.o
-+perf-y += map.o
-+perf-y += pstack.o
-+perf-y += session.o
-+perf-y += sample-raw.o
-+perf-y += s390-sample-raw.o
-+perf-$(CONFIG_TRACE) += syscalltbl.o
-+perf-y += ordered-events.o
-+perf-y += namespaces.o
-+perf-y += comm.o
-+perf-y += thread.o
-+perf-y += thread_map.o
-+perf-y += trace-event-parse.o
-+perf-y += parse-events-flex.o
-+perf-y += parse-events-bison.o
-+perf-y += pmu.o
-+perf-y += pmu-flex.o
-+perf-y += pmu-bison.o
-+perf-y += trace-event-read.o
-+perf-y += trace-event-info.o
-+perf-y += trace-event-scripting.o
-+perf-y += trace-event.o
-+perf-y += svghelper.o
-+perf-y += sort.o
-+perf-y += hist.o
-+perf-y += util.o
-+perf-y += xyarray.o
-+perf-y += cpumap.o
-+perf-y += cgroup.o
-+perf-y += target.o
-+perf-y += rblist.o
-+perf-y += intlist.o
-+perf-y += vdso.o
-+perf-y += counts.o
-+perf-y += stat.o
-+perf-y += stat-shadow.o
-+perf-y += stat-display.o
-+perf-y += record.o
-+perf-y += srcline.o
-+perf-y += srccode.o
-+perf-y += data.o
-+perf-y += tsc.o
-+perf-y += cloexec.o
-+perf-y += call-path.o
-+perf-y += rwsem.o
-+perf-y += thread-stack.o
-+perf-$(CONFIG_AUXTRACE) += auxtrace.o
-+perf-$(CONFIG_AUXTRACE) += intel-pt-decoder/
-+perf-$(CONFIG_AUXTRACE) += intel-pt.o
-+perf-$(CONFIG_AUXTRACE) += intel-bts.o
-+perf-$(CONFIG_AUXTRACE) += arm-spe.o
-+perf-$(CONFIG_AUXTRACE) += arm-spe-pkt-decoder.o
-+perf-$(CONFIG_AUXTRACE) += s390-cpumsf.o
- 
- ifdef CONFIG_LIBOPENCSD
--libperf-$(CONFIG_AUXTRACE) += cs-etm.o
--libperf-$(CONFIG_AUXTRACE) += cs-etm-decoder/
-+perf-$(CONFIG_AUXTRACE) += cs-etm.o
-+perf-$(CONFIG_AUXTRACE) += cs-etm-decoder/
- endif
- 
--libperf-y += parse-branch-options.o
--libperf-y += dump-insn.o
--libperf-y += parse-regs-options.o
--libperf-y += term.o
--libperf-y += help-unknown-cmd.o
--libperf-y += mem-events.o
--libperf-y += vsprintf.o
--libperf-y += units.o
--libperf-y += time-utils.o
--libperf-y += expr-bison.o
--libperf-y += branch.o
--libperf-y += mem2node.o
--
--libperf-$(CONFIG_LIBBPF) += bpf-loader.o
--libperf-$(CONFIG_BPF_PROLOGUE) += bpf-prologue.o
--libperf-$(CONFIG_LIBELF) += symbol-elf.o
--libperf-$(CONFIG_LIBELF) += probe-file.o
--libperf-$(CONFIG_LIBELF) += probe-event.o
-+perf-y += parse-branch-options.o
-+perf-y += dump-insn.o
-+perf-y += parse-regs-options.o
-+perf-y += term.o
-+perf-y += help-unknown-cmd.o
-+perf-y += mem-events.o
-+perf-y += vsprintf.o
-+perf-y += units.o
-+perf-y += time-utils.o
-+perf-y += expr-bison.o
-+perf-y += branch.o
-+perf-y += mem2node.o
-+
-+perf-$(CONFIG_LIBBPF) += bpf-loader.o
-+perf-$(CONFIG_BPF_PROLOGUE) += bpf-prologue.o
-+perf-$(CONFIG_LIBELF) += symbol-elf.o
-+perf-$(CONFIG_LIBELF) += probe-file.o
-+perf-$(CONFIG_LIBELF) += probe-event.o
- 
- ifndef CONFIG_LIBELF
--libperf-y += symbol-minimal.o
-+perf-y += symbol-minimal.o
- endif
- 
- ifndef CONFIG_SETNS
--libperf-y += setns.o
-+perf-y += setns.o
- endif
- 
--libperf-$(CONFIG_DWARF) += probe-finder.o
--libperf-$(CONFIG_DWARF) += dwarf-aux.o
--libperf-$(CONFIG_DWARF) += dwarf-regs.o
-+perf-$(CONFIG_DWARF) += probe-finder.o
-+perf-$(CONFIG_DWARF) += dwarf-aux.o
-+perf-$(CONFIG_DWARF) += dwarf-regs.o
- 
--libperf-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
--libperf-$(CONFIG_LOCAL_LIBUNWIND)    += unwind-libunwind-local.o
--libperf-$(CONFIG_LIBUNWIND)          += unwind-libunwind.o
--libperf-$(CONFIG_LIBUNWIND_X86)      += libunwind/x86_32.o
--libperf-$(CONFIG_LIBUNWIND_AARCH64)  += libunwind/arm64.o
-+perf-$(CONFIG_LIBDW_DWARF_UNWIND) += unwind-libdw.o
-+perf-$(CONFIG_LOCAL_LIBUNWIND)    += unwind-libunwind-local.o
-+perf-$(CONFIG_LIBUNWIND)          += unwind-libunwind.o
-+perf-$(CONFIG_LIBUNWIND_X86)      += libunwind/x86_32.o
-+perf-$(CONFIG_LIBUNWIND_AARCH64)  += libunwind/arm64.o
- 
--libperf-$(CONFIG_LIBBABELTRACE) += data-convert-bt.o
-+perf-$(CONFIG_LIBBABELTRACE) += data-convert-bt.o
- 
--libperf-y += scripting-engines/
-+perf-y += scripting-engines/
- 
--libperf-$(CONFIG_ZLIB) += zlib.o
--libperf-$(CONFIG_LZMA) += lzma.o
--libperf-y += demangle-java.o
--libperf-y += demangle-rust.o
-+perf-$(CONFIG_ZLIB) += zlib.o
-+perf-$(CONFIG_LZMA) += lzma.o
-+perf-y += demangle-java.o
-+perf-y += demangle-rust.o
- 
- ifdef CONFIG_JITDUMP
--libperf-$(CONFIG_LIBELF) += jitdump.o
--libperf-$(CONFIG_LIBELF) += genelf.o
--libperf-$(CONFIG_DWARF) += genelf_debug.o
-+perf-$(CONFIG_LIBELF) += jitdump.o
-+perf-$(CONFIG_LIBELF) += genelf.o
-+perf-$(CONFIG_DWARF) += genelf_debug.o
- endif
- 
--libperf-y += perf-hooks.o
-+perf-y += perf-hooks.o
- 
--libperf-$(CONFIG_LIBBPF) += bpf-event.o
-+perf-$(CONFIG_LIBBPF) += bpf-event.o
- 
--libperf-$(CONFIG_CXX) += c++/
-+perf-$(CONFIG_CXX) += c++/
- 
- CFLAGS_config.o   += -DETC_PERFCONFIG="BUILD_STR($(ETC_PERFCONFIG_SQ))"
- CFLAGS_llvm-utils.o += -DPERF_INCLUDE_DIR="BUILD_STR($(perf_include_dir_SQ))"
-diff --git a/tools/perf/util/c++/Build b/tools/perf/util/c++/Build
-index 988fef1b11d7..613ecfd76527 100644
---- a/tools/perf/util/c++/Build
-+++ b/tools/perf/util/c++/Build
-@@ -1,2 +1,2 @@
--libperf-$(CONFIG_CLANGLLVM) += clang.o
--libperf-$(CONFIG_CLANGLLVM) += clang-test.o
-+perf-$(CONFIG_CLANGLLVM) += clang.o
-+perf-$(CONFIG_CLANGLLVM) += clang-test.o
-diff --git a/tools/perf/util/cs-etm-decoder/Build b/tools/perf/util/cs-etm-decoder/Build
-index bc22c39c727f..216cb17a3322 100644
---- a/tools/perf/util/cs-etm-decoder/Build
-+++ b/tools/perf/util/cs-etm-decoder/Build
-@@ -1 +1 @@
--libperf-$(CONFIG_AUXTRACE) += cs-etm-decoder.o
-+perf-$(CONFIG_AUXTRACE) += cs-etm-decoder.o
-diff --git a/tools/perf/util/intel-pt-decoder/Build b/tools/perf/util/intel-pt-decoder/Build
-index 1b704fbea9de..23bf788f84b9 100644
---- a/tools/perf/util/intel-pt-decoder/Build
-+++ b/tools/perf/util/intel-pt-decoder/Build
-@@ -1,4 +1,4 @@
--libperf-$(CONFIG_AUXTRACE) += intel-pt-pkt-decoder.o intel-pt-insn-decoder.o intel-pt-log.o intel-pt-decoder.o
-+perf-$(CONFIG_AUXTRACE) += intel-pt-pkt-decoder.o intel-pt-insn-decoder.o intel-pt-log.o intel-pt-decoder.o
- 
- inat_tables_script = util/intel-pt-decoder/gen-insn-attr-x86.awk
- inat_tables_maps = util/intel-pt-decoder/x86-opcode-map.txt
-diff --git a/tools/perf/util/scripting-engines/Build b/tools/perf/util/scripting-engines/Build
-index 82d28c67e0f3..7b342ce38d99 100644
---- a/tools/perf/util/scripting-engines/Build
-+++ b/tools/perf/util/scripting-engines/Build
-@@ -1,5 +1,5 @@
--libperf-$(CONFIG_LIBPERL)   += trace-event-perl.o
--libperf-$(CONFIG_LIBPYTHON) += trace-event-python.o
-+perf-$(CONFIG_LIBPERL)   += trace-event-perl.o
-+perf-$(CONFIG_LIBPYTHON) += trace-event-python.o
- 
- CFLAGS_trace-event-perl.o += $(PERL_EMBED_CCOPTS) -Wno-redundant-decls -Wno-strict-prototypes -Wno-unused-parameter -Wno-shadow -Wno-nested-externs -Wno-undef -Wno-switch-default
- 
+I think you are right. Sorry for not noticing this before making my
+change. Since it was pretty much the only architecture (the only one I
+care about) that does not unflatten DT, I assumed that was the
+problem. I didn't put too much thought into it after that point beyond
+making sure that it did what I wanted.
+
+>
+> unittest_unflatten_overlay_base() is an unfortunate wart that I
+> added, but I don't have a better alternative yet.
+
+Hey, I get it. No worries.
+
+In any case, it seems like unittest_unflatten_overlay_base() is the
+right function to call there. I will send out patch. Do you want me to
+send a patch on top of this one, or do you want to revert this one and
+for me to send a v2 follow up to this patch? I don't care either way,
+whatever you guys prefer.
+
+Cheers
