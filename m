@@ -4,121 +4,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12E67C4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 01:50:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87208C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 01:54:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9A1D2229F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 01:50:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E9D221934
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 01:54:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550195424;
-	bh=SrpytnwARM1mJLTjr4gqtS19qJrRqNK0e1rIS0pu3BU=;
+	s=default; t=1550195675;
+	bh=sZctXZ3iMiiEOmbwB5XNUGJOkyU0Oiyr3JpZ8jmmH64=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=dJWoEvVPEfOYqkoB/ogNkivUk+JLNGLiLO0gTMnOHBs9Skxx1Xv1MDwWsWAlURBpH
-	 iEIS36wOojFxNCFyAQulyb34dL6zQpcL2+wNgkJTwDV7o18hN9hKoJyi+PQMTJq3cR
-	 IBf29mndhFO24adJamj9bUCuWAXpuwFYuI9Hm0bo=
+	b=bhFOBHZ4kwG/wh8MvnfITXt5yCAnO+5yKegFg6phriK2PpQ3NAw+1maX/fN6KQAaH
+	 TaJU4TSd4rW2Wn4VhDbsflA3nuN1TepPmeykSjud+uFrE146i+RJde8S8Afmfxqufa
+	 7ETGx8u9AFbGmi7CYBlSi84rBaSsoDqbF+UfHLk0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731017AbfBOBuX (ORCPT
+        id S1731092AbfBOByd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 20:50:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39102 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 20:54:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730852AbfBOBuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 20:50:23 -0500
+        id S1729053AbfBOByd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 20:54:33 -0500
 Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7797A21934;
-        Fri, 15 Feb 2019 01:50:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65CCE21934;
+        Fri, 15 Feb 2019 01:54:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550195421;
-        bh=SrpytnwARM1mJLTjr4gqtS19qJrRqNK0e1rIS0pu3BU=;
+        s=default; t=1550195672;
+        bh=sZctXZ3iMiiEOmbwB5XNUGJOkyU0Oiyr3JpZ8jmmH64=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BHXRGPVIG6SLeXma4mzXznz5vji0QPOy5UceOKsYtVWtT9PxZajJbK0XZITkLVJSs
-         7r8U4V69QHZgqfaviUfdqKugSr3hWHgnOhzz6N6LxLbhYgwe/hFHKW2ssPG4Q/qHbO
-         5ffC9IjvkA9uzJI27P0vh9+jws0vmZr/zCbeNlwY=
-Date:   Thu, 14 Feb 2019 20:50:20 -0500
+        b=iasA3uimkw2BKBa0vUjVOcH8Ht4jU1iqzUR0bxh0McGc6p0cg1H8Poe1C2yABwLL2
+         AjVijJx2kQwdFMXMWcejbawrtqrszaznEKw1FIIuZlkshyLaziS1l4TnHzZ1fMSwWp
+         yDIRZRZlaTvTmpMGUpMeV/c21kGboZ+5+49QaTng=
+Date:   Thu, 14 Feb 2019 20:54:31 -0500
 From:   Sasha Levin <sashal@kernel.org>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Steve French <smfrench@gmail.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
-Message-ID: <20190215015020.GJ69686@sasha-vm>
-References: <20190212170012.GF69686@sasha-vm>
- <CAH2r5mviqHxaXg5mtVe30s2OTiPW2ZYa9+wPajjzz3VOarAUfw@mail.gmail.com>
- <CAOQ4uxjMYWJPF8wFF_7J7yy7KCdGd8mZChfQc5GzNDcfqA7UAA@mail.gmail.com>
- <20190213073707.GA2875@kroah.com>
- <CAOQ4uxgQGCSbhppBfhHQmDDXS3TGmgB4m=Vp3nyyWTFiyv6z6g@mail.gmail.com>
- <20190213091803.GA2308@kroah.com>
- <20190213192512.GH69686@sasha-vm>
- <20190213195232.GA10047@kroah.com>
- <1550088875.2871.21.camel@HansenPartnership.com>
+To:     Kimberly Brown <kimbrownkd@gmail.com>
+Cc:     Dexuan Cui <decui@microsoft.com>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Long Li <longli@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Drivers: hv: vmbus: Add mutex lock to channel show
+ functions
+Message-ID: <20190215015431.GK69686@sasha-vm>
+References: <PU1P153MB0169EB8CFC0A69407A8AE2C2BF980@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <20190122064246.GA28613@ubu-Virtual-Machine>
+ <PU1P153MB01696D28CDDC098307EBD5AFBF980@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <20190128195845.GA3723@ubu-Virtual-Machine>
+ <PU1P153MB01699B96311157EA9DF515E6BF970@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <20190131151958.GT3973@sasha-vm>
+ <DM5PR2101MB091847B2B68D7F9F2050CE45D7910@DM5PR2101MB0918.namprd21.prod.outlook.com>
+ <20190131174707.GA2055@ubu-Virtual-Machine>
+ <PU1P153MB0169227534F832C2DAEC02B4BF920@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <20190202200735.GA2637@ubu-Virtual-Machine>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <1550088875.2871.21.camel@HansenPartnership.com>
+In-Reply-To: <20190202200735.GA2637@ubu-Virtual-Machine>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 12:14:35PM -0800, James Bottomley wrote:
->On Wed, 2019-02-13 at 20:52 +0100, Greg KH wrote:
->> On Wed, Feb 13, 2019 at 02:25:12PM -0500, Sasha Levin wrote:
->> > On Wed, Feb 13, 2019 at 10:18:03AM +0100, Greg KH wrote:
->> > > On Wed, Feb 13, 2019 at 11:01:25AM +0200, Amir Goldstein wrote:
->> > > > Best effort testing in timely manner is good, but a good way to
->> > > > improve confidence in stable kernel releases is a publicly
->> > > > available list of tests that the release went through.
->> > >
->> > > We have that, you aren't noticing them...
->> >
->> > This is one of the biggest things I want to address: there is a
->> > disconnect between the stable kernel testing story and the tests
->> > the fs/ and mm/ folks expect to see here.
->> >
->> > On one had, the stable kernel folks see these kernels go through
->> > entire suites of testing by multiple individuals and organizations,
->> > receiving way more coverage than any of Linus's releases.
->> >
->> > On the other hand, things like LTP and selftests tend to barely
->> > scratch the surface of our mm/ and fs/ code, and the maintainers of
->> > these subsystems do not see LTP-like suites as something that adds
->> > significant value and ignore them. Instead, they have a
->> > (convoluted) set of testing they do with different tools and
->> > configurations that qualifies their code as being "tested".
->> >
->> > So really, it sounds like a low hanging fruit: we don't really need
->> > to write much more testing code code nor do we have to refactor
->> > existing test suites. We just need to make sure the right tests are
->> > running on stable kernels. I really want to clarify what each
->> > subsystem sees as "sufficient" (and have that documented
->> > somewhere).
+On Sat, Feb 02, 2019 at 03:07:35PM -0500, Kimberly Brown wrote:
+>On Fri, Feb 01, 2019 at 06:24:24PM +0000, Dexuan Cui wrote:
+>> > From: Kimberly Brown <kimbrownkd@gmail.com>
+>> > Sent: Thursday, January 31, 2019 9:47 AM
+>> > ...
+>> > 2) Prevent a deadlock that can occur between the proposed mutex_lock()
+>> > call in the vmbus_chan_attr_show() function and the sysfs/kernfs functions.
+>> Hi Kim,
+>> Can you please share more details about the deadlock?
+>> It's unclear to me how the deadlock happens.
 >>
->> kernel.ci and 0-day and Linaro are starting to add the fs and mm
->> tests to their test suites to address these issues (I think 0-day
->> already has many of them).  So this is happening, but not quite
->> obvious.  I know I keep asking Linaro about this :(
 >
->0day has xfstests at least, but it's opt-in only (you have to request
->that it be run on your trees).  When I did it for the SCSI tree, I had
->to email Fenguangg directly, there wasn't any other way of getting it.
+>Hi Dexuan,
+>
+>I encountered the deadlock by:
+>1) Adding a call to msleep() before acquiring the mutex in
+>vmbus_chan_attr_show()
+>2) Opening a hv_netvsc subchannel's sysfs file
+>3) Removing hv_netvsc while the sysfs file is opening
 
-It's very tricky to do even if someone would just run it. I worked with
-the xfs folks for quite a while to gather the various configs they want
-to use, and to establish the baseline for a few of the stable trees
-(some tests are know to fail, etc).
-
-So just running xfstests "blindly" doesn't add much value beyond ltp I
-think.
+Dexuan, any objections to pulling this fix in?
 
 --
 Thanks,
