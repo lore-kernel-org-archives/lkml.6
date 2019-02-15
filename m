@@ -2,145 +2,152 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E248C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA56C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:48:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E873D2192B
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:48:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BC7A21B68
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:48:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=herbertland-com.20150623.gappssmtp.com header.i=@herbertland-com.20150623.gappssmtp.com header.b="u5dPS3WU"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="SpFC1bFl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729826AbfBOCsT (ORCPT
+        id S1730357AbfBOCs1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:48:19 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:42262 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727103AbfBOCsT (ORCPT
+        Thu, 14 Feb 2019 21:48:27 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:42624 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727103AbfBOCs0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:48:19 -0500
-Received: by mail-qk1-f196.google.com with SMTP id y140so4891901qkb.9
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 18:48:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=herbertland-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LpbJjRBGH59c4Ahc97sbV5w5+jdyJon5GyhFWxCzjJk=;
-        b=u5dPS3WUyH7GXxfcsxnPtNeolWqezGTGJMp1YL1JDERUBNRlbd6BOshwyLxV4jkjF1
-         Pkny5camY1aDb4XLNsmH7DZ8T5diZ6TsRumc4KEeWC4svlBs+OOJHHBp3jAav7Nf0TiH
-         Es9oodWVuN+RE3N3bo/hjIk2A0NM2AW2RVg6FgZdulhUuB6czIlIiqWpRazvziRhkHNv
-         CpURqz0anRrs+qiw9X23WXYtqpDvGo8S2YCOA445Do4M99dvovdiNWBXFFYMosyk2uli
-         tBWCVonSaEfwg8iPQzDXO19yXWGFO44mCqvwqsam2md35ynkQz5b8lZR39UeIT/fYpy8
-         smYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LpbJjRBGH59c4Ahc97sbV5w5+jdyJon5GyhFWxCzjJk=;
-        b=HzoJC1zuMEio5Af3IgoTzFTV0QwPfQXH+CdmRloZVXzJ1uphbOzwk1+0u3mRIWtN9j
-         P0tQztblnm+0fFyBu1Et6dgXEf9dYCAZBK/oQaBnWabVgdVfbgXsgnA0X1jOVcDT82H6
-         q7w42RPjZvRK+MsGmJsxVwYUAuS567RqKYG7+7pahNXj0iJwZTblU7+pvZkNkr1PEKKu
-         6+ys53w91rqdo0LqAK1qeN46HTwn1ihbHTsIHlp11LgQo9RRCYHREBSpoS3MYWKxpAN/
-         dDFBw5PHTgSNKSllT2FmH/E9bzNX+z9dJ6JMltRwPrsYTkrHVWeFj/Je8LS7t/fNwEY4
-         ggUQ==
-X-Gm-Message-State: AHQUAuaM18zUGg6wRmGgiMxWolTE7/gKEl1+iZApZWpYNEeGF6BtvdGs
-        7sQpQhYaZam13rTtKb8CUmPXDIeCrZ+7A7t84WneJg==
-X-Google-Smtp-Source: AHgI3IalxCH6h9h2B3lAlicVhdQu2OO9U4xyiJHwFKdao6uVChyTvVj/nhUwPujBVb708urZqT0CXYbrDyCCH/Yeh6Y=
-X-Received: by 2002:a37:5bc1:: with SMTP id p184mr5435629qkb.121.1550198897523;
- Thu, 14 Feb 2019 18:48:17 -0800 (PST)
-MIME-Version: 1.0
-References: <1536657703-27577-1-git-send-email-asmadeus@codewreck.org>
- <20180912053642.GA2912@nautica> <20180917.184502.447385458615284933.davem@davemloft.net>
- <20180918015723.GA26300@nautica> <20181031025657.GA17861@nautica>
- <20190215010029.GA10899@nautica> <CALx6S35HBKgtYkFde_AhCMPRtZfcVYfCYf=mLKjWSLLAfhMHyQ@mail.gmail.com>
- <20190215015705.GA17974@nautica>
-In-Reply-To: <20190215015705.GA17974@nautica>
-From:   Tom Herbert <tom@herbertland.com>
-Date:   Thu, 14 Feb 2019 18:48:06 -0800
-Message-ID: <CALx6S37MZadJ=PaAd+SSv9hxSX9kFTmTUtijPGA39JCx3PYq1Q@mail.gmail.com>
-Subject: Re: [PATCH v2] kcm: remove any offset before parsing messages
-To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     David Miller <davem@davemloft.net>, doronrk@fb.com,
-        Tom Herbert <tom@quantonium.net>,
-        Dave Watson <davejwatson@fb.com>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        Thu, 14 Feb 2019 21:48:26 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id AE46F8EE23E;
+        Thu, 14 Feb 2019 18:48:25 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id NfGbFDjpEDAs; Thu, 14 Feb 2019 18:48:25 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id E51118EE15F;
+        Thu, 14 Feb 2019 18:48:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1550198905;
+        bh=Hdt5XqqSkBX1Pp/GVYTeN07WE45/gKKk88sNDiiMCbo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=SpFC1bFlZbQaa6sggFEA2tXgWD2xOZyDuweLFKBKXQchgqCBqxBWwsqozGYcUxGRt
+         jMK0Hfy390lHbfHrXbt2c41ANfGSHXqxcUrkwnHF/GL+zciae68S1FhYwya2P6vCDP
+         KhYsEUucEmjYurFcGWZ3qW7bRXY7uJsXVydw/d8E=
+Message-ID: <1550198902.2802.12.camel@HansenPartnership.com>
+Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Steve French <smfrench@gmail.com>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>
+Date:   Thu, 14 Feb 2019 18:48:22 -0800
+In-Reply-To: <20190215015020.GJ69686@sasha-vm>
+References: <20190212170012.GF69686@sasha-vm>
+         <CAH2r5mviqHxaXg5mtVe30s2OTiPW2ZYa9+wPajjzz3VOarAUfw@mail.gmail.com>
+         <CAOQ4uxjMYWJPF8wFF_7J7yy7KCdGd8mZChfQc5GzNDcfqA7UAA@mail.gmail.com>
+         <20190213073707.GA2875@kroah.com>
+         <CAOQ4uxgQGCSbhppBfhHQmDDXS3TGmgB4m=Vp3nyyWTFiyv6z6g@mail.gmail.com>
+         <20190213091803.GA2308@kroah.com> <20190213192512.GH69686@sasha-vm>
+         <20190213195232.GA10047@kroah.com>
+         <1550088875.2871.21.camel@HansenPartnership.com>
+         <20190215015020.GJ69686@sasha-vm>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 5:57 PM Dominique Martinet
-<asmadeus@codewreck.org> wrote:
->
-> Tom Herbert wrote on Thu, Feb 14, 2019:
-> > > The best alternative I see is adding a proper helper to get
-> > > "kcm_rx_msg(skb)->offset" from bpf and document it so users aren't as
-> > > lost as I have been; I'm not quite sure how/where to add such a helper
-> > > though as I've barely looked at the bpf code until now, but should we go
-> > > for that?
-> >
-> > I'd rather not complicate the bpf code for this. Can we just always do
-> > an pskb_pull after skb_clone?
->
-> Which skb_clone are you thinking of?
-> If you're referring to the one in strparser, that was my very first
-> approach here[1], but Dordon shot it down saying that this is not an
-> strparser bug but a kcm bug since there are ways for users to properly
-> get the offset and use it -- and the ktls code does it right.
->
-> Frankly, my opinion still is that it'd be better in strparser because
-> there also is some bad use in bpf sockmap (they never look at the offset
-> either, while kcm uses it for rcv but not for parse), but looking at it
-> from an optimal performance point of view I agree the user can make
-> better decision than strparser so I understand where he comes from.
->
->
-> This second patch[2] (the current thread) now does an extra clone if
-> there is an offset, but the problem really isn't in the clone but the
-> pull itself that can fail and return NULL when there is memory pressure.
-> For some reason I hadn't been able to reproduce that behaviour with
-> strparser doing the pull, but I assume it would also be possible to hit
-> in extreme situations, I'm not sure...
->
-This option looks the best to me, at least as a way to fix the issue
-without requiring a change to the API. If the pull fails, doesn't that
-just mean that the parser fails? Is there some behavior with this
-patch that is not being handled gracefully?
+On Thu, 2019-02-14 at 20:50 -0500, Sasha Levin wrote:
+> On Wed, Feb 13, 2019 at 12:14:35PM -0800, James Bottomley wrote:
+> > On Wed, 2019-02-13 at 20:52 +0100, Greg KH wrote:
+> > > On Wed, Feb 13, 2019 at 02:25:12PM -0500, Sasha Levin wrote:
+> > > > On Wed, Feb 13, 2019 at 10:18:03AM +0100, Greg KH wrote:
+> > > > > On Wed, Feb 13, 2019 at 11:01:25AM +0200, Amir Goldstein
+> > > > > wrote:
+> > > > > > Best effort testing in timely manner is good, but a good
+> > > > > > way to improve confidence in stable kernel releases is a
+> > > > > > publicly available list of tests that the release went
+> > > > > > through.
+> > > > > 
+> > > > > We have that, you aren't noticing them...
+> > > > 
+> > > > This is one of the biggest things I want to address: there is a
+> > > > disconnect between the stable kernel testing story and the
+> > > > tests the fs/ and mm/ folks expect to see here.
+> > > > 
+> > > > On one had, the stable kernel folks see these kernels go
+> > > > through entire suites of testing by multiple individuals and
+> > > > organizations, receiving way more coverage than any of Linus's
+> > > > releases.
+> > > > 
+> > > > On the other hand, things like LTP and selftests tend to barely
+> > > > scratch the surface of our mm/ and fs/ code, and the
+> > > > maintainers of these subsystems do not see LTP-like suites as
+> > > > something that adds significant value and ignore them. Instead,
+> > > > they have a (convoluted) set of testing they do with different
+> > > > tools and configurations that qualifies their code as being
+> > > > "tested".
+> > > > 
+> > > > So really, it sounds like a low hanging fruit: we don't really
+> > > > need to write much more testing code code nor do we have to
+> > > > refactor existing test suites. We just need to make sure the
+> > > > right tests are running on stable kernels. I really want to
+> > > > clarify what each subsystem sees as "sufficient" (and have that
+> > > > documented somewhere).
+> > > 
+> > > kernel.ci and 0-day and Linaro are starting to add the fs and mm
+> > > tests to their test suites to address these issues (I think 0-day
+> > > already has many of them).  So this is happening, but not quite
+> > > obvious.  I know I keep asking Linaro about this :(
+> > 
+> > 0day has xfstests at least, but it's opt-in only (you have to
+> > request that it be run on your trees).  When I did it for the SCSI
+> > tree, I had to email Fenguangg directly, there wasn't any other way
+> > of getting it.
+> 
+> It's very tricky to do even if someone would just run it.
 
-Thanks,
-Tom
+It is?  It's a test suite, so you just run it and it exercises standard
+and growing set of regression tests.
 
-> So anyway, we basically have three choices that I can see:
->  - push harder on strparser and go back to my first patch ; it's simple
-> and makes using strparser easier/safer but has a small overhead for
-> ktls, which uses the current strparser implementation correctly.
-> I hadn't been able to get this to fail with KASAN last time I tried but
-> I assume it should still be possible somehow.
->
->  - the current patch, that I could only get to fail with KASAN, but does
-> complexify kcm a bit; this also does not fix bpf sockmap at all.
-> Would still require to fix the hang, so make strparser retry a few times
-> if strp->cb.parse_msg failed maybe? Or at least get the error back to
-> userspace somehow.
->
->  - my last suggestion to document the kcm behaviour, and if possible add
-> a bpf helper to make proper usage easier ; this will make kcm harder to
-> use on end users but it's better than not being documented and seeing
-> random unappropriate lengths being parsed.
->
->
->
-> [1] first strparser patch
-> http://lkml.kernel.org/r/1534855906-22870-1-git-send-email-asmadeus@codewreck.org
-> [2] current thread's patch
-> http://lkml.kernel.org/r/1536657703-27577-1-git-send-email-asmadeus@codewreck.org
->
->
-> Thanks,
-> --
-> Dominique
+>  I worked with the xfs folks for quite a while to gather the various
+> configs they want to use, and to establish the baseline for a few of
+> the stable trees (some tests are know to fail, etc).
+
+The only real config issue is per-fs non-standard tests (features
+specific to a given filesystem).  I just want it to exercise the
+storage underneath, so the SCSI tree is configured for the default set
+on xfs.
+
+> So just running xfstests "blindly" doesn't add much value beyond ltp
+> I think.
+
+Well, we differ on the value of running regression tests, then.  The
+whole point of a test infrastructure is that it's simple to run 'make
+check' in autoconf parlance.  xfstests does provide a useful baseline
+set of regression tests.  However, since my goal is primarily to detect
+problems in the storage path rather than the filesystem, the utility is
+exercising that path, although I fully appreciate that filesystem
+regression tests aren't going to catch every SCSI issue, they do
+provide some level of assurance against bugs.
+
+Hopefully we can switch over to blktests when it's ready, but in the
+meantime xfstests is way better than nothing.
+
+James
+
