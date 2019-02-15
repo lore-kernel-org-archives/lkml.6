@@ -5,153 +5,204 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC249C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:34:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F4D7C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:35:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90D4821924
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:34:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 226BB21924
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:35:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389663AbfBOPeC (ORCPT
+        id S2389629AbfBOPfB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 10:34:02 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:37660 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726360AbfBOPeB (ORCPT
+        Fri, 15 Feb 2019 10:35:01 -0500
+Received: from iolanthe.rowland.org ([192.131.102.54]:53418 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1726634AbfBOPfB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 10:34:01 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gufV1-0002QD-Km; Fri, 15 Feb 2019 15:33:59 +0000
-Subject: Re: [PATCH][next] i2c: tegra: change phrasing, "fallbacking" to
- "falling back"
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Laxman Dewangan <ldewangan@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190215153126.18575-1-colin.king@canonical.com>
- <20190215153245.GA7374@ulmo>
-From:   Colin Ian King <colin.king@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <da6cdd39-b021-7834-f3a4-46feceeb66c4@canonical.com>
-Date:   Fri, 15 Feb 2019 15:33:58 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 15 Feb 2019 10:35:01 -0500
+Received: (qmail 2203 invoked by uid 2102); 15 Feb 2019 10:35:00 -0500
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 15 Feb 2019 10:35:00 -0500
+Date:   Fri, 15 Feb 2019 10:35:00 -0500 (EST)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Will Deacon <will.deacon@arm.com>
+cc:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Daniel Lustig <dlustig@nvidia.com>,
+        David Howells <dhowells@redhat.com>,
+        Jade Alglave <j.alglave@ucl.ac.uk>,
+        Luc Maranget <luc.maranget@inria.fr>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: Mixing volatile and non-volatile accesses
+In-Reply-To: <20190215144230.GA6540@fuggles.cambridge.arm.com>
+Message-ID: <Pine.LNX.4.44L0.1902151020160.1574-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-In-Reply-To: <20190215153245.GA7374@ulmo>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="py9g8dSNFTOP9VgyMmapBVtGto0resIai"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---py9g8dSNFTOP9VgyMmapBVtGto0resIai
-Content-Type: multipart/mixed; boundary="TciyCQDuoBWwCvwwCrafxO9WdjqqkozhV";
- protected-headers="v1"
-From: Colin Ian King <colin.king@canonical.com>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>,
- Jonathan Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org,
- linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Message-ID: <da6cdd39-b021-7834-f3a4-46feceeb66c4@canonical.com>
-Subject: Re: [PATCH][next] i2c: tegra: change phrasing, "fallbacking" to
- "falling back"
-References: <20190215153126.18575-1-colin.king@canonical.com>
- <20190215153245.GA7374@ulmo>
-In-Reply-To: <20190215153245.GA7374@ulmo>
+[Added LKML to CC: -- I forgot to include it originally]
 
---TciyCQDuoBWwCvwwCrafxO9WdjqqkozhV
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+On Fri, 15 Feb 2019, Will Deacon wrote:
 
-On 15/02/2019 15:32, Thierry Reding wrote:
-> On Fri, Feb 15, 2019 at 03:31:26PM +0000, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The phrasing in two dev_err messages is using fallbacking which
->> os less understandable than "falling back", so fix this up.
->=20
-> os -> is, otherwise:
+Thanks a lot for the quick feedback.
 
-Oops, can that be fixed up when it's applied.
+> Hi Alan,
+> 
+> I'll give you my opinions below, but my broader concern here is that the
+> compiler folks will be reluctant to guarantee very much in this area :(
 
->=20
-> Acked-by: Thierry Reding <treding@nvidia.com>
->=20
+Agreed.
 
+> On Thu, Feb 14, 2019 at 04:59:21PM -0500, Alan Stern wrote:
+> > Work on adding support for plain (non-volatile, unannotated) accesses
+> > to the Linux Kernel Memory Model has raised a number of questions
+> > concerning how the volatile accesses used by READ_ONCE and WRITE_ONCE
+> > can interact with plain accesses.  These questions amount to asking
+> > what sort of code transformations the compiler is allowed to perform.
+> > 
+> > For example, if the source code contains:
+> > 
+> > 	r1 = x;
+> > 	r2 = READ_ONCE(x);
+> > 
+> > is the compiler allowed to emit object code equivalent to:
+> > 
+> > 	r2 = LOAD(x);
+> > 	r1 = LOAD(x);
+> > 
+> > thereby interchanging the order of the reads?
+> 
+> FWIW, we've seen the opposite of that tranformation before where:
+> 
+> 	r1 = READ_ONCE(x);
+> 	r2 = x;
+> 
+> ended up with r2 using a stale value that was loaded from before r1 (see
+> a7b100953aa3 and 20a004e7b017). So I would say that this is allowed.
 
+Yes; I think I will have to minimize the LKMM's assumptions in these 
+areas.
 
---TciyCQDuoBWwCvwwCrafxO9WdjqqkozhV--
+> > Or even:
+> > 
+> > 	r1 = r2 = LOAD(x);
+> > 
+> > eliminating the first read completely?  The second translation seems
+> > more reasonable than the first, but is it allowed?
+> 
+> I also think this is allowed.
+> 
+> > Can overwriting a value with WRITE_ONCE be used to prevent races?  
+> > Given:
+> > 
+> > 	P0()			P1()
+> > 	r = x;			if (READ_ONCE(x) == 2)
+> > 	WRITE_ONCE(x, 2);		WRITE_ONCE(x, 3);
+> > 
+> > is there a race between P0's plain read of x and P1's write?
+> 
+> I would say that there isn't a race here.
 
---py9g8dSNFTOP9VgyMmapBVtGto0resIai
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
+I should expand on this, because now I'm not so sure.
 
------BEGIN PGP SIGNATURE-----
+Having a plain read in the source gives the compiler license to add 
+its own reads of the same location, so long as they wouldn't create 
+a data race where one didn't already exist.  The Standard (and 
+presumably the compiler writers) regard memory barriers as the only 
+things that can be used to prevent races.
 
-iQIzBAEBCAAdFiEEcGLapPABucZhZwDPaMKH38aoAiYFAlxm2+YACgkQaMKH38ao
-AiZFGBAAo8ybfY7DoUCaX29wjYKjFqgZVEOJVV8Yk1Wa5iBOHCl+v/LIwJ4uIjmQ
-2+PENd/urGB7xva7UOmLCXlEgljxu9Dni16oAh+YoDh33i0Bgda/2pJktMwzi/qE
-nE8I8yiSiZgaqqUC4v8Wd/XKoIt/a54pGHqOUXGc+LiIq0xQnzghbhFWaKIXmUv1
-+DJHGyIYq6PDmyokiqm/IEoER6H47se1n7cSYswMAH/Pwm28+B3MMbe6GomAqPak
-4nb4JvlR/CBqMhvAZBZYNrFbefw6MDQhrDUUcGCu+iCGNCex+1KzOeAfNB3HrRgC
-g7vzHWDDn9Ab4z4e0XDFw7kYQe8pqnec9kMh6e7srh2CWFFvluY2yWsnTddZTXHL
-YQW38T9+1L0zQ2HF14fB+SANvJVzUxzGZzSMcPDAQXl63M3fiyCFyONNP0+nPX//
-XYNaHpA0Igkg2dYEsNPXHEDnYhHiMtkVVfXwBp2DY6FeGW9ORWUYIAFQ6cPnZbpZ
-KhFAxwHyKYd3FjMDL4gUsmmPAUXCeVcL/h0bRxQMO+h3Fn0XMdnvIucAI+OGK6+0
-uRX6Or2UmTZCEQwrgk/IZJvYZTKqBZoxSvIFi1nu/UVyjUceeXbOG7/2FO3G4fR1
-JiZj9Wh+koaxzBsCLNSnqRxn9fpSD7X2Vjv99A3LK/AuTF2P0yc=
-=lOva
------END PGP SIGNATURE-----
+Thus, in the example above, the compiler may well be allowed to add 
+reads of x following P0's WRITE_ONCE.  Of course there's no reason 
+for the compiler to do this -- it would be foolish -- but it is 
+allowed, and such accesses would indeed race with P1.  So the 
+conclusion is that we do need to regard this code as racy.
 
---py9g8dSNFTOP9VgyMmapBVtGto0resIai--
+> > Similar questions arise when we consider the interaction between 
+> > address dependencies and volatile accesses.  In order to support RCU 
+> > properly, the compiler must avoid breaking address dependencies from a 
+> > volatile read to a plain access.  This means the compiler should not be 
+> > allowed to transform:
+> > 
+> > 	x = 1;
+> > 	r = READ_ONCE(ptr);
+> > 	*r = 1;
+> > 
+> > into
+> > 
+> > 	x = 1;
+> > 	r = READ_ONCE(ptr);
+> > 	if (r != &x)
+> > 		*r = 1;
+> > 
+> > or to transform:
+> > 
+> > 	x = 1;
+> > 	r1 = READ_ONCE(ptr);
+> > 	r2 = *r1;
+> > 
+> > into:
+> > 
+> > 	r2 = x = 1;
+> > 	r1 = READ_ONCE(ptr);
+> > 	if (r1 != &x)
+> > 		r2 = *r1;
+> > 
+> > because these would break the address dependency when ptr contains &x.
+> 
+> I've never seen a compiler manage to do this, but I suspect that it would
+> not be considered a bug by the compiler developers if it did occur. This is
+> one of the reasons why I've been reluctant to enable LTO for arm64 kernel
+> builds, because I fear that it will give the compiler enough information to
+> perform these sorts of transformations.
+> 
+> > But suppose we have:
+> > 
+> > 	r = rcu_dereference(ptr);
+> > 	*r = 1;
+> > 	WRITE_ONCE(x, 2);
+> > 
+> > Is the compiler allowed to transform this to:
+> > 
+> > 	r = rcu_dereference(ptr);
+> > 	WRITE_ONCE(x, 2);
+> > 	if (r != &x)
+> > 		*r = 1;
+> > 
+> > Does this transformation also break the dependency?  I would say that
+> > it does.  How do we know the compiler won't perform it anyway?
+> 
+> Oh man, that's a horrible example but I can't see what would prevent it from
+> happening if the compiler figured it out.
+
+Yes -- ouch.
+
+> I think the bottom line here is that the de-facto guarantees on which we
+> rely today are unlikely to hold us well into the future unless we engage
+> with both the language and compiler communities to secure the guarantees
+> that we require for efficient, relaxed concurrency. Paul has been fighting
+> the good fight in SG1, but we're still some way from having a proposal that
+> is imminently deployable in the kernel imo.
+
+Perhaps the best approach we can take at this point is something Paul
+suggested.  Namely, exclude from the memory model any code containing
+both a plain access and a READ_ONCE/WRITE_ONCE of the same location
+that aren't separated by at least a compiler barrier.  This means we
+wouldn't have to make any firm pronouncements about any of the examples
+above, and it seems like the safest thing to do.
+
+(I guess to be thorough we should also exclude plain accesses 
+appearing before an acquire load, and plain accesses appearing after a 
+release store.)
+
+After all, code that mixes plain accesses with READ_ONCE/WRITE_ONCE is 
+highly suspect and in very bad style, no matter what.
+
+Alan
+
