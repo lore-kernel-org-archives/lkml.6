@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50CE0C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:34:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A1CC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:34:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1487D21927
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:34:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8235C21927
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:34:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550198073;
-	bh=6FhqouOx5RLYnCpIatPtkGWwPIuwLtryM35X9sPg/vY=;
+	s=default; t=1550198077;
+	bh=90tLrpIZ9fYPKFa+OArdpxSuF8xpIN6Q2I4tx3VhnFU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GgzSdnYQsXwDn0CPs5/X0s7/kIAsdwyH7RKysOAH96cPlDZYMIwr2TQ/vF/fsst94
-	 ZPEv0BfZOSRF6aBw02vg4Esomf3dzw4CzmD0I3aUH2Ox/gvKmYTckBMiLAv1hYxope
-	 hRP052Wz2hRXqPXza+MTn16B8MgqdD+oVh439tHE=
+	b=kVbd+6mWagRygRXeSzcn8U3mGoh3viotgQSxLRNgVpQcbSFUG+6/xp464DK4d/SlH
+	 CUcFne1bp5pUBUYIhEZ5pgPcUA21klgifgyrytiXq2DnyGzp1HdjBNaDE22OYI9mnR
+	 xRK49TLYmRJYYxKGSOBcgZqHU2wr/OsLwhMRl19c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403912AbfBOCLl (ORCPT
+        id S2403876AbfBOCLj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:11:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51644 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:11:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51628 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403839AbfBOCLh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:11:37 -0500
+        id S2403802AbfBOCLg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:11:36 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FD0C206BA;
-        Fri, 15 Feb 2019 02:11:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 407EB21B1C;
+        Fri, 15 Feb 2019 02:11:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196697;
-        bh=6FhqouOx5RLYnCpIatPtkGWwPIuwLtryM35X9sPg/vY=;
+        s=default; t=1550196696;
+        bh=90tLrpIZ9fYPKFa+OArdpxSuF8xpIN6Q2I4tx3VhnFU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u2GAsAYp6kNZfntPyf7QECFNmW85x5q9geTy6jsuOkKszkXEwI1RQqoqRoEwXNwcP
-         RrIWLJjgUYVNVZABkaPhzAlZ/5MlpmeuIFtfEH5NdPuPs89xZAkaqErg7463SwlpJo
-         2fhQfbbVdfCF7qu9LbWz2MwRBuB1nMeMWXKekjdQ=
+        b=cMeyexDNWLU/qXcl5YIF1w/P/aKLxVAn3p1gaG2sKIHCBoaQZgjQl3HoRY3Jrjp5y
+         85mWt6e93wqoEJdhvA7OmyOd8sArYCsel3f8v4pcOT0Nag04s86rkVLFDtljaUjycB
+         M2Z76tRLSbCTDpHX2CZKvSCM9OBqx+mxQoxVke6E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bo He <bo.he@intel.com>, Yu Wang <yu.y.wang@intel.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 09/65] usb: dwc3: gadget: synchronize_irq dwc irq in suspend
-Date:   Thu, 14 Feb 2019 21:10:25 -0500
-Message-Id: <20190215021121.177674-9-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 08/65] thermal: int340x_thermal: Fix a NULL vs IS_ERR() check
+Date:   Thu, 14 Feb 2019 21:10:24 -0500
+Message-Id: <20190215021121.177674-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -57,38 +57,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bo He <bo.he@intel.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 01c10880d24291a96a4ab0da773e3c5ce4d12da8 ]
+[ Upstream commit 3fe931b31a4078395c1967f0495dcc9e5ec6b5e3 ]
 
-We see dwc3 endpoint stopped by unwanted irq during
-suspend resume test, which is caused dwc3 ep can't be started
-with error "No Resource".
+The intel_soc_dts_iosf_init() function doesn't return NULL, it returns
+error pointers.
 
-Here, add synchronize_irq before suspend to sync the
-pending IRQ handlers complete.
-
-Signed-off-by: Bo He <bo.he@intel.com>
-Signed-off-by: Yu Wang <yu.y.wang@intel.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Fixes: 4d0dd6c1576b ("Thermal/int340x/processor_thermal: Enable auxiliary DTS for Braswell")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Zhang Rui <rui.zhang@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/dwc3/gadget.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/thermal/int340x_thermal/processor_thermal_device.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index d8bf9307901e..3baca4d4435a 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -3270,6 +3270,8 @@ int dwc3_gadget_suspend(struct dwc3 *dwc)
- 	dwc3_disconnect_gadget(dwc);
- 	__dwc3_gadget_stop(dwc);
+diff --git a/drivers/thermal/int340x_thermal/processor_thermal_device.c b/drivers/thermal/int340x_thermal/processor_thermal_device.c
+index 284cf2c5a8fd..8e0f665cf06f 100644
+--- a/drivers/thermal/int340x_thermal/processor_thermal_device.c
++++ b/drivers/thermal/int340x_thermal/processor_thermal_device.c
+@@ -423,7 +423,7 @@ static int  proc_thermal_pci_probe(struct pci_dev *pdev,
+ 		proc_priv->soc_dts = intel_soc_dts_iosf_init(
+ 					INTEL_SOC_DTS_INTERRUPT_MSI, 2, 0);
  
-+	synchronize_irq(dwc->irq_gadget);
-+
- 	return 0;
- }
- 
+-		if (proc_priv->soc_dts && pdev->irq) {
++		if (!IS_ERR(proc_priv->soc_dts) && pdev->irq) {
+ 			ret = pci_enable_msi(pdev);
+ 			if (!ret) {
+ 				ret = request_threaded_irq(pdev->irq, NULL,
 -- 
 2.19.1
 
