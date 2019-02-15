@@ -2,207 +2,110 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D809DC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:11:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53912C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:11:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADE2421916
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:11:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B67321925
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:11:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392242AbfBOJK7 (ORCPT
+        id S2392279AbfBOJLH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:10:59 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3731 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728277AbfBOJK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 04:10:58 -0500
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 83D6395044CDAEEA3F01;
-        Fri, 15 Feb 2019 17:10:55 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.408.0; Fri, 15 Feb 2019
- 17:10:50 +0800
-Subject: Re: [f2fs-dev] [PATCH] f2fs: do not use mutex lock in atomic context
-To:     Ritesh Harjani <riteshh@codeaurora.org>, Chao Yu <chao@kernel.org>,
-        Sahitya Tummala <stummala@codeaurora.org>
-CC:     Jaegeuk Kim <jaegeuk@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <1549267613-9288-1-git-send-email-stummala@codeaurora.org>
- <c98cbfcb-f45d-e9a9-5c2e-6730d0448e82@huawei.com>
- <20190214074628.GD7308@codeaurora.org>
- <5650af07-c55d-fcb4-ca98-eca45248392d@kernel.org>
- <77c63bf6-069c-704c-220a-b50d997d2463@codeaurora.org>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <70630a8c-4f7d-7d97-54a2-b1e4bceca492@huawei.com>
-Date:   Fri, 15 Feb 2019 17:10:57 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 15 Feb 2019 04:11:07 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:44673 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726986AbfBOJLH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 04:11:07 -0500
+X-IronPort-AV: E=Sophos;i="5.58,372,1544457600"; 
+   d="scan'208";a="54417125"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 15 Feb 2019 17:11:03 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 43E374C4C382;
+        Fri, 15 Feb 2019 17:11:04 +0800 (CST)
+Received: from localhost.local (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 15 Feb 2019 17:11:07 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <tglx@linutronix.de>,
+        <mingo@redhat.com>, <hpa@zytor.com>, <x86@kernel.org>,
+        <bp@alien8.de>
+Subject: [PATCH] x86/boot: Move detecting acpi=off in cmdline to get_rsdp_addr()
+Date:   Fri, 15 Feb 2019 17:10:47 +0800
+Message-ID: <20190215091047.23047-1-fanc.fnst@cn.fujitsu.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <77c63bf6-069c-704c-220a-b50d997d2463@codeaurora.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 43E374C4C382.A6072
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/2/15 12:28, Ritesh Harjani wrote:
-> 
-> On 2/14/2019 9:40 PM, Chao Yu wrote:
->> On 2019-2-14 15:46, Sahitya Tummala wrote:
->>> On Wed, Feb 13, 2019 at 11:25:31AM +0800, Chao Yu wrote:
->>>> On 2019/2/4 16:06, Sahitya Tummala wrote:
->>>>> Fix below warning coming because of using mutex lock in atomic context.
->>>>>
->>>>> BUG: sleeping function called from invalid context at kernel/locking/mutex.c:98
->>>>> in_atomic(): 1, irqs_disabled(): 0, pid: 585, name: sh
->>>>> Preemption disabled at: __radix_tree_preload+0x28/0x130
->>>>> Call trace:
->>>>>   dump_backtrace+0x0/0x2b4
->>>>>   show_stack+0x20/0x28
->>>>>   dump_stack+0xa8/0xe0
->>>>>   ___might_sleep+0x144/0x194
->>>>>   __might_sleep+0x58/0x8c
->>>>>   mutex_lock+0x2c/0x48
->>>>>   f2fs_trace_pid+0x88/0x14c
->>>>>   f2fs_set_node_page_dirty+0xd0/0x184
->>>>>
->>>>> Do not use f2fs_radix_tree_insert() to avoid doing cond_resched() with
->>>>> spin_lock() acquired.
->>>>>
->>>>> Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
->>>>> ---
->>>>>   fs/f2fs/trace.c | 20 +++++++++++++-------
->>>>>   1 file changed, 13 insertions(+), 7 deletions(-)
->>>>>
->>>>> diff --git a/fs/f2fs/trace.c b/fs/f2fs/trace.c
->>>>> index ce2a5eb..d0ab533 100644
->>>>> --- a/fs/f2fs/trace.c
->>>>> +++ b/fs/f2fs/trace.c
->>>>> @@ -14,7 +14,7 @@
->>>>>   #include "trace.h"
->>>>>   
->>>>>   static RADIX_TREE(pids, GFP_ATOMIC);
->>>>> -static struct mutex pids_lock;
->>>>> +static spinlock_t pids_lock;
->>>>>   static struct last_io_info last_io;
->>>>>   
->>>>>   static inline void __print_last_io(void)
->>>>> @@ -58,23 +58,29 @@ void f2fs_trace_pid(struct page *page)
->>>>>   
->>>>>   	set_page_private(page, (unsigned long)pid);
->>>>>   
->>>>> +retry:
->>>>>   	if (radix_tree_preload(GFP_NOFS))
->>>>>   		return;
->>>>>   
->>>>> -	mutex_lock(&pids_lock);
->>>>> +	spin_lock(&pids_lock);
->>>>>   	p = radix_tree_lookup(&pids, pid);
->>>>>   	if (p == current)
->>>>>   		goto out;
->>>>>   	if (p)
->>>>>   		radix_tree_delete(&pids, pid);
->>>>>   
->>>>> -	f2fs_radix_tree_insert(&pids, pid, current);
-> 
-> Do you know why do we have a retry logic here? When anyways we have 
-> called for radix_tree_delete with pid key?
-> Which should ensure the slot is empty, no?
-> Then why in the original code (f2fs_radix_tree_insert), we were 
-> retrying. For what condition a retry was needed?
+If "acpi=off" specified in cmdline, the whole functions of acpi.c
+should not work, there is no need to ealy parse RSDP, so detect
+"acpi=off" in the very first place.
 
-Hi,
+Also replace magic number with macro.
 
-f2fs_radix_tree_insert is used in many places, it was introduced to used in
-some paths we should not failed.
+Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+---
+ arch/x86/boot/compressed/acpi.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-And here, I guess we used it for the same purpose, if we failed to insert
-@current pointer into radix, next time, we may not skip calling
-trace_printk, actually it will print the same current->comm info as
-previous one, it's redundant.
+diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
+index 0ef4ad55b29b..5510a2105b7b 100644
+--- a/arch/x86/boot/compressed/acpi.c
++++ b/arch/x86/boot/compressed/acpi.c
+@@ -213,8 +213,13 @@ static acpi_physical_address bios_get_rsdp_addr(void)
+ /* Return RSDP address on success, otherwise 0. */
+ acpi_physical_address get_rsdp_addr(void)
+ {
++	char arg[MAX_ACPI_ARG_LENGTH];
+ 	acpi_physical_address pa;
+ 
++	if (cmdline_find_option("acpi", arg, sizeof(arg)) == 3 &&
++	    !strncmp(arg, "off", 3))
++		return 0;
++
+ 	pa = get_acpi_rsdp();
+ 
+ 	if (!pa)
+@@ -235,9 +240,9 @@ static unsigned long get_acpi_srat_table(void)
+ {
+ 	unsigned long root_table, acpi_table;
+ 	struct acpi_table_header *header;
++	char arg[MAX_ACPI_ARG_LENGTH];
+ 	struct acpi_table_rsdp *rsdp;
+ 	u32 num_entries, size, len;
+-	char arg[10];
+ 	u8 *entry;
+ 
+ 	rsdp = (struct acpi_table_rsdp *)(long)boot_params->acpi_rsdp_addr;
+@@ -299,13 +304,8 @@ int count_immovable_mem_regions(void)
+ 	unsigned long table_addr, table_end, table;
+ 	struct acpi_subtable_header *sub_table;
+ 	struct acpi_table_header *table_header;
+-	char arg[MAX_ACPI_ARG_LENGTH];
+ 	int num = 0;
+ 
+-	if (cmdline_find_option("acpi", arg, sizeof(arg)) == 3 &&
+-	    !strncmp(arg, "off", 3))
+-		return 0;
+-
+ 	table_addr = get_acpi_srat_table();
+ 	if (!table_addr)
+ 		return 0;
+-- 
+2.20.1
 
-Thanks,
 
-> 
-> Regards
-> Ritesh
-> 
-> 
->>>>> +	if (radix_tree_insert(&pids, pid, current)) {
->>>>> +		spin_unlock(&pids_lock);
->>>>> +		radix_tree_preload_end();
->>>>> +		cond_resched();
->>>>> +		goto retry;
->>>>> +	}
->>>>>   
->>>>>   	trace_printk("%3x:%3x %4x %-16s\n",
->>>>>   			MAJOR(inode->i_sb->s_dev), MINOR(inode->i_sb->s_dev),
->>>>>   			pid, current->comm);
->>>> Hi Sahitya,
->>>>
->>>> Can trace_printk sleep? For safety, how about moving it out of spinlock?
->>>>
->>> Hi Chao,
->>>
->>> Yes, trace_printk() is safe to use in atomic context (unlike printk).
->> Hi Sahitya,
->>
->> Thanks for your confirmation. :)
->>
->> Reviewed-by: Chao Yu <yuchao0@huawei.com>
->>
->> Thanks,
->>
->>> Thanks,
->>> Sahitya.
->>>
->>>> Thanks,
->>>>
->>>>>   out:
->>>>> -	mutex_unlock(&pids_lock);
->>>>> +	spin_unlock(&pids_lock);
->>>>>   	radix_tree_preload_end();
->>>>>   }
->>>>>   
->>>>> @@ -119,7 +125,7 @@ void f2fs_trace_ios(struct f2fs_io_info *fio, int flush)
->>>>>   
->>>>>   void f2fs_build_trace_ios(void)
->>>>>   {
->>>>> -	mutex_init(&pids_lock);
->>>>> +	spin_lock_init(&pids_lock);
->>>>>   }
->>>>>   
->>>>>   #define PIDVEC_SIZE	128
->>>>> @@ -147,7 +153,7 @@ void f2fs_destroy_trace_ios(void)
->>>>>   	pid_t next_pid = 0;
->>>>>   	unsigned int found;
->>>>>   
->>>>> -	mutex_lock(&pids_lock);
->>>>> +	spin_lock(&pids_lock);
->>>>>   	while ((found = gang_lookup_pids(pid, next_pid, PIDVEC_SIZE))) {
->>>>>   		unsigned idx;
->>>>>   
->>>>> @@ -155,5 +161,5 @@ void f2fs_destroy_trace_ios(void)
->>>>>   		for (idx = 0; idx < found; idx++)
->>>>>   			radix_tree_delete(&pids, pid[idx]);
->>>>>   	}
->>>>> -	mutex_unlock(&pids_lock);
->>>>> +	spin_unlock(&pids_lock);
->>>>>   }
->>>>>
->>
->> _______________________________________________
->> Linux-f2fs-devel mailing list
->> Linux-f2fs-devel@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> .
-> 
 
