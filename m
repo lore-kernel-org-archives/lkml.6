@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AD4DC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:24:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08F80C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:25:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A93B2073D
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:24:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7A252073D
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:25:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197483;
-	bh=pQMAj4hQlvbkIhUFvqP29iDsDV7LHnDNTv8tDqVLNrU=;
+	s=default; t=1550197507;
+	bh=CT2K/sexOaZGPjsh/47ydH1F+Sm//8tD4a4Ha/lGCw8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=h+j1ZIju9JYfNKX0qkSd44cNh7Ptejj1KXqF4s/YC2Vyb4WQZB3KFOswL+c3xyUW5
-	 xujcaCXTXFSjx/vGkyxmmEVZ+dgefmB5FWXhxZvTfyMQgGiFcO+19BwRmIdzpTiXZf
-	 V9hwTOMmZp7xEwtCZr3+Hqlh3riKkXPLnleSXWr0=
+	b=OF2nws6pmu2BdrC3VyEGh/D+aeixgz+cv2U4mkiBElYmHPV7Tl8Q7thZts4omojkl
+	 pbUqmg932S1P4cOcyKdsK+dTJiAqsjZPduzdhsmKG69LmocdCMnZnW1maiE4t7+ZSr
+	 nVwq0uNx7diYqjvmaN7IEAyCmyBRvgOQ8ybGMsyg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729270AbfBOCYm (ORCPT
+        id S1729350AbfBOCZG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:24:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54648 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:25:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405230AbfBOCOt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:14:49 -0500
+        id S2405066AbfBOCOL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:14:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92DE320643;
-        Fri, 15 Feb 2019 02:14:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BA6B206BA;
+        Fri, 15 Feb 2019 02:14:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196888;
-        bh=pQMAj4hQlvbkIhUFvqP29iDsDV7LHnDNTv8tDqVLNrU=;
+        s=default; t=1550196849;
+        bh=CT2K/sexOaZGPjsh/47ydH1F+Sm//8tD4a4Ha/lGCw8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U/NzIv1+v7++JH/e/zofv+TrUdGu/8P4rvlwmqvkIfv338WkCHfT+QLx4yCgNWhR/
-         pRZjZ9yhO6fomXy/C+k/DOIoc7cOOjnQ3ukvR9O3bEGs+Emg6I+0G6lcagDNVqENBg
-         S5XAp7JYwTUOWJdZI/4EuDrNjaeBcp41ixeSGaEg=
+        b=jv8Ft6sJjGNw2EqshkcnwZc5GTJp8MtNZqwhryfUvEGDYmZhf4GRao+C3TGN9YzpC
+         Ld5X/i6SuCUO3JBY6GZPBOSD3WSCwugYMu0IrgCarcO5zOlesPKGn/hAVb7qsb5YPl
+         oj4vZSEZ5SE+PRraDbDOoJCqey+lGRYCNdMgYp9k=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Aaron Hill <aa1ronham@gmail.com>, Zhang Rui <rui.zhang@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 11/27] drivers: thermal: int340x_thermal: Fix sysfs race condition
-Date:   Thu, 14 Feb 2019 21:14:08 -0500
-Message-Id: <20190215021424.178979-11-sashal@kernel.org>
+Cc:     Edward Cree <ecree@solarflare.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 31/40] sfc: suppress duplicate nvmem partition types in efx_ef10_mtd_probe
+Date:   Thu, 14 Feb 2019 21:13:04 -0500
+Message-Id: <20190215021313.178476-31-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190215021424.178979-1-sashal@kernel.org>
-References: <20190215021424.178979-1-sashal@kernel.org>
+In-Reply-To: <20190215021313.178476-1-sashal@kernel.org>
+References: <20190215021313.178476-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -57,113 +58,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aaron Hill <aa1ronham@gmail.com>
+From: Edward Cree <ecree@solarflare.com>
 
-[ Upstream commit 129699bb8c7572106b5bbb2407c2daee4727ccad ]
+[ Upstream commit 3366463513f544c12c6b88c13da4462ee9e7a1a1 ]
 
-Changes since V1:
-* Use dev_info instead of printk
-* Use dev_warn instead of BUG_ON
+Use a bitmap to keep track of which partition types we've already seen;
+ for duplicates, return -EEXIST from efx_ef10_mtd_probe_partition() and
+ thus skip adding that partition.
+Duplicate partitions occur because of the A/B backup scheme used by newer
+ sfc NICs.  Prior to this patch they cause sysfs_warn_dup errors because
+ they have the same name, causing us not to expose any MTDs at all.
 
-Previously, sysfs_create_group was called before all initialization had
-fully run - specifically, before pci_set_drvdata was called. Since the
-sysctl group is visible to userspace as soon as sysfs_create_group
-returns, a small window of time existed during which a process could read
-from an uninitialized/partially-initialized device.
-
-This commit moves the creation of the sysctl group to after all
-initialized is completed. This ensures that it's impossible for
-userspace to read from a sysctl file before initialization has fully
-completed.
-
-To catch any future regressions, I've added a check to ensure
-that proc_thermal_emum_mode is never PROC_THERMAL_NONE when a process
-tries to read from a sysctl file. Previously, the aforementioned race
-condition could result in the 'else' branch
-running while PROC_THERMAL_NONE was set,
-leading to a null pointer deference.
-
-Signed-off-by: Aaron Hill <aa1ronham@gmail.com>
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+Signed-off-by: Edward Cree <ecree@solarflare.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../processor_thermal_device.c                | 28 ++++++++++---------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+ drivers/net/ethernet/sfc/ef10.c | 29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/thermal/int340x_thermal/processor_thermal_device.c b/drivers/thermal/int340x_thermal/processor_thermal_device.c
-index 06d46e2ff337..1fdf6fd24cdf 100644
---- a/drivers/thermal/int340x_thermal/processor_thermal_device.c
-+++ b/drivers/thermal/int340x_thermal/processor_thermal_device.c
-@@ -77,7 +77,12 @@ static ssize_t power_limit_##index##_##suffix##_show(struct device *dev, \
- 	struct pci_dev *pci_dev; \
- 	struct platform_device *pdev; \
- 	struct proc_thermal_device *proc_dev; \
--\
-+	\
-+	if (proc_thermal_emum_mode == PROC_THERMAL_NONE) { \
-+		dev_warn(dev, "Attempted to get power limit before device was initialized!\n"); \
-+		return 0; \
-+	} \
-+	\
- 	if (proc_thermal_emum_mode == PROC_THERMAL_PLATFORM_DEV) { \
- 		pdev = to_platform_device(dev); \
- 		proc_dev = platform_get_drvdata(pdev); \
-@@ -291,11 +296,6 @@ static int proc_thermal_add(struct device *dev,
- 	*priv = proc_priv;
+diff --git a/drivers/net/ethernet/sfc/ef10.c b/drivers/net/ethernet/sfc/ef10.c
+index 09352ee43b55..cc3be94d0562 100644
+--- a/drivers/net/ethernet/sfc/ef10.c
++++ b/drivers/net/ethernet/sfc/ef10.c
+@@ -5852,22 +5852,25 @@ static const struct efx_ef10_nvram_type_info efx_ef10_nvram_types[] = {
+ 	{ NVRAM_PARTITION_TYPE_LICENSE,		   0,    0, "sfc_license" },
+ 	{ NVRAM_PARTITION_TYPE_PHY_MIN,		   0xff, 0, "sfc_phy_fw" },
+ };
++#define EF10_NVRAM_PARTITION_COUNT	ARRAY_SIZE(efx_ef10_nvram_types)
  
- 	ret = proc_thermal_read_ppcc(proc_priv);
--	if (!ret) {
--		ret = sysfs_create_group(&dev->kobj,
--					 &power_limit_attribute_group);
--
--	}
- 	if (ret)
- 		return ret;
+ static int efx_ef10_mtd_probe_partition(struct efx_nic *efx,
+ 					struct efx_mcdi_mtd_partition *part,
+-					unsigned int type)
++					unsigned int type,
++					unsigned long *found)
+ {
+ 	MCDI_DECLARE_BUF(inbuf, MC_CMD_NVRAM_METADATA_IN_LEN);
+ 	MCDI_DECLARE_BUF(outbuf, MC_CMD_NVRAM_METADATA_OUT_LENMAX);
+ 	const struct efx_ef10_nvram_type_info *info;
+ 	size_t size, erase_size, outlen;
++	int type_idx = 0;
+ 	bool protected;
+ 	int rc;
  
-@@ -309,8 +309,7 @@ static int proc_thermal_add(struct device *dev,
+-	for (info = efx_ef10_nvram_types; ; info++) {
+-		if (info ==
+-		    efx_ef10_nvram_types + ARRAY_SIZE(efx_ef10_nvram_types))
++	for (type_idx = 0; ; type_idx++) {
++		if (type_idx == EF10_NVRAM_PARTITION_COUNT)
+ 			return -ENODEV;
++		info = efx_ef10_nvram_types + type_idx;
+ 		if ((type & ~info->type_mask) == info->type)
+ 			break;
+ 	}
+@@ -5880,6 +5883,13 @@ static int efx_ef10_mtd_probe_partition(struct efx_nic *efx,
+ 	if (protected)
+ 		return -ENODEV; /* hide it */
  
- 	proc_priv->int340x_zone = int340x_thermal_zone_add(adev, ops);
- 	if (IS_ERR(proc_priv->int340x_zone)) {
--		ret = PTR_ERR(proc_priv->int340x_zone);
--		goto remove_group;
-+		return PTR_ERR(proc_priv->int340x_zone);
- 	} else
- 		ret = 0;
- 
-@@ -324,9 +323,6 @@ static int proc_thermal_add(struct device *dev,
- 
- remove_zone:
- 	int340x_thermal_zone_remove(proc_priv->int340x_zone);
--remove_group:
--	sysfs_remove_group(&proc_priv->dev->kobj,
--			   &power_limit_attribute_group);
- 
- 	return ret;
- }
-@@ -357,7 +353,10 @@ static int int3401_add(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, proc_priv);
- 	proc_thermal_emum_mode = PROC_THERMAL_PLATFORM_DEV;
- 
--	return 0;
-+	dev_info(&pdev->dev, "Creating sysfs group for PROC_THERMAL_PLATFORM_DEV\n");
++	/* If we've already exposed a partition of this type, hide this
++	 * duplicate.  All operations on MTDs are keyed by the type anyway,
++	 * so we can't act on the duplicate.
++	 */
++	if (__test_and_set_bit(type_idx, found))
++		return -EEXIST;
 +
-+	return sysfs_create_group(&pdev->dev.kobj,
-+					 &power_limit_attribute_group);
- }
+ 	part->nvram_type = type;
  
- static int int3401_remove(struct platform_device *pdev)
-@@ -434,7 +433,10 @@ static int  proc_thermal_pci_probe(struct pci_dev *pdev,
- 			dev_err(&pdev->dev, "No auxiliary DTSs enabled\n");
+ 	MCDI_SET_DWORD(inbuf, NVRAM_METADATA_IN_TYPE, type);
+@@ -5908,6 +5918,7 @@ static int efx_ef10_mtd_probe_partition(struct efx_nic *efx,
+ static int efx_ef10_mtd_probe(struct efx_nic *efx)
+ {
+ 	MCDI_DECLARE_BUF(outbuf, MC_CMD_NVRAM_PARTITIONS_OUT_LENMAX);
++	DECLARE_BITMAP(found, EF10_NVRAM_PARTITION_COUNT);
+ 	struct efx_mcdi_mtd_partition *parts;
+ 	size_t outlen, n_parts_total, i, n_parts;
+ 	unsigned int type;
+@@ -5936,11 +5947,13 @@ static int efx_ef10_mtd_probe(struct efx_nic *efx)
+ 	for (i = 0; i < n_parts_total; i++) {
+ 		type = MCDI_ARRAY_DWORD(outbuf, NVRAM_PARTITIONS_OUT_TYPE_ID,
+ 					i);
+-		rc = efx_ef10_mtd_probe_partition(efx, &parts[n_parts], type);
+-		if (rc == 0)
+-			n_parts++;
+-		else if (rc != -ENODEV)
++		rc = efx_ef10_mtd_probe_partition(efx, &parts[n_parts], type,
++						  found);
++		if (rc == -EEXIST || rc == -ENODEV)
++			continue;
++		if (rc)
+ 			goto fail;
++		n_parts++;
  	}
  
--	return 0;
-+	dev_info(&pdev->dev, "Creating sysfs group for PROC_THERMAL_PCI\n");
-+
-+	return sysfs_create_group(&pdev->dev.kobj,
-+					 &power_limit_attribute_group);
- }
- 
- static void  proc_thermal_pci_remove(struct pci_dev *pdev)
+ 	rc = efx_mtd_add(efx, &parts[0].common, n_parts, sizeof(*parts));
 -- 
 2.19.1
 
