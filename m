@@ -2,87 +2,108 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A12CFC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:17:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD60C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:18:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68665205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:17:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B5BE222E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:18:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ERpkjXHU"
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="PonqHoew"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387465AbfBOJRj (ORCPT
+        id S1730329AbfBOJR4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:17:39 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:39667 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388090AbfBOJRj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 04:17:39 -0500
-Received: by mail-qt1-f194.google.com with SMTP id o6so10093849qtk.6
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 01:17:38 -0800 (PST)
+        Fri, 15 Feb 2019 04:17:56 -0500
+Received: from mail-eopbgr790053.outbound.protection.outlook.com ([40.107.79.53]:30846
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726045AbfBOJRz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 04:17:55 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pHeu5JGMOU1EgxdvztFSk/kQgSEyGK8ZIvx2jHvc17g=;
-        b=ERpkjXHUOVvbEoaP7Ix7pgMW6Coci96ne1h9iiEQ+IKpGoyN7GqYw4TgO2qdRhDYBy
-         jALmTeWdZSGIVCXLP3WJfo0sd7IsqnhNjDWsoWKfLMmXYxIWQjSjNaRLdaGUoe6pgZ0Y
-         cpQG3/2yznHn24BoQqsBDF8XA3UsMrn7qCyws=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pHeu5JGMOU1EgxdvztFSk/kQgSEyGK8ZIvx2jHvc17g=;
-        b=AYotakhp2RL67pYCcVmXOq36oUbdfMEHadbgVziyA5spLIq442lwolkXfoSPmnGpPH
-         DTL1rnMlXNWItQAidM3KT7LcjieDmbTjcqRgtcSlOlyYt8mpc/liU2Yc4tbGrZ95WDAW
-         +sTAOnAwlvf8Ef8n1/LVCnZZbIeih2hAd9RSJjDzMzLRU/WMafpPZrs+itDqHqNXgvBI
-         CshE+NbzVVhRZFzJTsYM71OWuObhiLzs2BShgzy4aYrQA2cgNYi3psZKWtPh3ReXkNhf
-         38coHDCXCmgatCijCL5W4aoS9uWItgzUKERkaMRQ+CTTupra1N/hXUw+mrb1cJX3s813
-         B8dQ==
-X-Gm-Message-State: AHQUAuZfLzu3ZByhwLyK5gIjbq3Iy3OqBs1PQulqbJW+OqklD1w7Eqrk
-        Ahg2tRjVvuKUgEGrGNCRI+DS4gRe1Kl9T/XyNUGz+g==
-X-Google-Smtp-Source: AHgI3IbiLPsHirD/XHSvcifyp9fuzaRJC7tOry4+XO6LWiBdKdHShOVnzhCPnbR7x8JCU5VczPmcpChvvl2/djjeObs=
-X-Received: by 2002:ac8:300a:: with SMTP id f10mr6571381qte.236.1550222257770;
- Fri, 15 Feb 2019 01:17:37 -0800 (PST)
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=n3JXrOQDORjAdnNzbwyJbMo1+XjeO11dEslerZ7GbaE=;
+ b=PonqHoewQVPm/hphQy3dVb0071EGL7TStHQ2Ap+Vi09klqTLiZjNhE+m/pEfUb6tm/R56H1bTdEa/9DJMBfvbMO5ByBs8zSWFKnoTODm5jxG0TRy1JUEtrgSHQiqiMx+O0PWcjSaq67kPNR/sIcxINJWBLMi+iv3FtXXGsjXmXE=
+Received: from MN2PR12MB3455.namprd12.prod.outlook.com (20.178.244.22) by
+ MN2PR12MB3264.namprd12.prod.outlook.com (20.179.83.23) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.16; Fri, 15 Feb 2019 09:17:51 +0000
+Received: from MN2PR12MB3455.namprd12.prod.outlook.com
+ ([fe80::f01f:c1eb:8483:1679]) by MN2PR12MB3455.namprd12.prod.outlook.com
+ ([fe80::f01f:c1eb:8483:1679%5]) with mapi id 15.20.1622.018; Fri, 15 Feb 2019
+ 09:17:51 +0000
+From:   "Mehta, Sanju" <Sanju.Mehta@amd.com>
+To:     "S-k, Shyam-sundar" <Shyam-sundar.S-k@amd.com>,
+        "jdmason@kudzu.us" <jdmason@kudzu.us>,
+        "dave.jiang@intel.com" <dave.jiang@intel.com>,
+        "allenbh@gmail.com" <allenbh@gmail.com>
+CC:     "linux-ntb@googlegroups.com" <linux-ntb@googlegroups.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Mehta, Sanju" <Sanju.Mehta@amd.com>
+Subject: [PATCH 0/4] bug fixes in ntb_hw_amd and ntb_perf
+Thread-Topic: [PATCH 0/4] bug fixes in ntb_hw_amd and ntb_perf
+Thread-Index: AQHUxQ9T27dDEa1fmE+JNVoiuBSvhQ==
+Date:   Fri, 15 Feb 2019 09:17:51 +0000
+Message-ID: <1550222224-26475-1-git-send-email-Sanju.Mehta@amd.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MA1PR0101CA0032.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:22::18) To MN2PR12MB3455.namprd12.prod.outlook.com
+ (2603:10b6:208:d0::22)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Sanju.Mehta@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.7.4
+x-originating-ip: [165.204.156.251]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 4d580b79-1ad5-41d0-b93a-08d6932675ad
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:MN2PR12MB3264;
+x-ms-traffictypediagnostic: MN2PR12MB3264:
+x-microsoft-exchange-diagnostics: 1;MN2PR12MB3264;20:DZlbR3l+fmw111wJp53QUj8miXTvwZzPazbY/5aB3Tfw2Kq4APlH7sxsFnzYnzPwdoswssrxywr4awy6ILxuZzun1amZi47/sQj2amoXOYKBfgUws6TXqhTWN0vfuMJgYHWZlrozncBBNULdKIFvKb0rER5dK9g9o+q8dICMmdUOcqjGJzS86bN6L3KuJfXjUat0WDv5QEYaxuWH855Gf4qiDjjnQFgrXdvaPwHWbdQbosYJ4vs/pjvLKCl27GpP
+x-microsoft-antispam-prvs: <MN2PR12MB32647868DD37C5A3DF05A94AE5600@MN2PR12MB3264.namprd12.prod.outlook.com>
+x-forefront-prvs: 09497C15EB
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39840400004)(396003)(366004)(346002)(376002)(136003)(199004)(189003)(2616005)(105586002)(99286004)(8936002)(4744005)(81156014)(81166006)(256004)(476003)(71190400001)(71200400001)(3846002)(8676002)(50226002)(486006)(52116002)(14444005)(6116002)(68736007)(97736004)(72206003)(478600001)(2906002)(14454004)(36756003)(86362001)(2501003)(106356001)(54906003)(186003)(26005)(110136005)(305945005)(102836004)(6436002)(2201001)(7736002)(6512007)(6486002)(4326008)(316002)(66066001)(386003)(53936002)(6506007)(25786009);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR12MB3264;H:MN2PR12MB3455.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: DNMcJraEkmY/u35pfCgjOvr0oc3ubwUJJ/dA/wc5bXO/KrSZEk6LNopVYBPWnTSN5acMu2Lrj+S6vD06oXFrNAcg3xsMf0aCt+VPCOi/+0VSSOSSU3SoVg1TUDyKQBWyihuIEawA4+RA+7fVzTK9AzIrjAnI/L/VAcWKKPP8tHy6gnH9xHHuMLnRLKKebq1nW4OXhGuoKk8/jyhKPjJc2o5v4BovAxIq2dVax1kGMAT0vP0cqihF6nRG7pAipiJprJAdX4BG2PozvOWnt/9pnJmsDxuKk5nGlF1SnLs/Hy4P3VYWxKUEQD8x/Mh3QfM1sjTua5iHBjza4b/DlqpzMIjkFeVxXQu8bqd4jXMIcYEtbyt3ruUBA2QGtvYtNS1ZIkL00P6Mz4qz/FL7GoX/3w267SvWAVMuy+JnpP/o+xY=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20190215090202.157100-1-hsinyi@chromium.org> <20190215090959.soxkf3ho3or2geme@ninjato>
-In-Reply-To: <20190215090959.soxkf3ho3or2geme@ninjato>
-From:   Hsin-Yi Wang <hsinyi@chromium.org>
-Date:   Fri, 15 Feb 2019 17:17:27 +0800
-Message-ID: <CAJMQK-jrpnfzKNYh01Pg6QydSSa-=6x44Pj1wwMdXw7G3x-ybA@mail.gmail.com>
-Subject: Re: [PATCH] i2c: mediatek: modify threshold passed to i2c_get_dma_safe_msg_buf()
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jun Gao <jun.gao@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>, linux-i2c@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4d580b79-1ad5-41d0-b93a-08d6932675ad
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Feb 2019 09:17:49.0018
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB3264
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ok, I can add a check in another patch. Should we return NULL pointer
-if msg->len is 0 or print out some warnings? Thanks.
+From: Sanjay R Mehta <sanju.mehta@amd.com>
 
-On Fri, Feb 15, 2019 at 5:10 PM Wolfram Sang <wsa@the-dreams.de> wrote:
->
-> On Fri, Feb 15, 2019 at 05:02:02PM +0800, Hsin-Yi Wang wrote:
-> > i2c_get_dma_safe_msg_buf() allocates space based on msg->len. If threshold is
-> > 0 and msg->len is also 0, function makes zero-length allocation, which returns
-> > a special ZERO_SIZE_PTR instead of a NULL pointer, and this will cause later
-> > code to fail. Modify the threshold to > 0 so the function returns NULL pointer.
-> >
-> > Fixes: fc66b39fe36a ("i2c: mediatek: Use DMA safe buffers for i2c transactions")
-> > Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
->
-> Right. But we need to fix i2c_get_dma_safe_msg_buf(), so it will be
-> handled for all callers. Do you want to add a check if msg->len is 0 or
-> shall I? Both fine for me.
->
+Add bug fix for ntb_perf and ntb_hw_amd
+
+Sanjay R Mehta (4):
+  NTB: ntb_perf: Increased the number of message retries to 1000
+  NTB: ntb_perf: Disable NTB link after clearing peer XLAT registers
+  NTB: ntb_perf: Clear stale values in doorbell and command SPAD
+    register
+  NTB: ntb_hw_amd: set peer limit register
+
+ drivers/ntb/hw/amd/ntb_hw_amd.c |  8 ++++----
+ drivers/ntb/test/ntb_perf.c     | 14 +++++++++++---
+ 2 files changed, 15 insertions(+), 7 deletions(-)
+
+--=20
+2.7.4
+
