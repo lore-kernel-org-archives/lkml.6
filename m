@@ -2,241 +2,224 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B45B6C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43091C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:56:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D5F0222DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:55:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0819E222D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:56:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="F3FW0jz+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394232AbfBOWzr (ORCPT
+        id S2394278AbfBOW4Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 17:55:47 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51228 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728235AbfBOWzq (ORCPT
+        Fri, 15 Feb 2019 17:56:24 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43038 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727943AbfBOW4Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 17:55:46 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1FMccE3176619
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 17:55:45 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qp59samme-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 17:55:44 -0500
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Fri, 15 Feb 2019 22:55:44 -0000
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 15 Feb 2019 22:55:40 -0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1FMtbo724445034
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Feb 2019 22:55:37 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 006C3AE062;
-        Fri, 15 Feb 2019 22:55:37 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 45CE6AE060;
-        Fri, 15 Feb 2019 22:55:36 +0000 (GMT)
-Received: from [9.80.239.175] (unknown [9.80.239.175])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 15 Feb 2019 22:55:36 +0000 (GMT)
-Subject: Re: [PATCH v3 6/9] vfio: ap: register IOMMU VFIO notifier
-To:     Pierre Morel <pmorel@linux.ibm.com>, borntraeger@de.ibm.com
-Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, frankja@linux.ibm.com, pasic@linux.ibm.com,
-        david@redhat.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
-References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
- <1550152269-6317-7-git-send-email-pmorel@linux.ibm.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Fri, 15 Feb 2019 17:55:35 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 15 Feb 2019 17:56:24 -0500
+Received: by mail-pf1-f196.google.com with SMTP id q17so5503324pfh.10
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 14:56:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=CgUUh/CyKN2duRzRGvACqyGXrjfQbOsdifB+RX8Aq/w=;
+        b=F3FW0jz+csJ4ZUXBKPiINh1hoEy4illxvFFQyigonj7p3l48XXQQ+Bbbhlo/cRIB02
+         zJ3Tsh1anZ5/pgzqrHeD7F2AJaemH7spQoPRg2VvmgroIBkECAE5rWZ6TYYQMfvJxGsF
+         lGuETCZuvcaehlbT+IGrTeFMpalG8g8nodvPc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=CgUUh/CyKN2duRzRGvACqyGXrjfQbOsdifB+RX8Aq/w=;
+        b=ERxwV+nFPlRI4p3VK/P2pGWZWtofjLB4R8QZ+4IWRf7zojtJOrpcN2fXyD9nw7J7C/
+         xtuuPs1OslNW+wAFGJZf+dgZHNEpCd8/MplUMXn0nC1AXL7Xpl+aF0YBjOlRQM137NkU
+         5S9/cdJB1MbtlKcxt/vKHF88a6yOY7b1CKtj8QwIf+fbXAXvAhc71qF6LJYdnBqo/m8I
+         ChjWf9nPL7NDoSUV+oTzkKxPDyegbIRiFPv+hnkTwb9P3RksFGWc3b7j+FYKemCtwXZS
+         FtucNr0NH3YDFtauy6shwNPUEzOxR8fMMjzuo9doEcJOO/2Gmz7itHfmmD6PBH1RT7Qy
+         /Acg==
+X-Gm-Message-State: AHQUAuazuHkLCSHuFEUTfmApVaP2Ytvwr23YwlMAU7fJsy5iT61dcVpL
+        xxyoRRVjoBKm5xClJuLwzqMBsnaxNYg=
+X-Google-Smtp-Source: AHgI3IbFAcSvVG16EtBZK5bHKGqhWwLDuuAzmBoimfkgBBIZVfDBdiZIp6+GPjSnFajetaG/zqwKDw==
+X-Received: by 2002:a63:134a:: with SMTP id 10mr7020276pgt.83.1550271383112;
+        Fri, 15 Feb 2019 14:56:23 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id d3sm18571698pfj.54.2019.02.15.14.56.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 15 Feb 2019 14:56:22 -0800 (PST)
+Date:   Fri, 15 Feb 2019 14:56:21 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     Chanwoo Choi <cwchoi00@gmail.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-tegra@vger.kernel.org,
+        Lukasz Luba <l.luba@partner.samsung.com>
+Subject: Re: [PATCH 4/4] PM / devfreq: Handle monitor start/stop in the
+ devfreq core
+Message-ID: <20190215225621.GG117604@google.com>
+References: <20190214013042.254790-1-mka@chromium.org>
+ <20190214013042.254790-5-mka@chromium.org>
+ <CAGTfZH118diXgKHetWwiNMXHALxXqt=MSh9oVv+nt4-SJkzN2Q@mail.gmail.com>
+ <CGME20190214192933epcas5p204c34010accb5e63480abd3ca34991eb@epcas5p2.samsung.com>
+ <20190214192855.GD117604@google.com>
+ <b28e763d-c3c9-0673-6216-f67561112b60@samsung.com>
+ <20190215001947.GF117604@google.com>
+ <1671c5fa-5414-8a83-b372-99f7f057a2ac@samsung.com>
 MIME-Version: 1.0
-In-Reply-To: <1550152269-6317-7-git-send-email-pmorel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19021522-0072-0000-0000-000003FAB960
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010604; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000280; SDB=6.01161606; UDB=6.00606365; IPR=6.00942166;
- MB=3.00025605; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-15 22:55:43
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021522-0073-0000-0000-00004B31B5B3
-Message-Id: <3ce0a3a0-22fb-c418-321d-7e6e3af5b66c@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-15_16:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902150147
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1671c5fa-5414-8a83-b372-99f7f057a2ac@samsung.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/14/19 8:51 AM, Pierre Morel wrote:
-> To be able to use the VFIO interface to facilitate the
-> mediated device memory pining/unpining we need to register
-> a notifier for IOMMU.
+Hi Chanwoo,
+
+On Fri, Feb 15, 2019 at 09:33:05AM +0900, Chanwoo Choi wrote:
+> Hi Matthias,
 > 
-> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-> ---
->   drivers/s390/crypto/vfio_ap_ops.c     | 64 +++++++++++++++++++++++++++++++----
->   drivers/s390/crypto/vfio_ap_private.h |  2 ++
->   2 files changed, 60 insertions(+), 6 deletions(-)
+> On 19. 2. 15. 오전 9:19, Matthias Kaehlcke wrote:
+> > Hi Chanwoo,
+> > 
+> > On Fri, Feb 15, 2019 at 08:42:30AM +0900, Chanwoo Choi wrote:
+> >> Hi Matthias,
+> >>
+> >> On 19. 2. 15. 오전 4:28, Matthias Kaehlcke wrote:
+> >>> Hi Chanwoo,
+> >>>
+> >>> On Thu, Feb 14, 2019 at 11:17:36PM +0900, Chanwoo Choi wrote:
+> >>>> Hi Matthias,
+> >>>>
+> >>>> As I commented on the first patch, it is not possible to call some codes
+> >>>> according to the intention of each governor between 'devfreq_moniotr_*()'
+> >>>> and some codes which are executed before or after 'devfreq_moniotr_*()'
+> >>>>
+> >>>> For example, if some governor requires the following sequence,
+> >>>> after this patch, it is not possible.
+> >>>>
+> >>>> case DEVFREQ_GOV_xxx:
+> >>>>         /* execute some code before devfreq_monitor_xxx() */
+> >>>>         devfreq_monitor_xxx()
+> >>>>         /* execute some code after devfreq_monitor_xxx() */
+> >>>
+> >>> As for the suspend/resume case I agree that the patch introduces this
+> >>> limitation, but I'm not convinced that this is an actual problem.
+> >>>
+> >>> For governor_start(): why can't the governor execute the code
+> >>> before polling started, does it make any difference to the governor
+> >>> that a work is scheduled?
+> >>
+> >> The some governors might want to do something before starting
+> >> the work and do something after work started. I think that
+> >> the existing style is more flexible.
+> > 
+> > Could you provide a practical example that answers my question above:
+> > 
+> > "why can't the governor execute the code before polling started, does
+> > it make any difference to the governor that a work is scheduled?"
 > 
-> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
-> index 1851b24..6eddc2c 100644
-> --- a/drivers/s390/crypto/vfio_ap_ops.c
-> +++ b/drivers/s390/crypto/vfio_ap_ops.c
-> @@ -781,6 +781,36 @@ static const struct attribute_group *vfio_ap_mdev_attr_groups[] = {
->   };
->   
->   /**
-> + * vfio_ap_mdev_iommu_notifier: IOMMU notifier callback
-> + *
-> + * @nb: The notifier block
-> + * @action: Action to be taken (VFIO_IOMMU_NOTIFY_DMA_UNMAP)
-> + * @data: the specific unmap structure for vfio_iommu_type1
-> + *
-> + * Unpins the guest IOVA. (The NIB guest address we pinned before).
-> + * Return NOTIFY_OK after unpining on a UNMAP request.
-> + * otherwise, returns NOTIFY_DONE .
-> + */
-> +static int vfio_ap_mdev_iommu_notifier(struct notifier_block *nb,
-> +				       unsigned long action, void *data)
-> +{
-> +	struct ap_matrix_mdev *matrix_mdev;
-> +
-> +	matrix_mdev = container_of(nb, struct ap_matrix_mdev, iommu_notifier);
-> +
-> +	if (action == VFIO_IOMMU_NOTIFY_DMA_UNMAP) {
-> +		struct vfio_iommu_type1_dma_unmap *unmap = data;
-> +		unsigned long g_pfn = unmap->iova >> PAGE_SHIFT;
-> +
-> +		vfio_unpin_pages(mdev_dev(matrix_mdev->mdev), &g_pfn, 1);
-> +		return NOTIFY_OK;
-> +	}
-> +
-> +	return NOTIFY_DONE;
-> +}
-> +
-> +
-> +/**
->    * vfio_ap_mdev_set_kvm
->    *
->    * @matrix_mdev: a mediated matrix device
-> @@ -904,8 +934,7 @@ static void vfio_ap_dissociate_queues(struct ap_matrix_mdev *matrix_mdev)
->    * In the case a queue could not be found return -ENODEV.
->    * Otherwise return 0.
->    */
-> -static __attribute__((unused))
-> -	int vfio_ap_associate_queues(struct ap_matrix_mdev *matrix_mdev)
-> +static int vfio_ap_associate_queues(struct ap_matrix_mdev *matrix_mdev)
+> Actually, as for now, I don't know the correct practice and now.
+> I want to say that the existing style is more flexible for the
+> new governor in the future.
 
-Maybe this function should be introduced in this patch instead?
+If you try submitting 'flexible' code in other parts of the kernel
+without users of this flexibility and no solid arguments why this
+flexibility is needed it would most likely be rejected.
 
->   {
->   	unsigned long apid, apqi;
->   	struct vfio_ap_queue *q;
-> @@ -967,12 +996,32 @@ static int vfio_ap_mdev_open(struct mdev_device *mdev)
->   
->   	ret = vfio_register_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
->   				     &events, &matrix_mdev->group_notifier);
-> -	if (ret) {
-> -		module_put(THIS_MODULE);
-> -		return ret;
-> -	}
-> +	if (ret)
-> +		goto err_group;
-> +
-> +	matrix_mdev->iommu_notifier.notifier_call = vfio_ap_mdev_iommu_notifier;
-> +	events = VFIO_IOMMU_NOTIFY_DMA_UNMAP;
-> +
-> +	ret = vfio_register_notifier(mdev_dev(mdev), VFIO_IOMMU_NOTIFY,
-> +				     &events, &matrix_mdev->iommu_notifier);
-> +	if (ret)
-> +		goto err_iommu;
-> +
-> +	ret = vfio_ap_associate_queues(matrix_mdev);
-> +	if (ret)
-> +		goto err_associate;
+Unnecessary flexibility can be a burden, rather than an advantage.
 
-I think the matrix_mdev should be associated with queues when an 
-assignment of an adapter or domain is made to the mdev device via its
-sysfs interfaces. I say this because assigning an adapter or domain to
-an mdev device effectively grants ownership of any additional AP queues 
-added to the mdev device's AP matrix as a result of the assignment. It
-only makes sense to assign ownership to the vfio_ap_queue objects
-representing the queues at that time. If an adapter or domain is
-dynamically assigned while a guest is using the affected queues, then
-the associations will have to be made at that time and this code will
-likely go bye bye.
+> If there are no any special benefits I think we don't need to harm
+> the flexibility.
 
->   
->   	return 0;
-> +
-> +err_associate:
-> +	vfio_unregister_notifier(mdev_dev(mdev), VFIO_IOMMU_NOTIFY,
-> +				 &matrix_mdev->iommu_notifier);
-> +err_iommu:
-> +	vfio_unregister_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
-> +				 &matrix_mdev->group_notifier);
-> +err_group:
-> +	module_put(THIS_MODULE);
-> +	return ret;
->   }
->   
->   static void vfio_ap_mdev_release(struct mdev_device *mdev)
-> @@ -985,6 +1034,9 @@ static void vfio_ap_mdev_release(struct mdev_device *mdev)
->   	vfio_ap_mdev_reset_queues(mdev);
->   	vfio_unregister_notifier(mdev_dev(mdev), VFIO_GROUP_NOTIFY,
->   				 &matrix_mdev->group_notifier);
-> +	vfio_unregister_notifier(mdev_dev(mdev), VFIO_IOMMU_NOTIFY,
-> +				 &matrix_mdev->iommu_notifier);
-> +	vfio_ap_dissociate_queues(matrix_mdev);
+There are multiple benefits, the following shortcomings of the current
+approach are eliminated:
 
-I think the matrix_mdev should be dissociated from queues when an
-adapter or domain is unassigned from the mdev device via its
-sysfs interfaces. I say this because unassigning an adapter or domain 
-from an mdev device effectively takes away ownership of any AP queues
-removed from the mdev device's AP matrix as a result of the
-unassignment. It only makes sense to remove ownership from the
-vfio_ap_queue objects representing the queues at that time. This will
-become necessary for the forthcoming dynamic configuration patches.
-If an adapter or domain is dynamically unassigned while a guest is
-using the affected queues, then the dissociation will have to be made
-at that time and this code will likely go bye bye.
+- it is error prone and allows governors to do the wrong thing, e.g.
+  - start monitoring before the governor is fully ready
+  - keep monitoring when the governor is partially 'stopped'
+  - omit mandatory calls
+- delegates tasks to the governors which are responsibility of the
+  core
+- code is harder to read
+  - switch from common code to governor code and back
+- unecessary boilerplate code in governors
+- option to replace ->event_handler() with ->start(), ->stop(), etc,
+  which is cleaner
 
->   	matrix_mdev->kvm = NULL;
->   	module_put(THIS_MODULE);
->   }
-> diff --git a/drivers/s390/crypto/vfio_ap_private.h b/drivers/s390/crypto/vfio_ap_private.h
-> index 10bc8b5..2781720 100644
-> --- a/drivers/s390/crypto/vfio_ap_private.h
-> +++ b/drivers/s390/crypto/vfio_ap_private.h
-> @@ -80,7 +80,9 @@ struct ap_matrix_mdev {
->   	struct list_head node;
->   	struct ap_matrix matrix;
->   	struct notifier_block group_notifier;
-> +	struct notifier_block iommu_notifier;
->   	struct kvm *kvm;
-> +	struct mdev_device *mdev;
->   };
->   
->   extern int vfio_ap_mdev_register(void);
+I'm easily convinced if the flexibility is really needed. I'm not even
+expecting a real world example, just be creative and make something
+up that sounds reasonable.
+
+start/resume()
+{
+	// prepare governor
+
+	// start polling
+
+=>	what needs to be done here that couldn't have been done
+=>	before polling was started?
+}
+
+stop/suspend()
+{
+=>	what needs to be done here that couldn't be done after polling
+=>	is stopped?
+
+	// stop polling
+
+	// 'unprepare' governor
+}
+
+> >> And,
+> >> It has one more problem when changing the governor on the fly
+> >> from simple_ondemand to other governors like performance,
+> >> powersave and so on.
+> >>
+> >> Even if other governors don't need to monitor the utilization,
+> >> the work timer will be executed continually because the devfreq
+> >> device has the polling_ms value. It is not necessary
+> >> of the other governors such as performance, powersave.
+> >>
+> >> It means that only specific governor like simple_ondemand
+> >> have to call the devfreq_monitor_start() by itself
+> >> instead of calling it on devfreq core.
+> > 
+> > yes, I noticed that too, it can be easily fixed with a flag in the
+> > governor.
 > 
+> Right, If we add some codes like flag, it is easy.
+> Actually, it is just difference how to support them.
+> 
+> I think that the existing style has not any problem and is not
+> complicated to develop the new governor. If there are no
+> some benefits, IMO, we better to keep the flexibility.
+> It can give the flexibility to the developer of governor.
 
+I listed several benefits, please comment on the specific items if you
+disagree, instead of just saying there are no benefits.
+
+OTOH so far we haven't seen an even hypothetical example that shows
+that the flexibility *could* be needed.
+
+And even if such a rare case that we currently can't imagine came up,
+it could be easily addressed with notifiers, a standard mechanism in
+the kernel to inform drivers about events they are interested in.
+
+Cheers
+
+Matthias
