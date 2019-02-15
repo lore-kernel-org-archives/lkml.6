@@ -2,202 +2,394 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1093C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 062F9C4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78FBA222BE
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:07:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ZB56Se3h"
+	by mail.kernel.org (Postfix) with ESMTP id C4954222BE
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:08:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387981AbfBOSHj (ORCPT
+        id S2388100AbfBOSII (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 13:07:39 -0500
-Received: from mail-eopbgr50062.outbound.protection.outlook.com ([40.107.5.62]:62496
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725835AbfBOSHh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 13:07:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9TboPlUQ5SZrLo9jg+s3YP+TgOxztLWLaU5uOPbWF2Q=;
- b=ZB56Se3hmnYr81vPKBcUfliiOemKtNleCAO334/nSA+57GMnLMJnj6SFnSEiSmjfs3NTJU/CiVldPeAUHyPI1G45YTBPqCGQErMwE/hJFKqb78iFftQESf0UUAz4JYqvJEo89YxyA8A8NxmXh4Sn2KG+yKGjijZRMlvhV0/VHd8=
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
- AM0PR04MB4385.eurprd04.prod.outlook.com (52.135.149.15) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.19; Fri, 15 Feb 2019 18:07:24 +0000
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::ec4e:4756:a9dc:914c]) by AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::ec4e:4756:a9dc:914c%3]) with mapi id 15.20.1601.023; Fri, 15 Feb 2019
- 18:07:24 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Angus Ainslie <angus.ainslie@puri.sm>
-CC:     Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v2 3/3] arm64: dts: imx8mq: Add the opp table and cores opp
- properties
-Thread-Topic: [PATCH v2 3/3] arm64: dts: imx8mq: Add the opp table and cores
- opp properties
-Thread-Index: AQHUxVlNIq31A6OcskGGyy1wv+2NnQ==
-Date:   Fri, 15 Feb 2019 18:07:24 +0000
-Message-ID: <1550254032-16451-4-git-send-email-abel.vesa@nxp.com>
-References: <1550254032-16451-1-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1550254032-16451-1-git-send-email-abel.vesa@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6PR0502CA0043.eurprd05.prod.outlook.com
- (2603:10a6:20b:56::20) To AM0PR04MB5779.eurprd04.prod.outlook.com
- (2603:10a6:208:131::23)
-x-originating-ip: [95.76.156.53]
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.7.4
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 08f99247-b403-46cf-8468-08d693706fbf
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4385;
-x-ms-traffictypediagnostic: AM0PR04MB4385:
-x-ms-exchange-purlcount: 1
-x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;AM0PR04MB4385;23:564rBYTdU9PwWlgHfuPKe8gH9yxRnbv1widO1C/?=
- =?iso-8859-1?Q?n4gN4uiy7EWMtKJVwymZJWmJQrXAHwEnYQk6LqgXto3vix1pbd8OVke7jG?=
- =?iso-8859-1?Q?ax+TDahiBvpvh6wWdq52yt2fGV1cYNxHQ+abpCVrfX1e3icuGINnklOTMk?=
- =?iso-8859-1?Q?UHucJtW3TjYfb9iGS0s/ch1nL8qbIle10xb3nwLv9cnfD7WjgHbTjv9KEO?=
- =?iso-8859-1?Q?Y7Zr/U3vHIt3D5ebZtg5303x/E2TOYlrJdPzxvkiT/qOKvPUkq8gPqwHue?=
- =?iso-8859-1?Q?y1Fw5RswClyw7OsQwUieAcPxuPObrhhK3fEepRmNyFkdZ9sP04QHVdCubF?=
- =?iso-8859-1?Q?0esBztaMRl8asE8jFCasFPYdwm6uKkcZlmB2BMu2b9+Szoj1GdWzo7KGE0?=
- =?iso-8859-1?Q?WpugR9gFPDoWhU7rhmG7nEIOcr2G3UMqt5UqPnWmqPW6QSqwQA7AzqHdRS?=
- =?iso-8859-1?Q?yY2omYQZrwM6Y3y669kiGJNhxxW6mMbmzpgMyzjWMHCHyfCSQyR0/eoVbr?=
- =?iso-8859-1?Q?C7bKvd+g55XbmRXKl79un7f9B5bUqjAYS/eRrRu7XPJzZsU/I61OP0uBR1?=
- =?iso-8859-1?Q?pO6IqoUL/jsgOI0pQ6an6tuIgEdp/okjpBSrpyJzikNsFbruDuz/LgJxiO?=
- =?iso-8859-1?Q?u3TN2k+GPN/zehnp5tpyJYf7kOYmFppgm0gSaUT8VCqRHyfv4NSC2JlUMo?=
- =?iso-8859-1?Q?2i3Ii3S25+f0BKAKzwqWBQ4j8dBqE8arI1ZoWUJt9/ixCJUOQZPUc+qrAs?=
- =?iso-8859-1?Q?NplTyEDjZXFIOyCMXxOidFDWHQbykw2OwD6UbdIuLwUv19iIxZrXcP6wkB?=
- =?iso-8859-1?Q?ir7bQxQVu3yOTPf4pO64XZYJYzBwmVLDFx0R0MfRSn8yLzQZ3O0W3KIe/e?=
- =?iso-8859-1?Q?JL8K+NNYNptGmAhk8hxwm3eLQ6ybruXZjfR595fMQuahG1IZrxLYtDdOHg?=
- =?iso-8859-1?Q?vAFjHOtNORQbOPt/B6aqVTt54Ac6fqxoHHmDXSeElJUqmjutv3sZNi36S7?=
- =?iso-8859-1?Q?H1VPm/vK6oUQPAf+dleC2RYm08ZesXMAo22wUZf9sxtScR3Q3MaEQTqR9T?=
- =?iso-8859-1?Q?fkeSO+uW+Gk1nWwjjlezdfQ7LzRHm9EcfCiUljAjODZz5F4pIqXvUt1OMq?=
- =?iso-8859-1?Q?8TWa3MyetFybzkCKx8pGiWQD1EC77Oqq0OviknJWpAiE0w6rl5AnoHBjYE?=
- =?iso-8859-1?Q?NfXCyPUVgWYbx5Ud2npA8cZ/3QA0C+Mn8SIbk6NVyvittwizZuygI2Kq4h?=
- =?iso-8859-1?Q?s+7eHH5LilScosH07DL+CsBiGuBbPOF4odwyo5H8Q0aCbXpnZz0KW/jGY6?=
- =?iso-8859-1?Q?jw=3D?=
-x-microsoft-antispam-prvs: <AM0PR04MB43857729EF68A320CE889860F6600@AM0PR04MB4385.eurprd04.prod.outlook.com>
-x-forefront-prvs: 09497C15EB
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(376002)(136003)(39860400002)(366004)(189003)(199004)(305945005)(86362001)(97736004)(71200400001)(71190400001)(446003)(966005)(102836004)(14454004)(66066001)(478600001)(6506007)(6436002)(386003)(2906002)(7736002)(106356001)(105586002)(44832011)(8676002)(6116002)(81166006)(36756003)(81156014)(3846002)(476003)(486006)(99286004)(52116002)(2616005)(8936002)(110136005)(76176011)(14444005)(256004)(54906003)(316002)(26005)(53936002)(11346002)(25786009)(6486002)(4326008)(6512007)(68736007)(186003)(50226002)(6306002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4385;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: QdHryt1tHu7gfRUKU6jqhC1L97Jdb7F0WfQJ1UK1abKekVQ6ssCWJbK4m8fgGR6cKw/4r4SvnSSZHekUxeWg4ta4oy3eGvd3lw1DrTXLmtLCfjdORAqlLhvRLxYPvohiFxphoHtudqvmt7a+sXqbEWYQth836PQFTYk4beSTqbqHyldot8EHOWMIWtiudyzAYqQYP03FaPzhzsAgIWo7LmK/QPBjdWfa2U7/LLEfy82684iIV++2OAHL+j9AwBgZfSxQJt+/u1Dj4RTVU2NpXl/bKqEHpzoH0JmkZK2lK40uJ+OkagPnXtFD8QwF8aZbL9NQJGJAsjEEzDJwUy+IPGMJLygRM23sAX9m8Yhi98WLaNaDMIJDwLYbfjVpq0Ng9/Ad539Bh8vvbm9LcpiApvBa4b49BoGofHwfI2SJcd4=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 15 Feb 2019 13:08:08 -0500
+Received: from asavdk4.altibox.net ([109.247.116.15]:45857 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387991AbfBOSIH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 13:08:07 -0500
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by asavdk4.altibox.net (Postfix) with ESMTPS id BA73A8036E;
+        Fri, 15 Feb 2019 19:08:00 +0100 (CET)
+Date:   Fri, 15 Feb 2019 19:07:59 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
+Cc:     thierry.reding@gmail.com, airlied@linux.ie, daniel@ffwll.ch,
+        devicetree@vger.kernel.org, tomi.valkeinen@ti.com,
+        robh+dt@kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 4/4] drm/panel: Add OSD101T2587-53TS driver
+Message-ID: <20190215180759.GA26944@ravnborg.org>
+References: <20190215140315.18046-1-peter.ujfalusi@ti.com>
+ <20190215140315.18046-5-peter.ujfalusi@ti.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 08f99247-b403-46cf-8468-08d693706fbf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Feb 2019 18:07:23.3691
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4385
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190215140315.18046-5-peter.ujfalusi@ti.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=UpRNyd4B c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=kj9zAlcOel0A:10 a=sozttTNsAAAA:8 a=e5mUnYsNAAAA:8
+        a=WBYF2_TpmoQI-sFB3eIA:9 a=CjuIK1q_8ugA:10 a=aeg5Gbbo78KNqacMgKqU:22
+        a=Vxmtnl_E_bksehYqCbjh:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the 0.8GHz and 1GHz opps. According to the datasheet:
-https://www.nxp.com/docs/en/data-sheet/IMX8MDQLQIEC.pdf
-section 3.1.3 Operating ranges.
+Hi Peter.
 
-The 0.8GHz opp runs in nominal mode with the regulator set to 0.9V.
-The 1GHz runs in overdrive mode with the regulator set to 1V.
+Good with more panel drivers.
+Some comments in the following, please do not blindly follow them but
+check that this is OK.
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mq.dtsi | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+	Sam
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dt=
-s/freescale/imx8mq.dtsi
-index 1a89062..ebdec9e 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-@@ -91,6 +91,7 @@
- 			clocks =3D <&clk IMX8MQ_CLK_ARM>;
- 			enable-method =3D "psci";
- 			next-level-cache =3D <&A53_L2>;
-+			operating-points-v2 =3D <&a53_0_opp_table>;
- 		};
-=20
- 		A53_1: cpu@1 {
-@@ -101,6 +102,7 @@
- 			clocks =3D <&clk IMX8MQ_CLK_ARM>;
- 			enable-method =3D "psci";
- 			next-level-cache =3D <&A53_L2>;
-+			operating-points-v2 =3D <&a53_0_opp_table>;
- 		};
-=20
- 		A53_2: cpu@2 {
-@@ -111,6 +113,7 @@
- 			clocks =3D <&clk IMX8MQ_CLK_ARM>;
- 			enable-method =3D "psci";
- 			next-level-cache =3D <&A53_L2>;
-+			operating-points-v2 =3D <&a53_0_opp_table>;
- 		};
-=20
- 		A53_3: cpu@3 {
-@@ -121,6 +124,7 @@
- 			clocks =3D <&clk IMX8MQ_CLK_ARM>;
- 			enable-method =3D "psci";
- 			next-level-cache =3D <&A53_L2>;
-+			operating-points-v2 =3D <&a53_0_opp_table>;
- 		};
-=20
- 		A53_L2: l2-cache0 {
-@@ -666,6 +670,25 @@
- 			status =3D "disabled";
- 		};
-=20
-+
-+		a53_0_opp_table: opp-table {
-+			compatible =3D "operating-points-v2";
-+			opp-shared;
-+
-+			opp-800000000 {
-+				opp-hz =3D /bits/ 64 <800000000>;
-+				opp-microvolt =3D <900000>;
-+				clock-latency-ns =3D <150000>;
-+			};
-+
-+			opp-1000000000 {
-+				opp-hz =3D /bits/ 64 <1000000000>;
-+				opp-microvolt =3D <1000000>;
-+				clock-latency-ns =3D <150000>;
-+				opp-suspend;
-+			};
-+		};
-+
- 		gic: interrupt-controller@38800000 {
- 			compatible =3D "arm,gic-v3";
- 			reg =3D <0x38800000 0x10000>,	/* GIC Dist */
---=20
-2.7.4
+On Fri, Feb 15, 2019 at 04:03:15PM +0200, Peter Ujfalusi via dri-devel wrote:
+> The panel is similar to OSD101T2045-53TS (which is handled by panel-simple)
+> with one big difference: osd101t2587-53ts needs MIPI_DSI_TURN_ON_PERIPHERAL
+> message to be sent from the host to be operational and thus can not be
+> handled by panel-simple.
+> 
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> ---
+> +++ b/drivers/gpu/drm/panel/panel-osd-osd101t2587-53ts.c
+> @@ -0,0 +1,284 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + *  Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com
+> + *  Author: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> + */
+> +
+> +#include <linux/backlight.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/regulator/consumer.h>
+> +
+> +#include <drm/drmP.h>
+Please do not use drmP.h in new drivers - we try to get rid of this file.
 
+> +#include <drm/drm_crtc.h>
+> +#include <drm/drm_mipi_dsi.h>
+> +#include <drm/drm_panel.h>
+> +
+> +#include <video/mipi_display.h>
+> +
+> +struct osd101t2587_panel {
+> +	struct drm_panel base;
+> +	struct mipi_dsi_device *dsi;
+> +
+> +	struct backlight_device *backlight;
+> +	struct regulator *supply;
+> +
+> +	bool prepared;
+> +	bool enabled;
+> +
+> +	ktime_t earliest_wake;
+earliest_wake is not used, and can be deleted.
+
+> +
+> +	const struct drm_display_mode *default_mode;
+> +	const struct drm_display_mode *mode;
+Assigned but never used. Drop the assignment and the variable?
+
+> +};
+> +
+> +static inline struct osd101t2587_panel *to_osd101t2587_panel(struct drm_panel *panel)
+> +{
+> +	return container_of(panel, struct osd101t2587_panel, base);
+> +}
+> +
+> +static int osd101t2587_panel_disable(struct drm_panel *panel)
+> +{
+> +	struct osd101t2587_panel *osd101t2587 = to_osd101t2587_panel(panel);
+> +	int ret;
+> +
+> +	if (!osd101t2587->enabled)
+> +		return 0;
+> +
+> +	if (osd101t2587->backlight) {
+> +		osd101t2587->backlight->props.power = FB_BLANK_POWERDOWN;
+> +		osd101t2587->backlight->props.state |= BL_CORE_FBBLANK;
+> +		backlight_update_status(osd101t2587->backlight);
+> +	}
+backlight_disable(osd101t2587->backlight);
+
+
+> +
+> +	ret = mipi_dsi_shutdown_peripheral(osd101t2587->dsi);
+> +
+> +	osd101t2587->enabled = false;
+> +
+> +	return ret;
+> +}
+> +
+> +static int osd101t2587_panel_unprepare(struct drm_panel *panel)
+> +{
+> +	struct osd101t2587_panel *osd101t2587 = to_osd101t2587_panel(panel);
+> +
+> +	if (!osd101t2587->prepared)
+> +		return 0;
+> +
+> +	regulator_disable(osd101t2587->supply);
+> +	osd101t2587->prepared = false;
+> +
+> +	return 0;
+> +}
+> +
+> +static int osd101t2587_panel_prepare(struct drm_panel *panel)
+> +{
+> +	struct osd101t2587_panel *osd101t2587 = to_osd101t2587_panel(panel);
+> +	int ret;
+> +
+> +	if (osd101t2587->prepared)
+> +		return 0;
+> +
+> +	ret = regulator_enable(osd101t2587->supply);
+> +	if (!ret)
+> +		osd101t2587->prepared = true;
+> +
+> +	return ret;
+> +}
+> +
+> +static int osd101t2587_panel_enable(struct drm_panel *panel)
+> +{
+> +	struct osd101t2587_panel *osd101t2587 = to_osd101t2587_panel(panel);
+> +	int ret;
+> +
+> +	if (osd101t2587->enabled)
+> +		return 0;
+> +
+> +	ret = mipi_dsi_turn_on_peripheral(osd101t2587->dsi);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (osd101t2587->backlight) {
+> +		osd101t2587->backlight->props.power = FB_BLANK_UNBLANK;
+> +		osd101t2587->backlight->props.state &= ~BL_CORE_FBBLANK;
+> +		backlight_update_status(osd101t2587->backlight);
+> +	}
+backlight_enable(osd101t2587->backlight);
+can be used here.
+
+> +
+> +	osd101t2587->enabled = true;
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct drm_display_mode default_mode_osd101t2587 = {
+> +	.clock = 164400,
+> +	.hdisplay = 1920,
+> +	.hsync_start = 1920 + 152,
+> +	.hsync_end = 1920 + 152 + 52,
+> +	.htotal = 1920 + 152 + 52 + 20,
+> +	.vdisplay = 1200,
+> +	.vsync_start = 1200 + 24,
+> +	.vsync_end = 1200 + 24 + 6,
+> +	.vtotal = 1200 + 24 + 6 + 48,
+> +	.vrefresh = 60,
+> +	.flags = DRM_MODE_FLAG_NHSYNC | DRM_MODE_FLAG_NVSYNC,
+> +};
+> +
+> +static int osd101t2587_panel_get_modes(struct drm_panel *panel)
+> +{
+> +	struct osd101t2587_panel *osd101t2587 = to_osd101t2587_panel(panel);
+> +	struct drm_display_mode *mode;
+> +
+> +	mode = drm_mode_duplicate(panel->drm, osd101t2587->default_mode);
+> +	if (!mode) {
+> +		dev_err(panel->drm->dev, "failed to add mode %ux%ux@%u\n",
+> +			osd101t2587->default_mode->hdisplay,
+> +			osd101t2587->default_mode->vdisplay,
+> +			osd101t2587->default_mode->vrefresh);
+> +		return -ENOMEM;
+> +	}
+> +
+> +	drm_mode_set_name(mode);
+> +
+> +	drm_mode_probed_add(panel->connector, mode);
+> +
+> +	panel->connector->display_info.width_mm = 217;
+> +	panel->connector->display_info.height_mm = 136;
+> +
+> +	return 1;
+> +}
+> +
+> +static const struct drm_panel_funcs osd101t2587_panel_funcs = {
+> +	.disable = osd101t2587_panel_disable,
+> +	.unprepare = osd101t2587_panel_unprepare,
+> +	.prepare = osd101t2587_panel_prepare,
+> +	.enable = osd101t2587_panel_enable,
+> +	.get_modes = osd101t2587_panel_get_modes,
+> +};
+> +
+> +static const struct of_device_id osd101t2587_of_match[] = {
+> +	{
+> +		.compatible = "osd,osd101t2587-53ts",
+> +		.data = &default_mode_osd101t2587,
+> +	}, { }
+Move { } to a separate line and use { /* sentinel */ } to make it look like other drivers.
+ 
+
+> +};
+> +MODULE_DEVICE_TABLE(of, osd101t2587_of_match);
+> +
+> +static int osd101t2587_panel_add(struct osd101t2587_panel *osd101t2587)
+> +{
+> +	struct device *dev = &osd101t2587->dsi->dev;
+> +	struct device_node *np;
+> +	int ret;
+> +
+> +	osd101t2587->mode = osd101t2587->default_mode;
+> +
+> +	osd101t2587->supply = devm_regulator_get(dev, "power");
+> +	if (IS_ERR(osd101t2587->supply))
+> +		return PTR_ERR(osd101t2587->supply);
+> +
+> +	np = of_parse_phandle(dev->of_node, "backlight", 0);
+> +	if (np) {
+> +		osd101t2587->backlight = of_find_backlight_by_node(np);
+> +		of_node_put(np);
+> +
+> +		if (!osd101t2587->backlight)
+> +			return -EPROBE_DEFER;
+> +	}
+Use devm_of_find_backlight() - this results in simpler code.
+
+> +
+> +	drm_panel_init(&osd101t2587->base);
+> +	osd101t2587->base.funcs = &osd101t2587_panel_funcs;
+> +	osd101t2587->base.dev = &osd101t2587->dsi->dev;
+> +
+> +	ret = drm_panel_add(&osd101t2587->base);
+> +	if (ret < 0)
+> +		goto put_backlight;
+> +
+> +	return 0;
+> +
+> +put_backlight:
+> +	if (osd101t2587->backlight)
+> +		put_device(&osd101t2587->backlight->dev);
+When using devm_of_find_backlight() this is not needed.
+
+> +
+> +	return ret;
+> +}
+> +
+> +static void osd101t2587_panel_del(struct osd101t2587_panel *osd101t2587)
+> +{
+> +	if (osd101t2587->base.dev)
+> +		drm_panel_remove(&osd101t2587->base);
+> +
+> +	if (osd101t2587->backlight)
+> +		put_device(&osd101t2587->backlight->dev);
+When you use devm_of_find_backlight() then this is done for you, so the above can be deleted.
+
+> +}
+> +
+> +static int osd101t2587_panel_probe(struct mipi_dsi_device *dsi)
+> +{
+> +	struct osd101t2587_panel *osd101t2587;
+> +	const struct of_device_id *id;
+> +	int ret;
+> +
+> +	id = of_match_node(osd101t2587_of_match, dsi->dev.of_node);
+> +	if (!id)
+> +		return -ENODEV;
+> +
+> +	dsi->lanes = 4;
+> +	dsi->format = MIPI_DSI_FMT_RGB888;
+> +	dsi->mode_flags = MIPI_DSI_MODE_VIDEO |
+> +			  MIPI_DSI_MODE_VIDEO_BURST |
+> +			  MIPI_DSI_MODE_VIDEO_SYNC_PULSE |
+> +			  MIPI_DSI_MODE_EOT_PACKET;
+> +
+> +	osd101t2587 = devm_kzalloc(&dsi->dev, sizeof(*osd101t2587), GFP_KERNEL);
+> +	if (!osd101t2587)
+> +		return -ENOMEM;
+> +
+> +	mipi_dsi_set_drvdata(dsi, osd101t2587);
+> +
+> +	osd101t2587->dsi = dsi;
+> +	osd101t2587->default_mode = id->data;
+> +
+> +	ret = osd101t2587_panel_add(osd101t2587);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return mipi_dsi_attach(dsi);
+> +}
+> +
+> +static int osd101t2587_panel_remove(struct mipi_dsi_device *dsi)
+> +{
+> +	struct osd101t2587_panel *osd101t2587 = mipi_dsi_get_drvdata(dsi);
+> +	int ret;
+> +
+> +	ret = osd101t2587_panel_disable(&osd101t2587->base);
+> +	if (ret < 0)
+> +		dev_err(&dsi->dev, "failed to disable panel: %d\n", ret);
+> +
+To trun off power supply call osd101t2587_panel_unprepare() here?
+
+> +	ret = mipi_dsi_detach(dsi);
+> +	if (ret < 0)
+> +		dev_err(&dsi->dev, "failed to detach from DSI host: %d\n", ret);
+> +
+> +	osd101t2587_panel_del(osd101t2587);
+Replace this with
+	drm_panel_remove(osd101t2587->base);
+This should be fine and no need to disable backlight, this is done in osd101t2587_panel_disable()
+
+> +
+> +	return 0;
+> +}
+> +
+> +static void osd101t2587_panel_shutdown(struct mipi_dsi_device *dsi)
+> +{
+> +	struct osd101t2587_panel *osd101t2587 = mipi_dsi_get_drvdata(dsi);
+> +
+Maybe call osd101t2587_panel_unprepare() here to turn off power supply?
+
+> +	osd101t2587_panel_disable(&osd101t2587->base);
+> +}
+> +
+> +static struct mipi_dsi_driver osd101t2587_panel_driver = {
+> +	.driver = {
+> +		.name = "panel-osd-osd101t2587-53ts",
+> +		.of_match_table = osd101t2587_of_match,
+> +	},
+> +	.probe = osd101t2587_panel_probe,
+> +	.remove = osd101t2587_panel_remove,
+> +	.shutdown = osd101t2587_panel_shutdown,
+> +};
+> +module_mipi_dsi_driver(osd101t2587_panel_driver);
+> +
+> +MODULE_AUTHOR("Peter Ujfalusi <peter.ujfalusi@ti.com>");
+> +MODULE_DESCRIPTION("OSD101T2587-53TS DSI panel");
+> +MODULE_LICENSE("GPL v2");
+> -- 
+> Peter
+> 
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
