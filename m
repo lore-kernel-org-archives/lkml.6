@@ -2,220 +2,387 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B284CC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:01:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EA16C4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:02:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77CC12192D
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:01:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t4T9VnUk"
+	by mail.kernel.org (Postfix) with ESMTP id 0199D21B1C
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:02:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389094AbfBOHBJ (ORCPT
+        id S2389194AbfBOHCk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 02:01:09 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:36213 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726766AbfBOHBI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 02:01:08 -0500
-Received: by mail-yw1-f65.google.com with SMTP id 189so3349109ywi.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 23:01:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to;
-        bh=DxrEJRnVeD1XMZONp0s8zMWw6hgP/1QxLyDlLOJ/tQM=;
-        b=t4T9VnUkKHp05Q5iqH98ggqao1htyrRqrN6e5eCEPdGxC+5gdp59fLNiAAaOm3zim6
-         9tRTXp814knmJ9uMN0qq1mPo2OFUbOGh5pzb4FUkO4tQKIdf4hHt2ev2ALTTy0F0Umpk
-         omQ5UMPgsx3xGd8hrBIzoYdtnqLGcu8GACrv6vcpAVl92U0spCI6Hmb+yUe4uv3upMbM
-         E+38J8lfWTEy6ZUdfzpk0vcPMBghol9KBQuIRaGJHjk+HVFAFbmGEg48rPucJovUfzNT
-         zmrGeQWJddM/WzePegSEaeVQ8IkpTDSsunLnkUe6JBTPk3Qn+IM7qALJ/WZLaD5G1LoT
-         M1Rg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to;
-        bh=DxrEJRnVeD1XMZONp0s8zMWw6hgP/1QxLyDlLOJ/tQM=;
-        b=QMCc2lrrU24EeJyZJxAKQLmKuYYfUQ2lwVdMOOI5fQarUj2f6i0/7NmeAh0Rxg0o0i
-         UlrKHWc6H07n+s4hLUA5ALzJYGLz8EedxpqfTragI13kO0QojHkQhFPHoXLynY4Yonct
-         2NNfAjgoIH8Hakl8CcseC/pXiRR0y3I2vRh2EEJSKbQB6ouuqx03+n/LDhyntt5FekL1
-         CkqnJtUERfBiUuv1kOgByjfXJA24gbVKw30Jpl11KUX4jpAfhFjEkyMMvOhiXVO0TKP4
-         fXDD0PUDBVAfLAk6rqM6kyGed6WljH4vk/fNcYLQ4jO9oyOqDJmRTS6w5YN7bbGHAUWL
-         Dv5g==
-X-Gm-Message-State: AHQUAuYRGvqCw6ukciexH/NPvPoNBAv82r9rWbztm6S3YQLzfSqjB6Cy
-        cgWJzsBwV7RqsyblXk/0kzb5JCbP
-X-Google-Smtp-Source: AHgI3IZv/UTmdTK8NbMf2xdxNzJBxWD477DE1bz05e/6XDUnLp+EFIErwN4Iktwh3+pqgx1YrDyuuw==
-X-Received: by 2002:a0d:c644:: with SMTP id i65mr6730032ywd.68.1550214067063;
-        Thu, 14 Feb 2019 23:01:07 -0800 (PST)
-Received: from localhost.localdomain ([46.216.144.99])
-        by smtp.gmail.com with ESMTPSA id y67sm1759487ywf.89.2019.02.14.23.01.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 23:01:05 -0800 (PST)
-Received: from [127.0.0.1] (helo=jeknote.loshitsa1.net)
-        by localhost.localdomain with esmtp (Exim 4.92-RC4)
-        (envelope-from <jekhor@gmail.com>)
-        id 1guXUd-0002Jj-EX; Fri, 15 Feb 2019 10:01:03 +0300
-Date:   Fri, 15 Feb 2019 10:01:03 +0300
-From:   Yauhen Kharuzhy <jekhor@gmail.com>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-kernel@vger.kernel.org,
-        MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH 0/2] extcon: Intel Cherry Trail Whiskey Cove PMIC and
- external charger tweaks
-Message-ID: <20190215070103.GC30250@jeknote.loshitsa1.net>
-References: <20190210203649.21691-1-jekhor@gmail.com>
- <7d226dcc-9b9c-941c-7915-53ca123fa3a5@redhat.com>
- <20190214124744.GT9224@smile.fi.intel.com>
- <CAKWEGV7SGDMttB6uHwnkyjWk+bmSmZ-vTSOXHg1UAgLBeqnaXw@mail.gmail.com>
- <1026e999-ecda-7866-6607-3c947a4cb483@redhat.com>
+        Fri, 15 Feb 2019 02:02:40 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3728 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726766AbfBOHCk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 02:02:40 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 5FE4113098AF59727D6E;
+        Fri, 15 Feb 2019 15:02:35 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Fri, 15 Feb 2019
+ 15:02:27 +0800
+Subject: Re: [PATCH v2] staging: erofs: keep corrupted fs from crashing kernel
+ in erofs_namei()
+To:     Gao Xiang <gaoxiang25@huawei.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
+        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>, <stable@vger.kernel.org>
+References: <20190201121631.15179-1-gaoxiang25@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <a9381c0d-9857-4d03-710d-80006d426bbc@huawei.com>
+Date:   Fri, 15 Feb 2019 15:02:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1026e999-ecda-7866-6607-3c947a4cb483@redhat.com>
+In-Reply-To: <20190201121631.15179-1-gaoxiang25@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 04:05:26PM +0100, Hans de Goede wrote:
-> Hi,
+On 2019/2/1 20:16, Gao Xiang wrote:
+> As Al pointed out, "
+> ... and while we are at it, what happens to
+> 	unsigned int nameoff = le16_to_cpu(de[mid].nameoff);
+> 	unsigned int matched = min(startprfx, endprfx);
 > 
-> On 14-02-19 15:15, Yauhen Kharuzhy wrote:
-> > 
-> > 
-> > чц, 14 лют 2019, 15.47: карыстальнік Andy Shevchenko <andriy.shevchenko@linux.intel.com <mailto:andriy.shevchenko@linux.intel.com>> напісаў:
-> > 
-> >     On Thu, Feb 14, 2019 at 12:00:44AM +0100, Hans de Goede wrote:
-> >      > On 10-02-19 21:36, Yauhen Kharuzhy wrote:
-> > 
-> >      > A kind request to the platform-x86 driver maintainers (hi Andy): Please
-> >      > do not apply these patches until I've been able to test they don't cause
-> >      > issues elsewhere.
-> > 
-> >     Yes, that's my plan from the day one.
-> > 
-> >     I also asked Yauhen to keep you in Cc list for all patches regarding the
-> >     platform he is enabling. On his GH page you may find, btw, a pile of patches.
-> >     I hope we will not get a patch bomb at once.
-> > 
-> > 
-> > 
-> > Yes, I plan to propose remained patches only after discussing and accepting already sent series and some reworking.
-> > 
-> > 
-> > The charger-related part will be very discussable.
+> 	struct qstr dname = QSTR_INIT(data + nameoff,
+> 		unlikely(mid >= ndirents - 1) ?
+> 			maxsize - nameoff :
+> 			le16_to_cpu(de[mid + 1].nameoff) - nameoff);
 > 
-> Yes I just took a look at the patches from your kernel-tree at github,
-> it seems this is another quite "interesting" Cherry Trail device.
+> 	/* string comparison without already matched prefix */
+> 	int ret = dirnamecmp(name, &dname, &matched);
+> if le16_to_cpu(de[...].nameoff) is not monotonically increasing?  I.e.
+> what's to prevent e.g. (unsigned)-1 ending up in dname.len?
 > 
-> Oh if only the engineers who designed these had just use ACPI as intended
-> instead of doing a bunch of spaghetti code and duck-taping it all together
-> with proprietary / vendor-specific ACPI opregions. Ah well.
+> Corrupted fs image shouldn't oops the kernel.. "
 > 
-> Note I see that your DSDT does not have any *valid* ACPI battery device
-> (PNP0C0A dev), so we need to directly talk to the fuel-gauge. I also see
-> that you already have some WIP code for this, good.
+> Revisit the related lookup flow to address the issue.
 > 
-> Taking a quick peek I also noticed the changes you did for the
-> drivers/i2c/busses/i2c-cht-wc.c code instantiating the charger device.
+> Fixes: d72d1ce60174 ("staging: erofs: add namei functions")
+> Cc: <stable@vger.kernel.org> # 4.19+
+> Suggested-by: Al Viro <viro@ZenIV.linux.org.uk>
+> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+> ---
+> [ It should be better get reviewed first and for linux-next... ]
 > 
-> I think it would be better to instead of using DMI matching, to
-> actually probe which device is there, you can create a dummy
-> client on the adapter after the i2c_add_adapter call using:
-> i2c_new_dummy() and then you can do an smbus byte read from
-> register 0x14, on the bq24292i which the other devices with a wcove
-> pmic have you will get 0xff then since the addresses on the
-> bq24292i only go up to 0x0a and on the bq2589x your device has
-> you should then actually be able to check the device id you expect.
+> change log v2:
+>  - fix the missing "kunmap_atomic" pointed out by Dan;
+>  - minor cleanup;
 > 
-> If you do this, please also read and check the 0x0a device-id register
-> of the bq24292i if the 0x14 check fails, I can test this. For the
-> bq24292i the expectation is for bits 3-5 to encode the value 3 (011).
+>  drivers/staging/erofs/namei.c | 187 ++++++++++++++++++++++--------------------
+>  1 file changed, 99 insertions(+), 88 deletions(-)
+> 
+> diff --git a/drivers/staging/erofs/namei.c b/drivers/staging/erofs/namei.c
+> index 5596c52e246d..321c881d720f 100644
+> --- a/drivers/staging/erofs/namei.c
+> +++ b/drivers/staging/erofs/namei.c
+> @@ -15,74 +15,77 @@
+>  
+>  #include <trace/events/erofs.h>
+>  
+> -/* based on the value of qn->len is accurate */
+> -static inline int dirnamecmp(struct qstr *qn,
+> -	struct qstr *qd, unsigned int *matched)
+> +struct erofs_qstr {
+> +	const unsigned char *name;
+> +	const unsigned char *end;
+> +};
+> +
+> +/* based on the end of qn is accurate and it must have the trailing '\0' */
+> +static inline int dirnamecmp(const struct erofs_qstr *qn,
+> +			     const struct erofs_qstr *qd,
+> +			     unsigned int *matched)
+>  {
+> -	unsigned int i = *matched, len = min(qn->len, qd->len);
+> -loop:
+> -	if (unlikely(i >= len)) {
+> -		*matched = i;
+> -		if (qn->len < qd->len) {
+> -			/*
+> -			 * actually (qn->len == qd->len)
+> -			 * when qd->name[i] == '\0'
+> -			 */
+> -			return qd->name[i] == '\0' ? 0 : -1;
+> +	unsigned int i = *matched;
+> +
+> +	/*
+> +	 * on-disk error, let's only BUG_ON in the debugging mode.
+> +	 * otherwise, it will return 1 to just skip the invalid name
+> +	 * and go on (in consideration of the lookup performance).
+> +	 */
+> +	DBG_BUGON(qd->name > qd->end);
 
-Sounds reasonable. I don't like approach when we store information about
-I2C devices inside of I2C bus driver but this kind of autodetection
-seems to be lesser evil than a DMI matching.
+qd->name == qd->end is not allowed as well?
 
-> 
-> If you go this route, I would also advice to change the:
-> 
-> if (acpi_dev_present("INT33FE", NULL, -1)) {
-> 	....
-> }
-> 
-> To:
-> 
-> if (!acpi_dev_present("INT33FE", NULL, -1))
-> 	goto done;
-> 
-> So that you don't get a too deep indentation level, making
-> the end result look something like this:
-> 
-> 
-> if (!acpi_dev_present("INT33FE", NULL, -1))
-> 	goto done;
-> 
-> test_client = i2c_new_dummy(&adap->adapter, 0x14);
-> // test for bq25892 or bq24292i
-> i2c_unregister_device(test_client);
-> // register correct device, this must be done after
-> // unregister-ing the dummy to avoid an EBUSY error on the address
-> 
-> done:
-> platform_set_drvdata(pdev, adap);
-> return 0;
-> 
-> ###
-> 
-> I would do something similar with the fuel-gauge in
-> drivers/platform/x86/intel_cht_int33fe.c, one option would
-> be to simply count the number of resources in the ACPI
-> resource table for the INT33FE device, versions with
-> the Type-C port have 7 resources, where as your INT33FE
-> device has only 3.
-> 
-> I'm even thinking that it might be best to rename
-> intel_cht_int33fe.c to intel_cht_int33fe_typec.c and add
-> a check for the resource table having 7 entries there, then
-> you can make a intel_cht_int33fe_micro_usb.c copy and strip
-> that mostly empty. Both would bind to the same "INT33FE"
-> id and they would both silently bail with -ENODEV if the
-> resource-count (or the PTYP value) don't match.
-> 
-> The reason I'm thinking of having 2 drivers is because
-> the current intel_cht_int33fe.c is quite special / ugly and
-> already has enough ifs.
-> 
-> If you do a stand-alone intel_cht_int33fe_micro_usb.c that can
-> hopefully be much simpler.
-> 
-> Andy what is your take on having separate intel_cht_int33fe_typec.c
-> and intel_cht_int33fe_micro_usb.c drivers, both binding to
-> the "INT33FE" ACPI-ID (with its totally !@#%$#-ed up "API") ?
-> 
-> Having 2 drivers bind to the same id and exit silently with -ENODEV
-> is somewhat normal for USB ids where we also sometimes have these
-> kinda ID clashes with different devices hiding behind the same id.
+So will it be better to return directly here?
 
-Hmm... And we need to handle case when all three INT33FE devices are
-enabled in the DSDT...
+	if (unlikely(qd->name >= qd->end)) {
+		DBG_BUGON(1);
+		return 1;
+	}
 
-Instead of separating of driver to two (and more when we will find new
-CHT device...) I think about some kind of configuration variants table
-with selection by PTYP/resource count/etc. But typeC devices will
-require to define interconnections for example and we will get yet
-another hardly readable code with quirks, autodetection magic and big
-constant tables...
+> +
+> +	/* qd could not have trailing '\0' */
+> +	/* However it is absolutely safe if < qd->end */
+> +	while (qd->name + i < qd->end && qd->name[i] != '\0') {
+> +		if (qn->name[i] != qd->name[i]) {
+> +			*matched = i;
+> +			return qn->name[i] > qd->name[i] ? 1 : -1;
+>  		}
+> -		return (qn->len > qd->len);
+> +		++i;
+>  	}
+> -
+> -	if (qn->name[i] != qd->name[i]) {
+> -		*matched = i;
+> -		return qn->name[i] > qd->name[i] ? 1 : -1;
+> -	}
+> -
+> -	++i;
+> -	goto loop;
+> +	*matched = i;
+> +	/* See comments in __d_alloc on the terminating NUL character */
+> +	return qn->name[i] == '\0' ? 0 : 1;
+>  }
+>  
+> -static struct erofs_dirent *find_target_dirent(
+> -	struct qstr *name,
+> -	u8 *data, int maxsize)
+> +#define nameoff_from_disk(off, sz)	(le16_to_cpu(off) & ((sz) - 1))
+> +
+> +static struct erofs_dirent *find_target_dirent(struct erofs_qstr *name,
+> +					       u8 *data,
+> +					       unsigned int dirblksize,
+> +					       const int ndirents)
+>  {
+> -	unsigned int ndirents, head, back;
+> +	int head, back;
+>  	unsigned int startprfx, endprfx;
+>  	struct erofs_dirent *const de = (struct erofs_dirent *)data;
+>  
+> -	/* make sure that maxsize is valid */
+> -	BUG_ON(maxsize < sizeof(struct erofs_dirent));
+> -
+> -	ndirents = le16_to_cpu(de->nameoff) / sizeof(*de);
+> -
+> -	/* corrupted dir (may be unnecessary...) */
+> -	BUG_ON(!ndirents);
+> -
+> -	head = 0;
+> +	/* since the 1st dirent has been evaluated previously */
+> +	head = 1;
+>  	back = ndirents - 1;
+>  	startprfx = endprfx = 0;
+>  
+>  	while (head <= back) {
+> -		unsigned int mid = head + (back - head) / 2;
+> -		unsigned int nameoff = le16_to_cpu(de[mid].nameoff);
+> +		const int mid = head + (back - head) / 2;
+> +		const int nameoff = nameoff_from_disk(de[mid].nameoff,
+> +						      dirblksize);
+>  		unsigned int matched = min(startprfx, endprfx);
+> -
+> -		struct qstr dname = QSTR_INIT(data + nameoff,
+> -			unlikely(mid >= ndirents - 1) ?
+> -				maxsize - nameoff :
+> -				le16_to_cpu(de[mid + 1].nameoff) - nameoff);
+> +		struct erofs_qstr dname = {
+> +			.name = data + nameoff,
+> +			.end = unlikely(mid >= ndirents - 1) ?
+> +				data + dirblksize :
+> +				data + nameoff_from_disk(de[mid + 1].nameoff,
+> +							 dirblksize)
+> +		};
+>  
+>  		/* string comparison without already matched prefix */
+>  		int ret = dirnamecmp(name, &dname, &matched);
+>  
+> -		if (unlikely(!ret))
+> +		if (unlikely(!ret)) {
+>  			return de + mid;
+> -		else if (ret > 0) {
+> +		} else if (ret > 0) {
+>  			head = mid + 1;
+>  			startprfx = matched;
+> -		} else if (unlikely(mid < 1))	/* fix "mid" overflow */
+> -			break;
+> -		else {
+> +		} else {
+>  			back = mid - 1;
+>  			endprfx = matched;
+>  		}
+> @@ -91,12 +94,12 @@ static struct erofs_dirent *find_target_dirent(
+>  	return ERR_PTR(-ENOENT);
+>  }
+>  
+> -static struct page *find_target_block_classic(
+> -	struct inode *dir,
+> -	struct qstr *name, int *_diff)
+> +static struct page *find_target_block_classic(struct inode *dir,
+> +					      struct erofs_qstr *name,
+> +					      int *_ndirents)
+>  {
+>  	unsigned int startprfx, endprfx;
+> -	unsigned int head, back;
+> +	int head, back;
+>  	struct address_space *const mapping = dir->i_mapping;
+>  	struct page *candidate = ERR_PTR(-ENOENT);
+>  
+> @@ -105,41 +108,43 @@ static struct page *find_target_block_classic(
+>  	back = inode_datablocks(dir) - 1;
+>  
+>  	while (head <= back) {
+> -		unsigned int mid = head + (back - head) / 2;
+> +		const int mid = head + (back - head) / 2;
+>  		struct page *page = read_mapping_page(mapping, mid, NULL);
+>  
+> -		if (IS_ERR(page)) {
+> -exact_out:
+> -			if (!IS_ERR(candidate)) /* valid candidate */
+> -				put_page(candidate);
+> -			return page;
+> -		} else {
+> -			int diff;
+> -			unsigned int ndirents, matched;
+> -			struct qstr dname;
+> +		if (!IS_ERR(page)) {
+>  			struct erofs_dirent *de = kmap_atomic(page);
+> -			unsigned int nameoff = le16_to_cpu(de->nameoff);
+> -
+> -			ndirents = nameoff / sizeof(*de);
+> +			const int nameoff = nameoff_from_disk(de->nameoff,
+> +							      EROFS_BLKSIZ);
+> +			const int ndirents = nameoff / sizeof(*de);
+> +			int diff;
+> +			unsigned int matched;
+> +			struct erofs_qstr dname;
+>  
+> -			/* corrupted dir (should have one entry at least) */
+> -			BUG_ON(!ndirents || nameoff > PAGE_SIZE);
+> +			if (unlikely(!ndirents)) {
+> +				DBG_BUGON(1);
+> +				kunmap_atomic(de);
+> +				put_page(page);
+> +				page = ERR_PTR(-EIO);
+> +				goto out;
+> +			}
+>  
+>  			matched = min(startprfx, endprfx);
+>  
+>  			dname.name = (u8 *)de + nameoff;
+> -			dname.len = ndirents == 1 ?
+> -				/* since the rest of the last page is 0 */
+> -				EROFS_BLKSIZ - nameoff
+> -				: le16_to_cpu(de[1].nameoff) - nameoff;
+> +			if (ndirents == 1)
+> +				dname.end = (u8 *)de + EROFS_BLKSIZ;
+> +			else
+> +				dname.end = (u8 *)de +
+> +					nameoff_from_disk(de[1].nameoff,
+> +							  EROFS_BLKSIZ);
+>  
+>  			/* string comparison without already matched prefix */
+>  			diff = dirnamecmp(name, &dname, &matched);
+>  			kunmap_atomic(de);
+>  
+>  			if (unlikely(!diff)) {
+> -				*_diff = 0;
+> -				goto exact_out;
+> +				*_ndirents = 0;
+> +				goto out;
+>  			} else if (diff > 0) {
+>  				head = mid + 1;
+>  				startprfx = matched;
+> @@ -147,47 +152,53 @@ static struct page *find_target_block_classic(
+>  				if (likely(!IS_ERR(candidate)))
+>  					put_page(candidate);
+>  				candidate = page;
+> +				*_ndirents = ndirents;
+>  			} else {
+>  				put_page(page);
+>  
+> -				if (unlikely(mid < 1))	/* fix "mid" overflow */
+> -					break;
+> -
+>  				back = mid - 1;
+>  				endprfx = matched;
+>  			}
+> +			continue;
+>  		}
+> +out:		/* free if the candidate is valid */
+> +		if (!IS_ERR(candidate))
+> +			put_page(candidate);
+> +		return page;
+>  	}
+> -	*_diff = 1;
+>  	return candidate;
+>  }
+>  
+>  int erofs_namei(struct inode *dir,
+> -	struct qstr *name,
+> -	erofs_nid_t *nid, unsigned int *d_type)
+> +		struct qstr *name,
+> +		erofs_nid_t *nid, unsigned int *d_type)
+>  {
+> -	int diff;
+> +	int ndirents;
+>  	struct page *page;
+> -	u8 *data;
+> +	void *data;
+>  	struct erofs_dirent *de;
+> +	struct erofs_qstr qn;
+>  
+>  	if (unlikely(!dir->i_size))
+>  		return -ENOENT;
+>  
+> -	diff = 1;
+> -	page = find_target_block_classic(dir, name, &diff);
+> +	qn.name = name->name;
+> +	qn.end = name->name + name->len;
+> +
+> +	ndirents = 0;
+> +	page = find_target_block_classic(dir, &qn, &ndirents);
+>  
+> -	if (unlikely(IS_ERR(page)))
+> +	if (IS_ERR(page))
+>  		return PTR_ERR(page);
+>  
+>  	data = kmap_atomic(page);
+>  	/* the target page has been mapped */
+> -	de = likely(diff) ?
+> -		/* since the rest of the last page is 0 */
+> -		find_target_dirent(name, data, EROFS_BLKSIZ) :
+> -		(struct erofs_dirent *)data;
+> +	if (ndirents)
+> +		de = find_target_dirent(&qn, data, EROFS_BLKSIZ, ndirents);
 
-OK, I plan to start to make some experiments with this at weekend.
+If we want to support different blksize during dirent lookup, how about
+adding parameter for find_target_block_classic() as find_target_dirent()?
 
--- 
-Yauhen Kharuzhy
+Thanks,
+
+> +	else
+> +		de = (struct erofs_dirent *)data;
+>  
+> -	if (likely(!IS_ERR(de))) {
+> +	if (!IS_ERR(de)) {
+>  		*nid = le64_to_cpu(de->nid);
+>  		*d_type = de->file_type;
+>  	}
+> 
+
