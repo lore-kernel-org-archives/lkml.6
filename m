@@ -2,96 +2,172 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C829AC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:25:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA49C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:27:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95A0F21924
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:24:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550215498;
-	bh=gCMvMJB8jyS5NVoL6Bpbbi0W9NYjiZmOLDG06SjhFJo=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=vLdl0g5ozfTbZe/2fmOi1+No/2h3bFGItGRg6MxicOUnTRZzYcWqP+MwSHlOq2q+H
-	 xlluqbWe4FCNG3jKJ9jIZGnCsUfCQUlIMLiXZ8HfUVXpcz1UK6qF1UUY/+fTiuFYYQ
-	 U9LzOFSBSbi1oV4FZ96323J6WojAbs9UK73tRkNo=
+	by mail.kernel.org (Postfix) with ESMTP id 8516721924
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:27:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jeSw6/Mq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389675AbfBOHYt (ORCPT
+        id S2389717AbfBOH1O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 02:24:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40158 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725909AbfBOHYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 02:24:48 -0500
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D78F21920
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 07:24:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550215484;
-        bh=gCMvMJB8jyS5NVoL6Bpbbi0W9NYjiZmOLDG06SjhFJo=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=elUxCBq9+hoeWcTe7EJljJhmFxCwbIjW8R+qSwWDjcUQuJSAjzr0hEvuFgWbY3bAO
-         SGfJvi3dN4oYubvh6sYttAtJFkWWxTZSHRsPRz4Lvky+bGy8OGSJQ4PgvOwvsvGWE5
-         jusdq3g88SDbwSn+6m/5tu+PntrnZdohlX1wdhdY=
-Received: by mail-lj1-f178.google.com with SMTP id e17-v6so7477324lja.8
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 23:24:43 -0800 (PST)
-X-Gm-Message-State: AHQUAuaRSqStQ43IMKY9ivG2o7uxUVoXBILVWiVIxtZl8AqoyOD0vw9g
-        4eRvb5/gW+qIjlaPzUnBGwvVQ4grHvQxGdIwJxE=
-X-Google-Smtp-Source: AHgI3IYrD6/FF6hobnvbge7h1TRGNYtf/3xPgUP2DGPCY4dWydPmXDhXmqV6nukzwcW/euc+XI5Wqmq9j2ytDgnyAoc=
-X-Received: by 2002:a2e:3a10:: with SMTP id h16-v6mr4865196lja.184.1550215469733;
- Thu, 14 Feb 2019 23:24:29 -0800 (PST)
+        Fri, 15 Feb 2019 02:27:14 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:33295 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725909AbfBOH1O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 02:27:14 -0500
+Received: by mail-yb1-f194.google.com with SMTP id w2so3456044ybi.0;
+        Thu, 14 Feb 2019 23:27:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=+/HJY0CvjgV5qxMAw4VOcOeAjbbA1USZ3ro72VHMvvk=;
+        b=jeSw6/MqB9kkIZGtp/sk4TjgSt095asqpTEbAYku05OkdM4mCZSCyBPSonpi+SZux7
+         0fru/IhmuBjEM7QSVFnSVXimanlKGxgrCoMt0UDcjHruUjnH7BeaRsssXrI9dukiXeyo
+         l5rTEiq1MEHs8GNwnE8QTEiqTq9P+ruWB8LBUOEr0X2lZ1O2cCqPfh8/65bKxTuu5SsE
+         E58g+q9kwyY3/15q+jq9OY5XcmQf3sTdWIJKJe8P+6rxPnmRcD2XWyynvTDRTHbOmhXg
+         h+aa7OrN+OaqOUZ5zLqgQiZaCG71zdG0ubBaMiVbGeXKIsDc5a36LLUMGGtFezFw4Ioc
+         Dp/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=+/HJY0CvjgV5qxMAw4VOcOeAjbbA1USZ3ro72VHMvvk=;
+        b=QIh8goWvL9s5FvEertMrpB+T0slVfu4F0/ZRQ8Zlx8BhrUgHj1DK34cyCyPLKO/jCi
+         skY5Re5TSoTRl+gwrrkhXPGMMGylCkqkjCjDClAv5vn2SkMluEFFavNFqMWOb096sSBo
+         cZY01V81kDTr5Nx64eIClUCjBw9sXCui2cN/vs717qGwGcu5+5B88AH9deXOGTQxng3s
+         a1Q71yThqf6tTxACf5p6t/T+JUSKyHAV5yFcbRlqoMMEOrkhnKfQVHXgPmIK4EgfS0BM
+         GdQsvb9+0AB/mGjW9WLPWr7jr8Jl/+HGhK3uawAMe5XV7vOa4+iGOXUyNRpBRod1EGnm
+         0ImQ==
+X-Gm-Message-State: AHQUAubuhjzL0tWWsXFhWPh1esQ+7ltKmCZcmg0Fv3yFiMO3532IHotg
+        27MQ+/940nisEus0HriM6zw=
+X-Google-Smtp-Source: AHgI3IZSmB29ag6WgJw/EIYm0KTYaZnbjUIazshS63GLVeMwXYcW28MXJ8xwlI5JieqMN9xQoyU5cg==
+X-Received: by 2002:a5b:352:: with SMTP id q18mr6759465ybp.371.1550215633003;
+        Thu, 14 Feb 2019 23:27:13 -0800 (PST)
+Received: from localhost.localdomain ([46.216.144.99])
+        by smtp.gmail.com with ESMTPSA id 207sm3176889ywj.92.2019.02.14.23.27.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 14 Feb 2019 23:27:12 -0800 (PST)
+Received: from [127.0.0.1] (helo=jeknote.loshitsa1.net)
+        by localhost.localdomain with esmtp (Exim 4.92-RC4)
+        (envelope-from <jekhor@gmail.com>)
+        id 1guXtt-0002h0-Nk; Fri, 15 Feb 2019 10:27:09 +0300
+Date:   Fri, 15 Feb 2019 10:27:09 +0300
+From:   Yauhen Kharuzhy <jekhor@gmail.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
+ LEDs
+Message-ID: <20190215072709.GD30250@jeknote.loshitsa1.net>
+References: <20190212205901.13037-2-jekhor@gmail.com>
+ <1df39a63-533f-bb68-a056-a0241f148be9@redhat.com>
+ <20190213230731.GA8557@amd>
+ <42078a81-e32e-81b7-528f-d1adb60d31c3@redhat.com>
+ <20190213233806.GA11867@amd>
+ <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com>
+ <20190214111423.GE6132@amd>
+ <92cf09b8-726d-4f1b-94ba-368a66af2246@redhat.com>
+ <2b6faaa5-b21e-a512-de7d-ca21be5045fc@gmail.com>
+ <20190214230307.GA17358@amd>
 MIME-Version: 1.0
-References: <CGME20190214160039epcas2p34b9e3b3ca5f9b0aa1fb5ed59403a6fe1@epcas2p3.samsung.com>
- <20190214160011.3940-1-s.nawrocki@samsung.com>
-In-Reply-To: <20190214160011.3940-1-s.nawrocki@samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 15 Feb 2019 08:24:17 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPd20QPjvEV_TzKi8fcJM-Ws4Te6W0ZRvzNVt2c-60VKAQ@mail.gmail.com>
-Message-ID: <CAJKOXPd20QPjvEV_TzKi8fcJM-Ws4Te6W0ZRvzNVt2c-60VKAQ@mail.gmail.com>
-Subject: Re: [PATCH] ASoC: samsung: odroid: Ensure proper sample rate on
- pri/sec PCM
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     broonie@kernel.org, lgirdwood@gmail.com, sbkim73@samsung.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190214230307.GA17358@amd>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 14 Feb 2019 at 17:00, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
->
-> Currently when playing sound with different sample rates actual
-> sample rate will be determined by audio stream which starts first
-> on either primary or secondary PCM. The audio root clock will be
-> configured appropriately only for the first stream. As the hardware
-> is limited to same sample rate on both interfaces we need to disallow
-> streams with different sample rates. It is done by this patch by
-> returning error in FE hw_params if there is already active stream
-> running with different sample rate.
->
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
->  sound/soc/samsung/odroid.c | 56 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 56 insertions(+)
+On Fri, Feb 15, 2019 at 12:03:07AM +0100, Pavel Machek wrote:
+> Hi!
+> 
+> > >>>I suggest that we deal with this special case by adding 3 custom
+> > >>>sysfs attributes:
+> > >>>
+> > >>>1) "mode" which when read, prints, e.g. :
+> > >>>manual [on-when-charging]
+> > >>
+> > >>While this allows _user on console_ to control everything using echo,
+> > >>it is not suitable for applications trying to control LEDs.
+> > >>
+> > >>As there's nothing special about the case here, I believe we should
+> > >>have generic solution here.
+> > >>
+> > >>My preffered solution would be "hardware" trigger that leaves the LED
+> > >>in hardware control.
+> > >
+> > >As you explained in the parts which I snipped, there are many
+> > >devices which have a similar choice for a LED being under hw or
+> > >user control. I can see how this looks like a trigger and how we
+> > >could use the trigger API for this.
+> > >
+> > >I believe though, that if we implement a "virtual" (for lack of
+> > >a better word) trigger for this, that this should be done in the
+> > >LED core. I can envision this working like this:
+> > >
+> > >1) Add a:
+> > >
+> > >hw_control_set(struct led_classdev *led_cdev, bool enable_hw_control);
+> > 
+> > Please note that we have support for hw patterns in the pattern trigger.
+> > (see how drivers/leds/leds-sc27xx-bltc.c makes use of it for its
+> > breathing pattern).
+> > We have also support for hw blinking in timer trigger via blink_set op.
+> > 
+> > In addition to that there is brightness_hw_changed sysfs attribute
+> > with led_classdev_notify_brightness_hw_changed() LED API.
+> > 
+> > Couldn't they be used in concert to support the specific features
+> > of the device in question?
+> 
+> I believe main issue here is this:
+> 
+> Hardware can automatically control the LED according to the charging
+> status, or it can be used as normal software-controlled LED.
+> 
+> I believe we should use trigger to select if hardware controls it or
+> not (and then add driver-specific files to describe the
+> details). Other proposal is in the mail thread, too.
 
-Is this the fix for
-"aplay: set_params:1403: Unable to install hw params:"
-which appeared in today's next (so after your last round of patches get merged)?
-https://krzk.eu/#/builders/1/builds/3093/steps/24/logs/stdio
+But there are two kinds of 'hardware control' here in discussion:
+1:
+	a) PMIC switching LED off/on/breathing/blinking reflected the charging
+	state (charger is controlled by PMIC entirely without of
+	software intervention) – 'hw controlled' mode
+	b) Software controls when LED is on/off/breathing/blinking but
+	patterns are generated by PMIC – 'sw controlled' mode.
 
-Also, since yesterday (so with previous rounds of patches) the audss
-rebind freezes entire kernel:
-https://krzk.eu/#/builders/1/builds/3093/steps/25/logs/stdio
-https://krzk.eu/#/builders/1/builds/3093/steps/25/logs/serial0
+2:
+	a) parameters of lighting (continuous/blinking/breathing) are
+	set in the PMIC and the PMIC generates patterns
+	b) blinking/breathing patterns are generated by the software
+	entirely.
 
-It is not important test but it was always passing in my suite.
+It seems that we sometimes confuse this two kinds of hw control definitions
+in the discussion.
 
-Best regards,
-Krzysztof
+
+The simple use case question: with this hardware and existing LED class
+API, what user/app should to do to make LED breathing with hw-generated
+pattern?
+
+As I see, user should activate 'pattern' trigger and write to its hw_pattern attribute...
+hm... big pattern which describes every step of breathing? Some
+simplified pattern which should be interpreted as 'enable the breathing
+an set its frequency' by driver? Which level of simplification will be
+suitable? Which criteria of pattern rejection should be?
+
+-- 
+Yauhen Kharuzhy
