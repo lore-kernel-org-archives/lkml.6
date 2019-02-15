@@ -2,111 +2,102 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD078C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:38:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 279BEC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:39:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D1B021A4C
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:38:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SbZlifBX"
+	by mail.kernel.org (Postfix) with ESMTP id 0351F218FF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:39:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729785AbfBORi6 (ORCPT
+        id S1729918AbfBORjf convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 12:38:58 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:55248 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbfBORi4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 12:38:56 -0500
-Received: by mail-it1-f196.google.com with SMTP id f10so2471157ita.4
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 09:38:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LGi7S/MNU3uYxAOGaRJ4HSpN828sKONDNI6b2ZNYQr8=;
-        b=SbZlifBXMLKzWTPrMvZu0XJvqq7bCGviH/ni2/ZvQ0CFNimrCGPrjmQOSU0HO1sl8N
-         GnJ/eSwr8tZytPoTCM5pv19ZqTmwrdmWuNxIhunWly5ialJVmpqKjRWv2BnqpuCAXjsX
-         pQV94nbWJHRAAGmLbfiLaSLykwszA3N/CMc8hBt+WgI41RES9oj7zITd7BJDqGnHZO97
-         QtuuCHFpnHN4acv9ovX7+sUAsA/f2sfKeZKhr79gn73EGoWC+H+Y9GOz3tTldCiLFZ/L
-         fqrPsqupCOQag8FT93ZpS1Yxa9XedcBbTNuHytSwk9KcQv+pbl9mlnj8QlKt5bteOfFs
-         cXQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LGi7S/MNU3uYxAOGaRJ4HSpN828sKONDNI6b2ZNYQr8=;
-        b=Xuk9MooixWpGsvKHpK81Pq8mYK9WNl+3TraXmHLyx75ZIvsEgkmNIZOuyEa5iYAjS7
-         8lkItoJx0qgwaSB/7jwDdyRbXe9OHg6oz/LlE7CMop8k2BwNK040vZ2JaVyOVXRYb8Lx
-         78VkyX2hDiwodWi4snfv7Vp8HdVMrqcvp+TxNcC9by9+e1GNMLiFHn3gez9T2ncNWGLZ
-         gljqrcXfvsPk47fOczTGZ+yEdgFpftREylbkUsAaXTvCjfjsONtya66AymVmvgvly0Dz
-         EIy+9UjypKdGdqFbnOmdTJd/r1W3qM7I+vf8V1qmtbd9LAJq4xhVmjgO2uNt0niYfxkd
-         f8DA==
-X-Gm-Message-State: AHQUAuYKb5W4pZlsKz5Yu8nkgfb7xiRINUotPCTzGe+cQ7Fk8xNpk4pl
-        LuycbmcEZSPOGeRH7Fd5qt+y3C6Fk/lMFHITLl7CFg==
-X-Google-Smtp-Source: AHgI3IblIqdmw/DETGmd4Cz14adK5/7GpRsqSmT8X+9mo1jRrCm8eeW03zav29tYUOdIxGtxPeswWRjxB/SL3vn/uDY=
-X-Received: by 2002:a02:3342:: with SMTP id k2mr5385833jak.62.1550252335329;
- Fri, 15 Feb 2019 09:38:55 -0800 (PST)
+        Fri, 15 Feb 2019 12:39:35 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57708 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725939AbfBORje (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 12:39:34 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6BEE1C0D8047;
+        Fri, 15 Feb 2019 17:39:33 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-121-129.rdu2.redhat.com [10.10.121.129])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AF9895C3FD;
+        Fri, 15 Feb 2019 17:39:20 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <758871dc-15b7-ed5c-a119-a40037309507@tycho.nsa.gov>
+References: <758871dc-15b7-ed5c-a119-a40037309507@tycho.nsa.gov> <155024683432.21651.14153938339749694146.stgit@warthog.procyon.org.uk> <155024709026.21651.7275876165845045967.stgit@warthog.procyon.org.uk>
+To:     Stephen Smalley <sds@tycho.nsa.gov>
+Cc:     dhowells@redhat.com, keyrings@vger.kernel.org,
+        trond.myklebust@hammerspace.com, sfrench@samba.org,
+        linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        rgb@redhat.com, linux-kernel@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        SELinux <selinux@vger.kernel.org>
+Subject: Re: [RFC PATCH 22/27] KEYS: Replace uid/gid/perm permissions checking with an ACL
 MIME-Version: 1.0
-References: <20190212180441.15340-1-keescook@chromium.org>
-In-Reply-To: <20190212180441.15340-1-keescook@chromium.org>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 15 Feb 2019 18:38:43 +0100
-Message-ID: <CAKv+Gu9Cecc1hAurC1TEwqnf5E1gOaUxNgHt64QnziT1enp6YQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] gcc-plugins: structleak: Generalize to all variable types
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Emese Revfy <re.emese@gmail.com>,
-        Alexander Popov <alex.popov@linux.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Jann Horn <jannh@google.com>,
-        Alexander Potapenko <glider@google.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <32622.1550252354.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8BIT
+Date:   Fri, 15 Feb 2019 17:39:14 +0000
+Message-ID: <32623.1550252354@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 15 Feb 2019 17:39:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Feb 2019 at 19:04, Kees Cook <keescook@chromium.org> wrote:
->
-> Instead of a new plugin for stack initialization[1], this improves
-> structleak to handle initialization of all variable types. Since the
-> instrumentation happens at a different point, the "switch" statement
-> changes from the earlier posting[2] are no longer needed. As before,
-> this also introduces a stack initialization regression testing module to
-> validate various kinds of stack variable usage vs compiler instrumentation
-> for initialization. See the individual patches for more details.
->
+Stephen Smalley <sds@tycho.nsa.gov> wrote:
 
-For the series,
+> > --- a/security/selinux/hooks.c
+> > +++ b/security/selinux/hooks.c
+> > @@ -6560,6 +6560,7 @@ static int selinux_key_permission(key_ref_t key_ref,
+> >   {
+> >   	struct key *key;
+> >   	struct key_security_struct *ksec;
+> > +	unsigned oldstyle_perm;
+> >   	u32 sid;
+> >     	/* if no specific permissions are requested, we skip the
+> > @@ -6568,13 +6569,26 @@ static int selinux_key_permission(key_ref_t key_ref,
+> >   	if (perm == 0)
+> >   		return 0;
+> >   +	oldstyle_perm = perm & (KEY_NEED_VIEW | KEY_NEED_READ | KEY_NEED_WRITE
+> > |
+> > +				KEY_NEED_SEARCH | KEY_NEED_LINK);
+> > +	if (perm & KEY_NEED_SETSEC)
+> > +		oldstyle_perm |= OLD_KEY_NEED_SETATTR;
+> > +	if (perm & KEY_NEED_INVAL)
+> > +		oldstyle_perm |= KEY_NEED_SEARCH;
+> > +	if (perm & KEY_NEED_REVOKE && !(perm & OLD_KEY_NEED_SETATTR))
+> > +		oldstyle_perm |= KEY_NEED_WRITE;
+> > +	if (perm & KEY_NEED_JOIN)
+> > +		oldstyle_perm |= KEY_NEED_SEARCH;
+> > +	if (perm & KEY_NEED_CLEAR)
+> > +		oldstyle_perm |= KEY_NEED_WRITE;
+> > +
+> >   	sid = cred_sid(cred);
+> >     	key = key_ref_to_ptr(key_ref);
+> >   	ksec = key->security;
+> >     	return avc_has_perm(&selinux_state,
+> > -			    sid, ksec->sid, SECCLASS_KEY, perm, NULL);
+> > +			    sid, ksec->sid, SECCLASS_KEY, oldstyle_perm, NULL);
+> 
+> This might be ok temporarily for compatibility but we'll want to ultimately
+> define the new permissions in SELinux and switch over to using them if a new
+> policy capability bit is set to indicate that the policy supports them.  We
+> should probably decouple the SELinux permission bits from the KEY_NEED_*
+> values and explicitly map them all at the same time.
 
-Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Sounds reasonable.  I should probably detach the first two ACL patches from
+the set and push them separately.
 
-(although I reviewed 2/2 only cursorily)
-
-
-
-> [1] https://lkml.kernel.org/r/CA+55aFykZL+cSBJjBBts7ebEFfyGPdMzTmLSxKnT_29=j942dA@mail.gmail.com
-> [2] https://lkml.kernel.org/r/20190123110349.35882-1-keescook@chromium.org
->
-> Kees Cook (2):
->   gcc-plugins: structleak: Generalize to all variable types
->   lib: Introduce test_stackinit module
->
->  lib/Kconfig.debug                       |  10 +
->  lib/Makefile                            |   1 +
->  lib/test_stackinit.c                    | 378 ++++++++++++++++++++++++
->  scripts/Makefile.gcc-plugins            |   2 +
->  scripts/gcc-plugins/Kconfig             |  58 +++-
->  scripts/gcc-plugins/structleak_plugin.c |  36 ++-
->  6 files changed, 463 insertions(+), 22 deletions(-)
->  create mode 100644 lib/test_stackinit.c
->
-> --
-> 2.17.1
->
+David
