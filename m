@@ -7,58 +7,62 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB56FC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:28:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D1ACC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:28:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA6D021929
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:28:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E8E692192B
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:28:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406075AbfBOM2Q (ORCPT
+        id S2406108AbfBOM2Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 07:28:16 -0500
-Received: from mout.gmx.net ([212.227.17.20]:42431 "EHLO mout.gmx.net"
+        Fri, 15 Feb 2019 07:28:24 -0500
+Received: from mout.gmx.net ([212.227.17.22]:54925 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405454AbfBOM2P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 07:28:15 -0500
+        id S2406082AbfBOM2W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 07:28:22 -0500
 Received: from localhost.localdomain ([218.18.229.179]) by mail.gmx.com
  (mrgmx103 [212.227.17.174]) with ESMTPSA (Nemesis) id
- 0Ld0E0-1hKqgF41BI-00iDAT; Fri, 15 Feb 2019 13:28:13 +0100
+ 0M7Y9j-1hFAQe167L-00xKFG; Fri, 15 Feb 2019 13:28:20 +0100
 From:   Chengguang Xu <cgxu519@gmx.com>
 To:     gregkh@linuxfoundation.org
 Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
         Chengguang Xu <cgxu519@gmx.com>
-Subject: [PATCH v2 1/4] chardev: add additional check for minor range overlap
-Date:   Fri, 15 Feb 2019 20:27:11 +0800
-Message-Id: <20190215122714.28842-1-cgxu519@gmx.com>
+Subject: [PATCH v2 2/4] chardev: add a check for given minor range
+Date:   Fri, 15 Feb 2019 20:27:12 +0800
+Message-Id: <20190215122714.28842-2-cgxu519@gmx.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190215122714.28842-1-cgxu519@gmx.com>
+References: <20190215122714.28842-1-cgxu519@gmx.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:PuxX26Iwc4DsD6HQypaGn4HHmfiFlbvc+zDkpxeqQf07xuqc4qf
- uTMrJ+1tvt9PxrKXunk85gRqfSqRCnXmZAWhCU/ydtJRBviCy9ejH4bGAB5yzS3WKwR0Ffa
- N4aXZW5bodlbxI+DPXc3UHWBJqS3bUAwrBrZdf8a2CJZ3EF8DKzx7cFbVD8P4T5NSdleHEj
- 4Ba6wZ+bPRTu+NmBTa4mg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:AI/DMhKy2a0=:E7+ZJX6F6prUEy3oG6tclE
- I1xgW+rbUeOiMIIUDz9Q59dlDmRPgYQc/oLJ6YeJaCAPe4czTodEmuQRmQWvg95WUYit0x7Ys
- Y8+yNebFo1vdvKxZyNHFhiQz1KtDSZzUQowOEj/xsIFVdJS537O/RrfoEIqQ/DEEC7d9H/Fh0
- Za+QMpI1UpL5lmkHvud03hS93H1DIl3CljTNpxP/ewkxonHepIEsSggA1kbEi5vJXl+H12/X6
- 1s5idcRK9P2fG3bNwVTdyfkS0OX677dHiTtI1zDxbor+BJ1NjDYuz6w8MGlmugTWveJAGZuDj
- /Ig6gbk5wcK1YucSwW9t/OJztdi+Ylz6i/BeO46QencGE4QU8u3jv1a1AWf2f1hm4rayUpxU6
- L9/TH8B+5gD8i8eGDpW74c6D9m/86UMkhOXfOEkUsCFG/yM5HYbqrfNk1vZ/phrlJRmW5ONN0
- ZA4o5RGYYYhlUaanMIY9fCGRDc9qAL8kBEHIf8ooOvS+R8BqbPVcOu6Ofov/X80+mORsPBjjF
- FhyW2AFx+Wc4hSwCHgJrcHwCaKv5RQ0QST1gb8ZsUSXYRr2eeg+1AiJPMimrsFRqqhAHx5eg0
- fq9YfMTToH1Uc9wrMIhq5nLxDYGQ1tue8h2RMEXahYO/gOPdigH3T/+OueVUligDBm4F3WfNw
- KeL/ewcNQ0JIexW16FufVZcAVmh1psE0t4BpJHYQk8jXUK+PUpsaF3xQ6oiyDxl7D/zWKixN3
- +iLAkPPFf3fpd9Va9+f61GYg4puGmzpThBUji0zhBKHNF/JrDotSU3IO+elmfue+C1liDCPPP
- BubiKh1KhuEsDoYuVPwklWqp9Q8UyNWyARR/uWmhoOC4BqKPkBzpqcq8x9MbOXrIx2fAzVCeA
- 7BT/mFeF7z6ybs2GZASIBjY01tKonYjZtzizayk8nWVSfLJL+ssJaT1liCKV6j
+X-Provags-ID: V03:K1:R4pWvPNm9tYZ5hJppJDSW4jb+Rnx7Qx3yYhPkIfANUeWzHFKrt+
+ /CObWIPSQi/A9SeKZ0iG22h3K6z7Eq8OrTIm0UH0gdCBeoqsJn9vcShnEbFP9WjATXKTSlp
+ oyU3KKWfGGoA8Bq7BVVb3GsvpYNKHcDDs8IF8Kpz309BII8tjf12V1rgF1FsxjkKTd4rQIM
+ 6/TmaxnHeYh7yaW8Vvugw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:xgZ0fnmxC1U=:l8xSbyoaY7Kn7/v3WQM3yP
+ X6dJy4bGWx8qJWQ+yMDmPvho3NFV40JkWSqbgs9hDyXsUHeOTV6ichZ41DC8CWFWPfBnmlvNl
+ dIyI1VbCvd3+9u9WarM3c0dDFrEe/Mcv8rEEI4eONTkRn0eJQf2NYQrQ7uo3DU2pd2UhPbpn5
+ w1WvDyUdQAYnFvOwI9FBj/2QRZasBIQ497sGCYjFbWzDpzCOXAt0aNFeHg4/SvQaRJmaM2Dmd
+ 3hVSV6kYM7H93px5DKLjBP+4yflfhMF4ZuQC2VhwMgbteSFrHlFKcRiJRxEai0c2VuA+wpkYB
+ T7FbL6OmgUqqQV3e7QsRUdCbvoQj/eGHzmLD2eHV3T+yFFx8DYncXy8jDu84mhiMpmHJVpnnx
+ SqJFFkXkJudHVv/15nDD4QiE6G4UfBnSbwGF6KLYPJSrlxB5pqRpc927PWVmIepL/Ee3xDwsA
+ AVa/9rRuRFOqnyERBmO+9nMR6FBSHxFzaDJxc502cpyodVOhYihqUBaYxIoaIKzoIDDFeo76w
+ ea89+mJMCBigma0DV4Mp9PRksiJJ7Xj3OEOxEzgL2kUj68opSq82UXVrYn8CPanGY+PhEiI2Q
+ i7rNctdlWcwqwQszplWbQDliAC4B3MFP8wDkDeREpTkQnh6KAq4Axrf6Re/tR6VZlyrtbY3PN
+ HytAJyW64Se4ijmDAqsgLEVXXNkQNlsIC9D8Ga7E1C0ABXEtUYuiTDKtBHeetGJxWrP67zTtn
+ Z7b55kH0KoMlUVmsvgCBS+fi+s4hZwQmMdX8Q5UpTJVEutMsUke+V+EAiKFp8tgiKDRnx9wud
+ vnxdK4L8ONJMYl94hpKJVh/5oi4PzVsKfppVYlxL2Nhc7ei6wh1LALHNrsVaAJd8qxl+R/997
+ zBTbQl1pq9vWp0hOAMiopC7HNP43aOAtSu51Z78AEWmaS5IkviOmQp16YC7Qs+
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current overlap checking cannot correctly handle
-a case which is baseminor < existing baseminor &&
-baseminor + minorct > existing baseminor + minorct.
+register_chrdev_region() carefully checks minor range
+before calling __register_chrdev_region() but there is
+another path from alloc_chrdev_region() which does not
+check the range properly. So add a check for given minor
+range in __register_chrdev_region().
 
 Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
 ---
@@ -70,22 +74,22 @@ v1->v2:
  1 file changed, 6 insertions(+)
 
 diff --git a/fs/char_dev.c b/fs/char_dev.c
-index a279c58fe360..8a63cfa29005 100644
+index 8a63cfa29005..6803e98414f1 100644
 --- a/fs/char_dev.c
 +++ b/fs/char_dev.c
-@@ -159,6 +159,12 @@ __register_chrdev_region(unsigned int major, unsigned int baseminor,
- 			ret = -EBUSY;
- 			goto out;
- 		}
-+
-+		if (new_min < old_min && new_max > old_max) {
-+			ret = -EBUSY;
-+			goto out;
-+		}
-+
- 	}
+@@ -104,6 +104,12 @@ __register_chrdev_region(unsigned int major, unsigned int baseminor,
+ 	int ret = 0;
+ 	int i;
  
- 	cd->next = *cp;
++	if (minorct > MINORMASK + 1 - baseminor) {
++		pr_err("CHRDEV \"%s\" minor range requested (%u-%u) is out of range of maximum range (%u-%u) for a single major\n",
++			name, baseminor, baseminor + minorct - 1, 0, MINORMASK);
++		return ERR_PTR(-EINVAL);
++	}
++
+ 	cd = kzalloc(sizeof(struct char_device_struct), GFP_KERNEL);
+ 	if (cd == NULL)
+ 		return ERR_PTR(-ENOMEM);
 -- 
 2.20.1
 
