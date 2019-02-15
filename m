@@ -2,41 +2,43 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FA28C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:42:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB2FC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16C0721929
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:42:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 210D621929
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:42:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Sp1Lxj8d"
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="jfEzo9Jw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394993AbfBONmT (ORCPT
+        id S2395017AbfBONmX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 08:42:19 -0500
-Received: from smtprelay.synopsys.com ([198.182.60.111]:43856 "EHLO
+        Fri, 15 Feb 2019 08:42:23 -0500
+Received: from smtprelay2.synopsys.com ([198.182.60.111]:43870 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726906AbfBONmT (ORCPT
+        with ESMTP id S1726906AbfBONmV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 08:42:19 -0500
+        Fri, 15 Feb 2019 08:42:21 -0500
 Received: from mailhost1.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 2A2A410C107D;
-        Fri, 15 Feb 2019 05:42:19 -0800 (PST)
+        by smtprelay.synopsys.com (Postfix) with ESMTP id B381A10C1353;
+        Fri, 15 Feb 2019 05:42:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1550238139; bh=NWYxkmdZOi1SKjkvKKsU2uZ3PcH4jl6/8meIqcWLijg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Sp1Lxj8dxwyfI7hzacjqgobAGTIn3MJeyuyoVJE+kLHi8q4PbkxMKrVwmIAaW+FuD
-         rTZ9ej+cfflp4TxxyHxvGZgnUJ0rWOj3Z+TqN2bnA+1KU+2IsUkqjBd+uobbC5YzrZ
-         gAXPlivt6LNtC4afOQoVEGXuEaKGFuetdQMywzPMC6vK0lkH+9uKyGcxz449AbSwwc
-         6dIl9tfU2GEXzZ/nHCbA+A5w+5IfW8guipv+t6yGFBZPepp4vLjWIjDsouUNlXzywg
-         n/1Oj8URw1hv3kkzhJq+D1eU/tDtFm5DMBetLKYGGm/jiAmPZKXlILt5FnpM2og+A4
-         SEs79Z+DOt77Q==
+        t=1550238140; bh=fISUCjFGqwmsJ61yW1UTUfbto+kHTb0THhqgQdFGwoc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+         References:From;
+        b=jfEzo9JwLrwmV86gUjNpkuyYa2oj9lMqLOYnXqKUILaXMwBXUvXA39aoDkX/X8znq
+         mxgTh+/wz/8OqwrfVU+quLiJ09GOGkfQcKGmmt1NDwT5iiCfoXbJwaIKQ6ITQO32sj
+         5UZmc7MqoqcbMg35DEFWyJSFFjSYtjmYqR6RJ+5boEFsFaoI0Z+jyLtVH7UvI4g1nR
+         26lQe/usfduLxoVGjVjPrjzqNF7z5+0vfZIAaHRrp1AxP5O8UEcVo9pHGT2porLjZT
+         AgJ/6oxqW/FT0rYbgjUFgVBeMiDdK8s7ecZfIivqSdw9zETS90yF+Ewq+xTB1rrvIR
+         8Y+KJe6y7X9Ng==
 Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by mailhost1.synopsys.com (Postfix) with ESMTP id 1DD6B5343;
-        Fri, 15 Feb 2019 05:42:16 -0800 (PST)
+        by mailhost1.synopsys.com (Postfix) with ESMTP id 282ED5346;
+        Fri, 15 Feb 2019 05:42:18 -0800 (PST)
 From:   Jose Abreu <jose.abreu@synopsys.com>
 To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Jose Abreu <jose.abreu@synopsys.com>,
@@ -45,37 +47,252 @@ Cc:     Jose Abreu <jose.abreu@synopsys.com>,
         "David S . Miller" <davem@davemloft.net>,
         Giuseppe Cavallaro <peppe.cavallaro@st.com>,
         Alexandre Torgue <alexandre.torgue@st.com>
-Subject: [PATCH net-next 0/3] net: stmmac: Performance improvements in Multi-Queue
-Date:   Fri, 15 Feb 2019 14:42:04 +0100
-Message-Id: <cover.1550237884.git.joabreu@synopsys.com>
+Subject: [PATCH net-next 1/3] net: stmmac: Fix NAPI poll in TX path when in multi-queue
+Date:   Fri, 15 Feb 2019 14:42:05 +0100
+Message-Id: <76da803a662214b024bfdb95731c38e45aef426d.1550237884.git.joabreu@synopsys.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1550237884.git.joabreu@synopsys.com>
+References: <cover.1550237884.git.joabreu@synopsys.com>
+In-Reply-To: <cover.1550237884.git.joabreu@synopsys.com>
+References: <cover.1550237884.git.joabreu@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tested in XGMAC2 and GMAC5. I guess 1/3 can be backported but besides being a
-kind of "not that small" refactoring it's also for a scenario that no-one
-complained yet ... Advice ?
+Commit 8fce33317023 introduced the concept of NAPI per-channel and
+independent cleaning of TX path.
 
+This is currently breaking performance in some cases. The scenario
+happens when all packets are being received in Queue 0 but the TX is
+performed in Queue != 0.
+
+Fix this by using different NAPI instances per each TX and RX queue, as
+suggested by Florian.
+
+Signed-off-by: Jose Abreu <joabreu@synopsys.com>
 Cc: Florian Fainelli <f.fainelli@gmail.com>
 Cc: Joao Pinto <jpinto@synopsys.com>
 Cc: David S. Miller <davem@davemloft.net>
 Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
 Cc: Alexandre Torgue <alexandre.torgue@st.com>
+---
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h      |   5 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 112 ++++++++++++----------
+ 2 files changed, 64 insertions(+), 53 deletions(-)
 
-Jose Abreu (3):
-  net: stmmac: Fix NAPI poll in TX path when in multi-queue
-  net: stmmac: dwmac4: Also use TBU interrupt to clean TX path
-  net: stmmac: dwxgmac2: Also use TBU interrupt to clean TX path
-
- drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c   |  24 ++---
- drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h     |   4 +-
- drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c |   8 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac.h       |   5 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 112 ++++++++++++---------
- 5 files changed, 77 insertions(+), 76 deletions(-)
-
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+index 63e1064b27a2..e697ecd9b0a6 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
+@@ -78,11 +78,10 @@ struct stmmac_rx_queue {
+ };
+ 
+ struct stmmac_channel {
+-	struct napi_struct napi ____cacheline_aligned_in_smp;
++	struct napi_struct rx_napi ____cacheline_aligned_in_smp;
++	struct napi_struct tx_napi ____cacheline_aligned_in_smp;
+ 	struct stmmac_priv *priv_data;
+ 	u32 index;
+-	int has_rx;
+-	int has_tx;
+ };
+ 
+ struct stmmac_tc_entry {
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index 685d20472358..89a4dd75af76 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -155,7 +155,10 @@ static void stmmac_disable_all_queues(struct stmmac_priv *priv)
+ 	for (queue = 0; queue < maxq; queue++) {
+ 		struct stmmac_channel *ch = &priv->channel[queue];
+ 
+-		napi_disable(&ch->napi);
++		if (queue < rx_queues_cnt)
++			napi_disable(&ch->rx_napi);
++		if (queue < tx_queues_cnt)
++			napi_disable(&ch->tx_napi);
+ 	}
+ }
+ 
+@@ -173,7 +176,10 @@ static void stmmac_enable_all_queues(struct stmmac_priv *priv)
+ 	for (queue = 0; queue < maxq; queue++) {
+ 		struct stmmac_channel *ch = &priv->channel[queue];
+ 
+-		napi_enable(&ch->napi);
++		if (queue < rx_queues_cnt)
++			napi_enable(&ch->rx_napi);
++		if (queue < tx_queues_cnt)
++			napi_enable(&ch->tx_napi);
+ 	}
+ }
+ 
+@@ -1939,6 +1945,10 @@ static int stmmac_tx_clean(struct stmmac_priv *priv, int budget, u32 queue)
+ 		mod_timer(&priv->eee_ctrl_timer, STMMAC_LPI_T(eee_timer));
+ 	}
+ 
++	/* We still have pending packets, let's call for a new scheduling */
++	if (tx_q->dirty_tx != tx_q->cur_tx)
++		mod_timer(&tx_q->txtimer, STMMAC_COAL_TIMER(10));
++
+ 	__netif_tx_unlock_bh(netdev_get_tx_queue(priv->dev, queue));
+ 
+ 	return count;
+@@ -2029,23 +2039,15 @@ static int stmmac_napi_check(struct stmmac_priv *priv, u32 chan)
+ 	int status = stmmac_dma_interrupt_status(priv, priv->ioaddr,
+ 						 &priv->xstats, chan);
+ 	struct stmmac_channel *ch = &priv->channel[chan];
+-	bool needs_work = false;
+-
+-	if ((status & handle_rx) && ch->has_rx) {
+-		needs_work = true;
+-	} else {
+-		status &= ~handle_rx;
+-	}
+ 
+-	if ((status & handle_tx) && ch->has_tx) {
+-		needs_work = true;
+-	} else {
+-		status &= ~handle_tx;
++	if ((status & handle_rx) && (chan < priv->plat->rx_queues_to_use)) {
++		stmmac_disable_dma_irq(priv, priv->ioaddr, chan);
++		napi_schedule_irqoff(&ch->rx_napi);
+ 	}
+ 
+-	if (needs_work && napi_schedule_prep(&ch->napi)) {
++	if ((status & handle_tx) && (chan < priv->plat->tx_queues_to_use)) {
+ 		stmmac_disable_dma_irq(priv, priv->ioaddr, chan);
+-		__napi_schedule(&ch->napi);
++		napi_schedule_irqoff(&ch->tx_napi);
+ 	}
+ 
+ 	return status;
+@@ -2241,8 +2243,14 @@ static void stmmac_tx_timer(struct timer_list *t)
+ 
+ 	ch = &priv->channel[tx_q->queue_index];
+ 
+-	if (likely(napi_schedule_prep(&ch->napi)))
+-		__napi_schedule(&ch->napi);
++	/*
++	 * If NAPI is already running we can miss some events. Let's rearm
++	 * the timer and try again.
++	 */
++	if (likely(napi_schedule_prep(&ch->tx_napi)))
++		__napi_schedule(&ch->tx_napi);
++	else
++		mod_timer(&tx_q->txtimer, STMMAC_COAL_TIMER(10));
+ }
+ 
+ /**
+@@ -3498,7 +3506,7 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
+ 			else
+ 				skb->ip_summed = CHECKSUM_UNNECESSARY;
+ 
+-			napi_gro_receive(&ch->napi, skb);
++			napi_gro_receive(&ch->rx_napi, skb);
+ 
+ 			priv->dev->stats.rx_packets++;
+ 			priv->dev->stats.rx_bytes += frame_len;
+@@ -3513,41 +3521,41 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
+ 	return count;
+ }
+ 
+-/**
+- *  stmmac_poll - stmmac poll method (NAPI)
+- *  @napi : pointer to the napi structure.
+- *  @budget : maximum number of packets that the current CPU can receive from
+- *	      all interfaces.
+- *  Description :
+- *  To look at the incoming frames and clear the tx resources.
+- */
+-static int stmmac_napi_poll(struct napi_struct *napi, int budget)
++static int stmmac_napi_poll_rx(struct napi_struct *napi, int budget)
+ {
+ 	struct stmmac_channel *ch =
+-		container_of(napi, struct stmmac_channel, napi);
++		container_of(napi, struct stmmac_channel, rx_napi);
+ 	struct stmmac_priv *priv = ch->priv_data;
+-	int work_done, rx_done = 0, tx_done = 0;
+ 	u32 chan = ch->index;
++	int work_done;
+ 
+ 	priv->xstats.napi_poll++;
+ 
+-	if (ch->has_tx)
+-		tx_done = stmmac_tx_clean(priv, budget, chan);
+-	if (ch->has_rx)
+-		rx_done = stmmac_rx(priv, budget, chan);
++	work_done = stmmac_rx(priv, budget, chan);
++	if (work_done < budget && napi_complete_done(napi, work_done))
++		stmmac_enable_dma_irq(priv, priv->ioaddr, chan);
++	return work_done;
++}
+ 
+-	work_done = max(rx_done, tx_done);
+-	work_done = min(work_done, budget);
++static int stmmac_napi_poll_tx(struct napi_struct *napi, int budget)
++{
++	struct stmmac_channel *ch =
++		container_of(napi, struct stmmac_channel, tx_napi);
++	struct stmmac_priv *priv = ch->priv_data;
++	struct stmmac_tx_queue *tx_q;
++	u32 chan = ch->index;
++	int work_done;
+ 
+-	if (work_done < budget && napi_complete_done(napi, work_done)) {
+-		int stat;
++	priv->xstats.napi_poll++;
+ 
++	work_done = stmmac_tx_clean(priv, budget, chan);
++	if (work_done < budget && napi_complete_done(napi, work_done))
+ 		stmmac_enable_dma_irq(priv, priv->ioaddr, chan);
+-		stat = stmmac_dma_interrupt_status(priv, priv->ioaddr,
+-						   &priv->xstats, chan);
+-		if (stat && napi_reschedule(napi))
+-			stmmac_disable_dma_irq(priv, priv->ioaddr, chan);
+-	}
++
++	/* Force transmission restart */
++	tx_q = &priv->tx_queue[chan];
++	stmmac_enable_dma_transmission(priv, priv->ioaddr);
++	stmmac_set_tx_tail_ptr(priv, priv->ioaddr, tx_q->tx_tail_addr, chan);
+ 
+ 	return work_done;
+ }
+@@ -4323,13 +4331,14 @@ int stmmac_dvr_probe(struct device *device,
+ 		ch->priv_data = priv;
+ 		ch->index = queue;
+ 
+-		if (queue < priv->plat->rx_queues_to_use)
+-			ch->has_rx = true;
+-		if (queue < priv->plat->tx_queues_to_use)
+-			ch->has_tx = true;
+-
+-		netif_napi_add(ndev, &ch->napi, stmmac_napi_poll,
+-			       NAPI_POLL_WEIGHT);
++		if (queue < priv->plat->rx_queues_to_use) {
++			netif_napi_add(ndev, &ch->rx_napi, stmmac_napi_poll_rx,
++				       NAPI_POLL_WEIGHT);
++		}
++		if (queue < priv->plat->tx_queues_to_use) {
++			netif_napi_add(ndev, &ch->tx_napi, stmmac_napi_poll_tx,
++				       NAPI_POLL_WEIGHT);
++		}
+ 	}
+ 
+ 	mutex_init(&priv->lock);
+@@ -4385,7 +4394,10 @@ int stmmac_dvr_probe(struct device *device,
+ 	for (queue = 0; queue < maxq; queue++) {
+ 		struct stmmac_channel *ch = &priv->channel[queue];
+ 
+-		netif_napi_del(&ch->napi);
++		if (queue < priv->plat->rx_queues_to_use)
++			netif_napi_del(&ch->rx_napi);
++		if (queue < priv->plat->tx_queues_to_use)
++			netif_napi_del(&ch->tx_napi);
+ 	}
+ error_hw_init:
+ 	destroy_workqueue(priv->wq);
 -- 
 2.7.4
 
