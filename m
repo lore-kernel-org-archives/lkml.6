@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8689AC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9F14C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:33:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54A6D20840
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:33:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AC2320840
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:33:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197995;
-	bh=qH68Fl2yU3bUgRS7OMGYHjcZy3iDg2z3W84n3Nh/PJQ=;
+	s=default; t=1550198004;
+	bh=e8uQXtz580xmLzODWsMx0M9RT/GzWLnSSY+bZdH4FDY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oTH4Mg2KjAtVNAVY7o8Gs7Vn0Dyje5MB2VyOZ48nrwIIytX9f20O6XjQ7uBTCtruJ
-	 2EbSHWeJ2yibJujXfUNaURb7olYoOHlsYJpOr9QZhzD/sE8wK47OddHurj60E7zPDi
-	 ckFOgbnYaIJauwNEPR6gN45C35/Osgq3aoNCgQc4=
+	b=LCuLIr2MH9Jq69Avgnc51/1Po0FZr9R+MshoVWkL6bV8XcjexCwzPz9XC8mM6RUVe
+	 7YQsXLjXomlSAPFjKixoxI0u0bM60SdM0fq+f4J6E7eDdg7uzHLm1AdBqOnkDEEKdw
+	 /k2Zl5+6jUTGmD8QwfJWEEevaDRkJwlbWSfEt1NI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388237AbfBOCdN (ORCPT
+        id S2390935AbfBOCL7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:33:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52126 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:11:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390994AbfBOCMG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:12:06 -0500
+        id S2387612AbfBOCLz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:11:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D106321B1C;
-        Fri, 15 Feb 2019 02:12:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A52121934;
+        Fri, 15 Feb 2019 02:11:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196725;
-        bh=qH68Fl2yU3bUgRS7OMGYHjcZy3iDg2z3W84n3Nh/PJQ=;
+        s=default; t=1550196715;
+        bh=e8uQXtz580xmLzODWsMx0M9RT/GzWLnSSY+bZdH4FDY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GTvJWLw0JPoD5qLxKC0KrOvJ1d5v8mvmTfu/PJdR7wmkfaIE0OvcAWMce8Q28qwgq
-         SorlWPnrkwD78ASlO9/DNyQn/YQYJMfhzXbUDwbX923Apxll4Vaur4xBlirCv7x9Vr
-         h/Pbjhe3lVl3YQZo7yCVJKgpAxeT5d7Q5K067UtU=
+        b=uLWimB99qAtN6phSfzdjuJddS0lfd5ogZPuWKibEEhwMyfYXYbNqtkROmNAzVTBFY
+         SI7JIRaNolMCRIHFV8bER6ANrLobjE8gpudn2EhsOBNeuTNu1j7wyV08O7TfAOvn3N
+         j2hLLL5u0IdEqn+WD2AviOixapEb8reTZbl5hPuQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Aaron Hill <aa1ronham@gmail.com>, Zhang Rui <rui.zhang@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 27/65] drivers: thermal: int340x_thermal: Fix sysfs race condition
-Date:   Thu, 14 Feb 2019 21:10:43 -0500
-Message-Id: <20190215021121.177674-27-sashal@kernel.org>
+Cc:     Alban Bedel <albeu@free.fr>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 21/65] phy: ath79-usb: Fix the main reset name to match the DT binding
+Date:   Thu, 14 Feb 2019 21:10:37 -0500
+Message-Id: <20190215021121.177674-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -57,113 +58,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aaron Hill <aa1ronham@gmail.com>
+From: Alban Bedel <albeu@free.fr>
 
-[ Upstream commit 129699bb8c7572106b5bbb2407c2daee4727ccad ]
+[ Upstream commit 827cb0323928952c0db9515aba9d534fb1285b3f ]
 
-Changes since V1:
-* Use dev_info instead of printk
-* Use dev_warn instead of BUG_ON
+I submitted this driver several times before it got accepted. The
+first series hasn't been accepted but the DTS binding did made it.
+I then made a second series that added generic reset support to the
+PHY core, this in turn required a change to the DT binding. This
+second series seemed to have been ignored, so I did a third one
+without the change to the PHY core and the DT binding update, and this
+last attempt finally made it.
 
-Previously, sysfs_create_group was called before all initialization had
-fully run - specifically, before pci_set_drvdata was called. Since the
-sysctl group is visible to userspace as soon as sysfs_create_group
-returns, a small window of time existed during which a process could read
-from an uninitialized/partially-initialized device.
+But two months later the DT binding update from the second series has
+been integrated too. So now the driver doesn't match the binding and
+the only DTS using it. This patch fix the driver to match the new
+binding.
 
-This commit moves the creation of the sysctl group to after all
-initialized is completed. This ensures that it's impossible for
-userspace to read from a sysctl file before initialization has fully
-completed.
-
-To catch any future regressions, I've added a check to ensure
-that proc_thermal_emum_mode is never PROC_THERMAL_NONE when a process
-tries to read from a sysctl file. Previously, the aforementioned race
-condition could result in the 'else' branch
-running while PROC_THERMAL_NONE was set,
-leading to a null pointer deference.
-
-Signed-off-by: Aaron Hill <aa1ronham@gmail.com>
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+Signed-off-by: Alban Bedel <albeu@free.fr>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../processor_thermal_device.c                | 28 ++++++++++---------
- 1 file changed, 15 insertions(+), 13 deletions(-)
+ drivers/phy/qualcomm/phy-ath79-usb.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/int340x_thermal/processor_thermal_device.c b/drivers/thermal/int340x_thermal/processor_thermal_device.c
-index 8e0f665cf06f..8e1cf4d789be 100644
---- a/drivers/thermal/int340x_thermal/processor_thermal_device.c
-+++ b/drivers/thermal/int340x_thermal/processor_thermal_device.c
-@@ -84,7 +84,12 @@ static ssize_t power_limit_##index##_##suffix##_show(struct device *dev, \
- 	struct pci_dev *pci_dev; \
- 	struct platform_device *pdev; \
- 	struct proc_thermal_device *proc_dev; \
--\
-+	\
-+	if (proc_thermal_emum_mode == PROC_THERMAL_NONE) { \
-+		dev_warn(dev, "Attempted to get power limit before device was initialized!\n"); \
-+		return 0; \
-+	} \
-+	\
- 	if (proc_thermal_emum_mode == PROC_THERMAL_PLATFORM_DEV) { \
- 		pdev = to_platform_device(dev); \
- 		proc_dev = platform_get_drvdata(pdev); \
-@@ -298,11 +303,6 @@ static int proc_thermal_add(struct device *dev,
- 	*priv = proc_priv;
+diff --git a/drivers/phy/qualcomm/phy-ath79-usb.c b/drivers/phy/qualcomm/phy-ath79-usb.c
+index f7d64f3910b4..09a77e556ece 100644
+--- a/drivers/phy/qualcomm/phy-ath79-usb.c
++++ b/drivers/phy/qualcomm/phy-ath79-usb.c
+@@ -69,7 +69,7 @@ static int ath79_usb_phy_probe(struct platform_device *pdev)
+ 	if (!priv)
+ 		return -ENOMEM;
  
- 	ret = proc_thermal_read_ppcc(proc_priv);
--	if (!ret) {
--		ret = sysfs_create_group(&dev->kobj,
--					 &power_limit_attribute_group);
--
--	}
- 	if (ret)
- 		return ret;
+-	priv->reset = devm_reset_control_get(&pdev->dev, "usb-phy");
++	priv->reset = devm_reset_control_get(&pdev->dev, "phy");
+ 	if (IS_ERR(priv->reset))
+ 		return PTR_ERR(priv->reset);
  
-@@ -316,8 +316,7 @@ static int proc_thermal_add(struct device *dev,
- 
- 	proc_priv->int340x_zone = int340x_thermal_zone_add(adev, ops);
- 	if (IS_ERR(proc_priv->int340x_zone)) {
--		ret = PTR_ERR(proc_priv->int340x_zone);
--		goto remove_group;
-+		return PTR_ERR(proc_priv->int340x_zone);
- 	} else
- 		ret = 0;
- 
-@@ -331,9 +330,6 @@ static int proc_thermal_add(struct device *dev,
- 
- remove_zone:
- 	int340x_thermal_zone_remove(proc_priv->int340x_zone);
--remove_group:
--	sysfs_remove_group(&proc_priv->dev->kobj,
--			   &power_limit_attribute_group);
- 
- 	return ret;
- }
-@@ -364,7 +360,10 @@ static int int3401_add(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, proc_priv);
- 	proc_thermal_emum_mode = PROC_THERMAL_PLATFORM_DEV;
- 
--	return 0;
-+	dev_info(&pdev->dev, "Creating sysfs group for PROC_THERMAL_PLATFORM_DEV\n");
-+
-+	return sysfs_create_group(&pdev->dev.kobj,
-+					 &power_limit_attribute_group);
- }
- 
- static int int3401_remove(struct platform_device *pdev)
-@@ -441,7 +440,10 @@ static int  proc_thermal_pci_probe(struct pci_dev *pdev,
- 			dev_err(&pdev->dev, "No auxiliary DTSs enabled\n");
- 	}
- 
--	return 0;
-+	dev_info(&pdev->dev, "Creating sysfs group for PROC_THERMAL_PCI\n");
-+
-+	return sysfs_create_group(&pdev->dev.kobj,
-+					 &power_limit_attribute_group);
- }
- 
- static void  proc_thermal_pci_remove(struct pci_dev *pdev)
 -- 
 2.19.1
 
