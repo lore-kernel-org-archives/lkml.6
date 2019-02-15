@@ -3,69 +3,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFBACC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E88EC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:59:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DF9C222BE
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:58:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48FBF222BE
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:59:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729847AbfBOQ6i (ORCPT
+        id S1729967AbfBOQ7v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 11:58:38 -0500
-Received: from mail-qt1-f176.google.com ([209.85.160.176]:38059 "EHLO
-        mail-qt1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726122AbfBOQ6i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 11:58:38 -0500
-Received: by mail-qt1-f176.google.com with SMTP id 2so11630400qtb.5
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 08:58:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BnmqEcnVe22uqilIXW6353Oi+MEwnNIwNE+n77BIoys=;
-        b=eKzu3j0xRASvx7ZWStmeiqmhCIpkrKpKpTUxi9QIvR+Im0Yh8PNasiwixHSK4ChuLi
-         qIsySfVtkvSCTqsUxpVW3L76l53dvsDdBUM8LmF9ECpVGU7TJjINikEY8V5waMAmRFzZ
-         XCbd1uSUjXT44E3Q83TFZddgVJxydRlbXZZch8bTdN3+TKgte8d+OeEQugYt+uobQKLr
-         xfPgulKinSk70n1oQBniiG39toDNTXNfp5PTcn5FycdK2OKf9D/moLs4sL+K8nAr53qP
-         JkIG3MFUabQF0zcBZ1XvWIKIfZb/+/HujIZ9YoLKAYMszOZnvH5CBo9G0YzDwtH4kARu
-         jPwQ==
-X-Gm-Message-State: AHQUAua6nCY0v5YUK83uuPWQp30gK39pnz1kbWZzaw7ok5kI99PPO0gY
-        w5EIgNmmWfNGYwLtoaPq6nMCyhdrRJm1H6Ty7Zq3uA==
-X-Google-Smtp-Source: AHgI3Ib5CwljJQuLh7lcAZOmNriuFJ6O+ikTT5hEwKeyTDVSlArny4wfaT7T/2dUNcYKZkiRDvOpTpnq6P/FWXfaKpU=
-X-Received: by 2002:a0c:c60f:: with SMTP id v15mr7903362qvi.40.1550249917555;
- Fri, 15 Feb 2019 08:58:37 -0800 (PST)
+        Fri, 15 Feb 2019 11:59:51 -0500
+Received: from mx2.cyber.ee ([193.40.6.72]:57832 "EHLO mx2.cyber.ee"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726122AbfBOQ7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 11:59:51 -0500
+Subject: Re: ext4 corruption on alpha with 4.20.0-09062-gd8372ba8ce28
+To:     linux-alpha@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        linux-block@vger.kernel.org, Jan Kara <jack@suse.cz>
+References: <fb63a4d0-d124-21c8-7395-90b34b57c85a@linux.ee>
+ <1c26eab4-3277-9066-5dce-6734ca9abb96@linux.ee>
+From:   Meelis Roos <mroos@linux.ee>
+Message-ID: <076b8b72-fab0-ea98-f32f-f48949585f9d@linux.ee>
+Date:   Fri, 15 Feb 2019 18:59:48 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <20190204085629.GA14098@jax.urgonet>
-In-Reply-To: <20190204085629.GA14098@jax.urgonet>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 15 Feb 2019 17:58:21 +0100
-Message-ID: <CAK8P3a3-fq8YnkYgCB=+PWV88mfamf5ySi1s0yWcEDtKrjqRxA@mail.gmail.com>
-Subject: Re: [GIT PULL] tee subsys for v5.1
-To:     Jens Wiklander <jens.wiklander@linaro.org>
-Cc:     arm-soc <arm@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1c26eab4-3277-9066-5dce-6734ca9abb96@linux.ee>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: et-EE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 4, 2019 at 9:56 AM Jens Wiklander <jens.wiklander@linaro.org> wrote:
->
-> Hello arm-soc maintainers,
->
-> Please pull this TEE subsystem enhancement. A tee bus driver framework
-> is introduced in order to support an OP-TEE based RNG driver.
->
-> The last commit makes changes under drivers/char/hw_random which
-> also are acked by that maintainer.
->
+>> I have noticed ext4 filesystem corruption on two of my test alphas with 4.20.0-09062-gd8372ba8ce28.
+> 
+> Retried it, still happens with 5.0.0-rc5-00358-gdf3865f8f568 - rsync of emerge --sync just fail with nothing in dmesg.
 
-Pulled into arm/drivers, thanks!
+Finished second round of bisecting, first round did not get me far enough so
+I may still have false "goods" in my bisection history.
 
-    Arnd
+The command I used for bisecting was Gentoos
+emerge --sync.
+that sometimes failed from error -6 or -11 from rsync.
+Usually the file system corruption did not happen and nothing was in dmesg, just file IO error from rsync.
+
+The result of the bisection is
+[88dbcbb3a4847f5e6dfeae952d3105497700c128] blkdev: avoid migration stalls for blkdev pages
+
+Is that result relevant for the problem or should I continue bisecting between 4.20.0 and the so far first bad commit?
+
+>> On AlphaServer DS10:
+>> [10749.664418] EXT4-fs error (device sda2): __ext4_iget:5052: inode #1853093: block 1: comm rsync: invalid block
+>>
+>> On AlphaServer DS10L:
+>> [ 5325.064656] EXT4-fs error (device sda2): htree_dirblock_to_tree:1007: inode #1191951: block 4731728: comm rm: bad entry in directory: directory entry overrun - offset=76, inode=417080, rec_len=61816, name_len=35, size=4096
+>> [ 5325.069539] EXT4-fs error (device sda2): htree_dirblock_to_tree:1007: inode #1191951: block 4731728: comm rm: bad entry in directory: directory entry overrun - offset=76, inode=417080, rec_len=61816, name_len=35, size=4096
+>> [ 5325.077351] EXT4-fs error (device sda2): ext4_empty_dir:2718: inode #1191951: block 4731728: comm rm: bad entry in directory: directory entry overrun - offset=76, inode=417080, rec_len=61816, name_len=35, size=4096
+>>
+>> Two other alphas, PC-164 and Eiger, worked fine with the same kernel version (different kernel configs according to hardware).
+>>
+>> The details:
+>> 4.20 worked fine, with gentoo emerge package update after bootup.
+>> Next, 4.20.0-06428-g00c569b567c7 worked fine, with gentoo emerge after bootup.
+>> Next, 4.20.0-09062-gd8372ba8ce28 booted up fine but rsync and rm during start of gentoo emerge errored out like above.
+>>
+>> So the corruption _might_ have happened during bootup of previous kernel but it looks more likely that only the latest kernel with blk-mq introduced the problems. mq-deadline is in use on all the alphas.
+>>
+>> DS10 has Symbios 53C896 SCSI (sym2 driver), DS10L has QLogic ISP1040, so they are different. Working Eiger and PC164 have sym2 based scsi controllers too.
+> 
+
+-- 
+Meelis Roos <mroos@linux.ee>
