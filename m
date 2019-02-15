@@ -5,151 +5,172 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5939C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:25:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABD3FC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:27:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88B7E21900
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:25:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7958621900
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:27:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394010AbfBOLZV convert rfc822-to-8bit (ORCPT
+        id S2394166AbfBOL1U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 06:25:21 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32893 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726321AbfBOLZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 06:25:21 -0500
-Received: from lhreml708-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id C238539BD91D82D9D915;
-        Fri, 15 Feb 2019 11:25:19 +0000 (GMT)
-Received: from lhreml702-chm.china.huawei.com (10.201.108.51) by
- lhreml708-cah.china.huawei.com (10.201.108.49) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 15 Feb 2019 11:25:19 +0000
-Received: from lhreml702-chm.china.huawei.com (10.201.108.51) by
- lhreml702-chm.china.huawei.com (10.201.108.51) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Fri, 15 Feb 2019 11:25:19 +0000
-Received: from lhreml702-chm.china.huawei.com ([10.201.68.197]) by
- lhreml702-chm.china.huawei.com ([10.201.68.197]) with mapi id 15.01.1591.008;
- Fri, 15 Feb 2019 11:25:18 +0000
-From:   Salil Mehta <salil.mehta@huawei.com>
-To:     John Garry <john.garry@huawei.com>,
-        Huang Zijiang <huang.zijiang@zte.com.cn>,
-        "Zhuangyuzeng (Yisen)" <yisen.zhuang@huawei.com>
-CC:     "davem@davemloft.net" <davem@davemloft.net>,
-        "lipeng (Y)" <lipeng321@huawei.com>,
-        liuyonglong <liuyonglong@huawei.com>,
-        yuehaibing <yuehaibing@huawei.com>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "wangxi (M)" <wangxi11@huawei.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "wang.yi59@zte.com.cn" <wang.yi59@zte.com.cn>,
-        Linuxarm <linuxarm@huawei.com>
-Subject: RE: [PATCH] net: hns: Fix object reference leaks in
- hns_dsaf_roce_reset()
-Thread-Topic: [PATCH] net: hns: Fix object reference leaks in
- hns_dsaf_roce_reset()
-Thread-Index: AQHUxDBEhCVMlZMv6EeAXB5DT3ZcMKXgsKCAgAAGiyA=
-Date:   Fri, 15 Feb 2019 11:25:18 +0000
-Message-ID: <11b3bcdf50ee435587fbfad6043e49bc@huawei.com>
-References: <1550126505-28394-1-git-send-email-huang.zijiang@zte.com.cn>
- <b20d235c-779c-77bd-e69f-2d63ffd79ec1@huawei.com>
-In-Reply-To: <b20d235c-779c-77bd-e69f-2d63ffd79ec1@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.226.60]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Fri, 15 Feb 2019 06:27:20 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:37765 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726321AbfBOL1U (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 06:27:20 -0500
+Received: by mail-ed1-f67.google.com with SMTP id m12so7667551edv.4
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 03:27:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=EtNMZwiHTC0iw7fMTcpJk9syhTrjtdjMJznWwL4OPfg=;
+        b=Xjj2nsjOxcHIcUhGk0+DAN1vNVgWCkQlqJlwUPhVHHQemgsMnHjrSm3GLGYtbGgbXU
+         oEhgzv2psCyoSjyKExP7o9jhYnePnXAqNA8+widOGrrJf7pMSWUSpoH86yJPCFNY6dYb
+         H6fCmJhHmZYR0SZqZQ9OPNSejLxS9JSa+NFQwdGO7rWkfmyb6uRmSfIQOs/RONWv5+aA
+         1tWekNt8QjTjbrKtBmGWrVICb+Rp2yzdUhypRHFGvyFU2Dgm34u+t+JQ9PyAY8ite9dB
+         k/MgUy0PqnvdHtAwP9zUUSL/JYqhuq2W+bd6kR8PJn4HDtoOa3HjWm2zYvoyxhbgRCpb
+         +a8w==
+X-Gm-Message-State: AHQUAuYsvsiYrQ2/Fo/YWxvcx44NoJXFU3iHq2Mxt4oigz6E+gFrxMVT
+        9sPU3IPSfONpHlbskl2NadKaug==
+X-Google-Smtp-Source: AHgI3Iag9yqyR6zkOuuRteLuTgF8tvgfX893ZAgIkHI83YOsubrIyZBnPl1RpHu+V2r9ksSiaqUi5g==
+X-Received: by 2002:aa7:c6da:: with SMTP id b26mr7236762eds.258.1550230038475;
+        Fri, 15 Feb 2019 03:27:18 -0800 (PST)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id r22sm199755ejb.1.2019.02.15.03.27.17
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Feb 2019 03:27:17 -0800 (PST)
+Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
+ LEDs
+To:     Pavel Machek <pavel@ucw.cz>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Yauhen Kharuzhy <jekhor@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+References: <20190212205901.13037-1-jekhor@gmail.com>
+ <20190212205901.13037-2-jekhor@gmail.com>
+ <1df39a63-533f-bb68-a056-a0241f148be9@redhat.com> <20190213230731.GA8557@amd>
+ <42078a81-e32e-81b7-528f-d1adb60d31c3@redhat.com>
+ <20190213233806.GA11867@amd>
+ <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com> <20190214111423.GE6132@amd>
+ <92cf09b8-726d-4f1b-94ba-368a66af2246@redhat.com>
+ <2b6faaa5-b21e-a512-de7d-ca21be5045fc@gmail.com> <20190214230307.GA17358@amd>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <2a5e2002-e5f1-6da3-8a43-317801b69657@redhat.com>
+Date:   Fri, 15 Feb 2019 12:27:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190214230307.GA17358@amd>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: John Garry
-> Sent: Friday, February 15, 2019 10:52 AM
+Hi,
+
+On 15-02-19 00:03, Pavel Machek wrote:
+> Hi!
 > 
-> On 14/02/2019 06:41, Huang Zijiang wrote:
-> > The of_find_device_by_node() takes a reference to the underlying device
-> > structure, we should release that reference.
+>>>>> I suggest that we deal with this special case by adding 3 custom
+>>>>> sysfs attributes:
+>>>>>
+>>>>> 1) "mode" which when read, prints, e.g. :
+>>>>> manual [on-when-charging]
+>>>>
+>>>> While this allows _user on console_ to control everything using echo,
+>>>> it is not suitable for applications trying to control LEDs.
+>>>>
+>>>> As there's nothing special about the case here, I believe we should
+>>>> have generic solution here.
+>>>>
+>>>> My preffered solution would be "hardware" trigger that leaves the LED
+>>>> in hardware control.
+>>>
+>>> As you explained in the parts which I snipped, there are many
+>>> devices which have a similar choice for a LED being under hw or
+>>> user control. I can see how this looks like a trigger and how we
+>>> could use the trigger API for this.
+>>>
+>>> I believe though, that if we implement a "virtual" (for lack of
+>>> a better word) trigger for this, that this should be done in the
+>>> LED core. I can envision this working like this:
+>>>
+>>> 1) Add a:
+>>>
+>>> hw_control_set(struct led_classdev *led_cdev, bool enable_hw_control);
+>>
+>> Please note that we have support for hw patterns in the pattern trigger.
+>> (see how drivers/leds/leds-sc27xx-bltc.c makes use of it for its
+>> breathing pattern).
+>> We have also support for hw blinking in timer trigger via blink_set op.
+>>
+>> In addition to that there is brightness_hw_changed sysfs attribute
+>> with led_classdev_notify_brightness_hw_changed() LED API.
+>>
+>> Couldn't they be used in concert to support the specific features
+>> of the device in question?
 > 
-> of_find_device_by_node() is not called for every path, so is this change proper:
-
-
-It looks okay to me and with the suggested device reference is being
-released from every possible error leg in the function. Could you be
-more specific which error path is not being addressed?
-
-
-
-> 	/* find the platform device corresponding to fwnode */
-> 	if (is_of_node(dsaf_fwnode)) {
-> 		pdev = of_find_device_by_node(to_of_node(dsaf_fwnode));
-
-
-This will get the reference to the device, which needs to be
-released later.
-
-
-> 	} else if (is_acpi_device_node(dsaf_fwnode)) {
-> 		pdev = hns_dsaf_find_platform_device(dsaf_fwnode);
-
-
-This will also get the reference to the device when bus_find_device()
-gets called and returns the 'device'. Therefore, this needs to be
-released as well using put_device()
-
-
-
-> 	} else {
-> 		pr_err("fwnode is neither OF or ACPI type\n");
-> 		return -EINVAL;
-> 	}
+> I believe main issue here is this:
 > 
-> 	/* check if we were a success in fetching pdev */
-> 	if (!pdev) {
-> 		pr_err("couldn't find platform device for node\n");
-> 		return -ENODEV;
-> 	}
+> Hardware can automatically control the LED according to the charging
+> status, or it can be used as normal software-controlled LED.
 > 
-> 	/* retrieve the dsaf_device from the driver data */
-> 	dsaf_dev = dev_get_drvdata(&pdev->dev);
-> 	if (!dsaf_dev) {
-> 		dev_err(&pdev->dev, "dsaf_dev is NULL\n");
-> 		return -ENODEV;
-> 	}
-> 
-> John
+> I believe we should use trigger to select if hardware controls it or
+> not (and then add driver-specific files to describe the
+> details). Other proposal is in the mail thread, too.
 
+Right, so there are really 2 orthogonal issues here:
 
-[...]
+1) With this hardware the LED is either turned on/off automatically
+by the PMIC based on charging state; or it is under user control.
 
-> > --- a/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-> > +++ b/drivers/net/ethernet/hisilicon/hns/hns_dsaf_main.c
-> > @@ -3081,6 +3081,7 @@ int hns_dsaf_roce_reset(struct fwnode_handle *dsaf_fwnode, bool dereset)
-> >  	dsaf_dev = dev_get_drvdata(&pdev->dev);
-> >  	if (!dsaf_dev) {
-> >  		dev_err(&pdev->dev, "dsaf_dev is NULL\n");
-> > +		put_device(&pdev->dev);
+This is different from the led_classdev_notify_brightness_hw_changed
+case, where the hardware may update the state underneath the driver,
+but the driver can still always update the state itself. In this case
+if the LED is in hw-control mode then the driver cannot turn it on/off.
 
+Pavel suggested modeling this with a new "hardware' trigger, where
+setting the trigger to this trigger will enable the hw-controlled
+mode and setting any other trigger will switch thing to the user-controlled
+mode.
 
-This looks okay.
+2) This hardware can do blinking / breathing. There are various issues with
+this:
 
+2.1) Blinking is more or less covered by the timer trigger. But breathing is
+not the pattern trigger is a poor match since there is only 1 fixed pattern
 
-> >  		return -ENODEV;
-> >  	}
-> >
-> > @@ -3088,6 +3089,7 @@ int hns_dsaf_roce_reset(struct fwnode_handle *dsaf_fwnode, bool dereset)
-> >  	if (AE_IS_VER1(dsaf_dev->dsaf_ver)) {
-> >  		dev_err(dsaf_dev->dev, "%s v1 chip doesn't support RoCE!\n",
-> >  			dsaf_dev->ae_dev.name);
-> > +		put_device(&pdev->dev);
+2.2) The supported blinking frequencies are very limited, so it might be better
+to keep the standard software blinking mode and have a special sysfs attribute
+to select the hardware blink support
 
+2.3) The user can also select between continuous on / blinking / breathing
+when the LED is under hardware control (it will then be on / blinking / breathing)
+when charging.
 
-This looks okay.
+My suggestion for dealing with this is 2 new device specific sysfs attributes.
 
+a) "pattern" which when read outputs e.g.:
+on blinking [breathing]
+And
 
-Salil.
+b) "pattern_delay_on_off" which sets the on and off times for the hardware
+patterns on milliseconds, mirroring the delay_on / delay_off attributes
+from the timer trigger.
+
+Note we could alternatively use: "hw_pattern" and "hw_pattern_delay_on_off"
+to make it clear that this is done in hardware.
+
+To deal with interactions with the standard API I suggest we reset pattern
+to "on" when brightness gets set to 0, similar to how we stop the timer
+trigger then, etc.
+
+Regards,
+
+Hans
+
