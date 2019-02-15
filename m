@@ -5,145 +5,135 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B3EFC43381
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD443C4360F
 	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:26:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DDF1206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:26:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92A9821925
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:26:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392725AbfBOJ0d (ORCPT
+        id S2404003AbfBOJ0g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:26:33 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55180 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726263AbfBOJ0d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 04:26:33 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AEF07C059B87;
-        Fri, 15 Feb 2019 09:26:32 +0000 (UTC)
-Received: from gondolin (dhcp-192-213.str.redhat.com [10.33.192.213])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3D93060C62;
-        Fri, 15 Feb 2019 09:26:30 +0000 (UTC)
-Date:   Fri, 15 Feb 2019 10:26:27 +0100
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Pierre Morel <pmorel@linux.ibm.com>
-Cc:     borntraeger@de.ibm.com, alex.williamson@redhat.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
-        pasic@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
-Subject: Re: [PATCH v3 2/9] s390: ap: kvm: setting a hook for PQAP
- instructions
-Message-ID: <20190215102627.6e300e28.cohuck@redhat.com>
-In-Reply-To: <2609f072-ab16-429e-8aba-e1af20757c25@linux.ibm.com>
-References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
-        <1550152269-6317-3-git-send-email-pmorel@linux.ibm.com>
-        <20190214165407.335b4ec0.cohuck@redhat.com>
-        <2609f072-ab16-429e-8aba-e1af20757c25@linux.ibm.com>
-Organization: Red Hat GmbH
+        Fri, 15 Feb 2019 04:26:36 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:41728 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732306AbfBOJ0e (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 04:26:34 -0500
+Received: by mail-ed1-f68.google.com with SMTP id x7so7369591eds.8
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 01:26:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=qjDqxUzQ4iCx9u6GGJkH0PZ3NpZqIq6Io1QGiYt8yrM=;
+        b=pI2O5Ht74PMUG83ndwqEbVvdxL9whnC70JxwHmrWWzd908YSaeMHxjIRTLbwwLkPir
+         soIaDeljFrJHY9kx7mjX1XcC/BEtXVlfggyEAURmUfOetbKVmuzh0YrRqFmZeMNQ9BT1
+         e+bUxfKTv9TnDAsoQLogFkqlfkbV7IwKYoRmuPJHt7RUFs7omCOZMKav92Qr+wkqK95t
+         DRy3bC6lyjkWEkS07goWaHv53fKsFfwQ8Fu6ZMjfR0diOGMDLqeP2aojKwQUZXRYVdus
+         IUsrj9QM0GA4mgWC+pOpV1uWAbFw5iostnuIaiZkvd7QmzSDQ23dNtblhL9ha9u+Vegi
+         d9OA==
+X-Gm-Message-State: AHQUAuabQj2HJvT9hMipaEsqzzUIeLFKMG88aaiUb2DP/9n6rEJnTh8g
+        9gV76fzCiHOrAmvZeRtcw7wURw==
+X-Google-Smtp-Source: AHgI3IaPXLqQTrjVB4HFbMZohcZDmKXqQMXYpENHnavuNtI9KkJIfC50p1cvdQJdd9JQbCCvbl9bTw==
+X-Received: by 2002:a17:906:33c1:: with SMTP id w1-v6mr5947979eja.49.1550222792276;
+        Fri, 15 Feb 2019 01:26:32 -0800 (PST)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id s7sm850451edr.86.2019.02.15.01.26.31
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Feb 2019 01:26:31 -0800 (PST)
+Subject: Re: [PATCH 0/2] extcon: Intel Cherry Trail Whiskey Cove PMIC and
+ external charger tweaks
+To:     Yauhen Kharuzhy <jekhor@gmail.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-kernel@vger.kernel.org,
+        MyungJoo Ham <myungjoo.ham@samsung.com>
+References: <20190210203649.21691-1-jekhor@gmail.com>
+ <7d226dcc-9b9c-941c-7915-53ca123fa3a5@redhat.com>
+ <20190214124744.GT9224@smile.fi.intel.com>
+ <CAKWEGV7SGDMttB6uHwnkyjWk+bmSmZ-vTSOXHg1UAgLBeqnaXw@mail.gmail.com>
+ <1026e999-ecda-7866-6607-3c947a4cb483@redhat.com>
+ <20190215070103.GC30250@jeknote.loshitsa1.net>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <952f3152-bf02-beff-7841-a414566912e9@redhat.com>
+Date:   Fri, 15 Feb 2019 10:26:30 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190215070103.GC30250@jeknote.loshitsa1.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 15 Feb 2019 09:26:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 14 Feb 2019 17:45:06 +0100
-Pierre Morel <pmorel@linux.ibm.com> wrote:
+Hi,
 
-> On 14/02/2019 16:54, Cornelia Huck wrote:
-> > On Thu, 14 Feb 2019 14:51:02 +0100
-> > Pierre Morel <pmorel@linux.ibm.com> wrote:
-> >   
-> >> This patch adds interception code for the PQAP instructions,
-> >> and a callback inside the KVM arch structure for s390.
-> >>
-> >> If a VFIO-AP drivers needs to intercept PQAP/AQIC or PQAP/TAPQ  
-> > 
-> > s/drivers/driver/  
-> 
-> thanks. OK
-> 
+On 15-02-19 08:01, Yauhen Kharuzhy wrote:
+> On Thu, Feb 14, 2019 at 04:05:26PM +0100, Hans de Goede wrote:
 
-> >> + *
-> >> + * This callback only handles PQAP/AQIC instruction and  
-> > 
-> > Here you only talk about PQAP/AQIC, what about PQAP/TAPQ mentioned in
-> > the patch description?  
-> 
-> I can add "for now" or "in this patch" or suppress the reference to 
-> PAPQ/TAPQ
+<snip>
 
-I'd just add a note to the patch description that this patch only
-handles PQAP/AQCI and that handling PQAP/TAPQ is something for a
-follow-on patch.
+>> I would do something similar with the fuel-gauge in
+>> drivers/platform/x86/intel_cht_int33fe.c, one option would
+>> be to simply count the number of resources in the ACPI
+>> resource table for the INT33FE device, versions with
+>> the Type-C port have 7 resources, where as your INT33FE
+>> device has only 3.
+>>
+>> I'm even thinking that it might be best to rename
+>> intel_cht_int33fe.c to intel_cht_int33fe_typec.c and add
+>> a check for the resource table having 7 entries there, then
+>> you can make a intel_cht_int33fe_micro_usb.c copy and strip
+>> that mostly empty. Both would bind to the same "INT33FE"
+>> id and they would both silently bail with -ENODEV if the
+>> resource-count (or the PTYP value) don't match.
+>>
+>> The reason I'm thinking of having 2 drivers is because
+>> the current intel_cht_int33fe.c is quite special / ugly and
+>> already has enough ifs.
+>>
+>> If you do a stand-alone intel_cht_int33fe_micro_usb.c that can
+>> hopefully be much simpler.
+>>
+>> Andy what is your take on having separate intel_cht_int33fe_typec.c
+>> and intel_cht_int33fe_micro_usb.c drivers, both binding to
+>> the "INT33FE" ACPI-ID (with its totally !@#%$#-ed up "API") ?
+>>
+>> Having 2 drivers bind to the same id and exit silently with -ENODEV
+>> is somewhat normal for USB ids where we also sometimes have these
+>> kinda ID clashes with different devices hiding behind the same id.
+> 
+> Hmm... And we need to handle case when all three INT33FE devices are
+> enabled in the DSDT...
 
-> 
-> >   
-> >> + * calls a dedicated callback for this instruction if
-> >> + * a driver did register one in the CRYPTO satellite of the
-> >> + * SIE block.
-> >> + *
-> >> + * Do not change the behavior if, return -EOPNOTSUPP if:
-> >> + * - the hook is not used do not change the behavior.  
-> > 
-> > The hook is not used? Or not set?  
-> 
-> I think "is not set" is better.
+I would not worry about that, I've never seen that and even then
+counting the resources + the PTYP check should catch this.
 
-Ok.
+> Instead of separating of driver to two (and more when we will find new
+> CHT device...) I think about some kind of configuration variants table
+> with selection by PTYP/resource count/etc. But typeC devices will
+> require to define interconnections for example and we will get yet
+> another hardly readable code with quirks, autodetection magic and big
+> constant tables...
 
-> 
-> > (I don't think you need to repeat "do
-> > not change the behavior".)  
-> 
-> OK
-> 
-> >   
-> >> + * - AP instructions are not available or not available to the guest
-> >> + * - the instruction is not PQAP with function code indicating
-> >> + *   AQIC do not change the previous behavior.
-> >> + *
-> >> + * For PQAP/AQIC instruction, verify privilege and specifications
-> >> + *
-> >> + * return the value returned by the callback.
-> >> + */
-> >> +static int handle_pqap(struct kvm_vcpu *vcpu)
-> >> +{
-> >> +	uint8_t fc;
-> >> +
-> >> +	/* Verify that the hook callback is registered */
-> >> +	if (!vcpu->kvm->arch.crypto.pqap_hook)
-> >> +		return -EOPNOTSUPP;
-> >> +	/* Verify that the AP instruction are available */
-> >> +	if (!ap_instructions_available())
-> >> +		return -EOPNOTSUPP;
-> >> +	/* Verify that the guest is allowed to use AP instructions */
-> >> +	if (!(vcpu->arch.sie_block->eca & ECA_APIE))
-> >> +		return -EOPNOTSUPP;
-> >> +	/* Verify that the function code is AQIC */
-> >> +	fc = vcpu->run->s.regs.gprs[0] >> 24;
-> >> +	if (fc != 0x03)
-> >> +		return -EOPNOTSUPP;
-> >> +
-> >> +	/* PQAP instructions are allowed for guest kernel only */
-> >> +	if (vcpu->arch.sie_block->gpsw.mask & PSW_MASK_PSTATE)
-> >> +		return kvm_s390_inject_program_int(vcpu, PGM_PRIVILEGED_OP);
-> >> +	/* AQIC instruction is allowed only if facility 65 is available */
-> >> +	if (!test_kvm_facility(vcpu->kvm, 65))
-> >> +		return kvm_s390_inject_program_int(vcpu, PGM_SPECIFICATION);
-> >> +	/* All right, call the callback */
-> >> +	return vcpu->kvm->arch.crypto.pqap_hook(vcpu);  
-> > 
-> > Can that callback also return -EOPNOTSUPP to order to drop to user
-> > space?  
-> 
-> Yes.
-> Why not?
+Right, the issue is the code for the variant with the Type-C connector
+is just quite ugly, also with the cht_int33fe_check_for_max17047 firmware
+bug workaround, I would prefer to keep that isolated to a single
+file for just the devices which need all these kludges.
 
-Maybe also mention that in the function description?
+The version for your device should be much cleaner and if we need
+another variant we can maybe make your version be a generic version
+for this with some config table, but adding more special casing to
+the current code is not a good idea IMHO.
+
+> OK, I plan to start to make some experiments with this at weekend.
+
+Sounds good.
+
+Regards,
+
+Hans
+
