@@ -4,66 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 152D7C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A88DC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:15:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1B8C2192C
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:15:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CA022192C
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:15:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="a5f7aXi3"
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="T68qNAfX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732090AbfBOSPB (ORCPT
+        id S1732190AbfBOSPH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 13:15:01 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:46732 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731987AbfBOSOh (ORCPT
+        Fri, 15 Feb 2019 13:15:07 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:37013 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731898AbfBOSOe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 13:14:37 -0500
-Received: by mail-yw1-f67.google.com with SMTP id n12so4022664ywn.13
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 10:14:36 -0800 (PST)
+        Fri, 15 Feb 2019 13:14:34 -0500
+Received: by mail-yw1-f65.google.com with SMTP id k14so4045194ywe.4
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 10:14:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=GjS/0oY9wwLINvtO7eIortkRmYdX1ic59VaG6ceBez0=;
-        b=a5f7aXi3TT8/yuiVA43lpvDIByTjBfBUd1PDUinv5LHcx+bFHBP4zO587KDnz0R/kN
-         TEoZi1rdgOC3047+bHpcrBiAyVPsAPpTsKs6ewUl4TSe+/djHoSAr49wBwzffHjBEozt
-         TnJYNfBu0e4kntec1YDy2OAqtaeZcg/lE8fbplc082JcDj8VE+pkZDse/RdBl6Ytp4XH
-         iCHkx6yRCbA2d5bNwB9lltewmxn/sWkbXfbHjeca79jqED5sY10/KFYwhdbD6DQsbD5y
-         09455famEavd9FgM96WVtwZi1U2BMJDMXcLQE+Is5EDN46bvB8wa3n+qaJOXAV/3m0MM
-         2YCg==
+        bh=0Mi2kL/2WsC77PZT2+GFY8rm4/RmpjTroxvb9aqMFLo=;
+        b=T68qNAfXm8z8Lj+3Sujbvrk6lrgzOm9xtKSZ/IbmFiUVElTgSyqQ2V+u8V/D9scygU
+         xxfD6Glf1ZjEFDVjQQL1tMksAEl64SR6rxg+DSZh4qQylcB+qKG7yvncHsUD6laSivYP
+         yrEesjRu1nLQkP3oKWLthCKmAAhpLG/cLBDhHmDEZHhlsOsBcznvipgKZKTxTcWUSIlS
+         3CGsUy80UjqzcUyhdj0RAav/iNiNe2XnpUFfM0WEFDf/Nju/TBXsm4AIq5xgFLVGyhme
+         /L0ACh/CL4wCcQTp/ogKd2o1NGC+q+Wz6XVJ5SxvPfpO1E1z2MSsbYxU1mnLMYATxkqx
+         ds+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=GjS/0oY9wwLINvtO7eIortkRmYdX1ic59VaG6ceBez0=;
-        b=pbP4ZxYfiiZyzE8+bok5gWR3Q+3neeIaJksBzm6moffU4mIJu8d8ia8APReAwn18KE
-         OeVr8Dumm+RB7ngn4T8TS348x4xNomgobBBJyL0qeLSb97y7cYKM3Vooum90TsrFvBw0
-         rMbecZ/8lq8iRnKfUkPrY6FYP+39S+FzasoBICZf+8onAurqjV+hOo6RWKWObu/2U8AW
-         grfG6djaGWRTcW5wG1KeQ3GmJCaHyMGksVgbotehx3cPt690Pf4agYQLlXvhYDujmP46
-         PbwGVInLLcK4ioRfbS/gJhkqxfa4rlzANWlGCRUAMpF22SwGQrwMk+4qRALwOAFmUbDj
-         bXog==
-X-Gm-Message-State: AHQUAuY9u7nQyFZqjWaSwTfRzoCeJk+Ryx4vta8o7wmcDD8eGDxfo17W
-        W2ANy2QHx+ny7O7LexBD5/Jf8g==
-X-Google-Smtp-Source: AHgI3IaTs3l6l3o0r57AsapVmdI1i/rDDUCcCVFJ3a4eYlNp4dSi6HTTnSBprSZTOVICUY1w6xMeGw==
-X-Received: by 2002:a81:1cc1:: with SMTP id c184mr9371591ywc.360.1550254476411;
-        Fri, 15 Feb 2019 10:14:36 -0800 (PST)
+        bh=0Mi2kL/2WsC77PZT2+GFY8rm4/RmpjTroxvb9aqMFLo=;
+        b=XHHy5W+koJo4qkEUmFxEySr+N5b7MNSslOdRkZEsvpivHIe0+f3rclYviO3mtHZCa8
+         O2UUo+dVt4GN0XthjC5U35D8hKaI97Auh/x8qBxn+EUHi2cq146xm1GwHjR1V9xlQg6T
+         r/4wJZSCFVtGvGIi1V1VP3hrSR1pmjUJhaQnJIFx++PnnnLVeVjh3yq54F2KDZdG/4xJ
+         d+1Pm9VZ3PVkyEqFqdVoLUsjZC7H41vCZKc6vQi+CpQvc05aRaQjUeuy0MyXhsmf+yuZ
+         78BIdSK90g9HNmXCgC4sKLSO8dH/uDk53zXegSojzYwfU0u/59SafhrE7AAl2Lm3XDLg
+         Xgeg==
+X-Gm-Message-State: AHQUAuaIIVQr4dVvp7VTtl6NfXT9gm1ErtPLzOewe4WPEfe0sGMRUEPY
+        hJyhu03ZPhBU7Dt8EPA2w2qBKbHsFG0=
+X-Google-Smtp-Source: AHgI3IajdWAbqPOMknx8ni8lnxgBEq1c4triDMsgoY5L29gO6lYAJj0wzEH0Eefp7qQvohqB2OEqow==
+X-Received: by 2002:a0d:d857:: with SMTP id a84mr9171114ywe.121.1550254473071;
+        Fri, 15 Feb 2019 10:14:33 -0800 (PST)
 Received: from localhost ([2620:10d:c091:200::4:33c1])
-        by smtp.gmail.com with ESMTPSA id n67sm2023613ywn.1.2019.02.15.10.14.35
+        by smtp.gmail.com with ESMTPSA id j22sm1915679ywj.37.2019.02.15.10.14.32
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 15 Feb 2019 10:14:35 -0800 (PST)
+        Fri, 15 Feb 2019 10:14:32 -0800 (PST)
 From:   Johannes Weiner <hannes@cmpxchg.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Tejun Heo <tj@kernel.org>, linux-mm@kvack.org,
         cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         kernel-team@fb.com
-Subject: [PATCH 4/6] mm: memcontrol: push down mem_cgroup_node_nr_lru_pages()
-Date:   Fri, 15 Feb 2019 13:14:23 -0500
-Message-Id: <20190215181425.32624-5-hannes@cmpxchg.org>
+Subject: [PATCH 2/6] mm: memcontrol: replace zone summing with lruvec_page_state()
+Date:   Fri, 15 Feb 2019 13:14:21 -0500
+Message-Id: <20190215181425.32624-3-hannes@cmpxchg.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190215181425.32624-1-hannes@cmpxchg.org>
 References: <20190215181425.32624-1-hannes@cmpxchg.org>
@@ -74,100 +74,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mem_cgroup_node_nr_lru_pages() is just a convenience wrapper around
-lruvec_page_state() that takes bitmasks of lru indexes and aggregates
-the counts for those.
-
-Replace callsites where the bitmask is simple enough with direct
-lruvec_page_state() calls.
-
-This removes the last extern user of mem_cgroup_node_nr_lru_pages(),
-so make that function private again, too.
+Instead of adding up the zone counters, use lruvec_page_state() to get
+the node state directly. This is a bit cheaper and more stream-lined.
 
 Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
 ---
- include/linux/memcontrol.h | 10 ----------
- mm/memcontrol.c            | 10 +++++++---
- mm/workingset.c            |  5 +++--
- 3 files changed, 10 insertions(+), 15 deletions(-)
+ include/linux/memcontrol.h | 18 ------------------
+ mm/memcontrol.c            |  2 +-
+ mm/vmscan.c                |  2 +-
+ 3 files changed, 2 insertions(+), 20 deletions(-)
 
 diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 206090de5d7c..6bf06b9d0260 100644
+index 83ae11cbd12c..206090de5d7c 100644
 --- a/include/linux/memcontrol.h
 +++ b/include/linux/memcontrol.h
-@@ -496,9 +496,6 @@ int mem_cgroup_select_victim_node(struct mem_cgroup *memcg);
- void mem_cgroup_update_lru_size(struct lruvec *lruvec, enum lru_list lru,
- 		int zid, int nr_pages);
+@@ -499,19 +499,6 @@ void mem_cgroup_update_lru_size(struct lruvec *lruvec, enum lru_list lru,
+ unsigned long mem_cgroup_node_nr_lru_pages(struct mem_cgroup *memcg,
+ 					   int nid, unsigned int lru_mask);
  
--unsigned long mem_cgroup_node_nr_lru_pages(struct mem_cgroup *memcg,
--					   int nid, unsigned int lru_mask);
+-static inline
+-unsigned long mem_cgroup_get_lru_size(struct lruvec *lruvec, enum lru_list lru)
+-{
+-	struct mem_cgroup_per_node *mz;
+-	unsigned long nr_pages = 0;
+-	int zid;
+-
+-	mz = container_of(lruvec, struct mem_cgroup_per_node, lruvec);
+-	for (zid = 0; zid < MAX_NR_ZONES; zid++)
+-		nr_pages += mz->lru_zone_size[zid][lru];
+-	return nr_pages;
+-}
 -
  static inline
  unsigned long mem_cgroup_get_zone_lru_size(struct lruvec *lruvec,
  		enum lru_list lru, int zone_idx)
-@@ -941,13 +938,6 @@ unsigned long mem_cgroup_get_zone_lru_size(struct lruvec *lruvec,
- 	return 0;
+@@ -947,11 +934,6 @@ static inline bool mem_cgroup_online(struct mem_cgroup *memcg)
+ 	return true;
  }
  
 -static inline unsigned long
--mem_cgroup_node_nr_lru_pages(struct mem_cgroup *memcg,
--			     int nid, unsigned int lru_mask)
+-mem_cgroup_get_lru_size(struct lruvec *lruvec, enum lru_list lru)
 -{
 -	return 0;
 -}
--
- static inline unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg)
- {
- 	return 0;
+ static inline
+ unsigned long mem_cgroup_get_zone_lru_size(struct lruvec *lruvec,
+ 		enum lru_list lru, int zone_idx)
 diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 4d573f4e1759..73eb8333bc73 100644
+index af7f18b32389..a04177f25758 100644
 --- a/mm/memcontrol.c
 +++ b/mm/memcontrol.c
-@@ -718,7 +718,7 @@ static void mem_cgroup_charge_statistics(struct mem_cgroup *memcg,
- 	__this_cpu_add(memcg->stat_cpu->nr_page_events, nr_pages);
+@@ -730,7 +730,7 @@ unsigned long mem_cgroup_node_nr_lru_pages(struct mem_cgroup *memcg,
+ 	for_each_lru(lru) {
+ 		if (!(BIT(lru) & lru_mask))
+ 			continue;
+-		nr += mem_cgroup_get_lru_size(lruvec, lru);
++		nr += lruvec_page_state(lruvec, NR_LRU_BASE + lru);
+ 	}
+ 	return nr;
  }
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index e979705bbf32..f88fef03fc04 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -346,7 +346,7 @@ unsigned long lruvec_lru_size(struct lruvec *lruvec, enum lru_list lru, int zone
+ 	int zid;
  
--unsigned long mem_cgroup_node_nr_lru_pages(struct mem_cgroup *memcg,
-+static unsigned long mem_cgroup_node_nr_lru_pages(struct mem_cgroup *memcg,
- 					   int nid, unsigned int lru_mask)
- {
- 	struct lruvec *lruvec = mem_cgroup_lruvec(NODE_DATA(nid), memcg);
-@@ -1413,11 +1413,15 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
- static bool test_mem_cgroup_node_reclaimable(struct mem_cgroup *memcg,
- 		int nid, bool noswap)
- {
--	if (mem_cgroup_node_nr_lru_pages(memcg, nid, LRU_ALL_FILE))
-+	struct lruvec *lruvec = mem_cgroup_lruvec(NODE_DATA(nid), memcg);
-+
-+	if (lruvec_page_state(lruvec, NR_INACTIVE_FILE) ||
-+	    lruvec_page_state(lruvec, NR_ACTIVE_FILE))
- 		return true;
- 	if (noswap || !total_swap_pages)
- 		return false;
--	if (mem_cgroup_node_nr_lru_pages(memcg, nid, LRU_ALL_ANON))
-+	if (lruvec_page_state(lruvec, NR_INACTIVE_ANON) ||
-+	    lruvec_page_state(lruvec, NR_ACTIVE_ANON))
- 		return true;
- 	return false;
+ 	if (!mem_cgroup_disabled())
+-		lru_size = mem_cgroup_get_lru_size(lruvec, lru);
++		lru_size = lruvec_page_state(lruvec, NR_LRU_BASE + lru);
+ 	else
+ 		lru_size = node_page_state(lruvec_pgdat(lruvec), NR_LRU_BASE + lru);
  
-diff --git a/mm/workingset.c b/mm/workingset.c
-index dcb994f2acc2..dbc333a21254 100644
---- a/mm/workingset.c
-+++ b/mm/workingset.c
-@@ -427,10 +427,11 @@ static unsigned long count_shadow_nodes(struct shrinker *shrinker,
- #ifdef CONFIG_MEMCG
- 	if (sc->memcg) {
- 		struct lruvec *lruvec;
-+		int i;
- 
--		pages = mem_cgroup_node_nr_lru_pages(sc->memcg, sc->nid,
--						     LRU_ALL);
- 		lruvec = mem_cgroup_lruvec(NODE_DATA(sc->nid), sc->memcg);
-+		for (pages = 0, i = 0; i < NR_LRU_LISTS; i++)
-+			pages += lruvec_page_state(lruvec, NR_LRU_BASE + i);
- 		pages += lruvec_page_state(lruvec, NR_SLAB_RECLAIMABLE);
- 		pages += lruvec_page_state(lruvec, NR_SLAB_UNRECLAIMABLE);
- 	} else
 -- 
 2.20.1
 
