@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EAFAC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE59C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:51:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1774721929
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:51:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA86721929
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:51:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394580AbfBOLvN (ORCPT
+        id S2394593AbfBOLvS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 06:51:13 -0500
-Received: from olimex.com ([184.105.72.32]:49799 "EHLO olimex.com"
+        Fri, 15 Feb 2019 06:51:18 -0500
+Received: from olimex.com ([184.105.72.32]:55253 "EHLO olimex.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394560AbfBOLvJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2394557AbfBOLvJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 15 Feb 2019 06:51:09 -0500
 Received: from localhost.localdomain ([195.238.85.143])
         by olimex.com with ESMTPSA (ECDHE-RSA-AES128-GCM-SHA256:TLSv1.2:Kx=ECDH:Au=RSA:Enc=AESGCM(128):Mac=AEAD) (SMTP-AUTH username stefan@olimex.com, mechanism PLAIN)
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 03:50:59 -0800
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 03:50:54 -0800
 From:   Stefan Mavrodiev <stefan@olimex.com>
 To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
@@ -37,9 +37,9 @@ To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner
         sunXi SoC support)
 Cc:     Stefan Mavrodiev <stefan@olimex.com>
-Subject: [PATCH v2 8/8] ARM: dts: sun8i: a33: Enable AXP223 CHGLED for A33-OLinuXino
-Date:   Fri, 15 Feb 2019 13:50:13 +0200
-Message-Id: <20190215115013.11098-9-stefan@olimex.com>
+Subject: [PATCH v2 6/8] arm: dts: axpxx: add charge led node
+Date:   Fri, 15 Feb 2019 13:50:11 +0200
+Message-Id: <20190215115013.11098-7-stefan@olimex.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190215115013.11098-1-stefan@olimex.com>
 References: <20190215115013.11098-1-stefan@olimex.com>
@@ -48,34 +48,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A33-OLinuXino comes with populated CHGLED LED indicating battery
-charging status. By default the control is set to manual mode,
-which doesn't indicate battery status. So it makes sense to set
-the control to automatic mode 0 ( FULL - charging, OFF - no battery
-or battery full).
+Add dt node for axp20x-led driver controlling CHGLED.
+Default status is disabled, since it may be not used.
 
 Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
 ---
- arch/arm/boot/dts/sun8i-a33-olinuxino.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/arm/boot/dts/axp209.dtsi | 5 +++++
+ arch/arm/boot/dts/axp22x.dtsi | 5 +++++
+ arch/arm/boot/dts/axp81x.dtsi | 5 +++++
+ 3 files changed, 15 insertions(+)
 
-diff --git a/arch/arm/boot/dts/sun8i-a33-olinuxino.dts b/arch/arm/boot/dts/sun8i-a33-olinuxino.dts
-index 3d78169cdeed..a1e36ee51bbb 100644
---- a/arch/arm/boot/dts/sun8i-a33-olinuxino.dts
-+++ b/arch/arm/boot/dts/sun8i-a33-olinuxino.dts
-@@ -111,6 +111,12 @@
- 	status = "okay";
- };
+diff --git a/arch/arm/boot/dts/axp209.dtsi b/arch/arm/boot/dts/axp209.dtsi
+index 0d9ff12bdf28..f972b6f3ecd0 100644
+--- a/arch/arm/boot/dts/axp209.dtsi
++++ b/arch/arm/boot/dts/axp209.dtsi
+@@ -69,6 +69,11 @@
+ 		#gpio-cells = <2>;
+ 	};
  
-+&axp_led {
-+	label = "a33-olinuxino:yellow:chgled";
-+	status = "okay";
-+	x-powers,charger-mode = <0>;
-+};
++	axp_led: led {
++		compatible = "x-powers,axp20x-led";
++		status = "disabled";
++	};
 +
- &battery_power_supply {
- 	status = "okay";
- };
+ 	battery_power_supply: battery-power-supply {
+ 		compatible = "x-powers,axp209-battery-power-supply";
+ 		status = "disabled";
+diff --git a/arch/arm/boot/dts/axp22x.dtsi b/arch/arm/boot/dts/axp22x.dtsi
+index 65a07a67aca9..92a0b64252b1 100644
+--- a/arch/arm/boot/dts/axp22x.dtsi
++++ b/arch/arm/boot/dts/axp22x.dtsi
+@@ -62,6 +62,11 @@
+ 		#io-channel-cells = <1>;
+ 	};
+ 
++	axp_led: led {
++		compatible = "x-powers,axp20x-led";
++		status = "disabled";
++	};
++
+ 	battery_power_supply: battery-power-supply {
+ 		compatible = "x-powers,axp221-battery-power-supply";
+ 		status = "disabled";
+diff --git a/arch/arm/boot/dts/axp81x.dtsi b/arch/arm/boot/dts/axp81x.dtsi
+index bd83962d3627..22e243cc40d5 100644
+--- a/arch/arm/boot/dts/axp81x.dtsi
++++ b/arch/arm/boot/dts/axp81x.dtsi
+@@ -74,6 +74,11 @@
+ 		};
+ 	};
+ 
++	axp_led: led {
++		compatible = "x-powers,axp20x-led";
++		status = "disabled";
++	};
++
+ 	battery_power_supply: battery-power-supply {
+ 		compatible = "x-powers,axp813-battery-power-supply";
+ 		status = "disabled";
 -- 
 2.17.1
 
