@@ -2,119 +2,148 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FAF6C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B3EFC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:26:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 759FD206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:26:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DDF1206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:26:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732428AbfBOJ0U (ORCPT
+        id S2392725AbfBOJ0d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:26:20 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:49663 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726263AbfBOJ0T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 04:26:19 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1F9Pjit1115537
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 15 Feb 2019 01:25:46 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1F9PjNF1115534;
-        Fri, 15 Feb 2019 01:25:45 -0800
-Date:   Fri, 15 Feb 2019 01:25:45 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Mathieu Poirier <tipbot@zytor.com>
-Message-ID: <tip-859dcf64389c93a647f230a7cfd206d30bc9d286@git.kernel.org>
-Cc:     suzuki.poulose@arm.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
-        acme@redhat.com, peterz@infradead.org, mathieu.poirier@linaro.org,
-        jolsa@redhat.com
-Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          suzuki.poulose@arm.com, hpa@zytor.com, peterz@infradead.org,
-          mathieu.poirier@linaro.org, jolsa@redhat.com, acme@redhat.com,
-          mingo@kernel.org
-In-Reply-To: <20190208223543.31836-1-mathieu.poirier@linaro.org>
-References: <20190208223543.31836-1-mathieu.poirier@linaro.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf cs-etm: Add proper header file for symbols
-Git-Commit-ID: 859dcf64389c93a647f230a7cfd206d30bc9d286
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 15 Feb 2019 04:26:33 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55180 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726263AbfBOJ0d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 04:26:33 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AEF07C059B87;
+        Fri, 15 Feb 2019 09:26:32 +0000 (UTC)
+Received: from gondolin (dhcp-192-213.str.redhat.com [10.33.192.213])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3D93060C62;
+        Fri, 15 Feb 2019 09:26:30 +0000 (UTC)
+Date:   Fri, 15 Feb 2019 10:26:27 +0100
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Pierre Morel <pmorel@linux.ibm.com>
+Cc:     borntraeger@de.ibm.com, alex.williamson@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, akrowiak@linux.ibm.com,
+        pasic@linux.ibm.com, david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
+Subject: Re: [PATCH v3 2/9] s390: ap: kvm: setting a hook for PQAP
+ instructions
+Message-ID: <20190215102627.6e300e28.cohuck@redhat.com>
+In-Reply-To: <2609f072-ab16-429e-8aba-e1af20757c25@linux.ibm.com>
+References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
+        <1550152269-6317-3-git-send-email-pmorel@linux.ibm.com>
+        <20190214165407.335b4ec0.cohuck@redhat.com>
+        <2609f072-ab16-429e-8aba-e1af20757c25@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 15 Feb 2019 09:26:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  859dcf64389c93a647f230a7cfd206d30bc9d286
-Gitweb:     https://git.kernel.org/tip/859dcf64389c93a647f230a7cfd206d30bc9d286
-Author:     Mathieu Poirier <mathieu.poirier@linaro.org>
-AuthorDate: Fri, 8 Feb 2019 15:35:43 -0700
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 14 Feb 2019 13:30:52 -0300
+On Thu, 14 Feb 2019 17:45:06 +0100
+Pierre Morel <pmorel@linux.ibm.com> wrote:
 
-perf cs-etm: Add proper header file for symbols
+> On 14/02/2019 16:54, Cornelia Huck wrote:
+> > On Thu, 14 Feb 2019 14:51:02 +0100
+> > Pierre Morel <pmorel@linux.ibm.com> wrote:
+> >   
+> >> This patch adds interception code for the PQAP instructions,
+> >> and a callback inside the KVM arch structure for s390.
+> >>
+> >> If a VFIO-AP drivers needs to intercept PQAP/AQIC or PQAP/TAPQ  
+> > 
+> > s/drivers/driver/  
+> 
+> thanks. OK
+> 
 
-After 'commit e22c1c751140 ("perf thread: Don't include symbol.h,
-symbol_conf.h is enough")'
+> >> + *
+> >> + * This callback only handles PQAP/AQIC instruction and  
+> > 
+> > Here you only talk about PQAP/AQIC, what about PQAP/TAPQ mentioned in
+> > the patch description?  
+> 
+> I can add "for now" or "in this patch" or suppress the reference to 
+> PAPQ/TAPQ
 
-Compilation of the perf tools is broken when using the functionality
-provided by the openCSD library:
+I'd just add a note to the patch description that this patch only
+handles PQAP/AQCI and that handling PQAP/TAPQ is something for a
+follow-on patch.
 
-[...]
+> 
+> >   
+> >> + * calls a dedicated callback for this instruction if
+> >> + * a driver did register one in the CRYPTO satellite of the
+> >> + * SIE block.
+> >> + *
+> >> + * Do not change the behavior if, return -EOPNOTSUPP if:
+> >> + * - the hook is not used do not change the behavior.  
+> > 
+> > The hook is not used? Or not set?  
+> 
+> I think "is not set" is better.
 
-...                       timerfd: [ on  ]
-...                  sched_getcpu: [ on  ]
-...                           sdt: [ OFF ]
-...                         setns: [ on  ]
-...                    libopencsd: [ on  ]
+Ok.
 
-[...]
+> 
+> > (I don't think you need to repeat "do
+> > not change the behavior".)  
+> 
+> OK
+> 
+> >   
+> >> + * - AP instructions are not available or not available to the guest
+> >> + * - the instruction is not PQAP with function code indicating
+> >> + *   AQIC do not change the previous behavior.
+> >> + *
+> >> + * For PQAP/AQIC instruction, verify privilege and specifications
+> >> + *
+> >> + * return the value returned by the callback.
+> >> + */
+> >> +static int handle_pqap(struct kvm_vcpu *vcpu)
+> >> +{
+> >> +	uint8_t fc;
+> >> +
+> >> +	/* Verify that the hook callback is registered */
+> >> +	if (!vcpu->kvm->arch.crypto.pqap_hook)
+> >> +		return -EOPNOTSUPP;
+> >> +	/* Verify that the AP instruction are available */
+> >> +	if (!ap_instructions_available())
+> >> +		return -EOPNOTSUPP;
+> >> +	/* Verify that the guest is allowed to use AP instructions */
+> >> +	if (!(vcpu->arch.sie_block->eca & ECA_APIE))
+> >> +		return -EOPNOTSUPP;
+> >> +	/* Verify that the function code is AQIC */
+> >> +	fc = vcpu->run->s.regs.gprs[0] >> 24;
+> >> +	if (fc != 0x03)
+> >> +		return -EOPNOTSUPP;
+> >> +
+> >> +	/* PQAP instructions are allowed for guest kernel only */
+> >> +	if (vcpu->arch.sie_block->gpsw.mask & PSW_MASK_PSTATE)
+> >> +		return kvm_s390_inject_program_int(vcpu, PGM_PRIVILEGED_OP);
+> >> +	/* AQIC instruction is allowed only if facility 65 is available */
+> >> +	if (!test_kvm_facility(vcpu->kvm, 65))
+> >> +		return kvm_s390_inject_program_int(vcpu, PGM_SPECIFICATION);
+> >> +	/* All right, call the callback */
+> >> +	return vcpu->kvm->arch.crypto.pqap_hook(vcpu);  
+> > 
+> > Can that callback also return -EOPNOTSUPP to order to drop to user
+> > space?  
+> 
+> Yes.
+> Why not?
 
-  CC       util/arm-spe.o
-  CC       util/arm-spe-pkt-decoder.o
-  CC       util/s390-cpumsf.o
-  CC       util/cs-etm.o
-  CC       util/parse-branch-options.o
-util/cs-etm.c: In function ‘cs_etm__mem_access’:
-util/cs-etm.c:297:24: error: storage size of ‘al’ isn’t known
-  struct  addr_location al;
-
-And rightly so since file cs-etm.c doesn't include symbol.h, something
-that is rectified in this patch.
-
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Suzuki K Poulouse <suzuki.poulose@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Link: http://lkml.kernel.org/r/20190208223543.31836-1-mathieu.poirier@linaro.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/cs-etm.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index 8b3f882d6e2f..0b11d653cfbe 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -25,6 +25,7 @@
- #include "machine.h"
- #include "map.h"
- #include "perf.h"
-+#include "symbol.h"
- #include "thread.h"
- #include "thread_map.h"
- #include "thread-stack.h"
+Maybe also mention that in the function description?
