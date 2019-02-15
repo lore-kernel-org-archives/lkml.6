@@ -2,160 +2,72 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D59C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 06:15:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C858FC4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 06:16:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4497A214DA
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 06:15:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RSGrlphS"
+	by mail.kernel.org (Postfix) with ESMTP id A137F214DA
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 06:16:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388408AbfBOGPO (ORCPT
+        id S2388569AbfBOGQz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 01:15:14 -0500
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:35242 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725838AbfBOGPN (ORCPT
+        Fri, 15 Feb 2019 01:16:55 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:41860 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725838AbfBOGQy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 01:15:13 -0500
-Received: by mail-vk1-f194.google.com with SMTP id l136so1994173vke.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 22:15:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=h4SdvpqGw3iuobgUcx19rFrv3lHuJOBe9urWJjGRD/4=;
-        b=RSGrlphSJVERzE5SaFXHjSZlHl28z24mIi9QmfRNgw+c0D7KozclgvntR+Cs4DYOCW
-         cXufXpaWe2QlTyZolAE/iNHSCiETASoDxGu8339g60sGkUOEB7/hpg9lWJxBZy9kXjfl
-         1t/5ijjkYI4XXbRzpmLhBRn7ZuKmOUraAxeCE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h4SdvpqGw3iuobgUcx19rFrv3lHuJOBe9urWJjGRD/4=;
-        b=UouD+nZRIQ8jsageij4nMEKXyaCTD9eFHhi3mcWXKvqlzGz5V3AVnaYD5xyQGfuDf2
-         3AxcUqzbW8QdYASOmzJYacxNHkNGVDies3jZQzU4elL/w+me6Buv9cC5Su1Ie8H0Hagr
-         h4tkH06qB14BBzvrkYYthNwsE/1yB2cRUJgBhyGBCK0vTuOiEH3wV39GODM6IdOX35fi
-         J1JNl/uLJ5Y2hulaV3Jp77KTDydfEgLOGZ7gZ9UsdkpTj1Jl7VtQGF5gh9rVFhku10/j
-         Wu2xLJdJ6PFFIE8qEBog6IIc9K76JSxdiP/yk6Pvck0IWzYJSlYxsCR9HeHcrB7k5I+X
-         thvQ==
-X-Gm-Message-State: AHQUAubknHREIQzOSBSNuY93CLy6veg8Unnpt1FV1fbR/dK9/cLyH7GW
-        RyXP2eA6p8F46iaFcOHSpNsK2YUbeGU=
-X-Google-Smtp-Source: AHgI3IalroLFpC5s77gx/8v7EZLiMWPPn+Mi1GlyyFVj2Tq63EgGk6hBF7zuGDRipfdpQBKn/jiChw==
-X-Received: by 2002:a1f:dd45:: with SMTP id u66mr4128802vkg.10.1550211311875;
-        Thu, 14 Feb 2019 22:15:11 -0800 (PST)
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com. [209.85.221.175])
-        by smtp.gmail.com with ESMTPSA id o6sm735066vkb.15.2019.02.14.22.15.10
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 22:15:10 -0800 (PST)
-Received: by mail-vk1-f175.google.com with SMTP id b6so888108vkf.8
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 22:15:10 -0800 (PST)
-X-Received: by 2002:a1f:8e49:: with SMTP id q70mr4246226vkd.40.1550211309930;
- Thu, 14 Feb 2019 22:15:09 -0800 (PST)
+        Fri, 15 Feb 2019 01:16:54 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1guWnq-0005Fc-E8; Fri, 15 Feb 2019 14:16:50 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1guWnm-0002My-QQ; Fri, 15 Feb 2019 14:16:46 +0800
+Date:   Fri, 15 Feb 2019 14:16:46 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Horia Geanta <horia.geanta@nxp.com>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH 0/4] crypto: caam - add ecb mode support
+Message-ID: <20190215061646.7fy6ihqxrvsrngc2@gondor.apana.org.au>
+References: <1549633810-10380-1-git-send-email-iuliana.prodan@nxp.com>
+ <20190209215219.GA688@sol.localdomain>
+ <HE1PR0402MB3484556884375681E3E81BE998660@HE1PR0402MB3484.eurprd04.prod.outlook.com>
+ <20190213185135.GA140810@gmail.com>
+ <20190215052442.7ti5d2ni7qh47ilv@gondor.apana.org.au>
+ <20190215055430.GA638@sol.localdomain>
 MIME-Version: 1.0
-References: <20190215031758.GA18776@beast> <CAHk-=wg7DRUqWvbCS2dm=mpdSNJry92Fo0OHDVi67bi8BMqt4A@mail.gmail.com>
-In-Reply-To: <CAHk-=wg7DRUqWvbCS2dm=mpdSNJry92Fo0OHDVi67bi8BMqt4A@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 14 Feb 2019 22:14:56 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jLi+zcOoi+Ti=OyR3MfF8s_S35EEmT_DoCzYPepOcn+Ow@mail.gmail.com>
-Message-ID: <CAGXu5jLi+zcOoi+Ti=OyR3MfF8s_S35EEmT_DoCzYPepOcn+Ow@mail.gmail.com>
-Subject: Re: [PATCH v3] exec: load_script: Do not exec truncated interpreter path
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Samuel Dionne-Riel <samuel@dionne-riel.com>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
-        Graham Christensen <graham@grahamc.com>,
-        Michal Hocko <mhocko@suse.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190215055430.GA638@sol.localdomain>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 8:49 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Thu, Feb 14, 2019 at 09:54:47PM -0800, Eric Biggers wrote:
 >
->
->
-> On Thu, Feb 14, 2019, 19:18 Kees Cook <keescook@chromium.org wrote:
->>
->>
->>  fs/binfmt_script.c | 97 +++++++++++++++++++++++++++++++++++++++-------
->>  1 file changed, 82 insertions(+), 15 deletions(-)
->
-> No, why?
+> Sure, but the bar shouldn't be so low that new implementations of insecure
+> algorithms the world is moving away from are accepted without a real use case.
+> We should be moving towards removing these algorithms instead.  The original DES
+> is especially bad as it only has a 56-bit key.  I'd like to better understand
+> if/why people claim to not only still need these algorithms in 2019, but also
+> need brand new implementations of them.
 
-In my defense, 56 of those 82 lines are comments. ;)
+If we're going to remove DES then we should remove all implementations
+of it and not single out a single driver.
 
->> -       if ((cp = strchr(bprm->buf, '\n')) == NULL)
->> -               cp = bprm->buf+BINPRM_BUF_SIZE-1;
->
->
-> This statement when we've not seen a newline should simply get a "is there at least a whitespace in there somewhere" test. Nothing more than that, afaik.
-
-Unfortunately I don't think this is true for two reasons. First, the
-leading spaces don't indicate that we won't later truncate the
-interpreter path.
-
-i.e. this is valid:
-"#!    /usr/bin/perl"
-but this could get truncated, even though we see whitespace:
-"#!    /some/insane/nfs/or/hexified/path/longer/than/127/bytes"
-
-The only way we know the interpreter wasn't truncated in the
-no-newline case is if we see whitespace after first skipping any
-leading whitespace, and it seemed really ugly to add a special scan
-there. This is what I had for that, minus comments:
-
-diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
-index 7cde3f46ad26..6d7ef98bc949 100644
---- a/fs/binfmt_script.c
-+++ b/fs/binfmt_script.c
-@@ -43,8 +43,18 @@ static int load_script(struct linux_binprm *bprm)
-        bprm->file = NULL;
-
-        bprm->buf[BINPRM_BUF_SIZE - 1] = '\0';
--       if ((cp = strchr(bprm->buf, '\n')) == NULL)
--               cp = bprm->buf+BINPRM_BUF_SIZE-1;
-+       if ((cp = strchr(bprm->buf, '\n')) == NULL) {
-+               bool whitespace = false;
-+
-+               for (cp = bprm->buf+2; cp < bprm->buf+BINPRM_BUF_SIZE-1 &&
-+                                      ((*cp == ' ') || (*cp == '\t')); cp++);
-+               for (; cp < bprm->buf+BINPRM_BUF_SIZE-1; cp++) {
-+                       if ((*cp == ' ') || (*cp == '\t'))
-+                               whitespace = true;
-+               }
-+               if (!whitespace)
-+                       return -ENOEXEC; /* Interpreter truncated */
-+       }
-        *cp = '\0';
-        while (cp > bprm->buf) {
-                cp--;
-
-But, as it turns out, the above is actually wrong too (yay for my test
-cases): the NUL termination before the loop (line 45) may blow away
-the newline at byte 127. So we need to actually manually scan for the
-newline while doing the out-of-bounds checking. (This was part of
-Oleg's original "don't blindly truncate" rationale in the reverted
-patch.)
-
-I had also tried building some state machine to walk the bytes and do
-everything in a single pass, but it was horrible. In another attempt I
-tried converting as much to using "standard" C string routines
-(isspace(), strchr(), strsep(), etc), but that was even more terrible.
-
-So I opted to keep most of the existing logic but add the places where
-tests were needed (along with comments describing wtf is happening
-along the way). Anyway, I'm open to suggestions, obviously. :)
-
+Cheers,
 -- 
-Kees Cook
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
