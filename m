@@ -4,37 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A7FDC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:07:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F270AC4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E34F521B18
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:07:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B83A821A4C
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:07:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="wxQ/Nhlt"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="hLF4A4Jb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387689AbfBOSHb (ORCPT
+        id S2387849AbfBOSHf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 13:07:31 -0500
+        Fri, 15 Feb 2019 13:07:35 -0500
 Received: from mail-eopbgr50062.outbound.protection.outlook.com ([40.107.5.62]:62496
         "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387497AbfBOSH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 13:07:29 -0500
+        id S2387563AbfBOSHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 13:07:33 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=w189ljzm0VaqugtVo9tpZPHp05AlfHj0Dcxzoa0eJr0=;
- b=wxQ/NhltAvEyUyIfp4j5bkXFjQUvfp+iyYGoBgdhfulOZrGi3WKAOfJgd9IXEoJ8rvWZLLNMW3BW+HTl08ttb/IwNC9Hl7dn1aBtd6KMVDbU0F1kPmOlpgmZpPl9DPsYXHIpAM/9xCwBTl9fUpRGCyKRbidqfKVOjF9BhiKzzZc=
+ bh=jsLwe/ux5qHYYcijSKkda3JKbWuNB0QqRFnikmhCpBM=;
+ b=hLF4A4JbR+IT2MxW4E5ls2bEPsSS86ZERPIqQCadd2f9HtBeVBQQZ26k261UYC/xhjbUoga3x/I8StMr9Au5s9Eu1L9HcO6LYwQHOdyV2eUf+y2yPyuodyqKti/cdh8KALPgEm8v08kC8DcBTUcnq4/1bd/Efpt2nvX9r52+FS8=
 Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
  AM0PR04MB4385.eurprd04.prod.outlook.com (52.135.149.15) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.19; Fri, 15 Feb 2019 18:07:22 +0000
+ 15.20.1622.19; Fri, 15 Feb 2019 18:07:23 +0000
 Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
  ([fe80::ec4e:4756:a9dc:914c]) by AM0PR04MB5779.eurprd04.prod.outlook.com
  ([fe80::ec4e:4756:a9dc:914c%3]) with mapi id 15.20.1601.023; Fri, 15 Feb 2019
- 18:07:22 +0000
+ 18:07:23 +0000
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Rob Herring <robh@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
         Shawn Guo <shawnguo@kernel.org>,
@@ -49,13 +49,12 @@ CC:     Fabio Estevam <fabio.estevam@nxp.com>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v2 1/3] arm64: dts: imx8mq: Add the clocks and the latencies
- for the A53 cores
-Thread-Topic: [PATCH v2 1/3] arm64: dts: imx8mq: Add the clocks and the
- latencies for the A53 cores
-Thread-Index: AQHUxVlMOnMGYj2UEkGIzXXdUVdTXw==
-Date:   Fri, 15 Feb 2019 18:07:22 +0000
-Message-ID: <1550254032-16451-2-git-send-email-abel.vesa@nxp.com>
+Subject: [PATCH v2 2/3] arm64: dts: imx8mq: Add the buck vdd_arm regulator
+Thread-Topic: [PATCH v2 2/3] arm64: dts: imx8mq: Add the buck vdd_arm
+ regulator
+Thread-Index: AQHUxVlMid01fUo1802jjVCZ5QXkdg==
+Date:   Fri, 15 Feb 2019 18:07:23 +0000
+Message-ID: <1550254032-16451-3-git-send-email-abel.vesa@nxp.com>
 References: <1550254032-16451-1-git-send-email-abel.vesa@nxp.com>
 In-Reply-To: <1550254032-16451-1-git-send-email-abel.vesa@nxp.com>
 Accept-Language: en-US
@@ -71,46 +70,47 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-mailer: git-send-email 2.7.4
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 27cef4af-9b29-4796-d058-08d693706e84
+x-ms-office365-filtering-correlation-id: 8ae8c690-eaf9-43fa-d425-08d693706f1b
 x-ms-office365-filtering-ht: Tenant
 x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4385;
 x-ms-traffictypediagnostic: AM0PR04MB4385:
 x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;AM0PR04MB4385;23:TWTBsXv7PCuAbBe4dEPBIh1K4TsgL8yRSplCzyB?=
- =?iso-8859-1?Q?wXzShQt/DRNU+0018hVb+a3L3wvs5no9kyJAPZS5QVS7wU18JTl7eMYJBV?=
- =?iso-8859-1?Q?chUguT+rOT7Pw9Ip70N5uD3Gj8qw//MrEwA+3J75rU7NK87joevJiaCtlt?=
- =?iso-8859-1?Q?Qpk+Ezx9oZ3TS616gViHGDcN9RihzaEdzVVc3IGFJIKjlcfUQG76eQDEb2?=
- =?iso-8859-1?Q?d0XE7A7rw1janDsiXmYRIg9FNo4QAYLEkiEEA4cifqKf4Caj9rVhuVNF1W?=
- =?iso-8859-1?Q?q9ywoqQSxxT8l+M6svHFhgqeHi6hbltxnf+1OVFjqw6L+ruiQCk5q2qA/0?=
- =?iso-8859-1?Q?dTUaJIKnyrAhDdUqhGjGp2oucEqlHDdNOUe2Cfbr3J9fARhxWjkCSSzD1D?=
- =?iso-8859-1?Q?CwosxOGs1ikJAXDbc5z7CiC3ffyZnN6i6vVBDZoUAhH9wrqyHQz5EtvloW?=
- =?iso-8859-1?Q?UnExiv6pGTuD38Lc0ZJFP82rG8IP9gTF3WZk/sWC3CEe6iGmOc6RPE0d9H?=
- =?iso-8859-1?Q?5HREyVysx24dBelsXBhHSMun4XiH/XKjSVGYras/Dgyo7S2bAzMNkySaTr?=
- =?iso-8859-1?Q?pHxn68Mt/ZdCvK6EvdS6T77JPiDvnhzZJ5FBlUPPoWmtPZn1uryGYFO6cs?=
- =?iso-8859-1?Q?XIoIZxCUCBaaI8dugMnJI28IJeJPs2nqWRnJHJq/N+0MfBz5Y+T7XUQGdu?=
- =?iso-8859-1?Q?iHD5umTVKyRokmq78CiDEC/BnqthASMZTZhdNNIdmLCI7iGzbJnwB/AiHx?=
- =?iso-8859-1?Q?KCPgFfti8KSdekYFsgHcBQyKi61Zu4vpmxPiKdbXsvJ6UEH6T3zVyjREjh?=
- =?iso-8859-1?Q?rsoGZcbOiAWnU8nGfOtY1+tabDXxar7lbiIGqisDTkCqOVYPmscfX+XTS7?=
- =?iso-8859-1?Q?aL7PmuH+DKElEwuLaLLPDZd9entElzR/aUoRQ5PkWIKS3rXWSzpAZxERxu?=
- =?iso-8859-1?Q?jWVbzSJTo7Qk9+Wmcd4Kdg8Yn834lHu7vPmel6hz8Z/yHE2ExuLMSC2vc9?=
- =?iso-8859-1?Q?iWjA3oCKLVtaNiCfl8MAbocbwtj1jsGXioGH8m0rkswQIeKXse7pS+b7tn?=
- =?iso-8859-1?Q?XWzqsvQqAR6fXevCJIcuoJyDabot4Xk2lmv3MKOvG/1u7Lmjw2OZTzN/kX?=
- =?iso-8859-1?Q?3jPUXmKgTnZMCeRDOG6WGU03sZdqKTFf+LF6YWeo1KY/C3sYL8kSaq/7dA?=
- =?iso-8859-1?Q?yuNXV/XvRhG3XAvIKpWM7rqCbeoJ6ImJ+rjMNTqUn9f8r808bkFhb6Y3wv?=
- =?iso-8859-1?Q?U3Q1S4p/6AUUbar7+?=
-x-microsoft-antispam-prvs: <AM0PR04MB4385ACAF2A71C2E25C75232CF6600@AM0PR04MB4385.eurprd04.prod.outlook.com>
+x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;AM0PR04MB4385;23:EIobiVJ462uZUm61og3MaNDh8ggkUCJBR4iMKe/?=
+ =?iso-8859-1?Q?vBLEQiUmPrg432ac91WjATpbwXhe7Ohbfr85iDIzAMaFAd7wdwjsO520hT?=
+ =?iso-8859-1?Q?hojeyvZ0pLF/uK9K7jvlvKwVs88GnkYCNGG5xwfp6voYf29IXVBgwz0Ylq?=
+ =?iso-8859-1?Q?7pR/GiIdMwePbijtRWoR+kUk8Gsi84sOI0mUpI1P7droYjHN2gT+ppyXCJ?=
+ =?iso-8859-1?Q?IIGrh2FwqEHa7h030CdGKFt9KgH1FZ4RFecMNSEa1Dy2Qc2T5nqzrsv7Wh?=
+ =?iso-8859-1?Q?O9hycGTujVfKsIfZAKVDtAg3MwcA5F27UTrBgrUfN60+OnsgVyEUExUVm+?=
+ =?iso-8859-1?Q?dMWvxTRa1dio3mtpVSsfRWSS5R8XM+Z2La8gG9pcog0L9RPM0xjlvjK/eM?=
+ =?iso-8859-1?Q?VEx37Tg1KuzL5YHFFSFc05k2mfPF+D/0CKZCMf2Vl7tRje/oy1oACTQqvm?=
+ =?iso-8859-1?Q?Hasn3WVsCm+ujq9FLBH7ycPPPPyS0AbvZTursjvbOINnb5KowQAAkf6bvN?=
+ =?iso-8859-1?Q?5jSDou2ZG7lAO+ttHo9Al19jgibuqgGTiudsiP8BCa443gikIGPvpy4wE1?=
+ =?iso-8859-1?Q?MJpWnVrTKfl4ha56W+HuEUeilduOdLmQCSO4TGitT9DaBtepw74QXhDl97?=
+ =?iso-8859-1?Q?ksLZs83DmmRXGnjWequ+XeSdvxtdQD74dAaNGpZ7L14OAF//nwN2C7slyH?=
+ =?iso-8859-1?Q?FP/Y6wfbQRgtm7/ScnVV9O8TXuiasAxxDOu6AX3R3Z+f4dGTqX1SEOUAcb?=
+ =?iso-8859-1?Q?BGXkx1PBL46ftHhmgj0rQZq66n4c5S2xmdOLYEaOpKr4Id6TZca/LMSFwx?=
+ =?iso-8859-1?Q?arhWFy//7qHKRvGsSBGw1W0WVMo5/o/bRdXkl6b4aoJh9An4385y19XvxX?=
+ =?iso-8859-1?Q?KIsS2XQJRxROH6tVZY6XxU1reriib03bc91nEcuWaQ9r6xIYKjPLBIPvHj?=
+ =?iso-8859-1?Q?xN9NxQzaWMhy8Se6fxojFnjJjHb5t79MAr/GG2quyG5s9jvo1LiwSxG0+l?=
+ =?iso-8859-1?Q?X9f8GGGUp+8LLZiGxRt2r/c7Kk1CR0pmpaEwjCsC+GsLI0pnwR0XAfh0vP?=
+ =?iso-8859-1?Q?ept5Zjn+V6SPy8KMhL2ryFpJs9tizsFYY/sRHSgLx0DZrVWO6DFMK1d5rw?=
+ =?iso-8859-1?Q?/IVZ38j8sLLrzpz6HlcoG0axQxIrVRNHs+jbeEUygFjdY/TGPVmFDbaE0d?=
+ =?iso-8859-1?Q?Z5xm/HXnP2dVHNfix6wzSDX5lS2rn1KurBTg+Q9RsPcAtDDU6Boxu7U8Gj?=
+ =?iso-8859-1?Q?g2uEliFjECct4n9sbEAMb4a2gfZpPQtIiHuVWIzZhdRnvYDGw+V35f6fvT?=
+ =?iso-8859-1?Q?RA=3D?=
+x-microsoft-antispam-prvs: <AM0PR04MB438526C4E5C969C87640B3C1F6600@AM0PR04MB4385.eurprd04.prod.outlook.com>
 x-forefront-prvs: 09497C15EB
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(376002)(136003)(39860400002)(366004)(189003)(199004)(305945005)(86362001)(97736004)(71200400001)(71190400001)(446003)(102836004)(14454004)(66066001)(478600001)(6506007)(6436002)(386003)(2906002)(7736002)(106356001)(105586002)(44832011)(8676002)(6116002)(81166006)(36756003)(81156014)(3846002)(476003)(486006)(99286004)(52116002)(2616005)(8936002)(110136005)(76176011)(256004)(54906003)(316002)(26005)(53936002)(11346002)(25786009)(6486002)(4326008)(6512007)(68736007)(186003)(50226002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4385;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(376002)(136003)(39860400002)(366004)(189003)(199004)(305945005)(86362001)(97736004)(71200400001)(71190400001)(446003)(102836004)(14454004)(66066001)(478600001)(6506007)(6436002)(386003)(2906002)(7736002)(106356001)(105586002)(44832011)(8676002)(6116002)(81166006)(36756003)(81156014)(3846002)(476003)(486006)(99286004)(52116002)(2616005)(8936002)(110136005)(76176011)(256004)(54906003)(316002)(26005)(53936002)(11346002)(25786009)(6486002)(4326008)(6512007)(68736007)(186003)(50226002)(32563001)(414714003)(473944003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4385;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: u/Wy8wcMUdXjO+slWLjyRDH+DEpR4w//7nXD9AcMjqIHP2uVYo/G9Dyhn1HGPztRTdtr//fjSoDrqQgGGNYQx8Io9lArRA8dt8L4iUE0RjW9MkpGns5P+i71S1K6q0JzrlPoCWZHZJAVLfx5kLxbLvcy3fN5qSIeBI3qw4126qw2z4qHTdnNwqpPVrBbwZ5tD5RQv4QkpUCvosIz60if9fFMoD+x+sFDWuQD4XwDTKLEzbe6te48LutJ04+h7+R7yIi4brZVXP4m2BEWxQur+SyTuHDW+iWqnH2N8kXnLD3DJMXnx5lso9f8rIJfOoRiHa7l4voyWhuaaObiJ9dWs5iKAzt7QU/eh9ryp97nJ7nDuTaCHTd955SzwDBRXf2YEAarggjG4zGicAJ8OSlH1f5UZMntnZoP+4SiyaG6AKQ=
+x-microsoft-antispam-message-info: 5CEGOCCBFjxYa4MS8DUA+L6xQdQSP0k5vdHf3J8pDh42UPdnTsQf3bvee3V1oJ7xdf8h6QthLr0o5ujN5TsDhgXlfDObA+TZ2MyxcU28shqNvFTwyqOQpy2v9HBHIrFuo6abZLICOyff6lZy1bOVbY5UO5jyUq80ifiKIwdF2XfbipRLAbN70L/1L/bxw+vGDCvZx/+468hVDfDTNNiVjOTxtnXdDq0fg8WJ6hcC9z0rmjJfdXrIeikBELT+d5l2XvG/aUUVbc1BbgtcA85Xko3ZrpiWdSrVBPsvenvQVB30zuqBHWNpvmO25guCymrXbuyy0U2sKTAzV7WLSoVhfttVNDx8T8Gs8gAD/uBuExjXRd6GhPOIisczbVmuOCB71mNIPJC7Q203bYVpBp7aEf/5aFaQFjD01dLg4BPIKRQ=
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 27cef4af-9b29-4796-d058-08d693706e84
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Feb 2019 18:07:21.3127
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ae8c690-eaf9-43fa-d425-08d693706f1b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Feb 2019 18:07:22.2994
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
@@ -121,54 +121,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The clocks and their latencies will be used by cpufreq-dt.
+According to the schematics, this is a MP2147 switch converter
+which is controlled by GPIO1_IO13. When set the gpio is set to
+high the regulator output is set to 0.9V. When the gpio is set
+to low the regulator output is set to 1V.
 
 Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
 ---
- arch/arm64/boot/dts/freescale/imx8mq.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm64/boot/dts/freescale/imx8mq-evk.dts | 36 ++++++++++++++++++++++++=
+++++
+ 1 file changed, 36 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dt=
-s/freescale/imx8mq.dtsi
-index 9155bd4..1a89062 100644
---- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
-@@ -87,6 +87,8 @@
- 			device_type =3D "cpu";
- 			compatible =3D "arm,cortex-a53";
- 			reg =3D <0x0>;
-+			clock-latency =3D <61036>; /* two CLK32 periods */
-+			clocks =3D <&clk IMX8MQ_CLK_ARM>;
- 			enable-method =3D "psci";
- 			next-level-cache =3D <&A53_L2>;
- 		};
-@@ -95,6 +97,8 @@
- 			device_type =3D "cpu";
- 			compatible =3D "arm,cortex-a53";
- 			reg =3D <0x1>;
-+			clock-latency =3D <61036>; /* two CLK32 periods */
-+			clocks =3D <&clk IMX8MQ_CLK_ARM>;
- 			enable-method =3D "psci";
- 			next-level-cache =3D <&A53_L2>;
- 		};
-@@ -103,6 +107,8 @@
- 			device_type =3D "cpu";
- 			compatible =3D "arm,cortex-a53";
- 			reg =3D <0x2>;
-+			clock-latency =3D <61036>; /* two CLK32 periods */
-+			clocks =3D <&clk IMX8MQ_CLK_ARM>;
- 			enable-method =3D "psci";
- 			next-level-cache =3D <&A53_L2>;
- 		};
-@@ -111,6 +117,8 @@
- 			device_type =3D "cpu";
- 			compatible =3D "arm,cortex-a53";
- 			reg =3D <0x3>;
-+			clock-latency =3D <61036>; /* two CLK32 periods */
-+			clocks =3D <&clk IMX8MQ_CLK_ARM>;
- 			enable-method =3D "psci";
- 			next-level-cache =3D <&A53_L2>;
- 		};
+diff --git a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts b/arch/arm64/boot=
+/dts/freescale/imx8mq-evk.dts
+index 54737bf..e5da3dd 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
+@@ -31,6 +31,35 @@
+ 		gpio =3D <&gpio2 19 GPIO_ACTIVE_HIGH>;
+ 		enable-active-high;
+ 	};
++
++	buck2_reg: buck2 {
++		pinctrl-names =3D "default";
++		pinctrl-0 =3D <&pinctrl_buck2>;
++		compatible =3D "regulator-gpio";
++		regulator-name =3D "vdd_arm";
++		regulator-min-microvolt =3D <900000>;
++		regulator-max-microvolt =3D <1000000>;
++		gpios =3D <&gpio1 13 GPIO_ACTIVE_HIGH>;
++		states =3D <1000000 0x0
++			  900000 0x1>;
++		enable-active-high;
++	};
++};
++
++&A53_0 {
++	cpu-supply =3D <&buck2_reg>;
++};
++
++&A53_1 {
++	cpu-supply =3D <&buck2_reg>;
++};
++
++&A53_2 {
++	cpu-supply =3D <&buck2_reg>;
++};
++
++&A53_3 {
++	cpu-supply =3D <&buck2_reg>;
+ };
+=20
+ &fec1 {
+@@ -203,6 +232,13 @@
+ };
+=20
+ &iomuxc {
++	pinctrl_buck2: vddarmgrp {
++		fsl,pins =3D <
++			MX8MQ_IOMUXC_GPIO1_IO13_GPIO1_IO13		0x19
++		>;
++
++	};
++
+ 	pinctrl_fec1: fec1grp {
+ 		fsl,pins =3D <
+ 			MX8MQ_IOMUXC_ENET_MDC_ENET1_MDC			0x3
 --=20
 2.7.4
 
