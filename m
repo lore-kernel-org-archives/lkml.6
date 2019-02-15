@@ -2,205 +2,141 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DC32C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81A26C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:53:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13060222D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:53:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AD2F222A1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:53:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o/vGb/rI"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FhZeerjf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732579AbfBOSxg (ORCPT
+        id S1732703AbfBOSxk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 13:53:36 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38144 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726891AbfBOSxg (ORCPT
+        Fri, 15 Feb 2019 13:53:40 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:36414 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732588AbfBOSxj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 13:53:36 -0500
-Received: by mail-pf1-f193.google.com with SMTP id q1so5244162pfi.5;
-        Fri, 15 Feb 2019 10:53:35 -0800 (PST)
+        Fri, 15 Feb 2019 13:53:39 -0500
+Received: by mail-ot1-f67.google.com with SMTP id v62so9402046otb.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 10:53:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Uww3jCESWScKQjArtNEG2mXqopLtMszsmqcohIsxJRk=;
-        b=o/vGb/rITIf7015lgR+bCPuFxuXDiUB3+VsybbG/i2t2KfcmIGrsFjSCcD9bX9UuP8
-         dPvh72QConN24X3DlXyfbAwofU7EYAkCnxbuZXTGUtuCe8mzvwuzshRllQtCa2XGRgYf
-         +xwPT/xGmK10LK60N1hv/VLDPxO+p9LGywCeX318eT/rFUp3aullNiJUcdklUBwt1ZKq
-         M6MkICsNqntz1vbf6NEmJzqKrRUYBB0K1zldgTF0DfA18pnL0GNHTQlun0M8Ix+dGxef
-         TPKaY+9orBE5DhF/0RDvpUQV2cJADkG4vGbTihCoizQMlJd6bdQgcAuwb0eDCQMWWuhF
-         sPOQ==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=sb3Sc09qPUrAUp+JHtXSuq89LJkxcpv7hFHYtJuu4UE=;
+        b=FhZeerjfosPTqJJsR7sJ987QkuclpYPvALOAHmgzkKP8JtR4Z9ronaIxP5nPg7hdv/
+         kbXEtxc2Zs0wADEJqqBcvSwWKUMJMMrBiuLmcoLLzDbM2mxoNyy8IEmon+l9JXAm86ID
+         nTDpgSuzvYBo4K5Abup6NfaoQ3MIysTlMaE44gFA9W3YaLAaeya5fDneIq3VVxSVApT9
+         UaxeyvfUaVTe0a0hTEbTJ7aisWK4j9xJf8ey0Pl5LxMEkni3vapWAKDefYpzVSG0kQdu
+         +3NhmpCUpROvtRswXVKkRxv8c4wH2uVQ4afko2RNAnQR1aFN6XYYvE4IdVrYByXu/zwf
+         7i9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=Uww3jCESWScKQjArtNEG2mXqopLtMszsmqcohIsxJRk=;
-        b=midWxV5cwKqrgDyz9lGvcloN/F3Z3dwomKjpFynuwkSIVYh1MvFFUTWWuuQMMOU8Qv
-         dtDhV8SEwazMh8OBvfR4klsAa1ZO1XBf4/fFE+YqdDNFe7/I85rw6PJS+Zg3mmaszbW7
-         RSmSIYpob1GON10GfJ4mHP1Xg2yCymkSRN3KOxbNrHTTKU00lqp/jMP4Pxjg/Shnivou
-         2ev/BXxvlSNzi8zN1Bb32Yoyw37cP7okMxocaw2wM+WhbQegmF/1o2dC/C76HtAZoPC0
-         EZxp2bsv5ZMspGmODG2Dl15cHxhMFuzPZUnNfK3Y9RNpjuNobySmziK8pm7P5s0wviwl
-         wabA==
-X-Gm-Message-State: AHQUAubQ6xE2nlozC4WpRLKwPj9HGa0nLd9rTaCCTIJgPS/gRVlB6YFr
-        wRRDvLpRGcaTHWHNqOVmfAk=
-X-Google-Smtp-Source: AHgI3IZ6bl/A5T7VR0voC2MbWO0BCRk0w5yOM+h6AJg36fklDMuyOajpswS6TMbBEpKp1wg5CdUuPQ==
-X-Received: by 2002:a65:60c2:: with SMTP id r2mr6835174pgv.319.1550256814736;
-        Fri, 15 Feb 2019 10:53:34 -0800 (PST)
-Received: from [10.67.48.220] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id l5sm7452612pgl.51.2019.02.15.10.53.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Feb 2019 10:53:33 -0800 (PST)
-Subject: Re: [PATCH RESEND net] net: phy: xgmiitorgmii: Support generic PHY
- status read
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-References: <20190215163220.20041-1-paul.kocialkowski@bootlin.com>
- <387ed483-b205-beda-319d-6f2b8ea55601@gmail.com>
- <38f6708476e9beca4583ccc2a62e238a4981b735.camel@bootlin.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
-Message-ID: <958bb823-3dc8-607f-3c38-3d902acb85a8@gmail.com>
-Date:   Fri, 15 Feb 2019 10:53:26 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=sb3Sc09qPUrAUp+JHtXSuq89LJkxcpv7hFHYtJuu4UE=;
+        b=EYGU4bdRTGe61+dl9IuRuHQVvnWrljISrzqykGd32jJeZZhmyOFNZsHHITGe5ybrnm
+         UaPnPa41YGUjMSjMIQ/gTgkaraMW114EMVpEm7k9NfrPYgORxp+4xJVfNr48CN7E0im8
+         Zff2oVgCskK6JSwxlEfyRUiFHrFiyaosk60HXOE0HR1B9DO36KHabLjifGl+L8GIVsl7
+         7aJUIuS/kaJoQ6Chp9Cv8k4uwfav8A0TetMZiE9DOY4qgVmlQG7l7lG9e4fYQAIY+19d
+         BYMIJt6zAvdeimRn//P7mxpMi4d485kJiQCd2uTL5wzmriYf5wduELbWBOyLMYKspNvY
+         i0gQ==
+X-Gm-Message-State: AHQUAuZJ4h3zFi0sNR/L1iY+LNZqpAmZu1LiDHIfG9NLco9hdcvx0yGg
+        UvIADZa3GFnOpOs9MDiSRHbxSwIXf3l6/aSjK0luKg==
+X-Google-Smtp-Source: AHgI3IaG80gMk1cL+YWwTcgMLO/QKE60fb6Aj6SdPeGVrEyJgOISzEwCht+L0B41TwXCU5kjbAcNT13sgHPk1xHsMMw=
+X-Received: by 2002:aca:d607:: with SMTP id n7mr6450861oig.3.1550256818550;
+ Fri, 15 Feb 2019 10:53:38 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <38f6708476e9beca4583ccc2a62e238a4981b735.camel@bootlin.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190213214559.125666-1-jannh@google.com> <20190214.091328.1687361207100252890.davem@davemloft.net>
+ <CAG48ez3p9kyyON4qDybveNhCNdTPfsvi3hUp7rDQUk-f43xMsQ@mail.gmail.com>
+ <20190214.142100.1155290437338631379.davem@davemloft.net> <CAG48ez0bFsKPBubARtjs+NQmRiUAbPEGbNjXPJaceuDa9Dd7OA@mail.gmail.com>
+ <CAKgT0UeOGPQO0viM0w3JD71357uj7uuZ+wX2tCUTP6u_ZQG78Q@mail.gmail.com>
+In-Reply-To: <CAKgT0UeOGPQO0viM0w3JD71357uj7uuZ+wX2tCUTP6u_ZQG78Q@mail.gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 15 Feb 2019 19:53:12 +0100
+Message-ID: <CAG48ez2BnC2Q5-h5Op+bRvm-96D=v4qV=BghC4WB-xnzG3FSiA@mail.gmail.com>
+Subject: Re: [RESEND PATCH net] mm: page_alloc: fix ref bias in
+ page_frag_alloc() for 1-byte allocs
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     Network Development <netdev@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/15/19 10:34 AM, Paul Kocialkowski wrote:
-> Hi,
-> 
-> On Fri, 2019-02-15 at 09:38 -0800, Florian Fainelli wrote:
->> On 2/15/19 8:32 AM, Paul Kocialkowski wrote:
->>> Some PHY drivers like the generic one do not provide a read_status
->>> callback on their own but rely on genphy_read_status being called
->>> directly.
->>>
->>> With the current code, this results in a NULL function pointer call.
->>> Call genphy_read_status instead when there is no specific callback.
->>>
->>> Fixes: f411a6160bd4 ("net: phy: Add gmiitorgmii converter support")
->>> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
->>> ---
->>> Added Fixes tag and net label for resend.
->>
->> You would want to use phy_read_status() which encapsulates that check as
->> well as checks that the phy_drv pointer is not NULL.
-> 
-> Well, this driver is a bit different and our priv->phy_drv != phydev-
->> drv, so we can't use the helper directly. I should probably have
-> mentionned it in the commit message, sorry!
-> 
-> As I was mentionning to Andrew in the initial submission of this patch,
-> this driver is a bit unusual since it represents a GMII to RGMII
-> bridge, so it's not actually a PHY driver on its own -- it just sticks
-> itself in between the actual PHY and the MAC.
+On Fri, Feb 15, 2019 at 7:35 PM Alexander Duyck
+<alexander.duyck@gmail.com> wrote:
+> On Fri, Feb 15, 2019 at 6:10 AM Jann Horn <jannh@google.com> wrote:
+> > On Thu, Feb 14, 2019 at 11:21 PM David Miller <davem@davemloft.net> wrote:
+> > > From: Jann Horn <jannh@google.com>
+> > > Date: Thu, 14 Feb 2019 22:26:22 +0100
+> > >
+> > > > On Thu, Feb 14, 2019 at 6:13 PM David Miller <davem@davemloft.net> wrote:
+> > > >> From: Jann Horn <jannh@google.com>
+> > > >> Date: Wed, 13 Feb 2019 22:45:59 +0100
+> > > >>
+> > > >> > The basic idea behind ->pagecnt_bias is: If we pre-allocate the maximum
+> > > >> > number of references that we might need to create in the fastpath later,
+> > > >> > the bump-allocation fastpath only has to modify the non-atomic bias value
+> > > >> > that tracks the number of extra references we hold instead of the atomic
+> > > >> > refcount. The maximum number of allocations we can serve (under the
+> > > >> > assumption that no allocation is made with size 0) is nc->size, so that's
+> > > >> > the bias used.
+> > > >> >
+> > > >> > However, even when all memory in the allocation has been given away, a
+> > > >> > reference to the page is still held; and in the `offset < 0` slowpath, the
+> > > >> > page may be reused if everyone else has dropped their references.
+> > > >> > This means that the necessary number of references is actually
+> > > >> > `nc->size+1`.
+> > > >> >
+> > > >> > Luckily, from a quick grep, it looks like the only path that can call
+> > > >> > page_frag_alloc(fragsz=1) is TAP with the IFF_NAPI_FRAGS flag, which
+> > > >> > requires CAP_NET_ADMIN in the init namespace and is only intended to be
+> > > >> > used for kernel testing and fuzzing.
+> > > >> >
+> > > >> > To test for this issue, put a `WARN_ON(page_ref_count(page) == 0)` in the
+> > > >> > `offset < 0` path, below the virt_to_page() call, and then repeatedly call
+> > > >> > writev() on a TAP device with IFF_TAP|IFF_NO_PI|IFF_NAPI_FRAGS|IFF_NAPI,
+> > > >> > with a vector consisting of 15 elements containing 1 byte each.
+> > > >> >
+> > > >> > Signed-off-by: Jann Horn <jannh@google.com>
+> > > >>
+> > > >> Applied and queued up for -stable.
+> > > >
+> > > > I had sent a v2 at Alexander Duyck's request an hour before you
+> > > > applied the patch (with a minor difference that, in Alexander's
+> > > > opinion, might be slightly more efficient). I guess the net tree
+> > > > doesn't work like the mm tree, where patches can get removed and
+> > > > replaced with newer versions? So if Alexander wants that change
+> > > > (s/size/PAGE_FRAG_CACHE_MAX_SIZE/ in the refcount), someone has to
+> > > > send that as a separate patch?
+> > >
+> > > Yes, please send a follow-up.  Sorry about that.
+> >
+> > @Alexander Do you want to do that? It was your idea and I don't think
+> > I can reasonably judge the usefulness of the change.
+>
+> I'll take care of it. I'm kind of annoyed that you resubmitted this to
+> netdev before anyone had a chance to even provide review comments
+> though.
 
-Yes, my bad, you should still consider checking priv->phy_drv though, if
-someone unbinds the PHY driver on either side, you are toast.
+Ah, I wasn't aware that there's a convention against resubmitting a
+patch immediately if the first recipient list pointed to the wrong
+maintainer. The only recipient I removed for the resend was akpm, so I
+assumed that anyone wanting to comment on the patch could just as well
+do that on the resent patch. Also, akpm had already put it in his
+tree, and I wasn't sure whether that meant that I had to send it to
+davem quickly enough to make it land in davem's tree before akpm sends
+his next pull request to Linus...
 
-> 
-> Cheers and thanks for the review,
-> 
-> Paul
-> 
->>>  drivers/net/phy/xilinx_gmii2rgmii.c | 5 ++++-
->>>  1 file changed, 4 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/net/phy/xilinx_gmii2rgmii.c b/drivers/net/phy/xilinx_gmii2rgmii.c
->>> index 74a8782313cf..bd6084e315de 100644
->>> --- a/drivers/net/phy/xilinx_gmii2rgmii.c
->>> +++ b/drivers/net/phy/xilinx_gmii2rgmii.c
->>> @@ -44,7 +44,10 @@ static int xgmiitorgmii_read_status(struct phy_device *phydev)
->>>  	u16 val = 0;
->>>  	int err;
->>>  
->>> -	err = priv->phy_drv->read_status(phydev);
->>> +	if (priv->phy_drv->read_status)
->>> +		err = priv->phy_drv->read_status(phydev);
->>> +	else
->>> +		err = genphy_read_status(phydev);
->>>  	if (err < 0)
->>>  		return err;
->>>  
->>>
->>
->>
-
-
--- 
-Florian
+So next time this happens, should I add a note below the resend
+pointing out that the resend is of a recent patch and it hasn't had
+time to be reviewed yet, or something like that?
