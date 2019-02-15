@@ -2,85 +2,193 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67460C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:14:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 892DEC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:15:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30ECC20685
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:14:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B49A2192D
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:15:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="npQFcA5+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406162AbfBOOOI (ORCPT
+        id S1731479AbfBOOPB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 09:14:08 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41548 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726352AbfBOOOI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 09:14:08 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CB245A0B99;
-        Fri, 15 Feb 2019 14:14:07 +0000 (UTC)
-Received: from sandy.ghostprotocols.net (ovpn-112-32.phx2.redhat.com [10.3.112.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 198345D9CA;
-        Fri, 15 Feb 2019 14:14:07 +0000 (UTC)
-Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
-        id 8D6EE55C4; Fri, 15 Feb 2019 12:14:07 -0200 (BRST)
-Date:   Fri, 15 Feb 2019 12:14:07 -0200
-From:   Arnaldo Carvalho de Melo <acme@redhat.com>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ast@kernel.org, daniel@iogearbox.net, kernel-team@fb.com,
-        peterz@infradead.org, jolsa@kernel.org, namhyung@kernel.org
-Subject: Re: [PATCH v2 perf,bpf 01/11] perf, bpf: consider events with
- attr.bpf_event as side-band events
-Message-ID: <20190215141407.GA5784@redhat.com>
-References: <20190214235624.2579307-1-songliubraving@fb.com>
- <20190214235840.2587123-1-songliubraving@fb.com>
+        Fri, 15 Feb 2019 09:15:01 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:5456 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726324AbfBOOPB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 09:15:01 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c66c9680000>; Fri, 15 Feb 2019 06:15:04 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 15 Feb 2019 06:14:59 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 15 Feb 2019 06:14:59 -0800
+Received: from [10.21.132.148] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 15 Feb
+ 2019 14:14:56 +0000
+Subject: Re: [PATCH 2/2] driver core: Fix possible supplier PM-usage counter
+ imbalance
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lukas Wunner <lukas@wunner.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+References: <5510642.nRbR3bcduN@aspire.rjw.lan>
+ <9351473.C2nPJoyFsE@aspire.rjw.lan>
+ <2ed95b05-317c-59bb-498a-b5481e54bcf6@nvidia.com>
+ <23147304.zVnvcQtZVR@aspire.rjw.lan>
+ <03cb05e4-5d34-3669-1ce9-bb8710c70c95@nvidia.com>
+Message-ID: <71d5b9e0-8906-eded-f8bd-9a9023e54eb9@nvidia.com>
+Date:   Fri, 15 Feb 2019 14:14:54 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190214235840.2587123-1-songliubraving@fb.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 15 Feb 2019 14:14:08 +0000 (UTC)
+In-Reply-To: <03cb05e4-5d34-3669-1ce9-bb8710c70c95@nvidia.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1550240104; bh=QHLvf2kAtRLdCg9LxIHTdGmok2BFcNgoPRRgnqUK5Gg=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=npQFcA5+PGdptoiFTtXvf2sqW9u11fZbjSwkJ1Pf2nJkAr79xinaDr98O46kFiHpg
+         2pydDdFoXJlOV3qWe2QIyPtNnAjk0HQ5TJEXLwUWZGg8xZao4kUvgyXvBXLZNbAAWH
+         /eV7QzUgjHmO6SJIivOokhFKgoBop3GZliOrLHBP3t2lkfixqhjup1EYbNcZSNWfVJ
+         duh5gAOCbiWYBfViyR3YNgWD3hj2VDZezrGCRFz6wwvAuxmoeQjX2dXZmNtOF4PCS0
+         08eF5zgQ5vDS8cMvHF1mvaVN74o6QN/t3lKw5DJ26I/ZRSN0U3dr5knkQCkXEv64gO
+         x9UPkaFTtaI0w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Feb 14, 2019 at 03:58:40PM -0800, Song Liu escreveu:
-> Events with bpf_event should be considered as side-band event, as they
-> carry information about BPF programs.
+
+On 15/02/2019 13:21, Jon Hunter wrote:
 > 
-> Fixes: 6ee52e2a3fe4 ("perf, bpf: Introduce PERF_RECORD_BPF_EVENT")
-> Signed-off-by: Song Liu <songliubraving@fb.com>
-> ---
->  kernel/events/core.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> On 15/02/2019 12:06, Rafael J. Wysocki wrote:
+>> On Friday, February 15, 2019 12:00:27 PM CET Jon Hunter wrote:
+>>> Hi Rafael,
+>>>
+>>> On 12/02/2019 12:08, Rafael J. Wysocki wrote:
+>>>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>>
+>>>> If a stateless device link to a certain supplier with
+>>>> DL_FLAG_PM_RUNTIME set in the flags is added and then removed by the
+>>>> consumer driver's probe callback, the supplier's PM-runtime usage
+>>>> counter will be nonzero after that which effectively causes the
+>>>> supplier to remain "always on" going forward.
+>>>>
+>>>> Namely, device_link_add() called to add the link invokes
+>>>> device_link_rpm_prepare() which notices that the consumer driver is
+>>>> probing, so it increments the supplier's PM-runtime usage counter
+>>>> with the assumption that the link will stay around until
+>>>> pm_runtime_put_suppliers() is called by driver_probe_device(),
+>>>> but if the link goes away before that point, the supplier's
+>>>> PM-runtime usage counter will remain nonzero.
+>>>>
+>>>> To prevent that from happening, first rework pm_runtime_get_suppliers()
+>>>> and pm_runtime_put_suppliers() to use the rpm_active refounts of device
+>>>> links and make the latter only drop rpm_active and the supplier's
+>>>> PM-runtime usage counter for each link by one, unless rpm_active is
+>>>> one already for it.  Next, modify device_link_add() to bump up the
+>>>> new link's rpm_active refcount and the suppliers PM-runtime usage
+>>>> counter by two, to prevent pm_runtime_put_suppliers(), if it is
+>>>> called subsequently, from suspending the supplier prematurely (in
+>>>> case its PM-runtime usage counter goes down to 0 in there).
+>>>>
+>>>> Due to the way rpm_put_suppliers() works, this change does not
+>>>> affect runtime suspend of the consumer ends of new device links (or,
+>>>> generally, device links for which DL_FLAG_PM_RUNTIME has just been
+>>>> set).
+>>>>
+>>>> Fixes: e2f3cd831a28 ("driver core: Fix handling of runtime PM flags in device_link_add()")
+>>>> Reported-by: Ulf Hansson <ulf.hansson@linaro.org> 
+>>>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>>>> ---
+>>>>
+>>>> Note that the issue had been there before commit e2f3cd831a28, but it was
+>>>> overlooked by that commit and this change is a fix on top of it, so make
+>>>> the Fixes: tag point to commit e2f3cd831a28 (instead of an earlier one
+>>>> that the patch will not be applicable to).
+>>> I noticed that yesterday's and today's -next were no longer booting on
+>>> one of our Tegra boards (Tegra210 Jetson TX2) because networking is
+>>> failing. The ethernet chip is a USB device and looking at the bootlogs I
+>>> can see that the Tegra XHCI driver is failing ...
+>>>
+>>>  tegra-xusb 70090000.usb: xHCI host controller not responding, assume dead
+>>>  tegra-xusb 70090000.usb: HC died; cleaning up
+>>>
+>>> The Tegra XHCI driver uses multiple power-domains and uses
+>>> device_link_add() to attach them. So now I am wondering if there is
+>>> something that we have got wrong in our implementation. However, I don't
+>>> see the device being probed deferred on boot or anything like that.
+>>>
+>>> The driver in question is drivers/usb/host/xhci-tegra.c and we add the
+>>> links in the function tegra_xusb_powerdomain_init() which is before RPM
+>>> is enabled. Let me know if you have any thoughts.
+>>
+>> Please try the appended patch on top of the $subject one (provided that
+>> reverting the $subject patch makes the problem go away).
 > 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 0a8dab322111..9403bdda5f8c 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -4238,7 +4238,8 @@ static bool is_sb_event(struct perf_event *event)
->  	if (attr->mmap || attr->mmap_data || attr->mmap2 ||
->  	    attr->comm || attr->comm_exec ||
->  	    attr->task || attr->ksymbol ||
-> -	    attr->context_switch)
-> +	    attr->context_switch ||
-> +	    attr->bpf_event)
+> Thanks and yes to confirm, reverting the $subject patch on top of next
+> does make the issue go away.
+> 
+>> ---
+>>  drivers/base/power/runtime.c |    9 ++++++---
+>>  1 file changed, 6 insertions(+), 3 deletions(-)
+>>
+>> Index: linux-pm/drivers/base/power/runtime.c
+>> ===================================================================
+>> --- linux-pm.orig/drivers/base/power/runtime.c
+>> +++ linux-pm/drivers/base/power/runtime.c
+>> @@ -1675,9 +1675,12 @@ void pm_runtime_put_suppliers(struct dev
+>>  	idx = device_links_read_lock();
+>>  
+>>  	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node)
+>> -		if (link->flags & DL_FLAG_PM_RUNTIME &&
+>> -		    refcount_dec_not_one(&link->rpm_active))
+>> -			pm_runtime_put(link->supplier);
+>> +		if (link->flags & DL_FLAG_PM_RUNTIME) {
+>> +			if (refcount_dec_not_one(&link->rpm_active))
+>> +				pm_runtime_put(link->supplier);
+>> +			else
+>> +				pm_request_idle(link->supplier);
+>> +		}
+>>  
+>>  	device_links_read_unlock(idx);
+>>  }
+> 
+> I will try this now and report back in a bit.
 
-What about attr->ksymbol?
+I tried this on top of next, but unfortunately the same issue still
+persists and so this did not fix it. Let me know if there is any debug I
+can add/enable.
 
-- Arnaldo
+Cheers
+Jon
 
->  		return true;
->  	return false;
->  }
-> -- 
-> 2.17.1
+-- 
+nvpublic
