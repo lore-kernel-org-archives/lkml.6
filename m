@@ -2,201 +2,122 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ED2FC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9193C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:45:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF971206DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:44:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 716A62089F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:45:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="voC3wZzW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390325AbfBOHoH (ORCPT
+        id S2390396AbfBOHpL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 02:44:07 -0500
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:43713 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726335AbfBOHoG (ORCPT
+        Fri, 15 Feb 2019 02:45:11 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:18075 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726335AbfBOHpK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 02:44:06 -0500
-X-Originating-IP: 141.70.45.131
-Received: from localhost (hadi-gate-vlan-851.hadiko.whka.de [141.70.45.131])
-        (Authenticated sender: hle@owl.eu.com)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 71232C000F;
-        Fri, 15 Feb 2019 07:44:02 +0000 (UTC)
-Date:   Fri, 15 Feb 2019 08:44:01 +0100
-From:   Hugo Lefeuvre <hle@owl.eu.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Greg Hartman <ghartman@google.com>,
-        Alistair Strachan <astrachan@google.com>,
-        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Christian Brauner <christian@brauner.io>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] staging/android: use multiple futex wait queues
-Message-ID: <20190215074401.GA20188@behemoth.owl.eu.com.local>
+        Fri, 15 Feb 2019 02:45:10 -0500
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id x1F7iuCe000847;
+        Fri, 15 Feb 2019 16:44:56 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x1F7iuCe000847
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1550216697;
+        bh=Y4dNF/RxX3MyGbFoqnUshXrtG1OoIFFX3Cshg6WbBGo=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=voC3wZzWmGkf4oIfJ5VuvWuGwdoQqiwIpvgMZPqfQ3ON0O5b8fCTETQM2M+79iPYs
+         ih5yKwMYf0F3JmxhH6SrmVhohU9Ysv1dq8HgP3t7cyg9ClVj6GUSnVjP728iQkoUS5
+         U86HcanXgi1dynef0tBrNson5h1CyG9Y48jAddYsgAN251xIHFQGTNH0d9JidZjida
+         2G+/1RAxeoNM32bSZpuQadqM9OAaYiWH9p+9A7nbVz2oiKhD42dyZQzdU90Is6Adg0
+         M9bo4WOk5/J8LidFvrGahPZnGhlvJXiep75InAb/WhQzxYbPDFAOEijPF+bQ7SbA9Q
+         CAnXGIvouUzbQ==
+X-Nifty-SrcIP: [209.85.222.45]
+Received: by mail-ua1-f45.google.com with SMTP id z11so2920800uaa.10;
+        Thu, 14 Feb 2019 23:44:56 -0800 (PST)
+X-Gm-Message-State: AHQUAub1Twba2Wlp22T8GxKrebl7GMRlH8JYWkswI/NUtxU7ztoHUsaP
+        vxccW3sVWGZUxiZhcOBB1B4TwQb83B+JiCkHyJQ=
+X-Google-Smtp-Source: AHgI3Ia57sZJUh0aDDMa4VhfpTpdjrTfmUBZjQBSj2E7ZBi3yv9XX3+lVFomDn/M0BocUuSx0lJsybIQCmRYC5ggw7A=
+X-Received: by 2002:a9f:3f41:: with SMTP id i1mr3963841uaj.42.1550216695582;
+ Thu, 14 Feb 2019 23:44:55 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190213174005.28785-1-hch@lst.de> <20190213174005.28785-12-hch@lst.de>
+In-Reply-To: <20190213174005.28785-12-hch@lst.de>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 15 Feb 2019 16:44:19 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQRv4ksk_bryE_PsHtiojEQos2BY8vQQ1sDcKkdypYH8A@mail.gmail.com>
+Message-ID: <CAK7LNAQRv4ksk_bryE_PsHtiojEQos2BY8vQQ1sDcKkdypYH8A@mail.gmail.com>
+Subject: Re: [PATCH 11/11] s390: don't redefined the HAS_IOMEM symbol
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-xtensa@linux-xtensa.org,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-riscv@lists.infradead.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use multiple per-offset wait queues instead of one big wait queue per
-region.
+On Thu, Feb 14, 2019 at 2:40 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> Rely on the common defintion instead.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  arch/s390/Kconfig | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+> index 9a25e19364f5..0f62e33ffcb2 100644
+> --- a/arch/s390/Kconfig
+> +++ b/arch/s390/Kconfig
+> @@ -159,6 +159,7 @@ config S390
+>         select MODULES_USE_ELF_RELA
+>         select NEED_DMA_MAP_STATE       if PCI
+>         select NEED_SG_DMA_LENGTH       if PCI
+> +       select NO_IOMEM                 if !PCI
 
-Signed-off-by: Hugo Lefeuvre <hle@owl.eu.com>
----
-Changes in v2:
-  - dereference the it pointer instead of wait_queue (which is not set
-    yet) in handle_vsoc_cond_wait()
----
- drivers/staging/android/TODO   |  4 ---
- drivers/staging/android/vsoc.c | 56 ++++++++++++++++++++++++++--------
- 2 files changed, 44 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/staging/android/TODO b/drivers/staging/android/TODO
-index fbf015cc6d62..cd2af06341dc 100644
---- a/drivers/staging/android/TODO
-+++ b/drivers/staging/android/TODO
-@@ -12,10 +12,6 @@ ion/
-  - Better test framework (integration with VGEM was suggested)
- 
- vsoc.c, uapi/vsoc_shm.h
-- - The current driver uses the same wait queue for all of the futexes in a
--   region. This will cause false wakeups in regions with a large number of
--   waiting threads. We should eventually use multiple queues and select the
--   queue based on the region.
-  - Add debugfs support for examining the permissions of regions.
-  - Remove VSOC_WAIT_FOR_INCOMING_INTERRUPT ioctl. This functionality has been
-    superseded by the futex and is there for legacy reasons.
-diff --git a/drivers/staging/android/vsoc.c b/drivers/staging/android/vsoc.c
-index f2bb18158e5b..97303d9173aa 100644
---- a/drivers/staging/android/vsoc.c
-+++ b/drivers/staging/android/vsoc.c
-@@ -31,6 +31,7 @@
- #include <linux/interrupt.h>
- #include <linux/cdev.h>
- #include <linux/file.h>
-+#include <linux/list.h>
- #include "uapi/vsoc_shm.h"
- 
- #define VSOC_DEV_NAME "vsoc"
-@@ -62,11 +63,18 @@ static const int MAX_REGISTER_BAR_LEN = 0x100;
-  */
- static const int SHARED_MEMORY_BAR = 2;
- 
-+struct vsoc_futex_wait_queue_t {
-+	struct list_head list;
-+	u32 offset;
-+	wait_queue_head_t queue;
-+};
-+
- struct vsoc_region_data {
- 	char name[VSOC_DEVICE_NAME_SZ + 1];
- 	wait_queue_head_t interrupt_wait_queue;
--	/* TODO(b/73664181): Use multiple futex wait queues */
--	wait_queue_head_t futex_wait_queue;
-+	/* Per-offset futex wait queue. */
-+	struct list_head futex_wait_queue_list;
-+	spinlock_t futex_wait_queue_lock;
- 	/* Flag indicating that an interrupt has been signalled by the host. */
- 	atomic_t *incoming_signalled;
- 	/* Flag indicating the guest has signalled the host. */
-@@ -402,6 +410,7 @@ static int handle_vsoc_cond_wait(struct file *filp, struct vsoc_cond_wait *arg)
- 	struct vsoc_region_data *data = vsoc_dev.regions_data + region_number;
- 	int ret = 0;
- 	struct vsoc_device_region *region_p = vsoc_region_from_filep(filp);
-+	struct vsoc_futex_wait_queue_t *it, *wait_queue = NULL;
- 	atomic_t *address = NULL;
- 	ktime_t wake_time;
- 
-@@ -415,10 +424,27 @@ static int handle_vsoc_cond_wait(struct file *filp, struct vsoc_cond_wait *arg)
- 	address = shm_off_to_virtual_addr(region_p->region_begin_offset +
- 					  arg->offset);
- 
-+	/* Find wait queue corresponding to offset or create it */
-+	spin_lock(&data->futex_wait_queue_lock);
-+	list_for_each_entry(it, &data->futex_wait_queue_list, list) {
-+		if (it->offset == arg->offset) {
-+			wait_queue = it;
-+			break;
-+		}
-+	}
-+
-+	if (!wait_queue) {
-+		wait_queue = kmalloc(sizeof(*wait_queue), GFP_KERNEL);
-+		wait_queue->offset = arg->offset;
-+		init_waitqueue_head(&wait_queue->queue);
-+		list_add(&wait_queue->list, &data->futex_wait_queue_list);
-+	}
-+	spin_unlock(&data->futex_wait_queue_lock);
-+
- 	/* Ensure that the type of wait is valid */
- 	switch (arg->wait_type) {
- 	case VSOC_WAIT_IF_EQUAL:
--		ret = wait_event_freezable(data->futex_wait_queue,
-+		ret = wait_event_freezable(wait_queue->queue,
- 					   arg->wakes++ &&
- 					   atomic_read(address) != arg->value);
- 		break;
-@@ -426,7 +452,7 @@ static int handle_vsoc_cond_wait(struct file *filp, struct vsoc_cond_wait *arg)
- 		if (arg->wake_time_nsec >= NSEC_PER_SEC)
- 			return -EINVAL;
- 		wake_time = ktime_set(arg->wake_time_sec, arg->wake_time_nsec);
--		ret = wait_event_freezable_hrtimeout(data->futex_wait_queue,
-+		ret = wait_event_freezable_hrtimeout(wait_queue->queue,
- 						     arg->wakes++ &&
- 						     atomic_read(address) != arg->value,
- 						     wake_time);
-@@ -463,6 +489,7 @@ static int do_vsoc_cond_wake(struct file *filp, uint32_t offset)
- 	struct vsoc_device_region *region_p = vsoc_region_from_filep(filp);
- 	u32 region_number = iminor(file_inode(filp));
- 	struct vsoc_region_data *data = vsoc_dev.regions_data + region_number;
-+	struct vsoc_futex_wait_queue_t *wait_queue;
- 	/* Ensure that the offset is aligned */
- 	if (offset & (sizeof(uint32_t) - 1))
- 		return -EADDRNOTAVAIL;
-@@ -470,13 +497,17 @@ static int do_vsoc_cond_wake(struct file *filp, uint32_t offset)
- 	if (((uint64_t)offset) + region_p->region_begin_offset +
- 	    sizeof(uint32_t) > region_p->region_end_offset)
- 		return -E2BIG;
--	/*
--	 * TODO(b/73664181): Use multiple futex wait queues.
--	 * We need to wake every sleeper when the condition changes. Typically
--	 * only a single thread will be waiting on the condition, but there
--	 * are exceptions. The worst case is about 10 threads.
--	 */
--	wake_up_interruptible_all(&data->futex_wait_queue);
-+	/* Only wake up tasks waiting for given offset */
-+	spin_lock(&data->futex_wait_queue_lock);
-+	list_for_each_entry(wait_queue, &data->futex_wait_queue_list, list) {
-+		if (wait_queue->offset == offset) {
-+			wake_up_interruptible_all(&wait_queue->queue);
-+			list_del(&wait_queue->list);
-+			kfree(wait_queue);
-+			break;
-+		}
-+	}
-+	spin_unlock(&data->futex_wait_queue_lock);
- 	return 0;
- }
- 
-@@ -866,7 +897,8 @@ static int vsoc_probe_device(struct pci_dev *pdev,
- 			 i, vsoc_dev.regions_data[i].name);
- 		init_waitqueue_head
- 			(&vsoc_dev.regions_data[i].interrupt_wait_queue);
--		init_waitqueue_head(&vsoc_dev.regions_data[i].futex_wait_queue);
-+		spin_lock_init(&vsoc_dev.regions_data[i].futex_wait_queue_lock);
-+		INIT_LIST_HEAD(&vsoc_dev.regions_data[i].futex_wait_queue_list);
- 		vsoc_dev.regions_data[i].incoming_signalled =
- 			shm_off_to_virtual_addr(region->region_begin_offset) +
- 			h_to_g_signal_table->interrupt_signalled_offset;
+This does not work because NO_IOMEM is defined
+in arch/um/Kconfig.
+
+
+If you want to do this,
+you must move NO_IOMEM  to lib/Kconfig.
+
+
+
+>         select OLD_SIGACTION
+>         select OLD_SIGSUSPEND3
+>         select PCI_DOMAINS              if PCI
+> @@ -708,9 +709,6 @@ config PCI_NR_FUNCTIONS
+>
+>  endif  # PCI
+>
+> -config HAS_IOMEM
+> -       def_bool PCI
+> -
+>  config CHSC_SCH
+>         def_tristate m
+>         prompt "Support for CHSC subchannels"
+> --
+> 2.20.1
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
+
+
+
 -- 
-2.20.1
+Best Regards
+Masahiro Yamada
