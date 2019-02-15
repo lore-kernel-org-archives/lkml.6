@@ -2,55 +2,55 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA212C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:09:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07C35C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:09:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C819222D9
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:09:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0D5A222D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:09:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b="JGI4HvBY";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="7LBY7jFR"
+	dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b="bCST9++F";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="N2TNvU/R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393549AbfBOWJp (ORCPT
+        id S2393602AbfBOWJt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 17:09:45 -0500
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:53057 "EHLO
+        Fri, 15 Feb 2019 17:09:49 -0500
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:46339 "EHLO
         wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2393469AbfBOWJm (ORCPT
+        by vger.kernel.org with ESMTP id S2393525AbfBOWJn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 17:09:42 -0500
+        Fri, 15 Feb 2019 17:09:43 -0500
 Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.west.internal (Postfix) with ESMTP id BCE9F32A2;
-        Fri, 15 Feb 2019 17:09:40 -0500 (EST)
+        by mailout.west.internal (Postfix) with ESMTP id 2050E329D;
+        Fri, 15 Feb 2019 17:09:42 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Fri, 15 Feb 2019 17:09:41 -0500
+  by compute3.internal (MEProxy); Fri, 15 Feb 2019 17:09:42 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sent.com; h=from
         :to:cc:subject:date:message-id:in-reply-to:references:reply-to
-        :mime-version:content-transfer-encoding; s=fm2; bh=shCZ1iSGYyBc0
-        QtOy4OOg2NHBqv6Cu7B1aYGh3Lj914=; b=JGI4HvBYMMqsmw33Ld98dJrsDB1V9
-        eA5YY/5aymibWj3GCK2ZBnkSanqlVNR9KcGe5P7tk9qq5GnUifO5nV4HwD6wMY2O
-        TnBHiA/MCr6o2UrwKCfJ1MXqTmx+l5fWXalUKXfMUFPf8VhAtmXWak99iVu9TCmW
-        swFXWRKzblPSqu4RhbrqErajr+wH09P7q2M+A+vYMWc8eDq5sHwSy5Nls1Zj9DMU
-        pLTQ4BJ+KVGl5yZ2h1mNF+O6I8Yb2HQJBTnPEYWC3PrA8UIOZSuddQGia+euS1EN
-        9Y8hsOSKtNwrR0AbF5AB02bfXkPOSlxpwPs9qRxF6A+N1EtUy0T3cNyrw==
+        :mime-version:content-transfer-encoding; s=fm2; bh=k7ZExxjAnB4ke
+        DLSp3xQU/1nRGQzF8KzUQhggKQXhQA=; b=bCST9++F8XtSzpwjh7el976UwiLPi
+        M7Tj8JRboCd0IwlnCEwtvDlYbyA8Rjpd9AeKVgoCIT5DSbK0F5OT5ThksiP9y5Fv
+        gGUOCMAhWAnS5OrY9KmLJvxXKHo1+9vfT0FHiVvUevjxUVRUqZ1jfE5ADNrp63Eq
+        /BSrH5lpf3BTEN5ouultEKnaUjtma934YpfHusNBt4taJWspaNRCAdRyHucXSagp
+        oW5tMUYZxy4oRavKWNRO2QmLgry+kZrIic4ZFt7PkUj9qmE0XYNs8+wq+XNQLG3O
+        8obrb2RuOt5RHrBgdH7qr7GXlFclhjXKS0B7bHOjn0H4N7EONBlfEZwMA==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:reply-to:subject
         :to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=shCZ1iSGYyBc0QtOy4OOg2NHBqv6Cu7B1aYGh3Lj914=; b=7LBY7jFR
-        gIXY6xtbU8OGarWtbnuAaiWCo3dFDFVQQca/BX7rdBvGPfSMGieDPVc+0gFJYRs9
-        Qk8EagwAb2TOX8lPvaaM1i7Zv2S+p9yD+OdQk2WNOEd0l+GygVYDeLLUwRlEcdYK
-        dAKMV/snTNYp0A/YZpwmkWpklS6NzZ+ZLx3EwSwkMkDXYga01k5bYx8CD55L0dOW
-        QtPUJ1HH95ud2bOfeHcsJTQmQJUqSw/NEOwWic2VVNl9VlbYiE7MTxwwVxpe1bxT
-        JMUPhQJNgHOjFbuxVTcIk7lADUi6wNskAEv9KyWnh4lq25C388QU4nqzPjx2Iy5N
-        y3GoeqFHYM4kAw==
-X-ME-Sender: <xms:pDhnXKrRFL8VIJyRZvlNReKemazB5HYZmnQTlTaoi0qIfVNL28uiFg>
+        fm2; bh=k7ZExxjAnB4keDLSp3xQU/1nRGQzF8KzUQhggKQXhQA=; b=N2TNvU/R
+        jWTIXilhmDIXAMyLfIPdfFFt3yofQ6K/H+6duECZyb3D3Kn7KlO1wWA8/o5J0cUi
+        OsigiqED0MnljUauXgN6wn4MUvpUVzfu+LgdOMgVv8w9KKh7Xv0wYYmRQmKAHzYf
+        cCO7bZb5Ge+jT7dNlPLCNbPaE8Q39AgTa5QJorojhOadKrKZivu3BJA60YJgqGVT
+        HQ05Kdd2LfbbRewAP7EjHdyMiFktvsgQp3edeAdrCfZf1Qkz6ICEWtIbuu6qMwSc
+        fWDF8CwPOgTdGU3iA3GIk55JoI/68mEukzNu/fWChg9Z16Gteap7m0l7/pFTOnkF
+        LKNxQ/mqa/zLXg==
+X-ME-Sender: <xms:pThnXOfCEQkB3dIgkj-bbMV2P1V4xGb6tojk3NBiKXrJb_mY2F8arw>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledruddtjedgudehlecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecu
     fedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkf
@@ -58,13 +58,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledruddtjedgudehlecutefuodetgg
     sehsvghnthdrtghomheqnecukfhppedvudeirddvvdekrdduuddvrddvvdenucfrrghrrg
     hmpehmrghilhhfrhhomhepiihirdihrghnsehsvghnthdrtghomhenucevlhhushhtvghr
     ufhiiigvpedt
-X-ME-Proxy: <xmx:pDhnXEFPihNU3cGKFL_WYX3erm0h-tMJQWfkASfvF-NaGWS2iPktvQ>
-    <xmx:pDhnXCs474p7ILWXnQzXTpKEDTtNfZyJN_UBJt23OwcDFkfhLmH3Yg>
-    <xmx:pDhnXOVyIkG9OELuH1C1tIRuLgok9u4U-bzZEVTCPBoCYMmKbu-91A>
-    <xmx:pDhnXGsmXe54iYI0JhDwdCqtCbIiA5bNFcpnwa76Nop_ymZyuENOKQ>
+X-ME-Proxy: <xmx:pThnXFnvX2RCQtgh3ZjWLqa1Tl-Ct979ZmGI1JylyY4D9wVRCq7WHw>
+    <xmx:pThnXJDvYISAyw_AffEAYhGrsIfIqU9D2WNAWn2oadnugtXdx5M6AA>
+    <xmx:pThnXHMivLaeC6T-i5gH3Gkigvx4j52hR1mKCLFpYK1vV85T7_Skng>
+    <xmx:pThnXOx4MgLnCxPGUL3fIhfGZQYUkftz2pQPbdWaEeEcR_zDnYDv4A>
 Received: from nvrsysarch5.nvidia.com (thunderhill.nvidia.com [216.228.112.22])
-        by mail.messagingengine.com (Postfix) with ESMTPA id C30E4E4511;
-        Fri, 15 Feb 2019 17:09:38 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 2ABD2E4597;
+        Fri, 15 Feb 2019 17:09:40 -0500 (EST)
 From:   Zi Yan <zi.yan@sent.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
@@ -77,9 +77,9 @@ Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         Mark Hairgrove <mhairgrove@nvidia.com>,
         Nitin Gupta <nigupta@nvidia.com>,
         David Nellans <dnellans@nvidia.com>, Zi Yan <ziy@nvidia.com>
-Subject: [RFC PATCH 28/31] mm: vmstats: add page promotion stats.
-Date:   Fri, 15 Feb 2019 14:08:53 -0800
-Message-Id: <20190215220856.29749-29-zi.yan@sent.com>
+Subject: [RFC PATCH 29/31] mm: madvise: add madvise options to split PMD and PUD THPs.
+Date:   Fri, 15 Feb 2019 14:08:54 -0800
+Message-Id: <20190215220856.29749-30-zi.yan@sent.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190215220856.29749-1-zi.yan@sent.com>
 References: <20190215220856.29749-1-zi.yan@sent.com>
@@ -93,99 +93,166 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Zi Yan <ziy@nvidia.com>
 
-Count all four types of page promotion.
-
 Signed-off-by: Zi Yan <ziy@nvidia.com>
 ---
- include/linux/vm_event_item.h | 4 ++++
- mm/huge_memory.c              | 8 ++++++++
- mm/vmstat.c                   | 4 ++++
- 3 files changed, 16 insertions(+)
+ include/uapi/asm-generic/mman-common.h |  12 +++
+ mm/madvise.c                           | 106 +++++++++++++++++++++++++
+ 2 files changed, 118 insertions(+)
 
-diff --git a/include/linux/vm_event_item.h b/include/linux/vm_event_item.h
-index df619262b1b4..f352e5cbfc9c 100644
---- a/include/linux/vm_event_item.h
-+++ b/include/linux/vm_event_item.h
-@@ -81,6 +81,8 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOUT,
- 		THP_SPLIT_PAGE_FAILED,
- 		THP_DEFERRED_SPLIT_PAGE,
- 		THP_SPLIT_PMD,
-+		THP_PROMOTE_PMD,
-+		THP_PROMOTE_PAGE,
- #ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
- 		THP_FAULT_ALLOC_PUD,
- 		THP_FAULT_FALLBACK_PUD,
-@@ -89,6 +91,8 @@ enum vm_event_item { PGPGIN, PGPGOUT, PSWPIN, PSWPOUT,
- 		THP_SPLIT_PUD_PAGE_FAILED,
- 		THP_ZERO_PUD_PAGE_ALLOC,
- 		THP_ZERO_PUD_PAGE_ALLOC_FAILED,
-+		THP_PROMOTE_PUD,
-+		THP_PROMOTE_PUD_PAGE,
- #endif
- 		THP_ZERO_PAGE_ALLOC,
- 		THP_ZERO_PAGE_ALLOC_FAILED,
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 67fd1821f4dc..911463c98bcc 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -4403,6 +4403,8 @@ int promote_huge_pmd_address(struct vm_area_struct *vma, unsigned long haddr)
- out_unlock:
- 	anon_vma_unlock_write(vma->anon_vma);
- out:
-+	if (!ret)
-+		count_vm_event(THP_PROMOTE_PMD);
- 	return ret;
- }
+diff --git a/include/uapi/asm-generic/mman-common.h b/include/uapi/asm-generic/mman-common.h
+index d1ec94a1970d..33db8b6a2ce0 100644
+--- a/include/uapi/asm-generic/mman-common.h
++++ b/include/uapi/asm-generic/mman-common.h
+@@ -69,6 +69,18 @@
+ #define MADV_MEMDEFRAG	20		/* Worth backing with hugepages */
+ #define MADV_NOMEMDEFRAG	21		/* Not worth backing with hugepages */
  
-@@ -4644,6 +4646,8 @@ int promote_list_to_huge_page(struct page *head, struct list_head *list)
- 		put_anon_vma(anon_vma);
++#define MADV_SPLITHUGEPAGE	24		/* Split huge page in range once */
++#define MADV_PROMOTEHUGEPAGE	25		/* Promote range into huge page */
++
++#define MADV_SPLITHUGEMAP	26		/* Split huge page table entry in range once */
++#define MADV_PROMOTEHUGEMAP	27		/* Promote range into huge page table entry */
++
++#define MADV_SPLITHUGEPUDPAGE	28		/* Split huge page in range once */
++#define MADV_PROMOTEHUGEPUDPAGE	29		/* Promote range into huge page */
++
++#define MADV_SPLITHUGEPUDMAP	30		/* Split huge page table entry in range once */
++#define MADV_PROMOTEHUGEPUDMAP	31		/* Promote range into huge page table entry */
++
+ /* compatibility flags */
+ #define MAP_FILE	0
+ 
+diff --git a/mm/madvise.c b/mm/madvise.c
+index 9cef96d633e8..be3818c06e17 100644
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -624,6 +624,95 @@ static long madvise_memdefrag(struct vm_area_struct *vma,
+ 	*prev = vma;
+ 	return memdefrag_madvise(vma, &vma->vm_flags, behavior);
+ }
++
++static long madvise_split_promote_hugepage(struct vm_area_struct *vma,
++		     struct vm_area_struct **prev,
++		     unsigned long start, unsigned long end, int behavior)
++{
++	struct page *page;
++	unsigned long addr = start, haddr;
++	int ret = 0;
++	*prev = vma;
++
++	while (addr < end && !ret) {
++		switch (behavior) {
++		case MADV_SPLITHUGEMAP:
++			split_huge_pmd_address(vma, addr, false, NULL);
++			addr += HPAGE_PMD_SIZE;
++			break;
++		case MADV_SPLITHUGEPUDMAP:
++			split_huge_pud_address(vma, addr, false, NULL);
++			addr += HPAGE_PUD_SIZE;
++			break;
++		case MADV_SPLITHUGEPAGE:
++			page = follow_page(vma, addr, FOLL_GET);
++			if (page) {
++				lock_page(page);
++				if (split_huge_page(page)) {
++					pr_debug("%s: fail to split page\n", __func__);
++					ret = -EBUSY;
++				}
++				unlock_page(page);
++				put_page(page);
++			} else
++				ret = -ENODEV;
++			addr += HPAGE_PMD_SIZE;
++			break;
++		case MADV_SPLITHUGEPUDPAGE:
++			page = follow_page(vma, addr, FOLL_GET);
++			if (page) {
++				lock_page(page);
++				if (split_huge_pud_page(page)) {
++					pr_debug("%s: fail to split pud page\n", __func__);
++					ret = -EBUSY;
++				}
++				unlock_page(page);
++				put_page(page);
++			} else
++				ret = -ENODEV;
++			addr += HPAGE_PUD_SIZE;
++			break;
++		case MADV_PROMOTEHUGEMAP:
++			haddr = addr & HPAGE_PMD_MASK;
++			if (haddr >= start && (haddr + HPAGE_PMD_SIZE) <= end)
++				promote_huge_pmd_address(vma, haddr);
++			else
++				ret = -ENODEV;
++			addr += HPAGE_PMD_SIZE;
++			break;
++		case MADV_PROMOTEHUGEPUDMAP:
++			haddr = addr & HPAGE_PUD_MASK;
++			if (haddr >= start && (haddr + HPAGE_PUD_SIZE) <= end)
++				promote_huge_pud_address(vma, haddr);
++			else
++				ret = -ENODEV;
++			addr += HPAGE_PUD_SIZE;
++			break;
++		case MADV_PROMOTEHUGEPAGE:
++			haddr = addr & HPAGE_PMD_MASK;
++			if (haddr >= start && (haddr + HPAGE_PMD_SIZE) <= end)
++				promote_huge_page_address(vma, haddr);
++			else
++				ret = -ENODEV;
++			addr += HPAGE_PMD_SIZE;
++			break;
++		case MADV_PROMOTEHUGEPUDPAGE:
++			haddr = addr & HPAGE_PUD_MASK;
++			if (haddr >= start && (haddr + HPAGE_PUD_SIZE) <= end)
++				promote_huge_pud_page_address(vma, haddr);
++			else
++				ret = -ENODEV;
++			addr += HPAGE_PUD_SIZE;
++			break;
++		default:
++			ret = -EINVAL;
++			break;
++		}
++	}
++
++	return ret;
++}
++
+ #ifdef CONFIG_MEMORY_FAILURE
+ /*
+  * Error injection support for memory error handling.
+@@ -708,6 +797,15 @@ madvise_vma(struct vm_area_struct *vma, struct vm_area_struct **prev,
+ 	case MADV_MEMDEFRAG:
+ 	case MADV_NOMEMDEFRAG:
+ 		return madvise_memdefrag(vma, prev, start, end, behavior);
++	case MADV_SPLITHUGEPAGE:
++	case MADV_PROMOTEHUGEPAGE:
++	case MADV_SPLITHUGEMAP:
++	case MADV_PROMOTEHUGEMAP:
++	case MADV_SPLITHUGEPUDPAGE:
++	case MADV_PROMOTEHUGEPUDPAGE:
++	case MADV_SPLITHUGEPUDMAP:
++	case MADV_PROMOTEHUGEPUDMAP:
++		return madvise_split_promote_hugepage(vma, prev, start, end, behavior);
+ 	default:
+ 		return madvise_behavior(vma, prev, start, end, behavior);
  	}
- out:
-+	if (!ret)
-+		count_vm_event(THP_PROMOTE_PAGE);
- 	return ret;
- }
- 
-@@ -4842,6 +4846,8 @@ int promote_huge_pud_address(struct vm_area_struct *vma, unsigned long haddr)
- out_unlock:
- 	anon_vma_unlock_write(vma->anon_vma);
- out:
-+	if (!ret)
-+		count_vm_event(THP_PROMOTE_PUD);
- 	return ret;
- }
- 
-@@ -5169,6 +5175,8 @@ int promote_list_to_huge_pud_page(struct page *head, struct list_head *list)
- 		unlock_page(p);
- 		putback_lru_page(p);
- 	}
-+	if (!ret)
-+		count_vm_event(THP_PROMOTE_PUD_PAGE);
- 	return ret;
- }
- 
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 1d185cf748a6..7dd1ff5805ef 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1259,6 +1259,8 @@ const char * const vmstat_text[] = {
- 	"thp_split_page_failed",
- 	"thp_deferred_split_page",
- 	"thp_split_pmd",
-+	"thp_promote_pmd",
-+	"thp_promote_page",
- #ifdef CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD
- 	"thp_fault_alloc_pud",
- 	"thp_fault_fallback_pud",
-@@ -1267,6 +1269,8 @@ const char * const vmstat_text[] = {
- 	"thp_split_pud_page_failed",
- 	"thp_zero_pud_page_alloc",
- 	"thp_zero_pud_page_alloc_failed",
-+	"thp_promote_pud",
-+	"thp_promote_pud_page",
+@@ -744,6 +842,14 @@ madvise_behavior_valid(int behavior)
  #endif
- 	"thp_zero_page_alloc",
- 	"thp_zero_page_alloc_failed",
+ 	case MADV_MEMDEFRAG:
+ 	case MADV_NOMEMDEFRAG:
++	case MADV_SPLITHUGEPAGE:
++	case MADV_PROMOTEHUGEPAGE:
++	case MADV_SPLITHUGEMAP:
++	case MADV_PROMOTEHUGEMAP:
++	case MADV_SPLITHUGEPUDPAGE:
++	case MADV_PROMOTEHUGEPUDPAGE:
++	case MADV_SPLITHUGEPUDMAP:
++	case MADV_PROMOTEHUGEPUDMAP:
+ 		return true;
+ 
+ 	default:
 -- 
 2.20.1
 
