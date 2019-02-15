@@ -2,33 +2,32 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 711B6C4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:12:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A8EC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:12:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C58A222A1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:12:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D68B521A80
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:12:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437186AbfBOOMD (ORCPT
+        id S2437203AbfBOOMK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 09:12:03 -0500
-Received: from honk.sigxcpu.org ([24.134.29.49]:44675 "EHLO honk.sigxcpu.org"
+        Fri, 15 Feb 2019 09:12:10 -0500
+Received: from honk.sigxcpu.org ([24.134.29.49]:44673 "EHLO honk.sigxcpu.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405514AbfBOOMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 09:12:00 -0500
+        id S1726838AbfBOOL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 09:11:59 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id B8D4DFB05;
-        Fri, 15 Feb 2019 15:11:58 +0100 (CET)
+        by honk.sigxcpu.org (Postfix) with ESMTP id 7154DFB04;
+        Fri, 15 Feb 2019 15:11:57 +0100 (CET)
 X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
 Received: from honk.sigxcpu.org ([127.0.0.1])
         by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id EKDJlwlJj3iu; Fri, 15 Feb 2019 15:11:53 +0100 (CET)
+        with ESMTP id fKVRYMpwFlcI; Fri, 15 Feb 2019 15:11:56 +0100 (CET)
 Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 4A4AA48DC3; Fri, 15 Feb 2019 15:11:53 +0100 (CET)
+        id 529B748DC2; Fri, 15 Feb 2019 15:11:53 +0100 (CET)
 From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
 To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -39,9 +38,9 @@ To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         linux-input@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org
-Subject: [PATCH v3 1/3] input: goodix - support Goodix gt5688
-Date:   Fri, 15 Feb 2019 15:11:51 +0100
-Message-Id: <f342ad633683716cd2acb99b819da76c06ce0850.1550239328.git.agx@sigxcpu.org>
+Subject: [PATCH v3 3/3] input: goodix: Print values in case of inconsistencies
+Date:   Fri, 15 Feb 2019 15:11:53 +0100
+Message-Id: <c2f48f779b64478cb7e0c63e3a2ee19e160d1292.1550239328.git.agx@sigxcpu.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <cover.1550239328.git.agx@sigxcpu.org>
 References: <cover.1550239328.git.agx@sigxcpu.org>
@@ -53,50 +52,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From what I've seen in vendor trees it's fine to treat this as gt1x¹.
-Tested on the Purism Librem 5 Devkit (Rocktech JH057N00900 panel).
-
-[1]: https://github.com/TadiT7/android_kernel_mtk-4.4/tree/master/drivers/input/touchscreen/mediatek/GT5688
+"Invalid config" gives little idea what's wrong. Print the values that
+must not be 0 so we know which ones are off.
 
 Signed-off-by: Guido Günther <agx@sigxcpu.org>
-Reviewed-by: Bastien Nocera <hadess@hadess.net>
 ---
- Documentation/devicetree/bindings/input/touchscreen/goodix.txt | 1 +
- drivers/input/touchscreen/goodix.c                             | 2 ++
- 2 files changed, 3 insertions(+)
+ drivers/input/touchscreen/goodix.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-index f7e95c52f3c7..57d3d8870a09 100644
---- a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-+++ b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-@@ -3,6 +3,7 @@ Device tree bindings for Goodix GT9xx series touchscreen controller
- Required properties:
- 
-  - compatible		: Should be "goodix,gt1151"
-+				 or "goodix,gt5688"
- 				 or "goodix,gt911"
- 				 or "goodix,gt9110"
- 				 or "goodix,gt912"
 diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
-index f2d9c2c41885..47b1ced41576 100644
+index 47b1ced41576..f57d82220a88 100644
 --- a/drivers/input/touchscreen/goodix.c
 +++ b/drivers/input/touchscreen/goodix.c
-@@ -216,6 +216,7 @@ static const struct goodix_chip_data *goodix_get_chip_data(u16 id)
- {
- 	switch (id) {
- 	case 1151:
-+	case 5688:
- 		return &gt1x_chip_data;
+@@ -693,7 +693,9 @@ static int goodix_configure_dev(struct goodix_ts_data *ts)
+ 	touchscreen_parse_properties(ts->input_dev, true, &ts->prop);
  
- 	case 911:
-@@ -942,6 +943,7 @@ MODULE_DEVICE_TABLE(acpi, goodix_acpi_match);
- #ifdef CONFIG_OF
- static const struct of_device_id goodix_of_match[] = {
- 	{ .compatible = "goodix,gt1151" },
-+	{ .compatible = "goodix,gt5688" },
- 	{ .compatible = "goodix,gt911" },
- 	{ .compatible = "goodix,gt9110" },
- 	{ .compatible = "goodix,gt912" },
+ 	if (!ts->prop.max_x || !ts->prop.max_y || !ts->max_touch_num) {
+-		dev_err(&ts->client->dev, "Invalid config, using defaults\n");
++		dev_err(&ts->client->dev,
++			"Invalid config (%d, %d, %d), using defaults\n",
++			ts->prop.max_x, ts->prop.max_y, ts->max_touch_num);
+ 		ts->prop.max_x = GOODIX_MAX_WIDTH - 1;
+ 		ts->prop.max_y = GOODIX_MAX_HEIGHT - 1;
+ 		ts->max_touch_num = GOODIX_MAX_CONTACTS;
 -- 
 2.20.1
 
