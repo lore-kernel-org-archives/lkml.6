@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5A22C10F04
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0736C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:13:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81B3921934
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:13:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0E7F21B1C
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:13:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196798;
-	bh=6XP47bMFH9B6r93B3mAX3sOfvBcOVChKejModyldUMU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HrgQL+E61bJYYZ/vnNd/duiKuXlVW7haM0su9/D2Lq5heDNx2vd1I7FBZbwXApMCh
-	 Q09fdcptCLRw5wdwa1l9Ti4K6g/aIsUKHI+2cc3welOg1AQ6Ni+CQ64SjgJUmVmfnD
-	 KWhk2BRBugf0CKfJnutsFdrF8p919zxn2LgO3348=
+	s=default; t=1550196804;
+	bh=U3yPzWgWowxtiSrQxiO2CaOREdGqbYLAx0buvaccRec=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=G3+GWtKH9QjdHscEW1iuDKkf0Ud87dflvJuFIVDCIiYMYWzdXZglohSJQGpipUE9Q
+	 rJicHRt+NrVqDQaAGpGrsgzcXiMcjUEck1rc5y+sygCmd1AEpf7Yx05/xF9Vy9Nlq9
+	 O4dSbHnFucuf0KaFrawCtNlYmlZxRF98dl3fDP+M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391379AbfBOCNQ (ORCPT
+        id S2404688AbfBOCNW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:13:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53106 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:13:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388862AbfBOCNM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:13:12 -0500
+        id S2391373AbfBOCNQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:13:16 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC5B1206BA;
-        Fri, 15 Feb 2019 02:13:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D18AC21934;
+        Fri, 15 Feb 2019 02:13:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196791;
-        bh=6XP47bMFH9B6r93B3mAX3sOfvBcOVChKejModyldUMU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H1lAXJfgoADCQUN05DRElbCOATAvQ/LK0sbe2a1x0SJiWfGA+huLOJzqQ3NITzAZ2
-         9CS0nzjfOI/gjkcNC61f0DnzKKLLv/am1cpWnPpK9/y0oeYEiuJ/qTrC14tVw/9a8q
-         I9BNu+ugMF3/k38Uc3sQOKh0feFpc5TpS2Aw/6cc=
+        s=default; t=1550196795;
+        bh=U3yPzWgWowxtiSrQxiO2CaOREdGqbYLAx0buvaccRec=;
+        h=From:To:Cc:Subject:Date:From;
+        b=16yAvfI89akiXxiwPzhIJ1888UU3FTksyTQ0Aya4Fy0ZCZ90aU+w3C3xDtJjLumv/
+         9HWi01LTUFcolV6O6hyOITz6b9vWtWJMnILFDCCnwX2qlj2d0Zjs/uKJbBVrGDnuw7
+         Muc3KWcJ6I7aJdHQV2bDf8ymySxtubxtJfe9sv+w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ben Gardon <bgardon@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 64/65] kvm: selftests: Fix region overlap check in kvm_util
-Date:   Thu, 14 Feb 2019 21:11:20 -0500
-Message-Id: <20190215021121.177674-64-sashal@kernel.org>
+Cc:     "Kristian H. Kristensen" <hoegsberg@gmail.com>,
+        "Kristian H . Kristensen" <hoegsberg@chromium.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.14 01/40] drm/msm: Unblock writer if reader closes file
+Date:   Thu, 14 Feb 2019 21:12:34 -0500
+Message-Id: <20190215021313.178476-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
-References: <20190215021121.177674-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -58,58 +58,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Gardon <bgardon@google.com>
+From: "Kristian H. Kristensen" <hoegsberg@gmail.com>
 
-[ Upstream commit 94a980c39c8e3f8abaff5d3b5bbcd4ccf1c02c4f ]
+[ Upstream commit 99c66bc051e7407fe0bf0607b142ec0be1a1d1dd ]
 
-Fix a call to userspace_mem_region_find to conform to its spec of
-taking an inclusive, inclusive range. It was previously being called
-with an inclusive, exclusive range. Also remove a redundant region bounds
-check in vm_userspace_mem_region_add. Region overlap checking is already
-performed by the call to userspace_mem_region_find.
+Prevents deadlock when fifo is full and reader closes file.
 
-Tested: Compiled tools/testing/selftests/kvm with -static
-	Ran all resulting test binaries on an Intel Haswell test machine
-	All tests passed
-
-Signed-off-by: Ben Gardon <bgardon@google.com>
-Reviewed-by: Jim Mattson <jmattson@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Kristian H. Kristensen <hoegsberg@chromium.org>
+Signed-off-by: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/kvm/lib/kvm_util.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/msm/msm_rd.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index 6fd8c089cafc..fb5d2d1e0c04 100644
---- a/tools/testing/selftests/kvm/lib/kvm_util.c
-+++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -590,7 +590,7 @@ void vm_userspace_mem_region_add(struct kvm_vm *vm,
- 	 * already exist.
- 	 */
- 	region = (struct userspace_mem_region *) userspace_mem_region_find(
--		vm, guest_paddr, guest_paddr + npages * vm->page_size);
-+		vm, guest_paddr, (guest_paddr + npages * vm->page_size) - 1);
- 	if (region != NULL)
- 		TEST_ASSERT(false, "overlapping userspace_mem_region already "
- 			"exists\n"
-@@ -606,15 +606,10 @@ void vm_userspace_mem_region_add(struct kvm_vm *vm,
- 		region = region->next) {
- 		if (region->region.slot == slot)
- 			break;
--		if ((guest_paddr <= (region->region.guest_phys_addr
--				+ region->region.memory_size))
--			&& ((guest_paddr + npages * vm->page_size)
--				>= region->region.guest_phys_addr))
--			break;
- 	}
- 	if (region != NULL)
- 		TEST_ASSERT(false, "A mem region with the requested slot "
--			"or overlapping physical memory range already exists.\n"
-+			"already exists.\n"
- 			"  requested slot: %u paddr: 0x%lx npages: 0x%lx\n"
- 			"  existing slot: %u paddr: 0x%lx size: 0x%lx",
- 			slot, guest_paddr, npages,
+diff --git a/drivers/gpu/drm/msm/msm_rd.c b/drivers/gpu/drm/msm/msm_rd.c
+index ec56794ad039..bdce1c9434c6 100644
+--- a/drivers/gpu/drm/msm/msm_rd.c
++++ b/drivers/gpu/drm/msm/msm_rd.c
+@@ -109,7 +109,9 @@ static void rd_write(struct msm_rd_state *rd, const void *buf, int sz)
+ 		char *fptr = &fifo->buf[fifo->head];
+ 		int n;
+ 
+-		wait_event(rd->fifo_event, circ_space(&rd->fifo) > 0);
++		wait_event(rd->fifo_event, circ_space(&rd->fifo) > 0 || !rd->open);
++		if (!rd->open)
++			return;
+ 
+ 		/* Note that smp_load_acquire() is not strictly required
+ 		 * as CIRC_SPACE_TO_END() does not access the tail more
+@@ -207,7 +209,10 @@ static int rd_open(struct inode *inode, struct file *file)
+ static int rd_release(struct inode *inode, struct file *file)
+ {
+ 	struct msm_rd_state *rd = inode->i_private;
++
+ 	rd->open = false;
++	wake_up_all(&rd->fifo_event);
++
+ 	return 0;
+ }
+ 
 -- 
 2.19.1
 
