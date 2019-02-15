@@ -2,179 +2,86 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57CB1C10F02
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:21:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58FCCC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:23:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1992A222D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:21:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 267A021924
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:23:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gateworks-com.20150623.gappssmtp.com header.i=@gateworks-com.20150623.gappssmtp.com header.b="p/0cvPHC"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ZdRP3vkK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728796AbfBOQVB (ORCPT
+        id S1727123AbfBOQXt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 11:21:01 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53090 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726028AbfBOQVA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 11:21:00 -0500
-Received: by mail-wm1-f68.google.com with SMTP id m1so10527378wml.2
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 08:20:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gateworks-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=s1vCuB7D2H4CusMBH+6UUBpcpQnoqa6rNuNJ4590MY4=;
-        b=p/0cvPHCAtnvauKh9iPXyQdmglLyL41qFfb2TxNAfQZo3f14Y1jM9JjlowPG+/eu89
-         SSBOhAlYC0Ej9WLW7wgHWsOWRzPIXvbc4iicB8995m1h5MLT5ZkvOXyS5cd8TGgXT6Sb
-         5Xl4pOyRbT6ek2RokuPk+qd5eqjg8CWeb7ZiI66/EnGiGLxdKYx8b5j1X8hU/KtSFeti
-         6HQTvQQ1a8D9b01KTnbu1hoRTi+b6Im+I2Kk5WS0Cqwgqx+LRsA+2q3UFjB5hVXdvZsO
-         DIVLC+Ja8j+0ozRft23an67eP4AnWGIcuKXXQwS7D8EetmWiXJF9EoOE/XmAXX7GF0/1
-         KvsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=s1vCuB7D2H4CusMBH+6UUBpcpQnoqa6rNuNJ4590MY4=;
-        b=FMvTLWJR8n+iSMqC3L9kIYapmKKhqP1RO2PdWBxtyG87216doKYRm5Kyxhjh90mro4
-         rcEcQl9EivTwinByfbcghVHP9A0csj6TjeJfz0fqAD+NXhDASR7PATa3WbeDIP9sIGRo
-         PfthHf2ehGrynL2gf5gGcHlo9ZCnYiagFoLNPsHRCznkgAOukbwTfmSJBnEK9AJrnWOH
-         s3a6rfAh/igKKyaJDq8inY9u9jedK5cKJplHCuKiSEe237RyToQcePUt60VZHk9GbQMn
-         4fs73T4+Qf1ZYMDIw9dJLDvdyfIQRKC3cqETKrT3LCI49kwHMVTVnJOr+5jsWSDuK1BY
-         X+WA==
-X-Gm-Message-State: AHQUAuYIA1E3sIK/sGLBZ22jiVlRIHFRK3VK9HPtLQhK07LLpfxLo9Vq
-        MUpcFkNG05ZrY43J+zG2dM9AW2x30sBNrIfvGoNtdg==
-X-Google-Smtp-Source: AHgI3IaaVw67O54WAUtFIX9I+RuK8eeog5f/93MTbeujoIdPcHprpr3xjAXprOKYjeaTU3L0g6/jNRibdSzgprDGxLg=
-X-Received: by 2002:a1c:c904:: with SMTP id f4mr7568771wmb.42.1550247658897;
- Fri, 15 Feb 2019 08:20:58 -0800 (PST)
+        Fri, 15 Feb 2019 11:23:49 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:54063 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725939AbfBOQXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 11:23:48 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=67+IEeFhpK0B2Sc9+tSCEUZ8B30FAu4sX2jWxP6yjGM=; b=ZdRP3vkKhooC31hEVRs25q5t1j
+        JxN0LQsxdZ9drXZh11chb0+WPSFMVbnPjQxv1iOz/eTXg4M0xKiLjkxZYTqQcQb+GHMgjRG2VWj11
+        L6o1wWel3eJhNVXgHo2aQkKb/xJ/IfL9yviQFzufFPOgWJcWwi3rGlbrzmC4sf1VSaMw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gugHA-0007iX-K6; Fri, 15 Feb 2019 17:23:44 +0100
+Date:   Fri, 15 Feb 2019 17:23:44 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH] net: phy: xgmiitorgmii: Support generic PHY status read
+Message-ID: <20190215162344.GQ708@lunn.ch>
+References: <20190215161708.18645-1-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
-References: <20190215115421.4811-1-axel.lin@ingics.com>
-In-Reply-To: <20190215115421.4811-1-axel.lin@ingics.com>
-From:   Tim Harvey <tharvey@gateworks.com>
-Date:   Fri, 15 Feb 2019 08:20:48 -0800
-Message-ID: <CAJ+vNU33mUS5WySjFAjUB=JhEQ6mfmN6h3vjydE1GcmEoBeDyA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] regulator: ltc3676: Simplify .readable_reg and
- .writable_reg callbacks
-To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Mark Brown <broonie@kernel.org>, Marek Vasut <marex@denx.de>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190215161708.18645-1-paul.kocialkowski@bootlin.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 3:54 AM Axel Lin <axel.lin@ingics.com> wrote:
->
-> Use case range for continuous range to make the code shorter.
-> The .readable_reg and .writable_reg implementation are exactly the same,
-> so use a common ltc3676_readable_writeable_reg function instead.
->
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+On Fri, Feb 15, 2019 at 05:17:08PM +0100, Paul Kocialkowski wrote:
+> Some PHY drivers like the generic one do not provide a read_status
+> callback on their own but rely on genphy_read_status being called
+> directly.
+> 
+> With the current code, this results in a NULL function pointer call.
+> Call genphy_read_status instead when there is no specific callback.
+> 
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 > ---
->  drivers/regulator/ltc3676.c | 63 +++----------------------------------
->  1 file changed, 5 insertions(+), 58 deletions(-)
->
-> diff --git a/drivers/regulator/ltc3676.c b/drivers/regulator/ltc3676.c
-> index 71fd0f2a4b76..549a1a243870 100644
-> --- a/drivers/regulator/ltc3676.c
-> +++ b/drivers/regulator/ltc3676.c
-> @@ -241,61 +241,10 @@ static struct regulator_desc ltc3676_regulators[LTC3676_NUM_REGULATORS] = {
->         LTC3676_FIXED_REG(LDO4, ldo4, LDOB, 2),
->  };
->
-> -static bool ltc3676_writeable_reg(struct device *dev, unsigned int reg)
-> +static bool ltc3676_readable_writeable_reg(struct device *dev, unsigned int reg)
->  {
->         switch (reg) {
-> -       case LTC3676_IRQSTAT:
-> -       case LTC3676_BUCK1:
-> -       case LTC3676_BUCK2:
-> -       case LTC3676_BUCK3:
-> -       case LTC3676_BUCK4:
-> -       case LTC3676_LDOA:
-> -       case LTC3676_LDOB:
-> -       case LTC3676_SQD1:
-> -       case LTC3676_SQD2:
-> -       case LTC3676_CNTRL:
-> -       case LTC3676_DVB1A:
-> -       case LTC3676_DVB1B:
-> -       case LTC3676_DVB2A:
-> -       case LTC3676_DVB2B:
-> -       case LTC3676_DVB3A:
-> -       case LTC3676_DVB3B:
-> -       case LTC3676_DVB4A:
-> -       case LTC3676_DVB4B:
-> -       case LTC3676_MSKIRQ:
-> -       case LTC3676_MSKPG:
-> -       case LTC3676_USER:
-> -       case LTC3676_HRST:
-> -       case LTC3676_CLIRQ:
-> -               return true;
-> -       }
-> -       return false;
-> -}
-> -
-> -static bool ltc3676_readable_reg(struct device *dev, unsigned int reg)
-> -{
-> -       switch (reg) {
-> -       case LTC3676_IRQSTAT:
-> -       case LTC3676_BUCK1:
-> -       case LTC3676_BUCK2:
-> -       case LTC3676_BUCK3:
-> -       case LTC3676_BUCK4:
-> -       case LTC3676_LDOA:
-> -       case LTC3676_LDOB:
-> -       case LTC3676_SQD1:
-> -       case LTC3676_SQD2:
-> -       case LTC3676_CNTRL:
-> -       case LTC3676_DVB1A:
-> -       case LTC3676_DVB1B:
-> -       case LTC3676_DVB2A:
-> -       case LTC3676_DVB2B:
-> -       case LTC3676_DVB3A:
-> -       case LTC3676_DVB3B:
-> -       case LTC3676_DVB4A:
-> -       case LTC3676_DVB4B:
-> -       case LTC3676_MSKIRQ:
-> -       case LTC3676_MSKPG:
-> -       case LTC3676_USER:
-> +       case LTC3676_BUCK1 ... LTC3676_IRQSTAT:
->         case LTC3676_HRST:
->         case LTC3676_CLIRQ:
->                 return true;
-> @@ -306,9 +255,7 @@ static bool ltc3676_readable_reg(struct device *dev, unsigned int reg)
->  static bool ltc3676_volatile_reg(struct device *dev, unsigned int reg)
->  {
->         switch (reg) {
-> -       case LTC3676_IRQSTAT:
-> -       case LTC3676_PGSTATL:
-> -       case LTC3676_PGSTATRT:
-> +       case LTC3676_IRQSTAT ... LTC3676_PGSTATRT:
->                 return true;
->         }
->         return false;
-> @@ -317,8 +264,8 @@ static bool ltc3676_volatile_reg(struct device *dev, unsigned int reg)
->  static const struct regmap_config ltc3676_regmap_config = {
->         .reg_bits = 8,
->         .val_bits = 8,
-> -       .writeable_reg = ltc3676_writeable_reg,
-> -       .readable_reg = ltc3676_readable_reg,
-> +       .writeable_reg = ltc3676_readable_writeable_reg,
-> +       .readable_reg = ltc3676_readable_writeable_reg,
->         .volatile_reg = ltc3676_volatile_reg,
->         .max_register = LTC3676_CLIRQ,
->         .use_single_read = true,
-> --
-> 2.17.1
->
+>  drivers/net/phy/xilinx_gmii2rgmii.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/phy/xilinx_gmii2rgmii.c b/drivers/net/phy/xilinx_gmii2rgmii.c
+> index 74a8782313cf..bd6084e315de 100644
+> --- a/drivers/net/phy/xilinx_gmii2rgmii.c
+> +++ b/drivers/net/phy/xilinx_gmii2rgmii.c
+> @@ -44,7 +44,10 @@ static int xgmiitorgmii_read_status(struct phy_device *phydev)
+>  	u16 val = 0;
+>  	int err;
+>  
+> -	err = priv->phy_drv->read_status(phydev);
 
-Acked-by: Tim Harvey <tharvey@gateworks.com>
+Hi Paul
 
-Tim
+How about using phy_read_status()?
+
+	Andrew
