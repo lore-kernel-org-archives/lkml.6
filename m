@@ -2,153 +2,162 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13FFDC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9993C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:57:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAE312192B
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:53:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2FDD2192C
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:57:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="gAG199gc"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="yYfd/4Fx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394754AbfBOMxx (ORCPT
+        id S2394780AbfBOM51 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 07:53:53 -0500
-Received: from mout.web.de ([212.227.15.14]:48853 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394691AbfBOMxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 07:53:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1550235173;
-        bh=ltb5GgSmuS9I80LWiFYSWlJd/1jkMpG4yqkG+okXzP0=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=gAG199gcDuRFtvv+fAYHJakw5EYArykoDm6M021OpKZIUAl97TMcrni+EBgokDTUH
-         +hKVHJRt9g7IKsJmCt1TGFLRr4FnOuIuOz3VyYUOsacGZLX5A4y+MQkiIh1eLMQQai
-         hTWiYITiHPhS0NTT4nowxSfrzRwaf+FO3WfCPq70=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.3] ([78.48.88.109]) by smtp.web.de (mrweb003
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0Lhvko-1hOgXX2Zwg-00nCgB; Fri, 15
- Feb 2019 13:52:53 +0100
-Subject: Re: [PATCH v5] Coccinelle: semantic code search for missing
- put_device()
-To:     Wen Yang <wen.yang99@zte.com.cn>,
-        Julia Lawall <julia.lawall@lip6.fr>
-Cc:     Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Yi Wang <wang.yi59@zte.com.cn>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wen Yang <yellowriver2010@hotmail.com>,
-        Cheng Shengyu <cheng.shengyu@zte.com.cn>,
-        cocci@systeme.lip6.fr, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-References: <1550217319-40418-1-git-send-email-wen.yang99@zte.com.cn>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
- +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
- mpVJgXGKkNJ1ey+QOXouzlErVvE2fRh+KXXN1Q7fSmTJlAW9XJYHS3BDHb0uRpymRSX3O+E2
- lA87C7R8qAigPDZi6Z7UmwIA83ZMKXQ5stA0lhPyYgQcM7fh7V4ZYhnR0I5/qkUoxKpqaYLp
- YHBczVP+Zx/zHOM0KQphOMbU7X3c1pmMruoe6ti9uZzqZSLsF+NKXFEPBS665tQr66HJvZvY
- GMDlntZFAZ6xQvCC1r3MGoxEC1tuEa24vPCC9RZ9wk2sY5Csbva0WwYv3WKRZZBv8eIhGMxs
- rcpeGShRFyZ/0BYO53wZAPV1pEhGLLxd8eLN/nEWjJE0ejakPC1H/mt5F+yQBJAzz9JzbToU
- 5jKLu0SugNI18MspJut8AiA1M44CIWrNHXvWsQ+nnBKHDHHYZu7MoXlOmB32ndsfPthR3GSv
- jN7YD4Ad724H8fhRijmC1+RpuSce7w2JLj5cYj4MlccmNb8YUxsE8brY2WkXQYS8Ivse39MX
- BE66MQN0r5DQ6oqgoJ4gHIVBUv/ZwgcmUNS5gQkNCFA0dWXznQARAQABtCZNYXJrdXMgRWxm
- cmluZyA8TWFya3VzLkVsZnJpbmdAd2ViLmRlPokCVAQTAQgAPhYhBHDP0hzibeXjwQ/ITuU9
- Figxg9azBQJYNvsQAhsjBQkJZgGABQsJCAcCBhUICQoLAgQWAgMBAh4BAheAAAoJEOU9Figx
- g9azcyMP/iVihZkZ4VyH3/wlV3nRiXvSreqg+pGPI3c8J6DjP9zvz7QHN35zWM++1yNek7Ar
- OVXwuKBo18ASlYzZPTFJZwQQdkZSV+atwIzG3US50ZZ4p7VyUuDuQQVVqFlaf6qZOkwHSnk+
- CeGxlDz1POSHY17VbJG2CzPuqMfgBtqIU1dODFLpFq4oIAwEOG6fxRa59qbsTLXxyw+PzRaR
- LIjVOit28raM83Efk07JKow8URb4u1n7k9RGAcnsM5/WMLRbDYjWTx0lJ2WO9zYwPgRykhn2
- sOyJVXk9xVESGTwEPbTtfHM+4x0n0gC6GzfTMvwvZ9G6xoM0S4/+lgbaaa9t5tT/PrsvJiob
- kfqDrPbmSwr2G5mHnSM9M7B+w8odjmQFOwAjfcxoVIHxC4Cl/GAAKsX3KNKTspCHR0Yag78w
- i8duH/eEd4tB8twcqCi3aCgWoIrhjNS0myusmuA89kAWFFW5z26qNCOefovCx8drdMXQfMYv
- g5lRk821ZCNBosfRUvcMXoY6lTwHLIDrEfkJQtjxfdTlWQdwr0mM5ye7vd83AManSQwutgpI
- q+wE8CNY2VN9xAlE7OhcmWXlnAw3MJLW863SXdGlnkA3N+U4BoKQSIToGuXARQ14IMNvfeKX
- NphLPpUUnUNdfxAHu/S3tPTc/E/oePbHo794dnEm57LuuQINBFg2+xABEADZg/T+4o5qj4cw
- nd0G5pFy7ACxk28mSrLuva9tyzqPgRZ2bdPiwNXJUvBg1es2u81urekeUvGvnERB/TKekp25
- 4wU3I2lEhIXj5NVdLc6eU5czZQs4YEZbu1U5iqhhZmKhlLrhLlZv2whLOXRlLwi4jAzXIZAu
- 76mT813jbczl2dwxFxcT8XRzk9+dwzNTdOg75683uinMgskiiul+dzd6sumdOhRZR7YBT+xC
- wzfykOgBKnzfFscMwKR0iuHNB+VdEnZw80XGZi4N1ku81DHxmo2HG3icg7CwO1ih2jx8ik0r
- riIyMhJrTXgR1hF6kQnX7p2mXe6K0s8tQFK0ZZmYpZuGYYsV05OvU8yqrRVL/GYvy4Xgplm3
- DuMuC7/A9/BfmxZVEPAS1gW6QQ8vSO4zf60zREKoSNYeiv+tURM2KOEj8tCMZN3k3sNASfoG
- fMvTvOjT0yzMbJsI1jwLwy5uA2JVdSLoWzBD8awZ2X/eCU9YDZeGuWmxzIHvkuMj8FfX8cK/
- 2m437UA877eqmcgiEy/3B7XeHUipOL83gjfq4ETzVmxVswkVvZvR6j2blQVr+MhCZPq83Ota
- xNB7QptPxJuNRZ49gtT6uQkyGI+2daXqkj/Mot5tKxNKtM1Vbr/3b+AEMA7qLz7QjhgGJcie
- qp4b0gELjY1Oe9dBAXMiDwARAQABiQI8BBgBCAAmFiEEcM/SHOJt5ePBD8hO5T0WKDGD1rMF
- Alg2+xACGwwFCQlmAYAACgkQ5T0WKDGD1rOYSw/+P6fYSZjTJDAl9XNfXRjRRyJSfaw6N1pA
- Ahuu0MIa3djFRuFCrAHUaaFZf5V2iW5xhGnrhDwE1Ksf7tlstSne/G0a+Ef7vhUyeTn6U/0m
- +/BrsCsBUXhqeNuraGUtaleatQijXfuemUwgB+mE3B0SobE601XLo6MYIhPh8MG32MKO5kOY
- hB5jzyor7WoN3ETVNQoGgMzPVWIRElwpcXr+yGoTLAOpG7nkAUBBj9n9TPpSdt/npfok9ZfL
- /Q+ranrxb2Cy4tvOPxeVfR58XveX85ICrW9VHPVq9sJf/a24bMm6+qEg1V/G7u/AM3fM8U2m
- tdrTqOrfxklZ7beppGKzC1/WLrcr072vrdiN0icyOHQlfWmaPv0pUnW3AwtiMYngT96BevfA
- qlwaymjPTvH+cTXScnbydfOQW8220JQwykUe+sHRZfAF5TS2YCkQvsyf7vIpSqo/ttDk4+xc
- Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
- x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
- pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <94e4b3e6-87a4-aea2-dfef-44d308f0fb4f@web.de>
-Date:   Fri, 15 Feb 2019 13:52:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Fri, 15 Feb 2019 07:57:27 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:48264 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393866AbfBOM50 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 07:57:26 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1FCmuHc057994;
+        Fri, 15 Feb 2019 12:57:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=54XMQOGrhhy1vVzkQDKzDYVxcLSETtsMppeiKZNRsts=;
+ b=yYfd/4FxQEa/0Fuxh4BfE/EW0lXrMIlmPYy5vXUBM9FHhbKLEcOTOA4VyjDhuggMwB1a
+ TkKXbUUQu+7+VPsLPvIs3uXGp99JrR86cjAHz4V974n/3FRh8YZugzdFpqHBEOX6F4Rc
+ SZnk1gZvgE+iNysjglIw0Bzpzv+PeJGcpCe7VCXnAfIr/hqjsUo4b9fM2i9c+Um9JlBV
+ WVCEQDBI8DTyIVn0+jtt49SeLb0R/54z0FzAEwyqR+p1tw3o5FUm/VbVXL2hqS7zCGxP
+ VvCxNdK5bweTqQwSt+23QDEREE9W9UEGWfuLo9vuLVPHCvnkBIf1J0IikvbsG44xpSby Sw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2qhre5wp7h-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Feb 2019 12:57:11 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1FCvBXl006439
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Feb 2019 12:57:11 GMT
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1FCv9V1020313;
+        Fri, 15 Feb 2019 12:57:09 GMT
+Received: from kadam (/197.157.0.55)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 15 Feb 2019 04:57:08 -0800
+Date:   Fri, 15 Feb 2019 15:57:00 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Nicholas Mc Guire <hofrat@osadl.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: r8822be: check kzalloc return or bail
+Message-ID: <20190215125659.GI2326@kadam>
+References: <1550222662-32124-1-git-send-email-hofrat@osadl.org>
 MIME-Version: 1.0
-In-Reply-To: <1550217319-40418-1-git-send-email-wen.yang99@zte.com.cn>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:dHpJs5P4WXfx+36nRxi/ipGQZpfYhX1+1dqkMVQ6cuGv+z6rVx/
- 8EP2gQg+Y4GYkN0T50vpcIUGPvORztjT+liK2ywFLFfPIpiQsxXOWoqnwu4+WYAaNeKkM8A
- 39vkq1d6rBlGz5Xi/fnvJTHXoy0spq4JP4rG5vAoXd/E6kbXfcw3jUVFM1V2H+wZzRj/odk
- 0vElJ1kIc8kx52K98IqVw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:dulOuokDS4w=:JClDS6qxKXiO+Aqv5um/wY
- Wl2NLgqTfItbNYFXdAaxNNxk/b8BugNM1QwEM2Lg6JHLQSBWN+cqKMRKVT96sZbQ9JhoYLH/R
- SO8/D2AkFO9Z6DdqcRFttxq46UlacGH9oFssdsuvhlc0MW1dak38SyInLjGVWIZnoKeuchKPG
- 8kJ2E2phUuN40vHfw9Uko7FxnD8MRkGnqgCn/IHqtWgf60cxqoP7mvMVbXSqbIPg46I8I6bZY
- nhEIzLrjOzGKMjzrT3rzeGZ2Jrcz06+bSjjlAevI7PW8wI2zm5nVqiuHAxsWQZQ4FlWehwuT6
- Co9/oVO0wX3/WPzmBDz6JtXSEkAdKpAQGEaX3AB3j51gEiOjTObuteNYOxfumY+gLcKxYvjgk
- 85KoBu6mejwf4iTyeu2/O0BnN2W1ph0hSQ3iHmXA7qItjEH6hN5cmbr/OHBgfiNgkuQxWA9tS
- oIN/LgvQ1x1YnkmQ/JGvNqpxhLpOawHxSbB+QGSESxkPiyD0YQze3vUXHJ0gEdigJsz9x8jv5
- OefGP58zAmclygYyFbNzPAqSc0cuIywuxGmrd0tG2eTetX7uR8YgCe9JOW2/GSWTYLF1HxKG9
- H3tKLidV7oiEkpRLD150vFEGj4FHo4wvE/gucowM1xOoWDMH70FDP66N8LvPDTxiEUcCPEGZP
- wyq2nCi++Vx/vafQi1uxSwWpDhwlaK0jKbVq65OBY7ih/OJ2AUz3mGx4+UYL8ZOagnDJAp2Mw
- 3qpMkqDNUzkDCbTholiuZ0ap280iNWVfjftKaAsAFn8uG5nRkDEZ0c6S6T1iFNduHoERJK2lQ
- 7rlPylWvplxKml8DyYLP+EMoM4dWUAN0ukel6CK+58PUr9c7sh0s/jjU9oMV1OWnHRcE10pxP
- ulWWutPwhEXENKQ8PStAqMjhB1OdgO0EM5tDHCVpB1Qnjg54JFlh8q0VWwWZ6CNuC0fubkNzh
- tDmXb7MbtGg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1550222662-32124-1-git-send-email-hofrat@osadl.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9167 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902150091
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +@search exists@
-> +local idexpression id;
-> +expression x,e,e1;
-> +position p1,p2;
-> +type T,T1,T2,T3;
-> +@@
-> +
-> +id =3D of_find_device_by_node@p1(x)
-> +... when !=3D e =3D id
-> +if (id =3D=3D NULL || ...) { ... return ...; }
-> +... when !=3D put_device(&id->dev)
-=E2=80=A6
-> +    when !=3D if (id) { ... put_device(&id->dev) ... }
-=E2=80=A6
+On Fri, Feb 15, 2019 at 10:24:22AM +0100, Nicholas Mc Guire wrote:
+> The kzalloc() in halmac_parse_psd_data_88xx() can fail and return NULL
+> so check the psd_set->data after allocation and if allocation failed
+> return HALMAC_CMD_PROCESS_ERROR.
+> 
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> Fixes: 938a0447f094 ("staging: r8822be: Add code for halmac sub-drive")
+> ---
+> 
+> Problem was located with an experimental coccinelle script
+> 
+> Patch was compile tested with: x86_64_defconfig + STAGING=y,
+> R8822BE=m
+> (with a smatch error that looks like a false-positive
+> 
+>   CHECK   drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c
+> drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c:624 halmac_func_write_logical_efuse_88xx() error: uninitialized symbol 'pg_efuse_header2'.
+>   CC [M]  drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.o
+> 
+> as the initialization of pg_efuse_header2 is under the same if condition (line 592) as the
+> use at line 624 it is initialized)
+>
 
-I would interpret this SmPL code in the way that the if statement
-for the pointer check is =E2=80=9Coptional=E2=80=9D in this line.
-Is it an extra and redundant SmPL specification when the reference
-release function could eventually be found just anywhere within
-an implementation?
+Hm...  That's tricky code for Smatch to parse.
+
+drivers/staging/rtlwifi/halmac/halmac_88xx/halmac_func_88xx.c
+   592                  if (offset > 0x7f) {
+   593                          pg_efuse_header =
+   594                                  (((pg_block & 0x07) << 5) & 0xE0) | 0x0F;
+   595                          pg_efuse_header2 =
+                                ^^^^^^^^^^^^^^^^^^
+pg_efuse_header2 is only intialized on this path.
+
+   596                                  (u8)(((pg_block & 0x78) << 1) +
+   597                                       ((0x1 << pg_block_index) ^ 0x0F));
+   598                  } else {
+   599                          pg_efuse_header =
+   600                                  (u8)((pg_block << 4) +
+   601                                       ((0x01 << pg_block_index) ^ 0x0F));
+   602                  }
+   603  
+   604                  if ((offset & 1) == 0) {
+                            ^^^^^^^^^^^^^^^^^
+But this condition confuses Smatch.  Smatch marks it as saying that
+offset is non-zero on this size.
+
+   605                          pg_efuse_byte1 = value;
+   606                          pg_efuse_byte2 = *(eeprom_map + offset + 1);
+   607                  } else {
+
+And this side offset = 0-0x7e.
+
+   608                          pg_efuse_byte1 = *(eeprom_map + offset - 1);
+   609                          pg_efuse_byte2 = value;
+   610                  }
+   611  
+   612                  if (offset > 0x7f) {
+                            ^^^^^^^^^^^^^
+So it doesn't parse this condition correctly.
+
+   613                          pg_efuse_num = 4;
+   614                          if (halmac_adapter->hw_config_info.efuse_size <=
+   615                              (pg_efuse_num + HALMAC_PROTECTED_EFUSE_SIZE_88XX +
+   616                               halmac_adapter->efuse_end)) {
+   617                                  kfree(eeprom_map);
+   618                                  return HALMAC_RET_EFUSE_NOT_ENOUGH;
+   619                          }
+   620                          halmac_func_write_efuse_88xx(halmac_adapter, efuse_end,
+   621                                                       pg_efuse_header);
+   622                          halmac_func_write_efuse_88xx(halmac_adapter,
+   623                                                       efuse_end + 1,
+   624                                                       pg_efuse_header2);
+                                                             ^^^^^^^^^^^^^^^^
+And it warns here.
+
+   625                          halmac_func_write_efuse_88xx(
+   626                                  halmac_adapter, efuse_end + 2, pg_efuse_byte1);
+   627                          status = halmac_func_write_efuse_88xx(
+   628                                  halmac_adapter, efuse_end + 3, pg_efuse_byte2);
 
 
-Will a need evolve to develop a similar source code search approach
-for safer resource management with other function combinations?
+It should be possible to fix this false positive...  It's just a matter
+of doing the work.
 
-Regards,
-Markus
+regards,
+dan carpenter
