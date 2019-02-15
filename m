@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8921DC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FC0EC4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:26:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 586912073D
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:26:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8C3D20836
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:26:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197581;
-	bh=9y6czDSPpA+bo3tP+Ec3orygXTuUceysrldRJ/qrXN8=;
+	s=default; t=1550197586;
+	bh=Krqw4jgFcBk1a/kuUBeO/F+Z41WcTFca1GLmgkab72s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ouZZZ5zOyIBlSVhwCRhoptdQjqFsTxDivryPBQZTykL5gDo/ECna/+9ocmOLaE33b
-	 xkDsKTmQZjXhGfnVEApENQ6jcl5blVJvoIon9q2J4C00FR0fzI5otril8hLDwjTOrn
-	 zUk8ucWjyjKtRR9QNrR0aDijA81o1gOSVmOl4Wh8=
+	b=s9RhwNdvwOu+QjaVV6CCQsgPEvqSDUlmYH90o4SJg7298aO4MCzh/GFujJB8ISEgJ
+	 VxWOuNtJP4c4VSsY3ggzbBIwAXC2Wf9FZ62TWS+e+yOZrLbrVlAsj68c7BUxpKwsLd
+	 5avr7x6oXfu6sk+zVd3kWTvt89cq7XDz0dcPGKe8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404957AbfBOCNy (ORCPT
+        id S2404923AbfBOCNv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:13:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53758 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:13:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404909AbfBOCNu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:13:50 -0500
+        id S2404854AbfBOCNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:13:48 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D406A206BA;
-        Fri, 15 Feb 2019 02:13:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6ADAF222D0;
+        Fri, 15 Feb 2019 02:13:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196829;
-        bh=9y6czDSPpA+bo3tP+Ec3orygXTuUceysrldRJ/qrXN8=;
+        s=default; t=1550196827;
+        bh=Krqw4jgFcBk1a/kuUBeO/F+Z41WcTFca1GLmgkab72s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YPILoM4+B3UV6d7Shd7w+9b1GtKII5vzxxgAz7qN7fHiF45bjTMN/NyqkBTi3SEoZ
-         RNuHCs7DF/6bj9xjwyh532SbwImhfszg2z7jd4+WQtNy2mZdF8ZCmDWBZWxsvZ9rE4
-         vHiFYCoWczKhawsh8qTcswIMRWPmnaLoLJmHLgSo=
+        b=UEx9nnuAj5r9403zxeWuTIvDVk0wbsYw0jbxIUGPNljfoTEfcN3oCKxQ8DBzZk5Tk
+         ProhdRuLvc9yed/aH1+fMxR5dAeDmSnJn3Pfk8YoWHE8nzgps1A5X9zfdzfdQaIkq6
+         +Z7ZqJTtuMyaGAJ/WdZhIqq2EDe0zu41c+eWnuh4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Prateek Sood <prsood@codeaurora.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 19/40] sched/wait: Fix rcuwait_wake_up() ordering
-Date:   Thu, 14 Feb 2019 21:12:52 -0500
-Message-Id: <20190215021313.178476-19-sashal@kernel.org>
+Cc:     Bob Copeland <me@bobcopeland.com>,
+        Bob Copeland <bobcopeland@fb.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 18/40] mac80211: fix miscounting of ttl-dropped frames
+Date:   Thu, 14 Feb 2019 21:12:51 -0500
+Message-Id: <20190215021313.178476-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021313.178476-1-sashal@kernel.org>
 References: <20190215021313.178476-1-sashal@kernel.org>
@@ -60,65 +60,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Prateek Sood <prsood@codeaurora.org>
+From: Bob Copeland <me@bobcopeland.com>
 
-[ Upstream commit 6dc080eeb2ba01973bfff0d79844d7a59e12542e ]
+[ Upstream commit a0dc02039a2ee54fb4ae400e0b755ed30e73e58c ]
 
-For some peculiar reason rcuwait_wake_up() has the right barrier in
-the comment, but not in the code.
+In ieee80211_rx_h_mesh_fwding, we increment the 'dropped_frames_ttl'
+counter when we decrement the ttl to zero.  For unicast frames
+destined for other hosts, we stop processing the frame at that point.
 
-This mistake has been observed to cause a deadlock in the following
-situation:
+For multicast frames, we do not rebroadcast it in this case, but we
+do pass the frame up the stack to process it on this STA.  That
+doesn't match the usual definition of "dropped," so don't count
+those as such.
 
-    P1					P2
+With this change, something like `ping6 -i0.2 ff02::1%mesh0` from a
+peer in a ttl=1 network no longer increments the counter rapidly.
 
-    percpu_up_read()			percpu_down_write()
-      rcu_sync_is_idle() // false
-					  rcu_sync_enter()
-					  ...
-      __percpu_up_read()
-
-[S] ,-  __this_cpu_dec(*sem->read_count)
-    |   smp_rmb();
-[L] |   task = rcu_dereference(w->task) // NULL
-    |
-    |				    [S]	    w->task = current
-    |					    smp_mb();
-    |				    [L]	    readers_active_check() // fail
-    `-> <store happens here>
-
-Where the smp_rmb() (obviously) fails to constrain the store.
-
-[ peterz: Added changelog. ]
-
-Signed-off-by: Prateek Sood <prsood@codeaurora.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Acked-by: Davidlohr Bueso <dbueso@suse.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 8f95c90ceb54 ("sched/wait, RCU: Introduce rcuwait machinery")
-Link: https://lkml.kernel.org/r/1543590656-7157-1-git-send-email-prsood@codeaurora.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Bob Copeland <bobcopeland@fb.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/exit.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/mac80211/rx.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 3aa01b74c1e3..5523fb0c20c8 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -306,7 +306,7 @@ void rcuwait_wake_up(struct rcuwait *w)
- 	 *        MB (A)	      MB (B)
- 	 *    [L] cond		  [L] tsk
- 	 */
--	smp_rmb(); /* (B) */
-+	smp_mb(); /* (B) */
+diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
+index 9e19ddbcb06e..7e9725d47557 100644
+--- a/net/mac80211/rx.c
++++ b/net/mac80211/rx.c
+@@ -2532,7 +2532,9 @@ ieee80211_rx_h_mesh_fwding(struct ieee80211_rx_data *rx)
+ 	skb_set_queue_mapping(skb, q);
  
- 	/*
- 	 * Avoid using task_rcu_dereference() magic as long as we are careful,
+ 	if (!--mesh_hdr->ttl) {
+-		IEEE80211_IFSTA_MESH_CTR_INC(ifmsh, dropped_frames_ttl);
++		if (!is_multicast_ether_addr(hdr->addr1))
++			IEEE80211_IFSTA_MESH_CTR_INC(ifmsh,
++						     dropped_frames_ttl);
+ 		goto out;
+ 	}
+ 
 -- 
 2.19.1
 
