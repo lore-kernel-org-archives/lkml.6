@@ -2,118 +2,108 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F3BC10F02
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 06:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA88C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 06:25:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76AA421B1C
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 06:20:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jOUoVPLQ"
+	by mail.kernel.org (Postfix) with ESMTP id 5D06021872
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 06:25:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388654AbfBOGUM (ORCPT
+        id S1730274AbfBOGZe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 01:20:12 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:34966 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725924AbfBOGUL (ORCPT
+        Fri, 15 Feb 2019 01:25:34 -0500
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:53448 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725924AbfBOGZe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 01:20:11 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1F6JrfR083423;
-        Fri, 15 Feb 2019 00:19:53 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1550211593;
-        bh=VvYosYLXTZE6Xwyjczf/0uYinaS7PQPeE6ljLNmbDgc=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=jOUoVPLQmKbqsitdkvRyRrmkqcoziJBqhVj5Yly5QTX34OkliiQz7JLrH+TLKJJfZ
-         wySnQRfSzYfmG6N8uHg7HmiWzdzmkReLIULgEzALzo4+zsD8uxDqnGHvmh4w2Z3qPP
-         8GPt5BpMLSRurtmpD0Xjkb24LD4c4M+jI0F9BALg=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1F6JrKR015573
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 15 Feb 2019 00:19:53 -0600
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 15
- Feb 2019 00:19:52 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 15 Feb 2019 00:19:52 -0600
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1F6JmOD016900;
-        Fri, 15 Feb 2019 00:19:49 -0600
-Subject: Re: [PATCH v2 08/15] PCI: endpoint: Fix pci_epf_alloc_space to set
- correct MEM TYPE flags
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Shawn Lin <shawn.lin@rock-chips.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        <linux-omap@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190114111513.21618-1-kishon@ti.com>
- <20190114111513.21618-9-kishon@ti.com>
- <20190211173723.GA31035@e107981-ln.cambridge.arm.com>
- <ebadc615-f633-e84e-041a-99b7936a123b@ti.com>
- <20190214162928.GA32523@e107981-ln.cambridge.arm.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <edc76e9b-bdd4-80bb-3dff-1d44a100c153@ti.com>
-Date:   Fri, 15 Feb 2019 11:49:12 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 15 Feb 2019 01:25:34 -0500
+X-IronPort-AV: E=Sophos;i="5.58,371,1544482800"; 
+   d="scan'208";a="369511575"
+Received: from abo-58-107-68.mrs.modulonet.fr (HELO hadrien) ([85.68.107.58])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Feb 2019 07:25:31 +0100
+Date:   Fri, 15 Feb 2019 07:25:31 +0100 (CET)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     wen.yang99@zte.com.cn
+cc:     Markus.Elfring@web.de, Gilles Muller <Gilles.Muller@lip6.fr>,
+        nicolas.palix@imag.fr, michal.lkml@markovi.net,
+        wang.yi59@zte.com.cn, yamada.masahiro@socionext.com,
+        yellowriver2010@hotmail.com, cheng.shengyu@zte.com.cn,
+        cocci@systeme.lip6.fr, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v4] coccinelle: semantic patch for missing put_device()
+In-Reply-To: <201902151422261425412@zte.com.cn>
+Message-ID: <alpine.DEB.2.21.1902150723110.2896@hadrien>
+References: 1550126293-27839-1-git-send-email-wen.yang99@zte.com.cn,7c4e26a4-32b9-e1f8-beeb-bfa4fc9e6128@web.de <201902151422261425412@zte.com.cn>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20190214162928.GA32523@e107981-ln.cambridge.arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/mixed; boundary="8323329-1724339360-1550211931=:2896"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lorenzo,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On 14/02/19 9:59 PM, Lorenzo Pieralisi wrote:
-> On Wed, Feb 13, 2019 at 07:17:14PM +0530, Kishon Vijay Abraham I wrote:
->> Hi Lorenzo,
->>
->> On 11/02/19 11:07 PM, Lorenzo Pieralisi wrote:
->>> On Mon, Jan 14, 2019 at 04:45:06PM +0530, Kishon Vijay Abraham I wrote:
->>>> pci_epf_alloc_space() sets the MEM TYPE flags to indicate a 32-bit
->>>> Base Address Register irrespective of the size. Fix it here to indicate
->>>> 64-bit BAR if the size is > 2GB.
->>>>
->>>> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
->>>> ---
->>>>  drivers/pci/endpoint/pci-epf-core.c | 4 +++-
->>>>  1 file changed, 3 insertions(+), 1 deletion(-)
->>>
->>> This looks like a fix and should me marked as such. Does it work
->>> as as standalone patch if it gets backported ?
->>
->> Yeah, it should work. But the current users doesn't allocate > 2GB and some
->> EPC drivers configure their registers based on size. So nothing is broken
->> without this patch as such.
-> 
-> I suspect you mean 4GB (here and the commit log), right ? I am checking
-> the commit logs, aiming at merging the patches.
+--8323329-1724339360-1550211931=:2896
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-A 32bit BAR register can support a 'size' of only up to 2GB. Though it can hold
-a memory address of up to 4GB.
 
-This is also mentioned in the PCI Local Bus Specification.
-"A 32-bit register can be implemented to support a single memory size that is a
-power of 2 from 16 bytes to 2 GB"
 
-Thanks
-Kishon
+On Fri, 15 Feb 2019, wen.yang99@zte.com.cn wrote:
+
+> > How do you think about to exchange the word “patch” by “code search”
+> > at affected places (and in the subject) then?
+>
+> Thanks, we‘ll fix it.
+>
+> >> In a function, for variables returned by calling of_find_device_by_node(),
+> > Do variables really get returned?
+> > The provided pointer should usually be stored somewhere.
+>
+> Thank you very much, we will consider this situation and  submit a next version to fix it.
+
+I don't know what Markus is talking about here, so I'm not sure that a
+change is needed.
+
+>
+> > * Would you like to pick any software development challenges up around
+> > inter-procedural data flow (or even escape) analysis for the shown use case?
+>
+> We are very interested in doing this work, but currently coccinelle may
+> not support data flow analysis, and we hope to contribute a little.
+>
+> > Would you like to add a SPDX identifier?
+>
+> OK, we will add a SPDX identifierfix soon.
+>
+> >> + "ERROR: missing put_device;"
+> >Will change confidence considerations result in another fine-tuning for this message?
+>
+> Thank you, we will change "ERROR" to "WARNING".
+
+I think ERROR is fine.  If it is a real positive than it is a real
+problem.  Warning is for things that look ugly, but don't have any impact
+on the execution.
+
+julia
+
+> >> + + " call of_find_device_by_node on line "
+> >I find that such a split string literal can be unwanted.
+>
+> Thank you, we will fix it soon.
+>
+> >> + + " and return without releasing.")
+> >Possible rewording?
+> >+ + " but without a corresponding object release within this function.")
+>
+> Thanks, we will modify it according to your suggestion.
+>
+> Regards,
+> Wen
+--8323329-1724339360-1550211931=:2896--
