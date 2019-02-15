@@ -4,49 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E51C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0596EC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5197B222D4
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C643021934
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196707;
-	bh=DPzk3bfpQ4QxcFB5vcNaOzyaV40b44hCAKC+He+PL/Y=;
+	s=default; t=1550196717;
+	bh=txooyQ8Rpj+IpdBFbXidhxz9DY3Rs8IPSu7DRDsgYtM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zW5kw/Uae0jbfY6kvDWZzoHl+odfiDI2MtYKQFbBFv2XoPOWA7YH5zHTratlcpuv8
-	 sUjLEtn4hd6NdUS1K1onLC9T8Zefe/B8RB+IhgPs0tMHS5nNWbmXWpDehYTAjVYrjX
-	 EjppacjJQm2mhQMCdZSKsYxU2Tqttte2wFQVMqI0=
+	b=zMztw3bCLzReOK04B7QMpFyYZ7QYKeBu+0LbC+qTfLjmo3gMlYYPDqwxahDbZ+H6t
+	 yNOCssbklzw23TAaKDtGseI4uVe1z8p8Sm8JVcaPfcfnyslnfL7c3ju4ShSDkXWSsP
+	 BaxIg6wg6tzOX6OL03Nt/QKU/0Vts8sAq+RfIJ5s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404015AbfBOCLq (ORCPT
+        id S2390891AbfBOCL4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:11:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51698 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:11:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403901AbfBOCLl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:11:41 -0500
+        id S2389268AbfBOCLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:11:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D6D221B1C;
-        Fri, 15 Feb 2019 02:11:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E5B6222D7;
+        Fri, 15 Feb 2019 02:11:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196701;
-        bh=DPzk3bfpQ4QxcFB5vcNaOzyaV40b44hCAKC+He+PL/Y=;
+        s=default; t=1550196710;
+        bh=txooyQ8Rpj+IpdBFbXidhxz9DY3Rs8IPSu7DRDsgYtM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kV+AXvZMksvbIzQ4r6Xk6RX9WL2W/Z7TEYSDkQStz44p0NLVLA71c9TY0uBk72vmF
-         1OzmbizbpOkanOWlx6dbyZz8dlEd3Z6TVOwk3P7jlCHOoXCVWr19hoaKDDuFT1oIlf
-         rBXhwQJZjeg5aYQSJg7gDZWOijC3IQr+Aau2EMis=
+        b=wbUgBzsBLzaLW/Ysm9D8Hc5pQERYMrKyZ3g0F8fFDoScEyRhDrhhZCfR4vyD1PSrW
+         aH4kx+G9TAWhkWrXCfrQoZWmyErUwQI43tfc1lxIUNVTqrY2HcV1ItwyJIwsblBP2Y
+         2beKkqekHSlENLHssm5LyGhHEQxE9tSBdpYKYRwY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 11/65] usb: gadget: Potential NULL dereference on allocation error
-Date:   Thu, 14 Feb 2019 21:10:27 -0500
-Message-Id: <20190215021121.177674-11-sashal@kernel.org>
+Cc:     Silvio Cesare <silvio.cesare@gmail.com>,
+        Timur Tabi <timur@kernel.org>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Kees Cook <keescook@chromium.org>,
+        Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>,
+        Willy Tarreau <w@1wt.eu>, Sasha Levin <sashal@kernel.org>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.19 18/65] ASoC: imx-audmux: change snprintf to scnprintf for possible overflow
+Date:   Thu, 14 Feb 2019 21:10:34 -0500
+Message-Id: <20190215021121.177674-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -58,36 +65,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Silvio Cesare <silvio.cesare@gmail.com>
 
-[ Upstream commit df28169e1538e4a8bcd8b779b043e5aa6524545c ]
+[ Upstream commit c407cd008fd039320d147088b52d0fa34ed3ddcb ]
 
-The source_sink_alloc_func() function is supposed to return error
-pointers on error.  The function is called from usb_get_function() which
-doesn't check for NULL returns so it would result in an Oops.
+Change snprintf to scnprintf. There are generally two cases where using
+snprintf causes problems.
 
-Of course, in the current kernel, small allocations always succeed so
-this doesn't affect runtime.
+1) Uses of size += snprintf(buf, SIZE - size, fmt, ...)
+In this case, if snprintf would have written more characters than what the
+buffer size (SIZE) is, then size will end up larger than SIZE. In later
+uses of snprintf, SIZE - size will result in a negative number, leading
+to problems. Note that size might already be too large by using
+size = snprintf before the code reaches a case of size += snprintf.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+2) If size is ultimately used as a length parameter for a copy back to user
+space, then it will potentially allow for a buffer overflow and information
+disclosure when size is greater than SIZE. When the size is used to index
+the buffer directly, we can have memory corruption. This also means when
+size = snprintf... is used, it may also cause problems since size may become
+large.  Copying to userspace is mitigated by the HARDENED_USERCOPY kernel
+configuration.
+
+The solution to these issues is to use scnprintf which returns the number of
+characters actually written to the buffer, so the size variable will never
+exceed SIZE.
+
+Signed-off-by: Silvio Cesare <silvio.cesare@gmail.com>
+Cc: Timur Tabi <timur@kernel.org>
+Cc: Nicolin Chen <nicoleotsuka@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Xiubo Li <Xiubo.Lee@gmail.com>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Greg KH <greg@kroah.com>
+Signed-off-by: Willy Tarreau <w@1wt.eu>
+Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/function/f_sourcesink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/fsl/imx-audmux.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/usb/gadget/function/f_sourcesink.c b/drivers/usb/gadget/function/f_sourcesink.c
-index 9cdef108fb1b..ed68a4860b7d 100644
---- a/drivers/usb/gadget/function/f_sourcesink.c
-+++ b/drivers/usb/gadget/function/f_sourcesink.c
-@@ -838,7 +838,7 @@ static struct usb_function *source_sink_alloc_func(
+diff --git a/sound/soc/fsl/imx-audmux.c b/sound/soc/fsl/imx-audmux.c
+index 392d5eef356d..99e07b01a2ce 100644
+--- a/sound/soc/fsl/imx-audmux.c
++++ b/sound/soc/fsl/imx-audmux.c
+@@ -86,49 +86,49 @@ static ssize_t audmux_read_file(struct file *file, char __user *user_buf,
+ 	if (!buf)
+ 		return -ENOMEM;
  
- 	ss = kzalloc(sizeof(*ss), GFP_KERNEL);
- 	if (!ss)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
+-	ret = snprintf(buf, PAGE_SIZE, "PDCR: %08x\nPTCR: %08x\n",
++	ret = scnprintf(buf, PAGE_SIZE, "PDCR: %08x\nPTCR: %08x\n",
+ 		       pdcr, ptcr);
  
- 	ss_opts =  container_of(fi, struct f_ss_opts, func_inst);
+ 	if (ptcr & IMX_AUDMUX_V2_PTCR_TFSDIR)
+-		ret += snprintf(buf + ret, PAGE_SIZE - ret,
++		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 				"TxFS output from %s, ",
+ 				audmux_port_string((ptcr >> 27) & 0x7));
+ 	else
+-		ret += snprintf(buf + ret, PAGE_SIZE - ret,
++		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 				"TxFS input, ");
+ 
+ 	if (ptcr & IMX_AUDMUX_V2_PTCR_TCLKDIR)
+-		ret += snprintf(buf + ret, PAGE_SIZE - ret,
++		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 				"TxClk output from %s",
+ 				audmux_port_string((ptcr >> 22) & 0x7));
+ 	else
+-		ret += snprintf(buf + ret, PAGE_SIZE - ret,
++		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 				"TxClk input");
+ 
+-	ret += snprintf(buf + ret, PAGE_SIZE - ret, "\n");
++	ret += scnprintf(buf + ret, PAGE_SIZE - ret, "\n");
+ 
+ 	if (ptcr & IMX_AUDMUX_V2_PTCR_SYN) {
+-		ret += snprintf(buf + ret, PAGE_SIZE - ret,
++		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 				"Port is symmetric");
+ 	} else {
+ 		if (ptcr & IMX_AUDMUX_V2_PTCR_RFSDIR)
+-			ret += snprintf(buf + ret, PAGE_SIZE - ret,
++			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 					"RxFS output from %s, ",
+ 					audmux_port_string((ptcr >> 17) & 0x7));
+ 		else
+-			ret += snprintf(buf + ret, PAGE_SIZE - ret,
++			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 					"RxFS input, ");
+ 
+ 		if (ptcr & IMX_AUDMUX_V2_PTCR_RCLKDIR)
+-			ret += snprintf(buf + ret, PAGE_SIZE - ret,
++			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 					"RxClk output from %s",
+ 					audmux_port_string((ptcr >> 12) & 0x7));
+ 		else
+-			ret += snprintf(buf + ret, PAGE_SIZE - ret,
++			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 					"RxClk input");
+ 	}
+ 
+-	ret += snprintf(buf + ret, PAGE_SIZE - ret,
++	ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 			"\nData received from %s\n",
+ 			audmux_port_string((pdcr >> 13) & 0x7));
  
 -- 
 2.19.1
