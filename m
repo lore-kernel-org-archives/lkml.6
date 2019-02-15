@@ -3,113 +3,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10B1FC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:50:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE60C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:55:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6E8E21927
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:50:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13F0521925
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:55:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mev.co.uk header.i=@mev.co.uk header.b="Yr6IWAM4"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GLBl4o6u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730687AbfBORuU (ORCPT
+        id S1730231AbfBORzx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 12:50:20 -0500
-Received: from smtp113.ord1d.emailsrvr.com ([184.106.54.113]:57640 "EHLO
-        smtp113.ord1d.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729662AbfBORuT (ORCPT
+        Fri, 15 Feb 2019 12:55:53 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39459 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728956AbfBORzx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 12:50:19 -0500
-Received: from smtp7.relay.ord1d.emailsrvr.com (localhost [127.0.0.1])
-        by smtp7.relay.ord1d.emailsrvr.com (SMTP Server) with ESMTP id 859BCC0402;
-        Fri, 15 Feb 2019 12:43:34 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-        s=20190130-41we5z8j; t=1550252614;
-        bh=wI/1eLUIde9SYRNhrA2BCK1wURzJgUWYA5bGQdSo318=;
-        h=Subject:To:From:Date:From;
-        b=Yr6IWAM4pVvYSBacrTIdbFUH23MyTbNm2tfu8Z506h2/eLBK6LCDQwji/p7g6zBVr
-         Cm8+em4mRIDGGCgpqwQSx6dUOhxcqgCWy4APSH48l7qJIGXXCvHn7jFw1fDRFcOQ5r
-         FwMTgj7qdzgTVWm7c/JrpeW7590MTeHuvLefTVlc=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp7.relay.ord1d.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id BFCA9C045A;
-        Fri, 15 Feb 2019 12:43:33 -0500 (EST)
-X-Sender-Id: abbotti@mev.co.uk
-Received: from [10.0.0.185] (remote.quintadena.com [81.133.34.160])
-        (using TLSv1.2 with cipher AES128-SHA)
-        by 0.0.0.0:465 (trex/5.7.12);
-        Fri, 15 Feb 2019 12:43:34 -0500
-Subject: Re: [PATCH] staging: comedi: ni_660x: fix missing break in switch
- statement
-To:     Sasha Levin <sashal@kernel.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <20190212180834.GA30653@embeddedor>
- <20190215154828.DE5DF222A1@mail.kernel.org>
-From:   Ian Abbott <abbotti@mev.co.uk>
-Organization: MEV Ltd.
-Message-ID: <882253b4-10e0-0343-37d8-a97ffca0b4c5@mev.co.uk>
-Date:   Fri, 15 Feb 2019 17:43:32 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Fri, 15 Feb 2019 12:55:53 -0500
+Received: by mail-lj1-f196.google.com with SMTP id g80so9093839ljg.6
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 09:55:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zvIZ7gSrQe9nGlalSisXMMrnlq9A9OjDbPuH9/neOM8=;
+        b=GLBl4o6uVqKKbN7PVX/9TpVRffkLB8HCNKtW81uT339JK8VXyX3VxqFdCcihrgZoTO
+         IEAdfaFqN9UTG9mdL1E1T+QZDVJD5ZE6nZWHg5C1KIdquJGjYjf7+NnYZl8dppXJZW2X
+         HWcLixNcqYo/FwsRHuHNtALKXcHlMeVwxYhmw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zvIZ7gSrQe9nGlalSisXMMrnlq9A9OjDbPuH9/neOM8=;
+        b=j7p0NXBcWJr/uMIldy3Biuw+2q54GyMY68lmN3cGLJN7HRRYgLhvz1e7IrzA7X6k19
+         83Cjzw/Q/RC/Bjdr+q9QG7IYfVRDVldiFFdWKgwcOb+JoHMjecRfilSuk2OVS39ZvZG7
+         IyHHOdI/9azKfWFCOGyPoW8+olunCLb8N+WobAySaHwBeQeVUbPlrMUUByvWYx2keT9d
+         AA+A366eNRmW6JlvHeZu6iCsM1WcDY+0FWVep2gKjX+zNm0zjm7R8uh7AcyqRWPBm1mB
+         G64zPAI4IFHV7as6xTIxmx35d89VNMCYEalhxIWEBsWoJJ0T91DXPNlf1Kr7o7VnW9g4
+         2XbQ==
+X-Gm-Message-State: AHQUAub7HZfixS8XgW0D/H4TN7zIlN1UcowQHh7WfIHnpD2VtzdthnHg
+        zooIXkJQ7xePYXDkCQfK5A9gVssSEAc=
+X-Google-Smtp-Source: AHgI3IbR4IR0OEFyDecinBdezIwZzgJzQVTdNdT1uJene58eUeSmoeeTIS1HxarwySsfIGTAcvvUnw==
+X-Received: by 2002:a2e:4d7:: with SMTP id a84mr3929073ljf.86.1550253350526;
+        Fri, 15 Feb 2019 09:55:50 -0800 (PST)
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
+        by smtp.gmail.com with ESMTPSA id q131sm1513163lfe.95.2019.02.15.09.55.49
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Feb 2019 09:55:49 -0800 (PST)
+Received: by mail-lf1-f48.google.com with SMTP id u21so7842529lfu.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 09:55:49 -0800 (PST)
+X-Received: by 2002:a19:d250:: with SMTP id j77mr6195107lfg.21.1550253349133;
+ Fri, 15 Feb 2019 09:55:49 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190215154828.DE5DF222A1@mail.kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20190215174712.372898450@goodmis.org> <20190215174945.557218316@goodmis.org>
+In-Reply-To: <20190215174945.557218316@goodmis.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 15 Feb 2019 09:55:32 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjP4bEYCFaKZVG4kLWmYBctyfsW9jjhC91tiTk9WwB8Rg@mail.gmail.com>
+Message-ID: <CAHk-=wjP4bEYCFaKZVG4kLWmYBctyfsW9jjhC91tiTk9WwB8Rg@mail.gmail.com>
+Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
+ kernel memory that can fault
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable <stable@vger.kernel.org>,
+        Changbin Du <changbin.du@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/02/2019 15:48, Sasha Levin wrote:
-> Hi,
-> 
-> [This is an automated email]
-> 
-> This commit has been processed because it contains a "Fixes:" tag,
-> fixing commit: 58dd7c0a2a6e Staging: comedi: add ni_660x driver.
-> 
-> The bot has tested the following trees: v4.20.8, v4.19.21, v4.14.99, v4.9.156, v4.4.174, v3.18.134.
-> 
-> v4.20.8: Build OK!
-> v4.19.21: Build OK!
-> v4.14.99: Build OK!
-> v4.9.156: Build OK!
-> v4.4.174: Failed to apply! Possible dependencies:
->      01ead0ded315 ("staging: comedi: ni_660x: cleanup the NI660X_IO_CFG register helpers")
->      22acd860137a ("staging: comedi: ni_660x: change IOConfigReg() into a macro")
->      41014593caeb ("staging: comedi: ni_660x: cleanup the NI660X_GLOBAL_INT_{STATUS, CFG}")
->      502552e161ae ("staging: comedi: ni_660x: remove enum clock_config_register_bits")
->      518d38423b48 ("staging: comedi: ni_660x: tidy up ni_660x_select_pfi_output()")
->      9678b73e273a ("staging: comedi: ni_660x: tidy up ni_660x_write_register()")
->      aa94f2888825 ("staging: comedi: ni_660x: tidy up ni_660x_set_pfi_routing()")
->      ad98c18cb9de ("staging: comedi: ni_660x: tidy up ni_660x_read_register()")
->      cded944fa90c ("staging: comedi: ni_660x: Prefer kernel type 'u64' over 'uint64_t'")
->      fecf4cce0021 ("staging: comedi: ni_660x: cleanup the NI660X_DMA_CFG register helpers")
-> 
-> v3.18.134: Failed to apply! Possible dependencies:
->      01ead0ded315 ("staging: comedi: ni_660x: cleanup the NI660X_IO_CFG register helpers")
->      22acd860137a ("staging: comedi: ni_660x: change IOConfigReg() into a macro")
->      41014593caeb ("staging: comedi: ni_660x: cleanup the NI660X_GLOBAL_INT_{STATUS, CFG}")
->      502552e161ae ("staging: comedi: ni_660x: remove enum clock_config_register_bits")
->      518d38423b48 ("staging: comedi: ni_660x: tidy up ni_660x_select_pfi_output()")
->      9678b73e273a ("staging: comedi: ni_660x: tidy up ni_660x_write_register()")
->      aa94f2888825 ("staging: comedi: ni_660x: tidy up ni_660x_set_pfi_routing()")
->      ad98c18cb9de ("staging: comedi: ni_660x: tidy up ni_660x_read_register()")
->      cded944fa90c ("staging: comedi: ni_660x: Prefer kernel type 'u64' over 'uint64_t'")
->      fecf4cce0021 ("staging: comedi: ni_660x: cleanup the NI660X_DMA_CFG register helpers")
-> 
-> 
-> How should we proceed with this patch?
+On Fri, Feb 15, 2019 at 9:49 AM Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+> From: Changbin Du <changbin.du@gmail.com>
+>
+> The userspace can ask kprobe to intercept strings at any memory address,
+> including invalid kernel address.
 
-Hi Sasha, the bug was introduced in v4.7 and hasn't been backported to 
-any earlier stable kernels, so no need to do anything for v4.4.x or v3.18.x.
+Again, this is not about a "kernel address" at all.
 
--- 
--=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
--=( MEV Ltd. is a company registered in England & Wales. )=-
--=( Registered number: 02862268.  Registered address:    )=-
--=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
+It's neither a kernel address _nor_ a user address.  It's an invalid
+address entirely, and there is nothing that makes it "kernel".
+
+Please don't talk about "invalid kernel addresses" when it is no such thing.
+
+                      Linus
