@@ -2,145 +2,90 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 683BBC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:25:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB56FC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3548921929
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:25:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="nRrFNkH4"
+	by mail.kernel.org (Postfix) with ESMTP id BA6D021929
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:28:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437000AbfBOMZ0 (ORCPT
+        id S2406075AbfBOM2Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 07:25:26 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:46101 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733121AbfBOMZ0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 07:25:26 -0500
-Received: by mail-ed1-f67.google.com with SMTP id f2so7761634edy.13
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 04:25:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=kaYhpM3K1lORUrG4TIL1K2D+s9nWHtiHPzXDKda8A0E=;
-        b=nRrFNkH4Rf5YL6oIfpcUZxZDrnILQ/wVBi0OglfDxNwG3jevICe+YCnXBUKUIlWcLd
-         C3A1rh9wOGdBpMs10ko4HdFZtAbREng0aKZp/WG/fW9BP2hsSNLOsVdpIqhyawKYAW+T
-         UqSXXeU+TH+02NhJnZ6YY7WiP5G0uU9rJTO3iAKregSBEHy1F5aI7knhYPU28dR1Xbzc
-         zMZTme+eZH1NwlJ/TkiBSRPyTbaEwahPugkN9FBEdSZmFFTt9Kxp/fz/kW61tNBlsTyV
-         2UFidFtkZzXvFO/ia6scjaivvj6GpkZeJRtLlXBp4PH/9dZiZFGtp0yrFUzsjp6DtVnJ
-         tezQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=kaYhpM3K1lORUrG4TIL1K2D+s9nWHtiHPzXDKda8A0E=;
-        b=VOpZW4+iHZqUSPE0pJ31DD9xLV6PRHjUtK0jOtn6LzHtOGZhi5uS640/fIwJDSZaSs
-         ZTMtoA2rtGsEzChHqytQOpjG/c+xSueTwBgPl6vsgQwQB4+BmAvWBHsACuuJrXjLMs31
-         iYMtB9S7HBQ9MVH1Nfz7m1E5XE9P1FpYdGQoyEawx6vArbtcSHFDkrn9p91cME7lnELU
-         FOGXWpt+DgHaG4TqMopyw+AS4qZa/7czcpSWFiw9GNnzEjquguDG5y+UkSEmWqyHOdGP
-         7ZkX/2R5HRWuKfjU25l53cofmmrS/Q+JyEr34JqHswiCHGu/NdGKWOKnX4fWuJCqhHQ7
-         zMyA==
-X-Gm-Message-State: AHQUAuby8JK+B25xUcnwQYb5RbiibzslgowaL8trX5Vb0Sgp2cxTXfZG
-        LbM3RMqJ+cnLwqZVpoGEtQAp9g==
-X-Google-Smtp-Source: AHgI3Ia/AePt867GBuhHiFAwymq6ydcEdV1qGEvztO6A8kE+RS2ElAgaOZuQ6A1eaTnIiBYuvDB0pg==
-X-Received: by 2002:a17:906:32c7:: with SMTP id k7mr6496809ejk.180.1550233524020;
-        Fri, 15 Feb 2019 04:25:24 -0800 (PST)
-Received: from localhost ([2620:10d:c092:180::1:2b])
-        by smtp.gmail.com with ESMTPSA id c25sm512455ejx.59.2019.02.15.04.25.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Feb 2019 04:25:23 -0800 (PST)
-References: <1550070569-18588-1-git-send-email-lollivier@baylibre.com> <1550070569-18588-5-git-send-email-lollivier@baylibre.com> <20190214100019.GA4197@Red> <20190214101212.GJ28278@localhost>
-User-agent: mu4e 1.0; emacs 25.3.2
-From:   Loys Ollivier <lollivier@baylibre.com>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Loys Ollivier <lollivier@baylibre.com>,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 4/4] gnss: add driver for mediatek receivers
-In-reply-to: <20190214101212.GJ28278@localhost>
-Date:   Fri, 15 Feb 2019 13:25:20 +0100
-Message-ID: <86d0ntfdcf.fsf@baylibre.com>
+        Fri, 15 Feb 2019 07:28:16 -0500
+Received: from mout.gmx.net ([212.227.17.20]:42431 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405454AbfBOM2P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 07:28:15 -0500
+Received: from localhost.localdomain ([218.18.229.179]) by mail.gmx.com
+ (mrgmx103 [212.227.17.174]) with ESMTPSA (Nemesis) id
+ 0Ld0E0-1hKqgF41BI-00iDAT; Fri, 15 Feb 2019 13:28:13 +0100
+From:   Chengguang Xu <cgxu519@gmx.com>
+To:     gregkh@linuxfoundation.org
+Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        Chengguang Xu <cgxu519@gmx.com>
+Subject: [PATCH v2 1/4] chardev: add additional check for minor range overlap
+Date:   Fri, 15 Feb 2019 20:27:11 +0800
+Message-Id: <20190215122714.28842-1-cgxu519@gmx.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Provags-ID: V03:K1:PuxX26Iwc4DsD6HQypaGn4HHmfiFlbvc+zDkpxeqQf07xuqc4qf
+ uTMrJ+1tvt9PxrKXunk85gRqfSqRCnXmZAWhCU/ydtJRBviCy9ejH4bGAB5yzS3WKwR0Ffa
+ N4aXZW5bodlbxI+DPXc3UHWBJqS3bUAwrBrZdf8a2CJZ3EF8DKzx7cFbVD8P4T5NSdleHEj
+ 4Ba6wZ+bPRTu+NmBTa4mg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:AI/DMhKy2a0=:E7+ZJX6F6prUEy3oG6tclE
+ I1xgW+rbUeOiMIIUDz9Q59dlDmRPgYQc/oLJ6YeJaCAPe4czTodEmuQRmQWvg95WUYit0x7Ys
+ Y8+yNebFo1vdvKxZyNHFhiQz1KtDSZzUQowOEj/xsIFVdJS537O/RrfoEIqQ/DEEC7d9H/Fh0
+ Za+QMpI1UpL5lmkHvud03hS93H1DIl3CljTNpxP/ewkxonHepIEsSggA1kbEi5vJXl+H12/X6
+ 1s5idcRK9P2fG3bNwVTdyfkS0OX677dHiTtI1zDxbor+BJ1NjDYuz6w8MGlmugTWveJAGZuDj
+ /Ig6gbk5wcK1YucSwW9t/OJztdi+Ylz6i/BeO46QencGE4QU8u3jv1a1AWf2f1hm4rayUpxU6
+ L9/TH8B+5gD8i8eGDpW74c6D9m/86UMkhOXfOEkUsCFG/yM5HYbqrfNk1vZ/phrlJRmW5ONN0
+ ZA4o5RGYYYhlUaanMIY9fCGRDc9qAL8kBEHIf8ooOvS+R8BqbPVcOu6Ofov/X80+mORsPBjjF
+ FhyW2AFx+Wc4hSwCHgJrcHwCaKv5RQ0QST1gb8ZsUSXYRr2eeg+1AiJPMimrsFRqqhAHx5eg0
+ fq9YfMTToH1Uc9wrMIhq5nLxDYGQ1tue8h2RMEXahYO/gOPdigH3T/+OueVUligDBm4F3WfNw
+ KeL/ewcNQ0JIexW16FufVZcAVmh1psE0t4BpJHYQk8jXUK+PUpsaF3xQ6oiyDxl7D/zWKixN3
+ +iLAkPPFf3fpd9Va9+f61GYg4puGmzpThBUji0zhBKHNF/JrDotSU3IO+elmfue+C1liDCPPP
+ BubiKh1KhuEsDoYuVPwklWqp9Q8UyNWyARR/uWmhoOC4BqKPkBzpqcq8x9MbOXrIx2fAzVCeA
+ 7BT/mFeF7z6ybs2GZASIBjY01tKonYjZtzizayk8nWVSfLJL+ssJaT1liCKV6j
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Current overlap checking cannot correctly handle
+a case which is baseminor < existing baseminor &&
+baseminor + minorct > existing baseminor + minorct.
 
-On Thu 14 Feb 2019 at 10:12, Johan Hovold <johan@kernel.org> wrote:
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+---
+v1->v2:
+- Split fix and cleanup patches.
+- Remove printing minor range in chrdev_show().
 
-> On Thu, Feb 14, 2019 at 11:00:19AM +0100, Corentin Labbe wrote:
->> On Wed, Feb 13, 2019 at 04:09:29PM +0100, Loys Ollivier wrote:
->> > Add driver for serial-connected Mediatek-based GNSS receivers.
->> > 
->> > These devices typically boot transmitting vendor specific NMEA output
->> > sequences. The serial port bit rate is read from the device tree
->> > "current-speed".
->> > 
->> > Note that the driver uses the generic GNSS serial implementation and
->> > therefore essentially only manages power abstracted into three power
->> > states: ACTIVE, STANDBY, and OFF.
->> > 
->> > For mediatek receivers with a main supply and no enable-gpios, this simply
->> > means that the main supply is disabled in STANDBY and OFF (the optional
->> > backup supply is kept enabled while the driver is bound).
->> > 
->> > Note that the timepulse-support is left unimplemented.
->> > 
->> > Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
->
->> > +static int mtk_set_active(struct gnss_serial *gserial)
->> > +{
->> > +	struct mtk_data *data = gnss_serial_get_drvdata(gserial);
->> > +	int ret;
->> > +
->> > +	ret = regulator_enable(data->vcc);
->> > +	if (ret)
->> > +		return ret;
->> > +
->> > +	return 0;
->> > +}
->> 
->> Hello
->> 
->> This could be simplified to return regulator_enable(data->vcc);
->
-> Indeed, but I prefer this style which clearly separates the error path
-> from the success path while making the success return value explicit.
->
+ fs/char_dev.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-It respects the coding style/standard and I prefer the original version.
-It's also easier to debug if you want to add extra code on error.
-
->> Furthermore, after this simplification, the function seems useless.
->
-> Why do you think so? You still need to retrieve the regulator from the
-> driver data. Sure, this could be folded into mtk_set_power(), but that
-> would be less ideal if there are more resources that need to be managed
-> (e.g. an external lna supply).
-
-I would be in favor to keep mtk_set_active. It clearly shows when the
-regulator is enabled.
-It also seems logic to have an enable/standby function in the driver.
-Even if those are trivial (for now).
-
->
-> Thanks,
-> Johan
-
-
+diff --git a/fs/char_dev.c b/fs/char_dev.c
+index a279c58fe360..8a63cfa29005 100644
+--- a/fs/char_dev.c
++++ b/fs/char_dev.c
+@@ -159,6 +159,12 @@ __register_chrdev_region(unsigned int major, unsigned int baseminor,
+ 			ret = -EBUSY;
+ 			goto out;
+ 		}
++
++		if (new_min < old_min && new_max > old_max) {
++			ret = -EBUSY;
++			goto out;
++		}
++
+ 	}
+ 
+ 	cd->next = *cp;
 -- 
--L
+2.20.1
+
