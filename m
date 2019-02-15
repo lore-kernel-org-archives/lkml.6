@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0240CC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:35:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94BCEC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:35:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A200021927
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:35:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5398221927
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:35:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550198102;
-	bh=8XUIlxSKIMBLJ1bbS2b+As4HwqZ1o/xAH4Ka+YOHEdU=;
+	s=default; t=1550198112;
+	bh=sLMiLbh8zwh/uj4cUVukNmd5vhgTbSsjTjwDskVCIjA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=poqo1VdpQKCOqN71IVoLYOgHAIGMpIpp+FJ11UGJwWjPOhICIh+BBMGwn7IMz4w8Q
-	 5pddJ/k5UhzJDKYkeR64feWa+1M6z1toPdBFePGcAjQdAsGnooQJft0ZFmj6Xjc+vz
-	 cFLI4FRqzHEU0VE6WGtutTYi/zJUIr2orjMnfP+I=
+	b=i6DX5Rr0F0b5G2Q6fHpitQ2xSjt69/NPHEtmq5uZ/k6cavTkYFdfCBY9N0/rRW09a
+	 vYN1RF8fcKmWgm8R4xpSe0nU0McbviNEd3iGPAfRi8rBA0x5etP4cHf6KOdd6WncOr
+	 Dw3QqeEFoQqFydtdVWZZKTcYBH71x9DIPlNOAlGo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387905AbfBOCfA (ORCPT
+        id S1732528AbfBOCfK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:35:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51568 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:35:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390805AbfBOCLc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:11:32 -0500
+        id S2390758AbfBOCL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:11:29 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 086B3206BA;
-        Fri, 15 Feb 2019 02:11:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA688222D0;
+        Fri, 15 Feb 2019 02:11:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196691;
-        bh=8XUIlxSKIMBLJ1bbS2b+As4HwqZ1o/xAH4Ka+YOHEdU=;
+        s=default; t=1550196689;
+        bh=sLMiLbh8zwh/uj4cUVukNmd5vhgTbSsjTjwDskVCIjA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YXF3hZ+R9B8wqgMCQjWzgR3GxIYz7pXncNlR0wOXYAART8WRdMDSaNRTbMbDKj1IO
-         kqJ3ijeC+UBpDtWJ1oEd7dUsEpJHyD2WRPX4r4m3U6ib27jx3XBg5Ls2YHD8BnFMOU
-         KiK13N4ziMWzjg4zXN85QlivQi1sUlwfvXH+SOM8=
+        b=eqiBmc90Afu6d+HC0eS2ENkG6p8t8goSQcD3TWj7IaMQ16eNF6UY9i32oPnVwtHWn
+         HQd3nMWwHLL/R+dNxhopGR7vk1RSj9r6AzaKyLgt8ZQ++eu9vPc92xc8Lxpvrij7Gq
+         cYzvGvtqHTIqxWSdNNaqBWdH7z7qcXk4hANesxDg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lubomir Rintel <lkundrak@v3.sk>, Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 06/65] clk: sysfs: fix invalid JSON in clk_dump
-Date:   Thu, 14 Feb 2019 21:10:22 -0500
-Message-Id: <20190215021121.177674-6-sashal@kernel.org>
+Cc:     Yizhuo <yzhai003@ucr.edu>, Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 04/65] ASoC: Variable "val" in function rt274_i2c_probe() could be uninitialized
+Date:   Thu, 14 Feb 2019 21:10:20 -0500
+Message-Id: <20190215021121.177674-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -57,33 +57,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lubomir Rintel <lkundrak@v3.sk>
+From: Yizhuo <yzhai003@ucr.edu>
 
-[ Upstream commit c6e909972ef87aa2a479269f46b84126f99ec6db ]
+[ Upstream commit 8c3590de0a378c2449fc1aec127cc693632458e4 ]
 
-Add a missing comma so that the output is valid JSON format again.
+Inside function rt274_i2c_probe(), if regmap_read() function
+returns -EINVAL, then local variable "val" leaves uninitialized
+but used in if statement. This is potentially unsafe.
 
-Fixes: 9fba738a53dd ("clk: add duty cycle support")
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Yizhuo <yzhai003@ucr.edu>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/codecs/rt274.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index d31055ae6ec6..5413ffaf02e2 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2687,7 +2687,7 @@ static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
- 	seq_printf(s, "\"protect_count\": %d,", c->protect_count);
- 	seq_printf(s, "\"rate\": %lu,", clk_core_get_rate(c));
- 	seq_printf(s, "\"accuracy\": %lu,", clk_core_get_accuracy(c));
--	seq_printf(s, "\"phase\": %d", clk_core_get_phase(c));
-+	seq_printf(s, "\"phase\": %d,", clk_core_get_phase(c));
- 	seq_printf(s, "\"duty_cycle\": %u",
- 		   clk_core_get_scaled_duty_cycle(c, 100000));
- }
+diff --git a/sound/soc/codecs/rt274.c b/sound/soc/codecs/rt274.c
+index d88e67341083..18a931c25ca5 100644
+--- a/sound/soc/codecs/rt274.c
++++ b/sound/soc/codecs/rt274.c
+@@ -1126,8 +1126,11 @@ static int rt274_i2c_probe(struct i2c_client *i2c,
+ 		return ret;
+ 	}
+ 
+-	regmap_read(rt274->regmap,
++	ret = regmap_read(rt274->regmap,
+ 		RT274_GET_PARAM(AC_NODE_ROOT, AC_PAR_VENDOR_ID), &val);
++	if (ret)
++		return ret;
++
+ 	if (val != RT274_VENDOR_ID) {
+ 		dev_err(&i2c->dev,
+ 			"Device with ID register %#x is not rt274\n", val);
 -- 
 2.19.1
 
