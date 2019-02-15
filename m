@@ -3,25 +3,25 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D51AC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FEEAC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:51:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FB9021929
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:51:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B2632192D
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:51:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394542AbfBOLu7 (ORCPT
+        id S2436755AbfBOLvJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 06:50:59 -0500
-Received: from olimex.com ([184.105.72.32]:52088 "EHLO olimex.com"
+        Fri, 15 Feb 2019 06:51:09 -0500
+Received: from olimex.com ([184.105.72.32]:60368 "EHLO olimex.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394523AbfBOLu6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 06:50:58 -0500
+        id S2394552AbfBOLvJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 06:51:09 -0500
 Received: from localhost.localdomain ([195.238.85.143])
         by olimex.com with ESMTPSA (ECDHE-RSA-AES128-GCM-SHA256:TLSv1.2:Kx=ECDH:Au=RSA:Enc=AESGCM(128):Mac=AEAD) (SMTP-AUTH username stefan@olimex.com, mechanism PLAIN)
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 03:50:45 -0800
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 03:50:57 -0800
 From:   Stefan Mavrodiev <stefan@olimex.com>
 To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
@@ -37,9 +37,9 @@ To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
         linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner
         sunXi SoC support)
 Cc:     Stefan Mavrodiev <stefan@olimex.com>
-Subject: [PATCH v2 3/8] dt-bindings: leds: Add binding for axp20x-led device driver
-Date:   Fri, 15 Feb 2019 13:50:08 +0200
-Message-Id: <20190215115013.11098-4-stefan@olimex.com>
+Subject: [PATCH v2 7/8] ARM: dts: sun7i: Enable AXP209 CHGLED for Olimex boards
+Date:   Fri, 15 Feb 2019 13:50:12 +0200
+Message-Id: <20190215115013.11098-8-stefan@olimex.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190215115013.11098-1-stefan@olimex.com>
 References: <20190215115013.11098-1-stefan@olimex.com>
@@ -48,95 +48,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds the devicetree bindings for charge led indicator found
-on most of X-Powers AXP20X PMICs.
+Olimex A20-OLinuXino based boards (MICRO, SOM, SOM204, LIME2)
+commes with populated LED connected to AXP209.
+
+By default the LED is controlled by AXP209, so this binding
+actually doesn't modify any registers. However this can can be
+used as general purpose LED, if the control mode is overridden.
+
+Also this binding is enabled only for OLIMEX boards, since I have
+no knowlegde if the other manifactures are populating this LED.
 
 Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
 ---
- .../devicetree/bindings/leds/leds-axp20x.txt  | 74 +++++++++++++++++++
- 1 file changed, 74 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/leds/leds-axp20x.txt
+ arch/arm/boot/dts/sun7i-a20-olimex-som-evb.dts    | 6 ++++++
+ arch/arm/boot/dts/sun7i-a20-olimex-som204-evb.dts | 6 ++++++
+ arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts   | 6 ++++++
+ arch/arm/boot/dts/sun7i-a20-olinuxino-micro.dts   | 6 ++++++
+ 4 files changed, 24 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/leds/leds-axp20x.txt b/Documentation/devicetree/bindings/leds/leds-axp20x.txt
-new file mode 100644
-index 000000000000..5a83ad06796d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/leds/leds-axp20x.txt
-@@ -0,0 +1,74 @@
-+Device Tree Bindings for LED support on X-Powers PMIC
+diff --git a/arch/arm/boot/dts/sun7i-a20-olimex-som-evb.dts b/arch/arm/boot/dts/sun7i-a20-olimex-som-evb.dts
+index f0e6a96e5785..677ee1c2795a 100644
+--- a/arch/arm/boot/dts/sun7i-a20-olimex-som-evb.dts
++++ b/arch/arm/boot/dts/sun7i-a20-olimex-som-evb.dts
+@@ -243,6 +243,12 @@
+ 
+ #include "axp209.dtsi"
+ 
++&axp_led {
++	label = "a20-olimex-som-evb:yellow:chgled";
++	status = "okay";
++	x-powers,charger-mode = <0>;
++};
 +
-+Most of the X-Powers PMICs have integrated battery charger with LED indicator.
-+The output is open-drain, so the state is either high-Z or output-low. The
-+driver is a subnode of AXP20X MFD driver, since it uses shared bus with all
-+other cells.
-+The LED can be controlled either manually or automatically. Then in automatic
-+(controlled by the charger) there are two indication modes:
+ &reg_dcdc2 {
+ 	regulator-always-on;
+ 	regulator-min-microvolt = <1000000>;
+diff --git a/arch/arm/boot/dts/sun7i-a20-olimex-som204-evb.dts b/arch/arm/boot/dts/sun7i-a20-olimex-som204-evb.dts
+index 823aabce0462..31a3ab5ad4e3 100644
+--- a/arch/arm/boot/dts/sun7i-a20-olimex-som204-evb.dts
++++ b/arch/arm/boot/dts/sun7i-a20-olimex-som204-evb.dts
+@@ -205,6 +205,12 @@
+ 	status = "okay";
+ };
+ 
++&axp_led {
++	label = "a20-som204-evb:yellow:chgled";
++	status = "okay";
++	x-powers,charger-mode = <0>;
++};
 +
-+Mode-A
-+======
-+- output-low:		Charging
-+- high-Z		Not charging
-+- 1Hz flashing:		Abnormal alarm
-+- 4Hz flashing		Overvoltage alarm
+ &battery_power_supply {
+ 	status = "okay";
+ };
+diff --git a/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts b/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
+index 4e1c590eb098..66dd80ced1fa 100644
+--- a/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
++++ b/arch/arm/boot/dts/sun7i-a20-olinuxino-lime2.dts
+@@ -200,6 +200,12 @@
+ 
+ #include "axp209.dtsi"
+ 
++&axp_led {
++	label = "a20-olinuxino-lime2:yellow:chgled";
++	status = "okay";
++	x-powers,charger-mode = <0>;
++};
 +
-+Mode-B
-+======
-+- output-low:		Battery full
-+- high-Z		Not charging
-+- 1Hz flashing:		Charging
-+- 4Hz flashing		Overvoltage or abnormal alarm
+ &reg_dcdc2 {
+ 	regulator-always-on;
+ 	regulator-min-microvolt = <1000000>;
+diff --git a/arch/arm/boot/dts/sun7i-a20-olinuxino-micro.dts b/arch/arm/boot/dts/sun7i-a20-olinuxino-micro.dts
+index 840ae1194a66..700de909eb49 100644
+--- a/arch/arm/boot/dts/sun7i-a20-olinuxino-micro.dts
++++ b/arch/arm/boot/dts/sun7i-a20-olinuxino-micro.dts
+@@ -272,6 +272,12 @@
+ 	status = "okay";
+ };
+ 
++&axp_led {
++	label = "a20-olinuxino-micro:yellow:chgled";
++	status = "okay";
++	x-powers,charger-mode = <0>;
++};
 +
-+The control and the mode can be changed from sysfs.
-+
-+For AXP20X MFD bindings see:
-+Documentation/devicetree/bindings/mfd/axp20x.txt
-+
-+Required properties:
-+- compatible : Must be "x-powers,axp20x-led"
-+
-+Supported common LED properties, see ./common.txt for more informationn
-+- label : See Documentation/devicetree/bindings/leds/common.txt
-+- linux,default-trigger : See Documentation/devicetree/bindings/leds/common.txt
-+- default-state: See Documentation/devicetree/bindings/leds/common.txt
-+
-+Optional properties:
-+- x-powers,charger-mode: 0 for Mode-A, 1 for Mode-B
-+			 If omitted, then the control is set to manual mode.
-+			 On invalid value, Mode-A is used.
-+
-+
-+Example:
-+
-+	axp803: pmic@3a3 {
-+		compatible = "x-powers,axp803";
-+
-+		...
-+
-+		led@0 {
-+			compatible = "x-powers,axp20x-led";
-+			status = "okay";
-+
-+			label = "axp20x:yellow:chgled";
-+			linux,default-trigger = "timer";
-+			default-state = "on";
-+		};
-+	};
-+
-+or
-+
-+	axp803: pmic@3a3 {
-+		compatible = "x-powers,axp803";
-+
-+		...
-+
-+		led@0 {
-+			compatible = "x-powers,axp20x-led";
-+			status = "okay";
-+
-+			label = "axp20x:yellow:chgled";
-+			x-powers,charger-mode = <1>;
-+		};
-+	};
+ &battery_power_supply {
+ 	status = "okay";
+ };
 -- 
 2.17.1
 
