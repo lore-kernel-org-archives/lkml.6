@@ -2,122 +2,106 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24643C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:13:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E2B2C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7C8420643
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:13:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550214810;
-	bh=uHa0ewdftxg6MCAtg1cwOGKFCgG1xNH5MAQOg7QL3Fo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=C/vq0rseJBBxFLpBgOsui/NWqtdJG60ZqCTN8yq32PqBmL3tvk+MpdEHQHA4vwa6a
-	 vUOkiUxrwqFCVph7mr0KAT/UKEq6G3f6oSdkfJ92sUcka7x+kEoGZsNupsEqC9nd2m
-	 +XFGTJ1VvmZ3ct+J7WjJ3ia45xshtIX3yi0go5W8=
+	by mail.kernel.org (Postfix) with ESMTP id E8E7921920
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:17:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="G5sNFRV3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389454AbfBOHNV (ORCPT
+        id S2389494AbfBOHRb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 02:13:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56610 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725909AbfBOHNV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 02:13:21 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24B7F206A3;
-        Fri, 15 Feb 2019 07:13:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550214796;
-        bh=uHa0ewdftxg6MCAtg1cwOGKFCgG1xNH5MAQOg7QL3Fo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=o4K+plyueYuuAPOngKyNVCDMWdy0KLly9X8tr4JZ6smUBREfPsxsz6nCNqWz6oBju
-         ePF2cx8WHN371VFb3S/0C+X5ytWYP3ED0XdT6UK7jlMI5Vxc3QTFtxIqHJM2+/Fv3t
-         JO7cfxIuBuwSGosrm/gKgjP9DXUW1wLDaEklCO1U=
-Date:   Fri, 15 Feb 2019 08:13:03 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
-        Samuel Dionne-Riel <samuel@dionne-riel.com>,
-        LKML <linux-kernel@vger.kernel.org>, graham@grahamc.com,
-        Oleg Nesterov <oleg@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: Userspace regression in LTS and stable kernels
-Message-ID: <20190215071303.GA29700@kroah.com>
-References: <CAN1fySViLgrLAHHfTHMef-Bkh73kUHKP-ava6TbgALeSE4LfFw@mail.gmail.com>
- <CAFLxGvwpuxKF4UWdsULwQWo7kgVLMNHC=77dN+w-A0a6avrAXA@mail.gmail.com>
- <CAHk-=wjtH5ombebghG-SDNGppJF4a5bZAUqndtZ3tauWjgw5_w@mail.gmail.com>
- <20190214122027.c0df36282d65dc9979248117@linux-foundation.org>
- <20190215070022.GD14473@kroah.com>
+        Fri, 15 Feb 2019 02:17:31 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:18986 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730765AbfBOHRa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 02:17:30 -0500
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id x1F7HQZf025465;
+        Fri, 15 Feb 2019 16:17:26 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x1F7HQZf025465
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1550215047;
+        bh=GeopkqQtXzwUJZ3y6qZvd9T4Uw6r5SvlPQNc24Bsa4Q=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=G5sNFRV3kQ3kFp1cpwQ/p977o6bRCOnlYRwRNZbkuKWgFr31TpOAUskfjCkCnggKQ
+         bulUyTGR9xrCN2VpS5d9St1neRX4yw62qWtdsw0HBtyn1j5hbwxlhgcjzB+8LnteAj
+         KF5Wc0ZLpE3uIZLcK/f8me4qiCozF3AhqXjaf6N3nAbupH9ncY+2IWXtspUZAi3Xjd
+         WTtVbIYCTGpMxC8PDivjPWuAWe4F/PcsOgcBrGN2LV3WR6q6hsQIotn0as3Y6WQIUJ
+         WwC7hCUSj3KnoLdRwtoHqyvBsQCyP3o6YHxEC6HvDuoD6dzpE4aZfPU+hVbdNCv7VA
+         zQ0DRyIAughAA==
+X-Nifty-SrcIP: [209.85.217.43]
+Received: by mail-vs1-f43.google.com with SMTP id b20so5223817vsl.9;
+        Thu, 14 Feb 2019 23:17:26 -0800 (PST)
+X-Gm-Message-State: AHQUAuZ01Nx3F/KC6UjnYlohsIK7lPJoCgjo9Lj6g5Hauvqi1R4b4PjE
+        RofZlrvkgsCc/XYe0iHzIVOvoMOFEnHiAWxKii4=
+X-Google-Smtp-Source: AHgI3IZyIXujDelplfko6wBHrsbS2dq6CNqn7D68TH0m2IT92ENSLenQrLKXfUJMf7PNeCSldoJEBtW7NN6lWFtuNvE=
+X-Received: by 2002:a67:7f43:: with SMTP id a64mr4199596vsd.155.1550215045700;
+ Thu, 14 Feb 2019 23:17:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190215070022.GD14473@kroah.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <20190213174005.28785-1-hch@lst.de> <20190213174005.28785-7-hch@lst.de>
+In-Reply-To: <20190213174005.28785-7-hch@lst.de>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 15 Feb 2019 16:16:49 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQZm2TXO1gxif2LZQzwYae2AiqgZnNGJBxBjiPwoZLqig@mail.gmail.com>
+Message-ID: <CAK7LNAQZm2TXO1gxif2LZQzwYae2AiqgZnNGJBxBjiPwoZLqig@mail.gmail.com>
+Subject: Re: [PATCH 06/11] lockdep: consolidate the LOCKDEP_SUPPORT symbol
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-xtensa@linux-xtensa.org,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-riscv@lists.infradead.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 08:00:22AM +0100, Greg Kroah-Hartman wrote:
-> On Thu, Feb 14, 2019 at 12:20:27PM -0800, Andrew Morton wrote:
-> > On Thu, 14 Feb 2019 09:56:46 -0800 Linus Torvalds <torvalds@linux-foundation.org> wrote:
-> > 
-> > > On Wed, Feb 13, 2019 at 3:37 PM Richard Weinberger
-> > > <richard.weinberger@gmail.com> wrote:
-> > > >
-> > > > Your shebang line exceeds BINPRM_BUF_SIZE.
-> > > > Before the said commit the kernel silently truncated the shebang line
-> > > > (and corrupted it),
-> > > > now it tells the user that the line is too long.
-> > > 
-> > > It doesn't matter if it "corrupted" things by truncating it. All that
-> > > matters is "it used to work, now it doesn't"
-> > > 
-> > > Yes, maybe it never *should* have worked. And yes, it's sad that
-> > > people apparently had cases that depended on this odd behavior, but
-> > > there we are.
-> > > 
-> > > I see that Kees has a patch to fix it up.
-> > > 
-> > 
-> > Greg, I think we have a problem here.
-> > 
-> > 8099b047ecc431518 ("exec: load_script: don't blindly truncate shebang
-> > string") wasn't marked for backporting.  And, presumably as a
-> > consequence, Kees's fix "exec: load_script: allow interpreter argument
-> > truncation" was not marked for backporting.
-> > 
-> > 8099b047ecc431518 hasn't even appeared in a Linus released kernel, yet
-> > it is now present in 4.9.x, 4.14.x, 4.19.x and 4.20.x.
-> 
-> It came in 5.0-rc1, so it fits the "in a Linus released kernel"
-> requirement.  If we are to wait until it shows up in a -final, that
-> would be months too late for almost all of these types of patches that
-> are picked up.
-> 
-> > I don't know if Oleg considered backporting that patch.  I certainly
-> > did (I always do), and I decided against doing so.  Yet there it is.
-> 
-> This came in through Sasha's tools, which give people a week or so to
-> say "hey, this isn't a stable patch!" and it seems everyone ignored that
-> :(
-> 
-> Where is Kees's fix?  I'll be glad to queue it up, or just revert the
-> above commit, which ever people think is easiest.
++CC Greentime Hu
++CC Vincent Chen
 
-Ah, I see the fix now, _after_ I just pushed out a bunch of stable
-releases.  I'll go queue it up and push it out with just that fix in it
-now...
 
-thanks,
+On Thu, Feb 14, 2019 at 2:40 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> Add one definition to lib/Kconfig.debug and let the architectures
+> select if it supported.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-greg k-h
+
+This changes the behavior of nds32.
+
+So please leave a note in the commit description.
+(Ideally, we want Ack of a NDS32 maintainer)
+
+Also, please do compile test for NDS32.
+
+
+-------------------------
+This commit changes CONFIG_LOCKDEP_SUPPORT to y for nds32.
+
+NDS32 selects LOCKEP_SUPPORT, but there was previously
+no config entry of LOCKDEP_SUPPORT in nds32.
+
+It is now available in lib/Kconfig.debug,
+so this commit enables LOCKDEP_SUPPORT for nds32.
+-------------------------
+
+
+
+
+
+
+--
+Best Regards
+Masahiro Yamada
