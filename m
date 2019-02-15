@@ -2,72 +2,67 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCA4BC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:02:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E6D4C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:02:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F98621924
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:02:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="VQixXjME"
+	by mail.kernel.org (Postfix) with ESMTP id 5209321924
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:02:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389171AbfBORCV (ORCPT
+        id S2389393AbfBORCm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 12:02:21 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:54160 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726052AbfBORCU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 12:02:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=W6e6qznt2JOS/949BOx6FvCW23lwdk9RLTqcCBKSms8=; b=VQixXjMEKCu41JsHECIrGLk922
-        JlxigX1+jwtXXbU8T/s/JNnxGXLVL+jIY3zP4WLxrDm8LYM6plPdNXzEZYsA96vAI20gTNSvW84eV
-        sEI/+TfRoLg1kKap9pl+oKz8kezMEcty2rbkBf5YDy7abOIeEqFIjlyF8PLRBm8Za20g=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gugsU-00087M-CR; Fri, 15 Feb 2019 18:02:18 +0100
-Date:   Fri, 15 Feb 2019 18:02:18 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH RESEND net] net: phy: xgmiitorgmii: Support generic PHY
- status read
-Message-ID: <20190215170218.GS708@lunn.ch>
-References: <20190215163220.20041-1-paul.kocialkowski@bootlin.com>
+        Fri, 15 Feb 2019 12:02:42 -0500
+Received: from mail-qk1-f179.google.com ([209.85.222.179]:40008 "EHLO
+        mail-qk1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389301AbfBORCm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 12:02:42 -0500
+Received: by mail-qk1-f179.google.com with SMTP id h28so2265329qkk.7
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 09:02:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/9zAIeq2Ol4m9ysnOUmt4bHtlKlrrmIDX6JCSKz/pRE=;
+        b=QLwSFZHn64Ll6JXiLxC2UsBi+fvfcxnogpaL45/aVDVRxW7vuLXrXpw+FjL2cFnQnQ
+         +/D2uWqR00HR4EWpkm4gH6N1jXpxgrjgpqUiJd43uvL7LFnC1I9k+j8t69qmnbpQaHwQ
+         d7EM5wozZkMEVgpUCpEylxR2ibpMiE+RpzWePSYcKo4YMZbaElaB2goaIk0WnOF0BQSZ
+         sOykYfkYqja6lu6gUcHteETkl/ip8FNX1cEGM+WCZHXHGIMszm0ype580Te3hcPE3/nM
+         txe4y8MAd9xBrSflzhK14OW1KQViyhcpZJQx3u94pI/a5e8pzTM4bxJ3EAIcycIXhqxr
+         rnwQ==
+X-Gm-Message-State: AHQUAuZQawyI52hBGbb1yuty/tdMGXAf6An3EIHYgtFrq8tSDE764ffW
+        gevTlOF0voKELN4Lr4PbgJoBjzE9hli8QZUTn+Y=
+X-Google-Smtp-Source: AHgI3IbwmLqV3Zax5Lup19d5xghzKvGL2sRDkktZ1FER3kEV3EJDqpUp3luGQUbDVjbSOgqn9rAqzP8y+ECUxSWoBTw=
+X-Received: by 2002:a37:7cf:: with SMTP id 198mr7767513qkh.173.1550250161012;
+ Fri, 15 Feb 2019 09:02:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190215163220.20041-1-paul.kocialkowski@bootlin.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <1549044263-5862-1-git-send-email-santosh.shilimkar@oracle.com>
+In-Reply-To: <1549044263-5862-1-git-send-email-santosh.shilimkar@oracle.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 15 Feb 2019 18:02:24 +0100
+Message-ID: <CAK8P3a3pspTHpVNDxwLG-GyajyjLN4nRz4k-3uUqwOP3xJzP3w@mail.gmail.com>
+Subject: Re: [GIT PULL] soc: ti: couple of non critical fixes for v5.1
+To:     Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Cc:     arm-soc <arm@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Kevin Hilman <khilman@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 05:32:20PM +0100, Paul Kocialkowski wrote:
-> Some PHY drivers like the generic one do not provide a read_status
-> callback on their own but rely on genphy_read_status being called
-> directly.
-> 
-> With the current code, this results in a NULL function pointer call.
-> Call genphy_read_status instead when there is no specific callback.
-> 
-> Fixes: f411a6160bd4 ("net: phy: Add gmiitorgmii converter support")
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+On Fri, Feb 1, 2019 at 7:04 PM Santosh Shilimkar
+<santosh.shilimkar@oracle.com> wrote:
+> soc: ti: couple of non critical fixes for v5.1
+>
+>  - Fix the Clang warning for enum in Navigator dma
+>  - Simplify code in ti_sci with DEFINE_SHOW_ATTRIBUTE macro
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Pulled into arm/drivers, thanks!
 
-    Andrew
+     Arnd
