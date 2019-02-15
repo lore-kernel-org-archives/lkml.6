@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94BCEC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC208C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:35:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5398221927
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:35:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8194421927
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:35:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550198112;
-	bh=sLMiLbh8zwh/uj4cUVukNmd5vhgTbSsjTjwDskVCIjA=;
+	s=default; t=1550198133;
+	bh=aaJVp55CTXuaXx9jliqdiG47J4cyVZSwbncctg49O/k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=i6DX5Rr0F0b5G2Q6fHpitQ2xSjt69/NPHEtmq5uZ/k6cavTkYFdfCBY9N0/rRW09a
-	 vYN1RF8fcKmWgm8R4xpSe0nU0McbviNEd3iGPAfRi8rBA0x5etP4cHf6KOdd6WncOr
-	 Dw3QqeEFoQqFydtdVWZZKTcYBH71x9DIPlNOAlGo=
+	b=iyGy6lJg2uzV/lCxdT0mnHVEc5ZH8OCHFPJgaFfimY+kUDe06FPCUVfaIJTjibb2J
+	 JPHk/QdeP0nVEJJg6fCNOY+leTuVYoSS5P6wxjEfnJd11+4Qg0T998mqC/DeQ5rPY/
+	 eAmcC8DnrFWCaLJoVpLJ31asnTPiYVheQND51nTw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732528AbfBOCfK (ORCPT
+        id S1732702AbfBOCfc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:35:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51534 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:35:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51164 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390758AbfBOCL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:11:29 -0500
+        id S1732138AbfBOCLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:11:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA688222D0;
-        Fri, 15 Feb 2019 02:11:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B9A8021B68;
+        Fri, 15 Feb 2019 02:11:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196689;
-        bh=sLMiLbh8zwh/uj4cUVukNmd5vhgTbSsjTjwDskVCIjA=;
+        s=default; t=1550196664;
+        bh=aaJVp55CTXuaXx9jliqdiG47J4cyVZSwbncctg49O/k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eqiBmc90Afu6d+HC0eS2ENkG6p8t8goSQcD3TWj7IaMQ16eNF6UY9i32oPnVwtHWn
-         HQd3nMWwHLL/R+dNxhopGR7vk1RSj9r6AzaKyLgt8ZQ++eu9vPc92xc8Lxpvrij7Gq
-         cYzvGvtqHTIqxWSdNNaqBWdH7z7qcXk4hANesxDg=
+        b=GVlOdPxHlOlli0+3+Xebty1xYNTEFYTe9rEhykYSmF8eG7hUVmAKPXhR0pi30LkLN
+         kh+dCMt7K2hNN98WGULbtlIu9sJse0MpO+BPwKU1oTvNEAEsgsSMGVp9vO4NrBTNGb
+         N2XjvsybZ14Rw/eKfyHwcJ3C1vPKvmWgLKF+TJ5c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yizhuo <yzhai003@ucr.edu>, Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 04/65] ASoC: Variable "val" in function rt274_i2c_probe() could be uninitialized
-Date:   Thu, 14 Feb 2019 21:10:20 -0500
-Message-Id: <20190215021121.177674-4-sashal@kernel.org>
+Cc:     Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 73/77] svm: Fix AVIC incomplete IPI emulation
+Date:   Thu, 14 Feb 2019 21:08:51 -0500
+Message-Id: <20190215020855.176727-73-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
-References: <20190215021121.177674-1-sashal@kernel.org>
+In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
+References: <20190215020855.176727-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -57,38 +58,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yizhuo <yzhai003@ucr.edu>
+From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
 
-[ Upstream commit 8c3590de0a378c2449fc1aec127cc693632458e4 ]
+[ Upstream commit bb218fbcfaaa3b115d4cd7a43c0ca164f3a96e57 ]
 
-Inside function rt274_i2c_probe(), if regmap_read() function
-returns -EINVAL, then local variable "val" leaves uninitialized
-but used in if statement. This is potentially unsafe.
+In case of incomplete IPI with invalid interrupt type, the current
+SVM driver does not properly emulate the IPI, and fails to boot
+FreeBSD guests with multiple vcpus when enabling AVIC.
 
-Signed-off-by: Yizhuo <yzhai003@ucr.edu>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fix this by update APIC ICR high/low registers, which also
+emulate sending the IPI.
+
+Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/codecs/rt274.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/x86/kvm/svm.c | 19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
 
-diff --git a/sound/soc/codecs/rt274.c b/sound/soc/codecs/rt274.c
-index d88e67341083..18a931c25ca5 100644
---- a/sound/soc/codecs/rt274.c
-+++ b/sound/soc/codecs/rt274.c
-@@ -1126,8 +1126,11 @@ static int rt274_i2c_probe(struct i2c_client *i2c,
- 		return ret;
- 	}
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index 101f53ccf571..cea8f8c03e8c 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -4486,25 +4486,14 @@ static int avic_incomplete_ipi_interception(struct vcpu_svm *svm)
+ 		kvm_lapic_reg_write(apic, APIC_ICR, icrl);
+ 		break;
+ 	case AVIC_IPI_FAILURE_TARGET_NOT_RUNNING: {
+-		int i;
+-		struct kvm_vcpu *vcpu;
+-		struct kvm *kvm = svm->vcpu.kvm;
+ 		struct kvm_lapic *apic = svm->vcpu.arch.apic;
  
--	regmap_read(rt274->regmap,
-+	ret = regmap_read(rt274->regmap,
- 		RT274_GET_PARAM(AC_NODE_ROOT, AC_PAR_VENDOR_ID), &val);
-+	if (ret)
-+		return ret;
-+
- 	if (val != RT274_VENDOR_ID) {
- 		dev_err(&i2c->dev,
- 			"Device with ID register %#x is not rt274\n", val);
+ 		/*
+-		 * At this point, we expect that the AVIC HW has already
+-		 * set the appropriate IRR bits on the valid target
+-		 * vcpus. So, we just need to kick the appropriate vcpu.
++		 * Update ICR high and low, then emulate sending IPI,
++		 * which is handled when writing APIC_ICR.
+ 		 */
+-		kvm_for_each_vcpu(i, vcpu, kvm) {
+-			bool m = kvm_apic_match_dest(vcpu, apic,
+-						     icrl & KVM_APIC_SHORT_MASK,
+-						     GET_APIC_DEST_FIELD(icrh),
+-						     icrl & KVM_APIC_DEST_MASK);
+-
+-			if (m && !avic_vcpu_is_running(vcpu))
+-				kvm_vcpu_wake_up(vcpu);
+-		}
++		kvm_lapic_reg_write(apic, APIC_ICR2, icrh);
++		kvm_lapic_reg_write(apic, APIC_ICR, icrl);
+ 		break;
+ 	}
+ 	case AVIC_IPI_FAILURE_INVALID_TARGET:
 -- 
 2.19.1
 
