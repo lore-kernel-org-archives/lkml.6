@@ -2,142 +2,153 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 426D9C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:04:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C1DC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:05:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F8152192B
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:04:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s+CP5nR1"
+	by mail.kernel.org (Postfix) with ESMTP id 6C4C92192B
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:05:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550257541;
+	bh=LqlPcCo9lG1dpPq1I4m4LJFkkEIIEFdDUAqzCdnMRcE=;
+	h=Date:From:To:Cc:Subject:List-ID:From;
+	b=0hRl1tDo5wLI9DxtYtAWGtMyRxMF3q8djdlh24eXE8Y1yOnivw4LmDS2ulL7XhE61
+	 4eF5A4TIwDv5sSFYBYFg5B4aQ4Xdu40gu4+kHcllfBevYVdqRNssLtsjM9S9zsx+dA
+	 LPrfFGUnPuC3i2v4iJ9OPFxqOwPCP0NvV4fS9/6Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731959AbfBOTEn (ORCPT
+        id S1732792AbfBOTFj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 14:04:43 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35406 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726654AbfBOTEm (ORCPT
+        Fri, 15 Feb 2019 14:05:39 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:34233 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726654AbfBOTFj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 14:04:42 -0500
-Received: by mail-pl1-f194.google.com with SMTP id p8so5397247plo.2;
-        Fri, 15 Feb 2019 11:04:42 -0800 (PST)
+        Fri, 15 Feb 2019 14:05:39 -0500
+Received: by mail-yb1-f194.google.com with SMTP id j62so4213620ybb.1;
+        Fri, 15 Feb 2019 11:05:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vAmkJKpKjbcU4YV6qJDo5SKqHHC6M8bye+VBPOPUYfk=;
-        b=s+CP5nR19k91190z515VCZ8SVidFb2UurVRqtYT3iwX2HscarCw18wZFWzILIfO/6G
-         2MJFdqTUBnh+/IjP98ER/g8mQ8Jzu4VNE1A13rqK5wkeOCMQW4fRRIQ1bG6BaMP3DKRV
-         PBJnc8oASGtspH9cnShlHctK5FniUCE7dvAA2p4Kv4EW2ZA/aHwCF5g6G6AT99NpOEaJ
-         vc8hStHHtAEicD5lex/E9sjdlV0JvldqRhRYWl6p+qdTwX30qyxgTdPnx+qjyP6fhFk2
-         NDTxuhO8G8trrnpnWUQt+lFn8Ee0h1yL2tdn9FFXX5s53+mNP7gFb3DzGEJCFbC7xp0I
-         dnlg==
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=542kMV/M+F4ke2Nez4pG0EO/cK2G2uhP23eV8bg4uGc=;
+        b=fqohBaoCh6j07OJSvNB8YJkGy7d7sCxJdAaXOMg30nSbXziT7y+/S7HPkzBp6tv5w+
+         4jtBehbmIspbhohxS9FyV/e2dwR2scC7ZpC3s2Bl6Ybj4qu8PEFgAspIEyvzVIjcOfaP
+         +vOGLsHhI0UIvoH3WvYEXBJ5q2LAY5AloHoXnKtT0ao/23j1Y2Z6CgwyyHQqahMRP5R1
+         LoaaDrFQvxX3f3xGdS7bw4CIJj25lYnf+HUBqesdGzEYESkRDd86qs2zqwJOJ/p2pguE
+         pAp0v9FP7bVkWKMFGa9uHOJiTXm1sFOStnuow7/yDaN3Q97YYAPA4VudCAXI2ldAK0Op
+         ur0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vAmkJKpKjbcU4YV6qJDo5SKqHHC6M8bye+VBPOPUYfk=;
-        b=hwDlhE1Yk/4sXpauxq/RG4TLeg0s9kGD9mqgllbe/QCKtM4qaXZx95oSag6mXUAW0p
-         QZp/yN/eAGRDRA0zJFyLeMWHoybzf+1U8z+StTWSHP3v77G0rqbNcDm5qbvVT0WAG5K1
-         o/V+XPVFxVpj+2l1Qtyb+4BgNBqtHv8XGapS3uA9GyF6+oZDB0W3DapN49EJ95VsbgU1
-         +nc3Zu9G2RncL8fmBp+uCA/MS4Vy9XYwm9U6pkZyCRuTQCilMTRgyKRIMKW5UNhqdqn7
-         9x7jd+UzRKa/aaQ7/5Y9udjyBZ9dmVAPtH9p50toT4/o5xYMe9SevRSOb9gLVq5d4kKx
-         5abA==
-X-Gm-Message-State: AHQUAuYYTbkqKuW0uDYLtSdPZ/uSG35Gx7wsg+ejNPqos54xS5Sv1esA
-        FkPs6nOIYRXKsu0hBKGz/mM=
-X-Google-Smtp-Source: AHgI3IZX40vn+XPUzARhqOkTlnNb5+igf/ucD5TK3wbuZU2Aop03oXppp6EuCpRNz7LMIudJoexS4w==
-X-Received: by 2002:a17:902:c05:: with SMTP id 5mr11779238pls.155.1550257482128;
-        Fri, 15 Feb 2019 11:04:42 -0800 (PST)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id f6sm10225864pfc.88.2019.02.15.11.04.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 15 Feb 2019 11:04:41 -0800 (PST)
-Date:   Fri, 15 Feb 2019 11:04:39 -0800
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Viorel Suman <viorel.suman@nxp.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Timur Tabi <timur@kernel.org>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Cosmin Samoila <cosmin.samoila@nxp.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Viorel Suman <viorel.suman@gmail.com>
-Subject: Re: [PATCH v5 0/3] Add NXP AUDMIX device and machine drivers
-Message-ID: <20190215190438.GB19299@Asurada-Nvidia.nvidia.com>
-References: <1550239285-12587-1-git-send-email-viorel.suman@nxp.com>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=542kMV/M+F4ke2Nez4pG0EO/cK2G2uhP23eV8bg4uGc=;
+        b=G+wCPaYy471p8fq30IXNa0TK/Dtpz+dkt3NTG6vjRavL0zAY45PJyolC3jYUCB1M3R
+         5FQfN5zVc+z/dDrunQrNT3kovBaM7r/HEStCBHPbMtEIzGLeIPeFlELxB5ATFEqm2fTi
+         EsS5MjFqy3Vq/c+rmFXvVdtMufzeJCa2nnoka+KuYLp/u3xuzPUWLu5RFEI8iHsEk7Fy
+         snC8vUBcv9gAN+xEI2rn4p1fRdujnf9r0KOHr7wBfCqUdyyNLcWRckWM+Df8PkTdbK68
+         EXZAyIMrCinrtP/GbLe5Ye0JfVhFOhCe4elFh8Gv6D62yleuLJZk8QloeyKOCCqAg2oZ
+         kP+w==
+X-Gm-Message-State: AHQUAub8FtbfW6/j5F1tC/6Kv9ugkkju+DJjZSn4QoU0B8bUqe/7F/WN
+        hN4tyh7OZ8kTznGKvPG9Gq8=
+X-Google-Smtp-Source: AHgI3IYMUC0OK4+5xnNXmafOJaja9su2sx87jrRy4aXEYhHQXbaJItVJw97xK6I6rZquAR6NtFVo0g==
+X-Received: by 2002:a25:208a:: with SMTP id g132mr9268729ybg.470.1550257538285;
+        Fri, 15 Feb 2019 11:05:38 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::5:2c70])
+        by smtp.gmail.com with ESMTPSA id l73sm2626457ywl.72.2019.02.15.11.05.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Feb 2019 11:05:37 -0800 (PST)
+Date:   Fri, 15 Feb 2019 11:05:35 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Li Zefan <lizefan@huawei.com>, Johannes Weiner <hannes@cmpxchg.org>
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@fb.com
+Subject: [PATCH cgroup/for-5.0] cgroup, rstat: Don't flush subtree root
+ unless necessary
+Message-ID: <20190215190535.GR50184@devbig004.ftw2.facebook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1550239285-12587-1-git-send-email-viorel.suman@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 02:01:32PM +0000, Viorel Suman wrote:
-> The patchset adds NXP Audio Mixer (AUDMIX) device and machine
-> drivers and related DT bindings documentation.
+From b4ff1b44bcd384d22fcbac6ebaf9cc0d33debe50 Mon Sep 17 00:00:00 2001
+From: Tejun Heo <tj@kernel.org>
+Date: Fri, 15 Feb 2019 11:01:31 -0800
 
-For this series,
+cgroup_rstat_cpu_pop_updated() is used to traverse the updated cgroups
+on flush.  While it was only visiting updated ones in the subtree, it
+was visiting @root unconditionally.  We can easily check whether @root
+is updated or not by looking at its ->updated_next just as with the
+cgroups in the subtree.
 
-Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+* Remove the unnecessary cgroup_parent() test.  The system root cgroup
+  is never updated and thus its ->updated_next is always NULL.  No
+  need to test whether cgroup_parent() exists in addition to
+  ->updated_next.
 
-And Rob gave his at the previous version already.
+* Terminate traverse if ->updated_next is NULL.  This can only happen
+  for subtree @root and there's no reason to visit it if it's not
+  marked updated.
+
+This reduces cpu consumption when reading a lot of rstat backed files.
+In a micro benchmark reading stat from ~1600 cgroups, the sys time was
+lowered by >40%.
+
+Signed-off-by: Tejun Heo <tj@kernel.org>
+---
+Hello,
+
+I'm applying this on for-5.0.  It's a fairly straight forward
+optimization.
 
 Thanks.
 
-> Changes since V4:
-> 1. Removed "model" attribute from device driver DT bindings documentation
->    as suggested by Nicolin.
-> 
-> Changes since V3:
-> 1. Removed machine driver DT bindings documentation.
-> 2. Trigger machine driver probe from device driver as suggested by Nicolin.
-> 
-> Changes since V2:
-> 1. Moved "dais" node from machine driver DTS node to device driver DTS node
->   as suggested by Rob.
-> 
-> Changes since V1:
-> 1. Original patch split into distinct patches for the device driver and
->   DT binding documentation.
-> 2. Replaced AMIX with AUDMIX in both code and file names as it looks more
->   RM-compliant.
-> 3. Removed polarity control from CPU DAI driver as suggested by Nicolin.
-> 4. Added machine driver and related DT binding documentation.
-> 
-> Viorel Suman (3):
->   ASoC: fsl: Add Audio Mixer CPU DAI driver
->   ASoC: add fsl_audmix DT binding documentation
->   ASoC: fsl: Add Audio Mixer machine driver
-> 
->  .../devicetree/bindings/sound/fsl,audmix.txt       |  50 ++
->  sound/soc/fsl/Kconfig                              |  16 +
->  sound/soc/fsl/Makefile                             |   5 +
->  sound/soc/fsl/fsl_audmix.c                         | 578 +++++++++++++++++++++
->  sound/soc/fsl/fsl_audmix.h                         | 102 ++++
->  sound/soc/fsl/imx-audmix.c                         | 327 ++++++++++++
->  6 files changed, 1078 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/fsl,audmix.txt
->  create mode 100644 sound/soc/fsl/fsl_audmix.c
->  create mode 100644 sound/soc/fsl/fsl_audmix.h
->  create mode 100644 sound/soc/fsl/imx-audmix.c
-> 
-> -- 
-> 2.7.4
-> 
+ kernel/cgroup/rstat.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/kernel/cgroup/rstat.c b/kernel/cgroup/rstat.c
+index d503d1a9007c..bb95a35e8c2d 100644
+--- a/kernel/cgroup/rstat.c
++++ b/kernel/cgroup/rstat.c
+@@ -87,7 +87,6 @@ static struct cgroup *cgroup_rstat_cpu_pop_updated(struct cgroup *pos,
+ 						   struct cgroup *root, int cpu)
+ {
+ 	struct cgroup_rstat_cpu *rstatc;
+-	struct cgroup *parent;
+ 
+ 	if (pos == root)
+ 		return NULL;
+@@ -115,8 +114,8 @@ static struct cgroup *cgroup_rstat_cpu_pop_updated(struct cgroup *pos,
+ 	 * However, due to the way we traverse, @pos will be the first
+ 	 * child in most cases. The only exception is @root.
+ 	 */
+-	parent = cgroup_parent(pos);
+-	if (parent && rstatc->updated_next) {
++	if (rstatc->updated_next) {
++		struct cgroup *parent = cgroup_parent(pos);
+ 		struct cgroup_rstat_cpu *prstatc = cgroup_rstat_cpu(parent, cpu);
+ 		struct cgroup_rstat_cpu *nrstatc;
+ 		struct cgroup **nextp;
+@@ -140,9 +139,12 @@ static struct cgroup *cgroup_rstat_cpu_pop_updated(struct cgroup *pos,
+ 		 * updated stat.
+ 		 */
+ 		smp_mb();
++
++		return pos;
+ 	}
+ 
+-	return pos;
++	/* only happens for @root */
++	return NULL;
+ }
+ 
+ /* see cgroup_rstat_flush() */
+-- 
+2.17.1
+
