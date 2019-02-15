@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FE86C4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:20:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1EAFC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:21:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1575B20643
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:20:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89DA720643
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:21:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197254;
-	bh=dwdD38h4KkgreZgBgC3LYdhlE66QIPn6SGb5WqSKF2o=;
+	s=default; t=1550197261;
+	bh=Gogn2uu0QPNMo6yTWi+PUFg7+KBqkPyfqIrY0fucQBY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XdCGWWV4CkCd9iFjX2n4XrGfGExwgknQNRPz/fgtQmWRlYpHfx8GlVJabDo/P5WeS
-	 vPs05BSgkpbRFNEXRrNMqCVdFAB05W37TP1g7rFpy6GuUL9B9z+s52X1Rj+28fQ8a8
-	 GR/Hv1FL9yX7gXLQ2CdM6Bkl+H8Xox9P2rmTzcCw=
+	b=qWRGtSKJdlGeusmKElV81HxkOuaQmY2TD3hi9mSgu/5j/7MJ4j7Mto3FCsXKG0iG4
+	 C1+jfuQKDhPGT1iHdPuvMXcP1BeJC5S6Pu6h3lc/RcXINj+ohhkJiCBDn+vSyz+RSz
+	 XydkYi4KK5bLTgXtew4hthv0QHjQvEj9V6ugFvBc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732897AbfBOCUw (ORCPT
+        id S2405487AbfBOCPI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:20:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54972 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:15:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54908 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405308AbfBOCPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:15:09 -0500
+        id S2405308AbfBOCPE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:15:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDEAF21B68;
-        Fri, 15 Feb 2019 02:15:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E48DA20643;
+        Fri, 15 Feb 2019 02:15:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196908;
-        bh=dwdD38h4KkgreZgBgC3LYdhlE66QIPn6SGb5WqSKF2o=;
+        s=default; t=1550196903;
+        bh=Gogn2uu0QPNMo6yTWi+PUFg7+KBqkPyfqIrY0fucQBY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=in3xbHTC+ln5Q0t6gNrd4YBfmDkx3a8quFev5pcKIDM/TOUMzqZbUM5XBSVL2GprK
-         wTCSQmv9Mj2GET1thAmnEBGW/5fCNVxwHoJnaoY50yqcEEvQrqJsVNA7ZH69CRVepq
-         bXGjLbia80RVeBGLhCbumLqMDRCXRMd5ThlTzmDA=
+        b=YS5EZVuEZ8xc7Hov4JrLMG258ZPJpXmhvOJVobwL6qFOvuWmPgiVdjynftOTWuV9A
+         oHDGaWj5YMbGCd6qPHgMz70zuBmrqHxC6fsbuhZtygVfQPL17+mCtf5YnOQw8YNkay
+         8wUghTujA/kGb+p2Q1k8g05+zU0RY+CLC90VPtk4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chaitanya Tata <chaitanya.tata@bluwirelesstechnology.com>,
-        Chaitanya Tata <Chaitanya.Tata@bluwireless.co.uk>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 25/27] cfg80211: extend range deviation for DMG
-Date:   Thu, 14 Feb 2019 21:14:22 -0500
-Message-Id: <20190215021424.178979-25-sashal@kernel.org>
+Cc:     Zhang Run <zhang.run@zte.com.cn>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 21/27] net: usb: asix: ax88772_bind return error when hw_reset fail
+Date:   Thu, 14 Feb 2019 21:14:18 -0500
+Message-Id: <20190215021424.178979-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021424.178979-1-sashal@kernel.org>
 References: <20190215021424.178979-1-sashal@kernel.org>
@@ -60,43 +59,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chaitanya Tata <chaitanya.tata@bluwirelesstechnology.com>
+From: Zhang Run <zhang.run@zte.com.cn>
 
-[ Upstream commit 93183bdbe73bbdd03e9566c8dc37c9d06b0d0db6 ]
+[ Upstream commit 6eea3527e68acc22483f4763c8682f223eb90029 ]
 
-Recently, DMG frequency bands have been extended till 71GHz, so extend
-the range check till 20GHz (45-71GHZ), else some channels will be marked
-as disabled.
+The ax88772_bind() should return error code immediately when the PHY
+was not reset properly through ax88772a_hw_reset().
+Otherwise, The asix_get_phyid() will block when get the PHY
+Identifier from the PHYSID1 MII registers through asix_mdio_read()
+due to the PHY isn't ready. Furthermore, it will produce a lot of
+error message cause system crash.As follows:
+asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to write
+ reg index 0x0000: -71
+asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to send
+ software reset: ffffffb9
+asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to write
+ reg index 0x0000: -71
+asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to enable
+ software MII access
+asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to read
+ reg index 0x0000: -71
+asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to write
+ reg index 0x0000: -71
+asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to enable
+ software MII access
+asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to read
+ reg index 0x0000: -71
+...
 
-Signed-off-by: Chaitanya Tata <Chaitanya.Tata@bluwireless.co.uk>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Zhang Run <zhang.run@zte.com.cn>
+Reviewed-by: Yang Wei <yang.wei9@zte.com.cn>
+Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/reg.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/usb/asix_devices.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/net/wireless/reg.c b/net/wireless/reg.c
-index 36d1d25082e3..7c19d0d2549b 100644
---- a/net/wireless/reg.c
-+++ b/net/wireless/reg.c
-@@ -773,7 +773,7 @@ static bool reg_does_bw_fit(const struct ieee80211_freq_range *freq_range,
-  * definitions (the "2.4 GHz band", the "5 GHz band" and the "60GHz band"),
-  * however it is safe for now to assume that a frequency rule should not be
-  * part of a frequency's band if the start freq or end freq are off by more
-- * than 2 GHz for the 2.4 and 5 GHz bands, and by more than 10 GHz for the
-+ * than 2 GHz for the 2.4 and 5 GHz bands, and by more than 20 GHz for the
-  * 60 GHz band.
-  * This resolution can be lowered and should be considered as we add
-  * regulatory rule support for other "bands".
-@@ -788,7 +788,7 @@ static bool freq_in_rule_band(const struct ieee80211_freq_range *freq_range,
- 	 * with the Channel starting frequency above 45 GHz.
- 	 */
- 	u32 limit = freq_khz > 45 * ONE_GHZ_IN_KHZ ?
--			10 * ONE_GHZ_IN_KHZ : 2 * ONE_GHZ_IN_KHZ;
-+			20 * ONE_GHZ_IN_KHZ : 2 * ONE_GHZ_IN_KHZ;
- 	if (abs(freq_khz - freq_range->start_freq_khz) <= limit)
- 		return true;
- 	if (abs(freq_khz - freq_range->end_freq_khz) <= limit)
+diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
+index 5be6b67492d5..393fd3ed6b94 100644
+--- a/drivers/net/usb/asix_devices.c
++++ b/drivers/net/usb/asix_devices.c
+@@ -729,8 +729,13 @@ static int ax88772_bind(struct usbnet *dev, struct usb_interface *intf)
+ 	asix_read_cmd(dev, AX_CMD_STATMNGSTS_REG, 0, 0, 1, &chipcode, 0);
+ 	chipcode &= AX_CHIPCODE_MASK;
+ 
+-	(chipcode == AX_AX88772_CHIPCODE) ? ax88772_hw_reset(dev, 0) :
+-					    ax88772a_hw_reset(dev, 0);
++	ret = (chipcode == AX_AX88772_CHIPCODE) ? ax88772_hw_reset(dev, 0) :
++						  ax88772a_hw_reset(dev, 0);
++
++	if (ret < 0) {
++		netdev_dbg(dev->net, "Failed to reset AX88772: %d\n", ret);
++		return ret;
++	}
+ 
+ 	/* Read PHYID register *AFTER* the PHY was reset properly */
+ 	phyid = asix_get_phyid(dev);
 -- 
 2.19.1
 
