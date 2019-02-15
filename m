@@ -2,103 +2,134 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56EF2C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:35:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7D14C4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:35:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34F4E206C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:35:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78D85206C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:35:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fYkx/RYA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390262AbfBOSfM (ORCPT
+        id S2390370AbfBOSfb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 13:35:12 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37434 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388116AbfBOSfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 13:35:12 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BBBB4A78;
-        Fri, 15 Feb 2019 10:35:11 -0800 (PST)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3A8543F589;
-        Fri, 15 Feb 2019 10:35:08 -0800 (PST)
-Date:   Fri, 15 Feb 2019 18:35:05 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Waiman Long <longman@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>,
-        "linux-alpha@vger.kernel.org" <linux-arm-kernel@lists.infradead.org>,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        Linux-sh list <linux-sh@vger.kernel.org>,
-        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linux-arch <linux-arch@vger.kernel.org>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>
-Subject: Re: [PATCH v3 2/2] locking/rwsem: Optimize down_read_trylock()
-Message-ID: <20190215183505.GB15084@fuggles.cambridge.arm.com>
-References: <1550089932-6888-1-git-send-email-longman@redhat.com>
- <1550089932-6888-3-git-send-email-longman@redhat.com>
- <20190214103333.GH32494@hirez.programming.kicks-ass.net>
- <9e01d4ef-56df-7af8-a0f5-b49644e298bf@redhat.com>
- <CAHk-=whKmuranma_HUOKBbDJHGmdWZr9MYW-+cmGzsOiJ2N1Sg@mail.gmail.com>
- <CAHk-=wi03J1jurebJNHPxGCVss7ARAN+2JuVthEGoEx=qkT4dQ@mail.gmail.com>
+        Fri, 15 Feb 2019 13:35:31 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:56148 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388116AbfBOSfa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 13:35:30 -0500
+Received: by mail-it1-f195.google.com with SMTP id z131so16008370itf.5;
+        Fri, 15 Feb 2019 10:35:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NeMcGtowQVXXn9BVS2r2knxqqUiLBaw5SVXxbHWcM3M=;
+        b=fYkx/RYAFDSw9ejLNKqUlrjp4bs6GhnjyxNIkEb9N1HCsxIGRyJ9rKojTOnwpCo64T
+         ey97Gf0/H1/RxuQkZ8Y9kwNjchinXGrW25E3GcGUlBBIaivpAs4v8nhYzCLTlQU1MUR9
+         t+r/A3uEgqewmy1l+APC2Faao1ptFvw4Rmd/a66Ot7KWmrfYsofv+R8KPLQvoJXZikHD
+         x++gOjRYojPpbEyRcWIfYDSOlNvYwDJ55mPI/MWLLViuNd/aS3mvZDNNHsLZUGUY932s
+         teGMWub+qG5BP3i9jT21tNR3Z+cGXlOUdnzM0hm8SlL3dvZduSV8VYZQx9mSXHzbIpUx
+         h7HA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NeMcGtowQVXXn9BVS2r2knxqqUiLBaw5SVXxbHWcM3M=;
+        b=EdWCv7RQGKBB7d/+/5kzCwigSoKCULJn+VdqtwKq5P/Y9HfvY5joTtgcfyEWrBaVtl
+         FVmsDpyLfXeyPDLB2LPIWokO8r0YWaUpFdwIjpSKc/a+GC/+ZKmsAaHwpZ2IT4iogQDN
+         Ascx/k9R3cQidb9e9j4jzoZMsPFoOKbSCm5hE1662UuUgR3AmwAffDyyKD6mIx8Ho/d6
+         2EHb3h3EABqJD175wQigs73HIFfNFYxcNBHWdfVHr2e4N4hwQSatsQkOcXJNrC6Kab1E
+         R2C0w4LkxRCYm52dV2RE0qRYI0VHIRU5y5168X9d+6x8SiargesEgv05HFPEQnG5mip7
+         LdKg==
+X-Gm-Message-State: AHQUAuZlR+E1oVPSoo5i6dC8guIubQjnMzrZN0O3kCJvzBxbXfxxEBIm
+        J5uMUHyslrehdqoxGRQpDXwf6fJdsYyyUoc0gDY=
+X-Google-Smtp-Source: AHgI3IZ6nOutVYXMGF5sUphJHUMFhXgQYndAX8ArZ8Rixw2ONvrvoc10yIA3qOUYzxIdSkRQrXvR3TBOl6rN+NKWscQ=
+X-Received: by 2002:a24:2ed3:: with SMTP id i202mr5245968ita.89.1550255729234;
+ Fri, 15 Feb 2019 10:35:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wi03J1jurebJNHPxGCVss7ARAN+2JuVthEGoEx=qkT4dQ@mail.gmail.com>
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+References: <20190213214559.125666-1-jannh@google.com> <20190214.091328.1687361207100252890.davem@davemloft.net>
+ <CAG48ez3p9kyyON4qDybveNhCNdTPfsvi3hUp7rDQUk-f43xMsQ@mail.gmail.com>
+ <20190214.142100.1155290437338631379.davem@davemloft.net> <CAG48ez0bFsKPBubARtjs+NQmRiUAbPEGbNjXPJaceuDa9Dd7OA@mail.gmail.com>
+In-Reply-To: <CAG48ez0bFsKPBubARtjs+NQmRiUAbPEGbNjXPJaceuDa9Dd7OA@mail.gmail.com>
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+Date:   Fri, 15 Feb 2019 10:35:18 -0800
+Message-ID: <CAKgT0UeOGPQO0viM0w3JD71357uj7uuZ+wX2tCUTP6u_ZQG78Q@mail.gmail.com>
+Subject: Re: [RESEND PATCH net] mm: page_alloc: fix ref bias in
+ page_frag_alloc() for 1-byte allocs
+To:     Jann Horn <jannh@google.com>
+Cc:     Network Development <netdev@vger.kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 10:09:44AM -0800, Linus Torvalds wrote:
-> On Thu, Feb 14, 2019 at 9:51 AM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
+On Fri, Feb 15, 2019 at 6:10 AM Jann Horn <jannh@google.com> wrote:
+>
+> On Thu, Feb 14, 2019 at 11:21 PM David Miller <davem@davemloft.net> wrote:
 > >
-> > The arm64 numbers scaled horribly even before, and that's because
-> > there is too much ping-pong, and it's probably because there is no
-> > "stickiness" to the cacheline to the core, and thus adding the extra
-> > loop can make the ping-pong issue even worse because now there is more
-> > of it.
-> 
-> Actually, if it's using the ll/sc, then I don't see why arm64 should
-> even change. It doesn't really even change the pattern: the initial
-> load of the value is just replaced with a "ll" that gets a non-zero
-> value, and then we re-try without even doing the "sc" part.
+> > From: Jann Horn <jannh@google.com>
+> > Date: Thu, 14 Feb 2019 22:26:22 +0100
+> >
+> > > On Thu, Feb 14, 2019 at 6:13 PM David Miller <davem@davemloft.net> wrote:
+> > >>
+> > >> From: Jann Horn <jannh@google.com>
+> > >> Date: Wed, 13 Feb 2019 22:45:59 +0100
+> > >>
+> > >> > The basic idea behind ->pagecnt_bias is: If we pre-allocate the maximum
+> > >> > number of references that we might need to create in the fastpath later,
+> > >> > the bump-allocation fastpath only has to modify the non-atomic bias value
+> > >> > that tracks the number of extra references we hold instead of the atomic
+> > >> > refcount. The maximum number of allocations we can serve (under the
+> > >> > assumption that no allocation is made with size 0) is nc->size, so that's
+> > >> > the bias used.
+> > >> >
+> > >> > However, even when all memory in the allocation has been given away, a
+> > >> > reference to the page is still held; and in the `offset < 0` slowpath, the
+> > >> > page may be reused if everyone else has dropped their references.
+> > >> > This means that the necessary number of references is actually
+> > >> > `nc->size+1`.
+> > >> >
+> > >> > Luckily, from a quick grep, it looks like the only path that can call
+> > >> > page_frag_alloc(fragsz=1) is TAP with the IFF_NAPI_FRAGS flag, which
+> > >> > requires CAP_NET_ADMIN in the init namespace and is only intended to be
+> > >> > used for kernel testing and fuzzing.
+> > >> >
+> > >> > To test for this issue, put a `WARN_ON(page_ref_count(page) == 0)` in the
+> > >> > `offset < 0` path, below the virt_to_page() call, and then repeatedly call
+> > >> > writev() on a TAP device with IFF_TAP|IFF_NO_PI|IFF_NAPI_FRAGS|IFF_NAPI,
+> > >> > with a vector consisting of 15 elements containing 1 byte each.
+> > >> >
+> > >> > Signed-off-by: Jann Horn <jannh@google.com>
+> > >>
+> > >> Applied and queued up for -stable.
+> > >
+> > > I had sent a v2 at Alexander Duyck's request an hour before you
+> > > applied the patch (with a minor difference that, in Alexander's
+> > > opinion, might be slightly more efficient). I guess the net tree
+> > > doesn't work like the mm tree, where patches can get removed and
+> > > replaced with newer versions? So if Alexander wants that change
+> > > (s/size/PAGE_FRAG_CACHE_MAX_SIZE/ in the refcount), someone has to
+> > > send that as a separate patch?
+> >
+> > Yes, please send a follow-up.  Sorry about that.
+>
+> @Alexander Do you want to do that? It was your idea and I don't think
+> I can reasonably judge the usefulness of the change.
 
-So our cmpxchg() has a prefetch-with-intent-to-modify instruction before the
-'ll' part, which will attempt to grab the line unique the first time round.
-The 'll' also has acquire semantics, so there's the chance for the
-micro-architecture to handle that badly too.
+I'll take care of it. I'm kind of annoyed that you resubmitted this to
+netdev before anyone had a chance to even provide review comments
+though.
 
-I think that the problem with the proposed changed change is that whenever a
-reader tries to acquire an rwsem that is already held for read, it will
-always fail the first cmpxchg(), so in this situation the read path is
-considerably slower than before.
+As is this doesn't really address the issue anyway since the bigger
+issue is the data alignment issue that I pointed out. I'll have
+patches for both ready shortly.
 
-> End result: exact same "load once, then do ll/sc to update". Just
-> using a slightly different instruction pattern.
-> 
-> But maybe "ll" does something different to the cacheline than a regular "ld"?
-> 
-> Alternatively, the machine you used is using LSE, and the "swp" thing
-> has some horrid behavior when it fails.
-
-Depending on where the data is, the LSE instructions may execute outside of
-the CPU (e.g. in a cache controller) and so could add latency to a failing
-CAS.
-
-Will
+- Alex
