@@ -2,109 +2,96 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-13.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD39C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:49:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1CE7C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:50:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B39D222A1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:49:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E78321929
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:50:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732563AbfBOStU (ORCPT
+        id S2390729AbfBOSub (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 13:49:20 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39095 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726891AbfBOStU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 13:49:20 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 626A180441; Fri, 15 Feb 2019 19:49:10 +0100 (CET)
-Date:   Fri, 15 Feb 2019 19:49:16 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Stefan Mavrodiev <stefan@olimex.com>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        "open list:LED SUBSYSTEM" <linux-leds@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "open list:X-POWERS MULTIFUNCTION PMIC DEVICE DRIVERS" 
-        <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Allwinner sunXi SoC support" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 5/8] arm64: dts: allwinner: Enable AXP803 CHGLED for
- Olimex boards
-Message-ID: <20190215184916.GA17897@amd>
-References: <20190215115013.11098-1-stefan@olimex.com>
- <20190215115013.11098-6-stefan@olimex.com>
+        Fri, 15 Feb 2019 13:50:31 -0500
+Received: from foss.arm.com ([217.140.101.70]:37700 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389581AbfBOSua (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 13:50:30 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5EF6EA78;
+        Fri, 15 Feb 2019 10:50:30 -0800 (PST)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D99813F589;
+        Fri, 15 Feb 2019 10:50:28 -0800 (PST)
+Date:   Fri, 15 Feb 2019 18:50:26 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Kevin Hilman <khilman@baylibre.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: Re: [PATCH] arm64/neon: Disable -Wincompatible-pointer-types when
+ building with Clang
+Message-ID: <20190215185026.GE15084@fuggles.cambridge.arm.com>
+References: <20190215013959.21320-1-natechancellor@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="LQksG6bCIzRHxTLp"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190215115013.11098-6-stefan@olimex.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190215013959.21320-1-natechancellor@gmail.com>
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---LQksG6bCIzRHxTLp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri 2019-02-15 13:50:10, Stefan Mavrodiev wrote:
-> Teres-I and A64-OLinuXino commes with populated LED connected
-> to AXP803. So to be used as battery indication, pass the LED control
-> to the charger itself in mode 0 ( FULL while charging, OFF no battery
-> or completed).
->=20
-> Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+On Thu, Feb 14, 2019 at 06:39:59PM -0700, Nathan Chancellor wrote:
+> After commit cc9f8349cb33 ("arm64: crypto: add NEON accelerated XOR
+> implementation"), Clang builds for arm64 started failing with the
+> following error message.
+> 
+> arch/arm64/lib/xor-neon.c:58:28: error: incompatible pointer types
+> assigning to 'const unsigned long *' from 'uint64_t *' (aka 'unsigned
+> long long *') [-Werror,-Wincompatible-pointer-types]
+>                 v3 = veorq_u64(vld1q_u64(dp1 +  6), vld1q_u64(dp2 + 6));
+>                                          ^~~~~~~~
+> /usr/lib/llvm-9/lib/clang/9.0.0/include/arm_neon.h:7538:47: note:
+> expanded from macro 'vld1q_u64'
+>   __ret = (uint64x2_t) __builtin_neon_vld1q_v(__p0, 51); \
+>                                               ^~~~
+> 
+> There has been quite a bit of debate and triage that has gone into
+> figuring out what the proper fix is, viewable at the link below, which
+> is still ongoing. Ard suggested disabling this warning with Clang with a
+> pragma so no neon code will have this type of error. While this is not
+> at all an ideal solution, this build error is the only thing preventing
+> KernelCI from having successful arm64 defconfig and allmodconfig builds
+> on linux-next. Getting continuous integration running is more important
+> so new warnings/errors or boot failures can be caught and fixed quickly.
+> 
+> Link: https://github.com/ClangBuiltLinux/linux/issues/283
+> Suggested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 > ---
->  arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts | 6 ++++++
->  arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts   | 6 ++++++
->  2 files changed, 12 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arc=
-h/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-> index f7a4bccaa5d4..7d6930319fba 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-> @@ -177,6 +177,12 @@
-> =20
->  #include "axp803.dtsi"
-> =20
-> +&axp_led {
-> +	label =3D "a64-olinuxino:yellow:chgled";
+>  arch/arm64/include/asm/neon-intrinsics.h | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/arm64/include/asm/neon-intrinsics.h b/arch/arm64/include/asm/neon-intrinsics.h
+> index 2ba6c6b9541f..71abfc7612b2 100644
+> --- a/arch/arm64/include/asm/neon-intrinsics.h
+> +++ b/arch/arm64/include/asm/neon-intrinsics.h
+> @@ -36,4 +36,8 @@
+>  #include <arm_neon.h>
+>  #endif
+>  
+> +#ifdef CONFIG_CC_IS_CLANG
+> +#pragma clang diagnostic ignored "-Wincompatible-pointer-types"
+> +#endif
 
-There's little chance userspace will recognize this led.
+I'd like Ard's ack on this one, please.
 
-Can you make it "platform:yellow:charging" and fix it for other
-boards, too?
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---LQksG6bCIzRHxTLp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlxnCawACgkQMOfwapXb+vLEAwCfUcSllFtWon2qQkW9JcK3hfq4
-aMsAoKwCglaZGvwLk+NVMgYjCe18FLZf
-=ftHA
------END PGP SIGNATURE-----
-
---LQksG6bCIzRHxTLp--
+Will
