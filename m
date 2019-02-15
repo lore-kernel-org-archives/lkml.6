@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19929C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A87F9C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:13:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE74A2229F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:13:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7523621934
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:13:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196825;
-	bh=sHOffNftr5cojCLr4zTtyl8CXbnnKArh2igKxuogNS4=;
+	s=default; t=1550196837;
+	bh=RKe2LF/cx7YUbbjZh7706T4DJbR5muk4fNC42Gzrjnk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BbyVtP+JqyBU8S9Q7Ee1XElFLzia7qQ71oR62tfrNEjd4gmHRZSLN8MXJX9mTFQe6
-	 fh/qeCtALWc8t3KUf+MTU6NZh/cNoynrnq1tiQi4Mtxf1mLW/3dNxfrjLWJOia3BKy
-	 bgocjL3qhbv81AMrH2TIqzMnaMoGZhtf4xfcMpx0=
+	b=F9okN9/+YLqbTkQvVBALTeL3hEBlDi9+QDbDEvInZBWJ/vTPLbkujbr4AA3RaSk7M
+	 X0YW5CWA52+7a7vkqEkLQPPfXhvsC/eRgZGLBAcc/cji3MvD/GCi49XC/hQNLBN/n9
+	 gzMUoyjOwTpHRguKwX/QW5u/kc/5fS2UQ4LqB+FQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391462AbfBOCNo (ORCPT
+        id S2405015AbfBOCNz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:13:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53622 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:13:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53796 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404819AbfBOCNl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:13:41 -0500
+        id S2404935AbfBOCNx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:13:53 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 805CF21B68;
-        Fri, 15 Feb 2019 02:13:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D3842229F;
+        Fri, 15 Feb 2019 02:13:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196820;
-        bh=sHOffNftr5cojCLr4zTtyl8CXbnnKArh2igKxuogNS4=;
+        s=default; t=1550196832;
+        bh=RKe2LF/cx7YUbbjZh7706T4DJbR5muk4fNC42Gzrjnk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HpP76SVFJlqrVzy2DFoD4BkK+95kiZdPopVGvEwmmTK4QsVySbTknsdTojCoF8VDw
-         corBOYH2N8fdCbyzrc09dkG6im1J0yCPTLDkVQvwfNerDdWIY1Oatth9nqxVFACOV1
-         P4sQT24NnlSwNpdmTW4wKhGdD2KDx1NQ8n1sr5sQ=
+        b=GtrNRqeayNPH8pOt2sIF+PNPeF3IJUIEhJ+8x9biuR1MkTR3syybP2NiH0m1FdNSI
+         SuD1tt71hDjGQgVRDOMBOh6+bDEtPDMrOre5o11GgYU0L13Ml0ia/pdhFpMUuxkDPR
+         KxIp7fWpMK4tfelgJy8fx/djmJ9IRZ686UdHTpZM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-snps-arc@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.14 15/40] ARC: fix __ffs return value to avoid build warnings
-Date:   Thu, 14 Feb 2019 21:12:48 -0500
-Message-Id: <20190215021313.178476-15-sashal@kernel.org>
+Cc:     Xie Yongji <xieyongji@baidu.com>, Zhang Yu <zhangyu31@baidu.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 21/40] locking/rwsem: Fix (possible) missed wakeup
+Date:   Thu, 14 Feb 2019 21:12:54 -0500
+Message-Id: <20190215021313.178476-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021313.178476-1-sashal@kernel.org>
 References: <20190215021313.178476-1-sashal@kernel.org>
@@ -59,74 +60,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+From: Xie Yongji <xieyongji@baidu.com>
 
-[ Upstream commit 4e868f8419cb4cb558c5d428e7ab5629cef864c7 ]
+[ Upstream commit e158488be27b157802753a59b336142dc0eb0380 ]
 
-|  CC      mm/nobootmem.o
-|In file included from ./include/asm-generic/bug.h:18:0,
-|                 from ./arch/arc/include/asm/bug.h:32,
-|                 from ./include/linux/bug.h:5,
-|                 from ./include/linux/mmdebug.h:5,
-|                 from ./include/linux/gfp.h:5,
-|                 from ./include/linux/slab.h:15,
-|                 from mm/nobootmem.c:14:
-|mm/nobootmem.c: In function '__free_pages_memory':
-|./include/linux/kernel.h:845:29: warning: comparison of distinct pointer types lacks a cast
-|   (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
-|                             ^
-|./include/linux/kernel.h:859:4: note: in expansion of macro '__typecheck'
-|   (__typecheck(x, y) && __no_side_effects(x, y))
-|    ^~~~~~~~~~~
-|./include/linux/kernel.h:869:24: note: in expansion of macro '__safe_cmp'
-|  __builtin_choose_expr(__safe_cmp(x, y), \
-|                        ^~~~~~~~~~
-|./include/linux/kernel.h:878:19: note: in expansion of macro '__careful_cmp'
-| #define min(x, y) __careful_cmp(x, y, <)
-|                   ^~~~~~~~~~~~~
-|mm/nobootmem.c:104:11: note: in expansion of macro 'min'
-|   order = min(MAX_ORDER - 1UL, __ffs(start));
+Because wake_q_add() can imply an immediate wakeup (cmpxchg failure
+case), we must not rely on the wakeup being delayed. However, commit:
 
-Change __ffs return value from 'int' to 'unsigned long' as it
-is done in other implementations (like asm-generic, x86, etc...)
-to avoid build-time warnings in places where type is strictly
-checked.
+  e38513905eea ("locking/rwsem: Rework zeroing reader waiter->task")
 
-As __ffs may return values in [0-31] interval changing return
-type to unsigned is valid.
+relies on exactly that behaviour in that the wakeup must not happen
+until after we clear waiter->task.
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
+[ peterz: Added changelog. ]
+
+Signed-off-by: Xie Yongji <xieyongji@baidu.com>
+Signed-off-by: Zhang Yu <zhangyu31@baidu.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: e38513905eea ("locking/rwsem: Rework zeroing reader waiter->task")
+Link: https://lkml.kernel.org/r/1543495830-2644-1-git-send-email-xieyongji@baidu.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arc/include/asm/bitops.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ kernel/locking/rwsem-xadd.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arc/include/asm/bitops.h b/arch/arc/include/asm/bitops.h
-index 8da87feec59a..99e6d8948f4a 100644
---- a/arch/arc/include/asm/bitops.h
-+++ b/arch/arc/include/asm/bitops.h
-@@ -340,7 +340,7 @@ static inline __attribute__ ((const)) int __fls(unsigned long x)
- /*
-  * __ffs: Similar to ffs, but zero based (0-31)
-  */
--static inline __attribute__ ((const)) int __ffs(unsigned long word)
-+static inline __attribute__ ((const)) unsigned long __ffs(unsigned long word)
- {
- 	if (!word)
- 		return word;
-@@ -400,9 +400,9 @@ static inline __attribute__ ((const)) int ffs(unsigned long x)
- /*
-  * __ffs: Similar to ffs, but zero based (0-31)
-  */
--static inline __attribute__ ((const)) int __ffs(unsigned long x)
-+static inline __attribute__ ((const)) unsigned long __ffs(unsigned long x)
- {
--	int n;
-+	unsigned long n;
+diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
+index a90336779375..c75017326c37 100644
+--- a/kernel/locking/rwsem-xadd.c
++++ b/kernel/locking/rwsem-xadd.c
+@@ -198,15 +198,22 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
+ 		woken++;
+ 		tsk = waiter->task;
  
- 	asm volatile(
- 	"	ffs.f	%0, %1		\n"  /* 0:31; 31(Z) if src 0 */
+-		wake_q_add(wake_q, tsk);
++		get_task_struct(tsk);
+ 		list_del(&waiter->list);
+ 		/*
+-		 * Ensure that the last operation is setting the reader
++		 * Ensure calling get_task_struct() before setting the reader
+ 		 * waiter to nil such that rwsem_down_read_failed() cannot
+ 		 * race with do_exit() by always holding a reference count
+ 		 * to the task to wakeup.
+ 		 */
+ 		smp_store_release(&waiter->task, NULL);
++		/*
++		 * Ensure issuing the wakeup (either by us or someone else)
++		 * after setting the reader waiter to nil.
++		 */
++		wake_q_add(wake_q, tsk);
++		/* wake_q_add() already take the task ref */
++		put_task_struct(tsk);
+ 	}
+ 
+ 	adjustment = woken * RWSEM_ACTIVE_READ_BIAS - adjustment;
 -- 
 2.19.1
 
