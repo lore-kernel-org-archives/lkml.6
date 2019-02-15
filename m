@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6165AC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37CACC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:09:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3160E222A1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:09:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 055D3222D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:09:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196575;
-	bh=y5Vtc8YidNoTw9PwpTl6UrIpFn1CINVZFcLTZgF8b44=;
+	s=default; t=1550196579;
+	bh=4er9CuufuaZ0Cmw1TnMlo0juDv8NNMxB2L8h3uXmaDs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rBKHFjL+kf8PDtcBZ3M2y8ew1hBEtNmalD+dp2nEliN2aXveU1mD4t9uo4ouXIXkm
-	 S/Q1COz/DhvqSs41udhY154dNpZggak2TuQudczTIvttfryEwoUZog+xdmQNy2DhvF
-	 tXXj4D4Hwz/ur3jnhR05+CfK669h1sqNkc1rZ80w=
+	b=vo5u01yrxCoqziFKx5gneiymYGnAGWTpYoZ2SePMUwwtEFbN9xnbmyIGNusq3az4e
+	 /j9vQGhstnIDJl3D8fnykIMhvZEmM9beclx1ZdGae/DaULsGsM+e296gK3dADtRBiM
+	 r7RI71oIUN1ZVfdLqImYpl3v/9x3BrE9TfnUzHko=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388052AbfBOCJe (ORCPT
+        id S2388486AbfBOCJh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:09:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49670 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:09:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387637AbfBOCJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:09:31 -0500
+        id S2388137AbfBOCJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:09:35 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B3CED206BA;
-        Fri, 15 Feb 2019 02:09:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3BBDE2229F;
+        Fri, 15 Feb 2019 02:09:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196570;
-        bh=y5Vtc8YidNoTw9PwpTl6UrIpFn1CINVZFcLTZgF8b44=;
+        s=default; t=1550196574;
+        bh=4er9CuufuaZ0Cmw1TnMlo0juDv8NNMxB2L8h3uXmaDs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jm6oUiINJeSpic4DZIGGs8W6U1qZKShFz3ofC6eq0a/LErv159YXdkTOqP8b6YIGz
-         FETSn6nwEcxTrJQbUAQKT4AAXupA319KLHlH4TcvFdQAYDQplVV29Ai1eWY35rv8kG
-         Pq6KC0OF2OpADMbFpdAFnOQwaWj6veipFwlBuiEI=
+        b=KYrEcvIP3yuZkfj53Gjw+ImLmJpBgvKzVeHK3LH7I/pvFMTg9W/+9nppA19lXIofD
+         64fgUII9NUQXYRHb2Qkm870vCjh2DWuTRj76YLPra6dohOiuX49kCebKjnqyTRc8u8
+         oOo9FmekzofDRfC/iptIfEfTUy1O1dBGAztXPCUk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Shuah Khan <shuah@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        linux-rtc@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 18/77] selftests: rtc: rtctest: fix alarm tests
-Date:   Thu, 14 Feb 2019 21:07:56 -0500
-Message-Id: <20190215020855.176727-18-sashal@kernel.org>
+Cc:     Peng Hao <peng.hao2@zte.com.cn>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        dave.hansen@linux.intel.com, peterz@infradead.org, luto@kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 21/77] x86/mm/mem_encrypt: Fix erroneous sizeof()
+Date:   Thu, 14 Feb 2019 21:07:59 -0500
+Message-Id: <20190215020855.176727-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
 References: <20190215020855.176727-1-sashal@kernel.org>
@@ -58,50 +61,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Peng Hao <peng.hao2@zte.com.cn>
 
-[ Upstream commit fdac94489c4d247088b3885875b39b3e1eb621ef ]
+[ Upstream commit bf7d28c53453ea904584960de55e33e03b9d93b1 ]
 
-Return values for select are not checked properly and timeouts may not be
-detected.
+Using sizeof(pointer) for determining the size of a memset() only works
+when the size of the pointer and the size of type to which it points are
+the same. For pte_t this is only true for 64bit and 32bit-NONPAE. On 32bit
+PAE systems this is wrong as the pointer size is 4 byte but the PTE entry
+is 8 bytes. It's actually not a real world issue as this code depends on
+64bit, but it's wrong nevertheless.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Signed-off-by: Shuah Khan <shuah@kernel.org>
+Use sizeof(*p) for correctness sake.
+
+Fixes: aad983913d77 ("x86/mm/encrypt: Simplify sme_populate_pgd() and sme_populate_pgd_large()")
+Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: dave.hansen@linux.intel.com
+Cc: peterz@infradead.org
+Cc: luto@kernel.org
+Link: https://lkml.kernel.org/r/1546065252-97996-1-git-send-email-peng.hao2@zte.com.cn
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/rtc/rtctest.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ arch/x86/mm/mem_encrypt_identity.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/rtc/rtctest.c b/tools/testing/selftests/rtc/rtctest.c
-index e20b017e7073..dea4e3d6d9e1 100644
---- a/tools/testing/selftests/rtc/rtctest.c
-+++ b/tools/testing/selftests/rtc/rtctest.c
-@@ -145,15 +145,12 @@ TEST_F(rtc, alarm_alm_set) {
+diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
+index a19ef1a416ff..4aa9b1480866 100644
+--- a/arch/x86/mm/mem_encrypt_identity.c
++++ b/arch/x86/mm/mem_encrypt_identity.c
+@@ -158,8 +158,8 @@ static void __init sme_populate_pgd(struct sme_populate_pgd_data *ppd)
+ 	pmd = pmd_offset(pud, ppd->vaddr);
+ 	if (pmd_none(*pmd)) {
+ 		pte = ppd->pgtable_area;
+-		memset(pte, 0, sizeof(pte) * PTRS_PER_PTE);
+-		ppd->pgtable_area += sizeof(pte) * PTRS_PER_PTE;
++		memset(pte, 0, sizeof(*pte) * PTRS_PER_PTE);
++		ppd->pgtable_area += sizeof(*pte) * PTRS_PER_PTE;
+ 		set_pmd(pmd, __pmd(PMD_FLAGS | __pa(pte)));
+ 	}
  
- 	rc = select(self->fd + 1, &readfds, NULL, NULL, &tv);
- 	ASSERT_NE(-1, rc);
--	EXPECT_NE(0, rc);
-+	ASSERT_NE(0, rc);
- 
- 	/* Disable alarm interrupts */
- 	rc = ioctl(self->fd, RTC_AIE_OFF, 0);
- 	ASSERT_NE(-1, rc);
- 
--	if (rc == 0)
--		return;
--
- 	rc = read(self->fd, &data, sizeof(unsigned long));
- 	ASSERT_NE(-1, rc);
- 	TH_LOG("data: %lx", data);
-@@ -202,7 +199,7 @@ TEST_F(rtc, alarm_wkalm_set) {
- 
- 	rc = select(self->fd + 1, &readfds, NULL, NULL, &tv);
- 	ASSERT_NE(-1, rc);
--	EXPECT_NE(0, rc);
-+	ASSERT_NE(0, rc);
- 
- 	rc = read(self->fd, &data, sizeof(unsigned long));
- 	ASSERT_NE(-1, rc);
 -- 
 2.19.1
 
