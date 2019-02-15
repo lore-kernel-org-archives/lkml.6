@@ -2,137 +2,160 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87DD1C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 01:26:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B5F4C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 01:30:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53F6A21B18
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 01:26:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3DDB21B1C
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 01:30:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KysuK/Hw"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="sMtVZ4hg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730770AbfBOB0e (ORCPT
+        id S1730823AbfBOBap (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 20:26:34 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:36736 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfBOB0e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 20:26:34 -0500
-Received: by mail-ot1-f68.google.com with SMTP id v62so5149293otb.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 17:26:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6uz0kUsZLOlyc/GsvAXtmKx3gYn3eTJy5dFjv86Wxg0=;
-        b=KysuK/HwzYui1rqiNnrZVF3yeoDzVUDktPelt2MN2ez+sYxdKyBc0LoYbWB/1D0zwg
-         /0G+dI9oaSVJ2skEdxHAYvtfwJ/4tzqrGxmJmtNG3h0ZdBNPZXW8jz7wsq8VwN8NuP0d
-         +fo9g9M7RD03uwqj38t2JtROgBLmjwnMoLIxNhnxW02zeLGyNvbHZlAsfF8zAJmRAxVK
-         ER77k86HW3G4bvpFmKYPVjRGV5B9cdoyrH75UyBnFiMEmqxWgbuRY6EYDrlzymtoY0mm
-         SjHQ1uE4mjnkXjO9Nt+b18hRM88N7Zpl1UbEQh64SvaTtV0bcyKPFVqvUavpyLgvxCKF
-         r1qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6uz0kUsZLOlyc/GsvAXtmKx3gYn3eTJy5dFjv86Wxg0=;
-        b=sp1H4mN0FrcSVGd1i67u6j12v3Nnm9d4nt07adfUUPD1FrHandhm5mPn9OCi9klEXf
-         MnpoV0D5Ig13qC8sRlakcgSSzCc6XGA/1SdKvQct+19CFd6PnrlhmXfqbpsOehABtovC
-         vYWjJfLWjmmZxPliVCzO5ZKfQQjR1qr+H6wqZt7u7c4G2fvXVsUfIT4qfL7zTkqqQZdY
-         ZbAEKuO4J9xm6tk4tyNJ9j3cnvM9AIbGOhCPNXKM5+MWqVc2l2cHwrxYAee/lp9cjBbg
-         7w7wAKwR+grw7ofQeJ5HrA81tPF71ehmhWKij9MQ0sECz0KXyzlbVwXzbkWT9phArmR4
-         3JFg==
-X-Gm-Message-State: AHQUAuZ5ygeshRs9kDoqubEvxo3KVAye9yEmIBh2uFeSSz3/I5MPkB+b
-        +zV73DL57UnpsRHFmkvTe889VPJcCoDC1Yc+loOZWw==
-X-Google-Smtp-Source: AHgI3Ib6+3Vr9Gbya3LpY9yJE+KDUdpmO3Q6cGJnYQg/UPIMBerHNd7MAFAiq7CsZLlhXLnQff76Yg6Dzq5MHmYHsi0=
-X-Received: by 2002:a9d:7597:: with SMTP id s23mr4192113otk.25.1550193993193;
- Thu, 14 Feb 2019 17:26:33 -0800 (PST)
+        Thu, 14 Feb 2019 20:30:45 -0500
+Received: from mail-eopbgr00044.outbound.protection.outlook.com ([40.107.0.44]:43618
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728905AbfBOBao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 20:30:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZDfR3xKh9+bDGXx9v6wdKU1j6bDyz1Go0fyyIhG9Zxo=;
+ b=sMtVZ4hgK213qWjOdaWGfA3ZCY9psOZNEQ61aPKmYENkRfEcXTvf4ZiUvBy8hw1zrDBbX/7VX2Jh/HwQ3TDPMKGD4iBNEkL9biDZXHXqPdJgUbwDZukr311u7JY0gzGMlThcqmBKjSL0vylpfkYvd0wxxEsVHGhTDidArf7R1zE=
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com (52.135.138.16) by
+ DB7PR04MB4796.eurprd04.prod.outlook.com (20.176.233.94) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.17; Fri, 15 Feb 2019 01:30:40 +0000
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::fd45:a391:7591:1aa5]) by DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::fd45:a391:7591:1aa5%6]) with mapi id 15.20.1622.018; Fri, 15 Feb 2019
+ 01:30:40 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     "labbott@redhat.com" <labbott@redhat.com>,
+        "mhocko@suse.com" <mhocko@suse.com>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "iamjoonsoo.kim@lge.com" <iamjoonsoo.kim@lge.com>,
+        "rppt@linux.vnet.ibm.com" <rppt@linux.vnet.ibm.com>,
+        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "andreyknvl@google.com" <andreyknvl@google.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "van.freenix@gmail.com" <van.freenix@gmail.com>,
+        Mike Rapoport <rppt@linux.ibm.com>
+Subject: RE: [PATCH] mm/cma: cma_declare_contiguous: correct err handling
+Thread-Topic: [PATCH] mm/cma: cma_declare_contiguous: correct err handling
+Thread-Index: AQHUxGM3TWg8yAT7z0a/qrCp1B+TP6Xfwa8AgABP9aA=
+Date:   Fri, 15 Feb 2019 01:30:40 +0000
+Message-ID: <DB7PR04MB449005901376F086215EC79A88600@DB7PR04MB4490.eurprd04.prod.outlook.com>
+References: <20190214125704.6678-1-peng.fan@nxp.com>
+ <20190214123824.fe95cc2e603f75382490bfb4@linux-foundation.org>
+In-Reply-To: <20190214123824.fe95cc2e603f75382490bfb4@linux-foundation.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [119.31.174.68]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: b30c9d42-084e-4acb-66c5-08d692e53225
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB4796;
+x-ms-traffictypediagnostic: DB7PR04MB4796:
+x-microsoft-exchange-diagnostics: =?gb2312?B?MTtEQjdQUjA0TUI0Nzk2OzIzOlBvRzd3Z25YWVBJcUlyN3duNUhFMXJVTW5G?=
+ =?gb2312?B?K0hjaXFGZmxvVEtXczV3ZmRDTUhRU0pLN1N0dTU4azBuUjA3UktMcU94T3hk?=
+ =?gb2312?B?aFNrbGtPWGNyNllobDRLOFJvTDA4SGdCcHpadWRPeC8yZW5qaDNvR3IvUGxr?=
+ =?gb2312?B?VUg4UEIrZWZwbVE5amZ6SkJoQ1lHa0VoNmVxbTZWUHNtRms3VG15QkRTc3hl?=
+ =?gb2312?B?YkIxdEFWeDJ2NFV4Qk9KRlBJU2FtejI0WnJPbW50RFEyK3JZUjFtL011NzRK?=
+ =?gb2312?B?b2pMVEdJVjNPd0VpL01UWEZlZ0JWckZVNERDR1dCOTBUblJJQlRTQVZjS1Jh?=
+ =?gb2312?B?aGpQTGs5VEVzRTc2SVNnRWdrSnJncmk0OWxuNTI5STFiQ1Q0K0NLMm5NdC9u?=
+ =?gb2312?B?ZnpHcEhJczVjK1lDN3l4cVVYWHBuR2RQU2hRWEoyMGtWdUR0WFROOWVpWDNq?=
+ =?gb2312?B?QlVMcUpVRjkzemg4WHVuTld2SWFnbzF3VmI2aFkveTdWMDFueHVISWZGcU4x?=
+ =?gb2312?B?K0ZBZ1dscXBtUzNSZFZ3VDYwRTYzRXovV1o1dDk1TkJIT2hDd3g1SnNOOWVH?=
+ =?gb2312?B?Njd2cEIyalhOdUppWkwwQ0NyeVl3ZndlVmpaUFo0MU82cUpYSnAweGtubllR?=
+ =?gb2312?B?aVFWVm1DRTBHTXUvdlpMUE9rTitrdit1akcwMGJQTEJGVkQxUzAwdjUrdzJq?=
+ =?gb2312?B?aHRsUDFQbTFreXNiUVM5OVplT2gxVnU1R0lERnY2ZlJDalpPWWF5eHE5eHo3?=
+ =?gb2312?B?bVRnbGJSM0NjRXUwM0RMallYVDF2ZjdWa2dYOEZGa2RCaVlBNFk5Q1daYXFv?=
+ =?gb2312?B?RExZNEs4cVllRnYrNnNBTzlSUS85ODVmNU9FMStVeUlKTFhSdjFxOUV4RkRR?=
+ =?gb2312?B?OWlxZHdDdkdIbC9NUDRlWjM0ZkkrVDFiZE0yTG9tK3dPRDQ0ZzRwVTRKWEIx?=
+ =?gb2312?B?Q0l2V21yM05OdVJXTld4cFRwRjhYMUw1RmliU1FPZDVxYzZsZTRIVXNwWDBn?=
+ =?gb2312?B?ODhaYzUyQU1rUy94NTY3ekNaZ1l2U3BqMFFaTkMrNmxRc2ZCWHUzVTNwYkpy?=
+ =?gb2312?B?dFpqWE5HZm45ckJPSWJYSUg1MC81bitCc3hCVEtXNWJBMHZKdTcvL2JFd2hz?=
+ =?gb2312?B?R2dkak5OTm8xREFnNy80SmNMckZNMGlkSXEyVmYyTG1qTENpTWpwUTZTYXJC?=
+ =?gb2312?B?R0NhQnhNYVFuRitjS0lLUFdzL2ZId3NNSUlRbERZdm9aS0JsUkZQSTZ2SER3?=
+ =?gb2312?B?ZWtONHdoWmd3bC9nakJNS0NWcnppN1ZVdWtqWlJnWFo0THNJRy9xRlZ4alhB?=
+ =?gb2312?B?MFRtS1JuV1dWRnR5Qi9YeCtLTVBZVkFrYkZQQWk1NC8xR3plM2Y0RE92Uk9p?=
+ =?gb2312?B?Q041eEw0N1RjZHZxTG95U2lsOC9TajA3Q2xPSXZrYURJSC9TWkhCeS95RzBG?=
+ =?gb2312?B?NlhrdU5NKzNPNUU4Tlc5VmdvVEpOb2N0TGIxRFBCRko3eUpBRmZTbEpVd0VJ?=
+ =?gb2312?B?OTFVWjRpVVFvL1J5MXo5RHdIejhQV2hITUF2Y3F0UTVKcWZ3MlpickkxMHBo?=
+ =?gb2312?B?M2VHU3FQSTgvbHd2VC9GTHFPaVZmSlpBRjR6cVZaRFhLZ3ZuNWNnemxuOEQr?=
+ =?gb2312?B?QVFqam54MEQ3Q25hUjJ4OC9sbHdmaFVpd0QvQzJyUERPN2VPdzdpRVdQRE5I?=
+ =?gb2312?Q?MBxcw5rJem1Dwzmqen9XmfX6zeqjhn6JSjPFKsG?=
+x-microsoft-antispam-prvs: <DB7PR04MB47960321DC774A22AE96E91488600@DB7PR04MB4796.eurprd04.prod.outlook.com>
+x-forefront-prvs: 09497C15EB
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(376002)(366004)(396003)(39860400002)(199004)(189003)(13464003)(81156014)(81166006)(74316002)(53936002)(256004)(11346002)(8676002)(8936002)(305945005)(102836004)(4326008)(71190400001)(71200400001)(6506007)(6246003)(25786009)(7736002)(2906002)(97736004)(55016002)(6116002)(186003)(68736007)(3846002)(53546011)(6436002)(14444005)(229853002)(105586002)(86362001)(316002)(106356001)(66066001)(14454004)(99286004)(26005)(478600001)(9686003)(6916009)(446003)(476003)(54906003)(44832011)(7416002)(76176011)(33656002)(7696005)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4796;H:DB7PR04MB4490.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: VIZ6yXJY5SogGXM3F/Mzu++9fjZ4hMmzN0yywlzyDqGqT+8P1cz4TXau4RnVGXQkbD1Z+abjz/mJWZtQWYMqLvnQzV8xfbgkJa+YIHdwanR2QuXfF5nIEmRgn/PbVf5l13Ndu+EwQIFxuGN3GEUxDKhphQz49zfeaafCOsK/1c7GwP95B7O3qepB5KBNxtEl4VkBrtDkzyxZgDNgmKjvsMFtEbM9CpxnMJkDuAm//+jEnJx4WOp3I0bfHSUHSS4HVZ4d1rlwz43Bb3oxBCCHnQ6KnQpJQZ7ftIeoBdyfu40sUDeFCLMNszpyDUlbmO/iI38VLlM/2XYUm66xIei4Ufn3SRLGeO7w9nqAAsGlXVbF4PwVO9F+5wghCT2yhM0AIumRswhhqyFeVykfjIJVjfSWiTqrVYjNVVB2hvk9jvw=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20190212185305.112847-1-brendanhiggins@google.com>
- <20190212185305.112847-2-brendanhiggins@google.com> <4cb7ca12-ce60-7516-b7eb-aef08f607acc@gmail.com>
-In-Reply-To: <4cb7ca12-ce60-7516-b7eb-aef08f607acc@gmail.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Thu, 14 Feb 2019 17:26:21 -0800
-Message-ID: <CAFd5g441+6ATUKcNz7OstAB6Qd2BqeDh77SNnGUpZGBNvgysmg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/1] of: unittest: unflatten device tree on UML when testing
-To:     Frank Rowand <frowand.list@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b30c9d42-084e-4acb-66c5-08d692e53225
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Feb 2019 01:30:40.4600
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4796
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 4:10 PM Frank Rowand <frowand.list@gmail.com> wrote:
->
-> On 2/12/19 10:53 AM, Brendan Higgins wrote:
-> > UML supports enabling OF, and is useful for running the device tree
-> > tests, so add support for unflattening device tree blobs so we can
-> > actually use it.
-> >
-> > Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> > ---
-> >  drivers/of/unittest.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-> > index 84427384654d5..effa4e2b9d992 100644
-> > --- a/drivers/of/unittest.c
-> > +++ b/drivers/of/unittest.c
-> > @@ -2527,6 +2527,9 @@ static int __init of_unittest(void)
-> >       }
-> >       of_node_put(np);
-> >
-> > +     if (IS_ENABLED(CONFIG_UML))
-> > +             unflatten_device_tree();
-> > +
-> >       pr_info("start of unittest - you will see error messages\n");
-> >       of_unittest_check_tree_linkage();
-> >       of_unittest_check_phandles();
-> >
->
-> (Insert my usual disclaimer that I am clueless about UML, I still need to learn
-> about it...)
->
-> This does not look correct to me.
->
-> A few lines earlier in of_unittest(), the live devicetree needs to exist for
-> unittest_data_data() and a few of_*() functions to succeed.  So it seems
-> that the unflatten_device_tree() for uml should be at the beginning of
-> of_unittest().
-
-It is true that other functions ahead of it depend on the presence of
-a device tree, but an unflattened tree does get linked in somewhere
-else. Despite that, this is needed for overlay_base_root. I got
-similar behavior if you don't link in a flattened device tree on x86.
-Thus, the order in which you call them doesn't actually seem to
-matter. I found no difference from changing the order in UML myself.
-
-Without my patch we get the following error,
-### dt-test ### FAIL of_unittest_overlay_high_level():2372
-overlay_base_root not initialized
-### dt-test ### end of unittest - 219 passed, 1 failed
-
-With my patch we get:
-### dt-test ### end of unittest - 224 passed, 0 failed
-
-I used the following .config for these results:
-CONFIG_OF=y
-CONFIG_OF_UNITTEST=y
-CONFIG_OF_OVERLAY=y
-CONFIG_I2C=y
-CONFIG_I2C_MUX=y
-
->
-> Rob, if I am correct please revert this patch.
->
-
-Cheers
+SGkgQW5kcmV3DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5kcmV3
+IE1vcnRvbiBbbWFpbHRvOmFrcG1AbGludXgtZm91bmRhdGlvbi5vcmddDQo+IFNlbnQ6IDIwMTnE
+6jLUwjE1yNUgNDozOA0KPiBUbzogUGVuZyBGYW4gPHBlbmcuZmFuQG54cC5jb20+DQo+IENjOiBs
+YWJib3R0QHJlZGhhdC5jb207IG1ob2Nrb0BzdXNlLmNvbTsgdmJhYmthQHN1c2UuY3o7DQo+IGlh
+bWpvb25zb28ua2ltQGxnZS5jb207IHJwcHRAbGludXgudm5ldC5pYm0uY29tOw0KPiBtLnN6eXBy
+b3dza2lAc2Ftc3VuZy5jb207IHJkdW5sYXBAaW5mcmFkZWFkLm9yZzsNCj4gYW5kcmV5a252bEBn
+b29nbGUuY29tOyBsaW51eC1tbUBrdmFjay5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5v
+cmc7DQo+IHZhbi5mcmVlbml4QGdtYWlsLmNvbTsgTWlrZSBSYXBvcG9ydCA8cnBwdEBsaW51eC5p
+Ym0uY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBtbS9jbWE6IGNtYV9kZWNsYXJlX2NvbnRp
+Z3VvdXM6IGNvcnJlY3QgZXJyIGhhbmRsaW5nDQo+IA0KPiBPbiBUaHUsIDE0IEZlYiAyMDE5IDEy
+OjQ1OjUxICswMDAwIFBlbmcgRmFuIDxwZW5nLmZhbkBueHAuY29tPiB3cm90ZToNCj4gDQo+ID4g
+SW4gY2FzZSBjbWFfaW5pdF9yZXNlcnZlZF9tZW0gZmFpbGVkLCBuZWVkIHRvIGZyZWUgdGhlIG1l
+bWJsb2NrDQo+ID4gYWxsb2NhdGVkIGJ5IG1lbWJsb2NrX3Jlc2VydmUgb3IgbWVtYmxvY2tfYWxs
+b2NfcmFuZ2UuDQo+ID4NCj4gPiAuLi4NCj4gPg0KPiA+IC0tLSBhL21tL2NtYS5jDQo+ID4gKysr
+IGIvbW0vY21hLmMNCj4gPiBAQCAtMzUzLDEyICszNTMsMTQgQEAgaW50IF9faW5pdCBjbWFfZGVj
+bGFyZV9jb250aWd1b3VzKHBoeXNfYWRkcl90DQo+ID4gYmFzZSwNCj4gPg0KPiA+ICAJcmV0ID0g
+Y21hX2luaXRfcmVzZXJ2ZWRfbWVtKGJhc2UsIHNpemUsIG9yZGVyX3Blcl9iaXQsIG5hbWUsDQo+
+IHJlc19jbWEpOw0KPiA+ICAJaWYgKHJldCkNCj4gPiAtCQlnb3RvIGVycjsNCj4gPiArCQlnb3Rv
+IGZyZWVfbWVtOw0KPiA+DQo+ID4gIAlwcl9pbmZvKCJSZXNlcnZlZCAlbGQgTWlCIGF0ICVwYVxu
+IiwgKHVuc2lnbmVkIGxvbmcpc2l6ZSAvIFNaXzFNLA0KPiA+ICAJCSZiYXNlKTsNCj4gPiAgCXJl
+dHVybiAwOw0KPiA+DQo+ID4gK2ZyZWVfbWVtOg0KPiA+ICsJbWVtYmxvY2tfZnJlZShiYXNlLCBz
+aXplKTsNCj4gPiAgZXJyOg0KPiA+ICAJcHJfZXJyKCJGYWlsZWQgdG8gcmVzZXJ2ZSAlbGQgTWlC
+XG4iLCAodW5zaWduZWQgbG9uZylzaXplIC8gU1pfMU0pOw0KPiA+ICAJcmV0dXJuIHJldDsNCj4g
+DQo+IFRoaXMgZG9lc24ndCBsb29rIHJpZ2h0IHRvIG1lLiAgSW4gdGhlIGBmaXhlZD09dHJ1ZScg
+Y2FzZSB3ZSBkaWRuJ3QgYWN0dWFsbHkNCj4gYWxsb2NhdGUgYW55dGhpbmcgYW5kIGluIHRoZSBg
+Zml4ZWQ9PWZhbHNlJyBjYXNlLCB0aGUgYWxsb2NhdGVkIG1lbW9yeSBpcyBhdA0KPiBgYWRkcics
+IG5vdCBhdCBgYmFzZScuDQoNCk15IGNvZGUgYmFzZSBpcyA1LjAuMC1yYzYsIGluIG1tL2NtYS5j
+DQozMTMgICAgICAgICAvKiBSZXNlcnZlIG1lbW9yeSAqLw0KMzE0ICAgICAgICAgaWYgKGZpeGVk
+KSB7DQozMTUgICAgICAgICAgICAgICAgIGlmIChtZW1ibG9ja19pc19yZWdpb25fcmVzZXJ2ZWQo
+YmFzZSwgc2l6ZSkgfHwNCjMxNiAgICAgICAgICAgICAgICAgICAgIG1lbWJsb2NrX3Jlc2VydmUo
+YmFzZSwgc2l6ZSkgPCAwKSB7DQozMTcgICAgICAgICAgICAgICAgICAgICAgICAgcmV0ID0gLUVC
+VVNZOw0KMzE4ICAgICAgICAgICAgICAgICAgICAgICAgIGdvdG8gZXJyOw0KMzE5ICAgICAgICAg
+ICAgICAgICB9DQozMjAgICAgICAgICB9IGVsc2Ugew0KDQpXaGVuIGZpeGVkIGlzIHRydWUsIG1l
+bWJsb2NrX2lzX3JlZ2lvbl9yZXNlcnZlZCB3aWxsIGNoZWNrIHdoZXRoZXIgdGhlIFtiYXNlLCBi
+YXNlICsgc2l6ZSkNCmlzIHJlc2VydmVkLCBpZiByZXNlcnZlZCwgcmV0dXJuIC1FQlVTWSwgaWYg
+bm90IHJlc2VydmVkLCBpdCB3aWxsIGNhbGwgbWVtYmxvY2tfcmVzZXJ2ZSwNCmlmIG1lbWJsb2Nr
+X3Jlc2VydmUgZmFpbCwgaXQgd2lsbCByZXR1cm4gLUVCVVNZLg0KDQpXaGVuIGZpeGVkIGlzIGZh
+bHNlLCBhZnRlciBtZW1ibG9ja19hbGxvY19yYW5nZSwgdGhlcmUgaXMgb25lIGxpbmUgY29kZSBg
+YmFzZSA9IGFkZHI7YC4NCg0KVGhhbmtzLA0KUGVuZy4NCg0K
