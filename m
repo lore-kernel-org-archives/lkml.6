@@ -2,150 +2,134 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4960BC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3DAFC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:01:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 161D921927
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:00:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550246458;
-	bh=xJvp4OXPV/nGWMJK7iDXBnG6dnTn7TRntrSVtaOF7VA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=l02UF+nv8mSCgathCWztgS9Vh4G64JYd9zU/GsFUS9JjWI1fQfm84fvlEdbuLtOAs
-	 gMKSn66wCgDHQY2PrrzSkRctlFsUEMiPC/IOzyBbM/3vzcQjvpZwTuXljvRCghepsL
-	 3Kda9yCU2hQIVN5H+7dN7RxarKwlrGc06AUAs43g=
+	by mail.kernel.org (Postfix) with ESMTP id C085A21927
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:01:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I4lxt5bT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391168AbfBOQA5 (ORCPT
+        id S2388650AbfBOQBT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 11:00:57 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43108 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391106AbfBOQAz (ORCPT
+        Fri, 15 Feb 2019 11:01:19 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:46470 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726308AbfBOQBS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 11:00:55 -0500
-Received: by mail-lj1-f195.google.com with SMTP id z20so7764151ljj.10;
-        Fri, 15 Feb 2019 08:00:54 -0800 (PST)
+        Fri, 15 Feb 2019 11:01:18 -0500
+Received: by mail-wr1-f66.google.com with SMTP id i16so2634879wrs.13;
+        Fri, 15 Feb 2019 08:01:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=5poziK9O5Oug3vQdWW8BPc4uRkJvkttpWR2oJESFLtk=;
+        b=I4lxt5bTEpPFtdR1k8oJ8nlIKYZwevamv1pYWibplzry/19j0zwYI/sKt5HQOen6Cl
+         +EJERPB2PRTzGQvF3gh18tO16ZSKnpejhwKV+NGWHJpRT3nmqlfqjR/0cBdh9IoXWOW9
+         n4Pn8bympn6p2WGhozaWuCXl3QqDQcLeCL64fRLJ4iVNpJ7lAGonOkPARD+BQM9+d1gP
+         xgf1HHh3YmMw0NOXcvgoE+i/BUSlUx7bKnS1vgoS21IqhzSEwUvZQwYkOxKrpmXjiWVS
+         MmUoGCf/V6blMu/nyY6y15KcG04cMK473fHt0qkzIAfOqZfC7AbHVeWpFi5E1knkEh/M
+         Z5Sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+NWvoArQciybMVwCFf3cNk9+s9mCCRZ6I26Z6YLNBW4=;
-        b=q2rti7W1/ZMGldm1rxpi7MD803bvAy1mHnj6PEN3opgXXZmIqTKwfDBK8e7B7+xXqW
-         9X2UIFOU/RwDAHWhr1/bQCY7SqUtovO8G0sRVXyHPmMHAF2mdR7INyREHV0OvwWsVh48
-         WAEXidLO6lJ9Dhk0O5e19YwaQHzNIzQeAN2c8Lh6FGXkaMVqhHeW0aQ7khmzBTXOK7/Q
-         DM8GjD/zTq26lAdtvM2qCIQq47uMli/ElkJuE2nVWy92EkC8nnQMNJ24y4a2egFE5VwJ
-         cTX6WRZ4a1kNaecHr4Po4X1qQiqa4T9LdWHO9YgkaJ+gJlddE6iOt8+klFVBrFav/gaB
-         mniA==
-X-Gm-Message-State: AHQUAuZvdpsJeeyb5STQFeeFBPpmxfFBSlEtAm/nUMUJl5J4aNmQROsk
-        zQv1zyXduNAVI4vIJtuygs8=
-X-Google-Smtp-Source: AHgI3Ib6oHOYfq26GpmGbR3UDfA8eUafWcK0ejrDhB+P7gDtjXX2XRyVdlZ0U5DXYITY/hlBfbmU+A==
-X-Received: by 2002:a2e:4503:: with SMTP id s3-v6mr5966428lja.44.1550246453203;
-        Fri, 15 Feb 2019 08:00:53 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id c187sm1385203lfg.66.2019.02.15.08.00.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Feb 2019 08:00:52 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gufux-0000pK-2G; Fri, 15 Feb 2019 17:00:47 +0100
-Date:   Fri, 15 Feb 2019 17:00:47 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Loys Ollivier <lollivier@baylibre.com>
-Cc:     Johan Hovold <johan@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH v2 2/4] dt-bindings: gnss: add mediatek binding
-Message-ID: <20190215160047.GN28278@localhost>
-References: <1547744074-28308-1-git-send-email-lollivier@baylibre.com>
- <1547744074-28308-3-git-send-email-lollivier@baylibre.com>
- <20190125090755.GB3691@localhost>
- <867eeo7pjm.fsf@baylibre.com>
- <20190211083349.GU4686@localhost>
- <86mun2v27r.fsf@baylibre.com>
- <CALZWD59e356Of+R4H2ZNHJyQcPCQNNdS+1DTc8qNDYp9ZnUpXA@mail.gmail.com>
- <20190214091121.GI28278@localhost>
- <86ef89fe10.fsf@baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=5poziK9O5Oug3vQdWW8BPc4uRkJvkttpWR2oJESFLtk=;
+        b=jfp7C5bryQdWjNm9d61n/Gu3dJA3fQbySHic7369Fr0rr85knbCakWSAEA47HeQmS8
+         Mkk6NGG23aE6Z1Zb1+nmdbdLi96DJsldyPrwMyUpH8rfgdGT9f4/hzwGX9nNiIako8Hf
+         iUmtWdrjJSnEQK+KIrjWAkhmxd4Guc7rXP5dA+giDQ0dki0bL/OYEtRUix70vnVv6SxA
+         ZD0MyRLN5BFIcJ5w+mD1HfsJ2cULnpTGiyq3nY4bxSyDkV9v9VYzt1qQzQUwWa1EEzG8
+         rh2MTDNspfJHKWL3DTGEK1+S4TTatEE/B4ivVgxvlGIIFNGGPGDbXmR7CAOolvPOzJzE
+         sP1A==
+X-Gm-Message-State: AHQUAuaXbLfuCUXLa/rRnJbvZV/A43TMGE1d6B/uoQUPHOL9w6Bdmkoe
+        nCoE8KmeC7mcwLXAIHEgshp/5LRUF5j/lZJQ9VQ=
+X-Google-Smtp-Source: AHgI3Ibb8IJazatOBdFqZP24pJweLKCllrbfbz4IHB8c0a97RcF8mwhluxuSYd3ji2163LbPm3Qfz3rBV3kAGcWfYCw=
+X-Received: by 2002:a05:6000:1152:: with SMTP id d18mr7708711wrx.128.1550246476907;
+ Fri, 15 Feb 2019 08:01:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86ef89fe10.fsf@baylibre.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <2281684.8tZHfIXjiu@aspire.rjw.lan>
+In-Reply-To: <2281684.8tZHfIXjiu@aspire.rjw.lan>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Fri, 15 Feb 2019 11:01:04 -0500
+Message-ID: <CADnq5_NmDYzZZPUh5Wp+a8bycRWFDt3Lhzf0AKx9BECJ_U-Kyg@mail.gmail.com>
+Subject: Re: [PATCH] gpu: drm: radeon: Set DPM_FLAG_NEVER_SKIP when enabling PM-runtime
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        David Zhou <David1.Zhou@amd.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        =?UTF-8?B?0K/RgNC+0YHQu9Cw0LIg0KHQtdC80YfQtdC90LrQvg==?= 
+        <ukrkyi@gmail.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 01:10:35PM +0100, Loys Ollivier wrote:
-> 
-> On Thu 14 Feb 2019 at 09:11, Johan Hovold <johan@kernel.org> wrote:
-> 
-> > On Wed, Feb 13, 2019 at 04:24:00PM +0100, Loys Ollivier wrote:
-> >> On Mon 11 Feb 2019 at 14:17, Loys Ollivier <lollivier@baylibre.com> wrote:
-> >> > On Mon 11 Feb 2019 at 08:33, Johan Hovold <johan@kernel.org> wrote:
-> >
-> >> >> Right, but please do look around for other receivers using this chipset
-> >> >> so that we can make the binding generic enough to cover those as well
-> >> >> (e.g. by choosing representative resource names).
-> >> >>
-> >> > OK will have a look.
-> >> 
-> >> The only mt3339-based receivers I have found are:
-> >> - [0] Globaltop
-> >> - [1] Locosys / Pololu
-> >> They both only provide the UART interface and do not list the I2C/SPI
-> >> interfaces.
-> >> 
-> >> [0] https://cdn-shop.adafruit.com/datasheets/GlobalTop-FGPMMOPA6H-Datasheet-V0A.pdf
-> >> [1] https://www.pololu.com/file/0J641/LS20030~3_datasheet_v1.3.pdf
-> >
-> > I found tree more:
-> >
-> Ah nice.
-> 
-> >  - Globaltop PA6C
-> >
-> >    - https://cdn-shop.adafruit.com/datasheets/GlobalTop-FGPMMOPA6C-Datasheet-V0A-Preliminary.pdf
-> >
-> >  - Linx RM series
-> >    - https://linxtechnologies.com/wp/wp-content/uploads/rxm-gps-rm.pdf
-> 
-> This is a different chip: MT3337; Apparently this chip only provides an
-> UART interface: https://labs.mediatek.com/en/chipset/MT3337
-> However it looks interesting. I'll look for a sample to test it in the
-> future :)
+On Fri, Feb 15, 2019 at 10:39 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrot=
+e:
+>
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> On HP ProBook 4540s, if PM-runtime is enabled in the radeon driver
+> and the direct-complete optimization is used for the radeon device
+> during system-wide suspend, the system doesn't resume.
+>
+> Preventing direct-complete from being used with the radeon device by
+> setting the DPM_FLAG_NEVER_SKIP driver flag for it makes the problem
+> go away, which indicates that direct-complete is not safe for the
+> radeon driver in general and should not be used with it (at least
+> for now).
+>
+> This fixes a regression introduced by commit c62ec4610c40
+> ("PM / core: Fix direct_complete handling for devices with no
+> callbacks") which allowed direct-complete to be applied to
+> devices without PM callbacks (again) which in turn unlocked
+> direct-complete for radeon on HP ProBook 4540s.
 
-Bah, sorry, I used the wrong link. Here's the mt3339-based one:
+Do other similar drivers like amdgpu and nouveau need the same fix?
+I'm not too familiar with the direct_complete feature in general.
 
-	https://linxtechnologies.com/wp/wp-content/uploads/rxm-gps-fm.pdf
+Alex
 
-But hopefully we can reuse this driver for mt3337 and any other
-variants too.
-
-> >  - ublox IT530
-> >    - https://www.u-blox.com/sites/default/files/products/documents/IT530_DataSheet_%28FTX-HW-12008%29.pdf
-> >
-> > All with uart-interface only and similar pins names, although the ublox
-> > device do have some additional features we can worry about later.
-> >
-> > As all but the ublox device use VBACKUP for the backup supply, do you
-> > mind if I change the binding to use "vbackup-supply" instead of
-> > "v-bckp-supply" (which is a ublox-ism) when applying?
-> 
-> I don't mind. You can go ahead and change the binding.
-> For reference, the v4 patch serie:
-> https://lkml.kernel.org/r/1550070569-18588-1-git-send-email-lollivier@baylibre.com
-
-Thanks, now updated and applied.
-
-Johan
+>
+> Fixes: c62ec4610c40 ("PM / core: Fix direct_complete handling for devices=
+ with no callbacks")
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=3D201519
+> Reported-by: =D0=AF=D1=80=D0=BE=D1=81=D0=BB=D0=B0=D0=B2 =D0=A1=D0=B5=D0=
+=BC=D1=87=D0=B5=D0=BD=D0=BA=D0=BE <ukrkyi@gmail.com>
+> Tested-by: =D0=AF=D1=80=D0=BE=D1=81=D0=BB=D0=B0=D0=B2 =D0=A1=D0=B5=D0=BC=
+=D1=87=D0=B5=D0=BD=D0=BA=D0=BE <ukrkyi@gmail.com>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>  drivers/gpu/drm/radeon/radeon_kms.c |    1 +
+>  1 file changed, 1 insertion(+)
+>
+> Index: linux-pm/drivers/gpu/drm/radeon/radeon_kms.c
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- linux-pm.orig/drivers/gpu/drm/radeon/radeon_kms.c
+> +++ linux-pm/drivers/gpu/drm/radeon/radeon_kms.c
+> @@ -172,6 +172,7 @@ int radeon_driver_load_kms(struct drm_de
+>         }
+>
+>         if (radeon_is_px(dev)) {
+> +               dev_pm_set_driver_flags(dev->dev, DPM_FLAG_NEVER_SKIP);
+>                 pm_runtime_use_autosuspend(dev->dev);
+>                 pm_runtime_set_autosuspend_delay(dev->dev, 5000);
+>                 pm_runtime_set_active(dev->dev);
+>
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
