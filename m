@@ -7,46 +7,44 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB9BBC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:26:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FAF6C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:26:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A41C4206BA
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:26:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 759FD206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:26:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392708AbfBOJZ7 (ORCPT
+        id S1732428AbfBOJ0U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:25:59 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:45507 "EHLO
+        Fri, 15 Feb 2019 04:26:20 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:49663 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392338AbfBOJZ6 (ORCPT
+        with ESMTP id S1726263AbfBOJ0T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 04:25:58 -0500
+        Fri, 15 Feb 2019 04:26:19 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1F9P6q01115452
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1F9Pjit1115537
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 15 Feb 2019 01:25:06 -0800
+        Fri, 15 Feb 2019 01:25:46 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1F9P6xC1115448;
-        Fri, 15 Feb 2019 01:25:06 -0800
-Date:   Fri, 15 Feb 2019 01:25:06 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1F9PjNF1115534;
+        Fri, 15 Feb 2019 01:25:45 -0800
+Date:   Fri, 15 Feb 2019 01:25:45 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Alexey Budankov <tipbot@zytor.com>
-Message-ID: <tip-f4fe11b7bf7ff6a1ccf15d7a9484f0ff7d1e92ae@git.kernel.org>
-Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com,
-        peterz@infradead.org, alexander.shishkin@linux.intel.com,
-        alexey.budankov@linux.intel.com, namhyung@kernel.org,
-        jolsa@redhat.com, mingo@kernel.org, acme@redhat.com,
-        ak@linux.intel.com
-Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org, hpa@zytor.com,
-          peterz@infradead.org, alexander.shishkin@linux.intel.com,
-          alexey.budankov@linux.intel.com, jolsa@redhat.com,
-          mingo@kernel.org, namhyung@kernel.org, acme@redhat.com,
-          ak@linux.intel.com
-In-Reply-To: <083f5422-ece9-10dd-8305-bf59c860f10f@linux.intel.com>
-References: <083f5422-ece9-10dd-8305-bf59c860f10f@linux.intel.com>
+From:   tip-bot for Mathieu Poirier <tipbot@zytor.com>
+Message-ID: <tip-859dcf64389c93a647f230a7cfd206d30bc9d286@git.kernel.org>
+Cc:     suzuki.poulose@arm.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
+        acme@redhat.com, peterz@infradead.org, mathieu.poirier@linaro.org,
+        jolsa@redhat.com
+Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          suzuki.poulose@arm.com, hpa@zytor.com, peterz@infradead.org,
+          mathieu.poirier@linaro.org, jolsa@redhat.com, acme@redhat.com,
+          mingo@kernel.org
+In-Reply-To: <20190208223543.31836-1-mathieu.poirier@linaro.org>
+References: <20190208223543.31836-1-mathieu.poirier@linaro.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf record: Implement --affinity=node|cpu option
-Git-Commit-ID: f4fe11b7bf7ff6a1ccf15d7a9484f0ff7d1e92ae
+Subject: [tip:perf/core] perf cs-etm: Add proper header file for symbols
+Git-Commit-ID: 859dcf64389c93a647f230a7cfd206d30bc9d286
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,80 +58,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f4fe11b7bf7ff6a1ccf15d7a9484f0ff7d1e92ae
-Gitweb:     https://git.kernel.org/tip/f4fe11b7bf7ff6a1ccf15d7a9484f0ff7d1e92ae
-Author:     Alexey Budankov <alexey.budankov@linux.intel.com>
-AuthorDate: Tue, 22 Jan 2019 20:52:03 +0300
+Commit-ID:  859dcf64389c93a647f230a7cfd206d30bc9d286
+Gitweb:     https://git.kernel.org/tip/859dcf64389c93a647f230a7cfd206d30bc9d286
+Author:     Mathieu Poirier <mathieu.poirier@linaro.org>
+AuthorDate: Fri, 8 Feb 2019 15:35:43 -0700
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 11 Feb 2019 12:32:21 -0300
+CommitDate: Thu, 14 Feb 2019 13:30:52 -0300
 
-perf record: Implement --affinity=node|cpu option
+perf cs-etm: Add proper header file for symbols
 
-Implement --affinity=node|cpu option for the record mode defaulting
-to system affinity mask bouncing.
+After 'commit e22c1c751140 ("perf thread: Don't include symbol.h,
+symbol_conf.h is enough")'
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
+Compilation of the perf tools is broken when using the functionality
+provided by the openCSD library:
+
+[...]
+
+...                       timerfd: [ on  ]
+...                  sched_getcpu: [ on  ]
+...                           sdt: [ OFF ]
+...                         setns: [ on  ]
+...                    libopencsd: [ on  ]
+
+[...]
+
+  CC       util/arm-spe.o
+  CC       util/arm-spe-pkt-decoder.o
+  CC       util/s390-cpumsf.o
+  CC       util/cs-etm.o
+  CC       util/parse-branch-options.o
+util/cs-etm.c: In function ‘cs_etm__mem_access’:
+util/cs-etm.c:297:24: error: storage size of ‘al’ isn’t known
+  struct  addr_location al;
+
+And rightly so since file cs-etm.c doesn't include symbol.h, something
+that is rectified in this patch.
+
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/083f5422-ece9-10dd-8305-bf59c860f10f@linux.intel.com
+Cc: Suzuki K Poulouse <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/20190208223543.31836-1-mathieu.poirier@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/perf-record.txt |  5 +++++
- tools/perf/builtin-record.c              | 18 ++++++++++++++++++
- 2 files changed, 23 insertions(+)
+ tools/perf/util/cs-etm.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/perf/Documentation/perf-record.txt b/tools/perf/Documentation/perf-record.txt
-index 02b4aa2621e7..8f0c2be34848 100644
---- a/tools/perf/Documentation/perf-record.txt
-+++ b/tools/perf/Documentation/perf-record.txt
-@@ -454,6 +454,11 @@ Use <n> control blocks in asynchronous (Posix AIO) trace writing mode (default:
- Asynchronous mode is supported only when linking Perf tool with libc library
- providing implementation for Posix AIO API.
- 
-+--affinity=mode::
-+Set affinity mask of trace reading thread according to the policy defined by 'mode' value:
-+  node - thread affinity mask is set to NUMA node cpu mask of the processed mmap buffer
-+  cpu  - thread affinity mask is set to cpu of the processed mmap buffer
-+
- --all-kernel::
- Configure all used events to run in kernel space.
- 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 3fdfbaebd95e..6c3719ac901d 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -1656,6 +1656,21 @@ static int parse_clockid(const struct option *opt, const char *str, int unset)
- 	return -1;
- }
- 
-+static int record__parse_affinity(const struct option *opt, const char *str, int unset)
-+{
-+	struct record_opts *opts = (struct record_opts *)opt->value;
-+
-+	if (unset || !str)
-+		return 0;
-+
-+	if (!strcasecmp(str, "node"))
-+		opts->affinity = PERF_AFFINITY_NODE;
-+	else if (!strcasecmp(str, "cpu"))
-+		opts->affinity = PERF_AFFINITY_CPU;
-+
-+	return 0;
-+}
-+
- static int record__parse_mmap_pages(const struct option *opt,
- 				    const char *str,
- 				    int unset __maybe_unused)
-@@ -1964,6 +1979,9 @@ static struct option __record_options[] = {
- 		     &nr_cblocks_default, "n", "Use <n> control blocks in asynchronous trace writing mode (default: 1, max: 4)",
- 		     record__aio_parse),
- #endif
-+	OPT_CALLBACK(0, "affinity", &record.opts, "node|cpu",
-+		     "Set affinity mask of trace reading thread to NUMA node cpu mask or cpu of processed mmap buffer",
-+		     record__parse_affinity),
- 	OPT_END()
- };
- 
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index 8b3f882d6e2f..0b11d653cfbe 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -25,6 +25,7 @@
+ #include "machine.h"
+ #include "map.h"
+ #include "perf.h"
++#include "symbol.h"
+ #include "thread.h"
+ #include "thread_map.h"
+ #include "thread-stack.h"
