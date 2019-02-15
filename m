@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC7B3C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:10:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21319C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B243D222D4
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:10:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3BDE2229F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196616;
-	bh=e/h8C4M3EzC/+wvYTgQB3vp9NjAx6Ohx09kOImO2ogc=;
+	s=default; t=1550196619;
+	bh=+/w59t3EsHT/r9n7Tf7+WDEMcEU/EnS8zxrldYfrolI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Xl+EzLEzKz8BL1e48YkhGCWeyJihGjbnpKzECwTp58aEU4UUemj3jxN4+3IvaQ3jY
-	 U1hgBrdxjTaKRv9GESNJJdSQlYfXcX2Zpgt6Y2k8aCvcvFUNUyZlJ0CPudqdADuvkI
-	 6lQf8/vq287+/JEq6wvanUerUkUmC09cREZOS3d0=
+	b=ewjRMBdTkO6Li5vxaWVyssJy0WIc1OZCrg6O8s9MGmG4Ji83HrKkvlwDNvP6ePzT9
+	 mEIUU0ueDVwSI9IYFBtRW+E+j1ajqBZfR2hWjmOYVRiI1RRIUi4IAYyF9dYqqzPBgU
+	 fhm1/EeGyZTpM7xADIGEQnCTub6v7XvdjwG9/EH0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390217AbfBOCKP (ORCPT
+        id S2390270AbfBOCKR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:10:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50332 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:10:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390110AbfBOCKM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:10:12 -0500
+        id S2390066AbfBOCKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:10:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 260DD222D4;
-        Fri, 15 Feb 2019 02:10:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E17D5222D0;
+        Fri, 15 Feb 2019 02:10:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196611;
-        bh=e/h8C4M3EzC/+wvYTgQB3vp9NjAx6Ohx09kOImO2ogc=;
+        s=default; t=1550196610;
+        bh=+/w59t3EsHT/r9n7Tf7+WDEMcEU/EnS8zxrldYfrolI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jaTe6fJRHHLNxwIGSR4R83WgsS5cQh/Uz9kEWJlo30r61efrwG8BzjWOF60+vQdjr
-         1IdXgrko9sGWY6RPoGQBkwE6iDvcDggrl5+MmyzsFBAHYyCGnaXfgwhPTC6g+/Lmu4
-         a3+GD5kw1yPVGOriWvkWeQUO0rWQmNNU8G6Qo/qY=
+        b=j0PVPyV7lAUa4VCDcZITqEE5lJ1ZP/RtGAR/vGu9oMCH2/r/hL23o3dHqwZ3/7hRg
+         N02WoyJpFmleriaVFuzTIg3TNQCIwktSa5xYyZwqtyXYKnjWE5FQeTBgAaOpZZRtFh
+         ThXfoQc+KelcLT3pvo5JBsuxjnZUEF95kPrXH6xw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Matthias Kaehlcke <mka@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 44/77] tty: serial: qcom_geni_serial: Allow mctrl when flow control is disabled
-Date:   Thu, 14 Feb 2019 21:08:22 -0500
-Message-Id: <20190215020855.176727-44-sashal@kernel.org>
+Cc:     Kenneth Feng <kenneth.feng@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.20 43/77] drm/amd/powerplay: OD setting fix on Vega10
+Date:   Thu, 14 Feb 2019 21:08:21 -0500
+Message-Id: <20190215020855.176727-43-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
 References: <20190215020855.176727-1-sashal@kernel.org>
@@ -58,45 +59,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthias Kaehlcke <mka@chromium.org>
+From: Kenneth Feng <kenneth.feng@amd.com>
 
-[ Upstream commit e8a6ca808c5ed1e2b43ab25f1f2cbd43a7574f73 ]
+[ Upstream commit 6d87dc97eb3341de3f7b1efa3156cb0e014f4a96 ]
 
-The geni set/get_mctrl() functions currently do nothing unless
-hardware flow control is enabled. Remove this arbitrary limitation.
+gfxclk for OD setting is limited to 1980M for non-acg
+ASICs of Vega10
 
-Suggested-by: Johan Hovold <johan@kernel.org>
-Fixes: 8a8a66a1a18a ("tty: serial: qcom_geni_serial: Add support for flow control")
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-Reviewed-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Kenneth Feng <kenneth.feng@amd.com>
+Reviewed-by: Evan Quan <evan.quan@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/qcom_geni_serial.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../powerplay/hwmgr/vega10_processpptables.c  | 22 ++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-index d3b5261ee80a..76e0ad7251e1 100644
---- a/drivers/tty/serial/qcom_geni_serial.c
-+++ b/drivers/tty/serial/qcom_geni_serial.c
-@@ -221,7 +221,7 @@ static unsigned int qcom_geni_serial_get_mctrl(struct uart_port *uport)
- 	unsigned int mctrl = TIOCM_DSR | TIOCM_CAR;
- 	u32 geni_ios;
+diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_processpptables.c b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_processpptables.c
+index b8747a5c9204..99d596dc0e89 100644
+--- a/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_processpptables.c
++++ b/drivers/gpu/drm/amd/powerplay/hwmgr/vega10_processpptables.c
+@@ -32,6 +32,7 @@
+ #include "vega10_pptable.h"
  
--	if (uart_console(uport) || !uart_cts_enabled(uport)) {
-+	if (uart_console(uport)) {
- 		mctrl |= TIOCM_CTS;
- 	} else {
- 		geni_ios = readl_relaxed(uport->membase + SE_GENI_IOS);
-@@ -237,7 +237,7 @@ static void qcom_geni_serial_set_mctrl(struct uart_port *uport,
+ #define NUM_DSPCLK_LEVELS 8
++#define VEGA10_ENGINECLOCK_HARDMAX 198000
+ 
+ static void set_hw_cap(struct pp_hwmgr *hwmgr, bool enable,
+ 		enum phm_platform_caps cap)
+@@ -258,7 +259,26 @@ static int init_over_drive_limits(
+ 		struct pp_hwmgr *hwmgr,
+ 		const ATOM_Vega10_POWERPLAYTABLE *powerplay_table)
  {
- 	u32 uart_manual_rfr = 0;
- 
--	if (uart_console(uport) || !uart_cts_enabled(uport))
-+	if (uart_console(uport))
- 		return;
- 
- 	if (!(mctrl & TIOCM_RTS))
+-	hwmgr->platform_descriptor.overdriveLimit.engineClock =
++	const ATOM_Vega10_GFXCLK_Dependency_Table *gfxclk_dep_table =
++			(const ATOM_Vega10_GFXCLK_Dependency_Table *)
++			(((unsigned long) powerplay_table) +
++			le16_to_cpu(powerplay_table->usGfxclkDependencyTableOffset));
++	bool is_acg_enabled = false;
++	ATOM_Vega10_GFXCLK_Dependency_Record_V2 *patom_record_v2;
++
++	if (gfxclk_dep_table->ucRevId == 1) {
++		patom_record_v2 =
++			(ATOM_Vega10_GFXCLK_Dependency_Record_V2 *)gfxclk_dep_table->entries;
++		is_acg_enabled =
++			(bool)patom_record_v2[gfxclk_dep_table->ucNumEntries-1].ucACGEnable;
++	}
++
++	if (powerplay_table->ulMaxODEngineClock > VEGA10_ENGINECLOCK_HARDMAX &&
++		!is_acg_enabled)
++		hwmgr->platform_descriptor.overdriveLimit.engineClock =
++			VEGA10_ENGINECLOCK_HARDMAX;
++	else
++		hwmgr->platform_descriptor.overdriveLimit.engineClock =
+ 			le32_to_cpu(powerplay_table->ulMaxODEngineClock);
+ 	hwmgr->platform_descriptor.overdriveLimit.memoryClock =
+ 			le32_to_cpu(powerplay_table->ulMaxODMemoryClock);
 -- 
 2.19.1
 
