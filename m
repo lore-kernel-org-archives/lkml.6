@@ -7,51 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76CC8C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E859C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:17:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 199E620643
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:17:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8DFD20643
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:17:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197051;
-	bh=arsGKCmVJULVPn0K4Hu/RIO/mL0V208JPuN4cTV2TQE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=g6lQ+lmXXZZRj674M4YOPK/hGlJyNYYP3ooGzF9qVEm8eed8Lgj0K3v8+meZolmmx
-	 TZVWJtfuXvtecAohszLSDZgAalxjkrXgpfbcEEiL2ood5DLynfqViDNVtKRywGH4YW
-	 XERJnHDdfHh8tmrgFshMcNKf5rHiOnjKNnXoXJUs=
+	s=default; t=1550197073;
+	bh=LdcnhN3ppJ952Lcr4o+LXP9lBUdJiMNefPLQv+qOfX0=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=u2jsD8vLWA6AozpAHCIFIZq7zglgs3XuENNlm5TL1bkwT27smA0GBZsnvFECDUHKK
+	 cQYxnlWqVXUMBrIQbilj5CW9Zx8QiXo17/5GS91JH09fWmbSJRm6CN3E2UucfzKhjK
+	 vJGRZn/f8AtbohkYz9D0isxdQmACyHD3dUx4P3qo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732375AbfBOCR3 (ORCPT
+        id S2405994AbfBOCPx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:17:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55526 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:15:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406050AbfBOCP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:15:58 -0500
+        id S2391123AbfBOCPt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:15:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CD7E20643;
-        Fri, 15 Feb 2019 02:15:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D24E220643;
+        Fri, 15 Feb 2019 02:15:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196958;
-        bh=arsGKCmVJULVPn0K4Hu/RIO/mL0V208JPuN4cTV2TQE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Jrk94+X3azX2W6yaKKGgNzrwwYnoyjZCutvVwR1GqAShV3VnBMixVnHKxnLqTQoPN
-         EYw7RhN0/rj73baw28FlyspJamvMGCFABQ3f+6CcsauR6ir7+6tm7/ikW4Q45AS1+n
-         8S9txiEskBoP0grnLXMTHE/W8kD5eFP3dJ4kmX18=
+        s=default; t=1550196948;
+        bh=LdcnhN3ppJ952Lcr4o+LXP9lBUdJiMNefPLQv+qOfX0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Dk2wrdH5mNlkvWT6dMa5dX6gmXDLKPUZKvn8hZirTLCvxW1R6KZ7ADlBWZOFsOGEl
+         yIsFbFZRjsJj0Btgw/muK+SujqytWEat9M1HHnlPmMEdkWBLE272jG7dd+KnEsfdOI
+         EAonEoLalgdhrFoOcYq/9Y+NJmGmgdSkdjk5FbMU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bob Copeland <me@bobcopeland.com>,
-        Bob Copeland <bobcopeland@fb.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 07/16] mac80211: fix miscounting of ttl-dropped frames
-Date:   Thu, 14 Feb 2019 21:15:37 -0500
-Message-Id: <20190215021546.179605-7-sashal@kernel.org>
+Cc:     "Kristian H. Kristensen" <hoegsberg@gmail.com>,
+        "Kristian H . Kristensen" <hoegsberg@chromium.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 3.18 01/16] drm/msm: Unblock writer if reader closes file
+Date:   Thu, 14 Feb 2019 21:15:31 -0500
+Message-Id: <20190215021546.179605-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190215021546.179605-1-sashal@kernel.org>
-References: <20190215021546.179605-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -60,43 +58,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bob Copeland <me@bobcopeland.com>
+From: "Kristian H. Kristensen" <hoegsberg@gmail.com>
 
-[ Upstream commit a0dc02039a2ee54fb4ae400e0b755ed30e73e58c ]
+[ Upstream commit 99c66bc051e7407fe0bf0607b142ec0be1a1d1dd ]
 
-In ieee80211_rx_h_mesh_fwding, we increment the 'dropped_frames_ttl'
-counter when we decrement the ttl to zero.  For unicast frames
-destined for other hosts, we stop processing the frame at that point.
+Prevents deadlock when fifo is full and reader closes file.
 
-For multicast frames, we do not rebroadcast it in this case, but we
-do pass the frame up the stack to process it on this STA.  That
-doesn't match the usual definition of "dropped," so don't count
-those as such.
-
-With this change, something like `ping6 -i0.2 ff02::1%mesh0` from a
-peer in a ttl=1 network no longer increments the counter rapidly.
-
-Signed-off-by: Bob Copeland <bobcopeland@fb.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Kristian H. Kristensen <hoegsberg@chromium.org>
+Signed-off-by: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/rx.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/msm/msm_rd.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
-index ea3b13987521..ccb822aa6225 100644
---- a/net/mac80211/rx.c
-+++ b/net/mac80211/rx.c
-@@ -2179,7 +2179,9 @@ ieee80211_rx_h_mesh_fwding(struct ieee80211_rx_data *rx)
- 	skb_set_queue_mapping(skb, q);
+diff --git a/drivers/gpu/drm/msm/msm_rd.c b/drivers/gpu/drm/msm/msm_rd.c
+index 9a78c48817c6..909a52b21ebe 100644
+--- a/drivers/gpu/drm/msm/msm_rd.c
++++ b/drivers/gpu/drm/msm/msm_rd.c
+@@ -103,7 +103,9 @@ static void rd_write(struct msm_rd_state *rd, const void *buf, int sz)
+ 		char *fptr = &fifo->buf[fifo->head];
+ 		int n;
  
- 	if (!--mesh_hdr->ttl) {
--		IEEE80211_IFSTA_MESH_CTR_INC(ifmsh, dropped_frames_ttl);
-+		if (!is_multicast_ether_addr(hdr->addr1))
-+			IEEE80211_IFSTA_MESH_CTR_INC(ifmsh,
-+						     dropped_frames_ttl);
- 		goto out;
- 	}
+-		wait_event(rd->fifo_event, circ_space(&rd->fifo) > 0);
++		wait_event(rd->fifo_event, circ_space(&rd->fifo) > 0 || !rd->open);
++		if (!rd->open)
++			return;
+ 
+ 		n = min(sz, circ_space_to_end(&rd->fifo));
+ 		memcpy(fptr, ptr, n);
+@@ -192,7 +194,10 @@ static int rd_open(struct inode *inode, struct file *file)
+ static int rd_release(struct inode *inode, struct file *file)
+ {
+ 	struct msm_rd_state *rd = inode->i_private;
++
+ 	rd->open = false;
++	wake_up_all(&rd->fifo_event);
++
+ 	return 0;
+ }
  
 -- 
 2.19.1
