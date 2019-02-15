@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F8EC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:56:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 625B5C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:56:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADF36222D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:56:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2485F222D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:56:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733188AbfBOT4j (ORCPT
+        id S2387556AbfBOT4m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 14:56:39 -0500
-Received: from mga18.intel.com ([134.134.136.126]:56580 "EHLO mga18.intel.com"
+        Fri, 15 Feb 2019 14:56:42 -0500
+Received: from mga07.intel.com ([134.134.136.100]:29120 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732893AbfBOT4g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 14:56:36 -0500
+        id S1732893AbfBOT4l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 14:56:41 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Feb 2019 11:56:35 -0800
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Feb 2019 11:56:40 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,373,1544515200"; 
-   d="scan'208";a="115302176"
+   d="scan'208";a="275404803"
 Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga007.jf.intel.com with ESMTP; 15 Feb 2019 11:56:35 -0800
-Subject: [PATCH v2 2/6] nfit/ars: Attempt short-ARS even in the no_init_ars
- case
+  by orsmga004.jf.intel.com with ESMTP; 15 Feb 2019 11:56:40 -0800
+Subject: [PATCH v2 3/6] nfit/ars: Remove ars_start_flags
 From:   Dan Williams <dan.j.williams@intel.com>
 To:     linux-nvdimm@lists.01.org
-Cc:     Erwin Tsaur <erwin.tsaur@oracle.com>, vishal.l.verma@intel.com,
+Cc:     Toshi Kani <toshi.kani@hpe.com>, vishal.l.verma@intel.com,
         linux-kernel@vger.kernel.org
-Date:   Fri, 15 Feb 2019 11:43:57 -0800
-Message-ID: <155025983758.1043225.7069046151889688538.stgit@dwillia2-desk3.amr.corp.intel.com>
+Date:   Fri, 15 Feb 2019 11:44:02 -0800
+Message-ID: <155025984267.1043225.13642468395161111076.stgit@dwillia2-desk3.amr.corp.intel.com>
 In-Reply-To: <155025982726.1043225.15436410616433285475.stgit@dwillia2-desk3.amr.corp.intel.com>
 References: <155025982726.1043225.15436410616433285475.stgit@dwillia2-desk3.amr.corp.intel.com>
 User-Agent: StGit/0.18-2-gc94f
@@ -47,32 +46,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The no_init_ars option is meant to prevent long-ARS, but short-ARS
-should be allowed to grab any immediate results.
+The ars_start_flags property of 'struct acpi_nfit_desc' is no longer
+used since ARS_REQ_SHORT and ARS_REQ_LONG were added.
 
-Reported-by: Erwin Tsaur <erwin.tsaur@oracle.com>
+Cc: Toshi Kani <toshi.kani@hpe.com>
 Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- drivers/acpi/nfit/core.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/acpi/nfit/core.c |   10 +++++-----
+ drivers/acpi/nfit/nfit.h |    1 -
+ 2 files changed, 5 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
-index 3d681a92ff7f..934be96dc149 100644
+index 934be96dc149..9a23ae74e82b 100644
 --- a/drivers/acpi/nfit/core.c
 +++ b/drivers/acpi/nfit/core.c
-@@ -3004,11 +3004,12 @@ static int ars_register(struct acpi_nfit_desc *acpi_desc,
- {
- 	int rc;
+@@ -2651,11 +2651,11 @@ static int ars_continue(struct acpi_nfit_desc *acpi_desc)
+ 	struct nvdimm_bus_descriptor *nd_desc = &acpi_desc->nd_desc;
+ 	struct nd_cmd_ars_status *ars_status = acpi_desc->ars_status;
  
--	if (no_init_ars || test_bit(ARS_FAILED, &nfit_spa->ars_state))
-+	if (test_bit(ARS_FAILED, &nfit_spa->ars_state))
- 		return acpi_nfit_register_region(acpi_desc, nfit_spa);
- 
- 	set_bit(ARS_REQ_SHORT, &nfit_spa->ars_state);
--	set_bit(ARS_REQ_LONG, &nfit_spa->ars_state);
-+	if (!no_init_ars)
-+		set_bit(ARS_REQ_LONG, &nfit_spa->ars_state);
- 
- 	switch (acpi_nfit_query_poison(acpi_desc)) {
- 	case 0:
+-	memset(&ars_start, 0, sizeof(ars_start));
+-	ars_start.address = ars_status->restart_address;
+-	ars_start.length = ars_status->restart_length;
+-	ars_start.type = ars_status->type;
+-	ars_start.flags = acpi_desc->ars_start_flags;
++	ars_start = (struct nd_cmd_ars_start) {
++		.address = ars_status->restart_address,
++		.length = ars_status->restart_length,
++		.type = ars_status->type,
++	};
+ 	rc = nd_desc->ndctl(nd_desc, NULL, ND_CMD_ARS_START, &ars_start,
+ 			sizeof(ars_start), &cmd_rc);
+ 	if (rc < 0)
+diff --git a/drivers/acpi/nfit/nfit.h b/drivers/acpi/nfit/nfit.h
+index 33691aecfcee..871fb3de3b30 100644
+--- a/drivers/acpi/nfit/nfit.h
++++ b/drivers/acpi/nfit/nfit.h
+@@ -223,7 +223,6 @@ struct acpi_nfit_desc {
+ 	struct list_head idts;
+ 	struct nvdimm_bus *nvdimm_bus;
+ 	struct device *dev;
+-	u8 ars_start_flags;
+ 	struct nd_cmd_ars_status *ars_status;
+ 	struct nfit_spa *scrub_spa;
+ 	struct delayed_work dwork;
 
