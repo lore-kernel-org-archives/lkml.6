@@ -2,204 +2,112 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B5CC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC213C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:45:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1090B2075C
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:41:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 760EA2075C
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:45:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="nFllKEko"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387773AbfBOMlH (ORCPT
+        id S2387776AbfBOMpo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 07:41:07 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42408 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728436AbfBOMlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 07:41:06 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 060C6C7943;
-        Fri, 15 Feb 2019 12:41:04 +0000 (UTC)
-Received: from [10.40.206.32] (unknown [10.40.206.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 76311600C1;
-        Fri, 15 Feb 2019 12:40:58 +0000 (UTC)
-Subject: Re: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
-To:     "Wang, Wei W" <wei.w.wang@intel.com>,
-        'David Hildenbrand' <david@redhat.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
-        "pagupta@redhat.com" <pagupta@redhat.com>,
-        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
-        "riel@surriel.com" <riel@surriel.com>,
-        "mst@redhat.com" <mst@redhat.com>,
-        "dodgen@google.com" <dodgen@google.com>,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        "dhildenb@redhat.com" <dhildenb@redhat.com>,
-        "aarcange@redhat.com" <aarcange@redhat.com>
-References: <20190204201854.2328-1-nitesh@redhat.com>
- <286AC319A985734F985F78AFA26841F73DF6B56A@shsmsx102.ccr.corp.intel.com>
- <f9516222-793a-a169-c18a-728ca0256cd3@redhat.com>
- <286AC319A985734F985F78AFA26841F73DF6F0E3@shsmsx102.ccr.corp.intel.com>
- <bdd4298d-b84b-1ffb-0d9c-3ff5798da325@redhat.com>
- <286AC319A985734F985F78AFA26841F73DF71F38@shsmsx102.ccr.corp.intel.com>
-From:   Nitesh Narayan Lal <nitesh@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nitesh@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- VujM7c/b4pps
-Organization: Red Hat Inc,
-Message-ID: <8c65b48c-6e28-f28b-c8f0-5a2c78cf52a5@redhat.com>
-Date:   Fri, 15 Feb 2019 07:40:55 -0500
+        Fri, 15 Feb 2019 07:45:44 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:25104 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728436AbfBOMpo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 07:45:44 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190215124541epoutp01697f43c61e7365e396860638c745c318~DikirdGzt1052710527epoutp01n;
+        Fri, 15 Feb 2019 12:45:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190215124541epoutp01697f43c61e7365e396860638c745c318~DikirdGzt1052710527epoutp01n
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1550234741;
+        bh=geAVXLLT313jDDG5IkQYupK5mQwcEfKhWe6g3wWdM0A=;
+        h=Subject:To:Cc:From:Date:In-reply-to:References:From;
+        b=nFllKEko4kv5yYWDCQrvZ2wPQoWjVPkuE2K1LAXsI/zUXZHlekAsFA/Ei7b8LzeKB
+         6q7eojZfRoZCV128zxNNqUQKL53H4uDd1DbkNNjW02HVkDdQwdqX+BOQP9NbdqdLMj
+         XMf7tBizxz4s0rMpGpfQY5RWKBloEbfJfTuHCy1Q=
+Received: from epsmges1p3.samsung.com (unknown [182.195.42.55]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190215124540epcas1p2c67e3696a4694e902f4af8714c514e57~DikhxSlL50035100351epcas1p2S;
+        Fri, 15 Feb 2019 12:45:40 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        28.A2.04069.474B66C5; Fri, 15 Feb 2019 21:45:40 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190215124539epcas1p27dc71aea62b3d2fc11864a2c89b42ade~Dikgr6QhT3075630756epcas1p2v;
+        Fri, 15 Feb 2019 12:45:39 +0000 (GMT)
+X-AuditID: b6c32a37-971ff70000000fe5-18-5c66b4748ebd
+Received: from epmmp1.local.host ( [203.254.227.16]) by
+        epsmgms2p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        EA.44.04015.374B66C5; Fri, 15 Feb 2019 21:45:39 +0900 (KST)
+Received: from [106.116.147.40] by mmp1.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PMY00H5KWRZMU80@mmp1.samsung.com>; Fri, 15 Feb 2019 21:45:39 +0900 (KST)
+Subject: Re: [PATCH] ASoC: samsung: odroid: Add missing DAPM routes
+To:     broonie@kernel.org
+Cc:     lgirdwood@gmail.com, krzk@kernel.org, sbkim73@samsung.com,
+        m.szyprowski@samsung.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-id: <ddefa7c5-3341-dd4b-9088-2ae8c9db050b@samsung.com>
+Date:   Fri, 15 Feb 2019 13:45:34 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <286AC319A985734F985F78AFA26841F73DF71F38@shsmsx102.ccr.corp.intel.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="qusNYtOEDPs1948kwFoAVU2s4iAWJUCqI"
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 15 Feb 2019 12:41:06 +0000 (UTC)
+        Thunderbird/60.4.0
+MIME-version: 1.0
+In-reply-to: <20190215120422.22907-1-s.nawrocki@samsung.com>
+Content-type: text/plain; charset="utf-8"
+Content-language: en-GB
+Content-transfer-encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFIsWRmVeSWpSXmKPExsWy7bCmvm7JlrQYg57LEhZXLh5ispj68Amb
+        xfnzG9gtvl3pYLK4vGsOm8XaI3fZLS6u+MLkwO6x4XMTm8fOWXfZPTat6mTz6NuyitHj8ya5
+        ANYoLpuU1JzMstQifbsErowVy1+yFnQzV1xePIGlgfEwUxcjJ4eEgIlE94eNrF2MXBxCAjsY
+        JW43bGaHcL4zSiz+tRfI4QCrmtmUChHfzSix4MRWNpBuIYH7jBLz7tSC2MICzhI35/wFi4sI
+        iEncntPJDNLALDCNUeLzpAvMIAk2AUOJ3qN9jCBDeQXsJA6dtQMJswioSixpXMsKYosKREgc
+        7n3HCGLzCghK/Jh8jwXE5hSwkVi1+ShYDbOApsSLL5NYIGxxiWP3bzJC2PISm9e8BdsrIXCb
+        TaLn8jZ2iDddJI5PWcQM8Yy0xKWjthDhaold27uh6jsYJVoubGeGSFhLHD5+EWoZn8S7rz2s
+        EL28Eh1tQhAlHhItv09AA6ufUeLOkxlsExhlZiG5exaSW2chuXUWklsXMLKsYhRLLSjOTU8t
+        Niww1itOzC0uzUvXS87P3cQIThFa5jsYN5zzOcQowMGoxMO7IiM1Rog1say4MvcQowQHs5II
+        L+eatBgh3pTEyqrUovz4otKc1OJDjNIcLErivOsdnGOEBNITS1KzU1MLUotgskwcnFINjJ6b
+        GqxvB0cvntuqt7DIQGLHCd9NDR8l6mU/b5r2KziCmdP/8o0rgjxxU/481naxuW8964mJptTn
+        wwdsbzNqKyxXPeP2dkaaer2J6cPc7E1al9TmL/M0e/3Ma0L5vecSL38t3fS1Zd369RucCo/k
+        3D4f4LNV64/kdT3Vqmkvz6/KaMtXPvYu5JYSS3FGoqEWc1FxIgAbXl9PDQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFLMWRmVeSWpSXmKPExsVy+t9jAd3iLWkxBmdf81hcuXiIyWLqwyds
+        FufPb2C3+Halg8ni8q45bBZrj9xlt7i44guTA7vHhs9NbB47Z91l99i0qpPNo2/LKkaPz5vk
+        AlijuGxSUnMyy1KL9O0SuDJWLH/JWtDNXHF58QSWBsbDTF2MHBwSAiYSM5tSuxi5OIQEdjJK
+        rF56kh3Cecgo8ejNKeYuRk4OYQFniZtz/rKB2CICYhK353QygxQxC0xjlJg7eRFUx0RGiba7
+        JxlBqtgEDCV6j/YxgqzgFbCTOHTWDiTMIqAqsaRxLSuILSoQIfHx6T4mEJtXQFDix+R7LCA2
+        p4CNxKrNR1lBWpkF1CWmTMkFCTMLiEscu3+TEcKWl9i85i3zBEaBWUi6ZyF0zELSMQtJxwJG
+        llWMkqkFxbnpucVGBYZ5qeV6xYm5xaV56XrJ+bmbGIExsO2wVt8OxvtL4g8xCnAwKvHwBqSl
+        xgixJpYVV+YeYpTgYFYS4eVckxYjxJuSWFmVWpQfX1Sak1p8iFGag0VJnPd23rFIIYH0xJLU
+        7NTUgtQimCwTB6dUA2Pk5Zb6ltCbH2o8EgReCrfdcq7+Nnf93aa4hda51t9vXfhn31E0dYZi
+        RNKZmV/un1yxzZqP/1b6s0+39NJDS8N3LoyeftTX/8+6kwaLX8958rZFzXTWv0W7f4p+fDTl
+        3aTJS1t5k0QmsVzbIvJDjbW8lLGY+3B089aNzJYccru7nc/cOLlj3WRxJZbijERDLeai4kQA
+        qTzOY30CAAA=
+X-CMS-MailID: 20190215124539epcas1p27dc71aea62b3d2fc11864a2c89b42ade
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20190215120457epcas2p3cd14657fc2159c058ab6448c10a47648
+References: <CGME20190215120457epcas2p3cd14657fc2159c058ab6448c10a47648@epcas2p3.samsung.com>
+        <20190215120422.22907-1-s.nawrocki@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---qusNYtOEDPs1948kwFoAVU2s4iAWJUCqI
-Content-Type: multipart/mixed; boundary="19xowJ6YcPLQjp6lxipmMsFPTwWfNFUy4";
- protected-headers="v1"
-From: Nitesh Narayan Lal <nitesh@redhat.com>
-To: "Wang, Wei W" <wei.w.wang@intel.com>,
- 'David Hildenbrand' <david@redhat.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
- "pagupta@redhat.com" <pagupta@redhat.com>,
- "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
- "riel@surriel.com" <riel@surriel.com>, "mst@redhat.com" <mst@redhat.com>,
- "dodgen@google.com" <dodgen@google.com>,
- "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
- "dhildenb@redhat.com" <dhildenb@redhat.com>,
- "aarcange@redhat.com" <aarcange@redhat.com>
-Message-ID: <8c65b48c-6e28-f28b-c8f0-5a2c78cf52a5@redhat.com>
-Subject: Re: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
-References: <20190204201854.2328-1-nitesh@redhat.com>
- <286AC319A985734F985F78AFA26841F73DF6B56A@shsmsx102.ccr.corp.intel.com>
- <f9516222-793a-a169-c18a-728ca0256cd3@redhat.com>
- <286AC319A985734F985F78AFA26841F73DF6F0E3@shsmsx102.ccr.corp.intel.com>
- <bdd4298d-b84b-1ffb-0d9c-3ff5798da325@redhat.com>
- <286AC319A985734F985F78AFA26841F73DF71F38@shsmsx102.ccr.corp.intel.com>
-In-Reply-To: <286AC319A985734F985F78AFA26841F73DF71F38@shsmsx102.ccr.corp.intel.com>
+On 2/15/19 13:04, Sylwester Nawrocki wrote:
+> With old DTS there will be missing DAPM routes linking BE with CODECs.
+> Add those routes in the card driver so sound works properly on Odroid
+> XU3/4 also without DTS updates enabling the secondary PCM.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
---19xowJ6YcPLQjp6lxipmMsFPTwWfNFUy4
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
+I forgot to add: 
 
-
-On 2/15/19 4:05 AM, Wang, Wei W wrote:
-> On Thursday, February 14, 2019 5:43 PM, David Hildenbrand wrote:
->> Yes indeed, that is the important bit. They must not be put pack to th=
-e
->> buddy before they have been processed by the hypervisor. But as the pa=
-ges
->> are not in the buddy, no one allocating a page will stumble over such =
-a page
->> and try to allocate it. Threads trying to allocate memory will simply =
-pick
->> another buddy page instead of "busy waiting" for that page to be finis=
-hed
->> reporting.
-> What if a guest thread try to allocate some pages but the buddy cannot =
-satisfy
-> because all the pages are isolated? Would it be the same case that the =
-guest thread
-> gets blocked by waiting all the isolated pages to get madvised by the h=
-ost and
-> returned to the guest buddy, or even worse, some guest threads get kill=
-ed due to oom?
-
-If you are referring to a situation when guest is under memory pressure
-then isolation request will fail and memory will not be
-reported/isolated. However, there can always be a corner case and we can
-definitely take that into consideration later.
-
->
-> Best,
-> Wei
---=20
-Regards
-Nitesh
-
-
---19xowJ6YcPLQjp6lxipmMsFPTwWfNFUy4--
-
---qusNYtOEDPs1948kwFoAVU2s4iAWJUCqI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEkXcoRVGaqvbHPuAGo4ZA3AYyozkFAlxms1cACgkQo4ZA3AYy
-ozkrkQ/9FFmzLrvp+OyyZFaaOTjfTJ/MaxhVGuBp1mPHgBqn3MT4cUBoeSPSW+hf
-3XxgJUBqQF5hIeQpkHUEKFH4felhdZaytFhaicQEFmeB9MgQDJ1+fkN9qHZjheK7
-GFDOEUvE70ADLDe65a+EOkXLTDS8urzcqghrToFxHTard9GeFG5o47N9O/9Zz3Ay
-8mZ5AXGHmU6jNZX5cIdNn1ydzibcsVdN08gU4y6bumXhUqpNw6lwrfTKXl1BfFb5
-8BD9SvtaG0NRcWz7o6dVVkSXHxAZu6ah2NT2wLJUsHWWrCE7LGaaO790Y52bSGdX
-dqK17G2e+F9nZZnDwXf8c7+z3QmG3TmFADp8MgLfnRWOyhqha6qcOFNEwfmkZOrF
-H8qURMrVkxz5VQMn2r1i3CoC2NaLGaJpfuIhEmz4P+KdXL2xaIn4RF9uTxG47cG5
-f5nl59dFMw/SdayicriqXOfNPMCUQDBGYKJ/We2zwJ8iw8OyCrsO0wb7KP0sK3fx
-YaAHMj2tk+k5PNqfk3EkoX1Q+OGNw7YxcSkXfD1bAbA9sRkEoeo2ZQkGEI/6E59W
-PSMOASzP2He+00WZoToVE2jHk5pXTCpebLr7F6NQ/4kpY3HNDvkKGoyU4ECi/zI2
-APz8MchKAqKFTY6OuKGNeIyVFiV1UMUpxEAqrzbItqjUkRoglT4=
-=ESEC
------END PGP SIGNATURE-----
-
---qusNYtOEDPs1948kwFoAVU2s4iAWJUCqI--
+Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
