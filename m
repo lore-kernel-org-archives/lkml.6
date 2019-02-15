@@ -2,125 +2,195 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67DCAC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:16:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC1D4C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:19:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B1092177B
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:16:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="alV+jLns"
+	by mail.kernel.org (Postfix) with ESMTP id B2B3C21925
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:19:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550243957;
+	bh=Uf8Xcrlvvln/nba+KUI5sC40U5pQoOw7T2CxKTwt6M8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=OvcoCGgvQNHNHf5K7A9I2G4juP/iO0rMTxDnvIOm46rR4+cDhM1Lp/afEvYDC+5VE
+	 il/qRQcA3SbQ1CWT6LfkcvFb7idXLnAxngrS843GofaqIoQkTkUhu7UQG/iZJsihKv
+	 vW0F5nwqZXTNGYy0Ftlu5P8TClNVWJYHwdyxqMbI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388323AbfBOPQr (ORCPT
+        id S2388557AbfBOPTP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 10:16:47 -0500
-Received: from mail-eopbgr30042.outbound.protection.outlook.com ([40.107.3.42]:58329
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727663AbfBOPQr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 10:16:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dNNZCbGO5LbrtC5C4tcy/yhDDog8p+a71zmq6zcKO6A=;
- b=alV+jLnsp5QYeEivA3NqL+BPBS6UTpjYgM4NuxTilRTXbfPBA2jxONBeplSHUihRpy01aI7tOlqtwAypQyIm4fWAmvJtplXXgy0+W+Q1MLRjBnXGzyNglGtZEsEf1C5ys/dOejmfLEGKdRhgl2Z6z3QpNTTv9pvjwrVU8voM7qk=
-Received: from AM6PR05MB5240.eurprd05.prod.outlook.com (20.177.196.214) by
- AM6PR05MB6566.eurprd05.prod.outlook.com (20.179.18.143) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.16; Fri, 15 Feb 2019 15:16:42 +0000
-Received: from AM6PR05MB5240.eurprd05.prod.outlook.com
- ([fe80::3542:889c:3a85:3866]) by AM6PR05MB5240.eurprd05.prod.outlook.com
- ([fe80::3542:889c:3a85:3866%5]) with mapi id 15.20.1601.023; Fri, 15 Feb 2019
- 15:16:42 +0000
-From:   Ido Schimmel <idosch@mellanox.com>
-To:     Colin King <colin.king@canonical.com>
-CC:     Jiri Pirko <jiri@mellanox.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] mlxsw: core: fix spelling mistake "temprature" ->
- "temperature"
-Thread-Topic: [PATCH][next] mlxsw: core: fix spelling mistake "temprature" ->
- "temperature"
-Thread-Index: AQHUxUDLgbgCGr1IbUe6IiajOPixQKXg+GOA
-Date:   Fri, 15 Feb 2019 15:16:42 +0000
-Message-ID: <20190215151639.GC18851@splinter>
-References: <20190215151153.17206-1-colin.king@canonical.com>
-In-Reply-To: <20190215151153.17206-1-colin.king@canonical.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6PR07CA0023.eurprd07.prod.outlook.com
- (2603:10a6:209:2a::36) To AM6PR05MB5240.eurprd05.prod.outlook.com
- (2603:10a6:20b:64::22)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=idosch@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [79.176.7.115]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e390cc93-a88b-411e-f9af-08d69358971c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:AM6PR05MB6566;
-x-ms-traffictypediagnostic: AM6PR05MB6566:
-x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;AM6PR05MB6566;23:GBOLTD1Gchw9jWR5jIKr5SWv6N307JnPHA0upafXG?=
- =?us-ascii?Q?HPEOh2t04NU+dZxVtMAjBgQbOMQkpYpjbtY/0SSz4EAKDQY7thBEAe2h//L9?=
- =?us-ascii?Q?bOVLNe88hhgE8TiqocygILeLsJdJVNaLf2Su4vS/r6Iio/y2Kz6BLTz7Iry5?=
- =?us-ascii?Q?7PeZ87eyf3wJCwuCcnmlViKo1CfRHnE7WQxygaOhG0PNWkvsWdo+vogrvQqy?=
- =?us-ascii?Q?CkD2gLq7N4eO5ZKOWyaB/LkMuoBbUDvrzHPKJAvrHes1jKzsCmb6ny3CpwEN?=
- =?us-ascii?Q?6P0AgSroJcM7nrMe/of0p5j+HAi+d/kvbi6TIIy0RSfv7RsZh+oMHmgAvyMP?=
- =?us-ascii?Q?86RylVkoVxlSee4S0rw+3eCSE0BE3Yb0wuzgpUjdoMpn5ek6zQfCmgyD3eOT?=
- =?us-ascii?Q?vx6M1stQjJfBrMjvNjfG+zHSrIGKgbFONYMHjhxAxdncmb/goIDCBa9HBC8H?=
- =?us-ascii?Q?zkAMd176qHbl6oGFGnVztzcrEHF/RUABNHMKy2u/1KCNfcWOwOKZdiJnfsuh?=
- =?us-ascii?Q?8opPyoK2Q6CtS8hpKmaO+PyXSiu7Ki2ZDF58oag/AssRYXMRisat4AHNl+a/?=
- =?us-ascii?Q?sqBnGVlxqX4t1ugDsYwoho6EyoCVB7pZVJDPGkxJ5IUr1GUe2GsQpKG//vlE?=
- =?us-ascii?Q?NC/UzhRlMixMdSCNXzdVLu6JniQHbTS2xVqqWkoZNofp6NZQfDkrGJ50MVWu?=
- =?us-ascii?Q?peZqmEXlD0UACtXVZmWIm13SaO8MakUGBo3Wj5aMjwUQ1pyMj3aY3qDMljqx?=
- =?us-ascii?Q?OAPVaSx/dxjJ8pOBVecKsVOlo90MfcgKMdUjHeE1SdZo76UtoSiZBkWX/7qx?=
- =?us-ascii?Q?7Zdp52LLF7aP9r/KWlwqExTBE4S//Pe97QQdYjIrW8At5FjLEIfCxJiKXAQM?=
- =?us-ascii?Q?wxYzy5ni7IYUgtGwDcfePdP9ay36M+tcyccHZ4q7A3ERbRv6HRuczxnPUlWS?=
- =?us-ascii?Q?MpihOkqwTobgRmyibBJp+QbxN2iK74ZZ3HHFt0asLAuODiWZ9IZ9oAlCMeKF?=
- =?us-ascii?Q?texLcwEZas1YjmtbWIobn7lky85ylxpwiTgrxuOr/5Z8DNOgLKbrAr7mHmCi?=
- =?us-ascii?Q?xeMmCLc5GA90RpT0gd5kl7VrNC+7DOzVA6bRG2ap1plRCIIQgWq2tKxI40B9?=
- =?us-ascii?Q?h/XfsIu8uvi0B4ORy/SAwlXc2wHfDRt576+HAE5F8r5qorApC79tVBx74nks?=
- =?us-ascii?Q?CLTOEMZ0J3N0q/KnRIPamZTYIOLXgQ+D6XBMAitPPa/pvEJ3w2CizJ6y8Neb?=
- =?us-ascii?Q?tKJwNCqRjd878qgZ+0gQVoWx6qvyIboy8MqnF7zaGCTPRV2uzE+17+yGE28J?=
- =?us-ascii?B?Zz09?=
-x-microsoft-antispam-prvs: <AM6PR05MB6566233ECC25B9E9BF90D8B3BF600@AM6PR05MB6566.eurprd05.prod.outlook.com>
-x-forefront-prvs: 09497C15EB
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(396003)(366004)(39860400002)(376002)(346002)(136003)(189003)(199004)(81156014)(1076003)(14454004)(97736004)(9686003)(8936002)(186003)(7736002)(386003)(305945005)(558084003)(478600001)(486006)(52116002)(6436002)(229853002)(26005)(68736007)(11346002)(105586002)(6506007)(476003)(33896004)(6512007)(6486002)(8676002)(6916009)(86362001)(99286004)(446003)(76176011)(25786009)(53936002)(4326008)(6116002)(3846002)(66066001)(316002)(54906003)(71190400001)(81166006)(256004)(71200400001)(33716001)(102836004)(106356001)(6246003)(2906002)(33656002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR05MB6566;H:AM6PR05MB5240.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: GLAA3X7wycEOxj3vVvOReaYW9Q9PIJQh3lF9q3UD4YTX7oaa1pC+W7tfXret2KZCrB3l4yw+7e/0b6JIm4gyhIupPqppF/45lXrIxWEI8gs5mrqroq5cDnfADN8XhHJlUiYNPBL86793FE3INx8mMy7V3z2QUk0aU45tdUrsCdrODHHpWBNo18CxER50blpD+Y0tHLx/ZlXTjGC83Q/hcDBkFO9zPvEFclrzFOWt3itnAJ7WeDeU2T96tdxJsnCMtNVBSWcBJqEv5j+hhX4rnQGxn+4g+Kv8HzUQL7+ybU4kodZzM/LVIyZmtwoB+j1M7gFOR7lwPulNATujXZmI1dJv1KQwnPlzmY/SCVDS8BcpVfKJTxh2xNK9MbWoZyODeUfxmVAmIEt6IB+o/LKB5NbgF0YfihVQYA4p0a5ZjhE=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <42E2E64ABD7B4B48B18646015F6C78F8@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Fri, 15 Feb 2019 10:19:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58210 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727536AbfBOPTP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 10:19:15 -0500
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A7BA21925;
+        Fri, 15 Feb 2019 15:19:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550243953;
+        bh=Uf8Xcrlvvln/nba+KUI5sC40U5pQoOw7T2CxKTwt6M8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=0hj9NSOlVfTCXktPQu27eVOzmjofqrKZpYRcI8Josnl5tKlAc7X2RnzqWlDD+wmB9
+         aEo9Arbjvn2i6WDnmQGiSHI2zaV74Tj9TFZRHsaWABnujabeeBRClLKagRXLUXnCQs
+         kmlzVdQBJ+/7nsj2XkUxuDAQSf1QVviv1iIMcsXA=
+Date:   Fri, 15 Feb 2019 10:19:12 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Richard Weinberger <richard.weinberger@gmail.com>,
+        Samuel Dionne-Riel <samuel@dionne-riel.com>,
+        LKML <linux-kernel@vger.kernel.org>, graham@grahamc.com,
+        Oleg Nesterov <oleg@redhat.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: Userspace regression in LTS and stable kernels
+Message-ID: <20190215151912.GA10616@sasha-vm>
+References: <CAN1fySViLgrLAHHfTHMef-Bkh73kUHKP-ava6TbgALeSE4LfFw@mail.gmail.com>
+ <CAFLxGvwpuxKF4UWdsULwQWo7kgVLMNHC=77dN+w-A0a6avrAXA@mail.gmail.com>
+ <CAHk-=wjtH5ombebghG-SDNGppJF4a5bZAUqndtZ3tauWjgw5_w@mail.gmail.com>
+ <20190214122027.c0df36282d65dc9979248117@linux-foundation.org>
+ <20190215070022.GD14473@kroah.com>
+ <20190215091000.GT4525@dhcp22.suse.cz>
+ <20190215092013.GA32575@kroah.com>
+ <20190215094205.GW4525@dhcp22.suse.cz>
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e390cc93-a88b-411e-f9af-08d69358971c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Feb 2019 15:16:41.8125
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR05MB6566
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190215094205.GW4525@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 03:11:53PM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
->=20
-> There is a spelling mistake in several dev_err messages, fix these.
->=20
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Fri, Feb 15, 2019 at 10:42:05AM +0100, Michal Hocko wrote:
+>On Fri 15-02-19 10:20:13, Greg KH wrote:
+>> On Fri, Feb 15, 2019 at 10:10:00AM +0100, Michal Hocko wrote:
+>> > On Fri 15-02-19 08:00:22, Greg KH wrote:
+>> > > On Thu, Feb 14, 2019 at 12:20:27PM -0800, Andrew Morton wrote:
+>> > > > On Thu, 14 Feb 2019 09:56:46 -0800 Linus Torvalds <torvalds@linux-foundation.org> wrote:
+>> > > >
+>> > > > > On Wed, Feb 13, 2019 at 3:37 PM Richard Weinberger
+>> > > > > <richard.weinberger@gmail.com> wrote:
+>> > > > > >
+>> > > > > > Your shebang line exceeds BINPRM_BUF_SIZE.
+>> > > > > > Before the said commit the kernel silently truncated the shebang line
+>> > > > > > (and corrupted it),
+>> > > > > > now it tells the user that the line is too long.
+>> > > > >
+>> > > > > It doesn't matter if it "corrupted" things by truncating it. All that
+>> > > > > matters is "it used to work, now it doesn't"
+>> > > > >
+>> > > > > Yes, maybe it never *should* have worked. And yes, it's sad that
+>> > > > > people apparently had cases that depended on this odd behavior, but
+>> > > > > there we are.
+>> > > > >
+>> > > > > I see that Kees has a patch to fix it up.
+>> > > > >
+>> > > >
+>> > > > Greg, I think we have a problem here.
+>> > > >
+>> > > > 8099b047ecc431518 ("exec: load_script: don't blindly truncate shebang
+>> > > > string") wasn't marked for backporting.  And, presumably as a
+>> > > > consequence, Kees's fix "exec: load_script: allow interpreter argument
+>> > > > truncation" was not marked for backporting.
+>> > > >
+>> > > > 8099b047ecc431518 hasn't even appeared in a Linus released kernel, yet
+>> > > > it is now present in 4.9.x, 4.14.x, 4.19.x and 4.20.x.
+>> > >
+>> > > It came in 5.0-rc1, so it fits the "in a Linus released kernel"
+>> > > requirement.  If we are to wait until it shows up in a -final, that
+>> > > would be months too late for almost all of these types of patches that
+>> > > are picked up.
+>> >
+>> > rc1 is just a too early. Waiting few more rcs or even a final release
+>> > for something that people do not see as an issue should be just fine.
+>> > Consider this particular patch and tell me why it had to be rushed in
+>> > the first place. The original code was broken for _years_ but I do not
+>> > remember anybody would be complaining.
+>>
+>> This patch was in 4.20.10, which was released on Feb 12 while 5.0-rc1
+>> came out on Jan 6.  Over a month delay.
+>
+>Obviously not long enough.
 
-Reviewed-by: Ido Schimmel <idosch@mellanox.com>
+You're assuming that if we wouldn't have taken this patch to stable
+somehow someone else would notice this bug and fix it.
 
-Thanks!
+What test do we have that would catch this? Which testsuite tests for
+long shebang lines? Where is the test added together with this patch
+that covers this and similar cases?
+
+The fact is that many patches are not tested until they get to stable,
+whether we add them the same week they went upstream or months later.
+This is a great case for this: I doubt anyone but NixOS does this crazy
+thing with shebang lines, so who else would discover the bug?
+
+If this is indeed a case of us jumping the gun and shipping stuff too
+early before all tests are complete, please point me to the test that we
+missed and I'll make sure that for any future kernel release it gets run
+before we ship a stable kernel.
+
+>> > > > I don't know if Oleg considered backporting that patch.  I certainly
+>> > > > did (I always do), and I decided against doing so.  Yet there it is.
+>> > >
+>> > > This came in through Sasha's tools, which give people a week or so to
+>> > > say "hey, this isn't a stable patch!" and it seems everyone ignored that
+>> > > :(
+>> >
+>> > I thought we were through this already. Automagic autoselection of
+>> > patches in the core kernel (or mmotm tree patches in particular) is too
+>> > dangerous. We try hard to consider each and every patch for stable. Even
+>> > if something slips through then it is much more preferred to ask for a
+>> > stable backport in the respective email thread and wait for a conclusion
+>> > before adding it.
+>>
+>> We have a list of blacklisted files/subsystems for people that do not
+>> want this to happen to their area of the kernel.  The patch seemed to
+>> make sense, and it passed all known tests that we currently have.
+>
+>Yes, the patch makes sense (I wouldn't give my acked-by otherwise). But
+>this is one of the area where things that make sense might still break
+>because it is hard to assume what userspace depends on.
+
+Great, so the solution is to just not take these things into stable at
+all? The solution should be to add tests to the patches that go in there
+to verify their correctness and that they don't regress in the future.
+
+If you're really concerned about subsystems being brittle the solution
+is to improve their testing rather push stuff in and hope nothing
+explodes.
+
+On one hand you Ack it saying it looks great to you and should be
+merged, but on the other hand you're saying that you don't really trust
+the patch?
+
+Really, if I wouldn't pick this patch now what do you think would have
+happened? It would just pop up in a few months as we roll our stable
+kernel forward.
+
+>> Sometimes things will slip through like this, it happens.  And really, a
+>> 3 day turn-around-time to resolve this is pretty good, don't you think?
+>
+>Yes, but that doesn't make any difference on the fact that this was not
+>marked for stable and I still think this is not a stable material - at
+>least not at this moment.
+
+Hindsight is 20/20 :)
+
+If people were good at understanding the impact and implications their
+patch has on the kernel we would never introduce new bugs!
+
+I'll happily list a bunch more patches where folks didn't think they're
+stable material, but turned out to be important fixes.
+
+--
+Thanks,
+Sasha
