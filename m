@@ -2,131 +2,106 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F022C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:57:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B352C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 060CF222A1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:57:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 37486206BB
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:58:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="3+v3P5fp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390923AbfBOH5K (ORCPT
+        id S2390965AbfBOH6s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 02:57:10 -0500
-Received: from smtp2.provo.novell.com ([137.65.250.81]:54013 "EHLO
-        smtp2.provo.novell.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726335AbfBOH5K (ORCPT
-        <rfc822;groupwise-linux-kernel@vger.kernel.org:0:0>);
-        Fri, 15 Feb 2019 02:57:10 -0500
-Received: from linux-fcij.suse (prv-ext-foundry1int.gns.novell.com [137.65.251.240])
-        by smtp2.provo.novell.com with ESMTP (TLS encrypted); Fri, 15 Feb 2019 00:57:06 -0700
-Subject: Re: linux 4.19.19: md0_raid:1317 blocked for more than 120 seconds.
-To:     Wolfgang Walter <linux@stwm.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, NeilBrown <neilb@suse.com>,
-        linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <2131016.q2kFhguZXe@stwm.de> <3057098.nBgIypvgED@stwm.de>
- <0c832f67-de10-8872-d3db-6a9f11c97454@suse.com> <3877135.KJXZSZYZ1L@stwm.de>
-From:   Guoqing Jiang <gqjiang@suse.com>
-Message-ID: <4703e846-d01b-ee2f-3306-958845a01d05@suse.com>
-Date:   Fri, 15 Feb 2019 15:57:02 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 15 Feb 2019 02:58:48 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:53464 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727249AbfBOH6s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 02:58:48 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1F7n0t9003543;
+        Fri, 15 Feb 2019 07:58:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=xGG5BLeVn/vzYF68+/jx4DYwNAgtI72APfiYgr2Yf0Q=;
+ b=3+v3P5fpt+Za29UHvG8EqUMOKOXHi3IxxChiljAoBr8DnQvrazWRm6fJBAZ6hnhm3R63
+ /3Hc9ZzcN0iG/yJ6qBzkZx1CEDdSrbvDmm10Jv0KeAC73RZ6X/jZY6suRSdTi5jigg3i
+ MaKSoCQipA6dams5zSu+VrasLDJQYgsEdZrCJtvOG/K6osjFQ7kfBg4ALROgMN7SmbAw
+ vnnoqp2ZtwW21deXeobSgeDmPE0me4Hqi9018l1RQhegnrkF7vt1zSLWnZJVEJPvX+Ee
+ 2aTYqnggwVlQ3IBfWrH7D4sBUSwb2IRmJQ5vH1gSjCtY+A1G8bDwHXXTIN2OTjr1nnZ4 +Q== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2qhre5va1q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Feb 2019 07:58:10 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1F7w9Js011783
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Feb 2019 07:58:09 GMT
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1F7w9g1031533;
+        Fri, 15 Feb 2019 07:58:09 GMT
+Received: from kadam (/197.157.0.55)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 15 Feb 2019 07:58:08 +0000
+Date:   Fri, 15 Feb 2019 10:57:57 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     Gao Xiang <gaoxiang25@huawei.com>,
+        Al Viro <viro@ZenIV.linux.org.uk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-erofs@lists.ozlabs.org,
+        Chao Yu <chao@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        stable@vger.kernel.org, weidu.du@huawei.com,
+        Fang Wei <fangwei1@huawei.com>, Miao Xie <miaoxie@huawei.com>
+Subject: Re: [PATCH v2] staging: erofs: keep corrupted fs from crashing
+ kernel in erofs_namei()
+Message-ID: <20190215075757.GG2326@kadam>
+References: <20190201121631.15179-1-gaoxiang25@huawei.com>
+ <a9381c0d-9857-4d03-710d-80006d426bbc@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <3877135.KJXZSZYZ1L@stwm.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a9381c0d-9857-4d03-710d-80006d426bbc@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9167 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=685 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902150059
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 15, 2019 at 03:02:25PM +0800, Chao Yu wrote:
+> On 2019/2/1 20:16, Gao Xiang wrote:
+> > +	/*
+> > +	 * on-disk error, let's only BUG_ON in the debugging mode.
+> > +	 * otherwise, it will return 1 to just skip the invalid name
+> > +	 * and go on (in consideration of the lookup performance).
+> > +	 */
+> > +	DBG_BUGON(qd->name > qd->end);
+> 
+> qd->name == qd->end is not allowed as well?
+> 
+> So will it be better to return directly here?
+> 
+> 	if (unlikely(qd->name >= qd->end)) {
+> 		DBG_BUGON(1);
+> 		return 1;
+> 	}
+
+Please don't add likely/unlikely() annotations unless you have
+benchmarked it and it makes a difference.
+
+regards,
+dan carpenter
 
 
-On 2/14/19 11:27 PM, Wolfgang Walter wrote:
-> Am Donnerstag, 14. Februar 2019, 10:09:56 schrieb Guoqing Jiang:
->> On 2/12/19 7:20 PM, Wolfgang Walter wrote:
->>> Am Dienstag, 12. Februar 2019, 16:20:11 schrieb Guoqing Jiang:
->>>> On 2/11/19 11:12 PM, Wolfgang Walter wrote:
->>>>> With 4.19.19 we see sometimes the following issue (practically only with
->>>>> blk_mq, though):
->>>>>
->>>>> Feb  4 20:04:46 tettnang kernel: [252300.060165] INFO: task
->>>>> md0_raid1:317
->>>>> blocked for more than 120 seconds. Feb  4 20:04:46 tettnang kernel:
->>>>> [252300.060188]       Not tainted 4.19.19-debian64.all+1.1 #1 Feb  4
->>>>> 20:04:46 tettnang kernel: [252300.060197] "echo 0 >
->>>>> /proc/sys/kernel/hung_task_timeout_secs" disables this message. Feb  4
->>>>> 20:04:46 tettnang kernel: [252300.060207] md0_raid1       D    0   317
->>>>>
->>>>>     2 0x80000000 Feb  4 20:04:46 tettnang kernel: [252300.060211] Call
->>>>>
->>>>> Trace:
->>>>> Feb  4 20:04:46 tettnang kernel: [252300.060222]  ?
->>>>> __schedule+0x2a2/0x8c0
->>>>> Feb  4 20:04:46 tettnang kernel: [252300.060226]  ?
->>>>> _raw_spin_unlock_irqrestore+0x20/0x40 Feb  4 20:04:46 tettnang kernel:
->>>>> [252300.060229]  schedule+0x32/0x90 Feb  4 20:04:46 tettnang kernel:
->>>>> [252300.060241]  md_super_wait+0x69/0xa0 [md_mod] Feb  4 20:04:46
->>>>> tettnang kernel: [252300.060247]  ? finish_wait+0x80/0x80 Feb  4
->>>>> 20:04:46
->>>>> tettnang kernel: [252300.060255]  md_bitmap_wait_writes+0x8e/0xa0
->>>>> [md_mod] Feb  4 20:04:46 tettnang kernel: [252300.060263]  ?
->>>>> md_bitmap_get_counter+0x42/0xd0 [md_mod] Feb  4 20:04:46 tettnang
->>>>> kernel:
->>>>> [252300.060271]  md_bitmap_daemon_work+0x1e8/0x380 [md_mod] Feb  4
->>>>> 20:04:46 tettnang kernel: [252300.060278]  ? md_rdev_init+0xb0/0xb0
->>>>> [md_mod] Feb  4 20:04:46 tettnang kernel: [252300.060285]
->>>>> md_check_recovery+0x26/0x540 [md_mod] Feb  4 20:04:46 tettnang kernel:
->>>>> [252300.060290]  raid1d+0x5c/0xf00 [raid1] Feb  4 20:04:46 tettnang
->>>>> kernel: [252300.060294]  ? preempt_count_add+0x79/0xb0 Feb  4 20:04:46
->>>>> tettnang kernel: [252300.060298]  ? lock_timer_base+0x67/0x80 Feb  4
->>>>> 20:04:46 tettnang kernel: [252300.060302]  ?
->>>>> _raw_spin_unlock_irqrestore+0x20/0x40 Feb  4 20:04:46 tettnang kernel:
->>>>> [252300.060304]  ? try_to_del_timer_sync+0x4d/0x80 Feb  4 20:04:46
->>>>> tettnang kernel: [252300.060306]  ? del_timer_sync+0x35/0x40 Feb  4
->>>>> 20:04:46 tettnang kernel: [252300.060309]  ?
->>>>> schedule_timeout+0x17a/0x3b0
->>>>> Feb  4 20:04:46 tettnang kernel: [252300.060312]  ?
->>>>> preempt_count_add+0x79/0xb0 Feb  4 20:04:46 tettnang kernel:
->>>>> [252300.060315]  ? _raw_spin_lock_irqsave+0x25/0x50 Feb  4 20:04:46
->>>>> tettnang kernel: [252300.060321]  ? md_rdev_init+0xb0/0xb0 [md_mod] Feb
->>>>> 4 20:04:46 tettnang kernel: [252300.060327]  ? md_thread+0xf9/0x160
->>>>> [md_mod] Feb  4 20:04:46 tettnang kernel: [252300.060330]  ?
->>>>> r1bio_pool_alloc+0x20/0x20 [raid1] Feb  4 20:04:46 tettnang kernel:
->>>>> [252300.060336]  md_thread+0xf9/0x160 [md_mod] Feb  4 20:04:46 tettnang
->>>>> kernel: [252300.060340]  ? finish_wait+0x80/0x80 Feb  4 20:04:46
->>>>> tettnang
->>>>> kernel: [252300.060344]  kthread+0x112/0x130 Feb  4 20:04:46 tettnang
->>>>> kernel: [252300.060346]  ? kthread_create_worker_on_cpu+0x70/0x70 Feb  4
->>>>> 20:04:46 tettnang kernel: [252300.060350]  ret_from_fork+0x35/0x40
->>>>>
->>>>> I saw that there was a similar problem with raid10 and an upstream patch
->>>>>
->>>>> e820d55cb99dd93ac2dc949cf486bb187e5cd70d
->>>>> md: fix raid10 hang issue caused by barrier
->>>>> by  Guoqing Jiang
->>>>>
->>>>> I wonder if there is a similar fix needed for raid1?
->>>> Seems not, the calltrace tells the previous write superblock IO was not
->>>> finish as expected,
->>>> there is a report for raid5 which has similar problem with md_super_wait
->>>> in the link [1]. Maybe
->>>> you can disable blk-mq to narrow down the issue as well.
->>> I already did for 4 weeks. I didn't saw this with blk-mq disabled (for
->>> scsi
->>> and md), though this may be by luck.
->> Then I guess it maybe related to blk-mq, which scheduler are you used
->> with blk-mq?
->> And maybe you can switch it to see if it is caused by specified
->> scheduler or not.
-> mq-deadline for SCSI and none for md and dm.
-
-Can you try with the patch [1]? In case the block was caused by flush.
-
-[1]: https://patchwork.kernel.org/patch/10787903/
-
-
-Thanks,
-Guoqing
