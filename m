@@ -2,107 +2,80 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 040A5C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E796C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:12:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4F872082F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:10:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46041218FF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:12:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388530AbfBOSKn (ORCPT
+        id S1731462AbfBOSM0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 13:10:43 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:60976 "EHLO mx1.redhat.com"
+        Fri, 15 Feb 2019 13:12:26 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38808 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387853AbfBOSKm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 13:10:42 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        id S1725835AbfBOSMZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 13:12:25 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D7F76C3A93;
-        Fri, 15 Feb 2019 18:10:42 +0000 (UTC)
-Received: from sandy.ghostprotocols.net (ovpn-112-20.phx2.redhat.com [10.3.112.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 28C0F19C65;
-        Fri, 15 Feb 2019 18:10:42 +0000 (UTC)
-Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
-        id 1868655D3; Fri, 15 Feb 2019 16:10:38 -0200 (BRST)
-Date:   Fri, 15 Feb 2019 16:10:38 -0200
-From:   Arnaldo Carvalho de Melo <acme@redhat.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        jolsa@redhat.com, Mansour Alharthi <malharthi9@gatech.edu>,
-        acme@kernel.org
-Subject: Re: [PATCH v0 1/2] perf: Copy parent's address filter offsets on
- clone
-Message-ID: <20190215181038.GK5784@redhat.com>
-References: <20190215115655.63469-1-alexander.shishkin@linux.intel.com>
- <20190215115655.63469-2-alexander.shishkin@linux.intel.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id B59E130EF62;
+        Fri, 15 Feb 2019 18:12:25 +0000 (UTC)
+Received: from krava (unknown [10.43.17.23])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 3861F5C21E;
+        Fri, 15 Feb 2019 18:12:24 +0000 (UTC)
+Date:   Fri, 15 Feb 2019 19:12:23 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH 09/10] perf tools: Add perf_topo_cpu object
+Message-ID: <20190215181223.GA8393@krava>
+References: <20190213123246.4015-1-jolsa@kernel.org>
+ <20190213123246.4015-10-jolsa@kernel.org>
+ <20190213211935.GH1904@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190215115655.63469-2-alexander.shishkin@linux.intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 15 Feb 2019 18:10:42 +0000 (UTC)
+In-Reply-To: <20190213211935.GH1904@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 15 Feb 2019 18:12:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Feb 15, 2019 at 01:56:54PM +0200, Alexander Shishkin escreveu:
-> When a child event is allocated in the inherit_event() path, the VMA
-> based filter offsets are not copied from the parent, even though the
-> address space mapping of the new task remains the same, which leads
-> to no trace for the new task until exec.
-
-Peter, I'm processing this one, ok? Ack?
-
-- Arnaldo
- 
-> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Fixes: 375637bc5249 ("perf/core: Introduce address range filtering")
-> Reported-by: Mansour Alharthi <malharthi9@gatech.edu>
-> ---
->  kernel/events/core.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
+On Wed, Feb 13, 2019 at 06:19:35PM -0300, Arnaldo Carvalho de Melo wrote:
+> Em Wed, Feb 13, 2019 at 01:32:45PM +0100, Jiri Olsa escreveu:
+> > Making struct cpu_topo global and renaming it to
+> > struct perf_topo_cpu, so it can be used from record
+> > command in following patches.
+> > 
+> > Adding following interface functions to load/free
+> > cpu topology details:
+> >   struct perf_topo_cpu *perf_topo_cpu__new(void);
+> >   void perf_topo_cpu__free(struct perf_topo_cpu *tp);
+> > 
+> > Moving it into separate object file cputopo.c together
+> > with numa related object in following patches.
+> > 
+> > No functional change, the new interface will be used
+> > in upcoming changes.
 > 
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 5aeb4c74fb99..2d89efc0a3e0 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -1255,6 +1255,7 @@ static void put_ctx(struct perf_event_context *ctx)
->   *	      perf_event_context::lock
->   *	    perf_event::mmap_mutex
->   *	    mmap_sem
-> + *	      perf_addr_filters_head::lock
->   *
->   *    cpu_hotplug_lock
->   *      pmus_lock
-> @@ -10312,6 +10313,20 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
->  			goto err_per_task;
->  		}
->  
-> +		/*
-> +		 * Clone the parent's vma offsets: they are valid until exec()
-> +		 * even if the mm is not shared with the parent.
-> +		 */
-> +		if (event->parent) {
-> +			struct perf_addr_filters_head *ifh = perf_event_addr_filters(event);
-> +
-> +			raw_spin_lock_irq(&ifh->lock);
-> +			memcpy(event->addr_filters_offs,
-> +			       event->parent->addr_filters_offs,
-> +			       pmu->nr_addr_filters * sizeof(unsigned long));
-> +			raw_spin_unlock_irq(&ifh->lock);
-> +		}
-> +
->  		/* force hw sync on the address filters */
->  		event->addr_filters_gen = 1;
->  	}
-> -- 
-> 2.20.1
+> Please rename it to 'struct cpu_topology' and make its related functions
+> be cpu_topology__new, the __free() should be __delete() since it doesn't
+> just free its members, but deletes itself as well.
+> 
+> I think this is not perf specific at all, so no need for the 'perf'
+> prefix.
+
+ok, will do
+
+jirka
