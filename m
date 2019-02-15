@@ -7,43 +7,45 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04137C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:34:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE2DC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:40:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBD0C206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:34:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACB19222F7
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:40:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392913AbfBOJep (ORCPT
+        id S2393154AbfBOJkX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:34:45 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:57233 "EHLO
+        Fri, 15 Feb 2019 04:40:23 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:40113 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726146AbfBOJeo (ORCPT
+        with ESMTP id S2390412AbfBOJkX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 04:34:44 -0500
+        Fri, 15 Feb 2019 04:40:23 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1F9YGhh1117149
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1F9e5tI1118371
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 15 Feb 2019 01:34:16 -0800
+        Fri, 15 Feb 2019 01:40:05 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1F9YGde1117146;
-        Fri, 15 Feb 2019 01:34:16 -0800
-Date:   Fri, 15 Feb 2019 01:34:16 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1F9e5Fi1118365;
+        Fri, 15 Feb 2019 01:40:05 -0800
+Date:   Fri, 15 Feb 2019 01:40:05 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-oq7bvaaf07gsd4yqty3107u2@git.kernel.org>
-Cc:     adrian.hunter@intel.com, namhyung@kernel.org,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        lclaudio@redhat.com, jolsa@kernel.org, tglx@linutronix.de,
-        hpa@zytor.com, acme@redhat.com, wangnan0@huawei.com
-Reply-To: wangnan0@huawei.com, acme@redhat.com, hpa@zytor.com,
-          tglx@linutronix.de, jolsa@kernel.org, lclaudio@redhat.com,
-          mingo@kernel.org, linux-kernel@vger.kernel.org,
-          namhyung@kernel.org, adrian.hunter@intel.com
+From:   tip-bot for Mathieu Poirier <tipbot@zytor.com>
+Message-ID: <tip-fc7ac4138cf5ab76850bca2b9a8f43449c762a37@git.kernel.org>
+Cc:     leo.yan@linaro.org, suzuki.poulose@arm.com, hpa@zytor.com,
+        peterz@infradead.org, jolsa@redhat.com, tglx@linutronix.de,
+        mathieu.poirier@linaro.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, acme@redhat.com
+Reply-To: linux-kernel@vger.kernel.org, acme@redhat.com, mingo@kernel.org,
+          mathieu.poirier@linaro.org, jolsa@redhat.com, tglx@linutronix.de,
+          hpa@zytor.com, leo.yan@linaro.org, suzuki.poulose@arm.com,
+          peterz@infradead.org
+In-Reply-To: <20190212171618.25355-3-mathieu.poirier@linaro.org>
+References: <20190212171618.25355-3-mathieu.poirier@linaro.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf trace: Check if the 'fd' is negative when
- mapping it to pathname
-Git-Commit-ID: 051074867434cc520c08f188479d4757dcfdaef8
+Subject: [tip:perf/core] perf cs-etm: Remove unused structure field "time"
+ and "timestamp"
+Git-Commit-ID: fc7ac4138cf5ab76850bca2b9a8f43449c762a37
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,73 +59,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  051074867434cc520c08f188479d4757dcfdaef8
-Gitweb:     https://git.kernel.org/tip/051074867434cc520c08f188479d4757dcfdaef8
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 12 Feb 2019 10:18:36 -0300
+Commit-ID:  fc7ac4138cf5ab76850bca2b9a8f43449c762a37
+Gitweb:     https://git.kernel.org/tip/fc7ac4138cf5ab76850bca2b9a8f43449c762a37
+Author:     Mathieu Poirier <mathieu.poirier@linaro.org>
+AuthorDate: Tue, 12 Feb 2019 10:16:07 -0700
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 14 Feb 2019 13:31:11 -0300
+CommitDate: Thu, 14 Feb 2019 15:18:06 -0300
 
-perf trace: Check if the 'fd' is negative when mapping it to pathname
+perf cs-etm: Remove unused structure field "time" and "timestamp"
 
-We were crashing when processing a negative fd:
+Field "time" and "timestamp" in structure cs_etm_queue are no longer
+used and need to be removed.
 
-  Program received signal SIGSEGV, Segmentation fault.
-  0x0000000000609bbf in syscall_arg__scnprintf_ioctl_cmd (bf=0x1172eca "", size=2038, arg=0x7fffffff8360) at trace/beauty/ioctl.c:182
-  182			if (file->dev_maj == USB_DEVICE_MAJOR)
-  Missing separate debuginfos, use: dnf debuginfo-install bzip2-libs-1.0.6-28.fc29.x86_64 elfutils-libelf-0.174-5.fc29.x86_64 elfutils-libs-0.174-5.fc29.x86_64 glib2-2.58.3-1.fc29.x86_64 libbabeltrace-1.5.6-1.fc29.x86_64 libunwind-1.2.1-6.fc29.x86_64 libuuid-2.32.1-1.fc29.x86_64 libxcrypt-4.4.3-2.fc29.x86_64 numactl-libs-2.0.12-1.fc29.x86_64 openssl-libs-1.1.1a-1.fc29.x86_64 pcre-8.42-6.fc29.x86_64 perl-libs-5.28.1-427.fc29.x86_64 popt-1.16-15.fc29.x86_64 python2-libs-2.7.15-11.fc29.x86_64 slang-2.3.2-4.fc29.x86_64 xz-libs-5.2.4-3.fc29.x86_64
-  (gdb) bt
-  #0  0x0000000000609bbf in syscall_arg__scnprintf_ioctl_cmd (bf=0x1172eca "", size=2038, arg=0x7fffffff8360) at trace/beauty/ioctl.c:182
-  #1  0x000000000048e295 in syscall__scnprintf_val (sc=0x123b500, bf=0x1172eca "", size=2038, arg=0x7fffffff8360, val=21519)
-      at builtin-trace.c:1594
-  #2  0x000000000048e60d in syscall__scnprintf_args (sc=0x123b500, bf=0x1172ec6 "-1, ", size=2042, args=0x7ffff6a7c034 "\377\377\377\377",
-      augmented_args=0x7ffff6a7c064, augmented_args_size=4, trace=0x7fffffffa8d0, thread=0x1175cd0) at builtin-trace.c:1661
-  #3  0x000000000048f04e in trace__sys_enter (trace=0x7fffffffa8d0, evsel=0xb260b0, event=0x7ffff6a7bfe8, sample=0x7fffffff84f0)
-      at builtin-trace.c:1880
-  #4  0x00000000004915a4 in trace__handle_event (trace=0x7fffffffa8d0, event=0x7ffff6a7bfe8, sample=0x7fffffff84f0) at builtin-trace.c:2590
-  #5  0x0000000000491eed in __trace__deliver_event (trace=0x7fffffffa8d0, event=0x7ffff6a7bfe8) at builtin-trace.c:2818
-  #6  0x0000000000492030 in trace__deliver_event (trace=0x7fffffffa8d0, event=0x7ffff6a7bfe8) at builtin-trace.c:2845
-  #7  0x0000000000492896 in trace__run (trace=0x7fffffffa8d0, argc=0, argv=0x7fffffffdb58) at builtin-trace.c:3040
-  #8  0x000000000049603a in cmd_trace (argc=0, argv=0x7fffffffdb58) at builtin-trace.c:3952
-  #9  0x00000000004d5103 in main (argc=1, argv=0x7fffffffdb58) at perf.c:474
-  (gdb) p fd
-  $1 = -1
-  (gdb) p file
-  $7 = (struct file *) 0xfffffffffffffff0
-  (gdb) p ((struct thread_trace *)arg->thread)->files.table + fd
-  $8 = (struct file *) 0xfffffffffffffff0
-  (gdb)
-
-Check for that and return NULL instead.
-
-This problem was introduced recently, the other codepaths leading to
-thread_trace__files_entry() check for negative fds, like thread__fd_path(),
-but we need to do it at thread_trace__files_entry() as more users are now
-calling it directly.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Fixes: 2d473389f87a ("perf trace beauty: Export function to get the files for a thread")
-Link: https://lkml.kernel.org/n/tip-oq7bvaaf07gsd4yqty3107u2@git.kernel.org
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Leo Yan <leo.yan@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Suzuki K Poulouse <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/20190212171618.25355-3-mathieu.poirier@linaro.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/perf/util/cs-etm.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index b4e420c41831..a9b51f59ab54 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -1041,6 +1041,9 @@ static const size_t trace__entry_str_size = 2048;
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index ebd68eb43da9..1d9419a0cf0c 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -69,8 +69,6 @@ struct cs_etm_queue {
+ 	unsigned int queue_nr;
+ 	pid_t pid, tid;
+ 	int cpu;
+-	u64 time;
+-	u64 timestamp;
+ 	u64 offset;
+ 	u64 period_instructions;
+ 	struct branch_stack *last_branch;
+@@ -82,7 +80,7 @@ struct cs_etm_queue {
  
- static struct file *thread_trace__files_entry(struct thread_trace *ttrace, int fd)
+ static int cs_etm__update_queues(struct cs_etm_auxtrace *etm);
+ static int cs_etm__process_timeless_queues(struct cs_etm_auxtrace *etm,
+-					   pid_t tid, u64 time_);
++					   pid_t tid);
+ 
+ /* PTMs ETMIDR [11:8] set to b0011 */
+ #define ETMIDR_PTM_VERSION 0x00000300
+@@ -234,7 +232,7 @@ static int cs_etm__flush_events(struct perf_session *session,
+ 	if (ret < 0)
+ 		return ret;
+ 
+-	return cs_etm__process_timeless_queues(etm, -1, MAX_TIMESTAMP - 1);
++	return cs_etm__process_timeless_queues(etm, -1);
+ }
+ 
+ static void cs_etm__free_queue(void *priv)
+@@ -1583,7 +1581,7 @@ static int cs_etm__run_decoder(struct cs_etm_queue *etmq)
+ }
+ 
+ static int cs_etm__process_timeless_queues(struct cs_etm_auxtrace *etm,
+-					   pid_t tid, u64 time_)
++					   pid_t tid)
  {
-+	if (fd < 0)
-+		return NULL;
-+
- 	if (fd > ttrace->files.max) {
- 		struct file *nfiles = realloc(ttrace->files.table, (fd + 1) * sizeof(struct file));
+ 	unsigned int i;
+ 	struct auxtrace_queues *queues = &etm->queues;
+@@ -1593,7 +1591,6 @@ static int cs_etm__process_timeless_queues(struct cs_etm_auxtrace *etm,
+ 		struct cs_etm_queue *etmq = queue->priv;
  
+ 		if (etmq && ((tid == -1) || (etmq->tid == tid))) {
+-			etmq->time = time_;
+ 			cs_etm__set_pid_tid_cpu(etm, queue);
+ 			cs_etm__run_decoder(etmq);
+ 		}
+@@ -1637,8 +1634,7 @@ static int cs_etm__process_event(struct perf_session *session,
+ 
+ 	if (event->header.type == PERF_RECORD_EXIT)
+ 		return cs_etm__process_timeless_queues(etm,
+-						       event->fork.tid,
+-						       sample->time);
++						       event->fork.tid);
+ 
+ 	return 0;
+ }
