@@ -2,777 +2,94 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C87C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F5BEC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:31:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ACCB206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:31:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0672A206BA
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:31:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404962AbfBOJbC (ORCPT
+        id S2404985AbfBOJb2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:31:02 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:33277 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404940AbfBOJa6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 04:30:58 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1F9UP1R1116546
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 15 Feb 2019 01:30:25 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1F9UOmo1116543;
-        Fri, 15 Feb 2019 01:30:24 -0800
-Date:   Fri, 15 Feb 2019 01:30:24 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Paul Clarke <tipbot@zytor.com>
-Message-ID: <tip-0133491d4641b493aa0d0e5bd66b52999619cd8a@git.kernel.org>
-Cc:     maddy@linux.vnet.ibm.com, mpe@ellerman.id.au, mingo@kernel.org,
-        ananth@linux.vnet.ibm.com, hpa@zytor.com, cel@us.ibm.com,
-        pc@us.ibm.com, naveen.n.rao@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, acme@redhat.com,
-        sukadev@linux.vnet.ibm.com, tglx@linutronix.de
-Reply-To: hpa@zytor.com, ananth@linux.vnet.ibm.com,
-          maddy@linux.vnet.ibm.com, mingo@kernel.org, mpe@ellerman.id.au,
-          cel@us.ibm.com, naveen.n.rao@linux.vnet.ibm.com, pc@us.ibm.com,
-          linux-kernel@vger.kernel.org, sukadev@linux.vnet.ibm.com,
-          tglx@linutronix.de, acme@redhat.com
-In-Reply-To: <20190209181429.23950-3-pc@us.ibm.com>
-References: <20190209181429.23950-3-pc@us.ibm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf vendor events power9: Dl1_reloads,
- instruction_misses, l[23]_stats & pteg_reloads metrics
-Git-Commit-ID: 0133491d4641b493aa0d0e5bd66b52999619cd8a
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 15 Feb 2019 04:31:28 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:56112 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727555AbfBOJb1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 04:31:27 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 2C723EC645EF888B6F92;
+        Fri, 15 Feb 2019 17:31:24 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Fri, 15 Feb 2019
+ 17:31:13 +0800
+Subject: Re: [PATCH v2 2/2] staging: erofs: complete POSIX ACL support
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+CC:     Chao Yu <chao@kernel.org>, <devel@driverdev.osuosl.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        <linux-erofs@lists.ozlabs.org>,
+        LKML <linux-kernel@vger.kernel.org>, <weidu.du@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>
+References: <20190125161007.4447-1-gaoxiang25@huawei.com>
+ <20190125161007.4447-2-gaoxiang25@huawei.com>
+ <94daa491-40c8-4a09-a0b5-55a7e92dc3fc@huawei.com>
+ <20190128133302.GI1795@kadam>
+ <f1fd2c69-0c5b-c655-3712-48169e87fff8@huawei.com>
+ <1eed1e6b-f95e-aa8e-c3e7-e9870401ee23@kernel.org>
+ <20190128183053.GK1795@kadam>
+ <16373e83-2496-3bf5-7b16-72f3454d294d@huawei.com>
+ <f08c49d2-c3c1-4b80-f61c-004f911086d8@huawei.com>
+ <20190215073644.GD2326@kadam>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <388add9e-8643-b08f-2eec-9742c5411cc0@huawei.com>
+Date:   Fri, 15 Feb 2019 17:31:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20190215073644.GD2326@kadam>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  0133491d4641b493aa0d0e5bd66b52999619cd8a
-Gitweb:     https://git.kernel.org/tip/0133491d4641b493aa0d0e5bd66b52999619cd8a
-Author:     Paul Clarke <pc@us.ibm.com>
-AuthorDate: Sat, 9 Feb 2019 13:14:27 -0500
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 14 Feb 2019 13:31:10 -0300
+On 2019/2/15 15:36, Dan Carpenter wrote:
+> On Fri, Feb 15, 2019 at 10:10:34AM +0800, Chao Yu wrote:
+>> Hi Dan,
+>>
+>> Any suggestion?
+>>
+> 
+> I won't NAK whatever you decide.  But my opinion is that you should
+> just use normal kernel memory allocators even though it means you have
+> to use two different fault injection frameworks.
 
-perf vendor events power9: Dl1_reloads, instruction_misses, l[23]_stats & pteg_reloads metrics
+Thanks for the suggestion.
 
-Descriptions of metrics for POWER9 processors can be found in the
-"POWER9 Performance Monitor Unit User’s Guide", which is currently
-available on the "IBM Portal for OpenPOWER"
-(https://www-355.ibm.com/systems/power/openpower/welcome.xhtml) at
-https://www-355.ibm.com/systems/power/openpower/posting.xhtml?postingId=4948CDE1963C9BCA852582F800718190
+There is only one injection type in erofs injection framework, I don't want
+to remove all framework codes with kmalloc type, so I think we can do this
+step by step:
+a. use erofs_kamloc to keep all codes consistent.
+b. add at least one erofs private injection type.
+c. remove erofs_kmalloc and related type.
 
-This patch is for metric groups:
-- dl1_reloads_percent_per_inst
-- dl1_reloads_percent_per_ref
-- instruction_misses_percent_per_inst
-- l2_stats
-- l3_stats
-- pteg_reloads_percent_per_inst
-- pteg_reloads_percent_per_ref
+> 
+> Over time it would be good to improve and expand the standard kernel
+> error injection frameworks to cover more types.
 
-Signed-off-by: Paul Clarke <pc@us.ibm.com>
-Cc: Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>
-Cc: Carl Love <cel@us.ibm.com>
-Cc: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-Cc: linuxppc-dev@ozlabs.org
-Link: http://lkml.kernel.org/r/20190209181429.23950-3-pc@us.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- .../pmu-events/arch/powerpc/power9/metrics.json    | 660 +++++++++++++++++++++
- 1 file changed, 660 insertions(+)
+Agreed.
 
-diff --git a/tools/perf/pmu-events/arch/powerpc/power9/metrics.json b/tools/perf/pmu-events/arch/powerpc/power9/metrics.json
-index cd46ebb8da6a..166f95518c45 100644
---- a/tools/perf/pmu-events/arch/powerpc/power9/metrics.json
-+++ b/tools/perf/pmu-events/arch/powerpc/power9/metrics.json
-@@ -484,6 +484,210 @@
-         "MetricGroup": "cpi_breakdown",
-         "MetricName": "vfxu_stall_cpi"
-     },
-+    {
-+        "BriefDescription": "% of DL1 Reloads from Distant L2 or L3 (Modified) per Inst",
-+        "MetricExpr": "PM_DATA_FROM_DL2L3_MOD * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "dl1_reloads_percent_per_inst",
-+        "MetricName": "dl1_reload_from_dl2l3_mod_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 Reloads from Distant L2 or L3 (Shared) per Inst",
-+        "MetricExpr": "PM_DATA_FROM_DL2L3_SHR * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "dl1_reloads_percent_per_inst",
-+        "MetricName": "dl1_reload_from_dl2l3_shr_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 Reloads from Distant Memory per Inst",
-+        "MetricExpr": "PM_DATA_FROM_DMEM * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "dl1_reloads_percent_per_inst",
-+        "MetricName": "dl1_reload_from_dmem_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 reloads from Private L2, other core per Inst",
-+        "MetricExpr": "PM_DATA_FROM_L21_MOD * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "dl1_reloads_percent_per_inst",
-+        "MetricName": "dl1_reload_from_l21_mod_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 reloads from Private L2, other core per Inst",
-+        "MetricExpr": "PM_DATA_FROM_L21_SHR * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "dl1_reloads_percent_per_inst",
-+        "MetricName": "dl1_reload_from_l21_shr_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 reloads from L2 per Inst",
-+        "MetricExpr": "PM_DATA_FROM_L2MISS * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "dl1_reloads_percent_per_inst",
-+        "MetricName": "dl1_reload_from_l2_miss_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 reloads from L2 per Inst",
-+        "MetricExpr": "PM_DATA_FROM_L2 * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "dl1_reloads_percent_per_inst",
-+        "MetricName": "dl1_reload_from_l2_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 reloads from Private L3 M state, other core per Inst",
-+        "MetricExpr": "PM_DATA_FROM_L31_MOD * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "dl1_reloads_percent_per_inst",
-+        "MetricName": "dl1_reload_from_l31_mod_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 reloads from Private L3 S tate, other core per Inst",
-+        "MetricExpr": "PM_DATA_FROM_L31_SHR * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "dl1_reloads_percent_per_inst",
-+        "MetricName": "dl1_reload_from_l31_shr_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 Reloads that came from the L3 and were brought into the L3 by a prefetch, per instruction completed",
-+        "MetricExpr": "PM_DATA_FROM_L3_MEPF * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "dl1_reloads_percent_per_inst",
-+        "MetricName": "dl1_reload_from_l3_mepf_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 reloads from L3 per Inst",
-+        "MetricExpr": "PM_DATA_FROM_L3MISS * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "dl1_reloads_percent_per_inst",
-+        "MetricName": "dl1_reload_from_l3_miss_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 Reloads from L3 per Inst",
-+        "MetricExpr": "PM_DATA_FROM_L3 * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "dl1_reloads_percent_per_inst",
-+        "MetricName": "dl1_reload_from_l3_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 Reloads from Local Memory per Inst",
-+        "MetricExpr": "PM_DATA_FROM_LMEM * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "dl1_reloads_percent_per_inst",
-+        "MetricName": "dl1_reload_from_lmem_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 reloads from Private L3, other core per Inst",
-+        "MetricExpr": "PM_DATA_FROM_RL2L3_MOD * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "dl1_reloads_percent_per_inst",
-+        "MetricName": "dl1_reload_from_rl2l3_mod_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 reloads from Private L3, other core per Inst",
-+        "MetricExpr": "PM_DATA_FROM_RL2L3_SHR * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "dl1_reloads_percent_per_inst",
-+        "MetricName": "dl1_reload_from_rl2l3_shr_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 Reloads from Remote Memory per Inst",
-+        "MetricExpr": "PM_DATA_FROM_RMEM * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "dl1_reloads_percent_per_inst",
-+        "MetricName": "dl1_reload_from_rmem_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "Percentage of L1 demand load misses per run instruction",
-+        "MetricExpr": "PM_LD_MISS_L1 * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "dl1_reloads_percent_per_inst",
-+        "MetricName": "l1_ld_miss_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 misses that result in a cache reload",
-+        "MetricExpr": "PM_L1_DCACHE_RELOAD_VALID * 100 / PM_LD_MISS_L1",
-+        "MetricGroup": "dl1_reloads_percent_per_ref",
-+        "MetricName": "dl1_miss_reloads_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 dL1_Reloads from Distant L2 or L3 (Modified)",
-+        "MetricExpr": "PM_DATA_FROM_DL2L3_MOD * 100 / PM_L1_DCACHE_RELOAD_VALID",
-+        "MetricGroup": "dl1_reloads_percent_per_ref",
-+        "MetricName": "dl1_reload_from_dl2l3_mod_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 dL1_Reloads from Distant L2 or L3 (Shared)",
-+        "MetricExpr": "PM_DATA_FROM_DL2L3_SHR * 100 / PM_L1_DCACHE_RELOAD_VALID",
-+        "MetricGroup": "dl1_reloads_percent_per_ref",
-+        "MetricName": "dl1_reload_from_dl2l3_shr_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 dL1_Reloads from Distant Memory",
-+        "MetricExpr": "PM_DATA_FROM_DMEM * 100 / PM_L1_DCACHE_RELOAD_VALID",
-+        "MetricGroup": "dl1_reloads_percent_per_ref",
-+        "MetricName": "dl1_reload_from_dmem_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 reloads from Private L2, other core",
-+        "MetricExpr": "PM_DATA_FROM_L21_MOD * 100 / PM_L1_DCACHE_RELOAD_VALID",
-+        "MetricGroup": "dl1_reloads_percent_per_ref",
-+        "MetricName": "dl1_reload_from_l21_mod_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 reloads from Private L2, other core",
-+        "MetricExpr": "PM_DATA_FROM_L21_SHR * 100 / PM_L1_DCACHE_RELOAD_VALID",
-+        "MetricGroup": "dl1_reloads_percent_per_ref",
-+        "MetricName": "dl1_reload_from_l21_shr_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 Reloads from sources beyond the local L2",
-+        "MetricExpr": "PM_DATA_FROM_L2MISS * 100 / PM_L1_DCACHE_RELOAD_VALID",
-+        "MetricGroup": "dl1_reloads_percent_per_ref",
-+        "MetricName": "dl1_reload_from_l2_miss_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 reloads from L2",
-+        "MetricExpr": "PM_DATA_FROM_L2 * 100 / PM_L1_DCACHE_RELOAD_VALID",
-+        "MetricGroup": "dl1_reloads_percent_per_ref",
-+        "MetricName": "dl1_reload_from_l2_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 reloads from Private L3, other core",
-+        "MetricExpr": "PM_DATA_FROM_L31_MOD * 100 / PM_L1_DCACHE_RELOAD_VALID",
-+        "MetricGroup": "dl1_reloads_percent_per_ref",
-+        "MetricName": "dl1_reload_from_l31_mod_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 reloads from Private L3, other core",
-+        "MetricExpr": "PM_DATA_FROM_L31_SHR * 100 / PM_L1_DCACHE_RELOAD_VALID",
-+        "MetricGroup": "dl1_reloads_percent_per_ref",
-+        "MetricName": "dl1_reload_from_l31_shr_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 Reloads that came from L3 and were brought into the L3 by a prefetch",
-+        "MetricExpr": "PM_DATA_FROM_L3_MEPF * 100 / PM_L1_DCACHE_RELOAD_VALID",
-+        "MetricGroup": "dl1_reloads_percent_per_ref",
-+        "MetricName": "dl1_reload_from_l3_mepf_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 Reloads from sources beyond the local L3",
-+        "MetricExpr": "PM_DATA_FROM_L3MISS * 100 / PM_L1_DCACHE_RELOAD_VALID",
-+        "MetricGroup": "dl1_reloads_percent_per_ref",
-+        "MetricName": "dl1_reload_from_l3_miss_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 Reloads from L3",
-+        "MetricExpr": "PM_DATA_FROM_L3 * 100 / PM_L1_DCACHE_RELOAD_VALID",
-+        "MetricGroup": "dl1_reloads_percent_per_ref",
-+        "MetricName": "dl1_reload_from_l3_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 dL1_Reloads from Local Memory",
-+        "MetricExpr": "PM_DATA_FROM_LMEM * 100 / PM_L1_DCACHE_RELOAD_VALID",
-+        "MetricGroup": "dl1_reloads_percent_per_ref",
-+        "MetricName": "dl1_reload_from_lmem_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 dL1_Reloads from Remote L2 or L3 (Modified)",
-+        "MetricExpr": "PM_DATA_FROM_RL2L3_MOD * 100 / PM_L1_DCACHE_RELOAD_VALID",
-+        "MetricGroup": "dl1_reloads_percent_per_ref",
-+        "MetricName": "dl1_reload_from_rl2l3_mod_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 dL1_Reloads from Remote L2 or L3 (Shared)",
-+        "MetricExpr": "PM_DATA_FROM_RL2L3_SHR * 100 / PM_L1_DCACHE_RELOAD_VALID",
-+        "MetricGroup": "dl1_reloads_percent_per_ref",
-+        "MetricName": "dl1_reload_from_rl2l3_shr_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 dL1_Reloads from Remote Memory",
-+        "MetricExpr": "PM_DATA_FROM_RMEM * 100 / PM_L1_DCACHE_RELOAD_VALID",
-+        "MetricGroup": "dl1_reloads_percent_per_ref",
-+        "MetricName": "dl1_reload_from_rmem_percent"
-+    },
-     {
-         "BriefDescription": "estimate of dl2l3 distant MOD miss rates with measured DL2L3 MOD latency as a %of dcache miss cpi",
-         "MetricExpr": "PM_DATA_FROM_DL2L3_MOD * PM_MRK_DATA_FROM_DL2L3_MOD_CYC / PM_MRK_DATA_FROM_DL2L3_MOD / PM_CMPLU_STALL_DCACHE_MISS *100",
-@@ -573,5 +777,461 @@
-         "MetricExpr": "PM_DATA_FROM_RMEM * PM_MRK_DATA_FROM_RMEM_CYC / PM_MRK_DATA_FROM_RMEM / PM_CMPLU_STALL_DCACHE_MISS *100",
-         "MetricGroup": "estimated_dcache_miss_cpi",
-         "MetricName": "rmem_cpi_percent"
-+    },
-+    {
-+        "BriefDescription": "% of ICache reloads from Distant L2 or L3 (Modified) per Inst",
-+        "MetricExpr": "PM_INST_FROM_DL2L3_MOD * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "instruction_misses_percent_per_inst",
-+        "MetricName": "inst_from_dl2l3_mod_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of ICache reloads from Distant L2 or L3 (Shared) per Inst",
-+        "MetricExpr": "PM_INST_FROM_DL2L3_SHR * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "instruction_misses_percent_per_inst",
-+        "MetricName": "inst_from_dl2l3_shr_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of ICache reloads from Distant L4 per Inst",
-+        "MetricExpr": "PM_INST_FROM_DL4 * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "instruction_misses_percent_per_inst",
-+        "MetricName": "inst_from_dl4_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of ICache reloads from Distant Memory per Inst",
-+        "MetricExpr": "PM_INST_FROM_DMEM * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "instruction_misses_percent_per_inst",
-+        "MetricName": "inst_from_dmem_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of ICache reloads from Private L2, other core per Inst",
-+        "MetricExpr": "PM_INST_FROM_L21_MOD * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "instruction_misses_percent_per_inst",
-+        "MetricName": "inst_from_l21_mod_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of ICache reloads from Private L2, other core per Inst",
-+        "MetricExpr": "PM_INST_FROM_L21_SHR * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "instruction_misses_percent_per_inst",
-+        "MetricName": "inst_from_l21_shr_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of ICache reloads from L2 per Inst",
-+        "MetricExpr": "PM_INST_FROM_L2 * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "instruction_misses_percent_per_inst",
-+        "MetricName": "inst_from_l2_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of ICache reloads from Private L3, other core per Inst",
-+        "MetricExpr": "PM_INST_FROM_L31_MOD * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "instruction_misses_percent_per_inst",
-+        "MetricName": "inst_from_l31_mod_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of ICache reloads from Private L3 other core per Inst",
-+        "MetricExpr": "PM_INST_FROM_L31_SHR * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "instruction_misses_percent_per_inst",
-+        "MetricName": "inst_from_l31_shr_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of ICache reloads from L3 per Inst",
-+        "MetricExpr": "PM_INST_FROM_L3 * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "instruction_misses_percent_per_inst",
-+        "MetricName": "inst_from_l3_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of ICache reloads from Local L4 per Inst",
-+        "MetricExpr": "PM_INST_FROM_LL4 * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "instruction_misses_percent_per_inst",
-+        "MetricName": "inst_from_ll4_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of ICache reloads from Local Memory per Inst",
-+        "MetricExpr": "PM_INST_FROM_LMEM * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "instruction_misses_percent_per_inst",
-+        "MetricName": "inst_from_lmem_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of ICache reloads from Remote L2 or L3 (Modified) per Inst",
-+        "MetricExpr": "PM_INST_FROM_RL2L3_MOD * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "instruction_misses_percent_per_inst",
-+        "MetricName": "inst_from_rl2l3_mod_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of ICache reloads from Remote L2 or L3 (Shared) per Inst",
-+        "MetricExpr": "PM_INST_FROM_RL2L3_SHR * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "instruction_misses_percent_per_inst",
-+        "MetricName": "inst_from_rl2l3_shr_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of ICache reloads from Remote L4 per Inst",
-+        "MetricExpr": "PM_INST_FROM_RL4 * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "instruction_misses_percent_per_inst",
-+        "MetricName": "inst_from_rl4_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of ICache reloads from Remote Memory per Inst",
-+        "MetricExpr": "PM_INST_FROM_RMEM * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "instruction_misses_percent_per_inst",
-+        "MetricName": "inst_from_rmem_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "Instruction Cache Miss Rate (Per run Instruction)(%)",
-+        "MetricExpr": "PM_L1_ICACHE_MISS * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "instruction_misses_percent_per_inst",
-+        "MetricName": "l1_inst_miss_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "%L2 Modified CO  Cache read Utilization (4 pclks per disp attempt)",
-+        "MetricExpr": "((PM_L2_CASTOUT_MOD/2)*4)/ PM_RUN_CYC * 100",
-+        "MetricGroup": "l2_stats",
-+        "MetricName": "l2_co_m_rd_util"
-+    },
-+    {
-+        "BriefDescription": "L2  dcache invalidates per run inst  (per core)",
-+        "MetricExpr": "(PM_L2_DC_INV / 2) / PM_RUN_INST_CMPL * 100",
-+        "MetricGroup": "l2_stats",
-+        "MetricName": "l2_dc_inv_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "Demand load misses as a % of L2 LD dispatches (per thread)",
-+        "MetricExpr": "PM_L1_DCACHE_RELOAD_VALID / (PM_L2_LD / 2) * 100",
-+        "MetricGroup": "l2_stats",
-+        "MetricName": "l2_dem_ld_disp_percent"
-+    },
-+    {
-+        "BriefDescription": "L2  Icache invalidates per run inst  (per core)",
-+        "MetricExpr": "(PM_L2_IC_INV / 2) / PM_RUN_INST_CMPL * 100",
-+        "MetricGroup": "l2_stats",
-+        "MetricName": "l2_ic_inv_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "L2  Inst misses  as a % of total L2  Inst dispatches (per thread)",
-+        "MetricExpr": "PM_L2_INST_MISS /  PM_L2_INST * 100",
-+        "MetricGroup": "l2_stats",
-+        "MetricName": "l2_inst_miss_ratio_percent"
-+    },
-+    {
-+        "BriefDescription": "Average number of cycles between L2 Load hits",
-+        "MetricExpr": "(PM_L2_LD_HIT / PM_RUN_CYC) / 2",
-+        "MetricGroup": "l2_stats",
-+        "MetricName": "l2_ld_hit_frequency"
-+    },
-+    {
-+        "BriefDescription": "Average number of cycles between L2 Load misses",
-+        "MetricExpr": "(PM_L2_LD_MISS / PM_RUN_CYC) / 2",
-+        "MetricGroup": "l2_stats",
-+        "MetricName": "l2_ld_miss_frequency"
-+    },
-+    {
-+        "BriefDescription": "L2 Load misses  as a % of total L2 Load dispatches (per thread)",
-+        "MetricExpr": "PM_L2_LD_MISS / PM_L2_LD * 100",
-+        "MetricGroup": "l2_stats",
-+        "MetricName": "l2_ld_miss_ratio_percent"
-+    },
-+    {
-+        "BriefDescription": "% L2 load disp attempts Cache read Utilization (4 pclks per disp attempt)",
-+        "MetricExpr": "((PM_L2_RCLD_DISP/2)*4)/ PM_RUN_CYC * 100",
-+        "MetricGroup": "l2_stats",
-+        "MetricName": "l2_ld_rd_util"
-+    },
-+    {
-+        "BriefDescription": "L2 load misses that require a cache write (4 pclks per disp attempt) % of pclks",
-+        "MetricExpr": "((( PM_L2_LD_DISP - PM_L2_LD_HIT)/2)*4)/ PM_RUN_CYC * 100",
-+        "MetricGroup": "l2_stats",
-+        "MetricName": "l2_ldmiss_wr_util"
-+    },
-+    {
-+        "BriefDescription": "L2  local pump prediction success",
-+        "MetricExpr": "PM_L2_LOC_GUESS_CORRECT / (PM_L2_LOC_GUESS_CORRECT + PM_L2_LOC_GUESS_WRONG) * 100",
-+        "MetricGroup": "l2_stats",
-+        "MetricName": "l2_local_pred_correct_percent"
-+    },
-+    {
-+        "BriefDescription": "L2 COs that were in M,Me,Mu state as a % of all L2 COs",
-+        "MetricExpr": "PM_L2_CASTOUT_MOD / (PM_L2_CASTOUT_MOD + PM_L2_CASTOUT_SHR) * 100",
-+        "MetricGroup": "l2_stats",
-+        "MetricName": "l2_mod_co_percent"
-+    },
-+    {
-+        "BriefDescription": "% of L2 Load RC dispatch atampts that failed  because of address collisions and cclass conflicts",
-+        "MetricExpr": "(PM_L2_RCLD_DISP_FAIL_ADDR )/ PM_L2_RCLD_DISP * 100",
-+        "MetricGroup": "l2_stats",
-+        "MetricName": "l2_rc_ld_disp_addr_fail_percent"
-+    },
-+    {
-+        "BriefDescription": "% of L2 Load RC dispatch attempts that failed",
-+        "MetricExpr": "(PM_L2_RCLD_DISP_FAIL_ADDR + PM_L2_RCLD_DISP_FAIL_OTHER)/ PM_L2_RCLD_DISP * 100",
-+        "MetricGroup": "l2_stats",
-+        "MetricName": "l2_rc_ld_disp_fail_percent"
-+    },
-+    {
-+        "BriefDescription": "% of L2 Store RC dispatch atampts that failed  because of address collisions and cclass conflicts",
-+        "MetricExpr": "PM_L2_RCST_DISP_FAIL_ADDR / PM_L2_RCST_DISP * 100",
-+        "MetricGroup": "l2_stats",
-+        "MetricName": "l2_rc_st_disp_addr_fail_percent"
-+    },
-+    {
-+        "BriefDescription": "% of L2 Store RC dispatch attempts that failed",
-+        "MetricExpr": "(PM_L2_RCST_DISP_FAIL_ADDR + PM_L2_RCST_DISP_FAIL_OTHER)/ PM_L2_RCST_DISP * 100",
-+        "MetricGroup": "l2_stats",
-+        "MetricName": "l2_rc_st_disp_fail_percent"
-+    },
-+    {
-+        "BriefDescription": "L2 Cache Read Utilization (per core)",
-+        "MetricExpr": "(((PM_L2_RCLD_DISP/2)*4)/ PM_RUN_CYC * 100) + (((PM_L2_RCST_DISP/2)*4)/PM_RUN_CYC * 100) + (((PM_L2_CASTOUT_MOD/2)*4)/PM_RUN_CYC * 100)",
-+        "MetricGroup": "l2_stats",
-+        "MetricName": "l2_rd_util_percent"
-+    },
-+    {
-+        "BriefDescription": "L2 COs that were in  T,Te,Si,S  state as a % of all L2 COs",
-+        "MetricExpr": "PM_L2_CASTOUT_SHR / (PM_L2_CASTOUT_MOD + PM_L2_CASTOUT_SHR) * 100",
-+        "MetricGroup": "l2_stats",
-+        "MetricName": "l2_shr_co_percent"
-+    },
-+    {
-+        "BriefDescription": "L2  Store misses  as a % of total L2  Store dispatches (per thread)",
-+        "MetricExpr": "PM_L2_ST_MISS / PM_L2_ST * 100",
-+        "MetricGroup": "l2_stats",
-+        "MetricName": "l2_st_miss_ratio_percent"
-+    },
-+    {
-+        "BriefDescription": "% L2 store disp attempts Cache read Utilization (4 pclks per disp attempt)",
-+        "MetricExpr": "((PM_L2_RCST_DISP/2)*4) / PM_RUN_CYC * 100",
-+        "MetricGroup": "l2_stats",
-+        "MetricName": "l2_st_rd_util"
-+    },
-+    {
-+        "BriefDescription": "L2 stores that require a cache write (4 pclks per disp attempt) % of pclks",
-+        "MetricExpr": "((PM_L2_ST_DISP/2)*4) / PM_RUN_CYC * 100",
-+        "MetricGroup": "l2_stats",
-+        "MetricName": "l2_st_wr_util"
-+    },
-+    {
-+        "BriefDescription": "L2 Cache Write Utilization (per core)",
-+        "MetricExpr": "((((PM_L2_LD_DISP - PM_L2_LD_HIT)/2)*4) / PM_RUN_CYC * 100) + (((PM_L2_ST_DISP/2)*4) / PM_RUN_CYC * 100)",
-+        "MetricGroup": "l2_stats",
-+        "MetricName": "l2_wr_util_percent"
-+    },
-+    {
-+        "BriefDescription": "Average number of cycles between L3 Load hits",
-+        "MetricExpr": "(PM_L3_LD_HIT / PM_RUN_CYC) / 2",
-+        "MetricGroup": "l3_stats",
-+        "MetricName": "l3_ld_hit_frequency"
-+    },
-+    {
-+        "BriefDescription": "Average number of cycles between L3 Load misses",
-+        "MetricExpr": "(PM_L3_LD_MISS / PM_RUN_CYC) / 2",
-+        "MetricGroup": "l3_stats",
-+        "MetricName": "l3_ld_miss_frequency"
-+    },
-+    {
-+        "BriefDescription": "Average number of Write-in machines used.  1 of 8 WI machines is sampled every L3 cycle",
-+        "MetricExpr": "(PM_L3_WI_USAGE / PM_RUN_CYC) * 8",
-+        "MetricGroup": "l3_stats",
-+        "MetricName": "l3_wi_usage"
-+    },
-+    {
-+        "BriefDescription": "DERAT Miss Rate (per run  instruction)(%)",
-+        "MetricExpr": "PM_LSU_DERAT_MISS * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "pteg_reloads_percent_per_inst",
-+        "MetricName": "derat_miss_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Distant L2 or L3 (Modified) per inst",
-+        "MetricExpr": "PM_DPTEG_FROM_DL2L3_MOD * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "pteg_reloads_percent_per_inst",
-+        "MetricName": "pteg_from_dl2l3_mod_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Distant L2 or L3 (Shared) per inst",
-+        "MetricExpr": "PM_DPTEG_FROM_DL2L3_SHR * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "pteg_reloads_percent_per_inst",
-+        "MetricName": "pteg_from_dl2l3_shr_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Distant L4 per inst",
-+        "MetricExpr": "PM_DPTEG_FROM_DL4 * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "pteg_reloads_percent_per_inst",
-+        "MetricName": "pteg_from_dl4_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Distant Memory per inst",
-+        "MetricExpr": "PM_DPTEG_FROM_DMEM * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "pteg_reloads_percent_per_inst",
-+        "MetricName": "pteg_from_dmem_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Private L2, other core per inst",
-+        "MetricExpr": "PM_DPTEG_FROM_L21_MOD * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "pteg_reloads_percent_per_inst",
-+        "MetricName": "pteg_from_l21_mod_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Private L2, other core per inst",
-+        "MetricExpr": "PM_DPTEG_FROM_L21_SHR * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "pteg_reloads_percent_per_inst",
-+        "MetricName": "pteg_from_l21_shr_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from L2 per inst",
-+        "MetricExpr": "PM_DPTEG_FROM_L2 * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "pteg_reloads_percent_per_inst",
-+        "MetricName": "pteg_from_l2_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Private L3, other core per inst",
-+        "MetricExpr": "PM_DPTEG_FROM_L31_MOD * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "pteg_reloads_percent_per_inst",
-+        "MetricName": "pteg_from_l31_mod_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Private L3, other core per inst",
-+        "MetricExpr": "PM_DPTEG_FROM_L31_SHR * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "pteg_reloads_percent_per_inst",
-+        "MetricName": "pteg_from_l31_shr_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from L3 per inst",
-+        "MetricExpr": "PM_DPTEG_FROM_L3 * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "pteg_reloads_percent_per_inst",
-+        "MetricName": "pteg_from_l3_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Local L4 per inst",
-+        "MetricExpr": "PM_DPTEG_FROM_LL4 * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "pteg_reloads_percent_per_inst",
-+        "MetricName": "pteg_from_ll4_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Local Memory per inst",
-+        "MetricExpr": "PM_DPTEG_FROM_LMEM * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "pteg_reloads_percent_per_inst",
-+        "MetricName": "pteg_from_lmem_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Remote L2 or L3 (Modified) per inst",
-+        "MetricExpr": "PM_DPTEG_FROM_RL2L3_MOD * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "pteg_reloads_percent_per_inst",
-+        "MetricName": "pteg_from_rl2l3_mod_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Remote L2 or L3 (Shared) per inst",
-+        "MetricExpr": "PM_DPTEG_FROM_RL2L3_SHR * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "pteg_reloads_percent_per_inst",
-+        "MetricName": "pteg_from_rl2l3_shr_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Remote L4 per inst",
-+        "MetricExpr": "PM_DPTEG_FROM_RL4 * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "pteg_reloads_percent_per_inst",
-+        "MetricName": "pteg_from_rl4_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Remote Memory per inst",
-+        "MetricExpr": "PM_DPTEG_FROM_RMEM * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "pteg_reloads_percent_per_inst",
-+        "MetricName": "pteg_from_rmem_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT misses that result in an ERAT reload",
-+        "MetricExpr": "PM_DTLB_MISS * 100 / PM_LSU_DERAT_MISS",
-+        "MetricGroup": "pteg_reloads_percent_per_ref",
-+        "MetricName": "derat_miss_reload_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Distant L2 or L3 (Modified)",
-+        "MetricExpr": "PM_DPTEG_FROM_DL2L3_MOD * 100 / PM_DTLB_MISS",
-+        "MetricGroup": "pteg_reloads_percent_per_ref",
-+        "MetricName": "pteg_from_dl2l3_mod_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Distant L2 or L3 (Shared)",
-+        "MetricExpr": "PM_DPTEG_FROM_DL2L3_SHR * 100 / PM_DTLB_MISS",
-+        "MetricGroup": "pteg_reloads_percent_per_ref",
-+        "MetricName": "pteg_from_dl2l3_shr_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Distant L4",
-+        "MetricExpr": "PM_DPTEG_FROM_DL4 * 100 / PM_DTLB_MISS",
-+        "MetricGroup": "pteg_reloads_percent_per_ref",
-+        "MetricName": "pteg_from_dl4_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Distant Memory",
-+        "MetricExpr": "PM_DPTEG_FROM_DMEM * 100 / PM_DTLB_MISS",
-+        "MetricGroup": "pteg_reloads_percent_per_ref",
-+        "MetricName": "pteg_from_dmem_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Private L2, other core",
-+        "MetricExpr": "PM_DPTEG_FROM_L21_MOD * 100 / PM_DTLB_MISS",
-+        "MetricGroup": "pteg_reloads_percent_per_ref",
-+        "MetricName": "pteg_from_l21_mod_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Private L2, other core",
-+        "MetricExpr": "PM_DPTEG_FROM_L21_SHR * 100 / PM_DTLB_MISS",
-+        "MetricGroup": "pteg_reloads_percent_per_ref",
-+        "MetricName": "pteg_from_l21_shr_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from L2",
-+        "MetricExpr": "PM_DPTEG_FROM_L2 * 100 / PM_DTLB_MISS",
-+        "MetricGroup": "pteg_reloads_percent_per_ref",
-+        "MetricName": "pteg_from_l2_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Private L3, other core",
-+        "MetricExpr": "PM_DPTEG_FROM_L31_MOD * 100 / PM_DTLB_MISS",
-+        "MetricGroup": "pteg_reloads_percent_per_ref",
-+        "MetricName": "pteg_from_l31_mod_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Private L3, other core",
-+        "MetricExpr": "PM_DPTEG_FROM_L31_SHR * 100 / PM_DTLB_MISS",
-+        "MetricGroup": "pteg_reloads_percent_per_ref",
-+        "MetricName": "pteg_from_l31_shr_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from L3",
-+        "MetricExpr": "PM_DPTEG_FROM_L3 * 100 / PM_DTLB_MISS",
-+        "MetricGroup": "pteg_reloads_percent_per_ref",
-+        "MetricName": "pteg_from_l3_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Local L4",
-+        "MetricExpr": "PM_DPTEG_FROM_LL4 * 100 / PM_DTLB_MISS",
-+        "MetricGroup": "pteg_reloads_percent_per_ref",
-+        "MetricName": "pteg_from_ll4_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Local Memory",
-+        "MetricExpr": "PM_DPTEG_FROM_LMEM * 100 / PM_DTLB_MISS",
-+        "MetricGroup": "pteg_reloads_percent_per_ref",
-+        "MetricName": "pteg_from_lmem_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Remote L2 or L3 (Modified)",
-+        "MetricExpr": "PM_DPTEG_FROM_RL2L3_MOD * 100 / PM_DTLB_MISS",
-+        "MetricGroup": "pteg_reloads_percent_per_ref",
-+        "MetricName": "pteg_from_rl2l3_mod_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Remote L2 or L3 (Shared)",
-+        "MetricExpr": "PM_DPTEG_FROM_RL2L3_SHR * 100 / PM_DTLB_MISS",
-+        "MetricGroup": "pteg_reloads_percent_per_ref",
-+        "MetricName": "pteg_from_rl2l3_shr_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Remote L4",
-+        "MetricExpr": "PM_DPTEG_FROM_RL4 * 100 / PM_DTLB_MISS",
-+        "MetricGroup": "pteg_reloads_percent_per_ref",
-+        "MetricName": "pteg_from_rl4_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DERAT reloads from Remote Memory",
-+        "MetricExpr": "PM_DPTEG_FROM_RMEM * 100 / PM_DTLB_MISS",
-+        "MetricGroup": "pteg_reloads_percent_per_ref",
-+        "MetricName": "pteg_from_rmem_percent"
-     }
- ]
+Thanks,
+
+> 
+> regards,
+> dan carpenter
+> 
+> 
+> 
+
