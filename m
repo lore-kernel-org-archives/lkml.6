@@ -2,101 +2,153 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC05FC10F02
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:58:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B36C4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:59:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8AC021925
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:58:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 392C121A4C
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:59:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="KMz4etZx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730500AbfBOR6f (ORCPT
+        id S1730880AbfBOR7w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 12:58:35 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33464 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729605AbfBOR6f (ORCPT
+        Fri, 15 Feb 2019 12:59:52 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:40801 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730324AbfBOR7v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 12:58:35 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1FHtHZC021436
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 12:58:34 -0500
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qp1rbhaf9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 12:58:34 -0500
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <zohar@linux.ibm.com>;
-        Fri, 15 Feb 2019 17:58:31 -0000
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 15 Feb 2019 17:58:28 -0000
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1FHwR7L2228508
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Feb 2019 17:58:27 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0D75A52052;
-        Fri, 15 Feb 2019 17:58:27 +0000 (GMT)
-Received: from localhost.localdomain (unknown [9.80.92.223])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 0D1C25204F;
-        Fri, 15 Feb 2019 17:58:25 +0000 (GMT)
-Subject: Re: [PATCH v3] x86/ima: require signed kernel modules
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jessica Yu <jeyu@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Seth Forshee <seth.forshee@canonical.com>,
-        "Bruno E . O . Meneguele" <bmeneg@redhat.com>
-Date:   Fri, 15 Feb 2019 12:58:15 -0500
-In-Reply-To: <20190215170144.GH11489@garbanzo.do-not-panic.com>
-References: <1550249418-7986-1-git-send-email-zohar@linux.ibm.com>
-         <20190215170144.GH11489@garbanzo.do-not-panic.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.20.5 (3.20.5-1.fc24) 
-Mime-Version: 1.0
+        Fri, 15 Feb 2019 12:59:51 -0500
+Received: by mail-it1-f194.google.com with SMTP id i2so25367246ite.5
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 09:59:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5Bgr0zj2aRmsmq9cmq2G6DDeTRau1JwWNabZdtGLuU8=;
+        b=KMz4etZxSVwp6ToDNVHa3UQ5ONXpp2fqM+/uuzn5Ym9qarUAL9M/eUOGtuee4TIrTa
+         ubCuGgOn1V8Py7fyrabLO5lRu7vcV+IDhbJ94eazYzeqeXYFWWDHttWOw+yQpiBOj1ir
+         dcFjII7LU/kMVttYP0gIeH5c1KoQHRZrKYfh3ZHvud2ojLZ3cx1ncCmK+/ompP2Ucv3z
+         RqAeHx62HuzzzrLZrkkC3mQbaifqXn7tG1FHgrYi/1RPiOdD9nLbTrDqGpbw/i6OLrR2
+         qy9Sj6sSUC5Fsxp86Toe1OSuHZYp1wmedRsen41kvhaIENqfCxh04YY76/7HUgTRKfsH
+         n3YQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5Bgr0zj2aRmsmq9cmq2G6DDeTRau1JwWNabZdtGLuU8=;
+        b=CG7PgfPY3HVcK3RX0adX/TrlWSrwi58FYN7RtV8G9ymjQaXzTfvi/tNDvyAeBv9/xv
+         UlQDqnkT4UHPUVJM0HZrB8Mihe7Z/yymRF10vSk9++oD9D5QIc5tlANXGJ1eoQnzktwk
+         4uIXsEHeIujCJoa97ut2t/Fmwuzz+IC8kGP1ke8ejoYZGJA9kCP+xvtU02uU7bI04iOQ
+         bjSgMw2++3sbtSqDKa3NvpN5gX96b0DNFrntJz7Z2huDdEJ+QdFFwl2C13aP19ZCMbzq
+         bkvDRO3/z8b+IGQie2JO12l/XjVaJNhhIG53GnZ2mwl8aIiOSVAj9omUbJvMTNUgFd9P
+         DUQQ==
+X-Gm-Message-State: AHQUAuZDWfXDaYjfDbG/l0YFnQJzbtJ9QISCkO0KdweIQwUicrTZ5HZa
+        eNlOu4k2zWIN+ltxTP7LuRwH7g==
+X-Google-Smtp-Source: AHgI3IbXlmYdrlCKnom68rsNd9Jn36YbM8bNEMGoKtZXICr/hlZrCiz2ntRDeSi7ie71hr+8xcfK8A==
+X-Received: by 2002:a02:c943:: with SMTP id u3mr5868722jao.96.1550253590448;
+        Fri, 15 Feb 2019 09:59:50 -0800 (PST)
+Received: from [192.168.1.158] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id b25sm2440259iot.10.2019.02.15.09.59.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Feb 2019 09:59:49 -0800 (PST)
+Subject: Re: [dm-devel] [PATCH V15 00/18] block: support multi-page bvec
+To:     Bart Van Assche <bvanassche@acm.org>,
+        Ming Lei <ming.lei@redhat.com>
+Cc:     Mike Snitzer <snitzer@redhat.com>, linux-mm@kvack.org,
+        dm-devel@redhat.com, Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Omar Sandoval <osandov@fb.com>, cluster-devel@redhat.com,
+        linux-ext4@vger.kernel.org,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Gao Xiang <gaoxiang25@huawei.com>, Coly Li <colyli@suse.de>,
+        linux-raid@vger.kernel.org, Bob Peterson <rpeterso@redhat.com>,
+        linux-bcache@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Dave Chinner <dchinner@redhat.com>,
+        David Sterba <dsterba@suse.com>, linux-block@vger.kernel.org,
+        Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org
+References: <20190215111324.30129-1-ming.lei@redhat.com>
+ <c52b6a8b-d1d4-67ff-f81c-371d09cc6d5b@kernel.dk>
+ <1550250855.31902.102.camel@acm.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <18c711a9-ca13-885d-43cd-4d48e683a6a2@kernel.dk>
+Date:   Fri, 15 Feb 2019 10:59:47 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <1550250855.31902.102.camel@acm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19021517-0020-0000-0000-000003174E94
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021517-0021-0000-0000-000021688570
-Message-Id: <1550253495.7468.0.camel@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-15_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=888 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902150122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-02-15 at 09:01 -0800, Luis Chamberlain wrote:
-> On Fri, Feb 15, 2019 at 11:50:18AM -0500, Mimi Zohar wrote:
-> > Have the IMA architecture specific policy require signed kernel modules
-> > on systems with secure boot mode enabled; and coordinate the different
-> > signature verification methods, so only one signature is required.
-> > 
-> > Requiring appended kernel module signatures may be configured, enabled
-> > on the boot command line, or with this patch enabled in secure boot
-> > mode.  This patch defines set_module_sig_enforced().
-> > 
-> > To coordinate between appended kernel module signatures and IMA
-> > signatures, only define an IMA MODULE_CHECK policy rule if
-> > CONFIG_MODULE_SIG is not enabled.  A custom IMA policy may still define
-> > and require an IMA signature.
-> > 
-> > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+On 2/15/19 10:14 AM, Bart Van Assche wrote:
+> On Fri, 2019-02-15 at 08:49 -0700, Jens Axboe wrote:
+>> On 2/15/19 4:13 AM, Ming Lei wrote:
+>>> This patchset brings multi-page bvec into block layer:
+>>
+>> Applied, thanks Ming. Let's hope it sticks!
 > 
-> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+> Hi Jens and Ming,
+> 
+> Test nvmeof-mp/002 fails with Jens' for-next branch from this morning.
+> I have not yet tried to figure out which patch introduced the failure.
+> Anyway, this is what I see in the kernel log for test nvmeof-mp/002:
+> 
+> [  475.611363] BUG: unable to handle kernel NULL pointer dereference at 0000000000000020
+> [  475.621188] #PF error: [normal kernel read fault]
+> [  475.623148] PGD 0 P4D 0  
+> [  475.624737] Oops: 0000 [#1] PREEMPT SMP KASAN
+> [  475.626628] CPU: 1 PID: 277 Comm: kworker/1:1H Tainted: G    B             5.0.0-rc6-dbg+ #1
+> [  475.630232] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+> [  475.633855] Workqueue: kblockd blk_mq_requeue_work
+> [  475.635777] RIP: 0010:__blk_recalc_rq_segments+0xbe/0x590
+> [  475.670948] Call Trace:
+> [  475.693515]  blk_recalc_rq_segments+0x2f/0x50
+> [  475.695081]  blk_insert_cloned_request+0xbb/0x1c0
+> [  475.701142]  dm_mq_queue_rq+0x3d1/0x770
+> [  475.707225]  blk_mq_dispatch_rq_list+0x5fc/0xb10
+> [  475.717137]  blk_mq_sched_dispatch_requests+0x256/0x300
+> [  475.721767]  __blk_mq_run_hw_queue+0xd6/0x180
+> [  475.725920]  __blk_mq_delay_run_hw_queue+0x25c/0x290
+> [  475.727480]  blk_mq_run_hw_queue+0x119/0x1b0
+> [  475.732019]  blk_mq_run_hw_queues+0x7b/0xa0
+> [  475.733468]  blk_mq_requeue_work+0x2cb/0x300
+> [  475.736473]  process_one_work+0x4f1/0xa40
+> [  475.739424]  worker_thread+0x67/0x5b0
+> [  475.741751]  kthread+0x1cf/0x1f0
+> [  475.746034]  ret_from_fork+0x24/0x30
+> 
+> (gdb) list *(__blk_recalc_rq_segments+0xbe)
+> 0xffffffff816a152e is in __blk_recalc_rq_segments (block/blk-merge.c:366).
+> 361                                                  struct bio *bio)
+> 362     {
+> 363             struct bio_vec bv, bvprv = { NULL };
+> 364             int prev = 0;
+> 365             unsigned int seg_size, nr_phys_segs;
+> 366             unsigned front_seg_size = bio->bi_seg_front_size;
+> 367             struct bio *fbio, *bbio;
+> 368             struct bvec_iter iter;
+> 369
+> 370             if (!bio)
 
-Thanks!
+Just ran a few tests, and it also seems to cause about a 5% regression
+in per-core IOPS throughput. Prior to this work, I could get 1620K 4k
+rand read IOPS out of core, now I'm at ~1535K. The cycler stealer seems
+to be blk_queue_split() and blk_rq_map_sg().
+
+-- 
+Jens Axboe
 
