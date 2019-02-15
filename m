@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF263C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:25:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B2DC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:25:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 925F02073D
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:25:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A5552073D
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:25:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197514;
-	bh=aIGqLqSjr38y+LNi35vhzZWnAuxfrttykwv8vrF8Qsw=;
+	s=default; t=1550197524;
+	bh=nkZLeW/kU7GIxdmBX93jo+iXTKEI6d9z5RS3j5QXh90=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mZjecxeNa5lmqKbp2VJHSMOvpvTOU52Zu2jINr3be+GPiuJ3vSxu4AUq9i+KQuLpK
-	 TG+WPsLHY3zSLK41N0ZwGWCdKoVLyhI+ITsVkNtDveyF6AaKuUsLoUQ17mm0e3HIhG
-	 nT7Gbm+p7JQ3JtH15xZZc0DLhId2aKDKLVVjvtjg=
+	b=CFyZr7VDqu4bvSkEw/2AtQksv0ZvVc4DP+Wko6xTQjsJoFnclO5x6gVeKkuwvJTGB
+	 7B75uECpXqm9r4590TO4wYMH0s+EAxUB6ZAY7/bK6RxGNZxJUUMNkoo0JUoo9baw0w
+	 387Bq9ZcAIuFyq5w/3NwfEej7aPxPiHXixgy5vRs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405084AbfBOCOK (ORCPT
+        id S1729447AbfBOCZW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:14:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54006 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:25:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391530AbfBOCOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:14:07 -0500
+        id S2391559AbfBOCOI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:14:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B80C2206BA;
-        Fri, 15 Feb 2019 02:14:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF23B21934;
+        Fri, 15 Feb 2019 02:14:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196846;
-        bh=aIGqLqSjr38y+LNi35vhzZWnAuxfrttykwv8vrF8Qsw=;
+        s=default; t=1550196847;
+        bh=nkZLeW/kU7GIxdmBX93jo+iXTKEI6d9z5RS3j5QXh90=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jWJvPFXt75Njghs0K1mt02jbUCC0vd4WPfYVD58ydE8AnGVxtKy/AdjdQyNSFDy7H
-         QDpifwUZvc2nV2AD7Ju1jSu2eT5pfquwUbq29RpUc/olPWCHuzktGyu0URXMtnn08l
-         J7yDtZdqUbfLccQOWfLBPHU/T4Lr2K2Dqh4uWYTY=
+        b=OYhJHKquAkSQ4XmUTLUSgOqmF4p8JTVKPRC2/HO374+v+zZyxLa+cIJVRqvL4u3gf
+         nS2g4UEFJCGIkDcsg8+Zu7CfMXEEfUeD2d8c8pjZ75FObpeD1AOkLIHDIb/euHAQPh
+         6RTFtd+17Rrddy2wZ3y/bwehAR10GgekXv7dQG/U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Varun Prakash <varun@chelsio.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 28/40] scsi: csiostor: fix NULL pointer dereference in csio_vport_set_state()
-Date:   Thu, 14 Feb 2019 21:13:01 -0500
-Message-Id: <20190215021313.178476-28-sashal@kernel.org>
+Cc:     Atsushi Nemoto <atsushi.nemoto@sord.co.jp>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 29/40] net: altera_tse: fix connect_local_phy error path
+Date:   Thu, 14 Feb 2019 21:13:02 -0500
+Message-Id: <20190215021313.178476-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021313.178476-1-sashal@kernel.org>
 References: <20190215021313.178476-1-sashal@kernel.org>
@@ -58,40 +58,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Varun Prakash <varun@chelsio.com>
+From: Atsushi Nemoto <atsushi.nemoto@sord.co.jp>
 
-[ Upstream commit fe35a40e675473eb65f2f5462b82770f324b5689 ]
+[ Upstream commit 17b42a20d7ca59377788c6a2409e77569570cc10 ]
 
-Assign fc_vport to ln->fc_vport before calling csio_fcoe_alloc_vnp() to
-avoid a NULL pointer dereference in csio_vport_set_state().
+The connect_local_phy should return NULL (not negative errno) on
+error, since its caller expects it.
 
-ln->fc_vport is dereferenced in csio_vport_set_state().
-
-Signed-off-by: Varun Prakash <varun@chelsio.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Atsushi Nemoto <atsushi.nemoto@sord.co.jp>
+Acked-by: Thor Thayer <thor.thayer@linux.intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/csiostor/csio_attr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/altera/altera_tse_main.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/csiostor/csio_attr.c b/drivers/scsi/csiostor/csio_attr.c
-index 2d1c4ebd40f9..6587f20cff1a 100644
---- a/drivers/scsi/csiostor/csio_attr.c
-+++ b/drivers/scsi/csiostor/csio_attr.c
-@@ -582,12 +582,12 @@ csio_vport_create(struct fc_vport *fc_vport, bool disable)
- 	}
+diff --git a/drivers/net/ethernet/altera/altera_tse_main.c b/drivers/net/ethernet/altera/altera_tse_main.c
+index 527908c7e384..84def1ff6cb6 100644
+--- a/drivers/net/ethernet/altera/altera_tse_main.c
++++ b/drivers/net/ethernet/altera/altera_tse_main.c
+@@ -714,8 +714,10 @@ static struct phy_device *connect_local_phy(struct net_device *dev)
  
- 	fc_vport_set_state(fc_vport, FC_VPORT_INITIALIZING);
-+	ln->fc_vport = fc_vport;
+ 		phydev = phy_connect(dev, phy_id_fmt, &altera_tse_adjust_link,
+ 				     priv->phy_iface);
+-		if (IS_ERR(phydev))
++		if (IS_ERR(phydev)) {
+ 			netdev_err(dev, "Could not attach to PHY\n");
++			phydev = NULL;
++		}
  
- 	if (csio_fcoe_alloc_vnp(hw, ln))
- 		goto error;
- 
- 	*(struct csio_lnode **)fc_vport->dd_data = ln;
--	ln->fc_vport = fc_vport;
- 	if (!fc_vport->node_name)
- 		fc_vport->node_name = wwn_to_u64(csio_ln_wwnn(ln));
- 	if (!fc_vport->port_name)
+ 	} else {
+ 		int ret;
 -- 
 2.19.1
 
