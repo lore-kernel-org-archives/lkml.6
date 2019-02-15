@@ -2,154 +2,121 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E64FFC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E907BC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:32:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6BCF20840
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:32:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197975;
-	bh=bZDqaFTvGDrDj0ZpbzT6WhWMd4AoGhSTBSiltW0fk/E=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=J9yTJWWkyLm8Tq+W5THoZmDAU6qDS1migrLyggdcx3HCbx5gZzKGsZs4tb7p1/YHw
-	 qyXjef8Y6MDMQwpjwY5HnHlWh2jdZYTLe9DUeofe/Hxx8/MUvi644WBweJSM9HhCUl
-	 nQNKCdswF9aeoucrPa16b/KsqevwIWypIrXBmpjg=
+	by mail.kernel.org (Postfix) with ESMTP id B96AF2175B
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:32:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TNfw8Gm8";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="G6cncKKC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387696AbfBOCcs (ORCPT
+        id S2388177AbfBOCc5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Feb 2019 21:32:57 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:37034 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387502AbfBOCcs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 14 Feb 2019 21:32:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52250 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404129AbfBOCMO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:12:14 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 17BD2608FD; Fri, 15 Feb 2019 02:32:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550197966;
+        bh=NDg3PhUw2Vr/THPcUDE5xFuZZuswpVtFeqXp6mwLfg8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=TNfw8Gm8f8o9X/PMNsTZuwnHQFcFdIQUIFZueWR9TUW66ZST09NC9R7ub/fLsMYHg
+         FUa5/HysVJXWEh9rMh0JGrmTiyFUPxt3kuKF4D3/Zrh8+vNwohlQCzVoXT1xvhZ/EP
+         +0AqpoCZqgBJQQT1OuZhA0qjWef4McpXg4bT/+C0=
+Received: from [10.79.128.185] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC7AB21B1C;
-        Fri, 15 Feb 2019 02:12:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196733;
-        bh=bZDqaFTvGDrDj0ZpbzT6WhWMd4AoGhSTBSiltW0fk/E=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R2c2uTFurToBJ1GZBt68pL47UoESTb3MVYO/ZUZ8ZRHGwMf+ea5p+T9FpoFHFhBu+
-         +s9jJKLHLRUopqYSwMT+mEoRU708gzPZncBWgLNaqplM4cl0PNJCti+2oKKKrOPqOp
-         nPk2QXF8i0LEn2Sb4Ajo6HwJIM4gUaFL8pBC6kBM=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Waiman Long <longman@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 31/65] sched/wake_q: Fix wakeup ordering for wake_q
-Date:   Thu, 14 Feb 2019 21:10:47 -0500
-Message-Id: <20190215021121.177674-31-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
-References: <20190215021121.177674-1-sashal@kernel.org>
+        (Authenticated sender: rnayak@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5FD2A608CC;
+        Fri, 15 Feb 2019 02:32:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550197964;
+        bh=NDg3PhUw2Vr/THPcUDE5xFuZZuswpVtFeqXp6mwLfg8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=G6cncKKCOQBtuOh0lr8/fUdb5G6zMZHCbTSIqdm7BUX7TLQxNwTjo6QEGgXrqLZV5
+         G0UloFj2HnPMDbyzD4rCs57l25/YJcTKYwdzyZ4aCb7w8gfK8idVcU4FdFuBAvg66e
+         Kh/ti9o0EjgPHDvX/pmLu/p1uc8/fCjWI1spaVgE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5FD2A608CC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [PATCH] soc: qcom: rpmhpd: Set 'active_only' for active only
+ power domains
+To:     Douglas Anderson <dianders@chromium.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Stephen Boyd <swboyd@chromium.org>, linux-arm-msm@vger.kernel.org,
+        David Brown <david.brown@linaro.org>,
+        linux-kernel@vger.kernel.org
+References: <20190214173633.211000-1-dianders@chromium.org>
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <69c46e02-f6b7-c6b3-5dc1-8c9ecd88b14d@codeaurora.org>
+Date:   Fri, 15 Feb 2019 08:02:40 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190214173633.211000-1-dianders@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
 
-[ Upstream commit 4c4e3731564c8945ac5ac90fc2a1e1f21cb79c92 ]
+On 2/14/2019 11:06 PM, Douglas Anderson wrote:
+> The 'active_only' attribute was accidentally never set to true for any
+> power domains meaning that all the code handling this attribute was
+> dead.
+> 
+> NOTE that the RPM power domain code (as opposed to the RPMh one) gets
+> this right.
+> 
+> Fixes: 279b7e8a62cc ("soc: qcom: rpmhpd: Add RPMh power domain driver")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 
-Notable cmpxchg() does not provide ordering when it fails, however
-wake_q_add() requires ordering in this specific case too. Without this
-it would be possible for the concurrent wakeup to not observe our
-prior state.
+Thanks for catching this. I seem to have introduced this bug when I moved
+away from using the macros to define these static structs and failed to add
+the property :/
 
-Andrea Parri provided:
+Acked-by: Rajendra Nayak <rnayak@codeaurora.org>
 
-  C wake_up_q-wake_q_add
+> ---
+> 
+>   drivers/soc/qcom/rpmhpd.c | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/soc/qcom/rpmhpd.c b/drivers/soc/qcom/rpmhpd.c
+> index 5741ec3fa814..51850cc68b70 100644
+> --- a/drivers/soc/qcom/rpmhpd.c
+> +++ b/drivers/soc/qcom/rpmhpd.c
+> @@ -93,6 +93,7 @@ static struct rpmhpd sdm845_mx = {
+>   
+>   static struct rpmhpd sdm845_mx_ao = {
+>   	.pd = { .name = "mx_ao", },
+> +	.active_only = true,
+>   	.peer = &sdm845_mx,
+>   	.res_name = "mx.lvl",
+>   };
+> @@ -107,6 +108,7 @@ static struct rpmhpd sdm845_cx = {
+>   
+>   static struct rpmhpd sdm845_cx_ao = {
+>   	.pd = { .name = "cx_ao", },
+> +	.active_only = true,
+>   	.peer = &sdm845_cx,
+>   	.parent = &sdm845_mx_ao.pd,
+>   	.res_name = "cx.lvl",
+> 
 
-  {
-	int next = 0;
-	int y = 0;
-  }
-
-  P0(int *next, int *y)
-  {
-	int r0;
-
-	/* in wake_up_q() */
-
-	WRITE_ONCE(*next, 1);   /* node->next = NULL */
-	smp_mb();               /* implied by wake_up_process() */
-	r0 = READ_ONCE(*y);
-  }
-
-  P1(int *next, int *y)
-  {
-	int r1;
-
-	/* in wake_q_add() */
-
-	WRITE_ONCE(*y, 1);      /* wake_cond = true */
-	smp_mb__before_atomic();
-	r1 = cmpxchg_relaxed(next, 1, 2);
-  }
-
-  exists (0:r0=0 /\ 1:r1=0)
-
-  This "exists" clause cannot be satisfied according to the LKMM:
-
-  Test wake_up_q-wake_q_add Allowed
-  States 3
-  0:r0=0; 1:r1=1;
-  0:r0=1; 1:r1=0;
-  0:r0=1; 1:r1=1;
-  No
-  Witnesses
-  Positive: 0 Negative: 3
-  Condition exists (0:r0=0 /\ 1:r1=0)
-  Observation wake_up_q-wake_q_add Never 0 3
-
-Reported-by: Yongji Xie <elohimes@gmail.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- kernel/sched/core.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 13ddfa46d741..152a0b0c91bb 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -405,10 +405,11 @@ void wake_q_add(struct wake_q_head *head, struct task_struct *task)
- 	 * its already queued (either by us or someone else) and will get the
- 	 * wakeup due to that.
- 	 *
--	 * This cmpxchg() executes a full barrier, which pairs with the full
--	 * barrier executed by the wakeup in wake_up_q().
-+	 * In order to ensure that a pending wakeup will observe our pending
-+	 * state, even in the failed case, an explicit smp_mb() must be used.
- 	 */
--	if (cmpxchg(&node->next, NULL, WAKE_Q_TAIL))
-+	smp_mb__before_atomic();
-+	if (cmpxchg_relaxed(&node->next, NULL, WAKE_Q_TAIL))
- 		return;
- 
- 	get_task_struct(task);
 -- 
-2.19.1
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
