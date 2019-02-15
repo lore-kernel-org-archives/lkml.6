@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D465CC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:21:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 107F0C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:21:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99BBF20643
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:21:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAD6220643
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:21:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197271;
-	bh=e0Y7LJADeVMuJ+mO1s/4mB5ItRHgoGsPN8tILdPKlmA=;
+	s=default; t=1550197283;
+	bh=YYZVPzGEdKsqa7iDI4HDJsast3VE1vT88vN+loSAVIY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QUVxKED4X+PgdOb85p38JQ7BfOCdPu3h9/JI2+GHY3/DUgqmCS1MdrI3xTICvNJxF
-	 rmp+EX0B1h9SyKm7d4B+9liRhb8gYiB5WES7xVlrOrmH3Q5DiiQl32A/Q3ly9bGTe8
-	 PEvc48POIieo9jaMBIadcXBK794L+vjHGAETqMXI=
+	b=ubqixI20hDLaYVmkZhTpPd6nFlkke8wxS14dywQ9eEYxWokF9aF7Qe6Lbs9uj+imW
+	 Md0IP/FPntdwBDrT1RU+/i23Gs69nySTFiEYIXQuK1+gcof5+7mOT3Wlr/d51MD0zN
+	 w8ZK8yPXhPJi933loyRtyMgmUiO7AllgjjWSEXOI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732939AbfBOCVJ (ORCPT
+        id S1732965AbfBOCVW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:21:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54964 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:21:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405453AbfBOCPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:15:08 -0500
+        id S2405399AbfBOCPF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:15:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 947872229F;
-        Fri, 15 Feb 2019 02:15:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 294DA206BA;
+        Fri, 15 Feb 2019 02:15:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196907;
-        bh=e0Y7LJADeVMuJ+mO1s/4mB5ItRHgoGsPN8tILdPKlmA=;
+        s=default; t=1550196905;
+        bh=YYZVPzGEdKsqa7iDI4HDJsast3VE1vT88vN+loSAVIY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A8bB2czGxvRjQumT6s8W3uKdIGSBCECmSNesYlx01eEqOEVOo9GL0dyok+2KNQGt9
-         hSnUxXNDbquGOs3s+ip+O5LyXGPedCje6ZdeuUqkOBtKg22asl3kpX2CuMpG9qen7y
-         JM0pbOSZCGyhPsNOqmcZi2BL5nYNRf5boVbpKebg=
+        b=fusDmHmPvl6nZhNEltCTVLKaYS/H8EYohrkFx/2PhTm67kzbT4bsKrif52KqCLGPk
+         6Aqzd9rnYGTW1BAGTyHOKY5F9PEJJ0LQiiJU62qZrZVm+l3nU+VRMjxJSErS8mJbzX
+         uTj9MS0jJBF3B2v6yN4dgaUCZ2/MUXGqGAcpehN0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 24/27] mac80211: Add attribute aligned(2) to struct 'action'
-Date:   Thu, 14 Feb 2019 21:14:21 -0500
-Message-Id: <20190215021424.178979-24-sashal@kernel.org>
+Cc:     Thomas Falcon <tlfalcon@linux.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.9 22/27] ibmveth: Do not process frames after calling napi_reschedule
+Date:   Thu, 14 Feb 2019 21:14:19 -0500
+Message-Id: <20190215021424.178979-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021424.178979-1-sashal@kernel.org>
 References: <20190215021424.178979-1-sashal@kernel.org>
@@ -59,62 +59,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mathieu Malaterre <malat@debian.org>
+From: Thomas Falcon <tlfalcon@linux.ibm.com>
 
-[ Upstream commit 7c53eb5d87bc21464da4268c3c0c47457b6d9c9b ]
+[ Upstream commit e95d22c69b2c130ccce257b84daf283fd82d611e ]
 
-During refactor in commit 9e478066eae4 ("mac80211: fix MU-MIMO
-follow-MAC mode") a new struct 'action' was declared with packed
-attribute as:
+The IBM virtual ethernet driver's polling function continues
+to process frames after rescheduling NAPI, resulting in a warning
+if it exhausted its budget. Do not restart polling after calling
+napi_reschedule. Instead let frames be processed in the following
+instance.
 
-  struct {
-          struct ieee80211_hdr_3addr hdr;
-          u8 category;
-          u8 action_code;
-  } __packed action;
-
-But since struct 'ieee80211_hdr_3addr' is declared with an aligned
-keyword as:
-
-  struct ieee80211_hdr {
-  	__le16 frame_control;
-  	__le16 duration_id;
-  	u8 addr1[ETH_ALEN];
-  	u8 addr2[ETH_ALEN];
-  	u8 addr3[ETH_ALEN];
-  	__le16 seq_ctrl;
-  	u8 addr4[ETH_ALEN];
-  } __packed __aligned(2);
-
-Solve the ambiguity of placing aligned structure in a packed one by
-adding the aligned(2) attribute to struct 'action'.
-
-This removes the following warning (W=1):
-
-  net/mac80211/rx.c:234:2: warning: alignment 1 of 'struct <anonymous>' is less than 2 [-Wpacked-not-aligned]
-
-Cc: Johannes Berg <johannes.berg@intel.com>
-Suggested-by: Johannes Berg <johannes@sipsolutions.net>
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Thomas Falcon <tlfalcon@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/rx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/ibm/ibmveth.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
-index fdbfdb04abe8..10e8b85e017f 100644
---- a/net/mac80211/rx.c
-+++ b/net/mac80211/rx.c
-@@ -216,7 +216,7 @@ static void ieee80211_handle_mu_mimo_mon(struct ieee80211_sub_if_data *sdata,
- 		struct ieee80211_hdr_3addr hdr;
- 		u8 category;
- 		u8 action_code;
--	} __packed action;
-+	} __packed __aligned(2) action;
+diff --git a/drivers/net/ethernet/ibm/ibmveth.c b/drivers/net/ethernet/ibm/ibmveth.c
+index 4996228fd7e6..955f658f3b65 100644
+--- a/drivers/net/ethernet/ibm/ibmveth.c
++++ b/drivers/net/ethernet/ibm/ibmveth.c
+@@ -1240,7 +1240,6 @@ static int ibmveth_poll(struct napi_struct *napi, int budget)
+ 	struct iphdr *iph;
+ 	u16 mss = 0;
  
- 	if (!sdata)
- 		return;
+-restart_poll:
+ 	while (frames_processed < budget) {
+ 		if (!ibmveth_rxq_pending_buffer(adapter))
+ 			break;
+@@ -1338,7 +1337,6 @@ static int ibmveth_poll(struct napi_struct *napi, int budget)
+ 		    napi_reschedule(napi)) {
+ 			lpar_rc = h_vio_signal(adapter->vdev->unit_address,
+ 					       VIO_IRQ_DISABLE);
+-			goto restart_poll;
+ 		}
+ 	}
+ 
 -- 
 2.19.1
 
