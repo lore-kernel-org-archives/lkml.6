@@ -2,224 +2,153 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43091C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:56:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 500CAC10F02
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 23:00:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0819E222D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:56:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="F3FW0jz+"
+	by mail.kernel.org (Postfix) with ESMTP id 1E4422192D
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 23:00:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394278AbfBOW4Y (ORCPT
+        id S2394304AbfBOXAq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 17:56:24 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:43038 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727943AbfBOW4Y (ORCPT
+        Fri, 15 Feb 2019 18:00:46 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:53897 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388553AbfBOXAp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 17:56:24 -0500
-Received: by mail-pf1-f196.google.com with SMTP id q17so5503324pfh.10
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 14:56:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=CgUUh/CyKN2duRzRGvACqyGXrjfQbOsdifB+RX8Aq/w=;
-        b=F3FW0jz+csJ4ZUXBKPiINh1hoEy4illxvFFQyigonj7p3l48XXQQ+Bbbhlo/cRIB02
-         zJ3Tsh1anZ5/pgzqrHeD7F2AJaemH7spQoPRg2VvmgroIBkECAE5rWZ6TYYQMfvJxGsF
-         lGuETCZuvcaehlbT+IGrTeFMpalG8g8nodvPc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=CgUUh/CyKN2duRzRGvACqyGXrjfQbOsdifB+RX8Aq/w=;
-        b=ERxwV+nFPlRI4p3VK/P2pGWZWtofjLB4R8QZ+4IWRf7zojtJOrpcN2fXyD9nw7J7C/
-         xtuuPs1OslNW+wAFGJZf+dgZHNEpCd8/MplUMXn0nC1AXL7Xpl+aF0YBjOlRQM137NkU
-         5S9/cdJB1MbtlKcxt/vKHF88a6yOY7b1CKtj8QwIf+fbXAXvAhc71qF6LJYdnBqo/m8I
-         ChjWf9nPL7NDoSUV+oTzkKxPDyegbIRiFPv+hnkTwb9P3RksFGWc3b7j+FYKemCtwXZS
-         FtucNr0NH3YDFtauy6shwNPUEzOxR8fMMjzuo9doEcJOO/2Gmz7itHfmmD6PBH1RT7Qy
-         /Acg==
-X-Gm-Message-State: AHQUAuazuHkLCSHuFEUTfmApVaP2Ytvwr23YwlMAU7fJsy5iT61dcVpL
-        xxyoRRVjoBKm5xClJuLwzqMBsnaxNYg=
-X-Google-Smtp-Source: AHgI3IbFAcSvVG16EtBZK5bHKGqhWwLDuuAzmBoimfkgBBIZVfDBdiZIp6+GPjSnFajetaG/zqwKDw==
-X-Received: by 2002:a63:134a:: with SMTP id 10mr7020276pgt.83.1550271383112;
-        Fri, 15 Feb 2019 14:56:23 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id d3sm18571698pfj.54.2019.02.15.14.56.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 15 Feb 2019 14:56:22 -0800 (PST)
-Date:   Fri, 15 Feb 2019 14:56:21 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     Chanwoo Choi <cwchoi00@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-tegra@vger.kernel.org,
-        Lukasz Luba <l.luba@partner.samsung.com>
-Subject: Re: [PATCH 4/4] PM / devfreq: Handle monitor start/stop in the
- devfreq core
-Message-ID: <20190215225621.GG117604@google.com>
-References: <20190214013042.254790-1-mka@chromium.org>
- <20190214013042.254790-5-mka@chromium.org>
- <CAGTfZH118diXgKHetWwiNMXHALxXqt=MSh9oVv+nt4-SJkzN2Q@mail.gmail.com>
- <CGME20190214192933epcas5p204c34010accb5e63480abd3ca34991eb@epcas5p2.samsung.com>
- <20190214192855.GD117604@google.com>
- <b28e763d-c3c9-0673-6216-f67561112b60@samsung.com>
- <20190215001947.GF117604@google.com>
- <1671c5fa-5414-8a83-b372-99f7f057a2ac@samsung.com>
+        Fri, 15 Feb 2019 18:00:45 -0500
+Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gumT8-0005pQ-0r; Sat, 16 Feb 2019 00:00:30 +0100
+Date:   Sat, 16 Feb 2019 00:00:29 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Ming Lei <ming.lei@redhat.com>
+cc:     LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+        Keith Busch <keith.busch@intel.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Kashyap Desai <kashyap.desai@broadcom.com>,
+        Shivasharan Srikanteshwara 
+        <shivasharan.srikanteshwara@broadcom.com>
+Subject: Re: [patch V5 4/8] nvme-pci: Simplify interrupt allocation
+In-Reply-To: <alpine.DEB.2.21.1902150053160.1646@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1902152242120.1683@nanos.tec.linutronix.de>
+References: <20190214204755.819014197@linutronix.de> <20190214211759.699390983@linutronix.de> <20190214224136.GA18764@ming.t460p> <alpine.DEB.2.21.1902150053160.1646@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1671c5fa-5414-8a83-b372-99f7f057a2ac@samsung.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chanwoo,
+On Fri, 15 Feb 2019, Thomas Gleixner wrote:
 
-On Fri, Feb 15, 2019 at 09:33:05AM +0900, Chanwoo Choi wrote:
-> Hi Matthias,
-> 
-> On 19. 2. 15. 오전 9:19, Matthias Kaehlcke wrote:
-> > Hi Chanwoo,
+> On Fri, 15 Feb 2019, Ming Lei wrote:
+> > > +	 * If only one interrupt is available, combine write and read
+> > > +	 * queues. If 'write_queues' is set, ensure it leaves room for at
+> > > +	 * least one read queue.
+> > > +	 */
+> > > +	if (nrirqs == 1)
+> > > +		nr_read_queues = 0;
+> > > +	else if (write_queues >= nrirqs)
+> > > +		nr_read_queues = nrirqs - 1;
+> > > +	else
+> > > +		nr_read_queues = nrirqs - write_queues;
+> > > +
+> > > +	dev->io_queues[HCTX_TYPE_DEFAULT] = nrirqs - nr_read_queues;
+> > > +	affd->set_size[HCTX_TYPE_DEFAULT] = nrirqs - nr_read_queues;
+> > > +	dev->io_queues[HCTX_TYPE_READ] = nr_read_queues;
+> > > +	affd->set_size[HCTX_TYPE_READ] = nr_read_queues;
+> > > +	affd->nr_sets = nr_read_queues ? 2 : 1;
+> > >  }
 > > 
-> > On Fri, Feb 15, 2019 at 08:42:30AM +0900, Chanwoo Choi wrote:
-> >> Hi Matthias,
-> >>
-> >> On 19. 2. 15. 오전 4:28, Matthias Kaehlcke wrote:
-> >>> Hi Chanwoo,
-> >>>
-> >>> On Thu, Feb 14, 2019 at 11:17:36PM +0900, Chanwoo Choi wrote:
-> >>>> Hi Matthias,
-> >>>>
-> >>>> As I commented on the first patch, it is not possible to call some codes
-> >>>> according to the intention of each governor between 'devfreq_moniotr_*()'
-> >>>> and some codes which are executed before or after 'devfreq_moniotr_*()'
-> >>>>
-> >>>> For example, if some governor requires the following sequence,
-> >>>> after this patch, it is not possible.
-> >>>>
-> >>>> case DEVFREQ_GOV_xxx:
-> >>>>         /* execute some code before devfreq_monitor_xxx() */
-> >>>>         devfreq_monitor_xxx()
-> >>>>         /* execute some code after devfreq_monitor_xxx() */
-> >>>
-> >>> As for the suspend/resume case I agree that the patch introduces this
-> >>> limitation, but I'm not convinced that this is an actual problem.
-> >>>
-> >>> For governor_start(): why can't the governor execute the code
-> >>> before polling started, does it make any difference to the governor
-> >>> that a work is scheduled?
-> >>
-> >> The some governors might want to do something before starting
-> >> the work and do something after work started. I think that
-> >> the existing style is more flexible.
-> > 
-> > Could you provide a practical example that answers my question above:
-> > 
-> > "why can't the governor execute the code before polling started, does
-> > it make any difference to the governor that a work is scheduled?"
+> > .calc_sets is called only if more than .pre_vectors is available,
+> > then dev->io_queues[HCTX_TYPE_DEFAULT] may not be set in case of
+> > (nvecs == affd->pre_vectors + affd->post_vectors).
 > 
-> Actually, as for now, I don't know the correct practice and now.
-> I want to say that the existing style is more flexible for the
-> new governor in the future.
+> Hmm, good catch. The delta patch below should fix that, but I have to go
+> through all the possible cases in pci_alloc_irq_vectors_affinity() once
+> more with brain awake.
 
-If you try submitting 'flexible' code in other parts of the kernel
-without users of this flexibility and no solid arguments why this
-flexibility is needed it would most likely be rejected.
+The existing logic in the driver is somewhat strange. If there is only a
+single interrupt available, i.e. no separation of admin and I/O queue, then
+dev->io_queues[HCTX_TYPE_DEFAULT] is still set to 1.
 
-Unnecessary flexibility can be a burden, rather than an advantage.
+Now with the callback scheme (independent of my changes) that breaks in
+various ways:
 
-> If there are no any special benefits I think we don't need to harm
-> the flexibility.
+  1) irq_create_affinity_masks() bails out early:
 
-There are multiple benefits, the following shortcomings of the current
-approach are eliminated:
+	if (nvecs == affd->pre_vectors + affd->post_vectors)
+		return NULL;
 
-- it is error prone and allows governors to do the wrong thing, e.g.
-  - start monitoring before the governor is fully ready
-  - keep monitoring when the governor is partially 'stopped'
-  - omit mandatory calls
-- delegates tasks to the governors which are responsibility of the
-  core
-- code is harder to read
-  - switch from common code to governor code and back
-- unecessary boilerplate code in governors
-- option to replace ->event_handler() with ->start(), ->stop(), etc,
-  which is cleaner
+     So the callback won't be invoked and the last content of
+     dev->io_queues is preserved. By chance this might end up with
 
-I'm easily convinced if the flexibility is really needed. I'm not even
-expecting a real world example, just be creative and make something
-up that sounds reasonable.
+	dev->io_queues[HCTX_TYPE_DEFAULT] = 1;
+	dev->io_queues[HCTX_TYPE_READ] = 0;
 
-start/resume()
-{
-	// prepare governor
+    but that does not happen by design.
 
-	// start polling
 
-=>	what needs to be done here that couldn't have been done
-=>	before polling was started?
-}
+ 2) pci_alloc_irq_vectors_affinity() has the following flow:
 
-stop/suspend()
-{
-=>	what needs to be done here that couldn't be done after polling
-=>	is stopped?
+    __pci_enable_msix_range()
+      for (...) {
+            __pci_enable_msix()
+      }
 
-	// stop polling
+    If that fails because MSIX is not supported, then the affinity
+    spreading code has not been called yet and neither the callback.
+    Now it goes on and tries MSI, which is the same as the above.
 
-	// 'unprepare' governor
-}
+    When that fails because MSI is not supported, same situation as above
+    and the code tries to allocate the legacy interrupt.
 
-> >> And,
-> >> It has one more problem when changing the governor on the fly
-> >> from simple_ondemand to other governors like performance,
-> >> powersave and so on.
-> >>
-> >> Even if other governors don't need to monitor the utilization,
-> >> the work timer will be executed continually because the devfreq
-> >> device has the polling_ms value. It is not necessary
-> >> of the other governors such as performance, powersave.
-> >>
-> >> It means that only specific governor like simple_ondemand
-> >> have to call the devfreq_monitor_start() by itself
-> >> instead of calling it on devfreq core.
-> > 
-> > yes, I noticed that too, it can be easily fixed with a flag in the
-> > governor.
-> 
-> Right, If we add some codes like flag, it is easy.
-> Actually, it is just difference how to support them.
-> 
-> I think that the existing style has not any problem and is not
-> complicated to develop the new governor. If there are no
-> some benefits, IMO, we better to keep the flexibility.
-> It can give the flexibility to the developer of governor.
+    Now with the initial initialization that case is covered, but not the
+    following error case:
 
-I listed several benefits, please comment on the specific items if you
-disagree, instead of just saying there are no benefits.
+      Assume MSIX is enabled, but __pci_enable_msix() fails with -ENOMEM
+      after having called irq_create_affinity_masks() and subsequently the
+      callback with maxvecs.
 
-OTOH so far we haven't seen an even hypothetical example that shows
-that the flexibility *could* be needed.
+      Then pci_alloc_irq_vectors_affinity() will try MSI and fail _BEFORE_
+      the callback is invoked.
 
-And even if such a rare case that we currently can't imagine came up,
-it could be easily addressed with notifiers, a standard mechanism in
-the kernel to inform drivers about events they are interested in.
+      The next step is to install the leagcy interrupt, but that does not
+      invoke the affinity code and neither the callback.
 
-Cheers
+      At the end dev->io_queues[*] are still initialized with the failed
+      attempt of enabling MSIX based on maxvecs.
 
-Matthias
+      Result: inconsistent state ...
+
+I have an idea how to fix that, but that's again a task for brain being
+awake. Will take care of that tomorrow morning.
+
+Thanks,
+
+	tglx
+
+
+    
+
+
+ 
+
+
+    
