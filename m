@@ -2,125 +2,127 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C1C5C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:29:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE2E3C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:29:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3CB7222A1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:29:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E8F1222A1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:29:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nokia.onmicrosoft.com header.i=@nokia.onmicrosoft.com header.b="YaiZCa5z"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iFnPJz2x";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QRRNVvaV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730253AbfBOT3T (ORCPT
+        id S1730598AbfBOT3a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 14:29:19 -0500
-Received: from mail-eopbgr80128.outbound.protection.outlook.com ([40.107.8.128]:51777
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726010AbfBOT3S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 14:29:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uiV//4IwR4F+wt7RedPOJIClQoACca/kXrQErdLcEs0=;
- b=YaiZCa5zq/StvBlnr0NLR80/02sS2iJ+7FvUcW0XK4+1ynstGWcWsmGge1U41hbuyTf6YfSgX8PjOjKcdHlEBt/BINoYOSJMtvFsSUlGqszjsNEwVPg7vhx01ocP/52cPiTSHb6pJATjKx+lTf6ihWYT3oy5k+quBtBThI6UD6o=
-Received: from HE1PR0702MB3675.eurprd07.prod.outlook.com (52.133.6.141) by
- HE1PR0702MB3675.eurprd07.prod.outlook.com (52.133.6.141) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.9; Fri, 15 Feb 2019 19:29:13 +0000
-Received: from HE1PR0702MB3675.eurprd07.prod.outlook.com
- ([fe80::b49f:d20e:88d4:128]) by HE1PR0702MB3675.eurprd07.prod.outlook.com
- ([fe80::b49f:d20e:88d4:128%6]) with mapi id 15.20.1622.016; Fri, 15 Feb 2019
- 19:29:13 +0000
-From:   "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "mingo@redhat.com" <mingo@redhat.com>
-Subject: /proc/sys/kernel/sched_domain/, isolcpus, CONFIG_CPUMASK_OFFSTACK
-Thread-Topic: /proc/sys/kernel/sched_domain/, isolcpus,
- CONFIG_CPUMASK_OFFSTACK
-Thread-Index: AQHUxWS7MRAshjLOG0SbueLnNFm6EA==
-Date:   Fri, 15 Feb 2019 19:29:13 +0000
-Message-ID: <68662179f21de176e3d8909ddab6bb15a2e23a09.camel@nokia.com>
-Accept-Language: fi-FI, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=tommi.t.rantala@nokia.com; 
-x-originating-ip: [131.228.2.16]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 1881a137-0884-4655-888a-08d6937bde23
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7193020);SRVR:HE1PR0702MB3675;
-x-ms-traffictypediagnostic: HE1PR0702MB3675:
-x-microsoft-exchange-diagnostics: =?utf-8?B?MTtIRTFQUjA3MDJNQjM2NzU7MjM6OG9JSGxQckkrRkQ0ck1GVlBVejJxeEkw?=
- =?utf-8?B?aXM4cTRqYW1tMzMrak4ycGVHVXFqOUkxbmNpd0lJVFhzRFQ2VTk3RWV0ejFB?=
- =?utf-8?B?N08vTHMwYXVGbEFwRlpzUlRJN3hrVGdZdnFKN2RXbk9JSjZkL1ZOSmoyTkps?=
- =?utf-8?B?cERsMWRmQWQ3cThka2w1NzBidHRDRVJ4RzNUUXBDcHNWQXlQbFVYT1Jwc1Fn?=
- =?utf-8?B?Z1FMMXBMYURWK3E0bGN3RFkvVHFHNDcvTG5VM01ncElqL1l2NEF4Z3NRQVhG?=
- =?utf-8?B?ejgvbWhsYVpUa1cxYzhrM3MyZHdyN1ZDVUVjUk9teVU3WjR2UWtRSmdCK2Fw?=
- =?utf-8?B?ekMzQ2Q4eTdPTmFVNGs4MW1ZWVNnMTJ3Q1pyeC9XMkpDOGl4ZCtGRksyMkQv?=
- =?utf-8?B?RnNsdWdFeGc1MG5LMmhoeWdlSVhMSXBVS05XbDVhUUNSa1NJcmY2ZitNL1FI?=
- =?utf-8?B?akRyVE9wb1dHSWFNallKT01keXVtR2NydlJ3RFV4OW5wTUd0aDlsQ1ptOHdl?=
- =?utf-8?B?THp1NytlOFMzWjJwTDl1QStTYzA1eWttYmUzaHFpRGxTV1NRUUhxS3cxZGJw?=
- =?utf-8?B?WGZHd2lEKzUzMzFuRVFqSWdSUkM0b2JNYStYZWRrOTFIZzVtNzVBSnp2WEdz?=
- =?utf-8?B?R3hmNFlLZVU5Rm9UbEJBNXdrdW5TOVJuWWc0eE84S3Y0Wkh0dDNuTTU5aDlT?=
- =?utf-8?B?Q2tNa3liMjA5Y1F4Y2FZdlNkYW1sb1hUY21sOU1uZ0RJRHpDZGJzNXJNWVFk?=
- =?utf-8?B?RDdLMDNPSzFQR005STRMSHJTUklYMVA5amRyYTF6Nmo5UGd1QjJCVUNvYTJI?=
- =?utf-8?B?aTlDK0YxVzBNSFJka0RqMlI3T213MTV0NjlJcEVoYkRjbnpuUTZTWTM1NTFq?=
- =?utf-8?B?WUhpN2JaaHZ4S1Y1Tis3NjgyNEo2ZTVrRG9RSG9ZWUVleUZIL3VhRnA5Zno4?=
- =?utf-8?B?ZFkzVVFBRWk3VGpLcENzZEJVY1pEQlpNL054YmlnK0c5MkRZTkl1SnpvQWVx?=
- =?utf-8?B?TldySVd2VUpMUmNsUXY4NStsOXhud3pDdlB2MmdEL2hZM2F3T3BsQnRTNy94?=
- =?utf-8?B?OXN5UVVSdDN6cFozbjQ2Y1hQdkI4bGlIajRBUGJNN2VwekxjcW4xbzNvOGZL?=
- =?utf-8?B?bGs1ZHBNa1M2YkwvQkxlaEtQTXNyR1hCSDAybGp3bGZ1djRiZFEyWmlxbkZn?=
- =?utf-8?B?anlUYnl3Rlc1TGR5eHlQcUR2cmFTMERKRDZLdUQvWHhDQlZyMnFqand4bzl6?=
- =?utf-8?B?SWRsdkh6aGVzQ2NZZnhlY24yUjU4bC91TVNlbk9yU2RHVWNOd3EzS3VZMGcx?=
- =?utf-8?B?RmI0dE9UTXl4Nmk1bmdoUXEyZGVrYXVJVkV4MWRzQmJweWFtbFpMV09JN0tx?=
- =?utf-8?B?NUNYOUxjVGE5M1hLS0xOMG1qVlNodldsVDB1V0hLbGZOcDVWUGdZVFl3TmlN?=
- =?utf-8?Q?1RklK0/YVFwt4a4O0lDYywWyRsivC?=
-x-microsoft-antispam-prvs: <HE1PR0702MB3675C13BA119D8FDF01C61D8B4600@HE1PR0702MB3675.eurprd07.prod.outlook.com>
-x-forefront-prvs: 09497C15EB
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(366004)(39860400002)(376002)(136003)(189003)(199004)(97736004)(106356001)(105586002)(8936002)(2616005)(2906002)(86362001)(2201001)(6116002)(486006)(476003)(71190400001)(110136005)(68736007)(53936002)(478600001)(316002)(36756003)(3846002)(2501003)(71200400001)(256004)(118296001)(102836004)(7736002)(14454004)(6436002)(6512007)(186003)(81166006)(81156014)(4744005)(25786009)(99286004)(26005)(8676002)(6486002)(66066001)(305945005)(6506007);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0702MB3675;H:HE1PR0702MB3675.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nokia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: NwWIXRUcdyZoblhahfO+2m9BvbAVuRsFf3a81ezyzkgP3sfzE8AAZSSvZcFwmtmlcFcb6ZriLsSMe1W8uG7jNMv2QI3OXm7x/8Mg0rvB5XcfHT/C4RzE6p4Z5nJNctal10HiEZMwzL+TLuJH2nTeSBvcRsjrDgzL5FBYfLXpUS6oO6fGsOKWnw8Ytyj9d79qd879/Ugw4pPL7+qQxlXHWqNXF7kIjhbgs8ikM1TO/Z8uAR774Q3/0dPexjrUmHjhsovWOInCFRWYsZgHW+AzsWLeV+NF8YTr8V76sXLRalsE0fzOd0tfKLaAaJUZPNBjGBcxEVo7kc/eI7A0o2Q2+OJxt6wKg0S/yAzjly7CgrqCFlfl3aBvoncSZot64H6gJ71cyEiwv836eXiJ1xa5At+aYVJWNhWWct+5J57a4wo=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D417B5F8E5844A4283FDE0AEEAAAE4E7@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 15 Feb 2019 14:29:30 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:59056 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726010AbfBOT3a (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 14:29:30 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 1F66160740; Fri, 15 Feb 2019 19:29:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550258969;
+        bh=vC3nU2+7vIcRopeSLMrSbcjM6O+DDXSUpzvbzveJga4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=iFnPJz2xHgPAfCYN8MkQH/lNSsQOxZr+phMHRNqW0A95R9E1B2oY0eJjRS3lJHlTy
+         +XiOW6mmsz46WfxO6Ph9GJN0tIoRxhmq0i7JYidStTDWxDxwNYGxRrKYhy/naoIVjd
+         UWNiSbx7IPMfM4Om80rkMCTEFTvYRBLIqor3K280=
+Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4835360740;
+        Fri, 15 Feb 2019 19:29:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550258967;
+        bh=vC3nU2+7vIcRopeSLMrSbcjM6O+DDXSUpzvbzveJga4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=QRRNVvaV0icUtH/94BZbB0gSAsRcS56lzSbRFakD9ObeZ5ggffDl+r73vJpHKrOhQ
+         bqb2fFBYMaCC9Be8Lw8CgdxOpjIJ3frADEuKVQf4mZ+UuqvFU01lsrrDdYY6ofDbDL
+         oHeVvBik89kxGY6Q5EwhWwjVSSXRljmUBYG78taM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4835360740
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH 2/9] clk: Introduce get_parent_hw clk op
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>
+References: <20190129061021.94775-1-sboyd@kernel.org>
+ <20190129061021.94775-3-sboyd@kernel.org>
+ <41f8f325-2738-3995-1fc8-354a9412041e@codeaurora.org>
+ <155025643198.115909.9355230466710329335@swboyd.mtv.corp.google.com>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <488f5033-c7a5-b49b-b973-c1415e533019@codeaurora.org>
+Date:   Fri, 15 Feb 2019 12:29:26 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1881a137-0884-4655-888a-08d6937bde23
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Feb 2019 19:29:13.4603
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0702MB3675
+In-Reply-To: <155025643198.115909.9355230466710329335@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8sDQoNCi9wcm9jL3N5cy9rZXJuZWwvc2NoZWRfZG9tYWluLyBzZWVtcyB0byBiZSBzb21l
-d2hhdCBicm9rZW4gd2hlbiBrZXJuZWwNCmlzIGNvbmZpZ3VyZWQgd2l0aG91dCBDT05GSUdfQ1BV
-TUFTS19PRkZTVEFDSyBhbmQgYm9vdGluZyB3aXRoDQppc29sY3B1cz0gb3B0aW9uLg0KDQpFeGFt
-cGxlIHdpdGggOHggQ1BVLg0KDQpXaXRoIENPTkZJR19DUFVNQVNLX09GRlNUQUNLPXkgYW5kICJp
-c29sY3B1cz0yIjoNCg0KIyB1bmFtZSAtcg0KNS4wLjAtMC5yYzMuZ2l0MC4xLmZjMzAueDg2XzY0
-DQoNCiMgbHMgL3Byb2Mvc3lzL2tlcm5lbC9zY2hlZF9kb21haW4vKg0KL3Byb2Mvc3lzL2tlcm5l
-bC9zY2hlZF9kb21haW4vY3B1MDoNCmRvbWFpbjANCg0KL3Byb2Mvc3lzL2tlcm5lbC9zY2hlZF9k
-b21haW4vY3B1MToNCmRvbWFpbjANCg0KL3Byb2Mvc3lzL2tlcm5lbC9zY2hlZF9kb21haW4vY3B1
-MjoNCg0KL3Byb2Mvc3lzL2tlcm5lbC9zY2hlZF9kb21haW4vY3B1MzoNCmRvbWFpbjANCg0KL3By
-b2Mvc3lzL2tlcm5lbC9zY2hlZF9kb21haW4vY3B1NDoNCmRvbWFpbjANCg0KL3Byb2Mvc3lzL2tl
-cm5lbC9zY2hlZF9kb21haW4vY3B1NToNCmRvbWFpbjANCg0KL3Byb2Mvc3lzL2tlcm5lbC9zY2hl
-ZF9kb21haW4vY3B1NjoNCmRvbWFpbjANCg0KL3Byb2Mvc3lzL2tlcm5lbC9zY2hlZF9kb21haW4v
-Y3B1NzoNCmRvbWFpbjANCg0KDQpBbm90aGVyIGtlcm5lbCB3aXRob3V0IENPTkZJR19DUFVNQVNL
-X09GRlNUQUNLIGFuZCAiaXNvbGNwdXM9MiIsIHNvDQpkaXJlY3RvcmllcyBtaXNzaW5nIGZvciBD
-UFVzIDItNzoNCg0KIyBscyAvcHJvYy9zeXMva2VybmVsL3NjaGVkX2RvbWFpbi8NCmNwdTAgIGNw
-dTENCg0KIyBscyAvcHJvYy9zeXMva2VybmVsL3NjaGVkX2RvbWFpbi8qDQovcHJvYy9zeXMva2Vy
-bmVsL3NjaGVkX2RvbWFpbi9jcHUwOg0KZG9tYWluMA0KDQovcHJvYy9zeXMva2VybmVsL3NjaGVk
-X2RvbWFpbi9jcHUxOg0KZG9tYWluMA0KDQoNCi1Ub21taQ0KDQo=
+On 2/15/2019 11:47 AM, Stephen Boyd wrote:
+> Quoting Jeffrey Hugo (2019-02-11 08:09:00)
+>> On 1/28/2019 11:10 PM, Stephen Boyd wrote:
+>>
+>>> +static int clk_init_parent(struct clk_core *core)
+>>> +{
+>>> +     core->parent = __clk_init_parent(core, true);
+>>> +     if (IS_ERR(core->parent))
+>>> +             return PTR_ERR(core->parent);
+>>> +
+>>> +     /*
+>>> +      * Populate core->parent if parent has already been clk_core_init'd. If
+>>> +      * parent has not yet been clk_core_init'd then place clk in the orphan
+>>> +      * list.  If clk doesn't have any parents then place it in the root
+>>> +      * clk list.
+>>> +      *
+>>> +      * Every time a new clk is clk_init'd then we walk the list of orphan
+>>> +      * clocks and re-parent any that are children of the clock currently
+>>> +      * being clk_init'd.
+>>> +      */
+>>> +     if (core->parent) {
+>>> +             hlist_add_head(&core->child_node,
+>>> +                             &core->parent->children);
+>>> +             core->orphan = core->parent->orphan;
+>>> +     } else if (!core->num_parents) {
+>>> +             hlist_add_head(&core->child_node, &clk_root_list);
+>>> +             core->orphan = false;
+>>> +     } else {
+>>> +             hlist_add_head(&core->child_node, &clk_orphan_list);
+>>
+>> Missing "core->orphan = true;"?
+>> The snippet below had that line.  Its not clear why it appears to be
+>> dropped here.
+>>
+> 
+> Hmm. Weird. I think I may have been getting ahead of myself and moving
+> the orphan updating code into __clk_init_parent(). I can't remember why
+> though, so I guess I'll go all the way and move it all into
+> __clk_init_parent() now. Thanks for pointing it out.
+> 
+
+No problem.
+
+Just FYI, I've rebased the 8998 mmcc series on top of this, and as far 
+as I can tell, everything seems to be working great.
+
+-- 
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
