@@ -2,118 +2,94 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6E47C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 256C0C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:58:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4D3D21B18
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:58:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFA3221B18
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:58:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KAGgJMQp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gebaehCf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388459AbfBOT6F (ORCPT
+        id S1733070AbfBOT6Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 14:58:05 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:33233 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726317AbfBOT6E (ORCPT
+        Fri, 15 Feb 2019 14:58:24 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:34852 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726317AbfBOT6Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 14:58:04 -0500
-Received: by mail-pf1-f193.google.com with SMTP id c123so5334021pfb.0;
-        Fri, 15 Feb 2019 11:58:03 -0800 (PST)
+        Fri, 15 Feb 2019 14:58:24 -0500
+Received: by mail-lf1-f65.google.com with SMTP id v7so8087334lfd.2;
+        Fri, 15 Feb 2019 11:58:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ouOsaD2yvbHYJu6XT2SnIQFXfqdWR5DyARa34t5/lAs=;
-        b=KAGgJMQpty/sQmDzblWhfFvNFrsUexCPr/hAyIrZWqizkbNnELJ3pesOq0zgzkXr7m
-         UYjRjxR5nHRB9mA9hmmxwnWPWKGLM0FuGvtuhgt1a5HsTvS5A48fsNC+IyrQbHtj2Xis
-         roAgbd6RvYjuFPXAg30GIv2WBQZ0McZv00+SQXU11tvmSSMGZh8N/fdQQ447umiJwfnF
-         xHQGaxuA1Vgef7weHoszDdhXt5qBZFcNX1FMnIaZ1aFUieOUIXrlk8iO9sEjXqdgztfX
-         2P3ZRDY4ozsmkAbwZYpEQDA7xWRJAWH5XIKlsKNnNZU4M8O0jS71CeGv2Uu3QRSWgQdZ
-         260g==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gyGpuqy/ZhXMRh4iUw/Fi8lOBjfC9HvqCP6X0SvuftM=;
+        b=gebaehCfuzdx+ry+ViDMWm/VKHFnLfui4urSN3mGQ7OH/lJnELwg1l2adOiwqOG6lM
+         +MN5Mjoenu5D0dVatPZO4gJITWdt8fi4nBsz6bon+cAHrY4YAugD+6ipnM0TskGa5CgO
+         6LyVR78amrZY7dWusiYxYa2pVqFZRAcRgkqp3jxb1rBHeCPld0TqEcnq9VIIB+vkGd0P
+         3e8ZWjQHQVrp17efrlqod5S0/EKWNdqcFaq9ZxodFW2hpQkdkg4FO+B9XXMeB9QpkmCC
+         hJ5ZwQa4Md0YpyW9a7OX4MQw5fD7HNW7XmPXJtMzJykEpNYlhaOTQoDFsP2h6ez/XLwM
+         0Mog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ouOsaD2yvbHYJu6XT2SnIQFXfqdWR5DyARa34t5/lAs=;
-        b=G5zFhHLe0UqU/l4VpHvzt1IqIS2IzHZJjm1TkqKjYHNRPturd6wl29UJE7CTQ1Aoso
-         V3neb3Em1U5Etc+mGCxDxPA8IQhdovYFYqE4aLor/EEMjwnd4PIOHu3J8M43Tg055SDl
-         3YoS1JvmmNgaw9RQF560mcVHls5xpwuHq4m8W6NglG7tJs2hJvzy/I3rhuilX6HJrteD
-         mqJ2ivbYBaPSJdnE1lFcRljpPojjv7NRzvqenYDaRSJTveHHXrf83xdzLPSeoThUkgvX
-         5TZLmuS9YsxzhwcFbffiSeiYnC536InoNjemup1XGDx4Yu9TNvdxHYQlFVekKjfO8gmc
-         Em+g==
-X-Gm-Message-State: AHQUAubAhYng7DNX7KYSU3c/JYQDX9PwFHTWMRsmu+/VMJ+n7UB8J3XK
-        UyQI4YGJrY89y3+DD6z5rrdfNIQNy/A/MCPcblrcWgnx
-X-Google-Smtp-Source: AHgI3IZj56+NK8D0lmKFq88/G+arhGPB/Nttfep56i0yiDK7qUpDFn5NoyozOAlvb3kW/C0vndM7RLQI9XUnd38se8s=
-X-Received: by 2002:a63:f148:: with SMTP id o8mr7004923pgk.337.1550260683290;
- Fri, 15 Feb 2019 11:58:03 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gyGpuqy/ZhXMRh4iUw/Fi8lOBjfC9HvqCP6X0SvuftM=;
+        b=Q/ID5DC4Bur4J2rQMgwXHDGQtWgxDNDX0zTxFtHTSkROQMoaySYxHILcb9HSzzhBOL
+         ka/LaEirOIQX+O03UT225XGyAss6juhuBR6PAdxOvHqH9OMlC6Fm5YIVCfsf/0u+p5ap
+         UvzWOjzqxTP/sHahi8yf06dBDaSRBejBxQA/S0Fn8zD/xbdviZlYUjwSa6rWT17FGkjs
+         1b4qUtwU54XcYX6qgtfYivOQtcV6jRuCi8T+7Tpi90EJyb+aaBRGhiSHpYpQgoBhyW33
+         9IVV8PQYcEFf7syyOx3YIdn27C/IVQYS2ydztSnYRyoRhKkB7P1LBTfpIIsRuucAzFAu
+         tdrA==
+X-Gm-Message-State: AHQUAuYYm5bRisd+paghwsvBs5J6RbRC+IFgFDQM2RGNPQyEAm3A+yJV
+        gfmH8hGFYh3oCHCfQ9jyt3WdkJ5/
+X-Google-Smtp-Source: AHgI3IY1x6YSztM4B00vE65Rrk63ANtqgGnEiqSY/X8CigeUk5VAR7R61zgj6sLKVNhlHMcQUlTY/w==
+X-Received: by 2002:ac2:415a:: with SMTP id c26mr5112297lfi.62.1550260701400;
+        Fri, 15 Feb 2019 11:58:21 -0800 (PST)
+Received: from arch.domain.name (89-70-37-207.dynamic.chello.pl. [89.70.37.207])
+        by smtp.gmail.com with ESMTPSA id y17-v6sm1441790lja.94.2019.02.15.11.58.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Feb 2019 11:58:20 -0800 (PST)
+From:   Tomasz Duszynski <tduszyns@gmail.com>
+To:     linux-iio@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Tomasz Duszynski <tduszyns@gmail.com>
+Subject: [PATCH] iio: chemical: sps30: fix attribute kernel version
+Date:   Fri, 15 Feb 2019 20:57:59 +0100
+Message-Id: <20190215195759.31304-1-tduszyns@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190211130940.28206-1-hch@lst.de> <8d8a1ad0-2192-5293-9073-21d1916778ff@gmail.com>
-In-Reply-To: <8d8a1ad0-2192-5293-9073-21d1916778ff@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 15 Feb 2019 21:57:51 +0200
-Message-ID: <CAHp75Vc3cBcCb7Rsd1S3LX32_ZrCCPMcrtMtqPioadowrhh-0w@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: dell_rbu: fix lock imbalance in img_update_realloc
-To:     Stuart Hayes <stuart.w.hayes@gmail.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 5:56 AM Stuart Hayes <stuart.w.hayes@gmail.com> wrote:
->
->
->
-> On 2/11/2019 7:09 AM, Christoph Hellwig wrote:
-> > We need to ensure rbu_data.lock is always held on return.
-> >
+4.22 has never existed and this change was actually added to 4.21
+hence fix the numbering.
 
-Pushed to my review and testing queue, thanks!
+Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
+---
+ Documentation/ABI/testing/sysfs-bus-iio-sps30 | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > Fixes: 289790a3ea94 ("platform/x86: dell_rbu: stop abusing the DMA API")
-> > Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> > ---
-> >  drivers/platform/x86/dell_rbu.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/platform/x86/dell_rbu.c b/drivers/platform/x86/dell_rbu.c
-> > index 8104ca0c44ca..031c68903583 100644
-> > --- a/drivers/platform/x86/dell_rbu.c
-> > +++ b/drivers/platform/x86/dell_rbu.c
-> > @@ -436,6 +436,7 @@ static int img_update_realloc(unsigned long size)
-> >       ordernum = get_order(size);
-> >       image_update_buffer =
-> >               (unsigned char *)__get_free_pages(GFP_DMA32, ordernum);
-> > +     spin_lock(&rbu_data.lock);
-> >       if (!image_update_buffer) {
-> >               pr_debug("Not enough memory for image update:"
-> >                       "size = %ld\n", size);
-> > @@ -446,7 +447,6 @@ static int img_update_realloc(unsigned long size)
-> >       if (WARN_ON_ONCE(img_buf_phys_addr > BIOS_SCAN_LIMIT))
-> >               return -EINVAL; /* can't happen per definition */
-> >
-> > -     spin_lock(&rbu_data.lock);
-> >       rbu_data.image_update_buffer = image_update_buffer;
-> >       rbu_data.image_update_buffer_size = size;
-> >       rbu_data.bios_image_size = rbu_data.image_update_buffer_size;
-> >
->
-> Acked-by: Stuart Hayes <stuart.w.hayes@gmail.com>
+diff --git a/Documentation/ABI/testing/sysfs-bus-iio-sps30 b/Documentation/ABI/testing/sysfs-bus-iio-sps30
+index 143df8e89d08..bef52f3e47bc 100644
+--- a/Documentation/ABI/testing/sysfs-bus-iio-sps30
++++ b/Documentation/ABI/testing/sysfs-bus-iio-sps30
+@@ -1,6 +1,6 @@
+ What:		/sys/bus/iio/devices/iio:deviceX/start_cleaning
+ Date:		December 2018
+-KernelVersion:	4.22
++KernelVersion:	4.21
+ Contact:	linux-iio@vger.kernel.org
+ Description:
+ 		Writing 1 starts sensor self cleaning. Internal fan accelerates
+--
+2.20.1
 
-
-
--- 
-With Best Regards,
-Andy Shevchenko
