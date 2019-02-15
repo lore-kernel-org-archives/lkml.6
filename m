@@ -4,48 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 339FAC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23775C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:32:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01FF420840
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:32:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E867F20840
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:32:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197956;
-	bh=MP1KCnozvkSfAdSinFt987IBw4p8cg4lvbh49WWr+RE=;
+	s=default; t=1550197972;
+	bh=TON0jWu7Z48cGnW3MRq5Cs1m2Hlpe+QDwDUQJgb6nwg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LRtiPQ1u0B4t0bRIuo0ysCBotdfVJiSHyd63ke3ZC7NLV4wH1IGMECbh6GBa+Kskg
-	 fXxkjTxxyqmNoQZgiLhwBFsJ+j5TWrGlzhBx+MUDTI5yWR0VSOMLaIKXkhe9MpXQ7u
-	 OmASw9rF2b7Bri7HhKBNn/s9hGatmXV5WqhCqUZ8=
+	b=i5tcqjEqGgMDh8IzTiedFHGf7IuCGCrY8ahDmWPMQoUrR7QE0oa2wgH8prDRDPzSq
+	 /SB0/G8Fhreli7Y4BJwyyapULA8pkoygnKGO+e7DIS2ffv93HsPag/Az2+bO0Bkyom
+	 wzHAVGnfe8uyWA3rrTjTKG+QJgk5ClJPO8NQtlwA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387493AbfBOCcV (ORCPT
+        id S2387996AbfBOCct (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:32:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52336 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:32:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404028AbfBOCMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:12:18 -0500
+        id S2404094AbfBOCMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:12:13 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D89FC2229F;
-        Fri, 15 Feb 2019 02:12:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6792521934;
+        Fri, 15 Feb 2019 02:12:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196737;
-        bh=MP1KCnozvkSfAdSinFt987IBw4p8cg4lvbh49WWr+RE=;
+        s=default; t=1550196732;
+        bh=TON0jWu7Z48cGnW3MRq5Cs1m2Hlpe+QDwDUQJgb6nwg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gdj5McdY9o1Ro4kGIzjsxmdTYDjFJLdMGNd8vmA8GwIbYzGfCiW/HBkpb3tA7/Svh
-         SLYFZ7MbF3Nmj1xsgjDthcaWHlBiWwVm/4zyWsFQ4t0yutjWVEU0hEbvWEIiiSp19v
-         ZB4GBqhtFAK5EqOyEpHJvE5/l6Nxk2PORwIlxEZ4=
+        b=nH2q6V65RqWWGh4AhPLHbUEDDh03SxJ7T4BVePiquPFUKnjy2PeEWcNuS8l46ED4v
+         IzrV29xn/0QuWcF3N8DvxRWFTQCzNAbsMt+YTkNLP7Q/+n8CHxWqid6kwnPZAOdMR6
+         ygUpbaNtEl753XSSF0GHTo1jobaNFtBZ0wgg4Oxs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ilya Dryomov <idryomov@gmail.com>, Sasha Levin <sashal@kernel.org>,
-        ceph-devel@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 34/65] libceph: avoid KEEPALIVE_PENDING races in ceph_con_keepalive()
-Date:   Thu, 14 Feb 2019 21:10:50 -0500
-Message-Id: <20190215021121.177674-34-sashal@kernel.org>
+Cc:     Prateek Sood <prsood@codeaurora.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 30/65] sched/wait: Fix rcuwait_wake_up() ordering
+Date:   Thu, 14 Feb 2019 21:10:46 -0500
+Message-Id: <20190215021121.177674-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -57,62 +60,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ilya Dryomov <idryomov@gmail.com>
+From: Prateek Sood <prsood@codeaurora.org>
 
-[ Upstream commit 4aac9228d16458cedcfd90c7fb37211cf3653ac3 ]
+[ Upstream commit 6dc080eeb2ba01973bfff0d79844d7a59e12542e ]
 
-con_fault() can transition the connection into STANDBY right after
-ceph_con_keepalive() clears STANDBY in clear_standby():
+For some peculiar reason rcuwait_wake_up() has the right barrier in
+the comment, but not in the code.
 
-    libceph user thread               ceph-msgr worker
+This mistake has been observed to cause a deadlock in the following
+situation:
 
-ceph_con_keepalive()
-  mutex_lock(&con->mutex)
-  clear_standby(con)
-  mutex_unlock(&con->mutex)
-                                mutex_lock(&con->mutex)
-                                con_fault()
-                                  ...
-                                  if KEEPALIVE_PENDING isn't set
-                                    set state to STANDBY
-                                  ...
-                                mutex_unlock(&con->mutex)
-  set KEEPALIVE_PENDING
-  set WRITE_PENDING
+    P1					P2
 
-This triggers warnings in clear_standby() when either ceph_con_send()
-or ceph_con_keepalive() get to clearing STANDBY next time.
+    percpu_up_read()			percpu_down_write()
+      rcu_sync_is_idle() // false
+					  rcu_sync_enter()
+					  ...
+      __percpu_up_read()
 
-I don't see a reason to condition queue_con() call on the previous
-value of KEEPALIVE_PENDING, so move the setting of KEEPALIVE_PENDING
-into the critical section -- unlike WRITE_PENDING, KEEPALIVE_PENDING
-could have been a non-atomic flag.
+[S] ,-  __this_cpu_dec(*sem->read_count)
+    |   smp_rmb();
+[L] |   task = rcu_dereference(w->task) // NULL
+    |
+    |				    [S]	    w->task = current
+    |					    smp_mb();
+    |				    [L]	    readers_active_check() // fail
+    `-> <store happens here>
 
-Reported-by: syzbot+acdeb633f6211ccdf886@syzkaller.appspotmail.com
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Tested-by: Myungho Jung <mhjungk@gmail.com>
+Where the smp_rmb() (obviously) fails to constrain the store.
+
+[ peterz: Added changelog. ]
+
+Signed-off-by: Prateek Sood <prsood@codeaurora.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
+Acked-by: Davidlohr Bueso <dbueso@suse.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 8f95c90ceb54 ("sched/wait, RCU: Introduce rcuwait machinery")
+Link: https://lkml.kernel.org/r/1543590656-7157-1-git-send-email-prsood@codeaurora.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ceph/messenger.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ kernel/exit.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/ceph/messenger.c b/net/ceph/messenger.c
-index 9a1c27c61de8..a127d1442116 100644
---- a/net/ceph/messenger.c
-+++ b/net/ceph/messenger.c
-@@ -3240,9 +3240,10 @@ void ceph_con_keepalive(struct ceph_connection *con)
- 	dout("con_keepalive %p\n", con);
- 	mutex_lock(&con->mutex);
- 	clear_standby(con);
-+	con_flag_set(con, CON_FLAG_KEEPALIVE_PENDING);
- 	mutex_unlock(&con->mutex);
--	if (con_flag_test_and_set(con, CON_FLAG_KEEPALIVE_PENDING) == 0 &&
--	    con_flag_test_and_set(con, CON_FLAG_WRITE_PENDING) == 0)
-+
-+	if (con_flag_test_and_set(con, CON_FLAG_WRITE_PENDING) == 0)
- 		queue_con(con);
- }
- EXPORT_SYMBOL(ceph_con_keepalive);
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 55b4fa6d01eb..d607e23fd0c3 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -307,7 +307,7 @@ void rcuwait_wake_up(struct rcuwait *w)
+ 	 *        MB (A)	      MB (B)
+ 	 *    [L] cond		  [L] tsk
+ 	 */
+-	smp_rmb(); /* (B) */
++	smp_mb(); /* (B) */
+ 
+ 	/*
+ 	 * Avoid using task_rcu_dereference() magic as long as we are careful,
 -- 
 2.19.1
 
