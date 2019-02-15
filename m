@@ -2,139 +2,118 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF3DDC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A48C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:17:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BCC421900
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:17:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB1BF222D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 19:17:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="N1SQinY5"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CuUoUmvM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732905AbfBOTRP (ORCPT
+        id S1732959AbfBOTRm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 14:17:15 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:51358 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726654AbfBOTRO (ORCPT
+        Fri, 15 Feb 2019 14:17:42 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:59548 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726654AbfBOTRl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 14:17:14 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id D65C98EE235;
-        Fri, 15 Feb 2019 11:17:13 -0800 (PST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Tr1HqR5hTIJi; Fri, 15 Feb 2019 11:17:13 -0800 (PST)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 4BB708EE10C;
-        Fri, 15 Feb 2019 11:17:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1550258233;
-        bh=ZcQo684pyd8jOtiDQZLm9UhOtL4FAORSIvKrJR1kZ3A=;
-        h=Subject:From:To:Cc:Date:From;
-        b=N1SQinY5xadTWYJLZ8Thkmhl8NjxqOwhbrI+jGAyBkHNDvoEJj5gsXTuyiubmTAEW
-         55YNGi3gdL2XzFGEuaRwJxqfyr7EVAFSEJQpwZKh8vRGQJAGYi3rK6o3xYfkDGpVH5
-         tJ2G6L/UN8jaKtCbsJMlXwPD76h6yjtfGAvVFKGw=
-Message-ID: <1550258231.3406.15.camel@HansenPartnership.com>
-Subject: [GIT PULL] SCSI fixes for 5.0-rc
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Fri, 15 Feb 2019 11:17:11 -0800
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 15 Feb 2019 14:17:41 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1FJHZYJ128839;
+        Fri, 15 Feb 2019 13:17:35 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1550258255;
+        bh=u9zH9gfwCuO4qb0wkF+/Yvr1zIGmXnlp+UZi2pS6yjA=;
+        h=From:To:CC:Subject:Date;
+        b=CuUoUmvMo7y1F21PbRI7wApRS45H6HwU1Wu0Lq2xNYK3UjTmUeLKQXufPNdjnrXGy
+         VUTApLzLm+8N7ityp7VDYtaVVC3F4F+Lvlbe/2tcsHW8yM1Pf5/psR+i07m36lACql
+         IxDxVtYHmwH+/ZAaL+iyjIi7Fi82aJNzDWDJEKAA=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1FJHZd6091598
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 15 Feb 2019 13:17:35 -0600
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 15
+ Feb 2019 13:17:34 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Fri, 15 Feb 2019 13:17:34 -0600
+Received: from a0230074-OptiPlex-7010.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1FJHV0u025256;
+        Fri, 15 Feb 2019 13:17:31 -0600
+From:   Faiz Abbas <faiz_abbas@ti.com>
+To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-mmc@vger.kernel.org>, <linux-omap@vger.kernel.org>
+CC:     <ulf.hansson@linaro.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <adrian.hunter@intel.com>, <kishon@ti.com>,
+        <zhang.chunyan@linaro.org>, <faiz_abbas@ti.com>
+Subject: [PATCH v2 0/8] Port am335 and am437 devices to sdhci-omap
+Date:   Sat, 16 Feb 2019 00:50:25 +0530
+Message-ID: <20190215192033.24203-1-faiz_abbas@ti.com>
+X-Mailer: git-send-email 2.19.2
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Two fairly small fixes: the qla one is a panic inducing use after free
-and the entropy fix may seem minor but it has had huge userspace impact
-thanks to an unrelated change in openssl that causes sshd to refuse
-logins until it has enough entropy for the session keys, which causes
-tens of minutes delay before the affected systems allow logins after
-reboot.
+The following add driver patches for porting TI's am335x and am437x
+devices to the sdhci-omap driver.
 
-The patch is available here:
+This involves adding external DMA support to sdhci (first 3 patches from
+Chunyan) plus some miscellaneous patches to take care of deviations of
+the controllers from the sdhci model.
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+DT changes will be posted in a separate series.
 
-The short changelog is:
+Untested versions of Chunyan's patches were posted before[1].
 
-Bill Kuzeja (1):
-      scsi: qla2xxx: Fix panic from use after free in qla2x00_async_tm_cmd
+Tested on: am335x-evm, am335x-boneblack, am335x-sk, am437x-gpevm,
+am43xx-gpevm, am437x-idk, dra7xx-evm, dra72x-evm
 
-James Bottomley (1):
-      scsi: sd: fix entropy gathering for most rotational disks
+v2:
+1. sdhci is using two bottom halves. One threaded_rq for card detect and a
+   tasklet for finishing mmc requests. Patch 1 removes the tasklet and
+   moves its function to the threaded_irq. This enables me to
+   terminate_sync() in sdhci_request_done()
 
-And the diffstat:
+2. Factored out common code for between the normal adn external dma case
 
- drivers/scsi/qla2xxx/qla_init.c |  4 ++--
- drivers/scsi/sd.c               | 12 +++++++++---
- 2 files changed, 11 insertions(+), 5 deletions(-)
+3. Using existing API sdhci_data_timeout_irq for disabling DTO during
+   erase commands.
 
-With full diff below.
+4. Fixed subject line for dt-bindings patch.
 
-James
+[1] https://patchwork.kernel.org/project/linux-mmc/list/?series=54897
 
----
+Chunyan Zhang (3):
+  mmc: sdhci: add support for using external DMA devices
+  dt-bindings: sdhci-omap: Add properties for using external dma
+  mmc: sdhci-omap: Add using external dma
 
-diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
-index 364bb52ed2a6..109587e62983 100644
---- a/drivers/scsi/qla2xxx/qla_init.c
-+++ b/drivers/scsi/qla2xxx/qla_init.c
-@@ -1785,13 +1785,13 @@ qla2x00_async_tm_cmd(fc_port_t *fcport, uint32_t flags, uint32_t lun,
- 
- 		/* Issue Marker IOCB */
- 		qla2x00_marker(vha, vha->hw->req_q_map[0],
--		    vha->hw->rsp_q_map[0], sp->fcport->loop_id, lun,
-+		    vha->hw->rsp_q_map[0], fcport->loop_id, lun,
- 		    flags == TCF_LUN_RESET ? MK_SYNC_ID_LUN : MK_SYNC_ID);
- 	}
- 
- done_free_sp:
- 	sp->free(sp);
--	sp->fcport->flags &= ~FCF_ASYNC_SENT;
-+	fcport->flags &= ~FCF_ASYNC_SENT;
- done:
- 	return rval;
- }
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index b2da8a00ec33..5464d467e23e 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -2951,9 +2951,6 @@ static void sd_read_block_characteristics(struct scsi_disk *sdkp)
- 	if (rot == 1) {
- 		blk_queue_flag_set(QUEUE_FLAG_NONROT, q);
- 		blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, q);
--	} else {
--		blk_queue_flag_clear(QUEUE_FLAG_NONROT, q);
--		blk_queue_flag_set(QUEUE_FLAG_ADD_RANDOM, q);
- 	}
- 
- 	if (sdkp->device->type == TYPE_ZBC) {
-@@ -3090,6 +3087,15 @@ static int sd_revalidate_disk(struct gendisk *disk)
- 	if (sdkp->media_present) {
- 		sd_read_capacity(sdkp, buffer);
- 
-+		/*
-+		 * set the default to rotational.  All non-rotational devices
-+		 * support the block characteristics VPD page, which will
-+		 * cause this to be updated correctly and any device which
-+		 * doesn't support it should be treated as rotational.
-+		 */
-+		blk_queue_flag_clear(QUEUE_FLAG_NONROT, q);
-+		blk_queue_flag_set(QUEUE_FLAG_ADD_RANDOM, q);
-+
- 		if (scsi_device_supports_vpd(sdp)) {
- 			sd_read_block_provisioning(sdkp);
- 			sd_read_block_limits(sdkp);
+Faiz Abbas (5):
+  mmc: sdhci: Get rid of finish_tasklet
+  mmc: sdhci: Add quirk for disabling DTO during erase command
+  mmc: sdhci-omap: Add DISABLE_DTO_FOR_ERASE Quirk
+  dt-bindings: sdhci-omap: Add am335x and am437x specific bindings
+  mmc: sdhci-omap: Add am335x and am437x specific compatibles
+
+ .../devicetree/bindings/mmc/sdhci-omap.txt    |   9 +
+ drivers/mmc/host/Kconfig                      |   4 +
+ drivers/mmc/host/sdhci-omap.c                 |  27 +-
+ drivers/mmc/host/sdhci.c                      | 333 +++++++++++++++---
+ drivers/mmc/host/sdhci.h                      |  12 +-
+ 5 files changed, 328 insertions(+), 57 deletions(-)
+
+-- 
+2.19.2
+
