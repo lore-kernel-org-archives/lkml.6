@@ -2,109 +2,84 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE44C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:14:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B93BCC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:16:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6290421924
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:14:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8057B21924
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:16:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387576AbfBOQOg (ORCPT
+        id S1727549AbfBOQQe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 11:14:36 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:56569 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726168AbfBOQOf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 11:14:35 -0500
-Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <l.stach@pengutronix.de>)
-        id 1gug8E-0006hP-Jr; Fri, 15 Feb 2019 17:14:30 +0100
-Message-ID: <1550247269.2546.58.camel@pengutronix.de>
-Subject: Re: [PATCH v1 2/3] ARM: dts: stm32: enable Vivante GPU support on
- stm32mp157c-ed1 board
-From:   Lucas Stach <l.stach@pengutronix.de>
-To:     Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-Cc:     devicetree@vger.kernel.org, Philippe Cornu <philippe.cornu@st.com>,
+        Fri, 15 Feb 2019 11:16:34 -0500
+Received: from muru.com ([72.249.23.125]:39028 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726000AbfBOQQe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 11:16:34 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id E1EF580C0;
+        Fri, 15 Feb 2019 16:16:42 +0000 (UTC)
+Date:   Fri, 15 Feb 2019 08:16:29 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Lokesh Vutla <lokeshvutla@ti.com>
+Cc:     marc.zyngier@arm.com, Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, tglx@linutronix.de,
+        jason@lakedaemon.net,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
         linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org
-Date:   Fri, 15 Feb 2019 17:14:29 +0100
-In-Reply-To: <1550246316-9747-3-git-send-email-pierre-yves.mordret@st.com>
-References: <1550246316-9747-1-git-send-email-pierre-yves.mordret@st.com>
-         <1550246316-9747-3-git-send-email-pierre-yves.mordret@st.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Device Tree Mailing List <devicetree@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>
+Subject: Re: [PATCH v5 05/10] dt-bindings: irqchip: Introduce TISCI Interrupt
+ router bindings
+Message-ID: <20190215161629.GK5720@atomide.com>
+References: <20190212074237.2875-1-lokeshvutla@ti.com>
+ <20190212074237.2875-6-lokeshvutla@ti.com>
+ <20190212162247.GK5720@atomide.com>
+ <6a274588-0fb6-2ddf-3bcc-f9e4d849ac07@ti.com>
+ <20190213152620.GS5720@atomide.com>
+ <4791de04-63af-4c5e-db9c-47634fcb8dc9@ti.com>
+ <20190214154100.GB5720@atomide.com>
+ <b4e821b3-f2fb-41d8-eb8c-8f4e8a19f77c@ti.com>
+ <20190214174612.GF5720@atomide.com>
+ <171e8597-2156-747d-d024-7b4bfc6f9186@ti.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <171e8597-2156-747d-d024-7b4bfc6f9186@ti.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Freitag, den 15.02.2019, 16:58 +0100 schrieb Pierre-Yves MORDRET:
-> Enable Vivante GPU driver for stm32mp157c-ed1 board.
-> 
-> Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-> ---
->  arch/arm/boot/dts/stm32mp157c-ed1.dts | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/stm32mp157c-ed1.dts
-> b/arch/arm/boot/dts/stm32mp157c-ed1.dts
-> index 98ef7a0..792f402 100644
-> --- a/arch/arm/boot/dts/stm32mp157c-ed1.dts
-> +++ b/arch/arm/boot/dts/stm32mp157c-ed1.dts
-> @@ -20,6 +20,17 @@
->  		reg = <0xC0000000 0x40000000>;
->  	};
->  
-> +	reserved-memory {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges;
-> +
-> +		gpu_reserved: gpu@f8000000 {
-> +			reg = <0xf8000000 0x8000000>;
-> +			no-map;
-> +		};
-> +	};
-> +
+Hi,
 
-I don't think you need this. The GPU driver uses very little contig dma
-memory. Most of the GPU memory is ordinary paged memory, so setting
-aside a private memory region of this size is a waste of memory. Most
-likely you can just allow the GPU driver to use the system global CMA
-region.
+* Lokesh Vutla <lokeshvutla@ti.com> [190214 18:03]:
+> On 2/14/2019 11:16 PM, Tony Lindgren wrote:
+> > But I'd rather have a proper hardware based phandle + index
+> > type mapping in the dts if possible though.
+> 
+> The idea about sysfw here is that Linux is not aware of anything about
+> this device(Interrupt Router). It cannot even access any of its
+> registers. As a user Linux should know who is the parent to which the
+> Interrut router output should be configured. Then query sysfw about the
+> range of gic irqs allocated to it. Now for configuration, Linux should
+> pass the the input to interrupt router, gic irq no, and gic id(by which
+> sysfw uniquely identifies GIC interrupt controller with the SoC).  Based
+> on these parameters Interrupt Router registers gets configured.
+
+If the interrupt router hardawre is hidden away from Linux,
+just leave it out of the device tree completely and have the
+interrupt controller driver request the routing.
+
+The dts node for the interrupt controller should describe a
+proper Linux device, that is with reg entries and so on.
 
 Regards,
-Lucas
 
-
->  	aliases {
->  		serial0 = &uart4;
->  	};
-> @@ -53,6 +64,11 @@
->  	status = "okay";
->  };
->  
-> +&gpu {
-> +	contiguous-area = <&gpu_reserved>;
-> +	status = "okay";
-> +};
-> +
->  &i2c4 {
->  	pinctrl-names = "default";
->  	pinctrl-0 = <&i2c4_pins_a>;
+Tony
