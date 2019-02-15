@@ -2,853 +2,278 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC9B5C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E4B2C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:47:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ABC721A80
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:44:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD38A21929
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:47:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729516AbfBONoP (ORCPT
+        id S1728822AbfBONrO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 08:44:15 -0500
-Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:59211 "EHLO
-        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726106AbfBONoN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 08:44:13 -0500
-Received: from [IPv6:2001:420:44c1:2579:e58e:188a:dca7:31dc] ([IPv6:2001:420:44c1:2579:e58e:188a:dca7:31dc])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id udmegW7m7LMwIudmhgWGMT; Fri, 15 Feb 2019 14:44:09 +0100
-Subject: Re: [PATCH 10/10] venus: dec: make decoder compliant with stateful
- codec API
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        linux-media@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Malathi Gottam <mgottam@codeaurora.org>
-References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
- <20190117162008.25217-11-stanimir.varbanov@linaro.org>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <60b3efff-31c1-bc04-8af9-deebb8bc013a@xs4all.nl>
-Date:   Fri, 15 Feb 2019 14:44:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 15 Feb 2019 08:47:14 -0500
+Received: from mx2.suse.de ([195.135.220.15]:59748 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725966AbfBONrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 08:47:14 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 35782AE06;
+        Fri, 15 Feb 2019 13:47:12 +0000 (UTC)
+Date:   Fri, 15 Feb 2019 14:47:11 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     John Ogness <john.ogness@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Daniel Wang <wonderfly@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Peter Feiner <pfeiner@google.com>,
+        linux-serial@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Subject: Re: [RFC PATCH v1 04/25] printk-rb: add writer interface
+Message-ID: <20190215134711.pimxhuwipkzlgq23@pathway.suse.cz>
+References: <20190212143003.48446-1-john.ogness@linutronix.de>
+ <20190212143003.48446-5-john.ogness@linutronix.de>
+ <20190214151650.5y337yy2jnnztsc6@pathway.suse.cz>
+ <87ef8aosby.fsf@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <20190117162008.25217-11-stanimir.varbanov@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfLMl6A5ABLX7UQQ/ME383CWEqdkNVKCJD7fanKktMW1BbRO5RQaMYgmPyJLkVDoVwgiAvLg61ye8mKjkj4C+9W2kV56ZxQvmF7X3R/hUqARvwA5Faf+y
- 9dWHMxgVcSxhEz4MvbZkD5r41Ffu9Vq6/uzDpYiBpuivaYycjoPalo3wPZLEMw0yQhmEz7xdkEA6aE6crDi2ywo2EAk8tQa5aZ3PF6em8CaeSNLGzl7ADQ9D
- KTR0O2cfw2TFYWT+isey17gnkQ1YdcS85WbcR+moK9tHanl0qipANHgRoSKp9FvTzpl4rD6m08HW6dqomFerm39J8gmne7H6XZR8oeRS+afPnGIZS4dzlIdj
- PphyaKeC7PoL5v6wHl5Ao3iFproWvyeLR9j17mP/mA8j/9AL371LQsBm3RXS5a0BDOXyaZFBuzWhPPGRNjmfWgO7x/cXA4TsJWWgSdFoIA9BINnP78WcWfFE
- OB5or82wSdSPZidDpgMGVFzqr4+97cuvH7Hg5Wlo9bQpbUsDGIt60zUMDkIpyZc+0lkLRxcp/c/tZ5SNhhGOXVjLPXJbRIuqB6wTx8+5rYYSgzOk0N5+SoRl
- Oac=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87ef8aosby.fsf@linutronix.de>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stanimir,
-
-I never paid much attention to this patch series since others were busy
-discussing it and I had a lot of other things on my plate, but then I heard
-that this patch made G_FMT blocking.
-
-That's a no-go. Apparently s5p-mfc does that as well, and that's against
-the V4L2 spec as well (clearly I never realized that at the time).
-
-So, just to make it unambiguous:
-
-Nacked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-
-Now, I plan to work on adding stateful codec checks to v4l2-compliance.
-I had hoped to do some of that already, but didn't manage to find time
-this week. I hope to have something decent in 2-3 weeks from now.
-
-So I would wait with making this driver compliant until I have written
-the tests.
-
-Initially I'll test this with vicodec, but the next phase would be to
-make it work with e.g. a venus codec. I might contact you for help
-when I start work on that.
-
-Regards,
-
-	Hans
-
-On 1/17/19 5:20 PM, Stanimir Varbanov wrote:
-> This refactored code for start/stop streaming vb2 operations and
-> adds a state machine handling similar to the one in stateful codec
-> API documentation. One major change is that now the HFI session is
-> started on STREAMON(OUTPUT) and stopped on REQBUF(OUTPUT,count=0),
-> during that time streamoff(cap,out) just flush buffers but doesn't
-> stop the session. The other major change is that now the capture
-> and output queues are completely separated.
+On Fri 2019-02-15 00:36:49, John Ogness wrote:
+> On 2019-02-14, Petr Mladek <pmladek@suse.com> wrote:
+> >> Add the writer functions prb_reserve() and prb_commit(). These make
+> >> use of processor-reentrant spin locks to limit the number of possible
+> >> interruption scenarios for the writers.
+> >> 
+> >> --- a/lib/printk_ringbuffer.c
+> >> +++ b/lib/printk_ringbuffer.c
+> >>  static bool __prb_trylock(struct prb_cpulock *cpu_lock,
+> >>  			  unsigned int *cpu_store)
+> >>  {
+> >> @@ -75,3 +83,167 @@ void prb_unlock(struct prb_cpulock *cpu_lock, unsigned int cpu_store)
+> >>  
+> >>  	put_cpu();
+> >>  }
+> >> +
+> >> +static struct prb_entry *to_entry(struct printk_ringbuffer *rb,
+> >> +				  unsigned long lpos)
+> >> +{
+> >> +	char *buffer = rb->buffer;
+> >> +	buffer += PRB_INDEX(rb, lpos);
+> >> +	return (struct prb_entry *)buffer;
+> >> +}
+> >> +
+> >> +static int calc_next(struct printk_ringbuffer *rb, unsigned long tail,
+> >> +		     unsigned long lpos, int size, unsigned long *calced_next)
+> >> +{
+> >
+> > The function is so tricky that it deserves a comment.
+> >
+> > Well, I am getting really lost because of the generic name
+> > and all the parameters. For example, I wonder what "calced" stands
+> > for.
 > 
-> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-> ---
->  drivers/media/platform/qcom/venus/core.h    |  20 +-
->  drivers/media/platform/qcom/venus/helpers.c |  23 +-
->  drivers/media/platform/qcom/venus/helpers.h |   5 +
->  drivers/media/platform/qcom/venus/vdec.c    | 449 ++++++++++++++++----
->  4 files changed, 389 insertions(+), 108 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
-> index 79c7e816c706..5a133c203455 100644
-> --- a/drivers/media/platform/qcom/venus/core.h
-> +++ b/drivers/media/platform/qcom/venus/core.h
-> @@ -218,6 +218,15 @@ struct venus_buffer {
->  
->  #define to_venus_buffer(ptr)	container_of(ptr, struct venus_buffer, vb)
->  
-> +#define DEC_STATE_UNINIT		0
-> +#define DEC_STATE_INIT			1
-> +#define DEC_STATE_CAPTURE_SETUP		2
-> +#define DEC_STATE_STOPPED		3
-> +#define DEC_STATE_SEEK			4
-> +#define DEC_STATE_DRAIN			5
-> +#define DEC_STATE_DECODING		6
-> +#define DEC_STATE_DRC			7
-> +
->  /**
->   * struct venus_inst - holds per instance paramerters
->   *
-> @@ -241,6 +250,10 @@ struct venus_buffer {
->   * @colorspace:	current color space
->   * @quantization:	current quantization
->   * @xfer_func:	current xfer function
-> + * @codec_state:	current codec API state (see DEC/ENC_STATE_)
-> + * @reconf_wait:	wait queue for resolution change event
-> + * @ten_bits:		does new stream is 10bits depth
-> + * @buf_count:		used to count number number of buffers (reqbuf(0))
->   * @fps:		holds current FPS
->   * @timeperframe:	holds current time per frame structure
->   * @fmt_out:	a reference to output format structure
-> @@ -255,8 +268,6 @@ struct venus_buffer {
->   * @opb_buftype:	output picture buffer type
->   * @opb_fmt:		output picture buffer raw format
->   * @reconfig:	a flag raised by decoder when the stream resolution changed
-> - * @reconfig_width:	holds the new width
-> - * @reconfig_height:	holds the new height
->   * @hfi_codec:		current codec for this instance in HFI space
->   * @sequence_cap:	a sequence counter for capture queue
->   * @sequence_out:	a sequence counter for output queue
-> @@ -296,6 +307,9 @@ struct venus_inst {
->  	u8 ycbcr_enc;
->  	u8 quantization;
->  	u8 xfer_func;
-> +	unsigned int codec_state;
-> +	wait_queue_head_t reconf_wait;
-> +	int buf_count;
->  	u64 fps;
->  	struct v4l2_fract timeperframe;
->  	const struct venus_format *fmt_out;
-> @@ -310,8 +324,6 @@ struct venus_inst {
->  	u32 opb_buftype;
->  	u32 opb_fmt;
->  	bool reconfig;
-> -	u32 reconfig_width;
-> -	u32 reconfig_height;
->  	u32 hfi_codec;
->  	u32 sequence_cap;
->  	u32 sequence_out;
-> diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-> index 637ce7b82d94..25d8cceccae4 100644
-> --- a/drivers/media/platform/qcom/venus/helpers.c
-> +++ b/drivers/media/platform/qcom/venus/helpers.c
-> @@ -1030,16 +1030,15 @@ void venus_helper_vb2_buf_queue(struct vb2_buffer *vb)
->  
->  	v4l2_m2m_buf_queue(m2m_ctx, vbuf);
->  
-> -	if (!(inst->streamon_out & inst->streamon_cap))
-> -		goto unlock;
-> -
-> -	ret = is_buf_refed(inst, vbuf);
-> -	if (ret)
-> -		goto unlock;
-> +	if (IS_OUT(vb->vb2_queue, inst) || IS_CAP(vb->vb2_queue, inst)) {
-> +		ret = is_buf_refed(inst, vbuf);
-> +		if (ret)
-> +			goto unlock;
->  
-> -	ret = session_process_buf(inst, vbuf);
-> -	if (ret)
-> -		return_buf_error(inst, vbuf);
-> +		ret = session_process_buf(inst, vbuf);
-> +		if (ret)
-> +			return_buf_error(inst, vbuf);
-> +	}
->  
->  unlock:
->  	mutex_unlock(&inst->lock);
-> @@ -1155,14 +1154,8 @@ int venus_helper_vb2_start_streaming(struct venus_inst *inst)
->  	if (ret)
->  		goto err_unload_res;
->  
-> -	ret = venus_helper_queue_dpb_bufs(inst);
-> -	if (ret)
-> -		goto err_session_stop;
-> -
->  	return 0;
->  
-> -err_session_stop:
-> -	hfi_session_stop(inst);
->  err_unload_res:
->  	hfi_session_unload_res(inst);
->  err_unreg_bufs:
-> diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
-> index 2ec1c1a8b416..3b46139b5ee1 100644
-> --- a/drivers/media/platform/qcom/venus/helpers.h
-> +++ b/drivers/media/platform/qcom/venus/helpers.h
-> @@ -17,6 +17,11 @@
->  
->  #include <media/videobuf2-v4l2.h>
->  
-> +#define IS_OUT(q, inst) (inst->streamon_out &&	\
-> +		q->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
-> +#define IS_CAP(q, inst) (inst->streamon_cap &&	\
-> +		q->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
-> +
->  struct venus_inst;
->  struct venus_core;
->  
-> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-> index 7a9370df7515..306e0f7d3337 100644
-> --- a/drivers/media/platform/qcom/venus/vdec.c
-> +++ b/drivers/media/platform/qcom/venus/vdec.c
-> @@ -201,28 +201,18 @@ static int vdec_g_fmt(struct file *file, void *fh, struct v4l2_format *f)
->  	struct venus_inst *inst = to_inst(file);
->  	const struct venus_format *fmt = NULL;
->  	struct v4l2_pix_format_mplane *pixmp = &f->fmt.pix_mp;
-> +	int ret;
->  
->  	if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
->  		fmt = inst->fmt_cap;
->  	else if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
->  		fmt = inst->fmt_out;
->  
-> -	if (inst->reconfig) {
-> -		struct v4l2_format format = {};
-> -
-> -		inst->out_width = inst->reconfig_width;
-> -		inst->out_height = inst->reconfig_height;
-> -		inst->reconfig = false;
-> -
-> -		format.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-> -		format.fmt.pix_mp.pixelformat = inst->fmt_cap->pixfmt;
-> -		format.fmt.pix_mp.width = inst->out_width;
-> -		format.fmt.pix_mp.height = inst->out_height;
-> -
-> -		vdec_try_fmt_common(inst, &format);
-> -
-> -		inst->width = format.fmt.pix_mp.width;
-> -		inst->height = format.fmt.pix_mp.height;
-> +	if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
-> +		ret = wait_event_timeout(inst->reconf_wait, inst->reconfig,
-> +					 msecs_to_jiffies(100));
-> +		if (!ret)
-> +			return -EINVAL;
->  	}
->  
->  	pixmp->pixelformat = fmt->pixfmt;
-> @@ -457,6 +447,10 @@ vdec_try_decoder_cmd(struct file *file, void *fh, struct v4l2_decoder_cmd *cmd)
->  		if (cmd->flags & V4L2_DEC_CMD_STOP_TO_BLACK)
->  			return -EINVAL;
->  		break;
-> +	case V4L2_DEC_CMD_START:
-> +		if (cmd->flags & V4L2_DEC_CMD_START_MUTE_AUDIO)
-> +			return -EINVAL;
-> +		break;
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -477,18 +471,23 @@ vdec_decoder_cmd(struct file *file, void *fh, struct v4l2_decoder_cmd *cmd)
->  
->  	mutex_lock(&inst->lock);
->  
-> -	/*
-> -	 * Implement V4L2_DEC_CMD_STOP by enqueue an empty buffer on decoder
-> -	 * input to signal EOS.
-> -	 */
-> -	if (!(inst->streamon_out & inst->streamon_cap))
-> -		goto unlock;
-> +	if (cmd->cmd == V4L2_DEC_CMD_STOP) {
-> +		/*
-> +		 * Implement V4L2_DEC_CMD_STOP by enqueue an empty buffer on
-> +		 * decoder input to signal EOS.
-> +		 */
-> +		if (!(inst->streamon_out & inst->streamon_cap))
-> +			goto unlock;
->  
-> -	fdata.buffer_type = HFI_BUFFER_INPUT;
-> -	fdata.flags |= HFI_BUFFERFLAG_EOS;
-> -	fdata.device_addr = 0xdeadbeef;
-> +		fdata.buffer_type = HFI_BUFFER_INPUT;
-> +		fdata.flags |= HFI_BUFFERFLAG_EOS;
-> +		fdata.device_addr = 0xdeadb000;
->  
-> -	ret = hfi_session_process_buf(inst, &fdata);
-> +		ret = hfi_session_process_buf(inst, &fdata);
-> +
-> +		if (!ret && inst->codec_state == DEC_STATE_DECODING)
-> +			inst->codec_state = DEC_STATE_DRAIN;
-> +	}
->  
->  unlock:
->  	mutex_unlock(&inst->lock);
-> @@ -649,20 +648,18 @@ static int vdec_output_conf(struct venus_inst *inst)
->  	return 0;
->  }
->  
-> -static int vdec_init_session(struct venus_inst *inst)
-> +static int vdec_session_init(struct venus_inst *inst)
->  {
->  	int ret;
->  
->  	ret = hfi_session_init(inst, inst->fmt_out->pixfmt);
-> -	if (ret)
-> +	if (ret == -EINVAL)
-> +		return 0;
-> +	else if (ret)
->  		return ret;
->  
-> -	ret = venus_helper_set_input_resolution(inst, inst->out_width,
-> -						inst->out_height);
-> -	if (ret)
-> -		goto deinit;
-> -
-> -	ret = venus_helper_set_color_format(inst, inst->fmt_cap->pixfmt);
-> +	ret = venus_helper_set_input_resolution(inst, frame_width_min(inst),
-> +						frame_height_min(inst));
->  	if (ret)
->  		goto deinit;
->  
-> @@ -681,26 +678,19 @@ static int vdec_num_buffers(struct venus_inst *inst, unsigned int *in_num,
->  
->  	*in_num = *out_num = 0;
->  
-> -	ret = vdec_init_session(inst);
-> -	if (ret)
-> -		return ret;
-> -
->  	ret = venus_helper_get_bufreq(inst, HFI_BUFFER_INPUT, &bufreq);
->  	if (ret)
-> -		goto deinit;
-> +		return ret;
->  
->  	*in_num = HFI_BUFREQ_COUNT_MIN(&bufreq, ver);
->  
->  	ret = venus_helper_get_bufreq(inst, HFI_BUFFER_OUTPUT, &bufreq);
->  	if (ret)
-> -		goto deinit;
-> +		return ret;
->  
->  	*out_num = HFI_BUFREQ_COUNT_MIN(&bufreq, ver);
->  
-> -deinit:
-> -	hfi_session_deinit(inst);
-> -
-> -	return ret;
-> +	return 0;
->  }
->  
->  static int vdec_queue_setup(struct vb2_queue *q,
-> @@ -733,6 +723,10 @@ static int vdec_queue_setup(struct vb2_queue *q,
->  		return 0;
->  	}
->  
-> +	ret = vdec_session_init(inst);
-> +	if (ret)
-> +		return ret;
-> +
->  	ret = vdec_num_buffers(inst, &in_num, &out_num);
->  	if (ret)
->  		return ret;
-> @@ -758,6 +752,11 @@ static int vdec_queue_setup(struct vb2_queue *q,
->  		inst->output_buf_size = sizes[0];
->  		*num_buffers = max(*num_buffers, out_num);
->  		inst->num_output_bufs = *num_buffers;
-> +
-> +		mutex_lock(&inst->lock);
-> +		if (inst->codec_state == DEC_STATE_CAPTURE_SETUP)
-> +			inst->codec_state = DEC_STATE_STOPPED;
-> +		mutex_unlock(&inst->lock);
->  		break;
->  	default:
->  		ret = -EINVAL;
-> @@ -794,80 +793,298 @@ static int vdec_verify_conf(struct venus_inst *inst)
->  	return 0;
->  }
->  
-> -static int vdec_start_streaming(struct vb2_queue *q, unsigned int count)
-> +static int vdec_start_capture(struct venus_inst *inst)
->  {
-> -	struct venus_inst *inst = vb2_get_drv_priv(q);
->  	int ret;
->  
-> -	mutex_lock(&inst->lock);
-> +	if (!inst->streamon_out)
-> +		return -EINVAL;
->  
-> -	if (q->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
-> -		inst->streamon_out = 1;
-> -	else
-> -		inst->streamon_cap = 1;
-> +	if (inst->codec_state == DEC_STATE_DECODING) {
-> +		if (inst->reconfig)
-> +			goto reconfigure;
->  
-> -	if (!(inst->streamon_out & inst->streamon_cap)) {
-> -		mutex_unlock(&inst->lock);
-> +		venus_helper_queue_dpb_bufs(inst);
-> +		venus_helper_process_initial_cap_bufs(inst);
-> +		inst->streamon_cap = 1;
->  		return 0;
->  	}
->  
-> -	venus_helper_init_instance(inst);
-> +	if (inst->codec_state != DEC_STATE_STOPPED)
-> +		return -EINVAL;
->  
-> -	inst->reconfig = false;
-> -	inst->sequence_cap = 0;
-> -	inst->sequence_out = 0;
-> +reconfigure:
-> +	ret = hfi_session_flush(inst, HFI_FLUSH_OUTPUT);
-> +	if (ret)
-> +		return ret;
->  
-> -	ret = vdec_init_session(inst);
-> +	ret = vdec_output_conf(inst);
->  	if (ret)
-> -		goto bufs_done;
-> +		return ret;
-> +
-> +	ret = venus_helper_set_num_bufs(inst, inst->num_input_bufs,
-> +					VB2_MAX_FRAME, VB2_MAX_FRAME);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = venus_helper_intbufs_realloc(inst);
-> +	if (ret)
-> +		goto err;
-> +
-> +	ret = venus_helper_alloc_dpb_bufs(inst);
-> +	if (ret)
-> +		goto err;
-> +
-> +	ret = venus_helper_queue_dpb_bufs(inst);
-> +	if (ret)
-> +		goto free_dpb_bufs;
-> +
-> +	ret = venus_helper_process_initial_cap_bufs(inst);
-> +	if (ret)
-> +		goto free_dpb_bufs;
-> +
-> +	venus_helper_load_scale_clocks(inst->core);
-> +
-> +	ret = hfi_session_continue(inst);
-> +	if (ret)
-> +		goto free_dpb_bufs;
-> +
-> +	inst->codec_state = DEC_STATE_DECODING;
-> +
-> +	inst->streamon_cap = 1;
-> +	inst->sequence_cap = 0;
-> +	inst->reconfig = false;
-> +
-> +	return 0;
-> +
-> +free_dpb_bufs:
-> +	venus_helper_free_dpb_bufs(inst);
-> +err:
-> +	return ret;
-> +}
-> +
-> +static int vdec_start_output(struct venus_inst *inst)
-> +{
-> +	int ret;
-> +
-> +	if (inst->codec_state == DEC_STATE_SEEK) {
-> +		ret = venus_helper_process_initial_out_bufs(inst);
-> +		inst->codec_state = DEC_STATE_DECODING;
-> +		goto done;
-> +	}
-> +
-> +	if (inst->codec_state == DEC_STATE_INIT ||
-> +	    inst->codec_state == DEC_STATE_CAPTURE_SETUP) {
-> +		ret = venus_helper_process_initial_out_bufs(inst);
-> +		goto done;
-> +	}
-> +
-> +	if (inst->codec_state != DEC_STATE_UNINIT)
-> +		return -EINVAL;
-> +
-> +	venus_helper_init_instance(inst);
-> +	inst->sequence_out = 0;
-> +	inst->reconfig = false;
->  
->  	ret = vdec_set_properties(inst);
->  	if (ret)
-> -		goto deinit_sess;
-> +		return ret;
->  
->  	ret = vdec_output_conf(inst);
->  	if (ret)
-> -		goto deinit_sess;
-> +		return ret;
->  
->  	ret = vdec_verify_conf(inst);
->  	if (ret)
-> -		goto deinit_sess;
-> +		return ret;
->  
->  	ret = venus_helper_set_num_bufs(inst, inst->num_input_bufs,
->  					VB2_MAX_FRAME, VB2_MAX_FRAME);
->  	if (ret)
-> -		goto deinit_sess;
-> +		return ret;
->  
-> -	ret = venus_helper_alloc_dpb_bufs(inst);
-> +	ret = venus_helper_vb2_start_streaming(inst);
->  	if (ret)
-> -		goto deinit_sess;
-> +		return ret;
->  
-> -	ret = venus_helper_vb2_start_streaming(inst);
-> +	ret = venus_helper_process_initial_out_bufs(inst);
->  	if (ret)
-> -		goto deinit_sess;
-> +		return ret;
->  
-> -	mutex_unlock(&inst->lock);
-> +	inst->codec_state = DEC_STATE_INIT;
-> +
-> +done:
-> +	inst->streamon_out = 1;
-> +	return ret;
-> +}
-> +
-> +static int vdec_start_streaming(struct vb2_queue *q, unsigned int count)
-> +{
-> +	struct venus_inst *inst = vb2_get_drv_priv(q);
-> +	int ret;
-> +
-> +	mutex_lock(&inst->lock);
-> +
-> +	if (q->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
-> +		ret = vdec_start_capture(inst);
-> +	else
-> +		ret = vdec_start_output(inst);
->  
-> +	if (ret)
-> +		goto error;
-> +
-> +	mutex_unlock(&inst->lock);
->  	return 0;
->  
-> -deinit_sess:
-> -	hfi_session_deinit(inst);
-> -bufs_done:
-> +error:
->  	venus_helper_buffers_done(inst, VB2_BUF_STATE_QUEUED);
-> +	mutex_unlock(&inst->lock);
-> +	return ret;
-> +}
-> +
-> +static void vdec_dst_buffers_done(struct venus_inst *inst,
-> +				  enum vb2_buffer_state state)
-> +{
-> +	struct vb2_v4l2_buffer *buf;
-> +
-> +	while ((buf = v4l2_m2m_dst_buf_remove(inst->m2m_ctx)))
-> +		v4l2_m2m_buf_done(buf, state);
-> +}
-> +
-> +static int vdec_stop_capture(struct venus_inst *inst)
-> +{
-> +	int ret = 0;
-> +
-> +	switch (inst->codec_state) {
-> +	case DEC_STATE_DECODING:
-> +		ret = hfi_session_flush(inst, HFI_FLUSH_ALL);
-> +		vdec_dst_buffers_done(inst, VB2_BUF_STATE_ERROR);
-> +		inst->codec_state = DEC_STATE_STOPPED;
-> +		break;
-> +	case DEC_STATE_DRAIN:
-> +		vdec_dst_buffers_done(inst, VB2_BUF_STATE_ERROR);
-> +		inst->codec_state = DEC_STATE_STOPPED;
-> +		break;
-> +	case DEC_STATE_DRC:
-> +		ret = hfi_session_flush(inst, HFI_FLUSH_OUTPUT);
-> +		vdec_dst_buffers_done(inst, VB2_BUF_STATE_ERROR);
-> +		inst->codec_state = DEC_STATE_CAPTURE_SETUP;
-> +		INIT_LIST_HEAD(&inst->registeredbufs);
-> +		venus_helper_free_dpb_bufs(inst);
-> +		break;
-> +	default:
-> +		return 0;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int vdec_stop_output(struct venus_inst *inst)
-> +{
-> +	int ret = 0;
-> +
-> +	switch (inst->codec_state) {
-> +	case DEC_STATE_DECODING:
-> +	case DEC_STATE_DRAIN:
-> +	case DEC_STATE_STOPPED:
-> +		ret = hfi_session_flush(inst, HFI_FLUSH_ALL);
-> +		inst->codec_state = DEC_STATE_SEEK;
-> +		break;
-> +	case DEC_STATE_INIT:
-> +	case DEC_STATE_CAPTURE_SETUP:
-> +		ret = hfi_session_flush(inst, HFI_FLUSH_INPUT);
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static void vdec_stop_streaming(struct vb2_queue *q)
-> +{
-> +	struct venus_inst *inst = vb2_get_drv_priv(q);
-> +	int ret = -EINVAL;
-> +
-> +	mutex_lock(&inst->lock);
-> +
-> +	if (IS_CAP(q, inst))
-> +		ret = vdec_stop_capture(inst);
-> +	else if (IS_OUT(q, inst))
-> +		ret = vdec_stop_output(inst);
-> +
-> +	venus_helper_buffers_done(inst, VB2_BUF_STATE_ERROR);
-> +
-> +	if (ret)
-> +		goto unlock;
-> +
->  	if (q->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
->  		inst->streamon_out = 0;
->  	else
->  		inst->streamon_cap = 0;
-> +
-> +unlock:
->  	mutex_unlock(&inst->lock);
-> -	return ret;
-> +}
-> +
-> +static void vdec_session_release(struct venus_inst *inst)
-> +{
-> +	struct venus_core *core = inst->core;
-> +	int ret, abort = 0;
-> +
-> +	mutex_lock(&inst->lock);
-> +
-> +	inst->codec_state = DEC_STATE_UNINIT;
-> +
-> +	ret = hfi_session_stop(inst);
-> +	abort = (ret && ret != -EINVAL) ? 1 : 0;
-> +	ret = hfi_session_unload_res(inst);
-> +	abort = (ret && ret != -EINVAL) ? 1 : 0;
-> +	ret = venus_helper_unregister_bufs(inst);
-> +	abort = (ret && ret != -EINVAL) ? 1 : 0;
-> +	ret = venus_helper_intbufs_free(inst);
-> +	abort = (ret && ret != -EINVAL) ? 1 : 0;
-> +	ret = hfi_session_deinit(inst);
-> +	abort = (ret && ret != -EINVAL) ? 1 : 0;
-> +
-> +	if (inst->session_error || core->sys_error)
-> +		abort = 1;
-> +
-> +	if (abort)
-> +		hfi_session_abort(inst);
-> +
-> +	venus_helper_free_dpb_bufs(inst);
-> +	venus_helper_load_scale_clocks(core);
-> +	INIT_LIST_HEAD(&inst->registeredbufs);
-> +
-> +	mutex_unlock(&inst->lock);
-> +}
-> +
-> +static int vdec_buf_init(struct vb2_buffer *vb)
-> +{
-> +	struct venus_inst *inst = vb2_get_drv_priv(vb->vb2_queue);
-> +
-> +	inst->buf_count++;
-> +
-> +	return venus_helper_vb2_buf_init(vb);
-> +}
-> +
-> +static void vdec_buf_cleanup(struct vb2_buffer *vb)
-> +{
-> +	struct venus_inst *inst = vb2_get_drv_priv(vb->vb2_queue);
-> +
-> +	inst->buf_count--;
-> +	if (!inst->buf_count)
-> +		vdec_session_release(inst);
->  }
->  
->  static const struct vb2_ops vdec_vb2_ops = {
->  	.queue_setup = vdec_queue_setup,
-> -	.buf_init = venus_helper_vb2_buf_init,
-> +	.buf_init = vdec_buf_init,
-> +	.buf_cleanup = vdec_buf_cleanup,
->  	.buf_prepare = venus_helper_vb2_buf_prepare,
->  	.start_streaming = vdec_start_streaming,
-> -	.stop_streaming = venus_helper_vb2_stop_streaming,
-> +	.stop_streaming = vdec_stop_streaming,
->  	.buf_queue = venus_helper_vb2_buf_queue,
->  };
->  
-> @@ -891,6 +1108,7 @@ static void vdec_buf_done(struct venus_inst *inst, unsigned int buf_type,
->  
->  	vbuf->flags = flags;
->  	vbuf->field = V4L2_FIELD_NONE;
-> +	vb = &vbuf->vb2_buf;
->  
->  	if (type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
->  		vb = &vbuf->vb2_buf;
-> @@ -903,6 +1121,9 @@ static void vdec_buf_done(struct venus_inst *inst, unsigned int buf_type,
->  			const struct v4l2_event ev = { .type = V4L2_EVENT_EOS };
->  
->  			v4l2_event_queue_fh(&inst->fh, &ev);
-> +
-> +			if (inst->codec_state == DEC_STATE_DRAIN)
-> +				inst->codec_state = DEC_STATE_STOPPED;
->  		}
->  	} else {
->  		vbuf->sequence = inst->sequence_out++;
-> @@ -914,17 +1135,69 @@ static void vdec_buf_done(struct venus_inst *inst, unsigned int buf_type,
->  	if (hfi_flags & HFI_BUFFERFLAG_DATACORRUPT)
->  		state = VB2_BUF_STATE_ERROR;
->  
-> +	if (hfi_flags & HFI_BUFFERFLAG_DROP_FRAME) {
-> +		state = VB2_BUF_STATE_ERROR;
-> +		vb2_set_plane_payload(vb, 0, 0);
-> +		vb->timestamp = 0;
-> +	}
-> +
->  	v4l2_m2m_buf_done(vbuf, state);
->  }
->  
-> +static void vdec_event_change(struct venus_inst *inst,
-> +			      struct hfi_event_data *ev_data, bool sufficient)
-> +{
-> +	static const struct v4l2_event ev = {
-> +		.type = V4L2_EVENT_SOURCE_CHANGE,
-> +		.u.src_change.changes = V4L2_EVENT_SRC_CH_RESOLUTION };
-> +	struct device *dev = inst->core->dev_dec;
-> +	struct v4l2_format format = {};
-> +
-> +	mutex_lock(&inst->lock);
-> +
-> +	format.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
-> +	format.fmt.pix_mp.pixelformat = inst->fmt_cap->pixfmt;
-> +	format.fmt.pix_mp.width = ev_data->width;
-> +	format.fmt.pix_mp.height = ev_data->height;
-> +
-> +	vdec_try_fmt_common(inst, &format);
-> +
-> +	inst->width = format.fmt.pix_mp.width;
-> +	inst->height = format.fmt.pix_mp.height;
-> +
-> +	inst->out_width = ev_data->width;
-> +	inst->out_height = ev_data->height;
-> +
-> +	dev_dbg(dev, "event %s sufficient resources (%ux%u)\n",
-> +		sufficient ? "" : "not", ev_data->width, ev_data->height);
-> +
-> +	if (sufficient) {
-> +		hfi_session_continue(inst);
-> +	} else {
-> +		switch (inst->codec_state) {
-> +		case DEC_STATE_INIT:
-> +			inst->codec_state = DEC_STATE_CAPTURE_SETUP;
-> +			break;
-> +		case DEC_STATE_DECODING:
-> +			inst->codec_state = DEC_STATE_DRC;
-> +			break;
-> +		default:
-> +			break;
-> +		}
-> +	}
-> +
-> +	inst->reconfig = true;
-> +	v4l2_event_queue_fh(&inst->fh, &ev);
-> +	wake_up(&inst->reconf_wait);
-> +
-> +	mutex_unlock(&inst->lock);
-> +}
-> +
->  static void vdec_event_notify(struct venus_inst *inst, u32 event,
->  			      struct hfi_event_data *data)
->  {
->  	struct venus_core *core = inst->core;
->  	struct device *dev = core->dev_dec;
-> -	static const struct v4l2_event ev = {
-> -		.type = V4L2_EVENT_SOURCE_CHANGE,
-> -		.u.src_change.changes = V4L2_EVENT_SRC_CH_RESOLUTION };
->  
->  	switch (event) {
->  	case EVT_SESSION_ERROR:
-> @@ -934,18 +1207,10 @@ static void vdec_event_notify(struct venus_inst *inst, u32 event,
->  	case EVT_SYS_EVENT_CHANGE:
->  		switch (data->event_type) {
->  		case HFI_EVENT_DATA_SEQUENCE_CHANGED_SUFFICIENT_BUF_RESOURCES:
-> -			hfi_session_continue(inst);
-> -			dev_dbg(dev, "event sufficient resources\n");
-> +			vdec_event_change(inst, data, true);
->  			break;
->  		case HFI_EVENT_DATA_SEQUENCE_CHANGED_INSUFFICIENT_BUF_RESOURCES:
-> -			inst->reconfig_height = data->height;
-> -			inst->reconfig_width = data->width;
-> -			inst->reconfig = true;
-> -
-> -			v4l2_event_queue_fh(&inst->fh, &ev);
-> -
-> -			dev_dbg(dev, "event not sufficient resources (%ux%u)\n",
-> -				data->width, data->height);
-> +			vdec_event_change(inst, data, false);
->  			break;
->  		case HFI_EVENT_RELEASE_BUFFER_REFERENCE:
->  			venus_helper_release_buf_ref(inst, data->tag);
-> @@ -978,8 +1243,12 @@ static void vdec_inst_init(struct venus_inst *inst)
->  	inst->hfi_codec = HFI_VIDEO_CODEC_H264;
->  }
->  
-> +static void vdec_m2m_device_run(void *priv)
-> +{
-> +}
-> +
->  static const struct v4l2_m2m_ops vdec_m2m_ops = {
-> -	.device_run = venus_helper_m2m_device_run,
-> +	.device_run = vdec_m2m_device_run,
->  	.job_abort = venus_helper_m2m_job_abort,
->  };
->  
-> @@ -1041,7 +1310,9 @@ static int vdec_open(struct file *file)
->  	inst->core = core;
->  	inst->session_type = VIDC_SESSION_TYPE_DEC;
->  	inst->num_output_bufs = 1;
-> -
-> +	inst->codec_state = DEC_STATE_UNINIT;
-> +	inst->buf_count = 0;
-> +	init_waitqueue_head(&inst->reconf_wait);
->  	venus_helper_init_instance(inst);
->  
->  	ret = pm_runtime_get_sync(core->dev_dec);
-> 
+> "calced" is short for "calculated". Maybe "lpos_next" would be a good
+> name?
 
+Yes. It would help if the name is the same as the variable passed
+from prb_reserve().
+
+
+> The function is only doing this: Given a reserve position and size to
+> reserve, calculate what the next reserve position would be.
+> 
+> It might seem complicated because it also detects/reports the special
+> cases that the tail would be overwritten (returns -1) or if the
+> ringbuffer wraps when performing the reserve (returns 1).
+
+> > I think that it will be much easiser to follow the logic if the entire
+> > for-cycle around calc_next() is implemented in a single function.
+> 
+> calc_next() is already sitting in 2 nested loops. And calc_next()
+> performs manual tail-recursion using a goto. I doubt it becomes easier
+> to follow when calc_next is inlined in prb_reserve().
+
+Of course, it is possible that it will be worse. But we need to do
+something to make it better. The current interaction between calc_next(),
+push_tail() and prb_reserve using -1,0,1 values and many parameters
+is really hard to follow.
+
+
+> > The function push_tail() should get called from inside this function.
+> 
+> I disagree. calc_next's job isn't to make any changes.
+
+It is only about the name. If you rename it to klp_get_next_reserve()
+then it will be allowed to push the tail ;-) I believe that it will
+simplify the code. I might be wrong but please try it.
+
+[...]
+
+> >
+> > /* Try to remove the oldest message */
+> 
+> That is the kind of comment that I usually get in trouble for (saying
+> the obvious). But I have no problems adding it.
+
+It is obvious for you. But it helps to understand the meaning
+for people that see the code for the first time. Especially
+when they need to get familiar with the tail/head/reserve
+naming scheme. Note that the current printk buffer used
+first/next names.
+
+> >> +static bool push_tail(struct printk_ringbuffer *rb, unsigned long tail)
+
+[...]
+
+> >> +/*
+> >> + * prb_commit: Commit a reserved entry to the ring buffer.
+> >> + * @h: An entry handle referencing the data entry to commit.
+> >> + *
+> >> + * Commit data that has been reserved using prb_reserve(). Once the data
+> >> + * block has been committed, it can be invalidated at any time. If a writer
+> >> + * is interested in using the data after committing, the writer should make
+> >> + * its own copy first or use the prb_iter_ reader functions to access the
+> >> + * data in the ring buffer.
+> >> + *
+> >> + * It is safe to call this function from any context and state.
+> >> + */
+> >> +void prb_commit(struct prb_handle *h)
+> >> +{
+> >> +	struct printk_ringbuffer *rb = h->rb;
+> >> +	struct prb_entry *e;
+> >> +	unsigned long head;
+> >> +	unsigned long res;
+> >> +
+> >> +	for (;;) {
+> >> +		if (atomic_read(&rb->ctx) != 1) {
+> >> +			/* the interrupted context will fixup head */
+> >> +			atomic_dec(&rb->ctx);
+> >> +			break;
+> >> +		}
+> >> +		/* assign sequence numbers before moving head */
+> >> +		head = atomic_long_read(&rb->head);
+> >> +		res = atomic_long_read(&rb->reserve);
+> >> +		while (head != res) {
+> >> +			e = to_entry(rb, head);
+> >> +			if (e->size == -1) {
+> >> +				head = PRB_WRAP_LPOS(rb, head, 1);
+> >> +				continue;
+> >> +			}
+> >> +			e->seq = ++rb->seq;
+> >> +			head += e->size;
+> >> +		}
+> >> +		atomic_long_set_release(&rb->head, res);
+> >
+> > This looks realy weird. It looks like you are commiting all
+> > reserved entries between current head and this entry.
+> 
+> I am.
+> 
+> > I would expect that every prb_entry has its own flag whether
+> > it was commited or not. This function should set this flag
+> > for its own entry. Then it should move the head to the
+> > first uncommited entry.
+> 
+> How could there be a reserved but uncommitted entry before this one? Or
+> after this one? The reserve/commit window is under the prb_cpulock. No
+> other CPU can be involved. If an NMI occurred anywhere here and it did a
+> reserve, it already did the matching commit.
+
+Heh, I missed this. But then all the reserve/commit complexity is
+used just to handle the race with NMIs. Other contexts do both actions
+atomically.
+
+Hmm, prb_reserve() code looks almost ready to be used
+lockless. And if you have reservation then it looks natural
+to leave the lock and fill the data lockless.
+
+I understand that your approach solve some problems, especially
+with the commit. Also I know that fixing all races often
+makes the code much more complicated than one expected.
+
+OK, I am going to continue with the review and will think about it.
+Some complexity is surely needed also because of the readers.
+I have to get familiar with them as well.
+
+
+> >> +char *prb_reserve(struct prb_handle *h, struct printk_ringbuffer *rb,
+> >> +		  unsigned int size)
+> >> +{
+
+[...]
+
+> >> +	do {
+> >> +		for (;;) {
+> >> +			tail = atomic_long_read(&rb->tail);
+> >> +			res1 = atomic_long_read(&rb->reserve);
+> >> +			ret = calc_next(rb, tail, res1, size, &res2);
+> >> +			if (ret >= 0)
+> >> +				break;
+> >> +			if (!push_tail(rb, tail)) {
+> >> +				prb_commit(h);
+> >
+> > I am a bit confused. Is it commiting a handle that haven't
+> > been reserved yet? Why, please?
+> 
+> If ctx is 1 we have the special responsibility of moving the head past
+> all the entries that interrupting NMIs have reserve/committed. (See the
+> check for "ctx != 1" in prb_commit().) The NMIs are already gone so we
+> are the only one that can do this.
+> 
+> Here we are in prb_reserve() and have already incremented ctx. We might
+> be the "ctx == 1" task and NMIs may have reserve/committed entries after
+> we incremented ctx, which means that they did not push the head. If we
+> now bail out because we couldn't push the tail, we still are obligated
+> to push the head if we are "ctx == 1".
+>
+> prb_commit() does not actually care what is in the handle. It is going
+> to commit everything up to the reserve. The fact that I pass it a handle
+> is because that is what the function expects. I suppose I could create a
+> _prb_commit() that takes only a ringbuffer argument and prb_commit()
+> simply calls _prb_commit(h->rb). Then the bailout would be:
+
+This is tricky like hell. Please add more comments in your code.
+For example, see rb_remove_pages() or rb_tail_page_update().
+Even trivial operations are commented there:
+
+   + describe complex interactions between various variables,
+     flags, etc.
+
+   + the author spent non-trivial time to realize that
+     the operation has to be done exactly there
+
+   + some non-trivial computing
+
+   + some corner case is handled
+
+   + the operation has some non-obvious side effects or
+     prerequisites
+
+
+> Or maybe it should have a more descriptive name:
+>
+> 				_prb_commit_all_reserved(rb);
+
+This would have helped. But it would still deserve a comment
+why it is called there.
+
+
+Best Regards,
+Petr
