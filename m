@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58295C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:28:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB18EC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DAB621B1A
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:28:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75D6921924
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:28:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WDJX3v8W"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g9Y9aZ4K"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729199AbfBOK23 (ORCPT
+        id S1729351AbfBOK2d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 05:28:29 -0500
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:39225 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727012AbfBOK22 (ORCPT
+        Fri, 15 Feb 2019 05:28:33 -0500
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:46197 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727012AbfBOK2b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 05:28:28 -0500
-Received: by mail-vk1-f194.google.com with SMTP id f206so2118600vke.6
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 02:28:27 -0800 (PST)
+        Fri, 15 Feb 2019 05:28:31 -0500
+Received: by mail-vk1-f195.google.com with SMTP id j68so2102666vke.13
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 02:28:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=PINAiX8dc70wZC+Nch/uydyj/BSPov6DEeJ3MPB8ves=;
-        b=WDJX3v8WBUumz0bXoytEnZEopdDo9uP4mTCKwHpJgm8sofqcYilluzsW0Eu96U9zng
-         LfA97r8vJpy9pmRM6RQt6XdsQ6D5honYS8vUmx8jF9m6Qt/+AZpNqgPWvFpaHNWUlIES
-         mlPueLi+6VVUJEVbYOjDJ85ttkJytXDDNvDhDWHwrnmyBW1skSCnioxQcgy8fdCVPc4k
-         Ld2GVZ7qV71Os1mDZq8lPAEAVeAqjKCYaoSgptUPY2oYQ6pjGf8hbC6ZhPlVncJNTgw6
-         rfTyHiZJ+utXmX3zb4/xnQJFBLemMoc8iiPPNDowPQCkiHdNWxe+7cNYF8iJlyamcXI6
-         Bxcg==
+        bh=fLBd3lhZPfXWMH7Ws28iyP7cbmLb4ZgLVBr3D/WvZKU=;
+        b=g9Y9aZ4K7fz42Ls6vZS0HdjFuG+W5XAuB+UXyA8B+my0s4owUijZQ5q423wHpJvj+R
+         DmgGUoqXEMaI8W/ztT9ReESSroTPNfOd38EOovBrGtXvbOnfDLo1rGXDbBnOVCPiv7Du
+         S/fiNruzTWtxPiEyppBcy9L+Gr2mhjKdfD5m97y7Er527lpTPmbNu8kpW1ut+f6OyI5M
+         csiSc0JGb93zfl4PFG27euQc559F0o6P113HXA5O1EbAQklEIwI/bV90FAJUfROCR8dP
+         uGF5dPA9ixG6QFcqzC/12bXqwlutCvT1jU+T4rTCSzeqBpG3BcFtetdH30aMdxuXVwDl
+         brJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=PINAiX8dc70wZC+Nch/uydyj/BSPov6DEeJ3MPB8ves=;
-        b=MQsroFVfuVMxu23PaVoFUhEHNBBJxbnRKhw2/W/AYYV2uyvLfS2ebJ4k0HCQeK+KJ5
-         lMVIq/wxrF0KbI9Mqb7Ti0QS7Ma/7d05PE16dodEdGw+dTZ9tTULJyTRs4dRsS7gF46r
-         0BKE0WliD7V39A0r5q60201aCtV3gvEhX+mNcUVYP5pQj1jYz09RCObXUFbLGnyCKohh
-         Xz7L7f7xER7RmsKTGCKJsdHIPhiA28TSIgOb+TLKTip9DKtuoZu6YCDrhHgOjp+EfQQy
-         4HmA75hK5NjMFKPechSmPqrvsq8Wt5vlfDru/j5ohoCw0I4KgpL1yurS9UzuTcXkCnQn
-         F98Q==
-X-Gm-Message-State: AHQUAuZ1oojvCIB4e6ReAtE+BAfxUODnAXwC6hJ2cDihVFFILmlQN1pH
-        AO1jjlRFsU6J35lKWq3vJoIphsY+mxB9Mzw7exiEyQ==
-X-Google-Smtp-Source: AHgI3Ia+cjWXCuC/mW7RsW5u4jk5EOyOZSbqSju3x3nRvTQZYyUxB+xV0MtPrLkwxL2Cfo/xzmKUWey3cWaNB9VUY7E=
-X-Received: by 2002:a1f:d005:: with SMTP id h5mr4517280vkg.4.1550226506020;
- Fri, 15 Feb 2019 02:28:26 -0800 (PST)
+        bh=fLBd3lhZPfXWMH7Ws28iyP7cbmLb4ZgLVBr3D/WvZKU=;
+        b=ibQ/loUO0vuMfTxFyTmuR2qYmPfMn7LP3mvfpnCuuGQBo1qnxuThivqm6aSC4GnzJI
+         SFyIrHJwY/7YiiTgEmW8VF4a5BTax2lYg9wm1UQnaPWEFRNqfU24jXmx3LaOnWGJ/Wa5
+         8h7QKbIBepyb9HfulHZEQOVeyd1qUHd9n4xInFkq5RAyngiT6xex9MnrcHm63eCBl8np
+         ftvENyx3+nK4wU8pz90PVqmRzUfavL6U5QBOPwQeDiGwyww4jymqucJHyZLoEeqOrlDW
+         N+W7YkJG5VPbVMTQEJq8lvQ7Vk9RpS4OLx9uV48dmfzbQoYiyZ9V+jsqg2LZT5wElIgG
+         v8GQ==
+X-Gm-Message-State: AHQUAub6910Vqb0hAT8gVVLBgL7jFd96098xmS5zw19U1VVyQ9nFu3Ms
+        gOBv46VgpWeoONOUhGupKYzsBRyU6e37wYlZ2GGTJg==
+X-Google-Smtp-Source: AHgI3IZ2QL1QAe9kob+NyrFfaj5kFTeFY8cZFOeoBoXqWycTnNnSRsVZkMVca99N/Vgs+k+QfgHE4bVF2LKz9T5+S1I=
+X-Received: by 2002:a1f:9042:: with SMTP id s63mr4427887vkd.17.1550226510162;
+ Fri, 15 Feb 2019 02:28:30 -0800 (PST)
 MIME-Version: 1.0
-References: <20190214181249.2749-1-dianders@chromium.org> <20190214181249.2749-2-dianders@chromium.org>
-In-Reply-To: <20190214181249.2749-2-dianders@chromium.org>
+References: <20190214181249.2749-1-dianders@chromium.org>
+In-Reply-To: <20190214181249.2749-1-dianders@chromium.org>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 15 Feb 2019 11:27:50 +0100
-Message-ID: <CAPDyKFpXc+0rAHOgKN+QDK0MH-4efUZJ8asuBkAwg+w73huzOw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] PM / Domains: Mark "name" const in dev_pm_domain_attach_by_name()
+Date:   Fri, 15 Feb 2019 11:27:54 +0100
+Message-ID: <CAPDyKFpw8Fwgc8QjjhjuxcW7zJp1-kqcKC4RAs65S8Jr5H=uYA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] PM / Domains: Mark "name" const in genpd_dev_pm_attach_by_name()
 To:     Douglas Anderson <dianders@chromium.org>
 Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         linux-arm-msm <linux-arm-msm@vger.kernel.org>,
@@ -79,61 +79,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Thu, 14 Feb 2019 at 19:13, Douglas Anderson <dianders@chromium.org> wrote:
 >
-> As of the patch ("PM / Domains: Mark "name" const in
-> genpd_dev_pm_attach_by_name()") it's clear that the name in
-> dev_pm_domain_attach_by_name() can be const.  Mark it as so.  This
-> allows drivers to pass in a name that was declared "const" in a
-> driver.
+> The genpd_dev_pm_attach_by_name() simply takes the name and passes it
+> to of_property_match_string() where the argument is "const char *".
+> Adding a const here allows a later patch to add a const to
+> dev_pm_domain_attach_by_name() which allows drivers to pass in a name
+> that was declared "const" in a driver.
 >
-> Fixes: 27dceb81f445 ("PM / Domains: Introduce dev_pm_domain_attach_by_name()")
+> Fixes: 5d6be70add65 ("PM / Domains: Introduce option to attach a device by name to genpd")
 > Signed-off-by: Douglas Anderson <dianders@chromium.org>
 
 Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Perhaps fold $subject patch into patch1, they seems highly related.
-Anyway, no strong opinion here.
-
 Kind regards
 Uffe
 
+
 > ---
 >
->  drivers/base/power/common.c | 2 +-
+>  drivers/base/power/domain.c | 2 +-
 >  include/linux/pm_domain.h   | 4 ++--
 >  2 files changed, 3 insertions(+), 3 deletions(-)
 >
-> diff --git a/drivers/base/power/common.c b/drivers/base/power/common.c
-> index b413951c6abc..22aedb28aad7 100644
-> --- a/drivers/base/power/common.c
-> +++ b/drivers/base/power/common.c
-> @@ -160,7 +160,7 @@ EXPORT_SYMBOL_GPL(dev_pm_domain_attach_by_id);
->   * For a detailed function description, see dev_pm_domain_attach_by_id().
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index 45eafe8cf7dd..2c334c01fc43 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -2483,7 +2483,7 @@ EXPORT_SYMBOL_GPL(genpd_dev_pm_attach_by_id);
+>   * power-domain-names DT property. For further description see
+>   * genpd_dev_pm_attach_by_id().
 >   */
->  struct device *dev_pm_domain_attach_by_name(struct device *dev,
-> -                                           char *name)
-> +                                           const char *name)
+> -struct device *genpd_dev_pm_attach_by_name(struct device *dev, char *name)
+> +struct device *genpd_dev_pm_attach_by_name(struct device *dev, const char *name)
 >  {
->         if (dev->pm_domain)
->                 return ERR_PTR(-EEXIST);
+>         int index;
+>
 > diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index 203be5082f33..1ed5874bcee0 100644
+> index dd364abb649a..203be5082f33 100644
 > --- a/include/linux/pm_domain.h
 > +++ b/include/linux/pm_domain.h
-> @@ -341,7 +341,7 @@ int dev_pm_domain_attach(struct device *dev, bool power_on);
->  struct device *dev_pm_domain_attach_by_id(struct device *dev,
->                                           unsigned int index);
->  struct device *dev_pm_domain_attach_by_name(struct device *dev,
-> -                                           char *name);
-> +                                           const char *name);
->  void dev_pm_domain_detach(struct device *dev, bool power_off);
->  void dev_pm_domain_set(struct device *dev, struct dev_pm_domain *pd);
->  #else
-> @@ -355,7 +355,7 @@ static inline struct device *dev_pm_domain_attach_by_id(struct device *dev,
->         return NULL;
+> @@ -271,7 +271,7 @@ int genpd_dev_pm_attach(struct device *dev);
+>  struct device *genpd_dev_pm_attach_by_id(struct device *dev,
+>                                          unsigned int index);
+>  struct device *genpd_dev_pm_attach_by_name(struct device *dev,
+> -                                          char *name);
+> +                                          const char *name);
+>  #else /* !CONFIG_PM_GENERIC_DOMAINS_OF */
+>  static inline int of_genpd_add_provider_simple(struct device_node *np,
+>                                         struct generic_pm_domain *genpd)
+> @@ -324,7 +324,7 @@ static inline struct device *genpd_dev_pm_attach_by_id(struct device *dev,
 >  }
->  static inline struct device *dev_pm_domain_attach_by_name(struct device *dev,
-> -                                                         char *name)
-> +                                                         const char *name)
+>
+>  static inline struct device *genpd_dev_pm_attach_by_name(struct device *dev,
+> -                                                        char *name)
+> +                                                        const char *name)
 >  {
 >         return NULL;
 >  }
