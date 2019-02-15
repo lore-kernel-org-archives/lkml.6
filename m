@@ -2,561 +2,108 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FFFFC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9213BC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:28:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 249DE2192C
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:27:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58EC2206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:28:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AsPU6xGz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732666AbfBOJ1q (ORCPT
+        id S2389192AbfBOJ2L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:27:46 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:51961 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726263AbfBOJ1p (ORCPT
+        Fri, 15 Feb 2019 04:28:11 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:34081 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732633AbfBOJ2L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 04:27:45 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1F9R8HU1115924
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 15 Feb 2019 01:27:08 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1F9R7Iu1115919;
-        Fri, 15 Feb 2019 01:27:07 -0800
-Date:   Fri, 15 Feb 2019 01:27:07 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Paul Clarke <tipbot@zytor.com>
-Message-ID: <tip-dd81eafacc52961ed1b2bf3e998b92ccfd9108bc@git.kernel.org>
-Cc:     sukadev@linux.vnet.ibm.com, pc@us.ibm.com, mpe@ellerman.id.au,
-        acme@redhat.com, linux-kernel@vger.kernel.org,
-        naveen.n.rao@linux.vnet.ibm.com, hpa@zytor.com,
-        maddy@linux.vnet.ibm.com, tglx@linutronix.de, mingo@kernel.org,
-        ananth@linux.vnet.ibm.com, cel@us.ibm.com
-Reply-To: mingo@kernel.org, ananth@linux.vnet.ibm.com, cel@us.ibm.com,
-          maddy@linux.vnet.ibm.com, tglx@linutronix.de, hpa@zytor.com,
-          naveen.n.rao@linux.vnet.ibm.com, mpe@ellerman.id.au,
-          acme@redhat.com, linux-kernel@vger.kernel.org,
-          sukadev@linux.vnet.ibm.com, pc@us.ibm.com
-In-Reply-To: <20190207175314.31813-2-pc@us.ibm.com>
-References: <20190207175314.31813-2-pc@us.ibm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf vendor events power8: Cpi_breakdown &
- estimated_dcache_miss_cpi metrics
-Git-Commit-ID: dd81eafacc52961ed1b2bf3e998b92ccfd9108bc
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 15 Feb 2019 04:28:11 -0500
+Received: by mail-wm1-f67.google.com with SMTP id y185so6201244wmd.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 01:28:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4vuwJfCjaymcrQMHuhlHrbRPg7VDf027mF0EyK6vTag=;
+        b=AsPU6xGzd2Ww1oDpvRjd764AlORojlxzX3HhXH5Ax3iiNg2WB97GK5yy8s5SW91icG
+         00krXHPhu/ptPeAoORMVVaphubQMeisy6Cs4OjRm2FmezzTvohOEFWlTO/DSIIePeEht
+         EBIgzqwfIiOjo3gFSgqiFGoJvpaXNcjyU6Cug92ZdyKxLLVxxd7DWBSENNTCcNqkGOg8
+         XdfWlg9RdbYx+tWgLyGNmIJHMZTpK1aFxUt1tckPABYjIe8TpNpRILVz/B11PUmCD0GS
+         dTMKKrb+ePLhDAwpNUCeIBY++jrZb428/aICEcLTERgooOy55jXE4/PnK16PpGoYdJEL
+         fKfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=4vuwJfCjaymcrQMHuhlHrbRPg7VDf027mF0EyK6vTag=;
+        b=VN1eBZSz02jMGIOIZ4FLGWr9bwgTu3RDhz+GqM/zupWj/KFYjYzThJIYI5nCqWJybi
+         A3NG/UEZtyqSiwhiR5ttpX+uxTOAQBhYW6fo3gBKWCfPW40ZzsJIi29lQYDAGkg6UnPs
+         xqGEGiJ71hpyMazLHnD8OSpHra+HYbnpZhwgF23Z5z0ss0EyB01D3t6CBXipPfgWg1gq
+         i7laYnHUdMutYb7/JyD+LU/fMKJelp+oH9c7MQc20yEWBQXH6MVxX574h16d0noQAAr0
+         lHCjzAxqkx4Ybhf53B99hny4EJyxTvirTwZM0S3FIc4Ud+EAhLV3hqKKGgB9XO6Z6TMu
+         07qw==
+X-Gm-Message-State: AHQUAuZWz39+ZyHjGbpMvf0U3f/4jDNMrV6eT8kSxz3r5xmp5Y47BVIU
+        TCLpw7dj321wtdSgbBrwN9A2EQ==
+X-Google-Smtp-Source: AHgI3IZiFbeA12c2rsy3vAf4bim1CuIfd9UQiHAViiNTRyX4AOYmr5cqhZuI2nJqPqitN1KXzyn17Q==
+X-Received: by 2002:a1c:f20a:: with SMTP id s10mr5459321wmc.123.1550222889404;
+        Fri, 15 Feb 2019 01:28:09 -0800 (PST)
+Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.googlemail.com with ESMTPSA id 62sm10123312wra.46.2019.02.15.01.28.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Feb 2019 01:28:08 -0800 (PST)
+Subject: Re: [PATCH] nvmem: core: fix the return value check when calling the
+ notifier chain
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        stable@vger.kernel.org
+References: <20190214162349.22740-1-brgl@bgdev.pl>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <e566b4ba-0f3e-052a-bf08-ad881cf7b7c0@linaro.org>
+Date:   Fri, 15 Feb 2019 09:28:07 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <20190214162349.22740-1-brgl@bgdev.pl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  dd81eafacc52961ed1b2bf3e998b92ccfd9108bc
-Gitweb:     https://git.kernel.org/tip/dd81eafacc52961ed1b2bf3e998b92ccfd9108bc
-Author:     Paul Clarke <pc@us.ibm.com>
-AuthorDate: Thu, 7 Feb 2019 12:53:11 -0500
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 14 Feb 2019 13:31:08 -0300
 
-perf vendor events power8: Cpi_breakdown & estimated_dcache_miss_cpi metrics
 
-POWER8 metrics are not well publicized.
+On 14/02/2019 16:23, Bartosz Golaszewski wrote:
+> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+> index f7301bb4ef3b..a3bed2d9aec7 100644
+> --- a/drivers/nvmem/core.c
+> +++ b/drivers/nvmem/core.c
+> @@ -687,7 +687,7 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
+>   		goto err_remove_cells;
+>   
+>   	rval = blocking_notifier_call_chain(&nvmem_notifier, NVMEM_ADD, nvmem);
+> -	if (rval)
+> +	if (rval < 0)
+>   		goto err_remove_cells;
 
-Some are here:
+rval will be masked with STOP MASK, so the above statement could be 
+false even if we have error.
+So you should consider returning an errono which can be understood by user:
 
-  https://www.ibm.com/support/knowledgecenter/en/SSFK5S_2.2.0/com.ibm.cluster.pedev.v2r2.pedev100.doc/bl7ug_derivedmetricspower8.htm
+may be something like this:
 
-This patch is for metric groups:
-- cpi_breakdown
-- estimated_dcache_miss_cpi
+if (rval & NOTIFY_STOP_MASK) {
+	rval = notifier_to_errno(rval);
+	goto err_remove_cells
+}
 
-Signed-off-by: Paul Clarke <pc@us.ibm.com>
-Cc: Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>
-Cc: Carl Love <cel@us.ibm.com>
-Cc: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-Link: http://lkml.kernel.org/r/20190207175314.31813-2-pc@us.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- .../pmu-events/arch/powerpc/power8/metrics.json    | 461 +++++++++++++++++++++
- 1 file changed, 461 insertions(+)
 
-diff --git a/tools/perf/pmu-events/arch/powerpc/power8/metrics.json b/tools/perf/pmu-events/arch/powerpc/power8/metrics.json
-new file mode 100644
-index 000000000000..377b76226c08
---- /dev/null
-+++ b/tools/perf/pmu-events/arch/powerpc/power8/metrics.json
-@@ -0,0 +1,461 @@
-+[
-+    {
-+        "BriefDescription": "Cycles stalled due to CRU or BRU operations",
-+        "MetricExpr": "PM_CMPLU_STALL_BRU_CRU / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "bru_cru_stall_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled due to ISU Branch Operations",
-+        "MetricExpr": "PM_CMPLU_STALL_BRU / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "bru_stall_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles in which a Group Completed",
-+        "MetricExpr": "PM_GRP_CMPL / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "completion_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by CO queue full",
-+        "MetricExpr": "PM_CMPLU_STALL_COQ_FULL / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "coq_full_stall_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled due to CRU Operations",
-+        "MetricExpr": "(PM_CMPLU_STALL_BRU_CRU - PM_CMPLU_STALL_BRU) / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "cru_stall_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by flushes",
-+        "MetricExpr": "PM_CMPLU_STALL_FLUSH / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "flush_stall_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by FXU Multi-Cycle Instructions",
-+        "MetricExpr": "PM_CMPLU_STALL_FXLONG / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "fxu_multi_cyc_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by FXU",
-+        "MetricExpr": "PM_CMPLU_STALL_FXU / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "fxu_stall_cpi"
-+    },
-+    {
-+        "BriefDescription": "Other cycles stalled by FXU",
-+        "MetricExpr": "(PM_CMPLU_STALL_FXU / PM_RUN_INST_CMPL) - (PM_CMPLU_STALL_FXLONG / PM_RUN_INST_CMPL)",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "fxu_stall_other_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles GCT empty due to Branch Mispredicts",
-+        "MetricExpr": "PM_GCT_NOSLOT_BR_MPRED / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "gct_empty_br_mpred_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles GCT empty due to Branch Mispredicts and Icache Misses",
-+        "MetricExpr": "PM_GCT_NOSLOT_BR_MPRED_ICMISS / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "gct_empty_br_mpred_ic_miss_cpi"
-+    },
-+    {
-+        "BriefDescription": "GCT empty cycles",
-+        "MetricExpr": "PM_GCT_NOSLOT_CYC / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "gct_empty_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles GCT empty where dispatch was held",
-+        "MetricExpr": "(PM_GCT_NOSLOT_DISP_HELD_MAP + PM_GCT_NOSLOT_DISP_HELD_SRQ + PM_GCT_NOSLOT_DISP_HELD_ISSQ + PM_GCT_NOSLOT_DISP_HELD_OTHER) / PM_RUN_INST_CMPL)",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "gct_empty_disp_held_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles GCT empty where dispatch was held due to issue queue",
-+        "MetricExpr": "PM_GCT_NOSLOT_DISP_HELD_ISSQ / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "gct_empty_disp_held_issq_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles GCT empty where dispatch was held due to maps",
-+        "MetricExpr": "PM_GCT_NOSLOT_DISP_HELD_MAP / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "gct_empty_disp_held_map_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles GCT empty where dispatch was held due to syncs and other effects",
-+        "MetricExpr": "PM_GCT_NOSLOT_DISP_HELD_OTHER / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "gct_empty_disp_held_other_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles GCT empty where dispatch was held due to SRQ",
-+        "MetricExpr": "PM_GCT_NOSLOT_DISP_HELD_SRQ / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "gct_empty_disp_held_srq_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by GCT empty due to Icache misses",
-+        "MetricExpr": "PM_GCT_NOSLOT_IC_MISS  / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "gct_empty_ic_miss_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by GCT empty due to Icache misses that resolve in the local L2 or L3",
-+        "MetricExpr": "(PM_GCT_NOSLOT_IC_MISS - PM_GCT_NOSLOT_IC_L3MISS) / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "gct_empty_ic_miss_l2l3_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by GCT empty due to Icache misses that resolve off-chip",
-+        "MetricExpr": "PM_GCT_NOSLOT_IC_L3MISS / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "gct_empty_ic_miss_l3miss_cpi"
-+    },
-+    {
-+        "BriefDescription": "Other GCT empty cycles",
-+        "MetricExpr": "(PM_GCT_NOSLOT_CYC / PM_RUN_INST_CMPL) - (PM_GCT_NOSLOT_IC_MISS  / PM_RUN_INST_CMPL) - (PM_GCT_NOSLOT_BR_MPRED / PM_RUN_INST_CMPL) - (PM_GCT_NOSLOT_BR_MPRED_ICMISS / PM_RUN_INST_CMPL) - ((PM_GCT_NOSLOT_DISP_HELD_MAP / PM_RUN_INST_CMPL) + (PM_GCT_NOSLOT_DISP_HELD_SRQ / PM_RUN_INST_CMPL) + (PM_GCT_NOSLOT_DISP_HELD_ISSQ / PM_RUN_INST_CMPL) + (PM_GCT_NOSLOT_DISP_HELD_OTHER / PM_RUN_INST_CMPL))",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "gct_empty_other_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by heavyweight syncs",
-+        "MetricExpr": "PM_CMPLU_STALL_HWSYNC  / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "hwsync_stall_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by LSU",
-+        "MetricExpr": "PM_CMPLU_STALL_LSU / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "lsu_stall_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by D-Cache Misses",
-+        "MetricExpr": "PM_CMPLU_STALL_DCACHE_MISS / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "lsu_stall_dcache_miss_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by D-Cache Misses that resolved in distant interventions and memory",
-+        "MetricExpr": "(PM_CMPLU_STALL_DMISS_L3MISS - PM_CMPLU_STALL_DMISS_LMEM - PM_CMPLU_STALL_DMISS_L21_L31 - PM_CMPLU_STALL_DMISS_REMOTE) / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "lsu_stall_dcache_miss_distant_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by D-Cache Misses that resolved in remote or distant caches",
-+        "MetricExpr": "PM_CMPLU_STALL_DMISS_L21_L31 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "lsu_stall_dcache_miss_l21l31_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by D-Cache Misses that resolved in the local L2 or L3, where there was a conflict",
-+        "MetricExpr": "PM_CMPLU_STALL_DMISS_L2L3_CONFLICT / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "lsu_stall_dcache_miss_l2l3_conflict_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by D-Cache Misses that resolved in the local L2 or L3",
-+        "MetricExpr": "PM_CMPLU_STALL_DMISS_L2L3 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "lsu_stall_dcache_miss_l2l3_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by D-Cache Misses that resolved in the local L2 or L3, where there was no conflict",
-+        "MetricExpr": "(PM_CMPLU_STALL_DMISS_L2L3 - PM_CMPLU_STALL_DMISS_L2L3_CONFLICT) / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "lsu_stall_dcache_miss_l2l3_noconflict_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by D-Cache Misses that resolved in other core's caches or memory",
-+        "MetricExpr": "PM_CMPLU_STALL_DMISS_L3MISS / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "lsu_stall_dcache_miss_l3miss_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by D-Cache Misses that resolved in local memory or local L4",
-+        "MetricExpr": "PM_CMPLU_STALL_DMISS_LMEM / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "lsu_stall_dcache_miss_lmem_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by D-Cache Misses that resolved in remote interventions and memory",
-+        "MetricExpr": "PM_CMPLU_STALL_DMISS_REMOTE / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "lsu_stall_dcache_miss_remote_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by ERAT Translation rejects",
-+        "MetricExpr": "PM_CMPLU_STALL_ERAT_MISS / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "lsu_stall_erat_miss_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by LSU load finishes",
-+        "MetricExpr": "PM_CMPLU_STALL_LOAD_FINISH / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "lsu_stall_ld_fin_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by LHS rejects",
-+        "MetricExpr": "PM_CMPLU_STALL_REJECT_LHS / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "lsu_stall_lhs_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by LMQ Full rejects",
-+        "MetricExpr": "PM_CMPLU_STALL_REJ_LMQ_FULL / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "lsu_stall_lmq_full_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by Other LSU Operations",
-+        "MetricExpr": "(PM_CMPLU_STALL_LSU / PM_RUN_INST_CMPL) - (PM_CMPLU_STALL_DCACHE_MISS / PM_RUN_INST_CMPL) - (PM_CMPLU_STALL_REJECT / PM_RUN_INST_CMPL) - (PM_CMPLU_STALL_STORE / PM_RUN_INST_CMPL) - (PM_CMPLU_STALL_LOAD_FINISH / PM_RUN_INST_CMPL) - (PM_CMPLU_STALL_ST_FWD / PM_RUN_INST_CMPL)",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "lsu_stall_other_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by LSU Rejects",
-+        "MetricExpr": "PM_CMPLU_STALL_REJECT / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "lsu_stall_reject_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by Other LSU Rejects",
-+        "MetricExpr": "(PM_CMPLU_STALL_REJECT / PM_RUN_INST_CMPL) - (PM_CMPLU_STALL_REJECT_LHS / PM_RUN_INST_CMPL) - (PM_CMPLU_STALL_ERAT_MISS / PM_RUN_INST_CMPL) - (PM_CMPLU_STALL_REJ_LMQ_FULL / PM_RUN_INST_CMPL)",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "lsu_stall_reject_other_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by LSU store forwarding",
-+        "MetricExpr": "PM_CMPLU_STALL_ST_FWD / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "lsu_stall_st_fwd_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by LSU Stores",
-+        "MetricExpr": "PM_CMPLU_STALL_STORE / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "lsu_stall_store_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by lightweight syncs",
-+        "MetricExpr": "PM_CMPLU_STALL_LWSYNC / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "lwsync_stall_cpi"
-+    },
-+    {
-+        "MetricExpr": "PM_CMPLU_STALL_MEM_ECC_DELAY / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "mem_ecc_delay_stall_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by nops (nothing next to finish)",
-+        "MetricExpr": "PM_CMPLU_STALL_NO_NTF / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "no_ntf_stall_cpi"
-+    },
-+    {
-+        "MetricExpr": "PM_NTCG_ALL_FIN / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "ntcg_all_fin_cpi"
-+    },
-+    {
-+        "MetricExpr": "PM_CMPLU_STALL_NTCG_FLUSH / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "ntcg_flush_cpi"
-+    },
-+    {
-+        "BriefDescription": "Other thread block stall cycles",
-+        "MetricExpr": "(PM_CMPLU_STALL_THRD - PM_CMPLU_STALL_LWSYNC - PM_CMPLU_STALL_HWSYNC - PM_CMPLU_STALL_MEM_ECC_DELAY - PM_CMPLU_STALL_FLUSH - PM_CMPLU_STALL_COQ_FULL)  / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "other_block_stall_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles unaccounted for",
-+        "MetricExpr": "(PM_RUN_CYC / PM_RUN_INST_CMPL) - (PM_CMPLU_STALL / PM_RUN_INST_CMPL) - (PM_GCT_NOSLOT_CYC / PM_RUN_INST_CMPL) - (PM_NTCG_ALL_FIN / PM_RUN_INST_CMPL) - (PM_CMPLU_STALL_THRD / PM_RUN_INST_CMPL) -  (PM_GRP_CMPL / PM_RUN_INST_CMPL)",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "other_cpi"
-+    },
-+    {
-+        "BriefDescription": "Stall cycles unaccounted for",
-+        "MetricExpr": "(PM_CMPLU_STALL / PM_RUN_INST_CMPL) - (PM_CMPLU_STALL_BRU_CRU / PM_RUN_INST_CMPL) - (PM_CMPLU_STALL_FXU / PM_RUN_INST_CMPL) - (PM_CMPLU_STALL_VSU / PM_RUN_INST_CMPL) - (PM_CMPLU_STALL_LSU / PM_RUN_INST_CMPL) - (PM_CMPLU_STALL_NTCG_FLUSH / PM_RUN_INST_CMPL) - (PM_CMPLU_STALL_NO_NTF / PM_RUN_INST_CMPL)",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "other_stall_cpi"
-+    },
-+    {
-+        "BriefDescription": "Run cycles per run instruction",
-+        "MetricExpr": "PM_RUN_CYC / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "run_cpi"
-+    },
-+    {
-+        "BriefDescription": "Completion Stall Cycles",
-+        "MetricExpr": "PM_CMPLU_STALL / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "stall_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles a thread was blocked",
-+        "MetricExpr": "PM_CMPLU_STALL_THRD / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "thread_block_stall_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by VSU",
-+        "MetricExpr": "PM_CMPLU_STALL_VSU / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "vsu_stall_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by other VSU Operations",
-+        "MetricExpr": "(PM_CMPLU_STALL_VSU - PM_CMPLU_STALL_VECTOR - PM_CMPLU_STALL_SCALAR) / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "vsu_stall_other_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by VSU Scalar Operations",
-+        "MetricExpr": "PM_CMPLU_STALL_SCALAR / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "vsu_stall_scalar_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by VSU Scalar Long Operations",
-+        "MetricExpr": "PM_CMPLU_STALL_SCALAR_LONG / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "vsu_stall_scalar_long_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by Other VSU Scalar Operations",
-+        "MetricExpr": "(PM_CMPLU_STALL_SCALAR / PM_RUN_INST_CMPL) - (PM_CMPLU_STALL_SCALAR_LONG / PM_RUN_INST_CMPL)",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "vsu_stall_scalar_other_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by VSU Vector Operations",
-+        "MetricExpr": "PM_CMPLU_STALL_VECTOR / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "vsu_stall_vector_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by VSU Vector Long Operations",
-+        "MetricExpr": "PM_CMPLU_STALL_VECTOR_LONG / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "vsu_stall_vector_long_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by other VSU Vector Operations",
-+        "MetricExpr": "(PM_CMPLU_STALL_VECTOR - PM_CMPLU_STALL_VECTOR_LONG) / PM_RUN_INST_CMPL",
-+        "MetricGroup": "cpi_breakdown",
-+        "MetricName": "vsu_stall_vector_other_cpi"
-+    },
-+    {
-+        "BriefDescription": "dL1 miss portion of CPI",
-+        "MetricExpr": "( (PM_CMPLU_STALL_DCACHE_MISS / PM_RUN_INST_CMPL)/  (PM_RUN_CYC / PM_RUN_INST_CMPL))  * 100",
-+        "MetricGroup": "estimated_dcache_miss_cpi",
-+        "MetricName": "dcache_miss_cpi_percent"
-+    },
-+    {
-+        "BriefDescription": "estimate of dl2l3 distant MOD miss rates with measured DL2L3 MOD latency as a %of dcache miss cpi",
-+        "MetricExpr": "(((PM_DATA_FROM_DL2L3_MOD / PM_RUN_INST_CMPL) * (PM_MRK_DATA_FROM_DL2L3_MOD_CYC/ PM_MRK_DATA_FROM_DL2L3_MOD)) / (PM_CMPLU_STALL_DCACHE_MISS / PM_RUN_INST_CMPL)) *100",
-+        "MetricGroup": "estimated_dcache_miss_cpi",
-+        "MetricName": "dl2l3_mod_cpi_percent"
-+    },
-+    {
-+        "BriefDescription": "estimate of dl2l3 distant SHR miss rates with measured DL2L3 SHR latency as a %of dcache miss cpi",
-+        "MetricExpr": "(((PM_DATA_FROM_DL2L3_SHR / PM_RUN_INST_CMPL) * (PM_MRK_DATA_FROM_DL2L3_SHR_CYC/ PM_MRK_DATA_FROM_DL2L3_SHR)) / (PM_CMPLU_STALL_DCACHE_MISS / PM_RUN_INST_CMPL)) *100",
-+        "MetricGroup": "estimated_dcache_miss_cpi",
-+        "MetricName": "dl2l3_shr_cpi_percent"
-+    },
-+    {
-+        "BriefDescription": "estimate of distant L4 miss rates with measured DL4 latency as a %of dcache miss cpi",
-+        "MetricExpr": "(((PM_DATA_FROM_DL4 / PM_RUN_INST_CMPL) * (PM_MRK_DATA_FROM_DL4_CYC/ PM_MRK_DATA_FROM_DL4)) / (PM_CMPLU_STALL_DCACHE_MISS / PM_RUN_INST_CMPL)) *100",
-+        "MetricGroup": "estimated_dcache_miss_cpi",
-+        "MetricName": "dl4_cpi_percent"
-+    },
-+    {
-+        "BriefDescription": "estimate of distant memory miss rates with measured DMEM latency as a %of dcache miss cpi",
-+        "MetricExpr": "(((PM_DATA_FROM_DMEM / PM_RUN_INST_CMPL) * (PM_MRK_DATA_FROM_DMEM_CYC/ PM_MRK_DATA_FROM_DMEM)) / (PM_CMPLU_STALL_DCACHE_MISS / PM_RUN_INST_CMPL)) *100",
-+        "MetricGroup": "estimated_dcache_miss_cpi",
-+        "MetricName": "dmem_cpi_percent"
-+    },
-+    {
-+        "BriefDescription": "estimate of dl21 MOD miss rates with measured L21 MOD latency as a %of dcache miss cpi",
-+        "MetricExpr": "(((PM_DATA_FROM_L21_MOD / PM_RUN_INST_CMPL) * (PM_MRK_DATA_FROM_L21_MOD_CYC/ PM_MRK_DATA_FROM_L21_MOD)) / (PM_CMPLU_STALL_DCACHE_MISS / PM_RUN_INST_CMPL)) *100",
-+        "MetricGroup": "estimated_dcache_miss_cpi",
-+        "MetricName": "l21_mod_cpi_percent"
-+    },
-+    {
-+        "BriefDescription": "estimate of dl21 SHR miss rates with measured L21 SHR latency as a %of dcache miss cpi",
-+        "MetricExpr": "(((PM_DATA_FROM_L21_SHR / PM_RUN_INST_CMPL) * (PM_MRK_DATA_FROM_L21_SHR_CYC/ PM_MRK_DATA_FROM_L21_SHR)) / (PM_CMPLU_STALL_DCACHE_MISS / PM_RUN_INST_CMPL)) *100",
-+        "MetricGroup": "estimated_dcache_miss_cpi",
-+        "MetricName": "l21_shr_cpi_percent"
-+    },
-+    {
-+        "BriefDescription": "estimate of dl2 miss rates with measured L2 latency as a %of dcache miss cpi",
-+        "MetricExpr": "(((PM_DATA_FROM_L2  / PM_RUN_INST_CMPL) * (PM_MRK_DATA_FROM_L2_CYC/ PM_MRK_DATA_FROM_L2)) / (PM_CMPLU_STALL_DCACHE_MISS / PM_RUN_INST_CMPL) ) *100",
-+        "MetricGroup": "estimated_dcache_miss_cpi",
-+        "MetricName": "l2_cpi_percent"
-+    },
-+    {
-+        "BriefDescription": "estimate of dl31 MOD miss rates with measured L31 MOD latency as a %of dcache miss cpi",
-+        "MetricExpr": "(((PM_DATA_FROM_L31_MOD / PM_RUN_INST_CMPL) * (PM_MRK_DATA_FROM_L31_MOD_CYC/ PM_MRK_DATA_FROM_L31_MOD)) / (PM_CMPLU_STALL_DCACHE_MISS / PM_RUN_INST_CMPL)) *100",
-+        "MetricGroup": "estimated_dcache_miss_cpi",
-+        "MetricName": "l31_mod_cpi_percent"
-+    },
-+    {
-+        "BriefDescription": "estimate of dl31 SHR miss rates with measured L31 SHR latency as a %of dcache miss cpi",
-+        "MetricExpr": "(((PM_DATA_FROM_L31_SHR / PM_RUN_INST_CMPL) * (PM_MRK_DATA_FROM_L31_SHR_CYC/ PM_MRK_DATA_FROM_L31_SHR)) / (PM_CMPLU_STALL_DCACHE_MISS / PM_RUN_INST_CMPL)) *100",
-+        "MetricGroup": "estimated_dcache_miss_cpi",
-+        "MetricName": "l31_shr_cpi_percent"
-+    },
-+    {
-+        "BriefDescription": "estimate of dl3 miss rates with measured L3 latency as a % of dcache miss cpi",
-+        "MetricExpr": "(((PM_DATA_FROM_L3  / PM_RUN_INST_CMPL) * (PM_MRK_DATA_FROM_L3_CYC/ PM_MRK_DATA_FROM_L3)) / (PM_CMPLU_STALL_DCACHE_MISS / PM_RUN_INST_CMPL)) * 100",
-+        "MetricGroup": "estimated_dcache_miss_cpi",
-+        "MetricName": "l3_cpi_percent"
-+    },
-+    {
-+        "BriefDescription": "estimate of Local L4 miss rates with measured LL4 latency as a %of dcache miss cpi",
-+        "MetricExpr": "(((PM_DATA_FROM_LL4 / PM_RUN_INST_CMPL) * (PM_MRK_DATA_FROM_LL4_CYC/ PM_MRK_DATA_FROM_LL4)) / (PM_CMPLU_STALL_DCACHE_MISS / PM_RUN_INST_CMPL)) *100",
-+        "MetricGroup": "estimated_dcache_miss_cpi",
-+        "MetricName": "ll4_cpi_percent"
-+    },
-+    {
-+        "BriefDescription": "estimate of Local memory miss rates with measured LMEM latency as a %of dcache miss cpi",
-+        "MetricExpr": "(((PM_DATA_FROM_LMEM / PM_RUN_INST_CMPL) * (PM_MRK_DATA_FROM_LMEM_CYC/ PM_MRK_DATA_FROM_LMEM)) / (PM_CMPLU_STALL_DCACHE_MISS / PM_RUN_INST_CMPL)) *100",
-+        "MetricGroup": "estimated_dcache_miss_cpi",
-+        "MetricName": "lmem_cpi_percent"
-+    },
-+    {
-+        "BriefDescription": "estimate of dl2l3 remote MOD miss rates with measured RL2L3 MOD latency as a %of dcache miss cpi",
-+        "MetricExpr": "(((PM_DATA_FROM_RL2L3_MOD / PM_RUN_INST_CMPL) * (PM_MRK_DATA_FROM_RL2L3_MOD_CYC/ PM_MRK_DATA_FROM_RL2L3_MOD)) / (PM_CMPLU_STALL_DCACHE_MISS / PM_RUN_INST_CMPL)) *100",
-+        "MetricGroup": "estimated_dcache_miss_cpi",
-+        "MetricName": "rl2l3_mod_cpi_percent"
-+    },
-+    {
-+        "BriefDescription": "estimate of dl2l3 shared miss rates with measured RL2L3 SHR latency as a %of dcache miss cpi",
-+        "MetricExpr": "(((PM_DATA_FROM_RL2L3_SHR / PM_RUN_INST_CMPL) * (PM_MRK_DATA_FROM_RL2L3_SHR_CYC/ PM_MRK_DATA_FROM_RL2L3_SHR)) / (PM_CMPLU_STALL_DCACHE_MISS / PM_RUN_INST_CMPL)) * 100",
-+        "MetricGroup": "estimated_dcache_miss_cpi",
-+        "MetricName": "rl2l3_shr_cpi_percent"
-+    },
-+    {
-+        "BriefDescription": "estimate of remote L4 miss rates with measured RL4 latency as a %of dcache miss cpi",
-+        "MetricExpr": "(((PM_DATA_FROM_RL4 / PM_RUN_INST_CMPL) * (PM_MRK_DATA_FROM_RL4_CYC/ PM_MRK_DATA_FROM_RL4)) / (PM_CMPLU_STALL_DCACHE_MISS / PM_RUN_INST_CMPL)) *100",
-+        "MetricGroup": "estimated_dcache_miss_cpi",
-+        "MetricName": "rl4_cpi_percent"
-+    },
-+    {
-+        "BriefDescription": "estimate of remote memory miss rates with measured RMEM latency as a %of dcache miss cpi",
-+        "MetricExpr": "(((PM_DATA_FROM_RMEM / PM_RUN_INST_CMPL) * (PM_MRK_DATA_FROM_RMEM_CYC/ PM_MRK_DATA_FROM_RMEM)) / (PM_CMPLU_STALL_DCACHE_MISS / PM_RUN_INST_CMPL)) *100",
-+        "MetricGroup": "estimated_dcache_miss_cpi",
-+        "MetricName": "rmem_cpi_percent"
-+    }
-+]
+--srini
