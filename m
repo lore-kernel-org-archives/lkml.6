@@ -2,127 +2,105 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7752AC10F02
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 04:52:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C9AC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 04:55:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A52F21B1C
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 04:52:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 209D321924
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 04:55:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tk8sI1cT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388230AbfBOEwe (ORCPT
+        id S2388281AbfBOEzf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 23:52:34 -0500
-Received: from nautica.notk.org ([91.121.71.147]:41326 "EHLO nautica.notk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726300AbfBOEwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 23:52:34 -0500
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 35FDEC009; Fri, 15 Feb 2019 05:52:29 +0100 (CET)
-Date:   Fri, 15 Feb 2019 05:52:14 +0100
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Tom Herbert <tom@quantonium.net>
-Cc:     Tom Herbert <tom@herbertland.com>,
-        David Miller <davem@davemloft.net>,
-        Doron Roberts-Kedes <doronrk@fb.com>,
-        Dave Watson <davejwatson@fb.com>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] kcm: remove any offset before parsing messages
-Message-ID: <20190215045214.GA13123@nautica>
-References: <20180912053642.GA2912@nautica>
- <20180917.184502.447385458615284933.davem@davemloft.net>
- <20180918015723.GA26300@nautica>
- <20181031025657.GA17861@nautica>
- <20190215010029.GA10899@nautica>
- <CALx6S35HBKgtYkFde_AhCMPRtZfcVYfCYf=mLKjWSLLAfhMHyQ@mail.gmail.com>
- <20190215015705.GA17974@nautica>
- <CALx6S37MZadJ=PaAd+SSv9hxSX9kFTmTUtijPGA39JCx3PYq1Q@mail.gmail.com>
- <20190215033102.GA3099@nautica>
- <CAPDqMeoJ7CCo1eGNBp_-crkxfVt_4f=XQqhEo7kmyCN-hf_EWQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAPDqMeoJ7CCo1eGNBp_-crkxfVt_4f=XQqhEo7kmyCN-hf_EWQ@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Thu, 14 Feb 2019 23:55:35 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37059 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726120AbfBOEze (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 23:55:34 -0500
+Received: by mail-pl1-f193.google.com with SMTP id b5so4339457plr.4
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 20:55:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=D7/RneycXXgs5+9wC9kC+gpuNNwAJvr8ojEXFhWO72Y=;
+        b=Tk8sI1cT1A+es31pjCRVTsdUfW3xXQvG7BF/RXIWomcWBUmzsUxyLbBzy+Vh3LO2o8
+         Ak4Ctq1CkUPDzwk6wTdnt6UfnXqxGYBC6iffHsSN8fZSShuDIvpGRBj3XWmNrUsW6tLY
+         5fb0ZeyWWtivkBVnmkNHi0ssHaVdpfxNYYhCJmrwdpfL/JnBaxjVudCB/vhawh8KAMj8
+         YB7T5rty/BhSamgUN6G9U1e9nBKtCno9Dv2xtp5AIJ2K/EG6DHvOmrXym48dUSUtuc4f
+         urt1QwgSwr3ZMoJu+O3E+ndbg+IC6ebljmN6Ex5lX/vBOstGWyXD1mTcyHkkIOGJbFIS
+         scgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=D7/RneycXXgs5+9wC9kC+gpuNNwAJvr8ojEXFhWO72Y=;
+        b=qvPOgXkjIGFgkCBEuiqP5KTxAI0HS5QJh+S9cdZ2up0m8Lzf9fpsQov2MooFHbcN80
+         sFBgRiA+xKCt0wPYTVnHs0B7Aj5Kepme3cgokLXTtS4nxBB6l8L9xqNvFhLCwsB1A0+2
+         05dXII7R1YbrAqAKKF3OtjT+o/Tn32mDGlrsbJZrQoTW11je8YBK/hb5+Vjn3bs5kz1Q
+         OnLwsvHsJSnHvJCAQl/lgXPhMENuUVw8j3mNprZBy0AIz2WAY848HMeHPjn411xVbleu
+         2KCMBcDRMzbtPzEx+nNXpyBGe3r2kIRQOxbeQpUfZnHpGTOmDNSHOsZGAxrEsTF6ouzB
+         WU4Q==
+X-Gm-Message-State: AHQUAubuDy1oAY+PM1vJI3ZyH03IaqnYCKeLsZPHRCVkGiPJXzqfu+66
+        gdT+cG3+rmyNmKDj/0uBvHpqDw==
+X-Google-Smtp-Source: AHgI3IZdHEqyvdOIUhiEAUJEv2DIMQ3aA9FAqxWlOI9AQdeRWjMjKU2/eEQSWhix+7dxbm+mEV2dUQ==
+X-Received: by 2002:a17:902:7246:: with SMTP id c6mr7988979pll.68.1550206534188;
+        Thu, 14 Feb 2019 20:55:34 -0800 (PST)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id o1sm8600106pgn.63.2019.02.14.20.55.29
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 14 Feb 2019 20:55:33 -0800 (PST)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org,
+        bgolaszewski@baylibre.com
+Cc:     orsonzhai@gmail.com, zhang.lyra@gmail.com, baolin.wang@linaro.org,
+        broonie@kernel.org, devicetree@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] dt-bindings: gpio: sprd: Use SoC compatible string instead of wildcard string
+Date:   Fri, 15 Feb 2019 12:55:18 +0800
+Message-Id: <3818909a5d6f956ef30ff25cfc42f7550d062086.1550201284.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tom Herbert wrote on Thu, Feb 14, 2019:
-> On Thu, Feb 14, 2019 at 7:31 PM Dominique Martinet
-> <asmadeus@codewreck.org> wrote:
-> > Yes, the parser fails with -ENOMEM ; that is not handled gracefully at
-> > all: from a user point of view, the connection just hangs (recvmsg never
-> > returns), without so much as a message in dmesg either.
->
-> That's by design. Here is the description in kcm.txt:
-> 
-> "When a TCP socket is attached to a KCM multiplexor data ready
-> (POLLIN) and write space available (POLLOUT) events are handled by the
-> multiplexor. If there is a state change (disconnection) or other error
-> on a TCP socket, an error is posted on the TCP socket so that a
-> POLLERR event happens and KCM discontinues using the socket. When the
-> application gets the error notification for a TCP socket, it should
-> unattach the socket from KCM and then handle the error condition (the
-> typical response is to close the socket and create a new connection if
-> necessary)."
+Use SoC compatible string instead of wildcard string.
 
-Sigh, that's what I get for relying on pieces of code found on the
-internet.
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+Changes from v1:
+ - Add 'sprd' to indicate the module in subject line.
+---
+ .../devicetree/bindings/gpio/gpio-eic-sprd.txt     |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-It does make "trivial" kcm sockets difficult to use though, the old
-ganesha code I adapted to kcm was the horrible (naive?) kind spawning
-one thread per connection and just waiting on read(), so making it just
-create a kcm socket from the tcp one and wait on recvmsg() until an
-error pops up does not seem an option.
-
-That being said I'm a bit confused, I thought part of the point of kcm
-was the multiplexing so a simple server could just keep attaching tcp
-sockets to a single kcm socket and only have a single trivial loop
-reading from the kcm socket ; but I guess there's no harm in also
-looking for POLLERR on the tcp sockets... It would still need to close
-them once clients disconnect I guess, this really only affects my naive
-server.
-
-> > strparser might be able to retry somehow.
-> 
-> We could retry on -ENOMEM since it is potentially a transient error,
-
-Yes, I think we should aim to retry on -ENOMEM; I agree all errors are
-not meant to be retried on but there already are different cases based
-on what the parse cb returned; but that can be a different patch.
-
-> but generally for errors (like connection is simply broken) it seems
-> like it's working as intended. I suppose we could add a socket option
-> to fail the KCM socket when all attached lower sockets have failed,
-> but I not sure that would be a significant benefit for additional
-> complexity.
-
-Right, I agree it's probably not worth doing, now I'm aware of this I
-can probably motivate myself to change this old code to use epoll
-properly.
-
-I think it could make sense to have this option for simpler programs,
-but as things stand I guess we can require kcm users to do this much,
-thanks for the explanation, and sorry for having failed to notice it.
-
-
-
-With all that said I guess my patch should work correctly then, I'll try
-to find some time to check the error does come back up the tcp socket in
-my reproducer but I have no reason to believe it doesn't.
-
-I'd like to see some retry on ENOMEM before this is merged though, so
-while I'm there I'll resend this with a second patch doing that
-retry,.. I think just not setting strp->interrupted and not reporting
-the error up might be enough? Will have to try either way.
-
-
-
-Thanks for the feedback,
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt b/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
+index 93d98d0..54040a2 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-eic-sprd.txt
+@@ -33,7 +33,7 @@ Required properties:
+   "sprd,sc9860-eic-latch",
+   "sprd,sc9860-eic-async",
+   "sprd,sc9860-eic-sync",
+-  "sprd,sc27xx-eic".
++  "sprd,sc2731-eic".
+ - reg: Define the base and range of the I/O address space containing
+   the GPIO controller registers.
+ - gpio-controller: Marks the device node as a GPIO controller.
+@@ -86,7 +86,7 @@ Example:
+ 	};
+ 
+ 	pmic_eic: gpio@300 {
+-		compatible = "sprd,sc27xx-eic";
++		compatible = "sprd,sc2731-eic";
+ 		reg = <0x300>;
+ 		interrupt-parent = <&sc2731_pmic>;
+ 		interrupts = <5 IRQ_TYPE_LEVEL_HIGH>;
 -- 
-Dominique
+1.7.9.5
+
