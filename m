@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE41C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:14:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7959C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:14:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA42F2229F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:14:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F21921934
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:14:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196875;
-	bh=5F2en0vHYqnBs2wWXh+UZNY9VuQn//bJvl+yer0npGw=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=Izi7wOFXEh5yUgWex+/OB1nYVh1c0ciwKTJPAFudwDTPLQhCdiSfoIwMFWQdNHlPD
-	 Cz1g8mmyboTaGcA7HUzqEkaAk+z3M+CSvGREad7s6+94QtM1gsvr5VCFzh5wC5kAyb
-	 TKw1512b3ijvQlberB7nfshhVwB6C9DFKwMwCKcw=
+	s=default; t=1550196880;
+	bh=ldNhhAbC2FdOyzUuSS3YUvKcfzA+jzkS6VxIokd35fM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=lBWrYEe9ohSM88Wh6gzqRSwelDqzgLtG9mU8zHvg+k43SjtL/rybaNAPmj94ftKUa
+	 XsejxM+Eq66Ktxg1KXiVbwYplvLd/hP5i1AHYWL4R3W/mtTPLUtEPtNGChyEQvZHCf
+	 MBoRDgJvHRkE32AXTF7Nz7Q3mCve0/ZvoG+AxtOc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391824AbfBOCOd (ORCPT
+        id S2391882AbfBOCOi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:14:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54366 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:14:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391726AbfBOCO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:14:27 -0500
+        id S2391799AbfBOCOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:14:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 197A820643;
-        Fri, 15 Feb 2019 02:14:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF468206BA;
+        Fri, 15 Feb 2019 02:14:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196867;
-        bh=5F2en0vHYqnBs2wWXh+UZNY9VuQn//bJvl+yer0npGw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=j6bLLKCkNLlc1g9LxoA7Xm5neAB/zHRzPAmJuEpy8djniD6J5SGJvYOWsF1CxZs20
-         a2rDD1661vaj7nAZQlSnMyl36U17ojJJX0O4GHWh+DX4Ej941wDXHiraE2mrB1w95R
-         WuvK6LuP4tZnW7IlWbvRGNL+qL5RGOOBkLkN+G5w=
+        s=default; t=1550196871;
+        bh=ldNhhAbC2FdOyzUuSS3YUvKcfzA+jzkS6VxIokd35fM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=QE9UcRzZmRyu3fwWtHxysrpzohg08CLjrP8R/7BtlxDzSzfez5rdj2aXX9rw4MioT
+         bYeZjehtIjRNYrBwIKsCP+RrybxlAPX0Ga9nXxFSjUA9kzmV58QYVpKwQDF5+6BMLY
+         P1u3mXTjqeZcgi6kp8fK25S/FR3HLInSkat7Pzao=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Kristian H. Kristensen" <hoegsberg@gmail.com>,
-        "Kristian H . Kristensen" <hoegsberg@chromium.org>,
-        Rob Clark <robdclark@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.9 01/27] drm/msm: Unblock writer if reader closes file
-Date:   Thu, 14 Feb 2019 21:13:58 -0500
-Message-Id: <20190215021424.178979-1-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 03/27] ALSA: compress: prevent potential divide by zero bugs
+Date:   Thu, 14 Feb 2019 21:14:00 -0500
+Message-Id: <20190215021424.178979-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190215021424.178979-1-sashal@kernel.org>
+References: <20190215021424.178979-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -58,45 +57,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Kristian H. Kristensen" <hoegsberg@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 99c66bc051e7407fe0bf0607b142ec0be1a1d1dd ]
+[ Upstream commit 678e2b44c8e3fec3afc7202f1996a4500a50be93 ]
 
-Prevents deadlock when fifo is full and reader closes file.
+The problem is seen in the q6asm_dai_compr_set_params() function:
 
-Signed-off-by: Kristian H. Kristensen <hoegsberg@chromium.org>
-Signed-off-by: Rob Clark <robdclark@gmail.com>
+	ret = q6asm_map_memory_regions(dir, prtd->audio_client, prtd->phys,
+				       (prtd->pcm_size / prtd->periods),
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+				       prtd->periods);
+
+In this code prtd->pcm_size is the buffer_size and prtd->periods comes
+from params->buffer.fragments.  If we allow the number of fragments to
+be zero then it results in a divide by zero bug.  One possible fix would
+be to use prtd->pcm_count directly instead of using the division to
+re-calculate it.  But I decided that it doesn't really make sense to
+allow zero fragments.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/msm/msm_rd.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ sound/core/compress_offload.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/msm/msm_rd.c b/drivers/gpu/drm/msm/msm_rd.c
-index 8487f461f05f..4823019eb422 100644
---- a/drivers/gpu/drm/msm/msm_rd.c
-+++ b/drivers/gpu/drm/msm/msm_rd.c
-@@ -112,7 +112,9 @@ static void rd_write(struct msm_rd_state *rd, const void *buf, int sz)
- 		char *fptr = &fifo->buf[fifo->head];
- 		int n;
- 
--		wait_event(rd->fifo_event, circ_space(&rd->fifo) > 0);
-+		wait_event(rd->fifo_event, circ_space(&rd->fifo) > 0 || !rd->open);
-+		if (!rd->open)
-+			return;
- 
- 		n = min(sz, circ_space_to_end(&rd->fifo));
- 		memcpy(fptr, ptr, n);
-@@ -202,7 +204,10 @@ static int rd_open(struct inode *inode, struct file *file)
- static int rd_release(struct inode *inode, struct file *file)
+diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
+index 4490a699030b..555df64d46ff 100644
+--- a/sound/core/compress_offload.c
++++ b/sound/core/compress_offload.c
+@@ -529,7 +529,8 @@ static int snd_compress_check_input(struct snd_compr_params *params)
  {
- 	struct msm_rd_state *rd = inode->i_private;
-+
- 	rd->open = false;
-+	wake_up_all(&rd->fifo_event);
-+
- 	return 0;
- }
+ 	/* first let's check the buffer parameter's */
+ 	if (params->buffer.fragment_size == 0 ||
+-	    params->buffer.fragments > INT_MAX / params->buffer.fragment_size)
++	    params->buffer.fragments > INT_MAX / params->buffer.fragment_size ||
++	    params->buffer.fragments == 0)
+ 		return -EINVAL;
  
+ 	/* now codec parameters */
 -- 
 2.19.1
 
