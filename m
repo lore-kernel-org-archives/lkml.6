@@ -2,168 +2,151 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C35D0C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:02:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B17EFC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:03:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 975A421927
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:02:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 707EF21927
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:03:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SMK5tZd+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389175AbfBOQCU (ORCPT
+        id S2391216AbfBOQDK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 11:02:20 -0500
-Received: from gateway22.websitewelcome.com ([192.185.46.187]:29436 "EHLO
-        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726303AbfBOQCU (ORCPT
+        Fri, 15 Feb 2019 11:03:10 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:39903 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726303AbfBOQDK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 11:02:20 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway22.websitewelcome.com (Postfix) with ESMTP id 6982096CF3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 10:02:18 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id ufwQgLtQ92qH7ufwQgtTSb; Fri, 15 Feb 2019 10:02:18 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=38278 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gufwP-002K7d-Uc; Fri, 15 Feb 2019 10:02:18 -0600
-Subject: Re: [PATCH] drm/nouveau/bo: mark expected switch fall-through
-To:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>
-References: <20190211185835.GA19174@embeddedor>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <83ed0bf4-9833-8bf2-41ff-638035e71bd3@embeddedor.com>
-Date:   Fri, 15 Feb 2019 10:02:16 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 15 Feb 2019 11:03:10 -0500
+Received: by mail-ot1-f66.google.com with SMTP id n8so17306797otl.6
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 08:03:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qQ8zJ4anEmJxTlDcKWED0D8GmxDA1bsgSe6R3t3u3dM=;
+        b=SMK5tZd+xHhif8/wZTEZltb4tZjHIV59VOol6opYpTZDe3xTZA9If5sRdVe7TfOxJw
+         5bcWdzBpD1l39Fwysh1QaLiSL6xwnnvuOHhEfyy3m/41viCHMZH5gg69iVg+HUaJDR82
+         ZeFwJ4meF9TksgTr0HplAqO2Z+p+lDdmLCWVMPCZicEdl8u7zv8mjMjgEm0vk9MycVWQ
+         BVz/eP0vzTeALA+sRi4cRTmsmvRHu7Rv9qBpGkSU/+kgq8tcf5MWkYZcRC7qZLwoz3XT
+         8Bzw0nEFM2vYquQ2WVngSYNzHNau51L8hkc/HfeiX94lVBphbn+vrU91glkhlXINrIpr
+         vaLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qQ8zJ4anEmJxTlDcKWED0D8GmxDA1bsgSe6R3t3u3dM=;
+        b=MuHjyROxdMWgkYAy2V8Nzv3p9m+2QALn2ff8oSjUmytZrN6cJlx1kkYxbJB1RsXY3C
+         FnvJ1nW5pKvuXZLCl72MOl3CM7oFKCE8Ed0ErjJ19reAOFfxtc1iTtRusZ1pwb68Ad5M
+         yp9YcZojwaXgcPbcBTNXt4hmxoIVIgZ3FIqmxDn/6GSDBxxh5pW2zZxdVlqo18w4I94N
+         fmJ0kAih0DIDpJg/rHJDCtOEhjSorBj1LpBXFqiU+O0P0cMNR423d9EFHLtkTymZrEKm
+         508X2T899BbPd26wMs4lQaZ4NSsHiDiQnGVESRYMG/pGKE8ZFrR0QiXoIxeql18g+nZp
+         POcw==
+X-Gm-Message-State: AHQUAubblIpgjI0uCLUS522chUfOZaGRKXui3O3idvUpi9miuGBgRPve
+        JfImQ0g/kEg9fq1XTpd0d5WyIuRJlMpr8OWaXzL/wg==
+X-Google-Smtp-Source: AHgI3IYzfSq1fRvYCjjgJpuSHm/DDMcQPkIQTzEIXZRzPA3mGmyuxUdfz+zSOIc7bgbF4txI7dw7Jx9UBt22hafimCg=
+X-Received: by 2002:a05:6830:14d6:: with SMTP id t22mr6490741otq.255.1550246588758;
+ Fri, 15 Feb 2019 08:03:08 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190211185835.GA19174@embeddedor>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gufwP-002K7d-Uc
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:38278
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 6
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <000000000000c13ce50577db36cc@google.com> <073dedee-62df-9c67-1742-8de1e6c9502a@redhat.com>
+ <CACT4Y+Ys3E7Au6-wZ7DFi+yxu0sJ_Gi_6jgBHWGTQ9YNDnjE=g@mail.gmail.com>
+In-Reply-To: <CACT4Y+Ys3E7Au6-wZ7DFi+yxu0sJ_Gi_6jgBHWGTQ9YNDnjE=g@mail.gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 15 Feb 2019 17:02:42 +0100
+Message-ID: <CAG48ez3gk8d7qm1JiQyEZLbt85Ax7uqd=vQoxL=h_dAcQ1WWKA@mail.gmail.com>
+Subject: Re: WARNING: refcount bug in kvm_vm_ioctl
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        syzbot <syzbot+6df4d24a0a50fd5d1a08@syzkaller.appspotmail.com>,
+        KVM list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        Christoffer Dall <christoffer.dall@linaro.org>,
+        Janosch Frank <frankja@linux.vnet.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, Feb 15, 2019 at 4:40 PM Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Thu, Oct 11, 2018 at 4:18 PM Paolo Bonzini <pbonzini@redhat.com> wrote:
+> > On 10/10/2018 09:58, syzbot wrote:
+> > >  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:316
+> > >  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:993
+> > > RIP: 0010:refcount_inc_checked+0x5d/0x70 lib/refcount.c:153
+> > >  kvm_get_kvm arch/x86/kvm/../../../virt/kvm/kvm_main.c:766 [inline]
+> > >  kvm_ioctl_create_device arch/x86/kvm/../../../virt/kvm/kvm_main.c:2924
+> > >  kvm_vm_ioctl+0xed7/0x1d40 arch/x86/kvm/../../../virt/kvm/kvm_main.c:3114
+> > >  vfs_ioctl fs/ioctl.c:46 [inline]
+> > >  file_ioctl fs/ioctl.c:501 [inline]
+> > >  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
+> > >  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
+> > >  __do_sys_ioctl fs/ioctl.c:709 [inline]
+> > >  __se_sys_ioctl fs/ioctl.c:707 [inline]
+> > >  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
+> > >  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> > >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >
+> > The trace here is fairly simple, but I don't understand how this could
+> > happen.
+> >
+> > The kvm_get_kvm is done within kvm_ioctl_create_device, which is called
+> > from ioctl; the last reference cannot disappear inside a ioctl, because:
+> >
+> > 1) kvm_ioctl is called from vfs_ioctl, which does fdget and holds the fd
+> > reference until after kvm_vm_ioctl returns
+> >
+> > 2) the file descriptor holds one reference to the struct kvm*, and this
+> > reference is not released until kvm_vm_release is called by the last
+> > fput (which could be fdput's call to fput if the process has exited in
+> > the meanwhile)
+> >
+> > 3) for completeness, in case anon_inode_getfd fails, put_unused_fd will
+> > not invoke the file descriptor's ->release callback (in this case
+> > kvm_device_release).
+> >
+> > CCing some random people to get their opinion...
+> >
+> > Paolo
+>
+>
+> Jann, is it what you fixed in "kvm: fix kvm_ioctl_create_device()
+> reference counting (CVE-2019-6974)"?
+> If so, we need to close the syzbot bug.
+>
+>
+> > > # See https://goo.gl/kgGztJ for information about syzkaller reproducers.
+> > > #{"threaded":true,"collide":true,"repeat":true,"procs":6,"sandbox":"none","fault_call":-1,"tun":true,"tmpdir":true,"cgroups":true,"netdev":true,"resetnet":true,"segv":true}
+> > > r0 = openat$kvm(0xffffffffffffff9c, &(0x7f0000000380)='/dev/kvm\x00', 0x0, 0x0)
+> > > r1 = syz_open_dev$dspn(&(0x7f0000000100)='/dev/dsp#\x00', 0x3fe, 0x400)
+> > > r2 = ioctl$KVM_CREATE_VM(r0, 0xae01, 0x0)
 
-Please drop this, as I have included this fix into
-the following patch, which addresses all the
-expected fall-throughs in drivers/gpu/drm:
+Here we create a VM fd...
 
-https://lore.kernel.org/patchwork/patch/1042856/
+> > > perf_event_open(&(0x7f0000000040)={0x1, 0x70, 0x0, 0x0, 0x0, 0x0, 0x0, 0x50d}, 0x0, 0xffffffffffffffff, 0xffffffffffffffff, 0x0)
+> > > mincore(&(0x7f0000ffc000/0x1000)=nil, 0x1000, &(0x7f00000003c0)=""/4096)
+> > > setrlimit(0x0, &(0x7f0000000000))
+> > > readahead(r1, 0x3, 0x9a6)
+> > > ioctl$KVM_CREATE_DEVICE(r2, 0xc00caee0, &(0x7f00000002c0)={0x4})
 
-Thanks
---
-Gustavo
+... and here we do the KVM_CREATE_DEVICE ioctl with type==KVM_DEV_TYPE_VFIO.
 
-On 2/11/19 12:58 PM, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> cases where we are expecting to fall through.
-> 
-> This patch fixes the following warning:
-> 
-> drivers/gpu/drm/nouveau/nouveau_bo.c: In function ‘nouveau_ttm_io_mem_reserve’:
-> drivers/gpu/drm/nouveau/nouveau_bo.c:1434:53: warning: this statement may fall through [-Wimplicit-fallthrough=]
->    if (drm->client.mem->oclass < NVIF_CLASS_MEM_NV50 || !mem->kind)
->        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~
-> drivers/gpu/drm/nouveau/nouveau_bo.c:1438:2: note: here
->   case TTM_PL_VRAM:
->   ^~~~
-> 
-> Warning level 3 was used: -Wimplicit-fallthrough=3
-> 
-> Notice that, in this particular case,  the code comment is modified
-> in accordance with what GCC is expecting to find.
-> 
-> This patch is part of the ongoing efforts to enable
-> -Wimplicit-fallthrough.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> ---
->  drivers/gpu/drm/nouveau/nouveau_bo.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/nouveau/nouveau_bo.c b/drivers/gpu/drm/nouveau/nouveau_bo.c
-> index 73eff52036d2..a72be71c45b4 100644
-> --- a/drivers/gpu/drm/nouveau/nouveau_bo.c
-> +++ b/drivers/gpu/drm/nouveau/nouveau_bo.c
-> @@ -1434,7 +1434,7 @@ nouveau_ttm_io_mem_reserve(struct ttm_bo_device *bdev, struct ttm_mem_reg *reg)
->  		if (drm->client.mem->oclass < NVIF_CLASS_MEM_NV50 || !mem->kind)
->  			/* untiled */
->  			break;
-> -		/* fallthrough, tiled memory */
-> +		/* fall through - tiled memory */
->  	case TTM_PL_VRAM:
->  		reg->bus.offset = reg->start << PAGE_SHIFT;
->  		reg->bus.base = device->func->resource_addr(device, 1);
-> 
+So that far it looks exactly like CVE-2019-6974. But CVE-2019-6974
+also requires that someone calls close() on the file descriptor of the
+newly created device very quickly, before the ioctl is able to
+increment the refcount further, and I don't see anything like that
+here. Is there a chance that syzkaller called close() on a file
+descriptor while the ioctl() was still running without saying so here
+(potentially through dup2() or something like that)?
+
+It would be helpful if we could see the backtrace of how the refcount
+was dropped to zero...
+
+> > > setsockopt$inet_sctp6_SCTP_FRAGMENT_INTERLEAVE(r1, 0x84, 0x12, &(0x7f00000001c0)=0x9, 0x4)
