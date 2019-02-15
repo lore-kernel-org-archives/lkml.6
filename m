@@ -3,159 +3,220 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B5F4C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 01:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFFE8C10F04
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 01:35:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3DDB21B1C
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 01:30:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84C6C21B1C
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 01:35:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="sMtVZ4hg"
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="TReKCFle"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730823AbfBOBap (ORCPT
+        id S1730850AbfBOBfr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 20:30:45 -0500
-Received: from mail-eopbgr00044.outbound.protection.outlook.com ([40.107.0.44]:43618
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728905AbfBOBao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 20:30:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZDfR3xKh9+bDGXx9v6wdKU1j6bDyz1Go0fyyIhG9Zxo=;
- b=sMtVZ4hgK213qWjOdaWGfA3ZCY9psOZNEQ61aPKmYENkRfEcXTvf4ZiUvBy8hw1zrDBbX/7VX2Jh/HwQ3TDPMKGD4iBNEkL9biDZXHXqPdJgUbwDZukr311u7JY0gzGMlThcqmBKjSL0vylpfkYvd0wxxEsVHGhTDidArf7R1zE=
-Received: from DB7PR04MB4490.eurprd04.prod.outlook.com (52.135.138.16) by
- DB7PR04MB4796.eurprd04.prod.outlook.com (20.176.233.94) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1601.17; Fri, 15 Feb 2019 01:30:40 +0000
-Received: from DB7PR04MB4490.eurprd04.prod.outlook.com
- ([fe80::fd45:a391:7591:1aa5]) by DB7PR04MB4490.eurprd04.prod.outlook.com
- ([fe80::fd45:a391:7591:1aa5%6]) with mapi id 15.20.1622.018; Fri, 15 Feb 2019
- 01:30:40 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-CC:     "labbott@redhat.com" <labbott@redhat.com>,
-        "mhocko@suse.com" <mhocko@suse.com>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "iamjoonsoo.kim@lge.com" <iamjoonsoo.kim@lge.com>,
-        "rppt@linux.vnet.ibm.com" <rppt@linux.vnet.ibm.com>,
-        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "andreyknvl@google.com" <andreyknvl@google.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Thu, 14 Feb 2019 20:35:47 -0500
+Received: from smtprelay.synopsys.com ([198.182.60.111]:49408 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728905AbfBOBfq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 20:35:46 -0500
+Received: from mailhost.synopsys.com (dc8-mailhost1.synopsys.com [10.13.135.209])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay.synopsys.com (Postfix) with ESMTPS id B376F10C1039;
+        Thu, 14 Feb 2019 17:35:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1550194545; bh=IBqm5qNukl2ROXiPY4aT5wo5lRAbddJ8leJA9h5MEGc=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=TReKCFletXfXxZ2HF7Vv6+pDU1nQvbRZU6jpc8uBi4qNA/H9z9S4KTaDRQcX8rKS4
+         jZeLr/awoDOpMN9R7oTUiohsU65m961S7shDVkLQWH6cK9CAo5gWFkL3j3t/LlInt1
+         F0rA03bLvgpuM2ZsBsmdyV66iEynsd8ghg2quHdmMCbKo0Of4vNQY5tbKLKOB2At6w
+         5YpxK5foFx+7+/waGYjmQ7dqjU8I/qxfZCiZVG70MJIEVPHB4zEQnW6uzIfMuQpqvh
+         kOK6nq6YdvaZDuezbwQPvtPMkP8fz1wOOQfH85goJuD/R71a+urIuRzitWpe26GF1b
+         emTaRn+88AfRg==
+Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
+        (using TLSv1.2 with cipher AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailhost.synopsys.com (Postfix) with ESMTPS id 34D1FA005A;
+        Fri, 15 Feb 2019 01:35:36 +0000 (UTC)
+Received: from IN01WEHTCA.internal.synopsys.com (10.144.199.104) by
+ US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 14 Feb 2019 17:34:40 -0800
+Received: from IN01WEHTCB.internal.synopsys.com (10.144.199.105) by
+ IN01WEHTCA.internal.synopsys.com (10.144.199.103) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 15 Feb 2019 07:04:42 +0530
+Received: from [10.10.161.59] (10.10.161.59) by
+ IN01WEHTCB.internal.synopsys.com (10.144.199.243) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Fri, 15 Feb 2019 07:04:43 +0530
+Subject: Re: [PATCH] ARC: Explicitly set ARCH_SLAB_MINALIGN = 8
+To:     Alexey Brodkin <alexey.brodkin@synopsys.com>,
+        Peter Zijlstra <peterz@infradead.org>
+CC:     David Laight <David.Laight@ACULAB.COM>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>,
+        Arnd Bergmann <arnd.bergmann@linaro.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "van.freenix@gmail.com" <van.freenix@gmail.com>,
-        Mike Rapoport <rppt@linux.ibm.com>
-Subject: RE: [PATCH] mm/cma: cma_declare_contiguous: correct err handling
-Thread-Topic: [PATCH] mm/cma: cma_declare_contiguous: correct err handling
-Thread-Index: AQHUxGM3TWg8yAT7z0a/qrCp1B+TP6Xfwa8AgABP9aA=
-Date:   Fri, 15 Feb 2019 01:30:40 +0000
-Message-ID: <DB7PR04MB449005901376F086215EC79A88600@DB7PR04MB4490.eurprd04.prod.outlook.com>
-References: <20190214125704.6678-1-peng.fan@nxp.com>
- <20190214123824.fe95cc2e603f75382490bfb4@linux-foundation.org>
-In-Reply-To: <20190214123824.fe95cc2e603f75382490bfb4@linux-foundation.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-originating-ip: [119.31.174.68]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b30c9d42-084e-4acb-66c5-08d692e53225
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB4796;
-x-ms-traffictypediagnostic: DB7PR04MB4796:
-x-microsoft-exchange-diagnostics: =?gb2312?B?MTtEQjdQUjA0TUI0Nzk2OzIzOlBvRzd3Z25YWVBJcUlyN3duNUhFMXJVTW5G?=
- =?gb2312?B?K0hjaXFGZmxvVEtXczV3ZmRDTUhRU0pLN1N0dTU4azBuUjA3UktMcU94T3hk?=
- =?gb2312?B?aFNrbGtPWGNyNllobDRLOFJvTDA4SGdCcHpadWRPeC8yZW5qaDNvR3IvUGxr?=
- =?gb2312?B?VUg4UEIrZWZwbVE5amZ6SkJoQ1lHa0VoNmVxbTZWUHNtRms3VG15QkRTc3hl?=
- =?gb2312?B?YkIxdEFWeDJ2NFV4Qk9KRlBJU2FtejI0WnJPbW50RFEyK3JZUjFtL011NzRK?=
- =?gb2312?B?b2pMVEdJVjNPd0VpL01UWEZlZ0JWckZVNERDR1dCOTBUblJJQlRTQVZjS1Jh?=
- =?gb2312?B?aGpQTGs5VEVzRTc2SVNnRWdrSnJncmk0OWxuNTI5STFiQ1Q0K0NLMm5NdC9u?=
- =?gb2312?B?ZnpHcEhJczVjK1lDN3l4cVVYWHBuR2RQU2hRWEoyMGtWdUR0WFROOWVpWDNq?=
- =?gb2312?B?QlVMcUpVRjkzemg4WHVuTld2SWFnbzF3VmI2aFkveTdWMDFueHVISWZGcU4x?=
- =?gb2312?B?K0ZBZ1dscXBtUzNSZFZ3VDYwRTYzRXovV1o1dDk1TkJIT2hDd3g1SnNOOWVH?=
- =?gb2312?B?Njd2cEIyalhOdUppWkwwQ0NyeVl3ZndlVmpaUFo0MU82cUpYSnAweGtubllR?=
- =?gb2312?B?aVFWVm1DRTBHTXUvdlpMUE9rTitrdit1akcwMGJQTEJGVkQxUzAwdjUrdzJq?=
- =?gb2312?B?aHRsUDFQbTFreXNiUVM5OVplT2gxVnU1R0lERnY2ZlJDalpPWWF5eHE5eHo3?=
- =?gb2312?B?bVRnbGJSM0NjRXUwM0RMallYVDF2ZjdWa2dYOEZGa2RCaVlBNFk5Q1daYXFv?=
- =?gb2312?B?RExZNEs4cVllRnYrNnNBTzlSUS85ODVmNU9FMStVeUlKTFhSdjFxOUV4RkRR?=
- =?gb2312?B?OWlxZHdDdkdIbC9NUDRlWjM0ZkkrVDFiZE0yTG9tK3dPRDQ0ZzRwVTRKWEIx?=
- =?gb2312?B?Q0l2V21yM05OdVJXTld4cFRwRjhYMUw1RmliU1FPZDVxYzZsZTRIVXNwWDBn?=
- =?gb2312?B?ODhaYzUyQU1rUy94NTY3ekNaZ1l2U3BqMFFaTkMrNmxRc2ZCWHUzVTNwYkpy?=
- =?gb2312?B?dFpqWE5HZm45ckJPSWJYSUg1MC81bitCc3hCVEtXNWJBMHZKdTcvL2JFd2hz?=
- =?gb2312?B?R2dkak5OTm8xREFnNy80SmNMckZNMGlkSXEyVmYyTG1qTENpTWpwUTZTYXJC?=
- =?gb2312?B?R0NhQnhNYVFuRitjS0lLUFdzL2ZId3NNSUlRbERZdm9aS0JsUkZQSTZ2SER3?=
- =?gb2312?B?ZWtONHdoWmd3bC9nakJNS0NWcnppN1ZVdWtqWlJnWFo0THNJRy9xRlZ4alhB?=
- =?gb2312?B?MFRtS1JuV1dWRnR5Qi9YeCtLTVBZVkFrYkZQQWk1NC8xR3plM2Y0RE92Uk9p?=
- =?gb2312?B?Q041eEw0N1RjZHZxTG95U2lsOC9TajA3Q2xPSXZrYURJSC9TWkhCeS95RzBG?=
- =?gb2312?B?NlhrdU5NKzNPNUU4Tlc5VmdvVEpOb2N0TGIxRFBCRko3eUpBRmZTbEpVd0VJ?=
- =?gb2312?B?OTFVWjRpVVFvL1J5MXo5RHdIejhQV2hITUF2Y3F0UTVKcWZ3MlpickkxMHBo?=
- =?gb2312?B?M2VHU3FQSTgvbHd2VC9GTHFPaVZmSlpBRjR6cVZaRFhLZ3ZuNWNnemxuOEQr?=
- =?gb2312?B?QVFqam54MEQ3Q25hUjJ4OC9sbHdmaFVpd0QvQzJyUERPN2VPdzdpRVdQRE5I?=
- =?gb2312?Q?MBxcw5rJem1Dwzmqen9XmfX6zeqjhn6JSjPFKsG?=
-x-microsoft-antispam-prvs: <DB7PR04MB47960321DC774A22AE96E91488600@DB7PR04MB4796.eurprd04.prod.outlook.com>
-x-forefront-prvs: 09497C15EB
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(376002)(366004)(396003)(39860400002)(199004)(189003)(13464003)(81156014)(81166006)(74316002)(53936002)(256004)(11346002)(8676002)(8936002)(305945005)(102836004)(4326008)(71190400001)(71200400001)(6506007)(6246003)(25786009)(7736002)(2906002)(97736004)(55016002)(6116002)(186003)(68736007)(3846002)(53546011)(6436002)(14444005)(229853002)(105586002)(86362001)(316002)(106356001)(66066001)(14454004)(99286004)(26005)(478600001)(9686003)(6916009)(446003)(476003)(54906003)(44832011)(7416002)(76176011)(33656002)(7696005)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4796;H:DB7PR04MB4490.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: VIZ6yXJY5SogGXM3F/Mzu++9fjZ4hMmzN0yywlzyDqGqT+8P1cz4TXau4RnVGXQkbD1Z+abjz/mJWZtQWYMqLvnQzV8xfbgkJa+YIHdwanR2QuXfF5nIEmRgn/PbVf5l13Ndu+EwQIFxuGN3GEUxDKhphQz49zfeaafCOsK/1c7GwP95B7O3qepB5KBNxtEl4VkBrtDkzyxZgDNgmKjvsMFtEbM9CpxnMJkDuAm//+jEnJx4WOp3I0bfHSUHSS4HVZ4d1rlwz43Bb3oxBCCHnQ6KnQpJQZ7ftIeoBdyfu40sUDeFCLMNszpyDUlbmO/iI38VLlM/2XYUm66xIei4Ufn3SRLGeO7w9nqAAsGlXVbF4PwVO9F+5wghCT2yhM0AIumRswhhqyFeVykfjIJVjfSWiTqrVYjNVVB2hvk9jvw=
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Newsgroups: gmane.linux.kernel.stable,gmane.linux.kernel.arc,gmane.linux.kernel
+References: <20190208105519.26750-1-abrodkin@synopsys.com>
+ <81017fe4-b31f-4942-e822-a7b70008b74d@synopsys.com>
+ <f83412d1e7fd4d67b4632c1f81fae963@AcuMS.aculab.com>
+ <bfc65835-21f9-6d5e-791d-ee49113d939c@synopsys.com>
+ <20190213125651.GP32494@hirez.programming.kicks-ass.net>
+ <e6138aeb-9ce4-fbfa-4d6a-b76f189a3e47@synopsys.com>
+ <4881796E12491D4BB15146FE0209CE64681DB01F@DE02WEMBXB.internal.synopsys.com>
+From:   Vineet Gupta <vineet.gupta1@synopsys.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vgupta@synopsys.com; keydata=
+ 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
+ hhqBJlyU6MVUa6vZNv8E
+Message-ID: <e4aed55f-656b-ebec-c3e3-393714cc693e@synopsys.com>
+Date:   Thu, 14 Feb 2019 17:34:29 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b30c9d42-084e-4acb-66c5-08d692e53225
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Feb 2019 01:30:40.4600
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4796
+In-Reply-To: <4881796E12491D4BB15146FE0209CE64681DB01F@DE02WEMBXB.internal.synopsys.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.10.161.59]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgQW5kcmV3DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW5kcmV3
-IE1vcnRvbiBbbWFpbHRvOmFrcG1AbGludXgtZm91bmRhdGlvbi5vcmddDQo+IFNlbnQ6IDIwMTnE
-6jLUwjE1yNUgNDozOA0KPiBUbzogUGVuZyBGYW4gPHBlbmcuZmFuQG54cC5jb20+DQo+IENjOiBs
-YWJib3R0QHJlZGhhdC5jb207IG1ob2Nrb0BzdXNlLmNvbTsgdmJhYmthQHN1c2UuY3o7DQo+IGlh
-bWpvb25zb28ua2ltQGxnZS5jb207IHJwcHRAbGludXgudm5ldC5pYm0uY29tOw0KPiBtLnN6eXBy
-b3dza2lAc2Ftc3VuZy5jb207IHJkdW5sYXBAaW5mcmFkZWFkLm9yZzsNCj4gYW5kcmV5a252bEBn
-b29nbGUuY29tOyBsaW51eC1tbUBrdmFjay5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5v
-cmc7DQo+IHZhbi5mcmVlbml4QGdtYWlsLmNvbTsgTWlrZSBSYXBvcG9ydCA8cnBwdEBsaW51eC5p
-Ym0uY29tPg0KPiBTdWJqZWN0OiBSZTogW1BBVENIXSBtbS9jbWE6IGNtYV9kZWNsYXJlX2NvbnRp
-Z3VvdXM6IGNvcnJlY3QgZXJyIGhhbmRsaW5nDQo+IA0KPiBPbiBUaHUsIDE0IEZlYiAyMDE5IDEy
-OjQ1OjUxICswMDAwIFBlbmcgRmFuIDxwZW5nLmZhbkBueHAuY29tPiB3cm90ZToNCj4gDQo+ID4g
-SW4gY2FzZSBjbWFfaW5pdF9yZXNlcnZlZF9tZW0gZmFpbGVkLCBuZWVkIHRvIGZyZWUgdGhlIG1l
-bWJsb2NrDQo+ID4gYWxsb2NhdGVkIGJ5IG1lbWJsb2NrX3Jlc2VydmUgb3IgbWVtYmxvY2tfYWxs
-b2NfcmFuZ2UuDQo+ID4NCj4gPiAuLi4NCj4gPg0KPiA+IC0tLSBhL21tL2NtYS5jDQo+ID4gKysr
-IGIvbW0vY21hLmMNCj4gPiBAQCAtMzUzLDEyICszNTMsMTQgQEAgaW50IF9faW5pdCBjbWFfZGVj
-bGFyZV9jb250aWd1b3VzKHBoeXNfYWRkcl90DQo+ID4gYmFzZSwNCj4gPg0KPiA+ICAJcmV0ID0g
-Y21hX2luaXRfcmVzZXJ2ZWRfbWVtKGJhc2UsIHNpemUsIG9yZGVyX3Blcl9iaXQsIG5hbWUsDQo+
-IHJlc19jbWEpOw0KPiA+ICAJaWYgKHJldCkNCj4gPiAtCQlnb3RvIGVycjsNCj4gPiArCQlnb3Rv
-IGZyZWVfbWVtOw0KPiA+DQo+ID4gIAlwcl9pbmZvKCJSZXNlcnZlZCAlbGQgTWlCIGF0ICVwYVxu
-IiwgKHVuc2lnbmVkIGxvbmcpc2l6ZSAvIFNaXzFNLA0KPiA+ICAJCSZiYXNlKTsNCj4gPiAgCXJl
-dHVybiAwOw0KPiA+DQo+ID4gK2ZyZWVfbWVtOg0KPiA+ICsJbWVtYmxvY2tfZnJlZShiYXNlLCBz
-aXplKTsNCj4gPiAgZXJyOg0KPiA+ICAJcHJfZXJyKCJGYWlsZWQgdG8gcmVzZXJ2ZSAlbGQgTWlC
-XG4iLCAodW5zaWduZWQgbG9uZylzaXplIC8gU1pfMU0pOw0KPiA+ICAJcmV0dXJuIHJldDsNCj4g
-DQo+IFRoaXMgZG9lc24ndCBsb29rIHJpZ2h0IHRvIG1lLiAgSW4gdGhlIGBmaXhlZD09dHJ1ZScg
-Y2FzZSB3ZSBkaWRuJ3QgYWN0dWFsbHkNCj4gYWxsb2NhdGUgYW55dGhpbmcgYW5kIGluIHRoZSBg
-Zml4ZWQ9PWZhbHNlJyBjYXNlLCB0aGUgYWxsb2NhdGVkIG1lbW9yeSBpcyBhdA0KPiBgYWRkcics
-IG5vdCBhdCBgYmFzZScuDQoNCk15IGNvZGUgYmFzZSBpcyA1LjAuMC1yYzYsIGluIG1tL2NtYS5j
-DQozMTMgICAgICAgICAvKiBSZXNlcnZlIG1lbW9yeSAqLw0KMzE0ICAgICAgICAgaWYgKGZpeGVk
-KSB7DQozMTUgICAgICAgICAgICAgICAgIGlmIChtZW1ibG9ja19pc19yZWdpb25fcmVzZXJ2ZWQo
-YmFzZSwgc2l6ZSkgfHwNCjMxNiAgICAgICAgICAgICAgICAgICAgIG1lbWJsb2NrX3Jlc2VydmUo
-YmFzZSwgc2l6ZSkgPCAwKSB7DQozMTcgICAgICAgICAgICAgICAgICAgICAgICAgcmV0ID0gLUVC
-VVNZOw0KMzE4ICAgICAgICAgICAgICAgICAgICAgICAgIGdvdG8gZXJyOw0KMzE5ICAgICAgICAg
-ICAgICAgICB9DQozMjAgICAgICAgICB9IGVsc2Ugew0KDQpXaGVuIGZpeGVkIGlzIHRydWUsIG1l
-bWJsb2NrX2lzX3JlZ2lvbl9yZXNlcnZlZCB3aWxsIGNoZWNrIHdoZXRoZXIgdGhlIFtiYXNlLCBi
-YXNlICsgc2l6ZSkNCmlzIHJlc2VydmVkLCBpZiByZXNlcnZlZCwgcmV0dXJuIC1FQlVTWSwgaWYg
-bm90IHJlc2VydmVkLCBpdCB3aWxsIGNhbGwgbWVtYmxvY2tfcmVzZXJ2ZSwNCmlmIG1lbWJsb2Nr
-X3Jlc2VydmUgZmFpbCwgaXQgd2lsbCByZXR1cm4gLUVCVVNZLg0KDQpXaGVuIGZpeGVkIGlzIGZh
-bHNlLCBhZnRlciBtZW1ibG9ja19hbGxvY19yYW5nZSwgdGhlcmUgaXMgb25lIGxpbmUgY29kZSBg
-YmFzZSA9IGFkZHI7YC4NCg0KVGhhbmtzLA0KUGVuZy4NCg0K
+On 2/14/19 12:50 AM, Alexey Brodkin wrote:
+
+>>>>> I suspect the slab allocator should be returning 8 byte aligned addresses
+>>>>> on all systems....
+>>>>
+>>>> why ? As I understand it is still not fool proof against the expected alignment of
+>>>> inner members. There ought to be a better way to enforce all this.
+>>>
+>>> I agree that for ARC ARCH_SLAB_MINALIGN should be at least 8.
+>>
+>> This issue aside, are there other reasons ? Because making it 8 on ARC is just
+>> pending the eventuality for later.
+> 
+> But that's pretty much the same for other 32-bit arches that have 64-bit atomics
+> like ARM etc. From what I may see from ARM's documentation for LDREXD/SRREXD they
+> require double-word alignment of data as well.
+
+Right LLOCKD/SCONDD (64-bit exclusive load/store) needs 64-bit aligned effective
+addresses for micro-arch reasons (1 vs 2 cache lines) etc.
+
+So lets try to unpack this for me. Say we had.
+
+   struct foo {
+	int        a;
+	atomic64_t b;
+   };
+
+The atomic64_t (which for ARC and most others is u64 __attribute__((aligned(8))
+*already ensures* that there a 4 b padding is generated by gcc (I just confirmed
+with a simple test case).
+
+   #ifdef DOALIGN__
+   #define my_u64	__u64 __attribute__((aligned(8)))
+   #else
+   #define my_u64	__u64
+   #endif
+
+  struct foo on_heap;
+
+  printf(%d", &on_heap.b)
+
+$ arc-linux-gcc -O2 test.c -DDOALIGN__ -c --save-temps
+
+   main:
+	mov_s r1,@on_heap+8   <----
+	mov_s r0,@.LC0
+	b @printf
+
+W/o the alignment attribute (say normal LDD/STD)
+
+$ arc-linux-gcc -O2 test.c -c --save-temps
+
+   main:
+	mov_s r1,@on_heap+4
+	mov_s r0,@.LC0
+	b @printf
+
+So indeed your patch aligns dynamic structs to 64-bit, ensuring any embedded
+aligned_u64 to be 64-bit aligned as well. Phew !
+
+
+> That said if for some reason atomic64_t variable is unaligned execution on
+> any (or at least most) 32-bit architectures will lead to run-time failure,
+> i.e. we'll know about it and this will be fixed.
+> 
+> And what I'm doing by that change (ARCH_SLAB_MINALIGN=8 for ARC) I'm just
+> working-around peculiarity of ARC ABI.
+
+Right.
+
+> 
+> Out of curiosity I checked if there're any other occurrences of "alingof(long long)"
+> and there seems to be a couple of more:
+> ----------------------------------->8-----------------------------
+> # git grep alignof | grep "long long"
+> 
+> ...
+> 
+> kernel/workqueue.c:5693:        WARN_ON(__alignof__(struct pool_workqueue) < __alignof__(long long));
+> mm/slab.c:155:#define   REDZONE_ALIGN           max(BYTES_PER_WORD, __alignof__(unsigned long long))
+
+For ARC, it will be max(4,4) so 4
+for others 32-bit,it will be max(4,8)
+
+So indeed it makes sense to change it.
+
+> mm/slab.c:2034: if (ralign > __alignof__(unsigned long long))
+> ----------------------------------->8-----------------------------
+> 
+> Not really sure how important is "kernel/workqueue.c" part but in case of "mm/slab.c"
+> shouldn't we use ARCH_SLAB_MINALIGN there instead of that "not very meaningful" __alignof__(long long)?
+
