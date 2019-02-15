@@ -2,94 +2,123 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0875C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A992BC4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B033F21B68
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:50:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550191804;
-	bh=Tlzvqd7rT0vT27LkD/x/7ZYS7d/ASpxw3AQ63kHE4jE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IyS6u2eqmV1RbbtKvjVcCMsTMdtTml6wzqWKyxAwWrQpqAZXb6H05qH+JpOoUR77S
-	 1ezk32LwbwdJ927DsZ/mXaEb6uMbTwkQ7nyq3/1/oz/XrCC2p9dN8Kjc8XtqDM22hx
-	 1n6Ln2S+b64EIXhtYsFvQGj9LOLpRTH0gyEjiVtE=
+	by mail.kernel.org (Postfix) with ESMTP id 6B4ED21934
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:54:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="m8rpA8Tx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388683AbfBOAqr (ORCPT
+        id S1727085AbfBOAy3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 19:46:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45244 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388636AbfBOAqo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 19:46:44 -0500
-Received: from quaco.ghostprotocols.net (unknown [189.40.103.31])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E27FD21B68;
-        Fri, 15 Feb 2019 00:46:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550191603;
-        bh=Tlzvqd7rT0vT27LkD/x/7ZYS7d/ASpxw3AQ63kHE4jE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ygxZdcJDkIxPPKgxZaPCeO+tJ2YtxU+OkOdoqy4Sr2INxMY3+pMyAAO0iNuO+OTjL
-         pyZOuHOho/mjGpO4TNW9a43P2o5GvWfu0/sEfG4NGiQIx7kwbehtyqYu2gLu2burS4
-         m3hrf4ARTdgwCdOeMGl91v/azGrZn4tDO4qerPh4=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Song Liu <songliubraving@fb.com>, kernel-team@fb.com,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 12/43] perf utils: Silence "Couldn't synthesize bpf events" warning for EPERM
-Date:   Thu, 14 Feb 2019 21:45:08 -0300
-Message-Id: <20190215004539.23571-13-acme@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190215004539.23571-1-acme@kernel.org>
-References: <20190215004539.23571-1-acme@kernel.org>
+        Thu, 14 Feb 2019 19:54:29 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:5377 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725778AbfBOAy2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 19:54:28 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c660d9e0000>; Thu, 14 Feb 2019 16:53:50 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 14 Feb 2019 16:54:26 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 14 Feb 2019 16:54:26 -0800
+Received: from [10.110.48.28] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 15 Feb
+ 2019 00:54:25 +0000
+Subject: Re: [PATCH 0/2] mm: put_user_page() call site conversion first
+To:     Ira Weiny <ira.weiny@intel.com>, <john.hubbard@gmail.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Benvenuti <benve@cisco.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Tom Talpey <tom@talpey.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <linux-fsdevel@vger.kernel.org>
+References: <20190208075649.3025-1-jhubbard@nvidia.com>
+ <20190215002312.GC7512@iweiny-DESK2.sc.intel.com>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <4a326c1d-0ebb-5463-f7ed-8461bfa489df@nvidia.com>
+Date:   Thu, 14 Feb 2019 16:54:25 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190215002312.GC7512@iweiny-DESK2.sc.intel.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US-large
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1550192030; bh=OHV4QGJwXMt6cTDDR9gAJliF74InHPXXIremhlCNuPU=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=m8rpA8TxgQeOBZs6mHboNH4I3SHtCGoBV0ITcxs6fERzRDWqgDqPJjZff0Dg/YUj7
+         T2/6Qkxi6BRGl5QQRUqDDDHQoVj9g3wg2eb+6pHyCC/4vg+2UhunQ1OAXjw6kF40GZ
+         qlIXVrMYsxZz7j4PLMKoaUzyK2q8AYAp8VEzjRIgpS5ScP/34yIG6d7UVivcEb46hO
+         EWsK9dpg7heuwwZbsFmhy3UJGOE3V7FUsZe/Ui+knZpWNw/w5f2sakQedbtizKGYpd
+         vPbrGtVl1HQJcIZBOYQj/lSHOJMGSa49MyOC1TOnvrGofejPRb2Dp2otF+Vuoej7zm
+         GARy95cWHm/kg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Song Liu <songliubraving@fb.com>
+On 2/14/19 4:23 PM, Ira Weiny wrote:
+> On Thu, Feb 07, 2019 at 11:56:47PM -0800, john.hubbard@gmail.com wrote:
+>> From: John Hubbard <jhubbard@nvidia.com>
+[...]
+>>   mm: introduce put_user_page*(), placeholder versions
+>>   infiniband/mm: convert put_page() to put_user_page*()
+> 
+> A bit late but, FWIW:
+> 
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> 
+> John these are the pages sitting in your gup_dma/first_steps branch here,
+> correct?
+> 
+> https://github.com/johnhubbard/linux.git
+> 
 
-Synthesizing BPF events is only supported for root. Silent warning msg
-when non-root user runs perf-record.
+That's an old branch. In fact, just deleted it now, in order to avoid further
+confusion.
 
-Reported-by: David Carrillo-Cisneros <davidca@fb.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
-Tested-by: David Carrillo-Cisneros <davidca@fb.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: kernel-team@fb.com
-Link: http://lkml.kernel.org/r/20190204193140.719740-1-songliubraving@fb.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/bpf-event.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This is the current branch: 
 
-diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
-index 796ef793f4ce..62dda96b0096 100644
---- a/tools/perf/util/bpf-event.c
-+++ b/tools/perf/util/bpf-event.c
-@@ -236,8 +236,8 @@ int perf_event__synthesize_bpf_events(struct perf_tool *tool,
- 			pr_debug("%s: can't get next program: %s%s",
- 				 __func__, strerror(errno),
- 				 errno == EINVAL ? " -- kernel too old?" : "");
--			/* don't report error on old kernel */
--			err = (errno == EINVAL) ? 0 : -1;
-+			/* don't report error on old kernel or EPERM  */
-+			err = (errno == EINVAL || errno == EPERM) ? 0 : -1;
- 			break;
- 		}
- 		fd = bpf_prog_get_fd_by_id(id);
+    gup_dma_core 
+
+in that same git repo. It has the current set of call site conversions. 
+Please note that there are a lot of conversions that are either incomplete
+or likely just plain wrong, at this point, but it is sufficient to at least 
+boot up and run things such as fio(1).
+
+
+
+thanks,
 -- 
-2.19.1
-
+John Hubbard
+NVIDIA
