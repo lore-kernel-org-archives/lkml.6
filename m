@@ -2,100 +2,109 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 060EBC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:25:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE1BC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:25:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D15B520838
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:25:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00AB021B18
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:25:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392579AbfBOJZE (ORCPT
+        id S2392602AbfBOJZI convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:25:04 -0500
-Received: from sauhun.de ([88.99.104.3]:60584 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388428AbfBOJZD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 04:25:03 -0500
-Received: from localhost (unknown [83.221.228.209])
-        by pokefinder.org (Postfix) with ESMTPSA id 36CCC2E3551;
-        Fri, 15 Feb 2019 10:25:01 +0100 (CET)
-Date:   Fri, 15 Feb 2019 10:25:00 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Hsin-Yi Wang <hsinyi@chromium.org>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Jun Gao <jun.gao@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>, linux-i2c@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: mediatek: modify threshold passed to
- i2c_get_dma_safe_msg_buf()
-Message-ID: <20190215092500.6q3hqnoufyowiqaz@ninjato>
-References: <20190215090202.157100-1-hsinyi@chromium.org>
- <20190215090959.soxkf3ho3or2geme@ninjato>
- <CAJMQK-jrpnfzKNYh01Pg6QydSSa-=6x44Pj1wwMdXw7G3x-ybA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="y2t44ovekq3k3td5"
-Content-Disposition: inline
-In-Reply-To: <CAJMQK-jrpnfzKNYh01Pg6QydSSa-=6x44Pj1wwMdXw7G3x-ybA@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Fri, 15 Feb 2019 04:25:08 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:59000 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387827AbfBOJZF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 04:25:05 -0500
+Received: from mail-pg1-f197.google.com ([209.85.215.197])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1guZjy-0007ma-Fi
+        for linux-kernel@vger.kernel.org; Fri, 15 Feb 2019 09:25:02 +0000
+Received: by mail-pg1-f197.google.com with SMTP id t26so6387893pgu.18
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 01:25:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=BJoGR3Jqu9tA0XPgH2mLolLr0PGFn7j/pRWqd1Fbzbk=;
+        b=mi7IiMSECh7WJiGPTjXniI5y+qKO0tms1WwCQMPF8w4pyMWm9kxQR47JECqGpDJv3w
+         hOUmgaMHr+pKCMlsZ3pm91SvNyLF0QwR23naX+DK8m9EczIQwBeDDplmatuO0IuCs2+p
+         G7KILkDlQqUAXA445hfLADRbEgFpkz7Z0fO05YUyirdBhdHnZxohb6DDeRomh+wqU6ds
+         tUYfoTTQyKOIVdEHJSCE+WXp9DQC4q2ZPfc7aPwLtUQolZYRgAfjg4Z97B2CEwUCF3vf
+         G7EEBzrHnPe2mLZoBHHEaJzGfVJkN52ucRhxyIIxA1AqBregih4BWSBPhEgqvv8HcF/y
+         lqxQ==
+X-Gm-Message-State: AHQUAuYEn2RY2jc5Nuq7q+4GHQAGitgecyo9VqD4WjSct6JbIf7OUjg+
+        oyiGRmjCd5LbSR5Ib8G114FzO6ixa4UgBdlC+MlBWKq0rwqjCh2C871FHeFnTDSuA9LVssqMIWH
+        T2fYMR5gbzMmufKyCAy6t+iesGQ+XDzhYf1XtdmZqPg==
+X-Received: by 2002:a17:902:a50a:: with SMTP id s10mr8794989plq.278.1550222701200;
+        Fri, 15 Feb 2019 01:25:01 -0800 (PST)
+X-Google-Smtp-Source: AHgI3IYcsTwso7bijU5uvgyxc6s126KXbPhayDZ1FykbHSOOaXhz0373LCCozrWXrkTQ3igiZtGprA==
+X-Received: by 2002:a17:902:a50a:: with SMTP id s10mr8794967plq.278.1550222700789;
+        Fri, 15 Feb 2019 01:25:00 -0800 (PST)
+Received: from 2001-b011-380f-39c7-759a-ff6b-a5f3-69c6.dynamic-ip6.hinet.net (2001-b011-380f-39c7-759a-ff6b-a5f3-69c6.dynamic-ip6.hinet.net. [2001:b011:380f:39c7:759a:ff6b:a5f3:69c6])
+        by smtp.gmail.com with ESMTPSA id 125sm6067365pfg.39.2019.02.15.01.24.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Feb 2019 01:24:59 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH] Fix resume for ELAN2097 touchscreen.
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <nycvar.YFH.7.76.1902150834180.11598@cbobk.fhfr.pm>
+Date:   Fri, 15 Feb 2019 17:24:57 +0800
+Cc:     Benjamin Tissoires <benjamin.tissoires@gmail.com>,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <6280CE2E-0820-48DA-ABA1-621D107511CF@canonical.com>
+References: <20190211070040.4569-1-jbroadus@gmail.com>
+ <nycvar.YFH.7.76.1902140036400.11598@cbobk.fhfr.pm>
+ <CAKgEEwteam5TCWAUtgQKxQpTzTk3+_DktmqwxZTLa=w3xt5i8Q@mail.gmail.com>
+ <nycvar.YFH.7.76.1902150834180.11598@cbobk.fhfr.pm>
+To:     Jiri Kosina <jikos@kernel.org>, james broadus <jbroadus@gmail.com>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jiri and James,
 
---y2t44ovekq3k3td5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On Feb 15, 2019, at 15:35, Jiri Kosina <jikos@kernel.org> wrote:
+> 
+> On Thu, 14 Feb 2019, james broadus wrote:
+> 
+>>> This should be fixed in hid.git#for-5.1/i2c-hid already by commit
+>>> 1475af255e18f. Could you please confirm that?
+>>> 
+>> 
+>> Hi Jiri. That change mutes the log messages, but I'm still counting 
+>> around 35000 interrupts per second after resume and touch does not work. 
+>> With the reset, the device works properly.
+> 
+> Ah, I see. Should your patch then actually replace 1475af255e18f?
 
-On Fri, Feb 15, 2019 at 05:17:27PM +0800, Hsin-Yi Wang wrote:
-> Ok, I can add a check in another patch. Should we return NULL pointer
-> if msg->len is 0 or print out some warnings? Thanks.
+Sorry for the late reply, was off because of Lunar new year.
 
-No warning, msg->len == 0 is a valid setting. But interesting question:
-I was about to say NULL, but your driver would assume ENOMEM there and
-discard the message which is also not correct since msg->len == 0 is a
-valid setting. So, should we just return msg->buf then? Will this work
-with your driver? Can it handle zero-length transfers?
+Commit 1475af255e18f is to silence the message when using the touchpad, so it’s different to this patch.
 
-> On Fri, Feb 15, 2019 at 5:10 PM Wolfram Sang <wsa@the-dreams.de> wrote:
-> >
-> > On Fri, Feb 15, 2019 at 05:02:02PM +0800, Hsin-Yi Wang wrote:
-> > > i2c_get_dma_safe_msg_buf() allocates space based on msg->len. If threshold is
-> > > 0 and msg->len is also 0, function makes zero-length allocation, which returns
-> > > a special ZERO_SIZE_PTR instead of a NULL pointer, and this will cause later
-> > > code to fail. Modify the threshold to > 0 so the function returns NULL pointer.
-> > >
-> > > Fixes: fc66b39fe36a ("i2c: mediatek: Use DMA safe buffers for i2c transactions")
-> > > Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
-> >
-> > Right. But we need to fix i2c_get_dma_safe_msg_buf(), so it will be
-> > handled for all callers. Do you want to add a check if msg->len is 0 or
-> > shall I? Both fine for me.
-> >
+I’ve seen similar bugs happens on new platforms that defaults S2Idle (Modern Standby), but user uses S3 instead.
+On those systems, S3 was never tested, so the BIOS doesn’t cut the touchpad’s power off during S3, and the IRQ line wasn’t getting properly reset.
 
---y2t44ovekq3k3td5
-Content-Type: application/pgp-signature; name="signature.asc"
+So if the platform defaults to S2Idle but user wants to use S3, this issue happens.
+If that’s the case, maybe it’s better to report to the platform vendor.
 
------BEGIN PGP SIGNATURE-----
+Kai-Heng
 
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxmhWwACgkQFA3kzBSg
-KbaFFQ//fuSyJ7pBnGx4oHNrTC5YHyX1SDtwZyZqo5kDgB7MNJ5yOR3Gd2jTCx8j
-IzJEQlO6bVPUCJSgdZTvWjfOdbbkLyakIhbMYoDOTPl+JV73M1GU0bppG7oggqTV
-T/DbHUvQ5YlshB/eENAJtbVJjGu7rjmd2Ttbm4PSUl5Y1zyiT0JLAMEEvDfW8UxY
-cOMY8u8bHZtbDxkMRQ73L2h7C0XFb7TdoxmdYmbNvFBmczHAzznvgrHtxGmTg2R2
-ThO7WNRTzABSeudmLeZhKTIum4hvwp3ghyBsRos8kiBpSmDz/0vRcBvqG+4ZThuO
-GbqQTyK+Lln4Q7zkPdCSb1GWO6IGGFysXUAIewTRmr2yWgP5zkAtaZkbDkDdz1aW
-6EUlgfWg//3BXQimXWpMwZ/sOij8IJ2XBsIytssuO6pJon+q3/sspY+QBnOWFsiJ
-UhcW12LdEXZW7Nvi+BxRYfRlSy3TxOb5Z2sGYsOMZ0P8SGyQxFFiUQ6ks99hr0hf
-Clv3SBpRv7Kua4LmziFL/PtNnNkr/9Z9j/sdk8hfh2Zzlx0D1+k8sWvWN2KjYxa1
-ZKDVf3RzdKWPbw0nloni4/6aQ9/+sohzz6Ov09l0Gvu6exQIF5XAmCw/Gh6WjyiV
-UzARwXWjLRkPuGDRFEIe7WgmwlcaF0NMC8zwttf8FavI4eNdOxQ=
-=eOq9
------END PGP SIGNATURE-----
+> 
+> Thanks,
+> 
+> -- 
+> Jiri Kosina
+> SUSE Labs
+> 
 
---y2t44ovekq3k3td5--
