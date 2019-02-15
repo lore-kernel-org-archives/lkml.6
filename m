@@ -2,367 +2,181 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D768FC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:38:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE72EC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:38:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9358821A4C
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:38:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1A71218D9
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:38:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="msAmlfTm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JBkSjydA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729372AbfBORiO (ORCPT
+        id S1729576AbfBORiv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 12:38:14 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:55004 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729055AbfBORiO (ORCPT
+        Fri, 15 Feb 2019 12:38:51 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45524 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726045AbfBORiu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 12:38:14 -0500
-Received: by mail-it1-f196.google.com with SMTP id f10so2465681ita.4
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 09:38:13 -0800 (PST)
+        Fri, 15 Feb 2019 12:38:50 -0500
+Received: by mail-pf1-f193.google.com with SMTP id v21so2147864pfm.12;
+        Fri, 15 Feb 2019 09:38:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3Y8icLVQelSU2ibu1X0vhgVDn37O3pG2P0mtJzpVPMY=;
-        b=msAmlfTmL5Y8s2+kS2TPa+ghaquMGCwG6C2j1W6MQtNaewgN9JlSm9FQhAJuqOp6JF
-         1aKpeKBLEYExUkhC8fh1Sm42Iv5Y3fw2RtBdLx/p43XQtmwUGnxsCVUMcUp9UCzV2tUS
-         TI4YvLBgYvZ6ZNl9yvTGPvRcDj5hSVwdFgKBH7YS6ERr2UmrS3GWd7MYrBV11dWOFO5i
-         NC2cd1ArvZQxWutqu7bBAFMGq9PQOqm9bze8slONm6t7aQDlluRK4KfFi18p4zS2XjFH
-         xXYj/dHwFPF/fcHyh3n7rk94gtgeVHF6NPLxhECoGWEYzxKGxOQk9dgjg0Ey3T3vN/3H
-         GoXA==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=nSPMthbLOf364VKdPkyku5Ql6hieQnQ685si+JY6hpk=;
+        b=JBkSjydANU8nBCOq4k1cPprg13Rl7KfKfoVDHurHsux/j58wJMs9BmUdAttqLe+8PK
+         4boOQ5AHAOboTdLKY0KR8YyIQo4muL1DAdrraoUslobN0316fqEAQIQpEa1VJaW3e77a
+         BeNUtq1emEoic0GdvThgtqGZ6fH2TlykhRW3+xldrym2pdT7BdfT642XLb0hM35bGgEw
+         rO5rSk7KhJoICcuyhRoCWoGX7JUEKh6qTQ5yZSPSd0tRMRZsqqdDz0J8iNvJ6gihQ23a
+         jynFhTjtzZO9WOqI7/3cseb8qkIEuSWbaBxB5oRSZXVWvTUG6xjj7+tsGQmyd3FNla5B
+         1Xmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3Y8icLVQelSU2ibu1X0vhgVDn37O3pG2P0mtJzpVPMY=;
-        b=aVVc7f3evfF0c1kX51wG2X/JZUmBMI4LSvvOMAYs+vJeIPwe+avAj33QM+q9PQPCaD
-         hjk+lw2u14UzA7eD1FJHHqS5cf+TSXsSa4uH7hpUdQxlaSOmKQhNlqkFRQicc/HHphjP
-         yJyTP+RDqIk2noeQUlYUn/wksv0SimnyRwh50MF27T0NrcELcT0fpW3uvQYUHU3DpXcY
-         0KtHrYvVhfSgfwch8clRY2iLGuNSfvFDFQ2x+DTWMsXWJCwIvrKRk//e3UDbQKyMHJrj
-         478dPFT9bqtOugVnBRsPGD1IOjDgnl+d6U6Z4+KRazKdYbNZCLVGPTNBivRNsfKhIsvH
-         tyPA==
-X-Gm-Message-State: AHQUAubjIHhOi/lX/4KKgXr0nsyoYESKeXMp2cuWBBv25R99mdK40Blp
-        /LfMHlSuR4KhkLiEoxAoeq93f4hG9yKSoFcg1Fz3tg==
-X-Google-Smtp-Source: AHgI3IZU9G/FDHorXUMAxLRI0M24PFq1F1FY5bZj4F+RW+cSZ8K16AqLjaiUfe4XcQXkgFhdSZqp4HfHLCZO4H1Eeqc=
-X-Received: by 2002:a5d:84c3:: with SMTP id z3mr6395156ior.11.1550252293084;
- Fri, 15 Feb 2019 09:38:13 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=nSPMthbLOf364VKdPkyku5Ql6hieQnQ685si+JY6hpk=;
+        b=I6MB8yVneo1mBLIO+s1CbtSLdMgeR551k6SgrotqlkuYT7I5g4OlTQcz1cEJwM5JKl
+         se9+2G2EluYjGaeOICmfNQluVV4EOmx4a/8t51MvDYKDtW554ZYhBeHno4jtwp4vX94a
+         dHpat2KPITrxGhYsu+q48yYXcfU6qM7Cou42hfiwVNEkcFdfYxFyVgejMaIGwcLtD8Eh
+         BzPRVL7rEyVDjdf+pwSSc+Onrj3V1i6jrjqo60ozPVldxF+oJ1mveknLrFQcGz6/wCo0
+         7XY4RhzpQ8pSWwxzeCHZAvGUcWr2nqjZlk10JBZgYuv6dN4qPC5ItMKDBP/FEOI12X1G
+         kkrg==
+X-Gm-Message-State: AHQUAuYjsa6eBMXG+EoFjndKNtlAU00bu9TopWxKhibmEeUHAxAmZTd1
+        tz4IB/u5t4lzgJHrGxPGgPSnQhs6
+X-Google-Smtp-Source: AHgI3IbxeEx3o2x0EN5Fme8DDjbmSTh4ipK47XnHHLN7r3ozBCRUhpxdb7ZBcm52YETbGf6BDh2/7A==
+X-Received: by 2002:a63:2ccb:: with SMTP id s194mr6413069pgs.214.1550252329094;
+        Fri, 15 Feb 2019 09:38:49 -0800 (PST)
+Received: from [10.67.48.220] ([192.19.223.250])
+        by smtp.googlemail.com with ESMTPSA id w6sm11307724pga.72.2019.02.15.09.38.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Feb 2019 09:38:48 -0800 (PST)
+Subject: Re: [PATCH RESEND net] net: phy: xgmiitorgmii: Support generic PHY
+ status read
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20190215163220.20041-1-paul.kocialkowski@bootlin.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
+Message-ID: <387ed483-b205-beda-319d-6f2b8ea55601@gmail.com>
+Date:   Fri, 15 Feb 2019 09:38:27 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190215115655.63469-1-alexander.shishkin@linux.intel.com>
- <20190215115655.63469-3-alexander.shishkin@linux.intel.com> <20190215145453.GG5784@redhat.com>
-In-Reply-To: <20190215145453.GG5784@redhat.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Fri, 15 Feb 2019 10:38:01 -0700
-Message-ID: <CANLsYky1_4yQPbg=mv=+JfBM8273shmM1kXpussb90-2CLru1Q@mail.gmail.com>
-Subject: Re: [PATCH v0 2/2] perf, pt, coresight: Fix address filters for vmas
- with non-zero offset
-To:     Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190215163220.20041-1-paul.kocialkowski@bootlin.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 15 Feb 2019 at 07:54, Arnaldo Carvalho de Melo <acme@redhat.com> wrote:
->
-> Adding Mathieu to the CC list.
->
-> Em Fri, Feb 15, 2019 at 01:56:55PM +0200, Alexander Shishkin escreveu:
-> > Currently, the address range calculation for file-based filters works as
-> > long as the vma that maps the matching part of the object file starts from
-> > offset zero into the file (vm_pgoff==0). Otherwise, the resulting filter
-> > range would be off by vm_pgoff pages. Another related problem is that in
-> > case of a partially matching vma, that is, a vma that matches part of a
-> > filter region, the filter range size wouldn't be adjusted.
-> >
-> > Fix the arithmetics around address filter range calculations, taking into
-> > account vma offset, so that the entire calculation is done before the
-> > filter configuration is passed to the PMU drivers instead of having those
-> > drivers do the final bit of arithmetics.
-> >
-> > Based on the patch by Adrian Hunter <adrian.hunter.intel.com>.
-> >
-> > Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> > Fixes: 375637bc5249 ("perf/core: Introduce address range filtering")
-> > Reported-by: Adrian Hunter <adrian.hunter@intel.com>
-> > ---
-> >  arch/x86/events/intel/pt.c                    |  9 ++-
-> >  .../hwtracing/coresight/coresight-etm-perf.c  |  7 +-
-> >  include/linux/perf_event.h                    |  7 +-
-> >  kernel/events/core.c                          | 81 +++++++++++--------
-> >  4 files changed, 62 insertions(+), 42 deletions(-)
-> >
-> > diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
-> > index cb4c10fdf793..c0c44c055eaa 100644
-> > --- a/arch/x86/events/intel/pt.c
-> > +++ b/arch/x86/events/intel/pt.c
-> > @@ -1223,7 +1223,8 @@ static int pt_event_addr_filters_validate(struct list_head *filters)
-> >  static void pt_event_addr_filters_sync(struct perf_event *event)
-> >  {
-> >       struct perf_addr_filters_head *head = perf_event_addr_filters(event);
-> > -     unsigned long msr_a, msr_b, *offs = event->addr_filters_offs;
-> > +     unsigned long msr_a, msr_b;
-> > +     struct perf_addr_filter_range *fr = event->addr_filter_ranges;
-> >       struct pt_filters *filters = event->hw.addr_filters;
-> >       struct perf_addr_filter *filter;
-> >       int range = 0;
-> > @@ -1232,12 +1233,12 @@ static void pt_event_addr_filters_sync(struct perf_event *event)
-> >               return;
-> >
-> >       list_for_each_entry(filter, &head->list, entry) {
-> > -             if (filter->path.dentry && !offs[range]) {
-> > +             if (filter->path.dentry && !fr[range].start) {
-> >                       msr_a = msr_b = 0;
-> >               } else {
-> >                       /* apply the offset */
-> > -                     msr_a = filter->offset + offs[range];
-> > -                     msr_b = filter->size + msr_a - 1;
-> > +                     msr_a = fr[range].start;
-> > +                     msr_b = msr_a + fr[range].size - 1;
-> >               }
-> >
-> >               filters->filter[range].msr_a  = msr_a;
-> > diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-> > index 8c88bf0a1e5f..4d5a2b9f9d6a 100644
-> > --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-> > +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-> > @@ -433,15 +433,16 @@ static int etm_addr_filters_validate(struct list_head *filters)
-> >  static void etm_addr_filters_sync(struct perf_event *event)
-> >  {
-> >       struct perf_addr_filters_head *head = perf_event_addr_filters(event);
-> > -     unsigned long start, stop, *offs = event->addr_filters_offs;
-> > +     unsigned long start, stop;
-> > +     struct perf_addr_filter_range *fr = event->addr_filter_ranges;
-> >       struct etm_filters *filters = event->hw.addr_filters;
-> >       struct etm_filter *etm_filter;
-> >       struct perf_addr_filter *filter;
-> >       int i = 0;
-> >
-> >       list_for_each_entry(filter, &head->list, entry) {
-> > -             start = filter->offset + offs[i];
-> > -             stop = start + filter->size;
-> > +             start = fr[i].start;
-> > +             stop = start + fr[i].size;
-> >               etm_filter = &filters->etm_filter[i];
-> >
-> >               switch (filter->action) {
-> > diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-> > index d9c3610e0e25..6ebc72f65017 100644
-> > --- a/include/linux/perf_event.h
-> > +++ b/include/linux/perf_event.h
-> > @@ -490,6 +490,11 @@ struct perf_addr_filters_head {
-> >       unsigned int            nr_file_filters;
-> >  };
-> >
-> > +struct perf_addr_filter_range {
-> > +     unsigned long           start;
-> > +     unsigned long           size;
-> > +};
-> > +
-> >  /**
-> >   * enum perf_event_state - the states of an event:
-> >   */
-> > @@ -666,7 +671,7 @@ struct perf_event {
-> >       /* address range filters */
-> >       struct perf_addr_filters_head   addr_filters;
-> >       /* vma address array for file-based filders */
-> > -     unsigned long                   *addr_filters_offs;
-> > +     struct perf_addr_filter_range   *addr_filter_ranges;
-> >       unsigned long                   addr_filters_gen;
-> >
-> >       void (*destroy)(struct perf_event *);
-> > diff --git a/kernel/events/core.c b/kernel/events/core.c
-> > index 2d89efc0a3e0..16609f6737da 100644
-> > --- a/kernel/events/core.c
-> > +++ b/kernel/events/core.c
-> > @@ -2799,7 +2799,7 @@ static int perf_event_stop(struct perf_event *event, int restart)
-> >   *
-> >   * (p1) when userspace mappings change as a result of (1) or (2) or (3) below,
-> >   *      we update the addresses of corresponding vmas in
-> > - *   event::addr_filters_offs array and bump the event::addr_filters_gen;
-> > + *   event::addr_filter_ranges array and bump the event::addr_filters_gen;
-> >   * (p2) when an event is scheduled in (pmu::add), it calls
-> >   *      perf_event_addr_filters_sync() which calls pmu::addr_filters_sync()
-> >   *      if the generation has changed since the previous call.
-> > @@ -4446,7 +4446,7 @@ static void _free_event(struct perf_event *event)
-> >
-> >       perf_event_free_bpf_prog(event);
-> >       perf_addr_filters_splice(event, NULL);
-> > -     kfree(event->addr_filters_offs);
-> > +     kfree(event->addr_filter_ranges);
-> >
-> >       if (event->destroy)
-> >               event->destroy(event);
-> > @@ -6687,7 +6687,8 @@ static void perf_event_addr_filters_exec(struct perf_event *event, void *data)
-> >       raw_spin_lock_irqsave(&ifh->lock, flags);
-> >       list_for_each_entry(filter, &ifh->list, entry) {
-> >               if (filter->path.dentry) {
-> > -                     event->addr_filters_offs[count] = 0;
-> > +                     event->addr_filter_ranges[count].start = 0;
-> > +                     event->addr_filter_ranges[count].size = 0;
-> >                       restart++;
-> >               }
-> >
-> > @@ -7367,28 +7368,47 @@ static bool perf_addr_filter_match(struct perf_addr_filter *filter,
-> >       return true;
-> >  }
-> >
-> > +static bool perf_addr_filter_vma_adjust(struct perf_addr_filter *filter,
-> > +                                     struct vm_area_struct *vma,
-> > +                                     struct perf_addr_filter_range *fr)
-> > +{
-> > +     unsigned long vma_size = vma->vm_end - vma->vm_start;
-> > +     unsigned long off = vma->vm_pgoff << PAGE_SHIFT;
-> > +     struct file *file = vma->vm_file;
-> > +
-> > +     if (!perf_addr_filter_match(filter, file, off, vma_size))
-> > +             return false;
-> > +
-> > +     if (filter->offset < off) {
-> > +             fr->start = vma->vm_start;
-> > +             fr->size = min(vma_size, filter->size - (off - filter->offset));
-> > +     } else {
-> > +             fr->start = vma->vm_start + filter->offset - off;
-> > +             fr->size = min(vma->vm_end - fr->start, filter->size);
-> > +     }
-> > +
-> > +     return true;
-> > +}
-> > +
-> >  static void __perf_addr_filters_adjust(struct perf_event *event, void *data)
-> >  {
-> >       struct perf_addr_filters_head *ifh = perf_event_addr_filters(event);
-> >       struct vm_area_struct *vma = data;
-> > -     unsigned long off = vma->vm_pgoff << PAGE_SHIFT, flags;
-> > -     struct file *file = vma->vm_file;
-> >       struct perf_addr_filter *filter;
-> >       unsigned int restart = 0, count = 0;
-> > +     unsigned long flags;
-> >
-> >       if (!has_addr_filter(event))
-> >               return;
-> >
-> > -     if (!file)
-> > +     if (!vma->vm_file)
-> >               return;
-> >
-> >       raw_spin_lock_irqsave(&ifh->lock, flags);
-> >       list_for_each_entry(filter, &ifh->list, entry) {
-> > -             if (perf_addr_filter_match(filter, file, off,
-> > -                                          vma->vm_end - vma->vm_start)) {
-> > -                     event->addr_filters_offs[count] = vma->vm_start;
-> > +             if (perf_addr_filter_vma_adjust(filter, vma,
-> > +                                             &event->addr_filter_ranges[count]))
-> >                       restart++;
-> > -             }
-> >
-> >               count++;
-> >       }
-> > @@ -8978,26 +8998,19 @@ static void perf_addr_filters_splice(struct perf_event *event,
-> >   * @filter; if so, adjust filter's address range.
-> >   * Called with mm::mmap_sem down for reading.
-> >   */
-> > -static unsigned long perf_addr_filter_apply(struct perf_addr_filter *filter,
-> > -                                         struct mm_struct *mm)
-> > +static void perf_addr_filter_apply(struct perf_addr_filter *filter,
-> > +                                struct mm_struct *mm,
-> > +                                struct perf_addr_filter_range *fr)
-> >  {
-> >       struct vm_area_struct *vma;
-> >
-> >       for (vma = mm->mmap; vma; vma = vma->vm_next) {
-> > -             struct file *file = vma->vm_file;
-> > -             unsigned long off = vma->vm_pgoff << PAGE_SHIFT;
-> > -             unsigned long vma_size = vma->vm_end - vma->vm_start;
-> > -
-> > -             if (!file)
-> > +             if (!vma->vm_file)
-> >                       continue;
-> >
-> > -             if (!perf_addr_filter_match(filter, file, off, vma_size))
-> > -                     continue;
-> > -
-> > -             return vma->vm_start;
-> > +             if (perf_addr_filter_vma_adjust(filter, vma, fr))
-> > +                     return;
-> >       }
-> > -
-> > -     return 0;
-> >  }
-> >
-> >  /*
-> > @@ -9031,15 +9044,15 @@ static void perf_event_addr_filters_apply(struct perf_event *event)
-> >
-> >       raw_spin_lock_irqsave(&ifh->lock, flags);
-> >       list_for_each_entry(filter, &ifh->list, entry) {
-> > -             event->addr_filters_offs[count] = 0;
-> > +             event->addr_filter_ranges[count].start = 0;
-> > +             event->addr_filter_ranges[count].size = 0;
-> >
-> >               /*
-> >                * Adjust base offset if the filter is associated to a binary
-> >                * that needs to be mapped:
-> >                */
-> >               if (filter->path.dentry)
-> > -                     event->addr_filters_offs[count] =
-> > -                             perf_addr_filter_apply(filter, mm);
-> > +                     perf_addr_filter_apply(filter, mm, &event->addr_filter_ranges[count]);
-> >
-> >               count++;
-> >       }
-> > @@ -10305,10 +10318,10 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
-> >               goto err_pmu;
-> >
-> >       if (has_addr_filter(event)) {
-> > -             event->addr_filters_offs = kcalloc(pmu->nr_addr_filters,
-> > -                                                sizeof(unsigned long),
-> > -                                                GFP_KERNEL);
-> > -             if (!event->addr_filters_offs) {
-> > +             event->addr_filter_ranges = kcalloc(pmu->nr_addr_filters,
-> > +                                                 sizeof(struct perf_addr_filter_range),
-> > +                                                 GFP_KERNEL);
-> > +             if (!event->addr_filter_ranges) {
-> >                       err = -ENOMEM;
-> >                       goto err_per_task;
-> >               }
-> > @@ -10321,9 +10334,9 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
-> >                       struct perf_addr_filters_head *ifh = perf_event_addr_filters(event);
-> >
-> >                       raw_spin_lock_irq(&ifh->lock);
-> > -                     memcpy(event->addr_filters_offs,
-> > -                            event->parent->addr_filters_offs,
-> > -                            pmu->nr_addr_filters * sizeof(unsigned long));
-> > +                     memcpy(event->addr_filter_ranges,
-> > +                            event->parent->addr_filter_ranges,
-> > +                            pmu->nr_addr_filters * sizeof(struct perf_addr_filter_range));
-> >                       raw_spin_unlock_irq(&ifh->lock);
-> >               }
-> >
-> > @@ -10345,7 +10358,7 @@ perf_event_alloc(struct perf_event_attr *attr, int cpu,
-> >       return event;
-> >
-> >  err_addr_filters:
-> > -     kfree(event->addr_filters_offs);
-> > +     kfree(event->addr_filter_ranges);
-> >
+On 2/15/19 8:32 AM, Paul Kocialkowski wrote:
+> Some PHY drivers like the generic one do not provide a read_status
+> callback on their own but rely on genphy_read_status being called
+> directly.
+> 
+> With the current code, this results in a NULL function pointer call.
+> Call genphy_read_status instead when there is no specific callback.
+> 
+> Fixes: f411a6160bd4 ("net: phy: Add gmiitorgmii converter support")
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> ---
+> Added Fixes tag and net label for resend.
 
-Thanks for CC'ing me on this Arnaldo.
+You would want to use phy_read_status() which encapsulates that check as
+well as checks that the phy_drv pointer is not NULL.
 
-Tested-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> 
+>  drivers/net/phy/xilinx_gmii2rgmii.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/phy/xilinx_gmii2rgmii.c b/drivers/net/phy/xilinx_gmii2rgmii.c
+> index 74a8782313cf..bd6084e315de 100644
+> --- a/drivers/net/phy/xilinx_gmii2rgmii.c
+> +++ b/drivers/net/phy/xilinx_gmii2rgmii.c
+> @@ -44,7 +44,10 @@ static int xgmiitorgmii_read_status(struct phy_device *phydev)
+>  	u16 val = 0;
+>  	int err;
+>  
+> -	err = priv->phy_drv->read_status(phydev);
+> +	if (priv->phy_drv->read_status)
+> +		err = priv->phy_drv->read_status(phydev);
+> +	else
+> +		err = genphy_read_status(phydev);
+>  	if (err < 0)
+>  		return err;
+>  
+> 
 
 
-> >  err_per_task:
-> >       exclusive_event_destroy(event);
-> > --
-> > 2.20.1
+-- 
+Florian
