@@ -2,151 +2,103 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6DA3C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:09:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5FEC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACCDF218AC
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:09:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21094218AC
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:10:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437021AbfBONJw (ORCPT
+        id S2437037AbfBONKR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 08:09:52 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59452 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727524AbfBONJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 08:09:52 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5EA9EA78;
-        Fri, 15 Feb 2019 05:09:51 -0800 (PST)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3BE993F575;
-        Fri, 15 Feb 2019 05:09:45 -0800 (PST)
-Date:   Fri, 15 Feb 2019 13:09:42 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Khalid Aziz <khalid.aziz@oracle.com>
-Cc:     juergh@gmail.com, tycho@tycho.ws, jsteckli@amazon.de,
-        ak@linux.intel.com, torvalds@linux-foundation.org,
-        liran.alon@oracle.com, keescook@google.com,
-        akpm@linux-foundation.org, mhocko@suse.com,
-        catalin.marinas@arm.com, will.deacon@arm.com, jmorris@namei.org,
-        konrad.wilk@oracle.com, Tycho Andersen <tycho@docker.com>,
-        deepa.srinivasan@oracle.com, chris.hyser@oracle.com,
-        tyhicks@canonical.com, dwmw@amazon.co.uk,
-        andrew.cooper3@citrix.com, jcm@redhat.com,
-        boris.ostrovsky@oracle.com, kanth.ghatraju@oracle.com,
-        oao.m.martins@oracle.com, jmattson@google.com,
-        pradeep.vincent@oracle.com, john.haxby@oracle.com,
-        tglx@linutronix.de, kirill.shutemov@linux.intel.com, hch@lst.de,
-        steven.sistare@oracle.com, labbott@redhat.com, luto@kernel.org,
-        dave.hansen@intel.com, peterz@infradead.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        x86@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v8 08/14] arm64/mm: disable section/contiguous
- mappings if XPFO is enabled
-Message-ID: <20190215130942.GD53520@lakrids.cambridge.arm.com>
-References: <cover.1550088114.git.khalid.aziz@oracle.com>
- <0b9624b6c1fe5a31d73a6390e063d551bfebc321.1550088114.git.khalid.aziz@oracle.com>
+        Fri, 15 Feb 2019 08:10:17 -0500
+Received: from mga17.intel.com ([192.55.52.151]:2647 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729125AbfBONKR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 08:10:17 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Feb 2019 05:10:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,372,1544515200"; 
+   d="scan'208";a="275317145"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
+  by orsmga004.jf.intel.com with ESMTP; 15 Feb 2019 05:10:15 -0800
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id EF062300E42; Fri, 15 Feb 2019 05:10:14 -0800 (PST)
+Date:   Fri, 15 Feb 2019 05:10:14 -0800
+From:   Andi Kleen <ak@linux.intel.com>
+To:     "Wang, Wei W" <wei.w.wang@intel.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "Liang, Kan" <kan.liang@intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "Xu, Like" <like.xu@intel.com>,
+        "jannh@google.com" <jannh@google.com>,
+        "arei.gonglei@huawei.com" <arei.gonglei@huawei.com>,
+        "jmattson@google.com" <jmattson@google.com>
+Subject: Re: [PATCH v5 12/12] KVM/VMX/vPMU: support to report
+ GLOBAL_STATUS_LBRS_FROZEN
+Message-ID: <20190215131014.GC16922@tassilo.jf.intel.com>
+References: <1550135174-5423-1-git-send-email-wei.w.wang@intel.com>
+ <1550135174-5423-13-git-send-email-wei.w.wang@intel.com>
+ <20190214163147.GL16922@tassilo.jf.intel.com>
+ <286AC319A985734F985F78AFA26841F73DF71ED6@shsmsx102.ccr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0b9624b6c1fe5a31d73a6390e063d551bfebc321.1550088114.git.khalid.aziz@oracle.com>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+In-Reply-To: <286AC319A985734F985F78AFA26841F73DF71ED6@shsmsx102.ccr.corp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Wed, Feb 13, 2019 at 05:01:31PM -0700, Khalid Aziz wrote:
-> From: Tycho Andersen <tycho@docker.com>
+On Fri, Feb 15, 2019 at 08:56:02AM +0000, Wang, Wei W wrote:
+> On Friday, February 15, 2019 12:32 AM, Andi Kleen wrote:
+> > 
+> > > +static void intel_pmu_get_global_status(struct kvm_pmu *pmu,
+> > > +					struct msr_data *msr_info)
+> > > +{
+> > > +	u64 guest_debugctl, freeze_lbr_bits =
+> > DEBUGCTLMSR_FREEZE_LBRS_ON_PMI |
+> > > +					      DEBUGCTLMSR_LBR;
+> > > +
+> > > +	if (!pmu->global_status) {
+> > > +		msr_info->data = 0;
+> > > +		return;
+> > > +	}
+> > > +
+> > > +	msr_info->data = pmu->global_status;
+> > > +	if (pmu->version >= 4) {
+> > > +		guest_debugctl = vmcs_read64(GUEST_IA32_DEBUGCTL);
+> > > +		if ((guest_debugctl & freeze_lbr_bits) == freeze_lbr_bits)
+> > 
+> > It should only check for the freeze bit, the freeze bit can be set even when
+> > LBRs are disabled.
+> > 
+> > Also you seem to set the bit unconditionally?
+> > That doesn't seem right. It should only be set after an overflow.
+> > 
+> > So the PMI injection needs to set it.
 > 
-> XPFO doesn't support section/contiguous mappings yet, so let's disable it
-> if XPFO is turned on.
-> 
-> Thanks to Laura Abbot for the simplification from v5, and Mark Rutland for
-> pointing out we need NO_CONT_MAPPINGS too.
-> 
-> CC: linux-arm-kernel@lists.infradead.org
-> Signed-off-by: Tycho Andersen <tycho@docker.com>
-> Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
+> OK. The freeze bits need to be cleared by IA32_PERF_GLOBAL_STATUS_RESET, which seems not supported by the perf code yet (thus guest won't clear them). Would handle_irq_v4 also need to be changed to support that?
 
-There should be no point in this series where it's possible to enable a
-broken XPFO. Either this patch should be merged into the rest of the
-arm64 bits, or it should be placed before the rest of the arm64 bits.
+In Arch Perfmon v4 it is  cleared by the MSR_CORE_PERF_GLOBAL_OVF_CTRL write
+But the guest KVM pmu doesn't support v4 so far, so the only way to clear it is through DEBUGCTL.
 
-That's a pre-requisite for merging, and it significantly reduces the
-burden on reviewers.
+STATUS_RESET would only be needed to set it from the guest, which is not necessary at least for now
+(and would be also v4)
 
-In general, a patch series should bisect cleanly. Could you please
-restructure the series to that effect?
+At some point the guest PMU should probably be updated for v4, but it can be done
+separately from this.
 
-Thanks,
-Mark.
-
-> ---
->  arch/arm64/mm/mmu.c  | 2 +-
->  include/linux/xpfo.h | 4 ++++
->  mm/xpfo.c            | 6 ++++++
->  3 files changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-> index d1d6601b385d..f4dd27073006 100644
-> --- a/arch/arm64/mm/mmu.c
-> +++ b/arch/arm64/mm/mmu.c
-> @@ -451,7 +451,7 @@ static void __init map_mem(pgd_t *pgdp)
->  	struct memblock_region *reg;
->  	int flags = 0;
->  
-> -	if (debug_pagealloc_enabled())
-> +	if (debug_pagealloc_enabled() || xpfo_enabled())
->  		flags = NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
->  
->  	/*
-> diff --git a/include/linux/xpfo.h b/include/linux/xpfo.h
-> index 1ae05756344d..8b029918a958 100644
-> --- a/include/linux/xpfo.h
-> +++ b/include/linux/xpfo.h
-> @@ -47,6 +47,8 @@ void xpfo_temp_map(const void *addr, size_t size, void **mapping,
->  void xpfo_temp_unmap(const void *addr, size_t size, void **mapping,
->  		     size_t mapping_len);
->  
-> +bool xpfo_enabled(void);
-> +
->  #else /* !CONFIG_XPFO */
->  
->  static inline void xpfo_kmap(void *kaddr, struct page *page) { }
-> @@ -69,6 +71,8 @@ static inline void xpfo_temp_unmap(const void *addr, size_t size,
->  }
->  
->  
-> +static inline bool xpfo_enabled(void) { return false; }
-> +
->  #endif /* CONFIG_XPFO */
->  
->  #endif /* _LINUX_XPFO_H */
-> diff --git a/mm/xpfo.c b/mm/xpfo.c
-> index 92ca6d1baf06..150784ae0f08 100644
-> --- a/mm/xpfo.c
-> +++ b/mm/xpfo.c
-> @@ -71,6 +71,12 @@ struct page_ext_operations page_xpfo_ops = {
->  	.init = init_xpfo,
->  };
->  
-> +bool __init xpfo_enabled(void)
-> +{
-> +	return !xpfo_disabled;
-> +}
-> +EXPORT_SYMBOL(xpfo_enabled);
-> +
->  static inline struct xpfo *lookup_xpfo(struct page *page)
->  {
->  	struct page_ext *page_ext = lookup_page_ext(page);
-> -- 
-> 2.17.1
-> 
+-Andi
