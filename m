@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EFD0C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:28:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B208EC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:28:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E5402073D
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:28:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8061A2073D
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:28:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197726;
-	bh=0vSfSMiU+8pGBB8ZgIziX9dfMiKns8BV9JC+iioPptU=;
+	s=default; t=1550197730;
+	bh=ldNhhAbC2FdOyzUuSS3YUvKcfzA+jzkS6VxIokd35fM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pZD/TU/66mPsZlmztfdCbU1j9I35epVW+wy3fctJ/BJsRcTgUBizObwVpGEpPRrBS
-	 MiA+f8uLzMqkxNC2pKydxaBjYumrxA7t9+9/TXHSKqNTY25hawiQQfU/R3Qu7zDGBC
-	 r9qxzB0YKmMH/DjfuEmeTB1hUgEjjsnYQX7n9S8U=
+	b=WXegfUW/ErDLyztl8ld9Mr4hi0ouHcwBDh7Dy25Nw6kzH558qbnlVJU4BcaVdHBKY
+	 gLyLmXTTSQaod6YmlVKoAoP0ZsKLUcgxAnAYhamrrfEehTvhM6PVoB465WX/F6BTHf
+	 w0AgxE0Uqu4S7FRaP40nL8tnf/1qlTo//fhWqhQQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404633AbfBOCNU (ORCPT
+        id S1730577AbfBOC2s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:13:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53118 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:28:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53280 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389380AbfBOCNN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:13:13 -0500
+        id S2404637AbfBOCNU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:13:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1208421934;
-        Fri, 15 Feb 2019 02:13:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1B9921B1C;
+        Fri, 15 Feb 2019 02:13:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196792;
-        bh=0vSfSMiU+8pGBB8ZgIziX9dfMiKns8BV9JC+iioPptU=;
+        s=default; t=1550196800;
+        bh=ldNhhAbC2FdOyzUuSS3YUvKcfzA+jzkS6VxIokd35fM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FgQRybK9A2+hQQmInmBcnqea9pFcnEMi1k5v9MVIN9sULc3FqazQwE+O/HzVjhu8+
-         /6spDx+wSQB1yCMIju5lkoTtCgTPYz7NaFVMgVesNIg90Xwcz2Z0ugNO+ACdJSHWru
-         zX51P3AMB11tEeR6DVflgaejCcYaZjJYqR2Xi5rc=
+        b=HbnVaKyJq+yHslvC42EUba1LAuwKPCKHHCJRYzQCBGYO9CTPGkutS4fa0qOEMGxnQ
+         du5mprnV4xSxkGq9shrGY9J5du2zSYrgRCyxOrpSnD/LAHwRt4gfA9gBfQbTS0H+PO
+         FyKxEXsYzxbs/54SKIBijghEOJ8Lj0IV1I9CIMcI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 65/65] Revert "block: cover another queue enter recursion via BIO_QUEUE_ENTERED"
-Date:   Thu, 14 Feb 2019 21:11:21 -0500
-Message-Id: <20190215021121.177674-65-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 03/40] ALSA: compress: prevent potential divide by zero bugs
+Date:   Thu, 14 Feb 2019 21:12:36 -0500
+Message-Id: <20190215021313.178476-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
-References: <20190215021121.177674-1-sashal@kernel.org>
+In-Reply-To: <20190215021313.178476-1-sashal@kernel.org>
+References: <20190215021313.178476-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -57,67 +57,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 947b7ac135b16aa60f9141ff72bd494eda0edb5e ]
+[ Upstream commit 678e2b44c8e3fec3afc7202f1996a4500a50be93 ]
 
-We can't touch a bio after ->make_request_fn(), for all we know it could
-already have been completed by the time this function returns.
+The problem is seen in the q6asm_dai_compr_set_params() function:
 
-This reverts commit 698cef173983b086977e633e46476e0f925ca01e.
+	ret = q6asm_map_memory_regions(dir, prtd->audio_client, prtd->phys,
+				       (prtd->pcm_size / prtd->periods),
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+				       prtd->periods);
 
-Reported-by: syzbot+4df6ca820108fd248943@syzkaller.appspotmail.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+In this code prtd->pcm_size is the buffer_size and prtd->periods comes
+from params->buffer.fragments.  If we allow the number of fragments to
+be zero then it results in a divide by zero bug.  One possible fix would
+be to use prtd->pcm_count directly instead of using the division to
+re-calculate it.  But I decided that it doesn't really make sense to
+allow zero fragments.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/blk-core.c  | 11 -----------
- block/blk-merge.c | 10 ++++++++++
- 2 files changed, 10 insertions(+), 11 deletions(-)
+ sound/core/compress_offload.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index a9fde80606d7..eb8b52241453 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -2454,18 +2454,7 @@ blk_qc_t generic_make_request(struct bio *bio)
- 			/* Create a fresh bio_list for all subordinate requests */
- 			bio_list_on_stack[1] = bio_list_on_stack[0];
- 			bio_list_init(&bio_list_on_stack[0]);
--
--			/*
--			 * Since we're recursing into make_request here, ensure
--			 * that we mark this bio as already having entered the queue.
--			 * If not, and the queue is going away, we can get stuck
--			 * forever on waiting for the queue reference to drop. But
--			 * that will never happen, as we're already holding a
--			 * reference to it.
--			 */
--			bio_set_flag(bio, BIO_QUEUE_ENTERED);
- 			ret = q->make_request_fn(q, bio);
--			bio_clear_flag(bio, BIO_QUEUE_ENTERED);
+diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
+index 4490a699030b..555df64d46ff 100644
+--- a/sound/core/compress_offload.c
++++ b/sound/core/compress_offload.c
+@@ -529,7 +529,8 @@ static int snd_compress_check_input(struct snd_compr_params *params)
+ {
+ 	/* first let's check the buffer parameter's */
+ 	if (params->buffer.fragment_size == 0 ||
+-	    params->buffer.fragments > INT_MAX / params->buffer.fragment_size)
++	    params->buffer.fragments > INT_MAX / params->buffer.fragment_size ||
++	    params->buffer.fragments == 0)
+ 		return -EINVAL;
  
- 			/* sort new bios into those for a lower level
- 			 * and those for the same level
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index ba7f732c519e..2e042190a4f1 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -211,6 +211,16 @@ void blk_queue_split(struct request_queue *q, struct bio **bio)
- 		/* there isn't chance to merge the splitted bio */
- 		split->bi_opf |= REQ_NOMERGE;
- 
-+		/*
-+		 * Since we're recursing into make_request here, ensure
-+		 * that we mark this bio as already having entered the queue.
-+		 * If not, and the queue is going away, we can get stuck
-+		 * forever on waiting for the queue reference to drop. But
-+		 * that will never happen, as we're already holding a
-+		 * reference to it.
-+		 */
-+		bio_set_flag(*bio, BIO_QUEUE_ENTERED);
-+
- 		bio_chain(split, *bio);
- 		trace_block_split(q, split, (*bio)->bi_iter.bi_sector);
- 		generic_make_request(*bio);
+ 	/* now codec parameters */
 -- 
 2.19.1
 
