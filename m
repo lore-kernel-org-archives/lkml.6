@@ -2,117 +2,96 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DB0BC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:37:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B9EAC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:41:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 288AE206C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:37:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50E8C206C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:41:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390619AbfBOShq (ORCPT
+        id S1731674AbfBOSlF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 13:37:46 -0500
-Received: from mx-rz-1.rrze.uni-erlangen.de ([131.188.11.20]:59748 "EHLO
-        mx-rz-1.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2388116AbfBOShq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 13:37:46 -0500
-X-Greylist: delayed 551 seconds by postgrey-1.27 at vger.kernel.org; Fri, 15 Feb 2019 13:37:45 EST
-Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mx-rz-1.rrze.uni-erlangen.de (Postfix) with ESMTPS id 441MG86q5jz8vB3;
-        Fri, 15 Feb 2019 19:28:32 +0100 (CET)
-Authentication-Results: mx-rz-1.rrze.uni-erlangen.de; dkim=none
-        reason="no signature"; dkim-adsp=none (unprotected policy);
-        dkim-atps=neutral
-X-Virus-Scanned: amavisd-new at boeck2.rrze.uni-erlangen.de (RRZE)
-X-RRZE-Flag: Not-Spam
-X-RRZE-Submit-IP: 93.217.154.217
-Received: from fau.de (p5DD99AD9.dip0.t-ipconnect.de [93.217.154.217])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: U2FsdGVkX19ITf61O2P3j8Vrxl4taMRLsPw/0Jq1wYk=)
-        by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 441MG64fvQz8tZr;
-        Fri, 15 Feb 2019 19:28:30 +0100 (CET)
-From:   Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
-To:     linux-perf-users@vger.kernel.org
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        Stephane Eranian <eranian@google.com>,
-        Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] perf: update perf.data file format documentation
-Date:   Fri, 15 Feb 2019 19:28:23 +0100
-Message-Id: <20190215182823.303-1-jonas.rabenstein@studium.uni-erlangen.de>
-X-Mailer: git-send-email 2.19.2
+        Fri, 15 Feb 2019 13:41:05 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37532 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727890AbfBOSlE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 13:41:04 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8F399A78;
+        Fri, 15 Feb 2019 10:41:03 -0800 (PST)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 937D53F589;
+        Fri, 15 Feb 2019 10:40:58 -0800 (PST)
+Date:   Fri, 15 Feb 2019 18:40:56 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        uclinux-h8-devel@lists.sourceforge.jp,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        linux-arch@vger.kernel.org, x86@kernel.org,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>
+Subject: Re: [PATCH v4 0/3] locking/rwsem: Rwsem rearchitecture part 0
+Message-ID: <20190215184056.GC15084@fuggles.cambridge.arm.com>
+References: <1550095217-12047-1-git-send-email-longman@redhat.com>
+ <20190214103715.GI32494@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190214103715.GI32494@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I found that the documentation of the flags section is some how
-different from the actual format used and expected by the perf
-tools. In this patch the according section of the file format
-documentation is updated to conform to the expectations of the
-perf tool suite.
+On Thu, Feb 14, 2019 at 11:37:15AM +0100, Peter Zijlstra wrote:
+> On Wed, Feb 13, 2019 at 05:00:14PM -0500, Waiman Long wrote:
+> > v4:
+> >  - Remove rwsem-spinlock.c and make all archs use rwsem-xadd.c.
+> > 
+> > v3:
+> >  - Optimize __down_read_trylock() for the uncontended case as suggested
+> >    by Linus.
+> > 
+> > v2:
+> >  - Add patch 2 to optimize __down_read_trylock() as suggested by PeterZ.
+> >  - Update performance test data in patch 1.
+> > 
+> > The goal of this patchset is to remove the architecture specific files
+> > for rwsem-xadd to make it easer to add enhancements in the later rwsem
+> > patches. It also removes the legacy rwsem-spinlock.c file and make all
+> > the architectures use one single implementation of rwsem - rwsem-xadd.c.
+> > 
+> > Waiman Long (3):
+> >   locking/rwsem: Remove arch specific rwsem files
+> >   locking/rwsem: Remove rwsem-spinlock.c & use rwsem-xadd.c for all
+> >     archs
+> >   locking/rwsem: Optimize down_read_trylock()
+> 
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> 
+> with the caveat that I'm happy to exchange patch 3 back to my earlier
+> suggestion in case Will expesses concerns wrt the ARM64 performance of
+> Linus' suggestion.
 
-Signed-off-by: Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
----
- .../perf/Documentation/perf.data-file-format.txt  | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+Right, the current proposal doesn't work well for us, unfortunately. Which
+was your earlier suggestion?
 
-diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
-index dfb218feaad9..6ea199f28330 100644
---- a/tools/perf/Documentation/perf.data-file-format.txt
-+++ b/tools/perf/Documentation/perf.data-file-format.txt
-@@ -43,13 +43,10 @@ struct perf_file_section {
- 
- Flags section:
- 
--The header is followed by different optional headers, described by the bits set
--in flags. Only headers for which the bit is set are included. Each header
--consists of a perf_file_section located after the initial header.
--The respective perf_file_section points to the data of the additional
--header and defines its size.
--
--Some headers consist of strings, which are defined like this:
-+The Flags section is placed directly after the data section and consists of a
-+variable amount of information described by the flags-bitset in the perf_header.
-+A lot of the headers in the Flags section are simple strings and are represented
-+like this:
- 
- struct perf_header_string {
-        uint32_t len;
-@@ -82,7 +79,7 @@ assigned by the linker to an executable.
- struct build_id_event {
- 	struct perf_event_header header;
- 	pid_t			 pid;
--	uint8_t			 build_id[24];
-+	uint8_t			 build_id[PERF_ALIGN(24, sizeof(u64))];
- 	char			 filename[header.size - offsetof(struct build_id_event, filename)];
- };
- 
-@@ -131,7 +128,7 @@ An uint64_t with the total memory in bytes.
- 
- 	HEADER_CMDLINE = 11,
- 
--A perf_header_string with the perf command line used to collect the data.
-+A perf_header_string_list with the perf arg-vector used to collect the data.
- 
- 	HEADER_EVENT_DESC = 12,
- 
--- 
-2.17.1
-
+Will
