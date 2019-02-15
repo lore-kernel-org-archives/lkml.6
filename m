@@ -2,180 +2,126 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD2FEC10F04
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:41:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F8EDC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:41:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 824B62192B
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:41:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550198469;
-	bh=mOBP+9rPnX0dhUGx4qlf39uMWjz/4et0MCUUEMNWhVc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BgzMrmWZPo1hG7yrj8Cwdn585vXaUZUb5ElokoUgJrWRqnC2W/pRsAwwrzef9JHrA
-	 0aDIVZjYgiyxUr+fzxQFhOPB/JakxpEra1gX8M+64B6dQNCGcyBE/aLMaQnF2Q+kvn
-	 HiNAk2rHhiMfg6P35XiJ/alg1SqWsdbxH7OaIe7Q=
+	by mail.kernel.org (Postfix) with ESMTP id 62E1921A80
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:41:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PZBET/v+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731187AbfBOClI (ORCPT
+        id S1731405AbfBOClK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:41:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49936 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388977AbfBOCJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:09:47 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1593222D0;
-        Fri, 15 Feb 2019 02:09:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196585;
-        bh=mOBP+9rPnX0dhUGx4qlf39uMWjz/4et0MCUUEMNWhVc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ssu5S7scOE/BY+l9Vf50knJC2YlDTTbuArgF5yMqnlizsyL4KxlEEA5kWZARTj0Th
-         7AuRf4qE0bD0XgaVF0Z+D9hONu0EKONA/kOFBljY6T47TbcGOs4qY4avSqLSIdgKe9
-         prD506WdFwS7sx92SDYRS5IGFmwMfK7One/aPitQ=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Fathi Boudra <fathi.boudra@linaro.org>,
-        Shuah Khan <shuah@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 29/77] selftests: seccomp: use LDLIBS instead of LDFLAGS
-Date:   Thu, 14 Feb 2019 21:08:07 -0500
-Message-Id: <20190215020855.176727-29-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
-References: <20190215020855.176727-1-sashal@kernel.org>
+        Thu, 14 Feb 2019 21:41:10 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:33047 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731007AbfBOClF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:41:05 -0500
+Received: by mail-pl1-f195.google.com with SMTP id y10so4197036plp.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 18:41:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=+cqpEOgVsQX6FuKbkjkqnPdK6JJEhfhSEvMIkCtIVgk=;
+        b=PZBET/v+AvTm5uI6YhLQd/yhp9OJU4BXs5QA0Gv2/WEpddBD1QACIx3W+qj/R+DwpM
+         B3BzpTqjks4wX/579seQjUOZNkBasPTeBbzS7Ts4S8uR/gAobhLKvuuBjPvnZ0p2M1+e
+         UH/Gc2iPGBMYC4EV/ODk3qG1i7BTa624G4IbAyHgpQom75nwKU1TVfguAY8NM1SpQhag
+         t/bnF90mVuhLmHwSRidYkQGL4uxY7KCT7jqdywdvHspXzYeX6exXlLeF+WVbzBFla7Za
+         xrpAZoUBgGaI0ABuhCyNn+4AoykbvyaUO80m2jJbnwhHLhgC8kP1xoZ96ASplt0w6m2V
+         UyKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=+cqpEOgVsQX6FuKbkjkqnPdK6JJEhfhSEvMIkCtIVgk=;
+        b=bNZteLrYahCi8kVY6HCDbZSUr0YmqDe0fdFj2cLOPXBbMJOD2F0B2WOltnCBZDuZmo
+         776zJXbKG6vaub4OrmGoN+8rmINbSaqoxalsQhHe7QIIMw+TtyQb/E3lf1FxmttWYS9h
+         XhIa9OUXzkOiE3AxVjH8ZANUfDek2SZ9sMyvanTOBndBuknfwAC9O3eXANErgOiCLOxV
+         A1MT0Tlft4h76F0gKFrl/jRg2cmMDA82pYKR94NHWQFWCXwpVuHal6Ki/3SgMYmML4db
+         KjVN/d9gHI61uK/nTEC+ZJuJgYz/8cCcpkBy2N7lE4MjBqwBGz499k4YwsDJNxw9gIft
+         mkMQ==
+X-Gm-Message-State: AHQUAubutU8wDKIi9uTBdrP59d2PCx6tlqhB7ZwAxBKEexB0H4KylXA3
+        p/SfYeJKVCmM4RDYZmXKE4I=
+X-Google-Smtp-Source: AHgI3IZkR4bUjIEoJN1Iweg1I643mATKe+Qg6hd5B30hfMqsOz0sR+gJKonzI4eh8rnzPur2hIb3aQ==
+X-Received: by 2002:a17:902:d83:: with SMTP id 3mr7519491plv.43.1550198464676;
+        Thu, 14 Feb 2019 18:41:04 -0800 (PST)
+Received: from jordon-HP-15-Notebook-PC ([49.207.53.51])
+        by smtp.gmail.com with ESMTPSA id g87sm9521109pfe.43.2019.02.14.18.41.03
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 14 Feb 2019 18:41:03 -0800 (PST)
+Date:   Fri, 15 Feb 2019 08:15:24 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
+        hjc@rock-chips.com, heiko@sntech.de, airlied@linux.ie,
+        linux@armlinux.org.uk, robin.murphy@arm.com
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org
+Subject: [PATCH v4 4/9] drm/rockchip/rockchip_drm_gem.c: Convert to use
+ vm_map_pages()
+Message-ID: <20190215024524.GA26405@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fathi Boudra <fathi.boudra@linaro.org>
+Convert to use vm_map_pages() to map range of kernel
+memory to user vma.
 
-[ Upstream commit 5bbc73a841d7f0bbe025a342146dde462a796a5a ]
+Tested on Rockchip hardware and display is working,
+including talking to Lima via prime.
 
-seccomp_bpf fails to build due to undefined reference errors:
-
- aarch64-linaro-linux-gcc --sysroot=/build/tmp-rpb-glibc/sysroots/hikey
- -O2 -pipe -g -feliminate-unused-debug-types -Wl,-no-as-needed -Wall
- -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed -lpthread seccomp_bpf.c -o
- /build/tmp-rpb-glibc/work/hikey-linaro-linux/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf
- /tmp/ccrlR3MW.o: In function `tsync_sibling':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1920: undefined reference to `sem_post'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1920: undefined reference to `sem_post'
- /tmp/ccrlR3MW.o: In function `TSYNC_setup':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1863: undefined reference to `sem_init'
- /tmp/ccrlR3MW.o: In function `TSYNC_teardown':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1904: undefined reference to `sem_destroy'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1897: undefined reference to `pthread_kill'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1898: undefined reference to `pthread_cancel'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1899: undefined reference to `pthread_join'
- /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /tmp/ccrlR3MW.o: In function `TSYNC_siblings_fail_prctl':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1978: undefined reference to `sem_wait'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1990: undefined reference to `pthread_join'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1992: undefined reference to `pthread_join'
- /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /tmp/ccrlR3MW.o: In function `TSYNC_two_siblings_with_ancestor':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2016: undefined reference to `sem_wait'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2032: undefined reference to `pthread_join'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2034: undefined reference to `pthread_join'
- /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /tmp/ccrlR3MW.o: In function `TSYNC_two_sibling_want_nnp':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2046: undefined reference to `sem_wait'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2058: undefined reference to `pthread_join'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2060: undefined reference to `pthread_join'
- /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /tmp/ccrlR3MW.o: In function `TSYNC_two_siblings_with_no_filter':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2073: undefined reference to `sem_wait'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2098: undefined reference to `pthread_join'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2100: undefined reference to `pthread_join'
- /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /tmp/ccrlR3MW.o: In function `TSYNC_two_siblings_with_one_divergence':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2125: undefined reference to `sem_wait'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2143: undefined reference to `pthread_join'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2145: undefined reference to `pthread_join'
- /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
- /tmp/ccrlR3MW.o: In function `TSYNC_two_siblings_not_under_filter':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2169: undefined reference to `sem_wait'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2202: undefined reference to `pthread_join'
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:2227: undefined reference to `pthread_join'
- /tmp/ccrlR3MW.o: In function `tsync_start_sibling':
- /usr/src/debug/kselftests/4.12-r0/linux-4.12-rc7/tools/testing/selftests/seccomp/seccomp_bpf.c:1941: undefined reference to `pthread_create'
-
-It's GNU Make and linker specific.
-
-The default Makefile rule looks like:
-
-$(CC) $(CFLAGS) $(LDFLAGS) $@ $^ $(LDLIBS)
-
-When linking is done by gcc itself, no issue, but when it needs to be passed
-to proper ld, only LDLIBS follows and then ld cannot know what libs to link
-with.
-
-More detail:
-https://www.gnu.org/software/make/manual/html_node/Implicit-Variables.html
-
-LDFLAGS
-Extra flags to give to compilers when they are supposed to invoke the linker,
-‘ld’, such as -L. Libraries (-lfoo) should be added to the LDLIBS variable
-instead.
-
-LDLIBS
-Library flags or names given to compilers when they are supposed to invoke the
-linker, ‘ld’. LOADLIBES is a deprecated (but still supported) alternative to
-LDLIBS. Non-library linker flags, such as -L, should go in the LDFLAGS
-variable.
-
-https://lkml.org/lkml/2010/2/10/362
-
-tools/perf: libraries must come after objects
-
-Link order matters, use LDLIBS instead of LDFLAGS to properly link against
-libpthread.
-
-Signed-off-by: Fathi Boudra <fathi.boudra@linaro.org>
-Acked-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Shuah Khan <shuah@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Tested-by: Heiko Stuebner <heiko@sntech.de>
 ---
- tools/testing/selftests/seccomp/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/rockchip/rockchip_drm_gem.c | 17 ++---------------
+ 1 file changed, 2 insertions(+), 15 deletions(-)
 
-diff --git a/tools/testing/selftests/seccomp/Makefile b/tools/testing/selftests/seccomp/Makefile
-index fce7f4ce0692..1760b3e39730 100644
---- a/tools/testing/selftests/seccomp/Makefile
-+++ b/tools/testing/selftests/seccomp/Makefile
-@@ -9,7 +9,7 @@ BINARIES := seccomp_bpf seccomp_benchmark
- CFLAGS += -Wl,-no-as-needed -Wall
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+index a8db758..a2ebb08 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+@@ -221,26 +221,13 @@ static int rockchip_drm_gem_object_mmap_iommu(struct drm_gem_object *obj,
+ 					      struct vm_area_struct *vma)
+ {
+ 	struct rockchip_gem_object *rk_obj = to_rockchip_obj(obj);
+-	unsigned int i, count = obj->size >> PAGE_SHIFT;
++	unsigned int count = obj->size >> PAGE_SHIFT;
+ 	unsigned long user_count = vma_pages(vma);
+-	unsigned long uaddr = vma->vm_start;
+-	unsigned long offset = vma->vm_pgoff;
+-	unsigned long end = user_count + offset;
+-	int ret;
  
- seccomp_bpf: seccomp_bpf.c ../kselftest_harness.h
--	$(CC) $(CFLAGS) $(LDFLAGS) -lpthread $< -o $@
-+	$(CC) $(CFLAGS) $(LDFLAGS) $< -lpthread -o $@
+ 	if (user_count == 0)
+ 		return -ENXIO;
+-	if (end > count)
+-		return -ENXIO;
  
- TEST_PROGS += $(BINARIES)
- EXTRA_CLEAN := $(BINARIES)
+-	for (i = offset; i < end; i++) {
+-		ret = vm_insert_page(vma, uaddr, rk_obj->pages[i]);
+-		if (ret)
+-			return ret;
+-		uaddr += PAGE_SIZE;
+-	}
+-
+-	return 0;
++	return vm_map_pages(vma, rk_obj->pages, count);
+ }
+ 
+ static int rockchip_drm_gem_object_mmap_dma(struct drm_gem_object *obj,
 -- 
-2.19.1
+1.9.1
 
