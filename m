@@ -4,51 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB3A5C4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:13:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5A22C10F04
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:13:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89AD021934
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:13:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81B3921934
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:13:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196793;
-	bh=EzBlGYCEMzUagoaUlIyK6y0LsygZV7ynp5frefzAFGc=;
+	s=default; t=1550196798;
+	bh=6XP47bMFH9B6r93B3mAX3sOfvBcOVChKejModyldUMU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gGOnz9HLdJPkWA0ZpERptlU/8WR6023LyYfiTqsUM4s0CIsmjPWx/pj3RBRTF6epo
-	 ZIEcn/cIMWmmrtgxKUBvvyzyQbfg/MWcz4KpQysKY6aRCScMZFr44103KIwFYFj0dt
-	 y60p5cRKfwK00t8/NzaBfkLC/6hVpOJtMjFN2rYk=
+	b=HrgQL+E61bJYYZ/vnNd/duiKuXlVW7haM0su9/D2Lq5heDNx2vd1I7FBZbwXApMCh
+	 Q09fdcptCLRw5wdwa1l9Ti4K6g/aIsUKHI+2cc3welOg1AQ6Ni+CQ64SjgJUmVmfnD
+	 KWhk2BRBugf0CKfJnutsFdrF8p919zxn2LgO3348=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404600AbfBOCNL (ORCPT
+        id S2391379AbfBOCNQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:13:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53018 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:13:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404522AbfBOCNE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:13:04 -0500
+        id S2388862AbfBOCNM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:13:12 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BAFAE21934;
-        Fri, 15 Feb 2019 02:13:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC5B1206BA;
+        Fri, 15 Feb 2019 02:13:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196783;
-        bh=EzBlGYCEMzUagoaUlIyK6y0LsygZV7ynp5frefzAFGc=;
+        s=default; t=1550196791;
+        bh=6XP47bMFH9B6r93B3mAX3sOfvBcOVChKejModyldUMU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AeUDgxAgvykN9SGd1JvZNGEvyMM06e0KbVJhpd9e4bPLPOexwBfMQB82+FrUycqJl
-         DW5mH52q8/fhJ7njCZN913Ea4iiA8Mjjp9PucbEvnUJGHea+mU1y6ZXft4XxHKCdd1
-         Vt7TQm7LSG7YWQAY9rbfVyrD+wjJ5rYl60oTxzIs=
+        b=H1lAXJfgoADCQUN05DRElbCOATAvQ/LK0sbe2a1x0SJiWfGA+huLOJzqQ3NITzAZ2
+         9CS0nzjfOI/gjkcNC61f0DnzKKLLv/am1cpWnPpK9/y0oeYEiuJ/qTrC14tVw/9a8q
+         I9BNu+ugMF3/k38Uc3sQOKh0feFpc5TpS2Aw/6cc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chaitanya Tata <chaitanya.tata@bluwirelesstechnology.com>,
-        Chaitanya Tata <Chaitanya.Tata@bluwireless.co.uk>,
-        Johannes Berg <johannes.berg@intel.com>,
+Cc:     Ben Gardon <bgardon@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 61/65] cfg80211: extend range deviation for DMG
-Date:   Thu, 14 Feb 2019 21:11:17 -0500
-Message-Id: <20190215021121.177674-61-sashal@kernel.org>
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 64/65] kvm: selftests: Fix region overlap check in kvm_util
+Date:   Thu, 14 Feb 2019 21:11:20 -0500
+Message-Id: <20190215021121.177674-64-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -60,43 +58,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chaitanya Tata <chaitanya.tata@bluwirelesstechnology.com>
+From: Ben Gardon <bgardon@google.com>
 
-[ Upstream commit 93183bdbe73bbdd03e9566c8dc37c9d06b0d0db6 ]
+[ Upstream commit 94a980c39c8e3f8abaff5d3b5bbcd4ccf1c02c4f ]
 
-Recently, DMG frequency bands have been extended till 71GHz, so extend
-the range check till 20GHz (45-71GHZ), else some channels will be marked
-as disabled.
+Fix a call to userspace_mem_region_find to conform to its spec of
+taking an inclusive, inclusive range. It was previously being called
+with an inclusive, exclusive range. Also remove a redundant region bounds
+check in vm_userspace_mem_region_add. Region overlap checking is already
+performed by the call to userspace_mem_region_find.
 
-Signed-off-by: Chaitanya Tata <Chaitanya.Tata@bluwireless.co.uk>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Tested: Compiled tools/testing/selftests/kvm with -static
+	Ran all resulting test binaries on an Intel Haswell test machine
+	All tests passed
+
+Signed-off-by: Ben Gardon <bgardon@google.com>
+Reviewed-by: Jim Mattson <jmattson@google.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/wireless/reg.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/testing/selftests/kvm/lib/kvm_util.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/net/wireless/reg.c b/net/wireless/reg.c
-index 24cfa2776f50..8002ace7c9f6 100644
---- a/net/wireless/reg.c
-+++ b/net/wireless/reg.c
-@@ -1249,7 +1249,7 @@ static bool is_valid_rd(const struct ieee80211_regdomain *rd)
-  * definitions (the "2.4 GHz band", the "5 GHz band" and the "60GHz band"),
-  * however it is safe for now to assume that a frequency rule should not be
-  * part of a frequency's band if the start freq or end freq are off by more
-- * than 2 GHz for the 2.4 and 5 GHz bands, and by more than 10 GHz for the
-+ * than 2 GHz for the 2.4 and 5 GHz bands, and by more than 20 GHz for the
-  * 60 GHz band.
-  * This resolution can be lowered and should be considered as we add
-  * regulatory rule support for other "bands".
-@@ -1264,7 +1264,7 @@ static bool freq_in_rule_band(const struct ieee80211_freq_range *freq_range,
- 	 * with the Channel starting frequency above 45 GHz.
+diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+index 6fd8c089cafc..fb5d2d1e0c04 100644
+--- a/tools/testing/selftests/kvm/lib/kvm_util.c
++++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+@@ -590,7 +590,7 @@ void vm_userspace_mem_region_add(struct kvm_vm *vm,
+ 	 * already exist.
  	 */
- 	u32 limit = freq_khz > 45 * ONE_GHZ_IN_KHZ ?
--			10 * ONE_GHZ_IN_KHZ : 2 * ONE_GHZ_IN_KHZ;
-+			20 * ONE_GHZ_IN_KHZ : 2 * ONE_GHZ_IN_KHZ;
- 	if (abs(freq_khz - freq_range->start_freq_khz) <= limit)
- 		return true;
- 	if (abs(freq_khz - freq_range->end_freq_khz) <= limit)
+ 	region = (struct userspace_mem_region *) userspace_mem_region_find(
+-		vm, guest_paddr, guest_paddr + npages * vm->page_size);
++		vm, guest_paddr, (guest_paddr + npages * vm->page_size) - 1);
+ 	if (region != NULL)
+ 		TEST_ASSERT(false, "overlapping userspace_mem_region already "
+ 			"exists\n"
+@@ -606,15 +606,10 @@ void vm_userspace_mem_region_add(struct kvm_vm *vm,
+ 		region = region->next) {
+ 		if (region->region.slot == slot)
+ 			break;
+-		if ((guest_paddr <= (region->region.guest_phys_addr
+-				+ region->region.memory_size))
+-			&& ((guest_paddr + npages * vm->page_size)
+-				>= region->region.guest_phys_addr))
+-			break;
+ 	}
+ 	if (region != NULL)
+ 		TEST_ASSERT(false, "A mem region with the requested slot "
+-			"or overlapping physical memory range already exists.\n"
++			"already exists.\n"
+ 			"  requested slot: %u paddr: 0x%lx npages: 0x%lx\n"
+ 			"  existing slot: %u paddr: 0x%lx size: 0x%lx",
+ 			slot, guest_paddr, npages,
 -- 
 2.19.1
 
