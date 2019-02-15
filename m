@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93462C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:09:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6165AC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:09:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63DD3222C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:09:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3160E222A1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:09:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196570;
-	bh=DPzk3bfpQ4QxcFB5vcNaOzyaV40b44hCAKC+He+PL/Y=;
+	s=default; t=1550196575;
+	bh=y5Vtc8YidNoTw9PwpTl6UrIpFn1CINVZFcLTZgF8b44=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fLsBBrCte3BGZ89YJliZHZouD1iDATs7UQBuMfCxSjzaNgSTF76EBXBIqw28bSokh
-	 TTYKBEtc9iBC5UZU/0TsrInTcsqv1wjN9BCKijCRd3lLPLSktUJolbXmausgejwDvK
-	 A1D/16HlULSF2THH4ReFDsGuQPIBe9AfByy8lMP8=
+	b=rBKHFjL+kf8PDtcBZ3M2y8ew1hBEtNmalD+dp2nEliN2aXveU1mD4t9uo4ouXIXkm
+	 S/Q1COz/DhvqSs41udhY154dNpZggak2TuQudczTIvttfryEwoUZog+xdmQNy2DhvF
+	 tXXj4D4Hwz/ur3jnhR05+CfK669h1sqNkc1rZ80w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731783AbfBOCJ2 (ORCPT
+        id S2388052AbfBOCJe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:09:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49516 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:09:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731685AbfBOCJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:09:18 -0500
+        id S2387637AbfBOCJb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:09:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E5CD206BA;
-        Fri, 15 Feb 2019 02:09:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3CED206BA;
+        Fri, 15 Feb 2019 02:09:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196558;
-        bh=DPzk3bfpQ4QxcFB5vcNaOzyaV40b44hCAKC+He+PL/Y=;
+        s=default; t=1550196570;
+        bh=y5Vtc8YidNoTw9PwpTl6UrIpFn1CINVZFcLTZgF8b44=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LEV3TiiawIyBfAJivKGGDVjqDw+ppb40XSHbmpSNuqslb+vrxIqzUJmrMuShzlaaH
-         4qDFa3/jiXz0EJYtBLp7kqRe5ngjdMe7GqScl12p2F8lLwLc07n9raKbrFdMwrKeGS
-         PEmI1KBSXPE5t8yqp0Ncp1nGsXCzYOktzZkj2Y/g=
+        b=Jm6oUiINJeSpic4DZIGGs8W6U1qZKShFz3ofC6eq0a/LErv159YXdkTOqP8b6YIGz
+         FETSn6nwEcxTrJQbUAQKT4AAXupA319KLHlH4TcvFdQAYDQplVV29Ai1eWY35rv8kG
+         Pq6KC0OF2OpADMbFpdAFnOQwaWj6veipFwlBuiEI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 14/77] usb: gadget: Potential NULL dereference on allocation error
-Date:   Thu, 14 Feb 2019 21:07:52 -0500
-Message-Id: <20190215020855.176727-14-sashal@kernel.org>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Shuah Khan <shuah@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        linux-rtc@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 18/77] selftests: rtc: rtctest: fix alarm tests
+Date:   Thu, 14 Feb 2019 21:07:56 -0500
+Message-Id: <20190215020855.176727-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
 References: <20190215020855.176727-1-sashal@kernel.org>
@@ -57,37 +58,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-[ Upstream commit df28169e1538e4a8bcd8b779b043e5aa6524545c ]
+[ Upstream commit fdac94489c4d247088b3885875b39b3e1eb621ef ]
 
-The source_sink_alloc_func() function is supposed to return error
-pointers on error.  The function is called from usb_get_function() which
-doesn't check for NULL returns so it would result in an Oops.
+Return values for select are not checked properly and timeouts may not be
+detected.
 
-Of course, in the current kernel, small allocations always succeed so
-this doesn't affect runtime.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Shuah Khan <shuah@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/function/f_sourcesink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/testing/selftests/rtc/rtctest.c | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/usb/gadget/function/f_sourcesink.c b/drivers/usb/gadget/function/f_sourcesink.c
-index 9cdef108fb1b..ed68a4860b7d 100644
---- a/drivers/usb/gadget/function/f_sourcesink.c
-+++ b/drivers/usb/gadget/function/f_sourcesink.c
-@@ -838,7 +838,7 @@ static struct usb_function *source_sink_alloc_func(
+diff --git a/tools/testing/selftests/rtc/rtctest.c b/tools/testing/selftests/rtc/rtctest.c
+index e20b017e7073..dea4e3d6d9e1 100644
+--- a/tools/testing/selftests/rtc/rtctest.c
++++ b/tools/testing/selftests/rtc/rtctest.c
+@@ -145,15 +145,12 @@ TEST_F(rtc, alarm_alm_set) {
  
- 	ss = kzalloc(sizeof(*ss), GFP_KERNEL);
- 	if (!ss)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
+ 	rc = select(self->fd + 1, &readfds, NULL, NULL, &tv);
+ 	ASSERT_NE(-1, rc);
+-	EXPECT_NE(0, rc);
++	ASSERT_NE(0, rc);
  
- 	ss_opts =  container_of(fi, struct f_ss_opts, func_inst);
+ 	/* Disable alarm interrupts */
+ 	rc = ioctl(self->fd, RTC_AIE_OFF, 0);
+ 	ASSERT_NE(-1, rc);
  
+-	if (rc == 0)
+-		return;
+-
+ 	rc = read(self->fd, &data, sizeof(unsigned long));
+ 	ASSERT_NE(-1, rc);
+ 	TH_LOG("data: %lx", data);
+@@ -202,7 +199,7 @@ TEST_F(rtc, alarm_wkalm_set) {
+ 
+ 	rc = select(self->fd + 1, &readfds, NULL, NULL, &tv);
+ 	ASSERT_NE(-1, rc);
+-	EXPECT_NE(0, rc);
++	ASSERT_NE(0, rc);
+ 
+ 	rc = read(self->fd, &data, sizeof(unsigned long));
+ 	ASSERT_NE(-1, rc);
 -- 
 2.19.1
 
