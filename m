@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 168D4C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 919B7C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:16:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF764222D4
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:16:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 618AD20643
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:16:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196968;
-	bh=gq/RLeRTKnj3TgOilfzLSAG1JJM12SK4UtJ++I4+tTc=;
+	s=default; t=1550196973;
+	bh=gOdTyfqyfgyGXKdDbSZ1cCLrp5mmEytQYGi8oOLQZjQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=C93enHIUCMA+BouRRO/8hlYvnPPJBf/CIC4Z58fA3UMFjzRnEJ6uLXu3fT7SMms4i
-	 Ze0NHX40SNkiKbFQoEwqZR4QJ7c8WkjpDM8iiP0R2vJe5DvJfJu0lsfbtibOKaSH1t
-	 bnLgdQ1wSfsYPJfHZX8p9jiRYCgLOY4t47LJ47Ig=
+	b=vbsjsQNLMG24yREW9Gn8b+iQ52CWB9rS+bAeTVKctrY1dqiI4z29Hmsbl/SB/JJmz
+	 5DLoyTessCKAclPoUUoZB6tBB+N5v1UM4GHEZKmtC2bOJsj3YbcadqWkzrmvC1Z7Yr
+	 M61bDGTmURaL4bwQGuLTVm4J/SSZRvhQheHGOYUk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392169AbfBOCQH (ORCPT
+        id S2392305AbfBOCQL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:16:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55542 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:16:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406011AbfBOCQB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:16:01 -0500
+        id S2392149AbfBOCQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:16:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90685222D0;
-        Fri, 15 Feb 2019 02:15:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91DE421B68;
+        Fri, 15 Feb 2019 02:16:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196960;
-        bh=gq/RLeRTKnj3TgOilfzLSAG1JJM12SK4UtJ++I4+tTc=;
+        s=default; t=1550196965;
+        bh=gOdTyfqyfgyGXKdDbSZ1cCLrp5mmEytQYGi8oOLQZjQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oBfTigwXbXJ77iCWTxc/GLybQJ/kLD9SbDbYBCvqVNB5Xt9CAk66OYwTetMQVVIcC
-         dXC6CRErHznfbKUFERJLv3Tl4QLwQ3Vyn2jIntTLkvf8+wLOwZyN81nakvT3XnwVU/
-         WMmgph4pco344vZkcY2tH8T37zRybN6xx+2I5Too=
+        b=KKZ8yX3sQfA0qChvfqtl4uDfLHaO8wVvyTdBs5t9BNsKlHuqLHXAo8TibeWEy9dIr
+         6pFvjtEX7fmuwc2Jb3okNIgSEeOSChonUCjVaR0raBuvl/xUaKOmHIbrfrOcics30k
+         fPnVviWuOGj0WO9gcS+qdMuq/8ggiQEK72OclIJs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tomonori Sakita <tomonori.sakita@sord.co.jp>,
-        Atsushi Nemoto <atsushi.nemoto@sord.co.jp>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 09/16] serial: fsl_lpuart: fix maximum acceptable baud rate with over-sampling
-Date:   Thu, 14 Feb 2019 21:15:39 -0500
-Message-Id: <20190215021546.179605-9-sashal@kernel.org>
+Cc:     Edward Cree <ecree@solarflare.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 12/16] sfc: suppress duplicate nvmem partition types in efx_ef10_mtd_probe
+Date:   Thu, 14 Feb 2019 21:15:42 -0500
+Message-Id: <20190215021546.179605-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021546.179605-1-sashal@kernel.org>
 References: <20190215021546.179605-1-sashal@kernel.org>
@@ -59,33 +58,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomonori Sakita <tomonori.sakita@sord.co.jp>
+From: Edward Cree <ecree@solarflare.com>
 
-[ Upstream commit 815d835b7ba46685c316b000013367dacb2b461b ]
+[ Upstream commit 3366463513f544c12c6b88c13da4462ee9e7a1a1 ]
 
-Using over-sampling ratio, lpuart can accept baud rate upto uartclk / 4.
+Use a bitmap to keep track of which partition types we've already seen;
+ for duplicates, return -EEXIST from efx_ef10_mtd_probe_partition() and
+ thus skip adding that partition.
+Duplicate partitions occur because of the A/B backup scheme used by newer
+ sfc NICs.  Prior to this patch they cause sysfs_warn_dup errors because
+ they have the same name, causing us not to expose any MTDs at all.
 
-Signed-off-by: Tomonori Sakita <tomonori.sakita@sord.co.jp>
-Signed-off-by: Atsushi Nemoto <atsushi.nemoto@sord.co.jp>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Edward Cree <ecree@solarflare.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/fsl_lpuart.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/sfc/ef10.c | 29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 92b7a5bf7c4d..8c4f561a09c0 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -1422,7 +1422,7 @@ lpuart32_set_termios(struct uart_port *port, struct ktermios *termios,
+diff --git a/drivers/net/ethernet/sfc/ef10.c b/drivers/net/ethernet/sfc/ef10.c
+index 010009d64017..84a17b41313c 100644
+--- a/drivers/net/ethernet/sfc/ef10.c
++++ b/drivers/net/ethernet/sfc/ef10.c
+@@ -3407,22 +3407,25 @@ static const struct efx_ef10_nvram_type_info efx_ef10_nvram_types[] = {
+ 	{ NVRAM_PARTITION_TYPE_LICENSE,		   0,    0, "sfc_license" },
+ 	{ NVRAM_PARTITION_TYPE_PHY_MIN,		   0xff, 0, "sfc_phy_fw" },
+ };
++#define EF10_NVRAM_PARTITION_COUNT	ARRAY_SIZE(efx_ef10_nvram_types)
+ 
+ static int efx_ef10_mtd_probe_partition(struct efx_nic *efx,
+ 					struct efx_mcdi_mtd_partition *part,
+-					unsigned int type)
++					unsigned int type,
++					unsigned long *found)
+ {
+ 	MCDI_DECLARE_BUF(inbuf, MC_CMD_NVRAM_METADATA_IN_LEN);
+ 	MCDI_DECLARE_BUF(outbuf, MC_CMD_NVRAM_METADATA_OUT_LENMAX);
+ 	const struct efx_ef10_nvram_type_info *info;
+ 	size_t size, erase_size, outlen;
++	int type_idx = 0;
+ 	bool protected;
+ 	int rc;
+ 
+-	for (info = efx_ef10_nvram_types; ; info++) {
+-		if (info ==
+-		    efx_ef10_nvram_types + ARRAY_SIZE(efx_ef10_nvram_types))
++	for (type_idx = 0; ; type_idx++) {
++		if (type_idx == EF10_NVRAM_PARTITION_COUNT)
+ 			return -ENODEV;
++		info = efx_ef10_nvram_types + type_idx;
+ 		if ((type & ~info->type_mask) == info->type)
+ 			break;
+ 	}
+@@ -3435,6 +3438,13 @@ static int efx_ef10_mtd_probe_partition(struct efx_nic *efx,
+ 	if (protected)
+ 		return -ENODEV; /* hide it */
+ 
++	/* If we've already exposed a partition of this type, hide this
++	 * duplicate.  All operations on MTDs are keyed by the type anyway,
++	 * so we can't act on the duplicate.
++	 */
++	if (__test_and_set_bit(type_idx, found))
++		return -EEXIST;
++
+ 	part->nvram_type = type;
+ 
+ 	MCDI_SET_DWORD(inbuf, NVRAM_METADATA_IN_TYPE, type);
+@@ -3463,6 +3473,7 @@ static int efx_ef10_mtd_probe_partition(struct efx_nic *efx,
+ static int efx_ef10_mtd_probe(struct efx_nic *efx)
+ {
+ 	MCDI_DECLARE_BUF(outbuf, MC_CMD_NVRAM_PARTITIONS_OUT_LENMAX);
++	DECLARE_BITMAP(found, EF10_NVRAM_PARTITION_COUNT);
+ 	struct efx_mcdi_mtd_partition *parts;
+ 	size_t outlen, n_parts_total, i, n_parts;
+ 	unsigned int type;
+@@ -3491,11 +3502,13 @@ static int efx_ef10_mtd_probe(struct efx_nic *efx)
+ 	for (i = 0; i < n_parts_total; i++) {
+ 		type = MCDI_ARRAY_DWORD(outbuf, NVRAM_PARTITIONS_OUT_TYPE_ID,
+ 					i);
+-		rc = efx_ef10_mtd_probe_partition(efx, &parts[n_parts], type);
+-		if (rc == 0)
+-			n_parts++;
+-		else if (rc != -ENODEV)
++		rc = efx_ef10_mtd_probe_partition(efx, &parts[n_parts], type,
++						  found);
++		if (rc == -EEXIST || rc == -ENODEV)
++			continue;
++		if (rc)
+ 			goto fail;
++		n_parts++;
  	}
  
- 	/* ask the core to calculate the divisor */
--	baud = uart_get_baud_rate(port, termios, old, 50, port->uartclk / 16);
-+	baud = uart_get_baud_rate(port, termios, old, 50, port->uartclk / 4);
- 
- 	spin_lock_irqsave(&sport->port.lock, flags);
- 
+ 	rc = efx_mtd_add(efx, &parts[0].common, n_parts, sizeof(*parts));
 -- 
 2.19.1
 
