@@ -2,129 +2,148 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92510C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3080C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:00:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66CC521A80
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:00:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92D4021A80
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:00:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="htOXUgJk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390496AbfBOLAR (ORCPT
+        id S2393685AbfBOLAf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 06:00:17 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:45157 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726160AbfBOLAR (ORCPT
+        Fri, 15 Feb 2019 06:00:35 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:12897 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726160AbfBOLAe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 06:00:17 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 32so15765466ota.12
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 03:00:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VJ1w0R223NOFMFs8jprELV7OmTbW2Ho0cuabQNPRrxs=;
-        b=NOPJRbLNLTpZqE3iDWg/fKVoWOSS7zoj45lzMRWDvgcffcd90Qa7a0fFDpKztYBVWG
-         Su4S9AXlTNdwY1h0+HzAnUZvnnBLhEy6lqg8bJP4k4RlGa7yXCXZ72r3QAmIxU3nMRqD
-         S9icKbZRLfhHgzg1cyDUSb/zpnYS+bIJ4JlQqLsMcw//WtKpT7e/W5SEVodxnlxSOufp
-         WtEYred5LGm5mLo1KboTIYHKR9Wo1NpLbLE4/990aFGyYTBr9ivp2opD7sInyS7gQFTA
-         PFBk2ZWFX0FflvyPX027Hgh38ODCtiagsXe2DgEdTRW0OP48YFZA1LKxCFc7BAdDJ9Gc
-         vUng==
-X-Gm-Message-State: AHQUAuZHKeqpZd8478CjcPMic9lIysHNWhTWF5kifpIBNDcY/5Q+gN4X
-        mZ+I8xIoXKghAwyOICYppppm2CwCc2xKNTZlt5p1gTeQ
-X-Google-Smtp-Source: AHgI3IYbfrX7AIolW1V7LYuCoKrAWyKC2jau6gRe6jftYyoteJKqHvv9ysv43HkUNysa0i4dhW/Ns56Ri67xY1q9ZKk=
-X-Received: by 2002:a9d:6acc:: with SMTP id m12mr5051127otq.300.1550228415864;
- Fri, 15 Feb 2019 03:00:15 -0800 (PST)
+        Fri, 15 Feb 2019 06:00:34 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c669bd50001>; Fri, 15 Feb 2019 03:00:37 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 15 Feb 2019 03:00:32 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 15 Feb 2019 03:00:32 -0800
+Received: from [10.21.132.148] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 15 Feb
+ 2019 11:00:29 +0000
+Subject: Re: [PATCH 2/2] driver core: Fix possible supplier PM-usage counter
+ imbalance
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lukas Wunner <lukas@wunner.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+References: <5510642.nRbR3bcduN@aspire.rjw.lan>
+ <9351473.C2nPJoyFsE@aspire.rjw.lan>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <2ed95b05-317c-59bb-498a-b5481e54bcf6@nvidia.com>
+Date:   Fri, 15 Feb 2019 11:00:27 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <1550223519-18290-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1550223519-18290-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Mathieu Malaterre <malat@debian.org>
-Date:   Fri, 15 Feb 2019 12:00:04 +0100
-Message-ID: <CA+7wUswJ5+nb3OdZYrx6++batRMUcnje3jLTgdN4zAQo=--xBg@mail.gmail.com>
-Subject: Re: [PATCH] powerpc: use $(origin ARCH) to select KBUILD_DEFCONFIG
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <9351473.C2nPJoyFsE@aspire.rjw.lan>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1550228437; bh=4LRVG+p/BayEahjiKUItR8XDJZbQ8zqnIZoOsf0G9j0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=htOXUgJkIvtY+JfltpqNrmURhPl/4mUxnXZZr1SGiZM5QXPGGl2lfyzoMzCrrfQpU
+         ESmc5yx0ApxBYhlBGOKoOOAVRx/+dzi2Yl+7usTQEv/xdE6nsN6t9dMWRQl9jtUSbo
+         y23G9Q9L/xZBrWFlbOH1ES/zubW8vvfbGW3hjDDjQm2B6o2tGCEVV7gpFpCVURzL2b
+         UKFWjXl/Aufn0DG6P1VISn3Q8y6SxDmOParIrZe7MHo8PsmzqbtWjJQVhCEG0z29CX
+         oEXuzKxLOHzqDwhs5HopRP7JN0YKfYiVJU9n09vsSQBJE+QNPkj26MIT9MdB45CWis
+         ZRoCimGB6xHiQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 10:41 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> I often test all Kconfig commands for all architectures. To ease my
-> workflow, I want 'make defconfig' at least working without any cross
-> compiler.
->
-> Currently, arch/powerpc/Makefile checks CROSS_COMPILE to decide the
-> default defconfig source.
->
-> If CROSS_COMPILE is unset, it is likely to be the native build, so
-> 'uname -m' is useful to choose the defconfig. If CROSS_COMPILE is set,
-> the user is cross-building (i.e. 'uname -m' is probably x86_64), so
-> it falls back to ppc64_defconfig. Yup, make sense.
->
-> However, I want to run 'make ARCH=* defconfig' without setting
-> CROSS_COMPILE for each architecture.
->
-> My suggestion is to check $(origin ARCH).
->
-> When you cross-compile the kernel, you need to set ARCH from your
-> environment or from the command line.
->
-> For the native build, you do not need to set ARCH. The default in
-> the top Makefile is used:
->
->   ARCH            ?= $(SUBARCH)
->
-> Hence, $(origin ARCH) returns 'file'.
->
-> Before this commit, 'make ARCH=powerpc defconfig' failed:
+Hi Rafael,
 
-In case you have not seen it, please check:
-
-http://patchwork.ozlabs.org/patch/1037835/
-
->   $ make ARCH=powerpc defconfig
->   *** Default configuration is based on target 'x86_64_defconfig'
->   ***
->   *** Can't find default configuration "arch/powerpc/configs/x86_64_defconfig"!
->   ***
->
-> After this commit, it will succeed:
->
->   $ make ARCH=powerpc defconfig
->   *** Default configuration is based on 'ppc64_defconfig'
->   #
->   # configuration written to .config
->   #
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+On 12/02/2019 12:08, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> If a stateless device link to a certain supplier with
+> DL_FLAG_PM_RUNTIME set in the flags is added and then removed by the
+> consumer driver's probe callback, the supplier's PM-runtime usage
+> counter will be nonzero after that which effectively causes the
+> supplier to remain "always on" going forward.
+> 
+> Namely, device_link_add() called to add the link invokes
+> device_link_rpm_prepare() which notices that the consumer driver is
+> probing, so it increments the supplier's PM-runtime usage counter
+> with the assumption that the link will stay around until
+> pm_runtime_put_suppliers() is called by driver_probe_device(),
+> but if the link goes away before that point, the supplier's
+> PM-runtime usage counter will remain nonzero.
+> 
+> To prevent that from happening, first rework pm_runtime_get_suppliers()
+> and pm_runtime_put_suppliers() to use the rpm_active refounts of device
+> links and make the latter only drop rpm_active and the supplier's
+> PM-runtime usage counter for each link by one, unless rpm_active is
+> one already for it.  Next, modify device_link_add() to bump up the
+> new link's rpm_active refcount and the suppliers PM-runtime usage
+> counter by two, to prevent pm_runtime_put_suppliers(), if it is
+> called subsequently, from suspending the supplier prematurely (in
+> case its PM-runtime usage counter goes down to 0 in there).
+> 
+> Due to the way rpm_put_suppliers() works, this change does not
+> affect runtime suspend of the consumer ends of new device links (or,
+> generally, device links for which DL_FLAG_PM_RUNTIME has just been
+> set).
+> 
+> Fixes: e2f3cd831a28 ("driver core: Fix handling of runtime PM flags in device_link_add()")
+> Reported-by: Ulf Hansson <ulf.hansson@linaro.org> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > ---
->
->  arch/powerpc/Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
-> index ac03334..f989979 100644
-> --- a/arch/powerpc/Makefile
-> +++ b/arch/powerpc/Makefile
-> @@ -34,7 +34,7 @@ ifdef CONFIG_PPC_BOOK3S_32
->  KBUILD_CFLAGS          += -mcpu=powerpc
->  endif
->
-> -ifeq ($(CROSS_COMPILE),)
-> +ifeq ($(origin ARCH), file)
->  KBUILD_DEFCONFIG := $(shell uname -m)_defconfig
->  else
->  KBUILD_DEFCONFIG := ppc64_defconfig
-> --
-> 2.7.4
->
+> 
+> Note that the issue had been there before commit e2f3cd831a28, but it was
+> overlooked by that commit and this change is a fix on top of it, so make
+> the Fixes: tag point to commit e2f3cd831a28 (instead of an earlier one
+> that the patch will not be applicable to).
+I noticed that yesterday's and today's -next were no longer booting on
+one of our Tegra boards (Tegra210 Jetson TX2) because networking is
+failing. The ethernet chip is a USB device and looking at the bootlogs I
+can see that the Tegra XHCI driver is failing ...
+
+ tegra-xusb 70090000.usb: xHCI host controller not responding, assume dead
+ tegra-xusb 70090000.usb: HC died; cleaning up
+
+The Tegra XHCI driver uses multiple power-domains and uses
+device_link_add() to attach them. So now I am wondering if there is
+something that we have got wrong in our implementation. However, I don't
+see the device being probed deferred on boot or anything like that.
+
+The driver in question is drivers/usb/host/xhci-tegra.c and we add the
+links in the function tegra_xusb_powerdomain_init() which is before RPM
+is enabled. Let me know if you have any thoughts.
+
+Cheers
+Jon
+
+-- 
+nvpublic
