@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C213C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:31:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A09C4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:31:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D069D20840
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:31:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACB2D20840
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:31:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197904;
-	bh=8b+nD2gxk3CIxUx056hPA3Oe82UM5m44h+GjOegFd0A=;
+	s=default; t=1550197910;
+	bh=l2qM5AV0H+yyDL6njng0SjRZasjlTO3f0MW3sc1Bgn8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MJJhtwGpZZKSZ/hgdktYYbdYQ1dBG9InI2cDJiu0z4gLVQD/a0MbHeZ5wVyzhu0zN
-	 UyMJ/CC7HFuheytjntI1VxkGFsKXM7N88gF2GKBJXMmzhChGKlfeTzAmE/Mui6eUYk
-	 xEP6KbW2iCy3A+o9VLVQ4HgY1IM/ntSM8/UQPOEQ=
+	b=dDBYeTL3+CUhRbgPkTo733BjzN/YlMUhzARksqMLUQ/hdlFAN4WenyxOwGNKRHdJh
+	 nxHsjbT++XeSHlPZ6N5kKOFNA7g8KyoD42MgredauBBGGoYtPZ9lhX3pn/439Kyi5S
+	 0V/S6oosxWwg1Jw0F8jFLN+aBhrx7kOFlZh7ek1w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732584AbfBOCbn (ORCPT
+        id S2391089AbfBOCM2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:31:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52544 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:12:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391124AbfBOCMc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:12:32 -0500
+        id S2404189AbfBOCMW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:12:22 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C55C21934;
-        Fri, 15 Feb 2019 02:12:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA12D222D0;
+        Fri, 15 Feb 2019 02:12:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196751;
-        bh=8b+nD2gxk3CIxUx056hPA3Oe82UM5m44h+GjOegFd0A=;
+        s=default; t=1550196741;
+        bh=l2qM5AV0H+yyDL6njng0SjRZasjlTO3f0MW3sc1Bgn8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=czbZs5YhH1WvQy4Qa4BXqhiZ/YWE/UqMmFOReH1D5O05/2SHn2wyb65bxUtKUXq2i
-         35CQ4yobpEHsWJKhwad0SHHPTxQUS02Xb/Q3F/1WF/04K/zpFFF3YHjs7h/eAZIMnw
-         YJ0jlE7Vvjnt3d1jArYmc2NRRh2rstyhuU6WJK1w=
+        b=Je1bhWUGCgPYEyO3Oo5SditoZ9J6a3HYkSIHwZSqMt84w3InDXO1/MWFaY820TG03
+         PvpTX1Rp/Ss04cbk6WFA0eR27UskxU0W+/o5+WshP5lkAJ4V2e65La7Gw/bYglYnqC
+         EGG2bUTpe1Hz+GvBLp5mNpTRv/j0CLzS92trH5BA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tejun Heo <tj@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.19 42/65] writeback: synchronize sync(2) against cgroup writeback membership switches
-Date:   Thu, 14 Feb 2019 21:10:58 -0500
-Message-Id: <20190215021121.177674-42-sashal@kernel.org>
+Cc:     Matthias Kaehlcke <mka@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 36/65] tty: serial: qcom_geni_serial: Allow mctrl when flow control is disabled
+Date:   Thu, 14 Feb 2019 21:10:52 -0500
+Message-Id: <20190215021121.177674-36-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -58,167 +58,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tejun Heo <tj@kernel.org>
+From: Matthias Kaehlcke <mka@chromium.org>
 
-[ Upstream commit 7fc5854f8c6efae9e7624970ab49a1eac2faefb1 ]
+[ Upstream commit e8a6ca808c5ed1e2b43ab25f1f2cbd43a7574f73 ]
 
-sync_inodes_sb() can race against cgwb (cgroup writeback) membership
-switches and fail to writeback some inodes.  For example, if an inode
-switches to another wb while sync_inodes_sb() is in progress, the new
-wb might not be visible to bdi_split_work_to_wbs() at all or the inode
-might jump from a wb which hasn't issued writebacks yet to one which
-already has.
+The geni set/get_mctrl() functions currently do nothing unless
+hardware flow control is enabled. Remove this arbitrary limitation.
 
-This patch adds backing_dev_info->wb_switch_rwsem to synchronize cgwb
-switch path against sync_inodes_sb() so that sync_inodes_sb() is
-guaranteed to see all the target wbs and inodes can't jump wbs to
-escape syncing.
-
-v2: Fixed misplaced rwsem init.  Spotted by Jiufei.
-
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Reported-by: Jiufei Xue <xuejiufei@gmail.com>
-Link: http://lkml.kernel.org/r/dc694ae2-f07f-61e1-7097-7c8411cee12d@gmail.com
-Acked-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Suggested-by: Johan Hovold <johan@kernel.org>
+Fixes: 8a8a66a1a18a ("tty: serial: qcom_geni_serial: Add support for flow control")
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/fs-writeback.c                | 40 ++++++++++++++++++++++++++++++--
- include/linux/backing-dev-defs.h |  1 +
- mm/backing-dev.c                 |  1 +
- 3 files changed, 40 insertions(+), 2 deletions(-)
+ drivers/tty/serial/qcom_geni_serial.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 471d863958bc..82ce6d4f7e31 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -331,11 +331,22 @@ struct inode_switch_wbs_context {
- 	struct work_struct	work;
- };
+diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
+index 1515074e18fb..35d1f6fa0e3c 100644
+--- a/drivers/tty/serial/qcom_geni_serial.c
++++ b/drivers/tty/serial/qcom_geni_serial.c
+@@ -221,7 +221,7 @@ static unsigned int qcom_geni_serial_get_mctrl(struct uart_port *uport)
+ 	unsigned int mctrl = TIOCM_DSR | TIOCM_CAR;
+ 	u32 geni_ios;
  
-+static void bdi_down_write_wb_switch_rwsem(struct backing_dev_info *bdi)
-+{
-+	down_write(&bdi->wb_switch_rwsem);
-+}
-+
-+static void bdi_up_write_wb_switch_rwsem(struct backing_dev_info *bdi)
-+{
-+	up_write(&bdi->wb_switch_rwsem);
-+}
-+
- static void inode_switch_wbs_work_fn(struct work_struct *work)
+-	if (uart_console(uport) || !uart_cts_enabled(uport)) {
++	if (uart_console(uport)) {
+ 		mctrl |= TIOCM_CTS;
+ 	} else {
+ 		geni_ios = readl_relaxed(uport->membase + SE_GENI_IOS);
+@@ -237,7 +237,7 @@ static void qcom_geni_serial_set_mctrl(struct uart_port *uport,
  {
- 	struct inode_switch_wbs_context *isw =
- 		container_of(work, struct inode_switch_wbs_context, work);
- 	struct inode *inode = isw->inode;
-+	struct backing_dev_info *bdi = inode_to_bdi(inode);
- 	struct address_space *mapping = inode->i_mapping;
- 	struct bdi_writeback *old_wb = inode->i_wb;
- 	struct bdi_writeback *new_wb = isw->new_wb;
-@@ -343,6 +354,12 @@ static void inode_switch_wbs_work_fn(struct work_struct *work)
- 	bool switched = false;
- 	void **slot;
+ 	u32 uart_manual_rfr = 0;
  
-+	/*
-+	 * If @inode switches cgwb membership while sync_inodes_sb() is
-+	 * being issued, sync_inodes_sb() might miss it.  Synchronize.
-+	 */
-+	down_read(&bdi->wb_switch_rwsem);
-+
- 	/*
- 	 * By the time control reaches here, RCU grace period has passed
- 	 * since I_WB_SWITCH assertion and all wb stat update transactions
-@@ -435,6 +452,8 @@ static void inode_switch_wbs_work_fn(struct work_struct *work)
- 	spin_unlock(&new_wb->list_lock);
- 	spin_unlock(&old_wb->list_lock);
- 
-+	up_read(&bdi->wb_switch_rwsem);
-+
- 	if (switched) {
- 		wb_wakeup(new_wb);
- 		wb_put(old_wb);
-@@ -475,9 +494,18 @@ static void inode_switch_wbs(struct inode *inode, int new_wb_id)
- 	if (inode->i_state & I_WB_SWITCH)
+-	if (uart_console(uport) || !uart_cts_enabled(uport))
++	if (uart_console(uport))
  		return;
  
-+	/*
-+	 * Avoid starting new switches while sync_inodes_sb() is in
-+	 * progress.  Otherwise, if the down_write protected issue path
-+	 * blocks heavily, we might end up starting a large number of
-+	 * switches which will block on the rwsem.
-+	 */
-+	if (!down_read_trylock(&bdi->wb_switch_rwsem))
-+		return;
-+
- 	isw = kzalloc(sizeof(*isw), GFP_ATOMIC);
- 	if (!isw)
--		return;
-+		goto out_unlock;
- 
- 	/* find and pin the new wb */
- 	rcu_read_lock();
-@@ -511,12 +539,14 @@ static void inode_switch_wbs(struct inode *inode, int new_wb_id)
- 	 * Let's continue after I_WB_SWITCH is guaranteed to be visible.
- 	 */
- 	call_rcu(&isw->rcu_head, inode_switch_wbs_rcu_fn);
--	return;
-+	goto out_unlock;
- 
- out_free:
- 	if (isw->new_wb)
- 		wb_put(isw->new_wb);
- 	kfree(isw);
-+out_unlock:
-+	up_read(&bdi->wb_switch_rwsem);
- }
- 
- /**
-@@ -894,6 +924,9 @@ fs_initcall(cgroup_writeback_init);
- 
- #else	/* CONFIG_CGROUP_WRITEBACK */
- 
-+static void bdi_down_write_wb_switch_rwsem(struct backing_dev_info *bdi) { }
-+static void bdi_up_write_wb_switch_rwsem(struct backing_dev_info *bdi) { }
-+
- static struct bdi_writeback *
- locked_inode_to_wb_and_lock_list(struct inode *inode)
- 	__releases(&inode->i_lock)
-@@ -2420,8 +2453,11 @@ void sync_inodes_sb(struct super_block *sb)
- 		return;
- 	WARN_ON(!rwsem_is_locked(&sb->s_umount));
- 
-+	/* protect against inode wb switch, see inode_switch_wbs_work_fn() */
-+	bdi_down_write_wb_switch_rwsem(bdi);
- 	bdi_split_work_to_wbs(bdi, &work, false);
- 	wb_wait_for_completion(bdi, &done);
-+	bdi_up_write_wb_switch_rwsem(bdi);
- 
- 	wait_sb_inodes(sb);
- }
-diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
-index c31157135598..07e02d6df5ad 100644
---- a/include/linux/backing-dev-defs.h
-+++ b/include/linux/backing-dev-defs.h
-@@ -190,6 +190,7 @@ struct backing_dev_info {
- 	struct radix_tree_root cgwb_tree; /* radix tree of active cgroup wbs */
- 	struct rb_root cgwb_congested_tree; /* their congested states */
- 	struct mutex cgwb_release_mutex;  /* protect shutdown of wb structs */
-+	struct rw_semaphore wb_switch_rwsem; /* no cgwb switch while syncing */
- #else
- 	struct bdi_writeback_congested *wb_congested;
- #endif
-diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-index 8a8bb8796c6c..72e6d0c55cfa 100644
---- a/mm/backing-dev.c
-+++ b/mm/backing-dev.c
-@@ -689,6 +689,7 @@ static int cgwb_bdi_init(struct backing_dev_info *bdi)
- 	INIT_RADIX_TREE(&bdi->cgwb_tree, GFP_ATOMIC);
- 	bdi->cgwb_congested_tree = RB_ROOT;
- 	mutex_init(&bdi->cgwb_release_mutex);
-+	init_rwsem(&bdi->wb_switch_rwsem);
- 
- 	ret = wb_init(&bdi->wb, bdi, 1, GFP_KERNEL);
- 	if (!ret) {
+ 	if (!(mctrl & TIOCM_RTS))
 -- 
 2.19.1
 
