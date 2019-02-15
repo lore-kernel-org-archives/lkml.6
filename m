@@ -3,75 +3,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EDA0C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:10:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AD79C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:10:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3DEB21925
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:10:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 474A721925
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:10:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550250606;
-	bh=HzMAk/Pjax0h0ML0vYeJe3mQA0oDzDwnpo72hWUlzM4=;
+	s=default; t=1550250609;
+	bh=CzbGNSAj92JO8OwJxvQbzTDylckZ1ToC4yjiDwwK89c=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=VTSlgrE6TcWQHIDeQrjNmDqv5sVVOzqy07QyCz6EVWJevr01BQN+e3NoXfGwQXD0V
-	 sWvFDKch0xN2PPz2hwMV8NfecC4Wr8zpoJYbH09zYQje1P+nMj8wKDZ+O5H+dK5/Ud
-	 P3wUMswJEWVpBUpMARZisdMyjAjBaxdWR/NPipu0=
+	b=wHvj5r1tZ8aWQQBlOr0XrNKe/NJSXBRHCi85ejWYVFzS6kaRvBPGosPBZhS4l6FiL
+	 AnVPeArKdUOle6gdqzazUqu0Bcnl8mrHC8/WteXTqfmufiH+LVaBwQdMYqRtrzCTho
+	 bOHWApD/kMSvn7bhACZpHThW/B7BN9bouaqJx5cE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729288AbfBORKG (ORCPT
+        id S1729368AbfBORKH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 12:10:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56850 "EHLO mail.kernel.org"
+        Fri, 15 Feb 2019 12:10:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726144AbfBORKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728166AbfBORKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 15 Feb 2019 12:10:04 -0500
-Subject: Re: [GIT] Crypto Fixes for 5.0
+Subject: Re: [git pull] drm fixes for 5.0-rc7
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550250603;
-        bh=HzMAk/Pjax0h0ML0vYeJe3mQA0oDzDwnpo72hWUlzM4=;
+        s=default; t=1550250604;
+        bh=CzbGNSAj92JO8OwJxvQbzTDylckZ1ToC4yjiDwwK89c=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=POF0xKYP9wqC9N1Eofc0jZfDMIpXf54MXf/IklytLf5mI76NjLxqlXr99/9KxIwa4
-         NobxITUGW2fbXuH/2rn0pjwgS8aRUvAukf8WRI+mfitX76XS0I4byCdur6oIhuK1ow
-         mGWO7RszyYCVCXfdDgnnKttHNsV8Q2jnOEomV1tg=
+        b=uL+MNadVR2IPPRO3YvEMn/Z/yAKNhMC91kNfzv+MZ5bmrHJIc9HcZNpBhybRuYjMY
+         xRw8v4fXrqWmU4gA3L31egVAhXwQ5nrgWJpaNuzsH5u1/rexmV2Phv97QjwA3TZXY1
+         cnGuUGhSlFRwpuVMW30jb1W6P+sllWCaOJ+AGV3Y=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190215024738.fynl64d5u5htcy2l@gondor.apana.org.au>
-References: <20171222064931.GA27068@gondor.apana.org.au>
- <20180105073808.GA14405@gondor.apana.org.au>
- <20180212031702.GA26153@gondor.apana.org.au>
- <20180428080517.haxgpvqrwgotakyo@gondor.apana.org.au>
- <20180622145403.6ltjip7che227fuo@gondor.apana.org.au>
- <20180829033353.agnzxra3jk2r2mzg@gondor.apana.org.au>
- <20181116063146.e7a3mep3ghnfltxe@gondor.apana.org.au>
- <20181207061409.xflg423nknleuddw@gondor.apana.org.au>
- <20190118104006.ye5amhxkgd4xrbmc@gondor.apana.org.au>
- <20190201054204.ehl7u7aaqmkdh5b6@gondor.apana.org.au>
- <20190215024738.fynl64d5u5htcy2l@gondor.apana.org.au>
+In-Reply-To: <CAPM=9txPE7gVooSFCyOt0cvGOJnHaq7xF28YydC17vDCemGB4w@mail.gmail.com>
+References: <CAPM=9txPE7gVooSFCyOt0cvGOJnHaq7xF28YydC17vDCemGB4w@mail.gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190215024738.fynl64d5u5htcy2l@gondor.apana.org.au>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
-X-PR-Tracked-Commit-Id: 1358c13a48c43f5e4de0c1835291837a27b9720c
+X-PR-Tracked-Message-Id: <CAPM=9txPE7gVooSFCyOt0cvGOJnHaq7xF28YydC17vDCemGB4w@mail.gmail.com>
+X-PR-Tracked-Remote: git://anongit.freedesktop.org/drm/drm
+ tags/drm-fixes-2019-02-15-1
+X-PR-Tracked-Commit-Id: 69ef943dbc14b21987c79f8399ffea08f9a1b446
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2aba322074de0d6781f4ae6b44d3e792b9bd2243
-Message-Id: <155025060394.11780.11662160614573441558.pr-tracker-bot@kernel.org>
-Date:   Fri, 15 Feb 2019 17:10:03 +0000
-To:     Herbert Xu <herbert@gondor.apana.org.au>
+X-PR-Merge-Commit-Id: 545aabcbdcec6c88faa3dfde506ad1931d119f52
+Message-Id: <155025060411.11780.2965811560438439564.pr-tracker-bot@kernel.org>
+Date:   Fri, 15 Feb 2019 17:10:04 +0000
+To:     Dave Airlie <airlied@gmail.com>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        LKML <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 15 Feb 2019 10:47:39 +0800:
+The pull request you sent on Fri, 15 Feb 2019 13:17:43 +1000:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git linus
+> git://anongit.freedesktop.org/drm/drm tags/drm-fixes-2019-02-15-1
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2aba322074de0d6781f4ae6b44d3e792b9bd2243
+https://git.kernel.org/torvalds/c/545aabcbdcec6c88faa3dfde506ad1931d119f52
 
 Thank you!
 
