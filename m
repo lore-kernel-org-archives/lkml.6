@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 392EBC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:12:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6375DC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:12:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEDBA222DF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:12:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A3F02229F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:12:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196743;
-	bh=soZlLbgL6tbq6lNd2cnZAdOntkC3kZXkGgyxvSHXt20=;
+	s=default; t=1550196754;
+	bh=9/vIXNjYur0fMrot25rWyv4k3CjtT9Ba7PlQfyShXjc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Bac0GYmchwqkNPTCbRXOmpqeeIoQW9fL1CGVy+s3BrDcWQUgA011u6/EovTV2eflv
-	 vDq/BY6Txr/lklWNZilMh7/GvNzKO/44yu8FoXxbG2eJaNpF/lQAmT+ewZmKCh6CnC
-	 sWJcYPUUdi2GL+H8l1MfDHMu340HslLmsfz/CI5Q=
+	b=PZd3Y11H8PmlFx4viaGM/1bmEOoE+iL47lI7RtWiALdnAOF96rEy+/Zxjmx6lCpki
+	 pUT25lZNJxGSfcLqrNMsA4Bd9yr5ljak9mIvngcMJfR4j0jmURjSnmu8cZUMNJvACm
+	 5I6ckLpTkNDZAQz0a2GAJF3O4/9vP/YByqTCiHMU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404224AbfBOCMU (ORCPT
+        id S2391132AbfBOCMc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:12:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52318 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:12:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404189AbfBOCMR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:12:17 -0500
+        id S2404214AbfBOCMZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:12:25 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7165D21B68;
-        Fri, 15 Feb 2019 02:12:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34E74206BA;
+        Fri, 15 Feb 2019 02:12:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196736;
-        bh=soZlLbgL6tbq6lNd2cnZAdOntkC3kZXkGgyxvSHXt20=;
+        s=default; t=1550196745;
+        bh=9/vIXNjYur0fMrot25rWyv4k3CjtT9Ba7PlQfyShXjc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xuh/+CCm+DaZyAcwSQjHq7CG01UWgmlfKYw4TEBQXV1uvi7dP2TENLRLTQyYcAUwK
-         1CCsZa/BYx9KvhDW1+jM7kKRF+2aIg7JkmNouihDTpX005Ga/z+390b2KRI7gW+aG7
-         XsOFrohxGiauZUTktG0z8KttwFYv69oA1sgI7pLI=
+        b=s3oKEf8mUQYvaheKaeLMmcmBvwANb9Dr/13OJjDyvr0VidushU/v7fk6gU+PXGizM
+         YHCVT78GFla4agP4eszKrrNCvHK7cxBLH8wUyhWFwX9SjuUeE6PNnWmhWWT+K6BgxO
+         Nm8GtVtSfzAI+v0c847fFV+xGir0LzPlaakDyVEE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Xie Yongji <xieyongji@baidu.com>, Zhang Yu <zhangyu31@baidu.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 33/65] locking/rwsem: Fix (possible) missed wakeup
-Date:   Thu, 14 Feb 2019 21:10:49 -0500
-Message-Id: <20190215021121.177674-33-sashal@kernel.org>
+Cc:     Liam Mark <lmark@codeaurora.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, devel@driverdev.osuosl.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.19 39/65] staging: android: ion: Support cpu access during dma_buf_detach
+Date:   Thu, 14 Feb 2019 21:10:55 -0500
+Message-Id: <20190215021121.177674-39-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -60,63 +59,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xie Yongji <xieyongji@baidu.com>
+From: Liam Mark <lmark@codeaurora.org>
 
-[ Upstream commit e158488be27b157802753a59b336142dc0eb0380 ]
+[ Upstream commit 31eb79db420a3f94c4c45a8c0a05cd30e333f981 ]
 
-Because wake_q_add() can imply an immediate wakeup (cmpxchg failure
-case), we must not rely on the wakeup being delayed. However, commit:
+Often userspace doesn't know when the kernel will be calling dma_buf_detach
+on the buffer.
+If userpace starts its CPU access at the same time as the sg list is being
+freed it could end up accessing the sg list after it has been freed.
 
-  e38513905eea ("locking/rwsem: Rework zeroing reader waiter->task")
+Thread A				Thread B
+- DMA_BUF_IOCTL_SYNC IOCT
+ - ion_dma_buf_begin_cpu_access
+  - list_for_each_entry
+					- ion_dma_buf_detatch
+					 - free_duped_table
+   - dma_sync_sg_for_cpu
 
-relies on exactly that behaviour in that the wakeup must not happen
-until after we clear waiter->task.
+Fix this by getting the ion_buffer lock before freeing the sg table memory.
 
-[ peterz: Added changelog. ]
-
-Signed-off-by: Xie Yongji <xieyongji@baidu.com>
-Signed-off-by: Zhang Yu <zhangyu31@baidu.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: e38513905eea ("locking/rwsem: Rework zeroing reader waiter->task")
-Link: https://lkml.kernel.org/r/1543495830-2644-1-git-send-email-xieyongji@baidu.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 2a55e7b5e544 ("staging: android: ion: Call dma_map_sg for syncing and mapping")
+Signed-off-by: Liam Mark <lmark@codeaurora.org>
+Acked-by: Laura Abbott <labbott@redhat.com>
+Acked-by: Andrew F. Davis <afd@ti.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/locking/rwsem-xadd.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ drivers/staging/android/ion/ion.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/locking/rwsem-xadd.c b/kernel/locking/rwsem-xadd.c
-index 3064c50e181e..ef909357b84e 100644
---- a/kernel/locking/rwsem-xadd.c
-+++ b/kernel/locking/rwsem-xadd.c
-@@ -198,15 +198,22 @@ static void __rwsem_mark_wake(struct rw_semaphore *sem,
- 		woken++;
- 		tsk = waiter->task;
+diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
+index 99073325b0c0..45c7f829e387 100644
+--- a/drivers/staging/android/ion/ion.c
++++ b/drivers/staging/android/ion/ion.c
+@@ -237,10 +237,10 @@ static void ion_dma_buf_detatch(struct dma_buf *dmabuf,
+ 	struct ion_dma_buf_attachment *a = attachment->priv;
+ 	struct ion_buffer *buffer = dmabuf->priv;
  
--		wake_q_add(wake_q, tsk);
-+		get_task_struct(tsk);
- 		list_del(&waiter->list);
- 		/*
--		 * Ensure that the last operation is setting the reader
-+		 * Ensure calling get_task_struct() before setting the reader
- 		 * waiter to nil such that rwsem_down_read_failed() cannot
- 		 * race with do_exit() by always holding a reference count
- 		 * to the task to wakeup.
- 		 */
- 		smp_store_release(&waiter->task, NULL);
-+		/*
-+		 * Ensure issuing the wakeup (either by us or someone else)
-+		 * after setting the reader waiter to nil.
-+		 */
-+		wake_q_add(wake_q, tsk);
-+		/* wake_q_add() already take the task ref */
-+		put_task_struct(tsk);
- 	}
+-	free_duped_table(a->table);
+ 	mutex_lock(&buffer->lock);
+ 	list_del(&a->list);
+ 	mutex_unlock(&buffer->lock);
++	free_duped_table(a->table);
  
- 	adjustment = woken * RWSEM_ACTIVE_READ_BIAS - adjustment;
+ 	kfree(a);
+ }
 -- 
 2.19.1
 
