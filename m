@@ -2,117 +2,342 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72259C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:12:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7297BC10F02
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:13:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ADF121B1A
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:12:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="kLZgpmGW"
+	by mail.kernel.org (Postfix) with ESMTP id 3997A21B1A
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:13:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394045AbfBOLMc (ORCPT
+        id S2394090AbfBOLNt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 06:12:32 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43942 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389957AbfBOLMc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 06:12:32 -0500
-Received: by mail-wr1-f68.google.com with SMTP id r2so9878848wrv.10
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 03:12:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YXmDuuP3jHoilOmEftWxAROrXZ617W04HSxSZN9uecQ=;
-        b=kLZgpmGWoIqtQmwbZNe2vQbr1qI5dQIhXhWPXKFR2ZGIastxfHiyMYj8IoUWhCf28D
-         V0sQ1KYNxTIuZJJ5Lt/uuZXg/P0kTiHtbnZSTQPvzfX7tJusNVNfx2lqXwUn7p5K58lB
-         +louPxlWfnNIE+MQ92k2/yGxV6lvBuNrOZ8gLvJ7ObMx3uAg7OU4x3GwOxHWZkFlI6Fo
-         XVI86hhwSIwtHGO6cfFch6Ty0zon+WRQip1P1jAhFTgSMozPJvYX0sc3WErUHyzDbgW2
-         40EutGKrgxPJAVf5jZKsNDavi8gxRBd4OfoiuJQ5EDZ7U6EgoaUYwV4Hx2ZFFFDH/w9B
-         3OVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YXmDuuP3jHoilOmEftWxAROrXZ617W04HSxSZN9uecQ=;
-        b=Z4x1gMeDQ0xjJJbFrhDENPUU8497/O6L+J44m7PqEr0waGdepiUxxVogusMiUJKYoJ
-         bSY3dD1ZXB3dUmm0bGmoZ0Bn8c3MJuPPYAbALpt/Mn06SRvhl3GN3TOvh5NRzKMcPZSD
-         nWs5x3nq6jZXCbTBfGx4N5U57oOOhprrPMghkATwrwJQI6CH0QpvsrVX2Kk3oW544X9w
-         KNd7Mgi49BF+u1VuNey85YXq7P+xjWv5bg8bvK1DjremrI8CO66llb2BnbnyxGMuLA3X
-         PcPXSS0hTihZPYC++ulCWHO+9cYnp9thSR6o1KOzu3EVSi5WcA/Hculv/mR5GkZ+Y/Tr
-         z5tg==
-X-Gm-Message-State: AHQUAuZ2UMnf+DQ2M9JyTQY50epEFnUuJ3mQ23zjLH7aQIqdFtJl235O
-        tff+JTu5x4e9ITbEBVWZkrRs6K5V4Dr+lA==
-X-Google-Smtp-Source: AHgI3IZRlYJN3hoJU2RxLmiIGcE13cTzmFxef/hTFDqCc9fKzKEy8V/WaBS1ohsWCWzvcFXw4EKopQ==
-X-Received: by 2002:adf:efca:: with SMTP id i10mr6377789wrp.265.1550229150429;
-        Fri, 15 Feb 2019 03:12:30 -0800 (PST)
-Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id f187sm3810223wma.4.2019.02.15.03.12.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Feb 2019 03:12:29 -0800 (PST)
-Date:   Fri, 15 Feb 2019 12:12:27 +0100
-From:   LABBE Corentin <clabbe@baylibre.com>
-To:     Eugeniy Paltsev <eugeniy.paltsev@synopsys.com>
-Cc:     linux-snps-arc@lists.infradead.org,
-        Vineet Gupta <vineet.gupta1@synopsys.com>,
-        linux-kernel@vger.kernel.org,
-        Alexey Brodkin <alexey.brodkin@synopsys.com>,
-        khilman@baylibre.com
-Subject: Re: [PATCH v2 0/2] ARC: rework U-boot arguments handling
-Message-ID: <20190215111227.GA24034@Red>
-References: <20190214150745.18773-1-Eugeniy.Paltsev@synopsys.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190214150745.18773-1-Eugeniy.Paltsev@synopsys.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 15 Feb 2019 06:13:49 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59080 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388520AbfBOLNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 06:13:48 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7826EC0D804C;
+        Fri, 15 Feb 2019 11:13:47 +0000 (UTC)
+Received: from localhost (ovpn-8-22.pek2.redhat.com [10.72.8.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DD6435D6A9;
+        Fri, 15 Feb 2019 11:13:33 +0000 (UTC)
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Theodore Ts'o <tytso@mit.edu>,
+        Omar Sandoval <osandov@fb.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-raid@vger.kernel.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, linux-ext4@vger.kernel.org,
+        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
+        Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com,
+        Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH V15 00/18] block: support multi-page bvec
+Date:   Fri, 15 Feb 2019 19:13:06 +0800
+Message-Id: <20190215111324.30129-1-ming.lei@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 15 Feb 2019 11:13:48 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 06:07:43PM +0300, Eugeniy Paltsev wrote:
-> Reworking U-boot args handling and enable uboot support
-> unconditionally.
-> 
-> Changes v1->v2:
->  * Drop magic number check [in this patch series]
->  * Keep comment about cndline appending
-> 
-> Changes RFC->v1:
->  * Don't add new ABI contract between kernel and uboot
->  * Eliminate CONFIG_ARC_UBOOT_SUPPORT Kconfig option and
->    enable uboot support unconditionally
->  * Skip invalid U-boot args instead of panic
->  * Check existing U-boot magic value
->  * Improve uboot_arg validating
->  * Minor code changes
-> 
-> Eugeniy Paltsev (2):
->   ARC: U-boot: check arguments paranoidly
->   ARC: enable uboot support unconditionally
-> 
->  arch/arc/Kconfig                        | 12 -----
->  arch/arc/configs/nps_defconfig          |  1 -
->  arch/arc/configs/vdk_hs38_defconfig     |  1 -
->  arch/arc/configs/vdk_hs38_smp_defconfig |  2 -
->  arch/arc/kernel/head.S                  |  7 ++-
->  arch/arc/kernel/setup.c                 | 96 +++++++++++++++++++++++----------
->  6 files changed, 70 insertions(+), 49 deletions(-)
-> 
-> -- 
-> 2.14.5
-> 
+Hi,
 
-Hello
+This patchset brings multi-page bvec into block layer:
 
-Tested-by: Corentin LABBE <clabbe@baylibre.com>
+1) what is multi-page bvec?
 
-It worked on our LAVA lab  along with my "arc: hsdk_defconfig: Enable CONFIG_BLK_DEV_RAM" patch.
+Multipage bvecs means that one 'struct bio_bvec' can hold multiple pages
+which are physically contiguous instead of one single page used in linux
+kernel for long time.
 
-Regards
+2) why is multi-page bvec introduced?
+
+Kent proposed the idea[1] first. 
+
+As system's RAM becomes much bigger than before, and huge page, transparent
+huge page and memory compaction are widely used, it is a bit easy now
+to see physically contiguous pages from fs in I/O. On the other hand, from
+block layer's view, it isn't necessary to store intermediate pages into bvec,
+and it is enough to just store the physicallly contiguous 'segment' in each
+io vector.
+
+Also huge pages are being brought to filesystem and swap [2][6], we can
+do IO on a hugepage each time[3], which requires that one bio can transfer
+at least one huge page one time. Turns out it isn't flexiable to change
+BIO_MAX_PAGES simply[3][5]. Multipage bvec can fit in this case very well.
+As we saw, if CONFIG_THP_SWAP is enabled, BIO_MAX_PAGES can be configured
+as much bigger, such as 512, which requires at least two 4K pages for holding
+the bvec table.
+
+With multi-page bvec:
+
+- Inside block layer, both bio splitting and sg map can become more
+efficient than before by just traversing the physically contiguous
+'segment' instead of each page.
+
+- segment handling in block layer can be improved much in future since it
+should be quite easy to convert multipage bvec into segment easily. For
+example, we might just store segment in each bvec directly in future.
+
+- bio size can be increased and it should improve some high-bandwidth IO
+case in theory[4].
+
+- there is opportunity in future to improve memory footprint of bvecs. 
+
+3) how is multi-page bvec implemented in this patchset?
+
+Patch 1 ~ 3 parpares for supporting multi-page bvec. 
+
+Patches 4 ~ 14 implement multipage bvec in block layer:
+
+	- put all tricks into bvec/bio/rq iterators, and as far as
+	drivers and fs use these standard iterators, they are happy
+	with multipage bvec
+
+	- introduce bio_for_each_bvec() to iterate over multipage bvec for splitting
+	bio and mapping sg
+
+	- keep current bio_for_each_segment*() to itereate over singlepage bvec and
+	make sure current users won't be broken; especailly, convert to this
+	new helper prototype in single patch 21 given it is bascially a mechanism
+	conversion
+
+	- deal with iomap & xfs's sub-pagesize io vec in patch 13
+
+	- enalbe multipage bvec in patch 14 
+
+Patch 15 redefines BIO_MAX_PAGES as 256.
+
+Patch 16 documents usages of bio iterator helpers.
+
+Patch 17~18 kills NO_SG_MERGE.
+
+These patches can be found in the following git tree:
+
+	git:  https://github.com/ming1/linux.git  v5.0-blk_mp_bvec_v14
+
+Lots of test(blktest, xfstests, ltp io, ...) have been run with this patchset,
+and not see regression.
+
+Thanks Christoph for reviewing the early version and providing very good
+suggestions, such as: introduce bio_init_with_vec_table(), remove another
+unnecessary helpers for cleanup and so on.
+
+Thanks Chritoph and Omar for reviewing V10/V11/V12, and provides lots of
+helpful comments.
+
+V15:
+	- rename bio_for_each_mp_bvec/rq_for_each_mp_bvec as
+	  bio_for_each_bvec/rq_for_each_bvec, as suggested by Christoph,
+	  so the mp_bvec name is only used by bvec helpers
+
+V14:
+	- drop patch(patch 4 in V13) for renaming bvec helpers, as suggested by Jens
+	- use mp_bvec_* as multi-page bvec helper name
+	- fix one build issue, which is caused by missing one converion of
+	bio_for_each_segment_all in fs/gfs2
+	- fix one 32bit ARCH specific issue caused by segment boundary mask
+	overflow
+
+V13:
+	- rebase on v5.0-rc2
+	- address Omar's comment on patch 1 of V12 by using V11's approach
+	- rename one local vairable in patch 15 as suggested by Christoph
+
+V12:
+	- deal with non-cluster by max segment size & segment boundary limit
+	- rename bvec helper's name
+	- revert new change on bvec_iter_advance() in V11
+	- introduce rq_for_each_bvec()
+	- use simpler check on enalbing multi-page bvec
+	- fix Document change
+
+V11:
+	- address most of reviews from Omar and christoph
+	- rename mp_bvec_* as segment_* helpers
+	- remove 'mp' parameter from bvec_iter_advance() and related helpers
+	- cleanup patch on bvec_split_segs() and blk_bio_segment_split(),
+	  remove unnecessary checks
+	- simplify bvec_last_segment()
+	- drop bio_pages_all()
+	- introduce dedicated functions/file for handling non-cluser bio for
+	avoiding checking queue cluster before adding page to bio
+	- introduce bio_try_merge_segment() for simplifying iomap/xfs page
+	  accounting code
+	- Fix Document change
+
+V10:
+	- no any code change, just add more guys and list into patch's CC list,
+	as suggested by Christoph and Dave Chinner
+V9:
+	- fix regression on iomap's sub-pagesize io vec, covered by patch 13
+V8:
+	- remove prepare patches which all are merged to linus tree
+	- rebase on for-4.21/block
+	- address comments on V7
+	- add patches of killing NO_SG_MERGE
+
+V7:
+	- include Christoph and Mike's bio_clone_bioset() patches, which is
+	  actually prepare patches for multipage bvec
+	- address Christoph's comments
+
+V6:
+	- avoid to introduce lots of renaming, follow Jen's suggestion of
+	using the name of chunk for multipage io vector
+	- include Christoph's three prepare patches
+	- decrease stack usage for using bio_for_each_chunk_segment_all()
+	- address Kent's comment
+
+V5:
+	- remove some of prepare patches, which have been merged already
+	- add bio_clone_seg_bioset() to fix DM's bio clone, which
+	is introduced by 18a25da84354c6b (dm: ensure bio submission follows
+	a depth-first tree walk)
+	- rebase on the latest block for-v4.18
+
+V4:
+	- rename bio_for_each_segment*() as bio_for_each_page*(), rename
+	bio_segments() as bio_pages(), rename rq_for_each_segment() as
+	rq_for_each_pages(), because these helpers never return real
+	segment, and they always return single page bvec
+	
+	- introducing segment_for_each_page_all()
+
+	- introduce new bio_for_each_segment*()/rq_for_each_segment()/bio_segments()
+	for returning real multipage segment
+
+	- rewrite segment_last_page()
+
+	- rename bvec iterator helper as suggested by Christoph
+
+	- replace comment with applying bio helpers as suggested by Christoph
+
+	- document usage of bio iterator helpers
+
+	- redefine BIO_MAX_PAGES as 256 to make the biggest bvec table
+	accommodated in 4K page
+
+	- move bio_alloc_pages() into bcache as suggested by Christoph
+
+V3:
+	- rebase on v4.13-rc3 with for-next of block tree
+	- run more xfstests: xfs/ext4 over NVMe, Sata, DM(linear),
+	MD(raid1), and not see regressions triggered
+	- add Reviewed-by on some btrfs patches
+	- remove two MD patches because both are merged to linus tree
+	  already
+
+V2:
+	- bvec table direct access in raid has been cleaned, so NO_MP
+	flag is dropped
+	- rebase on recent Neil Brown's change on bio and bounce code
+	- reorganize the patchset
+
+V1:
+	- against v4.10-rc1 and some cleanup in V0 are in -linus already
+	- handle queue_virt_boundary() in mp bvec change and make NVMe happy
+	- further BTRFS cleanup
+	- remove QUEUE_FLAG_SPLIT_MP
+	- rename for two new helpers of bio_for_each_segment_all()
+	- fix bounce convertion
+	- address comments in V0
+
+[1], http://marc.info/?l=linux-kernel&m=141680246629547&w=2
+[2], https://patchwork.kernel.org/patch/9451523/
+[3], http://marc.info/?t=147735447100001&r=1&w=2
+[4], http://marc.info/?l=linux-mm&m=147745525801433&w=2
+[5], http://marc.info/?t=149569484500007&r=1&w=2
+[6], http://marc.info/?t=149820215300004&r=1&w=2
+
+
+
+Christoph Hellwig (1):
+  btrfs: look at bi_size for repair decisions
+
+Ming Lei (17):
+  block: don't use bio->bi_vcnt to figure out segment number
+  block: remove bvec_iter_rewind()
+  block: introduce multi-page bvec helpers
+  block: introduce bio_for_each_bvec() and rq_for_each_bvec()
+  block: use bio_for_each_bvec() to compute multi-page bvec count
+  block: use bio_for_each_bvec() to map sg
+  block: introduce mp_bvec_last_segment()
+  fs/buffer.c: use bvec iterator to truncate the bio
+  btrfs: use mp_bvec_last_segment to get bio's last page
+  block: loop: pass multi-page bvec to iov_iter
+  bcache: avoid to use bio_for_each_segment_all() in
+    bch_bio_alloc_pages()
+  block: allow bio_for_each_segment_all() to iterate over multi-page
+    bvec
+  block: enable multipage bvecs
+  block: always define BIO_MAX_PAGES as 256
+  block: document usage of bio iterator helpers
+  block: kill QUEUE_FLAG_NO_SG_MERGE
+  block: kill BLK_MQ_F_SG_MERGE
+
+ Documentation/block/biovecs.txt   |  25 +++++
+ block/bio.c                       |  49 ++++++---
+ block/blk-merge.c                 | 210 +++++++++++++++++++++++++-------------
+ block/blk-mq-debugfs.c            |   2 -
+ block/blk-mq.c                    |   3 -
+ block/bounce.c                    |   6 +-
+ drivers/block/loop.c              |  22 ++--
+ drivers/block/nbd.c               |   2 +-
+ drivers/block/rbd.c               |   2 +-
+ drivers/block/skd_main.c          |   1 -
+ drivers/block/xen-blkfront.c      |   2 +-
+ drivers/md/bcache/btree.c         |   3 +-
+ drivers/md/bcache/util.c          |   6 +-
+ drivers/md/dm-crypt.c             |   3 +-
+ drivers/md/dm-rq.c                |   2 +-
+ drivers/md/dm-table.c             |  13 ---
+ drivers/md/raid1.c                |   3 +-
+ drivers/mmc/core/queue.c          |   3 +-
+ drivers/scsi/scsi_lib.c           |   2 +-
+ drivers/staging/erofs/data.c      |   3 +-
+ drivers/staging/erofs/unzip_vle.c |   3 +-
+ fs/block_dev.c                    |   6 +-
+ fs/btrfs/compression.c            |   3 +-
+ fs/btrfs/disk-io.c                |   3 +-
+ fs/btrfs/extent_io.c              |  16 +--
+ fs/btrfs/inode.c                  |   6 +-
+ fs/btrfs/raid56.c                 |   3 +-
+ fs/buffer.c                       |   5 +-
+ fs/crypto/bio.c                   |   3 +-
+ fs/direct-io.c                    |   4 +-
+ fs/exofs/ore.c                    |   3 +-
+ fs/exofs/ore_raid.c               |   3 +-
+ fs/ext4/page-io.c                 |   3 +-
+ fs/ext4/readpage.c                |   3 +-
+ fs/f2fs/data.c                    |   9 +-
+ fs/gfs2/lops.c                    |   9 +-
+ fs/gfs2/meta_io.c                 |   3 +-
+ fs/iomap.c                        |  10 +-
+ fs/mpage.c                        |   3 +-
+ fs/xfs/xfs_aops.c                 |   9 +-
+ include/linux/bio.h               |  37 ++++---
+ include/linux/blk-mq.h            |   1 -
+ include/linux/blkdev.h            |   5 +-
+ include/linux/bvec.h              | 106 ++++++++++++++-----
+ 44 files changed, 404 insertions(+), 214 deletions(-)
+
+-- 
+2.9.5
+
