@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4456FC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7169C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13F53206BA
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E088206BA
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196686;
-	bh=NcKvf8oMC4u7b0tkGEoBYhxO1MaBw/KKt+vj3llO5zI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IH346hUxwT+TS638Csl0hbuBoqAKPRDzk0TyvjysjYUcwq36e76BM674ubZSJOOGv
-	 yB9KglEmNZXmFnydZV+59eQyUyTgswHHDkhB4tEHshVIxiQq0C0KGecIvwpcMvis0B
-	 aisrriSfrIiQAKlv1SGLXMAMs3uVKDxELFKI4zvs=
+	s=default; t=1550196688;
+	bh=oEqDsEBYFU7gPlxJyLqO/IgFG6lXMm8lv23vUo97DsI=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=NfJXRfgiyiqBKEHX6y96ltk+BS2M5xu2cO3ll0tKbDDKGDB9wJIbheAuwewpEjiLC
+	 /QdMYwYZr34IXh7ec7/CBEFgfxNTg9Ac/TGuJE/DStFpMuN2DYuBIXxsrGrFvz/zWD
+	 5lPL1mVEd2zIiqdTXH/qG9i+PxGxpFDO5tyGykK4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732278AbfBOCLY (ORCPT
+        id S2390734AbfBOCL1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:11:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51368 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:11:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732214AbfBOCLV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:11:21 -0500
+        id S1732273AbfBOCLY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:11:24 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0AABC21934;
-        Fri, 15 Feb 2019 02:11:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6A3E206BA;
+        Fri, 15 Feb 2019 02:11:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196680;
-        bh=NcKvf8oMC4u7b0tkGEoBYhxO1MaBw/KKt+vj3llO5zI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GtEdaNB5zDdRgXiwZ0+lgdwz8xfb0jvqz+gLAm8RnfwOQibEqdgfJLcv7xf4L89ST
-         1PIbfT+PcxmJV3JbjnZcqoJQ6CSHMqL5WM9TJYoxN8lakgMG0k9idj6Wd6x5a2OWU/
-         5NSi+EdxM1mLfVHGjJ//xTPwu/AQVgIYTiDZPFFQ=
+        s=default; t=1550196683;
+        bh=oEqDsEBYFU7gPlxJyLqO/IgFG6lXMm8lv23vUo97DsI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ZkWjWJfVnzST9KTDjckFiiqVYEBBxfp2EIRSIWAQdgFe0DyE/lcuWmQa1vLX7u6Nz
+         rP8l+K7AyEFbwnTANz+Hi9U+ayxW49gyss78apo0B4bSBMoqp3rGxfNdXnIKj5VzlX
+         okWdfiB0FwE5JxE4G7NJvXz0Hzy6Ya7UbPY5uPGI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 77/77] Revert "block: cover another queue enter recursion via BIO_QUEUE_ENTERED"
-Date:   Thu, 14 Feb 2019 21:08:55 -0500
-Message-Id: <20190215020855.176727-77-sashal@kernel.org>
+Cc:     "Kristian H. Kristensen" <hoegsberg@gmail.com>,
+        "Kristian H . Kristensen" <hoegsberg@chromium.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.19 01/65] drm/msm: Unblock writer if reader closes file
+Date:   Thu, 14 Feb 2019 21:10:17 -0500
+Message-Id: <20190215021121.177674-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
-References: <20190215020855.176727-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -57,67 +58,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
+From: "Kristian H. Kristensen" <hoegsberg@gmail.com>
 
-[ Upstream commit 947b7ac135b16aa60f9141ff72bd494eda0edb5e ]
+[ Upstream commit 99c66bc051e7407fe0bf0607b142ec0be1a1d1dd ]
 
-We can't touch a bio after ->make_request_fn(), for all we know it could
-already have been completed by the time this function returns.
+Prevents deadlock when fifo is full and reader closes file.
 
-This reverts commit 698cef173983b086977e633e46476e0f925ca01e.
-
-Reported-by: syzbot+4df6ca820108fd248943@syzkaller.appspotmail.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Kristian H. Kristensen <hoegsberg@chromium.org>
+Signed-off-by: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- block/blk-core.c  | 11 -----------
- block/blk-merge.c | 10 ++++++++++
- 2 files changed, 10 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/msm/msm_rd.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index 22260339f66f..deb56932f8c4 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -2449,18 +2449,7 @@ blk_qc_t generic_make_request(struct bio *bio)
- 			/* Create a fresh bio_list for all subordinate requests */
- 			bio_list_on_stack[1] = bio_list_on_stack[0];
- 			bio_list_init(&bio_list_on_stack[0]);
--
--			/*
--			 * Since we're recursing into make_request here, ensure
--			 * that we mark this bio as already having entered the queue.
--			 * If not, and the queue is going away, we can get stuck
--			 * forever on waiting for the queue reference to drop. But
--			 * that will never happen, as we're already holding a
--			 * reference to it.
--			 */
--			bio_set_flag(bio, BIO_QUEUE_ENTERED);
- 			ret = q->make_request_fn(q, bio);
--			bio_clear_flag(bio, BIO_QUEUE_ENTERED);
+diff --git a/drivers/gpu/drm/msm/msm_rd.c b/drivers/gpu/drm/msm/msm_rd.c
+index f7a0edea4705..d4cc5ceb22d0 100644
+--- a/drivers/gpu/drm/msm/msm_rd.c
++++ b/drivers/gpu/drm/msm/msm_rd.c
+@@ -115,7 +115,9 @@ static void rd_write(struct msm_rd_state *rd, const void *buf, int sz)
+ 		char *fptr = &fifo->buf[fifo->head];
+ 		int n;
  
- 			/* sort new bios into those for a lower level
- 			 * and those for the same level
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index adfe835ab258..7695034f4b87 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -272,6 +272,16 @@ void blk_queue_split(struct request_queue *q, struct bio **bio)
- 		/* there isn't chance to merge the splitted bio */
- 		split->bi_opf |= REQ_NOMERGE;
+-		wait_event(rd->fifo_event, circ_space(&rd->fifo) > 0);
++		wait_event(rd->fifo_event, circ_space(&rd->fifo) > 0 || !rd->open);
++		if (!rd->open)
++			return;
  
-+		/*
-+		 * Since we're recursing into make_request here, ensure
-+		 * that we mark this bio as already having entered the queue.
-+		 * If not, and the queue is going away, we can get stuck
-+		 * forever on waiting for the queue reference to drop. But
-+		 * that will never happen, as we're already holding a
-+		 * reference to it.
-+		 */
-+		bio_set_flag(*bio, BIO_QUEUE_ENTERED);
+ 		/* Note that smp_load_acquire() is not strictly required
+ 		 * as CIRC_SPACE_TO_END() does not access the tail more
+@@ -213,7 +215,10 @@ static int rd_open(struct inode *inode, struct file *file)
+ static int rd_release(struct inode *inode, struct file *file)
+ {
+ 	struct msm_rd_state *rd = inode->i_private;
 +
- 		bio_chain(split, *bio);
- 		trace_block_split(q, split, (*bio)->bi_iter.bi_sector);
- 		generic_make_request(*bio);
+ 	rd->open = false;
++	wake_up_all(&rd->fifo_event);
++
+ 	return 0;
+ }
+ 
 -- 
 2.19.1
 
