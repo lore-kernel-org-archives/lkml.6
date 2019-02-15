@@ -2,153 +2,422 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 321D8C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:41:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD6DEC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:41:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA5E12192D
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:41:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="j9Gw3aw0"
+	by mail.kernel.org (Postfix) with ESMTP id 7F5BF2192D
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 14:41:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392225AbfBOOlw (ORCPT
+        id S2406186AbfBOOl4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 09:41:52 -0500
-Received: from mail-eopbgr00045.outbound.protection.outlook.com ([40.107.0.45]:60048
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387515AbfBOOlw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 09:41:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3U7gU+TLwJ9yh/IZqBptRDOJ4Njji7BTTzXJKb8fOIg=;
- b=j9Gw3aw0oU4wgp7e2sQGuzaT6adMO8hl+L8XbsKBxp/K7lvetbNSo0KwTsY1t+mIs2d/gkWpAp7LuZfvyGSQ2RyqkrisgE6NgHPOZc1MckDP4aHLp5siScbaTtoQuSqOKI0FUfNQjeRKQ4fzoZ91TYNENWYJ6U+DfXBzM/evCUg=
-Received: from VI1PR04MB4880.eurprd04.prod.outlook.com (20.177.49.153) by
- VI1PR04MB4174.eurprd04.prod.outlook.com (52.134.30.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.17; Fri, 15 Feb 2019 14:41:47 +0000
-Received: from VI1PR04MB4880.eurprd04.prod.outlook.com
- ([fe80::3d48:4560:6982:4c32]) by VI1PR04MB4880.eurprd04.prod.outlook.com
- ([fe80::3d48:4560:6982:4c32%3]) with mapi id 15.20.1601.023; Fri, 15 Feb 2019
- 14:41:47 +0000
-From:   Claudiu Manoil <claudiu.manoil@nxp.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-CC:     Shawn Guo <shawnguo@kernel.org>, Leo Li <leoyang.li@nxp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Alexandru Marginean <alexandru.marginean@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH net-next v2 3/3] enetc: Add ENETC PF level external MDIO
- support
-Thread-Topic: [PATCH net-next v2 3/3] enetc: Add ENETC PF level external MDIO
- support
-Thread-Index: AQHUxRa2xfAoHsNatECZeGrGwDGmUaXg3FCAgAAPfPA=
-Date:   Fri, 15 Feb 2019 14:41:47 +0000
-Message-ID: <VI1PR04MB488080895C871B6B3ABA571D96600@VI1PR04MB4880.eurprd04.prod.outlook.com>
-References: <1550225414-12125-1-git-send-email-claudiu.manoil@nxp.com>
- <1550225414-12125-4-git-send-email-claudiu.manoil@nxp.com>
- <20190215133459.GH5699@lunn.ch>
-In-Reply-To: <20190215133459.GH5699@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=claudiu.manoil@nxp.com; 
-x-originating-ip: [86.34.165.90]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e18b633c-c1c1-4738-bd77-08d69353b6c0
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB4174;
-x-ms-traffictypediagnostic: VI1PR04MB4174:
-x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;VI1PR04MB4174;23:HGabyH9cr78tsrJyumilkISD8DSaQK4Na/2MmrADl?=
- =?us-ascii?Q?i+oPEyC10HpGkYkFgoDuCehNSTvP5I5c+0kolXwFNiRXzfXE5NCoeDR9LYab?=
- =?us-ascii?Q?KWTe8yS6sPLvUFWaZsk0jSQloSiS9zrgxFYrmZTQsM0uSM5wedZvWT1WvfuE?=
- =?us-ascii?Q?SvLZEXHx/o/LXpvVrv84dV/0EEI2ohnC6WT4CZs7H0KmSncuj4jN3aS7WJHN?=
- =?us-ascii?Q?cduYPQjCji4WMb9iapDAuM1G7HhQdd6073I1VcNGpwvpdRWqnMgpTnY4wqCp?=
- =?us-ascii?Q?dYY1K7lIVNWLN9nKtDpwBA/yx0lwjQuX8ob5tolRupyB16Uo/OYsrhtyow09?=
- =?us-ascii?Q?9/x/CiRqDjqXdLWHUuUCT3EJjAm9jkellEageKdpfe0FZRSZ0AW2YXhiH13t?=
- =?us-ascii?Q?8o9J2qPVSLtX9cjmgaInGAGVTtxZv9cuq8E7m5RJqJaNSoGRYIsTlQR4d4/J?=
- =?us-ascii?Q?wmx9MnbMcMAxCT6a2IEUuGdrBVF2tqwkJPL7DTOR6IyqnvBL0lUDQxE207dR?=
- =?us-ascii?Q?zAPGVcOwQW3xJi20Ro/MyAEB4YCZ+4D2ULZZlfI+RWBvo1R2dfvxwaSjwU4N?=
- =?us-ascii?Q?PNTbENl+foiq+wbQefAKi66DZLVO3Xn39i3VimAFMpS+4eWejyx4qRt0r4MI?=
- =?us-ascii?Q?FQnB/R+E7EcGhyhaYmTYZ/0nNhjzeGj/IFd+0PPuxYbYp0m3TSN4AtAB+lZo?=
- =?us-ascii?Q?dVM1dQVI8nU76ytz5q7t/jtQ1FnQV9lQRmr0/UzAIFm34BO86fN4UktsUQdB?=
- =?us-ascii?Q?+NXuChburA1QlEZ9FX1O3EClIMrJVG4ivKb+MtHS/DncN1ue2Fc2l9sKwgzR?=
- =?us-ascii?Q?vcQe9v5Kha1H1vl1dR1I9G17O/UsjiwtI4no6KOYgrr6ekbearp5HeUpa19E?=
- =?us-ascii?Q?v4hHeaTGQ3Wt05Pa5K3PCojR7FBlJpZzI9bUaSGCXM2YLhik08jz914vHlyD?=
- =?us-ascii?Q?ohwccGYv2fnqh4mh//pTcr6Keva3LRXIRK8kuNMP6ytZGuAmIfTCg3Nt2Osa?=
- =?us-ascii?Q?3GhOge9PyDDA7KmCR6frm8EqJG5QpB51BZrA8fJeIyIP8KFUKUQDI5WfttTL?=
- =?us-ascii?Q?vCJK1aoYdIhcQ+f/AS1CvLn5HNc+IJoEssxM5tcKxY4uUKcrFb9oLNqk68of?=
- =?us-ascii?Q?Y3xioPr0iUgX91pK51/xKpFnLCQd3xCWlfU7h5N5cePBq4zIxI3AHe8iu/K3?=
- =?us-ascii?Q?/Z8VAR8VEcKt8CbQGrxLXwz5ecMsY6DAEqq?=
-x-microsoft-antispam-prvs: <VI1PR04MB4174D6E2E2AA227D7FE4E97196600@VI1PR04MB4174.eurprd04.prod.outlook.com>
-x-forefront-prvs: 09497C15EB
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(39860400002)(396003)(376002)(366004)(199004)(189003)(13464003)(8936002)(6436002)(81166006)(8676002)(86362001)(68736007)(305945005)(81156014)(6916009)(478600001)(54906003)(6116002)(3846002)(74316002)(316002)(102836004)(6506007)(26005)(186003)(99286004)(7696005)(76176011)(14454004)(25786009)(256004)(11346002)(486006)(4326008)(476003)(446003)(105586002)(33656002)(55016002)(9686003)(106356001)(53936002)(6246003)(97736004)(71200400001)(71190400001)(7736002)(44832011)(66066001)(229853002)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4174;H:VI1PR04MB4880.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: QdsvHuRuRi1DF9v7DGLl2qYGnYPjNpj2IRzdHCGqZyzjIFwjLU3XGR9A9U84+8SrWqAV43qfYg+irNReW+AtIRNKJaQfGXu88jkwBbnVbI4RX1jo3V3I1G1Fs/E2fzUjokv32KQFlk1RV11B9MZGO0c1hi72+ATJQzeWxf9gIKJUUjdy7QpzNWWD3Ncj00LgPUs0f82xN9aSG7OaGRQX0EGWkB71YAyGEyBDhm0KytDsMCTN359+ZZaF9aNRXgmoiFGxt1Q1MF0E1GztVxJ/zEDLOdhBp2/TalSo4Bbr3vM4kDlRnIO31HGyVrYO9aIgmF9/ZKYk8XZjRZe3T6UtsM8u9rjUFj2i96jzxpTSuRIhUrWcB923GRa1MAMuO5YRXJ1Gc2cxWyaIRTlHG51wMdS7oOA7z9vU3QlOmHe9q8c=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 15 Feb 2019 09:41:56 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60450 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726237AbfBOOly (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 09:41:54 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 59B39C0718BF;
+        Fri, 15 Feb 2019 14:41:54 +0000 (UTC)
+Received: from sandy.ghostprotocols.net (ovpn-112-32.phx2.redhat.com [10.3.112.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id CEB191024949;
+        Fri, 15 Feb 2019 14:41:50 +0000 (UTC)
+Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
+        id 8529B55C4; Fri, 15 Feb 2019 12:41:46 -0200 (BRST)
+Date:   Fri, 15 Feb 2019 12:41:46 -0200
+From:   Arnaldo Carvalho de Melo <acme@redhat.com>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, kernel-team@fb.com,
+        peterz@infradead.org, jolsa@kernel.org, namhyung@kernel.org
+Subject: Re: [PATCH v2 perf,bpf 11/11] perf, bpf: save information about
+ short living bpf programs
+Message-ID: <20190215144146.GF5784@redhat.com>
+References: <20190214235624.2579307-1-songliubraving@fb.com>
+ <20190215000045.2592135-1-songliubraving@fb.com>
+ <20190215000045.2592135-2-songliubraving@fb.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e18b633c-c1c1-4738-bd77-08d69353b6c0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Feb 2019 14:41:47.6066
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4174
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190215000045.2592135-2-songliubraving@fb.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 15 Feb 2019 14:41:54 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Em Thu, Feb 14, 2019 at 04:00:45PM -0800, Song Liu escreveu:
+> To annotate bpf programs in perf, it is necessary to save information in
+> bpf_prog_info and btf. For short living bpf program, it is necessary to
+> save these information before it is unloaded.
+> 
+> This patch saves these information in a separate thread. This thread
+> creates its own evlist, that only tracks bpf events. This evlists uses
+> ring buffer with very low watermark for lower latency. When bpf load
+> events are received, this thread tries to gather information via sys_bpf
+> and save it in perf_env.
+> 
+> Signed-off-by: Song Liu <songliubraving@fb.com>
+> ---
+>  tools/perf/builtin-record.c |  13 ++++
+>  tools/perf/builtin-top.c    |  12 ++++
+>  tools/perf/util/bpf-event.c | 129 ++++++++++++++++++++++++++++++++++++
+>  tools/perf/util/bpf-event.h |  22 ++++++
+>  tools/perf/util/evlist.c    |  20 ++++++
+>  tools/perf/util/evlist.h    |   2 +
+>  6 files changed, 198 insertions(+)
+> 
+> diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
+> index 2355e0a9eda0..46abb44aaaab 100644
+> --- a/tools/perf/builtin-record.c
+> +++ b/tools/perf/builtin-record.c
+> @@ -1106,6 +1106,8 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+>  	struct perf_data *data = &rec->data;
+>  	struct perf_session *session;
+>  	bool disabled = false, draining = false;
+> +	struct bpf_event_poll_args poll_args;
+> +	bool bpf_thread_running = false;
+>  	int fd;
+>  
+>  	atexit(record__sig_exit);
+> @@ -1206,6 +1208,14 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+>  		goto out_child;
+>  	}
+>  
+> +	if (rec->opts.bpf_event) {
+> +		poll_args.env = &session->header.env;
+> +		poll_args.target = &rec->opts.target;
+> +		poll_args.done = &done;
+> +		if (bpf_event__start_polling_thread(&poll_args) == 0)
+> +			bpf_thread_running = true;
+> +	}
+> +
+>  	err = record__synthesize(rec, false);
+>  	if (err < 0)
+>  		goto out_child;
+> @@ -1456,6 +1466,9 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
+>  
+>  out_delete_session:
+>  	perf_session__delete(session);
+> +
+> +	if (bpf_thread_running)
+> +		bpf_event__stop_polling_thread(&poll_args);
+>  	return status;
+>  }
+>  
+> diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+> index 5271d7211b9c..2586ee081967 100644
+> --- a/tools/perf/builtin-top.c
+> +++ b/tools/perf/builtin-top.c
+> @@ -1524,10 +1524,12 @@ int cmd_top(int argc, const char **argv)
+>  			"number of thread to run event synthesize"),
+>  	OPT_END()
+>  	};
+> +	struct bpf_event_poll_args poll_args;
+>  	const char * const top_usage[] = {
+>  		"perf top [<options>]",
+>  		NULL
+>  	};
+> +	bool bpf_thread_running = false;
+>  	int status = hists__init();
+>  
+>  	if (status < 0)
+> @@ -1652,8 +1654,18 @@ int cmd_top(int argc, const char **argv)
+>  		signal(SIGWINCH, winch_sig);
+>  	}
+>  
+> +	if (top.record_opts.bpf_event) {
+> +		poll_args.env = &perf_env;
+> +		poll_args.target = target;
+> +		poll_args.done = &done;
+> +		if (bpf_event__start_polling_thread(&poll_args) == 0)
+> +			bpf_thread_running = true;
+> +	}
+>  	status = __cmd_top(&top);
+>  
+> +	if (bpf_thread_running)
+> +		bpf_event__stop_polling_thread(&poll_args);
+> +
+>  out_delete_evlist:
+>  	perf_evlist__delete(top.evlist);
+>  
+> diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
+> index 4f347d61ed96..0caf137c515b 100644
+> --- a/tools/perf/util/bpf-event.c
+> +++ b/tools/perf/util/bpf-event.c
+> @@ -8,6 +8,7 @@
+>  #include "machine.h"
+>  #include "env.h"
+>  #include "session.h"
+> +#include "evlist.h"
+>  
+>  #define ptr_to_u64(ptr)    ((__u64)(unsigned long)(ptr))
+>  
+> @@ -316,3 +317,131 @@ int perf_event__synthesize_bpf_events(struct perf_session *session,
+>  	free(event);
+>  	return err;
+>  }
+> +
+> +static void perf_env_add_bpf_info(struct perf_env *env, u32 id)
+> +{
+> +	struct bpf_prog_info_linear *info_linear;
+> +	struct bpf_prog_info_node *info_node;
+> +	struct btf *btf = NULL;
+> +	u64 arrays;
+> +	u32 btf_id;
+> +	int fd;
+> +
+> +	fd = bpf_prog_get_fd_by_id(id);
+> +	if (fd < 0)
+> +		return;
+> +
+> +	arrays = 1UL << BPF_PROG_INFO_JITED_KSYMS;
+> +	arrays |= 1UL << BPF_PROG_INFO_JITED_FUNC_LENS;
+> +	arrays |= 1UL << BPF_PROG_INFO_FUNC_INFO;
+> +	arrays |= 1UL << BPF_PROG_INFO_PROG_TAGS;
+> +	arrays |= 1UL << BPF_PROG_INFO_JITED_INSNS;
+> +	arrays |= 1UL << BPF_PROG_INFO_LINE_INFO;
+> +	arrays |= 1UL << BPF_PROG_INFO_JITED_LINE_INFO;
+> +
+> +	info_linear = bpf_program__get_prog_info_linear(fd, arrays);
+> +	if (IS_ERR_OR_NULL(info_linear)) {
+> +		pr_debug("%s: failed to get BPF program info. aborting\n", __func__);
+> +		goto out;
+> +	}
+> +
+> +	btf_id = info_linear->info.btf_id;
+> +
+> +	info_node = malloc(sizeof(struct bpf_prog_info_node));
+> +	if (info_node) {
+> +		info_node->info_linear = info_linear;
+> +		perf_env__insert_bpf_prog_info(env, info_node);
+> +	} else
+> +		free(info_linear);
+> +
+> +	if (btf_id == 0)
+> +		goto out;
+> +
+> +	if (btf__get_from_id(btf_id, &btf)) {
+> +		pr_debug("%s: failed to get BTF of id %u, aborting\n",
+> +			 __func__, btf_id);
+> +		goto out;
+> +	}
+> +	perf_fetch_btf(env, btf_id, btf);
+> +
+> +out:
+> +	free(btf);
+> +	close(fd);
+> +}
+> +
+> +static void *bpf_poll_thread(void *arg)
+> +{
+> +	struct bpf_event_poll_args *args = arg;
+> +	int i;
+> +
+> +	while (!*(args->done)) {
+> +		perf_evlist__poll(args->evlist, 1000);
+> +
+> +		for (i = 0; i < args->evlist->nr_mmaps; i++) {
+> +			struct perf_mmap *map = &args->evlist->mmap[i];
+> +			union perf_event *event;
+> +
+> +			if (perf_mmap__read_init(map))
+> +				continue;
+> +			while ((event = perf_mmap__read_event(map)) != NULL) {
+> +				pr_debug("processing vip event of type %d\n",
+> +					 event->header.type);
+> +				switch (event->header.type) {
+> +				case PERF_RECORD_BPF_EVENT:
+> +					if (event->bpf_event.type != PERF_BPF_EVENT_PROG_LOAD)
+> +						break;
+> +					perf_env_add_bpf_info(args->env, event->bpf_event.id);
+> +					break;
+> +				default:
+> +					break;
+> +				}
+> +				perf_mmap__consume(map);
+> +			}
+> +			perf_mmap__read_done(map);
+> +		}
+> +	}
+> +	return NULL;
+> +}
+> +
+> +pthread_t poll_thread;
+> +
+> +int bpf_event__start_polling_thread(struct bpf_event_poll_args *args)
+> +{
+> +	struct perf_evsel *counter;
+> +
+> +	args->evlist = perf_evlist__new();
+> +
+> +	if (args->evlist == NULL)
+> +		return -1;
+> +
+> +	if (perf_evlist__create_maps(args->evlist, args->target))
+		goto out_delete_evlist;
+> +
+> +	if (perf_evlist__add_bpf_tracker(args->evlist))
+		goto out_delete_evlist;
+> +
+> +	evlist__for_each_entry(args->evlist, counter) {
+> +		if (perf_evsel__open(counter, args->evlist->cpus,
+> +				     args->evlist->threads) < 0)
+			goto out_delete_evlist;
+> +	}
+> +
+> +	if (perf_evlist__mmap(args->evlist, UINT_MAX))
+		goto out_delete_evlist;
+> +
+> +	evlist__for_each_entry(args->evlist, counter) {
+> +		if (perf_evsel__enable(counter))
+			goto out_delete_evlist;
+> +	}
+> +
+> +	if (pthread_create(&poll_thread, NULL, bpf_poll_thread, args))
+		goto out_delete_evlist;	
+> +
+> +	return 0;
+out_delete_evlist:
+	perf_evlist__delete(args->evlist);
+	args->evlist = NULL;
 
+	return -1;
+> +}
+> +
+> +void bpf_event__stop_polling_thread(struct bpf_event_poll_args *args)
+> +{
+> +	pthread_join(poll_thread, NULL);
+> +	perf_evlist__exit(args->evlist);
+> +}
+> diff --git a/tools/perf/util/bpf-event.h b/tools/perf/util/bpf-event.h
+> index c4f0f1395ea5..61914827c1e3 100644
+> --- a/tools/perf/util/bpf-event.h
+> +++ b/tools/perf/util/bpf-event.h
+> @@ -12,12 +12,17 @@
+>  #include <bpf/libbpf.h>
+>  #include <linux/btf.h>
+>  #include <linux/rbtree.h>
+> +#include <pthread.h>
+> +#include <api/fd/array.h>
+>  #include "event.h"
+>  
+>  struct machine;
+>  union perf_event;
+> +struct perf_env;
+>  struct perf_sample;
+>  struct record_opts;
+> +struct evlist;
+> +struct target;
+>  
+>  struct bpf_prog_info_node {
+>  	struct bpf_prog_info_linear	*info_linear;
+> @@ -31,6 +36,13 @@ struct btf_node {
+>  	char		data[];
+>  };
+>  
+> +struct bpf_event_poll_args {
+> +	struct perf_env		*env;
+> +	struct perf_evlist	*evlist;
+> +	struct target		*target;
+> +	volatile int		*done;
+> +};
+> +
+>  #ifdef HAVE_LIBBPF_SUPPORT
+>  int machine__process_bpf_event(struct machine *machine, union perf_event *event,
+>  			       struct perf_sample *sample);
+> @@ -39,6 +51,8 @@ int perf_event__synthesize_bpf_events(struct perf_session *session,
+>  				      perf_event__handler_t process,
+>  				      struct machine *machine,
+>  				      struct record_opts *opts);
+> +int bpf_event__start_polling_thread(struct bpf_event_poll_args *args);
+> +void bpf_event__stop_polling_thread(struct bpf_event_poll_args *args);
+>  #else
+>  static inline int machine__process_bpf_event(struct machine *machine __maybe_unused,
+>  					     union perf_event *event __maybe_unused,
+> @@ -54,5 +68,13 @@ static inline int perf_event__synthesize_bpf_events(struct perf_session *session
+>  {
+>  	return 0;
+>  }
+> +
+> +static inline int bpf_event__start_polling_thread(struct bpf_event_poll_args *args __maybe_unused)
+> +{
+> +	return 0;
+> +}
+> +void bpf_event__stop_polling_thread(struct bpf_event_poll_args *args __maybe_unused)
+> +{
+> +}
+>  #endif // HAVE_LIBBPF_SUPPORT
+>  #endif
+> diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
+> index 8c902276d4b4..612c079579ce 100644
+> --- a/tools/perf/util/evlist.c
+> +++ b/tools/perf/util/evlist.c
+> @@ -271,6 +271,26 @@ int perf_evlist__add_dummy(struct perf_evlist *evlist)
+>  	return 0;
+>  }
+>  
+> +int perf_evlist__add_bpf_tracker(struct perf_evlist *evlist)
+> +{
+> +	struct perf_event_attr attr = {
+> +		.type	          = PERF_TYPE_SOFTWARE,
+> +		.config           = PERF_COUNT_SW_DUMMY,
+> +		.watermark        = 1,
+> +		.bpf_event        = 1,
+> +		.wakeup_watermark = 1,
+> +		.size	   = sizeof(attr), /* to capture ABI version */
+> +	};
+> +	struct perf_evsel *evsel = perf_evsel__new_idx(&attr,
+> +						       evlist->nr_entries);
+> +
+> +	if (evsel == NULL)
+> +		return -ENOMEM;
+> +
+> +	perf_evlist__add(evlist, evsel);
 
->-----Original Message-----
->From: Andrew Lunn <andrew@lunn.ch>
->Sent: Friday, February 15, 2019 3:35 PM
->To: Claudiu Manoil <claudiu.manoil@nxp.com>
->Cc: Shawn Guo <shawnguo@kernel.org>; Leo Li <leoyang.li@nxp.com>; David S =
-.
->Miller <davem@davemloft.net>; Alexandru Marginean
-><alexandru.marginean@nxp.com>; linux-arm-kernel@lists.infradead.org;
->devicetree@vger.kernel.org; netdev@vger.kernel.org; linux-
->kernel@vger.kernel.org
->Subject: Re: [PATCH net-next v2 3/3] enetc: Add ENETC PF level external MD=
-IO
->support
->
->On Fri, Feb 15, 2019 at 12:10:14PM +0200, Claudiu Manoil wrote:
->> Each ENETC PF has its own MDIO interface, the corresponding
->> MDIO registers are mapped in the ENETC's Port register block.
->> The current patch adds a driver for these PF level MDIO buses,
->> so that each PF can manage directly its own external link.
->>
->> Signed-off-by: Alex Marginean <alexandru.marginean@nxp.com>
->> Signed-off-by: Claudiu Manoil <claudiu.manoil@nxp.com>
->> ---
->> v2 - used readx_poll_timeout()
->>    - added mdio node child to the port node
->
->Hi Claudiu
->
->Please document this in the device tree binding.
->
+You could use:
 
-Hi,
-I don't really see what bindings would need to be documented, as the node
-names and properties used so far are common.  Like, the "mdio" node name
-is common, the enetc ports are "pci" nodes, nothing special for these.
-What's missing?
+	struct perf_evlist *evlist = perf_evlist__new_dummy();
+	if (evlist != NULL) {
+		struct perf_evsel *evsel == perf_evlist__first(evlist);
+		evsel->attr.bpf_event = evsel->attr.watermark = evsel->attr.wakeup_watermark = 1;
+		return 0;
+	}
+	return -1;
 
-Regards,
-Claudiu
+Because in this case all you'll have in this evlist is the bpf tracker,
+right? The add_bpf_tracker would be handy if we would want to have a
+pre-existing evlist with some other events and wanted to add a bpf
+tracker, no?
+
+- Arnaldo
+
+> +	return 0;
+> +}
+> +
+>  static int perf_evlist__add_attrs(struct perf_evlist *evlist,
+>  				  struct perf_event_attr *attrs, size_t nr_attrs)
+>  {
+> diff --git a/tools/perf/util/evlist.h b/tools/perf/util/evlist.h
+> index 868294491194..a2d22715188e 100644
+> --- a/tools/perf/util/evlist.h
+> +++ b/tools/perf/util/evlist.h
+> @@ -84,6 +84,8 @@ int __perf_evlist__add_default_attrs(struct perf_evlist *evlist,
+>  
+>  int perf_evlist__add_dummy(struct perf_evlist *evlist);
+>  
+> +int perf_evlist__add_bpf_tracker(struct perf_evlist *evlist);
+> +
+>  int perf_evlist__add_newtp(struct perf_evlist *evlist,
+>  			   const char *sys, const char *name, void *handler);
+>  
+> -- 
+> 2.17.1
