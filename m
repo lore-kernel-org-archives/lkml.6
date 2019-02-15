@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE2EC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:38:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DEB08C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:38:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0FB721927
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:38:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0A9B207E0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:38:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550198322;
-	bh=dRklQz0aq5dKE1usUj0gV5+J6HY/pFo3wyV1njM54K0=;
+	s=default; t=1550198336;
+	bh=+rX6YSeAoRMM5r7BNd2h7IP68/H/CQjCsUnBIab07dk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZtT/wFnv66uvArqqjUMnnbfsno+Be85VM7gVPSoBcjjkclmj7PEePNtPcn5gsOpNZ
-	 8lgmg3ioHBzr2RCH6Fl6jWwsjvkXs/8hguzf7ODkMP4ENu3FXRSSqIVbZ7WkuG9pUd
-	 UJzRnWmmG9unLlet5g1mlSvHAuJ3IqjK9shFwcCw=
+	b=buI7TbwxpD+yupLMx5wvIEXO27cp65w34hbdjLyqd4BFhxWdsd8jhBme9B3cWfv0l
+	 MAvatDByoURZe9isyZEi7tmmmv2IqLEZf1p9S9YCih+kc8XtaqWOPKYrL8fS/TSWmx
+	 dnQZsYzEQb02MERK8roBhTLkdKFIW5v7L7YvhtTg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729615AbfBOCij (ORCPT
+        id S1731833AbfBOCKV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:38:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50528 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:10:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390334AbfBOCKY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:10:24 -0500
+        id S1729960AbfBOCKT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:10:19 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5D8E921B68;
-        Fri, 15 Feb 2019 02:10:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2818222C9;
+        Fri, 15 Feb 2019 02:10:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196624;
-        bh=dRklQz0aq5dKE1usUj0gV5+J6HY/pFo3wyV1njM54K0=;
+        s=default; t=1550196617;
+        bh=+rX6YSeAoRMM5r7BNd2h7IP68/H/CQjCsUnBIab07dk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T4fzvYOiO7XfkGVIAWcJuFHcYtMQ5emQwQWi5gBqBKiRK/JYF4QaE7AtuaT3whVOX
-         yPXOx/2pMn/9phqJN8k12cTiUbEgA17cC3eyaw+YmDrgbzUvRM2wrP3woBJkXtzGyV
-         dajrD/lrPatU6jRpxUGvLT5Xkm6PXRYDcXIh0kGo=
+        b=CZVgpj1cidBOzF1r3LU6aRD1FICRx+v/fdoYfeYnBPAgeI5t+Ft+dzdI42Q2jrvOe
+         qaauuTnir4lmQv2yRMuIuCHPZlwJpXSCBFFNZr/IoPVxCxH1u9EcKEA/zguDG9k27m
+         GfetA5XdjQIHcmOnHIHHyAPihC5NC6YBAibqS/4E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Ewan D. Milne" <emilne@redhat.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 52/77] scsi: lpfc: nvmet: avoid hang / use-after-free when destroying targetport
-Date:   Thu, 14 Feb 2019 21:08:30 -0500
-Message-Id: <20190215020855.176727-52-sashal@kernel.org>
+Cc:     Ming Lei <ming.lei@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        NeilBrown <neilb@suse.com>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>, linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 49/77] block: cover another queue enter recursion via BIO_QUEUE_ENTERED
+Date:   Thu, 14 Feb 2019 21:08:27 -0500
+Message-Id: <20190215020855.176727-49-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
 References: <20190215020855.176727-1-sashal@kernel.org>
@@ -58,73 +59,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Ewan D. Milne" <emilne@redhat.com>
+From: Ming Lei <ming.lei@redhat.com>
 
-[ Upstream commit c41f59884be5cca293ed61f3d64637dbba3a6381 ]
+[ Upstream commit 698cef173983b086977e633e46476e0f925ca01e ]
 
-We cannot wait on a completion object in the lpfc_nvme_targetport structure
-in the _destroy_targetport() code path because the NVMe/fc transport will
-free that structure immediately after the .targetport_delete() callback.
-This results in a use-after-free, and a hang if slub_debug=FZPU is enabled.
+Except for blk_queue_split(), bio_split() is used for splitting bio too,
+then the remained bio is often resubmit to queue via generic_make_request().
+So the same queue enter recursion exits in this case too. Unfortunatley
+commit cd4a4ae4683dc2 doesn't help this case.
 
-Fix this by putting the completion on the stack.
+This patch covers the above case by setting BIO_QUEUE_ENTERED before calling
+q->make_request_fn.
 
-Signed-off-by: Ewan D. Milne <emilne@redhat.com>
-Acked-by: James Smart <james.smart@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+In theory the per-bio flag is used to simulate one stack variable, it is
+just fine to clear it after q->make_request_fn is returned. Especially
+the same bio can't be submitted from another context.
+
+Fixes: cd4a4ae4683dc2 ("block: don't use blocking queue entered for recursive bio submits")
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Cc: NeilBrown <neilb@suse.com>
+Reviewed-by:  Mike Snitzer <snitzer@redhat.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_nvmet.c | 8 +++++---
- drivers/scsi/lpfc/lpfc_nvmet.h | 2 +-
- 2 files changed, 6 insertions(+), 4 deletions(-)
+ block/blk-core.c  | 11 +++++++++++
+ block/blk-merge.c | 10 ----------
+ 2 files changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_nvmet.c b/drivers/scsi/lpfc/lpfc_nvmet.c
-index 6245f442d784..95fee83090eb 100644
---- a/drivers/scsi/lpfc/lpfc_nvmet.c
-+++ b/drivers/scsi/lpfc/lpfc_nvmet.c
-@@ -1003,7 +1003,8 @@ lpfc_nvmet_targetport_delete(struct nvmet_fc_target_port *targetport)
- 	struct lpfc_nvmet_tgtport *tport = targetport->private;
+diff --git a/block/blk-core.c b/block/blk-core.c
+index deb56932f8c4..22260339f66f 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -2449,7 +2449,18 @@ blk_qc_t generic_make_request(struct bio *bio)
+ 			/* Create a fresh bio_list for all subordinate requests */
+ 			bio_list_on_stack[1] = bio_list_on_stack[0];
+ 			bio_list_init(&bio_list_on_stack[0]);
++
++			/*
++			 * Since we're recursing into make_request here, ensure
++			 * that we mark this bio as already having entered the queue.
++			 * If not, and the queue is going away, we can get stuck
++			 * forever on waiting for the queue reference to drop. But
++			 * that will never happen, as we're already holding a
++			 * reference to it.
++			 */
++			bio_set_flag(bio, BIO_QUEUE_ENTERED);
+ 			ret = q->make_request_fn(q, bio);
++			bio_clear_flag(bio, BIO_QUEUE_ENTERED);
  
- 	/* release any threads waiting for the unreg to complete */
--	complete(&tport->tport_unreg_done);
-+	if (tport->phba->targetport)
-+		complete(tport->tport_unreg_cmp);
- }
+ 			/* sort new bios into those for a lower level
+ 			 * and those for the same level
+diff --git a/block/blk-merge.c b/block/blk-merge.c
+index 7695034f4b87..adfe835ab258 100644
+--- a/block/blk-merge.c
++++ b/block/blk-merge.c
+@@ -272,16 +272,6 @@ void blk_queue_split(struct request_queue *q, struct bio **bio)
+ 		/* there isn't chance to merge the splitted bio */
+ 		split->bi_opf |= REQ_NOMERGE;
  
- static void
-@@ -1692,6 +1693,7 @@ lpfc_nvmet_destroy_targetport(struct lpfc_hba *phba)
- 	struct lpfc_nvmet_tgtport *tgtp;
- 	struct lpfc_queue *wq;
- 	uint32_t qidx;
-+	DECLARE_COMPLETION_ONSTACK(tport_unreg_cmp);
- 
- 	if (phba->nvmet_support == 0)
- 		return;
-@@ -1701,9 +1703,9 @@ lpfc_nvmet_destroy_targetport(struct lpfc_hba *phba)
- 			wq = phba->sli4_hba.nvme_wq[qidx];
- 			lpfc_nvmet_wqfull_flush(phba, wq, NULL);
- 		}
--		init_completion(&tgtp->tport_unreg_done);
-+		tgtp->tport_unreg_cmp = &tport_unreg_cmp;
- 		nvmet_fc_unregister_targetport(phba->targetport);
--		wait_for_completion_timeout(&tgtp->tport_unreg_done, 5);
-+		wait_for_completion_timeout(&tport_unreg_cmp, 5);
- 		lpfc_nvmet_cleanup_io_context(phba);
- 	}
- 	phba->targetport = NULL;
-diff --git a/drivers/scsi/lpfc/lpfc_nvmet.h b/drivers/scsi/lpfc/lpfc_nvmet.h
-index 1aaff63f1f41..0ec1082ce7ef 100644
---- a/drivers/scsi/lpfc/lpfc_nvmet.h
-+++ b/drivers/scsi/lpfc/lpfc_nvmet.h
-@@ -34,7 +34,7 @@
- /* Used for NVME Target */
- struct lpfc_nvmet_tgtport {
- 	struct lpfc_hba *phba;
--	struct completion tport_unreg_done;
-+	struct completion *tport_unreg_cmp;
- 
- 	/* Stats counters - lpfc_nvmet_unsol_ls_buffer */
- 	atomic_t rcv_ls_req_in;
+-		/*
+-		 * Since we're recursing into make_request here, ensure
+-		 * that we mark this bio as already having entered the queue.
+-		 * If not, and the queue is going away, we can get stuck
+-		 * forever on waiting for the queue reference to drop. But
+-		 * that will never happen, as we're already holding a
+-		 * reference to it.
+-		 */
+-		bio_set_flag(*bio, BIO_QUEUE_ENTERED);
+-
+ 		bio_chain(split, *bio);
+ 		trace_block_split(q, split, (*bio)->bi_iter.bi_sector);
+ 		generic_make_request(*bio);
 -- 
 2.19.1
 
