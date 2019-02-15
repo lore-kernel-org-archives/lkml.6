@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 130F3C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D42D6C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:37:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D504F21927
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:37:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2AF32192B
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:37:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550198238;
-	bh=nea4Wn8nOz0hjIBBYZWzQYPhtp1Y7vTYjTgDb096TvM=;
+	s=default; t=1550198248;
+	bh=69tc0HoWUX8y0ZLvv7ga/QuUyxpQb4UrDfKwWULwD8k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wBu9f/HG3Jlw9DpU5hiLpWpZ2scn0KimvBMUHhfM1AGvinBx5NpBU7B/yqjw0RkdP
-	 meCB6foydSHRius6hpnlxoEs+zMTGTnPTLnPP2FFbN4jlKehjfQclKLAAjG8Urzq0s
-	 BsUY3jA0jipbwAz47j2j7E6WoVO+djHjjfRM8PMQ=
+	b=R7FcecZkxydoCWpoy+c8p84tK2yZK6eel1i585q+VDV0tMGeCyGVlyuF5y2BeVwhw
+	 V7YWT3P1thG1SbWSYHf8bdhW+pWE5c9sgpP7/SW6eJtn9xVNW8q10bMG0VfgxILRjy
+	 iu9UsUaJWCxIXaSa7R1hMsxk1WT02BYMQzj2n0aQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389071AbfBOChR (ORCPT
+        id S2389202AbfBOCh1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:37:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50750 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:37:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390619AbfBOCKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:10:36 -0500
+        id S2390521AbfBOCKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:10:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 770FC222D4;
-        Fri, 15 Feb 2019 02:10:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC673222D0;
+        Fri, 15 Feb 2019 02:10:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196635;
-        bh=nea4Wn8nOz0hjIBBYZWzQYPhtp1Y7vTYjTgDb096TvM=;
+        s=default; t=1550196632;
+        bh=69tc0HoWUX8y0ZLvv7ga/QuUyxpQb4UrDfKwWULwD8k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BwTqway9V501o+w7Eq5QXvAeUxXOA9nf04GtX1QNFV0nyQzh9jWkn27HeGbycPNvq
-         yPIntcyTcqpGRK+mkNTSaTGeQ9I0HkH1I4dVxdUAArSpguUsBvCmh164qMCL/gt/ZM
-         FJcGpMR+fbPQ1OEX0Rm5DV/6g1361L4CF1zJH1Do=
+        b=tp3arwSeDUyYppvU5tZFog5N0rT0Ayu0YAFB57tjg8zkKj/lDjijFl8IjhkII+T/4
+         1iOs6UKpozGPjmnhGbhebasi+jBNJgtRGTMzOSN4T9YkhUlA7oU8FrDE9entaobAIB
+         7usWG3pM0Ff7abqY+nGWEFMsbClYrNYN4XFkhjlU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sagi Grimberg <sagi@grimberg.me>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.20 60/77] nvme-rdma: fix timeout handler
-Date:   Thu, 14 Feb 2019 21:08:38 -0500
-Message-Id: <20190215020855.176727-60-sashal@kernel.org>
+Cc:     Edward Cree <ecree@solarflare.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 58/77] sfc: suppress duplicate nvmem partition types in efx_ef10_mtd_probe
+Date:   Thu, 14 Feb 2019 21:08:36 -0500
+Message-Id: <20190215020855.176727-58-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
 References: <20190215020855.176727-1-sashal@kernel.org>
@@ -57,75 +57,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sagi Grimberg <sagi@grimberg.me>
+From: Edward Cree <ecree@solarflare.com>
 
-[ Upstream commit 4c174e6366746ae8d49f9cc409f728eebb7a9ac9 ]
+[ Upstream commit 3366463513f544c12c6b88c13da4462ee9e7a1a1 ]
 
-Currently, we have several problems with the timeout
-handler:
-1. If we timeout on the controller establishment flow, we will hang
-because we don't execute the error recovery (and we shouldn't because
-the create_ctrl flow needs to fail and cleanup on its own)
-2. We might also hang if we get a disconnet on a queue while the
-controller is already deleting. This racy flow can cause the controller
-disable/shutdown admin command to hang.
+Use a bitmap to keep track of which partition types we've already seen;
+ for duplicates, return -EEXIST from efx_ef10_mtd_probe_partition() and
+ thus skip adding that partition.
+Duplicate partitions occur because of the A/B backup scheme used by newer
+ sfc NICs.  Prior to this patch they cause sysfs_warn_dup errors because
+ they have the same name, causing us not to expose any MTDs at all.
 
-We cannot complete a timed out request from the timeout handler without
-mutual exclusion from the teardown flow (e.g. nvme_rdma_error_recovery_work).
-So we serialize it in the timeout handler and teardown io and admin
-queues to guarantee that no one races with us from completing the
-request.
-
-Reported-by: Jaesoo Lee <jalee@purestorage.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Edward Cree <ecree@solarflare.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/rdma.c | 26 ++++++++++++++++++--------
- 1 file changed, 18 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/sfc/ef10.c | 29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/nvme/host/rdma.c b/drivers/nvme/host/rdma.c
-index ab6ec7295bf9..6e24b20304b5 100644
---- a/drivers/nvme/host/rdma.c
-+++ b/drivers/nvme/host/rdma.c
-@@ -1679,18 +1679,28 @@ static enum blk_eh_timer_return
- nvme_rdma_timeout(struct request *rq, bool reserved)
+diff --git a/drivers/net/ethernet/sfc/ef10.c b/drivers/net/ethernet/sfc/ef10.c
+index 7eeac3d6cfe8..a497aace7e4f 100644
+--- a/drivers/net/ethernet/sfc/ef10.c
++++ b/drivers/net/ethernet/sfc/ef10.c
+@@ -6042,22 +6042,25 @@ static const struct efx_ef10_nvram_type_info efx_ef10_nvram_types[] = {
+ 	{ NVRAM_PARTITION_TYPE_LICENSE,		   0,    0, "sfc_license" },
+ 	{ NVRAM_PARTITION_TYPE_PHY_MIN,		   0xff, 0, "sfc_phy_fw" },
+ };
++#define EF10_NVRAM_PARTITION_COUNT	ARRAY_SIZE(efx_ef10_nvram_types)
+ 
+ static int efx_ef10_mtd_probe_partition(struct efx_nic *efx,
+ 					struct efx_mcdi_mtd_partition *part,
+-					unsigned int type)
++					unsigned int type,
++					unsigned long *found)
  {
- 	struct nvme_rdma_request *req = blk_mq_rq_to_pdu(rq);
-+	struct nvme_rdma_queue *queue = req->queue;
-+	struct nvme_rdma_ctrl *ctrl = queue->ctrl;
+ 	MCDI_DECLARE_BUF(inbuf, MC_CMD_NVRAM_METADATA_IN_LEN);
+ 	MCDI_DECLARE_BUF(outbuf, MC_CMD_NVRAM_METADATA_OUT_LENMAX);
+ 	const struct efx_ef10_nvram_type_info *info;
+ 	size_t size, erase_size, outlen;
++	int type_idx = 0;
+ 	bool protected;
+ 	int rc;
  
--	dev_warn(req->queue->ctrl->ctrl.device,
--		 "I/O %d QID %d timeout, reset controller\n",
--		 rq->tag, nvme_rdma_queue_idx(req->queue));
-+	dev_warn(ctrl->ctrl.device, "I/O %d QID %d timeout\n",
-+		 rq->tag, nvme_rdma_queue_idx(queue));
+-	for (info = efx_ef10_nvram_types; ; info++) {
+-		if (info ==
+-		    efx_ef10_nvram_types + ARRAY_SIZE(efx_ef10_nvram_types))
++	for (type_idx = 0; ; type_idx++) {
++		if (type_idx == EF10_NVRAM_PARTITION_COUNT)
+ 			return -ENODEV;
++		info = efx_ef10_nvram_types + type_idx;
+ 		if ((type & ~info->type_mask) == info->type)
+ 			break;
+ 	}
+@@ -6070,6 +6073,13 @@ static int efx_ef10_mtd_probe_partition(struct efx_nic *efx,
+ 	if (protected)
+ 		return -ENODEV; /* hide it */
  
--	/* queue error recovery */
--	nvme_rdma_error_recovery(req->queue->ctrl);
-+	if (ctrl->ctrl.state != NVME_CTRL_LIVE) {
-+		/*
-+		 * Teardown immediately if controller times out while starting
-+		 * or we are already started error recovery. all outstanding
-+		 * requests are completed on shutdown, so we return BLK_EH_DONE.
-+		 */
-+		flush_work(&ctrl->err_work);
-+		nvme_rdma_teardown_io_queues(ctrl, false);
-+		nvme_rdma_teardown_admin_queue(ctrl, false);
-+		return BLK_EH_DONE;
-+	}
++	/* If we've already exposed a partition of this type, hide this
++	 * duplicate.  All operations on MTDs are keyed by the type anyway,
++	 * so we can't act on the duplicate.
++	 */
++	if (__test_and_set_bit(type_idx, found))
++		return -EEXIST;
++
+ 	part->nvram_type = type;
  
--	/* fail with DNR on cmd timeout */
--	nvme_req(rq)->status = NVME_SC_ABORT_REQ | NVME_SC_DNR;
-+	dev_warn(ctrl->ctrl.device, "starting error recovery\n");
-+	nvme_rdma_error_recovery(ctrl);
+ 	MCDI_SET_DWORD(inbuf, NVRAM_METADATA_IN_TYPE, type);
+@@ -6098,6 +6108,7 @@ static int efx_ef10_mtd_probe_partition(struct efx_nic *efx,
+ static int efx_ef10_mtd_probe(struct efx_nic *efx)
+ {
+ 	MCDI_DECLARE_BUF(outbuf, MC_CMD_NVRAM_PARTITIONS_OUT_LENMAX);
++	DECLARE_BITMAP(found, EF10_NVRAM_PARTITION_COUNT);
+ 	struct efx_mcdi_mtd_partition *parts;
+ 	size_t outlen, n_parts_total, i, n_parts;
+ 	unsigned int type;
+@@ -6126,11 +6137,13 @@ static int efx_ef10_mtd_probe(struct efx_nic *efx)
+ 	for (i = 0; i < n_parts_total; i++) {
+ 		type = MCDI_ARRAY_DWORD(outbuf, NVRAM_PARTITIONS_OUT_TYPE_ID,
+ 					i);
+-		rc = efx_ef10_mtd_probe_partition(efx, &parts[n_parts], type);
+-		if (rc == 0)
+-			n_parts++;
+-		else if (rc != -ENODEV)
++		rc = efx_ef10_mtd_probe_partition(efx, &parts[n_parts], type,
++						  found);
++		if (rc == -EEXIST || rc == -ENODEV)
++			continue;
++		if (rc)
+ 			goto fail;
++		n_parts++;
+ 	}
  
--	return BLK_EH_DONE;
-+	return BLK_EH_RESET_TIMER;
- }
- 
- static blk_status_t nvme_rdma_queue_rq(struct blk_mq_hw_ctx *hctx,
+ 	rc = efx_mtd_add(efx, &parts[0].common, n_parts, sizeof(*parts));
 -- 
 2.19.1
 
