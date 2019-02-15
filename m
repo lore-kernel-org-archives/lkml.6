@@ -7,50 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94877C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:22:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 819D5C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:23:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 594E320643
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:22:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42B1C20643
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:23:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197372;
-	bh=2LKSxtW8WKuswaGRgeyrr33fBbuX2oHJ82AsNkVQnCU=;
+	s=default; t=1550197381;
+	bh=slqZOW3NcXL8rk3Ff3ypikJsnDyGCNZgL8hOq0D+F+Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fvukwht0bWRivtxCWlubyivuNKkbhsLmSYKmzmOaJK3rPDm8jRvbd5U/YUIPRWX0v
-	 8cfwoAP9eau/mzADgwp/M+mOUWplOYDntsPesL/bq+ZZ1dzKdQ4R6ag6awi6B55RiP
-	 xGJFn9eIs7AUMRy1IAZ6VS5zTnva1dGrFqcCMkuc=
+	b=USt63HXuq9Nkn7cAasiI6W4YXdhLatN0iJ3gVM8MCCRjF4HF/ABfZ7P/iRJo+6NDL
+	 3s4b0c3quqPHmaa57dzKY4ZTCZiBhkcy7t73bBGzx1bGZVxa70DkPpqNcX4DVI0ExP
+	 wbeS9jKOGnTyVSLlaaAyRz2TcCHP3Lfcv77y1sik=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728871AbfBOCWu (ORCPT
+        id S2392439AbfBOCW7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:22:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54536 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:22:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391891AbfBOCOm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:14:42 -0500
+        id S2391799AbfBOCOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:14:40 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F35D206BA;
-        Fri, 15 Feb 2019 02:14:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DBE9120643;
+        Fri, 15 Feb 2019 02:14:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196881;
-        bh=2LKSxtW8WKuswaGRgeyrr33fBbuX2oHJ82AsNkVQnCU=;
+        s=default; t=1550196879;
+        bh=slqZOW3NcXL8rk3Ff3ypikJsnDyGCNZgL8hOq0D+F+Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OEl5VIyE7CrxJ+VsajEe65Oa49nsL8TYb+tJ3j866Cps1e0+8IQ+HKBbr8fMdHkuw
-         KyW0pklM0mfOJhdCwK8TtUaywr6MBBLDg4Uj813bJcPf7cgXrdfXm6j4N7cTcFQOwc
-         sEx0eEpmU5n3BmkgU7vqC46IHJNbeDkgjwOVL6LM=
+        b=LPnf1AJ3OmPdmAqojrOhK4DvnVfh2zKO8xGlcHsfDkimc6P2is5cc2UvtB36KpbY4
+         TCKl8U12pU4bVIRhRCUVpNMSL0xkv5ry9iIe8pMxAyB94kZY4KwopuJUi1Z5Bv/EaA
+         E1IChh+tuTCaIXXDRSLLIHlzRSEJO2dWvvjNcKrE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Silvio Cesare <silvio.cesare@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Kees Cook <keescook@chromium.org>,
-        Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>,
-        Willy Tarreau <w@1wt.eu>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 08/27] ASoC: dapm: change snprintf to scnprintf for possible overflow
-Date:   Thu, 14 Feb 2019 21:14:05 -0500
-Message-Id: <20190215021424.178979-8-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 07/27] usb: gadget: Potential NULL dereference on allocation error
+Date:   Thu, 14 Feb 2019 21:14:04 -0500
+Message-Id: <20190215021424.178979-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021424.178979-1-sashal@kernel.org>
 References: <20190215021424.178979-1-sashal@kernel.org>
@@ -62,83 +58,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Silvio Cesare <silvio.cesare@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit e581e151e965bf1f2815dd94620b638fec4d0a7e ]
+[ Upstream commit df28169e1538e4a8bcd8b779b043e5aa6524545c ]
 
-Change snprintf to scnprintf. There are generally two cases where using
-snprintf causes problems.
+The source_sink_alloc_func() function is supposed to return error
+pointers on error.  The function is called from usb_get_function() which
+doesn't check for NULL returns so it would result in an Oops.
 
-1) Uses of size += snprintf(buf, SIZE - size, fmt, ...)
-In this case, if snprintf would have written more characters than what the
-buffer size (SIZE) is, then size will end up larger than SIZE. In later
-uses of snprintf, SIZE - size will result in a negative number, leading
-to problems. Note that size might already be too large by using
-size = snprintf before the code reaches a case of size += snprintf.
+Of course, in the current kernel, small allocations always succeed so
+this doesn't affect runtime.
 
-2) If size is ultimately used as a length parameter for a copy back to user
-space, then it will potentially allow for a buffer overflow and information
-disclosure when size is greater than SIZE. When the size is used to index
-the buffer directly, we can have memory corruption. This also means when
-size = snprintf... is used, it may also cause problems since size may become
-large.  Copying to userspace is mitigated by the HARDENED_USERCOPY kernel
-configuration.
-
-The solution to these issues is to use scnprintf which returns the number of
-characters actually written to the buffer, so the size variable will never
-exceed SIZE.
-
-Signed-off-by: Silvio Cesare <silvio.cesare@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Greg KH <greg@kroah.com>
-Signed-off-by: Willy Tarreau <w@1wt.eu>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/soc-dapm.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/usb/gadget/function/f_sourcesink.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index 8bfc534e3b34..ab647f1fe11b 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -1976,19 +1976,19 @@ static ssize_t dapm_widget_power_read_file(struct file *file,
- 		out = is_connected_output_ep(w, NULL, NULL);
- 	}
+diff --git a/drivers/usb/gadget/function/f_sourcesink.c b/drivers/usb/gadget/function/f_sourcesink.c
+index 8784fa12ea2c..6e9d958004a0 100644
+--- a/drivers/usb/gadget/function/f_sourcesink.c
++++ b/drivers/usb/gadget/function/f_sourcesink.c
+@@ -842,7 +842,7 @@ static struct usb_function *source_sink_alloc_func(
  
--	ret = snprintf(buf, PAGE_SIZE, "%s: %s%s  in %d out %d",
-+	ret = scnprintf(buf, PAGE_SIZE, "%s: %s%s  in %d out %d",
- 		       w->name, w->power ? "On" : "Off",
- 		       w->force ? " (forced)" : "", in, out);
+ 	ss = kzalloc(sizeof(*ss), GFP_KERNEL);
+ 	if (!ss)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
  
- 	if (w->reg >= 0)
--		ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 				" - R%d(0x%x) mask 0x%x",
- 				w->reg, w->reg, w->mask << w->shift);
+ 	ss_opts =  container_of(fi, struct f_ss_opts, func_inst);
  
--	ret += snprintf(buf + ret, PAGE_SIZE - ret, "\n");
-+	ret += scnprintf(buf + ret, PAGE_SIZE - ret, "\n");
- 
- 	if (w->sname)
--		ret += snprintf(buf + ret, PAGE_SIZE - ret, " stream %s %s\n",
-+		ret += scnprintf(buf + ret, PAGE_SIZE - ret, " stream %s %s\n",
- 				w->sname,
- 				w->active ? "active" : "inactive");
- 
-@@ -2001,7 +2001,7 @@ static ssize_t dapm_widget_power_read_file(struct file *file,
- 			if (!p->connect)
- 				continue;
- 
--			ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 					" %s  \"%s\" \"%s\"\n",
- 					(rdir == SND_SOC_DAPM_DIR_IN) ? "in" : "out",
- 					p->name ? p->name : "static",
 -- 
 2.19.1
 
