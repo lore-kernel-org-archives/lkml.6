@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2841AC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:33:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8946AC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:34:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB76420449
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:33:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A5A820675
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:34:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550198039;
-	bh=LwTr1nXOEVL3MpJuQXnZTtCapQoKNlaweD0rUUygPwM=;
+	s=default; t=1550198044;
+	bh=NPO4Xbf6do6LsYoZs2OKAUJj/tZG+jUPDi0cgkElr4w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Tg+mz4K8Y7kvnJpa7ecQA8DmNPnlHp/BSplczxPT0kpNRUUrRRtYuNhxAjlkbTWy2
-	 DdaEnFdO+CoZ/6LGuDvWlni4YinXVe7Fy6M/T/IZNza53ANvVFJtzoirb0vTGks4iM
-	 pvkFu3xLAi32sCWa+zH3BUcRJtRr0J1x/Q21XllM=
+	b=Vikpbm5vnQRrV0WSFUMq09YMxUQWotFvT4q3jmtiVeBxC3GdwCiViVX0Ka8/h0so/
+	 jZruAnCzOd2eNPYa2As1EwTTy+BNvnG2v3Ek9vXKMv7qoayJumQn4bdudhrAvHVg/f
+	 goYDvBLfORTk/nXqVC4eFO5qq0twUGwsHiq0Pwao=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404059AbfBOCLu (ORCPT
+        id S2388548AbfBOCeC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:11:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51796 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:34:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403901AbfBOCLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:11:47 -0500
+        id S2404046AbfBOCLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:11:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1303821B1C;
-        Fri, 15 Feb 2019 02:11:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 901682229F;
+        Fri, 15 Feb 2019 02:11:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196706;
-        bh=LwTr1nXOEVL3MpJuQXnZTtCapQoKNlaweD0rUUygPwM=;
+        s=default; t=1550196708;
+        bh=NPO4Xbf6do6LsYoZs2OKAUJj/tZG+jUPDi0cgkElr4w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Y0Q8NZ7vW/hqF61FQtKUWPIYiuybfCijGaY+ZqWZq874CQQXm1SKhGp5BnfVb4YKU
-         FXdARPypl6tdrqX4AgEgC0b3Kx2z5gUlhW0MNGwK7empYUH9xEmhUVuKELbZG+r2f9
-         6Ir3q+S70S4jxjpxwj3eacseLEOBZZwk8ZSVhcSM=
+        b=vDnI8qiZyt6o3kC3GPvtoIPNvowuua3uo0x4s2N79JG2WllLOyRiSKj+rVyU+fr+Y
+         QRyQTNI5UMxeusLCASpMm43S1rp2Wh1LzFJoPHFba/7B7UfLGyUKhpgKFGBz7WzDi+
+         Ch1NEy8f/rPOBobGsfn9DxZeD5dsfg7BJJY1HI6Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Peng Hao <peng.hao2@zte.com.cn>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        dave.hansen@linux.intel.com, peterz@infradead.org, luto@kernel.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 15/65] x86/mm/mem_encrypt: Fix erroneous sizeof()
-Date:   Thu, 14 Feb 2019 21:10:31 -0500
-Message-Id: <20190215021121.177674-15-sashal@kernel.org>
+Cc:     Silvio Cesare <silvio.cesare@gmail.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Kees Cook <keescook@chromium.org>,
+        Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>,
+        Willy Tarreau <w@1wt.eu>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 17/65] ASoC: dapm: change snprintf to scnprintf for possible overflow
+Date:   Thu, 14 Feb 2019 21:10:33 -0500
+Message-Id: <20190215021121.177674-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -61,48 +62,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Hao <peng.hao2@zte.com.cn>
+From: Silvio Cesare <silvio.cesare@gmail.com>
 
-[ Upstream commit bf7d28c53453ea904584960de55e33e03b9d93b1 ]
+[ Upstream commit e581e151e965bf1f2815dd94620b638fec4d0a7e ]
 
-Using sizeof(pointer) for determining the size of a memset() only works
-when the size of the pointer and the size of type to which it points are
-the same. For pte_t this is only true for 64bit and 32bit-NONPAE. On 32bit
-PAE systems this is wrong as the pointer size is 4 byte but the PTE entry
-is 8 bytes. It's actually not a real world issue as this code depends on
-64bit, but it's wrong nevertheless.
+Change snprintf to scnprintf. There are generally two cases where using
+snprintf causes problems.
 
-Use sizeof(*p) for correctness sake.
+1) Uses of size += snprintf(buf, SIZE - size, fmt, ...)
+In this case, if snprintf would have written more characters than what the
+buffer size (SIZE) is, then size will end up larger than SIZE. In later
+uses of snprintf, SIZE - size will result in a negative number, leading
+to problems. Note that size might already be too large by using
+size = snprintf before the code reaches a case of size += snprintf.
 
-Fixes: aad983913d77 ("x86/mm/encrypt: Simplify sme_populate_pgd() and sme_populate_pgd_large()")
-Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Cc: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: dave.hansen@linux.intel.com
-Cc: peterz@infradead.org
-Cc: luto@kernel.org
-Link: https://lkml.kernel.org/r/1546065252-97996-1-git-send-email-peng.hao2@zte.com.cn
+2) If size is ultimately used as a length parameter for a copy back to user
+space, then it will potentially allow for a buffer overflow and information
+disclosure when size is greater than SIZE. When the size is used to index
+the buffer directly, we can have memory corruption. This also means when
+size = snprintf... is used, it may also cause problems since size may become
+large.  Copying to userspace is mitigated by the HARDENED_USERCOPY kernel
+configuration.
+
+The solution to these issues is to use scnprintf which returns the number of
+characters actually written to the buffer, so the size variable will never
+exceed SIZE.
+
+Signed-off-by: Silvio Cesare <silvio.cesare@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Greg KH <greg@kroah.com>
+Signed-off-by: Willy Tarreau <w@1wt.eu>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/mm/mem_encrypt_identity.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/soc-dapm.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/x86/mm/mem_encrypt_identity.c b/arch/x86/mm/mem_encrypt_identity.c
-index 7ae36868aed2..c9faf34cbb62 100644
---- a/arch/x86/mm/mem_encrypt_identity.c
-+++ b/arch/x86/mm/mem_encrypt_identity.c
-@@ -157,8 +157,8 @@ static void __init sme_populate_pgd(struct sme_populate_pgd_data *ppd)
- 	pmd = pmd_offset(pud, ppd->vaddr);
- 	if (pmd_none(*pmd)) {
- 		pte = ppd->pgtable_area;
--		memset(pte, 0, sizeof(pte) * PTRS_PER_PTE);
--		ppd->pgtable_area += sizeof(pte) * PTRS_PER_PTE;
-+		memset(pte, 0, sizeof(*pte) * PTRS_PER_PTE);
-+		ppd->pgtable_area += sizeof(*pte) * PTRS_PER_PTE;
- 		set_pmd(pmd, __pmd(PMD_FLAGS | __pa(pte)));
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index 461d951917c0..653706945222 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -2028,19 +2028,19 @@ static ssize_t dapm_widget_power_read_file(struct file *file,
+ 		out = is_connected_output_ep(w, NULL, NULL);
  	}
  
+-	ret = snprintf(buf, PAGE_SIZE, "%s: %s%s  in %d out %d",
++	ret = scnprintf(buf, PAGE_SIZE, "%s: %s%s  in %d out %d",
+ 		       w->name, w->power ? "On" : "Off",
+ 		       w->force ? " (forced)" : "", in, out);
+ 
+ 	if (w->reg >= 0)
+-		ret += snprintf(buf + ret, PAGE_SIZE - ret,
++		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 				" - R%d(0x%x) mask 0x%x",
+ 				w->reg, w->reg, w->mask << w->shift);
+ 
+-	ret += snprintf(buf + ret, PAGE_SIZE - ret, "\n");
++	ret += scnprintf(buf + ret, PAGE_SIZE - ret, "\n");
+ 
+ 	if (w->sname)
+-		ret += snprintf(buf + ret, PAGE_SIZE - ret, " stream %s %s\n",
++		ret += scnprintf(buf + ret, PAGE_SIZE - ret, " stream %s %s\n",
+ 				w->sname,
+ 				w->active ? "active" : "inactive");
+ 
+@@ -2053,7 +2053,7 @@ static ssize_t dapm_widget_power_read_file(struct file *file,
+ 			if (!p->connect)
+ 				continue;
+ 
+-			ret += snprintf(buf + ret, PAGE_SIZE - ret,
++			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 					" %s  \"%s\" \"%s\"\n",
+ 					(rdir == SND_SOC_DAPM_DIR_IN) ? "in" : "out",
+ 					p->name ? p->name : "static",
 -- 
 2.19.1
 
