@@ -2,86 +2,126 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DC74C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5DA6C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:41:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA28621925
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:35:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="d9PtjzjV"
+	by mail.kernel.org (Postfix) with ESMTP id A90A321929
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:41:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394943AbfBONfH (ORCPT
+        id S2394966AbfBONlK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 08:35:07 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:53649 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726026AbfBONfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 08:35:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=sae7oI0BakmA1YYtB52K/s24aAoF9FG6Hk2jAt8wpiw=; b=d9PtjzjVgLlBZikcGn6EOet4oT
-        ras8mlPdntQ4UIz5AzE7m0zsC/rJrOk3lHGaKLrzqDVvC/D7mNpo7uZaPwpjPstICpTTyeaB6fPY4
-        z+4wsSftF7BrnSO2q6fseMfUqBRemX/2HxdPn3Y0c46b20MwY5IMIJhJZe/B4DQO+wWc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1guddr-00055W-Q5; Fri, 15 Feb 2019 14:34:59 +0100
-Date:   Fri, 15 Feb 2019 14:34:59 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Claudiu Manoil <claudiu.manoil@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        alexandru.marginean@nxp.com, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v2 3/3] enetc: Add ENETC PF level external MDIO
- support
-Message-ID: <20190215133459.GH5699@lunn.ch>
-References: <1550225414-12125-1-git-send-email-claudiu.manoil@nxp.com>
- <1550225414-12125-4-git-send-email-claudiu.manoil@nxp.com>
+        Fri, 15 Feb 2019 08:41:10 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:47363 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388929AbfBONlJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 08:41:09 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1FDeOqG1195844
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Fri, 15 Feb 2019 05:40:24 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1FDeMD81195834;
+        Fri, 15 Feb 2019 05:40:22 -0800
+Date:   Fri, 15 Feb 2019 05:40:22 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Yazen Ghannam <tipbot@zytor.com>
+Message-ID: <tip-3f4da372ec8e4ce58c17ac4f2e3c8891bbfea17e@git.kernel.org>
+Cc:     puwen@hygon.cn, mchehab@kernel.org, linux-kernel@vger.kernel.org,
+        yazen.ghannam@amd.com, mingo@redhat.com, james.morse@arm.com,
+        bp@suse.de, hpa@zytor.com, qiuxu.zhuo@intel.com, mingo@kernel.org,
+        tony.luck@intel.com, vishal.l.verma@intel.com, x86@kernel.org,
+        tglx@linutronix.de, linux-edac@vger.kernel.org
+Reply-To: tony.luck@intel.com, mingo@kernel.org, qiuxu.zhuo@intel.com,
+          x86@kernel.org, tglx@linutronix.de, linux-edac@vger.kernel.org,
+          vishal.l.verma@intel.com, linux-kernel@vger.kernel.org,
+          puwen@hygon.cn, mchehab@kernel.org, hpa@zytor.com, bp@suse.de,
+          james.morse@arm.com, yazen.ghannam@amd.com, mingo@redhat.com
+In-Reply-To: <20190212212417.107049-1-Yazen.Ghannam@amd.com>
+References: <20190212212417.107049-1-Yazen.Ghannam@amd.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:ras/core] EDAC/mce_amd: Decode MCA_STATUS[Scrub] bit
+Git-Commit-ID: 3f4da372ec8e4ce58c17ac4f2e3c8891bbfea17e
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <1550225414-12125-4-git-send-email-claudiu.manoil@nxp.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 12:10:14PM +0200, Claudiu Manoil wrote:
-> Each ENETC PF has its own MDIO interface, the corresponding
-> MDIO registers are mapped in the ENETC's Port register block.
-> The current patch adds a driver for these PF level MDIO buses,
-> so that each PF can manage directly its own external link.
-> 
-> Signed-off-by: Alex Marginean <alexandru.marginean@nxp.com>
-> Signed-off-by: Claudiu Manoil <claudiu.manoil@nxp.com>
-> ---
-> v2 - used readx_poll_timeout()
->    - added mdio node child to the port node
+Commit-ID:  3f4da372ec8e4ce58c17ac4f2e3c8891bbfea17e
+Gitweb:     https://git.kernel.org/tip/3f4da372ec8e4ce58c17ac4f2e3c8891bbfea17e
+Author:     Yazen Ghannam <yazen.ghannam@amd.com>
+AuthorDate: Tue, 12 Feb 2019 21:24:28 +0000
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Fri, 15 Feb 2019 14:25:58 +0100
 
-Hi Claudiu
+EDAC/mce_amd: Decode MCA_STATUS[Scrub] bit
 
-Please document this in the device tree binding.
+Previous AMD systems have had a bit in MCA_STATUS to indicate that an
+error was detected on a scrub operation. However, this bit was defined
+differently within different banks and families/models.
 
-> +	/* return all Fs if nothing was there */
-> +	if (enetc_rd_reg(&regs->mdio_cfg) & MDIO_CFG_RD_ER) {
-> +		dev_err(&bus->dev,
-> +			"Error while reading PHY%d reg at %d.%hhu\n",
-> +			phy_id, dev_addr, regnum);
-> +		return 0xffff;
+Starting with Family 17h, MCA_STATUS[40] is either Reserved/Read-as-Zero
+or defined as "Scrub", for all MCA banks and CPU models. Therefore, this
+bit can be defined as the "Scrub" bit.
 
-I'm not sure you want a dev_err() here. The device tree binding allows
-you to have a phy node without a reg value. When that happens, the
-core code will scan all 32 addresses to find the PHY. This is going to
-spam the log. dev_dbg() might be better.
+Define MCA_STATUS[40] as "Scrub" and decode it in the AMD MCE decoding
+module for Family 17h and newer systems.
 
-     Andrew
+Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: James Morse <james.morse@arm.com>
+Cc: linux-edac <linux-edac@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Pu Wen <puwen@hygon.cn>
+Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20190212212417.107049-1-Yazen.Ghannam@amd.com
+---
+ arch/x86/include/asm/mce.h | 1 +
+ drivers/edac/mce_amd.c     | 3 +++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
+index 299a38536567..22d05e3835f0 100644
+--- a/arch/x86/include/asm/mce.h
++++ b/arch/x86/include/asm/mce.h
+@@ -48,6 +48,7 @@
+ #define MCI_STATUS_SYNDV	BIT_ULL(53)  /* synd reg. valid */
+ #define MCI_STATUS_DEFERRED	BIT_ULL(44)  /* uncorrected error, deferred exception */
+ #define MCI_STATUS_POISON	BIT_ULL(43)  /* access poisonous data */
++#define MCI_STATUS_SCRUB	BIT_ULL(40)  /* Error detected during scrub operation */
+ 
+ /*
+  * McaX field if set indicates a given bank supports MCA extensions:
+diff --git a/drivers/edac/mce_amd.c b/drivers/edac/mce_amd.c
+index f286b880f981..b349c22bb386 100644
+--- a/drivers/edac/mce_amd.c
++++ b/drivers/edac/mce_amd.c
+@@ -1078,6 +1078,9 @@ amd_decode_mce(struct notifier_block *nb, unsigned long val, void *data)
+ 	if (ecc)
+ 		pr_cont("|%sECC", ((ecc == 2) ? "C" : "U"));
+ 
++	if (fam >= 0x17)
++		pr_cont("|%s", (m->status & MCI_STATUS_SCRUB ? "Scrub" : "-"));
++
+ 	pr_cont("]: 0x%016llx\n", m->status);
+ 
+ 	if (m->status & MCI_STATUS_ADDRV)
