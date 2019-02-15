@@ -6,46 +6,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B77ABC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:12:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3353AC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:12:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8409A2229F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:12:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC730222D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:12:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196735;
-	bh=2K0MItoCg0hnOi1BYWUODwaGFGgRj3BR7iSEEWFpinY=;
+	s=default; t=1550196738;
+	bh=OCMBr16ERQc7kvl3wRG4Hj1hV26H8yMFZkg/cCRhyM4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=C2H37UDBptPajYF1Y1k3fAVSlUiYYl2q3LsmkqorEiSYCd0GP/WaTZXh2s6jW8a0c
-	 Jf8DXQlOoYALMlBg/CAPiRVXWFiAK5L0Ov5Bpg01SPiwjcyaQlpMtHq7ek16U0RUeL
-	 1tPFfhFt+KHHNVZlQcFGekiA9LCU5+7YRNwqlNs8=
+	b=M3VINEG2kp4wHfSdi1ZJluitfY8CX5HlEG6OMPxi9rXSYs26FtUGvPe7t56Jz0y7J
+	 vsCNPf8c76pmJ+AYB+kuvJgU/RcozpxuCfO3Q4zZrDCEXizcJdZqGzO7ST+fGOuYeQ
+	 WeemcUtVGGiu3mVYZ+siXJUdPjT5A4/MThcfepiM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404120AbfBOCMN (ORCPT
+        id S2404185AbfBOCMQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:12:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52170 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:12:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391023AbfBOCMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:12:09 -0500
+        id S2404028AbfBOCMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:12:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88B7321B1C;
-        Fri, 15 Feb 2019 02:12:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A876C206BA;
+        Fri, 15 Feb 2019 02:12:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196728;
-        bh=2K0MItoCg0hnOi1BYWUODwaGFGgRj3BR7iSEEWFpinY=;
+        s=default; t=1550196729;
+        bh=OCMBr16ERQc7kvl3wRG4Hj1hV26H8yMFZkg/cCRhyM4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uaNEdlFJuNJfhRaReCnIQSwgdDbl+vSGhKBZ/UB7IA50yLoKpr5XBiH0fGCxxJCBs
-         Q5N8vK31ca9lrpldE9gGaFYvNw+XCLblFhi0CK2sxfopBrqImnfKVih2Tp4yVZtkcW
-         cVWTVEJV80j+tROMDH7fSvQpYwEFcm0KogRHKA4E=
+        b=S/cZ0bOEhroduaC3elZXpEXIbZQqoZUeQzVgAwe2+oKaFZB8lNwmkgJzTT9zlpm26
+         //Ny3/zIL/yqY91MC1gaDjSlIn29gCUmFtSassM++2OawSTKwMYGwATXP/rMIut1/V
+         sKZLzhzGUHLHpNhu+nVb9BUHiZ5hfc9Kf8r5Mt1w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 4.19 28/65] staging: rtl8723bs: Fix build error with Clang when inlining is disabled
-Date:   Thu, 14 Feb 2019 21:10:44 -0500
-Message-Id: <20190215021121.177674-28-sashal@kernel.org>
+Cc:     Bob Copeland <me@bobcopeland.com>,
+        Bob Copeland <bobcopeland@fb.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 29/65] mac80211: fix miscounting of ttl-dropped frames
+Date:   Thu, 14 Feb 2019 21:10:45 -0500
+Message-Id: <20190215021121.177674-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -57,67 +59,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Bob Copeland <me@bobcopeland.com>
 
-[ Upstream commit 97715058b70da1262fd07798c8b2e3e894f759dd ]
+[ Upstream commit a0dc02039a2ee54fb4ae400e0b755ed30e73e58c ]
 
-When CONFIG_NO_AUTO_INLINE was present in linux-next (which added
-'-fno-inline-functions' to KBUILD_CFLAGS), an allyesconfig build with
-Clang failed at the modpost stage:
+In ieee80211_rx_h_mesh_fwding, we increment the 'dropped_frames_ttl'
+counter when we decrement the ttl to zero.  For unicast frames
+destined for other hosts, we stop processing the frame at that point.
 
-ERROR: "is_broadcast_mac_addr" [drivers/staging/rtl8723bs/r8723bs.ko] undefined!
-ERROR: "is_zero_mac_addr" [drivers/staging/rtl8723bs/r8723bs.ko] undefined!
-ERROR: "is_multicast_mac_addr" [drivers/staging/rtl8723bs/r8723bs.ko] undefined!
+For multicast frames, we do not rebroadcast it in this case, but we
+do pass the frame up the stack to process it on this STA.  That
+doesn't match the usual definition of "dropped," so don't count
+those as such.
 
-These functions were marked as extern inline, meaning that if inlining
-doesn't happen, the function will be undefined, as it is above.
+With this change, something like `ping6 -i0.2 ff02::1%mesh0` from a
+peer in a ttl=1 network no longer increments the counter rapidly.
 
-This happens to work with GCC because the '-fno-inline-functions' option
-respects the __inline attribute so all instances of these functions are
-inlined as expected and the definition doesn't actually matter. However,
-with Clang and '-fno-inline-functions', a function has to be marked with
-the __always_inline attribute to be considered for inlining, which none
-of these functions are. Clang tries to find the symbol definition
-elsewhere as it was told and fails, which trickles down to modpost.
-
-To make sure that this code compiles regardless of compiler and make the
-intention of the code clearer, use 'static' to ensure these functions
-are always defined, regardless of inlining. Additionally, silence a
-checkpatch warning by switching from '__inline' to 'inline'.
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Bob Copeland <bobcopeland@fb.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/rtl8723bs/include/ieee80211.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ net/mac80211/rx.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtl8723bs/include/ieee80211.h b/drivers/staging/rtl8723bs/include/ieee80211.h
-index bcc8dfa8e672..9efb4dcb9d3a 100644
---- a/drivers/staging/rtl8723bs/include/ieee80211.h
-+++ b/drivers/staging/rtl8723bs/include/ieee80211.h
-@@ -850,18 +850,18 @@ enum ieee80211_state {
- #define IP_FMT "%pI4"
- #define IP_ARG(x) (x)
+diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
+index 5e2b4a41acf1..77cfa62274f3 100644
+--- a/net/mac80211/rx.c
++++ b/net/mac80211/rx.c
+@@ -2676,7 +2676,9 @@ ieee80211_rx_h_mesh_fwding(struct ieee80211_rx_data *rx)
+ 	skb_set_queue_mapping(skb, q);
  
--extern __inline int is_multicast_mac_addr(const u8 *addr)
-+static inline int is_multicast_mac_addr(const u8 *addr)
- {
-         return ((addr[0] != 0xff) && (0x01 & addr[0]));
- }
+ 	if (!--mesh_hdr->ttl) {
+-		IEEE80211_IFSTA_MESH_CTR_INC(ifmsh, dropped_frames_ttl);
++		if (!is_multicast_ether_addr(hdr->addr1))
++			IEEE80211_IFSTA_MESH_CTR_INC(ifmsh,
++						     dropped_frames_ttl);
+ 		goto out;
+ 	}
  
--extern __inline int is_broadcast_mac_addr(const u8 *addr)
-+static inline int is_broadcast_mac_addr(const u8 *addr)
- {
- 	return ((addr[0] == 0xff) && (addr[1] == 0xff) && (addr[2] == 0xff) &&   \
- 		(addr[3] == 0xff) && (addr[4] == 0xff) && (addr[5] == 0xff));
- }
- 
--extern __inline int is_zero_mac_addr(const u8 *addr)
-+static inline int is_zero_mac_addr(const u8 *addr)
- {
- 	return ((addr[0] == 0x00) && (addr[1] == 0x00) && (addr[2] == 0x00) &&   \
- 		(addr[3] == 0x00) && (addr[4] == 0x00) && (addr[5] == 0x00));
 -- 
 2.19.1
 
