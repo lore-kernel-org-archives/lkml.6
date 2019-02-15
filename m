@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D42D6C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:37:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D95C4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:37:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2AF32192B
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:37:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C09A2192B
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:37:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550198248;
-	bh=69tc0HoWUX8y0ZLvv7ga/QuUyxpQb4UrDfKwWULwD8k=;
+	s=default; t=1550198272;
+	bh=QZ9HM5CjjkWjWL/SbDhN3izHTKvs5MEIqt31fW8Errw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=R7FcecZkxydoCWpoy+c8p84tK2yZK6eel1i585q+VDV0tMGeCyGVlyuF5y2BeVwhw
-	 V7YWT3P1thG1SbWSYHf8bdhW+pWE5c9sgpP7/SW6eJtn9xVNW8q10bMG0VfgxILRjy
-	 iu9UsUaJWCxIXaSa7R1hMsxk1WT02BYMQzj2n0aQ=
+	b=wPRvglGg+9U7npiL+3qvc1kJOoga9A7XD1Q9pgBjh+C4dgT4rM+W0CyZaE6HDS6T1
+	 WdAVt74TRTTUu+O2Uklgs6llo5OoJSyRpEy23HvGBEjRyFKGDi6W1LB2ojJOLztn/e
+	 Sx58JZVtnODIi4/ENOH+lZTDpXCa0TSOCkbe3XIc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389202AbfBOCh1 (ORCPT
+        id S2390546AbfBOCKd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:37:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50718 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390521AbfBOCKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 14 Feb 2019 21:10:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50652 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390464AbfBOCKa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:10:30 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC673222D0;
-        Fri, 15 Feb 2019 02:10:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75AA42229F;
+        Fri, 15 Feb 2019 02:10:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196632;
-        bh=69tc0HoWUX8y0ZLvv7ga/QuUyxpQb4UrDfKwWULwD8k=;
+        s=default; t=1550196629;
+        bh=QZ9HM5CjjkWjWL/SbDhN3izHTKvs5MEIqt31fW8Errw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tp3arwSeDUyYppvU5tZFog5N0rT0Ayu0YAFB57tjg8zkKj/lDjijFl8IjhkII+T/4
-         1iOs6UKpozGPjmnhGbhebasi+jBNJgtRGTMzOSN4T9YkhUlA7oU8FrDE9entaobAIB
-         7usWG3pM0Ff7abqY+nGWEFMsbClYrNYN4XFkhjlU=
+        b=jcYowg+AiXseMMXwR7BTAlSkwlJ07lURnsBLspBgRtua6UpFBIsiDhM7rWy7qhhO7
+         7jGO8h14sEj+N9+3ahtYZoOztoAL4JnzoGVkJXDtZesRSaPjaYeZRGmyhC3+gl0q5l
+         r4ZAv5RO8ZXVu2A7hrlPRKc/6eSwvM8XGE+DFAuo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Edward Cree <ecree@solarflare.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 58/77] sfc: suppress duplicate nvmem partition types in efx_ef10_mtd_probe
-Date:   Thu, 14 Feb 2019 21:08:36 -0500
-Message-Id: <20190215020855.176727-58-sashal@kernel.org>
+Cc:     Haiyang Zhang <haiyangz@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>, devel@linuxdriverproject.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 55/77] hv_netvsc: Fix ethtool change hash key error
+Date:   Thu, 14 Feb 2019 21:08:33 -0500
+Message-Id: <20190215020855.176727-55-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
 References: <20190215020855.176727-1-sashal@kernel.org>
@@ -57,98 +57,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Edward Cree <ecree@solarflare.com>
+From: Haiyang Zhang <haiyangz@microsoft.com>
 
-[ Upstream commit 3366463513f544c12c6b88c13da4462ee9e7a1a1 ]
+[ Upstream commit b4a10c750424e01b5e37372fef0a574ebf7b56c3 ]
 
-Use a bitmap to keep track of which partition types we've already seen;
- for duplicates, return -EEXIST from efx_ef10_mtd_probe_partition() and
- thus skip adding that partition.
-Duplicate partitions occur because of the A/B backup scheme used by newer
- sfc NICs.  Prior to this patch they cause sysfs_warn_dup errors because
- they have the same name, causing us not to expose any MTDs at all.
+Hyper-V hosts require us to disable RSS before changing RSS key,
+otherwise the changing request will fail. This patch fixes the
+coding error.
 
-Signed-off-by: Edward Cree <ecree@solarflare.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: ff4a44199012 ("netvsc: allow get/set of RSS indirection table")
+Reported-by: Wei Hu <weh@microsoft.com>
+Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+[sl: fix up subject line]
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/sfc/ef10.c | 29 +++++++++++++++++++++--------
- 1 file changed, 21 insertions(+), 8 deletions(-)
+ drivers/net/hyperv/rndis_filter.c | 25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/ethernet/sfc/ef10.c b/drivers/net/ethernet/sfc/ef10.c
-index 7eeac3d6cfe8..a497aace7e4f 100644
---- a/drivers/net/ethernet/sfc/ef10.c
-+++ b/drivers/net/ethernet/sfc/ef10.c
-@@ -6042,22 +6042,25 @@ static const struct efx_ef10_nvram_type_info efx_ef10_nvram_types[] = {
- 	{ NVRAM_PARTITION_TYPE_LICENSE,		   0,    0, "sfc_license" },
- 	{ NVRAM_PARTITION_TYPE_PHY_MIN,		   0xff, 0, "sfc_phy_fw" },
- };
-+#define EF10_NVRAM_PARTITION_COUNT	ARRAY_SIZE(efx_ef10_nvram_types)
+diff --git a/drivers/net/hyperv/rndis_filter.c b/drivers/net/hyperv/rndis_filter.c
+index 8b537a049c1e..a4661d396e3c 100644
+--- a/drivers/net/hyperv/rndis_filter.c
++++ b/drivers/net/hyperv/rndis_filter.c
+@@ -774,8 +774,8 @@ rndis_filter_set_offload_params(struct net_device *ndev,
+ 	return ret;
+ }
  
- static int efx_ef10_mtd_probe_partition(struct efx_nic *efx,
- 					struct efx_mcdi_mtd_partition *part,
--					unsigned int type)
-+					unsigned int type,
-+					unsigned long *found)
+-int rndis_filter_set_rss_param(struct rndis_device *rdev,
+-			       const u8 *rss_key)
++static int rndis_set_rss_param_msg(struct rndis_device *rdev,
++				   const u8 *rss_key, u16 flag)
  {
- 	MCDI_DECLARE_BUF(inbuf, MC_CMD_NVRAM_METADATA_IN_LEN);
- 	MCDI_DECLARE_BUF(outbuf, MC_CMD_NVRAM_METADATA_OUT_LENMAX);
- 	const struct efx_ef10_nvram_type_info *info;
- 	size_t size, erase_size, outlen;
-+	int type_idx = 0;
- 	bool protected;
- 	int rc;
+ 	struct net_device *ndev = rdev->ndev;
+ 	struct rndis_request *request;
+@@ -804,7 +804,7 @@ int rndis_filter_set_rss_param(struct rndis_device *rdev,
+ 	rssp->hdr.type = NDIS_OBJECT_TYPE_RSS_PARAMETERS;
+ 	rssp->hdr.rev = NDIS_RECEIVE_SCALE_PARAMETERS_REVISION_2;
+ 	rssp->hdr.size = sizeof(struct ndis_recv_scale_param);
+-	rssp->flag = 0;
++	rssp->flag = flag;
+ 	rssp->hashinfo = NDIS_HASH_FUNC_TOEPLITZ | NDIS_HASH_IPV4 |
+ 			 NDIS_HASH_TCP_IPV4 | NDIS_HASH_IPV6 |
+ 			 NDIS_HASH_TCP_IPV6;
+@@ -829,9 +829,12 @@ int rndis_filter_set_rss_param(struct rndis_device *rdev,
  
--	for (info = efx_ef10_nvram_types; ; info++) {
--		if (info ==
--		    efx_ef10_nvram_types + ARRAY_SIZE(efx_ef10_nvram_types))
-+	for (type_idx = 0; ; type_idx++) {
-+		if (type_idx == EF10_NVRAM_PARTITION_COUNT)
- 			return -ENODEV;
-+		info = efx_ef10_nvram_types + type_idx;
- 		if ((type & ~info->type_mask) == info->type)
- 			break;
- 	}
-@@ -6070,6 +6073,13 @@ static int efx_ef10_mtd_probe_partition(struct efx_nic *efx,
- 	if (protected)
- 		return -ENODEV; /* hide it */
- 
-+	/* If we've already exposed a partition of this type, hide this
-+	 * duplicate.  All operations on MTDs are keyed by the type anyway,
-+	 * so we can't act on the duplicate.
-+	 */
-+	if (__test_and_set_bit(type_idx, found))
-+		return -EEXIST;
+ 	wait_for_completion(&request->wait_event);
+ 	set_complete = &request->response_msg.msg.set_complete;
+-	if (set_complete->status == RNDIS_STATUS_SUCCESS)
+-		memcpy(rdev->rss_key, rss_key, NETVSC_HASH_KEYLEN);
+-	else {
++	if (set_complete->status == RNDIS_STATUS_SUCCESS) {
++		if (!(flag & NDIS_RSS_PARAM_FLAG_DISABLE_RSS) &&
++		    !(flag & NDIS_RSS_PARAM_FLAG_HASH_KEY_UNCHANGED))
++			memcpy(rdev->rss_key, rss_key, NETVSC_HASH_KEYLEN);
 +
- 	part->nvram_type = type;
++	} else {
+ 		netdev_err(ndev, "Fail to set RSS parameters:0x%x\n",
+ 			   set_complete->status);
+ 		ret = -EINVAL;
+@@ -842,6 +845,16 @@ int rndis_filter_set_rss_param(struct rndis_device *rdev,
+ 	return ret;
+ }
  
- 	MCDI_SET_DWORD(inbuf, NVRAM_METADATA_IN_TYPE, type);
-@@ -6098,6 +6108,7 @@ static int efx_ef10_mtd_probe_partition(struct efx_nic *efx,
- static int efx_ef10_mtd_probe(struct efx_nic *efx)
++int rndis_filter_set_rss_param(struct rndis_device *rdev,
++			       const u8 *rss_key)
++{
++	/* Disable RSS before change */
++	rndis_set_rss_param_msg(rdev, rss_key,
++				NDIS_RSS_PARAM_FLAG_DISABLE_RSS);
++
++	return rndis_set_rss_param_msg(rdev, rss_key, 0);
++}
++
+ static int rndis_filter_query_device_link_status(struct rndis_device *dev,
+ 						 struct netvsc_device *net_device)
  {
- 	MCDI_DECLARE_BUF(outbuf, MC_CMD_NVRAM_PARTITIONS_OUT_LENMAX);
-+	DECLARE_BITMAP(found, EF10_NVRAM_PARTITION_COUNT);
- 	struct efx_mcdi_mtd_partition *parts;
- 	size_t outlen, n_parts_total, i, n_parts;
- 	unsigned int type;
-@@ -6126,11 +6137,13 @@ static int efx_ef10_mtd_probe(struct efx_nic *efx)
- 	for (i = 0; i < n_parts_total; i++) {
- 		type = MCDI_ARRAY_DWORD(outbuf, NVRAM_PARTITIONS_OUT_TYPE_ID,
- 					i);
--		rc = efx_ef10_mtd_probe_partition(efx, &parts[n_parts], type);
--		if (rc == 0)
--			n_parts++;
--		else if (rc != -ENODEV)
-+		rc = efx_ef10_mtd_probe_partition(efx, &parts[n_parts], type,
-+						  found);
-+		if (rc == -EEXIST || rc == -ENODEV)
-+			continue;
-+		if (rc)
- 			goto fail;
-+		n_parts++;
- 	}
- 
- 	rc = efx_mtd_add(efx, &parts[0].common, n_parts, sizeof(*parts));
 -- 
 2.19.1
 
