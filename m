@@ -2,125 +2,97 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D00C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:24:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A96FC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:25:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF57220685
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:24:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 320F621B18
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:25:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="r2erocUc"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="SBz5c+25"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395202AbfBOPYB (ORCPT
+        id S2389129AbfBOPZT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 10:24:01 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:53902 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726766AbfBOPYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 10:24:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=zleyHMTUsHgLyhB3FFf3QLLuYWFs+3Wf02MxpRd1cX4=; b=r2erocUcKFFP248L5dweVSJ9JZ
-        FpWjC+twNG17LXwS46PRnw0eRjaxsCq7SU10A56x9o7Ep28uGJvs5ocNrzlvdLolnm1SCbFIZt/4h
-        v/EY/staDhbSF4lZpvaIqNQjNdA+7kSFm9kmaOCeJHAAKq7BJ7Wm6OoKNXPO/a3BWTDo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gufLI-0006qy-5s; Fri, 15 Feb 2019 16:23:56 +0100
-Date:   Fri, 15 Feb 2019 16:23:56 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Michal =?utf-8?B?Vm9rw6HEjQ==?= <michal.vokac@ysoft.com>
-Cc:     Vinod Koul <vkoul@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [RFC] net: dsa: qca8k: implement rgmii-id mode
-Message-ID: <20190215152356.GP708@lunn.ch>
-References: <0c7428dc-736e-c5c4-13e7-b42052c60cd7@ysoft.com>
+        Fri, 15 Feb 2019 10:25:19 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52360 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726766AbfBOPZT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 10:25:19 -0500
+Received: by mail-wm1-f66.google.com with SMTP id m1so10343294wml.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 07:25:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=f1dckFGTvQZYZhzzGrXR67W/UknA8fLi1pgVAz9HiRo=;
+        b=SBz5c+25n9ero2mxCaWzbMROn/Xwy+rvqBb3syanJhg8NJpmX/tRY2aCn8Qt8Edkd5
+         MJNE77cpoJSO/1111I7+S4b7casfJy7aQy32p9AhSxuQndSOCgT7g7910cjmG1q6/9Py
+         wzS4OEp0IozpNcfzswpb4bLD53VAJXjtbkm2pP2DVgWNhnuBp0DRj4o90TD/CIYsK70C
+         yKMF4PGawtELQdJCEHuq0HaaBmrQ3VrrCnaWzQVJnOwk2Wnnc402AM4+fC4Nq+EQeqYI
+         x3ltrvbmxso1Tuwcpt3hPWEwqR3wr02KE8Ykf3NWotaiNGqhF6x7+j+I+BJ8JUGW8b5k
+         pL8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=f1dckFGTvQZYZhzzGrXR67W/UknA8fLi1pgVAz9HiRo=;
+        b=r8XEswvzuz9zH0qH42H5t+2R08ec4Tbw0hiKTYD0lHyuzM7ga1SnCA6/R/Tq5U2UYS
+         75IRiJ0P4ul25bElDHU/x2+28RFc9oalsRYlGFM1xs+rH2FxvCXHxv043qRlBlOLbWQz
+         JhPWO9SnWei6bj7ce/SVaMN3Nlif0MEPTb6VdK0TIpG9ZsT+hFaDfhLcJYmT776bXPtq
+         qvby3e8Z3cUR8cUoXy0j+yLRXkIs4J5peZivVBAy+9VnMVLVhwsFdQJfoLFRB9f2Iy6x
+         wCF3chxVXmdkm4epwwHod07Wns7elMb+BLTg0wMm6sWr8Dopc8DXkdURgAXU+RSyhRjY
+         pQUQ==
+X-Gm-Message-State: AHQUAubzf75msNKZHMyRFPpnUhg0yVnMniD1ocJwxQbM/5FCd5BanW5l
+        b4ojarGNMnUactbRKCAFBB3kiA==
+X-Google-Smtp-Source: AHgI3IbzW2wp/4etnh1CI/wbfZWmg5uqbWhiL1NBc5R+hrHrR7m90cXdLcjy7Fp5C6CrxN9p1AvjRA==
+X-Received: by 2002:a1c:2097:: with SMTP id g145mr6637328wmg.81.1550244317511;
+        Fri, 15 Feb 2019 07:25:17 -0800 (PST)
+Received: from localhost.localdomain (aputeaux-684-1-7-43.w90-86.abo.wanadoo.fr. [90.86.124.43])
+        by smtp.gmail.com with ESMTPSA id y5sm1904337wmg.31.2019.02.15.07.25.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Feb 2019 07:25:16 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Keerthy <j-keerthy@ti.com>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: [PATCH 0/2] drivers: new helper for ioremapping memory resources
+Date:   Fri, 15 Feb 2019 16:25:05 +0100
+Message-Id: <20190215152507.31066-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <0c7428dc-736e-c5c4-13e7-b42052c60cd7@ysoft.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 04:01:08PM +0100, Michal Vokáč wrote:
-> Hi,
-> 
-> networking on my boards [1], which are currently in linux-next, suddently
-> stopped working. I tracked it down to this commit 5ecdd77c61c8 ("net: dsa:
-> qca8k: disable delay for RGMII mode") [2].
-> 
-> So I think the rgmii-id mode is obviously needed in my case.
-> I was able to find a couple drivers that read tx/rx-delay or
-> tx/rx-internal-delay from device tree. Namely:
-> 
->   drivers/net/ethernet/apm/xgene/xgene_enet_main.c
->   drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
->   drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
->   drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
->   drivers/net/phy/dp83867.c
-> 
-> I would appreciate any hints how to add similar function to qca8k driver
-> if that is the correct way to go. Can I take some of the above mentioned
-> drivers as a good example for that? How should the binding look like?
-> 
-> I would expect something like this:
-> 
-> 	switch@0 {
-> 		compatible = "qca,qca8334";
-> 		reg = <0>;
-> 
-> 		switch_ports: ports {
-> 			#address-cells = <1>;
-> 			#size-cells = <0>;
-> 
-> 			ethphy0: port@0 {
-> 				reg = <0>;
-> 				label = "cpu";
-> 				phy-mode = "rgmii-id";
-> 				qca,tx-delay = <3>;
-> 				qca,rx-delay = <3>;
-> 				ethernet = <&fec>;
-> 		};
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Hi Michal
+There are currently 1200+ instances of using platform_get_resource()
+and devm_ioremap_resource() together in the kernel tree. It's a minor
+redundancy, but consolidation is always good.
 
-Your submission used:
+The first patch in this series adds a wrapper for these two calls and
+the second uses it in a driver I could test.
 
-+				ethphy0: port@0 {
-+					reg = <0>;
-+					label = "cpu";
-+					phy-mode = "rgmii";
-+					ethernet = <&fec>;
-+
-+					fixed-link {
-+						speed = <1000>;
-+						full-duplex;
-+					};
-+				};
+If accepted I can prepare a script that'll apply this tree-wide.
 
-This is good. If you have a fixed-link you can pass a phy-mode.
+Bartosz Golaszewski (2):
+  drivers: provide devm_platform_ioremap_resource()
+  gpio: davinci: use devm_platform_ioremap_resource()
 
-The comment that was removed was:
+ drivers/base/platform.c         | 18 ++++++++++++++++++
+ drivers/gpio/gpio-davinci.c     |  4 +---
+ include/linux/platform_device.h |  3 +++
+ 3 files changed, 22 insertions(+), 3 deletions(-)
 
--               /* According to the datasheet, RGMII delay is enabled through
--                * PORT5_PAD_CTRL for all ports, rather than individual port
--                * registers
--                */
+-- 
+2.20.1
 
-Is it possible to enable delays per port? Ideally, you want to enable
-delays for just selected ports. Add another case for
-PHY_INTERFACE_MODE_RGMII_ID to enable the delays.
-
-    Andrew
