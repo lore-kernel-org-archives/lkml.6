@@ -2,482 +2,109 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF901C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6410BC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:46:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 913EE21B68
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:46:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34DD1222C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:46:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550191605;
-	bh=/ljUlPUaMBaiEoAWvaXiUeDwU0kApmNle5smb7Ldb/g=;
+	s=default; t=1550191611;
+	bh=kcG82EwS90zSs1OGXf/4oXgc3GD5RV1udOPgVs9Dang=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Hjcme6o5WUQSD42l32+kMIExjNTnbpo0eKfKtc7usCNgI+ad4tWJ9Nl1EdikkECjh
-	 PUueuwSIzHbyT38Z7gX/iGOHb7CqImUJJ/WKIcuUzBNsKnv/F+AoO34Q60q4mmoK08
-	 84RKnwTc1ZeLAbnyzA1Ef73IBRg0PxdrYtmu+Tzw=
+	b=PqwDspgkktk29/hX6krhVdnmO6F8LDwVM3mPTyr/YLJfhod8EVazJUOxNZ+VxQW7N
+	 9Uu3LbUdMwLG9t7jBXWPNY7Uwx2QU7CU3OK++nwJo/DdM573h/dKWIGmjGyvUio9eP
+	 yqoXiKOucbQqsMPJlAntcaZ0hg3JBqbRRWDWzc8I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388637AbfBOAqn (ORCPT
+        id S2388759AbfBOAqt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 19:46:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45148 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 19:46:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45322 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388327AbfBOAqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 19:46:42 -0500
+        id S2388679AbfBOAqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 19:46:47 -0500
 Received: from quaco.ghostprotocols.net (unknown [189.40.103.31])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E019222C9;
-        Fri, 15 Feb 2019 00:46:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 431C2222D9;
+        Fri, 15 Feb 2019 00:46:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550191600;
-        bh=/ljUlPUaMBaiEoAWvaXiUeDwU0kApmNle5smb7Ldb/g=;
+        s=default; t=1550191606;
+        bh=kcG82EwS90zSs1OGXf/4oXgc3GD5RV1udOPgVs9Dang=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DpsWlkIl8TOmoa7e8OXRtgKOcnj0sxaB8NX9h5o03R3NmMF7O5rlbhzjRtOvYoI5s
-         K2ajDRxMKPe1Ns5DklbvuBAyfjGIRWrGmDdrGeCzfw6owE/TzMhkPozQvYLfE41WIH
-         Al7ar4xeFyBjyQVTqnHiylV/XL3+kguhNbDXe8LY=
+        b=bdr1SfN8XmPWkh3lDRmVg/xCTFFwoT4YXDIykoj0dv0H45VuDmU9+DFUUZuWiRyPR
+         CPCWMRK8kBbjGdRJoVPtvDgCwLQFLeI0lKujRBpt5I37OzzDi0X0rxncgISx/CInNX
+         tkPzrNpBxy5MUez93l8yW70PtMfWk3RV332i4PGs=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Paul Clarke <pc@us.ibm.com>,
-        Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>,
-        Carl Love <cel@us.ibm.com>,
-        Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>,
-        linuxppc-dev@ozlabs.org, Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 11/43] perf vendor events power9: General metrics
-Date:   Thu, 14 Feb 2019 21:45:07 -0300
-Message-Id: <20190215004539.23571-12-acme@kernel.org>
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Subject: [PATCH 13/43] tools feature: Undef _GNU_SOURCE at the end of feature tests
+Date:   Thu, 14 Feb 2019 21:45:09 -0300
+Message-Id: <20190215004539.23571-14-acme@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215004539.23571-1-acme@kernel.org>
 References: <20190215004539.23571-1-acme@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Clarke <pc@us.ibm.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Descriptions of metrics for POWER9 processors can be found in the
-"POWER9 Performance Monitor Unit User’s Guide", which is currently
-available on the "IBM Portal for OpenPOWER"
-(https://www-355.ibm.com/systems/power/openpower/welcome.xhtml) at
-https://www-355.ibm.com/systems/power/openpower/posting.xhtml?postingId=4948CDE1963C9BCA852582F800718190
+Since we get all the tests in a single .c file for a first test,
+tools/build/feature/test-all.c, if individual tests set that define and
+fail to undef it at its end, then it the test-all.c build will fail due
+to defining _GNU_SOURCE multiple times, getting us to the slow path,
+so undef it at the end in tests that define it.
 
-This patch is for metric groups:
-- general
-
-and other metrics not in a metric group.
-
-Signed-off-by: Paul Clarke <pc@us.ibm.com>
-Cc: Ananth N Mavinakayanahalli <ananth@linux.vnet.ibm.com>
-Cc: Carl Love <cel@us.ibm.com>
-Cc: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
-Cc: linuxppc-dev@ozlabs.org
-Link: http://lkml.kernel.org/r/20190209181429.23950-5-pc@us.ibm.com
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-w6s00jfo1xabgphzczadl59b@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- .../arch/powerpc/power9/metrics.json          | 368 ++++++++++++++++++
- 1 file changed, 368 insertions(+)
+ tools/build/feature/test-get_current_dir_name.c | 1 +
+ tools/build/feature/test-libpython.c            | 1 +
+ tools/build/feature/test-setns.c                | 1 +
+ 3 files changed, 3 insertions(+)
 
-diff --git a/tools/perf/pmu-events/arch/powerpc/power9/metrics.json b/tools/perf/pmu-events/arch/powerpc/power9/metrics.json
-index c39a922aaf84..811c2a8c1c9e 100644
---- a/tools/perf/pmu-events/arch/powerpc/power9/metrics.json
-+++ b/tools/perf/pmu-events/arch/powerpc/power9/metrics.json
-@@ -813,6 +813,114 @@
-         "MetricGroup": "estimated_dcache_miss_cpi",
-         "MetricName": "rmem_cpi_percent"
-     },
-+    {
-+        "BriefDescription": "Branch Mispredict flushes per instruction",
-+        "MetricExpr": "PM_FLUSH_MPRED / PM_RUN_INST_CMPL * 100",
-+        "MetricGroup": "general",
-+        "MetricName": "br_mpred_flush_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "Cycles per instruction",
-+        "MetricExpr": "PM_CYC / PM_INST_CMPL",
-+        "MetricGroup": "general",
-+        "MetricName": "cpi"
-+    },
-+    {
-+        "BriefDescription": "GCT empty cycles",
-+        "MetricExpr": "(PM_FLUSH_DISP / PM_RUN_INST_CMPL) * 100",
-+        "MetricGroup": "general",
-+        "MetricName": "disp_flush_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% DTLB miss rate per inst",
-+        "MetricExpr": "PM_DTLB_MISS / PM_RUN_INST_CMPL *100",
-+        "MetricGroup": "general",
-+        "MetricName": "dtlb_miss_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "Flush rate (%)",
-+        "MetricExpr": "PM_FLUSH * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "general",
-+        "MetricName": "flush_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "Instructions per cycles",
-+        "MetricExpr": "PM_INST_CMPL / PM_CYC",
-+        "MetricGroup": "general",
-+        "MetricName": "ipc"
-+    },
-+    {
-+        "BriefDescription": "% ITLB miss rate per inst",
-+        "MetricExpr": "PM_ITLB_MISS / PM_RUN_INST_CMPL *100",
-+        "MetricGroup": "general",
-+        "MetricName": "itlb_miss_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "Percentage of L1 load misses per L1 load ref",
-+        "MetricExpr": "PM_LD_MISS_L1 / PM_LD_REF_L1 * 100",
-+        "MetricGroup": "general",
-+        "MetricName": "l1_ld_miss_ratio_percent"
-+    },
-+    {
-+        "BriefDescription": "Percentage of L1 store misses per run instruction",
-+        "MetricExpr": "PM_ST_MISS_L1 * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "general",
-+        "MetricName": "l1_st_miss_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "Percentage of L1 store misses per L1 store ref",
-+        "MetricExpr": "PM_ST_MISS_L1 / PM_ST_FIN * 100",
-+        "MetricGroup": "general",
-+        "MetricName": "l1_st_miss_ratio_percent"
-+    },
-+    {
-+        "BriefDescription": "L2 Instruction Miss Rate (per instruction)(%)",
-+        "MetricExpr": "PM_INST_FROM_L2MISS * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "general",
-+        "MetricName": "l2_inst_miss_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "L2 dmand Load Miss Rate (per run instruction)(%)",
-+        "MetricExpr": "PM_DATA_FROM_L2MISS * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "general",
-+        "MetricName": "l2_ld_miss_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "L2 PTEG Miss Rate (per run instruction)(%)",
-+        "MetricExpr": "PM_DPTEG_FROM_L2MISS * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "general",
-+        "MetricName": "l2_pteg_miss_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "L3 Instruction Miss Rate (per instruction)(%)",
-+        "MetricExpr": "PM_INST_FROM_L3MISS * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "general",
-+        "MetricName": "l3_inst_miss_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "L3 demand Load Miss Rate (per run instruction)(%)",
-+        "MetricExpr": "PM_DATA_FROM_L3MISS * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "general",
-+        "MetricName": "l3_ld_miss_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "L3 PTEG Miss Rate (per run instruction)(%)",
-+        "MetricExpr": "PM_DPTEG_FROM_L3MISS * 100 / PM_RUN_INST_CMPL",
-+        "MetricGroup": "general",
-+        "MetricName": "l3_pteg_miss_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "Run cycles per cycle",
-+        "MetricExpr": "PM_RUN_CYC / PM_CYC*100",
-+        "MetricGroup": "general",
-+        "MetricName": "run_cycles_percent"
-+    },
-+    {
-+        "BriefDescription": "Instruction dispatch-to-completion ratio",
-+        "MetricExpr": "PM_INST_DISP / PM_INST_CMPL",
-+        "MetricGroup": "general",
-+        "MetricName": "speculation"
-+    },
-     {
-         "BriefDescription": "% of ICache reloads from Distant L2 or L3 (Modified) per Inst",
-         "MetricExpr": "PM_INST_FROM_DL2L3_MOD * 100 / PM_RUN_INST_CMPL",
-@@ -1610,5 +1718,265 @@
-         "MetricExpr": "PM_ISLB_MISS * 100 / PM_RUN_INST_CMPL",
-         "MetricGroup": "translation",
-         "MetricName": "islb_miss_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "ANY_SYNC_STALL_CPI",
-+        "MetricExpr": "PM_CMPLU_STALL_ANY_SYNC / PM_RUN_INST_CMPL",
-+        "MetricName": "any_sync_stall_cpi"
-+    },
-+    {
-+        "BriefDescription": "Avg. more than 1 instructions completed",
-+        "MetricExpr": "PM_INST_CMPL / PM_1PLUS_PPC_CMPL",
-+        "MetricName": "average_completed_instruction_set_size"
-+    },
-+    {
-+        "BriefDescription": "% Branches per instruction",
-+        "MetricExpr": "PM_BRU_FIN / PM_RUN_INST_CMPL",
-+        "MetricName": "branches_per_inst"
-+    },
-+    {
-+        "BriefDescription": "Cycles in which at least one instruction completes in this thread",
-+        "MetricExpr": "PM_1PLUS_PPC_CMPL/PM_RUN_INST_CMPL",
-+        "MetricName": "completion_cpi"
-+    },
-+    {
-+        "BriefDescription": "cycles",
-+        "MetricExpr": "PM_RUN_CYC",
-+        "MetricName": "custom_secs"
-+    },
-+    {
-+        "BriefDescription": "Percentage Cycles atleast one instruction dispatched",
-+        "MetricExpr": "PM_1PLUS_PPC_DISP / PM_CYC * 100",
-+        "MetricName": "cycles_atleast_one_inst_dispatched_percent"
-+    },
-+    {
-+        "BriefDescription": "Cycles per instruction group",
-+        "MetricExpr": "PM_CYC / PM_1PLUS_PPC_CMPL",
-+        "MetricName": "cycles_per_completed_instructions_set"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 dL1_Reloads from Distant L4",
-+        "MetricExpr": "PM_DATA_FROM_DL4 * 100 / PM_L1_DCACHE_RELOAD_VALID",
-+        "MetricName": "dl1_reload_from_dl4_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 Reloads from Distant L4 per Inst",
-+        "MetricExpr": "PM_DATA_FROM_DL4 * 100 / PM_RUN_INST_CMPL",
-+        "MetricName": "dl1_reload_from_dl4_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 reloads from Private L3, other core per Inst",
-+        "MetricExpr": "(PM_DATA_FROM_L31_MOD + PM_DATA_FROM_L31_SHR) * 100 / PM_RUN_INST_CMPL",
-+        "MetricName": "dl1_reload_from_l31_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 dL1_Reloads from Local L4",
-+        "MetricExpr": "PM_DATA_FROM_LL4 * 100 / PM_L1_DCACHE_RELOAD_VALID",
-+        "MetricName": "dl1_reload_from_ll4_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 Reloads from Local L4 per Inst",
-+        "MetricExpr": "PM_DATA_FROM_LL4 * 100 / PM_RUN_INST_CMPL",
-+        "MetricName": "dl1_reload_from_ll4_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 dL1_Reloads from Remote L4",
-+        "MetricExpr": "PM_DATA_FROM_RL4 * 100 / PM_L1_DCACHE_RELOAD_VALID",
-+        "MetricName": "dl1_reload_from_rl4_percent"
-+    },
-+    {
-+        "BriefDescription": "% of DL1 Reloads from Remote Memory per Inst",
-+        "MetricExpr": "PM_DATA_FROM_RL4 * 100 / PM_RUN_INST_CMPL",
-+        "MetricName": "dl1_reload_from_rl4_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "Rate of DERAT reloads from L2",
-+        "MetricExpr": "PM_DPTEG_FROM_L2 * 100 / PM_RUN_INST_CMPL",
-+        "MetricName": "dpteg_from_l2_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "Rate of DERAT reloads from L3",
-+        "MetricExpr": "PM_DPTEG_FROM_L3 * 100 / PM_RUN_INST_CMPL",
-+        "MetricName": "dpteg_from_l3_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "Cycles in which the oldest instruction is finished and ready to complete for waiting to get through the completion pipe",
-+        "MetricExpr": "PM_NTC_ALL_FIN / PM_RUN_INST_CMPL",
-+        "MetricName": "finish_to_cmpl_cpi"
-+    },
-+    {
-+        "BriefDescription": "Total Fixed point operations",
-+        "MetricExpr": "PM_FXU_FIN/PM_RUN_INST_CMPL",
-+        "MetricName": "fixed_per_inst"
-+    },
-+    {
-+        "BriefDescription": "All FXU Busy",
-+        "MetricExpr": "PM_FXU_BUSY / PM_CYC",
-+        "MetricName": "fxu_all_busy"
-+    },
-+    {
-+        "BriefDescription": "All FXU Idle",
-+        "MetricExpr": "PM_FXU_IDLE / PM_CYC",
-+        "MetricName": "fxu_all_idle"
-+    },
-+    {
-+        "BriefDescription": "Ict empty for this thread due to branch mispred",
-+        "MetricExpr": "PM_ICT_NOSLOT_BR_MPRED/PM_RUN_INST_CMPL",
-+        "MetricName": "ict_noslot_br_mpred_cpi"
-+    },
-+    {
-+        "BriefDescription": "Ict empty for this thread due to Icache Miss and branch mispred",
-+        "MetricExpr": "PM_ICT_NOSLOT_BR_MPRED_ICMISS/PM_RUN_INST_CMPL",
-+        "MetricName": "ict_noslot_br_mpred_icmiss_cpi"
-+    },
-+    {
-+        "BriefDescription": "ICT other stalls",
-+        "MetricExpr": "(PM_ICT_NOSLOT_CYC - PM_ICT_NOSLOT_IC_MISS - PM_ICT_NOSLOT_BR_MPRED_ICMISS - PM_ICT_NOSLOT_BR_MPRED - PM_ICT_NOSLOT_DISP_HELD)/PM_RUN_INST_CMPL",
-+        "MetricName": "ict_noslot_cyc_other_cpi"
-+    },
-+    {
-+        "BriefDescription": "Cycles in which the NTC instruciton is held at dispatch for any reason",
-+        "MetricExpr": "PM_ICT_NOSLOT_DISP_HELD/PM_RUN_INST_CMPL",
-+        "MetricName": "ict_noslot_disp_held_cpi"
-+    },
-+    {
-+        "BriefDescription": "Ict empty for this thread due to dispatch holds because the History Buffer was full. Could be GPR/VSR/VMR/FPR/CR/XVF",
-+        "MetricExpr": "PM_ICT_NOSLOT_DISP_HELD_HB_FULL/PM_RUN_INST_CMPL",
-+        "MetricName": "ict_noslot_disp_held_hb_full_cpi"
-+    },
-+    {
-+        "BriefDescription": "Ict empty for this thread due to dispatch hold on this thread due to Issue q full, BRQ full, XVCF Full, Count cache, Link, Tar full",
-+        "MetricExpr": "PM_ICT_NOSLOT_DISP_HELD_ISSQ/PM_RUN_INST_CMPL",
-+        "MetricName": "ict_noslot_disp_held_issq_cpi"
-+    },
-+    {
-+        "BriefDescription": "ICT_NOSLOT_DISP_HELD_OTHER_CPI",
-+        "MetricExpr": "(PM_ICT_NOSLOT_DISP_HELD - PM_ICT_NOSLOT_DISP_HELD_HB_FULL - PM_ICT_NOSLOT_DISP_HELD_SYNC - PM_ICT_NOSLOT_DISP_HELD_TBEGIN - PM_ICT_NOSLOT_DISP_HELD_ISSQ)/PM_RUN_INST_CMPL",
-+        "MetricName": "ict_noslot_disp_held_other_cpi"
-+    },
-+    {
-+        "BriefDescription": "Dispatch held due to a synchronizing instruction at dispatch",
-+        "MetricExpr": "PM_ICT_NOSLOT_DISP_HELD_SYNC/PM_RUN_INST_CMPL",
-+        "MetricName": "ict_noslot_disp_held_sync_cpi"
-+    },
-+    {
-+        "BriefDescription": "the NTC instruction is being held at dispatch because it is a tbegin instruction and there is an older tbegin in the pipeline that must complete before the younger tbegin can dispatch",
-+        "MetricExpr": "PM_ICT_NOSLOT_DISP_HELD_TBEGIN/PM_RUN_INST_CMPL",
-+        "MetricName": "ict_noslot_disp_held_tbegin_cpi"
-+    },
-+    {
-+        "BriefDescription": "ICT_NOSLOT_IC_L2_CPI",
-+        "MetricExpr": "(PM_ICT_NOSLOT_IC_MISS - PM_ICT_NOSLOT_IC_L3 - PM_ICT_NOSLOT_IC_L3MISS)/PM_RUN_INST_CMPL",
-+        "MetricName": "ict_noslot_ic_l2_cpi"
-+    },
-+    {
-+        "BriefDescription": "Ict empty for this thread due to icache misses that were sourced from the local L3",
-+        "MetricExpr": "PM_ICT_NOSLOT_IC_L3/PM_RUN_INST_CMPL",
-+        "MetricName": "ict_noslot_ic_l3_cpi"
-+    },
-+    {
-+        "BriefDescription": "Ict empty for this thread due to icache misses that were sourced from beyond the local L3. The source could be local/remote/distant memory or another core's cache",
-+        "MetricExpr": "PM_ICT_NOSLOT_IC_L3MISS/PM_RUN_INST_CMPL",
-+        "MetricName": "ict_noslot_ic_l3miss_cpi"
-+    },
-+    {
-+        "BriefDescription": "Ict empty for this thread due to Icache Miss",
-+        "MetricExpr": "PM_ICT_NOSLOT_IC_MISS/PM_RUN_INST_CMPL",
-+        "MetricName": "ict_noslot_ic_miss_cpi"
-+    },
-+    {
-+        "BriefDescription": "Rate of IERAT reloads from L2",
-+        "MetricExpr": "PM_IPTEG_FROM_L2 * 100 / PM_RUN_INST_CMPL",
-+        "MetricName": "ipteg_from_l2_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "Rate of IERAT reloads from L3",
-+        "MetricExpr": "PM_IPTEG_FROM_L3 * 100 / PM_RUN_INST_CMPL",
-+        "MetricName": "ipteg_from_l3_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "Rate of IERAT reloads from local memory",
-+        "MetricExpr": "PM_IPTEG_FROM_LL4 * 100 / PM_RUN_INST_CMPL",
-+        "MetricName": "ipteg_from_ll4_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "Rate of IERAT reloads from local memory",
-+        "MetricExpr": "PM_IPTEG_FROM_LMEM * 100 / PM_RUN_INST_CMPL",
-+        "MetricName": "ipteg_from_lmem_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "Average number of Castout machines used. 1 of 16 CO machines is sampled every L2 cycle",
-+        "MetricExpr": "PM_CO_USAGE / PM_RUN_CYC * 16",
-+        "MetricName": "l2_co_usage"
-+    },
-+    {
-+        "BriefDescription": "Percent of instruction reads out of all L2 commands",
-+        "MetricExpr": "PM_ISIDE_DISP * 100 / (PM_L2_ST + PM_L2_LD + PM_ISIDE_DISP)",
-+        "MetricName": "l2_instr_commands_percent"
-+    },
-+    {
-+        "BriefDescription": "Percent of loads out of all L2 commands",
-+        "MetricExpr": "PM_L2_LD * 100 / (PM_L2_ST + PM_L2_LD + PM_ISIDE_DISP)",
-+        "MetricName": "l2_ld_commands_percent"
-+    },
-+    {
-+        "BriefDescription": "Rate of L2 store dispatches that failed per core",
-+        "MetricExpr": "100 * (PM_L2_RCST_DISP_FAIL_ADDR + PM_L2_RCST_DISP_FAIL_OTHER)/2 / PM_RUN_INST_CMPL",
-+        "MetricName": "l2_rc_st_disp_fail_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "Average number of Read/Claim machines used. 1 of 16 RC machines is sampled every L2 cycle",
-+        "MetricExpr": "PM_RC_USAGE / PM_RUN_CYC * 16",
-+        "MetricName": "l2_rc_usage"
-+    },
-+    {
-+        "BriefDescription": "Average number of Snoop machines used. 1 of 8 SN machines is sampled every L2 cycle",
-+        "MetricExpr": "PM_SN_USAGE / PM_RUN_CYC * 8",
-+        "MetricName": "l2_sn_usage"
-+    },
-+    {
-+        "BriefDescription": "Percent of stores out of all L2 commands",
-+        "MetricExpr": "PM_L2_ST * 100 / (PM_L2_ST + PM_L2_LD + PM_ISIDE_DISP)",
-+        "MetricName": "l2_st_commands_percent"
-+    },
-+    {
-+        "BriefDescription": "Rate of L2 store dispatches that failed per core",
-+        "MetricExpr": "100 * (PM_L2_RCST_DISP_FAIL_ADDR + PM_L2_RCST_DISP_FAIL_OTHER)/2 / PM_RUN_INST_CMPL",
-+        "MetricName": "l2_st_disp_fail_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "Rate of L2 dispatches per core",
-+        "MetricExpr": "100 * PM_L2_RCST_DISP/2 / PM_RUN_INST_CMPL",
-+        "MetricName": "l2_st_disp_rate_percent"
-+    },
-+    {
-+        "BriefDescription": "Marked L31 Load latency",
-+        "MetricExpr": "(PM_MRK_DATA_FROM_L31_SHR_CYC + PM_MRK_DATA_FROM_L31_MOD_CYC) / (PM_MRK_DATA_FROM_L31_SHR + PM_MRK_DATA_FROM_L31_MOD)",
-+        "MetricName": "l31_latency"
-+    },
-+    {
-+        "BriefDescription": "PCT instruction loads",
-+        "MetricExpr": "PM_LD_REF_L1 / PM_RUN_INST_CMPL",
-+        "MetricName": "loads_per_inst"
-+    },
-+    {
-+        "BriefDescription": "Cycles stalled by D-Cache Misses",
-+        "MetricExpr": "PM_CMPLU_STALL_DCACHE_MISS / PM_RUN_INST_CMPL",
-+        "MetricName": "lsu_stall_dcache_miss_cpi"
-+    },
-+    {
-+        "BriefDescription": "Completion stall because a different thread was using the completion pipe",
-+        "MetricExpr": "(PM_CMPLU_STALL_THRD - PM_CMPLU_STALL_EXCEPTION - PM_CMPLU_STALL_ANY_SYNC - PM_CMPLU_STALL_SYNC_PMU_INT - PM_CMPLU_STALL_SPEC_FINISH - PM_CMPLU_STALL_FLUSH_ANY_THREAD - PM_CMPLU_STALL_LSU_FLUSH_NEXT - PM_CMPLU_STALL_NESTED_TBEGIN - PM_CMPLU_STALL_NESTED_TEND - PM_CMPLU_STALL_MTFPSCR)/PM_RUN_INST_CMPL",
-+        "MetricName": "other_thread_cmpl_stall"
-+    },
-+    {
-+        "BriefDescription": "PCT instruction stores",
-+        "MetricExpr": "PM_ST_FIN / PM_RUN_INST_CMPL",
-+        "MetricName": "stores_per_inst"
-+    },
-+    {
-+        "BriefDescription": "ANY_SYNC_STALL_CPI",
-+        "MetricExpr": "PM_CMPLU_STALL_SYNC_PMU_INT / PM_RUN_INST_CMPL",
-+        "MetricName": "sync_pmu_int_stall_cpi"
-     }
- ]
+diff --git a/tools/build/feature/test-get_current_dir_name.c b/tools/build/feature/test-get_current_dir_name.c
+index 573000f93212..c3c201691b4f 100644
+--- a/tools/build/feature/test-get_current_dir_name.c
++++ b/tools/build/feature/test-get_current_dir_name.c
+@@ -8,3 +8,4 @@ int main(void)
+ 	free(get_current_dir_name());
+ 	return 0;
+ }
++#undef _GNU_SOURCE
+diff --git a/tools/build/feature/test-libpython.c b/tools/build/feature/test-libpython.c
+index 0c1641b0d9a7..371c9113e49d 100644
+--- a/tools/build/feature/test-libpython.c
++++ b/tools/build/feature/test-libpython.c
+@@ -7,3 +7,4 @@ int main(void)
+ 
+ 	return 0;
+ }
++#undef _GNU_SOURCE
+diff --git a/tools/build/feature/test-setns.c b/tools/build/feature/test-setns.c
+index 1f714d2a658b..4a1581ae7a55 100644
+--- a/tools/build/feature/test-setns.c
++++ b/tools/build/feature/test-setns.c
+@@ -5,3 +5,4 @@ int main(void)
+ {
+ 	return setns(0, 0);
+ }
++#undef _GNU_SOURCE
 -- 
 2.19.1
 
