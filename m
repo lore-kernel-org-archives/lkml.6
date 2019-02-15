@@ -6,109 +6,155 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28730C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:09:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69278C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:10:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2E6521B18
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:09:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4126E21916
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:10:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392057AbfBOJJa (ORCPT
+        id S2392092AbfBOJJ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:09:30 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:56042 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726986AbfBOJJ3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 04:09:29 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1F91vIP022581;
-        Fri, 15 Feb 2019 10:09:17 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2qmwsurrqb-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 15 Feb 2019 10:09:17 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8B1C038;
-        Fri, 15 Feb 2019 09:09:16 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DAF0F2A55;
-        Fri, 15 Feb 2019 09:09:15 +0000 (GMT)
-Received: from [10.201.21.58] (10.75.127.46) by SFHDAG3NODE2.st.com
- (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 15 Feb
- 2019 10:09:15 +0100
-Subject: Re: [net-next] net: stmmac: handle endianness in dwmac4_get_timestamp
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Jose Abreu <joabreu@synopsys.com>, <davem@davemloft.net>
-CC:     <netdev@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1550165176-10099-1-git-send-email-alexandre.torgue@st.com>
- <59a381e6-02eb-3c97-bc63-5a8f511a1901@gmail.com>
-From:   Alexandre Torgue <alexandre.torgue@st.com>
-Message-ID: <a60a1a29-5f68-9573-1fde-35b7e721c964@st.com>
-Date:   Fri, 15 Feb 2019 10:09:14 +0100
+        Fri, 15 Feb 2019 04:09:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38746 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388927AbfBOJJz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 04:09:55 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 10D8AAA85;
+        Fri, 15 Feb 2019 09:09:53 +0000 (UTC)
+Subject: Re: [PATCH 01/11] dt-bindings: Add vendor prefix for Silicon Linux.
+To:     Lukasz Majewski <lukma@denx.de>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wolfgang Grandegger <wg@grandegger.com>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Simon Horman <horms@verge.net.au>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thierry Reding <treding@nvidia.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Johan Hovold <johan@kernel.org>,
+        Michal Simek <monstr@monstr.eu>,
+        =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Ben Whitten <ben.whitten@gmail.com>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "ebiharaml@si-linux.co.jp" <ebiharaml@si-linux.co.jp>
+References: <1547663874-29411-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1547663874-29411-2-git-send-email-fabrizio.castro@bp.renesas.com>
+ <TY1PR01MB1770A46D7FA45A8AFA923DADC0670@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+ <20190215075226.413d55dc@jawa>
+From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
+Openpgp: preference=signencrypt
+Organization: SUSE Linux GmbH
+Message-ID: <c2eb829b-96a7-20cb-913f-ce4214f2156c@suse.de>
+Date:   Fri, 15 Feb 2019 10:09:50 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <59a381e6-02eb-3c97-bc63-5a8f511a1901@gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+In-Reply-To: <20190215075226.413d55dc@jawa>
+Content-Type: text/plain; charset=windows-1252
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.75.127.46]
-X-ClientProxiedBy: SFHDAG5NODE1.st.com (10.75.127.13) To SFHDAG3NODE2.st.com
- (10.75.127.8)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-15_06:,,
- signatures=0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Lukasz and Fabrizio,
 
-
-On 2/14/19 7:09 PM, Florian Fainelli wrote:
-> On 2/14/19 9:26 AM, Alexandre Torgue wrote:
->> GMAC IP is little-endian and used on several kind of CPU (big or little
->> endian). Main callbacks functions of the stmmac drivers take care about
->> it. It was not the case for dwmac4_get_timestamp function.
+Am 15.02.19 um 07:52 schrieb Lukasz Majewski:
+> The best approach is to run:
 > 
-> This is clearly a bugfix, so you should be targeting the 'net' tree and
-> provide a Fixes: tag so this can be backported to relevant stable kernels.
+> git format patch -1 <your patch sha>
 > 
+> And then 
+> 
+> scripts/get_maintainer.pl 0001-xxxxxxx
+> 
+> You shall see the the list of people to send the patch.
 
-Ok Florian, I just have to find the right commit to fix :)
+No, that does not answer his question. And please don't top-post.
 
+>> Who is the best person for taking this patch?
+
+The answer is: whomever is taking dt-bindings patches in the following
+10 patches that make use of this prefix, once you have a Reviewed-by
+from Rob. So, most likely the Renesas kernel maintainer(s), i.e. Simon,
+which differs from get_maintainers.pl of vendor-prefixes.txt.
+
+Regards,
+Andreas
+
+>>> From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+>>> Sent: 16 January 2019 18:38
+>>> Subject: [PATCH 01/11] dt-bindings: Add vendor prefix for Silicon
+>>> Linux.
+>>>
+>>> From: Biju Das <biju.das@bp.renesas.com>
+>>>
+>>> Add Silicon Linux to the list of devicetree vendor prefixes.
+>>>
+>>> Website: http://www.si-linux.co.jp
+>>>
+>>> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+>>> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+>>> Reviewed-by: Chris Paterson <Chris.Paterson2@renesas.com>
+>>> ---
+>>>  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
+>>>  1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt
+>>> b/Documentation/devicetree/bindings/vendor-prefixes.txt index
+>>> 4b1a2a8..02a7037 100644 ---
+>>> a/Documentation/devicetree/bindings/vendor-prefixes.txt +++
+>>> b/Documentation/devicetree/bindings/vendor-prefixes.txt @@ -344,6
+>>> +344,7 @@ sgxSGX Sensortech sharpSharp Corporation
+>>>  shimafujiShimafuji Electric, Inc.
+>>>  si-enSi-En Technology Ltd.
+>>> +si-linuxSilicon Linux Corporation
+>>>  sifiveSiFive, Inc.
+>>>  sigmaSigma Designs, Inc.
+>>>  siiSeiko Instruments, Inc.
+>>> --
+>>> 2.7.4  
 >>
->> Signed-off-by: Alexandre Torgue <alexandre.torgue@st.com>
 >>
->> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
->> index 20299f6..736e296 100644
->> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
->> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_descs.c
->> @@ -241,15 +241,18 @@ static inline void dwmac4_get_timestamp(void *desc, u32 ats, u64 *ts)
->>   static int dwmac4_rx_check_timestamp(void *desc)
->>   {
->>   	struct dma_desc *p = (struct dma_desc *)desc;
->> +	unsigned int rdes0 = le32_to_cpu(p->des0);
->> +	unsigned int rdes1 = le32_to_cpu(p->des1);
->> +	unsigned int rdes3 = le32_to_cpu(p->des3);
->>   	u32 own, ctxt;
->>   	int ret = 1;
->>   
->> -	own = p->des3 & RDES3_OWN;
->> -	ctxt = ((p->des3 & RDES3_CONTEXT_DESCRIPTOR)
->> +	own = rdes3 & RDES3_OWN;
->> +	ctxt = ((rdes3 & RDES3_CONTEXT_DESCRIPTOR)
->>   		>> RDES3_CONTEXT_DESCRIPTOR_SHIFT);
->>   
->>   	if (likely(!own && ctxt)) {
->> -		if ((p->des0 == 0xffffffff) && (p->des1 == 0xffffffff))
->> +		if ((rdes0 == 0xffffffff) && (rdes1 == 0xffffffff))
->>   			/* Corrupted value */
->>   			ret = -EINVAL;
->>   		else
 >>
+>> Renesas Electronics Europe GmbH,Geschaeftsfuehrer/President : Michael
+>> Hannawald, Sitz der Gesellschaft/Registered office: Duesseldorf,
+>> Arcadiastrasse 10, 40472 Duesseldorf,
+>> Germany,Handelsregister/Commercial Register: Duesseldorf, HRB 3708
+>> USt-IDNr./Tax identification no.: DE 119353406 WEEE-Reg.-Nr./WEEE
+>> reg. no.: DE 14978647
 > 
 > 
+> 
+> 
+> Best regards,
+> 
+> Lukasz Majewski
+> 
+> --
+> 
+> DENX Software Engineering GmbH,      Managing Director: Wolfgang Denk
+> HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+> Phone: (+49)-8142-66989-59 Fax: (+49)-8142-66989-80 Email: lukma@denx.de
+> 
+
+
+-- 
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 Nürnberg, Germany
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
