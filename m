@@ -2,134 +2,119 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB488C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0157BC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:14:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75464218AC
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:11:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550236287;
-	bh=iqkkqlS+A4RTxdvdayr7E2AtdytsyLOJYhX625HKI7o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=SXQHfR8e1vGVsIX4CzfJzGcunDQbV5xcZep/vb6/w7PLG04mLxZW2uCf5mcezn3e6
-	 WFCb2J2CS2jJaGLfHITOEPEDnf4YBzIAvp0ORKifmt/CytBDhuRkB/0NDhWETZEYtA
-	 c2jl6iJfitbQ8W7SwEUFiODaLv13zvBVYrcfngdY=
+	by mail.kernel.org (Postfix) with ESMTP id B984D218AC
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:14:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437048AbfBONLZ (ORCPT
+        id S2394928AbfBONOb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 08:11:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:52502 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388952AbfBONLZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 08:11:25 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 4B6ADADCA;
-        Fri, 15 Feb 2019 13:11:23 +0000 (UTC)
-Date:   Fri, 15 Feb 2019 14:11:22 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     "Huang, Ying" <ying.huang@intel.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        =?utf-8?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-Subject: Re: [PATCH -mm -V7] mm, swap: fix race between swapoff and some swap
- operations
-Message-ID: <20190215131122.GA4525@dhcp22.suse.cz>
-References: <20190211083846.18888-1-ying.huang@intel.com>
- <20190214143318.GJ4525@dhcp22.suse.cz>
- <871s49bkaz.fsf@yhuang-dev.intel.com>
+        Fri, 15 Feb 2019 08:14:31 -0500
+Received: from mx.socionext.com ([202.248.49.38]:50791 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387962AbfBONOa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 08:14:30 -0500
+Received: from unknown (HELO iyokan-ex.css.socionext.com) ([172.31.9.54])
+  by mx.socionext.com with ESMTP; 15 Feb 2019 22:14:28 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by iyokan-ex.css.socionext.com (Postfix) with ESMTP id B60016117D;
+        Fri, 15 Feb 2019 22:14:28 +0900 (JST)
+Received: from 10.213.24.1 (10.213.24.1) by m-FILTER with ESMTP; Fri, 15 Feb 2019 22:14:28 +0900
+Received: from SOC-EX02V.e01.socionext.com (10.213.24.22) by
+ SOC-EX03V.e01.socionext.com (10.213.24.23) with Microsoft SMTP Server (TLS)
+ id 15.0.995.29; Fri, 15 Feb 2019 22:14:28 +0900
+Received: from SOC-EX02V.e01.socionext.com ([10.213.25.22]) by
+ SOC-EX02V.e01.socionext.com ([10.213.25.22]) with mapi id 15.00.0995.028;
+ Fri, 15 Feb 2019 22:14:28 +0900
+From:   <sugaya.taichi@socionext.com>
+To:     <arnd@arndb.de>
+CC:     <kanematsu.shinji@socionext.com>, <masami.hiramatsu@linaro.org>,
+        <daniel.lezcano@linaro.org>, <linux-kernel@vger.kernel.org>,
+        <kasai.kazuhiro@socionext.com>, <jaswinder.singh@linaro.org>,
+        <orito.takao@socionext.com>, <arnd.bergmann@linaro.org>,
+        <linux-soc@vger.kernel.org>, <tglx@linutronix.de>,
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v2 06/15] clocksource/drivers/timer-milbeaut: Introduce
+ timer for Milbeaut SoCs
+Thread-Topic: [PATCH v2 06/15] clocksource/drivers/timer-milbeaut: Introduce
+ timer for Milbeaut SoCs
+Thread-Index: AQHUv6l5WxG4u1Q7vEyLFPML69i0XKXbTjSAgAGq3YCAAdg9gIAACa+AgAC6TYCAAHBngIAA24mg
+Date:   Fri, 15 Feb 2019 13:14:27 +0000
+Message-ID: <9b1543a25ce34affa8f0301a7505196a@SOC-EX02V.e01.socionext.com>
+References: <1549628812-31235-1-git-send-email-sugaya.taichi@socionext.com>
+ <80f521e5-6207-a32f-2f79-c2cb81dd1908@linaro.org>
+ <c6fd5a9d-17df-a13d-7634-4c54d3e65f9c@socionext.com>
+ <8f4ea33f-f176-e8d6-40fc-3286bd6a3fcc@linaro.org>
+ <CAK8P3a1u=u93v7FSwXMmexCvoTectdm1tDQ+g2AoB2_rTRTs=Q@mail.gmail.com>
+ <feb7c60c-ed9a-1ff0-0871-d9b3fc7a40dc@socionext.com>
+ <CAK8P3a0G_5JmL8SMCpP4metQAG2JFeDd86t6V0K+4yxzBSEGrw@mail.gmail.com>
+In-Reply-To: <CAK8P3a0G_5JmL8SMCpP4metQAG2JFeDd86t6V0K+4yxzBSEGrw@mail.gmail.com>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-securitypolicycheck: OK by SHieldMailChecker v2.3.2
+x-shieldmailcheckerpolicyversion: POLICY180220
+x-originating-ip: [10.213.24.1]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <871s49bkaz.fsf@yhuang-dev.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 15-02-19 15:08:36, Huang, Ying wrote:
-> Michal Hocko <mhocko@kernel.org> writes:
-> 
-> > On Mon 11-02-19 16:38:46, Huang, Ying wrote:
-> >> From: Huang Ying <ying.huang@intel.com>
-> >> 
-> >> When swapin is performed, after getting the swap entry information from
-> >> the page table, system will swap in the swap entry, without any lock held
-> >> to prevent the swap device from being swapoff.  This may cause the race
-> >> like below,
-> >> 
-> >> CPU 1				CPU 2
-> >> -----				-----
-> >> 				do_swap_page
-> >> 				  swapin_readahead
-> >> 				    __read_swap_cache_async
-> >> swapoff				      swapcache_prepare
-> >>   p->swap_map = NULL		        __swap_duplicate
-> >> 					  p->swap_map[?] /* !!! NULL pointer access */
-> >> 
-> >> Because swapoff is usually done when system shutdown only, the race may
-> >> not hit many people in practice.  But it is still a race need to be fixed.
-> >> 
-> >> To fix the race, get_swap_device() is added to check whether the specified
-> >> swap entry is valid in its swap device.  If so, it will keep the swap
-> >> entry valid via preventing the swap device from being swapoff, until
-> >> put_swap_device() is called.
-> >> 
-> >> Because swapoff() is very rare code path, to make the normal path runs as
-> >> fast as possible, disabling preemption + stop_machine() instead of
-> >> reference count is used to implement get/put_swap_device().  From
-> >> get_swap_device() to put_swap_device(), the preemption is disabled, so
-> >> stop_machine() in swapoff() will wait until put_swap_device() is called.
-> >> 
-> >> In addition to swap_map, cluster_info, etc.  data structure in the struct
-> >> swap_info_struct, the swap cache radix tree will be freed after swapoff,
-> >> so this patch fixes the race between swap cache looking up and swapoff
-> >> too.
-> >> 
-> >> Races between some other swap cache usages protected via disabling
-> >> preemption and swapoff are fixed too via calling stop_machine() between
-> >> clearing PageSwapCache() and freeing swap cache data structure.
-> >> 
-> >> Alternative implementation could be replacing disable preemption with
-> >> rcu_read_lock_sched and stop_machine() with synchronize_sched().
-> >
-> > using stop_machine is generally discouraged. It is a gross
-> > synchronization.
-> >
-> > Besides that, since when do we have this problem?
-> 
-> For problem, you mean the race between swapoff and the page fault
-> handler?
-
-yes
-
-> The problem is introduced in v4.11 when we avoid to replace
-> swap_info_struct->lock with swap_cluster_info->lock in
-> __swap_duplicate() if possible to improve the scalability of swap
-> operations.  But because swapoff is a really rare operation, I don't
-> think it's necessary to backport the fix.
-
-Well, a lack of any bug reports would support your theory that this is
-unlikely to hit in practice. Fixes tag would be nice to have regardless
-though.
-
-Thanks!
--- 
-Michal Hocko
-SUSE Labs
+SGksDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogbGludXgtYXJtLWtl
+cm5lbA0KPiBbbWFpbHRvOmxpbnV4LWFybS1rZXJuZWwtYm91bmNlc0BsaXN0cy5pbmZyYWRlYWQu
+b3JnXSBPbiBCZWhhbGYgT2YNCj4gQXJuZCBCZXJnbWFubg0KPiBTZW50OiBGcmlkYXksIEZlYnJ1
+YXJ5IDE1LCAyMDE5IDY6MDggUE0NCj4gVG86IFN1Z2F5YSwgVGFpY2hpLxskQj97QysbKEIgGyRC
+QkAwbBsoQg0KPiBDYzogS2FuZW1hdHN1LCBTaGluamkvGyRCN3M+PhsoQiAbJEI/LTwhGyhCOyBN
+YXNhbWkgSGlyYW1hdHN1OyBEYW5pZWwgTGV6Y2FubzsNCj4gTGludXggS2VybmVsIE1haWxpbmcg
+TGlzdDsgS2FzYWksIEthenVoaXJvLxskQjNeMGYbKEIgGyRCMGxNThsoQjsgSmFzc2kgQnJhcjsg
+T3JpdG8sDQo+IFRha2FvLxskQj8lOE0bKEIgGyRCTUBAOBsoQjsgQXJuZCBCZXJnbWFubjsgbGlu
+dXgtc29jQHZnZXIua2VybmVsLm9yZzsgVGhvbWFzDQo+IEdsZWl4bmVyOyBMaW51eCBBUk0NCj4g
+U3ViamVjdDogUmU6IFtQQVRDSCB2MiAwNi8xNV0gY2xvY2tzb3VyY2UvZHJpdmVycy90aW1lci1t
+aWxiZWF1dDoNCj4gSW50cm9kdWNlIHRpbWVyIGZvciBNaWxiZWF1dCBTb0NzDQo+IA0KPiBPbiBG
+cmksIEZlYiAxNSwgMjAxOSBhdCAzOjI1IEFNIFN1Z2F5YSwgVGFpY2hpDQo+IDxzdWdheWEudGFp
+Y2hpQHNvY2lvbmV4dC5jb20+IHdyb3RlOg0KPiA+IE9uIDIwMTkvMDIvMTUgMDoxOCwgQXJuZCBC
+ZXJnbWFubiB3cm90ZToNCj4gPiA+IE9uIFRodSwgRmViIDE0LCAyMDE5IGF0IDM6NDQgUE0gRGFu
+aWVsIExlemNhbm8NCj4gPiA+IDxkYW5pZWwubGV6Y2Fub0BsaW5hcm8ub3JnPiB3cm90ZToNCj4g
+PiA+Pg0KPiA+ID4+IE9uIDEzLzAyLzIwMTkgMTE6MzQsIFN1Z2F5YSwgVGFpY2hpIHdyb3RlOg0K
+PiA+ID4+PiBIaSwNCj4gPiA+Pj4NCj4gPiA+Pj4gT24gMjAxOS8wMi8xMiAxODowNiwgRGFuaWVs
+IExlemNhbm8gd3JvdGU6DQo+ID4gPj4+PiBPbiAwOC8wMi8yMDE5IDEzOjI2LCBTdWdheWEgVGFp
+Y2hpIHdyb3RlOg0KPiA+ID4+Pj4+IEFkZCB0aW1lciBkcml2ZXIgZm9yIE1pbGJlYXV0IFNvQ3Mg
+c2VyaWVzLg0KPiA+ID4+Pj4+DQo+ID4gPj4+Pj4gVGhlIHRpbWVyIGhhcyB0d28gMzItYml0IHdp
+ZHRoIGRvd24gY291bnRlcnMsIG9uZSBvZiB3aGljaCBpcw0KPiBjb25maWd1cmVkDQo+ID4gPj4+
+Pj4gYXMgYSBjbG9ja2V2ZW50IGRldmljZSBhbmQgdGhlIG90aGVyIGlzIGNvbmZpZ3VyZWQgYXMg
+YSBjbG9jaw0KPiBzb3VyY2UuDQo+ID4gPj4+Pj4NCj4gPiA+Pj4+PiBTaWduZWQtb2ZmLWJ5OiBT
+dWdheWEgVGFpY2hpIDxzdWdheWEudGFpY2hpQHNvY2lvbmV4dC5jb20+DQo+ID4gPj4+Pg0KPiA+
+ID4+Pj4gRG8gd2FudCBtZSB0byB0YWtlIGl0IHRocm91Z2ggbXkgdHJlZT8NCj4gPiA+Pj4+DQo+
+ID4gPj4+DQo+ID4gPj4+IFllcywgcGxlYXNlLg0KPiA+ID4+Pg0KPiA+ID4+PiBCeSB0aGUgd2F5
+LCB0aGUgcGF0Y2ggc2VyaWVzIGluY2x1ZGVzIG90aGVyIHN1Yi1zeXN0ZW0gZHJpdmVycywNCj4g
+c28NCj4gPiA+Pj4gc2hvdWxkIGl0IGJlIHNwbGl0dGVkIGludG8gZWFjaCBkcml2ZXIgcGF0Y2gg
+Pw0KPiA+ID4+DQo+ID4gPj4gV2VsbCB1c3VhbGx5IGNoYW5nZXMgYXJlIHBlciBzdWItc3lzdGVt
+cyBidXQgaW4gY2FzZSBvZiBmaXJzdA0KPiBzdWJtaXNzaW9uDQo+ID4gPj4geW91IG1heSBhc2sg
+bGludXgtc29jQCB0ZWFtIHRvIHRha2UgYWxsIHRoZSBwYXRjaGVzIHRvZ2V0aGVyIHdpdGgNCj4g
+dGhlDQo+ID4gPj4gYWNrZWQtYnkgdGFncyBmcm9tIHRob3NlIHN1YnN5c3RlbXMgbWFpbnRhaW5l
+ci4NCj4gPiA+Pg0KPiA+ID4+IEFkZGVkIGluIENjOiBBcm5kQCBhbmQgbGludXgtc29jQA0KPiA+
+ID4+DQo+ID4gPj4gSSdsbCB3YWl0IGEgYml0IGJlZm9yZSBhcHBseWluZyB0aGUgcGF0Y2ggeW91
+IGNsYXJpZnkgdGhpcy4NCj4gPiA+DQo+ID4gPiBZZXMsIEkgdGhpbmsgbWVyZ2luZyB0aGVtIGFs
+bCB0b2dldGhlciBpcyBiZXN0IGhlcmUuDQo+ID4gPg0KPiA+ID4gSSBzYXcgdGhlIHBhdGNoZXMg
+Zmx5IHBhc3QgYnV0IGRpZCBub3QgZG8gYSBjb21wbGV0ZSByZXZpZXcsDQo+ID4gPiBidXQgaWYg
+YWxsIG90aGVyIHJldmlldyBjb21tZW50cyBhcmUgYWRkcmVzc2VkLCBJJ2Qgc3VnZ2VzdA0KPiA+
+ID4gc2VuZGluZyB0aGUgZW50aXJlIHNlcmllcyBmb3IgaW5jbHVzaW9uIHRvIGxpbnV4LXNvY0B2
+Z2VyLmtlcm5lbC5vcmcNCj4gPiA+IHdpdGggdGhlIEFja2VkLWJ5L1Jldmlld2VkLWJ5IHRhZ3Mg
+ZnJvbSBzdWJzeXN0ZW0gbWFpbnRhaW5lcnMNCj4gPiA+IGFkZGVkIGluLg0KPiA+DQo+ID4gVGhh
+bmsgeW91IGZvciBzdWdnZXN0aW9uLg0KPiA+IE9LLiBJIHdpbGwgc2VuZCB0aGUgc2VyaWVzIHRv
+IHRoZSBNTCB3aXRoIHRoZSBBY2tlZC1ieS9SZXZpZXdlZC1ieSB0YWdzLg0KPiANCj4gT25lIGNv
+cnJlY3Rpb246IHBsZWFzZSBzZW5kIHRoZSBwYXRjaGVzIHRvIGFkZHJlc3MgInNvY0BrZXJuZWwu
+b3JnIg0KPiBmb3IgaW5jbHVzaW9uLg0KPg0KDQpJIGdvdCBpdCENCg0KVGhhbmtzLA0KU3VnYXlh
+IFRhaWNoaQ0KDQogDQo+ICAgICAgIEFybmQNCj4gDQo+IF9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fDQo+IGxpbnV4LWFybS1rZXJuZWwgbWFpbGluZyBsaXN0
+DQo+IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZw0KPiBodHRwOi8vbGlzdHMu
+aW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwNCg==
