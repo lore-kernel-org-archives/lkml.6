@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41BCDC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A4CC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:30:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0698F2175B
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:29:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F030420840
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:30:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197788;
-	bh=7N9Beok+VCOOzHubot1dzR3c/usbzEfwIHXsXXcjvvA=;
+	s=default; t=1550197803;
+	bh=5+7x3q8RdW0GEJgGwSGI9Vyvh3PwH0HjYorp57NGYBk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XcqMeNA3t35bBTAIV7EkTVn1Ku/lA9K/kMGj1KihvzWAnEgzL1Djg7pWMmsLC8BOe
-	 hY8WDpFAlYmzf0snPKC7LxSxe3g4Sar+wsyWcLKWkTziduK99zSKGOMAzHLjgB7atq
-	 AdGyZzIbd/TC1Zm2ZT64FB3srM4fQd2/MRqxldlQ=
+	b=azuGbeawjrop0T5pKR+5Iv/6YNofEZcF/OYqLK6m8d0JXuc26W/Taxh1eDTCrjNz1
+	 4C8uvoJ3QEwd/K/RZlqSWr4wsu23SwGuxNKsoJovKQ4yM5EprLB5oXN/rlTavVf3XV
+	 KYRS/zo0wfSwibLXmkNpX+DsETk5RCVduaYx1r7E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730808AbfBOC3q (ORCPT
+        id S1730820AbfBOCaB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:29:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52990 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:30:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52974 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404475AbfBOCNB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:13:01 -0500
+        id S2391286AbfBOCNA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:13:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 569C32229F;
-        Fri, 15 Feb 2019 02:13:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 232D521B1C;
+        Fri, 15 Feb 2019 02:12:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196781;
-        bh=7N9Beok+VCOOzHubot1dzR3c/usbzEfwIHXsXXcjvvA=;
+        s=default; t=1550196779;
+        bh=5+7x3q8RdW0GEJgGwSGI9Vyvh3PwH0HjYorp57NGYBk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YOw/xsM+ZrUadLaBFFWyHNBkQ2fAGWlYizcV62514gOP7cl9/BB/Xnodwqf05/UjD
-         D/4pxqpRGNqdcjh2sGH1vNgef0frPiNlu2GN+6cf9aFt7YKMMUw4b0WIIFFyTnYAp+
-         cm5W0AUaOA3iP7aaHoMJAKP1sG6Dr2j6wU/nArAc=
+        b=TXe5/Ua7X2LIHkmTdwKn6gkutmeZzXo8bv5IlzjNPnefnN6/cmjUR6rR65AnnYTKU
+         S+/9O1XsYMG7Ebf1rEHx+LjSx3/msSPdhA4/YPeVfuQ08wdjAFJrVJofX1SHpdeAxc
+         yd0ylTqB4oKWIXNHSHs4jSegXeCc/GqKXBStNE/A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Balaji Pothunoori <bpothuno@codeaurora.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 59/65] mac80211: don't initiate TDLS connection if station is not associated to AP
-Date:   Thu, 14 Feb 2019 21:11:15 -0500
-Message-Id: <20190215021121.177674-59-sashal@kernel.org>
+Cc:     Thomas Falcon <tlfalcon@linux.ibm.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 58/65] ibmveth: Do not process frames after calling napi_reschedule
+Date:   Thu, 14 Feb 2019 21:11:14 -0500
+Message-Id: <20190215021121.177674-58-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -59,56 +59,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Balaji Pothunoori <bpothuno@codeaurora.org>
+From: Thomas Falcon <tlfalcon@linux.ibm.com>
 
-[ Upstream commit 7ed5285396c257fd4070b1e29e7b2341aae2a1ce ]
+[ Upstream commit e95d22c69b2c130ccce257b84daf283fd82d611e ]
 
-Following call trace is observed while adding TDLS peer entry in driver
-during TDLS setup.
+The IBM virtual ethernet driver's polling function continues
+to process frames after rescheduling NAPI, resulting in a warning
+if it exhausted its budget. Do not restart polling after calling
+napi_reschedule. Instead let frames be processed in the following
+instance.
 
-Call Trace:
-[<c1301476>] dump_stack+0x47/0x61
-[<c10537d2>] __warn+0xe2/0x100
-[<fa22415f>] ? sta_apply_parameters+0x49f/0x550 [mac80211]
-[<c1053895>] warn_slowpath_null+0x25/0x30
-[<fa22415f>] sta_apply_parameters+0x49f/0x550 [mac80211]
-[<fa20ad42>] ? sta_info_alloc+0x1c2/0x450 [mac80211]
-[<fa224623>] ieee80211_add_station+0xe3/0x160 [mac80211]
-[<c1876fe3>] nl80211_new_station+0x273/0x420
-[<c170f6d9>] genl_rcv_msg+0x219/0x3c0
-[<c170f4c0>] ? genl_rcv+0x30/0x30
-[<c170ee7e>] netlink_rcv_skb+0x8e/0xb0
-[<c170f4ac>] genl_rcv+0x1c/0x30
-[<c170e8aa>] netlink_unicast+0x13a/0x1d0
-[<c170ec18>] netlink_sendmsg+0x2d8/0x390
-[<c16c5acd>] sock_sendmsg+0x2d/0x40
-[<c16c6369>] ___sys_sendmsg+0x1d9/0x1e0
-
-Fixing this by allowing TDLS setup request only when we have completed
-association.
-
-Signed-off-by: Balaji Pothunoori <bpothuno@codeaurora.org>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Thomas Falcon <tlfalcon@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/cfg.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/ibm/ibmveth.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
-index 5d22eda8a6b1..8089af436ff7 100644
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@ -1474,6 +1474,10 @@ static int ieee80211_add_station(struct wiphy *wiphy, struct net_device *dev,
- 	if (params->sta_flags_set & BIT(NL80211_STA_FLAG_TDLS_PEER))
- 		sta->sta.tdls = true;
+diff --git a/drivers/net/ethernet/ibm/ibmveth.c b/drivers/net/ethernet/ibm/ibmveth.c
+index 91f48c078073..f70cb4d3c684 100644
+--- a/drivers/net/ethernet/ibm/ibmveth.c
++++ b/drivers/net/ethernet/ibm/ibmveth.c
+@@ -1314,7 +1314,6 @@ static int ibmveth_poll(struct napi_struct *napi, int budget)
+ 	unsigned long lpar_rc;
+ 	u16 mss = 0;
  
-+	if (sta->sta.tdls && sdata->vif.type == NL80211_IFTYPE_STATION &&
-+	    !sdata->u.mgd.associated)
-+		return -EINVAL;
-+
- 	err = sta_apply_parameters(local, sta, params);
- 	if (err) {
- 		sta_info_free(local, sta);
+-restart_poll:
+ 	while (frames_processed < budget) {
+ 		if (!ibmveth_rxq_pending_buffer(adapter))
+ 			break;
+@@ -1402,7 +1401,6 @@ static int ibmveth_poll(struct napi_struct *napi, int budget)
+ 		    napi_reschedule(napi)) {
+ 			lpar_rc = h_vio_signal(adapter->vdev->unit_address,
+ 					       VIO_IRQ_DISABLE);
+-			goto restart_poll;
+ 		}
+ 	}
+ 
 -- 
 2.19.1
 
