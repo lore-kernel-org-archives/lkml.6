@@ -2,120 +2,202 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF69C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:01:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A32C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:02:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA393222DF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:01:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="RU3EU3x+"
+	by mail.kernel.org (Postfix) with ESMTP id C05702192C
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:02:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392877AbfBOWBL (ORCPT
+        id S2392968AbfBOWC2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 17:01:11 -0500
-Received: from mail-eopbgr70128.outbound.protection.outlook.com ([40.107.7.128]:33809
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727912AbfBOWBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 17:01:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3W5UlzZWve2oLpsWzekoZqMv0wretQeJahaAQpJBU48=;
- b=RU3EU3x++7YGKzvzqZ+y+d/v+zFj78IUVHXKKm/DxJRSpEyZ4hEiXxlZhsq2OWRUodbsxWiwIHONRF7ZvSuJSI/0rJFg6pgl+czsMTiRdd0wNGgUJID4OAbAR4SB6xu5f7jwRoDSInCUI+skIEkOmOWjA9QQ+G8nBUa0iBmEHvA=
-Received: from DB7PR08MB3771.eurprd08.prod.outlook.com (20.178.47.26) by
- DB7PR08MB3673.eurprd08.prod.outlook.com (20.177.120.155) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.16; Fri, 15 Feb 2019 22:01:06 +0000
-Received: from DB7PR08MB3771.eurprd08.prod.outlook.com
- ([fe80::59ce:a552:89d5:47b9]) by DB7PR08MB3771.eurprd08.prod.outlook.com
- ([fe80::59ce:a552:89d5:47b9%5]) with mapi id 15.20.1601.023; Fri, 15 Feb 2019
- 22:01:06 +0000
-From:   Kirill Tkhai <ktkhai@virtuozzo.com>
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>
-CC:     "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mhocko@suse.com" <mhocko@suse.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 4/4] mm: Generalize putback scan functions
-Thread-Topic: [PATCH v2 4/4] mm: Generalize putback scan functions
-Thread-Index: AQHUxFEL53fZZeHOl0uxGT7DbkvR8aXhVHOAgAAWcQA=
-Date:   Fri, 15 Feb 2019 22:01:05 +0000
-Message-ID: <b2fcd214-52a5-6284-81b9-8a09de27fbea@virtuozzo.com>
-References: <155014039859.28944.1726860521114076369.stgit@localhost.localdomain>
- <155014053725.28944.7960592286711533914.stgit@localhost.localdomain>
- <20190215203926.ldpfniqwpn7rtqif@ca-dmjordan1.us.oracle.com>
-In-Reply-To: <20190215203926.ldpfniqwpn7rtqif@ca-dmjordan1.us.oracle.com>
-Accept-Language: ru-RU, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HE1PR06CA0144.eurprd06.prod.outlook.com
- (2603:10a6:7:16::31) To DB7PR08MB3771.eurprd08.prod.outlook.com
- (2603:10a6:10:7c::26)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=ktkhai@virtuozzo.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [128.69.177.17]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 07d24579-30dd-4718-5126-08d693911546
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB7PR08MB3673;
-x-ms-traffictypediagnostic: DB7PR08MB3673:
-x-microsoft-exchange-diagnostics: 1;DB7PR08MB3673;20:zPeykguNM5ppb1GzTGxHHyrM1PCMD/FKOkV0nTJZK/FBpDnuMsvFWY4mHauaPs04tz6M675ueFjRVLLWmeq2EK4Zl76Z3D3gOQjWskRxYwB/utlrUJVrPbmHC7GVgwZ+PM4L8A7pWNF1PnemhFZi+zxvdxvbeMRGMacI6LQYz4A=
-x-microsoft-antispam-prvs: <DB7PR08MB36737D1A4CA15C60E470F913CD600@DB7PR08MB3673.eurprd08.prod.outlook.com>
-x-forefront-prvs: 09497C15EB
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(346002)(136003)(396003)(39850400004)(376002)(199004)(189003)(86362001)(6916009)(476003)(6512007)(102836004)(8936002)(486006)(31696002)(68736007)(26005)(97736004)(66066001)(6506007)(6486002)(2906002)(386003)(316002)(446003)(55236004)(11346002)(6436002)(6246003)(53936002)(256004)(478600001)(5660300002)(2616005)(25786009)(54906003)(99286004)(106356001)(76176011)(81166006)(81156014)(105586002)(53546011)(8676002)(7736002)(14454004)(52116002)(3846002)(36756003)(186003)(71190400001)(71200400001)(229853002)(4326008)(31686004)(305945005)(6116002);DIR:OUT;SFP:1102;SCL:1;SRVR:DB7PR08MB3673;H:DB7PR08MB3771.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: virtuozzo.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: MabVeYNV7iwGWqfI9vr21SLoNKF/9vHzD3qSDh6ftM9hfWxUgp8SpoipjTNp9Jm1KrwZGGR1NneemsL/ydb7pcGomICW/IWJl/mTEaim86UHxKmmwdZ+f6GAmQkwvHIx0ijruZGKJYaU6PMHctBAwr9lZDsCPRitzNysQIdAv6/jMh6GLFH19ea6kkYFIHMaI2s8SbBbm2VtHMx2ZQPYIPgiLTb3yUro4AeiVlKCcGhJAcITRGJco1sMhIp82pto5HeHpyRgWL7Vv3O/jSGebZFzkWdwfT8zdW+LNLGLCyFQPIJmZz3VUQ0841/YdAzzUnd8Gnt71CE26VKohGNavofWgw9mhCQ2sbdmr2irHIplwRSJL3CRzZhwkYSVnHIFPBKALQSXD84+kFrumMmIrS/upCRk0iS7nMRxeMD7ur8=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C117B143E78C6C45940299C83D4F7C6F@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Fri, 15 Feb 2019 17:02:28 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38264 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729239AbfBOWC1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 17:02:27 -0500
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1FLnrR3093653
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 17:02:26 -0500
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qp5jsghu6-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 17:02:25 -0500
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
+        Fri, 15 Feb 2019 22:02:25 -0000
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 15 Feb 2019 22:02:21 -0000
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1FM2H2B21495870
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Feb 2019 22:02:18 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DF042AE09F;
+        Fri, 15 Feb 2019 22:02:17 +0000 (GMT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 384AAAE09B;
+        Fri, 15 Feb 2019 22:02:17 +0000 (GMT)
+Received: from [9.80.239.175] (unknown [9.80.239.175])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 15 Feb 2019 22:02:17 +0000 (GMT)
+Subject: Re: [PATCH v3 2/9] s390: ap: kvm: setting a hook for PQAP
+ instructions
+To:     Pierre Morel <pmorel@linux.ibm.com>, borntraeger@de.ibm.com
+Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        kvm@vger.kernel.org, frankja@linux.ibm.com, pasic@linux.ibm.com,
+        david@redhat.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
+References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
+ <1550152269-6317-3-git-send-email-pmorel@linux.ibm.com>
+From:   Tony Krowiak <akrowiak@linux.ibm.com>
+Date:   Fri, 15 Feb 2019 17:02:16 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 07d24579-30dd-4718-5126-08d693911546
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Feb 2019 22:01:04.8008
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR08MB3673
+In-Reply-To: <1550152269-6317-3-git-send-email-pmorel@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19021522-0064-0000-0000-000003A97610
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010604; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000280; SDB=6.01161588; UDB=6.00606354; IPR=6.00942149;
+ MB=3.00025604; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-15 22:02:23
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021522-0065-0000-0000-00003C6D9E75
+Message-Id: <4b21f059-1d37-f341-bac7-5b1fe0d06521@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-15_16:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=888 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902150143
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMTUuMDIuMjAxOSAyMzozOSwgRGFuaWVsIEpvcmRhbiB3cm90ZToNCj4gT24gVGh1LCBGZWIg
-MTQsIDIwMTkgYXQgMDE6MzU6MzdQTSArMDMwMCwgS2lyaWxsIFRraGFpIHdyb3RlOg0KPj4gK3N0
-YXRpYyB1bnNpZ25lZCBub2lubGluZV9mb3Jfc3RhY2sgbW92ZV9wYWdlc190b19scnUoc3RydWN0
-IGxydXZlYyAqbHJ1dmVjLA0KPj4gKwkJCQkJCSAgICAgc3RydWN0IGxpc3RfaGVhZCAqbGlzdCkN
-Cj4+ICB7DQo+PiAgCXN0cnVjdCBwZ2xpc3RfZGF0YSAqcGdkYXQgPSBscnV2ZWNfcGdkYXQobHJ1
-dmVjKTsNCj4+ICsJaW50IG5yX3BhZ2VzLCBucl9tb3ZlZCA9IDA7DQo+PiAgCUxJU1RfSEVBRChw
-YWdlc190b19mcmVlKTsNCj4+ICsJc3RydWN0IHBhZ2UgKnBhZ2U7DQo+PiArCWVudW0gbHJ1X2xp
-c3QgbHJ1Ow0KPj4gIA0KPj4gLQkvKg0KPj4gLQkgKiBQdXQgYmFjayBhbnkgdW5mcmVlYWJsZSBw
-YWdlcy4NCj4+IC0JICovDQo+PiAtCXdoaWxlICghbGlzdF9lbXB0eShwYWdlX2xpc3QpKSB7DQo+
-PiAtCQlzdHJ1Y3QgcGFnZSAqcGFnZSA9IGxydV90b19wYWdlKHBhZ2VfbGlzdCk7DQo+PiAtCQlp
-bnQgbHJ1Ow0KPj4gLQ0KPj4gKwl3aGlsZSAoIWxpc3RfZW1wdHkobGlzdCkpIHsNCj4+ICsJCXBh
-Z2UgPSBscnVfdG9fcGFnZShsaXN0KTsNCj4+ICAJCVZNX0JVR19PTl9QQUdFKFBhZ2VMUlUocGFn
-ZSksIHBhZ2UpOw0KPj4gLQkJbGlzdF9kZWwoJnBhZ2UtPmxydSk7DQo+PiAgCQlpZiAodW5saWtl
-bHkoIXBhZ2VfZXZpY3RhYmxlKHBhZ2UpKSkgew0KPj4gKwkJCWxpc3RfZGVsX2luaXQoJnBhZ2Ut
-PmxydSk7DQo+IA0KPiBXaHkgY2hhbmdlIHRvIGxpc3RfZGVsX2luaXQ/ICBJdCdzIG1vcmUgc3Bl
-Y2lhbCB0aGFuIGxpc3RfZGVsIGJ1dCBkb2Vzbid0IHNlZW0NCj4gbmVlZGVkIHNpbmNlIHRoZSBw
-YWdlIGlzIGxpc3RfYWRkKCllZCBsYXRlci4NCg0KTm90IHNvbWV0aGluZyBzcGVjaWFsIGlzIGhl
-cmUsIEknbGwgcmVtb3ZlIHRoaXMgX2luaXQuDQogDQo+IFRoYXQgcG9zdHByb2Nlc3Mgc2NyaXB0
-IGZyb20gcGF0Y2ggMSBzZWVtcyBraW5kYSBicm9rZW4gYmVmb3JlIHRoaXMgc2VyaWVzLCBhbmQN
-Cj4gc3RpbGwgaXMuICBOb3QgdGhhdCBpdCBzaG91bGQgYmxvY2sgdGhpcyBjaGFuZ2UuICBPdXQg
-b2YgY3VyaW9zaXR5IGRpZCB5b3UgZ2V0DQo+IGl0IHRvIHJ1bj8NCg0KSSBmaXhlZCBhbGwgbmV3
-IHdhcm5pbmdzLCB3aGljaCBjb21lIHdpdGggbXkgY2hhbmdlcywgc28gdGhlIHBhdGNoIGRvZXMg
-bm90IG1ha2UNCnRoZSBzY3JpcHQgd29yc2UuDQoNCklmIHlvdSBjaGFuZ2UgYWxsIGFscmVhZHkg
-ZXhpc3Rpbmcgd2FybmluZ3MgYnkgcmVuYW1pbmcgdmFyaWFibGVzIGluIGFwcHJvcHJpYXRlDQpw
-bGFjZXMsIHRoZSBzY3JpcHQgd2lsbCB3b3JrIGluIHNvbWUgd2F5LiBCdXQgSSdtIG5vdCBzdXJl
-IHRoaXMgaXMgZW5vdWdoIHRvIGdldA0KcmVzdWx0cyBjb3JyZWN0LCBhbmQgSSBoYXZlIG5vIGEg
-YmlnIHdpc2ggdG8gZGl2ZSBpbnRvIHBlcmwgdG8gZml4IHdhcm5pbmdzDQppbnRyb2R1Y2VkIGJ5
-IGFub3RoZXIgcGVvcGxlLCBzbyBJIGRvbid0IHBsYW4gdG8gZG8gd2l0aCB0aGlzIHNjcmlwdCBz
-b21ldGhpbmcgZWxzZS4NCg==
+On 2/14/19 8:51 AM, Pierre Morel wrote:
+> This patch adds interception code for the PQAP instructions,
+> and a callback inside the KVM arch structure for s390.
+> 
+> If a VFIO-AP drivers needs to intercept PQAP/AQIC or PQAP/TAPQ
+> instructions, the driver will initialize the callback inside
+> the kvm_arch structure to be called when the interception of a
+> PQAP instruction occurs.
+> 
+> If the callback is not initialized, the code still returns
+> -EOPNOTSUPP to let userland handle the instruction as it used to.
+> 
+> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
+> Reviewed-by: Tony Krowiak <akrowiak@linux.ibm.com>
+> ---
+>   arch/s390/include/asm/kvm_host.h |  1 +
+>   arch/s390/kvm/priv.c             | 50 ++++++++++++++++++++++++++++++++++++++++
+>   2 files changed, 51 insertions(+)
+> 
+> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
+> index c5f5156..49cc8b0 100644
+> --- a/arch/s390/include/asm/kvm_host.h
+> +++ b/arch/s390/include/asm/kvm_host.h
+> @@ -719,6 +719,7 @@ struct kvm_s390_cpu_model {
+>   
+>   struct kvm_s390_crypto {
+>   	struct kvm_s390_crypto_cb *crycb;
+> +	int (*pqap_hook)(struct kvm_vcpu *vcpu);
+>   	__u32 crycbd;
+>   	__u8 aes_kw;
+>   	__u8 dea_kw;
+> diff --git a/arch/s390/kvm/priv.c b/arch/s390/kvm/priv.c
+> index 8679bd7..72fdc21 100644
+> --- a/arch/s390/kvm/priv.c
+> +++ b/arch/s390/kvm/priv.c
+> @@ -27,6 +27,7 @@
+>   #include <asm/io.h>
+>   #include <asm/ptrace.h>
+>   #include <asm/sclp.h>
+> +#include <asm/ap.h>
+>   #include "gaccess.h"
+>   #include "kvm-s390.h"
+>   #include "trace.h"
+> @@ -592,6 +593,53 @@ static int handle_io_inst(struct kvm_vcpu *vcpu)
+>   	}
+>   }
+>   
+> +/*
+> + * handle_pqap: Handling pqap interception
+> + * @vcpu: the vcpu having issue the pqap instruction
+> + *
+> + * This callback only handles PQAP/AQIC instruction and
+> + * calls a dedicated callback for this instruction if
+> + * a driver did register one in the CRYPTO satellite of the
+> + * SIE block.
+> + *
+> + * Do not change the behavior if, return -EOPNOTSUPP if:
+> + * - the hook is not used do not change the behavior.
+> + * - AP instructions are not available or not available to the guest
+> + * - the instruction is not PQAP with function code indicating
+> + *   AQIC do not change the previous behavior.
+> + *
+> + * For PQAP/AQIC instruction, verify privilege and specifications
+> + *
+> + * return the value returned by the callback.
+> + */
+> +static int handle_pqap(struct kvm_vcpu *vcpu)
+> +{
+> +	uint8_t fc;
+> +
+> +	/* Verify that the hook callback is registered */
+> +	if (!vcpu->kvm->arch.crypto.pqap_hook)
+> +		return -EOPNOTSUPP;
+> +	/* Verify that the AP instruction are available */
+> +	if (!ap_instructions_available())
+> +		return -EOPNOTSUPP;
+> +	/* Verify that the guest is allowed to use AP instructions */
+> +	if (!(vcpu->arch.sie_block->eca & ECA_APIE))
+> +		return -EOPNOTSUPP;
+> +	/* Verify that the function code is AQIC */
+> +	fc = vcpu->run->s.regs.gprs[0] >> 24;
+> +	if (fc != 0x03)
+> +		return -EOPNOTSUPP;
+
+This does not belong here. Function code 3 is one of 7 function codes
+that can be sent with the PQAP instruction. This belongs in the PQAP
+hook code.
+
+> +
+> +	/* PQAP instructions are allowed for guest kernel only */
+> +	if (vcpu->arch.sie_block->gpsw.mask & PSW_MASK_PSTATE)
+> +		return kvm_s390_inject_program_int(vcpu, PGM_PRIVILEGED_OP);
+> +	/* AQIC instruction is allowed only if facility 65 is available */
+> +	if (!test_kvm_facility(vcpu->kvm, 65))
+> +		return kvm_s390_inject_program_int(vcpu, PGM_SPECIFICATION);
+> +	/* All right, call the callback */
+> +	return vcpu->kvm->arch.crypto.pqap_hook(vcpu);
+> +}
+> +
+>   static int handle_stfl(struct kvm_vcpu *vcpu)
+>   {
+>   	int rc;
+> @@ -878,6 +926,8 @@ int kvm_s390_handle_b2(struct kvm_vcpu *vcpu)
+>   		return handle_sthyi(vcpu);
+>   	case 0x7d:
+>   		return handle_stsi(vcpu);
+> +	case 0xaf:
+> +		return handle_pqap(vcpu);
+>   	case 0xb1:
+>   		return handle_stfl(vcpu);
+>   	case 0xb2:
+> 
+
