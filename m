@@ -4,50 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85C13C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:29:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FA28C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:29:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C92120840
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:29:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18E2F222DA
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:29:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197750;
-	bh=PrTO41PffTcb8UKGVkJUL2HeVcMtm3IQhnGKeDk3g5E=;
+	s=default; t=1550197756;
+	bh=eiBabLThfvITQaflfLrUTq4NoTkOQKfHZWI7tFM+M98=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Vvmch2o5Kk/nuAy4HFGvqXmXx8E47sIdP9t1CPlXzfQX4CzBC3Osmj5bR72FGVpwU
-	 Ag+yDokcTq58JPFXz+0Nv1PUmXjPKSzxKmuFIYGxQzbUZnjdt38M2F3U8P5YkGOhfZ
-	 gB6WEPeUumn9d/aAerofZbomuvvupUL4P0L31oVs=
+	b=GKNThv0XRolnaLczR77dCdC75VlcknWwP57/HG5P8bTFRqyUNtA0xO+Eai7mN+WV2
+	 yhp/ON7GYkF1m7UniGuk2KgUmf9+akV6ZJaxpGCpZmLXSk3cEG96sUGm5p2y5jnCYN
+	 gfeNJ5MqvHNUG8/hZX1YGvFxp+HT69ptxjmQ91Iw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404571AbfBOCNJ (ORCPT
+        id S1730531AbfBOC3O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:13:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53006 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:29:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404500AbfBOCND (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:13:03 -0500
+        id S2391311AbfBOCNG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:13:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B6DF206BA;
-        Fri, 15 Feb 2019 02:13:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C1AC206BA;
+        Fri, 15 Feb 2019 02:13:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196782;
-        bh=PrTO41PffTcb8UKGVkJUL2HeVcMtm3IQhnGKeDk3g5E=;
+        s=default; t=1550196785;
+        bh=eiBabLThfvITQaflfLrUTq4NoTkOQKfHZWI7tFM+M98=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kPnX2/tR0x/yKm/YqY38dxfM61V8eYBEgTEPhTSDdOdx7KgW3+6Dff10gFB1nGGE2
-         2+D+n6Ncqau6o+zoeDvDjPPjixdwHKMli7J/mvm7V1ngieNcw6RtDmantNkusj7D9F
-         DiTz2HsSFdpf9juwCS3ni9fYIR5FLXm2GUybhMt0=
+        b=HmP/cMRFOQkeJcdDOJV2FCiZolNpVrnCcfKrTxJDcbdWu6BEO5Wmjr4Gsk9UNtfjC
+         cD6DjkOH/bu6ouk1z/taDuw87lMwMa/hVzqbbPZpEBscyXO+Ug0GcfiqhLeBrHDZsw
+         5nH+qFIv/AHuqfVciQ7VfZ5xyy4+jBvii8lNLuDY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 60/65] mac80211: Add attribute aligned(2) to struct 'action'
-Date:   Thu, 14 Feb 2019 21:11:16 -0500
-Message-Id: <20190215021121.177674-60-sashal@kernel.org>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 63/65] KVM: nSVM: clear events pending from svm_complete_interrupts() when exiting to L1
+Date:   Thu, 14 Feb 2019 21:11:19 -0500
+Message-Id: <20190215021121.177674-63-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -59,62 +57,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mathieu Malaterre <malat@debian.org>
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-[ Upstream commit 7c53eb5d87bc21464da4268c3c0c47457b6d9c9b ]
+[ Upstream commit 619ad846fc3452adaf71ca246c5aa711e2055398 ]
 
-During refactor in commit 9e478066eae4 ("mac80211: fix MU-MIMO
-follow-MAC mode") a new struct 'action' was declared with packed
-attribute as:
+kvm-unit-tests' eventinj "NMI failing on IDT" test results in NMI being
+delivered to the host (L1) when it's running nested. The problem seems to
+be: svm_complete_interrupts() raises 'nmi_injected' flag but later we
+decide to reflect EXIT_NPF to L1. The flag remains pending and we do NMI
+injection upon entry so it got delivered to L1 instead of L2.
 
-  struct {
-          struct ieee80211_hdr_3addr hdr;
-          u8 category;
-          u8 action_code;
-  } __packed action;
+It seems that VMX code solves the same issue in prepare_vmcs12(), this was
+introduced with code refactoring in commit 5f3d5799974b ("KVM: nVMX: Rework
+event injection and recovery").
 
-But since struct 'ieee80211_hdr_3addr' is declared with an aligned
-keyword as:
-
-  struct ieee80211_hdr {
-  	__le16 frame_control;
-  	__le16 duration_id;
-  	u8 addr1[ETH_ALEN];
-  	u8 addr2[ETH_ALEN];
-  	u8 addr3[ETH_ALEN];
-  	__le16 seq_ctrl;
-  	u8 addr4[ETH_ALEN];
-  } __packed __aligned(2);
-
-Solve the ambiguity of placing aligned structure in a packed one by
-adding the aligned(2) attribute to struct 'action'.
-
-This removes the following warning (W=1):
-
-  net/mac80211/rx.c:234:2: warning: alignment 1 of 'struct <anonymous>' is less than 2 [-Wpacked-not-aligned]
-
-Cc: Johannes Berg <johannes.berg@intel.com>
-Suggested-by: Johannes Berg <johannes@sipsolutions.net>
-Signed-off-by: Mathieu Malaterre <malat@debian.org>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/rx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kvm/svm.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
-index 77cfa62274f3..a804ef55ec60 100644
---- a/net/mac80211/rx.c
-+++ b/net/mac80211/rx.c
-@@ -220,7 +220,7 @@ static void ieee80211_handle_mu_mimo_mon(struct ieee80211_sub_if_data *sdata,
- 		struct ieee80211_hdr_3addr hdr;
- 		u8 category;
- 		u8 action_code;
--	} __packed action;
-+	} __packed __aligned(2) action;
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index 4f9cc07a67d8..d7073dffa39f 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -3399,6 +3399,14 @@ static int nested_svm_vmexit(struct vcpu_svm *svm)
+ 	kvm_mmu_reset_context(&svm->vcpu);
+ 	kvm_mmu_load(&svm->vcpu);
  
- 	if (!sdata)
- 		return;
++	/*
++	 * Drop what we picked up for L2 via svm_complete_interrupts() so it
++	 * doesn't end up in L1.
++	 */
++	svm->vcpu.arch.nmi_injected = false;
++	kvm_clear_exception_queue(&svm->vcpu);
++	kvm_clear_interrupt_queue(&svm->vcpu);
++
+ 	return 0;
+ }
+ 
 -- 
 2.19.1
 
