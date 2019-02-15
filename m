@@ -2,84 +2,172 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B7CEC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:25:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79211C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:26:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E61020643
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:25:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 458F5222D9
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:25:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QaAkq8dV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404261AbfBOIZZ (ORCPT
+        id S2391291AbfBOIZv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 03:25:25 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:40401 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729605AbfBOIZZ (ORCPT
+        Fri, 15 Feb 2019 03:25:51 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:51136 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389067AbfBOIZv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 03:25:25 -0500
-Received: by mail-vs1-f67.google.com with SMTP id z18so5315755vso.7;
-        Fri, 15 Feb 2019 00:25:24 -0800 (PST)
+        Fri, 15 Feb 2019 03:25:51 -0500
+Received: by mail-it1-f195.google.com with SMTP id z7so22317396iti.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 00:25:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=juG0MViCZiAT+zDsXZ8fm+sEnVYZs4zVtkSGvneF++Y=;
+        b=QaAkq8dV0igXFlPYuqnLjGUX/mZjdfP+Xscr5xuHA8biE2RPGNjZXDDQrqjA0E7V3s
+         8Tcl3x3Vqe4fDAIr3KKF/AsUMesa+/TN2RK3ap46JMZprjhi2S7oEzceR1F+bEFOqGZk
+         Tdolm+TompptSuMMpd4lTpGLSfXHxW9gMr+Q9QpAoU66GXK/uGE3sMzLO0pX4y7mmkxE
+         BB6ZoM6ZTUyR/aHFAmAZKLvAWwZVcWj+wah4xbjzkVH6RplWTd0GFMm19gTM7SjwTa6J
+         buoD9Y5lhcvnsJxztRm4RjkGhD3MaJusYWdx2EeCRbZ/hb1SN+eXktVj+cCS1gKc5awG
+         57ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=YDgNj+hLumR0nv6kzdyxNqixIoCoe5NmWzayHzxN+d8=;
-        b=c/rOaGC55XL3mav6pSSSjuDqrDZh2thCFBXjfOQMZzWS41aoXaWGlbhtk+8eiABIHX
-         4JULw+dbKk893JXXUj0k17E314XFYE2xzYtNR18YAWpnvrH5Z29bZBBwpGL/gzYXeyZ7
-         R8oj/rpR5YsOJySNFtm3/QnSu+Kxraj7m4MMshglETs9bDxktQoFf07CHx8DVPbq/WsZ
-         S/xij8g/tuo9VuaZR8YQV/Ut5+6GYHNuIz3GxmyNko/X2V22hk44AyB2v6D0aaQBeuzn
-         MWu8logJwWeSMcc9PJA3o9jcgyQb4ciFFcEtgMuCThoVz6tnNK8z+iMjNPl/a9svywAw
-         mFVA==
-X-Gm-Message-State: AHQUAuboilIO87mxlhkH7vzYi4atCYYa+n7acxBiSgxL4G8kjnX8lGVp
-        P/duJ+SuehcVOPJpqtqlcZVU+fO3eDxeHbHMAktI5+PQ
-X-Google-Smtp-Source: AHgI3IbrVSUhPlfMbxcHABds1JS46hoFKfr8foOF88yNgUc42iC9odOEZBImKjWtMk5RaxW44sLy+ewc4Ry+4yjPHrU=
-X-Received: by 2002:a67:f43:: with SMTP id 64mr4285204vsp.166.1550219124276;
- Fri, 15 Feb 2019 00:25:24 -0800 (PST)
+        bh=juG0MViCZiAT+zDsXZ8fm+sEnVYZs4zVtkSGvneF++Y=;
+        b=cMnylY9bcYyATj5Z3UyKhUxxn3jer8aNPEIg0Neo7oAFNFH8y/K57MqcPYTwvZ6wlp
+         XBnzQexoiejGFLhnUvalUJ66vWk2zVqXzSMw2FAxXPGL9TNEMNnmWoIyLKpNO+UxGa34
+         Z8qnp0kLDwgxHVfd8/V8qkVmn0cjjhZriXA3hENee5NUUwNbTdVHMEoW7YrKajOaaVhh
+         SBoe1j+7/0/lHL7Cb+db3C9eqUGJ2ljyo4VvMMiBByGHE09PKrdhEubodEtrLOiBrBdp
+         /GpDZMMVS7yEobKM1YxtstXnJZk31OB1YLp/xVox/aLAE7zhzUW4qsewsjYAjBBkEMTE
+         Rc8g==
+X-Gm-Message-State: AHQUAub24wdi6pLV68XfB4jWBmZpc0bCXRo9dM8VIO35Oco9vaUYNSjz
+        rW0ogHMA5bUkwvPw6RZ1v0oA3LZfhvp5XHIDazmNug==
+X-Google-Smtp-Source: AHgI3IYrJaPN4UsWQoBsCdmaP9C1toLRwpm5eM4gHXrPouGeJ60/nnjKE5Fmn7F+2JrrOUUgs3vY228KqysO1q0yRlI=
+X-Received: by 2002:a24:1947:: with SMTP id b68mr17514itb.121.1550219149888;
+ Fri, 15 Feb 2019 00:25:49 -0800 (PST)
 MIME-Version: 1.0
-References: <86a3eca8946cbeb648ddbe3ff67b983ece7498d8.1550182390.git.fthain@telegraphics.com.au>
-In-Reply-To: <86a3eca8946cbeb648ddbe3ff67b983ece7498d8.1550182390.git.fthain@telegraphics.com.au>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 15 Feb 2019 09:25:12 +0100
-Message-ID: <CAMuHMdUN1SGHd-BbEWY9xwc5jkybLQ_xbLaE0-jzskorso6brw@mail.gmail.com>
-Subject: Re: [PATCH] video/macfb: Remove redundant code
-To:     Finn Thain <fthain@telegraphics.com.au>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1549943095-10956-1-git-send-email-yamada.masahiro@socionext.com>
+ <CAKv+Gu8yLY+c6jNmHYkvP3n=xiojF7dcKBHmeGibUW2FUrEczA@mail.gmail.com> <CAK7LNASoyeFW=j9R=M2vaoLK_Gms1Z6hA_yKLyVSY=g5ALUi8A@mail.gmail.com>
+In-Reply-To: <CAK7LNASoyeFW=j9R=M2vaoLK_Gms1Z6hA_yKLyVSY=g5ALUi8A@mail.gmail.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 15 Feb 2019 09:25:38 +0100
+Message-ID: <CAKv+Gu8k63Fj2aPbQPLLvBXvJrdcu5NrODXuZKkb2n21AUM70Q@mail.gmail.com>
+Subject: Re: [PATCH] efi/libstub: refactor cmd_stubcopy
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        linux-efi <linux-efi@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Alistair Strachan <astrachan@google.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 3:19 AM Finn Thain <fthain@telegraphics.com.au> wrote:
-> The value of info->var.bits_per_pixel get checked in macfb_setcolreg().
-> Remove additional checks as they are redundant.
+On Fri, 15 Feb 2019 at 06:49, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 >
-> macfb_defined.activate gets initialized to FB_ACTIVATE_NOW by the struct
-> initializer. Remove redundant assignments.
+> On Tue, Feb 12, 2019 at 4:26 PM Ard Biesheuvel
+> <ard.biesheuvel@linaro.org> wrote:
+> >
+> > On Tue, 12 Feb 2019 at 04:45, Masahiro Yamada
+> > <yamada.masahiro@socionext.com> wrote:
+> > >
+> > > It took me a while to understand what is going on in the nested
+> > > if-blocks.
+> > >
+> > > Simplify it by removing unneeded code.
+> > >
+> > >   - if_changed automatically adds 'set -e', so any failure in the
+> > >     series of commands makes it immediately fail as a whole.
+> > >     So, the outer if block is entirely redundant.
+> > >
+> > >   - Since commit 9c2af1c7377a ("kbuild: add .DELETE_ON_ERROR special
+> > >     target"), GNU Make automatically deletes the target on any failure
+> > >     in its recipe. The explicit 'rm -f $@' is redundant.
+> > >
+> > >   - surrounding commands with ( ) will spawn a subshell to execute them
+> > >     in it, but it is rarely useful to do so.
+> > >
+> > > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> >
+> > Assuming that it still works as expected:
+> >
+> > Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> >
+> > You can test this by adding a statically initialized global function
+> > pointer to any of the libstub source files that get built for ARM.
+> >
+> > Thanks!
 >
-> macfb_defined.bits_per_pixel, .width and .height all get assigned
-> unconditionally. Remove redundant initializers.
 >
-> Cc: linux-m68k@lists.linux-m68k.org
-> Tested-by: Stan Johnson <userm57@yahoo.com>
-> Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+> I tried that, and it failed as expected.
+>
 
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Great, thanks for double checking.
 
-Gr{oetje,eeting}s,
+Are you taking this directly, or do you want me to take it via the EFI
+tree? Either is fine with me
 
-                        Geert
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>
+> $ git diff
+> diff --git a/drivers/firmware/efi/libstub/arm32-stub.c
+> b/drivers/firmware/efi/libstub/arm32-stub.c
+> index becbda4..5ad7bbd 100644
+> --- a/drivers/firmware/efi/libstub/arm32-stub.c
+> +++ b/drivers/firmware/efi/libstub/arm32-stub.c
+> @@ -28,6 +28,8 @@ efi_status_t
+> check_platform_features(efi_system_table_t *sys_table_arg)
+>         return EFI_SUCCESS;
+>  }
+>
+> +void * foo = (void *)check_platform_features;
+> +
+>  static efi_guid_t screen_info_guid = LINUX_EFI_ARM_SCREEN_INFO_TABLE_GUID;
+>
+>  struct screen_info *alloc_screen_info(efi_system_table_t *sys_table_arg)
+> $ make ARCH=arm  CROSS_COMPILE=arm-linux-gnueabihf- defconfig
+> drivers/firmware/efi/libstub/
+> *** Default configuration is based on 'multi_v7_defconfig'
+> #
+> # configuration written to .config
+> #
+> scripts/kconfig/conf  --syncconfig Kconfig
+>   CALL    scripts/checksyscalls.sh
+>   CC      drivers/firmware/efi/libstub/arm32-stub.o
+>   STUBCPY drivers/firmware/efi/libstub/arm32-stub.stub.o
+> 00000000 R_ARM_ABS32       check_platform_features
+> drivers/firmware/efi/libstub/arm32-stub.stub.o: absolute symbol
+> references not allowed in the EFI stub
+> drivers/firmware/efi/libstub/Makefile:80: recipe for target
+> 'drivers/firmware/efi/libstub/arm32-stub.stub.o' failed
+> make[3]: *** [drivers/firmware/efi/libstub/arm32-stub.stub.o] Error 1
+> make[3]: *** Deleting file 'drivers/firmware/efi/libstub/arm32-stub.stub.o'
+> Makefile:1705: recipe for target 'drivers/firmware/efi/libstub/' failed
+> make[2]: *** [drivers/firmware/efi/libstub/] Error 2
+> /home/masahiro/workspace/bsp/linux/Makefile:300: recipe for target
+> '__build_one_by_one' failed
+> make[1]: *** [__build_one_by_one] Error 2
+> Makefile:160: recipe for target 'sub-make' failed
+> make: *** [sub-make] Error 2
+>
+>
+>
+>
+>
+> --
+> Best Regards
+> Masahiro Yamada
