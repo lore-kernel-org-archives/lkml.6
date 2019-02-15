@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13B2EC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:17:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9875FC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:18:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D77E720643
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:17:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F1C420643
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:18:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197078;
-	bh=P6oTV/QwRGzjSFuFBysJ8VA1f5yBs9LVx07x+NnfF6Y=;
+	s=default; t=1550197085;
+	bh=jrqR/ux9vwogeT1cZ9T3ECu1glJFLPgWI0hcgo4cOtM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gwrW5277nIiQ2ySYo+El+jPn/ciPn6fVUvNdASWGAainUboXfqqtPb4PccbFT7UcO
-	 OESZvliYhVriw62GmxS5EbZ6T32/ii1rvDk+kYLpAipu1dvNwbNBSep3t1fH/UU/yF
-	 F8bTg00wCs+DaMlDDCPbt09VVdEva1rV1byxRNcM=
+	b=Mncc1Uxc5r8JiFCT/pWZkpTW1wvRPtkXVZUnJt+JNCkHNFouISlTrCMGlgOBVYOBN
+	 X4dwxD760GDp90DxhXkQjjwN2sH8OdjmcZ9qoCdcH9y0bdFvPwhkSh81QKq6KmBqpY
+	 dnA59gK0GB7CgeRSiGRrNnFeKjeN98jwmDduStu4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392390AbfBOCR4 (ORCPT
+        id S2405948AbfBOCPv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:17:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55468 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:15:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405971AbfBOCPw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:15:52 -0500
+        id S2405933AbfBOCPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:15:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61A3E2229F;
-        Fri, 15 Feb 2019 02:15:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36D992229F;
+        Fri, 15 Feb 2019 02:15:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196952;
-        bh=P6oTV/QwRGzjSFuFBysJ8VA1f5yBs9LVx07x+NnfF6Y=;
+        s=default; t=1550196945;
+        bh=jrqR/ux9vwogeT1cZ9T3ECu1glJFLPgWI0hcgo4cOtM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aYGTjaz/7bzjGqTEltWji1Otk63VsQKTF0u/aCYFEMU51ChitO/LfgF3t6h5pm9da
-         Sk7t7znsfTqLYOCIIViZTFZfaXhq4U3VhchHt6Mq+bow6GQvjyPqsCNIOfVEZ6DHjw
-         cuB9pJ65EUM0y4kA2z9y8dPOMY6LxKktmH6NVCow=
+        b=PPTpUKtHzoahtQtxR6TiLBtkDxaw0Vc6Riw9Sgp70fZqYwHk7NYlXfjEQuKsq99uX
+         LpvvtGm8F6QDJFySQVhrFk9Mh8y32p9ZWj1aXbkMCR1hV08IX+PyENIsP456DAMwkj
+         +y36Hi19v89EvmgMSBIy7DYZLXLI9sIY/owZxxxo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Zeng Tao <prime.zeng@hisilicon.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 04/16] usb: dwc3: gadget: Fix the uninitialized link_state when udc starts
-Date:   Thu, 14 Feb 2019 21:15:34 -0500
-Message-Id: <20190215021546.179605-4-sashal@kernel.org>
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 20/20] KVM: nSVM: clear events pending from svm_complete_interrupts() when exiting to L1
+Date:   Thu, 14 Feb 2019 21:15:11 -0500
+Message-Id: <20190215021511.179333-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190215021546.179605-1-sashal@kernel.org>
-References: <20190215021546.179605-1-sashal@kernel.org>
+In-Reply-To: <20190215021511.179333-1-sashal@kernel.org>
+References: <20190215021511.179333-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -58,57 +57,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zeng Tao <prime.zeng@hisilicon.com>
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-[ Upstream commit 88b1bb1f3b88e0bf20b05d543a53a5b99bd7ceb6 ]
+[ Upstream commit 619ad846fc3452adaf71ca246c5aa711e2055398 ]
 
-Currently the link_state is uninitialized and the default value is 0(U0)
-before the first time we start the udc, and after we start the udc then
- stop the udc, the link_state will be undefined.
-We may have the following warnings if we start the udc again with
-an undefined link_state:
+kvm-unit-tests' eventinj "NMI failing on IDT" test results in NMI being
+delivered to the host (L1) when it's running nested. The problem seems to
+be: svm_complete_interrupts() raises 'nmi_injected' flag but later we
+decide to reflect EXIT_NPF to L1. The flag remains pending and we do NMI
+injection upon entry so it got delivered to L1 instead of L2.
 
-WARNING: CPU: 0 PID: 327 at drivers/usb/dwc3/gadget.c:294 dwc3_send_gadget_ep_cmd+0x304/0x308
-dwc3 100e0000.hidwc3_0: wakeup failed --> -22
-[...]
-Call Trace:
-[<c010f270>] (unwind_backtrace) from [<c010b3d8>] (show_stack+0x10/0x14)
-[<c010b3d8>] (show_stack) from [<c034a4dc>] (dump_stack+0x84/0x98)
-[<c034a4dc>] (dump_stack) from [<c0118000>] (__warn+0xe8/0x100)
-[<c0118000>] (__warn) from [<c0118050>](warn_slowpath_fmt+0x38/0x48)
-[<c0118050>] (warn_slowpath_fmt) from [<c0442ec0>](dwc3_send_gadget_ep_cmd+0x304/0x308)
-[<c0442ec0>] (dwc3_send_gadget_ep_cmd) from [<c0445e68>](dwc3_ep0_start_trans+0x48/0xf4)
-[<c0445e68>] (dwc3_ep0_start_trans) from [<c0446750>](dwc3_ep0_out_start+0x64/0x80)
-[<c0446750>] (dwc3_ep0_out_start) from [<c04451c0>](__dwc3_gadget_start+0x1e0/0x278)
-[<c04451c0>] (__dwc3_gadget_start) from [<c04452e0>](dwc3_gadget_start+0x88/0x10c)
-[<c04452e0>] (dwc3_gadget_start) from [<c045ee54>](udc_bind_to_driver+0x88/0xbc)
-[<c045ee54>] (udc_bind_to_driver) from [<c045f29c>](usb_gadget_probe_driver+0xf8/0x140)
-[<c045f29c>] (usb_gadget_probe_driver) from [<bf005424>](gadget_dev_desc_UDC_store+0xac/0xc4 [libcomposite])
-[<bf005424>] (gadget_dev_desc_UDC_store [libcomposite]) from[<c023d8e0>] (configfs_write_file+0xd4/0x160)
-[<c023d8e0>] (configfs_write_file) from [<c01d51e8>] (__vfs_write+0x1c/0x114)
-[<c01d51e8>] (__vfs_write) from [<c01d5ff4>] (vfs_write+0xa4/0x168)
-[<c01d5ff4>] (vfs_write) from [<c01d6d40>] (SyS_write+0x3c/0x90)
-[<c01d6d40>] (SyS_write) from [<c0107400>] (ret_fast_syscall+0x0/0x3c)
+It seems that VMX code solves the same issue in prepare_vmcs12(), this was
+introduced with code refactoring in commit 5f3d5799974b ("KVM: nVMX: Rework
+event injection and recovery").
 
-Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/dwc3/gadget.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kvm/svm.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index a1ab83769191..8daf7145b304 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -1641,6 +1641,7 @@ static int dwc3_gadget_start(struct usb_gadget *g,
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index ecdf724da371..415a30a74f9a 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -2388,6 +2388,14 @@ static int nested_svm_vmexit(struct vcpu_svm *svm)
+ 	kvm_mmu_reset_context(&svm->vcpu);
+ 	kvm_mmu_load(&svm->vcpu);
  
- 	/* begin to receive SETUP packets */
- 	dwc->ep0state = EP0_SETUP_PHASE;
-+	dwc->link_state = DWC3_LINK_STATE_SS_DIS;
- 	dwc3_ep0_out_start(dwc);
++	/*
++	 * Drop what we picked up for L2 via svm_complete_interrupts() so it
++	 * doesn't end up in L1.
++	 */
++	svm->vcpu.arch.nmi_injected = false;
++	kvm_clear_exception_queue(&svm->vcpu);
++	kvm_clear_interrupt_queue(&svm->vcpu);
++
+ 	return 0;
+ }
  
- 	dwc3_gadget_enable_irq(dwc);
 -- 
 2.19.1
 
