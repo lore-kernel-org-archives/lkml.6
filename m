@@ -4,52 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B7EC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:41:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B483FC10F04
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:41:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21E732192B
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:41:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 776F42192B
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:41:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550198491;
-	bh=Oeq7yqX15VgPc+LBpYeRDxiRoffITRc3K/P3etR9nbU=;
+	s=default; t=1550198496;
+	bh=FnN2b7tTqbakzSmyWd5wQwV4ibN1ySbrBIAZcvY/YHo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vM3QZrCev0oE7JFRnfScjkThsrwMZilgjkEGl9gHe8V1UU8yW5ADRIEW2LKrzjWvQ
-	 awXrKFi5xnT9FEng85VNFysyce02er1pna2DNvzMMc1gIDcUXdeYDPc9mI86FrRLlU
-	 n5ONkh8o2CPxbqbPCDlS/fsgD+TccBGkGLj4BSQk=
+	b=MPS8qDPDrboYURhXNGJwwzPn8sjOmTj8ytM9sa8gx3QrMBLnMY8/AvtIxmrAiuE+6
+	 ZnB3s/rMPC6tL03XyKwlpkRiMinfqwPPjRbD1ewVY/tHBt88sK7MNqZLLPBlsXcTSU
+	 zntgrX8QKaIMesqqfmDM6sw+t0bVXoNJhPYAd2cw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731698AbfBOCla (ORCPT
+        id S2388308AbfBOCJf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:41:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49798 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:09:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388137AbfBOCJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:09:38 -0500
+        id S2387940AbfBOCJd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:09:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C771E222C9;
-        Fri, 15 Feb 2019 02:09:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F504222D4;
+        Fri, 15 Feb 2019 02:09:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196578;
-        bh=Oeq7yqX15VgPc+LBpYeRDxiRoffITRc3K/P3etR9nbU=;
+        s=default; t=1550196572;
+        bh=FnN2b7tTqbakzSmyWd5wQwV4ibN1ySbrBIAZcvY/YHo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XNsM/dDMPCnCXKSyPccEKBm+mcIiywgzGmrVlYA0dUHFFqjrhvBFq/AaEtuTq7bLo
-         NeDTTcMbkYUDo00G8j9zlDonrL3QrXo9ttvnrX9pcsvAqeokAvfU6dljxFKmXCzkgB
-         TC31dOPWxt6at9Ls9MXVKzA7TUN3eB/XL8eTK8Fk=
+        b=MJpQRtEDP6/2EWZhDM/xtF4c+DrWcAYuTrbsTK6CrggQFBXUzkx5TN0A8JfcaIHpC
+         uQVWZVuDSiQm/V7EQEV2Rp5Zbr3ossjDPVW2vkPtobrMQhiiwqII8rJ+sidN42ibZ/
+         t4PCwtrIXounoLF5mP9zhl7cgKE5+vbVfqCH2WgA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Silvio Cesare <silvio.cesare@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Kees Cook <keescook@chromium.org>,
-        Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>,
-        Willy Tarreau <w@1wt.eu>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 24/77] ASoC: dapm: change snprintf to scnprintf for possible overflow
-Date:   Thu, 14 Feb 2019 21:08:02 -0500
-Message-Id: <20190215020855.176727-24-sashal@kernel.org>
+Cc:     Srinivas Ramana <sramana@codeaurora.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-msm@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 20/77] genirq: Make sure the initial affinity is not empty
+Date:   Thu, 14 Feb 2019 21:07:58 -0500
+Message-Id: <20190215020855.176727-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
 References: <20190215020855.176727-1-sashal@kernel.org>
@@ -61,83 +58,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Silvio Cesare <silvio.cesare@gmail.com>
+From: Srinivas Ramana <sramana@codeaurora.org>
 
-[ Upstream commit e581e151e965bf1f2815dd94620b638fec4d0a7e ]
+[ Upstream commit bddda606ec76550dd63592e32a6e87e7d32583f7 ]
 
-Change snprintf to scnprintf. There are generally two cases where using
-snprintf causes problems.
+If all CPUs in the irq_default_affinity mask are offline when an interrupt
+is initialized then irq_setup_affinity() can set an empty affinity mask for
+a newly allocated interrupt.
 
-1) Uses of size += snprintf(buf, SIZE - size, fmt, ...)
-In this case, if snprintf would have written more characters than what the
-buffer size (SIZE) is, then size will end up larger than SIZE. In later
-uses of snprintf, SIZE - size will result in a negative number, leading
-to problems. Note that size might already be too large by using
-size = snprintf before the code reaches a case of size += snprintf.
+Fix this by falling back to cpu_online_mask in case the resulting affinity
+mask is zero.
 
-2) If size is ultimately used as a length parameter for a copy back to user
-space, then it will potentially allow for a buffer overflow and information
-disclosure when size is greater than SIZE. When the size is used to index
-the buffer directly, we can have memory corruption. This also means when
-size = snprintf... is used, it may also cause problems since size may become
-large.  Copying to userspace is mitigated by the HARDENED_USERCOPY kernel
-configuration.
-
-The solution to these issues is to use scnprintf which returns the number of
-characters actually written to the buffer, so the size variable will never
-exceed SIZE.
-
-Signed-off-by: Silvio Cesare <silvio.cesare@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Greg KH <greg@kroah.com>
-Signed-off-by: Willy Tarreau <w@1wt.eu>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Srinivas Ramana <sramana@codeaurora.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-arm-msm@vger.kernel.org
+Link: https://lkml.kernel.org/r/1545312957-8504-1-git-send-email-sramana@codeaurora.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/soc-dapm.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ kernel/irq/manage.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index a5178845065b..2c4c13419539 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -2019,19 +2019,19 @@ static ssize_t dapm_widget_power_read_file(struct file *file,
- 		out = is_connected_output_ep(w, NULL, NULL);
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index 9dbdccab3b6a..5c0ba5ca5930 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -393,6 +393,9 @@ int irq_setup_affinity(struct irq_desc *desc)
  	}
  
--	ret = snprintf(buf, PAGE_SIZE, "%s: %s%s  in %d out %d",
-+	ret = scnprintf(buf, PAGE_SIZE, "%s: %s%s  in %d out %d",
- 		       w->name, w->power ? "On" : "Off",
- 		       w->force ? " (forced)" : "", in, out);
+ 	cpumask_and(&mask, cpu_online_mask, set);
++	if (cpumask_empty(&mask))
++		cpumask_copy(&mask, cpu_online_mask);
++
+ 	if (node != NUMA_NO_NODE) {
+ 		const struct cpumask *nodemask = cpumask_of_node(node);
  
- 	if (w->reg >= 0)
--		ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 				" - R%d(0x%x) mask 0x%x",
- 				w->reg, w->reg, w->mask << w->shift);
- 
--	ret += snprintf(buf + ret, PAGE_SIZE - ret, "\n");
-+	ret += scnprintf(buf + ret, PAGE_SIZE - ret, "\n");
- 
- 	if (w->sname)
--		ret += snprintf(buf + ret, PAGE_SIZE - ret, " stream %s %s\n",
-+		ret += scnprintf(buf + ret, PAGE_SIZE - ret, " stream %s %s\n",
- 				w->sname,
- 				w->active ? "active" : "inactive");
- 
-@@ -2044,7 +2044,7 @@ static ssize_t dapm_widget_power_read_file(struct file *file,
- 			if (!p->connect)
- 				continue;
- 
--			ret += snprintf(buf + ret, PAGE_SIZE - ret,
-+			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
- 					" %s  \"%s\" \"%s\"\n",
- 					(rdir == SND_SOC_DAPM_DIR_IN) ? "in" : "out",
- 					p->name ? p->name : "static",
 -- 
 2.19.1
 
