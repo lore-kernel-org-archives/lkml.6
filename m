@@ -2,68 +2,118 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A97DC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:10:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 934FAC10F02
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:10:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D69A021A80
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:10:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C50421B1A
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:10:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393570AbfBOKKS (ORCPT
+        id S2393612AbfBOKKV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 05:10:18 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:44362 "EHLO inva021.nxp.com"
+        Fri, 15 Feb 2019 05:10:21 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:55360 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726122AbfBOKKS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 05:10:18 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 09B5D200114;
+        id S1726220AbfBOKKT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 05:10:19 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 877A71A0056;
         Fri, 15 Feb 2019 11:10:16 +0100 (CET)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id F198220003F;
-        Fri, 15 Feb 2019 11:10:15 +0100 (CET)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 78EE41A00C2;
+        Fri, 15 Feb 2019 11:10:16 +0100 (CET)
 Received: from fsr-ub1664-016.ea.freescale.net (fsr-ub1664-016.ea.freescale.net [10.171.71.216])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 56A9C205EC;
-        Fri, 15 Feb 2019 11:10:15 +0100 (CET)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 13DDC205EC;
+        Fri, 15 Feb 2019 11:10:16 +0100 (CET)
 From:   Claudiu Manoil <claudiu.manoil@nxp.com>
 To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
         "David S . Miller" <davem@davemloft.net>
 Cc:     alexandru.marginean@nxp.com, linux-arm-kernel@lists.infradead.org,
         devicetree@vger.kernel.org, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH net-next v2 0/3] enetc: Add mdio support and device tree nodes
-Date:   Fri, 15 Feb 2019 12:10:11 +0200
-Message-Id: <1550225414-12125-1-git-send-email-claudiu.manoil@nxp.com>
+Subject: [PATCH net-next v2 1/3] arm64: dts: fsl: ls1028a: Add PCI IERC node and ENETC endpoints
+Date:   Fri, 15 Feb 2019 12:10:12 +0200
+Message-Id: <1550225414-12125-2-git-send-email-claudiu.manoil@nxp.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1550225414-12125-1-git-send-email-claudiu.manoil@nxp.com>
+References: <1550225414-12125-1-git-send-email-claudiu.manoil@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the missing part to enable PCI probing of the ENETC ethernet
-ports on the LS1028A SoC and external traffic on the LS1028A RDB board.
-It's one of the first items on the TODO list for the recently merged
-ENETC ethernet driver.
+The LS1028A SoC features a PCI Integrated Endpoint Root Complex
+(IERC) defining several integrated PCI devices, including the ENETC
+ethernet controller integrated endpoints (IEPs). The IERC implements
+ECAM (Enhanced Configuration Access Mechanism) to provide access
+to the PCIe config space of the IEPs. This means the the IEPs
+(including ENETC) do not support the standard PCIe BARs, instead
+the Enhanced Allocation (EA) capability structures in the ECAM space
+are used to fix the base addresses in the system, and the PCI
+subsystem uses these structures for device enumeration and discovery.
+The "ranges" entries contain basic information from these EA capabily
+structures required by the kernel for device enumeration.
 
-Claudiu Manoil (3):
-  arm64: dts: fsl: ls1028a: Add PCI IERC node and ENETC endpoints
-  arm64: dts: fsl: ls1028a-rdb: Add ENETC external eth ports for the
-    LS1028A RDB board
-  enetc: Add ENETC PF level external MDIO support
+The current patch also enables the first 2 ENETC PFs (Physiscal
+Functions) and the associated VFs (Virtual Functions), 2 VFs for
+each PF.  Each of these ENETC PFs has an external ethernet port
+on the LS1028A SoC.
 
- arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts |  17 ++
- arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi    |  33 ++++
- drivers/net/ethernet/freescale/enetc/Makefile     |   3 +-
- drivers/net/ethernet/freescale/enetc/enetc_mdio.c | 199 ++++++++++++++++++++++
- drivers/net/ethernet/freescale/enetc/enetc_pf.c   |  12 ++
- drivers/net/ethernet/freescale/enetc/enetc_pf.h   |   6 +
- 6 files changed, 269 insertions(+), 1 deletion(-)
- create mode 100644 drivers/net/ethernet/freescale/enetc/enetc_mdio.c
+Signed-off-by: Alex Marginean <alexandru.marginean@nxp.com>
+Signed-off-by: Claudiu Manoil <claudiu.manoil@nxp.com>
+---
+v2 - none
 
+ arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 33 ++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+index a8cf92a..7f5a8e6 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+@@ -335,5 +335,38 @@
+ 				     <GIC_SPI 206 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 207 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>, <GIC_SPI 209 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
++
++		pcie@1f0000000 { /* Integrated Endpoint Root Complex */
++			compatible = "pci-host-ecam-generic";
++			reg = <0x01 0xf0000000 0x0 0x100000>;
++			#address-cells = <3>;
++			#size-cells = <2>;
++			#interrupt-cells = <1>;
++			msi-parent = <&its>;
++			device_type = "pci";
++			bus-range = <0x0 0x0>;
++			dma-coherent;
++			msi-map = <0 &its 0x17 0xe>;
++			iommu-map = <0 &smmu 0x17 0xe>;
++				  /* PF0-6 BAR0 - non-prefetchable memory */
++			ranges = <0x82000000 0x0 0x00000000  0x1 0xf8000000  0x0 0x160000
++				  /* PF0-6 BAR2 - prefetchable memory */
++				  0xc2000000 0x0 0x00000000  0x1 0xf8160000  0x0 0x070000
++				  /* PF0: VF0-1 BAR0 - non-prefetchable memory */
++				  0x82000000 0x0 0x00000000  0x1 0xf81d0000  0x0 0x020000
++				  /* PF0: VF0-1 BAR2 - prefetchable memory */
++				  0xc2000000 0x0 0x00000000  0x1 0xf81f0000  0x0 0x020000
++				  /* PF1: VF0-1 BAR0 - non-prefetchable memory */
++				  0x82000000 0x0 0x00000000  0x1 0xf8210000  0x0 0x020000
++				  /* PF1: VF0-1 BAR2 - prefetchable memory */
++				  0xc2000000 0x0 0x00000000  0x1 0xf8230000  0x0 0x020000>;
++
++			enetc_port0: pci@0,0 {
++				reg = <0x000000 0 0 0 0>;
++			};
++			enetc_port1: pci@0,1 {
++				reg = <0x000100 0 0 0 0>;
++			};
++		};
+ 	};
+ };
 -- 
 2.7.4
 
