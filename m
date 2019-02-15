@@ -2,120 +2,142 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1568C10F09
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F39C3C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:48:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B26E222F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:40:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="F46UDRvV"
+	by mail.kernel.org (Postfix) with ESMTP id C858220675
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:48:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405094AbfBOJkE (ORCPT
+        id S2393402AbfBOJsE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:40:04 -0500
-Received: from conuserg-12.nifty.com ([210.131.2.79]:28898 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405074AbfBOJkD (ORCPT
+        Fri, 15 Feb 2019 04:48:04 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:47759 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390106AbfBOJsD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 04:40:03 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id x1F9cjfD023550;
-        Fri, 15 Feb 2019 18:38:45 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x1F9cjfD023550
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1550223525;
-        bh=CBamstatH6SEE8PkWAfApJMSUCvf06iKMWQVXEv6Ou4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=F46UDRvVm7YksAnE4Oui19Xld7f5miS164qgKp5ux/DJJOv8ypGdOg8waEhgdRm01
-         CA00J8OR8WADqiOGzzFfDIfz4QsEa4QA86HFEnxmkNOok2mI0CWDOXnUrt4lgFpnPs
-         PEl3CfjKBdQma0RWR/6N5+zvxL/cmR9EzDUAg9Frar4oo6FBVl5W54CZgNh5aulO/U
-         vYW1w7LPYuuj8nr6qx/f2pbPMPN9+7aanLbHdx0rWUxoxRq15bQEOWRvJn3ckSZM3b
-         NfnAbrk3v4M6cPfrIti68xhAh9wfq6ryLQfNL30JesTZQAPQ8KNQ4FXCSNtM6Oi+CB
-         VwrZEIBe2w8JA==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linuxppc-dev@lists.ozlabs.org,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] powerpc: use $(origin ARCH) to select KBUILD_DEFCONFIG
-Date:   Fri, 15 Feb 2019 18:38:39 +0900
-Message-Id: <1550223519-18290-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 15 Feb 2019 04:48:03 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1F9lpOw1121102
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Fri, 15 Feb 2019 01:47:51 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1F9louh1121099;
+        Fri, 15 Feb 2019 01:47:50 -0800
+Date:   Fri, 15 Feb 2019 01:47:50 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-d0bfbedad72b74f93b028c26474acba1ba3d73ed@git.kernel.org>
+Cc:     namhyung@kernel.org, tglx@linutronix.de, jolsa@kernel.org,
+        linux-kernel@vger.kernel.org, acme@redhat.com,
+        peterz@infradead.org, mingo@kernel.org,
+        alexander.shishkin@linux.intel.com, hpa@zytor.com
+Reply-To: tglx@linutronix.de, jolsa@kernel.org, namhyung@kernel.org,
+          acme@redhat.com, linux-kernel@vger.kernel.org, mingo@kernel.org,
+          peterz@infradead.org, hpa@zytor.com,
+          alexander.shishkin@linux.intel.com
+In-Reply-To: <20190213123246.4015-2-jolsa@kernel.org>
+References: <20190213123246.4015-2-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf tools: Compile perf with libperf-in.o instead
+ of libperf.a
+Git-Commit-ID: d0bfbedad72b74f93b028c26474acba1ba3d73ed
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I often test all Kconfig commands for all architectures. To ease my
-workflow, I want 'make defconfig' at least working without any cross
-compiler.
+Commit-ID:  d0bfbedad72b74f93b028c26474acba1ba3d73ed
+Gitweb:     https://git.kernel.org/tip/d0bfbedad72b74f93b028c26474acba1ba3d73ed
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Wed, 13 Feb 2019 13:32:37 +0100
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 14 Feb 2019 15:18:08 -0300
 
-Currently, arch/powerpc/Makefile checks CROSS_COMPILE to decide the
-default defconfig source.
+perf tools: Compile perf with libperf-in.o instead of libperf.a
 
-If CROSS_COMPILE is unset, it is likely to be the native build, so
-'uname -m' is useful to choose the defconfig. If CROSS_COMPILE is set,
-the user is cross-building (i.e. 'uname -m' is probably x86_64), so
-it falls back to ppc64_defconfig. Yup, make sense.
+There's no need for perf build to use libperf.a,
+we can use directly libperf-in.o.
 
-However, I want to run 'make ARCH=* defconfig' without setting
-CROSS_COMPILE for each architecture.
+The libperf.a stays as a target if needed:
 
-My suggestion is to check $(origin ARCH).
+  $ make libperf.a
+  ...
+    CC       util/pmu.o
+    CC       util/pmu-flex.o
+    LD       util/libperf-in.o
+    LD       libperf-in.o
+    AR       libperf.a
 
-When you cross-compile the kernel, you need to set ARCH from your
-environment or from the command line.
-
-For the native build, you do not need to set ARCH. The default in
-the top Makefile is used:
-
-  ARCH            ?= $(SUBARCH)
-
-Hence, $(origin ARCH) returns 'file'.
-
-Before this commit, 'make ARCH=powerpc defconfig' failed:
-
-  $ make ARCH=powerpc defconfig
-  *** Default configuration is based on target 'x86_64_defconfig'
-  ***
-  *** Can't find default configuration "arch/powerpc/configs/x86_64_defconfig"!
-  ***
-
-After this commit, it will succeed:
-
-  $ make ARCH=powerpc defconfig
-  *** Default configuration is based on 'ppc64_defconfig'
-  #
-  # configuration written to .config
-  #
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/20190213123246.4015-2-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
+ tools/perf/Makefile.perf | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
- arch/powerpc/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
-index ac03334..f989979 100644
---- a/arch/powerpc/Makefile
-+++ b/arch/powerpc/Makefile
-@@ -34,7 +34,7 @@ ifdef CONFIG_PPC_BOOK3S_32
- KBUILD_CFLAGS		+= -mcpu=powerpc
- endif
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index c2ccc54618d1..93de7c7b8007 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -346,7 +346,7 @@ export PERL_PATH
  
--ifeq ($(CROSS_COMPILE),)
-+ifeq ($(origin ARCH), file)
- KBUILD_DEFCONFIG := $(shell uname -m)_defconfig
- else
- KBUILD_DEFCONFIG := ppc64_defconfig
--- 
-2.7.4
-
+ LIB_FILE=$(OUTPUT)libperf.a
+ 
+-PERFLIBS = $(LIB_FILE) $(LIBAPI) $(LIBTRACEEVENT) $(LIBSUBCMD)
++PERFLIBS = $(LIBAPI) $(LIBTRACEEVENT) $(LIBSUBCMD)
+ ifndef NO_LIBBPF
+   PERFLIBS += $(LIBBPF)
+ endif
+@@ -549,6 +549,8 @@ JEVENTS_IN    := $(OUTPUT)pmu-events/jevents-in.o
+ 
+ PMU_EVENTS_IN := $(OUTPUT)pmu-events/pmu-events-in.o
+ 
++LIBPERF_IN := $(OUTPUT)libperf-in.o
++
+ export JEVENTS
+ 
+ build := -f $(srctree)/tools/build/Makefile.build dir=. obj
+@@ -565,9 +567,12 @@ $(JEVENTS): $(JEVENTS_IN)
+ $(PMU_EVENTS_IN): $(JEVENTS) FORCE
+ 	$(Q)$(MAKE) -f $(srctree)/tools/build/Makefile.build dir=pmu-events obj=pmu-events
+ 
+-$(OUTPUT)perf: $(PERFLIBS) $(PERF_IN) $(PMU_EVENTS_IN) $(LIBTRACEEVENT_DYNAMIC_LIST)
++$(LIBPERF_IN): prepare FORCE
++	$(Q)$(MAKE) $(build)=libperf
++
++$(OUTPUT)perf: $(PERFLIBS) $(PERF_IN) $(PMU_EVENTS_IN) $(LIBPERF_IN) $(LIBTRACEEVENT_DYNAMIC_LIST)
+ 	$(QUIET_LINK)$(CC) $(CFLAGS) $(LDFLAGS) $(LIBTRACEEVENT_DYNAMIC_LIST_LDFLAGS) \
+-		$(PERF_IN) $(PMU_EVENTS_IN) $(LIBS) -o $@
++		$(PERF_IN) $(PMU_EVENTS_IN) $(LIBPERF_IN) $(LIBS) -o $@
+ 
+ $(GTK_IN): FORCE
+ 	$(Q)$(MAKE) $(build)=gtk
+@@ -683,11 +688,6 @@ endif
+ 
+ $(patsubst perf-%,%.o,$(PROGRAMS)): $(wildcard */*.h)
+ 
+-LIBPERF_IN := $(OUTPUT)libperf-in.o
+-
+-$(LIBPERF_IN): prepare FORCE
+-	$(Q)$(MAKE) $(build)=libperf
+-
+ $(LIB_FILE): $(LIBPERF_IN)
+ 	$(QUIET_AR)$(RM) $@ && $(AR) rcs $@ $(LIBPERF_IN) $(LIB_OBJS)
+ 
