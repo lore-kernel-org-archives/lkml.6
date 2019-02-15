@@ -3,96 +3,67 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3589DC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:51:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD59C10F02
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:52:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11C8F2192D
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:51:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B15521929
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:52:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394563AbfBOLvI (ORCPT
+        id S2404403AbfBOLwB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 06:51:08 -0500
-Received: from olimex.com ([184.105.72.32]:42902 "EHLO olimex.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2394528AbfBOLu6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 06:50:58 -0500
-Received: from localhost.localdomain ([195.238.85.143])
-        by olimex.com with ESMTPSA (ECDHE-RSA-AES128-GCM-SHA256:TLSv1.2:Kx=ECDH:Au=RSA:Enc=AESGCM(128):Mac=AEAD) (SMTP-AUTH username stefan@olimex.com, mechanism PLAIN)
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 03:50:51 -0800
-From:   Stefan Mavrodiev <stefan@olimex.com>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-leds@vger.kernel.org (open list:LED SUBSYSTEM),
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE BINDINGS),
-        linux-kernel@vger.kernel.org (open list:X-POWERS MULTIFUNCTION PMIC
-        DEVICE DRIVERS),
-        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Allwinner
-        sunXi SoC support)
-Cc:     Stefan Mavrodiev <stefan@olimex.com>
-Subject: [PATCH v2 5/8] arm64: dts: allwinner: Enable AXP803 CHGLED for Olimex boards
-Date:   Fri, 15 Feb 2019 13:50:10 +0200
-Message-Id: <20190215115013.11098-6-stefan@olimex.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190215115013.11098-1-stefan@olimex.com>
-References: <20190215115013.11098-1-stefan@olimex.com>
+        Fri, 15 Feb 2019 06:52:01 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:57078 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728829AbfBOLwB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 06:52:01 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id C60D9268E18
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+        Rob Herring <robh+dt@kernel.org>, kernel@collabora.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] ARM: dts: rockchip: add chosen node on veyron chromebooks
+Date:   Fri, 15 Feb 2019 12:51:50 +0100
+Message-Id: <20190215115150.32299-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Teres-I and A64-OLinuXino commes with populated LED connected
-to AXP803. So to be used as battery indication, pass the LED control
-to the charger itself in mode 0 ( FULL while charging, OFF no battery
-or completed).
+In order to use earlycon, the stdout-path property needs to be set
+in the chosen node.
 
-Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts | 6 ++++++
- arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts   | 6 ++++++
- 2 files changed, 12 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-index f7a4bccaa5d4..7d6930319fba 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-olinuxino.dts
-@@ -177,6 +177,12 @@
+ arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi b/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi
+index b54746df3661..8890967ed572 100644
+--- a/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi
++++ b/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi
+@@ -62,6 +62,10 @@
+ 		pwm-off-delay-ms = <10>;
+ 	};
  
- #include "axp803.dtsi"
- 
-+&axp_led {
-+	label = "a64-olinuxino:yellow:chgled";
-+	status = "okay";
-+	x-powers,charger-mode = <0>;
-+};
++	chosen {
++		stdout-path = "serial2:115200n8";
++	};
 +
- &reg_aldo1 {
- 	regulator-always-on;
- 	regulator-min-microvolt = <2800000>;
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
-index c455b24dd079..cdffdd4e4561 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-teres-i.dts
-@@ -145,6 +145,12 @@
- 
- #include "axp803.dtsi"
- 
-+&axp_led {
-+	label = "teres-i:yellow:chgled";
-+	status = "okay";
-+	x-powers,charger-mode = <0>;
-+};
-+
- &reg_aldo1 {
- 	regulator-always-on;
- 	regulator-min-microvolt = <2800000>;
+ 	gpio-charger {
+ 		compatible = "gpio-charger";
+ 		charger-type = "mains";
 -- 
-2.17.1
+2.20.1
 
