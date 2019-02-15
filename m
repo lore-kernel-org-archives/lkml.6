@@ -2,91 +2,96 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14390C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:33:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B168C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:33:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD15D21917
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:33:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C9AD2192C
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:33:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393328AbfBOJcz (ORCPT
+        id S2393303AbfBOJcy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:32:55 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:57432 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2392921AbfBOJcp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 04:32:45 -0500
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 14957FCCEA54204A65D3;
-        Fri, 15 Feb 2019 17:32:43 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Fri, 15 Feb 2019
- 17:32:34 +0800
-Subject: Re: [PATCH v2] staging: erofs: keep corrupted fs from crashing kernel
- in erofs_namei()
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-CC:     Gao Xiang <gaoxiang25@huawei.com>,
-        Al Viro <viro@ZenIV.linux.org.uk>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>, <linux-erofs@lists.ozlabs.org>,
-        Chao Yu <chao@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>, <weidu.du@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>, Miao Xie <miaoxie@huawei.com>
-References: <20190201121631.15179-1-gaoxiang25@huawei.com>
- <a9381c0d-9857-4d03-710d-80006d426bbc@huawei.com>
- <20190215075757.GG2326@kadam>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <fb99bac2-2587-04fa-6ac2-f2e5f83af7c9@huawei.com>
-Date:   Fri, 15 Feb 2019 17:32:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 15 Feb 2019 04:32:54 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:45761 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392868AbfBOJcl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 04:32:41 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1F9WLYl1116732
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Fri, 15 Feb 2019 01:32:21 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1F9WLB91116727;
+        Fri, 15 Feb 2019 01:32:21 -0800
+Date:   Fri, 15 Feb 2019 01:32:21 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Song Liu <tipbot@zytor.com>
+Message-ID: <tip-39f4a913d6d439178177cae8aa2e9a232160fd51@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, songliubraving@fb.com, hpa@zytor.com,
+        jolsa@kernel.org, davidca@fb.com, acme@redhat.com,
+        tglx@linutronix.de, mingo@kernel.org
+Reply-To: mingo@kernel.org, tglx@linutronix.de, acme@redhat.com,
+          davidca@fb.com, jolsa@kernel.org, songliubraving@fb.com,
+          hpa@zytor.com, linux-kernel@vger.kernel.org
+In-Reply-To: <20190204193140.719740-1-songliubraving@fb.com>
+References: <20190204193140.719740-1-songliubraving@fb.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf utils: Silence "Couldn't synthesize bpf
+ events" warning for EPERM
+Git-Commit-ID: 39f4a913d6d439178177cae8aa2e9a232160fd51
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-In-Reply-To: <20190215075757.GG2326@kadam>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/2/15 15:57, Dan Carpenter wrote:
-> On Fri, Feb 15, 2019 at 03:02:25PM +0800, Chao Yu wrote:
->> On 2019/2/1 20:16, Gao Xiang wrote:
->>> +	/*
->>> +	 * on-disk error, let's only BUG_ON in the debugging mode.
->>> +	 * otherwise, it will return 1 to just skip the invalid name
->>> +	 * and go on (in consideration of the lookup performance).
->>> +	 */
->>> +	DBG_BUGON(qd->name > qd->end);
->>
->> qd->name == qd->end is not allowed as well?
->>
->> So will it be better to return directly here?
->>
->> 	if (unlikely(qd->name >= qd->end)) {
->> 		DBG_BUGON(1);
->> 		return 1;
->> 	}
-> 
-> Please don't add likely/unlikely() annotations unless you have
-> benchmarked it and it makes a difference.
+Commit-ID:  39f4a913d6d439178177cae8aa2e9a232160fd51
+Gitweb:     https://git.kernel.org/tip/39f4a913d6d439178177cae8aa2e9a232160fd51
+Author:     Song Liu <songliubraving@fb.com>
+AuthorDate: Mon, 4 Feb 2019 11:31:40 -0800
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 14 Feb 2019 13:31:11 -0300
 
-Well, it only occur for corrupted image, since the image is readonly, so it
-is really rare.
+perf utils: Silence "Couldn't synthesize bpf events" warning for EPERM
 
-Thanks,
+Synthesizing BPF events is only supported for root. Silent warning msg
+when non-root user runs perf-record.
 
-> 
-> regards,
-> dan carpenter
-> 
-> 
-> 
-> .
-> 
+Reported-by: David Carrillo-Cisneros <davidca@fb.com>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Tested-by: David Carrillo-Cisneros <davidca@fb.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: kernel-team@fb.com
+Link: http://lkml.kernel.org/r/20190204193140.719740-1-songliubraving@fb.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/bpf-event.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
+index 796ef793f4ce..62dda96b0096 100644
+--- a/tools/perf/util/bpf-event.c
++++ b/tools/perf/util/bpf-event.c
+@@ -236,8 +236,8 @@ int perf_event__synthesize_bpf_events(struct perf_tool *tool,
+ 			pr_debug("%s: can't get next program: %s%s",
+ 				 __func__, strerror(errno),
+ 				 errno == EINVAL ? " -- kernel too old?" : "");
+-			/* don't report error on old kernel */
+-			err = (errno == EINVAL) ? 0 : -1;
++			/* don't report error on old kernel or EPERM  */
++			err = (errno == EINVAL || errno == EPERM) ? 0 : -1;
+ 			break;
+ 		}
+ 		fd = bpf_prog_get_fd_by_id(id);
