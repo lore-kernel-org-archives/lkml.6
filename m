@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30FE5C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:14:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE41C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:14:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E80FF20643
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:14:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA42F2229F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:14:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196865;
-	bh=QfBeoIo4fJRRq2xsWFQzkYWNIKcoYDuRKbc1UkDc3KI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0PXsqBMR2IekJvg/IchBoRl1Uy3cMVNAJC261blrQeB/w9gWSlER2lq8Iv27n9f7I
-	 cfO4z+Yd6WZEG1q3dG2upqzos/cHEPewMFEULZf/TUDxxaSUrh0ITKmqEMueoOLLYj
-	 K3APnyrZVn0XUtlhpT5t5+MA1sYe1rJSLUfopD6A=
+	s=default; t=1550196875;
+	bh=5F2en0vHYqnBs2wWXh+UZNY9VuQn//bJvl+yer0npGw=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=Izi7wOFXEh5yUgWex+/OB1nYVh1c0ciwKTJPAFudwDTPLQhCdiSfoIwMFWQdNHlPD
+	 Cz1g8mmyboTaGcA7HUzqEkaAk+z3M+CSvGREad7s6+94QtM1gsvr5VCFzh5wC5kAyb
+	 TKw1512b3ijvQlberB7nfshhVwB6C9DFKwMwCKcw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391670AbfBOCOX (ORCPT
+        id S2391824AbfBOCOd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:14:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54230 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:14:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54366 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391589AbfBOCOU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:14:20 -0500
+        id S2391726AbfBOCO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:14:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 866F020643;
-        Fri, 15 Feb 2019 02:14:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 197A820643;
+        Fri, 15 Feb 2019 02:14:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196859;
-        bh=QfBeoIo4fJRRq2xsWFQzkYWNIKcoYDuRKbc1UkDc3KI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dsIuvzKS+w6S5RGN4l8ShXWV8K91NmoUH4hCKeDBMowUjBQLuYRdcOKmtr0l+N1dn
-         3c2uN3jtptn81Wr1hYz+PEGSh3RnTjLRgCtEnsCPjpiUG7He14TcEsCUzFclR6Qnk8
-         eloXkZ+daqy6nqLV1Wjz97O4QLIPRV2i1TEDBkbc=
+        s=default; t=1550196867;
+        bh=5F2en0vHYqnBs2wWXh+UZNY9VuQn//bJvl+yer0npGw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=j6bLLKCkNLlc1g9LxoA7Xm5neAB/zHRzPAmJuEpy8djniD6J5SGJvYOWsF1CxZs20
+         a2rDD1661vaj7nAZQlSnMyl36U17ojJJX0O4GHWh+DX4Ej941wDXHiraE2mrB1w95R
+         WuvK6LuP4tZnW7IlWbvRGNL+qL5RGOOBkLkN+G5w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Balaji Pothunoori <bpothuno@codeaurora.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 36/40] mac80211: don't initiate TDLS connection if station is not associated to AP
-Date:   Thu, 14 Feb 2019 21:13:09 -0500
-Message-Id: <20190215021313.178476-36-sashal@kernel.org>
+Cc:     "Kristian H. Kristensen" <hoegsberg@gmail.com>,
+        "Kristian H . Kristensen" <hoegsberg@chromium.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.9 01/27] drm/msm: Unblock writer if reader closes file
+Date:   Thu, 14 Feb 2019 21:13:58 -0500
+Message-Id: <20190215021424.178979-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190215021313.178476-1-sashal@kernel.org>
-References: <20190215021313.178476-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -58,56 +58,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Balaji Pothunoori <bpothuno@codeaurora.org>
+From: "Kristian H. Kristensen" <hoegsberg@gmail.com>
 
-[ Upstream commit 7ed5285396c257fd4070b1e29e7b2341aae2a1ce ]
+[ Upstream commit 99c66bc051e7407fe0bf0607b142ec0be1a1d1dd ]
 
-Following call trace is observed while adding TDLS peer entry in driver
-during TDLS setup.
+Prevents deadlock when fifo is full and reader closes file.
 
-Call Trace:
-[<c1301476>] dump_stack+0x47/0x61
-[<c10537d2>] __warn+0xe2/0x100
-[<fa22415f>] ? sta_apply_parameters+0x49f/0x550 [mac80211]
-[<c1053895>] warn_slowpath_null+0x25/0x30
-[<fa22415f>] sta_apply_parameters+0x49f/0x550 [mac80211]
-[<fa20ad42>] ? sta_info_alloc+0x1c2/0x450 [mac80211]
-[<fa224623>] ieee80211_add_station+0xe3/0x160 [mac80211]
-[<c1876fe3>] nl80211_new_station+0x273/0x420
-[<c170f6d9>] genl_rcv_msg+0x219/0x3c0
-[<c170f4c0>] ? genl_rcv+0x30/0x30
-[<c170ee7e>] netlink_rcv_skb+0x8e/0xb0
-[<c170f4ac>] genl_rcv+0x1c/0x30
-[<c170e8aa>] netlink_unicast+0x13a/0x1d0
-[<c170ec18>] netlink_sendmsg+0x2d8/0x390
-[<c16c5acd>] sock_sendmsg+0x2d/0x40
-[<c16c6369>] ___sys_sendmsg+0x1d9/0x1e0
-
-Fixing this by allowing TDLS setup request only when we have completed
-association.
-
-Signed-off-by: Balaji Pothunoori <bpothuno@codeaurora.org>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Kristian H. Kristensen <hoegsberg@chromium.org>
+Signed-off-by: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/cfg.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/msm/msm_rd.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
-index 63558335e41e..2b9af644c0e2 100644
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@ -1462,6 +1462,10 @@ static int ieee80211_add_station(struct wiphy *wiphy, struct net_device *dev,
- 	if (params->sta_flags_set & BIT(NL80211_STA_FLAG_TDLS_PEER))
- 		sta->sta.tdls = true;
+diff --git a/drivers/gpu/drm/msm/msm_rd.c b/drivers/gpu/drm/msm/msm_rd.c
+index 8487f461f05f..4823019eb422 100644
+--- a/drivers/gpu/drm/msm/msm_rd.c
++++ b/drivers/gpu/drm/msm/msm_rd.c
+@@ -112,7 +112,9 @@ static void rd_write(struct msm_rd_state *rd, const void *buf, int sz)
+ 		char *fptr = &fifo->buf[fifo->head];
+ 		int n;
  
-+	if (sta->sta.tdls && sdata->vif.type == NL80211_IFTYPE_STATION &&
-+	    !sdata->u.mgd.associated)
-+		return -EINVAL;
+-		wait_event(rd->fifo_event, circ_space(&rd->fifo) > 0);
++		wait_event(rd->fifo_event, circ_space(&rd->fifo) > 0 || !rd->open);
++		if (!rd->open)
++			return;
+ 
+ 		n = min(sz, circ_space_to_end(&rd->fifo));
+ 		memcpy(fptr, ptr, n);
+@@ -202,7 +204,10 @@ static int rd_open(struct inode *inode, struct file *file)
+ static int rd_release(struct inode *inode, struct file *file)
+ {
+ 	struct msm_rd_state *rd = inode->i_private;
 +
- 	err = sta_apply_parameters(local, sta, params);
- 	if (err) {
- 		sta_info_free(local, sta);
+ 	rd->open = false;
++	wake_up_all(&rd->fifo_event);
++
+ 	return 0;
+ }
+ 
 -- 
 2.19.1
 
