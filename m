@@ -3,92 +3,203 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A421AC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:36:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B5CC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:41:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AB482192B
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:36:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1090B2075C
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 12:41:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728479AbfBOMg3 (ORCPT
+        id S2387773AbfBOMlH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 07:36:29 -0500
-Received: from mgwkm04.jp.fujitsu.com ([202.219.69.171]:46030 "EHLO
-        mgwkm04.jp.fujitsu.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726174AbfBOMg3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 07:36:29 -0500
-Received: from ttb-m4.gw.nic.fujitsu.com (unknown [192.168.231.162]) by mgwkm04.jp.fujitsu.com with smtp
-         id 756f_1180_22ce9f1c_d779_4849_9e69_b9550396eb45;
-        Fri, 15 Feb 2019 21:36:26 +0900
-Received: from g01jpfmpwkw01.exch.g01.fujitsu.local (g01jpfmpwkw01.exch.g01.fujitsu.local [10.0.193.38])
-        by ttb-m4.gw.nic.fujitsu.com (Postfix) with ESMTP id 1232C40C0423
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 21:37:06 +0900 (JST)
-Received: from G01JPEXCHKW13.g01.fujitsu.local (G01JPEXCHKW13.g01.fujitsu.local [10.0.194.52])
-        by g01jpfmpwkw01.exch.g01.fujitsu.local (Postfix) with ESMTP id 02FAA692668;
-        Fri, 15 Feb 2019 21:36:25 +0900 (JST)
-Received: from G01JPEXMBKW03.g01.fujitsu.local ([10.0.194.67]) by
- g01jpexchkw13 ([10.0.194.52]) with mapi id 14.03.0415.000; Fri, 15 Feb 2019
- 21:36:25 +0900
-From:   "Zhang, Lei" <zhang.lei@jp.fujitsu.com>
-To:     'James Morse' <james.morse@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>
-CC:     'Will Deacon' <will.deacon@arm.com>,
-        'Catalin Marinas' <catalin.marinas@arm.com>,
-        "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "'linux-arm-kernel@lists.infradead.org'" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH v4] arm64: Add workaround for Fujitsu A64FX erratum
- 010001
-Thread-Topic: [PATCH v4] arm64: Add workaround for Fujitsu A64FX erratum
- 010001
-Thread-Index: AdTENhuVebuKtHOoRzCPb6sZ5vznO///+H8AgAAo/wD//jk2sA==
-Date:   Fri, 15 Feb 2019 12:36:23 +0000
-Message-ID: <8898674D84E3B24BA3A2D289B872026A6A313313@G01JPEXMBKW03>
-References: <8898674D84E3B24BA3A2D289B872026A6A311EAE@G01JPEXMBKW03>
- <20190214155605.GC27547@lakrids.cambridge.arm.com>
- <90347cf4-4d7b-d553-d4db-1bacd000ff75@arm.com>
-In-Reply-To: <90347cf4-4d7b-d553-d4db-1bacd000ff75@arm.com>
-Accept-Language: ja-JP, en-US
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-securitypolicycheck: OK by SHieldMailChecker v2.2.3
-x-shieldmailcheckerpolicyversion: FJ-ISEC-20140219
-x-originating-ip: [10.18.70.198]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Fri, 15 Feb 2019 07:41:07 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42408 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728436AbfBOMlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 07:41:06 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 060C6C7943;
+        Fri, 15 Feb 2019 12:41:04 +0000 (UTC)
+Received: from [10.40.206.32] (unknown [10.40.206.32])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 76311600C1;
+        Fri, 15 Feb 2019 12:40:58 +0000 (UTC)
+Subject: Re: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
+To:     "Wang, Wei W" <wei.w.wang@intel.com>,
+        'David Hildenbrand' <david@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
+        "pagupta@redhat.com" <pagupta@redhat.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "riel@surriel.com" <riel@surriel.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "dodgen@google.com" <dodgen@google.com>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        "dhildenb@redhat.com" <dhildenb@redhat.com>,
+        "aarcange@redhat.com" <aarcange@redhat.com>
+References: <20190204201854.2328-1-nitesh@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF6B56A@shsmsx102.ccr.corp.intel.com>
+ <f9516222-793a-a169-c18a-728ca0256cd3@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF6F0E3@shsmsx102.ccr.corp.intel.com>
+ <bdd4298d-b84b-1ffb-0d9c-3ff5798da325@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF71F38@shsmsx102.ccr.corp.intel.com>
+From:   Nitesh Narayan Lal <nitesh@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nitesh@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ VujM7c/b4pps
+Organization: Red Hat Inc,
+Message-ID: <8c65b48c-6e28-f28b-c8f0-5a2c78cf52a5@redhat.com>
+Date:   Fri, 15 Feb 2019 07:40:55 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-SecurityPolicyCheck-GC: OK by FENCE-Mail
-X-TM-AS-GCONF: 00
+In-Reply-To: <286AC319A985734F985F78AFA26841F73DF71F38@shsmsx102.ccr.corp.intel.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="qusNYtOEDPs1948kwFoAVU2s4iAWJUCqI"
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 15 Feb 2019 12:41:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgZ3V5cywNCg0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+
-IEZyb206IEphbWVzIE1vcnNlIFttYWlsdG86amFtZXMubW9yc2VAYXJtLmNv
-bV0NCj4gU2VudDogRnJpZGF5LCBGZWJydWFyeSAxNSwgMjAxOSAzOjIzIEFN
-DQo+IFRvOiBNYXJrIFJ1dGxhbmQ7IFpoYW5nLCBMZWkgDQo+IENjOiAnV2ls
-bCBEZWFjb24nOyAnQ2F0YWxpbiBNYXJpbmFzJzsgJ2xpbnV4LWtlcm5lbEB2
-Z2VyLmtlcm5lbC5vcmcnOw0KPiAnbGludXgtYXJtLWtlcm5lbEBsaXN0cy5p
-bmZyYWRlYWQub3JnJw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHY0XSBhcm02
-NDogQWRkIHdvcmthcm91bmQgZm9yIEZ1aml0c3UgQTY0RlggZXJyYXR1bSAw
-MTAwMDENCg0KPiBJIHRoaW5rIHdlIHNob3VsZCBkbyB0aGlzOiBuZXZlciBz
-ZXQgTkZEeCBvbiBBNjRGWC4gSSBkb24ndCB0aGluayB3ZSBjYW4gbWFpbnRh
-aW4NCj4gdGhlIFRDUg0KPiBzd2l2ZWwgYmVmb3JlIGFueSBtZW1vcnkgYWNj
-ZXNzIGluIHRoZSBLUFRJIHRyYW1wb2xpbmUuIChJdCBhbHJlYWR5IHVzZXMg
-dGhlDQo+IEZBUiBhcyBhDQo+IHNjcmF0Y2ggcmVnaXN0ZXIhKQ0KPiANCj4g
-VGhlIGVycmF0YSBtZWFucyB3ZSBjYW4ndCB1c2UgdGhlc2UgYml0cy4gSXRz
-IHNpbXBsZXIgdGhhbiB0cnlpbmcgdG8gd29yayBhcm91bmQNCj4gdGhlIHN5
-bXB0b21zLg0KDQpJIHRoaW5rIHlvdSBtZWFuIGl0IG1heSBiZSBhIHByb2Js
-ZW0gdG8gbW9kaWZ5IHRoZSBLUFRJIHRyYW1wb2xpbmUgDQpiZWNhdXNlIHNv
-bWUgcGF0Y2hlcyBhYm91dCBLUFRJIHdpbGwgYmUgbWVyZ2VkIHRvIG1haW5s
-aW5lIGluIHRoZSBuZWFyIGZ1dHVyZS4NCkkgdW5kZXJzdG9vZCB0aGF0Lg0K
-SSBzaG91bGQgZGlzY3VzcyB3aXRoIG15IGNvbGxlYWd1ZXMgd2hldGhlciB3
-ZSBjYW4gc2V0IE5GRHg9MCBhbGwgb2YgdGltZSBvbiBBNjRGWC4NCg0KQW5k
-IHRoYW5rcyBmb3IgeW91ciBwYXRjaC4NCklmIHdlIGNhbiBzZXQgTkZEeD0w
-IGFsbCBvZiB0aW1lLCBJIHdpbGwgcmV2aWV3LCB0ZXN0IGFuZCByZXBvcnQg
-dGhlIHJlc3VsdC4NCg0KQmVzdCBSZWdhcmRzLA0KWmhhbmcgTGVpDQoNCg==
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--qusNYtOEDPs1948kwFoAVU2s4iAWJUCqI
+Content-Type: multipart/mixed; boundary="19xowJ6YcPLQjp6lxipmMsFPTwWfNFUy4";
+ protected-headers="v1"
+From: Nitesh Narayan Lal <nitesh@redhat.com>
+To: "Wang, Wei W" <wei.w.wang@intel.com>,
+ 'David Hildenbrand' <david@redhat.com>,
+ "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "pbonzini@redhat.com" <pbonzini@redhat.com>,
+ "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
+ "pagupta@redhat.com" <pagupta@redhat.com>,
+ "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+ "riel@surriel.com" <riel@surriel.com>, "mst@redhat.com" <mst@redhat.com>,
+ "dodgen@google.com" <dodgen@google.com>,
+ "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+ "dhildenb@redhat.com" <dhildenb@redhat.com>,
+ "aarcange@redhat.com" <aarcange@redhat.com>
+Message-ID: <8c65b48c-6e28-f28b-c8f0-5a2c78cf52a5@redhat.com>
+Subject: Re: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
+References: <20190204201854.2328-1-nitesh@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF6B56A@shsmsx102.ccr.corp.intel.com>
+ <f9516222-793a-a169-c18a-728ca0256cd3@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF6F0E3@shsmsx102.ccr.corp.intel.com>
+ <bdd4298d-b84b-1ffb-0d9c-3ff5798da325@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF71F38@shsmsx102.ccr.corp.intel.com>
+In-Reply-To: <286AC319A985734F985F78AFA26841F73DF71F38@shsmsx102.ccr.corp.intel.com>
+
+--19xowJ6YcPLQjp6lxipmMsFPTwWfNFUy4
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+
+
+On 2/15/19 4:05 AM, Wang, Wei W wrote:
+> On Thursday, February 14, 2019 5:43 PM, David Hildenbrand wrote:
+>> Yes indeed, that is the important bit. They must not be put pack to th=
+e
+>> buddy before they have been processed by the hypervisor. But as the pa=
+ges
+>> are not in the buddy, no one allocating a page will stumble over such =
+a page
+>> and try to allocate it. Threads trying to allocate memory will simply =
+pick
+>> another buddy page instead of "busy waiting" for that page to be finis=
+hed
+>> reporting.
+> What if a guest thread try to allocate some pages but the buddy cannot =
+satisfy
+> because all the pages are isolated? Would it be the same case that the =
+guest thread
+> gets blocked by waiting all the isolated pages to get madvised by the h=
+ost and
+> returned to the guest buddy, or even worse, some guest threads get kill=
+ed due to oom?
+
+If you are referring to a situation when guest is under memory pressure
+then isolation request will fail and memory will not be
+reported/isolated. However, there can always be a corner case and we can
+definitely take that into consideration later.
+
+>
+> Best,
+> Wei
+--=20
+Regards
+Nitesh
+
+
+--19xowJ6YcPLQjp6lxipmMsFPTwWfNFUy4--
+
+--qusNYtOEDPs1948kwFoAVU2s4iAWJUCqI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEkXcoRVGaqvbHPuAGo4ZA3AYyozkFAlxms1cACgkQo4ZA3AYy
+ozkrkQ/9FFmzLrvp+OyyZFaaOTjfTJ/MaxhVGuBp1mPHgBqn3MT4cUBoeSPSW+hf
+3XxgJUBqQF5hIeQpkHUEKFH4felhdZaytFhaicQEFmeB9MgQDJ1+fkN9qHZjheK7
+GFDOEUvE70ADLDe65a+EOkXLTDS8urzcqghrToFxHTard9GeFG5o47N9O/9Zz3Ay
+8mZ5AXGHmU6jNZX5cIdNn1ydzibcsVdN08gU4y6bumXhUqpNw6lwrfTKXl1BfFb5
+8BD9SvtaG0NRcWz7o6dVVkSXHxAZu6ah2NT2wLJUsHWWrCE7LGaaO790Y52bSGdX
+dqK17G2e+F9nZZnDwXf8c7+z3QmG3TmFADp8MgLfnRWOyhqha6qcOFNEwfmkZOrF
+H8qURMrVkxz5VQMn2r1i3CoC2NaLGaJpfuIhEmz4P+KdXL2xaIn4RF9uTxG47cG5
+f5nl59dFMw/SdayicriqXOfNPMCUQDBGYKJ/We2zwJ8iw8OyCrsO0wb7KP0sK3fx
+YaAHMj2tk+k5PNqfk3EkoX1Q+OGNw7YxcSkXfD1bAbA9sRkEoeo2ZQkGEI/6E59W
+PSMOASzP2He+00WZoToVE2jHk5pXTCpebLr7F6NQ/4kpY3HNDvkKGoyU4ECi/zI2
+APz8MchKAqKFTY6OuKGNeIyVFiV1UMUpxEAqrzbItqjUkRoglT4=
+=ESEC
+-----END PGP SIGNATURE-----
+
+--qusNYtOEDPs1948kwFoAVU2s4iAWJUCqI--
