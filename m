@@ -2,119 +2,110 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB0D2C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:10:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25518C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:13:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96DBF217F5
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:10:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF3A9217F5
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 00:13:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h/6zVg/u"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="l/OVYs43"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727649AbfBOAKp (ORCPT
+        id S1729092AbfBOANi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 19:10:45 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39926 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726130AbfBOAKo (ORCPT
+        Thu, 14 Feb 2019 19:13:38 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:53186 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbfBOANh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 19:10:44 -0500
-Received: by mail-pl1-f195.google.com with SMTP id 101so4011707pld.6;
-        Thu, 14 Feb 2019 16:10:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yUt0k+djJpk1EXZf+gLjhm0M3fjeKZol9KaZ/TPziG8=;
-        b=h/6zVg/u7psWL8BW09M/qiu0NMbgOtxFxTya4WhGfP65s5wUWlZp/TVADC8U2K3ku4
-         bVAb/3N+ezLhT6mbmIoz0e0jZqi12fSthc53yMPbc0bBAIKAOqG1K3DZu+0O2cljS5Mk
-         REZ+w/XqGcg9QVrYhA3k8ujbKDGLS3JaIoeLXV/LUwmQcigg0j+QZ1kEYbsmU+eW/QxW
-         zEIjbX9H5dUfnzsg1LNQaINwMLIbW09ZQXF8RFX4lGwluyt4tVk2vIvqHPBvdCGMBcZ9
-         Z6rn6BQY0bz+d+CQGVBELktTptMsLMebmVwHjzU3XF1MUhCbuPOPY0LtrHpOpEKwNs3v
-         A2+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yUt0k+djJpk1EXZf+gLjhm0M3fjeKZol9KaZ/TPziG8=;
-        b=kDjYXCjrXBusNm0NYB2uRBEPTXs7rNNdcSQAFB3+b+5Z65lr8ldlhcFpdUxEyp0hAD
-         txhhKMGLFF7FCZj32dSfPCt7feUynJLwvAuDlZ5VygpJEpJxjQq8i+2b5UOBR4UdPw3t
-         Z2GR+lPhergDM0/JA1kFQYxhDUlUEHcwWg90di4aupPDohMicEXOXoL8r6z96wKR4ejt
-         tZlHykOpzlUteDO2WFxAv2XFDNW47icSyxml+qwtFcqRpg69WRKagf4FuLtNSfy4L7pq
-         QXlcbNJ0ZBSc/XEP0Zp4YZRJ3ybepX1xJbKtAlDvK2gRnpkHg9jPcQrcPcTWB60+LDBR
-         8mEw==
-X-Gm-Message-State: AHQUAuZBKnncbvympij3mty0T/xgnWThyJB+Cw2LyBFoRXNkmpb8xlYq
-        OVOO0pm8GjStOQtICx9Zueh11zho
-X-Google-Smtp-Source: AHgI3IYS2jUf7ThJI7euRCR80jESss1VQk5uSm4TTJ+uABIkrxAUELTTkGRV5NV8Bc/q9vF2ckBE1w==
-X-Received: by 2002:a17:902:264:: with SMTP id 91mr7202737plc.108.1550189444013;
-        Thu, 14 Feb 2019 16:10:44 -0800 (PST)
-Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
-        by smtp.gmail.com with ESMTPSA id a90sm8316681pfj.109.2019.02.14.16.10.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Feb 2019 16:10:43 -0800 (PST)
-Subject: Re: [PATCH v1 1/1] of: unittest: unflatten device tree on UML when
- testing
-To:     Brendan Higgins <brendanhiggins@google.com>, robh+dt@kernel.org,
-        mcgrof@kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190212185305.112847-1-brendanhiggins@google.com>
- <20190212185305.112847-2-brendanhiggins@google.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <4cb7ca12-ce60-7516-b7eb-aef08f607acc@gmail.com>
-Date:   Thu, 14 Feb 2019 16:10:42 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 14 Feb 2019 19:13:37 -0500
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id x1F0DYZN010259
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 09:13:34 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x1F0DYZN010259
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1550189614;
+        bh=MCdVTYrxWT51ahRDJrWzWV93+APa0whUUx6krSzdkzI=;
+        h=From:Date:Subject:To:Cc:From;
+        b=l/OVYs43FR056G7L8FNoh5dmEPjy6479+CjE3ufMDACzMbTPjseX2RSHqIc5GnmYl
+         T3Eb4SO6f7CXF95j+6XUPBD/1PD1nkxGW1UrjWjJ3Elau8mXha4GaDQl/Z9SsReN5Y
+         ++/DR+RBq2cDX4TDL5YqOdznNRJaia6MZHMNryqu/RFyLZmeq0X3wdB5yYYEcL/Qdp
+         BMwb/q71/yB+DtSi2mxXNtY7JsyEffvu/bwMryC4hAbnLaMFo2BpXf9xyXyp1zpMZQ
+         p7Mi/6FleFsEXLnZMvIbyd4A/3v3rxQRXfmQPVshDY3pcn1AWe0YcbudK561cU7xlm
+         hFrsnTaIpRF6A==
+X-Nifty-SrcIP: [209.85.217.52]
+Received: by mail-vs1-f52.google.com with SMTP id e81so1677126vsd.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 16:13:34 -0800 (PST)
+X-Gm-Message-State: AHQUAuaclsytMKnac+And8AItmYdKz1nk2Nce1URWgzJ/5o2eqw3ycUp
+        ElUSZL4dQQ6DtXpJGn1/wtid6hwA0EjomqrTbT4=
+X-Google-Smtp-Source: AHgI3IaxjPC+fVyohsCGKpe3R9ayn9eioAAWkTvzLxzBJYAo+2nzUp0gZELZzZp9mkcVZbbkwt2KmQ2jSnWeRgVEC2A=
+X-Received: by 2002:a67:485:: with SMTP id 127mr3551734vse.54.1550189613569;
+ Thu, 14 Feb 2019 16:13:33 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190212185305.112847-2-brendanhiggins@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 15 Feb 2019 09:12:57 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQOQ7KczCUP7hWWTX+9oRA3zycbBTDR7rXXkfhb0TG-Zg@mail.gmail.com>
+Message-ID: <CAK7LNAQOQ7KczCUP7hWWTX+9oRA3zycbBTDR7rXXkfhb0TG-Zg@mail.gmail.com>
+Subject: [GIT PULL] arm64: dts: uniphier: UniPhier DT updates for v5.1
+To:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        arm-soc <arm@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/12/19 10:53 AM, Brendan Higgins wrote:
-> UML supports enabling OF, and is useful for running the device tree
-> tests, so add support for unflattening device tree blobs so we can
-> actually use it.
-> 
-> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
-> ---
->  drivers/of/unittest.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-> index 84427384654d5..effa4e2b9d992 100644
-> --- a/drivers/of/unittest.c
-> +++ b/drivers/of/unittest.c
-> @@ -2527,6 +2527,9 @@ static int __init of_unittest(void)
->  	}
->  	of_node_put(np);
->  
-> +	if (IS_ENABLED(CONFIG_UML))
-> +		unflatten_device_tree();
-> +
->  	pr_info("start of unittest - you will see error messages\n");
->  	of_unittest_check_tree_linkage();
->  	of_unittest_check_phandles();
-> 
+Hi Arnd, Olof,
 
-(Insert my usual disclaimer that I am clueless about UML, I still need to learn
-about it...)
 
-This does not look correct to me.
+Please pull UniPhier DT (64bit) updates for the v5.1 MW.
 
-A few lines earlier in of_unittest(), the live devicetree needs to exist for
-unittest_data_data() and a few of_*() functions to succeed.  So it seems
-that the unflatten_device_tree() for uml should be at the beginning of
-of_unittest().
+Thanks!
 
-Rob, if I am correct please revert this patch.
 
--Frank
+
+
+The following changes since commit 1c7fc5cbc33980acd13d668f1c8f0313d6ae9fd8:
+
+  Linux 5.0-rc2 (2019-01-14 10:41:12 +1200)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-uniphier.git
+tags/uniphier-dt64-v5.1
+
+for you to fetch changes up to 519904a42ff8c2ed23651f33c256d009c656a50b:
+
+  arm64: dts: uniphier: sort labels in the same order as in dtsi
+(2019-02-15 09:04:30 +0900)
+
+----------------------------------------------------------------
+UniPhier ARM64 SoC DT updates for v5.1
+
+- Add PCI Express controller nodes
+
+----------------------------------------------------------------
+Kunihiko Hayashi (1):
+      arm64: dts: uniphier: Add PCIe host controller and PHY nodes
+
+Masahiro Yamada (1):
+      arm64: dts: uniphier: sort labels in the same order as in dtsi
+
+ arch/arm64/boot/dts/socionext/uniphier-ld20-global.dts |  4 +--
+ arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi       | 47
+++++++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/socionext/uniphier-pxs3-ref.dts    | 10 +++++---
+ arch/arm64/boot/dts/socionext/uniphier-pxs3.dtsi       | 47
+++++++++++++++++++++++++++++++++++
+ 4 files changed, 103 insertions(+), 5 deletions(-)
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
