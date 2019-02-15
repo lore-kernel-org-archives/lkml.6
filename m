@@ -2,86 +2,68 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03345C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 05:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C2C7C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 05:24:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC3FC2192C
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 05:00:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="HiJxXxmS"
+	by mail.kernel.org (Postfix) with ESMTP id 1725220836
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 05:24:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726611AbfBOFA4 (ORCPT
+        id S1726772AbfBOFYv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 00:00:56 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:38148 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726120AbfBOFAz (ORCPT
+        Fri, 15 Feb 2019 00:24:51 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:41778 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726336AbfBOFYv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 00:00:55 -0500
-Received: by mail-qt1-f195.google.com with SMTP id 2so9602612qtb.5
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 21:00:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LQtW9QwTMR1ZY3igaz7j+sEcQKomd0OgYbmle02AZVw=;
-        b=HiJxXxmSC3HqR4lUQa8OKiH7A6vm3VM/mSFko+hX53RNHsMWM32G+RjrUVHVdegaHb
-         oZkfkD1zg/UImzmXHKGtou6OsEuFA0Fj1Y/3u5lRl0444nAI6frDA+7oGKJmjFiOaqT2
-         ZI1JM3DlLckOY08cD3M/MVolVOyQeIZ7bPVAfdSxsZH00EBQ+C+FFat0QiRinygwHeP1
-         Z+meFadQmM88MlvpaZ5B0OhxP9VDAEsv7LURX3+vEp8ow/yvL7cpQeUBLxHwALRwYs9m
-         NJZrjfvRjfD4TXBcp2QB9eJqeBjtL6J5aTSLwd7Nu6Dr59N05lKan+GMn0CFeYzFajpP
-         nIWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LQtW9QwTMR1ZY3igaz7j+sEcQKomd0OgYbmle02AZVw=;
-        b=WTXnmivjeBr8lGLrj9l0JSx2sstVzEKkNKXe3T1LC4xxDPM7JWbJ4ayj3iYKm4oxrP
-         OO6LSoJEeGkDNjXyZ+XeoUqPPLdLB3TE8O2Dm56bQruPnKlk1y/r3f1ocBfBRHcqYSli
-         Qqvt2FOrsyUk5upH9c82UU1BARr3KFLLrccDnZkrjnbcLEDR2g4rKJ31fzpyIMyqJzde
-         Z0VheHyAqXswnlVTwGAURdqPBIgyNZXqnOpJvuET703V9ExSemfY240SYPMxNrRp33hT
-         /UAR84w6Lw8OkTQKAsyT64jkljy5fMT1dV2XWxvz9JXLIXUnBJSGMgTm1AKBnft12HAl
-         xvxg==
-X-Gm-Message-State: AHQUAuY3qyl7IeefIhVCoysEjAN5bPh8JrH20+zdZJFc+dp8oDj8wDkY
-        KNecz4JmkcDaCA2jGT0tfo+QPg==
-X-Google-Smtp-Source: AHgI3IY9x2TTohLruAira0LIpf5dtXHRSHc84Y3evnYo0LJIU3hF+lMBD1E0oNksn5X/WWNFr4RvCA==
-X-Received: by 2002:a0c:8a48:: with SMTP id 8mr5728463qvu.177.1550206854161;
-        Thu, 14 Feb 2019 21:00:54 -0800 (PST)
-Received: from cisco ([192.241.255.151])
-        by smtp.gmail.com with ESMTPSA id 12sm4691073qka.83.2019.02.14.21.00.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Feb 2019 21:00:53 -0800 (PST)
-Date:   Thu, 14 Feb 2019 22:00:49 -0700
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Christian Brauner <christian@brauner.io>
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        luto@kernel.org, arnd@arndb.de, serge@hallyn.com,
-        keescook@chromium.org, akpm@linux-foundation.org, jannh@google.com,
-        oleg@redhat.com, cyphar@cyphar.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, dancol@google.com,
-        timmurray@google.com, fweimer@redhat.com, tglx@linutronix.de,
-        x86@kernel.org, ebiederm@xmission.com
-Subject: Re: [PATCH v7 1/2] signal: add pidfd_send_signal() syscall
-Message-ID: <20190215050049.GC19258@cisco>
-References: <20190102161654.9093-1-christian@brauner.io>
+        Fri, 15 Feb 2019 00:24:51 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1guVzS-0004hu-7q; Fri, 15 Feb 2019 13:24:46 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1guVzO-0002Ix-9k; Fri, 15 Feb 2019 13:24:42 +0800
+Date:   Fri, 15 Feb 2019 13:24:42 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Horia Geanta <horia.geanta@nxp.com>,
+        Iuliana Prodan <iuliana.prodan@nxp.com>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH 0/4] crypto: caam - add ecb mode support
+Message-ID: <20190215052442.7ti5d2ni7qh47ilv@gondor.apana.org.au>
+References: <1549633810-10380-1-git-send-email-iuliana.prodan@nxp.com>
+ <20190209215219.GA688@sol.localdomain>
+ <HE1PR0402MB3484556884375681E3E81BE998660@HE1PR0402MB3484.eurprd04.prod.outlook.com>
+ <20190213185135.GA140810@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190102161654.9093-1-christian@brauner.io>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190213185135.GA140810@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 02, 2019 at 05:16:53PM +0100, Christian Brauner wrote:
-> The kill() syscall operates on process identifiers (pid). After a process
-> ...
+On Wed, Feb 13, 2019 at 10:51:36AM -0800, Eric Biggers wrote:
+>
+> You are claiming you need DES-ECB, 3DES-ECB, *and* ARC4 for that?
+> 
+> Which one is it actually, if any?
 
-Fashionably late to the party, but feel free to consider these two:
+Since these are existing algorithms in the crypto API and we're
+simply adding them to the driver I think the bar of acceptance
+is lower than if it were a completely new addition to the kernel.
 
-Reviewed-by: Tycho Andersen <tycho@tycho.ws>
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
