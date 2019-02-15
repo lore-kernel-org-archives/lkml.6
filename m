@@ -2,123 +2,98 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BCEBC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:01:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D88C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:01:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A5D0207E0
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:01:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550242864;
-	bh=AkVBKEMZ0ZYJo67INS81B29Rgu0o9C+VCzGlb/jazs8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=D6iaHxHUnzjdr5Grq9JxBdSzZcFXjAjetls/sGWDocflPU+stIXX11qvNf85F0ET7
-	 GXl6HH/1EkRWqvdYfU075rBND1Zc1pXa15ItTuU16mbbP5u9URpqsZ0b3+FJ5857vL
-	 SEMfPlN5hmtGaEldLiqbFzPktBtErs26Zk7mkcm8=
+	by mail.kernel.org (Postfix) with ESMTP id 813AE206C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:01:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="WAyqiKJu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730818AbfBOPBC (ORCPT
+        id S1731169AbfBOPBM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 10:01:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35190 "EHLO mail.kernel.org"
+        Fri, 15 Feb 2019 10:01:12 -0500
+Received: from uho.ysoft.cz ([81.19.3.130]:48208 "EHLO uho.ysoft.cz"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730366AbfBOPBC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 10:01:02 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6AD0D207E0;
-        Fri, 15 Feb 2019 15:01:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550242861;
-        bh=AkVBKEMZ0ZYJo67INS81B29Rgu0o9C+VCzGlb/jazs8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=MIqjAlxX0GHFbsj9JncL/1H7+IfZ0hRrH34WM4G7PMtnyN5vECPRdt3AsFpFz6117
-         HddvhlNMLNhkexjGJ2FGwdZLbxQ0d7/eRetcAGlmpeOChx6WLQwVhNxm0fijb/mXao
-         SOXwYKisokyabfcyzOmKHm1s22Lx2L9vDlupxG18=
-Date:   Sat, 16 Feb 2019 00:00:58 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Pratyush Anand <panand@redhat.com>,
-        "David A . Long" <dave.long@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        James Morse <james.morse@arm.com>
-Subject: Re: [PATCH v3 4/4] arm64: kprobes: Use
- arch_populate_kprobe_blacklist()
-Message-Id: <20190216000058.a75ff4d9497065ce216e246d@kernel.org>
-In-Reply-To: <20190214155522.GA1825@fuggles.cambridge.arm.com>
-References: <154998617300.21869.11457765723750331236.stgit@devbox>
-        <154998628802.21869.4041705065539411318.stgit@devbox>
-        <20190214155522.GA1825@fuggles.cambridge.arm.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1730831AbfBOPBM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 10:01:12 -0500
+Received: from [10.1.8.111] (unknown [10.1.8.111])
+        by uho.ysoft.cz (Postfix) with ESMTP id C8C75A6490;
+        Fri, 15 Feb 2019 16:01:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
+        s=20160406-ysoft-com; t=1550242868;
+        bh=jzyhPl3YglK7yUBctudQfISg3mpsITA6KIy8ISSumso=;
+        h=To:Cc:From:Subject:Date:From;
+        b=WAyqiKJur8zVuzpV52wuQalOnvM5b+5rSMLK46UKw+YfwWhfo8Y12GEXOjb0C1yqL
+         N2LncuddOHzcHaVlC5yhEdGWsqtPg6Fr4UgMP2FB7TRBSm3BdmxWWoUGGXBdICr9kJ
+         NA7W8jspr69Wu8CBn0+nHivQixp3jrcg7FFxYtiw=
+To:     Vinod Koul <vkoul@kernel.org>, Andrew Lunn <andrew@lunn.ch>
+Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>
+From:   =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
+Subject: [RFC] net: dsa: qca8k: implement rgmii-id mode
+Message-ID: <0c7428dc-736e-c5c4-13e7-b42052c60cd7@ysoft.com>
+Date:   Fri, 15 Feb 2019 16:01:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 14 Feb 2019 15:55:22 +0000
-Will Deacon <will.deacon@arm.com> wrote:
+Hi,
 
-> Hi Masami,
-> 
-> On Wed, Feb 13, 2019 at 12:44:48AM +0900, Masami Hiramatsu wrote:
-> > Use arch_populate_kprobe_blacklist() instead of
-> > arch_within_kprobe_blacklist() so that we can see the full
-> > blacklisted symbols under the debugfs.
-> > 
-> > Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-> > ---
-> >   Changes in v3
-> >    - Do not populate blacklist in __kprobe_text in
-> >      arch_populate_kprobe_blacklist(), since it is already
-> >      populated in populate_kprobe_blacklist().
-> >    - Add exception entry text blacklist since those are rejected
-> >      by in_exception_text().
-> > ---
-> >  arch/arm64/kernel/probes/kprobes.c |   45 +++++++++++++++++++++---------------
-> >  1 file changed, 26 insertions(+), 19 deletions(-)
-> > 
-> > diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
-> > index 194262fca5cd..37d913f33a89 100644
-> > --- a/arch/arm64/kernel/probes/kprobes.c
-> > +++ b/arch/arm64/kernel/probes/kprobes.c
-> > @@ -465,26 +465,33 @@ kprobe_breakpoint_handler(struct pt_regs *regs, unsigned int esr)
-> >  	return DBG_HOOK_HANDLED;
-> >  }
-> >  
-> > -bool arch_within_kprobe_blacklist(unsigned long addr)
-> 
-> I think it would be useful to add a comment here so that we remember
-> why this code is the way it is:
-> 
-> /*
->  * Provide a blacklist of symbols identifying ranges which cannot be kprobed.
->  * This blacklist is exposed to userspace via debugfs (kprobes/blacklist).
->  */
+networking on my boards [1], which are currently in linux-next, suddently
+stopped working. I tracked it down to this commit 5ecdd77c61c8 ("net: dsa:
+qca8k: disable delay for RGMII mode") [2].
 
-Agreed. This looks good to me too.
+So I think the rgmii-id mode is obviously needed in my case.
+I was able to find a couple drivers that read tx/rx-delay or
+tx/rx-internal-delay from device tree. Namely:
 
-> 
-> With that, you can have my ack for the series:
-> 
-> Acked-by: Will Deacon <will.deacon@arm.com>
+   drivers/net/ethernet/apm/xgene/xgene_enet_main.c
+   drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
+   drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
+   drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
+   drivers/net/phy/dp83867.c
 
-Thank you!
+I would appreciate any hints how to add similar function to qca8k driver
+if that is the correct way to go. Can I take some of the above mentioned
+drivers as a good example for that? How should the binding look like?
 
-> 
-> Catalin -- can you pick these up with that comment added, please?
-> 
-> Cheers,
-> 
-> Will
+I would expect something like this:
+
+	switch@0 {
+		compatible = "qca,qca8334";
+		reg = <0>;
+
+		switch_ports: ports {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			ethphy0: port@0 {
+				reg = <0>;
+				label = "cpu";
+				phy-mode = "rgmii-id";
+				qca,tx-delay = <3>;
+				qca,rx-delay = <3>;
+				ethernet = <&fec>;
+		};
+	};
 
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Thanks in advance,
+Michal
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=87489ec3a77f3e01bcf0d46e353ae7112ec8c4f0
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/net/dsa/qca8k.c?id=5ecdd77c61c8fe1d75ded538701e5e854963c890
