@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8065CC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:30:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD441C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:30:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 470C020840
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:30:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A66E20840
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:30:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197828;
-	bh=GzkL0USozPtgPZE7i2JmzwzS2YjEpXKRWdhjCqO+tVw=;
+	s=default; t=1550197838;
+	bh=8ph/w/ZqRx2HgcCdUZX2M5OOJIR3rPk35EBakbPGkYQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LlWsSQr+EUyZXNLQLExzNlwUf9v2A+PRBIW+iHi43XwNtvGqz1dcgCPA1F9acKulM
-	 TWJQIsnwJVL9p9WJrSWakX5SkUD+Z+lS17/coXvqUeAGVFL/x0wreJpR6Bo1lyS56b
-	 wg4jkPNzTf2xMmefsH8QlPxDYJbPnN7pTK5obP74=
+	b=xzrJAMa/N3GBWisyMaDAuu2D8O5hR8ezDZT/vXdgxTeHYD2jnByS5eE5PFv0mrUXs
+	 3gadsM9ZyXBh2nBZ251XHrhlpU7FvkWYY76iiIUQ5a9VXrkYO5FVcIvHfAxCaZGGzD
+	 soj/4fTzIidpOo0AZoBtcGfNKrrFyZheqowYYjNE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730911AbfBOCa0 (ORCPT
+        id S1731126AbfBOCah (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:30:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52800 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:30:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404454AbfBOCMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:12:46 -0500
+        id S2404327AbfBOCMp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:12:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D59D21B68;
-        Fri, 15 Feb 2019 02:12:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5AA821B1C;
+        Fri, 15 Feb 2019 02:12:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196765;
-        bh=GzkL0USozPtgPZE7i2JmzwzS2YjEpXKRWdhjCqO+tVw=;
+        s=default; t=1550196764;
+        bh=8ph/w/ZqRx2HgcCdUZX2M5OOJIR3rPk35EBakbPGkYQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vl18s16OdZT087d0pAw4DE+1qJrCLNTo94lMOD7zis3enY3IGBLOSMQcaEWKJoeLt
-         OHFEdnOhe3K1hThLwfC9/mpsoNV3trS2KYN8hpkoCjnrWSUHUsFbVLbEtgr/ZyMSJI
-         u9mXIaovZ6rMV/H6IyoIWzylmTtN7lrHxkYHIt94=
+        b=ug/34laQ3wRzCfaVfJOCjk3fTTlqlk+r3XkKJKFcurmwR8TThK0hZxkNHMLFc0M52
+         Sf9s30qA4dPyO45gP7oYSNkLKZwLqLF2nwjHdQVABlRvnOL3Ff7eGfpBHVATKEtCr6
+         M35L3Y1iOF5mv5uuIdjU2bpp7Ah4RJrO34OslmUo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hannes Reinecke <hare@suse.de>, Hannes Reinecke <hare@suse.com>,
-        Sagi Grimberg <sagi@grimberg.me>, Jens Axboe <axboe@kernel.dk>,
+Cc:     Sagi Grimberg <sagi@grimberg.me>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 53/65] nvme-multipath: drop optimization for static ANA group IDs
-Date:   Thu, 14 Feb 2019 21:11:09 -0500
-Message-Id: <20190215021121.177674-53-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 52/65] nvme-rdma: fix timeout handler
+Date:   Thu, 14 Feb 2019 21:11:08 -0500
+Message-Id: <20190215021121.177674-52-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -58,43 +57,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hannes Reinecke <hare@suse.de>
+From: Sagi Grimberg <sagi@grimberg.me>
 
-[ Upstream commit 78a61cd42a64f3587862b372a79e1d6aaf131fd7 ]
+[ Upstream commit 4c174e6366746ae8d49f9cc409f728eebb7a9ac9 ]
 
-Bit 6 in the ANACAP field is used to indicate that the ANA group ID
-doesn't change while the namespace is attached to the controller.
-There is an optimisation in the code to only allocate space
-for the ANA group header, as the namespace list won't change and
-hence would not need to be refreshed.
-However, this optimisation was never carried over to the actual
-workflow, which always assumes that the buffer is large enough
-to hold the ANA header _and_ the namespace list.
-So drop this optimisation and always allocate enough space.
+Currently, we have several problems with the timeout
+handler:
+1. If we timeout on the controller establishment flow, we will hang
+because we don't execute the error recovery (and we shouldn't because
+the create_ctrl flow needs to fail and cleanup on its own)
+2. We might also hang if we get a disconnet on a queue while the
+controller is already deleting. This racy flow can cause the controller
+disable/shutdown admin command to hang.
 
+We cannot complete a timed out request from the timeout handler without
+mutual exclusion from the teardown flow (e.g. nvme_rdma_error_recovery_work).
+So we serialize it in the timeout handler and teardown io and admin
+queues to guarantee that no one races with us from completing the
+request.
+
+Reported-by: Jaesoo Lee <jalee@purestorage.com>
 Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Hannes Reinecke <hare@suse.com>
 Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/multipath.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/nvme/host/rdma.c | 26 ++++++++++++++++++--------
+ 1 file changed, 18 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index c27af277e14e..65180cc1ba33 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -531,8 +531,7 @@ int nvme_mpath_init(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
- 	timer_setup(&ctrl->anatt_timer, nvme_anatt_timeout, 0);
- 	ctrl->ana_log_size = sizeof(struct nvme_ana_rsp_hdr) +
- 		ctrl->nanagrpid * sizeof(struct nvme_ana_group_desc);
--	if (!(ctrl->anacap & (1 << 6)))
--		ctrl->ana_log_size += ctrl->max_namespaces * sizeof(__le32);
-+	ctrl->ana_log_size += ctrl->max_namespaces * sizeof(__le32);
+diff --git a/drivers/nvme/host/rdma.c b/drivers/nvme/host/rdma.c
+index b6a28de682e8..0939a4e178fb 100644
+--- a/drivers/nvme/host/rdma.c
++++ b/drivers/nvme/host/rdma.c
+@@ -1672,18 +1672,28 @@ static enum blk_eh_timer_return
+ nvme_rdma_timeout(struct request *rq, bool reserved)
+ {
+ 	struct nvme_rdma_request *req = blk_mq_rq_to_pdu(rq);
++	struct nvme_rdma_queue *queue = req->queue;
++	struct nvme_rdma_ctrl *ctrl = queue->ctrl;
  
- 	if (ctrl->ana_log_size > ctrl->max_hw_sectors << SECTOR_SHIFT) {
- 		dev_err(ctrl->device,
+-	dev_warn(req->queue->ctrl->ctrl.device,
+-		 "I/O %d QID %d timeout, reset controller\n",
+-		 rq->tag, nvme_rdma_queue_idx(req->queue));
++	dev_warn(ctrl->ctrl.device, "I/O %d QID %d timeout\n",
++		 rq->tag, nvme_rdma_queue_idx(queue));
+ 
+-	/* queue error recovery */
+-	nvme_rdma_error_recovery(req->queue->ctrl);
++	if (ctrl->ctrl.state != NVME_CTRL_LIVE) {
++		/*
++		 * Teardown immediately if controller times out while starting
++		 * or we are already started error recovery. all outstanding
++		 * requests are completed on shutdown, so we return BLK_EH_DONE.
++		 */
++		flush_work(&ctrl->err_work);
++		nvme_rdma_teardown_io_queues(ctrl, false);
++		nvme_rdma_teardown_admin_queue(ctrl, false);
++		return BLK_EH_DONE;
++	}
+ 
+-	/* fail with DNR on cmd timeout */
+-	nvme_req(rq)->status = NVME_SC_ABORT_REQ | NVME_SC_DNR;
++	dev_warn(ctrl->ctrl.device, "starting error recovery\n");
++	nvme_rdma_error_recovery(ctrl);
+ 
+-	return BLK_EH_DONE;
++	return BLK_EH_RESET_TIMER;
+ }
+ 
+ static blk_status_t nvme_rdma_queue_rq(struct blk_mq_hw_ctx *hctx,
 -- 
 2.19.1
 
