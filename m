@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3A9BC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:39:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C438C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 946F72192B
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:39:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F9F02192B
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:39:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550198364;
-	bh=b9mHi0vxGM5l7wd3jcDXtjgneNvouOkb7J+ZhDi3SMo=;
+	s=default; t=1550198372;
+	bh=3V/u7Utnyzge0+vvY0FBq1belRu7qA0GQkD+z+/Od0E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LGTQv41R288KyPwSUVra/ff9eVT0gmkdp1xtm1MJoaKDjbIuFOW/4f1fpaLAT4O3k
-	 /++4ALGTfmExfBvUFy+nXTWwnE/akF0Ylrk2cTrKAi8TsskffO28ECLwPQQJWuenNi
-	 sKcvSJQZRLzWi2YxU7sNbQj/U4IwwHYbvKJDkCrE=
+	b=qXQn1pHz5LPzOhNeAl6vygAyrToFi5JD+9OENxu25USb9mlXbjImna/IZUPSEo2Ea
+	 LWdac6xokLCSJWhZ/IaSAsNZEmv/xCcPZgZYHP4T+X7DIJ4vcqjIXwpqM5mI6S+juX
+	 TvQ+ckhHcxK6L1E03wRMtOqeX7O1UdIOn32boQ3g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387865AbfBOCjW (ORCPT
+        id S2389235AbfBOCja (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:39:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50356 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:39:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390199AbfBOCKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:10:15 -0500
+        id S2390171AbfBOCKN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:10:13 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A677206BA;
-        Fri, 15 Feb 2019 02:10:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4363521B68;
+        Fri, 15 Feb 2019 02:10:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196614;
-        bh=b9mHi0vxGM5l7wd3jcDXtjgneNvouOkb7J+ZhDi3SMo=;
+        s=default; t=1550196613;
+        bh=3V/u7Utnyzge0+vvY0FBq1belRu7qA0GQkD+z+/Od0E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g3N+L0dRe/tIYVa9JafzXFJmI3+C+f4PIaeH0QHJD9RECdcyHYoiaadxhPDqEuoP3
-         2qxXYVDDVMySU+NJiw/r6piTZBQ5cK1TEPsffMDwahYLRrivWj6GV+vGXdDPRlaHFJ
-         FX32epcTFqGlZjGxfakMKxjTxe8/3ofJLJiTzVcs=
+        b=NlcWX54YEYRfL9ZMJHcms7UvpOrHfwRUxjx4Lb67b5Gat/o99hBwRRnA72SWF/+QA
+         SA1qhyneDliW6utPug0UaEYPMwYy36emlLkFAtF1ufsZYE2zf7Ojr8wSK85evtCC+r
+         OQkSSLUBJBOSkPoom+Z1QQSww4FRJW/NkWoKTnbA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Priit Laes <priit.laes@paf.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.20 46/77] drm/sun4i: hdmi: Fix usage of TMDS clock
-Date:   Thu, 14 Feb 2019 21:08:24 -0500
-Message-Id: <20190215020855.176727-46-sashal@kernel.org>
+Cc:     Tomonori Sakita <tomonori.sakita@sord.co.jp>,
+        Atsushi Nemoto <atsushi.nemoto@sord.co.jp>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 45/77] serial: fsl_lpuart: fix maximum acceptable baud rate with over-sampling
+Date:   Thu, 14 Feb 2019 21:08:23 -0500
+Message-Id: <20190215020855.176727-45-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
 References: <20190215020855.176727-1-sashal@kernel.org>
@@ -59,50 +59,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Priit Laes <priit.laes@paf.com>
+From: Tomonori Sakita <tomonori.sakita@sord.co.jp>
 
-[ Upstream commit 5e1bc251cebc84b41b8eb5d2434e54d939a85430 ]
+[ Upstream commit 815d835b7ba46685c316b000013367dacb2b461b ]
 
-Although TMDS clock is required for HDMI to properly function,
-nobody called clk_prepare_enable(). This fixes reference counting
-issues and makes sure clock is running when it needs to be running.
+Using over-sampling ratio, lpuart can accept baud rate upto uartclk / 4.
 
-Due to TDMS clock being parent clock for DDC clock, TDMS clock
-was turned on/off for each EDID probe, causing spurious failures
-for certain HDMI/DVI screens.
-
-Fixes: 9c5681011a0c ("drm/sun4i: Add HDMI support")
-Signed-off-by: Priit Laes <priit.laes@paf.com>
-[Maxime: Moved the TMDS clock enable earlier]
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190122073232.7240-1-plaes@plaes.org
+Signed-off-by: Tomonori Sakita <tomonori.sakita@sord.co.jp>
+Signed-off-by: Atsushi Nemoto <atsushi.nemoto@sord.co.jp>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/tty/serial/fsl_lpuart.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-index 061d2e0d9011..416da5376701 100644
---- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-+++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
-@@ -92,6 +92,8 @@ static void sun4i_hdmi_disable(struct drm_encoder *encoder)
- 	val = readl(hdmi->base + SUN4I_HDMI_VID_CTRL_REG);
- 	val &= ~SUN4I_HDMI_VID_CTRL_ENABLE;
- 	writel(val, hdmi->base + SUN4I_HDMI_VID_CTRL_REG);
-+
-+	clk_disable_unprepare(hdmi->tmds_clk);
- }
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 00c220e4f43c..989b95af1b95 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -1693,7 +1693,7 @@ lpuart32_set_termios(struct uart_port *port, struct ktermios *termios,
+ 	}
  
- static void sun4i_hdmi_enable(struct drm_encoder *encoder)
-@@ -102,6 +104,8 @@ static void sun4i_hdmi_enable(struct drm_encoder *encoder)
+ 	/* ask the core to calculate the divisor */
+-	baud = uart_get_baud_rate(port, termios, old, 50, port->uartclk / 16);
++	baud = uart_get_baud_rate(port, termios, old, 50, port->uartclk / 4);
  
- 	DRM_DEBUG_DRIVER("Enabling the HDMI Output\n");
+ 	spin_lock_irqsave(&sport->port.lock, flags);
  
-+	clk_prepare_enable(hdmi->tmds_clk);
-+
- 	sun4i_hdmi_setup_avi_infoframes(hdmi, mode);
- 	val |= SUN4I_HDMI_PKT_CTRL_TYPE(0, SUN4I_HDMI_PKT_AVI);
- 	val |= SUN4I_HDMI_PKT_CTRL_TYPE(1, SUN4I_HDMI_PKT_END);
 -- 
 2.19.1
 
