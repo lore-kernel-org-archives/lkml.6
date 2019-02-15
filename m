@@ -4,45 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A38DC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:34:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04137C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54115206B7
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:34:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBD0C206B7
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:34:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392901AbfBOJeP (ORCPT
+        id S2392913AbfBOJep (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:34:15 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:52617 "EHLO
+        Fri, 15 Feb 2019 04:34:45 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:57233 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726146AbfBOJeO (ORCPT
+        with ESMTP id S1726146AbfBOJeo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 04:34:14 -0500
+        Fri, 15 Feb 2019 04:34:44 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1F9Xcwq1117092
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1F9YGhh1117149
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 15 Feb 2019 01:33:38 -0800
+        Fri, 15 Feb 2019 01:34:16 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1F9Xb3x1117089;
-        Fri, 15 Feb 2019 01:33:37 -0800
-Date:   Fri, 15 Feb 2019 01:33:37 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1F9YGde1117146;
+        Fri, 15 Feb 2019 01:34:16 -0800
+Date:   Fri, 15 Feb 2019 01:34:16 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-b7qwa0l19dswa09h3s41akfu@git.kernel.org>
-Cc:     tglx@linutronix.de, wangnan0@huawei.com, hpa@zytor.com,
-        adrian.hunter@intel.com, lclaudio@redhat.com, jolsa@kernel.org,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org, acme@redhat.com,
-        mingo@kernel.org
-Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org, acme@redhat.com,
-          adrian.hunter@intel.com, lclaudio@redhat.com, jolsa@kernel.org,
-          namhyung@kernel.org, tglx@linutronix.de, hpa@zytor.com,
-          wangnan0@huawei.com
+Message-ID: <tip-oq7bvaaf07gsd4yqty3107u2@git.kernel.org>
+Cc:     adrian.hunter@intel.com, namhyung@kernel.org,
+        linux-kernel@vger.kernel.org, mingo@kernel.org,
+        lclaudio@redhat.com, jolsa@kernel.org, tglx@linutronix.de,
+        hpa@zytor.com, acme@redhat.com, wangnan0@huawei.com
+Reply-To: wangnan0@huawei.com, acme@redhat.com, hpa@zytor.com,
+          tglx@linutronix.de, jolsa@kernel.org, lclaudio@redhat.com,
+          mingo@kernel.org, linux-kernel@vger.kernel.org,
+          namhyung@kernel.org, adrian.hunter@intel.com
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf beauty ioctl cmd: The 'fd' arg is signed
-Git-Commit-ID: e1be4a5c03e1b282633e5528ea634c1cc2095c43
+Subject: [tip:perf/core] perf trace: Check if the 'fd' is negative when
+ mapping it to pathname
+Git-Commit-ID: 051074867434cc520c08f188479d4757dcfdaef8
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -56,40 +57,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e1be4a5c03e1b282633e5528ea634c1cc2095c43
-Gitweb:     https://git.kernel.org/tip/e1be4a5c03e1b282633e5528ea634c1cc2095c43
+Commit-ID:  051074867434cc520c08f188479d4757dcfdaef8
+Gitweb:     https://git.kernel.org/tip/051074867434cc520c08f188479d4757dcfdaef8
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 12 Feb 2019 10:12:28 -0300
+AuthorDate: Tue, 12 Feb 2019 10:18:36 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Thu, 14 Feb 2019 13:31:11 -0300
 
-perf beauty ioctl cmd: The 'fd' arg is signed
+perf trace: Check if the 'fd' is negative when mapping it to pathname
 
-It is possible to pass a negative number as the fd and that has to be
-handled, so stop using 'unsigned int fd' in the ioctl syscall 'cmd'
-beautifier.
+We were crashing when processing a negative fd:
+
+  Program received signal SIGSEGV, Segmentation fault.
+  0x0000000000609bbf in syscall_arg__scnprintf_ioctl_cmd (bf=0x1172eca "", size=2038, arg=0x7fffffff8360) at trace/beauty/ioctl.c:182
+  182			if (file->dev_maj == USB_DEVICE_MAJOR)
+  Missing separate debuginfos, use: dnf debuginfo-install bzip2-libs-1.0.6-28.fc29.x86_64 elfutils-libelf-0.174-5.fc29.x86_64 elfutils-libs-0.174-5.fc29.x86_64 glib2-2.58.3-1.fc29.x86_64 libbabeltrace-1.5.6-1.fc29.x86_64 libunwind-1.2.1-6.fc29.x86_64 libuuid-2.32.1-1.fc29.x86_64 libxcrypt-4.4.3-2.fc29.x86_64 numactl-libs-2.0.12-1.fc29.x86_64 openssl-libs-1.1.1a-1.fc29.x86_64 pcre-8.42-6.fc29.x86_64 perl-libs-5.28.1-427.fc29.x86_64 popt-1.16-15.fc29.x86_64 python2-libs-2.7.15-11.fc29.x86_64 slang-2.3.2-4.fc29.x86_64 xz-libs-5.2.4-3.fc29.x86_64
+  (gdb) bt
+  #0  0x0000000000609bbf in syscall_arg__scnprintf_ioctl_cmd (bf=0x1172eca "", size=2038, arg=0x7fffffff8360) at trace/beauty/ioctl.c:182
+  #1  0x000000000048e295 in syscall__scnprintf_val (sc=0x123b500, bf=0x1172eca "", size=2038, arg=0x7fffffff8360, val=21519)
+      at builtin-trace.c:1594
+  #2  0x000000000048e60d in syscall__scnprintf_args (sc=0x123b500, bf=0x1172ec6 "-1, ", size=2042, args=0x7ffff6a7c034 "\377\377\377\377",
+      augmented_args=0x7ffff6a7c064, augmented_args_size=4, trace=0x7fffffffa8d0, thread=0x1175cd0) at builtin-trace.c:1661
+  #3  0x000000000048f04e in trace__sys_enter (trace=0x7fffffffa8d0, evsel=0xb260b0, event=0x7ffff6a7bfe8, sample=0x7fffffff84f0)
+      at builtin-trace.c:1880
+  #4  0x00000000004915a4 in trace__handle_event (trace=0x7fffffffa8d0, event=0x7ffff6a7bfe8, sample=0x7fffffff84f0) at builtin-trace.c:2590
+  #5  0x0000000000491eed in __trace__deliver_event (trace=0x7fffffffa8d0, event=0x7ffff6a7bfe8) at builtin-trace.c:2818
+  #6  0x0000000000492030 in trace__deliver_event (trace=0x7fffffffa8d0, event=0x7ffff6a7bfe8) at builtin-trace.c:2845
+  #7  0x0000000000492896 in trace__run (trace=0x7fffffffa8d0, argc=0, argv=0x7fffffffdb58) at builtin-trace.c:3040
+  #8  0x000000000049603a in cmd_trace (argc=0, argv=0x7fffffffdb58) at builtin-trace.c:3952
+  #9  0x00000000004d5103 in main (argc=1, argv=0x7fffffffdb58) at perf.c:474
+  (gdb) p fd
+  $1 = -1
+  (gdb) p file
+  $7 = (struct file *) 0xfffffffffffffff0
+  (gdb) p ((struct thread_trace *)arg->thread)->files.table + fd
+  $8 = (struct file *) 0xfffffffffffffff0
+  (gdb)
+
+Check for that and return NULL instead.
+
+This problem was introduced recently, the other codepaths leading to
+thread_trace__files_entry() check for negative fds, like thread__fd_path(),
+but we need to do it at thread_trace__files_entry() as more users are now
+calling it directly.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-b7qwa0l19dswa09h3s41akfu@git.kernel.org
+Fixes: 2d473389f87a ("perf trace beauty: Export function to get the files for a thread")
+Link: https://lkml.kernel.org/n/tip-oq7bvaaf07gsd4yqty3107u2@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/trace/beauty/ioctl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/builtin-trace.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/perf/trace/beauty/ioctl.c b/tools/perf/trace/beauty/ioctl.c
-index 620350d41209..52242fa4072b 100644
---- a/tools/perf/trace/beauty/ioctl.c
-+++ b/tools/perf/trace/beauty/ioctl.c
-@@ -175,7 +175,7 @@ static size_t ioctl__scnprintf_cmd(unsigned long cmd, char *bf, size_t size, boo
- size_t syscall_arg__scnprintf_ioctl_cmd(char *bf, size_t size, struct syscall_arg *arg)
- {
- 	unsigned long cmd = arg->val;
--	unsigned int fd = syscall_arg__val(arg, 0);
-+	int fd = syscall_arg__val(arg, 0);
- 	struct file *file = thread__files_entry(arg->thread, fd);
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index b4e420c41831..a9b51f59ab54 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -1041,6 +1041,9 @@ static const size_t trace__entry_str_size = 2048;
  
- 	if (file != NULL) {
+ static struct file *thread_trace__files_entry(struct thread_trace *ttrace, int fd)
+ {
++	if (fd < 0)
++		return NULL;
++
+ 	if (fd > ttrace->files.max) {
+ 		struct file *nfiles = realloc(ttrace->files.table, (fd + 1) * sizeof(struct file));
+ 
