@@ -2,122 +2,122 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33069C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:13:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24643C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:13:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF8C82080A
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:13:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="QmhBJECQ"
+	by mail.kernel.org (Postfix) with ESMTP id E7C8420643
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:13:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550214810;
+	bh=uHa0ewdftxg6MCAtg1cwOGKFCgG1xNH5MAQOg7QL3Fo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=C/vq0rseJBBxFLpBgOsui/NWqtdJG60ZqCTN8yq32PqBmL3tvk+MpdEHQHA4vwa6a
+	 vUOkiUxrwqFCVph7mr0KAT/UKEq6G3f6oSdkfJ92sUcka7x+kEoGZsNupsEqC9nd2m
+	 +XFGTJ1VvmZ3ct+J7WjJ3ia45xshtIX3yi0go5W8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389410AbfBOHNP (ORCPT
+        id S2389454AbfBOHNV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 02:13:15 -0500
-Received: from mail.andi.de1.cc ([85.214.239.24]:57830 "EHLO
-        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731694AbfBOHNO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 02:13:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
-        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=6w+vFfVoNlU/XhcPPJ8lofA6a6B0rHWienMgz3TUnmI=; b=QmhBJECQktpiyoBlqH7x1MyyI
-        nEW8lefC/jLJ/IOnaU3o+wpCeHoOomXKX+r5zVTJ3DdcGJVMi3eAMqYkhzxXIxE2JaAg8PpJMax5l
-        8XUCrVLZbTfTfspyRVm6bQmSZjqB8nmPPIbMXfyo99dDZE1eehzWY5+3CVW0pVgxf3bT0=;
-Received: from [2a02:790:ff:1019:7ee9:d3ff:fe1f:a246] (helo=localhost)
-        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1guXgG-00024J-CR; Fri, 15 Feb 2019 08:13:04 +0100
-Received: from [::1] (helo=localhost)
-        by localhost with esmtp (Exim 4.89)
-        (envelope-from <andreas@kemnade.info>)
-        id 1guXgE-0004qi-KV; Fri, 15 Feb 2019 08:13:02 +0100
-Date:   Fri, 15 Feb 2019 08:12:42 +0100
-From:   Andreas Kemnade <andreas@kemnade.info>
-To:     Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc:     <airlied@linux.ie>, <daniel@ffwll.ch>,
-        <laurent.pinchart@ideasonboard.com>, <sre@kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <letux-kernel@openphoenux.org>
-Subject: Re: [PATCH v2 0/2] drm/omap: panel-tpo-td028ttec1: add backlight
- support
-Message-ID: <20190215081242.21cc9953@kemnade.info>
-In-Reply-To: <a54e7427-ff84-d105-aab7-c5eab42e6df9@ti.com>
-References: <20190205063813.14873-1-andreas@kemnade.info>
-        <a54e7427-ff84-d105-aab7-c5eab42e6df9@ti.com>
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
+        Fri, 15 Feb 2019 02:13:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56610 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725909AbfBOHNV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 02:13:21 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24B7F206A3;
+        Fri, 15 Feb 2019 07:13:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550214796;
+        bh=uHa0ewdftxg6MCAtg1cwOGKFCgG1xNH5MAQOg7QL3Fo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=o4K+plyueYuuAPOngKyNVCDMWdy0KLly9X8tr4JZ6smUBREfPsxsz6nCNqWz6oBju
+         ePF2cx8WHN371VFb3S/0C+X5ytWYP3ED0XdT6UK7jlMI5Vxc3QTFtxIqHJM2+/Fv3t
+         JO7cfxIuBuwSGosrm/gKgjP9DXUW1wLDaEklCO1U=
+Date:   Fri, 15 Feb 2019 08:13:03 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     stable@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Richard Weinberger <richard.weinberger@gmail.com>,
+        Samuel Dionne-Riel <samuel@dionne-riel.com>,
+        LKML <linux-kernel@vger.kernel.org>, graham@grahamc.com,
+        Oleg Nesterov <oleg@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: Userspace regression in LTS and stable kernels
+Message-ID: <20190215071303.GA29700@kroah.com>
+References: <CAN1fySViLgrLAHHfTHMef-Bkh73kUHKP-ava6TbgALeSE4LfFw@mail.gmail.com>
+ <CAFLxGvwpuxKF4UWdsULwQWo7kgVLMNHC=77dN+w-A0a6avrAXA@mail.gmail.com>
+ <CAHk-=wjtH5ombebghG-SDNGppJF4a5bZAUqndtZ3tauWjgw5_w@mail.gmail.com>
+ <20190214122027.c0df36282d65dc9979248117@linux-foundation.org>
+ <20190215070022.GD14473@kroah.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/CwJMaOvMR+688fpUkYv3koC"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190215070022.GD14473@kroah.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/CwJMaOvMR+688fpUkYv3koC
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Feb 15, 2019 at 08:00:22AM +0100, Greg Kroah-Hartman wrote:
+> On Thu, Feb 14, 2019 at 12:20:27PM -0800, Andrew Morton wrote:
+> > On Thu, 14 Feb 2019 09:56:46 -0800 Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> > 
+> > > On Wed, Feb 13, 2019 at 3:37 PM Richard Weinberger
+> > > <richard.weinberger@gmail.com> wrote:
+> > > >
+> > > > Your shebang line exceeds BINPRM_BUF_SIZE.
+> > > > Before the said commit the kernel silently truncated the shebang line
+> > > > (and corrupted it),
+> > > > now it tells the user that the line is too long.
+> > > 
+> > > It doesn't matter if it "corrupted" things by truncating it. All that
+> > > matters is "it used to work, now it doesn't"
+> > > 
+> > > Yes, maybe it never *should* have worked. And yes, it's sad that
+> > > people apparently had cases that depended on this odd behavior, but
+> > > there we are.
+> > > 
+> > > I see that Kees has a patch to fix it up.
+> > > 
+> > 
+> > Greg, I think we have a problem here.
+> > 
+> > 8099b047ecc431518 ("exec: load_script: don't blindly truncate shebang
+> > string") wasn't marked for backporting.  And, presumably as a
+> > consequence, Kees's fix "exec: load_script: allow interpreter argument
+> > truncation" was not marked for backporting.
+> > 
+> > 8099b047ecc431518 hasn't even appeared in a Linus released kernel, yet
+> > it is now present in 4.9.x, 4.14.x, 4.19.x and 4.20.x.
+> 
+> It came in 5.0-rc1, so it fits the "in a Linus released kernel"
+> requirement.  If we are to wait until it shows up in a -final, that
+> would be months too late for almost all of these types of patches that
+> are picked up.
+> 
+> > I don't know if Oleg considered backporting that patch.  I certainly
+> > did (I always do), and I decided against doing so.  Yet there it is.
+> 
+> This came in through Sasha's tools, which give people a week or so to
+> say "hey, this isn't a stable patch!" and it seems everyone ignored that
+> :(
+> 
+> Where is Kees's fix?  I'll be glad to queue it up, or just revert the
+> above commit, which ever people think is easiest.
 
-Hi,
+Ah, I see the fix now, _after_ I just pushed out a bunch of stable
+releases.  I'll go queue it up and push it out with just that fix in it
+now...
 
-On Fri, 8 Feb 2019 11:13:33 +0200
-Tomi Valkeinen <tomi.valkeinen@ti.com> wrote:
+thanks,
 
-> On 05/02/2019 08:38, Andreas Kemnade wrote:
-> > This panel has a backlight, so add a property describing that and
-> > add the code to use that.
-> > This makes things like xset dpms force off
-> > also turn off the backlight, so we do not need to rely on additional
-> > userspace programs to do that.
-> >=20
-> > Andreas Kemnade (2):
-> >   drm/omap: panel-tpo-td028ttec1: add backlight support
-> >   dt-bindings: panel: td028ttec1: add backlight property
-> >=20
-> >  .../devicetree/bindings/display/panel/tpo,td028ttec1.txt       |  2 ++
-> >  drivers/gpu/drm/omapdrm/displays/panel-tpo-td028ttec1.c        | 10 ++=
-++++++++
-> >  2 files changed, 12 insertions(+)
-> >  =20
->=20
-> Thanks, I'll pick these up.
->=20
-
-hmm, that sounds like: patch accepted, will appear in linux-next soon.
-I have not seen it there, or is it just in some branch not merged into
-linux-next. Any new obstacles?
-
-Regards,
-Andreas
-
---Sig_/CwJMaOvMR+688fpUkYv3koC
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEPIWxmAFyOaBcwCpFl4jFM1s/ye8FAlxmZmoACgkQl4jFM1s/
-ye9+8xAAqmwCufiIjNGhDbgZP4jQZyAq8wV/Mfq8XHJLGVThdnHzE/AoKrEwa1/Y
-snw2s4+AcBHwLwqPbKTzAyY+hZoWlzuTDmRUepnoKxusJerbsSe3DBH0brqb2NR5
-Wsjn7s0JHVv0XPo3cDQOw6igQ+ca/nJak8OweR9QZFs1raoqfDldUCVQH9zFGRkk
-Ec5sBfd+/YWxpdmDpREB5QCYeW4CJsWWcDTzMSp8uY69IpXv2+uU0+eao3HSjAli
-pdYaPMiaw52Rr31ERmG2icWiYkEQETH52xoPVe85yut5fIO9WjGd37UTW1QaeFLN
-j02Jc9YWmjPgXmxqoLC1gD0ODuVMEVwFvQmzejtTYRWJYaz4MrYuGi4EL+LYW3gU
-1w5FD0D80vxm55nRog/pWHD42IPPqQ+svj0SqKoUrjof3Pv13PnsvcGKV82dNPnP
-MFTre8QnxpAlP6YjHDJaRGVqtMEMM1Ny2c0u3euTDCtzeYINx77Q4j576Ichb6K7
-gi7zMBhPhvtVkcxnu1jYQYSTodjHD5aCkhxIqFkvxsN/oCZId7pekTOaalhdz97m
-3em2ct49+LyYJU9POAxyOwzNPg7Ikwm/uNLV/rspwJQL4z58SBq3Uxq8+bmFt4oX
-eWEOlH1NUhFcYTU19JJ+xeE9lJ6K98pxMntwgIHlvWX/LqGRL4g=
-=85hg
------END PGP SIGNATURE-----
-
---Sig_/CwJMaOvMR+688fpUkYv3koC--
+greg k-h
