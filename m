@@ -2,90 +2,65 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 494ADC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:19:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D90CC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C67F205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:18:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D80F421924
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:19:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731819AbfBOJSu (ORCPT
+        id S1732343AbfBOJTL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:18:50 -0500
-Received: from sauhun.de ([88.99.104.3]:60486 "EHLO pokefinder.org"
+        Fri, 15 Feb 2019 04:19:11 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:60064 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727917AbfBOJSt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 04:18:49 -0500
-Received: from localhost (unknown [83.221.228.209])
-        by pokefinder.org (Postfix) with ESMTPSA id EE8B42E3551;
-        Fri, 15 Feb 2019 10:18:47 +0100 (CET)
-Date:   Fri, 15 Feb 2019 10:18:47 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     Ludovic Desroches <ludovic.desroches@microchip.com>,
-        kbuild-all@01.org, linux-i2c@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, me@jue.yt,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        linux-kernel@vger.kernel.org, andriy.shevchenko@linux.intel.com,
-        Juergen Fitschen <jfi@ssv-embedded.de>
-Subject: Re: [PATCH v4 3/3] i2c: at91: added slave mode support
-Message-ID: <20190215091847.pkagndsndjzumzwd@ninjato>
-References: <20181227151311.20107-4-ludovic.desroches@microchip.com>
- <201901050345.JaEWLmjh%fengguang.wu@intel.com>
- <20190115224351.rtbqaqro5pl3dvov@ninjato>
+        id S1727917AbfBOJTL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 04:19:11 -0500
+Received: from ip5f5a6320.dynamic.kabel-deutschland.de ([95.90.99.32] helo=diego.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1guZe8-0000CI-0R; Fri, 15 Feb 2019 10:19:00 +0100
+From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To:     Akash Gajjar <Akash_Gajjar@mentor.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Oskari Lemmela <oskari@lemmela.net>,
+        Shohei Maruyama <cheat.sc.linux@outlook.com>,
+        Levin Du <djw@t-chip.com.cn>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] arm64: dts: rockchip: rockpro64 dts remove unused node
+Date:   Fri, 15 Feb 2019 10:18:59 +0100
+Message-ID: <4653141.o6ZdamfZ6d@diego>
+In-Reply-To: <20190213170651.3210-3-Akash_Gajjar@mentor.com>
+References: <20190213170651.3210-1-Akash_Gajjar@mentor.com> <20190213170651.3210-3-Akash_Gajjar@mentor.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qchyiiv27q5ypmam"
-Content-Disposition: inline
-In-Reply-To: <20190115224351.rtbqaqro5pl3dvov@ninjato>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Am Mittwoch, 13. Februar 2019, 18:06:38 CET schrieb Akash Gajjar:
+> lcd panel pinmux and vcc1v8_s3 regulator is redundant and has a no impact,
+> so removing it.
+> 
+> Signed-off-by: Akash Gajjar <Akash_Gajjar@mentor.com>
 
---qchyiiv27q5ypmam
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+vcc1v8_s3 is actually also a emmc supply, so I'd like to keep it around
+for completenes sake.
 
-On Tue, Jan 15, 2019 at 11:43:51PM +0100, Wolfram Sang wrote:
->=20
-> > All errors (new ones prefixed by >>):
-> >=20
-> > >> ERROR: "at91_init_twi_bus_slave" [drivers/i2c/busses/i2c-at91.ko] un=
-defined!
-> > >> ERROR: "at91_twi_probe_slave" [drivers/i2c/busses/i2c-at91.ko] undef=
-ined!
->=20
-> That needs to be fixed. Rest looks good to me!
+I've now dropped the regulator portions so that only the lcd-pinmux
+gets removed and reworded the commit message accordingly
+and applied the result for 5.1
 
-Ludovic, do you have time to fix it? I would really like to apply this
-series for the next merge window.
+Thanks
+Heiko
 
 
---qchyiiv27q5ypmam
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxmg/MACgkQFA3kzBSg
-Kbaxtg/9EujPwpdjaYtxYjWa2I4ETfR0dHWnklKyaTbLIDlAi1HZnfhQ656dWaat
-h+FpC6m9SubOr3DeJxG7XVBsygDvn8AnWS0UJPxzYlBSuOl+XAPoDdpiBwMugpEL
-mKBOyBiLUQ8M7L1LzGHvgnm5Bm3r4xBirPVBYckHc5S2kMGqgarQYopILiwrC62D
-6b+eyKYWbcmpESEIwPz7Sl6KbcOb1WzEJbdmxNCFDmzQhV4K15fMl/BsrRSb0OLa
-9qwhzQ+suUHXk6plDkXg49qvzxEZmPEPg0fDLFAdDHKUVNnLitgj+2DzSdAxSv5c
-PpQaWv82b4CxxAyMi4Zm35CsfwiLb4fhMnfflZh0AaCoRBQit9/R/ROPCFmMVkSG
-2LJ3ap6eENveUXifYjqNV4aoucOtvcQrn0u2Dt2WhaVrlImVoq7hW7+JirzTZxUd
-VpPdsB9Zx7yU/6EgeuzvXaeH780vuWkGezw7GgnQMA9as1KQXOyAsw9KwKEgHnBI
-MlHxZrpv0uYAKKVXV/5gvYmQF5TpkhhWfe4iSkMXGuHKqXFBZ095XAagt6roP58I
-hOQ4eGbKyE9kiIbR2Ie8fQwSK/PpBTDxxcF2ZUk/F2DbPRyh9j1yHLnqWPs11TTo
-fftCDKNQAV44g5TveOVZ7eQUWM9lL/UoSyrrjS8yGZs7LIXKvPI=
-=PYSp
------END PGP SIGNATURE-----
-
---qchyiiv27q5ypmam--
