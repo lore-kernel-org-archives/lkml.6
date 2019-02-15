@@ -2,88 +2,114 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5FB1C4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7ECBC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:42:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A80A2192D
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:42:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B58262192D
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 15:42:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="Unvl08o3"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fH6s1uam"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729614AbfBOPmD (ORCPT
+        id S1730796AbfBOPml (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 10:42:03 -0500
-Received: from a9-31.smtp-out.amazonses.com ([54.240.9.31]:45698 "EHLO
-        a9-31.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726144AbfBOPmD (ORCPT
+        Fri, 15 Feb 2019 10:42:41 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:38470 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726154AbfBOPml (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 10:42:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1550245322;
-        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=ieoA9G/W7FjMw2f/8b6ijric5X7WLHj4SWCwlIfIT3E=;
-        b=Unvl08o3EUDCs5oYoOtJ8OdPcFc3nBgaouZGWhaSGZlU9kTY9eNGTON+3/0G29W6
-        6pXPvYuHZZIEeICI7KLo9AEm2ZplYtKkKF+PsXj0PEPeb2H8EbZirMGy+OxsrEYPu3i
-        2bZjBAUyQ6w+UfRWab+O9lfJretpOK2oDiEyOQPY=
-Date:   Fri, 15 Feb 2019 15:42:02 +0000
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To:     Dave Chinner <david@fromorbit.com>
-cc:     Jerome Glisse <jglisse@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, Doug Ledford <dledford@redhat.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving longterm-GUP
- usage by RDMA
-In-Reply-To: <20190215011921.GS20493@dastard>
-Message-ID: <01000168f1d25e3a-2857236c-a7cc-44b8-a5f3-f51c2cfe6ce4-000000@email.amazonses.com>
-References: <01000168c8e2de6b-9ab820ed-38ad-469c-b210-60fcff8ea81c-000000@email.amazonses.com> <20190208044302.GA20493@dastard> <20190208111028.GD6353@quack2.suse.cz> <CAPcyv4iVtBfO8zWZU3LZXLqv-dha1NSG+2+7MvgNy9TibCy4Cw@mail.gmail.com> <20190211102402.GF19029@quack2.suse.cz>
- <CAPcyv4iHso+PqAm-4NfF0svoK4mELJMSWNp+vsG43UaW1S2eew@mail.gmail.com> <20190211180654.GB24692@ziepe.ca> <20190214202622.GB3420@redhat.com> <20190214205049.GC12668@bombadil.infradead.org> <20190214213922.GD3420@redhat.com> <20190215011921.GS20493@dastard>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 15 Feb 2019 10:42:41 -0500
+Received: by mail-vs1-f68.google.com with SMTP id t7so6037680vsq.5
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 07:42:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=21Fx0jkAMtJpbFhfsGHadPS2RCbybIZVUEaYg4IA3YM=;
+        b=fH6s1uamWAlEArpmX8T7mVLUOhyVUTUbxl0BK9PmhZWQf1BjDfMXgwKWtBpfJTbyvw
+         SLMEH38zwLXFz3/gPsmCFhF/4H66jynqFmOusL2JS0RvwI7KxkYfEfGO7WTl7L+9LYZg
+         IDiZ/svA6Hcf7vTLPvmP/INGazfgn5bgg5Ov4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=21Fx0jkAMtJpbFhfsGHadPS2RCbybIZVUEaYg4IA3YM=;
+        b=i8wzBgA8EDyngkG7S2sMosf9dAsvv36MKO5X+egSjH6k7Q/nWLTOmMFx/iLoIdahZL
+         S97kteB4QIoSe7uE3TuJTtsaWehLeDxT9p14g4+hWlcm6RcoHxUMtYL6i94KfAVAli0y
+         I3LQIQYY1560MF+Z4Hwh+X3AlC/P5JiG+KobhWEyYzAfDZFTp3ixwwy9cWWsBquH7eBm
+         d7bsryF1p9LqiyKx0kN0qRXR7fZjOEmHgfK45nzDrDbPJ2ZuWqujHPdJH1DjOfx1mAi5
+         EdH3BWz/zQ6fYYp6RLNbglTGBJLD+qbNC+rD1CYXe/0/wkH34k22q96KHt2db3FuJCyr
+         n7ag==
+X-Gm-Message-State: AHQUAuZ0GusYT4JC3yqDorAVFM/2oHeuPbaWEGv8nJBzImN2V9QbCDXy
+        tBwmZDuwTKMkyn76uU9lbtAPzcu+7gk=
+X-Google-Smtp-Source: AHgI3IYybiZ4Y0XHWtbeFN0rvAE0F06Xh4hEn3SssUfPwN4evS0SncZWfmbG7q+pXv8ZmU1OMX/ZzA==
+X-Received: by 2002:a67:c86:: with SMTP id 128mr5427866vsm.221.1550245359519;
+        Fri, 15 Feb 2019 07:42:39 -0800 (PST)
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
+        by smtp.gmail.com with ESMTPSA id l123sm1097781vsd.26.2019.02.15.07.42.37
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Feb 2019 07:42:37 -0800 (PST)
+Received: by mail-ua1-f50.google.com with SMTP id v26so3356629uap.4
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 07:42:37 -0800 (PST)
+X-Received: by 2002:ab0:70b7:: with SMTP id q23mr4845751ual.15.1550245357144;
+ Fri, 15 Feb 2019 07:42:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2019.02.15-54.240.9.31
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+References: <20190214181249.2749-1-dianders@chromium.org> <20190214181249.2749-2-dianders@chromium.org>
+ <CAPDyKFpXc+0rAHOgKN+QDK0MH-4efUZJ8asuBkAwg+w73huzOw@mail.gmail.com>
+In-Reply-To: <CAPDyKFpXc+0rAHOgKN+QDK0MH-4efUZJ8asuBkAwg+w73huzOw@mail.gmail.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Fri, 15 Feb 2019 07:42:25 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=XMGzWD=rEPshz_QHkcmqMhu87cn2n0i+ZOzPbgcHccxg@mail.gmail.com>
+Message-ID: <CAD=FV=XMGzWD=rEPshz_QHkcmqMhu87cn2n0i+ZOzPbgcHccxg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] PM / Domains: Mark "name" const in dev_pm_domain_attach_by_name()
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Len Brown <len.brown@intel.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Pavel Machek <pavel@ucw.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 15 Feb 2019, Dave Chinner wrote:
+Hi,
 
-> Which tells us filesystem people that the applications are doing
-> something that _will_ cause data corruption and hence not to spend
-> any time triaging data corruption reports because it's not a
-> filesystem bug that caused it.
+On Fri, Feb 15, 2019 at 2:28 AM Ulf Hansson <ulf.hansson@linaro.org> wrote:
 >
-> See open(2):
+> On Thu, 14 Feb 2019 at 19:13, Douglas Anderson <dianders@chromium.org> wrote:
+> >
+> > As of the patch ("PM / Domains: Mark "name" const in
+> > genpd_dev_pm_attach_by_name()") it's clear that the name in
+> > dev_pm_domain_attach_by_name() can be const.  Mark it as so.  This
+> > allows drivers to pass in a name that was declared "const" in a
+> > driver.
+> >
+> > Fixes: 27dceb81f445 ("PM / Domains: Introduce dev_pm_domain_attach_by_name()")
+> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
 >
-> 	Applications should avoid mixing O_DIRECT and normal I/O to
-> 	the same file, and especially to overlapping byte regions in
-> 	the same file.  Even when the filesystem correctly handles
-> 	the coherency issues in this situation, overall I/O
-> 	throughput is likely to be slower than using either mode
-> 	alone.  Likewise, applications should avoid mixing mmap(2)
-> 	of files with direct I/O to the same files.
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+>
+> Perhaps fold $subject patch into patch1, they seems highly related.
+> Anyway, no strong opinion here.
 
-Since RDMA is something similar: Can we say that a file that is used for
-RDMA should not use the page cache?
+Sure, either way is fine with me so I'll wait until someone tells me
+for sure one way or the other.  I'm also happy if they just get
+squashed together when applied if that's easier.  I originally kept
+them separate since the two APIs were originally added in separate
+patches so it seemed consistent to do the bugfixes in separate
+patches.  ;-)
 
-And can we enforce this in the future? I.e. have some file state that says
-that this file is direct/RDMA or contains long term pinning and thus
-allows only a certain type of operations to ensure data consistency?
-
-If we cannot enforce it then we may want to spit out some warning?
-
+-Doug
