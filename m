@@ -2,110 +2,149 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E997FC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D478DC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B88E3222F7
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:41:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="HciA2shR"
+	by mail.kernel.org (Postfix) with ESMTP id AE3EB222FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:41:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405148AbfBOJlu (ORCPT
+        id S2405183AbfBOJly (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:41:50 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:50903 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405116AbfBOJlu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 04:41:50 -0500
-Received: by mail-it1-f195.google.com with SMTP id z7so22726960iti.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 01:41:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=z4kLOxk0Pqr+y6/o713VrCidz873BkOSKyDdosL1Pfw=;
-        b=HciA2shRZ8CjL7saNAMB4rI0wOSnALHbJrOdQkn9XPS6PHj7UJGiykrf9pvoRpm3gm
-         Z/sn+KvXjvnYN3Xo+uViLssd1tfIt8LQMOZFvpYqnRvCXlERvH0WUCZ6/Eh7JnY7cmxa
-         1epHIlphADiaGMga7MxzpIEOdHYs8pRSD3J6+B25PdC6EUNpwunzTAXe6IeaR8AawOgo
-         yAl5LOzbKheLRwlF7xSm5F9bGQPpOn1elmEXML+QM1l+DR44foHSvxHfE9NRi/HQ6+x6
-         YDenlqD2DdC2kO7zxJHkv/Hjvc8q7qfjmpraHb28gxXXEDYSH8ZA2zne7fSrM86uNgyW
-         C6Kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=z4kLOxk0Pqr+y6/o713VrCidz873BkOSKyDdosL1Pfw=;
-        b=txAfQlMn5eThIHvapylnw5GD2sBIjINJ8/aidfmZTusdvTy+wytcgVgrM0n+X0qB9+
-         CbLrSGRmD+cW759aljTlK6HYzjrb7Lfh9lwOtr+Z59CjnSx/4CPJ1XI7sM7vbQz4NJJv
-         uZL8m9/dGXNIb6nd+fNx6CIQp9RYBCiEFquSvue5VeAndflaJpPa6WV1s08Eqhej0MNJ
-         w+gtlVnpm95Z3WEPhQCWOPF2Ev24naTAwH8jA5YrUU5KmwL0O+SNlKv8eAcgi5msjKA9
-         GwT1JYDZM87mySSYu159DMcMnowbH16dw/9A/D24kwaWvzrozHnQMFw6SnysCClwPrg0
-         l0PA==
-X-Gm-Message-State: AHQUAuYgSHObY+GEU5Q3NonLEGRk+RvdN7b30uo0hmiFD+iBfDGa6pTk
-        36D8RXjdMJR81/OZBpqK7Fh2Ure/AkGPQ8aWdp82Ig==
-X-Google-Smtp-Source: AHgI3Ia5Hjlue/Mr3PJspIk50HO5My1AWiWGZeENYt73SIeJ5U0THF9hr292qsKLr5lLQMKPmLhOx5PjYq457LgQObc=
-X-Received: by 2002:a5d:88d3:: with SMTP id i19mr5423601iol.187.1550223709534;
- Fri, 15 Feb 2019 01:41:49 -0800 (PST)
+        Fri, 15 Feb 2019 04:41:54 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57446 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405116AbfBOJlx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 04:41:53 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 66E37C3A8C;
+        Fri, 15 Feb 2019 09:41:52 +0000 (UTC)
+Received: from [10.36.117.138] (ovpn-117-138.ams2.redhat.com [10.36.117.138])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9116A1019626;
+        Fri, 15 Feb 2019 09:41:38 +0000 (UTC)
+Subject: Re: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
+To:     "Wang, Wei W" <wei.w.wang@intel.com>,
+        'Nitesh Narayan Lal' <nitesh@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
+        "pagupta@redhat.com" <pagupta@redhat.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "riel@surriel.com" <riel@surriel.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "dodgen@google.com" <dodgen@google.com>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        "dhildenb@redhat.com" <dhildenb@redhat.com>,
+        "aarcange@redhat.com" <aarcange@redhat.com>
+References: <20190204201854.2328-1-nitesh@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF6B56A@shsmsx102.ccr.corp.intel.com>
+ <f9516222-793a-a169-c18a-728ca0256cd3@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF6F0E3@shsmsx102.ccr.corp.intel.com>
+ <bdd4298d-b84b-1ffb-0d9c-3ff5798da325@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF71F38@shsmsx102.ccr.corp.intel.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwX4EEwECACgFAljj9eoCGwMFCQlmAYAGCwkI
+ BwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEE3eEPcA/4Na5IIP/3T/FIQMxIfNzZshIq687qgG
+ 8UbspuE/YSUDdv7r5szYTK6KPTlqN8NAcSfheywbuYD9A4ZeSBWD3/NAVUdrCaRP2IvFyELj
+ xoMvfJccbq45BxzgEspg/bVahNbyuBpLBVjVWwRtFCUEXkyazksSv8pdTMAs9IucChvFmmq3
+ jJ2vlaz9lYt/lxN246fIVceckPMiUveimngvXZw21VOAhfQ+/sofXF8JCFv2mFcBDoa7eYob
+ s0FLpmqFaeNRHAlzMWgSsP80qx5nWWEvRLdKWi533N2vC/EyunN3HcBwVrXH4hxRBMco3jvM
+ m8VKLKao9wKj82qSivUnkPIwsAGNPdFoPbgghCQiBjBe6A75Z2xHFrzo7t1jg7nQfIyNC7ez
+ MZBJ59sqA9EDMEJPlLNIeJmqslXPjmMFnE7Mby/+335WJYDulsRybN+W5rLT5aMvhC6x6POK
+ z55fMNKrMASCzBJum2Fwjf/VnuGRYkhKCqqZ8gJ3OvmR50tInDV2jZ1DQgc3i550T5JDpToh
+ dPBxZocIhzg+MBSRDXcJmHOx/7nQm3iQ6iLuwmXsRC6f5FbFefk9EjuTKcLMvBsEx+2DEx0E
+ UnmJ4hVg7u1PQ+2Oy+Lh/opK/BDiqlQ8Pz2jiXv5xkECvr/3Sv59hlOCZMOaiLTTjtOIU7Tq
+ 7ut6OL64oAq+zsFNBFXLn5EBEADn1959INH2cwYJv0tsxf5MUCghCj/CA/lc/LMthqQ773ga
+ uB9mN+F1rE9cyyXb6jyOGn+GUjMbnq1o121Vm0+neKHUCBtHyseBfDXHA6m4B3mUTWo13nid
+ 0e4AM71r0DS8+KYh6zvweLX/LL5kQS9GQeT+QNroXcC1NzWbitts6TZ+IrPOwT1hfB4WNC+X
+ 2n4AzDqp3+ILiVST2DT4VBc11Gz6jijpC/KI5Al8ZDhRwG47LUiuQmt3yqrmN63V9wzaPhC+
+ xbwIsNZlLUvuRnmBPkTJwwrFRZvwu5GPHNndBjVpAfaSTOfppyKBTccu2AXJXWAE1Xjh6GOC
+ 8mlFjZwLxWFqdPHR1n2aPVgoiTLk34LR/bXO+e0GpzFXT7enwyvFFFyAS0Nk1q/7EChPcbRb
+ hJqEBpRNZemxmg55zC3GLvgLKd5A09MOM2BrMea+l0FUR+PuTenh2YmnmLRTro6eZ/qYwWkC
+ u8FFIw4pT0OUDMyLgi+GI1aMpVogTZJ70FgV0pUAlpmrzk/bLbRkF3TwgucpyPtcpmQtTkWS
+ gDS50QG9DR/1As3LLLcNkwJBZzBG6PWbvcOyrwMQUF1nl4SSPV0LLH63+BrrHasfJzxKXzqg
+ rW28CTAE2x8qi7e/6M/+XXhrsMYG+uaViM7n2je3qKe7ofum3s4vq7oFCPsOgwARAQABwsFl
+ BBgBAgAPBQJVy5+RAhsMBQkJZgGAAAoJEE3eEPcA/4NagOsP/jPoIBb/iXVbM+fmSHOjEshl
+ KMwEl/m5iLj3iHnHPVLBUWrXPdS7iQijJA/VLxjnFknhaS60hkUNWexDMxVVP/6lbOrs4bDZ
+ NEWDMktAeqJaFtxackPszlcpRVkAs6Msn9tu8hlvB517pyUgvuD7ZS9gGOMmYwFQDyytpepo
+ YApVV00P0u3AaE0Cj/o71STqGJKZxcVhPaZ+LR+UCBZOyKfEyq+ZN311VpOJZ1IvTExf+S/5
+ lqnciDtbO3I4Wq0ArLX1gs1q1XlXLaVaA3yVqeC8E7kOchDNinD3hJS4OX0e1gdsx/e6COvy
+ qNg5aL5n0Kl4fcVqM0LdIhsubVs4eiNCa5XMSYpXmVi3HAuFyg9dN+x8thSwI836FoMASwOl
+ C7tHsTjnSGufB+D7F7ZBT61BffNBBIm1KdMxcxqLUVXpBQHHlGkbwI+3Ye+nE6HmZH7IwLwV
+ W+Ajl7oYF+jeKaH4DZFtgLYGLtZ1LDwKPjX7VAsa4Yx7S5+EBAaZGxK510MjIx6SGrZWBrrV
+ TEvdV00F2MnQoeXKzD7O4WFbL55hhyGgfWTHwZ457iN9SgYi1JLPqWkZB0JRXIEtjd4JEQcx
+ +8Umfre0Xt4713VxMygW0PnQt5aSQdMD58jHFxTk092mU+yIHj5LeYgvwSgZN4airXk5yRXl
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <751444f1-2ff8-e6f8-3501-b0408e3f6035@redhat.com>
+Date:   Fri, 15 Feb 2019 10:41:37 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190214162349.22740-1-brgl@bgdev.pl> <e566b4ba-0f3e-052a-bf08-ad881cf7b7c0@linaro.org>
-In-Reply-To: <e566b4ba-0f3e-052a-bf08-ad881cf7b7c0@linaro.org>
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-Date:   Fri, 15 Feb 2019 10:41:38 +0100
-Message-ID: <CAMRc=MdW47YspeOv+9U6h9Ps35S0As2yBVXPdiwJFXNg_hMZZg@mail.gmail.com>
-Subject: Re: [PATCH] nvmem: core: fix the return value check when calling the
- notifier chain
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <286AC319A985734F985F78AFA26841F73DF71F38@shsmsx102.ccr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 15 Feb 2019 09:41:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-pt., 15 lut 2019 o 10:28 Srinivas Kandagatla
-<srinivas.kandagatla@linaro.org> napisa=C5=82(a):
->
->
->
-> On 14/02/2019 16:23, Bartosz Golaszewski wrote:
-> > diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-> > index f7301bb4ef3b..a3bed2d9aec7 100644
-> > --- a/drivers/nvmem/core.c
-> > +++ b/drivers/nvmem/core.c
-> > @@ -687,7 +687,7 @@ struct nvmem_device *nvmem_register(const struct nv=
-mem_config *config)
-> >               goto err_remove_cells;
-> >
-> >       rval =3D blocking_notifier_call_chain(&nvmem_notifier, NVMEM_ADD,=
- nvmem);
-> > -     if (rval)
-> > +     if (rval < 0)
-> >               goto err_remove_cells;
->
-> rval will be masked with STOP MASK, so the above statement could be
-> false even if we have error.
-> So you should consider returning an errono which can be understood by use=
-r:
->
-> may be something like this:
->
-> if (rval & NOTIFY_STOP_MASK) {
->         rval =3D notifier_to_errno(rval);
->         goto err_remove_cells
-> }
->
+On 15.02.19 10:05, Wang, Wei W wrote:
+> On Thursday, February 14, 2019 5:43 PM, David Hildenbrand wrote:
+>> Yes indeed, that is the important bit. They must not be put pack to the
+>> buddy before they have been processed by the hypervisor. But as the pages
+>> are not in the buddy, no one allocating a page will stumble over such a page
+>> and try to allocate it. Threads trying to allocate memory will simply pick
+>> another buddy page instead of "busy waiting" for that page to be finished
+>> reporting.
+> 
+> What if a guest thread try to allocate some pages but the buddy cannot satisfy
+> because all the pages are isolated? Would it be the same case that the guest thread
+> gets blocked by waiting all the isolated pages to get madvised by the host and
+> returned to the guest buddy, or even worse, some guest threads get killed due to oom?
 
-Actually I'm now thinking we can remove this check at all - most users
-never check the return values of notifier chain calls. This function
-cannot fail in itself. What do you think?
+Your question targets low memory situations in the guest. I think Nitesh
+already answered parts of that question somewhere and I'll let him
+answer it in detail, only a short comment from my side :)
 
-Bart
+I can imagine techniques where the OOM killer can be avoided, but the
+OOM handler will eventually kick in and handle it.
+
+In general your question is valid and we will have to think about a way
+to avoid that from happening. However, in contrast to your approach
+blocking on potentially every page that is being hinted, in Nitesh's
+approach this would only happen when the guest is really low on memory.
+And the question is in general, if a guest wants to hint if low on
+memory ("safety buffer").
+
+> 
+> Best,
+> Wei
+> 
+
+
+-- 
+
+Thanks,
+
+David / dhildenb
