@@ -2,472 +2,253 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CAA3C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:33:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 752C1C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:34:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51C35205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:33:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 458F321A4C
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:34:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728901AbfBORdz (ORCPT
+        id S1729201AbfBOReZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 12:33:55 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36668 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725939AbfBORdz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 12:33:55 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 592CCA78;
-        Fri, 15 Feb 2019 09:33:54 -0800 (PST)
-Received: from [10.1.197.2] (ostrya.cambridge.arm.com [10.1.197.2])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 53A513F589;
-        Fri, 15 Feb 2019 09:33:51 -0800 (PST)
-Subject: Re: [RFC PATCH 1/5] iommu: Add APIs for IOMMU PASID management
-To:     Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Kirti Wankhede <kwankhede@nvidia.com>,
-        "ashok.raj@intel.com" <ashok.raj@intel.com>,
-        "sanjay.k.kumar@intel.com" <sanjay.k.kumar@intel.com>,
-        "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "yi.l.liu@intel.com" <yi.l.liu@intel.com>,
-        "yi.y.sun@intel.com" <yi.y.sun@intel.com>,
-        "peterx@redhat.com" <peterx@redhat.com>,
-        "tiwei.bie@intel.com" <tiwei.bie@intel.com>,
-        Zeng Xin <xin.zeng@intel.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20181112064501.2290-1-baolu.lu@linux.intel.com>
- <20181112064501.2290-2-baolu.lu@linux.intel.com>
- <20190130110507.54e8bfad@jacob-builder>
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <65452190-afac-bc71-de29-ce24b508955a@arm.com>
-Date:   Fri, 15 Feb 2019 17:33:34 +0000
+        Fri, 15 Feb 2019 12:34:25 -0500
+Received: from mga05.intel.com ([192.55.52.43]:6870 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726847AbfBOReY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 12:34:24 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Feb 2019 09:34:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,373,1544515200"; 
+   d="scan'208";a="138950984"
+Received: from ray.jf.intel.com (HELO [10.7.201.17]) ([10.7.201.17])
+  by orsmga001.jf.intel.com with ESMTP; 15 Feb 2019 09:34:23 -0800
+Subject: Re: [PATCH v3] hugetlb: allow to free gigantic pages regardless of
+ the configuration
+To:     Alexandre Ghiti <alex@ghiti.fr>, Vlastimil Babka <vbabka@suse.cz>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20190214193100.3529-1-alex@ghiti.fr>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+Message-ID: <c6d9be5f-3b3a-c95b-0045-9f98ea52a5c4@intel.com>
+Date:   Fri, 15 Feb 2019 09:34:24 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190130110507.54e8bfad@jacob-builder>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <20190214193100.3529-1-alex@ghiti.fr>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacob, Lu,
+> -#if (defined(CONFIG_MEMORY_ISOLATION) && defined(CONFIG_COMPACTION)) || defined(CONFIG_CMA)
+> +#ifdef CONFIG_CONTIG_ALLOC
+>  /* The below functions must be run on a range from a single zone. */
+>  extern int alloc_contig_range(unsigned long start, unsigned long end,
+>  			      unsigned migratetype, gfp_t gfp_mask);
+> -extern void free_contig_range(unsigned long pfn, unsigned nr_pages);
+>  #endif
+> +extern void free_contig_range(unsigned long pfn, unsigned int nr_pages);
 
-On 30/01/2019 19:05, Jacob Pan wrote:
-> On Mon, 12 Nov 2018 14:44:57 +0800
-> Lu Baolu <baolu.lu@linux.intel.com> wrote:
-> 
->> This adds APIs for IOMMU drivers and device drivers to manage
->> the PASIDs used for DMA transfer and translation. It bases on
->> I/O ASID allocator for PASID namespace management and relies
->> on vendor specific IOMMU drivers for paravirtual PASIDs.
->>
-> Trying to integrate this with VT-d SVM code had some thoughts.
-> First of all, it seems to me the problem we are trying to solve here is
-> to allow custom PASID/IOASID allocator.
-> IOASID, as in driver base, is a common infrastructure of its own right.
-> So it is OK to let device drivers such as VT-d driver directly
-> communicate with IOASID w/o going through common IOMMU layer. Therefore
-> I see little value of adding this wrapper to ioasid code, instead I
-> feel it might be less work to enhance ioasid with the following:
-> 
-> 1. allow ioasid code to register a system wide custom asid allocator,
-> which takes precedence over the idr allocator
-> e.g.
-> typedef ioasid_t (*ioasid_alloc_fn_t)(ioasid_t min, ioasid_t max, void *data);
-> void ioasid_set_allocator(ioasid_alloc_fn_t fn)
-> {}
-> We can still use idr for tracking ioasid and private data lookup, since
-> the ioasid idr is exclusively owned by ioasid_alloc, we can rest and be
-> sure there is no conflict with other callers. See code comments below.
+There's a lot of stuff going on in this patch.  Adding/removing config
+options.  Please get rid of these superfluous changes or at least break
+them out.
 
-Yes, I think we need the alloc function to be registered at boot time.
-Because even when using a PV allocation instead of idr allocation, we do
-need a way to quickly retrieve PASID->mm when handling an I/O page
-fault. In the ioasid_alloc() function, we could do, roughly:
+>  #ifdef CONFIG_CMA
+>  /* CMA stuff */
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 25c71eb8a7db..138a8df9b813 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -252,12 +252,17 @@ config MIGRATION
+>  	  pages as migration can relocate pages to satisfy a huge page
+>  	  allocation instead of reclaiming.
+>  
+> +
+>  config ARCH_ENABLE_HUGEPAGE_MIGRATION
+>  	bool
 
-static ioasid_t (*ioasid_alloc_fn)(...);
+Like this. :)
 
-ioasid_t ioasid_alloc(... min, max...)
-{
-	if (ioasid_alloc_fn) {
-	   ioasid = ioasid_alloc_fn(min, max);
+>  config ARCH_ENABLE_THP_MIGRATION
+>  	bool
+>  
+> +config CONTIG_ALLOC
+> +	def_bool y
+> +	depends on (MEMORY_ISOLATION && COMPACTION) || CMA
+> +
+>  config PHYS_ADDR_T_64BIT
+>  	def_bool 64BIT
 
-	   /* With PV allocation, only use the IDR for storage */
-	   min = ioasid;
-	   max = ioasid + 1;
-	}
+Please think carefully though the Kconfig dependencies.  'select' is
+*not* the same as 'depends on'.
 
-	idr_lock
-	ioasid = idr_alloc(... min, max... );
-	idr_unlock
-}
+This replaces a bunch of arch-specific "select ARCH_HAS_GIGANTIC_PAGE"
+with a 'depends on'.  I *think* that ends up being OK, but it absolutely
+needs to be addressed in the changelog about why *you* think it is OK
+and why it doesn't change the functionality of any of the patched
+architetures.
 
-> 2. support setting asid private data _after_ asid is allocated. The use
-> case is that PASID allocation and mm bind can be split into separate
-> stages. Private data (mm related) are not available at the time of
-> allocation, only bind time.
-> Since IDR needs the data pointer at allocation time, we can still
-> create an empty ioasid_data for ioasid tracking at alloc time. i.e.
-> struct ioasid_data {
-> 	void *ptr; /* private data */
-> };
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index afef61656c1e..e686c92212e9 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -1035,7 +1035,6 @@ static int hstate_next_node_to_free(struct hstate *h, nodemask_t *nodes_allowed)
+>  		((node = hstate_next_node_to_free(hs, mask)) || 1);	\
+>  		nr_nodes--)
+>  
+> -#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
+>  static void destroy_compound_gigantic_page(struct page *page,
+>  					unsigned int order)
+>  {
 
-I think I agree as well (though finding the right ordering and locking
-in SVA allocation is giving me the biggest headache these days). If the
-PASID becomes reachable early we need to make sure that concurrent
-threads working on the PASID space can deal with incomplete data, but I
-think that might be one of the easiest alternatives.
+Whats the result of this #ifdef removal?  A universally larger kernel
+even for architectures that do not support runtime gigantic page
+alloc/free?  That doesn't seem like a good thing.
 
-> 3. allow NULL ioasid_set
-> I also had a hard time understanding the use of ioasid_set, since there
-> is already a private data associated with each ioasid, is it not enough
-> to group ioasid based on private data?
+> @@ -1058,6 +1057,12 @@ static void free_gigantic_page(struct page *page, unsigned int order)
+>  	free_contig_range(page_to_pfn(page), 1 << order);
+>  }
+>  
+> +static inline bool gigantic_page_runtime_allocation_supported(void)
+> +{
+> +	return IS_ENABLED(CONFIG_CONTIG_ALLOC);
+> +}
 
-The idea behind ioasid_set is that different modules compete for the
-single IOASID space, and associate different data types to their IOASIDs.
+Why bother having this function?  Why don't the callers just check the
+config option directly?
 
-(a) iommu-sva associates an mm_struct
-(b) IOMMU driver allocates a PASIDs for each auxiliary domain, and
-probably associates an iommu_domain to it.
-(c) device drivers (e.g. AMD KFD) want some PASIDs for their own use in
-the same space, and will have their own private data in there.
+> +#ifdef CONFIG_CONTIG_ALLOC
+>  static int __alloc_gigantic_page(unsigned long start_pfn,
+>  				unsigned long nr_pages, gfp_t gfp_mask)
+>  {
+> @@ -1143,22 +1148,15 @@ static struct page *alloc_gigantic_page(struct hstate *h, gfp_t gfp_mask,
+>  static void prep_new_huge_page(struct hstate *h, struct page *page, int nid);
+>  static void prep_compound_gigantic_page(struct page *page, unsigned int order);
+>  
+> -#else /* !CONFIG_ARCH_HAS_GIGANTIC_PAGE */
+> -static inline bool gigantic_page_supported(void) { return false; }
+> +#else /* !CONFIG_CONTIG_ALLOC */
+>  static struct page *alloc_gigantic_page(struct hstate *h, gfp_t gfp_mask,
+>  		int nid, nodemask_t *nodemask) { return NULL; }
+> -static inline void free_gigantic_page(struct page *page, unsigned int order) { }
+> -static inline void destroy_compound_gigantic_page(struct page *page,
+> -						unsigned int order) { }
+>  #endif
+>  
+>  static void update_and_free_page(struct hstate *h, struct page *page)
+>  {
+>  	int i;
+>  
+> -	if (hstate_is_gigantic(h) && !gigantic_page_supported())
+> -		return;
 
-For (a) we also want the io_pgfault code to find the mm associated with
-a PASID:
-  iopf_handle_mm_fault()
-    iommu_sva_find(pasid)
-      ioasid_find(&shared_pasid_set, pasid) -> mm struct
+I don't get the point of removing this check.  Logically, this reads as
+checking if the architecture supports gigantic hstates and has nothing
+to do with allocation.
 
-And in this case we really need the search to be only on the
-shared_pasid_set, or else the IOPF code gets something that's not an mm
-struct.
+>  	h->nr_huge_pages--;
+>  	h->nr_huge_pages_node[page_to_nid(page)]--;
+>  	for (i = 0; i < pages_per_huge_page(h); i++) {
+> @@ -2276,13 +2274,20 @@ static int adjust_pool_surplus(struct hstate *h, nodemask_t *nodes_allowed,
+>  }
+>  
+>  #define persistent_huge_pages(h) (h->nr_huge_pages - h->surplus_huge_pages)
+> -static unsigned long set_max_huge_pages(struct hstate *h, unsigned long count,
+> +static int set_max_huge_pages(struct hstate *h, unsigned long count,
+>  						nodemask_t *nodes_allowed)
+>  {
+>  	unsigned long min_count, ret;
+>  
+> -	if (hstate_is_gigantic(h) && !gigantic_page_supported())
+> -		return h->max_huge_pages;
+> +	if (hstate_is_gigantic(h) &&
+> +		!gigantic_page_runtime_allocation_supported()) {
 
-The easy alternative is to let the IOMMU driver handle both (a) and (b),
-and store the same data type for both. I've been considering this a few
-times this week, but it doesn't solve case (c).
+The indentation here is wrong and reduces readability.  Needs to be like
+this:
 
-Thanks,
-Jean
+	if (hstate_is_gigantic(h) &&
+	    !gigantic_page_runtime_allocation_supported()) {
 
-> So the usage scenarios can be.
-> 1. during boot, vt-d driver register a custom ioasid allocator (vcmd) if
-> it detects its running as a guest.
-> 
-> 2. Running as a guest, all pasid allocation via ioasid_alloc() will go
-> to this custom allocators and tracked
-> 
-> 3. for native case, there is no custom allocator, ioasid just use IDR
-> alloc
-> 
-> 4. for native bind mm, pasid allocation already has private data filled
-> in when calling ioasid_alloc
-> 
-> 5. for guest bind, pasid is allocated with empty private data (called
-> by VFIO layer), but private data is filled in later by bind guest
-> pasid inside the vt-d driver.
-> 
-> So my thinking is that we can avoid having another layer of APIs as
-> below and keep everything within ioasid. Also allows private data to be
-> managed at lower level as compared to VFIO.
-> 
-> 
-> Thanks,
-> 
-> Jacob
-> 
->> Below APIs are added:
->>
->> * iommu_pasid_init(pasid)
->>   - Initialize a PASID consumer. The vendor specific IOMMU
->>     drivers are able to set the PASID range imposed by IOMMU
->>     hardware through a callback in iommu_ops.
->>
->> * iommu_pasid_exit(pasid)
->>   - The PASID consumer stops consuming any PASID.
->>
->> * iommu_pasid_alloc(pasid, min, max, private, *ioasid)
->>   - Allocate a PASID and associate a @private data with this
->>     PASID. The PASID value is stored in @ioaisd if returning
->>     success.
->>
->> * iommu_pasid_free(pasid, ioasid)
->>   - Free a PASID to the pool so that it could be consumed by
->>     others.
->>
->> This also adds below helpers to lookup or iterate PASID items
->> associated with a consumer.
->>
->> * iommu_pasid_for_each(pasid, func, data)
->>   - Iterate PASID items of the consumer identified by @pasid,
->>     and call @func() against each item. An error returned from
->>     @func() will break the iteration.
->>
->> * iommu_pasid_find(pasid, ioasid)
->>   - Retrieve the private data associated with @ioasid.
->>
->> Cc: Ashok Raj <ashok.raj@intel.com>
->> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
->> Cc: Kevin Tian <kevin.tian@intel.com>
->> Cc: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
->> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
->> ---
->>  drivers/iommu/Kconfig |  1 +
->>  drivers/iommu/iommu.c | 89
->> +++++++++++++++++++++++++++++++++++++++++++ include/linux/iommu.h |
->> 73 +++++++++++++++++++++++++++++++++++ 3 files changed, 163
->> insertions(+)
->>
->> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
->> index d9a25715650e..39f2bb76c7b8 100644
->> --- a/drivers/iommu/Kconfig
->> +++ b/drivers/iommu/Kconfig
->> @@ -1,6 +1,7 @@
->>  # IOMMU_API always gets selected by whoever wants it.
->>  config IOMMU_API
->>  	bool
->> +	select IOASID
->>  
->>  menuconfig IOMMU_SUPPORT
->>  	bool "IOMMU Hardware Support"
->> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
->> index 0b7c96d1425e..570b244897bb 100644
->> --- a/drivers/iommu/iommu.c
->> +++ b/drivers/iommu/iommu.c
->> @@ -2082,3 +2082,92 @@ void iommu_detach_device_aux(struct
->> iommu_domain *domain, struct device *dev) }
->>  }
->>  EXPORT_SYMBOL_GPL(iommu_detach_device_aux);
->> +
->> +/*
->> + * APIs for PASID used by IOMMU and the device drivers which depend
->> + * on IOMMU.
->> + */
->> +struct iommu_pasid *iommu_pasid_init(struct bus_type *bus)
->> +{
->> +	struct iommu_pasid *pasid;
->> +	int ret;
->> +
->> +	if (!bus || !bus->iommu_ops)
->> +		return NULL;
->> +
->> +	pasid = kzalloc(sizeof(*pasid), GFP_KERNEL);
->> +	if (!pasid)
->> +		return NULL;
->> +
->> +	pasid->ops = bus->iommu_ops;
->> +	/*
->> +	 * The default range of an IOMMU PASID is from 0 to the full
->> +	 * 20bit integer.
->> +	 */
->> +	pasid->min = 0;
->> +	pasid->max = 0x100000;
->> +	/*
->> +	 * Give vendor specific iommu drivers a chance to set the
->> pasid
->> +	 * limits imposed by the iommu hardware.
->> +	 */
->> +	if (bus->iommu_ops->pasid_init) {
->> +		ret = bus->iommu_ops->pasid_init(pasid);
->> +		if (ret) {
->> +			kfree(pasid);
->> +			return NULL;
->> +		}
->> +	}
->> +
->> +	return pasid;
->> +}
->> +EXPORT_SYMBOL_GPL(iommu_pasid_init);
->> +
->> +void iommu_pasid_exit(struct iommu_pasid *pasid)
->> +{
->> +	kfree(pasid);
->> +}
->> +EXPORT_SYMBOL_GPL(iommu_pasid_exit);
->> +
->> +int iommu_pasid_alloc(struct iommu_pasid *pasid, ioasid_t min,
->> +		      ioasid_t max, void *private, ioasid_t *ioasid)
->> +{
->> +	ioasid_t start, end, hw, val;
->> +	int ret = -EAGAIN;
->> +
->> +	start = max_t(int, min, pasid->min);
->> +	end = min_t(int, max, pasid->max);
->> +
->> +	if (pasid->ops->pasid_alloc)
->> +		ret = pasid->ops->pasid_alloc(pasid, start, end,
->> &hw); +
->> +	if (ret == -EAGAIN)
->> +                val = ioasid_alloc(&pasid->set, start, end, private);
->> +	else if (ret == 0)
->> +		val = ioasid_alloc(&pasid->set, hw, hw + 1, private);
-> this may fail due to conflict with other callers of ioasic_alloc(), but
-> we should really respect the iommu ops allocator. If we move the
-> pasid_alloc op into ioasid code, then we don't need to worry about the
-> conflict.
->> +	else
->> +		goto hw_ret;
->> +
->> +	if (val == INVALID_IOASID)
->> +		goto ioasid_ret;
->> +
->> +	*ioasid = val;
->> +
->> +        return 0;
->> +
->> +ioasid_ret:
->> +	if (pasid->ops->pasid_free)
->> +		pasid->ops->pasid_free(pasid, hw);
->> +
->> +hw_ret:
->> +	return -ENODEV;
->> +}
->> +EXPORT_SYMBOL_GPL(iommu_pasid_alloc);
->> +
->> +void iommu_pasid_free(struct iommu_pasid *pasid, ioasid_t ioasid)
->> +{
->> +	if (pasid->ops->pasid_free)
->> +		pasid->ops->pasid_free(pasid, ioasid);
->> +
->> +	ioasid_free(ioasid);
->> +}
->> +EXPORT_SYMBOL_GPL(iommu_pasid_free);
->> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
->> index 9bf1b3f2457a..4f5202c8170b 100644
->> --- a/include/linux/iommu.h
->> +++ b/include/linux/iommu.h
->> @@ -20,6 +20,7 @@
->>  #define __LINUX_IOMMU_H
->>  
->>  #include <linux/scatterlist.h>
->> +#include <linux/ioasid.h>
->>  #include <linux/device.h>
->>  #include <linux/types.h>
->>  #include <linux/errno.h>
->> @@ -48,6 +49,7 @@ struct bus_type;
->>  struct device;
->>  struct iommu_domain;
->>  struct notifier_block;
->> +struct iommu_pasid;
->>  
->>  /* iommu fault flags */
->>  #define IOMMU_FAULT_READ	0x0
->> @@ -194,6 +196,9 @@ enum iommu_dev_attr {
->>   * @of_xlate: add OF master IDs to iommu grouping
->>   * @get_dev_attr: get per device IOMMU attributions
->>   * @set_dev_attr: set per device IOMMU attributions
->> + * @pasid_init: initialize a pasid consumer
->> + * @pasid_alloc: allocate a pasid from low level driver
->> + * @pasid_free: free a pasid to low level driver
->>   * @pgsize_bitmap: bitmap of all possible supported page sizes
->>   */
->>  struct iommu_ops {
->> @@ -246,6 +251,12 @@ struct iommu_ops {
->>  	int (*attach_dev_aux)(struct iommu_domain *domain, struct
->> device *dev); void (*detach_dev_aux)(struct iommu_domain *domain,
->> struct device *dev); 
->> +	/* IOMMU pasid callbacks */
->> +	int (*pasid_init)(struct iommu_pasid *pasid);
->> +	int (*pasid_alloc)(struct iommu_pasid *pasid, ioasid_t start,
->> +			   ioasid_t end, ioasid_t *ioasid);
->> +	void (*pasid_free)(struct iommu_pasid *pasid, ioasid_t
->> ioasid); +
->>  	unsigned long pgsize_bitmap;
->>  };
->>  
->> @@ -428,12 +439,41 @@ extern int iommu_attach_device_aux(struct
->> iommu_domain *domain, extern void iommu_detach_device_aux(struct
->> iommu_domain *domain, struct device *dev);
->>  
->> +/*
->> + * Per IOMMU PASID consumer data.
->> + */
->> +struct iommu_pasid {
->> +	ioasid_t		max;
->> +	ioasid_t		min;
->> +	struct ioasid_set	set;
->> +	const struct iommu_ops	*ops;
->> +
->> +	/* vendor specific iommu private data */
->> +	void			*priv;
->> +};
->> +
->> +struct iommu_pasid *iommu_pasid_init(struct bus_type *bus);
->> +void iommu_pasid_exit(struct iommu_pasid *pasid);
->> +int iommu_pasid_alloc(struct iommu_pasid *pasid, ioasid_t min,
->> +		      ioasid_t max, void *private, ioasid_t *ioasid);
->> +void iommu_pasid_free(struct iommu_pasid *pasid, ioasid_t iosid);
->> +static inline int
->> +iommu_pasid_for_each(struct iommu_pasid *pasid, ioasid_iter_t func,
->> void *data) +{
->> +	return ioasid_for_each(&pasid->set, func, data);
->> +}
->> +static inline void*
->> +iommu_pasid_find(struct iommu_pasid *pasid, ioasid_t ioasid)
->> +{
->> +	return ioasid_find(&pasid->set, ioasid);
->> +}
->>  #else /* CONFIG_IOMMU_API */
->>  
->>  struct iommu_ops {};
->>  struct iommu_group {};
->>  struct iommu_fwspec {};
->>  struct iommu_device {};
->> +struct iommu_pasid {};
->>  
->>  static inline bool iommu_present(struct bus_type *bus)
->>  {
->> @@ -734,6 +774,39 @@ static inline void
->>  iommu_detach_device_aux(struct iommu_domain *domain, struct device
->> *dev) {
->>  }
->> +
->> +static inline struct iommu_pasid *
->> +iommu_pasid_init(struct bus_type *bus)
->> +{
->> +	return NULL;
->> +}
->> +
->> +static inline void iommu_pasid_exit(struct iommu_pasid *pasid)
->> +{
->> +}
->> +
->> +static inline int
->> +iommu_pasid_alloc(struct iommu_pasid *pasid, ioasid_t min,
->> +		  ioasid_t max, void *private, ioasid_t *ioasid)
->> +{
->> +	return -ENODEV;
->> +}
->> +
->> +static inline void iommu_pasid_free(struct iommu_pasid *pasid,
->> ioasid_t iosid) +{
->> +}
->> +
->> +static inline int
->> +iommu_pasid_for_each(struct iommu_pasid *pasid, ioasid_iter_t func,
->> void *data) +{
->> +	return -ENODEV;
->> +}
->> +
->> +static inline void*
->> +iommu_pasid_find(struct iommu_pasid *pasid, ioasid_t ioasid)
->> +{
->> +	return NULL;
->> +}
->>  #endif /* CONFIG_IOMMU_API */
->>  
->>  #ifdef CONFIG_IOMMU_DEBUGFS
-> 
-> [Jacob Pan]
-> 
+> +		spin_lock(&hugetlb_lock);
+> +		if (count > persistent_huge_pages(h)) {
+> +			spin_unlock(&hugetlb_lock);
+> +			return -EINVAL;
+> +		}
+> +		goto decrease_pool;
+> +	}
 
+Needs comments.
+
+	/* Gigantic pages can be freed but not allocated */
+
+or something.
