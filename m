@@ -2,90 +2,102 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=CHARSET_FARAWAY_HEADER,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7939FC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:24:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF5BC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:24:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 486262073D
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:24:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197471;
-	bh=Eq9MgsGHKcEuZ6OqAjYjBrszyMxLd6uTZDnQOmYgiO4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=k4lJYNhuZJ7mWentMepLLrOKLQvhw7V0fAxZUeYshaUQSVOT0esJKsl03thwjnK9D
-	 GVjpxx6i/3ZFS993/mhseuskeCqFPXalSyt1GOSHnSBQB4zN2ex3bLMW6PEprS4Ok6
-	 m46hV6Uc9WbiGM9hOceS1rQXx/ECIKTwKiWPOFjY=
+	by mail.kernel.org (Postfix) with ESMTP id E60062073D
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:24:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729110AbfBOCY3 (ORCPT
+        id S1729180AbfBOCYh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Feb 2019 21:24:37 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:12005 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726165AbfBOCY3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 14 Feb 2019 21:24:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54192 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405149AbfBOCOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:14:17 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 37B3A222D0;
-        Fri, 15 Feb 2019 02:14:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196856;
-        bh=Eq9MgsGHKcEuZ6OqAjYjBrszyMxLd6uTZDnQOmYgiO4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mrXzls8xH7iKKJpCqB7Tsg/1ZuLsggz1uXZ1Af3U0vNQnwOFs0qFMwwRiS0KUAg08
-         2aaGNAKMnPAWgEZpm4DnwaDl+OLsoaC8oWVMZerfUMnicyTrvBYx4ePOahYzFgugfh
-         /YjM2k4lQWjxCl8Phqv9N339HpgOMu7FfsO4aoxw=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Maciej=20=C5=BBenczykowski?= <maze@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 34/40] net: dev_is_mac_header_xmit() true for ARPHRD_RAWIP
-Date:   Thu, 14 Feb 2019 21:13:07 -0500
-Message-Id: <20190215021313.178476-34-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190215021313.178476-1-sashal@kernel.org>
-References: <20190215021313.178476-1-sashal@kernel.org>
+Received: from fsav106.sakura.ne.jp (fsav106.sakura.ne.jp [27.133.134.233])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1F2ORdY039579;
+        Fri, 15 Feb 2019 11:24:27 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav106.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp);
+ Fri, 15 Feb 2019 11:24:27 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1F2OREj039575;
+        Fri, 15 Feb 2019 11:24:27 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: (from i-love@localhost)
+        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id x1F2ORDs039574;
+        Fri, 15 Feb 2019 11:24:27 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Message-Id: <201902150224.x1F2ORDs039574@www262.sakura.ne.jp>
+X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
+Subject: Re: [PATCH AUTOSEL 4.20 49/77] block: cover another queue enter recursion
+ via =?ISO-2022-JP?B?QklPX1FVRVVFX0VOVEVSRUQ=?=
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Ming Lei <ming.lei@redhat.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        NeilBrown <neilb@suse.com>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>, linux-block@vger.kernel.org
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Date:   Fri, 15 Feb 2019 11:24:27 +0900
+References: <20190215020855.176727-1-sashal@kernel.org> <20190215020855.176727-49-sashal@kernel.org>
+In-Reply-To: <20190215020855.176727-49-sashal@kernel.org>
+Content-Type: text/plain; charset="ISO-2022-JP"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maciej Żenczykowski <maze@google.com>
+This patch turned out to be wrong and was reverted. Please drop this patch. 
 
-[ Upstream commit 3b707c3008cad04604c1f50e39f456621821c414 ]
+commit 947b7ac135b16aa60f9141ff72bd494eda0edb5e
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Sun Jan 27 06:35:28 2019 -0700
 
-__bpf_redirect() and act_mirred checks this boolean
-to determine whether to prefix an ethernet header.
+    Revert "block: cover another queue enter recursion via BIO_QUEUE_ENTERED"
 
-Signed-off-by: Maciej Żenczykowski <maze@google.com>
-Acked-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- include/linux/if_arp.h | 1 +
- 1 file changed, 1 insertion(+)
+    We can't touch a bio after ->make_request_fn(), for all we know it could
+    already have been completed by the time this function returns.
 
-diff --git a/include/linux/if_arp.h b/include/linux/if_arp.h
-index 3355efc89781..4125f60ee53b 100644
---- a/include/linux/if_arp.h
-+++ b/include/linux/if_arp.h
-@@ -54,6 +54,7 @@ static inline bool dev_is_mac_header_xmit(const struct net_device *dev)
- 	case ARPHRD_IPGRE:
- 	case ARPHRD_VOID:
- 	case ARPHRD_NONE:
-+	case ARPHRD_RAWIP:
- 		return false;
- 	default:
- 		return true;
--- 
-2.19.1
+    This reverts commit 698cef173983b086977e633e46476e0f925ca01e.
 
+    Reported-by: syzbot+4df6ca820108fd248943@syzkaller.appspotmail.com
+    Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
+> From: Ming Lei <ming.lei@redhat.com>
+> 
+> [ Upstream commit 698cef173983b086977e633e46476e0f925ca01e ]
+> 
+> Except for blk_queue_split(), bio_split() is used for splitting bio too,
+> then the remained bio is often resubmit to queue via generic_make_request().
+> So the same queue enter recursion exits in this case too. Unfortunatley
+> commit cd4a4ae4683dc2 doesn't help this case.
+> 
+> This patch covers the above case by setting BIO_QUEUE_ENTERED before calling
+> q->make_request_fn.
+> 
+> In theory the per-bio flag is used to simulate one stack variable, it is
+> just fine to clear it after q->make_request_fn is returned. Especially
+> the same bio can't be submitted from another context.
+> 
+> Fixes: cd4a4ae4683dc2 ("block: don't use blocking queue entered for recursive bio submits")
+> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Cc: NeilBrown <neilb@suse.com>
+> Reviewed-by:  Mike Snitzer <snitzer@redhat.com>
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> ---
+>  block/blk-core.c  | 11 +++++++++++
+>  block/blk-merge.c | 10 ----------
+>  2 files changed, 11 insertions(+), 10 deletions(-)
