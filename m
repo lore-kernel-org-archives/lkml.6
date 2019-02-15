@@ -7,48 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23775C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E64FFC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:32:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E867F20840
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:32:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6BCF20840
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:32:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197972;
-	bh=TON0jWu7Z48cGnW3MRq5Cs1m2Hlpe+QDwDUQJgb6nwg=;
+	s=default; t=1550197975;
+	bh=bZDqaFTvGDrDj0ZpbzT6WhWMd4AoGhSTBSiltW0fk/E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=i5tcqjEqGgMDh8IzTiedFHGf7IuCGCrY8ahDmWPMQoUrR7QE0oa2wgH8prDRDPzSq
-	 /SB0/G8Fhreli7Y4BJwyyapULA8pkoygnKGO+e7DIS2ffv93HsPag/Az2+bO0Bkyom
-	 wzHAVGnfe8uyWA3rrTjTKG+QJgk5ClJPO8NQtlwA=
+	b=J9yTJWWkyLm8Tq+W5THoZmDAU6qDS1migrLyggdcx3HCbx5gZzKGsZs4tb7p1/YHw
+	 qyXjef8Y6MDMQwpjwY5HnHlWh2jdZYTLe9DUeofe/Hxx8/MUvi644WBweJSM9HhCUl
+	 nQNKCdswF9aeoucrPa16b/KsqevwIWypIrXBmpjg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387996AbfBOCct (ORCPT
+        id S2387696AbfBOCcs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:32:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52228 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:32:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404094AbfBOCMN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:12:13 -0500
+        id S2404129AbfBOCMO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:12:14 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6792521934;
-        Fri, 15 Feb 2019 02:12:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BC7AB21B1C;
+        Fri, 15 Feb 2019 02:12:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196732;
-        bh=TON0jWu7Z48cGnW3MRq5Cs1m2Hlpe+QDwDUQJgb6nwg=;
+        s=default; t=1550196733;
+        bh=bZDqaFTvGDrDj0ZpbzT6WhWMd4AoGhSTBSiltW0fk/E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nH2q6V65RqWWGh4AhPLHbUEDDh03SxJ7T4BVePiquPFUKnjy2PeEWcNuS8l46ED4v
-         IzrV29xn/0QuWcF3N8DvxRWFTQCzNAbsMt+YTkNLP7Q/+n8CHxWqid6kwnPZAOdMR6
-         ygUpbaNtEl753XSSF0GHTo1jobaNFtBZ0wgg4Oxs=
+        b=R2c2uTFurToBJ1GZBt68pL47UoESTb3MVYO/ZUZ8ZRHGwMf+ea5p+T9FpoFHFhBu+
+         +s9jJKLHLRUopqYSwMT+mEoRU708gzPZncBWgLNaqplM4cl0PNJCti+2oKKKrOPqOp
+         nPk2QXF8i0LEn2Sb4Ajo6HwJIM4gUaFL8pBC6kBM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Prateek Sood <prsood@codeaurora.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
+        Waiman Long <longman@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
         Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 30/65] sched/wait: Fix rcuwait_wake_up() ordering
-Date:   Thu, 14 Feb 2019 21:10:46 -0500
-Message-Id: <20190215021121.177674-30-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 31/65] sched/wake_q: Fix wakeup ordering for wake_q
+Date:   Thu, 14 Feb 2019 21:10:47 -0500
+Message-Id: <20190215021121.177674-31-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -60,65 +62,94 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Prateek Sood <prsood@codeaurora.org>
+From: Peter Zijlstra <peterz@infradead.org>
 
-[ Upstream commit 6dc080eeb2ba01973bfff0d79844d7a59e12542e ]
+[ Upstream commit 4c4e3731564c8945ac5ac90fc2a1e1f21cb79c92 ]
 
-For some peculiar reason rcuwait_wake_up() has the right barrier in
-the comment, but not in the code.
+Notable cmpxchg() does not provide ordering when it fails, however
+wake_q_add() requires ordering in this specific case too. Without this
+it would be possible for the concurrent wakeup to not observe our
+prior state.
 
-This mistake has been observed to cause a deadlock in the following
-situation:
+Andrea Parri provided:
 
-    P1					P2
+  C wake_up_q-wake_q_add
 
-    percpu_up_read()			percpu_down_write()
-      rcu_sync_is_idle() // false
-					  rcu_sync_enter()
-					  ...
-      __percpu_up_read()
+  {
+	int next = 0;
+	int y = 0;
+  }
 
-[S] ,-  __this_cpu_dec(*sem->read_count)
-    |   smp_rmb();
-[L] |   task = rcu_dereference(w->task) // NULL
-    |
-    |				    [S]	    w->task = current
-    |					    smp_mb();
-    |				    [L]	    readers_active_check() // fail
-    `-> <store happens here>
+  P0(int *next, int *y)
+  {
+	int r0;
 
-Where the smp_rmb() (obviously) fails to constrain the store.
+	/* in wake_up_q() */
 
-[ peterz: Added changelog. ]
+	WRITE_ONCE(*next, 1);   /* node->next = NULL */
+	smp_mb();               /* implied by wake_up_process() */
+	r0 = READ_ONCE(*y);
+  }
 
-Signed-off-by: Prateek Sood <prsood@codeaurora.org>
+  P1(int *next, int *y)
+  {
+	int r1;
+
+	/* in wake_q_add() */
+
+	WRITE_ONCE(*y, 1);      /* wake_cond = true */
+	smp_mb__before_atomic();
+	r1 = cmpxchg_relaxed(next, 1, 2);
+  }
+
+  exists (0:r0=0 /\ 1:r1=0)
+
+  This "exists" clause cannot be satisfied according to the LKMM:
+
+  Test wake_up_q-wake_q_add Allowed
+  States 3
+  0:r0=0; 1:r1=1;
+  0:r0=1; 1:r1=0;
+  0:r0=1; 1:r1=1;
+  No
+  Witnesses
+  Positive: 0 Negative: 3
+  Condition exists (0:r0=0 /\ 1:r1=0)
+  Observation wake_up_q-wake_q_add Never 0 3
+
+Reported-by: Yongji Xie <elohimes@gmail.com>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reviewed-by: Andrea Parri <andrea.parri@amarulasolutions.com>
-Acked-by: Davidlohr Bueso <dbueso@suse.de>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 8f95c90ceb54 ("sched/wait, RCU: Introduce rcuwait machinery")
-Link: https://lkml.kernel.org/r/1543590656-7157-1-git-send-email-prsood@codeaurora.org
+Cc: Waiman Long <longman@redhat.com>
+Cc: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/exit.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/sched/core.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 55b4fa6d01eb..d607e23fd0c3 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -307,7 +307,7 @@ void rcuwait_wake_up(struct rcuwait *w)
- 	 *        MB (A)	      MB (B)
- 	 *    [L] cond		  [L] tsk
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 13ddfa46d741..152a0b0c91bb 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -405,10 +405,11 @@ void wake_q_add(struct wake_q_head *head, struct task_struct *task)
+ 	 * its already queued (either by us or someone else) and will get the
+ 	 * wakeup due to that.
+ 	 *
+-	 * This cmpxchg() executes a full barrier, which pairs with the full
+-	 * barrier executed by the wakeup in wake_up_q().
++	 * In order to ensure that a pending wakeup will observe our pending
++	 * state, even in the failed case, an explicit smp_mb() must be used.
  	 */
--	smp_rmb(); /* (B) */
-+	smp_mb(); /* (B) */
+-	if (cmpxchg(&node->next, NULL, WAKE_Q_TAIL))
++	smp_mb__before_atomic();
++	if (cmpxchg_relaxed(&node->next, NULL, WAKE_Q_TAIL))
+ 		return;
  
- 	/*
- 	 * Avoid using task_rcu_dereference() magic as long as we are careful,
+ 	get_task_struct(task);
 -- 
 2.19.1
 
