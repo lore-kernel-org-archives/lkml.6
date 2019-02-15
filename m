@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FC0EC4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:26:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2416FC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:26:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8C3D20836
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:26:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E969A20836
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:26:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197586;
-	bh=Krqw4jgFcBk1a/kuUBeO/F+Z41WcTFca1GLmgkab72s=;
+	s=default; t=1550197591;
+	bh=OuND4bUQC/DN21xljX2lNIyCCxtPqZCcLou+dTA7xqQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=s9RhwNdvwOu+QjaVV6CCQsgPEvqSDUlmYH90o4SJg7298aO4MCzh/GFujJB8ISEgJ
-	 VxWOuNtJP4c4VSsY3ggzbBIwAXC2Wf9FZ62TWS+e+yOZrLbrVlAsj68c7BUxpKwsLd
-	 5avr7x6oXfu6sk+zVd3kWTvt89cq7XDz0dcPGKe8=
+	b=iCeeijLGBuB0QkhU33dMa+FAUshsHWQpzeqh+fWl3XkyVmwvUza04jB74wfzIqFwX
+	 ZKSc4rO5K6BLyAu4C3tNWoDTzsiD6Rqwc+zxkAEIzTgZRnn50T/ciYHkRm1k/AZqEv
+	 tHa2nQBw7QiQasQAXNB2ZGV9B8vKm805EmPhw7Pw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404923AbfBOCNv (ORCPT
+        id S1729797AbfBOC03 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:13:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53740 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:26:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404854AbfBOCNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:13:48 -0500
+        id S2404917AbfBOCNv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:13:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6ADAF222D0;
-        Fri, 15 Feb 2019 02:13:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29ED921B68;
+        Fri, 15 Feb 2019 02:13:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196827;
-        bh=Krqw4jgFcBk1a/kuUBeO/F+Z41WcTFca1GLmgkab72s=;
+        s=default; t=1550196831;
+        bh=OuND4bUQC/DN21xljX2lNIyCCxtPqZCcLou+dTA7xqQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UEx9nnuAj5r9403zxeWuTIvDVk0wbsYw0jbxIUGPNljfoTEfcN3oCKxQ8DBzZk5Tk
-         ProhdRuLvc9yed/aH1+fMxR5dAeDmSnJn3Pfk8YoWHE8nzgps1A5X9zfdzfdQaIkq6
-         +Z7ZqJTtuMyaGAJ/WdZhIqq2EDe0zu41c+eWnuh4=
+        b=yjzNU64VkRAd2/VGkLNKD9QUfWRim+G1uguFmmOSYqPNfBgmTm4CVmUjtoyCZkk3T
+         v80auNKEMB96ZKgMHzO8L8Yw/xbg55gHGwN9Y8XOc11ZrvGWFo9ut8k6zj0Mi9HHEK
+         c9XrKsmw80kqgQkqd8dai/P2upZaK9Y88bbmstwY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bob Copeland <me@bobcopeland.com>,
-        Bob Copeland <bobcopeland@fb.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 18/40] mac80211: fix miscounting of ttl-dropped frames
-Date:   Thu, 14 Feb 2019 21:12:51 -0500
-Message-Id: <20190215021313.178476-18-sashal@kernel.org>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 20/40] futex: Fix (possible) missed wakeup
+Date:   Thu, 14 Feb 2019 21:12:53 -0500
+Message-Id: <20190215021313.178476-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021313.178476-1-sashal@kernel.org>
 References: <20190215021313.178476-1-sashal@kernel.org>
@@ -60,44 +59,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bob Copeland <me@bobcopeland.com>
+From: Peter Zijlstra <peterz@infradead.org>
 
-[ Upstream commit a0dc02039a2ee54fb4ae400e0b755ed30e73e58c ]
+[ Upstream commit b061c38bef43406df8e73c5be06cbfacad5ee6ad ]
 
-In ieee80211_rx_h_mesh_fwding, we increment the 'dropped_frames_ttl'
-counter when we decrement the ttl to zero.  For unicast frames
-destined for other hosts, we stop processing the frame at that point.
+We must not rely on wake_q_add() to delay the wakeup; in particular
+commit:
 
-For multicast frames, we do not rebroadcast it in this case, but we
-do pass the frame up the stack to process it on this STA.  That
-doesn't match the usual definition of "dropped," so don't count
-those as such.
+  1d0dcb3ad9d3 ("futex: Implement lockless wakeups")
 
-With this change, something like `ping6 -i0.2 ff02::1%mesh0` from a
-peer in a ttl=1 network no longer increments the counter rapidly.
+moved wake_q_add() before smp_store_release(&q->lock_ptr, NULL), which
+could result in futex_wait() waking before observing ->lock_ptr ==
+NULL and going back to sleep again.
 
-Signed-off-by: Bob Copeland <bobcopeland@fb.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 1d0dcb3ad9d3 ("futex: Implement lockless wakeups")
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/rx.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ kernel/futex.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
-index 9e19ddbcb06e..7e9725d47557 100644
---- a/net/mac80211/rx.c
-+++ b/net/mac80211/rx.c
-@@ -2532,7 +2532,9 @@ ieee80211_rx_h_mesh_fwding(struct ieee80211_rx_data *rx)
- 	skb_set_queue_mapping(skb, q);
+diff --git a/kernel/futex.c b/kernel/futex.c
+index 046cd780d057..176913206579 100644
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -1405,11 +1405,7 @@ static void mark_wake_futex(struct wake_q_head *wake_q, struct futex_q *q)
+ 	if (WARN(q->pi_state || q->rt_waiter, "refusing to wake PI futex\n"))
+ 		return;
  
- 	if (!--mesh_hdr->ttl) {
--		IEEE80211_IFSTA_MESH_CTR_INC(ifmsh, dropped_frames_ttl);
-+		if (!is_multicast_ether_addr(hdr->addr1))
-+			IEEE80211_IFSTA_MESH_CTR_INC(ifmsh,
-+						     dropped_frames_ttl);
- 		goto out;
- 	}
+-	/*
+-	 * Queue the task for later wakeup for after we've released
+-	 * the hb->lock. wake_q_add() grabs reference to p.
+-	 */
+-	wake_q_add(wake_q, p);
++	get_task_struct(p);
+ 	__unqueue_futex(q);
+ 	/*
+ 	 * The waiting task can free the futex_q as soon as q->lock_ptr = NULL
+@@ -1419,6 +1415,13 @@ static void mark_wake_futex(struct wake_q_head *wake_q, struct futex_q *q)
+ 	 * plist_del in __unqueue_futex().
+ 	 */
+ 	smp_store_release(&q->lock_ptr, NULL);
++
++	/*
++	 * Queue the task for later wakeup for after we've released
++	 * the hb->lock. wake_q_add() grabs reference to p.
++	 */
++	wake_q_add(wake_q, p);
++	put_task_struct(p);
+ }
  
+ /*
 -- 
 2.19.1
 
