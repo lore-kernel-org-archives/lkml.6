@@ -2,108 +2,129 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E510AC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:39:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE767C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:39:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A959F2192B
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:39:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550198347;
-	bh=9/vIXNjYur0fMrot25rWyv4k3CjtT9Ba7PlQfyShXjc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uHkuqwOHWrYSxWa1qbTD6WQclSFri0SuK+RPCUZawM4mX7NlWZpW9eUfW+LNYYRxc
-	 a+4EfoaI9D8v0wNutyTsnw239olniTxthpsuruxIc3ASpitFXczflmHKAY75Xgn5S1
-	 wZ9ApOVngq9LC3CqM2GSsKCRtBPHU6koTcBE552I=
+	by mail.kernel.org (Postfix) with ESMTP id ABFEF2192B
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:39:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C8J8YEaP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729696AbfBOCjF (ORCPT
+        id S1729843AbfBOCjM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:39:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50374 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390228AbfBOCKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:10:15 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95A07222C9;
-        Fri, 15 Feb 2019 02:10:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196615;
-        bh=9/vIXNjYur0fMrot25rWyv4k3CjtT9Ba7PlQfyShXjc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1YH3pyDzFh6pD3qoNvVNgFW4yUpGgP7/HKLXr83RYk9gkUBie0vyguWufFqYohI6j
-         ZGmNFeAowaf0ElBkvmB69ZW/miYh1ZFhkpywXdBCMKqRloqlLD7YsBflb/hSHeqDaB
-         K2UOG4vlMCiQQrPGlxz5E07zIJWmAe0aBAXJHo2I=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Liam Mark <lmark@codeaurora.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, devel@driverdev.osuosl.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.20 47/77] staging: android: ion: Support cpu access during dma_buf_detach
-Date:   Thu, 14 Feb 2019 21:08:25 -0500
-Message-Id: <20190215020855.176727-47-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
-References: <20190215020855.176727-1-sashal@kernel.org>
+        Thu, 14 Feb 2019 21:39:12 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41718 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726238AbfBOCjK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:39:10 -0500
+Received: by mail-pg1-f195.google.com with SMTP id m1so4053768pgq.8
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 18:39:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=cNyFM0J2DfW9voxw9FzV7E7Y/LrzsWkGDKLqwe0d5pk=;
+        b=C8J8YEaP1sXar/+zW0yONM/GThKVOZP43UoKx+bsMs0rR+kOwbwuiT2BIDoESBLxKN
+         X6AH8lyLqHVlJ3S1+7SjnEjca5R1G8T4RFnjNToQO6v4YNaQSQSNkLbvxe90zZykLVDi
+         54ov/SHMO/cZOMqPEs91uSOr6MV9wmu9R1mZMEKYCox3q1ABu4U+roRJf/5xpBsTlTDO
+         KAmeeosjCfbEhSgpHYgu6X3qTk/lRll1yN/eR/pYc5h5Gznm4xGDGVTvZ1VW0BjA2yKi
+         9shB5cJBIHEFyFW2Gn9ppb3AKrv2U+8H26GIKZ1mUlV4K3ypWZYz6UbQihzp+r6bWUJk
+         St0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=cNyFM0J2DfW9voxw9FzV7E7Y/LrzsWkGDKLqwe0d5pk=;
+        b=OPh5n4C5/nLc9E3E4gjJ7IJ2nYuDbfq1RrZS0t/7c+pDi+lKbQz9sKfDVWIwAcMZK3
+         ZrlZaT/pEU3tTSwjiNktsEO6Ke4AnfMTuvafKNsX6lkLqKga+WSsrSxH2BM8jZRI6cgB
+         qnnrDQfjmq4xp15IJRkvukI2lE4SXCbCWFrl4sVhoSJteCU9K56kWOQ7ou3GYTUjaKed
+         MJ6GYeIc04rtZhPAazakX8xD3PGi4ni0YQ7DWg5ohfPihU9aS5QfRWJHF9k1exotSCf4
+         qmoxnQKOK9St5qwbCfhIq1OTLJiKc5unatWTCuvRnjcOcILHdk5P6PT5f9vCmWRBswV3
+         qCsg==
+X-Gm-Message-State: AHQUAubXjBSKjut0Th8oUQL5UoigWj7mxCNLo/DT3bo9C60io3GLoMM9
+        /GF2QiBbg1CTWBocv+zl6AthpwwR
+X-Google-Smtp-Source: AHgI3IYPDJcfAJcux7am1/kgkI8RGRJz/Eho2e26RlxYpln5H5W4x8B/Nfk9OSESdiI7mMZpfEdzLw==
+X-Received: by 2002:a63:4b12:: with SMTP id y18mr3125993pga.340.1550198349469;
+        Thu, 14 Feb 2019 18:39:09 -0800 (PST)
+Received: from jordon-HP-15-Notebook-PC ([49.207.53.51])
+        by smtp.gmail.com with ESMTPSA id t3sm4758131pga.31.2019.02.14.18.39.07
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 14 Feb 2019 18:39:08 -0800 (PST)
+Date:   Fri, 15 Feb 2019 08:13:29 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
+        linux@armlinux.org.uk, robin.murphy@arm.com,
+        iamjoonsoo.kim@lge.com, treding@nvidia.com, keescook@chromium.org,
+        m.szyprowski@samsung.com
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4 2/9] arm: mm: dma-mapping: Convert to use vm_map_pages()
+Message-ID: <20190215024329.GA26372@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Liam Mark <lmark@codeaurora.org>
+Convert to use vm_map_pages() to map range of kernel
+memory to user vma.
 
-[ Upstream commit 31eb79db420a3f94c4c45a8c0a05cd30e333f981 ]
-
-Often userspace doesn't know when the kernel will be calling dma_buf_detach
-on the buffer.
-If userpace starts its CPU access at the same time as the sg list is being
-freed it could end up accessing the sg list after it has been freed.
-
-Thread A				Thread B
-- DMA_BUF_IOCTL_SYNC IOCT
- - ion_dma_buf_begin_cpu_access
-  - list_for_each_entry
-					- ion_dma_buf_detatch
-					 - free_duped_table
-   - dma_sync_sg_for_cpu
-
-Fix this by getting the ion_buffer lock before freeing the sg table memory.
-
-Fixes: 2a55e7b5e544 ("staging: android: ion: Call dma_map_sg for syncing and mapping")
-Signed-off-by: Liam Mark <lmark@codeaurora.org>
-Acked-by: Laura Abbott <labbott@redhat.com>
-Acked-by: Andrew F. Davis <afd@ti.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 ---
- drivers/staging/android/ion/ion.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mm/dma-mapping.c | 22 ++++++----------------
+ 1 file changed, 6 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
-index 99073325b0c0..45c7f829e387 100644
---- a/drivers/staging/android/ion/ion.c
-+++ b/drivers/staging/android/ion/ion.c
-@@ -237,10 +237,10 @@ static void ion_dma_buf_detatch(struct dma_buf *dmabuf,
- 	struct ion_dma_buf_attachment *a = attachment->priv;
- 	struct ion_buffer *buffer = dmabuf->priv;
+diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+index f1e2922..de7c76e 100644
+--- a/arch/arm/mm/dma-mapping.c
++++ b/arch/arm/mm/dma-mapping.c
+@@ -1575,31 +1575,21 @@ static int __arm_iommu_mmap_attrs(struct device *dev, struct vm_area_struct *vma
+ 		    void *cpu_addr, dma_addr_t dma_addr, size_t size,
+ 		    unsigned long attrs)
+ {
+-	unsigned long uaddr = vma->vm_start;
+-	unsigned long usize = vma->vm_end - vma->vm_start;
+ 	struct page **pages = __iommu_get_pages(cpu_addr, attrs);
+ 	unsigned long nr_pages = PAGE_ALIGN(size) >> PAGE_SHIFT;
+-	unsigned long off = vma->vm_pgoff;
++	int err;
  
--	free_duped_table(a->table);
- 	mutex_lock(&buffer->lock);
- 	list_del(&a->list);
- 	mutex_unlock(&buffer->lock);
-+	free_duped_table(a->table);
+ 	if (!pages)
+ 		return -ENXIO;
  
- 	kfree(a);
+-	if (off >= nr_pages || (usize >> PAGE_SHIFT) > nr_pages - off)
++	if (vma->vm_pgoff >= nr_pages)
+ 		return -ENXIO;
+ 
+-	pages += off;
+-
+-	do {
+-		int ret = vm_insert_page(vma, uaddr, *pages++);
+-		if (ret) {
+-			pr_err("Remapping memory failed: %d\n", ret);
+-			return ret;
+-		}
+-		uaddr += PAGE_SIZE;
+-		usize -= PAGE_SIZE;
+-	} while (usize > 0);
++	err = vm_map_pages(vma, pages, nr_pages);
++	if (err)
++		pr_err("Remapping memory failed: %d\n", err);
+ 
+-	return 0;
++	return err;
  }
+ static int arm_iommu_mmap_attrs(struct device *dev,
+ 		struct vm_area_struct *vma, void *cpu_addr,
 -- 
-2.19.1
+1.9.1
 
