@@ -2,103 +2,134 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5FEC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:10:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB488C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:11:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21094218AC
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:10:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75464218AC
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:11:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550236287;
+	bh=iqkkqlS+A4RTxdvdayr7E2AtdytsyLOJYhX625HKI7o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=SXQHfR8e1vGVsIX4CzfJzGcunDQbV5xcZep/vb6/w7PLG04mLxZW2uCf5mcezn3e6
+	 WFCb2J2CS2jJaGLfHITOEPEDnf4YBzIAvp0ORKifmt/CytBDhuRkB/0NDhWETZEYtA
+	 c2jl6iJfitbQ8W7SwEUFiODaLv13zvBVYrcfngdY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437037AbfBONKR (ORCPT
+        id S2437048AbfBONLZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 08:10:17 -0500
-Received: from mga17.intel.com ([192.55.52.151]:2647 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729125AbfBONKR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 08:10:17 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Feb 2019 05:10:15 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,372,1544515200"; 
-   d="scan'208";a="275317145"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by orsmga004.jf.intel.com with ESMTP; 15 Feb 2019 05:10:15 -0800
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id EF062300E42; Fri, 15 Feb 2019 05:10:14 -0800 (PST)
-Date:   Fri, 15 Feb 2019 05:10:14 -0800
-From:   Andi Kleen <ak@linux.intel.com>
-To:     "Wang, Wei W" <wei.w.wang@intel.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "Liang, Kan" <kan.liang@intel.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "Xu, Like" <like.xu@intel.com>,
-        "jannh@google.com" <jannh@google.com>,
-        "arei.gonglei@huawei.com" <arei.gonglei@huawei.com>,
-        "jmattson@google.com" <jmattson@google.com>
-Subject: Re: [PATCH v5 12/12] KVM/VMX/vPMU: support to report
- GLOBAL_STATUS_LBRS_FROZEN
-Message-ID: <20190215131014.GC16922@tassilo.jf.intel.com>
-References: <1550135174-5423-1-git-send-email-wei.w.wang@intel.com>
- <1550135174-5423-13-git-send-email-wei.w.wang@intel.com>
- <20190214163147.GL16922@tassilo.jf.intel.com>
- <286AC319A985734F985F78AFA26841F73DF71ED6@shsmsx102.ccr.corp.intel.com>
+        Fri, 15 Feb 2019 08:11:25 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52502 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2388952AbfBONLZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 08:11:25 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4B6ADADCA;
+        Fri, 15 Feb 2019 13:11:23 +0000 (UTC)
+Date:   Fri, 15 Feb 2019 14:11:22 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     "Huang, Ying" <ying.huang@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Hugh Dickins <hughd@google.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tim Chen <tim.c.chen@linux.intel.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        =?utf-8?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Rik van Riel <riel@redhat.com>, Jan Kara <jack@suse.cz>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>
+Subject: Re: [PATCH -mm -V7] mm, swap: fix race between swapoff and some swap
+ operations
+Message-ID: <20190215131122.GA4525@dhcp22.suse.cz>
+References: <20190211083846.18888-1-ying.huang@intel.com>
+ <20190214143318.GJ4525@dhcp22.suse.cz>
+ <871s49bkaz.fsf@yhuang-dev.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <286AC319A985734F985F78AFA26841F73DF71ED6@shsmsx102.ccr.corp.intel.com>
+In-Reply-To: <871s49bkaz.fsf@yhuang-dev.intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 08:56:02AM +0000, Wang, Wei W wrote:
-> On Friday, February 15, 2019 12:32 AM, Andi Kleen wrote:
-> > 
-> > > +static void intel_pmu_get_global_status(struct kvm_pmu *pmu,
-> > > +					struct msr_data *msr_info)
-> > > +{
-> > > +	u64 guest_debugctl, freeze_lbr_bits =
-> > DEBUGCTLMSR_FREEZE_LBRS_ON_PMI |
-> > > +					      DEBUGCTLMSR_LBR;
-> > > +
-> > > +	if (!pmu->global_status) {
-> > > +		msr_info->data = 0;
-> > > +		return;
-> > > +	}
-> > > +
-> > > +	msr_info->data = pmu->global_status;
-> > > +	if (pmu->version >= 4) {
-> > > +		guest_debugctl = vmcs_read64(GUEST_IA32_DEBUGCTL);
-> > > +		if ((guest_debugctl & freeze_lbr_bits) == freeze_lbr_bits)
-> > 
-> > It should only check for the freeze bit, the freeze bit can be set even when
-> > LBRs are disabled.
-> > 
-> > Also you seem to set the bit unconditionally?
-> > That doesn't seem right. It should only be set after an overflow.
-> > 
-> > So the PMI injection needs to set it.
+On Fri 15-02-19 15:08:36, Huang, Ying wrote:
+> Michal Hocko <mhocko@kernel.org> writes:
 > 
-> OK. The freeze bits need to be cleared by IA32_PERF_GLOBAL_STATUS_RESET, which seems not supported by the perf code yet (thus guest won't clear them). Would handle_irq_v4 also need to be changed to support that?
+> > On Mon 11-02-19 16:38:46, Huang, Ying wrote:
+> >> From: Huang Ying <ying.huang@intel.com>
+> >> 
+> >> When swapin is performed, after getting the swap entry information from
+> >> the page table, system will swap in the swap entry, without any lock held
+> >> to prevent the swap device from being swapoff.  This may cause the race
+> >> like below,
+> >> 
+> >> CPU 1				CPU 2
+> >> -----				-----
+> >> 				do_swap_page
+> >> 				  swapin_readahead
+> >> 				    __read_swap_cache_async
+> >> swapoff				      swapcache_prepare
+> >>   p->swap_map = NULL		        __swap_duplicate
+> >> 					  p->swap_map[?] /* !!! NULL pointer access */
+> >> 
+> >> Because swapoff is usually done when system shutdown only, the race may
+> >> not hit many people in practice.  But it is still a race need to be fixed.
+> >> 
+> >> To fix the race, get_swap_device() is added to check whether the specified
+> >> swap entry is valid in its swap device.  If so, it will keep the swap
+> >> entry valid via preventing the swap device from being swapoff, until
+> >> put_swap_device() is called.
+> >> 
+> >> Because swapoff() is very rare code path, to make the normal path runs as
+> >> fast as possible, disabling preemption + stop_machine() instead of
+> >> reference count is used to implement get/put_swap_device().  From
+> >> get_swap_device() to put_swap_device(), the preemption is disabled, so
+> >> stop_machine() in swapoff() will wait until put_swap_device() is called.
+> >> 
+> >> In addition to swap_map, cluster_info, etc.  data structure in the struct
+> >> swap_info_struct, the swap cache radix tree will be freed after swapoff,
+> >> so this patch fixes the race between swap cache looking up and swapoff
+> >> too.
+> >> 
+> >> Races between some other swap cache usages protected via disabling
+> >> preemption and swapoff are fixed too via calling stop_machine() between
+> >> clearing PageSwapCache() and freeing swap cache data structure.
+> >> 
+> >> Alternative implementation could be replacing disable preemption with
+> >> rcu_read_lock_sched and stop_machine() with synchronize_sched().
+> >
+> > using stop_machine is generally discouraged. It is a gross
+> > synchronization.
+> >
+> > Besides that, since when do we have this problem?
+> 
+> For problem, you mean the race between swapoff and the page fault
+> handler?
 
-In Arch Perfmon v4 it is  cleared by the MSR_CORE_PERF_GLOBAL_OVF_CTRL write
-But the guest KVM pmu doesn't support v4 so far, so the only way to clear it is through DEBUGCTL.
+yes
 
-STATUS_RESET would only be needed to set it from the guest, which is not necessary at least for now
-(and would be also v4)
+> The problem is introduced in v4.11 when we avoid to replace
+> swap_info_struct->lock with swap_cluster_info->lock in
+> __swap_duplicate() if possible to improve the scalability of swap
+> operations.  But because swapoff is a really rare operation, I don't
+> think it's necessary to backport the fix.
 
-At some point the guest PMU should probably be updated for v4, but it can be done
-separately from this.
+Well, a lack of any bug reports would support your theory that this is
+unlikely to hit in practice. Fixes tag would be nice to have regardless
+though.
 
--Andi
+Thanks!
+-- 
+Michal Hocko
+SUSE Labs
