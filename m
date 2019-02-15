@@ -6,198 +6,102 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A32C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:02:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD44C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:03:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C05702192C
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:02:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAB1B2192C
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:03:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392968AbfBOWC2 (ORCPT
+        id S2393083AbfBOWDS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 17:02:28 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38264 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729239AbfBOWC1 (ORCPT
+        Fri, 15 Feb 2019 17:03:18 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:55869 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733184AbfBOWDS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 17:02:27 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1FLnrR3093653
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 17:02:26 -0500
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qp5jsghu6-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 17:02:25 -0500
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Fri, 15 Feb 2019 22:02:25 -0000
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 15 Feb 2019 22:02:21 -0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1FM2H2B21495870
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Feb 2019 22:02:18 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DF042AE09F;
-        Fri, 15 Feb 2019 22:02:17 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 384AAAE09B;
-        Fri, 15 Feb 2019 22:02:17 +0000 (GMT)
-Received: from [9.80.239.175] (unknown [9.80.239.175])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 15 Feb 2019 22:02:17 +0000 (GMT)
-Subject: Re: [PATCH v3 2/9] s390: ap: kvm: setting a hook for PQAP
- instructions
-To:     Pierre Morel <pmorel@linux.ibm.com>, borntraeger@de.ibm.com
-Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, frankja@linux.ibm.com, pasic@linux.ibm.com,
-        david@redhat.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
-References: <1550152269-6317-1-git-send-email-pmorel@linux.ibm.com>
- <1550152269-6317-3-git-send-email-pmorel@linux.ibm.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Fri, 15 Feb 2019 17:02:16 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 15 Feb 2019 17:03:18 -0500
+Received: by mail-it1-f194.google.com with SMTP id z131so17371871itf.5
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 14:03:17 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=knOx25++K9f2PpNjsJJVR0YOB7lmETFhT/2wOOmVbyI=;
+        b=uZ6eE1Mq3xDrsBc6cncq3cAv2cBESWTX977XOugzEbl03jQ1xCp6Nimwa2i9hLfVDK
+         fJheNOlGQVJG0In6WM3/MnwZx+8giK9WUlg8V5WkyMD2lbo0axJ6e/kELXi+74hDq6MR
+         il2vuhjpuHlXs3Jd1VCSAtVKhGoEXCMyIxdDS26R8TqSzSHyWcmhiFqe/Plm2kVPTTOH
+         i/aURZXA2bUvB4mz1fRywGx0EKwNzXv7ylgK0mzZ75p+ymrq9frYz0Ch71iH5Kl1UvqG
+         5G7Brdzpvf4+KRKOUbGEKUvsUsuoiYiIXPHj0iNUU8iWh1qj4IYiQhlwxwidOShFHdhf
+         kLug==
+X-Gm-Message-State: AHQUAuZemR+z3HQ79bwcJ+Yxno+LXiCqEbkNSph2owBQdB3w5qY//qv+
+        Q7sKeqGlqGFl0nXosTxT0CBSf4fd
+X-Google-Smtp-Source: AHgI3IaPOY3MGT7Hc42bw4lHubQ54ojv6PJLAbIS0r7dZwHoVZg0zoDqUP+ripx76BEBX6RGv1tKbg==
+X-Received: by 2002:a5d:974b:: with SMTP id c11mr7107691ioo.257.1550268197345;
+        Fri, 15 Feb 2019 14:03:17 -0800 (PST)
+Received: from mail-it1-f174.google.com (mail-it1-f174.google.com. [209.85.166.174])
+        by smtp.gmail.com with ESMTPSA id k77sm3184384itb.7.2019.02.15.14.03.17
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Feb 2019 14:03:17 -0800 (PST)
+Received: by mail-it1-f174.google.com with SMTP id l15so14271209iti.4
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 14:03:17 -0800 (PST)
+X-Received: by 2002:a6b:b408:: with SMTP id d8mr6192402iof.138.1550268196904;
+ Fri, 15 Feb 2019 14:03:16 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1550152269-6317-3-git-send-email-pmorel@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19021522-0064-0000-0000-000003A97610
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010604; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000280; SDB=6.01161588; UDB=6.00606354; IPR=6.00942149;
- MB=3.00025604; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-15 22:02:23
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021522-0065-0000-0000-00003C6D9E75
-Message-Id: <4b21f059-1d37-f341-bac7-5b1fe0d06521@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-15_16:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=888 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902150143
+From:   Sultan Alsawaf <sultan@kerneltoast.com>
+Date:   Fri, 15 Feb 2019 14:03:06 -0800
+X-Gmail-Original-Message-ID: <CAFArEyWsuvEMFQ-CpTeawBbDY1egDzXf1HaOyd9z-uKcbSCq=Q@mail.gmail.com>
+Message-ID: <CAFArEyWsuvEMFQ-CpTeawBbDY1egDzXf1HaOyd9z-uKcbSCq=Q@mail.gmail.com>
+Subject: [PATCH] random: fix inconsistent spinlock usage
+To:     tytso@mit.edu
+Cc:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/14/19 8:51 AM, Pierre Morel wrote:
-> This patch adds interception code for the PQAP instructions,
-> and a callback inside the KVM arch structure for s390.
-> 
-> If a VFIO-AP drivers needs to intercept PQAP/AQIC or PQAP/TAPQ
-> instructions, the driver will initialize the callback inside
-> the kvm_arch structure to be called when the interception of a
-> PQAP instruction occurs.
-> 
-> If the callback is not initialized, the code still returns
-> -EOPNOTSUPP to let userland handle the instruction as it used to.
-> 
-> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
-> Reviewed-by: Tony Krowiak <akrowiak@linux.ibm.com>
-> ---
->   arch/s390/include/asm/kvm_host.h |  1 +
->   arch/s390/kvm/priv.c             | 50 ++++++++++++++++++++++++++++++++++++++++
->   2 files changed, 51 insertions(+)
-> 
-> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
-> index c5f5156..49cc8b0 100644
-> --- a/arch/s390/include/asm/kvm_host.h
-> +++ b/arch/s390/include/asm/kvm_host.h
-> @@ -719,6 +719,7 @@ struct kvm_s390_cpu_model {
->   
->   struct kvm_s390_crypto {
->   	struct kvm_s390_crypto_cb *crycb;
-> +	int (*pqap_hook)(struct kvm_vcpu *vcpu);
->   	__u32 crycbd;
->   	__u8 aes_kw;
->   	__u8 dea_kw;
-> diff --git a/arch/s390/kvm/priv.c b/arch/s390/kvm/priv.c
-> index 8679bd7..72fdc21 100644
-> --- a/arch/s390/kvm/priv.c
-> +++ b/arch/s390/kvm/priv.c
-> @@ -27,6 +27,7 @@
->   #include <asm/io.h>
->   #include <asm/ptrace.h>
->   #include <asm/sclp.h>
-> +#include <asm/ap.h>
->   #include "gaccess.h"
->   #include "kvm-s390.h"
->   #include "trace.h"
-> @@ -592,6 +593,53 @@ static int handle_io_inst(struct kvm_vcpu *vcpu)
->   	}
->   }
->   
-> +/*
-> + * handle_pqap: Handling pqap interception
-> + * @vcpu: the vcpu having issue the pqap instruction
-> + *
-> + * This callback only handles PQAP/AQIC instruction and
-> + * calls a dedicated callback for this instruction if
-> + * a driver did register one in the CRYPTO satellite of the
-> + * SIE block.
-> + *
-> + * Do not change the behavior if, return -EOPNOTSUPP if:
-> + * - the hook is not used do not change the behavior.
-> + * - AP instructions are not available or not available to the guest
-> + * - the instruction is not PQAP with function code indicating
-> + *   AQIC do not change the previous behavior.
-> + *
-> + * For PQAP/AQIC instruction, verify privilege and specifications
-> + *
-> + * return the value returned by the callback.
-> + */
-> +static int handle_pqap(struct kvm_vcpu *vcpu)
-> +{
-> +	uint8_t fc;
-> +
-> +	/* Verify that the hook callback is registered */
-> +	if (!vcpu->kvm->arch.crypto.pqap_hook)
-> +		return -EOPNOTSUPP;
-> +	/* Verify that the AP instruction are available */
-> +	if (!ap_instructions_available())
-> +		return -EOPNOTSUPP;
-> +	/* Verify that the guest is allowed to use AP instructions */
-> +	if (!(vcpu->arch.sie_block->eca & ECA_APIE))
-> +		return -EOPNOTSUPP;
-> +	/* Verify that the function code is AQIC */
-> +	fc = vcpu->run->s.regs.gprs[0] >> 24;
-> +	if (fc != 0x03)
-> +		return -EOPNOTSUPP;
+All users of the struct entropy_store spinlock use the irqsave spinlock variant.
+Spinlock users of the same lock should use be consistent in their use of a
+certain spinlock primitive, which makes add_interrupt_randomness()'s spinlock
+usage incorrect.
 
-This does not belong here. Function code 3 is one of 7 function codes
-that can be sent with the PQAP instruction. This belongs in the PQAP
-hook code.
+Fix the inconsistency by converting add_interrupt_randomness()'s spinlocks to
+use the irqsave primitive.
 
-> +
-> +	/* PQAP instructions are allowed for guest kernel only */
-> +	if (vcpu->arch.sie_block->gpsw.mask & PSW_MASK_PSTATE)
-> +		return kvm_s390_inject_program_int(vcpu, PGM_PRIVILEGED_OP);
-> +	/* AQIC instruction is allowed only if facility 65 is available */
-> +	if (!test_kvm_facility(vcpu->kvm, 65))
-> +		return kvm_s390_inject_program_int(vcpu, PGM_SPECIFICATION);
-> +	/* All right, call the callback */
-> +	return vcpu->kvm->arch.crypto.pqap_hook(vcpu);
-> +}
-> +
->   static int handle_stfl(struct kvm_vcpu *vcpu)
->   {
->   	int rc;
-> @@ -878,6 +926,8 @@ int kvm_s390_handle_b2(struct kvm_vcpu *vcpu)
->   		return handle_sthyi(vcpu);
->   	case 0x7d:
->   		return handle_stsi(vcpu);
-> +	case 0xaf:
-> +		return handle_pqap(vcpu);
->   	case 0xb1:
->   		return handle_stfl(vcpu);
->   	case 0xb2:
-> 
+Signed-off-by: Sultan Alsawaf <sultan@kerneltoast.com>
+---
+ drivers/char/random.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index 38c6d1af6..1365017a7 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -1239,6 +1239,7 @@ void add_interrupt_randomness(int irq, int irq_flags)
+  __u64 ip;
+  unsigned long seed;
+  int credit = 0;
++ unsigned long flags;
+
+  if (cycles == 0)
+  cycles = get_reg(fast_pool, regs);
+@@ -1269,7 +1270,7 @@ void add_interrupt_randomness(int irq, int irq_flags)
+  return;
+
+  r = &input_pool;
+- if (!spin_trylock(&r->lock))
++ if (!spin_trylock_irqsave(&r->lock, flags))
+  return;
+
+  fast_pool->last = now;
+@@ -1285,7 +1286,7 @@ void add_interrupt_randomness(int irq, int irq_flags)
+  __mix_pool_bytes(r, &seed, sizeof(seed));
+  credit = 1;
+  }
+- spin_unlock(&r->lock);
++ spin_unlock_irqrestore(&r->lock, flags);
+
+  fast_pool->count = 0;
+
+-- 
+2.20.1
