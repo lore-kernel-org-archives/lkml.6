@@ -2,59 +2,87 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 467B3C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39F64C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:15:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 195D821925
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:14:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B2542190B
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 09:15:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392331AbfBOJOm (ORCPT
+        id S1729418AbfBOJP0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 04:14:42 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:59984 "EHLO gloria.sntech.de"
+        Fri, 15 Feb 2019 04:15:26 -0500
+Received: from mga12.intel.com ([192.55.52.136]:16366 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726144AbfBOJOl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 04:14:41 -0500
-Received: from ip5f5a6320.dynamic.kabel-deutschland.de ([95.90.99.32] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1guZZb-0000Ao-Mk; Fri, 15 Feb 2019 10:14:19 +0100
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     Akash Gajjar <Akash_Gajjar@mentor.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Oskari Lemmela <oskari@lemmela.net>,
-        Shohei Maruyama <cheat.sc.linux@outlook.com>,
-        Levin Du <djw@t-chip.com.cn>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] arm64: dts: rockchip: rockpro64 dts make regulator more readable
-Date:   Fri, 15 Feb 2019 10:14:19 +0100
-Message-ID: <3848940.W0AIcLlWW9@diego>
-In-Reply-To: <20190213170651.3210-2-Akash_Gajjar@mentor.com>
-References: <20190213170651.3210-1-Akash_Gajjar@mentor.com> <20190213170651.3210-2-Akash_Gajjar@mentor.com>
+        id S1726045AbfBOJPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 04:15:25 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Feb 2019 01:15:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,372,1544515200"; 
+   d="scan'208";a="144511144"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by fmsmga004.fm.intel.com with ESMTP; 15 Feb 2019 01:15:25 -0800
+Received: from fmsmsx161.amr.corp.intel.com (10.18.125.9) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Fri, 15 Feb 2019 01:15:25 -0800
+Received: from shsmsx104.ccr.corp.intel.com (10.239.4.70) by
+ FMSMSX161.amr.corp.intel.com (10.18.125.9) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Fri, 15 Feb 2019 01:15:25 -0800
+Received: from shsmsx102.ccr.corp.intel.com ([169.254.2.207]) by
+ SHSMSX104.ccr.corp.intel.com ([169.254.5.102]) with mapi id 14.03.0415.000;
+ Fri, 15 Feb 2019 17:15:22 +0800
+From:   "Wang, Wei W" <wei.w.wang@intel.com>
+To:     'David Hildenbrand' <david@redhat.com>,
+        Nitesh Narayan Lal <nitesh@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
+        "pagupta@redhat.com" <pagupta@redhat.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "riel@surriel.com" <riel@surriel.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "dodgen@google.com" <dodgen@google.com>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        "dhildenb@redhat.com" <dhildenb@redhat.com>,
+        "aarcange@redhat.com" <aarcange@redhat.com>
+Subject: RE: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
+Thread-Topic: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
+Thread-Index: AQHUvMb57IQCd72gCkOm4okDUKYrcaXb13cw//+SQwCAAKVowIAA64iAgAGk3nD///kWgIAB80GA
+Date:   Fri, 15 Feb 2019 09:15:21 +0000
+Message-ID: <286AC319A985734F985F78AFA26841F73DF71F93@shsmsx102.ccr.corp.intel.com>
+References: <20190204201854.2328-1-nitesh@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF68060@shsmsx102.ccr.corp.intel.com>
+ <17adc05d-91f9-682b-d9a4-485e6a631422@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF6B52A@shsmsx102.ccr.corp.intel.com>
+ <62b43699-f548-e0da-c944-80702ceb7202@redhat.com>
+ <286AC319A985734F985F78AFA26841F73DF6F195@shsmsx102.ccr.corp.intel.com>
+ <19d2d9bd-a9dc-9c5f-6dcc-d456d50b9e10@redhat.com>
+In-Reply-To: <19d2d9bd-a9dc-9c5f-6dcc-d456d50b9e10@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiOTNjZTMwNWYtMmZmOC00MzYzLTg1OGQtOTgxNTYyYjM4MzA5IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoidUNKaFJiekFhT1Y1YjI1YnUxVzZNWnFXWjFHNG4rZnE1THVCZjZiTHRZNkxHejI0aGVieGlIa1lPXC9YYTBFbVoifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Mittwoch, 13. Februar 2019, 18:06:37 CET schrieb Akash Gajjar:
-> rename dc12, vcc_sys, vcc1v8_pmu regulators and make it more redable as per
-> the schematic of rk3399-rockpro64.
-> 
-> Signed-off-by: Akash Gajjar <Akash_Gajjar@mentor.com>
-
-applied for (hopefully) 5.1
-
-Thanks
-Heiko
-
-
+T24gVGh1cnNkYXksIEZlYnJ1YXJ5IDE0LCAyMDE5IDY6MDEgUE0sIERhdmlkIEhpbGRlbmJyYW5k
+IHdyb3RlOg0KPiBBbmQgaG93IHRvIHByZWxvYWQgd2l0aG91dCBsb2NraW5nPw0KDQpUaGUgbWVt
+b3J5IGlzIHByZWxvYWQgcGVyLUNQVS4gSXQncyB1c3VhbGx5IGNhbGxlZCBvdXRzaWRlIHRoZSBs
+b2NrLg0KDQpCZXN0LA0KV2VpDQo=
