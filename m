@@ -2,110 +2,116 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7001C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 21:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 610F7C10F02
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 21:29:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D105222D7
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 21:28:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28A6B222D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 21:29:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550266085;
-	bh=FinDzfO9NFbLMTj3fYKJj6bEymQZrYIJ9z9gXWgH2/Q=;
+	s=default; t=1550266167;
+	bh=UR08ykxIkKh0Vfj/fVGtLCw461Bc+tzNrBFf3QgA33s=;
 	h=To:In-Reply-To:Subject:References:Cc:From:Date:List-ID:From;
-	b=FkksNGQw9SPChX471VsJym6KSpovyNsmQWtdGCDpCZ4n7/BLGxCwKPNClVIK1XH8n
-	 il6Ut3m7nxheDRKv08afs4HTzxjVG8esU0DkPpJL4QXHVMJjkS4Zph06ot0zpQNMwt
-	 Xt7nIddkFh74hCYkuVZzD5m/hB7MC4M+VKX5jLyA=
+	b=zbc3g4bb1WCjWwMbRkWHEQz6LEfsUKsO2YH8H3THWLFYdlTfuwo/kcq3X11mVSfyF
+	 DbMgun5cmm2vdHyVGDSGFvyEYuKNnPNKkrLKzLK3IX2ibhFtlIFUzDPpfqxkFxQy8g
+	 uo1/yOKVIuh6HesLn4rcBFRg/OmsfpBGZD9Jtk2E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392254AbfBOV2E (ORCPT
+        id S1732617AbfBOV30 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 16:28:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56382 "EHLO mail.kernel.org"
+        Fri, 15 Feb 2019 16:29:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392197AbfBOV2D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 16:28:03 -0500
+        id S1728755AbfBOV3Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 16:29:25 -0500
 Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27B4C222BE;
-        Fri, 15 Feb 2019 21:28:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 471F6222BE;
+        Fri, 15 Feb 2019 21:29:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550266083;
-        bh=FinDzfO9NFbLMTj3fYKJj6bEymQZrYIJ9z9gXWgH2/Q=;
+        s=default; t=1550266165;
+        bh=UR08ykxIkKh0Vfj/fVGtLCw461Bc+tzNrBFf3QgA33s=;
         h=To:In-Reply-To:Subject:References:Cc:From:Date:From;
-        b=jPmnuLF4Z7fJrQJNV1/Y3sVgQPbx9zIl7NGkcEd8cFFv9YUhKHi9b1g6MT0eOEJFc
-         wH+PhcPOsfSXvBsCkUUAYZ432y7VUco23G+t9aX15V5i6ny0odeUZbwIAELCFRkP4n
-         L1q+lgpRS1CePflme+Pxv1ef4rH0XV72fO4Isy70=
+        b=qhOvOvWRMRcsmaE5t8f0FlgIALa3sup2rb9Re5HuZMqX0k1XMEsy8Hq8FbOyxqC9P
+         eIYcuR3Wuo1Dt5Gxb/jdMP4cut5buK01/KBRi2hFvCFLdsO7qsZPNAJgalomvmicG6
+         v2nhU9T0QaSBQACCRXUYUUGgQS4Ez1zEnijIsM+8=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-To:     Brian Masney <masneyb@onstation.org>
-In-Reply-To: <20190215134733.GA21208@basecamp>
+To:     Jeffrey Hugo <jhugo@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <488f5033-c7a5-b49b-b973-c1415e533019@codeaurora.org>
 User-Agent: alot/0.8
-Subject: Re: [PATCH v2 05/11] mfd: pm8xxx: disassociate old virq if hwirq mapping already exists
-Message-ID: <155026608236.115909.9007817366859489104@swboyd.mtv.corp.google.com>
-References: <20190208021631.30252-1-masneyb@onstation.org> <20190208021631.30252-6-masneyb@onstation.org> <155020988635.115909.8353948296231202388@swboyd.mtv.corp.google.com> <20190215134733.GA21208@basecamp>
-Cc:     andy.gross@linaro.org, bjorn.andersson@linaro.org,
-        lee.jones@linaro.org, linus.walleij@linaro.org,
-        marc.zyngier@arm.com, tglx@linutronix.de, shawnguo@kernel.org,
-        dianders@chromium.org, linux-gpio@vger.kernel.org,
-        nicolas.dechesne@linaro.org, niklas.cassel@linaro.org,
-        david.brown@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        thierry.reding@gmail.com, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/9] clk: Introduce get_parent_hw clk op
+Message-ID: <155026616459.115909.14315694127255521155@swboyd.mtv.corp.google.com>
+References: <20190129061021.94775-1-sboyd@kernel.org> <20190129061021.94775-3-sboyd@kernel.org> <41f8f325-2738-3995-1fc8-354a9412041e@codeaurora.org> <155025643198.115909.9355230466710329335@swboyd.mtv.corp.google.com> <488f5033-c7a5-b49b-b973-c1415e533019@codeaurora.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>
 From:   Stephen Boyd <sboyd@kernel.org>
-Date:   Fri, 15 Feb 2019 13:28:02 -0800
+Date:   Fri, 15 Feb 2019 13:29:24 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Brian Masney (2019-02-15 05:47:33)
-> On Thu, Feb 14, 2019 at 09:51:26PM -0800, Stephen Boyd wrote:
-> > > diff --git a/drivers/mfd/qcom-pm8xxx.c b/drivers/mfd/qcom-pm8xxx.c
-> > > index 8eb2528793f9..2f99a98ccee5 100644
-> > > --- a/drivers/mfd/qcom-pm8xxx.c
-> > > +++ b/drivers/mfd/qcom-pm8xxx.c
-> > > @@ -380,6 +380,12 @@ static void pm8xxx_irq_domain_map(struct pm_irq_=
-chip *chip,
-> > >                                   struct irq_domain *domain, unsigned=
- int irq,
-> > >                                   irq_hw_number_t hwirq, unsigned int=
- type)
-> > >  {
-> > > +       unsigned int old_virq;
-> > > +
-> > > +       old_virq =3D irq_find_mapping(domain, hwirq);
-> > > +       if (old_virq)
-> > > +               irq_domain_disassociate(domain, old_virq);
+Quoting Jeffrey Hugo (2019-02-15 11:29:26)
+> On 2/15/2019 11:47 AM, Stephen Boyd wrote:
+> > Quoting Jeffrey Hugo (2019-02-11 08:09:00)
+> >> On 1/28/2019 11:10 PM, Stephen Boyd wrote:
+> >>
+> >>> +static int clk_init_parent(struct clk_core *core)
+> >>> +{
+> >>> +     core->parent =3D __clk_init_parent(core, true);
+> >>> +     if (IS_ERR(core->parent))
+> >>> +             return PTR_ERR(core->parent);
+> >>> +
+> >>> +     /*
+> >>> +      * Populate core->parent if parent has already been clk_core_in=
+it'd. If
+> >>> +      * parent has not yet been clk_core_init'd then place clk in th=
+e orphan
+> >>> +      * list.  If clk doesn't have any parents then place it in the =
+root
+> >>> +      * clk list.
+> >>> +      *
+> >>> +      * Every time a new clk is clk_init'd then we walk the list of =
+orphan
+> >>> +      * clocks and re-parent any that are children of the clock curr=
+ently
+> >>> +      * being clk_init'd.
+> >>> +      */
+> >>> +     if (core->parent) {
+> >>> +             hlist_add_head(&core->child_node,
+> >>> +                             &core->parent->children);
+> >>> +             core->orphan =3D core->parent->orphan;
+> >>> +     } else if (!core->num_parents) {
+> >>> +             hlist_add_head(&core->child_node, &clk_root_list);
+> >>> +             core->orphan =3D false;
+> >>> +     } else {
+> >>> +             hlist_add_head(&core->child_node, &clk_orphan_list);
+> >>
+> >> Missing "core->orphan =3D true;"?
+> >> The snippet below had that line.  Its not clear why it appears to be
+> >> dropped here.
+> >>
 > >=20
-> > Is it possible to pass 'true' for the 'realloc' argument to
-> > __irq_domain_alloc_irqs() and then this disassociate change isn't
-> > needed?
+> > Hmm. Weird. I think I may have been getting ahead of myself and moving
+> > the orphan updating code into __clk_init_parent(). I can't remember why
+> > though, so I guess I'll go all the way and move it all into
+> > __clk_init_parent() now. Thanks for pointing it out.
+> >=20
 >=20
-> The kernel doc for __irq_domain_alloc_irqs() says that the realloc
-> parameter is mainly to support legacy IRQs. I don't think its a good
-> idea to add new code that'll stay past the end of this patch series
-> on top of that legacy interface.
+> No problem.
+>=20
+> Just FYI, I've rebased the 8998 mmcc series on top of this, and as far=20
+> as I can tell, everything seems to be working great.
 >=20
 
-Ok. The other side of the argument is that this is the only user of
-irq_domain_disassociate(), which may also be some sort of legacy
-interface that isn't supposed to be used. Looking at the commit that
-exposed it, it seems to be that it's there for legacy reasons.
+Cool. Are you using the new way to specify parents or have you
+maintained the previous design of using string names for parents?
 
-commit 43a775916d63d1c822107b39987192ca5ced445c
-Author: Jiang Liu <jiang.liu@linux.intel.com>
-Date:   Mon Jun 9 16:20:05 2014 +0800
-
-    genirq: Export irq_domain_disassociate() to architecture interrupt driv=
-ers
-   =20
-    Export irq_domain_disassociate() to architecture interrupt drivers,
-    so it could be used to handle legacy IRQ descriptors on x86.
-
-So maybe we should just use the realloc argument and bury the
-disassociate API in irqdomain.c because it's not supposed to be used?
-Or does the realloc path not work for some reason?
