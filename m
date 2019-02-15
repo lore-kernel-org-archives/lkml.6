@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E467C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:12:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D04C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:12:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32EE121934
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:12:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F26521934
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:12:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196722;
-	bh=dVAiIHuw0E+PlsXSgmiKkIGI7JFclc6jl/VfrJkywmo=;
+	s=default; t=1550196727;
+	bh=sHOffNftr5cojCLr4zTtyl8CXbnnKArh2igKxuogNS4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HysIzmUFBft544DC4mnJj6VvnXWlh9iPWvrMj161tF16BALDXvPd3fpLDEwnOtki8
-	 etG4DULhwJpEgt2U7N5MIyY5F6oyAdgxeYWERfruO79ND3BUFfpBnVWSzh1eNYNcSE
-	 sxgLK6t7oSWmCW8Yzt2wHKfDL86xRDMuSFKmdg9k=
+	b=b48qw8j46Emt5k9Y2WMPKW9+r/e0lg/sT6aT6JH1lZkipWzZS/mayGlh+aKYSKyga
+	 Ij/IV/mZ4k0kDRPjBnD0brdU6maGHPveovKq/1GBehPqAOaIFBkNjswkJLDmtlkGYL
+	 tNs9RphopgBW2+VNH0/PtVU6Vtztj1m0/9n2O72o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390952AbfBOCMA (ORCPT
+        id S2390993AbfBOCMF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:12:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51946 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:12:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390882AbfBOCLy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:11:54 -0500
+        id S2390882AbfBOCMC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:12:02 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D2C621B68;
-        Fri, 15 Feb 2019 02:11:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05D9E21B1C;
+        Fri, 15 Feb 2019 02:11:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196714;
-        bh=dVAiIHuw0E+PlsXSgmiKkIGI7JFclc6jl/VfrJkywmo=;
+        s=default; t=1550196720;
+        bh=sHOffNftr5cojCLr4zTtyl8CXbnnKArh2igKxuogNS4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZZV+WLufPpFd0JxmS9UMvynPHj/2X/7Be9v9TgHai/T6effssrbw0rDcPltpcTX+b
-         aLwVKmYuCXH75qJs1R3YiO2X2k85XB7WS3yQcs2sbt8fC0FzuGqWmnEpCKiyBdG7Bk
-         jbBjET+QRASY5/t9YIYQsQKPosb396ycf1enjMTk=
+        b=G6V85fViX0yaTEIn0LPIYZmwGKirUqt0jy151Q5vjRbg04IX8O54g7y8Fm8HbWy3/
+         FpE6Wq0Y7TL1VISHRW7vH+t6fuDfmhrdMwrdSmutfS5uNFuqnV6iw5/oAkddiZSdqT
+         pRonE9y6/ySUiBCxdkiZuRAssA8mkIcbfUIwcfNQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alban Bedel <albeu@free.fr>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 20/65] phy: ath79-usb: Fix the power on error path
-Date:   Thu, 14 Feb 2019 21:10:36 -0500
-Message-Id: <20190215021121.177674-20-sashal@kernel.org>
+Cc:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-snps-arc@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 25/65] ARC: fix __ffs return value to avoid build warnings
+Date:   Thu, 14 Feb 2019 21:10:41 -0500
+Message-Id: <20190215021121.177674-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -58,34 +59,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alban Bedel <albeu@free.fr>
+From: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 
-[ Upstream commit 009808154c69c48d5b41fc8cf5ad5ab5704efd8f ]
+[ Upstream commit 4e868f8419cb4cb558c5d428e7ab5629cef864c7 ]
 
-In the power on function the error path doesn't return the suspend
-override to its proper state. It should should deassert this reset
-line to enable the suspend override.
+|  CC      mm/nobootmem.o
+|In file included from ./include/asm-generic/bug.h:18:0,
+|                 from ./arch/arc/include/asm/bug.h:32,
+|                 from ./include/linux/bug.h:5,
+|                 from ./include/linux/mmdebug.h:5,
+|                 from ./include/linux/gfp.h:5,
+|                 from ./include/linux/slab.h:15,
+|                 from mm/nobootmem.c:14:
+|mm/nobootmem.c: In function '__free_pages_memory':
+|./include/linux/kernel.h:845:29: warning: comparison of distinct pointer types lacks a cast
+|   (!!(sizeof((typeof(x) *)1 == (typeof(y) *)1)))
+|                             ^
+|./include/linux/kernel.h:859:4: note: in expansion of macro '__typecheck'
+|   (__typecheck(x, y) && __no_side_effects(x, y))
+|    ^~~~~~~~~~~
+|./include/linux/kernel.h:869:24: note: in expansion of macro '__safe_cmp'
+|  __builtin_choose_expr(__safe_cmp(x, y), \
+|                        ^~~~~~~~~~
+|./include/linux/kernel.h:878:19: note: in expansion of macro '__careful_cmp'
+| #define min(x, y) __careful_cmp(x, y, <)
+|                   ^~~~~~~~~~~~~
+|mm/nobootmem.c:104:11: note: in expansion of macro 'min'
+|   order = min(MAX_ORDER - 1UL, __ffs(start));
 
-Signed-off-by: Alban Bedel <albeu@free.fr>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Change __ffs return value from 'int' to 'unsigned long' as it
+is done in other implementations (like asm-generic, x86, etc...)
+to avoid build-time warnings in places where type is strictly
+checked.
+
+As __ffs may return values in [0-31] interval changing return
+type to unsigned is valid.
+
+Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
+Signed-off-by: Vineet Gupta <vgupta@synopsys.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/phy/qualcomm/phy-ath79-usb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arc/include/asm/bitops.h | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/phy/qualcomm/phy-ath79-usb.c b/drivers/phy/qualcomm/phy-ath79-usb.c
-index 6fd6e07ab345..f7d64f3910b4 100644
---- a/drivers/phy/qualcomm/phy-ath79-usb.c
-+++ b/drivers/phy/qualcomm/phy-ath79-usb.c
-@@ -31,7 +31,7 @@ static int ath79_usb_phy_power_on(struct phy *phy)
+diff --git a/arch/arc/include/asm/bitops.h b/arch/arc/include/asm/bitops.h
+index 8da87feec59a..99e6d8948f4a 100644
+--- a/arch/arc/include/asm/bitops.h
++++ b/arch/arc/include/asm/bitops.h
+@@ -340,7 +340,7 @@ static inline __attribute__ ((const)) int __fls(unsigned long x)
+ /*
+  * __ffs: Similar to ffs, but zero based (0-31)
+  */
+-static inline __attribute__ ((const)) int __ffs(unsigned long word)
++static inline __attribute__ ((const)) unsigned long __ffs(unsigned long word)
+ {
+ 	if (!word)
+ 		return word;
+@@ -400,9 +400,9 @@ static inline __attribute__ ((const)) int ffs(unsigned long x)
+ /*
+  * __ffs: Similar to ffs, but zero based (0-31)
+  */
+-static inline __attribute__ ((const)) int __ffs(unsigned long x)
++static inline __attribute__ ((const)) unsigned long __ffs(unsigned long x)
+ {
+-	int n;
++	unsigned long n;
  
- 	err = reset_control_deassert(priv->reset);
- 	if (err && priv->no_suspend_override)
--		reset_control_assert(priv->no_suspend_override);
-+		reset_control_deassert(priv->no_suspend_override);
- 
- 	return err;
- }
+ 	asm volatile(
+ 	"	ffs.f	%0, %1		\n"  /* 0:31; 31(Z) if src 0 */
 -- 
 2.19.1
 
