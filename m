@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A30C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90B0EC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C04BA222D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5555921934
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:11:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196660;
-	bh=YizPXQ9O2g4UGq3v7B2rEW7KqMxKK/TFvRQi63R+Jzw=;
+	s=default; t=1550196667;
+	bh=kuE3uAdjVqbT+DieaXi3yRhRQeH16kNdYpAAQVZ6wlg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0EOjStVCew/EQggTYTcNo0qoAMeNzGbZXnvHGO15f61/S9OZo5OBAWa0npcWOuaTm
-	 bDr2opUyTj+YqsX0DXvawZjeLqPAxVAT9b+Mds8Kb28IKFvMQIxboL+wznVtoLxuEt
-	 nsfYlQM9bE2N8FtZWbIfULcKZpZ+tioy74NZOIiI=
+	b=qP1NA5G2yyn1QCtrBYQyVaKbEQtm51VIMRUBK0zQwVa9eAN3nRBBeTX59o9sFYGCG
+	 SGRmaWx6IQGcVmfDc6dpK4m3uzgl5+7jGiSMi8R6VwWqFkLDJpBjj1Fpqre9KdGFBi
+	 B8Lz2dydC3m718mJs9fVhAZry5XFjxoDmSJtnVmA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732016AbfBOCK7 (ORCPT
+        id S1732154AbfBOCLF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:10:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51012 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:11:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731951AbfBOCKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:10:53 -0500
+        id S1732078AbfBOCLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:11:02 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 546AA222A1;
-        Fri, 15 Feb 2019 02:10:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3992D222A1;
+        Fri, 15 Feb 2019 02:11:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196653;
-        bh=YizPXQ9O2g4UGq3v7B2rEW7KqMxKK/TFvRQi63R+Jzw=;
+        s=default; t=1550196662;
+        bh=kuE3uAdjVqbT+DieaXi3yRhRQeH16kNdYpAAQVZ6wlg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=crQpU7ywiPa9JcRXTJNO4/QWIHsHi8kuPyo+Ksf1LEGMU56Srue0Ey/vLkwqRlyX8
-         B2zg0xgBNtU+t0cLZNoEitwjQ5ZDEoqSkV+SDK26sq8OqZN8BkVocUjAB948BWuZSl
-         IlE68J076tIRHwPQicnKO+JNALdV2x8x/VGcgbDg=
+        b=z3RfqGt88dcMRRuBQNIKTFsCUNleU6ObL+NwME0u3VmCYjh9i1U6J2bLu/hjy3coB
+         8qfEstZ2LpvdJyXg7MdyXXTqZyndfg9a8/hSCTRfbUCMAJMOobaY3w+He+e83p6rUQ
+         j5zsBbxQI1TVlCA6DO94YFJFBLY8g/M9WFq8Piyw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pavel Shilovsky <pshilov@microsoft.com>,
-        Steve French <stfrench@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 66/77] CIFS: Fix mounts if the client is low on credits
-Date:   Thu, 14 Feb 2019 21:08:44 -0500
-Message-Id: <20190215020855.176727-66-sashal@kernel.org>
+Cc:     Mathieu Malaterre <malat@debian.org>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 71/77] mac80211: Add attribute aligned(2) to struct 'action'
+Date:   Thu, 14 Feb 2019 21:08:49 -0500
+Message-Id: <20190215020855.176727-71-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
 References: <20190215020855.176727-1-sashal@kernel.org>
@@ -57,58 +59,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pavel Shilovsky <pshilov@microsoft.com>
+From: Mathieu Malaterre <malat@debian.org>
 
-[ Upstream commit 6a9cbdd1ceca1dc2359ddf082efe61b97c3e752b ]
+[ Upstream commit 7c53eb5d87bc21464da4268c3c0c47457b6d9c9b ]
 
-If the server doesn't grant us at least 3 credits during the mount
-we won't be able to complete it because query path info operation
-requires 3 credits. Use the cached file handle if possible to allow
-the mount to succeed.
+During refactor in commit 9e478066eae4 ("mac80211: fix MU-MIMO
+follow-MAC mode") a new struct 'action' was declared with packed
+attribute as:
 
-Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+  struct {
+          struct ieee80211_hdr_3addr hdr;
+          u8 category;
+          u8 action_code;
+  } __packed action;
+
+But since struct 'ieee80211_hdr_3addr' is declared with an aligned
+keyword as:
+
+  struct ieee80211_hdr {
+  	__le16 frame_control;
+  	__le16 duration_id;
+  	u8 addr1[ETH_ALEN];
+  	u8 addr2[ETH_ALEN];
+  	u8 addr3[ETH_ALEN];
+  	__le16 seq_ctrl;
+  	u8 addr4[ETH_ALEN];
+  } __packed __aligned(2);
+
+Solve the ambiguity of placing aligned structure in a packed one by
+adding the aligned(2) attribute to struct 'action'.
+
+This removes the following warning (W=1):
+
+  net/mac80211/rx.c:234:2: warning: alignment 1 of 'struct <anonymous>' is less than 2 [-Wpacked-not-aligned]
+
+Cc: Johannes Berg <johannes.berg@intel.com>
+Suggested-by: Johannes Berg <johannes@sipsolutions.net>
+Signed-off-by: Mathieu Malaterre <malat@debian.org>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/smb2inode.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ net/mac80211/rx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/cifs/smb2inode.c b/fs/cifs/smb2inode.c
-index a8999f930b22..057d2034209f 100644
---- a/fs/cifs/smb2inode.c
-+++ b/fs/cifs/smb2inode.c
-@@ -294,6 +294,8 @@ smb2_query_path_info(const unsigned int xid, struct cifs_tcon *tcon,
- 	int rc;
- 	struct smb2_file_all_info *smb2_data;
- 	__u32 create_options = 0;
-+	struct cifs_fid fid;
-+	bool no_cached_open = tcon->nohandlecache;
+diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
+index ef215d0e99b0..40f1a2986048 100644
+--- a/net/mac80211/rx.c
++++ b/net/mac80211/rx.c
+@@ -230,7 +230,7 @@ static void ieee80211_handle_mu_mimo_mon(struct ieee80211_sub_if_data *sdata,
+ 		struct ieee80211_hdr_3addr hdr;
+ 		u8 category;
+ 		u8 action_code;
+-	} __packed action;
++	} __packed __aligned(2) action;
  
- 	*adjust_tz = false;
- 	*symlink = false;
-@@ -302,6 +304,21 @@ smb2_query_path_info(const unsigned int xid, struct cifs_tcon *tcon,
- 			    GFP_KERNEL);
- 	if (smb2_data == NULL)
- 		return -ENOMEM;
-+
-+	/* If it is a root and its handle is cached then use it */
-+	if (!strlen(full_path) && !no_cached_open) {
-+		rc = open_shroot(xid, tcon, &fid);
-+		if (rc)
-+			goto out;
-+		rc = SMB2_query_info(xid, tcon, fid.persistent_fid,
-+				     fid.volatile_fid, smb2_data);
-+		close_shroot(&tcon->crfid);
-+		if (rc)
-+			goto out;
-+		move_smb2_info_to_cifs(data, smb2_data);
-+		goto out;
-+	}
-+
- 	if (backup_cred(cifs_sb))
- 		create_options |= CREATE_OPEN_BACKUP_INTENT;
- 
+ 	if (!sdata)
+ 		return;
 -- 
 2.19.1
 
