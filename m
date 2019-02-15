@@ -2,119 +2,127 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5766DC43381
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7752AC10F02
 	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 04:52:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2747E2073D
+	by mail.kernel.org (Postfix) with ESMTP id 4A52F21B1C
 	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 04:52:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731510AbfBOEtp (ORCPT
+        id S2388230AbfBOEwe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 23:49:45 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54568 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726300AbfBOEto (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 23:49:44 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EA741A78;
-        Thu, 14 Feb 2019 20:49:43 -0800 (PST)
-Received: from [10.162.0.144] (a075553-lin.blr.arm.com [10.162.0.144])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9513D3F589;
-        Thu, 14 Feb 2019 20:49:40 -0800 (PST)
-Subject: Re: [PATCH v5 4/5] arm64/kvm: add a userspace option to enable
- pointer authentication
-To:     Kristina Martsenko <kristina.martsenko@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        kvmarm@lists.cs.columbia.edu, linux-kernel@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>
-References: <1548658727-14271-1-git-send-email-amit.kachhap@arm.com>
- <1548658727-14271-5-git-send-email-amit.kachhap@arm.com>
- <a9b22dcf-2238-344f-0b7b-b4a9de7c562c@arm.com>
-From:   Amit Daniel Kachhap <amit.kachhap@arm.com>
-Message-ID: <6f341bd4-299b-8cc5-2509-f3598a78e4c6@arm.com>
-Date:   Fri, 15 Feb 2019 10:19:38 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 14 Feb 2019 23:52:34 -0500
+Received: from nautica.notk.org ([91.121.71.147]:41326 "EHLO nautica.notk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726300AbfBOEwe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 23:52:34 -0500
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id 35FDEC009; Fri, 15 Feb 2019 05:52:29 +0100 (CET)
+Date:   Fri, 15 Feb 2019 05:52:14 +0100
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Tom Herbert <tom@quantonium.net>
+Cc:     Tom Herbert <tom@herbertland.com>,
+        David Miller <davem@davemloft.net>,
+        Doron Roberts-Kedes <doronrk@fb.com>,
+        Dave Watson <davejwatson@fb.com>,
+        Linux Kernel Network Developers <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] kcm: remove any offset before parsing messages
+Message-ID: <20190215045214.GA13123@nautica>
+References: <20180912053642.GA2912@nautica>
+ <20180917.184502.447385458615284933.davem@davemloft.net>
+ <20180918015723.GA26300@nautica>
+ <20181031025657.GA17861@nautica>
+ <20190215010029.GA10899@nautica>
+ <CALx6S35HBKgtYkFde_AhCMPRtZfcVYfCYf=mLKjWSLLAfhMHyQ@mail.gmail.com>
+ <20190215015705.GA17974@nautica>
+ <CALx6S37MZadJ=PaAd+SSv9hxSX9kFTmTUtijPGA39JCx3PYq1Q@mail.gmail.com>
+ <20190215033102.GA3099@nautica>
+ <CAPDqMeoJ7CCo1eGNBp_-crkxfVt_4f=XQqhEo7kmyCN-hf_EWQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <a9b22dcf-2238-344f-0b7b-b4a9de7c562c@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAPDqMeoJ7CCo1eGNBp_-crkxfVt_4f=XQqhEo7kmyCN-hf_EWQ@mail.gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Tom Herbert wrote on Thu, Feb 14, 2019:
+> On Thu, Feb 14, 2019 at 7:31 PM Dominique Martinet
+> <asmadeus@codewreck.org> wrote:
+> > Yes, the parser fails with -ENOMEM ; that is not handled gracefully at
+> > all: from a user point of view, the connection just hangs (recvmsg never
+> > returns), without so much as a message in dmesg either.
+>
+> That's by design. Here is the description in kcm.txt:
+> 
+> "When a TCP socket is attached to a KCM multiplexor data ready
+> (POLLIN) and write space available (POLLOUT) events are handled by the
+> multiplexor. If there is a state change (disconnection) or other error
+> on a TCP socket, an error is posted on the TCP socket so that a
+> POLLERR event happens and KCM discontinues using the socket. When the
+> application gets the error notification for a TCP socket, it should
+> unattach the socket from KCM and then handle the error condition (the
+> typical response is to close the socket and create a new connection if
+> necessary)."
 
-On 2/13/19 11:05 PM, Kristina Martsenko wrote:
-> On 28/01/2019 06:58, Amit Daniel Kachhap wrote:
->> This feature will allow the KVM guest to allow the handling of
->> pointer authentication instructions or to treat them as undefined
->> if not set. It uses the existing vcpu API KVM_ARM_VCPU_INIT to
->> supply this parameter instead of creating a new API.
->>
->> A new register is not created to pass this parameter via
->> SET/GET_ONE_REG interface as just a flag (KVM_ARM_VCPU_PTRAUTH)
->> supplied is enough to enable this feature.
-> 
-> [...]
-> 
->> diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
->> index b200c14..b6950df 100644
->> --- a/arch/arm/include/asm/kvm_host.h
->> +++ b/arch/arm/include/asm/kvm_host.h
->> @@ -346,6 +346,10 @@ static inline int kvm_arm_have_ssbd(void)
->>   static inline void kvm_vcpu_load_sysregs(struct kvm_vcpu *vcpu) {}
->>   static inline void kvm_vcpu_put_sysregs(struct kvm_vcpu *vcpu) {}
->>   static inline void kvm_arm_vcpu_ptrauth_reset(struct kvm_vcpu *vcpu) {}
->> +static inline bool kvm_arm_vcpu_ptrauth_allowed(struct kvm_vcpu *vcpu)
->> +{
->> +	return false;
->> +}
-> 
-> It seems like this is only ever called from arm64 code, so do we need an
-> arch/arm/ definition?
-Yes not required. Nice catch.
-> 
->> +/**
->> + * kvm_arm_vcpu_ptrauth_allowed - checks if ptrauth feature is present in vcpu
->> + *
->> + * @vcpu: The VCPU pointer
->> + *
->> + * This function will be used to enable/disable ptrauth in guest as configured
->> + * by the KVM userspace API.
->> + */
->> +bool kvm_arm_vcpu_ptrauth_allowed(struct kvm_vcpu *vcpu)
->> +{
->> +	return test_bit(KVM_ARM_VCPU_PTRAUTH, vcpu->arch.features);
->> +}
-> 
-> I'm not sure, but should there also be something like
-> 
-> if (test_bit(KVM_ARM_VCPU_PTRAUTH, vcpu->arch.features) &&
->      !kvm_supports_ptrauth())
-> 	return -EINVAL;
-> 
-> in kvm_reset_vcpu?
-Yes makes sense. I missed it and with Dave martin patch this may be done 
-cleanly.
+Sigh, that's what I get for relying on pieces of code found on the
+internet.
 
-Thanks,
-Amit D
+It does make "trivial" kcm sockets difficult to use though, the old
+ganesha code I adapted to kcm was the horrible (naive?) kind spawning
+one thread per connection and just waiting on read(), so making it just
+create a kcm socket from the tcp one and wait on recvmsg() until an
+error pops up does not seem an option.
 
+That being said I'm a bit confused, I thought part of the point of kcm
+was the multiplexing so a simple server could just keep attaching tcp
+sockets to a single kcm socket and only have a single trivial loop
+reading from the kcm socket ; but I guess there's no harm in also
+looking for POLLERR on the tcp sockets... It would still need to close
+them once clients disconnect I guess, this really only affects my naive
+server.
+
+> > strparser might be able to retry somehow.
 > 
-> Thanks,
-> Kristina
-> 
+> We could retry on -ENOMEM since it is potentially a transient error,
+
+Yes, I think we should aim to retry on -ENOMEM; I agree all errors are
+not meant to be retried on but there already are different cases based
+on what the parse cb returned; but that can be a different patch.
+
+> but generally for errors (like connection is simply broken) it seems
+> like it's working as intended. I suppose we could add a socket option
+> to fail the KCM socket when all attached lower sockets have failed,
+> but I not sure that would be a significant benefit for additional
+> complexity.
+
+Right, I agree it's probably not worth doing, now I'm aware of this I
+can probably motivate myself to change this old code to use epoll
+properly.
+
+I think it could make sense to have this option for simpler programs,
+but as things stand I guess we can require kcm users to do this much,
+thanks for the explanation, and sorry for having failed to notice it.
+
+
+
+With all that said I guess my patch should work correctly then, I'll try
+to find some time to check the error does come back up the tcp socket in
+my reproducer but I have no reason to believe it doesn't.
+
+I'd like to see some retry on ENOMEM before this is merged though, so
+while I'm there I'll resend this with a second patch doing that
+retry,.. I think just not setting strp->interrupted and not reporting
+the error up might be enough? Will have to try either way.
+
+
+
+Thanks for the feedback,
+-- 
+Dominique
