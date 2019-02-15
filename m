@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40662C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:43:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 517E2C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:43:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 049F82192B
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:43:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 167562192B
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:43:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550198580;
-	bh=N9Fz3BVOoXVEcEtRYVMw5vIqIDwOANZocd22GITVcYs=;
+	s=default; t=1550198586;
+	bh=fxe4q5n+2kystf5LYHWAuoFAxgwkFPIwrPDtiT+wbFI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NlkX8tFoDF9DczZRjI1YSjhQE83oY+xAxM7FW8BHkxPL/jCce4kcOcqMtuSdPLWK7
-	 62nOTkMezilAdlB26hfw1j0hHrKG3O1FnZDkalpwYSWOviMrndwnNuFDFx9NUXAsA7
-	 kEogRTKzvFUUfd0a5iV7Uih2Fy5YxAXjG95Tn26o=
+	b=kZYCZ0I5eYy8pa/nT2W6JFhjplmHh881WERDK4Osv3aA05GCrfxw4rnYpTlGQ0hH5
+	 RciN+03nx7dz34jPejmbZG2UABoOv+Z++ZGFAUcvcmOpqHL0zrmW3MINg225vD/AJd
+	 d5kul/Qu22zj/NFGu7Xfjcs741ZNC1XyM4lS8XUI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732254AbfBOCm6 (ORCPT
+        id S1732475AbfBOCnE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:42:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49300 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:43:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49260 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731485AbfBOCJG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:09:06 -0500
+        id S1731466AbfBOCJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:09:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0DCF2222D9;
-        Fri, 15 Feb 2019 02:09:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A2D42229F;
+        Fri, 15 Feb 2019 02:09:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196545;
-        bh=N9Fz3BVOoXVEcEtRYVMw5vIqIDwOANZocd22GITVcYs=;
+        s=default; t=1550196544;
+        bh=fxe4q5n+2kystf5LYHWAuoFAxgwkFPIwrPDtiT+wbFI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aj6gTNoDS6lGgehRN74cxqDy9yPGPFuX5hmgwSRzWnNyiMuGsyNwqtjbo3c9o4fZ2
-         Dje986bZZq9Kz5iKtXrj9FLCLd4nXOng1BZOkiMrdRSkLHm/I6HFBWRkQmnCY9/wYQ
-         qTjxEH/lTYWnELPZx5pDc5rNZvuPHQe6qQF+4G+I=
+        b=T3tjaC+M5ul/aDTiEIk66QjjJADWr59d0LuB1oSCoQ9/sFwXkbMehaS8jkE0e7Ude
+         f5kZtMW1bPSB5P3fddb3an8cabQjWcLu8F37QJopth+Js/iFyxl5AxGlqJdmNLPbjf
+         3IOAg+Ruor1qSTCUwpoFhRIGQ8OfwGnCs0TLzqHA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ajit Pandey <ajitp@codeaurora.org>,
-        Rohit kumar <rohitkr@codeaurora.org>,
-        Mark Brown <broonie@kernel.org>,
+Cc:     Yizhuo <yzhai003@ucr.edu>, Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 06/77] ASoC: soc-core: defer card probe until all component is added to list
-Date:   Thu, 14 Feb 2019 21:07:44 -0500
-Message-Id: <20190215020855.176727-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 05/77] ASoC: Variable "val" in function rt274_i2c_probe() could be uninitialized
+Date:   Thu, 14 Feb 2019 21:07:43 -0500
+Message-Id: <20190215020855.176727-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
 References: <20190215020855.176727-1-sashal@kernel.org>
@@ -59,65 +57,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ajit Pandey <ajitp@codeaurora.org>
+From: Yizhuo <yzhai003@ucr.edu>
 
-[ Upstream commit 8780cf1142a59568a3aa77959cbd76b2edb6fd81 ]
+[ Upstream commit 8c3590de0a378c2449fc1aec127cc693632458e4 ]
 
-DAI component probe is not called if it is not present
-in component list during sound card registration.
-Check if component is available in component list for
-platform and cpu dai before soundcard registration.
+Inside function rt274_i2c_probe(), if regmap_read() function
+returns -EINVAL, then local variable "val" leaves uninitialized
+but used in if statement. This is potentially unsafe.
 
-Signed-off-by: Ajit Pandey <ajitp@codeaurora.org>
-Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+Signed-off-by: Yizhuo <yzhai003@ucr.edu>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/soc-core.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+ sound/soc/codecs/rt274.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/soc-core.c b/sound/soc/soc-core.c
-index b29d0f65611e..74b12f90ea9b 100644
---- a/sound/soc/soc-core.c
-+++ b/sound/soc/soc-core.c
-@@ -1027,7 +1027,6 @@ static int snd_soc_init_platform(struct snd_soc_card *card,
- 				 struct snd_soc_dai_link *dai_link)
- {
- 	struct snd_soc_dai_link_component *platform = dai_link->platform;
--
- 	/*
- 	 * FIXME
- 	 *
-@@ -1129,6 +1128,14 @@ static int soc_init_dai_link(struct snd_soc_card *card,
- 			link->name);
- 		return -EINVAL;
+diff --git a/sound/soc/codecs/rt274.c b/sound/soc/codecs/rt274.c
+index 0ef966d56bac..e2855ab9a2c6 100644
+--- a/sound/soc/codecs/rt274.c
++++ b/sound/soc/codecs/rt274.c
+@@ -1128,8 +1128,11 @@ static int rt274_i2c_probe(struct i2c_client *i2c,
+ 		return ret;
  	}
+ 
+-	regmap_read(rt274->regmap,
++	ret = regmap_read(rt274->regmap,
+ 		RT274_GET_PARAM(AC_NODE_ROOT, AC_PAR_VENDOR_ID), &val);
++	if (ret)
++		return ret;
 +
-+	/*
-+	 * Defer card registartion if platform dai component is not added to
-+	 * component list.
-+	 */
-+	if (!soc_find_component(link->platform->of_node, link->platform->name))
-+		return -EPROBE_DEFER;
-+
- 	/*
- 	 * CPU device may be specified by either name or OF node, but
- 	 * can be left unspecified, and will be matched based on DAI
-@@ -1140,6 +1147,14 @@ static int soc_init_dai_link(struct snd_soc_card *card,
- 			link->name);
- 		return -EINVAL;
- 	}
-+
-+	/*
-+	 * Defer card registartion if cpu dai component is not added to
-+	 * component list.
-+	 */
-+	if (!soc_find_component(link->cpu_of_node, link->cpu_name))
-+		return -EPROBE_DEFER;
-+
- 	/*
- 	 * At least one of CPU DAI name or CPU device name/node must be
- 	 * specified
+ 	if (val != RT274_VENDOR_ID) {
+ 		dev_err(&i2c->dev,
+ 			"Device with ID register %#x is not rt274\n", val);
 -- 
 2.19.1
 
