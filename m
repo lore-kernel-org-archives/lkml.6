@@ -2,129 +2,107 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE767C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:39:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3A9BC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:39:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABFEF2192B
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:39:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C8J8YEaP"
+	by mail.kernel.org (Postfix) with ESMTP id 946F72192B
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:39:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550198364;
+	bh=b9mHi0vxGM5l7wd3jcDXtjgneNvouOkb7J+ZhDi3SMo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=LGTQv41R288KyPwSUVra/ff9eVT0gmkdp1xtm1MJoaKDjbIuFOW/4f1fpaLAT4O3k
+	 /++4ALGTfmExfBvUFy+nXTWwnE/akF0Ylrk2cTrKAi8TsskffO28ECLwPQQJWuenNi
+	 sKcvSJQZRLzWi2YxU7sNbQj/U4IwwHYbvKJDkCrE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729843AbfBOCjM (ORCPT
+        id S2387865AbfBOCjW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:39:12 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41718 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726238AbfBOCjK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:39:10 -0500
-Received: by mail-pg1-f195.google.com with SMTP id m1so4053768pgq.8
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 18:39:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=cNyFM0J2DfW9voxw9FzV7E7Y/LrzsWkGDKLqwe0d5pk=;
-        b=C8J8YEaP1sXar/+zW0yONM/GThKVOZP43UoKx+bsMs0rR+kOwbwuiT2BIDoESBLxKN
-         X6AH8lyLqHVlJ3S1+7SjnEjca5R1G8T4RFnjNToQO6v4YNaQSQSNkLbvxe90zZykLVDi
-         54ov/SHMO/cZOMqPEs91uSOr6MV9wmu9R1mZMEKYCox3q1ABu4U+roRJf/5xpBsTlTDO
-         KAmeeosjCfbEhSgpHYgu6X3qTk/lRll1yN/eR/pYc5h5Gznm4xGDGVTvZ1VW0BjA2yKi
-         9shB5cJBIHEFyFW2Gn9ppb3AKrv2U+8H26GIKZ1mUlV4K3ypWZYz6UbQihzp+r6bWUJk
-         St0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=cNyFM0J2DfW9voxw9FzV7E7Y/LrzsWkGDKLqwe0d5pk=;
-        b=OPh5n4C5/nLc9E3E4gjJ7IJ2nYuDbfq1RrZS0t/7c+pDi+lKbQz9sKfDVWIwAcMZK3
-         ZrlZaT/pEU3tTSwjiNktsEO6Ke4AnfMTuvafKNsX6lkLqKga+WSsrSxH2BM8jZRI6cgB
-         qnnrDQfjmq4xp15IJRkvukI2lE4SXCbCWFrl4sVhoSJteCU9K56kWOQ7ou3GYTUjaKed
-         MJ6GYeIc04rtZhPAazakX8xD3PGi4ni0YQ7DWg5ohfPihU9aS5QfRWJHF9k1exotSCf4
-         qmoxnQKOK9St5qwbCfhIq1OTLJiKc5unatWTCuvRnjcOcILHdk5P6PT5f9vCmWRBswV3
-         qCsg==
-X-Gm-Message-State: AHQUAubXjBSKjut0Th8oUQL5UoigWj7mxCNLo/DT3bo9C60io3GLoMM9
-        /GF2QiBbg1CTWBocv+zl6AthpwwR
-X-Google-Smtp-Source: AHgI3IYPDJcfAJcux7am1/kgkI8RGRJz/Eho2e26RlxYpln5H5W4x8B/Nfk9OSESdiI7mMZpfEdzLw==
-X-Received: by 2002:a63:4b12:: with SMTP id y18mr3125993pga.340.1550198349469;
-        Thu, 14 Feb 2019 18:39:09 -0800 (PST)
-Received: from jordon-HP-15-Notebook-PC ([49.207.53.51])
-        by smtp.gmail.com with ESMTPSA id t3sm4758131pga.31.2019.02.14.18.39.07
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 14 Feb 2019 18:39:08 -0800 (PST)
-Date:   Fri, 15 Feb 2019 08:13:29 +0530
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-To:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
-        linux@armlinux.org.uk, robin.murphy@arm.com,
-        iamjoonsoo.kim@lge.com, treding@nvidia.com, keescook@chromium.org,
-        m.szyprowski@samsung.com
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v4 2/9] arm: mm: dma-mapping: Convert to use vm_map_pages()
-Message-ID: <20190215024329.GA26372@jordon-HP-15-Notebook-PC>
+        Thu, 14 Feb 2019 21:39:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50356 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390199AbfBOCKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:10:15 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A677206BA;
+        Fri, 15 Feb 2019 02:10:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550196614;
+        bh=b9mHi0vxGM5l7wd3jcDXtjgneNvouOkb7J+ZhDi3SMo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=g3N+L0dRe/tIYVa9JafzXFJmI3+C+f4PIaeH0QHJD9RECdcyHYoiaadxhPDqEuoP3
+         2qxXYVDDVMySU+NJiw/r6piTZBQ5cK1TEPsffMDwahYLRrivWj6GV+vGXdDPRlaHFJ
+         FX32epcTFqGlZjGxfakMKxjTxe8/3ofJLJiTzVcs=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Priit Laes <priit.laes@paf.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.20 46/77] drm/sun4i: hdmi: Fix usage of TMDS clock
+Date:   Thu, 14 Feb 2019 21:08:24 -0500
+Message-Id: <20190215020855.176727-46-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
+References: <20190215020855.176727-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert to use vm_map_pages() to map range of kernel
-memory to user vma.
+From: Priit Laes <priit.laes@paf.com>
 
-Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+[ Upstream commit 5e1bc251cebc84b41b8eb5d2434e54d939a85430 ]
+
+Although TMDS clock is required for HDMI to properly function,
+nobody called clk_prepare_enable(). This fixes reference counting
+issues and makes sure clock is running when it needs to be running.
+
+Due to TDMS clock being parent clock for DDC clock, TDMS clock
+was turned on/off for each EDID probe, causing spurious failures
+for certain HDMI/DVI screens.
+
+Fixes: 9c5681011a0c ("drm/sun4i: Add HDMI support")
+Signed-off-by: Priit Laes <priit.laes@paf.com>
+[Maxime: Moved the TMDS clock enable earlier]
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190122073232.7240-1-plaes@plaes.org
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mm/dma-mapping.c | 22 ++++++----------------
- 1 file changed, 6 insertions(+), 16 deletions(-)
+ drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index f1e2922..de7c76e 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -1575,31 +1575,21 @@ static int __arm_iommu_mmap_attrs(struct device *dev, struct vm_area_struct *vma
- 		    void *cpu_addr, dma_addr_t dma_addr, size_t size,
- 		    unsigned long attrs)
- {
--	unsigned long uaddr = vma->vm_start;
--	unsigned long usize = vma->vm_end - vma->vm_start;
- 	struct page **pages = __iommu_get_pages(cpu_addr, attrs);
- 	unsigned long nr_pages = PAGE_ALIGN(size) >> PAGE_SHIFT;
--	unsigned long off = vma->vm_pgoff;
-+	int err;
- 
- 	if (!pages)
- 		return -ENXIO;
- 
--	if (off >= nr_pages || (usize >> PAGE_SHIFT) > nr_pages - off)
-+	if (vma->vm_pgoff >= nr_pages)
- 		return -ENXIO;
- 
--	pages += off;
--
--	do {
--		int ret = vm_insert_page(vma, uaddr, *pages++);
--		if (ret) {
--			pr_err("Remapping memory failed: %d\n", ret);
--			return ret;
--		}
--		uaddr += PAGE_SIZE;
--		usize -= PAGE_SIZE;
--	} while (usize > 0);
-+	err = vm_map_pages(vma, pages, nr_pages);
-+	if (err)
-+		pr_err("Remapping memory failed: %d\n", err);
- 
--	return 0;
-+	return err;
+diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+index 061d2e0d9011..416da5376701 100644
+--- a/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
++++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_enc.c
+@@ -92,6 +92,8 @@ static void sun4i_hdmi_disable(struct drm_encoder *encoder)
+ 	val = readl(hdmi->base + SUN4I_HDMI_VID_CTRL_REG);
+ 	val &= ~SUN4I_HDMI_VID_CTRL_ENABLE;
+ 	writel(val, hdmi->base + SUN4I_HDMI_VID_CTRL_REG);
++
++	clk_disable_unprepare(hdmi->tmds_clk);
  }
- static int arm_iommu_mmap_attrs(struct device *dev,
- 		struct vm_area_struct *vma, void *cpu_addr,
+ 
+ static void sun4i_hdmi_enable(struct drm_encoder *encoder)
+@@ -102,6 +104,8 @@ static void sun4i_hdmi_enable(struct drm_encoder *encoder)
+ 
+ 	DRM_DEBUG_DRIVER("Enabling the HDMI Output\n");
+ 
++	clk_prepare_enable(hdmi->tmds_clk);
++
+ 	sun4i_hdmi_setup_avi_infoframes(hdmi, mode);
+ 	val |= SUN4I_HDMI_PKT_CTRL_TYPE(0, SUN4I_HDMI_PKT_AVI);
+ 	val |= SUN4I_HDMI_PKT_CTRL_TYPE(1, SUN4I_HDMI_PKT_END);
 -- 
-1.9.1
+2.19.1
 
