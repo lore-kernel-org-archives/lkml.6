@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD7A3C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:15:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FE33C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:16:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BA01206BA
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:15:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50F2A20643
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:16:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196948;
-	bh=scyPj/+o1ExCeCyj48gwlg8y7OvQtd+NUTnEGmdNAWs=;
+	s=default; t=1550196961;
+	bh=N+7iE94QtShBEuJOFIUlVhDG9iuMNWhZ1svS+hbpEA8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QMX6qIToFFtTXQbRc6dJdrIE2h4TxgYcG2yRUveIqyXNpgeg9YrKZmtI6SzrF1tm2
-	 mqpE1S+P50NlROe5yDtowCMGRL+yu3cSIZ3XRgaVdqUZtjClaCi4nmA8aHm8k6Hd9O
-	 HJ7/793QKn3ZOhP/O7b8LG9zPR0ywHFI/1CJ1aFc=
+	b=MLdJXU+/lTIaoOiaD/5f1zBkDMXVKhhK5ypPn8GGSe8yk+7wzEy7vQTG2lvAc9hOU
+	 VJSo8xEfbygKwndSbSDWsxMCsJWH6PjlLthoC+xDRfFCr1BKzh96UX2KLDh99izmV4
+	 xhwYqdTAZSP3y5bb3Xl61df7HWTqi22K/d5HaUuQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405943AbfBOCPq (ORCPT
+        id S2406065AbfBOCP7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:15:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55306 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:15:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405854AbfBOCPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:15:40 -0500
+        id S2406011AbfBOCPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:15:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEEAB222D0;
-        Fri, 15 Feb 2019 02:15:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A4DF20643;
+        Fri, 15 Feb 2019 02:15:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196939;
-        bh=scyPj/+o1ExCeCyj48gwlg8y7OvQtd+NUTnEGmdNAWs=;
+        s=default; t=1550196954;
+        bh=N+7iE94QtShBEuJOFIUlVhDG9iuMNWhZ1svS+hbpEA8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bZ3L3FvkrMLJpgROhB/7/9dJYldhOrpo3Jo7Kyb0m8S+0R7eHWa2Q1IJKewhF9qGr
-         MVmZoBrkSWReYK7sZA0O8cPlGnGalYcH8NquNt6kNKm4utAC8n/MzDCYv8J1QMr6zt
-         +G7UVBofgwj92ZOIs3Vdv6XzXkP/QKca/KIQf58A=
+        b=Du3ca64WEA9gzvw+OOyyqZWyIitihPGcPpWdx/hMS66d6CTwlBz2oj0SCGTuWA5+d
+         NG2UXfQOBaKrX8dx11CbKcpwutkmJlGf//tm7/7pscLIkbgCF/aXTVz0Hc6YS1Gja8
+         I+LivJjkhcx/XtSXwVcrGD9RSHEH0JF16Ytts9YY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Edward Cree <ecree@solarflare.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 15/20] sfc: suppress duplicate nvmem partition types in efx_ef10_mtd_probe
-Date:   Thu, 14 Feb 2019 21:15:06 -0500
-Message-Id: <20190215021511.179333-15-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 05/16] usb: gadget: Potential NULL dereference on allocation error
+Date:   Thu, 14 Feb 2019 21:15:35 -0500
+Message-Id: <20190215021546.179605-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190215021511.179333-1-sashal@kernel.org>
-References: <20190215021511.179333-1-sashal@kernel.org>
+In-Reply-To: <20190215021546.179605-1-sashal@kernel.org>
+References: <20190215021546.179605-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -58,98 +58,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Edward Cree <ecree@solarflare.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 3366463513f544c12c6b88c13da4462ee9e7a1a1 ]
+[ Upstream commit df28169e1538e4a8bcd8b779b043e5aa6524545c ]
 
-Use a bitmap to keep track of which partition types we've already seen;
- for duplicates, return -EEXIST from efx_ef10_mtd_probe_partition() and
- thus skip adding that partition.
-Duplicate partitions occur because of the A/B backup scheme used by newer
- sfc NICs.  Prior to this patch they cause sysfs_warn_dup errors because
- they have the same name, causing us not to expose any MTDs at all.
+The source_sink_alloc_func() function is supposed to return error
+pointers on error.  The function is called from usb_get_function() which
+doesn't check for NULL returns so it would result in an Oops.
 
-Signed-off-by: Edward Cree <ecree@solarflare.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Of course, in the current kernel, small allocations always succeed so
+this doesn't affect runtime.
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/sfc/ef10.c | 29 +++++++++++++++++++++--------
- 1 file changed, 21 insertions(+), 8 deletions(-)
+ drivers/usb/gadget/function/f_sourcesink.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/sfc/ef10.c b/drivers/net/ethernet/sfc/ef10.c
-index 063aca17e698..79a1031c3ef7 100644
---- a/drivers/net/ethernet/sfc/ef10.c
-+++ b/drivers/net/ethernet/sfc/ef10.c
-@@ -4433,22 +4433,25 @@ static const struct efx_ef10_nvram_type_info efx_ef10_nvram_types[] = {
- 	{ NVRAM_PARTITION_TYPE_LICENSE,		   0,    0, "sfc_license" },
- 	{ NVRAM_PARTITION_TYPE_PHY_MIN,		   0xff, 0, "sfc_phy_fw" },
- };
-+#define EF10_NVRAM_PARTITION_COUNT	ARRAY_SIZE(efx_ef10_nvram_types)
+diff --git a/drivers/usb/gadget/function/f_sourcesink.c b/drivers/usb/gadget/function/f_sourcesink.c
+index 45b41d1cfd19..ecfd9e71a0d5 100644
+--- a/drivers/usb/gadget/function/f_sourcesink.c
++++ b/drivers/usb/gadget/function/f_sourcesink.c
+@@ -1149,7 +1149,7 @@ static struct usb_function *source_sink_alloc_func(
  
- static int efx_ef10_mtd_probe_partition(struct efx_nic *efx,
- 					struct efx_mcdi_mtd_partition *part,
--					unsigned int type)
-+					unsigned int type,
-+					unsigned long *found)
- {
- 	MCDI_DECLARE_BUF(inbuf, MC_CMD_NVRAM_METADATA_IN_LEN);
- 	MCDI_DECLARE_BUF(outbuf, MC_CMD_NVRAM_METADATA_OUT_LENMAX);
- 	const struct efx_ef10_nvram_type_info *info;
- 	size_t size, erase_size, outlen;
-+	int type_idx = 0;
- 	bool protected;
- 	int rc;
+ 	ss = kzalloc(sizeof(*ss), GFP_KERNEL);
+ 	if (!ss)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
  
--	for (info = efx_ef10_nvram_types; ; info++) {
--		if (info ==
--		    efx_ef10_nvram_types + ARRAY_SIZE(efx_ef10_nvram_types))
-+	for (type_idx = 0; ; type_idx++) {
-+		if (type_idx == EF10_NVRAM_PARTITION_COUNT)
- 			return -ENODEV;
-+		info = efx_ef10_nvram_types + type_idx;
- 		if ((type & ~info->type_mask) == info->type)
- 			break;
- 	}
-@@ -4461,6 +4464,13 @@ static int efx_ef10_mtd_probe_partition(struct efx_nic *efx,
- 	if (protected)
- 		return -ENODEV; /* hide it */
+ 	ss_opts =  container_of(fi, struct f_ss_opts, func_inst);
  
-+	/* If we've already exposed a partition of this type, hide this
-+	 * duplicate.  All operations on MTDs are keyed by the type anyway,
-+	 * so we can't act on the duplicate.
-+	 */
-+	if (__test_and_set_bit(type_idx, found))
-+		return -EEXIST;
-+
- 	part->nvram_type = type;
- 
- 	MCDI_SET_DWORD(inbuf, NVRAM_METADATA_IN_TYPE, type);
-@@ -4489,6 +4499,7 @@ static int efx_ef10_mtd_probe_partition(struct efx_nic *efx,
- static int efx_ef10_mtd_probe(struct efx_nic *efx)
- {
- 	MCDI_DECLARE_BUF(outbuf, MC_CMD_NVRAM_PARTITIONS_OUT_LENMAX);
-+	DECLARE_BITMAP(found, EF10_NVRAM_PARTITION_COUNT);
- 	struct efx_mcdi_mtd_partition *parts;
- 	size_t outlen, n_parts_total, i, n_parts;
- 	unsigned int type;
-@@ -4517,11 +4528,13 @@ static int efx_ef10_mtd_probe(struct efx_nic *efx)
- 	for (i = 0; i < n_parts_total; i++) {
- 		type = MCDI_ARRAY_DWORD(outbuf, NVRAM_PARTITIONS_OUT_TYPE_ID,
- 					i);
--		rc = efx_ef10_mtd_probe_partition(efx, &parts[n_parts], type);
--		if (rc == 0)
--			n_parts++;
--		else if (rc != -ENODEV)
-+		rc = efx_ef10_mtd_probe_partition(efx, &parts[n_parts], type,
-+						  found);
-+		if (rc == -EEXIST || rc == -ENODEV)
-+			continue;
-+		if (rc)
- 			goto fail;
-+		n_parts++;
- 	}
- 
- 	rc = efx_mtd_add(efx, &parts[0].common, n_parts, sizeof(*parts));
 -- 
 2.19.1
 
