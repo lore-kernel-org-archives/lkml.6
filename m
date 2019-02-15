@@ -7,163 +7,124 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78073C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:22:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8994C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:24:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C25C21917
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:22:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A52E42192D
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:24:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D095tI5c"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="blybIFt5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389582AbfBOHWL (ORCPT
+        id S2389634AbfBOHYF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 02:22:11 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:38326 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbfBOHWL (ORCPT
+        Fri, 15 Feb 2019 02:24:05 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:45476 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725909AbfBOHYF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 02:22:11 -0500
-Received: by mail-qk1-f196.google.com with SMTP id p15so5154880qkl.5
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Feb 2019 23:22:10 -0800 (PST)
+        Fri, 15 Feb 2019 02:24:05 -0500
+Received: by mail-ed1-f68.google.com with SMTP id d9so7103645edh.12;
+        Thu, 14 Feb 2019 23:24:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gqBKu3DuRzErOdiT3HUQunhHLvGpzpttpmGGCZ1xIAI=;
-        b=D095tI5c/AiUUREQp5uoGFDxONAKWbXtmZCEUmVzy6wHZpKx+QzgU2S5Q6G/DmLbVU
-         FQBKXIuDebLl/XZsJxUIP/qXffyC8ndCooC8l9aVWWKXy/b7ZBcuwo4EU5ewZBs0JxRc
-         Ur/7N3xEJ5zgiPHMj+GO+4smkMyjSv73v/1o+rpSLXtLyeP53meSoTKZ7mIE4hJbSrTm
-         8ULMhVIXZeJeHTBN13vWwihqRd8S+gN2+4J5YgkxwdXFgbZzIdgEv813WRGXj0NwykaY
-         E4flOxUc8+KRD4lFmW7etsKL+qiDmn3NkDXqkD38RfQzMiqYr87XpJvw1fjeCQp6S8pt
-         6yDQ==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=RFbQfwT9/wI/RORTUjQ3U5Yg8CJ+8DH8wJ1ahrulbsk=;
+        b=blybIFt5OTKxp1WUoiro1xJDcfgPKy9/3NJH9+Y8BpSlL/43pnfgASi+YmKW8qZdyt
+         5a6OiGtixLknLzCA8e9U61SLDOVt0kLBbu8dAMpTZVo/H9NUw7hIuEm0fgkrjEWAIMBW
+         fk6iUhfEEoy1A5ELuAO0KGYKqSxCdkmKf+mSgbfN5mgJj0hyw20Ni0ZKaNkX4WRPkpuU
+         LVuuMsXokLEz8orXgquv+gPY9+jTmYhuwNoQfJBt1uPndj3KKlIagjqty0hmdtEuk5+C
+         5cGnpjwYYXm/GeHyHXdZYzTOdLjAzD1Aj4m1suCJmNvLxwAXeuJvF8NC7z5iTndhwWMs
+         hybA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gqBKu3DuRzErOdiT3HUQunhHLvGpzpttpmGGCZ1xIAI=;
-        b=fP0MQ5SXXUlYeTecYvJIRRlGWeeT7brUYjk6cT+I0iZuCUUiVYdls/Qi9yVslmURK7
-         7+rSl2DtuCH0tJ4Y3C0ifbympfbh/i4xB+I0ZpH27hDjhwtpeywgQxj2MDc5o3gs3EHL
-         9tq+taFMJGXuLJdzXJqJgDG4LY/K9oRCMXo+V8y7BJtCoilUrTYAq08H/532NggU8wmR
-         E9pEXu2bZNqgaTfkPUZrr0mL2Ps9qOwzK/RXh9cKdiNEh6JSghlsrMz3O0FBAiMWo+Tt
-         wF0YzRNoE2wy0de4SB6u3JNCBYQD2TfMRHhTzzyeLMak32xIXCLY/aEPsJMhaZ5lkLV9
-         U32g==
-X-Gm-Message-State: AHQUAuYpHJT49/Tgsi7IWmWw60/fThyzCc0CqohwcJ9oppG1MZOeANCD
-        HZ8O0PaxI/iM0AOV0a9o5UzPniXsiLI8kNKt6xk=
-X-Google-Smtp-Source: AHgI3IbmS7CKDB9PlXXGVfNKgK5mqxrC1osdG2voZp3D5Pw64K+HcXXWWs4+RNiPZKKyFnV+JYh5w3XptSKOPhTI5hg=
-X-Received: by 2002:a37:474b:: with SMTP id u72mr5804112qka.106.1550215330010;
- Thu, 14 Feb 2019 23:22:10 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RFbQfwT9/wI/RORTUjQ3U5Yg8CJ+8DH8wJ1ahrulbsk=;
+        b=FPJ9VUEPW5YEg1dkiTmVh4ddxqYWiNSmBfOx08UTcObjjdgE/hn1ssU2dwe19FsgK5
+         7J2+91Zx2tvWHEz9pv3SXccPdTfhGqE76fcCyNT//jTzV9vOR6kr+neKBftydCWxSA0i
+         McSiDkceDPUWIa1n57gBDlLgb19Lb4dH3F1NJ1RJcVxbi1a6yAy+0X+MW1LuyGhlNfAX
+         AoMJigdwIQYdLa28/ZEICdgcaNIzaSQirGtWxHasglf1AcNp0zCq0oWKzvnhVkuBrly5
+         vZtb10u6vQU+tOzMst6EQ+ATfovhvNFxjnFo6EJRBAcdAP/ZVzgu0i2wTiK9UFf1V5O7
+         kY2A==
+X-Gm-Message-State: AHQUAuY0bezEzBpAdeasrkvOvH9pQZzh3CPEwTItVSQKm2fU9BkO6LnP
+        dTjTCXScKauVdEcMOF+ZAHT6Ja/5ThE=
+X-Google-Smtp-Source: AHgI3IaRcvNDZ6LrhNsdE+1h3x/aLnoScqSN/glGCsbecY0yiEJlkmZwYgYgQazCUTWS4FPBFufJgw==
+X-Received: by 2002:a50:a982:: with SMTP id n2mr6293614edc.236.1550215442691;
+        Thu, 14 Feb 2019 23:24:02 -0800 (PST)
+Received: from linux-gy6r.site ([93.176.151.17])
+        by smtp.gmail.com with ESMTPSA id z19sm1039676ejm.47.2019.02.14.23.24.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Feb 2019 23:24:01 -0800 (PST)
+Subject: Re: [PATCH v7 1/6] dt-bindings: mtk-sysirq: Add compatible for
+ Mediatek MT8183
+To:     Erin Lo <erin.lo@mediatek.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc:     devicetree@vger.kernel.org,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, yingjoe.chen@mediatek.com,
+        mars.cheng@mediatek.com, eddie.huang@mediatek.com,
+        linux-clk@vger.kernel.org
+References: <1550210558-30516-1-git-send-email-erin.lo@mediatek.com>
+ <1550210558-30516-2-git-send-email-erin.lo@mediatek.com>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Message-ID: <fe86572e-690b-0e11-cb00-4cfe3a33c5fa@gmail.com>
+Date:   Fri, 15 Feb 2019 08:21:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20190211070040.4569-1-jbroadus@gmail.com> <nycvar.YFH.7.76.1902140036400.11598@cbobk.fhfr.pm>
-In-Reply-To: <nycvar.YFH.7.76.1902140036400.11598@cbobk.fhfr.pm>
-From:   james broadus <jbroadus@gmail.com>
-Date:   Thu, 14 Feb 2019 23:21:58 -0800
-Message-ID: <CAKgEEwteam5TCWAUtgQKxQpTzTk3+_DktmqwxZTLa=w3xt5i8Q@mail.gmail.com>
-Subject: Re: [PATCH] Fix resume for ELAN2097 touchscreen.
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Kai Heng Feng <kai.heng.feng@canonical.com>,
-        Benjamin Tissoires <benjamin.tissoires@gmail.com>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1550210558-30516-2-git-send-email-erin.lo@mediatek.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 3:37 PM Jiri Kosina <jikos@kernel.org> wrote:
->
-> On Sun, 10 Feb 2019, Jim Broadus wrote:
->
-> > Commit 52cf93e63ee6 ("HID: i2c-hid: Don't reset device upon system resume")
-> > fixes the resume behavior of several devices. However, this breaks the
-> > resume on the ELAN2097, used on Dell Inspiron laptops, with the same flood
-> > of messages:
-> >
-> > [27009.817110] i2c_hid i2c-ELAN2097:00: i2c_hid_get_input: incomplete report (67/65535)
-> > [27009.818867] i2c_hid i2c-ELAN2097:00: i2c_hid_get_input: incomplete report (67/65535)
-> > [27009.820623] i2c_hid i2c-ELAN2097:00: i2c_hid_get_input: incomplete report (67/65535)
-> >
-> > This change adds a new I2C_HID_QUIRK_RESET_AFTER_RESUME and replaces the
-> > original reset behavior for this device.
-> >
-> > Signed-off-by: Jim Broadus <jbroadus@gmail.com>
->
-> This should be fixed in hid.git#for-5.1/i2c-hid already by commit
-> 1475af255e18f. Could you please confirm that?
->
 
-Hi Jiri. That change mutes the log messages, but I'm still counting around
-35000 interrupts per second after resume and touch does not work. With the
-reset, the device works properly.
 
-Jim
+On 2/15/19 7:02 AM, Erin Lo wrote:
+> This adds dt-binding documentation of SYSIRQ for Mediatek MT8183 SoC
+> Platform.
+>=20
+> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
 
-> > ---
-> >  drivers/hid/hid-ids.h              |  1 +
-> >  drivers/hid/i2c-hid/i2c-hid-core.c | 20 ++++++++++++++------
-> >  2 files changed, 15 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-> > index 24f846d67478..38cc7033712a 100644
-> > --- a/drivers/hid/hid-ids.h
-> > +++ b/drivers/hid/hid-ids.h
-> > @@ -387,6 +387,7 @@
-> >  #define USB_DEVICE_ID_TOSHIBA_CLICK_L9W      0x0401
-> >  #define USB_DEVICE_ID_HP_X2          0x074d
-> >  #define USB_DEVICE_ID_HP_X2_10_COVER 0x0755
-> > +#define USB_DEVICE_ID_ELAN2097               0x2504
-> >
-> >  #define USB_VENDOR_ID_ELECOM         0x056e
-> >  #define USB_DEVICE_ID_ELECOM_BM084   0x0061
-> > diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
-> > index c5edfa966343..fdbad29b4406 100644
-> > --- a/drivers/hid/i2c-hid/i2c-hid-core.c
-> > +++ b/drivers/hid/i2c-hid/i2c-hid-core.c
-> > @@ -50,6 +50,7 @@
-> >  #define I2C_HID_QUIRK_NO_IRQ_AFTER_RESET     BIT(1)
-> >  #define I2C_HID_QUIRK_NO_RUNTIME_PM          BIT(2)
-> >  #define I2C_HID_QUIRK_DELAY_AFTER_SLEEP              BIT(3)
-> > +#define I2C_HID_QUIRK_RESET_AFTER_RESUME     BIT(4)
-> >
-> >  /* flags */
-> >  #define I2C_HID_STARTED              0
-> > @@ -181,6 +182,8 @@ static const struct i2c_hid_quirks {
-> >               I2C_HID_QUIRK_NO_RUNTIME_PM },
-> >       { I2C_VENDOR_ID_GOODIX, I2C_DEVICE_ID_GOODIX_01F0,
-> >               I2C_HID_QUIRK_NO_RUNTIME_PM },
-> > +     { USB_VENDOR_ID_ELAN, USB_DEVICE_ID_ELAN2097,
-> > +              I2C_HID_QUIRK_RESET_AFTER_RESUME },
-> >       { 0, 0 }
-> >  };
-> >
-> > @@ -1279,12 +1282,17 @@ static int i2c_hid_resume(struct device *dev)
-> >
-> >       enable_irq(client->irq);
-> >
-> > -     /* Instead of resetting device, simply powers the device on. This
-> > -      * solves "incomplete reports" on Raydium devices 2386:3118 and
-> > -      * 2386:4B33 and fixes various SIS touchscreens no longer sending
-> > -      * data after a suspend/resume.
-> > -      */
-> > -     ret = i2c_hid_set_power(client, I2C_HID_PWR_ON);
-> > +     if (ihid->quirks & I2C_HID_QUIRK_RESET_AFTER_RESUME) {
-> > +             ret = i2c_hid_hwreset(client);
-> > +     } else {
-> > +             /* Instead of resetting device, simply powers the device on.
-> > +              * This solves "incomplete reports" on Raydium devices 2386:3118
-> > +              * and 2386:4B33 and fixes various SIS touchscreens no longer
-> > +              * sending data after a suspend/resume.
-> > +              */
-> > +             ret = i2c_hid_set_power(client, I2C_HID_PWR_ON);
-> > +     }
-> > +
-> >       if (ret)
-> >               return ret;
-> >
-> > --
-> > 2.20.1
-> >
->
-> --
-> Jiri Kosina
-> SUSE Labs
->
+Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+
+Marc you want me to take it through my tree?
+
+>  .../devicetree/bindings/interrupt-controller/mediatek,sysirq.txt      =
+   | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/med=
+iatek,sysirq.txt b/Documentation/devicetree/bindings/interrupt-controller=
+/mediatek,sysirq.txt
+> index 33a98eb..91aa9ab 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/mediatek,s=
+ysirq.txt
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/mediatek,s=
+ysirq.txt
+> @@ -5,6 +5,7 @@ interrupt.
+> =20
+>  Required properties:
+>  - compatible: should be
+> +	"mediatek,mt8183-sysirq", "mediatek,mt6577-sysirq": for MT8183
+>  	"mediatek,mt8173-sysirq", "mediatek,mt6577-sysirq": for MT8173
+>  	"mediatek,mt8135-sysirq", "mediatek,mt6577-sysirq": for MT8135
+>  	"mediatek,mt8127-sysirq", "mediatek,mt6577-sysirq": for MT8127
+>=20
+
