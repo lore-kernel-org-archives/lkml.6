@@ -6,46 +6,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 049CBC4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF739C10F05
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:34:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF5B921927
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:34:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FA0921927
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:34:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550198086;
-	bh=ja27/XNLSwFGJAZ7KS2QJyKkg2+V3Zx9H8eoyoL0xxc=;
+	s=default; t=1550198091;
+	bh=UNbvbqI1P3qiTB9wUTijxN9B9QGB4i1nhcneVl2DA5s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZZ/emfeKbF1RK2hkG1U/mAw1agS54qqPfc9YXtLt3x5b+/Y0QlkYGH9cAA6ct15+D
-	 nJy0UOybD4KXGZ1teRLgb2RHpUcrSfpkNdJu9Ew9ZdAE8FZiR/QS2BT2m5v23EXEYw
-	 POg57tYH2WZg+EA3g6IL5Ott1L2N8x+yVMVtDfMM=
+	b=hNXHVa2x0CLFCDWCAitkTmWksovhXs5lsA3HiUc/RdOT7fUVwi+SGnEC8M3q66KFZ
+	 mTfNBZJwTxiVpZTu64BLZ1f2/7aEMeQsuLNSqVMCIlZlqluOVraq0Fm8OSQpp5BArs
+	 l5Q7vvdjmAUkE7JNxxy9c6ANRZhGFL53XJipfuEQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403786AbfBOCLf (ORCPT
+        id S1732381AbfBOCet (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:11:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51496 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:34:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389644AbfBOCL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:11:29 -0500
+        id S2403772AbfBOCLd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:11:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B194B21934;
-        Fri, 15 Feb 2019 02:11:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D6DA21934;
+        Fri, 15 Feb 2019 02:11:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196688;
-        bh=ja27/XNLSwFGJAZ7KS2QJyKkg2+V3Zx9H8eoyoL0xxc=;
+        s=default; t=1550196693;
+        bh=UNbvbqI1P3qiTB9wUTijxN9B9QGB4i1nhcneVl2DA5s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qEBbDpsXBt9TbNP53FqDSfE/VdqyVDYw0WXSdwDzie+hpe+0aaQxEOR2NQavO7wEx
-         Hug1lCgjeVkV2eOdE3xFqbqJCd/OZ6AR44b++gVeMEkcGVo6YK05F08YSVrov8KPPL
-         1qCKIdl7N5FDwu/FOkz4/wbsO7Y945y/ae4O8u8I=
+        b=m9fwyiXAZ+XtuVKnGrlCQFYGd5oyewxRwnizuWtHX2vuBN/lQMy5iT8+pE6Kv8MXj
+         rAaF/V/EaM4TOZfuN+KQNNLOqDvMY1L9A1LbVT9+4z14rQw/aoBxK+LsSSMkXmwlcL
+         nbxihKMAPx+BBywcdBkkpmBAvucbhQ22GxYvQ1as=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 03/65] ALSA: compress: prevent potential divide by zero bugs
-Date:   Thu, 14 Feb 2019 21:10:19 -0500
-Message-Id: <20190215021121.177674-3-sashal@kernel.org>
+Cc:     Marek Vasut <marek.vasut@gmail.com>,
+        Marek Vasut <marek.vasut+renesas@gmail.com>,
+        Alexey Firago <alexey_firago@mentor.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, Sasha Levin <sashal@kernel.org>,
+        linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 07/65] clk: vc5: Abort clock configuration without upstream clock
+Date:   Thu, 14 Feb 2019 21:10:23 -0500
+Message-Id: <20190215021121.177674-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -57,45 +61,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Marek Vasut <marek.vasut@gmail.com>
 
-[ Upstream commit 678e2b44c8e3fec3afc7202f1996a4500a50be93 ]
+[ Upstream commit 2137a109a5e39c2bdccfffe65230ed3fadbaac0e ]
 
-The problem is seen in the q6asm_dai_compr_set_params() function:
+In case the upstream clock are not set, which can happen in case the
+VC5 has no valid upstream clock, the $src variable is used uninited
+by regmap_update_bits(). Check for this condition and return -EINVAL
+in such case.
 
-	ret = q6asm_map_memory_regions(dir, prtd->audio_client, prtd->phys,
-				       (prtd->pcm_size / prtd->periods),
-                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-				       prtd->periods);
+Note that in case the VC5 has no valid upstream clock, the VC5 can
+not operate correctly. That is a hardware property of the VC5. The
+internal oscilator present in some VC5 models is also considered
+upstream clock.
 
-In this code prtd->pcm_size is the buffer_size and prtd->periods comes
-from params->buffer.fragments.  If we allow the number of fragments to
-be zero then it results in a divide by zero bug.  One possible fix would
-be to use prtd->pcm_count directly instead of using the division to
-re-calculate it.  But I decided that it doesn't really make sense to
-allow zero fragments.
-
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Marek Vasut <marek.vasut+renesas@gmail.com>
+Cc: Alexey Firago <alexey_firago@mentor.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org
+[sboyd@kernel.org: Added comment about probe preventing this from
+happening in the first place]
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/core/compress_offload.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/clk-versaclock5.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
-index 26b5e245b074..8b78ddffa509 100644
---- a/sound/core/compress_offload.c
-+++ b/sound/core/compress_offload.c
-@@ -529,7 +529,8 @@ static int snd_compress_check_input(struct snd_compr_params *params)
- {
- 	/* first let's check the buffer parameter's */
- 	if (params->buffer.fragment_size == 0 ||
--	    params->buffer.fragments > INT_MAX / params->buffer.fragment_size)
-+	    params->buffer.fragments > INT_MAX / params->buffer.fragment_size ||
-+	    params->buffer.fragments == 0)
- 		return -EINVAL;
+diff --git a/drivers/clk/clk-versaclock5.c b/drivers/clk/clk-versaclock5.c
+index decffb3826ec..a738af893532 100644
+--- a/drivers/clk/clk-versaclock5.c
++++ b/drivers/clk/clk-versaclock5.c
+@@ -262,8 +262,10 @@ static int vc5_mux_set_parent(struct clk_hw *hw, u8 index)
  
- 	/* now codec parameters */
+ 		if (vc5->clk_mux_ins == VC5_MUX_IN_XIN)
+ 			src = VC5_PRIM_SRC_SHDN_EN_XTAL;
+-		if (vc5->clk_mux_ins == VC5_MUX_IN_CLKIN)
++		else if (vc5->clk_mux_ins == VC5_MUX_IN_CLKIN)
+ 			src = VC5_PRIM_SRC_SHDN_EN_CLKIN;
++		else /* Invalid; should have been caught by vc5_probe() */
++			return -EINVAL;
+ 	}
+ 
+ 	return regmap_update_bits(vc5->regmap, VC5_PRIM_SRC_SHDN, mask, src);
 -- 
 2.19.1
 
