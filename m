@@ -2,102 +2,161 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39CA8C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:57:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B15ADC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:57:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07F4D21920
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:57:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E5F921920
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 11:57:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550231849;
-	bh=PCYa+c0eCnbIu+HxFarqiypOUw21U7WcHvRIJKETVIc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=UiMeVddeqiceArJ2KKKkRsucSc7nxjbpNgq5PadjB86SxJD/Z4GbNxTTu1dTEOw1g
-	 JC8rjGbQ/95F/Zb7umYYZueMd+f/5BCx73uxnaNHL+Wsh5vAGUnuNAIAWCM5002MCM
-	 Wh9+8tB3MVXW45BqNFpPFvl/wdUGiw3PxrPK1zCM=
+	s=default; t=1550231854;
+	bh=jxq2kTO76Bwz1fa8+xwTtKb3IDJYgNcxHl9/y+uxiBQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=tQOnVr1pyLCQ6Tl8gp6rwnQE2Qh1p79IMHANLbDl0oFdaV2msxjK6HnbXFWuCLZ7/
+	 fW1SsDd19hkx9L92wI+X1XU/fkIyhcLPgSF1VphUxDAzoxun96jCMlT897dgFrl3dg
+	 KkIejvr72ArFkkzuYV54OJ50qwPEYf8v20Er+MPg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436862AbfBOL50 (ORCPT
+        id S2436883AbfBOL5d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 06:57:26 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33374 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436815AbfBOL5W (ORCPT
+        Fri, 15 Feb 2019 06:57:33 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:35547 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436815AbfBOL5b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 06:57:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=PCYa+c0eCnbIu+HxFarqiypOUw21U7WcHvRIJKETVIc=; b=stYm10rQF5ZASlz5rVMf/PZ5j
-        ZpFMDgtKt3WC0t44WTGIIpjDwxexdgLwK4GNZ9aH+6GlCvgdmwn2o7PI55Z9dJGThUfno8J2qej6z
-        xu+1dWj1oAiJ8c8jT2GzOAg8UTj3LY7byKlIqinSFcIDbhBEHXa++tSDR8SF0f0WbYz44=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1guc7F-0006Ep-Vl; Fri, 15 Feb 2019 11:57:14 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 0177D1127748; Fri, 15 Feb 2019 11:57:12 +0000 (GMT)
-Date:   Fri, 15 Feb 2019 11:57:12 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Ajit Pandey <ajitp@codeaurora.org>,
-        Rohit kumar <rohitkr@codeaurora.org>
-Subject: Re: [PATCH AUTOSEL 4.20 06/77] ASoC: soc-core: defer card probe
- until all component is added to list
-Message-ID: <20190215115712.GB7897@sirena.org.uk>
-References: <20190215020855.176727-1-sashal@kernel.org>
- <20190215020855.176727-6-sashal@kernel.org>
+        Fri, 15 Feb 2019 06:57:31 -0500
+Received: by mail-ot1-f66.google.com with SMTP id z19so16121770otm.2;
+        Fri, 15 Feb 2019 03:57:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EQHuoLy39gbPzNOhM6cnv20TgXbddXoS9xdz8iweADI=;
+        b=mubDm8kaKXCswshVltj75FcgItr86Ow1rvWOX3Jj1biM19MUYY3s3WJayvVPBo3osi
+         ZRw53/5kR6PK3G0ZwApY3Ece1iLgYB6Y3eSpK378OgCcm8hslawQV69NPTMu3cVcEHjX
+         tMjFioVJ+ZBeT7L7XVio9MbOq5yx7VA0eI2Bby6XRw8rE7rxguoV1g2CKmWqFZDiePqQ
+         imoVPPUCZXVG9NAfth8/J68owrOZ0dBbqKOIM8iXLvkAjPeWnABIVZqVJ/cWWFq6L1TN
+         SCc4E941i4vr723p4XJcyXo4W1wPwsRlx4ws+PAMHgr/XybfTSLHKTcSKuEa8m5Fa999
+         vQyw==
+X-Gm-Message-State: AHQUAuZxhlHomf+hsXsfwo9q8xSwAv/w1bEUyz+wHWpiRg/istARwVVW
+        lqfIMdGH3Sj9ogFbKWZ2EovisHFHvbBKQNXDP2s=
+X-Google-Smtp-Source: AHgI3Ia+9t7yiE/W0dS06f1/ZhuO/+Txojo6r5Vq10B8yxPeq3ys48qFW1CAG/+egz/BmV1G/VjV48JL846UczLQDJ8=
+X-Received: by 2002:aca:ed0f:: with SMTP id l15mr5649982oih.76.1550231849362;
+ Fri, 15 Feb 2019 03:57:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="E39vaYmALEf/7YXx"
-Content-Disposition: inline
-In-Reply-To: <20190215020855.176727-6-sashal@kernel.org>
-X-Cookie: Neutrinos have bad breadth.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <5510642.nRbR3bcduN@aspire.rjw.lan> <9351473.C2nPJoyFsE@aspire.rjw.lan>
+ <2ed95b05-317c-59bb-498a-b5481e54bcf6@nvidia.com>
+In-Reply-To: <2ed95b05-317c-59bb-498a-b5481e54bcf6@nvidia.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 15 Feb 2019 12:57:18 +0100
+Message-ID: <CAJZ5v0jOi7W9JNMRtymO-SkApekzSwDmLONkwRJPvY0O1KkfFQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] driver core: Fix possible supplier PM-usage counter imbalance
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lukas Wunner <lukas@wunner.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Feb 15, 2019 at 12:00 PM Jon Hunter <jonathanh@nvidia.com> wrote:
+>
+> Hi Rafael,
+>
+> On 12/02/2019 12:08, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > If a stateless device link to a certain supplier with
+> > DL_FLAG_PM_RUNTIME set in the flags is added and then removed by the
+> > consumer driver's probe callback, the supplier's PM-runtime usage
+> > counter will be nonzero after that which effectively causes the
+> > supplier to remain "always on" going forward.
+> >
+> > Namely, device_link_add() called to add the link invokes
+> > device_link_rpm_prepare() which notices that the consumer driver is
+> > probing, so it increments the supplier's PM-runtime usage counter
+> > with the assumption that the link will stay around until
+> > pm_runtime_put_suppliers() is called by driver_probe_device(),
+> > but if the link goes away before that point, the supplier's
+> > PM-runtime usage counter will remain nonzero.
+> >
+> > To prevent that from happening, first rework pm_runtime_get_suppliers()
+> > and pm_runtime_put_suppliers() to use the rpm_active refounts of device
+> > links and make the latter only drop rpm_active and the supplier's
+> > PM-runtime usage counter for each link by one, unless rpm_active is
+> > one already for it.  Next, modify device_link_add() to bump up the
+> > new link's rpm_active refcount and the suppliers PM-runtime usage
+> > counter by two, to prevent pm_runtime_put_suppliers(), if it is
+> > called subsequently, from suspending the supplier prematurely (in
+> > case its PM-runtime usage counter goes down to 0 in there).
+> >
+> > Due to the way rpm_put_suppliers() works, this change does not
+> > affect runtime suspend of the consumer ends of new device links (or,
+> > generally, device links for which DL_FLAG_PM_RUNTIME has just been
+> > set).
+> >
+> > Fixes: e2f3cd831a28 ("driver core: Fix handling of runtime PM flags in device_link_add()")
+> > Reported-by: Ulf Hansson <ulf.hansson@linaro.org>
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >
+> > Note that the issue had been there before commit e2f3cd831a28, but it was
+> > overlooked by that commit and this change is a fix on top of it, so make
+> > the Fixes: tag point to commit e2f3cd831a28 (instead of an earlier one
+> > that the patch will not be applicable to).
+>
+> I noticed that yesterday's and today's -next were no longer booting on
+> one of our Tegra boards (Tegra210 Jetson TX2) because networking is
+> failing. The ethernet chip is a USB device and looking at the bootlogs I
+> can see that the Tegra XHCI driver is failing ...
 
---E39vaYmALEf/7YXx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Is it failing because of this particular commit?  That is, does
+reverting the entire commit help?
 
-On Thu, Feb 14, 2019 at 09:07:44PM -0500, Sasha Levin wrote:
-> From: Ajit Pandey <ajitp@codeaurora.org>
->=20
-> [ Upstream commit 8780cf1142a59568a3aa77959cbd76b2edb6fd81 ]
->=20
-> DAI component probe is not called if it is not present
-> in component list during sound card registration.
-> Check if component is available in component list for
-> platform and cpu dai before soundcard registration.
+>  tegra-xusb 70090000.usb: xHCI host controller not responding, assume dead
+>  tegra-xusb 70090000.usb: HC died; cleaning up
+>
+> The Tegra XHCI driver uses multiple power-domains and uses
+> device_link_add() to attach them. So now I am wondering if there is
+> something that we have got wrong in our implementation. However, I don't
+> see the device being probed deferred on boot or anything like that.
 
-This is a really bad idea without also looking at surrounding commits -
-taken randomly by itself it's more likely to introduce regressions than
-help.
+It won't be, because you use stateless links.
 
---E39vaYmALEf/7YXx
-Content-Type: application/pgp-signature; name="signature.asc"
+> The driver in question is drivers/usb/host/xhci-tegra.c and we add the
+> links in the function tegra_xusb_powerdomain_init() which is before RPM
+> is enabled. Let me know if you have any thoughts.
 
------BEGIN PGP SIGNATURE-----
+Well, if it breaks, then there is a bug somewhere.  I'm not seeing it
+now, but let's dig into this.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxmqRgACgkQJNaLcl1U
-h9DWjgf6AlWLAxR1hL6HIkwlHJH4eF9gc0iLXBTZ6K89SoQjv5OjnR2dh794cxzr
-OMVuVRQ0ChIJAj88S4ylZytsB6V1dKrRq3sazR746BhzM7nr8tY4dMPSkRi4hjeC
-8YL1o2A57T5Q1Hj0fQOXcr9Lu2Qf+ZUcP2lQLEfv8FFkCtJ2uPhVD+264jHY+Y/c
-8HzqKE29oKgIxc5UHPFBH+kMM0ljGWpXaNiAHAjtAh7HzF7NxGXcWjTzYd+Z7H/K
-HQ2sWooOnCwdYHwqdyIQrtMaIeAAiUKoIVjRdggZbXa9BkAPp3BqBTJlczFha850
-ESR7GqP1rXrCXr/FpPjpNeeYkoG0Qg==
-=0ttp
------END PGP SIGNATURE-----
+Since you don't pass DL_FLAG_RPM_ACTIVE to device_link_add(), the
+changes related to that don't matter.
 
---E39vaYmALEf/7YXx--
+The links are not there before your probe function runs.  It adds the
+links and then pm_runtime_put_suppliers() sees them, but since
+link->rpm_active is one for the new links, it won't do anything with
+them.
+
+Well, there is a difference, but if it matters, then something fishy
+is going on IMO.  Before this change pm_runtime_put_suppliers() would
+do pm_runtime_put() on the new links' suppliers and (because their
+PM-runtime usage counters are both one at that point) it will actually
+try to suspend the suppliers.  It should be easy enough to verify if
+this really matters, stay tuned.
