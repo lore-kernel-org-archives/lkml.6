@@ -2,110 +2,110 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA594C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75956C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:50:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C10BA21B18
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:48:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D43C2146E
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 16:50:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388278AbfBOQs4 (ORCPT
+        id S2388477AbfBOQuZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 11:48:56 -0500
-Received: from mx2.suse.de ([195.135.220.15]:35658 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726122AbfBOQsz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 11:48:55 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CF894B03F;
-        Fri, 15 Feb 2019 16:48:53 +0000 (UTC)
-Subject: Re: [PATCH v3] hugetlb: allow to free gigantic pages regardless of
- the configuration
-To:     Alexandre Ghiti <alex@ghiti.fr>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <20190214193100.3529-1-alex@ghiti.fr>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Message-ID: <363365a7-f1ac-5bde-ff7f-bdb137c20628@suse.cz>
-Date:   Fri, 15 Feb 2019 17:48:50 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Fri, 15 Feb 2019 11:50:25 -0500
+Received: from gateway22.websitewelcome.com ([192.185.47.168]:25391 "EHLO
+        gateway22.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388125AbfBOQuZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 11:50:25 -0500
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway22.websitewelcome.com (Postfix) with ESMTP id AA902267A6
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 10:50:24 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id uggygWBGjiQeruggygl5YR; Fri, 15 Feb 2019 10:50:24 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.119.20] (port=49152 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1guggx-002lNo-Mj; Fri, 15 Feb 2019 10:50:23 -0600
+Date:   Fri, 15 Feb 2019 10:50:23 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>
+Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] drm/amd/display/dc/bios_parser2: Mark expected switch
+ fall-throughs
+Message-ID: <20190215165023.GA30190@embeddedor>
 MIME-Version: 1.0
-In-Reply-To: <20190214193100.3529-1-alex@ghiti.fr>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.119.20
+X-Source-L: No
+X-Exim-ID: 1guggx-002lNo-Mj
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.119.20]:49152
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 45
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/14/19 8:31 PM, Alexandre Ghiti wrote:
-> On systems without CMA or (MEMORY_ISOLATION && COMPACTION) activated but
-> that support gigantic pages, boottime reserved gigantic pages can not be
-> freed at all. This patch simply enables the possibility to hand back
-> those pages to memory allocator.
-> 
-> This patch also renames:
-> 
-> - the triplet CMA or (MEMORY_ISOLATION && COMPACTION) into CONTIG_ALLOC,
-> and gets rid of all use of it in architecture specific code (and then
-> removes ARCH_HAS_GIGANTIC_PAGE config).
-> - gigantic_page_supported to make it more accurate: this value being false
-> does not mean that the system cannot use gigantic pages, it just means that
-> runtime allocation of gigantic pages is not supported, one can still
-> allocate boottime gigantic pages if the architecture supports it.
-> 
-> Signed-off-by: Alexandre Ghiti <alex@ghiti.fr>
+In preparation to enabling -Wimplicit-fallthrough, mark switch
+cases where we are expecting to fall through.
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Warning level 3 was used: -Wimplicit-fallthrough=3
 
-Thanks!
+This patch is part of the ongoing efforts to enable
+-Wimplicit-fallthrough.
 
-...
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -252,12 +252,17 @@ config MIGRATION
->  	  pages as migration can relocate pages to satisfy a huge page
->  	  allocation instead of reclaiming.
->  
-> +
+diff --git a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
+index a1c56f29cfeb..fd5266a58297 100644
+--- a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
++++ b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
+@@ -265,6 +265,7 @@ static struct atom_display_object_path_v2 *get_bios_object(
+ 					&& id.enum_id == obj_id.enum_id)
+ 				return &bp->object_info_tbl.v1_4->display_path[i];
+ 		}
++		/* fall through */
+ 	case OBJECT_TYPE_CONNECTOR:
+ 	case OBJECT_TYPE_GENERIC:
+ 		/* Both Generic and Connector Object ID
+@@ -277,6 +278,7 @@ static struct atom_display_object_path_v2 *get_bios_object(
+ 					&& id.enum_id == obj_id.enum_id)
+ 				return &bp->object_info_tbl.v1_4->display_path[i];
+ 		}
++		/* fall through */
+ 	default:
+ 		return NULL;
+ 	}
+-- 
+2.20.1
 
-Stray newline? No need to resend, Andrew can fix up.
-Ah, he wasn't in To:, adding.
-
->  config ARCH_ENABLE_HUGEPAGE_MIGRATION
->  	bool
->  
->  config ARCH_ENABLE_THP_MIGRATION
->  	bool
->  
-> +config CONTIG_ALLOC
-> +	def_bool y
-> +	depends on (MEMORY_ISOLATION && COMPACTION) || CMA
-> +
->  config PHYS_ADDR_T_64BIT
->  	def_bool 64BIT
->  
