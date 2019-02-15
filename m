@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AB2FC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:42:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97954C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:42:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 210D621929
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:42:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65D4C21929
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 13:42:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="jfEzo9Jw"
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Tq8DXC9v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395017AbfBONmX (ORCPT
+        id S2395034AbfBONmx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 08:42:23 -0500
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:43870 "EHLO
+        Fri, 15 Feb 2019 08:42:53 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:43898 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726906AbfBONmV (ORCPT
+        with ESMTP id S1726906AbfBONmw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 08:42:21 -0500
+        Fri, 15 Feb 2019 08:42:52 -0500
 Received: from mailhost1.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id B381A10C1353;
-        Fri, 15 Feb 2019 05:42:20 -0800 (PST)
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 65C6B10C107D;
+        Fri, 15 Feb 2019 05:42:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1550238140; bh=fISUCjFGqwmsJ61yW1UTUfbto+kHTb0THhqgQdFGwoc=;
+        t=1550238172; bh=VpbMwFSjKIjoga2jnTw3hNoJo6MpSF4+usQFNCdJYtc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=jfEzo9JwLrwmV86gUjNpkuyYa2oj9lMqLOYnXqKUILaXMwBXUvXA39aoDkX/X8znq
-         mxgTh+/wz/8OqwrfVU+quLiJ09GOGkfQcKGmmt1NDwT5iiCfoXbJwaIKQ6ITQO32sj
-         5UZmc7MqoqcbMg35DEFWyJSFFjSYtjmYqR6RJ+5boEFsFaoI0Z+jyLtVH7UvI4g1nR
-         26lQe/usfduLxoVGjVjPrjzqNF7z5+0vfZIAaHRrp1AxP5O8UEcVo9pHGT2porLjZT
-         AgJ/6oxqW/FT0rYbgjUFgVBeMiDdK8s7ecZfIivqSdw9zETS90yF+Ewq+xTB1rrvIR
-         8Y+KJe6y7X9Ng==
+        b=Tq8DXC9vkEbc0V1ftRWSCnf84rfaYQzfwndBIj7hFZr+CZAWWDC40jT0be540BrGT
+         qIhbAx66IMpDr8SWMO9Zkl3obdcmFViUHyAaazf4fcykXFQCN4k9GtzYGRICf60rec
+         iaJgKSBUtDPHHYfl3/nSt7wlJ4FdQrpqgctqW9TbBvUXCa5xHyP96vGdsrkIbY1AFA
+         Uvm+AA5NEA4W0hXcTfeqCLJS/jVXyJMLwMfGyJZb3WCQ7DkiEhFvN9nx3cA8lqvobk
+         nYUNWHmc0XVPL479AOjYGNqmunb5fMwkADIkRcYjjVJNCPsoHX1tKvowirF1A7DXjo
+         QeSYuSxRfa5WA==
 Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
-        by mailhost1.synopsys.com (Postfix) with ESMTP id 282ED5346;
-        Fri, 15 Feb 2019 05:42:18 -0800 (PST)
+        by mailhost1.synopsys.com (Postfix) with ESMTP id 06E0F5349;
+        Fri, 15 Feb 2019 05:42:20 -0800 (PST)
 From:   Jose Abreu <jose.abreu@synopsys.com>
 To:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Jose Abreu <jose.abreu@synopsys.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
         Joao Pinto <joao.pinto@synopsys.com>,
         "David S . Miller" <davem@davemloft.net>,
         Giuseppe Cavallaro <peppe.cavallaro@st.com>,
         Alexandre Torgue <alexandre.torgue@st.com>
-Subject: [PATCH net-next 1/3] net: stmmac: Fix NAPI poll in TX path when in multi-queue
-Date:   Fri, 15 Feb 2019 14:42:05 +0100
-Message-Id: <76da803a662214b024bfdb95731c38e45aef426d.1550237884.git.joabreu@synopsys.com>
+Subject: [PATCH net-next 2/3] net: stmmac: dwmac4: Also use TBU interrupt to clean TX path
+Date:   Fri, 15 Feb 2019 14:42:06 +0100
+Message-Id: <7381bc27f8268376345f60d1996734805257354c.1550237884.git.joabreu@synopsys.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1550237884.git.joabreu@synopsys.com>
 References: <cover.1550237884.git.joabreu@synopsys.com>
@@ -60,239 +59,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 8fce33317023 introduced the concept of NAPI per-channel and
-independent cleaning of TX path.
+TBU interrupt is a normal interrupt and can be used to trigger the
+cleaning of TX path. Lets check if it's active in DMA interrupt handler.
 
-This is currently breaking performance in some cases. The scenario
-happens when all packets are being received in Queue 0 but the TX is
-performed in Queue != 0.
+While at it, refactor a little bit the function:
+	- Don't check if RI is enabled because at function exit we will
+	  only clear the interrupts that are enabled so, no event will be
+	  missed.
 
-Fix this by using different NAPI instances per each TX and RX queue, as
-suggested by Florian.
+In my tests with GMAC5 this increased performance.
 
 Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>
 Cc: Joao Pinto <jpinto@synopsys.com>
 Cc: David S. Miller <davem@davemloft.net>
 Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
 Cc: Alexandre Torgue <alexandre.torgue@st.com>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac.h      |   5 +-
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 112 ++++++++++++----------
- 2 files changed, 64 insertions(+), 53 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c | 24 +++++++-----------------
+ 1 file changed, 7 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac.h b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-index 63e1064b27a2..e697ecd9b0a6 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac.h
-@@ -78,11 +78,10 @@ struct stmmac_rx_queue {
- };
- 
- struct stmmac_channel {
--	struct napi_struct napi ____cacheline_aligned_in_smp;
-+	struct napi_struct rx_napi ____cacheline_aligned_in_smp;
-+	struct napi_struct tx_napi ____cacheline_aligned_in_smp;
- 	struct stmmac_priv *priv_data;
- 	u32 index;
--	int has_rx;
--	int has_tx;
- };
- 
- struct stmmac_tc_entry {
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 685d20472358..89a4dd75af76 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -155,7 +155,10 @@ static void stmmac_disable_all_queues(struct stmmac_priv *priv)
- 	for (queue = 0; queue < maxq; queue++) {
- 		struct stmmac_channel *ch = &priv->channel[queue];
- 
--		napi_disable(&ch->napi);
-+		if (queue < rx_queues_cnt)
-+			napi_disable(&ch->rx_napi);
-+		if (queue < tx_queues_cnt)
-+			napi_disable(&ch->tx_napi);
- 	}
- }
- 
-@@ -173,7 +176,10 @@ static void stmmac_enable_all_queues(struct stmmac_priv *priv)
- 	for (queue = 0; queue < maxq; queue++) {
- 		struct stmmac_channel *ch = &priv->channel[queue];
- 
--		napi_enable(&ch->napi);
-+		if (queue < rx_queues_cnt)
-+			napi_enable(&ch->rx_napi);
-+		if (queue < tx_queues_cnt)
-+			napi_enable(&ch->tx_napi);
- 	}
- }
- 
-@@ -1939,6 +1945,10 @@ static int stmmac_tx_clean(struct stmmac_priv *priv, int budget, u32 queue)
- 		mod_timer(&priv->eee_ctrl_timer, STMMAC_LPI_T(eee_timer));
- 	}
- 
-+	/* We still have pending packets, let's call for a new scheduling */
-+	if (tx_q->dirty_tx != tx_q->cur_tx)
-+		mod_timer(&tx_q->txtimer, STMMAC_COAL_TIMER(10));
-+
- 	__netif_tx_unlock_bh(netdev_get_tx_queue(priv->dev, queue));
- 
- 	return count;
-@@ -2029,23 +2039,15 @@ static int stmmac_napi_check(struct stmmac_priv *priv, u32 chan)
- 	int status = stmmac_dma_interrupt_status(priv, priv->ioaddr,
- 						 &priv->xstats, chan);
- 	struct stmmac_channel *ch = &priv->channel[chan];
--	bool needs_work = false;
--
--	if ((status & handle_rx) && ch->has_rx) {
--		needs_work = true;
--	} else {
--		status &= ~handle_rx;
--	}
- 
--	if ((status & handle_tx) && ch->has_tx) {
--		needs_work = true;
--	} else {
--		status &= ~handle_tx;
-+	if ((status & handle_rx) && (chan < priv->plat->rx_queues_to_use)) {
-+		stmmac_disable_dma_irq(priv, priv->ioaddr, chan);
-+		napi_schedule_irqoff(&ch->rx_napi);
- 	}
- 
--	if (needs_work && napi_schedule_prep(&ch->napi)) {
-+	if ((status & handle_tx) && (chan < priv->plat->tx_queues_to_use)) {
- 		stmmac_disable_dma_irq(priv, priv->ioaddr, chan);
--		__napi_schedule(&ch->napi);
-+		napi_schedule_irqoff(&ch->tx_napi);
- 	}
- 
- 	return status;
-@@ -2241,8 +2243,14 @@ static void stmmac_tx_timer(struct timer_list *t)
- 
- 	ch = &priv->channel[tx_q->queue_index];
- 
--	if (likely(napi_schedule_prep(&ch->napi)))
--		__napi_schedule(&ch->napi);
-+	/*
-+	 * If NAPI is already running we can miss some events. Let's rearm
-+	 * the timer and try again.
-+	 */
-+	if (likely(napi_schedule_prep(&ch->tx_napi)))
-+		__napi_schedule(&ch->tx_napi);
-+	else
-+		mod_timer(&tx_q->txtimer, STMMAC_COAL_TIMER(10));
- }
- 
- /**
-@@ -3498,7 +3506,7 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
- 			else
- 				skb->ip_summed = CHECKSUM_UNNECESSARY;
- 
--			napi_gro_receive(&ch->napi, skb);
-+			napi_gro_receive(&ch->rx_napi, skb);
- 
- 			priv->dev->stats.rx_packets++;
- 			priv->dev->stats.rx_bytes += frame_len;
-@@ -3513,41 +3521,41 @@ static int stmmac_rx(struct stmmac_priv *priv, int limit, u32 queue)
- 	return count;
- }
- 
--/**
-- *  stmmac_poll - stmmac poll method (NAPI)
-- *  @napi : pointer to the napi structure.
-- *  @budget : maximum number of packets that the current CPU can receive from
-- *	      all interfaces.
-- *  Description :
-- *  To look at the incoming frames and clear the tx resources.
-- */
--static int stmmac_napi_poll(struct napi_struct *napi, int budget)
-+static int stmmac_napi_poll_rx(struct napi_struct *napi, int budget)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c
+index 49f5687879df..545cb9c47433 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c
+@@ -124,9 +124,9 @@ void dwmac4_disable_dma_irq(void __iomem *ioaddr, u32 chan)
+ int dwmac4_dma_interrupt(void __iomem *ioaddr,
+ 			 struct stmmac_extra_stats *x, u32 chan)
  {
- 	struct stmmac_channel *ch =
--		container_of(napi, struct stmmac_channel, napi);
-+		container_of(napi, struct stmmac_channel, rx_napi);
- 	struct stmmac_priv *priv = ch->priv_data;
--	int work_done, rx_done = 0, tx_done = 0;
- 	u32 chan = ch->index;
-+	int work_done;
- 
- 	priv->xstats.napi_poll++;
- 
--	if (ch->has_tx)
--		tx_done = stmmac_tx_clean(priv, budget, chan);
--	if (ch->has_rx)
--		rx_done = stmmac_rx(priv, budget, chan);
-+	work_done = stmmac_rx(priv, budget, chan);
-+	if (work_done < budget && napi_complete_done(napi, work_done))
-+		stmmac_enable_dma_irq(priv, priv->ioaddr, chan);
-+	return work_done;
-+}
- 
--	work_done = max(rx_done, tx_done);
--	work_done = min(work_done, budget);
-+static int stmmac_napi_poll_tx(struct napi_struct *napi, int budget)
-+{
-+	struct stmmac_channel *ch =
-+		container_of(napi, struct stmmac_channel, tx_napi);
-+	struct stmmac_priv *priv = ch->priv_data;
-+	struct stmmac_tx_queue *tx_q;
-+	u32 chan = ch->index;
-+	int work_done;
- 
--	if (work_done < budget && napi_complete_done(napi, work_done)) {
--		int stat;
-+	priv->xstats.napi_poll++;
- 
-+	work_done = stmmac_tx_clean(priv, budget, chan);
-+	if (work_done < budget && napi_complete_done(napi, work_done))
- 		stmmac_enable_dma_irq(priv, priv->ioaddr, chan);
--		stat = stmmac_dma_interrupt_status(priv, priv->ioaddr,
--						   &priv->xstats, chan);
--		if (stat && napi_reschedule(napi))
--			stmmac_disable_dma_irq(priv, priv->ioaddr, chan);
--	}
-+
-+	/* Force transmission restart */
-+	tx_q = &priv->tx_queue[chan];
-+	stmmac_enable_dma_transmission(priv, priv->ioaddr);
-+	stmmac_set_tx_tail_ptr(priv, priv->ioaddr, tx_q->tx_tail_addr, chan);
- 
- 	return work_done;
- }
-@@ -4323,13 +4331,14 @@ int stmmac_dvr_probe(struct device *device,
- 		ch->priv_data = priv;
- 		ch->index = queue;
- 
--		if (queue < priv->plat->rx_queues_to_use)
--			ch->has_rx = true;
--		if (queue < priv->plat->tx_queues_to_use)
--			ch->has_tx = true;
+-	int ret = 0;
 -
--		netif_napi_add(ndev, &ch->napi, stmmac_napi_poll,
--			       NAPI_POLL_WEIGHT);
-+		if (queue < priv->plat->rx_queues_to_use) {
-+			netif_napi_add(ndev, &ch->rx_napi, stmmac_napi_poll_rx,
-+				       NAPI_POLL_WEIGHT);
-+		}
-+		if (queue < priv->plat->tx_queues_to_use) {
-+			netif_napi_add(ndev, &ch->tx_napi, stmmac_napi_poll_tx,
-+				       NAPI_POLL_WEIGHT);
-+		}
+ 	u32 intr_status = readl(ioaddr + DMA_CHAN_STATUS(chan));
++	u32 intr_en = readl(ioaddr + DMA_CHAN_INTR_ENA(chan));
++	int ret = 0;
+ 
+ 	/* ABNORMAL interrupts */
+ 	if (unlikely(intr_status & DMA_CHAN_STATUS_AIS)) {
+@@ -151,16 +151,11 @@ int dwmac4_dma_interrupt(void __iomem *ioaddr,
+ 	if (likely(intr_status & DMA_CHAN_STATUS_NIS)) {
+ 		x->normal_irq_n++;
+ 		if (likely(intr_status & DMA_CHAN_STATUS_RI)) {
+-			u32 value;
+-
+-			value = readl(ioaddr + DMA_CHAN_INTR_ENA(chan));
+-			/* to schedule NAPI on real RIE event. */
+-			if (likely(value & DMA_CHAN_INTR_ENA_RIE)) {
+-				x->rx_normal_irq_n++;
+-				ret |= handle_rx;
+-			}
++			x->rx_normal_irq_n++;
++			ret |= handle_rx;
+ 		}
+-		if (likely(intr_status & DMA_CHAN_STATUS_TI)) {
++		if (likely(intr_status & (DMA_CHAN_STATUS_TI |
++					  DMA_CHAN_STATUS_TBU))) {
+ 			x->tx_normal_irq_n++;
+ 			ret |= handle_tx;
+ 		}
+@@ -168,12 +163,7 @@ int dwmac4_dma_interrupt(void __iomem *ioaddr,
+ 			x->rx_early_irq++;
  	}
  
- 	mutex_init(&priv->lock);
-@@ -4385,7 +4394,10 @@ int stmmac_dvr_probe(struct device *device,
- 	for (queue = 0; queue < maxq; queue++) {
- 		struct stmmac_channel *ch = &priv->channel[queue];
+-	/* Clear the interrupt by writing a logic 1 to the chanX interrupt
+-	 * status [21-0] expect reserved bits [5-3]
+-	 */
+-	writel((intr_status & 0x3fffc7),
+-	       ioaddr + DMA_CHAN_STATUS(chan));
+-
++	writel(intr_status & intr_en, ioaddr + DMA_CHAN_STATUS(chan));
+ 	return ret;
+ }
  
--		netif_napi_del(&ch->napi);
-+		if (queue < priv->plat->rx_queues_to_use)
-+			netif_napi_del(&ch->rx_napi);
-+		if (queue < priv->plat->tx_queues_to_use)
-+			netif_napi_del(&ch->tx_napi);
- 	}
- error_hw_init:
- 	destroy_workqueue(priv->wq);
 -- 
 2.7.4
 
