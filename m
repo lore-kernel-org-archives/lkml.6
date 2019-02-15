@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76730C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:31:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9751C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:31:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 389D32229F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:31:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B147D20840
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:31:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197861;
-	bh=GEFrVDUc43N/pV9cMh1z1H3zOA7tolEXnRmWWjUUTHs=;
+	s=default; t=1550197871;
+	bh=AG0gaGMwRJJ3a5LCdaP7mwJC0jmk9Pq8Vu4IkeJMAxA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YBY4yB7DN0hwbDckPmXPjfXK5heqiqOXW+FSw6Kof82OAni7MdUUkVSzDxFqggdNu
-	 krDKqpkBfFDvqRGa3OCTdsJ4TDwS1xRM+RH242MFtiZLgTNn9QKukahRz1T8O2qzWO
-	 CSWzX8DyVVHDKdsy6iPGio9BViJcEpjFC5GFt/QE=
+	b=tjQQWrTm+11hHENHiXVhLcyzaQqcaWwSGOqp3BDH/wSswQqyNUNgD9r9UJTJTJMBw
+	 KSVftC4TV8FyM6Gh4IdqYLyLCZ7qcf5jkKCuGNqzlAT0ZeJbsOdupOSZhI6+/FaUou
+	 6UvaBcC+Tg8+Zai0YjAenmrDhz/TIEGQj9txH4tk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731207AbfBOCbA (ORCPT
+        id S1731312AbfBOCbK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:31:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52686 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:31:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404351AbfBOCMl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:12:41 -0500
+        id S2390400AbfBOCMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:12:39 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E01621B68;
-        Fri, 15 Feb 2019 02:12:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C7B1B21934;
+        Fri, 15 Feb 2019 02:12:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196760;
-        bh=GEFrVDUc43N/pV9cMh1z1H3zOA7tolEXnRmWWjUUTHs=;
+        s=default; t=1550196758;
+        bh=AG0gaGMwRJJ3a5LCdaP7mwJC0jmk9Pq8Vu4IkeJMAxA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D803/qLugvmQsnIpE02xyMnrl7bQ5naz45dbv1HzqPfEmbmwFmfhwaa3Y50M/pV9Y
-         WD7IJIgSkHgh2fNfOOlAxFXfJy1hlP20UdnXnUGJAvJzTNYbHQRfTABka9QGfoY385
-         8YmAM/299lE9dappfLLkChGAXF0DJT/vZWLECoK8=
+        b=lT9QpFYW8w1YeQ8Ohh+usqtU4UDpj+qSp/Pt180UJ0HBKiA4fqnWQ/NOD4Q+HdqRa
+         uOu7jh6W02FA+FbkJy/glOxhl1llNo1BwNKoxbbfKZNcyvxFmYhI/AjyYYpPxPufoY
+         64rtEIqMUxGjinDQ/FtIq5vt7yoosA3pa8M0i0n0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Haiyang Zhang <haiyangz@microsoft.com>,
         Sasha Levin <sashal@kernel.org>, devel@linuxdriverproject.org,
         netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 49/65] hv_netvsc: Fix hash key value reset after other ops
-Date:   Thu, 14 Feb 2019 21:11:05 -0500
-Message-Id: <20190215021121.177674-49-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 47/65] hv_netvsc: Fix ethtool change hash key error
+Date:   Thu, 14 Feb 2019 21:11:03 -0500
+Message-Id: <20190215021121.177674-47-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -59,131 +59,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Haiyang Zhang <haiyangz@microsoft.com>
 
-[ Upstream commit 17d91256898402daf4425cc541ac9cbf64574d9a ]
+[ Upstream commit b4a10c750424e01b5e37372fef0a574ebf7b56c3 ]
 
-Changing mtu, channels, or buffer sizes ops call to netvsc_attach(),
-rndis_set_subchannel(), which always reset the hash key to default
-value. That will override hash key changed previously. This patch
-fixes the problem by save the hash key, then restore it when we re-
-add the netvsc device.
+Hyper-V hosts require us to disable RSS before changing RSS key,
+otherwise the changing request will fail. This patch fixes the
+coding error.
 
 Fixes: ff4a44199012 ("netvsc: allow get/set of RSS indirection table")
+Reported-by: Wei Hu <weh@microsoft.com>
 Signed-off-by: Haiyang Zhang <haiyangz@microsoft.com>
 Reviewed-by: Michael Kelley <mikelley@microsoft.com>
 [sl: fix up subject line]
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/hyperv/hyperv_net.h   | 10 +++++++---
- drivers/net/hyperv/netvsc.c       |  2 +-
- drivers/net/hyperv/netvsc_drv.c   |  5 ++++-
- drivers/net/hyperv/rndis_filter.c |  9 +++++++--
- 4 files changed, 19 insertions(+), 7 deletions(-)
+ drivers/net/hyperv/rndis_filter.c | 25 +++++++++++++++++++------
+ 1 file changed, 19 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/hyperv/hyperv_net.h b/drivers/net/hyperv/hyperv_net.h
-index a32ded5b4f41..42d284669b03 100644
---- a/drivers/net/hyperv/hyperv_net.h
-+++ b/drivers/net/hyperv/hyperv_net.h
-@@ -144,6 +144,8 @@ struct hv_netvsc_packet {
- 	u32 total_data_buflen;
- };
- 
-+#define NETVSC_HASH_KEYLEN 40
-+
- struct netvsc_device_info {
- 	unsigned char mac_adr[ETH_ALEN];
- 	u32  num_chn;
-@@ -151,6 +153,8 @@ struct netvsc_device_info {
- 	u32  recv_sections;
- 	u32  send_section_size;
- 	u32  recv_section_size;
-+
-+	u8 rss_key[NETVSC_HASH_KEYLEN];
- };
- 
- enum rndis_device_state {
-@@ -160,8 +164,6 @@ enum rndis_device_state {
- 	RNDIS_DEV_DATAINITIALIZED,
- };
- 
--#define NETVSC_HASH_KEYLEN 40
--
- struct rndis_device {
- 	struct net_device *ndev;
- 
-@@ -210,7 +212,9 @@ int netvsc_recv_callback(struct net_device *net,
- void netvsc_channel_cb(void *context);
- int netvsc_poll(struct napi_struct *napi, int budget);
- 
--int rndis_set_subchannel(struct net_device *ndev, struct netvsc_device *nvdev);
-+int rndis_set_subchannel(struct net_device *ndev,
-+			 struct netvsc_device *nvdev,
-+			 struct netvsc_device_info *dev_info);
- int rndis_filter_open(struct netvsc_device *nvdev);
- int rndis_filter_close(struct netvsc_device *nvdev);
- struct netvsc_device *rndis_filter_device_add(struct hv_device *dev,
-diff --git a/drivers/net/hyperv/netvsc.c b/drivers/net/hyperv/netvsc.c
-index fe01e141c8f8..1a942feab954 100644
---- a/drivers/net/hyperv/netvsc.c
-+++ b/drivers/net/hyperv/netvsc.c
-@@ -84,7 +84,7 @@ static void netvsc_subchan_work(struct work_struct *w)
- 
- 	rdev = nvdev->extension;
- 	if (rdev) {
--		ret = rndis_set_subchannel(rdev->ndev, nvdev);
-+		ret = rndis_set_subchannel(rdev->ndev, nvdev, NULL);
- 		if (ret == 0) {
- 			netif_device_attach(rdev->ndev);
- 		} else {
-diff --git a/drivers/net/hyperv/netvsc_drv.c b/drivers/net/hyperv/netvsc_drv.c
-index bece935567c1..c9e2a986ccb7 100644
---- a/drivers/net/hyperv/netvsc_drv.c
-+++ b/drivers/net/hyperv/netvsc_drv.c
-@@ -875,6 +875,9 @@ static struct netvsc_device_info *netvsc_devinfo_get
- 		dev_info->send_section_size = nvdev->send_section_size;
- 		dev_info->recv_sections = nvdev->recv_section_cnt;
- 		dev_info->recv_section_size = nvdev->recv_section_size;
-+
-+		memcpy(dev_info->rss_key, nvdev->extension->rss_key,
-+		       NETVSC_HASH_KEYLEN);
- 	} else {
- 		dev_info->num_chn = VRSS_CHANNEL_DEFAULT;
- 		dev_info->send_sections = NETVSC_DEFAULT_TX;
-@@ -937,7 +940,7 @@ static int netvsc_attach(struct net_device *ndev,
- 		return PTR_ERR(nvdev);
- 
- 	if (nvdev->num_chn > 1) {
--		ret = rndis_set_subchannel(ndev, nvdev);
-+		ret = rndis_set_subchannel(ndev, nvdev, dev_info);
- 
- 		/* if unavailable, just proceed with one queue */
- 		if (ret) {
 diff --git a/drivers/net/hyperv/rndis_filter.c b/drivers/net/hyperv/rndis_filter.c
-index 0b05f7ebeb01..53c6039bffb6 100644
+index 2a5209f23f29..0b05f7ebeb01 100644
 --- a/drivers/net/hyperv/rndis_filter.c
 +++ b/drivers/net/hyperv/rndis_filter.c
-@@ -1075,7 +1075,9 @@ static void netvsc_sc_open(struct vmbus_channel *new_sc)
-  * This breaks overlap of processing the host message for the
-  * new primary channel with the initialization of sub-channels.
-  */
--int rndis_set_subchannel(struct net_device *ndev, struct netvsc_device *nvdev)
-+int rndis_set_subchannel(struct net_device *ndev,
-+			 struct netvsc_device *nvdev,
-+			 struct netvsc_device_info *dev_info)
+@@ -715,8 +715,8 @@ rndis_filter_set_offload_params(struct net_device *ndev,
+ 	return ret;
+ }
+ 
+-int rndis_filter_set_rss_param(struct rndis_device *rdev,
+-			       const u8 *rss_key)
++static int rndis_set_rss_param_msg(struct rndis_device *rdev,
++				   const u8 *rss_key, u16 flag)
  {
- 	struct nvsp_message *init_packet = &nvdev->channel_init_pkt;
- 	struct net_device_context *ndev_ctx = netdev_priv(ndev);
-@@ -1116,7 +1118,10 @@ int rndis_set_subchannel(struct net_device *ndev, struct netvsc_device *nvdev)
- 		   atomic_read(&nvdev->open_chn) == nvdev->num_chn);
+ 	struct net_device *ndev = rdev->ndev;
+ 	struct rndis_request *request;
+@@ -745,7 +745,7 @@ int rndis_filter_set_rss_param(struct rndis_device *rdev,
+ 	rssp->hdr.type = NDIS_OBJECT_TYPE_RSS_PARAMETERS;
+ 	rssp->hdr.rev = NDIS_RECEIVE_SCALE_PARAMETERS_REVISION_2;
+ 	rssp->hdr.size = sizeof(struct ndis_recv_scale_param);
+-	rssp->flag = 0;
++	rssp->flag = flag;
+ 	rssp->hashinfo = NDIS_HASH_FUNC_TOEPLITZ | NDIS_HASH_IPV4 |
+ 			 NDIS_HASH_TCP_IPV4 | NDIS_HASH_IPV6 |
+ 			 NDIS_HASH_TCP_IPV6;
+@@ -770,9 +770,12 @@ int rndis_filter_set_rss_param(struct rndis_device *rdev,
  
- 	/* ignore failues from setting rss parameters, still have channels */
--	rndis_filter_set_rss_param(rdev, netvsc_hash_key);
-+	if (dev_info)
-+		rndis_filter_set_rss_param(rdev, dev_info->rss_key);
-+	else
-+		rndis_filter_set_rss_param(rdev, netvsc_hash_key);
+ 	wait_for_completion(&request->wait_event);
+ 	set_complete = &request->response_msg.msg.set_complete;
+-	if (set_complete->status == RNDIS_STATUS_SUCCESS)
+-		memcpy(rdev->rss_key, rss_key, NETVSC_HASH_KEYLEN);
+-	else {
++	if (set_complete->status == RNDIS_STATUS_SUCCESS) {
++		if (!(flag & NDIS_RSS_PARAM_FLAG_DISABLE_RSS) &&
++		    !(flag & NDIS_RSS_PARAM_FLAG_HASH_KEY_UNCHANGED))
++			memcpy(rdev->rss_key, rss_key, NETVSC_HASH_KEYLEN);
++
++	} else {
+ 		netdev_err(ndev, "Fail to set RSS parameters:0x%x\n",
+ 			   set_complete->status);
+ 		ret = -EINVAL;
+@@ -783,6 +786,16 @@ int rndis_filter_set_rss_param(struct rndis_device *rdev,
+ 	return ret;
+ }
  
- 	netif_set_real_num_tx_queues(ndev, nvdev->num_chn);
- 	netif_set_real_num_rx_queues(ndev, nvdev->num_chn);
++int rndis_filter_set_rss_param(struct rndis_device *rdev,
++			       const u8 *rss_key)
++{
++	/* Disable RSS before change */
++	rndis_set_rss_param_msg(rdev, rss_key,
++				NDIS_RSS_PARAM_FLAG_DISABLE_RSS);
++
++	return rndis_set_rss_param_msg(rdev, rss_key, 0);
++}
++
+ static int rndis_filter_query_device_link_status(struct rndis_device *dev,
+ 						 struct netvsc_device *net_device)
+ {
 -- 
 2.19.1
 
