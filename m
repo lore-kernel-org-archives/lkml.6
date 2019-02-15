@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B94CEC4360F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:15:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31CB9C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:15:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83AC521B68
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:15:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E98DC2229F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:15:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196926;
-	bh=RMg5PuicqD6wLdCkFGFtYvqP3WPgHb7vQmrk2An4b3E=;
+	s=default; t=1550196929;
+	bh=5abGJ/B3kl5X5PVBnFR3QueNIYhQTYaZwKyhwlmOPOM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BH8NmN5uD6sSKcnba0EprmRv0Ymlb3S4ILtYEQVXAz+ezsDAK/JAjw5QaSBC9UsiY
-	 y8wtzCaGOcw37AqXnmROmKDVjgYyvFGw22C23JfdhZdCiCyhJymWsBJxIAOgOTMFf9
-	 PNF39D2RdLhMal7m9vonQQ7PNZFWCn3C68xviyxg=
+	b=W2wqlnykfEVcsHF6z7v0Ec47JmkrWIZf4oq+AVNohWAfAGdOXy8Wc9c2dWTDFd3a3
+	 IUZRNpUtr9aylO7w7vUJXRiFMmhmG00k0kFq7YbdKUmOuQW/k07dMHoA2Mu0dXriuO
+	 De3s9Ei+srmpIU4/c/zEj9YeZ3ouZiDf8IUd23Ho=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405689AbfBOCPZ (ORCPT
+        id S2405730AbfBOCP1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:15:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55100 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:15:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391951AbfBOCPX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:15:23 -0500
+        id S2405694AbfBOCPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:15:25 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E8DB206BA;
-        Fri, 15 Feb 2019 02:15:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C83521934;
+        Fri, 15 Feb 2019 02:15:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196922;
-        bh=RMg5PuicqD6wLdCkFGFtYvqP3WPgHb7vQmrk2An4b3E=;
+        s=default; t=1550196925;
+        bh=5abGJ/B3kl5X5PVBnFR3QueNIYhQTYaZwKyhwlmOPOM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lh9RVBS7UsHw+2/vuZMSbZ3QcXDwZdB03m8k4neCGk9wYXvol+GLf+k7OS3KH4/0a
-         E7D6QgXsh+3Ga2y/eDxaosjhxVZSsr44nlt20f2ofAAD9jirfoY4ZEy83uHnVQDriH
-         aX59JlsSnORFO7Ji5dLKGtf32y30MUKHYBv4L2dc=
+        b=YgZbjwQltOS3vRBo36hJo+bEOSCCucOQ3+euqHi7Z98O+7TDjPKOofjFp8WAhSpjX
+         tZ1Sd2XGOuO51yX5rP3kPm64dim4TKtYW8ptFogIk0HTjdMvCt3DpoxHsUAIWbNHgI
+         O7XY/PUHxkARGGMtZbdQOflnKsxuKsx7dXOQIF7w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Zeng Tao <prime.zeng@hisilicon.com>,
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
         Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 05/20] usb: dwc3: gadget: Fix the uninitialized link_state when udc starts
-Date:   Thu, 14 Feb 2019 21:14:56 -0500
-Message-Id: <20190215021511.179333-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 06/20] usb: gadget: Potential NULL dereference on allocation error
+Date:   Thu, 14 Feb 2019 21:14:57 -0500
+Message-Id: <20190215021511.179333-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021511.179333-1-sashal@kernel.org>
 References: <20190215021511.179333-1-sashal@kernel.org>
@@ -57,57 +58,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zeng Tao <prime.zeng@hisilicon.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 88b1bb1f3b88e0bf20b05d543a53a5b99bd7ceb6 ]
+[ Upstream commit df28169e1538e4a8bcd8b779b043e5aa6524545c ]
 
-Currently the link_state is uninitialized and the default value is 0(U0)
-before the first time we start the udc, and after we start the udc then
- stop the udc, the link_state will be undefined.
-We may have the following warnings if we start the udc again with
-an undefined link_state:
+The source_sink_alloc_func() function is supposed to return error
+pointers on error.  The function is called from usb_get_function() which
+doesn't check for NULL returns so it would result in an Oops.
 
-WARNING: CPU: 0 PID: 327 at drivers/usb/dwc3/gadget.c:294 dwc3_send_gadget_ep_cmd+0x304/0x308
-dwc3 100e0000.hidwc3_0: wakeup failed --> -22
-[...]
-Call Trace:
-[<c010f270>] (unwind_backtrace) from [<c010b3d8>] (show_stack+0x10/0x14)
-[<c010b3d8>] (show_stack) from [<c034a4dc>] (dump_stack+0x84/0x98)
-[<c034a4dc>] (dump_stack) from [<c0118000>] (__warn+0xe8/0x100)
-[<c0118000>] (__warn) from [<c0118050>](warn_slowpath_fmt+0x38/0x48)
-[<c0118050>] (warn_slowpath_fmt) from [<c0442ec0>](dwc3_send_gadget_ep_cmd+0x304/0x308)
-[<c0442ec0>] (dwc3_send_gadget_ep_cmd) from [<c0445e68>](dwc3_ep0_start_trans+0x48/0xf4)
-[<c0445e68>] (dwc3_ep0_start_trans) from [<c0446750>](dwc3_ep0_out_start+0x64/0x80)
-[<c0446750>] (dwc3_ep0_out_start) from [<c04451c0>](__dwc3_gadget_start+0x1e0/0x278)
-[<c04451c0>] (__dwc3_gadget_start) from [<c04452e0>](dwc3_gadget_start+0x88/0x10c)
-[<c04452e0>] (dwc3_gadget_start) from [<c045ee54>](udc_bind_to_driver+0x88/0xbc)
-[<c045ee54>] (udc_bind_to_driver) from [<c045f29c>](usb_gadget_probe_driver+0xf8/0x140)
-[<c045f29c>] (usb_gadget_probe_driver) from [<bf005424>](gadget_dev_desc_UDC_store+0xac/0xc4 [libcomposite])
-[<bf005424>] (gadget_dev_desc_UDC_store [libcomposite]) from[<c023d8e0>] (configfs_write_file+0xd4/0x160)
-[<c023d8e0>] (configfs_write_file) from [<c01d51e8>] (__vfs_write+0x1c/0x114)
-[<c01d51e8>] (__vfs_write) from [<c01d5ff4>] (vfs_write+0xa4/0x168)
-[<c01d5ff4>] (vfs_write) from [<c01d6d40>] (SyS_write+0x3c/0x90)
-[<c01d6d40>] (SyS_write) from [<c0107400>] (ret_fast_syscall+0x0/0x3c)
+Of course, in the current kernel, small allocations always succeed so
+this doesn't affect runtime.
 
-Signed-off-by: Zeng Tao <prime.zeng@hisilicon.com>
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/dwc3/gadget.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/usb/gadget/function/f_sourcesink.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index b6037a0ae829..557f08adf644 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -1676,6 +1676,7 @@ static int dwc3_gadget_start(struct usb_gadget *g,
+diff --git a/drivers/usb/gadget/function/f_sourcesink.c b/drivers/usb/gadget/function/f_sourcesink.c
+index 67b243989938..d7d095781be1 100644
+--- a/drivers/usb/gadget/function/f_sourcesink.c
++++ b/drivers/usb/gadget/function/f_sourcesink.c
+@@ -849,7 +849,7 @@ static struct usb_function *source_sink_alloc_func(
  
- 	/* begin to receive SETUP packets */
- 	dwc->ep0state = EP0_SETUP_PHASE;
-+	dwc->link_state = DWC3_LINK_STATE_SS_DIS;
- 	dwc3_ep0_out_start(dwc);
+ 	ss = kzalloc(sizeof(*ss), GFP_KERNEL);
+ 	if (!ss)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
  
- 	dwc3_gadget_enable_irq(dwc);
+ 	ss_opts =  container_of(fi, struct f_ss_opts, func_inst);
+ 
 -- 
 2.19.1
 
