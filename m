@@ -2,73 +2,142 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4470C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61747C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:51:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 809A620821
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:49:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550216970;
-	bh=+s5qNxZ5Bp6kG58TgUUCmvBUuqZCU40Q2bOTrhLjZ58=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=h2TsTvM/ZazpexIAifpvtGYm80E3Yqy3tsQf43k4aB4PWpKdVcyYJ2wuDc+6vV+Ea
-	 cDUrXioaWqx9ZSSJTX05PIMKCjBYiKbu3JA9jLEIfZWqEKSbxhAnFoq/VKEtHMLrU1
-	 9ChTfzpaY7466e2rZBvuUohkN4zQ7Ri0AmREdVRI=
+	by mail.kernel.org (Postfix) with ESMTP id 2EA0C21872
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 07:51:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="dvaWzyv3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390618AbfBOHtR (ORCPT
+        id S2390663AbfBOHuy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 02:49:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35214 "EHLO mail.kernel.org"
+        Fri, 15 Feb 2019 02:50:54 -0500
+Received: from mout.web.de ([212.227.17.11]:40981 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726335AbfBOHtQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 02:49:16 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35EE420836;
-        Fri, 15 Feb 2019 07:49:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550216951;
-        bh=+s5qNxZ5Bp6kG58TgUUCmvBUuqZCU40Q2bOTrhLjZ58=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=zOgpnsecW3jm7S3g9kpYWf1uX+MGWR8q6fmp307sNfay8pa3baMBsUn3AH1D5v2Xk
-         xhLc8Pjt4JmvICynNMSTVRPdnp1ysicdt3IzWhW0q9MpEP9UMlGBlgKuOHbMLFir1z
-         +Q4fLZElal10Lby2ZZ3bvmO9YurmLHM3pqXGAwYw=
-Date:   Fri, 15 Feb 2019 08:48:59 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Todd Kjos <tkjos@android.com>
-Cc:     tkjos@google.com, arve@android.com, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, maco@google.com,
-        joel@joelfernandes.org, kernel-team@android.com,
-        syzbot+55de1eb4975dec156d8f@syzkaller.appspotmail.com
-Subject: Re: [PATCH] binder: fix handling of misaligned binder object
-Message-ID: <20190215074859.GB1808@kroah.com>
-References: <20190214232257.76856-1-tkjos@google.com>
+        id S2390576AbfBOHuy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 02:50:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1550217030;
+        bh=Mp1YKJjyFwpNLa2lYkucozRFX0Fh137UEplkaCv/rzI=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=dvaWzyv3IlJD+uW7GFhysPqZz7ChDRwAk/ADCEr3SlhiKGuJl4/Amn/0HHj0fs8Ob
+         FP2lxJmZsfajeOEPePYnQOvC0CnPpUIE2XnD3jmnY4sIMfqmcUymm5/xw8bru5fptB
+         LT80/UxUZMCan5iqbb58fZNIeaPq/MIGZH4yCnEg=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.3] ([78.48.88.109]) by smtp.web.de (mrweb102
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0LoHgL-1halmJ1e8H-00gFV4; Fri, 15
+ Feb 2019 08:50:30 +0100
+Subject: Re: [v4] coccinelle: semantic patch for missing put_device()
+To:     Julia Lawall <julia.lawall@lip6.fr>
+Cc:     Wen Yang <wen.yang99@zte.com.cn>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Yi Wang <wang.yi59@zte.com.cn>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Wen Yang <yellowriver2010@hotmail.com>,
+        Cheng Shengyu <cheng.shengyu@zte.com.cn>,
+        cocci@systeme.lip6.fr, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <201902151452197117145@zte.com.cn>
+ <alpine.DEB.2.21.1902150754380.2896@hadrien>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <f4bc7f71-efee-5e0f-3209-82681ddc85be@web.de>
+Date:   Fri, 15 Feb 2019 08:50:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190214232257.76856-1-tkjos@google.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <alpine.DEB.2.21.1902150754380.2896@hadrien>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:7QwjKMrz5fwOOuUMEP9B3fkz/ZFsb0Xj8TBB24+W4IuoyvLE0mT
+ YcPRjuHKv6+TP0BTvMESilieiI0izIqOAHeQtH9n0PpN3qitzgM2s3WeJebb2CXAosdwXZ/
+ 5dqhO8YNL9Fe9AVKQcvtNLntrzyWgqmjtGp7o/w1JQiHk7k7Y/G3u9NgSAV1nL1da3gf9f0
+ +K5SyVqvKx79WlZj59yBQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:0SdTSi+OOL4=:wMXSXje3Re6yzBrZMT6zQ5
+ FqlmVpyT/qFPrxC0azIGZceANuCYI94VfZsGSQZphfE7kioPravhYIykfal2ovztqbSbgE5ow
+ 8RVGYoFS8EKSCUEZaz146zQcJx47dy2BQ7Ce6YVfS7XE/xZF8Ep+fDsAeIaBkvcuDH44OilpZ
+ L9KsSGWUZ4NTNDRcnr8mBxZUyH8yB3LP88FAmiS4HS9ocNfTHvbVGd/+MuRc3TTz9e2vwv+A/
+ pJuGpjjalIB7jXAvYn90CG8xF4Lr7vZ+fQP3TpOVfr/58DR+azvaoILJlBvpEptB0yNdQJYFm
+ sW37C5ZOvoCjoAGTqF5Dg1NW/ardPPsYwV1crYA1GV+BLkCjwnD4qMz1W4b+qvD6mOnJh3Ccv
+ CFd9kCW29zgQzi1Ah66HspvvPM5PAE+Bz2+IYKmb8KmTo3opOw9XaW9enH0NC2dSUQx0mx0OO
+ fd1zbLAjxFAw8ksco/etCeNUrf9pMMhTXCFJcFdgr9i6RdbPIT/LjYKIg0gmOGLaYkMXbwYiG
+ LiKV8u4GUU9jEV8q/Zp14jiwPzEYmxw0VXzf4nmmpTkAdBVqa4quz9P/JR8Hh66dXxDQjzLyA
+ SfCYzmHvkQTyvR1v4+q1vxy7fCaj+6hM6tD7PCLZLMFuwNZKHPw9flbCJKsOxJQ89grbnKQae
+ 3e61+6YAz9rSV8udA1neDlUxqVckiNSB+PKtU39jukS2mKxzvS0403ta8k31d0TCdJ1J42fvI
+ 5tU00V6Ga5m7d1/MOynUlznmg1rXiTy2TnbZCz0veQx7ZAnVQobPdb7XOlBniVSgHwvsZnNwF
+ bAL3gpKrCb/Vex4OfHMK94kl7g/lgQuBmLCFpp61fWni8W3v07jjgYz1HcyZk7z3HKl6QczAj
+ kAauMbyTp9pepaJK9AabE6g2GhkSYkrbhFQW9tOHFJbkhcC/n3jbmVUV7+ZKp71z04Utm9wnb
+ +Bro/jXG29w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 03:22:57PM -0800, Todd Kjos wrote:
-> Fixes crash found by syzbot:
-> kernel BUG at drivers/android/binder_alloc.c:LINE! (2)
-> 
-> Reported-by: syzbot+55de1eb4975dec156d8f@syzkaller.appspotmail.com
+>> So I plan to modify the following to capture both cases:
+>> -local idexpression id;
+>> +expression id;
+>
+> I'm not sure that this is a good idea.
 
-As the bot asked, this should be:
-	Reported-and-tested-by: syzbot+55de1eb4975dec156d8f@syzkaller.appspotmail.com
+Why have you got doubts here?
 
-I'll go fix that up...
 
-thanks,
+> There is likely no need for a put in the latter case.
 
-greg k-h
+I have got understanding difficulties for such information.
+What did you try to express with this sentence finally?
+
+Regards,
+Markus
