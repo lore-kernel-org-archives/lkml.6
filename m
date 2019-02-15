@@ -5,51 +5,52 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F876C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:11:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4329C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:11:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C20C8222D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:11:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C00A222D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 22:11:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b="HSEJSvzK";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IW1zIufo"
+	dkim=pass (2048-bit key) header.d=sent.com header.i=@sent.com header.b="KNcQRgco";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VqdFBUXY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392996AbfBOWJK (ORCPT
+        id S2404439AbfBOWLk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 17:09:10 -0500
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:55599 "EHLO
+        Fri, 15 Feb 2019 17:11:40 -0500
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:34205 "EHLO
         wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2390489AbfBOWJG (ORCPT
+        by vger.kernel.org with ESMTP id S2392933AbfBOWJK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 17:09:06 -0500
+        Fri, 15 Feb 2019 17:09:10 -0500
 Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.west.internal (Postfix) with ESMTP id ED436321D;
-        Fri, 15 Feb 2019 17:09:04 -0500 (EST)
+        by mailout.west.internal (Postfix) with ESMTP id D84D2329C;
+        Fri, 15 Feb 2019 17:09:08 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute3.internal (MEProxy); Fri, 15 Feb 2019 17:09:05 -0500
+  by compute3.internal (MEProxy); Fri, 15 Feb 2019 17:09:09 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sent.com; h=from
         :to:cc:subject:date:message-id:in-reply-to:references:reply-to
-        :mime-version:content-transfer-encoding; s=fm2; bh=nAM+pSX97PAFy
-        4Xg9SX78TGwNfne/lhBfg+g4IBK468=; b=HSEJSvzKRLMkcD5hknvApfMFk+Cn/
-        HDJ7P16WBYgGG71vqLGXuw1xUu+Y8FQhUm6oonaWYIe1WyIo/StE1hDBWHLHo0Ye
-        8q1vF6FsXAoCranG8VGu+yfTN6dnm2+B1H5PZ0klBa7jpEJbHKnJ3/yukLqlWSru
-        h0rOg8pdHYdzmf9vHsrpAqnmhRPpd13DVFeOg5CMBLnIJC9bnvJOvCoNojouvMUr
-        AvCkttqB9e7l3q+e6gCVE6epG7x1SP9cxOJ1nCuxC4y2F2luFF3FWS/86p43hEb9
-        wRmjaTJ/YnSJ1rDC9W5UJzN50XngD8GbMuyaaCg46vLczVaEUuMGIAMsQ==
+        :mime-version:content-transfer-encoding; s=fm2; bh=902xFr+JOntSJ
+        P1cg0P3STe45DXLaJ7bWFq0OYVQRqQ=; b=KNcQRgco65nLK8HcP4rreHPMghTtD
+        tbAicuwBbTE1FHBK/mt1I3d7CrhIMayrxJ7vIYABDxqxw244SAuoqDpERuzwc21A
+        /lenuvOPKvu41G7xdU1zJQKfmGI3Z3Eqwe77Qm7YCFQo7c2UAZsR3TdLMNRLadV1
+        viPsvHoH32VRO5hDpT7PE08kVsGqwhj9ja219+Z/ckfW0t6cDOfW0xf1GAyPFSQ9
+        qX12ECY2+hbG5EpEudUaVecKVJnIEyYGGywK7RL8ez/ZkDvv05hlxLtbYDapTgyP
+        SuiDA0rOE78fPWsjpeLtTPfcFQ54n8nA3rvb3S+mQAtbpi5n4KOBvfyhw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:reply-to:subject
         :to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=nAM+pSX97PAFy4Xg9SX78TGwNfne/lhBfg+g4IBK468=; b=IW1zIufo
-        P1Rp8kuXE67Tqh3KSAYNhlYaB1Ycl2Q43Zc1/PrHudXg8HeBx3xW/xWanGcPMYTr
-        b14z+AtBYrPr/RzAot96HpH8v2MfRpMBrPkyQImbuqiogLAVJ0Hc/+YIxdloFN6y
-        B0a1+Pq4q4JU8xp68B9PQYervjKbqmL8E0he7Rz44dZh8+9TtWEE1EyaLXMDlhL1
-        /iyDGgQgsNlDv1wANjkENUxTqbkynqwrZd0iFz6TKziR59XD23vBU535MOYHRxk6
-        9FhvfOqjVBEXPY/a6BKDgBYGDntsZj7BhrSTNI2oD6fsYb88pCQwri8IUJv3aVB5
-        vai1AtbF8ZHCrw==
-X-ME-Sender: <xms:gDhnXPbQPnXETzhTqB0jBaw01sE4_ArLHqgeYCGxIXzdLG5jm9p8SA>
+        fm2; bh=902xFr+JOntSJP1cg0P3STe45DXLaJ7bWFq0OYVQRqQ=; b=VqdFBUXY
+        WLb1yElVXLoPwOR5wnvkIS2U9RfZpTs95eMz6DgbT6jN9jlUWm+08d6hcyXPJbF8
+        iAP/a7c1WbBagMx/3a+9kAkRRWiZLCeWmaMN9J1RC9ferz+shh6Zu2FATorUpCEG
+        j+LPn15EmNthHAmK/HAWfOxSkgV/UMjCNgrYIakQjJSDSHiWTj9KbxL8+o6LeYnh
+        8V7xtwgYcdAotJTRPsoJDnssnGkBe8oXLSEPQ3zCk/+TYvaZYXWyW9wUyIusaeDv
+        CaGE46LCYxcqdViEhGJhm1IZm0y5a9ByEsEx3QsuuWKVVvF6FqqE0X8MuKDDlUWi
+        jeQzH7SrN1/WeA==
+X-ME-Sender: <xms:hDhnXDXlNNHgjP7XW5CgPzWKWwTh3lm22HEPEuB5huQ_22J_AQ8iFA>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledruddtjedgudehkecutefuodetggdotefrod
     ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthenuceurghilhhouhhtmecu
     fedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvufffkf
@@ -57,13 +58,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledruddtjedgudehkecutefuodetgg
     sehsvghnthdrtghomheqnecukfhppedvudeirddvvdekrdduuddvrddvvdenucfrrghrrg
     hmpehmrghilhhfrhhomhepiihirdihrghnsehsvghnthdrtghomhenucevlhhushhtvghr
     ufhiiigvpedu
-X-ME-Proxy: <xmx:gDhnXJa1lsIQXibQCjRPXNdYYO1KGPEDLfJFmUlqyhsExeEQxVeyqg>
-    <xmx:gDhnXGaqW71NAc7aljBikLbTBOEGOhVMx6QC1fA4g1umhYdXKTSYYQ>
-    <xmx:gDhnXGLbcSJYUQNsHSq-45R4YMXE8XWYzODNtrPZuqQpip2BD4SVdA>
-    <xmx:gDhnXPV0quu7T2jNypLeayXvx-UAukc5OTJUuJJk2QgpbvPsD8iFog>
+X-ME-Proxy: <xmx:hDhnXGVGezRAIuoxdauOvlra77qO0ZByp1wBHrS4Xl7jIfwGa7LzvA>
+    <xmx:hDhnXOSGeqElYX8O5JButLC1ld98et4n-0JU8n5lXQ_cvFLsaAnQjg>
+    <xmx:hDhnXFGg1IS5PHBUdn2Iz_2mKWpiIy3v2n6AOx7Hv1vuWjyBb1dQWg>
+    <xmx:hDhnXBe1z_-A27Cj76HsJ8HZ0-BOv-HTWT9MIU1IiFHqH60_Uq7bvQ>
 Received: from nvrsysarch5.nvidia.com (thunderhill.nvidia.com [216.228.112.22])
-        by mail.messagingengine.com (Postfix) with ESMTPA id DCB4CE462B;
-        Fri, 15 Feb 2019 17:09:02 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 1E32EE4511;
+        Fri, 15 Feb 2019 17:09:07 -0500 (EST)
 From:   Zi Yan <zi.yan@sent.com>
 To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
 Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
@@ -76,9 +77,9 @@ Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
         Mark Hairgrove <mhairgrove@nvidia.com>,
         Nitin Gupta <nigupta@nvidia.com>,
         David Nellans <dnellans@nvidia.com>, Zi Yan <ziy@nvidia.com>
-Subject: [RFC PATCH 02/31] mm: migrate: Add THP exchange support.
-Date:   Fri, 15 Feb 2019 14:08:27 -0800
-Message-Id: <20190215220856.29749-3-zi.yan@sent.com>
+Subject: [RFC PATCH 05/31] mem_defrag: split a THP if either src or dst is THP only.
+Date:   Fri, 15 Feb 2019 14:08:30 -0800
+Message-Id: <20190215220856.29749-6-zi.yan@sent.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190215220856.29749-1-zi.yan@sent.com>
 References: <20190215220856.29749-1-zi.yan@sent.com>
@@ -92,156 +93,344 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Zi Yan <ziy@nvidia.com>
 
-Add support for exchange between two THPs.
+During the process of generating physically contiguous memory, it is
+possible that we want to move a THP to a place with 512 base pages.
+Exchange pages has not implemented the exchange of a THP and 512 base
+pages. Instead, we can split the THP and exchange 512 base pages.
+This increases the chance of creating a large contiguous region.
+A split THP could be promoted back after all 512 pages are moved to the
+destination or if none of its subpages is moved.
+In-place THP promotion will be introduced later in this patch serie.
 
 Signed-off-by: Zi Yan <ziy@nvidia.com>
 ---
- mm/exchange.c | 47 ++++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 38 insertions(+), 9 deletions(-)
+ mm/internal.h   |   4 ++
+ mm/mem_defrag.c | 155 +++++++++++++++++++++++++++++++++++++-----------
+ mm/page_alloc.c |  45 ++++++++++++++
+ 3 files changed, 168 insertions(+), 36 deletions(-)
 
-diff --git a/mm/exchange.c b/mm/exchange.c
-index a607348cc6f4..8cf286fc0f10 100644
---- a/mm/exchange.c
-+++ b/mm/exchange.c
-@@ -48,7 +48,8 @@ struct page_flags {
- 	unsigned int page_swapcache:1;
- 	unsigned int page_writeback:1;
- 	unsigned int page_private:1;
--	unsigned int __pad:3;
-+	unsigned int page_doublemap:1;
-+	unsigned int __pad:2;
- };
+diff --git a/mm/internal.h b/mm/internal.h
+index 4fe8d1a4d7bb..70a6ef603e5b 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -574,6 +574,10 @@ void expand(struct zone *zone, struct page *page,
+ 	int low, int high, struct free_area *area,
+ 	int migratetype);
  
++int expand_free_page(struct zone *zone, struct page *buddy_head,
++	struct page *page, int buddy_order, int page_order,
++	struct free_area *area, int migratetype);
++
+ void prep_new_page(struct page *page, unsigned int order, gfp_t gfp_flags,
+ 							unsigned int alloc_flags);
  
-@@ -125,20 +126,23 @@ static void exchange_huge_page(struct page *dst, struct page *src)
- static void exchange_page_flags(struct page *to_page, struct page *from_page)
- {
- 	int from_cpupid, to_cpupid;
--	struct page_flags from_page_flags, to_page_flags;
-+	struct page_flags from_page_flags = {0}, to_page_flags = {0};
- 	struct mem_cgroup *to_memcg = page_memcg(to_page),
- 					  *from_memcg = page_memcg(from_page);
- 
- 	from_cpupid = page_cpupid_xchg_last(from_page, -1);
- 
--	from_page_flags.page_error = TestClearPageError(from_page);
-+	from_page_flags.page_error = PageError(from_page);
-+	if (from_page_flags.page_error)
-+		ClearPageError(from_page);
- 	from_page_flags.page_referenced = TestClearPageReferenced(from_page);
- 	from_page_flags.page_uptodate = PageUptodate(from_page);
- 	ClearPageUptodate(from_page);
- 	from_page_flags.page_active = TestClearPageActive(from_page);
- 	from_page_flags.page_unevictable = TestClearPageUnevictable(from_page);
- 	from_page_flags.page_checked = PageChecked(from_page);
--	ClearPageChecked(from_page);
-+	if (from_page_flags.page_checked)
-+		ClearPageChecked(from_page);
- 	from_page_flags.page_mappedtodisk = PageMappedToDisk(from_page);
- 	ClearPageMappedToDisk(from_page);
- 	from_page_flags.page_dirty = PageDirty(from_page);
-@@ -148,18 +152,22 @@ static void exchange_page_flags(struct page *to_page, struct page *from_page)
- 	clear_page_idle(from_page);
- 	from_page_flags.page_swapcache = PageSwapCache(from_page);
- 	from_page_flags.page_writeback = test_clear_page_writeback(from_page);
-+	from_page_flags.page_doublemap = PageDoubleMap(from_page);
- 
- 
- 	to_cpupid = page_cpupid_xchg_last(to_page, -1);
- 
--	to_page_flags.page_error = TestClearPageError(to_page);
-+	to_page_flags.page_error = PageError(to_page);
-+	if (to_page_flags.page_error)
-+		ClearPageError(to_page);
- 	to_page_flags.page_referenced = TestClearPageReferenced(to_page);
- 	to_page_flags.page_uptodate = PageUptodate(to_page);
- 	ClearPageUptodate(to_page);
- 	to_page_flags.page_active = TestClearPageActive(to_page);
- 	to_page_flags.page_unevictable = TestClearPageUnevictable(to_page);
- 	to_page_flags.page_checked = PageChecked(to_page);
--	ClearPageChecked(to_page);
-+	if (to_page_flags.page_checked)
-+		ClearPageChecked(to_page);
- 	to_page_flags.page_mappedtodisk = PageMappedToDisk(to_page);
- 	ClearPageMappedToDisk(to_page);
- 	to_page_flags.page_dirty = PageDirty(to_page);
-@@ -169,6 +177,7 @@ static void exchange_page_flags(struct page *to_page, struct page *from_page)
- 	clear_page_idle(to_page);
- 	to_page_flags.page_swapcache = PageSwapCache(to_page);
- 	to_page_flags.page_writeback = test_clear_page_writeback(to_page);
-+	to_page_flags.page_doublemap = PageDoubleMap(to_page);
- 
- 	/* set to_page */
- 	if (from_page_flags.page_error)
-@@ -195,6 +204,8 @@ static void exchange_page_flags(struct page *to_page, struct page *from_page)
- 		set_page_young(to_page);
- 	if (from_page_flags.page_is_idle)
- 		set_page_idle(to_page);
-+	if (from_page_flags.page_doublemap)
-+		SetPageDoubleMap(to_page);
- 
- 	/* set from_page */
- 	if (to_page_flags.page_error)
-@@ -221,6 +232,8 @@ static void exchange_page_flags(struct page *to_page, struct page *from_page)
- 		set_page_young(from_page);
- 	if (to_page_flags.page_is_idle)
- 		set_page_idle(from_page);
-+	if (to_page_flags.page_doublemap)
-+		SetPageDoubleMap(from_page);
- 
- 	/*
- 	 * Copy NUMA information to the new page, to prevent over-eager
-@@ -280,6 +293,7 @@ static int exchange_page_move_mapping(struct address_space *to_mapping,
- 
- 	VM_BUG_ON_PAGE(to_mapping != page_mapping(to_page), to_page);
- 	VM_BUG_ON_PAGE(from_mapping != page_mapping(from_page), from_page);
-+	VM_BUG_ON(PageCompound(from_page) != PageCompound(to_page));
- 
- 	if (!to_mapping) {
- 		/* Anonymous page without mapping */
-@@ -600,7 +614,6 @@ static int unmap_and_exchange(struct page *from_page,
- 	to_mapping = to_page->mapping;
- 	from_index = from_page->index;
- 	to_index = to_page->index;
--
- 	/*
- 	 * Corner case handling:
- 	 * 1. When a new swap-cache page is read into, it is added to the LRU
-@@ -691,6 +704,23 @@ static int unmap_and_exchange(struct page *from_page,
- 	return rc;
+diff --git a/mm/mem_defrag.c b/mm/mem_defrag.c
+index 414909e1c19c..4d458b125c95 100644
+--- a/mm/mem_defrag.c
++++ b/mm/mem_defrag.c
+@@ -643,6 +643,15 @@ static void exchange_free(struct page *freepage, unsigned long data)
+ 		head->num_freepages++;
  }
  
-+static bool can_be_exchanged(struct page *from, struct page *to)
++static bool page_can_migrate(struct page *page)
 +{
-+	if (PageCompound(from) != PageCompound(to))
-+		return false;
-+
-+	if (PageHuge(from) != PageHuge(to))
-+		return false;
-+
-+	if (PageHuge(from) || PageHuge(to))
-+		return false;
-+
-+	if (compound_order(from) != compound_order(to))
-+		return false;
-+
-+	return true;
++	if (PageAnon(page))
++		return true;
++	if (page_mapping(page))
++		return true;
++	return false;
 +}
 +
- /*
-  * Exchange pages in the exchange_list
-  *
-@@ -751,9 +781,8 @@ static int exchange_pages(struct list_head *exchange_list,
- 			continue;
- 		}
+ int defrag_address_range(struct mm_struct *mm, struct vm_area_struct *vma,
+ 		unsigned long start_addr, unsigned long end_addr,
+ 		struct page *anchor_page, unsigned long page_vaddr,
+@@ -655,6 +664,7 @@ int defrag_address_range(struct mm_struct *mm, struct vm_area_struct *vma,
+ 	int not_present = 0;
+ 	bool src_thp = false;
  
--		/* TODO: compound page not supported */
- 		/* to_page can be file-backed page  */
--		if (PageCompound(from_page) ||
-+		if (!can_be_exchanged(from_page, to_page) ||
- 			page_mapping(from_page)
- 			) {
- 			++failed;
++restart:
+ 	for (scan_address = start_addr; scan_address < end_addr;
+ 		 scan_address += page_size) {
+ 		struct page *scan_page;
+@@ -683,6 +693,8 @@ int defrag_address_range(struct mm_struct *mm, struct vm_area_struct *vma,
+ 		if ((scan_page == compound_head(scan_page)) &&
+ 			PageTransHuge(scan_page) && !PageHuge(scan_page))
+ 			src_thp = true;
++		else
++			src_thp = false;
+ 
+ 		/* Allow THPs  */
+ 		if (PageCompound(scan_page) && !src_thp) {
+@@ -720,13 +732,17 @@ int defrag_address_range(struct mm_struct *mm, struct vm_area_struct *vma,
+ 			}
+ 
+ retry_defrag:
+-			/* migrate */
+-			if (PageBuddy(dest_page)) {
++				/* free pages */
++			if (page_count(dest_page) == 0 && dest_page->mapping == NULL) {
++				int buddy_page_order = 0;
++				unsigned long pfn = page_to_pfn(dest_page);
++				unsigned long buddy_pfn;
++				struct page *buddy = dest_page;
+ 				struct zone *zone = page_zone(dest_page);
+ 				spinlock_t *zone_lock = &zone->lock;
+ 				unsigned long zone_lock_flags;
+ 				unsigned long free_page_order = 0;
+-				int err = 0;
++				int err = 0, expand_err = 0;
+ 				struct exchange_alloc_head exchange_alloc_head = {0};
+ 				int migratetype = get_pageblock_migratetype(dest_page);
+ 
+@@ -734,32 +750,77 @@ int defrag_address_range(struct mm_struct *mm, struct vm_area_struct *vma,
+ 				INIT_LIST_HEAD(&exchange_alloc_head.freelist);
+ 				INIT_LIST_HEAD(&exchange_alloc_head.migratepage_list);
+ 
+-				count_vm_events(MEM_DEFRAG_DST_FREE_PAGES, 1<<scan_page_order);
++				/* not managed pages  */
++				if (!dest_page->flags) {
++					failed += 1;
++					defrag_stats->dst_out_of_bound_failed += 1;
+ 
++					defrag_stats->not_defrag_vpn = scan_address + page_size;
++					goto quit_defrag;
++				}
++				/* spill order-0 pages to buddy allocator from pcplist */
++				if (!PageBuddy(dest_page) && !page_drained) {
++					drain_all_pages(zone);
++					page_drained = 1;
++					goto retry_defrag;
++				}
+ 				/* lock page_zone(dest_page)->lock  */
+ 				spin_lock_irqsave(zone_lock, zone_lock_flags);
+ 
+-				if (!PageBuddy(dest_page)) {
++				while (!PageBuddy(buddy) && buddy_page_order < MAX_ORDER) {
++					buddy_pfn = pfn & ~((1<<buddy_page_order) - 1);
++					buddy = dest_page - (pfn - buddy_pfn);
++					buddy_page_order++;
++				}
++				if (!PageBuddy(buddy)) {
+ 					err = -EINVAL;
+ 					goto freepage_isolate_fail;
+ 				}
+ 
+-				free_page_order = page_order(dest_page);
++				count_vm_events(MEM_DEFRAG_DST_FREE_PAGES, 1<<scan_page_order);
+ 
+-				/* fail early if not enough free pages */
+-				if (free_page_order < scan_page_order) {
++				free_page_order = page_order(buddy);
++
++				/* caught some transient-state page */
++				if (free_page_order < buddy_page_order) {
+ 					err = -ENOMEM;
+ 					goto freepage_isolate_fail;
+ 				}
+ 
++				/* fail early if not enough free pages */
++				if (free_page_order < scan_page_order) {
++					int ret;
++
++					spin_unlock_irqrestore(zone_lock, zone_lock_flags);
++
++					if (is_huge_zero_page(scan_page)) {
++						err = -ENOMEM;
++						goto freepage_isolate_fail_unlocked;
++					}
++					get_page(scan_page);
++					lock_page(scan_page);
++					ret = split_huge_page(scan_page);
++					unlock_page(scan_page);
++					put_page(scan_page);
++					if (ret) {
++						err = -ENOMEM;
++						goto freepage_isolate_fail_unlocked;
++					} else {
++						goto restart;
++					}
++				}
++
+ 				/* __isolate_free_page()  */
+-				err = isolate_free_page_no_wmark(dest_page, free_page_order);
++				err = isolate_free_page_no_wmark(buddy, free_page_order);
+ 				if (!err)
+ 					goto freepage_isolate_fail;
+ 
+-				expand(zone, dest_page, scan_page_order, free_page_order,
++				expand_err = expand_free_page(zone, buddy, dest_page,
++					free_page_order, scan_page_order,
+ 					&(zone->free_area[free_page_order]),
+ 					migratetype);
++				if (expand_err)
++					goto freepage_isolate_fail;
+ 
+ 				if (!is_migrate_isolate(migratetype))
+ 					__mod_zone_freepage_state(zone, -(1UL << scan_page_order),
+@@ -778,7 +839,7 @@ int defrag_address_range(struct mm_struct *mm, struct vm_area_struct *vma,
+ 
+ freepage_isolate_fail:
+ 				spin_unlock_irqrestore(zone_lock, zone_lock_flags);
+-
++freepage_isolate_fail_unlocked:
+ 				if (err < 0) {
+ 					failed += (page_size/PAGE_SIZE);
+ 					defrag_stats->dst_isolate_free_failed += (page_size/PAGE_SIZE);
+@@ -844,6 +905,8 @@ int defrag_address_range(struct mm_struct *mm, struct vm_area_struct *vma,
+ 				if ((dest_page == compound_head(dest_page)) &&
+ 					PageTransHuge(dest_page) && !PageHuge(dest_page))
+ 					dst_thp = true;
++				else
++					dst_thp = false;
+ 
+ 				if (PageCompound(dest_page) && !dst_thp) {
+ 					failed += get_contig_page_size(dest_page);
+@@ -854,37 +917,56 @@ int defrag_address_range(struct mm_struct *mm, struct vm_area_struct *vma,
+ 				}
+ 
+ 				if (src_thp != dst_thp) {
+-					failed += get_contig_page_size(scan_page);
+-					if (src_thp && !dst_thp)
+-						defrag_stats->src_thp_dst_not_failed +=
+-							page_size/PAGE_SIZE;
+-					else /* !src_thp && dst_thp */
+-						defrag_stats->dst_thp_src_not_failed +=
+-							page_size/PAGE_SIZE;
++					if (src_thp && !dst_thp) {
++						int ret;
++
++						if (!page_can_migrate(dest_page)) {
++							failed += get_contig_page_size(scan_page);
++							defrag_stats->not_defrag_vpn = scan_address + page_size;
++							goto quit_defrag;
++						}
+ 
++						get_page(scan_page);
++						lock_page(scan_page);
++						if (!PageCompound(scan_page) || is_huge_zero_page(scan_page)) {
++							ret = 0;
++							src_thp = false;
++							goto split_src_done;
++						}
++						ret = split_huge_page(scan_page);
++split_src_done:
++						unlock_page(scan_page);
++						put_page(scan_page);
++						if (ret)
++							defrag_stats->src_thp_dst_not_failed += page_size/PAGE_SIZE;
++						else
++							goto restart;
++					} else {/* !src_thp && dst_thp */
++						int ret;
++
++						get_page(dest_page);
++						lock_page(dest_page);
++						if (!PageCompound(dest_page) || is_huge_zero_page(dest_page)) {
++							ret = 0;
++							dst_thp = false;
++							goto split_dst_done;
++						}
++						ret = split_huge_page(dest_page);
++split_dst_done:
++						unlock_page(dest_page);
++						put_page(dest_page);
++						if (ret)
++							defrag_stats->dst_thp_src_not_failed += page_size/PAGE_SIZE;
++						else
++							goto retry_defrag;
++					}
++
++					failed += get_contig_page_size(scan_page);
+ 					defrag_stats->not_defrag_vpn = scan_address + page_size;
+ 					goto quit_defrag;
+ 					/*continue;*/
+ 				}
+ 
+-				/* free page on pcplist */
+-				if (page_count(dest_page) == 0) {
+-					/* not managed pages  */
+-					if (!dest_page->flags) {
+-						failed += 1;
+-						defrag_stats->dst_out_of_bound_failed += 1;
+-
+-						defrag_stats->not_defrag_vpn = scan_address + page_size;
+-						goto quit_defrag;
+-					}
+-					/* spill order-0 pages to buddy allocator from pcplist */
+-					if (!page_drained) {
+-						drain_all_pages(NULL);
+-						page_drained = 1;
+-						goto retry_defrag;
+-					}
+-				}
+-
+ 				if (PageAnon(dest_page)) {
+ 					count_vm_events(MEM_DEFRAG_DST_ANON_PAGES,
+ 							1<<scan_page_order);
+@@ -895,6 +977,7 @@ int defrag_address_range(struct mm_struct *mm, struct vm_area_struct *vma,
+ 								1<<scan_page_order);
+ 						failed += 1<<scan_page_order;
+ 						defrag_stats->dst_anon_failed += 1<<scan_page_order;
++						/*print_page_stats(dest_page, "anonymous page");*/
+ 					}
+ 				} else if (page_mapping(dest_page)) {
+ 					count_vm_events(MEM_DEFRAG_DST_FILE_PAGES,
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index a35605e0924a..9ba2cdc320f2 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -1855,6 +1855,51 @@ inline void expand(struct zone *zone, struct page *page,
+ 	}
+ }
+ 
++inline int expand_free_page(struct zone *zone, struct page *buddy_head,
++	struct page *page, int buddy_order, int page_order, struct free_area *area,
++	int migratetype)
++{
++	unsigned long size = 1 << buddy_order;
++
++	if (!(page >= buddy_head && page < (buddy_head + (1<<buddy_order)))) {
++		int mapcount = PageSlab(buddy_head) ? 0 : page_mapcount(buddy_head);
++
++		mapcount = PageSlab(page) ? 0 : page_mapcount(page);
++		__free_one_page(buddy_head, page_to_pfn(buddy_head), zone, buddy_order,
++				migratetype);
++		return -EINVAL;
++	}
++
++	while (buddy_order > page_order) {
++		struct page *page_to_free;
++
++		area--;
++		buddy_order--;
++		size >>= 1;
++
++		if (page < (buddy_head + size))
++			page_to_free = buddy_head + size;
++		else {
++			page_to_free = buddy_head;
++			buddy_head = buddy_head + size;
++		}
++
++		/*
++		 * Mark as guard pages (or page), that will allow to
++		 * merge back to allocator when buddy will be freed.
++		 * Corresponding page table entries will not be touched,
++		 * pages will stay not present in virtual address space
++		 */
++		if (set_page_guard(zone, page_to_free, buddy_order, migratetype))
++			continue;
++
++		list_add(&page_to_free->lru, &area->free_list[migratetype]);
++		area->nr_free++;
++		set_page_order(page_to_free, buddy_order);
++	}
++	return 0;
++}
++
+ static void check_new_page_bad(struct page *page)
+ {
+ 	const char *bad_reason = NULL;
 -- 
 2.20.1
 
