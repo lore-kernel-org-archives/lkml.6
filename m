@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5C1C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75926C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4A72206BA
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:16:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C63E20643
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:17:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197015;
-	bh=Y9o8KsB+a9lG2Xg8g9q5V6wwNEdFY1dlkRFiCB4i6Fs=;
+	s=default; t=1550197030;
+	bh=i9CWBbz0n5OmiHfhDnmO88mOqULBnhlAm4Yrb4d8ugQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gTYpLo/yQJxG9y9YsSuYjAWZ6ghZ5ZTi3t7APHTZr+H56UpahU5Ch5/7B6c7C73jB
-	 oeURhAuG1ury0OTriMweZn1b8wInQTmz3H9mZ7GNmMDP3mA5cus0hG37Gs5sL4UsoP
-	 PL0NxrMAF7JFcq7Snqae3G3rYfNJE9Vc7m7xUyoM=
+	b=G3YUTFPJYWJYMe+t9fyitG71O2XGPQC4/U9ApOn+Bq/0MoOriuuZ1lDK2oXeo6GwD
+	 xPHa/fjFeghvV0CBmScf2u3ky1OLWZCw84k8OwoV0kL7Sj/Dlu/+kjki+4hZTF0A2n
+	 6zQllzFyZBhlmJG3rLePkPsx2fgRc88AszEWn/CM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406137AbfBOCQx (ORCPT
+        id S2406189AbfBOCRI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:16:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55612 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:17:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392197AbfBOCQI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:16:08 -0500
+        id S2392121AbfBOCQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:16:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8C0E21934;
-        Fri, 15 Feb 2019 02:16:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 750E821934;
+        Fri, 15 Feb 2019 02:16:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196967;
-        bh=Y9o8KsB+a9lG2Xg8g9q5V6wwNEdFY1dlkRFiCB4i6Fs=;
+        s=default; t=1550196964;
+        bh=i9CWBbz0n5OmiHfhDnmO88mOqULBnhlAm4Yrb4d8ugQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I4v+ubAuhNJ9s7kGmqGe52VFKmsbRaWz6Y3+mKKRNvD6Uc/n7Wbufm2RjS8CkGLb2
-         uhhaFeoIVUElwxhdr1hUYJIJecOUPxw0NCtPlp1UOn0XMYF+d31h3wFRe+5odKB5im
-         mbEJzjQqVb+LuXU40ZL5G5OvKH05U7anJ4lajySk=
+        b=FQUp3HYAB2gdww5Lrrf8RYVRrIByaFresIUG4zdoSFHwNnoxW3rmG+FNvRRMG3Phm
+         X1vMBC27OVsgpx018j9QiWPhYM12EJcUzaB5iM23d8u8bdo50uCgktp3K6t6U3VGRK
+         tusqp/9dTIExdQ4g98m5fOWtD25UWsw5kXmuXTCU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Balaji Pothunoori <bpothuno@codeaurora.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 14/16] mac80211: don't initiate TDLS connection if station is not associated to AP
-Date:   Thu, 14 Feb 2019 21:15:44 -0500
-Message-Id: <20190215021546.179605-14-sashal@kernel.org>
+Cc:     Atsushi Nemoto <atsushi.nemoto@sord.co.jp>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 11/16] net: altera_tse: fix connect_local_phy error path
+Date:   Thu, 14 Feb 2019 21:15:41 -0500
+Message-Id: <20190215021546.179605-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021546.179605-1-sashal@kernel.org>
 References: <20190215021546.179605-1-sashal@kernel.org>
@@ -59,56 +58,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Balaji Pothunoori <bpothuno@codeaurora.org>
+From: Atsushi Nemoto <atsushi.nemoto@sord.co.jp>
 
-[ Upstream commit 7ed5285396c257fd4070b1e29e7b2341aae2a1ce ]
+[ Upstream commit 17b42a20d7ca59377788c6a2409e77569570cc10 ]
 
-Following call trace is observed while adding TDLS peer entry in driver
-during TDLS setup.
+The connect_local_phy should return NULL (not negative errno) on
+error, since its caller expects it.
 
-Call Trace:
-[<c1301476>] dump_stack+0x47/0x61
-[<c10537d2>] __warn+0xe2/0x100
-[<fa22415f>] ? sta_apply_parameters+0x49f/0x550 [mac80211]
-[<c1053895>] warn_slowpath_null+0x25/0x30
-[<fa22415f>] sta_apply_parameters+0x49f/0x550 [mac80211]
-[<fa20ad42>] ? sta_info_alloc+0x1c2/0x450 [mac80211]
-[<fa224623>] ieee80211_add_station+0xe3/0x160 [mac80211]
-[<c1876fe3>] nl80211_new_station+0x273/0x420
-[<c170f6d9>] genl_rcv_msg+0x219/0x3c0
-[<c170f4c0>] ? genl_rcv+0x30/0x30
-[<c170ee7e>] netlink_rcv_skb+0x8e/0xb0
-[<c170f4ac>] genl_rcv+0x1c/0x30
-[<c170e8aa>] netlink_unicast+0x13a/0x1d0
-[<c170ec18>] netlink_sendmsg+0x2d8/0x390
-[<c16c5acd>] sock_sendmsg+0x2d/0x40
-[<c16c6369>] ___sys_sendmsg+0x1d9/0x1e0
-
-Fixing this by allowing TDLS setup request only when we have completed
-association.
-
-Signed-off-by: Balaji Pothunoori <bpothuno@codeaurora.org>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Atsushi Nemoto <atsushi.nemoto@sord.co.jp>
+Acked-by: Thor Thayer <thor.thayer@linux.intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/cfg.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/altera/altera_tse_main.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/net/mac80211/cfg.c b/net/mac80211/cfg.c
-index 6ba5240dd61d..ffe319309d03 100644
---- a/net/mac80211/cfg.c
-+++ b/net/mac80211/cfg.c
-@@ -1194,6 +1194,10 @@ static int ieee80211_add_station(struct wiphy *wiphy, struct net_device *dev,
- 		sta->sta.tdls = true;
- 	}
+diff --git a/drivers/net/ethernet/altera/altera_tse_main.c b/drivers/net/ethernet/altera/altera_tse_main.c
+index 2eb6404755b1..c1b599c52195 100644
+--- a/drivers/net/ethernet/altera/altera_tse_main.c
++++ b/drivers/net/ethernet/altera/altera_tse_main.c
+@@ -706,8 +706,10 @@ static struct phy_device *connect_local_phy(struct net_device *dev)
  
-+	if (sta->sta.tdls && sdata->vif.type == NL80211_IFTYPE_STATION &&
-+	    !sdata->u.mgd.associated)
-+		return -EINVAL;
-+
- 	err = sta_apply_parameters(local, sta, params);
- 	if (err) {
- 		sta_info_free(local, sta);
+ 		phydev = phy_connect(dev, phy_id_fmt, &altera_tse_adjust_link,
+ 				     priv->phy_iface);
+-		if (IS_ERR(phydev))
++		if (IS_ERR(phydev)) {
+ 			netdev_err(dev, "Could not attach to PHY\n");
++			phydev = NULL;
++		}
+ 
+ 	} else {
+ 		int ret;
 -- 
 2.19.1
 
