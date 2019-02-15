@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 267B9C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8065CC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:30:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E933020840
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:30:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 470C020840
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:30:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550197820;
-	bh=Wb0I43kT1FzP9mnX602sQTz4Hxk0NvBFPw8oBH3QYuM=;
+	s=default; t=1550197828;
+	bh=GzkL0USozPtgPZE7i2JmzwzS2YjEpXKRWdhjCqO+tVw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rsiBA8RQnJ2TDeuAvg3NhBeq9EQhFRBR5zjpDKUh75WchvgcofLCOc2QKSRT8PaTA
-	 GgZeoqfQP6VQeRaI15/XbnnLrTztZpot3LWhgCAVbMrywv+T4z1h4gphSr8P2o0qQd
-	 Y8XOyLYBNg3L5VEeIWhrfYrCsb6wzp7fZpvUhZrg=
+	b=LlWsSQr+EUyZXNLQLExzNlwUf9v2A+PRBIW+iHi43XwNtvGqz1dcgCPA1F9acKulM
+	 TWJQIsnwJVL9p9WJrSWakX5SkUD+Z+lS17/coXvqUeAGVFL/x0wreJpR6Bo1lyS56b
+	 wg4jkPNzTf2xMmefsH8QlPxDYJbPnN7pTK5obP74=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730864AbfBOCaS (ORCPT
+        id S1730911AbfBOCa0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:30:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52900 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:30:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391213AbfBOCMx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:12:53 -0500
+        id S2404454AbfBOCMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:12:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E10E21934;
-        Fri, 15 Feb 2019 02:12:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D59D21B68;
+        Fri, 15 Feb 2019 02:12:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196773;
-        bh=Wb0I43kT1FzP9mnX602sQTz4Hxk0NvBFPw8oBH3QYuM=;
+        s=default; t=1550196765;
+        bh=GzkL0USozPtgPZE7i2JmzwzS2YjEpXKRWdhjCqO+tVw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JGHPhpE49LaxUOlUP7jZoA4Dj4oB6PnZjBakdOus0e8+B1r9o/06YN7VD7Bw2mNR7
-         S+18BeWefSRMeEUeg7/yDhZEvJoBD56H11Um/Th8FRDwcr2gY0kFPE+6euRH1eu93R
-         yCoojNDlvHKWfRKgWrFCHBBjRSbfc2yquQMCCxnQ=
+        b=Vl18s16OdZT087d0pAw4DE+1qJrCLNTo94lMOD7zis3enY3IGBLOSMQcaEWKJoeLt
+         OHFEdnOhe3K1hThLwfC9/mpsoNV3trS2KYN8hpkoCjnrWSUHUsFbVLbEtgr/ZyMSJI
+         u9mXIaovZ6rMV/H6IyoIWzylmTtN7lrHxkYHIt94=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pavel Shilovsky <pshilov@microsoft.com>,
-        Steve French <stfrench@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 55/65] CIFS: Do not assume one credit for async responses
-Date:   Thu, 14 Feb 2019 21:11:11 -0500
-Message-Id: <20190215021121.177674-55-sashal@kernel.org>
+Cc:     Hannes Reinecke <hare@suse.de>, Hannes Reinecke <hare@suse.com>,
+        Sagi Grimberg <sagi@grimberg.me>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 53/65] nvme-multipath: drop optimization for static ANA group IDs
+Date:   Thu, 14 Feb 2019 21:11:09 -0500
+Message-Id: <20190215021121.177674-53-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215021121.177674-1-sashal@kernel.org>
 References: <20190215021121.177674-1-sashal@kernel.org>
@@ -57,76 +58,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pavel Shilovsky <pshilov@microsoft.com>
+From: Hannes Reinecke <hare@suse.de>
 
-[ Upstream commit 0fd1d37b0501efc6e295f56ab55cdaff784aa50c ]
+[ Upstream commit 78a61cd42a64f3587862b372a79e1d6aaf131fd7 ]
 
-If we don't receive a response we can't assume that the server
-granted one credit. Assume zero credits in such cases.
+Bit 6 in the ANACAP field is used to indicate that the ANA group ID
+doesn't change while the namespace is attached to the controller.
+There is an optimisation in the code to only allocate space
+for the ANA group header, as the namespace list won't change and
+hence would not need to be refreshed.
+However, this optimisation was never carried over to the actual
+workflow, which always assumes that the buffer is large enough
+to hold the ANA header _and_ the namespace list.
+So drop this optimisation and always allocate enough space.
 
-Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/smb2pdu.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+ drivers/nvme/host/multipath.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
-index 8a01e89ff827..1e5a1171212f 100644
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -2814,9 +2814,10 @@ smb2_echo_callback(struct mid_q_entry *mid)
- {
- 	struct TCP_Server_Info *server = mid->callback_data;
- 	struct smb2_echo_rsp *rsp = (struct smb2_echo_rsp *)mid->resp_buf;
--	unsigned int credits_received = 1;
-+	unsigned int credits_received = 0;
+diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+index c27af277e14e..65180cc1ba33 100644
+--- a/drivers/nvme/host/multipath.c
++++ b/drivers/nvme/host/multipath.c
+@@ -531,8 +531,7 @@ int nvme_mpath_init(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
+ 	timer_setup(&ctrl->anatt_timer, nvme_anatt_timeout, 0);
+ 	ctrl->ana_log_size = sizeof(struct nvme_ana_rsp_hdr) +
+ 		ctrl->nanagrpid * sizeof(struct nvme_ana_group_desc);
+-	if (!(ctrl->anacap & (1 << 6)))
+-		ctrl->ana_log_size += ctrl->max_namespaces * sizeof(__le32);
++	ctrl->ana_log_size += ctrl->max_namespaces * sizeof(__le32);
  
--	if (mid->mid_state == MID_RESPONSE_RECEIVED)
-+	if (mid->mid_state == MID_RESPONSE_RECEIVED
-+	    || mid->mid_state == MID_RESPONSE_MALFORMED)
- 		credits_received = le16_to_cpu(rsp->sync_hdr.CreditRequest);
- 
- 	DeleteMidQEntry(mid);
-@@ -3073,7 +3074,7 @@ smb2_readv_callback(struct mid_q_entry *mid)
- 	struct TCP_Server_Info *server = tcon->ses->server;
- 	struct smb2_sync_hdr *shdr =
- 				(struct smb2_sync_hdr *)rdata->iov[0].iov_base;
--	unsigned int credits_received = 1;
-+	unsigned int credits_received = 0;
- 	struct smb_rqst rqst = { .rq_iov = rdata->iov,
- 				 .rq_nvec = 2,
- 				 .rq_pages = rdata->pages,
-@@ -3112,6 +3113,9 @@ smb2_readv_callback(struct mid_q_entry *mid)
- 		task_io_account_read(rdata->got_bytes);
- 		cifs_stats_bytes_read(tcon, rdata->got_bytes);
- 		break;
-+	case MID_RESPONSE_MALFORMED:
-+		credits_received = le16_to_cpu(shdr->CreditRequest);
-+		/* fall through */
- 	default:
- 		if (rdata->result != -ENODATA)
- 			rdata->result = -EIO;
-@@ -3305,7 +3309,7 @@ smb2_writev_callback(struct mid_q_entry *mid)
- 	struct cifs_tcon *tcon = tlink_tcon(wdata->cfile->tlink);
- 	unsigned int written;
- 	struct smb2_write_rsp *rsp = (struct smb2_write_rsp *)mid->resp_buf;
--	unsigned int credits_received = 1;
-+	unsigned int credits_received = 0;
- 
- 	switch (mid->mid_state) {
- 	case MID_RESPONSE_RECEIVED:
-@@ -3333,6 +3337,9 @@ smb2_writev_callback(struct mid_q_entry *mid)
- 	case MID_RETRY_NEEDED:
- 		wdata->result = -EAGAIN;
- 		break;
-+	case MID_RESPONSE_MALFORMED:
-+		credits_received = le16_to_cpu(rsp->sync_hdr.CreditRequest);
-+		/* fall through */
- 	default:
- 		wdata->result = -EIO;
- 		break;
+ 	if (ctrl->ana_log_size > ctrl->max_hw_sectors << SECTOR_SHIFT) {
+ 		dev_err(ctrl->device,
 -- 
 2.19.1
 
