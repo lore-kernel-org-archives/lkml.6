@@ -2,155 +2,423 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EAACC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 21:15:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD73C4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 21:17:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5F3621924
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 21:15:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="It8F+c8O"
+	by mail.kernel.org (Postfix) with ESMTP id 8AEE0222DB
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 21:17:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391943AbfBOVPO (ORCPT
+        id S2391981AbfBOVRm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 16:15:14 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34033 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387600AbfBOVPO (ORCPT
+        Fri, 15 Feb 2019 16:17:42 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:33992 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391946AbfBOVRl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 16:15:14 -0500
-Received: by mail-wr1-f68.google.com with SMTP id f14so11805305wrg.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 13:15:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VADwBkT847c4aOiIkdkR9YLvQNw66R551EDkGw96awk=;
-        b=It8F+c8OyP4FK+4MuoQpsanlzZ3WZTFldM914Xab6exkiKDCu9GknyvQIsVd0HGJ08
-         HEN4FHfsL4LcOYhNSIU1GIKUrOW04LqSQdhxK/lFEUWmcEFYl+eSG7Bn6+iPVTrjvxht
-         vx3QaNze8o7IfV0+ucXZ+rjxH8//eSEIwFUVrrmin6O1tCI4FtVsIzasTmu+hwfoGGBo
-         IZzxwOaLtzAgowwm1xLPaUP3hQB4b96OZad4i4FxozYunbQevU/4GClxAMNkALNMT1jW
-         6YMxLyRb+E42aIrTBh+AI3KxQ/6XeZi0Cu0z/3taFa/blovZGnHmp/TvyGSnhwH0Yz1y
-         Cgsg==
+        Fri, 15 Feb 2019 16:17:41 -0500
+Received: by mail-qt1-f193.google.com with SMTP id w4so12618273qtc.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 13:17:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VADwBkT847c4aOiIkdkR9YLvQNw66R551EDkGw96awk=;
-        b=pMnFNr1/oXlVe/hRMf7bW+P/f4gzmFIXyBNHDArh99w4AIEiOMucyUVsfnXDvvB913
-         ZISuSJAmozLD4/nBNbuTdzn7auEMsGbe4bZ5/gFsP46fJyg231Aptm1JFRPAegmStZu6
-         26M5Seh8+PLAcabMittyiPckBO8L76wNnUt34QCEYs/tXUHbWq+y3Jac4+5sJdDWoxRc
-         XnvGex4m7rDLIRmc/a68onk37e2nJNmhdRQ1T9+ymmYUfEqYLXa0C8k2Sg7BJ4zWa/MR
-         8vSRtVi0uWeuJKLikdQPhke3GLNCjJ2eFzqckawh4XUoJKRAkYiAOUIL3Xk2hBIjpfYo
-         Umbg==
-X-Gm-Message-State: AHQUAubo105ezKv47MoOdN3vvoQXPTrNMd35qyhEVksUfpA4gGpyTcno
-        1gaCkRqQs+8GV8JvjkZEOZyRHdHxIIaalkr4ZKnZ2A==
-X-Google-Smtp-Source: AHgI3IZOdHmSmMjg4PexSRpR5bh5vsKdCyPn7i+o78RY3ci6TP6v/Vp+MECM81V6G2afaHRsr7UChmU6/o6/iKGTT58=
-X-Received: by 2002:adf:fa51:: with SMTP id y17mr8606129wrr.233.1550265311833;
- Fri, 15 Feb 2019 13:15:11 -0800 (PST)
-MIME-Version: 1.0
-References: <20190128214408.25442-1-afd@ti.com> <CALAqxLXb53nsBJtb958sMzpr-fnXxqFE0s2B6YJzoGcswv50wg@mail.gmail.com>
- <20190215105057.jujgm4k77rhkvmo7@DESKTOP-E1NTVVP.localdomain>
- <CALAqxLU=L3Y7KJEo9c-Nu1rS3EquofGf1UGWBWqAO+Qke72Ekw@mail.gmail.com>
- <0cc81357-034b-9c74-8172-2a7a26e77804@ti.com> <CALAqxLXe8KHvx_ce10_W_0uxBsLBsyWw+B9J-fzZU5vTY8VC+Q@mail.gmail.com>
- <bbfb51f3-c703-7bb7-db83-311945ef2be9@ti.com>
-In-Reply-To: <bbfb51f3-c703-7bb7-db83-311945ef2be9@ti.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Fri, 15 Feb 2019 13:15:00 -0800
-Message-ID: <CALAqxLXUU7U2WksEOH342Nt6V9_LT9RHnZufHyPeQJUi7okHig@mail.gmail.com>
-Subject: Re: [PATCH v2] staging: android: ion: Allocate from heap ID directly
- without mask
-To:     "Andrew F. Davis" <afd@ti.com>
-Cc:     Brian Starkey <Brian.Starkey@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Liam Mark <lmark@codeaurora.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>, nd <nd@arm.com>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:organization:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=QrJ9R2N40e+FPxEJfboSZewPUrl+3E6jbL31urJwjAQ=;
+        b=D6aQ4tebTILLpRiHcgmSX6TlRgJLr35HU0qrhemDxuI5t7TWG6MdViWgEqcccnZonk
+         29JL95O3xcABLvjVKoQ8InnHAtISoLW22cctVoVE1/3QzNBFVFQm7gOakS3diatUTyJ5
+         2UZeNPc1tMq6i8olRa+b1G4EUa1c2CGpBeIkhwQ9DlMSXaib8JAc8Sx8ITiHFoQQSUN0
+         iHZnGAi3xmmgE8YmCoByF65Viurbg85EcgiY2cBpA4QeAWT4yQGp6qd3Kge67IyI1eBg
+         luu7i7FSs1KfwGY3ws5qD0qYwO2y1m3MlfaZjGs1TWGpEeSrGsUhixw/s0bFgb+EyNLy
+         vx6A==
+X-Gm-Message-State: AHQUAuZECF7q3qrv7qU9oVawBMl3yFiMYuRsblGcpMkAzyLUN2Q+IN2B
+        Ur+E4UfHcsRO2RwtxQcZkigeDHqj0LU=
+X-Google-Smtp-Source: AHgI3Ia3MO9HbsJn9ElrD5RZTFwyiAdsmPE9ydKX5UUJK3LSpq3RaLGb9LVRKga/KP5bmm17kw6Anw==
+X-Received: by 2002:ac8:2b51:: with SMTP id 17mr9112309qtv.328.1550265459414;
+        Fri, 15 Feb 2019 13:17:39 -0800 (PST)
+Received: from dhcp-10-20-1-11.bss.redhat.com ([144.121.20.162])
+        by smtp.gmail.com with ESMTPSA id p18sm3673629qkl.48.2019.02.15.13.17.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 15 Feb 2019 13:17:38 -0800 (PST)
+Message-ID: <2fca9a9feafcd17b27bc71994a71ebc241a93e9a.camel@redhat.com>
+Subject: Re: [PATCH] pci/quirks: Add quirk to reset nvgpu at boot for the
+ Lenovo ThinkPad P50
+From:   Lyude Paul <lyude@redhat.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, nouveau@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, Karol Herbst <kherbst@redhat.com>,
+        Ben Skeggs <skeggsb@gmail.com>, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 15 Feb 2019 16:17:37 -0500
+In-Reply-To: <20190215004329.GR96272@google.com>
+References: <20190212220230.1568-1-lyude@redhat.com>
+         <20190215004329.GR96272@google.com>
+Organization: Red Hat
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 12:52 PM Andrew F. Davis <afd@ti.com> wrote:
-> On 2/15/19 1:58 PM, John Stultz wrote:
-> > So yea, I don't think we should tie our hands in reworking the
-> > interfaces, but it would be nice to avoid having subtle ABI changes
-> > that don't have clear ways for userland to detect which interface
-> > version its using.
-> >
->
-> Let me preference this by pointing out I've dealt with the same pain
-> internally with our Android and soon to also in AOSP for the Beagle x15
-> boards[0].. But my stance matches Christoph's in the other ION thread:
->
-> https://lkml.org/lkml/2019/1/19/53
->
-> The more freely we can make ABI changes here in staging the quicker we
-> can get this out of staging where the ABI can be locked down.
-> ION_IOC_VERSION should solve this anyway.
+On Thu, 2019-02-14 at 18:43 -0600, Bjorn Helgaas wrote:
+> Hi Lyude,
+> 
+> On Tue, Feb 12, 2019 at 05:02:30PM -0500, Lyude Paul wrote:
+> > On a very specific subset of ThinkPad P50 SKUs, particularly ones that
+> > come with a Quadro M1000M chip instead of the M2000M variant, the BIOS
+> > seems to have a very nasty habit of not always resetting the secondary
+> > Nvidia GPU between full reboots if the laptop is configured in Hybrid
+> > Graphics mode. The reason for this happening is unknown, but the
+> > following steps and possibly a good bit of patience will reproduce the
+> > issue:
+> > 
+> > 1. Boot up the laptop normally in Hybrid graphics mode
+> > 2. Make sure nouveau is loaded and that the GPU is awake
+> > 2. Allow the nvidia GPU to runtime suspend itself after being idle
+> > 3. Reboot the machine, the more sudden the better (e.g sysrq-b may help)
+> > 4. If nouveau loads up properly, reboot the machine again and go back to
+> > step 2 until you reproduce the issue
+> > 
+> > This results in some very strange behavior: the GPU will
+> > quite literally be left in exactly the same state it was in when the
+> > previously booted kernel started the reboot. This has all sorts of bad
+> > sideaffects: for starters, this completely breaks nouveau starting with a
+> > mysterious EVO channel failure that happens well before we've actually
+> > used the EVO channel for anything:
+> 
+> There are a lot of moving parts here that are probably obvious to you
+> but not to me.  I need help untangling this a bit so I'm comfortable
+> that we got to the root cause and that we're doing something logical
+> as opposed to something that just happens to make things work.  I
+> really don't know enough to even ask the right questions...
 
-If there is real momentum to destaging and locking the ABI down,
-that's great! I just want to avoid lots of little incompatible changes
-that don't get us fully out of staging and cause tons of pain for
-folks trying to make it work (because at that point, its easier for
-folks to stick to their own out of tree solutions).
+I completely understand! I'm pretty sure I'd be just as skeptical if I was in
+your position reviewing a patch like this :P
 
-> > So my initial thought is we simply use a /dev/ion_heaps/ dir which has
-> > a list of heap devicenodes. /dev/ion goes away.
-> >
-> > Currently ION_IOC_HEAP_QUERY returns:
-> >   char name[MAX_HEAP_NAME];
-> >   __u32 type;
-> >   __u32 heap_id;
-> >
-> > The names are discoverable via "ls /dev/ion_heaps/"
-> >
-> > The heap_id is really only useful as a handle, and after opening the
-> > heap device, we'll have the fd to use.
-> >
->
-> So why have heap_id at all then?
->
+> 
+> Is there a bug report for this?  Bugzilla.kernel.org would be ideal,
+> including "lspci -vvxxx" and dmidecode for the system.
+> 
+Not yet, but there has been discussion about this between nouveau developers
+on our IRC channel.
 
-Good question!  I'm hoping we can yank them, though internally I
-didn't quite get there with my first patchset. :)
+> Is this running a current BIOS?  The date in your log below looks
+> pretty recent, so I assume it is current.
 
-> > But to match the use case you describe:
-> > 1) ls /dev/ion_heaps/ for a list of heaps
->
-> Yuk, dirent.h and friends :(
+Yes, this is the most up to date BIOS available for this system.
 
-Yea, its not super fun, but its a standard interface, and the ugly
-bits can be done once in the helper library.
+> 
+> I assume "hybrid graphics" means you have two GPUs.  Do you select
+> hybrid graphics mode in the BIOS?
+
+Yes, the P50 has two available modes in the BIOS: Dedicated (e.g. only
+the nvidia GPU is used for everything), and Hybrid (i915 drives the
+built-in display panel, nouveau drives everything else). This bug only
+seems to occur in Hybrid mode.
+
+> 
+> I assume when you say the Nvidia GPU doesn't get reset on a full
+> reboot, you're talking about a "warm reboot", and that if you actually
+> remove the power and do a cold reboot, there's no problem?
+
+If you meant "unplugging the power adapter" when you said cutting the
+power we don't need to go that far, but shutting down the machine and
+restarting it by hand does avoid the problem yes.
+
+> 
+> I assume Nvidia GPU being active means you are using the performance
+> GPU.  Does that mean the integrated GPU is completely unused and Linux
+> does nothing at all with it?  Is Linux doing any switching between
+> them?  If so, how?  I am not 100% confident in the code I've seen that
+> does the switching.
+
+"Switching" isn't really the right word to describe it these days as the
+process for how this is handled has changed quite a bit in the last few
+years. As I mentioned above, the main intel GPU is used for driving the
+built-in display. As for the nvidia GPU, it's used to drive any kind of
+external displays connected to the P50 and can also be used to do
+rendering through DRI PRIME. The connector hookups are mostly hardcoded
+as there isn't really much of a mux, unlike the old days where we could
+actually do things like switch which GPU was driving the internal
+display on the fly with  vga-switcheroo using the _DSM methods provided
+by ACPI.
+
+Nowadays muxless laptops like the ThinkPad P50 don't make much use of
+_DSM for power management and instead just runtime suspend the dedicated
+nvidia GPU when it's not in use. We rely on the PCI subsystem to invoke
+the _PR3 ACPI methods for suspending and resuming the GPU and don't
+handle much of it ourselves anymore:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpu/drm/nouveau/nouveau_drm.c?h=v5.0-rc6#n860
+
+(You can ignore the call to nouveau_switcheroo_optimus_dsm() there; it
+ doesn't do anything on systems like the P50 where we detect _PR3)
+
+Additionally-if you see any problems with how we're handling things
+there we're all ears! We've been trying to fix as many issues with
+runtime PM as we can find.
+
+Something else to consider here too: I've only ever managed to reproduce
+this issue on this specific P50 SKU. Since I work on Desktop engineering
+at Red Hat we have access to a very large number of laptops with hybrid
+GPU setups. Interestingly I haven't ever reproduced anything like this
+on any of them, even P50 SKUs with the M2000M GPU instead of the M1000M
+(which are almost identical, they're both GM107 chips) I can follow the
+same steps that I followed to reproduce this bug and it never appears.
+
+Another thing to note: this bug also doesn't appear to happen 100% of
+the time. Some warm reboots the GPU will be reset by the BIOS perfectly
+fine.
+
+> 
+> > nouveau 0000:01:00.0: disp: chid 0 mthd 0000 data 00000400 00001000
+> > 00000002
+> > 
+> > Later on, this causes us to timeout trying to bring up the GR ctx:
+> > 
+> > ------------[ cut here ]------------
+> > nouveau 0000:01:00.0: timeout
+> > WARNING: CPU: 0 PID: 12 at
+> > drivers/gpu/drm/nouveau/nvkm/engine/gr/ctxgf100.c:1547
+> > gf100_grctx_generate+0x7b2/0x850 [nouveau]
+> > Modules linked in: nouveau mxm_wmi i915 crc32c_intel ttm i2c_algo_bit
+> > serio_raw drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops
+> > xhci_pci drm xhci_hcd i2c_core wmi video
+> > CPU: 0 PID: 12 Comm: kworker/0:1 Not tainted 5.0.0-rc5Lyude-Test+ #29
+> > Hardware name: LENOVO 20EQS64N0B/20EQS64N0B, BIOS N1EET82W (1.55 )
+> > 12/18/2018
+> > Workqueue: events_long drm_dp_mst_link_probe_work [drm_kms_helper]
+> > RIP: 0010:gf100_grctx_generate+0x7b2/0x850 [nouveau]
+> > Code: 85 d2 75 04 48 8b 57 10 48 89 95 28 ff ff ff e8 b4 37 0e e1 48 8b
+> > 95 28 ff ff ff 48 c7 c7 b1 97 57 a0 48 89 c6 e8 5a 38 c0 e0 <0f> 0b e9
+> > b9 fd ff ff 48 8b 85 60 ff ff ff 48 8b 40 10 48 8b 78 10
+> > RSP: 0018:ffffc900000b77f0 EFLAGS: 00010286
+> > RAX: 0000000000000000 RBX: ffff888871af8000 RCX: 0000000000000000
+> > RDX: ffff88887f41dfe0 RSI: ffff88887f415698 RDI: ffff88887f415698
+> > RBP: ffffc900000b78c8 R08: 0000000000000000 R09: 0000000000000000
+> > R10: 0000000000000000 R11: 0000000000000000 R12: ffff888872118000
+> > R13: 0000000000000000 R14: ffffffffa0551420 R15: ffffc900000b7818
+> > FS:  0000000000000000(0000) GS:ffff88887f400000(0000)
+> > knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00005644d0556ca8 CR3: 0000000002214006 CR4: 00000000003606f0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > Call Trace:
+> >  gf100_gr_init_ctxctl+0x27b/0x2d0 [nouveau]
+> >  gf100_gr_init+0x5bd/0x5e0 [nouveau]
+> >  gf100_gr_init_+0x61/0x70 [nouveau]
+> >  nvkm_gr_init+0x1d/0x20 [nouveau]
+> >  nvkm_engine_init+0xcb/0x210 [nouveau]
+> >  nvkm_subdev_init+0xd6/0x230 [nouveau]
+> >  nvkm_engine_ref.part.0+0x52/0x70 [nouveau]
+> >  nvkm_engine_ref+0x13/0x20 [nouveau]
+> >  nvkm_ioctl_new+0x12c/0x260 [nouveau]
+> >  ? nvkm_fifo_chan_child_del+0xa0/0xa0 [nouveau]
+> >  ? gf100_gr_dtor+0xe0/0xe0 [nouveau]
+> >  nvkm_ioctl+0xe2/0x180 [nouveau]
+> >  nvkm_client_ioctl+0x12/0x20 [nouveau]
+> >  nvif_object_ioctl+0x47/0x50 [nouveau]
+> >  nvif_object_init+0xc8/0x120 [nouveau]
+> >  nvc0_fbcon_accel_init+0x5c/0x960 [nouveau]
+> >  nouveau_fbcon_create+0x5a5/0x5d0 [nouveau]
+> >  ? drm_setup_crtcs+0x27b/0xcb0 [drm_kms_helper]
+> >  ? __lock_is_held+0x5e/0xa0
+> >  __drm_fb_helper_initial_config_and_unlock+0x27c/0x520 [drm_kms_helper]
+> >  drm_fb_helper_hotplug_event.part.29+0xae/0xc0 [drm_kms_helper]
+> >  drm_fb_helper_hotplug_event+0x1c/0x30 [drm_kms_helper]
+> >  nouveau_fbcon_output_poll_changed+0xb8/0x110 [nouveau]
+> >  drm_kms_helper_hotplug_event+0x2a/0x40 [drm_kms_helper]
+> >  drm_dp_send_link_address+0x176/0x1c0 [drm_kms_helper]
+> >  drm_dp_check_and_send_link_address+0xa0/0xb0 [drm_kms_helper]
+> >  drm_dp_mst_link_probe_work+0xa4/0xc0 [drm_kms_helper]
+> >  process_one_work+0x22f/0x5c0
+> >  worker_thread+0x44/0x3a0
+> >  kthread+0x12b/0x150
+> >  ? wq_pool_ids_show+0x140/0x140
+> >  ? kthread_create_on_node+0x60/0x60
+> >  ret_from_fork+0x3a/0x50
+> > irq event stamp: 22490
+> > hardirqs last  enabled at (22489): [<ffffffff8113281d>]
+> > console_unlock+0x44d/0x5f0
+> > hardirqs last disabled at (22490): [<ffffffff81001c03>]
+> > trace_hardirqs_off_thunk+0x1a/0x1c
+> > softirqs last  enabled at (22486): [<ffffffff81c00330>]
+> > __do_softirq+0x330/0x44d
+> > softirqs last disabled at (22479): [<ffffffff810c3105>]
+> > irq_exit+0xe5/0xf0
+> > WARNING: CPU: 0 PID: 12 at
+> > drivers/gpu/drm/nouveau/nvkm/engine/gr/ctxgf100.c:1547
+> > gf100_grctx_generate+0x7b2/0x850 [nouveau]
+> > ---[ end trace bf0976ed88b122a8 ]---
+> > nouveau 0000:01:00.0: gr: wait for idle timeout (en: 1, ctxsw: 0, busy: 1)
+> > nouveau 0000:01:00.0: gr: wait for idle timeout (en: 1, ctxsw: 0, busy: 1)
+> > nouveau 0000:01:00.0: fifo: fault 01 [WRITE] at 0000000000008000 engine
+> > 00 [GR] client 15 [HUB/SCC_NB] reason c4 [] on channel -1 [0000000000
+> > unknown]
+> > 
+> > From which the GPU never manages to recover. Booting without nouveau
+> > loading causes issues as well, since the GPU starts sending spurious
+> > interrupts that cause other device's IRQs to get disabled by the kernel:
+> > 
+> > irq 16: nobody cared (try booting with the "irqpoll" option)
+> > …
+> > handlers:
+> > [<000000007faa9e99>] i801_isr [i2c_i801]
+> > Disabling IRQ #16
+> > …
+> > serio: RMI4 PS/2 pass-through port at rmi4-00.fn03
+> > i801_smbus 0000:00:1f.4: Timeout waiting for interrupt!
+> > i801_smbus 0000:00:1f.4: Transaction timeout
+> > rmi4_f03 rmi4-00.fn03: rmi_f03_pt_write: Failed to write to F03 TX
+> > register (-110).
+> > i801_smbus 0000:00:1f.4: Timeout waiting for interrupt!
+> > i801_smbus 0000:00:1f.4: Transaction timeout
+> > rmi4_physical rmi4-00: rmi_driver_set_irq_bits: Failed to change enabled
+> > interrupts!
+> > 
+> > Which in turn causes the touchpad and sometimes even other things to get
+> > disabled.
+> > 
+> > Since the GPU staying on causes problems even without nouveau's
+> > intervention, we can't fix this problem from nouveau itself. We have to
+> > fix it as early as possible in the boot sequence in order to make sure
+> > that the GPU is in a clean state before it has a chance to spam us with
+> > interrupts and break things.
+> 
+> Was nouveau loaded *before* the reboot?  Or can you reproduce the
+> spurious interrupts even if you do a cold reboot without nouveau, then
+> a warm reboot again without nouveau?
+
+Nouveau was loaded before the reboot, yes, and as far as I'm aware this
+bug won't show up following the steps you described here. We wouldn't
+really notice the interrupts if this bug happened without nouveau loaded
+(since the BIOS doesn't arm them). However, I can confirm it's being
+reset each on each warm reboot when nouveau's completely disabled by
+sticking values into some MMIO registers we know the VBIOS doesn't touch
+followed by rebooting in order to see if they retain their value (this
+is how I discovered that the GPU wasn't being power cycled in the first
+place, if the values I stick into said registers gets cleared after
+reboot then the GPU was reset, otherwise it wasn't).
 
 
-> > Does that sound reasonable?  And I don't really mean to dismiss the
-> > dynamic picking of the best heap part, and having something like a
-> > opaque constraints bitfield that each device and each heap export so
-> > userland can match things up would be great.  But since we don't have
-> > any real solutions there yet(still!), it seems like most gralloc
-> > implementations are likely to be fully knowing which heap they want at
-> > allocation time.
-> >
->
-> I think you already touched on my main issue with this, the dynamic
-> picking not supported. Well, like you said it doesn't really exist now
-> either. And this doesn't look to stop one from adding it as some ioctl
-> extensions..
->
-> Okay, looks like you posted an RFC, lets move the discussion over to
-> that thread.
+> 
+> > So to do this, we add a new pci quirk using
+> > DECLARE_PCI_FIXUP_CLASS_FINAL that will be invoked before the PCI probe
+> > at boot finishes. From there, we check to make sure that this is indeed
+> > the specific P50 variant of this GPU. We also make sure that the GPU PCI
+> > device is advertising NoReset- in order to prevent us from trying to
+> > reset the GPU when the machine is in Dedicated graphics mode (where the
+> > GPU being initialized by the BIOS is normal and expected). Finally, we
+> > try mapping the MMIO space for the GPU which should only work if the GPU
+> > is actually active in D0 mode. We can then read the magic 0x2240c
+> > register on the GPU, which will have bit 1 set if the GPU's firmware has
+> > already been posted during a previous boot. Once we've confirmed all of
+> > this, we reset the PCI device and re-disable it - bringing the GPU back
+> > into a healthy state.
+> > 
+> > Signed-off-by: Lyude Paul <lyude@redhat.com>
+> > Cc: nouveau@lists.freedesktop.org
+> > Cc: dri-devel@lists.freedesktop.org
+> > Cc: Karol Herbst <kherbst@redhat.com>
+> > Cc: Ben Skeggs <skeggsb@gmail.com>
+> > Cc: stable@vger.kernel.org
+> > ---
+> >  drivers/pci/quirks.c | 65 ++++++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 65 insertions(+)
+> > 
+> > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> > index b0a413f3f7ca..948492fda8bf 100644
+> > --- a/drivers/pci/quirks.c
+> > +++ b/drivers/pci/quirks.c
+> > @@ -5117,3 +5117,68 @@ SWITCHTEC_QUIRK(0x8573);  /* PFXI 48XG3 */
+> >  SWITCHTEC_QUIRK(0x8574);  /* PFXI 64XG3 */
+> >  SWITCHTEC_QUIRK(0x8575);  /* PFXI 80XG3 */
+> >  SWITCHTEC_QUIRK(0x8576);  /* PFXI 96XG3 */
+> > +
+> > +/*
+> > + * On certain Lenovo Thinkpad P50 SKUs, specifically those with a Nvidia
+> > + * Quadro M1000M, the BIOS will occasionally make the mistake of not
+> > resetting
+> > + * the nvidia GPU between reboots if the system is configured to use
+> > hybrid
+> > + * graphics mode. This results in the GPU being left in whatever state it
+> > was
+> > + * in during the previous boot which causes spurious interrupts from the
+> > GPU,
+> > + * which in turn cause us to disable the wrong IRQs and end up breaking
+> > the
+> > + * touchpad. Unsurprisingly, this also completely breaks nouveau.
+> > + *
+> > + * Luckily, it seems a simple reset of the PCI device for the nvidia GPU
+> > + * manages to bring the GPU back into a clean state and fix all of these
+> > + * issues. Additionally since the GPU will report NoReset+ when the
+> > machine is
+> > + * configured in Dedicated display mode, we don't need to worry about
+> > + * accidentally resetting the GPU when it's supposed to already be
+> > + * initialized.
+> > + */
+> > +static void
+> > +quirk_lenovo_thinkpad_p50_nvgpu_survives_reboot(struct pci_dev *pdev)
+> > +{
+> > +	void __iomem *map;
+> > +	int ret;
+> > +
+> > +	if (pdev->subsystem_vendor != PCI_VENDOR_ID_LENOVO ||
+> > +	    pdev->subsystem_device != 0x222e ||
+> > +	    !pdev->reset_fn)
+> > +		return;
+> > +
+> > +	/*
+> > +	 * If we can't enable the device's mmio space, it's probably not even
+> > +	 * initialized. This is fine, and means we can just skip the quirk
+> > +	 * entirely.
+> > +	 */
+> > +	if (pci_enable_device_mem(pdev)) {
+> > +		pci_dbg(pdev, "Can't enable device mem, no reset needed\n");
+> > +		return;
+> > +	}
+> > +
+> > +	/* Taken from drivers/gpu/drm/nouveau/engine/device/base.c */
+> > +	map = ioremap(pci_resource_start(pdev, 0), 0x102000);
+> > +	if (!map) {
+> > +		pci_err(pdev, "Can't map MMIO space, this is probably very
+> > bad\n");
+> > +		goto out_disable;
+> > +	}
+> > +
+> > +	/*
+> > +	 * Be extra careful, and make sure that the GPU firmware is posted
+> > +	 * before trying a reset
+> > +	 */
+> > +	if (ioread32(map + 0x2240c) & 0x2) {
+> > +		pci_info(pdev,
+> > +			 FW_BUG "GPU left initialized by EFI, resetting\n");
+> > +		ret = pci_reset_function(pdev);
+> > +		if (ret < 0)
+> > +			pci_err(pdev, "Failed to reset GPU: %d\n", ret);
+> > +	}
+> > +
+> > +	iounmap(map);
+> > +out_disable:
+> > +	pci_disable_device(pdev);
+> > +}
+> > +
+> > +DECLARE_PCI_FIXUP_CLASS_FINAL(PCI_VENDOR_ID_NVIDIA, 0x13b1,
+> > +			      PCI_CLASS_DISPLAY_VGA, 8,
+> > +			      quirk_lenovo_thinkpad_p50_nvgpu_survives_reboot)
+> > ;
+> > -- 
+> > 2.20.1
+> > 
+-- 
+Cheers,
+	Lyude Paul
 
-Sounds good. I look forward to your input!
-
-thanks
--john
