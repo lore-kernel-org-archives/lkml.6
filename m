@@ -2,102 +2,181 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF5BC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C73C4360F
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:24:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E60062073D
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:24:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFC6420836
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:24:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550197479;
+	bh=DU8CL1zyXXLXMsSSamR3mxRVEo3Xi4RUvaqnPzs1Jwg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=U6yIkqgs7CswRJ+GniC5RH8HXauaSEx3cBti8RkoG7uLP3DzBwzFLFL+cYbauybFR
+	 XUOQn0rbsg8D9j2LuRXJ0VhrxoaB63k2qTzJRdh7wVZNmJslJhN44pAq7PELnmLOjB
+	 W2LgTewPhOAYY9rlJpi7QmFB11QWZknYZlwYFNXw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729180AbfBOCYh (ORCPT
+        id S2405241AbfBOCOt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:24:37 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:12005 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726165AbfBOCY3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:24:29 -0500
-Received: from fsav106.sakura.ne.jp (fsav106.sakura.ne.jp [27.133.134.233])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1F2ORdY039579;
-        Fri, 15 Feb 2019 11:24:27 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav106.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp);
- Fri, 15 Feb 2019 11:24:27 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1F2OREj039575;
-        Fri, 15 Feb 2019 11:24:27 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: (from i-love@localhost)
-        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id x1F2ORDs039574;
-        Fri, 15 Feb 2019 11:24:27 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Message-Id: <201902150224.x1F2ORDs039574@www262.sakura.ne.jp>
-X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
-Subject: Re: [PATCH AUTOSEL 4.20 49/77] block: cover another queue enter recursion
- via =?ISO-2022-JP?B?QklPX1FVRVVFX0VOVEVSRUQ=?=
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Ming Lei <ming.lei@redhat.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        NeilBrown <neilb@suse.com>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>, linux-block@vger.kernel.org
+        Thu, 14 Feb 2019 21:14:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54562 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2405192AbfBOCOn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:14:43 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A33C321B68;
+        Fri, 15 Feb 2019 02:14:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550196883;
+        bh=DU8CL1zyXXLXMsSSamR3mxRVEo3Xi4RUvaqnPzs1Jwg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=kh+D6A7luG4NJceQ+FZhQIL4ERrUW92d1/PRSD8+8RhnVe5U/+H4zdkzaLPG5d3aE
+         duPQVVvY9P589loySqHflFOwm0flR97OL2Nb5H4RvGEosnV7UnCa2EWBRaZtlPXdGA
+         tLHR6bTU/QpyIwGnKdXP72tX+haBYZuXx7FPeR34=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Silvio Cesare <silvio.cesare@gmail.com>,
+        Timur Tabi <timur@kernel.org>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Kees Cook <keescook@chromium.org>,
+        Will Deacon <will.deacon@arm.com>, Greg KH <greg@kroah.com>,
+        Willy Tarreau <w@1wt.eu>, Sasha Levin <sashal@kernel.org>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.9 09/27] ASoC: imx-audmux: change snprintf to scnprintf for possible overflow
+Date:   Thu, 14 Feb 2019 21:14:06 -0500
+Message-Id: <20190215021424.178979-9-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190215021424.178979-1-sashal@kernel.org>
+References: <20190215021424.178979-1-sashal@kernel.org>
 MIME-Version: 1.0
-Date:   Fri, 15 Feb 2019 11:24:27 +0900
-References: <20190215020855.176727-1-sashal@kernel.org> <20190215020855.176727-49-sashal@kernel.org>
-In-Reply-To: <20190215020855.176727-49-sashal@kernel.org>
-Content-Type: text/plain; charset="ISO-2022-JP"
-Content-Transfer-Encoding: 7bit
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch turned out to be wrong and was reverted. Please drop this patch. 
+From: Silvio Cesare <silvio.cesare@gmail.com>
 
-commit 947b7ac135b16aa60f9141ff72bd494eda0edb5e
-Author: Jens Axboe <axboe@kernel.dk>
-Date:   Sun Jan 27 06:35:28 2019 -0700
+[ Upstream commit c407cd008fd039320d147088b52d0fa34ed3ddcb ]
 
-    Revert "block: cover another queue enter recursion via BIO_QUEUE_ENTERED"
+Change snprintf to scnprintf. There are generally two cases where using
+snprintf causes problems.
 
-    We can't touch a bio after ->make_request_fn(), for all we know it could
-    already have been completed by the time this function returns.
+1) Uses of size += snprintf(buf, SIZE - size, fmt, ...)
+In this case, if snprintf would have written more characters than what the
+buffer size (SIZE) is, then size will end up larger than SIZE. In later
+uses of snprintf, SIZE - size will result in a negative number, leading
+to problems. Note that size might already be too large by using
+size = snprintf before the code reaches a case of size += snprintf.
 
-    This reverts commit 698cef173983b086977e633e46476e0f925ca01e.
+2) If size is ultimately used as a length parameter for a copy back to user
+space, then it will potentially allow for a buffer overflow and information
+disclosure when size is greater than SIZE. When the size is used to index
+the buffer directly, we can have memory corruption. This also means when
+size = snprintf... is used, it may also cause problems since size may become
+large.  Copying to userspace is mitigated by the HARDENED_USERCOPY kernel
+configuration.
 
-    Reported-by: syzbot+4df6ca820108fd248943@syzkaller.appspotmail.com
-    Signed-off-by: Jens Axboe <axboe@kernel.dk>
+The solution to these issues is to use scnprintf which returns the number of
+characters actually written to the buffer, so the size variable will never
+exceed SIZE.
 
-> From: Ming Lei <ming.lei@redhat.com>
-> 
-> [ Upstream commit 698cef173983b086977e633e46476e0f925ca01e ]
-> 
-> Except for blk_queue_split(), bio_split() is used for splitting bio too,
-> then the remained bio is often resubmit to queue via generic_make_request().
-> So the same queue enter recursion exits in this case too. Unfortunatley
-> commit cd4a4ae4683dc2 doesn't help this case.
-> 
-> This patch covers the above case by setting BIO_QUEUE_ENTERED before calling
-> q->make_request_fn.
-> 
-> In theory the per-bio flag is used to simulate one stack variable, it is
-> just fine to clear it after q->make_request_fn is returned. Especially
-> the same bio can't be submitted from another context.
-> 
-> Fixes: cd4a4ae4683dc2 ("block: don't use blocking queue entered for recursive bio submits")
-> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Cc: NeilBrown <neilb@suse.com>
-> Reviewed-by:  Mike Snitzer <snitzer@redhat.com>
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  block/blk-core.c  | 11 +++++++++++
->  block/blk-merge.c | 10 ----------
->  2 files changed, 11 insertions(+), 10 deletions(-)
+Signed-off-by: Silvio Cesare <silvio.cesare@gmail.com>
+Cc: Timur Tabi <timur@kernel.org>
+Cc: Nicolin Chen <nicoleotsuka@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Xiubo Li <Xiubo.Lee@gmail.com>
+Cc: Fabio Estevam <fabio.estevam@nxp.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Greg KH <greg@kroah.com>
+Signed-off-by: Willy Tarreau <w@1wt.eu>
+Acked-by: Nicolin Chen <nicoleotsuka@gmail.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ sound/soc/fsl/imx-audmux.c | 24 ++++++++++++------------
+ 1 file changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/sound/soc/fsl/imx-audmux.c b/sound/soc/fsl/imx-audmux.c
+index fc57da341d61..136df38c4536 100644
+--- a/sound/soc/fsl/imx-audmux.c
++++ b/sound/soc/fsl/imx-audmux.c
+@@ -86,49 +86,49 @@ static ssize_t audmux_read_file(struct file *file, char __user *user_buf,
+ 	if (!buf)
+ 		return -ENOMEM;
+ 
+-	ret = snprintf(buf, PAGE_SIZE, "PDCR: %08x\nPTCR: %08x\n",
++	ret = scnprintf(buf, PAGE_SIZE, "PDCR: %08x\nPTCR: %08x\n",
+ 		       pdcr, ptcr);
+ 
+ 	if (ptcr & IMX_AUDMUX_V2_PTCR_TFSDIR)
+-		ret += snprintf(buf + ret, PAGE_SIZE - ret,
++		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 				"TxFS output from %s, ",
+ 				audmux_port_string((ptcr >> 27) & 0x7));
+ 	else
+-		ret += snprintf(buf + ret, PAGE_SIZE - ret,
++		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 				"TxFS input, ");
+ 
+ 	if (ptcr & IMX_AUDMUX_V2_PTCR_TCLKDIR)
+-		ret += snprintf(buf + ret, PAGE_SIZE - ret,
++		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 				"TxClk output from %s",
+ 				audmux_port_string((ptcr >> 22) & 0x7));
+ 	else
+-		ret += snprintf(buf + ret, PAGE_SIZE - ret,
++		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 				"TxClk input");
+ 
+-	ret += snprintf(buf + ret, PAGE_SIZE - ret, "\n");
++	ret += scnprintf(buf + ret, PAGE_SIZE - ret, "\n");
+ 
+ 	if (ptcr & IMX_AUDMUX_V2_PTCR_SYN) {
+-		ret += snprintf(buf + ret, PAGE_SIZE - ret,
++		ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 				"Port is symmetric");
+ 	} else {
+ 		if (ptcr & IMX_AUDMUX_V2_PTCR_RFSDIR)
+-			ret += snprintf(buf + ret, PAGE_SIZE - ret,
++			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 					"RxFS output from %s, ",
+ 					audmux_port_string((ptcr >> 17) & 0x7));
+ 		else
+-			ret += snprintf(buf + ret, PAGE_SIZE - ret,
++			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 					"RxFS input, ");
+ 
+ 		if (ptcr & IMX_AUDMUX_V2_PTCR_RCLKDIR)
+-			ret += snprintf(buf + ret, PAGE_SIZE - ret,
++			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 					"RxClk output from %s",
+ 					audmux_port_string((ptcr >> 12) & 0x7));
+ 		else
+-			ret += snprintf(buf + ret, PAGE_SIZE - ret,
++			ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 					"RxClk input");
+ 	}
+ 
+-	ret += snprintf(buf + ret, PAGE_SIZE - ret,
++	ret += scnprintf(buf + ret, PAGE_SIZE - ret,
+ 			"\nData received from %s\n",
+ 			audmux_port_string((pdcr >> 13) & 0x7));
+ 
+-- 
+2.19.1
+
