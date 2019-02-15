@@ -2,71 +2,70 @@ Return-Path: <SRS0=lv5c=QW=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 460EEC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:41:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAEA3C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:43:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11C4D2089F
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:41:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8577D21B1C
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 10:43:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f/UVc6Im"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="zysXGPt1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405777AbfBOKk6 (ORCPT
+        id S1730030AbfBOKnD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 05:40:58 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51623 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405722AbfBOKkt (ORCPT
+        Fri, 15 Feb 2019 05:43:03 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52930 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729902AbfBOKnD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 05:40:49 -0500
-Received: by mail-wm1-f66.google.com with SMTP id b11so9451621wmj.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 02:40:48 -0800 (PST)
+        Fri, 15 Feb 2019 05:43:03 -0500
+Received: by mail-wm1-f67.google.com with SMTP id m1so9449446wml.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 02:43:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=weY+02WyQtYURWgOqk/sehPDo0eed1gHxxbmbDDrodg=;
-        b=f/UVc6ImQ+JYHzqD6YxuotULEey2fKgeyS3yYswfkwkQ9bkfh0X4X6Udrw3ghBr/f1
-         XFB9SrcCgYYlzMbn/588tI//Am87IzkoG+Jt1HOOQx/IU28j0D83f3MnGEoDThxzGNfk
-         SB84ayWhGNu/wCM8b6gEl/zfAWk4alNJ11HYh/LI2Exirx8KGMSTVNXJ+Mi7Pe3A+NxW
-         4fugOhb3MmE1KoYJd1XJL8+2L6o5oAixOvB6RPGUP6f6MEyhBwATkjYrZd8QjWUyg+tL
-         XAWzgyvJvL7XrkF4a8LUtfYVS5OmyUVYXuheANUFw5/nmqICMUhZMyZhLSwp3YTwRfUu
-         IjIg==
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+6owkBUTp+2ZeTKY1pZgHAXcKgyGqK8I58+oLqdsrG4=;
+        b=zysXGPt1xaS/nPsMacZ7ntWtzmXtX6YpzilWrwdKkgl++zmpowDvF17qpdCVdgXsAZ
+         vTN38KbUKfJ35INanWNa6nTUgTNAvqnPtmW1ZSVIIGFYKUnlmPSJKWi260LjHTC50+jZ
+         26k7r5nIvVtzLucLEDaTJRz+rvwSuJBUTDKpTbJyBRoHgAU/YT9+6I/tBFysnokbMdgA
+         1E2K9aA83mNKzPoAVIoAZ219iS9jX0f3qgEqGyi/ZDJ30F7iBSkEyb3TBqKPeslkRYhD
+         h4VbScVtwoHzaO42RLS42X5NmnXoRzqfFeGsdfQLzG2tT49HxMvd2Ans25ZVFI72Aon8
+         Vu7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=weY+02WyQtYURWgOqk/sehPDo0eed1gHxxbmbDDrodg=;
-        b=On1XDDv7vvQRIvv7ZZHqbXjMP4tj/cDjZZtyTrAHiPn9WcsUO5zDs37g2/DWr6TcAd
-         qLVsK8FJq3bY9AvtkqUCMq/Mlham0Dt/NDzRs66nwHCKqSMzvbMo0eyLYUkLK/Ft9iPo
-         AjVhjA7+RWn/53jlGrgVUJf0412krlLq+1Ul5tXsHxvsYYFptXG6PHw72ZeFxMtC+MqH
-         QiyjvZ2/Ike5/vo1bp8yrDeCWzGZb+lsr5z9yxoNFTvShndR3Mj91pXydqPcWeCOUuKl
-         Esj89osH4THJi/Aql2GmhPT96uIOw3KgmTZ16d47Pa8jASCdUdmnfl3RUMhOn0pYAuZJ
-         eSQQ==
-X-Gm-Message-State: AHQUAuaVqgwwv+d7dFRvgUwvxeHCdUfJG/hIT7HJGIKPSmQVswyyv4Ms
-        OuOo03Km+k4V7fnMgSTY2Br7OfBd3B8=
-X-Google-Smtp-Source: AHgI3Ibs8O+U+Dp8EkWM2PgpV1vdshA7g+D7a04x/EDW3qQ5nG8O9QMblnwXO4pYYm8EmKYyXY8Qqg==
-X-Received: by 2002:a7b:c3cf:: with SMTP id t15mr5894201wmj.103.1550227248097;
-        Fri, 15 Feb 2019 02:40:48 -0800 (PST)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id v4sm6525577wme.6.2019.02.15.02.40.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 15 Feb 2019 02:40:47 -0800 (PST)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-        Thierry Escande <thierry.escande@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 2/2] misc: fastrpc: Fix device_open when no session is available
-Date:   Fri, 15 Feb 2019 10:40:07 +0000
-Message-Id: <20190215104007.27103-3-srinivas.kandagatla@linaro.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=+6owkBUTp+2ZeTKY1pZgHAXcKgyGqK8I58+oLqdsrG4=;
+        b=o3ZURTigyPxnlHTfPclP7X1KlOwmdy54nL3KvzZyEvWU7gBTJgsviw19UT4I6Kzxgi
+         NnFvR6AxhorqS2hsKTp49JUOKxod7jcJ7DsecVOxX4LA7Rs/5AyP5hRuTjTBQtW9bVUE
+         Vakxgka6lcDNKDNuEqgHgZCCZ1ZnKBp32CM0aU57OoysdvuuDofcAUlSo7CCmFqJviOQ
+         Yh2o7KdDvJdREDVfKhdXdHjV5X2hsz9OGnQkeXmgMHqaSxlX8du5m/UG78QX0DqhRwlz
+         GDVlOMKsJaXqBXNDJz5ri7JLFXEVHPfGttNgvfBHxwQHK0p07Yi04jR4vacuUx7bU/29
+         l2nw==
+X-Gm-Message-State: AHQUAuaXVMjASXNm1k4Sk23+9cgYiXNwFGDnya2IvIOOsCF3d8/51eTR
+        MzSvK79anWtPIdyAEMqZdnqm/Q==
+X-Google-Smtp-Source: AHgI3IZBPy9YPYVQlxaByXhfA9ntSfEzIM+J/adbpUb4mrRzuI3jf9VFx5ieSbCbNizZFUzYz64yVw==
+X-Received: by 2002:a1c:c40c:: with SMTP id u12mr5771714wmf.11.1550227381617;
+        Fri, 15 Feb 2019 02:43:01 -0800 (PST)
+Received: from localhost.localdomain (aputeaux-684-1-7-43.w90-86.abo.wanadoo.fr. [90.86.124.43])
+        by smtp.gmail.com with ESMTPSA id b18sm2988310wro.80.2019.02.15.02.43.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Feb 2019 02:43:00 -0800 (PST)
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        stable@vger.kernel.org
+Subject: [PATCH] nvmem: core: don't check the return value of notifier chain call
+Date:   Fri, 15 Feb 2019 11:42:59 +0100
+Message-Id: <20190215104259.30732-1-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190215104007.27103-1-srinivas.kandagatla@linaro.org>
-References: <20190215104007.27103-1-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,42 +73,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Escande <thierry.escande@linaro.org>
+From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-This change fixes fastrpc_device_open() when no session is available and
-return an error in such case.
+blocking_notifier_call_chain() returns the value returned by the last
+registered callback. A positive return value doesn't indicate an error
+and an nvmem device should correctly register irrespective of any
+notifier callback failures. Drop the retval check.
 
-Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Fixes: bee1138bea15 ("nvmem: add a notifier chain")
+Cc: stable@vger.kernel.org
+Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- drivers/misc/fastrpc.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/nvmem/core.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index 4b0db33896df..89aec17738ef 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -1016,10 +1016,19 @@ static int fastrpc_device_open(struct inode *inode, struct file *filp)
- 	INIT_LIST_HEAD(&fl->user);
- 	fl->tgid = current->tgid;
- 	fl->cctx = cctx;
-+
-+	fl->sctx = fastrpc_session_alloc(cctx);
-+	if (!fl->sctx) {
-+		dev_err(&cctx->rpdev->dev, "No session available\n");
-+		mutex_destroy(&fl->mutex);
-+		kfree(fl);
-+
-+		return -EBUSY;
-+	}
-+
- 	spin_lock(&cctx->lock);
- 	list_add_tail(&fl->user, &cctx->users);
- 	spin_unlock(&cctx->lock);
--	fl->sctx = fastrpc_session_alloc(cctx);
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index f7301bb4ef3b..3ce65927e11c 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -686,9 +686,7 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
+ 	if (rval)
+ 		goto err_remove_cells;
  
- 	return 0;
- }
+-	rval = blocking_notifier_call_chain(&nvmem_notifier, NVMEM_ADD, nvmem);
+-	if (rval)
+-		goto err_remove_cells;
++	blocking_notifier_call_chain(&nvmem_notifier, NVMEM_ADD, nvmem);
+ 
+ 	return nvmem;
+ 
 -- 
 2.20.1
 
