@@ -3,170 +3,280 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A20CFC43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5276C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:43:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 688C82077B
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:43:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66BE9222DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 08:43:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="r/G/c1Qj"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TXYVnDJT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404418AbfBOInM (ORCPT
+        id S2404474AbfBOInd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 03:43:12 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:38789 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404378AbfBOInM (ORCPT
+        Fri, 15 Feb 2019 03:43:33 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:40756 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404378AbfBOInd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 03:43:12 -0500
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id x1F8h2p9029419;
-        Fri, 15 Feb 2019 17:43:03 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x1F8h2p9029419
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1550220183;
-        bh=ipwSqGKOtUHrs33U6yO/OuzKAUWDmn9Er4eFuQ213OY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=r/G/c1QjnEcKDOxcndklNUbzkPiWtjsSbxgkEJ5xCNVkeX4P2KgnfHMInSbRR3lm5
-         aAqJ3tzTmmbbGnWbuYFqTKyWcNWeneBxGFpbqqXR7+aum1qTdHkM2s4LUZl5oYEjvn
-         T1DN9rwPJBquAbBPYuagGLoaWgQ+SKYPoz8jF56yNKMiRUevGmgImo36p6h6C9DS/B
-         qa1Ky8H4/1zbvcAb7pDHueVkenmzjKI2gEOS7uzRfxbS7fy4otG9BY+FkkwErRUc68
-         md+TwLZuLDcyQw4JKbeozXTSkB8OXaZmDRz6ANlprYiFWFw4eTuffn6VDkVSahW9LB
-         0xta5NWD51prA==
-X-Nifty-SrcIP: [209.85.221.179]
-Received: by mail-vk1-f179.google.com with SMTP id l136so2063076vke.2;
-        Fri, 15 Feb 2019 00:43:03 -0800 (PST)
-X-Gm-Message-State: AHQUAuaOMHXNYsANPZ81vzk8jkBcdMbusPbkeFB0WuOfLLVaOGWo41W7
-        Z+14lXP1vIQIZMVynpn2bUyKbVfXC/x7UDinZ8Y=
-X-Google-Smtp-Source: AHgI3IYjWlycwOqTadsN4vWgeiW+eLZwajnwdi0xsiNH8+3caYRm3HAPLl12jEJEPXCeo/0gyPelxImT0q2cWCrC3NU=
-X-Received: by 2002:a1f:1ac3:: with SMTP id a186mr4404252vka.34.1550220182039;
- Fri, 15 Feb 2019 00:43:02 -0800 (PST)
+        Fri, 15 Feb 2019 03:43:33 -0500
+Received: by mail-ot1-f66.google.com with SMTP id s5so15285668oth.7;
+        Fri, 15 Feb 2019 00:43:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KZwdBdXj+6/7xoeWytQeMbd4oICIIcE3oliGzGSC/DE=;
+        b=TXYVnDJTyUa6KDvZbx+s0Xv/SAagFIowNo4MZPsOj0nTDkQMG8pz6dhWVAsAy16f23
+         kzs4Ibcf0LVln7XBnPiv5ishrp8KI6uZwYcXSfaQwphgjCkWublnpTzSI//NZY4PfiIU
+         vl+VGyfb9c94GOmPin4awvo9H1PWuTKWda59TRboWk9rn1vduBr4aaDBR6c2IGevPJ9Q
+         iUZAtYZmLT4O74Db/wR7ATgDUL2N/HOgczC5uY7IfV07ieGNFy8FCT/Rx8WUiOWGzIq3
+         GgXeNX7AXyQHliGc7AAVSfNMOGWCRNmDA88f9CuscVTSCaxTNEz52Odtoaf2e50NftaX
+         z9ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KZwdBdXj+6/7xoeWytQeMbd4oICIIcE3oliGzGSC/DE=;
+        b=rrlfcSfhxGxGgb5yMU7fjkULKixSaryXx5GKbyyin8muaPS6s53nZJJBBOL7Ycyfg/
+         uL1S4z3Ea+lPjT4pOOdMt+0MrwVtMBPvIn39p/ZzRsw0dv99ZD4vQs5XGtoIm+BnyuZm
+         RqMMclc06HaxBgG0ZJYkMnPLlbdAS3vrFWYFAJzPiU5tf6gSJ75mqKME404+aZR56i6h
+         L84LujJq5cHmhUajAvCg4mD76Y617wNPQjPv0CjPgVOGU/6mKkPgD8cVB3zuFuXZQoAA
+         fFXSIGcXuyE58WcHIPemXe6Q6GpN2qjFiqmja1ZJVFMxzCyxE4UA4RvTQeRDPyD1maM1
+         M+tg==
+X-Gm-Message-State: AHQUAuYHoA6U9sPLsB0RASq4E9IStjZfaJEJcVVG9Nn4dewe8VsgScWv
+        PIRNha01GFP+imi/ijdMeBl5VfCg8FA20yMm8C2UPWcj
+X-Google-Smtp-Source: AHgI3Iba8WjIZkzojNaiGgB3zFtrtGJmPZ4hL07wqlK+q5/NJ9swArfpRCj/08mPl11y6fV+Cw6FESAwYUQI3d0iRFA=
+X-Received: by 2002:a9d:6195:: with SMTP id g21mr4959436otk.76.1550220211817;
+ Fri, 15 Feb 2019 00:43:31 -0800 (PST)
 MIME-Version: 1.0
-References: <20190213174005.28785-1-hch@lst.de> <20190213174005.28785-9-hch@lst.de>
-In-Reply-To: <20190213174005.28785-9-hch@lst.de>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 15 Feb 2019 17:42:25 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASycJG=26WUPwJsMwYPhj26YFhj+NH5jNcMGx3PQ-miTQ@mail.gmail.com>
-Message-ID: <CAK7LNASycJG=26WUPwJsMwYPhj26YFhj+NH5jNcMGx3PQ-miTQ@mail.gmail.com>
-Subject: Re: [PATCH 08/11] lib: consolidate the GENERIC_BUG symbol
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-xtensa@linux-xtensa.org,
-        linux-s390 <linux-s390@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+References: <20190213214052.2427-1-linux.amoon@gmail.com> <20190213214052.2427-3-linux.amoon@gmail.com>
+ <CAJKOXPcor0PC-H73nTyVnPYSk+1raL5Q0WSdH-MLvzVz2+u+pA@mail.gmail.com>
+ <CANAwSgQfarF9VAJwPuGgaM3T5WFPqSdxDU8OP_OLMb_GWCB=XQ@mail.gmail.com> <CAJKOXPdo8cVwL8kb4NzvvDUDaVgAgDf3OM=aJqVdkyPminPG2A@mail.gmail.com>
+In-Reply-To: <CAJKOXPdo8cVwL8kb4NzvvDUDaVgAgDf3OM=aJqVdkyPminPG2A@mail.gmail.com>
+From:   Anand Moon <linux.amoon@gmail.com>
+Date:   Fri, 15 Feb 2019 14:13:21 +0530
+Message-ID: <CANAwSgRXUgykeiPgvBtx63ffFhqoswru7ObNFrnPXF9niZWyhA@mail.gmail.com>
+Subject: Re: [RFC 2/2] soc: samsung: pmu: Add the PMU data of exynos4412 to
+ support low-power state
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Pankaj Dubey <pankaj.dubey@samsung.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 2:40 AM Christoph Hellwig <hch@lst.de> wrote:
+Hi Krzysztof,
+
+On Fri, 15 Feb 2019 at 13:03, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
-> And just let the architectures that want it select the symbol.
-> Same for GENERIC_BUG_RELATIVE_POINTERS.
+> On Thu, 14 Feb 2019 at 19:37, Anand Moon <linux.amoon@gmail.com> wrote:
+> >
+> > Hi Krzysztof,
+> >
+> > Thanks for your review comments.
+> >
+> > On Thu, 14 Feb 2019 at 18:29, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > >
+> > > On Wed, 13 Feb 2019 at 22:41, Anand Moon <linux.amoon@gmail.com> wrote:
+> > > >
+> > > > This patch adds configration for PMU (Power Management Unit) state
+> > > > tuning for exynos4412 SoC in order to enter low-power mode during
+> > > > suspend power modes and help resume from suspend state.
+> > >
+> > > The U3 and Trats2 already enter STOP/S2R so please describe what
+> > > exactly you change.
+> > >
+> > > > Fixes: bfce552d0b1 ("drivers: soc: Add support for Exynos PMU driver")
+> > >
+> > > How it fixes it? What was broken in that commit?
+> >
+> > * I was not aware on their is common framework for suspend and resume
+> > other than setting this here.I only look in to some the other exynos
+> > pmu architecture
+> > and referring 3.10.x kernel to model my changes.*
 >
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-
-
-This slightly changes the behavior of GENERIC_BUG_RELATIVE_POINTERS
-for arm64, riscv, x86.
-Previously, GENERIC_BUG_RELATIVE_POINTERS was enabled only when BUG=y.
-
-
-Having said that, this is not a big deal.
-When CONFIG_GENERIC_BUG=n, CONFIG_GENERIC_BUG_RELATIVE_POINTERS
-is actually don't care.
-
-
-
-If you change this,
-could you add some comments in commit description?
-
-
-> ---
-
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index c39dac831f08..913b2ca7ec22 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -85,6 +85,8 @@ config ARM64
->         select FRAME_POINTER
->         select GENERIC_ALLOCATOR
->         select GENERIC_ARCH_TOPOLOGY
-> +       select GENERIC_BUG if BUG
-> +       select GENERIC_BUG_RELATIVE_POINTERS
-
-Precisely,
-
-          select GENERIC_BUG_RELATIVE_POINTERS if BUG
-
-
-
-
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 732614eb3683..c410ed896567 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -19,6 +19,8 @@ config RISCV
->         select ARCH_WANT_FRAME_POINTERS
->         select CLONE_BACKWARDS
->         select COMMON_CLK
-> +       select GENERIC_BUG if BUG
-> +       select GENERIC_BUG_RELATIVE_POINTERS if 64BIT
-
-Precisely,
-
-          select GENERIC_BUG_RELATIVE_POINTERS if 64BIT && BUG
-
-
-> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-> index 15ccdd04814e..2a5c12be633e 100644
-> --- a/arch/s390/Kconfig
-> +++ b/arch/s390/Kconfig
-> @@ -17,12 +17,6 @@ config ARCH_HAS_ILOG2_U64
->  config GENERIC_HWEIGHT
->         def_bool y
+> Suspend in general should be working already so adding this code just
+> because is not a valid reason. Please specify what is not working
+> first.
 >
-> -config GENERIC_BUG
-> -       def_bool y if BUG
-> -
-> -config GENERIC_BUG_RELATIVE_POINTERS
-> -       def_bool y
-> -
 
+Please accept *my apology* for not studying the code changes required.
+Sorry for wasting your precious time in review.
 
-Hmm, s390 enables GENERIC_BUG_RELATIVE_POINTERS
-irrespective of BUG...
+My only intention with this patch was to correctly initialize some PMU
+parameters.
+which might be wrong. so lets drop this.
 
+> > >
+> > > > Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> > > > Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> > > > Cc: Chanwoo Choi <cw00.choi@samsung.com>
+> > > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> > > > ---
+> > > >
+> > > > Changes from previous patch.
+> > > > New patch to this series to support suspend and resume state
+> > > >
+> > > > Changes have been tested on microSD card but fails to resume on cMMC.
+> > > > It need to be investigated and more debuging
+> > > > ---
+> > > >  drivers/soc/samsung/exynos4-pmu.c           | 83 +++++++++++++++++++++
+> > > >  include/linux/soc/samsung/exynos-regs-pmu.h | 21 ++++++
+> > > >  2 files changed, 104 insertions(+)
+> > > >
+> > > > diff --git a/drivers/soc/samsung/exynos4-pmu.c b/drivers/soc/samsung/exynos4-pmu.c
+> > > > index a7cdbf1aac0c..d261a0d2371e 100644
+> > > > --- a/drivers/soc/samsung/exynos4-pmu.c
+> > > > +++ b/drivers/soc/samsung/exynos4-pmu.c
+> > > > @@ -200,10 +200,93 @@ static const struct exynos_pmu_conf exynos4412_pmu_config[] = {
+> > > >         { PMU_TABLE_END,},
+> > > >  };
+> > > >
+> > > > +static unsigned int const exynos4412_list_feed[] = {
+> > > > +       EXYNOS4_ARM_CORE0_OPTION,
+> > > > +       EXYNOS4_ARM_CORE1_OPTION,
+> > > > +       EXYNOS4_ARM_CORE2_OPTION,
+> > > > +       EXYNOS4_ARM_CORE3_OPTION,
+> > > > +       EXYNOS4_ARM_COMMON_OPTION,
+> > > > +       EXYNOS4_CAM_OPTION,
+> > > > +       EXYNOS4_TV_OPTION,
+> > > > +       EXYNOS4_MFC_OPTION,
+> > > > +       EXYNOS4_G3D_OPTION,
+> > > > +       EXYNOS4_LCD0_OPTION,
+> > > > +       EXYNOS4_ISP_OPTION,
+> > > > +       EXYNOS4_MAUDIO_OPTION,
+> > > > +       EXYNOS4_GPS_OPTION,
+> > > > +       EXYNOS4_GPS_ALIVE_OPTION,
+> > > > +};
+> > > > +
+> > > > +static void exynos4412_pmu_central_seq(bool enable)
+> > >
+> > > You name the argument as "enable"  but during initialization and
+> > > system running you pass here false. It confuses me. What do you enable
+> > > here?
+> > >
+> >
+> > Yep your are correct need to drop this function as already done in
+> > common frame work.
+> >
+> > > > +{
+> > > > +       unsigned int value;
+> > > > +
+> > > > +       value = pmu_raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
+> > > > +       if (enable)
+> > > > +               value &= ~S5P_CENTRAL_LOWPWR_CFG;
+> > > > +       else
+> > > > +               value |= S5P_CENTRAL_LOWPWR_CFG;
+> > > > +       pmu_raw_writel(value, S5P_CENTRAL_SEQ_CONFIGURATION);
+> > >
+> > > You duplicate exynos_pm_central_suspend() without removing the original code.
+> > >
+> > > > +
+> > > > +       value = pmu_raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION_COREBLK);
+> > > > +       if (enable)
+> > > > +               value &= ~S5P_CENTRAL_LOWPWR_CFG;
+> > > > +       else
+> > > > +               value |= S5P_CENTRAL_LOWPWR_CFG;
+> > >
+> > > As manual says - set this register only if you disable C2C. Our entire
+> > > low power configuration for STOP mode is for C2C enabled case so you
+> > > add inconsistent configuration.
+> >
+> > Ok Sorry I overlook this code change.
+> >
+> > Enable system power down. Set only CENTRAL_SEQ_CONFIGURATION register
+> > if you disable C2C.
+> > Set both CENTRAL_SEQ_CONFIGURATION and
+> > CENTRAL_SEQ_CONFIGURATION_COREBLK registers if you enable C2C.
+> >
+> > > > +       pmu_raw_writel(value, S5P_CENTRAL_SEQ_CONFIGURATION_COREBLK);
+> > > > +}
+> > > > +
+> > > > +static void exynos4412_pmu_init(void)
+> > > > +{
+> > > > +       unsigned int value;
+> > > > +       int i;
+> > > > +
+> > > > +       /* Enable USE_STANDBY_WFI for all CORE */
+> > > > +       pmu_raw_writel(S5P_USE_STANDBY_WFI_ALL, S5P_CENTRAL_SEQ_OPTION);
+> > >
+> > > This does not look related to improving suspend... it looks unrelated.
+> > >
+> >
+> > Ok  yes your are correct all ready done in comment frame work.
+> >
+> > "Execute WFI/WFE for all CPU cores. As soon as all the CPU cores in
+> > Exynos 4412 SCP enter STANDBY mode"
+> > > > +
+> > > > +       /* Decides whether to use retention capability */
+> > > > +       value  = pmu_raw_readl(S5P_ARM_L2_0_OPTION);
+> > > > +       value &= ~EXYNOS_L2_USE_RETENTION;
+> > > > +       pmu_raw_writel(value, S5P_ARM_L2_0_OPTION);
+> > > > +
+> > > > +       value = pmu_raw_readl(S5P_ARM_L2_1_OPTION);
+> > > > +       value &= ~EXYNOS_L2_USE_RETENTION;
+> > > > +       pmu_raw_writel(value, S5P_ARM_L2_1_OPTION);
+> > > > +
+> > > > +       /* Set PSHOLD port for output high */
+> > > > +       value = pmu_raw_readl(S5P_PS_HOLD_CONTROL);
+> > > > +       value |= S5P_PS_HOLD_OUTPUT_HIGH;
+> > > > +       pmu_raw_writel(value, S5P_PS_HOLD_CONTROL);
+> > > > +
+> > > > +       /* Enable signal for PSHOLD port */
+> > > > +       value = pmu_raw_readl(S5P_PS_HOLD_CONTROL);
+> > > > +       value |= S5P_PS_HOLD_EN;
+> > > > +       pmu_raw_writel(value, S5P_PS_HOLD_CONTROL);
+> > > > +
+> > >
+> > > The same - not related.
+> >
+> > PS_HOLD_CONTROL need to be set under following set
+> > Hardware reset                             Reset
+> > Watchdog timer reset                   Keep its value
+> > Software reset                              Keep its value
+> > Warm reset                                   Keep its value
+> > Wakeup reset                               Keep its value
+>
+> Which is not related to suspend...
+>
+> >
+> > >
+> > > > +       /* Enable only SC_FEEDBACK */
+> > > > +       for (i = 0; i < ARRAY_SIZE(exynos4412_list_feed); i++) {
+> > > > +               value =  pmu_raw_readl(exynos4412_list_feed[i]);
+> > > > +               value &= ~(EXYNOS_USE_SC_COUNTER);
+> > > > +               value |= EXYNOS_USE_SC_FEEDBACK;
+> > > > +               pmu_raw_writel(value, exynos4412_list_feed[i]);
+> > >
+> > > Why do you prefer to use feedback instead of counter?
+> > >
+> >
+> > Their is a note below if we use this setting.
+> > NOTE: Either one of USE_SC_FEEDBACK and USE_SC_COUNTER should be activated.
+>
+> This is not the answer to my question at all.
+>
+> Best regards,
+> Krzysztof
 
+Once again sorry for wasting your time.
+I know I have the improve a lot of things.
 
-
-
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 1bd4f19b6b28..f4cb31174e1b 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -91,6 +91,8 @@ config X86
->         select DCACHE_WORD_ACCESS
->         select EDAC_ATOMIC_SCRUB
->         select EDAC_SUPPORT
-> +       select GENERIC_BUG                      if BUG
-> +       select GENERIC_BUG_RELATIVE_POINTERS    if X86_64
-
-Precisely,
-
-          select GENERIC_BUG_RELATIVE_POINTERS    if X86_64 && BUG
-
-
-
-
-
-
---
 Best Regards
-Masahiro Yamada
+
+-Anand
