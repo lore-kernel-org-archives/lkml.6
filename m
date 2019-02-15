@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFDE1C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:09:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC7FC43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:09:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FD9E222A1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:09:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2009021B68
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 02:09:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550196593;
-	bh=e8uQXtz580xmLzODWsMx0M9RT/GzWLnSSY+bZdH4FDY=;
+	s=default; t=1550196596;
+	bh=8UN0B3TRD+hX+0lpLPRtGT187EZVzcIQSZfk1WFAYjg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NOCe2GlUVlFOmw+7wKct7Wml8wYEf86g+32aMzSiqwjTPxILQ69IqtvlrK4uZBYfa
-	 wTWqwbmSMM3eE1RMfYW8AC6OhoZdv1ytmSwW2xp0SfbOzwzYwaXx5SMogyAdB0GkoA
-	 OU6oBn6vnjKqgb+z6bu9a0uJBZ2M3RwHG6biuaC0=
+	b=EX8r1BOem6jK5/OHlsrdwt0s0VeUnGZsFss1hqV1jsQ/OD0pbTnYLpX3y7alBUydr
+	 b31mY7jJbSA6GJ3yEbtKCqBJtOVYEUhJSb4LwPnxvskvLkrjTJAU/Ry5HqXntEh/Wh
+	 5LbAtP+7vEvlh6oLeL1VezT8dQjXTYSbjTUCVWoA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389415AbfBOCJw (ORCPT
+        id S2389502AbfBOCJy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Feb 2019 21:09:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49924 "EHLO mail.kernel.org"
+        Thu, 14 Feb 2019 21:09:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388861AbfBOCJp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Feb 2019 21:09:45 -0500
+        id S2389129AbfBOCJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Feb 2019 21:09:48 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F84E222A1;
-        Fri, 15 Feb 2019 02:09:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FF7F222D4;
+        Fri, 15 Feb 2019 02:09:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550196584;
-        bh=e8uQXtz580xmLzODWsMx0M9RT/GzWLnSSY+bZdH4FDY=;
+        s=default; t=1550196587;
+        bh=8UN0B3TRD+hX+0lpLPRtGT187EZVzcIQSZfk1WFAYjg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TjYVNam4lvcmw7oUxM3b7Q6GothnQkZrPmYlJhEmUUT30uNzDPrg9tmfTi4m9De/U
-         Cmp2cipnqVO/ETPA4rKwgsRnCS8//im+xefMPB12v+da6vaxVSqUh75AyyyeoDa3o8
-         DuBKCjPQlXK1fGU5iCVq6eieuXu2rM0aXekf1edQ=
+        b=ctQJo0u67GiuEWZN2IaAF2qf5J7L0u6f3TAAndhfBF465KrazxCfVbFlJ+9hnFQ6V
+         SaNb3eBq9Xn8GozujYBZLJUTW5QTRc3sCxeWYNJiMTLFoR5UHWb1f0QxMawJ79Omtk
+         +OwrujlWIsm84xdAHQfLP0zyCo4E0H5ohjTsqlFE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alban Bedel <albeu@free.fr>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
+Cc:     Yang Yingliang <yangyingliang@huawei.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 28/77] phy: ath79-usb: Fix the main reset name to match the DT binding
-Date:   Thu, 14 Feb 2019 21:08:06 -0500
-Message-Id: <20190215020855.176727-28-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 31/77] irqchip/gic-v3-mbi: Fix uninitialized mbi_lock
+Date:   Thu, 14 Feb 2019 21:08:09 -0500
+Message-Id: <20190215020855.176727-31-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190215020855.176727-1-sashal@kernel.org>
 References: <20190215020855.176727-1-sashal@kernel.org>
@@ -58,43 +57,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alban Bedel <albeu@free.fr>
+From: Yang Yingliang <yangyingliang@huawei.com>
 
-[ Upstream commit 827cb0323928952c0db9515aba9d534fb1285b3f ]
+[ Upstream commit c530bb8a726a37811e9fb5d68cd6b5408173b545 ]
 
-I submitted this driver several times before it got accepted. The
-first series hasn't been accepted but the DTS binding did made it.
-I then made a second series that added generic reset support to the
-PHY core, this in turn required a change to the DT binding. This
-second series seemed to have been ignored, so I did a third one
-without the change to the PHY core and the DT binding update, and this
-last attempt finally made it.
+The mbi_lock mutex is left uninitialized, so let's use DEFINE_MUTEX
+to initialize it statically.
 
-But two months later the DT binding update from the second series has
-been integrated too. So now the driver doesn't match the binding and
-the only DTS using it. This patch fix the driver to match the new
-binding.
-
-Signed-off-by: Alban Bedel <albeu@free.fr>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Fixes: 505287525c24d ("irqchip/gic-v3: Add support for Message Based Interrupts as an MSI controller")
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/phy/qualcomm/phy-ath79-usb.c | 2 +-
+ drivers/irqchip/irq-gic-v3-mbi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/phy/qualcomm/phy-ath79-usb.c b/drivers/phy/qualcomm/phy-ath79-usb.c
-index f7d64f3910b4..09a77e556ece 100644
---- a/drivers/phy/qualcomm/phy-ath79-usb.c
-+++ b/drivers/phy/qualcomm/phy-ath79-usb.c
-@@ -69,7 +69,7 @@ static int ath79_usb_phy_probe(struct platform_device *pdev)
- 	if (!priv)
- 		return -ENOMEM;
+diff --git a/drivers/irqchip/irq-gic-v3-mbi.c b/drivers/irqchip/irq-gic-v3-mbi.c
+index ad70e7c416e3..fbfa7ff6deb1 100644
+--- a/drivers/irqchip/irq-gic-v3-mbi.c
++++ b/drivers/irqchip/irq-gic-v3-mbi.c
+@@ -24,7 +24,7 @@ struct mbi_range {
+ 	unsigned long		*bm;
+ };
  
--	priv->reset = devm_reset_control_get(&pdev->dev, "usb-phy");
-+	priv->reset = devm_reset_control_get(&pdev->dev, "phy");
- 	if (IS_ERR(priv->reset))
- 		return PTR_ERR(priv->reset);
- 
+-static struct mutex		mbi_lock;
++static DEFINE_MUTEX(mbi_lock);
+ static phys_addr_t		mbi_phys_base;
+ static struct mbi_range		*mbi_ranges;
+ static unsigned int		mbi_range_nr;
 -- 
 2.19.1
 
