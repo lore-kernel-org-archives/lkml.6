@@ -3,43 +3,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD680C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15120C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:58:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A96C3222A1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:55:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DABCB2192C
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 18:58:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403870AbfBOSzh (ORCPT
+        id S2403906AbfBOS6q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 13:55:37 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:59582 "EHLO mx1.redhat.com"
+        Fri, 15 Feb 2019 13:58:46 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:42130 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403761AbfBOSzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 13:55:36 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        id S2390784AbfBOS6o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 13:58:44 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2DC44C0ADB59;
-        Fri, 15 Feb 2019 18:55:35 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 891FF3D1E0;
+        Fri, 15 Feb 2019 18:58:42 +0000 (UTC)
 Received: from llong.remote.csb (dhcp-17-59.bos.redhat.com [10.18.17.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 878FC102497F;
-        Fri, 15 Feb 2019 18:55:32 +0000 (UTC)
-Subject: Re: [PATCH 00/10] locking/rwsem: Rwsem rearchitecture part 1
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 52DD15C21E;
+        Fri, 15 Feb 2019 18:58:35 +0000 (UTC)
+Subject: Re: [PATCH v4 0/3] locking/rwsem: Rwsem rearchitecture part 0
+To:     Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-c6x-dev@linux-c6x.org,
+        uclinux-h8-devel@lists.sourceforge.jp,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        linux-arch@vger.kernel.org, x86@kernel.org,
         Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>,
         Davidlohr Bueso <dave@stgolabs.net>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Tim Chen <tim.c.chen@linux.intel.com>
-References: <1550017627-14504-1-git-send-email-longman@redhat.com>
- <20190215184904.GD15084@fuggles.cambridge.arm.com>
+References: <1550095217-12047-1-git-send-email-longman@redhat.com>
+ <20190214103715.GI32494@hirez.programming.kicks-ass.net>
+ <20190215184056.GC15084@fuggles.cambridge.arm.com>
 From:   Waiman Long <longman@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
@@ -86,39 +98,59 @@ Autocrypt: addr=longman@redhat.com; prefer-encrypt=mutual; keydata=
  wGA5uquIgb8p3/ENgYpDPrsZ72CxVC2NEJjJwwnRBStjJOGQX4lV1uhN1XsZjBbRHdKF2W9g
  weim8xU=
 Organization: Red Hat
-Message-ID: <a3b2e39c-597b-916f-8503-eb811583ea95@redhat.com>
-Date:   Fri, 15 Feb 2019 13:55:31 -0500
+Message-ID: <a45d8b68-5623-d6fe-8080-072994f7625e@redhat.com>
+Date:   Fri, 15 Feb 2019 13:58:34 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20190215184904.GD15084@fuggles.cambridge.arm.com>
+In-Reply-To: <20190215184056.GC15084@fuggles.cambridge.arm.com>
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 15 Feb 2019 18:55:35 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 15 Feb 2019 18:58:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/15/2019 01:49 PM, Will Deacon wrote:
-> On Tue, Feb 12, 2019 at 07:26:57PM -0500, Waiman Long wrote:
->> This is part 1 of a 3-part (0/1/2) series to rearchitect the internal
->> operation of rwsem. This depends on the part 0 patches sent out previously
+On 02/15/2019 01:40 PM, Will Deacon wrote:
+> On Thu, Feb 14, 2019 at 11:37:15AM +0100, Peter Zijlstra wrote:
+>> On Wed, Feb 13, 2019 at 05:00:14PM -0500, Waiman Long wrote:
+>>> v4:
+>>>  - Remove rwsem-spinlock.c and make all archs use rwsem-xadd.c.
+>>>
+>>> v3:
+>>>  - Optimize __down_read_trylock() for the uncontended case as suggested
+>>>    by Linus.
+>>>
+>>> v2:
+>>>  - Add patch 2 to optimize __down_read_trylock() as suggested by PeterZ.
+>>>  - Update performance test data in patch 1.
+>>>
+>>> The goal of this patchset is to remove the architecture specific files
+>>> for rwsem-xadd to make it easer to add enhancements in the later rwsem
+>>> patches. It also removes the legacy rwsem-spinlock.c file and make all
+>>> the architectures use one single implementation of rwsem - rwsem-xadd.c.
+>>>
+>>> Waiman Long (3):
+>>>   locking/rwsem: Remove arch specific rwsem files
+>>>   locking/rwsem: Remove rwsem-spinlock.c & use rwsem-xadd.c for all
+>>>     archs
+>>>   locking/rwsem: Optimize down_read_trylock()
+>> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 >>
->> https://lore.kernel.org/lkml/1549913486-16799-1-git-send-email-longman@redhat.com
->>
->> This part lays the foundation for part 2 without making any functional
->> changes. This part includes the following changes:
-> Did you post part 2 anywhere? I can't seem to find it for some reason.
->
-> Cheers,
+>> with the caveat that I'm happy to exchange patch 3 back to my earlier
+>> suggestion in case Will expesses concerns wrt the ARM64 performance of
+>> Linus' suggestion.
+> Right, the current proposal doesn't work well for us, unfortunately. Which
+> was your earlier suggestion?
 >
 > Will
 
-I haven't posted the part 2 yet. I will need to repost part 1 to work
-with part 0 v4.
+In my posting yesterday, I showed that most of the trylocks done were
+actually uncontended. Assuming that pattern hold for the most of the
+workloads, it will not that bad after all.
 
 -Longman
 
