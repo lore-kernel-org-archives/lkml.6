@@ -3,92 +3,96 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B95C43381
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF5E3C43381
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:12:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C16D321925
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:10:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DD41222D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Feb 2019 17:12:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=posk.io header.i=@posk.io header.b="bNJ0NN3+"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ea3pCxb8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729633AbfBORKv (ORCPT
+        id S1730406AbfBORMX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 12:10:51 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:37348 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfBORKo (ORCPT
+        Fri, 15 Feb 2019 12:12:23 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37853 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727674AbfBORMR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 12:10:44 -0500
-Received: by mail-ed1-f68.google.com with SMTP id m12so8552597edv.4
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 09:10:43 -0800 (PST)
+        Fri, 15 Feb 2019 12:12:17 -0500
+Received: by mail-lj1-f196.google.com with SMTP id r10-v6so8996831ljj.4
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 09:12:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=posk.io; s=google;
+        d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vqvSX/2/fIBl118riJNMYt+kfHwPe23nI2BC5oSQwIM=;
-        b=bNJ0NN3+w+WbKHzXmt2i0gpzGU8+pvJ81YHGqFoMCA46LzV432FvzYWb+ehgCP1Fjg
-         FWiEUD7qvjcHtYScb6SNiLaLO8ZIqv1lgZ6VzcAXxNDQc/Ya+nPPw6A19poVw2QfXG3G
-         BMMJX1rC5GIlaP+WAYNOOMAEGo9oZK2ITbwNQgTabnwtz4s9ESTRpfPoa5QcwlWLELx8
-         gAsfHW0r6g+HfIIcuJ6aHhGBEcNftlO4ecDheZanPmqT5goPkNbNzS1ljYOlEt6uBwRa
-         wabN0TaKk6Kjn/MWRFp1PZXisIywX/yCSvBfE/aLC9/vVo1rJPPprLGOnAq09rI6iKrD
-         e/YQ==
+        bh=Nn2E7FTFiXRo/vIwDiEoZVSIB/DlXWRJscA/D+04tO0=;
+        b=ea3pCxb8vsm2xJwAndWIGff/q7/pOkdMdIqCBL9KGvtDcZkS3K5QJChwJ6hvYxSBqc
+         cyIo8Af0nzmYZMEvB8N0sDPp7xvRQ457/9n8YYTatsmyLYuRjWJeFFqQhPBUuw/+vpPp
+         Y5G/kxlKhq/NhY+0auSQXsMv0MvsUlKVGYPG4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vqvSX/2/fIBl118riJNMYt+kfHwPe23nI2BC5oSQwIM=;
-        b=IFFlhwE17RibKtKUGC+k5BlBw+BleSSGvVMW4jJDRjo0imyr8GMoKvEaQhCt0+NE1x
-         JlL8fUl8eJ6mIoBoFeUMSk+zf8fqQrqOaXrbpoxlb0uD2vmSRPFFEjnz8wdEodnyvc9f
-         Ds+UC9LLIM0akgNAOmkbHG7l8u1GBVT/gDnlDin9Pg3hqKD+8KKrhFallB1VrOpabzeA
-         S6Laf+JBHYj97xo9i8gISAzGSz/97JB7GFGMRZQWj+s04nDplaTAOHv5yXk5IjZaQUys
-         F/6G2PAbkCJ01NJoCCVm3wSv+YQ88rz3sv2QcLPM/+bQHHy/pcOYkA/xfIorW/9oLhfh
-         doNQ==
-X-Gm-Message-State: AHQUAuZn60v7UNwoD729l7GE5YKSUrkQ2GdrNai/3SdxgYqRIpdpygWr
-        xLrXn4JfOzK978YPp/uziVZDvoCQFi+h8c2ERIGV1lP9
-X-Google-Smtp-Source: AHgI3IY8QzvMW4ZIFRN1RU9l8MI9lDc9XGIFgQ1suZ+ASKnSMVIWRxbWu/IFA2hocDwDR4gsZrCcfmWYcmreLay5EtQ=
-X-Received: by 2002:a17:906:e2d5:: with SMTP id gr21mr7425632ejb.145.1550250643011;
- Fri, 15 Feb 2019 09:10:43 -0800 (PST)
+        bh=Nn2E7FTFiXRo/vIwDiEoZVSIB/DlXWRJscA/D+04tO0=;
+        b=dqBcZG47ie4GRWWqaK6vz6Zu4nrWumrUc1uJXMnidhlggnkaA6tCYaB/ZOvIspQA8t
+         hjDbLvkL0RE7E3d2K6lepGxF/3gYXcsjRAKbYIRqfmRzTyXQurLZmjX16+yhANJHAyJi
+         5hw0MrbtvOB5OpQpXa5q9JmbtDgSEj/rPJndGJZC43qKyx2pr7Mj5SadgPABf4Y32pt7
+         EoWa7UwiZK/8+rFbDSViTK8+a+qtFJqm9egga8ryamBkfmoAUXO29hOebkUtLogN8SAj
+         g0sV6TPAMVtuwF5Cg/3Wgh8oeF5A4DFOagkFdze/kWO9/8Oc26Zh7bqbs48Msn9Bh7el
+         LMdQ==
+X-Gm-Message-State: AHQUAuY1L06vVRYXF1nSD1I2z1LUYG3iPTl0s620vYjDf4jD/awHakQk
+        L2WXKTNG2Pm2onWbB+qNWS8neINjjDs=
+X-Google-Smtp-Source: AHgI3IZtMshxiGMo958DIS0xVpkzJGGmEo5WF5ix2/SKG0JRcFcesBhCVdKGze31wZhAKDvuASOiEQ==
+X-Received: by 2002:a2e:7803:: with SMTP id t3-v6mr6659186ljc.115.1550250734369;
+        Fri, 15 Feb 2019 09:12:14 -0800 (PST)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id j12sm1485011lfg.47.2019.02.15.09.12.13
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Feb 2019 09:12:13 -0800 (PST)
+Received: by mail-lf1-f46.google.com with SMTP id e27so7724664lfj.8
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 09:12:13 -0800 (PST)
+X-Received: by 2002:a19:ab09:: with SMTP id u9mr6079702lfe.149.1550250732703;
+ Fri, 15 Feb 2019 09:12:12 -0800 (PST)
 MIME-Version: 1.0
-References: <20190215170342.1b704e7c@canb.auug.org.au> <51ee23dd-b852-db61-ef21-ff5819488386@infradead.org>
-In-Reply-To: <51ee23dd-b852-db61-ef21-ff5819488386@infradead.org>
-From:   Peter Oskolkov <posk@posk.io>
-Date:   Fri, 15 Feb 2019 09:10:32 -0800
-Message-ID: <CAFTs51XSScFFa1DjzAikm8RuT7OHX7O7p3cHcvU_ypnpoyu=jw@mail.gmail.com>
-Subject: Re: linux-next: Tree for Feb 15 (net/core/lwt_bpf.c)
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+References: <20190215031758.GA18776@beast> <CAHk-=wg7DRUqWvbCS2dm=mpdSNJry92Fo0OHDVi67bi8BMqt4A@mail.gmail.com>
+ <CAGXu5jLi+zcOoi+Ti=OyR3MfF8s_S35EEmT_DoCzYPepOcn+Ow@mail.gmail.com>
+ <CAGXu5jJXFP-1rEeYtMfqrSUz2oz8TWcjr89zL6-MPsNS7rwywg@mail.gmail.com>
+ <20190215161851.GA8804@redhat.com> <CAHk-=wjk29MeO9PuyirONZMr75-H6LtfNe6WghOXT7n+f5-RTA@mail.gmail.com>
+ <CAGXu5jKGyZhPMdMCrPY00-XXW0MhRoPuGFJbouFBfi7VoURdSQ@mail.gmail.com>
+In-Reply-To: <CAGXu5jKGyZhPMdMCrPY00-XXW0MhRoPuGFJbouFBfi7VoURdSQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 15 Feb 2019 09:11:55 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wg_aYT+Yti5nY4_a7FgUa0k3Uip3MXezR=8HKaRMFAV4Q@mail.gmail.com>
+Message-ID: <CAHk-=wg_aYT+Yti5nY4_a7FgUa0k3Uip3MXezR=8HKaRMFAV4Q@mail.gmail.com>
+Subject: Re: [PATCH v3] exec: load_script: Do not exec truncated interpreter path
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Samuel Dionne-Riel <samuel@dionne-riel.com>,
+        Richard Weinberger <richard.weinberger@gmail.com>,
+        Graham Christensen <graham@grahamc.com>,
+        Michal Hocko <mhocko@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 8:48 AM Randy Dunlap <rdunlap@infradead.org> wrote:
+On Fri, Feb 15, 2019 at 9:01 AM Kees Cook <keescook@chromium.org> wrote:
 >
-> On 2/14/19 10:03 PM, Stephen Rothwell wrote:
-> > Hi all,
-> >
-> > Changes since 20190214:
-> >
->
-> on x86_64:
->
-> ld: net/core/lwt_bpf.o: in function `bpf_lwt_xmit_reroute':
-> lwt_bpf.c:(.text+0x11e): undefined reference to `ip_route_output_flow'
-> ld: net/core/lwt_bpf.o: in function `bpf_input':
-> lwt_bpf.c:(.text+0x9d3): undefined reference to `ip_route_input_noref'
+> The !*first will never hit here (since it's been checked to be either
+> ' ' or '\t', and if first == last it's whitespace all the way, so we
+> could just return true here to bail out early (there's no interpreter
+> at all, so we want to -ENOEXEC still).
 
-Looking into it.
+Correct.
 
->
->
-> Full randconfig file is attached.
->
-> --
-> ~Randy
+You do need the !*first test, but it needs to be after the loop
+(because the next loop skips over the first non-space thing we found).
+
+               Linus
