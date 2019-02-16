@@ -2,111 +2,104 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F16A6C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 07:46:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CDC6C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 07:46:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6BBA222D0
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 07:46:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECAED222D0
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 07:46:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="CHF3UxUF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TkNvWLvz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728686AbfBPHqK (ORCPT
+        id S1728972AbfBPHqW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 02:46:10 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:40837 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726858AbfBPHqK (ORCPT
+        Sat, 16 Feb 2019 02:46:22 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:42044 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728698AbfBPHqW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 02:46:10 -0500
-Received: by mail-lf1-f65.google.com with SMTP id t14so8850799lfk.7
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 23:46:08 -0800 (PST)
+        Sat, 16 Feb 2019 02:46:22 -0500
+Received: by mail-pl1-f193.google.com with SMTP id s1so6111034plp.9
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 23:46:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=l1KthLKvmV+4GnwFICNbd9lELKHahFKa+BSGIWuEC40=;
-        b=CHF3UxUFNon1FsjgR2i9sYRZMWsa4dyhPDtv124mER4tLFYkPBbEbrWGfc3+dmFQ+3
-         NctHS37AdOFlwxq0HeMGZ9f60kagGdPiMdMpcqLfYEex+u4nQkUDOWC1jtYFzgo930Zr
-         aIRdNwTxc0Kbli7fiVrXACvR5lOJiw9GwZdDFi65HmwbYXUijK0lYjJhXQ/xL3b6U8BZ
-         ztxtz+lvACvsk7LogUUmZ862GoVYk2sOg4r+lJB7jycRxQn2exZKi8ZdqNtJ2gPOegVM
-         Qzdz7ZThBHTXSKtYmWPjviXtvgA1NpKpVbQMqMEnd+ZR6sYot/nWXO2Aewt2AmA6F8kj
-         S9sQ==
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PZ2lrnyrL5JE4u94qbUvHYiQRcN+mxeRBdIawqfw9lE=;
+        b=TkNvWLvzi6rXdW4bbmsjyAQ+azvTiLx5vCvVDnjo4XIW4S6jJk2/WBxmpIA9X8vlYr
+         q+O689VTw0rv/SWPsWJW++8x8uEjhgNZwPrSf5lHMYcjpbT9G6ePLLjMgX4BJXU9KL/t
+         Bk7lv37BarXacmvhQ2gx6LIB3NzLJl69MgDAdfeqWAz3uOE7jLe64FpYi9eH2/vKntwq
+         ZBDoxwHbFksTU/Yi7bgpdorivU30M60DkbRwYWGde+eDjLyGNwaJfVx2DtzBc2lqRh3R
+         BjcfAy2z/mbzKaZcfSwTf944JzstOt9l4BsAoj//7UQfYXWQfRCnQv267kq8Ibo59u7f
+         gdAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=l1KthLKvmV+4GnwFICNbd9lELKHahFKa+BSGIWuEC40=;
-        b=nE3JASsY0WhxR+OAGQzMRFnvk9tsttoFkwUSfqN2nwguEtWubsAXwh5eUrCNm/fVx3
-         tDAozOpJbKGwsaCZ0YBPEf+4pBOYXfP9X70lIUAB8bndS9bz4eIX/FscuA3N9S+KtFt3
-         tazJll0pNooGIvIZWIGMBlAuDiThA1uNOp+UsSDQAMnWxffnypaAhcZ6F9cl6xWYEhdx
-         OdEcp/Rm+gH5oz/nmfn0aWYg2qjm5N/yDfaG9D6+3gVX0jPxkOMvwi6mz2onjya0fdJ6
-         4lCeGJpmUEp+lHRfM+0455zpsUbOQWX3Ym9bWTdzcGWg7QNpLHnLuqSdhPOUsJjbWxK+
-         WvCw==
-X-Gm-Message-State: AHQUAubG3UkbpbPDwf1/uFWt0ME6ER7pEHrGsDqDTLwWoS29GotPsYcn
-        v5/MMtJ4ris4FOqQxFt9Y6l+/DyBoAI=
-X-Google-Smtp-Source: AHgI3IbFvwbzhT/qEGJNjs8faeG4WFS78VOXlghkCGdtmgkUHXfgrj0UI/xsG/7eV8ItQG7DbgkiPA==
-X-Received: by 2002:ac2:4343:: with SMTP id o3mr7084762lfl.129.1550303167639;
-        Fri, 15 Feb 2019 23:46:07 -0800 (PST)
-Received: from [192.168.0.199] ([31.173.80.82])
-        by smtp.gmail.com with ESMTPSA id v11-v6sm1782232ljc.57.2019.02.15.23.46.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Feb 2019 23:46:06 -0800 (PST)
-Subject: Re: [PATCH] ata: fix a race condition when internal cmd time out
-To:     Jason Yan <yanaijie@huawei.com>, linux-ide@vger.kernel.org,
-        tj@kernel.org, axboe@kernel.dk, linux-kernel@vger.kernel.org
-References: <20190216034257.30226-1-yanaijie@huawei.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <63bc665b-4f5f-0845-9767-825925ead80a@cogentembedded.com>
-Date:   Sat, 16 Feb 2019 10:45:49 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PZ2lrnyrL5JE4u94qbUvHYiQRcN+mxeRBdIawqfw9lE=;
+        b=D5/K2D9kPLsI2igxvlCrFtbI7c0f7MafxSuKZcB2z328fa8LT/q4hxCltW/q78KpLM
+         DXhkCOduMQHwgkNTbKUM1czkKLxyZotIV8h8dxvjk1vOlwSUpdss4tCPIRztA6nMxttA
+         0Er2tDfMaycriCz83BPXvAi06DaCkiP57pC2NT95lMUgluFt9O5bjgz0zJIY7SUJ4sTw
+         wodUFMeZ+4N/y5G45ygZRitW3fnXZ3mR9G6CuB4p7RmxYxbaIH2eM0rg2qV1MouBvcC6
+         WxR/+TnCUKGl7Sh+T8+NeYdJYo/p9taWNkEk4K5DvdK4b2MKtUf3x/p+ghiq2nza29pV
+         3/vw==
+X-Gm-Message-State: AHQUAubaGieQd43vFBda0a93gzkWYnd0iJM3T0p90d9Faka0qXjWaBCm
+        SdOpVf/AsLU1qQVcpJvXxBA=
+X-Google-Smtp-Source: AHgI3Ia6MNcIhv+wZtPN5/q/fU0FawtRAEvEz0qV0YlUODGlryHmTBvzT7e/4Cr1EOv8+L+4zdIiXw==
+X-Received: by 2002:a17:902:b609:: with SMTP id b9mr14358032pls.57.1550303181083;
+        Fri, 15 Feb 2019 23:46:21 -0800 (PST)
+Received: from localhost ([221.162.103.114])
+        by smtp.gmail.com with ESMTPSA id z67sm13153985pfd.188.2019.02.15.23.46.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 15 Feb 2019 23:46:20 -0800 (PST)
+From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Date:   Sat, 16 Feb 2019 16:46:17 +0900
+To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc:     Yao HongBo <yaohongbo@huawei.com>, linuxarm@huawei.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: possible deadlock in console_unlock
+Message-ID: <20190216073856.GA9979@tigerII.localdomain>
+References: <ebc01f4f-5b1d-4f8a-1d0d-463d5218ee45@huawei.com>
+ <20190216072127.GA1945@tigerII.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20190216034257.30226-1-yanaijie@huawei.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190216072127.GA1945@tigerII.localdomain>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
-
-On 16.02.2019 6:42, Jason Yan wrote:
-
-> For internal cmds, we will unmap DMA memory associated with the cmd
-> before we abort the cmd. If DMA transfering data before the aborting,
-
-    Transferring.
-
-> bus error will occured.
-
-    Occur.
-
-> ata_exec_internal_sg
->    ->ata_port_freeze if timeout
->      ->ata_qc_complete
->        ->ata_sg_clean
->                                        dma transfering data = bus error
->    ->ap->ops->post_internal_cmd
->      ->sas_ata_post_internal
->        ->sas_ata_internal_abort
->          ->abort the cmd
+On (02/16/19 16:21), Sergey Senozhatsky wrote:
+> On (02/16/19 14:36), Yao HongBo wrote:
+> > hi, sergey:
+> > 
+> > As shown in that link, https://lkml.org/lkml/2018/6/6/397
+> > 
+> > On the linux kernel 5.0-rc6, Syzkaller also hit 'possible deadlock in console_unlock'
+> > bug for several times in my environment.
+> > 
+> > This solution fixes things for me. Do you have a plan to submit patches to
+> > solve this problem.
+> > 
+> > diff --git a/drivers/tty/tty_buffer.c b/drivers/tty/tty_buffer.c
+> > 	__printk_safe_enter();
+> > 	kmalloc(sizeof(struct tty_buffer) + 2 * size, GFP_ATOMIC);
+> > 	__printk_safe_exit();
 > 
-> Fix this by move post_internal_cmd() before unmapping the DMA memory
+> I would probably try the following:
 
-    Moving.
+Yao HongBo, could you please post the lockdep splat?
 
-> when time out. Notice that we have to set ATA_QCFLAG_FAILED flag before
-> calling post_internal_cmd() so that the aborting will work.
-> 
-> Reported-by: luojian <luojian5@huawei.com>
-> Signed-off-by: Jason Yan <yanaijie@huawei.com>
-[...]
+GFP_NOWARN is probably the best option for now. Yes, it, maybe,
+will not work for fault-injection cases; but printk_safe approach
+is harder to push for, especially given that printk_safe maybe will
+not even exist in the future.
 
-MBR, Sergei
+	-ss
