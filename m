@@ -2,100 +2,75 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.2 required=3.0 tests=DATE_IN_PAST_03_06,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 862C0C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 05:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BD11C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 05:11:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C5132192C
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 05:06:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 217CA2192C
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 05:11:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FijtRViz";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FijtRViz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o+RWhVtD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726427AbfBQFGF (ORCPT
+        id S1726783AbfBQFLV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 00:06:05 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:43468 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725372AbfBQFGE (ORCPT
+        Sun, 17 Feb 2019 00:11:21 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:41077 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725372AbfBQFLV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 00:06:04 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id AE1896081B; Sun, 17 Feb 2019 05:06:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550379963;
-        bh=AFUgXgq7Cy+33lynzOffSN3VRuEjlhTpEi8maDQKxto=;
-        h=From:To:Cc:Subject:Date:From;
-        b=FijtRVizMXkp0EPhQPXnMdGCVTLI/CsKY/7o0llOMNtfg6s/sBQwqEBIogzuWg5y+
-         eK9z4Hi0R7kNr5u3e7O0warm238MywJd8XHRDInT0aHHuxPmnW/STQ9+/o50eyf1cL
-         thSOV0ofICO+jXqv9q6ewzkJiH+qf9wyEMinsdGE=
-Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3900860709;
-        Sun, 17 Feb 2019 05:06:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550379963;
-        bh=AFUgXgq7Cy+33lynzOffSN3VRuEjlhTpEi8maDQKxto=;
-        h=From:To:Cc:Subject:Date:From;
-        b=FijtRVizMXkp0EPhQPXnMdGCVTLI/CsKY/7o0llOMNtfg6s/sBQwqEBIogzuWg5y+
-         eK9z4Hi0R7kNr5u3e7O0warm238MywJd8XHRDInT0aHHuxPmnW/STQ9+/o50eyf1cL
-         thSOV0ofICO+jXqv9q6ewzkJiH+qf9wyEMinsdGE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3900860709
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-To:     bjorn.andersson@linaro.org, andy.gross@linaro.org,
-        david.brown@linaro.org, gregkh@linuxfoundation.org
-Cc:     jslaby@suse.com, linux-arm-msm@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: [PATCH] tty: serial: msm_serial: Remove __init from msm_console_setup()
-Date:   Sat, 16 Feb 2019 22:05:52 -0700
-Message-Id: <1550379952-19457-1-git-send-email-jhugo@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Sun, 17 Feb 2019 00:11:21 -0500
+Received: by mail-ot1-f65.google.com with SMTP id t7so6789775otk.8
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Feb 2019 21:11:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=ODzSrp9mIKo3HqMLVvFOVbi74xmbO6rbK55wRLXxEaM=;
+        b=o+RWhVtDqqwUl0qvx1KegbO5TM2kV6BUJJUc9kOhKcx/s8y+BD2kbzNWfZQ3W6URv2
+         l9XBWTky8Ija8dRD9gThmBQvVsT8uZyCvDefhbnD4ZHLqoABxJLRZ6Ye5XXWV3lA2ULG
+         eRo8dktXv2KF9Hf3KLeWBEvufMflg2m/upgv/3m4N5ZzitOnZtd+ARVLTzaiPC2wPx4f
+         Ln3ZkIWV8FSS1+vSRlEmuA1LmwtcSQjMG2TwiTfFh1pTPFyGPp207i35ZeDYR0Lr208N
+         vmZT+5QF6/bI/WujPue4m5yD0Zhl8l2n8dWkhKSF9CGDmgOTIP/Kpk2H0LM2WoWAJSzC
+         HlWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=ODzSrp9mIKo3HqMLVvFOVbi74xmbO6rbK55wRLXxEaM=;
+        b=Aej/Ba3EAbxomrskoTlsHN+zw1JKXIpybQu62mp4pcuegI7UO6rn9QtuAZADhH969n
+         pPe++k18MUiRUUiyXlpUWV2c4zmOQfulDmX8O8r4N4JYcAu8soJP0zQlHuFuWd2imJy0
+         LdsM1we0X76EJatSmesPcwrdaS95IdDFZevurDFDwJGNKTjK+BGLBrJ/1zGYfqN2xQzx
+         jJ4zc2J+0UpoPyYdN0ovPe+j0vK7FyGZ4b71zf672UD33BUTOms6isLb+PJFqQgeyCKL
+         ijYsYih2IW0kFgA/i53C3o6SgeISFwAGRB2mo67489vlVqwII+HaggfpEQp7xZ/fPAGd
+         rPAg==
+X-Gm-Message-State: AHQUAuZ2ZWgWa2joovymkZ99mUhbZUpZ4fM0EEYD3bg6e2PoY6MTeyhm
+        hteLKpWnz07mXhs4A2w1u6CRsRJR6pis7de0Infjqj6D
+X-Google-Smtp-Source: AHgI3IbnyZIYu3Xbgkh66Yf1JN1AFlwdnZuHYZnJyZwRnMBP0MAsQXR2ZYEyMKF5ntCIf22yMED02UodWn21slAVIQw=
+X-Received: by 2002:a9d:6357:: with SMTP id y23mr10737514otk.203.1550380280357;
+ Sat, 16 Feb 2019 21:11:20 -0800 (PST)
+MIME-Version: 1.0
+References: <CAM5Ud7NzkM72EaZ_ow4m6wtie=UHYqfhvM3L1dtNX6AidBWEzg@mail.gmail.com>
+ <CAM5Ud7NDojyOnNmOpgx7ZsT1g=vMB9xxKOkmVj27FirNp+DPng@mail.gmail.com>
+In-Reply-To: <CAM5Ud7NDojyOnNmOpgx7ZsT1g=vMB9xxKOkmVj27FirNp+DPng@mail.gmail.com>
+From:   Alec Ari <neotheuser@gmail.com>
+Date:   Sat, 16 Feb 2019 17:12:43 -0600
+Message-ID: <CAM5Ud7P64zfxXwTd_TwnP623B0tEonhTAx0DMu_otn+rf64UnA@mail.gmail.com>
+Subject: Fwd: [PATCH] scripts/sign-file.c: Use CMS if LibreSSL >= 2.6.0 is present
+To:     linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Due to the complexities of modern Qualcomm SoCs, about a half dozen drivers
-must successfully probe before the clocks for the console are present, and
-the console can successfully probe.  Depending on several random factors
-such as probe order and modules vs builtin, msm_serial may not be able to
-successfully probe for some, at which point, __init annotated functions
-may become unmapped.  If this occurs, msm_console_setup() will be called
-from the probe path, but will no longer exist, resulting in a kernel
-panic.
+Hello, it seems it's impossible to add tabs via gmail. The appropriate
+patch has been attached to kernel bugzilla #202159
 
-Resolve this issue by removing the __init annotation from
-msm_console_setup().
+Sorry about this, hitting tab toggles highlighted selection, using
+"more indent" didn't do the trick I guess. The patch works here but I
+suppose not for the one who reported the bug.
 
-Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
----
- drivers/tty/serial/msm_serial.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/msm_serial.c b/drivers/tty/serial/msm_serial.c
-index 736b74f..1090960 100644
---- a/drivers/tty/serial/msm_serial.c
-+++ b/drivers/tty/serial/msm_serial.c
-@@ -1634,7 +1634,7 @@ static void msm_console_write(struct console *co, const char *s,
- 	__msm_console_write(port, s, count, msm_port->is_uartdm);
- }
- 
--static int __init msm_console_setup(struct console *co, char *options)
-+static int msm_console_setup(struct console *co, char *options)
- {
- 	struct uart_port *port;
- 	int baud = 115200;
--- 
-Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
-
+Alec
