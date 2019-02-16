@@ -2,139 +2,174 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6164EC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 18:40:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A27BBC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 19:01:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19A6B21925
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 18:40:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="iHqc7/I+"
+	by mail.kernel.org (Postfix) with ESMTP id 733F621A4C
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 19:01:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731133AbfBPSkV (ORCPT
+        id S1732464AbfBPTBz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 13:40:21 -0500
-Received: from mout.web.de ([212.227.17.12]:57541 "EHLO mout.web.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726035AbfBPSkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 13:40:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1550342401;
-        bh=w0/8ajHDOZCCLPrlED+z6Emy8jpOII7oE9JQKmvHw88=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=iHqc7/I+QV5PeXyqI/zYK742m1SVZOx60ZPPrgd5rBL/gGL6oKQr+TtAt4RXNyBtT
-         UiYCYfOxhieTD4hb4exmsnOkhYwv7OykF+O5nbXWNlWKyWXp6V7uODmdVnHZ8FChCd
-         5efpgrhamavMDZ5Xddoe072QTX6T+Lli1HC2YwvQ=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.3] ([78.48.154.45]) by smtp.web.de (mrweb102
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0MdLsF-1geEiZ3qAV-00IYij; Sat, 16
- Feb 2019 19:40:01 +0100
-Subject: Re: [v6] coccinelle: semantic code search for missing put_device()
-To:     Wen Yang <yellowriver2010@hotmail.com>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>
-Cc:     cocci@systeme.lip6.fr, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        Cheng Shengyu <cheng.shengyu@zte.com.cn>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-References: <HK0PR02MB36344E2B29CEB195892F6420B2610@HK0PR02MB3634.apcprd02.prod.outlook.com>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <52c3fdf6-0d04-eed5-da57-ef7d1008c291@web.de>
-Date:   Sat, 16 Feb 2019 19:39:56 +0100
+        Sat, 16 Feb 2019 14:01:55 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:40660 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732421AbfBPTBy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Feb 2019 14:01:54 -0500
+Received: by mail-ed1-f68.google.com with SMTP id 10so10524198eds.7
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Feb 2019 11:01:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zNpsUdRsHHjpskTXp9b60sihhsgtCaQdY7JAh/F4Paw=;
+        b=hKqxXNgmyKDZzgEiom7vjH/VH7qRHvhZ7oa3RVyZv87tGqKLr+cPq0PgHc52e6ypk0
+         pLn4gP6+zTJYicz7cJWf+r+hCidi64c3vEbXnUJXAygySPNJlp5XxSjk2puUtla9BxGz
+         7gcKns5a2U941uxuTQ/a1VfEZXu+VRUx3dqVfDBsJfTkZVi7o542D2CzEo4Dm1ErTGfm
+         OLjVe29InKeCoZf+pBQMjdizJzZKowlO93QMGVp44IPmZOA1EhizlfMTzNIAucE35nG8
+         /k0OSpljgc57X6h53/FCl3bMBXCiVoyfhmrK9BmALUv2axPNcwuv31F2MuR+ko/qeKWE
+         LT7A==
+X-Gm-Message-State: AHQUAuY/uLQWc66oZwU2TSv9tNS/iEi/Cjw8HtDMoHq5JRhX4gOLQhsk
+        BGuJvVQw5mG/MXXX3zMM445Ntw==
+X-Google-Smtp-Source: AHgI3IYwne8VrUr6IzYXxXgqxt0cGitNa18SAkHnA1fPUKTzS3y6Sa7inCR26XqWSxJ/iqAX8XXDsQ==
+X-Received: by 2002:a17:906:f102:: with SMTP id gv2mr10958479ejb.87.1550343711874;
+        Sat, 16 Feb 2019 11:01:51 -0800 (PST)
+Received: from localhost.localdomain ([2001:678:814:68:8573:4f61:f765:5d7e])
+        by smtp.gmail.com with ESMTPSA id i11sm2629097edk.17.2019.02.16.11.01.50
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Sat, 16 Feb 2019 11:01:51 -0800 (PST)
+Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
+ LEDs
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>
+Cc:     Yauhen Kharuzhy <jekhor@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+References: <20190212205901.13037-1-jekhor@gmail.com>
+ <20190212205901.13037-2-jekhor@gmail.com>
+ <1df39a63-533f-bb68-a056-a0241f148be9@redhat.com> <20190213230731.GA8557@amd>
+ <42078a81-e32e-81b7-528f-d1adb60d31c3@redhat.com>
+ <20190213233806.GA11867@amd>
+ <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com> <20190214111423.GE6132@amd>
+ <92cf09b8-726d-4f1b-94ba-368a66af2246@redhat.com>
+ <2b6faaa5-b21e-a512-de7d-ca21be5045fc@gmail.com> <20190214230307.GA17358@amd>
+ <2a5e2002-e5f1-6da3-8a43-317801b69657@redhat.com>
+ <3d5407a7-9458-f071-a1d5-511b09678e20@gmail.com>
+ <87a21c4e-8e5e-c180-2ff3-eb8170746e71@redhat.com>
+ <80971bc3-1193-83ed-913a-12f6217016c8@gmail.com>
+ <b15fd048-8206-4057-a354-07dc14ca15e3@redhat.com>
+ <8a263266-a41f-c916-e990-02d04de9b5d0@gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <af5bec7b-0da1-ee19-cdf4-0240f56221ad@redhat.com>
+Date:   Sat, 16 Feb 2019 20:01:49 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <HK0PR02MB36344E2B29CEB195892F6420B2610@HK0PR02MB3634.apcprd02.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <8a263266-a41f-c916-e990-02d04de9b5d0@gmail.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Language: en-US
-X-Provags-ID: V03:K1:WOvHj4F2Q4JawsmySRO5I27gnQdIB5lOM7+MfdZXJf+kxZ30A/P
- FN45hq9NjX4HD96UbTXQ34YqGR+Zn2xFdv2s9nUJt1fRqFsnR9+futg1u/Za6SqURq1sZh+
- at/wpYGrIthP/vbKeTSAVqe+MgTGspxIJ5QHUlzosnBYOMseiipHA29+1d9Wxf4z+h72Dap
- XLZTFggb3WJOwOEbHSIrQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:wRNvInyGI0c=:1yRBy45GYOhRh4JAwwfyXk
- TYqC+X+2vQQb5fIK2XUNEMcWKVpOecJDAJ8pPVDzu+AeuZRGf4AaGIzD4xD0yi79uh7o2Irhr
- iz1tQ33JJdRM6vqQ2wzzaE74yUypoD7nbQPyW1gOusH5d1VIpe3s9Cy/mi6B4zyHGCY5q8KJI
- lgulPwjSNFNlQkQXasggUlva3Mpvh+XZQzDO8Xv4ALOkVq+qqBMaAoG08wXjRlaHpmWEJAciO
- YK0CkvGAIelsTnJoqduU5wpwzAQvYkmLs2ELoAsV14mAU57uaYPjLOeUNcZO/dOb0+SMJh2eV
- ucgDKlgyqXC/Uwic+bYleBVSmso7+EvswkOdxYZzj7OdopzczPjtHfL9jQKRsp7E/PaImjQ6X
- 0FoKwRraF918RRBV9jI8OP5zjnQ0YvW9fR0l8INDC+Fc9orVqU8N240pCUSjneobF8mO588cR
- MHwVsdt9uE/oeOMmxOT/F1B0kPJdpLNEi6MVNZD3+2s5BJmzfBD3/5QHdQBLbLUsrPWl4iPHH
- rGav9zaNkxfMUxaopPnvmx6VKHVtwu94Ehu78PozMmAPfugjFk6RnQF48Yei8/j6bVy1v4YZ/
- cAGQp5u8J3mObog7ZpA6MfP9y0WTTYmLKHof2GuvgF6xRV9dsFpeRySufvladr21YbzFDkLIY
- 1QzKGC8otwgQEzJCk7MPDRe+db7XdeuFDg2fWPWx023RihAUrGJDciA3vAvIjm63cKqzuR206
- 1i1OIt/bwPgfXZbSUeWzYIMmyGDxIdKz0cV86khV/ilHOUTN+OeDwggTwh4mWRmzZ38vyUZov
- nlrMZN7Dn9+WjNHd2/uSUQcv9xXq6/aj2vNjbkUT5SII/v0ZF9EE3pMBQDJi4hN33eLAp2Qyd
- ZctKfZ+drQ1ij13BxcBUuWUAL6DmmlMU6TJ3p29S359fQOuJ3XkQqNCCLMjFUfWSKJrQQP33y
- zEbjHh8I6Zg==
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> In a function, for a local variable obtained by of_find_device_by_node(),
+Hi,
 
-I got a software understanding where such a variable can not be obtained
-from this function call.
-The return value (like a pointer in this use case) can be stored there.
+On 2/16/19 6:02 PM, Jacek Anaszewski wrote:
+> Hi Hans,
+> 
+> On 2/16/19 12:14 AM, Hans de Goede wrote:
+>> Hi,
+>>
+>> On 2/15/19 11:31 PM, Jacek Anaszewski wrote:
+>>> On 2/15/19 11:26 PM, Hans de Goede wrote:
+>>
+>> <snip>
+>>
+>>>> I think that should work fine, which means that we can use the timer and
+>>>> pattern trigger support for the blinking and breathing modes.
+>>>>
+>>>> That still leaves the switching between user and hw-control modes,
+>>>> as discussed the hw-controlled mode could be modelled as a new "hardware"
+>>>> trigger, but then we cannot choose between on/blink/breathing when
+>>>> in hw-controlled mode. As Pavel mentioned, that would require some
+>>>> sort of composed trigger, where we have both the hardware and
+>>>> timer triggers active for example.
+>>>>
+>>>> I think it might be easier to just allow turning on/off the hardware
+>>>> control mode through a special "hardware_control" sysfs attribute and
+>>>> then use the existing timer and pattern triggers for blinking / breathing.
+>>>
+>>> Pattern trigger exposes pattern file by default and hw_pattern if
+>>> pattern_set/get ops are provided. Writing them enables software and
+>>> hardware pattern respectively.
+>>
+>> This is not about software vs hardware pattern.
+>>
+>> There are 2 *orthogonal*, separate problems/challenges with this LED controller:
+>>
+>> 1) It has hardware blinking and breathing, as discussed this can be
+>> controlled through the timer and pattern triggers, so this problem
+>> is solved.
+>>
+>> 2) It has 2 operating modes:
+>>
+>> a) Automatic/hardware controlled, in this mode the LED is turned
+>> off or on (where on can be continues on, blinking or breathing)
+>> by the hardware itself, when in this mode we / userspace is not
+>> in control of the LED
+>>
+>> b) Manual/user controlled mode, in this mode we / userspace can
+>> control of the LED.
+>>
+>> Currently there is no API in the ledclass to switch a LED from
+>> automatic controlled to user controlled and back, This is what
+>> the proposed hardware trigger was for, to switch to automatic
+>> mode. A problem with this is that we still want to be able
+>> to chose between continues on, blinking or breathing (when on),
+>> configure the max brightness, etc.
+> 
+> Yes, we do have the API to switch a LED from automatic (hardware
+> accelerated) control to software control and back. This is pattern
+> trigger, which exposes two files for setting pattern: pattern
+> and hw_pattern. Writing pattern file switches the device to software
+> control mode and writing hw_pattern switches it to the hardware control,
+> with the possibility of defining device specific ABI syntax to enable
+> particular pattern (blinking, breathing or event permanently on
+> in case of this device).
+
+OK, I see. So we would use the hw_pattern for this and the driver
+would implement the pattern_set led_classdev callback.
+
+The pattern_set callback would then expect 6 brightness/time tuples
+with the following meaning for the time part of each tupple
+
+tupple0: charging blinking_on_time
+tupple1: charging blinking_off_time
+tupple2: charging breathing_time
+tupple3: manual blinking_on_time
+tupple4: manual blinking_off_time
+tupple5: manual breathing_time
+
+Where only the times in tupple 0-2; or the times in 3-5 can be
+non-zero. Having non zero times for both some charging and some
+manual values is not allowed.
+
+If a breathing time is set, none of the other times may be non
+0. If blinkig_on and blinking_off are used then breathing_time
+must be 0.
+
+When configured to blink then blinking_off must be either 0
+(continuously on); or it must be the same as blinking_on.
 
 
-> v6:
-> - to be double sure, replace &id->dev with (T)(&id->dev).
-
-The support for data type casts is another interesting extension for
-this source code analysis approach.
-Further adjustments might become possible at other places of the presented SmPL script
-after specific clarifications of previously mentioned implementation details.
+I believe this will work, does this sound ok to you ?
 
 Regards,
-Markus
+
+Hans
+
