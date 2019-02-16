@@ -2,96 +2,105 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 065FAC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 11:19:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 411F7C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 11:21:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA3D2222DD
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 11:19:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 062DA222DD
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 11:21:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dMI9MLVJ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="L+SU0voX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729416AbfBPLTM (ORCPT
+        id S1729555AbfBPLVN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 06:19:12 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:3222 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725294AbfBPLTL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 06:19:11 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 8040581B00B149F3FA97;
-        Sat, 16 Feb 2019 19:19:09 +0800 (CST)
-Received: from [127.0.0.1] (10.177.244.145) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Sat, 16 Feb 2019
- 19:19:03 +0800
-Subject: Re: [PATCH] tracing: fix incorrect tracer freeing when opening
- tracing pipe
-To:     Steven Rostedt <rostedt@goodmis.org>
-References: <1550060946-45984-1-git-send-email-yi.zhang@huawei.com>
- <20190213083635.36f4762e@gandalf.local.home>
-CC:     <mingo@redhat.com>, <linux-kernel@vger.kernel.org>,
-        <miaoxie@huawei.com>
-From:   "zhangyi (F)" <yi.zhang@huawei.com>
-Message-ID: <ed080680-ddac-3e99-720e-a8371fce5ab6@huawei.com>
-Date:   Sat, 16 Feb 2019 19:19:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        Sat, 16 Feb 2019 06:21:13 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:45152 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725294AbfBPLVN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Feb 2019 06:21:13 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 34F8060860; Sat, 16 Feb 2019 11:21:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550316072;
+        bh=tHbnR+DR/1gceFnSr9DFfmcwp7teT/G4SBP1O+GUlas=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=dMI9MLVJC8Re0z4KtFSW0uxJ3qNoxyNlzGBXImTLwW2ua8GxEmYW09vQSqrdhT1m1
+         8VjhNB6t7UFzq/L2XvBlNwv5CLJpPok00+JoQkdg6MsOhN25RVoXqh65plMUV8LTzW
+         sxBwW76J/RldEFFmriogm4rlT1557n4A831RstWU=
+Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id DC948606FC;
+        Sat, 16 Feb 2019 11:21:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550316071;
+        bh=tHbnR+DR/1gceFnSr9DFfmcwp7teT/G4SBP1O+GUlas=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=L+SU0voX1zfteeq5E1ahCAG1e+eZ5TpSwLlDXo8ny7uZX+fYNblyuq31G4sdDKUYb
+         2gPlNh5qT5GOOV/H3gMKxb/SaRsRj8A+v9zXIt9Wv8TNN2tqTJ99w47Z4Sj1Usuie8
+         iJpryFJOnI3Q0kFnwN96oSFH3vha567GQo7tLlKA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DC948606FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ath10k@lists.infradead.org,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kbuild@vger.kernel.org
+Subject: -Wimplicit-fallthrough not working with ccache
+References: <20180524225928.GA19570@embeddedor.com>
+        <20180613114059.DAC95601D2@smtp.codeaurora.org>
+Date:   Sat, 16 Feb 2019 13:21:06 +0200
+In-Reply-To: <20180613114059.DAC95601D2@smtp.codeaurora.org> (Kalle Valo's
+        message of "Wed, 13 Jun 2018 11:40:59 +0000 (UTC)")
+Message-ID: <87zhqwuggt.fsf_-_@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <20190213083635.36f4762e@gandalf.local.home>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.244.145]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/2/13 21:36, Steven Rostedt Wrote:
-> On Wed, 13 Feb 2019 20:29:06 +0800
-> "zhangyi (F)" <yi.zhang@huawei.com> wrote:
-> 
->> Commit d716ff71dd12 ("tracing: Remove taking of trace_types_lock in
->> pipe files") use the current tracer instead of the copy in
->> tracing_open_pipe(), but it forget to remove the freeing sentence in
->> the error path.
->>
->> Fixes: d716ff71dd12 ("tracing: Remove taking of trace_types_lock in pipe files")
-> 
-> Thanks.
-> 
-> As this is harmless (frees to NULL is ok, and iter is allocated with
-> kzalloc()), I'm going to just add this for the next merge window.
-> 
+(replying to an old thread but renaming it)
 
-This patch patch want to remove kfree(iter->trace) instead of kfree(iter),
-which is set by tr->current_trace and probably not allocated dynamically.
-So if we kfree such tracer in the error path, it will lead to BUG_ON.
+Kalle Valo <kvalo@codeaurora.org> writes:
 
-Thanks，
-Yi.
+> "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+>
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+>> where we are expecting to fall through.
+>> 
+>> Notice that in this particular case, I replaced "pass through" with
+>> a proper "fall through" comment, which is what GCC is expecting
+>> to find.
+>> 
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+>
+> Patch applied to ath-next branch of ath.git, thanks.
+>
+> f1d270ae10ff ath10k: htt_tx: mark expected switch fall-throughs
 
-> 
->> Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
->> ---
->>  kernel/trace/trace.c | 1 -
->>  1 file changed, 1 deletion(-)
->>
->> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
->> index c521b73..b583ff7 100644
->> --- a/kernel/trace/trace.c
->> +++ b/kernel/trace/trace.c
->> @@ -5624,7 +5624,6 @@ static int tracing_open_pipe(struct inode *inode, struct file *filp)
->>  	return ret;
->>  
->>  fail:
->> -	kfree(iter->trace);
->>  	kfree(iter);
->>  	__trace_array_put(tr);
->>  	mutex_unlock(&trace_types_lock);
-> 
-> 
-> .
-> 
+Gustavo, I enabled W=1 on my ath10k build checks and it took me a while
+to figure out why GCC was warning about fall through annotations missing
+even I knew you had fixed them. Finally I figured out that the reason
+was ccache, which I need because I work with different branches and need
+to recompile the kernel quite often.
 
+If the plan is to enable -Wimplicit-fallthrough by default in the kernel
+IMHO this might become an issue, as otherwise people using ccache start
+seeing lots of invalid warnings. Apparently CCACHE_COMMENTS=1 will fix
+that but my version of ccache doesn't support it, and how would everyone
+learn that trick anyway? Or maybe CCACHE_COMMENTS can enabled through
+kernel Makefile?
+
+-- 
+Kalle Valo
