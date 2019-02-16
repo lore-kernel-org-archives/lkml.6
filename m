@@ -2,156 +2,91 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E355AC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 12:12:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 203B0C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 12:29:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B02572192C
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 12:12:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VH8l8I+x"
+	by mail.kernel.org (Postfix) with ESMTP id E65E721B18
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 12:29:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728917AbfBPMMU (ORCPT
+        id S1729050AbfBPM3T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 07:12:20 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45774 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726156AbfBPMMT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 07:12:19 -0500
-Received: by mail-pl1-f193.google.com with SMTP id r14so6304885pls.12
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Feb 2019 04:12:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8yxPfQbdgFsgQmUsjJRgpLpFTR6AgQm0I9PqST8tOsw=;
-        b=VH8l8I+xU8tCcJ+mKhk1YHP3fPPE2wqNszp+taY77gWARCZRlT5ulpl70Ow/mH1sGj
-         M5TDkpzH4P92gEZtefkyAONTm0Z4UN2Iatdy+dV+7e/ErlhWk/+XTQOPK0xrjbrXLNer
-         lxIEBOR70UDxjtaEwsRtnGGP9NT81K1AL454w9ZNkHE0IVwsHaG7Zvrbm7jbjQVwHj2A
-         gn2PQIKWVQMdn/ourqWRETpSnqXRBfSQ/2aJNY+89Sg8cHo1jq6JxBG3HXHhp+UoMAU4
-         Lkm8NYOmevGiCixGEnt2d2Q+T88m/5SQJnsDb9NOFlXwuqy5h04bEdi9WrdwUo1ng8lT
-         dOFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8yxPfQbdgFsgQmUsjJRgpLpFTR6AgQm0I9PqST8tOsw=;
-        b=OpPvSqRflhHrbb4I8KKVJXyPmOENb8hpK8y9Y0lpXsSSWDXz20qTHTWQ5BULegSk5V
-         RJ7fu9/mB947VRGO2mL60Zriyuoz2GIn7BS+Wa5z3Zf+4uL39Y1xC+D2dt7pSrtq94QX
-         VRNNXPSLVyaduwEfNTxJaeVDgp8j+C9PpZKK4fukcgrD+fG1ZyHKYS7suiVZQqxxgcT4
-         wvAHI/YwhNAkWmhYnryGyF9G7zX+mlbZGBCpAtf7T5jzCRy+lyfXDCyTpWRGKvl2J3tE
-         NKsUTjeJHoP2Z/MfS7pTIBsRi+2tn8zwIcIIfWHXIxaj3nPfbZXEj8CLhzwFqlVroCb4
-         t68A==
-X-Gm-Message-State: AHQUAuboKjFRaRAGBDjfUNfFko2NxnXhVMWEz3SVT+6ToUf8uQHh524T
-        7UfuFy6PzWdXOn2MI6+M/hOhfdU6bltvBaX+3u1vgyl+
-X-Google-Smtp-Source: AHgI3IbtmVyx0OPo8QuOT9CIWEzHB+nvSRY+dcHBjtMvSG7dtQ+QbO+braFgLlKpL3HtUmWXZNJpQFy+JxTlrj9EBGU=
-X-Received: by 2002:a17:902:7682:: with SMTP id m2mr2206890pll.311.1550319139289;
- Sat, 16 Feb 2019 04:12:19 -0800 (PST)
+        Sat, 16 Feb 2019 07:29:19 -0500
+Received: from sauhun.de ([88.99.104.3]:42650 "EHLO pokefinder.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727195AbfBPM3S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Feb 2019 07:29:18 -0500
+Received: from localhost (unknown [195.52.228.164])
+        by pokefinder.org (Postfix) with ESMTPSA id 9483F2C0509;
+        Sat, 16 Feb 2019 13:29:16 +0100 (CET)
+Date:   Sat, 16 Feb 2019 13:29:15 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Qii Wang <qii.wang@mediatek.com>
+Cc:     linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
+        leilk.liu@mediatek.com, ryder.lee@mediatek.com,
+        xinping.qian@mediatek.com, liguo.zhang@mediatek.com,
+        Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 5/6] dt-bindings: i2c: Add Mediatek MT8183 i2c binding
+Message-ID: <20190216122915.hchghozcn7ntdkbm@ninjato>
+References: <1548057574-8061-1-git-send-email-qii.wang@mediatek.com>
+ <1548057574-8061-6-git-send-email-qii.wang@mediatek.com>
+ <20190205131641.GF12401@kunai>
+ <1550109268.30065.13.camel@mhfsdcap03>
+ <20190215090257.geumssb2cucs7rzt@ninjato>
+ <1550316723.30065.44.camel@mhfsdcap03>
 MIME-Version: 1.0
-References: <1550335843-108902-1-git-send-email-peng.hao2@zte.com.cn> <1550335843-108902-2-git-send-email-peng.hao2@zte.com.cn>
-In-Reply-To: <1550335843-108902-2-git-send-email-peng.hao2@zte.com.cn>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sat, 16 Feb 2019 14:12:08 +0200
-Message-ID: <CAHp75VexcXF4n9dN=ecivr=ygGwVuRYveQ-ZF1eYDGG2VU0Fmw@mail.gmail.com>
-Subject: Re: [PATCH V5 1/4] misc/pvpanic : preparing for pvpanic driver framework
-To:     Peng Hao <peng.hao2@zte.com.cn>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uvl5pgprc2c6iamr"
+Content-Disposition: inline
+In-Reply-To: <1550316723.30065.44.camel@mhfsdcap03>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 16, 2019 at 10:29 AM Peng Hao <peng.hao2@zte.com.cn> wrote:
->
-> Preparing for pvpanic driver framework. Create a pvpanic driver
-> directory and move current driver file to new directory.
->
 
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-
-> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-> ---
->  drivers/misc/Kconfig                 | 9 +--------
->  drivers/misc/Makefile                | 2 +-
->  drivers/misc/pvpanic/Kconfig         | 7 +++++++
->  drivers/misc/pvpanic/Makefile        | 5 +++++
->  drivers/misc/{ => pvpanic}/pvpanic.c | 0
->  5 files changed, 14 insertions(+), 9 deletions(-)
->  create mode 100644 drivers/misc/pvpanic/Kconfig
->  create mode 100644 drivers/misc/pvpanic/Makefile
->  rename drivers/misc/{ => pvpanic}/pvpanic.c (100%)
->
-> diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-> index f417b06..aa3a805 100644
-> --- a/drivers/misc/Kconfig
-> +++ b/drivers/misc/Kconfig
-> @@ -513,14 +513,7 @@ config MISC_RTSX
->         tristate
->         default MISC_RTSX_PCI || MISC_RTSX_USB
->
-> -config PVPANIC
-> -       tristate "pvpanic device support"
-> -       depends on HAS_IOMEM && (ACPI || OF)
-> -       help
-> -         This driver provides support for the pvpanic device.  pvpanic is
-> -         a paravirtualized device provided by QEMU; it lets a virtual machine
-> -         (guest) communicate panic events to the host.
-> -
-> +source "drivers/misc/pvpanic/Kconfig"
->  source "drivers/misc/c2port/Kconfig"
->  source "drivers/misc/eeprom/Kconfig"
->  source "drivers/misc/cb710/Kconfig"
-> diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-> index e39ccbb..cfe20b3 100644
-> --- a/drivers/misc/Makefile
-> +++ b/drivers/misc/Makefile
-> @@ -58,4 +58,4 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)        += aspeed-lpc-snoop.o
->  obj-$(CONFIG_PCI_ENDPOINT_TEST)        += pci_endpoint_test.o
->  obj-$(CONFIG_OCXL)             += ocxl/
->  obj-y                          += cardreader/
-> -obj-$(CONFIG_PVPANIC)          += pvpanic.o
-> +obj-$(CONFIG_PVPANIC)          += pvpanic/
-> diff --git a/drivers/misc/pvpanic/Kconfig b/drivers/misc/pvpanic/Kconfig
-> new file mode 100644
-> index 0000000..3e612c6
-> --- /dev/null
-> +++ b/drivers/misc/pvpanic/Kconfig
-> @@ -0,0 +1,7 @@
-> +config PVPANIC
-> +       tristate "pvpanic device support"
-> +       depends on HAS_IOMEM && (ACPI || OF)
-> +       help
-> +         This driver provides support for the pvpanic device.  pvpanic is
-> +         a paravirtualized device provided by QEMU; it lets a virtual machine
-> +         (guest) communicate panic events to the host.
-> diff --git a/drivers/misc/pvpanic/Makefile b/drivers/misc/pvpanic/Makefile
-> new file mode 100644
-> index 0000000..6394224
-> --- /dev/null
-> +++ b/drivers/misc/pvpanic/Makefile
-> @@ -0,0 +1,5 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +#
-> +# Copyright (c) 2018 ZTE Ltd.
-> +
-> +obj-$(CONFIG_PVPANIC)            += pvpanic.o
-> diff --git a/drivers/misc/pvpanic.c b/drivers/misc/pvpanic/pvpanic.c
-> similarity index 100%
-> rename from drivers/misc/pvpanic.c
-> rename to drivers/misc/pvpanic/pvpanic.c
-> --
-> 1.8.3.1
->
+--uvl5pgprc2c6iamr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 
--- 
-With Best Regards,
-Andy Shevchenko
+> Maybe you think that MT8183 SoC only has the I3C controllers. Actually,
+> there are I2C and I3C controllers on MT8183 SoC. We will remove
+> "mediatek,share-i3c" for I2C controller driver, so these patches are
+> just to support the I2C controllers on MT8183 SoC. For the I3C
+> controller we will send some new patches which are based on i3c
+> framework directories(kernel/drivers/i3c), not based on
+> i2c-mt65xx.c.
+
+Sounds perfect to me. If it turns out that the I3C driver can share
+things with the I2C driver, we can discuss it then. But unless we have
+an I3C driver and know for sure, the above strategy seems good to me.
+
+
+--uvl5pgprc2c6iamr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxoAhcACgkQFA3kzBSg
+KbZX6Q//fbtn+bsK5KVjERP9EokrSE8Pn/Q8MsFHFKLxQm2ZQsc2yMzOu0YUYvnF
+X531Roh9TkDU3SkJL/xnERFtamDianlugO11qGRxvJnSGCjrUDogHdw8awM6BE1e
+G01y8agD7lRVmrZb3AidW9HAfgCBalucvrKovIQSkvvhvnCglVnZHBpwmQwFEZ/E
+NlB20w8KdvAKNXeT8GgxsjFBfanSHAHOTJKUcnkeO4Lg10TDlnh85c1FGcuOmbcE
+j0yvYzcFIUJ5Xdw1f0BVG12RDuN0pOSN/FuVDZRBb/FkOJx+CIb62jJiieCYVTMl
+/jwL6gkGbyZyo2YJJ/P6twDzxXE3JtjP1gtnN9FPBVFOeaWN3qoabOM/aO1iWlZM
+K2hsLVorxvdHedrDEqwNFawEFSF0Y2sdPCndwlgKRqRcdJRh4f5VzPNXTxDmPeQI
+5zubdYEA1dE8NfX3xM4/05/vBNK9JDwj+U5EczvGL7PI+q8n5X/QoQqu7x6tWMq8
+D9VMUWRpM6usbQ52gt/hQi08taNuaxP4BQJkDduDVZ/x09aAdKrKDStwtwhIABH1
+gnLt/3qJqEo6o2LM6fpK/hvhUgjiZ5KlTJ/RylosAcAbRkho4lFwI6AyzEGRFGHe
+lntFJiamVASorn7fg4GVdNNJAzVsNTIdVcSJfxij5TjtbqVjiBg=
+=2hOh
+-----END PGP SIGNATURE-----
+
+--uvl5pgprc2c6iamr--
