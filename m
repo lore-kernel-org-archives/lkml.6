@@ -2,126 +2,73 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BBE5C4360F
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 13:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7928BC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 13:15:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4E97222E3
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 13:10:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F205222D0
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 13:15:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbfBPNKn (ORCPT
+        id S1726326AbfBPNPY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 08:10:43 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:33596 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725497AbfBPNKn (ORCPT
+        Sat, 16 Feb 2019 08:15:24 -0500
+Received: from mail-out.m-online.net ([212.18.0.9]:59019 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725554AbfBPNPX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 08:10:43 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 0034F72CCAE;
-        Sat, 16 Feb 2019 16:10:39 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id BE3FC7CC774; Sat, 16 Feb 2019 16:10:39 +0300 (MSK)
-Date:   Sat, 16 Feb 2019 16:10:39 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Helge Deller <deller@gmx.de>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        "James E.J. Bottomley" <jejb@parisc-linux.org>,
-        linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] parisc: Fix ptrace syscall number modification
-Message-ID: <20190216131039.GA18767@altlinux.org>
-References: <20190216024623.GA11910@altlinux.org>
+        Sat, 16 Feb 2019 08:15:23 -0500
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 441rGJ38jnz1r01b;
+        Sat, 16 Feb 2019 14:15:20 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 441rGJ29m3z1qqkS;
+        Sat, 16 Feb 2019 14:15:20 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id 8E9i_dOXwDyq; Sat, 16 Feb 2019 14:15:19 +0100 (CET)
+X-Auth-Info: WAZZ1lxIpLiJaGUL7WPeQCu95RDgYXrEcAgkoSQ4XdXOKg7aXAfiS1bzR4aClOM1
+Received: from igel.home (ppp-188-174-150-184.dynamic.mnet-online.de [188.174.150.184])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Sat, 16 Feb 2019 14:15:19 +0100 (CET)
+Received: by igel.home (Postfix, from userid 1000)
+        id A50CE2C202B; Sat, 16 Feb 2019 14:15:18 +0100 (CET)
+From:   Andreas Schwab <schwab@linux-m68k.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@ozlabs.org, linux-mm@kvack.org, erhard_f@mailbox.org,
+        jack@suse.cz, aneesh.kumar@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc/64s: Fix possible corruption on big endian due to pgd/pud_present()
+References: <20190214062339.7139-1-mpe@ellerman.id.au>
+X-Yow:  I'll take ROAST BEEF if you're out of LAMB!!
+Date:   Sat, 16 Feb 2019 14:15:18 +0100
+In-Reply-To: <20190214062339.7139-1-mpe@ellerman.id.au> (Michael Ellerman's
+        message of "Thu, 14 Feb 2019 17:23:39 +1100")
+Message-ID: <87pnrran89.fsf@igel.home>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1.91 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190216024623.GA11910@altlinux.org>
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 910cd32e552e ("parisc: Fix and enable seccomp filter support")
-introduced a regression in ptrace-based syscall tampering: when tracer
-changes syscall number to -1, the kernel fails to initialize %r28 with
--ENOSYS and subsequently fails to return the error code of the failed
-syscall to userspace.
+On Feb 14 2019, Michael Ellerman <mpe@ellerman.id.au> wrote:
 
-This erroneous behaviour could be observed with a simple strace syscall
-fault injection command which is expected to print something like this:
+> The fix is simple, we need to convert the result of the bitwise && to
+> an int before returning it.
 
-$ strace -a0 -ewrite -einject=write:error=enospc echo hello
-write(1, "hello\n", 6) = -1 ENOSPC (No space left on device) (INJECTED)
-write(2, "echo: ", 6) = -1 ENOSPC (No space left on device) (INJECTED)
-write(2, "write error", 11) = -1 ENOSPC (No space left on device) (INJECTED)
-write(2, "\n", 1) = -1 ENOSPC (No space left on device) (INJECTED)
-+++ exited with 1 +++
+Alternatively, the return type could be changed to bool, so that the
+compiler does the right thing by itself.
 
-After commit 910cd32e552ea09caa89cdbe328e468979b030dd it loops printing
-something like this instead:
+Andreas.
 
-write(1, "hello\n", 6../strace: Failed to tamper with process 12345: unexpectedly got no error (return value 0, error 0)
-) = 0 (INJECTED)
-
-This bug was found by strace test suite.
-
-Fixes: 910cd32e552e ("parisc: Fix and enable seccomp filter support")
-Cc: stable@vger.kernel.org # v4.5+
-Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
----
-
- v2: Updated comments.
-     Set gr[28] to -ENOSYS after tracehook_report_syscall_entry() invocation
-     because setting of syscall return code by tracer on entering syscall
-     shall not affect the syscall return code.
-
- N.B. I have no parisc box to test the patch.
-
- arch/parisc/kernel/ptrace.c | 28 +++++++++++++++++++++-------
- 1 file changed, 21 insertions(+), 7 deletions(-)
-
-diff --git a/arch/parisc/kernel/ptrace.c b/arch/parisc/kernel/ptrace.c
-index 2582df1c529b..be4d6a279b12 100644
---- a/arch/parisc/kernel/ptrace.c
-+++ b/arch/parisc/kernel/ptrace.c
-@@ -308,15 +308,29 @@ long compat_arch_ptrace(struct task_struct *child, compat_long_t request,
- 
- long do_syscall_trace_enter(struct pt_regs *regs)
- {
--	if (test_thread_flag(TIF_SYSCALL_TRACE) &&
--	    tracehook_report_syscall_entry(regs)) {
-+	if (test_thread_flag(TIF_SYSCALL_TRACE)) {
-+		int rc = tracehook_report_syscall_entry(regs);
-+
- 		/*
--		 * Tracing decided this syscall should not happen or the
--		 * debugger stored an invalid system call number. Skip
--		 * the system call and the system call restart handling.
-+		 * As tracesys_next does not set %r28 to -ENOSYS
-+		 * when %r20 is set to -1, initialize it here.
- 		 */
--		regs->gr[20] = -1UL;
--		goto out;
-+		regs->gr[28] = -ENOSYS;
-+
-+		if (rc) {
-+			/*
-+			 * A nonzero return code from
-+			 * tracehook_report_syscall_entry() tells us
-+			 * to prevent the syscall execution.  Skip
-+			 * the syscall call and the syscall restart handling.
-+			 *
-+			 * Note that the tracer may also just change
-+			 * regs->gr[20] to an invalid syscall number,
-+			 * that is handled by tracesys_next.
-+			 */
-+			regs->gr[20] = -1UL;
-+			return -1;
-+		}
- 	}
- 
- 	/* Do the secure computing check after ptrace. */
 -- 
-ldv
+Andreas Schwab, schwab@linux-m68k.org
+GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
+"And now for something completely different."
