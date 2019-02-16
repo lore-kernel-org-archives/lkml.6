@@ -2,167 +2,139 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D31E1C4360F
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 18:28:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6164EC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 18:40:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99074222A1
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 18:28:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19A6B21925
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 18:40:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mit.edu header.i=@mit.edu header.b="QHCtm45T"
+	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="iHqc7/I+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732395AbfBPS2q (ORCPT
+        id S1731133AbfBPSkV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 13:28:46 -0500
-Received: from mail-eopbgr720108.outbound.protection.outlook.com ([40.107.72.108]:22916
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726035AbfBPS2p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 13:28:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o3jWc0TlZfxsex/IIVq4IitiFbLVH0HYFCCn1AFy1vY=;
- b=QHCtm45TyKXrpXzRZxNaCBq8Z0FmTnbEAiDNZ7KO77RkX8+BamkFjNKBoltlu903BAjcKdrbgNN1GQAZ9CyRs9WkuIBneDA54bm5XhTln9E2tjKQO9b6KzjnAPMVAVGwcBI8K+/BibDC2Nfx+IU40lv2FPt6CYW3VBf4FWHU6E8=
-Received: from MWHPR01CA0047.prod.exchangelabs.com (2603:10b6:300:101::33) by
- SN6PR01MB4861.prod.exchangelabs.com (2603:10b6:805:d8::20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.16; Sat, 16 Feb 2019 18:28:40 +0000
-Received: from BY2NAM03FT006.eop-NAM03.prod.protection.outlook.com
- (2a01:111:f400:7e4a::203) by MWHPR01CA0047.outlook.office365.com
- (2603:10b6:300:101::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1622.16 via Frontend
- Transport; Sat, 16 Feb 2019 18:28:40 +0000
-Authentication-Results: spf=pass (sender IP is 18.9.28.11)
- smtp.mailfrom=mit.edu; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=mit.edu;
-Received-SPF: Pass (protection.outlook.com: domain of mit.edu designates
- 18.9.28.11 as permitted sender) receiver=protection.outlook.com;
- client-ip=18.9.28.11; helo=outgoing.mit.edu;
-Received: from outgoing.mit.edu (18.9.28.11) by
- BY2NAM03FT006.mail.protection.outlook.com (10.152.84.100) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1580.10 via Frontend Transport; Sat, 16 Feb 2019 18:28:39 +0000
-Received: from callcc.thunk.org ([66.31.38.53])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x1GISZct005659
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sat, 16 Feb 2019 13:28:36 -0500
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id B0A087A5779; Sat, 16 Feb 2019 13:28:35 -0500 (EST)
-Date:   Sat, 16 Feb 2019 13:28:35 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-CC:     Sasha Levin <sashal@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Steve French <smfrench@gmail.com>,
-        <lsf-pc@lists.linux-foundation.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>
-Subject: Re: [LSF/MM TOPIC] FS, MM, and stable trees
-Message-ID: <20190216182835.GF23000@mit.edu>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Steve French <smfrench@gmail.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>
-References: <CAH2r5mviqHxaXg5mtVe30s2OTiPW2ZYa9+wPajjzz3VOarAUfw@mail.gmail.com>
- <CAOQ4uxjMYWJPF8wFF_7J7yy7KCdGd8mZChfQc5GzNDcfqA7UAA@mail.gmail.com>
- <20190213073707.GA2875@kroah.com>
- <CAOQ4uxgQGCSbhppBfhHQmDDXS3TGmgB4m=Vp3nyyWTFiyv6z6g@mail.gmail.com>
- <20190213091803.GA2308@kroah.com>
- <20190213192512.GH69686@sasha-vm>
- <20190213195232.GA10047@kroah.com>
- <1550088875.2871.21.camel@HansenPartnership.com>
- <20190215015020.GJ69686@sasha-vm>
- <1550198902.2802.12.camel@HansenPartnership.com>
+        Sat, 16 Feb 2019 13:40:21 -0500
+Received: from mout.web.de ([212.227.17.12]:57541 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726035AbfBPSkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Feb 2019 13:40:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1550342401;
+        bh=w0/8ajHDOZCCLPrlED+z6Emy8jpOII7oE9JQKmvHw88=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=iHqc7/I+QV5PeXyqI/zYK742m1SVZOx60ZPPrgd5rBL/gGL6oKQr+TtAt4RXNyBtT
+         UiYCYfOxhieTD4hb4exmsnOkhYwv7OykF+O5nbXWNlWKyWXp6V7uODmdVnHZ8FChCd
+         5efpgrhamavMDZ5Xddoe072QTX6T+Lli1HC2YwvQ=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.3] ([78.48.154.45]) by smtp.web.de (mrweb102
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0MdLsF-1geEiZ3qAV-00IYij; Sat, 16
+ Feb 2019 19:40:01 +0100
+Subject: Re: [v6] coccinelle: semantic code search for missing put_device()
+To:     Wen Yang <yellowriver2010@hotmail.com>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>
+Cc:     cocci@systeme.lip6.fr, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        Cheng Shengyu <cheng.shengyu@zte.com.cn>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+References: <HK0PR02MB36344E2B29CEB195892F6420B2610@HK0PR02MB3634.apcprd02.prod.outlook.com>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
+ +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
+ mpVJgXGKkNJ1ey+QOXouzlErVvE2fRh+KXXN1Q7fSmTJlAW9XJYHS3BDHb0uRpymRSX3O+E2
+ lA87C7R8qAigPDZi6Z7UmwIA83ZMKXQ5stA0lhPyYgQcM7fh7V4ZYhnR0I5/qkUoxKpqaYLp
+ YHBczVP+Zx/zHOM0KQphOMbU7X3c1pmMruoe6ti9uZzqZSLsF+NKXFEPBS665tQr66HJvZvY
+ GMDlntZFAZ6xQvCC1r3MGoxEC1tuEa24vPCC9RZ9wk2sY5Csbva0WwYv3WKRZZBv8eIhGMxs
+ rcpeGShRFyZ/0BYO53wZAPV1pEhGLLxd8eLN/nEWjJE0ejakPC1H/mt5F+yQBJAzz9JzbToU
+ 5jKLu0SugNI18MspJut8AiA1M44CIWrNHXvWsQ+nnBKHDHHYZu7MoXlOmB32ndsfPthR3GSv
+ jN7YD4Ad724H8fhRijmC1+RpuSce7w2JLj5cYj4MlccmNb8YUxsE8brY2WkXQYS8Ivse39MX
+ BE66MQN0r5DQ6oqgoJ4gHIVBUv/ZwgcmUNS5gQkNCFA0dWXznQARAQABtCZNYXJrdXMgRWxm
+ cmluZyA8TWFya3VzLkVsZnJpbmdAd2ViLmRlPokCVAQTAQgAPhYhBHDP0hzibeXjwQ/ITuU9
+ Figxg9azBQJYNvsQAhsjBQkJZgGABQsJCAcCBhUICQoLAgQWAgMBAh4BAheAAAoJEOU9Figx
+ g9azcyMP/iVihZkZ4VyH3/wlV3nRiXvSreqg+pGPI3c8J6DjP9zvz7QHN35zWM++1yNek7Ar
+ OVXwuKBo18ASlYzZPTFJZwQQdkZSV+atwIzG3US50ZZ4p7VyUuDuQQVVqFlaf6qZOkwHSnk+
+ CeGxlDz1POSHY17VbJG2CzPuqMfgBtqIU1dODFLpFq4oIAwEOG6fxRa59qbsTLXxyw+PzRaR
+ LIjVOit28raM83Efk07JKow8URb4u1n7k9RGAcnsM5/WMLRbDYjWTx0lJ2WO9zYwPgRykhn2
+ sOyJVXk9xVESGTwEPbTtfHM+4x0n0gC6GzfTMvwvZ9G6xoM0S4/+lgbaaa9t5tT/PrsvJiob
+ kfqDrPbmSwr2G5mHnSM9M7B+w8odjmQFOwAjfcxoVIHxC4Cl/GAAKsX3KNKTspCHR0Yag78w
+ i8duH/eEd4tB8twcqCi3aCgWoIrhjNS0myusmuA89kAWFFW5z26qNCOefovCx8drdMXQfMYv
+ g5lRk821ZCNBosfRUvcMXoY6lTwHLIDrEfkJQtjxfdTlWQdwr0mM5ye7vd83AManSQwutgpI
+ q+wE8CNY2VN9xAlE7OhcmWXlnAw3MJLW863SXdGlnkA3N+U4BoKQSIToGuXARQ14IMNvfeKX
+ NphLPpUUnUNdfxAHu/S3tPTc/E/oePbHo794dnEm57LuuQINBFg2+xABEADZg/T+4o5qj4cw
+ nd0G5pFy7ACxk28mSrLuva9tyzqPgRZ2bdPiwNXJUvBg1es2u81urekeUvGvnERB/TKekp25
+ 4wU3I2lEhIXj5NVdLc6eU5czZQs4YEZbu1U5iqhhZmKhlLrhLlZv2whLOXRlLwi4jAzXIZAu
+ 76mT813jbczl2dwxFxcT8XRzk9+dwzNTdOg75683uinMgskiiul+dzd6sumdOhRZR7YBT+xC
+ wzfykOgBKnzfFscMwKR0iuHNB+VdEnZw80XGZi4N1ku81DHxmo2HG3icg7CwO1ih2jx8ik0r
+ riIyMhJrTXgR1hF6kQnX7p2mXe6K0s8tQFK0ZZmYpZuGYYsV05OvU8yqrRVL/GYvy4Xgplm3
+ DuMuC7/A9/BfmxZVEPAS1gW6QQ8vSO4zf60zREKoSNYeiv+tURM2KOEj8tCMZN3k3sNASfoG
+ fMvTvOjT0yzMbJsI1jwLwy5uA2JVdSLoWzBD8awZ2X/eCU9YDZeGuWmxzIHvkuMj8FfX8cK/
+ 2m437UA877eqmcgiEy/3B7XeHUipOL83gjfq4ETzVmxVswkVvZvR6j2blQVr+MhCZPq83Ota
+ xNB7QptPxJuNRZ49gtT6uQkyGI+2daXqkj/Mot5tKxNKtM1Vbr/3b+AEMA7qLz7QjhgGJcie
+ qp4b0gELjY1Oe9dBAXMiDwARAQABiQI8BBgBCAAmFiEEcM/SHOJt5ePBD8hO5T0WKDGD1rMF
+ Alg2+xACGwwFCQlmAYAACgkQ5T0WKDGD1rOYSw/+P6fYSZjTJDAl9XNfXRjRRyJSfaw6N1pA
+ Ahuu0MIa3djFRuFCrAHUaaFZf5V2iW5xhGnrhDwE1Ksf7tlstSne/G0a+Ef7vhUyeTn6U/0m
+ +/BrsCsBUXhqeNuraGUtaleatQijXfuemUwgB+mE3B0SobE601XLo6MYIhPh8MG32MKO5kOY
+ hB5jzyor7WoN3ETVNQoGgMzPVWIRElwpcXr+yGoTLAOpG7nkAUBBj9n9TPpSdt/npfok9ZfL
+ /Q+ranrxb2Cy4tvOPxeVfR58XveX85ICrW9VHPVq9sJf/a24bMm6+qEg1V/G7u/AM3fM8U2m
+ tdrTqOrfxklZ7beppGKzC1/WLrcr072vrdiN0icyOHQlfWmaPv0pUnW3AwtiMYngT96BevfA
+ qlwaymjPTvH+cTXScnbydfOQW8220JQwykUe+sHRZfAF5TS2YCkQvsyf7vIpSqo/ttDk4+xc
+ Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
+ x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
+ pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
+Message-ID: <52c3fdf6-0d04-eed5-da57-ef7d1008c291@web.de>
+Date:   Sat, 16 Feb 2019 19:39:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <1550198902.2802.12.camel@HansenPartnership.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:18.9.28.11;IPV:CAL;SCL:-1;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10019020)(396003)(39860400002)(136003)(376002)(346002)(2980300002)(189003)(199004)(76176011)(356004)(26826003)(90966002)(786003)(36906005)(316002)(75432002)(42186006)(1076003)(93886005)(478600001)(46406003)(33656002)(58126008)(16586007)(229853002)(106466001)(54906003)(47776003)(88552002)(2906002)(50466002)(23726003)(14444005)(11346002)(446003)(126002)(2616005)(103686004)(476003)(106002)(486006)(26005)(336012)(6246003)(6266002)(4326008)(186003)(7416002)(36756003)(52956003)(6916009)(97756001)(86362001)(305945005)(8936002)(8676002)(5660300002)(246002)(18370500001);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR01MB4861;H:outgoing.mit.edu;FPR:;SPF:Pass;LANG:en;PTR:outgoing-auth-1.mit.edu;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 8ed7cacc-2342-45d0-466a-08d6943c92e8
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4608103)(4709054)(2017052603328)(7153060);SRVR:SN6PR01MB4861;
-X-MS-TrafficTypeDiagnostic: SN6PR01MB4861:
-X-LD-Processed: 64afd9ba-0ecf-4acf-bc36-935f6235ba8b,ExtAddr
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR01MB4861;20:ueY9ZOD/gXvrb2e1UMfF0y1XIjjNA/H8Ekm5zZUimBBsd1huTW+ZOgwnPKu1r4BmqmDiQ/We7qmJ3TF1MNCpTV3i/iBLQxhlk6BpOBKbujzi3Oo0ld6CbLc2JT8sZfSCg202Ptpf0rXkTQ64lM6MnwgjE67towk2XFX+prtx6WDIuE8KMRWE+knfpbt7Bb3TUxfqJBC6u6p6qDLSTMkH/6Q+IzXqsqjwSRqYNEv34tXF+XwM6SbqnB9BcQ5S/ZNhfxuGifcRsTE2JnF0jxq94KX9L7oK/U+VEz73IfGcpLALhFXKdXVMSuNrMOmnTy2WVeTpN/sNve2xnFavzm/mOje7qRhVjc+i1qSGWEqZx0hrzfTq/oCUCJ/gq1nI9O/E5WTiSE5D4Ji7rTwQkwnLwo23G3KMjldSbgFGfiF5V39Ar3xuMOHZUZB0D0QFcIgU9YRfuXKmRVZ7CzvX/CjS7lbXoDlR6ImxKIYBygnUWdjkl9o5yT5k/z1TMgAK7TpIPyYmayM0vtoBTd1/jw2gwWtGr7lQ/IExPAvsIp6mqJ8m2Cuugk193kVK0hQJt2oTO9rgujVboix6fsF2F1CQel6iY4CZrVc1XNCYEgs/u2c=
-X-Microsoft-Antispam-PRVS: <SN6PR01MB4861663437775A896D23C603B5610@SN6PR01MB4861.prod.exchangelabs.com>
-X-Forefront-PRVS: 0950706AC1
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR01MB4861;23:UmrAUhT7DiITxiXc/tswO4NbOkrDVPEGg2vmTHI7Q?=
- =?us-ascii?Q?dBeUS7OyXdzO+K1rjmg1hmXdd08Idtw2ua1uTQ3FCIhRZLghsnqgFWEg3+VX?=
- =?us-ascii?Q?3ytzCV8mhR1BLm49NDh0Ov1COuonBeDMk5/HxqDzJ+cc8UeK913ReR16aFGm?=
- =?us-ascii?Q?KhmkNCRItmyNDypWYR8za3zDAUm/1ahdnLTY+AIQ3BsFObGhmQ64bD9JFeO2?=
- =?us-ascii?Q?JkXrPhQXCF0tGj+vA8rFzieqshRMbmrBEhC7az06j2+HJQ+b6tcECI/B6ePf?=
- =?us-ascii?Q?VSRD6hoepGZOhrGjm7XnrQ0jHv7yApkWl99CMN1PfB7oJnqE/SYTZRP9gGZA?=
- =?us-ascii?Q?bt9JOQt6YkqH1wXuMWjPnbsew4lL8iLnE7/L+0GcXnppuInAz4ho3hpo82qH?=
- =?us-ascii?Q?NL4j62OfIAgsNu50PsU+YXpY1SOtARG4IVFB3eBxIr/u2dvmEB93RMJOBuHY?=
- =?us-ascii?Q?lXtiaUdwYCLHjAamMZJDJysWmjuXQtM+QoK/YJogFdxUTBzxyQtVLD7ME+0v?=
- =?us-ascii?Q?/xEAJHIJxA9idAP6NyaDVY6K5MmZnDB7BMA733CaLMtqAeKgdWomUtjmrLJ1?=
- =?us-ascii?Q?rTO+0pqNRF83JkE/iMRORgcj7C8c3Di7AU/rlXdl9w76qy0vtnmn3edp8JZw?=
- =?us-ascii?Q?zAQvR8WyPhI9NKHnPQhD/9zz9bLYZyntOxLe7qhDYL3A4uB0KJrPY6jjqZvP?=
- =?us-ascii?Q?nBXmcUlfMdLJNLoU418f+K67oduDnLXHwMGWDB27VDxNruKQsYUMRyVK9TmD?=
- =?us-ascii?Q?PgGe/gmlxLmVpGGQlM3pDo/0yd34JdY9AneoSAnWKrPBSQgyk5IW9yKZ6K0+?=
- =?us-ascii?Q?+oFU6mVfGjNgKo1VhqVTyq8LfrmyFU4BnS6ArE7H2eGWjz8aNz5DdKVorSyx?=
- =?us-ascii?Q?rkCKlZ89A3OqzQF2flAUE8OuBJHCbSj887BWmx+CNQ+lHOodVb8BH9bO95aX?=
- =?us-ascii?Q?V6rd79C6gOWXWTCjHsRIcf3Tl3sWr6yQCo7ipYcdjbEPa5xuYuK/cIn1jtqx?=
- =?us-ascii?Q?KWSP0a+7hGPVip7trYZLBL0eTJPIwyyidStUVhMXiyc1ZRkOU3noPxSTNZjR?=
- =?us-ascii?Q?wcgTsCIeYEzCSMAVD0k4+ztqMMw9QoLRHARvl1u+2Kdte/vpIj1gB0moCiYO?=
- =?us-ascii?Q?GRNh5HDaFR00mMfrxNOX/4hmtd6y0TDHamUxCUW2FYh41zAkelTzBwDv5bvW?=
- =?us-ascii?Q?DhKysm78oIUYWcEg+PvNBbdDzfRUMy7EJ/cwrqtL+gmkxNAgNt9qrYDYw/fu?=
- =?us-ascii?Q?MMEOAx7XAZQH0xyucsXi9e81N7lcDNqHk0ooYcsbfRevbTW5wwdnE2ce5St9?=
- =?us-ascii?B?UT09?=
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: qvPzD2ZBLabAEF0eOHxYgT2yFv3dp3SsJipU+gom6LALcWgjxIRpJfZPATG0pGIa0VvF/o9ZrN2G6qwKxTS/2as95pctkd/DbwfteZcWXQ7fb3dmHrMuLEma9KIgNWOD8NMVcz+bySdyPV16xl4qqdYEWX36YEzz5G9J3fUL+DNbdFmKrj0pIhnxzcHxeduIwMavUVPsy+LRi1z6IjwFiJYRov7dr6TcWhB6Usq0m210O5AvgL9m7u5iTvngCp4zl0B3xziYxhBHWL2xY/5ANdhJ9xxOLIhN4s5u+jhqij+y/WXemD1PXi5aZYf9ii/O600UILTOUHE/jUU6WTz9zaJn9AGieoNZYUci4Jp4PGr5h/N4qvuHSPoHl7aUHEnMpIB9avaZEBJWQO16/LtM8zw1+4WnJaTjbTHpl0zdErM=
-X-OriginatorOrg: mit.edu
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Feb 2019 18:28:39.9125
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8ed7cacc-2342-45d0-466a-08d6943c92e8
-X-MS-Exchange-CrossTenant-Id: 64afd9ba-0ecf-4acf-bc36-935f6235ba8b
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=64afd9ba-0ecf-4acf-bc36-935f6235ba8b;Ip=[18.9.28.11];Helo=[outgoing.mit.edu]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR01MB4861
+In-Reply-To: <HK0PR02MB36344E2B29CEB195892F6420B2610@HK0PR02MB3634.apcprd02.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+X-Provags-ID: V03:K1:WOvHj4F2Q4JawsmySRO5I27gnQdIB5lOM7+MfdZXJf+kxZ30A/P
+ FN45hq9NjX4HD96UbTXQ34YqGR+Zn2xFdv2s9nUJt1fRqFsnR9+futg1u/Za6SqURq1sZh+
+ at/wpYGrIthP/vbKeTSAVqe+MgTGspxIJ5QHUlzosnBYOMseiipHA29+1d9Wxf4z+h72Dap
+ XLZTFggb3WJOwOEbHSIrQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:wRNvInyGI0c=:1yRBy45GYOhRh4JAwwfyXk
+ TYqC+X+2vQQb5fIK2XUNEMcWKVpOecJDAJ8pPVDzu+AeuZRGf4AaGIzD4xD0yi79uh7o2Irhr
+ iz1tQ33JJdRM6vqQ2wzzaE74yUypoD7nbQPyW1gOusH5d1VIpe3s9Cy/mi6B4zyHGCY5q8KJI
+ lgulPwjSNFNlQkQXasggUlva3Mpvh+XZQzDO8Xv4ALOkVq+qqBMaAoG08wXjRlaHpmWEJAciO
+ YK0CkvGAIelsTnJoqduU5wpwzAQvYkmLs2ELoAsV14mAU57uaYPjLOeUNcZO/dOb0+SMJh2eV
+ ucgDKlgyqXC/Uwic+bYleBVSmso7+EvswkOdxYZzj7OdopzczPjtHfL9jQKRsp7E/PaImjQ6X
+ 0FoKwRraF918RRBV9jI8OP5zjnQ0YvW9fR0l8INDC+Fc9orVqU8N240pCUSjneobF8mO588cR
+ MHwVsdt9uE/oeOMmxOT/F1B0kPJdpLNEi6MVNZD3+2s5BJmzfBD3/5QHdQBLbLUsrPWl4iPHH
+ rGav9zaNkxfMUxaopPnvmx6VKHVtwu94Ehu78PozMmAPfugjFk6RnQF48Yei8/j6bVy1v4YZ/
+ cAGQp5u8J3mObog7ZpA6MfP9y0WTTYmLKHof2GuvgF6xRV9dsFpeRySufvladr21YbzFDkLIY
+ 1QzKGC8otwgQEzJCk7MPDRe+db7XdeuFDg2fWPWx023RihAUrGJDciA3vAvIjm63cKqzuR206
+ 1i1OIt/bwPgfXZbSUeWzYIMmyGDxIdKz0cV86khV/ilHOUTN+OeDwggTwh4mWRmzZ38vyUZov
+ nlrMZN7Dn9+WjNHd2/uSUQcv9xXq6/aj2vNjbkUT5SII/v0ZF9EE3pMBQDJi4hN33eLAp2Qyd
+ ZctKfZ+drQ1ij13BxcBUuWUAL6DmmlMU6TJ3p29S359fQOuJ3XkQqNCCLMjFUfWSKJrQQP33y
+ zEbjHh8I6Zg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 06:48:22PM -0800, James Bottomley wrote:
-> Well, we differ on the value of running regression tests, then.  The
-> whole point of a test infrastructure is that it's simple to run 'make
-> check' in autoconf parlance.  xfstests does provide a useful baseline
-> set of regression tests.  However, since my goal is primarily to detect
-> problems in the storage path rather than the filesystem, the utility is
-> exercising that path, although I fully appreciate that filesystem
-> regression tests aren't going to catch every SCSI issue, they do
-> provide some level of assurance against bugs.
-> 
-> Hopefully we can switch over to blktests when it's ready, but in the
-> meantime xfstests is way better than nothing.
+> In a function, for a local variable obtained by of_find_device_by_node(),
 
-blktests isn't yet comprehensive, but I think there's value in running
-blktests as well as xfstests.  I've been integrating blktests into
-{kvm,gce}-xfstets because if the problem is caused to some regression
-introduced in the block layer, I'm not wasting time trying to figure
-out if it's caused by the block layer or not.  It won't catch
-everything, but at least it has some value...
+I got a software understanding where such a variable can not be obtained
+from this function call.
+The return value (like a pointer in this use case) can be stored there.
 
-The block/*, loop/* and scsi/* tests in blktests do seem to be in
-pretty good shape.  The nvme, nvmeof, and srp tests are *definitely*
-not as mature.
 
-				- Ted
+> v6:
+> - to be double sure, replace &id->dev with (T)(&id->dev).
+
+The support for data type casts is another interesting extension for
+this source code analysis approach.
+Further adjustments might become possible at other places of the presented SmPL script
+after specific clarifications of previously mentioned implementation details.
+
+Regards,
+Markus
