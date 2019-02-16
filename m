@@ -3,137 +3,145 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E8DC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 02:08:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD2E9C10F02
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 02:14:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 223F3222A1
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 02:08:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C281222D0
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 02:14:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="NZAi8qeq"
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="clw4aHtq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387795AbfBPCIa (ORCPT
+        id S2388383AbfBPCOZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 21:08:30 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:44106 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731407AbfBPCI2 (ORCPT
+        Fri, 15 Feb 2019 21:14:25 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:46350 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731265AbfBPCOY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 21:08:28 -0500
-Received: by mail-ot1-f67.google.com with SMTP id g1so19753874otj.11
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 18:08:28 -0800 (PST)
+        Fri, 15 Feb 2019 21:14:24 -0500
+Received: by mail-pf1-f194.google.com with SMTP id g6so5695963pfh.13
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 18:14:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=E8MQdVUTQEeEu3nqjpLgUdTpwxg637m/uFGbvQJuSWY=;
-        b=NZAi8qeqKa4RmPPWbQVLGsqH4HcPbbo4moBaDR6y/8pPawWONe13ZuvYXTo5GAHWT+
-         2SEhnciu5Nxtikh1o/YLTFaui0l1W7N0BaCqWNMvEK+gdODVygA3nZm22lFn8HMNXNx3
-         STYAiZbSyO1Ox1c4sb4rzFQxdwtm2u3uBEq0ew6AthQ6ApS6/Ujbyv7ulFPS09nFNLPt
-         nzZu6SouDanwDSRF3oecaNGJdqKJ0PXHwkLOud3BY85NPhN/hLR4Z7zDbDgypEricMVC
-         R2gNUbkDzNKG0rv1ODmTwk7QgP5+T9W89SDM8e+uNq9jEGvZT3Vn5g9OrZ7T5Z/X0/o1
-         iT5w==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=vxGwAtkTVlMgRJNqee8nqYyR1YhNSRjvLOqWLKjDkOY=;
+        b=clw4aHtq6t64mwyl6fsPtGxDEys/d2BMJ4Bs3812AbympgqxRKwFc6Ebbr9lOfnwDe
+         vRGI+lGsdbht5eLMR9zMk5oV8rcS7WgW6zWNWuLzOTm0PkclTDAD0LAh/LC2X9yDe2nf
+         JnNZtW8kRapuGRzz/2CXtwjRkGJQpcBXjy3WTr+9vg5Mm7vN68g/aSFHk8VNJAmQLJat
+         9wud5KiUp3uELU8DPYwWDO2bS4IfVrOCiBX/Dy2TCC85PEVT+PcUZokP9TFS5Kqpnuf1
+         SjmO156N355dVDlqaEp8gJs0wXFnwOJfm+hNdBY3c4kC83zYfObA7WQtrtixBCb1JIxX
+         zVBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=E8MQdVUTQEeEu3nqjpLgUdTpwxg637m/uFGbvQJuSWY=;
-        b=O0qVCHuTCA7+tc7dGyWqg3VOYvjCYKDerYQF7ZtppBmcFiwDGpET5NKP0DAzoQsLbt
-         fJqWKFjU5X3ws3PxVpgIUrYr+eBWh5h/ZdBNq5/zZLn8dgtq11o01DuxinkeMskq97Fn
-         1L1H4ptNzxU4tBiBCZ5jHMOJpz8Qfr//RU3dOhIOrs/YIn/WgF8p802W7JFDupvTeQGb
-         Nr9dUJVmCB2LFa6WvfLq4v7qqGJoFN+wE8LwFc/Co+w0BcC/1vreabj+TuDTWUBI0G+c
-         hv7rsLEdefAn2a8z3XSkjkfk4d3jkB4519hFqqX1gsRjmj520NIF+T8mGOFhIOhiLqmL
-         gv+A==
-X-Gm-Message-State: AHQUAubDw7tGogbsCNvL5oJ/dD/k30xl2deBp3Lzioft8Yqbp5od+NOI
-        9xzKHFN55unnPNGZKhRginFE7ynAcjGalSe39BK1jQ==
-X-Google-Smtp-Source: AHgI3IYiHFdoZ4/8rxjRC06U3FUw/zyaCagWPgW++88v+Zd3W6gFP6Xc57iHPsqgcS/aRz9zESCBYGPq1WDZ2Jsdub4=
-X-Received: by 2002:a9d:7a87:: with SMTP id l7mr274118otn.98.1550282907624;
- Fri, 15 Feb 2019 18:08:27 -0800 (PST)
-MIME-Version: 1.0
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 15 Feb 2019 18:08:15 -0800
-Message-ID: <CAPcyv4gs7nGnf81Lj-Hf04uhmMb2wxKzi42ajaNVCHty7PAsAQ@mail.gmail.com>
-Subject: find_get_entries_tag regression bisected
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Balcer, Piotr" <piotr.balcer@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=vxGwAtkTVlMgRJNqee8nqYyR1YhNSRjvLOqWLKjDkOY=;
+        b=tWtZ8Lx6R8WJMlsWNqTVuvZArYCDLe4ZuK/2DuJmXwip1+PQAfN+K4RqKh1JvVkjgo
+         /aJmDgEe6Cm+2qaJhbRMkAExb1pQNMNmYUXq5ZimrwUdFv/vVLvAveo/anNnjDNgbxdN
+         8ogv3uC2duuXrnfb3FyNBSerRt+q2t1uU6BffM4gY2afFIdJhmlasC7JUot2DABVb/YB
+         Cx+JyVeAwPAUyipIt7y7n7awbEPLyVpNc0QCiVl+IrvxS+uCyymBjFibx7/xo2tvyJeL
+         Dte3Nn6ECEtmUQK3O2azOJK6w2oNB+8ssUO6e5usMKlchllGt1v72ijF8yIFWzoLxh1d
+         Vjgg==
+X-Gm-Message-State: AHQUAuYyFpE4rC3ueheUoCBdjfwOBDx2U+Vv8iWUi8qXJIF790eoD+wc
+        E34eF7+lTVRDJLcJZeOB0lMp5g==
+X-Google-Smtp-Source: AHgI3IarUHd2gRnfGNi2H414YJbCUXhIsNWzmTZt7kL/nicC746ogQprPm8UHj5rEoYYM0hhb3RBgA==
+X-Received: by 2002:a63:9751:: with SMTP id d17mr8201837pgo.392.1550283263603;
+        Fri, 15 Feb 2019 18:14:23 -0800 (PST)
+Received: from ?IPv6:2601:642:c400:7877:cc9b:b6f4:78c:813a? ([2601:642:c400:7877:cc9b:b6f4:78c:813a])
+        by smtp.gmail.com with ESMTPSA id 184sm11109067pfe.106.2019.02.15.18.14.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Feb 2019 18:14:22 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access kernel memory that can fault
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16C101)
+In-Reply-To: <20190215210801.7f8c94cf@gandalf.local.home>
+Date:   Fri, 15 Feb 2019 18:14:21 -0800
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable <stable@vger.kernel.org>,
+        Changbin Du <changbin.du@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <1B52384E-5C02-4279-9111-34881BA3204E@amacapital.net>
+References: <20190215174712.372898450@goodmis.org> <20190215174945.557218316@goodmis.org> <CAHk-=wjP4bEYCFaKZVG4kLWmYBctyfsW9jjhC91tiTk9WwB8Rg@mail.gmail.com> <20190215171539.4682f0b4@gandalf.local.home> <300C4516-A093-43AE-8707-1C42486807A4@amacapital.net> <20190215191949.04604191@gandalf.local.home> <D1A39BE5-CAB2-42D1-B87B-2E21906FE5B1@amacapital.net> <20190215210801.7f8c94cf@gandalf.local.home>
+To:     Steven Rostedt <rostedt@goodmis.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Willy,
 
-Piotr reports the following crash can be triggered on latest mainline:
+> On Feb 15, 2019, at 6:08 PM, Steven Rostedt <rostedt@goodmis.org> wrote:
+>=20
+> On Fri, 15 Feb 2019 17:32:55 -0800
+> Andy Lutomirski <luto@amacapital.net> wrote:
+>=20
+>>> I added you just because I wanted help getting the change log correct,
+>>> as that's what Linus was complaining about. I kept using "kernel
+>>> address" when the sample bug used for the patch was really a
+>>> non-canonical address (as Linus said, it's just garbage. Neither kernel
+>>> or user space). But I pointed out that this can also bug if the
+>>> address is canonical and in the kernel address space. The old code
+>>> didn't complain about non-canonical or kernel address faulting before
+>>> commit 9da3f2b7405, which only talks about kernel address space
+>>> faulting (which is why I only mentioned that in my messages).
+>>>=20
+>>> Would changing all the mention of "kernel address" to "non user space"
+>>> be accurate?
+>>>=20
+>>=20
+>> I think =E2=80=9Ckernel address=E2=80=9D is right. It=E2=80=99s illegal t=
+o access anything that isn=E2=80=99t known to be a valid kernel address whil=
+e in KERNEL_DS.
+>=20
+> But an non-canonical address is not a "kernel address", and that will
+> cause a bug too.
 
- EXT4-fs (pmem5): recovery complete
- EXT4-fs (pmem5): mounted filesystem with ordered data mode. Opts: dax
- ------------[ cut here ]------------
- kernel BUG at mm/pgtable-generic.c:127!
- invalid opcode: 0000 [#1] SMP PTI
- CPU: 28 PID: 1193 Comm: a.out Tainted: G        W  OE     4.19.0-rc5+ #2907
- [..]
- RIP: 0010:pmdp_huge_clear_flush+0x1e/0x80
- [..]
- Call Trace:
-  dax_writeback_mapping_range+0x473/0x8a0
-  ? print_shortest_lock_dependencies+0x40/0x40
-  ? jbd2_journal_stop+0xef/0x470
-  ? ext4_fill_super+0x3071/0x3110
-  ? __lock_is_held+0x4f/0x90
-  ? __lock_is_held+0x4f/0x90
-  ext4_dax_writepages+0xed/0x2f0
-  do_writepages+0x41/0xe0
-  __filemap_fdatawrite_range+0xbe/0xf0
-  file_write_and_wait_range+0x4c/0xa0
-  ext4_sync_file+0xa6/0x4f0
+Indeed. A non-canonical address is not known to be a valid kernel address.  I=
+ stand by my slightly pedantic statement :)
 
-I bisected this regression to commit c1901cd33cf4 "page cache: Convert
-find_get_entries_tag to XArray". I suspect another case of pte vs pmd
-confusion.
+> This patch came about because it was changed that if
+> we do a uaccess on something other than a user space address and take a
+> fault (either because it was a non-canonical address, or a kernel
+> address), we BUG! Where before that one patch, it would just return a
+> fault.
+>=20
+>>=20
+>> The old __copy seems likely to have always been a bit bogus.
+>>=20
+>> BTW, what is this probe_mem_read() thing?  Some minimal inspection sugges=
+ts it=E2=80=99s a buggy reimplementation of probe_kernel_read().  Can you de=
+lete it and just use probe_kernel_read() directly?
+>=20
+> Well, the issue is that we have trace_probe_tmpl.h in that same
+> directory, which does the work for kprobes and uprobes. The
+> trace_kprobes.c defines all the functions for handling kprobes, and
+> trace_uprobes.c does all the handling of uprobes, then they include
+> trace_probe_tmpl.h which does the bulk of the work.
+>=20
+> In the uprobes case, we have:
+>=20
+> static nokprobe_inline int
+> probe_mem_read(void *dest, void *src, size_t size)
+> {
+>    void __user *vaddr =3D (void __force __user *)src;
+>=20
+>    return copy_from_user(dest, vaddr, size) ? -EFAULT : 0;
+> }
+>=20
+> Because that is adding probes on userspace code.
+>=20
+>=20
 
-Below is the small reproducer from Piotr, it triggers in a qemu
-environment with emulated pmem, but only with ext4 that I can see, but
-I did not dig too deep. Let me know if anything jumps out to you. I'll
-otherwise take a deeper look in the coming days.
-
-
-#include <sys/mman.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <fcntl.h>
-#include <string.h>
-#include <assert.h>
-
-#define MB (1ULL << 20)
-
-int
-main(int argc, char *argv[])
-{
-    int ret;
-    int fd;
-    off_t size = 2 * MB;
-
-    char *path = argv[1];
-
-    fd = open(path, O_RDWR | O_CREAT | O_EXCL, 0666);
-    assert(fd > 0);
-
-    ret = ftruncate(fd, size);
-    assert(ret == 0);
-
-    char *addr = mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
-    assert(addr != MAP_FAILED);
-
-    memset((char*)addr, '0', 1);
-
-    ret = msync(addr + 4096, 1, MS_SYNC);
-    assert(ret == 0);
-
-    close(fd);
-
-    return 0;
-}
+Can the kprobe case call probe_kernel_read?  Maybe it does already?=
