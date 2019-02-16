@@ -2,193 +2,191 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61EE2C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 08:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52DDEC4360F
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 08:05:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 277A5222D7
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 08:02:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21E63222D7
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 08:05:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729264AbfBPIAP (ORCPT
+        id S1729605AbfBPIFE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 03:00:15 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3739 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727970AbfBPIAO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 03:00:14 -0500
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 670FB9BFCC4025B2C711
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Feb 2019 16:00:08 +0800 (CST)
-Received: from [127.0.0.1] (10.57.71.8) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Sat, 16 Feb 2019
- 15:59:57 +0800
-Subject: Re: possible deadlock in console_unlock
-To:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-CC:     <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>
-References: <ebc01f4f-5b1d-4f8a-1d0d-463d5218ee45@huawei.com>
- <20190216072127.GA1945@tigerII.localdomain>
- <20190216073856.GA9979@tigerII.localdomain>
-From:   Yao HongBo <yaohongbo@huawei.com>
-Message-ID: <71b097a7-03c5-8a65-76fa-24312b452b51@huawei.com>
-Date:   Sat, 16 Feb 2019 15:59:09 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Sat, 16 Feb 2019 03:05:04 -0500
+Received: from mail-it1-f197.google.com ([209.85.166.197]:57555 "EHLO
+        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727970AbfBPIFE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Feb 2019 03:05:04 -0500
+Received: by mail-it1-f197.google.com with SMTP id n124so20103140itb.7
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Feb 2019 00:05:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=ATDW+1im1+6McfmFYNDyHPkRS2FcJXcAGn4j03Aw5xA=;
+        b=j7ZTZJkjb2QnDTV3veqqPnWKHdHZWwvNqko7x+Am8xlxT/etYNPL1NvUiOQuvcf940
+         j5Yulaq2WXNBZEI3msstBUr0N5DTLgBdAmRebA69VND/ybXXaGfuz+oyda8EcA/n4w3G
+         jXo4DCX90LMEML3j5LzPEQNUvZsxMzUIBzDwAmdNZg6pXf/pQdsGP7h/2wroXcBUIFjf
+         Li7EOnT0jvXwhnRtWfoY3PrO6C3fJkVUzs52v5O3skxP2cKW6zodfSsORoZEThd0VgQh
+         qKiLtkrLTOYemCTCmi1MyhZB8aoyfGsC5g/uonyzH2/JxluDJZTMzildLpBTNhCgI/k7
+         nWlA==
+X-Gm-Message-State: AHQUAuYuwyM4VMgz/fgtz9W5mhQ1JXgiJhYQ4CQ4fX2qTW5YBfjghuO0
+        qQtV8DJ72OGttWBP/Vnm2org4o6ECIi4TlS7vOfa1zicIDIC
+X-Google-Smtp-Source: AHgI3Ia92SHGf1uRvzKXxRULFuC5aOsfpJchL24HY98Qr8l6q1wKFAYqRekHkUXGhVmVXmxNRi9DW5FONKDfO/+LGphUSnyq5TUN
 MIME-Version: 1.0
-In-Reply-To: <20190216073856.GA9979@tigerII.localdomain>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.57.71.8]
-X-CFilter-Loop: Reflected
+X-Received: by 2002:a24:6c93:: with SMTP id w141mr7459266itb.35.1550304302976;
+ Sat, 16 Feb 2019 00:05:02 -0800 (PST)
+Date:   Sat, 16 Feb 2019 00:05:02 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000045d4f10581fe59a7@google.com>
+Subject: KASAN: use-after-free Read in shmem_fault
+From:   syzbot <syzbot+56fbe62f8c55f860fd99@syzkaller.appspotmail.com>
+To:     hughd@google.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
-On 2/16/2019 3:46 PM, Sergey Senozhatsky wrote:
-> On (02/16/19 16:21), Sergey Senozhatsky wrote:
->> On (02/16/19 14:36), Yao HongBo wrote:
->>> hi, sergey:
->>>
->>> As shown in that link, https://lkml.org/lkml/2018/6/6/397
->>>
->>> On the linux kernel 5.0-rc6, Syzkaller also hit 'possible deadlock in console_unlock'
->>> bug for several times in my environment.
->>>
->>> This solution fixes things for me. Do you have a plan to submit patches to
->>> solve this problem.
->>>
->>> diff --git a/drivers/tty/tty_buffer.c b/drivers/tty/tty_buffer.c
->>> 	__printk_safe_enter();
->>> 	kmalloc(sizeof(struct tty_buffer) + 2 * size, GFP_ATOMIC);
->>> 	__printk_safe_exit();
->>
->> I would probably try the following:
-> 
-> Yao HongBo, could you please post the lockdep splat?
-> 
-> GFP_NOWARN is probably the best option for now. Yes, it, maybe,
-> will not work for fault-injection cases; but printk_safe approach
-> is harder to push for, especially given that printk_safe maybe will
-> not even exist in the future.
+syzbot found the following crash on:
 
-I have tried GFP_NOWARN, but the problem still exists.
-Only print_safe contexts for tty locks can solve the problem.
-My test scenario is falt-injection.
+HEAD commit:    aa0c38cf39de Merge branch 'fixes' of git://git.kernel.org/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=146cadff400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ee434566c893c7b1
+dashboard link: https://syzkaller.appspot.com/bug?extid=56fbe62f8c55f860fd99
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
 
-deadlock report is shown as below:
+Unfortunately, I don't have any reproducer for this crash yet.
 
-RBP: 00007f1cf76cbc70 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f1cf76cc6bc
-R13: 00000000004c473d R14: 0000000000701f18 R15: 0000000000000005
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+56fbe62f8c55f860fd99@syzkaller.appspotmail.com
 
-======================================================
-WARNING: possible circular locking dependency detected
-4.19.18-514.55.6.9.x86_64+ #1 Not tainted
-------------------------------------------------------
-syz-executor0/23291 is trying to acquire lock:
-00000000d73d87c0 (console_owner){-.-.}, at: log_next kernel/printk/printk.c:495 [inline]
-00000000d73d87c0 (console_owner){-.-.}, at: console_unlock+0x36d/0xb30 kernel/printk/printk.c:2397
+==================================================================
+BUG: KASAN: use-after-free in __lock_acquire+0x30e0/0x4700  
+kernel/locking/lockdep.c:3215
+Read of size 8 at addr ffff888098eda1a0 by task syz-executor.2/16643
 
-but task is already holding lock:
-00000000dfbab914 (&(&port->lock)->rlock){-.-.}, at: pty_write+0xd2/0x1d0 drivers/tty/pty.c:119
+CPU: 0 PID: 16643 Comm: syz-executor.2 Not tainted 5.0.0-rc6+ #68
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
+  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/generic_report.c:135
+  __lock_acquire+0x30e0/0x4700 kernel/locking/lockdep.c:3215
+  lock_acquire+0x16f/0x3f0 kernel/locking/lockdep.c:3841
+  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+  _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:144
+  spin_lock include/linux/spinlock.h:329 [inline]
+  shmem_fault+0x5b4/0x760 mm/shmem.c:1972
+  __do_fault+0x116/0x4e0 mm/memory.c:3019
+  do_read_fault mm/memory.c:3430 [inline]
+  do_fault mm/memory.c:3556 [inline]
+  handle_pte_fault mm/memory.c:3787 [inline]
+  __handle_mm_fault+0x2cbd/0x3f20 mm/memory.c:3911
+  handle_mm_fault+0x43f/0xb30 mm/memory.c:3948
+  faultin_page mm/gup.c:535 [inline]
+  __get_user_pages+0x7b6/0x1a40 mm/gup.c:738
+  populate_vma_page_range+0x20d/0x2a0 mm/gup.c:1247
+  __mm_populate+0x204/0x380 mm/gup.c:1295
+  mm_populate include/linux/mm.h:2388 [inline]
+  vm_mmap_pgoff+0x213/0x230 mm/util.c:355
+  ksys_mmap_pgoff+0xf7/0x630 mm/mmap.c:1609
+  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+  __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457e39
+Code: ad b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 7b b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fe43bdebc78 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 0000000000457e39
+RDX: 0000000000000003 RSI: 0000000000b36000 RDI: 0000000020000000
+RBP: 000000000073bf00 R08: ffffffffffffffff R09: 0000000000000000
+R10: 0000000000008031 R11: 0000000000000246 R12: 00007fe43bdec6d4
+R13: 00000000004c3b9e R14: 00000000004d6c88 R15: 00000000ffffffff
 
-which lock already depends on the new lock.
+Allocated by task 16643:
+  save_stack+0x45/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  __kasan_kmalloc mm/kasan/common.c:496 [inline]
+  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:469
+  kasan_kmalloc mm/kasan/common.c:504 [inline]
+  kasan_slab_alloc+0xf/0x20 mm/kasan/common.c:411
+  kmem_cache_alloc+0x12d/0x710 mm/slab.c:3543
+  shmem_alloc_inode+0x1c/0x50 mm/shmem.c:3544
+  alloc_inode+0x66/0x190 fs/inode.c:210
+  new_inode_pseudo+0x19/0xf0 fs/inode.c:906
+  new_inode+0x1f/0x40 fs/inode.c:935
+  shmem_get_inode+0x84/0x780 mm/shmem.c:2148
+  __shmem_file_setup.part.0+0x1e2/0x2b0 mm/shmem.c:3900
+  __shmem_file_setup mm/shmem.c:3894 [inline]
+  shmem_kernel_file_setup mm/shmem.c:3930 [inline]
+  shmem_zero_setup+0xe2/0x474 mm/shmem.c:3974
+  mmap_region+0x136c/0x1760 mm/mmap.c:1802
+  do_mmap+0x8e2/0x1080 mm/mmap.c:1559
+  do_mmap_pgoff include/linux/mm.h:2379 [inline]
+  vm_mmap_pgoff+0x1c5/0x230 mm/util.c:350
+  ksys_mmap_pgoff+0xf7/0x630 mm/mmap.c:1609
+  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
+  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
+  __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
+Freed by task 16:
+  save_stack+0x45/0xd0 mm/kasan/common.c:73
+  set_track mm/kasan/common.c:85 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:458
+  kasan_slab_free+0xe/0x10 mm/kasan/common.c:466
+  __cache_free mm/slab.c:3487 [inline]
+  kmem_cache_free+0x86/0x260 mm/slab.c:3749
+  shmem_destroy_callback+0x6e/0xc0 mm/shmem.c:3555
+  __rcu_reclaim kernel/rcu/rcu.h:240 [inline]
+  rcu_do_batch kernel/rcu/tree.c:2452 [inline]
+  invoke_rcu_callbacks kernel/rcu/tree.c:2773 [inline]
+  rcu_process_callbacks+0x928/0x1390 kernel/rcu/tree.c:2754
+  __do_softirq+0x266/0x95a kernel/softirq.c:292
 
-the existing dependency chain (in reverse order) is:
+The buggy address belongs to the object at ffff888098eda000
+  which belongs to the cache shmem_inode_cache(49:syz2) of size 1184
+The buggy address is located 416 bytes inside of
+  1184-byte region [ffff888098eda000, ffff888098eda4a0)
+The buggy address belongs to the page:
+page:ffffea000263b680 count:1 mapcount:0 mapping:ffff888085ba8d80  
+index:0xffff888098edaffd
+flags: 0x1fffc0000000200(slab)
+raw: 01fffc0000000200 ffffea000283a708 ffffea00029ce6c8 ffff888085ba8d80
+raw: ffff888098edaffd ffff888098eda000 0000000100000001 ffff88805755e540
+page dumped because: kasan: bad access detected
+page->mem_cgroup:ffff88805755e540
 
--> #2 (&(&port->lock)->rlock){-.-.}:
-       tty_port_tty_get+0x20/0x80 drivers/tty/tty_port.c:288
-       tty_port_default_wakeup+0x16/0x40 drivers/tty/tty_port.c:47
-       serial8250_tx_chars+0x4dc/0xa80 drivers/tty/serial/8250/8250_port.c:1806
-       serial8250_handle_irq.part.12+0x198/0x220 drivers/tty/serial/8250/8250_port.c:1879
-       serial8250_handle_irq drivers/tty/serial/8250/8250_port.c:1899 [inline]
-       serial8250_default_handle_irq+0xf8/0x120 drivers/tty/serial/8250/8250_port.c:1895
-       serial8250_interrupt+0xfe/0x250 drivers/tty/serial/8250/8250_core.c:125
-       __handle_irq_event_percpu+0xf5/0x730 kernel/irq/handle.c:149
-       handle_irq_event_percpu+0x7b/0x170 kernel/irq/handle.c:189
-       handle_irq_event+0xa6/0x140 kernel/irq/handle.c:206
-       handle_edge_irq+0x1eb/0xa90 kernel/irq/chip.c:791
-       generic_handle_irq_desc include/linux/irqdesc.h:154 [inline]
-       handle_irq+0x3e/0x50 arch/x86/kernel/irq_64.c:78
-       do_IRQ+0x92/0x200 arch/x86/kernel/irq.c:246
-       ret_from_intr+0x0/0x22
-       native_safe_halt+0x2/0x10 arch/x86/include/asm/irqflags.h:57
-       arch_safe_halt arch/x86/include/asm/paravirt.h:94 [inline]
-       default_idle+0x24/0x2b0 arch/x86/kernel/process.c:561
-       cpuidle_idle_call kernel/sched/idle.c:153 [inline]
-       do_idle+0x2ca/0x420 kernel/sched/idle.c:262
-       cpu_startup_entry+0xcb/0xe0 kernel/sched/idle.c:368
-       start_secondary+0x421/0x570 arch/x86/kernel/smpboot.c:271
-       secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
-
--> #1 (&port_lock_key){-.-.}:
-       serial8250_console_write+0x68a/0x820 drivers/tty/serial/8250/8250_port.c:3247
-       call_console_drivers kernel/printk/printk.c:1729 [inline]
-       console_unlock+0x66a/0xb30 kernel/printk/printk.c:2410
-       vprintk_emit+0x181/0x570 kernel/printk/printk.c:1927
-       vprintk_default+0x68/0xe0 kernel/printk/printk.c:1968
-       vprintk_func+0x57/0xf0 kernel/printk/printk_safe.c:398
-       printk+0xb7/0xe2 kernel/printk/printk.c:2001
-       register_console+0x752/0xc60 kernel/printk/printk.c:2725
-       univ8250_console_init+0x31/0x3a drivers/tty/serial/8250/8250_core.c:685
-       console_init+0x3ad/0x567 kernel/printk/printk.c:2811
-       start_kernel+0x4c3/0x7e1 init/main.c:661
-       secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
-
--> #0 (console_owner){-.-.}:
-       console_lock_spinning_enable kernel/printk/printk.c:1592 [inline]
-       console_unlock+0x3d9/0xb30 kernel/printk/printk.c:2407
-       vprintk_emit+0x181/0x570 kernel/printk/printk.c:1927
-       vprintk_default+0x68/0xe0 kernel/printk/printk.c:1968
-       vprintk_func+0x57/0xf0 kernel/printk/printk_safe.c:398
-       printk+0xb7/0xe2 kernel/printk/printk.c:2001
-       fail_dump lib/fault-inject.c:44 [inline]
-       should_fail+0x5d3/0x700 lib/fault-inject.c:149
-       __should_failslab+0x110/0x180 mm/failslab.c:32
-       should_failslab+0xa/0x20 mm/slab_common.c:1557
-       slab_pre_alloc_hook mm/slab.h:423 [inline]
-       slab_alloc_node mm/slub.c:2632 [inline]
-       slab_alloc mm/slub.c:2714 [inline]
-       __kmalloc+0x6e/0x350 mm/slub.c:3747
-       kmalloc include/linux/slab.h:518 [inline]
-       tty_buffer_alloc drivers/tty/tty_buffer.c:170 [inline]
-       __tty_buffer_request_room+0x1cf/0x5e0 drivers/tty/tty_buffer.c:268
-       tty_insert_flip_string_fixed_flag+0x8f/0x220 drivers/tty/tty_buffer.c:313
-       tty_insert_flip_string include/linux/tty_flip.h:37 [inline]
-       pty_write+0x104/0x1d0 drivers/tty/pty.c:121
-       n_tty_write+0x9a3/0xd90 drivers/tty/n_tty.c:2354
-       do_tty_write drivers/tty/tty_io.c:958 [inline]
-       tty_write+0x451/0x8a0 drivers/tty/tty_io.c:1042
-       __vfs_write+0xef/0x6a0 fs/read_write.c:485
-       vfs_write+0x184/0x4c0 fs/read_write.c:549
-       ksys_write+0xc6/0x1a0 fs/read_write.c:598
-       do_syscall_64+0xc8/0x580 arch/x86/entry/common.c:290
-       entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-other info that might help us debug this:
-
-Chain exists of:
-  console_owner --> &port_lock_key --> &(&port->lock)->rlock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&(&port->lock)->rlock);
-                               lock(&port_lock_key);
-                               lock(&(&port->lock)->rlock);
-  lock(console_owner);
-
- *** DEADLOCK ***
+Memory state around the buggy address:
+  ffff888098eda080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff888098eda100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff888098eda180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                ^
+  ffff888098eda200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff888098eda280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
 
 
-> 	-ss
-> 
-> 
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
