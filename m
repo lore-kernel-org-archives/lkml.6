@@ -2,172 +2,156 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC452C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 02:25:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BB0C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 02:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68256222D0
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 02:25:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5017A222D9
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 02:35:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="j/2FkjGE"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H+dncHvt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390472AbfBPCZz (ORCPT
+        id S2391253AbfBPCfo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 21:25:55 -0500
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:19356 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727348AbfBPCZz (ORCPT
+        Fri, 15 Feb 2019 21:35:44 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41180 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390786AbfBPCfn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 21:25:55 -0500
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id x1G2PdbS032473
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Feb 2019 11:25:40 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com x1G2PdbS032473
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1550283940;
-        bh=kYWVuWCPdFD9cz/1DU1jn/YsGrYBPicxpCpcOQRS/wY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=j/2FkjGEcQ4vsg5o6IkCYWmyWxGUDxxjgyx8xdxqGo2WFgEyA487vi+n+Cr8ip16O
-         wjUFuCrA/ie5mLl0woCMgmBZhGHl+4qhmv9/BCfbuBZe9nutlC0lI/N/CJljdSq38j
-         xZqli8xUPRtaLDfX1HjbOxxQzlaAvxak1bC15rYGoq7DK8NUTUe7cbnmqM+6xM/npa
-         je+irbjjKfKdOeBKowvhrjHJuo+yMYNB9iZF3qud8MnHGYbAai7csQ0xv4l2juSCKg
-         GzK4ZMjCE3Pr/qxADFT0uVtoPaeLs9PrpfeuO4v38RBwzsDLKehuUzNKdgYYo8+Oke
-         7ef3WdvljAUfw==
-X-Nifty-SrcIP: [209.85.221.172]
-Received: by mail-vk1-f172.google.com with SMTP id v131so2458474vkd.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 18:25:40 -0800 (PST)
-X-Gm-Message-State: AHQUAubDBLTPYgGDc+9ngHkXyQ4Vaxcld7OkjBDeO9K+uPhx6YR7dayU
-        U5Tb19sAgdbjqlf7UqKNzjP4tpQzaIB+8kELV28=
-X-Google-Smtp-Source: AHgI3IZclZ5dbPYZ12FlprJt8qA2NuZiiS3TMi9wSTD0Iu4Bfqz98SLsaZbmUmMIJyrOJqJCECqxsaDKAzsgDc9d+vI=
-X-Received: by 2002:a1f:9350:: with SMTP id v77mr6703657vkd.64.1550283939252;
- Fri, 15 Feb 2019 18:25:39 -0800 (PST)
+        Fri, 15 Feb 2019 21:35:43 -0500
+Received: by mail-pg1-f193.google.com with SMTP id m1so5677367pgq.8;
+        Fri, 15 Feb 2019 18:35:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=yEy/+YbDQbGxxA2qYRx3mjiGQKjjfBhoBcUP0nyLTSw=;
+        b=H+dncHvtFMJzDUAtZi6nDtSNVgOSAJW3JOMWM9P39YucfMNqev14XmPf4Ke4grJix7
+         aucQNcGkNCE1N0iRu30zPJS8JwSF35aSVqks93bK6x4cDdAAezB25DJso6+p1GQXquKh
+         PlCLuo22VYIGJw4hJCNB33lxjQjQz+S/2Y6RFm8SOhd+1hmbdAAekiTyNHudFdgpOM4K
+         9XkUWNy5/oFcC1TYjpb9byUo0I9LmofuBmLUOyIM4DoSUdRFAsGxlxP7GwCxzyNWHTmE
+         uk7hWjaWWxeygMqVFG/TgOw+p5vP0TvrsELHLaFfCQ1wF9db4deAMV94iByJNPsLtlRw
+         HG5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=yEy/+YbDQbGxxA2qYRx3mjiGQKjjfBhoBcUP0nyLTSw=;
+        b=GftGh9GdukmrAv3nPTtpb67+qnYFitgs1rJVmO50dX3975OAq5MNdg91t4HaXRL0fq
+         wS4KzqGwO7Tm+IcFZxr5BHZGgINCn61D/n6WNZgOLmCoOYzIyAz3nTC99TxPBP2XZ4Lb
+         z4/vf8GKkNDmt0N0EBAAhBtJ+5QLztxpulOIyelzem1/2KX7gByUGtufeul6UNgObwIn
+         Z32+S8hXRln1wdJhzO38e6wdeYb8XkSANKczYybnmTCN9UwQVnKlruWei4GCkVgHGnCl
+         oj/wv/Lg7NZS54HlneCzwv0YWtph3PiXdsr3KE7hINUvLlvHaVuryx3I7+ZnHw47Ay1C
+         8IJQ==
+X-Gm-Message-State: AHQUAuZ/GQV9yAI8IaGEYGpwumQvSR+Eb51TeZ+IGiBxBfCKUyJ8tS4w
+        w8FTE63K4Y3Vw0Ihmv+NOPg=
+X-Google-Smtp-Source: AHgI3IZXWkG48rdrmUkFGOdpQP0cc1OGlqnUsB8oJaLAPgf9rsE8If46WFaPvyrBkfbJlvML3y6a+g==
+X-Received: by 2002:a63:2c8c:: with SMTP id s134mr8383805pgs.269.1550284542515;
+        Fri, 15 Feb 2019 18:35:42 -0800 (PST)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id s6sm1111820pgm.90.2019.02.15.18.35.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Feb 2019 18:35:42 -0800 (PST)
+Subject: Re: [PATCH v2] of: unittest: unflatten device tree on UML when
+ testing
+From:   Frank Rowand <frowand.list@gmail.com>
+To:     Brendan Higgins <brendanhiggins@google.com>, robh+dt@kernel.org,
+        mcgrof@kernel.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190216004647.206431-1-brendanhiggins@google.com>
+ <eabdd156-62f4-fadb-bfa4-ecbb5ba65527@gmail.com>
+Message-ID: <fcb92f73-f49b-03b8-32ca-ee89b962a765@gmail.com>
+Date:   Fri, 15 Feb 2019 18:35:40 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <1550223519-18290-1-git-send-email-yamada.masahiro@socionext.com> <CA+7wUswJ5+nb3OdZYrx6++batRMUcnje3jLTgdN4zAQo=--xBg@mail.gmail.com>
-In-Reply-To: <CA+7wUswJ5+nb3OdZYrx6++batRMUcnje3jLTgdN4zAQo=--xBg@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sat, 16 Feb 2019 11:25:03 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQUEivnhFnmkP+5uCHRJcYWDtK_fm2gB0rsbzGv1taBCg@mail.gmail.com>
-Message-ID: <CAK7LNAQUEivnhFnmkP+5uCHRJcYWDtK_fm2gB0rsbzGv1taBCg@mail.gmail.com>
-Subject: Re: [PATCH] powerpc: use $(origin ARCH) to select KBUILD_DEFCONFIG
-To:     Mathieu Malaterre <malat@debian.org>
-Cc:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <eabdd156-62f4-fadb-bfa4-ecbb5ba65527@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 16, 2019 at 1:11 AM Mathieu Malaterre <malat@debian.org> wrote:
->
-> On Fri, Feb 15, 2019 at 10:41 AM Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
-> >
-> > I often test all Kconfig commands for all architectures. To ease my
-> > workflow, I want 'make defconfig' at least working without any cross
-> > compiler.
-> >
-> > Currently, arch/powerpc/Makefile checks CROSS_COMPILE to decide the
-> > default defconfig source.
-> >
-> > If CROSS_COMPILE is unset, it is likely to be the native build, so
-> > 'uname -m' is useful to choose the defconfig. If CROSS_COMPILE is set,
-> > the user is cross-building (i.e. 'uname -m' is probably x86_64), so
-> > it falls back to ppc64_defconfig. Yup, make sense.
-> >
-> > However, I want to run 'make ARCH=* defconfig' without setting
-> > CROSS_COMPILE for each architecture.
-> >
-> > My suggestion is to check $(origin ARCH).
-> >
-> > When you cross-compile the kernel, you need to set ARCH from your
-> > environment or from the command line.
-> >
-> > For the native build, you do not need to set ARCH. The default in
-> > the top Makefile is used:
-> >
-> >   ARCH            ?= $(SUBARCH)
-> >
-> > Hence, $(origin ARCH) returns 'file'.
-> >
-> > Before this commit, 'make ARCH=powerpc defconfig' failed:
->
-> In case you have not seen it, please check:
->
-> http://patchwork.ozlabs.org/patch/1037835/
+On 2/15/19 6:18 PM, Frank Rowand wrote:
+> On 2/15/19 4:46 PM, Brendan Higgins wrote:
+>> UML supports enabling OF, and is useful for running the device tree
+>> tests, so add support for unflattening device tree blobs so we can
+>> actually use it.
+>>
+>> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+>> ---
+>>  drivers/of/unittest.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+>> index 84427384654d5..6de34d5fa0e85 100644
+>> --- a/drivers/of/unittest.c
+>> +++ b/drivers/of/unittest.c
+>> @@ -2527,6 +2527,9 @@ static int __init of_unittest(void)
+>>  	}
+>>  	of_node_put(np);
+>>  
+>> +	if (IS_ENABLED(CONFIG_UML))
+>> +		unittest_unflatten_overlay_base();
+>> +
+> 
+> This is still the wrong location.  It should be at the top of the function.
+> 
+> I'll try moving it to the top and see if it still works -- should only
+> take me a few minutes.
+
+Yep, see below.
 
 
-I did not know that because I do not subscribe to ppc ML.
+> -Frank
+> 
+>>  	pr_info("start of unittest - you will see error messages\n");
+>>  	of_unittest_check_tree_linkage();
+>>  	of_unittest_check_phandles();
+>>
+> 
+> 
 
+This is probably white space damaged because I used cut and paste,
+but this is what I meant above.
 
-Michael's patch looks good to me.
+Tested on 5.0-rc3.
 
+Applied patches 1-14 of series:
 
-If you mimic x86, the following will work:
+   [RFC v4 00/17] kunit: introduce KUnit, the Linux kernel unit testing framework
 
+booted uml, saw the expected 219 pass, 1 fail.
 
+Applied the following patch, saw the expected 224 pass, 0 fail.
 
+I did not apply patch 15 of the other series, but applying patch 15
+should still result in errors on boot, as I reported in the mail
+thread for that patch series.
 
-diff --git a/Makefile b/Makefile
-index 86cf35d..eb9552d 100644
---- a/Makefile
-+++ b/Makefile
-@@ -356,6 +356,11 @@ ifeq ($(ARCH),sh64)
-        SRCARCH := sh
- endif
+---
+ drivers/of/unittest.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-+# Additional ARCH settings for powerpc
-+ifneq ($(filter ppc%,$(ARCH)),)
-+       SRCARCH := powerpc
-+endif
+Index: b/drivers/of/unittest.c
+===================================================================
+--- a/drivers/of/unittest.c
++++ b/drivers/of/unittest.c
+@@ -2514,6 +2514,10 @@ static int __init of_unittest(void)
+ 	int res;
+ 
+ 	/* adding data for unittest */
 +
- KCONFIG_CONFIG ?= .config
- export KCONFIG_CONFIG
-
-diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
-index 488c9ed..ff01fef 100644
---- a/arch/powerpc/Makefile
-+++ b/arch/powerpc/Makefile
-@@ -34,10 +34,10 @@ ifdef CONFIG_PPC_BOOK3S_32
- KBUILD_CFLAGS          += -mcpu=powerpc
- endif
-
--ifeq ($(CROSS_COMPILE),)
--KBUILD_DEFCONFIG := $(shell uname -m)_defconfig
--else
-+ifeq ($(ARCH),powerpc)
- KBUILD_DEFCONFIG := ppc64_defconfig
-+else
-+KBUILD_DEFCONFIG := $(ARCH)_defconfig
- endif
-
- ifdef CONFIG_PPC64
-diff --git a/scripts/subarch.include b/scripts/subarch.include
-index 6506828..c98323f 100644
---- a/scripts/subarch.include
-+++ b/scripts/subarch.include
-@@ -8,6 +8,6 @@ SUBARCH := $(shell uname -m | sed -e s/i.86/x86/ -e
-s/x86_64/x86/ \
-                                  -e s/sun4u/sparc64/ \
-                                  -e s/arm.*/arm/ -e s/sa110/arm/ \
-                                  -e s/s390x/s390/ -e s/parisc64/parisc/ \
--                                 -e s/ppc.*/powerpc/ -e s/mips.*/mips/ \
-+                                 -e s/mips.*/mips/ \
-                                  -e s/sh[234].*/sh/ -e s/aarch64.*/arm64/ \
-                                  -e s/riscv.*/riscv/)
-
-
-
-
-
-
-
-
---
-Best Regards
-Masahiro Yamada
++	if (IS_ENABLED(CONFIG_UML))
++		unittest_unflatten_overlay_base();
++
+ 	res = unittest_data_add();
+ 	if (res)
+ 		return res;
