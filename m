@@ -2,174 +2,130 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A27BBC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 19:01:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 260D8C10F00
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 19:12:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 733F621A4C
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 19:01:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAF0D222E6
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 19:12:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=manojrajarao-com.20150623.gappssmtp.com header.i=@manojrajarao-com.20150623.gappssmtp.com header.b="zWmTgeqt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732464AbfBPTBz (ORCPT
+        id S1732557AbfBPTMa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 14:01:55 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:40660 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732421AbfBPTBy (ORCPT
+        Sat, 16 Feb 2019 14:12:30 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:46183 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732506AbfBPTM3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 14:01:54 -0500
-Received: by mail-ed1-f68.google.com with SMTP id 10so10524198eds.7
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Feb 2019 11:01:52 -0800 (PST)
+        Sat, 16 Feb 2019 14:12:29 -0500
+Received: by mail-pl1-f195.google.com with SMTP id o6so6620805pls.13
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Feb 2019 11:12:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=manojrajarao-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=Eh1jaq667dFAHSieu8gZf75SHj7h+C4iXs741KKYZic=;
+        b=zWmTgeqt2+3yz7+adKjkxVdqtrHNSVPem7jiAkNHzD87UcdwrflOAOCYk3Z0TC9+h5
+         uGLd+crEIJu5Zqw2831hyEkDZEkW3qGacz+qBvdt7r67ZSC9Pit+Fm8+ncoeq9kPAjVF
+         enSGTQ5/Grdn+UkYrhx70x6Sq07H2glO2DIk0Z/o0J8IrccVYkyXDk2e/EOQNs/GFeWN
+         gd4i5/5n08kbzi3NSz89Y5YTwTCB1uIHsuLal2jKmKuYZc+9qwAQt2RGNMyZWIbI+ZVY
+         x6dX+70kVO8od2kfYn4S5883eTuZHh5KeI1BZ9ShDkaViQMFva/lq593gMnho4RIdXda
+         UH6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zNpsUdRsHHjpskTXp9b60sihhsgtCaQdY7JAh/F4Paw=;
-        b=hKqxXNgmyKDZzgEiom7vjH/VH7qRHvhZ7oa3RVyZv87tGqKLr+cPq0PgHc52e6ypk0
-         pLn4gP6+zTJYicz7cJWf+r+hCidi64c3vEbXnUJXAygySPNJlp5XxSjk2puUtla9BxGz
-         7gcKns5a2U941uxuTQ/a1VfEZXu+VRUx3dqVfDBsJfTkZVi7o542D2CzEo4Dm1ErTGfm
-         OLjVe29InKeCoZf+pBQMjdizJzZKowlO93QMGVp44IPmZOA1EhizlfMTzNIAucE35nG8
-         /k0OSpljgc57X6h53/FCl3bMBXCiVoyfhmrK9BmALUv2axPNcwuv31F2MuR+ko/qeKWE
-         LT7A==
-X-Gm-Message-State: AHQUAuY/uLQWc66oZwU2TSv9tNS/iEi/Cjw8HtDMoHq5JRhX4gOLQhsk
-        BGuJvVQw5mG/MXXX3zMM445Ntw==
-X-Google-Smtp-Source: AHgI3IYwne8VrUr6IzYXxXgqxt0cGitNa18SAkHnA1fPUKTzS3y6Sa7inCR26XqWSxJ/iqAX8XXDsQ==
-X-Received: by 2002:a17:906:f102:: with SMTP id gv2mr10958479ejb.87.1550343711874;
-        Sat, 16 Feb 2019 11:01:51 -0800 (PST)
-Received: from localhost.localdomain ([2001:678:814:68:8573:4f61:f765:5d7e])
-        by smtp.gmail.com with ESMTPSA id i11sm2629097edk.17.2019.02.16.11.01.50
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Sat, 16 Feb 2019 11:01:51 -0800 (PST)
-Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
- LEDs
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>
-Cc:     Yauhen Kharuzhy <jekhor@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org
-References: <20190212205901.13037-1-jekhor@gmail.com>
- <20190212205901.13037-2-jekhor@gmail.com>
- <1df39a63-533f-bb68-a056-a0241f148be9@redhat.com> <20190213230731.GA8557@amd>
- <42078a81-e32e-81b7-528f-d1adb60d31c3@redhat.com>
- <20190213233806.GA11867@amd>
- <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com> <20190214111423.GE6132@amd>
- <92cf09b8-726d-4f1b-94ba-368a66af2246@redhat.com>
- <2b6faaa5-b21e-a512-de7d-ca21be5045fc@gmail.com> <20190214230307.GA17358@amd>
- <2a5e2002-e5f1-6da3-8a43-317801b69657@redhat.com>
- <3d5407a7-9458-f071-a1d5-511b09678e20@gmail.com>
- <87a21c4e-8e5e-c180-2ff3-eb8170746e71@redhat.com>
- <80971bc3-1193-83ed-913a-12f6217016c8@gmail.com>
- <b15fd048-8206-4057-a354-07dc14ca15e3@redhat.com>
- <8a263266-a41f-c916-e990-02d04de9b5d0@gmail.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <af5bec7b-0da1-ee19-cdf4-0240f56221ad@redhat.com>
-Date:   Sat, 16 Feb 2019 20:01:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=Eh1jaq667dFAHSieu8gZf75SHj7h+C4iXs741KKYZic=;
+        b=djSYh5BAKdUa/FbWWQaab9Gzn/BrMK+eHHfWF2YJ1ruvgbZ8x5l7ygN14qLRajQQ4J
+         iL69ZritgdxWbX6+kc8NMfUhATcxjvZRRTvjRCV+dlZGtATKmH8ygXxHlDcXjuAmlUWO
+         bUPwx4pYVUwdrs4WlpZ283UdVHm0bpNPvxBbl+Ql7Dv893SOVUOLzlQCFutEpM5PEkaR
+         GOv8QasAiECRTlsah2r2Tc8gtM4TA1fS/JIy9nwaV8Np3qxXvFG2DKcKDzGrD9GjnBmv
+         C+c+qV5UpfFpl0dGRQ3VZ30R3NBbWY4CyX7hyMmvnbjjiIXiNFo/6VeMRrabnM1XEySZ
+         LHGg==
+X-Gm-Message-State: AHQUAuY85FLy+Vw6btu6LJq+jDpcO1808QUxD3OGHzg4E0DzjK0Y5j1C
+        k/l4QR2zR7UGbiZKCIXSRoltMQ==
+X-Google-Smtp-Source: AHgI3IYlsna5bj9z/49J72uEgB2M+65urVU5vViJfxmEWJP34JVhGKQeM9ZMrrdWytajrsh6A+08sA==
+X-Received: by 2002:a17:902:6949:: with SMTP id k9mr17003011plt.188.1550344348855;
+        Sat, 16 Feb 2019 11:12:28 -0800 (PST)
+Received: from manoj-desktop (c-24-6-55-244.hsd1.ca.comcast.net. [24.6.55.244])
+        by smtp.gmail.com with ESMTPSA id b9sm11267019pfi.118.2019.02.16.11.12.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 16 Feb 2019 11:12:28 -0800 (PST)
+References: <20190211143600.15021-1-joel@joelfernandes.org> <20190215031926.ljzluy2cfxp64u6o@ast-mbp> <20190215034720.GA230433@google.com>
+User-agent: mu4e 0.9.18; emacs 26.1
+From:   Manoj <linux@manojrajarao.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>, ast@kernel.org,
+        atishp04@gmail.com, dancol@google.com,
+        Dan Williams <dan.j.williams@intel.com>,
+        gregkh@linuxfoundation.org, Jonathan Corbet <corbet@lwn.net>,
+        karim.yaghmour@opersys.com, Kees Cook <keescook@chromium.org>,
+        kernel-team@android.com, linux-doc@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Manoj Rao <linux@manojrajarao.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        paulmck@linux.vnet.ibm.com,
+        "Peter Zijlstra \(Intel\)" <peterz@infradead.org>,
+        rdunlap@infradead.org, rostedt@goodmis.org,
+        Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, yhs@fb.com
+Subject: Re: [PATCH v2 1/2] Provide in-kernel headers for making it easy to extend the kernel
+In-reply-to: <20190215034720.GA230433@google.com>
+Date:   Sat, 16 Feb 2019 11:10:14 -0800
+Message-ID: <8736on1re1.fsf@manojrajarao.com>
 MIME-Version: 1.0
-In-Reply-To: <8a263266-a41f-c916-e990-02d04de9b5d0@gmail.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-On 2/16/19 6:02 PM, Jacek Anaszewski wrote:
-> Hi Hans,
-> 
-> On 2/16/19 12:14 AM, Hans de Goede wrote:
->> Hi,
->>
->> On 2/15/19 11:31 PM, Jacek Anaszewski wrote:
->>> On 2/15/19 11:26 PM, Hans de Goede wrote:
->>
->> <snip>
->>
->>>> I think that should work fine, which means that we can use the timer and
->>>> pattern trigger support for the blinking and breathing modes.
->>>>
->>>> That still leaves the switching between user and hw-control modes,
->>>> as discussed the hw-controlled mode could be modelled as a new "hardware"
->>>> trigger, but then we cannot choose between on/blink/breathing when
->>>> in hw-controlled mode. As Pavel mentioned, that would require some
->>>> sort of composed trigger, where we have both the hardware and
->>>> timer triggers active for example.
->>>>
->>>> I think it might be easier to just allow turning on/off the hardware
->>>> control mode through a special "hardware_control" sysfs attribute and
->>>> then use the existing timer and pattern triggers for blinking / breathing.
->>>
->>> Pattern trigger exposes pattern file by default and hw_pattern if
->>> pattern_set/get ops are provided. Writing them enables software and
->>> hardware pattern respectively.
->>
->> This is not about software vs hardware pattern.
->>
->> There are 2 *orthogonal*, separate problems/challenges with this LED controller:
->>
->> 1) It has hardware blinking and breathing, as discussed this can be
->> controlled through the timer and pattern triggers, so this problem
->> is solved.
->>
->> 2) It has 2 operating modes:
->>
->> a) Automatic/hardware controlled, in this mode the LED is turned
->> off or on (where on can be continues on, blinking or breathing)
->> by the hardware itself, when in this mode we / userspace is not
->> in control of the LED
->>
->> b) Manual/user controlled mode, in this mode we / userspace can
->> control of the LED.
->>
->> Currently there is no API in the ledclass to switch a LED from
->> automatic controlled to user controlled and back, This is what
->> the proposed hardware trigger was for, to switch to automatic
->> mode. A problem with this is that we still want to be able
->> to chose between continues on, blinking or breathing (when on),
->> configure the max brightness, etc.
-> 
-> Yes, we do have the API to switch a LED from automatic (hardware
-> accelerated) control to software control and back. This is pattern
-> trigger, which exposes two files for setting pattern: pattern
-> and hw_pattern. Writing pattern file switches the device to software
-> control mode and writing hw_pattern switches it to the hardware control,
-> with the possibility of defining device specific ABI syntax to enable
-> particular pattern (blinking, breathing or event permanently on
-> in case of this device).
+Joel Fernandes writes:
 
-OK, I see. So we would use the hw_pattern for this and the driver
-would implement the pattern_set led_classdev callback.
+> On Thu, Feb 14, 2019 at 07:19:29PM -0800, Alexei Starovoitov wrote:
+>> On Mon, Feb 11, 2019 at 09:35:59AM -0500, Joel Fernandes (Google) wrote:
+>> > Introduce in-kernel headers and other artifacts which are made available
+>> > as an archive through proc (/proc/kheaders.txz file). This archive makes
+>> > it possible to build kernel modules, run eBPF programs, and other
+>> > tracing programs that need to extend the kernel for tracing purposes
+>> > without any dependency on the file system having headers and build
+>> > artifacts.
+>> > 
+>> > On Android and embedded systems, it is common to switch kernels but not
+>> > have kernel headers available on the file system. Raw kernel headers
+>> > also cannot be copied into the filesystem like they can be on other
+>> > distros, due to licensing and other issues. There's no linux-headers
+>> > package on Android. Further once a different kernel is booted, any
+>> > headers stored on the file system will no longer be useful. By storing
+>> > the headers as a compressed archive within the kernel, we can avoid these
+>> > issues that have been a hindrance for a long time.
+>> 
+>> The set looks good to me and since the main use case is building bpf progs
+>> I can route it via bpf-next tree if there are no objections.
+>> Masahiro, could you please ack it?
+>> 
+>
+> Yes, eBPF is one of the usecases. After this, I am also planning to send
+> patches to BCC so that it can use this feature when compiling C to eBPF.
+>
 
-The pattern_set callback would then expect 6 brightness/time tuples
-with the following meaning for the time part of each tupple
+Tested-by: Manoj Rao <linux@manojrajarao.com>
 
-tupple0: charging blinking_on_time
-tupple1: charging blinking_off_time
-tupple2: charging breathing_time
-tupple3: manual blinking_on_time
-tupple4: manual blinking_off_time
-tupple5: manual breathing_time
+I think this can definitely make it easier to use eBPF on
+Android. Thanks for initiating this.
 
-Where only the times in tupple 0-2; or the times in 3-5 can be
-non-zero. Having non zero times for both some charging and some
-manual values is not allowed.
-
-If a breathing time is set, none of the other times may be non
-0. If blinkig_on and blinking_off are used then breathing_time
-must be 0.
-
-When configured to blink then blinking_off must be either 0
-(continuously on); or it must be the same as blinking_on.
+> Thanks!
+>
+>  - Joel
 
 
-I believe this will work, does this sound ok to you ?
-
-Regards,
-
-Hans
-
+-- 
+Manoj
+http://www.mycpu.org
