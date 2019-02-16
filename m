@@ -6,33 +6,32 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96DF8C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 09:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE94C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 10:01:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 644E7222DD
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 09:53:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A9E1222D0
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 10:01:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730491AbfBPJxh (ORCPT
+        id S1731913AbfBPKBs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 04:53:37 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3750 "EHLO huawei.com"
+        Sat, 16 Feb 2019 05:01:48 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:45212 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726152AbfBPJxg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 04:53:36 -0500
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 6F47A2F5D26583C1F0D3;
-        Sat, 16 Feb 2019 17:53:34 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Sat, 16 Feb 2019
- 17:53:25 +0800
+        id S1727600AbfBPKBs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Feb 2019 05:01:48 -0500
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 31090A3AC2B0228E93ED;
+        Sat, 16 Feb 2019 18:01:46 +0800 (CST)
+Received: from localhost (10.177.31.96) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Sat, 16 Feb 2019
+ 18:01:36 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
-To:     <davem@davemloft.net>, <dchickles@marvell.com>,
-        <sburla@marvell.com>, <fmanlunas@marvell.com>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+To:     <jejb@linux.ibm.com>, <martin.petersen@oracle.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
         YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH net-next] liquidio: using NULL instead of plain integer
-Date:   Sat, 16 Feb 2019 17:53:10 +0800
-Message-ID: <20190216095310.22544-1-yuehaibing@huawei.com>
+Subject: [PATCH -next] scsi: mvumi: Using plain integer as NULL pointer
+Date:   Sat, 16 Feb 2019 18:01:30 +0800
+Message-ID: <20190216100130.19396-1-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -43,43 +42,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix following warning:
+Fix following sparse warning:
 
-drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c:1453:35: warning: Using plain integer as NULL pointer
-drivers/net/ethernet/cavium/liquidio/lio_main.c:2910:23: warning: Using plain integer as NULL pointer
+drivers/scsi/mvumi.c:1797:48: warning: Using plain integer as NULL pointer
+drivers/scsi/mvumi.c:2143:50: warning: Using plain integer as NULL pointer
+drivers/scsi/mvumi.c:755:58: warning: Using plain integer as NULL pointer
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c | 2 +-
- drivers/net/ethernet/cavium/liquidio/lio_main.c         | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/mvumi.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c b/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
-index 9f4f3c1d..43d11c3 100644
---- a/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
-+++ b/drivers/net/ethernet/cavium/liquidio/cn23xx_pf_device.c
-@@ -1450,7 +1450,7 @@ void cn23xx_tell_vf_its_macaddr_changed(struct octeon_device *oct, int vfidx,
- 		mbox_cmd.recv_len = 0;
- 		mbox_cmd.recv_status = 0;
- 		mbox_cmd.fn = NULL;
--		mbox_cmd.fn_arg = 0;
-+		mbox_cmd.fn_arg = NULL;
- 		ether_addr_copy(mbox_cmd.msg.s.params, mac);
- 		mbox_cmd.q_no = vfidx * oct->sriov_info.rings_per_vf;
- 		octeon_mbox_write(oct, &mbox_cmd);
-diff --git a/drivers/net/ethernet/cavium/liquidio/lio_main.c b/drivers/net/ethernet/cavium/liquidio/lio_main.c
-index e97e675..9b7819f 100644
---- a/drivers/net/ethernet/cavium/liquidio/lio_main.c
-+++ b/drivers/net/ethernet/cavium/liquidio/lio_main.c
-@@ -2907,7 +2907,7 @@ static int liquidio_set_vf_spoofchk(struct net_device *netdev, int vfidx,
- 	nctrl.ncmd.s.param2 = enable;
- 	nctrl.ncmd.s.more = 0;
- 	nctrl.iq_no = lio->linfo.txpciq[0].s.q_no;
--	nctrl.cb_fn = 0;
-+	nctrl.cb_fn = NULL;
+diff --git a/drivers/scsi/mvumi.c b/drivers/scsi/mvumi.c
+index 36f6420..a8fe1f8 100644
+--- a/drivers/scsi/mvumi.c
++++ b/drivers/scsi/mvumi.c
+@@ -752,7 +752,7 @@ static int mvumi_issue_blocked_cmd(struct mvumi_hba *mhba,
+ 		spin_lock_irqsave(mhba->shost->host_lock, flags);
+ 		atomic_dec(&cmd->sync_cmd);
+ 		if (mhba->tag_cmd[cmd->frame->tag]) {
+-			mhba->tag_cmd[cmd->frame->tag] = 0;
++			mhba->tag_cmd[cmd->frame->tag] = NULL;
+ 			dev_warn(&mhba->pdev->dev, "TIMEOUT:release tag [%d]\n",
+ 							cmd->frame->tag);
+ 			tag_release_one(mhba, &mhba->tag_pool, cmd->frame->tag);
+@@ -1794,7 +1794,7 @@ static void mvumi_handle_clob(struct mvumi_hba *mhba)
+ 		cmd = mhba->tag_cmd[ob_frame->tag];
  
- 	retval = octnet_send_nic_ctrl_pkt(oct, &nctrl);
+ 		atomic_dec(&mhba->fw_outstanding);
+-		mhba->tag_cmd[ob_frame->tag] = 0;
++		mhba->tag_cmd[ob_frame->tag] = NULL;
+ 		tag_release_one(mhba, &mhba->tag_pool, ob_frame->tag);
+ 		if (cmd->scmd)
+ 			mvumi_complete_cmd(mhba, cmd, ob_frame);
+@@ -2140,7 +2140,7 @@ static enum blk_eh_timer_return mvumi_timed_out(struct scsi_cmnd *scmd)
+ 	spin_lock_irqsave(mhba->shost->host_lock, flags);
  
+ 	if (mhba->tag_cmd[cmd->frame->tag]) {
+-		mhba->tag_cmd[cmd->frame->tag] = 0;
++		mhba->tag_cmd[cmd->frame->tag] = NULL;
+ 		tag_release_one(mhba, &mhba->tag_pool, cmd->frame->tag);
+ 	}
+ 	if (!list_empty(&cmd->queue_pointer))
 -- 
 2.7.0
 
