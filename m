@@ -2,118 +2,114 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2770C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 09:17:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02AE4C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 09:17:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4CFF222D0
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 09:17:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OOAiJp0L"
+	by mail.kernel.org (Postfix) with ESMTP id D2A57222D0
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 09:17:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731702AbfBPJRe (ORCPT
+        id S1731750AbfBPJRk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 04:17:34 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42926 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726647AbfBPJRe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 04:17:34 -0500
-Received: by mail-pf1-f194.google.com with SMTP id n74so6036900pfi.9;
-        Sat, 16 Feb 2019 01:17:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=09VPvvjG3iqG8uhIMPG020teROeozKHz9E/sWH2blQA=;
-        b=OOAiJp0LKwj7EtV7IKHrDXrJwdzxJJEtRRNno6Vy9JK+FJKfQ7FVZ7CeOhYKaQKoyV
-         +uDzfS6cu3USSTmt7arhQuvkSjFrQOPjJuTC2CTu1+OnyFOcj0vlLCKsSDg6vkNBWpRX
-         kTYkGFfz9MY/ZWRV2ZBdtmrFbuyj3UYRUSPXsR6djUejSS4WFNjKnRFkeKQPJMK4Rx3A
-         yp1rb/mMw/dqJmxUPqWP4jKJPfDBKAfnYp1i2hH91L9bS0td13MsNnLc1RnYA5r9Mdhh
-         x+qRVxz/ZuTnExutoPv3jSI20ksal1KeQrv6PqicLjoZbz/9c43Sj65Xusxf97pYYe8+
-         HZmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=09VPvvjG3iqG8uhIMPG020teROeozKHz9E/sWH2blQA=;
-        b=gaeLQtGu5vVbc6sDLHFOUR12T3fxtFZXZz8PKRsvnQmpeIXRNLFlpp+/bd70EtvivR
-         lxTRUB8jhjv553qYmqRh/JPgY1Z4r/iHfudVa/FzUsgnNgFZz8reSWf3Ch/cfG0qsvkp
-         eCei+eh5EXeRMRGmVmn6CnRb4jIOpieELoC+Y50uWKe7xnw82HHAjS+dq55t9YnLZ574
-         1SNyEKb/WTZPmWBne6wWXleYOLyxa4zH39B6wZvEPzFmGFUcpNjnbK4auYYiTlSaFbzH
-         5S4XiPyaDLrDLyC2kIfkQ+A+SSluo69w/CKJYjXSaorpvCQm3tVw0vc+HZVoq4mVGB08
-         AqRg==
-X-Gm-Message-State: AHQUAuZyiwoAVIZGp3w3iFP+049tcB1xs/cOg/ZYphTorsp8FLhfE4wc
-        3mriQc1PwsST0x9l7UYKnw5r1eMOoGE=
-X-Google-Smtp-Source: AHgI3IZk+mgFDs8OuVGhXNmPtDOWSVQ7Pr5smiOmZTA//UqxTRnFvNgYSh8bY+WULKUzymBxeU+1rw==
-X-Received: by 2002:a63:2c8c:: with SMTP id s134mr9485113pgs.269.1550308652414;
-        Sat, 16 Feb 2019 01:17:32 -0800 (PST)
-Received: from localhost.localdomain (2001-b011-1004-1fe7-cc7e-a132-b6dd-76b3.dynamic-ip6.hinet.net. [2001:b011:1004:1fe7:cc7e:a132:b6dd:76b3])
-        by smtp.gmail.com with ESMTPSA id x2sm11732869pfx.78.2019.02.16.01.17.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 16 Feb 2019 01:17:31 -0800 (PST)
-From:   David Chen <david0813@gmail.com>
-To:     linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     davem@davemloft.net, hayeswang@realtek.com,
-        mario.limonciello@dell.com, bigeasy@linutronix.de,
-        edumazet@google.com, jslaby@suse.cz, f.fainelli@gmail.com,
-        david.chen7@dell.com, kai.heng.feng@canonical.com,
-        zhongjiang@huawei.com
-Subject: [PATCH] r8152: Add support for MAC address pass through on RTL8153-BD
-Date:   Sat, 16 Feb 2019 17:16:42 +0800
-Message-Id: <20190216091642.21388-1-david0813@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        Sat, 16 Feb 2019 04:17:40 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:51616 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726647AbfBPJRi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Feb 2019 04:17:38 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 2B168C55A3A9C0FE4F60;
+        Sat, 16 Feb 2019 17:17:35 +0800 (CST)
+Received: from huawei.com (10.175.102.38) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Sat, 16 Feb 2019
+ 17:17:26 +0800
+From:   Tan Xiaojun <tanxiaojun@huawei.com>
+To:     <viro@zeniv.linux.org.uk>, <bcrl@kvack.org>
+CC:     <linux-aio@kvack.org>, <linux-kernel@vger.kernel.org>,
+        <guohanjun@huawei.com>, <wangxiongfeng2@huawei.com>,
+        <tanxiaojun@huawei.com>
+Subject: [RFC PATCH] aio: add check for timeout to aviod invalid value
+Date:   Sat, 16 Feb 2019 17:57:01 +0800
+Message-ID: <1550311021-60612-1-git-send-email-tanxiaojun@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.175.102.38]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Chen <david.chen7@dell.com>
+(When I was testing with syzkaller, I found a lot of ubsan problems. Here 
+is one of them. I am not sure if it needs to be fixed and how it will be 
+fixed. So I sent this patch to ask your opinion.)
 
-RTL8153-BD is used in Dell DA300 type-C dongle.
-It should be added to the whitelist of devices to activate MAC address
-pass through.
+Syzkaller reported a UBSAN bug below, which was mainly caused by a large
+negative number passed to the timeout of the io_getevents system call.
 
-Per confirming with Realtek all devices containing RTL8153-BD should
-activate MAC pass through and there won't use pass through bit on efuse
-like in RTL8153-AD.
+================================================================================
+UBSAN: Undefined behaviour in ./include/linux/ktime.h:42:14
+signed integer overflow:
+-8427032702788048137 * 1000000000 cannot be represented in type 'long long int'
+CPU: 3 PID: 11668 Comm: syz-executor0 Not tainted 4.19.18-514.55.6.9.x86_64+ #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xca/0x13e lib/dump_stack.c:113
+ ubsan_epilogue+0xe/0x81 lib/ubsan.c:159
+ handle_overflow+0x193/0x1e2 lib/ubsan.c:190
+ ktime_set include/linux/ktime.h:42 [inline]
+ timespec64_to_ktime include/linux/ktime.h:78 [inline]
+ do_io_getevents+0x307/0x390 fs/aio.c:2043
+ __do_sys_io_getevents fs/aio.c:2080 [inline]
+ __se_sys_io_getevents fs/aio.c:2068 [inline]
+ __x64_sys_io_getevents+0x163/0x250 fs/aio.c:2068
+ do_syscall_64+0xc8/0x580 arch/x86/entry/common.c:290
+ entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x462589
+Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fde9b04ec58 EFLAGS: 00000246 ORIG_RAX: 00000000000000d0
+RAX: ffffffffffffffda RBX: 000000000072bf00 RCX: 0000000000462589
+RDX: 0000000000000006 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000005 R08: 0000000020000100 R09: 0000000000000000
+R10: 0000000020000040 R11: 0000000000000246 R12: 00007fde9b04f6bc
+R13: 00000000004bd1f0 R14: 00000000006f6b60 R15: 00000000ffffffff
+================================================================================
+bond0 (unregistering): Released all slaves
 
-Signed-off-by: David Chen <david.chen7@dell.com>
+The timeout described in "man io_getevents" does not say whether it
+can be negative or not, but as a waiting time, a negative number has
+no meaning. So I add check to avoid this case.
+
+Signed-off-by: Tan Xiaojun <tanxiaojun@huawei.com>
 ---
- drivers/net/usb/r8152.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ fs/aio.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
-index 60dd1ec1665f..ada6baf8847a 100644
---- a/drivers/net/usb/r8152.c
-+++ b/drivers/net/usb/r8152.c
-@@ -557,6 +557,7 @@ enum spd_duplex {
- /* MAC PASSTHRU */
- #define AD_MASK			0xfee0
- #define BND_MASK		0x0004
-+#define BD_MASK			0x0001
- #define EFUSE			0xcfdb
- #define PASS_THRU_MASK		0x1
+diff --git a/fs/aio.c b/fs/aio.c
+index aaaaf4d..28e0fa6 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -2078,10 +2078,15 @@ static long do_io_getevents(aio_context_t ctx_id,
+ 		struct io_event __user *events,
+ 		struct timespec64 *ts)
+ {
+-	ktime_t until = ts ? timespec64_to_ktime(*ts) : KTIME_MAX;
++	ktime_t until;
+ 	struct kioctx *ioctx = lookup_ioctx(ctx_id);
+ 	long ret = -EINVAL;
  
-@@ -1176,9 +1177,9 @@ static int vendor_mac_passthru_addr_read(struct r8152 *tp, struct sockaddr *sa)
- 			return -ENODEV;
- 		}
- 	} else {
--		/* test for RTL8153-BND */
-+		/* test for RTL8153-BND and RTL8153-BD */
- 		ocp_data = ocp_read_byte(tp, MCU_TYPE_USB, USB_MISC_1);
--		if ((ocp_data & BND_MASK) == 0) {
-+		if ((ocp_data & BND_MASK) == 0 && (ocp_data & BD_MASK)) {
- 			netif_dbg(tp, probe, tp->netdev,
- 				  "Invalid variant for MAC pass through\n");
- 			return -ENODEV;
++	if (ts && !timespec64_valid(ts))
++		return -EINVAL;
++
++	until = ts ? timespec64_to_ktime(*ts) : KTIME_MAX;
++
+ 	if (likely(ioctx)) {
+ 		if (likely(min_nr <= nr && min_nr >= 0))
+ 			ret = read_events(ioctx, min_nr, nr, events, until);
 -- 
-2.19.1
+2.7.4
 
