@@ -2,153 +2,180 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6CF7C10F06
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 20:13:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 381A0C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 20:20:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DBEF21B69
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 20:13:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 056C421A4C
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 20:20:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733088AbfBPUM0 convert rfc822-to-8bit (ORCPT
+        id S1733135AbfBPUSs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 15:12:26 -0500
-Received: from mail-oln040092071042.outbound.protection.outlook.com ([40.92.71.42]:18153
-        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727270AbfBPUM0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 15:12:26 -0500
-Received: from AM5EUR03FT003.eop-EUR03.prod.protection.outlook.com
- (10.152.16.59) by AM5EUR03HT170.eop-EUR03.prod.protection.outlook.com
- (10.152.17.131) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1580.17; Sat, 16 Feb
- 2019 20:12:22 +0000
-Received: from VI1PR0702MB3840.eurprd07.prod.outlook.com (10.152.16.59) by
- AM5EUR03FT003.mail.protection.outlook.com (10.152.16.149) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.17 via Frontend Transport; Sat, 16 Feb 2019 20:12:22 +0000
-Received: from VI1PR0702MB3840.eurprd07.prod.outlook.com
- ([fe80::6139:4cf3:fb81:b105]) by VI1PR0702MB3840.eurprd07.prod.outlook.com
- ([fe80::6139:4cf3:fb81:b105%5]) with mapi id 15.20.1643.008; Sat, 16 Feb 2019
- 20:12:22 +0000
-From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv2] random: Make /dev/random wait for crng_ready
-Thread-Topic: [PATCHv2] random: Make /dev/random wait for crng_ready
-Thread-Index: AQHUxTaCraRKyzzTqEeNDzUOb6MJSKXivx+AgAAeTIA=
-Date:   Sat, 16 Feb 2019 20:12:22 +0000
-Message-ID: <VI1PR0702MB38404F3D4D54432E3F8F0048E4610@VI1PR0702MB3840.eurprd07.prod.outlook.com>
-References: <VI1PR0702MB38408B595C818F1C3278873EE4600@VI1PR0702MB3840.eurprd07.prod.outlook.com>
- <VI1PR0702MB3840E7DCBEA62BB204CA863DE4600@VI1PR0702MB3840.eurprd07.prod.outlook.com>
- <20190216182355.GE23000@mit.edu>
-In-Reply-To: <20190216182355.GE23000@mit.edu>
-Accept-Language: en-US, en-GB, de-DE
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6PR07CA0033.eurprd07.prod.outlook.com
- (2603:10a6:209:2a::46) To VI1PR0702MB3840.eurprd07.prod.outlook.com
- (2603:10a6:803:f::33)
-x-incomingtopheadermarker: OriginalChecksum:339E9F3F5D42DCEBD653D585D7924D19B009C2EA10C4A85955EA168BF5EE861D;UpperCasedChecksum:ADB8F8B4D0509FFCCB19686A91372D0CB2CD6F4F8AF180A6C2530009421459BB;SizeAsReceived:8659;Count:62
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [JX1xZg+Hzkqsfkx1wlcINy/4fx7+pox0]
-x-microsoft-original-message-id: <deb07c24-5a12-5400-bacc-77e4c414f88b@hotmail.de>
-x-ms-publictraffictype: Email
-x-incomingheadercount: 62
-x-eopattributedmessage: 0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031323274)(2017031324274)(2017031322404)(1603101475)(1601125500)(1701031045);SRVR:AM5EUR03HT170;
-x-ms-traffictypediagnostic: AM5EUR03HT170:
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:AM5EUR03HT170;BCL:0;PCL:0;RULEID:;SRVR:AM5EUR03HT170;
-x-microsoft-antispam-message-info: cGNs7ztfnWbP4rZ1kcv+eMdFrBBd0Adi6X5rfMy2xCQSLhkYEHaGdUyKplxjr7xs
-Content-Type: text/plain; charset="Windows-1252"
-Content-ID: <4802362507702C40B17069E64B0C0209@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: 8BIT
+        Sat, 16 Feb 2019 15:18:48 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:54819 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727270AbfBPUSr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Feb 2019 15:18:47 -0500
+Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gv6Q3-0004j3-I3; Sat, 16 Feb 2019 21:18:39 +0100
+Date:   Sat, 16 Feb 2019 21:18:39 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Jann Horn <jannh@google.com>
+cc:     baloo@gandi.net, Andy Lutomirski <luto@amacapital.net>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Pascal Bouchareine <pascal@gandi.net>
+Subject: Re: [PATCH] x86: uaccess: fix regression in unsafe_get_user
+In-Reply-To: <CAG48ez2tYizTKncevLF=AMQ2nm3D=SqGHH5bM5f-U0fhQ1nL9Q@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1902161358160.1683@nanos.tec.linutronix.de>
+References: <20190215235901.23541-1-baloo@gandi.net> <CAG48ez2tYizTKncevLF=AMQ2nm3D=SqGHH5bM5f-U0fhQ1nL9Q@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: d4d70346-2c10-4f39-8c00-e767963926d9
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f41d252-03b1-4a9f-3217-08d6944b0f64
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: d4d70346-2c10-4f39-8c00-e767963926d9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Feb 2019 20:12:21.7684
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Internet
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5EUR03HT170
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/16/19 7:23 PM, Theodore Y. Ts'o wrote:
+On Sat, 16 Feb 2019, Jann Horn wrote:
+> On Sat, Feb 16, 2019 at 12:59 AM <baloo@gandi.net> wrote:
+> > When extracting an initramfs, a filename may be near an allocation boundary.
+> > Should that happen, strncopy_from_user will invoke unsafe_get_user which
+> > may cross the allocation boundary. Should that happen, unsafe_get_user will
+> > trigger a page fault, and strncopy_from_user would then bailout to
+> > byte_at_a_time behavior.
+> >
+> > unsafe_get_user is unsafe by nature, and rely on pagefault to detect boundaries.
+> > After 9da3f2b74054 ("x86/fault: BUG() when uaccess helpers fault on kernel addresses")
+> > it may no longer rely on pagefault as the new page fault handler would
+> > trigger a BUG().
+> >
+> > This commit allows unsafe_get_user to explicitly trigger pagefaults and
+> > handle them directly with the error target label.
 > 
-> This really isn't a correct way to fix things; since the blocking_pool
-> used for /dev/random and the CRNG state are different things, and are
-> fed by different sources of entropy.
-> 
+> Oof. So basically the init code is full of things that just call
+> syscalls instead of using VFS functions (which don't actually exist
+> for everything), and the VFS syscalls use getname_flags(), which uses
+> strncpy_from_user(), which can access out-of-bounds pages on
+> architectures that set CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS, and
+> that in summary means that all the init code is potentially prone to
+> tripping over this?
 
-It is interesting that random_poll does only look at input_pool.
-Could it be that the existing entropy in blocking_pool also matters?
+Not all init code. It should be only the initramfs decompression.
 
-My observation is that _random_read extracts always the requested
-number of bytes from the input_pool by calling extract_entropy_user.
-By not calling extract_entropy_user it is straight forward to ensure
-that the entropy in the input_pool can accumulate until the primary_crng
-is being initialized.
+> I don't particularly like this approach to fixing it, but I also don't
+> have any better ideas, so I guess unless someone else has a bright
+> idea, this patch might have to go in.
 
-> What we should do is to have a separate flag which indicates that the
-> blocking_pool has been adequately initialized, and set it only when
-> the entropy count in the blocking pool is at least 128 bits.  When get
-> woken up by the reader lock, we would transfer entropy from the input
-> pool to the blocking pool, and if the pool is not yet initializedm,
-> and the entropy count is less than 128 bits, we wait until it is.
-> 
+So we know that this happens in the context of decompress() which calls
+flush_buffer() for every chunk. flush_buffer() gets the start_address and
+the length. We also know that the fault can only happen within:
 
-What happens for me, is that single byte reads out of /dev/random are able
-to pull so much entropy out of the input_pool that the input_pool
-never reaches 128 bit and therefore crng_ready will never be true.
+    start_address <= fault_address < start_address + length + 8;
 
-Therefore I want to delay the blocking_pool until the CRNG is fully
-initialized.  I hope you agree about that.
+So something like the untested workaround below should cover the initramfs
+oddity and avoid to weaken the protection for all other cases.
 
-When that is done, there are two ways how entropy is transferred
-from the input_pool to the blocking_pool, just to confirm I have
-not overlooked something:
+Thanks,
 
-                /* If the input pool is getting full, send some
-                 * entropy to the blocking pool until it is 75% full.
-                 */
-                if (entropy_bits > random_write_wakeup_bits &&
-                    r->initialized &&
-                    r->entropy_total >= 2*random_read_wakeup_bits) {
-                        struct entropy_store *other = &blocking_pool;
+	tglx
 
-                        if (other->entropy_count <=
-                            3 * other->poolinfo->poolfracbits / 4) {
-                                schedule_work(&other->push_work);
-                                r->entropy_total = 0;
-                        }
-                }
+8<---------------
+--- a/arch/x86/mm/extable.c
++++ b/arch/x86/mm/extable.c
+@@ -1,5 +1,6 @@
+ #include <linux/extable.h>
+ #include <linux/uaccess.h>
++#include <linux/initrd.h>
+ #include <linux/sched/debug.h>
+ #include <xen/xen.h>
+ 
+@@ -161,6 +162,14 @@ static bool bogus_uaccess(struct pt_regs
+ 	if (current->kernel_uaccess_faults_ok)
+ 		return false;
+ 
++	/*
++	 * initramfs decompression can trigger a fault when
++	 * unsafe_get_user() goes over the boundary of the buffer. That's a
++	 * valid case for e.g. strncpy_from_user().
++	 */
++	if (initramfs_fault_in_decompress(fault_addr))
++		return false;
++
+ 	/* This is bad. Refuse the fixup so that we go into die(). */
+ 	if (trapnr == X86_TRAP_PF) {
+ 		pr_emerg("BUG: pagefault on kernel address 0x%lx in non-whitelisted uaccess\n",
+--- a/include/linux/initrd.h
++++ b/include/linux/initrd.h
+@@ -1,5 +1,8 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ 
++#ifndef LINUX_INITRD_H
++#define LINUX_INITRD_H
++
+ #define INITRD_MINOR 250 /* shouldn't collide with /dev/ram* too soon ... */
+ 
+ /* 1 = load ramdisk, 0 = don't load */
+@@ -25,3 +28,14 @@ extern phys_addr_t phys_initrd_start;
+ extern unsigned long phys_initrd_size;
+ 
+ extern unsigned int real_root_dev;
++
++#ifdef CONFIG_BLK_DEV_INITRD
++bool initramfs_fault_in_decompress(unsigned long addr);
++#else
++static inline bool initramfs_fault_in_decompress(unsigned long addr)
++{
++	return false;
++}
++#endif
++
++#endif
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -403,13 +403,27 @@ static __initdata int (*actions[])(void)
+ 	[Reset]		= do_reset,
+ };
+ 
++static unsigned long flush_start;
++static unsigned long flush_length;
++
++bool initramfs_fault_in_decompress(unsigned long addr)
++{
++	return addr >= flush_start && addr < flush_start + flush_length + 8;
++}
++
+ static long __init write_buffer(char *buf, unsigned long len)
+ {
++	/* Store address and length for uaccess fault handling */
++	flush_start = (unsigned long) buf;
++	flush_length = len;
++
+ 	byte_count = len;
+ 	victim = buf;
+ 
+ 	while (!actions[state]())
+ 		;
++	/* Clear the uaccess fault handling region */
++	flush_start = flush_length = 0;
+ 	return len - byte_count;
+ }
+ 
 
-this rarely happens, before crng_ready because it requires more than
-128 bits of entropy, at least in my setup.
-
-The other path is:
-_random_read->extract_entropy_user->xfer_secondary_pool
-
-which pulls at least to random_read_wakeup_bits / 8
-from the input_pool to the blocking_pool, 
-and the same amount of entropy is extracted again
-from the blocking_pool so the blocking_pool's entropy_count
-effectively stays at zero, when this path is taken.
-
-That you don't like, right?
-
-You propose to disable the second path until the first path
-has pulled 128 bits into the blocking_pool, right?
 
 
-Thanks
-Bernd.
+
+
+
+
+
