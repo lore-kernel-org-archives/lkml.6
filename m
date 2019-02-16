@@ -2,341 +2,193 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32714C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 11:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57488C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 11:26:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7B22222DD
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 11:22:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1106E222DD
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 11:26:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xl4T60GM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726890AbfBPLW4 (ORCPT
+        id S1727066AbfBPL0S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 06:22:56 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:42721 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725294AbfBPLWz (ORCPT
+        Sat, 16 Feb 2019 06:26:18 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33297 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725813AbfBPL0R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 06:22:55 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x1GBMZrk1624041
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 16 Feb 2019 03:22:35 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x1GBMZ841624038;
-        Sat, 16 Feb 2019 03:22:35 -0800
-Date:   Sat, 16 Feb 2019 03:22:35 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Anders Roxell <tipbot@zytor.com>
-Message-ID: <tip-5c418dc789a3898717ebf2caa5716ba91a7150b2@git.kernel.org>
-Cc:     peterz@infradead.org, ard.biesheuvel@linaro.org,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        anders.roxell@linaro.org, torvalds@linux-foundation.org,
-        hpa@zytor.com, tglx@linutronix.de
-Reply-To: ard.biesheuvel@linaro.org, peterz@infradead.org,
-          tglx@linutronix.de, hpa@zytor.com, torvalds@linux-foundation.org,
-          mingo@kernel.org, anders.roxell@linaro.org,
-          linux-kernel@vger.kernel.org
-In-Reply-To: <20190215165551.12220-2-ard.biesheuvel@linaro.org>
-References: <20190215165551.12220-2-ard.biesheuvel@linaro.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:efi/core] efi: Fix build error due to enum collision between
- efi.h and ima.h
-Git-Commit-ID: 5c418dc789a3898717ebf2caa5716ba91a7150b2
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 16 Feb 2019 06:26:17 -0500
+Received: by mail-wm1-f68.google.com with SMTP id h22so8480092wmb.0;
+        Sat, 16 Feb 2019 03:26:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=Mws+xaLF9V9qnzi9/nLwSnVpo535FW6n67Lb6f1fLds=;
+        b=Xl4T60GMBrzoIl6n2jy+/wAGdOONoVZ/aacF2rs1DG8yFHCs3RIfv1AxlHsIZgZvFj
+         dL4vwwTPlB0+lJktCKsMORZxnRhPZHhH64T8oskuz0GdhM+JBQDu8XTNUN7N6M6W4O5G
+         1ngCmixyvRwNX76Ftk0euqAdmq4NfAFRPo31lynZDVrAcnFDKK4MyhiUsPKUXrnf1wrI
+         Xf+F9UfiQdP1zFw7CzpiHJrjLhrNVKjd8SdgAdDZhAkuTkQKu8v6iozaYRpnfD5DobxH
+         Z8dey8anO3agmuBnZPXlP6N/VtVBuFfLVlHdwBWyJZBa7djBxOgDF5UlVkiJEWa9IgWr
+         QS/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=Mws+xaLF9V9qnzi9/nLwSnVpo535FW6n67Lb6f1fLds=;
+        b=rCj3miks8rZ4xZnR/z/S0pd3rZ0X1fPJ6+Ah5fw5MQNgqffj9UL3oyZ6ODuXpmB02J
+         gUqFpXvql/Pq51rvgmqgumi6FtTvBYwKEEp73/uJh5XrZ7+6soBWgsf2GNd/K6eC9B3c
+         gXRiTzZXpDBfrz3l5RiP7t6dliIFDB6yD4ulTuZlT45xSQndjweKVlUiPLke5NGv0+j8
+         uXJlNztkU6Mgr+2VeQqK5XRGdKG9S0PgohjKFry2vh5VVdqj0FYKWTutvJCvRtXBXfjY
+         V9/Ou7l2acVhbsA6KPBH4CmixSPx8YyXAds6W4bV3J9bkE8tMfr/Q5BdagSooEHihNnp
+         z3Ew==
+X-Gm-Message-State: AHQUAuYoBTa4AzBc3AsVSK/bd1UhgJSIUW8kCdrLq1Z/tQzb36MxmYLk
+        KfKu+Yyi4+5+8GsHJgzfQDQ=
+X-Google-Smtp-Source: AHgI3IY+Vy9gjvgcf0gwZJbcdqlrGtTUziAHDTyCh9OKJyYdPejk0GT4Y2gml13/hG2QOAtNVWYNtA==
+X-Received: by 2002:a7b:c0c5:: with SMTP id s5mr9955821wmh.40.1550316375281;
+        Sat, 16 Feb 2019 03:26:15 -0800 (PST)
+Received: from localhost.localdomain ([46.216.153.34])
+        by smtp.gmail.com with ESMTPSA id f134sm11042510wme.31.2019.02.16.03.26.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 16 Feb 2019 03:26:13 -0800 (PST)
+Received: from [127.0.0.1] (helo=jeknote.loshitsa1.net)
+        by localhost.localdomain with esmtp (Exim 4.92-RC4)
+        (envelope-from <jekhor@gmail.com>)
+        id 1guy6l-0005LK-V0; Sat, 16 Feb 2019 14:26:12 +0300
+Date:   Sat, 16 Feb 2019 14:26:11 +0300
+From:   Yauhen Kharuzhy <jekhor@gmail.com>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, Hans de Goede <hdegoede@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
+ LEDs
+Message-ID: <20190216112611.GA11750@jeknote.loshitsa1.net>
+References: <20190213230731.GA8557@amd>
+ <42078a81-e32e-81b7-528f-d1adb60d31c3@redhat.com>
+ <20190213233806.GA11867@amd>
+ <562e2acd-a60a-2aea-4050-6d9414d23a4e@redhat.com>
+ <20190214111423.GE6132@amd>
+ <92cf09b8-726d-4f1b-94ba-368a66af2246@redhat.com>
+ <2b6faaa5-b21e-a512-de7d-ca21be5045fc@gmail.com>
+ <20190214230307.GA17358@amd>
+ <20190215072709.GD30250@jeknote.loshitsa1.net>
+ <a79807bb-7826-6f2c-0738-7bddcc66cc5e@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a79807bb-7826-6f2c-0738-7bddcc66cc5e@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  5c418dc789a3898717ebf2caa5716ba91a7150b2
-Gitweb:     https://git.kernel.org/tip/5c418dc789a3898717ebf2caa5716ba91a7150b2
-Author:     Anders Roxell <anders.roxell@linaro.org>
-AuthorDate: Fri, 15 Feb 2019 17:55:51 +0100
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Sat, 16 Feb 2019 12:18:55 +0100
+On Fri, Feb 15, 2019 at 10:43:17PM +0100, Jacek Anaszewski wrote:
+> Hi Yauhen,
+> 
+> On 2/15/19 8:27 AM, Yauhen Kharuzhy wrote:
+> > On Fri, Feb 15, 2019 at 12:03:07AM +0100, Pavel Machek wrote:
+> > > Hi!
+> > > 
+> > > > > > > I suggest that we deal with this special case by adding 3 custom
+> > > > > > > sysfs attributes:
+> > > > > > > 
+> > > > > > > 1) "mode" which when read, prints, e.g. :
+> > > > > > > manual [on-when-charging]
+> > > > > > 
+> > > > > > While this allows _user on console_ to control everything using echo,
+> > > > > > it is not suitable for applications trying to control LEDs.
+> > > > > > 
+> > > > > > As there's nothing special about the case here, I believe we should
+> > > > > > have generic solution here.
+> > > > > > 
+> > > > > > My preffered solution would be "hardware" trigger that leaves the LED
+> > > > > > in hardware control.
+> > > > > 
+> > > > > As you explained in the parts which I snipped, there are many
+> > > > > devices which have a similar choice for a LED being under hw or
+> > > > > user control. I can see how this looks like a trigger and how we
+> > > > > could use the trigger API for this.
+> > > > > 
+> > > > > I believe though, that if we implement a "virtual" (for lack of
+> > > > > a better word) trigger for this, that this should be done in the
+> > > > > LED core. I can envision this working like this:
+> > > > > 
+> > > > > 1) Add a:
+> > > > > 
+> > > > > hw_control_set(struct led_classdev *led_cdev, bool enable_hw_control);
+> > > > 
+> > > > Please note that we have support for hw patterns in the pattern trigger.
+> > > > (see how drivers/leds/leds-sc27xx-bltc.c makes use of it for its
+> > > > breathing pattern).
+> > > > We have also support for hw blinking in timer trigger via blink_set op.
+> > > > 
+> > > > In addition to that there is brightness_hw_changed sysfs attribute
+> > > > with led_classdev_notify_brightness_hw_changed() LED API.
+> > > > 
+> > > > Couldn't they be used in concert to support the specific features
+> > > > of the device in question?
+> > > 
+> > > I believe main issue here is this:
+> > > 
+> > > Hardware can automatically control the LED according to the charging
+> > > status, or it can be used as normal software-controlled LED.
+> > > 
+> > > I believe we should use trigger to select if hardware controls it or
+> > > not (and then add driver-specific files to describe the
+> > > details). Other proposal is in the mail thread, too.
+> > 
+> > But there are two kinds of 'hardware control' here in discussion:
+> > 1:
+> > 	a) PMIC switching LED off/on/breathing/blinking reflected the charging
+> > 	state (charger is controlled by PMIC entirely without of
+> > 	software intervention) – 'hw controlled' mode
+> 
+> Can we detect when charging is activated?
 
-efi: Fix build error due to enum collision between efi.h and ima.h
+Depends on PMIC and charger configuration. Seems there are no common
+way working for all configurations exists.
 
-The following commit:
+> 
+> > 	b) Software controls when LED is on/off/breathing/blinking but
+> > 	patterns are generated by PMIC – 'sw controlled' mode.
+> > 
+> > 2:
+> > 	a) parameters of lighting (continuous/blinking/breathing) are
+> > 	set in the PMIC and the PMIC generates patterns
+> > 	b) blinking/breathing patterns are generated by the software
+> > 	entirely.
+> > 
+> > It seems that we sometimes confuse this two kinds of hw control definitions
+> > in the discussion.
+> > 
+> > 
+> > The simple use case question: with this hardware and existing LED class
+> > API, what user/app should to do to make LED breathing with hw-generated
+> > pattern?
+> > 
+> > As I see, user should activate 'pattern' trigger and write to its hw_pattern attribute...
+> > hm... big pattern which describes every step of breathing? Some
+> > simplified pattern which should be interpreted as 'enable the breathing
+> > an set its frequency' by driver? Which level of simplification will be
+> > suitable? Which criteria of pattern rejection should be?
+> 
+> Please see my reply to Hans. We need some simplified device specific
+> syntax of hw_pattern for this device, similarly like in:
+> Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
 
-  a893ea15d764 ("tpm: move tpm_chip definition to include/linux/tpm.h")
+Thanks, this approach seems easy to implement.
 
-introduced a build error when both IMA and EFI are enabled:
+> 
+> -- 
+> Best regards,
+> Jacek Anaszewski
 
-    In file included from ../security/integrity/ima/ima_fs.c:30:
-    ../security/integrity/ima/ima.h:176:7: error: redeclaration of enumerator "NONE"
-
-What happens is that both headers (ima.h and efi.h) defines the same
-'NONE' constant, and it broke when they started getting included from
-the same file:
-
-Rework to prefix the EFI enum with 'EFI_*'.
-
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20190215165551.12220-2-ard.biesheuvel@linaro.org
-[ Cleaned up the changelog a bit. ]
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/x86/platform/efi/quirks.c          |  4 +--
- drivers/firmware/efi/runtime-wrappers.c | 48 ++++++++++++++++-----------------
- include/linux/efi.h                     | 26 +++++++++---------
- 3 files changed, 39 insertions(+), 39 deletions(-)
-
-diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
-index 9ce85e605052..458a0e2bcc57 100644
---- a/arch/x86/platform/efi/quirks.c
-+++ b/arch/x86/platform/efi/quirks.c
-@@ -717,7 +717,7 @@ void efi_recover_from_page_fault(unsigned long phys_addr)
- 	 * "efi_mm" cannot be used to check if the page fault had occurred
- 	 * in the firmware context because efi=old_map doesn't use efi_pgd.
- 	 */
--	if (efi_rts_work.efi_rts_id == NONE)
-+	if (efi_rts_work.efi_rts_id == EFI_NONE)
- 		return;
- 
- 	/*
-@@ -742,7 +742,7 @@ void efi_recover_from_page_fault(unsigned long phys_addr)
- 	 * because this case occurs *very* rarely and hence could be improved
- 	 * on a need by basis.
- 	 */
--	if (efi_rts_work.efi_rts_id == RESET_SYSTEM) {
-+	if (efi_rts_work.efi_rts_id == EFI_RESET_SYSTEM) {
- 		pr_info("efi_reset_system() buggy! Reboot through BIOS\n");
- 		machine_real_restart(MRR_BIOS);
- 		return;
-diff --git a/drivers/firmware/efi/runtime-wrappers.c b/drivers/firmware/efi/runtime-wrappers.c
-index 8903b9ccfc2b..8bbbbf160d05 100644
---- a/drivers/firmware/efi/runtime-wrappers.c
-+++ b/drivers/firmware/efi/runtime-wrappers.c
-@@ -85,7 +85,7 @@ struct efi_runtime_work efi_rts_work;
- 		pr_err("Failed to queue work to efi_rts_wq.\n");	\
- 									\
- exit:									\
--	efi_rts_work.efi_rts_id = NONE;					\
-+	efi_rts_work.efi_rts_id = EFI_NONE;				\
- 	efi_rts_work.status;						\
- })
- 
-@@ -168,50 +168,50 @@ static void efi_call_rts(struct work_struct *work)
- 	arg5 = efi_rts_work.arg5;
- 
- 	switch (efi_rts_work.efi_rts_id) {
--	case GET_TIME:
-+	case EFI_GET_TIME:
- 		status = efi_call_virt(get_time, (efi_time_t *)arg1,
- 				       (efi_time_cap_t *)arg2);
- 		break;
--	case SET_TIME:
-+	case EFI_SET_TIME:
- 		status = efi_call_virt(set_time, (efi_time_t *)arg1);
- 		break;
--	case GET_WAKEUP_TIME:
-+	case EFI_GET_WAKEUP_TIME:
- 		status = efi_call_virt(get_wakeup_time, (efi_bool_t *)arg1,
- 				       (efi_bool_t *)arg2, (efi_time_t *)arg3);
- 		break;
--	case SET_WAKEUP_TIME:
-+	case EFI_SET_WAKEUP_TIME:
- 		status = efi_call_virt(set_wakeup_time, *(efi_bool_t *)arg1,
- 				       (efi_time_t *)arg2);
- 		break;
--	case GET_VARIABLE:
-+	case EFI_GET_VARIABLE:
- 		status = efi_call_virt(get_variable, (efi_char16_t *)arg1,
- 				       (efi_guid_t *)arg2, (u32 *)arg3,
- 				       (unsigned long *)arg4, (void *)arg5);
- 		break;
--	case GET_NEXT_VARIABLE:
-+	case EFI_GET_NEXT_VARIABLE:
- 		status = efi_call_virt(get_next_variable, (unsigned long *)arg1,
- 				       (efi_char16_t *)arg2,
- 				       (efi_guid_t *)arg3);
- 		break;
--	case SET_VARIABLE:
-+	case EFI_SET_VARIABLE:
- 		status = efi_call_virt(set_variable, (efi_char16_t *)arg1,
- 				       (efi_guid_t *)arg2, *(u32 *)arg3,
- 				       *(unsigned long *)arg4, (void *)arg5);
- 		break;
--	case QUERY_VARIABLE_INFO:
-+	case EFI_QUERY_VARIABLE_INFO:
- 		status = efi_call_virt(query_variable_info, *(u32 *)arg1,
- 				       (u64 *)arg2, (u64 *)arg3, (u64 *)arg4);
- 		break;
--	case GET_NEXT_HIGH_MONO_COUNT:
-+	case EFI_GET_NEXT_HIGH_MONO_COUNT:
- 		status = efi_call_virt(get_next_high_mono_count, (u32 *)arg1);
- 		break;
--	case UPDATE_CAPSULE:
-+	case EFI_UPDATE_CAPSULE:
- 		status = efi_call_virt(update_capsule,
- 				       (efi_capsule_header_t **)arg1,
- 				       *(unsigned long *)arg2,
- 				       *(unsigned long *)arg3);
- 		break;
--	case QUERY_CAPSULE_CAPS:
-+	case EFI_QUERY_CAPSULE_CAPS:
- 		status = efi_call_virt(query_capsule_caps,
- 				       (efi_capsule_header_t **)arg1,
- 				       *(unsigned long *)arg2, (u64 *)arg3,
-@@ -235,7 +235,7 @@ static efi_status_t virt_efi_get_time(efi_time_t *tm, efi_time_cap_t *tc)
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(GET_TIME, tm, tc, NULL, NULL, NULL);
-+	status = efi_queue_work(EFI_GET_TIME, tm, tc, NULL, NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
- }
-@@ -246,7 +246,7 @@ static efi_status_t virt_efi_set_time(efi_time_t *tm)
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(SET_TIME, tm, NULL, NULL, NULL, NULL);
-+	status = efi_queue_work(EFI_SET_TIME, tm, NULL, NULL, NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
- }
-@@ -259,7 +259,7 @@ static efi_status_t virt_efi_get_wakeup_time(efi_bool_t *enabled,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(GET_WAKEUP_TIME, enabled, pending, tm, NULL,
-+	status = efi_queue_work(EFI_GET_WAKEUP_TIME, enabled, pending, tm, NULL,
- 				NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -271,7 +271,7 @@ static efi_status_t virt_efi_set_wakeup_time(efi_bool_t enabled, efi_time_t *tm)
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(SET_WAKEUP_TIME, &enabled, tm, NULL, NULL,
-+	status = efi_queue_work(EFI_SET_WAKEUP_TIME, &enabled, tm, NULL, NULL,
- 				NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -287,7 +287,7 @@ static efi_status_t virt_efi_get_variable(efi_char16_t *name,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(GET_VARIABLE, name, vendor, attr, data_size,
-+	status = efi_queue_work(EFI_GET_VARIABLE, name, vendor, attr, data_size,
- 				data);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -301,7 +301,7 @@ static efi_status_t virt_efi_get_next_variable(unsigned long *name_size,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(GET_NEXT_VARIABLE, name_size, name, vendor,
-+	status = efi_queue_work(EFI_GET_NEXT_VARIABLE, name_size, name, vendor,
- 				NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -317,7 +317,7 @@ static efi_status_t virt_efi_set_variable(efi_char16_t *name,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(SET_VARIABLE, name, vendor, &attr, &data_size,
-+	status = efi_queue_work(EFI_SET_VARIABLE, name, vendor, &attr, &data_size,
- 				data);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -352,7 +352,7 @@ static efi_status_t virt_efi_query_variable_info(u32 attr,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(QUERY_VARIABLE_INFO, &attr, storage_space,
-+	status = efi_queue_work(EFI_QUERY_VARIABLE_INFO, &attr, storage_space,
- 				remaining_space, max_variable_size, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -384,7 +384,7 @@ static efi_status_t virt_efi_get_next_high_mono_count(u32 *count)
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(GET_NEXT_HIGH_MONO_COUNT, count, NULL, NULL,
-+	status = efi_queue_work(EFI_GET_NEXT_HIGH_MONO_COUNT, count, NULL, NULL,
- 				NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -400,7 +400,7 @@ static void virt_efi_reset_system(int reset_type,
- 			"could not get exclusive access to the firmware\n");
- 		return;
- 	}
--	efi_rts_work.efi_rts_id = RESET_SYSTEM;
-+	efi_rts_work.efi_rts_id = EFI_RESET_SYSTEM;
- 	__efi_call_virt(reset_system, reset_type, status, data_size, data);
- 	up(&efi_runtime_lock);
- }
-@@ -416,7 +416,7 @@ static efi_status_t virt_efi_update_capsule(efi_capsule_header_t **capsules,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(UPDATE_CAPSULE, capsules, &count, &sg_list,
-+	status = efi_queue_work(EFI_UPDATE_CAPSULE, capsules, &count, &sg_list,
- 				NULL, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-@@ -434,7 +434,7 @@ static efi_status_t virt_efi_query_capsule_caps(efi_capsule_header_t **capsules,
- 
- 	if (down_interruptible(&efi_runtime_lock))
- 		return EFI_ABORTED;
--	status = efi_queue_work(QUERY_CAPSULE_CAPS, capsules, &count,
-+	status = efi_queue_work(EFI_QUERY_CAPSULE_CAPS, capsules, &count,
- 				max_size, reset_type, NULL);
- 	up(&efi_runtime_lock);
- 	return status;
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index be08518c2553..eecd1079617a 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1719,19 +1719,19 @@ extern int efi_tpm_eventlog_init(void);
-  * fault happened while executing an efi runtime service.
-  */
- enum efi_rts_ids {
--	NONE,
--	GET_TIME,
--	SET_TIME,
--	GET_WAKEUP_TIME,
--	SET_WAKEUP_TIME,
--	GET_VARIABLE,
--	GET_NEXT_VARIABLE,
--	SET_VARIABLE,
--	QUERY_VARIABLE_INFO,
--	GET_NEXT_HIGH_MONO_COUNT,
--	RESET_SYSTEM,
--	UPDATE_CAPSULE,
--	QUERY_CAPSULE_CAPS,
-+	EFI_NONE,
-+	EFI_GET_TIME,
-+	EFI_SET_TIME,
-+	EFI_GET_WAKEUP_TIME,
-+	EFI_SET_WAKEUP_TIME,
-+	EFI_GET_VARIABLE,
-+	EFI_GET_NEXT_VARIABLE,
-+	EFI_SET_VARIABLE,
-+	EFI_QUERY_VARIABLE_INFO,
-+	EFI_GET_NEXT_HIGH_MONO_COUNT,
-+	EFI_RESET_SYSTEM,
-+	EFI_UPDATE_CAPSULE,
-+	EFI_QUERY_CAPSULE_CAPS,
- };
- 
- /*
+-- 
+Yauhen Kharuzhy
