@@ -3,65 +3,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB50C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 00:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFFB9C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 01:07:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0379222D0
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 00:56:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0D27222D9
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 01:07:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730969AbfBPA4S (ORCPT
+        id S1731385AbfBPBHM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 19:56:18 -0500
-Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:55344 "EHLO
-        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726874AbfBPA4S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 19:56:18 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e01424;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0TKBzhpr_1550278564;
-Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TKBzhpr_1550278564)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 16 Feb 2019 08:56:15 +0800
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-To:     tj@kernel.org, hannes@cmpxchg.org, corbet@lwn.net
-Cc:     yang.shi@linux.alibaba.com, cgroups@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] doc: cgroup: correct the wrong information about measure of memory pressure
-Date:   Sat, 16 Feb 2019 08:56:04 +0800
-Message-Id: <1550278564-81540-1-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
+        Fri, 15 Feb 2019 20:07:12 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3216 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726874AbfBPBHL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 20:07:11 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 2E6E77BD5C2BD39E7738;
+        Sat, 16 Feb 2019 09:07:09 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.408.0; Sat, 16 Feb 2019 09:07:00 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Sangbeom Kim <sbkim73@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+CC:     Wei Yongjun <weiyongjun1@huawei.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] ASoC: samsung: i2s: Fix return value check in i2s_create_secondary_device()
+Date:   Sat, 16 Feb 2019 01:20:55 +0000
+Message-ID: <20190216012055.79622-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since PSI has implemented some kind of measure of memory pressure, the
-statement about lack of such measure is not true anymore.
+In case of error, the function platform_device_register_simple() returns
+ERR_PTR() and never returns NULL. The NULL test in the return value
+check should be replaced with IS_ERR().
 
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+Fixes: 7196c64c7d0c ("ASoC: samsung: i2s: Restore support for the secondary PCM")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- Documentation/admin-guide/cgroup-v2.rst | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ sound/soc/samsung/i2s.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 7bf3f12..9a92013 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1310,8 +1310,7 @@ network to a file can use all available memory but can also operate as
- performant with a small amount of memory.  A measure of memory
- pressure - how much the workload is being impacted due to lack of
- memory - is necessary to determine whether a workload needs more
--memory; unfortunately, memory pressure monitoring mechanism isn't
--implemented yet.
-+memory.
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 72f0cb7abb30..15844c00c3cd 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -1342,8 +1342,8 @@ static int i2s_create_secondary_device(struct samsung_i2s_priv *priv)
+ 	int ret;
  
+ 	pdev = platform_device_register_simple("samsung-i2s-sec", -1, NULL, 0);
+-	if (!pdev)
+-		return -ENOMEM;
++	if (IS_ERR(pdev))
++		return PTR_ERR(pdev);
  
- Memory Ownership
--- 
-1.8.3.1
+ 	ret = device_attach(&pdev->dev);
+ 	if (ret < 0) {
+
+
 
