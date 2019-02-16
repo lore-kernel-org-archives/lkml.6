@@ -2,197 +2,96 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E84EC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 11:01:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 065FAC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 11:19:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCF39222D9
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 11:01:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA3D2222DD
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 11:19:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728812AbfBPLBB (ORCPT
+        id S1729416AbfBPLTM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 06:01:01 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:38427 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725966AbfBPLBB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 06:01:01 -0500
-Received: from fsav405.sakura.ne.jp (fsav405.sakura.ne.jp [133.242.250.104])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1GAxpNu015299;
-        Sat, 16 Feb 2019 19:59:52 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav405.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp);
- Sat, 16 Feb 2019 19:59:51 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav405.sakura.ne.jp)
-Received: from ccsecurity.localdomain (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x1GAxl8U015163
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Sat, 16 Feb 2019 19:59:51 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To:     Dmitry Vyukov <dvyukov@google.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [PATCH] printk: Pass caller information to log_store().
-Date:   Sat, 16 Feb 2019 19:59:33 +0900
-Message-Id: <1550314773-8607-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
-X-Mailer: git-send-email 1.8.3.1
+        Sat, 16 Feb 2019 06:19:12 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3222 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725294AbfBPLTL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Feb 2019 06:19:11 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 8040581B00B149F3FA97;
+        Sat, 16 Feb 2019 19:19:09 +0800 (CST)
+Received: from [127.0.0.1] (10.177.244.145) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Sat, 16 Feb 2019
+ 19:19:03 +0800
+Subject: Re: [PATCH] tracing: fix incorrect tracer freeing when opening
+ tracing pipe
+To:     Steven Rostedt <rostedt@goodmis.org>
+References: <1550060946-45984-1-git-send-email-yi.zhang@huawei.com>
+ <20190213083635.36f4762e@gandalf.local.home>
+CC:     <mingo@redhat.com>, <linux-kernel@vger.kernel.org>,
+        <miaoxie@huawei.com>
+From:   "zhangyi (F)" <yi.zhang@huawei.com>
+Message-ID: <ed080680-ddac-3e99-720e-a8371fce5ab6@huawei.com>
+Date:   Sat, 16 Feb 2019 19:19:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
+MIME-Version: 1.0
+In-Reply-To: <20190213083635.36f4762e@gandalf.local.home>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.177.244.145]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When thread1 called printk() which did not end with '\n', and then thread2
-called printk() which ends with '\n' before thread1 calls pr_cont(), the
-partial content saved into "struct cont" is flushed by thread2 despite the
-partial content was generated by thread1. This leads to confusing output
-as if the partial content was generated by thread2. Fix this problem by
-passing correct caller information to log_store().
+On 2019/2/13 21:36, Steven Rostedt Wrote:
+> On Wed, 13 Feb 2019 20:29:06 +0800
+> "zhangyi (F)" <yi.zhang@huawei.com> wrote:
+> 
+>> Commit d716ff71dd12 ("tracing: Remove taking of trace_types_lock in
+>> pipe files") use the current tracer instead of the copy in
+>> tracing_open_pipe(), but it forget to remove the freeing sentence in
+>> the error path.
+>>
+>> Fixes: d716ff71dd12 ("tracing: Remove taking of trace_types_lock in pipe files")
+> 
+> Thanks.
+> 
+> As this is harmless (frees to NULL is ok, and iter is allocated with
+> kzalloc()), I'm going to just add this for the next merge window.
+> 
 
-Before:
+This patch patch want to remove kfree(iter->trace) instead of kfree(iter),
+which is set by tr->current_trace and probably not allocated dynamically.
+So if we kfree such tracer in the error path, it will lead to BUG_ON.
 
-  [ T8533] abcdefghijklm
-  [ T8533] ABCDEFGHIJKLMNOPQRSTUVWXYZ
-  [ T8532] nopqrstuvwxyz
-  [ T8532] abcdefghijklmnopqrstuvwxyz
-  [ T8533] abcdefghijklm
-  [ T8533] ABCDEFGHIJKLMNOPQRSTUVWXYZ
-  [ T8532] nopqrstuvwxyz
+Thanks，
+Yi.
 
-After:
-
-  [ T8507] abcdefghijklm
-  [ T8508] ABCDEFGHIJKLMNOPQRSTUVWXYZ
-  [ T8507] nopqrstuvwxyz
-  [ T8507] abcdefghijklmnopqrstuvwxyz
-  [ T8507] abcdefghijklm
-  [ T8508] ABCDEFGHIJKLMNOPQRSTUVWXYZ
-  [ T8507] nopqrstuvwxyz
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
- kernel/printk/printk.c | 39 ++++++++++++++++++++++++---------------
- 1 file changed, 24 insertions(+), 15 deletions(-)
-
-diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
-index 33c0359..6547a88 100644
---- a/kernel/printk/printk.c
-+++ b/kernel/printk/printk.c
-@@ -585,7 +585,7 @@ static u32 truncate_msg(u16 *text_len, u16 *trunc_msg_len,
- }
- 
- /* insert record into the buffer, discard old ones, update heads */
--static int log_store(int facility, int level,
-+static int log_store(u32 caller_id, int facility, int level,
- 		     enum log_flags flags, u64 ts_nsec,
- 		     const char *dict, u16 dict_len,
- 		     const char *text, u16 text_len)
-@@ -634,10 +634,7 @@ static int log_store(int facility, int level,
- 	else
- 		msg->ts_nsec = local_clock();
- #ifdef CONFIG_PRINTK_CALLER
--	if (in_task())
--		msg->caller_id = task_pid_nr(current);
--	else
--		msg->caller_id = 0x80000000 + raw_smp_processor_id();
-+	msg->caller_id = caller_id;
- #endif
- 	memset(log_dict(msg) + dict_len, 0, pad_len);
- 	msg->len = size;
-@@ -1793,6 +1790,12 @@ static inline void printk_delay(void)
- 	}
- }
- 
-+static inline u32 printk_caller_id(void)
-+{
-+	return in_task() ? task_pid_nr(current) :
-+		0x80000000 + raw_smp_processor_id();
-+}
-+
- /*
-  * Continuation lines are buffered, and not committed to the record buffer
-  * until the line is complete, or a race forces it. The line fragments
-@@ -1802,7 +1805,7 @@ static inline void printk_delay(void)
- static struct cont {
- 	char buf[LOG_LINE_MAX];
- 	size_t len;			/* length == 0 means unused buffer */
--	struct task_struct *owner;	/* task of first print*/
-+	u32 caller_id;			/* printk_caller_id() of first print */
- 	u64 ts_nsec;			/* time of first print */
- 	u8 level;			/* log level of first message */
- 	u8 facility;			/* log facility of first message */
-@@ -1814,12 +1817,13 @@ static void cont_flush(void)
- 	if (cont.len == 0)
- 		return;
- 
--	log_store(cont.facility, cont.level, cont.flags, cont.ts_nsec,
--		  NULL, 0, cont.buf, cont.len);
-+	log_store(cont.caller_id, cont.facility, cont.level, cont.flags,
-+		  cont.ts_nsec, NULL, 0, cont.buf, cont.len);
- 	cont.len = 0;
- }
- 
--static bool cont_add(int facility, int level, enum log_flags flags, const char *text, size_t len)
-+static bool cont_add(u32 caller_id, int facility, int level,
-+		     enum log_flags flags, const char *text, size_t len)
- {
- 	/* If the line gets too long, split it up in separate records. */
- 	if (cont.len + len > sizeof(cont.buf)) {
-@@ -1830,7 +1834,7 @@ static bool cont_add(int facility, int level, enum log_flags flags, const char *
- 	if (!cont.len) {
- 		cont.facility = facility;
- 		cont.level = level;
--		cont.owner = current;
-+		cont.caller_id = caller_id;
- 		cont.ts_nsec = local_clock();
- 		cont.flags = flags;
- 	}
-@@ -1850,13 +1854,16 @@ static bool cont_add(int facility, int level, enum log_flags flags, const char *
- 
- static size_t log_output(int facility, int level, enum log_flags lflags, const char *dict, size_t dictlen, char *text, size_t text_len)
- {
-+	const u32 caller_id = printk_caller_id();
-+
- 	/*
- 	 * If an earlier line was buffered, and we're a continuation
--	 * write from the same process, try to add it to the buffer.
-+	 * write from the same context, try to add it to the buffer.
- 	 */
- 	if (cont.len) {
--		if (cont.owner == current && (lflags & LOG_CONT)) {
--			if (cont_add(facility, level, lflags, text, text_len))
-+		if (cont.caller_id == caller_id && (lflags & LOG_CONT)) {
-+			if (cont_add(caller_id, facility, level, lflags, text,
-+				     text_len))
- 				return text_len;
- 		}
- 		/* Otherwise, make sure it's flushed */
-@@ -1869,12 +1876,14 @@ static size_t log_output(int facility, int level, enum log_flags lflags, const c
- 
- 	/* If it doesn't end in a newline, try to buffer the current line */
- 	if (!(lflags & LOG_NEWLINE)) {
--		if (cont_add(facility, level, lflags, text, text_len))
-+		if (cont_add(caller_id, facility, level, lflags, text,
-+			     text_len))
- 			return text_len;
- 	}
- 
- 	/* Store it in the record log */
--	return log_store(facility, level, lflags, 0, dict, dictlen, text, text_len);
-+	return log_store(caller_id, facility, level, lflags, 0, dict, dictlen,
-+			 text, text_len);
- }
- 
- /* Must be called under logbuf_lock. */
--- 
-1.8.3.1
+> 
+>> Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
+>> ---
+>>  kernel/trace/trace.c | 1 -
+>>  1 file changed, 1 deletion(-)
+>>
+>> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+>> index c521b73..b583ff7 100644
+>> --- a/kernel/trace/trace.c
+>> +++ b/kernel/trace/trace.c
+>> @@ -5624,7 +5624,6 @@ static int tracing_open_pipe(struct inode *inode, struct file *filp)
+>>  	return ret;
+>>  
+>>  fail:
+>> -	kfree(iter->trace);
+>>  	kfree(iter);
+>>  	__trace_array_put(tr);
+>>  	mutex_unlock(&trace_types_lock);
+> 
+> 
+> .
+> 
 
