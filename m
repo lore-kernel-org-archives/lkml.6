@@ -2,299 +2,168 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C95C5C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 19:27:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D93B6C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 19:37:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84E98222E0
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 19:27:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tcQsZiJD"
+	by mail.kernel.org (Postfix) with ESMTP id AB851222E0
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 19:37:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732713AbfBPT1P (ORCPT
+        id S1732780AbfBPThc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 14:27:15 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37760 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728542AbfBPT1O (ORCPT
+        Sat, 16 Feb 2019 14:37:32 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50994 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728102AbfBPThb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 14:27:14 -0500
-Received: by mail-pf1-f193.google.com with SMTP id s22so6488833pfh.4;
-        Sat, 16 Feb 2019 11:27:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=PvGd4wtTpa+CQYMionZSq5bb7Gtx6XZLGmQFvd6i7o0=;
-        b=tcQsZiJD79S3XYKwoX5DsGaoRUWQIB4rpn7Qm/enXZniGCizPGoE7ItRPfsduQOD1J
-         oqGI28exZD2xtCna6hTXu2SpiVgZuK+wtPbzPejPQLo1/tO1HNGzhfPA43xTOL2RHlmR
-         IyPdApP1RkcBfWHRzS4TQHfItBGddeOLwdEgZrDklEPddXpgZ+zn8CwNh7T0AvjNoSAa
-         X75mxhE/bnuZx8hKYrPS/5hZSrE9kW4Z4Xty4J6TOdxaricUQCTwRzF0mEIMtPgQTHhj
-         LzEYPKwawz14lHyDlycw9yYH76ZVJ/QSbdK/AGEVN/UN+lviQRnyQa5uvO0WwFft5M+g
-         LeGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=PvGd4wtTpa+CQYMionZSq5bb7Gtx6XZLGmQFvd6i7o0=;
-        b=PGjmx3KFFVOAP2N5d1R+6Hgnmgsve3lHMDYG5vQRxdzWI77YcQU4rWafD41n7TkPIG
-         KZXNiTu8IcHw2TkGfoBy4tuvPJe+cYUF1U9Rf2ZvOMzWSA+R7MGFGeBduVgGr2qqsq5u
-         6AyTfI9gnuaPGn3g6SlmkXMymuVqPdeiz+yUsPcF6GQakuUC1NQQa3ZciVWl/JHDS+C6
-         y59CJAi/FxCtM+RdaFZalVJvkwJYcwA3eCsJw0HLH4OHBI87qyYslI91o5VQoKnWIH0o
-         Ebe/W6uSH0IH5C4xD7FzOa7K3ynuozwvOFxpJRxwn2VagiRDcWMf4Di7oWoH/JpmbFyc
-         7etQ==
-X-Gm-Message-State: AHQUAub/8m+00xH1TTV1TullkUczeKqx6Z85uNE8r14+1JqqUs6RvV50
-        jPuUy2bpv7Akqe1UW9u5UXc=
-X-Google-Smtp-Source: AHgI3Iay1rbm1GJD5PrYcpdkL+5Mqb9q60MOThvReqGqHvH127FJ/kEbLV1kaYX3jLb1/HwDqT4sBw==
-X-Received: by 2002:a62:444b:: with SMTP id r72mr16296174pfa.184.1550345233565;
-        Sat, 16 Feb 2019 11:27:13 -0800 (PST)
-Received: from localhost.localdomain ([43.224.245.179])
-        by smtp.gmail.com with ESMTPSA id n75sm13472398pfb.39.2019.02.16.11.27.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 16 Feb 2019 11:27:13 -0800 (PST)
-From:   Xiang Xiao <xiaoxiang781216@gmail.com>
-X-Google-Original-From: Xiang Xiao <xiaoxiang@xiaomi.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        alexander.shishkin@linux.intel.com,
-        Ohad Ben Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        wendy.liang@xilinx.com, Arnaud POULIQUEN <arnaud.pouliquen@st.com>,
-        Kumar Gala <kumar.gala@linaro.org>,
-        linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Guiding Li <liguiding@pinecone.net>
-Subject: [PATCH V3] rpmsg: add syslog redirection driver
-Date:   Sun, 17 Feb 2019 03:26:43 +0800
-Message-Id: <1550345203-25460-2-git-send-email-xiaoxiang@xiaomi.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1550345203-25460-1-git-send-email-xiaoxiang@xiaomi.com>
-References: <1550345203-25460-1-git-send-email-xiaoxiang@xiaomi.com>
+        Sat, 16 Feb 2019 14:37:31 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id F131F8050E; Sat, 16 Feb 2019 20:37:20 +0100 (CET)
+Date:   Sat, 16 Feb 2019 20:37:27 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Yauhen Kharuzhy <jekhor@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
+ LEDs
+Message-ID: <20190216193727.GA14305@amd>
+References: <92cf09b8-726d-4f1b-94ba-368a66af2246@redhat.com>
+ <2b6faaa5-b21e-a512-de7d-ca21be5045fc@gmail.com>
+ <20190214230307.GA17358@amd>
+ <2a5e2002-e5f1-6da3-8a43-317801b69657@redhat.com>
+ <3d5407a7-9458-f071-a1d5-511b09678e20@gmail.com>
+ <87a21c4e-8e5e-c180-2ff3-eb8170746e71@redhat.com>
+ <80971bc3-1193-83ed-913a-12f6217016c8@gmail.com>
+ <b15fd048-8206-4057-a354-07dc14ca15e3@redhat.com>
+ <8a263266-a41f-c916-e990-02d04de9b5d0@gmail.com>
+ <af5bec7b-0da1-ee19-cdf4-0240f56221ad@redhat.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="RnlQjJ0d97Da+TV1"
+Content-Disposition: inline
+In-Reply-To: <af5bec7b-0da1-ee19-cdf4-0240f56221ad@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guiding Li <liguiding@pinecone.net>
 
-This driver allows the remote processor to redirect the output of
-syslog or printf into the kernel log, which is very useful to see
-what happen in the remote side.
+--RnlQjJ0d97Da+TV1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Guiding Li <liguiding@pinecone.net>
----
- drivers/rpmsg/Kconfig        |  12 ++++
- drivers/rpmsg/Makefile       |   1 +
- drivers/rpmsg/rpmsg_syslog.c | 161 +++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 174 insertions(+)
- create mode 100644 drivers/rpmsg/rpmsg_syslog.c
+Hi!
 
-diff --git a/drivers/rpmsg/Kconfig b/drivers/rpmsg/Kconfig
-index d0322b4..13ead55 100644
---- a/drivers/rpmsg/Kconfig
-+++ b/drivers/rpmsg/Kconfig
-@@ -15,6 +15,18 @@ config RPMSG_CHAR
- 	  in /dev. They make it possible for user-space programs to send and
- 	  receive rpmsg packets.
- 
-+config RPMSG_SYSLOG
-+	tristate "RPMSG syslog redirection"
-+	depends on RPMSG
-+	help
-+	  Say Y here to redirect the syslog/printf from remote processor into
-+	  the kernel log which is very useful to see what happened in the remote
-+	  side.
-+
-+	  If the remote processor hangs during bootup or panics during runtime,
-+	  we can even cat /sys/kernel/debug/remoteproc/remoteprocX/trace0 to
-+	  get the last log which hasn't been output yet.
-+
- config RPMSG_QCOM_GLINK_NATIVE
- 	tristate
- 	select RPMSG
-diff --git a/drivers/rpmsg/Makefile b/drivers/rpmsg/Makefile
-index 9aa8595..bfd22df 100644
---- a/drivers/rpmsg/Makefile
-+++ b/drivers/rpmsg/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_RPMSG)		+= rpmsg_core.o
- obj-$(CONFIG_RPMSG_CHAR)	+= rpmsg_char.o
-+obj-$(CONFIG_RPMSG_SYSLOG)	+= rpmsg_syslog.o
- obj-$(CONFIG_RPMSG_QCOM_GLINK_RPM) += qcom_glink_rpm.o
- obj-$(CONFIG_RPMSG_QCOM_GLINK_NATIVE) += qcom_glink_native.o
- obj-$(CONFIG_RPMSG_QCOM_GLINK_SMEM) += qcom_glink_smem.o
-diff --git a/drivers/rpmsg/rpmsg_syslog.c b/drivers/rpmsg/rpmsg_syslog.c
-new file mode 100644
-index 0000000..06e3f86
---- /dev/null
-+++ b/drivers/rpmsg/rpmsg_syslog.c
-@@ -0,0 +1,161 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2017 Pinecone Inc.
-+ *
-+ * redirect syslog/printf from remote to the kernel.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/rpmsg.h>
-+#include <linux/slab.h>
-+
-+#define RPMSG_SYSLOG_TRANSFER		0
-+#define RPMSG_SYSLOG_TRANSFER_DONE	1
-+#define RPMSG_SYSLOG_SUSPEND		2
-+#define RPMSG_SYSLOG_RESUME		3
-+
-+struct rpmsg_syslog_header {
-+	u32				command;
-+	s32				result;
-+} __packed;
-+
-+struct rpmsg_syslog_transfer {
-+	struct rpmsg_syslog_header	header;
-+	u32				count;
-+	char				data[0];
-+} __packed;
-+
-+#define rpmsg_syslog_suspend		rpmsg_syslog_header
-+#define rpmsg_syslog_resume		rpmsg_syslog_header
-+#define rpmsg_syslog_transfer_done	rpmsg_syslog_header
-+
-+struct rpmsg_syslog {
-+	char				*buf;
-+	unsigned int			next;
-+	unsigned int			size;
-+};
-+
-+static int rpmsg_syslog_callback(struct rpmsg_device *rpdev,
-+				 void *data, int len, void *priv_, u32 src)
-+{
-+	struct rpmsg_syslog *priv = dev_get_drvdata(&rpdev->dev);
-+	struct rpmsg_syslog_transfer *msg = data;
-+	struct rpmsg_syslog_transfer_done done;
-+	char *s, *e, *nl;
-+
-+	if (msg->header.command != RPMSG_SYSLOG_TRANSFER)
-+		return -EINVAL;
-+
-+	s = msg->data;
-+	e = s + msg->count;
-+
-+	/* redirect the message to kernel log line by line */
-+	while ((nl = strnchr(s, e - s, '\n')) != NULL) {
-+		*nl = '\0';
-+		if (priv->next) {
-+			pr_info("%.*s%s\n", priv->next, priv->buf, s);
-+			priv->next = 0;
-+		} else {
-+			pr_info("%s\n", s);
-+		}
-+		s = nl + 1;
-+	}
-+
-+	/* append the remain to the buffer */
-+	if (s != e) {
-+		unsigned int size = e - s;
-+		unsigned int newsize = priv->next + size;
-+
-+		if (newsize > priv->size) {
-+			char *newbuf;
-+
-+			newbuf = krealloc(priv->buf, newsize, GFP_KERNEL);
-+			if (newbuf) {
-+				priv->buf  = newbuf;
-+				priv->size = newsize;
-+			} else {
-+				size = priv->size - priv->next;
-+			}
-+		}
-+
-+		strncpy(priv->buf + priv->next, s, size);
-+		priv->next += size;
-+		s += size;
-+	}
-+
-+	done.command = RPMSG_SYSLOG_TRANSFER_DONE;
-+	done.result  = s - msg->data;
-+	return rpmsg_send(rpdev->ept, &done, sizeof(done));
-+}
-+
-+static int rpmsg_syslog_probe(struct rpmsg_device *rpdev)
-+{
-+	struct rpmsg_syslog *priv;
-+
-+	priv = devm_kzalloc(&rpdev->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	dev_set_drvdata(&rpdev->dev, priv);
-+	return 0;
-+}
-+
-+static void rpmsg_syslog_remove(struct rpmsg_device *rpdev)
-+{
-+	struct rpmsg_syslog *priv = dev_get_drvdata(&rpdev->dev);
-+
-+	/* flush the buffered log if need */
-+	if (priv->next)
-+		pr_info("%.*s\n", priv->next, priv->buf);
-+	kfree(priv->buf);
-+}
-+
-+static int __maybe_unused rpmsg_syslog_dev_suspend(struct device *dev)
-+{
-+	struct rpmsg_device *rpdev = dev_get_drvdata(dev);
-+	struct rpmsg_syslog_suspend msg = {
-+		.command = RPMSG_SYSLOG_SUSPEND,
-+	};
-+
-+	return rpmsg_send(rpdev->ept, &msg, sizeof(msg));
-+}
-+
-+static int __maybe_unused rpmsg_syslog_dev_resume(struct device *dev)
-+{
-+	struct rpmsg_device *rpdev = dev_get_drvdata(dev);
-+	struct rpmsg_syslog_resume msg = {
-+		.command = RPMSG_SYSLOG_RESUME,
-+	};
-+
-+	return rpmsg_send(rpdev->ept, &msg, sizeof(msg));
-+}
-+
-+static SIMPLE_DEV_PM_OPS(rpmsg_syslog_pm,
-+			rpmsg_syslog_dev_suspend,
-+			rpmsg_syslog_dev_resume);
-+
-+static const struct rpmsg_device_id rpmsg_syslog_id_table[] = {
-+	{ .name = "rpmsg-syslog" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(rpmsg, rpmsg_syslog_id_table);
-+
-+static struct rpmsg_driver rpmsg_syslog_driver = {
-+	.drv = {
-+		.name  = "rpmsg_syslog",
-+		.owner = THIS_MODULE,
-+		.pm    = &rpmsg_syslog_pm,
-+	},
-+
-+	.id_table = rpmsg_syslog_id_table,
-+	.probe    = rpmsg_syslog_probe,
-+	.callback = rpmsg_syslog_callback,
-+	.remove   = rpmsg_syslog_remove,
-+};
-+
-+module_rpmsg_driver(rpmsg_syslog_driver);
-+
-+MODULE_ALIAS("rpmsg:rpmsg_syslog");
-+MODULE_AUTHOR("Guiding Li <liguiding@pinecone.net>");
-+MODULE_DESCRIPTION("rpmsg syslog redirection driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.7.4
+> >>>>I think that should work fine, which means that we can use the timer =
+and
+> >>>>pattern trigger support for the blinking and breathing modes.
+> >>>>
+> >>>>That still leaves the switching between user and hw-control modes,
+> >>>>as discussed the hw-controlled mode could be modelled as a new "hardw=
+are"
+> >>>>trigger, but then we cannot choose between on/blink/breathing when
+> >>>>in hw-controlled mode. As Pavel mentioned, that would require some
+> >>>>sort of composed trigger, where we have both the hardware and
+> >>>>timer triggers active for example.
+> >>>>
+> >>>>I think it might be easier to just allow turning on/off the hardware
+> >>>>control mode through a special "hardware_control" sysfs attribute and
+> >>>>then use the existing timer and pattern triggers for blinking / breat=
+hing.
+> >>>
+> >>>Pattern trigger exposes pattern file by default and hw_pattern if
+> >>>pattern_set/get ops are provided. Writing them enables software and
+> >>>hardware pattern respectively.
+> >>
+> >>This is not about software vs hardware pattern.
+> >>
+> >>There are 2 *orthogonal*, separate problems/challenges with this LED co=
+ntroller:
+> >>
+> >>1) It has hardware blinking and breathing, as discussed this can be
+> >>controlled through the timer and pattern triggers, so this problem
+> >>is solved.
+> >>
+> >>2) It has 2 operating modes:
+> >>
+> >>a) Automatic/hardware controlled, in this mode the LED is turned
+> >>off or on (where on can be continues on, blinking or breathing)
+> >>by the hardware itself, when in this mode we / userspace is not
+> >>in control of the LED
+> >>
+> >>b) Manual/user controlled mode, in this mode we / userspace can
+> >>control of the LED.
+> >>
+> >>Currently there is no API in the ledclass to switch a LED from
+> >>automatic controlled to user controlled and back, This is what
+> >>the proposed hardware trigger was for, to switch to automatic
+> >>mode. A problem with this is that we still want to be able
+> >>to chose between continues on, blinking or breathing (when on),
+> >>configure the max brightness, etc.
+> >
+> >Yes, we do have the API to switch a LED from automatic (hardware
+> >accelerated) control to software control and back. This is pattern
+> >trigger, which exposes two files for setting pattern: pattern
+> >and hw_pattern. Writing pattern file switches the device to software
+> >control mode and writing hw_pattern switches it to the hardware control,
+> >with the possibility of defining device specific ABI syntax to enable
+> >particular pattern (blinking, breathing or event permanently on
+> >in case of this device).
+>=20
+> OK, I see. So we would use the hw_pattern for this and the driver
+> would implement the pattern_set led_classdev callback.
+>=20
+> The pattern_set callback would then expect 6 brightness/time tuples
+> with the following meaning for the time part of each tupple
+>=20
+> tupple0: charging blinking_on_time
+> tupple1: charging blinking_off_time
+> tupple2: charging breathing_time
+> tupple3: manual blinking_on_time
+> tupple4: manual blinking_off_time
+> tupple5: manual breathing_time
+>=20
+> Where only the times in tupple 0-2; or the times in 3-5 can be
+> non-zero. Having non zero times for both some charging and some
+> manual values is not allowed.
+>=20
+> If a breathing time is set, none of the other times may be non
+> 0. If blinkig_on and blinking_off are used then breathing_time
+> must be 0.
+>=20
+> When configured to blink then blinking_off must be either 0
+> (continuously on); or it must be the same as blinking_on.
+>=20
+>=20
+> I believe this will work, does this sound ok to you ?
 
+I don't pretend to fully understand it, _but_ hw_pattern should really
+describe the pattern LED should do, not whether it reacts to charging
+or not.
+
+Best regards,
+								Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--RnlQjJ0d97Da+TV1
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlxoZncACgkQMOfwapXb+vLrpQCgt8lkPVSljfLh6fSB7u7kUA0C
+JrYAoILDy70WvEqn5t4gqczB1uydVL4d
+=k38V
+-----END PGP SIGNATURE-----
+
+--RnlQjJ0d97Da+TV1--
