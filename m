@@ -2,108 +2,91 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7BA6C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 15:15:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48336C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 15:18:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FB2F222A3
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 15:15:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D18E222A3
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 15:18:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fTsB3uV3"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d6OzwRQW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729273AbfBPPPo (ORCPT
+        id S1729338AbfBPPSf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 10:15:44 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:42846 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727151AbfBPPPn (ORCPT
+        Sat, 16 Feb 2019 10:18:35 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44575 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727151AbfBPPSf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 10:15:43 -0500
-Received: by mail-lj1-f196.google.com with SMTP id l7-v6so10799724ljg.9;
-        Sat, 16 Feb 2019 07:15:42 -0800 (PST)
+        Sat, 16 Feb 2019 10:18:35 -0500
+Received: by mail-pl1-f195.google.com with SMTP id c4so1404819pls.11;
+        Sat, 16 Feb 2019 07:18:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wdTsZwTAaPhrPSYQ7SDKMQoj7M1FkPvkbIiKXhOxM1o=;
-        b=fTsB3uV3xHqZz9A3cBt/r5vwxdxs4oXujXCiC23mQ4ZTp9ZkQOEHUN7rO0o6ancVh9
-         dBeq279h+6PLlQ3/TBnSvhdh84GNxMsZUSDQYsfAJ6PpA6WSbhNbQpRg9v2OLssyaZFV
-         FAPykvIJwxRyqb6TuMk0XLnZoAFpVccdmQF3ITvdR8ju+dWk1FBLly2vgeFxk/Rh0zQ5
-         ZZtWhKfMgowQpmsmByI6Wsgy0Ji2MqkJzoK2+mIxxDeSXAaMAAcHYJG+Lk5EaYX9o8iU
-         VGbe6mF3IXi9bwzxEZXE06N03BdJKzGZc8iIYAHswC8mCrdoe9TJiTCOFXmtvF7z3Bgp
-         EhWA==
+        h=from:to:cc:subject:date:message-id;
+        bh=RMBQjKzVGTp8CXBL5fsjpgOAbLUavTMlh8VMnWlbNfw=;
+        b=d6OzwRQWwWMxhmz14k4jlvOFORFp26jsurSzUH0BRhnlHUuh6DWrkRhTocsuQEA78O
+         gGYuLCM90Gp3O9yedAfOO5aoEPP2cZ/aPhhtQ7bAMtk8rD4Gsp9IAkdrBknx5Qm+Vqtx
+         JA0aP7w7kwfecwBZ8T21SyGfPvI511u0VOjaWm2gfWf6r6gflSYaIQ+5GiRL5QUCnNMz
+         p8oG/MN9ORROx2E15Q65l++iJ8RJkC/Iva8sytTDuqFSNry7atvIPJOjojFio2oyNRMB
+         OVlnb78rzE6tTidSslQUCCYh6UHNGLyPjUAzJHD7ukFuJjxdgl05NO/a6SVK4Xvf7ki8
+         0MHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wdTsZwTAaPhrPSYQ7SDKMQoj7M1FkPvkbIiKXhOxM1o=;
-        b=Sp5WLqriRd7Y9Fm0ZARYKSRfY7qZe3B3VvRQiK9oepY4xHpktAWDsaAeQavmWCXVFN
-         J8ZBB76Z9HbnQ8XLzR/uY1X1V/WEOcjQ2sB0ntt83y84ZY/JWQ3AyCl3++QkDoxbxaYo
-         BTBoS6ZBGDGilS4ED9bX7jCognq4JOy3rVu8hIUkeFVHF5b6Bi5fPmxH/+Epsdqz3g5Q
-         eYZStUdL3xL3/Ci9WosTn7jsUc9q8MlI0KfmJPEaCkU/fN2oAg9kG5GS2kHptaaORjkD
-         J6wKkaSTkSwBmeGpV6izyYmNXcg4U7YlJjjD4+3xMiWdgKAeNtOBFwBsJ+37K03llGjz
-         dAFg==
-X-Gm-Message-State: AHQUAuYXIzX5mEj7mlL9looD/h3PLN0i9494mZOMe5WxtsqZOHNm8N4K
-        VArsaMAbvKAfVcFzkHbFUBdn73uzDFA=
-X-Google-Smtp-Source: AHgI3IY7YpKG/T9n2PPQdafMl8YMC1f7twBEfDyXT15eGXEM7uukiZTWpEIvigeNDNaYa54ZwZC8UA==
-X-Received: by 2002:a2e:4942:: with SMTP id b2-v6mr8241086ljd.168.1550330140849;
-        Sat, 16 Feb 2019 07:15:40 -0800 (PST)
-Received: from [192.168.10.160] (91-159-62-191.elisa-laajakaista.fi. [91.159.62.191])
-        by smtp.gmail.com with ESMTPSA id p14sm2306998lfk.16.2019.02.16.07.15.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 16 Feb 2019 07:15:39 -0800 (PST)
-Subject: Re: [RFC PATCH v5 03/12] __wr_after_init: Core and default arch
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Igor Stoppa <igor.stoppa@huawei.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Thiago Jung Bauermann <bauerman@linux.ibm.com>,
-        Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
-        linux-integrity@vger.kernel.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1550097697.git.igor.stoppa@huawei.com>
- <b99f0de701e299b9d25ce8cfffa3387b9687f5fc.1550097697.git.igor.stoppa@huawei.com>
- <20190214112849.GM32494@hirez.programming.kicks-ass.net>
- <6e9ec71c-ee75-9b1e-9ff8-a3210030e85d@gmail.com>
- <20190215085736.GO32494@hirez.programming.kicks-ass.net>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <7cfb5d06-96a6-41a0-9f57-d9df1204f45e@gmail.com>
-Date:   Sat, 16 Feb 2019 17:15:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190215085736.GO32494@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=RMBQjKzVGTp8CXBL5fsjpgOAbLUavTMlh8VMnWlbNfw=;
+        b=fVPBB4lPxx0kkVDLot8eTOBMb2ulIPZFSSOifDqp2meJBZV7ERiHN1EaoXy52YQcUr
+         Yk7CvCTDd6NKluQHINRzWwT2YBsPqIDjsI9ezNq/a3UG7Ele8Jl5bCHC+b1qvOvGLjR8
+         ZJPrkP6FrcMpNH8U66L3I5+lJ+6Nle4XILSo4OIbU5GVxWDhkxORqCEyaY/ZFawDcVY/
+         /QEsMGZxN9AF0SNuOrXqc6GtKwhIoL1KEljzHprq8RLqGYv+RZybeb8K/j9tmT5YyehY
+         l/qAI+7tLr6MZhJGh8n/ZZ1yYrVfKzd638pXbAsyeqh3bmUfhFtOBpM6HFXIPNFk4Wt6
+         0fvg==
+X-Gm-Message-State: AHQUAuasUTg2SUmmqc27Loc0Odv9Jqa/tKAdWwOe624Jg5YIsuriZpjp
+        UtTIsx55nQV31vuvQHdJKos=
+X-Google-Smtp-Source: AHgI3IZpCeyCq33+o5pN0TDUaWGOm9bD/ImSus+fIHXdPDVztz2MxYMVgWfM3C1jeVyKoP8Ec90B1w==
+X-Received: by 2002:a17:902:1a2:: with SMTP id b31mr16093636plb.87.1550330314215;
+        Sat, 16 Feb 2019 07:18:34 -0800 (PST)
+Received: from localhost (68.168.130.77.16clouds.com. [68.168.130.77])
+        by smtp.gmail.com with ESMTPSA id d13sm13861474pfd.58.2019.02.16.07.18.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 16 Feb 2019 07:18:33 -0800 (PST)
+From:   Yangtao Li <tiny.windzz@gmail.com>
+To:     cw00.choi@samsung.com, myungjoo.ham@samsung.com,
+        kyungmin.park@samsung.com, heiko@sntech.de,
+        thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc:     linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-tegra@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>
+Subject: [PATCH 0/3] PM / devfreq: do some cleanup
+Date:   Sat, 16 Feb 2019 10:18:23 -0500
+Message-Id: <20190216151826.11584-1-tiny.windzz@gmail.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The informations come from the coccinelle tool.
 
+drivers/devfreq/tegra-devfreq.c:577:5-8: Unneeded variable: "ret".
+Return "0" on line 603
+drivers/devfreq/rk3399_dmc.c:325:2-3: Unneeded semicolon
+drivers/devfreq/event/rockchip-dfi.c:214:2-3: Unneeded semicolon
 
-On 15/02/2019 10:57, Peter Zijlstra wrote:
+Yangtao Li (3):
+  PM / devfreq: rk3399_dmc: remove unneeded semicolon
+  PM / devfreq: rockchip-dfi: remove unneeded semicolon
+  PM / devfreq: tegra: remove unneeded variable
 
-> Where are the comments and Changelog notes ? How is an arch maintainer
-> to be aware of this requirement when adding support for his/her arch?
+ drivers/devfreq/event/rockchip-dfi.c | 2 +-
+ drivers/devfreq/rk3399_dmc.c         | 2 +-
+ drivers/devfreq/tegra-devfreq.c      | 7 ++-----
+ 3 files changed, 4 insertions(+), 7 deletions(-)
 
-Yes, it will be fixed in the next revision. I've added comment to the 
-core wr_assign function and also to the changelogs for the patches 
-enabling it on x86_64 and arm64, respectively.
-
-Should I add mention of it also in the documentation?
-
---
-igor
+-- 
+2.17.0
 
