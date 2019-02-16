@@ -2,127 +2,107 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B27C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 01:44:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D73EAC10F02
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 02:08:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7971B214DA
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 01:44:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XuLxCXe3"
+	by mail.kernel.org (Postfix) with ESMTP id AF0C5222DD
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 02:08:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732658AbfBPBm1 (ORCPT
+        id S1732995AbfBPCIE convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 20:42:27 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:45121 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727144AbfBPBm1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 20:42:27 -0500
-Received: by mail-qk1-f194.google.com with SMTP id y195so6881751qka.12
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 17:42:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=/TYbp6WTFquopYV48HIsUS8kivveVqNwysscHdcJ7ow=;
-        b=XuLxCXe3PP7ofUqlKs7c4KiG4GTLtai2zMf/TipAAflWEkZT+VHfqaoEsGdSEkyr3d
-         60f3RO4MO69b9CNzN7Z+T0wCpRrvMxeAG8f7/SSd2rGLGq3flVdMFmMAtxnkP+2ToxaX
-         FMi0Osshhen71jUimqeuNtVHBo1qFXnGNmqzem5Q/PPOg/8JKRh4ipENoTw9z7mfoAIN
-         17bs5IcZo2p7yggaHH/syR3ruv8iDqek26XUE5Uu2hMc1dPmS7zCTNtDJjc4rzFmDqv1
-         2p0+DzPIFh8mRkTlYutOcrYSVIJM7ecVi7ZjeUtYL69Ns+/szQdorXt36RUrd4Q5SVyF
-         +Q4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=/TYbp6WTFquopYV48HIsUS8kivveVqNwysscHdcJ7ow=;
-        b=KzzLZhSxS1N6qOsNABKJ4H9L15lz3XZnY/uxHLoXRk8E+6QavnFqo6RxQr90pUdjn0
-         iR2dwDTDxm07jgLEJX6I7puYhAE1O3j+jfMcQFq9131i3NRZ5pQRp652qLX0roVSW/Yr
-         protnyZCPnZju54XVKv0cmSZXTLpCkhFD7T9K+MXo5NhOlokLTWmWoqQgN1+su0jJ/U6
-         xehJd6GXhC27AIP4B9UJLl5esGtBg5hKwUj1Y9+PyX/p7zMiy2Hzn97mC97MEns7X8cj
-         oueQgxhtkx+cja4VkwQbF/b8m9IJgFXakRfo+hwy2Ckym+kDTsrWomL8eV6pXzz78Otl
-         o+sA==
-X-Gm-Message-State: AHQUAuYOx+/PLU0wzsLw/q0WvYY6bpUfMZQEJxPWASpIov0X7mb+So90
-        UDIitYnl5D2gA17kQl/zrCzkxoRB3waDkS+hOZI=
-X-Google-Smtp-Source: AHgI3Iab/WywGxgzzG7AJ23eNIqIYHODlXNUcDzuFDY/euLrs4UgNwNG1zhA3ZY9IsulcEGva9LTqWD0Tq3mtqRwHDI=
-X-Received: by 2002:a37:4751:: with SMTP id u78mr9000418qka.280.1550281346032;
- Fri, 15 Feb 2019 17:42:26 -0800 (PST)
+        Fri, 15 Feb 2019 21:08:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40750 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726473AbfBPCIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 21:08:04 -0500
+Received: from gandalf.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACA19222A1;
+        Sat, 16 Feb 2019 02:08:02 +0000 (UTC)
+Date:   Fri, 15 Feb 2019 21:08:01 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        stable <stable@vger.kernel.org>,
+        Changbin Du <changbin.du@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH 1/2 v2] kprobe: Do not use uaccess functions to access
+ kernel memory that can fault
+Message-ID: <20190215210801.7f8c94cf@gandalf.local.home>
+In-Reply-To: <D1A39BE5-CAB2-42D1-B87B-2E21906FE5B1@amacapital.net>
+References: <20190215174712.372898450@goodmis.org>
+        <20190215174945.557218316@goodmis.org>
+        <CAHk-=wjP4bEYCFaKZVG4kLWmYBctyfsW9jjhC91tiTk9WwB8Rg@mail.gmail.com>
+        <20190215171539.4682f0b4@gandalf.local.home>
+        <300C4516-A093-43AE-8707-1C42486807A4@amacapital.net>
+        <20190215191949.04604191@gandalf.local.home>
+        <D1A39BE5-CAB2-42D1-B87B-2E21906FE5B1@amacapital.net>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20190211070040.4569-1-jbroadus@gmail.com> <nycvar.YFH.7.76.1902140036400.11598@cbobk.fhfr.pm>
- <CAKgEEwteam5TCWAUtgQKxQpTzTk3+_DktmqwxZTLa=w3xt5i8Q@mail.gmail.com>
- <nycvar.YFH.7.76.1902150834180.11598@cbobk.fhfr.pm> <6280CE2E-0820-48DA-ABA1-621D107511CF@canonical.com>
-In-Reply-To: <6280CE2E-0820-48DA-ABA1-621D107511CF@canonical.com>
-From:   Jim Broadus <jbroadus@gmail.com>
-Date:   Fri, 15 Feb 2019 17:42:14 -0800
-Message-ID: <CAKgEEwsO025b1LqQNWqMa7fxEXQWv-4ZjxzCJB2qmBKS8yJG8g@mail.gmail.com>
-Subject: Re: [PATCH] Fix resume for ELAN2097 touchscreen.
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@gmail.com>,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Happy new year.
+On Fri, 15 Feb 2019 17:32:55 -0800
+Andy Lutomirski <luto@amacapital.net> wrote:
 
-I think you might be right. I found some discussions about Dell
-disabling S3 support in a recent bios due to a C-state bug.
-I'll try to investigate a bit more this weekend.
+> > I added you just because I wanted help getting the change log correct,
+> > as that's what Linus was complaining about. I kept using "kernel
+> > address" when the sample bug used for the patch was really a
+> > non-canonical address (as Linus said, it's just garbage. Neither kernel
+> > or user space). But I pointed out that this can also bug if the
+> > address is canonical and in the kernel address space. The old code
+> > didn't complain about non-canonical or kernel address faulting before
+> > commit 9da3f2b7405, which only talks about kernel address space
+> > faulting (which is why I only mentioned that in my messages).
+> > 
+> > Would changing all the mention of "kernel address" to "non user space"
+> > be accurate?
+> >   
+> 
+> I think “kernel address” is right. It’s illegal to access anything that isn’t known to be a valid kernel address while in KERNEL_DS.
 
-Jim
+But an non-canonical address is not a "kernel address", and that will
+cause a bug too. This patch came about because it was changed that if
+we do a uaccess on something other than a user space address and take a
+fault (either because it was a non-canonical address, or a kernel
+address), we BUG! Where before that one patch, it would just return a
+fault.
 
-On Fri, Feb 15, 2019 at 1:25 AM Kai-Heng Feng
-<kai.heng.feng@canonical.com> wrote:
->
-> Hi Jiri and James,
->
-> > On Feb 15, 2019, at 15:35, Jiri Kosina <jikos@kernel.org> wrote:
-> >
-> > On Thu, 14 Feb 2019, james broadus wrote:
-> >
-> >>> This should be fixed in hid.git#for-5.1/i2c-hid already by commit
-> >>> 1475af255e18f. Could you please confirm that?
-> >>>
-> >>
-> >> Hi Jiri. That change mutes the log messages, but I'm still counting
-> >> around 35000 interrupts per second after resume and touch does not wor=
-k.
-> >> With the reset, the device works properly.
-> >
-> > Ah, I see. Should your patch then actually replace 1475af255e18f?
->
-> Sorry for the late reply, was off because of Lunar new year.
->
-> Commit 1475af255e18f is to silence the message when using the touchpad, s=
-o it=E2=80=99s different to this patch.
->
-> I=E2=80=99ve seen similar bugs happens on new platforms that defaults S2I=
-dle (Modern Standby), but user uses S3 instead.
-> On those systems, S3 was never tested, so the BIOS doesn=E2=80=99t cut th=
-e touchpad=E2=80=99s power off during S3, and the IRQ line wasn=E2=80=99t g=
-etting properly reset.
->
-> So if the platform defaults to S2Idle but user wants to use S3, this issu=
-e happens.
-> If that=E2=80=99s the case, maybe it=E2=80=99s better to report to the pl=
-atform vendor.
->
-> Kai-Heng
->
-> >
-> > Thanks,
-> >
-> > --
-> > Jiri Kosina
-> > SUSE Labs
-> >
->
+> 
+> The old __copy seems likely to have always been a bit bogus.
+> 
+> BTW, what is this probe_mem_read() thing?  Some minimal inspection suggests it’s a buggy reimplementation of probe_kernel_read().  Can you delete it and just use probe_kernel_read() directly?
+
+Well, the issue is that we have trace_probe_tmpl.h in that same
+directory, which does the work for kprobes and uprobes. The
+trace_kprobes.c defines all the functions for handling kprobes, and
+trace_uprobes.c does all the handling of uprobes, then they include
+trace_probe_tmpl.h which does the bulk of the work.
+
+In the uprobes case, we have:
+
+static nokprobe_inline int
+probe_mem_read(void *dest, void *src, size_t size)
+{
+	void __user *vaddr = (void __force __user *)src;
+
+	return copy_from_user(dest, vaddr, size) ? -EFAULT : 0;
+}
+
+Because that is adding probes on userspace code.
+
+-- Steve
