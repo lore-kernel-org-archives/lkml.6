@@ -2,98 +2,77 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A22BC10F07
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 05:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54391C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 06:01:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66C21222DD
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 05:37:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29601222D9
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 06:01:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726752AbfBPFhR (ORCPT
+        id S1726951AbfBPFz2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 00:37:17 -0500
-Received: from ipmail06.adl2.internode.on.net ([150.101.137.129]:43799 "EHLO
-        ipmail06.adl2.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725794AbfBPFhQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 00:37:16 -0500
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail06.adl2.internode.on.net with ESMTP; 16 Feb 2019 16:07:12 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gusf1-0000Dw-Je; Sat, 16 Feb 2019 16:37:11 +1100
-Date:   Sat, 16 Feb 2019 16:37:11 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-ext4 <linux-ext4@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>
-Subject: Re: [Lsf-pc] [LSF/MM TOPIC] The end of the DAX experiment
-Message-ID: <20190216053711.GA14116@dastard>
-References: <CAPcyv4jyCDJTpGZB6qVX7_FiaxJfDzWA1cw8dfPjHM2j3j3yqQ@mail.gmail.com>
- <20190214134622.GG4525@dhcp22.suse.cz>
- <CAPcyv4gxFKBQ9eVdn+pNEzBXRfw6Qwfmu21H2i5uj-PyFmRAGQ@mail.gmail.com>
- <20190214191013.GA3420@redhat.com>
- <CAPcyv4jLTdJyTOy715qvBL_j_deiLoBmu_thkUnFKZKMvZL6hA@mail.gmail.com>
- <20190214200840.GB12668@bombadil.infradead.org>
- <CAPcyv4hsDqvrV5yiDq8oWPuWb3WpuCEk_HB4qBxfiDpUwo75QQ@mail.gmail.com>
+        Sat, 16 Feb 2019 00:55:28 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:60924 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725783AbfBPFz1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Feb 2019 00:55:27 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 7DF8785BBA264D64A8F2;
+        Sat, 16 Feb 2019 13:55:25 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.408.0; Sat, 16 Feb 2019 13:55:15 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     Benson Leung <bleung@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Duncan Laurie <dlaurie@google.com>,
+        "Nick Crews" <ncrews@chromium.org>
+CC:     Wei Yongjun <weiyongjun1@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] platform/chrome: Make function wilco_ec_transfer() static
+Date:   Sat, 16 Feb 2019 06:09:10 +0000
+Message-ID: <20190216060910.139768-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4hsDqvrV5yiDq8oWPuWb3WpuCEk_HB4qBxfiDpUwo75QQ@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 12:20:11PM -0800, Dan Williams wrote:
-> On Thu, Feb 14, 2019 at 12:09 PM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Thu, Feb 14, 2019 at 11:31:24AM -0800, Dan Williams wrote:
-> > > On Thu, Feb 14, 2019 at 11:10 AM Jerome Glisse <jglisse@redhat.com> wrote:
-> > > > I am just again working on my struct page mapping patchset as well as
-> > > > the generic page write protection that sits on top. I hope to be able
-> > > > to post the v2 in couple weeks. You can always look at my posting last
-> > > > year to see more details.
-> > >
-> > > Yes, I have that in mind as one of the contenders. However, it's not
-> > > clear to me that its a suitable fit for filesystem-reflink. Others
-> > > have floated the 'page proxy' idea, so it would be good to discuss the
-> > > merits of the general approaches.
-> >
-> > ... and my preferred option of putting pfn entries in the page cache.
-> 
-> Another option to include the discussion.
-> 
-> > Or is that what you meant by "page proxy"?
-> 
-> Page proxy would be an object that a filesystem could allocate to
-> point back to a single physical 'struct page *'. The proxy would
-> contain an override for page->index.
+Fixes the following sparse warning:
 
-Needs to override page->mapping, potentially the page flags, what
-happens when someone takes a gup reference to the proxy structure,
-etc?
+drivers/platform/chrome/wilco_ec/mailbox.c:126:5: warning:
+ symbol 'wilco_ec_transfer' was not declared. Should it be static?
 
-Besides, didn't we discuss all this last year? how about we start
-with a summary of all the options considered last year, the pros and
-cons, etc, and then go from there? Regurgitating everything we've
-already talked about last year doesn't seem particularly useful to
-me...
+Fixes: 436dad4fda10 ("platform/chrome: Add new driver for Wilco EC")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ drivers/platform/chrome/wilco_ec/mailbox.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Cheers,
+diff --git a/drivers/platform/chrome/wilco_ec/mailbox.c b/drivers/platform/chrome/wilco_ec/mailbox.c
+index c7028488e575..f6ff29a11f1a 100644
+--- a/drivers/platform/chrome/wilco_ec/mailbox.c
++++ b/drivers/platform/chrome/wilco_ec/mailbox.c
+@@ -123,8 +123,9 @@ static void wilco_ec_prepare(struct wilco_ec_message *msg,
+  * Context: ec->mailbox_lock should be held while using this function.
+  * Return: number of bytes received or negative error code on failure.
+  */
+-int wilco_ec_transfer(struct wilco_ec_device *ec, struct wilco_ec_message *msg,
+-		      struct wilco_ec_request *rq)
++static int wilco_ec_transfer(struct wilco_ec_device *ec,
++			     struct wilco_ec_message *msg,
++			     struct wilco_ec_request *rq)
+ {
+ 	struct wilco_ec_response *rs;
+ 	u8 checksum;
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+
+
