@@ -2,53 +2,92 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 977D9C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 08:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFB73C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 08:44:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61107222D0
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 08:41:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF50C214DA
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 08:44:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731053AbfBPIls (ORCPT
+        id S1731240AbfBPIoA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 03:41:48 -0500
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:42500
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726139AbfBPIls (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 03:41:48 -0500
-X-IronPort-AV: E=Sophos;i="5.58,376,1544482800"; 
-   d="scan'208";a="296376647"
-Received: from abo-58-107-68.mrs.modulonet.fr (HELO hadrien) ([85.68.107.58])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Feb 2019 09:41:46 +0100
-Date:   Sat, 16 Feb 2019 09:41:45 +0100 (CET)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     wen.yang99@zte.com.cn
-cc:     Markus.Elfring@web.de, Gilles Muller <Gilles.Muller@lip6.fr>,
-        nicolas.palix@imag.fr, michal.lkml@markovi.net,
-        wang.yi59@zte.com.cn, yamada.masahiro@socionext.com,
-        yellowriver2010@hotmail.com, cheng.shengyu@zte.com.cn,
-        cocci@systeme.lip6.fr, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [v5] coccinelle: semantic code search for missingput_device()
-In-Reply-To: <alpine.DEB.2.21.1902160934400.3212@hadrien>
-Message-ID: <alpine.DEB.2.21.1902160939540.3212@hadrien>
-References: 201902161504357846572@zte.com.cn,10281c5d-8b32-0a02-17ae-20bf86f8dc65@web.de <201902161633004137519@zte.com.cn> <alpine.DEB.2.21.1902160934400.3212@hadrien>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sat, 16 Feb 2019 03:44:00 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3220 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726308AbfBPIoA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Feb 2019 03:44:00 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D380E8BFB94C3C197C46;
+        Sat, 16 Feb 2019 16:43:52 +0800 (CST)
+Received: from [127.0.0.1] (10.177.96.203) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.408.0; Sat, 16 Feb 2019
+ 16:43:50 +0800
+Subject: Re: [PATCH] ata: fix a race condition when internal cmd time out
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        <linux-ide@vger.kernel.org>, <tj@kernel.org>, <axboe@kernel.dk>,
+        <linux-kernel@vger.kernel.org>
+References: <20190216034257.30226-1-yanaijie@huawei.com>
+ <63bc665b-4f5f-0845-9767-825925ead80a@cogentembedded.com>
+From:   Jason Yan <yanaijie@huawei.com>
+Message-ID: <98d269d2-da80-fdd4-13c3-84e2868c05d3@huawei.com>
+Date:   Sat, 16 Feb 2019 16:43:49 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <63bc665b-4f5f-0845-9767-825925ead80a@cogentembedded.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.177.96.203]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Actually, upon reflection, I don't like the if (...) solution.  if (id !=
-NULL) would be better.  This will also check for if (id).  If having such
-an explicit test results in false positives, the semantic patch can be
-revised.  But it is better than if (...), which allow anything at all, and
-could miss cases where the free should happen, but does not.
+Hi, Sergei
 
-julia
+Thanks for the review.
+
+On 2019/2/16 15:45, Sergei Shtylyov wrote:
+> Hello!
+> 
+> On 16.02.2019 6:42, Jason Yan wrote:
+> 
+>> For internal cmds, we will unmap DMA memory associated with the cmd
+>> before we abort the cmd. If DMA transfering data before the aborting,
+> 
+>     Transferring.
+> 
+>> bus error will occured.
+> 
+>     Occur.
+> 
+>> ata_exec_internal_sg
+>>    ->ata_port_freeze if timeout
+>>      ->ata_qc_complete
+>>        ->ata_sg_clean
+>>                                        dma transfering data = bus error
+>>    ->ap->ops->post_internal_cmd
+>>      ->sas_ata_post_internal
+>>        ->sas_ata_internal_abort
+>>          ->abort the cmd
+>>
+>> Fix this by move post_internal_cmd() before unmapping the DMA memory
+> 
+>     Moving.
+> 
+>> when time out. Notice that we have to set ATA_QCFLAG_FAILED flag before
+>> calling post_internal_cmd() so that the aborting will work.
+>>
+>> Reported-by: luojian <luojian5@huawei.com>
+>> Signed-off-by: Jason Yan <yanaijie@huawei.com>
+> [...]
+> 
+> MBR, Sergei
+> 
+> 
+
