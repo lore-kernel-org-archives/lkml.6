@@ -2,168 +2,284 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6673C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 10:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F5BC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 10:20:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84457222D0
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 10:09:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="BcKINYA2"
+	by mail.kernel.org (Postfix) with ESMTP id E4144222D7
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 10:20:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730762AbfBPKJs (ORCPT
+        id S1731096AbfBPKUF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 05:09:48 -0500
-Received: from mail-eopbgr10067.outbound.protection.outlook.com ([40.107.1.67]:44352
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726145AbfBPKJr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 05:09:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pzHdtGzR8bmCiGRzaBAmuro2QCHJnbfUXaoHVscWLKw=;
- b=BcKINYA2h7LmL3Z6Cp48sp8o8f5XKg1c+NiUZtt0nzUNWWyvF71x1fh8JXA8rQ6z+Z1qJPzmnQac5L0C8tjV281b0iYz6XR5Oyh+HZ3gT5V6i8nL05pz5hE6dYLats0nsONMwQsX53zgaxcF60RYX/y3m9krbs4a+CAJ5qeMLHk=
-Received: from VI1PR0402MB3357.eurprd04.prod.outlook.com (52.134.1.18) by
- VI1PR0402MB3536.eurprd04.prod.outlook.com (52.134.4.29) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.16; Sat, 16 Feb 2019 10:09:42 +0000
-Received: from VI1PR0402MB3357.eurprd04.prod.outlook.com
- ([fe80::2d83:eb90:f977:f649]) by VI1PR0402MB3357.eurprd04.prod.outlook.com
- ([fe80::2d83:eb90:f977:f649%3]) with mapi id 15.20.1622.018; Sat, 16 Feb 2019
- 10:09:42 +0000
-From:   Daniel Baluta <daniel.baluta@nxp.com>
-To:     "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "vicencb@gmail.com" <vicencb@gmail.com>
-CC:     "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>
-Subject: [PATCH] ASoC: simple-card: Fix refcount underflow
-Thread-Topic: [PATCH] ASoC: simple-card: Fix refcount underflow
-Thread-Index: AQHUxd+7Rfekf4ZvxUOM7mRbKeq/IQ==
-Date:   Sat, 16 Feb 2019 10:09:42 +0000
-Message-ID: <20190216100927.10017-1-daniel.baluta@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR0501CA0019.eurprd05.prod.outlook.com
- (2603:10a6:800:92::29) To VI1PR0402MB3357.eurprd04.prod.outlook.com
- (2603:10a6:803:2::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=daniel.baluta@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [95.76.156.53]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ac4479d1-2dfc-48a8-287e-08d693f6ddc2
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR0402MB3536;
-x-ms-traffictypediagnostic: VI1PR0402MB3536:
-x-ms-exchange-purlcount: 1
-x-microsoft-exchange-diagnostics: =?iso-8859-1?Q?1;VI1PR0402MB3536;23:3+xVtMmZ9ZY3rC7Lhf0oEMalhdqizUHQgG3WD?=
- =?iso-8859-1?Q?Et6iK9lMd/Nh84kl+2oNF9K5MuM433I5bIGndudlLUNK6BYj61pn0Gg+8Y?=
- =?iso-8859-1?Q?VfgBOByGjfIFTh9rhPyR5dDeBxSZJZR1RXILrxb8y8FFzYly9uqbMxcf+p?=
- =?iso-8859-1?Q?EhIwRAAL3zkEBQg1MzLvSfJ18iI+CwxpKDTk6ueLZuWXfN35Fj1WLOkaCW?=
- =?iso-8859-1?Q?IFHjUqnZcOO7e3zyP2uTM7BwSpcjkN4gPAhrEVSFBs3RbVWWHblCVHiqJB?=
- =?iso-8859-1?Q?52txrQdc94xSSuiJSwLX2U1WjncPRlwkQ9fEWUHxDTSO/CmGhNgt1WQ8pI?=
- =?iso-8859-1?Q?Qu5IBpUGncaL/JtysGdzYHyhMJclMvl6ixY4wm0QEyXkshm92YeEiotW7J?=
- =?iso-8859-1?Q?NpZD81n16kaTiLl2TrZbj/OpF1czMKgdUAVU33We1+u51kyB1l6RgTnNqR?=
- =?iso-8859-1?Q?E9FdLkqjVC5fjmaf9vq1M2Xgsr9E920mwdwNEWMjlG0sj2lNQRLfjB0rFl?=
- =?iso-8859-1?Q?mhm6DCt5Fxtiup8BLtKnoPM/mxeUgG8ct+TibJAooBMrK+cElBX+cJNBg+?=
- =?iso-8859-1?Q?uXCFEsTsAaIla7phMVlrScKp/Imhh8pULNvAB+hRkVA9k4cSFFE6eb+4X+?=
- =?iso-8859-1?Q?JoCHdhXqlN9D6NsCjBaYrYCx/FPoOBkXQFcqySvLge14xW9n0aFBLgzDuo?=
- =?iso-8859-1?Q?wM5CydhpLsxPkz6eMizsIt/X12u6L+0kaQGNYmkaia7G2narhVnMBs8m2R?=
- =?iso-8859-1?Q?ITCyFapy9KKxzn1/0GBZY9AxeNIAgm+x8ZS7ckdVWk0KpY+9SkDFabIQKO?=
- =?iso-8859-1?Q?r9Tjp82ZxorFuND7WQo9SA1/kvpscy5NChJ9opwoPwViN8GfR+kzXDfvlD?=
- =?iso-8859-1?Q?yXsyK4d2h5Sn8F+kiKRzJMdrY0pwflAgXpqNszieltLwryXV2T30H2OxN1?=
- =?iso-8859-1?Q?Edp4DZtIy83auweN8q3ZjWutgbqWHWD6epynp115C4l1Qkn8GpVS1vUBaM?=
- =?iso-8859-1?Q?gwhlRNjGeEeNzGM2mdfq/BSkl8Fuo5qZPjRFaBaj2P0iKgDdW6YXxNxDJk?=
- =?iso-8859-1?Q?XAFLoTorxASLTMAvHg1iEHWzr/HLSV4LRHSebXgQuV3iBl8daED4osNXWV?=
- =?iso-8859-1?Q?Xl4ro5QzQtFXboPwG2UFiyIHWUCBFA9aYy6tQi3MFodKR/DpxxhL1Zun/F?=
- =?iso-8859-1?Q?ahhlsqvVmDwb63zyE2XySDz3n6XB4Q03H6JMva2GUyHQGPqO5TQKceiFBT?=
- =?iso-8859-1?Q?wakOPXLY7ZkluN+nqZkmaQiSs82hTS5f8pWCPrC0xlOqlFZ7RMtXNdPSTN?=
- =?iso-8859-1?Q?o7s0BDwH323C5Umzwwx7vdb8Lassay8ZZGWGc/l1PYa7k5g=3D=3D?=
-x-microsoft-antispam-prvs: <VI1PR0402MB3536C68100FD38ABA2925F57F9610@VI1PR0402MB3536.eurprd04.prod.outlook.com>
-x-forefront-prvs: 0950706AC1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(346002)(39860400002)(396003)(376002)(51234002)(199004)(189003)(106356001)(110136005)(54906003)(316002)(478600001)(66066001)(6512007)(186003)(6306002)(2501003)(102836004)(5660300002)(68736007)(256004)(36756003)(14444005)(1076003)(386003)(6506007)(486006)(2906002)(53936002)(4326008)(26005)(97736004)(305945005)(86362001)(7736002)(6436002)(2201001)(14454004)(44832011)(52116002)(71190400001)(71200400001)(8676002)(50226002)(6486002)(3846002)(476003)(6116002)(25786009)(99286004)(2616005)(8936002)(105586002)(81156014)(81166006)(966005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3536;H:VI1PR0402MB3357.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: jvd2YHGU+RKFgtGr+4k4PX6872uLwHbfDhGrp3qu769RxHqRwgOG7S9zNiR6wb4mMDiLvOiyD+KQgJXR6eHCDrfokHTkSyFlDe/2BW0lUztN90I2w7WWzruHfqgdcGbMhv+LjkpnAxvaJJJVNikGTPsNlCvZPYOyNumJFru5BtTL3UEeFfsfdr2DM/J8B7XAss4nd6D8y6iTWC9MLfgWrgFoqyXW4xi/LkmcgJyjlz5tjy461qrrX2gSEhnRyu+ZMcgSw1KKlofSfEhzzmLIa49GrHFESLFWCTOYSdLrMVhI+5O550oREt873igNN2+LJhk3ijhCsMeUGOM2LzFtjXRqcEc4dHDeGPpKxjllPFq25VBVu6wwhhiy4V3g9LC+EyFE5Ds2WfmBoAfUF9cpYYORJdsbzbA9tNbrkUiZ+Pg=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Sat, 16 Feb 2019 05:20:05 -0500
+Received: from mail-it1-f200.google.com ([209.85.166.200]:36743 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727615AbfBPKUF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Feb 2019 05:20:05 -0500
+Received: by mail-it1-f200.google.com with SMTP id w15so20743769ita.1
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Feb 2019 02:20:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=TJ2yNpVtaDQvPZYXrKBDQDF1U6bWaEvFGTnzBv1SQcs=;
+        b=PwExmUs3QFhT1AVu1j1id5sYfg/GCapEapfYWNPhpUZ4tau/b8z7E97PYlXhgMzuEc
+         z386a2Nw5NBG3KhB1OcImvd9gzjgYWxH7dJIM/NimoJXr5k7qlCPmpgYOrbNqAlkEA6k
+         nYH3f0xFIqs5w/ksG+a4/fOHn9p98QSUMs95sEDMomuwY+EyGujZDYpQC19e/UyhYV8p
+         HPhoffUutrOrgi2mVx1p84C2+SPN6uzfuebo1TXlxxp2GocypyDhl9xFoXgsH/qN4K8z
+         Kozr3HU1E9OaHElb4kpZj9DpMphlORiUn3K0RMgQN/N44En5ETGDN86Ls9sG10lZcQSQ
+         pQXg==
+X-Gm-Message-State: AHQUAuboRUemNBonphPUjLlFGRLsMxSCFk41U+gWbQm79+8a7Lw9bL/h
+        CiQVnbi9YafAz2GaBeF2MqX9mCUPafSB+4NRBrki2evCHJ5M
+X-Google-Smtp-Source: AHgI3Ibj3ZJDHlEPAUMyfnTo3w+YnLefcdYaTQK1nLzMGNLir4xyRyYUGWeurm+upPWcE9xpd6WE3ETaVFEoRhuwrjELsBgpwW/R
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac4479d1-2dfc-48a8-287e-08d693f6ddc2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Feb 2019 10:09:40.6577
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3536
+X-Received: by 2002:a02:b807:: with SMTP id o7mr8177808jam.23.1550312403708;
+ Sat, 16 Feb 2019 02:20:03 -0800 (PST)
+Date:   Sat, 16 Feb 2019 02:20:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001d37cd0582003c53@google.com>
+Subject: INFO: task hung in addrconf_dad_work
+From:   syzbot <syzbot+f4290c15a8ab6dee87c9@syzkaller.appspotmail.com>
+To:     ast@kernel.org, christian@brauner.io, daniel@iogearbox.net,
+        davem@davemloft.net, dsahern@gmail.com, hawk@kernel.org,
+        idosch@mellanox.com, jakub.kicinski@netronome.com,
+        john.fastabend@gmail.com, kafai@fb.com, ktkhai@virtuozzo.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        petrm@mellanox.com, roopa@cumulusnetworks.com,
+        songliubraving@fb.com, syzkaller-bugs@googlegroups.com,
+        xdp-newbies@vger.kernel.org, yhs@fb.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-of_get_child_by_name() takes a reference we'll need to drop
-later so when we substitute in top we need to take a reference
-as well as just assigning.
+Hello,
 
-Without this patch we hit the following error:
+syzbot found the following crash on:
 
-[    1.246852] OF: ERROR: Bad of_node_put() on /sound-wm8524
-[    1.262261] Hardware name: NXP i.MX8MQ EVK (DT)
-[    1.266807] Workqueue: events deferred_probe_work_func
-[    1.271950] Call trace:
-[    1.274406]  dump_backtrace+0x0/0x158
-[    1.278074]  show_stack+0x14/0x20
-[    1.281396]  dump_stack+0xa8/0xcc
-[    1.284717]  of_node_release+0xb0/0xc8
-[    1.288474]  kobject_put+0x74/0xf0
-[    1.291879]  of_node_put+0x14/0x28
-[    1.295286]  __of_get_next_child+0x44/0x70
-[    1.299387]  of_get_next_child+0x3c/0x60
-[    1.303315]  simple_for_each_link+0x1dc/0x230
-[    1.307676]  simple_probe+0x80/0x540
-[    1.311256]  platform_drv_probe+0x50/0xa0
+HEAD commit:    5ded5871030e Merge tag 'scsi-fixes' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1577228f400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ee434566c893c7b1
+dashboard link: https://syzkaller.appspot.com/bug?extid=f4290c15a8ab6dee87c9
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10ee52d4c00000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1073879cc00000
 
-This patch is based on an earlier version posted by Kuninori Morimoto
-and commit message includes explanations from Mark Brown.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+f4290c15a8ab6dee87c9@syzkaller.appspotmail.com
 
-https://patchwork.kernel.org/patch/10814255/
+INFO: task kworker/0:1:12 blocked for more than 140 seconds.
+       Not tainted 5.0.0-rc6+ #73
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+kworker/0:1     D26560    12      2 0x80000000
+Workqueue: ipv6_addrconf addrconf_dad_work
+Call Trace:
+  context_switch kernel/sched/core.c:2844 [inline]
+  __schedule+0x817/0x1cc0 kernel/sched/core.c:3485
+  schedule+0x92/0x180 kernel/sched/core.c:3529
+  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:3587
+  __mutex_lock_common kernel/locking/mutex.c:1002 [inline]
+  __mutex_lock+0x726/0x1310 kernel/locking/mutex.c:1072
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
+  rtnl_lock+0x17/0x20 net/core/rtnetlink.c:77
+  addrconf_dad_work+0xad/0x1150 net/ipv6/addrconf.c:3995
+  process_one_work+0x98e/0x1790 kernel/workqueue.c:2173
+  worker_thread+0x98/0xe40 kernel/workqueue.c:2319
+  kthread+0x357/0x430 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+INFO: task kworker/1:1:22 blocked for more than 140 seconds.
+       Not tainted 5.0.0-rc6+ #73
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+kworker/1:1     D26848    22      2 0x80000000
+Workqueue: ipv6_addrconf addrconf_dad_work
+Call Trace:
+  context_switch kernel/sched/core.c:2844 [inline]
+  __schedule+0x817/0x1cc0 kernel/sched/core.c:3485
+  schedule+0x92/0x180 kernel/sched/core.c:3529
+  schedule_preempt_disabled+0x13/0x20 kernel/sched/core.c:3587
+  __mutex_lock_common kernel/locking/mutex.c:1002 [inline]
+  __mutex_lock+0x726/0x1310 kernel/locking/mutex.c:1072
+  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
+  rtnl_lock+0x17/0x20 net/core/rtnetlink.c:77
+  addrconf_dad_work+0xad/0x1150 net/ipv6/addrconf.c:3995
+  process_one_work+0x98e/0x1790 kernel/workqueue.c:2173
+  worker_thread+0x98/0xe40 kernel/workqueue.c:2319
+  kthread+0x357/0x430 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
 
-Reported-by: Vicente Bergas <vicencb@gmail.com>
-Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+Showing all locks held in the system:
+3 locks held by kworker/0:1/12:
+  #0: 00000000c092f744 ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
+__write_once_size include/linux/compiler.h:220 [inline]
+  #0: 00000000c092f744 ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
+arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+  #0: 00000000c092f744 ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
+atomic64_set include/asm-generic/atomic-instrumented.h:40 [inline]
+  #0: 00000000c092f744 ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
+atomic_long_set include/asm-generic/atomic-long.h:59 [inline]
+  #0: 00000000c092f744 ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
+set_work_data kernel/workqueue.c:617 [inline]
+  #0: 00000000c092f744 ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
+set_work_pool_and_clear_pending kernel/workqueue.c:644 [inline]
+  #0: 00000000c092f744 ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
+process_one_work+0x87e/0x1790 kernel/workqueue.c:2144
+  #1: 00000000ba501015 ((work_completion)(&(&ifa->dad_work)->work)){+.+.},  
+at: process_one_work+0x8b4/0x1790 kernel/workqueue.c:2148
+  #2: 000000000a023ce4 (rtnl_mutex){+.+.}, at: rtnl_lock+0x17/0x20  
+net/core/rtnetlink.c:77
+3 locks held by kworker/1:1/22:
+  #0: 00000000c092f744 ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
+__write_once_size include/linux/compiler.h:220 [inline]
+  #0: 00000000c092f744 ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
+arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+  #0: 00000000c092f744 ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
+atomic64_set include/asm-generic/atomic-instrumented.h:40 [inline]
+  #0: 00000000c092f744 ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
+atomic_long_set include/asm-generic/atomic-long.h:59 [inline]
+  #0: 00000000c092f744 ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
+set_work_data kernel/workqueue.c:617 [inline]
+  #0: 00000000c092f744 ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
+set_work_pool_and_clear_pending kernel/workqueue.c:644 [inline]
+  #0: 00000000c092f744 ((wq_completion)"%s"("ipv6_addrconf")){+.+.}, at:  
+process_one_work+0x87e/0x1790 kernel/workqueue.c:2144
+  #1: 00000000609e3f2e ((work_completion)(&(&ifa->dad_work)->work)){+.+.},  
+at: process_one_work+0x8b4/0x1790 kernel/workqueue.c:2148
+  #2: 000000000a023ce4 (rtnl_mutex){+.+.}, at: rtnl_lock+0x17/0x20  
+net/core/rtnetlink.c:77
+1 lock held by khungtaskd/1039:
+  #0: 000000009a681c98 (rcu_read_lock){....}, at:  
+debug_show_all_locks+0x5f/0x27e kernel/locking/lockdep.c:4389
+1 lock held by rsyslogd/7932:
+  #0: 000000000ae60368 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0xee/0x110  
+fs/file.c:795
+2 locks held by getty/8054:
+  #0: 00000000330eb6bd (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
+  #1: 00000000115a4ff9 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2154
+2 locks held by getty/8055:
+  #0: 000000001f90753f (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
+  #1: 000000001e27037e (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2154
+2 locks held by getty/8056:
+  #0: 0000000027f8ba41 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
+  #1: 00000000a0356b01 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2154
+2 locks held by getty/8057:
+  #0: 000000009cf2ea94 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
+  #1: 0000000097e38bce (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2154
+2 locks held by getty/8058:
+  #0: 000000006dd48e75 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
+  #1: 00000000a75b841a (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2154
+2 locks held by getty/8059:
+  #0: 0000000020112132 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
+  #1: 00000000c3504044 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2154
+2 locks held by getty/8060:
+  #0: 000000001510234f (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x33/0x40 drivers/tty/tty_ldsem.c:341
+  #1: 00000000e70220db (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x232/0x1b70 drivers/tty/n_tty.c:2154
+1 lock held by syz-executor112/8443:
+
+=============================================
+
+NMI backtrace for cpu 1
+CPU: 1 PID: 1039 Comm: khungtaskd Not tainted 5.0.0-rc6+ #73
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  nmi_cpu_backtrace.cold+0x63/0xa4 lib/nmi_backtrace.c:101
+  nmi_trigger_cpumask_backtrace+0x1be/0x236 lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_all_cpu_backtrace include/linux/nmi.h:146 [inline]
+  check_hung_uninterruptible_tasks kernel/hung_task.c:203 [inline]
+  watchdog+0x9df/0xee0 kernel/hung_task.c:287
+  kthread+0x357/0x430 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+Sending NMI from CPU 1 to CPUs 0:
+INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.262  
+msecs
+NMI backtrace for cpu 0
+CPU: 0 PID: 8443 Comm: syz-executor112 Not tainted 5.0.0-rc6+ #73
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:preempt_count_add+0xf8/0x1b0 kernel/sched/core.c:3210
+Code: 11 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02  
+00 0f 85 ab 00 00 00 49 89 9c 24 b0 11 00 00 5b 41 5c 5d <c3> 48 8b 45 00  
+48 8b 58 08 48 89 df e8 27 e7 09 00 85 c0 74 b3 48
+RSP: 0018:ffff88809e13f190 EFLAGS: 00000046
+RAX: dffffc0000000000 RBX: 0000000000000286 RCX: 0000000000000000
+RDX: 1ffff1100f1efe66 RSI: 0000000000000000 RDI: ffff888078f7f330
+RBP: ffff88809e13f1a8 R08: ffff888078f7e180 R09: ffffed1015d05bd0
+R10: ffffed1015d05bcf R11: ffff8880ae82de7b R12: ffffffff8a648b08
+R13: 0000000000000086 R14: ffffffff8a648b08 R15: 00000000004012c0
+FS:  00000000019f3940(0000) GS:ffff8880ae800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffff600400 CR3: 00000000a1211000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  __debug_check_no_obj_freed lib/debugobjects.c:776 [inline]
+  debug_check_no_obj_freed+0xbe/0x464 lib/debugobjects.c:817
+  kfree+0xbd/0x230 mm/slab.c:3805
+  skb_free_head+0x93/0xb0 net/core/skbuff.c:553
+  pskb_expand_head+0x2ba/0xdd0 net/core/skbuff.c:1498
+  netlink_trim+0x215/0x270 net/netlink/af_netlink.c:1292
+  netlink_unicast+0xbf/0x720 net/netlink/af_netlink.c:1326
+  rtnetlink_send+0xf0/0x110 net/core/rtnetlink.c:721
+  tcf_add_notify net/sched/act_api.c:1325 [inline]
+  tcf_action_add+0x243/0x370 net/sched/act_api.c:1344
+  tc_ctl_action+0x3b6/0x4bd net/sched/act_api.c:1392
+  rtnetlink_rcv_msg+0x465/0xb00 net/core/rtnetlink.c:5130
+  netlink_rcv_skb+0x17a/0x460 net/netlink/af_netlink.c:2477
+  rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5148
+  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+  netlink_unicast+0x536/0x720 net/netlink/af_netlink.c:1336
+  netlink_sendmsg+0x8ae/0xd70 net/netlink/af_netlink.c:1917
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg+0xdd/0x130 net/socket.c:631
+  ___sys_sendmsg+0x806/0x930 net/socket.c:2114
+  __sys_sendmsg+0x105/0x1d0 net/socket.c:2152
+  __do_sys_sendmsg net/socket.c:2161 [inline]
+  __se_sys_sendmsg net/socket.c:2159 [inline]
+  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2159
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x45b129
+Code: e8 3c 0a 03 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 5b 07 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffc05c7adc8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 000000000045b129
+RDX: 00000000000000c4 RSI: 0000000020000300 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 00000000000003e8 R09: 00000000000003e8
+R10: 0000000000000004 R11: 0000000000000246 R12: 0000000000000162
+R13: 000000000041bda0 R14: 0000000000000000 R15: 0000000000000000
+
+
 ---
- sound/soc/generic/simple-card.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-car=
-d.c
-index 08df261024cf..dc18c4492955 100644
---- a/sound/soc/generic/simple-card.c
-+++ b/sound/soc/generic/simple-card.c
-@@ -445,7 +445,7 @@ static int simple_for_each_link(struct simple_priv *pri=
-v,
- 	/* Check if it has dai-link */
- 	node =3D of_get_child_by_name(top, PREFIX "dai-link");
- 	if (!node) {
--		node =3D top;
-+		node =3D of_node_get(top);
- 		is_top =3D 1;
- 	}
-=20
---=20
-2.17.1
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
