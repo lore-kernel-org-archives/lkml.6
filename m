@@ -2,137 +2,104 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A41EC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 08:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DFBAC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 09:07:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52ED7222D9
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 08:58:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="UK58EV7v"
+	by mail.kernel.org (Postfix) with ESMTP id D541B222D9
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 09:07:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731521AbfBPI6U (ORCPT
+        id S1731593AbfBPJHE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 03:58:20 -0500
-Received: from mout.web.de ([212.227.17.11]:54109 "EHLO mout.web.de"
+        Sat, 16 Feb 2019 04:07:04 -0500
+Received: from sauhun.de ([88.99.104.3]:41566 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726647AbfBPI6U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 03:58:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1550307477;
-        bh=fSE9ECCZcqjuQ5RrvTUuM8+BpclFqUQUn84XAuMBe9k=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=UK58EV7vzuFPALuFIouxMAjJkkWJEzeOV0zsz0UKPGXzo2cF+Nz/1Rowc2qkQvKyd
-         TTPzB+hnuJYU5ZjBUvlI/YWILWvX3oBTo6oBmY+sXzFR96Jeu8Txqm07vIGL9HAz6R
-         AbFFfUMIUoWgqS+rFVnjrq26KjtWZ9NB2Kn4omtk=
-X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.3] ([78.48.154.45]) by smtp.web.de (mrweb103
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0M0yeJ-1hCcAc0UDn-00v9FD; Sat, 16
- Feb 2019 09:57:57 +0100
-Subject: Re: [v5] coccinelle: semantic code search for missingput_device()
-To:     Julia Lawall <julia.lawall@lip6.fr>,
-        Wen Yang <wen.yang99@zte.com.cn>
-Cc:     Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
+        id S1728343AbfBPJHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Feb 2019 04:07:04 -0500
+Received: from localhost (unknown [195.52.228.164])
+        by pokefinder.org (Postfix) with ESMTPSA id 01D5C2C0509;
+        Sat, 16 Feb 2019 10:07:01 +0100 (CET)
+Date:   Sat, 16 Feb 2019 10:06:58 +0100
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Markus Elfring <Markus.Elfring@web.de>
+Cc:     Julia Lawall <julia.lawall@lip6.fr>,
+        Wen Yang <wen.yang99@zte.com.cn>,
         Yi Wang <wang.yi59@zte.com.cn>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        kernel-janitors@vger.kernel.org,
+        Michal Marek <michal.lkml@markovi.net>,
         Wen Yang <yellowriver2010@hotmail.com>,
-        Cheng Shengyu <cheng.shengyu@zte.com.cn>,
-        cocci@systeme.lip6.fr, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        linux-kernel@vger.kernel.org,
+        Cheng Shengyu <cheng.shengyu@zte.com.cn>, cocci@systeme.lip6.fr
+Subject: Re: [Cocci] [v5] coccinelle: semantic code search for
+ missingput_device()
+Message-ID: <20190216090658.lsfhvtllwnzj3675@ninjato>
 References: <201902161633004137519@zte.com.cn>
  <alpine.DEB.2.21.1902160934400.3212@hadrien>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
- 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 FEE=
-Message-ID: <992b8c6f-614d-b379-6352-30b36ac9d0d8@web.de>
-Date:   Sat, 16 Feb 2019 09:57:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+ <992b8c6f-614d-b379-6352-30b36ac9d0d8@web.de>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1902160934400.3212@hadrien>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-X-Provags-ID: V03:K1:LtCsApeZ5r4hsbi+xh3wfnjcGGvxe/UgqhtARNQnww2GARLm6/A
- Sf0y129yMwauX3QVcp9T8ul5axnCYnnP++Zi7n9jSsIW1xZpEtPjBViHN5MBAN7aVU7ARr/
- zBzvJFxuYu//HRafpJR4WevUnZLnZ9pPLNeICMcVCLoT7nL8isA9/WFLznmALBhxVvKeJGb
- wdsYAbWEgmQYUCNrKu6gw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:vhwfK1LVLHM=:aj4l+TPOW5T27g5dAX39KJ
- XVBAhLoynAfXsmEDwCwg90Md2NrHAl5Tevd0nmWIQbVHODzC2RqpA0BlHog0UT84VCTBwRcQU
- uL+F7Sb84QJks9IaBGQpvq9M6hli3lsElR7PdrCdCX1rPSY/F0+/knFVD25Dso4BdkS7Gg49r
- 4OlcjUaG20kh0M8HL51BTADMbkehMzSy35BoAg1vNjnua1gXPO5XSofQHbMmYLLSQpxyo8DQ2
- RDCgxbtLEXjTnm1JR/6jaTJ6Iqs/PszuVU+GvkeifWeR8epPCLG4W0eRSBbBaMl4ofhPIz4iR
- +WA8t/k4t6bnLUn1Z2zVS2RM8actDoVzcYSM1U5qrl9NIyW7mCzCI49sjW4CTmuReL7vQpPI6
- 1HawqWAmEFPVSazsiH4ZbsxRivqvUeDqyrmCbCVYb78YcbwDUgU8/k/evE8unJjh5/DkRSBuB
- 1AX8IpiSTVgT8H1mHjfHCWYyIhMSWBF4yCbV5PgDpC79bVvgRc346AmhjnXt6Qhoe+4HNIZ3v
- 3pp7vckoa0wI8Rj+ZgbxS78/JC0BeYc7lvoLwLv4NiTDM4zSWfGJLo/BI2q01jmq5Awh7WNB5
- 9kYR/fVRVVYv0PrSsLDAFGe76CwL3LwZsxTkg6khW6UWy69Gj12UPNu8AaULDtqUQzzcTb+F4
- /onyDZL/aHvV1m4lEmQoenqA2Ianknj0G2acEJo0xuq4HYkJGpgmEboVaBeCklQUBI4PerWO7
- XBHWU90MP3C9Wr20G3NjCzskwA9um0SjBKO/0NCOzY4LQ0c0ESxOSdzp9THbso6TQF9SjMKVJ
- Sl9xnMbjnAIaXIgFvbwnQ+0PMYyegdgKwlxH8atdZf5coATTayR0uVNAtzW7mWwcOkWa7X7UB
- 6fUtfJFwSOodgiGsoOdXxLhUTg1gkYkEeyduILaYdWA1Nwwbba9UcQua8JJ7QuqppNNEQdEnp
- g0YS8skZCtQ==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="mpidk2alepylbuio"
+Content-Disposition: inline
+In-Reply-To: <992b8c6f-614d-b379-6352-30b36ac9d0d8@web.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> We don't need perfection.
 
-I guess that you noticed in the meantime that I dare to propose
-more software development efforts in such a direction.
+--mpidk2alepylbuio
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
-> We need more to eliminate the memory leaks.
+On Sat, Feb 16, 2019 at 09:57:54AM +0100, Markus Elfring wrote:
+> > We don't need perfection.
+>=20
+> I guess that you noticed in the meantime that I dare to propose
+> more software development efforts in such a direction.
 
-Will this view evolve into further helpful and constructive clarifications?
+Yes, this is noticable. It is your choice, however, other people may
+have their reasons for other choices...
+
+> > We need more to eliminate the memory leaks.
+
+=2E.. like this one.
+
+> Will this view evolve into further helpful and constructive clarification=
+s?
+
+Given my above, what is the evaluation of the same question to yourself?
 
 Regards,
-Markus
+
+   Wolfram
+
+
+--mpidk2alepylbuio
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlxn0q4ACgkQFA3kzBSg
+Kba8qxAAje15NT5l07pf3Vrh13e+9aiL+22EMykTDGEPH9HgeOP58Dnw/DgFFo/W
+eoIuw7fR0cK33MI/L0yOyWkfWPa0Eg86acVtArgevil07PcObuT/2MGOXhN+MWKW
+2Ecy7yj/LzcUmT2f1p+NGF8DCggMZjscKvj3InRttSJlhMuCVxsT6gg+3LOMonl7
+L72gYrGdh+CMG+To7bkf0RCpwJbK4k3h11Ay7R0OUAr57yTJ3H1aYl+V7glXdBvm
+Oiw/BwyNPF9gRIzQBuAeBn2mI2VioU3/Cfj2dtwNxy6duAJb11KNKK8xWLpjbZFY
+bFswd5OGiCJY4EuVW3CofkPsQKo0eSPGQwB6whUsQYe4qAY5XwZr/FS2bczN1xtM
+u9Ya7zWHrFfmhc7b2lE4eO/Cw85kpNfnoy2SPi1Sn/8yjoPTvzvhinqlaWJido10
+zcMLc/pukHX/cOTK0Oqwqgq2Tp2C0Z2XdWAUDHfcKzSjkR4fW8FZs8a78TMAmBKX
+hlEseUygcYpq9QxBJIb7LMO7sv4WwY/Hq1Ac/EPw6rNzDSlAC/rFHVU/2uNHWTgi
+CsGt2twijdYlGEEbtIxi8MF6yCtGr8H5ARr4Uz6oyl+hmSrmWl0cMWJ/TuRGbkj0
+SnU4KkwP3GCZjm9RnmKyCLLE5sCvvxvd9ODDTcZ/wW0aYETGv7o=
+=IqtW
+-----END PGP SIGNATURE-----
+
+--mpidk2alepylbuio--
