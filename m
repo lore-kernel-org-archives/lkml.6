@@ -2,104 +2,137 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51577C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 08:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A41EC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 08:58:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28897222D7
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 08:55:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52ED7222D9
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 08:58:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="UK58EV7v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731437AbfBPIzk (ORCPT
+        id S1731521AbfBPI6U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 03:55:40 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:53304 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726647AbfBPIzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 03:55:40 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 04E1A382F4554B57FFD9;
-        Sat, 16 Feb 2019 16:55:36 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS403-HUB.china.huawei.com
- (10.3.19.203) with Microsoft SMTP Server id 14.3.408.0; Sat, 16 Feb 2019
- 16:55:27 +0800
-From:   Jason Yan <yanaijie@huawei.com>
-To:     <linux-ide@vger.kernel.org>, <tj@kernel.org>, <axboe@kernel.dk>,
-        <linux-kernel@vger.kernel.org>
-CC:     Jason Yan <yanaijie@huawei.com>
-Subject: [PATCH v2] ata: fix a race condition when internal cmd time out
-Date:   Sat, 16 Feb 2019 16:53:47 +0800
-Message-ID: <20190216085347.35228-1-yanaijie@huawei.com>
-X-Mailer: git-send-email 2.14.4
+        Sat, 16 Feb 2019 03:58:20 -0500
+Received: from mout.web.de ([212.227.17.11]:54109 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726647AbfBPI6U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Feb 2019 03:58:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1550307477;
+        bh=fSE9ECCZcqjuQ5RrvTUuM8+BpclFqUQUn84XAuMBe9k=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=UK58EV7vzuFPALuFIouxMAjJkkWJEzeOV0zsz0UKPGXzo2cF+Nz/1Rowc2qkQvKyd
+         TTPzB+hnuJYU5ZjBUvlI/YWILWvX3oBTo6oBmY+sXzFR96Jeu8Txqm07vIGL9HAz6R
+         AbFFfUMIUoWgqS+rFVnjrq26KjtWZ9NB2Kn4omtk=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.3] ([78.48.154.45]) by smtp.web.de (mrweb103
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0M0yeJ-1hCcAc0UDn-00v9FD; Sat, 16
+ Feb 2019 09:57:57 +0100
+Subject: Re: [v5] coccinelle: semantic code search for missingput_device()
+To:     Julia Lawall <julia.lawall@lip6.fr>,
+        Wen Yang <wen.yang99@zte.com.cn>
+Cc:     Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Yi Wang <wang.yi59@zte.com.cn>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Wen Yang <yellowriver2010@hotmail.com>,
+        Cheng Shengyu <cheng.shengyu@zte.com.cn>,
+        cocci@systeme.lip6.fr, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+References: <201902161633004137519@zte.com.cn>
+ <alpine.DEB.2.21.1902160934400.3212@hadrien>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <992b8c6f-614d-b379-6352-30b36ac9d0d8@web.de>
+Date:   Sat, 16 Feb 2019 09:57:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+In-Reply-To: <alpine.DEB.2.21.1902160934400.3212@hadrien>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+X-Provags-ID: V03:K1:LtCsApeZ5r4hsbi+xh3wfnjcGGvxe/UgqhtARNQnww2GARLm6/A
+ Sf0y129yMwauX3QVcp9T8ul5axnCYnnP++Zi7n9jSsIW1xZpEtPjBViHN5MBAN7aVU7ARr/
+ zBzvJFxuYu//HRafpJR4WevUnZLnZ9pPLNeICMcVCLoT7nL8isA9/WFLznmALBhxVvKeJGb
+ wdsYAbWEgmQYUCNrKu6gw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:vhwfK1LVLHM=:aj4l+TPOW5T27g5dAX39KJ
+ XVBAhLoynAfXsmEDwCwg90Md2NrHAl5Tevd0nmWIQbVHODzC2RqpA0BlHog0UT84VCTBwRcQU
+ uL+F7Sb84QJks9IaBGQpvq9M6hli3lsElR7PdrCdCX1rPSY/F0+/knFVD25Dso4BdkS7Gg49r
+ 4OlcjUaG20kh0M8HL51BTADMbkehMzSy35BoAg1vNjnua1gXPO5XSofQHbMmYLLSQpxyo8DQ2
+ RDCgxbtLEXjTnm1JR/6jaTJ6Iqs/PszuVU+GvkeifWeR8epPCLG4W0eRSBbBaMl4ofhPIz4iR
+ +WA8t/k4t6bnLUn1Z2zVS2RM8actDoVzcYSM1U5qrl9NIyW7mCzCI49sjW4CTmuReL7vQpPI6
+ 1HawqWAmEFPVSazsiH4ZbsxRivqvUeDqyrmCbCVYb78YcbwDUgU8/k/evE8unJjh5/DkRSBuB
+ 1AX8IpiSTVgT8H1mHjfHCWYyIhMSWBF4yCbV5PgDpC79bVvgRc346AmhjnXt6Qhoe+4HNIZ3v
+ 3pp7vckoa0wI8Rj+ZgbxS78/JC0BeYc7lvoLwLv4NiTDM4zSWfGJLo/BI2q01jmq5Awh7WNB5
+ 9kYR/fVRVVYv0PrSsLDAFGe76CwL3LwZsxTkg6khW6UWy69Gj12UPNu8AaULDtqUQzzcTb+F4
+ /onyDZL/aHvV1m4lEmQoenqA2Ianknj0G2acEJo0xuq4HYkJGpgmEboVaBeCklQUBI4PerWO7
+ XBHWU90MP3C9Wr20G3NjCzskwA9um0SjBKO/0NCOzY4LQ0c0ESxOSdzp9THbso6TQF9SjMKVJ
+ Sl9xnMbjnAIaXIgFvbwnQ+0PMYyegdgKwlxH8atdZf5coATTayR0uVNAtzW7mWwcOkWa7X7UB
+ 6fUtfJFwSOodgiGsoOdXxLhUTg1gkYkEeyduILaYdWA1Nwwbba9UcQua8JJ7QuqppNNEQdEnp
+ g0YS8skZCtQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For internal cmds, we will unmap DMA memory associated with the cmd
-before we abort the cmd. If DMA transferring data before the aborting,
-bus error will occur.
+> We don't need perfection.
 
-ata_exec_internal_sg
-  ->ata_port_freeze if timeout
-    ->ata_qc_complete
-      ->ata_sg_clean
-                                      dma transferring data = bus error
-  ->ap->ops->post_internal_cmd
-    ->sas_ata_post_internal
-      ->sas_ata_internal_abort
-        ->abort the cmd
+I guess that you noticed in the meantime that I dare to propose
+more software development efforts in such a direction.
 
-Fix this by moving post_internal_cmd() before unmapping the DMA memory
-when time out. Notice that we have to set ATA_QCFLAG_FAILED flag before
-calling post_internal_cmd() so that the aborting will work.
 
-Reported-by: luojian <luojian5@huawei.com>
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
----
-v2: fix some typos
+> We need more to eliminate the memory leaks.
 
- drivers/ata/libata-core.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+Will this view evolve into further helpful and constructive clarifications?
 
-diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index adf28788cab5..d0ff5711e805 100644
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -1665,6 +1665,13 @@ unsigned ata_exec_internal_sg(struct ata_device *dev,
- 		 */
- 		if (qc->flags & ATA_QCFLAG_ACTIVE) {
- 			qc->err_mask |= AC_ERR_TIMEOUT;
-+			qc->flags |= ATA_QCFLAG_FAILED;
-+
-+			spin_unlock_irqrestore(ap->lock, flags);
-+			/* do post_internal_cmd */
-+			if (ap->ops->post_internal_cmd)
-+				ap->ops->post_internal_cmd(qc);
-+			spin_lock_irqsave(ap->lock, flags);
- 
- 			if (ap->ops->error_handler)
- 				ata_port_freeze(ap);
-@@ -1679,9 +1686,10 @@ unsigned ata_exec_internal_sg(struct ata_device *dev,
- 		spin_unlock_irqrestore(ap->lock, flags);
- 	}
- 
--	/* do post_internal_cmd */
--	if (ap->ops->post_internal_cmd)
--		ap->ops->post_internal_cmd(qc);
-+	if (!(qc->err_mask & AC_ERR_TIMEOUT))
-+		/* do post_internal_cmd */
-+		if (ap->ops->post_internal_cmd)
-+			ap->ops->post_internal_cmd(qc);
- 
- 	/* perform minimal error analysis */
- 	if (qc->flags & ATA_QCFLAG_FAILED) {
--- 
-2.14.4
-
+Regards,
+Markus
