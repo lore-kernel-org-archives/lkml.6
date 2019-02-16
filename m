@@ -2,147 +2,165 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2121C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 22:57:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D052C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 23:37:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF0552192D
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 22:57:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1E1121A4C
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 23:37:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="aTgdNVWA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l1u2uNgu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387483AbfBPW5k (ORCPT
+        id S1727734AbfBPXha (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 17:57:40 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40536 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727734AbfBPW5j (ORCPT
+        Sat, 16 Feb 2019 18:37:30 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:32825 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727284AbfBPXha (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 17:57:39 -0500
-Received: by mail-pg1-f196.google.com with SMTP id u9so3052594pgo.7
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Feb 2019 14:57:39 -0800 (PST)
+        Sat, 16 Feb 2019 18:37:30 -0500
+Received: by mail-wm1-f68.google.com with SMTP id h22so9341209wmb.0;
+        Sat, 16 Feb 2019 15:37:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=GmY1DGvxlDOr0wgTH2Uuo71S9uZUrJX7TeGXSG9WpTY=;
-        b=aTgdNVWApi76usC8wUg9nh5WRXFvvxViynMGbSUzB0NHbTV+U3I5/7KMRm+4aWyh7x
-         sKBZZWLlNE59K+rbtoGGfOWcdZ+aAiLntiZYo7Y1Y0j0LbIHvYcLfJdUmrwLQdZlrYwb
-         IUmCYxPg80NYeTF9dvcZtfVu1wqlO/nfRsUAeiQtMN0wMK93ZP2K4Svqirj2pV3qqy2c
-         ejvgAaMAcaVRoQ3Via3GKhJ5nQeiYEun6MQOCLGBwKYvQB1vyHsfMiYl+/eCSbsgOzWK
-         453hSNsd38Bz3dOxCiNCPgnxx2BnulSYYVG03w5qhyumYg32UDuevPRYfEjG7OWodylB
-         lujQ==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=j3vihQgKqfgjXdWkIV1rQ1oSJIgvuAd1lUf0NOIzM6U=;
+        b=l1u2uNgutoFuX/iuAtplf9sjKqfc1oxyWb6GdKO2CpLqqjwY7U3x3xht8U+AHokdur
+         5sfNWzncQQmGiTpv60NllLzbtHQ3PiaTnAqqaLEqKajgamuRE3MugkLSgF+GNBmZQ3Ux
+         XOmqeLsZT+bjaE2aaCQqzTzZFKfdoCdAd8hs4o+J6Ut1g/gMgyn0rIiqjn/OJov9Fcz4
+         v8qICK6Aw3Ktv1XYX4bYbomVd70+7l2stRE0r45DVzVr1O8NUNPUK37WRNfc/PMvcyun
+         Lgo0ImmLjB5rHOW4bo92k++g3pQySOmMF+RCW9KMUlJV3cQfMV4PBliq6j0s9v+ip0pa
+         eGYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=GmY1DGvxlDOr0wgTH2Uuo71S9uZUrJX7TeGXSG9WpTY=;
-        b=KvSeGNBGoQUhCMgw0FCUCKPzmlqS6yxUmOTK7o9+kZe4/6MUiJW3wjY5KLbohCRkTu
-         1UZbTcR3MfzI0wXLtTCRx3FpSLDFlI346IcsAgdHtFQiJHpUyoTLv+k9B6UIdaUibFQP
-         xtTbniCdODsnSowLrn6tJ6WldMmgKqThul0r/rZ1QeDxffgV728x0lG0A5bQK8D1L0rC
-         Qw5v7T034ukMzMXHkZsgJND28yKCQ7avyTtOfGYIXsPIJ3caPXOaOh8mDMp319HkyNPc
-         Ey+re/DZ9bphrdj2VlEwegE3t97vHDailIqULH4OLSwW7I2SGR0C7ss+3Z+O0ho7f43H
-         X4DQ==
-X-Gm-Message-State: AHQUAub9/Bg+YGYh2mP0fmruwjzziD8bgVgRfUEfIC18YU+Ber08HEEd
-        R/uFBufkLDwZrSuLAdcELTuEjzXmVTo=
-X-Google-Smtp-Source: AHgI3Iazqh7GC31kfoK03IVGEdL31YvXfSXI9EPjOp0zyuJTvsq0CberwmGQ5+1oKypHehBpkjS6Wg==
-X-Received: by 2002:a63:9246:: with SMTP id s6mr11737385pgn.349.1550357858738;
-        Sat, 16 Feb 2019 14:57:38 -0800 (PST)
-Received: from ?IPv6:2600:1010:b01d:e8ca:a1cf:e098:145e:ed28? ([2600:1010:b01d:e8ca:a1cf:e098:145e:ed28])
-        by smtp.gmail.com with ESMTPSA id 67sm28069777pfl.175.2019.02.16.14.57.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 16 Feb 2019 14:57:37 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] x86: uaccess: fix regression in unsafe_get_user
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16C101)
-In-Reply-To: <4F2693EA-1553-4F09-9475-781305540DBC@amacapital.net>
-Date:   Sat, 16 Feb 2019 14:57:36 -0800
-Cc:     Jann Horn <jannh@google.com>, baloo@gandi.net,
-        the arch/x86 maintainers <x86@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Pascal Bouchareine <pascal@gandi.net>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <D8D44180-C781-4021-ADAB-D40FD2885D1B@amacapital.net>
-References: <20190215235901.23541-1-baloo@gandi.net> <CAG48ez2tYizTKncevLF=AMQ2nm3D=SqGHH5bM5f-U0fhQ1nL9Q@mail.gmail.com> <alpine.DEB.2.21.1902161358160.1683@nanos.tec.linutronix.de> <4F2693EA-1553-4F09-9475-781305540DBC@amacapital.net>
-To:     Thomas Gleixner <tglx@linutronix.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=j3vihQgKqfgjXdWkIV1rQ1oSJIgvuAd1lUf0NOIzM6U=;
+        b=fjPvEk73hXFcHQrlB7uAPxgt1cvZvBrynlQXTHK8LfP7N3PwsAvG++MOaICqhPEJ4t
+         +2Im7B43w4GWXMTS1X1eKG2yT1WBkZL9B4R2gSHmksjYSZj+MCRP4csjZUFMLxiw+qXw
+         FqUO77ZPBOk0sM5Ug7Av44jalU4EGn6yVpv2h1p9uz4goGLNlGXURno/gOhIsI3b3itf
+         zLG2M8KPUzxzraNYxsG+1kfjrIRbStb3oI7x/4QK/QePdHbCExOHSnJzDfjJyINaciBi
+         XVY0nN6aXEnarN4FEa5uDjWDGIHYx8sZacBKy1Fl2RuMEVjRtWO8W42DcIbgTTgEUqZi
+         xSIg==
+X-Gm-Message-State: AHQUAua1VzhyuL/UJvK1I8jWH9iAwQepZhlXj0qixGQat6mNwJCfD2nh
+        7NrIi65ZnPiPDmFUxLx5MP9fz1Yhwd2fvNMLVBA=
+X-Google-Smtp-Source: AHgI3IYaaK0lWVcIEvEVrqLebt3e/5CxN8nSWmNEva7umfr62cINr+uHO1eKc6EpKs0MLn6Mo2jTlj8k/4NabpFsEZA=
+X-Received: by 2002:a1c:f701:: with SMTP id v1mr10629504wmh.153.1550360247027;
+ Sat, 16 Feb 2019 15:37:27 -0800 (PST)
+MIME-Version: 1.0
+References: <2281684.8tZHfIXjiu@aspire.rjw.lan> <CADnq5_NmDYzZZPUh5Wp+a8bycRWFDt3Lhzf0AKx9BECJ_U-Kyg@mail.gmail.com>
+ <20190216060058.gsiddsmj3f27e6v7@wunner.de>
+In-Reply-To: <20190216060058.gsiddsmj3f27e6v7@wunner.de>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Sat, 16 Feb 2019 18:37:13 -0500
+Message-ID: <CADnq5_OqaQA2HNcy+ZZvsN5MTEWLXoFEuirX4f4nzEOJ6NrdVA@mail.gmail.com>
+Subject: Re: [PATCH] gpu: drm: radeon: Set DPM_FLAG_NEVER_SKIP when enabling PM-runtime
+To:     Lukas Wunner <lukas@wunner.de>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        David Zhou <David1.Zhou@amd.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        "?????????????? ????????????????" <ukrkyi@gmail.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Feb 16, 2019 at 1:01 AM Lukas Wunner <lukas@wunner.de> wrote:
+>
+> On Fri, Feb 15, 2019 at 11:01:04AM -0500, Alex Deucher wrote:
+> > On Fri, Feb 15, 2019 at 10:39 AM Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
+> > > On HP ProBook 4540s, if PM-runtime is enabled in the radeon driver
+> > > and the direct-complete optimization is used for the radeon device
+> > > during system-wide suspend, the system doesn't resume.
+> > >
+> > > Preventing direct-complete from being used with the radeon device by
+> > > setting the DPM_FLAG_NEVER_SKIP driver flag for it makes the problem
+> > > go away, which indicates that direct-complete is not safe for the
+> > > radeon driver in general and should not be used with it (at least
+> > > for now).
+> > >
+> > > This fixes a regression introduced by commit c62ec4610c40
+> > > ("PM / core: Fix direct_complete handling for devices with no
+> > > callbacks") which allowed direct-complete to be applied to
+> > > devices without PM callbacks (again) which in turn unlocked
+> > > direct-complete for radeon on HP ProBook 4540s.
+> >
+> > Do other similar drivers like amdgpu and nouveau need the same fix?
+> > I'm not too familiar with the direct_complete feature in general.
+>
+> direct_complete means that a discrete GPU which is in D3cold upon
+> entering system sleep is left as is, i.e. it is not woken.  It is
+> also expected to still be in D3cold when resuming from system sleep
+> from the PM core's point of view.  (If it is in D0uninitialized, the
+> GPU's driver needs to ensure it is transitioned to D3cold again.)
+>
+> I know for a fact that resuming the discrete GPU is not necessary
+> on my MacBook Pro with Nvidia GPU.  I'd expect those with AMD GPUs
+> to behave the same.  The apple-gmux driver takes care of putting
+> the GPU into D3cold on resume from system sleep if it was in D3cold
+> when entering system sleep (see drivers/platform/x86/apple-gmux.c,
+> gmux_resume()).
+>
+> I think it is desirable to use direct_complete because it saves power
+> (no need to gratuitously wake the GPU upon entering system sleep,
+> only to immediately cut its power) and it also speeds up the suspend
+> process by about half a second.
 
-> On Feb 16, 2019, at 2:50 PM, Andy Lutomirski <luto@amacapital.net> wrote:
->=20
->=20
->=20
->>> On Feb 16, 2019, at 12:18 PM, Thomas Gleixner <tglx@linutronix.de> wrote=
-:
->>>=20
->>>> On Sat, 16 Feb 2019, Jann Horn wrote:
->>>> On Sat, Feb 16, 2019 at 12:59 AM <baloo@gandi.net> wrote:
->>>> When extracting an initramfs, a filename may be near an allocation boun=
-dary.
->>>> Should that happen, strncopy_from_user will invoke unsafe_get_user whic=
-h
->>>> may cross the allocation boundary. Should that happen, unsafe_get_user w=
-ill
->>>> trigger a page fault, and strncopy_from_user would then bailout to
->>>> byte_at_a_time behavior.
->>>>=20
->>>> unsafe_get_user is unsafe by nature, and rely on pagefault to detect bo=
-undaries.
->>>> After 9da3f2b74054 ("x86/fault: BUG() when uaccess helpers fault on ker=
-nel addresses")
->>>> it may no longer rely on pagefault as the new page fault handler would
->>>> trigger a BUG().
->>>>=20
->>>> This commit allows unsafe_get_user to explicitly trigger pagefaults and=
+Thanks for the info.  It sounds like we need a similar patch for
+amdgpu.  With dGPUs controlled by the ACPI ATPX method, I believe the
+dGPU is powered by automatically on resume from S3/S4.  I think there
+may be a way to change that behavior in some revisions of ATPX (i.e.,
+to keep the state across suspend cycles), but it's not the default.
+I'm not sure about the newer _PR3 stuff in Hybrid Graphics laptops.  I
+think it retains state.  In both radeon and amdgpu we probably need to
+check if the system is using ATPX or _PR3 and disable direct complete
+for ATPX at least.
 
->>>> handle them directly with the error target label.
->>>=20
->>> Oof. So basically the init code is full of things that just call
->>> syscalls instead of using VFS functions (which don't actually exist
->>> for everything), and the VFS syscalls use getname_flags(), which uses
->>> strncpy_from_user(), which can access out-of-bounds pages on
->>> architectures that set CONFIG_HAVE_EFFICIENT_UNALIGNED_ACCESS, and
->>> that in summary means that all the init code is potentially prone to
->>> tripping over this?
->>=20
->> Not all init code. It should be only the initramfs decompression.
->>=20
->>> I don't particularly like this approach to fixing it, but I also don't
->>> have any better ideas, so I guess unless someone else has a bright
->>> idea, this patch might have to go in.
->>=20
->> So we know that this happens in the context of decompress() which calls
->> flush_buffer() for every chunk. flush_buffer() gets the start_address and=
+Alex
 
->> the length. We also know that the fault can only happen within:
->>=20
->>   start_address <=3D fault_address < start_address + length + 8;
->>=20
->> So something like the untested workaround below should cover the initramf=
-s
->> oddity and avoid to weaken the protection for all other cases.
->=20
-> What is the actual problem?  We=E2=80=99re not actually demand-faulting th=
-is data, are we?  Are we just overrunning the buffer because the from_user h=
-elpers are too clever?  Can we fix it for real by having the fancy helpers d=
-o *aligned* loads so that they don=E2=80=99t overrun the buffer?  Heck, this=
- might be faster, too.
-
-Indeed.  I would argue that the current code is a bug even in the normal cas=
-e.  If I lay out my user address space so that I have f,o,o,o,\0 at the end o=
-f a page and I have non-side-effect-free memory after it (MMIO, userfaultfd,=
- etc), then passing a pointer to that =E2=80=9Cfooo=E2=80=9D string to a sys=
-call should *not* overrun the buffer.
-
-If I have some time this evening, I=E2=80=99ll see if I can whip up a credib=
-le fix.=
+>
+> The root cause on the HP ProBook 4540s needs to be debugged, I'd
+> suspect a BIOS issue which could be adressed by a quirk, either for
+> this particular machine or for a certain class of devices (e.g. all
+> machines which use PR3 to transition to D3cold) if that is necessary
+> to behave identically to Windows.  Or maybe the atpx vga_switcheroo
+> handler needs to be amended to put the GPU into D3cold on resume from
+> system sleep if it was runtime suspended before.
+>
+> Is this machine using s2idle or does it suspend to S3?
+>
+> Thanks,
+>
+> Lukas
+>
+> > > Fixes: c62ec4610c40 ("PM / core: Fix direct_complete handling for devices with no callbacks")
+> > > Link: https://bugzilla.kernel.org/show_bug.cgi?id=201519
+> > > Reported-by: ?????????????? ???????????????? <ukrkyi@gmail.com>
+> > > Tested-by: ?????????????? ???????????????? <ukrkyi@gmail.com>
+> > > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > > ---
+> > >  drivers/gpu/drm/radeon/radeon_kms.c |    1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> > > Index: linux-pm/drivers/gpu/drm/radeon/radeon_kms.c
+> > > ===================================================================
+> > > --- linux-pm.orig/drivers/gpu/drm/radeon/radeon_kms.c
+> > > +++ linux-pm/drivers/gpu/drm/radeon/radeon_kms.c
+> > > @@ -172,6 +172,7 @@ int radeon_driver_load_kms(struct drm_de
+> > >         }
+> > >
+> > >         if (radeon_is_px(dev)) {
+> > > +               dev_pm_set_driver_flags(dev->dev, DPM_FLAG_NEVER_SKIP);
+> > >                 pm_runtime_use_autosuspend(dev->dev);
+> > >                 pm_runtime_set_autosuspend_delay(dev->dev, 5000);
+> > >                 pm_runtime_set_active(dev->dev);
