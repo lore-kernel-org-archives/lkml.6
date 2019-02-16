@@ -2,72 +2,70 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E7C0C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 00:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F39F4C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 00:37:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F00DE222A1
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 00:36:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3719222A1
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 00:37:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CJpbO4WU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o7TtJzAo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394348AbfBPAgD (ORCPT
+        id S2394371AbfBPAhm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 19:36:03 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:41257 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391676AbfBPAgC (ORCPT
+        Fri, 15 Feb 2019 19:37:42 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:40987 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728838AbfBPAhm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 19:36:02 -0500
-Received: by mail-yw1-f68.google.com with SMTP id q128so4396561ywg.8;
-        Fri, 15 Feb 2019 16:36:01 -0800 (PST)
+        Fri, 15 Feb 2019 19:37:42 -0500
+Received: by mail-yb1-f196.google.com with SMTP id 18so2886496ybf.8;
+        Fri, 15 Feb 2019 16:37:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=oIPHpHArQlGcijNx9n6Gy9A5JfUVamNPMRrBh2qIev8=;
-        b=CJpbO4WUlYxtitAjYZPf1f0TrdsFjEgbFOSdmmsCx+tUH6i6V8e3/xLIGG9nyL/WMy
-         NHSpQOT3MiVDmAYAJu+bRm/kB74DdyL/Wq+TRalh2X30HvlBex1jG/UBYpbXp9QqWpAG
-         naYBcSFEhnZoNI5CWffP6B6tgKCiKfHLPx3cYJHhE24pvRwl0cH1KS1RJp2EvFpj6yku
-         cbUF9RlTazdJ0ErEG4p97+xwWrzZLpaoIVnze/rA7Az8vRraNHFSiuf1eYxrDF6SkKf9
-         5Iv+ZRf3knUyUFKSPJmX3WRLvQgX5wUb8U5S//Bk928uGhsd85nZUIk/FOPcG4mB3paw
-         xJbw==
+        bh=bwa73KKS0GHzhM/Hzm2y4AjhgGLRJoVnB/9q7JdY9I0=;
+        b=o7TtJzAovHV0e9HulFcY9NIxhSljIAHEhWWHgYoiqbaxed4QjBlsvgpYv/2J7Bs1OR
+         PkdHPub3WNOgbwI9SNj2Ctsi/cO0Qt/McHiB6/wXWvxasbdCt4D7GzE8fuDQE11rP9k4
+         UEQISInf0kRzyBQ2u6NmrCJc+lIEHeEnYaI18a8ZD+mAnWzGnyL/NaMDp9ENpqYgXnDg
+         KHVd1mynMujvBjFUF9CME2c2LCK+u2zL1XbfFzm27E4HKOY8eg5qcqMM6d5E7SJpXaFx
+         A+BlMS/FjIjzOiUtfpfLw25T5FLWri/ptmQtvMe5pUrumXDOXtDNJxTNoxDgaQWYub9r
+         xXcw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=oIPHpHArQlGcijNx9n6Gy9A5JfUVamNPMRrBh2qIev8=;
-        b=I4oW5nzPoFeDOFnAZYzv9blIyFAvu1SOBJORoeiAgi+cyj0aAVaG4xS+kcMSdy3F6a
-         49JmDnB9bSzK8IUUz5esaPK4vcsufhfYz5ET/vAvXiIFHQZBOnr1aLpKPwjwJqzbxylr
-         IBdN62dA2NAUPIg1Cpf6NKNBG1ABBABxYYjWpmlIUzhAPuwV/EIBz9HJahLwci9OqGEg
-         gWCMEtYmGe1jW43UcJstwottBFeIMiqgZBRU0+dj5XQV2ga7nCkGoxp8SsWeJd9om9XV
-         5VG1RGl5lXevUI9ovQOKJI4dfNCNz6/+rkpayXG9/8L/b/MS/fXxFP5I2X9bLeQlGJz5
-         8t+Q==
-X-Gm-Message-State: AHQUAuY/Ew2btCI82hMiXvzN53EpvQ0mQcp2+3Z/wIp4ldSkE+/re9uh
-        EWkhYOv60m9g14G6W6vHDRcfMZhk
-X-Google-Smtp-Source: AHgI3Ia2wVfcgOWHqrtuYgJ0F4QhMOJ/yM/wV3cEQxvvRRVDaCOJMl4eLpFmD/ggx72Rbq/PMJTC+Q==
-X-Received: by 2002:a81:ee02:: with SMTP id l2mr10331541ywm.471.1550277361173;
-        Fri, 15 Feb 2019 16:36:01 -0800 (PST)
+        bh=bwa73KKS0GHzhM/Hzm2y4AjhgGLRJoVnB/9q7JdY9I0=;
+        b=SdCSvoLu/IqeA2LzHtGSwiFTv6ftK02t6R2n8g+7tvLpagfnr7GXFez7bGO+eydjfE
+         SWEuMxW3nSv5Pgv3a5o+nB+V0MZSRp8xQgVOVVSnususb3LBbJA/zYzeyZvKEd/Fb7HB
+         G1GRJctqFCagyfIyLHjFRSqe8aww+sg9p/9eqYEcIi+k5Xg88nZ0DnSDi8a07ZCAIok5
+         Nj1uo1m03UhhKmSgfiG9EXCzLQtIjFCUyw/nsqjt2gYGzWVK6mj0oWe0GjHdiqQ8jocb
+         utlUirIalotHr7m3js8sF7vEHU82ON2+w/gGS7hlBXgYxWlvk0NjD1HvqgelEvCuSx/6
+         SWyA==
+X-Gm-Message-State: AHQUAuZCeUwIw/Oqz4sU9nvptYTRMFn+hsuJwYn9/o1B5498VgLxn/Ha
+        /SO11nmPT+8Yymbp7gEUFmM=
+X-Google-Smtp-Source: AHgI3IYLkYXA1BJuaOZBZ3iqaWo9pLxEtJB8IdTXw/s1S7kKF9B5nMwboVQx7ewnidq7FphwroNf0w==
+X-Received: by 2002:a25:8b09:: with SMTP id i9mr10097808ybl.153.1550277460671;
+        Fri, 15 Feb 2019 16:37:40 -0800 (PST)
 Received: from [10.67.48.220] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id h205sm5337588ywh.85.2019.02.15.16.35.58
+        by smtp.googlemail.com with ESMTPSA id j82sm2050270ywj.91.2019.02.15.16.37.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Feb 2019 16:35:59 -0800 (PST)
-Subject: Re: [PATCH net-next 1/3] net: stmmac: Fix NAPI poll in TX path when
- in multi-queue
-To:     Jose Abreu <jose.abreu@synopsys.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Joao Pinto <joao.pinto@synopsys.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>
-References: <cover.1550237884.git.joabreu@synopsys.com>
- <76da803a662214b024bfdb95731c38e45aef426d.1550237884.git.joabreu@synopsys.com>
+        Fri, 15 Feb 2019 16:37:39 -0800 (PST)
+Subject: Re: [PATCH net-next v2 0/9] net: Get rid of switchdev_port_attr_get()
+To:     netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>
+Cc:     Ido Schimmel <idosch@mellanox.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        "moderated list:ETHERNET BRIDGE" <bridge@lists.linux-foundation.org>,
+        jiri@mellanox.com, andrew@lunn.ch, vivien.didelot@gmail.com
+References: <20190215225313.32303-1-f.fainelli@gmail.com>
 From:   Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
@@ -124,12 +122,12 @@ Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
  caxTGgc5zzQHeX67eMzrGomG3ZnIxmd1sAbgvJUDaD2GrYlulfwGWwWyTNbWRvMighVdPkSF
  6XFgQaosWxkV0OELLy2N485YrTr2Uq64VKyxpncLh50e2RnyAJ9Za0Dx0yyp44iD1OvHtkEI
  M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
-Message-ID: <c6a38836-a0d7-608d-39cf-ea770db78c95@gmail.com>
-Date:   Fri, 15 Feb 2019 16:35:57 -0800
+Message-ID: <77c28e2d-cd29-4932-5cfe-64799c730ede@gmail.com>
+Date:   Fri, 15 Feb 2019 16:37:38 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <76da803a662214b024bfdb95731c38e45aef426d.1550237884.git.joabreu@synopsys.com>
+In-Reply-To: <20190215225313.32303-1-f.fainelli@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -138,37 +136,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/15/19 5:42 AM, Jose Abreu wrote:
-> Commit 8fce33317023 introduced the concept of NAPI per-channel and
-> independent cleaning of TX path.
+On 2/15/19 2:53 PM, Florian Fainelli wrote:
+> Hi all,
 > 
-> This is currently breaking performance in some cases. The scenario
-> happens when all packets are being received in Queue 0 but the TX is
-> performed in Queue != 0.
+> This patch series splits the removal of the switchdev_ops that was
+> proposed a few times before and first tackles the easy part which is the
+> removal of the single call to switchdev_port_attr_get() within the
+> bridge code.
 > 
-> Fix this by using different NAPI instances per each TX and RX queue, as
-> suggested by Florian.
+> As suggestd by Ido, this patch series adds a
+> SWITCHDEV_ATTR_ID_PORT_PRE_BRIDGE_FLAGS which is used in the same
+> context as the caller of switchdev_port_attr_set(), so not deferred, and
+> then the operation is carried out in deferred context with setting a
+> support bridge port flag.
 > 
-> Signed-off-by: Jose Abreu <joabreu@synopsys.com>
-> Cc: Florian Fainelli <f.fainelli@gmail.com>
-> Cc: Joao Pinto <jpinto@synopsys.com>
-> Cc: David S. Miller <davem@davemloft.net>
-> Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
-> Cc: Alexandre Torgue <alexandre.torgue@st.com>
-> ---
+> Follow-up patches will do the switchdev_ops removal after introducing
+> the proper helpers for the switchdev blocking notifier to work across
+> stacked devices (unlike the previous submissions).
 
-[snip]
+David, please ignore this version, I will repost one that actually
+builds, need to keep mangling with my kernel configuration and keep
+those drivers enabled...
 
-> -	if (work_done < budget && napi_complete_done(napi, work_done)) {
-> -		int stat;
-> +	priv->xstats.napi_poll++;
->  
-> +	work_done = stmmac_tx_clean(priv, budget, chan);
-> +	if (work_done < budget && napi_complete_done(napi, work_done))
+> 
+> Changes in v2:
+> 
+> - differentiate callers not supporting switchdev_port_attr_set() from
+>   the driver not being able to support specific bridge flags
+> 
+> - pass "mask" instead of "flags" for the PRE_BRIDGE_FLAGS check
+> 
+> - skip prepare phase for PRE_BRIDGE_FLAGS
+> 
+> - corrected documentation a bit more
+> 
+> - tested bridge_vlan_aware.sh with veth/VRF
+> 
+> Florian Fainelli (9):
+>   Documentation: networking: switchdev: Update port parent ID section
+>   net: switchdev: Add PORT_PRE_BRIDGE_FLAGS
+>   mlxsw: spectrum: Handle PORT_PRE_BRIDGE_FLAGS
+>   staging: fsl-dpaa2: ethsw: Handle PORT_PRE_BRIDGE_FLAGS
+>   net: dsa: Add setter for SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS
+>   rocker: Check Handle PORT_PRE_BRIDGE_FLAGS
+>   net: bridge: Stop calling switchdev_port_attr_get()
+>   net: Remove SWITCHDEV_ATTR_ID_PORT_BRIDGE_FLAGS_SUPPORT
+>   net: Get rid of switchdev_port_attr_get()
+> 
+>  Documentation/networking/switchdev.txt        | 16 ++--
+>  .../mellanox/mlxsw/spectrum_switchdev.c       | 38 +++++-----
+>  drivers/net/ethernet/rocker/rocker_main.c     | 75 +++++++++++--------
+>  drivers/staging/fsl-dpaa2/ethsw/ethsw.c       | 32 ++++----
+>  include/net/switchdev.h                       | 13 +---
+>  net/bridge/br_switchdev.c                     | 11 ++-
+>  net/dsa/dsa_priv.h                            |  6 ++
+>  net/dsa/port.c                                | 17 +++++
+>  net/dsa/slave.c                               | 24 +++---
+>  9 files changed, 128 insertions(+), 104 deletions(-)
+> 
 
-You should not be bounding your TX queue against the NAPI budge, it
-should run unbound and clean as much as it can, which could be the
-entire ring size if that is how many packets you pushed between
-interrupts. That could be the cause of poor performance as well.
+
 -- 
 Florian
