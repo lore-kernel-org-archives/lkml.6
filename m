@@ -2,130 +2,138 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25CE8C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 02:08:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E8DC43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 02:08:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6E4F222A1
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 02:08:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 223F3222A1
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 02:08:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="LrqWH1Sx"
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="NZAi8qeq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733162AbfBPCI0 (ORCPT
+        id S2387795AbfBPCIa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 21:08:26 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:26147 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726473AbfBPCI0 (ORCPT
+        Fri, 15 Feb 2019 21:08:30 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:44106 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731407AbfBPCI2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 21:08:26 -0500
-X-Greylist: delayed 73126 seconds by postgrey-1.27 at vger.kernel.org; Fri, 15 Feb 2019 21:08:24 EST
-Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id x1G28IMm022673;
-        Sat, 16 Feb 2019 11:08:19 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x1G28IMm022673
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1550282899;
-        bh=JErR3fgFiQ72ZZEiKwWP6YSIo32wc/VrwAHm0YitJyw=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=LrqWH1SxDFqJhppZWSuQVmQ1l52qfmrtjXhzYVTDhjv0RzbAL/8Fkh/iUPLk5rffc
-         926eIdgar/PaG+lNxJxRKwM9t/b34Qo9HDalD6DwRKoMKsogVWM4NjuFJD6ZIqxSQW
-         VMZYn0lxJDj1W3dJrmZyiRmqqySDFOKH1XjCMI9Qgdf42fI8B501DrqFwb7Z6F87dR
-         ARJHFoMX1saXYPlMP576eH7TrIA/bxJ0luHVW1hTw2c4EBLt/ZnytyaVf5asuRAoy9
-         bWzZHqLyTD3BKSTw2QKd/5iP/gsOI8lmz1L1zwWV7zltiyW/WPayxp8pKi7vkGx+0a
-         RFFHXr/UHqnkw==
-X-Nifty-SrcIP: [209.85.217.50]
-Received: by mail-vs1-f50.google.com with SMTP id e81so3505025vsd.2;
-        Fri, 15 Feb 2019 18:08:19 -0800 (PST)
-X-Gm-Message-State: AHQUAuY2PxTRZ7MO2uo2CV4UixxPHnNVCQOEF3ysbCWZ0ppKxwN5z+x5
-        rsdUAO9WVXs3P+AhTa4gJU3JKBYvyjzJbiTFl30=
-X-Google-Smtp-Source: AHgI3Ia2p+8YoxNpxLcoBbk1Ow3HyaKQr4RCMeGqCUQ8i45JfhkNNanLIqTL73IbeyUIF/FhV/j0P6qJd7zXli6FQ9c=
-X-Received: by 2002:a05:6102:18f:: with SMTP id r15mr474486vsq.215.1550282898003;
- Fri, 15 Feb 2019 18:08:18 -0800 (PST)
+        Fri, 15 Feb 2019 21:08:28 -0500
+Received: by mail-ot1-f67.google.com with SMTP id g1so19753874otj.11
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Feb 2019 18:08:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=E8MQdVUTQEeEu3nqjpLgUdTpwxg637m/uFGbvQJuSWY=;
+        b=NZAi8qeqKa4RmPPWbQVLGsqH4HcPbbo4moBaDR6y/8pPawWONe13ZuvYXTo5GAHWT+
+         2SEhnciu5Nxtikh1o/YLTFaui0l1W7N0BaCqWNMvEK+gdODVygA3nZm22lFn8HMNXNx3
+         STYAiZbSyO1Ox1c4sb4rzFQxdwtm2u3uBEq0ew6AthQ6ApS6/Ujbyv7ulFPS09nFNLPt
+         nzZu6SouDanwDSRF3oecaNGJdqKJ0PXHwkLOud3BY85NPhN/hLR4Z7zDbDgypEricMVC
+         R2gNUbkDzNKG0rv1ODmTwk7QgP5+T9W89SDM8e+uNq9jEGvZT3Vn5g9OrZ7T5Z/X0/o1
+         iT5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=E8MQdVUTQEeEu3nqjpLgUdTpwxg637m/uFGbvQJuSWY=;
+        b=O0qVCHuTCA7+tc7dGyWqg3VOYvjCYKDerYQF7ZtppBmcFiwDGpET5NKP0DAzoQsLbt
+         fJqWKFjU5X3ws3PxVpgIUrYr+eBWh5h/ZdBNq5/zZLn8dgtq11o01DuxinkeMskq97Fn
+         1L1H4ptNzxU4tBiBCZ5jHMOJpz8Qfr//RU3dOhIOrs/YIn/WgF8p802W7JFDupvTeQGb
+         Nr9dUJVmCB2LFa6WvfLq4v7qqGJoFN+wE8LwFc/Co+w0BcC/1vreabj+TuDTWUBI0G+c
+         hv7rsLEdefAn2a8z3XSkjkfk4d3jkB4519hFqqX1gsRjmj520NIF+T8mGOFhIOhiLqmL
+         gv+A==
+X-Gm-Message-State: AHQUAubDw7tGogbsCNvL5oJ/dD/k30xl2deBp3Lzioft8Yqbp5od+NOI
+        9xzKHFN55unnPNGZKhRginFE7ynAcjGalSe39BK1jQ==
+X-Google-Smtp-Source: AHgI3IYiHFdoZ4/8rxjRC06U3FUw/zyaCagWPgW++88v+Zd3W6gFP6Xc57iHPsqgcS/aRz9zESCBYGPq1WDZ2Jsdub4=
+X-Received: by 2002:a9d:7a87:: with SMTP id l7mr274118otn.98.1550282907624;
+ Fri, 15 Feb 2019 18:08:27 -0800 (PST)
 MIME-Version: 1.0
-References: <1549943095-10956-1-git-send-email-yamada.masahiro@socionext.com>
- <CAKv+Gu8yLY+c6jNmHYkvP3n=xiojF7dcKBHmeGibUW2FUrEczA@mail.gmail.com>
- <CAK7LNASoyeFW=j9R=M2vaoLK_Gms1Z6hA_yKLyVSY=g5ALUi8A@mail.gmail.com> <CAKv+Gu8k63Fj2aPbQPLLvBXvJrdcu5NrODXuZKkb2n21AUM70Q@mail.gmail.com>
-In-Reply-To: <CAKv+Gu8k63Fj2aPbQPLLvBXvJrdcu5NrODXuZKkb2n21AUM70Q@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sat, 16 Feb 2019 11:07:41 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARd6R31QyGn4MZdDeTfUVGhF7bOx+5ZyuY-c7kZ6fETsA@mail.gmail.com>
-Message-ID: <CAK7LNARd6R31QyGn4MZdDeTfUVGhF7bOx+5ZyuY-c7kZ6fETsA@mail.gmail.com>
-Subject: Re: [PATCH] efi/libstub: refactor cmd_stubcopy
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Alistair Strachan <astrachan@google.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 15 Feb 2019 18:08:15 -0800
+Message-ID: <CAPcyv4gs7nGnf81Lj-Hf04uhmMb2wxKzi42ajaNVCHty7PAsAQ@mail.gmail.com>
+Subject: find_get_entries_tag regression bisected
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Balcer, Piotr" <piotr.balcer@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 16, 2019 at 12:38 AM Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
->
-> On Fri, 15 Feb 2019 at 06:49, Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
-> >
-> > On Tue, Feb 12, 2019 at 4:26 PM Ard Biesheuvel
-> > <ard.biesheuvel@linaro.org> wrote:
-> > >
-> > > On Tue, 12 Feb 2019 at 04:45, Masahiro Yamada
-> > > <yamada.masahiro@socionext.com> wrote:
-> > > >
-> > > > It took me a while to understand what is going on in the nested
-> > > > if-blocks.
-> > > >
-> > > > Simplify it by removing unneeded code.
-> > > >
-> > > >   - if_changed automatically adds 'set -e', so any failure in the
-> > > >     series of commands makes it immediately fail as a whole.
-> > > >     So, the outer if block is entirely redundant.
-> > > >
-> > > >   - Since commit 9c2af1c7377a ("kbuild: add .DELETE_ON_ERROR special
-> > > >     target"), GNU Make automatically deletes the target on any failure
-> > > >     in its recipe. The explicit 'rm -f $@' is redundant.
-> > > >
-> > > >   - surrounding commands with ( ) will spawn a subshell to execute them
-> > > >     in it, but it is rarely useful to do so.
-> > > >
-> > > > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > >
-> > > Assuming that it still works as expected:
-> > >
-> > > Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > >
-> > > You can test this by adding a statically initialized global function
-> > > pointer to any of the libstub source files that get built for ARM.
-> > >
-> > > Thanks!
-> >
-> >
-> > I tried that, and it failed as expected.
-> >
->
-> Great, thanks for double checking.
->
-> Are you taking this directly, or do you want me to take it via the EFI
-> tree? Either is fine with me
->
->
+Hi Willy,
 
-Could you apply it to your EFI tree?
-Thanks.
+Piotr reports the following crash can be triggered on latest mainline:
+
+ EXT4-fs (pmem5): recovery complete
+ EXT4-fs (pmem5): mounted filesystem with ordered data mode. Opts: dax
+ ------------[ cut here ]------------
+ kernel BUG at mm/pgtable-generic.c:127!
+ invalid opcode: 0000 [#1] SMP PTI
+ CPU: 28 PID: 1193 Comm: a.out Tainted: G        W  OE     4.19.0-rc5+ #2907
+ [..]
+ RIP: 0010:pmdp_huge_clear_flush+0x1e/0x80
+ [..]
+ Call Trace:
+  dax_writeback_mapping_range+0x473/0x8a0
+  ? print_shortest_lock_dependencies+0x40/0x40
+  ? jbd2_journal_stop+0xef/0x470
+  ? ext4_fill_super+0x3071/0x3110
+  ? __lock_is_held+0x4f/0x90
+  ? __lock_is_held+0x4f/0x90
+  ext4_dax_writepages+0xed/0x2f0
+  do_writepages+0x41/0xe0
+  __filemap_fdatawrite_range+0xbe/0xf0
+  file_write_and_wait_range+0x4c/0xa0
+  ext4_sync_file+0xa6/0x4f0
+
+I bisected this regression to commit c1901cd33cf4 "page cache: Convert
+find_get_entries_tag to XArray". I suspect another case of pte vs pmd
+confusion.
+
+Below is the small reproducer from Piotr, it triggers in a qemu
+environment with emulated pmem, but only with ext4 that I can see, but
+I did not dig too deep. Let me know if anything jumps out to you. I'll
+otherwise take a deeper look in the coming days.
 
 
+#include <sys/mman.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <string.h>
+#include <assert.h>
 
--- 
-Best Regards
-Masahiro Yamada
+#define MB (1ULL << 20)
+
+int
+main(int argc, char *argv[])
+{
+    int ret;
+    int fd;
+    off_t size = 2 * MB;
+
+    char *path = argv[1];
+
+    fd = open(path, O_RDWR | O_CREAT | O_EXCL, 0666);
+    assert(fd > 0);
+
+    ret = ftruncate(fd, size);
+    assert(ret == 0);
+
+    char *addr = mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+    assert(addr != MAP_FAILED);
+
+    memset((char*)addr, '0', 1);
+
+    ret = msync(addr + 4096, 1, MS_SYNC);
+    assert(ret == 0);
+
+    close(fd);
+
+    return 0;
+}
