@@ -2,95 +2,137 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CFB3C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 04:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6537C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 04:56:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 247F2222DD
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 04:55:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550292936;
-	bh=s6BXSDzvZx9cBI2HH51THAOoHx9pAr3Qcp/4ofk4Nqc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=TXJ/2Ce8BrUtD/iKI0iSOLvkQHCg8o9kzE/JLrf3WzAjRDSIJcaXk4ZSEwtWTvAMo
-	 NMELbH/1RK9D859NJ4sJ9YcVXB7dn8uw4VL37nFMEhNKXbfk0KQz7shI17cuDFYUC0
-	 HgIEZipAMMj65PKQe5ZUBWqGglcYK196Hr1Y+gYw=
+	by mail.kernel.org (Postfix) with ESMTP id 80BAD222A1
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 04:56:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AeeoVOnW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394549AbfBPEzc (ORCPT
+        id S2394587AbfBPE4F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 23:55:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45870 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726305AbfBPEzc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 23:55:32 -0500
-Received: from localhost (c-98-234-55-98.hsd1.ca.comcast.net [98.234.55.98])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88EAE222A1;
-        Sat, 16 Feb 2019 04:55:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550292931;
-        bh=s6BXSDzvZx9cBI2HH51THAOoHx9pAr3Qcp/4ofk4Nqc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mg5yHkRxr5iX6TSWZbA0rxvizFI/LhQwnCr0gg/LCVIA3Y+UltOKB+Phd/+soMkMq
-         iiEE7ka1mq/fECgEyKGpWbnDkwUse5mpqlV55qGG0LLJZuX6/MrdKyGDYiCDS/xSo8
-         J5UMe++NEHWVmeRDf4wjGzIQg1TRoK+0RaQhX2CQ=
-Date:   Fri, 15 Feb 2019 20:55:30 -0800
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH] f2fs: don't clear CP_QUOTA_NEED_FSCK_FLAG
-Message-ID: <20190216045530.GA57019@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190212023343.52215-1-jaegeuk@kernel.org>
- <df77f830-e5dd-5943-d5b0-e21ced3a7df2@huawei.com>
+        Fri, 15 Feb 2019 23:56:05 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:35236 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726305AbfBPE4E (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Feb 2019 23:56:04 -0500
+Received: by mail-ot1-f68.google.com with SMTP id z19so20225631otm.2;
+        Fri, 15 Feb 2019 20:56:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RNG4klDGEv3kNGo5+FcMdjwL5gIJg7XptcxvkwMC+hY=;
+        b=AeeoVOnW+7IZAlDl8y1mm89//9WY4i78VAFEVoyGppcNMJsIDtu+GZ17Ml70RTjUJ9
+         2WGxwjhaGDFL0RHbwkT4S7c3b1FD76CdnyGJkddbXHnAwKwNP2I6AZSir7NN0M4kI/IV
+         irPGJ0OwpNnyEG/6UN4ZlulFanJzWkyvHMhfCnhv0zKzZeieS3aCRwCDPAINBGzVIpvE
+         Hxa/uTzuZLTS9qrAwDTUgTGSF4wIQRok8nfQ8FOPVd6Oqiksn/fi0+UjYnLgiplLLe7D
+         zE9QtVfWfnUyegS3K4oirjt87YRIzzqRre5wQg/6hEYPaZVluqcrkKooBwZg/cPe3PJD
+         wFvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=RNG4klDGEv3kNGo5+FcMdjwL5gIJg7XptcxvkwMC+hY=;
+        b=g8wUiK+lo/94cwvMWJGh/RUEA6A1cL16hEs0qPMp736sYhOfCaN61f+5Cy00szFWp1
+         wTrZ7vSoVDq+Zmfg1V/08CjcYlhxboWife01xG28KN0K5lPSHdwkJi+jC8EP17o63RBi
+         +Qf0o0ejtKmocNEp6M8zz2pSenJpHprP/wWfTb5a53+7QNFrrnu9/rLjfnkEvozv4P3X
+         vX1JNvr6HdaArSzELQmcHoLmV0ZdxEsSzb76Tt2G8u4AoByg+FFZUsMFaqb+jQAsqxiJ
+         WfakBRyx/nG3d8aUKvY+sMsO54ddtyAZkltxvGsrmOTv7lpgIhsSrNXTLPris0voLw12
+         p9kw==
+X-Gm-Message-State: AHQUAuZXgtSCdm67x6nPXo6mA5Oua+JAdvVZNKzp49ifo2T8DG1ym+iX
+        Foe+jBsio0N4zef4MZ6fbYlWVWSG
+X-Google-Smtp-Source: AHgI3IZtlVS86zqrp3A2ZooBHBdOIioMB3Q7LuqAT8rHd/nnTo1ieLdJGbmDIKzTqluXLjMkB8en0A==
+X-Received: by 2002:aca:c2c4:: with SMTP id s187mr2582811oif.175.1550292963040;
+        Fri, 15 Feb 2019 20:56:03 -0800 (PST)
+Received: from localhost.localdomain (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
+        by smtp.gmail.com with ESMTPSA id j88sm3209480otj.47.2019.02.15.20.56.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Feb 2019 20:56:02 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>, idosch@mellanox.com,
+        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
+        bridge@lists.linux-foundation.org, jiri@mellanox.com,
+        andrew@lunn.ch, vivien.didelot@gmail.com
+Subject: [PATCH net-next v3 0/9] net: Get rid of switchdev_port_attr_get()
+Date:   Fri, 15 Feb 2019 20:55:47 -0800
+Message-Id: <20190216045556.3514-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <df77f830-e5dd-5943-d5b0-e21ced3a7df2@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/13, Chao Yu wrote:
-> On 2019/2/12 10:33, Jaegeuk Kim wrote:
-> > If we met this once, let fsck.f2fs clear this only.
-> > Note that, this addresses all the subtle fault injection test.
-> > 
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/checkpoint.c | 2 --
-> >  1 file changed, 2 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> > index 03fea4efd64b..10a3ada28715 100644
-> > --- a/fs/f2fs/checkpoint.c
-> > +++ b/fs/f2fs/checkpoint.c
-> > @@ -1267,8 +1267,6 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
-> >  
-> >  	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
-> >  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-> > -	else
-> > -		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-> 
-> I didn't get it, previously, if we didn't persist all quota file's data in
-> checkpoint, then we will tag CP_QUOTA_NEED_FSCK_FLAG in CP area, but in current
-> checkpoint, we have persisted all quota file's data, quota files are consistent
-> with all other files in filesystem, why we can't remove this NEED_FSCK flag..?
+Hi all,
 
-I said it's subtle. So, I guessed 1) set CP_QUOTA_NEED_FSCK_FLAG, 2) clear
-SBI_QUOTA_SKIP_FLUSH by checkpoint, 3) clear CP_QUOTA_NEED_FSCK_FLAG by another
-checkpoint?
+This patch series splits the removal of the switchdev_ops that was
+proposed a few times before and first tackles the easy part which is the
+removal of the single call to switchdev_port_attr_get() within the
+bridge code.
 
-> 
-> Thanks,
-> 
-> >  
-> >  	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
-> >  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-> > 
+As suggestd by Ido, this patch series adds a
+SWITCHDEV_ATTR_ID_PORT_PRE_BRIDGE_FLAGS which is used in the same
+context as the caller of switchdev_port_attr_set(), so not deferred, and
+then the operation is carried out in deferred context with setting a
+support bridge port flag.
+
+Follow-up patches will do the switchdev_ops removal after introducing
+the proper helpers for the switchdev blocking notifier to work across
+stacked devices (unlike the previous submissions).
+
+Changes in v3:
+- fixed build failure in mlxsw/spectrum_switchdev.c due to left over
+  argument
+
+- fixed unused variable in rocker
+
+Changes in v2:
+
+- differentiate callers not supporting switchdev_port_attr_set() from
+  the driver not being able to support specific bridge flags
+
+- pass "mask" instead of "flags" for the PRE_BRIDGE_FLAGS check
+
+- skip prepare phase for PRE_BRIDGE_FLAGS
+
+- corrected documentation a bit more
+
+- tested bridge_vlan_aware.sh with veth/VRF
+
+Florian Fainelli (9):
+  Documentation: networking: switchdev: Update port parent ID section
+  switchdev: Add SWITCHDEV_PORT_ATTR_SET, SWITCHDEV_PORT_ATTR_GET
+  rocker: Handle SWITCHDEV_PORT_ATTR_GET/SET
+  mlxsw: spectrum_switchdev: Handle SWITCHDEV_PORT_ATTR_GET/SET
+  net: mscc: ocelot: Handle SWITCHDEV_PORT_ATTR_GET/SET
+  staging: fsl-dpaa2: ethsw: Handle SWITCHDEV_PORT_ATTR_GET/SET
+  net: dsa: Handle SWITCHDEV_PORT_ATTR_GET/SET
+  net: switchdev: Replace port attr get/set SDO with a notification
+  net: Remove switchdev_ops
+
+ Documentation/networking/switchdev.txt        |  10 +-
+ .../net/ethernet/mellanox/mlxsw/spectrum.c    |  12 --
+ .../net/ethernet/mellanox/mlxsw/spectrum.h    |   2 -
+ .../mellanox/mlxsw/spectrum_switchdev.c       |  36 +++---
+ drivers/net/ethernet/mscc/ocelot.c            |  26 ++++-
+ drivers/net/ethernet/rocker/rocker_main.c     |  30 ++++-
+ drivers/staging/fsl-dpaa2/ethsw/ethsw.c       |  30 ++++-
+ include/linux/netdevice.h                     |   3 -
+ include/net/switchdev.h                       |  28 ++---
+ net/dsa/slave.c                               |  30 ++++-
+ net/switchdev/switchdev.c                     | 107 ++++++------------
+ 11 files changed, 168 insertions(+), 146 deletions(-)
+
+-- 
+2.19.1
+
