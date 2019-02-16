@@ -2,124 +2,86 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD352C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 03:08:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D4A7C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 03:17:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 586B8222D0
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 03:08:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BBF8222A1
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 03:17:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="LrRtHvQ5"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="3yqa2sc4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394379AbfBPDIt (ORCPT
+        id S1729312AbfBPDRP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Feb 2019 22:08:49 -0500
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:33345 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726232AbfBPDIt (ORCPT
+        Fri, 15 Feb 2019 22:17:15 -0500
+Received: from aserp2130.oracle.com ([141.146.126.79]:60590 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726263AbfBPDRO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Feb 2019 22:08:49 -0500
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id x1G38atP011746;
-        Sat, 16 Feb 2019 12:08:36 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x1G38atP011746
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1550286517;
-        bh=p2Q9L/ltzZxjvTnn9Bbjd54by4CdgaT1jnWDmxgtbfY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=LrRtHvQ5JPOf+BVDPpk7E60FeJL4VjjFij9UdqBcAFNI4tTr34WvRlsPVqBpt1lH6
-         IA23UyLKklg9XNYPTHwHjc0u61B+3oxF8N6sZpTS0wgkCVuuvMzzYzyN+kRg9u3TdO
-         asnnp2o5VnD+DjKmS2Et0HWFEHHgeobzh4Ubn+eDyDKX6R5Ofm1YYc3+NETPC2iVEL
-         fo+yPVz9yp3X5S6FOBjjo1g8L62MSUKz1LeJ0bpHPjRt+VhK4w+W1pbNffRVZF8xIF
-         K6hiiGudbnmVm7twb9Z9wzNkHxyb4xcDY5sUTimAzW9UENBgvl98fxVHRADTL5gyfD
-         ubyiqJcP4lIQQ==
-X-Nifty-SrcIP: [209.85.222.44]
-Received: by mail-ua1-f44.google.com with SMTP id q17so4232178uam.0;
-        Fri, 15 Feb 2019 19:08:36 -0800 (PST)
-X-Gm-Message-State: AHQUAubGUx/6xRR00+c66LGIJBWhZ2jBH6NG3IQvdg+LIX4pcHyJM9m9
-        SjlcYvPvMyRHf+kzMc8RBak2EbBBVFIEJbnkZzs=
-X-Google-Smtp-Source: AHgI3Ia2juXsuthv8ZyGw02D8uaGdPQ3BdOyZOLE55Az+1tNVUZUTmcMk0wcD8jm5A+wUjMYQdkYZEY0XekUCWOf4xI=
-X-Received: by 2002:ab0:2a01:: with SMTP id o1mr2230009uar.42.1550286515464;
- Fri, 15 Feb 2019 19:08:35 -0800 (PST)
+        Fri, 15 Feb 2019 22:17:14 -0500
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1G34IeA128314;
+        Sat, 16 Feb 2019 03:17:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=HE3+D+5oZCXr6QEjjhXo7D/LpdTn6L66LPwbZI4Jv9Y=;
+ b=3yqa2sc4OHZsCbEEb2U29/8jA9uGUGF4QxiQMV4TZ+vj901VKvjGLLwlCaKYSz2Hth5N
+ W7LcnOc9rpuWL90VSfGx1BGA9gxiLyS3o9El+VLwnzMRiDoentAB7ZmPLzEUezplcw5w
+ QwunX9MvRmfI2WPBTSqVV/SFAHGz0dXmFs8uNL5xqDMMfXnCHAeVajUo9Kgz0Yh44oJb
+ 39WSFL2gL+2G5JKbpe4cuCOdTO1f7Z+ZUYAbD5Z4H0jinCsVXCRiOGbgS1NnHNAdpiVs
+ EhnzRxDwwbdKv7cniw6TDWIjblF88h/VOLU1X/v69M4s1AS5Gx8vnxkDLSLA8ef8bH2b yg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2qp81dr735-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 16 Feb 2019 03:17:06 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1G3H5oS002577
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 16 Feb 2019 03:17:05 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1G3H4cs007860;
+        Sat, 16 Feb 2019 03:17:04 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 15 Feb 2019 19:17:04 -0800
+To:     John Garry <john.garry@huawei.com>
+Cc:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
+        <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, <dann.frazier@canonical.com>,
+        <yanaijie@huawei.com>
+Subject: Re: [PATCH] scsi: libsas: Fix rphy phy_identifier for PHYs with end devices attached
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1550162277-17615-1-git-send-email-john.garry@huawei.com>
+Date:   Fri, 15 Feb 2019 22:17:01 -0500
+In-Reply-To: <1550162277-17615-1-git-send-email-john.garry@huawei.com> (John
+        Garry's message of "Fri, 15 Feb 2019 00:37:57 +0800")
+Message-ID: <yq1va1kmngy.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20190211193008.24101-1-ndesaulniers@google.com>
- <20190211193008.24101-3-ndesaulniers@google.com> <CAK7LNATZY-K4g81LLvXpjp=+oMSY8L0wQoVXgHt-Bjrb2WXnNg@mail.gmail.com>
- <CAKwvOdmyNFsV=67eLQtETSDJJyDZ8aEJY1+LHuoP4OtpdQOdWQ@mail.gmail.com>
-In-Reply-To: <CAKwvOdmyNFsV=67eLQtETSDJJyDZ8aEJY1+LHuoP4OtpdQOdWQ@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sat, 16 Feb 2019 12:07:59 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQMoYNevPns0zSaSx0iU5LA+2146snNDmy9fF8v5ej5tg@mail.gmail.com>
-Message-ID: <CAK7LNAQMoYNevPns0zSaSx0iU5LA+2146snNDmy9fF8v5ej5tg@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] Makefile: lld: tell clang to use lld
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Adrian Reber <adrian@lisas.de>,
-        Richard Guy Briggs <rgb@redhat.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9168 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=506 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902160019
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 8:08 AM Nick Desaulniers
-<ndesaulniers@google.com> wrote:
->
-> On Wed, Feb 13, 2019 at 6:59 AM Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
-> >
-> > On Tue, Feb 12, 2019 at 5:42 AM <ndesaulniers@google.com> wrote:
-> > >
-> > > This is needed because clang doesn't select which linker to use based on
-> > > $LD but rather -fuse-ld=lld. This is problematic especially for
-> > > cc-ldoption, which checks for linker flag support via invoking the
-> > > compiler, rather than the linker.
-> >
-> >
-> > Sorry, please explain what kind of problem
-> > this patch solves.
-> >
-> >
-> >
-> > [1] $(LD) is used to link vmlinux, modules, etc.
-> >
-> > [2] $(CC) is used to link vdso, etc.
-> >     and -fuse-ld= selects which linker is invoked from $(CC)
->
-> It solves case 2.
->
-> >
-> >
-> > Is it a problem to use a different
-> > type of linker for [1] and [2] ?
->
-> Ideally, no, but I can think of at least one case where it might be
-> problematic to mix linkers like that:
-> You might be mixing linker flags added via ld-option from one linker
-> that aren't actually supported by the other linker.
 
-You can do this only when you are sure
-that the _exactly_ same linker is used.
+John,
 
-In my understanding, -fuse-ld=lld does not guarantee it.
+> The sysfs phy_identifier attribute for a sas_end_device comes
+> from the rphy phy_identifier value.
 
-
+Applied to 5.0/scsi-fixes, thank you!
 
 -- 
-Best Regards
-Masahiro Yamada
+Martin K. Petersen	Oracle Linux Engineering
