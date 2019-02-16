@@ -2,87 +2,80 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ABF6C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 20:28:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A42A4C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 20:46:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE2B4218C3
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 20:28:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F91F21B1C
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 20:46:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733197AbfBPU2X convert rfc822-to-8bit (ORCPT
+        id S1733020AbfBPUqe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 15:28:23 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:45420 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730653AbfBPU2X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 15:28:23 -0500
-Received: from p57b77d08.dip0.t-ipconnect.de ([87.183.125.8] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1gv6ZP-0007d1-K7; Sat, 16 Feb 2019 21:28:19 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Alexandru M Stan <amstan@chromium.org>
-Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Doug Anderson <dianders@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>, kernel@collabora.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] ARM: dts: rockchip: add chosen node on veyron chromebooks
-Date:   Sat, 16 Feb 2019 21:28:13 +0100
-Message-ID: <2105716.Hge0YL7z4n@phil>
-In-Reply-To: <CAHNYxRzyVjLbT00ryBBkqK67JKFs7bvFR=G=rdvVa_o-q8zN9Q@mail.gmail.com>
-References: <20190215115150.32299-1-enric.balletbo@collabora.com> <22158501.cNvkU8jGDh@diego> <CAHNYxRzyVjLbT00ryBBkqK67JKFs7bvFR=G=rdvVa_o-q8zN9Q@mail.gmail.com>
+        Sat, 16 Feb 2019 15:46:34 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:57535 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729018AbfBPUqe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Feb 2019 15:46:34 -0500
+X-Originating-IP: 141.70.45.131
+Received: from localhost (hadi-gate-vlan-851.hadiko.whka.de [141.70.45.131])
+        (Authenticated sender: hle@owl.eu.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id B46A0E0002;
+        Sat, 16 Feb 2019 20:46:28 +0000 (UTC)
+Date:   Sat, 16 Feb 2019 21:46:27 +0100
+From:   Hugo Lefeuvre <hle@owl.eu.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, Todd Kjos <tkjos@android.com>,
+        Greg Hartman <ghartman@google.com>,
+        Alistair Strachan <astrachan@google.com>,
+        linux-kernel@vger.kernel.org,
+        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Martijn Coenen <maco@android.com>,
+        Christian Brauner <christian@brauner.io>
+Subject: Re: [PATCH] staging/android: use multiple futex wait queues
+Message-ID: <20190216204627.GA2173@behemoth.owl.eu.com.local>
+References: <20190214173459.GA10737@behemoth.owl.eu.com.local>
+ <20190214175053.GA11103@kroah.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190214175053.GA11103@kroah.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Samstag, 16. Februar 2019, 02:13:25 CET schrieb Alexandru M Stan:
-> On Fri, Feb 15, 2019 at 3:09 PM Heiko Stübner <heiko@sntech.de> wrote:
-> >
-> > Hi Enric,
-> >
-> > Am Freitag, 15. Februar 2019, 12:51:50 CET schrieb Enric Balletbo i Serra:
-> > > In order to use earlycon, the stdout-path property needs to be set
-> > > in the chosen node.
-> > >
-> > > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> >
-> > What's the reason for adding this only for the Chromebook variants?
-> > Uart2 is pretty much the standard output for all devices, so I'd assume
-> > at least all veyron boards should use uart2 as well, making this ideally
-> > live in the rk3288-veyron.dtsi instead?
-> 
-> Yep, all veyriants use uart 2, even when they're not chromebooks.
-> Feel free to put it in the other file instead.
-> 
-> Otherwise it'll make things like the Asus Chromebit (mickey), AOpen
-> Chromebox mini (fievel), and AOpen Chromebase (tiger) unhappy
-> while debugging.
-> 
-> The rk3288-veyron-chromebook.dtsi file is more for things that make
-> a chromebook portable. Ex: built in display, lid switch, cros-ec.
-> 
-> Note how we have no uart2 references either in our tree in the
-> chromebook specific dtsi:
-> https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.14/arch/arm/boot/dts/rk3288-veyron-chromebook.dtsi
+Hi,
 
-thanks for the confirmation :-) .
+> Have you tested this?
 
-I've moved the choosen node over to veyron.dtsi and applied the result
-for 5.1
+I have finally set up a cuttlefish test env and tested both my first
+patch set[0] and this patch (v2).
 
-Thanks
-Heiko
+My first patch set works fine. I have nothing to say about it.
 
+> Noticed any performance speedups or slow downs?
 
+This patch doesn't work.
+
+The boot process goes well. Overall, calls to vsoc_cond_wake are executed
+slightly faster. However the system freezes at some point.
+
+The graphical interface generates many calls to vsoc_cond_wake and wait,
+so I suspect an issue with the locks. I will investigate this and come back
+with an updated patch.
+
+regards,
+ Hugo
+
+[0] https://lore.kernel.org/patchwork/patch/1039712/
+
+-- 
+                Hugo Lefeuvre (hle)    |    www.owl.eu.com
+RSA4096_ 360B 03B3 BF27 4F4D 7A3F D5E8 14AA 1EB8 A247 3DFD
+ed25519_ 37B2 6D38 0B25 B8A2 6B9F 3A65 A36F 5357 5F2D DC4C
