@@ -2,141 +2,182 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA288C43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 21:53:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B905C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 21:55:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE86D21A4A
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 21:53:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BD4A21A4A
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 21:55:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W4/rHPid"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A86C0ov0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727748AbfBPVxK (ORCPT
+        id S1733230AbfBPVzE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 16:53:10 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:46404 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727170AbfBPVxJ (ORCPT
+        Sat, 16 Feb 2019 16:55:04 -0500
+Received: from mail-lf1-f50.google.com ([209.85.167.50]:35192 "EHLO
+        mail-lf1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727170AbfBPVzE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 16:53:09 -0500
-Received: by mail-ed1-f67.google.com with SMTP id f2so10675815edy.13;
-        Sat, 16 Feb 2019 13:53:08 -0800 (PST)
+        Sat, 16 Feb 2019 16:55:04 -0500
+Received: by mail-lf1-f50.google.com with SMTP id v7so9691378lfd.2;
+        Sat, 16 Feb 2019 13:55:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=O0Y07SSr71M/Pw1dkZpd+Pqcpn6B//XOq11C1nTZD20=;
-        b=W4/rHPidNH2lZ0pKp3hetWrrtHJJTJGwtPSLshIuQYu6Tid5eTfUJvHoP0NSnLD0W3
-         cQ10MsIyiRxBx81XoGSPeoynU4Uq8UjPeErb+CQtiO5McTpmpxny8nSBcMexjnTTl4c5
-         4IU7bKk3Crv+RuIT4f7MI34ScqtY/9Pv4rrn32LO/zaRYqp0bIhR4j7xB1oQLl/BXbgO
-         L3ifMhUEMMyxhawBJbSkFGL1X/rO1VoMUso9GWXbLFCQ4oLfVoRuUmzkN7OwdvZd5gGP
-         6sgO4PBNmuwilUdQ8/bFUIl6JpUTKZhRqoGhDa+f1qk338pNd5JGSftPkRcB/tPL4j7M
-         Jp9w==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=VY7fHHAG4KU8LXetcIebfHfOpmZI8CPCLYXRFWTEkQM=;
+        b=A86C0ov0y+M/ZBU+lzVgKBWnhsmQU8ax+dns/VcaYJJtBSRVnoCxFOZQLbsLVVUloK
+         XDArR3/LgNVoIlsnnOhLP6gP2yWcTb9pc3GzMcij7rLxj/VwPQe/62+xgDLaJbJvoqgZ
+         BPef0rHS4/ES41SibteOsmQvyLc+JV1+1tc5onm6ZFOZNP4CbeWYHlYDDa+vjaPAwGlt
+         VngWw7YkGhJeVuPQsj/9VCYI0i1Il6RbHYz0LCHX0OS8I4jD+EAG7xKSXapGOoHmZ8z7
+         hZGL7x3+fv3rWXx6ySYJKzSoCbjxg3VRwE8lFchEfTPVbZ8MM4Ae8iVpjsJUnJNjE9CU
+         ObdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=O0Y07SSr71M/Pw1dkZpd+Pqcpn6B//XOq11C1nTZD20=;
-        b=n6C74ugt/bx1X0VYwAhNpNXQA2/ZlJa24TTyYnDhnGfcS7A8aqYy98Ea9R+4emqUbu
-         cTvUczzJC0OJVevn1vr0BNG5nEDtY80pAnpF/7NjeRyp8CuT6bG9tHgIN+l+sg+F+O5p
-         givObWHrjnt+OOfj6rfWwy9nhC1tBt/8vTO7KaGe+2bQnifRFzkeEfZk5WzwuBPVYRlD
-         9JSnB5YS7kVH4Ezxz7Jpacz87d04JTJ3pNV+S0/5tPpb+SRi+UVfCWlO6PGgAI0FSpSB
-         YqBHYJ+LbgqIhSfiY9KhTL/y2SdvSm0eQBSUHzbzW7UxnUjsZ6AeR9r5enqKljUVdlBa
-         qdYg==
-X-Gm-Message-State: AHQUAubn9Rzovj3TyBAn9QZdLkKxBIEMXZ49z1TuH/B6JgEVaK2jJxnF
-        1l+IJ2zQeiALDe1lAUTsNbw=
-X-Google-Smtp-Source: AHgI3IapEEE4XQrZ6wliEPZutDuLKQ3R634VL7mkoK7ZSH8z71aCSCdf+FNTufTVQYGe77bwpVBTbg==
-X-Received: by 2002:a17:906:b5b:: with SMTP id v27mr11397599ejg.127.1550353987663;
-        Sat, 16 Feb 2019 13:53:07 -0800 (PST)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id h24sm2217424edr.80.2019.02.16.13.53.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 16 Feb 2019 13:53:06 -0800 (PST)
-Date:   Sat, 16 Feb 2019 21:53:05 +0000
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Wei Yang <richard.weiyang@gmail.com>,
-        "Tobin C. Harding" <tobin@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] xarray: Document erasing entries during iteration
-Message-ID: <20190216215305.vdlshknfisgee7gy@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20190212072958.17373-1-tobin@kernel.org>
- <20190212135129.GL12668@bombadil.infradead.org>
- <20190213144744.ifejzbxrbaltivwc@master>
- <20190213161258.GS12668@bombadil.infradead.org>
- <20190214221652.rwctk7wrocpojtfy@master>
- <20190214223300.GH12668@bombadil.infradead.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=VY7fHHAG4KU8LXetcIebfHfOpmZI8CPCLYXRFWTEkQM=;
+        b=PmEFPaafZUxeno2EpA9o3tKNKFRJ24pBewaNBYhsVd2VA3+nkghzVnLZ82fqtSLv9/
+         Xcnb6QvfPeGSoGY/enlCVWXvWtW0L/pelPMp8zh52s0gVVSo4GGGYmsdGXIDdtc9HnMx
+         UeUD6ZQctwBaihxLhaNpfPioue8wjWLJ4LzX4ALUI7W6EN/1MpeDi8GE+KgMjR2R4cH0
+         AgEB95+omLS5HdVcvf4ndEcJPbvlDtQaAXLCvTbER2r79G0VdMzJ69V0sX0sCEMegbAR
+         O8nR4fOhF15w05xhoN/01cuBxjgreCnCmpVUutFdSM3JiMelFYrnP3WdBC9hhvU/QRtI
+         HZPA==
+X-Gm-Message-State: AHQUAuZ42fvBl7CDS4LID9z6XAisJJx7VEmqlVzi8GDod8T2IzlTDwRn
+        ta4sSCGtbaafW0gkKRW7eUidSb5e
+X-Google-Smtp-Source: AHgI3Ibt2MOTxxgLYnITYQCJ9JwwVtPklpNDs18SXSDbTJupeUJK7cVxhSjn2gZ16Lu+H8UEAB3JbA==
+X-Received: by 2002:a19:5013:: with SMTP id e19mr9238351lfb.89.1550354100673;
+        Sat, 16 Feb 2019 13:55:00 -0800 (PST)
+Received: from [192.168.1.18] (chf73.neoplus.adsl.tpnet.pl. [83.31.3.73])
+        by smtp.gmail.com with ESMTPSA id q123-v6sm2397530ljb.60.2019.02.16.13.54.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 16 Feb 2019 13:54:59 -0800 (PST)
+Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
+ LEDs
+To:     Pavel Machek <pavel@ucw.cz>, Hans de Goede <hdegoede@redhat.com>
+Cc:     Yauhen Kharuzhy <jekhor@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+References: <92cf09b8-726d-4f1b-94ba-368a66af2246@redhat.com>
+ <2b6faaa5-b21e-a512-de7d-ca21be5045fc@gmail.com> <20190214230307.GA17358@amd>
+ <2a5e2002-e5f1-6da3-8a43-317801b69657@redhat.com>
+ <3d5407a7-9458-f071-a1d5-511b09678e20@gmail.com>
+ <87a21c4e-8e5e-c180-2ff3-eb8170746e71@redhat.com>
+ <80971bc3-1193-83ed-913a-12f6217016c8@gmail.com>
+ <b15fd048-8206-4057-a354-07dc14ca15e3@redhat.com>
+ <8a263266-a41f-c916-e990-02d04de9b5d0@gmail.com>
+ <af5bec7b-0da1-ee19-cdf4-0240f56221ad@redhat.com>
+ <20190216193727.GA14305@amd>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <2d5c6f50-c41f-655c-ab03-0c66aa911a27@gmail.com>
+Date:   Sat, 16 Feb 2019 22:54:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190214223300.GH12668@bombadil.infradead.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190216193727.GA14305@amd>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 02:33:00PM -0800, Matthew Wilcox wrote:
->On Thu, Feb 14, 2019 at 10:16:52PM +0000, Wei Yang wrote:
->> On Wed, Feb 13, 2019 at 08:12:58AM -0800, Matthew Wilcox wrote:
->> >The only remaining user of the radix tree in that tree is the IDR.  So
->> >now I'm converting the IDR users over to the XArray as well.
->> 
->> Wow, really a HUGE work.
->
->Yes ... but necessary.  Have to pay down the technical debt.
->
->> >But that isn't what I was talking about.  At the moment, the radix
->> >tree and the XArray use the same data structure.  It has good best-case
->> >performance, but shockingly bad worst-case performance.  So we're looking
->> >at replacing the data structure, which won't require changing any of the
->> >users (maybe the page cache ... that has some pretty intimate knowledge
->> >of exactly how the radix tree works).
->> 
->> Two questions from my curiosity:
->> 
->> 1. Why you come up the idea to replace radix tree with XArray even they
->>    use the same data structure?
->
->The radix tree API was just awful to use.  I tried to convert some users
->with their own resizing-array-of-pointers to use the radix tree, and I
->gave up in disgust.  I believe the XArray is much simpler to use.
->
->> 2. The worst-case performance is related to the data structure itself?
->
->Yes.  Consider the case where you store a pointer at its own address in
->the data structure.  It'll allocate 11 nodes occupying one-and-a-half pages
->of RAM in order to store a single pointer.
->
+On 2/16/19 8:37 PM, Pavel Machek wrote:
+> Hi!
+> 
+>>>>>> I think that should work fine, which means that we can use the timer and
+>>>>>> pattern trigger support for the blinking and breathing modes.
+>>>>>>
+>>>>>> That still leaves the switching between user and hw-control modes,
+>>>>>> as discussed the hw-controlled mode could be modelled as a new "hardware"
+>>>>>> trigger, but then we cannot choose between on/blink/breathing when
+>>>>>> in hw-controlled mode. As Pavel mentioned, that would require some
+>>>>>> sort of composed trigger, where we have both the hardware and
+>>>>>> timer triggers active for example.
+>>>>>>
+>>>>>> I think it might be easier to just allow turning on/off the hardware
+>>>>>> control mode through a special "hardware_control" sysfs attribute and
+>>>>>> then use the existing timer and pattern triggers for blinking / breathing.
+>>>>>
+>>>>> Pattern trigger exposes pattern file by default and hw_pattern if
+>>>>> pattern_set/get ops are provided. Writing them enables software and
+>>>>> hardware pattern respectively.
+>>>>
+>>>> This is not about software vs hardware pattern.
+>>>>
+>>>> There are 2 *orthogonal*, separate problems/challenges with this LED controller:
+>>>>
+>>>> 1) It has hardware blinking and breathing, as discussed this can be
+>>>> controlled through the timer and pattern triggers, so this problem
+>>>> is solved.
+>>>>
+>>>> 2) It has 2 operating modes:
+>>>>
+>>>> a) Automatic/hardware controlled, in this mode the LED is turned
+>>>> off or on (where on can be continues on, blinking or breathing)
+>>>> by the hardware itself, when in this mode we / userspace is not
+>>>> in control of the LED
+>>>>
+>>>> b) Manual/user controlled mode, in this mode we / userspace can
+>>>> control of the LED.
+>>>>
+>>>> Currently there is no API in the ledclass to switch a LED from
+>>>> automatic controlled to user controlled and back, This is what
+>>>> the proposed hardware trigger was for, to switch to automatic
+>>>> mode. A problem with this is that we still want to be able
+>>>> to chose between continues on, blinking or breathing (when on),
+>>>> configure the max brightness, etc.
+>>>
+>>> Yes, we do have the API to switch a LED from automatic (hardware
+>>> accelerated) control to software control and back. This is pattern
+>>> trigger, which exposes two files for setting pattern: pattern
+>>> and hw_pattern. Writing pattern file switches the device to software
+>>> control mode and writing hw_pattern switches it to the hardware control,
+>>> with the possibility of defining device specific ABI syntax to enable
+>>> particular pattern (blinking, breathing or event permanently on
+>>> in case of this device).
+>>
+>> OK, I see. So we would use the hw_pattern for this and the driver
+>> would implement the pattern_set led_classdev callback.
+>>
+>> The pattern_set callback would then expect 6 brightness/time tuples
+>> with the following meaning for the time part of each tupple
+>>
+>> tupple0: charging blinking_on_time
+>> tupple1: charging blinking_off_time
+>> tupple2: charging breathing_time
+>> tupple3: manual blinking_on_time
+>> tupple4: manual blinking_off_time
+>> tupple5: manual breathing_time
+>>
+>> Where only the times in tupple 0-2; or the times in 3-5 can be
+>> non-zero. Having non zero times for both some charging and some
+>> manual values is not allowed.
+>>
+>> If a breathing time is set, none of the other times may be non
+>> 0. If blinkig_on and blinking_off are used then breathing_time
+>> must be 0.
+>>
+>> When configured to blink then blinking_off must be either 0
+>> (continuously on); or it must be the same as blinking_on.
+>>
+>>
+>> I believe this will work, does this sound ok to you ?
+> 
+> I don't pretend to fully understand it, _but_ hw_pattern should really
+> describe the pattern LED should do, not whether it reacts to charging
+> or not.
 
-Thanks for your explanation :-)
-
->> >> BTW, have we compared the performance difference?
->> >
->> >It's in the noise.  Sometimes the XArray does a little better because
->> >the APIs encourage the user to do things in a more efficient way.
->> >Some of the users are improved just because the original author didn't
->> >know about a more efficient way of doing what they wanted to do.
->> 
->> So sometimes XArray does a little worse?
->> 
->> Why this happens whey XArray and radix tree has the same data structure?
->> 
->> Interesting.
->
->I'm not sure there are any cases where the XArray does worse.
->Feel free to run your own measurements ... the test cases in
->tools/testing/radix-tree can always do with being improved ;-) (that
->directory is a bit misnamed as it now features tests for the radix tree,
->IDR, IDA and XArray).
-
-Sure, I will try to play with this.
+This is hardware specific and is supposed to have dedicated ABI
+documentation. There's no reason to introduce new mechanisms when
+existing ones fit. It will still describe a pattern but activated
+on some condition.
 
 -- 
-Wei Yang
-Help you, Help me
+Best regards,
+Jacek Anaszewski
