@@ -2,93 +2,128 @@ Return-Path: <SRS0=3DzG=QX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8809BC43381
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 08:17:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C13D1C43381
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 08:29:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54C8D222D9
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 08:17:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="cWBbF337"
+	by mail.kernel.org (Postfix) with ESMTP id 8F494222D0
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Feb 2019 08:29:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729169AbfBPIRv (ORCPT
+        id S1729854AbfBPI3J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 03:17:51 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34674 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726159AbfBPIRu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 03:17:50 -0500
-Received: by mail-lj1-f193.google.com with SMTP id l5so6911162lje.1
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Feb 2019 00:17:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UwKg6lAUAHmUWtD97HsnVvOS9TLzLzFe+nliVxQzXvY=;
-        b=cWBbF337z7MXOvEzPl4MHbg2cmn8t1/44lAwKxtDd8GG3EOs7M6hs/WQ/wycPYfQYJ
-         +yzLDripSaeRgXWnUbJvj/V4x/PxRN8Ma9ArY2HuYak5qgGaWGu6q+HJlpEiBKouAXPH
-         6MkJniAN9DzGoeab5IDgkkPIbhDkRc//nUxbrSn0uGJ3CpjVNT1zLKX5Ynn7uOFybFR+
-         lyTkn0E3uD2lmylVgE2Qzx01B97r6HwH8Hc8+ys7FOu9Av7brvubX+AXpMXSmv2LvbnH
-         ddbhtRsZC5Uar63cg8FWAU8UFDsqhS4PpWMDKMewf9qjR2M6VsLZa8xreE2yqNTBH/fk
-         qryg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UwKg6lAUAHmUWtD97HsnVvOS9TLzLzFe+nliVxQzXvY=;
-        b=fvkqXc9tdFjuTmgnTxU2P9N//JgSOoEOqzKevaT9Q0UK5ButBm4dra2yol+t/BRRFd
-         EQdxvVbT8a85YZnv4YCPeRR2PgVH+5NsRGxgFqLBdVfDXrlNY3K8PIwciycuoEaGKecH
-         BGA3l3m1fitLyCO7jPuGEIPAw2S7klIgXaqkaupyZ/1G1V+uqn9yEmi1SR5ZzpGF1BMQ
-         JvDvv2rH0Ivd45dj0rvb9twWx1EBva3Tu5U7Mvu5A+d6Hv5+NwvgHQ9Vmy2/SQ9f2jGu
-         pGGVoe3zWs5TgBy0jC16aypmY34X7VPzTo/yecFbQF1ZE66cAlR/urj+6H83uF3mgqvC
-         iYQQ==
-X-Gm-Message-State: AHQUAua8u/sJIiqaWlsTGzOJkrPuubVSTqRAuAq81M2HRrSDBEX052Jc
-        yEJjPPlzy6pZXERWStpJqpukzQ==
-X-Google-Smtp-Source: AHgI3Ia2ChMcnc5pS/c0XvtfS8cESMzFsgcV+danaID+WebIU86vji2bLiopd1dBqFy0xjwubfjGZw==
-X-Received: by 2002:a2e:918d:: with SMTP id f13mr8755988ljg.151.1550305068669;
-        Sat, 16 Feb 2019 00:17:48 -0800 (PST)
-Received: from [192.168.0.199] ([31.173.80.82])
-        by smtp.gmail.com with ESMTPSA id m25sm423952lfl.93.2019.02.16.00.17.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 16 Feb 2019 00:17:47 -0800 (PST)
-Subject: Re: [PATCH] net: mv643xx_eth: disable clk on error path in
- mv643xx_eth_shared_probe()
-To:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ldv-project@linuxtesting.org
-References: <1550265654-6626-1-git-send-email-khoroshilov@ispras.ru>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Message-ID: <f736a332-a81f-2e1a-bc04-8870deac5065@cogentembedded.com>
-Date:   Sat, 16 Feb 2019 11:17:32 +0300
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
-MIME-Version: 1.0
-In-Reply-To: <1550265654-6626-1-git-send-email-khoroshilov@ispras.ru>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sat, 16 Feb 2019 03:29:09 -0500
+Received: from mxhk.zte.com.cn ([63.217.80.70]:49336 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728502AbfBPI3I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Feb 2019 03:29:08 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 0CDAF2FF1405BE06D771;
+        Sat, 16 Feb 2019 16:29:06 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id x1G8SxfA021053;
+        Sat, 16 Feb 2019 16:28:59 +0800 (GMT-8)
+        (envelope-from peng.hao2@zte.com.cn)
+Received: from localhost.localdomain.localdomain ([10.74.120.59])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2019021616291107-251064 ;
+          Sat, 16 Feb 2019 16:29:11 +0800 
+From:   Peng Hao <peng.hao2@zte.com.cn>
+To:     gregkh@linuxfoundation.org, arnd@arndb.de,
+        andy.shevchenko@gmail.com
+Cc:     linux-kernel@vger.kernel.org, Peng Hao <peng.hao2@zte.com.cn>
+Subject: [PATCH V5 1/4]  misc/pvpanic : preparing for pvpanic driver framework
+Date:   Sun, 17 Feb 2019 00:50:40 +0800
+Message-Id: <1550335843-108902-2-git-send-email-peng.hao2@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1550335843-108902-1-git-send-email-peng.hao2@zte.com.cn>
+References: <1550335843-108902-1-git-send-email-peng.hao2@zte.com.cn>
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2019-02-16 16:29:11,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2019-02-16 16:28:40,
+        Serialize complete at 2019-02-16 16:28:40
+X-MAIL: mse01.zte.com.cn x1G8SxfA021053
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.02.2019 0:20, Alexey Khoroshilov wrote:
+Preparing for pvpanic driver framework. Create a pvpanic driver
+directory and move current driver file to new directory.
 
-> If mv643xx_eth_shared_of_probe() fails, mv643xx_eth_shared_probe()
-> leaves clk undisabled.
+Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+---
+ drivers/misc/Kconfig                 | 9 +--------
+ drivers/misc/Makefile                | 2 +-
+ drivers/misc/pvpanic/Kconfig         | 7 +++++++
+ drivers/misc/pvpanic/Makefile        | 5 +++++
+ drivers/misc/{ => pvpanic}/pvpanic.c | 0
+ 5 files changed, 14 insertions(+), 9 deletions(-)
+ create mode 100644 drivers/misc/pvpanic/Kconfig
+ create mode 100644 drivers/misc/pvpanic/Makefile
+ rename drivers/misc/{ => pvpanic}/pvpanic.c (100%)
 
-    Enabled, that is? :-)
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index f417b06..aa3a805 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -513,14 +513,7 @@ config MISC_RTSX
+ 	tristate
+ 	default MISC_RTSX_PCI || MISC_RTSX_USB
+ 
+-config PVPANIC
+-	tristate "pvpanic device support"
+-	depends on HAS_IOMEM && (ACPI || OF)
+-	help
+-	  This driver provides support for the pvpanic device.  pvpanic is
+-	  a paravirtualized device provided by QEMU; it lets a virtual machine
+-	  (guest) communicate panic events to the host.
+-
++source "drivers/misc/pvpanic/Kconfig"
+ source "drivers/misc/c2port/Kconfig"
+ source "drivers/misc/eeprom/Kconfig"
+ source "drivers/misc/cb710/Kconfig"
+diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+index e39ccbb..cfe20b3 100644
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@ -58,4 +58,4 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)	+= aspeed-lpc-snoop.o
+ obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
+ obj-$(CONFIG_OCXL)		+= ocxl/
+ obj-y				+= cardreader/
+-obj-$(CONFIG_PVPANIC)   	+= pvpanic.o
++obj-$(CONFIG_PVPANIC)   	+= pvpanic/
+diff --git a/drivers/misc/pvpanic/Kconfig b/drivers/misc/pvpanic/Kconfig
+new file mode 100644
+index 0000000..3e612c6
+--- /dev/null
++++ b/drivers/misc/pvpanic/Kconfig
+@@ -0,0 +1,7 @@
++config PVPANIC
++	tristate "pvpanic device support"
++	depends on HAS_IOMEM && (ACPI || OF)
++	help
++	  This driver provides support for the pvpanic device.  pvpanic is
++	  a paravirtualized device provided by QEMU; it lets a virtual machine
++	  (guest) communicate panic events to the host.
+diff --git a/drivers/misc/pvpanic/Makefile b/drivers/misc/pvpanic/Makefile
+new file mode 100644
+index 0000000..6394224
+--- /dev/null
++++ b/drivers/misc/pvpanic/Makefile
+@@ -0,0 +1,5 @@
++# SPDX-License-Identifier: GPL-2.0
++# 
++# Copyright (c) 2018 ZTE Ltd.
++
++obj-$(CONFIG_PVPANIC)            += pvpanic.o
+diff --git a/drivers/misc/pvpanic.c b/drivers/misc/pvpanic/pvpanic.c
+similarity index 100%
+rename from drivers/misc/pvpanic.c
+rename to drivers/misc/pvpanic/pvpanic.c
+-- 
+1.8.3.1
 
-> Found by Linux Driver Verification project (linuxtesting.org).
-> 
-> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-[...]
-
-MBR, Sergei
