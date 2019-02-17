@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C83C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:09:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1682AC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:09:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 025AC21934
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:09:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E25C621900
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:09:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727871AbfBQJJc (ORCPT
+        id S1727895AbfBQJJg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 04:09:32 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:35782 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727766AbfBQJJ3 (ORCPT
+        Sun, 17 Feb 2019 04:09:36 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:41745 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727866AbfBQJJe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 04:09:29 -0500
-X-UUID: 82b06576883244c5afd4a577cdd323c2-20190217
-X-UUID: 82b06576883244c5afd4a577cdd323c2-20190217
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        Sun, 17 Feb 2019 04:09:34 -0500
+X-UUID: b797d83fc235450d944ad4fbfaf9790a-20190217
+X-UUID: b797d83fc235450d944ad4fbfaf9790a-20190217
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
         (envelope-from <yong.wu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 948821970; Sun, 17 Feb 2019 17:09:22 +0800
+        with ESMTP id 441582375; Sun, 17 Feb 2019 17:09:29 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
  mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Sun, 17 Feb 2019 17:09:15 +0800
+ 15.0.1395.4; Sun, 17 Feb 2019 17:09:27 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Sun, 17 Feb 2019 17:09:14 +0800
+ Transport; Sun, 17 Feb 2019 17:09:26 +0800
 From:   Yong Wu <yong.wu@mediatek.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Robin Murphy <robin.murphy@arm.com>,
         Rob Herring <robh+dt@kernel.org>
 CC:     Evan Green <evgreen@chromium.org>, Tomasz Figa <tfiga@google.com>,
-        "Will Deacon" <will.deacon@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         <linux-mediatek@lists.infradead.org>,
         <srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
@@ -47,65 +47,83 @@ CC:     Evan Green <evgreen@chromium.org>, Tomasz Figa <tfiga@google.com>,
         <yong.wu@mediatek.com>, <youlin.pei@mediatek.com>,
         Nicolas Boichat <drinkcat@chromium.org>,
         <anan.sun@mediatek.com>, Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v6 18/22] iommu/mediatek: Fix VLD_PA_RNG register backup when suspend
-Date:   Sun, 17 Feb 2019 17:04:56 +0800
-Message-ID: <1550394300-17420-19-git-send-email-yong.wu@mediatek.com>
+Subject: [PATCH v6 20/22] iommu/mediatek: Rename enable_4GB to dram_is_4gb
+Date:   Sun, 17 Feb 2019 17:04:58 +0800
+Message-ID: <1550394300-17420-21-git-send-email-yong.wu@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1550394300-17420-1-git-send-email-yong.wu@mediatek.com>
 References: <1550394300-17420-1-git-send-email-yong.wu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: A7151B9DA4F9E89147C6CC1F4B871371515F1B8B8C1F48BB057BF6B44FC332782000:8
+X-TM-SNTS-SMTP: 5B0FB1D48A92A447B225EC4968B7729CBEFB9D291F130389DD051641658FA1BE2000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The register VLD_PA_RNG(0x118) was forgot to backup while adding 4GB
-mode support for mt2712. this patch add it.
+This patch only rename the variable name from enable_4GB to
+dram_is_4gb for readable.
 
-Fixes: 30e2fccf9512 ("iommu/mediatek: Enlarge the validate PA range
-for 4GB mode")
 Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-Reviewed-by: Evan Green <evgreen@chromium.org>
 ---
- drivers/iommu/mtk_iommu.c | 2 ++
- drivers/iommu/mtk_iommu.h | 1 +
- 2 files changed, 3 insertions(+)
+ drivers/iommu/mtk_iommu.c | 10 +++++-----
+ drivers/iommu/mtk_iommu.h |  2 +-
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-index 22c508b..b02854c 100644
+index 8742841..0277396 100644
 --- a/drivers/iommu/mtk_iommu.c
 +++ b/drivers/iommu/mtk_iommu.c
-@@ -715,6 +715,7 @@ static int __maybe_unused mtk_iommu_suspend(struct device *dev)
- 	reg->int_control0 = readl_relaxed(base + REG_MMU_INT_CONTROL0);
- 	reg->int_main_control = readl_relaxed(base + REG_MMU_INT_MAIN_CONTROL);
- 	reg->ivrp_paddr = readl_relaxed(base + REG_MMU_IVRP_PADDR);
-+	reg->vld_pa_rng = readl_relaxed(base + REG_MMU_VLD_PA_RNG);
- 	clk_disable_unprepare(data->bclk);
- 	return 0;
- }
-@@ -739,6 +740,7 @@ static int __maybe_unused mtk_iommu_resume(struct device *dev)
- 	writel_relaxed(reg->int_control0, base + REG_MMU_INT_CONTROL0);
- 	writel_relaxed(reg->int_main_control, base + REG_MMU_INT_MAIN_CONTROL);
- 	writel_relaxed(reg->ivrp_paddr, base + REG_MMU_IVRP_PADDR);
-+	writel_relaxed(reg->vld_pa_rng, base + REG_MMU_VLD_PA_RNG);
- 	if (m4u_dom)
- 		writel(m4u_dom->cfg.arm_v7s_cfg.ttbr[0] & MMU_PT_ADDR_MASK,
- 		       base + REG_MMU_PT_BASE_ADDR);
+@@ -382,7 +382,7 @@ static int mtk_iommu_map(struct iommu_domain *domain, unsigned long iova,
+ 	int ret;
+ 
+ 	/* The "4GB mode" M4U physically can not use the lower remap of Dram. */
+-	if (data->plat_data->has_4gb_mode && data->enable_4GB)
++	if (data->plat_data->has_4gb_mode && data->dram_is_4gb)
+ 		paddr |= BIT_ULL(32);
+ 
+ 	spin_lock_irqsave(&dom->pgtlock, flags);
+@@ -554,13 +554,13 @@ static int mtk_iommu_hw_init(const struct mtk_iommu_data *data)
+ 	writel_relaxed(regval, data->base + REG_MMU_INT_MAIN_CONTROL);
+ 
+ 	if (data->plat_data->m4u_plat == M4U_MT8173)
+-		regval = (data->protect_base >> 1) | (data->enable_4GB << 31);
++		regval = (data->protect_base >> 1) | (data->dram_is_4gb << 31);
+ 	else
+ 		regval = lower_32_bits(data->protect_base) |
+ 			 upper_32_bits(data->protect_base);
+ 	writel_relaxed(regval, data->base + REG_MMU_IVRP_PADDR);
+ 
+-	if (data->enable_4GB && data->plat_data->has_vld_pa_rng) {
++	if (data->dram_is_4gb && data->plat_data->has_vld_pa_rng) {
+ 		/*
+ 		 * If 4GB mode is enabled, the validate PA range is from
+ 		 * 0x1_0000_0000 to 0x1_ffff_ffff. here record bit[32:30].
+@@ -611,8 +611,8 @@ static int mtk_iommu_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	data->protect_base = ALIGN(virt_to_phys(protect), MTK_PROTECT_PA_ALIGN);
+ 
+-	/* Whether the current dram is over 4GB */
+-	data->enable_4GB = !!(max_pfn > (BIT_ULL(32) >> PAGE_SHIFT));
++	/* Whether the current dram is 4GB. */
++	data->dram_is_4gb = !!(max_pfn > (BIT_ULL(32) >> PAGE_SHIFT));
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	data->base = devm_ioremap_resource(dev, res);
 diff --git a/drivers/iommu/mtk_iommu.h b/drivers/iommu/mtk_iommu.h
-index db12424..dedf05c 100644
+index dedf05c..90e98a6 100644
 --- a/drivers/iommu/mtk_iommu.h
 +++ b/drivers/iommu/mtk_iommu.h
-@@ -33,6 +33,7 @@ struct mtk_iommu_suspend_reg {
- 	u32				int_control0;
- 	u32				int_main_control;
- 	u32				ivrp_paddr;
-+	u32				vld_pa_rng;
- };
+@@ -66,7 +66,7 @@ struct mtk_iommu_data {
+ 	struct mtk_iommu_domain		*m4u_dom;
+ 	struct iommu_group		*m4u_group;
+ 	struct mtk_smi_iommu		smi_imu;      /* SMI larb iommu info */
+-	bool                            enable_4GB;
++	bool                            dram_is_4gb;
+ 	bool				tlb_flush_active;
  
- enum mtk_iommu_plat {
+ 	struct iommu_device		iommu;
 -- 
 1.9.1
 
