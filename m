@@ -2,185 +2,281 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C960BC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B904C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:14:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9066C21934
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:09:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="38SH3EZ4"
+	by mail.kernel.org (Postfix) with ESMTP id 2B9C421917
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:14:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727727AbfBQRJc (ORCPT
+        id S1727932AbfBQROO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 12:09:32 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:45236 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725810AbfBQRJb (ORCPT
+        Sun, 17 Feb 2019 12:14:14 -0500
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:36170 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725810AbfBQRON (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 12:09:31 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1HH4JNb143689;
-        Sun, 17 Feb 2019 17:09:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type :
- content-transfer-encoding; s=corp-2018-07-02;
- bh=ntWVkLeJIdQ5fFy0VllDZVuQMFMR5jYgVKdEoVWfL0w=;
- b=38SH3EZ47Tk4qDWGgp7WrHAkM2VlrbCm28KiRUhnx+9z/n8HNQA5xRbG5usbMqZRJ2pS
- 7rTEXPUZopZ2lwRjMrB/Y1bSl5mk9UzWmvbe4FOUuaHAE0/gS14Fws7IggEiMVoTvA7Z
- 062JiABsZLi3SDRKZXIYQVzf0DRWkI9bBPfrWZlSUzqTYgbR5FCdr9eIsaqBPVAeFngN
- LtortPSTCxCr6reOQw1qhnV8wmC2CgrDBmvwlIHuAE667/ZOBxjyVmFfZHvo7VwPiLi5
- UJIxpteIMNdaAFi0ybxTgXx4fpLybsE5r+E7YLPVd3s2RIKJ4Xky785gPqrMRbXHgfrV WA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2qp9xtk6hw-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 17 Feb 2019 17:09:23 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1HH9M9k017467
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 17 Feb 2019 17:09:22 GMT
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1HH9LFw013678;
-        Sun, 17 Feb 2019 17:09:21 GMT
-Received: from lab02.no.oracle.com (/10.172.144.56)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 17 Feb 2019 17:09:21 +0000
-From:   =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>
-To:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Leon Romanovsky <leon@kernel.org>,
-        Parav Pandit <parav@mellanox.com>,
-        Steve Wise <swise@opengridcomputing.com>
-Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] RDMA/cma: Make CM response timeout and # CM retries configurable
-Date:   Sun, 17 Feb 2019 18:09:09 +0100
-Message-Id: <20190217170909.1178575-1-haakon.bugge@oracle.com>
-X-Mailer: git-send-email 2.20.1
+        Sun, 17 Feb 2019 12:14:13 -0500
+Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id ACFFA3A6CDA;
+        Sun, 17 Feb 2019 18:06:36 +0100 (CET)
+X-Originating-IP: 79.86.19.127
+Received: from [192.168.0.11] (127.19.86.79.rev.sfr.net [79.86.19.127])
+        (Authenticated sender: alex@ghiti.fr)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id A9E19FF802;
+        Sun, 17 Feb 2019 17:06:26 +0000 (UTC)
+From:   Alex Ghiti <alex@ghiti.fr>
+Subject: Re: [PATCH v3] hugetlb: allow to free gigantic pages regardless of
+ the configuration
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20190214193100.3529-1-alex@ghiti.fr>
+ <c6d9be5f-3b3a-c95b-0045-9f98ea52a5c4@intel.com>
+Message-ID: <37046a52-a0eb-cb1a-0a72-601cdee45917@ghiti.fr>
+Date:   Sun, 17 Feb 2019 12:06:26 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9170 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902170133
+In-Reply-To: <c6d9be5f-3b3a-c95b-0045-9f98ea52a5c4@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: sv-FI
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During certain workloads, the default CM response timeout is too
-short, leading to excessive retries. Hence, make it configurable
-through sysctl. While at it, also make number of CM retries
-configurable.
+On 2/15/19 12:34 PM, Dave Hansen wrote:
+>> -#if (defined(CONFIG_MEMORY_ISOLATION) && defined(CONFIG_COMPACTION)) || defined(CONFIG_CMA)
+>> +#ifdef CONFIG_CONTIG_ALLOC
+>>   /* The below functions must be run on a range from a single zone. */
+>>   extern int alloc_contig_range(unsigned long start, unsigned long end,
+>>   			      unsigned migratetype, gfp_t gfp_mask);
+>> -extern void free_contig_range(unsigned long pfn, unsigned nr_pages);
+>>   #endif
+>> +extern void free_contig_range(unsigned long pfn, unsigned int nr_pages);
+> There's a lot of stuff going on in this patch.  Adding/removing config
+> options.  Please get rid of these superfluous changes or at least break
+> them out.
 
-The defaults are not changed.
 
-Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
----
- drivers/infiniband/core/cma.c | 51 ++++++++++++++++++++++++++++++-----
- 1 file changed, 44 insertions(+), 7 deletions(-)
+I agree that this patch does a lot of things. I am going at least to 
+split it
+into 2 separate patches, one suggested-by Vlastimil regarding the renaming
+of MEMORY_ISOLATION && COMPACTION || CMA, and another that indeed
+does what was primarily intended.
 
-diff --git a/drivers/infiniband/core/cma.c b/drivers/infiniband/core/cma.c
-index c43512752b8a..ce99e1cd1029 100644
---- a/drivers/infiniband/core/cma.c
-+++ b/drivers/infiniband/core/cma.c
-@@ -43,6 +43,7 @@
- #include <linux/inetdevice.h>
- #include <linux/slab.h>
- #include <linux/module.h>
-+#include <linux/sysctl.h>
- #include <net/route.h>
- 
- #include <net/net_namespace.h>
-@@ -68,13 +69,46 @@ MODULE_AUTHOR("Sean Hefty");
- MODULE_DESCRIPTION("Generic RDMA CM Agent");
- MODULE_LICENSE("Dual BSD/GPL");
- 
--#define CMA_CM_RESPONSE_TIMEOUT 20
- #define CMA_QUERY_CLASSPORT_INFO_TIMEOUT 3000
--#define CMA_MAX_CM_RETRIES 15
- #define CMA_CM_MRA_SETTING (IB_CM_MRA_FLAG_DELAY | 24)
- #define CMA_IBOE_PACKET_LIFETIME 18
- #define CMA_PREFERRED_ROCE_GID_TYPE IB_GID_TYPE_ROCE_UDP_ENCAP
- 
-+#define CMA_DFLT_CM_RESPONSE_TIMEOUT 20
-+static int cma_cm_response_timeout = CMA_DFLT_CM_RESPONSE_TIMEOUT;
-+static int cma_cm_response_timeout_min = 8;
-+static int cma_cm_response_timeout_max = 31;
-+#undef CMA_DFLT_CM_RESPONSE_TIMEOUT
-+
-+#define CMA_DFLT_MAX_CM_RETRIES 15
-+static int cma_max_cm_retries = CMA_DFLT_MAX_CM_RETRIES;
-+static int cma_max_cm_retries_min = 1;
-+static int cma_max_cm_retries_max = 100;
-+#undef CMA_DFLT_MAX_CM_RETRIES
-+
-+static struct ctl_table_header *cma_ctl_table_hdr;
-+static struct ctl_table cma_ctl_table[] = {
-+	{
-+		.procname	= "cma_cm_response_timeout",
-+		.data		= &cma_cm_response_timeout,
-+		.maxlen		= sizeof(cma_cm_response_timeout),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= &cma_cm_response_timeout_min,
-+		.extra2		= &cma_cm_response_timeout_max,
-+	},
-+	{
-+		.procname	= "cma_max_cm_retries",
-+		.data		= &cma_max_cm_retries,
-+		.maxlen		= sizeof(cma_max_cm_retries),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= &cma_max_cm_retries_min,
-+		.extra2		= &cma_max_cm_retries_max,
-+	},
-+	{ }
-+};
-+
- static const char * const cma_events[] = {
- 	[RDMA_CM_EVENT_ADDR_RESOLVED]	 = "address resolved",
- 	[RDMA_CM_EVENT_ADDR_ERROR]	 = "address error",
-@@ -3745,8 +3779,8 @@ static int cma_resolve_ib_udp(struct rdma_id_private *id_priv,
- 	req.path = id_priv->id.route.path_rec;
- 	req.sgid_attr = id_priv->id.route.addr.dev_addr.sgid_attr;
- 	req.service_id = rdma_get_service_id(&id_priv->id, cma_dst_addr(id_priv));
--	req.timeout_ms = 1 << (CMA_CM_RESPONSE_TIMEOUT - 8);
--	req.max_cm_retries = CMA_MAX_CM_RETRIES;
-+	req.timeout_ms = 1 << (cma_cm_response_timeout - 8);
-+	req.max_cm_retries = cma_max_cm_retries;
- 
- 	ret = ib_send_cm_sidr_req(id_priv->cm_id.ib, &req);
- 	if (ret) {
-@@ -3816,9 +3850,9 @@ static int cma_connect_ib(struct rdma_id_private *id_priv,
- 	req.flow_control = conn_param->flow_control;
- 	req.retry_count = min_t(u8, 7, conn_param->retry_count);
- 	req.rnr_retry_count = min_t(u8, 7, conn_param->rnr_retry_count);
--	req.remote_cm_response_timeout = CMA_CM_RESPONSE_TIMEOUT;
--	req.local_cm_response_timeout = CMA_CM_RESPONSE_TIMEOUT;
--	req.max_cm_retries = CMA_MAX_CM_RETRIES;
-+	req.remote_cm_response_timeout = cma_cm_response_timeout;
-+	req.local_cm_response_timeout = cma_cm_response_timeout;
-+	req.max_cm_retries = cma_max_cm_retries;
- 	req.srq = id_priv->srq ? 1 : 0;
- 
- 	ret = ib_send_cm_req(id_priv->cm_id.ib, &req);
-@@ -4701,6 +4735,9 @@ static int __init cma_init(void)
- 		goto err;
- 
- 	cma_configfs_init();
-+	cma_ctl_table_hdr = register_net_sysctl(&init_net, "net/rdma_cm", cma_ctl_table);
-+	if (!cma_ctl_table_hdr)
-+		pr_warn("rdma_cm: couldn't register sysctl path, using default values\n");
- 
- 	return 0;
- 
--- 
-2.20.1
+
+>>   #ifdef CONFIG_CMA
+>>   /* CMA stuff */
+>> diff --git a/mm/Kconfig b/mm/Kconfig
+>> index 25c71eb8a7db..138a8df9b813 100644
+>> --- a/mm/Kconfig
+>> +++ b/mm/Kconfig
+>> @@ -252,12 +252,17 @@ config MIGRATION
+>>   	  pages as migration can relocate pages to satisfy a huge page
+>>   	  allocation instead of reclaiming.
+>>   
+>> +
+>>   config ARCH_ENABLE_HUGEPAGE_MIGRATION
+>>   	bool
+> Like this. :)
+
+
+My apologies for that.
+
+
+>>   config ARCH_ENABLE_THP_MIGRATION
+>>   	bool
+>>   
+>> +config CONTIG_ALLOC
+>> +	def_bool y
+>> +	depends on (MEMORY_ISOLATION && COMPACTION) || CMA
+>> +
+>>   config PHYS_ADDR_T_64BIT
+>>   	def_bool 64BIT
+> Please think carefully though the Kconfig dependencies.  'select' is
+> *not* the same as 'depends on'.
+>
+> This replaces a bunch of arch-specific "select ARCH_HAS_GIGANTIC_PAGE"
+> with a 'depends on'.  I *think* that ends up being OK, but it absolutely
+> needs to be addressed in the changelog about why *you* think it is OK
+> and why it doesn't change the functionality of any of the patched
+> architetures.
+
+
+Ok.
+
+
+>> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+>> index afef61656c1e..e686c92212e9 100644
+>> --- a/mm/hugetlb.c
+>> +++ b/mm/hugetlb.c
+>> @@ -1035,7 +1035,6 @@ static int hstate_next_node_to_free(struct hstate *h, nodemask_t *nodes_allowed)
+>>   		((node = hstate_next_node_to_free(hs, mask)) || 1);	\
+>>   		nr_nodes--)
+>>   
+>> -#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
+>>   static void destroy_compound_gigantic_page(struct page *page,
+>>   					unsigned int order)
+>>   {
+> Whats the result of this #ifdef removal?  A universally larger kernel
+> even for architectures that do not support runtime gigantic page
+> alloc/free?  That doesn't seem like a good thing.
+
+
+Ok, I agree, now that we removed the "wrong" definition of 
+ARCH_HAS_GIGANTIC_PAGE,
+we can actually use this define for architectures to show they support 
+gigantic pages
+and avoid the problem you mention. Thanks.
+
+
+>> @@ -1058,6 +1057,12 @@ static void free_gigantic_page(struct page *page, unsigned int order)
+>>   	free_contig_range(page_to_pfn(page), 1 << order);
+>>   }
+>>   
+>> +static inline bool gigantic_page_runtime_allocation_supported(void)
+>> +{
+>> +	return IS_ENABLED(CONFIG_CONTIG_ALLOC);
+>> +}
+> Why bother having this function?  Why don't the callers just check the
+> config option directly?
+
+
+Ok, this function is only used once in set_max_huge_pages where you
+mention the need for a comment, so I can get rid of it. Thanks.
+
+
+>> +#ifdef CONFIG_CONTIG_ALLOC
+>>   static int __alloc_gigantic_page(unsigned long start_pfn,
+>>   				unsigned long nr_pages, gfp_t gfp_mask)
+>>   {
+>> @@ -1143,22 +1148,15 @@ static struct page *alloc_gigantic_page(struct hstate *h, gfp_t gfp_mask,
+>>   static void prep_new_huge_page(struct hstate *h, struct page *page, int nid);
+>>   static void prep_compound_gigantic_page(struct page *page, unsigned int order);
+>>   
+>> -#else /* !CONFIG_ARCH_HAS_GIGANTIC_PAGE */
+>> -static inline bool gigantic_page_supported(void) { return false; }
+>> +#else /* !CONFIG_CONTIG_ALLOC */
+>>   static struct page *alloc_gigantic_page(struct hstate *h, gfp_t gfp_mask,
+>>   		int nid, nodemask_t *nodemask) { return NULL; }
+>> -static inline void free_gigantic_page(struct page *page, unsigned int order) { }
+>> -static inline void destroy_compound_gigantic_page(struct page *page,
+>> -						unsigned int order) { }
+>>   #endif
+>>   
+>>   static void update_and_free_page(struct hstate *h, struct page *page)
+>>   {
+>>   	int i;
+>>   
+>> -	if (hstate_is_gigantic(h) && !gigantic_page_supported())
+>> -		return;
+> I don't get the point of removing this check.  Logically, this reads as
+> checking if the architecture supports gigantic hstates and has nothing
+> to do with allocation.
+
+I think this check was wrong from the beginning: gigantic_page_supported()
+was only checking (MEMORY_ISOLATION && COMPACTION) || CMA, which has
+nothing to do with the capability to free gigantic pages.
+
+But then I went through all the architectures to see if removing this 
+test could
+affect any of them. And I noticed that if an architecture supports gigantic
+page without advertising it with ARCH_HAS_GIGANTIC_PAGE, then it would
+decrement the number of free huge page but would not actually free the 
+pages.
+
+I found at least 2 archs that have gigantic pages, but do not allow
+runtime allocation nor freeing of those pages because they do not define
+the (wrong) ARCH_HAS_GIGANTIC_PAGE:
+
+- ia64 has HPAGE_SHIFT_DEFAULT = 28, with PAGE_SHIFT = 14
+- sh has max HPAGE_SHIFT = 29 and max PAGE_SHIFT = 16
+
+with default MAX_ORDER = 11, both architectures support gigantic pages.
+
+So I'm going to propose a patch that selects the (right) 
+ARCH_HAS_GIGANTIC_PAGE
+for those archs, because I think they should be able to free their boottime
+gigantic pages.
+
+Regarding this check, we can either remove it if we are sure that
+every architecture that has gigantic pages selects ARCH_HAS_GIGANTIC_PAGE,
+or leaving it in case some future archs forget to select it.
+
+I'd rather patch all archs so that they can at least free gigantic pages and
+then remove the test since hstate_is_gigantic would imply 
+gigantic_page_supported.
+I will propose something like that if you agree.
+
+
+>>   	h->nr_huge_pages--;
+>>   	h->nr_huge_pages_node[page_to_nid(page)]--;
+>>   	for (i = 0; i < pages_per_huge_page(h); i++) {
+>> @@ -2276,13 +2274,20 @@ static int adjust_pool_surplus(struct hstate *h, nodemask_t *nodes_allowed,
+>>   }
+>>   
+>>   #define persistent_huge_pages(h) (h->nr_huge_pages - h->surplus_huge_pages)
+>> -static unsigned long set_max_huge_pages(struct hstate *h, unsigned long count,
+>> +static int set_max_huge_pages(struct hstate *h, unsigned long count,
+>>   						nodemask_t *nodes_allowed)
+>>   {
+>>   	unsigned long min_count, ret;
+>>   
+>> -	if (hstate_is_gigantic(h) && !gigantic_page_supported())
+>> -		return h->max_huge_pages;
+>> +	if (hstate_is_gigantic(h) &&
+>> +		!gigantic_page_runtime_allocation_supported()) {
+> The indentation here is wrong and reduces readability.  Needs to be like
+> this:
+>
+> 	if (hstate_is_gigantic(h) &&
+> 	    !gigantic_page_runtime_allocation_supported()) {
+
+
+This will disappear with your previous remark, thanks.
+
+
+>> +		spin_lock(&hugetlb_lock);
+>> +		if (count > persistent_huge_pages(h)) {
+>> +			spin_unlock(&hugetlb_lock);
+>> +			return -EINVAL;
+>> +		}
+>> +		goto decrease_pool;
+>> +	}
+> Needs comments.
+>
+> 	/* Gigantic pages can be freed but not allocated */
+>
+> or something.
+>
+
+Ok, I agree, I'll add that and another sentence regarding the removal
+of gigantic_page_runtime_allocation_supported.
+
+Thank you Dave for your comments !
+
+Alex
 
