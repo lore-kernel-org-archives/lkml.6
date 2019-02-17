@@ -2,88 +2,87 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C24FC4360F
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 19:21:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC924C10F06
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 19:22:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6448A21874
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 19:21:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550431297;
-	bh=2YJ+biGx7sQrh2TYvzPJ0ivweqk5N3aVZ19BfMSXlTA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ZrgtawAoC4EwNrpvaXKkeTCTnYchpo252tdzgE3hxHcwTrqFMx6vk23rlP5/g892/
-	 750rK6ULDAJU9FlG2vqycvaNF9lN/+zkAklIa4iMn1zdYiuwDHliDXStw3cWuZKGsX
-	 nGd4LQSb/CmL9OtVOb+j2nDN2G4uv8mkKrjXVd1s=
+	by mail.kernel.org (Postfix) with ESMTP id 97E6A218A1
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 19:22:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zw0sdqkB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726347AbfBQTVg (ORCPT
+        id S1726381AbfBQTWn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 14:21:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36064 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725554AbfBQTVf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 14:21:35 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA3CD2186A;
-        Sun, 17 Feb 2019 19:21:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550431295;
-        bh=2YJ+biGx7sQrh2TYvzPJ0ivweqk5N3aVZ19BfMSXlTA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZyOw5uyUy/YJlVSH1aQ/i3XdsZyYsfnho1yR4ySDqzKkqqKoF1xx00EPo0CogesAv
-         Ra4lJjxllBmUm7NkrlW/PFOiVmFZwdIguEIqwgHBu9QObmdyZHpPPGKM3TYYKQ08lC
-         r/lPFgsgwPYWioeKVmBX04awrjASSvUfOmeDzd4w=
-Date:   Sun, 17 Feb 2019 14:21:33 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Alakesh Haloi <alakeshh@amazon.com>
-Cc:     stable@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tcp: Namespace-ify sysctl_tcp_rmem and sysctl_tcp_wmem
-Message-ID: <20190217192133.GN10616@sasha-vm>
-References: <20190214011159.GA35034@dev-dsk-alakeshh-2c-f8a3e6e0.us-west-2.amazon.com>
+        Sun, 17 Feb 2019 14:22:43 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:46415 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725554AbfBQTWn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 14:22:43 -0500
+Received: by mail-lf1-f68.google.com with SMTP id g12so1093693lfb.13;
+        Sun, 17 Feb 2019 11:22:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=s17GrLGIUdTwkDzobw/wjqzja8xYxsv0uTtwxlT/3DM=;
+        b=Zw0sdqkB1ptCJ/O3HblCqXIsOyIEeRl9xJ9UwytBdzHMcgb5vsilTCDhHRTUgapVC4
+         bSfczQGFFMueSjjk6WyxBNdjzADiGGntgMyU6dt9dr982lKeVaqcpBbIPrtVlFAsutng
+         pyxh5j3Uo3mwNexeps+Ublt5rZzxyRBngWUnF+L2MLqcXPVQ4RdqPHG5fUK2gdWTvpRr
+         h/1VxvPDIf05xtALq+mjDatiL1FgzzJ4geY4he1GkJ9Cd1r262LxMBorwNoLJHqU5Ejm
+         yTdknxWtwJiiMo3k219Hsnam1H6Ingj/ZQtxIPz6eMDEFB89M+gvGQ3/VLT6aLbjV4WU
+         LcYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=s17GrLGIUdTwkDzobw/wjqzja8xYxsv0uTtwxlT/3DM=;
+        b=db7GZJMWJmIXznarnsCNnNdwWnF5FbQCOq7o2B2oT0rlnrQsupWljGlRcv9FmHpe8X
+         TvGsFkX5lq8TuiY1lFEnr3Q/PBXMG5PCXyRrybgj8dvSLLMCQv8JRTGBusMlXXsthr9k
+         VDr6Eoq7ot/hcjDPeQd52bNxD/LJPk4vFZ9wZ59qw0psDEDieTaLoD16YfAw5KCsf37b
+         YpIPU6sA5QDwwUTlwX5nPBl8amx+KPTKcBHrRKl3Jvzk3cWFBvJA4N7t84yusUy3InbZ
+         1oR+hhgHnl+RA90S06gJuvc3M+Fm6pMfg1RlsOE/7IWpSNP0hjcV2GqMYsllJYPoDpsI
+         V/5Q==
+X-Gm-Message-State: AHQUAuY3mm6+w0WE49b5kP8+yGIbGmf/0CgUFN3FMpxDKVDSg5JMMs4j
+        IHrG2XdMEWY8TSjTP0X1hEBIy0zw
+X-Google-Smtp-Source: AHgI3Ibbx3g4wX/ofVZsp596txpB9kSn72Mh6BgweSMcYiN8/4KJbOQ2qIT8eouWj2I/+NvYgH+xEQ==
+X-Received: by 2002:a19:645e:: with SMTP id b30mr11508891lfj.15.1550431360128;
+        Sun, 17 Feb 2019 11:22:40 -0800 (PST)
+Received: from arch.domain.name (89-70-37-207.dynamic.chello.pl. [89.70.37.207])
+        by smtp.gmail.com with ESMTPSA id j14sm2916766lji.32.2019.02.17.11.22.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 17 Feb 2019 11:22:39 -0800 (PST)
+From:   Tomasz Duszynski <tduszyns@gmail.com>
+To:     linux-iio@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Tomasz Duszynski <tduszyns@gmail.com>
+Subject: [PATCH 0/2] iio: chemical: pms7003: add other supported sensors
+Date:   Sun, 17 Feb 2019 20:22:11 +0100
+Message-Id: <20190217192213.15803-1-tduszyns@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190214011159.GA35034@dev-dsk-alakeshh-2c-f8a3e6e0.us-west-2.amazon.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 01:12:08AM +0000, Alakesh Haloi wrote:
->[ Upstream commit 356d1833b638bd465672aefeb71def3ab93fc17d ]
->
->Note that when a new netns is created, it inherits its
->sysctl_tcp_rmem and sysctl_tcp_wmem from initial netns.
->
->This change is needed so that we can refine TCP rcvbuf autotuning,
->to take RTT into consideration.
->
->Signed-off-by: Eric Dumazet <edumazet@google.com>
->Cc: Wei Wang <weiwan@google.com>
->Signed-off-by: David S. Miller <davem@davemloft.net>
->[alakeshh: backport to v4.14: The patch does not apply to v4.14
->directly and hence needed manual backport. Function signature for
->the function tcp_select_initial_window had to be changed to be able
->to pass pointer to struct sock.]
->Signed-off-by: Alakesh Haloi <alakeshh@amazon.com>
->Cc: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>
->Cc: Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
->Cc: Eric Dumazet <edumazet@google.com>
->Cc: <stable@vger.kernel.org> # 4.14.x
+This series extends the supported sensors list with a new ones belonging
+to the PMSxxyy family. All share the very same binary protocol and
+are capable of measuring PM1.0, PM2.5 and PM10 dust particles.
 
-What does this fix? This is a new interface...
+Tomasz Duszynski (2):
+  iio: chemical: pms7003: extend supported sensors list
+  dt-bindings: iio: chemical: pms7003: extend supported sensors list
+
+ .../bindings/iio/chemical/plantower,pms7003.txt           | 8 +++++++-
+ drivers/iio/chemical/pms7003.c                            | 5 +++++
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
 --
-Thanks,
-Sasha
+2.20.1
+
