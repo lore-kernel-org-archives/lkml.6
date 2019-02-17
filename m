@@ -2,43 +2,44 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB3BCC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:40:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11A17C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:41:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 825882192D
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:40:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEC682192D
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:41:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="dbXlcUCb"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="LWa0+4+j"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727336AbfBQJkC (ORCPT
+        id S1727453AbfBQJlh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 04:40:02 -0500
-Received: from vern.gendns.com ([98.142.107.122]:52686 "EHLO vern.gendns.com"
+        Sun, 17 Feb 2019 04:41:37 -0500
+Received: from vern.gendns.com ([98.142.107.122]:52826 "EHLO vern.gendns.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725769AbfBQJkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 04:40:01 -0500
+        id S1725769AbfBQJlh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 04:41:37 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
         In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
         :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
         Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=OLrETPYPsFwEdPITog9RDbfkIjTDsapPYRtogRriLGE=; b=dbXlcUCbN5D0/gn8xukomwUHCv
-        Td7JWrbBsPSo7ICPXz2g8CuwPRRDsNqOpRM5mDIW9p7p1Ul04/+f4RyouckJUS/Em/eqGKX2hUOyU
-        rmI7unv3XQDXzUyGZUsHKT11b1RF/zwwY9S6TZirQ5bH2sD6uHYA0L6ckqnp6tZ0FknacG2McEjyP
-        RdrZTiL7fu5NizLVpcsnfntpxEFJEkcvnnVuTmhHw/RPHgh99Sm17wKLBZEKY1woiAQMbU8pOsSkL
-        ZoB3rTxu4MqyFQ+ap6pHfGbKuur8t7jmZ2G86flansFo3Qa8cbdOZpYCh7noEhXBc0Mm89UxCr0yX
-        sqiMPieg==;
-Received: from [185.122.190.68] (port=16065 helo=gerda-5.local)
+        bh=NWDenohgjVPpXw0dAhnvd0a3PuMIuvHxk5FQ1rJpcCg=; b=LWa0+4+jw/k1F1re+/Arwyjpkt
+        8Br/H2givwywznq1qrBQ7X21AVGq7h1BY2+peLJUZT6kTCASqWU6wb5DVbl8/aveB47DHB7VjBSwF
+        Ow9M9df8yULN4yzoik1W+jG40C0jIeGDhmZnRDlez4zuKMQeBvqw5mezeP9HRb3LFltnm3sAmqZHV
+        SElg3ea5pzSetjPkXCj4Z/dIEdZwo7fxCxunG09JEaZZgV7vXM4luvj5SKhDdfFjTE1NbIHt55soK
+        3AhYRGzG6rotPyaDnqA/ks2DSobuOE3PtEz3bitW6/rzdlFUxOJm6mAJyI3mCbDfJVlh/sNA9pU4g
+        QL8VREnQ==;
+Received: from [185.122.190.68] (port=57384 helo=gerda-5.local)
         by vern.gendns.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.91)
         (envelope-from <david@lechnology.com>)
-        id 1gvIvN-00062B-GL; Sun, 17 Feb 2019 04:39:49 -0500
-Subject: Re: [PATCH v4 14/37] ARM: davinci: aintc: use readl/writel_relaxed()
+        id 1gvIwu-0006Gr-O3; Sun, 17 Feb 2019 04:41:24 -0500
+Subject: Re: [PATCH v4 15/37] irqchip: davinci-aintc: add a new config
+ structure
 To:     Bartosz Golaszewski <brgl@bgdev.pl>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sekhar Nori <nsekhar@ti.com>,
@@ -49,14 +50,14 @@ To:     Bartosz Golaszewski <brgl@bgdev.pl>,
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
 References: <20190214145231.8750-1-brgl@bgdev.pl>
- <20190214145231.8750-15-brgl@bgdev.pl>
+ <20190214145231.8750-16-brgl@bgdev.pl>
 From:   David Lechner <david@lechnology.com>
-Message-ID: <9df95fcb-49b3-bd53-69d1-f8cd363f3ee3@lechnology.com>
-Date:   Sun, 17 Feb 2019 10:39:56 +0100
+Message-ID: <a2b34a20-dd2d-43ff-dd22-4f07f54046be@lechnology.com>
+Date:   Sun, 17 Feb 2019 10:41:32 +0100
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
  Gecko/20100101 Thunderbird/60.5.0
 MIME-Version: 1.0
-In-Reply-To: <20190214145231.8750-15-brgl@bgdev.pl>
+In-Reply-To: <20190214145231.8750-16-brgl@bgdev.pl>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -78,29 +79,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 2/14/19 8:52 AM, Bartosz Golaszewski wrote:
 > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> Raplace all calls to __raw_readl() & __raw_writel() with readl_relaxed()
-> and writel_relaxed() respectively. It's safe to do as there's no
-> endianness conversion being done in the code.
-
-This patch only changes writel. There is no readl.
-
+> Add a config structure that will be used by aintc-based platforms.
+> It contains the register range resource, number of interrupts and
+> a list of priorities.
 > 
 > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > ---
->   arch/arm/mach-davinci/irq.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/mach-davinci/irq.c b/arch/arm/mach-davinci/irq.c
-> index 2df91fc0dade..509be44eda22 100644
-> --- a/arch/arm/mach-davinci/irq.c
-> +++ b/arch/arm/mach-davinci/irq.c
-> @@ -36,7 +36,7 @@ static struct irq_domain *davinci_aintc_irq_domain;
->   
->   static inline void davinci_aintc_writel(unsigned long value, int offset)
->   {
-> -	__raw_writel(value, davinci_aintc_base + offset);
-> +	writel_relaxed(value, davinci_aintc_base + offset);
->   }
->   
->   static inline unsigned long davinci_aintc_readl(int offset)
-> 
+
+Reviewed-by: David Lechner <david@lechnology.com>
+
