@@ -2,104 +2,101 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF92C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:28:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF6FC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:30:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C2FD2196F
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:28:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550424504;
-	bh=C3SspDXNDgil2tAg1TW4o4r0CiFJGzI4gHouEijaq8U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Tykuz5eH8+ILe7ITAZtZO9xeuJitBW7pJVsE691S5YZKdRWYfKZRqZnkwhIhpfxDd
-	 62V4ABzReYXZYGKEf8KZlfmA6/bkTIItvxIFasySldkD+bQWm2X9fPpX+TIrxd9odO
-	 SDqq1pKa7h5mGxeYK5jFdCxcjEBAtsnkWCvyWAnM=
+	by mail.kernel.org (Postfix) with ESMTP id 36BAE2196F
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:30:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fiqwgcAI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727753AbfBQR2W (ORCPT
+        id S1727522AbfBQRah (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 12:28:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34554 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725811AbfBQR2W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 12:28:22 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 173C221924;
-        Sun, 17 Feb 2019 17:28:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550424501;
-        bh=C3SspDXNDgil2tAg1TW4o4r0CiFJGzI4gHouEijaq8U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=n8I9iO+Q01OtivR/zVwNwPz0ACajXBPqSCD3kTEWHHfagBDFqOit/Bu/6CXcVZZ2g
-         MQO60s79lVaPWGUVR6FerTOrfFPi0pmRgDgmByxkAP7YRk9Kp+BEv/s+OKhHIhlXU4
-         Cppf0j1SzPx9lxLy1RYutagZceqLryPHD/X1bMew=
-Date:   Sun, 17 Feb 2019 12:28:19 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Thibaut Sautereau <thibaut@sautereau.fr>
-Cc:     stable@vger.kernel.org, Jianchao Wang <jianchao.w.wang@oracle.com>,
-        m19@florianstecker.de, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] blk-mq: fix a hung issue when fsync
-Message-ID: <20190217172819.GE10616@sasha-vm>
-References: <1548838916-25051-1-git-send-email-jianchao.w.wang@oracle.com>
- <319fffef-2fa8-afff-8f93-1ce8fd721581@kernel.dk>
- <20190217153729.GA3835@gandi.net>
+        Sun, 17 Feb 2019 12:30:37 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:37563 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725811AbfBQRah (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 12:30:37 -0500
+Received: by mail-lj1-f193.google.com with SMTP id r10-v6so12358458ljj.4
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 09:30:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GsIlCPevGTkpmWXFe23QGHRV1UfkcaWJRUrDhlzkeE4=;
+        b=fiqwgcAIWNgDCqfteOTca2L/UXt0mYyswsxhLpyeGzy5Y3kKwNbmEZZFxA5b1OWBRN
+         ZeaIwGKeQW+k1tEcr3MfSGB7qz+pqxT6sN+zgYvgg+7MuakypMAPpRAc++K6HS+f109k
+         LZbnmAjpDUtstCOteUprhsB3qzfDhYUuGe/mc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GsIlCPevGTkpmWXFe23QGHRV1UfkcaWJRUrDhlzkeE4=;
+        b=ptGJxBtQIStRD9lr42SD1n0+pST7+tpqG3XLlJdkgBUTrjGYfvE0eV6ybycxiZxX60
+         RZZOkJeNHfu+RpPlpaHf5y8odfdw8IbcYAVimqXkkjEmgblwf7wZMV5YQiMbdae3uaKK
+         IEQ/AClmA8KKQ8Ou3drQhjpPsMEtnEdeNJoQLy6Hl2qyh4qZ+EokdD1eTaRkIDx8aZ7w
+         FPvq/+LIAwklPFpreBiGhjz0kpokmRP/mksK4KjmqkNVh3a/f+I3J+YWyLbVyBeODRqs
+         49Rv/kJbV5VbLJxFArMVYPBq91GQbWuuBTMZ2RKs7T4pyysJlmDeeKtsAb+mYV7GOCl0
+         uhgA==
+X-Gm-Message-State: AHQUAubtUS39Lo9fPEsc2I65gjCaB88P5nwjZHwUxbq71P7Npv92Imqg
+        4nhIYhWpK7H7ocPZH+HPlekHjKgor6o=
+X-Google-Smtp-Source: AHgI3Ib10CMBoFOI8UahFFXfa2xhz0Mkup7iVDZQFJn+kvbN66R5nZ/A+LKNw6m2ewLw+Imu2sudAQ==
+X-Received: by 2002:a2e:5cc4:: with SMTP id q187-v6mr10246170ljb.69.1550424634592;
+        Sun, 17 Feb 2019 09:30:34 -0800 (PST)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id n20sm3079940lfh.53.2019.02.17.09.30.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 17 Feb 2019 09:30:33 -0800 (PST)
+Received: by mail-lj1-f177.google.com with SMTP id j13-v6so12374946ljc.2
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 09:30:33 -0800 (PST)
+X-Received: by 2002:a2e:8510:: with SMTP id j16mr10491446lji.2.1550424633262;
+ Sun, 17 Feb 2019 09:30:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190217153729.GA3835@gandi.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190217090903.GA17600@beast>
+In-Reply-To: <20190217090903.GA17600@beast>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 17 Feb 2019 09:30:17 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiA00pLq_3DautqfL=Dn9r4Nmjgw+M2ABt-RfCX38xh6g@mail.gmail.com>
+Message-ID: <CAHk-=wiA00pLq_3DautqfL=Dn9r4Nmjgw+M2ABt-RfCX38xh6g@mail.gmail.com>
+Subject: Re: [PATCH v4] exec: load_script: Do not exec truncated interpreter path
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Samuel Dionne-Riel <samuel@dionne-riel.com>,
+        Richard Weinberger <richard.weinberger@gmail.com>,
+        Graham Christensen <graham@grahamc.com>,
+        Michal Hocko <mhocko@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 17, 2019 at 04:37:29PM +0100, Thibaut Sautereau wrote:
->On Wed, Jan 30, 2019 at 08:54:09AM -0700, Jens Axboe wrote:
->> On 1/30/19 2:01 AM, Jianchao Wang wrote:
->> > Florian reported a io hung issue when fsync(). It should be
->> > triggered by following race condition.
->> >
->> > data + post flush         a flush
->> >
->> > blk_flush_complete_seq
->> >   case REQ_FSEQ_DATA
->> >     blk_flush_queue_rq
->> >     issued to driver      blk_mq_dispatch_rq_list
->> >                             try to issue a flush req
->> >                             failed due to NON-NCQ command
->> >                             .queue_rq return BLK_STS_DEV_RESOURCE
->> >
->> > request completion
->> >   req->end_io // doesn't check RESTART
->> >   mq_flush_data_end_io
->> >     case REQ_FSEQ_POSTFLUSH
->> >       blk_kick_flush
->> >         do nothing because previous flush
->> >         has not been completed
->> >      blk_mq_run_hw_queue
->> >                               insert rq to hctx->dispatch
->> >                               due to RESTART is still set, do nothing
->> >
->> > To fix this, replace the blk_mq_run_hw_queue in mq_flush_data_end_io
->> > with blk_mq_sched_restart to check and clear the RESTART flag.
->>
->> Applied, thanks.
->>
->> --
->> Jens Axboe
+On Sun, Feb 17, 2019 at 1:09 AM Kees Cook <keescook@chromium.org> wrote:
 >
->Can this be applied to stable kernels please?
->
->It's commit 85bd6e61f34dffa8ec2dc75ff3c02ee7b2f1cbce upstream.
+> +static inline char *next_spacetab(char *first, const char *last)
+> +{
+> +       for (; first <= last; first++)
+> +               if (spacetab(*first))
+> +                       return first;
+> +       return NULL;
+> +}
 
-I've queued it for 4.20, 4.19 and 4.14.
+I think this should be "next_terminator()" and also stop at NUL.
 
---
-Thanks,
-Sasha
+You do check for the NUL case here:
+
+> +               if (!next_spacetab(cp, buf_end) && *buf_end)
+> +                       return -ENOEXEC;
+
+but it means that if there's no space ot tab and it's a short file,
+you pointlessly walk to the end. No?
+
+                   Linus
