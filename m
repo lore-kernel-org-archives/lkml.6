@@ -3,28 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 817C3C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 14:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C08CC4360F
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 14:28:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5ADD3222F3
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 14:28:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F7B121916
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 14:28:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727699AbfBQO2U (ORCPT
+        id S1728021AbfBQO2Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 09:28:20 -0500
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:41309 "EHLO
+        Sun, 17 Feb 2019 09:28:24 -0500
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:38699 "EHLO
         relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727499AbfBQO2R (ORCPT
+        with ESMTP id S1727727AbfBQO2W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 09:28:17 -0500
+        Sun, 17 Feb 2019 09:28:22 -0500
 X-Originating-IP: 91.192.165.7
 Received: from pc.localdomain (unknown [91.192.165.7])
         (Authenticated sender: contact@artur-rojek.eu)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id BABFA1BF208;
-        Sun, 17 Feb 2019 14:28:13 +0000 (UTC)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id EC8621BF204;
+        Sun, 17 Feb 2019 14:28:17 +0000 (UTC)
 From:   Artur Rojek <contact@artur-rojek.eu>
 To:     Sebastian Reichel <sre@kernel.org>,
         Jonathan Cameron <jic23@kernel.org>,
@@ -34,9 +34,9 @@ Cc:     linux-pm@vger.kernel.org, linux-iio@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Paul Cercueil <paul@crapouillou.net>,
         Artur Rojek <contact@artur-rojek.eu>
-Subject: [PATCH 2/7] power: supply: core: Add a field to support battery max voltage
-Date:   Sun, 17 Feb 2019 15:29:11 +0100
-Message-Id: <20190217142914.17433-2-contact@artur-rojek.eu>
+Subject: [PATCH 4/7] dt-bindings: power: supply: Add docs for Ingenic JZ47xx SoCs battery.
+Date:   Sun, 17 Feb 2019 15:29:13 +0100
+Message-Id: <20190217142914.17433-4-contact@artur-rojek.eu>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190217142914.17433-1-contact@artur-rojek.eu>
 References: <20190217142914.17433-1-contact@artur-rojek.eu>
@@ -47,48 +47,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a field for "voltage_max_design_uv" to present fully charged
-battery voltage.
+Add documentation for the ingenic-battery driver, used on JZ47xx SoCs.
 
 Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
 ---
- drivers/power/supply/power_supply_core.c | 3 +++
- include/linux/power_supply.h             | 1 +
- 2 files changed, 4 insertions(+)
+ .../bindings/power/supply/ingenic,battery.txt | 31 +++++++++++++++++++
+ 1 file changed, 31 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/power/supply/ingenic,battery.txt
 
-diff --git a/drivers/power/supply/power_supply_core.c b/drivers/power/supply/power_supply_core.c
-index 569790ea6917..702a2b17ff78 100644
---- a/drivers/power/supply/power_supply_core.c
-+++ b/drivers/power/supply/power_supply_core.c
-@@ -575,6 +575,7 @@ int power_supply_get_battery_info(struct power_supply *psy,
- 	info->energy_full_design_uwh         = -EINVAL;
- 	info->charge_full_design_uah         = -EINVAL;
- 	info->voltage_min_design_uv          = -EINVAL;
-+	info->voltage_max_design_uv          = -EINVAL;
- 	info->precharge_current_ua           = -EINVAL;
- 	info->charge_term_current_ua         = -EINVAL;
- 	info->constant_charge_current_max_ua = -EINVAL;
-@@ -615,6 +616,8 @@ int power_supply_get_battery_info(struct power_supply *psy,
- 			     &info->charge_full_design_uah);
- 	of_property_read_u32(battery_np, "voltage-min-design-microvolt",
- 			     &info->voltage_min_design_uv);
-+	of_property_read_u32(battery_np, "voltage-max-design-microvolt",
-+			     &info->voltage_max_design_uv);
- 	of_property_read_u32(battery_np, "precharge-current-microamp",
- 			     &info->precharge_current_ua);
- 	of_property_read_u32(battery_np, "charge-term-current-microamp",
-diff --git a/include/linux/power_supply.h b/include/linux/power_supply.h
-index 57b2ab82b951..2f9c201a54d1 100644
---- a/include/linux/power_supply.h
-+++ b/include/linux/power_supply.h
-@@ -332,6 +332,7 @@ struct power_supply_battery_info {
- 	int energy_full_design_uwh;	    /* microWatt-hours */
- 	int charge_full_design_uah;	    /* microAmp-hours */
- 	int voltage_min_design_uv;	    /* microVolts */
-+	int voltage_max_design_uv;	    /* microVolts */
- 	int precharge_current_ua;	    /* microAmps */
- 	int charge_term_current_ua;	    /* microAmps */
- 	int constant_charge_current_max_ua; /* microAmps */
+diff --git a/Documentation/devicetree/bindings/power/supply/ingenic,battery.txt b/Documentation/devicetree/bindings/power/supply/ingenic,battery.txt
+new file mode 100644
+index 000000000000..66430bf73815
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power/supply/ingenic,battery.txt
+@@ -0,0 +1,31 @@
++* Ingenic JZ47xx battery bindings
++
++Required properties:
++
++- compatible: Must be "ingenic,jz4740-battery".
++- io-channels: phandle and IIO specifier pair to the IIO device.
++  Format described in iio-bindings.txt.
++- monitored-battery: phandle to a "simple-battery" compatible node.
++
++The "monitored-battery" property must be a phandle to a node using the format
++described in battery.txt, with the following properties being required:
++
++- voltage-min-design-microvolt: Drained battery voltage.
++- voltage-max-design-microvolt: Fully charged battery voltage.
++
++Example:
++
++#include <dt-bindings/iio/adc/ingenic,adc.h>
++
++simple_battery: battery {
++	compatible = "simple-battery";
++	voltage-min-design-microvolt = <3600000>;
++	voltage-max-design-microvolt = <4200000>;
++};
++
++ingenic_battery {
++	compatible = "ingenic,jz4740-battery";
++	io-channels = <&adc INGENIC_ADC_BATTERY>;
++	io-channel-names = "battery";
++	monitored-battery = <&simple_battery>;
++};
 -- 
 2.20.1
 
