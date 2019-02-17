@@ -2,146 +2,107 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A26BC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:40:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D38C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:41:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C78C2089F
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:40:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 621062089F
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:41:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MTFPrkKZ"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="E1JfCbQ4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727764AbfBQRkm (ORCPT
+        id S1727900AbfBQRli (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 12:40:42 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:39639 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726790AbfBQRkm (ORCPT
+        Sun, 17 Feb 2019 12:41:38 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:42030 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725811AbfBQRli (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 12:40:42 -0500
-Received: by mail-it1-f193.google.com with SMTP id l15so22863894iti.4;
-        Sun, 17 Feb 2019 09:40:41 -0800 (PST)
+        Sun, 17 Feb 2019 12:41:38 -0500
+Received: by mail-vs1-f68.google.com with SMTP id b20so8339244vsl.9
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 09:41:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=KoqIo9qVci7Fr14maI1o0dWrQxbnZ3dOSXtkch7SjK0=;
-        b=MTFPrkKZRaHAUIAPl6Cw304AYsY5bJxNwmnHpLqwTLyjtoNJvjUV40Z/tVmZoZ4jwu
-         4PRBcuwxSKYkifB0cCWzcVGd9fCVNdafOJPfmy0Ts8nJvNgU3p8wPQmG1rL/KAJoU5Ap
-         TQXKZYQdbSOBy3SwnwD62bfv4UKJAifFEPFa32Jg6Qnes3b/VqsYS4oPc9ZL2jNLMPMu
-         OmIZMeaRtXnECS7T7xQ2KkhDfiUfRFn1my/zDJs3JvrPr5hv3iJft5aa7hLkQjaZXVKt
-         4tW52eEvTe5+9XRc5Sqg7cjcaHG0x80JyifJn7zTwujvWGMUQpvrtH1BuELeqlY4D5/5
-         /4jA==
+        bh=6PgdSNnQzlX/eTUtXBJn/6MFVTF8DobJiNsBHLchxHg=;
+        b=E1JfCbQ4VS4MUNs3mLMLvzyNlvw3U2+hosjXJQ1zpVpvqVOvgQZUogvXCCaf6eFL55
+         8/3z3bwtFEtaKc+cFAkWDhtxuYCutN5HDThw9+JI8ECTl9eE6t0BiH72ScF6T6NFGJOH
+         MhTjBViwpT2BK2pSAmK1/QVOWxjtamus81HB0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=KoqIo9qVci7Fr14maI1o0dWrQxbnZ3dOSXtkch7SjK0=;
-        b=e3WiGxc18gGpvnTPw+OQnFk358S4dmTlCxPg3EhWpehl8W8LSUR+/aP7BFpBErOP50
-         wvPjMKYQuL/JxLEgQ1pwpq4mcUOCqKiT6wNCfOdtFJKRxUajuUHLlKFpC7HdGqZ3jA9B
-         K1/DdhO6QzxeXj5eIFPC3zDVrMhnCS5iWAF3iAn6sIzO0PvplF7hMrWHZ8xdFE9VBWhZ
-         JgNovVw18RGvU8MMxBDXE0jCOsN8x26CcHtXgF9C4KDb/nme9oVpWe0sVT83DjDn9n7T
-         nwipxSwqgluc0V9wUokTQAT11cPY8Jphw5NiEbc/saMYy2Q1Q+9Mr6FyNvuztU5WSgWo
-         cCXQ==
-X-Gm-Message-State: AHQUAuburjTI1gGIy4JCTGM5AtJXTK7VkcyExj0HbiHbYqbth6iqx5fK
-        z/lAw3UcBjwkQYHtfRWyR3Ip65VF8hmRzRA3PHU=
-X-Google-Smtp-Source: AHgI3IaajAJWZ+CH+DDOekY2yjtecFxkJqmo++QKa3YAIXtEbjiMRvv8yWbpDnWUhjiIqLXnH2ubgdGIjnRdO7B98vQ=
-X-Received: by 2002:a6b:dd04:: with SMTP id f4mr11071044ioc.248.1550425240858;
- Sun, 17 Feb 2019 09:40:40 -0800 (PST)
+        bh=6PgdSNnQzlX/eTUtXBJn/6MFVTF8DobJiNsBHLchxHg=;
+        b=fzWbsddIPYgtZ9+Jigjkb614NJ9PjyrS8WzAmVmkIxgRsqWDM6Dj3wR3xWmQC82z1w
+         TPpVBVM8fjdKmOE2pLEfbZVPPgZmK1fYXw8eavBWJpmGDwT8c9RcmGl5kfqOGDBPW7nt
+         SlXCdaqcgUFbLK/EHMgSGgk9D3W3eskoz5GKPQ7NmkAhm5B5YsyQHw3aP0AchFuvx8jj
+         gAvSEY9mGYp7qShN6FgDBow1tPVO0c5McdBvsox9odycmHufN0HrME8twXAQs7SEiQRf
+         JNhGGcFbwZnimWHPvreZi4NhUgnIsYcgzNZ7qP50BQwepll2zzcDpkL9HsxZDTOkihZm
+         XdhQ==
+X-Gm-Message-State: AHQUAuYrOvU8LlZ993W385mbQkvTxWCdJ1tI+Nwunc/tCV8NfD9zXA/h
+        ONKm4rO/ujRp14bVu7nGtJU3QDyQeeE=
+X-Google-Smtp-Source: AHgI3IYvrNiTeykdQVFnLdkbY4ASAbw5XrlYjLQOO4jm0UPmt3V3c5811Lmx7jYI/mGQlghK5lqQYQ==
+X-Received: by 2002:a67:2e81:: with SMTP id u123mr4720913vsu.135.1550425296742;
+        Sun, 17 Feb 2019 09:41:36 -0800 (PST)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
+        by smtp.gmail.com with ESMTPSA id c185sm4781312vka.24.2019.02.17.09.41.35
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 17 Feb 2019 09:41:35 -0800 (PST)
+Received: by mail-vs1-f43.google.com with SMTP id z18so8350719vso.7
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 09:41:35 -0800 (PST)
+X-Received: by 2002:a67:fa45:: with SMTP id j5mr3015414vsq.48.1550425295175;
+ Sun, 17 Feb 2019 09:41:35 -0800 (PST)
 MIME-Version: 1.0
-References: <1548241960-7412-1-git-send-email-jshekhar@codeaurora.org>
-In-Reply-To: <1548241960-7412-1-git-send-email-jshekhar@codeaurora.org>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Sun, 17 Feb 2019 12:40:27 -0500
-Message-ID: <CAF6AEGs_SvZ=Ttu3pQgMGbQb=3K5Bqj2TOfqf-V4RjjVLJOCaA@mail.gmail.com>
-Subject: Re: [v1] drm/msm: Remove clock and bandwidth votes in mdss pm suspend
-To:     Jayant Shekhar <jshekhar@codeaurora.org>
-Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        "Kristian H. Kristensen" <hoegsberg@chromium.org>,
-        Abhinav Kumar <abhinavk@codeaurora.org>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        chandanu@codeaurora.org, nganji@codeaurora.org
+References: <20190217090903.GA17600@beast> <CAHk-=wiA00pLq_3DautqfL=Dn9r4Nmjgw+M2ABt-RfCX38xh6g@mail.gmail.com>
+In-Reply-To: <CAHk-=wiA00pLq_3DautqfL=Dn9r4Nmjgw+M2ABt-RfCX38xh6g@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Sun, 17 Feb 2019 09:41:24 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jJrbM+wocY3bA59JDqkKwpptb3PGWFq-RiXrD2cfig2uQ@mail.gmail.com>
+Message-ID: <CAGXu5jJrbM+wocY3bA59JDqkKwpptb3PGWFq-RiXrD2cfig2uQ@mail.gmail.com>
+Subject: Re: [PATCH v4] exec: load_script: Do not exec truncated interpreter path
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Samuel Dionne-Riel <samuel@dionne-riel.com>,
+        Richard Weinberger <richard.weinberger@gmail.com>,
+        Graham Christensen <graham@grahamc.com>,
+        Michal Hocko <mhocko@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 6:12 AM Jayant Shekhar <jshekhar@codeaurora.org> wrote:
+On Sun, Feb 17, 2019 at 9:30 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> MDSS PM suspend is dependent on runtime suspend for disabling
-> clocks and removing bandwidth votes. In case of pm_suspend
-> triggered, dpm_prepare hold a refcount on power usage of device
-> and hence runtime suspend is never triggered during pm_suspend.
-> As runtime suspend is not triggered, clocks and bandwidth votes
-> remain. Hence explicitly trigger mdss disable in msm_pm_suspend
-> to disable clocks and remove the votes.
+> On Sun, Feb 17, 2019 at 1:09 AM Kees Cook <keescook@chromium.org> wrote:
+> >
+> > +static inline char *next_spacetab(char *first, const char *last)
+> > +{
+> > +       for (; first <= last; first++)
+> > +               if (spacetab(*first))
+> > +                       return first;
+> > +       return NULL;
+> > +}
 >
-> Signed-off-by: Jayant Shekhar <jshekhar@codeaurora.org>
-> ---
->  drivers/gpu/drm/msm/msm_drv.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+> I think this should be "next_terminator()" and also stop at NUL.
 >
-> diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
-> index 5c60bb3..ffe3a25 100644
-> --- a/drivers/gpu/drm/msm/msm_drv.c
-> +++ b/drivers/gpu/drm/msm/msm_drv.c
-> @@ -1068,12 +1068,16 @@ static int msm_pm_suspend(struct device *dev)
->  {
->         struct drm_device *ddev = dev_get_drvdata(dev);
->         struct msm_drm_private *priv = ddev->dev_private;
-> +       struct msm_mdss *mdss = priv->mdss;
+> You do check for the NUL case here:
 >
->         if (!IS_ERR_OR_NULL(priv->pm_state))
->                 return 0;
+> > +               if (!next_spacetab(cp, buf_end) && *buf_end)
+> > +                       return -ENOEXEC;
 >
->         priv->pm_state = drm_atomic_helper_suspend(ddev);
->
-> +       if (mdss && mdss->funcs)
-> +               mdss->funcs->disable(mdss);
-> +
+> but it means that if there's no space ot tab and it's a short file,
+> you pointlessly walk to the end. No?
 
-This patch doesn't actually seem to apply, I guess it has a dependency
-on some other missing patch?
+Yeah, that works. I'll send v5.
 
-That said, shouldn't the refcount aquired in _prepare() be dropped
-somewhere?  It seems like if all planes/crtcs/etc are disabled, we
-should also disable power (or at least as much as we can while still
-having hotplug work), so ideally drm_atomic_helper_suspend() should be
-enough.
-
-BR.
--R
-
->         return IS_ERR(priv->pm_state) ? PTR_ERR(priv->pm_state) : 0;
->  }
->
-> @@ -1081,11 +1085,15 @@ static int msm_pm_resume(struct device *dev)
->  {
->         struct drm_device *ddev = dev_get_drvdata(dev);
->         struct msm_drm_private *priv = ddev->dev_private;
-> +       struct msm_mdss *mdss = priv->mdss;
->         int ret;
->
->         if (IS_ERR_OR_NULL(priv->pm_state))
->                 return 0;
->
-> +       if (mdss && mdss->funcs)
-> +               mdss->funcs->enable(mdss);
-> +
->         ret = drm_atomic_helper_resume(ddev, priv->pm_state);
->         if (ret == 0)
->                 priv->pm_state = NULL;
-> --
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->
+-- 
+Kees Cook
