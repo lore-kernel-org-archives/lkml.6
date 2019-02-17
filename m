@@ -2,107 +2,268 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 906C9C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 14:58:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 905E1C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 15:14:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 547E221916
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 14:58:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550415514;
-	bh=cZ8Uk+5ObAOcxlqUWwO3h3jKNMcubG4uM5UBjsfTFbY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Bjdhx1sRHoRJyY1JjYLwaMCfOBs3VHTlKFJLY4qK+SX0QmfZdxpmCjTf1oIQkAsfj
-	 FQwezOs2TgiOszwAbQzsGxwCwRzg/WC9XiOj5c3gtVZnC4L98jCB9fP71kqYpD4KLz
-	 Q8JSf5D9Md4gsB962B+sq6NKS/F5aYm0uOIQ6U3A=
+	by mail.kernel.org (Postfix) with ESMTP id 5C3E72190B
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 15:14:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbfBQO6a (ORCPT
+        id S1727941AbfBQPOZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 09:58:30 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:52512 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbfBQO6a (ORCPT
+        Sun, 17 Feb 2019 10:14:25 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:29701 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726638AbfBQPOY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 09:58:30 -0500
-Received: by mail-wm1-f66.google.com with SMTP id m1so14759604wml.2;
-        Sun, 17 Feb 2019 06:58:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7DHBLfTGFPdlt8VAn5Pxnenv7TXacU2a+22zGIRrQc0=;
-        b=RtpwgS30J22nKDViMy4BGnsC+8V/MVusx1hjJtuinlyPTlC9bwXbo0RPNHk9FZRMQZ
-         qql77v2y+qL2Eb3Itwx27zb3bR7Cwq3PtjY/YBgoTdZYmciqd/c0LU23fpjXOWR8o7ah
-         vsjTAAFtKTG7lgPUr4RPfYyt0bCVl/AvTXlVry0Bmxig91BUnbO21KDNiuFv2Gba//6q
-         Abcwl1QGtkEz+I/kEfQPjBrguJKmAw6OK201YpvzV3WU3jarpbcohns9eiZQcJi9YG86
-         MrTk/rk/LGajm9cyIogTmR6iX1jUIrh5uKbATjB5pe1OWPTwDbiewwv28T0tzSyU00Va
-         7qUQ==
-X-Gm-Message-State: AHQUAuZ4ZTFieUVPs7gVKMiJiGBLds565E27Bey+2yXaGguVBt19NFsa
-        AzCKzljcCG/BPqmyLNl79iPt/ylBkOgwYCydB9Y=
-X-Google-Smtp-Source: AHgI3IYCQmSjv2WK6XHGWHUN0QF+BMn21Ky4olGhmalqj2KWeiEK1Z43P2pqkl+qgV/F9vI7jWd+sTPbu16zf+PlDG0=
-X-Received: by 2002:a1c:4844:: with SMTP id v65mr13722608wma.66.1550415508290;
- Sun, 17 Feb 2019 06:58:28 -0800 (PST)
-MIME-Version: 1.0
-References: <20190215215354.3114006-1-songliubraving@fb.com> <20190215215354.3114006-9-songliubraving@fb.com>
-In-Reply-To: <20190215215354.3114006-9-songliubraving@fb.com>
-From:   Namhyung Kim <namhyung@kernel.org>
-Date:   Sun, 17 Feb 2019 23:58:16 +0900
-Message-ID: <CAM9d7ch-VtYcxpHDnZwqfpx8Ab74CAg8z44Jhc=t8rzQH603kQ@mail.gmail.com>
-Subject: Re: [PATCH v3 perf,bpf 08/11] perf, bpf: save btf information as
- headers to perf.data
-To:     Song Liu <songliubraving@fb.com>
-Cc:     Network Development <netdev@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>, kernel-team@fb.com,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@kernel.org>
+        Sun, 17 Feb 2019 10:14:24 -0500
+X-UUID: 73e8eb8f70f94686adcf931b4957acda-20190217
+X-UUID: 73e8eb8f70f94686adcf931b4957acda-20190217
+Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <jitao.shi@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1083103188; Sun, 17 Feb 2019 23:13:53 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33N1.mediatek.inc
+ (172.27.4.75) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sun, 17 Feb
+ 2019 23:13:51 +0800
+Received: from [10.16.6.141] (10.16.6.141) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Sun, 17 Feb 2019 23:13:50 +0800
+Message-ID: <1550416429.5194.30.camel@mszsdaap41>
+Subject: Re: [PATCH 1/3] drm/mediatek: move mipi_dsi_host_register to probe
+From:   Jitao Shi <jitao.shi@mediatek.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+CC:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>, <linux-pwm@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        "Matthias Brugger" <matthias.bgg@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
+        "Ajay Kumar" <ajaykumar.rs@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        "Rahul Sharma" <rahul.sharma@samsung.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Vincent Palatin <vpalatin@chromium.org>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Russell King" <rmk+kernel@arm.linux.org.uk>,
+        <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>,
+        "linux-arm Mailing List" <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        "Yingjoe Chen" <yingjoe.chen@mediatek.com>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        cawa cheng <cawa.cheng@mediatek.com>,
+        Bibby Hsieh =?UTF-8?Q?=28=E8=AC=9D=E6=BF=9F=E9=81=A0=29?= 
+        <bibby.hsieh@mediatek.com>, CK HU <ck.hu@mediatek.com>,
+        <stonea168@163.com>
+Date:   Sun, 17 Feb 2019 23:13:49 +0800
+In-Reply-To: <CANMq1KC+ga-Sjxj6eD51nLmq_54Y-gpJR_8qOLQee5gAy7ypkQ@mail.gmail.com>
+References: <20190214044243.129920-1-jitao.shi@mediatek.com>
+         <CANMq1KC+ga-Sjxj6eD51nLmq_54Y-gpJR_8qOLQee5gAy7ypkQ@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, 2019-02-14 at 14:02 +0800, Nicolas Boichat wrote:
+> Just some comments on the error path, I'm not sure about the change itself.
+> 
+> On Thu, Feb 14, 2019 at 12:42 PM Jitao Shi <jitao.shi@mediatek.com> wrote:
+> >
+> > DSI panel driver need attach function which is inculde in
+> > mipi_dsi_host_ops.
+> >
+> > If mipi_dsi_host_register is not in probe, dsi panel will
+> > probe fail or more delay.
+> >
+> > So move the mipi_dsi_host_register to probe from bind.
+> >
+> > Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
+> > ---
+> >  drivers/gpu/drm/mediatek/mtk_dsi.c | 49 ++++++++++++++++++------------
+> >  1 file changed, 30 insertions(+), 19 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
+> > index 27b507eb4a99..93fa255b4aad 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
+> > +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
+> > @@ -1045,12 +1045,6 @@ static int mtk_dsi_bind(struct device *dev, struct device *master, void *data)
+> >                 return ret;
+> >         }
+> >
+> > -       ret = mipi_dsi_host_register(&dsi->host);
+> > -       if (ret < 0) {
+> > -               dev_err(dev, "failed to register DSI host: %d\n", ret);
+> > -               goto err_ddp_comp_unregister;
+> > -       }
+> > -
+> >         ret = mtk_dsi_create_conn_enc(drm, dsi);
+> >         if (ret) {
+> >                 DRM_ERROR("Encoder create failed with %d\n", ret);
+> > @@ -1060,8 +1054,6 @@ static int mtk_dsi_bind(struct device *dev, struct device *master, void *data)
+> >         return 0;
+> >
+> >  err_unregister:
+> > -       mipi_dsi_host_unregister(&dsi->host);
+> > -err_ddp_comp_unregister:
+> >         mtk_ddp_comp_unregister(drm, &dsi->ddp_comp);
+> >         return ret;
+> >  }
+> > @@ -1097,31 +1089,37 @@ static int mtk_dsi_probe(struct platform_device *pdev)
+> >
+> >         dsi->host.ops = &mtk_dsi_ops;
+> >         dsi->host.dev = dev;
+> > +       dsi->dev = dev;
+> > +       ret = mipi_dsi_host_register(&dsi->host);
+> > +       if (ret < 0) {
+> > +               dev_err(dev, "failed to register DSI host: %d\n", ret);
+> > +               return -EPROBE_DEFER;
+> 
+> return ret
+> 
 
-On Sat, Feb 16, 2019 at 6:55 AM Song Liu <songliubraving@fb.com> wrote:
->
-> This patch enables perf-record to save btf information as headers to
-> perf.data A new header type HEADER_BTF is introduced for this data.
->
-> Signed-off-by: Song Liu <songliubraving@fb.com>
-> ---
+Ok, I'll fix it next version.
 
-[SNIP]
-> +static void print_btf(struct feat_fd *ff, FILE *fp)
-> +{
-> +       struct perf_env *env = &ff->ph->env;
-> +       struct rb_root *root;
-> +       struct rb_node *next;
-> +
-> +       down_read(&env->bpf_progs.bpf_info_lock);
-> +
-> +       root = &env->bpf_progs.btfs;
-> +       next = rb_first(root);
-> +
-> +       while (next) {
-> +               struct btf_node *node;
-> +
-> +               node = rb_entry(next, struct btf_node, rb_node);
-> +               next = rb_next(&node->rb_node);
-> +               fprintf(fp, "# bpf_prog_info of id %u\n", node->id);
+> > +       }
+> >
+> >         ret = drm_of_find_panel_or_bridge(dev->of_node, 0, 0,
+> >                                           &dsi->panel, &dsi->bridge);
+> >         if (ret)
+> > -               return ret;
+> > +               goto err_unregister_host;
+> >
+> >         dsi->engine_clk = devm_clk_get(dev, "engine");
+> >         if (IS_ERR(dsi->engine_clk)) {
+> >                 ret = PTR_ERR(dsi->engine_clk);
+> >                 dev_err(dev, "Failed to get engine clock: %d\n", ret);
+> > -               return ret;
+> > +               goto err_unregister_host;
+> >         }
+> >
+> >         dsi->digital_clk = devm_clk_get(dev, "digital");
+> >         if (IS_ERR(dsi->digital_clk)) {
+> >                 ret = PTR_ERR(dsi->digital_clk);
+> >                 dev_err(dev, "Failed to get digital clock: %d\n", ret);
+> > -               return ret;
+> > +               goto err_unregister_host;
+> >         }
+> >
+> >         dsi->hs_clk = devm_clk_get(dev, "hs");
+> >         if (IS_ERR(dsi->hs_clk)) {
+> >                 ret = PTR_ERR(dsi->hs_clk);
+> >                 dev_err(dev, "Failed to get hs clock: %d\n", ret);
+> > -               return ret;
+> > +               goto err_unregister_host;
+> >         }
+> >
+> >         regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > @@ -1129,33 +1127,35 @@ static int mtk_dsi_probe(struct platform_device *pdev)
+> >         if (IS_ERR(dsi->regs)) {
+> >                 ret = PTR_ERR(dsi->regs);
+> >                 dev_err(dev, "Failed to ioremap memory: %d\n", ret);
+> > -               return ret;
+> > +               goto err_unregister_host;
+> >         }
+> >
+> >         dsi->phy = devm_phy_get(dev, "dphy");
+> >         if (IS_ERR(dsi->phy)) {
+> >                 ret = PTR_ERR(dsi->phy);
+> >                 dev_err(dev, "Failed to get MIPI-DPHY: %d\n", ret);
+> > -               return ret;
+> > +               goto err_unregister_host;
+> >         }
+> >
+> >         comp_id = mtk_ddp_comp_get_id(dev->of_node, MTK_DSI);
+> >         if (comp_id < 0) {
+> >                 dev_err(dev, "Failed to identify by alias: %d\n", comp_id);
+> > -               return comp_id;
+> > +               ret = comp_id;
+> > +               goto err_unregister_host;
+> >         }
+> >
+> >         ret = mtk_ddp_comp_init(dev, dev->of_node, &dsi->ddp_comp, comp_id,
+> >                                 &mtk_dsi_funcs);
+> >         if (ret) {
+> >                 dev_err(dev, "Failed to initialize component: %d\n", ret);
+> > -               return ret;
+> > +               goto err_unregister_host;
+> >         }
+> >
+> >         irq_num = platform_get_irq(pdev, 0);
+> >         if (irq_num < 0) {
+> >                 dev_err(&pdev->dev, "failed to request dsi irq resource\n");
+> > -               return -EPROBE_DEFER;
+> > +               ret = -EPROBE_DEFER;
+> 
+> I think you need to do ret = irq_num here, too (and yes, it was
+> probably wrong before?)
+> 
 
-How about saying it's "btf" info?
+Yes, the "ret = irq_num" is right. 
+We regard all the return error case as "-EPROBE_DEFER".
 
-Thanks,
-Namhyung
+Actually the error case (ex. EXIO) should return error case.
+
+I'll fix it next version.
+
+> > +               goto err_unregister_host;
+> >         }
+> >
+> >         irq_set_status_flags(irq_num, IRQ_TYPE_LEVEL_LOW);
+> > @@ -1163,14 +1163,25 @@ static int mtk_dsi_probe(struct platform_device *pdev)
+> >                                IRQF_TRIGGER_LOW, dev_name(&pdev->dev), dsi);
+> >         if (ret) {
+> >                 dev_err(&pdev->dev, "failed to request mediatek dsi irq\n");
+> > -               return -EPROBE_DEFER;
+> > +               ret = -EPROBE_DEFER;
+> 
+> Ditto, I'd not reassign ret.
+
+I'll fix it next version.
+> 
+> > +               goto err_unregister_host;
+> >         }
+> >
+> >         init_waitqueue_head(&dsi->irq_wait_queue);
+> >
+> >         platform_set_drvdata(pdev, dsi);
+> >
+> > -       return component_add(&pdev->dev, &mtk_dsi_component_ops);
+> > +       ret = component_add(&pdev->dev, &mtk_dsi_component_ops);
+> > +       if (ret) {
+> > +               ret = -EPROBE_DEFER;
+> 
+> Ditto (this one _was_ right before).
+
+I'll fix it next version.
+
+> 
+> > +               goto err_unregister_host;
+> > +       }
+> > +
+> > +       return 0;
+> > +
+> > +err_unregister_host:
+> > +       mipi_dsi_host_unregister(&dsi->host);
+> > +       return ret;
+> >  }
+> >
+> >  static int mtk_dsi_remove(struct platform_device *pdev)
+> > --
+> > 2.20.1
+> >
 
 
-> +       }
-> +
-> +       up_read(&env->bpf_progs.bpf_info_lock);
-> +}
