@@ -2,136 +2,146 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC03FC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:34:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A26BC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:40:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 996B32089F
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:34:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C78C2089F
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:40:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MTFPrkKZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727869AbfBQRe2 (ORCPT
+        id S1727764AbfBQRkm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 12:34:28 -0500
-Received: from www1102.sakura.ne.jp ([219.94.129.142]:65201 "EHLO
-        www1102.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbfBQRe1 (ORCPT
+        Sun, 17 Feb 2019 12:40:42 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:39639 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726790AbfBQRkm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 12:34:27 -0500
-Received: from fsav109.sakura.ne.jp (fsav109.sakura.ne.jp [27.133.134.236])
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1HHYBai095904;
-        Mon, 18 Feb 2019 02:34:11 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-Received: from www1102.sakura.ne.jp (219.94.129.142)
- by fsav109.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav109.sakura.ne.jp);
- Mon, 18 Feb 2019 02:34:11 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav109.sakura.ne.jp)
-Received: from localhost.localdomain (119.104.232.153.ap.dti.ne.jp [153.232.104.119])
-        (authenticated bits=0)
-        by www1102.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x1HHY8YE095893
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Mon, 18 Feb 2019 02:34:11 +0900 (JST)
-        (envelope-from katsuhiro@katsuster.net)
-From:   Katsuhiro Suzuki <katsuhiro@katsuster.net>
-To:     Heiko Stuebner <heiko@sntech.de>,
-        linux-rockchip@lists.infradead.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Katsuhiro Suzuki <katsuhiro@katsuster.net>
-Subject: [PATCH v3 2/2] arm64: dts: rockchip: add HDMI sound node for rk3328-rock64
-Date:   Mon, 18 Feb 2019 02:34:07 +0900
-Message-Id: <20190217173407.29189-2-katsuhiro@katsuster.net>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190217173407.29189-1-katsuhiro@katsuster.net>
-References: <20190217173407.29189-1-katsuhiro@katsuster.net>
+        Sun, 17 Feb 2019 12:40:42 -0500
+Received: by mail-it1-f193.google.com with SMTP id l15so22863894iti.4;
+        Sun, 17 Feb 2019 09:40:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KoqIo9qVci7Fr14maI1o0dWrQxbnZ3dOSXtkch7SjK0=;
+        b=MTFPrkKZRaHAUIAPl6Cw304AYsY5bJxNwmnHpLqwTLyjtoNJvjUV40Z/tVmZoZ4jwu
+         4PRBcuwxSKYkifB0cCWzcVGd9fCVNdafOJPfmy0Ts8nJvNgU3p8wPQmG1rL/KAJoU5Ap
+         TQXKZYQdbSOBy3SwnwD62bfv4UKJAifFEPFa32Jg6Qnes3b/VqsYS4oPc9ZL2jNLMPMu
+         OmIZMeaRtXnECS7T7xQ2KkhDfiUfRFn1my/zDJs3JvrPr5hv3iJft5aa7hLkQjaZXVKt
+         4tW52eEvTe5+9XRc5Sqg7cjcaHG0x80JyifJn7zTwujvWGMUQpvrtH1BuELeqlY4D5/5
+         /4jA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KoqIo9qVci7Fr14maI1o0dWrQxbnZ3dOSXtkch7SjK0=;
+        b=e3WiGxc18gGpvnTPw+OQnFk358S4dmTlCxPg3EhWpehl8W8LSUR+/aP7BFpBErOP50
+         wvPjMKYQuL/JxLEgQ1pwpq4mcUOCqKiT6wNCfOdtFJKRxUajuUHLlKFpC7HdGqZ3jA9B
+         K1/DdhO6QzxeXj5eIFPC3zDVrMhnCS5iWAF3iAn6sIzO0PvplF7hMrWHZ8xdFE9VBWhZ
+         JgNovVw18RGvU8MMxBDXE0jCOsN8x26CcHtXgF9C4KDb/nme9oVpWe0sVT83DjDn9n7T
+         nwipxSwqgluc0V9wUokTQAT11cPY8Jphw5NiEbc/saMYy2Q1Q+9Mr6FyNvuztU5WSgWo
+         cCXQ==
+X-Gm-Message-State: AHQUAuburjTI1gGIy4JCTGM5AtJXTK7VkcyExj0HbiHbYqbth6iqx5fK
+        z/lAw3UcBjwkQYHtfRWyR3Ip65VF8hmRzRA3PHU=
+X-Google-Smtp-Source: AHgI3IaajAJWZ+CH+DDOekY2yjtecFxkJqmo++QKa3YAIXtEbjiMRvv8yWbpDnWUhjiIqLXnH2ubgdGIjnRdO7B98vQ=
+X-Received: by 2002:a6b:dd04:: with SMTP id f4mr11071044ioc.248.1550425240858;
+ Sun, 17 Feb 2019 09:40:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1548241960-7412-1-git-send-email-jshekhar@codeaurora.org>
+In-Reply-To: <1548241960-7412-1-git-send-email-jshekhar@codeaurora.org>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Sun, 17 Feb 2019 12:40:27 -0500
+Message-ID: <CAF6AEGs_SvZ=Ttu3pQgMGbQb=3K5Bqj2TOfqf-V4RjjVLJOCaA@mail.gmail.com>
+Subject: Re: [v1] drm/msm: Remove clock and bandwidth votes in mdss pm suspend
+To:     Jayant Shekhar <jshekhar@codeaurora.org>
+Cc:     dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        "Kristian H. Kristensen" <hoegsberg@chromium.org>,
+        Abhinav Kumar <abhinavk@codeaurora.org>,
+        Jeykumar Sankaran <jsanka@codeaurora.org>,
+        chandanu@codeaurora.org, nganji@codeaurora.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds HDMI sound (I2S0) node for rock64.
+On Wed, Jan 23, 2019 at 6:12 AM Jayant Shekhar <jshekhar@codeaurora.org> wrote:
+>
+> MDSS PM suspend is dependent on runtime suspend for disabling
+> clocks and removing bandwidth votes. In case of pm_suspend
+> triggered, dpm_prepare hold a refcount on power usage of device
+> and hence runtime suspend is never triggered during pm_suspend.
+> As runtime suspend is not triggered, clocks and bandwidth votes
+> remain. Hence explicitly trigger mdss disable in msm_pm_suspend
+> to disable clocks and remove the votes.
+>
+> Signed-off-by: Jayant Shekhar <jshekhar@codeaurora.org>
+> ---
+>  drivers/gpu/drm/msm/msm_drv.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+> index 5c60bb3..ffe3a25 100644
+> --- a/drivers/gpu/drm/msm/msm_drv.c
+> +++ b/drivers/gpu/drm/msm/msm_drv.c
+> @@ -1068,12 +1068,16 @@ static int msm_pm_suspend(struct device *dev)
+>  {
+>         struct drm_device *ddev = dev_get_drvdata(dev);
+>         struct msm_drm_private *priv = ddev->dev_private;
+> +       struct msm_mdss *mdss = priv->mdss;
+>
+>         if (!IS_ERR_OR_NULL(priv->pm_state))
+>                 return 0;
+>
+>         priv->pm_state = drm_atomic_helper_suspend(ddev);
+>
+> +       if (mdss && mdss->funcs)
+> +               mdss->funcs->disable(mdss);
+> +
 
-After apply this patch, UART2 will fail to allocate DMA resources
-but UART driver can work fine without DMA.
+This patch doesn't actually seem to apply, I guess it has a dependency
+on some other missing patch?
 
-This error is related to the DMAC of rk3328 (pl330 or compatible).
-DMAC connected to 16 DMA sources. Each sources have ID number that is
-called 'Req number' in rk3328 TRM. Currently total 7 sources has been
-activated as follows:
+That said, shouldn't the refcount aquired in _prepare() be dropped
+somewhere?  It seems like if all planes/crtcs/etc are disabled, we
+should also disable power (or at least as much as we can while still
+having hotplug work), so ideally drm_atomic_helper_suspend() should be
+enough.
 
-| Req number | Source | Required  |
-|            |        | channels  |
-|------------+--------+-----------|
-| 14, 15     | I2S1   | 2ch       |
-|  6,  7     | UART2  | 2ch       |
-|     10     | SPDIF  | 1ch       |
-|  8,  9     | SPI0   | 2ch       |
-|------------+--------+-----------|
-|            | Total  | 7ch       |
+BR.
+-R
 
-HDMI audio needs to activate new source I2S0 (Req number 11 and 12).
-I2S0 can work concurrently with other sources, but rk3328 DMAC can
-use max 8 channels at same time. If I2S0 is simply activated by this
-patch, required DMAC channels will be 9. So last one (UART2) cannot
-allocate the DMA resources.
-
-Virt-dma mechanism for pl0330 DMAC driver is needed to fix this
-problem.
-
-Signed-off-by: Katsuhiro Suzuki <katsuhiro@katsuster.net>
----
- .../arm64/boot/dts/rockchip/rk3328-rock64.dts | 21 ++++++++++++++++++-
- 1 file changed, 20 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
-index 2157a528276b..bfc0930d245c 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
-@@ -68,7 +68,8 @@
- 	sound {
- 		compatible = "audio-graph-card";
- 		label = "rockchip,rk3328";
--		dais = <&i2s1_p0
-+		dais = <&i2s0_p0
-+			&i2s1_p0
- 			&spdif_p0>;
- 	};
- 
-@@ -141,6 +142,12 @@
- 
- &hdmi {
- 	status = "okay";
-+
-+	port@0 {
-+		hdmi_p0_0: endpoint {
-+			remote-endpoint = <&i2s0_p0_0>;
-+		};
-+	};
- };
- 
- &hdmiphy {
-@@ -256,6 +263,18 @@
- 	};
- };
- 
-+&i2s0 {
-+	status = "okay";
-+
-+	i2s0_p0: port {
-+		i2s0_p0_0: endpoint {
-+			dai-format = "i2s";
-+			mclk-fs = <256>;
-+			remote-endpoint = <&hdmi_p0_0>;
-+		};
-+	};
-+};
-+
- &i2s1 {
- 	status = "okay";
- 
--- 
-2.20.1
-
+>         return IS_ERR(priv->pm_state) ? PTR_ERR(priv->pm_state) : 0;
+>  }
+>
+> @@ -1081,11 +1085,15 @@ static int msm_pm_resume(struct device *dev)
+>  {
+>         struct drm_device *ddev = dev_get_drvdata(dev);
+>         struct msm_drm_private *priv = ddev->dev_private;
+> +       struct msm_mdss *mdss = priv->mdss;
+>         int ret;
+>
+>         if (IS_ERR_OR_NULL(priv->pm_state))
+>                 return 0;
+>
+> +       if (mdss && mdss->funcs)
+> +               mdss->funcs->enable(mdss);
+> +
+>         ret = drm_atomic_helper_resume(ddev, priv->pm_state);
+>         if (ret == 0)
+>                 priv->pm_state = NULL;
+> --
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>
