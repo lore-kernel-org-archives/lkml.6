@@ -2,67 +2,125 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 851C1C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 01:50:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C70C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 01:54:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53727222E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 01:50:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550368222;
-	bh=iJ45b1HSYg1KAFHb+yGG6QXiID7GyR+5ZtxpihNyqjc=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=cYFAiBfxbWdevpZLJcck5Pl2JsSTGFCJ/v2tSA5fDO+4kfJdbUxj5XsCeRSpybhJJ
-	 7m/qRXzgTDCKu2hq33h9+qQhHpiVJv6Kv+jRbIhVgs+0geP+lF+as9tIDSAYA5iEDC
-	 kPCOolyE5WcO04TC28flXA+GDoYImwsXdovym+SI=
+	by mail.kernel.org (Postfix) with ESMTP id 921C421A4A
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 01:54:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387555AbfBQBuV (ORCPT
+        id S1727444AbfBQByi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 20:50:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56724 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727969AbfBQBuD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 20:50:03 -0500
-Subject: Re: [GIT PULL] more nfsd fixes for 5.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550368202;
-        bh=iJ45b1HSYg1KAFHb+yGG6QXiID7GyR+5ZtxpihNyqjc=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=OpToG1vm1SSzYkxN5cAw9v2GIx6O+KmW84z3I77sOJX9fYjdvAujbGgUaTwvzhsJM
-         k8X5gQheTo6mpf2IhGnml8SY+HhU9QjsrhP4s8IsrGJGyXN02RI2V9+zi9/qb+ZmLM
-         B5kZeZ81vzmTFQwkTox05m4o6dcs6JwovE+zHv7Y=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190215220102.GD22354@fieldses.org>
-References: <20190215220102.GD22354@fieldses.org>
-X-PR-Tracked-List-Id: <linux-nfs.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190215220102.GD22354@fieldses.org>
-X-PR-Tracked-Remote: git://linux-nfs.org/~bfields/linux.git tags/nfsd-5.0-2
-X-PR-Tracked-Commit-Id: e7afe6c1d486b516ed586dcc10b3e7e3e85a9c2b
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 88fe73cb804abc3d209a06f6221a7108d89ff04f
-Message-Id: <155036820240.25738.16783624746161570411.pr-tracker-bot@kernel.org>
-Date:   Sun, 17 Feb 2019 01:50:02 +0000
-To:     bfields@fieldses.org (J. Bruce Fields)
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+        Sat, 16 Feb 2019 20:54:38 -0500
+Received: from mail.grenz-bonn.de ([178.33.37.38]:51110 "EHLO
+        mail.grenz-bonn.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726220AbfBQByi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Feb 2019 20:54:38 -0500
+X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Sat, 16 Feb 2019 20:54:37 EST
+Received: from [192.168.1.100] (212-51-139-180.fiber7.init7.net [212.51.139.180])
+        by ks357529.kimsufi.com (Postfix) with ESMTPSA id 2EA5978B72;
+        Sun, 17 Feb 2019 02:47:29 +0100 (CET)
+To:     linux-kernel@vger.kernel.org
+From:   =?UTF-8?Q?Niklas_Hamb=c3=bcchen?= <mail@nh2.me>
+Subject: ptrace() with multithreaded tracer
+Openpgp: preference=signencrypt
+Autocrypt: addr=mail@nh2.me; keydata=
+ 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
+Cc:     cleverca22@gmail.com
+Message-ID: <48bb7c89-abb9-1e88-fee3-fb42d4032d12@nh2.me>
+Date:   Sun, 17 Feb 2019 02:47:29 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 15 Feb 2019 17:01:02 -0500:
+Hello,
 
-> git://linux-nfs.org/~bfields/linux.git tags/nfsd-5.0-2
+it would be awesome if somebody in the know could confirm or refute a suspicion on ptrace() that we have.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/88fe73cb804abc3d209a06f6221a7108d89ff04f
+The man page says:
 
-Thank you!
+    Attachment and subsequent commands are per thread:
+    in a multi‐ threaded process, every thread can be individually attached to a
+    (potentially different) tracer, or left not attached and thus not debugged.
+    Therefore, "tracee" always means "(one) thread", never "a (possibly
+    multithreaded) process".
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+While the first sentence "Attachment ... [is] per thread" is quite general, the rest talks only about the multi-threadedness of the *tracee*.
+
+What about multithreaded *tracers*?
+
+We suspect (and observe program behaviour that supports this) that having one thread pA_t1 in a process A become the tracer of some tracee thread pB_t1, and then a different thread of A, pA_t2 running a `ptrace(pB_t1, ...)` is illegal and results in `ESRCH`.
+
+Is this statement in true in general, or are there nuances?
+
+Thanks,
+Niklas
+
+
+PS: We'd be happy to contribute these details to the man page based on an answer :)
