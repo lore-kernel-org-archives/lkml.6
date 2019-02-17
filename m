@@ -2,296 +2,130 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DC68C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 16:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26160C10F06
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 16:48:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F010F2190C
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 16:37:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ettus-com.20150623.gappssmtp.com header.i=@ettus-com.20150623.gappssmtp.com header.b="kM4qv4EP"
+	by mail.kernel.org (Postfix) with ESMTP id E902B21924
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 16:48:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550422097;
+	bh=HjFIrihBcVZgXoCOgErOCMvaEU7bieYJv1BUuJ2jlJI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Q8nNdt/tP7GFMTqNHZC0eJTrBgv/yc3gkUngHizCZk31UXVGp2GpNdGW2ZHAaTKma
+	 WM4wwTGDks2u4y7Lv6yiTEFjcCpIkcvEd6yeGxQhePV9evo/Vd/W7zMuQPU1Bxa/g2
+	 pbdUDCt7lCP5KEnKiqAN4lFBuQ7Q6g9vDDajQ78c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726768AbfBQQhs (ORCPT
+        id S1727134AbfBQQsP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 11:37:48 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:35224 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726016AbfBQQhs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 11:37:48 -0500
-Received: by mail-yw1-f67.google.com with SMTP id s204so5577344ywg.2
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 08:37:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ettus-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wcfVD+Z2d39fCjnzHaFw0lRjGDD2+KJIc2xzhByjOuc=;
-        b=kM4qv4EPjUjMtCDzO/CWhMMDa8HLkcdhNO94jYwpeqfGn3QsdjmDc85nOz37CO3Oo9
-         L+NJZ6KXp8nTIvFrNHUJqE98+CcPWkpEpf1/p9afOWyWwX6b2Ji4yxaaM5KEqEE37Vom
-         K5AOCsgQ1/AlLpB/iZgaq3tYZ6SvSupwbGlEUMy+7cdPw6cbGdpTFRa0AMF00YsWlefu
-         Y2ZUjxCcCW/+JZR1Zw8C6mXZ8+3/CtK9aQmonXdgZrZRHtU6HiySNEOa8VAZJ8pQeC7p
-         nLt4ft92Q5TA6/A+c0cQhuI+OaK7IJ1WKTWlYD+p54cY7tzupTqrQwBJSN44j7Lwdp3p
-         bIHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wcfVD+Z2d39fCjnzHaFw0lRjGDD2+KJIc2xzhByjOuc=;
-        b=ICoegdoxShOV+g06IwofJvHY/ddm8c0bL2kLN7kdE9FGCsqqwJ22fvq75K07DUUTx6
-         tP0YeJo5IvFEKZDNshLyV4UCQeWpvsZYJm+xw0rPhIdoMjfLGuq98nQXVgJVBRsJ2T2A
-         DusEa6UIIi90UcZVtpNUpzPwu2L+cOYMvsJfIKPkdTBPodcb6W8HwY7mK/8enmFXIDJ+
-         yWQQ7MfoNw+ls93aTflGQVf/gu5vz+J31XrmYXvHILyJU8MEwxg9mwaThJc6N7nd4dr8
-         AHMBa6iy1MFoUhkTHRfwg53IF3DvlHfg+J/XsoGZwzzAnV+dSkW+T4JhYzoKNvvJJemy
-         et3g==
-X-Gm-Message-State: AHQUAuZnB/0KDYi2/O72BWrWwpvUpVk/VybZMWbEBHWhotd2pzmcU91F
-        YBuOq2pFmG5NiUbzMQTmqwV9n+vJCRMYp6beBL1ANw==
-X-Google-Smtp-Source: AHgI3Ia+fOvrOYqZZ1BCxWX9LPEXQiildhtsERLX/KCt9y1g0A/Sm1DbAR2gXZKmM0RPPNb1WIyzSCaCKWIpWMzFC28=
-X-Received: by 2002:a81:35cc:: with SMTP id c195mr15806758ywa.18.1550421466278;
- Sun, 17 Feb 2019 08:37:46 -0800 (PST)
+        Sun, 17 Feb 2019 11:48:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46374 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726311AbfBQQsP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 11:48:15 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13CAF21924;
+        Sun, 17 Feb 2019 16:48:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550422093;
+        bh=HjFIrihBcVZgXoCOgErOCMvaEU7bieYJv1BUuJ2jlJI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lt0qqpqgxMpr7qUsMdlBJo7N40b4yaDT4H/w6vMeJ8gljl9lRSeerh9uvlWzgXOwP
+         twyi03Qz4VrpkKb+aN4d9jvnKDS+bbuFzBHC2bDCyd96kcaLrGMIDA9gsZrN18ekPC
+         P+3IQKzfWaO3ZaRScBI3vkFoouliDOeJTPUGCt9A=
+Date:   Sun, 17 Feb 2019 17:48:09 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Sebastian Gottschall <s.gottschall@newmedia-net.de>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Ying Xu <yinxu@redhat.com>, Hangbin Liu <liuhangbin@gmail.com>,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH 4.19 01/24] bridge: do not add port to router list when
+ receives query with source 0.0.0.0
+Message-ID: <20190217164809.GA24091@kroah.com>
+References: <20181102182839.725385066@linuxfoundation.org>
+ <20181102182839.913422845@linuxfoundation.org>
+ <07d315a2-d735-3d8b-686c-9c52acf91bf1@newmedia-net.de>
 MIME-Version: 1.0
-References: <20190212010143.3729-1-virendra.kakade@ni.com> <20190212010143.3729-3-virendra.kakade@ni.com>
- <20190214093445.GF13737@dell>
-In-Reply-To: <20190214093445.GF13737@dell>
-From:   Moritz Fischer <moritz.fischer@ettus.com>
-Date:   Sun, 17 Feb 2019 08:37:35 -0800
-Message-ID: <CAAtXAHemEOOKOmQGT5StDt-Jxn0RUOoc9L-breMNURhd8=9q=Q@mail.gmail.com>
-Subject: Re: [RFC 2/6] mfd: Support for Ettus Research E31x devices PMU
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Virendra Kakade <virendra.kakade@ni.com>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sebastian Reichel <sre@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <07d315a2-d735-3d8b-686c-9c52acf91bf1@newmedia-net.de>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lee,
-
-thanks for your feedback!
-
-On Thu, Feb 14, 2019 at 1:34 AM Lee Jones <lee.jones@linaro.org> wrote:
->
-> On Mon, 11 Feb 2019, Virendra Kakade wrote:
->
-> > Signed-off-by: Virendra Kakade <virendra.kakade@ni.com>
+On Sun, Feb 17, 2019 at 03:29:22PM +0100, Sebastian Gottschall wrote:
+> according to user reports this patch will cause a serious regression. igmp
+> snooping is not working anymore with this patch
+> 
+> Am 02.11.2018 um 19:34 schrieb Greg Kroah-Hartman:
+> > 4.19-stable review patch.  If anyone has any objections, please let me know.
+> > 
+> > ------------------
+> > 
+> > From: Hangbin Liu <liuhangbin@gmail.com>
+> > 
+> > [ Upstream commit 5a2de63fd1a59c30c02526d427bc014b98adf508 ]
+> > 
+> > Based on RFC 4541, 2.1.1.  IGMP Forwarding Rules
+> > 
+> >    The switch supporting IGMP snooping must maintain a list of
+> >    multicast routers and the ports on which they are attached.  This
+> >    list can be constructed in any combination of the following ways:
+> > 
+> >    a) This list should be built by the snooping switch sending
+> >       Multicast Router Solicitation messages as described in IGMP
+> >       Multicast Router Discovery [MRDISC].  It may also snoop
+> >       Multicast Router Advertisement messages sent by and to other
+> >       nodes.
+> > 
+> >    b) The arrival port for IGMP Queries (sent by multicast routers)
+> >       where the source address is not 0.0.0.0.
+> > 
+> > We should not add the port to router list when receives query with source
+> > 0.0.0.0.
+> > 
+> > Reported-by: Ying Xu <yinxu@redhat.com>
+> > Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+> > Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+> > Acked-by: Roopa Prabhu <roopa@cumulusnetworks.com>
+> > Signed-off-by: David S. Miller <davem@davemloft.net>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 > > ---
-> >  drivers/mfd/Kconfig          |  7 +++
-> >  drivers/mfd/Makefile         |  2 +-
-> >  drivers/mfd/e31x-pmu.c       | 89 ++++++++++++++++++++++++++++++++++++
-> >  include/linux/mfd/e31x-pmu.h | 20 ++++++++
-> >  4 files changed, 117 insertions(+), 1 deletion(-)
-> >  create mode 100644 drivers/mfd/e31x-pmu.c
-> >  create mode 100644 include/linux/mfd/e31x-pmu.h
-> >
-> > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> > index 8c5dfdce4326..6c4c0747f2a5 100644
-> > --- a/drivers/mfd/Kconfig
-> > +++ b/drivers/mfd/Kconfig
-> > @@ -1916,4 +1916,11 @@ config RAVE_SP_CORE
-> >         device found on several devices in RAVE line of hardware.
-> >
-> >  endmenu
+> >   net/bridge/br_multicast.c |   10 +++++++++-
+> >   1 file changed, 9 insertions(+), 1 deletion(-)
+> > 
+> > --- a/net/bridge/br_multicast.c
+> > +++ b/net/bridge/br_multicast.c
+> > @@ -1420,7 +1420,15 @@ static void br_multicast_query_received(
+> >   		return;
+> >   	br_multicast_update_query_timer(br, query, max_delay);
+> > -	br_multicast_mark_router(br, port);
 > > +
-> > +config MFD_E31X_PMU
-> > +     tristate "E31X PMU driver"
-> > +     select MFD_SYSCON
-> > +     help
-> > +      Select this to get support for the Ettus Research E31x devices.
-> > +
-> >  endif
-> > diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> > index 12980a4ad460..e37c2057134b 100644
-> > --- a/drivers/mfd/Makefile
-> > +++ b/drivers/mfd/Makefile
-> > @@ -241,4 +241,4 @@ obj-$(CONFIG_MFD_MXS_LRADC)     += mxs-lradc.o
-> >  obj-$(CONFIG_MFD_SC27XX_PMIC)        += sprd-sc27xx-spi.o
-> >  obj-$(CONFIG_RAVE_SP_CORE)   += rave-sp.o
-> >  obj-$(CONFIG_MFD_ROHM_BD718XX)       += rohm-bd718x7.o
-> > -
-> > +obj-$(CONFIG_MFD_E31X_PMU)      += e31x-pmu.o
-> > diff --git a/drivers/mfd/e31x-pmu.c b/drivers/mfd/e31x-pmu.c
-> > new file mode 100644
-> > index 000000000000..383df68a538f
-> > --- /dev/null
-> > +++ b/drivers/mfd/e31x-pmu.c
-> > @@ -0,0 +1,89 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (c) 2018 National Instruments Corp
->
-> This is out of date.
->
-> '\n' here.
->
-> > + * Author: Virendra Kakade<virendra.kakade@ni.com>
->
-> You need a space after your name.
->
-> > + * Ettus Research E31x PMU MFD driver
->
-> Please expand PMU.
->
-> > + */
-> > +
-> > +#include <linux/err.h>
-> > +#include <linux/delay.h>
-> > +#include <linux/interrupt.h>
-> > +#include <linux/kernel.h>
-> > +#include <linux/mfd/syscon.h>
-> > +#include <linux/module.h>
-> > +#include <linux/pm_runtime.h>
-> > +#include <linux/regmap.h>
-> > +#include <linux/mfd/core.h>
-> > +#include <linux/of_device.h>
-> > +#include <linux/mfd/e31x-pmu.h>
-> > +#include <linux/platform_device.h>
->
-> Alphabetical.
->
-> > +#define E31X_PMU_MISC_IRQ_MASK               BIT(8)
-> > +#define E31X_PMU_MISC_IRQ_SHIFT              8
-> > +#define E31X_PMU_MISC_VERSION_MIN_MASK       GENMASK(3, 0)
-> > +#define E31X_PMU_MISC_VERSION_MIN_SHIFT      0
-> > +#define E31X_PMU_MISC_VERSION_MAJ_MASK       GENMASK(7, 4)
-> > +#define E31X_PMU_MISC_VERSION_MAJ_SHIFT      4
-> > +
-> > +struct e31x_pmu {
-> > +     struct regmap *regmap;
-> > +};
->
-> A whole struct for one attribute?
->
-> > +static int e31x_pmu_check_version(struct e31x_pmu *pmu)
-> > +{
-> > +     int timeout = 100;
->
-> Where does 100 come from?
->
-> > +     u32 misc, maj;
-> > +     int err;
->
-> 'ret' is more common.
->
-> > +     /* we need to wait a bit for firmware to populate the fields */
->
-> "a bit" ?
->
-> What does the datasheet say?
->
-> Please use proper grammar.  Capital letters.
->
-> > +     while (timeout--) {
-> > +             err = regmap_read(pmu->regmap, E31X_PMU_REG_MISC, &misc);
-> > +             if (err)
-> > +                     return err;
-> > +             if (misc)
-> > +                     break;
-> > +
-> > +     usleep_range(2500, 5000);
->
-> Formatting.
->
-> > +     }
-> > +
-> > +     /* only firmware versions above 2.0 are supported */
->
-> "Only supports firmware version 2.0 and above"
->
-> > +     maj = E31X_PMU_GET_FIELD(MISC_VERSION_MAJ, misc);
-> > +     if (maj < 2)
-> > +             return -ENOTSUPP;
->
-> '\n' here.
->
-> > +     return 0;
-> > +}
-> > +
-> > +static int e31x_pmu_probe(struct platform_device *pdev)
-> > +{
-> > +     struct e31x_pmu *pmu;
-> > +
-> > +     pmu = devm_kzalloc(&pdev->dev, sizeof(*pmu), GFP_KERNEL);
-> > +     if (!pmu)
-> > +             return -ENOMEM;
->
-> '\n' here.
->
-> > +     pmu->regmap = syscon_regmap_lookup_by_phandle(\
->
-> Why are you storing regmap?
+> > +	/* Based on RFC4541, section 2.1.1 IGMP Forwarding Rules,
+> > +	 * the arrival port for IGMP Queries where the source address
+> > +	 * is 0.0.0.0 should not be added to router port list.
+> > +	 */
+> > +	if ((saddr->proto == htons(ETH_P_IP) && saddr->u.ip4) ||
+> > +	    (saddr->proto == htons(ETH_P_IPV6) &&
+> > +	     !ipv6_addr_any(&saddr->u.ip6)))
+> > +		br_multicast_mark_router(br, port);
+> >   }
+> >   static void br_ip4_multicast_query(struct net_bridge *br,
 
-See my comment below.
->
-> Just pass it directly to e31x_pmu_check_version().
->
-> > +                     pdev->dev.of_node, "regmap");
-> > +
->
-> Remove this line.
->
-> > +     if (IS_ERR(pmu->regmap))
-> > +             return PTR_ERR(pmu->regmap);
->
-> '\n' here.
->
-> > +     if (e31x_pmu_check_version(pmu))
->
-> Please split out the function from the if.
->
-> Use a variable 'ret' to feed into and check that.
->
-> > +             return -ENOTSUPP;
->
-> '\n' here.
->
-> > +     return devm_of_platform_populate(&pdev->dev);
-> > +}
-> > +
-> > +static const struct of_device_id e31x_pmu_id[] = {
-> > +     { .compatible = "ni,e31x-pmu" },
-> > +     {},
-> > +};
-> > +
-> > +static struct platform_driver e31x_pmu_driver = {
-> > +     .driver = {
-> > +     .name = "e31x-pmu",
-> > +     .of_match_table = e31x_pmu_id,
->
-> These 2 lines need indenting.
->
-> > +     },
-> > +     .probe = e31x_pmu_probe,
-> > +};
-> > +module_platform_driver(e31x_pmu_driver);
-> > +
-> > +MODULE_DESCRIPTION("E31x PMU driver");
-> > +MODULE_AUTHOR("Virendra Kakade <virendra.kakade@ni.com>");
-> > +MODULE_LICENSE("GPL");
->
-> So the whole purpose of this driver is to do a version check.
->
-> Seems like over-kill!
->
-> Probably better to do the version check in an inline function stored
-> in a header file, then call it from each of the children's .probe()
-> function.
+Is this also a problem in 4.20?  This patch went into 4.20-rc1, so it
+has been around for a while with no reported issues that I can find.
+Any pointers to the reports?
 
-A bit of context here, this is based on an in-house driver that we had that does
-a bunch of other stuff (e.g. it controls a flag on whether the device auto-boots
-on power being plugged in etc.). These functions will use the regmap.
+thanks,
 
-I had advised Virendra to submit a base version and follow up with patches
-that would add these functions one by one as he figures out how to expose them
-in a proper way to the kernel.
-
-Cheers,
-Moritz
+greg k-h
