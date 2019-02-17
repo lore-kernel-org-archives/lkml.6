@@ -2,91 +2,83 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A59BFC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 13:57:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E24C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 14:03:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6353D2192C
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 13:57:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D0702192C
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 14:03:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ou7nf/Fw"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="fOupv8ni"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728115AbfBQN5V (ORCPT
+        id S1727469AbfBQODA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 08:57:21 -0500
-Received: from ozlabs.org ([203.11.71.1]:51707 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727191AbfBQN5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 08:57:21 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 442T8G2zHtz9s7h;
-        Mon, 18 Feb 2019 00:57:18 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1550411838;
-        bh=WySIdWx0AzTVFxRLLf58Wd5usWZKcPPgG6KnP9aq8Fw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=ou7nf/Fw3XEII8D7mq8GFoPL3CqTpgk6DlAQMcdDJfNXNuXztJbx/IbM9dk3Bh0TJ
-         FF+bGC4/YEChNCQ58NK4LZtc+UNnTiabr+iA4rGH42nAQoHIRg2hYafgn1FxRNMQGc
-         XoZUMnvs46PrBOepJuBgj6IsJjZD7pk1Ny79iwJK7jwjWQh58+EpNdQbxoS7uC/UIi
-         cwsI5LEtE4oZOmazGZj1YFyOXYBjRf4+k5PrQr9tpSGPNnBOD+vtdvYgoMcq48FYIT
-         tG9nBJKjnAnw4EwH2zXJK59cJu33qy77vtUG/i46bgKzI8h7jbER5dvotRFKcYmqhw
-         90odf1WMfe6Zg==
-Date:   Mon, 18 Feb 2019 00:57:17 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Juergen Gross <jgross@suse.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Xen Devel <Xen-devel@lists.xensource.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commits in the xen-tip tree
-Message-ID: <20190218005717.175ba89f@canb.auug.org.au>
+        Sun, 17 Feb 2019 09:03:00 -0500
+Received: from mail-ot1-f51.google.com ([209.85.210.51]:39757 "EHLO
+        mail-ot1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725801AbfBQODA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 09:03:00 -0500
+Received: by mail-ot1-f51.google.com with SMTP id n8so24095284otl.6;
+        Sun, 17 Feb 2019 06:02:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cRF7QEZ4ps6hDZrYg29EaqW9rR7Z0aLbdNOon8BuccA=;
+        b=fOupv8niAR4uZSUJ+ftsUj0MmVCLqXB9kTjQv5plP08//eCbch+Mcxijtuh5wVViKa
+         F/R/Tuvq690c+/s4kyeVeAgWyHMZ+5JYe2jtsHWXhDSZNCQJxFzhMs99LaoRoJEVMxgr
+         85jJTJxJsm3ubrf4Y/bVAjKC+QVNSj/RKKfu2ry8UoKRERpUzABJZOa1whi/l+N7szRL
+         OK0p1V6iOAczGtn2fyZlHpFvYdQMAQRtjrTR0RidD1CpDfSpXjyPq4ZKF+o4vQlicTLg
+         a+umFH4VStwBgr4g9hmY8TbjWRUVm/DjprB6GtHM+UmLZwpFXbZaPnCfth5MK+OeFs98
+         Xw8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cRF7QEZ4ps6hDZrYg29EaqW9rR7Z0aLbdNOon8BuccA=;
+        b=P2lXI+Rph5kRGIyvERmDe9uzbNoimKnXZnPMd0GbHrTypa/+pxt2kO3ULhcgU2cb6B
+         JmE0P8JpQkGROpte51V9kNby/JbozpbULorZDWppxZlq1gpbzYEAVWCU0sZpqMVJhmXO
+         rIrH5qL8kAh4fMTr3Zt4CX3Vv7qLcOXfdWPKcmfFrT2USeaxRGRQ2dj89Nif+485FZjx
+         Zy7q4gAfcmHVepkorPAQ4s+D9qsUQ41yQBXEQMnMNdYmxFsxCndQe768z/gcdZq5rYgY
+         Grq+AoTKSjQo2OtHL1Bxs4wUKzwpg+PFJ/QmoycH49yfpTt0zTYOf2QZhN6+U+2aK/Av
+         Jssw==
+X-Gm-Message-State: AHQUAubGn9wNtcyUv9l8dOPhLilnxAgHWgHtBHRX18NGAjEJ0B2Y0qEi
+        /xfgSIbHlLiuDDKA/5hiH6iqSRh7kj+l3wiWhLM=
+X-Google-Smtp-Source: AHgI3IZXLCcpxapVqlJ3MOwLLh7Qq9+xZufFlKkmn99eFUBNzWxxQp+RJStiLJf2x7tpTIH7Kj/l5ZPHyzOPVhvV3O4=
+X-Received: by 2002:a9d:a48:: with SMTP id 66mr11771077otg.308.1550412179185;
+ Sun, 17 Feb 2019 06:02:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/u2uu1OvJX=AMbFcvWehUyAo"; protocol="application/pgp-signature"
+References: <20190211103324.643-1-alexandre.belloni@bootlin.com>
+In-Reply-To: <20190211103324.643-1-alexandre.belloni@bootlin.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Sun, 17 Feb 2019 15:02:48 +0100
+Message-ID: <CAFBinCC8FBeswc-dq0brSOxtLVt97dKgncU=gy-FmY5cwBPGww@mail.gmail.com>
+Subject: Re: [PATCH] rtc: meson: remove useless rtc_nvmem_unregister call
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/u2uu1OvJX=AMbFcvWehUyAo
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Alexandre,
 
-Hi all,
+On Mon, Feb 11, 2019 at 11:33 AM Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
+>
+> rtc_nvmem_unregister() is called on rtc_device release so it is not
+> necessary to call it from the driver.
+thank you for taking care of the linker-error!
 
-Commits
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-  28df69acbd27 ("xen-scsiback: mark expected switch fall-through")
-  7bb17e0ca4a5 ("xen: mark expected switch fall-through")
 
-are missing a Signed-off-by from their committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/u2uu1OvJX=AMbFcvWehUyAo
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxpaD0ACgkQAVBC80lX
-0GyUPgf/V4oAVkGq1tLAQdyUT/BLYb3Bcv16Qh/NzBL/Z4STDCZeNTOdXedRqhb1
-IB0/QEW9jSPrLAZQ64cIGXD1nd6c6A2AT1mbuMUVVTSq8fqfiuLZWfBVUb/cyN0D
-eqw150jMr86KJhjY//TtY4uuch3BAU82gZvnXS4O4OrLV4uZgU04z7QV+QAwtCgk
-XEg2DQCn/gHXkGLkNTr665BQKWSRzVJ/VEvBMPD4eabxxR6nVUs8qtcqt6B6TXr5
-5l6zbMQWfUznVMTm2Ro1n5pvdBH2uVp1GUpvf/jCqLAuE/F+kk63p9Z+0yPRQqLx
-JlmEMOiubYLRF0GRZnihVPrOXx8dOA==
-=2EOl
------END PGP SIGNATURE-----
-
---Sig_/u2uu1OvJX=AMbFcvWehUyAo--
+Regards
+Martin
