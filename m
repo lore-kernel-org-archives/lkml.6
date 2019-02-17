@@ -2,100 +2,93 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7897AC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 04:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26F33C10F04
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 04:42:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2948921A4A
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 04:34:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lca.pw header.i=@lca.pw header.b="pL0aptnA"
+	by mail.kernel.org (Postfix) with ESMTP id F27362196F
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 04:42:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387685AbfBQEej (ORCPT
+        id S1727138AbfBQEmo convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 23:34:39 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:46428 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbfBQEej (ORCPT
+        Sat, 16 Feb 2019 23:42:44 -0500
+Received: from linux-libre.fsfla.org ([209.51.188.54]:50120 "EHLO
+        linux-libre.fsfla.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbfBQEmn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 23:34:39 -0500
-Received: by mail-qk1-f193.google.com with SMTP id i5so8169016qkd.13
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Feb 2019 20:34:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=h6TKt4Hh8+6/IGrwTZ2yYrCHynxj3jrbFVaK/gRbrTk=;
-        b=pL0aptnAzBDaovLZAhnwQfZk6XWrw8F8IisW06u6EOotGY6TsujUzuZDiNyOWIQw3g
-         QWZkDmkJ3a0deDcuGM+IkyZAygSZcW16keE2X1jOfsNedsbpPcW39sUPRenJDBdU4JSu
-         /AYKoSPnN5GeNgAPa2IzYVxjqhrug+XllHcjFDtDUVpM/BodH/JkDqQEZtJY8dVTZdKQ
-         AmO8mUJSMWJv4WwE7F40u5A7I7HvpJsK9yD5S+JS6aHL8cz+GsF9IV86iftNVHO5tklE
-         jG3lXd5ciFII4jaHbolrk4d6sA+9egEIHQhEKJsg0y64o2vOix5+toSwri0r+fTBTp3s
-         kh5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=h6TKt4Hh8+6/IGrwTZ2yYrCHynxj3jrbFVaK/gRbrTk=;
-        b=puvOevJ6PFlD1U5oRSblGddQKZiUDyrAH2+X8udIoh7KW25aQDZBgftYeqfZFJsqWE
-         AHganj0P3QyavgL7GSi4dVGfvku5WaTw+Z0jg5R39KeogQaHLHltX5WJGtfg/fOxZBxR
-         AM1bFRrLrglFi289bZd/XJoZd0VPzC7uyoa08HkGm13XRgKNB9ng/Dbf2QIVmzPeJ+Qy
-         4tZgPjjXKgLLz/GooyvJcrBNQLJyDj3DNeW2jJ1Ii60TK5XPhk9K6CDQMr/j9uhWgYgV
-         eL/fHakzzfylT2qCyKb/9UfZTCn73xvtBnZrG9TWZof8HjFc/jtVAyOdJFsCbp55++J2
-         68AQ==
-X-Gm-Message-State: AHQUAuZdPpti5o3ZIartyQxpcrJd0Me+rCOAjTR0fgqYQ3G5tKd4vk1w
-        aw1oHRb/9RMwE97aJJpEqpM6Fg==
-X-Google-Smtp-Source: AHgI3IamzFPnrIQQELRtEl+dx7SsghZSgftoi3VyNxrU/X4MvX8mIGFIFEBNrCd7x5MJR3cudv0C1Q==
-X-Received: by 2002:a37:4846:: with SMTP id v67mr12866022qka.267.1550378078369;
-        Sat, 16 Feb 2019 20:34:38 -0800 (PST)
-Received: from ovpn-120-150.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
-        by smtp.gmail.com with ESMTPSA id n62sm5118369qkf.89.2019.02.16.20.34.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 16 Feb 2019 20:34:37 -0800 (PST)
-From:   Qian Cai <cai@lca.pw>
-To:     rostedt@goodmis.org, mingo@redhat.com
-Cc:     will.deacon@arm.com, catalin.marinas@arm.com,
-        andreyknvl@google.com, aryabinin@virtuozzo.com,
-        linux-arm-kernel@lists.infradead.org, kasan-dev@googlegroups.com,
-        linux-kernel@vger.kernel.org, Qian Cai <cai@lca.pw>
-Subject: [PATCH] trace: skip hwasan
-Date:   Sat, 16 Feb 2019 23:34:34 -0500
-Message-Id: <20190217043434.46233-1-cai@lca.pw>
-X-Mailer: git-send-email 2.17.2 (Apple Git-113)
+        Sat, 16 Feb 2019 23:42:43 -0500
+Received: from free.home (home.lxoliva.fsfla.org [172.31.160.164])
+        by linux-libre.fsfla.org (8.15.2/8.15.2/Debian-3) with ESMTP id x1H4gGXg019408;
+        Sun, 17 Feb 2019 04:42:17 GMT
+Received: from livre (livre.home [172.31.160.2])
+        by free.home (8.15.2/8.15.2) with ESMTP id x1H4fuUS166969;
+        Sun, 17 Feb 2019 01:41:56 -0300
+From:   Alexandre Oliva <lxoliva@fsfla.org>
+To:     Tom Li <tomli@tomli.me>, Aaro Koskinen <aaro.koskinen@iki.fi>
+Cc:     James Hogan <jhogan@kernel.org>,
+        Jiaxun Yang <jiaxun.yang@flygoat.com>,
+        Huacai Chen <chenhc@lemote.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC] On the Current Troubles of Mainlining Loongson Platform Drivers
+Organization: Free thinker, not speaking for FSF Latin America
+References: <20190208083038.GA1433@localhost.localdomain>
+        <orbm3i5xrn.fsf@lxoliva.fsfla.org>
+        <20190211125506.GA21280@localhost.localdomain>
+Date:   Sun, 17 Feb 2019 01:41:56 -0300
+In-Reply-To: <20190211125506.GA21280@localhost.localdomain> (Tom Li's message
+        of "Mon, 11 Feb 2019 20:55:09 +0800")
+Message-ID: <or36onkovf.fsf@lxoliva.fsfla.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Scanned-By: MIMEDefang 2.84
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enabling function tracer with CONFIG_KASAN_SW_TAGS=y (hwasan) tracer
-causes the whole system frozen on ThunderX2 systems with 256 CPUs,
-because there is a burst of too much pointer access, and then KASAN will
-dereference each byte of the shadow address for the tag checking which
-will kill all the CPUs.
+On Feb 11, 2019, Tom Li <tomli@tomli.me> wrote:
 
-Signed-off-by: Qian Cai <cai@lca.pw>
----
- kernel/trace/Makefile | 5 +++++
- 1 file changed, 5 insertions(+)
+> We've just identified and confirmed the source of the shutdown problem a
+> few days ago on this mailing list.
 
-diff --git a/kernel/trace/Makefile b/kernel/trace/Makefile
-index c2b2148bb1d2..fdd547a68385 100644
---- a/kernel/trace/Makefile
-+++ b/kernel/trace/Makefile
-@@ -28,6 +28,11 @@ ifdef CONFIG_GCOV_PROFILE_FTRACE
- GCOV_PROFILE := y
- endif
- 
-+# Too much pointer access will kill hwasan.
-+ifdef CONFIG_KASAN_SW_TAGS
-+KASAN_SANITIZE := n
-+endif
-+
- CFLAGS_trace_benchmark.o := -I$(src)
- CFLAGS_trace_events_filter.o := -I$(src)
- 
+> You can pick up the patch from:
+> https://lore.kernel.org/lkml/20190207205812.GA11315@darkstar.musicnaut.iki.fi/
+
+> A patch has been authored and submitted by Aaro Koskinen, but currently it
+> seems stuck in the mailing list because the maintainer worries about regression
+> and asks for testing on more MIPS systems, although we believe it's a trivial
+> patch.
+
+Thanks.  I've just brought it into my local copies of loongson-community
+branches for 4.4, 4.9, 4.14, 4.19, and 4.20, and master, after verifying
+that it enables at least 4.19, 4.20 and master to reboot without a power
+cycle, and I'll include it in upcoming freeloong builds, except for 3.16
+and 3.18, where it doesn't apply.
+
+
+> In addition, I've discovered and fixed another bug preventing the machine from
+> shutting down, this patch has already merged into the Linus tree.
+
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8a96669d77897ff3613157bf43f875739205d66d
+
+Hmm, I don't think I've ever hit this one.  Do you happen to know how
+far back it might be needed?
+
+
+> I'll continue working on upstreaming these out-of-tree drivers as my personal
+> project. I hope you'll be able to use a fully-functional machine with the mainline
+> kernel soon, my current target is Linux 5.3.
+
+Thanks!
+
 -- 
-2.17.2 (Apple Git-113)
-
+Alexandre Oliva, freedom fighter   https://FSFLA.org/blogs/lxo
+Be the change, be Free!         FSF Latin America board member
+GNU Toolchain Engineer                Free Software Evangelist
+Hay que enGNUrecerse, pero sin perder la terGNUra jamás-GNUChe
