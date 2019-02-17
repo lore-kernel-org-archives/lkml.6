@@ -2,109 +2,108 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B11C4360F
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 02:36:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D9CCC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 02:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7B9F21A4A
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 02:36:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4409F222E6
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 02:54:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="0KNvUXDn"
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="ZLC8erem"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbfBQCg5 (ORCPT
+        id S1729902AbfBQCyc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 21:36:57 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36580 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725799AbfBQCg4 (ORCPT
+        Sat, 16 Feb 2019 21:54:32 -0500
+Received: from a9-37.smtp-out.amazonses.com ([54.240.9.37]:48476 "EHLO
+        a9-37.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727175AbfBQCyc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 21:36:56 -0500
-Received: by mail-pf1-f196.google.com with SMTP id n22so6789246pfa.3
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Feb 2019 18:36:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=CxnZx9xjxIgLZ1xag5Fp9cF44ziT0g64seYfvpN2DbE=;
-        b=0KNvUXDnXnID/X8ZRp/6Z6PdHlcQ4HNePWnzsF5eCKqlK+IrX+gguZuG547VVi3BI+
-         FyCqC4DudDs5aUAjW0efGEkl2iMu8Xg0h2/fv5iMg82pVQxloLW6fmLIeUH8EGLMMzGq
-         9Zklezlz3QDJab9ZDnZMi5tnA+WMdzO2WVLyDWOArI9ACTBreXeuoT2BM903zikyu39q
-         nTsou8i7G1V48w8TqyLTjpfD0r6CqRj6HFtVxwkUZCBpjk/eSrqqhpuPZGkB9xieLy9s
-         pJ76OUW0IV/z5eyHk3i7Dsg3P0ZgkVcL1Bk6Hw8uwVk8VWL0aQl3Vjs57rTOt+k0gNcK
-         NGzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=CxnZx9xjxIgLZ1xag5Fp9cF44ziT0g64seYfvpN2DbE=;
-        b=WgHKsMrqH9Umm1sJx8ledd0s28SMDnYqOvw5hd2OlE2DUPtjspYqry8Bz9vXdOt4lK
-         hJvNn/20T95AUBJxq4H4fHhD12+otqd/XEpK6xONeOeP/sXPj1QaVvmDM3uKk8i1ZtwK
-         eJvejFqbca4sA6sGvkun1bo9VaLwnFpw3gVpKv89v72T5d3QB++0RFM/wSiYQGPRvL5U
-         OTHnLtZNf5+yzH7Y0aZBPKWZhRmgFhSf0X5JgO3qkJd7C76galOdhQLV5Bog8xOq+YbP
-         mqt7vNwBb3OSXjwlQv6V64kflp581HNtgfa49T5RZqA6Zh0Qv49WcPFlXwUWv2FFcoWN
-         A3pg==
-X-Gm-Message-State: AHQUAuarKvVE2Xg7M/8cvak0oHThe+RUGcCKveRugT7MNckN2a+sZp/8
-        0GxMvEyLgY7MzwYARWHGmmS8ow==
-X-Google-Smtp-Source: AHgI3IYV7xk0wqKNGout3H8gWPo+gsRwWlyvFrKlU/jp0V52EoaUNxc7hY2I4Tbcg2EQl3nQfwKnAw==
-X-Received: by 2002:a63:5518:: with SMTP id j24mr12351626pgb.208.1550371015557;
-        Sat, 16 Feb 2019 18:36:55 -0800 (PST)
-Received: from ?IPv6:2600:1010:b04d:2030:49e7:7136:e1e6:66fa? ([2600:1010:b04d:2030:49e7:7136:e1e6:66fa])
-        by smtp.gmail.com with ESMTPSA id k74sm1951376pfb.172.2019.02.16.18.36.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 16 Feb 2019 18:36:53 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH] x86: uaccess: fix regression in unsafe_get_user
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16C101)
-In-Reply-To: <20190216234702.GP2217@ZenIV.linux.org.uk>
-Date:   Sat, 16 Feb 2019 18:36:52 -0800
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Jann Horn <jannh@google.com>,
-        baloo@gandi.net, the arch/x86 maintainers <x86@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Pascal Bouchareine <pascal@gandi.net>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <FBED20DC-1F47-4038-81CC-8F5119785F8E@amacapital.net>
-References: <20190215235901.23541-1-baloo@gandi.net> <CAG48ez2tYizTKncevLF=AMQ2nm3D=SqGHH5bM5f-U0fhQ1nL9Q@mail.gmail.com> <alpine.DEB.2.21.1902161358160.1683@nanos.tec.linutronix.de> <4F2693EA-1553-4F09-9475-781305540DBC@amacapital.net> <20190216234702.GP2217@ZenIV.linux.org.uk>
-To:     Al Viro <viro@zeniv.linux.org.uk>
+        Sat, 16 Feb 2019 21:54:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1550372071;
+        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
+        bh=3x4EHOIW6CCTZsLQgDwb2qN7fvHKquBtp2/7NciRkx4=;
+        b=ZLC8eremojT71FLFUgaBmmj1KkwvdFjjNTLFOYoFlnk+umWvhFp+MkiC6mZuMSgg
+        G+Dm+U3IXIGW6EcTY47XH5leKVOwCOt0aqCO8PgvF1UR+rIIcbXE5xbYWE59s+CkCCK
+        jC0Lq+kV9Y0uI7Rkx65K7WnKWxPTCCyaVyWoWPuQ=
+Date:   Sun, 17 Feb 2019 02:54:31 +0000
+From:   Christopher Lameter <cl@linux.com>
+X-X-Sender: cl@nuc-kabylake
+To:     Ira Weiny <ira.weiny@intel.com>
+cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>, Doug Ledford <dledford@redhat.com>,
+        lsf-pc@lists.linux-foundation.org,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving longterm-GUP
+ usage by RDMA
+In-Reply-To: <20190215233828.GB30818@iweiny-DESK2.sc.intel.com>
+Message-ID: <01000168f96067cc-053f7689-8362-49c5-85b6-3fe23ac7d4f4-000000@email.amazonses.com>
+References: <CAPcyv4iHso+PqAm-4NfF0svoK4mELJMSWNp+vsG43UaW1S2eew@mail.gmail.com> <20190211180654.GB24692@ziepe.ca> <20190214202622.GB3420@redhat.com> <20190214205049.GC12668@bombadil.infradead.org> <20190214213922.GD3420@redhat.com> <20190215011921.GS20493@dastard>
+ <01000168f1d25e3a-2857236c-a7cc-44b8-a5f3-f51c2cfe6ce4-000000@email.amazonses.com> <20190215180852.GJ12668@bombadil.infradead.org> <01000168f26d9e0c-aef3255a-5059-4657-b241-dae66663bbea-000000@email.amazonses.com> <20190215220031.GB8001@ziepe.ca>
+ <20190215233828.GB30818@iweiny-DESK2.sc.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+X-SES-Outgoing: 2019.02.17-54.240.9.37
+Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 15 Feb 2019, Ira Weiny wrote:
 
+> > > > for filesystems and processes.  The only problems come in for the things
+> > > > which bypass the page cache like O_DIRECT and DAX.
+> > >
+> > > It makes a lot of sense since the filesystems play COW etc games with the
+> > > pages and RDMA is very much like O_DIRECT in that the pages are modified
+> > > directly under I/O. It also bypasses the page cache in case you have
+> > > not noticed yet.
+> >
+> > It is quite different, O_DIRECT modifies the physical blocks on the
+> > storage, bypassing the memory copy.
+> >
+>
+> Really?  I thought O_DIRECT allowed the block drivers to write to/from user
+> space buffers.  But the _storage_ was still under the control of the block
+> drivers?
 
-> On Feb 16, 2019, at 3:47 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
->=20
->> On Sat, Feb 16, 2019 at 02:50:15PM -0800, Andy Lutomirski wrote:
->>=20
->> What is the actual problem?  We=E2=80=99re not actually demand-faulting t=
-his data, are we?  Are we just overrunning the buffer because the from_user h=
-elpers are too clever?  Can we fix it for real by having the fancy helpers d=
-o *aligned* loads so that they don=E2=80=99t overrun the buffer?  Heck, this=
- might be faster, too.
->=20
-> Unaligned _stores_ are not any cheaper, and you'd get one hell of
-> extra arithmetics from trying to avoid both.  Check something
-> like e.g. memcpy() on alpha, where you really have to keep all
-> accesses aligned, both on load and on store side.
+It depends on what you see as the modification target. O_DIRECT uses
+memory as a target and source like RDMA. The block device is at the other
+end of the handling.
 
-I think we should avoid unaligned loads and do unaligned stores instead.
+> > RDMA modifies the memory copy.
+> >
+> > pages are necessary to do RDMA, and those pages have to be flushed to
+> > disk.. So I'm not seeing how it can be disconnected from the page
+> > cache?
+>
+> I don't disagree with this.
 
-I would general expect that unaligned stores are a bit cheaper since they do=
-n=E2=80=99t need to complete for the comparisons to happen.
+RDMA does direct access to memory. If that memmory is a mmmap of a regular
+block  device then we have a problem (this has not been a standard use case to my
+knowledge). The semantics are simmply different. RDMA expects memory to be
+pinned and always to be able to read and write from it. The block
+device/filesystem expects memory access to be controllable via the page
+permission. In particular access to be page need to be able to be stopped.
 
-But I maintain my claim that this code should not be overrunning its input b=
-uffer into the next page, since it could have observable side effects.
+This is fundamentally incompatible. RDMA access to such an mmapped section
+must preserve the RDMA semantics while the pinning is done and can only
+provide the access control after RDMA is finished. Pages in the RDMA range
+cannot be handled like normal page cache pages.
 
->=20
-> Can't we just pad the buffers a bit?  Making sure that name_buf
-> and symlink_buf are _not_ followed by unmapped pages shouldn't
-> be hard.  Both are allocated by kmalloc(), so...
->=20
-> What am I missing here?
+This is in particular evident in the DAX case in which we have direct pass
+through even to the storage medium. And in this case write through can
+replace the page cache.
