@@ -2,109 +2,113 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB87EC10F06
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 21:48:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73E60C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 21:52:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B0402186A
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 21:48:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qXlk7uNu"
+	by mail.kernel.org (Postfix) with ESMTP id 45B7C2146E
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 21:52:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbfBQVsa (ORCPT
+        id S1726521AbfBQVwi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 16:48:30 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33182 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726124AbfBQVs3 (ORCPT
+        Sun, 17 Feb 2019 16:52:38 -0500
+Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:59900 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726124AbfBQVwi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 16:48:29 -0500
-Received: by mail-wr1-f67.google.com with SMTP id i12so16259848wrw.0
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 13:48:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3Ulo8XvsRN/4EFvyv9ZkpIMBsSSfHRzXFDGXuQ85ggE=;
-        b=qXlk7uNubIi9Q4kfdP3tgElcV8gmyy9681yP0bYT9YpsxATtCIXAntiPjVWXdcP375
-         7ppLbzsbFsTDjgA5ObybSEL297MBfOzpScfWm4RsDjOS/A/T/c4G0ricNP9CO3KwCzOq
-         Ll0gZ+6fv1uAkkljbOECLl9EFCS/5ClC3liT/WnQLhqwj7BFaCp4x59IAQLJsD3majiT
-         TTqxF/VhBYs1EyRiriY9TKTGEQ0WoOK00hOdirq79jtwUe0tikvvvXijXsRO4tRCFhcQ
-         LQzU35BB53WNCEp0EmNb0fDAQRyx1rJKmYXBfNzyPNffQHkyp/ydGHGrMbGhRNxhvXOY
-         d8sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3Ulo8XvsRN/4EFvyv9ZkpIMBsSSfHRzXFDGXuQ85ggE=;
-        b=WCAVZ5+C6/7p8N215bQI/mYpVKxb949YHiMILo7DEButbyftToGGXhTAJUM6htcHbs
-         Bq671Poa+X9hhlM78yLYFMETwoN05ctnJmpfFZUYTZL9+wWxqEHBwAdJ21DVl25Jd9do
-         osgSoEVhLkaVP65mbYbVRTCKlN9Losh+SUHbaCYK4XykJ16w8QoER4hWZo06c6Fd4j8I
-         e10/6ThFBYuqO8oLcK6h7J3QVo5bytep3Y9+wpm+yYvs8YMMBl8UDvPtgY7pHjJ5mQqv
-         BzYaU8gTvM/15mGVuAvO6nLJEPkIVqYM7u424n5ioLTeljlFtM67suxqGO2m+7P6hw4a
-         DpLw==
-X-Gm-Message-State: AHQUAuYeWUP0/e1wsNLg8Zhtu2EVG2DiMnLfGoQ6PYYt7sjxFmM2Hr19
-        x5tQ1kFPaWzSjOs1iE08IFEecw==
-X-Google-Smtp-Source: AHgI3IZfI4mU0q2wzMbokm1soc542SgMf5MCPfS7OjSQetmIiKmDqUNnvTFj6YZpIW+xfU8nPZ+qhA==
-X-Received: by 2002:a5d:4841:: with SMTP id n1mr13055272wrs.85.1550440107843;
-        Sun, 17 Feb 2019 13:48:27 -0800 (PST)
-Received: from [192.168.0.41] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
-        by smtp.googlemail.com with ESMTPSA id j15sm7497217wrt.1.2019.02.17.13.48.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Feb 2019 13:48:27 -0800 (PST)
-Subject: Re: [PATCH 3/3] dt-bindings: timer: mediatek: update bindings for
- MT7629 SoC
-To:     Ryder Lee <ryder.lee@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Weijie Gao <weijie.gao@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-References: <56a2c38c9efa41be940858e19501fe07fbd5120e.1550233614.git.ryder.lee@mediatek.com>
- <b145be98c1bfa71d0b9609b80c20c37177f45d6a.1550233614.git.ryder.lee@mediatek.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <05377892-7434-f74f-c28e-ebada2596b51@linaro.org>
-Date:   Sun, 17 Feb 2019 22:48:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Sun, 17 Feb 2019 16:52:38 -0500
+Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
+        id 1gvUMV-0006Ok-00; Sun, 17 Feb 2019 21:52:35 +0000
+Date:   Sun, 17 Feb 2019 16:52:35 -0500
+From:   Rich Felker <dalias@libc.org>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: Regression in SYS_membarrier expedited
+Message-ID: <20190217215235.GH23599@brightrain.aerifal.cx>
+References: <20190217184800.GA16118@brightrain.aerifal.cx>
+ <53623603.9626.1550439285362.JavaMail.zimbra@efficios.com>
 MIME-Version: 1.0
-In-Reply-To: <b145be98c1bfa71d0b9609b80c20c37177f45d6a.1550233614.git.ryder.lee@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <53623603.9626.1550439285362.JavaMail.zimbra@efficios.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17/02/2019 14:50, Ryder Lee wrote:
-> From: Ryder Lee <ryder.lee@mediatek.com>
+On Sun, Feb 17, 2019 at 04:34:45PM -0500, Mathieu Desnoyers wrote:
+> ----- On Feb 17, 2019, at 1:48 PM, Rich Felker dalias@libc.org wrote:
 > 
-> Update the binding for MT7629 SoC, which uses fallback compatible to
-> MT6765 SYST, so add more descriptions to distinguish it from the other
-> SoCs that use GPT.
+> > commit a961e40917fb14614d368d8bc9782ca4d6a8cd11 made it so that the
+> > MEMBARRIER_CMD_PRIVATE_EXPEDITED command cannot be used without first
+> > registering intent to use it. However, registration is an expensive
+> > operation since commit 3ccfebedd8cf54e291c809c838d8ad5cc00f5688, which
+> > added synchronize_sched() to it; this means it's no longer possible to
+> > lazily register intent at first use, and it's unreasonably expensive
+> > to preemptively register intent for possibly extremely-short-lived
+> > processes that will never use it. (My usage case is in libc (musl),
+> > where I can't know if the process will be short- or long-lived;
+> > unnecessary and potentially expensive syscalls can't be made
+> > preemptively, only lazily at first use.)
+> > 
+> > Can we restore the functionality of MEMBARRIER_CMD_PRIVATE_EXPEDITED
+> > to work even without registration? The motivation of requiring
+> > registration seems to be:
+> > 
+> >    "Registering at this time removes the need to interrupt each and
+> >    every thread in that process at the first expedited
+> >    sys_membarrier() system call."
+> > 
+> > but interrupting every thread in the process is exactly what I expect,
+> > and is not a problem. What does seem like a big problem is waiting for
+> > synchronize_sched() to synchronize with an unboundedly large number of
+> > cores (vs only a few threads in the process), especially in the
+> > presence of full_nohz, where it seems like latency would be at least a
+> > few ms and possibly unbounded.
+> > 
+> > Short of a working SYS_membarrier that doesn't require expensive
+> > pre-registration, I'm stuck just implementing it in userspace with
+> > signals...
 > 
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
+> Hi Rich,
+> 
+> Let me try to understand the scenario first.
+> 
+> musl libc support for using membarrier private expedited
+> would require to first register membarrier private expedited for
+> the process at musl library init (typically after exec). At that stage, the
+> process is still single-threaded, right ? So there is no reason
+> to issue a synchronize_sched() (or now synchronize_rcu() in newer
+> kernels):
+> 
+> membarrier_register_private_expedited()
+> 
+>         if (!(atomic_read(&mm->mm_users) == 1 && get_nr_threads(p) == 1)) {
+>                 /*
+>                  * Ensure all future scheduler executions will observe the
+>                  * new thread flag state for this process.
+>                  */
+>                 synchronize_rcu();
+>         }
+> 
+> So considering that pre-registration carefully done before the process
+> becomes multi-threaded just costs a system call (and not a synchronize_sched()),
+> does it make the pre-registration approach more acceptable ?
 
-Applied for 5.1
+It does get rid of the extreme cost, but I don't think it would be
+well-received by users who don't like random unnecessary syscalls at
+init time (each adding a few us of startup time cost). If it's so
+cheap, why isn't it just the default at kernel-side process creation?
+Why is there any requirement of registration to begin with? Reading
+the code, it looks like all it does is set a flag, and all this flag
+is used for is erroring-out if it's not set.
 
-Thanks
-
-  -- Daniel
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+Rich
