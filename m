@@ -2,179 +2,150 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58909C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 06:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A80DC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 07:00:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21A9520C01
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 06:54:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 067A32192C
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 07:00:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GryOWSf6"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iu/JMnIy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbfBQGyN (ORCPT
+        id S1728617AbfBQHAX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 01:54:13 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35259 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727235AbfBQGyN (ORCPT
+        Sun, 17 Feb 2019 02:00:23 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37198 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727235AbfBQHAX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 01:54:13 -0500
-Received: by mail-pg1-f194.google.com with SMTP id s198so6893259pgs.2;
-        Sat, 16 Feb 2019 22:54:12 -0800 (PST)
+        Sun, 17 Feb 2019 02:00:23 -0500
+Received: by mail-wm1-f65.google.com with SMTP id x10so13662812wmg.2;
+        Sat, 16 Feb 2019 23:00:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=o5vhrC9DOZGFGyHGF+splJ+1OBSbBR/9Fce6vMvOBpE=;
-        b=GryOWSf6ed82RXWS2lb/M/1EOz+2dDJXHZrtuvszTyz1/WPkE+Fc0lnvMbPC4CzDGt
-         os9dhhqS2iwjrDNZMNIL5mKsqNjW0G8nY1F5hn5HkATmr54LqgmiQi2VQudfdU+relTY
-         Lh8x6/4VZIkdHJLhHmPFi3F1+xTbGpolauMTJVW1nrUDFycVzb6kcJY15f8Wkf9yNPkE
-         BbhUGzRYsCQDBMDAt7gGLB8k5uKpLwGvjeuFDMX6iC16p+3/86eq9sbGyERpLrjZArpk
-         OtaEhh7GgRkrcso4lYL6vpT1TlP50377uBhcvNq7h4zQrO8TUsbspJNXetJPKspN0Hrf
-         EyQw==
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=iVIuCREYC9bLO13GIcfghUQBIIxBSOKOLnIxtldK3Gw=;
+        b=Iu/JMnIyODAH4uiKIZDBN2w+yNNXKw1xA5ngUYi0AXI2Oi2AMzBaNBPXbbYmsHKqry
+         n3Yj83g0GcDA9DrchHbcSfOyOJqo80ujBp12+d1a57E7MJzH7/N+XRUppiTXqwIUS6FW
+         QM3PwxqXz9QjJqFVhKyG7O/JlEkPBmTiNNH9hCDN+17jOQtYfsODO8YiB4Qy1mhGQ9+d
+         Lrv+ic72FQK8Wb7/nTXh1UvYFNkAFuhzrWlytD/2kvscAWgNNSk7MkS5k3Kfe0uBnfWm
+         H2zmndeDaEQw+Wi6hAMC06pTrXLvBHv/2rfyLzg/t1YMkzKNlq83bkFG+h5bTvukf1+u
+         jPDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=o5vhrC9DOZGFGyHGF+splJ+1OBSbBR/9Fce6vMvOBpE=;
-        b=l/J3KACs71yxjNlts9YGiSqDgfUjw7AsPbowM+RlhGhkFtvfER9Xk/rIi/HHzEgp5L
-         vL8GKMewFiwZSINKWqIAJ//cGZ0xr3KhJgxdrWyiZHfLchEcyA3+580zg3Xrg/7De4bQ
-         so+KYOtNuvA9xpC8W9mAeYB/Cdzt6bSUMmweNSW+zGLTUdLH1vUFx+r7RIKtHGiRlEAe
-         SuMCKXniz8HcDFX13hW7P7i6/0nHG2Bj0awkd87wf+2qRM1YbBT/Iz7SZzPlnacjBVWU
-         RQGKiLPpexFkJjrCEt+5eSM3DJZXDiN1dDF3fpxDxNXb6/VeBasrnahS+V+sLSO2NVBD
-         XIag==
-X-Gm-Message-State: AHQUAuYbZ7hQIEp8FsHvHdny7s5sVROuBwKHzrdPUnncob4Hzu7+4L5Q
-        /zm2Ex6gleroLGOlcZycQKQOjIqh
-X-Google-Smtp-Source: AHgI3IbUxaM3Fuyc4GlJ9PPJP3psrMeLRzP75Zm22M13NyuOeoTK305zGX5MKVHfNjQ72ErbsFutvA==
-X-Received: by 2002:a62:20c9:: with SMTP id m70mr17095263pfj.118.1550386451701;
-        Sat, 16 Feb 2019 22:54:11 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id 67sm31069217pfl.175.2019.02.16.22.54.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 16 Feb 2019 22:54:10 -0800 (PST)
-Date:   Sat, 16 Feb 2019 22:54:09 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     thesven73@gmail.com
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v2] Input: synaptics_i2c - remove redundant spinlock
-Message-ID: <20190217065409.GA148958@dtor-ws>
-References: <20190217061053.4559-1-TheSven73@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190217061053.4559-1-TheSven73@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=iVIuCREYC9bLO13GIcfghUQBIIxBSOKOLnIxtldK3Gw=;
+        b=CbonWpWtIDIplJiEddsm4AU0wpsTorLgl6JcBzc/PzY6RZqEpMKB3I1lZGaKLmdvhn
+         0YXcJX44t/ie7l2qGMc3TzMF4PJngNg/9/M2y0zFCACUzzFND9J13pAoKYDIvVC009C/
+         Oe401V0BBDjH4iBSF/i3rooV4fuCTci8vP29xtM+J1smpmaQRTKZiwvqdmWW6AyGMZyA
+         dfmZq7xv1Js18aHjcM5M8kIsGxrpX0LEB/+4OL1Rk2UmVyJvoAAGzLiTRybRFkQh60W6
+         Fq/ULXiFSXmEGal1E1chPfRDyomCThJb2pj/vIdoxAHVW+wYGsvq2msMDBUsP8Apwrqv
+         t5wQ==
+X-Gm-Message-State: AHQUAuYqjh0RISgYF/rtH5I5EmVyLWPMjcbOeerVhtvH8ccBY4vEl4/a
+        n0KcH3sQ9gF5YdmfK01OF5U=
+X-Google-Smtp-Source: AHgI3IYFFoxwmcSZAY7v9shZ9fQ0OF3iRm+YLYlTUp8NiPSzuC8mBRvM0yQawxk3RhjFsHUgLR/Ztw==
+X-Received: by 2002:a1c:4155:: with SMTP id o82mr11292319wma.122.1550386820844;
+        Sat, 16 Feb 2019 23:00:20 -0800 (PST)
+Received: from 640k.lan ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id y20sm19469303wra.51.2019.02.16.23.00.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 16 Feb 2019 23:00:19 -0800 (PST)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, rkrcmar@redhat.com,
+        kvm@vger.kernel.org
+Subject: [GIT PULL] KVM changes for Linux 5.0-rc7
+Date:   Sun, 17 Feb 2019 08:00:17 +0100
+Message-Id: <1550386817-50269-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 17, 2019 at 01:10:53AM -0500, thesven73@gmail.com wrote:
-> From: Sven Van Asbroeck <TheSven73@gmail.com>
-> 
-> Remove a leftover spinlock.
-> 
-> This was required back when mod_delayed_work() did not exist,
-> and had to be implemented with a cancel + queue. See
-> commit e7c2f967445d ("workqueue: use mod_delayed_work() instead of
-> __cancel + queue")
-> 
-> schedule_delayed_work() and mod_delayed_work() can now be used
-> concurrently. So the spinlock is no longer needed.
-> 
-> Cc: Tejun Heo <tj@kernel.org>
-> Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
+Linus,
 
-Applied, thank you.
+The following changes since commit d13937116f1e82bf508a6325111b322c30c85eb9:
 
-> ---
-> 
-> v2: replace useless synaptics_i2c_reschedule_work() with
-> 		mod_delayed_work().
-> 
->  drivers/input/mouse/synaptics_i2c.c | 22 ++++------------------
->  1 file changed, 4 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/input/mouse/synaptics_i2c.c b/drivers/input/mouse/synaptics_i2c.c
-> index 8538318d332c..fa304648d611 100644
-> --- a/drivers/input/mouse/synaptics_i2c.c
-> +++ b/drivers/input/mouse/synaptics_i2c.c
-> @@ -219,7 +219,6 @@ struct synaptics_i2c {
->  	struct i2c_client	*client;
->  	struct input_dev	*input;
->  	struct delayed_work	dwork;
-> -	spinlock_t		lock;
->  	int			no_data_count;
->  	int			no_decel_param;
->  	int			reduce_report_param;
-> @@ -369,23 +368,11 @@ static bool synaptics_i2c_get_input(struct synaptics_i2c *touch)
->  	return xy_delta || gesture;
->  }
->  
-> -static void synaptics_i2c_reschedule_work(struct synaptics_i2c *touch,
-> -					  unsigned long delay)
-> -{
-> -	unsigned long flags;
-> -
-> -	spin_lock_irqsave(&touch->lock, flags);
-> -
-> -	mod_delayed_work(system_wq, &touch->dwork, delay);
-> -
-> -	spin_unlock_irqrestore(&touch->lock, flags);
-> -}
-> -
->  static irqreturn_t synaptics_i2c_irq(int irq, void *dev_id)
->  {
->  	struct synaptics_i2c *touch = dev_id;
->  
-> -	synaptics_i2c_reschedule_work(touch, 0);
-> +	mod_delayed_work(system_wq, &touch->dwork, 0);
->  
->  	return IRQ_HANDLED;
->  }
-> @@ -461,7 +448,7 @@ static void synaptics_i2c_work_handler(struct work_struct *work)
->  	 * We poll the device once in THREAD_IRQ_SLEEP_SECS and
->  	 * if error is detected, we try to reset and reconfigure the touchpad.
->  	 */
-> -	synaptics_i2c_reschedule_work(touch, delay);
-> +	mod_delayed_work(system_wq, &touch->dwork, delay);
->  }
->  
->  static int synaptics_i2c_open(struct input_dev *input)
-> @@ -474,7 +461,7 @@ static int synaptics_i2c_open(struct input_dev *input)
->  		return ret;
->  
->  	if (polling_req)
-> -		synaptics_i2c_reschedule_work(touch,
-> +		mod_delayed_work(system_wq, &touch->dwork,
->  				msecs_to_jiffies(NO_DATA_SLEEP_MSECS));
->  
->  	return 0;
-> @@ -530,7 +517,6 @@ static struct synaptics_i2c *synaptics_i2c_touch_create(struct i2c_client *clien
->  	touch->scan_rate_param = scan_rate;
->  	set_scan_rate(touch, scan_rate);
->  	INIT_DELAYED_WORK(&touch->dwork, synaptics_i2c_work_handler);
-> -	spin_lock_init(&touch->lock);
->  
->  	return touch;
->  }
-> @@ -637,7 +623,7 @@ static int __maybe_unused synaptics_i2c_resume(struct device *dev)
->  	if (ret)
->  		return ret;
->  
-> -	synaptics_i2c_reschedule_work(touch,
-> +	mod_delayed_work(system_wq, &touch->dwork,
->  				msecs_to_jiffies(NO_DATA_SLEEP_MSECS));
->  
->  	return 0;
-> -- 
-> 2.17.1
-> 
+  Linux 5.0-rc6 (2019-02-10 14:42:20 -0800)
 
--- 
-Dmitry
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+
+for you to fetch changes up to 98ae70cc476e833332a2c6bb72f941a25f0de226:
+
+  kvm: vmx: Fix entry number check for add_atomic_switch_msr() (2019-02-14 16:22:20 +0100)
+
+----------------------------------------------------------------
+A somewhat bigger ARM update, and the usual smattering
+of x86 bug fixes.
+
+----------------------------------------------------------------
+Christoffer Dall (2):
+      KVM: arm/arm64: Reset the VCPU without preemption and vcpu state loaded
+      KVM: arm/arm64: vgic: Always initialize the group of private IRQs
+
+James Morse (1):
+      KVM: arm64: Forbid kprobing of the VHE world-switch code
+
+Julien Thierry (3):
+      KVM: arm/arm64: vgic: Make vgic_irq->irq_lock a raw_spinlock
+      KVM: arm/arm64: vgic: Make vgic_dist->lpi_list_lock a raw_spinlock
+      KVM: arm/arm64: vgic: Make vgic_cpu->ap_list_lock a raw_spinlock
+
+Luwei Kang (1):
+      KVM: x86: Recompute PID.ON when clearing PID.SN
+
+Marc Zyngier (4):
+      arm64: KVM: Don't generate UNDEF when LORegion feature is present
+      arm/arm64: KVM: Allow a VCPU to fully reset itself
+      arm/arm64: KVM: Don't panic on failure to properly reset system registers
+      arm: KVM: Add missing kvm_stage2_has_pmd() helper
+
+Paolo Bonzini (1):
+      Merge tag 'kvm-arm-fixes-for-5.0' of git://git.kernel.org/.../kvmarm/kvmarm into kvm-master
+
+Sean Christopherson (1):
+      KVM: nVMX: Restore a preemption timer consistency check
+
+Suzuki K Poulose (1):
+      KVM: arm64: Relax the restriction on using stage2 PUD huge mapping
+
+Vitaly Kuznetsov (1):
+      x86/kvm/nVMX: read from MSR_IA32_VMX_PROCBASED_CTLS2 only when it is available
+
+Xiaoyao Li (1):
+      kvm: vmx: Fix entry number check for add_atomic_switch_msr()
+
+ arch/arm/include/asm/kvm_host.h       |  10 +++
+ arch/arm/include/asm/stage2_pgtable.h |   5 ++
+ arch/arm/kvm/coproc.c                 |   4 +-
+ arch/arm/kvm/reset.c                  |  24 +++++++
+ arch/arm64/include/asm/kvm_host.h     |  11 ++++
+ arch/arm64/kvm/hyp/switch.c           |   5 ++
+ arch/arm64/kvm/hyp/sysreg-sr.c        |   5 ++
+ arch/arm64/kvm/reset.c                |  50 +++++++++++++-
+ arch/arm64/kvm/sys_regs.c             |  50 ++++++++------
+ arch/x86/kvm/vmx/nested.c             |  12 +++-
+ arch/x86/kvm/vmx/vmx.c                |  29 ++++-----
+ arch/x86/kvm/vmx/vmx.h                |  10 +--
+ arch/x86/kvm/x86.c                    |   2 +-
+ include/kvm/arm_vgic.h                |   6 +-
+ virt/kvm/arm/arm.c                    |  10 +++
+ virt/kvm/arm/mmu.c                    |   9 ++-
+ virt/kvm/arm/psci.c                   |  36 +++++------
+ virt/kvm/arm/vgic/vgic-debug.c        |   4 +-
+ virt/kvm/arm/vgic/vgic-init.c         |  30 +++++----
+ virt/kvm/arm/vgic/vgic-its.c          |  22 +++----
+ virt/kvm/arm/vgic/vgic-mmio-v2.c      |  14 ++--
+ virt/kvm/arm/vgic/vgic-mmio-v3.c      |  12 ++--
+ virt/kvm/arm/vgic/vgic-mmio.c         |  34 +++++-----
+ virt/kvm/arm/vgic/vgic-v2.c           |   4 +-
+ virt/kvm/arm/vgic/vgic-v3.c           |   8 +--
+ virt/kvm/arm/vgic/vgic.c              | 118 +++++++++++++++++-----------------
+ 26 files changed, 331 insertions(+), 193 deletions(-)
