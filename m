@@ -4,34 +4,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10883C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:06:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4773CC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFD7321900
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:06:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19FDC21900
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:07:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726860AbfBQJGv (ORCPT
+        id S1727074AbfBQJHL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 04:06:51 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:33066 "EHLO
+        Sun, 17 Feb 2019 04:07:11 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:6929 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725768AbfBQJGt (ORCPT
+        with ESMTP id S1726876AbfBQJHI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 04:06:49 -0500
-X-UUID: cfe863a66a8c4b93b22e7b69165774f4-20190217
-X-UUID: cfe863a66a8c4b93b22e7b69165774f4-20190217
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        Sun, 17 Feb 2019 04:07:08 -0500
+X-UUID: 3d070a9ea6ec4073bf0b2d1b7ff8ffb6-20190217
+X-UUID: 3d070a9ea6ec4073bf0b2d1b7ff8ffb6-20190217
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
         (envelope-from <yong.wu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1627838037; Sun, 17 Feb 2019 17:06:42 +0800
+        with ESMTP id 310183878; Sun, 17 Feb 2019 17:07:03 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Sun, 17 Feb 2019 17:06:40 +0800
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Sun, 17 Feb 2019 17:07:02 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Sun, 17 Feb 2019 17:06:39 +0800
+ Transport; Sun, 17 Feb 2019 17:07:01 +0800
 From:   Yong Wu <yong.wu@mediatek.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -47,14 +47,15 @@ CC:     Evan Green <evgreen@chromium.org>, Tomasz Figa <tfiga@google.com>,
         <yong.wu@mediatek.com>, <youlin.pei@mediatek.com>,
         Nicolas Boichat <drinkcat@chromium.org>,
         <anan.sun@mediatek.com>, Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v6 02/22] iommu/mediatek: Use a struct as the platform data
-Date:   Sun, 17 Feb 2019 17:04:40 +0800
-Message-ID: <1550394300-17420-3-git-send-email-yong.wu@mediatek.com>
+Subject: [PATCH v6 04/22] memory: mtk-smi: Use a struct for the platform data for smi-common
+Date:   Sun, 17 Feb 2019 17:04:42 +0800
+Message-ID: <1550394300-17420-5-git-send-email-yong.wu@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1550394300-17420-1-git-send-email-yong.wu@mediatek.com>
 References: <1550394300-17420-1-git-send-email-yong.wu@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
+X-TM-SNTS-SMTP: 793914FBF9E5BA9BE66C56DCABD90D347F379D8652DEB48678673336EB5066562000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -62,117 +63,116 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Use a struct as the platform special data instead of the enumeration.
-This is a prepare patch for adding mt8183 iommu support.
+
+Also there is a minor change that moving the position of
+"enum mtk_smi_gen" definition, this is because we expect define
+"struct mtk_smi_common_plat" before it is referred.
+
+This is a preparing patch for mt8183.
 
 Signed-off-by: Yong Wu <yong.wu@mediatek.com>
 Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 Reviewed-by: Evan Green <evgreen@chromium.org>
 ---
- drivers/iommu/mtk_iommu.c | 24 ++++++++++++++++--------
- drivers/iommu/mtk_iommu.h |  6 +++++-
- 2 files changed, 21 insertions(+), 9 deletions(-)
+ drivers/memory/mtk-smi.c | 35 ++++++++++++++++++++++++-----------
+ 1 file changed, 24 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-index de3e022..189d1b5 100644
---- a/drivers/iommu/mtk_iommu.c
-+++ b/drivers/iommu/mtk_iommu.c
-@@ -54,7 +54,7 @@
- #define REG_MMU_CTRL_REG			0x110
- #define F_MMU_PREFETCH_RT_REPLACE_MOD		BIT(4)
- #define F_MMU_TF_PROTECT_SEL_SHIFT(data) \
--	((data)->m4u_plat == M4U_MT2712 ? 4 : 5)
-+	((data)->plat_data->m4u_plat == M4U_MT2712 ? 4 : 5)
- /* It's named by F_MMU_TF_PROT_SEL in mt2712. */
- #define F_MMU_TF_PROTECT_SEL(prot, data) \
- 	(((prot) & 0x3) << F_MMU_TF_PROTECT_SEL_SHIFT(data))
-@@ -520,7 +520,7 @@ static int mtk_iommu_hw_init(const struct mtk_iommu_data *data)
- 	}
+diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
+index 9fd6b3d..8a2f968 100644
+--- a/drivers/memory/mtk-smi.c
++++ b/drivers/memory/mtk-smi.c
+@@ -49,6 +49,15 @@
+ #define SMI_LARB_NONSEC_CON(id)	(0x380 + ((id) * 4))
+ #define F_MMU_EN		BIT(0)
  
- 	regval = F_MMU_TF_PROTECT_SEL(2, data);
--	if (data->m4u_plat == M4U_MT8173)
-+	if (data->plat_data->m4u_plat == M4U_MT8173)
- 		regval |= F_MMU_PREFETCH_RT_REPLACE_MOD;
- 	writel_relaxed(regval, data->base + REG_MMU_CTRL_REG);
- 
-@@ -541,14 +541,14 @@ static int mtk_iommu_hw_init(const struct mtk_iommu_data *data)
- 		F_INT_PRETETCH_TRANSATION_FIFO_FAULT;
- 	writel_relaxed(regval, data->base + REG_MMU_INT_MAIN_CONTROL);
- 
--	if (data->m4u_plat == M4U_MT8173)
-+	if (data->plat_data->m4u_plat == M4U_MT8173)
- 		regval = (data->protect_base >> 1) | (data->enable_4GB << 31);
- 	else
- 		regval = lower_32_bits(data->protect_base) |
- 			 upper_32_bits(data->protect_base);
- 	writel_relaxed(regval, data->base + REG_MMU_IVRP_PADDR);
- 
--	if (data->enable_4GB && data->m4u_plat != M4U_MT8173) {
-+	if (data->enable_4GB && data->plat_data->m4u_plat != M4U_MT8173) {
- 		/*
- 		 * If 4GB mode is enabled, the validate PA range is from
- 		 * 0x1_0000_0000 to 0x1_ffff_ffff. here record bit[32:30].
-@@ -559,7 +559,7 @@ static int mtk_iommu_hw_init(const struct mtk_iommu_data *data)
- 	writel_relaxed(0, data->base + REG_MMU_DCM_DIS);
- 
- 	/* It's MISC control register whose default value is ok except mt8173.*/
--	if (data->m4u_plat == M4U_MT8173)
-+	if (data->plat_data->m4u_plat == M4U_MT8173)
- 		writel_relaxed(0, data->base + REG_MMU_STANDARD_AXI_MODE);
- 
- 	if (devm_request_irq(data->dev, data->irq, mtk_iommu_isr, 0,
-@@ -592,7 +592,7 @@ static int mtk_iommu_probe(struct platform_device *pdev)
- 	if (!data)
- 		return -ENOMEM;
- 	data->dev = dev;
--	data->m4u_plat = (enum mtk_iommu_plat)of_device_get_match_data(dev);
-+	data->plat_data = of_device_get_match_data(dev);
- 
- 	/* Protect memory. HW will access here while translation fault.*/
- 	protect = devm_kzalloc(dev, MTK_PROTECT_PA_ALIGN * 2, GFP_KERNEL);
-@@ -736,9 +736,17 @@ static int __maybe_unused mtk_iommu_resume(struct device *dev)
- 	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mtk_iommu_suspend, mtk_iommu_resume)
++enum mtk_smi_gen {
++	MTK_SMI_GEN1,
++	MTK_SMI_GEN2
++};
++
++struct mtk_smi_common_plat {
++	enum mtk_smi_gen gen;
++};
++
+ struct mtk_smi_larb_gen {
+ 	bool need_larbid;
+ 	int port_in_larb[MTK_LARB_NR_MAX + 1];
+@@ -61,6 +70,8 @@ struct mtk_smi {
+ 	struct clk			*clk_apb, *clk_smi;
+ 	struct clk			*clk_async; /*only needed by mt2701*/
+ 	void __iomem			*smi_ao_base;
++
++	const struct mtk_smi_common_plat *plat;
  };
  
-+static const struct mtk_iommu_plat_data mt2712_data = {
-+	.m4u_plat     = M4U_MT2712,
+ struct mtk_smi_larb { /* larb: local arbiter */
+@@ -72,11 +83,6 @@ struct mtk_smi_larb { /* larb: local arbiter */
+ 	u32				*mmu;
+ };
+ 
+-enum mtk_smi_gen {
+-	MTK_SMI_GEN1,
+-	MTK_SMI_GEN2
+-};
+-
+ static int mtk_smi_enable(const struct mtk_smi *smi)
+ {
+ 	int ret;
+@@ -351,18 +357,26 @@ static int mtk_smi_larb_remove(struct platform_device *pdev)
+ 	}
+ };
+ 
++static const struct mtk_smi_common_plat mtk_smi_common_gen1 = {
++	.gen = MTK_SMI_GEN1,
 +};
 +
-+static const struct mtk_iommu_plat_data mt8173_data = {
-+	.m4u_plat     = M4U_MT8173,
++static const struct mtk_smi_common_plat mtk_smi_common_gen2 = {
++	.gen = MTK_SMI_GEN2,
 +};
 +
- static const struct of_device_id mtk_iommu_of_ids[] = {
--	{ .compatible = "mediatek,mt2712-m4u", .data = (void *)M4U_MT2712},
--	{ .compatible = "mediatek,mt8173-m4u", .data = (void *)M4U_MT8173},
-+	{ .compatible = "mediatek,mt2712-m4u", .data = &mt2712_data},
-+	{ .compatible = "mediatek,mt8173-m4u", .data = &mt8173_data},
+ static const struct of_device_id mtk_smi_common_of_ids[] = {
+ 	{
+ 		.compatible = "mediatek,mt8173-smi-common",
+-		.data = (void *)MTK_SMI_GEN2
++		.data = &mtk_smi_common_gen2,
+ 	},
+ 	{
+ 		.compatible = "mediatek,mt2701-smi-common",
+-		.data = (void *)MTK_SMI_GEN1
++		.data = &mtk_smi_common_gen1,
+ 	},
+ 	{
+ 		.compatible = "mediatek,mt2712-smi-common",
+-		.data = (void *)MTK_SMI_GEN2
++		.data = &mtk_smi_common_gen2,
+ 	},
  	{}
  };
+@@ -372,13 +386,13 @@ static int mtk_smi_common_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct mtk_smi *common;
+ 	struct resource *res;
+-	enum mtk_smi_gen smi_gen;
+ 	int ret;
  
-diff --git a/drivers/iommu/mtk_iommu.h b/drivers/iommu/mtk_iommu.h
-index 778498b..333a0ef 100644
---- a/drivers/iommu/mtk_iommu.h
-+++ b/drivers/iommu/mtk_iommu.h
-@@ -41,6 +41,10 @@ enum mtk_iommu_plat {
- 	M4U_MT8173,
- };
+ 	common = devm_kzalloc(dev, sizeof(*common), GFP_KERNEL);
+ 	if (!common)
+ 		return -ENOMEM;
+ 	common->dev = dev;
++	common->plat = of_device_get_match_data(dev);
  
-+struct mtk_iommu_plat_data {
-+	enum mtk_iommu_plat m4u_plat;
-+};
-+
- struct mtk_iommu_domain;
- 
- struct mtk_iommu_data {
-@@ -57,7 +61,7 @@ struct mtk_iommu_data {
- 	bool				tlb_flush_active;
- 
- 	struct iommu_device		iommu;
--	enum mtk_iommu_plat		m4u_plat;
-+	const struct mtk_iommu_plat_data *plat_data;
- 
- 	struct list_head		list;
- };
+ 	common->clk_apb = devm_clk_get(dev, "apb");
+ 	if (IS_ERR(common->clk_apb))
+@@ -394,8 +408,7 @@ static int mtk_smi_common_probe(struct platform_device *pdev)
+ 	 * clock into emi clock domain, but for mtk smi gen2, there's no smi ao
+ 	 * base.
+ 	 */
+-	smi_gen = (enum mtk_smi_gen)of_device_get_match_data(dev);
+-	if (smi_gen == MTK_SMI_GEN1) {
++	if (common->plat->gen == MTK_SMI_GEN1) {
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 		common->smi_ao_base = devm_ioremap_resource(dev, res);
+ 		if (IS_ERR(common->smi_ao_base))
 -- 
 1.9.1
 
