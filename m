@@ -2,123 +2,108 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4D27C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:09:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 822A2C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:14:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAECD21900
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:09:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47CCA21934
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:14:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="KUIJ5dNm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727830AbfBQJJa (ORCPT
+        id S1726443AbfBQJOs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 04:09:30 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:46050 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727680AbfBQJJ2 (ORCPT
+        Sun, 17 Feb 2019 04:14:48 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43494 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725769AbfBQJOs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 04:09:28 -0500
-X-UUID: 83494a69ade54e2aa538aafa1d61b5bc-20190217
-X-UUID: 83494a69ade54e2aa538aafa1d61b5bc-20190217
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
-        (envelope-from <yong.wu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 181692658; Sun, 17 Feb 2019 17:09:23 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Sun, 17 Feb 2019 17:09:22 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Sun, 17 Feb 2019 17:09:21 +0800
-From:   Yong Wu <yong.wu@mediatek.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
+        Sun, 17 Feb 2019 04:14:48 -0500
+Received: by mail-pl1-f194.google.com with SMTP id f90so7224310plb.10
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 01:14:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=C+0wO2z3ugugrmweRK4PuFUuzn08i1pwgW943uQ5p84=;
+        b=KUIJ5dNmh4dYDeVsTYpAUnEKkOKoGI+lQVApFjUIO6k9hotb4VKovcM7u7FnDRmJL1
+         hY3ZA299sy0kSvbLcmWm3JyY2bCfAK3/jJwJ/IUfz/JaNNu8GHh9iOT32RCdR631bM0u
+         Vn/qE4O9xpqHa2cYXt8FpY0OhV8gjn9Kxp4N8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=C+0wO2z3ugugrmweRK4PuFUuzn08i1pwgW943uQ5p84=;
+        b=p0IHz4Vm2jY4foWf4I2P8r2Y9us9HRwAuARszCa1Q0G2B7mJDV0YTM2bIACFip8drS
+         MMmeI16oc4KxHqHShRUXu0lhTPaTLRo0jxbWHt+CZAAFqNqAAIJDXrgFhDiu8XhJJddG
+         q+ARDHRoBXdEJYEHZ42zRTfn9iuNGC+KVcCwu5qBTSzobLW7s2It6m8Twf2CP6N6d5AB
+         Y1JstuAVAyZgtFK09Kj3eMt1B7dzDhBTnJNy5BTSntn9YT8EWn2dAF0MnDGayfoHsQ4I
+         Blp5o/Ti9/3ay80H0gliA/519l5V1VrgkqUN60u+6qh4lO8sTuCrn6MZ4HFrwtI6VIDs
+         DyUQ==
+X-Gm-Message-State: AHQUAuaXtHQ9pPnxDdEGaUGDAXxiV90RObh2gGrnZXglgY2fnqY108lQ
+        IudPWHoS7yBS6aH4wnqKbSv5yg==
+X-Google-Smtp-Source: AHgI3IbBM173Fy1fNjh08Kj3gUh89Ci/3aUZahQKtXkBEZCh+yNkIsNjf8Riy/LvcOmG5xxLzmSqFw==
+X-Received: by 2002:a17:902:2b8a:: with SMTP id l10mr18368898plb.70.1550394887187;
+        Sun, 17 Feb 2019 01:14:47 -0800 (PST)
+Received: from localhost.localdomain ([115.97.184.151])
+        by smtp.gmail.com with ESMTPSA id v15sm5565924pfa.75.2019.02.17.01.14.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 17 Feb 2019 01:14:46 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Bastien Nocera <hadess@hadess.net>,
         Rob Herring <robh+dt@kernel.org>
-CC:     Evan Green <evgreen@chromium.org>, Tomasz Figa <tfiga@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, <yingjoe.chen@mediatek.com>,
-        <yong.wu@mediatek.com>, <youlin.pei@mediatek.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        <anan.sun@mediatek.com>, Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v6 19/22] iommu/mediatek: Add shutdown callback
-Date:   Sun, 17 Feb 2019 17:04:57 +0800
-Message-ID: <1550394300-17420-20-git-send-email-yong.wu@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1550394300-17420-1-git-send-email-yong.wu@mediatek.com>
-References: <1550394300-17420-1-git-send-email-yong.wu@mediatek.com>
+Cc:     Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-amarula@amarulasolutions.com,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v5 0/4] input: touchscreen: Add goodix GT5553 CTP support 
+Date:   Sun, 17 Feb 2019 14:44:32 +0530
+Message-Id: <20190217091436.3702-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch only improve the shutdown flow. The shutdown callback will
-mute the M4U HW when the system shutdown.
+This is v5 patchset for supporting goodix GT5553 CTP. Here is the
+previous version[1]
 
-Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-Reviewed-by: Evan Green <evgreen@chromium.org>
----
- drivers/iommu/mtk_iommu.c    | 6 ++++++
- drivers/iommu/mtk_iommu_v1.c | 6 ++++++
- 2 files changed, 12 insertions(+)
+Changes for v4:
+- document AVDD22, DVDD12, VDDIO as optional properties
+- use regulator bulk calls, for get, enable and disable functionalities
+Changes for v4:
+- devm_add_action_or_reset for disabling regulator
+Changes for v3:
+- add cover-letter
+- s/ADVV28/AVDD28 on commit head
+- fix few typo
+Changes for v2:
+- Rename vcc-supply with AVDD28-supply
+- disable regulator in remove
+- fix to setup regulator in probe code
+- add chipdata
+- drop example node in dt-bindings
 
-diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-index b02854c..8742841 100644
---- a/drivers/iommu/mtk_iommu.c
-+++ b/drivers/iommu/mtk_iommu.c
-@@ -702,6 +702,11 @@ static int mtk_iommu_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static void mtk_iommu_shutdown(struct platform_device *pdev)
-+{
-+	mtk_iommu_remove(pdev);
-+}
-+
- static int __maybe_unused mtk_iommu_suspend(struct device *dev)
- {
- 	struct mtk_iommu_data *data = dev_get_drvdata(dev);
-@@ -783,6 +788,7 @@ static int __maybe_unused mtk_iommu_resume(struct device *dev)
- static struct platform_driver mtk_iommu_driver = {
- 	.probe	= mtk_iommu_probe,
- 	.remove	= mtk_iommu_remove,
-+	.shutdown = mtk_iommu_shutdown,
- 	.driver	= {
- 		.name = "mtk-iommu",
- 		.of_match_table = of_match_ptr(mtk_iommu_of_ids),
-diff --git a/drivers/iommu/mtk_iommu_v1.c b/drivers/iommu/mtk_iommu_v1.c
-index 4f15043..dd84eea 100644
---- a/drivers/iommu/mtk_iommu_v1.c
-+++ b/drivers/iommu/mtk_iommu_v1.c
-@@ -660,6 +660,11 @@ static int mtk_iommu_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static void mtk_iommu_shutdown(struct platform_device *pdev)
-+{
-+	mtk_iommu_remove(pdev);
-+}
-+
- static int __maybe_unused mtk_iommu_suspend(struct device *dev)
- {
- 	struct mtk_iommu_data *data = dev_get_drvdata(dev);
-@@ -697,6 +702,7 @@ static int __maybe_unused mtk_iommu_resume(struct device *dev)
- static struct platform_driver mtk_iommu_driver = {
- 	.probe	= mtk_iommu_probe,
- 	.remove	= mtk_iommu_remove,
-+	.shutdown = mtk_iommu_shutdown,
- 	.driver	= {
- 		.name = "mtk-iommu-v1",
- 		.of_match_table = mtk_iommu_of_ids,
+[1] https://patchwork.kernel.org/cover/10807779/
+
+Jagan Teki (4):
+  dt-bindings: input: touchscreen: goodix: Document regulator properties
+  Input: goodix - Add regulators support
+  dt-bindings: input: touchscreen: goodix: Add GT5663 compatible
+  Input: goodix - Add GT5663 CTP support
+
+ .../bindings/input/touchscreen/goodix.txt     |  8 +++
+ drivers/input/touchscreen/goodix.c            | 60 +++++++++++++++++--
+ 2 files changed, 62 insertions(+), 6 deletions(-)
+
 -- 
-1.9.1
+2.18.0.321.gffc6fa0e3
 
