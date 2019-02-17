@@ -2,178 +2,182 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F4A2C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:09:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E2CCC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:09:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C83621900
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:09:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gQp6rhFL"
+	by mail.kernel.org (Postfix) with ESMTP id 502A921934
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:09:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727675AbfBQJJI (ORCPT
+        id S1727716AbfBQJJP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 04:09:08 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:33538 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726371AbfBQJJG (ORCPT
+        Sun, 17 Feb 2019 04:09:15 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:4662 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726371AbfBQJJO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 04:09:06 -0500
-Received: by mail-pg1-f194.google.com with SMTP id h11so4605891pgl.0
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 01:09:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=p/I6/LqGUBbuuID0jaGYlqYqa2oWBMLzS3FYo+Q0TSs=;
-        b=gQp6rhFLZ5lwnQycdujwiveZNsrNBF86/lHxAA/zWuQsP0UIwVHLDSgNMZxxchhFMj
-         6oKNqtDJGUOiD2IPHNRVTvkVF1OTijmlFcD0C+sKGQGe6QkSFa/Srz+TvXx0uhY79YJc
-         HHnwKXuMZKacXqo6ozz4aVCA8wer2zAiaPzhU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=p/I6/LqGUBbuuID0jaGYlqYqa2oWBMLzS3FYo+Q0TSs=;
-        b=nIxXJ1v7HR+54AaDw6Zdpwy/zfp8K2s/C1L9Z2/QFkXEF5uEizEgDlU2m/jYSow1uw
-         Nh5E5dLXwTwVYTs35jy7QKl1QqbBAXoPqvNl9qNi2e9O7vZAwGNZ66+bj14mcFqtzJSk
-         LcHZ8kK/aYfJD0BpchRLjEwqhmd9zGBqWSO2RgEaiePZUVrxg7fH953RfMK6NXmCNGoo
-         cuFHps6v7UBlqCfNmKYahVIwfKTKses1wwO3BGwFIcBB+TFPNkN5u5UqCSX+MhmQD7px
-         wOmDTvDypHg/4n+YClf/3H1BQzg8KWyyDgoymnqsJOtu72sdncqyvM1vyb7dkd+3LfzO
-         Sp8A==
-X-Gm-Message-State: AHQUAubJevZKrfGXJVrxYKX8nmQJbgO/nIpFDMA5P7H5udlg3LEjMcnr
-        J4kwLUYZ9u7IN3MPb1zi9xHDNdgSLaE=
-X-Google-Smtp-Source: AHgI3Ib3cDiwv/lswYK4agv61v34NDzfkNddmx9f55UrPSmgY2ZITgBS1ABARM/lU7VDzMFvtvR9aQ==
-X-Received: by 2002:a65:65c9:: with SMTP id y9mr13781190pgv.438.1550394545928;
-        Sun, 17 Feb 2019 01:09:05 -0800 (PST)
-Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id a20sm9949248pfj.5.2019.02.17.01.09.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 17 Feb 2019 01:09:04 -0800 (PST)
-Date:   Sun, 17 Feb 2019 01:09:03 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Samuel Dionne-Riel <samuel@dionne-riel.com>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
-        Graham Christensen <graham@grahamc.com>,
-        Michal Hocko <mhocko@suse.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4] exec: load_script: Do not exec truncated interpreter path
-Message-ID: <20190217090903.GA17600@beast>
+        Sun, 17 Feb 2019 04:09:14 -0500
+X-UUID: cb0a02e339e24111ad4de940b7545cbf-20190217
+X-UUID: cb0a02e339e24111ad4de940b7545cbf-20190217
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <yong.wu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1283490232; Sun, 17 Feb 2019 17:09:09 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Sun, 17 Feb 2019 17:08:48 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Sun, 17 Feb 2019 17:08:47 +0800
+From:   Yong Wu <yong.wu@mediatek.com>
+To:     Joerg Roedel <joro@8bytes.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Evan Green <evgreen@chromium.org>, Tomasz Figa <tfiga@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <iommu@lists.linux-foundation.org>, <yingjoe.chen@mediatek.com>,
+        <yong.wu@mediatek.com>, <youlin.pei@mediatek.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        <anan.sun@mediatek.com>, Matthias Kaehlcke <mka@chromium.org>
+Subject: [PATCH v6 14/22] iommu/mediatek: Add mmu1 support
+Date:   Sun, 17 Feb 2019 17:04:52 +0800
+Message-ID: <1550394300-17420-15-git-send-email-yong.wu@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1550394300-17420-1-git-send-email-yong.wu@mediatek.com>
+References: <1550394300-17420-1-git-send-email-yong.wu@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 634CB8E523EDCAC4A3AAD411909856D3EA8AF57486584BE8F2A0BE018B8556A12000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 8099b047ecc4 ("exec: load_script: don't blindly truncate
-shebang string") was trying to protect against a confused exec of a
-truncated interpreter path. However, it was overeager and also refused
-to truncate arguments as well, which broke userspace, and it was
-reverted. This attempts the protection again, but allows arguments to
-remain truncated. In an effort to improve readability, helper functions
-and comments have been added.
+Normally the M4U HW connect EMI with smi. the diagram is like below:
+              EMI
+               |
+              M4U
+               |
+            smi-common
+               |
+       -----------------
+       |    |    |     |    ...
+    larb0 larb1  larb2 larb3
 
-Co-developed-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Kees Cook <keescook@chromium.org>
+Actually there are 2 mmu cells in the M4U HW, like this diagram:
+
+              EMI
+           ---------
+            |     |
+           mmu0  mmu1     <- M4U
+            |     |
+           ---------
+               |
+            smi-common
+               |
+       -----------------
+       |    |    |     |    ...
+    larb0 larb1  larb2 larb3
+
+This patch add support for mmu1. In order to get better performance,
+we could adjust some larbs go to mmu1 while the others still go to
+mmu0. This is controlled by a SMI COMMON register SMI_BUS_SEL(0x220).
+
+mt2712, mt8173 and mt8183 M4U HW all have 2 mmu cells. the default
+value of that register is 0 which means all the larbs go to mmu0
+defaultly.
+
+This is a preparing patch for adjusting SMI_BUS_SEL for mt8183.
+
+Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+Reviewed-by: Evan Green <evgreen@chromium.org>
 ---
- fs/binfmt_script.c | 57 ++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 48 insertions(+), 9 deletions(-)
+ drivers/iommu/mtk_iommu.c | 46 +++++++++++++++++++++++++++++-----------------
+ 1 file changed, 29 insertions(+), 17 deletions(-)
 
-diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
-index 7cde3f46ad26..32cdf6ee1f75 100644
---- a/fs/binfmt_script.c
-+++ b/fs/binfmt_script.c
-@@ -14,13 +14,30 @@
- #include <linux/err.h>
- #include <linux/fs.h>
+diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
+index bdf8dea..84f18bd 100644
+--- a/drivers/iommu/mtk_iommu.c
++++ b/drivers/iommu/mtk_iommu.c
+@@ -72,26 +72,32 @@
+ #define F_INT_CLR_BIT				BIT(12)
  
-+static inline bool spacetab(char c) { return c == ' ' || c == '\t'; }
-+static inline char *next_non_spacetab(char *first, const char *last)
-+{
-+	for (; first <= last; first++)
-+		if (!spacetab(*first))
-+			return first;
-+	return NULL;
-+}
-+static inline char *next_spacetab(char *first, const char *last)
-+{
-+	for (; first <= last; first++)
-+		if (spacetab(*first))
-+			return first;
-+	return NULL;
-+}
-+
- static int load_script(struct linux_binprm *bprm)
- {
- 	const char *i_arg, *i_name;
--	char *cp;
-+	char *cp, *buf_end;
- 	struct file *file;
- 	int retval;
+ #define REG_MMU_INT_MAIN_CONTROL		0x124
+-#define F_INT_TRANSLATION_FAULT			BIT(0)
+-#define F_INT_MAIN_MULTI_HIT_FAULT		BIT(1)
+-#define F_INT_INVALID_PA_FAULT			BIT(2)
+-#define F_INT_ENTRY_REPLACEMENT_FAULT		BIT(3)
+-#define F_INT_TLB_MISS_FAULT			BIT(4)
+-#define F_INT_MISS_TRANSACTION_FIFO_FAULT	BIT(5)
+-#define F_INT_PRETETCH_TRANSATION_FIFO_FAULT	BIT(6)
++						/* mmu0 | mmu1 */
++#define F_INT_TRANSLATION_FAULT			(BIT(0) | BIT(7))
++#define F_INT_MAIN_MULTI_HIT_FAULT		(BIT(1) | BIT(8))
++#define F_INT_INVALID_PA_FAULT			(BIT(2) | BIT(9))
++#define F_INT_ENTRY_REPLACEMENT_FAULT		(BIT(3) | BIT(10))
++#define F_INT_TLB_MISS_FAULT			(BIT(4) | BIT(11))
++#define F_INT_MISS_TRANSACTION_FIFO_FAULT	(BIT(5) | BIT(12))
++#define F_INT_PRETETCH_TRANSATION_FIFO_FAULT	(BIT(6) | BIT(13))
  
-+	/* Not ours to exec if we don't start with "#!". */
- 	if ((bprm->buf[0] != '#') || (bprm->buf[1] != '!'))
- 		return -ENOEXEC;
+ #define REG_MMU_CPE_DONE			0x12C
  
-@@ -33,18 +50,40 @@ static int load_script(struct linux_binprm *bprm)
- 	if (bprm->interp_flags & BINPRM_FLAGS_PATH_INACCESSIBLE)
- 		return -ENOENT;
+ #define REG_MMU_FAULT_ST1			0x134
++#define F_REG_MMU0_FAULT_MASK			GENMASK(6, 0)
++#define F_REG_MMU1_FAULT_MASK			GENMASK(13, 7)
  
--	/*
--	 * This section does the #! interpretation.
--	 * Sorta complicated, but hopefully it will work.  -TYT
--	 */
--
-+	/* Release since we are not mapping a binary into memory. */
- 	allow_write_access(bprm->file);
- 	fput(bprm->file);
- 	bprm->file = NULL;
+-#define REG_MMU_FAULT_VA			0x13c
++#define REG_MMU0_FAULT_VA			0x13c
+ #define F_MMU_FAULT_VA_WRITE_BIT		BIT(1)
+ #define F_MMU_FAULT_VA_LAYER_BIT		BIT(0)
  
--	bprm->buf[BINPRM_BUF_SIZE - 1] = '\0';
--	if ((cp = strchr(bprm->buf, '\n')) == NULL)
--		cp = bprm->buf+BINPRM_BUF_SIZE-1;
-+	/*
-+	 * This section handles parsing the #! line into separate
-+	 * interpreter path and argument strings. We must be careful
-+	 * because bprm->buf is not yet guaranteed to be NUL-terminated
-+	 * (though the buffer will have trailing NUL padding when the
-+	 * file size was smaller than the buffer size).
-+	 *
-+	 * We do not want to exec a truncated interpreter path, so either
-+	 * we find a newline (which indicates nothing is truncated), or
-+	 * we find a space/tab/NUL after the interpreter path (which
-+	 * itself may be preceded by spaces/tabs). Truncating the
-+	 * arguments is fine: the interpreter can re-read the script to
-+	 * parse them on its own.
-+	 */
-+	buf_end = bprm->buf + sizeof(bprm->buf) - 1;
-+	cp = strnchr(bprm->buf, sizeof(bprm->buf), '\n');
-+	if (!cp) {
-+		cp = next_non_spacetab(bprm->buf + 2, buf_end);
-+		if (!cp)
-+			return -ENOEXEC; /* Entire buf is spaces/tabs */
-+		/*
-+		 * Without later spaces/tabs and a non-NUL final byte we
-+		 * must assume the interpreter path is truncated.
-+		 */
-+		if (!next_spacetab(cp, buf_end) && *buf_end)
-+			return -ENOEXEC;
-+		cp = buf_end;
+-#define REG_MMU_INVLD_PA			0x140
+-#define REG_MMU_INT_ID				0x150
+-#define F_MMU0_INT_ID_LARB_ID(a)		(((a) >> 7) & 0x7)
+-#define F_MMU0_INT_ID_PORT_ID(a)		(((a) >> 2) & 0x1f)
++#define REG_MMU0_INVLD_PA			0x140
++#define REG_MMU1_FAULT_VA			0x144
++#define REG_MMU1_INVLD_PA			0x148
++#define REG_MMU0_INT_ID				0x150
++#define REG_MMU1_INT_ID				0x154
++#define F_MMU_INT_ID_LARB_ID(a)			(((a) >> 7) & 0x7)
++#define F_MMU_INT_ID_PORT_ID(a)			(((a) >> 2) & 0x1f)
+ 
+ #define MTK_PROTECT_PA_ALIGN			128
+ 
+@@ -210,13 +216,19 @@ static irqreturn_t mtk_iommu_isr(int irq, void *dev_id)
+ 
+ 	/* Read error info from registers */
+ 	int_state = readl_relaxed(data->base + REG_MMU_FAULT_ST1);
+-	fault_iova = readl_relaxed(data->base + REG_MMU_FAULT_VA);
++	if (int_state & F_REG_MMU0_FAULT_MASK) {
++		regval = readl_relaxed(data->base + REG_MMU0_INT_ID);
++		fault_iova = readl_relaxed(data->base + REG_MMU0_FAULT_VA);
++		fault_pa = readl_relaxed(data->base + REG_MMU0_INVLD_PA);
++	} else {
++		regval = readl_relaxed(data->base + REG_MMU1_INT_ID);
++		fault_iova = readl_relaxed(data->base + REG_MMU1_FAULT_VA);
++		fault_pa = readl_relaxed(data->base + REG_MMU1_INVLD_PA);
 +	}
-+	/* NUL-terminate the buffer and any trailing spaces/tabs. */
- 	*cp = '\0';
- 	while (cp > bprm->buf) {
- 		cp--;
+ 	layer = fault_iova & F_MMU_FAULT_VA_LAYER_BIT;
+ 	write = fault_iova & F_MMU_FAULT_VA_WRITE_BIT;
+-	fault_pa = readl_relaxed(data->base + REG_MMU_INVLD_PA);
+-	regval = readl_relaxed(data->base + REG_MMU_INT_ID);
+-	fault_larb = F_MMU0_INT_ID_LARB_ID(regval);
+-	fault_port = F_MMU0_INT_ID_PORT_ID(regval);
++	fault_larb = F_MMU_INT_ID_LARB_ID(regval);
++	fault_port = F_MMU_INT_ID_PORT_ID(regval);
+ 
+ 	fault_larb = data->plat_data->larbid_remap[fault_larb];
+ 
 -- 
-2.17.1
+1.9.1
 
-
--- 
-Kees Cook
