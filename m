@@ -2,152 +2,139 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 858C0C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 152B3C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:59:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BE5C2177E
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:45:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF5002147C
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:59:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=pados.hu header.i=@pados.hu header.b="RdTgcbvE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727623AbfBQRpw (ORCPT
+        id S1728038AbfBQR7S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 12:45:52 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60822 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbfBQRpw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 12:45:52 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 513BA8052B; Sun, 17 Feb 2019 18:45:42 +0100 (CET)
-Date:   Sun, 17 Feb 2019 18:45:49 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Yauhen Kharuzhy <jekhor@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
- LEDs
-Message-ID: <20190217174549.GA13301@amd>
-References: <3d5407a7-9458-f071-a1d5-511b09678e20@gmail.com>
- <87a21c4e-8e5e-c180-2ff3-eb8170746e71@redhat.com>
- <80971bc3-1193-83ed-913a-12f6217016c8@gmail.com>
- <b15fd048-8206-4057-a354-07dc14ca15e3@redhat.com>
- <8a263266-a41f-c916-e990-02d04de9b5d0@gmail.com>
- <af5bec7b-0da1-ee19-cdf4-0240f56221ad@redhat.com>
- <20190216193727.GA14305@amd>
- <7be63b6b-8d8d-90b8-fb17-d219b87a101f@redhat.com>
- <20190217000851.GA29803@amd>
- <81cc42f5-1f3d-c7f2-eb13-c2f8c4f9bfb4@redhat.com>
+        Sun, 17 Feb 2019 12:59:18 -0500
+Received: from erza.pados.hu ([176.9.136.194]:49730 "EHLO erza.pados.hu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725811AbfBQR7R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 12:59:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=pados.hu;
+         s=february2016; h=MIME-Version:Date:Subject:To:From:From:Subject:To:
+        Content-Type; bh=rIjhwHMBppHfj0QRTpoUxM4Fk8pH4xuVPrjiqbtsbts=; b=RdTgcbvEDg1a
+        it7BbYCP/Bfnf399DI8nFdk/yp/dxqdQ5XsJ0riagWvUOhL3WccTZNJwcJliE5WKdeL2erBFsTx1Z
+        YTryZGdR1nTMrj2Srqfc23rSr66qwal2wM70ADvMR/spQ1KKasSyDEaEgOw3AlRoJoc8w0UwdzrbQ
+        IC8d3hERFn5KzcQRyVN4Dbeh4Ms3+8hQuGkVnTdkSSlCUqcmp2E3gXXK5GDjSGM8OWIDiNbfsMo1C
+        h6JJodFPJp6OOaGxAs9Y9MHzbO8+H+5Nu3L9A5LJ+fZl7Ob0s5gZO4xYL0V3xRX08FEU8QE8TVMdc
+        L82pQUACEEN+SDAJaVk2jA==;
+Received: from 84-236-59-32.pool.digikabel.hu ([84.236.59.32] helo=localhost)
+        by erza with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <pados@pados.hu>)
+        id 1gvQif-0007Ax-QW; Sun, 17 Feb 2019 18:59:14 +0100
+From:   Karoly Pados <pados@pados.hu>
+To:     "Johan Hovold" <johan@kernel.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Loic Poulain" <loic.poulain@linaro.org>
+Cc:     Karoly Pados <pados@pados.hu>
+Subject: [PATCH v2] USB: serial: cp210x: Fix GPIO in autosuspend
+Date:   Sun, 17 Feb 2019 18:59:01 +0100
+Message-Id: <20190217175901.3986-1-pados@pados.hu>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="pf9I7BMVVzbSWLtt"
-Content-Disposition: inline
-In-Reply-To: <81cc42f5-1f3d-c7f2-eb13-c2f8c4f9bfb4@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+X-Spam_score: -2.9
+X-Spam_report: Spam detection software, running on the system "erza",
+ has NOT identified this incoming email as spam.  The original
+ message has been attached to this so you can view it or label
+ similar future email.  If you have any questions, see
+ the administrator of that system for details.
+ Content preview:  Current GPIO code in cp210x fails to take USB autosuspend
+   into account, making it practically impossible to use GPIOs with autosuspend
+    enabled without user configuration. Fix this like for ftdi_sio in [...] 
+ Content analysis details:   (-2.9 points, 5.0 required)
+  pts rule name              description
+ ---- ---------------------- --------------------------------------------------
+ -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
+ -1.9 BAYES_00               BODY: Bayes spam probability is 0 to 1%
+                             [score: 0.0000]
+  0.0 TVD_RCVD_IP            Message was received from an IP address
+  0.0 URIBL_BLOCKED          ADMINISTRATOR NOTICE: The query to URIBL was
+                             blocked.  See
+                             http://wiki.apache.org/spamassassin/DnsBlocklists#dnsbl-block
+                              for more information.
+                             [URIs: pados.hu]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Current GPIO code in cp210x fails to take USB autosuspend into account,
+making it practically impossible to use GPIOs with autosuspend enabled
+without user configuration. Fix this like for ftdi_sio in a previous patch.
+Tested on a CP2102N.
 
---pf9I7BMVVzbSWLtt
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Karoly Pados <pados@pados.hu>
+---
+Changelog:
+- v2: Restrict new autopm calls to GPIO paths.
+      Always check result of usb_autopm_get.
+      Rebased to current usb_serial upstream.
 
-Hi!
+ drivers/usb/serial/cp210x.c | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
 
-> >I see... and yes, that would be the easiest solution.
-> >
-> >But somehow I see "this LED is controlled by charging state" as
-> >primary and "it shows pulses instead of staying on" as secondary
-> >eye-candy.
-> >
-> >This week there was another driver for charger LED.. but that one does
-> >not do pulses. Ideally, we'd like consistent interface to the
-> >userland.
-> >
-> >(To make it complex, the other driver supports things like:
-> >   LED solid on -- fully charged
-> >   LED blinking slowly -- charging
-> >   LED blinking fast -- charge error
-> >   LED off -- not charging).
->=20
-> Something like that could be supported with my original hw_pattern
-> proposal where we simply encode all of this in the hw-pattern file:
->=20
-> tupple0: charging blinking_on_time
-> tupple1: charging blinking_off_time
-> tupple2: charging breathing_time
-> tupple3: manual blinking_on_time
-> tupple4: manual blinking_off_time
-> tupple5: manual breathing_time
+diff --git a/drivers/usb/serial/cp210x.c b/drivers/usb/serial/cp210x.c
+index fac7a4547523..f7aaecad6e21 100644
+--- a/drivers/usb/serial/cp210x.c
++++ b/drivers/usb/serial/cp210x.c
+@@ -1370,8 +1370,13 @@ static int cp210x_gpio_get(struct gpio_chip *gc, unsigned int gpio)
+ 	if (priv->partnum == CP210X_PARTNUM_CP2105)
+ 		req_type = REQTYPE_INTERFACE_TO_HOST;
+ 
++	result = usb_autopm_get_interface(serial->interface);
++	if (result)
++		return result;
++
+ 	result = cp210x_read_vendor_block(serial, req_type,
+ 					  CP210X_READ_LATCH, &buf, sizeof(buf));
++	usb_autopm_put_interface(serial->interface);
+ 	if (result < 0)
+ 		return result;
+ 
+@@ -1392,6 +1397,10 @@ static void cp210x_gpio_set(struct gpio_chip *gc, unsigned int gpio, int value)
+ 
+ 	buf.mask = BIT(gpio);
+ 
++	result = usb_autopm_get_interface(serial->interface);
++	if (result)
++		goto out;
++
+ 	if (priv->partnum == CP210X_PARTNUM_CP2105) {
+ 		result = cp210x_write_vendor_block(serial,
+ 						   REQTYPE_HOST_TO_INTERFACE,
+@@ -1399,7 +1408,6 @@ static void cp210x_gpio_set(struct gpio_chip *gc, unsigned int gpio, int value)
+ 						   sizeof(buf));
+ 	} else {
+ 		u16 wIndex = buf.state << 8 | buf.mask;
+-
+ 		result = usb_control_msg(serial->dev,
+ 					 usb_sndctrlpipe(serial->dev, 0),
+ 					 CP210X_VENDOR_SPECIFIC,
+@@ -1409,6 +1417,9 @@ static void cp210x_gpio_set(struct gpio_chip *gc, unsigned int gpio, int value)
+ 					 NULL, 0, USB_CTRL_SET_TIMEOUT);
+ 	}
+ 
++	usb_autopm_put_interface(serial->interface);
++
++out:
+ 	if (result < 0) {
+ 		dev_err(&serial->interface->dev, "failed to set GPIO value: %d\n",
+ 				result);
+-- 
+2.20.1
 
-So the userland would need to know "I'm on yoga, so 3rd tupple sets up
-breathing when charging"?
-
-> So for this chip you mention, we do not need the breathing time (no breat=
-hing support),
-> so we would get the following tupples:
->=20
-> tupple0: not charging blinking_on_time
-> tupple1: not charging blinking_off_time
-> tupple2: slow charging blinking_on_time
-> tupple3: slow charging blinking_off_time
-> tupple4: fast charging blinking_on_time
-> tupple5: fast charging blinking_off_time
-> tupple6: charging error blinking_on_time
-> tupple7: charging error blinking_off_time
-
-Patterns and their meanings are fixed (or almost) on that driver, so
-fortunately that will not be neccessary.
-
-> Where by solid on/off can be done by setting one
-> of the blinking times to 0.
->=20
-> Having hw_pattern ABIs like this where some of
-> the tupples only activate on certain conditions
-> might be better then a hardware_control sysfs
-> file as it offers more flexibility.
-
-Agreed about flexibility, but I don't think it does enough to provide
-hardware abstraction. It might be too much flexibility.
-
-Also it only works with hw controlled LEDs.
-
-With RGB LED multiple patterns per LED make a lot of sense (as there's
-typically just one led.
-
-For example on N900, we have
-
-green: fully charged.
-yellow pulsing: charging.
-solid yellow: hardware feature, emergency charging.
-white pulsing: happy phone, no events
-blue fast pulses: message waiting
-
-On N900, I'm handling that in userspace, but...
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---pf9I7BMVVzbSWLtt
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlxpnc0ACgkQMOfwapXb+vLf4QCeO6zbHGc5WCQbHTPq74Hw/b63
-xLEAn204WDUgvQJkslmfGmO70OF/G+QM
-=FrBN
------END PGP SIGNATURE-----
-
---pf9I7BMVVzbSWLtt--
