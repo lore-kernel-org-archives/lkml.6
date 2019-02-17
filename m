@@ -2,68 +2,84 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21280C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 23:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F455C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 23:05:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8C0921773
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 23:03:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 352A421773
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 23:05:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727212AbfBQXDf (ORCPT
+        id S1727253AbfBQXFU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 18:03:35 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:42042 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbfBQXDf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 18:03:35 -0500
-Received: from cpc129250-craw9-2-0-cust139.know.cable.virginm.net ([82.43.126.140] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gvVT9-0001Fn-G0; Sun, 17 Feb 2019 23:03:31 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Tariq Toukan <tariqt@mellanox.com>,
-        "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-rdma@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] net/mlx4_en: fix spelling mistake: "quiting" -> "quitting"
-Date:   Sun, 17 Feb 2019 23:03:31 +0000
-Message-Id: <20190217230331.18678-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Sun, 17 Feb 2019 18:05:20 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36974 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726283AbfBQXFU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 18:05:20 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3DDDEC04BE1F;
+        Sun, 17 Feb 2019 23:05:20 +0000 (UTC)
+Received: from krava (ovpn-204-33.brq.redhat.com [10.40.204.33])
+        by smtp.corp.redhat.com (Postfix) with SMTP id B8DA1608C6;
+        Sun, 17 Feb 2019 23:05:17 +0000 (UTC)
+Date:   Mon, 18 Feb 2019 00:05:16 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ast@kernel.org, daniel@iogearbox.net, kernel-team@fb.com,
+        peterz@infradead.org, acme@redhat.com, jolsa@kernel.org,
+        namhyung@kernel.org
+Subject: Re: [PATCH v3 perf,bpf 05/11] perf, bpf: save bpf_prog_info in a
+ rbtree in perf_env
+Message-ID: <20190217230516.GA7443@krava>
+References: <20190215215354.3114006-1-songliubraving@fb.com>
+ <20190215215354.3114006-6-songliubraving@fb.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190215215354.3114006-6-songliubraving@fb.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Sun, 17 Feb 2019 23:05:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Fri, Feb 15, 2019 at 01:53:48PM -0800, Song Liu wrote:
 
-There is a spelling mistake in a en_err error message. Fix it.
+SNIP
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/net/ethernet/mellanox/mlx4/en_netdev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+>  	info_linear = bpf_program__get_prog_info_linear(fd, arrays);
+>  	if (IS_ERR_OR_NULL(info_linear)) {
+> @@ -151,8 +165,8 @@ static int perf_event__synthesize_one_bpf_prog(struct perf_tool *tool,
+>  						     machine, process);
+>  	}
+>  
+> -	/* Synthesize PERF_RECORD_BPF_EVENT */
+>  	if (opts->bpf_event) {
+> +		/* Synthesize PERF_RECORD_BPF_EVENT */
+>  		*bpf_event = (struct bpf_event){
+>  			.header = {
+>  				.type = PERF_RECORD_BPF_EVENT,
+> @@ -165,6 +179,19 @@ static int perf_event__synthesize_one_bpf_prog(struct perf_tool *tool,
+>  		memcpy(bpf_event->tag, info->tag, BPF_TAG_SIZE);
+>  		memset((void *)event + event->header.size, 0, machine->id_hdr_size);
+>  		event->header.size += machine->id_hdr_size;
+> +
+> +		/* save bpf_prog_info to env */
+> +		info_node = malloc(sizeof(struct bpf_prog_info_node));
+> +		if (info_node) {
+> +			info_node->info_linear = info_linear;
+> +			perf_env__insert_bpf_prog_info(env, info_node);
+> +			info_linear = NULL;
+> +		}
 
-diff --git a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
-index 6b88881b8e35..c1438ae52a11 100644
---- a/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_netdev.c
-@@ -3360,7 +3360,7 @@ int mlx4_en_init_netdev(struct mlx4_en_dev *mdev, int port,
- 	dev->addr_len = ETH_ALEN;
- 	mlx4_en_u64_to_mac(dev->dev_addr, mdev->dev->caps.def_mac[priv->port]);
- 	if (!is_valid_ether_addr(dev->dev_addr)) {
--		en_err(priv, "Port: %d, invalid mac burned: %pM, quiting\n",
-+		en_err(priv, "Port: %d, invalid mac burned: %pM, quitting\n",
- 		       priv->port, dev->dev_addr);
- 		err = -EINVAL;
- 		goto out;
--- 
-2.20.1
+what if the allocation fails? we don't care?
 
+jirka
