@@ -2,180 +2,135 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 410B3C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 22:15:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF470C10F06
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 22:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D86721773
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 22:15:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C079D21773
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 22:16:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZCeFZorK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726974AbfBQWP3 (ORCPT
+        id S1727014AbfBQWQC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 17:15:29 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:50308 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726124AbfBQWP0 (ORCPT
+        Sun, 17 Feb 2019 17:16:02 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:38274 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726349AbfBQWQB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 17:15:26 -0500
-Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 3F12572CCAE;
-        Mon, 18 Feb 2019 01:15:24 +0300 (MSK)
-Received: by mua.local.altlinux.org (Postfix, from userid 508)
-        id 31B297CC774; Mon, 18 Feb 2019 01:15:24 +0300 (MSK)
-Date:   Mon, 18 Feb 2019 01:15:24 +0300
-From:   "Dmitry V. Levin" <ldv@altlinux.org>
-To:     Niklas =?utf-8?Q?Hamb=C3=BCchen?= <mail@nh2.me>
-Cc:     mtk.manpages@gmail.com, linux-kernel@vger.kernel.org,
-        cleverca22@gmail.com, linux-man@vger.kernel.org
-Subject: Re: [PATCH] ptrace.2: Improve clarity for multi-threaded tracers
-Message-ID: <20190217221523.GA9233@altlinux.org>
-References: <48bb7c89-abb9-1e88-fee3-fb42d4032d12@nh2.me>
- <bfa474c6-5b13-652d-2fd8-16b2be7efb62@nh2.me>
+        Sun, 17 Feb 2019 17:16:01 -0500
+Received: by mail-vs1-f67.google.com with SMTP id t7so8571051vsq.5
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 14:16:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=PjHkEiAHgyCptBIPeBD7i1m3I3cu+ZyBHKVX7yI20WQ=;
+        b=ZCeFZorKQHJuvIxZqvLwQweRNFz7SsjrYI/F6WAcyepZrljHEzsGdE1sa4oIVq7H0I
+         JVPW8Ov1LByRHgZd1WUdMrwJOXc49a18jlYCTN3ft4SFz/8ru5W4au8MauloUsb0A3rr
+         mxk4E4LEKNmnYL3b5IAOSV67Lbv8fVmGMqR6k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=PjHkEiAHgyCptBIPeBD7i1m3I3cu+ZyBHKVX7yI20WQ=;
+        b=E/W/f4oohVRCUwEblH1yDvgnJMAGHK5dQuLTcZtGAuKVFPxfErQYlcIWmoxx7O3bJb
+         T2B5O1jKzLVxnydhCqOizlwltBYZ96+R7H9yMw+vP++abm2qpSrbV24alGzkRLBtFYFs
+         DDC0uDwHxyWCd8ntnLsDJTips1ow7KgvUi7JDQJd1YrR3IBZUH516Whbb3eSc/jZ6kEg
+         2UPwfHhrBR+SAaM/oLxNnJywAnx/7xl8hNLNXrNKrg/ayNMNpChBo3N6gxXE24TDje9h
+         pn04GOne4biq6TtdBznzn7bDIfzjJoPOAydnz2iIDwg62Barj+jmXv/rgec5QPCnN8hE
+         u3Kg==
+X-Gm-Message-State: AHQUAubNIfNFapr4tOZQuI4cgFKfLtssGXBVkg1lOsaGbIcufS5aEdm/
+        NcNnHSxWWcK51LlvZm/EmTFOMqbGiWU=
+X-Google-Smtp-Source: AHgI3IYnMcU6+WrVOJ6kM9KyxayWjH31kGLlt0REjezXDQekKHCE/UOqXTsMfnMrbn1EJdEFBzyVwQ==
+X-Received: by 2002:a05:6102:18f:: with SMTP id r15mr4314445vsq.215.1550441759824;
+        Sun, 17 Feb 2019 14:15:59 -0800 (PST)
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
+        by smtp.gmail.com with ESMTPSA id t133sm10787247vsc.8.2019.02.17.14.15.58
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 17 Feb 2019 14:15:58 -0800 (PST)
+Received: by mail-vs1-f46.google.com with SMTP id t13so8575941vsk.3
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 14:15:58 -0800 (PST)
+X-Received: by 2002:a67:6f44:: with SMTP id k65mr9831152vsc.222.1550441757864;
+ Sun, 17 Feb 2019 14:15:57 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
-Content-Disposition: inline
-In-Reply-To: <bfa474c6-5b13-652d-2fd8-16b2be7efb62@nh2.me>
+References: <cover.1549540487.git.efremov@ispras.ru> <CAGXu5jJ8DaoXk4Vt-K_Tgvpe4=wgHZ3Z1Y=D8JzRHU9n=bvgtA@mail.gmail.com>
+ <67ff280b6867b9a594ee16b2ad83bb7f@ispras.ru>
+In-Reply-To: <67ff280b6867b9a594ee16b2ad83bb7f@ispras.ru>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Sun, 17 Feb 2019 14:15:45 -0800
+X-Gmail-Original-Message-ID: <CAGXu5j+VMU3LT77KkyoAwuVAemfM0mayvBcy3Y0K_a7UDBL=ow@mail.gmail.com>
+Message-ID: <CAGXu5j+VMU3LT77KkyoAwuVAemfM0mayvBcy3Y0K_a7UDBL=ow@mail.gmail.com>
+Subject: Re: [PATCH 00/10] LSM documentation update
+To:     efremov <efremov@ispras.ru>
+Cc:     linux-security-module <linux-security-module@vger.kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Eric Paris <eparis@parisplace.org>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Feb 17, 2019 at 10:04 AM efremov <efremov@ispras.ru> wrote:
+>
+> Kees Cook =D0=BF=D0=B8=D1=81=D0=B0=D0=BB 2019-02-11 22:28:
+> > On Thu, Feb 7, 2019 at 4:45 AM Denis Efremov <efremov@ispras.ru> wrote:
+> >>
+> >> Recent "New LSM Hooks" discussion has led me to the
+> >> thought that it might be a good idea to slightly
+> >> update the current documentation. The patchset adds
+> >> nothing new to the documentation, only fixes the old
+> >> description of hooks to reflect their current state.
+>
+> >
+> > Do these fixes silence any warnings during the documentation build?
+> > (i.e. how did you verify the results beyond eyeballing the changes)
+> >
+> > -Kees
+>
+> This LSM documentation is not used during the documentation build.
+> At least I can't find it in the resulting build directory and at
+> the online documentation on the kernel. Most of the fixes are pretty
+> obvious and can be checked by comparing an lsm hook declaration and
+> its description in the LSM comment from lsm_hooks.h I tried to be
+> exhaustive in the commits description and in every case to reference
+> the original commit where the interface was changed without
+> documentation update.
 
---4Ckj6UjgE2iN1+kY
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'll send an official patch that'll hook this up. I've been meaning to
+do it for a while, but there were several things that needed cleaning
+up (and you've snagged most of them). So with this patch, you'll be
+able to check the output for "make htmldocs" for lsm_hooks.h errors:
 
-Hi,
+diff --git a/Documentation/security/LSM.rst b/Documentation/security/LSM.rs=
+t
+index 8b9ee597e9d0..31d92bc5fdd2 100644
+--- a/Documentation/security/LSM.rst
++++ b/Documentation/security/LSM.rst
+@@ -11,4 +11,7 @@ that end users and distros can make a more informed
+decision about which
+ LSMs suit their requirements.
 
-On Sun, Feb 17, 2019 at 05:34:46PM +0100, Niklas Hamb=C3=BCchen wrote:
-> Until now, the man page said:
->=20
->     Attachment and subsequent commands are per thread:
->     in a multi=E2=80=90 threaded process, every thread can be individuall=
-y attached to a
->     (potentially different) tracer, or left not attached and thus not deb=
-ugged.
->     Therefore, "tracee" always means "(one) thread", never "a (possibly
->     multithreaded) process".
->=20
-> While the first sentence "Attachment ... [is] per thread" might be interp=
-reted
-> as holding for both tracer and tracee, the rest talks only about the
-> multi-threadedness of the *tracee*, leaving some uncertainty in the reade=
-r on
-> whether the tracer may issue `ptrace()` from different threads.
->=20
-> This patch adds more explicitness, removing any doubt.
-
-Thanks for making an attempt to remove any doubt.
-
-Yes, ptrace'ing is per task_struct on both sides.
-
-> Relevant resources:
->=20
-> * LKML thread https://marc.info/?l=3Dlinux-kernel&m=3D155036848808748&w=
-=3D2
->   "ptrace() with multithreaded tracer"
->   where I asked about this behaviour, in case anybody disagrees with my
->   understanding
-> * https://stackoverflow.com/questions/18737866/can-a-thread-trace-a-proce=
-ss/
->   where the previous ambiguity of the man page confused some users, and w=
-here
->   and example program is given that confirms the behaviour I mention in t=
-his
->   patch
-> * A program of mine, in which I have independently confirmed that using
->   `ptrace()` from a thread that's not the tracer thread (a sibling thread=
- in
->   the process is the tracer instead) results in `ESRCH`
-> * https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/kernel/ptrace.c?id=3D96d4f267e40f9509e8a66e2b39e8b95655617693#n207
->   where the comment on `ptrace_check_attach()` talks about `%current`, wh=
-ich
->   is a thread
->=20
-> Signed-off-by: Niklas Hamb=C3=BCchen <mail@nh2.me>
-> ---
->  man2/ptrace.2 | 14 ++++++++++----
->  1 file changed, 10 insertions(+), 4 deletions(-)
->=20
-> diff --git a/man2/ptrace.2 b/man2/ptrace.2
-> index 3b6b6ea84..4058abe94 100644
-> --- a/man2/ptrace.2
-> +++ b/man2/ptrace.2
-> @@ -122,12 +122,18 @@ It is primarily used to implement breakpoint debugg=
-ing and system
->  call tracing.
->  .PP
->  A tracee first needs to be attached to the tracer.
-> -Attachment and subsequent commands are per thread:
-> -in a multithreaded process,
-> +Attachment and subsequent commands are per thread,
-> +on both the tracer and tracee side.
-> +Issuing a tracing command from a thread that is not the tracer of the gi=
-ven
-> +.I pid
-> +will result in an
-> +.B ESRCH
-> +error.
-
-This is confusing.  What do you mean by a tracing command?
-Is PTRACE_TRACEME a tracing command?  PTRACE_ATTACH?  PTRACE_SEIZE?
-
-I suggest leaving the explanation of ptrace return code to "ERRORS"
-section.
-
-> +In a multithreaded process to be traced,
->  every thread can be individually attached to a
->  (potentially different) tracer,
->  or left not attached and thus not debugged.
-> -Therefore, "tracee" always means "(one) thread",
-> +Therefore, "tracer" or "tracee" always mean "(one) thread",
->  never "a (possibly multithreaded) process".
->  Ptrace commands are always sent to
->  a specific tracee using a call of the form
-> @@ -2259,7 +2265,7 @@ or (on kernels before 2.6.26) be
->  .TP
->  .B ESRCH
->  The specified process does not exist, or is not currently being traced
-> -by the caller, or is not stopped
-> +by the calling thread, or is not stopped
->  (for requests that require a stopped tracee).
->  .SH CONFORMING TO
->  SVr4, 4.3BSD.
-
-I agree the current text can be made more clear on the subject,
-but, unfortunately, proposed change makes the description more confusing.
+ For extensive documentation on the available LSM hook interfaces, please
+-see ``include/linux/lsm_hooks.h``.
++see ``include/linux/lsm_hooks.h`` and associated structures:
++
++.. kernel-doc:: include/linux/lsm_hooks.h
++   :internal:
 
 
 --=20
-ldv
-
---4Ckj6UjgE2iN1+kY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBCAAGBQJcadz7AAoJEAVFT+BVnCUIDrcP/3dgjqHOr3EgIUXMV6AiC12n
-Gp7OtjbDO4DDsTJC4GR/4GZEx9NZQFr712XZIGgxmOIphikJ3wzvGilnzUyg1TDe
-sE0zN1hgFHMbHDwzpPGFT/ysB1hEr2fJtK+QwbNjLjqaUljEjSzaBihz1lFN0zDj
-f0SJdHqW/R+SjUF1uixR9j19IUzyL6TxL6AqkPjBKndIr8bVXrdSn1XMROxJIejv
-0rdsnW9474N2Ki4mKiZ6eqOjSFLrIuL1IgGdOf35scQUm85UcOmO9AcChWXGaRcE
-tQuQ6yEAYYn1Q7DcGfiBunoD7/+J87stywlkmdEgTvYMsnJ3Cm5GutSEfK9GLrUT
-Puk60YfqeZH6Pfr+pA6/fcZo3nUFwzemfHUsTXcG7m2l9M8H12tAmgGuf62Kobrg
-wqs2yiVkL2I2iWir00b/pJ6ebpHyZ/dKPKhVV0dd7W3EIdSL20FM93mQAnvM7/z7
-FW0RpOn1fDTX9AqMW4gyK6DwTPw6lJ9bCkFilbqocGJTiiVyT3rZIRHqFuVDS22B
-2XI2YnGpUrEVr6+8eGk44wIMSG9tFcJeL7NIqGcLbL0XZTxoesHPRl+Ij4KE09Yq
-WDhyqaVVheU7fRiZ0vbuZejY3AHjf1jFaTOHqevkZZTZ7JJLpu6yQiNUF5L+eqF/
-wai+x8lr3iGgjtXfxMhw
-=5uSA
------END PGP SIGNATURE-----
-
---4Ckj6UjgE2iN1+kY--
+Kees Cook
