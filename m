@@ -2,108 +2,88 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CF5BC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 21:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D01C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 21:58:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57001217F9
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 21:57:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7559D217F9
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 21:58:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="f0j5qKOs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbfBQV5t (ORCPT
+        id S1726949AbfBQV6u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 16:57:49 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53262 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726124AbfBQV5s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 16:57:48 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4E3F1C04D319;
-        Sun, 17 Feb 2019 21:57:48 +0000 (UTC)
-Received: from krava (ovpn-204-33.brq.redhat.com [10.40.204.33])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 8BDE060BF7;
-        Sun, 17 Feb 2019 21:57:45 +0000 (UTC)
-Date:   Sun, 17 Feb 2019 22:57:44 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ast@kernel.org, daniel@iogearbox.net, kernel-team@fb.com,
-        peterz@infradead.org, acme@redhat.com, jolsa@kernel.org,
-        namhyung@kernel.org
-Subject: Re: [PATCH v3 perf,bpf 00/11] perf annotation of BPF programs
-Message-ID: <20190217215744.GA797@krava>
-References: <20190215215354.3114006-1-songliubraving@fb.com>
+        Sun, 17 Feb 2019 16:58:50 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41088 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726124AbfBQV6t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 16:58:49 -0500
+Received: by mail-ot1-f66.google.com with SMTP id t7so8804674otk.8;
+        Sun, 17 Feb 2019 13:58:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+z25ustYKZCtg4I78gtFQsiSPOzxMV27bUHQ1lAMDcA=;
+        b=f0j5qKOsTzQoDBFgbTlpC1DUQife0pLeaLElWfS/0XoK5OoHxe9a4bn/dU+ldWeffi
+         zG0KpPeF1m2stiPEz63tbZoH4oU5jIOc293jIxfiDTgR0dZAEC1Li3EIj0RP+hwXEO3p
+         q2ZZkpt55VxOISq4ywlgR0gOewA9EqE9Lfr2jLCyUENWdUe0H3IbrijE2GZAtc0da97o
+         XOx8DaYxReeKpzvei3qhb6PZ0xApbQptZJcadWIgqTkkoYwzMCdr1sP92zURJmIBXGcY
+         3MwRv1z14WmEiNJ+MUhdzzuewu1c8suuTzJumIbHN+0iN1XZys8slzndAm6tkiD89k8H
+         DqWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+z25ustYKZCtg4I78gtFQsiSPOzxMV27bUHQ1lAMDcA=;
+        b=HgoSrqeyoM3kSs4YlyeT6s1MYU5Sm/npL3aACHfo+CqBTrAfWEHHRI2lNU2TK27xCU
+         XfA9SV8OAsoTd6gWpon/a+QTB5LUK+sfrJPXT0XZ6CbUqac72QVKbyPAhCuIVy0T/hDP
+         RDTQKAzyGLzxyvWDKv1ByVJeffUMMWw+1dUshl6vJw4re3j2tI3//WVZhYFd78wzYgs6
+         payEtzm7mvErRyd5kszSbEKe+LZ24u0g5gTbU9FJEF8S+ogG0bKayoRrKmKggiDMDCYn
+         rNYCo031hTOOZfOrhVdZF5NnpH0pyb99N1M4NE0V3yzp7IPswrTrKC/sEbNMTJ67xQov
+         VY0w==
+X-Gm-Message-State: AHQUAuZSAxopIR5UtOF74BWZ5oAKmxRr0N+3/ZbOEYlCa0pdcyLqYwcU
+        ouQu+83rQYmGVTD34+XUokXsleid/xx+H3fokHE=
+X-Google-Smtp-Source: AHgI3IYsPb4qd04Jf23hSAfbOAJXcF+Rc500WLGUPXkcBqfrVi0dEhyAat/jWW/lvR07y2A7Kq/k948MD+n9k6wLjpo=
+X-Received: by 2002:a05:6830:13cd:: with SMTP id e13mr5088250otq.342.1550440728865;
+ Sun, 17 Feb 2019 13:58:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190215215354.3114006-1-songliubraving@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Sun, 17 Feb 2019 21:57:48 +0000 (UTC)
+References: <20190212151413.24632-1-narmstrong@baylibre.com> <20190212151413.24632-2-narmstrong@baylibre.com>
+In-Reply-To: <20190212151413.24632-2-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Sun, 17 Feb 2019 22:58:38 +0100
+Message-ID: <CAFBinCD_n_T=Ho+yB74FW1JP8mCLj0KmHPeDFWne=yfmgd9rqg@mail.gmail.com>
+Subject: Re: [PATCH 1/8] dt-bindings: phy: Add Amlogic G12A USB2 PHY Bindings
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     gregkh@linuxfoundation.org, hminas@synopsys.com, balbi@kernel.org,
+        kishon@ti.com, devicetree@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 01:53:43PM -0800, Song Liu wrote:
-> Changes v2 to v3:
-> 1. Remove unnecessary include in header files;
-> 2. Improved error handling;
-> 3. Better naming of functions, variables, etc.;
-> 4. Enable bpf events by default for perf-top.
-> 
-> Changes v1 to v2:
-> 1. Fix compilation error with different feature-disassembler-four-args;
-> 2. Fix a segfault in perf-record;
-> 3. Split patches 5/9 and 6/9 so that perf_env changes and perf.data changes
->    are in separate patches.
-> 
-> This series enables annotation of BPF programs in perf.
-> 
-> perf tool gathers information via sys_bpf and (optionally) stores them in
-> perf.data as headers.
-> 
-> Patch 1/11 fixes a minor issue in kernel;
-> Patch 2/11 to 4/11 introduce new helper functions and use them in perf and
->      bpftool;
-> Patch 5/11 to 8/11 saves information of bpf program in perf_env;
-> Patch 9/11 adds --bpf-event options to perf-top;
-> Patch 10/11 enables annotation of bpf programs based on information
->      gathered in 5/11 to 8/11;
-> Patch 11/11 handles information of short living BPF program that are loaded
->      during perf-record or perf-top.
-> 
-> Commands tested during developments are perf-top, perf-record, perf-report,
-> and perf-annotate.
-> 
-> ===================== Note on patch dependency  ========================
-> This set has dependency in both bpf-next tree and tip/perf/core. Current
-> version is developed on bpf-next tree with the following commits
-> cherry-picked from tip/perf/core:
-> 
-> (from 1/10 to 10/10)
-> commit 76193a94522f ("perf, bpf: Introduce PERF_RECORD_KSYMBOL")
-> commit d764ac646491 ("tools headers uapi: Sync tools/include/uapi/linux/perf_event.h")
-> commit 6ee52e2a3fe4 ("perf, bpf: Introduce PERF_RECORD_BPF_EVENT")
-> commit df063c83aa2c ("tools headers uapi: Sync tools/include/uapi/linux/perf_event.h")
-> commit 9aa0bfa370b2 ("perf tools: Handle PERF_RECORD_KSYMBOL")
-> commit 45178a928a4b ("perf tools: Handle PERF_RECORD_BPF_EVENT")
-> commit 7b612e291a5a ("perf tools: Synthesize PERF_RECORD_* for loaded BPF programs")
-> commit a40b95bcd30c ("perf top: Synthesize BPF events for pre-existing loaded BPF programs")
-> commit 6934058d9fb6 ("bpf: Add module name [bpf] to ksymbols for bpf programs")
-> commit 811184fb6977 ("perf bpf: Fix synthesized PERF_RECORD_KSYMBOL/BPF_EVENT")
-> ========================================================================
-> 
-> This set is also available at:
-> 
-> https://github.com/liu-song-6/linux/tree/bpf-annotation
+On Tue, Feb 12, 2019 at 4:14 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> Add the Amlogic G12A Family USB2 OTG PHY Bindings
+nit-pick: if you want to keep "OTG" in there then please add a short
+description how OTG works on this PHY.
+I would describe this as: "Add the Amlogic G12A Family USB2 PHY
+Bindings. The PHY works for host or peripheral modes. Configuration of
+the mode is part of the USBCTRL registers which are outside of the PHY
+registers."
 
-I'm getting same compilation error as last time,
-maybe it wasnt updated?
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+with the patch description nit-pick addressed:
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-thanks,
-jirka
+
+Regards
+Martin
