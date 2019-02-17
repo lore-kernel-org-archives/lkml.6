@@ -2,68 +2,61 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF17C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 22:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 795B8C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 22:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDE1D218AC
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 22:36:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50757218AD
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 22:39:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbfBQWgc (ORCPT
+        id S1727106AbfBQWja (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 17:36:32 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:41748 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbfBQWgb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 17:36:31 -0500
-Received: from cpc129250-craw9-2-0-cust139.know.cable.virginm.net ([82.43.126.140] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gvV2w-0007sJ-TV; Sun, 17 Feb 2019 22:36:26 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Christoffer Dall <christoffer.dall@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] KVM: arm/arm64: fix spelling mistake: "auxilary" -> "auxiliary"
-Date:   Sun, 17 Feb 2019 22:36:26 +0000
-Message-Id: <20190217223626.16686-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.20.1
+        Sun, 17 Feb 2019 17:39:30 -0500
+Received: from ms.lwn.net ([45.79.88.28]:37956 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726304AbfBQWja (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 17:39:30 -0500
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 1A8CF300;
+        Sun, 17 Feb 2019 22:39:22 +0000 (UTC)
+Date:   Sun, 17 Feb 2019 15:39:08 -0700
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     frowand.list@gmail.com
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Joris Gutjahr <joris.gutjahr@gmail.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: kernel-doc: typo "if ... if" -> "if ... is"
+Message-ID: <20190217153908.78646071@lwn.net>
+In-Reply-To: <1549924684-2148-1-git-send-email-frowand.list@gmail.com>
+References: <1549924684-2148-1-git-send-email-frowand.list@gmail.com>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon, 11 Feb 2019 14:38:04 -0800
+frowand.list@gmail.com wrote:
 
-There is a spelling mistake in a kvm_err error message. Fix it.
+> From: Frank Rowand <frank.rowand@sony.com>
+> 
+> "If no *function* if specified" should instead be
+> "If no *function* is specified".
+> 
+> Reported-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- virt/kvm/arm/arm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Applied, thanks.
 
-diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
-index 7fcc1c8c4020..99c37384ba7b 100644
---- a/virt/kvm/arm/arm.c
-+++ b/virt/kvm/arm/arm.c
-@@ -1563,7 +1563,7 @@ static int init_hyp_mode(void)
- 
- 	err = hyp_map_aux_data();
- 	if (err)
--		kvm_err("Cannot map host auxilary data: %d\n", err);
-+		kvm_err("Cannot map host auxiliary data: %d\n", err);
- 
- 	return 0;
- 
--- 
-2.20.1
-
+jon
