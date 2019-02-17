@@ -2,107 +2,152 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D38C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:41:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 858C0C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:45:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 621062089F
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:41:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="E1JfCbQ4"
+	by mail.kernel.org (Postfix) with ESMTP id 5BE5C2177E
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:45:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727900AbfBQRli (ORCPT
+        id S1727623AbfBQRpw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 12:41:38 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:42030 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbfBQRli (ORCPT
+        Sun, 17 Feb 2019 12:45:52 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60822 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725811AbfBQRpw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 12:41:38 -0500
-Received: by mail-vs1-f68.google.com with SMTP id b20so8339244vsl.9
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 09:41:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6PgdSNnQzlX/eTUtXBJn/6MFVTF8DobJiNsBHLchxHg=;
-        b=E1JfCbQ4VS4MUNs3mLMLvzyNlvw3U2+hosjXJQ1zpVpvqVOvgQZUogvXCCaf6eFL55
-         8/3z3bwtFEtaKc+cFAkWDhtxuYCutN5HDThw9+JI8ECTl9eE6t0BiH72ScF6T6NFGJOH
-         MhTjBViwpT2BK2pSAmK1/QVOWxjtamus81HB0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6PgdSNnQzlX/eTUtXBJn/6MFVTF8DobJiNsBHLchxHg=;
-        b=fzWbsddIPYgtZ9+Jigjkb614NJ9PjyrS8WzAmVmkIxgRsqWDM6Dj3wR3xWmQC82z1w
-         TPpVBVM8fjdKmOE2pLEfbZVPPgZmK1fYXw8eavBWJpmGDwT8c9RcmGl5kfqOGDBPW7nt
-         SlXCdaqcgUFbLK/EHMgSGgk9D3W3eskoz5GKPQ7NmkAhm5B5YsyQHw3aP0AchFuvx8jj
-         gAvSEY9mGYp7qShN6FgDBow1tPVO0c5McdBvsox9odycmHufN0HrME8twXAQs7SEiQRf
-         JNhGGcFbwZnimWHPvreZi4NhUgnIsYcgzNZ7qP50BQwepll2zzcDpkL9HsxZDTOkihZm
-         XdhQ==
-X-Gm-Message-State: AHQUAuYrOvU8LlZ993W385mbQkvTxWCdJ1tI+Nwunc/tCV8NfD9zXA/h
-        ONKm4rO/ujRp14bVu7nGtJU3QDyQeeE=
-X-Google-Smtp-Source: AHgI3IYvrNiTeykdQVFnLdkbY4ASAbw5XrlYjLQOO4jm0UPmt3V3c5811Lmx7jYI/mGQlghK5lqQYQ==
-X-Received: by 2002:a67:2e81:: with SMTP id u123mr4720913vsu.135.1550425296742;
-        Sun, 17 Feb 2019 09:41:36 -0800 (PST)
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
-        by smtp.gmail.com with ESMTPSA id c185sm4781312vka.24.2019.02.17.09.41.35
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Feb 2019 09:41:35 -0800 (PST)
-Received: by mail-vs1-f43.google.com with SMTP id z18so8350719vso.7
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 09:41:35 -0800 (PST)
-X-Received: by 2002:a67:fa45:: with SMTP id j5mr3015414vsq.48.1550425295175;
- Sun, 17 Feb 2019 09:41:35 -0800 (PST)
+        Sun, 17 Feb 2019 12:45:52 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 513BA8052B; Sun, 17 Feb 2019 18:45:42 +0100 (CET)
+Date:   Sun, 17 Feb 2019 18:45:49 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Yauhen Kharuzhy <jekhor@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
+ LEDs
+Message-ID: <20190217174549.GA13301@amd>
+References: <3d5407a7-9458-f071-a1d5-511b09678e20@gmail.com>
+ <87a21c4e-8e5e-c180-2ff3-eb8170746e71@redhat.com>
+ <80971bc3-1193-83ed-913a-12f6217016c8@gmail.com>
+ <b15fd048-8206-4057-a354-07dc14ca15e3@redhat.com>
+ <8a263266-a41f-c916-e990-02d04de9b5d0@gmail.com>
+ <af5bec7b-0da1-ee19-cdf4-0240f56221ad@redhat.com>
+ <20190216193727.GA14305@amd>
+ <7be63b6b-8d8d-90b8-fb17-d219b87a101f@redhat.com>
+ <20190217000851.GA29803@amd>
+ <81cc42f5-1f3d-c7f2-eb13-c2f8c4f9bfb4@redhat.com>
 MIME-Version: 1.0
-References: <20190217090903.GA17600@beast> <CAHk-=wiA00pLq_3DautqfL=Dn9r4Nmjgw+M2ABt-RfCX38xh6g@mail.gmail.com>
-In-Reply-To: <CAHk-=wiA00pLq_3DautqfL=Dn9r4Nmjgw+M2ABt-RfCX38xh6g@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Sun, 17 Feb 2019 09:41:24 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jJrbM+wocY3bA59JDqkKwpptb3PGWFq-RiXrD2cfig2uQ@mail.gmail.com>
-Message-ID: <CAGXu5jJrbM+wocY3bA59JDqkKwpptb3PGWFq-RiXrD2cfig2uQ@mail.gmail.com>
-Subject: Re: [PATCH v4] exec: load_script: Do not exec truncated interpreter path
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Samuel Dionne-Riel <samuel@dionne-riel.com>,
-        Richard Weinberger <richard.weinberger@gmail.com>,
-        Graham Christensen <graham@grahamc.com>,
-        Michal Hocko <mhocko@suse.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="pf9I7BMVVzbSWLtt"
+Content-Disposition: inline
+In-Reply-To: <81cc42f5-1f3d-c7f2-eb13-c2f8c4f9bfb4@redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 17, 2019 at 9:30 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Sun, Feb 17, 2019 at 1:09 AM Kees Cook <keescook@chromium.org> wrote:
+
+--pf9I7BMVVzbSWLtt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> >I see... and yes, that would be the easiest solution.
 > >
-> > +static inline char *next_spacetab(char *first, const char *last)
-> > +{
-> > +       for (; first <= last; first++)
-> > +               if (spacetab(*first))
-> > +                       return first;
-> > +       return NULL;
-> > +}
->
-> I think this should be "next_terminator()" and also stop at NUL.
->
-> You do check for the NUL case here:
->
-> > +               if (!next_spacetab(cp, buf_end) && *buf_end)
-> > +                       return -ENOEXEC;
->
-> but it means that if there's no space ot tab and it's a short file,
-> you pointlessly walk to the end. No?
+> >But somehow I see "this LED is controlled by charging state" as
+> >primary and "it shows pulses instead of staying on" as secondary
+> >eye-candy.
+> >
+> >This week there was another driver for charger LED.. but that one does
+> >not do pulses. Ideally, we'd like consistent interface to the
+> >userland.
+> >
+> >(To make it complex, the other driver supports things like:
+> >   LED solid on -- fully charged
+> >   LED blinking slowly -- charging
+> >   LED blinking fast -- charge error
+> >   LED off -- not charging).
+>=20
+> Something like that could be supported with my original hw_pattern
+> proposal where we simply encode all of this in the hw-pattern file:
+>=20
+> tupple0: charging blinking_on_time
+> tupple1: charging blinking_off_time
+> tupple2: charging breathing_time
+> tupple3: manual blinking_on_time
+> tupple4: manual blinking_off_time
+> tupple5: manual breathing_time
 
-Yeah, that works. I'll send v5.
+So the userland would need to know "I'm on yoga, so 3rd tupple sets up
+breathing when charging"?
 
--- 
-Kees Cook
+> So for this chip you mention, we do not need the breathing time (no breat=
+hing support),
+> so we would get the following tupples:
+>=20
+> tupple0: not charging blinking_on_time
+> tupple1: not charging blinking_off_time
+> tupple2: slow charging blinking_on_time
+> tupple3: slow charging blinking_off_time
+> tupple4: fast charging blinking_on_time
+> tupple5: fast charging blinking_off_time
+> tupple6: charging error blinking_on_time
+> tupple7: charging error blinking_off_time
+
+Patterns and their meanings are fixed (or almost) on that driver, so
+fortunately that will not be neccessary.
+
+> Where by solid on/off can be done by setting one
+> of the blinking times to 0.
+>=20
+> Having hw_pattern ABIs like this where some of
+> the tupples only activate on certain conditions
+> might be better then a hardware_control sysfs
+> file as it offers more flexibility.
+
+Agreed about flexibility, but I don't think it does enough to provide
+hardware abstraction. It might be too much flexibility.
+
+Also it only works with hw controlled LEDs.
+
+With RGB LED multiple patterns per LED make a lot of sense (as there's
+typically just one led.
+
+For example on N900, we have
+
+green: fully charged.
+yellow pulsing: charging.
+solid yellow: hardware feature, emergency charging.
+white pulsing: happy phone, no events
+blue fast pulses: message waiting
+
+On N900, I'm handling that in userspace, but...
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--pf9I7BMVVzbSWLtt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlxpnc0ACgkQMOfwapXb+vLf4QCeO6zbHGc5WCQbHTPq74Hw/b63
+xLEAn204WDUgvQJkslmfGmO70OF/G+QM
+=FrBN
+-----END PGP SIGNATURE-----
+
+--pf9I7BMVVzbSWLtt--
