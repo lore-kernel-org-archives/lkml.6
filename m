@@ -2,167 +2,110 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A69FC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 06:11:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43223C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 06:23:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20BBC21B69
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 06:11:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1182E2196F
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 06:23:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tflIUzDg"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ifcnmcwM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728176AbfBQGLa (ORCPT
+        id S1728294AbfBQGXk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 01:11:30 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:38124 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726501AbfBQGLa (ORCPT
+        Sun, 17 Feb 2019 01:23:40 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39281 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbfBQGXk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 01:11:30 -0500
-Received: by mail-it1-f196.google.com with SMTP id l66so23655346itg.3;
-        Sat, 16 Feb 2019 22:11:29 -0800 (PST)
+        Sun, 17 Feb 2019 01:23:40 -0500
+Received: by mail-pg1-f196.google.com with SMTP id r11so6857822pgp.6
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Feb 2019 22:23:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=cD2xTT2d2Swt8dfY5oO9l6rZgzmCM3S/DcGBHpq/rag=;
-        b=tflIUzDgNUqAzZGGmvxK0MUEOJPu390ioPS3/jsQuK1OFVUVF5RqYlgoSQ3OmcK0op
-         FDzpPh/9jxuoU0hGE9HXYEwX6N6Q02j36fat59iiVbsiSdLjzWFkwOLgL3J2tA6SioeZ
-         NmUg76509N1rJHWxrzo/ABJFHh2ghH6qNSaSfOwS5HeR4EIeMBdmb61vJZ8rYyFTiU44
-         SlyhPejFn+Kx36z5t5ZnNhp3n5TxaTbDtU+EbbegYGyXzyO3W4F4EjAYtR5qAz2wdBZl
-         jRJU2HkEi52meg1m2Y3QfRj6Yp+VFZ4slAY9SuUyW3GaHO9XHjKHksGOyQCGksxJ7nfr
-         JJwQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nm7Mpr2bFzDsTZtDgyvgfnqAVAhEse/hD66HPwpevYI=;
+        b=ifcnmcwMlqknwcmblNlaOdEKIdi2A7JylegsmM4qPX6LKXhT0ZDMyL5XKSNZUgZ1ol
+         mbTn8MatZvfW5RlESuur/dZZzaVRaepLswtWfvSL93RWTQhoKtUMHJWKOU/QNCNchpSq
+         Lu/svA4tSsxsI85nS1x9uShfXffajFxM2Df+Mdl4vi3qRz8X6Aqpo0XR/+GbJkZzCj3o
+         NrvzGzrRqu5fKqZmH5Bo49rKdOqKBSjfMxBPMNGzaNhsrFFesFV6le1PgjnnT6AA94Jy
+         T015qKwtZu05dS2Hm8uFvn5dZTIBkwQrJe1YESNzYmnhfz/SujlmJTpbMmLCkpdxS5A1
+         LbgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=cD2xTT2d2Swt8dfY5oO9l6rZgzmCM3S/DcGBHpq/rag=;
-        b=j3icCxbnJ4QV2mqDkAEc2ZZlxzZ0hrYJJFXy/HJBLV9tkGQzqjHIBchX9Qu+CzPuZ0
-         Y1NRyA6jluLvQlFIDobDc+EDQQ9IO46ysZxjI4GDtaxh43FJpBV8ZcnQT+hEHyZEeXn4
-         PZPKzxRCNE0LomaAm1Xrp2tK7uCg07Ft1gowfH4K0eLpr25fP/VV1nqNYL4pJDU/Mmum
-         ZKHS01Bd0MirTcGzYCQ5SNPybNRRsTRz7Sf+q838w1TPUnpDGv6WDMgWXvSulu8Re300
-         X27+ssEEn2MP8el8s33F994kcq0jfAI+Bdm4b132dbYEOLXy/5fusnfH5caPAc1J5YHx
-         sF4g==
-X-Gm-Message-State: AHQUAuZkxVeRZ2XdsqMhMQcIct4+ZngB/+MJoRf1aNB6giJ92IgMg9gR
-        8rsHBu7MvcutKps0iDRTsoSRQo41
-X-Google-Smtp-Source: AHgI3Ib6IV8HzGZ+hvLR7dUNv5M6MzUqJ35UF7BBKVzCH3eebbp/NoFptR4+U/EuMWBJ0o3gPFT+Cg==
-X-Received: by 2002:a6b:1444:: with SMTP id 65mr10715743iou.105.1550383888449;
-        Sat, 16 Feb 2019 22:11:28 -0800 (PST)
-Received: from localhost.localdomain ([198.52.185.227])
-        by smtp.gmail.com with ESMTPSA id m8sm3980522ioc.85.2019.02.16.22.11.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 16 Feb 2019 22:11:27 -0800 (PST)
-From:   thesven73@gmail.com
-X-Google-Original-From: TheSven73@gmail.com
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sven Van Asbroeck <TheSven73@gmail.com>,
-        Tejun Heo <tj@kernel.org>
-Subject: [PATCH v2] Input: synaptics_i2c - remove redundant spinlock
-Date:   Sun, 17 Feb 2019 01:10:53 -0500
-Message-Id: <20190217061053.4559-1-TheSven73@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nm7Mpr2bFzDsTZtDgyvgfnqAVAhEse/hD66HPwpevYI=;
+        b=MDwwc1LwuGrYoXRCHFxCfURXAyf/KzfjbLkBgc4AH35fnZCj0dhsOPryGCJvbhlavq
+         nVbgW1ZxNwsOEara7epEsTaytBJmMn4rhfEw8v+iJnoYk1/Yi3hBbP5xp8Nr9Km7FQvu
+         Ze7T/m7PsUZeai/wJsqxi9tlLx1KZXaipX5M9HM91jI9f5Gy+79SYBcyJr0s9ms4SPbm
+         rJQz3diDj1HK6Fkwrrfai9QSOMCCGZQvpABKVha7KUR+sFJmL5gXBidSdP4gtZTCHXYE
+         Ti/23KhTIb66izVY2qITq4e0Bj+fUwuSp5kcsuZXjASsvhiP30C1WFMVHdr8ISWnyjEg
+         jKZQ==
+X-Gm-Message-State: AHQUAuYxTMSTzEVKtGtkyoJBO/nCY7+jsJbhzZut4+O0lkv5zAAYVOf1
+        3zKl0qi0o8KDibsXb/nrFrZ348uz
+X-Google-Smtp-Source: AHgI3IbaL+qoncpcwlKwPaLrZSlwDbREXbJesWUb4jxQUmO9VmgguFlB3LYaCIFe0NomUSbpOkUzig==
+X-Received: by 2002:a62:b40b:: with SMTP id h11mr313568pfn.108.1550384618640;
+        Sat, 16 Feb 2019 22:23:38 -0800 (PST)
+Received: from localhost (220-245-128-230.tpgi.com.au. [220.245.128.230])
+        by smtp.gmail.com with ESMTPSA id f13sm13736786pfa.132.2019.02.16.22.23.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 16 Feb 2019 22:23:37 -0800 (PST)
+Date:   Sun, 17 Feb 2019 17:23:33 +1100
+From:   Balbir Singh <bsingharora@gmail.com>
+To:     Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>, erhard_f@mailbox.org,
+        jack@suse.cz, linuxppc-dev@ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        aneesh.kumar@linux.vnet.ibm.com
+Subject: Re: [PATCH] powerpc/64s: Fix possible corruption on big endian due
+ to pgd/pud_present()
+Message-ID: <20190217062333.GC31125@350D>
+References: <20190214062339.7139-1-mpe@ellerman.id.au>
+ <20190216105511.GA31125@350D>
+ <20190216142206.GE14180@gate.crashing.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190216142206.GE14180@gate.crashing.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sven Van Asbroeck <TheSven73@gmail.com>
+On Sat, Feb 16, 2019 at 08:22:12AM -0600, Segher Boessenkool wrote:
+> Hi all,
+> 
+> On Sat, Feb 16, 2019 at 09:55:11PM +1100, Balbir Singh wrote:
+> > On Thu, Feb 14, 2019 at 05:23:39PM +1100, Michael Ellerman wrote:
+> > > In v4.20 we changed our pgd/pud_present() to check for _PAGE_PRESENT
+> > > rather than just checking that the value is non-zero, e.g.:
+> > > 
+> > >   static inline int pgd_present(pgd_t pgd)
+> > >   {
+> > >  -       return !pgd_none(pgd);
+> > >  +       return (pgd_raw(pgd) & cpu_to_be64(_PAGE_PRESENT));
+> > >   }
+> > > 
+> > > Unfortunately this is broken on big endian, as the result of the
+> > > bitwise && is truncated to int, which is always zero because
+> 
+> (Bitwise "&" of course).
+> 
+> > Not sure why that should happen, why is the result an int? What
+> > causes the casting of pgd_t & be64 to be truncated to an int.
+> 
+> Yes, it's not obvious as written...  It's simply that the return type of
+> pgd_present is int.  So it is truncated _after_ the bitwise and.
+>
 
-Remove a leftover spinlock.
+Thanks, I am surprised the compiler does not complain about the truncation
+of bits. I wonder if we are missing -Wconversion
 
-This was required back when mod_delayed_work() did not exist,
-and had to be implemented with a cancel + queue. See
-commit e7c2f967445d ("workqueue: use mod_delayed_work() instead of
-__cancel + queue")
-
-schedule_delayed_work() and mod_delayed_work() can now be used
-concurrently. So the spinlock is no longer needed.
-
-Cc: Tejun Heo <tj@kernel.org>
-Signed-off-by: Sven Van Asbroeck <TheSven73@gmail.com>
----
-
-v2: replace useless synaptics_i2c_reschedule_work() with
-		mod_delayed_work().
-
- drivers/input/mouse/synaptics_i2c.c | 22 ++++------------------
- 1 file changed, 4 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/input/mouse/synaptics_i2c.c b/drivers/input/mouse/synaptics_i2c.c
-index 8538318d332c..fa304648d611 100644
---- a/drivers/input/mouse/synaptics_i2c.c
-+++ b/drivers/input/mouse/synaptics_i2c.c
-@@ -219,7 +219,6 @@ struct synaptics_i2c {
- 	struct i2c_client	*client;
- 	struct input_dev	*input;
- 	struct delayed_work	dwork;
--	spinlock_t		lock;
- 	int			no_data_count;
- 	int			no_decel_param;
- 	int			reduce_report_param;
-@@ -369,23 +368,11 @@ static bool synaptics_i2c_get_input(struct synaptics_i2c *touch)
- 	return xy_delta || gesture;
- }
- 
--static void synaptics_i2c_reschedule_work(struct synaptics_i2c *touch,
--					  unsigned long delay)
--{
--	unsigned long flags;
--
--	spin_lock_irqsave(&touch->lock, flags);
--
--	mod_delayed_work(system_wq, &touch->dwork, delay);
--
--	spin_unlock_irqrestore(&touch->lock, flags);
--}
--
- static irqreturn_t synaptics_i2c_irq(int irq, void *dev_id)
- {
- 	struct synaptics_i2c *touch = dev_id;
- 
--	synaptics_i2c_reschedule_work(touch, 0);
-+	mod_delayed_work(system_wq, &touch->dwork, 0);
- 
- 	return IRQ_HANDLED;
- }
-@@ -461,7 +448,7 @@ static void synaptics_i2c_work_handler(struct work_struct *work)
- 	 * We poll the device once in THREAD_IRQ_SLEEP_SECS and
- 	 * if error is detected, we try to reset and reconfigure the touchpad.
- 	 */
--	synaptics_i2c_reschedule_work(touch, delay);
-+	mod_delayed_work(system_wq, &touch->dwork, delay);
- }
- 
- static int synaptics_i2c_open(struct input_dev *input)
-@@ -474,7 +461,7 @@ static int synaptics_i2c_open(struct input_dev *input)
- 		return ret;
- 
- 	if (polling_req)
--		synaptics_i2c_reschedule_work(touch,
-+		mod_delayed_work(system_wq, &touch->dwork,
- 				msecs_to_jiffies(NO_DATA_SLEEP_MSECS));
- 
- 	return 0;
-@@ -530,7 +517,6 @@ static struct synaptics_i2c *synaptics_i2c_touch_create(struct i2c_client *clien
- 	touch->scan_rate_param = scan_rate;
- 	set_scan_rate(touch, scan_rate);
- 	INIT_DELAYED_WORK(&touch->dwork, synaptics_i2c_work_handler);
--	spin_lock_init(&touch->lock);
- 
- 	return touch;
- }
-@@ -637,7 +623,7 @@ static int __maybe_unused synaptics_i2c_resume(struct device *dev)
- 	if (ret)
- 		return ret;
- 
--	synaptics_i2c_reschedule_work(touch,
-+	mod_delayed_work(system_wq, &touch->dwork,
- 				msecs_to_jiffies(NO_DATA_SLEEP_MSECS));
- 
- 	return 0;
--- 
-2.17.1
-
+Balbir
