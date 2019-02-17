@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 959B1C4360F
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD509C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:15:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 628A3218FF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:15:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACC31218FF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:15:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="d5EQxlhq"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="a6na9x5E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727254AbfBQJPB (ORCPT
+        id S1727967AbfBQJPH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 04:15:01 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35146 "EHLO
+        Sun, 17 Feb 2019 04:15:07 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35153 "EHLO
         mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727057AbfBQJO7 (ORCPT
+        with ESMTP id S1727057AbfBQJPD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 04:14:59 -0500
-Received: by mail-pg1-f196.google.com with SMTP id s198so6977581pgs.2
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 01:14:59 -0800 (PST)
+        Sun, 17 Feb 2019 04:15:03 -0500
+Received: by mail-pg1-f196.google.com with SMTP id s198so6977636pgs.2
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 01:15:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=okBCXL5ZObi1PQJODlH9Ry376R4p7BpEcaEwmiQ3GnM=;
-        b=d5EQxlhq1n3AbV5nwFJNW1ItP7iVR/cZqsiNEo80YqXTTeed9blO+zHlLYD0RIz2RB
-         SbpIQlLIDISRDzKMyCed1uv8MCV2uK3++YdqWXJxTkNfG2VS8YCCT18yGiemn0glqedi
-         0A7ye5K1a7JWwDG/GXQ7HfNksA8rwezGB3SnA=
+        bh=U3aS7aZspUVXaJLVPXE9mGfHChnxYiwxohb9NgNnEus=;
+        b=a6na9x5Eae2qvd8qxgS0CyWjZSh+CjeLFzUqYm0WK6WiXehrDVPI1IregatkYGdmfl
+         uvgZWD0tBsMxkIfoY5TFTvUm9IRJmcjXVaD7XTJ2H+ZYbtJUiaJFXbYb/uElsBXSLUVR
+         48fO6PghodQOi0FrA+OUuCUx9Tl96kBzSbGcw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=okBCXL5ZObi1PQJODlH9Ry376R4p7BpEcaEwmiQ3GnM=;
-        b=BqpLLIcPlRRGHNokvWYOOwG1Pnlc9uW9lMrm7GsfPD+MzX4ML5PbIZpLMzLxP2zaMt
-         HzxVAx6kxf6PSDPzdAk/0uyQ3QSyjz1ffpKVRGHLdQIwPtlOTyxBMjeWdCb4ZiKpUBtW
-         ExWUK1ARoVh91f5ay4ZahVbe9aRTFcFchA8Hp/4DhhOVNten0PK0iOYX1iPQ6Mb+gXfL
-         zmc1ZZmjRy17YtHvJFOb0xEQY6SQ52QniVPL5TGKoGktGwnXAwp6d/oB/v3+ZC6locKh
-         UsozxNxhGORK+6Zg2vilc8zKD1XkCW7Zj8tdjae1aUrezU9FGYtggXT+dtbhFMRmVS33
-         0qbQ==
-X-Gm-Message-State: AHQUAuaCG4lIwHGgDSKZHN/4KeTL2CXEJVo89yfJb0bvNPuO2Cq71A9l
-        HpEajU8tJofA88gpJKReSEh7qg==
-X-Google-Smtp-Source: AHgI3Ia0DIu9n2dwODlYftgmBt6QfrrKaui0ah3kZHxG0NZzgLFdMTPAS0c4gY/rsnCF82KG9aefog==
-X-Received: by 2002:a62:59d0:: with SMTP id k77mr18387851pfj.211.1550394898665;
-        Sun, 17 Feb 2019 01:14:58 -0800 (PST)
+        bh=U3aS7aZspUVXaJLVPXE9mGfHChnxYiwxohb9NgNnEus=;
+        b=ub+QYx8VExMxfS0VWlb+eUJpOqi+pOm2lkagZg6O+m7Xqa82oZb8hlt5lW2ZNkrZIq
+         LuFks4aFoYon6km9tJ+Xs5kQfZwSSXW7HPNMGr7u21YwIjJDBjQMoz/b6tE7oOTBGUZU
+         rNiSkyjVu6Q3Bu+ID+fvdJhny+VLSx5uoTspmAgEgtx+BEv9ZLOI7+9peXjqFZjqTJev
+         IogpfucgQBozmgzqlTEtMWPlGQwOgowlnOgDRzBozDuNIz2AFv7ppt3a3rNPh8vwfwub
+         ZJROjuUIWl2rXnvy9wYT0rslP/WhbYAHBapWdz7299pRqkK9cIdkzI5W4iLOoiFgaC9C
+         UHyg==
+X-Gm-Message-State: AHQUAuZbDIjDSsnKQ8X+03o8Zdzh/Ovv+C80+T8fI6n3ZCvKMoHHCjuX
+        efkw/lYLFOCTs0ScwXe445TRPA==
+X-Google-Smtp-Source: AHgI3IbqdKjGGkOemK316sGeG0SCm1rNMVUr212TOQpRk1zCKWZzZApJT0UihVTHeXZYJ10bpJ7llQ==
+X-Received: by 2002:a63:df50:: with SMTP id h16mr13718193pgj.421.1550394902364;
+        Sun, 17 Feb 2019 01:15:02 -0800 (PST)
 Received: from localhost.localdomain ([115.97.184.151])
-        by smtp.gmail.com with ESMTPSA id v15sm5565924pfa.75.2019.02.17.01.14.55
+        by smtp.gmail.com with ESMTPSA id v15sm5565924pfa.75.2019.02.17.01.14.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Feb 2019 01:14:57 -0800 (PST)
+        Sun, 17 Feb 2019 01:15:01 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Bastien Nocera <hadess@hadess.net>,
@@ -63,9 +63,9 @@ Cc:     Henrik Rydberg <rydberg@bitmath.org>, linux-input@vger.kernel.org,
         linux-amarula@amarulasolutions.com,
         Michael Trimarchi <michael@amarulasolutions.com>,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v5 3/4] dt-bindings: input: touchscreen: goodix: Add GT5663 compatible
-Date:   Sun, 17 Feb 2019 14:44:35 +0530
-Message-Id: <20190217091436.3702-4-jagan@amarulasolutions.com>
+Subject: [PATCH v5 4/4] Input: goodix - Add GT5663 CTP support
+Date:   Sun, 17 Feb 2019 14:44:36 +0530
+Message-Id: <20190217091436.3702-5-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20190217091436.3702-1-jagan@amarulasolutions.com>
 References: <20190217091436.3702-1-jagan@amarulasolutions.com>
@@ -77,28 +77,40 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 GT5663 is capacitive touch controller with customized smart
-wakeup gestures, it support chipdata which is similar to
-existing GT1151 and require AVDD28 supply for some boards.
+wakeup gestures.
 
-Document the compatible for the same.
+Add support for it by adding compatible and supported chip data.
+
+The chip data on GT5663 is similar to GT1151, like
+- config data register has 0x8050 address
+- config data register max len is 240
+- config data checksum has 16-bit
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- Documentation/devicetree/bindings/input/touchscreen/goodix.txt | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/input/touchscreen/goodix.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-index 8f6e6eede64d..29c149d91a05 100644
---- a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-+++ b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-@@ -3,6 +3,7 @@ Device tree bindings for Goodix GT9xx series touchscreen controller
- Required properties:
+diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
+index 294456a53fe0..80f8b920ef5e 100644
+--- a/drivers/input/touchscreen/goodix.c
++++ b/drivers/input/touchscreen/goodix.c
+@@ -227,6 +227,7 @@ static const struct goodix_chip_data *goodix_get_chip_data(u16 id)
+ {
+ 	switch (id) {
+ 	case 1151:
++	case 5663:
+ 		return &gt1x_chip_data;
  
-  - compatible		: Should be "goodix,gt1151"
-+				 or "goodix,gt5663"
- 				 or "goodix,gt911"
- 				 or "goodix,gt9110"
- 				 or "goodix,gt912"
+ 	case 911:
+@@ -988,6 +989,7 @@ MODULE_DEVICE_TABLE(acpi, goodix_acpi_match);
+ #ifdef CONFIG_OF
+ static const struct of_device_id goodix_of_match[] = {
+ 	{ .compatible = "goodix,gt1151" },
++	{ .compatible = "goodix,gt5663" },
+ 	{ .compatible = "goodix,gt911" },
+ 	{ .compatible = "goodix,gt9110" },
+ 	{ .compatible = "goodix,gt912" },
 -- 
 2.18.0.321.gffc6fa0e3
 
