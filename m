@@ -2,137 +2,185 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8281C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 16:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C960BC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:09:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B229221924
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 16:53:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9066C21934
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:09:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hFoI7Bp6"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="38SH3EZ4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727467AbfBQQxh (ORCPT
+        id S1727727AbfBQRJc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 11:53:37 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:40525 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725810AbfBQQxh (ORCPT
+        Sun, 17 Feb 2019 12:09:32 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:45236 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725810AbfBQRJb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 11:53:37 -0500
-Received: by mail-vs1-f66.google.com with SMTP id z18so8309282vso.7
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 08:53:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yKgfA//YV+A6sroKDHVk07GyLvRUDPHxxokXfsRBje4=;
-        b=hFoI7Bp6l7EaGViqnGVmnznQ8x3N373hLmNz0CcJsNiE5HtBLMntYVo5fGmSfCou+q
-         XP4n31pvGKARD5G1hVX6OliOHzOaAbgx000jxqFNHNr5F0gy+eNqGUl1sBlNEqr2r+za
-         CyLRzP2de/gk8cOYua8mreVJ3GGuXSmaDQ/Gg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yKgfA//YV+A6sroKDHVk07GyLvRUDPHxxokXfsRBje4=;
-        b=b4Z37r7CuM9dHnF/b/rMuMMf9E59grSDXRIl9TI3g4cWuSdaWQKNUgkfFh0Mv5I0zo
-         Klos5d5FT99fErRtCDeKK+5KdVJoK187vlbOIbthUPYzQTHIaS5fzrAUtQs0AvJ60zAO
-         IXdTbP2Zt1c+TTRlBuVMUvKKWGbllJ7O9Qr/ZDiruSx5QHwaA/F84n3V4NLFcqJwxX/O
-         2T0Qh6NLOUJscIdvcVzHDcrGWzAwzikEBBB6GzF+LXQd1sRyRoCjfRA3I/JYBULjNicQ
-         hJNnn/6mOFYB33Qiz8ZdNTagCVaqnokzBAqphLuYVULXg9knWNqbYkbhKM8FrJNR+xVI
-         B1SA==
-X-Gm-Message-State: AHQUAubcxUTJyYC+J9f4Dp/AFCI+rSoTn1sf60D2+TC6vbiGsDW2ONtn
-        Bg8HXQ/S85DWQjQNjFpimU6fPs6D9Zs=
-X-Google-Smtp-Source: AHgI3IZ176JBGyRe/58sbO5nbsM6CmJUAzirmOcBIGo6vP7rCaZ1/JIG/K67SYaUjIwRucFW5yegnw==
-X-Received: by 2002:a67:1b85:: with SMTP id b127mr10376994vsb.45.1550422415625;
-        Sun, 17 Feb 2019 08:53:35 -0800 (PST)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
-        by smtp.gmail.com with ESMTPSA id b144sm2535262vka.34.2019.02.17.08.53.34
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Feb 2019 08:53:34 -0800 (PST)
-Received: by mail-ua1-f54.google.com with SMTP id j3so5095362uap.3
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 08:53:34 -0800 (PST)
-X-Received: by 2002:a9f:2709:: with SMTP id a9mr9767198uaa.10.1550422414147;
- Sun, 17 Feb 2019 08:53:34 -0800 (PST)
+        Sun, 17 Feb 2019 12:09:31 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1HH4JNb143689;
+        Sun, 17 Feb 2019 17:09:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-type :
+ content-transfer-encoding; s=corp-2018-07-02;
+ bh=ntWVkLeJIdQ5fFy0VllDZVuQMFMR5jYgVKdEoVWfL0w=;
+ b=38SH3EZ47Tk4qDWGgp7WrHAkM2VlrbCm28KiRUhnx+9z/n8HNQA5xRbG5usbMqZRJ2pS
+ 7rTEXPUZopZ2lwRjMrB/Y1bSl5mk9UzWmvbe4FOUuaHAE0/gS14Fws7IggEiMVoTvA7Z
+ 062JiABsZLi3SDRKZXIYQVzf0DRWkI9bBPfrWZlSUzqTYgbR5FCdr9eIsaqBPVAeFngN
+ LtortPSTCxCr6reOQw1qhnV8wmC2CgrDBmvwlIHuAE667/ZOBxjyVmFfZHvo7VwPiLi5
+ UJIxpteIMNdaAFi0ybxTgXx4fpLybsE5r+E7YLPVd3s2RIKJ4Xky785gPqrMRbXHgfrV WA== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2qp9xtk6hw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 17 Feb 2019 17:09:23 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1HH9M9k017467
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 17 Feb 2019 17:09:22 GMT
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1HH9LFw013678;
+        Sun, 17 Feb 2019 17:09:21 GMT
+Received: from lab02.no.oracle.com (/10.172.144.56)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 17 Feb 2019 17:09:21 +0000
+From:   =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>
+To:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Leon Romanovsky <leon@kernel.org>,
+        Parav Pandit <parav@mellanox.com>,
+        Steve Wise <swise@opengridcomputing.com>
+Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] RDMA/cma: Make CM response timeout and # CM retries configurable
+Date:   Sun, 17 Feb 2019 18:09:09 +0100
+Message-Id: <20190217170909.1178575-1-haakon.bugge@oracle.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190216140008.28671-1-bhe@redhat.com> <20190216140008.28671-5-bhe@redhat.com>
-In-Reply-To: <20190216140008.28671-5-bhe@redhat.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Sun, 17 Feb 2019 08:53:21 -0800
-X-Gmail-Original-Message-ID: <CAGXu5jKRRj9Hb5b=vnnrSuVpA+6U5mk1+16HsV=ZrPv-zgjPNA@mail.gmail.com>
-Message-ID: <CAGXu5jKRRj9Hb5b=vnnrSuVpA+6U5mk1+16HsV=ZrPv-zgjPNA@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] x86/mm/KASLR: Fix the wrong calculation of memory
- region initial size
-To:     Baoquan He <bhe@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, X86 ML <x86@kernel.org>,
-        Mike Travis <travis@sgi.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9170 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902170133
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 16, 2019 at 6:03 AM Baoquan He <bhe@redhat.com> wrote:
->
-> In memory region KASLR, __PHYSICAL_MASK_SHIFT is taken to calculate
-> the initial size of the direct mapping region. This is correct in
-> the old code where __PHYSICAL_MASK_SHIFT was equal to MAX_PHYSMEM_BITS,
-> 46 bits, and only 4-level mode was supported.
->
-> Later, in commit b83ce5ee91471d ("x86/mm/64: Make __PHYSICAL_MASK_SHIFT
-> always 52"), __PHYSICAL_MASK_SHIFT was changed to be always 52 bits, no
-> matter it's 5-level or 4-level. This is wrong for 4-level paging. Then
-> when we adapt physical memory region size based on available memory, it
-> will overflow if the amount of system RAM and the padding is bigger
-> than 64 TB.
->
-> In fact, here MAX_PHYSMEM_BITS should be used instead. Fix it by
-> replacing __PHYSICAL_MASK_SHIFT with MAX_PHYSMEM_BITS.
->
-> Fixes: b83ce5ee9147 ("x86/mm/64: Make __PHYSICAL_MASK_SHIFT always 52")
-> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Reviewed-by: Thomas Garnier <thgarnie@google.com>
-> Signed-off-by: Baoquan He <bhe@redhat.com>
+During certain workloads, the default CM response timeout is too
+short, leading to excessive retries. Hence, make it configurable
+through sysctl. While at it, also make number of CM retries
+configurable.
 
-Nice catch! I wish I had a system with >64TB RAM. ;)
+The defaults are not changed.
 
-Acked-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
+---
+ drivers/infiniband/core/cma.c | 51 ++++++++++++++++++++++++++++++-----
+ 1 file changed, 44 insertions(+), 7 deletions(-)
 
-> ---
->  arch/x86/mm/kaslr.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-> index bf680929fe26..97768df923e3 100644
-> --- a/arch/x86/mm/kaslr.c
-> +++ b/arch/x86/mm/kaslr.c
-> @@ -137,7 +137,7 @@ void __init kernel_randomize_memory(void)
->         if (!kaslr_memory_enabled())
->                 return;
->
-> -       kaslr_regions[0].size_tb = 1 << (__PHYSICAL_MASK_SHIFT - TB_SHIFT);
-> +       kaslr_regions[0].size_tb = 1 << (MAX_PHYSMEM_BITS - TB_SHIFT);
->         kaslr_regions[1].size_tb = VMALLOC_SIZE_TB;
->
->         /*
-> --
-> 2.17.2
->
-
-
+diff --git a/drivers/infiniband/core/cma.c b/drivers/infiniband/core/cma.c
+index c43512752b8a..ce99e1cd1029 100644
+--- a/drivers/infiniband/core/cma.c
++++ b/drivers/infiniband/core/cma.c
+@@ -43,6 +43,7 @@
+ #include <linux/inetdevice.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
++#include <linux/sysctl.h>
+ #include <net/route.h>
+ 
+ #include <net/net_namespace.h>
+@@ -68,13 +69,46 @@ MODULE_AUTHOR("Sean Hefty");
+ MODULE_DESCRIPTION("Generic RDMA CM Agent");
+ MODULE_LICENSE("Dual BSD/GPL");
+ 
+-#define CMA_CM_RESPONSE_TIMEOUT 20
+ #define CMA_QUERY_CLASSPORT_INFO_TIMEOUT 3000
+-#define CMA_MAX_CM_RETRIES 15
+ #define CMA_CM_MRA_SETTING (IB_CM_MRA_FLAG_DELAY | 24)
+ #define CMA_IBOE_PACKET_LIFETIME 18
+ #define CMA_PREFERRED_ROCE_GID_TYPE IB_GID_TYPE_ROCE_UDP_ENCAP
+ 
++#define CMA_DFLT_CM_RESPONSE_TIMEOUT 20
++static int cma_cm_response_timeout = CMA_DFLT_CM_RESPONSE_TIMEOUT;
++static int cma_cm_response_timeout_min = 8;
++static int cma_cm_response_timeout_max = 31;
++#undef CMA_DFLT_CM_RESPONSE_TIMEOUT
++
++#define CMA_DFLT_MAX_CM_RETRIES 15
++static int cma_max_cm_retries = CMA_DFLT_MAX_CM_RETRIES;
++static int cma_max_cm_retries_min = 1;
++static int cma_max_cm_retries_max = 100;
++#undef CMA_DFLT_MAX_CM_RETRIES
++
++static struct ctl_table_header *cma_ctl_table_hdr;
++static struct ctl_table cma_ctl_table[] = {
++	{
++		.procname	= "cma_cm_response_timeout",
++		.data		= &cma_cm_response_timeout,
++		.maxlen		= sizeof(cma_cm_response_timeout),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= &cma_cm_response_timeout_min,
++		.extra2		= &cma_cm_response_timeout_max,
++	},
++	{
++		.procname	= "cma_max_cm_retries",
++		.data		= &cma_max_cm_retries,
++		.maxlen		= sizeof(cma_max_cm_retries),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= &cma_max_cm_retries_min,
++		.extra2		= &cma_max_cm_retries_max,
++	},
++	{ }
++};
++
+ static const char * const cma_events[] = {
+ 	[RDMA_CM_EVENT_ADDR_RESOLVED]	 = "address resolved",
+ 	[RDMA_CM_EVENT_ADDR_ERROR]	 = "address error",
+@@ -3745,8 +3779,8 @@ static int cma_resolve_ib_udp(struct rdma_id_private *id_priv,
+ 	req.path = id_priv->id.route.path_rec;
+ 	req.sgid_attr = id_priv->id.route.addr.dev_addr.sgid_attr;
+ 	req.service_id = rdma_get_service_id(&id_priv->id, cma_dst_addr(id_priv));
+-	req.timeout_ms = 1 << (CMA_CM_RESPONSE_TIMEOUT - 8);
+-	req.max_cm_retries = CMA_MAX_CM_RETRIES;
++	req.timeout_ms = 1 << (cma_cm_response_timeout - 8);
++	req.max_cm_retries = cma_max_cm_retries;
+ 
+ 	ret = ib_send_cm_sidr_req(id_priv->cm_id.ib, &req);
+ 	if (ret) {
+@@ -3816,9 +3850,9 @@ static int cma_connect_ib(struct rdma_id_private *id_priv,
+ 	req.flow_control = conn_param->flow_control;
+ 	req.retry_count = min_t(u8, 7, conn_param->retry_count);
+ 	req.rnr_retry_count = min_t(u8, 7, conn_param->rnr_retry_count);
+-	req.remote_cm_response_timeout = CMA_CM_RESPONSE_TIMEOUT;
+-	req.local_cm_response_timeout = CMA_CM_RESPONSE_TIMEOUT;
+-	req.max_cm_retries = CMA_MAX_CM_RETRIES;
++	req.remote_cm_response_timeout = cma_cm_response_timeout;
++	req.local_cm_response_timeout = cma_cm_response_timeout;
++	req.max_cm_retries = cma_max_cm_retries;
+ 	req.srq = id_priv->srq ? 1 : 0;
+ 
+ 	ret = ib_send_cm_req(id_priv->cm_id.ib, &req);
+@@ -4701,6 +4735,9 @@ static int __init cma_init(void)
+ 		goto err;
+ 
+ 	cma_configfs_init();
++	cma_ctl_table_hdr = register_net_sysctl(&init_net, "net/rdma_cm", cma_ctl_table);
++	if (!cma_ctl_table_hdr)
++		pr_warn("rdma_cm: couldn't register sysctl path, using default values\n");
+ 
+ 	return 0;
+ 
 -- 
-Kees Cook
+2.20.1
+
