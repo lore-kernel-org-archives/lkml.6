@@ -2,75 +2,71 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.2 required=3.0 tests=DATE_IN_PAST_03_06,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BD11C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 05:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB1CDC10F06
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 05:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 217CA2192C
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 05:11:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o+RWhVtD"
+	by mail.kernel.org (Postfix) with ESMTP id C2A9321B69
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 05:17:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbfBQFLV (ORCPT
+        id S1727267AbfBQFRP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 00:11:21 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:41077 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725372AbfBQFLV (ORCPT
+        Sun, 17 Feb 2019 00:17:15 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:59013 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725372AbfBQFRP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 00:11:21 -0500
-Received: by mail-ot1-f65.google.com with SMTP id t7so6789775otk.8
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Feb 2019 21:11:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=ODzSrp9mIKo3HqMLVvFOVbi74xmbO6rbK55wRLXxEaM=;
-        b=o+RWhVtDqqwUl0qvx1KegbO5TM2kV6BUJJUc9kOhKcx/s8y+BD2kbzNWfZQ3W6URv2
-         l9XBWTky8Ija8dRD9gThmBQvVsT8uZyCvDefhbnD4ZHLqoABxJLRZ6Ye5XXWV3lA2ULG
-         eRo8dktXv2KF9Hf3KLeWBEvufMflg2m/upgv/3m4N5ZzitOnZtd+ARVLTzaiPC2wPx4f
-         Ln3ZkIWV8FSS1+vSRlEmuA1LmwtcSQjMG2TwiTfFh1pTPFyGPp207i35ZeDYR0Lr208N
-         vmZT+5QF6/bI/WujPue4m5yD0Zhl8l2n8dWkhKSF9CGDmgOTIP/Kpk2H0LM2WoWAJSzC
-         HlWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=ODzSrp9mIKo3HqMLVvFOVbi74xmbO6rbK55wRLXxEaM=;
-        b=Aej/Ba3EAbxomrskoTlsHN+zw1JKXIpybQu62mp4pcuegI7UO6rn9QtuAZADhH969n
-         pPe++k18MUiRUUiyXlpUWV2c4zmOQfulDmX8O8r4N4JYcAu8soJP0zQlHuFuWd2imJy0
-         LdsM1we0X76EJatSmesPcwrdaS95IdDFZevurDFDwJGNKTjK+BGLBrJ/1zGYfqN2xQzx
-         jJ4zc2J+0UpoPyYdN0ovPe+j0vK7FyGZ4b71zf672UD33BUTOms6isLb+PJFqQgeyCKL
-         ijYsYih2IW0kFgA/i53C3o6SgeISFwAGRB2mo67489vlVqwII+HaggfpEQp7xZ/fPAGd
-         rPAg==
-X-Gm-Message-State: AHQUAuZ2ZWgWa2joovymkZ99mUhbZUpZ4fM0EEYD3bg6e2PoY6MTeyhm
-        hteLKpWnz07mXhs4A2w1u6CRsRJR6pis7de0Infjqj6D
-X-Google-Smtp-Source: AHgI3IbnyZIYu3Xbgkh66Yf1JN1AFlwdnZuHYZnJyZwRnMBP0MAsQXR2ZYEyMKF5ntCIf22yMED02UodWn21slAVIQw=
-X-Received: by 2002:a9d:6357:: with SMTP id y23mr10737514otk.203.1550380280357;
- Sat, 16 Feb 2019 21:11:20 -0800 (PST)
+        Sun, 17 Feb 2019 00:17:15 -0500
+Received: from fsav303.sakura.ne.jp (fsav303.sakura.ne.jp [153.120.85.134])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x1H5GuTR090850;
+        Sun, 17 Feb 2019 14:16:56 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav303.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp);
+ Sun, 17 Feb 2019 14:16:56 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x1H5Goq5090695
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Sun, 17 Feb 2019 14:16:56 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Subject: Re: [PATCH v2] LSM: Ignore "security=" when "lsm=" is specified
+To:     SELinux <selinux@vger.kernel.org>, kernel-team@lists.ubuntu.com
+Cc:     Casey Schaufler <casey@schaufler-ca.com>,
+        Kees Cook <keescook@chromium.org>,
+        James Morris <jmorris@namei.org>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190212182318.GA16669@beast>
+ <5260689d-9016-bdf4-6070-13d2c88ac8a8@schaufler-ca.com>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Message-ID: <4ed50852-abfb-773b-01e4-b4ac83e32ed3@I-love.SAKURA.ne.jp>
+Date:   Sun, 17 Feb 2019 14:16:50 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-References: <CAM5Ud7NzkM72EaZ_ow4m6wtie=UHYqfhvM3L1dtNX6AidBWEzg@mail.gmail.com>
- <CAM5Ud7NDojyOnNmOpgx7ZsT1g=vMB9xxKOkmVj27FirNp+DPng@mail.gmail.com>
-In-Reply-To: <CAM5Ud7NDojyOnNmOpgx7ZsT1g=vMB9xxKOkmVj27FirNp+DPng@mail.gmail.com>
-From:   Alec Ari <neotheuser@gmail.com>
-Date:   Sat, 16 Feb 2019 17:12:43 -0600
-Message-ID: <CAM5Ud7P64zfxXwTd_TwnP623B0tEonhTAx0DMu_otn+rf64UnA@mail.gmail.com>
-Subject: Fwd: [PATCH] scripts/sign-file.c: Use CMS if LibreSSL >= 2.6.0 is present
-To:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5260689d-9016-bdf4-6070-13d2c88ac8a8@schaufler-ca.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, it seems it's impossible to add tabs via gmail. The appropriate
-patch has been attached to kernel bugzilla #202159
+On 2019/02/14 1:05, Casey Schaufler wrote:
+> On 2/12/2019 10:23 AM, Kees Cook wrote:
+>> To avoid potential confusion, explicitly ignore "security=" when "lsm=" is
+>> used on the command line, and report that it is happening.
+>>
+>> Suggested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+>> Signed-off-by: Kees Cook <keescook@chromium.org>
+> 
+> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> 
 
-Sorry about this, hitting tab toggles highlighted selection, using
-"more indent" didn't do the trick I guess. The patch works here but I
-suppose not for the one who reported the bug.
-
-Alec
+The manual for TOMOYO was updated to follow this change.
+SELinux folks and AppArmor folks, can we apply this change?
