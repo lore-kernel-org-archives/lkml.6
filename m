@@ -2,164 +2,137 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E2CC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 16:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8281C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 16:53:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 102322192C
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 16:51:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B229221924
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 16:53:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=dev-mellanox-co-il.20150623.gappssmtp.com header.i=@dev-mellanox-co-il.20150623.gappssmtp.com header.b="x9RyghVd"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hFoI7Bp6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728042AbfBQQvH (ORCPT
+        id S1727467AbfBQQxh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 11:51:07 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38694 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725810AbfBQQvH (ORCPT
+        Sun, 17 Feb 2019 11:53:37 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:40525 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725810AbfBQQxh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 11:51:07 -0500
-Received: by mail-wr1-f65.google.com with SMTP id v13so15623214wrw.5
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 08:51:05 -0800 (PST)
+        Sun, 17 Feb 2019 11:53:37 -0500
+Received: by mail-vs1-f66.google.com with SMTP id z18so8309282vso.7
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 08:53:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dev-mellanox-co-il.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=SJbT7ufd3FmlzPu6Oxgbsa30XHQohpMofSF2GIXdxWE=;
-        b=x9RyghVdPj8vl/k9Pl6ic1HC3OcX3LU1+CWS5Nq4LqQdSSK4BkMN6k0e+2ti31L1l7
-         YXVX76Gm35wymeBMP8mtC5tGE2CBqutiFnVS2IoQn5JuOC9sIwVpCP436C/jvLCJqLrZ
-         daU+dQuuSA0hagXRlJPfQGqhg6L5mjpRjQXqHfRFRZixl2w8P3U+IwKyBUM1hpO1fysp
-         kgxrXq+iCAc2HuabxWEoz1D45+57xfFobTK8llHznqp++itdOlp8ADcZZ/BCIoKJTL1+
-         iK8pkL86HE4xEhSpHmmi6YHp0cm2/0M5NRgomZ7ikPs/+onLOByMlic5HA96sv/x5QPw
-         kH0w==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yKgfA//YV+A6sroKDHVk07GyLvRUDPHxxokXfsRBje4=;
+        b=hFoI7Bp6l7EaGViqnGVmnznQ8x3N373hLmNz0CcJsNiE5HtBLMntYVo5fGmSfCou+q
+         XP4n31pvGKARD5G1hVX6OliOHzOaAbgx000jxqFNHNr5F0gy+eNqGUl1sBlNEqr2r+za
+         CyLRzP2de/gk8cOYua8mreVJ3GGuXSmaDQ/Gg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=SJbT7ufd3FmlzPu6Oxgbsa30XHQohpMofSF2GIXdxWE=;
-        b=FhnXF/XStIv425TelcVbH90W5IYcD+LSLJmyA1S7fRAmzXO+f2JckFhMzoCFLIJ8Or
-         +2p9Y19/trs5DiY7CWY6mSmOBYUR87POHKc9WyH7vrUnljcLmG8Q5KtE2cqmJ30PxnZT
-         Fu+4oqcgJ4LKmfFR1yzJ7v8mOwEYkTglbMZ3gYx1vJCa4/4L90+WbA3CiTa5V/t8TN3Y
-         1gpgF3rOeMhgc6OcJYuaLCZ0OgkprUnuPqL+ElInLyEMjWfmcMW3kd7zsn6vBs6f3zz0
-         uP+qd1icBunm9+QaTEtwPT1SbYMZKOZeooETJgQfUDEnWehqhug/JxJfN9t2EWeg9wb7
-         qX7A==
-X-Gm-Message-State: AHQUAuZav659BjyFna0HovB3Zz1budyDlzWAMJ+uFZmKGAMWvqRU4Mbr
-        sLn2Xlyd/K5zVJfMXTvCXm7gdg==
-X-Google-Smtp-Source: AHgI3IZXgcQEZB56nEo+HvLaBG95B95eO30Or+X589LoEakX3o3oqIvb4gxS3BqRa/7pV1fz0LOCew==
-X-Received: by 2002:adf:eb85:: with SMTP id t5mr13241400wrn.157.1550422265083;
-        Sun, 17 Feb 2019 08:51:05 -0800 (PST)
-Received: from localhost ([5.102.238.15])
-        by smtp.gmail.com with ESMTPSA id o18sm40428636wrg.40.2019.02.17.08.51.03
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 17 Feb 2019 08:51:04 -0800 (PST)
-Date:   Sun, 17 Feb 2019 18:51:00 +0200
-From:   jackm <jackm@dev.mellanox.co.il>
-To:     =?ISO-8859-1?Q?H=E5kon?= Bugge <haakon.bugge@oracle.com>
-Cc:     Yishai Hadas <yishaih@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, majd@mellanox.com,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] IB/mlx4: Increase the timeout for CM cache
-Message-ID: <20190217185100.00002c83@dev.mellanox.co.il>
-In-Reply-To: <20190217144512.1171546-1-haakon.bugge@oracle.com>
-References: <20190217144512.1171546-1-haakon.bugge@oracle.com>
-Organization: Mellanox
-X-Mailer: Claws Mail 3.15.0 (GTK+ 2.24.31; i686-w64-mingw32)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yKgfA//YV+A6sroKDHVk07GyLvRUDPHxxokXfsRBje4=;
+        b=b4Z37r7CuM9dHnF/b/rMuMMf9E59grSDXRIl9TI3g4cWuSdaWQKNUgkfFh0Mv5I0zo
+         Klos5d5FT99fErRtCDeKK+5KdVJoK187vlbOIbthUPYzQTHIaS5fzrAUtQs0AvJ60zAO
+         IXdTbP2Zt1c+TTRlBuVMUvKKWGbllJ7O9Qr/ZDiruSx5QHwaA/F84n3V4NLFcqJwxX/O
+         2T0Qh6NLOUJscIdvcVzHDcrGWzAwzikEBBB6GzF+LXQd1sRyRoCjfRA3I/JYBULjNicQ
+         hJNnn/6mOFYB33Qiz8ZdNTagCVaqnokzBAqphLuYVULXg9knWNqbYkbhKM8FrJNR+xVI
+         B1SA==
+X-Gm-Message-State: AHQUAubcxUTJyYC+J9f4Dp/AFCI+rSoTn1sf60D2+TC6vbiGsDW2ONtn
+        Bg8HXQ/S85DWQjQNjFpimU6fPs6D9Zs=
+X-Google-Smtp-Source: AHgI3IZ176JBGyRe/58sbO5nbsM6CmJUAzirmOcBIGo6vP7rCaZ1/JIG/K67SYaUjIwRucFW5yegnw==
+X-Received: by 2002:a67:1b85:: with SMTP id b127mr10376994vsb.45.1550422415625;
+        Sun, 17 Feb 2019 08:53:35 -0800 (PST)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id b144sm2535262vka.34.2019.02.17.08.53.34
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 17 Feb 2019 08:53:34 -0800 (PST)
+Received: by mail-ua1-f54.google.com with SMTP id j3so5095362uap.3
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 08:53:34 -0800 (PST)
+X-Received: by 2002:a9f:2709:: with SMTP id a9mr9767198uaa.10.1550422414147;
+ Sun, 17 Feb 2019 08:53:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
+References: <20190216140008.28671-1-bhe@redhat.com> <20190216140008.28671-5-bhe@redhat.com>
+In-Reply-To: <20190216140008.28671-5-bhe@redhat.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Sun, 17 Feb 2019 08:53:21 -0800
+X-Gmail-Original-Message-ID: <CAGXu5jKRRj9Hb5b=vnnrSuVpA+6U5mk1+16HsV=ZrPv-zgjPNA@mail.gmail.com>
+Message-ID: <CAGXu5jKRRj9Hb5b=vnnrSuVpA+6U5mk1+16HsV=ZrPv-zgjPNA@mail.gmail.com>
+Subject: Re: [PATCH v3 4/6] x86/mm/KASLR: Fix the wrong calculation of memory
+ region initial size
+To:     Baoquan He <bhe@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, X86 ML <x86@kernel.org>,
+        Mike Travis <travis@sgi.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 17 Feb 2019 15:45:12 +0100
-H=E5kon Bugge <haakon.bugge@oracle.com> wrote:
+On Sat, Feb 16, 2019 at 6:03 AM Baoquan He <bhe@redhat.com> wrote:
+>
+> In memory region KASLR, __PHYSICAL_MASK_SHIFT is taken to calculate
+> the initial size of the direct mapping region. This is correct in
+> the old code where __PHYSICAL_MASK_SHIFT was equal to MAX_PHYSMEM_BITS,
+> 46 bits, and only 4-level mode was supported.
+>
+> Later, in commit b83ce5ee91471d ("x86/mm/64: Make __PHYSICAL_MASK_SHIFT
+> always 52"), __PHYSICAL_MASK_SHIFT was changed to be always 52 bits, no
+> matter it's 5-level or 4-level. This is wrong for 4-level paging. Then
+> when we adapt physical memory region size based on available memory, it
+> will overflow if the amount of system RAM and the padding is bigger
+> than 64 TB.
+>
+> In fact, here MAX_PHYSMEM_BITS should be used instead. Fix it by
+> replacing __PHYSICAL_MASK_SHIFT with MAX_PHYSMEM_BITS.
+>
+> Fixes: b83ce5ee9147 ("x86/mm/64: Make __PHYSICAL_MASK_SHIFT always 52")
+> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Reviewed-by: Thomas Garnier <thgarnie@google.com>
+> Signed-off-by: Baoquan He <bhe@redhat.com>
 
-> Using CX-3 virtual functions, either from a bare-metal machine or
-> pass-through from a VM, MAD packets are proxied through the PF driver.
->=20
-> Since the VF drivers have separate name spaces for MAD Transaction Ids
-> (TIDs), the PF driver has to re-map the TIDs and keep the book keeping
-> in a cache.
->=20
-> Following the RDMA Connection Manager (CM) protocol, it is clear when
-> an entry has to evicted form the cache. But life is not perfect,
-> remote peers may die or be rebooted. Hence, it's a timeout to wipe out
-> a cache entry, when the PF driver assumes the remote peer has gone.
->=20
-> During workloads where a high number of QPs are destroyed
-> concurrently, excessive amount of CM DREQ retries has been observed
->=20
-> The problem can be demonstrated in a bare-metal environment, where two
-> nodes have instantiated 8 VFs each. This using dual ported HCAs, so we
-> have 16 vPorts per physical server.
->=20
-> 64 processes are associated with each vPort and creates and destroys
-> one QP for each of the remote 64 processes. That is, 1024 QPs per
-> vPort, all in all 16K QPs. The QPs are created/destroyed using the
-> CM.
->=20
-> When tearing down these 16K QPs, excessive CM DREQ retries (and
-> duplicates) are observed. With some cat/paste/awk wizardry on the
-> infiniband_cm sysfs, we observe as sum of the 16 vPorts on one of the
-> nodes:
->=20
-> cm_rx_duplicates:
->       dreq  2102
-> cm_rx_msgs:
->       drep  1989
->       dreq  6195
->        rep  3968
->        req  4224
->        rtu  4224
-> cm_tx_msgs:
->       drep  4093
->       dreq 27568
->        rep  4224
->        req  3968
->        rtu  3968
-> cm_tx_retries:
->       dreq 23469
->=20
-> Note that the active/passive side is equally distributed between the
-> two nodes.
->=20
-> Enabling pr_debug in cm.c gives tons of:
->=20
-> [171778.814239] <mlx4_ib> mlx4_ib_multiplex_cm_handler: id{slave:
-> 1,sl_cm_id: 0xd393089f} is NULL!
->=20
-> By increasing the CM_CLEANUP_CACHE_TIMEOUT from 5 to 30 seconds, the
-> tear-down phase of the application is reduced from approximately 90 to
-> 50 seconds. Retries/duplicates are also significantly reduced:
->=20
-> cm_rx_duplicates:
->       dreq  2460
-> []
-> cm_tx_retries:
->       dreq  3010
->        req    47
->=20
-> Increasing the timeout further didn't help, as these duplicates and
-> retries stems from a too short CMA timeout, which was 20 (~4 seconds)
-> on the systems. By increasing the CMA timeout to 22 (~17 seconds), the
-> numbers fell down to about 10 for both of them.
->=20
-> Adjustment of the CMA timeout is not part of this commit.
->=20
-> Signed-off-by: H=E5kon Bugge <haakon.bugge@oracle.com>
->=20
+Nice catch! I wish I had a system with >64TB RAM. ;)
+
+Acked-by: Kees Cook <keescook@chromium.org>
+
 > ---
->=20
-> v1 -> v2:
->    * Reworded commit message to reflect the new test-setup using
->      multiple VFs
-> ---
->  drivers/infiniband/hw/mlx4/cm.c | 2 +-
+>  arch/x86/mm/kaslr.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+> index bf680929fe26..97768df923e3 100644
+> --- a/arch/x86/mm/kaslr.c
+> +++ b/arch/x86/mm/kaslr.c
+> @@ -137,7 +137,7 @@ void __init kernel_randomize_memory(void)
+>         if (!kaslr_memory_enabled())
+>                 return;
+>
+> -       kaslr_regions[0].size_tb = 1 << (__PHYSICAL_MASK_SHIFT - TB_SHIFT);
+> +       kaslr_regions[0].size_tb = 1 << (MAX_PHYSMEM_BITS - TB_SHIFT);
+>         kaslr_regions[1].size_tb = VMALLOC_SIZE_TB;
+>
+>         /*
+> --
+> 2.17.2
+>
 
-Acked-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+
+-- 
+Kees Cook
