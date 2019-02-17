@@ -2,281 +2,198 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B904C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:14:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DB3C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B9C421917
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:14:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CF3421917
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 17:15:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KP6IfCKZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727932AbfBQROO (ORCPT
+        id S1728003AbfBQRPq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 12:14:14 -0500
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:36170 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725810AbfBQRON (ORCPT
+        Sun, 17 Feb 2019 12:15:46 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:42117 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725810AbfBQRPq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 12:14:13 -0500
-Received: from relay9-d.mail.gandi.net (unknown [217.70.183.199])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id ACFFA3A6CDA;
-        Sun, 17 Feb 2019 18:06:36 +0100 (CET)
-X-Originating-IP: 79.86.19.127
-Received: from [192.168.0.11] (127.19.86.79.rev.sfr.net [79.86.19.127])
-        (Authenticated sender: alex@ghiti.fr)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id A9E19FF802;
-        Sun, 17 Feb 2019 17:06:26 +0000 (UTC)
-From:   Alex Ghiti <alex@ghiti.fr>
-Subject: Re: [PATCH v3] hugetlb: allow to free gigantic pages regardless of
- the configuration
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Sun, 17 Feb 2019 12:15:46 -0500
+Received: by mail-vs1-f66.google.com with SMTP id b20so8317180vsl.9
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 09:15:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TVv4u7xXBnJzjMh4BjD25r3SfNCvgwwqZN8ECpi/Rz4=;
+        b=KP6IfCKZrlPqGXPN6AKUKX/2Nhx21liHOSXowW6PciT3Evtgh/pUBd8x0VeKzl1Maz
+         z/z6TDa9IM+dUvSsLJ/yFa5PrZBRc0JP9Mfnd4GhOr2n5JXOCnRi6nXgDlpRgSlZ8Vmj
+         Yw5ZnL1ZazB/9808frg5/ytacz0YBFKfm+RbY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TVv4u7xXBnJzjMh4BjD25r3SfNCvgwwqZN8ECpi/Rz4=;
+        b=pYLkQohFKdZ1TkFCH00x8Srt5yof0srPFfQ1UgIkxyQ9oueMpogr9GDUtF2f1e70xD
+         xL9FNlCPlcIP0m+iPVnv04QmTCZXLlk+S+VpGFBd5IW/kyczFmfkGvf9GV/TYNZxYvx9
+         XvLFpWyluy7vdl4UYO5uuTVxk2nr35l9d3KOhQ6p/IrzXsqwErqMoQrRkqITkv0+qWoE
+         uwsqrb7IYyTfAmBfRmtPcHAEmE4BSnydQnpQqh7y+YaFPw61pKAflEDt9PLwWlLJrQTT
+         vKjG0g04lQPfx3jl13IKfGhSc5PaGb6YzZgfKmukw0tfDgHHW/NDqf5KqN7KPAtRAFcl
+         q25g==
+X-Gm-Message-State: AHQUAubn0qz3m9r5Q9kI7WXy6F/u2oqxXhG5T7E9kW963ECYjUA1BIsL
+        6stRGcgM2xEdVZoz5rRrl+6lXFHrpN0=
+X-Google-Smtp-Source: AHgI3IYgiIAs0W/FSc9GiY3pdzrmK1N+0Ch9C2dFHC+R/HfUN8TQ39l8/V9S1oridvEyb4rpShNMGw==
+X-Received: by 2002:a67:f68b:: with SMTP id n11mr10209560vso.164.1550423744749;
+        Sun, 17 Feb 2019 09:15:44 -0800 (PST)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com. [209.85.217.50])
+        by smtp.gmail.com with ESMTPSA id p185sm1837466vsd.20.2019.02.17.09.15.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 17 Feb 2019 09:15:44 -0800 (PST)
+Received: by mail-vs1-f50.google.com with SMTP id i15so5718027vsd.10
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 09:15:44 -0800 (PST)
+X-Received: by 2002:a67:6f44:: with SMTP id k65mr9396261vsc.222.1550423288041;
+ Sun, 17 Feb 2019 09:08:08 -0800 (PST)
+MIME-Version: 1.0
+References: <20190216140008.28671-1-bhe@redhat.com> <20190216140008.28671-2-bhe@redhat.com>
+In-Reply-To: <20190216140008.28671-2-bhe@redhat.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Sun, 17 Feb 2019 09:07:55 -0800
+X-Gmail-Original-Message-ID: <CAGXu5j+MUrt70E6YiwM0QWOQxQeU9+rY7UPvuDrASne1pkCZLA@mail.gmail.com>
+Message-ID: <CAGXu5j+MUrt70E6YiwM0QWOQxQeU9+rY7UPvuDrASne1pkCZLA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/6] x86/mm/KASLR: Improve code comments about struct kaslr_memory_region
+To:     Baoquan He <bhe@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20190214193100.3529-1-alex@ghiti.fr>
- <c6d9be5f-3b3a-c95b-0045-9f98ea52a5c4@intel.com>
-Message-ID: <37046a52-a0eb-cb1a-0a72-601cdee45917@ghiti.fr>
-Date:   Sun, 17 Feb 2019 12:06:26 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <c6d9be5f-3b3a-c95b-0045-9f98ea52a5c4@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: sv-FI
+        Peter Zijlstra <peterz@infradead.org>, X86 ML <x86@kernel.org>,
+        Mike Travis <travis@sgi.com>,
+        Thomas Garnier <thgarnie@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/15/19 12:34 PM, Dave Hansen wrote:
->> -#if (defined(CONFIG_MEMORY_ISOLATION) && defined(CONFIG_COMPACTION)) || defined(CONFIG_CMA)
->> +#ifdef CONFIG_CONTIG_ALLOC
->>   /* The below functions must be run on a range from a single zone. */
->>   extern int alloc_contig_range(unsigned long start, unsigned long end,
->>   			      unsigned migratetype, gfp_t gfp_mask);
->> -extern void free_contig_range(unsigned long pfn, unsigned nr_pages);
->>   #endif
->> +extern void free_contig_range(unsigned long pfn, unsigned int nr_pages);
-> There's a lot of stuff going on in this patch.  Adding/removing config
-> options.  Please get rid of these superfluous changes or at least break
-> them out.
-
-
-I agree that this patch does a lot of things. I am going at least to 
-split it
-into 2 separate patches, one suggested-by Vlastimil regarding the renaming
-of MEMORY_ISOLATION && COMPACTION || CMA, and another that indeed
-does what was primarily intended.
-
-
->>   #ifdef CONFIG_CMA
->>   /* CMA stuff */
->> diff --git a/mm/Kconfig b/mm/Kconfig
->> index 25c71eb8a7db..138a8df9b813 100644
->> --- a/mm/Kconfig
->> +++ b/mm/Kconfig
->> @@ -252,12 +252,17 @@ config MIGRATION
->>   	  pages as migration can relocate pages to satisfy a huge page
->>   	  allocation instead of reclaiming.
->>   
->> +
->>   config ARCH_ENABLE_HUGEPAGE_MIGRATION
->>   	bool
-> Like this. :)
-
-
-My apologies for that.
-
-
->>   config ARCH_ENABLE_THP_MIGRATION
->>   	bool
->>   
->> +config CONTIG_ALLOC
->> +	def_bool y
->> +	depends on (MEMORY_ISOLATION && COMPACTION) || CMA
->> +
->>   config PHYS_ADDR_T_64BIT
->>   	def_bool 64BIT
-> Please think carefully though the Kconfig dependencies.  'select' is
-> *not* the same as 'depends on'.
+On Sat, Feb 16, 2019 at 6:01 AM Baoquan He <bhe@redhat.com> wrote:
 >
-> This replaces a bunch of arch-specific "select ARCH_HAS_GIGANTIC_PAGE"
-> with a 'depends on'.  I *think* that ends up being OK, but it absolutely
-> needs to be addressed in the changelog about why *you* think it is OK
-> and why it doesn't change the functionality of any of the patched
-> architetures.
-
-
-Ok.
-
-
->> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
->> index afef61656c1e..e686c92212e9 100644
->> --- a/mm/hugetlb.c
->> +++ b/mm/hugetlb.c
->> @@ -1035,7 +1035,6 @@ static int hstate_next_node_to_free(struct hstate *h, nodemask_t *nodes_allowed)
->>   		((node = hstate_next_node_to_free(hs, mask)) || 1);	\
->>   		nr_nodes--)
->>   
->> -#ifdef CONFIG_ARCH_HAS_GIGANTIC_PAGE
->>   static void destroy_compound_gigantic_page(struct page *page,
->>   					unsigned int order)
->>   {
-> Whats the result of this #ifdef removal?  A universally larger kernel
-> even for architectures that do not support runtime gigantic page
-> alloc/free?  That doesn't seem like a good thing.
-
-
-Ok, I agree, now that we removed the "wrong" definition of 
-ARCH_HAS_GIGANTIC_PAGE,
-we can actually use this define for architectures to show they support 
-gigantic pages
-and avoid the problem you mention. Thanks.
-
-
->> @@ -1058,6 +1057,12 @@ static void free_gigantic_page(struct page *page, unsigned int order)
->>   	free_contig_range(page_to_pfn(page), 1 << order);
->>   }
->>   
->> +static inline bool gigantic_page_runtime_allocation_supported(void)
->> +{
->> +	return IS_ENABLED(CONFIG_CONTIG_ALLOC);
->> +}
-> Why bother having this function?  Why don't the callers just check the
-> config option directly?
-
-
-Ok, this function is only used once in set_max_huge_pages where you
-mention the need for a comment, so I can get rid of it. Thanks.
-
-
->> +#ifdef CONFIG_CONTIG_ALLOC
->>   static int __alloc_gigantic_page(unsigned long start_pfn,
->>   				unsigned long nr_pages, gfp_t gfp_mask)
->>   {
->> @@ -1143,22 +1148,15 @@ static struct page *alloc_gigantic_page(struct hstate *h, gfp_t gfp_mask,
->>   static void prep_new_huge_page(struct hstate *h, struct page *page, int nid);
->>   static void prep_compound_gigantic_page(struct page *page, unsigned int order);
->>   
->> -#else /* !CONFIG_ARCH_HAS_GIGANTIC_PAGE */
->> -static inline bool gigantic_page_supported(void) { return false; }
->> +#else /* !CONFIG_CONTIG_ALLOC */
->>   static struct page *alloc_gigantic_page(struct hstate *h, gfp_t gfp_mask,
->>   		int nid, nodemask_t *nodemask) { return NULL; }
->> -static inline void free_gigantic_page(struct page *page, unsigned int order) { }
->> -static inline void destroy_compound_gigantic_page(struct page *page,
->> -						unsigned int order) { }
->>   #endif
->>   
->>   static void update_and_free_page(struct hstate *h, struct page *page)
->>   {
->>   	int i;
->>   
->> -	if (hstate_is_gigantic(h) && !gigantic_page_supported())
->> -		return;
-> I don't get the point of removing this check.  Logically, this reads as
-> checking if the architecture supports gigantic hstates and has nothing
-> to do with allocation.
-
-I think this check was wrong from the beginning: gigantic_page_supported()
-was only checking (MEMORY_ISOLATION && COMPACTION) || CMA, which has
-nothing to do with the capability to free gigantic pages.
-
-But then I went through all the architectures to see if removing this 
-test could
-affect any of them. And I noticed that if an architecture supports gigantic
-page without advertising it with ARCH_HAS_GIGANTIC_PAGE, then it would
-decrement the number of free huge page but would not actually free the 
-pages.
-
-I found at least 2 archs that have gigantic pages, but do not allow
-runtime allocation nor freeing of those pages because they do not define
-the (wrong) ARCH_HAS_GIGANTIC_PAGE:
-
-- ia64 has HPAGE_SHIFT_DEFAULT = 28, with PAGE_SHIFT = 14
-- sh has max HPAGE_SHIFT = 29 and max PAGE_SHIFT = 16
-
-with default MAX_ORDER = 11, both architectures support gigantic pages.
-
-So I'm going to propose a patch that selects the (right) 
-ARCH_HAS_GIGANTIC_PAGE
-for those archs, because I think they should be able to free their boottime
-gigantic pages.
-
-Regarding this check, we can either remove it if we are sure that
-every architecture that has gigantic pages selects ARCH_HAS_GIGANTIC_PAGE,
-or leaving it in case some future archs forget to select it.
-
-I'd rather patch all archs so that they can at least free gigantic pages and
-then remove the test since hstate_is_gigantic would imply 
-gigantic_page_supported.
-I will propose something like that if you agree.
-
-
->>   	h->nr_huge_pages--;
->>   	h->nr_huge_pages_node[page_to_nid(page)]--;
->>   	for (i = 0; i < pages_per_huge_page(h); i++) {
->> @@ -2276,13 +2274,20 @@ static int adjust_pool_surplus(struct hstate *h, nodemask_t *nodes_allowed,
->>   }
->>   
->>   #define persistent_huge_pages(h) (h->nr_huge_pages - h->surplus_huge_pages)
->> -static unsigned long set_max_huge_pages(struct hstate *h, unsigned long count,
->> +static int set_max_huge_pages(struct hstate *h, unsigned long count,
->>   						nodemask_t *nodes_allowed)
->>   {
->>   	unsigned long min_count, ret;
->>   
->> -	if (hstate_is_gigantic(h) && !gigantic_page_supported())
->> -		return h->max_huge_pages;
->> +	if (hstate_is_gigantic(h) &&
->> +		!gigantic_page_runtime_allocation_supported()) {
-> The indentation here is wrong and reduces readability.  Needs to be like
-> this:
+> The old comment above kaslr_memory_region is not clear enough to explain
+> the concepts of memory region KASLR.
 >
-> 	if (hstate_is_gigantic(h) &&
-> 	    !gigantic_page_runtime_allocation_supported()) {
-
-
-This will disappear with your previous remark, thanks.
-
-
->> +		spin_lock(&hugetlb_lock);
->> +		if (count > persistent_huge_pages(h)) {
->> +			spin_unlock(&hugetlb_lock);
->> +			return -EINVAL;
->> +		}
->> +		goto decrease_pool;
->> +	}
-> Needs comments.
+> [Ingo suggested this and helped to prettify the text]
 >
-> 	/* Gigantic pages can be freed but not allocated */
+> Signed-off-by: Baoquan He <bhe@redhat.com>
+> ---
+>  arch/x86/mm/kaslr.c | 55 ++++++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 52 insertions(+), 3 deletions(-)
 >
-> or something.
+> diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+> index 3f452ffed7e9..d7c6e4e8e48e 100644
+> --- a/arch/x86/mm/kaslr.c
+> +++ b/arch/x86/mm/kaslr.c
+> @@ -42,10 +42,59 @@
+>  static const unsigned long vaddr_end = CPU_ENTRY_AREA_BASE;
+>
+>  /*
+> - * Memory regions randomized by KASLR (except modules that use a separate logic
+> - * earlier during boot). The list is ordered based on virtual addresses. This
+> - * order is kept after randomization.
+> + * 'struct kasl_memory_region' entries represent continuous chunks of
+
+Typo: struct kaslr_memory_region
+
+Also, while you're rewriting this, how about putting it in full
+kern-doc format? (You're already using the "@field" style...) I think
+you just need the "/**" header...
+
+/**
+ * struct name.... - short description...
+
+> + * kernel virtual memory regions, to be randomized by KASLR.
+> + *
+> + * ( The exception is the module space virtual memory window which
+> + *   uses separate logic earlier during bootup. )
+> + *
+> + * Currently there are three such regions: the physical memory mapping,
+> + * vmalloc and vmemmap regions.
+> + *
+> + * The array below has the entries ordered based on virtual addresses.
+> + * The order is kept after randomization, i.e. the randomized
+> + * virtual addresses of these regions are still ascending.
+> + *
+> + * Here are the fields:
+> + *
+> + * @base: points to a global variable used by the MM to get the
+> + * virtual base address of any of the above regions. This allows the
+> + * early KASLR code to modify these base addresses early during bootup,
+> + * on a per bootup basis, without the MM code even being aware of whether
+> + * it got changed and to what value.
+> + *
+> + * When KASLR is active then the MM code makes sure that for each region
+> + * there's such a single, dynamic, global base address 'unsigned long'
+> + * variable available for the KASLR code to point to and modify directly:
+> + *
+> + *     { &page_offset_base, 0 },
+> + *     { &vmalloc_base,     0 },
+> + *     { &vmemmap_base,     1 },
+> + *
+> + * @size_tb: size in TB of each memory region. Thereinto, the size of
+
+nit: "Thereinto" is odd. I'd say "Therefore".
+
+> + * the physical memory mapping region is variable, calculated according
+> + * to the actual size of system RAM in order to save more space for
+> + * randomization. The rest are fixed values related to paging mode.
+> + *
+> + * @size_tb: is the size of each memory region after randomization, and
+> + * its unit is TB.
+
+Redundant lines?
+
+> + *
+> + * Physical memory mapping: (actual RAM size + 10 TB padding)
+> + * Vmalloc: 32 TB
+> + * Vmemmap: 1 TB
+> + *
+> + * When randomize the layout, their order are kept, still the physical
+> + * memory mapping region is handled fistly, next vmalloc and vmemmap.
+
+typo: "first"
+
+> + * E.g the physical memory region, we limit the starting address to be
+> + * taken from the 1st 1/3 part of the whole available virtual address
+> + * space which is from 0xffff880000000000 to 0xfffffe0000000000, namely
+> + * the original starting address of the physical memory mapping region
+> + * to the starting address of cpu_entry_area mapping region. Once a random
+> + * address is chosen for the physical memory mapping, we jump over the
+> + * region and add 1G to begin the next region handling with the remaining
+> + * available space.
+
+Should the "operation" comments (rather than the struct field
+comments) be moved to the start of the kernel_randomize_memory()
+function instead?
+
+-Kees
+
+>   */
+> +
+>  static __initdata struct kaslr_memory_region {
+>         unsigned long *base;
+>         unsigned long size_tb;
+> --
+> 2.17.2
 >
 
-Ok, I agree, I'll add that and another sentence regarding the removal
-of gigantic_page_runtime_allocation_supported.
 
-Thank you Dave for your comments !
-
-Alex
-
+-- 
+Kees Cook
