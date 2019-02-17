@@ -2,261 +2,178 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB8A7C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:09:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F4A2C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:09:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C84721900
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:09:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C83621900
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 09:09:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gQp6rhFL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbfBQJJD (ORCPT
+        id S1727675AbfBQJJI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 04:09:03 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:21217 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726371AbfBQJJC (ORCPT
+        Sun, 17 Feb 2019 04:09:08 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33538 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726371AbfBQJJG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 04:09:02 -0500
-X-UUID: 1884a4ee350f43f594b783eac9a4a1d8-20190217
-X-UUID: 1884a4ee350f43f594b783eac9a4a1d8-20190217
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <yong.wu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 181153206; Sun, 17 Feb 2019 17:08:57 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Sun, 17 Feb 2019 17:08:55 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Sun, 17 Feb 2019 17:08:55 +0800
-From:   Yong Wu <yong.wu@mediatek.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Evan Green <evgreen@chromium.org>, Tomasz Figa <tfiga@google.com>,
-        Will Deacon <will.deacon@arm.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, <yingjoe.chen@mediatek.com>,
-        <yong.wu@mediatek.com>, <youlin.pei@mediatek.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        <anan.sun@mediatek.com>, Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v6 15/22] memory: mtk-smi: Invoke pm runtime_callback to enable clocks
-Date:   Sun, 17 Feb 2019 17:04:53 +0800
-Message-ID: <1550394300-17420-16-git-send-email-yong.wu@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1550394300-17420-1-git-send-email-yong.wu@mediatek.com>
-References: <1550394300-17420-1-git-send-email-yong.wu@mediatek.com>
+        Sun, 17 Feb 2019 04:09:06 -0500
+Received: by mail-pg1-f194.google.com with SMTP id h11so4605891pgl.0
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 01:09:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=p/I6/LqGUBbuuID0jaGYlqYqa2oWBMLzS3FYo+Q0TSs=;
+        b=gQp6rhFLZ5lwnQycdujwiveZNsrNBF86/lHxAA/zWuQsP0UIwVHLDSgNMZxxchhFMj
+         6oKNqtDJGUOiD2IPHNRVTvkVF1OTijmlFcD0C+sKGQGe6QkSFa/Srz+TvXx0uhY79YJc
+         HHnwKXuMZKacXqo6ozz4aVCA8wer2zAiaPzhU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=p/I6/LqGUBbuuID0jaGYlqYqa2oWBMLzS3FYo+Q0TSs=;
+        b=nIxXJ1v7HR+54AaDw6Zdpwy/zfp8K2s/C1L9Z2/QFkXEF5uEizEgDlU2m/jYSow1uw
+         Nh5E5dLXwTwVYTs35jy7QKl1QqbBAXoPqvNl9qNi2e9O7vZAwGNZ66+bj14mcFqtzJSk
+         LcHZ8kK/aYfJD0BpchRLjEwqhmd9zGBqWSO2RgEaiePZUVrxg7fH953RfMK6NXmCNGoo
+         cuFHps6v7UBlqCfNmKYahVIwfKTKses1wwO3BGwFIcBB+TFPNkN5u5UqCSX+MhmQD7px
+         wOmDTvDypHg/4n+YClf/3H1BQzg8KWyyDgoymnqsJOtu72sdncqyvM1vyb7dkd+3LfzO
+         Sp8A==
+X-Gm-Message-State: AHQUAubJevZKrfGXJVrxYKX8nmQJbgO/nIpFDMA5P7H5udlg3LEjMcnr
+        J4kwLUYZ9u7IN3MPb1zi9xHDNdgSLaE=
+X-Google-Smtp-Source: AHgI3Ib3cDiwv/lswYK4agv61v34NDzfkNddmx9f55UrPSmgY2ZITgBS1ABARM/lU7VDzMFvtvR9aQ==
+X-Received: by 2002:a65:65c9:: with SMTP id y9mr13781190pgv.438.1550394545928;
+        Sun, 17 Feb 2019 01:09:05 -0800 (PST)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id a20sm9949248pfj.5.2019.02.17.01.09.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 17 Feb 2019 01:09:04 -0800 (PST)
+Date:   Sun, 17 Feb 2019 01:09:03 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Samuel Dionne-Riel <samuel@dionne-riel.com>,
+        Richard Weinberger <richard.weinberger@gmail.com>,
+        Graham Christensen <graham@grahamc.com>,
+        Michal Hocko <mhocko@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4] exec: load_script: Do not exec truncated interpreter path
+Message-ID: <20190217090903.GA17600@beast>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch only move the clk_prepare_enable and config_port into the
-runtime suspend/resume callback. It doesn't change the code content
-and sequence.
+Commit 8099b047ecc4 ("exec: load_script: don't blindly truncate
+shebang string") was trying to protect against a confused exec of a
+truncated interpreter path. However, it was overeager and also refused
+to truncate arguments as well, which broke userspace, and it was
+reverted. This attempts the protection again, but allows arguments to
+remain truncated. In an effort to improve readability, helper functions
+and comments have been added.
 
-This is a preparing patch for adjusting SMI_BUS_SEL for mt8183.
-(SMI_BUS_SEL need to be restored after smi-common resume every time.)
-Also it gives a chance to get rid of mtk_smi_larb_get/put which could
-be a next topic.
-
-CC: Matthias Brugger <matthias.bgg@gmail.com>
-Signed-off-by: Yong Wu <yong.wu@mediatek.com>
-Reviewed-by: Evan Green <evgreen@chromium.org>
+Co-developed-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- drivers/memory/mtk-smi.c | 113 ++++++++++++++++++++++++++++++-----------------
- 1 file changed, 72 insertions(+), 41 deletions(-)
+ fs/binfmt_script.c | 57 ++++++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 48 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
-index a430721..9790801 100644
---- a/drivers/memory/mtk-smi.c
-+++ b/drivers/memory/mtk-smi.c
-@@ -86,17 +86,13 @@ struct mtk_smi_larb { /* larb: local arbiter */
- 	u32				*mmu;
- };
+diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
+index 7cde3f46ad26..32cdf6ee1f75 100644
+--- a/fs/binfmt_script.c
++++ b/fs/binfmt_script.c
+@@ -14,13 +14,30 @@
+ #include <linux/err.h>
+ #include <linux/fs.h>
  
--static int mtk_smi_enable(const struct mtk_smi *smi)
-+static int mtk_smi_clk_enable(const struct mtk_smi *smi)
++static inline bool spacetab(char c) { return c == ' ' || c == '\t'; }
++static inline char *next_non_spacetab(char *first, const char *last)
++{
++	for (; first <= last; first++)
++		if (!spacetab(*first))
++			return first;
++	return NULL;
++}
++static inline char *next_spacetab(char *first, const char *last)
++{
++	for (; first <= last; first++)
++		if (spacetab(*first))
++			return first;
++	return NULL;
++}
++
+ static int load_script(struct linux_binprm *bprm)
  {
- 	int ret;
+ 	const char *i_arg, *i_name;
+-	char *cp;
++	char *cp, *buf_end;
+ 	struct file *file;
+ 	int retval;
  
--	ret = pm_runtime_get_sync(smi->dev);
--	if (ret < 0)
--		return ret;
--
- 	ret = clk_prepare_enable(smi->clk_apb);
- 	if (ret)
--		goto err_put_pm;
-+		return ret;
++	/* Not ours to exec if we don't start with "#!". */
+ 	if ((bprm->buf[0] != '#') || (bprm->buf[1] != '!'))
+ 		return -ENOEXEC;
  
- 	ret = clk_prepare_enable(smi->clk_smi);
- 	if (ret)
-@@ -118,59 +114,28 @@ static int mtk_smi_enable(const struct mtk_smi *smi)
- 	clk_disable_unprepare(smi->clk_smi);
- err_disable_apb:
- 	clk_disable_unprepare(smi->clk_apb);
--err_put_pm:
--	pm_runtime_put_sync(smi->dev);
- 	return ret;
- }
+@@ -33,18 +50,40 @@ static int load_script(struct linux_binprm *bprm)
+ 	if (bprm->interp_flags & BINPRM_FLAGS_PATH_INACCESSIBLE)
+ 		return -ENOENT;
  
--static void mtk_smi_disable(const struct mtk_smi *smi)
-+static void mtk_smi_clk_disable(const struct mtk_smi *smi)
- {
- 	clk_disable_unprepare(smi->clk_gals1);
- 	clk_disable_unprepare(smi->clk_gals0);
- 	clk_disable_unprepare(smi->clk_smi);
- 	clk_disable_unprepare(smi->clk_apb);
--	pm_runtime_put_sync(smi->dev);
- }
- 
- int mtk_smi_larb_get(struct device *larbdev)
- {
--	struct mtk_smi_larb *larb = dev_get_drvdata(larbdev);
--	const struct mtk_smi_larb_gen *larb_gen = larb->larb_gen;
--	struct mtk_smi *common = dev_get_drvdata(larb->smi_common_dev);
--	int ret;
-+	int ret = pm_runtime_get_sync(larbdev);
- 
--	/* Enable the smi-common's power and clocks */
--	ret = mtk_smi_enable(common);
--	if (ret)
--		return ret;
--
--	/* Enable the larb's power and clocks */
--	ret = mtk_smi_enable(&larb->smi);
--	if (ret) {
--		mtk_smi_disable(common);
--		return ret;
--	}
--
--	/* Configure the iommu info for this larb */
--	larb_gen->config_port(larbdev);
--
--	return 0;
-+	return (ret < 0) ? ret : 0;
- }
- EXPORT_SYMBOL_GPL(mtk_smi_larb_get);
- 
- void mtk_smi_larb_put(struct device *larbdev)
- {
--	struct mtk_smi_larb *larb = dev_get_drvdata(larbdev);
--	struct mtk_smi *common = dev_get_drvdata(larb->smi_common_dev);
--
 -	/*
--	 * Don't de-configure the iommu info for this larb since there may be
--	 * several modules in this larb.
--	 * The iommu info will be reset after power off.
+-	 * This section does the #! interpretation.
+-	 * Sorta complicated, but hopefully it will work.  -TYT
 -	 */
 -
--	mtk_smi_disable(&larb->smi);
--	mtk_smi_disable(common);
-+	pm_runtime_put_sync(larbdev);
- }
- EXPORT_SYMBOL_GPL(mtk_smi_larb_put);
++	/* Release since we are not mapping a binary into memory. */
+ 	allow_write_access(bprm->file);
+ 	fput(bprm->file);
+ 	bprm->file = NULL;
  
-@@ -385,12 +350,52 @@ static int mtk_smi_larb_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static int __maybe_unused mtk_smi_larb_resume(struct device *dev)
-+{
-+	struct mtk_smi_larb *larb = dev_get_drvdata(dev);
-+	const struct mtk_smi_larb_gen *larb_gen = larb->larb_gen;
-+	int ret;
-+
-+	/* Power on smi-common. */
-+	ret = pm_runtime_get_sync(larb->smi_common_dev);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to pm get for smi-common(%d).\n", ret);
-+		return ret;
+-	bprm->buf[BINPRM_BUF_SIZE - 1] = '\0';
+-	if ((cp = strchr(bprm->buf, '\n')) == NULL)
+-		cp = bprm->buf+BINPRM_BUF_SIZE-1;
++	/*
++	 * This section handles parsing the #! line into separate
++	 * interpreter path and argument strings. We must be careful
++	 * because bprm->buf is not yet guaranteed to be NUL-terminated
++	 * (though the buffer will have trailing NUL padding when the
++	 * file size was smaller than the buffer size).
++	 *
++	 * We do not want to exec a truncated interpreter path, so either
++	 * we find a newline (which indicates nothing is truncated), or
++	 * we find a space/tab/NUL after the interpreter path (which
++	 * itself may be preceded by spaces/tabs). Truncating the
++	 * arguments is fine: the interpreter can re-read the script to
++	 * parse them on its own.
++	 */
++	buf_end = bprm->buf + sizeof(bprm->buf) - 1;
++	cp = strnchr(bprm->buf, sizeof(bprm->buf), '\n');
++	if (!cp) {
++		cp = next_non_spacetab(bprm->buf + 2, buf_end);
++		if (!cp)
++			return -ENOEXEC; /* Entire buf is spaces/tabs */
++		/*
++		 * Without later spaces/tabs and a non-NUL final byte we
++		 * must assume the interpreter path is truncated.
++		 */
++		if (!next_spacetab(cp, buf_end) && *buf_end)
++			return -ENOEXEC;
++		cp = buf_end;
 +	}
-+
-+	ret = mtk_smi_clk_enable(&larb->smi);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to enable clock(%d).\n", ret);
-+		pm_runtime_put_sync(larb->smi_common_dev);
-+		return ret;
-+	}
-+
-+	/* Configure the basic setting for this larb */
-+	larb_gen->config_port(dev);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused mtk_smi_larb_suspend(struct device *dev)
-+{
-+	struct mtk_smi_larb *larb = dev_get_drvdata(dev);
-+
-+	mtk_smi_clk_disable(&larb->smi);
-+	pm_runtime_put_sync(larb->smi_common_dev);
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops smi_larb_pm_ops = {
-+	SET_RUNTIME_PM_OPS(mtk_smi_larb_suspend, mtk_smi_larb_resume, NULL)
-+};
-+
- static struct platform_driver mtk_smi_larb_driver = {
- 	.probe	= mtk_smi_larb_probe,
- 	.remove	= mtk_smi_larb_remove,
- 	.driver	= {
- 		.name = "mtk-smi-larb",
- 		.of_match_table = mtk_smi_larb_of_ids,
-+		.pm             = &smi_larb_pm_ops,
- 	}
- };
- 
-@@ -489,12 +494,38 @@ static int mtk_smi_common_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static int __maybe_unused mtk_smi_common_resume(struct device *dev)
-+{
-+	struct mtk_smi *common = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = mtk_smi_clk_enable(common);
-+	if (ret) {
-+		dev_err(common->dev, "Failed to enable clock(%d).\n", ret);
-+		return ret;
-+	}
-+	return 0;
-+}
-+
-+static int __maybe_unused mtk_smi_common_suspend(struct device *dev)
-+{
-+	struct mtk_smi *common = dev_get_drvdata(dev);
-+
-+	mtk_smi_clk_disable(common);
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops smi_common_pm_ops = {
-+	SET_RUNTIME_PM_OPS(mtk_smi_common_suspend, mtk_smi_common_resume, NULL)
-+};
-+
- static struct platform_driver mtk_smi_common_driver = {
- 	.probe	= mtk_smi_common_probe,
- 	.remove = mtk_smi_common_remove,
- 	.driver	= {
- 		.name = "mtk-smi-common",
- 		.of_match_table = mtk_smi_common_of_ids,
-+		.pm             = &smi_common_pm_ops,
- 	}
- };
- 
++	/* NUL-terminate the buffer and any trailing spaces/tabs. */
+ 	*cp = '\0';
+ 	while (cp > bprm->buf) {
+ 		cp--;
 -- 
-1.9.1
+2.17.1
 
+
+-- 
+Kees Cook
