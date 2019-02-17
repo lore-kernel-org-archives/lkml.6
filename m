@@ -2,115 +2,113 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC911C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 13:51:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB938C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 13:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C041A217F5
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 13:51:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550411466;
-	bh=PDuupRJPMegqS18zBnmW84cz84LHdJ6d4r8fV+rJXnc=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=o9Jfa6TVBKz873kcMqJsJMdA1BHR2rGn0uQGoldAvvAk8TijPM7wt+GfWQQYbT/RX
-	 uRnwPNroIv+mNOYfXy4qULYemweUDdwj+9fpnBKGITWV5NzDZ1+2l4QF9F3gE8EKGL
-	 txJhysCU6ZQwPYatjuidt12OvX/gUQ9Z93x6L8qo=
+	by mail.kernel.org (Postfix) with ESMTP id 9F9E1217F5
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 13:52:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TFLPgO65"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729186AbfBQNvF (ORCPT
+        id S1729237AbfBQNwO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 08:51:05 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:40927 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726895AbfBQNvC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 08:51:02 -0500
-X-UUID: 2361d6c4fcf546bc818204cd080ccb7e-20190217
-X-UUID: 2361d6c4fcf546bc818204cd080ccb7e-20190217
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <ryder.lee@kernel.org>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 968666490; Sun, 17 Feb 2019 21:50:54 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Sun, 17 Feb 2019 21:50:52 +0800
-Received: from mtkslt306.mediatek.inc (10.21.14.136) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Sun, 17 Feb 2019 21:50:52 +0800
-From:   Ryder Lee <ryder.lee@kernel.org>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Weijie Gao <weijie.gao@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH 3/3] dt-bindings: timer: mediatek: update bindings for MT7629 SoC
-Date:   Sun, 17 Feb 2019 21:50:32 +0800
-Message-ID: <b145be98c1bfa71d0b9609b80c20c37177f45d6a.1550233614.git.ryder.lee@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <56a2c38c9efa41be940858e19501fe07fbd5120e.1550233614.git.ryder.lee@mediatek.com>
-References: <56a2c38c9efa41be940858e19501fe07fbd5120e.1550233614.git.ryder.lee@mediatek.com>
+        Sun, 17 Feb 2019 08:52:14 -0500
+Received: from ozlabs.org ([203.11.71.1]:54937 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726895AbfBQNwN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 08:52:13 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 442T2L27gLz9sDX;
+        Mon, 18 Feb 2019 00:52:09 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1550411531;
+        bh=DwVrTGI0dHMfDB1KRy3KNnN1NPcweqAxrzDJM3KqUbg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=TFLPgO653DwMNdveT5nakxVx9aD9WQCdQ5ZMhtDWhSHhrlJgaeEQwO6k5FFTIGWrJ
+         cYIhdrdFbDmfykEiGtD58brqGDZ3IsuWthumbMaoeuNkkHyW/zGH7Pfd5kl7c61PLn
+         5UFpZ8Kk02jK19FFHlAHvIUp/Dp16aH+C0M5Rmbq5ml2ZxvQF+HD6KLNEOE9LBJ9zo
+         BQxWFbMhVqLY3t9BaKbArvQQ8s7xuUKI3PyZy2QdaiId/HLV6ewcEmcsaZbU+/0Axk
+         +gUYo9V/CpAkI55wzlADNTdk5RAJE7UE2VYzai5pdNWimq7fT1QJDEsb5ZI12aP+nV
+         KAjq8exc45j/w==
+Date:   Mon, 18 Feb 2019 00:52:03 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hauke Mehrtens <hauke.mehrtens@intel.com>,
+        Florian Fainelli <f.fainelli@gmail.com>
+Subject: linux-next: Fixes tags need some work in the net tree
+Message-ID: <20190218005203.5ac3473e@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 6C65F80851D20DB026668A1521030E6F68102B7026BA75ABE6D6326EE67303692000:8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/VA06HLo6cQnKKBHv6kwGPJ2"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ryder Lee <ryder.lee@mediatek.com>
+--Sig_/VA06HLo6cQnKKBHv6kwGPJ2
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Update the binding for MT7629 SoC, which uses fallback compatible to
-MT6765 SYST, so add more descriptions to distinguish it from the other
-SoCs that use GPT.
+Hi all,
 
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- .../devicetree/bindings/timer/mediatek,mtk-timer.txt          | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+In commit
 
-diff --git a/Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt b/Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt
-index 18d4d01..ff7c567 100644
---- a/Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt
-+++ b/Documentation/devicetree/bindings/timer/mediatek,mtk-timer.txt
-@@ -1,7 +1,7 @@
--Mediatek Timers
-+MediaTek Timers
- ---------------
- 
--Mediatek SoCs have two different timers on different platforms,
-+MediaTek SoCs have two different timers on different platforms,
- - GPT (General Purpose Timer)
- - SYST (System Timer)
- 
-@@ -9,6 +9,7 @@ The proper timer will be selected automatically by driver.
- 
- Required properties:
- - compatible should contain:
-+	For those SoCs that use GPT
- 	* "mediatek,mt2701-timer" for MT2701 compatible timers (GPT)
- 	* "mediatek,mt6580-timer" for MT6580 compatible timers (GPT)
- 	* "mediatek,mt6589-timer" for MT6589 compatible timers (GPT)
-@@ -17,7 +18,11 @@ Required properties:
- 	* "mediatek,mt8135-timer" for MT8135 compatible timers (GPT)
- 	* "mediatek,mt8173-timer" for MT8173 compatible timers (GPT)
- 	* "mediatek,mt6577-timer" for MT6577 and all above compatible timers (GPT)
--	* "mediatek,mt6765-timer" for MT6765 compatible timers (SYST)
-+
-+	For those SoCs that use SYST
-+	* "mediatek,mt7629-timer" for MT7629 compatible timers (SYST)
-+	* "mediatek,mt6765-timer" for MT6765 and all above compatible timers (SYST)
-+
- - reg: Should contain location and length for timer register.
- - clocks: Should contain system clock.
- 
--- 
-1.9.1
+  a40061ea2e39 ("net: systemport: Fix reception of BPDUs")
 
+Fixes tag
+
+  Fixes: 4e8aedfe78c7 ("net: systemport: Turn on offloads by default")
+
+has these problem(s):
+
+  - Target SHA1 does not exist
+    Did you mean
+
+  Fixes: b5061778f822 ("net: systemport: Turn on offloads by default")?
+
+In commit
+
+  3b89ea9c5902 ("net: Fix for_each_netdev_feature on Big endian")
+
+Fixes tag
+
+  Fixes: fd867d51f ("net/core: generic support for disabling netdev feature=
+s down stack")
+
+has these problem(s):
+
+  - SHA1 should be at least 12 digits long
+    Can be fixed by setting core.abbrev to 12 (or more) or (for git v2.11
+    or later) just making sure it is not set (or set to "auto").
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/VA06HLo6cQnKKBHv6kwGPJ2
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxpZwMACgkQAVBC80lX
+0GxBsgf9EBROBBV550yn6EKnHtKW6p8tbXNFQU5KQJ+kyQ95gXzcRGnmKkb7n9MV
+6T3IxbISKBxrJqdxXf9lKJf07JidLT+hI2eb5aCeEqwxZ1P2ZfcGcLBDHatZqrpq
+ewgksDmeJRhkdsIwE8DnSz2YP03MaDIbcUCpNAgVUmMIscB3czbqKdtgj/kouRYc
+GZJj2UlK7ESN05SR5Rp3zvx8qBmdqAOY32lfHyJS4uIWhr9m3TbPQg1sLXYE3kFS
+nLFwsqeSYAD5tiXaBbI/sSkGJ2yrUPFbRzlCurqou60iGknasv9Dj3XIxPMIWHwX
+XNv3O9czCbTQxumnSPF/us2dvGpjdw==
+=saU4
+-----END PGP SIGNATURE-----
+
+--Sig_/VA06HLo6cQnKKBHv6kwGPJ2--
