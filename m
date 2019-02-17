@@ -2,150 +2,103 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A80DC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 07:00:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B131C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 07:07:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 067A32192C
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 07:00:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33A632195D
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 07:07:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iu/JMnIy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aZc+YWiZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728617AbfBQHAX (ORCPT
+        id S1728759AbfBQHHK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 02:00:23 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37198 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727235AbfBQHAX (ORCPT
+        Sun, 17 Feb 2019 02:07:10 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44667 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726565AbfBQHHJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 02:00:23 -0500
-Received: by mail-wm1-f65.google.com with SMTP id x10so13662812wmg.2;
-        Sat, 16 Feb 2019 23:00:21 -0800 (PST)
+        Sun, 17 Feb 2019 02:07:09 -0500
+Received: by mail-pl1-f193.google.com with SMTP id c4so2110017pls.11;
+        Sat, 16 Feb 2019 23:07:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=iVIuCREYC9bLO13GIcfghUQBIIxBSOKOLnIxtldK3Gw=;
-        b=Iu/JMnIyODAH4uiKIZDBN2w+yNNXKw1xA5ngUYi0AXI2Oi2AMzBaNBPXbbYmsHKqry
-         n3Yj83g0GcDA9DrchHbcSfOyOJqo80ujBp12+d1a57E7MJzH7/N+XRUppiTXqwIUS6FW
-         QM3PwxqXz9QjJqFVhKyG7O/JlEkPBmTiNNH9hCDN+17jOQtYfsODO8YiB4Qy1mhGQ9+d
-         Lrv+ic72FQK8Wb7/nTXh1UvYFNkAFuhzrWlytD/2kvscAWgNNSk7MkS5k3Kfe0uBnfWm
-         H2zmndeDaEQw+Wi6hAMC06pTrXLvBHv/2rfyLzg/t1YMkzKNlq83bkFG+h5bTvukf1+u
-         jPDQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=It5OEgJ4iYIMPI81go7NiHuDVjtSj5HVzsbxnYSlOe0=;
+        b=aZc+YWiZzUUe0tTPkDcAUfqJ63RPBIhmPpH78AnM7ubdbgLf4TxT0FIapEealbMdIA
+         8/F0Teqbas+ATEy3A1lS8KE8ui3UMKo3bnLgUPMAwNXJ9jEPn+OBZBOmFFfyrqW3pDTa
+         p54YaZ6rAT/yLr7q/CX5lPmnxLTozqOK1vYJNSaCLB5AdFE3nqFOfw59/35KwGvvciAj
+         1fWcR/XEUm6kz9ZGKqaIRprkM4vuDdZvVG9w7qxz5qkpa89e9uaYqGF9j8k666/uNg35
+         SRzqoP7xQJcfSjC08epHN88GnNiCjGO0RE+0PGSfBSIUpUgJH3O2v2TZQnEH6epXSbnz
+         76PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=iVIuCREYC9bLO13GIcfghUQBIIxBSOKOLnIxtldK3Gw=;
-        b=CbonWpWtIDIplJiEddsm4AU0wpsTorLgl6JcBzc/PzY6RZqEpMKB3I1lZGaKLmdvhn
-         0YXcJX44t/ie7l2qGMc3TzMF4PJngNg/9/M2y0zFCACUzzFND9J13pAoKYDIvVC009C/
-         Oe401V0BBDjH4iBSF/i3rooV4fuCTci8vP29xtM+J1smpmaQRTKZiwvqdmWW6AyGMZyA
-         dfmZq7xv1Js18aHjcM5M8kIsGxrpX0LEB/+4OL1Rk2UmVyJvoAAGzLiTRybRFkQh60W6
-         Fq/ULXiFSXmEGal1E1chPfRDyomCThJb2pj/vIdoxAHVW+wYGsvq2msMDBUsP8Apwrqv
-         t5wQ==
-X-Gm-Message-State: AHQUAuYqjh0RISgYF/rtH5I5EmVyLWPMjcbOeerVhtvH8ccBY4vEl4/a
-        n0KcH3sQ9gF5YdmfK01OF5U=
-X-Google-Smtp-Source: AHgI3IYFFoxwmcSZAY7v9shZ9fQ0OF3iRm+YLYlTUp8NiPSzuC8mBRvM0yQawxk3RhjFsHUgLR/Ztw==
-X-Received: by 2002:a1c:4155:: with SMTP id o82mr11292319wma.122.1550386820844;
-        Sat, 16 Feb 2019 23:00:20 -0800 (PST)
-Received: from 640k.lan ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id y20sm19469303wra.51.2019.02.16.23.00.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 16 Feb 2019 23:00:19 -0800 (PST)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, rkrcmar@redhat.com,
-        kvm@vger.kernel.org
-Subject: [GIT PULL] KVM changes for Linux 5.0-rc7
-Date:   Sun, 17 Feb 2019 08:00:17 +0100
-Message-Id: <1550386817-50269-1-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=It5OEgJ4iYIMPI81go7NiHuDVjtSj5HVzsbxnYSlOe0=;
+        b=AJzbnHT0Eqo7xkANmfowlq7rprEMklEveyHP7Jl4l+i7LfQk9pey4eymWsgWSZLBLA
+         uh7BDWNU5cW5uG1da5w7JcDwgFKW6MrJPslVtNz2yBBHOL6cJ0YKSczG2Nu9qCbv/GCQ
+         9kMTzaWPTchgAP2MF8XoM8fFVezqK6D7Qb5rRLuw7L5IA78BEzAtb4dO97ZsDcMoNxVU
+         iwmTvIRQdsxHnKy8aV4sd9qi8w3XfUAmMZcUElM9T2C+n9A5sLhOL1HfdfT4Gdx7Ttco
+         KkgXZjOwqrxfORA+bgGgE9ejkJS4BomP21lSPvXkKGE+9Niz7ttLiwfSxv+qbDiLw7/J
+         RyxA==
+X-Gm-Message-State: AHQUAuaaZWz0OLio2IHIQ08I6i+iUPWNp0Ot7vqN6zxqHxKMGOZcM9Tm
+        yGjWS6g9y3CRKZWC/7Sv7XQ=
+X-Google-Smtp-Source: AHgI3IYr6DW5xEyBkZoA2bWxKRmAM6CS+vmr/dyrrPkIUVkEW2uJNmmrx58yLGTrEraZZTLgdLxJTw==
+X-Received: by 2002:a17:902:8e8a:: with SMTP id bg10mr18866625plb.192.1550387228616;
+        Sat, 16 Feb 2019 23:07:08 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id u13sm2947298pfa.169.2019.02.16.23.07.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 16 Feb 2019 23:07:07 -0800 (PST)
+Date:   Sat, 16 Feb 2019 23:07:06 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bastien Nocera <hadess@hadess.net>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v3 0/3] input: goodix - support Goodix gt5688
+Message-ID: <20190217070527.GC148958@dtor-ws>
+References: <cover.1550239328.git.agx@sigxcpu.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1550239328.git.agx@sigxcpu.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+On Fri, Feb 15, 2019 at 03:11:50PM +0100, Guido Günther wrote:
+> Besides the support for gt5688 two more minimal changes piled up so I'm
+> folding these in here. One is a doc update for the goodix bindings, the
+> other one makes it a bit simpler to figure out configuration problems
+> (like lack of touchscreen-size-{x,y} in the device tree.
+> 
+> I've kept the original subject to (hopefully) not break the series for
+> patchwork. All patches can be applied independently. Series is based on
+> next-20190208.
+> 
+> Changes from v2
+> * Add 'dt-bindings: input: Refer to touchscreen.txt for goodix ts'
+> * Add 'input: goodix: Print values in case of inconsistencies'
+>   (sent out separtely before, no comments so far)
+> * Collect 'Reviewed-By' on 'input: goodix - support Goodix gt5688'
 
-The following changes since commit d13937116f1e82bf508a6325111b322c30c85eb9:
+Applied the lot, thank you.
 
-  Linux 5.0-rc6 (2019-02-10 14:42:20 -0800)
-
-are available in the git repository at:
-
-  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
-
-for you to fetch changes up to 98ae70cc476e833332a2c6bb72f941a25f0de226:
-
-  kvm: vmx: Fix entry number check for add_atomic_switch_msr() (2019-02-14 16:22:20 +0100)
-
-----------------------------------------------------------------
-A somewhat bigger ARM update, and the usual smattering
-of x86 bug fixes.
-
-----------------------------------------------------------------
-Christoffer Dall (2):
-      KVM: arm/arm64: Reset the VCPU without preemption and vcpu state loaded
-      KVM: arm/arm64: vgic: Always initialize the group of private IRQs
-
-James Morse (1):
-      KVM: arm64: Forbid kprobing of the VHE world-switch code
-
-Julien Thierry (3):
-      KVM: arm/arm64: vgic: Make vgic_irq->irq_lock a raw_spinlock
-      KVM: arm/arm64: vgic: Make vgic_dist->lpi_list_lock a raw_spinlock
-      KVM: arm/arm64: vgic: Make vgic_cpu->ap_list_lock a raw_spinlock
-
-Luwei Kang (1):
-      KVM: x86: Recompute PID.ON when clearing PID.SN
-
-Marc Zyngier (4):
-      arm64: KVM: Don't generate UNDEF when LORegion feature is present
-      arm/arm64: KVM: Allow a VCPU to fully reset itself
-      arm/arm64: KVM: Don't panic on failure to properly reset system registers
-      arm: KVM: Add missing kvm_stage2_has_pmd() helper
-
-Paolo Bonzini (1):
-      Merge tag 'kvm-arm-fixes-for-5.0' of git://git.kernel.org/.../kvmarm/kvmarm into kvm-master
-
-Sean Christopherson (1):
-      KVM: nVMX: Restore a preemption timer consistency check
-
-Suzuki K Poulose (1):
-      KVM: arm64: Relax the restriction on using stage2 PUD huge mapping
-
-Vitaly Kuznetsov (1):
-      x86/kvm/nVMX: read from MSR_IA32_VMX_PROCBASED_CTLS2 only when it is available
-
-Xiaoyao Li (1):
-      kvm: vmx: Fix entry number check for add_atomic_switch_msr()
-
- arch/arm/include/asm/kvm_host.h       |  10 +++
- arch/arm/include/asm/stage2_pgtable.h |   5 ++
- arch/arm/kvm/coproc.c                 |   4 +-
- arch/arm/kvm/reset.c                  |  24 +++++++
- arch/arm64/include/asm/kvm_host.h     |  11 ++++
- arch/arm64/kvm/hyp/switch.c           |   5 ++
- arch/arm64/kvm/hyp/sysreg-sr.c        |   5 ++
- arch/arm64/kvm/reset.c                |  50 +++++++++++++-
- arch/arm64/kvm/sys_regs.c             |  50 ++++++++------
- arch/x86/kvm/vmx/nested.c             |  12 +++-
- arch/x86/kvm/vmx/vmx.c                |  29 ++++-----
- arch/x86/kvm/vmx/vmx.h                |  10 +--
- arch/x86/kvm/x86.c                    |   2 +-
- include/kvm/arm_vgic.h                |   6 +-
- virt/kvm/arm/arm.c                    |  10 +++
- virt/kvm/arm/mmu.c                    |   9 ++-
- virt/kvm/arm/psci.c                   |  36 +++++------
- virt/kvm/arm/vgic/vgic-debug.c        |   4 +-
- virt/kvm/arm/vgic/vgic-init.c         |  30 +++++----
- virt/kvm/arm/vgic/vgic-its.c          |  22 +++----
- virt/kvm/arm/vgic/vgic-mmio-v2.c      |  14 ++--
- virt/kvm/arm/vgic/vgic-mmio-v3.c      |  12 ++--
- virt/kvm/arm/vgic/vgic-mmio.c         |  34 +++++-----
- virt/kvm/arm/vgic/vgic-v2.c           |   4 +-
- virt/kvm/arm/vgic/vgic-v3.c           |   8 +--
- virt/kvm/arm/vgic/vgic.c              | 118 +++++++++++++++++-----------------
- 26 files changed, 331 insertions(+), 193 deletions(-)
+-- 
+Dmitry
