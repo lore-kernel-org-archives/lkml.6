@@ -2,110 +2,88 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43223C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 06:23:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5116C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 06:31:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1182E2196F
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 06:23:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 640C021A4A
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 06:31:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ifcnmcwM"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="WSsSrzBU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728294AbfBQGXk (ORCPT
+        id S1728452AbfBQGbK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 01:23:40 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39281 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726057AbfBQGXk (ORCPT
+        Sun, 17 Feb 2019 01:31:10 -0500
+Received: from esa1.hgst.iphmx.com ([68.232.141.245]:8816 "EHLO
+        esa1.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726057AbfBQGbJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 01:23:40 -0500
-Received: by mail-pg1-f196.google.com with SMTP id r11so6857822pgp.6
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Feb 2019 22:23:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=nm7Mpr2bFzDsTZtDgyvgfnqAVAhEse/hD66HPwpevYI=;
-        b=ifcnmcwMlqknwcmblNlaOdEKIdi2A7JylegsmM4qPX6LKXhT0ZDMyL5XKSNZUgZ1ol
-         mbTn8MatZvfW5RlESuur/dZZzaVRaepLswtWfvSL93RWTQhoKtUMHJWKOU/QNCNchpSq
-         Lu/svA4tSsxsI85nS1x9uShfXffajFxM2Df+Mdl4vi3qRz8X6Aqpo0XR/+GbJkZzCj3o
-         NrvzGzrRqu5fKqZmH5Bo49rKdOqKBSjfMxBPMNGzaNhsrFFesFV6le1PgjnnT6AA94Jy
-         T015qKwtZu05dS2Hm8uFvn5dZTIBkwQrJe1YESNzYmnhfz/SujlmJTpbMmLCkpdxS5A1
-         LbgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nm7Mpr2bFzDsTZtDgyvgfnqAVAhEse/hD66HPwpevYI=;
-        b=MDwwc1LwuGrYoXRCHFxCfURXAyf/KzfjbLkBgc4AH35fnZCj0dhsOPryGCJvbhlavq
-         nVbgW1ZxNwsOEara7epEsTaytBJmMn4rhfEw8v+iJnoYk1/Yi3hBbP5xp8Nr9Km7FQvu
-         Ze7T/m7PsUZeai/wJsqxi9tlLx1KZXaipX5M9HM91jI9f5Gy+79SYBcyJr0s9ms4SPbm
-         rJQz3diDj1HK6Fkwrrfai9QSOMCCGZQvpABKVha7KUR+sFJmL5gXBidSdP4gtZTCHXYE
-         Ti/23KhTIb66izVY2qITq4e0Bj+fUwuSp5kcsuZXjASsvhiP30C1WFMVHdr8ISWnyjEg
-         jKZQ==
-X-Gm-Message-State: AHQUAuYxTMSTzEVKtGtkyoJBO/nCY7+jsJbhzZut4+O0lkv5zAAYVOf1
-        3zKl0qi0o8KDibsXb/nrFrZ348uz
-X-Google-Smtp-Source: AHgI3IbaL+qoncpcwlKwPaLrZSlwDbREXbJesWUb4jxQUmO9VmgguFlB3LYaCIFe0NomUSbpOkUzig==
-X-Received: by 2002:a62:b40b:: with SMTP id h11mr313568pfn.108.1550384618640;
-        Sat, 16 Feb 2019 22:23:38 -0800 (PST)
-Received: from localhost (220-245-128-230.tpgi.com.au. [220.245.128.230])
-        by smtp.gmail.com with ESMTPSA id f13sm13736786pfa.132.2019.02.16.22.23.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 16 Feb 2019 22:23:37 -0800 (PST)
-Date:   Sun, 17 Feb 2019 17:23:33 +1100
-From:   Balbir Singh <bsingharora@gmail.com>
-To:     Segher Boessenkool <segher@kernel.crashing.org>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>, erhard_f@mailbox.org,
-        jack@suse.cz, linuxppc-dev@ozlabs.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        aneesh.kumar@linux.vnet.ibm.com
-Subject: Re: [PATCH] powerpc/64s: Fix possible corruption on big endian due
- to pgd/pud_present()
-Message-ID: <20190217062333.GC31125@350D>
-References: <20190214062339.7139-1-mpe@ellerman.id.au>
- <20190216105511.GA31125@350D>
- <20190216142206.GE14180@gate.crashing.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190216142206.GE14180@gate.crashing.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Sun, 17 Feb 2019 01:31:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1550385069; x=1581921069;
+  h=from:to:cc:subject:date:message-id;
+  bh=JlBezc6VJE54/kAaxIEKF4AAqszBKCXftftZoQ/ZPQg=;
+  b=WSsSrzBUdmwr93oxcWNWrv3D3J1y/tocEydn/UG1OG5IDRvRepTlGvUo
+   weOu4Jc/pz1q2uhqIyXlgGz0MDjCBSr/+pmFrUCBtOPZ4EGUcPC6am62P
+   XbdnBYHEyEiiFLi60c7+eYkivm6gNnoQD30YIBHiZquYC9Cm+zy0+IYJt
+   RC42zQhisrtAkkKsZZ7lYFEiq+9tSmLSpwsIDBh2+tNbO3L/OS24742oz
+   CfXJJt0ERipXJS3OYnRV0gdJ2zy8aiHP/nDRS9p6C1YCTVu41ruLWzV4t
+   k6VAYbIpwbgB72DxAppj/9BmB5YneknOlGOEQwYMHrpbm1ufXV7bTx+RD
+   g==;
+X-IronPort-AV: E=Sophos;i="5.58,379,1544457600"; 
+   d="scan'208";a="206654174"
+Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 17 Feb 2019 14:30:50 +0800
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP; 16 Feb 2019 22:11:19 -0800
+Received: from kfae422988.sdcorp.global.sandisk.com ([10.0.230.227])
+  by uls-op-cesaip02.wdc.com with ESMTP; 16 Feb 2019 22:30:48 -0800
+From:   Avri Altman <avri.altman@wdc.com>
+To:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Avi Shchislowski <avi.shchislowski@wdc.com>,
+        Alex Lemberg <alex.lemberg@wdc.com>,
+        Avri Altman <avri.altman@wdc.com>
+Subject: [PATCH] scsi: clean obsolete return values of eh_timed_out
+Date:   Sun, 17 Feb 2019 08:30:27 +0200
+Message-Id: <1550385027-6217-1-git-send-email-avri.altman@wdc.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Feb 16, 2019 at 08:22:12AM -0600, Segher Boessenkool wrote:
-> Hi all,
-> 
-> On Sat, Feb 16, 2019 at 09:55:11PM +1100, Balbir Singh wrote:
-> > On Thu, Feb 14, 2019 at 05:23:39PM +1100, Michael Ellerman wrote:
-> > > In v4.20 we changed our pgd/pud_present() to check for _PAGE_PRESENT
-> > > rather than just checking that the value is non-zero, e.g.:
-> > > 
-> > >   static inline int pgd_present(pgd_t pgd)
-> > >   {
-> > >  -       return !pgd_none(pgd);
-> > >  +       return (pgd_raw(pgd) & cpu_to_be64(_PAGE_PRESENT));
-> > >   }
-> > > 
-> > > Unfortunately this is broken on big endian, as the result of the
-> > > bitwise && is truncated to int, which is always zero because
-> 
-> (Bitwise "&" of course).
-> 
-> > Not sure why that should happen, why is the result an int? What
-> > causes the casting of pgd_t & be64 to be truncated to an int.
-> 
-> Yes, it's not obvious as written...  It's simply that the return type of
-> pgd_present is int.  So it is truncated _after_ the bitwise and.
->
+Those are no longer in use since commit 242f9dcb8ba6
+("block: unify request timeout handling").
 
-Thanks, I am surprised the compiler does not complain about the truncation
-of bits. I wonder if we are missing -Wconversion
+Signed-off-by: Avri Altman <avri.altman@wdc.com>
+---
+ include/scsi/scsi_host.h | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
-Balbir
+diff --git a/include/scsi/scsi_host.h b/include/scsi/scsi_host.h
+index 4047d68..dbbdfbd 100644
+--- a/include/scsi/scsi_host.h
++++ b/include/scsi/scsi_host.h
+@@ -300,11 +300,7 @@ struct scsi_host_template {
+ 	/*
+ 	 * This is an optional routine that allows the transport to become
+ 	 * involved when a scsi io timer fires. The return value tells the
+-	 * timer routine how to finish the io timeout handling:
+-	 * EH_HANDLED:		I fixed the error, please complete the command
+-	 * EH_RESET_TIMER:	I need more time, reset the timer and
+-	 *			begin counting again
+-	 * EH_DONE:		Begin normal error recovery
++	 * timer routine how to finish the io timeout handling.
+ 	 *
+ 	 * Status: OPTIONAL
+ 	 */
+-- 
+1.9.1
+
