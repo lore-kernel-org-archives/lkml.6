@@ -2,152 +2,116 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FEEBC10F07
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 13:45:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4F79C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 13:48:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AA3A21A4A
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 13:45:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 737E021A4A
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 13:48:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729055AbfBQNpl (ORCPT
+        id S1729085AbfBQNso convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 08:45:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:37444 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727442AbfBQNpl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 08:45:41 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CE70A12AD75;
-        Sun, 17 Feb 2019 13:45:40 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8461D5DD73;
-        Sun, 17 Feb 2019 13:45:28 +0000 (UTC)
-Date:   Sun, 17 Feb 2019 21:45:23 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
-        Keith Busch <keith.busch@intel.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        Kashyap Desai <kashyap.desai@broadcom.com>,
-        Shivasharan Srikanteshwara 
-        <shivasharan.srikanteshwara@broadcom.com>
-Subject: Re: [patch v6 7/7] genirq/affinity: Add support for non-managed
- affinity sets
-Message-ID: <20190217134522.GH7296@ming.t460p>
-References: <20190216171306.403545970@linutronix.de>
- <20190216172228.869750763@linutronix.de>
+        Sun, 17 Feb 2019 08:48:44 -0500
+Received: from mail-oln040092070100.outbound.protection.outlook.com ([40.92.70.100]:3200
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727442AbfBQNso (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 08:48:44 -0500
+Received: from DB5EUR03FT048.eop-EUR03.prod.protection.outlook.com
+ (10.152.20.57) by DB5EUR03HT023.eop-EUR03.prod.protection.outlook.com
+ (10.152.21.177) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1580.17; Sun, 17 Feb
+ 2019 13:48:42 +0000
+Received: from HE1PR0702MB3834.eurprd07.prod.outlook.com (10.152.20.52) by
+ DB5EUR03FT048.mail.protection.outlook.com (10.152.21.28) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1643.11 via Frontend Transport; Sun, 17 Feb 2019 13:48:42 +0000
+Received: from HE1PR0702MB3834.eurprd07.prod.outlook.com
+ ([fe80::c2e:20b8:445d:e9af]) by HE1PR0702MB3834.eurprd07.prod.outlook.com
+ ([fe80::c2e:20b8:445d:e9af%2]) with mapi id 15.20.1622.018; Sun, 17 Feb 2019
+ 13:48:41 +0000
+From:   Bernd Edlinger <bernd.edlinger@hotmail.de>
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv3] random: Make /dev/random wait for crng_ready
+Thread-Topic: [PATCHv3] random: Make /dev/random wait for crng_ready
+Thread-Index: AQHUxp0Npbqs83BkVEynF/QYRVMIGKXkAb6A
+Date:   Sun, 17 Feb 2019 13:48:41 +0000
+Message-ID: <HE1PR0702MB3834CF349C1480194E35CADDE4620@HE1PR0702MB3834.eurprd07.prod.outlook.com>
+References: <VI1PR0702MB38408B595C818F1C3278873EE4600@VI1PR0702MB3840.eurprd07.prod.outlook.com>
+ <VI1PR0702MB3840E7DCBEA62BB204CA863DE4600@VI1PR0702MB3840.eurprd07.prod.outlook.com>
+ <20190216182355.GE23000@mit.edu>
+ <VI1PR0702MB38400342893473C16C0C6D70E4620@VI1PR0702MB3840.eurprd07.prod.outlook.com>
+In-Reply-To: <VI1PR0702MB38400342893473C16C0C6D70E4620@VI1PR0702MB3840.eurprd07.prod.outlook.com>
+Accept-Language: en-US, en-GB, de-DE
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: AM5P189CA0030.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:206:15::43) To HE1PR0702MB3834.eurprd07.prod.outlook.com
+ (2603:10a6:7:8e::30)
+x-incomingtopheadermarker: OriginalChecksum:9D4502516549F696AE45C76E194427B1AC033BF453A3EED20D8A19EC03DACB2B;UpperCasedChecksum:D0D4B450A5E4D85A8183FF693A9FB0369D7BD9FDDE01845CDB17E4C11BDABD5E;SizeAsReceived:8778;Count:62
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [+NW7BeRom402ppoYXaTXmFUjmRfbRIe8]
+x-microsoft-original-message-id: <d5d87743-1ff4-0ff1-b1a7-d83ec6c83040@hotmail.de>
+x-ms-publictraffictype: Email
+x-incomingheadercount: 62
+x-eopattributedmessage: 0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031323274)(2017031324274)(2017031322404)(1601125500)(1603101475)(1701031045);SRVR:DB5EUR03HT023;
+x-ms-traffictypediagnostic: DB5EUR03HT023:
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:DB5EUR03HT023;BCL:0;PCL:0;RULEID:;SRVR:DB5EUR03HT023;
+x-microsoft-antispam-message-info: 1LwlFIvIT7bqXGhVH0Ip5zTs8IbkksZLHqjYjX54pE/YxSvBzbEe//tEQ7c0FAL8
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <0F88F59EDCC3B44DBCCD7C3B59D9789D@eurprd07.prod.outlook.com>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190216172228.869750763@linutronix.de>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Sun, 17 Feb 2019 13:45:41 +0000 (UTC)
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: d4d70346-2c10-4f39-8c00-e767963926d9
+X-MS-Exchange-CrossTenant-Network-Message-Id: ed05564d-d9c5-4a1b-1dc3-08d694dea049
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: d4d70346-2c10-4f39-8c00-e767963926d9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Feb 2019 13:48:40.8628
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5EUR03HT023
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
-
-On Sat, Feb 16, 2019 at 06:13:13PM +0100, Thomas Gleixner wrote:
-> Some drivers need an extra set of interrupts which should not be marked
-> managed, but should get initial interrupt spreading.
-
-Could you share the drivers and their use case?
-
-> 
-> Add a bitmap to struct irq_affinity which allows the driver to mark a
-> particular set of interrupts as non managed. Check the bitmap during
-> spreading and use the result to mark the interrupts in the sets
-> accordingly.
-> 
-> The unmanaged interrupts get initial spreading, but user space can change
-> their affinity later on. For the managed sets, i.e. the corresponding bit
-> in the mask is not set, there is no change in behaviour.
-> 
-> Usage example:
-> 
-> 	struct irq_affinity affd = {
-> 		.pre_vectors	= 2,
-> 		.unmanaged_sets	= 0x02,
-> 		.calc_sets	= drv_calc_sets,
-> 	};
-> 	....
-> 
-> For both interrupt sets the interrupts are properly spread out, but the
-> second set is not marked managed.
-
-Given drivers only care the managed vs non-managed interrupt numbers,
-just wondering why this case can't be covered by .pre_vectors &
-.post_vectors?
-
-Also this kind of usage may break blk-mq easily, in which the following
-rule needs to be respected:
-
-1) all CPUs are required to spread among each interrupt set
-
-2) no any CPU is shared between two IRQs in same set.
-
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
->  include/linux/interrupt.h |    2 ++
->  kernel/irq/affinity.c     |   16 +++++++++++-----
->  2 files changed, 13 insertions(+), 5 deletions(-)
-> 
-> Index: b/include/linux/interrupt.h
-> ===================================================================
-> --- a/include/linux/interrupt.h
-> +++ b/include/linux/interrupt.h
-> @@ -251,6 +251,7 @@ struct irq_affinity_notify {
->   *			the MSI(-X) vector space
->   * @nr_sets:		The number of interrupt sets for which affinity
->   *			spreading is required
-> + * @unmanaged_sets:	Bitmap to mark entries in the @set_size array unmanaged
->   * @set_size:		Array holding the size of each interrupt set
->   * @calc_sets:		Callback for calculating the number and size
->   *			of interrupt sets
-> @@ -261,6 +262,7 @@ struct irq_affinity {
->  	unsigned int	pre_vectors;
->  	unsigned int	post_vectors;
->  	unsigned int	nr_sets;
-> +	unsigned int	unmanaged_sets;
->  	unsigned int	set_size[IRQ_AFFINITY_MAX_SETS];
->  	void		(*calc_sets)(struct irq_affinity *, unsigned int nvecs);
->  	void		*priv;
-> Index: b/kernel/irq/affinity.c
-> ===================================================================
-> --- a/kernel/irq/affinity.c
-> +++ b/kernel/irq/affinity.c
-> @@ -249,6 +249,8 @@ irq_create_affinity_masks(unsigned int n
->  	unsigned int affvecs, curvec, usedvecs, i;
->  	struct irq_affinity_desc *masks = NULL;
+On 2/17/19 9:44 AM, Bernd Edlinger wrote:
 >  
-> +	BUILD_BUG_ON(IRQ_AFFINITY_MAX_SETS > sizeof(affd->unmanaged_sets) * 8);
-> +
->  	/*
->  	 * Determine the number of vectors which need interrupt affinities
->  	 * assigned. If the pre/post request exhausts the available vectors
-> @@ -292,7 +294,8 @@ irq_create_affinity_masks(unsigned int n
->  	 * have multiple sets, build each sets affinity mask separately.
->  	 */
->  	for (i = 0, usedvecs = 0; i < affd->nr_sets; i++) {
-> -		unsigned int this_vecs = affd->set_size[i];
-> +		bool managed = affd->unmanaged_sets & (1U << i) ? true : false;
+> +		if (crng_ready() && !blocking_pool.initialized &&
 
-The above check is inverted.
+After some more debugging I realize that blocking_pool.initialized
+is true after 128 bits of input entropy, but that is only 80 bits
+credited, due to the asymptotic 3/4 crediting formula.
 
-Thanks,
-Ming
+I see that will also enable the code path below:
+
+                if (entropy_bits > random_write_wakeup_bits &&
+                    r->initialized &&
+                    r->entropy_total >= 2*random_read_wakeup_bits) {
+                        struct entropy_store *other = &blocking_pool;
+
+                        if (other->entropy_count <=
+                            3 * other->poolinfo->poolfracbits / 4) {
+                                schedule_work(&other->push_work);
+                                r->entropy_total = 0;
+                        }
+
+when random_write_wakeup_bits is below 80, and random_read_wakeup_bits
+is also smallish.  This depletes the input_pool in favor of the
+blocking pool, while we are actually waiting for the input_pool to
+reach 128 bits security strength, in order to seed the CRNG.
+
+I am testing a new version and will post it later today.
+
+Sorry for all the back-and forth.
+
+
+Bernd.
