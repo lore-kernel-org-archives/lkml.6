@@ -2,108 +2,78 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D9CCC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 02:54:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47E4EC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 03:41:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4409F222E6
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 02:54:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="ZLC8erem"
+	by mail.kernel.org (Postfix) with ESMTP id 117732192C
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 03:41:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729902AbfBQCyc (ORCPT
+        id S1728152AbfBQDlc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 21:54:32 -0500
-Received: from a9-37.smtp-out.amazonses.com ([54.240.9.37]:48476 "EHLO
-        a9-37.smtp-out.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727175AbfBQCyc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 21:54:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=ug7nbtf4gccmlpwj322ax3p6ow6yfsug; d=amazonses.com; t=1550372071;
-        h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:MIME-Version:Content-Type:Feedback-ID;
-        bh=3x4EHOIW6CCTZsLQgDwb2qN7fvHKquBtp2/7NciRkx4=;
-        b=ZLC8eremojT71FLFUgaBmmj1KkwvdFjjNTLFOYoFlnk+umWvhFp+MkiC6mZuMSgg
-        G+Dm+U3IXIGW6EcTY47XH5leKVOwCOt0aqCO8PgvF1UR+rIIcbXE5xbYWE59s+CkCCK
-        jC0Lq+kV9Y0uI7Rkx65K7WnKWxPTCCyaVyWoWPuQ=
-Date:   Sun, 17 Feb 2019 02:54:31 +0000
-From:   Christopher Lameter <cl@linux.com>
-X-X-Sender: cl@nuc-kabylake
-To:     Ira Weiny <ira.weiny@intel.com>
-cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, Doug Ledford <dledford@redhat.com>,
-        lsf-pc@lists.linux-foundation.org,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@kernel.org>
-Subject: Re: [LSF/MM TOPIC] Discuss least bad options for resolving longterm-GUP
- usage by RDMA
-In-Reply-To: <20190215233828.GB30818@iweiny-DESK2.sc.intel.com>
-Message-ID: <01000168f96067cc-053f7689-8362-49c5-85b6-3fe23ac7d4f4-000000@email.amazonses.com>
-References: <CAPcyv4iHso+PqAm-4NfF0svoK4mELJMSWNp+vsG43UaW1S2eew@mail.gmail.com> <20190211180654.GB24692@ziepe.ca> <20190214202622.GB3420@redhat.com> <20190214205049.GC12668@bombadil.infradead.org> <20190214213922.GD3420@redhat.com> <20190215011921.GS20493@dastard>
- <01000168f1d25e3a-2857236c-a7cc-44b8-a5f3-f51c2cfe6ce4-000000@email.amazonses.com> <20190215180852.GJ12668@bombadil.infradead.org> <01000168f26d9e0c-aef3255a-5059-4657-b241-dae66663bbea-000000@email.amazonses.com> <20190215220031.GB8001@ziepe.ca>
- <20190215233828.GB30818@iweiny-DESK2.sc.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Sat, 16 Feb 2019 22:41:32 -0500
+Received: from mail12.gandi.net ([217.70.182.73]:49195 "EHLO gandi.net"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726751AbfBQDlc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Feb 2019 22:41:32 -0500
+Received: from khany.gandi.net (fob.gandi.net [217.70.181.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by gandi.net (Postfix) with ESMTPSA id 051EE160457;
+        Sun, 17 Feb 2019 03:41:30 +0000 (UTC)
+Received: by khany.gandi.net (Postfix, from userid 1000)
+        id E4770DD164B; Sun, 17 Feb 2019 03:41:21 +0000 (GMT)
+Date:   Sun, 17 Feb 2019 03:41:21 +0000
+From:   Arthur Gautier <baloo@gandi.net>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jann Horn <jannh@google.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Pascal Bouchareine <pascal@gandi.net>
+Subject: Re: [PATCH] x86: uaccess: fix regression in unsafe_get_user
+Message-ID: <20190217034121.bs3q3sgevexmdt3d@khany>
+References: <20190215235901.23541-1-baloo@gandi.net>
+ <CAG48ez2tYizTKncevLF=AMQ2nm3D=SqGHH5bM5f-U0fhQ1nL9Q@mail.gmail.com>
+ <alpine.DEB.2.21.1902161358160.1683@nanos.tec.linutronix.de>
+ <4F2693EA-1553-4F09-9475-781305540DBC@amacapital.net>
+ <20190216234702.GP2217@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-SES-Outgoing: 2019.02.17-54.240.9.37
-Feedback-ID: 1.us-east-1.fQZZZ0Xtj2+TD7V5apTT/NrT6QKuPgzCT/IC7XYgDKI=:AmazonSES
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190216234702.GP2217@ZenIV.linux.org.uk>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 15 Feb 2019, Ira Weiny wrote:
+On Sat, Feb 16, 2019 at 11:47:02PM +0000, Al Viro wrote:
+> On Sat, Feb 16, 2019 at 02:50:15PM -0800, Andy Lutomirski wrote:
+> 
+> > What is the actual problem?  We’re not actually demand-faulting this data, are we?  Are we just overrunning the buffer because the from_user helpers are too clever?  Can we fix it for real by having the fancy helpers do *aligned* loads so that they don’t overrun the buffer?  Heck, this might be faster, too.
+> 
+> Unaligned _stores_ are not any cheaper, and you'd get one hell of
+> extra arithmetics from trying to avoid both.  Check something
+> like e.g. memcpy() on alpha, where you really have to keep all
+> accesses aligned, both on load and on store side.
+> 
+> Can't we just pad the buffers a bit?  Making sure that name_buf
+> and symlink_buf are _not_ followed by unmapped pages shouldn't
+> be hard.  Both are allocated by kmalloc(), so...
 
-> > > > for filesystems and processes.  The only problems come in for the things
-> > > > which bypass the page cache like O_DIRECT and DAX.
-> > >
-> > > It makes a lot of sense since the filesystems play COW etc games with the
-> > > pages and RDMA is very much like O_DIRECT in that the pages are modified
-> > > directly under I/O. It also bypasses the page cache in case you have
-> > > not noticed yet.
-> >
-> > It is quite different, O_DIRECT modifies the physical blocks on the
-> > storage, bypassing the memory copy.
-> >
->
-> Really?  I thought O_DIRECT allowed the block drivers to write to/from user
-> space buffers.  But the _storage_ was still under the control of the block
-> drivers?
+We cannot change alignment rules here. The input buffer string we're
+reading is coming from an cpio formated file and the format is
+defined by cpio(5).
+Nothing much we can do there I'm afraid. Input buffer is defined to
+be 4-byte aligned.
 
-It depends on what you see as the modification target. O_DIRECT uses
-memory as a target and source like RDMA. The block device is at the other
-end of the handling.
-
-> > RDMA modifies the memory copy.
-> >
-> > pages are necessary to do RDMA, and those pages have to be flushed to
-> > disk.. So I'm not seeing how it can be disconnected from the page
-> > cache?
->
-> I don't disagree with this.
-
-RDMA does direct access to memory. If that memmory is a mmmap of a regular
-block  device then we have a problem (this has not been a standard use case to my
-knowledge). The semantics are simmply different. RDMA expects memory to be
-pinned and always to be able to read and write from it. The block
-device/filesystem expects memory access to be controllable via the page
-permission. In particular access to be page need to be able to be stopped.
-
-This is fundamentally incompatible. RDMA access to such an mmapped section
-must preserve the RDMA semantics while the pinning is done and can only
-provide the access control after RDMA is finished. Pages in the RDMA range
-cannot be handled like normal page cache pages.
-
-This is in particular evident in the DAX case in which we have direct pass
-through even to the storage medium. And in this case write through can
-replace the page cache.
+-- 
+\o/ Arthur
+ G  Gandi.net
