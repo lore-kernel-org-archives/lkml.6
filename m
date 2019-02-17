@@ -2,125 +2,218 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2C70C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 01:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C2FC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 02:10:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 921C421A4A
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 01:54:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCE7B21917
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 02:10:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727444AbfBQByi (ORCPT
+        id S1727724AbfBQCJw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 20:54:38 -0500
-Received: from mail.grenz-bonn.de ([178.33.37.38]:51110 "EHLO
-        mail.grenz-bonn.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726220AbfBQByi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 20:54:38 -0500
-X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Sat, 16 Feb 2019 20:54:37 EST
-Received: from [192.168.1.100] (212-51-139-180.fiber7.init7.net [212.51.139.180])
-        by ks357529.kimsufi.com (Postfix) with ESMTPSA id 2EA5978B72;
-        Sun, 17 Feb 2019 02:47:29 +0100 (CET)
-To:     linux-kernel@vger.kernel.org
-From:   =?UTF-8?Q?Niklas_Hamb=c3=bcchen?= <mail@nh2.me>
-Subject: ptrace() with multithreaded tracer
-Openpgp: preference=signencrypt
-Autocrypt: addr=mail@nh2.me; keydata=
- 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
-Cc:     cleverca22@gmail.com
-Message-ID: <48bb7c89-abb9-1e88-fee3-fb42d4032d12@nh2.me>
-Date:   Sun, 17 Feb 2019 02:47:29 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Sat, 16 Feb 2019 21:09:52 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44444 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727175AbfBQCJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Feb 2019 21:09:51 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6326BB216;
+        Sun, 17 Feb 2019 02:09:50 +0000 (UTC)
+Received: from localhost (ovpn-12-45.pek2.redhat.com [10.72.12.45])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 56B36600C5;
+        Sun, 17 Feb 2019 02:09:48 +0000 (UTC)
+Date:   Sun, 17 Feb 2019 10:09:46 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     travis@sgi.com, mike.travis@hpe.com
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        x86@kernel.org, thgarnie@google.com, linux-kernel@vger.kernel.org,
+        keescook@chromium.org, akpm@linux-foundation.org,
+        yamada.masahiro@socionext.com, kirill@shutemov.name
+Subject: Re: [PATCH v3 6/6] x86/mm/KASLR: Do not adapt the size of the direct
+ mapping section for SGI UV system
+Message-ID: <20190217020904.GF14858@MiWiFi-R3L-srv>
+References: <20190216140008.28671-1-bhe@redhat.com>
+ <20190216140008.28671-7-bhe@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190216140008.28671-7-bhe@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Sun, 17 Feb 2019 02:09:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi Mike,
 
-it would be awesome if somebody in the know could confirm or refute a suspicion on ptrace() that we have.
+On 02/16/19 at 10:00pm, Baoquan He wrote:
+> On SGI UV system, kernel often hangs when KASLR is enabled. Disabling
+> KASLR makes kernel work well.
 
-The man page says:
+I wrap codes which calculate the size of the direct mapping section
+into a new function calc_direct_mapping_size() as Ingo suggested. This
+code change has passed basic testing, but hasn't been tested on a
+SGI UV machine after reproducing since it needs UV machine with UV
+module installed of enough size.
 
-    Attachment and subsequent commands are per thread:
-    in a multi‐ threaded process, every thread can be individually attached to a
-    (potentially different) tracer, or left not attached and thus not debugged.
-    Therefore, "tracee" always means "(one) thread", never "a (possibly
-    multithreaded) process".
+To reproduce it, we can apply patches 0001~0005. If reproduced, patch
+0006 can be applied on top to check if bug is fixed. Please help check
+if the code is OK, if you have a machine, I can have a test.
 
-While the first sentence "Attachment ... [is] per thread" is quite general, the rest talks only about the multi-threadedness of the *tracee*.
+Thanks
+Baoquan
 
-What about multithreaded *tracers*?
-
-We suspect (and observe program behaviour that supports this) that having one thread pA_t1 in a process A become the tracer of some tracee thread pB_t1, and then a different thread of A, pA_t2 running a `ptrace(pB_t1, ...)` is illegal and results in `ESRCH`.
-
-Is this statement in true in general, or are there nuances?
-
-Thanks,
-Niklas
-
-
-PS: We'd be happy to contribute these details to the man page based on an answer :)
+> 
+> The back trace is:
+> 
+> kernel BUG at arch/x86/mm/init_64.c:311!
+> invalid opcode: 0000 [#1] SMP
+> [...]
+> RIP: 0010:__init_extra_mapping+0x188/0x196
+> [...]
+> Call Trace:
+>  init_extra_mapping_uc+0x13/0x15
+>  map_high+0x67/0x75
+>  map_mmioh_high_uv3+0x20a/0x219
+>  uv_system_init_hub+0x12d9/0x1496
+>  uv_system_init+0x27/0x29
+>  native_smp_prepare_cpus+0x28d/0x2d8
+>  kernel_init_freeable+0xdd/0x253
+>  ? rest_init+0x80/0x80
+>  kernel_init+0xe/0x110
+>  ret_from_fork+0x2c/0x40
+> 
+> This is because the SGI UV system need map its MMIOH region to the direct
+> mapping section, and the mapping happens in rest_init() which is much
+> later than the calling of kernel_randomize_memory() to do mm KASLR. So
+> mm KASLR can't count in the size of the MMIOH region when calculate the
+> needed size of address space for the direct mapping section.
+> 
+> When KASLR is disabled, there are 64TB address space for both system RAM
+> and the MMIOH regions to share. When KASLR is enabled, the current code
+> of mm KASLR only reserves the actual size of system RAM plus extra 10TB
+> for the direct mapping. Thus later the MMIOH mapping could go beyond
+> the upper bound of the direct mapping to step into VMALLOC or VMEMMAP area.
+> Then BUG_ON() in __init_extra_mapping() will be triggered.
+> 
+> E.g on the SGI UV3 machine where this bug was reported , there are two
+> MMIOH regions:
+> 
+> [    1.519001] UV: Map MMIOH0_HI 0xffc00000000 - 0x100000000000
+> [    1.523001] UV: Map MMIOH1_HI 0x100000000000 - 0x200000000000
+> 
+> They are [16TB-16G, 16TB) and [16TB, 32TB). On this machine, 512G RAM are
+> spread out to 1TB regions. Then above two SGI MMIOH regions also will be
+> mapped into the direct mapping section.
+> 
+> To fix it, we need check if it's SGI UV system by calling
+> is_early_uv_system() in kernel_randomize_memory(). If yes, do not adapt
+> thesize of the direct mapping section, just keep it as is, e.g in level-4
+> paging mode, 64TB.
+> 
+> Signed-off-by: Baoquan He <bhe@redhat.com>
+> ---
+>  arch/x86/mm/kaslr.c | 57 +++++++++++++++++++++++++++++++++------------
+>  1 file changed, 42 insertions(+), 15 deletions(-)
+> 
+> diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
+> index ca12ed4e5239..754b5da91d43 100644
+> --- a/arch/x86/mm/kaslr.c
+> +++ b/arch/x86/mm/kaslr.c
+> @@ -29,6 +29,7 @@
+>  #include <asm/pgtable.h>
+>  #include <asm/setup.h>
+>  #include <asm/kaslr.h>
+> +#include <asm/uv/uv.h>
+>  
+>  #include "mm_internal.h"
+>  
+> @@ -113,15 +114,51 @@ static inline bool kaslr_memory_enabled(void)
+>  	return kaslr_enabled() && !IS_ENABLED(CONFIG_KASAN);
+>  }
+>  
+> +/*
+> + * Even though a huge virtual address space is reserved for the direct
+> + * mapping of physical memory, e.g in 4-level pageing mode, it's 64TB,
+> + * rare system can own enough physical memory to use it up, most are
+> + * even less than 1TB. So with KASLR enabled, we adapt the size of
+> + * direct mapping area to size of actual physical memory plus the
+> + * configured padding CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING.
+> + * The left part will be taken out to join memory randomization.
+> + *
+> + * Note that UV system is an exception, its MMIOH region need be mapped
+> + * into the direct mapping area too, while the size can't be got until
+> + * rest_init() calling. Hence for UV system, do not adapt the size
+> + * of direct mapping area.
+> + */
+> +static inline unsigned long calc_direct_mapping_size(void)
+> +{
+> +	unsigned long size_tb, memory_tb;
+> +
+> +	/*
+> +	 * Update Physical memory mapping to available and
+> +	 * add padding if needed (especially for memory hotplug support).
+> +	 */
+> +	memory_tb = DIV_ROUND_UP(max_pfn << PAGE_SHIFT, 1UL << TB_SHIFT) +
+> +		CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
+> +
+> +	size_tb = 1 << (MAX_PHYSMEM_BITS - TB_SHIFT);
+> +
+> +	/*
+> +	 * Adapt phyiscal memory region size based on available memory if
+> +	 * it's not UV system.
+> +	 */
+> +	if (memory_tb < size_tb && !is_early_uv_system())
+> +		size_tb = memory_tb;
+> +
+> +	return size_tb;
+> +}
+> +
+>  /* Initialize base and padding for each memory region randomized with KASLR */
+>  void __init kernel_randomize_memory(void)
+>  {
+> -	size_t i;
+> -	unsigned long vaddr_start, vaddr;
+> -	unsigned long rand, memory_tb;
+> -	struct rnd_state rand_state;
+> +	unsigned long vaddr_start, vaddr, rand;
+>  	unsigned long remain_entropy;
+>  	unsigned long vmemmap_size;
+> +	struct rnd_state rand_state;
+> +	size_t i;
+>  
+>  	vaddr_start = pgtable_l5_enabled() ? __PAGE_OFFSET_BASE_L5 : __PAGE_OFFSET_BASE_L4;
+>  	vaddr = vaddr_start;
+> @@ -138,20 +175,10 @@ void __init kernel_randomize_memory(void)
+>  	if (!kaslr_memory_enabled())
+>  		return;
+>  
+> -	kaslr_regions[0].size_tb = 1 << (MAX_PHYSMEM_BITS - TB_SHIFT);
+> +	kaslr_regions[0].size_tb = calc_direct_mapping_size();
+>  	kaslr_regions[1].size_tb = VMALLOC_SIZE_TB;
+>  
+> -	/*
+> -	 * Update Physical memory mapping to available and
+> -	 * add padding if needed (especially for memory hotplug support).
+> -	 */
+>  	BUG_ON(kaslr_regions[0].base != &page_offset_base);
+> -	memory_tb = DIV_ROUND_UP(max_pfn << PAGE_SHIFT, 1UL << TB_SHIFT) +
+> -		CONFIG_RANDOMIZE_MEMORY_PHYSICAL_PADDING;
+> -
+> -	/* Adapt phyiscal memory region size based on available memory */
+> -	if (memory_tb < kaslr_regions[0].size_tb)
+> -		kaslr_regions[0].size_tb = memory_tb;
+>  
+>  	/*
+>  	 * Calculate how many TB vmemmap region needs, and align to
+> -- 
+> 2.17.2
+> 
