@@ -2,111 +2,123 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4AF8C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 22:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14209C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 22:08:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 963272184E
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 22:07:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="A7oN0MY1"
+	by mail.kernel.org (Postfix) with ESMTP id E02A72184E
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 22:08:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726816AbfBQWHm (ORCPT
+        id S1726954AbfBQWIJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 17:07:42 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:38824 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726124AbfBQWHm (ORCPT
+        Sun, 17 Feb 2019 17:08:09 -0500
+Received: from 216-12-86-13.cv.mvl.ntelos.net ([216.12.86.13]:59912 "EHLO
+        brightrain.aerifal.cx" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726124AbfBQWIH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 17:07:42 -0500
-Received: by mail-ot1-f68.google.com with SMTP id m1so25236339otf.5;
-        Sun, 17 Feb 2019 14:07:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Fb34zk0pI4o5Yrm2AzckhgwIT5jFzU1CY3//3+bCSd0=;
-        b=A7oN0MY1nq9XiqE4fU9+ijO7qYjmTi2Z5sQYDo+7t3bvAHG7Q8MbP4TUygf6sSW1pN
-         6K+7fa1+CmfXP6TFi3FHVlPA15eaD1Cuc8J5wjraCWWrD+cee1aPjnaB68qTs+o+PsQT
-         EeNcg+H/n04u0VxjAYndEJzuIWOqBm9lrlu8dasBkHVQTGDjAR2WX67tGYbQD8dU7MJp
-         nwH9cepymQFmk3vKI3BWbIg61bqo2MvK5JzI1MWCVQwzuBaOsdxBkl1gEjhEo+POtlyq
-         BAYVAYqUZrT6YAFuOCW1RFaEt4L/b0SYaBwha4WCvQMZUlZAR3avxnxTaAZYZBtFQ1z4
-         tawA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Fb34zk0pI4o5Yrm2AzckhgwIT5jFzU1CY3//3+bCSd0=;
-        b=XUOpvwWwCWJvyOtXJmyUwpPKCMruRXJxg/1O2FD1zOqXAEtPddjCVuRz/Z4KztGak2
-         aTNEfEGS7gCgOuaTw+/MP0Uad9HPil7EfiycGB5qnPfKmQv6Xp07QfC62gtY1cEc+eah
-         DfuNBiYtFpTMfMQ3TG2Iorix+Ux6kH5Apens4H7VzmL8jD4cihZHvSrdiWKOIL8Mj/EQ
-         +Iti4Sfo3yYb2tKJ+mKIK/GHNer/tNFxVgGgrmM5qUH4eJQjoBgmdHcL+viOmjDIMWSY
-         PXjBJdRpK5AjbIJudV6JkBroIlzAVTNKzwF0QEqCTuE6HZz7K1u/MTvuoXp3A66TdsQz
-         ZReg==
-X-Gm-Message-State: AHQUAual1keGqrodJqApljvLra5XQzBl+80ViFtLxplVUXEerIYiNFfL
-        mr8tZ7hdD2BxgRDFm6Zn6yXGtjv6EsUUxCF5Yxs=
-X-Google-Smtp-Source: AHgI3IYF/eF8fEVvtPrPZpkO1gTS5g5/omwxFYl/mMCwZWICPyeLgArW+TSfazpEo5v5xBnUUV8mbIBAlthSrVXUlEo=
-X-Received: by 2002:a9d:798c:: with SMTP id h12mr4342848otm.86.1550441260987;
- Sun, 17 Feb 2019 14:07:40 -0800 (PST)
+        Sun, 17 Feb 2019 17:08:07 -0500
+Received: from dalias by brightrain.aerifal.cx with local (Exim 3.15 #2)
+        id 1gvUbV-0006RA-00; Sun, 17 Feb 2019 22:08:05 +0000
+Date:   Sun, 17 Feb 2019 17:08:05 -0500
+From:   Rich Felker <dalias@libc.org>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: Regression in SYS_membarrier expedited
+Message-ID: <20190217220805.GI23599@brightrain.aerifal.cx>
+References: <20190217184800.GA16118@brightrain.aerifal.cx>
+ <53623603.9626.1550439285362.JavaMail.zimbra@efficios.com>
+ <20190217215235.GH23599@brightrain.aerifal.cx>
 MIME-Version: 1.0
-References: <20190212151413.24632-1-narmstrong@baylibre.com> <20190212151413.24632-4-narmstrong@baylibre.com>
-In-Reply-To: <20190212151413.24632-4-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sun, 17 Feb 2019 23:07:30 +0100
-Message-ID: <CAFBinCCHy5-kxFoAGUvA7KgOFTjvRFjVE962U+FS1UZnGKEOXA@mail.gmail.com>
-Subject: Re: [PATCH 3/8] dt-bindings: usb: dwc2: Add Amlogic G12A DWC2 Compatible
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     gregkh@linuxfoundation.org, hminas@synopsys.com, balbi@kernel.org,
-        kishon@ti.com, devicetree@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190217215235.GH23599@brightrain.aerifal.cx>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Neil,
+On Sun, Feb 17, 2019 at 04:52:35PM -0500, Rich Felker wrote:
+> On Sun, Feb 17, 2019 at 04:34:45PM -0500, Mathieu Desnoyers wrote:
+> > ----- On Feb 17, 2019, at 1:48 PM, Rich Felker dalias@libc.org wrote:
+> > 
+> > > commit a961e40917fb14614d368d8bc9782ca4d6a8cd11 made it so that the
+> > > MEMBARRIER_CMD_PRIVATE_EXPEDITED command cannot be used without first
+> > > registering intent to use it. However, registration is an expensive
+> > > operation since commit 3ccfebedd8cf54e291c809c838d8ad5cc00f5688, which
+> > > added synchronize_sched() to it; this means it's no longer possible to
+> > > lazily register intent at first use, and it's unreasonably expensive
+> > > to preemptively register intent for possibly extremely-short-lived
+> > > processes that will never use it. (My usage case is in libc (musl),
+> > > where I can't know if the process will be short- or long-lived;
+> > > unnecessary and potentially expensive syscalls can't be made
+> > > preemptively, only lazily at first use.)
+> > > 
+> > > Can we restore the functionality of MEMBARRIER_CMD_PRIVATE_EXPEDITED
+> > > to work even without registration? The motivation of requiring
+> > > registration seems to be:
+> > > 
+> > >    "Registering at this time removes the need to interrupt each and
+> > >    every thread in that process at the first expedited
+> > >    sys_membarrier() system call."
+> > > 
+> > > but interrupting every thread in the process is exactly what I expect,
+> > > and is not a problem. What does seem like a big problem is waiting for
+> > > synchronize_sched() to synchronize with an unboundedly large number of
+> > > cores (vs only a few threads in the process), especially in the
+> > > presence of full_nohz, where it seems like latency would be at least a
+> > > few ms and possibly unbounded.
+> > > 
+> > > Short of a working SYS_membarrier that doesn't require expensive
+> > > pre-registration, I'm stuck just implementing it in userspace with
+> > > signals...
+> > 
+> > Hi Rich,
+> > 
+> > Let me try to understand the scenario first.
+> > 
+> > musl libc support for using membarrier private expedited
+> > would require to first register membarrier private expedited for
+> > the process at musl library init (typically after exec). At that stage, the
+> > process is still single-threaded, right ? So there is no reason
+> > to issue a synchronize_sched() (or now synchronize_rcu() in newer
+> > kernels):
+> > 
+> > membarrier_register_private_expedited()
+> > 
+> >         if (!(atomic_read(&mm->mm_users) == 1 && get_nr_threads(p) == 1)) {
+> >                 /*
+> >                  * Ensure all future scheduler executions will observe the
+> >                  * new thread flag state for this process.
+> >                  */
+> >                 synchronize_rcu();
+> >         }
+> > 
+> > So considering that pre-registration carefully done before the process
+> > becomes multi-threaded just costs a system call (and not a synchronize_sched()),
+> > does it make the pre-registration approach more acceptable ?
+> 
+> It does get rid of the extreme cost, but I don't think it would be
+> well-received by users who don't like random unnecessary syscalls at
+> init time (each adding a few us of startup time cost). If it's so
+> cheap, why isn't it just the default at kernel-side process creation?
+> Why is there any requirement of registration to begin with? Reading
+> the code, it looks like all it does is set a flag, and all this flag
+> is used for is erroring-out if it's not set.
 
-On Tue, Feb 12, 2019 at 4:15 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> Adds the specific compatible string for the DWC2 IP found in the
-> Amlogic G12A SoC Family.
->
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+On further thought, pre-registration could be done at first
+pthread_create rather than process entry, which would probably be
+acceptable. But the question remains why it's needed at all, and
+neither of these approaches is available to code that doesn't have the
+privilege of being part of libc. For example, library code that might
+be loaded via dlopen can't safely use SYS_membarrier without
+introducing unbounded latency before the first use.
 
-> ---
->  Documentation/devicetree/bindings/usb/dwc2.txt | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/usb/dwc2.txt b/Documentation/devicetree/bindings/usb/dwc2.txt
-> index 6dc3c4a34483..e150b7b227c9 100644
-> --- a/Documentation/devicetree/bindings/usb/dwc2.txt
-> +++ b/Documentation/devicetree/bindings/usb/dwc2.txt
-> @@ -14,6 +14,7 @@ Required properties:
->    - "amlogic,meson8-usb": The DWC2 USB controller instance in Amlogic Meson8 SoCs;
->    - "amlogic,meson8b-usb": The DWC2 USB controller instance in Amlogic Meson8b SoCs;
->    - "amlogic,meson-gxbb-usb": The DWC2 USB controller instance in Amlogic S905 SoCs;
-> +  - "amlogic,meson-g12a-usb": The DWC2 USB controller instance in Amlogic G12A SoCs;
-if anyone is curious: starting with GXL (not supported by the dwc2
-driver yet) the dwc2 core is "peripheral mode" only while previous
-SoCs had one host-only dwc2 instance and another OTG capable dwc2
-instance
-
-I also discussed the compatible string with Neil off-list because I
-was not sure if we have unique compatible names for the dwc2
-controller and the "USB control" registers.
-The "USB control" registers are named "USBCTRL" according to Neil (I
-assume he got this information from the datasheet to which I don't
-have access). Thus the compatible string for the "USB control" device
-will be "amlogic,meson-g12a-usb-ctrl" - so we don't have any naming
-conflict.
-
-
-Regards
-Martin
+Rich
