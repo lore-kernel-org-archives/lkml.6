@@ -2,83 +2,63 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC13C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 21:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E89A8C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 21:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B02BF2186A
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 21:08:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550437708;
-	bh=VjgWKBrAGiRK1KqNr6D/pSf3vwKER3XAlgc+J1todFY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=kEUM4s6l3KpGw3qdcqJXKuk+g46dJNBnKeBAmg7d9hFeCxx2rgTeSWOVLFKp+zWhm
-	 cq30U3N+zWILQDLS9fZ8OMxqKGYCVKggvpfEBlFY5zuwXnBS9+tOmt5f9RLIylX630
-	 ee0ml9APbDsGaECN7H0ds2fAkG1t/t3V4RxwCVsk=
+	by mail.kernel.org (Postfix) with ESMTP id BAE70206B7
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 21:23:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726756AbfBQVI1 (ORCPT
+        id S1726411AbfBQVXz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 16:08:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42508 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726209AbfBQVI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 16:08:27 -0500
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34BBC218A6;
-        Sun, 17 Feb 2019 21:08:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550437706;
-        bh=VjgWKBrAGiRK1KqNr6D/pSf3vwKER3XAlgc+J1todFY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=lushgwu3PGm09zj8znG4dVyzyi3zM5Tm20wunnlIRCQ5ynOubQKTR61Z5K2jZSjFq
-         IqqfF90niZViHDjGtgSPpsXU8SwteT6gYGNWgVXtjT86ZQH0XQ4ccJclkLKm/WkUeu
-         iSJL4Kz9AHRs/I1kv88wzfOuwD4RaBlnypCh9Ekc=
-Received: by mail-qt1-f169.google.com with SMTP id o6so17135226qtk.6;
-        Sun, 17 Feb 2019 13:08:26 -0800 (PST)
-X-Gm-Message-State: AHQUAubY6vtUN73PqIGPR//4dPaf+HdCqcZUNost78zlXOsaUFVNNGsu
-        J/5pkeu+n5r/P/VxF8yazosl+lOC+zPwJWpTTw==
-X-Google-Smtp-Source: AHgI3Ia5fcrTqgzUD8CRAAUGJ6Z4NacRgN1SaCsAxVaVbCtpsAj7NuIeHCukqU4Necdf3jjX8rMNUJYZ6BLPDMU+t8g=
-X-Received: by 2002:a0c:c389:: with SMTP id o9mr15190092qvi.90.1550437705335;
- Sun, 17 Feb 2019 13:08:25 -0800 (PST)
-MIME-Version: 1.0
-References: <1549296944-17285-1-git-send-email-jcrouse@codeaurora.org> <1549296944-17285-3-git-send-email-jcrouse@codeaurora.org>
-In-Reply-To: <1549296944-17285-3-git-send-email-jcrouse@codeaurora.org>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Sun, 17 Feb 2019 15:08:14 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJ0FX=dbQb34bvZcdbWibjKnS2VXGsApT_Vz+UcjUxCSQ@mail.gmail.com>
-Message-ID: <CAL_JsqJ0FX=dbQb34bvZcdbWibjKnS2VXGsApT_Vz+UcjUxCSQ@mail.gmail.com>
-Subject: Re: [PATCH v1 2/6] dt-bindings: drm/msm/a6xx: Add GX power-domain for
- GMU bindings
-To:     Jordan Crouse <jcrouse@codeaurora.org>
-Cc:     freedreno <freedreno@lists.freedesktop.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 17 Feb 2019 16:23:55 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:41308 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726124AbfBQVXz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 16:23:55 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 4C7981208F8DD;
+        Sun, 17 Feb 2019 13:23:54 -0800 (PST)
+Date:   Sun, 17 Feb 2019 13:23:51 -0800 (PST)
+Message-Id: <20190217.132351.925628458706281010.davem@davemloft.net>
+To:     antoine.tenart@bootlin.com
+Cc:     linux@armlinux.org.uk, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
+        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
+        ymarkman@marvell.com, mw@semihalf.com
+Subject: Re: [PATCH net-next 00/13] net: mvpp2: various fixes
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190215153241.6857-1-antoine.tenart@bootlin.com>
+References: <20190215153241.6857-1-antoine.tenart@bootlin.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 17 Feb 2019 13:23:54 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 4, 2019 at 10:15 AM Jordan Crouse <jcrouse@codeaurora.org> wrote:
->
-> The GMU should have two power domains defined: "cx" and "gx". "cx" is the
-> actual power domain for the device and "gx" will be attached at runtime
-> to manage reference counting on the GPU device in case of a GMU crash.
+From: Antoine Tenart <antoine.tenart@bootlin.com>
+Date: Fri, 15 Feb 2019 16:32:28 +0100
 
-power-domains are supposed to be actual regions on a chip die which
-can be power gated. However, they are often abused by being defined in
-terms of kernel PM domains which are not always the same thing. This
-description sounds like the latter case.
+> This series contains various fixes on bugs reported to us, or bugs I
+> stumbled upon while testing the various interface configurations I have
+> access to.
+> 
+> While this series contain fixes, it's sent to net-next as it is based
+> on top of Russell's rework and fixes he sent during the last 2 weeks
+> (such as his PPv2 phylink rework) that were applied to net-next. It'll
+> also allow the users to have more time to test those changes.
 
-Rob
+Please respond to the feedback you've received.
+
+Thank you.
