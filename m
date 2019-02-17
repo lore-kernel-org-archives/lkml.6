@@ -6,30 +6,31 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07A29C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 10:39:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4589FC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 10:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C32DD21924
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 10:39:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DD8421924
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 10:40:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728340AbfBQKjo (ORCPT
+        id S1728385AbfBQKkI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 05:39:44 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44500 "EHLO mx1.suse.de"
+        Sun, 17 Feb 2019 05:40:08 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44526 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726267AbfBQKjn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 05:39:43 -0500
+        id S1726267AbfBQKkH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 05:40:07 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DAD57AF15;
-        Sun, 17 Feb 2019 10:39:41 +0000 (UTC)
-Subject: Re: [Xen-devel][PATCH 1/2] xen/gntdev: Do not destroy context while
- dma-bufs are in use
+        by mx1.suse.de (Postfix) with ESMTP id A4A63AF15;
+        Sun, 17 Feb 2019 10:40:06 +0000 (UTC)
+Subject: Re: [Xen-devel][PATCH 2/2] xen/gntdev: Check and release imported
+ dma-bufs on close
 To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
         xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         boris.ostrovsky@oracle.com
 Cc:     Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 References: <20190214142321.1138-1-andr2000@gmail.com>
+ <20190214142321.1138-2-andr2000@gmail.com>
 From:   Juergen Gross <jgross@suse.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
@@ -63,12 +64,12 @@ Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
  pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
  jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
  hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
-Message-ID: <302ff90b-32a9-58dd-ae8f-1b55813fed74@suse.com>
-Date:   Sun, 17 Feb 2019 11:39:41 +0100
+Message-ID: <24e0b031-1ae1-ad6f-c5e1-73a326e7a515@suse.com>
+Date:   Sun, 17 Feb 2019 11:40:06 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <20190214142321.1138-1-andr2000@gmail.com>
+In-Reply-To: <20190214142321.1138-2-andr2000@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: de-DE
 Content-Transfer-Encoding: 7bit
@@ -80,26 +81,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On 14/02/2019 15:23, Oleksandr Andrushchenko wrote:
 > From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 > 
-> If there are exported DMA buffers which are still in use and
-> grant device is closed by either normal user-space close or by
-> a signal this leads to the grant device context to be destroyed,
-> thus making it not possible to correctly destroy those exported
-> buffers when they are returned back to gntdev and makes the module
-> crash:
-> 
-> [  339.617540] [<ffff00000854c0d8>] dmabuf_exp_ops_release+0x40/0xa8
-> [  339.617560] [<ffff00000867a6e8>] dma_buf_release+0x60/0x190
-> [  339.617577] [<ffff0000082211f0>] __fput+0x88/0x1d0
-> [  339.617589] [<ffff000008221394>] ____fput+0xc/0x18
-> [  339.617607] [<ffff0000080ed4e4>] task_work_run+0x9c/0xc0
-> [  339.617622] [<ffff000008089714>] do_notify_resume+0xfc/0x108
-> 
-> Fix this by referencing gntdev on each DMA buffer export and
-> unreferencing on buffer release.
+> Check if there are any imported dma-bufs left not released by
+> user-space when grant device's release callback is called and
+> free those if this is the case. This can happen if user-space
+> leaks the buffers because of a bug or application has been
+> terminated for any reason.
 > 
 > Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-Applied to xen/tip.git for-linus-5.1
+Applied-to: xen/tip.git for-linus-5.1
 
 
 Juergen
