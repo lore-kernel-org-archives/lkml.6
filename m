@@ -2,99 +2,98 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30532C10F06
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 19:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9378FC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 19:12:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE4D8218A1
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 19:09:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550430595;
-	bh=+adiWGkPiL+K3hYCfEJ+APffztc5Nov+nbmucKAbpN0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=TJiGbUDiS2kxsjV7qZnPSOE4i9kTt/u2S44iEz73lUvKYtciP+msjh9GFe4XPO/VO
-	 sQVg5iDVMUZQv4GFbI0gsd1IiNaaLBu4C04TqpzxlUepTVgOtSRPdqKnD7x/rGP7Vf
-	 nRNL9HRFCnIcat6zEy3HVbU2wzMCcmrq4iVxVXG4=
+	by mail.kernel.org (Postfix) with ESMTP id 69FE221872
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 19:12:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726197AbfBQTJx (ORCPT
+        id S1726241AbfBQTMB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 14:09:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33510 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725554AbfBQTJx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 14:09:53 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1EAC821872;
-        Sun, 17 Feb 2019 19:09:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550430592;
-        bh=+adiWGkPiL+K3hYCfEJ+APffztc5Nov+nbmucKAbpN0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0hoRhj4Ry3nr8pf1qSQB67g3PNiUd/OgQxrS8YJ+iSHyy+HQLS8B7aIVoG9JaWp52
-         8t6kwjFZtIXbNRpB5HXsUgjjk8zY4KcFEnYmehjgjLBDbI8Umw+/UsoCrNPt8JxM5L
-         lCUSFVQNa78hSnrXUHC3z18ZKKVGCNq3Bu0mykSs=
-Date:   Sun, 17 Feb 2019 14:09:50 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     David Long <dave.long@linaro.org>
-Cc:     stable@vger.kernel.org,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4.9 00/16] V4.9 backport of more 32-bit arm spectre
- patches
-Message-ID: <20190217190950.GK10616@sasha-vm>
-References: <20190214144930.27539-1-dave.long@linaro.org>
+        Sun, 17 Feb 2019 14:12:01 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45906 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725991AbfBQTMA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 14:12:00 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1HJ9OFB087598
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 14:11:59 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qqddfg8me-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 14:11:59 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <akshay.adiga@linux.vnet.ibm.com>;
+        Sun, 17 Feb 2019 19:11:57 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sun, 17 Feb 2019 19:11:55 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1HJBsvx19398776
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 17 Feb 2019 19:11:54 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 15471A4053;
+        Sun, 17 Feb 2019 19:11:54 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 07F01A4051;
+        Sun, 17 Feb 2019 19:11:52 +0000 (GMT)
+Received: from aks.ibm (unknown [9.85.68.185])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Sun, 17 Feb 2019 19:11:51 +0000 (GMT)
+Date:   Mon, 18 Feb 2019 00:41:49 +0530
+From:   Akshay Adiga <akshay.adiga@linux.vnet.ibm.com>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     rjw@rjwysocki.net, viresh.kumar@linaro.org,
+        benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: powernv: fix missing check of return value in
+ init_powernv_pstates()
+References: <20190216170623.12634-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190214144930.27539-1-dave.long@linaro.org>
+In-Reply-To: <20190216170623.12634-1-tiny.windzz@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+x-cbid: 19021719-0020-0000-0000-00000317CFBB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021719-0021-0000-0000-000021690B64
+Message-Id: <20190217190155.GA25556@aks.ibm>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-17_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902170148
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Feb 14, 2019 at 09:49:14AM -0500, David Long wrote:
->From: "David A. Long" <dave.long@linaro.org>
->
->V4.9 backport of spectre patches from Russell M. King's spectre branch.
->Patches have been kvm-unit-test'ed on an arndale, run through kernelci, and
->handed off to ARM for functional testing.
->
->Julien Thierry (9):
->  ARM: 8789/1: signal: copy registers using __copy_to_user()
->  ARM: 8791/1: vfp: use __copy_to_user() when saving VFP state
->  ARM: 8792/1: oabi-compat: copy oabi events using __copy_to_user()
->  ARM: 8793/1: signal: replace __put_user_error with __put_user
->  ARM: 8794/1: uaccess: Prevent speculative use of the current
->    addr_limit
->  ARM: 8795/1: spectre-v1.1: use put_user() for __put_user()
->  ARM: 8796/1: spectre-v1,v1.1: provide helpers for address sanitization
->  ARM: 8797/1: spectre-v1.1: harden __copy_to_user
->  ARM: 8810/1: vfp: Fix wrong assignement to ufp_exc
->
->Russell King (7):
->  ARM: make lookup_processor_type() non-__init
->  ARM: split out processor lookup
->  ARM: clean up per-processor check_bugs method call
->  ARM: add PROC_VTABLE and PROC_TABLE macros
->  ARM: spectre-v2: per-CPU vtables to work around big.Little systems
->  ARM: ensure that processor vtables is not lost after boot
->  ARM: fix the cockup in the previous patch
+On Sat, Feb 16, 2019 at 12:06:23PM -0500, Yangtao Li wrote:
+> kmalloc() could fail, so insert a check of its return value. And
+> if it fails, returns -ENOMEM.
+> 
+> And remove (struct pstate_idx_revmap_data *) to fix coccinelle WARNING
+> by the way.
+> 
+> WARNING: casting value returned by memory allocation function to (struct
+> pstate_idx_revmap_data *) is useless.
+> 
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/cpufreq/powernv-cpufreq.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+Looks good to me. Thanks for fixing this.
 
-Queued for 4.9, thank you.
-
---
-Thanks,
-Sasha
