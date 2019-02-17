@@ -2,155 +2,116 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1577C4360F
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 03:55:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B267C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 04:22:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 996BE21B69
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 03:55:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F4B62192C
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 04:22:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730209AbfBQDzX (ORCPT
+        id S1730331AbfBQEWs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Feb 2019 22:55:23 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3751 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727723AbfBQDzS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Feb 2019 22:55:18 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 83BDC6C44685C937A2C7;
-        Sun, 17 Feb 2019 11:55:15 +0800 (CST)
-Received: from linux-ibm.site (10.175.102.37) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.408.0; Sun, 17 Feb 2019 11:55:08 +0800
-From:   Xiongfeng Wang <wangxiongfeng2@huawei.com>
-To:     <viresh.kumar@linaro.org>, <rafael@kernel.org>,
-        <gcherianv@gmail.com>, <pprakash@codeaurora.org>,
-        <george.cherian@cavium.com>, <robert.moore@intel.com>
-CC:     <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <guohanjun@huawei.com>, <wangxiongfeng2@huawei.com>,
-        <john.garry@huawei.com>
-Subject: [PATCH v3 2/2] cpufreq / cppc: Work around for Hisilicon CPPC cpufreq
-Date:   Sun, 17 Feb 2019 11:54:15 +0800
-Message-ID: <1550375655-58007-3-git-send-email-wangxiongfeng2@huawei.com>
-X-Mailer: git-send-email 1.7.12.4
-In-Reply-To: <1550375655-58007-1-git-send-email-wangxiongfeng2@huawei.com>
-References: <1550375655-58007-1-git-send-email-wangxiongfeng2@huawei.com>
+        Sat, 16 Feb 2019 23:22:48 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:55254 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726168AbfBQEWs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Feb 2019 23:22:48 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.91 #2 (Red Hat Linux))
+        id 1gvDxx-0000Dt-7e; Sun, 17 Feb 2019 04:22:12 +0000
+Date:   Sun, 17 Feb 2019 04:22:09 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Arthur Gautier <baloo@gandi.net>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jann Horn <jannh@google.com>,
+        the arch/x86 maintainers <x86@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Pascal Bouchareine <pascal@gandi.net>
+Subject: Re: [PATCH] x86: uaccess: fix regression in unsafe_get_user
+Message-ID: <20190217042201.GU2217@ZenIV.linux.org.uk>
+References: <20190215235901.23541-1-baloo@gandi.net>
+ <CAG48ez2tYizTKncevLF=AMQ2nm3D=SqGHH5bM5f-U0fhQ1nL9Q@mail.gmail.com>
+ <alpine.DEB.2.21.1902161358160.1683@nanos.tec.linutronix.de>
+ <4F2693EA-1553-4F09-9475-781305540DBC@amacapital.net>
+ <20190216234702.GP2217@ZenIV.linux.org.uk>
+ <20190217034121.bs3q3sgevexmdt3d@khany>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.102.37]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190217034121.bs3q3sgevexmdt3d@khany>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hisilicon chips do not support delivered performance counter register
-and reference performance counter register. But the platform can
-calculate the real performance using its own method. We reuse the
-desired performance register to store the real performance calculated by
-the platform. After the platform finished the frequency adjust, it gets
-the real performance and writes it into desired performance register. Os
-can use it to calculate the real frequency.
+On Sun, Feb 17, 2019 at 03:41:21AM +0000, Arthur Gautier wrote:
+> On Sat, Feb 16, 2019 at 11:47:02PM +0000, Al Viro wrote:
+> > On Sat, Feb 16, 2019 at 02:50:15PM -0800, Andy Lutomirski wrote:
+> > 
+> > > What is the actual problem?  We’re not actually demand-faulting this data, are we?  Are we just overrunning the buffer because the from_user helpers are too clever?  Can we fix it for real by having the fancy helpers do *aligned* loads so that they don’t overrun the buffer?  Heck, this might be faster, too.
+> > 
+> > Unaligned _stores_ are not any cheaper, and you'd get one hell of
+> > extra arithmetics from trying to avoid both.  Check something
+> > like e.g. memcpy() on alpha, where you really have to keep all
+> > accesses aligned, both on load and on store side.
+> > 
+> > Can't we just pad the buffers a bit?  Making sure that name_buf
+> > and symlink_buf are _not_ followed by unmapped pages shouldn't
+> > be hard.  Both are allocated by kmalloc(), so...
+> 
+> We cannot change alignment rules here. The input buffer string we're
+> reading is coming from an cpio formated file and the format is
+> defined by cpio(5).
+> Nothing much we can do there I'm afraid. Input buffer is defined to
+> be 4-byte aligned.
 
-Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
----
- drivers/cpufreq/cppc_cpufreq.c | 66 ++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+Who says anything about changing the format of the file?  At least
+one trivial way to handle that would be this:
 
-diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-index fd25c21c..efc0298 100644
---- a/drivers/cpufreq/cppc_cpufreq.c
-+++ b/drivers/cpufreq/cppc_cpufreq.c
-@@ -42,6 +42,67 @@
-  */
- static struct cppc_cpudata **all_cpu_data;
- 
-+struct cppc_workaround_oem_info {
-+	char oem_id[ACPI_OEM_ID_SIZE +1];
-+	char oem_table_id[ACPI_OEM_TABLE_ID_SIZE + 1];
-+	u32 oem_revision;
-+};
-+
-+static bool apply_hisi_workaround;
-+
-+static struct cppc_workaround_oem_info wa_info[] = {
-+	{
-+		.oem_id		= "HISI  ",
-+		.oem_table_id	= "HIP07   ",
-+		.oem_revision	= 0,
-+	}, {
-+		.oem_id		= "HISI  ",
-+		.oem_table_id	= "HIP08   ",
-+		.oem_revision	= 0,
-+	}
-+};
-+
-+static unsigned int cppc_cpufreq_perf_to_khz(struct cppc_cpudata *cpu,
-+					unsigned int perf);
-+
-+/*
-+ * HISI platform does not support delivered performance counter and
-+ * reference performance counter. It can calculate the performance using the
-+ * platform specific mechanism. We reuse the desired performance register to
-+ * store the real performance calculated by the platform.
-+ */
-+static unsigned int hisi_cppc_cpufreq_get_rate(unsigned int cpunum)
-+{
-+	struct cppc_cpudata *cpudata = all_cpu_data[cpunum];
-+	u64 desired_perf;
-+	int ret;
-+
-+	ret = cppc_get_desired_perf(cpunum, &desired_perf);
-+	if (ret < 0)
-+		return -EIO;
-+
-+	return cppc_cpufreq_perf_to_khz(cpudata, desired_perf);
-+}
-+
-+static void cppc_check_hisi_workaround(void)
-+{
-+	struct acpi_table_header *tbl;
-+	acpi_status status = AE_OK;
-+	int i;
-+
-+	status = acpi_get_table(ACPI_SIG_PCCT, 0, &tbl);
-+	if (ACPI_FAILURE(status) || !tbl)
-+		return;
-+
-+	for (i = 0; i < ARRAY_SIZE(wa_info); i++) {
-+		if (!memcmp(wa_info[i].oem_id, tbl->oem_id, ACPI_OEM_ID_SIZE) &&
-+		    !memcmp(wa_info[i].oem_table_id, tbl->oem_table_id, ACPI_OEM_TABLE_ID_SIZE) &&
-+		    wa_info[i].oem_revision == tbl->oem_revision) {
-+			apply_hisi_workaround = true;
-+		}
-+	}
-+}
-+
- /* Callback function used to retrieve the max frequency from DMI */
- static void cppc_find_dmi_mhz(const struct dmi_header *dm, void *private)
- {
-@@ -334,6 +395,9 @@ static unsigned int cppc_cpufreq_get_rate(unsigned int cpunum)
- 	struct cppc_cpudata *cpu = all_cpu_data[cpunum];
- 	int ret;
- 
-+	if (apply_hisi_workaround)
-+		return hisi_cppc_cpufreq_get_rate(cpunum);
-+
- 	ret = cppc_get_perf_ctrs(cpunum, &fb_ctrs_t0);
- 	if (ret)
- 		return ret;
-@@ -386,6 +450,8 @@ static int __init cppc_cpufreq_init(void)
- 		goto out;
+diff --git a/init/initramfs.c b/init/initramfs.c
+index 7cea802d00ef..edbddfb73106 100644
+--- a/init/initramfs.c
++++ b/init/initramfs.c
+@@ -265,8 +265,12 @@ static int __init do_header(void)
+ 		state = Collect;
+ 		return 0;
  	}
+-	if (S_ISREG(mode) || !body_len)
+-		read_into(name_buf, N_ALIGN(name_len), GotName);
++	if (S_ISREG(mode) || !body_len) {
++		collect = collected = name_buf;
++		remains = N_ALIGN(name_len);
++		next_state = GotName;
++		state = Collect;
++	}
+ 	return 0;
+ }
  
-+	cppc_check_hisi_workaround();
-+
- 	ret = cpufreq_register_driver(&cppc_cpufreq_driver);
- 	if (ret)
- 		goto out;
--- 
-1.7.12.4
+Another would be to have the buffer passed to flush_buffer() (i.e.
+the callback of decompress_fn) allocated with 4 bytes of padding
+past the part where the unpacked piece of data is placed for the
+callback to find.  As in,
 
+diff --git a/lib/decompress_inflate.c b/lib/decompress_inflate.c
+index 63b4b7eee138..ca3f7ecc9b35 100644
+--- a/lib/decompress_inflate.c
++++ b/lib/decompress_inflate.c
+@@ -48,7 +48,7 @@ STATIC int INIT __gunzip(unsigned char *buf, long len,
+ 	rc = -1;
+ 	if (flush) {
+ 		out_len = 0x8000; /* 32 K */
+-		out_buf = malloc(out_len);
++		out_buf = malloc(out_len + 4);
+ 	} else {
+ 		if (!out_len)
+ 			out_len = ((size_t)~0) - (size_t)out_buf; /* no limit */
+
+for gunzip/decompress and similar ones for bzip2, etc.  The contents
+layout doesn't have anything to do with that...
