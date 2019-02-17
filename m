@@ -6,32 +6,33 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F2BC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 22:32:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF17C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 22:36:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E4372177B
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 22:32:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDE1D218AC
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 22:36:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727383AbfBQWc2 (ORCPT
+        id S1727021AbfBQWgc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 17:32:28 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:41718 "EHLO
+        Sun, 17 Feb 2019 17:36:32 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:41748 "EHLO
         youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726283AbfBQWc1 (ORCPT
+        with ESMTP id S1726283AbfBQWgb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 17:32:27 -0500
+        Sun, 17 Feb 2019 17:36:31 -0500
 Received: from cpc129250-craw9-2-0-cust139.know.cable.virginm.net ([82.43.126.140] helo=localhost)
         by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
         (Exim 4.76)
         (envelope-from <colin.king@canonical.com>)
-        id 1gvUz0-0007g3-Bi; Sun, 17 Feb 2019 22:32:22 +0000
+        id 1gvV2w-0007sJ-TV; Sun, 17 Feb 2019 22:36:26 +0000
 From:   Colin King <colin.king@canonical.com>
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>
+To:     Christoffer Dall <christoffer.dall@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
 Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] tracing: fix spelling mistake: "analagous" -> "analogous"
-Date:   Sun, 17 Feb 2019 22:32:22 +0000
-Message-Id: <20190217223222.16479-1-colin.king@canonical.com>
+Subject: [PATCH] KVM: arm/arm64: fix spelling mistake: "auxilary" -> "auxiliary"
+Date:   Sun, 17 Feb 2019 22:36:26 +0000
+Message-Id: <20190217223626.16686-1-colin.king@canonical.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -43,26 +44,26 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Colin Ian King <colin.king@canonical.com>
 
-There is a spelling mistake in the mini-howto help text. Fix it.
+There is a spelling mistake in a kvm_err error message. Fix it.
 
 Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- kernel/trace/trace.c | 2 +-
+ virt/kvm/arm/arm.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index f380139e972c..4dd8a52a71e0 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -4740,7 +4740,7 @@ static const char readme_msg[] =
- 	"\t    unchanged.\n\n"
- 	"\t    The enable_hist and disable_hist triggers can be used to\n"
- 	"\t    have one event conditionally start and stop another event's\n"
--	"\t    already-attached hist trigger.  The syntax is analagous to\n"
-+	"\t    already-attached hist trigger.  The syntax is analogous to\n"
- 	"\t    the enable_event and disable_event triggers.\n"
- #endif
- ;
+diff --git a/virt/kvm/arm/arm.c b/virt/kvm/arm/arm.c
+index 7fcc1c8c4020..99c37384ba7b 100644
+--- a/virt/kvm/arm/arm.c
++++ b/virt/kvm/arm/arm.c
+@@ -1563,7 +1563,7 @@ static int init_hyp_mode(void)
+ 
+ 	err = hyp_map_aux_data();
+ 	if (err)
+-		kvm_err("Cannot map host auxilary data: %d\n", err);
++		kvm_err("Cannot map host auxiliary data: %d\n", err);
+ 
+ 	return 0;
+ 
 -- 
 2.20.1
 
