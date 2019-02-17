@@ -4,38 +4,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22470C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 15:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C5AC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 15:22:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFCA621A4A
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 15:20:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAAB221A4A
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 15:22:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728051AbfBQPU2 (ORCPT
+        id S1728106AbfBQPWT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 10:20:28 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:47366 "EHLO
+        Sun, 17 Feb 2019 10:22:19 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:28781 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726638AbfBQPU1 (ORCPT
+        with ESMTP id S1726638AbfBQPWS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 10:20:27 -0500
-X-UUID: 45d20fadf37449348b6f3cf149b71e45-20190217
-X-UUID: 45d20fadf37449348b6f3cf149b71e45-20190217
-Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
+        Sun, 17 Feb 2019 10:22:18 -0500
+X-UUID: a26959f352a54f68853e9215304ece92-20190217
+X-UUID: a26959f352a54f68853e9215304ece92-20190217
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw01.mediatek.com
         (envelope-from <jitao.shi@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 284467705; Sun, 17 Feb 2019 23:20:09 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31N1.mediatek.inc
- (172.27.4.69) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sun, 17 Feb
- 2019 23:20:06 +0800
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1586695015; Sun, 17 Feb 2019 23:22:13 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by mtkmbs01n2.mediatek.inc
+ (172.21.101.79) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sun, 17 Feb
+ 2019 23:22:08 +0800
 Received: from [10.16.6.141] (10.16.6.141) by MTKCAS32.mediatek.inc
  (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Sun, 17 Feb 2019 23:20:05 +0800
-Message-ID: <1550416804.5194.35.camel@mszsdaap41>
+ Transport; Sun, 17 Feb 2019 23:22:06 +0800
+Message-ID: <1550416925.5194.37.camel@mszsdaap41>
 Subject: Re: [PATCH] drm/mediatek: add mt8183 dpi support
 From:   Jitao Shi <jitao.shi@mediatek.com>
-To:     Sean Paul <sean@poorly.run>
+To:     CK Hu <ck.hu@mediatek.com>
 CC:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
         "Mark Rutland" <mark.rutland@arm.com>,
         Ian Campbell <ijc+devicetree@hellion.org.uk>,
@@ -59,23 +59,26 @@ CC:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
         Sascha Hauer <kernel@pengutronix.de>,
         <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
         <cawa.cheng@mediatek.com>, <bibby.hsieh@mediatek.com>,
-        <ck.hu@mediatek.com>, <stonea168@163.com>
-Date:   Sun, 17 Feb 2019 23:20:04 +0800
-In-Reply-To: <20190214204149.GO114153@art_vandelay>
+        <stonea168@163.com>
+Date:   Sun, 17 Feb 2019 23:22:05 +0800
+In-Reply-To: <1550160809.6862.13.camel@mtksdaap41>
 References: <20190211045059.11821-1-jitao.shi@mediatek.com>
-         <20190214204149.GO114153@art_vandelay>
+         <1550160809.6862.13.camel@mtksdaap41>
 Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 713BAB53D83005796D2FB33DDFC99B1B13E2A54688CC2F133817900CBAC11BDF2000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-02-14 at 15:41 -0500, Sean Paul wrote:
-> On Mon, Feb 11, 2019 at 12:50:59PM +0800, Jitao Shi wrote:
+On Fri, 2019-02-15 at 00:13 +0800, CK Hu wrote:
+> Hi, Jitao:
+> 
+> On Mon, 2019-02-11 at 12:50 +0800, Jitao Shi wrote:
 > > MT8183 sample on rising and falling edge. It can reduce half data io.
 > > 
 > > Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
@@ -105,6 +108,21 @@ On Thu, 2019-02-14 at 15:41 -0500, Sean Paul wrote:
 > > +		     DDR_EN | DDR_4PHASE);
 > > +	mtk_dpi_mask(dpi, DPI_OUTPUT_SETTING, EDGE_SEL, EDGE_SEL);
 > > +}
+> 
+> All these register exist in MT8173, if you do the same setting in
+> MT8173, could it also sample on rising edge and falling edge?
+> 
+> Regards,
+> CK
+> 
+
+I'll fix is next version.
+
+Thanks for your review.
+
+Best Regards.
+Jitao
+
 > > +
 > >  static void mtk_dpi_config_color_format(struct mtk_dpi *dpi,
 > >  					enum mtk_dpi_out_color_format format)
@@ -153,26 +171,12 @@ On Thu, 2019-02-14 at 15:41 -0500, Sean Paul wrote:
 > >  	  .data = &mt8173_conf,
 > >  	},
 > > +	{ .compatible = "mediatek,mt8183-dpi",
-> 
-> Do you need to add this compatible value to the dt binding? If you can do as CK
-> suggested, maybe you don't need this at all (and mt8183 can use the mt8173
-> compatible string in the dt).
-> 
-> Sean
-> 
-
-Yes, CK is right. 
-
-I'll move it to mt8173.
-
 > > +	  .data = &mt8183_conf,
 > > +	},
 > >  	{ },
 > >  };
 > >  
-> > -- 
-> > 2.12.5
-> > 
+> 
 > 
 
 
