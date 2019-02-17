@@ -2,216 +2,174 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3AFFC43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 23:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 818ACC43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 23:44:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 755AF217D9
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 23:43:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nYmtdpu5"
+	by mail.kernel.org (Postfix) with ESMTP id 4EFB8218A6
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 23:44:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727718AbfBQXnw (ORCPT
+        id S1727781AbfBQXoF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 18:43:52 -0500
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:36501 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727024AbfBQXnv (ORCPT
+        Sun, 17 Feb 2019 18:44:05 -0500
+Received: from mail-it1-f197.google.com ([209.85.166.197]:42666 "EHLO
+        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727725AbfBQXoE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 18:43:51 -0500
-Received: by mail-qk1-f193.google.com with SMTP id o125so9048866qkf.3
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 15:43:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3ANnZaosomtu0eO0QJ89wPkXqbFXXuBOppyqsrgxGRY=;
-        b=nYmtdpu5zEqhIF7OM4oCJACO/rz/y8uDDRgS2OUPlzkrNyYGykmEWswCOxmdHSG60g
-         wecUbBbOKwm9NreKo/Y3ZUR19kpeAowIItD7PaokFsWEvXiBv2/WxSIH62quzREovOwp
-         s5D26uxOGFLxEjMnKqvW0N8ucU2O50d9yJGIs=
+        Sun, 17 Feb 2019 18:44:04 -0500
+Received: by mail-it1-f197.google.com with SMTP id f137so27752496ita.7
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 15:44:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3ANnZaosomtu0eO0QJ89wPkXqbFXXuBOppyqsrgxGRY=;
-        b=W/uGpMWjxNjEFrqdrku+aA71ILKv828iY24W63UpMFn/PO0Ugzh8/jEJdo+yBHKD8y
-         ZcZTe0ruBUT54V9p45D8H7kxKnCBlVRER7tOf0pwly5pUUPB/H1piytnd43Mu2OvEw4W
-         N3wwTkp6P2NPmM8jOlP9BOFZlw/B5G3e6xs8Cqmw7Q7SA6iLYVccF2DFjVFTWWj9U6zk
-         +3CzlCnfCFyGoDvX2sRG30OMANV7d1S5/DOyaHTG8amqAu7OGsFHjZ/G3H7620muKO+l
-         gg/mAmI77hqDGhvdR4iA/9iDntUffXvg80Nsn2mDTHUh/4+xKwAN++asvnsll+gPhBhT
-         c0gQ==
-X-Gm-Message-State: AHQUAuavrf/j507FHQgwPEMlWJHan1tRIdaJjXOCtGmAHBKrwfjJEACv
-        GyjF2miHy/6Q57wa5r2OwyxBvq47j7/BdYWx+D+tJQ==
-X-Google-Smtp-Source: AHgI3IZYl9OJmbvsHzthxXJCmZiPBIhrFjAmQcOYBiNihq0RAmNLOKfwn3R6weCrtKgbkDlK+9EokuCbUr12WseaCW0=
-X-Received: by 2002:a37:634b:: with SMTP id x72mr13039324qkb.151.1550447029715;
- Sun, 17 Feb 2019 15:43:49 -0800 (PST)
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=MEE45OwtXckN3RoR5WDv6OS9ifLmgTuqveb8FSAFJhk=;
+        b=KIQSHsC+F2JWidMnWxhj8T6J6smrBApQydEHNI938iSw5rAplQvyHNzMefc38ps1la
+         G20DIhBnjkFY3YrutoZvywGdhCnYmDfzGqBxoY3dZPPtusTxaRVTgHQlddxACI9o9MGu
+         L1DXDAg/4UD7sdRcpcbCE1UgZLzWxi+zrBxDZLBRHiAdH+0u/z7e8Ou3WMi4P6Pr7Mql
+         lG74j2xFGUpiqtpvlJlulvUyFRoH9bWgIaa3nCdOdiE0P64gofV9rknIyJR8wzwHMBiV
+         U4Z+Y984lU5xl2gxOooLspgLcHb+OP/te150hQSiPFRc4wly6qPRiEV3DbzQjAIcMzRz
+         XJ+w==
+X-Gm-Message-State: AHQUAuZliPYLSHcgo2llMtJUWOgY6kQl74zJhp0/3dnvjbUAAjfKlrzg
+        ddRWKO+9HmbzwIKgpziesenQMw7QCh6HZk5YnB+MIMLCw3hb
+X-Google-Smtp-Source: AHgI3IYZMclTpMHhOMo5hMRFmQc4hfDe8YsDpwWIp4ZLUO+/vcuJj6aeL6UN8MLK8YbDUs7s7HMpvO1+8Mc5i/E+mLwid4BEF1zj
 MIME-Version: 1.0
-References: <20190214044243.129920-1-jitao.shi@mediatek.com>
- <20190214044243.129920-3-jitao.shi@mediatek.com> <CANMq1KBR-CpjAtj6qTEjK8PA2DUW3w_-OP_EyE7uoaojGLoGLg@mail.gmail.com>
- <1550414892.5194.17.camel@mszsdaap41>
-In-Reply-To: <1550414892.5194.17.camel@mszsdaap41>
-From:   Nicolas Boichat <drinkcat@chromium.org>
-Date:   Mon, 18 Feb 2019 07:43:38 +0800
-Message-ID: <CANMq1KD9QsmeB0D-GW1pvpDsNER7y23mep8Yf-VPveL+mTELwg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] drm/mediatek: add mt8183 dsi driver support
-To:     Jitao Shi <jitao.shi@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>, linux-pwm@vger.kernel.org,
-        David Airlie <airlied@linux.ie>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Ajay Kumar <ajaykumar.rs@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Rahul Sharma <rahul.sharma@samsung.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Vincent Palatin <vpalatin@chromium.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        devicetree@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>, srv_heupstream@mediatek.com,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        Eddie Huang <eddie.huang@mediatek.com>,
-        cawa cheng <cawa.cheng@mediatek.com>,
-        =?UTF-8?B?QmliYnkgSHNpZWggKOisnea/n+mBoCk=?= 
-        <bibby.hsieh@mediatek.com>, CK HU <ck.hu@mediatek.com>,
-        stonea168@163.com
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a02:97da:: with SMTP id v26mr12529997jaj.1.1550447043276;
+ Sun, 17 Feb 2019 15:44:03 -0800 (PST)
+Date:   Sun, 17 Feb 2019 15:44:03 -0800
+In-Reply-To: <000000000000db5b24057dbe0ab9@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000041f96405821f9524@google.com>
+Subject: Re: INFO: rcu detected stall in netlink_sendmsg
+From:   syzbot <syzbot+a910a514846e27f15348@syzkaller.appspotmail.com>
+To:     coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
+        herbert@gondor.apana.org.au, kadlec@blackhole.kfki.hu,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, pablo@netfilter.org,
+        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 17, 2019 at 10:48 PM Jitao Shi <jitao.shi@mediatek.com> wrote:
->
-> On Thu, 2019-02-14 at 13:54 +0800, Nicolas Boichat wrote:
-> > On Thu, Feb 14, 2019 at 12:43 PM Jitao Shi <jitao.shi@mediatek.com> wrote:
-> > >
-> > > MT8183 dsi has two changes with mt8173.
-> > > 1. Add the register double buffer control, but we no need it, So make
-> > >    it default off.
-> >
-> > Can you describe a little bit more what this is about? That's shadow
-> > registers, right?
-> >
->
-> Yes, it is shadow registers.
->
-> Jitao
->
-> > > 2. Add picture size control.
-> > >
-> > > Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
-> > > ---
-> > >  drivers/gpu/drm/mediatek/mtk_dsi.c | 20 +++++++++++++++++++-
-> > >  1 file changed, 19 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> > > index 80db02a25cb0..20cb53f05d42 100644
-> > > --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-> > > +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> > > @@ -78,6 +78,7 @@
-> > >  #define DSI_VBP_NL             0x24
-> > >  #define DSI_VFP_NL             0x28
-> > >  #define DSI_VACT_NL            0x2C
-> > > +#define DSI_SIZE_CON           0x38
-> > >  #define DSI_HSA_WC             0x50
-> > >  #define DSI_HBP_WC             0x54
-> > >  #define DSI_HFP_WC             0x58
-> > > @@ -131,7 +132,10 @@
-> > >  #define VM_CMD_EN                      BIT(0)
-> > >  #define TS_VFP_EN                      BIT(5)
-> > >
-> > > -#define DSI_CMDQ0              0x180
-> >
-> > As I said earlier, move this to 2/3.
-> >
->
-> Thank for you review.
-> I'll move it to 2/3 next version.
->
-> Best Regards
-> Jitao
->
-> > > +#define DSI_SHADOW_DEBUG       0x190U
-> > > +#define FORCE_COMMIT           BIT(0)
-> > > +#define BYPASS_SHADOW          BIT(1)
-> > > +
-> > >  #define CONFIG                         (0xff << 0)
-> > >  #define SHORT_PACKET                   0
-> > >  #define LONG_PACKET                    2
-> > > @@ -158,6 +162,7 @@ struct phy;
-> > >
-> > >  struct mtk_dsi_driver_data {
-> > >         const u32 reg_cmdq_off;
-> > > +       bool has_size_ctl;
-> > >  };
-> > >
-> > >  struct mtk_dsi {
-> > > @@ -426,6 +431,9 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
-> > >         writel(vm->vfront_porch, dsi->regs + DSI_VFP_NL);
-> > >         writel(vm->vactive, dsi->regs + DSI_VACT_NL);
-> > >
-> > > +       if (dsi->driver_data->has_size_ctl)
-> > > +               writel(vm->vactive << 16 | vm->hactive, dsi->regs + DSI_SIZE_CON);
-> > > +
-> > >         horizontal_sync_active_byte = (vm->hsync_len * dsi_tmp_buf_bpp - 10);
-> > >
-> > >         if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
-> > > @@ -595,6 +603,9 @@ static int mtk_dsi_poweron(struct mtk_dsi *dsi)
-> > >         }
-> > >
-> > >         mtk_dsi_enable(dsi);
-> > > +
-> > > +       /* DSI no need this double buffer, disable it when writing register */
-> >
-> > "DSI does not need double buffering, disable it when writing register"
-> >
->
-> I'll fix it next version.
+syzbot has found a reproducer for the following crash on:
 
-In that case, please say something about "shadow registers". (maybe
-it's just me, but usually double-buffering is associated with
-framebuffer data, not register settings)
+HEAD commit:    8d33316d5205 Merge branch 'x86-urgent-for-linus' of git://..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14d5f3bcc00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ee434566c893c7b1
+dashboard link: https://syzkaller.appspot.com/bug?extid=a910a514846e27f15348
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13923b60c00000
 
-> > > +       writel(FORCE_COMMIT | BYPASS_SHADOW, dsi->regs + DSI_SHADOW_DEBUG);
-> >
-> > So you do this on all MT* variants, is that ok?
-> >
-> > >         mtk_dsi_reset_engine(dsi);
-> > >         mtk_dsi_phy_timconfig(dsi);
-> > >
-> > > @@ -1090,11 +1101,18 @@ static const struct mtk_dsi_driver_data mt2701_dsi_driver_data = {
-> > >         .reg_cmdq_off = 0x180,
-> > >  };
-> > >
-> > > +static const struct mtk_dsi_driver_data mt8183_dsi_driver_data = {
-> > > +       .reg_cmdq_off = 0x200,
-> > > +       .has_size_ctl = true,
-> > > +};
-> > > +
-> > >  static const struct of_device_id mtk_dsi_of_match[] = {
-> > >         { .compatible = "mediatek,mt2701-dsi",
-> > >           .data = &mt2701_dsi_driver_data },
-> > >         { .compatible = "mediatek,mt8173-dsi",
-> > >           .data = &mt8173_dsi_driver_data },
-> > > +       { .compatible = "mediatek,mt8183-dsi",
-> > > +         .data = &mt8183_dsi_driver_data },
-> > >         { },
-> > >  };
-> > >
-> > > --
-> > > 2.20.1
-> > >
->
->
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+a910a514846e27f15348@syzkaller.appspotmail.com
+
+kernel msg: ebtables bug: please report to author: Entries_size never zero
+kernel msg: ebtables bug: please report to author: Entries_size never zero
+kernel msg: ebtables bug: please report to author: Entries_size never zero
+kernel msg: ebtables bug: please report to author: Entries_size never zero
+32-bit node address hash set to aa1414ac
+rcu: INFO: rcu_preempt self-detected stall on CPU
+rcu: 	1-....: (1 GPs behind) idle=5aa/1/0x4000000000000002  
+softirq=10469/10470 fqs=5225
+rcu: 	 (t=10500 jiffies g=6081 q=489)
+NMI backtrace for cpu 1
+CPU: 1 PID: 7809 Comm: syz-executor.3 Not tainted 5.0.0-rc6+ #76
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  nmi_cpu_backtrace.cold+0x63/0xa4 lib/nmi_backtrace.c:101
+  nmi_trigger_cpumask_backtrace+0x1be/0x236 lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_single_cpu_backtrace include/linux/nmi.h:164 [inline]
+  rcu_dump_cpu_stacks+0x183/0x1cf kernel/rcu/tree.c:1211
+  print_cpu_stall kernel/rcu/tree.c:1348 [inline]
+  check_cpu_stall kernel/rcu/tree.c:1422 [inline]
+  rcu_pending kernel/rcu/tree.c:3018 [inline]
+  rcu_check_callbacks.cold+0x500/0xa4a kernel/rcu/tree.c:2521
+  update_process_times+0x32/0x80 kernel/time/timer.c:1635
+  tick_sched_handle+0xa2/0x190 kernel/time/tick-sched.c:161
+  tick_sched_timer+0x47/0x130 kernel/time/tick-sched.c:1271
+  __run_hrtimer kernel/time/hrtimer.c:1389 [inline]
+  __hrtimer_run_queues+0x33e/0xde0 kernel/time/hrtimer.c:1451
+  hrtimer_interrupt+0x314/0x770 kernel/time/hrtimer.c:1509
+  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1035 [inline]
+  smp_apic_timer_interrupt+0x120/0x570 arch/x86/kernel/apic/apic.c:1060
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
+  </IRQ>
+RIP: 0010:check_memory_region+0x21/0x190 mm/kasan/generic.c:190
+Code: 2e 0f 1f 84 00 00 00 00 00 48 85 f6 0f 84 21 01 00 00 48 b8 ff ff ff  
+ff ff 7f ff ff 55 0f b6 d2 48 39 c7 48 89 e5 41 55 41 54 <53> 0f 86 f6 00  
+00 00 4c 8d 5c 37 ff 49 89 f8 48 b8 00 00 00 00 00
+RSP: 0018:ffff88808b8fea60 EFLAGS: 00000212 ORIG_RAX: ffffffffffffff13
+RAX: ffff7fffffffffff RBX: ffffe8ffffd2f348 RCX: ffffffff8157be27
+RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffffe8ffffd2f348
+RBP: ffff88808b8fea70 R08: 1ffffd1ffffa5e69 R09: fffff91ffffa5e6a
+R10: fffff91ffffa5e69 R11: ffffe8ffffd2f34b R12: 0000000000000001
+R13: 0000000000000003 R14: fffff91ffffa5e69 R15: 00000000000005e8
+  kasan_check_read+0x11/0x20 mm/kasan/common.c:100
+  atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
+  virt_spin_lock arch/x86/include/asm/qspinlock.h:83 [inline]
+  native_queued_spin_lock_slowpath+0xb7/0x970 kernel/locking/qspinlock.c:337
+  pv_queued_spin_lock_slowpath arch/x86/include/asm/paravirt.h:653 [inline]
+  queued_spin_lock_slowpath arch/x86/include/asm/qspinlock.h:50 [inline]
+  queued_spin_lock include/asm-generic/qspinlock.h:90 [inline]
+  do_raw_spin_lock+0x20e/0x2e0 kernel/locking/spinlock_debug.c:113
+  __raw_spin_lock include/linux/spinlock_api_smp.h:143 [inline]
+  _raw_spin_lock+0x37/0x40 kernel/locking/spinlock.c:144
+  spin_lock include/linux/spinlock.h:329 [inline]
+  nf_ct_add_to_unconfirmed_list net/netfilter/nf_conntrack_core.c:462  
+[inline]
+  init_conntrack.isra.0+0xa15/0x1180 net/netfilter/nf_conntrack_core.c:1437
+  resolve_normal_ct net/netfilter/nf_conntrack_core.c:1479 [inline]
+  nf_conntrack_in+0xa68/0x1070 net/netfilter/nf_conntrack_core.c:1585
+  ipv4_conntrack_local+0x169/0x210 net/netfilter/nf_conntrack_proto.c:444
+  nf_hook_entry_hookfn include/linux/netfilter.h:119 [inline]
+  nf_hook_slow+0xbf/0x1f0 net/netfilter/core.c:511
+  nf_hook include/linux/netfilter.h:244 [inline]
+  __ip_local_out+0x403/0x880 net/ipv4/ip_output.c:113
+  ip_local_out+0x2d/0x1b0 net/ipv4/ip_output.c:122
+  iptunnel_xmit+0x58e/0x980 net/ipv4/ip_tunnel_core.c:91
+  udp_tunnel_xmit_skb+0x236/0x310 net/ipv4/udp_tunnel.c:200
+  tipc_udp_xmit.isra.0+0x7fd/0xcc0 net/tipc/udp_media.c:181
+  tipc_udp_send_msg+0x295/0x4a0 net/tipc/udp_media.c:247
+  tipc_bearer_xmit_skb+0x172/0x360 net/tipc/bearer.c:503
+  tipc_enable_bearer+0xac4/0xd20 net/tipc/bearer.c:328
+  __tipc_nl_bearer_enable+0x2d1/0x3b0 net/tipc/bearer.c:899
+  tipc_nl_bearer_enable+0x23/0x40 net/tipc/bearer.c:907
+  genl_family_rcv_msg+0x6e1/0xd90 net/netlink/genetlink.c:601
+  genl_rcv_msg+0xca/0x16c net/netlink/genetlink.c:626
+  netlink_rcv_skb+0x17a/0x460 net/netlink/af_netlink.c:2477
+  genl_rcv+0x29/0x40 net/netlink/genetlink.c:637
+  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+  netlink_unicast+0x536/0x720 net/netlink/af_netlink.c:1336
+  netlink_sendmsg+0x8ae/0xd70 net/netlink/af_netlink.c:1917
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg+0xdd/0x130 net/socket.c:631
+  ___sys_sendmsg+0x806/0x930 net/socket.c:2114
+  __sys_sendmsg+0x105/0x1d0 net/socket.c:2152
+  __do_sys_sendmsg net/socket.c:2161 [inline]
+  __se_sys_sendmsg net/socket.c:2159 [inline]
+  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2159
+  do_syscall_64+0x103/0x610 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457e29
+Code: ad b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 7b b8 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fafcebf0c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457e29
+RDX: 0000000000000010 RSI: 00000000200000c0 RDI: 0000000000000009
+RBP: 000000000073bfa0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fafcebf16d4
+R13: 00000000004c5210 R14: 00000000004d8fc8 R15: 00000000ffffffff
+
