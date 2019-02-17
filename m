@@ -2,178 +2,296 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63155C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 16:34:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DC68C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 16:37:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 376792190C
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 16:34:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F010F2190C
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 16:37:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ettus-com.20150623.gappssmtp.com header.i=@ettus-com.20150623.gappssmtp.com header.b="kM4qv4EP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726883AbfBQQeu (ORCPT
+        id S1726768AbfBQQhs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 11:34:50 -0500
-Received: from mail.grenz-bonn.de ([178.33.37.38]:35374 "EHLO
-        mail.grenz-bonn.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725810AbfBQQeu (ORCPT
+        Sun, 17 Feb 2019 11:37:48 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:35224 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726016AbfBQQhs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 11:34:50 -0500
-Received: from [192.168.1.100] (212-51-139-180.fiber7.init7.net [212.51.139.180])
-        by ks357529.kimsufi.com (Postfix) with ESMTPSA id 9F7FE7928D;
-        Sun, 17 Feb 2019 17:34:47 +0100 (CET)
-Subject: [PATCH] ptrace.2: Improve clarity for multi-threaded tracers
-From:   =?UTF-8?Q?Niklas_Hamb=c3=bcchen?= <mail@nh2.me>
-To:     mtk.manpages@gmail.com
-Cc:     linux-kernel@vger.kernel.org, cleverca22@gmail.com,
-        linux-man@vger.kernel.org
-References: <48bb7c89-abb9-1e88-fee3-fb42d4032d12@nh2.me>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mail@nh2.me; keydata=
- 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
-Message-ID: <bfa474c6-5b13-652d-2fd8-16b2be7efb62@nh2.me>
-Date:   Sun, 17 Feb 2019 17:34:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Sun, 17 Feb 2019 11:37:48 -0500
+Received: by mail-yw1-f67.google.com with SMTP id s204so5577344ywg.2
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 08:37:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ettus-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wcfVD+Z2d39fCjnzHaFw0lRjGDD2+KJIc2xzhByjOuc=;
+        b=kM4qv4EPjUjMtCDzO/CWhMMDa8HLkcdhNO94jYwpeqfGn3QsdjmDc85nOz37CO3Oo9
+         L+NJZ6KXp8nTIvFrNHUJqE98+CcPWkpEpf1/p9afOWyWwX6b2Ji4yxaaM5KEqEE37Vom
+         K5AOCsgQ1/AlLpB/iZgaq3tYZ6SvSupwbGlEUMy+7cdPw6cbGdpTFRa0AMF00YsWlefu
+         Y2ZUjxCcCW/+JZR1Zw8C6mXZ8+3/CtK9aQmonXdgZrZRHtU6HiySNEOa8VAZJ8pQeC7p
+         nLt4ft92Q5TA6/A+c0cQhuI+OaK7IJ1WKTWlYD+p54cY7tzupTqrQwBJSN44j7Lwdp3p
+         bIHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wcfVD+Z2d39fCjnzHaFw0lRjGDD2+KJIc2xzhByjOuc=;
+        b=ICoegdoxShOV+g06IwofJvHY/ddm8c0bL2kLN7kdE9FGCsqqwJ22fvq75K07DUUTx6
+         tP0YeJo5IvFEKZDNshLyV4UCQeWpvsZYJm+xw0rPhIdoMjfLGuq98nQXVgJVBRsJ2T2A
+         DusEa6UIIi90UcZVtpNUpzPwu2L+cOYMvsJfIKPkdTBPodcb6W8HwY7mK/8enmFXIDJ+
+         yWQQ7MfoNw+ls93aTflGQVf/gu5vz+J31XrmYXvHILyJU8MEwxg9mwaThJc6N7nd4dr8
+         AHMBa6iy1MFoUhkTHRfwg53IF3DvlHfg+J/XsoGZwzzAnV+dSkW+T4JhYzoKNvvJJemy
+         et3g==
+X-Gm-Message-State: AHQUAuZnB/0KDYi2/O72BWrWwpvUpVk/VybZMWbEBHWhotd2pzmcU91F
+        YBuOq2pFmG5NiUbzMQTmqwV9n+vJCRMYp6beBL1ANw==
+X-Google-Smtp-Source: AHgI3Ia+fOvrOYqZZ1BCxWX9LPEXQiildhtsERLX/KCt9y1g0A/Sm1DbAR2gXZKmM0RPPNb1WIyzSCaCKWIpWMzFC28=
+X-Received: by 2002:a81:35cc:: with SMTP id c195mr15806758ywa.18.1550421466278;
+ Sun, 17 Feb 2019 08:37:46 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <48bb7c89-abb9-1e88-fee3-fb42d4032d12@nh2.me>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190212010143.3729-1-virendra.kakade@ni.com> <20190212010143.3729-3-virendra.kakade@ni.com>
+ <20190214093445.GF13737@dell>
+In-Reply-To: <20190214093445.GF13737@dell>
+From:   Moritz Fischer <moritz.fischer@ettus.com>
+Date:   Sun, 17 Feb 2019 08:37:35 -0800
+Message-ID: <CAAtXAHemEOOKOmQGT5StDt-Jxn0RUOoc9L-breMNURhd8=9q=Q@mail.gmail.com>
+Subject: Re: [RFC 2/6] mfd: Support for Ettus Research E31x devices PMU
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Virendra Kakade <virendra.kakade@ni.com>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sebastian Reichel <sre@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Until now, the man page said:
+Hi Lee,
 
-    Attachment and subsequent commands are per thread:
-    in a multi‐ threaded process, every thread can be individually attached to a
-    (potentially different) tracer, or left not attached and thus not debugged.
-    Therefore, "tracee" always means "(one) thread", never "a (possibly
-    multithreaded) process".
+thanks for your feedback!
 
-While the first sentence "Attachment ... [is] per thread" might be interpreted
-as holding for both tracer and tracee, the rest talks only about the
-multi-threadedness of the *tracee*, leaving some uncertainty in the reader on
-whether the tracer may issue `ptrace()` from different threads.
+On Thu, Feb 14, 2019 at 1:34 AM Lee Jones <lee.jones@linaro.org> wrote:
+>
+> On Mon, 11 Feb 2019, Virendra Kakade wrote:
+>
+> > Signed-off-by: Virendra Kakade <virendra.kakade@ni.com>
+> > ---
+> >  drivers/mfd/Kconfig          |  7 +++
+> >  drivers/mfd/Makefile         |  2 +-
+> >  drivers/mfd/e31x-pmu.c       | 89 ++++++++++++++++++++++++++++++++++++
+> >  include/linux/mfd/e31x-pmu.h | 20 ++++++++
+> >  4 files changed, 117 insertions(+), 1 deletion(-)
+> >  create mode 100644 drivers/mfd/e31x-pmu.c
+> >  create mode 100644 include/linux/mfd/e31x-pmu.h
+> >
+> > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> > index 8c5dfdce4326..6c4c0747f2a5 100644
+> > --- a/drivers/mfd/Kconfig
+> > +++ b/drivers/mfd/Kconfig
+> > @@ -1916,4 +1916,11 @@ config RAVE_SP_CORE
+> >         device found on several devices in RAVE line of hardware.
+> >
+> >  endmenu
+> > +
+> > +config MFD_E31X_PMU
+> > +     tristate "E31X PMU driver"
+> > +     select MFD_SYSCON
+> > +     help
+> > +      Select this to get support for the Ettus Research E31x devices.
+> > +
+> >  endif
+> > diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> > index 12980a4ad460..e37c2057134b 100644
+> > --- a/drivers/mfd/Makefile
+> > +++ b/drivers/mfd/Makefile
+> > @@ -241,4 +241,4 @@ obj-$(CONFIG_MFD_MXS_LRADC)     += mxs-lradc.o
+> >  obj-$(CONFIG_MFD_SC27XX_PMIC)        += sprd-sc27xx-spi.o
+> >  obj-$(CONFIG_RAVE_SP_CORE)   += rave-sp.o
+> >  obj-$(CONFIG_MFD_ROHM_BD718XX)       += rohm-bd718x7.o
+> > -
+> > +obj-$(CONFIG_MFD_E31X_PMU)      += e31x-pmu.o
+> > diff --git a/drivers/mfd/e31x-pmu.c b/drivers/mfd/e31x-pmu.c
+> > new file mode 100644
+> > index 000000000000..383df68a538f
+> > --- /dev/null
+> > +++ b/drivers/mfd/e31x-pmu.c
+> > @@ -0,0 +1,89 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (c) 2018 National Instruments Corp
+>
+> This is out of date.
+>
+> '\n' here.
+>
+> > + * Author: Virendra Kakade<virendra.kakade@ni.com>
+>
+> You need a space after your name.
+>
+> > + * Ettus Research E31x PMU MFD driver
+>
+> Please expand PMU.
+>
+> > + */
+> > +
+> > +#include <linux/err.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/interrupt.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/mfd/syscon.h>
+> > +#include <linux/module.h>
+> > +#include <linux/pm_runtime.h>
+> > +#include <linux/regmap.h>
+> > +#include <linux/mfd/core.h>
+> > +#include <linux/of_device.h>
+> > +#include <linux/mfd/e31x-pmu.h>
+> > +#include <linux/platform_device.h>
+>
+> Alphabetical.
+>
+> > +#define E31X_PMU_MISC_IRQ_MASK               BIT(8)
+> > +#define E31X_PMU_MISC_IRQ_SHIFT              8
+> > +#define E31X_PMU_MISC_VERSION_MIN_MASK       GENMASK(3, 0)
+> > +#define E31X_PMU_MISC_VERSION_MIN_SHIFT      0
+> > +#define E31X_PMU_MISC_VERSION_MAJ_MASK       GENMASK(7, 4)
+> > +#define E31X_PMU_MISC_VERSION_MAJ_SHIFT      4
+> > +
+> > +struct e31x_pmu {
+> > +     struct regmap *regmap;
+> > +};
+>
+> A whole struct for one attribute?
+>
+> > +static int e31x_pmu_check_version(struct e31x_pmu *pmu)
+> > +{
+> > +     int timeout = 100;
+>
+> Where does 100 come from?
+>
+> > +     u32 misc, maj;
+> > +     int err;
+>
+> 'ret' is more common.
+>
+> > +     /* we need to wait a bit for firmware to populate the fields */
+>
+> "a bit" ?
+>
+> What does the datasheet say?
+>
+> Please use proper grammar.  Capital letters.
+>
+> > +     while (timeout--) {
+> > +             err = regmap_read(pmu->regmap, E31X_PMU_REG_MISC, &misc);
+> > +             if (err)
+> > +                     return err;
+> > +             if (misc)
+> > +                     break;
+> > +
+> > +     usleep_range(2500, 5000);
+>
+> Formatting.
+>
+> > +     }
+> > +
+> > +     /* only firmware versions above 2.0 are supported */
+>
+> "Only supports firmware version 2.0 and above"
+>
+> > +     maj = E31X_PMU_GET_FIELD(MISC_VERSION_MAJ, misc);
+> > +     if (maj < 2)
+> > +             return -ENOTSUPP;
+>
+> '\n' here.
+>
+> > +     return 0;
+> > +}
+> > +
+> > +static int e31x_pmu_probe(struct platform_device *pdev)
+> > +{
+> > +     struct e31x_pmu *pmu;
+> > +
+> > +     pmu = devm_kzalloc(&pdev->dev, sizeof(*pmu), GFP_KERNEL);
+> > +     if (!pmu)
+> > +             return -ENOMEM;
+>
+> '\n' here.
+>
+> > +     pmu->regmap = syscon_regmap_lookup_by_phandle(\
+>
+> Why are you storing regmap?
 
-This patch adds more explicitness, removing any doubt.
+See my comment below.
+>
+> Just pass it directly to e31x_pmu_check_version().
+>
+> > +                     pdev->dev.of_node, "regmap");
+> > +
+>
+> Remove this line.
+>
+> > +     if (IS_ERR(pmu->regmap))
+> > +             return PTR_ERR(pmu->regmap);
+>
+> '\n' here.
+>
+> > +     if (e31x_pmu_check_version(pmu))
+>
+> Please split out the function from the if.
+>
+> Use a variable 'ret' to feed into and check that.
+>
+> > +             return -ENOTSUPP;
+>
+> '\n' here.
+>
+> > +     return devm_of_platform_populate(&pdev->dev);
+> > +}
+> > +
+> > +static const struct of_device_id e31x_pmu_id[] = {
+> > +     { .compatible = "ni,e31x-pmu" },
+> > +     {},
+> > +};
+> > +
+> > +static struct platform_driver e31x_pmu_driver = {
+> > +     .driver = {
+> > +     .name = "e31x-pmu",
+> > +     .of_match_table = e31x_pmu_id,
+>
+> These 2 lines need indenting.
+>
+> > +     },
+> > +     .probe = e31x_pmu_probe,
+> > +};
+> > +module_platform_driver(e31x_pmu_driver);
+> > +
+> > +MODULE_DESCRIPTION("E31x PMU driver");
+> > +MODULE_AUTHOR("Virendra Kakade <virendra.kakade@ni.com>");
+> > +MODULE_LICENSE("GPL");
+>
+> So the whole purpose of this driver is to do a version check.
+>
+> Seems like over-kill!
+>
+> Probably better to do the version check in an inline function stored
+> in a header file, then call it from each of the children's .probe()
+> function.
 
-Relevant resources:
+A bit of context here, this is based on an in-house driver that we had that does
+a bunch of other stuff (e.g. it controls a flag on whether the device auto-boots
+on power being plugged in etc.). These functions will use the regmap.
 
-* LKML thread https://marc.info/?l=linux-kernel&m=155036848808748&w=2
-  "ptrace() with multithreaded tracer"
-  where I asked about this behaviour, in case anybody disagrees with my
-  understanding
-* https://stackoverflow.com/questions/18737866/can-a-thread-trace-a-process/
-  where the previous ambiguity of the man page confused some users, and where
-  and example program is given that confirms the behaviour I mention in this
-  patch
-* A program of mine, in which I have independently confirmed that using
-  `ptrace()` from a thread that's not the tracer thread (a sibling thread in
-  the process is the tracer instead) results in `ESRCH`
-* https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/ptrace.c?id=96d4f267e40f9509e8a66e2b39e8b95655617693#n207
-  where the comment on `ptrace_check_attach()` talks about `%current`, which
-  is a thread
+I had advised Virendra to submit a base version and follow up with patches
+that would add these functions one by one as he figures out how to expose them
+in a proper way to the kernel.
 
-Signed-off-by: Niklas Hambüchen <mail@nh2.me>
----
- man2/ptrace.2 | 14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
-
-diff --git a/man2/ptrace.2 b/man2/ptrace.2
-index 3b6b6ea84..4058abe94 100644
---- a/man2/ptrace.2
-+++ b/man2/ptrace.2
-@@ -122,12 +122,18 @@ It is primarily used to implement breakpoint debugging and system
- call tracing.
- .PP
- A tracee first needs to be attached to the tracer.
--Attachment and subsequent commands are per thread:
--in a multithreaded process,
-+Attachment and subsequent commands are per thread,
-+on both the tracer and tracee side.
-+Issuing a tracing command from a thread that is not the tracer of the given
-+.I pid
-+will result in an
-+.B ESRCH
-+error.
-+In a multithreaded process to be traced,
- every thread can be individually attached to a
- (potentially different) tracer,
- or left not attached and thus not debugged.
--Therefore, "tracee" always means "(one) thread",
-+Therefore, "tracer" or "tracee" always mean "(one) thread",
- never "a (possibly multithreaded) process".
- Ptrace commands are always sent to
- a specific tracee using a call of the form
-@@ -2259,7 +2265,7 @@ or (on kernels before 2.6.26) be
- .TP
- .B ESRCH
- The specified process does not exist, or is not currently being traced
--by the caller, or is not stopped
-+by the calling thread, or is not stopped
- (for requests that require a stopped tracee).
- .SH CONFORMING TO
- SVr4, 4.3BSD.
---
-2.17.1
+Cheers,
+Moritz
