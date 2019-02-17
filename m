@@ -2,173 +2,179 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2766CC10F06
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 14:45:45 +0000 (UTC)
-Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB0C12192C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED642C43381
 	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 14:45:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Rlq1CCaO"
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by mail.kernel.org (Postfix) with ESMTP id C8BB521929
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 14:45:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727499AbfBQOpk (ORCPT
+        id S1727353AbfBQOp3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 09:45:40 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:46094 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725795AbfBQOpi (ORCPT
+        Sun, 17 Feb 2019 09:45:29 -0500
+Received: from mailgw02.mediatek.com ([1.203.163.81]:1166 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725795AbfBQOp2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 09:45:38 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1HEjUHB062587;
-        Sun, 17 Feb 2019 14:45:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : mime-version : content-type :
- content-transfer-encoding; s=corp-2018-07-02;
- bh=ba5MWPuKWXiWUhChh6+IUa7Jvmwhw4+yhUnrxADzL/4=;
- b=Rlq1CCaORqVJZorlX35Nkw1sZoBx41R6tA54WP0e1jy0hBTxS/I1E3uGce8r7+6HKv99
- gI7ungCzbNNoWvBzLUdcloxjZ63ICa47GdK2Sxz8jaeXG4Cz3XRBZvZlstgQpjBm2dri
- 7hZYExwVt2CG5FKunidKfne9KYVzbjz6VxHqi9lEbInj1QazlocYYM9DYF9DcCsBP0iW
- 1G2P5xYi8H2WkJTn+074SN206YnwROZpuVb/WAO1q2n25pZLJmm7nlu66SVQJtFykmmL
- LL1kEx9ujsGYUgh/Owsp/JiO8r2X7F0qjAxdYxerMN0MIyHGwreyVwJ/UpcawIawCrpl yg== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2qp9xtk1h9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 17 Feb 2019 14:45:30 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1HEjOKk029924
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 17 Feb 2019 14:45:24 GMT
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1HEjNJB007109;
-        Sun, 17 Feb 2019 14:45:23 GMT
-Received: from lab02.no.oracle.com (/10.172.144.56)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 17 Feb 2019 14:45:23 +0000
-From:   =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>
-To:     Yishai Hadas <yishaih@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, jackm@dev.mellanox.co.il,
-        majd@mellanox.com
-Cc:     linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] IB/mlx4: Increase the timeout for CM cache
-Date:   Sun, 17 Feb 2019 15:45:12 +0100
-Message-Id: <20190217144512.1171546-1-haakon.bugge@oracle.com>
-X-Mailer: git-send-email 2.20.1
+        Sun, 17 Feb 2019 09:45:28 -0500
+X-UUID: 0b52a9022dfa400380f3fa48f64ed7b5-20190217
+X-UUID: 0b52a9022dfa400380f3fa48f64ed7b5-20190217
+Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw02.mediatek.com
+        (envelope-from <jitao.shi@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1870567813; Sun, 17 Feb 2019 22:45:19 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS32N2.mediatek.inc
+ (172.27.4.72) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sun, 17 Feb
+ 2019 22:45:18 +0800
+Received: from [10.16.6.141] (10.16.6.141) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Sun, 17 Feb 2019 22:45:17 +0800
+Message-ID: <1550414716.5194.14.camel@mszsdaap41>
+Subject: Re: [PATCH 3/3] drm/mediatek: add mt8183 dsi driver support
+From:   Jitao Shi <jitao.shi@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+CC:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>, <linux-pwm@vger.kernel.org>,
+        David Airlie <airlied@linux.ie>, <drinkcat@chromium.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Ajay Kumar <ajaykumar.rs@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Rahul Sharma <rahul.sharma@samsung.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        "Vincent Palatin" <vpalatin@chromium.org>,
+        Andy Yan <andy.yan@rock-chips.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Russell King <rmk+kernel@arm.linux.org.uk>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
+        <cawa.cheng@mediatek.com>, <bibby.hsieh@mediatek.com>,
+        <ck.hu@mediatek.com>, <stonea168@163.com>
+Date:   Sun, 17 Feb 2019 22:45:16 +0800
+In-Reply-To: <9e37106d-5e29-fc4a-56e1-5b551f47d723@gmail.com>
+References: <20190214044243.129920-1-jitao.shi@mediatek.com>
+         <20190214044243.129920-3-jitao.shi@mediatek.com>
+         <9e37106d-5e29-fc4a-56e1-5b551f47d723@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9170 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=904 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902170116
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using CX-3 virtual functions, either from a bare-metal machine or
-pass-through from a VM, MAD packets are proxied through the PF driver.
+On Thu, 2019-02-14 at 10:54 +0100, Matthias Brugger wrote:
+> 
+> On 14/02/2019 05:42, Jitao Shi wrote:
+> > MT8183 dsi has two changes with mt8173.
+> > 1. Add the register double buffer control, but we no need it, So make
+> >    it default off.
+> > 2. Add picture size control.
+> > 
+> > Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
+> > ---
+> >  drivers/gpu/drm/mediatek/mtk_dsi.c | 20 +++++++++++++++++++-
+> >  1 file changed, 19 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
+> > index 80db02a25cb0..20cb53f05d42 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
+> > +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
+> > @@ -78,6 +78,7 @@
+> >  #define DSI_VBP_NL		0x24
+> >  #define DSI_VFP_NL		0x28
+> >  #define DSI_VACT_NL		0x2C
+> > +#define DSI_SIZE_CON		0x38
+> >  #define DSI_HSA_WC		0x50
+> >  #define DSI_HBP_WC		0x54
+> >  #define DSI_HFP_WC		0x58
+> > @@ -131,7 +132,10 @@
+> >  #define VM_CMD_EN			BIT(0)
+> >  #define TS_VFP_EN			BIT(5)
+> >  
+> > -#define DSI_CMDQ0		0x180
+> > +#define DSI_SHADOW_DEBUG	0x190U
+> > +#define FORCE_COMMIT		BIT(0)
+> > +#define BYPASS_SHADOW		BIT(1)
+> > +
+> >  #define CONFIG				(0xff << 0)
+> >  #define SHORT_PACKET			0
+> >  #define LONG_PACKET			2
+> > @@ -158,6 +162,7 @@ struct phy;
+> >  
+> >  struct mtk_dsi_driver_data {
+> >  	const u32 reg_cmdq_off;
+> > +	bool has_size_ctl;
+> >  };
+> >  
+> >  struct mtk_dsi {
+> > @@ -426,6 +431,9 @@ static void mtk_dsi_config_vdo_timing(struct mtk_dsi *dsi)
+> >  	writel(vm->vfront_porch, dsi->regs + DSI_VFP_NL);
+> >  	writel(vm->vactive, dsi->regs + DSI_VACT_NL);
+> >  
+> > +	if (dsi->driver_data->has_size_ctl)
+> > +		writel(vm->vactive << 16 | vm->hactive, dsi->regs + DSI_SIZE_CON);
+> > +
+> >  	horizontal_sync_active_byte = (vm->hsync_len * dsi_tmp_buf_bpp - 10);
+> >  
+> >  	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
+> > @@ -595,6 +603,9 @@ static int mtk_dsi_poweron(struct mtk_dsi *dsi)
+> >  	}
+> >  
+> >  	mtk_dsi_enable(dsi);
+> > +
+> > +	/* DSI no need this double buffer, disable it when writing register */
+> > +	writel(FORCE_COMMIT | BYPASS_SHADOW, dsi->regs + DSI_SHADOW_DEBUG);
+> 
+> Is this a mt8183 thing? Did you assure that this does not introduce regressions
+> on other SoCs, or does it fix any?
+> 
+> I think this should be a independent patch. If it fixes an actual issue, then
+> please provide a fixes tag in that patch.
+> 
+> Thanks,
+> Matthias
+> 
 
-Since the VF drivers have separate name spaces for MAD Transaction Ids
-(TIDs), the PF driver has to re-map the TIDs and keep the book keeping
-in a cache.
+Yes, this is for mt8183. But this reg is reverse on other mtk soc.
+It is unsuitable. And i'll put it in mt8183 driver data next version.
 
-Following the RDMA Connection Manager (CM) protocol, it is clear when
-an entry has to evicted form the cache. But life is not perfect,
-remote peers may die or be rebooted. Hence, it's a timeout to wipe out
-a cache entry, when the PF driver assumes the remote peer has gone.
+Best Regards
+Jitao
 
-During workloads where a high number of QPs are destroyed concurrently,
-excessive amount of CM DREQ retries has been observed
+> >  	mtk_dsi_reset_engine(dsi);
+> >  	mtk_dsi_phy_timconfig(dsi);
+> >  
+> > @@ -1090,11 +1101,18 @@ static const struct mtk_dsi_driver_data mt2701_dsi_driver_data = {
+> >  	.reg_cmdq_off = 0x180,
+> >  };
+> >  
+> > +static const struct mtk_dsi_driver_data mt8183_dsi_driver_data = {
+> > +	.reg_cmdq_off = 0x200,
+> > +	.has_size_ctl = true,
+> > +};
+> > +
+> >  static const struct of_device_id mtk_dsi_of_match[] = {
+> >  	{ .compatible = "mediatek,mt2701-dsi",
+> >  	  .data = &mt2701_dsi_driver_data },
+> >  	{ .compatible = "mediatek,mt8173-dsi",
+> >  	  .data = &mt8173_dsi_driver_data },
+> > +	{ .compatible = "mediatek,mt8183-dsi",
+> > +	  .data = &mt8183_dsi_driver_data },
+> >  	{ },
+> >  };
+> >  
+> > 
 
-The problem can be demonstrated in a bare-metal environment, where two
-nodes have instantiated 8 VFs each. This using dual ported HCAs, so we
-have 16 vPorts per physical server.
-
-64 processes are associated with each vPort and creates and destroys
-one QP for each of the remote 64 processes. That is, 1024 QPs per
-vPort, all in all 16K QPs. The QPs are created/destroyed using the
-CM.
-
-When tearing down these 16K QPs, excessive CM DREQ retries (and
-duplicates) are observed. With some cat/paste/awk wizardry on the
-infiniband_cm sysfs, we observe as sum of the 16 vPorts on one of the
-nodes:
-
-cm_rx_duplicates:
-      dreq  2102
-cm_rx_msgs:
-      drep  1989
-      dreq  6195
-       rep  3968
-       req  4224
-       rtu  4224
-cm_tx_msgs:
-      drep  4093
-      dreq 27568
-       rep  4224
-       req  3968
-       rtu  3968
-cm_tx_retries:
-      dreq 23469
-
-Note that the active/passive side is equally distributed between the
-two nodes.
-
-Enabling pr_debug in cm.c gives tons of:
-
-[171778.814239] <mlx4_ib> mlx4_ib_multiplex_cm_handler: id{slave:
-1,sl_cm_id: 0xd393089f} is NULL!
-
-By increasing the CM_CLEANUP_CACHE_TIMEOUT from 5 to 30 seconds, the
-tear-down phase of the application is reduced from approximately 90 to
-50 seconds. Retries/duplicates are also significantly reduced:
-
-cm_rx_duplicates:
-      dreq  2460
-[]
-cm_tx_retries:
-      dreq  3010
-       req    47
-
-Increasing the timeout further didn't help, as these duplicates and
-retries stems from a too short CMA timeout, which was 20 (~4 seconds)
-on the systems. By increasing the CMA timeout to 22 (~17 seconds), the
-numbers fell down to about 10 for both of them.
-
-Adjustment of the CMA timeout is not part of this commit.
-
-Signed-off-by: Håkon Bugge <haakon.bugge@oracle.com>
-
----
-
-v1 -> v2:
-   * Reworded commit message to reflect the new test-setup using
-     multiple VFs
----
- drivers/infiniband/hw/mlx4/cm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/infiniband/hw/mlx4/cm.c b/drivers/infiniband/hw/mlx4/cm.c
-index fedaf8260105..8c79a480f2b7 100644
---- a/drivers/infiniband/hw/mlx4/cm.c
-+++ b/drivers/infiniband/hw/mlx4/cm.c
-@@ -39,7 +39,7 @@
- 
- #include "mlx4_ib.h"
- 
--#define CM_CLEANUP_CACHE_TIMEOUT  (5 * HZ)
-+#define CM_CLEANUP_CACHE_TIMEOUT  (30 * HZ)
- 
- struct id_map_entry {
- 	struct rb_node node;
--- 
-2.20.1
 
