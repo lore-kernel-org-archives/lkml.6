@@ -2,250 +2,128 @@ Return-Path: <SRS0=Aihr=QY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBE27C43381
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 14:33:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00BC3C43381
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 14:38:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89CFA218AC
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 14:33:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9B8621916
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Feb 2019 14:38:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727166AbfBQOdX (ORCPT
+        id S1726827AbfBQOiC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 09:33:23 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:62918 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725795AbfBQOdW (ORCPT
+        Sun, 17 Feb 2019 09:38:02 -0500
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:34829 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725795AbfBQOiC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 09:33:22 -0500
-X-UUID: fa9b914b7d9042b99df9e5e55a15c98a-20190217
-X-UUID: fa9b914b7d9042b99df9e5e55a15c98a-20190217
-Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <jitao.shi@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 206697319; Sun, 17 Feb 2019 22:33:05 +0800
-Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS32N1.mediatek.inc
- (172.27.4.71) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sun, 17 Feb
- 2019 22:33:03 +0800
-Received: from [10.16.6.141] (10.16.6.141) by MTKCAS32.mediatek.inc
- (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Sun, 17 Feb 2019 22:33:02 +0800
-Message-ID: <1550413981.5194.8.camel@mszsdaap41>
-Subject: Re: [PATCH 1/3] drm/mediatek: move mipi_dsi_host_register to probe
-From:   Jitao Shi <jitao.shi@mediatek.com>
-To:     Sean Paul <sean@poorly.run>
-CC:     Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>, <linux-pwm@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        "Matthias Brugger" <matthias.bgg@gmail.com>,
-        <drinkcat@chromium.org>, Thierry Reding <treding@nvidia.com>,
-        Ajay Kumar <ajaykumar.rs@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Rahul Sharma <rahul.sharma@samsung.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Vincent Palatin <vpalatin@chromium.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Russell King" <rmk+kernel@arm.linux.org.uk>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        <yingjoe.chen@mediatek.com>, <eddie.huang@mediatek.com>,
-        <cawa.cheng@mediatek.com>, <bibby.hsieh@mediatek.com>,
-        <ck.hu@mediatek.com>, <stonea168@163.com>
-Date:   Sun, 17 Feb 2019 22:33:01 +0800
-In-Reply-To: <20190214204821.GP114153@art_vandelay>
-References: <20190214044243.129920-1-jitao.shi@mediatek.com>
-         <20190214204821.GP114153@art_vandelay>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Sun, 17 Feb 2019 09:38:02 -0500
+Received: from webmail.gandi.net (webmail6.sd4.0x35.net [10.200.201.6])
+        (Authenticated sender: contact@artur-rojek.eu)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPA id 6C4FAC0005;
+        Sun, 17 Feb 2019 14:37:58 +0000 (UTC)
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Date:   Sun, 17 Feb 2019 15:37:58 +0100
+From:   Artur Rojek <contact@artur-rojek.eu>
+To:     Sebastian Reichel <sre@kernel.org>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-pm@vger.kernel.org, linux-iio@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH 1/7] iio: inkern: API for reading available iio channel
+ attribute values
+In-Reply-To: <20190217142914.17433-1-contact@artur-rojek.eu>
+References: <20190217142914.17433-1-contact@artur-rojek.eu>
+Message-ID: <0fb5a3fef7c4a790b208cf0f3651c059@artur-rojek.eu>
+X-Sender: contact@artur-rojek.eu
+User-Agent: Roundcube Webmail/1.1.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-02-14 at 15:48 -0500, Sean Paul wrote:
-> On Thu, Feb 14, 2019 at 12:42:41PM +0800, Jitao Shi wrote:
-> > DSI panel driver need attach function which is inculde in
-> > mipi_dsi_host_ops.
+Hi,
+
+This patchset is supposed to contain 5 patches, not 7. So this patch is 
+actually 1/5. My apologies for the mistake.
+
+Artur
+
+On 2019-02-17 15:29, Artur Rojek wrote:
+> Extend the inkern API with a function for reading available
+> attribute values of iio channels.
 > 
-> Which function is required from dsi_host?
+> Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
+> ---
+>  drivers/iio/inkern.c         | 20 ++++++++++++++++++++
+>  include/linux/iio/consumer.h | 14 ++++++++++++++
+>  2 files changed, 34 insertions(+)
 > 
-> Sean
+> diff --git a/drivers/iio/inkern.c b/drivers/iio/inkern.c
+> index 06ca3f7fcc44..f19dbde3c945 100644
+> --- a/drivers/iio/inkern.c
+> +++ b/drivers/iio/inkern.c
+> @@ -733,6 +733,26 @@ static int iio_channel_read_avail(struct 
+> iio_channel *chan,
+>  						 vals, type, length, info);
+>  }
 > 
-
-mipi_dsi_attach request the mipi_dsi_host_register ready.
-
-for example.
-
-mipi_dsi_attach is called by panel_simple_dsi_probe. 
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpu/drm/panel/panel-simple.c?h=v5.0-rc6#n2987
-
-jitao
-
-> > 
-> > If mipi_dsi_host_register is not in probe, dsi panel will
-> > probe fail or more delay.
-> > 
-> > So move the mipi_dsi_host_register to probe from bind.
-> > 
-> > Signed-off-by: Jitao Shi <jitao.shi@mediatek.com>
-> > ---
-> >  drivers/gpu/drm/mediatek/mtk_dsi.c | 49 ++++++++++++++++++------------
-> >  1 file changed, 30 insertions(+), 19 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/mediatek/mtk_dsi.c b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> > index 27b507eb4a99..93fa255b4aad 100644
-> > --- a/drivers/gpu/drm/mediatek/mtk_dsi.c
-> > +++ b/drivers/gpu/drm/mediatek/mtk_dsi.c
-> > @@ -1045,12 +1045,6 @@ static int mtk_dsi_bind(struct device *dev, struct device *master, void *data)
-> >  		return ret;
-> >  	}
-> >  
-> > -	ret = mipi_dsi_host_register(&dsi->host);
-> > -	if (ret < 0) {
-> > -		dev_err(dev, "failed to register DSI host: %d\n", ret);
-> > -		goto err_ddp_comp_unregister;
-> > -	}
-> > -
-> >  	ret = mtk_dsi_create_conn_enc(drm, dsi);
-> >  	if (ret) {
-> >  		DRM_ERROR("Encoder create failed with %d\n", ret);
-> > @@ -1060,8 +1054,6 @@ static int mtk_dsi_bind(struct device *dev, struct device *master, void *data)
-> >  	return 0;
-> >  
-> >  err_unregister:
-> > -	mipi_dsi_host_unregister(&dsi->host);
-> > -err_ddp_comp_unregister:
-> >  	mtk_ddp_comp_unregister(drm, &dsi->ddp_comp);
-> >  	return ret;
-> >  }
-> > @@ -1097,31 +1089,37 @@ static int mtk_dsi_probe(struct platform_device *pdev)
-> >  
-> >  	dsi->host.ops = &mtk_dsi_ops;
-> >  	dsi->host.dev = dev;
-> > +	dsi->dev = dev;
-> > +	ret = mipi_dsi_host_register(&dsi->host);
-> > +	if (ret < 0) {
-> > +		dev_err(dev, "failed to register DSI host: %d\n", ret);
-> > +		return -EPROBE_DEFER;
-> > +	}
-> >  
-> >  	ret = drm_of_find_panel_or_bridge(dev->of_node, 0, 0,
-> >  					  &dsi->panel, &dsi->bridge);
-> >  	if (ret)
-> > -		return ret;
-> > +		goto err_unregister_host;
-> >  
-> >  	dsi->engine_clk = devm_clk_get(dev, "engine");
-> >  	if (IS_ERR(dsi->engine_clk)) {
-> >  		ret = PTR_ERR(dsi->engine_clk);
-> >  		dev_err(dev, "Failed to get engine clock: %d\n", ret);
-> > -		return ret;
-> > +		goto err_unregister_host;
-> >  	}
-> >  
-> >  	dsi->digital_clk = devm_clk_get(dev, "digital");
-> >  	if (IS_ERR(dsi->digital_clk)) {
-> >  		ret = PTR_ERR(dsi->digital_clk);
-> >  		dev_err(dev, "Failed to get digital clock: %d\n", ret);
-> > -		return ret;
-> > +		goto err_unregister_host;
-> >  	}
-> >  
-> >  	dsi->hs_clk = devm_clk_get(dev, "hs");
-> >  	if (IS_ERR(dsi->hs_clk)) {
-> >  		ret = PTR_ERR(dsi->hs_clk);
-> >  		dev_err(dev, "Failed to get hs clock: %d\n", ret);
-> > -		return ret;
-> > +		goto err_unregister_host;
-> >  	}
-> >  
-> >  	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > @@ -1129,33 +1127,35 @@ static int mtk_dsi_probe(struct platform_device *pdev)
-> >  	if (IS_ERR(dsi->regs)) {
-> >  		ret = PTR_ERR(dsi->regs);
-> >  		dev_err(dev, "Failed to ioremap memory: %d\n", ret);
-> > -		return ret;
-> > +		goto err_unregister_host;
-> >  	}
-> >  
-> >  	dsi->phy = devm_phy_get(dev, "dphy");
-> >  	if (IS_ERR(dsi->phy)) {
-> >  		ret = PTR_ERR(dsi->phy);
-> >  		dev_err(dev, "Failed to get MIPI-DPHY: %d\n", ret);
-> > -		return ret;
-> > +		goto err_unregister_host;
-> >  	}
-> >  
-> >  	comp_id = mtk_ddp_comp_get_id(dev->of_node, MTK_DSI);
-> >  	if (comp_id < 0) {
-> >  		dev_err(dev, "Failed to identify by alias: %d\n", comp_id);
-> > -		return comp_id;
-> > +		ret = comp_id;
-> > +		goto err_unregister_host;
-> >  	}
-> >  
-> >  	ret = mtk_ddp_comp_init(dev, dev->of_node, &dsi->ddp_comp, comp_id,
-> >  				&mtk_dsi_funcs);
-> >  	if (ret) {
-> >  		dev_err(dev, "Failed to initialize component: %d\n", ret);
-> > -		return ret;
-> > +		goto err_unregister_host;
-> >  	}
-> >  
-> >  	irq_num = platform_get_irq(pdev, 0);
-> >  	if (irq_num < 0) {
-> >  		dev_err(&pdev->dev, "failed to request dsi irq resource\n");
-> > -		return -EPROBE_DEFER;
-> > +		ret = -EPROBE_DEFER;
-> > +		goto err_unregister_host;
-> >  	}
-> >  
-> >  	irq_set_status_flags(irq_num, IRQ_TYPE_LEVEL_LOW);
-> > @@ -1163,14 +1163,25 @@ static int mtk_dsi_probe(struct platform_device *pdev)
-> >  			       IRQF_TRIGGER_LOW, dev_name(&pdev->dev), dsi);
-> >  	if (ret) {
-> >  		dev_err(&pdev->dev, "failed to request mediatek dsi irq\n");
-> > -		return -EPROBE_DEFER;
-> > +		ret = -EPROBE_DEFER;
-> > +		goto err_unregister_host;
-> >  	}
-> >  
-> >  	init_waitqueue_head(&dsi->irq_wait_queue);
-> >  
-> >  	platform_set_drvdata(pdev, dsi);
-> >  
-> > -	return component_add(&pdev->dev, &mtk_dsi_component_ops);
-> > +	ret = component_add(&pdev->dev, &mtk_dsi_component_ops);
-> > +	if (ret) {
-> > +		ret = -EPROBE_DEFER;
-> > +		goto err_unregister_host;
-> > +	}
-> > +
-> > +	return 0;
-> > +
-> > +err_unregister_host:
-> > +	mipi_dsi_host_unregister(&dsi->host);
-> > +	return ret;
-> >  }
-> >  
-> >  static int mtk_dsi_remove(struct platform_device *pdev)
-> > -- 
-> > 2.20.1
-> > 
+> +int iio_read_avail_channel_attribute(struct iio_channel *chan,
+> +				     const int **vals, int *type, int *length,
+> +				     enum iio_chan_info_enum attribute)
+> +{
+> +	int ret;
+> +
+> +	mutex_lock(&chan->indio_dev->info_exist_lock);
+> +	if (!chan->indio_dev->info) {
+> +		ret = -ENODEV;
+> +		goto err_unlock;
+> +	}
+> +
+> +	ret = iio_channel_read_avail(chan, vals, type, length, attribute);
+> +err_unlock:
+> +	mutex_unlock(&chan->indio_dev->info_exist_lock);
+> +
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL_GPL(iio_read_avail_channel_attribute);
+> +
+>  int iio_read_avail_channel_raw(struct iio_channel *chan,
+>  			       const int **vals, int *length)
+>  {
+> diff --git a/include/linux/iio/consumer.h 
+> b/include/linux/iio/consumer.h
+> index 9887f4f8e2a8..b2d34831ed7c 100644
+> --- a/include/linux/iio/consumer.h
+> +++ b/include/linux/iio/consumer.h
+> @@ -290,6 +290,20 @@ int iio_read_max_channel_raw(struct iio_channel
+> *chan, int *val);
+>  int iio_read_avail_channel_raw(struct iio_channel *chan,
+>  			       const int **vals, int *length);
 > 
-
+> +/**
+> + * iio_read_avail_channel_attribute() - read available channel 
+> attribute values
+> + * @chan:		The channel being queried.
+> + * @vals:		Available values read back.
+> + * @type:		Type of values read back.
+> + * @length:		Number of entries in vals.
+> + * @attribute:		info attribute to be read back.
+> + *
+> + * Returns an error code, IIO_AVAIL_RANGE or IIO_AVAIL_LIST.
+> + */
+> +int iio_read_avail_channel_attribute(struct iio_channel *chan,
+> +				     const int **vals, int *type, int *length,
+> +				     enum iio_chan_info_enum attribute);
+> +
+>  /**
+>   * iio_get_channel_type() - get the type of a channel
+>   * @channel:		The channel being queried.
 
