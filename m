@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73FD4C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FD7FC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:23:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 375AA21901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:23:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D214821902
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:23:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499819;
-	bh=2xq+CErBwDFaw6cWqB+Bzs3k8P/zCZVKdW9t33ukngM=;
+	s=default; t=1550499822;
+	bh=Is6tAJa3lftB0TzA673/Hzzonh7YC/6FLMJ193h0Qi8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XZ/E+PMvAtcwkn0UEbMw2llcs/BPMC/wcjREhLqR6HP2oaII4ZGC1R7vs9GEuf139
-	 HSpkmumaBOjYw6fEZdGgJteHmuDVBio7OV2YDNx9Wki0bTsHyKD7zVSLKapznYV6SQ
-	 CSXjvW+rCytVb5ZQekuRABS328G+UgWnmNIKup6Y=
+	b=qp+4rrA/UH7UlhH1X6Aoum1ArubsSPjP7x2oGZMFkNNJ/isA15yD/6hiPFmOTrU6r
+	 gEnmq5+v3Bl4gcsbb7bPS7/2OfxcLi5JC1NugFKPMz14V4p2pzINXlL7oI+GOgahkF
+	 0mE6crtU4hocO56nKKt8RgblZjSazGMYWQUyOB1o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389917AbfBROE3 (ORCPT
+        id S2389904AbfBROE1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:04:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46814 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:04:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389365AbfBROEU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:04:20 -0500
+        id S2389292AbfBROEY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:04:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF8CF2196F;
-        Mon, 18 Feb 2019 14:04:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D15221901;
+        Mon, 18 Feb 2019 14:04:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498660;
-        bh=2xq+CErBwDFaw6cWqB+Bzs3k8P/zCZVKdW9t33ukngM=;
+        s=default; t=1550498663;
+        bh=Is6tAJa3lftB0TzA673/Hzzonh7YC/6FLMJ193h0Qi8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2p6AZC1MpUk1ZroxsO+sYFMg+ja9hyVge435BD+v2zdplgMjHXhlWIWy+ILfBF8Y9
-         aeBJMBUWdYDPLn+z3Lgbh5iaJrtIIt4DRGqfl7E7/oD5bQwZji3PYQrJLps/cfoBg1
-         WSLArMLSn0YQ2oUE3jhLd6gXFR9pybPVVM/D5nAQ=
+        b=SdtbRKDsFhg9c3hva5gF5hbFIGRWjMNIbIsii24/h6Wfhp8RD7RG8PkR4oiipw5Sr
+         LpXcnR4SHw3t23ASILxVdKPLAqUjkjaBZsseZHehp0xp0ZIRiYS1t6MQKVrCWKnLg7
+         p5+kb9uWuVLZS9GlYqWeF7w66ImOWiwjlDXB0h2w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 080/143] skge: potential memory corruption in skge_get_regs()
-Date:   Mon, 18 Feb 2019 14:43:28 +0100
-Message-Id: <20190218133532.003665060@linuxfoundation.org>
+Subject: [PATCH 4.4 081/143] net: systemport: Fix WoL with password after deep sleep
+Date:   Mon, 18 Feb 2019 14:43:29 +0100
+Message-Id: <20190218133532.037665967@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -65,37 +65,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 294c149a209c6196c2de85f512b52ef50f519949 ]
+[ Upstream commit 8dfb8d2cceb76b74ad5b58cc65c75994329b4d5e ]
 
-The "p" buffer is 0x4000 bytes long.  B3_RI_WTO_R1 is 0x190.  The value
-of "regs->len" is in the 1-0x4000 range.  The bug here is that
-"regs->len - B3_RI_WTO_R1" can be a negative value which would lead to
-memory corruption and an abrupt crash.
+Broadcom STB chips support a deep sleep mode where all register
+contents are lost. Because we were stashing the MagicPacket password
+into some of these registers a suspend into that deep sleep then a
+resumption would not lead to being able to wake-up from MagicPacket with
+password again.
 
-Fixes: c3f8be961808 ("[PATCH] skge: expand ethtool debug register dump")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Fix this by keeping a software copy of the password and program it
+during suspend.
+
+Fixes: 83e82f4c706b ("net: systemport: add Wake-on-LAN support")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/marvell/skge.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/broadcom/bcmsysport.c |   25 ++++++++++---------------
+ drivers/net/ethernet/broadcom/bcmsysport.h |    2 ++
+ 2 files changed, 12 insertions(+), 15 deletions(-)
 
---- a/drivers/net/ethernet/marvell/skge.c
-+++ b/drivers/net/ethernet/marvell/skge.c
-@@ -152,8 +152,10 @@ static void skge_get_regs(struct net_dev
- 	memset(p, 0, regs->len);
- 	memcpy_fromio(p, io, B3_RAM_ADDR);
+--- a/drivers/net/ethernet/broadcom/bcmsysport.c
++++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+@@ -400,7 +400,6 @@ static void bcm_sysport_get_wol(struct n
+ 				struct ethtool_wolinfo *wol)
+ {
+ 	struct bcm_sysport_priv *priv = netdev_priv(dev);
+-	u32 reg;
  
--	memcpy_fromio(p + B3_RI_WTO_R1, io + B3_RI_WTO_R1,
--		      regs->len - B3_RI_WTO_R1);
-+	if (regs->len > B3_RI_WTO_R1) {
-+		memcpy_fromio(p + B3_RI_WTO_R1, io + B3_RI_WTO_R1,
-+			      regs->len - B3_RI_WTO_R1);
-+	}
+ 	wol->supported = WAKE_MAGIC | WAKE_MAGICSECURE;
+ 	wol->wolopts = priv->wolopts;
+@@ -408,11 +407,7 @@ static void bcm_sysport_get_wol(struct n
+ 	if (!(priv->wolopts & WAKE_MAGICSECURE))
+ 		return;
+ 
+-	/* Return the programmed SecureOn password */
+-	reg = umac_readl(priv, UMAC_PSW_MS);
+-	put_unaligned_be16(reg, &wol->sopass[0]);
+-	reg = umac_readl(priv, UMAC_PSW_LS);
+-	put_unaligned_be32(reg, &wol->sopass[2]);
++	memcpy(wol->sopass, priv->sopass, sizeof(priv->sopass));
  }
  
- /* Wake on Lan only supported on Yukon chips with rev 1 or above */
+ static int bcm_sysport_set_wol(struct net_device *dev,
+@@ -428,13 +423,8 @@ static int bcm_sysport_set_wol(struct ne
+ 	if (wol->wolopts & ~supported)
+ 		return -EINVAL;
+ 
+-	/* Program the SecureOn password */
+-	if (wol->wolopts & WAKE_MAGICSECURE) {
+-		umac_writel(priv, get_unaligned_be16(&wol->sopass[0]),
+-			    UMAC_PSW_MS);
+-		umac_writel(priv, get_unaligned_be32(&wol->sopass[2]),
+-			    UMAC_PSW_LS);
+-	}
++	if (wol->wolopts & WAKE_MAGICSECURE)
++		memcpy(priv->sopass, wol->sopass, sizeof(priv->sopass));
+ 
+ 	/* Flag the device and relevant IRQ as wakeup capable */
+ 	if (wol->wolopts) {
+@@ -1889,12 +1879,17 @@ static int bcm_sysport_suspend_to_wol(st
+ 	unsigned int timeout = 1000;
+ 	u32 reg;
+ 
+-	/* Password has already been programmed */
+ 	reg = umac_readl(priv, UMAC_MPD_CTRL);
+ 	reg |= MPD_EN;
+ 	reg &= ~PSW_EN;
+-	if (priv->wolopts & WAKE_MAGICSECURE)
++	if (priv->wolopts & WAKE_MAGICSECURE) {
++		/* Program the SecureOn password */
++		umac_writel(priv, get_unaligned_be16(&priv->sopass[0]),
++			    UMAC_PSW_MS);
++		umac_writel(priv, get_unaligned_be32(&priv->sopass[2]),
++			    UMAC_PSW_LS);
+ 		reg |= PSW_EN;
++	}
+ 	umac_writel(priv, reg, UMAC_MPD_CTRL);
+ 
+ 	/* Make sure RBUF entered WoL mode as result */
+--- a/drivers/net/ethernet/broadcom/bcmsysport.h
++++ b/drivers/net/ethernet/broadcom/bcmsysport.h
+@@ -11,6 +11,7 @@
+ #ifndef __BCM_SYSPORT_H
+ #define __BCM_SYSPORT_H
+ 
++#include <linux/ethtool.h>
+ #include <linux/if_vlan.h>
+ 
+ /* Receive/transmit descriptor format */
+@@ -682,6 +683,7 @@ struct bcm_sysport_priv {
+ 	unsigned int		crc_fwd:1;
+ 	u16			rev;
+ 	u32			wolopts;
++	u8			sopass[SOPASS_MAX];
+ 	unsigned int		wol_irq_disabled:1;
+ 
+ 	/* MIB related fields */
 
 
