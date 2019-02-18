@@ -4,47 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB719C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F5FFC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:13:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1FF521905
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:13:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1A35218AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:13:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499191;
-	bh=CJ7L/Etu0IvEAsMZnh3FnPSE5ugBj+HHjrGxbpr3cgE=;
+	s=default; t=1550499195;
+	bh=raw4I8vF7z8DltlfERfXJlT+4FA1bpuA+gEUy1dKIOE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=P0vHLwhq5XkNQ4CYViiNhZkpvQOKCI1B861r9+vBMmCAltMfNAG0EWC16VRsZ374E
-	 li9D5NFmrwwqJahFvte8VgE3i2JHIzy5dDITfjE6oxD8pcR7iSH+uDVnGhS5gpUskz
-	 O7CzPh5B6mNdnR9lSMOG/fmKVUCV19e1tCExKc/0=
+	b=QRdyJwjYxVO00Kp9b9nEzjilDOZQV4rMqhV0ewL8Hxtq2ceIiCDTfUWTrVt/be8cY
+	 huaOiZ4c+2PWZGmgBsgyv+FOFUwH9eR650Q1FwXXhxw8gYwNh37Gry4v7oN+h4tdbb
+	 NxpFomwXJwaeC/uRXHRjvTHh7ToMgbtKMkKlualY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392269AbfBRONK (ORCPT
+        id S2391076AbfBRONO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:13:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57750 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:13:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392215AbfBRONF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:13:05 -0500
+        id S2392247AbfBRONJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:13:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5748218AD;
-        Mon, 18 Feb 2019 14:13:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 195F8217D7;
+        Mon, 18 Feb 2019 14:13:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550499185;
-        bh=CJ7L/Etu0IvEAsMZnh3FnPSE5ugBj+HHjrGxbpr3cgE=;
+        s=default; t=1550499188;
+        bh=raw4I8vF7z8DltlfERfXJlT+4FA1bpuA+gEUy1dKIOE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jZQ4yLDH1K8io6arYBw6Xyhm7iJNcluRvJ93TsJN0RLKJHzg1udDMQw6BBpxsvuVQ
-         o9IY7zsVACqTA38jZyPqxHsv241yj9qZ/iUIRQXHvIAK2tDzPOfSQLgedKuvJGHEOY
-         kZuZh7TB4MaNd+835M/h25l1DcW/WjBslmD0ktOs=
+        b=vR1Fg6IIrxqa4DfBR8XYfpK3UutpenlNUlMnpebvteMqWzM/oAhl3FfmOsiASwSQy
+         pY8QlCknO7kA1RnPnnNeH/0Q74f3b4VkXY9jmh79xKWdEJP8wGyflmUDVUY3Vp/jKM
+         ouY4hvLrhJTurBN46O8CyDFr6LVgnTGRe/IMboCI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org
-Subject: [PATCH 3.18 079/108] debugfs: fix debugfs_rename parameter checking
-Date:   Mon, 18 Feb 2019 14:44:15 +0100
-Message-Id: <20190218133523.182186159@linuxfoundation.org>
+        stable@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org
+Subject: [PATCH 3.18 080/108] MIPS: OCTEON: dont set octeon_dma_bar_type if PCI is disabled
+Date:   Mon, 18 Feb 2019 14:44:16 +0100
+Message-Id: <20190218133523.231370027@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -63,39 +65,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Aaro Koskinen <aaro.koskinen@iki.fi>
 
-commit d88c93f090f708c18195553b352b9f205e65418f upstream.
+commit dcf300a69ac307053dfb35c2e33972e754a98bce upstream.
 
-debugfs_rename() needs to check that the dentries passed into it really
-are valid, as sometimes they are not (i.e. if the return value of
-another debugfs call is passed into this one.)  So fix this up by
-properly checking if the two parent directories are errors (they are
-allowed to be NULL), and if the dentry to rename is not NULL or an
-error.
+Don't set octeon_dma_bar_type if PCI is disabled. This avoids creation
+of the MSI irqchip later on, and saves a bit of memory.
 
-Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Aaro Koskinen <aaro.koskinen@iki.fi>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Fixes: a214720cbf50 ("Disable MSI also when pcie-octeon.pcie_disable on")
+Cc: stable@vger.kernel.org # v3.3+
+Cc: linux-mips@vger.kernel.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/debugfs/inode.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/mips/pci/pci-octeon.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---- a/fs/debugfs/inode.c
-+++ b/fs/debugfs/inode.c
-@@ -622,6 +622,13 @@ struct dentry *debugfs_rename(struct den
- 	struct dentry *dentry = NULL, *trap;
- 	struct name_snapshot old_name;
+--- a/arch/mips/pci/pci-octeon.c
++++ b/arch/mips/pci/pci-octeon.c
+@@ -571,6 +571,11 @@ static int __init octeon_pci_setup(void)
+ 	if (octeon_has_feature(OCTEON_FEATURE_PCIE))
+ 		return 0;
  
-+	if (IS_ERR(old_dir))
-+		return old_dir;
-+	if (IS_ERR(new_dir))
-+		return new_dir;
-+	if (IS_ERR_OR_NULL(old_dentry))
-+		return old_dentry;
++	if (!octeon_is_pci_host()) {
++		pr_notice("Not in host mode, PCI Controller not initialized\n");
++		return 0;
++	}
 +
- 	trap = lock_rename(new_dir, old_dir);
- 	/* Source or destination directories don't exist? */
- 	if (!old_dir->d_inode || !new_dir->d_inode)
+ 	/* Point pcibios_map_irq() to the PCI version of it */
+ 	octeon_pcibios_map_irq = octeon_pci_pcibios_map_irq;
+ 
+@@ -582,11 +587,6 @@ static int __init octeon_pci_setup(void)
+ 	else
+ 		octeon_dma_bar_type = OCTEON_DMA_BAR_TYPE_BIG;
+ 
+-	if (!octeon_is_pci_host()) {
+-		pr_notice("Not in host mode, PCI Controller not initialized\n");
+-		return 0;
+-	}
+-
+ 	/* PCI I/O and PCI MEM values */
+ 	set_io_port_base(OCTEON_PCI_IOSPACE_BASE);
+ 	ioport_resource.start = 0;
 
 
