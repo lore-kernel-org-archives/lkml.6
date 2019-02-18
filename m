@@ -2,250 +2,211 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D01C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:57:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E6FC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:59:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F19721738
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:57:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DACEB2146E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:59:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kfeACEV+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731151AbfBRV5y (ORCPT
+        id S1731175AbfBRV7O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 16:57:54 -0500
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:55667 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726955AbfBRV5y (ORCPT
+        Mon, 18 Feb 2019 16:59:14 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45660 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731106AbfBRV7N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 16:57:54 -0500
-X-Originating-IP: 86.202.231.219
-Received: from localhost (lfbn-lyo-1-149-219.w86-202.abo.wanadoo.fr [86.202.231.219])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id B23A020003;
-        Mon, 18 Feb 2019 21:57:48 +0000 (UTC)
-Date:   Mon, 18 Feb 2019 22:57:48 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Anson Huang <anson.huang@nxp.com>
-Cc:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V2 4/4] rtc: imx-sc: add rtc alarm support
-Message-ID: <20190218215748.GC10129@piout.net>
-References: <1550115535-14488-1-git-send-email-Anson.Huang@nxp.com>
- <1550115535-14488-5-git-send-email-Anson.Huang@nxp.com>
+        Mon, 18 Feb 2019 16:59:13 -0500
+Received: by mail-lj1-f195.google.com with SMTP id s5-v6so15600247ljd.12;
+        Mon, 18 Feb 2019 13:59:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vfXjryxGCwCjsH/qAV3cQX5y5FXAoYRPw38OPtvBkmg=;
+        b=kfeACEV+XvrEEFjHgFRE0EyUkLMOZ6web6Z+PLzYrdnDmW/rLm7b78ERAaYJ58XeUv
+         6CVLGre1obJh7oxJMS4nsihmuprivApqtDPW73nGft48zRWGXXpjtfmkbOdTu4vg/LNO
+         AcusN/B/JUMWYQyNdSdfonz3YqHU/KNBIGO4I9fQ4hi1VqEG35ySNqpRaBUjcmVPzOMo
+         xA3+4JQ3814dTt8Rr4fzRwgoa2yeaNr15UWxzQu4cO2IqRlj91xZoYUfunpc4kVTIS50
+         9sSLdhgssXX0Dr6daVOyn1Gl+2LEWsWLxXANGoC5Meu67w/ZIQVYmJgtX36WzcbbHgbC
+         BnFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vfXjryxGCwCjsH/qAV3cQX5y5FXAoYRPw38OPtvBkmg=;
+        b=ChRf1M8SJqJo7ExZpuTjw6VF1qhQTGESUGOgHfGVz55uDo7mLEidhnjmoPRASUP7eX
+         7lvgvXNVYwYP+TSJJwJRmejHdC1c1tsqFrjIY2AxFPQAOlNsQp92HS4gBP2j1OKvgTNN
+         Gj6vnAkCBeVzXTYpvzXwleGq3AxI2HB9VFcXjC3wDICmFOfytMK2Q+dg3UcTTEN3vHXq
+         t6IDS7EammiNEET3Hr2xRyNhpn2nedT7ceG00BVz9Xe4bPSVLSfw7ehT6ciAQzlDO0Da
+         BPHiYJwsf6AuPqWc7JCmA0DN0/DrUsyU/xoFk4RvmKXUMJdNAe22iNPmi1Y3oqU2cY7X
+         VWFA==
+X-Gm-Message-State: AHQUAubOW2xUeJEstQyTBhH1GpeH6HPFbZhhagFt3fuaZ7BvN2R2hGN0
+        wGsHfgDVwRv9ltfA9ve+0gd/V2Vl
+X-Google-Smtp-Source: AHgI3IaZOMhnB0gcpD7kO/HIGnTOin4UWROAtRO4nH1BhQVCM+kENKO4PdeILclKIkhNy3xRjIHjxQ==
+X-Received: by 2002:a2e:9d85:: with SMTP id c5mr12996250ljj.70.1550527150509;
+        Mon, 18 Feb 2019 13:59:10 -0800 (PST)
+Received: from [192.168.1.18] (bgr172.neoplus.adsl.tpnet.pl. [83.28.81.172])
+        by smtp.gmail.com with ESMTPSA id u15sm3881977lff.3.2019.02.18.13.59.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Feb 2019 13:59:09 -0800 (PST)
+Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
+ LEDs
+To:     Hans de Goede <hdegoede@redhat.com>, Pavel Machek <pavel@ucw.cz>
+Cc:     Yauhen Kharuzhy <jekhor@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-leds@vger.kernel.org
+References: <3d5407a7-9458-f071-a1d5-511b09678e20@gmail.com>
+ <87a21c4e-8e5e-c180-2ff3-eb8170746e71@redhat.com>
+ <80971bc3-1193-83ed-913a-12f6217016c8@gmail.com>
+ <b15fd048-8206-4057-a354-07dc14ca15e3@redhat.com>
+ <8a263266-a41f-c916-e990-02d04de9b5d0@gmail.com>
+ <af5bec7b-0da1-ee19-cdf4-0240f56221ad@redhat.com>
+ <20190216193727.GA14305@amd>
+ <7be63b6b-8d8d-90b8-fb17-d219b87a101f@redhat.com>
+ <20190217000851.GA29803@amd>
+ <81cc42f5-1f3d-c7f2-eb13-c2f8c4f9bfb4@redhat.com>
+ <20190217174549.GA13301@amd>
+ <98896f2f-1752-d52a-f755-3daa3b29a83f@redhat.com>
+From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Message-ID: <d16af997-f872-98c1-7b3a-caf77dac4059@gmail.com>
+Date:   Mon, 18 Feb 2019 22:59:07 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1550115535-14488-5-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <98896f2f-1752-d52a-f755-3daa3b29a83f@redhat.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Hans,
 
-On 14/02/2019 03:44:48+0000, Anson Huang wrote:
-> Add i.MX system controller RTC alarm support, the RTC alarm
-> is implemented via SIP(silicon provider) runtime service call
-> and ARM-Trusted-Firmware will communicate with system controller
-> via MU(message unit) IPC to set RTC alarm. When RTC alarm fires,
-> system controller will generate a common MU irq event and notify
-> system controller RTC driver to handle the irq event.
+On 2/18/19 12:12 PM, Hans de Goede wrote:
+> Hi,
 > 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> No V1 patch, just add it into the i.MX SC general irq support patch series,
-> to support system controller RTC's alarm function and also to provide an
-> example of how to use general MU irq, this patch depends on the i.MX SC
-> general irq support patch set, so add it into same patch series.
-
-Through which tree do you expect this patch to be merged?
-
-> --
->  drivers/rtc/rtc-imx-sc.c | 100 +++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 100 insertions(+)
+> On 17-02-19 18:45, Pavel Machek wrote:
+>> Hi!
+>>
+>>>> I see... and yes, that would be the easiest solution.
+>>>>
+>>>> But somehow I see "this LED is controlled by charging state" as
+>>>> primary and "it shows pulses instead of staying on" as secondary
+>>>> eye-candy.
+>>>>
+>>>> This week there was another driver for charger LED.. but that one does
+>>>> not do pulses. Ideally, we'd like consistent interface to the
+>>>> userland.
+>>>>
+>>>> (To make it complex, the other driver supports things like:
+>>>>    LED solid on -- fully charged
+>>>>    LED blinking slowly -- charging
+>>>>    LED blinking fast -- charge error
+>>>>    LED off -- not charging).
+>>>
+>>> Something like that could be supported with my original hw_pattern
+>>> proposal where we simply encode all of this in the hw-pattern file:
+>>>
+>>> tupple0: charging blinking_on_time
+>>> tupple1: charging blinking_off_time
+>>> tupple2: charging breathing_time
+>>> tupple3: manual blinking_on_time
+>>> tupple4: manual blinking_off_time
+>>> tupple5: manual breathing_time
+>>
+>> So the userland would need to know "I'm on yoga, so 3rd tupple sets up
+>> breathing when charging"?
 > 
-> diff --git a/drivers/rtc/rtc-imx-sc.c b/drivers/rtc/rtc-imx-sc.c
-> index 60570a2..147545e 100644
-> --- a/drivers/rtc/rtc-imx-sc.c
-> +++ b/drivers/rtc/rtc-imx-sc.c
-> @@ -3,6 +3,7 @@
->   * Copyright 2018 NXP.
->   */
->  
-> +#include <dt-bindings/firmware/imx/rsrc.h>
->  #include <linux/arm-smccc.h>
->  #include <linux/firmware/imx/sci.h>
->  #include <linux/module.h>
-> @@ -11,11 +12,17 @@
->  #include <linux/rtc.h>
->  
->  #define IMX_SC_TIMER_FUNC_GET_RTC_SEC1970	9
-> +#define IMX_SC_TIMER_FUNC_SET_RTC_ALARM		8
->  #define IMX_SC_TIMER_FUNC_SET_RTC_TIME		6
->  
-> +#define IMX_SC_IRQ_FUNC_ENABLE			1
-> +
->  #define IMX_SIP_SRTC			0xC2000002
->  #define IMX_SIP_SRTC_SET_TIME		0x0
->  
-> +#define SC_IRQ_GROUP_RTC    2
-> +#define SC_IRQ_RTC          1
-> +
->  static struct imx_sc_ipc *rtc_ipc_handle;
->  static struct rtc_device *imx_sc_rtc;
->  
-> @@ -24,6 +31,24 @@ struct imx_sc_msg_timer_get_rtc_time {
->  	u32 time;
->  } __packed;
->  
-> +struct imx_sc_msg_timer_enable_irq {
-> +	struct imx_sc_rpc_msg hdr;
-> +	u32 mask;
-> +	u16 resource;
-> +	u8 group;
-> +	u8 enable;
-> +} __packed;
-> +
-> +struct imx_sc_msg_timer_rtc_set_alarm {
-> +	struct imx_sc_rpc_msg hdr;
-> +	u16 year;
-> +	u8 mon;
-> +	u8 day;
-> +	u8 hour;
-> +	u8 min;
-> +	u8 sec;
-> +} __packed;
-> +
->  static int imx_sc_rtc_read_time(struct device *dev, struct rtc_time *tm)
->  {
->  	struct imx_sc_msg_timer_get_rtc_time msg;
-> @@ -60,9 +85,80 @@ static int imx_sc_rtc_set_time(struct device *dev, struct rtc_time *tm)
->  	return res.a0;
->  }
->  
-> +static int imx_sc_rtc_alarm_irq_enable(struct device *dev, unsigned int enable)
-> +{
-> +	struct imx_sc_msg_timer_enable_irq msg;
-> +	struct imx_sc_rpc_msg *hdr = &msg.hdr;
-> +	int ret;
-> +
-> +	hdr->ver = IMX_SC_RPC_VERSION;
-> +	hdr->svc = IMX_SC_RPC_SVC_IRQ;
-> +	hdr->func = IMX_SC_IRQ_FUNC_ENABLE;
-> +	hdr->size = 3;
-> +
-> +	msg.resource = IMX_SC_R_MU_1A;
-> +	msg.group = SC_IRQ_GROUP_RTC;
-> +	msg.mask = SC_IRQ_RTC;
-> +	msg.enable = enable;
-> +
-> +	ret = imx_scu_call_rpc(rtc_ipc_handle, &msg, true);
-> +	if (ret) {
-> +		dev_err(dev, "enable rtc irq failed, ret %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int imx_sc_rtc_set_alarm(struct device *dev, struct rtc_wkalrm *alrm)
-> +{
-> +	struct imx_sc_msg_timer_rtc_set_alarm msg;
-> +	struct imx_sc_rpc_msg *hdr = &msg.hdr;
-> +	int ret;
-> +	struct rtc_time *alrm_tm = &alrm->time;
-> +
-> +	hdr->ver = IMX_SC_RPC_VERSION;
-> +	hdr->svc = IMX_SC_RPC_SVC_TIMER;
-> +	hdr->func = IMX_SC_TIMER_FUNC_SET_RTC_ALARM;
-> +	hdr->size = 3;
-> +
-> +	msg.year = alrm_tm->tm_year + 1900;
-> +	msg.mon = alrm_tm->tm_mon + 1;
-> +	msg.day = alrm_tm->tm_mday;
-> +	msg.hour = alrm_tm->tm_hour;
-> +	msg.min = alrm_tm->tm_min;
-> +	msg.sec = alrm_tm->tm_sec;
-> +
-> +	ret = imx_scu_call_rpc(rtc_ipc_handle, &msg, true);
-> +	if (ret) {
-> +		dev_err(dev, "set rtc alarm failed, ret %d\n", ret);
-> +		return ret;
-> +	}
-> +
+> Yes this is for the hw_pattern file not the regular pattern file and if 
+> I've
+> understood things correctly then the hw_pattern file is often (always?)
+> specific to the LED controller model. See e.g. :
+> Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
 
-You must check whether the alarm needs to be enabled here and enable the
-alarm else the userspace application that are using RTC_WKALM_SET will
-not work properly.
+This is so far the only user of hw_pattern. Whereas as in case of the
+mentioned driver, it allows to simplify the pattern description which
+would have to be otherwise quite complex in case of breathing, still the
+sequence of tuples needs to adhere to the common pattern syntax.
 
-> +	return 0;
-> +}
-> +
->  static const struct rtc_class_ops imx_sc_rtc_ops = {
->  	.read_time = imx_sc_rtc_read_time,
->  	.set_time = imx_sc_rtc_set_time,
-> +	.set_alarm = imx_sc_rtc_set_alarm,
-> +	.alarm_irq_enable = imx_sc_rtc_alarm_irq_enable,
-> +};
-> +
-> +static int imx_sc_rtc_alarm_sc_notify(struct notifier_block *nb,
-> +					unsigned long event, void *group)
-> +{
-> +	/* ignore non-rtc irq */
-> +	if (!((event & SC_IRQ_RTC) && (*(u8 *)group == SC_IRQ_GROUP_RTC)))
-> +		return 0;
-> +
-> +	rtc_update_irq(imx_sc_rtc, 1, RTC_IRQF | RTC_AF);
-> +
-> +	return 0;
-> +}
-> +
-> +static struct notifier_block imx_sc_rtc_alarm_sc_notifier = {
-> +	.notifier_call = imx_sc_rtc_alarm_sc_notify,
->  };
->  
->  static int imx_sc_rtc_probe(struct platform_device *pdev)
-> @@ -73,6 +169,8 @@ static int imx_sc_rtc_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> +	device_init_wakeup(&pdev->dev, true);
-> +
->  	imx_sc_rtc = devm_rtc_allocate_device(&pdev->dev);
->  	if (IS_ERR(imx_sc_rtc))
->  		return PTR_ERR(imx_sc_rtc);
-> @@ -87,6 +185,8 @@ static int imx_sc_rtc_probe(struct platform_device *pdev)
->  		return ret;
->  	}
->  
-> +	imx_scu_register_notifier(&imx_sc_rtc_alarm_sc_notifier);
-> +
->  	return 0;
->  }
->  
-> -- 
-> 2.7.4
+> Also userland is not really expected to touch this, the user himself
+> could touch it if he/she wants to customize things.
 > 
+>>> So for this chip you mention, we do not need the breathing time (no 
+>>> breathing support),
+>>> so we would get the following tupples:
+>>>
+>>> tupple0: not charging blinking_on_time
+>>> tupple1: not charging blinking_off_time
+>>> tupple2: slow charging blinking_on_time
+>>> tupple3: slow charging blinking_off_time
+>>> tupple4: fast charging blinking_on_time
+>>> tupple5: fast charging blinking_off_time
+>>> tupple6: charging error blinking_on_time
+>>> tupple7: charging error blinking_off_time
+>>
+>> Patterns and their meanings are fixed (or almost) on that driver, so
+>> fortunately that will not be neccessary.
+> 
+> Ok, so back the Whiskey Cove PMIC LED controller, I think
+> there was some agreement to add a hw_control sysfs
+> attribute and simplify the hw_pattern ABI to:
+> 
+> tupple0: blinking_on_time
+> tupple1: blinking_off_time
+> tupple2: breathing_time
+
+Pattern format is defined to:
+
+brightness_1 duration_1 brightness_2 duration_2 brightness_3 duration_3
+and so on...
+
+ From what I understood blinking and breathing are different
+patterns in case of discussed device, so they would have to be
+initialized differently.
+
+Documentation/devicetree/bindings/leds/leds-trigger-pattern.txt
+shows how to approach both cases, i.e. for instant change
+of brightness we need intervening tuple with duration time = 0.
+
+Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+shows how hw breathing was approached in that case.
+
+> You suggested adding support for a hw_control
+> sysfs attribute to the core, activated by a flag.
+> 
+> I assume that there will then be a callback into the
+
+Yes, e.g. hw_control_set{_get}.
+
+> driver when that file gets written. The semantics for
+> the Whiskey Cove PMIC LED controller are clear, but
+> how should the patch adding support for this to the LED core
+> describe the new hw_control sysfs attribute in:
+> Documentation/ABI/testing/sysfs-class-led ?
+
+Yes, since it will belong to LED core.
+
+> Or do you just want to have the basic handling in the
+> core and then describe the semantics in a per LED controller
+> way like how we do for hw_pattern, so for the
+> Whiskey Cove PMIC LED controller we would add a:
+> Documentation/ABI/testing/sysfs-class-led-cht-wc
+> file, which we need to do anyways for the hw_pattern file?
+
+In Documentation/ABI/testing/sysfs-class-led-cht-wc we should
+have a description of hw_pattern semantics for Whiskey Cove PMIC LED,
+with regard to how hw_control state impacts the mode of trigger
+(manual/triggered when charging).
 
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Best regards,
+Jacek Anaszewski
