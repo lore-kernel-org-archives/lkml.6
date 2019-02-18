@@ -2,181 +2,519 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC61CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:04:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1353C4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69A25218D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:04:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CB96218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:07:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="g/oif2Vz"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="oV/I+WAX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728120AbfBRDEX (ORCPT
+        id S1728371AbfBRDHR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 22:04:23 -0500
-Received: from mail-eopbgr150047.outbound.protection.outlook.com ([40.107.15.47]:26368
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727602AbfBRDEX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 22:04:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DmBf37P15ggFEl/skkx0CW1NLh0nLQM7ZwjfiZFth0s=;
- b=g/oif2Vz8rWWyUqZt+1fOx7SBOQV2pjugKNYvcZTRmOjBKTvYL9Pg8ujP/A3A/kixVGZcL9Rn32imU9AL01YRSnnCnQCMgKrrhImB3wHR3rnaQIyY+qKBknMfwyPBVJ8NK9groWupgHhrnxyhyu+HJKxmnBbz8MtMAXCEt2vdy4=
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com (20.177.52.16) by
- VI1PR04MB1648.eurprd04.prod.outlook.com (10.164.84.158) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.16; Mon, 18 Feb 2019 03:04:18 +0000
-Received: from VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::790f:a219:bcbd:6fd2]) by VI1PR04MB5327.eurprd04.prod.outlook.com
- ([fe80::790f:a219:bcbd:6fd2%3]) with mapi id 15.20.1622.018; Mon, 18 Feb 2019
- 03:04:18 +0000
-From:   Peter Chen <peter.chen@nxp.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: RE: [PATCH v3] usb: chipidea: Grab the (legacy) USB PHY by phandle
- first
-Thread-Topic: [PATCH v3] usb: chipidea: Grab the (legacy) USB PHY by phandle
- first
-Thread-Index: AQHUxUqvA6eOAzVWPUW+Xl7987JiyqXk4fzA
-Date:   Mon, 18 Feb 2019 03:04:17 +0000
-Message-ID: <VI1PR04MB53274C03CD18C3D3ADB767408B630@VI1PR04MB5327.eurprd04.prod.outlook.com>
-References: <20190215162225.19284-1-paul.kocialkowski@bootlin.com>
-In-Reply-To: <20190215162225.19284-1-paul.kocialkowski@bootlin.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peter.chen@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: d39ff746-698d-473d-165c-08d6954dc5b3
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB1648;
-x-ms-traffictypediagnostic: VI1PR04MB1648:
-x-microsoft-exchange-diagnostics: =?us-ascii?Q?1;VI1PR04MB1648;23:9wXXj8oSznBKGzLI6SASVPpvS24yBvUlN2aGojD9W?=
- =?us-ascii?Q?RL9PjIDA44aVFRbMpfkUWib2DRkkty2x2xUcoKKvG+Eb2VOeDYdID3EsGo/4?=
- =?us-ascii?Q?3LdeesSbI58hX/HlQ/CmWPMqtQAcnPu7TROM9HbSGQfqWKwWOXE4dFFRvsXz?=
- =?us-ascii?Q?Z+Olpsl7T2a5ffdBIly8CUH6axEU7TZpCFBUlSyak8wGtw8xfZAjH0deKa7x?=
- =?us-ascii?Q?LCeWuTN5urGJuDV9QiNaQD4jxXKv0ussOugWwnLL8B6zqC7OtJnN02TnF8vg?=
- =?us-ascii?Q?tJLzGrs8OAQ/WfOzbufLvsKBjPjPD1ucFlDnnhLQ8GcwD+WAbYMsUvcrAYTO?=
- =?us-ascii?Q?XwdOXed+LhDcbp2MA6B5oXLycBogfniwksX+ZLKduDo9J/Zel+pVcV3GV2VW?=
- =?us-ascii?Q?u4c9HUsxx8dLKuVy1vQb0g5n+zTJnJ5LrDd23fdvSpJmcR1PDH03zOx38ABM?=
- =?us-ascii?Q?RcHjqgXwqpW+VNFoCCFRcgvAZToWFjdlYm00/AAFvlHUlUXAm1Cfa1bstlFr?=
- =?us-ascii?Q?Y/jl46xxuM+wN3W9JwWyHFtWEplnNawgovj1tdj5gUO9yo5OzJeIM4au/7r0?=
- =?us-ascii?Q?SpqzDbnIXqaeaY2Xt89+Wquo24MQWV/xKANUuN+pBs0G5L7qYXteOl8QyJUc?=
- =?us-ascii?Q?t50y6diiUOx0ngI3Zv8GifeTCEu7kIEBnh/aR8Mg16aV7d6p52ZmTiL17FEm?=
- =?us-ascii?Q?ktAQH4eL4ejsV4zyLcRNqf/XK0FhsWvtUwIPJ/wlvd8gObR8gmIECU8bMJ+Q?=
- =?us-ascii?Q?hO8QmYhwE1Z0H8W/E9mRWiSJh4IclivEG3hEmH+mHsBq3OxEtmXyke1N26/z?=
- =?us-ascii?Q?n9kBQChBoLxSQd8EBZZKHajnPLmPUHpLXnLqYbGLTylruyYCBOmHyCBYGhhd?=
- =?us-ascii?Q?5y29DWZJLC8YhCM4Z0CZ8GiW7eIZ4K3WxvH+/xp558ZuJ+FaGii+ZjMeXynn?=
- =?us-ascii?Q?Rs04bOCc2dRjA+meESn9KjkEFIWWITMg8gqd82dH3G1qRcAY6x2uZe38zwSk?=
- =?us-ascii?Q?QkvXdZTU3jBI9EYhSupt5iDtcaaM5nnh4CaGMnggDuUy1Wa+k329jYUDuGm9?=
- =?us-ascii?Q?3KYR/T7HIPQwHW68LUnkKRHm/UiY1PO69c2DmnB0nf/PSHR3+zkM3bsXhtfp?=
- =?us-ascii?Q?ZXUv44Lh7dw1SA3dL34QkQ3Z1s8qmOYsgnKPWUe5FYpDbmO6XBMKm9MikNxt?=
- =?us-ascii?Q?CBYb1gHTx6rob1+CBkAVpkyZHi8CsANgzOO2eQIjLP+fvYytxWJd48nLEfRb?=
- =?us-ascii?Q?YmLo4U5DcZEtNm0tLGCYiR1DX+QTYanAKq1OOIzUhlP61Tp3XjyceXszgLSf?=
- =?us-ascii?B?QT09?=
-x-microsoft-antispam-prvs: <VI1PR04MB164815FDA6626574B49EB2F18B630@VI1PR04MB1648.eurprd04.prod.outlook.com>
-x-forefront-prvs: 09525C61DB
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(396003)(366004)(136003)(39860400002)(189003)(199004)(9686003)(102836004)(229853002)(486006)(53936002)(186003)(7696005)(6506007)(2501003)(6246003)(26005)(11346002)(99286004)(476003)(446003)(44832011)(106356001)(217873002)(110136005)(76176011)(256004)(86362001)(66066001)(25786009)(97736004)(54906003)(14444005)(105586002)(2906002)(6116002)(33656002)(3846002)(5660300002)(74316002)(7736002)(316002)(68736007)(305945005)(81166006)(81156014)(478600001)(8936002)(4326008)(71200400001)(2201001)(55016002)(71190400001)(6436002)(8676002)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB1648;H:VI1PR04MB5327.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 83WoP78oDyrv3hdx/8OFtDc7Gjn7rNNaLmtBrCe08vgmMafZ2XznnKc33XCukrb+P56fUJ6CqLdpn1mCvEOvNl5EhHoeYRFNuhezlSSgC5uqreH0keR7/UAFgeUk12LSlkH7H5aQGsekmDFBOTPi3udpzuwzCxN+Ylzs6/SgJ4oYFEk1P+XIyJWEa3vKa23IWGj4hsWcLiv6BeNfPlPSKa+swIi1mUdv9k/fkFQ4VBQm7O5exID5Fwkz5xtfv/0As7CNyjO+XZHx0Le3Sg44nWtI2MHUr5xLtRGfIo03ye4CmBHaxpEWqTGc+t9MAQ1reQ079kGFQ9IybkZHA4isqdEk6gs/tCF/+BxTsI4MI/RlIoWNbrYbQ/AM/pOloKYeuA5Eb/yuNgJYeGlqqYbvMU8w3qMPpbPAqGAQI6IwAdo=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Sun, 17 Feb 2019 22:07:17 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:53499 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727602AbfBRDHQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 22:07:16 -0500
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x1I373G9002054;
+        Mon, 18 Feb 2019 12:07:03 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x1I373G9002054
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1550459224;
+        bh=L1XqnuV2cGGvBiG0SVgjTsCI6UzRnL93ImGl029cLDk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=oV/I+WAXB1zy02vmAIWtqw7rh8jMe65ifQDEwFnLNU1TJeTr8jT4B+kmLkxO3iBR8
+         gmS1zOWcCGxEeLEVK+1P7MUvSy+4n+4jX20kQAcdwLoA7u4GcpgvWv4HStZ3OS2lfI
+         PUp4nHFDt2MSNui/EnDlWml9ge+KlRxTw972u9LlI3nHJvazmiaDktT+JX+sZgo/Dk
+         Aw9lgvVCWtj2y02FlGA2/S8huvsU/10fkf/kCZu4c+970LFC/k6LDP0ezw/B0Orvef
+         X0+VuWhvw41ecUoZtuNgJNFdvExAKyPtj7DoLvgZv4LtMbopHwfp0ygRw4PcyUObyy
+         SJTYI7ZJkfzKg==
+X-Nifty-SrcIP: [209.85.217.45]
+Received: by mail-vs1-f45.google.com with SMTP id e10so8839742vsp.1;
+        Sun, 17 Feb 2019 19:07:03 -0800 (PST)
+X-Gm-Message-State: AHQUAubVJNfDbUCQnuBL94M9I54g7WOstpXtniTRr0NCP63sNJORll0s
+        Rj08BEAdtnagIjjtE3rQgHKjJN8nX6S57pPWyf8=
+X-Google-Smtp-Source: AHgI3IZP1tz9IqvvhKD2DfnRrqwr0wKKUIUAasZvJEoykVV0yrLIxihsfZA6Ss/p2qrtVaeCIRhXa9zJt0BqIwg1SYs=
+X-Received: by 2002:a67:c913:: with SMTP id w19mr10824086vsk.179.1550459222293;
+ Sun, 17 Feb 2019 19:07:02 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d39ff746-698d-473d-165c-08d6954dc5b3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2019 03:04:18.0331
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB1648
+References: <20190213174005.28785-1-hch@lst.de> <20190213174005.28785-11-hch@lst.de>
+In-Reply-To: <20190213174005.28785-11-hch@lst.de>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 18 Feb 2019 12:06:26 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARo5Sd-2rpHtFMfxEuEUej4P8oSbUdV+-EBp+V8qU+Gww@mail.gmail.com>
+Message-ID: <CAK7LNARo5Sd-2rpHtFMfxEuEUej4P8oSbUdV+-EBp+V8qU+Gww@mail.gmail.com>
+Subject: Re: [PATCH 10/11] lib: consolidate the GENERIC_HWEIGHT symbol
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-xtensa@linux-xtensa.org,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-riscv@lists.infradead.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=20
-> According to the chipidea driver bindings, the USB PHY is specified via t=
-he "phys"
-> phandle node. However, this only takes effect for USB PHYs that use the c=
-ommon
-> PHY framework. For legacy USB PHYs, a simple lookup based on the USB PHY
-> type is done instead.
->=20
-> This does not play out well when more than one USB PHY is registered, sin=
-ce the
-> first registered PHY matching the type will always be returned regardless=
- of what
-> the driver was bound to.
->=20
-> Fix this by looking up the PHY based on the "phys" phandle node.
-> Although generic PHYs are rather matched by their "phys-name" and not the=
- "phys"
-> phandle directly, there is no helper for similar lookup on legacy PHYs an=
-d it's
-> probably not worth the effort to add it.
->=20
-> When no legacy USB PHY is found by phandle, fallback to grabbing any regi=
-stered
-> USB2 PHY. This ensures backward compatibility if some users were actually=
- relying
-> on this mechanism.
->=20
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+On Thu, Feb 14, 2019 at 2:41 AM Christoph Hellwig <hch@lst.de> wrote:
+>
+> Introduce a new ARCH_HAS_HWEIGHT symbol for alpha and ia64,
+
+
+I think this is really confusing.
+
+
+"ARCH has its own optimized hweight implementation"
+
+   is not equivalent to
+
+"ARCH does not need generic hweight at all".
+
+
+For example, see
+
+arch/powerpc/lib/hweight_64.S
+
+
+As far as I understood the code,
+it will fallback to generic lib/hweight.c
+if it turns out the optimized one is not available.
+
+
+Thanks.
+
+
+> and just
+> default to the generic version otherwise.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
-> Changes since v2:
-> * Fixed typos in commit message.
->=20
-> Changes since v1:
-> * Only consider legacy USB PHY error for fallback as suggested;
-> * Checked against EPROBE_DEFER before entering fallback.
->=20
->  drivers/usb/chipidea/core.c | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/usb/chipidea/core.c b/drivers/usb/chipidea/core.c in=
-dex
-> 7bfcbb23c2a4..016e4004fe9d 100644
-> --- a/drivers/usb/chipidea/core.c
-> +++ b/drivers/usb/chipidea/core.c
-> @@ -954,8 +954,15 @@ static int ci_hdrc_probe(struct platform_device *pde=
-v)
->  	} else if (ci->platdata->usb_phy) {
->  		ci->usb_phy =3D ci->platdata->usb_phy;
->  	} else {
-> +		ci->usb_phy =3D devm_usb_get_phy_by_phandle(dev->parent, "phys",
-> +							  0);
->  		ci->phy =3D devm_phy_get(dev->parent, "usb-phy");
-> -		ci->usb_phy =3D devm_usb_get_phy(dev->parent,
-> USB_PHY_TYPE_USB2);
+>  arch/alpha/Kconfig      | 5 +----
+>  arch/arc/Kconfig        | 3 ---
+>  arch/arm/Kconfig        | 4 ----
+>  arch/arm64/Kconfig      | 3 ---
+>  arch/c6x/Kconfig        | 3 ---
+>  arch/csky/Kconfig       | 3 ---
+>  arch/h8300/Kconfig      | 3 ---
+>  arch/hexagon/Kconfig    | 3 ---
+>  arch/ia64/Kconfig       | 1 +
+>  arch/m68k/Kconfig       | 4 ----
+>  arch/microblaze/Kconfig | 3 ---
+>  arch/mips/Kconfig       | 4 ----
+>  arch/nds32/Kconfig      | 3 ---
+>  arch/nios2/Kconfig      | 3 ---
+>  arch/openrisc/Kconfig   | 3 ---
+>  arch/parisc/Kconfig     | 4 ----
+>  arch/powerpc/Kconfig    | 4 ----
+>  arch/riscv/Kconfig      | 3 ---
+>  arch/s390/Kconfig       | 3 ---
+>  arch/sh/Kconfig         | 3 ---
+>  arch/sparc/Kconfig      | 4 ----
+>  arch/unicore32/Kconfig  | 3 ---
+>  arch/x86/Kconfig        | 3 ---
+>  arch/x86/um/Kconfig     | 3 ---
+>  arch/xtensa/Kconfig     | 3 ---
+>  lib/Kconfig             | 7 +++++++
+>  26 files changed, 9 insertions(+), 79 deletions(-)
+>
+> diff --git a/arch/alpha/Kconfig b/arch/alpha/Kconfig
+> index 65b5514e5a7f..a549c53563e8 100644
+> --- a/arch/alpha/Kconfig
+> +++ b/arch/alpha/Kconfig
+> @@ -2,6 +2,7 @@
+>  config ALPHA
+>         bool
+>         default y
+> +       select ARCH_HAS_HWEIGHT if ALPHA_EV67
+>         select ARCH_MIGHT_HAVE_PC_PARPORT
+>         select ARCH_MIGHT_HAVE_PC_SERIO
+>         select ARCH_NO_PREEMPT
+> @@ -446,10 +447,6 @@ config ALPHA_IRONGATE
+>         depends on ALPHA_NAUTILUS
+>         default y
+>
+> -config GENERIC_HWEIGHT
+> -       bool
+> -       default y if !ALPHA_EV67
+> -
+>  config ALPHA_AVANTI
+>         bool
+>         depends on ALPHA_XL || ALPHA_AVANTI_CH
+> diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+> index 6476404b98b8..8bf4c0f7cc1d 100644
+> --- a/arch/arc/Kconfig
+> +++ b/arch/arc/Kconfig
+> @@ -72,9 +72,6 @@ config MMU
+>  config NO_IOPORT_MAP
+>         def_bool y
+>
+> -config GENERIC_HWEIGHT
+> -       def_bool y
+> -
+>  config HAVE_ARCH_TRANSPARENT_HUGEPAGE
+>         def_bool y
+>         depends on ARC_MMU_V4
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index c230fb1e09ba..b47825767e3d 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -182,10 +182,6 @@ config ARCH_HAS_BANDGAP
+>  config FIX_EARLYCON_MEM
+>         def_bool y if MMU
+>
+> -config GENERIC_HWEIGHT
+> -       bool
+> -       default y
+> -
+>  config ARCH_MAY_HAVE_PC_FDC
+>         bool
+>
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 7cc3334aba29..98c3776ccf6b 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -237,9 +237,6 @@ config ILLEGAL_POINTER_VALUE
+>         hex
+>         default 0xdead000000000000
+>
+> -config GENERIC_HWEIGHT
+> -       def_bool y
+> -
+>  config ZONE_DMA32
+>         def_bool y
+>
+> diff --git a/arch/c6x/Kconfig b/arch/c6x/Kconfig
+> index 19b145ef7d92..c439d2f46af0 100644
+> --- a/arch/c6x/Kconfig
+> +++ b/arch/c6x/Kconfig
+> @@ -28,9 +28,6 @@ config MMU
+>  config FPU
+>         def_bool n
+>
+> -config GENERIC_HWEIGHT
+> -       def_bool y
+> -
+>  config C6X_BIG_KERNEL
+>         bool "Build a big kernel"
+>         help
+> diff --git a/arch/csky/Kconfig b/arch/csky/Kconfig
+> index c0a49cbd3df0..14a9905e99a4 100644
+> --- a/arch/csky/Kconfig
+> +++ b/arch/csky/Kconfig
+> @@ -84,9 +84,6 @@ config CPU_NO_USER_BKPT
+>           instruction exception.
+>           In kernel we parse the *regs->pc to determine whether to send SIGTRAP or not.
+>
+> -config GENERIC_HWEIGHT
+> -       def_bool y
+> -
+>  config MMU
+>         def_bool y
+>
+> diff --git a/arch/h8300/Kconfig b/arch/h8300/Kconfig
+> index 4f5a1efab822..77ce104bb42e 100644
+> --- a/arch/h8300/Kconfig
+> +++ b/arch/h8300/Kconfig
+> @@ -27,9 +27,6 @@ config H8300
+>  config CPU_BIG_ENDIAN
+>         def_bool y
+>
+> -config GENERIC_HWEIGHT
+> -       def_bool y
+> -
+>  config NO_IOPORT_MAP
+>         def_bool y
+>
+> diff --git a/arch/hexagon/Kconfig b/arch/hexagon/Kconfig
+> index 7a01f4c5a4f6..fb2996063d5a 100644
+> --- a/arch/hexagon/Kconfig
+> +++ b/arch/hexagon/Kconfig
+> @@ -61,9 +61,6 @@ config MMU
+>  config GENERIC_IRQ_PROBE
+>         def_bool y
+>
+> -config GENERIC_HWEIGHT
+> -       def_bool y
+> -
+>  menu "Machine selection"
+>
+>  choice
+> diff --git a/arch/ia64/Kconfig b/arch/ia64/Kconfig
+> index fc44c046953e..c9eb106b1f4c 100644
+> --- a/arch/ia64/Kconfig
+> +++ b/arch/ia64/Kconfig
+> @@ -8,6 +8,7 @@ menu "Processor type and features"
+>
+>  config IA64
+>         bool
+> +       select ARCH_HAS_HWEIGHT
+>         select ARCH_MIGHT_HAVE_PC_PARPORT
+>         select ARCH_MIGHT_HAVE_PC_SERIO
+>         select ACPI if (!IA64_HP_SIM)
+> diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
+> index 1bf6abaea604..91b150b6572c 100644
+> --- a/arch/m68k/Kconfig
+> +++ b/arch/m68k/Kconfig
+> @@ -38,10 +38,6 @@ config ARCH_HAS_ILOG2_U32
+>  config ARCH_HAS_ILOG2_U64
+>         bool
+>
+> -config GENERIC_HWEIGHT
+> -       bool
+> -       default y
+> -
+>  config TIME_LOW_RES
+>         bool
+>         default y
+> diff --git a/arch/microblaze/Kconfig b/arch/microblaze/Kconfig
+> index d8907d6f969c..0185ac1f0268 100644
+> --- a/arch/microblaze/Kconfig
+> +++ b/arch/microblaze/Kconfig
+> @@ -71,9 +71,6 @@ config ARCH_HAS_ILOG2_U32
+>  config ARCH_HAS_ILOG2_U64
+>         def_bool n
+>
+> -config GENERIC_HWEIGHT
+> -       def_bool y
+> -
+>  source "arch/microblaze/Kconfig.platform"
+>
+>  menu "Processor type and features"
+> diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+> index bd0c9be7e7cf..04e041cac595 100644
+> --- a/arch/mips/Kconfig
+> +++ b/arch/mips/Kconfig
+> @@ -1042,10 +1042,6 @@ source "arch/mips/paravirt/Kconfig"
+>
+>  endmenu
+>
+> -config GENERIC_HWEIGHT
+> -       bool
+> -       default y
+> -
+>  config SCHED_OMIT_FRAME_POINTER
+>         bool
+>         default y
+> diff --git a/arch/nds32/Kconfig b/arch/nds32/Kconfig
+> index 7b3a36705aa8..979661f0ab51 100644
+> --- a/arch/nds32/Kconfig
+> +++ b/arch/nds32/Kconfig
+> @@ -50,9 +50,6 @@ config NDS32
+>         help
+>           Andes(nds32) Linux support.
+>
+> -config GENERIC_HWEIGHT
+> -        def_bool y
+> -
+>  config GENERIC_LOCKBREAK
+>          def_bool y
+>         depends on PREEMPT
+> diff --git a/arch/nios2/Kconfig b/arch/nios2/Kconfig
+> index 11ef63217ebe..a0485f5f0db0 100644
+> --- a/arch/nios2/Kconfig
+> +++ b/arch/nios2/Kconfig
+> @@ -27,9 +27,6 @@ config NIOS2
+>         select CPU_NO_EFFICIENT_FFS
+>         select ARCH_DISCARD_MEMBLOCK
+>
+> -config GENERIC_HWEIGHT
+> -       def_bool y
+> -
+>  config NO_IOPORT_MAP
+>         def_bool y
+>
+> diff --git a/arch/openrisc/Kconfig b/arch/openrisc/Kconfig
+> index 15d7df402c19..dc026973e6f6 100644
+> --- a/arch/openrisc/Kconfig
+> +++ b/arch/openrisc/Kconfig
+> @@ -46,9 +46,6 @@ config CPU_BIG_ENDIAN
+>  config MMU
+>         def_bool y
+>
+> -config GENERIC_HWEIGHT
+> -       def_bool y
+> -
+>  config NO_IOPORT_MAP
+>         def_bool y
+>
+> diff --git a/arch/parisc/Kconfig b/arch/parisc/Kconfig
+> index 42282b8e086d..7d5ded83c180 100644
+> --- a/arch/parisc/Kconfig
+> +++ b/arch/parisc/Kconfig
+> @@ -86,10 +86,6 @@ config ARCH_HAS_ILOG2_U64
+>         bool
+>         default n
+>
+> -config GENERIC_HWEIGHT
+> -       bool
+> -       default y
+> -
+>  config TIME_LOW_RES
+>         bool
+>         depends on SMP
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index a0e9207893c8..8dd4d2b24fdb 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -96,10 +96,6 @@ config GENERIC_LOCKBREAK
+>         default y
+>         depends on SMP && PREEMPT
+>
+> -config GENERIC_HWEIGHT
+> -       bool
+> -       default y
+> -
+>  config ARCH_HAS_DMA_SET_COHERENT_MASK
+>          bool
+>
+> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+> index 2b173a48bdbc..0acdd7aaaaea 100644
+> --- a/arch/riscv/Kconfig
+> +++ b/arch/riscv/Kconfig
+> @@ -69,9 +69,6 @@ config PAGE_OFFSET
+>         default 0xffffffff80000000 if 64BIT && MAXPHYSMEM_2GB
+>         default 0xffffffe000000000 if 64BIT && MAXPHYSMEM_128GB
+>
+> -config GENERIC_HWEIGHT
+> -       def_bool y
+> -
+>  config PGTABLE_LEVELS
+>         int
+>         default 3 if 64BIT
+> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+> index 2a5c12be633e..9a25e19364f5 100644
+> --- a/arch/s390/Kconfig
+> +++ b/arch/s390/Kconfig
+> @@ -14,9 +14,6 @@ config ARCH_HAS_ILOG2_U32
+>  config ARCH_HAS_ILOG2_U64
+>         def_bool n
+>
+> -config GENERIC_HWEIGHT
+> -       def_bool y
+> -
+>  config GENERIC_LOCKBREAK
+>         def_bool y if SMP && PREEMPT
+>
+> diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+> index 3d0bd7fbe11a..af6a40af1702 100644
+> --- a/arch/sh/Kconfig
+> +++ b/arch/sh/Kconfig
+> @@ -94,9 +94,6 @@ config ARCH_DEFCONFIG
+>         default "arch/sh/configs/shx3_defconfig" if SUPERH32
+>         default "arch/sh/configs/cayman_defconfig" if SUPERH64
+>
+> -config GENERIC_HWEIGHT
+> -       def_bool y
+> -
+>  config GENERIC_LOCKBREAK
+>         def_bool y
+>         depends on SMP && PREEMPT
+> diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
+> index 58270c021b01..78135ac357ed 100644
+> --- a/arch/sparc/Kconfig
+> +++ b/arch/sparc/Kconfig
+> @@ -187,10 +187,6 @@ config NR_CPUS
+>
+>  source "kernel/Kconfig.hz"
+>
+> -config GENERIC_HWEIGHT
+> -       bool
+> -       default y
+> -
+>  config ARCH_MAY_HAVE_PC_FDC
+>         bool
+>         default y
+> diff --git a/arch/unicore32/Kconfig b/arch/unicore32/Kconfig
+> index 9de1d983a99a..e69a8c3232e1 100644
+> --- a/arch/unicore32/Kconfig
+> +++ b/arch/unicore32/Kconfig
+> @@ -38,9 +38,6 @@ config ARCH_HAS_ILOG2_U32
+>  config ARCH_HAS_ILOG2_U64
+>         bool
+>
+> -config GENERIC_HWEIGHT
+> -       def_bool y
+> -
+>  config ARCH_MAY_HAVE_PC_FDC
+>         bool
+>
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index f4cb31174e1b..7a9347c7448e 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -255,9 +255,6 @@ config GENERIC_ISA_DMA
+>         def_bool y
+>         depends on ISA_DMA_API
+>
+> -config GENERIC_HWEIGHT
+> -       def_bool y
+> -
+>  config ARCH_MAY_HAVE_PC_FDC
+>         def_bool y
+>         depends on ISA_DMA_API
+> diff --git a/arch/x86/um/Kconfig b/arch/x86/um/Kconfig
+> index f5a8cded3ca4..1628a54af003 100644
+> --- a/arch/x86/um/Kconfig
+> +++ b/arch/x86/um/Kconfig
+> @@ -49,6 +49,3 @@ config ARCH_HAS_SC_SIGNALS
+>
+>  config ARCH_REUSE_HOST_VSYSCALL_AREA
+>         def_bool !64BIT
+> -
+> -config GENERIC_HWEIGHT
+> -       def_bool y
+> diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
+> index d02c25184ca0..ff57afdeda04 100644
+> --- a/arch/xtensa/Kconfig
+> +++ b/arch/xtensa/Kconfig
+> @@ -47,9 +47,6 @@ config XTENSA
+>           with reasonable minimum requirements.  The Xtensa Linux project has
+>           a home page at <http://www.linux-xtensa.org/>.
+>
+> -config GENERIC_HWEIGHT
+> -       def_bool y
+> -
+>  config ARCH_HAS_ILOG2_U32
+>         def_bool n
+>
+> diff --git a/lib/Kconfig b/lib/Kconfig
+> index bd2e7e74c321..91019f26d0a8 100644
+> --- a/lib/Kconfig
+> +++ b/lib/Kconfig
+> @@ -35,6 +35,13 @@ config RATIONAL
+>  config GENERIC_CSUM
+>         bool
+>
+> +config ARCH_HAS_HWEIGHT
+> +       bool
 > +
-> +		/* Fallback to grabbing any registered USB2 PHY */
-> +		if (IS_ERR(ci->usb_phy) &&
-> +		    PTR_ERR(ci->usb_phy) !=3D -EPROBE_DEFER)
-> +			ci->usb_phy =3D devm_usb_get_phy(dev->parent,
-> +						       USB_PHY_TYPE_USB2);
->=20
-
-I think you may need to do above if ci->phy is error, and not the error is =
--EPROBE_DEFER.
-
-Peter
-
->  		/* if both generic PHY and USB PHY layers aren't enabled */
->  		if (PTR_ERR(ci->phy) =3D=3D -ENOSYS &&
+> +config GENERIC_HWEIGHT
+> +       default y if !ARCH_HAS_HWEIGHT
+> +       bool
+> +
+>  config GENERIC_STRNCPY_FROM_USER
+>         bool
+>
 > --
 > 2.20.1
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
+
+
+--
+Best Regards
+Masahiro Yamada
