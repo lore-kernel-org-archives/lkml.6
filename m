@@ -2,60 +2,51 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 557E7C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10914C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:52:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C8FB21901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:52:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C69F121904
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:52:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497928;
-	bh=J+rS13RpnaZqQl30C1uhf3j+PJt6JQGARp6foMgTU7A=;
+	s=default; t=1550497939;
+	bh=kJHyoAWrKaBp7BD8eH26ZddDXGQpqZcg5ciCAo4i9Tc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RCG+yFcseR1Kyrq/AoUsE71J4dlwUfYqG8vZCVZaOWRtB04hJW/VpZVizqasDVbpD
-	 mDBTGFKnCqIO+J4BIkWVGKHw/iaYbD91d1LpL5jiU0g1dz3Ebg7Cs/aZ2ppxrXmdEb
-	 uIqCmc7PIroHOiK+9lHmRVY2roPRtZlTb7LAM0qE=
+	b=gz59xyN5RbxDbuqhQGlEqSb2/J40GW2v2+Hv6gUWBkf6msM1/bbovquVciXO3v97j
+	 Rgnyfa3dgVHPqhZIbXWeaLB5vpwoxivmYyoMsN3eAdmJ23Jq3JTQ05RFvGzFLelILF
+	 cdBamIES/OtMHHeKxO2Qe8M3q6xkH9xseL5YNoWs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732621AbfBRNwG (ORCPT
+        id S1732119AbfBRNwS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:52:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59938 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:52:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732569AbfBRNwD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:52:03 -0500
+        id S1732650AbfBRNwP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:52:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0550620449;
-        Mon, 18 Feb 2019 13:52:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FCB321904;
+        Mon, 18 Feb 2019 13:52:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497922;
-        bh=J+rS13RpnaZqQl30C1uhf3j+PJt6JQGARp6foMgTU7A=;
+        s=default; t=1550497935;
+        bh=kJHyoAWrKaBp7BD8eH26ZddDXGQpqZcg5ciCAo4i9Tc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2CB5aEOK+FOOixOURJYBc0FyB9qrVYNVbuJwZtM/FBiaIJ964SKE5Dv/pq9apaxVf
-         MNNUy6Iqgh7zNfHecL3m9hzlucdjzvbIGzOPJbFjvTQcIrpLWrTwMf36DMOrWRP4id
-         PbmAIkfPob8xHB47QPpggW9oLkkDtgK8XIz4fg5o=
+        b=1CJMn9oq8uv/9X9z1irEnAoUjN8w5UdSPbL6DhKC3PUZsDwZO0fDobWLQIirAkTA1
+         LsbRBN+SLswze1BBWO87U9OY6F2gUwNGth/nqJQi5M1kZX4Jeey0t/Zar1sdl8OBa2
+         aGQE9rGvuKWMq/a17mljcuNC/vdZ1YKfjRqc2bZ4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Belisko Marek <marek.belisko@gmail.com>,
-        Dmitry Lifshitz <lifshitz@compulab.co.il>,
-        "Dr. H. Nikolaus Schaller" <hns@goldelico.com>,
-        Jon Hunter <jonathanh@nvidia.com>, Keerthy <j-keerthy@ti.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Nishanth Menon <nm@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Richard Woodruff <r-woodruff2@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Tero Kristo <t-kristo@ti.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 4.19 53/85] ARM: OMAP5+: Fix inverted nirq pin interrupts with irq_set_type
-Date:   Mon, 18 Feb 2019 14:43:19 +0100
-Message-Id: <20190218133505.277712510@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 40/85] ARM: dts: da850-evm: Correct the sound card name
+Date:   Mon, 18 Feb 2019 14:43:06 +0100
+Message-Id: <20190218133504.107071789@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -74,185 +65,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Lindgren <tony@atomide.com>
+[ Upstream commit 7fca69d4e43fa1ae9cb4f652772c132dc5a659c6 ]
 
-commit d0243693fbf6fbd48b4efb2ba7210765983b03e3 upstream.
+To avoid  the following error:
+asoc-simple-card sound: ASoC: Failed to create card debugfs directory
 
-Commit 83a86fbb5b56 ("irqchip/gic: Loudly complain about the use of
-IRQ_TYPE_NONE") started warning about incorrect dts usage for irqs.
-ARM GIC only supports active-high interrupts for SPI (Shared Peripheral
-Interrupts), and the Palmas PMIC by default is active-low.
+Which is because the card name contains '/' character, which can not be
+used in file or directory names.
 
-Palmas PMIC allows changing the interrupt polarity using register
-PALMAS_POLARITY_CTRL_INT_POLARITY, but configuring sys_nirq1 with
-a pull-down and setting PALMAS_POLARITY_CTRL_INT_POLARITY made the
-Palmas RTC interrupts stop working. This can be easily tested with
-kernel tools rtctest.c.
-
-Turns out the SoC inverts the sys_nirq pins for GIC as they do not go
-through a peripheral device but go directly to the MPUSS wakeupgen.
-I've verified this by muxing the interrupt line temporarily to gpio_wk16
-instead of sys_nirq1. with a gpio, the interrupt works fine both
-active-low and active-high with the SoC internal pull configured and
-palmas polarity configured. But as sys_nirq1, the interrupt only works
-when configured ACTIVE_LOW for palmas, and ACTIVE_HIGH for GIC.
-
-Note that there was a similar issue earlier with tegra114 and palmas
-interrupt polarity that got fixed by commit df545d1cd01a ("mfd: palmas:
-Provide irq flags through DT/platform data"). However, the difference
-between omap5 and tegra114 is that tegra inverts the palmas interrupt
-twice, once when entering tegra PMC, and again when exiting tegra PMC
-to GIC.
-
-Let's fix the issue by adding a custom wakeupgen_irq_set_type() for
-wakeupgen and invert any interrupts with wrong polarity. Let's also
-warn about any non-sysnirq pins using wrong polarity. Note that we
-also need to update the dts for the level as IRQ_TYPE_NONE never
-has irq_set_type() called, and let's add some comments and use proper
-pin nameing to avoid more confusion later on.
-
-Cc: Belisko Marek <marek.belisko@gmail.com>
-Cc: Dmitry Lifshitz <lifshitz@compulab.co.il>
-Cc: "Dr. H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>
-Cc: Keerthy <j-keerthy@ti.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Nishanth Menon <nm@ti.com>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc: Richard Woodruff <r-woodruff2@ti.com>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>
-Cc: Tero Kristo <t-kristo@ti.com>
-Cc: Thierry Reding <treding@nvidia.com>
-Cc: stable@vger.kernel.org # v4.17+
-Reported-by: Belisko Marek <marek.belisko@gmail.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/omap5-board-common.dtsi |    9 +++++--
- arch/arm/boot/dts/omap5-cm-t54.dts        |   12 +++++++++-
- arch/arm/mach-omap2/omap-wakeupgen.c      |   36 +++++++++++++++++++++++++++++-
- 3 files changed, 52 insertions(+), 5 deletions(-)
+ arch/arm/boot/dts/da850-evm.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/arm/boot/dts/omap5-board-common.dtsi
-+++ b/arch/arm/boot/dts/omap5-board-common.dtsi
-@@ -317,7 +317,8 @@
+diff --git a/arch/arm/boot/dts/da850-evm.dts b/arch/arm/boot/dts/da850-evm.dts
+index e0ac195950b1..016616cc036c 100644
+--- a/arch/arm/boot/dts/da850-evm.dts
++++ b/arch/arm/boot/dts/da850-evm.dts
+@@ -127,7 +127,7 @@
  
- 	palmas_sys_nirq_pins: pinmux_palmas_sys_nirq_pins {
- 		pinctrl-single,pins = <
--			OMAP5_IOPAD(0x068, PIN_INPUT_PULLUP | MUX_MODE0) /* sys_nirq1 */
-+			/* sys_nirq1 is pulled down as the SoC is inverting it for GIC */
-+			OMAP5_IOPAD(0x068, PIN_INPUT_PULLUP | MUX_MODE0)
- 		>;
- 	};
- 
-@@ -385,7 +386,8 @@
- 
- 	palmas: palmas@48 {
- 		compatible = "ti,palmas";
--		interrupts = <GIC_SPI 7 IRQ_TYPE_NONE>; /* IRQ_SYS_1N */
-+		/* sys_nirq/ext_sys_irq pins get inverted at mpuss wakeupgen */
-+		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_LOW>;
- 		reg = <0x48>;
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
-@@ -651,7 +653,8 @@
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&twl6040_pins>;
- 
--		interrupts = <GIC_SPI 119 IRQ_TYPE_NONE>; /* IRQ_SYS_2N cascaded to gic */
-+		/* sys_nirq/ext_sys_irq pins get inverted at mpuss wakeupgen */
-+		interrupts = <GIC_SPI 119 IRQ_TYPE_LEVEL_LOW>;
- 
- 		/* audpwron gpio defined in the board specific dts */
- 
---- a/arch/arm/boot/dts/omap5-cm-t54.dts
-+++ b/arch/arm/boot/dts/omap5-cm-t54.dts
-@@ -181,6 +181,13 @@
- 			OMAP5_IOPAD(0x0042, PIN_INPUT_PULLDOWN | MUX_MODE6)  /* llib_wakereqin.gpio1_wk15 */
- 		>;
- 	};
-+
-+	palmas_sys_nirq_pins: pinmux_palmas_sys_nirq_pins {
-+		pinctrl-single,pins = <
-+			/* sys_nirq1 is pulled down as the SoC is inverting it for GIC */
-+			OMAP5_IOPAD(0x068, PIN_INPUT_PULLUP | MUX_MODE0)
-+		>;
-+	};
- };
- 
- &omap5_pmx_core {
-@@ -414,8 +421,11 @@
- 
- 	palmas: palmas@48 {
- 		compatible = "ti,palmas";
--		interrupts = <GIC_SPI 7 IRQ_TYPE_NONE>; /* IRQ_SYS_1N */
- 		reg = <0x48>;
-+		pinctrl-0 = <&palmas_sys_nirq_pins>;
-+		pinctrl-names = "default";
-+		/* sys_nirq/ext_sys_irq pins get inverted at mpuss wakeupgen */
-+		interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_LOW>;
- 		interrupt-controller;
- 		#interrupt-cells = <2>;
- 		ti,system-power-controller;
---- a/arch/arm/mach-omap2/omap-wakeupgen.c
-+++ b/arch/arm/mach-omap2/omap-wakeupgen.c
-@@ -50,6 +50,9 @@
- #define OMAP4_NR_BANKS		4
- #define OMAP4_NR_IRQS		128
- 
-+#define SYS_NIRQ1_EXT_SYS_IRQ_1	7
-+#define SYS_NIRQ2_EXT_SYS_IRQ_2	119
-+
- static void __iomem *wakeupgen_base;
- static void __iomem *sar_base;
- static DEFINE_RAW_SPINLOCK(wakeupgen_lock);
-@@ -153,6 +156,37 @@ static void wakeupgen_unmask(struct irq_
- 	irq_chip_unmask_parent(d);
- }
- 
-+/*
-+ * The sys_nirq pins bypass peripheral modules and are wired directly
-+ * to MPUSS wakeupgen. They get automatically inverted for GIC.
-+ */
-+static int wakeupgen_irq_set_type(struct irq_data *d, unsigned int type)
-+{
-+	bool inverted = false;
-+
-+	switch (type) {
-+	case IRQ_TYPE_LEVEL_LOW:
-+		type &= ~IRQ_TYPE_LEVEL_MASK;
-+		type |= IRQ_TYPE_LEVEL_HIGH;
-+		inverted = true;
-+		break;
-+	case IRQ_TYPE_EDGE_FALLING:
-+		type &= ~IRQ_TYPE_EDGE_BOTH;
-+		type |= IRQ_TYPE_EDGE_RISING;
-+		inverted = true;
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	if (inverted && d->hwirq != SYS_NIRQ1_EXT_SYS_IRQ_1 &&
-+	    d->hwirq != SYS_NIRQ2_EXT_SYS_IRQ_2)
-+		pr_warn("wakeupgen: irq%li polarity inverted in dts\n",
-+			d->hwirq);
-+
-+	return irq_chip_set_type_parent(d, type);
-+}
-+
- #ifdef CONFIG_HOTPLUG_CPU
- static DEFINE_PER_CPU(u32 [MAX_NR_REG_BANKS], irqmasks);
- 
-@@ -446,7 +480,7 @@ static struct irq_chip wakeupgen_chip =
- 	.irq_mask		= wakeupgen_mask,
- 	.irq_unmask		= wakeupgen_unmask,
- 	.irq_retrigger		= irq_chip_retrigger_hierarchy,
--	.irq_set_type		= irq_chip_set_type_parent,
-+	.irq_set_type		= wakeupgen_irq_set_type,
- 	.flags			= IRQCHIP_SKIP_SET_WAKE | IRQCHIP_MASK_ON_SUSPEND,
- #ifdef CONFIG_SMP
- 	.irq_set_affinity	= irq_chip_set_affinity_parent,
+ 	sound {
+ 		compatible = "simple-audio-card";
+-		simple-audio-card,name = "DA850/OMAP-L138 EVM";
++		simple-audio-card,name = "DA850-OMAPL138 EVM";
+ 		simple-audio-card,widgets =
+ 			"Line", "Line In",
+ 			"Line", "Line Out";
+-- 
+2.19.1
+
 
 
