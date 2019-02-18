@@ -4,53 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3252BC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:06:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F8BC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:06:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3BD421902
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:06:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F5EB204FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:06:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498764;
-	bh=pYMHqMWjRdAa5wE9slkCO3MIdRg1u/LQSEDpg1zX4uQ=;
+	s=default; t=1550498767;
+	bh=Vhce3c6QbE3Of8SMeCai8zqIg+f4IFZB1ylfHMILmFw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fRtx34BFVbv77Eaw7KehfrAyiHeFTvRORkc5IqoTBkiiM79oP7eRhw1UUljbPXNqA
-	 oBjGX1N+yI3+mLnwlCk7Cynf6rc/0Kjbnn0jz39QwouN1TB/wuwXh1unS/GVRd2dw0
-	 F0oLwDeo7wrvzIxf6nwjDK02F0SSoIgb5WMFuU/I=
+	b=mvNHkvE8CFXu0dDxkbnvAerkjlXOV+tvlvZnkKg0VU3x1gTyU8cKK9EqShfGNs+zV
+	 DKdIUDEDu6Kyxd98qhFjLbTneByocvUbiW8H+U8zCdjaAycsd6c0zIWhQm+Sphwr7N
+	 dmv/+Lm1Oci+ekDdyCXb652uZn1LcncEGS1l+F90=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390314AbfBROGC (ORCPT
+        id S2390326AbfBROGF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:06:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48960 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:06:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390290AbfBROF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:05:59 -0500
+        id S2390313AbfBROGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:06:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32FAB21901;
-        Mon, 18 Feb 2019 14:05:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92E4D21908;
+        Mon, 18 Feb 2019 14:06:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498758;
-        bh=pYMHqMWjRdAa5wE9slkCO3MIdRg1u/LQSEDpg1zX4uQ=;
+        s=default; t=1550498762;
+        bh=Vhce3c6QbE3Of8SMeCai8zqIg+f4IFZB1ylfHMILmFw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pkPb+8Y+GAsxnPDvn+hBBwUgG7KtE3HyrSEFVWR7hjgIeuTo4VGViE8cMxZzEdoql
-         j8iwxotC9BAc755uN2WtZi5CslR9BTow8O9Hej4Gpv5FWUJNNH1AR59U7JBYl+k/sV
-         Pmcl7tUrkd3YXvg/IUdbb995XxcBMThiqR3hgzFM=
+        b=j50rxc2yQuGXnacZcSHPAOMwErk4JjCv/ze3WL0jEDHWqYql1GakogshgialTYe5j
+         emcUPwIto/zoFFlJ/1w5gkfLFsG0mo/KDFBye0bGm38c4lYjC2+j+zhc8XwHni8UP+
+         MItqLFMoNyvwgh2HiipjlJtXLImIi5IPHN3yAOME=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Cl=C3=A9ment=20Perrochaud?= 
-        <clement.perrochaud@effinnov.com>,
-        Samuel Ortiz <sameo@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH 4.4 112/143] NFC: nxp-nci: Include unaligned.h instead of access_ok.h
-Date:   Mon, 18 Feb 2019 14:44:00 +0100
-Message-Id: <20190218133533.115879972@linuxfoundation.org>
+        stable@vger.kernel.org, "zhangyi (F)" <yi.zhang@huawei.com>,
+        Steve French <stfrench@microsoft.com>,
+        Pavel Shilovsky <pshilov@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 113/143] Revert "cifs: In Kconfig CONFIG_CIFS_POSIX needs depends on legacy (insecure cifs)"
+Date:   Mon, 18 Feb 2019 14:44:01 +0100
+Message-Id: <20190218133533.150455176@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -69,58 +66,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 2eee74b7e2a496dea49847c36fd09320505f45b7 upstream.
+This reverts commit 60da90b224ba77a934decbb8129dabc861edd526 which is
+commit 6e785302dad32228819d8066e5376acd15d0e6ba upstream.
 
-Directly including access_ok.h can result in the following compile errors
-if an architecture such as ia64 does not support direct unaligned accesses.
+Yi writes:
+	I notice that 4.4.169 merged 60da90b224ba7 ("cifs: In Kconfig
+	CONFIG_CIFS_POSIX needs depends on legacy (insecure cifs)") add
+	a Kconfig dependency CIFS_ALLOW_INSECURE_LEGACY, which was not
+	defined in 4.4 stable, so after this patch we are not able to
+	enable CIFS_POSIX anymore. Linux 4.4 stable didn't merge the
+	legacy dialects codes, so do we really need this patch for 4.4?
 
-include/linux/unaligned/access_ok.h:7:19: error:
-	redefinition of 'get_unaligned_le16'
-include/linux/unaligned/le_struct.h:6:19: note:
-	previous definition of 'get_unaligned_le16' was here
-include/linux/unaligned/access_ok.h:12:19: error:
-	redefinition of 'get_unaligned_le32'
-include/linux/unaligned/le_struct.h:11:19: note:
-	previous definition of 'get_unaligned_le32' was here
+So revert this patch.
 
-Include asm/unaligned.h instead and let the architecture decide which
-access functions to use.
-
-Cc: Clément Perrochaud <clement.perrochaud@effinnov.com>
-Cc: Samuel Ortiz <sameo@linux.intel.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Samuel Ortiz <sameo@linux.intel.com>
-Cc: Matthias Kaehlcke <mka@chromium.org>
+Reported-by: "zhangyi (F)" <yi.zhang@huawei.com>
+Cc: Steve French <stfrench@microsoft.com>
+Cc: Pavel Shilovsky <pshilov@microsoft.com>
+Cc: Sasha Levin <sashal@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/nfc/nxp-nci/firmware.c |    2 +-
- drivers/nfc/nxp-nci/i2c.c      |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ fs/cifs/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/nfc/nxp-nci/firmware.c
-+++ b/drivers/nfc/nxp-nci/firmware.c
-@@ -24,7 +24,7 @@
- #include <linux/completion.h>
- #include <linux/firmware.h>
- #include <linux/nfc.h>
--#include <linux/unaligned/access_ok.h>
-+#include <asm/unaligned.h>
+--- a/fs/cifs/Kconfig
++++ b/fs/cifs/Kconfig
+@@ -111,7 +111,7 @@ config CIFS_XATTR
  
- #include "nxp-nci.h"
- 
---- a/drivers/nfc/nxp-nci/i2c.c
-+++ b/drivers/nfc/nxp-nci/i2c.c
-@@ -36,7 +36,7 @@
- #include <linux/of_gpio.h>
- #include <linux/of_irq.h>
- #include <linux/platform_data/nxp-nci.h>
--#include <linux/unaligned/access_ok.h>
-+#include <asm/unaligned.h>
- 
- #include <net/nfc/nfc.h>
- 
+ config CIFS_POSIX
+         bool "CIFS POSIX Extensions"
+-        depends on CIFS && CIFS_ALLOW_INSECURE_LEGACY && CIFS_XATTR
++        depends on CIFS_XATTR
+         help
+           Enabling this option will cause the cifs client to attempt to
+ 	  negotiate a newer dialect with servers, such as Samba 3.0.5
 
 
