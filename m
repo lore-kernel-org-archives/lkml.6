@@ -4,52 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B8ACC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:13:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B152C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:13:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AED521917
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:13:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6089621905
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:13:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499228;
-	bh=r19kt9IIzaTP39J4RQt6EY0idhn86c9awsYykmW9UFg=;
+	s=default; t=1550499232;
+	bh=J+cWngoBJSi1C6uR/pgEGqqgJoTVHe4+wgocEHb8b/A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cwcd2g7Zsio37oj3x04BPt9EH5Un2Tn3O9a6iUcxioQYxi6czkhsg/xS2KXNT0Wj6
-	 WL5XsNb7LB4nlTrfdr8HNM2h+dhFmVAKE7XtjdGGs7pRW4OMmEYgg7L8hbtZo4cw/h
-	 iau/AlVE5/kcCbIlr9pj3xc6aLepWWc8AUaMzbME=
+	b=AtEfCH/9Q/67B3KFESfSWRyLivQFXvMJocz6rj9AHsvJ4gCdcF5LBaYROBCgnyDk+
+	 ES7IjF9WGnp39/+kO+6UuarsDdjkFCRI8BwXIpnheZYMcJLyxQIjBhEp04zeJERMUc
+	 SGwekU1OhOSD9EENrnorgQuGhXG7Nf4m3Iykc22Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392429AbfBRONq (ORCPT
+        id S2392441AbfBRONv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:13:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58512 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:13:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392407AbfBRONo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:13:44 -0500
+        id S2392431AbfBRONr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:13:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F82A21905;
-        Mon, 18 Feb 2019 14:13:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15D2121934;
+        Mon, 18 Feb 2019 14:13:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550499222;
-        bh=r19kt9IIzaTP39J4RQt6EY0idhn86c9awsYykmW9UFg=;
+        s=default; t=1550499226;
+        bh=J+cWngoBJSi1C6uR/pgEGqqgJoTVHe4+wgocEHb8b/A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dQpj12E6Bbv+wPr9t9AMBD/GslQe2PDpndDXcyCnzl1J/oPkmrsmz5G9s9aKN0tkw
-         OpqZWKUB1dj/NWCpCOfTKe97UVpWqlLZgIjg6XK8haQFDnU4H8h86XHH+40F3SNQmw
-         qhQJasybFXOaifqemcr6wdH/ki/wRg4png5s0OJw=
+        b=Yzby7lmAmUFJEvZDQ0nV3mwvntQj78IBKlmG9WrmAYbXyM6wXZ/jEm66KlD6ZNJ2w
+         hAP1FQqxjYrfN5Y1Mk1qEcP/6AS/XDtR2k5TCHmImPptcYO0wws27BpYND580YOQ2x
+         51wnph4zY/6LQLSTZGGbZwqILuygavFFYIvtJV44=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sven Eckelmann <sven.eckelmann@openmesh.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Christian Lamparter <chunkeey@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 3.18 108/108] pinctrl: msm: fix gpio-hog related boot issues
-Date:   Mon, 18 Feb 2019 14:44:44 +0100
-Message-Id: <20190218133524.673247416@linuxfoundation.org>
+        stable@vger.kernel.org, Meelis Roos <mroos@linux.ee>,
+        Matt Turner <mattst88@gmail.com>
+Subject: [PATCH 3.18 101/108] alpha: Fix Eiger NR_IRQS to 128
+Date:   Mon, 18 Feb 2019 14:44:37 +0100
+Message-Id: <20190218133524.352789340@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -68,101 +65,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christian Lamparter <chunkeey@gmail.com>
+From: Meelis Roos <mroos@linux.ee>
 
-commit a86caa9ba5d70696ceb35d1d39caa20d8b641387 upstream.
+commit bfc913682464f45bc4d6044084e370f9048de9d5 upstream.
 
-Sven Eckelmann reported an issue with the current IPQ4019 pinctrl.
-Setting up any gpio-hog in the device-tree for his device would
-"kill the bootup completely":
+Eiger machine vector definition has nr_irqs 128, and working 2.6.26
+boot shows SCSI getting IRQ-s 64 and 65. Current kernel boot fails
+because Symbios SCSI fails to request IRQ-s and does not find the disks.
+It has been broken at least since 3.18 - the earliest I could test with
+my gcc-5.
 
-| [    0.477838] msm_serial 78af000.serial: could not find pctldev for node /soc/pinctrl@1000000/serial_pinmux, deferring probe
-| [    0.499828] spi_qup 78b5000.spi: could not find pctldev for node /soc/pinctrl@1000000/spi_0_pinmux, deferring probe
-| [    1.298883] requesting hog GPIO enable USB2 power (chip 1000000.pinctrl, offset 58) failed, -517
-| [    1.299609] gpiochip_add_data: GPIOs 0..99 (1000000.pinctrl) failed to register
-| [    1.308589] ipq4019-pinctrl 1000000.pinctrl: Failed register gpiochip
-| [    1.316586] msm_serial 78af000.serial: could not find pctldev for node /soc/pinctrl@1000000/serial_pinmux, deferring probe
-| [    1.322415] spi_qup 78b5000.spi: could not find pctldev for node /soc/pinctrl@1000000/spi_0_pinmux, deferri
+The headers have moved around and possibly another order of defines has
+worked in the past - but since 128 seems to be correct and used, fix
+arch/alpha/include/asm/irq.h to have NR_IRQS=128 for Eiger.
 
-This was also verified on a RT-AC58U (IPQ4018) which would
-no longer boot, if a gpio-hog was specified. (Tried forcing
-the USB LED PIN (GPIO0) to high.).
+This fixes 4.19-rc7 boot on my Force Flexor A264 (Eiger subarch).
 
-The problem is that Pinctrl+GPIO registration is currently
-peformed in the following order in pinctrl-msm.c:
-	1. pinctrl_register()
-	2. gpiochip_add()
-	3. gpiochip_add_pin_range()
-
-The actual error code -517 == -EPROBE_DEFER is coming from
-pinctrl_get_device_gpio_range(), which is called through:
-        gpiochip_add
-            of_gpiochip_add
-                of_gpiochip_scan_gpios
-                    gpiod_hog
-                        gpiochip_request_own_desc
-                            __gpiod_request
-                                chip->request
-                                    gpiochip_generic_request
-                                       pinctrl_gpio_request
-                                          pinctrl_get_device_gpio_range
-
-pinctrl_get_device_gpio_range() is unable to find any valid
-pin ranges, since nothing has been added to the pinctrldev_list yet.
-so the range can't be found, and the operation fails with -EPROBE_DEFER.
-
-This patch fixes the issue by adding the "gpio-ranges" property to
-the pinctrl device node of all upstream Qcom SoC. The pin ranges are
-then added by the gpio core.
-
-In order to remain compatible with older, existing DTs (and ACPI)
-a check for the "gpio-ranges" property has been added to
-msm_gpio_init(). This prevents the driver of adding the same entry
-to the pinctrldev_list twice.
-
-Reported-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
-Tested-by: Sven Eckelmann <sven.eckelmann@openmesh.com> [ipq4019]
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+Cc: stable@vger.kernel.org # v3.18+
+Signed-off-by: Meelis Roos <mroos@linux.ee>
+Signed-off-by: Matt Turner <mattst88@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/pinctrl/qcom/pinctrl-msm.c |   23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
+ arch/alpha/include/asm/irq.h |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -825,11 +825,24 @@ static int msm_gpio_init(struct msm_pinc
- 		return ret;
- 	}
+--- a/arch/alpha/include/asm/irq.h
++++ b/arch/alpha/include/asm/irq.h
+@@ -55,15 +55,15 @@
  
--	ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev), 0, 0, chip->ngpio);
--	if (ret) {
--		dev_err(pctrl->dev, "Failed to add pin range\n");
--		gpiochip_remove(&pctrl->chip);
--		return ret;
-+	/*
-+	 * For DeviceTree-supported systems, the gpio core checks the
-+	 * pinctrl's device node for the "gpio-ranges" property.
-+	 * If it is present, it takes care of adding the pin ranges
-+	 * for the driver. In this case the driver can skip ahead.
-+	 *
-+	 * In order to remain compatible with older, existing DeviceTree
-+	 * files which don't set the "gpio-ranges" property or systems that
-+	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
-+	 */
-+	if (!of_property_read_bool(pctrl->dev->of_node, "gpio-ranges")) {
-+		ret = gpiochip_add_pin_range(&pctrl->chip,
-+			dev_name(pctrl->dev), 0, 0, chip->ngpio);
-+		if (ret) {
-+			dev_err(pctrl->dev, "Failed to add pin range\n");
-+			gpiochip_remove(&pctrl->chip);
-+			return ret;
-+		}
- 	}
+ #elif defined(CONFIG_ALPHA_DP264) || \
+       defined(CONFIG_ALPHA_LYNX)  || \
+-      defined(CONFIG_ALPHA_SHARK) || \
+-      defined(CONFIG_ALPHA_EIGER)
++      defined(CONFIG_ALPHA_SHARK)
+ # define NR_IRQS	64
  
- 	ret = gpiochip_irqchip_add(chip,
+ #elif defined(CONFIG_ALPHA_TITAN)
+ #define NR_IRQS		80
+ 
+ #elif defined(CONFIG_ALPHA_RAWHIDE) || \
+-	defined(CONFIG_ALPHA_TAKARA)
++      defined(CONFIG_ALPHA_TAKARA) || \
++      defined(CONFIG_ALPHA_EIGER)
+ # define NR_IRQS	128
+ 
+ #elif defined(CONFIG_ALPHA_WILDFIRE)
 
 
