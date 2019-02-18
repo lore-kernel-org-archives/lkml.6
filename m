@@ -2,113 +2,86 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91339C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C70C0C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:07:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66CA820838
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:57:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0A502146F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:07:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729774AbfBRJ5z convert rfc822-to-8bit (ORCPT
+        id S1729539AbfBRKG7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 04:57:55 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32894 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727414AbfBRJ5z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 04:57:55 -0500
-Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id B13B1C14A11B53AB07AF;
-        Mon, 18 Feb 2019 09:57:53 +0000 (GMT)
-Received: from LHREML524-MBB.china.huawei.com ([169.254.3.86]) by
- LHREML713-CAH.china.huawei.com ([10.201.108.36]) with mapi id 14.03.0415.000;
- Mon, 18 Feb 2019 09:57:45 +0000
-From:   Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-CC:     "robin.murphy@arm.com" <robin.murphy@arm.com>,
-        "andrew.murray@arm.com" <andrew.murray@arm.com>,
-        "jean-philippe.brucker@arm.com" <jean-philippe.brucker@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "Guohanjun (Hanjun Guo)" <guohanjun@huawei.com>,
-        John Garry <john.garry@huawei.com>,
-        "pabba@codeaurora.org" <pabba@codeaurora.org>,
-        "vkilari@codeaurora.org" <vkilari@codeaurora.org>,
-        "rruigrok@codeaurora.org" <rruigrok@codeaurora.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Linuxarm <linuxarm@huawei.com>,
-        "neil.m.leeder@gmail.com" <neil.m.leeder@gmail.com>
-Subject: RE: [PATCH v6 1/4] acpi: arm64: add iort support for PMCG
-Thread-Topic: [PATCH v6 1/4] acpi: arm64: add iort support for PMCG
-Thread-Index: AQHUvIOBcTrq4FzrZ0KMa4a+1vXOg6XgzTaAgASYgDA=
-Date:   Mon, 18 Feb 2019 09:57:44 +0000
-Message-ID: <5FC3163CFD30C246ABAA99954A238FA8392C2FA3@lhreml524-mbb.china.huawei.com>
-References: <20190204121324.11460-1-shameerali.kolothum.thodi@huawei.com>
- <20190204121324.11460-2-shameerali.kolothum.thodi@huawei.com>
- <20190215113933.GB27700@e107981-ln.cambridge.arm.com>
-In-Reply-To: <20190215113933.GB27700@e107981-ln.cambridge.arm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.227.237]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Mon, 18 Feb 2019 05:06:59 -0500
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:35758 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729460AbfBRKG7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 05:06:59 -0500
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1IA4Oic010942;
+        Mon, 18 Feb 2019 04:06:53 -0600
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail3.cirrus.com ([87.246.76.56])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2qpftrter5-1;
+        Mon, 18 Feb 2019 04:06:53 -0600
+Received: from EX17.ad.cirrus.com (ex17.ad.cirrus.com [172.20.9.81])
+        by mail3.cirrus.com (Postfix) with ESMTP id 0FBB5611C8AF;
+        Mon, 18 Feb 2019 04:07:05 -0600 (CST)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Mon, 18 Feb 2019
+ 10:06:52 +0000
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com
+ [198.61.86.93])        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id
+ x1IA6q9e002932;        Mon, 18 Feb 2019 10:06:52 GMT
+Date:   Mon, 18 Feb 2019 10:06:52 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Jim Broadus <jbroadus@gmail.com>
+CC:     <benjamin.tissoires@redhat.com>, <wsa@the-dreams.de>,
+        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] i2c: Allow recovery of the initial IRQ by a i2c client
+ device.
+Message-ID: <20190218100652.GB27940@ediswmail.ad.cirrus.com>
+References: <20190216001533.5465-1-jbroadus@gmail.com>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190216001533.5465-1-jbroadus@gmail.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=832 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902180077
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> -----Original Message-----
-> From: Lorenzo Pieralisi [mailto:lorenzo.pieralisi@arm.com]
-> Sent: 15 February 2019 11:40
-> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-> Cc: robin.murphy@arm.com; andrew.murray@arm.com;
-> jean-philippe.brucker@arm.com; will.deacon@arm.com;
-> mark.rutland@arm.com; Guohanjun (Hanjun Guo) <guohanjun@huawei.com>;
-> John Garry <john.garry@huawei.com>; pabba@codeaurora.org;
-> vkilari@codeaurora.org; rruigrok@codeaurora.org; linux-acpi@vger.kernel.org;
-> linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; Linuxarm
-> <linuxarm@huawei.com>; neil.m.leeder@gmail.com
-> Subject: Re: [PATCH v6 1/4] acpi: arm64: add iort support for PMCG
+On Fri, Feb 15, 2019 at 04:15:33PM -0800, Jim Broadus wrote:
+> A previous change allowed i2c client devices to discover new IRQs upon
+> reprobe. By clearing the IRQ in i2c_device_remove. However, if an IRQ was
+> assigned in i2c_new_device, that information is lost.
 > 
-[...]
+> For example, the touchscreen and trackpad devices on a Dell Inspiron laptop
+> are I2C devices whose IRQs are defined by ACPI extended IRQ types. The
+> client device structures are initialized during an ACPI walk. After
+> removing the i2c_hid device, modprobe fails.
+> 
+> This change caches the initial IRQ value in i2c_new_device and then resets
+> the client device IRQ to the initial value in i2c_device_remove.
+> 
+> Fixes: 6f108dd70d30 ("i2c: Clear client->irq in i2c_device_remove")
+> Signed-off-by: Jim Broadus <jbroadus@gmail.com>
+> ---
 
-> > +/*
-> > + * PMCG model identifiers for use in smmu pmu driver. Please note
-> > + * that, this is not part of the IORT specification.
-> 
-> And it is a Linux internal tag that has nothing to do with HW, it is just fabricated
-> for matching a driver, I would like to have this clarified in the comment please.
-> 
-> I would have avoided adding another hook to differentiate platform data but
-> given that it is self-contained in IORT code that should be fine for the sake of
-> making progress:
-> 
-> Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-Thanks. I will wait for review of main driver patches and then will sent out a
-revised one incorporating your comments on this.
+Apologies for the issues caused. I think this looks like a good fix
+to me.
 
 Thanks,
-Shameer
-
-> > + */
-> > +#define IORT_SMMU_V3_PMCG_GENERIC        0x00000000 /* Generic
-> SMMUv3 PMCG */
-> > +
-> >  int iort_register_domain_token(int trans_id, phys_addr_t base,
-> >  			       struct fwnode_handle *fw_node);  void
-> > iort_deregister_domain_token(int trans_id);
-> > --
-> > 2.7.4
-> >
-> >
+Charles
