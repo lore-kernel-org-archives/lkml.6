@@ -3,42 +3,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCE8C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:50:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A5BC4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:50:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C627B217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:50:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 986CE2173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:50:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391460AbfBRRuc (ORCPT
+        id S2391494AbfBRRu5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 12:50:32 -0500
-Received: from gateway23.websitewelcome.com ([192.185.49.180]:24652 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732914AbfBRRub (ORCPT
+        Mon, 18 Feb 2019 12:50:57 -0500
+Received: from gateway21.websitewelcome.com ([192.185.45.36]:12592 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732914AbfBRRu4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 12:50:31 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 3A29C10131
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 11:50:30 -0600 (CST)
+        Mon, 18 Feb 2019 12:50:56 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 5A40A400DB5FF
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 11:50:55 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id vn3mgHauliQervn3mgVsqD; Mon, 18 Feb 2019 11:50:30 -0600
+        id vn4BgMm6PYTGMvn4BgfLfA; Mon, 18 Feb 2019 11:50:55 -0600
 X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=34682 helo=[192.168.1.76])
+Received: from [189.250.119.20] (port=34694 helo=[192.168.1.76])
         by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1gvn3l-004MnZ-Ry; Mon, 18 Feb 2019 11:50:29 -0600
-Subject: Re: [PATCH] watchdog: pc87413: Mark expected switch fall-through
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>
-Cc:     linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-References: <20190214202618.GA18658@embeddedor>
- <d7065d30-d56b-1b76-cfc6-e209aadc61c0@roeck-us.net>
+        id 1gvn4A-004N4W-PM; Mon, 18 Feb 2019 11:50:54 -0600
+Subject: Re: [PATCH][next] Bluetooth: a2mp: Use struct_size() helper
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190208002817.GA15338@embeddedor>
+ <F03ABE42-2AB3-4519-9E64-43E4600C6A42@holtmann.org>
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=gustavo@embeddedor.com; keydata=
@@ -84,15 +85,15 @@ Autocrypt: addr=gustavo@embeddedor.com; keydata=
  YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
  GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
  VtSixD1uOgytAP7RWS474w==
-Message-ID: <81ad685a-054c-6d5d-4501-ca983da0fc9d@embeddedor.com>
-Date:   Mon, 18 Feb 2019 11:50:28 -0600
+Message-ID: <3f777ed6-28c7-a0fd-f1a5-2975deea0e40@embeddedor.com>
+Date:   Mon, 18 Feb 2019 11:50:53 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <d7065d30-d56b-1b76-cfc6-e209aadc61c0@roeck-us.net>
+In-Reply-To: <F03ABE42-2AB3-4519-9E64-43E4600C6A42@holtmann.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
 X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
 X-AntiAbuse: Original Domain - vger.kernel.org
@@ -101,13 +102,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.119.20
 X-Source-L: No
-X-Exim-ID: 1gvn3l-004MnZ-Ry
+X-Exim-ID: 1gvn4A-004N4W-PM
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:34682
+X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:34694
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 12
+X-Email-Count: 19
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -117,35 +118,38 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 2/18/19 10:09 AM, Guenter Roeck wrote:
-> On 2/14/19 12:26 PM, Gustavo A. R. Silva wrote:
->> In preparation to enabling -Wimplicit-fallthrough, mark switch
->> cases where we are expecting to fall through.
+On 2/18/19 7:02 AM, Marcel Holtmann wrote:
+> Hi Gustavo,
+> 
+>> One of the more common cases of allocation size calculations is finding
+>> the size of a structure that has a zero-sized array at the end, along
+>> with memory for some number of elements for that array. For example:
 >>
->> This patch fixes the following warning:
+>> struct foo {
+>>    int stuff;
+>>    struct boo entry[];
+>> };
 >>
->> drivers/watchdog/pc87413_wdt.c: In function ‘pc87413_ioctl’:
->> drivers/watchdog/pc87413_wdt.c:439:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>     pc87413_refresh();
->>     ^~~~~~~~~~~~~~~~~
->> drivers/watchdog/pc87413_wdt.c:441:2: note: here
->>    case WDIOC_GETTIMEOUT:
->>    ^~~~
+>> size = sizeof(struct foo) + count * sizeof(struct boo);
+>> instance = alloc(size, GFP_KERNEL)
 >>
->> Warning level 3 was used: -Wimplicit-fallthrough=3
+>> Instead of leaving these open-coded and prone to type mistakes, we can
+>> now use the new struct_size() helper:
 >>
->> Notice that, in this particular case, the code comment is modified
->> in accordance with what GCC is expecting to find.
+>> size = struct_size(instance, entry, count);
+>> instance = alloc(size, GFP_KERNEL)
 >>
->> This patch is part of the ongoing efforts to enable
->> -Wimplicit-fallthrough.
+>> This code was detected with the help of Coccinelle.
 >>
 >> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>> ---
+>> net/bluetooth/a2mp.c | 2 +-
+>> 1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+> patch has been applied to bluetooth-next tree.
 > 
 
-Thanks, Guenter.
+Thanks Marcel.
 
 --
 Gustavo
