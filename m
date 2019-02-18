@@ -4,57 +4,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF487C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:52:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B728C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83B6C2177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:52:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 001DE2177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:52:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550515950;
-	bh=BCayeuDWCo9SEK7k7iVM6a96RvrOgdfifnlCZeS/3HA=;
+	s=default; t=1550515957;
+	bh=EK3mHZDtHUhFoY5ZAYwFkIu2chk/mSe7eq6FQzfDdp8=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=GVCi7+/HrMhjaUzENrLBo3ywLUI1uxSZqDcdfSQa3ss5SKpS1dLtVvchtfR0M7lmQ
-	 jTs6LbMIYH7CcCVCteZwYCXi5j8TfruKACaQF73hyE7ny6hoFQwJv3QVa1L5sIIjtW
-	 xOZcJ92kERBJxExdtcwEMSKKO2HgSXBXwo1sOVzE=
+	b=iIkjTdf09IFWe+/I7x5K+Q/XiPXFo9/9UpVarRkzvSAu91X0iieOjLZhXRVhwHk3+
+	 AwwBOzNaIVmial6cIdxaodFEI9PAKPOmfm+5F+gXf0CKt6gfOyVqtBrY8Z/sQjZh76
+	 nTUcYEcJpzGXmHtEYkxfONHDNjGEeVWa/KK6U4Ps=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727614AbfBRSw3 (ORCPT
+        id S1727671AbfBRSwf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:52:29 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46838 "EHLO
+        Mon, 18 Feb 2019 13:52:35 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47032 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726258AbfBRSw2 (ORCPT
+        with ESMTP id S1726258AbfBRSwe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:52:28 -0500
+        Mon, 18 Feb 2019 13:52:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=9je/8gluzR/OK6MxRiuz19zq5Cvy4bhUiUoGTFoYAbk=; b=SiBYiAEjm+aT
-        VcUF5VkQijMxzk2jfgkfqv5yu2fEeZAUmqi1pi+GSqmssX5ku6ouyXWsXumKaQDnayWJL0uSIqGmC
-        7L3IjyqWe9HBfi225FpBJhLWgIJH7ySi5ym3wA8vy/rvfaThpSqmQ/fTKpGLyRd/FyClzUIbmlue2
-        ZeLYA=;
+        List-Archive; bh=h3IvtyV+tDBtFWNwf1GwwoOFE6oJ9gCF69TG37Rz5oY=; b=aJkK3yqtNBRV
+        u+j/DjnVR+sttHqApWfkWhkG3fQph6bgoqz3XdOWM3T5Yqor83yd6GrM/H7b80x3y+vYbSsnQqmD4
+        ZheerPraYxBZJG4nJ4CxQ+tqgskkNyNaKqgxq5y+gF9PwJ+A34rnd7yonKQ9VEZRo1zPG28cgNn2X
+        r2/ho=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gvo1f-0001iI-OF; Mon, 18 Feb 2019 18:52:23 +0000
+        id 1gvo1d-0001i6-Iv; Mon, 18 Feb 2019 18:52:21 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 3FF701128008; Mon, 18 Feb 2019 18:52:23 +0000 (GMT)
+        id 0C4301128008; Mon, 18 Feb 2019 18:52:21 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
-        alsa-devel@alsa-project.org, sbkim73@samsung.com,
-        lgirdwood@gmail.com, krzk@kernel.org, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: samsung: odroid: Ensure proper sample rate on pri/sec PCM" to the asoc tree
-In-Reply-To:  <20190214160011.3940-1-s.nawrocki@samsung.com>
+To:     Daniel Baluta <daniel.baluta@nxp.com>
+Cc:     Vicente Bergas <vicencb@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "vicencb@gmail.com" <vicencb@gmail.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: simple-card: Fix refcount underflow" to the asoc tree
+In-Reply-To:  <20190216100927.10017-1-daniel.baluta@nxp.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190218185223.3FF701128008@debutante.sirena.org.uk>
-Date:   Mon, 18 Feb 2019 18:52:23 +0000 (GMT)
+Message-Id: <20190218185221.0C4301128008@debutante.sirena.org.uk>
+Date:   Mon, 18 Feb 2019 18:52:21 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,7 +70,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: samsung: odroid: Ensure proper sample rate on pri/sec PCM
+   ASoC: simple-card: Fix refcount underflow
 
 has been applied to the asoc tree at
 
@@ -87,129 +95,58 @@ to this mail.
 Thanks,
 Mark
 
-From b5c16a24efc809554c4c651df6bd9b48b084a5a3 Mon Sep 17 00:00:00 2001
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Date: Thu, 14 Feb 2019 17:00:11 +0100
-Subject: [PATCH] ASoC: samsung: odroid: Ensure proper sample rate on pri/sec
- PCM
+From 461d854c0dba3cdf63cce37ffb9423eca0793a47 Mon Sep 17 00:00:00 2001
+From: Daniel Baluta <daniel.baluta@nxp.com>
+Date: Sat, 16 Feb 2019 10:09:42 +0000
+Subject: [PATCH] ASoC: simple-card: Fix refcount underflow
 
-Currently when playing sound with different sample rates actual
-sample rate will be determined by audio stream which starts first
-on either primary or secondary PCM. The audio root clock will be
-configured appropriately only for the first stream. As the hardware
-is limited to same sample rate on both interfaces we need to disallow
-streams with different sample rates. It is done by this patch by
-returning error in FE hw_params if there is already active stream
-running with different sample rate.
+of_get_child_by_name() takes a reference we'll need to drop
+later so when we substitute in top we need to take a reference
+as well as just assigning.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Without this patch we hit the following error:
+
+[    1.246852] OF: ERROR: Bad of_node_put() on /sound-wm8524
+[    1.262261] Hardware name: NXP i.MX8MQ EVK (DT)
+[    1.266807] Workqueue: events deferred_probe_work_func
+[    1.271950] Call trace:
+[    1.274406]  dump_backtrace+0x0/0x158
+[    1.278074]  show_stack+0x14/0x20
+[    1.281396]  dump_stack+0xa8/0xcc
+[    1.284717]  of_node_release+0xb0/0xc8
+[    1.288474]  kobject_put+0x74/0xf0
+[    1.291879]  of_node_put+0x14/0x28
+[    1.295286]  __of_get_next_child+0x44/0x70
+[    1.299387]  of_get_next_child+0x3c/0x60
+[    1.303315]  simple_for_each_link+0x1dc/0x230
+[    1.307676]  simple_probe+0x80/0x540
+[    1.311256]  platform_drv_probe+0x50/0xa0
+
+This patch is based on an earlier version posted by Kuninori Morimoto
+and commit message includes explanations from Mark Brown.
+
+https://patchwork.kernel.org/patch/10814255/
+
+Reported-by: Vicente Bergas <vicencb@gmail.com>
+Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/samsung/odroid.c | 56 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 56 insertions(+)
+ sound/soc/generic/simple-card.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/samsung/odroid.c b/sound/soc/samsung/odroid.c
-index 18bb3bfe0300..941e8c3f67a4 100644
---- a/sound/soc/samsung/odroid.c
-+++ b/sound/soc/samsung/odroid.c
-@@ -20,6 +20,11 @@ struct odroid_priv {
- 	struct snd_soc_card card;
- 	struct clk *clk_i2s_bus;
- 	struct clk *sclk_i2s;
-+
-+	/* Spinlock protecting fields below */
-+	spinlock_t lock;
-+	unsigned int be_sample_rate;
-+	bool be_active;
- };
- 
- static int odroid_card_fe_startup(struct snd_pcm_substream *substream)
-@@ -31,8 +36,25 @@ static int odroid_card_fe_startup(struct snd_pcm_substream *substream)
- 	return 0;
- }
- 
-+static int odroid_card_fe_hw_params(struct snd_pcm_substream *substream,
-+				      struct snd_pcm_hw_params *params)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct odroid_priv *priv = snd_soc_card_get_drvdata(rtd->card);
-+	unsigned long flags;
-+	int ret = 0;
-+
-+	spin_lock_irqsave(&priv->lock, flags);
-+	if (priv->be_active && priv->be_sample_rate != params_rate(params))
-+		ret = -EINVAL;
-+	spin_unlock_irqrestore(&priv->lock, flags);
-+
-+	return ret;
-+}
-+
- static const struct snd_soc_ops odroid_card_fe_ops = {
- 	.startup = odroid_card_fe_startup,
-+	.hw_params = odroid_card_fe_hw_params,
- };
- 
- static int odroid_card_be_hw_params(struct snd_pcm_substream *substream,
-@@ -41,6 +63,7 @@ static int odroid_card_be_hw_params(struct snd_pcm_substream *substream,
- 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
- 	struct odroid_priv *priv = snd_soc_card_get_drvdata(rtd->card);
- 	unsigned int pll_freq, rclk_freq, rfs;
-+	unsigned long flags;
- 	int ret;
- 
- 	switch (params_rate(params)) {
-@@ -87,11 +110,43 @@ static int odroid_card_be_hw_params(struct snd_pcm_substream *substream,
- 			return ret;
+diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
+index 08df261024cf..dc18c4492955 100644
+--- a/sound/soc/generic/simple-card.c
++++ b/sound/soc/generic/simple-card.c
+@@ -445,7 +445,7 @@ static int simple_for_each_link(struct simple_priv *priv,
+ 	/* Check if it has dai-link */
+ 	node = of_get_child_by_name(top, PREFIX "dai-link");
+ 	if (!node) {
+-		node = top;
++		node = of_node_get(top);
+ 		is_top = 1;
  	}
  
-+	spin_lock_irqsave(&priv->lock, flags);
-+	priv->be_sample_rate = params_rate(params);
-+	spin_unlock_irqrestore(&priv->lock, flags);
-+
-+	return 0;
-+}
-+
-+static int odroid_card_be_trigger(struct snd_pcm_substream *substream, int cmd)
-+{
-+	struct snd_soc_pcm_runtime *rtd = substream->private_data;
-+	struct odroid_priv *priv = snd_soc_card_get_drvdata(rtd->card);
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&priv->lock, flags);
-+
-+	switch (cmd) {
-+	case SNDRV_PCM_TRIGGER_START:
-+	case SNDRV_PCM_TRIGGER_RESUME:
-+	case SNDRV_PCM_TRIGGER_PAUSE_RELEASE:
-+		priv->be_active = true;
-+		break;
-+
-+	case SNDRV_PCM_TRIGGER_STOP:
-+	case SNDRV_PCM_TRIGGER_SUSPEND:
-+	case SNDRV_PCM_TRIGGER_PAUSE_PUSH:
-+		priv->be_active = false;
-+		break;
-+	}
-+
-+	spin_unlock_irqrestore(&priv->lock, flags);
-+
- 	return 0;
- }
- 
- static const struct snd_soc_ops odroid_card_be_ops = {
- 	.hw_params = odroid_card_be_hw_params,
-+	.trigger = odroid_card_be_trigger,
- };
- 
- static struct snd_soc_dai_link odroid_card_dais[] = {
-@@ -150,6 +205,7 @@ static int odroid_audio_probe(struct platform_device *pdev)
- 	card->owner = THIS_MODULE;
- 	card->fully_routed = true;
- 
-+	spin_lock_init(&priv->lock);
- 	snd_soc_card_set_drvdata(card, priv);
- 
- 	ret = snd_soc_of_parse_card_name(card, "model");
 -- 
 2.20.1
 
