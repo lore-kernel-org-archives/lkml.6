@@ -7,50 +7,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80101C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E26A3C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:08:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 555DD204FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:08:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B29E421916
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:08:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498917;
-	bh=RKeHUYHQouzeKheTu3/hQpKcOMM6QMbhuxJngNurYTA=;
+	s=default; t=1550498922;
+	bh=s6nTNQ7kGdgzgQCI2edAnPx/Qi3vZBxSYkMN0HkO6Is=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tn2nceK0eSjhjnk4tkRcmi35K06ecj13tv7w4U15ZcRty7GzAG5sHk85E2jbdMNYC
-	 4RVVZApU0Vyzk6gy5m76eqttoBcgcuLiI69QyEcSOLUMgfmtdctAGb6iJcmjn0tXHP
-	 QJWUBwXNS0v/rinB4dQ2B8+yXXSL2C+7FvUY2BaE=
+	b=jDQ0oMofUknIZrFUjCLMiZ8ksIXRNJr8cv0WmndTO1gBVD8/wvmdmuUbwrRKro9xZ
+	 9vpC4UrL0D2vbGiuqvYqixsZP/2J/BwSTTZcNQ8coyttJzUC5jwiNboLDE1sjaihbz
+	 MHFNpMhQjrNkWq0Etc2Z0JJkE4k72xKmJzg0Gb5o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390950AbfBROIf (ORCPT
+        id S2390248AbfBROIk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:08:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51766 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:08:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390905AbfBROI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:08:27 -0500
+        id S2390949AbfBROIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:08:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F321F21901;
-        Mon, 18 Feb 2019 14:08:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C72B0204FD;
+        Mon, 18 Feb 2019 14:08:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498906;
-        bh=RKeHUYHQouzeKheTu3/hQpKcOMM6QMbhuxJngNurYTA=;
+        s=default; t=1550498915;
+        bh=s6nTNQ7kGdgzgQCI2edAnPx/Qi3vZBxSYkMN0HkO6Is=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mgdQ82T0vDuXaypdk3wiA6MH/I0qSnl8NeFv0h+9DLv3bJZJQEbKQrhPs7Iya5rVZ
-         O1n3YHwY81c7N6pp2QSqR0j8HWMeRmka0wjCEGFWtHnMYyRuuIHx18F8iBe5PsgYdP
-         jmdRjwbW7yA2p4Ymd4lLGifi+EAvyQupFwXMl30s=
+        b=MR6eOoiEwyffOWH/sNTHwXR9RTxjcsAVlvIVJneLZchF9+WR9wRfZnlbqHGsMezwc
+         +6ymghtbZi5v7hUyxZxh6BU1cn7+IJAKi8UGjVg+1zfO262+WsXC+blGfjVkAAbt4n
+         ybU8A4p7QACaTeW2L9NB7pr7spNMEeTXqthkdxZs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Torsten Duwe <duwe@suse.de>, Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 015/108] arm64: ftrace: dont adjust the LR value
-Date:   Mon, 18 Feb 2019 14:43:11 +0100
-Message-Id: <20190218133520.214997948@linuxfoundation.org>
+Subject: [PATCH 3.18 018/108] usb: hub: delay hub autosuspend if USB3 port is still link training
+Date:   Mon, 18 Feb 2019 14:43:14 +0100
+Message-Id: <20190218133520.353168345@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -69,51 +67,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6e803e2e6e367db9a0d6ecae1bd24bb5752011bd ]
+[ Upstream commit e86108940e541febf35813402ff29fa6f4a9ac0b ]
 
-The core ftrace code requires that when it is handed the PC of an
-instrumented function, this PC is the address of the instrumented
-instruction. This is necessary so that the core ftrace code can identify
-the specific instrumentation site. Since the instrumented function will
-be a BL, the address of the instrumented function is LR - 4 at entry to
-the ftrace code.
+When initializing a hub we want to give a USB3 port in link training
+the same debounce delay time before autosuspening the hub as already
+trained, connected enabled ports.
 
-This fixup is applied in the mcount_get_pc and mcount_get_pc0 helpers,
-which acquire the PC of the instrumented function.
+USB3 ports won't reach the enabled state with "current connect status" and
+"connect status change" bits set until the USB3 link training finishes.
 
-The mcount_get_lr helper is used to acquire the LR of the instrumented
-function, whose value does not require this adjustment, and cannot be
-adjusted to anything meaningful. No adjustment of this value is made on
-other architectures, including arm. However, arm64 adjusts this value by
-4.
+Catching the port in link training (polling) and adding the debounce delay
+prevents unnecessary failed attempts to autosuspend the hub.
 
-This patch brings arm64 in line with other architectures and removes the
-adjustment of the LR value.
-
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Torsten Duwe <duwe@suse.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/entry-ftrace.S | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/usb/core/hub.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/arch/arm64/kernel/entry-ftrace.S b/arch/arm64/kernel/entry-ftrace.S
-index c85a02b6cca0..b3fdbba80d4b 100644
---- a/arch/arm64/kernel/entry-ftrace.S
-+++ b/arch/arm64/kernel/entry-ftrace.S
-@@ -78,7 +78,6 @@
- 	.macro mcount_get_lr reg
- 	ldr	\reg, [x29]
- 	ldr	\reg, [\reg, #8]
--	mcount_adjust_addr	\reg, \reg
- 	.endm
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index 19cc2c03906d..adf8dea1f6f3 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -1117,6 +1117,16 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
+ 						   USB_PORT_FEAT_ENABLE);
+ 		}
  
- 	.macro mcount_get_lr_addr reg
++		/*
++		 * Add debounce if USB3 link is in polling/link training state.
++		 * Link will automatically transition to Enabled state after
++		 * link training completes.
++		 */
++		if (hub_is_superspeed(hdev) &&
++		    ((portstatus & USB_PORT_STAT_LINK_STATE) ==
++						USB_SS_PORT_LS_POLLING))
++			need_debounce_delay = true;
++
+ 		/* Clear status-change flags; we'll debounce later */
+ 		if (portchange & USB_PORT_STAT_C_CONNECTION) {
+ 			need_debounce_delay = true;
 -- 
 2.19.1
 
