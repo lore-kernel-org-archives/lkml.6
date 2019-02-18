@@ -4,51 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52CD0C10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54232C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:45:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2211621902
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:45:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23FC821903
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:45:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497511;
-	bh=hNSa5Wm6r7qeZf6tTCegsLJBqXCixmJU4Gn3zEia/O0=;
+	s=default; t=1550497513;
+	bh=52jguU2lIT+tC5hQHCWzPFW4Jjo5ulyjtyV6HaEyWmU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=a5mO/VdATzmM2JLg80KQwl/epMY35o/g3yd2uBhXXFYe6GRONBR7uXw75KjfGMl/q
-	 0Gv4JJZV75o70vdj2/4Uf0iNPh7XXC4r2W1zr1/94dBnzrGsvsLy+ebDJoiy/P6nkL
-	 70X2nqADawA/GfKwJHoxoziTzR0ppzvzncAfbKuk=
+	b=adUmvoQYVH+gyeNJdBZ/FkvcHAudMrkitCcZvWvIF3UJsxZt7O4XApnOtYvuHJ08v
+	 EQxvscCrIhm4aS0zvPwOu2oUQQV8Z+w/bNq3aat5k682PpLtDU8j8DTpJsjPXFnDDH
+	 4vy3QK3vxXoMepne+HGCt65dEYUw2SNMe2iF6tV8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731245AbfBRNpJ (ORCPT
+        id S1731263AbfBRNpL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:45:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51084 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:45:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51156 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731222AbfBRNpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:45:06 -0500
+        id S1731243AbfBRNpJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:45:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC584217F5;
-        Mon, 18 Feb 2019 13:45:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 17EBE21900;
+        Mon, 18 Feb 2019 13:45:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497505;
-        bh=hNSa5Wm6r7qeZf6tTCegsLJBqXCixmJU4Gn3zEia/O0=;
+        s=default; t=1550497508;
+        bh=52jguU2lIT+tC5hQHCWzPFW4Jjo5ulyjtyV6HaEyWmU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yyskbN1k0I19vsUAAA1de+HCUpVWZZDyq6so6uunkgSNi4tVZ92SsCHVmIakwmzYS
-         ZAzis/mg90+RbY9jODk98IFwwFU+KIMeXVfSY9Y8SWDrlOG8XRVSGPrHUr1iFW9bJK
-         JZmsBVpTwWf+36oMyN8DvYqgR1FSWQUiiPFzus+c=
+        b=ttjAfd4KyllCXYwkVHDDV/3EiPf+vumI3g4rqhlpRSOlodQiDQeVr5jYKZCPtgx4H
+         VHHB/LsNQ4Kr2LPFUP7TC4nc0i3oE0oL4w8ESMAELpeY4hJGShg1mREAUHTdA5lzkF
+         SWK4+GzG7FqM78rQPrsySjSHH/fhHy591/UAjOzQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 12/92] cpufreq: check if policy is inactive early in __cpufreq_get()
-Date:   Mon, 18 Feb 2019 14:42:15 +0100
-Message-Id: <20190218133455.804291561@linuxfoundation.org>
+        stable@vger.kernel.org, Guo Ren <ren_guo@c-sky.com>,
+        Hui Kai <huikai@acoinfo.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 13/92] csky: fixup relocation error with 807 & 860
+Date:   Mon, 18 Feb 2019 14:42:16 +0100
+Message-Id: <20190218133455.892331522@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
 References: <20190218133454.668268457@linuxfoundation.org>
@@ -67,94 +65,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 2f66196208c98b3d1b4294edffb2c5a8197be899 ]
+[ Upstream commit f553aa1c13cbc29aaf420349a28fc33ca98440e5 ]
 
-cpuinfo_cur_freq gets current CPU frequency as detected by hardware
-while scaling_cur_freq last known CPU frequency. Some platforms may not
-allow checking the CPU frequency of an offline CPU or the associated
-resources may have been released via cpufreq_exit when the CPU gets
-offlined, in which case the policy would have been invalidated already.
-If we attempt to get current frequency from the hardware, it may result
-in hang or crash.
+810 doesn't support jsri instruction and csky-as will leave
+jsri + nop for relocation. Module-probe need replace them with
+lrw + jsr.
 
-For example on Juno, I see:
-
-Unable to handle kernel NULL pointer dereference at virtual address 0000000000000188
-[0000000000000188] pgd=0000000000000000
-Internal error: Oops: 96000004 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 5 PID: 4202 Comm: cat Not tainted 4.20.0-08251-ga0f2c0318a15-dirty #87
-Hardware name: ARM LTD ARM Juno Development Platform/ARM Juno Development Platform
-pstate: 40000005 (nZcv daif -PAN -UAO)
-pc : scmi_cpufreq_get_rate+0x34/0xb0
-lr : scmi_cpufreq_get_rate+0x34/0xb0
-Call trace:
- scmi_cpufreq_get_rate+0x34/0xb0
- __cpufreq_get+0x34/0xc0
- show_cpuinfo_cur_freq+0x24/0x78
- show+0x40/0x60
- sysfs_kf_seq_show+0xc0/0x148
- kernfs_seq_show+0x44/0x50
- seq_read+0xd4/0x480
- kernfs_fop_read+0x15c/0x208
- __vfs_read+0x60/0x188
- vfs_read+0x94/0x150
- ksys_read+0x6c/0xd8
- __arm64_sys_read+0x24/0x30
- el0_svc_common+0x78/0x100
- el0_svc_handler+0x38/0x78
- el0_svc+0x8/0xc
----[ end trace 3d1024e58f77f6b2 ]---
-
-So fix the issue by checking if the policy is invalid early in
-__cpufreq_get before attempting to get the current frequency.
-
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+Cc: Hui Kai <huikai@acoinfo.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpufreq/cpufreq.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+ arch/csky/kernel/module.c | 38 ++++++++++++++++++++++----------------
+ 1 file changed, 22 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index 7aa3dcad2175..df34a12a388f 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -1530,17 +1530,16 @@ static unsigned int __cpufreq_get(struct cpufreq_policy *policy)
- {
- 	unsigned int ret_freq = 0;
+diff --git a/arch/csky/kernel/module.c b/arch/csky/kernel/module.c
+index 65abab0c7a47..0b028ee3c764 100644
+--- a/arch/csky/kernel/module.c
++++ b/arch/csky/kernel/module.c
+@@ -12,7 +12,7 @@
+ #include <linux/spinlock.h>
+ #include <asm/pgtable.h>
  
--	if (!cpufreq_driver->get)
-+	if (unlikely(policy_is_inactive(policy)) || !cpufreq_driver->get)
- 		return ret_freq;
+-#if defined(__CSKYABIV2__)
++#ifdef CONFIG_CPU_CK810
+ #define IS_BSR32(hi16, lo16)		(((hi16) & 0xFC00) == 0xE000)
+ #define IS_JSRI32(hi16, lo16)		((hi16) == 0xEAE0)
  
- 	ret_freq = cpufreq_driver->get(policy->cpu);
+@@ -25,6 +25,26 @@
+ 	*(uint16_t *)(addr) = 0xE8Fa;		\
+ 	*((uint16_t *)(addr) + 1) = 0x0000;	\
+ } while (0)
++
++static void jsri_2_lrw_jsr(uint32_t *location)
++{
++	uint16_t location_tmp = (uint16_t *)location;
++
++	if (IS_BSR32(*location_tmp, *(location_tmp + 1)))
++		return;
++
++	if (IS_JSRI32(*location_tmp, *(location_tmp + 1))) {
++		/* jsri 0x...  --> lrw r26, 0x... */
++		CHANGE_JSRI_TO_LRW(location);
++		/* lsli r0, r0 --> jsr r26 */
++		SET_JSR32_R26(location + 1);
++	}
++}
++#else
++static void inline jsri_2_lrw_jsr(uint32_t *location)
++{
++	return;
++}
+ #endif
  
- 	/*
--	 * Updating inactive policies is invalid, so avoid doing that.  Also
--	 * if fast frequency switching is used with the given policy, the check
-+	 * If fast frequency switching is used with the given policy, the check
- 	 * against policy->cur is pointless, so skip it in that case too.
- 	 */
--	if (unlikely(policy_is_inactive(policy)) || policy->fast_switch_enabled)
-+	if (policy->fast_switch_enabled)
- 		return ret_freq;
+ int apply_relocate_add(Elf32_Shdr *sechdrs, const char *strtab,
+@@ -35,9 +55,6 @@ int apply_relocate_add(Elf32_Shdr *sechdrs, const char *strtab,
+ 	Elf32_Sym	*sym;
+ 	uint32_t	*location;
+ 	short		*temp;
+-#if defined(__CSKYABIV2__)
+-	uint16_t	*location_tmp;
+-#endif
  
- 	if (ret_freq && policy->cur &&
-@@ -1569,10 +1568,7 @@ unsigned int cpufreq_get(unsigned int cpu)
- 
- 	if (policy) {
- 		down_read(&policy->rwsem);
+ 	for (i = 0; i < sechdrs[relsec].sh_size / sizeof(*rel); i++) {
+ 		/* This is where to make the change */
+@@ -59,18 +76,7 @@ int apply_relocate_add(Elf32_Shdr *sechdrs, const char *strtab,
+ 		case R_CSKY_PCRELJSR_IMM11BY2:
+ 			break;
+ 		case R_CSKY_PCRELJSR_IMM26BY2:
+-#if defined(__CSKYABIV2__)
+-			location_tmp = (uint16_t *)location;
+-			if (IS_BSR32(*location_tmp, *(location_tmp + 1)))
+-				break;
 -
--		if (!policy_is_inactive(policy))
--			ret_freq = __cpufreq_get(policy);
--
-+		ret_freq = __cpufreq_get(policy);
- 		up_read(&policy->rwsem);
- 
- 		cpufreq_cpu_put(policy);
+-			if (IS_JSRI32(*location_tmp, *(location_tmp + 1))) {
+-				/* jsri 0x...  --> lrw r26, 0x... */
+-				CHANGE_JSRI_TO_LRW(location);
+-				/* lsli r0, r0 --> jsr r26 */
+-				SET_JSR32_R26(location + 1);
+-			}
+-#endif
++			jsri_2_lrw_jsr(location);
+ 			break;
+ 		case R_CSKY_ADDR_HI16:
+ 			temp = ((short  *)location) + 1;
 -- 
 2.19.1
 
