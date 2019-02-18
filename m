@@ -2,115 +2,116 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63133C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28DE6C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:41:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3157321773
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:39:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550515191;
-	bh=UkXZIBbaYrvX934i4ctnApU4YHSeQaRb0IYRdyM8uQQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=dSlNKmvTlkQtyjFx2yeqT5Kt+YJ5isCv0Z7esF/SIUPLXakRJbCvNgueAYQYFPNU4
-	 k7j9b2PD/VDRD9RlVvHUHF77Wz8auIgxivNM5uC5fhZQKM0j1lip3TsAPFNg50PuEb
-	 D4wIomaWw8v5BSSd4LWko+LwdklQMoR6apCSGw8s=
+	by mail.kernel.org (Postfix) with ESMTP id EF68021773
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:41:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726556AbfBRSjt (ORCPT
+        id S1726602AbfBRSlo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:39:49 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53568 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726166AbfBRSjs (ORCPT
+        Mon, 18 Feb 2019 13:41:44 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:35130 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726009AbfBRSln (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:39:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=GmDXdx1avJwt1OEiG6XY+QjIIG5CZ7dyXr4TZoV5NBI=; b=KLoZOW1SYNozc8kL2HyYdRvlm
-        fgL278SxxmtfSa0pVmhy3ZPkWqTHllcOafeyceu77zrKOir2ZnmsHt75kPaKFVF7hCa+mp+oIEPZA
-        /gSPzvdJxzSIEXACOwPQ1uMf7yJHw1YodrS/vJYFCfxWmVAAiY+9ygOaP0kpzVPnYCoMo=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gvnpR-0001bH-BM; Mon, 18 Feb 2019 18:39:45 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 93F7C1128008; Mon, 18 Feb 2019 18:39:44 +0000 (GMT)
-Date:   Mon, 18 Feb 2019 18:39:44 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] regulator: core: Take lock before applying system load
-Message-ID: <20190218183944.GH10794@sirena.org.uk>
-References: <20190215105533.10264-1-niklas.cassel@linaro.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="mYYhpFXgKVw71fwr"
-Content-Disposition: inline
-In-Reply-To: <20190215105533.10264-1-niklas.cassel@linaro.org>
-X-Cookie: Take an astronaut to launch.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 18 Feb 2019 13:41:43 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1IIdPOd044766
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 13:41:42 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qqxynjbmb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 13:41:42 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Mon, 18 Feb 2019 18:41:40 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 18 Feb 2019 18:41:36 -0000
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1IIfaTR26017832
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 18 Feb 2019 18:41:36 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ED5435204E;
+        Mon, 18 Feb 2019 18:41:35 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.207.239])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id B636952063;
+        Mon, 18 Feb 2019 18:41:28 +0000 (GMT)
+Received: by rapoport-lnx (sSMTP sendmail emulation); Mon, 18 Feb 2019 20:41:26 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Palmer Dabbelt <palmer@sifive.com>,
+        Richard Kuo <rkuo@codeaurora.org>, linux-arch@vger.kernel.org,
+        linux-hexagon@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+        Mike Rapoport <rppt@linux.ibm.com>
+Subject: [PATCH v2 0/4] provide a generic free_initmem implementation
+Date:   Mon, 18 Feb 2019 20:41:21 +0200
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 19021818-4275-0000-0000-00000310F3DF
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021818-4276-0000-0000-0000381F1D9A
+Message-Id: <1550515285-17446-1-git-send-email-rppt@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-18_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=813 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902180138
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---mYYhpFXgKVw71fwr
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Many architectures implement free_initmem() in exactly the same or very
+similar way: they wrap the call to free_initmem_default() with sometimes
+different 'poison' parameter.
 
-On Fri, Feb 15, 2019 at 11:55:33AM +0100, Niklas Cassel wrote:
-> Take the regulator lock before applying system load.
->=20
-> Fixes the following lockdep splat:
->=20
-> [    5.583581] WARNING: CPU: 1 PID: 16 at drivers/regulator/core.c:925 dr=
-ms_uA_update+0x114/0x360
-> [    5.588467] Modules linked in:
-> [    5.596833] CPU: 1 PID: 16 Comm: kworker/1:0 Not tainted 5.0.0-rc6-nex=
-t-20190213-00002-g0fce66ab480f #18
+These patches switch those architectures to use a generic implementation
+that does free_initmem_default(POISON_FREE_INITMEM).
 
-Please think hard before including complete backtraces in upstream
-reports, they are very large and contain almost no useful information
-relative to their size so often obscure the relevant content in your
-message. If part of the backtrace is usefully illustrative then it's
-usually better to pull out the relevant sections.
+This was inspired by Christoph's patches for free_initrd_mem [1] and I
+shamelessly copied changelog entries from his patches :)
 
->  		 * We'll only apply the initial system load if an
->  		 * initial mode wasn't specified.
->  		 */
-> +		regulator_lock(rdev);
->  		drms_uA_update(rdev);
-> +		regulator_unlock(rdev);
+v2: rebased on top of v5.0-rc7 + Christoph's patches for free_initrd_mem
 
-This is correct in that it will shut up the warning but we're not
-supposed to need locks at this point as the regulator is in the process
-of being registered so there should be no possibility of concurrent
-access.  Since I can't see a sensible way to conditionally assert that
-the lock is held we're probably better off just removing the annotation
-since it's no longer valid.
+[1] https://lore.kernel.org/lkml/20190213174621.29297-1-hch@lst.de/
 
---mYYhpFXgKVw71fwr
-Content-Type: application/pgp-signature; name="signature.asc"
+Mike Rapoport (4):
+  init: provide a generic free_initmem implementation
+  hexagon: switch over to generic free_initmem()
+  init: free_initmem: poison freed init memory
+  riscv: switch over to generic free_initmem()
 
------BEGIN PGP SIGNATURE-----
+ arch/alpha/mm/init.c      |  6 ------
+ arch/arc/mm/init.c        |  8 --------
+ arch/c6x/mm/init.c        |  5 -----
+ arch/h8300/mm/init.c      |  6 ------
+ arch/hexagon/mm/init.c    | 10 ----------
+ arch/microblaze/mm/init.c |  5 -----
+ arch/nds32/mm/init.c      |  5 -----
+ arch/nios2/mm/init.c      |  5 -----
+ arch/openrisc/mm/init.c   |  5 -----
+ arch/riscv/mm/init.c      |  5 -----
+ arch/sh/mm/init.c         |  5 -----
+ arch/sparc/mm/init_32.c   |  5 -----
+ arch/unicore32/mm/init.c  |  5 -----
+ arch/xtensa/mm/init.c     |  5 -----
+ init/main.c               |  5 +++++
+ 15 files changed, 5 insertions(+), 80 deletions(-)
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxq++8ACgkQJNaLcl1U
-h9CfQQf7BZp5BHXpjAQWoCMvuZsFJCDZYABNLNQbHiK3SWETGmDGMsB/bM7tAzaI
-CKFjvduHrN9tNxJlwU3NE19omVR1mW3B8OVFZK6cxCUpit8id8q1U2QR7F/CND+/
-Ebiaac8rMcp3jb9f9LVCSNurDEXUcnaWxTCuWzAUCPRIqnVsTPe7gaYARspzpehC
-387KzhjTcbMafYNgBDkI5AeTi99TUXVxLRfAIl12ZYT4TPDc6OIrHHroOp+ak4IT
-soY2z1yvqjTp7pnl+Iehs6JeaECEsl2u6TrIAYt5s5Fu9cN6PeNnY5WdkbUTQoek
-cc91+Y+SbIp1ZztP/mPQmEo7BVhotw==
-=fMxO
------END PGP SIGNATURE-----
+-- 
+2.7.4
 
---mYYhpFXgKVw71fwr--
