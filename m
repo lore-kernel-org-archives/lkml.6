@@ -2,125 +2,209 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1544FC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:16:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD987C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:18:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E575F21773
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:16:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 867F721773
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:18:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550517535;
+	bh=AIz5w6ZrFSR+8siQtIIJos8b1wGfQR7Iaz3jNTdiMSM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ygLj+Np59LI2JSwDNBpyQGz40xZkgntaMwJLZa6+FWkVrjdYogUfgVx/TC9tQuI0r
+	 +9gCCCw0f1ipJ3f/vtkwlznmDxawCKH8FwmsimWsxdNNsDi3KH/2iGjQlMM6J7cyLz
+	 NcnF7qey0HWrpZUWT8vrT5LIgSvhho9uUdCiW88s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729261AbfBRTQy (ORCPT
+        id S1729300AbfBRTSx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 14:16:54 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:44402 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729176AbfBRTQx (ORCPT
+        Mon, 18 Feb 2019 14:18:53 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:36075 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728416AbfBRTSx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 14:16:53 -0500
-Received: by mail-qk1-f195.google.com with SMTP id r21so10596266qkl.11
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 11:16:52 -0800 (PST)
+        Mon, 18 Feb 2019 14:18:53 -0500
+Received: by mail-ot1-f67.google.com with SMTP id v62so21286815otb.3;
+        Mon, 18 Feb 2019 11:18:52 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=sbcG1BDuWi1Ss3pG7QOT/FVWLP6SwaeDik62YJgOYLQ=;
-        b=G7Azln4pmw4y6Y6I6bTJB7e1iQpBUHwPIlwUY3aInWF1BJPUQJOuxuWQOxfdIvFVFL
-         ZtgMu223czvKB0y/G7/weI3Q0R9taS999tfpIPQ00StJIEloYDIXFj1PoOGHcYp9oOrL
-         alTx+ujzKKScVVcSZXLTCJjBFpjBoka8CgL+SmyDuiPZoikM08fdwY2BswpqNXE7oMPC
-         GoxvTX7EAjWo0HBxexu04zMTePgn8As1JsrhBMuYdrTkwPa8tLVh32I4aJZRyZRwiB6A
-         HLNAO5dexpCrxohyqmk662WkEaWstxbjx6xK8w68QegGlGfZdSKam5QRfD3OmD+crfrX
-         DqKw==
-X-Gm-Message-State: AHQUAuZqj9bClVPWZjjQ8Zj5KGbcw0Gh9onx8t8Wexzw50rmjYbyoYAo
-        jvjHaG2YrgJeTyw9b3Bu73hDrA==
-X-Google-Smtp-Source: AHgI3IYIWzZAcM9RP9F39THpg34fbdQLguqdRZ0rro2GPMfTcszbKgCAonjyGm/qXJkZso5oVd8VmQ==
-X-Received: by 2002:a37:4c0f:: with SMTP id z15mr17997220qka.180.1550517412544;
-        Mon, 18 Feb 2019 11:16:52 -0800 (PST)
-Received: from redhat.com (pool-173-76-246-42.bstnma.fios.verizon.net. [173.76.246.42])
-        by smtp.gmail.com with ESMTPSA id j66sm4809388qkj.27.2019.02.18.11.16.50
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=W39jONSIIz31Rzrkgl43XEJB24YV1hoz4JWOKqmfsso=;
+        b=KgnOrjfUTKC4mIU2tmKUXzXoUMM/q46D4HTTsVFtE6WOb1iaVsrby23REwkHIjLb88
+         1LwvKeRaHQVqeFMiFl1aRMyaS3jx7ih87GEX/gvSwrBck8nJO5hMtvHCx+xDYBs1SoWA
+         tKecGqodXRez6G5vJPx8F1L6FWHmpgVzyXXwglmoeL6yXwgJ7x3Q629WANWxL6fCoS2e
+         79miEUtTE/MNb7IQZ78yzKUpxBAjU7GiHdy996tpo2EoBRdVBfLbvbeiMbstJZhPOJ3b
+         axiYEbmLjNwSlsNNh9cj5YLsTRsL5qzbUkk/iCo83uovypfybNPNDmIP5uwUcEfZOPSG
+         +o1g==
+X-Gm-Message-State: AHQUAubkS5C+0zMarhKXnzPZeG44vfwoEVDgvxqNGnv1HSJpHd3F8rIm
+        BNdF2E1nv9ZjRFEq0z3IMg==
+X-Google-Smtp-Source: AHgI3IbrncYXFohfXd9UO/3rZ6er3ITdPJ+fMz8wI3bHu1+YclYIfrH69k9t9fI1EI/ibFKGMaXNNA==
+X-Received: by 2002:a05:6830:1092:: with SMTP id y18mr15592887oto.125.1550517531722;
+        Mon, 18 Feb 2019 11:18:51 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id a62sm11226982otb.72.2019.02.18.11.18.50
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Feb 2019 11:16:51 -0800 (PST)
-Date:   Mon, 18 Feb 2019 14:16:49 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Nitesh Narayan Lal <nitesh@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-        lcapitulino@redhat.com, pagupta@redhat.com, wei.w.wang@intel.com,
-        yang.zhang.wz@gmail.com, riel@surriel.com, dodgen@google.com,
-        konrad.wilk@oracle.com, dhildenb@redhat.com, aarcange@redhat.com,
-        Alexander Duyck <alexander.duyck@gmail.com>
-Subject: Re: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
-Message-ID: <20190218140947-mutt-send-email-mst@kernel.org>
-References: <20190204201854.2328-1-nitesh@redhat.com>
- <af4430fd-0a2c-8f35-b767-3f93fc6db270@redhat.com>
- <20190218114601-mutt-send-email-mst@kernel.org>
- <44740a29-bb14-e6e6-2992-98d0ae58e994@redhat.com>
- <20190218122636-mutt-send-email-mst@kernel.org>
- <f396836d-9bbd-e3e2-c7b0-d921bf1c9ed1@redhat.com>
+        Mon, 18 Feb 2019 11:18:50 -0800 (PST)
+Date:   Mon, 18 Feb 2019 13:18:50 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Cc:     dmitry.torokhov@gmail.com, mark.rutland@arm.com, xc-racer2@live.ca,
+        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] dt-bindings: input: Add binding for bma150 sensor
+Message-ID: <20190218191850.GA31221@bogus>
+References: <20190202151806.9064-1-pawel.mikolaj.chmiel@gmail.com>
+ <20190202151806.9064-2-pawel.mikolaj.chmiel@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f396836d-9bbd-e3e2-c7b0-d921bf1c9ed1@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190202151806.9064-2-pawel.mikolaj.chmiel@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 07:29:44PM +0100, David Hildenbrand wrote:
-> > 
-> >>>
-> >>> But really what business has something that is supposedly
-> >>> an optimization blocking a VCPU? We are just freeing up
-> >>> lots of memory why is it a good idea to slow that
-> >>> process down?
-> >>
-> >> I first want to know that it is a problem before we declare it a
-> >> problem. I provided an example (s390x) where it does not seem to be a
-> >> problem. One hypercall ~every 512 frees. As simple as it can get.
-> >>
-> >> No trying to deny that it could be a problem on x86, but then I assume
-> >> it is only a problem in specific setups.
-> > 
-> > But which setups? How are we going to identify them?
+On Sat, Feb 02, 2019 at 04:18:02PM +0100, Paweł Chmiel wrote:
+> From: Jonathan Bakker <xc-racer2@live.ca>
 > 
-> I guess is simple (I should be carefuly with this word ;) ): As long as
-> you don't isolate + pin your CPUs in the hypervisor, you can expect any
-> kind of sudden hickups. We're in a virtualized world. Real time is one
-> example.
+> Add device tree bindings for Bosch BMA150 Accelerometer Sensor
 > 
-> Using kernel threads like Nitesh does right now? It can be scheduled
-> anytime by the hypervisor on the exact same cpu. Unless you isolate +
-> pin in the hypervor. So the same problem applies.
-
-Right but we know how to handle this. Many deployments already use tools
-to detect host threads kicking VCPUs out.
-Getting VCPU blocked by a kfree call would be something new.
-
-
-...
-
-> > So I'm fine with a simple implementation but the interface needs to
-> > allow the hypervisor to process hints in parallel while guest is
-> > running.  We can then fix any issues on hypervisor without breaking
-> > guests.
+> Changes from v1:
+>  - Add properties for all of bma150_cfg
+>  - Correct IRQ type in example
 > 
-> Yes, I am fine with defining an interface that theoretically let's us
-> change the implementation in the guest later.
-> I consider this even a
-> prerequisite. IMHO the interface shouldn't be different, it will be
-> exactly the same.
+> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> ---
+>  .../bindings/input/bosch,bma150.txt           | 38 +++++++++++++++++++
+>  include/dt-bindings/input/bma150.h            | 22 +++++++++++
+>  include/linux/bma150.h                        | 13 +------
+>  3 files changed, 62 insertions(+), 11 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/input/bosch,bma150.txt
+>  create mode 100644 include/dt-bindings/input/bma150.h
 > 
-> It is just "who" calls the batch freeing and waits for it. And as I
-> outlined here, doing it without additional threads at least avoids us
-> for now having to think about dynamic data structures and that we can
-> sometimes not report "because the thread is still busy reporting or
-> wasn't scheduled yet".
+> diff --git a/Documentation/devicetree/bindings/input/bosch,bma150.txt b/Documentation/devicetree/bindings/input/bosch,bma150.txt
+> new file mode 100644
+> index 000000000000..f644d132f79c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/bosch,bma150.txt
+> @@ -0,0 +1,38 @@
+> +* Bosch BMA150 Accelerometer Sensor
+> +
+> +Also works for the SMB380 and BMA023 accelerometers
+> +
+> +Required properties:
+> +- compatible : Should be "bosch,bma150"
+> +- reg : The I2C address of the sensor
+> +
+> +Optional properties:
+> +- interrupt-parent : should be the phandle for the interrupt controller
 
-Sorry I wasn't clear. I think we need ability to change the
-implementation in the *host* later. IOW don't rely on
-host being synchronous.
+This is implied and can be dropped.
 
+> +- interrupts : Interrupt mapping for IRQ.  If not present device will be polled
 
--- 
-MST
+> +- any-motion-int : bool for if the any motion interrupt should be enabled
+> +- hg-int : bool for if the high-G interrupt should be enabled
+> +- lg-int : bool for if the low-G interrupt should be enabled
+> +- any-motion-cfg : array of integers for any motion duration and threshold
+> +- hg-cfg : array of integers for high-G hysterisis, duration, and threshold
+> +- lg-cfg : array of integers for low-G hysterisis, duration, and threshold
+> +- range : configuration of range, one of BMA150_RANGE_* as defined in [1]
+> +- bandwidth : refresh rate of device, one of BMA150_BW_* as defined in [1]
+
+These all need vendor prefixes if they stay.
+
+What determines all this configuration? It seems like a user may want to 
+change at run-time in which case sysfs would be more appropriate.
+
+I don't recall seeing other accelerometers with these, but seems these 
+could apply to other accelerometers. In which case, they should be 
+common.
+
+> +
+> +Example:
+> +
+> +bma150@38 {
+
+accelerometer@38
+
+> +	compatible = "bosch,bma150";
+> +	reg = <0x38>;
+> +	interrupt-parent = <&gph0>;
+> +	interrupts = <1 IRQ_TYPE_EDGE_RISING>;
+> +	any-motion-int;
+> +	hg-int;
+> +	lg-int;
+> +	any-motion-cfg = <0 0>;
+> +	hg-cfg = <0 150 160>;
+> +	lg-cfg = <0 150 20>;
+> +	range = <BMA150_RANGE_2G>;
+> +	bandwidth = <BMA150_BW_50HZ>;
+> +};
+> +
+> +[1] include/dt-bindings/input/bma150.h
+> diff --git a/include/dt-bindings/input/bma150.h b/include/dt-bindings/input/bma150.h
+> new file mode 100644
+> index 000000000000..fb38ca787f0f
+> --- /dev/null
+> +++ b/include/dt-bindings/input/bma150.h
+> @@ -0,0 +1,22 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * This header provides bindings for the BMA150 accelerometer
+> + */
+> +#ifndef _DT_BINDINGS_INPUT_BMA150_H
+> +#define _DT_BINDINGS_INPUT_BMA150_H
+> +
+> +/* Range */
+> +#define BMA150_RANGE_2G		0
+> +#define BMA150_RANGE_4G		1
+> +#define BMA150_RANGE_8G		2
+> +
+> +/* Refresh rate */
+> +#define BMA150_BW_25HZ		0
+> +#define BMA150_BW_50HZ		1
+> +#define BMA150_BW_100HZ		2
+> +#define BMA150_BW_190HZ		3
+> +#define BMA150_BW_375HZ		4
+> +#define BMA150_BW_750HZ		5
+> +#define BMA150_BW_1500HZ	6
+> +
+> +#endif /* _DT_BINDINGS_INPUT_BMA150_H */
+> diff --git a/include/linux/bma150.h b/include/linux/bma150.h
+> index 97ade7cdc870..b85266a9c35c 100644
+> --- a/include/linux/bma150.h
+> +++ b/include/linux/bma150.h
+> @@ -20,19 +20,10 @@
+>  #ifndef _BMA150_H_
+>  #define _BMA150_H_
+>  
+> -#define BMA150_DRIVER		"bma150"
+> +#include <dt-bindings/input/bma150.h>
+>  
+> -#define BMA150_RANGE_2G		0
+> -#define BMA150_RANGE_4G		1
+> -#define BMA150_RANGE_8G		2
+> +#define BMA150_DRIVER		"bma150"
+>  
+> -#define BMA150_BW_25HZ		0
+> -#define BMA150_BW_50HZ		1
+> -#define BMA150_BW_100HZ		2
+> -#define BMA150_BW_190HZ		3
+> -#define BMA150_BW_375HZ		4
+> -#define BMA150_BW_750HZ		5
+> -#define BMA150_BW_1500HZ	6
+>  
+>  struct bma150_cfg {
+>  	bool any_motion_int;		/* Set to enable any-motion interrupt */
+> -- 
+> 2.17.1
+> 
