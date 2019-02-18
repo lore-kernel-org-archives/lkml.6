@@ -2,125 +2,155 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D9BC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:33:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 708EDC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:33:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13F9D2081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:33:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4183F2081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:33:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550500434;
+	bh=C6lQ+B20K4rzZ8yWwSIX8gOwnehvztd7UBiqmlDGWLw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=uniUkL285RAVtgNmUj1NCvzXe92e3ZeYsEIBJ09slXIPRnlLnq+k6i+YMNOT3buXG
+	 WB1AcW3iq0oRfHyW4xgs7CxXvdXYGzqAHVJTsl2kYZOTw7FlXCtjejD23e/Vy9vQam
+	 2XrrWSpDwWTSdLDjau5Ub9gWthR+6fuhQNf1aM1g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388008AbfBROdr (ORCPT
+        id S2388205AbfBRN56 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:33:47 -0500
-Received: from foss.arm.com ([217.140.101.70]:60342 "EHLO foss.arm.com"
+        Mon, 18 Feb 2019 08:57:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388743AbfBROdp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:33:45 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 06046A78;
-        Mon, 18 Feb 2019 06:33:45 -0800 (PST)
-Received: from [10.1.196.50] (e108454-lin.cambridge.arm.com [10.1.196.50])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 95D9E3F589;
-        Mon, 18 Feb 2019 06:33:38 -0800 (PST)
-Subject: Re: [RFC PATCH] arm64/fpsimd: Don't disable softirq when touching
- FPSIMD/SVE state
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-arm-kernel@lists.infradead.org, Dave.Martin@arm.com,
-        linux-rt-users@vger.kernel.org, catalin.marinas@arm.com,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        linux-kernel@vger.kernel.org
-References: <20190208165513.8435-1-julien.grall@arm.com>
- <20190213143029.ad2kzg7vtuo3zpjk@linutronix.de>
-From:   Julien Grall <julien.grall@arm.com>
-Message-ID: <205c0b3a-d905-544f-31c3-1bb6ab68bb5b@arm.com>
-Date:   Mon, 18 Feb 2019 14:33:36 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S2388147AbfBRN5r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:57:47 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 333552077B;
+        Mon, 18 Feb 2019 13:57:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550498266;
+        bh=C6lQ+B20K4rzZ8yWwSIX8gOwnehvztd7UBiqmlDGWLw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Me9gM+NXwndZdLrZPvETpq85Ssv+etWW9fCJCYKBTi5GKHiPUtRAuFlu4jJUiCy8a
+         s2RVttcrStVA9or2sDUIPYpXRLwyciiUErs6RGSNQmRQhq/0BY1ISihMGeVN71xQd4
+         rFhJrX3gghQx6EHI4NDDX56UhW1n46T10cQHq+Es=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        "David A. Long" <dave.long@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 14/58] ARM: split out processor lookup
+Date:   Mon, 18 Feb 2019 14:43:35 +0100
+Message-Id: <20190218133509.652631899@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190218133508.567416115@linuxfoundation.org>
+References: <20190218133508.567416115@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-In-Reply-To: <20190213143029.ad2kzg7vtuo3zpjk@linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Sebastian,
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-On 13/02/2019 14:30, Sebastian Andrzej Siewior wrote:
-> On 2019-02-08 16:55:13 [+0000], Julien Grall wrote:
->> When the kernel is compiled with CONFIG_KERNEL_MODE_NEON, some part of
->> the kernel may be able to use FPSIMD/SVE. This is for instance the case
->> for crypto code.
->>
->> Any use of FPSIMD/SVE in the kernel are clearly marked by using the
->> function kernel_neon_{begin, end}. Furthermore, this can only be used
->> when may_use_simd() returns true.
-> 
-> This is equal what x86 is currently doing. The naming is slightly
-> different, there is irq_fpu_usable().
-The idea behind the patch was taken from x86. On x86, softirq does not seem to 
-be disabled when context switching the FPUs registers.
+------------------
 
-> 
->> The current implementation of may_use_simd() allows softirq to use
->> FPSIMD/SVE unless it is currently in used (i.e kernel_neon_busy is true).
->> When in used, softirqs usually fallback to a software method.
->>
->> At the moment, as a softirq may use FPSIMD/SVE, softirqs are disabled
->> when touching the FPSIMD/SVE context. This has the drawback to disable
->> all softirqs even if they are not using FPSIMD/SVE.
-> 
-> Is this bad? This means also that your crypto code will not be
-> interrupted by a softirq. Also if you would get rid of it, you could
-> avoid the software fallback in case may_use_simd() says false.
+Commit 65987a8553061515b5851b472081aedb9837a391 upstream.
 
-There seem to have some misunderstanding about the purpose of this patch. Any 
-use of crypto in the kernel is only protected by preempt_disable(). softirqs are 
-only disabled when context switching the FPU register between two userspace tasks.
+Split out the lookup of the processor type and associated error handling
+from the rest of setup_processor() - we will need to use this in the
+secondary CPU bringup path for big.Little Spectre variant 2 mitigation.
 
- From the commit log cb84d11e1625 "arm64: neon: Remove support for nested or 
-hardirq kernel-mode NEON" this was done to protect against rare softirqs use 
-crypto. It seems to me this is a bit overkill to increase softirq latency if 
-they barely use FPSIMD/SVE. Indeed, the SVE context can be quite large, 
-therefore it can take some times to save/restore it.
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: David A. Long <dave.long@linaro.org>
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm/include/asm/cputype.h |  1 +
+ arch/arm/kernel/setup.c        | 31 +++++++++++++++++++------------
+ 2 files changed, 20 insertions(+), 12 deletions(-)
 
-[...]
-
->> For RT-linux, it might be possible to use migrate_{enable, disable}. I
->> am quite new with RT and have some trouble to understand the semantics
->> of migrate_{enable, disable}. So far, I am still unsure if it is possible
->> to run another userspace task on the same CPU while getting preempted
->> when the migration is disabled.
-> 
-> In RT:
-> - preemt_disable() is the same as !RT. A thread can not be suspend. An
->    interrupt may interrupt. However on RT we have threaded interrupts so
->    the interrupt is limited to the first-level handler (not the threaded
->    handler).
-> 
-> - migrate_disable() means that the thread can not be moved to another
->    CPU. It can be suspended.
-> 
-> - local_bh_disable() disables the BH: No softirq can run. In RT
->    local_bh_disable() does not inherit preempt_disable(). Two different
->    softirqs can be executed in parallel.
->    The BH is usually invoked at the end of the threaded interrupt
->    (because the threaded interrupt handler raises the softirq). It can
->    also run in the ksoftirqd.
-> 
-> Usually you should not get preempted in a migrate_disable() section. A
-> SCHED_OTHER task should not interrupt another SCHED_OTHER task in a
-> migrate_disable() section. A task with a higher priority (a RT/DL task)
-> will. Since threaded interrupts run with a RT priority of 50, they will
-> interrupt your task in a migrate_disable() section.
-
-Thank you for the explanation!
-
-Cheers,
-
+diff --git a/arch/arm/include/asm/cputype.h b/arch/arm/include/asm/cputype.h
+index c55db1e22f0c..b9356dbfded0 100644
+--- a/arch/arm/include/asm/cputype.h
++++ b/arch/arm/include/asm/cputype.h
+@@ -106,6 +106,7 @@
+ #define ARM_CPU_PART_SCORPION		0x510002d0
+ 
+ extern unsigned int processor_id;
++struct proc_info_list *lookup_processor(u32 midr);
+ 
+ #ifdef CONFIG_CPU_CP15
+ #define read_cpuid(reg)							\
+diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
+index f4e54503afa9..8d5c3a118abe 100644
+--- a/arch/arm/kernel/setup.c
++++ b/arch/arm/kernel/setup.c
+@@ -667,22 +667,29 @@ static void __init smp_build_mpidr_hash(void)
+ }
+ #endif
+ 
+-static void __init setup_processor(void)
++/*
++ * locate processor in the list of supported processor types.  The linker
++ * builds this table for us from the entries in arch/arm/mm/proc-*.S
++ */
++struct proc_info_list *lookup_processor(u32 midr)
+ {
+-	struct proc_info_list *list;
++	struct proc_info_list *list = lookup_processor_type(midr);
+ 
+-	/*
+-	 * locate processor in the list of supported processor
+-	 * types.  The linker builds this table for us from the
+-	 * entries in arch/arm/mm/proc-*.S
+-	 */
+-	list = lookup_processor_type(read_cpuid_id());
+ 	if (!list) {
+-		pr_err("CPU configuration botched (ID %08x), unable to continue.\n",
+-		       read_cpuid_id());
+-		while (1);
++		pr_err("CPU%u: configuration botched (ID %08x), CPU halted\n",
++		       smp_processor_id(), midr);
++		while (1)
++		/* can't use cpu_relax() here as it may require MMU setup */;
+ 	}
+ 
++	return list;
++}
++
++static void __init setup_processor(void)
++{
++	unsigned int midr = read_cpuid_id();
++	struct proc_info_list *list = lookup_processor(midr);
++
+ 	cpu_name = list->cpu_name;
+ 	__cpu_architecture = __get_cpu_architecture();
+ 
+@@ -700,7 +707,7 @@ static void __init setup_processor(void)
+ #endif
+ 
+ 	pr_info("CPU: %s [%08x] revision %d (ARMv%s), cr=%08lx\n",
+-		cpu_name, read_cpuid_id(), read_cpuid_id() & 15,
++		list->cpu_name, midr, midr & 15,
+ 		proc_arch[cpu_architecture()], get_cr());
+ 
+ 	snprintf(init_utsname()->machine, __NEW_UTS_LEN + 1, "%s%c",
 -- 
-Julien Grall
+2.19.1
+
+
+
