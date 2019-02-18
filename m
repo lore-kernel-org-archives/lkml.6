@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFDADC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:08:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF6DC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:09:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C792C217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:08:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A91142070D
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:09:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730218AbfBRVIu (ORCPT
+        id S1730261AbfBRVI6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 16:08:50 -0500
-Received: from mout.kundenserver.de ([212.227.17.13]:40305 "EHLO
+        Mon, 18 Feb 2019 16:08:58 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:52359 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728154AbfBRVIA (ORCPT
+        with ESMTP id S1728062AbfBRVH7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 16:08:00 -0500
+        Mon, 18 Feb 2019 16:07:59 -0500
 Received: from wuerfel.lan ([109.192.41.194]) by mrelayeu.kundenserver.de
  (mreue106 [212.227.15.145]) with ESMTPA (Nemesis) id
- 1MlO9r-1hL1UD3zaP-00liHH; Mon, 18 Feb 2019 22:07:29 +0100
+ 1MekKJ-1hVzpn14AH-00akyl; Mon, 18 Feb 2019 22:07:30 +0100
 From:   Arnd Bergmann <arnd@arndb.de>
 To:     y2038@lists.linaro.org
 Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-arch@vger.kernel.org,
@@ -36,73 +36,92 @@ Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-arch@vger.kernel.org,
         Guo Ren <guoren@kernel.org>, Greentime Hu <green.hu@gmail.com>,
         arnd@arndb.de, linux-riscv@lists.infradead.org,
         Guan Xuetao <gxt@pku.edu.cn>
-Subject: [PATCH 6/8] checksyscalls: fix up mq_timedreceive and stat exceptions
-Date:   Mon, 18 Feb 2019 22:07:10 +0100
-Message-Id: <20190218210712.3503891-7-arnd@arndb.de>
+Subject: [PATCH 8/8] riscv: Use latest system call ABI
+Date:   Mon, 18 Feb 2019 22:07:12 +0100
+Message-Id: <20190218210712.3503891-9-arnd@arndb.de>
 X-Mailer: git-send-email 2.20.0
 In-Reply-To: <20190218210712.3503891-1-arnd@arndb.de>
 References: <20190218210712.3503891-1-arnd@arndb.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:UgT5qLzBRe8uGhCU9AyHn5Jt9cfHoQ+D0/iLF4gMTpdoEuzsO5q
- poQ3zyyety+N59s3VxhuXLURLB1ufFgiJP7cPrbxRJTMbWMQ7K0uKTGBFu/NpnSZWaFSdog
- T5gcp2hhQXO/x3YKwmnCZyKSdPjGDBSytrIMMHzUDbw9nXiaOEcLEtNWS47SPtFe0pvedzm
- Ahdkq9w/U6TCxmxQhHcnQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:FXDoJv4Bfvw=:6GGmsD/rmCT7ei5OeBL7DH
- t9coJHnvAkWeYWrmUafR5IWBjDhHbw2hVsAkjpwqjvj3M0jVTAtvr7aqtTJp3u2S6u2FYnMqW
- oespDKsgf17cgnskdeI7Sy/It7HDngnnl74fqB+LbOq6/d7fW09m7xuwmbqLX9HGP30okqkVC
- l7Rv7RBccaKtbAvSmZmfBLGqy4RvBP2v1u7W8bw0wCcDCNj/9OGlxnPdKoduPuCDMljPNKkFg
- JTtgWH8cJKfZZ2jO2wbH+O8AtgAx2NPL0R3zDybKPp0Dsvbr4choUvo5Ukzb/LYmpBH/5SqTj
- 0eUWMq3UHbkVx8A/WLYPvrRLXGGufyIG3fJukEQka4tWA9POcGL7GbFZdx6cX1YBavQM6+ByU
- zU4K+JW1rJnKBnsQVgKCCms9O+DsmmG7AUmR4yF7tA00HB40Cy1HsgjbxYpo0aWBks6MLe+8E
- S7M6NSY9pyhl8HXrsGEtNZYBhlLUN0Cgw0vl8vgW3V9gq7fPe+GUbtgAxR7VsfN4YHZACoZ/p
- IzfbkPLQA2l7yP0ln+KZkpHc+jEUnWcCy6Leah+mx8/eM2RAQSXAVtrOZGtmgJWqm69jQKts1
- eeB3ScSFFC+r9IGdyNPr8m6apR0guzuUaE1Vw6q+1wIVfXRrJu6sT7SocYw82+e3UcDNhEurI
- 7gyiHW/RS/RFQmAfCFQy82U8gb9TOHsW93BtxnO0Uva0vatR8Yfwov25b1QvqBmgsxezJ9Bpq
- o0d2GWfT3VWHoeSTt3tl9IAc2q/hmZNKR3+1xg==
+X-Provags-ID: V03:K1:ScKittBUPbtTQVR0D2l9QJ/Xwbz5RAo/fF1oCAct/9ud6octFcV
+ h3yKXHywP14xKDxJaVLEsUWPE3OmqCjnG82aCB4NUdkfbVY7hwv4QqVPvKB1vAHJ19xcaO5
+ 3xAwwTl6rnM1agEMyLmSR6J//chNkfRHVVpRX4ULBuwjtaigY5FA4YB1h9617BWsOOYJd8J
+ fZOQ9NbBzqv5qvep4QBaw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:o9dJBFc/2PE=:6OUQhfzYWqi4WunWGXaGYB
+ f8vS8yA6t8rxXrEjV2+dgiT8v9CkTOE5ltkLO1zfySqpw9H5yP4F0tmidAyGQKJ18jc2Qyp94
+ 12pypKf9UmKVK0cryzzr6qL/Yd7V+vqidT+8nqsm9QdjbFqAc9oM7DNzuVibjvheQ575PHNon
+ Mkcdar5U2VYCW9MNIVaGPXl7REnT6LfBbW7cKOSXDJ5Ueq6q+FqEBKs8oNtXSfKAtkQ6rlLAN
+ rJhAaxiN2ekwUPA2db0cmGB6ORpu86ikvL7CCJ6phhyUf18Sj6Z+TlT/Jpe2HRzdBFxRSaYvQ
+ DVhHv05ZNrwohLC1oTH7uSavLNKG003rJPSpe1+0gP2g1lBzc3paQSXYX+4pHayuHNOPwyeTt
+ G0OOTppm5+VkOO8Duiax8ns/IvgW45ytBJ3BgpkjOjafbeOfmsyjSMoOzLv7IYCk+25Op6WFS
+ YBBLvab8oC/VSpr/Kn6RGM+0ag37Y9rpso+qx6z4QOS9k+wtjuSC+9bVcCWGUWN0P253djT0F
+ U8R9lm90BTHgXMmBSrCRhNsU8LQ/HJFHjt3A15sYM23jsPlBKWZl8GQeh4KXdeCjaJbGM4kgI
+ gjI6yl7I8ImAunRYolHOLl+VULxe9YqMH94pqQHuIuu+TEguAJfxe5f4F4DYeHuKz1sxnZhts
+ JD8zXIPwT20T6Or/Fu7ywh3ogDuoLSaL0IxeXGWpKnHv2g1KT62daFuvl0mG/exugc4Oc4PUZ
+ HDKrpRF9L+odFkMf/xPku6J4TybLaPqhB2kBrQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mq_timedreceive was spelled incorrectly, and we need exceptions
-for new architectures that leave out newstat or stat64, implementing
-only statx() now.
+We don't yet have an upstream glibc port for riscv, so there is no user
+space for the existing ABI, and we can remove the definitions for 32-bit
+time_t, off_t and struct resource and system calls based on them,
+including the vdso.
 
-Fixes: 48166e6ea47d ("y2038: add 64-bit time_t syscalls to all 32-bit architectures")
-Fixes: bf4b6a7d371e ("y2038: Remove stat64 family from default syscall set")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- scripts/checksyscalls.sh | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ arch/riscv/Kconfig                   | 1 -
+ arch/riscv/include/uapi/asm/unistd.h | 5 +----
+ arch/riscv/kernel/vdso/Makefile      | 2 ++
+ 3 files changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/scripts/checksyscalls.sh b/scripts/checksyscalls.sh
-index ffd635efbdca..a18b47695f55 100755
---- a/scripts/checksyscalls.sh
-+++ b/scripts/checksyscalls.sh
-@@ -30,13 +30,10 @@ cat << EOF
- #define __IGNORE_readlink	/* readlinkat */
- #define __IGNORE_symlink	/* symlinkat */
- #define __IGNORE_utimes		/* futimesat */
--#if BITS_PER_LONG == 64
- #define __IGNORE_stat		/* fstatat */
- #define __IGNORE_lstat		/* fstatat */
--#else
- #define __IGNORE_stat64		/* fstatat64 */
- #define __IGNORE_lstat64	/* fstatat64 */
--#endif
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index 09fa3a87bf30..feeeaa60697c 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -11,7 +11,6 @@ config 32BIT
  
- #ifndef __ARCH_WANT_SET_GET_RLIMIT
- #define __IGNORE_getrlimit	/* getrlimit */
-@@ -138,7 +135,7 @@ cat << EOF
- #define __IGNORE_io_pgetevents
- #define __IGNORE_recvmmsg
- #define __IGNORE_mq_timedsend
--#define __IGNORE_mq_timedreceiv
-+#define __IGNORE_mq_timedreceive
- #define __IGNORE_semtimedop
- #define __IGNORE_rt_sigtimedwait
- #define __IGNORE_futex
+ config RISCV
+ 	def_bool y
+-	select ARCH_32BIT_OFF_T if !64BIT
+ 	# even on 32-bit, physical (and DMA) addresses are > 32-bits
+ 	select PHYS_ADDR_T_64BIT
+ 	select OF
+diff --git a/arch/riscv/include/uapi/asm/unistd.h b/arch/riscv/include/uapi/asm/unistd.h
+index 486a288b454c..0e2eeeb1fd27 100644
+--- a/arch/riscv/include/uapi/asm/unistd.h
++++ b/arch/riscv/include/uapi/asm/unistd.h
+@@ -17,11 +17,8 @@
+ 
+ #ifdef __LP64__
+ #define __ARCH_WANT_NEW_STAT
+-#endif /* __LP64__ */
+ #define __ARCH_WANT_SET_GET_RLIMIT
+-#ifndef __LP64__
+-#define __ARCH_WANT_TIME32_SYSCALLS
+-#endif
++#endif /* __LP64__ */
+ 
+ #include <asm-generic/unistd.h>
+ 
+diff --git a/arch/riscv/kernel/vdso/Makefile b/arch/riscv/kernel/vdso/Makefile
+index eed1c137f618..fec62b24df89 100644
+--- a/arch/riscv/kernel/vdso/Makefile
++++ b/arch/riscv/kernel/vdso/Makefile
+@@ -2,9 +2,11 @@
+ 
+ # Symbols present in the vdso
+ vdso-syms  = rt_sigreturn
++ifdef CONFIG_64BIT
+ vdso-syms += gettimeofday
+ vdso-syms += clock_gettime
+ vdso-syms += clock_getres
++endif
+ vdso-syms += getcpu
+ vdso-syms += flush_icache
+ 
 -- 
 2.20.0
 
