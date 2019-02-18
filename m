@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCACEC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:00:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77F6FC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:00:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF01021903
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:00:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4378220842
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:00:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498427;
-	bh=su23+IXdqgCRo1zhu9pyyO4oAzAlX/wARRLPaBlGrLo=;
+	s=default; t=1550498432;
+	bh=qJb+M3uG4tGVBH7z9rRxTCMRo+vF7UQptdhzcYn1Les=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Z6VJAIv+3ydXiIoSSU6cbIP2qfB6c3YRKSu4NpCR0I62kBKqvFaUjtyczUSiz2ttw
-	 vqHt6V7MkwjQJYQFh6SjMBNgY2b/b7XU3SsDCJIEFNxZQpo6vGs1YjNqXpPirXeXjw
-	 JIVIdm3k0tk2kl6BiQ+Gh2LJFYjnFowhv3g8AAhQ=
+	b=YZIzxy5sEL3cHg8Cl+RdO51gpt4nOuriVVxJwwwijakXpABwffbSFJcPNgFSuX8xu
+	 Xjt+F0JjDnsls2SVeMkSYl1FY1dY+AtKY8tta/5CiXWV/Aa+slJRSn7LUXTpODSYQ7
+	 XfwYac0fjcqvz77h5ut7dVHC7bZfmsMuAW5nSV0U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388831AbfBROA0 (ORCPT
+        id S2388848AbfBROAa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:00:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41630 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:00:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388305AbfBROAY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:00:24 -0500
+        id S2388835AbfBROA1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:00:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02E4A21908;
-        Mon, 18 Feb 2019 14:00:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5ECF2070D;
+        Mon, 18 Feb 2019 14:00:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498423;
-        bh=su23+IXdqgCRo1zhu9pyyO4oAzAlX/wARRLPaBlGrLo=;
+        s=default; t=1550498426;
+        bh=qJb+M3uG4tGVBH7z9rRxTCMRo+vF7UQptdhzcYn1Les=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fGiab8FVD8XtwwlKtMe7vgKax8kn4tAikeiNEiBfKTAKm6q9whD36opfkxUGFv9/1
-         c/dR6vogX6fE6/v2+KxCin+nW9uzjR1ISK2EgIKfEz6Q7BYvvey0Asf4K0JVXYwOz7
-         Mg4Mjf5Kvqi9mRnBoZO2VXcyUe9/zBaTZo7M9jWo=
+        b=wgOiRNpV3m+fNlL5hWpYXfQVCFoy8QuNC/ZG5/p+41LI5p56Aq3/gzU/7dd4d4MgT
+         ie+GHOxNEo25kvLc34iKTenwPdab88Fu5ZhBCI2ABeCidiHL4mYoSvGV4T84UpWrh3
+         PiPqh4sLMAqeD0g+iQQOn9/Rz8nqxuglNZA3Gel0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
-        Ivan Delalande <colona@arista.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>
-Subject: [PATCH 4.9 48/58] signal: Restore the stop PTRACE_EVENT_EXIT
-Date:   Mon, 18 Feb 2019 14:44:09 +0100
-Message-Id: <20190218133512.242779007@linuxfoundation.org>
+        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
+        Derek Robson <robsonde@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Matz <matz@suse.de>, x86@kernel.org
+Subject: [PATCH 4.9 49/58] x86/a.out: Clear the dump structure initially
+Date:   Mon, 18 Feb 2019 14:44:10 +0100
+Message-Id: <20190218133512.302021244@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133508.567416115@linuxfoundation.org>
 References: <20190218133508.567416115@linuxfoundation.org>
@@ -65,58 +66,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric W. Biederman <ebiederm@xmission.com>
+From: Borislav Petkov <bp@suse.de>
 
-commit cf43a757fd49442bc38f76088b70c2299eed2c2f upstream.
+commit 10970e1b4be9c74fce8ab6e3c34a7d718f063f2c upstream.
 
-In the middle of do_exit() there is there is a call
-"ptrace_event(PTRACE_EVENT_EXIT, code);" That call places the process
-in TACKED_TRACED aka "(TASK_WAKEKILL | __TASK_TRACED)" and waits for
-for the debugger to release the task or SIGKILL to be delivered.
+dump_thread32() in aout_core_dump() does not clear the user32 structure
+allocated on the stack as the first thing on function entry.
 
-Skipping past dequeue_signal when we know a fatal signal has already
-been delivered resulted in SIGKILL remaining pending and
-TIF_SIGPENDING remaining set.  This in turn caused the
-scheduler to not sleep in PTACE_EVENT_EXIT as it figured
-a fatal signal was pending.  This also caused ptrace_freeze_traced
-in ptrace_check_attach to fail because it left a per thread
-SIGKILL pending which is what fatal_signal_pending tests for.
+As a result, the dump.u_comm, dump.u_ar0 and dump.signal which get
+assigned before the clearing, get overwritten.
 
-This difference in signal state caused strace to report
-strace: Exit of unknown pid NNNNN ignored
+Rename that function to fill_dump() to make it clear what it does and
+call it first thing.
 
-Therefore update the signal handling state like dequeue_signal
-would when removing a per thread SIGKILL, by removing SIGKILL
-from the per thread signal mask and clearing TIF_SIGPENDING.
+This was caught while staring at a patch by Derek Robson
+<robsonde@gmail.com>.
 
-Acked-by: Oleg Nesterov <oleg@redhat.com>
-Reported-by: Oleg Nesterov <oleg@redhat.com>
-Reported-by: Ivan Delalande <colona@arista.com>
-Cc: stable@vger.kernel.org
-Fixes: 35634ffa1751 ("signal: Always notice exiting tasks")
-Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Derek Robson <robsonde@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Matz <matz@suse.de>
+Cc: x86@kernel.org
+Cc: <stable@vger.kernel.org>
+Link: https://lkml.kernel.org/r/20190202005512.3144-1-robsonde@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/signal.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/x86/ia32/ia32_aout.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2241,9 +2241,12 @@ relock:
- 	}
+--- a/arch/x86/ia32/ia32_aout.c
++++ b/arch/x86/ia32/ia32_aout.c
+@@ -50,7 +50,7 @@ static unsigned long get_dr(int n)
+ /*
+  * fill in the user structure for a core dump..
+  */
+-static void dump_thread32(struct pt_regs *regs, struct user32 *dump)
++static void fill_dump(struct pt_regs *regs, struct user32 *dump)
+ {
+ 	u32 fs, gs;
+ 	memset(dump, 0, sizeof(*dump));
+@@ -156,10 +156,12 @@ static int aout_core_dump(struct coredum
+ 	fs = get_fs();
+ 	set_fs(KERNEL_DS);
+ 	has_dumped = 1;
++
++	fill_dump(cprm->regs, &dump);
++
+ 	strncpy(dump.u_comm, current->comm, sizeof(current->comm));
+ 	dump.u_ar0 = offsetof(struct user32, regs);
+ 	dump.signal = cprm->siginfo->si_signo;
+-	dump_thread32(cprm->regs, &dump);
  
- 	/* Has this task already been marked for death? */
--	ksig->info.si_signo = signr = SIGKILL;
--	if (signal_group_exit(signal))
-+	if (signal_group_exit(signal)) {
-+		ksig->info.si_signo = signr = SIGKILL;
-+		sigdelset(&current->pending.signal, SIGKILL);
-+		recalc_sigpending();
- 		goto fatal;
-+	}
- 
- 	for (;;) {
- 		struct k_sigaction *ka;
+ 	/*
+ 	 * If the size of the dump file exceeds the rlimit, then see
 
 
