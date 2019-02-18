@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C43CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7850C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:45:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FA1B218FC
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:45:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A3B321902
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:45:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497516;
-	bh=L8M+5IJoOEq18hgdKu9M+U9V/xVcKbGVFewY0k6TDZM=;
+	s=default; t=1550497520;
+	bh=wm/xvyKAh4hOPZeBLhIj5oV9Sy1L0m+PWfkeJ/MaCPA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GsXrL4rii3Y7ifLwDYSdXg1F/EUGcCLpDC9hzQeTtO0avGkaxeDZmJE13iDSS+elq
-	 YZ2haCvf0OKgcXOlo65dbEYqe9St7TicvPUbT+lSsvgV4sQWJBlHDWeN6DyOkirtLc
-	 bVaclAXnHu3vvUvJpdIGyw6jNV0k5KOj22h8OkOY=
+	b=k7Pj3xVC0KRS7otdfkKX+/QsjNfxEasOGm4/z8MkS4IsWg/hauA/PugBTapXDgcC5
+	 I6SgA1kksYQdRoEMnk9r/59HeIWcJcRJTLiyKMliQJI477e03ED5dhcQsE2V7D4adS
+	 cvOLLB1YlkMKtpFckmofScuilV+ZOOCmFRJ1b7lc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731286AbfBRNpP (ORCPT
+        id S1729542AbfBRNpT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:45:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51224 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:45:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731243AbfBRNpM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:45:12 -0500
+        id S1731281AbfBRNpP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:45:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E09FD217F5;
-        Mon, 18 Feb 2019 13:45:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D6E521902;
+        Mon, 18 Feb 2019 13:45:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497511;
-        bh=L8M+5IJoOEq18hgdKu9M+U9V/xVcKbGVFewY0k6TDZM=;
+        s=default; t=1550497514;
+        bh=wm/xvyKAh4hOPZeBLhIj5oV9Sy1L0m+PWfkeJ/MaCPA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qmDD/toKsGvNEfuDRwcLNn/MfEStEIUyFQr0Y5rdsPDcy+4IGZ3rTFooJuJOcFt8Y
-         W8AnDJzixkSn9h10a5q5+SBrdLiLmneH5JmnMSDO3XeP4Xb2G0fchPfy6LVvvjI2y+
-         CUGUjKdZ/PTg2iKCeujvishQqz3s4YrZIErXgMDw=
+        b=DXYpxvX2gTmD9XeRw54F2BQIgWriuLmm3m8zxpoiOzKtKmY1MvJdrP7Oa1yEaV7/L
+         3dWDyJ8JgRVs8QmxlcCiH1xYdaG6fAidnGhxFFZqe2GbRhw+xovvvCIYHwgdNkNx60
+         0PLJ7a7WPYVUAMv0dYl4RDPaCGMmnACjidrxPk7I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guo Ren <ren_guo@c-sky.com>,
-        Lu Baoquan <lu.baoquan@intellif.com>,
+        stable@vger.kernel.org, Adrian Bunk <bunk@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 14/92] csky: fixup CACHEV1 store instruction fast retire
-Date:   Mon, 18 Feb 2019 14:42:17 +0100
-Message-Id: <20190218133455.977184903@linuxfoundation.org>
+Subject: [PATCH 4.20 02/92] eeprom: at24: add support for 24c2048
+Date:   Mon, 18 Feb 2019 14:42:05 +0100
+Message-Id: <20190218133454.872363445@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
 References: <20190218133454.668268457@linuxfoundation.org>
@@ -66,64 +66,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 96354ad79e2e59f9d620669c8e1ac2452440c260 ]
+[ Upstream commit 37cf28d3b5bca1b532a0b6aac722e7f2788a9294 ]
 
-For I/O access, 810/807 store instruction fast retire will cause wrong
-primitive. For example:
+Works with ST M24M02.
 
-	stw (clear interrupt source)
-	stw (unmask interrupt controller)
-	enable interrupt
-
-stw is fast retire instruction. When PC is run at enable interrupt
-stage, the clear interrupt source hasn't finished. It will cause another
-wrong irq-enter.
-
-So use mb() to prevent above.
-
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Cc: Lu Baoquan <lu.baoquan@intellif.com>
+Signed-off-by: Adrian Bunk <bunk@kernel.org>
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/csky/include/asm/io.h | 25 +++++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+ drivers/misc/eeprom/Kconfig | 2 +-
+ drivers/misc/eeprom/at24.c  | 3 +++
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/csky/include/asm/io.h b/arch/csky/include/asm/io.h
-index ecae6b358f95..c1dfa9c10e36 100644
---- a/arch/csky/include/asm/io.h
-+++ b/arch/csky/include/asm/io.h
-@@ -15,6 +15,31 @@ extern void iounmap(void *addr);
- extern int remap_area_pages(unsigned long address, phys_addr_t phys_addr,
- 		size_t size, unsigned long flags);
+diff --git a/drivers/misc/eeprom/Kconfig b/drivers/misc/eeprom/Kconfig
+index fe7a1d27a017..a846faefa210 100644
+--- a/drivers/misc/eeprom/Kconfig
++++ b/drivers/misc/eeprom/Kconfig
+@@ -13,7 +13,7 @@ config EEPROM_AT24
+ 	  ones like at24c64, 24lc02 or fm24c04:
  
-+/*
-+ * I/O memory access primitives. Reads are ordered relative to any
-+ * following Normal memory access. Writes are ordered relative to any prior
-+ * Normal memory access.
-+ *
-+ * For CACHEV1 (807, 810), store instruction could fast retire, so we need
-+ * another mb() to prevent st fast retire.
-+ *
-+ * For CACHEV2 (860), store instruction with PAGE_ATTR_NO_BUFFERABLE won't
-+ * fast retire.
-+ */
-+#define readb(c)		({ u8  __v = readb_relaxed(c); rmb(); __v; })
-+#define readw(c)		({ u16 __v = readw_relaxed(c); rmb(); __v; })
-+#define readl(c)		({ u32 __v = readl_relaxed(c); rmb(); __v; })
-+
-+#ifdef CONFIG_CPU_HAS_CACHEV2
-+#define writeb(v,c)		({ wmb(); writeb_relaxed((v),(c)); })
-+#define writew(v,c)		({ wmb(); writew_relaxed((v),(c)); })
-+#define writel(v,c)		({ wmb(); writel_relaxed((v),(c)); })
-+#else
-+#define writeb(v,c)		({ wmb(); writeb_relaxed((v),(c)); mb(); })
-+#define writew(v,c)		({ wmb(); writew_relaxed((v),(c)); mb(); })
-+#define writel(v,c)		({ wmb(); writel_relaxed((v),(c)); mb(); })
-+#endif
-+
- #define ioremap_nocache(phy, sz)	ioremap(phy, sz)
- #define ioremap_wc ioremap_nocache
- #define ioremap_wt ioremap_nocache
+ 	     24c00, 24c01, 24c02, spd (readonly 24c02), 24c04, 24c08,
+-	     24c16, 24c32, 24c64, 24c128, 24c256, 24c512, 24c1024
++	     24c16, 24c32, 24c64, 24c128, 24c256, 24c512, 24c1024, 24c2048
+ 
+ 	  Unless you like data loss puzzles, always be sure that any chip
+ 	  you configure as a 24c32 (32 kbit) or larger is NOT really a
+diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
+index 636ed7149793..ddfcf4ade7bf 100644
+--- a/drivers/misc/eeprom/at24.c
++++ b/drivers/misc/eeprom/at24.c
+@@ -156,6 +156,7 @@ AT24_CHIP_DATA(at24_data_24c128, 131072 / 8, AT24_FLAG_ADDR16);
+ AT24_CHIP_DATA(at24_data_24c256, 262144 / 8, AT24_FLAG_ADDR16);
+ AT24_CHIP_DATA(at24_data_24c512, 524288 / 8, AT24_FLAG_ADDR16);
+ AT24_CHIP_DATA(at24_data_24c1024, 1048576 / 8, AT24_FLAG_ADDR16);
++AT24_CHIP_DATA(at24_data_24c2048, 2097152 / 8, AT24_FLAG_ADDR16);
+ /* identical to 24c08 ? */
+ AT24_CHIP_DATA(at24_data_INT3499, 8192 / 8, 0);
+ 
+@@ -182,6 +183,7 @@ static const struct i2c_device_id at24_ids[] = {
+ 	{ "24c256",	(kernel_ulong_t)&at24_data_24c256 },
+ 	{ "24c512",	(kernel_ulong_t)&at24_data_24c512 },
+ 	{ "24c1024",	(kernel_ulong_t)&at24_data_24c1024 },
++	{ "24c2048",    (kernel_ulong_t)&at24_data_24c2048 },
+ 	{ "at24",	0 },
+ 	{ /* END OF LIST */ }
+ };
+@@ -210,6 +212,7 @@ static const struct of_device_id at24_of_match[] = {
+ 	{ .compatible = "atmel,24c256",		.data = &at24_data_24c256 },
+ 	{ .compatible = "atmel,24c512",		.data = &at24_data_24c512 },
+ 	{ .compatible = "atmel,24c1024",	.data = &at24_data_24c1024 },
++	{ .compatible = "atmel,24c2048",	.data = &at24_data_24c2048 },
+ 	{ /* END OF LIST */ },
+ };
+ MODULE_DEVICE_TABLE(of, at24_of_match);
 -- 
 2.19.1
 
