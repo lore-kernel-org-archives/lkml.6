@@ -5,78 +5,78 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E10DEC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 12:09:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E4EBC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 12:10:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B282A21773
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 12:09:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45918218AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 12:10:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730694AbfBRMJq (ORCPT
+        id S1730741AbfBRMKU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 07:09:46 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:41320 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730631AbfBRMJp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 07:09:45 -0500
-Received: by mail-qt1-f193.google.com with SMTP id v10so18848703qtp.8;
-        Mon, 18 Feb 2019 04:09:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Rt8Onk5ZFIivNapcSYBDIp/BG20u3QyBL4v88MFsEog=;
-        b=OzSkhE1VhgY2H2iSyfm/q7HXXNWST2iqSOdTVnVG/g0LCgPRRyGOI7MytWq63ssM+Q
-         iNkPBLja0axHSOuVJ16guqLGGeskKYx8mdC2VOLXEJtUPpjKsM9p6QK7gz0O0Kr0kh06
-         c0sdRtPeD9lHaaNUreSp9Y77H50I0b6vWqvAeNbyVvNDdF5/ECKh7IwzZMcft9YXyHNM
-         QsfMPAHOyKTmv3YlYLDae2AyDSJ4V/Wg2eJ0Xixs+tIffq2RSpBs5HLlK0ljlDXUK1NA
-         CuCBLPoIfMsGbB8t4n9PE4MMhOb32qBL6PweqUJziLTLndqON49Xxs4zoaJwl5/BP3++
-         U/9g==
-X-Gm-Message-State: AHQUAubrbchsJvExEP/urNcKpRb2rgkY3/00Vohfge2ZuR4dxz7S33Ew
-        K/nPMPQaolma4+1caoJmYwhtBkh1Kt4WevCUmwXuJA==
-X-Google-Smtp-Source: AHgI3IZ0H0QTGO2yfAXRK+DPKf1as5oE2i77Ox29VXi8tqA+s+QDSxx+jObbrp6qXqoWG80ldg63pd71KtD8FpcjdxI=
-X-Received: by 2002:ac8:33f1:: with SMTP id d46mr17699767qtb.319.1550491784457;
- Mon, 18 Feb 2019 04:09:44 -0800 (PST)
+        Mon, 18 Feb 2019 07:10:20 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:59270 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730631AbfBRMKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 07:10:20 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 5F67B3F4A3668C11CFFE
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 20:10:17 +0800 (CST)
+Received: from [127.0.0.1] (10.57.71.8) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.408.0; Mon, 18 Feb 2019
+ 20:10:09 +0800
+Subject: Re: possible deadlock in console_unlock
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+CC:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        <linuxarm@huawei.com>, <linux-kernel@vger.kernel.org>
+References: <ebc01f4f-5b1d-4f8a-1d0d-463d5218ee45@huawei.com>
+ <20190216072127.GA1945@tigerII.localdomain>
+ <20190216073856.GA9979@tigerII.localdomain>
+ <71b097a7-03c5-8a65-76fa-24312b452b51@huawei.com>
+ <20190218054649.GA26686@jagdpanzerIV>
+From:   Yao HongBo <yaohongbo@huawei.com>
+Message-ID: <fd3c5c63-912c-a11f-9282-c46211c98521@huawei.com>
+Date:   Mon, 18 Feb 2019 20:09:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <1549628920-32623-1-git-send-email-sugaya.taichi@socionext.com>
-In-Reply-To: <1549628920-32623-1-git-send-email-sugaya.taichi@socionext.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 18 Feb 2019 13:09:27 +0100
-Message-ID: <CAK8P3a15mLEgVAh1+jQ+GqOcQa0zhrePWofo8iGkTs5_bd=TmQ@mail.gmail.com>
-Subject: Re: [PATCH v2 13/15] ARM: dts: milbeaut: Add device tree set for the
- Milbeaut M10V board
-To:     Sugaya Taichi <sugaya.taichi@socionext.com>
-Cc:     DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>,
-        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190218054649.GA26686@jagdpanzerIV>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.71.8]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 8, 2019 at 1:28 PM Sugaya Taichi
-<sugaya.taichi@socionext.com> wrote:
-> +
-> +       aliases {
-> +               serial1 = &uart1;
-> +       };
 
-Maybe start with serial0 here? It seems unusual to start
-counting at 1.
 
-> +       chosen {
-> +               bootargs = "init=/sbin/finit rootwait earlycon";
+On 2/18/2019 1:46 PM, Sergey Senozhatsky wrote:
+> Hi,
+> 
+> On (02/16/19 15:59), Yao HongBo wrote:
+>>> GFP_NOWARN is probably the best option for now. Yes, it, maybe,
+>>> will not work for fault-injection cases; but printk_safe approach
+>>> is harder to push for, especially given that printk_safe maybe will
+>>> not even exist in the future.
+>>
+>> I have tried GFP_NOWARN, but the problem still exists.
+>> Only print_safe contexts for tty locks can solve the problem.
+>> My test scenario is falt-injection.
+> 
+> Oh, I see. Yes, fault-injection is special.
+> 
+> I suspect that this patch series can be helpful then
+> https://lore.kernel.org/lkml/20181016050428.17966-1-sergey.senozhatsky@gmail.com/T/#u
 
-The /sbin/finit argument seems user space specific, so you probably don't
-want this in the dts file but rather pass it from the boot loader.
-Possible drop the bootargs entirely.
+ok, i'll try it.
+Thanks.
 
-     Arnd
+> but first we need to figure out if printk_safe will
+> stay in the kernel (this will take some time).
+> 
+> 	-ss
+> 
+> 
+
