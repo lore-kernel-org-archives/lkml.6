@@ -2,151 +2,113 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AA45C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:07:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28123C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:07:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4A4C218C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:07:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E67EB218C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:07:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550477257;
+	bh=f1oyHMXR0H2RE4SVj30LyqSdSVFSIGLqTtQiDPrFDLs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=grYV4GxhDiTmv0oNfXRjV+8iY8dc5TpAF7sd0a5yvG/LLI4Sg4erPdJXUNIVmVjdk
+	 wRF9X3KTkd7Fe42VA3zH0ZDH1DuJzyo8wLNKnnv8nkb7fBWVlMMAu9diHm6Lj8sraa
+	 J5kIwgeAXbsdh1/NiMVP1CaZsifUi1hDu6raI7M4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729078AbfBRIHb (ORCPT
+        id S1729114AbfBRIHf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 03:07:31 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52972 "EHLO mx1.redhat.com"
+        Mon, 18 Feb 2019 03:07:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50340 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729034AbfBRIHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1725881AbfBRIHb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 18 Feb 2019 03:07:31 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6911259458;
-        Mon, 18 Feb 2019 08:07:30 +0000 (UTC)
-Received: from localhost (ovpn-12-45.pek2.redhat.com [10.72.12.45])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B24355F9C0;
+        by mail.kernel.org (Postfix) with ESMTPSA id D2CB92070D;
         Mon, 18 Feb 2019 08:07:29 +0000 (UTC)
-Date:   Mon, 18 Feb 2019 16:07:27 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Kees Cook <keescook@chromium.org>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, X86 ML <x86@kernel.org>,
-        Mike Travis <travis@sgi.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH v3 3/6] mm: Add build time sanity check for struct page
- size
-Message-ID: <20190218080727.GH14858@MiWiFi-R3L-srv>
-References: <20190216140008.28671-1-bhe@redhat.com>
- <20190216140008.28671-4-bhe@redhat.com>
- <CAGXu5jLVYC8QZ9xo_=JxODQAPVTJMvnWwUb+aZKO-X-Luz+S0w@mail.gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550477250;
+        bh=f1oyHMXR0H2RE4SVj30LyqSdSVFSIGLqTtQiDPrFDLs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jlZWe5zAe7yCtpAkEKqvZZlS7ER4ao+iIbEbRxliJ+lJsxfOt1EdLY5bhGrZeNsvK
+         c7bphLp6E8uNP5eOBdElop3Q5UZsX0Tvh1vQV0nfHZuk2VrGb3KPCv6uTbF/LxE3Ex
+         5LSabqAT90Q1lWBmwVBiiKsx04e7+GRJ0S/L/+CM=
+Date:   Mon, 18 Feb 2019 09:07:27 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Chen Yu <chenyu56@huawei.com>, Jun Li <jun.li@nxp.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/9] device connection: Add support for device graphs
+Message-ID: <20190218080727.GA21246@kroah.com>
+References: <20190213074557.66028-1-heikki.krogerus@linux.intel.com>
+ <20190214101043.GA4316@kroah.com>
+ <20190215124715.GA10182@kuha.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGXu5jLVYC8QZ9xo_=JxODQAPVTJMvnWwUb+aZKO-X-Luz+S0w@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 18 Feb 2019 08:07:30 +0000 (UTC)
+In-Reply-To: <20190215124715.GA10182@kuha.fi.intel.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/17/19 at 08:50am, Kees Cook wrote:
-> On Sat, Feb 16, 2019 at 6:02 AM Baoquan He <bhe@redhat.com> wrote:
-> >
-> > Size of struct page might be larger than 64 bytes if debug options
-> > enabled, or fields added for debugging intentionally. Yet an upper
-> > limit need be added at build time to trigger an alert in case the
-> > size is too big to boot up system, warning people to check if it's
-> > be done on purpose in advance.
-> >
-> > Here 1/4 of PAGE_SIZE is chosen since system must have been insane
-> > with this value. For those systems with PAGE_SIZE larger than 4KB,
-> > 1KB is simply taken.
-> >
-> > Signed-off-by: Baoquan He <bhe@redhat.com>
-> > ---
-> >  mm/page_alloc.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > index 35fdde041f5c..eb6c8e22333b 100644
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -67,6 +67,7 @@
-> >  #include <linux/lockdep.h>
-> >  #include <linux/nmi.h>
-> >  #include <linux/psi.h>
-> > +#include <linux/sizes.h>
-> >
-> >  #include <asm/sections.h>
-> >  #include <asm/tlbflush.h>
-> > @@ -7084,6 +7085,7 @@ void __init free_area_init_nodes(unsigned long *max_zone_pfn)
-> >         unsigned long start_pfn, end_pfn;
-> >         int i, nid;
-> >
-> > +       BUILD_BUG_ON(sizeof(struct page) > min_t(size_t, SZ_1K, PAGE_SIZE));
+On Fri, Feb 15, 2019 at 02:47:15PM +0200, Heikki Krogerus wrote:
+> Hi Greg,
 > 
-> Are there systems with PAGE_SIZE < 1K? Maybe this should just be a
-> direct SZ_1K check?
-
-This check was suggested by Kirill, I forgot adding his "Suggested-by",
-sorry abou that.
-
-Originally he suggested to add code in generic place like this:
-
-	BUILD_BUG_ON(sizeof(struct page) < min(SZ_1K, PAGE_SIZE/4));
-
-In later post, the kbuild test robot reported an build error on i386
-ARCH,
-
-http://lkml.kernel.org/r/20180911074733.GX1740@192.168.1.3
-
-From the report hint, I thought 'PAGE_SIZE/4' also related to the macro
-expansion, so change it as min_t(size_t, SZ_1K, PAGE_SIZE).
-
-Just now I tried the build again, changing it back to 'PAGE_SIZE/4' also
-works.
-
-	BUILD_BUG_ON(sizeof(struct page) > min_t(size_t, SZ_1K, PAGE_SIZE/4));
-
-I guess Kirill wants to make it as self explanatory for this check by
-suggesting it as min(SZ_1K, PAGE_SIZE/4), to stress the 'PAGE_SIZE/4'.
-As he said in mail thread, "If struct page is more than 1/4 of PAGE_SIZE
-something is horribly broken".
-
-lkml.kernel.org/r/20180903102642.rmzawwqsqjvh2mkb@kshutemo-mobl1
-
-Just try to give more details about this adding, not defend. I am
-fine to take any of them.
-
-
-> (Also, perhaps this should use the new static_assert where struct page
-> is defined?)
-
-I searched with 'git grep', didn't find static_assert macro or function.
-And also no finding in include/linux/mm_types.h. Could you please be
-more specific?
-
-Thanks
-Baoquan
+> On Thu, Feb 14, 2019 at 11:10:44AM +0100, Greg Kroah-Hartman wrote:
+> > On Wed, Feb 13, 2019 at 10:45:48AM +0300, Heikki Krogerus wrote:
+> > > Hi,
+> > > 
+> > > This is the third version of my proposal to add device graph parsing
+> > > to the device connection API. There was only one problem reported in
+> > > v2 by Jun - kernel-doc entry was missing for the new fwnode member in
+> > > struct usb_role_switch_desc - and it's now fixed.
+> > > 
+> > > The second version of the series:
+> > > https://lkml.org/lkml/2019/1/30/622
+> > > 
+> > > The commit message from v1:
+> > > 
+> > > This series adds support for OF and ACPI device graph parsing to the
+> > > device connection API.
+> > > 
+> > > Handling the graph is straightforward, but because I'm adding that
+> > > fwnode member to struct device_connection, I had to make sure all the
+> > > existing users consider it.
+> > > 
+> > > The plan is to only support matching with fwnode in the future, so no
+> > > more device name matching. The software fwnodes that we now have in
+> > > kernel should make that possible, once we add support for references
+> > > to them.
+> > > 
+> > > The original RFC:
+> > > https://lkml.org/lkml/2018/10/24/619
+> > 
+> > All now merged, thanks.
 > 
-> >         /* Record where the zone boundaries are */
-> >         memset(arch_zone_lowest_possible_pfn, 0,
-> >                                 sizeof(arch_zone_lowest_possible_pfn));
-> > --
-> > 2.17.2
-> >
+> It looks like you have not followed the order of the patches in this
+> series.
 > 
-> 
-> -- 
-> Kees Cook
+> You applied at least the patch 4/9 ("device connection: Add fwnode
+> member to struct device_connection") as the last patch to your
+> usb-next branch. The rest of the series, patches starting from 5/9,
+> depend on that patch.
+
+Ugh, did I just apply them out of order?  I can't rewrite my tree now,
+sorry about that, odd that my sorting didn't work.
+
+I think all of the patches are now in the tree, so I didn't miss
+anything, is there anything I can do now?  Want me to revert them and
+then add them back in the correct order?
+
+thanks,
+
+greg k-h
