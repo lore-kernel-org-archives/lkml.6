@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDFD5C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:17:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7F5FC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:17:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEADA21736
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:17:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A45FB21736
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:17:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550485024;
-	bh=tDSa3P+fSylKnMCiEXnNmh9Gh3DjztB0EGX/Y8Y+AXw=;
+	s=default; t=1550485028;
+	bh=gNf/5Uk/N77EbTBib61uKhWZvxLozaD5/JezwNFwHzw=;
 	h=From:To:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BxAv1fWnz6Wu9ME9p3AVqTGd7fGsfRMi6j4udgKi29fI8g16txUHpCxkhnq3yOJ00
-	 8E/Ykdn8ScU0JN0871cMtAPajR8cEBScVliNRdS/hZINuuVb2g0UPF0dEpHFdrqx6n
-	 5usVqJcQthJM0m2lOgmOMm0LsWez7PnPqAxs18YQ=
+	b=hd4RJ1fHENUoMG1mZV1sSKMaeA4rYDl63oMEbBacb138p6IPJB+845ai1Fn85hW9I
+	 DJAUihUYeDyYsSu0cXmJ7iRHTwBKnNMVEZbzCqwfijOOrsIoaSZA090Q8y/Ob6s50M
+	 sIAHRQI3bN+Xqe0qaYEba8WrmDNM7jpVLuzLhE2A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730087AbfBRKRD (ORCPT
+        id S1730002AbfBRKRH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 05:17:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60990 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 05:17:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730054AbfBRKRB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 05:17:01 -0500
+        id S1729956AbfBRKRE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 05:17:04 -0500
 Received: from PC-kkoz.proceq.com (unknown [213.160.61.66])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EAB2B2176F;
-        Mon, 18 Feb 2019 10:16:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7A3421848;
+        Mon, 18 Feb 2019 10:17:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550485020;
-        bh=tDSa3P+fSylKnMCiEXnNmh9Gh3DjztB0EGX/Y8Y+AXw=;
+        s=default; t=1550485024;
+        bh=gNf/5Uk/N77EbTBib61uKhWZvxLozaD5/JezwNFwHzw=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=t/QI9NgYeHrNe80RfWP9E0h5AWb8+WLJO7QiI9n5bLbzCCn9lHyTt0vxcMJ0xTG4r
-         y3cOUlGSTCHjU/BTn0sEkxxtGEVLlBhlpe/SjGkrPMxc/nADDjrxe/QU1foI5YtKfN
-         0n+lTuh2sL/pLVHHzyWG9o8N/uNgPkU1NXwpDSdU=
+        b=vAsukM95NUgr4qNKVk5IRNPMc2r5dElrspwsCt8JStKBTfiYNP5AERGeI9p5RtiUF
+         LYAcQEOMzfWkf4CX30NXtxkz314WbP7KT8GfziSgzDJICueG5P0YRpxkOBrsYvI0VG
+         RUX8kQuIyNfWmaFiSxDaCUEs2v8BaYM1apg82I6I=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Russell King <linux@armlinux.org.uk>,
         Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
@@ -56,9 +56,9 @@ To:     Russell King <linux@armlinux.org.uk>,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         linux-arm-msm@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: [RFC 3/4] clk: samsung: exynos5: Fix kfree() of const memory on setting driver_override
-Date:   Mon, 18 Feb 2019 11:15:59 +0100
-Message-Id: <1550484960-2392-4-git-send-email-krzk@kernel.org>
+Subject: [RFC 4/4] slimbus: ngd: Fix kfree() of const memory on setting driver_override
+Date:   Mon, 18 Feb 2019 11:16:00 +0100
+Message-Id: <1550484960-2392-5-git-send-email-krzk@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1550484960-2392-1-git-send-email-krzk@kernel.org>
 References: <1550484960-2392-1-git-send-email-krzk@kernel.org>
@@ -86,22 +86,22 @@ manually set later through sysfs, kfree() of old value leads to:
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 ---
- drivers/clk/samsung/clk-exynos5-subcmu.c | 2 +-
+ drivers/slimbus/qcom-ngd-ctrl.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5-subcmu.c b/drivers/clk/samsung/clk-exynos5-subcmu.c
-index d07ef26bd052..880d92ad20e8 100644
---- a/drivers/clk/samsung/clk-exynos5-subcmu.c
-+++ b/drivers/clk/samsung/clk-exynos5-subcmu.c
-@@ -143,7 +143,7 @@ static int __init exynos5_clk_register_subcmu(struct device *parent,
- 		return -ENOMEM;
- 
- 	pdev->dev.parent = parent;
--	pdev->driver_override = "exynos5-subcmu";
-+	platform_set_driver_override(pdev, "exynos5-subcmu");
- 	platform_set_drvdata(pdev, (void *)info);
- 	of_genpd_add_device(&genpdspec, &pdev->dev);
- 	ret = platform_device_add(pdev);
+diff --git a/drivers/slimbus/qcom-ngd-ctrl.c b/drivers/slimbus/qcom-ngd-ctrl.c
+index 71f094c9ec68..fc46bf6ec903 100644
+--- a/drivers/slimbus/qcom-ngd-ctrl.c
++++ b/drivers/slimbus/qcom-ngd-ctrl.c
+@@ -1344,7 +1344,7 @@ static int of_qcom_slim_ngd_register(struct device *parent,
+ 		ngd->pdev = platform_device_alloc(QCOM_SLIM_NGD_DRV_NAME, id);
+ 		ngd->id = id;
+ 		ngd->pdev->dev.parent = parent;
+-		ngd->pdev->driver_override = QCOM_SLIM_NGD_DRV_NAME;
++		platform_set_driver_override(ngd->pdev, QCOM_SLIM_NGD_DRV_NAME);
+ 		ngd->pdev->dev.of_node = node;
+ 		ctrl->ngd = ngd;
+ 		platform_set_drvdata(ngd->pdev, ctrl);
 -- 
 2.7.4
 
