@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56AB8C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:58:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 930D9C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:58:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 248CF21903
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:58:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63B39217F9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:58:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498329;
-	bh=2ZtfPqIlQSwx54MJ/7azpe3pKIAC3ca5zorTPUx90kQ=;
+	s=default; t=1550498333;
+	bh=okiAX8/GvgeHs96zqDcQhAP91OYi6LguLffJ11plJTQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mi3nYU4LuDyrPkHb97RQL7SGky+oo2pZehfLAsf+7Xhf4aZZDf6d6AfnMYeFk7HXB
-	 QXpKz/AClQ9uRWbXFFhf+CaJ+nWMCwV4AozcV24+tzwI6//ewneJ6LvRBPe5Jq4i7S
-	 S/vw5pqoAPF0AuixJLhgxkhuF+oI9qZHrsHrf68Y=
+	b=Oqb6Fay02I1Cu9YgkDrsnYR+MBxrPHQrCCpcbWLotvDxIusWg2Tzu2A/HMQI7kcCD
+	 Rii5058AntJO2BtO7SKhBCzBiMf+Pzd2ZvaFN0U3JvXDHahbKLzGEK4QkZwsA4lGhx
+	 u+lmUSCyz+KPGvDA08TnQ+shZwrhmXM7Qa7RP+zM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388441AbfBRN6r (ORCPT
+        id S2388452AbfBRN6v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:58:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39504 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:58:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388417AbfBRN6n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:58:43 -0500
+        id S2388428AbfBRN6r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:58:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34B672077B;
-        Mon, 18 Feb 2019 13:58:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA5AF21901;
+        Mon, 18 Feb 2019 13:58:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498322;
-        bh=2ZtfPqIlQSwx54MJ/7azpe3pKIAC3ca5zorTPUx90kQ=;
+        s=default; t=1550498326;
+        bh=okiAX8/GvgeHs96zqDcQhAP91OYi6LguLffJ11plJTQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZwcuGcMuqwOEOS7mVyE1rMibQNdj0Cpxtf4qtXY1CMfz9LM/cboREO3TmZwm40bEX
-         aa61mbE3jH6TuzipX26oqlOiuu8rMCSmP0Cg/EBZVrGnfa0ryq6srSnMisT4Mpa9vN
-         PaRJF/NKheZwmpz2SLiAXi2Oxc8jGHcHoR77PGM4=
+        b=dJg/eWGTOf8EjmVgY6lRHmRoiQ+iMdqufWRv9z7XGJci2l01mBvYc0L4TFYqCNs/C
+         NoJS26wWYDLZld0BoRN5FztYvjCQ+z/8nxq3cjDVxLhOqNOeP2sAsKQj9vAAy7m7yI
+         utQk5wp/k4IuY9pWIJ7CPfhEOfC+Qdw7N+dviyZU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Mc Guire <hofrat@osadl.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
+        Steve French <stfrench@microsoft.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 32/58] gpio: pl061: handle failed allocations
-Date:   Mon, 18 Feb 2019 14:43:53 +0100
-Message-Id: <20190218133511.133351097@linuxfoundation.org>
+Subject: [PATCH 4.9 33/58] cifs: Limit memory used by lock request calls to a page
+Date:   Mon, 18 Feb 2019 14:43:54 +0100
+Message-Id: <20190218133511.215363164@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133508.567416115@linuxfoundation.org>
 References: <20190218133508.567416115@linuxfoundation.org>
@@ -66,41 +66,71 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit df209c43a0e8258e096fb722dfbdae4f0dd13fde ]
+[ Upstream commit 92a8109e4d3a34fb6b115c9098b51767dc933444 ]
 
-devm_kzalloc(), devm_kstrdup() and devm_kasprintf() all can
-fail internal allocation and return NULL. Using any of the assigned
-objects without checking is not safe. As this is early in the boot
-phase and these allocations really should not fail, any failure here
-is probably an indication of a more serious issue so it makes little
-sense to try and rollback the previous allocated resources or try to
-continue;  but rather the probe function is simply exited with -ENOMEM.
+The code tries to allocate a contiguous buffer with a size supplied by
+the server (maxBuf). This could fail if memory is fragmented since it
+results in high order allocations for commonly used server
+implementations. It is also wasteful since there are probably
+few locks in the usual case. Limit the buffer to be no larger than a
+page to avoid memory allocation failures due to fragmentation.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: 684284b64aae ("ARM: integrator: add MMCI device to IM-PD1")
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-integrator/impd1.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/cifs/file.c     | 8 ++++++++
+ fs/cifs/smb2file.c | 4 ++++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/arch/arm/mach-integrator/impd1.c b/arch/arm/mach-integrator/impd1.c
-index ed9a01484030..a52fe871adbc 100644
---- a/arch/arm/mach-integrator/impd1.c
-+++ b/arch/arm/mach-integrator/impd1.c
-@@ -394,7 +394,11 @@ static int __ref impd1_probe(struct lm_device *dev)
- 					      sizeof(*lookup) + 3 * sizeof(struct gpiod_lookup),
- 					      GFP_KERNEL);
- 			chipname = devm_kstrdup(&dev->dev, devname, GFP_KERNEL);
--			mmciname = kasprintf(GFP_KERNEL, "lm%x:00700", dev->id);
-+			mmciname = devm_kasprintf(&dev->dev, GFP_KERNEL,
-+						  "lm%x:00700", dev->id);
-+			if (!lookup || !chipname || !mmciname)
-+				return -ENOMEM;
-+
- 			lookup->dev_id = mmciname;
- 			/*
- 			 * Offsets on GPIO block 1:
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index a3046b6523c8..8ec296308729 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -1126,6 +1126,10 @@ cifs_push_mandatory_locks(struct cifsFileInfo *cfile)
+ 		return -EINVAL;
+ 	}
+ 
++	BUILD_BUG_ON(sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE) >
++		     PAGE_SIZE);
++	max_buf = min_t(unsigned int, max_buf - sizeof(struct smb_hdr),
++			PAGE_SIZE);
+ 	max_num = (max_buf - sizeof(struct smb_hdr)) /
+ 						sizeof(LOCKING_ANDX_RANGE);
+ 	buf = kcalloc(max_num, sizeof(LOCKING_ANDX_RANGE), GFP_KERNEL);
+@@ -1462,6 +1466,10 @@ cifs_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
+ 	if (max_buf < (sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE)))
+ 		return -EINVAL;
+ 
++	BUILD_BUG_ON(sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE) >
++		     PAGE_SIZE);
++	max_buf = min_t(unsigned int, max_buf - sizeof(struct smb_hdr),
++			PAGE_SIZE);
+ 	max_num = (max_buf - sizeof(struct smb_hdr)) /
+ 						sizeof(LOCKING_ANDX_RANGE);
+ 	buf = kcalloc(max_num, sizeof(LOCKING_ANDX_RANGE), GFP_KERNEL);
+diff --git a/fs/cifs/smb2file.c b/fs/cifs/smb2file.c
+index b7885dc0d9bb..dee5250701de 100644
+--- a/fs/cifs/smb2file.c
++++ b/fs/cifs/smb2file.c
+@@ -129,6 +129,8 @@ smb2_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
+ 	if (max_buf < sizeof(struct smb2_lock_element))
+ 		return -EINVAL;
+ 
++	BUILD_BUG_ON(sizeof(struct smb2_lock_element) > PAGE_SIZE);
++	max_buf = min_t(unsigned int, max_buf, PAGE_SIZE);
+ 	max_num = max_buf / sizeof(struct smb2_lock_element);
+ 	buf = kcalloc(max_num, sizeof(struct smb2_lock_element), GFP_KERNEL);
+ 	if (!buf)
+@@ -265,6 +267,8 @@ smb2_push_mandatory_locks(struct cifsFileInfo *cfile)
+ 		return -EINVAL;
+ 	}
+ 
++	BUILD_BUG_ON(sizeof(struct smb2_lock_element) > PAGE_SIZE);
++	max_buf = min_t(unsigned int, max_buf, PAGE_SIZE);
+ 	max_num = max_buf / sizeof(struct smb2_lock_element);
+ 	buf = kcalloc(max_num, sizeof(struct smb2_lock_element), GFP_KERNEL);
+ 	if (!buf) {
 -- 
 2.19.1
 
