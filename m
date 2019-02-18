@@ -4,48 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39263C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:06:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04D4EC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:06:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B50D21901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:06:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CAEF621902
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:06:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498812;
-	bh=cqICbBnVNhGpmLuXkm4aGEd7BTEUkH+Am/Vdc6a3Ns8=;
+	s=default; t=1550498815;
+	bh=jwc6gL1JcXEPP/zaW9Dg4y1ENlChbmlW+gEjnVuSdws=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=m/iHPAmF3fCMvU7HzDsFkGrOAQPS0jidh5Y73ooT2wOMyqXLyUM0OpM8oMiZSWjbB
-	 VF/9HsxqBfaRRfK/6N7jKaJpLIEfTCprlPdCU/JQQMHxjuUca319anbs4MCv6BT7Mk
-	 09xdpnfQmXCtIrW6c9IO1x9EknV5mLOgvNR/NSrs=
+	b=afFKhqq+p8gQiACdaWmH12fKpeVUeLpV69gNdSDI+dE6rX9WZVj6p0jH9S/eiSNDk
+	 waivFDD3mXs5/eVSpCP6iXJMySv6MmEjoBgca3fRjaT/iKMe2zvnUiHfdHt1xWipan
+	 4uNU5Xgn0yLB8HuQETYWA02YReHeEtNAdq2oAHpY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390493AbfBROGt (ORCPT
+        id S2390507AbfBROGy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:06:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49830 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:06:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49904 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390471AbfBROGq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:06:46 -0500
+        id S2390485AbfBROGs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:06:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B7EA21902;
-        Mon, 18 Feb 2019 14:06:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DD58421929;
+        Mon, 18 Feb 2019 14:06:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498805;
-        bh=cqICbBnVNhGpmLuXkm4aGEd7BTEUkH+Am/Vdc6a3Ns8=;
+        s=default; t=1550498808;
+        bh=jwc6gL1JcXEPP/zaW9Dg4y1ENlChbmlW+gEjnVuSdws=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nRPQAk7Dr5x9dIOSAjiRUclazGQAjvMvFmuhYAk9A0Lc9QOZSu5ixrX7gtEBL1CxR
-         OPXhFpBX0SdJAzGK69xJHUBfLO3SxW14R3tR1sBWD8Lmw53lvXnkOxcGIHxdZjqX3Q
-         oQj4dWxdAIu1aqcdBwVJmDwRelSjONN78s2wOqwY=
+        b=qBaBJqYHfiCpXu/z3lwowA8YhdKcsxrF4N1gcF5Ir0W8qmd/upi15urEixLnbcae4
+         FyZH7i23u0aDphxn6axs5F0leWF4SM87Ctvhm5z8rFtS2VAmEBDcxgK5Lm4ryV3Zdj
+         +oJpGdhhFaFpr9xpeLolEFVjWKgo5Oq2fHVTn+SA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: [PATCH 4.4 101/143] misc: vexpress: Off by one in vexpress_syscfg_exec()
-Date:   Mon, 18 Feb 2019 14:43:49 +0100
-Message-Id: <20190218133532.731704341@linuxfoundation.org>
+        stable@vger.kernel.org
+Subject: [PATCH 4.4 102/143] debugfs: fix debugfs_rename parameter checking
+Date:   Mon, 18 Feb 2019 14:43:50 +0100
+Message-Id: <20190218133532.766776385@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -64,35 +63,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit f8a70d8b889f180e6860cb1f85fed43d37844c5a upstream.
+commit d88c93f090f708c18195553b352b9f205e65418f upstream.
 
-The > comparison should be >= to prevent reading beyond the end of the
-func->template[] array.
+debugfs_rename() needs to check that the dentries passed into it really
+are valid, as sometimes they are not (i.e. if the return value of
+another debugfs call is passed into this one.)  So fix this up by
+properly checking if the two parent directories are errors (they are
+allowed to be NULL), and if the dentry to rename is not NULL or an
+error.
 
-(The func->template array is allocated in vexpress_syscfg_regmap_init()
-and it has func->num_templates elements.)
-
-Fixes: 974cc7b93441 ("mfd: vexpress: Define the device as MFD cells")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/vexpress-syscfg.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/debugfs/inode.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/misc/vexpress-syscfg.c
-+++ b/drivers/misc/vexpress-syscfg.c
-@@ -61,7 +61,7 @@ static int vexpress_syscfg_exec(struct v
- 	int tries;
- 	long timeout;
+--- a/fs/debugfs/inode.c
++++ b/fs/debugfs/inode.c
+@@ -671,6 +671,13 @@ struct dentry *debugfs_rename(struct den
+ 	struct dentry *dentry = NULL, *trap;
+ 	struct name_snapshot old_name;
  
--	if (WARN_ON(index > func->num_templates))
-+	if (WARN_ON(index >= func->num_templates))
- 		return -EINVAL;
- 
- 	command = readl(syscfg->base + SYS_CFGCTRL);
++	if (IS_ERR(old_dir))
++		return old_dir;
++	if (IS_ERR(new_dir))
++		return new_dir;
++	if (IS_ERR_OR_NULL(old_dentry))
++		return old_dentry;
++
+ 	trap = lock_rename(new_dir, old_dir);
+ 	/* Source or destination directories don't exist? */
+ 	if (d_really_is_negative(old_dir) || d_really_is_negative(new_dir))
 
 
