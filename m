@@ -2,85 +2,100 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8855BC10F02
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:48:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE82C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:49:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5872221479
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:48:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B17B22089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:49:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729420AbfBRIsT (ORCPT
+        id S1729429AbfBRItg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 03:48:19 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:37120 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727423AbfBRIsT (ORCPT
+        Mon, 18 Feb 2019 03:49:36 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:35063 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725881AbfBRItf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 03:48:19 -0500
-Received: by mail-vs1-f68.google.com with SMTP id s16so9202586vsk.4;
-        Mon, 18 Feb 2019 00:48:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EHl4v02YyC8ucW3zOPfnDXE8fKCHewZdmpg50OilTkA=;
-        b=MMRdOsgFRz6dMjv4o0CjjgjVQeLwTwQzCTfb+Rwfh9KBEGVgcHZbypIiiHc//swqzo
-         a35zCcxprQILgxV3JxadLzZgjVmrN7S1Zrrjd84HTAtRrPNcIHaun1KoECK2oAZ1wulg
-         URbwfKldOtJuCXqdUXr+snnrHfX99Gknk2gUH01XNeRXTevDOkA1Fn7aITA+vCm47bXN
-         Dk55vsuldzk3nWJqYJ3sHG9FxI44NyDXDiVE/E/Op5P57So4xormTCKSCm6jskn6QdYs
-         S9szEawwWgG/8qrTcRJA8TxioXaVh4GwFWenWcuCJTxB0RR1358XJmQ1X6rDgrnsr9w4
-         i+eA==
-X-Gm-Message-State: AHQUAuaAz0jnpIj+g/F7/YMSpE3clC7JxF7nj/9fnNWahbX9Sfwe/+Z+
-        O9eXP3vv/pO+A88g5fLw7Vtcwyfg9nqvIHKPHZU=
-X-Google-Smtp-Source: AHgI3Ibuz7PVLjPrRSCP05dVX++N0nnICcjU/7Xtw7YF229ArPLKOui0LaCbTMNZ5kxxpM/v55mtADJ8ucZU1pvO6+E=
-X-Received: by 2002:a67:e3d3:: with SMTP id k19mr10222097vsm.96.1550479698653;
- Mon, 18 Feb 2019 00:48:18 -0800 (PST)
+        Mon, 18 Feb 2019 03:49:35 -0500
+X-Originating-IP: 90.88.30.68
+Received: from localhost (aaubervilliers-681-1-89-68.w90-88.abo.wanadoo.fr [90.88.30.68])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id F0A84E0009;
+        Mon, 18 Feb 2019 08:49:31 +0000 (UTC)
+Date:   Mon, 18 Feb 2019 09:49:31 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     srinivas.kandagatla@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, wens@csie.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] nvmem: sunxi-sid: add support for H5's SID controller
+Message-ID: <20190218084931.fdut6d4cgwkwvihx@flea>
+References: <20190217162316.14111-1-tiny.windzz@gmail.com>
+ <20190217162316.14111-3-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-References: <20190211142758.16718-1-gilad@benyossef.com>
-In-Reply-To: <20190211142758.16718-1-gilad@benyossef.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 18 Feb 2019 09:48:07 +0100
-Message-ID: <CAMuHMdUXAY7wBjCYH94V2NV7+MXdOKufnWpi=B1vAWkNFysxpg@mail.gmail.com>
-Subject: Re: [PATCH] crypto: ccree: add missing inline qualifier
-To:     Gilad Ben-Yossef <gilad@benyossef.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Ofir Drag <ofir.drang@arm.com>, stable <stable@kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="scnr26aml4g7phhd"
+Content-Disposition: inline
+In-Reply-To: <20190217162316.14111-3-tiny.windzz@gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 11, 2019 at 3:29 PM Gilad Ben-Yossef <gilad@benyossef.com> wrote:
-> Commit 1358c13a48c4 ("crypto: ccree - fix resume race condition on init")
-> was missing a "inline" qualifier for stub function used when CONFIG_PM
-> is not set causing a build warning.
->
-> Fixes: 1358c13a48c4 ("crypto: ccree - fix resume race condition on init")
-> Cc: stable@kernel.org # v4.20
 
-# v5.0
+--scnr26aml4g7phhd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-However, I believe the version comment is not necessary, as the same
-version is indicated by the Fixes tag.
+On Sun, Feb 17, 2019 at 11:23:13AM -0500, Yangtao Li wrote:
+> Add support for H5's SID controller.
+>=20
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  drivers/nvmem/sunxi_sid.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>=20
+> diff --git a/drivers/nvmem/sunxi_sid.c b/drivers/nvmem/sunxi_sid.c
+> index 570a2e354f30..036029e90921 100644
+> --- a/drivers/nvmem/sunxi_sid.c
+> +++ b/drivers/nvmem/sunxi_sid.c
+> @@ -219,11 +219,17 @@ static const struct sunxi_sid_cfg sun50i_a64_cfg =
+=3D {
+>  	.size =3D 0x100,
+>  };
+> =20
+> +static const struct sunxi_sid_cfg sun50i_h5_cfg =3D {
+> +	.value_offset =3D 0x200,
+> +	.size =3D 0x100,
+> +};
 
-> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+IIRC, there was an endianness issue on the newer SoCs, with the driver
+converting the data from big endian to little endian, while it's
+actually stored little endian in the SID.
 
-Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Have you checked the SID content?
 
-Gr{oetje,eeting}s,
+Maxime
 
-                        Geert
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+--scnr26aml4g7phhd
+Content-Type: application/pgp-signature; name="signature.asc"
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXGpxmwAKCRDj7w1vZxhR
+xXx7AQDcwq0iKz7NwrOgeLiQJtBdc0cgjMZh9PBcdpG0bCWIBwD7BwtI5UEDPuB5
+GNkfU1d6DR0iUKSDPFYUTL3dTKlK0QU=
+=Okil
+-----END PGP SIGNATURE-----
+
+--scnr26aml4g7phhd--
