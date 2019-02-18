@@ -2,1955 +2,263 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,UPPERCASE_50_75,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C9A5C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:16:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64236C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E328218DE
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:16:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9C16218DE
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:17:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727879AbfBRCQL (ORCPT
+        id S1728090AbfBRCQj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 21:16:11 -0500
-Received: from mga14.intel.com ([192.55.52.115]:61780 "EHLO mga14.intel.com"
+        Sun, 17 Feb 2019 21:16:39 -0500
+Received: from mga09.intel.com ([134.134.136.24]:53939 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727266AbfBRCQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 21:16:10 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1727266AbfBRCQi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 21:16:38 -0500
+X-Amp-Result: UNSCANNABLE
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Feb 2019 18:16:05 -0800
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Feb 2019 18:16:34 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.58,382,1544515200"; 
-   d="xz'?scan'208";a="135075932"
+   d="yaml'?scan'208";a="116972131"
 Received: from shao2-debian.sh.intel.com (HELO localhost) ([10.239.13.107])
-  by orsmga002.jf.intel.com with ESMTP; 17 Feb 2019 18:16:00 -0800
-Date:   Mon, 18 Feb 2019 10:16:18 +0800
+  by orsmga006.jf.intel.com with ESMTP; 17 Feb 2019 18:16:28 -0800
+Date:   Mon, 18 Feb 2019 10:16:46 +0800
 From:   kernel test robot <rong.a.chen@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        Peter Huewe <PeterHuewe@gmx.de>,
+To:     john.hubbard@gmail.com
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christian Benvenuti <benve@cisco.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Christopher Lameter <cl@linux.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Doug Ledford <dledford@redhat.com>, Jan Kara <jack@suse.cz>,
         Jason Gunthorpe <jgg@ziepe.ca>,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>, lkp@01.org
-Subject: [LKP] [selftests]  60b119cae8:
- kernel_selftests.tpm2.test_smoke.sh.fail
-Message-ID: <20190218021618.GF29177@shao2-debian>
+        Jerome Glisse <jglisse@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        Tom Talpey <tom@talpey.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
+        lkp@01.org
+Subject: [LKP] [mm/gup]  e7ae097b0b:  will-it-scale.per_process_ops -5.0%
+ regression
+Message-ID: <20190218021646.GG29177@shao2-debian>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="SWTRyWv/ijrBap1m"
+Content-Type: multipart/mixed; boundary="VuQYccsttdhdIfIP"
 Content-Disposition: inline
-In-Reply-To: <20190204131640.11429-1-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190204052135.25784-6-jhubbard@nvidia.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---SWTRyWv/ijrBap1m
+--VuQYccsttdhdIfIP
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-FYI, we noticed the following commit (built with gcc-7):
+Greeting,
 
-commit: 60b119cae86ecb300fa50fd107122e3568156991 ("[PATCH v3] selftests: add TPM 2.0 tests")
-url: https://github.com/0day-ci/linux/commits/Jarkko-Sakkinen/selftests-add-TPM-2-0-tests/20190206-002609
-base: https://git.kernel.org/cgit/linux/kernel/git/shuah/linux-kselftest.git next
+FYI, we noticed a -5.0% regression of will-it-scale.per_process_ops due to commit:
 
-in testcase: kernel_selftests
+
+commit: e7ae097b0bda3e7dfd224e2a960346c37aa42394 ("[PATCH 5/6] mm/gup: /proc/vmstat support for get/put user pages")
+url: https://github.com/0day-ci/linux/commits/john-hubbard-gmail-com/RFC-v2-mm-gup-dma-tracking/20190205-001101
+
+
+in testcase: will-it-scale
+on test machine: 192 threads Skylake-4S with 704G memory
 with following parameters:
 
-	group: kselftests-03
+	nr_task: 100%
+	mode: process
+	test: futex1
+	cpufreq_governor: performance
 
-test-description: The kernel contains a set of "self tests" under the tools/testing/selftests/ directory. These are intended to be small unit tests to exercise individual code paths in the kernel.
-test-url: https://www.kernel.org/doc/Documentation/kselftest.txt
-
-
-on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 4G
-
-caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
+test-description: Will It Scale takes a testcase and runs it from 1 through to n parallel copies to see if the testcase will scale. It builds both a process and threads based test in order to see any differences between the two.
+test-url: https://github.com/antonblanchard/will-it-scale
 
 
 
-
-KERNEL SELFTESTS: linux_headers_dir is /usr/src/linux-headers-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991
-2019-02-17 20:19:08 ln -sf /usr/bin/clang-7 /usr/bin/clang
-2019-02-17 20:19:08 ln -sf /usr/bin/llc-7 /usr/bin/llc
-
-2019-02-17 20:19:08 make run_tests -C timers
-make: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers'
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  posix_timers.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/posix_timers
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  nanosleep.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/nanosleep
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  nsleep-lat.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/nsleep-lat
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  set-timer-lat.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/set-timer-lat
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  mqueue-lat.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/mqueue-lat
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  inconsistency-check.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/inconsistency-check
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  raw_skew.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/raw_skew
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  threadtest.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/threadtest
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  rtcpie.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/rtcpie
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  alarmtimer-suspend.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/alarmtimer-suspend
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  valid-adjtimex.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/valid-adjtimex
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  adjtick.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/adjtick
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  change_skew.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/change_skew
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  skew_consistency.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/skew_consistency
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  clocksource-switch.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/clocksource-switch
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  freq-step.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/freq-step
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  leap-a-day.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/leap-a-day
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  leapcrash.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/leapcrash
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  set-tai.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/set-tai
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  set-2038.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/set-2038
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  set-tz.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/set-tz
-TAP version 13
-selftests: timers: posix_timers
-========================================
-Testing posix timers. False negative may happen on CPU execution 
-based timers if other threads run on the CPU...
-Check itimer virtual... [OK]
-Check itimer prof... [OK]
-Check itimer real... [OK]
-Check timer_create() per thread... [OK]
-Check timer_create() per process... [OK]
-Pass 0 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
-1..0
-ok 1..1 selftests: timers: posix_timers [PASS]
-selftests: timers: nanosleep
-========================================
-Nanosleep CLOCK_REALTIME                  [OK]
-Nanosleep CLOCK_MONOTONIC                 [OK]
-Nanosleep CLOCK_MONOTONIC_RAW             [UNSUPPORTED]
-Nanosleep CLOCK_REALTIME_COARSE           [UNSUPPORTED]
-Nanosleep CLOCK_MONOTONIC_COARSE          [UNSUPPORTED]
-Nanosleep CLOCK_BOOTTIME                  [OK]
-Nanosleep CLOCK_REALTIME_ALARM            [OK]
-Nanosleep CLOCK_BOOTTIME_ALARM            [OK]
-Nanosleep CLOCK_TAI                       [OK]
-Pass 0 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
-1..0
-ok 1..2 selftests: timers: nanosleep [PASS]
-selftests: timers: nsleep-lat
-========================================
-nsleep latency CLOCK_REALTIME             [OK]
-nsleep latency CLOCK_MONOTONIC            [OK]
-nsleep latency CLOCK_MONOTONIC_RAW        [UNSUPPORTED]
-nsleep latency CLOCK_REALTIME_COARSE      [UNSUPPORTED]
-nsleep latency CLOCK_MONOTONIC_COARSE     [UNSUPPORTED]
-nsleep latency CLOCK_BOOTTIME             [OK]
-nsleep latency CLOCK_REALTIME_ALARM       [OK]
-nsleep latency CLOCK_BOOTTIME_ALARM       [OK]
-nsleep latency CLOCK_TAI                  [OK]
-Pass 0 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
-1..0
-ok 1..3 selftests: timers: nsleep-lat [PASS]
-selftests: timers: set-timer-lat
-========================================
-Setting timers for every 1 seconds
-CLOCK_REALTIME         ABSTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_REALTIME         ABSTIME PERIODIC max latency:     108055 ns : [OK]
-CLOCK_REALTIME         RELTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_REALTIME         RELTIME PERIODIC max latency:      79099 ns : [OK]
-CLOCK_REALTIME         ABSTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_REALTIME         ABSTIME ONE-SHOT max latency:      78646 ns : [OK]
-CLOCK_REALTIME         ABSTIME ONE-SHOT count:                   1 : [OK]
-CLOCK_REALTIME         RELTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_REALTIME         RELTIME ONE-SHOT max latency:      64791 ns : [OK]
-CLOCK_REALTIME         RELTIME ONE-SHOT count:                   1 : [OK]
-CLOCK_MONOTONIC        ABSTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_MONOTONIC        ABSTIME PERIODIC max latency:      74977 ns : [OK]
-CLOCK_MONOTONIC        RELTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_MONOTONIC        RELTIME PERIODIC max latency:      71429 ns : [OK]
-CLOCK_MONOTONIC        ABSTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_MONOTONIC        ABSTIME ONE-SHOT max latency:      65208 ns : [OK]
-CLOCK_MONOTONIC        ABSTIME ONE-SHOT count:                   1 : [OK]
-CLOCK_MONOTONIC        RELTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_MONOTONIC        RELTIME ONE-SHOT max latency:      67467 ns : [OK]
-CLOCK_MONOTONIC        RELTIME ONE-SHOT count:                   1 : [OK]
-CLOCK_BOOTTIME         ABSTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_BOOTTIME         ABSTIME PERIODIC max latency:      80590 ns : [OK]
-CLOCK_BOOTTIME         RELTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_BOOTTIME         RELTIME PERIODIC max latency:      77761 ns : [OK]
-CLOCK_BOOTTIME         ABSTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_BOOTTIME         ABSTIME ONE-SHOT max latency:      94790 ns : [OK]
-CLOCK_BOOTTIME         ABSTIME ONE-SHOT count:                   1 : [OK]
-CLOCK_BOOTTIME         RELTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_BOOTTIME         RELTIME ONE-SHOT max latency:      69638 ns : [OK]
-CLOCK_BOOTTIME         RELTIME ONE-SHOT count:                   1 : [OK]
-CLOCK_REALTIME_ALARM   ABSTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_REALTIME_ALARM   ABSTIME PERIODIC max latency:      72121 ns : [OK]
-CLOCK_REALTIME_ALARM   RELTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_REALTIME_ALARM   RELTIME PERIODIC max latency:      69062 ns : [OK]
-CLOCK_REALTIME_ALARM   ABSTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_REALTIME_ALARM   ABSTIME ONE-SHOT max latency:      68319 ns : [OK]
-CLOCK_REALTIME_ALARM   ABSTIME ONE-SHOT count:                   1 : [OK]
-CLOCK_REALTIME_ALARM   RELTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_REALTIME_ALARM   RELTIME ONE-SHOT max latency:      35027 ns : [OK]
-CLOCK_REALTIME_ALARM   RELTIME ONE-SHOT count:                   1 : [OK]
-CLOCK_BOOTTIME_ALARM   ABSTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_BOOTTIME_ALARM   ABSTIME PERIODIC max latency:      85302 ns : [OK]
-CLOCK_BOOTTIME_ALARM   RELTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_BOOTTIME_ALARM   RELTIME PERIODIC max latency:      77188 ns : [OK]
-CLOCK_BOOTTIME_ALARM   ABSTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_BOOTTIME_ALARM   ABSTIME ONE-SHOT max latency:      66971 ns : [OK]
-CLOCK_BOOTTIME_ALARM   ABSTIME ONE-SHOT count:                   1 : [OK]
-CLOCK_BOOTTIME_ALARM   RELTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_BOOTTIME_ALARM   RELTIME ONE-SHOT max latency:      87441 ns : [OK]
-CLOCK_BOOTTIME_ALARM   RELTIME ONE-SHOT count:                   1 : [OK]
-CLOCK_TAI              ABSTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_TAI              ABSTIME PERIODIC max latency:     443022 ns : [OK]
-CLOCK_TAI              RELTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_TAI              RELTIME PERIODIC max latency:      82352 ns : [OK]
-CLOCK_TAI              ABSTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_TAI              ABSTIME ONE-SHOT max latency:      72309 ns : [OK]
-CLOCK_TAI              ABSTIME ONE-SHOT count:                   1 : [OK]
-CLOCK_TAI              RELTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_TAI              RELTIME ONE-SHOT max latency:      62950 ns : [OK]
-CLOCK_TAI              RELTIME ONE-SHOT count:                   1 : [OK]
-Pass 0 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
-1..0
-ok 1..4 selftests: timers: set-timer-lat [PASS]
-selftests: timers: mqueue-lat
-========================================
-Mqueue latency :                          [OK]
-Pass 0 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
-1..0
-ok 1..5 selftests: timers: mqueue-lat [PASS]
-selftests: timers: inconsistency-check
-========================================
-Consistent CLOCK_REALTIME                 [OK]
-Consistent CLOCK_MONOTONIC                [OK]
-Consistent CLOCK_PROCESS_CPUTIME_ID       [OK]
-Consistent CLOCK_THREAD_CPUTIME_ID        [OK]
-Consistent CLOCK_MONOTONIC_RAW            [OK]
-Consistent CLOCK_REALTIME_COARSE          [OK]
-Consistent CLOCK_MONOTONIC_COARSE         [OK]
-Consistent CLOCK_BOOTTIME                 [OK]
-Consistent CLOCK_REALTIME_ALARM           [OK]
-Consistent CLOCK_BOOTTIME_ALARM           [OK]
-Consistent CLOCK_TAI                      [OK]
-Pass 0 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
-1..0
-ok 1..6 selftests: timers: inconsistency-check [PASS]
-selftests: timers: raw_skew
-========================================
-Estimating clock drift: 0.0(est) 0.0(act)	[OK]
-Pass 0 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
-1..0
-ok 1..7 selftests: timers: raw_skew [PASS]
-selftests: timers: threadtest
-========================================
-Sun, 17 Feb 2019 20:27:37 +0800
-Testing consistency with 8 threads for 30 seconds: [OK]
-Pass 0 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
-1..0
-ok 1..8 selftests: timers: threadtest [PASS]
-selftests: timers: rtcpie
-========================================
-
-Periodic IRQ rate is 1024Hz.
-Counting 20 interrupts at:
-2Hz:	 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
-4Hz:	 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
-8Hz:	 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
-16Hz:	 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
-32Hz:	 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
-64Hz:	 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
-
-			 *** Test complete ***
-ok 1..9 selftests: timers: rtcpie [PASS]
-make: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers'
-
-2019-02-17 20:28:26 make run_tests -C tpm2
-make: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/tpm2'
-TAP version 13
-selftests: tpm2: test_smoke.sh
-========================================
-test_seal_with_auth (tpm2_tests.SmokeTest) ... ERROR
-test_seal_with_policy (tpm2_tests.SmokeTest) ... ERROR
-test_seal_with_too_long_auth (tpm2_tests.SmokeTest) ... ERROR
-test_too_short_cmd (tpm2_tests.SmokeTest) ... ERROR
-test_unseal_with_wrong_auth (tpm2_tests.SmokeTest) ... ERROR
-test_unseal_with_wrong_policy (tpm2_tests.SmokeTest) ... ERROR
-
-======================================================================
-ERROR: test_seal_with_auth (tpm2_tests.SmokeTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_tests.py", line 15, in setUp
-    self.client = tpm2.Client()
-  File "tpm2.py", line 360, in __init__
-    self.tpm = open('/dev/tpm0', 'r+b')
-IOError: [Errno 2] No such file or directory: '/dev/tpm0'
-
-======================================================================
-ERROR: test_seal_with_policy (tpm2_tests.SmokeTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_tests.py", line 15, in setUp
-    self.client = tpm2.Client()
-  File "tpm2.py", line 360, in __init__
-    self.tpm = open('/dev/tpm0', 'r+b')
-IOError: [Errno 2] No such file or directory: '/dev/tpm0'
-
-======================================================================
-ERROR: test_seal_with_too_long_auth (tpm2_tests.SmokeTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_tests.py", line 15, in setUp
-    self.client = tpm2.Client()
-  File "tpm2.py", line 360, in __init__
-    self.tpm = open('/dev/tpm0', 'r+b')
-IOError: [Errno 2] No such file or directory: '/dev/tpm0'
-
-======================================================================
-ERROR: test_too_short_cmd (tpm2_tests.SmokeTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_tests.py", line 15, in setUp
-    self.client = tpm2.Client()
-  File "tpm2.py", line 360, in __init__
-    self.tpm = open('/dev/tpm0', 'r+b')
-IOError: [Errno 2] No such file or directory: '/dev/tpm0'
-
-======================================================================
-ERROR: test_unseal_with_wrong_auth (tpm2_tests.SmokeTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_tests.py", line 15, in setUp
-    self.client = tpm2.Client()
-  File "tpm2.py", line 360, in __init__
-    self.tpm = open('/dev/tpm0', 'r+b')
-IOError: [Errno 2] No such file or directory: '/dev/tpm0'
-
-======================================================================
-ERROR: test_unseal_with_wrong_policy (tpm2_tests.SmokeTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_tests.py", line 15, in setUp
-    self.client = tpm2.Client()
-  File "tpm2.py", line 360, in __init__
-    self.tpm = open('/dev/tpm0', 'r+b')
-IOError: [Errno 2] No such file or directory: '/dev/tpm0'
-
-----------------------------------------------------------------------
-Ran 6 tests in 0.001s
-
-FAILED (errors=6)
-not ok 1..1 selftests: tpm2: test_smoke.sh [FAIL]
-selftests: tpm2: test_space.sh
-========================================
-test_flush_context (tpm2_tests.SpaceTest) ... ERROR
-test_get_handles (tpm2_tests.SpaceTest) ... ERROR
-test_invalid_cc (tpm2_tests.SpaceTest) ... ERROR
-test_make_two_spaces (tpm2_tests.SpaceTest) ... ERROR
-
-======================================================================
-ERROR: test_flush_context (tpm2_tests.SpaceTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_tests.py", line 183, in test_flush_context
-    space1 = tpm2.Client(tpm2.Client.FLAG_SPACE)
-  File "tpm2.py", line 362, in __init__
-    self.tpm = open('/dev/tpmrm0', 'r+b')
-IOError: [Errno 2] No such file or directory: '/dev/tpmrm0'
-
-======================================================================
-ERROR: test_get_handles (tpm2_tests.SpaceTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_tests.py", line 193, in test_get_handles
-    space1 = tpm2.Client(tpm2.Client.FLAG_SPACE)
-  File "tpm2.py", line 362, in __init__
-    self.tpm = open('/dev/tpmrm0', 'r+b')
-IOError: [Errno 2] No such file or directory: '/dev/tpmrm0'
-
-======================================================================
-ERROR: test_invalid_cc (tpm2_tests.SpaceTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_tests.py", line 212, in test_invalid_cc
-    space1 = tpm2.Client(tpm2.Client.FLAG_SPACE)
-  File "tpm2.py", line 362, in __init__
-    self.tpm = open('/dev/tpmrm0', 'r+b')
-IOError: [Errno 2] No such file or directory: '/dev/tpmrm0'
-
-======================================================================
-ERROR: test_make_two_spaces (tpm2_tests.SpaceTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_tests.py", line 169, in test_make_two_spaces
-    space1 = tpm2.Client(tpm2.Client.FLAG_SPACE)
-  File "tpm2.py", line 362, in __init__
-    self.tpm = open('/dev/tpmrm0', 'r+b')
-IOError: [Errno 2] No such file or directory: '/dev/tpmrm0'
-
-----------------------------------------------------------------------
-Ran 4 tests in 0.001s
-
-FAILED (errors=4)
-not ok 1..2 selftests: tpm2: test_space.sh [FAIL]
-make: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/tpm2'
-uevent test: not in Makefile
-2019-02-17 20:28:27 make TARGETS=uevent
-make[1]: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/uevent'
-gcc -Wl,-no-as-needed -Wall uevent_filtering.c -o uevent_filtering
-make[1]: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/uevent'
-
-2019-02-17 20:28:27 make run_tests -C uevent
-make: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/uevent'
-TAP version 13
-selftests: uevent: uevent_filtering
-========================================
-add@/devices/virtual/mem/fullACTION=addDEVPATH=/devices/virtual/mem/fullSUBSYSTEM=memSYNTH_UUID=0MAJOR=1MINOR=7DEVNAME=fullDEVMODE=0666SEQNUM=1697
-add@/devices/virtual/mem/fullACTION=addDEVPATH=/devices/virtual/mem/fullSUBSYSTEM=memSYNTH_UUID=0MAJOR=1MINOR=7DEVNAME=fullDEVMODE=0666SEQNUM=1710
-No buffer space available - Failed to receive uevent
-add@/devices/virtual/mem/fullACTION=addDEVPATH=/devices/virtual/mem/fullSUBSYSTEM=memSYNTH_UUID=0MAJOR=1MINOR=7DEVNAME=fullDEVMODE=0666SEQNUM=1746
-add@/devices/virtual/mem/fullACTION=addDEVPATH=/devices/virtual/mem/fullSUBSYSTEM=memSYNTH_UUID=0MAJOR=1MINOR=7DEVNAME=fullDEVMODE=0666SEQNUM=1756
-No buffer space available - Failed to receive uevent
-[==========] Running 1 tests from 1 test cases.
-[ RUN      ] global.uevent_filtering
-[       OK ] global.uevent_filtering
-[==========] 1 / 1 tests passed.
-[  PASSED  ]
-ok 1..1 selftests: uevent: uevent_filtering [PASS]
-make: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/uevent'
-
-2019-02-17 20:28:29 make run_tests -C user
-make: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/user'
-TAP version 13
-selftests: user: test_user_copy.sh
-========================================
-user_copy: ok
-ok 1..1 selftests: user: test_user_copy.sh [PASS]
-make: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/user'
-vDSO test: not in Makefile
-2019-02-17 20:28:29 make TARGETS=vDSO
-make[1]: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vDSO'
-gcc -std=gnu99    vdso_test.c parse_vdso.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vDSO/vdso_test
-gcc -std=gnu99 -nostdlib -fno-asynchronous-unwind-tables -fno-stack-protector \
-	vdso_standalone_test_x86.c parse_vdso.c \
-	-o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vDSO/vdso_standalone_test_x86
-make[1]: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vDSO'
-
-2019-02-17 20:28:29 make run_tests -C vDSO
-make: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vDSO'
-TAP version 13
-selftests: vDSO: vdso_test
-========================================
-The time is 1550406509.594805
-ok 1..1 selftests: vDSO: vdso_test [PASS]
-selftests: vDSO: vdso_standalone_test_x86
-========================================
-The time is           1550406509.600906
-ok 1..2 selftests: vDSO: vdso_standalone_test_x86 [PASS]
-make: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vDSO'
-
-2019-02-17 20:28:29 make run_tests -C vm
-make: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm'
-make ARCH=x86 -C ../../../.. headers_install
-make[1]: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991'
-  HOSTCC  scripts/basic/fixdep
-  WRAP    arch/x86/include/generated/uapi/asm/bpf_perf_event.h
-  WRAP    arch/x86/include/generated/uapi/asm/poll.h
-  SYSTBL  arch/x86/include/generated/asm/syscalls_32.h
-  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_32.h
-  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_64.h
-  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_x32.h
-  HOSTCC  arch/x86/tools/relocs_32.o
-  HOSTCC  arch/x86/tools/relocs_64.o
-  HOSTCC  arch/x86/tools/relocs_common.o
-  HOSTLD  arch/x86/tools/relocs
-  UPD     include/generated/uapi/linux/version.h
-  HOSTCC  scripts/unifdef
-  INSTALL usr/include/asm-generic/ (37 files)
-  INSTALL usr/include/drm/ (26 files)
-  INSTALL usr/include/linux/ (503 files)
-  INSTALL usr/include/linux/android/ (2 files)
-  INSTALL usr/include/linux/byteorder/ (2 files)
-  INSTALL usr/include/linux/caif/ (2 files)
-  INSTALL usr/include/linux/can/ (6 files)
-  INSTALL usr/include/linux/cifs/ (1 file)
-  INSTALL usr/include/linux/dvb/ (8 files)
-  INSTALL usr/include/linux/genwqe/ (1 file)
-  INSTALL usr/include/linux/hdlc/ (1 file)
-  INSTALL usr/include/linux/hsi/ (2 files)
-  INSTALL usr/include/linux/iio/ (2 files)
-  INSTALL usr/include/linux/isdn/ (1 file)
-  INSTALL usr/include/linux/mmc/ (1 file)
-  INSTALL usr/include/linux/netfilter/ (88 files)
-  INSTALL usr/include/linux/netfilter/ipset/ (4 files)
-  INSTALL usr/include/linux/netfilter_arp/ (2 files)
-  INSTALL usr/include/linux/netfilter_bridge/ (17 files)
-  INSTALL usr/include/linux/netfilter_ipv4/ (9 files)
-  INSTALL usr/include/linux/netfilter_ipv6/ (13 files)
-  INSTALL usr/include/linux/nfsd/ (5 files)
-  INSTALL usr/include/linux/raid/ (2 files)
-  INSTALL usr/include/linux/sched/ (1 file)
-  INSTALL usr/include/linux/spi/ (1 file)
-  INSTALL usr/include/linux/sunrpc/ (1 file)
-  INSTALL usr/include/linux/tc_act/ (15 files)
-  INSTALL usr/include/linux/tc_ematch/ (5 files)
-  INSTALL usr/include/linux/usb/ (13 files)
-  INSTALL usr/include/linux/wimax/ (1 file)
-  INSTALL usr/include/misc/ (2 files)
-  INSTALL usr/include/mtd/ (5 files)
-  INSTALL usr/include/rdma/ (25 files)
-  INSTALL usr/include/rdma/hfi/ (2 files)
-  INSTALL usr/include/scsi/ (5 files)
-  INSTALL usr/include/scsi/fc/ (4 files)
-  INSTALL usr/include/sound/ (16 files)
-  INSTALL usr/include/video/ (3 files)
-  INSTALL usr/include/xen/ (4 files)
-  INSTALL usr/include/asm/ (62 files)
-make[1]: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991'
-gcc -Wall -I ../../../../usr/include     compaction_test.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/compaction_test
-gcc -Wall -I ../../../../usr/include     gup_benchmark.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/gup_benchmark
-gcc -Wall -I ../../../../usr/include     hugepage-mmap.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/hugepage-mmap
-gcc -Wall -I ../../../../usr/include     hugepage-shm.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/hugepage-shm
-gcc -Wall -I ../../../../usr/include     map_hugetlb.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/map_hugetlb
-gcc -Wall -I ../../../../usr/include     map_fixed_noreplace.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/map_fixed_noreplace
-gcc -Wall -I ../../../../usr/include     map_populate.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/map_populate
-gcc -Wall -I ../../../../usr/include     mlock-random-test.c -lrt -lcap -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/mlock-random-test
-gcc -Wall -I ../../../../usr/include     mlock2-tests.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/mlock2-tests
-gcc -Wall -I ../../../../usr/include     on-fault-limit.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/on-fault-limit
-gcc -Wall -I ../../../../usr/include     thuge-gen.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/thuge-gen
-gcc -Wall -I ../../../../usr/include     transhuge-stress.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/transhuge-stress
-gcc -Wall -I ../../../../usr/include     userfaultfd.c -lrt -lpthread -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/userfaultfd
-gcc -Wall -I ../../../../usr/include     va_128TBswitch.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/va_128TBswitch
-gcc -Wall -I ../../../../usr/include     virtual_address_range.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/virtual_address_range
-TAP version 13
-selftests: vm: run_vmtests
-========================================
----------------------
-running hugepage-mmap
----------------------
-Returned address is 0x7f167f600000
-First hex is 0
-First hex is 3020100
-[PASS]
---------------------
-running hugepage-shm
---------------------
-shmid: 0x0
-shmaddr: 0x7fe58d200000
-Starting the writes:
-................................................................................................................................................................................................................................................................
-Starting the Check...Done.
-[PASS]
--------------------
-running map_hugetlb
--------------------
-Returned address is 0x7f345ba00000
-First hex is 0
-First hex is 3020100
-[PASS]
-NOTE: The above hugetlb tests provide minimal coverage.  Use
-      https://github.com/libhugetlbfs/libhugetlbfs.git for
-      hugetlb regression testing.
--------------------
-running userfaultfd
--------------------
-nr_pages: 32768, nr_pages_per_cpu: 16384
-bounces: 31, mode: rnd racing ver poll, userfaults: 3978 2107
-bounces: 30, mode: racing ver poll, userfaults: 2849 2899
-bounces: 29, mode: rnd ver poll, userfaults: 4510 4509
-bounces: 28, mode: ver poll, userfaults: 6287 6509
-bounces: 27, mode: rnd racing poll, userfaults: 4026 1861
-bounces: 26, mode: racing poll, userfaults: 2533 3049
-bounces: 25, mode: rnd poll, userfaults: 4496 4627
-bounces: 24, mode: poll, userfaults: 6576 6490
-bounces: 23, mode: rnd racing ver, userfaults: 4727 4202
-bounces: 22, mode: racing ver, userfaults: 5860 5621
-bounces: 21, mode: rnd ver, userfaults: 4284 4028
-bounces: 20, mode: ver, userfaults: 4920 4256
-bounces: 19, mode: rnd racing, userfaults: 5621 2349
-bounces: 18, mode: racing, userfaults: 1683 1170
-bounces: 17, mode: rnd, userfaults: 5171 5504
-bounces: 16, mode:, userfaults: 7026 6895
-bounces: 15, mode: rnd racing ver poll, userfaults: 3638 2303
-bounces: 14, mode: racing ver poll, userfaults: 565 1029
-bounces: 13, mode: rnd ver poll, userfaults: 3694 4300
-bounces: 12, mode: ver poll, userfaults: 6684 6430
-bounces: 11, mode: rnd racing poll, userfaults: 3292 2242
-bounces: 10, mode: racing poll, userfaults: 3979 3985
-bounces: 9, mode: rnd poll, userfaults: 4860 4842
-bounces: 8, mode: poll, userfaults: 7340 5522
-bounces: 7, mode: rnd racing ver, userfaults: 3853 4519
-bounces: 6, mode: racing ver, userfaults: 3501 2921
-bounces: 5, mode: rnd ver, userfaults: 7766 7163
-bounces: 4, mode: ver, userfaults: 6542 5050
-bounces: 3, mode: rnd racing, userfaults: 6864 2262
-bounces: 2, mode: racing, userfaults: 3593 4596
-bounces: 1, mode: rnd, userfaults: 8045 7708
-bounces: 0, mode:, userfaults: 3616 2779
-testing UFFDIO_ZEROPAGE: done.
-testing signal delivery: done.
-testing events (fork, remap, remove): userfaults: 32768
-[PASS]
----------------------------
-running userfaultfd_hugetlb
----------------------------
-nr_pages: 64, nr_pages_per_cpu: 32
-bounces: 31, mode: rnd racing ver poll, userfaults: 13 16
-bounces: 30, mode: racing ver poll, userfaults: 8 12
-bounces: 29, mode: rnd ver poll, userfaults: 17 13
-bounces: 28, mode: ver poll, userfaults: 7 9
-bounces: 27, mode: rnd racing poll, userfaults: 12 13
-bounces: 26, mode: racing poll, userfaults: 11 18
-bounces: 25, mode: rnd poll, userfaults: 16 17
-bounces: 24, mode: poll, userfaults: 11 9
-bounces: 23, mode: rnd racing ver, userfaults: 18 14
-bounces: 22, mode: racing ver, userfaults: 10 11
-bounces: 21, mode: rnd ver, userfaults: 17 17
-bounces: 20, mode: ver, userfaults: 17 21
-bounces: 19, mode: rnd racing, userfaults: 25 9
-bounces: 18, mode: racing, userfaults: 14 10
-bounces: 17, mode: rnd, userfaults: 29 6
-bounces: 16, mode:, userfaults: 21 10
-bounces: 15, mode: rnd racing ver poll, userfaults: 19 15
-bounces: 14, mode: racing ver poll, userfaults: 10 8
-bounces: 13, mode: rnd ver poll, userfaults: 16 13
-bounces: 12, mode: ver poll, userfaults: 9 8
-bounces: 11, mode: rnd racing poll, userfaults: 11 17
-bounces: 10, mode: racing poll, userfaults: 8 4
-bounces: 9, mode: rnd poll, userfaults: 15 7
-bounces: 8, mode: poll, userfaults: 16 13
-bounces: 7, mode: rnd racing ver, userfaults: 16 12
-bounces: 6, mode: racing ver, userfaults: 10 13
-bounces: 5, mode: rnd ver, userfaults: 22 15
-bounces: 4, mode: ver, userfaults: 16 19
-bounces: 3, mode: rnd racing, userfaults: 18 14
-bounces: 2, mode: racing, userfaults: 8 3
-bounces: 1, mode: rnd, userfaults: 19 12
-bounces: 0, mode:, userfaults: 18 17
-testing UFFDIO_ZEROPAGE: done.
-testing signal delivery: done.
-testing events (fork, remap, remove): userfaults: 64
-[PASS]
--------------------------
-running userfaultfd_shmem
--------------------------
-nr_pages: 32768, nr_pages_per_cpu: 16384
-bounces: 31, mode: rnd racing ver poll, userfaults: 952 4613
-bounces: 30, mode: racing ver poll, userfaults: 5965 933
-bounces: 29, mode: rnd ver poll, userfaults: 4657 4474
-bounces: 28, mode: ver poll, userfaults: 6737 6219
-bounces: 27, mode: rnd racing poll, userfaults: 1540 4608
-bounces: 26, mode: racing poll, userfaults: 2828 5560
-bounces: 25, mode: rnd poll, userfaults: 4725 5586
-bounces: 24, mode: poll, userfaults: 5526 4036
-bounces: 23, mode: rnd racing ver, userfaults: 4374 3525
-bounces: 22, mode: racing ver, userfaults: 3539 3076
-bounces: 21, mode: rnd ver, userfaults: 5589 5200
-bounces: 20, mode: ver, userfaults: 2999 2629
-bounces: 19, mode: rnd racing, userfaults: 3456 4114
-bounces: 18, mode: racing, userfaults: 5309 4279
-bounces: 17, mode: rnd, userfaults: 4660 4934
-bounces: 16, mode:, userfaults: 4554 4026
-bounces: 15, mode: rnd racing ver poll, userfaults: 2651 3165
-bounces: 14, mode: racing ver poll, userfaults: 1233 1422
-bounces: 13, mode: rnd ver poll, userfaults: 4662 4908
-bounces: 12, mode: ver poll, userfaults: 6739 6513
-bounces: 11, mode: rnd racing poll, userfaults: 4339 2529
-bounces: 10, mode: racing poll, userfaults: 5542 1817
-bounces: 9, mode: rnd poll, userfaults: 4980 5655
-bounces: 8, mode: poll, userfaults: 4049 4205
-bounces: 7, mode: rnd racing ver, userfaults: 4235 3353
-bounces: 6, mode: racing ver, userfaults: 4974 4570
-bounces: 5, mode: rnd ver, userfaults: 4647 4608
-bounces: 4, mode: ver, userfaults: 6322 6365
-bounces: 3, mode: rnd racing, userfaults: 6326 2316
-bounces: 2, mode: racing, userfaults: 4325 3840
-bounces: 1, mode: rnd, userfaults: 5348 5317
-bounces: 0, mode:, userfaults: 7319 7321
-testing UFFDIO_ZEROPAGE: done.
-testing signal delivery: done.
-testing events (fork, remap, remove): userfaults: 32768
-[PASS]
------------------------
-running compaction_test
------------------------
-[ignored_by_lkp]
-[PASS]
-----------------------
-running on-fault-limit
-----------------------
-[PASS]
---------------------
-running map_populate
---------------------
-[PASS]
---------------------
-running mlock2-tests
---------------------
-Failed to make faulted page unevictable
-Failed to make faulted page unevictable
-Failed to make present page unevictable
-[FAIL]
------------------------------
-running virtual_address_range
------------------------------
-[PASS]
------------------------------
-running virtual address 128TB switch test
------------------------------
-[ignored_by_lkp]
-[PASS]
-not ok 1..1 selftests: vm: run_vmtests [FAIL]
-make: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm'
-watchdog test: not in Makefile
-2019-02-17 20:28:56 make TARGETS=watchdog
-make[1]: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/watchdog'
-gcc     watchdog-test.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/watchdog/watchdog-test
-make[1]: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/watchdog'
-ignored_by_lkp watchdog test
-ignored_by_lkp x86.mov_ss_trap test
-
-2019-02-17 20:28:56 make run_tests -C x86
-make: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86'
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/single_step_syscall_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 single_step_syscall.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/sysret_ss_attrs_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 sysret_ss_attrs.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/syscall_nt_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 syscall_nt.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/test_mremap_vdso_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 test_mremap_vdso.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/check_initial_reg_state_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -Wl,-ereal_start -static -DCAN_BUILD_32 -DCAN_BUILD_64 check_initial_reg_state.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/sigreturn_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 sigreturn.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/iopl_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 iopl.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/mpx-mini-test_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 mpx-mini-test.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/ioperm_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 ioperm.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/protection_keys_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 protection_keys.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/test_vdso_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 test_vdso.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/test_vsyscall_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 test_vsyscall.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/entry_from_vm86_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 entry_from_vm86.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/syscall_arg_fault_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 syscall_arg_fault.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/test_syscall_vdso_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 test_syscall_vdso.c thunks_32.S -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/unwind_vdso_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 unwind_vdso.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/test_FCMOV_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 test_FCMOV.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/test_FCOMI_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 test_FCOMI.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/test_FISTTP_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 test_FISTTP.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/vdso_restorer_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 vdso_restorer.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/ldt_gdt_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 ldt_gdt.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/ptrace_syscall_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 ptrace_syscall.c raw_syscall_helper_32.S -lrt -ldl -lm
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/single_step_syscall_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 single_step_syscall.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/sysret_ss_attrs_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 sysret_ss_attrs.c thunks.S -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/syscall_nt_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 syscall_nt.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/test_mremap_vdso_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 test_mremap_vdso.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/check_initial_reg_state_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -Wl,-ereal_start -static -DCAN_BUILD_32 -DCAN_BUILD_64 check_initial_reg_state.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/sigreturn_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 sigreturn.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/iopl_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 iopl.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/mpx-mini-test_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 mpx-mini-test.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/ioperm_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 ioperm.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/protection_keys_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 protection_keys.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/test_vdso_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 test_vdso.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/test_vsyscall_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 test_vsyscall.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/fsgsbase_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 fsgsbase.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/sysret_rip_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 sysret_rip.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/ldt_gdt_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 ldt_gdt.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/ptrace_syscall_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 ptrace_syscall.c -lrt -ldl
-TAP version 13
-selftests: x86: single_step_syscall_32
-========================================
-[RUN]	Set TF and check nop
-[OK]	Survived with TF set and 14 traps
-[RUN]	Set TF and check int80
-[OK]	Survived with TF set and 14 traps
-[RUN]	Set TF and check a fast syscall
-[OK]	Survived with TF set and 43 traps
-[RUN]	Fast syscall with TF cleared
-[OK]	Nothing unexpected happened
-ok 1..1 selftests: x86: single_step_syscall_32 [PASS]
-selftests: x86: sysret_ss_attrs_32
-========================================
-[RUN]	Syscalls followed by SS validation
-[OK]	We survived
-ok 1..2 selftests: x86: sysret_ss_attrs_32 [PASS]
-selftests: x86: syscall_nt_32
-========================================
-[RUN]	Set NT and issue a syscall
-[OK]	The syscall worked and flags are still set
-[RUN]	Set NT|TF and issue a syscall
-[OK]	The syscall worked and flags are still set
-ok 1..3 selftests: x86: syscall_nt_32 [PASS]
-selftests: x86: test_mremap_vdso_32
-========================================
-	AT_SYSINFO_EHDR is 0xf7f0a000
-[NOTE]	Moving vDSO: [0xf7f0a000, 0xf7f0b000] -> [0xf7f32000, 0xf7f33000]
-[OK]
-ok 1..4 selftests: x86: test_mremap_vdso_32 [PASS]
-selftests: x86: check_initial_reg_state_32
-========================================
-[OK]	All GPRs except SP are 0
-[OK]	FLAGS is 0x202
-ok 1..5 selftests: x86: check_initial_reg_state_32 [PASS]
-selftests: x86: sigreturn_32
-========================================
-[OK]	set_thread_area refused 16-bit data
-[OK]	set_thread_area refused 16-bit data
-[RUN]	Valid sigreturn: 64-bit CS (33), 32-bit SS (2b, GDT)
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 32-bit CS (23), 32-bit SS (2b, GDT)
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 16-bit CS (37), 32-bit SS (2b, GDT)
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 64-bit CS (33), 16-bit SS (3f)
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 32-bit CS (23), 16-bit SS (3f)
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 16-bit CS (37), 16-bit SS (3f)
-[OK]	all registers okay
-[RUN]	64-bit CS (33), bogus SS (47)
-[OK]	Got #GP(0x0) (i.e. Segmentation fault)
-[RUN]	32-bit CS (23), bogus SS (47)
-[OK]	Got #GP(0x0) (i.e. Segmentation fault)
-[RUN]	16-bit CS (37), bogus SS (47)
-[OK]	Got #GP(0x0) (i.e. Segmentation fault)
-[RUN]	64-bit CS (33), bogus SS (23)
-[OK]	Got #GP(0x20) (i.e. GDT index 4, Segmentation fault)
-[RUN]	32-bit CS (23), bogus SS (23)
-[OK]	Got #GP(0x20) (i.e. GDT index 4, Segmentation fault)
-[RUN]	16-bit CS (37), bogus SS (23)
-[OK]	Got #GP(0x20) (i.e. GDT index 4, Segmentation fault)
-[RUN]	32-bit CS (4f), bogus SS (2b)
-[OK]	Got #NP(0x4c) (i.e. LDT index 9, Bus error)
-[RUN]	32-bit CS (23), bogus SS (57)
-[OK]	Got #GP(0x0) (i.e. Segmentation fault)
-ok 1..6 selftests: x86: sigreturn_32 [PASS]
-selftests: x86: iopl_32
-========================================
-	child: set IOPL to 3
-[RUN]	child: write to 0x80
-[OK]	Child succeeded
-[RUN]	parent: write to 0x80 (should fail)
-[OK]	write was denied
-	iopl(3)
-	Drop privileges
-[RUN]	iopl(3) unprivileged but with IOPL==3
-[RUN]	iopl(0) unprivileged
-[RUN]	iopl(3) unprivileged
-[OK]	Failed as expected
-ok 1..7 selftests: x86: iopl_32 [PASS]
-selftests: x86: mpx-mini-test_32
-========================================
-processor lacks MPX XSTATE(s), can not run MPX tests
-XSAVE is supported by HW & OS
-XSAVE processor supported state mask: 0x7
-XSAVE OS supported state mask: 0x7
-ok 1..8 selftests: x86: mpx-mini-test_32 [PASS]
-selftests: x86: ioperm_32
-========================================
-[OK]	outb to 0x80 failed
-[OK]	outb to 0xed failed
-[RUN]	enable 0x80
-[OK]	outb to 0x80 worked
-[OK]	outb to 0xed failed
-[RUN]	disable 0x80
-[OK]	outb to 0x80 failed
-[OK]	outb to 0xed failed
-[RUN]	child: check that we inherited permissions
-[OK]	outb to 0x80 worked
-[OK]	outb to 0xed failed
-[OK]	outb to 0x80 failed
-[OK]	outb to 0xed failed
-[RUN]	enable 0x80
-[OK]	outb to 0x80 worked
-[OK]	outb to 0xed failed
-[RUN]	disable 0x80
-[OK]	outb to 0x80 failed
-[OK]	outb to 0xed failed
-[OK]	Child succeeded
-	Drop privileges
-[RUN]	disable 0x80
-[OK]	it worked
-[RUN]	enable 0x80 again
-[OK]	it failed
-ok 1..9 selftests: x86: ioperm_32 [PASS]
-selftests: x86: protection_keys_32
-========================================
-has pku: 0
-running PKEY tests for unsupported CPU/OS
-ok 1..10 selftests: x86: protection_keys_32 [PASS]
-selftests: x86: test_vdso_32
-========================================
-Warning: failed to find getcpu in vDSO
-[RUN]	Testing clock_gettime for clock CLOCK_REALTIME (0)...
-	1550406543.760686908 1550406543.760691882 1550406543.760692427
-[RUN]	Testing clock_gettime for clock CLOCK_MONOTONIC (1)...
-	620.442148469 620.442148833 620.442149251
-[RUN]	Testing clock_gettime for clock CLOCK_PROCESS_CPUTIME_ID (2)...
-	0.000729669 0.000730516 0.000731225
-[RUN]	Testing clock_gettime for clock CLOCK_THREAD_CPUTIME_ID (3)...
-	0.000734202 0.000734861 0.000735552
-[RUN]	Testing clock_gettime for clock CLOCK_MONOTONIC_RAW (4)...
-	620.092138037 620.092138645 620.092139307
-[RUN]	Testing clock_gettime for clock CLOCK_REALTIME_COARSE (5)...
-	1550406543.760446639 1550406543.760446639 1550406543.760446639
-[RUN]	Testing clock_gettime for clock CLOCK_MONOTONIC_COARSE (6)...
-	620.441898638 620.441898638 620.441898638
-[RUN]	Testing clock_gettime for clock CLOCK_BOOTTIME (7)...
-	620.442169869 620.442170499 620.442171112
-[RUN]	Testing clock_gettime for clock CLOCK_REALTIME_ALARM (8)...
-	1550406543.760729780 1550406543.760730473 1550406543.760731210
-[RUN]	Testing clock_gettime for clock CLOCK_BOOTTIME_ALARM (9)...
-	620.442185511 620.442186204 620.442186909
-[RUN]	Testing clock_gettime for clock CLOCK_SGI_CYCLE (10)...
-[OK]	No such clock.
-[RUN]	Testing clock_gettime for clock CLOCK_TAI (11)...
-	1550406543.760740018 1550406543.760740375 1550406543.760740769
-[RUN]	Testing clock_gettime for clock invalid (-1)...
-[OK]	No such clock.
-[RUN]	Testing clock_gettime for clock invalid (-2147483648)...
-[OK]	No such clock.
-[RUN]	Testing clock_gettime for clock invalid (2147483647)...
-[OK]	No such clock.
-[RUN]	Testing gettimeofday...
-	1550406543.760748 1550406543.760748 1550406543.760749
-[OK]	timezones match: minuteswest=-480, dsttime=0
-[RUN]	Testing getcpu...
-[OK]	CPU 0: syscall: cpu 0, node 0
-[OK]	CPU 1: syscall: cpu 1, node 0
-ok 1..11 selftests: x86: test_vdso_32 [PASS]
-selftests: x86: test_vsyscall_32
-========================================
-[NOTE]	failed to find getcpu in vDSO
-[RUN]	test gettimeofday()
-	vDSO time offsets: 0.000005 0.000000
-[OK]	vDSO gettimeofday()'s timeval was okay
-[RUN]	test time()
-[OK]	vDSO time() is okay
-[RUN]	getcpu() on CPU 0
-[RUN]	getcpu() on CPU 1
-ok 1..12 selftests: x86: test_vsyscall_32 [PASS]
-selftests: x86: entry_from_vm86_32
-========================================
-[RUN]	#BR from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	SYSENTER from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	SYSCALL from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	STI with VIP set from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	POPF with VIP set and IF clear from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	POPF with VIP and IF set from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	POPF with VIP clear and IF set from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	INT3 from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	int80 from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	UMIP tests from vm86 mode
-[SKIP]	vm86 not supported
-[INFO]	Result from SMSW:[0x0000]
-[INFO]	Result from SIDT: limit[0x0000]base[0x00000000]
-[INFO]	Result from SGDT: limit[0x0000]base[0x00000000]
-[PASS]	All the results from SMSW are identical.
-[PASS]	All the results from SGDT are identical.
-[PASS]	All the results from SIDT are identical.
-[RUN]	STR instruction from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	SLDT instruction from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	Execute null pointer from vm86 mode
-[SKIP]	vm86 not supported
-ok 1..13 selftests: x86: entry_from_vm86_32 [PASS]
-selftests: x86: syscall_arg_fault_32
-========================================
-[RUN]	SYSENTER with invalid state
-[OK]	Seems okay
-[RUN]	SYSCALL with invalid state
-[SKIP]	Illegal instruction
-ok 1..14 selftests: x86: syscall_arg_fault_32 [PASS]
-[RUN]	#BR from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	SYSENTER from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	SYSCALL from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	STI with VIP set from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	POPF with VIP set and IF clear from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	POPF with VIP and IF set from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	POPF with VIP clear and IF set from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	INT3 from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	int80 from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	UMIP tests from vm86 mode
-[SKIP]	vm86 not supported
-[INFO]	Result from SMSW:[0x0000]
-[INFO]	Result from SIDT: limit[0x0000]base[0x00000000]
-[INFO]	Result from SGDT: limit[0x0000]base[0x00000000]
-[PASS]	All the results from SMSW are identical.
-[PASS]	All the results from SGDT are identical.
-[PASS]	All the results from SIDT are identical.
-[RUN]	STR instruction from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	SLDT instruction from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	Execute null pointer from vm86 mode
-[SKIP]	vm86 not supported
-selftests: x86: test_syscall_vdso_32
-========================================
-[RUN]	Executing 6-argument 32-bit syscall via VDSO
-[WARN]	Flags before=0000000000200ed7 id 0 00 o d i s z 0 a 0 p 1 c
-[WARN]	Flags  after=0000000000200606 id 0 00 d i 0 0 p 1 
-[WARN]	Flags change=00000000000008d1 0 00 o s z 0 a 0 0 c
-[OK]	Arguments are preserved across syscall
-[NOTE]	R11 has changed:0000000000200606 - assuming clobbered by SYSRET insn
-[OK]	R8..R15 did not leak kernel data
-[RUN]	Executing 6-argument 32-bit syscall via INT 80
-[OK]	Arguments are preserved across syscall
-[OK]	R8..R15 did not leak kernel data
-[RUN]	Executing 6-argument 32-bit syscall via VDSO
-[WARN]	Flags before=0000000000200ed7 id 0 00 o d i s z 0 a 0 p 1 c
-[WARN]	Flags  after=0000000000200606 id 0 00 d i 0 0 p 1 
-[WARN]	Flags change=00000000000008d1 0 00 o s z 0 a 0 0 c
-[OK]	Arguments are preserved across syscall
-[NOTE]	R11 has changed:0000000000200606 - assuming clobbered by SYSRET insn
-[OK]	R8..R15 did not leak kernel data
-[RUN]	Executing 6-argument 32-bit syscall via INT 80
-[OK]	Arguments are preserved across syscall
-[OK]	R8..R15 did not leak kernel data
-[RUN]	Running tests under ptrace
-ok 1..15 selftests: x86: test_syscall_vdso_32 [PASS]
-selftests: x86: unwind_vdso_32
-========================================
-	AT_SYSINFO is 0xf7fbe940
-[OK]	AT_SYSINFO maps to linux-gate.so.1, loaded at 0x0xf7fbe000
-[RUN]	Set TF and check a fast syscall
-	In vsyscall at 0xf7fbe940, returning to 0xf7daa877
-	SIGTRAP at 0xf7fbe940
-	  0xf7fbe940
-	  0xf7daa877
-[OK]	  NR = 20, args = 1, 2, 3, 4, 5, 6
-	SIGTRAP at 0xf7fbe941
-	  0xf7fbe941
-	  0xf7daa877
-[OK]	  NR = 20, args = 1, 2, 3, 4, 5, 6
-	SIGTRAP at 0xf7fbe942
-	  0xf7fbe942
-	  0xf7daa877
-[OK]	  NR = 20, args = 1, 2, 3, 4, 5, 6
-	SIGTRAP at 0xf7fbe943
-	  0xf7fbe943
-	  0xf7daa877
-[OK]	  NR = 20, args = 1, 2, 3, 4, 5, 6
-	SIGTRAP at 0xf7fbe945
-	  0xf7fbe945
-	  0xf7daa877
-[OK]	  NR = 20, args = 1, 2, 3, 4, 5, 6
-	SIGTRAP at 0xf7fbe94a
-	  0xf7fbe94a
-	  0xf7daa877
-[OK]	  NR = 9970, args = 1, 2, 3, 4, 5, 6
-	SIGTRAP at 0xf7fbe94b
-	  0xf7fbe94b
-	  0xf7daa877
-[OK]	  NR = 9970, args = 1, 2, 3, 4, 5, 6
-	SIGTRAP at 0xf7fbe94c
-	  0xf7fbe94c
-	  0xf7daa877
-[OK]	  NR = 9970, args = 1, 2, 3, 4, 5, 6
-	Vsyscall is done
-[OK]	All is well
-ok 1..16 selftests: x86: unwind_vdso_32 [PASS]
-selftests: x86: test_FCMOV_32
-========================================
-[RUN]	Testing fcmovCC instructions
-[OK]	fcmovCC
-ok 1..17 selftests: x86: test_FCMOV_32 [PASS]
-selftests: x86: test_FCOMI_32
-========================================
-[RUN]	Testing f[u]comi[p] instructions
-[OK]	f[u]comi[p]
-ok 1..18 selftests: x86: test_FCOMI_32 [PASS]
-selftests: x86: test_FISTTP_32
-========================================
-[RUN]	Testing fisttp instructions
-[OK]	fisttp
-ok 1..19 selftests: x86: test_FISTTP_32 [PASS]
-selftests: x86: vdso_restorer_32
-========================================
-[OK]	SA_SIGINFO handler returned successfully
-[OK]	!SA_SIGINFO handler returned successfully
-ok 1..20 selftests: x86: vdso_restorer_32 [PASS]
-selftests: x86: ldt_gdt_32
-========================================
-[NOTE]	set_thread_area is available; will use GDT index 13
-[OK]	LDT entry 0 has AR 0x0040FB00 and limit 0x0000000A
-[OK]	LDT entry 0 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 1 is invalid
-[OK]	LDT entry 2 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 1 is invalid
-[OK]	LDT entry 2 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07B00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00907B00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07300 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07100 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07500 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00507700 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507F00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507D00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507B00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507900 and limit 0x0000000A
-[RUN]	Test fork
-[OK]	LDT entry 2 has AR 0x00507900 and limit 0x0000000A
-[OK]	LDT entry 1 is invalid
-[OK]	LDT entry 0 is invalid
-[NOTE]	set_thread_area is available; will use GDT index 13
-[OK]	LDT entry 0 has AR 0x0040FB00 and limit 0x0000000A
-[OK]	LDT entry 0 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 1 is invalid
-[OK]	LDT entry 2 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 1 is invalid
-[OK]	LDT entry 2 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07B00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00907B00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07300 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07100 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07500 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00507700 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507F00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507D00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507B00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507900 and limit 0x0000000A
-[RUN]	Test fork
-[OK]	Child succeeded
-[RUN]	Test size
-[DONE]	Size test
-[OK]	modify_ldt failure 22
-[OK]	LDT entry 0 has AR 0x0000F300 and limit 0x00000000
-[OK]	LDT entry 0 has AR 0x00007300 and limit 0x00000000
-[OK]	LDT entry 0 has AR 0x0000F100 and limit 0x00000000
-[OK]	LDT entry 0 has AR 0x00007300 and limit 0x00000000
-[OK]	LDT entry 0 has AR 0x00007100 and limit 0x00000001
-[OK]	LDT entry 0 has AR 0x00007100 and limit 0x00000000
-[OK]	LDT entry 0 is invalid
-[OK]	LDT entry 0 has AR 0x0040F300 and limit 0x000FFFFF
-[OK]	GDT entry 13 has AR 0x0040F300 and limit 0x000FFFFF
-[OK]	LDT entry 0 has AR 0x00C0F300 and limit 0xFFFFFFFF
-[OK]	GDT entry 13 has AR 0x00C0F300 and limit 0xFFFFFFFF
-[OK]	LDT entry 0 has AR 0x00C0F100 and limit 0xFFFFFFFF
-[OK]	GDT entry 13 has AR 0x00C0F100 and limit 0xFFFFFFFF
-[OK]	LDT entry 0 has AR 0x00C0F700 and limit 0xFFFFFFFF
-[OK]	GDT entry 13 has AR 0x00C0F700 and limit 0xFFFFFFFF
-[OK]	LDT entry 0 has AR 0x00C0F500 and limit 0xFFFFFFFF
-[OK]	GDT entry 13 has AR 0x00C0F500 and limit 0xFFFFFFFF
-[OK]	LDT entry 0 is invalid
-[RUN]	Cross-CPU LDT invalidation
-[OK]	All 5 iterations succeeded
-[RUN]	Test exec
-[OK]	LDT entry 0 has AR 0x0040FB00 and limit 0x0000002A
-[OK]	Child succeeded
-[OK]	Invalidate DS with set_thread_area: new DS = 0x0
-[OK]	Invalidate ES with set_thread_area: new ES = 0x0
-[OK]	Invalidate FS with set_thread_area: new FS = 0x0
-[OK]	Invalidate GS with set_thread_area: new GS = 0x0
-ok 1..21 selftests: x86: ldt_gdt_32 [PASS]
-selftests: x86: ptrace_syscall_32
-========================================
-[RUN]	Check int80 return regs
-[OK]	getpid() preserves regs
-[OK]	kill(getpid(), SIGUSR1) preserves regs
-[RUN]	Check AT_SYSINFO return regs
-[OK]	getpid() preserves regs
-[OK]	kill(getpid(), SIGUSR1) preserves regs
-[RUN]	ptrace-induced syscall restart
-[RUN]	SYSEMU
-[OK]	Initial nr and args are correct
-[RUN]	Restart the syscall (ip = 0xf7fb7949)
-[OK]	Restarted nr and args are correct
-[RUN]	Change nr and args and restart the syscall (ip = 0xf7fb7949)
-[OK]	Replacement nr and args are correct
-[OK]	Child exited cleanly
-[RUN]	kernel syscall restart under ptrace
-[RUN]	SYSCALL
-[OK]	Initial nr and args are correct
-[RUN]	SYSCALL
-[OK]	Args after SIGUSR1 are correct (ax = -514)
-[OK]	Child got SIGUSR1
-[RUN]	Step again
-[OK]	pause(2) restarted correctly
-ok 1..22 selftests: x86: ptrace_syscall_32 [PASS]
-selftests: x86: single_step_syscall_64
-========================================
-[RUN]	Set TF and check nop
-[OK]	Survived with TF set and 9 traps
-[RUN]	Set TF and check syscall-less opportunistic sysret
-[OK]	Survived with TF set and 12 traps
-[RUN]	Set TF and check int80
-[OK]	Survived with TF set and 9 traps
-[RUN]	Set TF and check a fast syscall
-[OK]	Survived with TF set and 22 traps
-[RUN]	Fast syscall with TF cleared
-[OK]	Nothing unexpected happened
-ok 1..23 selftests: x86: single_step_syscall_64 [PASS]
-selftests: x86: sysret_ss_attrs_64
-========================================
-[RUN]	Syscalls followed by SS validation
-[OK]	We survived
-ok 1..24 selftests: x86: sysret_ss_attrs_64 [PASS]
-selftests: x86: syscall_nt_64
-========================================
-[RUN]	Set NT and issue a syscall
-[OK]	The syscall worked and flags are still set
-[RUN]	Set NT|TF and issue a syscall
-[OK]	The syscall worked and flags are still set
-ok 1..25 selftests: x86: syscall_nt_64 [PASS]
-selftests: x86: test_mremap_vdso_64
-========================================
-	AT_SYSINFO_EHDR is 0x7fff79f20000
-[NOTE]	Moving vDSO: [0x7fff79f20000, 0x7fff79f21000] -> [0x7fc06a892000, 0x7fc06a893000]
-[OK]
-ok 1..26 selftests: x86: test_mremap_vdso_64 [PASS]
-selftests: x86: check_initial_reg_state_64
-========================================
-[OK]	All GPRs except SP are 0
-[OK]	FLAGS is 0x202
-ok 1..27 selftests: x86: check_initial_reg_state_64 [PASS]
-selftests: x86: sigreturn_64
-========================================
-[OK]	set_thread_area refused 16-bit data
-[OK]	set_thread_area refused 16-bit data
-[RUN]	Valid sigreturn: 64-bit CS (33), 32-bit SS (2b, GDT)
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 32-bit CS (23), 32-bit SS (2b, GDT)
-[NOTE]	SP: 8badf00d5aadc0de -> 5aadc0de
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 16-bit CS (37), 32-bit SS (2b, GDT)
-[NOTE]	SP: 8badf00d5aadc0de -> 5aadc0de
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 64-bit CS (33), 16-bit SS (3f)
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 32-bit CS (23), 16-bit SS (3f)
-[NOTE]	SP: 8badf00d5aadc0de -> 5aadc0de
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 16-bit CS (37), 16-bit SS (3f)
-[NOTE]	SP: 8badf00d5aadc0de -> 5aadc0de
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 32-bit CS (23), 32-bit SS (2b, GDT)
-	Corrupting SS on return to 64-bit mode
-[NOTE]	SP: 8badf00d5aadc0de -> 5aadc0de
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 32-bit CS (23), 16-bit SS (3f)
-	Corrupting SS on return to 64-bit mode
-[NOTE]	SP: 8badf00d5aadc0de -> 5aadc0de
-[OK]	all registers okay
-[RUN]	64-bit CS (33), bogus SS (47)
-[OK]	Got #GP(0x0) (i.e. Segmentation fault)
-[RUN]	32-bit CS (23), bogus SS (47)
-[OK]	Got #GP(0x0) (i.e. Segmentation fault)
-[RUN]	16-bit CS (37), bogus SS (47)
-[OK]	Got #GP(0x0) (i.e. Segmentation fault)
-[RUN]	64-bit CS (33), bogus SS (33)
-[OK]	Got #GP(0x30) (i.e. GDT index 6, Segmentation fault)
-[RUN]	32-bit CS (23), bogus SS (33)
-[OK]	Got #GP(0x30) (i.e. GDT index 6, Segmentation fault)
-[RUN]	16-bit CS (37), bogus SS (33)
-[OK]	Got #GP(0x30) (i.e. GDT index 6, Segmentation fault)
-[RUN]	32-bit CS (4f), bogus SS (2b)
-[OK]	Got #NP(0x4c) (i.e. LDT index 9, Bus error)
-[RUN]	32-bit CS (23), bogus SS (57)
-[OK]	Got #GP(0x0) (i.e. Segmentation fault)
-[RUN]	Clear UC_STRICT_RESTORE_SS and corrupt SS
-[OK]	It worked
-ok 1..28 selftests: x86: sigreturn_64 [PASS]
-selftests: x86: iopl_64
-========================================
-	child: set IOPL to 3
-[RUN]	child: write to 0x80
-[OK]	Child succeeded
-[RUN]	parent: write to 0x80 (should fail)
-[OK]	write was denied
-	iopl(3)
-	Drop privileges
-[RUN]	iopl(3) unprivileged but with IOPL==3
-[RUN]	iopl(0) unprivileged
-[RUN]	iopl(3) unprivileged
-[OK]	Failed as expected
-ok 1..29 selftests: x86: iopl_64 [PASS]
-selftests: x86: mpx-mini-test_64
-========================================
-processor lacks MPX XSTATE(s), can not run MPX tests
-XSAVE is supported by HW & OS
-XSAVE processor supported state mask: 0x7
-XSAVE OS supported state mask: 0x7
-ok 1..30 selftests: x86: mpx-mini-test_64 [PASS]
-selftests: x86: ioperm_64
-========================================
-[OK]	outb to 0x80 failed
-[OK]	outb to 0xed failed
-[RUN]	enable 0x80
-[OK]	outb to 0x80 worked
-[OK]	outb to 0xed failed
-[RUN]	disable 0x80
-[OK]	outb to 0x80 failed
-[OK]	outb to 0xed failed
-[RUN]	child: check that we inherited permissions
-[OK]	outb to 0x80 worked
-[OK]	outb to 0xed failed
-[OK]	outb to 0x80 failed
-[OK]	outb to 0xed failed
-[RUN]	enable 0x80
-[OK]	outb to 0x80 worked
-[OK]	outb to 0xed failed
-[RUN]	disable 0x80
-[OK]	outb to 0x80 failed
-[OK]	outb to 0xed failed
-[OK]	Child succeeded
-	Drop privileges
-[RUN]	disable 0x80
-[OK]	it worked
-[RUN]	enable 0x80 again
-[OK]	it failed
-ok 1..31 selftests: x86: ioperm_64 [PASS]
-selftests: x86: protection_keys_64
-========================================
-has pku: 0
-running PKEY tests for unsupported CPU/OS
-ok 1..32 selftests: x86: protection_keys_64 [PASS]
-selftests: x86: test_vdso_64
-========================================
-[RUN]	Testing clock_gettime for clock CLOCK_REALTIME (0)...
-	1550406544.155541322 1550406544.155546385 1550406544.155546918
-[RUN]	Testing clock_gettime for clock CLOCK_MONOTONIC (1)...
-	620.837001654 620.837002024 620.837002431
-[RUN]	Testing clock_gettime for clock CLOCK_PROCESS_CPUTIME_ID (2)...
-	0.000599003 0.000600001 0.000600782
-[RUN]	Testing clock_gettime for clock CLOCK_THREAD_CPUTIME_ID (3)...
-	0.000602893 0.000603666 0.000604448
-[RUN]	Testing clock_gettime for clock CLOCK_MONOTONIC_RAW (4)...
-	620.486989405 620.486990045 620.486990718
-[RUN]	Testing clock_gettime for clock CLOCK_REALTIME_COARSE (5)...
-	1550406544.154446639 1550406544.154446639 1550406544.154446639
-[RUN]	Testing clock_gettime for clock CLOCK_MONOTONIC_COARSE (6)...
-	620.835898638 620.835898638 620.835898638
-[RUN]	Testing clock_gettime for clock CLOCK_BOOTTIME (7)...
-	620.837019749 620.837020415 620.837021128
-[RUN]	Testing clock_gettime for clock CLOCK_REALTIME_ALARM (8)...
-	1550406544.155583052 1550406544.156406993 1550406544.156407758
-[RUN]	Testing clock_gettime for clock CLOCK_BOOTTIME_ALARM (9)...
-	620.837861931 620.837862678 620.837863421
-[RUN]	Testing clock_gettime for clock CLOCK_SGI_CYCLE (10)...
-[OK]	No such clock.
-[RUN]	Testing clock_gettime for clock CLOCK_TAI (11)...
-	1550406544.156416536 1550406544.156416961 1550406544.156417379
-[RUN]	Testing clock_gettime for clock invalid (-1)...
-[OK]	No such clock.
-[RUN]	Testing clock_gettime for clock invalid (-2147483648)...
-[OK]	No such clock.
-[RUN]	Testing clock_gettime for clock invalid (2147483647)...
-[OK]	No such clock.
-[RUN]	Testing gettimeofday...
-	1550406544.156424 1550406544.156424 1550406544.156424
-[OK]	timezones match: minuteswest=-480, dsttime=0
-[RUN]	Testing getcpu...
-[OK]	CPU 0: syscall: cpu 0, node 0 vdso: cpu 0, node 0 vsyscall: cpu 0, node 0
-[OK]	CPU 1: syscall: cpu 1, node 0 vdso: cpu 1, node 0 vsyscall: cpu 1, node 0
-ok 1..33 selftests: x86: test_vdso_64 [PASS]
-selftests: x86: test_vsyscall_64
-========================================
-	vsyscall map: ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]
-	vsyscall permissions are r-x
-[RUN]	test gettimeofday()
-	vDSO time offsets: 0.000004 0.000002
-[OK]	vDSO gettimeofday()'s timeval was okay
-	vsyscall time offsets: 0.000005 0.000001
-[OK]	vsyscall gettimeofday()'s timeval was okay
-[RUN]	test time()
-[OK]	vDSO time() is okay
-[OK]	vsyscall time() is okay
-[RUN]	getcpu() on CPU 0
-[OK]	vDSO reported correct CPU
-[OK]	vDSO reported correct node
-[OK]	vsyscall reported correct CPU
-[OK]	vsyscall reported correct node
-[RUN]	getcpu() on CPU 1
-[OK]	vDSO reported correct CPU
-[OK]	vDSO reported correct node
-[OK]	vsyscall reported correct CPU
-[OK]	vsyscall reported correct node
-[RUN]	Checking read access to the vsyscall page
-[OK]	got expected result
-[RUN]	checking that vsyscalls are emulated
-[OK]	vsyscalls are emulated (1 instructions in vsyscall page)
-ok 1..34 selftests: x86: test_vsyscall_64 [PASS]
-selftests: x86: fsgsbase_64
-========================================
-[RUN]	ARCH_SET_GS to 0x0
-[OK]	GSBASE was set as expected (selector 0x0)
-[OK]	ARCH_GET_GS worked as expected (selector 0x0)
-[RUN]	ARCH_SET_GS to 0x1
-[OK]	GSBASE was set as expected (selector 0x0)
-[OK]	ARCH_GET_GS worked as expected (selector 0x0)
-[RUN]	ARCH_SET_GS to 0x200000000
-[OK]	GSBASE was set as expected (selector 0x0)
-[OK]	ARCH_GET_GS worked as expected (selector 0x0)
-[RUN]	ARCH_SET_GS to 0x0
-[OK]	GSBASE was set as expected (selector 0x0)
-[OK]	ARCH_GET_GS worked as expected (selector 0x0)
-[RUN]	ARCH_SET_GS to 0x200000000
-[OK]	GSBASE was set as expected (selector 0x0)
-[OK]	ARCH_GET_GS worked as expected (selector 0x0)
-[RUN]	ARCH_SET_GS to 0x1
-[OK]	GSBASE was set as expected (selector 0x0)
-[OK]	ARCH_GET_GS worked as expected (selector 0x0)
-[RUN]	ARCH_SET_GS to 0x0 then mov 0 to %gs
-[OK]	GSBASE is 0x0
-[RUN]	ARCH_SET_GS to 0x1 then mov 0 to %gs
-[OK]	GSBASE is 0x0
-[RUN]	ARCH_SET_GS to 0x200000000 then mov 0 to %gs
-[OK]	GSBASE is 0x0
-[RUN]	ARCH_SET_GS to 0x0 then mov 0 to %gs and schedule 
-[OK]	GSBASE is 0x0
-[RUN]	ARCH_SET_GS to 0x1 then mov 0 to %gs and schedule 
-[OK]	GSBASE is 0x0
-[RUN]	ARCH_SET_GS to 0x200000000 then mov 0 to %gs and schedule 
-[OK]	GSBASE is 0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x0
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x0
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x0
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x0
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x0
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0xa1fa5f343cb85fa4
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x1
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x1
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x1
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x1
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x1
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x200000000
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x200000000
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x200000000
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x200000000
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x200000000
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x0
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x0
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x0
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x0
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x0
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0xa1fa5f343cb85fa4
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x1
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x1
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x1
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x1
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x1
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x200000000
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x200000000
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x200000000
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x200000000
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x200000000
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x0
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x1
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x0
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x0
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x0
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x0
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0xa1fa5f343cb85fa4
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x1
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x1
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x1
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x1
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x1
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x1
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x1
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x200000000
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x1
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x200000000
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x200000000
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x200000000
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x200000000
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x0
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x200000000
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x0
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x0
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x0
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x0
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0xa1fa5f343cb85fa4
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x200000000
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x1
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x200000000
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x1
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x1
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x1
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x1
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x200000000
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x200000000
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x200000000
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x200000000
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x200000000
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x200000000
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0), clear gs, then manipulate GSBASE in a different thread
-	other thread: using LDT slot 0
-[OK]	GSBASE remained 0
-ok 1..35 selftests: x86: fsgsbase_64 [PASS]
-selftests: x86: sysret_rip_64
-========================================
-[RUN]	sigreturn to 0x800000000000
-[OK]	Got SIGSEGV at RIP=0x800000000000
-[RUN]	sigreturn to 0x1000000000000
-[OK]	Got SIGSEGV at RIP=0x1000000000000
-[RUN]	sigreturn to 0x2000000000000
-[OK]	Got SIGSEGV at RIP=0x2000000000000
-[RUN]	sigreturn to 0x4000000000000
-[OK]	Got SIGSEGV at RIP=0x4000000000000
-[RUN]	sigreturn to 0x8000000000000
-[OK]	Got SIGSEGV at RIP=0x8000000000000
-[RUN]	sigreturn to 0x10000000000000
-[OK]	Got SIGSEGV at RIP=0x10000000000000
-[RUN]	sigreturn to 0x20000000000000
-[OK]	Got SIGSEGV at RIP=0x20000000000000
-[RUN]	sigreturn to 0x40000000000000
-[OK]	Got SIGSEGV at RIP=0x40000000000000
-[RUN]	sigreturn to 0x80000000000000
-[OK]	Got SIGSEGV at RIP=0x80000000000000
-[RUN]	sigreturn to 0x100000000000000
-[OK]	Got SIGSEGV at RIP=0x100000000000000
-[RUN]	sigreturn to 0x200000000000000
-[OK]	Got SIGSEGV at RIP=0x200000000000000
-[RUN]	sigreturn to 0x400000000000000
-[OK]	Got SIGSEGV at RIP=0x400000000000000
-[RUN]	sigreturn to 0x800000000000000
-[OK]	Got SIGSEGV at RIP=0x800000000000000
-[RUN]	sigreturn to 0x1000000000000000
-[OK]	Got SIGSEGV at RIP=0x1000000000000000
-[RUN]	sigreturn to 0x2000000000000000
-[OK]	Got SIGSEGV at RIP=0x2000000000000000
-[RUN]	sigreturn to 0x4000000000000000
-[OK]	Got SIGSEGV at RIP=0x4000000000000000
-[RUN]	sigreturn to 0x8000000000000000
-[OK]	Got SIGSEGV at RIP=0x8000000000000000
-[RUN]	Trying a SYSCALL that falls through to 0x7fffffffe000
-[OK]	We survived
-[RUN]	Trying a SYSCALL that falls through to 0x7ffffffff000
-[OK]	We survived
-[RUN]	Trying a SYSCALL that falls through to 0x800000000000
-[OK]	mremap to 0x7ffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0xfffffffff000
-[OK]	mremap to 0xffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x1000000000000
-[OK]	mremap to 0xfffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x1fffffffff000
-[OK]	mremap to 0x1ffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x2000000000000
-[OK]	mremap to 0x1fffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x3fffffffff000
-[OK]	mremap to 0x3ffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x4000000000000
-[OK]	mremap to 0x3fffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x7fffffffff000
-[OK]	mremap to 0x7ffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x8000000000000
-[OK]	mremap to 0x7fffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0xffffffffff000
-[OK]	mremap to 0xfffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x10000000000000
-[OK]	mremap to 0xffffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x1ffffffffff000
-[OK]	mremap to 0x1fffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x20000000000000
-[OK]	mremap to 0x1ffffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x3ffffffffff000
-[OK]	mremap to 0x3fffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x40000000000000
-[OK]	mremap to 0x3ffffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x7ffffffffff000
-[OK]	mremap to 0x7fffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x80000000000000
-[OK]	mremap to 0x7ffffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0xfffffffffff000
-[OK]	mremap to 0xffffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x100000000000000
-[OK]	mremap to 0xfffffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x1fffffffffff000
-[OK]	mremap to 0x1ffffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x200000000000000
-[OK]	mremap to 0x1fffffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x3fffffffffff000
-[OK]	mremap to 0x3ffffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x400000000000000
-[OK]	mremap to 0x3fffffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x7fffffffffff000
-[OK]	mremap to 0x7ffffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x800000000000000
-[OK]	mremap to 0x7fffffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0xffffffffffff000
-[OK]	mremap to 0xfffffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x1000000000000000
-[OK]	mremap to 0xffffffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x1ffffffffffff000
-[OK]	mremap to 0x1fffffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x2000000000000000
-[OK]	mremap to 0x1ffffffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x3ffffffffffff000
-[OK]	mremap to 0x3fffffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x4000000000000000
-[OK]	mremap to 0x3ffffffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x7ffffffffffff000
-[OK]	mremap to 0x7fffffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x8000000000000000
-[OK]	mremap to 0x7ffffffffffff000 failed
-ok 1..36 selftests: x86: sysret_rip_64 [PASS]
-selftests: x86: ldt_gdt_64
-========================================
-[NOTE]	set_thread_area is available; will use GDT index 12
-[OK]	LDT entry 0 has AR 0x0040FB00 and limit 0x0000000A
-[OK]	LDT entry 0 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 1 is invalid
-[OK]	LDT entry 2 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 1 is invalid
-[OK]	LDT entry 2 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07B00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00907B00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07300 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07100 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07500 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00507700 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507F00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507D00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507B00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507900 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507900 and limit 0x0000000A
-[RUN]	Test fork
-[OK]	LDT entry 2 has AR 0x00507900 and limit 0x0000000A
-[OK]	LDT entry 1 is invalid
-[OK]	LDT entry 0 is invalid
-[NOTE]	set_thread_area is available; will use GDT index 12
-[OK]	LDT entry 0 has AR 0x0040FB00 and limit 0x0000000A
-[OK]	LDT entry 0 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 1 is invalid
-[OK]	LDT entry 2 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 1 is invalid
-[OK]	LDT entry 2 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07B00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00907B00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07300 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07100 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07500 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00507700 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507F00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507D00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507B00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507900 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507900 and limit 0x0000000A
-[RUN]	Test fork
-[OK]	Child succeeded
-[RUN]	Test size
-[DONE]	Size test
-[OK]	modify_ldt failure 22
-[OK]	LDT entry 0 has AR 0x0000F300 and limit 0x00000000
-[OK]	LDT entry 0 has AR 0x00007300 and limit 0x00000000
-[OK]	LDT entry 0 has AR 0x0000F100 and limit 0x00000000
-[OK]	LDT entry 0 has AR 0x00007300 and limit 0x00000000
-[OK]	LDT entry 0 has AR 0x00007100 and limit 0x00000001
-[OK]	LDT entry 0 has AR 0x00007100 and limit 0x00000000
-[OK]	LDT entry 0 is invalid
-[OK]	LDT entry 0 has AR 0x0040F300 and limit 0x000FFFFF
-[OK]	LDT entry 0 has AR 0x00C0F300 and limit 0xFFFFFFFF
-[OK]	LDT entry 0 has AR 0x00C0F100 and limit 0xFFFFFFFF
-[OK]	LDT entry 0 has AR 0x00C0F700 and limit 0xFFFFFFFF
-[OK]	LDT entry 0 has AR 0x00C0F500 and limit 0xFFFFFFFF
-[OK]	LDT entry 0 is invalid
-[RUN]	Cross-CPU LDT invalidation
-[OK]	All 5 iterations succeeded
-[RUN]	Test exec
-[OK]	LDT entry 0 has AR 0x0040FB00 and limit 0x0000002A
-[OK]	Child succeeded
-[OK]	Invalidate DS with set_thread_area: new DS = 0x0
-[OK]	Invalidate ES with set_thread_area: new ES = 0x0
-[OK]	Invalidate FS with set_thread_area: new FS = 0x0
-[OK]	New FSBASE was zero
-[OK]	Invalidate GS with set_thread_area: new GS = 0x0
-[OK]	New GSBASE was zero
-ok 1..37 selftests: x86: ldt_gdt_64 [PASS]
-selftests: x86: ptrace_syscall_64
-========================================
-[RUN]	Check int80 return regs
-[OK]	getpid() preserves regs
-[OK]	kill(getpid(), SIGUSR1) preserves regs
-[RUN]	ptrace-induced syscall restart
-[RUN]	SYSEMU
-[OK]	Initial nr and args are correct
-[RUN]	Restart the syscall (ip = 0x7fd96d28b309)
-[OK]	Restarted nr and args are correct
-[RUN]	Change nr and args and restart the syscall (ip = 0x7fd96d28b309)
-[OK]	Replacement nr and args are correct
-[OK]	Child exited cleanly
-[RUN]	kernel syscall restart under ptrace
-[RUN]	SYSCALL
-[OK]	Initial nr and args are correct
-[RUN]	SYSCALL
-[OK]	Args after SIGUSR1 are correct (ax = -514)
-[OK]	Child got SIGUSR1
-[RUN]	Step again
-[OK]	pause(2) restarted correctly
-ok 1..38 selftests: x86: ptrace_syscall_64 [PASS]
-make: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86'
-ignored_by_lkp zram test
-
+Details are as below:
+-------------------------------------------------------------------------------------------------->
 
 
 To reproduce:
 
         git clone https://github.com/intel/lkp-tests.git
         cd lkp-tests
-        bin/lkp qemu -k <bzImage> job-script # job-script is attached in this email
+        bin/lkp install job.yaml  # job file is attached in this email
+        bin/lkp run     job.yaml
 
+=========================================================================================
+compiler/cpufreq_governor/kconfig/mode/nr_task/rootfs/tbox_group/test/testcase:
+  gcc-7/performance/x86_64-rhel-7.2/process/100%/debian-x86_64-2018-04-03.cgz/lkp-skl-4sp1/futex1/will-it-scale
+
+commit: 
+  cdaa813278 ("mm/gup: track gup-pinned pages")
+  e7ae097b0b ("mm/gup: /proc/vmstat support for get/put user pages")
+
+cdaa813278ddc616 e7ae097b0bda3e7dfd224e2a96 
+---------------- -------------------------- 
+         %stddev     %change         %stddev
+             \          |                \  
+   1808394            -5.0%    1717524        will-it-scale.per_process_ops
+ 3.472e+08            -5.0%  3.298e+08        will-it-scale.workload
+      7936            +3.0%       8174        vmstat.system.cs
+    546083 ± 30%     -41.7%     318102 ± 68%  numa-numastat.node2.local_node
+    576076 ± 27%     -40.3%     343781 ± 60%  numa-numastat.node2.numa_hit
+     27067            -4.5%      25852 ±  2%  proc-vmstat.nr_shmem
+     30283            -6.3%      28378 ±  3%  proc-vmstat.pgactivate
+     18458 ±  5%      +9.0%      20120 ±  5%  slabinfo.kmalloc-96.active_objs
+     19055 ±  4%      +7.7%      20521 ±  5%  slabinfo.kmalloc-96.num_objs
+      1654 ±  5%     +13.5%       1877 ±  3%  slabinfo.pool_workqueue.active_objs
+      1747 ±  5%     +10.9%       1937 ±  3%  slabinfo.pool_workqueue.num_objs
+     17.13 ±  3%      +2.3       19.45 ±  2%  perf-profile.calltrace.cycles-pp.gup_pgd_range.get_user_pages_fast.get_futex_key.futex_wake.do_futex
+      0.00            +2.4        2.40 ±  9%  perf-profile.calltrace.cycles-pp.mod_node_page_state.gup_pgd_range.get_user_pages_fast.get_futex_key.futex_wake
+     19.62 ±  3%      +2.4       22.06 ±  2%  perf-profile.calltrace.cycles-pp.get_user_pages_fast.get_futex_key.futex_wake.do_futex.__x64_sys_futex
+     26.50 ±  3%      +2.8       29.33 ±  2%  perf-profile.calltrace.cycles-pp.get_futex_key.futex_wake.do_futex.__x64_sys_futex.do_syscall_64
+     32.48 ±  3%      +3.0       35.52 ±  2%  perf-profile.calltrace.cycles-pp.futex_wake.do_futex.__x64_sys_futex.do_syscall_64.entry_SYSCALL_64_after_hwframe
+     46.45 ±100%     -67.5%      15.08 ± 22%  sched_debug.cfs_rq:/.load_avg.stddev
+      0.04 ±  5%     -11.4%       0.04 ±  6%  sched_debug.cfs_rq:/.nr_running.stddev
+     13.08 ±  4%     +18.8%      15.54 ±  5%  sched_debug.cfs_rq:/.runnable_load_avg.max
+      1.14 ±  4%     +18.6%       1.35 ±  5%  sched_debug.cfs_rq:/.runnable_load_avg.stddev
+     13543 ±  7%      +9.5%      14825 ±  4%  sched_debug.cfs_rq:/.runnable_weight.max
+      1267 ±  5%     +13.4%       1436 ±  6%  sched_debug.cfs_rq:/.runnable_weight.stddev
+      1089 ±  3%     +14.4%       1246 ±  7%  sched_debug.cfs_rq:/.util_avg.max
+    533.25 ±  7%      +7.7%     574.21 ±  5%  sched_debug.cfs_rq:/.util_est_enqueued.max
+      1.17 ±  6%     +18.1%       1.39 ±  6%  sched_debug.cpu.cpu_load[0].stddev
+      3321            +9.1%       3622 ±  4%  sched_debug.cpu.curr->pid.min
+      1355 ±  5%     +10.1%       1493 ±  6%  sched_debug.cpu.load.stddev
+      1399 ±  6%     -11.5%       1239 ±  3%  sched_debug.cpu.nr_load_updates.stddev
+    270.33 ±  8%     +52.7%     412.92 ± 14%  sched_debug.cpu.nr_switches.min
+    113.58 ±  3%     +75.1%     198.88 ±  6%  sched_debug.cpu.sched_count.min
+      6331 ± 17%     +41.5%       8956 ±  9%  sched_debug.cpu.sched_goidle.max
+    545.75 ±  5%     +24.9%     681.80 ±  9%  sched_debug.cpu.sched_goidle.stddev
+     89.38           +48.7%     132.92 ±  3%  sched_debug.cpu.ttwu_count.min
+     48.21 ±  2%     +82.6%      88.04 ±  6%  sched_debug.cpu.ttwu_local.min
+     47917 ± 29%     -71.3%      13757 ± 83%  numa-vmstat.node0.nr_active_anon
+     30393 ± 45%     -71.0%       8807 ±111%  numa-vmstat.node0.nr_anon_pages
+     78776 ± 10%     -24.6%      59392 ±  7%  numa-vmstat.node0.nr_file_pages
+      9592 ±  8%     -10.3%       8602 ±  7%  numa-vmstat.node0.nr_kernel_stack
+      2706 ± 37%     -32.6%       1824 ± 38%  numa-vmstat.node0.nr_mapped
+     18243 ± 45%     -90.1%       1803 ±118%  numa-vmstat.node0.nr_shmem
+      9147 ± 19%     -42.9%       5227 ± 42%  numa-vmstat.node0.nr_slab_reclaimable
+     18959 ±  7%     -17.8%      15594 ± 14%  numa-vmstat.node0.nr_slab_unreclaimable
+     47917 ± 29%     -71.3%      13758 ± 83%  numa-vmstat.node0.nr_zone_active_anon
+     34497 ± 41%     +54.6%      53318 ± 19%  numa-vmstat.node1.nr_active_anon
+     60479 ±  6%      +9.6%      66283 ±  9%  numa-vmstat.node1.nr_file_pages
+      1419 ±122%    +162.7%       3729 ± 45%  numa-vmstat.node1.nr_inactive_anon
+      1571 ±112%    +441.7%       8510 ± 73%  numa-vmstat.node1.nr_shmem
+     34497 ± 41%     +54.6%      53318 ± 19%  numa-vmstat.node1.nr_zone_active_anon
+      1419 ±122%    +162.7%       3729 ± 45%  numa-vmstat.node1.nr_zone_inactive_anon
+      9145 ±104%    +188.9%      26423 ± 48%  numa-vmstat.node3.nr_active_anon
+      1476 ± 52%    +432.0%       7853 ±101%  numa-vmstat.node3.nr_anon_pages
+      3918 ± 20%     +78.8%       7005 ± 20%  numa-vmstat.node3.nr_slab_reclaimable
+     12499 ±  7%     +22.7%      15336 ± 12%  numa-vmstat.node3.nr_slab_unreclaimable
+      9145 ±104%    +188.9%      26423 ± 48%  numa-vmstat.node3.nr_zone_active_anon
+    194801 ± 28%     -71.7%      55131 ± 83%  numa-meminfo.node0.Active
+    191699 ± 28%     -71.2%      55131 ± 83%  numa-meminfo.node0.Active(anon)
+     38555 ± 84%    -100.0%       0.00        numa-meminfo.node0.AnonHugePages
+    121677 ± 45%     -70.9%      35356 ±111%  numa-meminfo.node0.AnonPages
+    315090 ± 10%     -24.6%     237568 ±  7%  numa-meminfo.node0.FilePages
+     36584 ± 19%     -42.8%      20912 ± 42%  numa-meminfo.node0.KReclaimable
+      9594 ±  8%     -10.3%       8603 ±  7%  numa-meminfo.node0.KernelStack
+     10625 ± 34%     -32.6%       7165 ± 36%  numa-meminfo.node0.Mapped
+    892127 ± 11%     -25.0%     668837 ± 13%  numa-meminfo.node0.MemUsed
+     36584 ± 19%     -42.8%      20912 ± 42%  numa-meminfo.node0.SReclaimable
+     75840 ±  7%     -17.8%      62378 ± 14%  numa-meminfo.node0.SUnreclaim
+     72956 ± 45%     -90.1%       7212 ±118%  numa-meminfo.node0.Shmem
+    112426 ± 11%     -25.9%      83290 ± 21%  numa-meminfo.node0.Slab
+    138083 ± 41%     +54.5%     213397 ± 19%  numa-meminfo.node1.Active(anon)
+    241919 ±  6%      +9.6%     265074 ±  9%  numa-meminfo.node1.FilePages
+      5679 ±122%    +162.6%      14916 ± 45%  numa-meminfo.node1.Inactive(anon)
+      6284 ±112%    +440.7%      33980 ± 73%  numa-meminfo.node1.Shmem
+     36547 ±104%    +189.0%     105608 ± 48%  numa-meminfo.node3.Active
+     36547 ±104%    +189.0%     105608 ± 48%  numa-meminfo.node3.Active(anon)
+      5876 ± 52%    +433.8%      31369 ±101%  numa-meminfo.node3.AnonPages
+     15671 ± 20%     +78.8%      28021 ± 20%  numa-meminfo.node3.KReclaimable
+    592511 ±  8%     +15.3%     683394 ±  8%  numa-meminfo.node3.MemUsed
+     15671 ± 20%     +78.8%      28021 ± 20%  numa-meminfo.node3.SReclaimable
+     49997 ±  7%     +22.7%      61344 ± 12%  numa-meminfo.node3.SUnreclaim
+     65670 ±  6%     +36.1%      89366 ± 14%  numa-meminfo.node3.Slab
+
+
+                                                                                
+                             will-it-scale.per_process_ops                      
+                                                                                
+  1.84e+06 +-+--------------------------------------------------------------+   
+           |                                                                |   
+  1.82e+06 +-+.. .+.+..   .+..+.+.+..+.+.+.. .+.+.+..   .+..   .+..+.      .|   
+   1.8e+06 +-+  +      +.+                  +        +.+    +.+      +.+..+ |   
+           |                                                                |   
+  1.78e+06 +-+                                                              |   
+           |                                                                |   
+  1.76e+06 +-+                                                              |   
+           |                                                                |   
+  1.74e+06 +-+                                                              |   
+  1.72e+06 +-+                O O        O  O   O O  O   O    O             |   
+           |               O      O  O O      O        O    O   O  O        |   
+   1.7e+06 +-+         O O                                                  |   
+           O O  O O O                                                       |   
+  1.68e+06 +-+--------------------------------------------------------------+   
+                                                                                
+                                                                                                                                                                
+                                will-it-scale.workload                          
+                                                                                
+   3.5e+08 +-+--------------------------------------------------------------+   
+           |.+..+.+       +   +      +.+    +.+   +..+.+.+..+.+.+..+.+.  .+.|   
+  3.45e+08 +-+         +.+                                             +.   |   
+           |                                                                |   
+           |                                                                |   
+   3.4e+08 +-+                                                              |   
+           |                                                                |   
+  3.35e+08 +-+                                                              |   
+           |                                                                |   
+   3.3e+08 +-+                O O      O O  O O O O  O O O  O O O           |   
+           |               O      O  O                             O        |   
+           |           O O                                                  |   
+  3.25e+08 O-O  O O O                                                       |   
+           |                                                                |   
+   3.2e+08 +-+--------------------------------------------------------------+   
+                                                                                
+                                                                                
+[*] bisect-good sample
+[O] bisect-bad  sample
+
+
+
+Disclaimer:
+Results have been estimated based on internal Intel analysis and are provided
+for informational purposes only. Any difference in system hardware or software
+design or configuration may affect actual performance.
 
 
 Thanks,
 Rong Chen
 
---SWTRyWv/ijrBap1m
+--VuQYccsttdhdIfIP
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename="config-5.0.0-rc1-00001-g60b119c"
+Content-Disposition: attachment; filename="config-5.0.0-rc4-00005-ge7ae097"
 
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86_64 5.0.0-rc1 Kernel Configuration
+# Linux/x86_64 5.0.0-rc4 Kernel Configuration
 #
 
 #
@@ -2239,7 +547,7 @@ CONFIG_X86_X2APIC=y
 CONFIG_X86_MPPARSE=y
 # CONFIG_GOLDFISH is not set
 CONFIG_RETPOLINE=y
-# CONFIG_RESCTRL is not set
+# CONFIG_X86_RESCTRL is not set
 CONFIG_X86_EXTENDED_PLATFORM=y
 # CONFIG_X86_NUMACHIP is not set
 # CONFIG_X86_VSMP is not set
@@ -2737,13 +1045,14 @@ CONFIG_BLK_SCSI_REQUEST=y
 CONFIG_BLK_DEV_BSG=y
 CONFIG_BLK_DEV_BSGLIB=y
 CONFIG_BLK_DEV_INTEGRITY=y
-# CONFIG_BLK_DEV_ZONED is not set
+CONFIG_BLK_DEV_ZONED=y
 CONFIG_BLK_DEV_THROTTLING=y
 # CONFIG_BLK_DEV_THROTTLING_LOW is not set
 # CONFIG_BLK_CMDLINE_PARSER is not set
 # CONFIG_BLK_WBT is not set
 # CONFIG_BLK_CGROUP_IOLATENCY is not set
 CONFIG_BLK_DEBUG_FS=y
+CONFIG_BLK_DEBUG_FS_ZONED=y
 # CONFIG_BLK_SED_OPAL is not set
 
 #
@@ -4246,6 +2555,7 @@ CONFIG_DM_VERITY=m
 CONFIG_DM_SWITCH=m
 CONFIG_DM_LOG_WRITES=m
 # CONFIG_DM_INTEGRITY is not set
+# CONFIG_DM_ZONED is not set
 CONFIG_TARGET_CORE=m
 CONFIG_TCM_IBLOCK=m
 CONFIG_TCM_FILEIO=m
@@ -5709,7 +4019,6 @@ CONFIG_MFD_CORE=y
 # CONFIG_MFD_AS3711 is not set
 # CONFIG_PMIC_ADP5520 is not set
 # CONFIG_MFD_AAT2870_CORE is not set
-# CONFIG_MFD_AT91_USART is not set
 # CONFIG_MFD_BCM590XX is not set
 # CONFIG_MFD_BD9571MWV is not set
 # CONFIG_MFD_AXP20X_I2C is not set
@@ -6616,7 +4925,6 @@ CONFIG_FRAMEBUFFER_CONSOLE_DETECT_PRIMARY=y
 CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=y
 # CONFIG_FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER is not set
 CONFIG_LOGO=y
-# CONFIG_FB_LOGO_CENTER is not set
 # CONFIG_LOGO_LINUX_MONO is not set
 # CONFIG_LOGO_LINUX_VGA16 is not set
 CONFIG_LOGO_LINUX_CLUT224=y
@@ -8855,7 +7163,7 @@ CONFIG_UNWINDER_ORC=y
 # CONFIG_UNWINDER_FRAME_POINTER is not set
 # CONFIG_UNWINDER_GUESS is not set
 
---SWTRyWv/ijrBap1m
+--VuQYccsttdhdIfIP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: attachment; filename=job-script
 
@@ -8863,103 +7171,47 @@ Content-Disposition: attachment; filename=job-script
 
 export_top_env()
 {
-	export suite='kernel_selftests'
-	export testcase='kernel_selftests'
-	export category='functional'
-	export need_memory='2G'
-	export need_cpu=2
-	export kernel_cmdline='erst_disable'
-	export job_origin='/lkp/lkp/.src-20190216-121343/allot/cyclic:vm:linux-devel:devel-hourly/vm-snb-4G/kernel_selftests.yaml'
+	export suite='will-it-scale'
+	export testcase='will-it-scale'
+	export category='benchmark'
+	export nr_task=192
+	export job_origin='/lkp/lkp/.src-20190215-231208/allot/cyclic:p1:linux-devel:devel-hourly/lkp-skl-4sp1/will-it-scale-100.yaml'
 	export queue_cmdline_keys='branch
 commit'
-	export queue='bisect'
-	export testbox='vm-snb-4G-105'
-	export tbox_group='vm-snb-4G'
-	export submit_id='5c694ca50b9a930c6f8a0b2b'
-	export job_file='/lkp/jobs/scheduled/vm-snb-4G-105/kernel_selftests-kselftests-03-debian-x86_64-2018-04-03.cgz-60b119cae-20190217-68719-1rhkvkj-1.yaml'
-	export id='4ba94d7adae995cf4b720176c73859d3c5d7295a'
+	export queue='validate'
+	export testbox='lkp-skl-4sp1'
+	export tbox_group='lkp-skl-4sp1'
+	export submit_id='5c691a9b0b9a93a7bc118421'
+	export job_file='/lkp/jobs/scheduled/lkp-skl-4sp1/will-it-scale-performance-process-100%-futex1-debian-x86_64-2018-20190217-42940-9qu119-3.yaml'
+	export id='6ff457a3c267e94de8878d3a7ef1cf7a34727ce5'
 	export queuer_version='/lkp/lkp/.src-20190216-121343'
-	export need_kernel_headers=true
-	export need_kernel_selftests=true
-	export need_kconfig='CONFIG_RUNTIME_TESTING_MENU=y
-CONFIG_TEST_FIRMWARE
-CONFIG_TEST_USER_COPY
-CONFIG_MEMORY_NOTIFIER_ERROR_INJECT
-CONFIG_MEMORY_HOTPLUG_SPARSE=y
-CONFIG_NOTIFIER_ERROR_INJECTION
-CONFIG_FTRACE=y
-CONFIG_TEST_BITMAP
-CONFIG_TEST_PRINTF
-CONFIG_TEST_STATIC_KEYS
-CONFIG_BPF_SYSCALL=y
-CONFIG_NET_CLS_BPF=m
-CONFIG_BPF_EVENTS=y
-CONFIG_TEST_BPF=m
-CONFIG_ARCH_HAVE_NMI_SAFE_CMPXCHG=y
-CONFIG_HIST_TRIGGERS=y
-CONFIG_EMBEDDED=y
-CONFIG_GPIO_MOCKUP=y
-CONFIG_USERFAULTFD=y
-CONFIG_SYNC_FILE=y
-CONFIG_SW_SYNC=y
-CONFIG_MISC_FILESYSTEMS=y
-CONFIG_PSTORE=y
-CONFIG_PSTORE_PMSG=y
-CONFIG_PSTORE_CONSOLE=y
-CONFIG_PSTORE_RAM=m
-CONFIG_FW_LOADER_USER_HELPER_FALLBACK=y
-CONFIG_EXPERT=y
-CONFIG_CHECKPOINT_RESTORE=y
-CONFIG_EFIVAR_FS
-CONFIG_TEST_KMOD=m
-CONFIG_TEST_LKM=m
-CONFIG_XFS_FS=m
-CONFIG_TUN=m
-CONFIG_BTRFS_FS=m
-CONFIG_TEST_SYSCTL=m
-CONFIG_BPF_STREAM_PARSER=y
-CONFIG_CGROUP_BPF=y
-CONFIG_IPV6_MULTIPLE_TABLES=y
-CONFIG_NET_L3_MASTER_DEV=y
-CONFIG_NET_VRF=y
-CONFIG_NET_FOU=m
-CONFIG_NET_FOU_IP_TUNNELS=y
-CONFIG_MACSEC=y
-CONFIG_X86_INTEL_MPX=y
-CONFIG_RC_LOOPBACK
-CONFIG_IPV6_SEG6_LWTUNNEL=y
-CONFIG_LWTUNNEL=y
-CONFIG_WW_MUTEX_SELFTEST=m
-CONFIG_DRM_DEBUG_SELFTEST=m
-CONFIG_KVM_GUEST=y'
-	export commit='60b119cae86ecb300fa50fd107122e3568156991'
-	export ssh_base_port=23032
+	export commit='e7ae097b0bda3e7dfd224e2a960346c37aa42394'
 	export kconfig='x86_64-rhel-7.2'
 	export compiler='gcc-7'
 	export rootfs='debian-x86_64-2018-04-03.cgz'
-	export enqueue_time='2019-02-17 19:59:33 +0800'
-	export _id='5c694ca50b9a930c6f8a0b2c'
-	export _rt='/result/kernel_selftests/kselftests-03/vm-snb-4G/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/60b119cae86ecb300fa50fd107122e3568156991'
+	export enqueue_time='2019-02-17 16:26:03 +0800'
+	export _id='5c691a9b0b9a93a7bc118422'
+	export _rt='/result/will-it-scale/performance-process-100%-futex1/lkp-skl-4sp1/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/e7ae097b0bda3e7dfd224e2a960346c37aa42394'
 	export user='lkp'
-	export head_commit='558dd67ee7ace40296eb150281fdcf587331d111'
+	export head_commit='220f47b599c5569967c1aa3ebd07a57b4f8b0df4'
 	export base_commit='f17b5f06cb92ef2250513a1e154c47b78df07d40'
-	export branch='linux-devel/devel-hourly-2019021706'
-	export result_root='/result/kernel_selftests/kselftests-03/vm-snb-4G/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/60b119cae86ecb300fa50fd107122e3568156991/3'
+	export branch='linux-devel/devel-hourly-2019021621'
+	export result_root='/result/will-it-scale/performance-process-100%-futex1/lkp-skl-4sp1/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/e7ae097b0bda3e7dfd224e2a960346c37aa42394/3'
 	export scheduler_version='/lkp/lkp/.src-20190216-121343'
 	export LKP_SERVER='inn'
-	export max_uptime=3600
+	export max_uptime=1500
 	export initrd='/osimage/debian/debian-x86_64-2018-04-03.cgz'
 	export bootloader_append='root=/dev/ram0
 user=lkp
-job=/lkp/jobs/scheduled/vm-snb-4G-105/kernel_selftests-kselftests-03-debian-x86_64-2018-04-03.cgz-60b119cae-20190217-68719-1rhkvkj-1.yaml
+job=/lkp/jobs/scheduled/lkp-skl-4sp1/will-it-scale-performance-process-100%-futex1-debian-x86_64-2018-20190217-42940-9qu119-3.yaml
 ARCH=x86_64
 kconfig=x86_64-rhel-7.2
-branch=linux-devel/devel-hourly-2019021706
-commit=60b119cae86ecb300fa50fd107122e3568156991
-BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/60b119cae86ecb300fa50fd107122e3568156991/vmlinuz-5.0.0-rc1-00001-g60b119c
-erst_disable
-max_uptime=3600
-RESULT_ROOT=/result/kernel_selftests/kselftests-03/vm-snb-4G/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/60b119cae86ecb300fa50fd107122e3568156991/3
+branch=linux-devel/devel-hourly-2019021621
+commit=e7ae097b0bda3e7dfd224e2a960346c37aa42394
+BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/e7ae097b0bda3e7dfd224e2a960346c37aa42394/vmlinuz-5.0.0-rc4-00005-ge7ae097
+acpi_rsdp=0x69252014
+max_uptime=1500
+RESULT_ROOT=/result/will-it-scale/performance-process-100%-futex1/lkp-skl-4sp1/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/e7ae097b0bda3e7dfd224e2a960346c37aa42394/3
 LKP_SERVER=inn
 debug
 apic=debug
@@ -8981,26 +7233,26 @@ earlyprintk=ttyS0,115200
 console=ttyS0,115200
 vga=normal
 rw'
-	export modules_initrd='/pkg/linux/x86_64-rhel-7.2/gcc-7/60b119cae86ecb300fa50fd107122e3568156991/modules.cgz'
-	export bm_initrd='/osimage/deps/debian-x86_64-2018-04-03.cgz/run-ipconfig_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/lkp_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/rsync-rootfs_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/kernel_selftests_2018-12-12.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/kernel_selftests-x86_64-f5d582777bcb_2018-12-12.cgz'
-	export linux_headers_initrd='/pkg/linux/x86_64-rhel-7.2/gcc-7/60b119cae86ecb300fa50fd107122e3568156991/linux-headers.cgz'
-	export linux_selftests_initrd='/pkg/linux/x86_64-rhel-7.2/gcc-7/60b119cae86ecb300fa50fd107122e3568156991/linux-selftests.cgz'
+	export modules_initrd='/pkg/linux/x86_64-rhel-7.2/gcc-7/e7ae097b0bda3e7dfd224e2a960346c37aa42394/modules.cgz'
+	export bm_initrd='/osimage/deps/debian-x86_64-2018-04-03.cgz/run-ipconfig_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/lkp_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/rsync-rootfs_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/will-it-scale_2018-05-17.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/will-it-scale-x86_64-decad85_2018-06-07.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/mpstat_2018-06-19.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/turbostat_2018-05-17.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/turbostat-x86_64-d5256b2_2018-05-18.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/perf_2019-01-01.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/perf-x86_64-e1ef035d272e_2019-01-01.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/hw_2016-11-15.cgz'
 	export lkp_initrd='/lkp/lkp/lkp-x86_64.cgz'
 	export site='inn'
 	export LKP_CGI_PORT=80
 	export LKP_CIFS_PORT=139
+	export repeat_to=4
 	export schedule_notify_address=
-	export model='qemu-system-x86_64 -enable-kvm -cpu SandyBridge'
-	export nr_cpu=2
-	export memory='4G'
-	export hdd_partitions='/dev/vda /dev/vdb /dev/vdc /dev/vdd /dev/vde /dev/vdf'
-	export swap_partitions='/dev/vdg'
-	export vm_tbox_group='vm-snb-4G'
-	export nr_vm=56
-	export vm_base_id=1001
-	export kernel='/pkg/linux/x86_64-rhel-7.2/gcc-7/60b119cae86ecb300fa50fd107122e3568156991/vmlinuz-5.0.0-rc1-00001-g60b119c'
-	export dequeue_time='2019-02-17 20:18:36 +0800'
-	export job_initrd='/lkp/jobs/scheduled/vm-snb-4G-105/kernel_selftests-kselftests-03-debian-x86_64-2018-04-03.cgz-60b119cae-20190217-68719-1rhkvkj-1.cgz'
+	export model='Skylake-4S'
+	export nr_node=4
+	export nr_cpu=192
+	export memory='704G'
+	export nr_ssd_partitions=1
+	export ssd_partitions='/dev/disk/by-id/ata-INTEL_SSDSC2BA400G4_BTHV634503K8400NGN-part1'
+	export swap_partitions=
+	export rootfs_partition='LABEL=LKP-ROOTFS'
+	export kernel_cmdline_hw='acpi_rsdp=0x69252014'
+	export kernel='/pkg/linux/x86_64-rhel-7.2/gcc-7/e7ae097b0bda3e7dfd224e2a960346c37aa42394/vmlinuz-5.0.0-rc4-00005-ge7ae097'
+	export dequeue_time='2019-02-17 16:49:56 +0800'
+	export job_initrd='/lkp/jobs/scheduled/lkp-skl-4sp1/will-it-scale-performance-process-100%-futex1-debian-x86_64-2018-20190217-42940-9qu119-3.cgz'
 
 	[ -n "$LKP_SRC" ] ||
 	export LKP_SRC=/lkp/${user:-lkp}/src
@@ -9016,13 +7268,40 @@ run_job()
 
 	export_top_env
 
+	run_setup $LKP_SRC/setup/cpufreq_governor 'performance'
+
 	run_monitor $LKP_SRC/monitors/wrapper kmsg
+	run_monitor $LKP_SRC/monitors/no-stdout/wrapper boot-time
+	run_monitor $LKP_SRC/monitors/wrapper iostat
 	run_monitor $LKP_SRC/monitors/wrapper heartbeat
+	run_monitor $LKP_SRC/monitors/wrapper vmstat
+	run_monitor $LKP_SRC/monitors/wrapper numa-numastat
+	run_monitor $LKP_SRC/monitors/wrapper numa-vmstat
+	run_monitor $LKP_SRC/monitors/wrapper numa-meminfo
+	run_monitor $LKP_SRC/monitors/wrapper proc-vmstat
+	run_monitor $LKP_SRC/monitors/wrapper proc-stat
 	run_monitor $LKP_SRC/monitors/wrapper meminfo
+	run_monitor $LKP_SRC/monitors/wrapper slabinfo
+	run_monitor $LKP_SRC/monitors/wrapper interrupts
+	run_monitor $LKP_SRC/monitors/wrapper lock_stat
+	run_monitor $LKP_SRC/monitors/wrapper latency_stats
+	run_monitor $LKP_SRC/monitors/wrapper softirqs
+	run_monitor $LKP_SRC/monitors/one-shot/wrapper bdi_dev_mapping
+	run_monitor $LKP_SRC/monitors/wrapper diskstats
+	run_monitor $LKP_SRC/monitors/wrapper nfsstat
+	run_monitor $LKP_SRC/monitors/wrapper cpuidle
+	run_monitor $LKP_SRC/monitors/wrapper cpufreq-stats
+	run_monitor $LKP_SRC/monitors/wrapper turbostat
+	run_monitor $LKP_SRC/monitors/wrapper sched_debug
+	run_monitor $LKP_SRC/monitors/wrapper perf-stat
+	run_monitor $LKP_SRC/monitors/wrapper mpstat
+	run_monitor $LKP_SRC/monitors/no-stdout/wrapper perf-profile
 	run_monitor $LKP_SRC/monitors/wrapper oom-killer
 	run_monitor $LKP_SRC/monitors/plain/watchdog
+	run_monitor irq=1 exception=1 $LKP_SRC/monitors/wrapper irq_exception_noise
+	run_monitor $LKP_SRC/monitors/wrapper kthread_noise
 
-	run_test group='kselftests-03' $LKP_SRC/tests/wrapper kernel_selftests
+	run_test mode='process' test='futex1' $LKP_SRC/tests/wrapper will-it-scale
 }
 
 extract_stats()
@@ -9030,11 +7309,33 @@ extract_stats()
 	export stats_part_begin=
 	export stats_part_end=
 
-	$LKP_SRC/stats/wrapper kernel_selftests
+	$LKP_SRC/stats/wrapper will-it-scale
 	$LKP_SRC/stats/wrapper kmsg
+	$LKP_SRC/stats/wrapper boot-time
+	$LKP_SRC/stats/wrapper iostat
+	$LKP_SRC/stats/wrapper vmstat
+	$LKP_SRC/stats/wrapper numa-numastat
+	$LKP_SRC/stats/wrapper numa-vmstat
+	$LKP_SRC/stats/wrapper numa-meminfo
+	$LKP_SRC/stats/wrapper proc-vmstat
 	$LKP_SRC/stats/wrapper meminfo
+	$LKP_SRC/stats/wrapper slabinfo
+	$LKP_SRC/stats/wrapper interrupts
+	$LKP_SRC/stats/wrapper lock_stat
+	$LKP_SRC/stats/wrapper latency_stats
+	$LKP_SRC/stats/wrapper softirqs
+	$LKP_SRC/stats/wrapper diskstats
+	$LKP_SRC/stats/wrapper nfsstat
+	$LKP_SRC/stats/wrapper cpuidle
+	$LKP_SRC/stats/wrapper turbostat
+	$LKP_SRC/stats/wrapper sched_debug
+	$LKP_SRC/stats/wrapper perf-stat
+	$LKP_SRC/stats/wrapper mpstat
+	$LKP_SRC/stats/wrapper perf-profile
+	$LKP_SRC/stats/wrapper irq_exception_noise
+	$LKP_SRC/stats/wrapper kthread_noise
 
-	$LKP_SRC/stats/wrapper time kernel_selftests.time
+	$LKP_SRC/stats/wrapper time will-it-scale.time
 	$LKP_SRC/stats/wrapper time
 	$LKP_SRC/stats/wrapper dmesg
 	$LKP_SRC/stats/wrapper kmsg
@@ -9044,2536 +7345,172 @@ extract_stats()
 
 "$@"
 
---SWTRyWv/ijrBap1m
-Content-Type: application/x-xz
-Content-Disposition: attachment; filename="dmesg.xz"
-Content-Transfer-Encoding: base64
-
-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
-
---SWTRyWv/ijrBap1m
+--VuQYccsttdhdIfIP
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: attachment; filename=kernel_selftests
+Content-Disposition: attachment; filename="job.yaml"
 
-KERNEL SELFTESTS: linux_headers_dir is /usr/src/linux-headers-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991
-2019-02-17 20:19:08 ln -sf /usr/bin/clang-7 /usr/bin/clang
-2019-02-17 20:19:08 ln -sf /usr/bin/llc-7 /usr/bin/llc
+---
 
-2019-02-17 20:19:08 make run_tests -C timers
-make: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers'
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  posix_timers.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/posix_timers
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  nanosleep.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/nanosleep
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  nsleep-lat.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/nsleep-lat
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  set-timer-lat.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/set-timer-lat
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  mqueue-lat.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/mqueue-lat
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  inconsistency-check.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/inconsistency-check
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  raw_skew.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/raw_skew
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  threadtest.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/threadtest
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  rtcpie.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/rtcpie
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  alarmtimer-suspend.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/alarmtimer-suspend
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  valid-adjtimex.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/valid-adjtimex
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  adjtick.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/adjtick
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  change_skew.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/change_skew
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  skew_consistency.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/skew_consistency
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  clocksource-switch.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/clocksource-switch
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  freq-step.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/freq-step
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  leap-a-day.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/leap-a-day
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  leapcrash.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/leapcrash
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  set-tai.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/set-tai
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  set-2038.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/set-2038
-gcc -O3 -Wl,-no-as-needed -Wall  -lrt -lpthread -lm  set-tz.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers/set-tz
-TAP version 13
-selftests: timers: posix_timers
-========================================
-Testing posix timers. False negative may happen on CPU execution 
-based timers if other threads run on the CPU...
-Check itimer virtual... [OK]
-Check itimer prof... [OK]
-Check itimer real... [OK]
-Check timer_create() per thread... [OK]
-Check timer_create() per process... [OK]
-Pass 0 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
-1..0
-ok 1..1 selftests: timers: posix_timers [PASS]
-selftests: timers: nanosleep
-========================================
-Nanosleep CLOCK_REALTIME                  [OK]
-Nanosleep CLOCK_MONOTONIC                 [OK]
-Nanosleep CLOCK_MONOTONIC_RAW             [UNSUPPORTED]
-Nanosleep CLOCK_REALTIME_COARSE           [UNSUPPORTED]
-Nanosleep CLOCK_MONOTONIC_COARSE          [UNSUPPORTED]
-Nanosleep CLOCK_BOOTTIME                  [OK]
-Nanosleep CLOCK_REALTIME_ALARM            [OK]
-Nanosleep CLOCK_BOOTTIME_ALARM            [OK]
-Nanosleep CLOCK_TAI                       [OK]
-Pass 0 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
-1..0
-ok 1..2 selftests: timers: nanosleep [PASS]
-selftests: timers: nsleep-lat
-========================================
-nsleep latency CLOCK_REALTIME             [OK]
-nsleep latency CLOCK_MONOTONIC            [OK]
-nsleep latency CLOCK_MONOTONIC_RAW        [UNSUPPORTED]
-nsleep latency CLOCK_REALTIME_COARSE      [UNSUPPORTED]
-nsleep latency CLOCK_MONOTONIC_COARSE     [UNSUPPORTED]
-nsleep latency CLOCK_BOOTTIME             [OK]
-nsleep latency CLOCK_REALTIME_ALARM       [OK]
-nsleep latency CLOCK_BOOTTIME_ALARM       [OK]
-nsleep latency CLOCK_TAI                  [OK]
-Pass 0 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
-1..0
-ok 1..3 selftests: timers: nsleep-lat [PASS]
-selftests: timers: set-timer-lat
-========================================
-Setting timers for every 1 seconds
-CLOCK_REALTIME         ABSTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_REALTIME         ABSTIME PERIODIC max latency:     108055 ns : [OK]
-CLOCK_REALTIME         RELTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_REALTIME         RELTIME PERIODIC max latency:      79099 ns : [OK]
-CLOCK_REALTIME         ABSTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_REALTIME         ABSTIME ONE-SHOT max latency:      78646 ns : [OK]
-CLOCK_REALTIME         ABSTIME ONE-SHOT count:                   1 : [OK]
-CLOCK_REALTIME         RELTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_REALTIME         RELTIME ONE-SHOT max latency:      64791 ns : [OK]
-CLOCK_REALTIME         RELTIME ONE-SHOT count:                   1 : [OK]
-CLOCK_MONOTONIC        ABSTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_MONOTONIC        ABSTIME PERIODIC max latency:      74977 ns : [OK]
-CLOCK_MONOTONIC        RELTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_MONOTONIC        RELTIME PERIODIC max latency:      71429 ns : [OK]
-CLOCK_MONOTONIC        ABSTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_MONOTONIC        ABSTIME ONE-SHOT max latency:      65208 ns : [OK]
-CLOCK_MONOTONIC        ABSTIME ONE-SHOT count:                   1 : [OK]
-CLOCK_MONOTONIC        RELTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_MONOTONIC        RELTIME ONE-SHOT max latency:      67467 ns : [OK]
-CLOCK_MONOTONIC        RELTIME ONE-SHOT count:                   1 : [OK]
-CLOCK_BOOTTIME         ABSTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_BOOTTIME         ABSTIME PERIODIC max latency:      80590 ns : [OK]
-CLOCK_BOOTTIME         RELTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_BOOTTIME         RELTIME PERIODIC max latency:      77761 ns : [OK]
-CLOCK_BOOTTIME         ABSTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_BOOTTIME         ABSTIME ONE-SHOT max latency:      94790 ns : [OK]
-CLOCK_BOOTTIME         ABSTIME ONE-SHOT count:                   1 : [OK]
-CLOCK_BOOTTIME         RELTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_BOOTTIME         RELTIME ONE-SHOT max latency:      69638 ns : [OK]
-CLOCK_BOOTTIME         RELTIME ONE-SHOT count:                   1 : [OK]
-CLOCK_REALTIME_ALARM   ABSTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_REALTIME_ALARM   ABSTIME PERIODIC max latency:      72121 ns : [OK]
-CLOCK_REALTIME_ALARM   RELTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_REALTIME_ALARM   RELTIME PERIODIC max latency:      69062 ns : [OK]
-CLOCK_REALTIME_ALARM   ABSTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_REALTIME_ALARM   ABSTIME ONE-SHOT max latency:      68319 ns : [OK]
-CLOCK_REALTIME_ALARM   ABSTIME ONE-SHOT count:                   1 : [OK]
-CLOCK_REALTIME_ALARM   RELTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_REALTIME_ALARM   RELTIME ONE-SHOT max latency:      35027 ns : [OK]
-CLOCK_REALTIME_ALARM   RELTIME ONE-SHOT count:                   1 : [OK]
-CLOCK_BOOTTIME_ALARM   ABSTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_BOOTTIME_ALARM   ABSTIME PERIODIC max latency:      85302 ns : [OK]
-CLOCK_BOOTTIME_ALARM   RELTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_BOOTTIME_ALARM   RELTIME PERIODIC max latency:      77188 ns : [OK]
-CLOCK_BOOTTIME_ALARM   ABSTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_BOOTTIME_ALARM   ABSTIME ONE-SHOT max latency:      66971 ns : [OK]
-CLOCK_BOOTTIME_ALARM   ABSTIME ONE-SHOT count:                   1 : [OK]
-CLOCK_BOOTTIME_ALARM   RELTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_BOOTTIME_ALARM   RELTIME ONE-SHOT max latency:      87441 ns : [OK]
-CLOCK_BOOTTIME_ALARM   RELTIME ONE-SHOT count:                   1 : [OK]
-CLOCK_TAI              ABSTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_TAI              ABSTIME PERIODIC max latency:     443022 ns : [OK]
-CLOCK_TAI              RELTIME PERIODIC timer fired early:       0 : [OK]
-CLOCK_TAI              RELTIME PERIODIC max latency:      82352 ns : [OK]
-CLOCK_TAI              ABSTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_TAI              ABSTIME ONE-SHOT max latency:      72309 ns : [OK]
-CLOCK_TAI              ABSTIME ONE-SHOT count:                   1 : [OK]
-CLOCK_TAI              RELTIME ONE-SHOT timer fired early:       0 : [OK]
-CLOCK_TAI              RELTIME ONE-SHOT max latency:      62950 ns : [OK]
-CLOCK_TAI              RELTIME ONE-SHOT count:                   1 : [OK]
-Pass 0 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
-1..0
-ok 1..4 selftests: timers: set-timer-lat [PASS]
-selftests: timers: mqueue-lat
-========================================
-Mqueue latency :                          [OK]
-Pass 0 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
-1..0
-ok 1..5 selftests: timers: mqueue-lat [PASS]
-selftests: timers: inconsistency-check
-========================================
-Consistent CLOCK_REALTIME                 [OK]
-Consistent CLOCK_MONOTONIC                [OK]
-Consistent CLOCK_PROCESS_CPUTIME_ID       [OK]
-Consistent CLOCK_THREAD_CPUTIME_ID        [OK]
-Consistent CLOCK_MONOTONIC_RAW            [OK]
-Consistent CLOCK_REALTIME_COARSE          [OK]
-Consistent CLOCK_MONOTONIC_COARSE         [OK]
-Consistent CLOCK_BOOTTIME                 [OK]
-Consistent CLOCK_REALTIME_ALARM           [OK]
-Consistent CLOCK_BOOTTIME_ALARM           [OK]
-Consistent CLOCK_TAI                      [OK]
-Pass 0 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
-1..0
-ok 1..6 selftests: timers: inconsistency-check [PASS]
-selftests: timers: raw_skew
-========================================
-Estimating clock drift: 0.0(est) 0.0(act)	[OK]
-Pass 0 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
-1..0
-ok 1..7 selftests: timers: raw_skew [PASS]
-selftests: timers: threadtest
-========================================
-Sun, 17 Feb 2019 20:27:37 +0800
-Testing consistency with 8 threads for 30 seconds: [OK]
-Pass 0 Fail 0 Xfail 0 Xpass 0 Skip 0 Error 0
-1..0
-ok 1..8 selftests: timers: threadtest [PASS]
-selftests: timers: rtcpie
-========================================
+#! jobs/will-it-scale-100.yaml
+suite: will-it-scale
+testcase: will-it-scale
+category: benchmark
+nr_task: 100%
+will-it-scale:
+  mode: process
+  test: futex1
+job_origin: "/lkp/lkp/.src-20190215-231208/allot/cyclic:p1:linux-devel:devel-hourly/lkp-skl-4sp1/will-it-scale-100.yaml"
 
-Periodic IRQ rate is 1024Hz.
-Counting 20 interrupts at:
-2Hz:	 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
-4Hz:	 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
-8Hz:	 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
-16Hz:	 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
-32Hz:	 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
-64Hz:	 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
+#! queue options
+queue_cmdline_keys:
+- branch
+- commit
+queue: bisect
+testbox: lkp-skl-4sp1
+tbox_group: lkp-skl-4sp1
+submit_id: 5c6913550b9a933a976561ee
+job_file: "/lkp/jobs/scheduled/lkp-skl-4sp1/will-it-scale-performance-process-100%-futex1-debian-x86_64-2018-0-20190217-14999-5mu6tl-0.yaml"
+id: f387e52f0032cac85f7ec2f4733d85211cc2272c
+queuer_version: "/lkp/lkp/.src-20190216-121343"
 
-			 *** Test complete ***
-ok 1..9 selftests: timers: rtcpie [PASS]
-make: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/timers'
+#! hosts/lkp-skl-4sp1
 
-2019-02-17 20:28:26 make run_tests -C tpm2
-make: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/tpm2'
-TAP version 13
-selftests: tpm2: test_smoke.sh
-========================================
-test_seal_with_auth (tpm2_tests.SmokeTest) ... ERROR
-test_seal_with_policy (tpm2_tests.SmokeTest) ... ERROR
-test_seal_with_too_long_auth (tpm2_tests.SmokeTest) ... ERROR
-test_too_short_cmd (tpm2_tests.SmokeTest) ... ERROR
-test_unseal_with_wrong_auth (tpm2_tests.SmokeTest) ... ERROR
-test_unseal_with_wrong_policy (tpm2_tests.SmokeTest) ... ERROR
+#! include/category/benchmark
+kmsg: 
+boot-time: 
+iostat: 
+heartbeat: 
+vmstat: 
+numa-numastat: 
+numa-vmstat: 
+numa-meminfo: 
+proc-vmstat: 
+proc-stat: 
+meminfo: 
+slabinfo: 
+interrupts: 
+lock_stat: 
+latency_stats: 
+softirqs: 
+bdi_dev_mapping: 
+diskstats: 
+nfsstat: 
+cpuidle: 
+cpufreq-stats: 
+turbostat: 
+sched_debug: 
+perf-stat: 
+mpstat: 
+perf-profile: 
 
-======================================================================
-ERROR: test_seal_with_auth (tpm2_tests.SmokeTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_tests.py", line 15, in setUp
-    self.client = tpm2.Client()
-  File "tpm2.py", line 360, in __init__
-    self.tpm = open('/dev/tpm0', 'r+b')
-IOError: [Errno 2] No such file or directory: '/dev/tpm0'
+#! include/category/ALL
+cpufreq_governor: performance
 
-======================================================================
-ERROR: test_seal_with_policy (tpm2_tests.SmokeTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_tests.py", line 15, in setUp
-    self.client = tpm2.Client()
-  File "tpm2.py", line 360, in __init__
-    self.tpm = open('/dev/tpm0', 'r+b')
-IOError: [Errno 2] No such file or directory: '/dev/tpm0'
+#! include/queue/cyclic
+commit: e7ae097b0bda3e7dfd224e2a960346c37aa42394
 
-======================================================================
-ERROR: test_seal_with_too_long_auth (tpm2_tests.SmokeTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_tests.py", line 15, in setUp
-    self.client = tpm2.Client()
-  File "tpm2.py", line 360, in __init__
-    self.tpm = open('/dev/tpm0', 'r+b')
-IOError: [Errno 2] No such file or directory: '/dev/tpm0'
+#! default params
+kconfig: x86_64-rhel-7.2
+compiler: gcc-7
+rootfs: debian-x86_64-2018-04-03.cgz
+enqueue_time: 2019-02-17 15:55:01.700906082 +08:00
+_id: 5c6913550b9a933a976561ee
+_rt: "/result/will-it-scale/performance-process-100%-futex1/lkp-skl-4sp1/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/e7ae097b0bda3e7dfd224e2a960346c37aa42394"
 
-======================================================================
-ERROR: test_too_short_cmd (tpm2_tests.SmokeTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_tests.py", line 15, in setUp
-    self.client = tpm2.Client()
-  File "tpm2.py", line 360, in __init__
-    self.tpm = open('/dev/tpm0', 'r+b')
-IOError: [Errno 2] No such file or directory: '/dev/tpm0'
+#! schedule options
+user: lkp
+head_commit: 220f47b599c5569967c1aa3ebd07a57b4f8b0df4
+base_commit: f17b5f06cb92ef2250513a1e154c47b78df07d40
+branch: linux-devel/devel-hourly-2019021621
+result_root: "/result/will-it-scale/performance-process-100%-futex1/lkp-skl-4sp1/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/e7ae097b0bda3e7dfd224e2a960346c37aa42394/0"
+scheduler_version: "/lkp/lkp/.src-20190216-121343"
+LKP_SERVER: inn
+max_uptime: 1500
+initrd: "/osimage/debian/debian-x86_64-2018-04-03.cgz"
+bootloader_append:
+- root=/dev/ram0
+- user=lkp
+- job=/lkp/jobs/scheduled/lkp-skl-4sp1/will-it-scale-performance-process-100%-futex1-debian-x86_64-2018-0-20190217-14999-5mu6tl-0.yaml
+- ARCH=x86_64
+- kconfig=x86_64-rhel-7.2
+- branch=linux-devel/devel-hourly-2019021621
+- commit=e7ae097b0bda3e7dfd224e2a960346c37aa42394
+- BOOT_IMAGE=/pkg/linux/x86_64-rhel-7.2/gcc-7/e7ae097b0bda3e7dfd224e2a960346c37aa42394/vmlinuz-5.0.0-rc4-00005-ge7ae097
+- acpi_rsdp=0x69252014
+- max_uptime=1500
+- RESULT_ROOT=/result/will-it-scale/performance-process-100%-futex1/lkp-skl-4sp1/debian-x86_64-2018-04-03.cgz/x86_64-rhel-7.2/gcc-7/e7ae097b0bda3e7dfd224e2a960346c37aa42394/0
+- LKP_SERVER=inn
+- debug
+- apic=debug
+- sysrq_always_enabled
+- rcupdate.rcu_cpu_stall_timeout=100
+- net.ifnames=0
+- printk.devkmsg=on
+- panic=-1
+- softlockup_panic=1
+- nmi_watchdog=panic
+- oops=panic
+- load_ramdisk=2
+- prompt_ramdisk=0
+- drbd.minor_count=8
+- systemd.log_level=err
+- ignore_loglevel
+- console=tty0
+- earlyprintk=ttyS0,115200
+- console=ttyS0,115200
+- vga=normal
+- rw
+modules_initrd: "/pkg/linux/x86_64-rhel-7.2/gcc-7/e7ae097b0bda3e7dfd224e2a960346c37aa42394/modules.cgz"
+bm_initrd: "/osimage/deps/debian-x86_64-2018-04-03.cgz/run-ipconfig_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/lkp_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/rsync-rootfs_2018-04-03.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/will-it-scale_2018-05-17.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/will-it-scale-x86_64-decad85_2018-06-07.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/mpstat_2018-06-19.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/turbostat_2018-05-17.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/turbostat-x86_64-d5256b2_2018-05-18.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/perf_2019-01-01.cgz,/osimage/pkg/debian-x86_64-2018-04-03.cgz/perf-x86_64-e1ef035d272e_2019-01-01.cgz,/osimage/deps/debian-x86_64-2018-04-03.cgz/hw_2016-11-15.cgz"
+lkp_initrd: "/lkp/lkp/lkp-x86_64.cgz"
+site: inn
 
-======================================================================
-ERROR: test_unseal_with_wrong_auth (tpm2_tests.SmokeTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_tests.py", line 15, in setUp
-    self.client = tpm2.Client()
-  File "tpm2.py", line 360, in __init__
-    self.tpm = open('/dev/tpm0', 'r+b')
-IOError: [Errno 2] No such file or directory: '/dev/tpm0'
+#! /lkp/lkp/.src-20190216-121343/include/site/inn
+LKP_CGI_PORT: 80
+LKP_CIFS_PORT: 139
+oom-killer: 
+watchdog: 
 
-======================================================================
-ERROR: test_unseal_with_wrong_policy (tpm2_tests.SmokeTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_tests.py", line 15, in setUp
-    self.client = tpm2.Client()
-  File "tpm2.py", line 360, in __init__
-    self.tpm = open('/dev/tpm0', 'r+b')
-IOError: [Errno 2] No such file or directory: '/dev/tpm0'
+#! runtime status
+repeat_to: 2
+schedule_notify_address: 
+model: Skylake-4S
+nr_node: 4
+nr_cpu: 192
+memory: 704G
+nr_ssd_partitions: 1
+ssd_partitions: "/dev/disk/by-id/ata-INTEL_SSDSC2BA400G4_BTHV634503K8400NGN-part1"
+swap_partitions: 
+rootfs_partition: LABEL=LKP-ROOTFS
+kernel_cmdline_hw: acpi_rsdp=0x69252014
+irq_exception_noise:
+  irq: 1
+  exception: 1
+kthread_noise: 
 
-----------------------------------------------------------------------
-Ran 6 tests in 0.001s
+#! user overrides
+kernel: "/pkg/linux/x86_64-rhel-7.2/gcc-7/e7ae097b0bda3e7dfd224e2a960346c37aa42394/vmlinuz-5.0.0-rc4-00005-ge7ae097"
+dequeue_time: 2019-02-17 16:08:13.099678725 +08:00
+job_state: finished
+loadavg: 43.44 90.90 48.61 1/1307 20098
+start_time: '1550390972'
+end_time: '1550391273'
+version: "/lkp/lkp/.src-20190216-121343"
 
-FAILED (errors=6)
-not ok 1..1 selftests: tpm2: test_smoke.sh [FAIL]
-selftests: tpm2: test_space.sh
-========================================
-test_flush_context (tpm2_tests.SpaceTest) ... ERROR
-test_get_handles (tpm2_tests.SpaceTest) ... ERROR
-test_invalid_cc (tpm2_tests.SpaceTest) ... ERROR
-test_make_two_spaces (tpm2_tests.SpaceTest) ... ERROR
+--VuQYccsttdhdIfIP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=reproduce
 
-======================================================================
-ERROR: test_flush_context (tpm2_tests.SpaceTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_tests.py", line 183, in test_flush_context
-    space1 = tpm2.Client(tpm2.Client.FLAG_SPACE)
-  File "tpm2.py", line 362, in __init__
-    self.tpm = open('/dev/tpmrm0', 'r+b')
-IOError: [Errno 2] No such file or directory: '/dev/tpmrm0'
 
-======================================================================
-ERROR: test_get_handles (tpm2_tests.SpaceTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_tests.py", line 193, in test_get_handles
-    space1 = tpm2.Client(tpm2.Client.FLAG_SPACE)
-  File "tpm2.py", line 362, in __init__
-    self.tpm = open('/dev/tpmrm0', 'r+b')
-IOError: [Errno 2] No such file or directory: '/dev/tpmrm0'
+for cpu_dir in /sys/devices/system/cpu/cpu[0-9]*
+do
+	online_file="$cpu_dir"/online
+	[ -f "$online_file" ] && [ "$(cat "$online_file")" -eq 0 ] && continue
 
-======================================================================
-ERROR: test_invalid_cc (tpm2_tests.SpaceTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_tests.py", line 212, in test_invalid_cc
-    space1 = tpm2.Client(tpm2.Client.FLAG_SPACE)
-  File "tpm2.py", line 362, in __init__
-    self.tpm = open('/dev/tpmrm0', 'r+b')
-IOError: [Errno 2] No such file or directory: '/dev/tpmrm0'
+	file="$cpu_dir"/cpufreq/scaling_governor
+	[ -f "$file" ] && echo "performance" > "$file"
+done
 
-======================================================================
-ERROR: test_make_two_spaces (tpm2_tests.SpaceTest)
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "tpm2_tests.py", line 169, in test_make_two_spaces
-    space1 = tpm2.Client(tpm2.Client.FLAG_SPACE)
-  File "tpm2.py", line 362, in __init__
-    self.tpm = open('/dev/tpmrm0', 'r+b')
-IOError: [Errno 2] No such file or directory: '/dev/tpmrm0'
+ "python2" "./runtest.py" "futex1" "295" "process" "192"
 
-----------------------------------------------------------------------
-Ran 4 tests in 0.001s
-
-FAILED (errors=4)
-not ok 1..2 selftests: tpm2: test_space.sh [FAIL]
-make: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/tpm2'
-uevent test: not in Makefile
-2019-02-17 20:28:27 make TARGETS=uevent
-make[1]: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/uevent'
-gcc -Wl,-no-as-needed -Wall uevent_filtering.c -o uevent_filtering
-make[1]: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/uevent'
-
-2019-02-17 20:28:27 make run_tests -C uevent
-make: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/uevent'
-TAP version 13
-selftests: uevent: uevent_filtering
-========================================
-add@/devices/virtual/mem/fullACTION=addDEVPATH=/devices/virtual/mem/fullSUBSYSTEM=memSYNTH_UUID=0MAJOR=1MINOR=7DEVNAME=fullDEVMODE=0666SEQNUM=1697
-add@/devices/virtual/mem/fullACTION=addDEVPATH=/devices/virtual/mem/fullSUBSYSTEM=memSYNTH_UUID=0MAJOR=1MINOR=7DEVNAME=fullDEVMODE=0666SEQNUM=1710
-No buffer space available - Failed to receive uevent
-add@/devices/virtual/mem/fullACTION=addDEVPATH=/devices/virtual/mem/fullSUBSYSTEM=memSYNTH_UUID=0MAJOR=1MINOR=7DEVNAME=fullDEVMODE=0666SEQNUM=1746
-add@/devices/virtual/mem/fullACTION=addDEVPATH=/devices/virtual/mem/fullSUBSYSTEM=memSYNTH_UUID=0MAJOR=1MINOR=7DEVNAME=fullDEVMODE=0666SEQNUM=1756
-No buffer space available - Failed to receive uevent
-[==========] Running 1 tests from 1 test cases.
-[ RUN      ] global.uevent_filtering
-[       OK ] global.uevent_filtering
-[==========] 1 / 1 tests passed.
-[  PASSED  ]
-ok 1..1 selftests: uevent: uevent_filtering [PASS]
-make: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/uevent'
-
-2019-02-17 20:28:29 make run_tests -C user
-make: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/user'
-TAP version 13
-selftests: user: test_user_copy.sh
-========================================
-user_copy: ok
-ok 1..1 selftests: user: test_user_copy.sh [PASS]
-make: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/user'
-vDSO test: not in Makefile
-2019-02-17 20:28:29 make TARGETS=vDSO
-make[1]: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vDSO'
-gcc -std=gnu99    vdso_test.c parse_vdso.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vDSO/vdso_test
-gcc -std=gnu99 -nostdlib -fno-asynchronous-unwind-tables -fno-stack-protector \
-	vdso_standalone_test_x86.c parse_vdso.c \
-	-o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vDSO/vdso_standalone_test_x86
-make[1]: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vDSO'
-
-2019-02-17 20:28:29 make run_tests -C vDSO
-make: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vDSO'
-TAP version 13
-selftests: vDSO: vdso_test
-========================================
-The time is 1550406509.594805
-ok 1..1 selftests: vDSO: vdso_test [PASS]
-selftests: vDSO: vdso_standalone_test_x86
-========================================
-The time is           1550406509.600906
-ok 1..2 selftests: vDSO: vdso_standalone_test_x86 [PASS]
-make: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vDSO'
-
-2019-02-17 20:28:29 make run_tests -C vm
-make: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm'
-make ARCH=x86 -C ../../../.. headers_install
-make[1]: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991'
-  HOSTCC  scripts/basic/fixdep
-  WRAP    arch/x86/include/generated/uapi/asm/bpf_perf_event.h
-  WRAP    arch/x86/include/generated/uapi/asm/poll.h
-  SYSTBL  arch/x86/include/generated/asm/syscalls_32.h
-  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_32.h
-  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_64.h
-  SYSHDR  arch/x86/include/generated/uapi/asm/unistd_x32.h
-  HOSTCC  arch/x86/tools/relocs_32.o
-  HOSTCC  arch/x86/tools/relocs_64.o
-  HOSTCC  arch/x86/tools/relocs_common.o
-  HOSTLD  arch/x86/tools/relocs
-  UPD     include/generated/uapi/linux/version.h
-  HOSTCC  scripts/unifdef
-  INSTALL usr/include/asm-generic/ (37 files)
-  INSTALL usr/include/drm/ (26 files)
-  INSTALL usr/include/linux/ (503 files)
-  INSTALL usr/include/linux/android/ (2 files)
-  INSTALL usr/include/linux/byteorder/ (2 files)
-  INSTALL usr/include/linux/caif/ (2 files)
-  INSTALL usr/include/linux/can/ (6 files)
-  INSTALL usr/include/linux/cifs/ (1 file)
-  INSTALL usr/include/linux/dvb/ (8 files)
-  INSTALL usr/include/linux/genwqe/ (1 file)
-  INSTALL usr/include/linux/hdlc/ (1 file)
-  INSTALL usr/include/linux/hsi/ (2 files)
-  INSTALL usr/include/linux/iio/ (2 files)
-  INSTALL usr/include/linux/isdn/ (1 file)
-  INSTALL usr/include/linux/mmc/ (1 file)
-  INSTALL usr/include/linux/netfilter/ (88 files)
-  INSTALL usr/include/linux/netfilter/ipset/ (4 files)
-  INSTALL usr/include/linux/netfilter_arp/ (2 files)
-  INSTALL usr/include/linux/netfilter_bridge/ (17 files)
-  INSTALL usr/include/linux/netfilter_ipv4/ (9 files)
-  INSTALL usr/include/linux/netfilter_ipv6/ (13 files)
-  INSTALL usr/include/linux/nfsd/ (5 files)
-  INSTALL usr/include/linux/raid/ (2 files)
-  INSTALL usr/include/linux/sched/ (1 file)
-  INSTALL usr/include/linux/spi/ (1 file)
-  INSTALL usr/include/linux/sunrpc/ (1 file)
-  INSTALL usr/include/linux/tc_act/ (15 files)
-  INSTALL usr/include/linux/tc_ematch/ (5 files)
-  INSTALL usr/include/linux/usb/ (13 files)
-  INSTALL usr/include/linux/wimax/ (1 file)
-  INSTALL usr/include/misc/ (2 files)
-  INSTALL usr/include/mtd/ (5 files)
-  INSTALL usr/include/rdma/ (25 files)
-  INSTALL usr/include/rdma/hfi/ (2 files)
-  INSTALL usr/include/scsi/ (5 files)
-  INSTALL usr/include/scsi/fc/ (4 files)
-  INSTALL usr/include/sound/ (16 files)
-  INSTALL usr/include/video/ (3 files)
-  INSTALL usr/include/xen/ (4 files)
-  INSTALL usr/include/asm/ (62 files)
-make[1]: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991'
-gcc -Wall -I ../../../../usr/include     compaction_test.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/compaction_test
-gcc -Wall -I ../../../../usr/include     gup_benchmark.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/gup_benchmark
-gcc -Wall -I ../../../../usr/include     hugepage-mmap.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/hugepage-mmap
-gcc -Wall -I ../../../../usr/include     hugepage-shm.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/hugepage-shm
-gcc -Wall -I ../../../../usr/include     map_hugetlb.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/map_hugetlb
-gcc -Wall -I ../../../../usr/include     map_fixed_noreplace.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/map_fixed_noreplace
-gcc -Wall -I ../../../../usr/include     map_populate.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/map_populate
-gcc -Wall -I ../../../../usr/include     mlock-random-test.c -lrt -lcap -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/mlock-random-test
-gcc -Wall -I ../../../../usr/include     mlock2-tests.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/mlock2-tests
-gcc -Wall -I ../../../../usr/include     on-fault-limit.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/on-fault-limit
-gcc -Wall -I ../../../../usr/include     thuge-gen.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/thuge-gen
-gcc -Wall -I ../../../../usr/include     transhuge-stress.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/transhuge-stress
-gcc -Wall -I ../../../../usr/include     userfaultfd.c -lrt -lpthread -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/userfaultfd
-gcc -Wall -I ../../../../usr/include     va_128TBswitch.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/va_128TBswitch
-gcc -Wall -I ../../../../usr/include     virtual_address_range.c -lrt -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm/virtual_address_range
-TAP version 13
-selftests: vm: run_vmtests
-========================================
----------------------
-running hugepage-mmap
----------------------
-Returned address is 0x7f167f600000
-First hex is 0
-First hex is 3020100
-[PASS]
---------------------
-running hugepage-shm
---------------------
-shmid: 0x0
-shmaddr: 0x7fe58d200000
-Starting the writes:
-................................................................................................................................................................................................................................................................
-Starting the Check...Done.
-[PASS]
--------------------
-running map_hugetlb
--------------------
-Returned address is 0x7f345ba00000
-First hex is 0
-First hex is 3020100
-[PASS]
-NOTE: The above hugetlb tests provide minimal coverage.  Use
-      https://github.com/libhugetlbfs/libhugetlbfs.git for
-      hugetlb regression testing.
--------------------
-running userfaultfd
--------------------
-nr_pages: 32768, nr_pages_per_cpu: 16384
-bounces: 31, mode: rnd racing ver poll, userfaults: 3978 2107
-bounces: 30, mode: racing ver poll, userfaults: 2849 2899
-bounces: 29, mode: rnd ver poll, userfaults: 4510 4509
-bounces: 28, mode: ver poll, userfaults: 6287 6509
-bounces: 27, mode: rnd racing poll, userfaults: 4026 1861
-bounces: 26, mode: racing poll, userfaults: 2533 3049
-bounces: 25, mode: rnd poll, userfaults: 4496 4627
-bounces: 24, mode: poll, userfaults: 6576 6490
-bounces: 23, mode: rnd racing ver, userfaults: 4727 4202
-bounces: 22, mode: racing ver, userfaults: 5860 5621
-bounces: 21, mode: rnd ver, userfaults: 4284 4028
-bounces: 20, mode: ver, userfaults: 4920 4256
-bounces: 19, mode: rnd racing, userfaults: 5621 2349
-bounces: 18, mode: racing, userfaults: 1683 1170
-bounces: 17, mode: rnd, userfaults: 5171 5504
-bounces: 16, mode:, userfaults: 7026 6895
-bounces: 15, mode: rnd racing ver poll, userfaults: 3638 2303
-bounces: 14, mode: racing ver poll, userfaults: 565 1029
-bounces: 13, mode: rnd ver poll, userfaults: 3694 4300
-bounces: 12, mode: ver poll, userfaults: 6684 6430
-bounces: 11, mode: rnd racing poll, userfaults: 3292 2242
-bounces: 10, mode: racing poll, userfaults: 3979 3985
-bounces: 9, mode: rnd poll, userfaults: 4860 4842
-bounces: 8, mode: poll, userfaults: 7340 5522
-bounces: 7, mode: rnd racing ver, userfaults: 3853 4519
-bounces: 6, mode: racing ver, userfaults: 3501 2921
-bounces: 5, mode: rnd ver, userfaults: 7766 7163
-bounces: 4, mode: ver, userfaults: 6542 5050
-bounces: 3, mode: rnd racing, userfaults: 6864 2262
-bounces: 2, mode: racing, userfaults: 3593 4596
-bounces: 1, mode: rnd, userfaults: 8045 7708
-bounces: 0, mode:, userfaults: 3616 2779
-testing UFFDIO_ZEROPAGE: done.
-testing signal delivery: done.
-testing events (fork, remap, remove): userfaults: 32768
-[PASS]
----------------------------
-running userfaultfd_hugetlb
----------------------------
-nr_pages: 64, nr_pages_per_cpu: 32
-bounces: 31, mode: rnd racing ver poll, userfaults: 13 16
-bounces: 30, mode: racing ver poll, userfaults: 8 12
-bounces: 29, mode: rnd ver poll, userfaults: 17 13
-bounces: 28, mode: ver poll, userfaults: 7 9
-bounces: 27, mode: rnd racing poll, userfaults: 12 13
-bounces: 26, mode: racing poll, userfaults: 11 18
-bounces: 25, mode: rnd poll, userfaults: 16 17
-bounces: 24, mode: poll, userfaults: 11 9
-bounces: 23, mode: rnd racing ver, userfaults: 18 14
-bounces: 22, mode: racing ver, userfaults: 10 11
-bounces: 21, mode: rnd ver, userfaults: 17 17
-bounces: 20, mode: ver, userfaults: 17 21
-bounces: 19, mode: rnd racing, userfaults: 25 9
-bounces: 18, mode: racing, userfaults: 14 10
-bounces: 17, mode: rnd, userfaults: 29 6
-bounces: 16, mode:, userfaults: 21 10
-bounces: 15, mode: rnd racing ver poll, userfaults: 19 15
-bounces: 14, mode: racing ver poll, userfaults: 10 8
-bounces: 13, mode: rnd ver poll, userfaults: 16 13
-bounces: 12, mode: ver poll, userfaults: 9 8
-bounces: 11, mode: rnd racing poll, userfaults: 11 17
-bounces: 10, mode: racing poll, userfaults: 8 4
-bounces: 9, mode: rnd poll, userfaults: 15 7
-bounces: 8, mode: poll, userfaults: 16 13
-bounces: 7, mode: rnd racing ver, userfaults: 16 12
-bounces: 6, mode: racing ver, userfaults: 10 13
-bounces: 5, mode: rnd ver, userfaults: 22 15
-bounces: 4, mode: ver, userfaults: 16 19
-bounces: 3, mode: rnd racing, userfaults: 18 14
-bounces: 2, mode: racing, userfaults: 8 3
-bounces: 1, mode: rnd, userfaults: 19 12
-bounces: 0, mode:, userfaults: 18 17
-testing UFFDIO_ZEROPAGE: done.
-testing signal delivery: done.
-testing events (fork, remap, remove): userfaults: 64
-[PASS]
--------------------------
-running userfaultfd_shmem
--------------------------
-nr_pages: 32768, nr_pages_per_cpu: 16384
-bounces: 31, mode: rnd racing ver poll, userfaults: 952 4613
-bounces: 30, mode: racing ver poll, userfaults: 5965 933
-bounces: 29, mode: rnd ver poll, userfaults: 4657 4474
-bounces: 28, mode: ver poll, userfaults: 6737 6219
-bounces: 27, mode: rnd racing poll, userfaults: 1540 4608
-bounces: 26, mode: racing poll, userfaults: 2828 5560
-bounces: 25, mode: rnd poll, userfaults: 4725 5586
-bounces: 24, mode: poll, userfaults: 5526 4036
-bounces: 23, mode: rnd racing ver, userfaults: 4374 3525
-bounces: 22, mode: racing ver, userfaults: 3539 3076
-bounces: 21, mode: rnd ver, userfaults: 5589 5200
-bounces: 20, mode: ver, userfaults: 2999 2629
-bounces: 19, mode: rnd racing, userfaults: 3456 4114
-bounces: 18, mode: racing, userfaults: 5309 4279
-bounces: 17, mode: rnd, userfaults: 4660 4934
-bounces: 16, mode:, userfaults: 4554 4026
-bounces: 15, mode: rnd racing ver poll, userfaults: 2651 3165
-bounces: 14, mode: racing ver poll, userfaults: 1233 1422
-bounces: 13, mode: rnd ver poll, userfaults: 4662 4908
-bounces: 12, mode: ver poll, userfaults: 6739 6513
-bounces: 11, mode: rnd racing poll, userfaults: 4339 2529
-bounces: 10, mode: racing poll, userfaults: 5542 1817
-bounces: 9, mode: rnd poll, userfaults: 4980 5655
-bounces: 8, mode: poll, userfaults: 4049 4205
-bounces: 7, mode: rnd racing ver, userfaults: 4235 3353
-bounces: 6, mode: racing ver, userfaults: 4974 4570
-bounces: 5, mode: rnd ver, userfaults: 4647 4608
-bounces: 4, mode: ver, userfaults: 6322 6365
-bounces: 3, mode: rnd racing, userfaults: 6326 2316
-bounces: 2, mode: racing, userfaults: 4325 3840
-bounces: 1, mode: rnd, userfaults: 5348 5317
-bounces: 0, mode:, userfaults: 7319 7321
-testing UFFDIO_ZEROPAGE: done.
-testing signal delivery: done.
-testing events (fork, remap, remove): userfaults: 32768
-[PASS]
------------------------
-running compaction_test
------------------------
-[ignored_by_lkp]
-[PASS]
-----------------------
-running on-fault-limit
-----------------------
-[PASS]
---------------------
-running map_populate
---------------------
-[PASS]
---------------------
-running mlock2-tests
---------------------
-Failed to make faulted page unevictable
-Failed to make faulted page unevictable
-Failed to make present page unevictable
-[FAIL]
------------------------------
-running virtual_address_range
------------------------------
-[PASS]
------------------------------
-running virtual address 128TB switch test
------------------------------
-[ignored_by_lkp]
-[PASS]
-not ok 1..1 selftests: vm: run_vmtests [FAIL]
-make: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/vm'
-watchdog test: not in Makefile
-2019-02-17 20:28:56 make TARGETS=watchdog
-make[1]: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/watchdog'
-gcc     watchdog-test.c  -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/watchdog/watchdog-test
-make[1]: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/watchdog'
-ignored_by_lkp watchdog test
-ignored_by_lkp x86.mov_ss_trap test
-
-2019-02-17 20:28:56 make run_tests -C x86
-make: Entering directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86'
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/single_step_syscall_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 single_step_syscall.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/sysret_ss_attrs_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 sysret_ss_attrs.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/syscall_nt_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 syscall_nt.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/test_mremap_vdso_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 test_mremap_vdso.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/check_initial_reg_state_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -Wl,-ereal_start -static -DCAN_BUILD_32 -DCAN_BUILD_64 check_initial_reg_state.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/sigreturn_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 sigreturn.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/iopl_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 iopl.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/mpx-mini-test_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 mpx-mini-test.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/ioperm_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 ioperm.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/protection_keys_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 protection_keys.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/test_vdso_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 test_vdso.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/test_vsyscall_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 test_vsyscall.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/entry_from_vm86_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 entry_from_vm86.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/syscall_arg_fault_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 syscall_arg_fault.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/test_syscall_vdso_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 test_syscall_vdso.c thunks_32.S -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/unwind_vdso_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 unwind_vdso.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/test_FCMOV_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 test_FCMOV.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/test_FCOMI_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 test_FCOMI.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/test_FISTTP_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 test_FISTTP.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/vdso_restorer_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 vdso_restorer.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/ldt_gdt_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 ldt_gdt.c -lrt -ldl -lm
-gcc -m32 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/ptrace_syscall_32 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 ptrace_syscall.c raw_syscall_helper_32.S -lrt -ldl -lm
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/single_step_syscall_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 single_step_syscall.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/sysret_ss_attrs_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 sysret_ss_attrs.c thunks.S -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/syscall_nt_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 syscall_nt.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/test_mremap_vdso_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 test_mremap_vdso.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/check_initial_reg_state_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -Wl,-ereal_start -static -DCAN_BUILD_32 -DCAN_BUILD_64 check_initial_reg_state.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/sigreturn_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 sigreturn.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/iopl_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 iopl.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/mpx-mini-test_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 mpx-mini-test.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/ioperm_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 ioperm.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/protection_keys_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 protection_keys.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/test_vdso_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 test_vdso.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/test_vsyscall_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 test_vsyscall.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/fsgsbase_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 fsgsbase.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/sysret_rip_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 sysret_rip.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/ldt_gdt_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 ldt_gdt.c -lrt -ldl
-gcc -m64 -o /usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86/ptrace_syscall_64 -O2 -g -std=gnu99 -pthread -Wall -no-pie -DCAN_BUILD_32 -DCAN_BUILD_64 ptrace_syscall.c -lrt -ldl
-TAP version 13
-selftests: x86: single_step_syscall_32
-========================================
-[RUN]	Set TF and check nop
-[OK]	Survived with TF set and 14 traps
-[RUN]	Set TF and check int80
-[OK]	Survived with TF set and 14 traps
-[RUN]	Set TF and check a fast syscall
-[OK]	Survived with TF set and 43 traps
-[RUN]	Fast syscall with TF cleared
-[OK]	Nothing unexpected happened
-ok 1..1 selftests: x86: single_step_syscall_32 [PASS]
-selftests: x86: sysret_ss_attrs_32
-========================================
-[RUN]	Syscalls followed by SS validation
-[OK]	We survived
-ok 1..2 selftests: x86: sysret_ss_attrs_32 [PASS]
-selftests: x86: syscall_nt_32
-========================================
-[RUN]	Set NT and issue a syscall
-[OK]	The syscall worked and flags are still set
-[RUN]	Set NT|TF and issue a syscall
-[OK]	The syscall worked and flags are still set
-ok 1..3 selftests: x86: syscall_nt_32 [PASS]
-selftests: x86: test_mremap_vdso_32
-========================================
-	AT_SYSINFO_EHDR is 0xf7f0a000
-[NOTE]	Moving vDSO: [0xf7f0a000, 0xf7f0b000] -> [0xf7f32000, 0xf7f33000]
-[OK]
-ok 1..4 selftests: x86: test_mremap_vdso_32 [PASS]
-selftests: x86: check_initial_reg_state_32
-========================================
-[OK]	All GPRs except SP are 0
-[OK]	FLAGS is 0x202
-ok 1..5 selftests: x86: check_initial_reg_state_32 [PASS]
-selftests: x86: sigreturn_32
-========================================
-[OK]	set_thread_area refused 16-bit data
-[OK]	set_thread_area refused 16-bit data
-[RUN]	Valid sigreturn: 64-bit CS (33), 32-bit SS (2b, GDT)
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 32-bit CS (23), 32-bit SS (2b, GDT)
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 16-bit CS (37), 32-bit SS (2b, GDT)
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 64-bit CS (33), 16-bit SS (3f)
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 32-bit CS (23), 16-bit SS (3f)
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 16-bit CS (37), 16-bit SS (3f)
-[OK]	all registers okay
-[RUN]	64-bit CS (33), bogus SS (47)
-[OK]	Got #GP(0x0) (i.e. Segmentation fault)
-[RUN]	32-bit CS (23), bogus SS (47)
-[OK]	Got #GP(0x0) (i.e. Segmentation fault)
-[RUN]	16-bit CS (37), bogus SS (47)
-[OK]	Got #GP(0x0) (i.e. Segmentation fault)
-[RUN]	64-bit CS (33), bogus SS (23)
-[OK]	Got #GP(0x20) (i.e. GDT index 4, Segmentation fault)
-[RUN]	32-bit CS (23), bogus SS (23)
-[OK]	Got #GP(0x20) (i.e. GDT index 4, Segmentation fault)
-[RUN]	16-bit CS (37), bogus SS (23)
-[OK]	Got #GP(0x20) (i.e. GDT index 4, Segmentation fault)
-[RUN]	32-bit CS (4f), bogus SS (2b)
-[OK]	Got #NP(0x4c) (i.e. LDT index 9, Bus error)
-[RUN]	32-bit CS (23), bogus SS (57)
-[OK]	Got #GP(0x0) (i.e. Segmentation fault)
-ok 1..6 selftests: x86: sigreturn_32 [PASS]
-selftests: x86: iopl_32
-========================================
-	child: set IOPL to 3
-[RUN]	child: write to 0x80
-[OK]	Child succeeded
-[RUN]	parent: write to 0x80 (should fail)
-[OK]	write was denied
-	iopl(3)
-	Drop privileges
-[RUN]	iopl(3) unprivileged but with IOPL==3
-[RUN]	iopl(0) unprivileged
-[RUN]	iopl(3) unprivileged
-[OK]	Failed as expected
-ok 1..7 selftests: x86: iopl_32 [PASS]
-selftests: x86: mpx-mini-test_32
-========================================
-processor lacks MPX XSTATE(s), can not run MPX tests
-XSAVE is supported by HW & OS
-XSAVE processor supported state mask: 0x7
-XSAVE OS supported state mask: 0x7
-ok 1..8 selftests: x86: mpx-mini-test_32 [PASS]
-selftests: x86: ioperm_32
-========================================
-[OK]	outb to 0x80 failed
-[OK]	outb to 0xed failed
-[RUN]	enable 0x80
-[OK]	outb to 0x80 worked
-[OK]	outb to 0xed failed
-[RUN]	disable 0x80
-[OK]	outb to 0x80 failed
-[OK]	outb to 0xed failed
-[RUN]	child: check that we inherited permissions
-[OK]	outb to 0x80 worked
-[OK]	outb to 0xed failed
-[OK]	outb to 0x80 failed
-[OK]	outb to 0xed failed
-[RUN]	enable 0x80
-[OK]	outb to 0x80 worked
-[OK]	outb to 0xed failed
-[RUN]	disable 0x80
-[OK]	outb to 0x80 failed
-[OK]	outb to 0xed failed
-[OK]	Child succeeded
-	Drop privileges
-[RUN]	disable 0x80
-[OK]	it worked
-[RUN]	enable 0x80 again
-[OK]	it failed
-ok 1..9 selftests: x86: ioperm_32 [PASS]
-selftests: x86: protection_keys_32
-========================================
-has pku: 0
-running PKEY tests for unsupported CPU/OS
-ok 1..10 selftests: x86: protection_keys_32 [PASS]
-selftests: x86: test_vdso_32
-========================================
-Warning: failed to find getcpu in vDSO
-[RUN]	Testing clock_gettime for clock CLOCK_REALTIME (0)...
-	1550406543.760686908 1550406543.760691882 1550406543.760692427
-[RUN]	Testing clock_gettime for clock CLOCK_MONOTONIC (1)...
-	620.442148469 620.442148833 620.442149251
-[RUN]	Testing clock_gettime for clock CLOCK_PROCESS_CPUTIME_ID (2)...
-	0.000729669 0.000730516 0.000731225
-[RUN]	Testing clock_gettime for clock CLOCK_THREAD_CPUTIME_ID (3)...
-	0.000734202 0.000734861 0.000735552
-[RUN]	Testing clock_gettime for clock CLOCK_MONOTONIC_RAW (4)...
-	620.092138037 620.092138645 620.092139307
-[RUN]	Testing clock_gettime for clock CLOCK_REALTIME_COARSE (5)...
-	1550406543.760446639 1550406543.760446639 1550406543.760446639
-[RUN]	Testing clock_gettime for clock CLOCK_MONOTONIC_COARSE (6)...
-	620.441898638 620.441898638 620.441898638
-[RUN]	Testing clock_gettime for clock CLOCK_BOOTTIME (7)...
-	620.442169869 620.442170499 620.442171112
-[RUN]	Testing clock_gettime for clock CLOCK_REALTIME_ALARM (8)...
-	1550406543.760729780 1550406543.760730473 1550406543.760731210
-[RUN]	Testing clock_gettime for clock CLOCK_BOOTTIME_ALARM (9)...
-	620.442185511 620.442186204 620.442186909
-[RUN]	Testing clock_gettime for clock CLOCK_SGI_CYCLE (10)...
-[OK]	No such clock.
-[RUN]	Testing clock_gettime for clock CLOCK_TAI (11)...
-	1550406543.760740018 1550406543.760740375 1550406543.760740769
-[RUN]	Testing clock_gettime for clock invalid (-1)...
-[OK]	No such clock.
-[RUN]	Testing clock_gettime for clock invalid (-2147483648)...
-[OK]	No such clock.
-[RUN]	Testing clock_gettime for clock invalid (2147483647)...
-[OK]	No such clock.
-[RUN]	Testing gettimeofday...
-	1550406543.760748 1550406543.760748 1550406543.760749
-[OK]	timezones match: minuteswest=-480, dsttime=0
-[RUN]	Testing getcpu...
-[OK]	CPU 0: syscall: cpu 0, node 0
-[OK]	CPU 1: syscall: cpu 1, node 0
-ok 1..11 selftests: x86: test_vdso_32 [PASS]
-selftests: x86: test_vsyscall_32
-========================================
-[NOTE]	failed to find getcpu in vDSO
-[RUN]	test gettimeofday()
-	vDSO time offsets: 0.000005 0.000000
-[OK]	vDSO gettimeofday()'s timeval was okay
-[RUN]	test time()
-[OK]	vDSO time() is okay
-[RUN]	getcpu() on CPU 0
-[RUN]	getcpu() on CPU 1
-ok 1..12 selftests: x86: test_vsyscall_32 [PASS]
-selftests: x86: entry_from_vm86_32
-========================================
-[RUN]	#BR from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	SYSENTER from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	SYSCALL from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	STI with VIP set from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	POPF with VIP set and IF clear from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	POPF with VIP and IF set from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	POPF with VIP clear and IF set from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	INT3 from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	int80 from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	UMIP tests from vm86 mode
-[SKIP]	vm86 not supported
-[INFO]	Result from SMSW:[0x0000]
-[INFO]	Result from SIDT: limit[0x0000]base[0x00000000]
-[INFO]	Result from SGDT: limit[0x0000]base[0x00000000]
-[PASS]	All the results from SMSW are identical.
-[PASS]	All the results from SGDT are identical.
-[PASS]	All the results from SIDT are identical.
-[RUN]	STR instruction from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	SLDT instruction from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	Execute null pointer from vm86 mode
-[SKIP]	vm86 not supported
-ok 1..13 selftests: x86: entry_from_vm86_32 [PASS]
-selftests: x86: syscall_arg_fault_32
-========================================
-[RUN]	SYSENTER with invalid state
-[OK]	Seems okay
-[RUN]	SYSCALL with invalid state
-[SKIP]	Illegal instruction
-ok 1..14 selftests: x86: syscall_arg_fault_32 [PASS]
-[RUN]	#BR from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	SYSENTER from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	SYSCALL from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	STI with VIP set from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	POPF with VIP set and IF clear from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	POPF with VIP and IF set from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	POPF with VIP clear and IF set from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	INT3 from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	int80 from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	UMIP tests from vm86 mode
-[SKIP]	vm86 not supported
-[INFO]	Result from SMSW:[0x0000]
-[INFO]	Result from SIDT: limit[0x0000]base[0x00000000]
-[INFO]	Result from SGDT: limit[0x0000]base[0x00000000]
-[PASS]	All the results from SMSW are identical.
-[PASS]	All the results from SGDT are identical.
-[PASS]	All the results from SIDT are identical.
-[RUN]	STR instruction from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	SLDT instruction from vm86 mode
-[SKIP]	vm86 not supported
-[RUN]	Execute null pointer from vm86 mode
-[SKIP]	vm86 not supported
-selftests: x86: test_syscall_vdso_32
-========================================
-[RUN]	Executing 6-argument 32-bit syscall via VDSO
-[WARN]	Flags before=0000000000200ed7 id 0 00 o d i s z 0 a 0 p 1 c
-[WARN]	Flags  after=0000000000200606 id 0 00 d i 0 0 p 1 
-[WARN]	Flags change=00000000000008d1 0 00 o s z 0 a 0 0 c
-[OK]	Arguments are preserved across syscall
-[NOTE]	R11 has changed:0000000000200606 - assuming clobbered by SYSRET insn
-[OK]	R8..R15 did not leak kernel data
-[RUN]	Executing 6-argument 32-bit syscall via INT 80
-[OK]	Arguments are preserved across syscall
-[OK]	R8..R15 did not leak kernel data
-[RUN]	Executing 6-argument 32-bit syscall via VDSO
-[WARN]	Flags before=0000000000200ed7 id 0 00 o d i s z 0 a 0 p 1 c
-[WARN]	Flags  after=0000000000200606 id 0 00 d i 0 0 p 1 
-[WARN]	Flags change=00000000000008d1 0 00 o s z 0 a 0 0 c
-[OK]	Arguments are preserved across syscall
-[NOTE]	R11 has changed:0000000000200606 - assuming clobbered by SYSRET insn
-[OK]	R8..R15 did not leak kernel data
-[RUN]	Executing 6-argument 32-bit syscall via INT 80
-[OK]	Arguments are preserved across syscall
-[OK]	R8..R15 did not leak kernel data
-[RUN]	Running tests under ptrace
-ok 1..15 selftests: x86: test_syscall_vdso_32 [PASS]
-selftests: x86: unwind_vdso_32
-========================================
-	AT_SYSINFO is 0xf7fbe940
-[OK]	AT_SYSINFO maps to linux-gate.so.1, loaded at 0x0xf7fbe000
-[RUN]	Set TF and check a fast syscall
-	In vsyscall at 0xf7fbe940, returning to 0xf7daa877
-	SIGTRAP at 0xf7fbe940
-	  0xf7fbe940
-	  0xf7daa877
-[OK]	  NR = 20, args = 1, 2, 3, 4, 5, 6
-	SIGTRAP at 0xf7fbe941
-	  0xf7fbe941
-	  0xf7daa877
-[OK]	  NR = 20, args = 1, 2, 3, 4, 5, 6
-	SIGTRAP at 0xf7fbe942
-	  0xf7fbe942
-	  0xf7daa877
-[OK]	  NR = 20, args = 1, 2, 3, 4, 5, 6
-	SIGTRAP at 0xf7fbe943
-	  0xf7fbe943
-	  0xf7daa877
-[OK]	  NR = 20, args = 1, 2, 3, 4, 5, 6
-	SIGTRAP at 0xf7fbe945
-	  0xf7fbe945
-	  0xf7daa877
-[OK]	  NR = 20, args = 1, 2, 3, 4, 5, 6
-	SIGTRAP at 0xf7fbe94a
-	  0xf7fbe94a
-	  0xf7daa877
-[OK]	  NR = 9970, args = 1, 2, 3, 4, 5, 6
-	SIGTRAP at 0xf7fbe94b
-	  0xf7fbe94b
-	  0xf7daa877
-[OK]	  NR = 9970, args = 1, 2, 3, 4, 5, 6
-	SIGTRAP at 0xf7fbe94c
-	  0xf7fbe94c
-	  0xf7daa877
-[OK]	  NR = 9970, args = 1, 2, 3, 4, 5, 6
-	Vsyscall is done
-[OK]	All is well
-ok 1..16 selftests: x86: unwind_vdso_32 [PASS]
-selftests: x86: test_FCMOV_32
-========================================
-[RUN]	Testing fcmovCC instructions
-[OK]	fcmovCC
-ok 1..17 selftests: x86: test_FCMOV_32 [PASS]
-selftests: x86: test_FCOMI_32
-========================================
-[RUN]	Testing f[u]comi[p] instructions
-[OK]	f[u]comi[p]
-ok 1..18 selftests: x86: test_FCOMI_32 [PASS]
-selftests: x86: test_FISTTP_32
-========================================
-[RUN]	Testing fisttp instructions
-[OK]	fisttp
-ok 1..19 selftests: x86: test_FISTTP_32 [PASS]
-selftests: x86: vdso_restorer_32
-========================================
-[OK]	SA_SIGINFO handler returned successfully
-[OK]	!SA_SIGINFO handler returned successfully
-ok 1..20 selftests: x86: vdso_restorer_32 [PASS]
-selftests: x86: ldt_gdt_32
-========================================
-[NOTE]	set_thread_area is available; will use GDT index 13
-[OK]	LDT entry 0 has AR 0x0040FB00 and limit 0x0000000A
-[OK]	LDT entry 0 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 1 is invalid
-[OK]	LDT entry 2 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 1 is invalid
-[OK]	LDT entry 2 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07B00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00907B00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07300 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07100 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07500 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00507700 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507F00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507D00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507B00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507900 and limit 0x0000000A
-[RUN]	Test fork
-[OK]	LDT entry 2 has AR 0x00507900 and limit 0x0000000A
-[OK]	LDT entry 1 is invalid
-[OK]	LDT entry 0 is invalid
-[NOTE]	set_thread_area is available; will use GDT index 13
-[OK]	LDT entry 0 has AR 0x0040FB00 and limit 0x0000000A
-[OK]	LDT entry 0 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 1 is invalid
-[OK]	LDT entry 2 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 1 is invalid
-[OK]	LDT entry 2 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07B00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00907B00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07300 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07100 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07500 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00507700 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507F00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507D00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507B00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507900 and limit 0x0000000A
-[RUN]	Test fork
-[OK]	Child succeeded
-[RUN]	Test size
-[DONE]	Size test
-[OK]	modify_ldt failure 22
-[OK]	LDT entry 0 has AR 0x0000F300 and limit 0x00000000
-[OK]	LDT entry 0 has AR 0x00007300 and limit 0x00000000
-[OK]	LDT entry 0 has AR 0x0000F100 and limit 0x00000000
-[OK]	LDT entry 0 has AR 0x00007300 and limit 0x00000000
-[OK]	LDT entry 0 has AR 0x00007100 and limit 0x00000001
-[OK]	LDT entry 0 has AR 0x00007100 and limit 0x00000000
-[OK]	LDT entry 0 is invalid
-[OK]	LDT entry 0 has AR 0x0040F300 and limit 0x000FFFFF
-[OK]	GDT entry 13 has AR 0x0040F300 and limit 0x000FFFFF
-[OK]	LDT entry 0 has AR 0x00C0F300 and limit 0xFFFFFFFF
-[OK]	GDT entry 13 has AR 0x00C0F300 and limit 0xFFFFFFFF
-[OK]	LDT entry 0 has AR 0x00C0F100 and limit 0xFFFFFFFF
-[OK]	GDT entry 13 has AR 0x00C0F100 and limit 0xFFFFFFFF
-[OK]	LDT entry 0 has AR 0x00C0F700 and limit 0xFFFFFFFF
-[OK]	GDT entry 13 has AR 0x00C0F700 and limit 0xFFFFFFFF
-[OK]	LDT entry 0 has AR 0x00C0F500 and limit 0xFFFFFFFF
-[OK]	GDT entry 13 has AR 0x00C0F500 and limit 0xFFFFFFFF
-[OK]	LDT entry 0 is invalid
-[RUN]	Cross-CPU LDT invalidation
-[OK]	All 5 iterations succeeded
-[RUN]	Test exec
-[OK]	LDT entry 0 has AR 0x0040FB00 and limit 0x0000002A
-[OK]	Child succeeded
-[OK]	Invalidate DS with set_thread_area: new DS = 0x0
-[OK]	Invalidate ES with set_thread_area: new ES = 0x0
-[OK]	Invalidate FS with set_thread_area: new FS = 0x0
-[OK]	Invalidate GS with set_thread_area: new GS = 0x0
-ok 1..21 selftests: x86: ldt_gdt_32 [PASS]
-selftests: x86: ptrace_syscall_32
-========================================
-[RUN]	Check int80 return regs
-[OK]	getpid() preserves regs
-[OK]	kill(getpid(), SIGUSR1) preserves regs
-[RUN]	Check AT_SYSINFO return regs
-[OK]	getpid() preserves regs
-[OK]	kill(getpid(), SIGUSR1) preserves regs
-[RUN]	ptrace-induced syscall restart
-[RUN]	SYSEMU
-[OK]	Initial nr and args are correct
-[RUN]	Restart the syscall (ip = 0xf7fb7949)
-[OK]	Restarted nr and args are correct
-[RUN]	Change nr and args and restart the syscall (ip = 0xf7fb7949)
-[OK]	Replacement nr and args are correct
-[OK]	Child exited cleanly
-[RUN]	kernel syscall restart under ptrace
-[RUN]	SYSCALL
-[OK]	Initial nr and args are correct
-[RUN]	SYSCALL
-[OK]	Args after SIGUSR1 are correct (ax = -514)
-[OK]	Child got SIGUSR1
-[RUN]	Step again
-[OK]	pause(2) restarted correctly
-ok 1..22 selftests: x86: ptrace_syscall_32 [PASS]
-selftests: x86: single_step_syscall_64
-========================================
-[RUN]	Set TF and check nop
-[OK]	Survived with TF set and 9 traps
-[RUN]	Set TF and check syscall-less opportunistic sysret
-[OK]	Survived with TF set and 12 traps
-[RUN]	Set TF and check int80
-[OK]	Survived with TF set and 9 traps
-[RUN]	Set TF and check a fast syscall
-[OK]	Survived with TF set and 22 traps
-[RUN]	Fast syscall with TF cleared
-[OK]	Nothing unexpected happened
-ok 1..23 selftests: x86: single_step_syscall_64 [PASS]
-selftests: x86: sysret_ss_attrs_64
-========================================
-[RUN]	Syscalls followed by SS validation
-[OK]	We survived
-ok 1..24 selftests: x86: sysret_ss_attrs_64 [PASS]
-selftests: x86: syscall_nt_64
-========================================
-[RUN]	Set NT and issue a syscall
-[OK]	The syscall worked and flags are still set
-[RUN]	Set NT|TF and issue a syscall
-[OK]	The syscall worked and flags are still set
-ok 1..25 selftests: x86: syscall_nt_64 [PASS]
-selftests: x86: test_mremap_vdso_64
-========================================
-	AT_SYSINFO_EHDR is 0x7fff79f20000
-[NOTE]	Moving vDSO: [0x7fff79f20000, 0x7fff79f21000] -> [0x7fc06a892000, 0x7fc06a893000]
-[OK]
-ok 1..26 selftests: x86: test_mremap_vdso_64 [PASS]
-selftests: x86: check_initial_reg_state_64
-========================================
-[OK]	All GPRs except SP are 0
-[OK]	FLAGS is 0x202
-ok 1..27 selftests: x86: check_initial_reg_state_64 [PASS]
-selftests: x86: sigreturn_64
-========================================
-[OK]	set_thread_area refused 16-bit data
-[OK]	set_thread_area refused 16-bit data
-[RUN]	Valid sigreturn: 64-bit CS (33), 32-bit SS (2b, GDT)
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 32-bit CS (23), 32-bit SS (2b, GDT)
-[NOTE]	SP: 8badf00d5aadc0de -> 5aadc0de
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 16-bit CS (37), 32-bit SS (2b, GDT)
-[NOTE]	SP: 8badf00d5aadc0de -> 5aadc0de
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 64-bit CS (33), 16-bit SS (3f)
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 32-bit CS (23), 16-bit SS (3f)
-[NOTE]	SP: 8badf00d5aadc0de -> 5aadc0de
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 16-bit CS (37), 16-bit SS (3f)
-[NOTE]	SP: 8badf00d5aadc0de -> 5aadc0de
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 32-bit CS (23), 32-bit SS (2b, GDT)
-	Corrupting SS on return to 64-bit mode
-[NOTE]	SP: 8badf00d5aadc0de -> 5aadc0de
-[OK]	all registers okay
-[RUN]	Valid sigreturn: 32-bit CS (23), 16-bit SS (3f)
-	Corrupting SS on return to 64-bit mode
-[NOTE]	SP: 8badf00d5aadc0de -> 5aadc0de
-[OK]	all registers okay
-[RUN]	64-bit CS (33), bogus SS (47)
-[OK]	Got #GP(0x0) (i.e. Segmentation fault)
-[RUN]	32-bit CS (23), bogus SS (47)
-[OK]	Got #GP(0x0) (i.e. Segmentation fault)
-[RUN]	16-bit CS (37), bogus SS (47)
-[OK]	Got #GP(0x0) (i.e. Segmentation fault)
-[RUN]	64-bit CS (33), bogus SS (33)
-[OK]	Got #GP(0x30) (i.e. GDT index 6, Segmentation fault)
-[RUN]	32-bit CS (23), bogus SS (33)
-[OK]	Got #GP(0x30) (i.e. GDT index 6, Segmentation fault)
-[RUN]	16-bit CS (37), bogus SS (33)
-[OK]	Got #GP(0x30) (i.e. GDT index 6, Segmentation fault)
-[RUN]	32-bit CS (4f), bogus SS (2b)
-[OK]	Got #NP(0x4c) (i.e. LDT index 9, Bus error)
-[RUN]	32-bit CS (23), bogus SS (57)
-[OK]	Got #GP(0x0) (i.e. Segmentation fault)
-[RUN]	Clear UC_STRICT_RESTORE_SS and corrupt SS
-[OK]	It worked
-ok 1..28 selftests: x86: sigreturn_64 [PASS]
-selftests: x86: iopl_64
-========================================
-	child: set IOPL to 3
-[RUN]	child: write to 0x80
-[OK]	Child succeeded
-[RUN]	parent: write to 0x80 (should fail)
-[OK]	write was denied
-	iopl(3)
-	Drop privileges
-[RUN]	iopl(3) unprivileged but with IOPL==3
-[RUN]	iopl(0) unprivileged
-[RUN]	iopl(3) unprivileged
-[OK]	Failed as expected
-ok 1..29 selftests: x86: iopl_64 [PASS]
-selftests: x86: mpx-mini-test_64
-========================================
-processor lacks MPX XSTATE(s), can not run MPX tests
-XSAVE is supported by HW & OS
-XSAVE processor supported state mask: 0x7
-XSAVE OS supported state mask: 0x7
-ok 1..30 selftests: x86: mpx-mini-test_64 [PASS]
-selftests: x86: ioperm_64
-========================================
-[OK]	outb to 0x80 failed
-[OK]	outb to 0xed failed
-[RUN]	enable 0x80
-[OK]	outb to 0x80 worked
-[OK]	outb to 0xed failed
-[RUN]	disable 0x80
-[OK]	outb to 0x80 failed
-[OK]	outb to 0xed failed
-[RUN]	child: check that we inherited permissions
-[OK]	outb to 0x80 worked
-[OK]	outb to 0xed failed
-[OK]	outb to 0x80 failed
-[OK]	outb to 0xed failed
-[RUN]	enable 0x80
-[OK]	outb to 0x80 worked
-[OK]	outb to 0xed failed
-[RUN]	disable 0x80
-[OK]	outb to 0x80 failed
-[OK]	outb to 0xed failed
-[OK]	Child succeeded
-	Drop privileges
-[RUN]	disable 0x80
-[OK]	it worked
-[RUN]	enable 0x80 again
-[OK]	it failed
-ok 1..31 selftests: x86: ioperm_64 [PASS]
-selftests: x86: protection_keys_64
-========================================
-has pku: 0
-running PKEY tests for unsupported CPU/OS
-ok 1..32 selftests: x86: protection_keys_64 [PASS]
-selftests: x86: test_vdso_64
-========================================
-[RUN]	Testing clock_gettime for clock CLOCK_REALTIME (0)...
-	1550406544.155541322 1550406544.155546385 1550406544.155546918
-[RUN]	Testing clock_gettime for clock CLOCK_MONOTONIC (1)...
-	620.837001654 620.837002024 620.837002431
-[RUN]	Testing clock_gettime for clock CLOCK_PROCESS_CPUTIME_ID (2)...
-	0.000599003 0.000600001 0.000600782
-[RUN]	Testing clock_gettime for clock CLOCK_THREAD_CPUTIME_ID (3)...
-	0.000602893 0.000603666 0.000604448
-[RUN]	Testing clock_gettime for clock CLOCK_MONOTONIC_RAW (4)...
-	620.486989405 620.486990045 620.486990718
-[RUN]	Testing clock_gettime for clock CLOCK_REALTIME_COARSE (5)...
-	1550406544.154446639 1550406544.154446639 1550406544.154446639
-[RUN]	Testing clock_gettime for clock CLOCK_MONOTONIC_COARSE (6)...
-	620.835898638 620.835898638 620.835898638
-[RUN]	Testing clock_gettime for clock CLOCK_BOOTTIME (7)...
-	620.837019749 620.837020415 620.837021128
-[RUN]	Testing clock_gettime for clock CLOCK_REALTIME_ALARM (8)...
-	1550406544.155583052 1550406544.156406993 1550406544.156407758
-[RUN]	Testing clock_gettime for clock CLOCK_BOOTTIME_ALARM (9)...
-	620.837861931 620.837862678 620.837863421
-[RUN]	Testing clock_gettime for clock CLOCK_SGI_CYCLE (10)...
-[OK]	No such clock.
-[RUN]	Testing clock_gettime for clock CLOCK_TAI (11)...
-	1550406544.156416536 1550406544.156416961 1550406544.156417379
-[RUN]	Testing clock_gettime for clock invalid (-1)...
-[OK]	No such clock.
-[RUN]	Testing clock_gettime for clock invalid (-2147483648)...
-[OK]	No such clock.
-[RUN]	Testing clock_gettime for clock invalid (2147483647)...
-[OK]	No such clock.
-[RUN]	Testing gettimeofday...
-	1550406544.156424 1550406544.156424 1550406544.156424
-[OK]	timezones match: minuteswest=-480, dsttime=0
-[RUN]	Testing getcpu...
-[OK]	CPU 0: syscall: cpu 0, node 0 vdso: cpu 0, node 0 vsyscall: cpu 0, node 0
-[OK]	CPU 1: syscall: cpu 1, node 0 vdso: cpu 1, node 0 vsyscall: cpu 1, node 0
-ok 1..33 selftests: x86: test_vdso_64 [PASS]
-selftests: x86: test_vsyscall_64
-========================================
-	vsyscall map: ffffffffff600000-ffffffffff601000 r-xp 00000000 00:00 0                  [vsyscall]
-	vsyscall permissions are r-x
-[RUN]	test gettimeofday()
-	vDSO time offsets: 0.000004 0.000002
-[OK]	vDSO gettimeofday()'s timeval was okay
-	vsyscall time offsets: 0.000005 0.000001
-[OK]	vsyscall gettimeofday()'s timeval was okay
-[RUN]	test time()
-[OK]	vDSO time() is okay
-[OK]	vsyscall time() is okay
-[RUN]	getcpu() on CPU 0
-[OK]	vDSO reported correct CPU
-[OK]	vDSO reported correct node
-[OK]	vsyscall reported correct CPU
-[OK]	vsyscall reported correct node
-[RUN]	getcpu() on CPU 1
-[OK]	vDSO reported correct CPU
-[OK]	vDSO reported correct node
-[OK]	vsyscall reported correct CPU
-[OK]	vsyscall reported correct node
-[RUN]	Checking read access to the vsyscall page
-[OK]	got expected result
-[RUN]	checking that vsyscalls are emulated
-[OK]	vsyscalls are emulated (1 instructions in vsyscall page)
-ok 1..34 selftests: x86: test_vsyscall_64 [PASS]
-selftests: x86: fsgsbase_64
-========================================
-[RUN]	ARCH_SET_GS to 0x0
-[OK]	GSBASE was set as expected (selector 0x0)
-[OK]	ARCH_GET_GS worked as expected (selector 0x0)
-[RUN]	ARCH_SET_GS to 0x1
-[OK]	GSBASE was set as expected (selector 0x0)
-[OK]	ARCH_GET_GS worked as expected (selector 0x0)
-[RUN]	ARCH_SET_GS to 0x200000000
-[OK]	GSBASE was set as expected (selector 0x0)
-[OK]	ARCH_GET_GS worked as expected (selector 0x0)
-[RUN]	ARCH_SET_GS to 0x0
-[OK]	GSBASE was set as expected (selector 0x0)
-[OK]	ARCH_GET_GS worked as expected (selector 0x0)
-[RUN]	ARCH_SET_GS to 0x200000000
-[OK]	GSBASE was set as expected (selector 0x0)
-[OK]	ARCH_GET_GS worked as expected (selector 0x0)
-[RUN]	ARCH_SET_GS to 0x1
-[OK]	GSBASE was set as expected (selector 0x0)
-[OK]	ARCH_GET_GS worked as expected (selector 0x0)
-[RUN]	ARCH_SET_GS to 0x0 then mov 0 to %gs
-[OK]	GSBASE is 0x0
-[RUN]	ARCH_SET_GS to 0x1 then mov 0 to %gs
-[OK]	GSBASE is 0x0
-[RUN]	ARCH_SET_GS to 0x200000000 then mov 0 to %gs
-[OK]	GSBASE is 0x0
-[RUN]	ARCH_SET_GS to 0x0 then mov 0 to %gs and schedule 
-[OK]	GSBASE is 0x0
-[RUN]	ARCH_SET_GS to 0x1 then mov 0 to %gs and schedule 
-[OK]	GSBASE is 0x0
-[RUN]	ARCH_SET_GS to 0x200000000 then mov 0 to %gs and schedule 
-[OK]	GSBASE is 0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x0
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x0
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x0
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x0
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x0
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0xa1fa5f343cb85fa4
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x1
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x1
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x1
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x1
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x1
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x200000000
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x200000000
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x200000000
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x200000000
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x0), then schedule to 0x200000000
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x0
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x0
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x0
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x0
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x0
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0xa1fa5f343cb85fa4
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x1
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x1
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x1
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x1
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x1
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x200000000
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x200000000
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x200000000
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x200000000
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x0) and clear gs, then schedule to 0x200000000
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x0
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x1
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x0
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x0
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x0
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x0
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0xa1fa5f343cb85fa4
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x1
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x1
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x1
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x1
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x1
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x1
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x1
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x200000000
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x1
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x200000000
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x200000000
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x200000000
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x1), then schedule to 0x200000000
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x0
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x200000000
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x0
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x0
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x0
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x0
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x0) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0xa1fa5f343cb85fa4
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x200000000
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0xa1fa5f343cb85fa4
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x0) and clear gs -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x1
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x200000000
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x1
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x1
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x1
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x1
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x1) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x200000000
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x0/0x200000000
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x200000000
-	Before schedule, set selector to 0x1
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x1/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x200000000
-	Before schedule, set selector to 0x2
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x2/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x200000000
-	Before schedule, set selector to 0x3
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x3/0x0
-[RUN]	ARCH_SET_GS(0x200000000), then schedule to 0x200000000
-	Before schedule, set selector to 0x2b
-	other thread: ARCH_SET_GS(0x200000000) -- sel is 0x0
-[OK]	GS/BASE remained 0x2b/0x0
-[RUN]	ARCH_SET_GS(0), clear gs, then manipulate GSBASE in a different thread
-	other thread: using LDT slot 0
-[OK]	GSBASE remained 0
-ok 1..35 selftests: x86: fsgsbase_64 [PASS]
-selftests: x86: sysret_rip_64
-========================================
-[RUN]	sigreturn to 0x800000000000
-[OK]	Got SIGSEGV at RIP=0x800000000000
-[RUN]	sigreturn to 0x1000000000000
-[OK]	Got SIGSEGV at RIP=0x1000000000000
-[RUN]	sigreturn to 0x2000000000000
-[OK]	Got SIGSEGV at RIP=0x2000000000000
-[RUN]	sigreturn to 0x4000000000000
-[OK]	Got SIGSEGV at RIP=0x4000000000000
-[RUN]	sigreturn to 0x8000000000000
-[OK]	Got SIGSEGV at RIP=0x8000000000000
-[RUN]	sigreturn to 0x10000000000000
-[OK]	Got SIGSEGV at RIP=0x10000000000000
-[RUN]	sigreturn to 0x20000000000000
-[OK]	Got SIGSEGV at RIP=0x20000000000000
-[RUN]	sigreturn to 0x40000000000000
-[OK]	Got SIGSEGV at RIP=0x40000000000000
-[RUN]	sigreturn to 0x80000000000000
-[OK]	Got SIGSEGV at RIP=0x80000000000000
-[RUN]	sigreturn to 0x100000000000000
-[OK]	Got SIGSEGV at RIP=0x100000000000000
-[RUN]	sigreturn to 0x200000000000000
-[OK]	Got SIGSEGV at RIP=0x200000000000000
-[RUN]	sigreturn to 0x400000000000000
-[OK]	Got SIGSEGV at RIP=0x400000000000000
-[RUN]	sigreturn to 0x800000000000000
-[OK]	Got SIGSEGV at RIP=0x800000000000000
-[RUN]	sigreturn to 0x1000000000000000
-[OK]	Got SIGSEGV at RIP=0x1000000000000000
-[RUN]	sigreturn to 0x2000000000000000
-[OK]	Got SIGSEGV at RIP=0x2000000000000000
-[RUN]	sigreturn to 0x4000000000000000
-[OK]	Got SIGSEGV at RIP=0x4000000000000000
-[RUN]	sigreturn to 0x8000000000000000
-[OK]	Got SIGSEGV at RIP=0x8000000000000000
-[RUN]	Trying a SYSCALL that falls through to 0x7fffffffe000
-[OK]	We survived
-[RUN]	Trying a SYSCALL that falls through to 0x7ffffffff000
-[OK]	We survived
-[RUN]	Trying a SYSCALL that falls through to 0x800000000000
-[OK]	mremap to 0x7ffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0xfffffffff000
-[OK]	mremap to 0xffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x1000000000000
-[OK]	mremap to 0xfffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x1fffffffff000
-[OK]	mremap to 0x1ffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x2000000000000
-[OK]	mremap to 0x1fffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x3fffffffff000
-[OK]	mremap to 0x3ffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x4000000000000
-[OK]	mremap to 0x3fffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x7fffffffff000
-[OK]	mremap to 0x7ffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x8000000000000
-[OK]	mremap to 0x7fffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0xffffffffff000
-[OK]	mremap to 0xfffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x10000000000000
-[OK]	mremap to 0xffffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x1ffffffffff000
-[OK]	mremap to 0x1fffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x20000000000000
-[OK]	mremap to 0x1ffffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x3ffffffffff000
-[OK]	mremap to 0x3fffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x40000000000000
-[OK]	mremap to 0x3ffffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x7ffffffffff000
-[OK]	mremap to 0x7fffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x80000000000000
-[OK]	mremap to 0x7ffffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0xfffffffffff000
-[OK]	mremap to 0xffffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x100000000000000
-[OK]	mremap to 0xfffffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x1fffffffffff000
-[OK]	mremap to 0x1ffffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x200000000000000
-[OK]	mremap to 0x1fffffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x3fffffffffff000
-[OK]	mremap to 0x3ffffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x400000000000000
-[OK]	mremap to 0x3fffffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x7fffffffffff000
-[OK]	mremap to 0x7ffffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x800000000000000
-[OK]	mremap to 0x7fffffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0xffffffffffff000
-[OK]	mremap to 0xfffffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x1000000000000000
-[OK]	mremap to 0xffffffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x1ffffffffffff000
-[OK]	mremap to 0x1fffffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x2000000000000000
-[OK]	mremap to 0x1ffffffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x3ffffffffffff000
-[OK]	mremap to 0x3fffffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x4000000000000000
-[OK]	mremap to 0x3ffffffffffff000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x7ffffffffffff000
-[OK]	mremap to 0x7fffffffffffe000 failed
-[RUN]	Trying a SYSCALL that falls through to 0x8000000000000000
-[OK]	mremap to 0x7ffffffffffff000 failed
-ok 1..36 selftests: x86: sysret_rip_64 [PASS]
-selftests: x86: ldt_gdt_64
-========================================
-[NOTE]	set_thread_area is available; will use GDT index 12
-[OK]	LDT entry 0 has AR 0x0040FB00 and limit 0x0000000A
-[OK]	LDT entry 0 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 1 is invalid
-[OK]	LDT entry 2 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 1 is invalid
-[OK]	LDT entry 2 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07B00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00907B00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07300 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07100 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07500 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00507700 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507F00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507D00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507B00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507900 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507900 and limit 0x0000000A
-[RUN]	Test fork
-[OK]	LDT entry 2 has AR 0x00507900 and limit 0x0000000A
-[OK]	LDT entry 1 is invalid
-[OK]	LDT entry 0 is invalid
-[NOTE]	set_thread_area is available; will use GDT index 12
-[OK]	LDT entry 0 has AR 0x0040FB00 and limit 0x0000000A
-[OK]	LDT entry 0 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 1 is invalid
-[OK]	LDT entry 2 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 1 is invalid
-[OK]	LDT entry 2 has AR 0x00C0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D0FB00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07B00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00907B00 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07300 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07100 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00D07500 and limit 0x0000AFFF
-[OK]	LDT entry 2 has AR 0x00507700 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507F00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507D00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507B00 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507900 and limit 0x0000000A
-[OK]	LDT entry 2 has AR 0x00507900 and limit 0x0000000A
-[RUN]	Test fork
-[OK]	Child succeeded
-[RUN]	Test size
-[DONE]	Size test
-[OK]	modify_ldt failure 22
-[OK]	LDT entry 0 has AR 0x0000F300 and limit 0x00000000
-[OK]	LDT entry 0 has AR 0x00007300 and limit 0x00000000
-[OK]	LDT entry 0 has AR 0x0000F100 and limit 0x00000000
-[OK]	LDT entry 0 has AR 0x00007300 and limit 0x00000000
-[OK]	LDT entry 0 has AR 0x00007100 and limit 0x00000001
-[OK]	LDT entry 0 has AR 0x00007100 and limit 0x00000000
-[OK]	LDT entry 0 is invalid
-[OK]	LDT entry 0 has AR 0x0040F300 and limit 0x000FFFFF
-[OK]	LDT entry 0 has AR 0x00C0F300 and limit 0xFFFFFFFF
-[OK]	LDT entry 0 has AR 0x00C0F100 and limit 0xFFFFFFFF
-[OK]	LDT entry 0 has AR 0x00C0F700 and limit 0xFFFFFFFF
-[OK]	LDT entry 0 has AR 0x00C0F500 and limit 0xFFFFFFFF
-[OK]	LDT entry 0 is invalid
-[RUN]	Cross-CPU LDT invalidation
-[OK]	All 5 iterations succeeded
-[RUN]	Test exec
-[OK]	LDT entry 0 has AR 0x0040FB00 and limit 0x0000002A
-[OK]	Child succeeded
-[OK]	Invalidate DS with set_thread_area: new DS = 0x0
-[OK]	Invalidate ES with set_thread_area: new ES = 0x0
-[OK]	Invalidate FS with set_thread_area: new FS = 0x0
-[OK]	New FSBASE was zero
-[OK]	Invalidate GS with set_thread_area: new GS = 0x0
-[OK]	New GSBASE was zero
-ok 1..37 selftests: x86: ldt_gdt_64 [PASS]
-selftests: x86: ptrace_syscall_64
-========================================
-[RUN]	Check int80 return regs
-[OK]	getpid() preserves regs
-[OK]	kill(getpid(), SIGUSR1) preserves regs
-[RUN]	ptrace-induced syscall restart
-[RUN]	SYSEMU
-[OK]	Initial nr and args are correct
-[RUN]	Restart the syscall (ip = 0x7fd96d28b309)
-[OK]	Restarted nr and args are correct
-[RUN]	Change nr and args and restart the syscall (ip = 0x7fd96d28b309)
-[OK]	Replacement nr and args are correct
-[OK]	Child exited cleanly
-[RUN]	kernel syscall restart under ptrace
-[RUN]	SYSCALL
-[OK]	Initial nr and args are correct
-[RUN]	SYSCALL
-[OK]	Args after SIGUSR1 are correct (ax = -514)
-[OK]	Child got SIGUSR1
-[RUN]	Step again
-[OK]	pause(2) restarted correctly
-ok 1..38 selftests: x86: ptrace_syscall_64 [PASS]
-make: Leaving directory '/usr/src/perf_selftests-x86_64-rhel-7.2-60b119cae86ecb300fa50fd107122e3568156991/tools/testing/selftests/x86'
-ignored_by_lkp zram test
-
---SWTRyWv/ijrBap1m--
+--VuQYccsttdhdIfIP--
