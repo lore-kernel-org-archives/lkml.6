@@ -2,134 +2,84 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A78C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 06:17:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 525BFC10F02
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 06:26:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 680D6218AD
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 06:17:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22412218C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 06:26:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VG2EqToA"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="O+YorYW/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727655AbfBRGRF (ORCPT
+        id S1727763AbfBRG0q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 01:17:05 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:38846 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726863AbfBRGRE (ORCPT
+        Mon, 18 Feb 2019 01:26:46 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:58622 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725881AbfBRG0q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 01:17:04 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1I6E5BI046806;
-        Mon, 18 Feb 2019 06:16:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=ZeA6I+/9EPnVW7DS4DxIPE7KyEb1gaKlFyPwY86yAz4=;
- b=VG2EqToAKNh/J9SMC33R0rQPqQm0bc+r1HfBrYHYulFbGlStNsjsOeJ7yHaX2EzRjIMH
- Viqx9qyB/zUuYCoNbGiJtgZ2hLxblt2gcTjxg95O7vrywKuWFhpgadU8OKf5Su4NfEx2
- xB3pLFAp4zZYmWZ6wsjCHIZLrx+clRK7jO0cmBdW605zkVilj1UurGgNiBjJOwenXsui
- yzTkDphwq5+gpbYRPpzZnn9VC+41nvx+xdOd//JktBizbFac7Sdy9vWMzquMrnIBT/7Y
- ehnkY5vDvCr4plDpIOUE1UgV2P0OQYmw6lb8w20BAzMfgbeVcR56cVfrM2XZAsamkjfu ew== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2qp9xtmdn6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 18 Feb 2019 06:16:47 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1I6GldO022885
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 18 Feb 2019 06:16:47 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1I6Gjxr010197;
-        Mon, 18 Feb 2019 06:16:45 GMT
-Received: from kadam (/197.157.0.22)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sun, 17 Feb 2019 22:16:44 -0800
-Date:   Mon, 18 Feb 2019 09:16:36 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Miao Xie <miaoxie@huawei.com>, Chao Yu <chao@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        weidu.du@huawei.com, Al Viro <viro@ZenIV.linux.org.uk>,
-        linux-erofs@lists.ozlabs.org, Fang Wei <fangwei1@huawei.com>
-Subject: Re: [PATCH v2] staging: erofs: keep corrupted fs from crashing
- kernel in erofs_namei()
-Message-ID: <20190218061635.GJ2304@kadam>
-References: <20190201121631.15179-1-gaoxiang25@huawei.com>
- <a9381c0d-9857-4d03-710d-80006d426bbc@huawei.com>
- <20190215075757.GG2326@kadam>
- <fb99bac2-2587-04fa-6ac2-f2e5f83af7c9@huawei.com>
- <20190215093503.GH2326@kadam>
- <d5567c5c-7ceb-a9cc-0fb8-b6b04a4d42ca@huawei.com>
+        Mon, 18 Feb 2019 01:26:46 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x1I6QXrR018406;
+        Mon, 18 Feb 2019 00:26:33 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1550471193;
+        bh=M6kpEB2XPLYbFaY2QVO/H7oFKYVqahsWv30SJy/eY0s=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=O+YorYW/+C+NRuK53MvViY3Q11iyDl9WYmBE/8jF6QqsWmyuM3MBg5G+FXnfc0leJ
+         VtJNCRSlr9UVjBqzGGiWHaKU3IEthUQWwzQq7h6uzm6ea3ya+jP/FpXMvJAmGlVea1
+         lKTjpitSEzxHwFAvDRdijDn7FtGFzLeZdRMYzQVE=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x1I6QXew017837
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 18 Feb 2019 00:26:33 -0600
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 18
+ Feb 2019 00:26:33 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 18 Feb 2019 00:26:33 -0600
+Received: from [172.24.190.172] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x1I6QU33017673;
+        Mon, 18 Feb 2019 00:26:31 -0600
+Subject: Re: [PATCH] cpufreq: davinci: move configuration to
+ include/linux/platform_data
+To:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC:     Kevin Hilman <khilman@kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+References: <20190214170505.27251-1-brgl@bgdev.pl>
+ <20190218061610.cwvwij7aoemi2gbe@vireshk-i7>
+From:   Sekhar Nori <nsekhar@ti.com>
+Message-ID: <979dd2f6-17dd-9569-42fe-9490c09be1bf@ti.com>
+Date:   Mon, 18 Feb 2019 11:56:29 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d5567c5c-7ceb-a9cc-0fb8-b6b04a4d42ca@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9170 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=883 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902180049
+In-Reply-To: <20190218061610.cwvwij7aoemi2gbe@vireshk-i7>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 10:41:36AM +0800, Chao Yu wrote:
-> On 2019/2/15 17:35, Dan Carpenter wrote:
-> > On Fri, Feb 15, 2019 at 05:32:33PM +0800, Chao Yu wrote:
-> >> On 2019/2/15 15:57, Dan Carpenter wrote:
-> >>> On Fri, Feb 15, 2019 at 03:02:25PM +0800, Chao Yu wrote:
-> >>>> On 2019/2/1 20:16, Gao Xiang wrote:
-> >>>>> +	/*
-> >>>>> +	 * on-disk error, let's only BUG_ON in the debugging mode.
-> >>>>> +	 * otherwise, it will return 1 to just skip the invalid name
-> >>>>> +	 * and go on (in consideration of the lookup performance).
-> >>>>> +	 */
-> >>>>> +	DBG_BUGON(qd->name > qd->end);
-> >>>>
-> >>>> qd->name == qd->end is not allowed as well?
-> >>>>
-> >>>> So will it be better to return directly here?
-> >>>>
-> >>>> 	if (unlikely(qd->name >= qd->end)) {
-> >>>> 		DBG_BUGON(1);
-> >>>> 		return 1;
-> >>>> 	}
-> >>>
-> >>> Please don't add likely/unlikely() annotations unless you have
-> >>> benchmarked it and it makes a difference.
-> >>
-> >> Well, it only occur for corrupted image, since the image is readonly, so it
-> >> is really rare.
-> > 
-> > The likely/unlikely() annotations make the code harder to read.  It's
-> 
-> Well, I think unlikely here can imply this is a rare case which may help to
-> read...
-> 
-> > only worth it if it's is a speedup on a fast path.
-> 
-> I guess unlikely here can help pipeline to load/execute right branch codes
-> instead of that rare branch one with BUGON(), is that right?
-> 
+On 18/02/19 11:46 AM, Viresh Kumar wrote:
+> Applied. Thanks.
 
-Correct.  If you really think the likely/unlikely on this line will lead
-to a performance improvement which will show up on a benchmark then you
-should use it.  (But there is no way that it really show on benchmarks,
-let's not pretend).
+Here is a belated ack from my side.
 
-If it doesn't show up on benchmarking, then we're just discussing style.
-Kernel style tends to be minimalist.
+Acked-by: Sekhar Nori <nsekhar@ti.com>
 
-regards,
-dan carpenter
-
+Thanks,
+Sekhar
