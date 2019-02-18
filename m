@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E3DDC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B2C6C10F03
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:22:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E44DE21908
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:22:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BAFD2190C
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:22:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499759;
-	bh=u52eHv4bnfcSZwqHLv+KVzfRq9WrkhTsoAQOuyEidDU=;
+	s=default; t=1550499761;
+	bh=jib8bmIXkWRx1NsypPldlOo7IE2y3bPjt1ewRQ8RsW0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EQvvcgUrQy0yzSMxSrTwgXF7MkDE8cgg/nAf3+2e/oOF8XojRzY6oDe8MYBsSJIgF
-	 tH/U2knyojZSTKj3IFjxUsg6A8TXfa0ObtQM4R2fW/SQjbNeUEx134TdjqBEfGrDAL
-	 2b7SEHdPv2oYLH5dJARJAh2uyDfox4fzJ80n4j4s=
+	b=v+EpcL5LJpzKwzT72F4wqxBD17e3VdbHz23qHKnF1fILhnSsXTaeqJZwhAV/WVfVy
+	 t7oYQFFJh/LH5f3uvXQLHKgZKbWT3O/uif/vztdTZC6eNcy/xkhj+LDe5ri/RDBLBB
+	 wTy8M4e3WFKeKmTseX1kjQUpwRUJYXPlti7gSUCs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390245AbfBROFu (ORCPT
+        id S2390038AbfBROEz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:05:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48670 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:04:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390222AbfBROFo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:05:44 -0500
+        id S2390011AbfBROEv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:04:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E8E8721902;
-        Mon, 18 Feb 2019 14:05:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C24421901;
+        Mon, 18 Feb 2019 14:04:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498743;
-        bh=u52eHv4bnfcSZwqHLv+KVzfRq9WrkhTsoAQOuyEidDU=;
+        s=default; t=1550498690;
+        bh=jib8bmIXkWRx1NsypPldlOo7IE2y3bPjt1ewRQ8RsW0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UgITNcsfRsGXcwoDqVw7djoh9cXY0aIxyY9Wn9hSWcpLnNUo3yN3JV79Oqi1kB2A7
-         /UynBBnU3E5Ma/wN0wyuEGZ7QXoSuN4baxxKoDOyCCtvqLQIVwPpTgKfmrSjsqd/zt
-         yGaw0Kd/NqA7s1XvbjZsi7/ooiudX0paQvOE4Db4=
+        b=Fh6N12xDTP3Hs8QCMjqlDcb5MlAkItHPa/3CSNXKgGcRauqm1F4J6YPCy2Ws2SXSI
+         h2Gm15yOnLCuLlCcaLMND6Ne1dnN4LGlHf2/ER5KNkWlnMU91fcBGUi6HP4VYTfCvV
+         FVZDWwwwufCrtlsfx3xZoEaMjqRTBqFm0i4+yBfc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Fietkau <nbd@nbd.name>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.4 107/143] mac80211: ensure that mgmt tx skbs have tailroom for encryption
-Date:   Mon, 18 Feb 2019 14:43:55 +0100
-Message-Id: <20190218133532.939994417@linuxfoundation.org>
+        stable@vger.kernel.org, Bin Liu <b-liu@ti.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.4 089/143] usb: phy: am335x: fix race condition in _probe
+Date:   Mon, 18 Feb 2019 14:43:37 +0100
+Message-Id: <20190218133532.312953660@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -65,57 +65,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Felix Fietkau <nbd@nbd.name>
+From: Bin Liu <b-liu@ti.com>
 
-commit 9d0f50b80222dc273e67e4e14410fcfa4130a90c upstream.
+commit a53469a68eb886e84dd8b69a1458a623d3591793 upstream.
 
-Some drivers use IEEE80211_KEY_FLAG_SW_MGMT_TX to indicate that management
-frames need to be software encrypted. Since normal data packets are still
-encrypted by the hardware, crypto_tx_tailroom_needed_cnt gets decremented
-after key upload to hw. This can lead to passing skbs to ccmp_encrypt_skb,
-which don't have the necessary tailroom for software encryption.
+power off the phy should be done before populate the phy. Otherwise,
+am335x_init() could be called by the phy owner to power on the phy first,
+then am335x_phy_probe() turns off the phy again without the caller knowing
+it.
 
-Change the code to add tailroom for encrypted management packets, even if
-crypto_tx_tailroom_needed_cnt is 0.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Felix Fietkau <nbd@nbd.name>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fixes: 2fc711d76352 ("usb: phy: am335x: Enable USB remote wakeup using PHY wakeup")
+Cc: stable@vger.kernel.org # v3.18+
+Signed-off-by: Bin Liu <b-liu@ti.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/mac80211/tx.c |   12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ drivers/usb/phy/phy-am335x.c |    5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
---- a/net/mac80211/tx.c
-+++ b/net/mac80211/tx.c
-@@ -1599,9 +1599,16 @@ static int ieee80211_skb_resize(struct i
- 				int head_need, bool may_encrypt)
- {
- 	struct ieee80211_local *local = sdata->local;
-+	struct ieee80211_hdr *hdr;
-+	bool enc_tailroom;
- 	int tail_need = 0;
+--- a/drivers/usb/phy/phy-am335x.c
++++ b/drivers/usb/phy/phy-am335x.c
+@@ -56,9 +56,6 @@ static int am335x_phy_probe(struct platf
+ 	if (ret)
+ 		return ret;
  
--	if (may_encrypt && sdata->crypto_tx_tailroom_needed_cnt) {
-+	hdr = (struct ieee80211_hdr *) skb->data;
-+	enc_tailroom = may_encrypt &&
-+		       (sdata->crypto_tx_tailroom_needed_cnt ||
-+			ieee80211_is_mgmt(hdr->frame_control));
-+
-+	if (enc_tailroom) {
- 		tail_need = IEEE80211_ENCRYPT_TAILROOM;
- 		tail_need -= skb_tailroom(skb);
- 		tail_need = max_t(int, tail_need, 0);
-@@ -1609,8 +1616,7 @@ static int ieee80211_skb_resize(struct i
+-	ret = usb_add_phy_dev(&am_phy->usb_phy_gen.phy);
+-	if (ret)
+-		return ret;
+ 	am_phy->usb_phy_gen.phy.init = am335x_init;
+ 	am_phy->usb_phy_gen.phy.shutdown = am335x_shutdown;
  
- 	if (skb_cloned(skb) &&
- 	    (!ieee80211_hw_check(&local->hw, SUPPORTS_CLONED_SKBS) ||
--	     !skb_clone_writable(skb, ETH_HLEN) ||
--	     (may_encrypt && sdata->crypto_tx_tailroom_needed_cnt)))
-+	     !skb_clone_writable(skb, ETH_HLEN) || enc_tailroom))
- 		I802_DEBUG_INC(local->tx_expand_skb_head_cloned);
- 	else if (head_need || tail_need)
- 		I802_DEBUG_INC(local->tx_expand_skb_head);
+@@ -77,7 +74,7 @@ static int am335x_phy_probe(struct platf
+ 	device_set_wakeup_enable(dev, false);
+ 	phy_ctrl_power(am_phy->phy_ctrl, am_phy->id, false);
+ 
+-	return 0;
++	return usb_add_phy_dev(&am_phy->usb_phy_gen.phy);
+ }
+ 
+ static int am335x_phy_remove(struct platform_device *pdev)
 
 
