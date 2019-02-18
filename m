@@ -2,108 +2,77 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C85E9C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:43:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F638C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:44:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A20B42147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:43:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35FF82147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:44:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730235AbfBRKnI convert rfc822-to-8bit (ORCPT
+        id S1730288AbfBRKoE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 05:43:08 -0500
-Received: from skedge03.snt-world.com ([91.208.41.68]:50256 "EHLO
-        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730141AbfBRKmt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 05:42:49 -0500
-Received: from sntmail11s.snt-is.com (unknown [10.203.32.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by skedge03.snt-world.com (Postfix) with ESMTPS id E571E603769;
-        Mon, 18 Feb 2019 11:42:46 +0100 (CET)
-Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail11s.snt-is.com
- (10.203.32.181) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Mon, 18 Feb
- 2019 11:42:46 +0100
-Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
- sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
- 15.01.1713.004; Mon, 18 Feb 2019 11:42:46 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.de>
-To:     "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "Schrempf Frieder" <frieder.schrempf@kontron.de>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>
-Subject: [PATCH v4 7/7] mtd: rawnand: AMD: Also use the last page for bad
- block markers
-Thread-Topic: [PATCH v4 7/7] mtd: rawnand: AMD: Also use the last page for bad
- block markers
-Thread-Index: AQHUx3av5nN+rA7yBUm0nQr4UWWfjQ==
-Date:   Mon, 18 Feb 2019 10:42:46 +0000
-Message-ID: <20190218104122.18788-8-frieder.schrempf@kontron.de>
-References: <20190218104122.18788-1-frieder.schrempf@kontron.de>
-In-Reply-To: <20190218104122.18788-1-frieder.schrempf@kontron.de>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.43]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: 8BIT
+        Mon, 18 Feb 2019 05:44:04 -0500
+Received: from foss.arm.com ([217.140.101.70]:55932 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728258AbfBRKoE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 05:44:04 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0717C80D;
+        Mon, 18 Feb 2019 02:44:04 -0800 (PST)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5D2B73F720;
+        Mon, 18 Feb 2019 02:44:02 -0800 (PST)
+Date:   Mon, 18 Feb 2019 10:43:59 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Qian Cai <cai@lca.pw>
+Cc:     rostedt@goodmis.org, mingo@redhat.com, catalin.marinas@arm.com,
+        andreyknvl@google.com, aryabinin@virtuozzo.com,
+        linux-arm-kernel@lists.infradead.org, kasan-dev@googlegroups.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] trace: skip hwasan
+Message-ID: <20190218104359.GB10743@fuggles.cambridge.arm.com>
+References: <20190217043434.46233-1-cai@lca.pw>
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: E571E603769.AE56B
-X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: bbrezillon@kernel.org, computersforpeace@gmail.com,
-        dwmw2@infradead.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, marek.vasut@gmail.com,
-        miquel.raynal@bootlin.com, richard@nod.at
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190217043434.46233-1-cai@lca.pw>
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
+On Sat, Feb 16, 2019 at 11:34:34PM -0500, Qian Cai wrote:
+> Enabling function tracer with CONFIG_KASAN_SW_TAGS=y (hwasan) tracer
+> causes the whole system frozen on ThunderX2 systems with 256 CPUs,
+> because there is a burst of too much pointer access, and then KASAN will
+> dereference each byte of the shadow address for the tag checking which
+> will kill all the CPUs.
+> 
+> Signed-off-by: Qian Cai <cai@lca.pw>
+> ---
+>  kernel/trace/Makefile | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/kernel/trace/Makefile b/kernel/trace/Makefile
+> index c2b2148bb1d2..fdd547a68385 100644
+> --- a/kernel/trace/Makefile
+> +++ b/kernel/trace/Makefile
+> @@ -28,6 +28,11 @@ ifdef CONFIG_GCOV_PROFILE_FTRACE
+>  GCOV_PROFILE := y
+>  endif
+>  
+> +# Too much pointer access will kill hwasan.
+> +ifdef CONFIG_KASAN_SW_TAGS
+> +KASAN_SANITIZE := n
+> +endif
 
-According to the datasheet of some Cypress SLC NANDs, the bad
-block markers can be in the first, second or last page of a block.
-So let's check all three locations.
+I don't maintain this file, but I think that my comments on your related
+patch are relevant here as well:
 
-Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-Reviewed-by: Boris Brezillon <bbrezillon@kernel.org>
----
- drivers/mtd/nand/raw/nand_amd.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+https://lkml.org/lkml/2019/2/18/223
 
-diff --git a/drivers/mtd/nand/raw/nand_amd.c b/drivers/mtd/nand/raw/nand_amd.c
-index 6202cbf7ee8d..2ffcddff3e27 100644
---- a/drivers/mtd/nand/raw/nand_amd.c
-+++ b/drivers/mtd/nand/raw/nand_amd.c
-@@ -40,7 +40,13 @@ static void amd_nand_decode_id(struct nand_chip *chip)
- static int amd_nand_init(struct nand_chip *chip)
- {
- 	if (nand_is_slc(chip))
--		chip->options |= NAND_BBM_FIRSTPAGE | NAND_BBM_SECONDPAGE;
-+		/*
-+		 * According to the datasheet of some Cypress SLC NANDs,
-+		 * the bad block markers can be in the first, second or last
-+		 * page of a block. So let's check all three locations.
-+		 */
-+		chip->options |= NAND_BBM_FIRSTPAGE | NAND_BBM_SECONDPAGE |
-+				 NAND_BBM_LASTPAGE;
- 
- 	return 0;
- }
--- 
-2.17.1
+Will
