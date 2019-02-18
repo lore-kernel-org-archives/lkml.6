@@ -2,122 +2,100 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5547C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A400C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:12:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F7FF21479
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:11:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550477517;
-	bh=F9y7lSaqxWYTV9o8SAQ8gMQ0TIi7C/kjNQfrjGg8j6g=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=qveHnHrj6p+Qh30CZqh0Tfsr4+8D7EDFm8V3PvjR1K3oZXMLmuCs7WETJhUnI0TTW
-	 UmZjTWZOj9GNc4aMXYh4RRzDKhvYmPyp1Pmxy5VwEDAVyuyVjwI/xTkq87dB2fOc6D
-	 yi8c6kDuj3hxqSOKm4J987D/FBm5osa0pBgCuouQ=
+	by mail.kernel.org (Postfix) with ESMTP id CFBC6218D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:12:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="p07Z1RO2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728973AbfBRILz (ORCPT
+        id S1729079AbfBRIMf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 03:11:55 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46783 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbfBRILz (ORCPT
+        Mon, 18 Feb 2019 03:12:35 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:32948 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725881AbfBRIMe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 03:11:55 -0500
-Received: by mail-pg1-f193.google.com with SMTP id w7so8048506pgp.13
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 00:11:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZcZRnl9lE4QIkCI9psKc6XHAkAhb2o/LPyacWFNhV/U=;
-        b=oJLd1xUKXzNOyX9QvChe8wA7ahme5SG2YsDQ63pkv1TwtGcoNlOwc79LjVAY1VrSKI
-         iYQzyy++6a5pHcyiZeyjwfzqRP45NIE9oO2ZqZrz+KruyL52iWh0AudMyy4uwj/3ETXZ
-         l6AYOgRj9PCKutOMjxEa/v64MRv1rIth8Vd+kIpdJIwyMmDTVCvW8YhhedRYJHaCmBVV
-         nUcqweLjkRXR/78oRqt/sKLUXblTPF8sTPmrWsaPi7PzZckRllbro/FVH4pSBwPaPd9+
-         vv4QlDC9A3RCs8/KQfD1PTld5PNF0EEJY8IlgihsEADtSop4AYS8M/7BVNex6m9NLdt5
-         wsdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=ZcZRnl9lE4QIkCI9psKc6XHAkAhb2o/LPyacWFNhV/U=;
-        b=oTM/6CzICkaO37qJkDdjIWoxoegvJPk6jih70ysX5kx8kO88vO9v4NXSTQZrkw65TR
-         70i+RmSqnw9Ow4uQosWENnu9SAb/QzYkLkAekLwAa4wH5vn8ocDFAz5vu9W26uJn1Oob
-         ETsdHqMaCWTCRliMjjqx6DPCrfm+IjoPAjOohAKUF9mDH8483R75f/hPh9NZa+LQaVp2
-         Ca8hXOkYwJnVzHbeuZJ+HujYPmtHqWJXYzTHPYZ9L8NSvbL4Wpp/PyelK0qKxVOmmAjl
-         RbPzbTnv+j6gh4YiOceYXbNawLeZ/3pBhT7/1qzLJyO8hgIbYVsjOwblK/azJ2WfMB8b
-         stBg==
-X-Gm-Message-State: AHQUAubuq2ha8Q26vNdkz+YRL6JQWDe2aAQnOFrCEDohKfaj4ZgKc2/C
-        5ws+jZiEUVqHmOPemGnfO90=
-X-Google-Smtp-Source: AHgI3IaX38tq461oE/F9v/3NRbYaDAsj9yeudPC/GKwX9bpSoJRbiqKsOW3XAXBofp2H5i/LnfJxpg==
-X-Received: by 2002:a63:d342:: with SMTP id u2mr17722234pgi.41.1550477513947;
-        Mon, 18 Feb 2019 00:11:53 -0800 (PST)
-Received: from bbox-2.seo.corp.google.com ([2401:fa00:d:0:98f1:8b3d:1f37:3e8])
-        by smtp.gmail.com with ESMTPSA id l87sm31865694pfj.35.2019.02.18.00.11.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Feb 2019 00:11:52 -0800 (PST)
-From:   Minchan Kim <minchan@kernel.org>
-To:     gregkh@linuxfoundation.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Minchan Kim <minchan@kernel.org>, Todd Kjos <tkjos@google.com>,
-        Martijn Coenen <maco@android.com>,
-        =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>
-Subject: [PATCH] binder: reduce mmap_sem write-side lock
-Date:   Mon, 18 Feb 2019 17:11:45 +0900
-Message-Id: <20190218081145.86633-1-minchan@kernel.org>
-X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
+        Mon, 18 Feb 2019 03:12:34 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1I89LEx133886;
+        Mon, 18 Feb 2019 08:12:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=tg0iUNhXRNq8Ygnl4Lw6BXr0Lrjm5aFIIFYjgxxhzig=;
+ b=p07Z1RO2daTAZhuviKUh3iNf6bmvq56FMXh9RbkopkGipvuWqbKYSMvkESOCnp3+At4Y
+ e/LLDp3mHakgmESfCBHHJaNmyhnS6yxiZjli+3T+6u6NruIEve4Srt/z53EiB+XOSWPj
+ ZN8figJK+El3wh/m3ivrFl+ri9DKw6HuCqKZzPQ3fKEJeuT1dmWuessMlIv2Q2rYmZty
+ 1+dxdLN3iyOPlsLY95civ/mFWrW0hWCw6qfZShGKI++uwtxRoXFtbcY4wbFVbJk4LLh4
+ 97Flbzf9RViB7+5pvdbFCkAt4Kq4wBxuZx14T+Ha7k0/tvPO1RbobC2qy64vHqJt8fZm rg== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2qp9xtmtqy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 18 Feb 2019 08:12:26 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1I8CPqo013094
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 18 Feb 2019 08:12:25 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1I8CPHb000635;
+        Mon, 18 Feb 2019 08:12:25 GMT
+Received: from kadam (/197.157.0.22)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 18 Feb 2019 00:12:24 -0800
+Date:   Mon, 18 Feb 2019 11:12:17 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][V3] regulator: axp20x: remove a redundant null check on
+ rdev
+Message-ID: <20190218081217.GA17104@kadam>
+References: <20190215094554.28593-1-colin.king@canonical.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190215094554.28593-1-colin.king@canonical.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9170 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=835 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902180065
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-binder has used write-side mmap_sem semaphore to release memory
-mapped at address space of the process. However, right lock to
-release pages is down_read, not down_write because page table lock
-already protects the race for parallel freeing.
+On Fri, Feb 15, 2019 at 09:45:54AM +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> Currently rdev is dereferenced when assigning desc before rdev is null
+> checked, this is leading to static analysis warnings.  However, rdev
+> can never be null, so the null check is redundant and can be removed.
+> 
+> Detected by CoverityScan, CID#1476031 ("Dereference before null check")
+> 
+> Fixes: 77e3e3b165db ("regulator: axp20x: add software based soft_start for AXP209 LDO3")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> 
+> --
 
-Please do not use mmap_sem write-side lock which is well known
-contented lock.
+We need a third '-' character on the cut off marker.
 
-Cc: Todd Kjos <tkjos@google.com>
-Cc: Martijn Coenen <maco@android.com>
-Cc: Arve Hjønnevåg <arve@android.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Minchan Kim <minchan@kernel.org>
----
- drivers/android/binder_alloc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> V2: Fix 2nd occurrance of this thinko
+> V3: Remove null check, Dan Carpenter noted that rdev can never be null.
+> ---
 
-diff --git a/drivers/android/binder_alloc.c b/drivers/android/binder_alloc.c
-index 022cd80e80cc3..2a62553b20fcc 100644
---- a/drivers/android/binder_alloc.c
-+++ b/drivers/android/binder_alloc.c
-@@ -964,7 +964,7 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
- 		if (!mmget_not_zero(alloc->vma_vm_mm))
- 			goto err_mmget;
- 		mm = alloc->vma_vm_mm;
--		if (!down_write_trylock(&mm->mmap_sem))
-+		if (!down_read_trylock(&mm->mmap_sem))
- 			goto err_down_write_mmap_sem_failed;
- 	}
- 
-@@ -980,7 +980,7 @@ enum lru_status binder_alloc_free_page(struct list_head *item,
- 
- 		trace_binder_unmap_user_end(alloc, index);
- 
--		up_write(&mm->mmap_sem);
-+		up_read(&mm->mmap_sem);
- 		mmput(mm);
- 	}
- 
--- 
-2.21.0.rc0.258.g878e2cd30e-goog
+regards,
+dan carpenter
 
