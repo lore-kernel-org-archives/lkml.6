@@ -2,137 +2,242 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFDC3C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:38:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E583CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:38:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAB0B21736
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:38:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABBA121736
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:38:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550500722;
+	bh=zocM1cHJfFUYoJZswMYq0A23vrhfouBPCinwcXXdNbM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Y2og7b61T4gyFt3xfi9KrQ3tfqigF26DoXspjW5Pu2IgHDRG+Xd+yj3OzT+MhGIO1
+	 /F/3eqXrfr8IZktlRBQPg2KJ6fCDIfOTbgCFVYWl7BXphcBJZdaKqCEUWWfPPX1iY6
+	 VWoTX+hA1qduLYNq6ZSCIL3y5OHNm5tUT0f9ayyA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388168AbfBROi2 (ORCPT
+        id S2387517AbfBROil (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:38:28 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35612 "EHLO mx1.redhat.com"
+        Mon, 18 Feb 2019 09:38:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388269AbfBROhv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:37:51 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1733103AbfBRNyG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:54:06 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 74BB6B0F9A;
-        Mon, 18 Feb 2019 14:37:50 +0000 (UTC)
-Received: from localhost (unknown [10.40.205.59])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9AECE103BABA;
-        Mon, 18 Feb 2019 14:37:49 +0000 (UTC)
-Date:   Mon, 18 Feb 2019 15:37:48 +0100
-From:   Stanislaw Gruszka <sgruszka@redhat.com>
-To:     Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Cc:     Rosen Penev <rosenp@gmail.com>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        Samuel Sieb <samuel@sieb.net>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: MT76x2U crashes XHCI driver on AMD Ryzen system
-Message-ID: <20190218143742.GA11872@redhat.com>
-References: <CAKxU2N9o5WeUwFMUwwXKHaPj7R+oiSKV1c2n8RtXwGNZRtw5Sw@mail.gmail.com>
- <CAJ0CqmVNF83bWgc+LSQ3_i=zfp-sXC5Nf=nKfqB3SWa8r7sKdQ@mail.gmail.com>
- <83A1D243-9073-48D1-9F26-5A2581DCB829@gmail.com>
- <CAJ0CqmUgPWNJtCW4Q__sOtB8w-YtwW+uZy7crxMNrmSgQ6OFyA@mail.gmail.com>
- <1547404075.1582.0@smtp.gmail.com>
- <CAJ0CqmU7k5i26g7dGPxNdts7Gm67W6qNsr4vYuW05ugsEF1ohw@mail.gmail.com>
- <CAKxU2N-+CTaRdJMFVRdozJ5TTpN+_4thiDRBJBFq8gGtuRVYvA@mail.gmail.com>
- <20190114091841.GA23045@localhost.localdomain>
- <CAKxU2N8ioMszBCyQcH7CVhgBdW4aj7yZ+kYQe14DCV5OSAnxrg@mail.gmail.com>
- <20190115090400.GA2267@localhost.localdomain>
+        by mail.kernel.org (Postfix) with ESMTPSA id 655BF2077B;
+        Mon, 18 Feb 2019 13:54:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550498044;
+        bh=zocM1cHJfFUYoJZswMYq0A23vrhfouBPCinwcXXdNbM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=SfVXZu8J1EenjzDAIbHw6v7Ju4q0gen7tvH9X+e0k2UETX9xz0DvQf/Z7DfXgNQQB
+         BV8VwNZBGupOce2LBUum5anNsmS7SgZmZaoD6VXktrpe7MI2djx/En3LL+g9t1osbq
+         iHhD34yH1XjEWrNp6w/h7XFC6Gj09qGw+scW4Q1A=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Lyude Paul <lyude@redhat.com>,
+        Todd Previte <tprevite@gmail.com>,
+        Dave Airlie <airlied@redhat.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Imre Deak <imre.deak@intel.com>,
+        intel-gfx@lists.freedesktop.org,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Jani Nikula <jani.nikula@intel.com>
+Subject: [PATCH 4.19 83/85] drm/i915: Block fbdev HPD processing during suspend
+Date:   Mon, 18 Feb 2019 14:43:49 +0100
+Message-Id: <20190218133507.978524940@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
+References: <20190218133459.758004711@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190115090400.GA2267@localhost.localdomain>
-User-Agent: Mutt/1.8.3 (2017-05-23)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 18 Feb 2019 14:37:50 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(cc: IOMMU & page_frag_alloc maintainers)
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-On Tue, Jan 15, 2019 at 10:04:01AM +0100, Lorenzo Bianconi wrote:
-> > On Mon, Jan 14, 2019 at 1:18 AM Lorenzo Bianconi
-> > <lorenzo.bianconi@redhat.com> wrote:
-> > >
-> > > > On Sun, Jan 13, 2019 at 11:00 AM Lorenzo Bianconi
-> > > > <lorenzo.bianconi@redhat.com> wrote:
-> > > > >
-> > > > > >
-> > > > > >
-> > > > > > On Sun, Jan 13, 2019 at 5:33 AM, Lorenzo Bianconi <lorenzo.bianconi@redhat.com> wrote:
-> > > > > >
-> > > > > > Direct. No VM used. This is the only peripheral causing this issue.
-> > > > > >
-> > > > > > Is the device connected to a usb3.0 port? If so, could you please try to connect the dongle to a 2.0 one?
-> > > > > >
-> > > > > > I tried through a USB 2.0 port. Shouldn't make a difference as they both use the xhci driver.
-> > > > > >
-> > > > >
-> > > > > mt76x2u supports scatter-gather on usb 3.0 (not on 2.0)
-> > > > Tried a USB 3 port. Same result.
-> > > > >
-> > > > > > Could you please double check if IOMMU is enabled?
-> > > > > >
-> > > > >
-> > > > > Have you tried to disable it? Does it make any difference?
-> > > > No idea how. UEFI doesn't seem to show anything similar.
-> > > >
-> > > > Similar bug report: https://bugzilla.kernel.org/show_bug.cgi?id=202241
+------------------
 
-FWIW: I provided some patches in the bugzilla, which were reported to
-solve the problem. But I looking for confirmation if both are needed:
+From: Lyude Paul <lyude@redhat.com>
 
-0001-mt76x02u-use-usb_bulk_msg-to-upload-firmware.patch
-0002-mt76usb-do-not-use-compound-head-page-for-SG-I-O.patch
+commit e8a8fedd57fdcebf0e4f24ef0fc7e29323df8e66 upstream.
 
-Or problem can be solved by just one of it (either first or second).
+When resuming, we check whether or not any previously connected
+MST topologies are still present and if so, attempt to resume them. If
+this fails, we disable said MST topologies and fire off a hotplug event
+so that userspace knows to reprobe.
 
-Additionally I'm not 100% sure if
+However, sending a hotplug event involves calling
+drm_fb_helper_hotplug_event(), which in turn results in fbcon doing a
+connector reprobe in the caller's thread - something we can't do at the
+point in which i915 calls drm_dp_mst_topology_mgr_resume() since
+hotplugging hasn't been fully initialized yet.
 
-0002-mt76usb-do-not-use-compound-head-page-for-SG-I-O.patch
+This currently causes some rather subtle but fatal issues. For example,
+on my T480s the laptop dock connected to it usually disappears during a
+suspend cycle, and comes back up a short while after the system has been
+resumed. This guarantees pretty much every suspend and resume cycle,
+drm_dp_mst_topology_mgr_set_mst(mgr, false); will be caused and in turn,
+a connector hotplug will occur. Now it's Rute Goldberg time: when the
+connector hotplug occurs, i915 reprobes /all/ of the connectors,
+including eDP. However, eDP probing requires that we power on the panel
+VDD which in turn, grabs a wakeref to the appropriate power domain on
+the GPU (on my T480s, this is the PORT_DDI_A_IO domain). This is where
+things start breaking, since this all happens before
+intel_power_domains_enable() is called we end up leaking the wakeref
+that was acquired and never releasing it later. Come next suspend/resume
+cycle, this causes us to fail to shut down the GPU properly, which
+causes it not to resume properly and die a horrible complicated death.
 
-is correct. So perhaps some IOMMU maintainer could look at it.
+(as a note: this only happens when there's both an eDP panel and MST
+topology connected which is removed mid-suspend. One or the other seems
+to always be OK).
 
-> > > You should be able to disable iommu using GRUB_CMDLINE_LINUX in
-> > > /etc/default/grub (I guess setting iommu=off and reinstalling grub)
-> > > https://wiki.gentoo.org/wiki/IOMMU_SWIOTLB
-> > Yep. Working great now. I wonder what mt76 is doing to cause the crash though...
-> 
-> Thanks for bisecting the issue. 
+We could try to fix the VDD wakeref leak, but this doesn't seem like
+it's worth it at all since we aren't able to handle hotplug detection
+while resuming anyway. So, let's go with a more robust solution inspired
+by nouveau: block fbdev from handling hotplug events until we resume
+fbdev. This allows us to still send sysfs hotplug events to be handled
+later by user space while we're resuming, while also preventing us from
+actually processing any hotplug events we receive until it's safe.
 
-Lorenzo, what you mean by 'bisecting' here ? Someone did 'git bisect'
-on this issue?
+This fixes the wakeref leak observed on the T480s and as such, also
+fixes suspend/resume with MST topologies connected on this machine.
 
-> I think amd iommu does not support well usb scatter-gather
-> (used by default in mt76u). I am working on a series in order to add the possibility to
-> disable it.
+Changes since v2:
+* Don't call drm_fb_helper_hotplug_event() under lock, do it after lock
+  (Chris Wilson)
+* Don't call drm_fb_helper_hotplug_event() in
+  intel_fbdev_output_poll_changed() under lock (Chris Wilson)
+* Always set ifbdev->hpd_waiting (Chris Wilson)
 
-Even if that true that AMD IOMMU does not support 'well' SG (what I think
-is not true) disabling SG in mt76 driver is not right solution. Right
-solution would be propagate the issue to AMD IOMMU maintainers
-(already CCed).
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Fixes: 0e32b39ceed6 ("drm/i915: add DP 1.2 MST support (v0.7)")
+Cc: Todd Previte <tprevite@gmail.com>
+Cc: Dave Airlie <airlied@redhat.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Imre Deak <imre.deak@intel.com>
+Cc: intel-gfx@lists.freedesktop.org
+Cc: <stable@vger.kernel.org> # v3.17+
+Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190129191001.442-2-lyude@redhat.com
+(cherry picked from commit fe5ec65668cdaa4348631d8ce1766eed43b33c10)
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-One problem in mt76 is page_frag_alloc() usage with different sizes.
-page_frag_alloc() unlike like other allocators do not assure alignment
-and relay on callers to provide buffers sizes that are aligned.
-Unaligned buffer might then not be appropriate for DMA.
+---
+ drivers/gpu/drm/i915/intel_drv.h   |   10 ++++++++++
+ drivers/gpu/drm/i915/intel_fbdev.c |   33 ++++++++++++++++++++++++++++++++-
+ 2 files changed, 42 insertions(+), 1 deletion(-)
 
-Another issue is that dma_map_sg() & dma_map_page() may require some 
-constraints. I'm not sure about that and I want to clarify that with 
-CCed mm maintainers. I think DMA drivers may expect sg->offset < PAGE_SIZE
-for both dma_map_sg() and dma_map_page(). Additionally dma_map_page()
-maight expect that offset & length specify buffer within one page.
+--- a/drivers/gpu/drm/i915/intel_drv.h
++++ b/drivers/gpu/drm/i915/intel_drv.h
+@@ -209,6 +209,16 @@ struct intel_fbdev {
+ 	unsigned long vma_flags;
+ 	async_cookie_t cookie;
+ 	int preferred_bpp;
++
++	/* Whether or not fbdev hpd processing is temporarily suspended */
++	bool hpd_suspended : 1;
++	/* Set when a hotplug was received while HPD processing was
++	 * suspended
++	 */
++	bool hpd_waiting : 1;
++
++	/* Protects hpd_suspended */
++	struct mutex hpd_lock;
+ };
+ 
+ struct intel_encoder {
+--- a/drivers/gpu/drm/i915/intel_fbdev.c
++++ b/drivers/gpu/drm/i915/intel_fbdev.c
+@@ -677,6 +677,7 @@ int intel_fbdev_init(struct drm_device *
+ 	if (ifbdev == NULL)
+ 		return -ENOMEM;
+ 
++	mutex_init(&ifbdev->hpd_lock);
+ 	drm_fb_helper_prepare(dev, &ifbdev->helper, &intel_fb_helper_funcs);
+ 
+ 	if (!intel_fbdev_init_bios(dev, ifbdev))
+@@ -750,6 +751,26 @@ void intel_fbdev_fini(struct drm_i915_pr
+ 	intel_fbdev_destroy(ifbdev);
+ }
+ 
++/* Suspends/resumes fbdev processing of incoming HPD events. When resuming HPD
++ * processing, fbdev will perform a full connector reprobe if a hotplug event
++ * was received while HPD was suspended.
++ */
++static void intel_fbdev_hpd_set_suspend(struct intel_fbdev *ifbdev, int state)
++{
++	bool send_hpd = false;
++
++	mutex_lock(&ifbdev->hpd_lock);
++	ifbdev->hpd_suspended = state == FBINFO_STATE_SUSPENDED;
++	send_hpd = !ifbdev->hpd_suspended && ifbdev->hpd_waiting;
++	ifbdev->hpd_waiting = false;
++	mutex_unlock(&ifbdev->hpd_lock);
++
++	if (send_hpd) {
++		DRM_DEBUG_KMS("Handling delayed fbcon HPD event\n");
++		drm_fb_helper_hotplug_event(&ifbdev->helper);
++	}
++}
++
+ void intel_fbdev_set_suspend(struct drm_device *dev, int state, bool synchronous)
+ {
+ 	struct drm_i915_private *dev_priv = to_i915(dev);
+@@ -771,6 +792,7 @@ void intel_fbdev_set_suspend(struct drm_
+ 		 */
+ 		if (state != FBINFO_STATE_RUNNING)
+ 			flush_work(&dev_priv->fbdev_suspend_work);
++
+ 		console_lock();
+ 	} else {
+ 		/*
+@@ -798,17 +820,26 @@ void intel_fbdev_set_suspend(struct drm_
+ 
+ 	drm_fb_helper_set_suspend(&ifbdev->helper, state);
+ 	console_unlock();
++
++	intel_fbdev_hpd_set_suspend(ifbdev, state);
+ }
+ 
+ void intel_fbdev_output_poll_changed(struct drm_device *dev)
+ {
+ 	struct intel_fbdev *ifbdev = to_i915(dev)->fbdev;
++	bool send_hpd;
+ 
+ 	if (!ifbdev)
+ 		return;
+ 
+ 	intel_fbdev_sync(ifbdev);
+-	if (ifbdev->vma || ifbdev->helper.deferred_setup)
++
++	mutex_lock(&ifbdev->hpd_lock);
++	send_hpd = !ifbdev->hpd_suspended;
++	ifbdev->hpd_waiting = true;
++	mutex_unlock(&ifbdev->hpd_lock);
++
++	if (send_hpd && (ifbdev->vma || ifbdev->helper.deferred_setup))
+ 		drm_fb_helper_hotplug_event(&ifbdev->helper);
+ }
+ 
 
-Stanislaw
+
