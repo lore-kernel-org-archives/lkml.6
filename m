@@ -2,218 +2,144 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC2F9C10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A581C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:57:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 728C8217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:57:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14301217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:57:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cNtmHRp7"
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="FI9a0eXp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390581AbfBRQ5Q (ORCPT
+        id S2390652AbfBRQ5s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 11:57:16 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37942 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733069AbfBRQ5Q (ORCPT
+        Mon, 18 Feb 2019 11:57:48 -0500
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:49931 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390589AbfBRQ5s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 11:57:16 -0500
-Received: by mail-wm1-f68.google.com with SMTP id v26so17832282wmh.3;
-        Mon, 18 Feb 2019 08:57:14 -0800 (PST)
+        Mon, 18 Feb 2019 11:57:48 -0500
+X-IronPort-AV: E=Sophos;i="5.58,385,1544511600"; 
+   d="scan'208";a="27909268"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 18 Feb 2019 09:57:46 -0700
+Received: from NAM03-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.106) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Mon, 18 Feb 2019 09:57:46 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Te/+py7/8j9kLxPbLdOqa2CQTZpN9pqS5WYOYHf4nJg=;
-        b=cNtmHRp7rXeg9Ep48gVhu8ZlNBoWHN1JTWGcm9qhMrqoV8kBIEtvl1/9vMo6vX2738
-         Y4/Wrj646OoCw3I1fx3cSuDgcrK7B43AmCZP3ZaC93ZImw2srVfJglnTKUI3xlScIrAB
-         uteGio+F1WIj9kqvfWwk1AjORAZ9V/AWZbk7VtBV1dQbvNVm4ofWqsCGRkVo1Lqca1jP
-         NVtwpaJiIGFqAaHWw3+SSYCFi1iatM0tO8IuSIvax4hKRQCETOgX8qCDkkgyCPPRqHBQ
-         0oDxgc5NuWlIYrROmszAO3Vdombxl+fwEGwn0To6mPJ4DgaoeF7stpy1VXl4iyIGfK65
-         sz8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Te/+py7/8j9kLxPbLdOqa2CQTZpN9pqS5WYOYHf4nJg=;
-        b=GIU/KSe5tqjIltDRBINJTBm7AFKPFyF4AwDYnSYcyplsoBPMKDXSt6VzxXNRFC29ia
-         Uo55+9WZaAPzKQQ1iU21q8VR45RIaxA1OFGsiF9fEHiZgPYCl06PLCOkARCp1i2fng3d
-         54r0qc54BsiZkEV8DOZ8Onn7r8nVnv4dURb3/o79/oqposCWwZ+sA8rO9LLKxKg/kD8x
-         0Z5Z5SeIZJf7tS/dfI+5nO5DPMr4EuThwKtAx//u3fbazWjyuVcAPLK69iczFAEjVUbT
-         b68Lh+KqwhX4hgGOBuWUyRqvKI49jrnOQBbg6omls1bHJHuAAjsTIOc7JOYKXfYIsmgi
-         b/CQ==
-X-Gm-Message-State: AHQUAuYjCLzHXKZVnKvDBvp18VX6KR68E0uTVg3d4/LrZg9zlsosfZWx
-        nEJVgJOSoRygnc088Xm/wfg=
-X-Google-Smtp-Source: AHgI3Iam1UNgqaSdUK1u9wD3MUMnBvJwgCAw9PzzE5b4ZxeIKU1TqE/XE7HuZ/dtFRNGP1c34vu6Og==
-X-Received: by 2002:a1c:740d:: with SMTP id p13mr17707006wmc.46.1550509032980;
-        Mon, 18 Feb 2019 08:57:12 -0800 (PST)
-Received: from debian64.daheim (p4FD09F2C.dip0.t-ipconnect.de. [79.208.159.44])
-        by smtp.gmail.com with ESMTPSA id 184sm19291828wmz.18.2019.02.18.08.57.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Feb 2019 08:57:12 -0800 (PST)
-Received: from localhost.daheim ([127.0.0.1] helo=debian64.localnet)
-        by debian64.daheim with esmtp (Exim 4.92-RC6)
-        (envelope-from <chunkeey@gmail.com>)
-        id 1gvmEB-0002ap-Ix; Mon, 18 Feb 2019 17:57:11 +0100
-From:   Christian Lamparter <chunkeey@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Sven Eckelmann <sven.eckelmann@openmesh.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>
-Subject: Re: [PATCH 4.14 62/62] pinctrl: msm: fix gpio-hog related boot issues
-Date:   Mon, 18 Feb 2019 17:57:11 +0100
-Message-ID: <4323375.xCQYxFPVKo@debian64>
-In-Reply-To: <20190218133511.112652987@linuxfoundation.org>
-References: <20190218133505.801423074@linuxfoundation.org> <20190218133511.112652987@linuxfoundation.org>
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=damPiT/3s2KQ9GhWYRW8XN/kpaYaVYpj33A2rGq364E=;
+ b=FI9a0eXpPGht1M4A8OjPqk/tGPecgQPumWF+0XSZ5kg+2xXmSNtfnEGHlVn5QauODrfFiaYYVlqV+LPKEhwNdiP2rFkljtUHVkWEX+qMLHtz/mGIY8V9JXUioCqSdLM8G42+zzcD2eIQrgurHSd1HNDPoTuHRKZMgBQZN/OTruU=
+Received: from CY4PR11MB1256.namprd11.prod.outlook.com (10.169.252.10) by
+ CY4PR11MB1544.namprd11.prod.outlook.com (10.172.70.135) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.16; Mon, 18 Feb 2019 16:57:44 +0000
+Received: from CY4PR11MB1256.namprd11.prod.outlook.com
+ ([fe80::d9cc:7741:4930:cda3]) by CY4PR11MB1256.namprd11.prod.outlook.com
+ ([fe80::d9cc:7741:4930:cda3%7]) with mapi id 15.20.1622.018; Mon, 18 Feb 2019
+ 16:57:44 +0000
+From:   <Codrin.Ciubotariu@microchip.com>
+To:     <lars@metafoo.de>, <lgirdwood@gmail.com>, <broonie@kernel.org>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/5] ASoC: codecs: ad193x: Several fixes and imprevements
+Thread-Topic: [PATCH 0/5] ASoC: codecs: ad193x: Several fixes and imprevements
+Thread-Index: AQHUx6sR0kKMfbXl6Uy5zdhSxOJ4LQ==
+Date:   Mon, 18 Feb 2019 16:57:44 +0000
+Message-ID: <165c7445-4023-5069-313e-8c8f8c0475f4@microchip.com>
+References: <20190218160954.13929-1-codrin.ciubotariu@microchip.com>
+In-Reply-To: <20190218160954.13929-1-codrin.ciubotariu@microchip.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: LO2P265CA0198.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:9e::18) To CY4PR11MB1256.namprd11.prod.outlook.com
+ (2603:10b6:903:25::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Codrin.Ciubotariu@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 8a555501-9312-4e77-b949-08d695c2338a
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:CY4PR11MB1544;
+x-ms-traffictypediagnostic: CY4PR11MB1544:
+x-microsoft-exchange-diagnostics: =?utf-8?B?MTtDWTRQUjExTUIxNTQ0OzIzOloxSnREYzBCbWZmcnowckFxRXQ5bkpYa29y?=
+ =?utf-8?B?dy81NWt6UDA0OHYzaG51bG9qelBYWmduelNMWmY0TEpQbElxNlhDRE5jbjJO?=
+ =?utf-8?B?YkV0aFBuNCs2M08vWFJSY01YOXN1YVdRRDZKUUxwNWExZXErQk5iK0JLcXFH?=
+ =?utf-8?B?QjNFNkJ2SFU2Q0ZYeUJzMmlPbDlkSDQ4aGhFcVBoYTdmRi83UmZVNGl5dnBm?=
+ =?utf-8?B?QTkxbElyNU9VSHNkMmxsN0pHUHlLdVhFbFA1YllLc0d4ckdXNkNpY3cvTVpQ?=
+ =?utf-8?B?ajB2dG9yQ3RNR3VxdG9pOHVYRjNIcFYvKzV3UGVDMVFvRlV2ZkVUSWFleFNy?=
+ =?utf-8?B?cHROMkE1ZDlkek1kdkIrWk8wdWN3SkRxMjlwdlYxSEhJK2hQMml1bWpGN3lP?=
+ =?utf-8?B?V0RMVnd4WjNUQUFIelBZUFA2eGFDS09UNUZZRWNqSzdLd3N0VGFMeGNjV1Q2?=
+ =?utf-8?B?bmFxWXhlSjFHNzhwQWJtSktBZFlkN253bU16WjYrM1pjdU5OOXhEL0drMlA2?=
+ =?utf-8?B?VnBGS25RNjFvWlBhUDBURzNlVFFDL1ZKZm54NGRXUkNMamtnc0N1Uzl5NHc3?=
+ =?utf-8?B?TThSYzFLNkFRbnpSV1dpcXF2VkZLZzY2K2N5Y1BLcUdPeVQzYzRTRTN5Rzg3?=
+ =?utf-8?B?V3lsdktNSGtxN2JLWnNhcHZxZDlqU0VrUm9SYWZaaWhiR2pteWEwVWFjY005?=
+ =?utf-8?B?akJWY2J1NkM3d3duMTRVQ1FTbmxrMjljb3JjTkJpVzZwYi9BUmIzeG9Qa2N3?=
+ =?utf-8?B?RDJxYXVPeGNFK09EN1ZsN01PVWE1U2txRXhkMXh2bURRc0pWU0Z2cWJCd3A1?=
+ =?utf-8?B?cWcvb1huaC9mbEhKNUY4L09sT014YTcvUjdsZlFEL1A0M3ZyNmoxRWRUT2xR?=
+ =?utf-8?B?WFVUTWg5bkVTNG5oejZnTVJkM0lLNytWQ0lmdFBTcWdqZHZTVEFKVkQxaDZm?=
+ =?utf-8?B?bnZLclEwVzVEaitiQ2krbDZ1Vlhla0tNa1Y2RW1tZ3pqaDBnd0JMRldCb1RJ?=
+ =?utf-8?B?R3hHRUJsQWg3ajRZNnBSQTVTZXI1N1JuUTJQSG1aK2JOZTJ3UWlJRHBRNTEz?=
+ =?utf-8?B?aXlpUHZCeEpSZFhFL0ZuakRMTFNZVyt4Q0RPR2t6ajVZRHlxUSs1TlFvSHJZ?=
+ =?utf-8?B?OS9pU1pybkxzblRmY0VmTzB2NjZheW84RTNleGE4U2MxV29jNXduWm10Ymd5?=
+ =?utf-8?B?NHJiSGt3N0o4bUdGMUkzUDFrbGpEckh6eHU1VGV6SmpYcEJXaTV2L3VZWWx1?=
+ =?utf-8?B?ODBLUTFVaEFPSDQreDU4STMzT01MaGRBNmN5RlMzWENCZVNKcWIreld0UDFH?=
+ =?utf-8?B?bkdPK3h4U2hOcll0djJkMTYzUzNGVlgvWUUwbW9oem05b2lpazRkNXNzeTVE?=
+ =?utf-8?B?ampsZ0xrK3lWVHM2bS9kMXNkelA0THBBeFFuUmc2VlpGL2Q2cTBZRVdtaWlh?=
+ =?utf-8?B?dHFSYjRsU2M4YTdSbXJiTC95MmdWWXFMNG9MUmRSMStsODd5VWdRUVJiZXA0?=
+ =?utf-8?B?TXZWazlldVc1YWMxb0xCTG9iZEViRTU4OXpYU1VpNGh4VFZzVXkwLy9FT1Q0?=
+ =?utf-8?B?d3hXWEM5QzN1c3dpRXJ1NDU3NUFHYUZXenl2TTdYWUZhSW1xckZNOEpMU0VO?=
+ =?utf-8?B?TnI4dDcrY3NDdThndmtHV080T3FQMGh5UmhaaUdJWGJvaWxZOW4yMkNRRllG?=
+ =?utf-8?B?djVwY05KV0dxZHpwZXRuMXE0bGRmR0l1TjlBOEVkYlYxR1B5MW94VlZ5MGxq?=
+ =?utf-8?B?ZExZeC93SzgrTU1oL2o0cjY4ZXdEUHdNZzhYQnlCVDRCZXUvdEdmM0hnWUI3?=
+ =?utf-8?Q?HreAPqCePLCZt?=
+x-microsoft-antispam-prvs: <CY4PR11MB1544DA62AF718ED0E257C754E7630@CY4PR11MB1544.namprd11.prod.outlook.com>
+x-forefront-prvs: 09525C61DB
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(39860400002)(366004)(396003)(136003)(189003)(199004)(2906002)(97736004)(52116002)(105586002)(5660300002)(31686004)(66066001)(86362001)(14454004)(6246003)(26005)(36756003)(186003)(2201001)(76176011)(99286004)(6506007)(53546011)(386003)(102836004)(478600001)(256004)(2616005)(6436002)(25786009)(72206003)(54906003)(6486002)(6512007)(2501003)(316002)(446003)(8936002)(486006)(6116002)(4326008)(8676002)(71190400001)(68736007)(476003)(229853002)(11346002)(3846002)(305945005)(31696002)(106356001)(71200400001)(81166006)(81156014)(7736002)(53936002)(110136005);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR11MB1544;H:CY4PR11MB1256.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: mTLY3d19nUbVV5/S+yIZ8mrM/5jxsxehAorAKGPQc6r1cpEX4vYG4S4FyZrnV1zVMuQMfybKvOjXCJ8u5urPU9htZ2P3Wl1PXKutuiZ9Ad1Iv7jJO7xoAdgba+ru7alZ0YA2qU3req9kY7oCUsKCKKi/K3vFhpbDTi5J3PvcslLrksk7jxlRLNua67AzJT7TLvY1gm1oEBnuWbyG88KbsJ6kFpyrkJ3FkTZKmoB5NOtuNqjbX7SycHeohMGSFL7ePPiinTrs/OrWy9SP47alWlhopiRxFmysgn0YlFZNVwR6DTBFwAyR8Pbyoe/slJL2UtkNc+Gm+rfqFt1AJHq9dyWN9c0TV6hNkXEJjXblWfja4g7HO/cdJxhjgy1EsEniZp9ufsRQmGtl6OfRoqW25sTxaW9q/ErW2TQBhu/VC4k=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <9AC5BFC5BC1AAD46B4553033B17F9AC9@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a555501-9312-4e77-b949-08d695c2338a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2019 16:57:42.8077
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR11MB1544
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, February 18, 2019 2:44:08 PM CET Greg Kroah-Hartman wrote:
-> 4.14-stable review patch.  If anyone has any objections, please let me know.
-> 
-
-
-Wait! There's a problem! This patch "alone" is not enough to fix "the gpio-hog
-kills system" bug. The series also included the necessary dts change:
-
-"[v6,2/2] ARM: dts: qcom: add gpio-ranges property"
-<https://patchwork.kernel.org/patch/10432105/>
-
-This patch is still set to "Awaiting upstream". But, from what I can tell
-"linux-arm-msm" is the upstream, right?
-
-Anyway we had this discussion before:
-<https://www.spinics.net/lists/stable-commits/msg95383.html>
-But I don't have a long enough "poking tool" you speak of to do
-anything about it.
-
-So @Amit / @greg : can you please poke Andy about it?
-
-Note 2:
-The series also included a dt-binding patch:
-"[v6,1/2] dt-bindings: pinctrl: qcom: add gpio-ranges, gpio-reserved-ranges"
-<https://patchwork.kernel.org/patch/10431593/> 
-
-which made its way (with the same changes as the 2/2 patch) upstream.
-commit c1e802f68ca0 ("dt-bindings: pinctrl: qcom: add gpio-ranges, gpio-reserved-ranges")
-
-Cheers,
-Christian
-
-> ------------------
-> 
-> From: Christian Lamparter <chunkeey@gmail.com>
-> 
-> commit a86caa9ba5d70696ceb35d1d39caa20d8b641387 upstream.
-> 
-> Sven Eckelmann reported an issue with the current IPQ4019 pinctrl.
-> Setting up any gpio-hog in the device-tree for his device would
-> "kill the bootup completely":
-> 
-> | [    0.477838] msm_serial 78af000.serial: could not find pctldev for node /soc/pinctrl@1000000/serial_pinmux, deferring probe
-> | [    0.499828] spi_qup 78b5000.spi: could not find pctldev for node /soc/pinctrl@1000000/spi_0_pinmux, deferring probe
-> | [    1.298883] requesting hog GPIO enable USB2 power (chip 1000000.pinctrl, offset 58) failed, -517
-> | [    1.299609] gpiochip_add_data: GPIOs 0..99 (1000000.pinctrl) failed to register
-> | [    1.308589] ipq4019-pinctrl 1000000.pinctrl: Failed register gpiochip
-> | [    1.316586] msm_serial 78af000.serial: could not find pctldev for node /soc/pinctrl@1000000/serial_pinmux, deferring probe
-> | [    1.322415] spi_qup 78b5000.spi: could not find pctldev for node /soc/pinctrl@1000000/spi_0_pinmux, deferri
-> 
-> This was also verified on a RT-AC58U (IPQ4018) which would
-> no longer boot, if a gpio-hog was specified. (Tried forcing
-> the USB LED PIN (GPIO0) to high.).
-> 
-> The problem is that Pinctrl+GPIO registration is currently
-> peformed in the following order in pinctrl-msm.c:
-> 	1. pinctrl_register()
-> 	2. gpiochip_add()
-> 	3. gpiochip_add_pin_range()
-> 
-> The actual error code -517 == -EPROBE_DEFER is coming from
-> pinctrl_get_device_gpio_range(), which is called through:
->         gpiochip_add
->             of_gpiochip_add
->                 of_gpiochip_scan_gpios
->                     gpiod_hog
->                         gpiochip_request_own_desc
->                             __gpiod_request
->                                 chip->request
->                                     gpiochip_generic_request
->                                        pinctrl_gpio_request
->                                           pinctrl_get_device_gpio_range
-> 
-> pinctrl_get_device_gpio_range() is unable to find any valid
-> pin ranges, since nothing has been added to the pinctrldev_list yet.
-> so the range can't be found, and the operation fails with -EPROBE_DEFER.
-> 
-> This patch fixes the issue by adding the "gpio-ranges" property to
-> the pinctrl device node of all upstream Qcom SoC. The pin ranges are
-> then added by the gpio core.
-> 
-> In order to remain compatible with older, existing DTs (and ACPI)
-> a check for the "gpio-ranges" property has been added to
-> msm_gpio_init(). This prevents the driver of adding the same entry
-> to the pinctrldev_list twice.
-> 
-> Reported-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
-> Tested-by: Sven Eckelmann <sven.eckelmann@openmesh.com> [ipq4019]
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
-> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> 
-> ---
->  drivers/pinctrl/qcom/pinctrl-msm.c |   23 ++++++++++++++++++-----
->  1 file changed, 18 insertions(+), 5 deletions(-)
-> 
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -839,11 +839,24 @@ static int msm_gpio_init(struct msm_pinc
->  		return ret;
->  	}
->  
-> -	ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev), 0, 0, chip->ngpio);
-> -	if (ret) {
-> -		dev_err(pctrl->dev, "Failed to add pin range\n");
-> -		gpiochip_remove(&pctrl->chip);
-> -		return ret;
-> +	/*
-> +	 * For DeviceTree-supported systems, the gpio core checks the
-> +	 * pinctrl's device node for the "gpio-ranges" property.
-> +	 * If it is present, it takes care of adding the pin ranges
-> +	 * for the driver. In this case the driver can skip ahead.
-> +	 *
-> +	 * In order to remain compatible with older, existing DeviceTree
-> +	 * files which don't set the "gpio-ranges" property or systems that
-> +	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
-> +	 */
-> +	if (!of_property_read_bool(pctrl->dev->of_node, "gpio-ranges")) {
-> +		ret = gpiochip_add_pin_range(&pctrl->chip,
-> +			dev_name(pctrl->dev), 0, 0, chip->ngpio);
-> +		if (ret) {
-> +			dev_err(pctrl->dev, "Failed to add pin range\n");
-> +			gpiochip_remove(&pctrl->chip);
-> +			return ret;
-> +		}
->  	}
->  
->  	ret = gpiochip_irqchip_add(chip,
-> 
-> 
-> 
-
-
-
+T24gMTguMDIuMjAxOSAxODoxMCwgQ29kcmluIENpdWJvdGFyaXUgLSBNMTk5NDAgd3JvdGU6DQo+
+IEZyb206IENvZHJpbiBDaXVib3Rhcml1IDxjb2RyaW4uY2l1Ym90YXJpdUBtaWNyb2NoaXAuY29t
+Pg0KPiANCj4gVGhpcyBwYXRjaCBzZXQgY29udGFpbnMgc29tZSBjaGFuZ2VzIEkgbmVlZGVkIHRv
+IG1ha2UgSTJTIGFuZCBURE0NCj4gKERTUF9BKSBmb3JtYXRzIHdvcmsuIEkgdGVzdGVkIG9ubHkg
+d2l0aCBhZDE5MzYsIGJ1dCB0aGUgcGF0Y2hlcw0KDQphY3R1YWxseSwgaXQncyBhZDE5MzQuIFNv
+cnJ5IGFib3V0IHRoYXQuDQoNCkJlc3QgcmVnYXJkcywNCkNvZHJpbg0KDQo+IHNob3VsZCB3b3Jr
+IGZpbmUgZm9yIGFsbCB0aGUgY29kZWNzIHRoYXQgdXNlIHRoaXMgZHJpdmVyLiBBbHRob3VnaCBJ
+DQo+IGNoZWNrZWQgdGhlIERTIGZvciBhbGwgb2YgdGhlbSAoSSBob3BlKSB0byBhc3N1cmUgdGhh
+dCB0aGUgcGF0Y2hlcw0KPiBhcHBseSwgSSB3b3VsZCByZWFsbHkgYXBwcmVjaWF0ZSBpZiBzb21l
+b25lIGVsc2UgY2FuIHRlc3QgdGhlbSBvbg0KPiBhbm90aGVyIGNvZGVjLg0KPiANCj4gQ29kcmlu
+IENpdWJvdGFyaXUgKDUpOg0KPiAgICBBU29DOiBjb2RlY3M6IGFkMTkzeDogUmVtb3ZlIGNhcHR1
+cmUgc3VwcG9ydCBmb3IgY29kZWNzIHdpdGhvdXQgQURDDQo+ICAgIEFTb0M6IGNvZGVjczogYWQx
+OTN4OiBTZXQgY29uc3RyYWludCB0byBhbHdheXMgaGF2ZSAzMiBzYW1wbGUgYml0cw0KPiAgICBB
+U29DOiBjb2RlY3M6IGFkMTkzeDogRml4IGZyYW1lIHBvbGFyaXR5IGZvciBEU1BfQSBmb3JtYXQN
+Cj4gICAgQVNvQzogY29kZWNzOiBhZDE5M3g6IEFkZCBydW50aW1lIHN1cHBvcnQgZm9yIERTUF9B
+IGFuZCBJMlMgbW9kZXMNCj4gICAgQVNvQzogY29kZWNzOiBhZDE5M3g6IEFkZCBzdXBwb3J0IHRv
+IGRpc2FibGUgb24tY2hpcCBQTEwNCj4gDQo+ICAgc291bmQvc29jL2NvZGVjcy9hZDE5M3guYyB8
+IDc2ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tLQ0KPiAgIHNvdW5kL3Nv
+Yy9jb2RlY3MvYWQxOTN4LmggfCAgOCArKysrKw0KPiAgIDIgZmlsZXMgY2hhbmdlZCwgODAgaW5z
+ZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkNCj4gDQoNCg==
