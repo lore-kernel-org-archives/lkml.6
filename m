@@ -2,91 +2,170 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT,
+	USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31C74C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:40:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B3A8C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:48:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00FBD20C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:40:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFDEB2146E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 20:48:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u9JWkSw3"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NUQUzfw8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729807AbfBRUk2 (ORCPT
+        id S1729707AbfBRUsu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 15:40:28 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:35410 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725844AbfBRUk1 (ORCPT
+        Mon, 18 Feb 2019 15:48:50 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:34611 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727513AbfBRUsr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 15:40:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=D4KVafrIWO3hRL7wT1pFyqZZqP8UP6+r/2o6A4Cqn30=; b=u9JWkSw32M7Y0PECZWpQl5Rqb
-        iF15GJPxMH/cTKJTSQTCyxrIgL1b4XQKjBxSe1KDOU0rVtgF3yJmtXaKBycEXRT8GG3G65CaONGCR
-        Mc2HKG7e2XxXPq1Gl8Q+rMc7UBQno0+q4sI4GzxE4OpQthuvEG57xmZbnZXkPPSZ8RDsL5OKRDfYc
-        E+bCxyrhsme+gBePf9I9oqacPbnObDKAMYpqYWtSEIqsROQ6tcqQbaMf0gp2xzgUQWO/fSvko6Nbn
-        4Ja8sbcrIgFasxD7CZXgNpJ0GqhuZjI+bINVIB8F6ZjO8Fif7HKI90HaqoPtrZHY8nsytRngvEgNZ
-        DoZZZ9Myg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gvpiB-0004v8-24; Mon, 18 Feb 2019 20:40:23 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 42F5F201A4F68; Mon, 18 Feb 2019 21:40:20 +0100 (CET)
-Date:   Mon, 18 Feb 2019 21:40:20 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Tim Chen <tim.c.chen@linux.intel.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        subhra.mazumdar@oracle.com,
-        =?iso-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>, kerrnel@google.com
-Subject: Re: [RFC][PATCH 00/16] sched: Core scheduling
-Message-ID: <20190218204020.GV32494@hirez.programming.kicks-ass.net>
-References: <20190218165620.383905466@infradead.org>
- <CAHk-=wh32Zgp+bN7G1KH7SuCiY1YSJ41Y-_eWpfWubGjqq2_dw@mail.gmail.com>
+        Mon, 18 Feb 2019 15:48:47 -0500
+Received: by mail-it1-f195.google.com with SMTP id d125so857481ith.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 12:48:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/NLpiy+j/zrpP+sVhQdIcgCVfL0HwEex4aRdsJ4vY8Q=;
+        b=NUQUzfw8/x7dr0Q70sqUQawAGRy1k43ldVFkm4ZbYxr1A3YdpzcGBs+YvYXIOhmZr+
+         45UfT9cky6fpnR0KZOUXAxs90kZDwfEffomg1cwN/PpVg0WEPS6aW5GpHLtuct5JMUJq
+         K213WVXJIDZ0l/iI9bu25oOyzAcMIFxP79Nzr9hkj/tZezv0NOLTYFZ9AnOC59poJK9q
+         21/h5HJxE20vXVmiNlzp3I8scZNb5ELd+yb3+OnbaSox94ydiQ/+kUattnzPon/0+iDL
+         dldi9AiGX42H8k9DyNw8FdUIZITG8BoFgW4sWn7w7K/aJ6rwcJ5lSHZ1Wj1Iso7Z53Ba
+         dSvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/NLpiy+j/zrpP+sVhQdIcgCVfL0HwEex4aRdsJ4vY8Q=;
+        b=kzbTIWpbZvGrcEnFUzpg9K9d4mBggSCtHZMmgQWGMyS7ru0v0VMiXJUY+LEOYuPFIJ
+         LuWyPRcExmaS0wMgItCsvY7PZw7Qt9zUQVdjTCBiprYYP+l1BOrGmHO8dPuJzCOIwitB
+         s9cYnz/YH59Cr71fuHdAQM64yEW445Whv54jL8rgKiXlkyYmCwNaTIFwREv13cyCdqhD
+         t/OTuqASiQba/PDs4UB75w1OCbaKAVXyQvJPAipEPgbwGCce6iLW4Gdd1mGiI/rAVBd5
+         kIPo805wJh+jNk+RVuhGv95GwU3Dmh3f+Wa1vho5GFG7fO3fbSm0QT6ifg+N7uT0iPWH
+         zowQ==
+X-Gm-Message-State: AHQUAuZEhpBKKwiyGyFZV8CecWogpIoZAKhgTIi6yj9Rw3wY8oPoG3bA
+        UfSyd+iJ3Y9UQbo0ozWnIl9pYQ==
+X-Google-Smtp-Source: AHgI3IYoW571J1Mbargry0dSLvhBvQdK5/NeOan6qv4n/bRuaI5i5jinvq0JPQkH5R/r3DLUERBiXg==
+X-Received: by 2002:a24:4648:: with SMTP id j69mr470647itb.56.1550522925849;
+        Mon, 18 Feb 2019 12:48:45 -0800 (PST)
+Received: from google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
+        by smtp.gmail.com with ESMTPSA id d6sm5943432ioc.44.2019.02.18.12.48.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Feb 2019 12:48:44 -0800 (PST)
+Date:   Mon, 18 Feb 2019 13:48:42 -0700
+From:   Yu Zhao <yuzhao@google.com>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nick Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        mark.rutland@arm.com
+Subject: Re: [PATCH] arm64: mm: enable per pmd page table lock
+Message-ID: <20190218204842.GA203083@google.com>
+References: <20190214211642.2200-1-yuzhao@google.com>
+ <20190218151223.GB16091@fuggles.cambridge.arm.com>
+ <20190218194938.GA184109@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wh32Zgp+bN7G1KH7SuCiY1YSJ41Y-_eWpfWubGjqq2_dw@mail.gmail.com>
+In-Reply-To: <20190218194938.GA184109@google.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 09:49:10AM -0800, Linus Torvalds wrote:
-> On Mon, Feb 18, 2019 at 9:40 AM Peter Zijlstra <peterz@infradead.org> wrote:
-> >
-> > However; whichever way around you turn this cookie; it is expensive and nasty.
+On Mon, Feb 18, 2019 at 12:49:38PM -0700, Yu Zhao wrote:
+> On Mon, Feb 18, 2019 at 03:12:23PM +0000, Will Deacon wrote:
+> > [+Mark]
+> > 
+> > On Thu, Feb 14, 2019 at 02:16:42PM -0700, Yu Zhao wrote:
+> > > Switch from per mm_struct to per pmd page table lock by enabling
+> > > ARCH_ENABLE_SPLIT_PMD_PTLOCK. This provides better granularity for
+> > > large system.
+> > > 
+> > > I'm not sure if there is contention on mm->page_table_lock. Given
+> > > the option comes at no cost (apart from initializing more spin
+> > > locks), why not enable it now.
+> > > 
+> > > Signed-off-by: Yu Zhao <yuzhao@google.com>
+> > > ---
+> > >  arch/arm64/Kconfig               |  3 +++
+> > >  arch/arm64/include/asm/pgalloc.h | 12 +++++++++++-
+> > >  arch/arm64/include/asm/tlb.h     |  5 ++++-
+> > >  3 files changed, 18 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> > > index a4168d366127..104325a1ffc3 100644
+> > > --- a/arch/arm64/Kconfig
+> > > +++ b/arch/arm64/Kconfig
+> > > @@ -872,6 +872,9 @@ config ARCH_WANT_HUGE_PMD_SHARE
+> > >  config ARCH_HAS_CACHE_LINE_SIZE
+> > >  	def_bool y
+> > >  
+> > > +config ARCH_ENABLE_SPLIT_PMD_PTLOCK
+> > > +	def_bool y
+> > > +
+> > >  config SECCOMP
+> > >  	bool "Enable seccomp to safely compute untrusted bytecode"
+> > >  	---help---
+> > > diff --git a/arch/arm64/include/asm/pgalloc.h b/arch/arm64/include/asm/pgalloc.h
+> > > index 52fa47c73bf0..dabba4b2c61f 100644
+> > > --- a/arch/arm64/include/asm/pgalloc.h
+> > > +++ b/arch/arm64/include/asm/pgalloc.h
+> > > @@ -33,12 +33,22 @@
+> > >  
+> > >  static inline pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long addr)
+> > >  {
+> > > -	return (pmd_t *)__get_free_page(PGALLOC_GFP);
+> > > +	struct page *page;
+> > > +
+> > > +	page = alloc_page(PGALLOC_GFP);
+> > > +	if (!page)
+> > > +		return NULL;
+> > > +	if (!pgtable_pmd_page_ctor(page)) {
+> > > +		__free_page(page);
+> > > +		return NULL;
+> > > +	}
+> > > +	return page_address(page);
+> > 
+> > I'm a bit worried as to how this interacts with the page-table code in
+> > arch/arm64/mm/mmu.c when pgd_pgtable_alloc is used as the allocator. It
+> > looks like that currently always calls pgtable_page_ctor(), regardless of
+> > level. Do we now need a separate allocator function for the PMD level?
 > 
-> Do you (or anybody else) have numbers for real loads?
+> Thanks for reminding me, I never noticed this. The short answer is
+> no.
 > 
-> Because performance is all that matters. If performance is bad, then
-> it's pointless, since just turning off SMT is the answer.
+> I guess pgtable_page_ctor() is used on all pud/pmd/pte entries
+> there because it's also compatible with pud, and pmd too without
+> this patch. So your concern is valid. Thanks again.
+> 
+> Why my answer is no? Because I don't think the ctor matters for
+> pgd_pgtable_alloc(). The ctor is only required for userspace page
+> tables, and that's why we don't have it in pte_alloc_one_kernel().
+> AFAICT, none of the pgds (efi_mm.pgd, tramp_pg_dir and init_mm.pgd)
+> pre-populated by pgd_pgtable_alloc() is. (I doubt we pre-populate
+> userspace page tables in any other arch).
+> 
+> So to avoid future confusion, we might just remove the ctor from
+> pgd_pgtable_alloc().
 
-Not for these patches; they stopped crashing only yesterday and I
-cleaned them up and send them out.
+I'm sorry. I've missed that we call apply_to_page_range() on efi_mm.
+The function does require the ctor. So we actually can't remove it.
+Though pgtable_page_ctor() also does the work adequately for pmd in
+terms of giving apply_to_page_range() what it requires, it would be
+more appropriate to use pgtable_pmd_page_ctor() instead (and not
+calling the ctor at all on pud).
 
-The previous version; which was more horrible; but L1TF complete, was
-between OK-ish and horrible depending on the number of VMEXITs a
-workload had.
-
-If there were close to no VMEXITs, it beat smt=off, if there were lots
-of VMEXITs it was far far worse. Supposedly hosting people try their
-very bestest to have no VMEXITs so it mostly works for them (with the
-obvious exception of single VCPU guests).
-
-It's just that people have been bugging me for this crap; and I figure
-I'd post it now that it's not exploding anymore and let others have at.
-
-
+I could add this change prior to this patch, if it makes sense to
+you. Thanks.
