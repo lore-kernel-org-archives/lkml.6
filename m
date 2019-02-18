@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE970C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:18:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DBE0C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:18:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9641D2177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:18:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40EE321901
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:18:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499504;
-	bh=Cl9moeMppdqzI4utOkbU7+1xMcbXbK2mv14C3eWOV+E=;
+	s=default; t=1550499508;
+	bh=0ivW29iiCsU60gPWFshDFo8KQpmXv23fcSr4wPDK+9E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nu+v0RHjLBrNAwKX0STMAfUMsavvlWpr3KxF2+Z8dOsX4GnhKrj6cLvUYGc41AtJU
-	 RMXcn/wlkjLB3qMDIAs6sZ7aOuNjp+z4JRtD9fLfxXA9PZf73rKidNoNEbRSOH/tey
-	 sWaS+FLeHSl4okplHNFwZDNwyqdUa3nnEMS/n4LU=
+	b=E6tW040WbXf+AigZBg5ARaQpCtRrwrxUmXfkyUZop7/iKdWJdpogYjTgrz+woDNf3
+	 F9NAqQGyYNgE4ScaId2h/XIHvzl7cN99piFDyK7o5AuI2CRaKhpxtkMQtMKX2o5Y5V
+	 q36m7EIPHqoOf9ryVQWFhtmcsa0dhnmw0yVj7oYI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390171AbfBROIv (ORCPT
+        id S2391661AbfBROS0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:08:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52132 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:18:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390999AbfBROIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:08:45 -0500
+        id S2391029AbfBROIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:08:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 959E221901;
-        Mon, 18 Feb 2019 14:08:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8FA321902;
+        Mon, 18 Feb 2019 14:08:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498925;
-        bh=Cl9moeMppdqzI4utOkbU7+1xMcbXbK2mv14C3eWOV+E=;
+        s=default; t=1550498931;
+        bh=0ivW29iiCsU60gPWFshDFo8KQpmXv23fcSr4wPDK+9E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zWghfceTfVQJ7GohyoRFR36BgKw89MA+HK2AwB4b5g9n423NBYQ4Sh5gz6GqNEcyD
-         y3LXPi7W0N1kkdwPoVdHkBnIZTj1N0cdff87xqJXBhUy1IZF6XXCnBWapMjchu/93m
-         9fFpvTddpHcPGknJ8NKiEKTrY0Dbltm7YQE1OWYk=
+        b=Uyu6JjzgTLh9wLwDRD/IT6RQ/+de8KejrshCmnyDBNZZ+2sVPxinsl/SNPRjrBKk9
+         hjlBWi79uDzik8mnR7xrEsBOA2udd0YU7QZn1bAuyVa6lzozf9rqCWkFEdeWd6CI3J
+         ntC7r+xdpORH+p8gOwhHa4U5lROpqZpLKsn36Unw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bob Peterson <rpeterso@redhat.com>,
-        David Teigland <teigland@redhat.com>,
+        stable@vger.kernel.org, Alan Tull <atull@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frank Rowand <frank.rowand@sony.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 003/108] dlm: Dont swamp the CPU with callbacks queued during recovery
-Date:   Mon, 18 Feb 2019 14:42:59 +0100
-Message-Id: <20190218133519.682694669@linuxfoundation.org>
+Subject: [PATCH 3.18 005/108] powerpc/pseries: add of_node_put() in dlpar_detach_node()
+Date:   Mon, 18 Feb 2019 14:43:01 +0100
+Message-Id: <20190218133519.766528626@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -66,56 +67,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 216f0efd19b9cc32207934fd1b87a45f2c4c593e ]
+[ Upstream commit 5b3f5c408d8cc59b87e47f1ab9803dbd006e4a91 ]
 
-Before this patch, recovery would cause all callbacks to be delayed,
-put on a queue, and afterward they were all queued to the callback
-work queue. This patch does the same thing, but occasionally takes
-a break after 25 of them so it won't swamp the CPU at the expense
-of other RT processes like corosync.
+The previous commit, "of: overlay: add missing of_node_get() in
+__of_attach_node_sysfs" added a missing of_node_get() to
+__of_attach_node_sysfs().  This results in a refcount imbalance
+for nodes attached with dlpar_attach_node().  The calling sequence
+from dlpar_attach_node() to __of_attach_node_sysfs() is:
 
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
-Signed-off-by: David Teigland <teigland@redhat.com>
+   dlpar_attach_node()
+      of_attach_node()
+         __of_attach_node_sysfs()
+
+For more detailed description of the node refcount, see
+commit 68baf692c435 ("powerpc/pseries: Fix of_node_put() underflow
+during DLPAR remove").
+
+Tested-by: Alan Tull <atull@kernel.org>
+Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/dlm/ast.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/powerpc/platforms/pseries/dlpar.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/dlm/ast.c b/fs/dlm/ast.c
-index dcea1e37a1b7..f18619bc2e09 100644
---- a/fs/dlm/ast.c
-+++ b/fs/dlm/ast.c
-@@ -290,6 +290,8 @@ void dlm_callback_suspend(struct dlm_ls *ls)
- 		flush_workqueue(ls->ls_callback_wq);
- }
+diff --git a/arch/powerpc/platforms/pseries/dlpar.c b/arch/powerpc/platforms/pseries/dlpar.c
+index 80d175dca68e..85bd29475987 100644
+--- a/arch/powerpc/platforms/pseries/dlpar.c
++++ b/arch/powerpc/platforms/pseries/dlpar.c
+@@ -299,6 +299,8 @@ int dlpar_detach_node(struct device_node *dn)
+ 	if (rc)
+ 		return rc;
  
-+#define MAX_CB_QUEUE 25
++	of_node_put(dn);
 +
- void dlm_callback_resume(struct dlm_ls *ls)
- {
- 	struct dlm_lkb *lkb, *safe;
-@@ -300,15 +302,23 @@ void dlm_callback_resume(struct dlm_ls *ls)
- 	if (!ls->ls_callback_wq)
- 		return;
- 
-+more:
- 	mutex_lock(&ls->ls_cb_mutex);
- 	list_for_each_entry_safe(lkb, safe, &ls->ls_cb_delay, lkb_cb_list) {
- 		list_del_init(&lkb->lkb_cb_list);
- 		queue_work(ls->ls_callback_wq, &lkb->lkb_cb_work);
- 		count++;
-+		if (count == MAX_CB_QUEUE)
-+			break;
- 	}
- 	mutex_unlock(&ls->ls_cb_mutex);
- 
- 	if (count)
- 		log_rinfo(ls, "dlm_callback_resume %d", count);
-+	if (count == MAX_CB_QUEUE) {
-+		count = 0;
-+		cond_resched();
-+		goto more;
-+	}
+ 	return 0;
  }
  
 -- 
