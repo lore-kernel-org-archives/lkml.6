@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA19EC10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 918BFC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:04:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC6C821901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:04:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6373E21902
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:04:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498673;
-	bh=2+l3cMPKqe1k1P0pJY7BW97+2aB+VVuUAcNeatCVcOs=;
+	s=default; t=1550498677;
+	bh=d8nozL5in4jiV0uR8sRhloYgPPeny4io0wR2zyeTWvc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GhE9D2On1nZqzg4eOTemKRHzk9rL0P/InRprLBG63R0DnenqObpqIAa3vosOOGQUh
-	 sFYwzyEg50n5J5de2kjHp64wL9q8R2+V4z6+nXspH9i/nAolfHeVoBOGavQbR831LZ
-	 ywu3llmVKW/4lfoVX1pLt46FuYrH513FfoOVNuEw=
+	b=WABcfZtr+ce2OvLo4cW6Jw951Soex6Wi36FAV7Om4E7SFPakmB7n6KqugoIK8kfYM
+	 84uxifF5Dp0wOC8dVVh3h56AcaXY3+ovwyUvAVLjVQY/djpBbihOjPBby5lQsQXD8p
+	 doclTsl+u7pdaGPZxRK6RstqSrqddSAP5+RBnmdQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389300AbfBROEc (ORCPT
+        id S2389951AbfBROEg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:04:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46904 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:04:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389898AbfBROE0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:04:26 -0500
+        id S2389331AbfBROEd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:04:33 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61D9321901;
-        Mon, 18 Feb 2019 14:04:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEE38204FD;
+        Mon, 18 Feb 2019 14:04:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498665;
-        bh=2+l3cMPKqe1k1P0pJY7BW97+2aB+VVuUAcNeatCVcOs=;
+        s=default; t=1550498672;
+        bh=d8nozL5in4jiV0uR8sRhloYgPPeny4io0wR2zyeTWvc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FMhUp70cbb6VhB04J9CWGpCv+0sq+HP1Mipxpc/fKVFqr9GzZMNf251YfZLEcesYH
-         qX0WVCBi85XkhxcT5c1Vy6sZLh45FSumjML/NgnAsFor5oMFl5GhoYH9qKSz8ElnXM
-         52XNEbZLYg646119izGiuxKj0plWPKmoueqlWewk=
+        b=cE3lpatRjwMrKRdM7Mcn9sQwng5GVvr7bs/5+/GdzS6VcIdNJn+S7EgJYhGZXBUwN
+         D55cyUdBhg9f/r6KWTbbDNdJhhNnnVYGlaLqPq5/6/Em++gnG18YK85Da/QYBVNf8V
+         JgMcz1AxPeHsOyv9qp/UR4PeIEkBY4x1PMSyXdII=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rundong Ge <rdong.ge@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 082/143] net: dsa: slave: Dont propagate flag changes on down slave interfaces
-Date:   Mon, 18 Feb 2019 14:43:30 +0100
-Message-Id: <20190218133532.071482604@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 084/143] ALSA: hda - Serialize codec registrations
+Date:   Mon, 18 Feb 2019 14:43:32 +0100
+Message-Id: <20190218133532.140094760@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -64,53 +64,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Rundong Ge <rdong.ge@gmail.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 17ab4f61b8cd6f9c38e9d0b935d86d73b5d0d2b5 ]
+commit 305a0ade180981686eec1f92aa6252a7c6ebb1cf upstream.
 
-The unbalance of master's promiscuity or allmulti will happen after ifdown
-and ifup a slave interface which is in a bridge.
+In the current code, the codec registration may happen both at the
+codec bind time and the end of the controller probe time.  In a rare
+occasion, they race with each other, leading to Oops due to the still
+uninitialized card device.
 
-When we ifdown a slave interface , both the 'dsa_slave_close' and
-'dsa_slave_change_rx_flags' will clear the master's flags. The flags
-of master will be decrease twice.
-In the other hand, if we ifup the slave interface again, since the
-slave's flags were cleared the 'dsa_slave_open' won't set the master's
-flag, only 'dsa_slave_change_rx_flags' that triggered by 'br_add_if'
-will set the master's flags. The flags of master is increase once.
+This patch introduces a simple flag to prevent the codec registration
+at the codec bind time as long as the controller probe is going on.
+The controller probe invokes snd_card_register() that does the whole
+registration task, and we don't need to register each piece
+beforehand.
 
-Only propagating flag changes when a slave interface is up makes
-sure this does not happen. The 'vlan_dev_change_rx_flags' had the
-same problem and was fixed, and changes here follows that fix.
-
-Fixes: 91da11f870f0 ("net: Distributed Switch Architecture protocol support")
-Signed-off-by: Rundong Ge <rdong.ge@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/dsa/slave.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/net/dsa/slave.c
-+++ b/net/dsa/slave.c
-@@ -157,10 +157,14 @@ static void dsa_slave_change_rx_flags(st
- 	struct dsa_slave_priv *p = netdev_priv(dev);
- 	struct net_device *master = p->parent->dst->master_netdev;
+---
+ sound/pci/hda/hda_bind.c  |    3 ++-
+ sound/pci/hda/hda_codec.h |    1 +
+ sound/pci/hda/hda_intel.c |    2 ++
+ 3 files changed, 5 insertions(+), 1 deletion(-)
+
+--- a/sound/pci/hda/hda_bind.c
++++ b/sound/pci/hda/hda_bind.c
+@@ -109,7 +109,8 @@ static int hda_codec_driver_probe(struct
+ 	err = snd_hda_codec_build_controls(codec);
+ 	if (err < 0)
+ 		goto error_module;
+-	if (codec->card->registered) {
++	/* only register after the bus probe finished; otherwise it's racy */
++	if (!codec->bus->bus_probing && codec->card->registered) {
+ 		err = snd_card_register(codec->card);
+ 		if (err < 0)
+ 			goto error_module;
+--- a/sound/pci/hda/hda_codec.h
++++ b/sound/pci/hda/hda_codec.h
+@@ -68,6 +68,7 @@ struct hda_bus {
+ 	unsigned int response_reset:1;	/* controller was reset */
+ 	unsigned int in_reset:1;	/* during reset operation */
+ 	unsigned int no_response_fallback:1; /* don't fallback at RIRB error */
++	unsigned int bus_probing :1;	/* during probing process */
  
--	if (change & IFF_ALLMULTI)
--		dev_set_allmulti(master, dev->flags & IFF_ALLMULTI ? 1 : -1);
--	if (change & IFF_PROMISC)
--		dev_set_promiscuity(master, dev->flags & IFF_PROMISC ? 1 : -1);
-+	if (dev->flags & IFF_UP) {
-+		if (change & IFF_ALLMULTI)
-+			dev_set_allmulti(master,
-+					 dev->flags & IFF_ALLMULTI ? 1 : -1);
-+		if (change & IFF_PROMISC)
-+			dev_set_promiscuity(master,
-+					    dev->flags & IFF_PROMISC ? 1 : -1);
-+	}
+ 	int primary_dig_out_type;	/* primary digital out PCM type */
+ 	unsigned int mixer_assigned;	/* codec addr for mixer name */
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -2100,6 +2100,7 @@ static int azx_probe_continue(struct azx
+ 	int val;
+ 	int err;
+ 
++	to_hda_bus(bus)->bus_probing = 1;
+ 	hda->probe_continued = 1;
+ 
+ 	/* Request display power well for the HDA controller or codec. For
+@@ -2200,6 +2201,7 @@ i915_power_fail:
+ 	if (err < 0)
+ 		hda->init_failed = 1;
+ 	complete_all(&hda->probe_wait);
++	to_hda_bus(bus)->bus_probing = 0;
+ 	return err;
  }
  
- static void dsa_slave_set_rx_mode(struct net_device *dev)
 
 
