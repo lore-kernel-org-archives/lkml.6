@@ -4,49 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C6B4C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:59:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE59C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:59:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18F55217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:59:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D733217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:59:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498387;
-	bh=Pyffbbp9E1MoPcgZddx9Mb+/rN2lJME0pTXz4c5Cnmc=;
+	s=default; t=1550498390;
+	bh=KnlB6fXS18sErm5wdb046CK/z9LrfWhvylX+1O2emaA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vPsVTDRMfQJyH7iPkxCFqLejOnskn3jtdYY/QKLooVjpxGYw+Jxso1IFetR3M17XS
-	 eZVFHDEkkI9gnsDupbff92jW2hVK0Sv3hZdQYZSJAs/JziEXOTIf0u7QM743gzac+n
-	 542H4oVHiyWTGX2iy61vNVs9m9JjWVcqurKeK+/o=
+	b=ApKvSlNF69YWs/YBTW1pRByLoms8qcD8YJnLvz3BTm4qwQtbn8ZR18HLurB0Z3Stq
+	 wRPGRO78MTLkybgZC0w62M58mrzGqmndul3ldoyPM77WgcteGN4W69sM1zSnN9y4g8
+	 4r2VXiZmFwPi1y44VDfbfykY1a2YkjaVOOANfyrU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388658AbfBRN7p (ORCPT
+        id S2388652AbfBRN7s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:59:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40698 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:59:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388636AbfBRN7n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:59:43 -0500
+        id S2388636AbfBRN7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:59:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 284422070D;
-        Mon, 18 Feb 2019 13:59:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E865520842;
+        Mon, 18 Feb 2019 13:59:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498382;
-        bh=Pyffbbp9E1MoPcgZddx9Mb+/rN2lJME0pTXz4c5Cnmc=;
+        s=default; t=1550498385;
+        bh=KnlB6fXS18sErm5wdb046CK/z9LrfWhvylX+1O2emaA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DLxjCjkb3YVsvnuEsFioGKD3kWsyi4jwRbLWU7XfykBb8CEDrfeQfyFYn9hg07Sae
-         wOCvT9zN7x9qf3KqEQHETGV2sufxiZNdV/TDNmrRwwZPf6DEkUzj2ihNJuF/lZcpeL
-         ew3+JEbpNGG6ItDVe6KcSKmMCZJ/g2cg8z8Z+CTY=
+        b=OTG7cowCKtkYowl9UZrNxsKybc2BQx/F0lEsdL8Otj5grhc5SsmBKAJ9/2agnqWdR
+         uZyajdW4znvBGf+ucWQsJ6iAYAOcnVI3LRIKIz31Mvn/JxXE7m+NXh4p4enlk4WL3G
+         MA/YsOGmNM0KMgFWQ2QHW30WATnsA+bSxp3EDbfs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matti Kurkela <Matti.Kurkela@iki.fi>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.9 43/58] Input: elantech - enable 3rd button support on Fujitsu CELSIUS H780
-Date:   Mon, 18 Feb 2019 14:44:04 +0100
-Message-Id: <20190218133511.900665946@linuxfoundation.org>
+        stable@vger.kernel.org,
+        James Hughes <james.hughes@raspberrypi.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Woojung Huh <Woojung.Huh@microchip.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 4.9 52/58] smsc95xx: Use skb_cow_head to deal with cloned skbs
+Date:   Mon, 18 Feb 2019 14:44:13 +0100
+Message-Id: <20190218133512.479473907@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133508.567416115@linuxfoundation.org>
 References: <20190218133508.567416115@linuxfoundation.org>
@@ -65,52 +68,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matti Kurkela <Matti.Kurkela@iki.fi>
+From: James Hughes <james.hughes@raspberrypi.org>
 
-commit e8b22d0a329f0fb5c7ef95406872d268f01ee3b1 upstream.
+commit e9156cd26a495a18706e796f02a81fee41ec14f4 upstream.
 
-Like Fujitsu CELSIUS H760, the H780 also has a three-button Elantech
-touchpad, but the driver needs to be told so to enable the middle touchpad
-button.
+The driver was failing to check that the SKB wasn't cloned
+before adding checksum data.
+Replace existing handling to extend/copy the header buffer
+with skb_cow_head.
 
-The elantech_dmi_force_crc_enabled quirk was not necessary with the H780.
-
-Also document the fw_version and caps values detected for both H760 and
-H780 models.
-
-Signed-off-by: Matti Kurkela <Matti.Kurkela@iki.fi>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: James Hughes <james.hughes@raspberrypi.org>
+Acked-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Woojung Huh <Woojung.Huh@microchip.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/elantech.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/net/usb/smsc95xx.c |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- a/drivers/input/mouse/elantech.c
-+++ b/drivers/input/mouse/elantech.c
-@@ -1117,6 +1117,8 @@ static int elantech_get_resolution_v4(st
-  * Asus UX31               0x361f00        20, 15, 0e      clickpad
-  * Asus UX32VD             0x361f02        00, 15, 0e      clickpad
-  * Avatar AVIU-145A2       0x361f00        ?               clickpad
-+ * Fujitsu CELSIUS H760    0x570f02        40, 14, 0c      3 hw buttons (**)
-+ * Fujitsu CELSIUS H780    0x5d0f02        41, 16, 0d      3 hw buttons (**)
-  * Fujitsu LIFEBOOK E544   0x470f00        d0, 12, 09      2 hw buttons
-  * Fujitsu LIFEBOOK E546   0x470f00        50, 12, 09      2 hw buttons
-  * Fujitsu LIFEBOOK E547   0x470f00        50, 12, 09      2 hw buttons
-@@ -1169,6 +1171,13 @@ static const struct dmi_system_id elante
- 			DMI_MATCH(DMI_PRODUCT_NAME, "CELSIUS H760"),
- 		},
- 	},
-+	{
-+		/* Fujitsu H780 also has a middle button */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "FUJITSU"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "CELSIUS H780"),
-+		},
-+	},
- #endif
- 	{ }
- };
+--- a/drivers/net/usb/smsc95xx.c
++++ b/drivers/net/usb/smsc95xx.c
+@@ -2011,13 +2011,13 @@ static struct sk_buff *smsc95xx_tx_fixup
+ 	/* We do not advertise SG, so skbs should be already linearized */
+ 	BUG_ON(skb_shinfo(skb)->nr_frags);
+ 
+-	if (skb_headroom(skb) < overhead) {
+-		struct sk_buff *skb2 = skb_copy_expand(skb,
+-			overhead, 0, flags);
++	/* Make writable and expand header space by overhead if required */
++	if (skb_cow_head(skb, overhead)) {
++		/* Must deallocate here as returning NULL to indicate error
++		 * means the skb won't be deallocated in the caller.
++		 */
+ 		dev_kfree_skb_any(skb);
+-		skb = skb2;
+-		if (!skb)
+-			return NULL;
++		return NULL;
+ 	}
+ 
+ 	if (csum) {
 
 
