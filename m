@@ -2,135 +2,128 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15E6AC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:30:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D744C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:30:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E05A321736
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:30:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E7CE2081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:30:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550500248;
+	bh=X/h8T4WRmWKZJ55FqVEnOx+VaToCnT2gcqf/P5RnIv8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Bkt9cZQ7HhI88v6OIgre94cVJUU0vwDHNBwbjhEUq2ukQsEmdNjKAut4pEm8bevEO
+	 8hUhLuMJfxR8QTN3vnMwTQHYm3x6mpDmV7Xckws5O0B5ADyBqz3qfBavP7oQ9OIKv7
+	 AhJYz5oTHUnk9dq99OFYISZqeu+G+Xvq12rkHdyE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388656AbfBROaj (ORCPT
+        id S2388349AbfBRN60 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:30:39 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:40384 "EHLO mx1.redhat.com"
+        Mon, 18 Feb 2019 08:58:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387469AbfBRN63 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:58:29 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2388330AbfBRN6W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:58:22 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D490FA8F4;
-        Mon, 18 Feb 2019 13:58:28 +0000 (UTC)
-Received: from laptop.redhat.com (ovpn-116-102.ams2.redhat.com [10.36.116.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E53B15D719;
-        Mon, 18 Feb 2019 13:58:24 +0000 (UTC)
-From:   Eric Auger <eric.auger@redhat.com>
-To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
-        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
-        yi.l.liu@linux.intel.com, jean-philippe.brucker@arm.com,
-        will.deacon@arm.com, robin.murphy@arm.com
-Cc:     kevin.tian@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, peter.maydell@linaro.org
-Subject: [PATCH v4 21/22] vfio-pci: Add VFIO_PCI_DMA_FAULT_IRQ_INDEX
-Date:   Mon, 18 Feb 2019 14:55:02 +0100
-Message-Id: <20190218135504.25048-22-eric.auger@redhat.com>
-In-Reply-To: <20190218135504.25048-1-eric.auger@redhat.com>
-References: <20190218135504.25048-1-eric.auger@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 1159D2077B;
+        Mon, 18 Feb 2019 13:58:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550498301;
+        bh=X/h8T4WRmWKZJ55FqVEnOx+VaToCnT2gcqf/P5RnIv8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=zz/kaTLP0Kdt9Nw2ML8aFgOKNRwnD3361fM1AUR94s1it1UBzeXExKRyK1PWFVQjv
+         Q8nx/g+yCjh3GEoYJur8ZJHY5WurEO+f/d5nJx80vA0pahS9PEDupKGMHh33KQbjzn
+         xBBEqpa08SJSLemvzhtY3wUZH47yn+XEvERB5kQk=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        "David A. Long" <dave.long@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 09/58] ARM: 8795/1: spectre-v1.1: use put_user() for __put_user()
+Date:   Mon, 18 Feb 2019 14:43:30 +0100
+Message-Id: <20190218133509.302032279@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190218133508.567416115@linuxfoundation.org>
+References: <20190218133508.567416115@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 18 Feb 2019 13:58:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new VFIO_PCI_DMA_FAULT_IRQ_INDEX index. This allows to
-set/unset an eventfd that will be triggered when DMA translation
-faults are detected at physical level when the nested mode is used.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
+------------------
+
+Commit e3aa6243434fd9a82e84bb79ab1abd14f2d9a5a7 upstream.
+
+When Spectre mitigation is required, __put_user() needs to include
+check_uaccess. This is already the case for put_user(), so just make
+__put_user() an alias of put_user().
+
+Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: David A. Long <dave.long@linaro.org>
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/vfio/pci/vfio_pci.c       |  3 +++
- drivers/vfio/pci/vfio_pci_intrs.c | 19 +++++++++++++++++++
- include/uapi/linux/vfio.h         |  1 +
- 3 files changed, 23 insertions(+)
+ arch/arm/include/asm/uaccess.h | 15 +++++++++------
+ 1 file changed, 9 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-index 3aaa14eb5518..0886d427f403 100644
---- a/drivers/vfio/pci/vfio_pci.c
-+++ b/drivers/vfio/pci/vfio_pci.c
-@@ -698,6 +698,8 @@ static int vfio_pci_get_irq_count(struct vfio_pci_device *vdev, int irq_type)
- 			return 1;
- 	} else if (irq_type == VFIO_PCI_REQ_IRQ_INDEX) {
- 		return 1;
-+	} else if (irq_type == VFIO_PCI_DMA_FAULT_IRQ_INDEX) {
-+		return 1;
- 	}
+diff --git a/arch/arm/include/asm/uaccess.h b/arch/arm/include/asm/uaccess.h
+index 9ae888775743..b61acd62cffb 100644
+--- a/arch/arm/include/asm/uaccess.h
++++ b/arch/arm/include/asm/uaccess.h
+@@ -400,6 +400,14 @@ do {									\
+ 	__pu_err;							\
+ })
  
- 	return 0;
-@@ -1025,6 +1027,7 @@ static long vfio_pci_ioctl(void *device_data,
- 		switch (info.index) {
- 		case VFIO_PCI_INTX_IRQ_INDEX ... VFIO_PCI_MSIX_IRQ_INDEX:
- 		case VFIO_PCI_REQ_IRQ_INDEX:
-+		case VFIO_PCI_DMA_FAULT_IRQ_INDEX:
- 			break;
- 		case VFIO_PCI_ERR_IRQ_INDEX:
- 			if (pci_is_pcie(vdev->pdev))
-diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
-index 1c46045b0e7f..28a96117daf3 100644
---- a/drivers/vfio/pci/vfio_pci_intrs.c
-+++ b/drivers/vfio/pci/vfio_pci_intrs.c
-@@ -622,6 +622,18 @@ static int vfio_pci_set_req_trigger(struct vfio_pci_device *vdev,
- 					       count, flags, data);
- }
- 
-+static int vfio_pci_set_dma_fault_trigger(struct vfio_pci_device *vdev,
-+					  unsigned index, unsigned start,
-+					  unsigned count, uint32_t flags,
-+					  void *data)
-+{
-+	if (index != VFIO_PCI_DMA_FAULT_IRQ_INDEX || start != 0 || count > 1)
-+		return -EINVAL;
++#ifdef CONFIG_CPU_SPECTRE
++/*
++ * When mitigating Spectre variant 1.1, all accessors need to include
++ * verification of the address space.
++ */
++#define __put_user(x, ptr) put_user(x, ptr)
 +
-+	return vfio_pci_set_ctx_trigger_single(&vdev->dma_fault_trigger,
-+					       count, flags, data);
-+}
-+
- int vfio_pci_set_irqs_ioctl(struct vfio_pci_device *vdev, uint32_t flags,
- 			    unsigned index, unsigned start, unsigned count,
- 			    void *data)
-@@ -671,6 +683,13 @@ int vfio_pci_set_irqs_ioctl(struct vfio_pci_device *vdev, uint32_t flags,
- 			break;
- 		}
- 		break;
-+	case VFIO_PCI_DMA_FAULT_IRQ_INDEX:
-+		switch (flags & VFIO_IRQ_SET_ACTION_TYPE_MASK) {
-+		case VFIO_IRQ_SET_ACTION_TRIGGER:
-+			func = vfio_pci_set_dma_fault_trigger;
-+			break;
-+		}
-+		break;
- 	}
++#else
+ #define __put_user(x, ptr)						\
+ ({									\
+ 	long __pu_err = 0;						\
+@@ -407,12 +415,6 @@ do {									\
+ 	__pu_err;							\
+ })
  
- 	if (!func)
-diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-index 40b7aec8fefa..b47f65df5b86 100644
---- a/include/uapi/linux/vfio.h
-+++ b/include/uapi/linux/vfio.h
-@@ -555,6 +555,7 @@ enum {
- 	VFIO_PCI_MSIX_IRQ_INDEX,
- 	VFIO_PCI_ERR_IRQ_INDEX,
- 	VFIO_PCI_REQ_IRQ_INDEX,
-+	VFIO_PCI_DMA_FAULT_IRQ_INDEX,
- 	VFIO_PCI_NUM_IRQS
- };
+-#define __put_user_error(x, ptr, err)					\
+-({									\
+-	__put_user_switch((x), (ptr), (err), __put_user_nocheck);	\
+-	(void) 0;							\
+-})
+-
+ #define __put_user_nocheck(x, __pu_ptr, __err, __size)			\
+ 	do {								\
+ 		unsigned long __pu_addr = (unsigned long)__pu_ptr;	\
+@@ -492,6 +494,7 @@ do {									\
+ 	: "r" (x), "i" (-EFAULT)				\
+ 	: "cc")
  
++#endif /* !CONFIG_CPU_SPECTRE */
+ 
+ #ifdef CONFIG_MMU
+ extern unsigned long __must_check
 -- 
-2.20.1
+2.19.1
+
+
 
