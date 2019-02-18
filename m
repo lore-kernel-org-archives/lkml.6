@@ -7,50 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE44C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:46:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F78EC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:46:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD97421903
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:46:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E4FD21900
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:46:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497604;
-	bh=QKamiL862+13LXB3EaWqANZJQWaB6qsOlI/3uzTM5KI=;
+	s=default; t=1550497607;
+	bh=Ymcc3PWY1H3H/Czbxnzb/M6sWojtCiLqcQQnaOFtEdE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pkhzRPdNM4rZr4jAciUH0dF3hgSe5PXXgZ0iwe5WtqE3kNBDdxASpqzbQmH9iT+Vm
-	 FWNfNmud+lTKx0/UneWrHap2gUdAwHeNfY+lD9+ySD1lmLh18FqocQ1qqsXg7Apz4f
-	 4EFJfcvwWGVXDbafYSG8hKJvnCvcFBe08DE1oHpA=
+	b=fVUM5dikcI8cnKIPpmaj0+Pw4LYwLmbemihbE90MBDtdGZZ5C2+fnDGmm4pkw4Tse
+	 +7+vbaJwhK8Tpsy0/UH3HhY+Xq488f5LclYfTlOPdOELJj+UgpTPHc2SBmN6aHpAAz
+	 oMe11DIPT9YYAN0WEhS0NdxNokv8QWxdRxJUJcnk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730839AbfBRNqm (ORCPT
+        id S1729990AbfBRNqo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:46:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53118 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:46:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730359AbfBRNqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:46:39 -0500
+        id S1731682AbfBRNqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:46:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F1809218FC;
-        Mon, 18 Feb 2019 13:46:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 788EA21900;
+        Mon, 18 Feb 2019 13:46:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497598;
-        bh=QKamiL862+13LXB3EaWqANZJQWaB6qsOlI/3uzTM5KI=;
+        s=default; t=1550497602;
+        bh=Ymcc3PWY1H3H/Czbxnzb/M6sWojtCiLqcQQnaOFtEdE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pU5F4Kh3A+VpTGVgt1ZUrM11RRFRUr2ruxi/cDjzWcp/RzyWcTbvwY9+0KmSl1oUy
-         nq52qOVwd7pltQgXQ+EigiVQo1gZyE1ATGbhgHEgyX5n1fEyohUOvCQfqNphLjFDZs
-         FJj+6Wr4IBdStrBRFchyzLFw8IHB/xpWs6EmFuzs=
+        b=cRqYIBXFMkXm+roan5lqB4BkWfyRuwx3mddR/0Uy1b73kU3Bif4B6VpjqXycWVVQ5
+         6APoqmIfQ4Rd+x5yvdW2dpK5RszaHIy+E2h4L/XWnLTSwaEoe/ZUTx2FSRTe7+CD78
+         Zf3MZQAWDc5rs1/Ow4XHGdzZBhl0m1wggqT7kV5k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Guo Ren <ren_guo@c-sky.com>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 15/92] csky: fixup compile error with pte_alloc
-Date:   Mon, 18 Feb 2019 14:42:18 +0100
-Message-Id: <20190218133456.077826606@linuxfoundation.org>
+        stable@vger.kernel.org, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 35/92] ARM: dts: da850-lcdk: Correct the sound card name
+Date:   Mon, 18 Feb 2019 14:42:38 +0100
+Message-Id: <20190218133458.022382953@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
 References: <20190218133454.668268457@linuxfoundation.org>
@@ -69,87 +65,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 2a60aa14a9a0333b3eef58150bc1ef654f7321ef ]
+[ Upstream commit c25748acc5c20786ecb7518bfeae8fcef93472d6 ]
 
-Commit: 4cf58924951e remove the address argument of pte_alloc without
-modify csky related code. linux-5.0-rc1 compile failed with csky.
+To avoid  the following error:
+asoc-simple-card sound: ASoC: Failed to create card debugfs directory
 
-Remove the unnecessary address testing in pte_alloc().
+Which is because the card name contains '/' character, which can not be
+used in file or directory names.
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Cc: Joel Fernandes (Google) <joel@joelfernandes.org>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/csky/include/asm/pgalloc.h | 43 ++++++++++++++-------------------
- 1 file changed, 18 insertions(+), 25 deletions(-)
+ arch/arm/boot/dts/da850-lcdk.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/csky/include/asm/pgalloc.h b/arch/csky/include/asm/pgalloc.h
-index bf4f4a0e140e..d213bb47b717 100644
---- a/arch/csky/include/asm/pgalloc.h
-+++ b/arch/csky/include/asm/pgalloc.h
-@@ -24,41 +24,34 @@ static inline void pmd_populate(struct mm_struct *mm, pmd_t *pmd,
+diff --git a/arch/arm/boot/dts/da850-lcdk.dts b/arch/arm/boot/dts/da850-lcdk.dts
+index c196e37606c4..3a2fa6e035a3 100644
+--- a/arch/arm/boot/dts/da850-lcdk.dts
++++ b/arch/arm/boot/dts/da850-lcdk.dts
+@@ -71,7 +71,7 @@
  
- extern void pgd_init(unsigned long *p);
- 
--static inline pte_t *pte_alloc_one_kernel(struct mm_struct *mm,
--					unsigned long address)
-+static inline pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
- {
- 	pte_t *pte;
--	unsigned long *kaddr, i;
-+	unsigned long i;
- 
--	pte = (pte_t *) __get_free_pages(GFP_KERNEL | __GFP_RETRY_MAYFAIL,
--					 PTE_ORDER);
--	kaddr = (unsigned long *)pte;
--	if (address & 0x80000000)
--		for (i = 0; i < (PAGE_SIZE/4); i++)
--			*(kaddr + i) = 0x1;
--	else
--		clear_page(kaddr);
-+	pte = (pte_t *) __get_free_page(GFP_KERNEL);
-+	if (!pte)
-+		return NULL;
-+
-+	for (i = 0; i < PAGE_SIZE/sizeof(pte_t); i++)
-+		(pte + i)->pte_low = _PAGE_GLOBAL;
- 
- 	return pte;
- }
- 
--static inline struct page *pte_alloc_one(struct mm_struct *mm,
--						unsigned long address)
-+static inline struct page *pte_alloc_one(struct mm_struct *mm)
- {
- 	struct page *pte;
--	unsigned long *kaddr, i;
--
--	pte = alloc_pages(GFP_KERNEL | __GFP_RETRY_MAYFAIL, PTE_ORDER);
--	if (pte) {
--		kaddr = kmap_atomic(pte);
--		if (address & 0x80000000) {
--			for (i = 0; i < (PAGE_SIZE/4); i++)
--				*(kaddr + i) = 0x1;
--		} else
--			clear_page(kaddr);
--		kunmap_atomic(kaddr);
--		pgtable_page_ctor(pte);
-+
-+	pte = alloc_pages(GFP_KERNEL | __GFP_ZERO, 0);
-+	if (!pte)
-+		return NULL;
-+
-+	if (!pgtable_page_ctor(pte)) {
-+		__free_page(pte);
-+		return NULL;
- 	}
-+
- 	return pte;
- }
- 
+ 	sound {
+ 		compatible = "simple-audio-card";
+-		simple-audio-card,name = "DA850/OMAP-L138 LCDK";
++		simple-audio-card,name = "DA850-OMAPL138 LCDK";
+ 		simple-audio-card,widgets =
+ 			"Line", "Line In",
+ 			"Line", "Line Out";
 -- 
 2.19.1
 
