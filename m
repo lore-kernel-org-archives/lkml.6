@@ -2,210 +2,109 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8467CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:58:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6F87C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:58:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 552F620842
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:58:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9646A20842
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:58:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550498287;
+	bh=9/cza0IcYtET5jxOZC8D8N/yDJBpil8S+IaYRe+ptQo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=aGZwIyeV7xrMTpfBhnI8bEL3rEAeBqQLU7GlFbL8WIxegNgdqY0sXhK2rz3BD+I1f
+	 KIaKvWJJF3eNM3hJ8b8PN6o1Alnh0GMOcvuSV9Od+9lOmS0EWmy8TzIJ+GgbeJ39tT
+	 5Ms+cJi0Arsu+vu2UnXQjpEHzbyVKGqTEAwB7lEw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388240AbfBRN6E (ORCPT
+        id S2388253AbfBRN6F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:58:04 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34194 "EHLO mx1.redhat.com"
+        Mon, 18 Feb 2019 08:58:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387987AbfBRN5E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:57:04 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2388207AbfBRN6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:58:00 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 691AA8E685;
-        Mon, 18 Feb 2019 13:57:03 +0000 (UTC)
-Received: from laptop.redhat.com (ovpn-116-102.ams2.redhat.com [10.36.116.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3AF995D70E;
-        Mon, 18 Feb 2019 13:56:57 +0000 (UTC)
-From:   Eric Auger <eric.auger@redhat.com>
-To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
-        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
-        yi.l.liu@linux.intel.com, jean-philippe.brucker@arm.com,
-        will.deacon@arm.com, robin.murphy@arm.com
-Cc:     kevin.tian@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, peter.maydell@linaro.org
-Subject: [PATCH v4 13/22] iommu/smmuv3: Implement attach/detach_pasid_table
-Date:   Mon, 18 Feb 2019 14:54:54 +0100
-Message-Id: <20190218135504.25048-14-eric.auger@redhat.com>
-In-Reply-To: <20190218135504.25048-1-eric.auger@redhat.com>
-References: <20190218135504.25048-1-eric.auger@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id A476E20842;
+        Mon, 18 Feb 2019 13:57:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550498279;
+        bh=9/cza0IcYtET5jxOZC8D8N/yDJBpil8S+IaYRe+ptQo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=k5fb0FpI8WJeigaOdf6pQ+vAHFHNsQ7l4eZihdNcagr2rag3bCA/vand5jqAc1+ID
+         DbanY5042JPYjBf4XtMU3zZXOSorihDWr7MVJ7ecHhuz2lJVpmmv9QXnT0TinpR7JX
+         lU2IssWyyb9T/jQgEDZtO53fFniAyOj73BcKoAyk=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Adrian Bunk <bunk@kernel.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 02/58] eeprom: at24: add support for 24c2048
+Date:   Mon, 18 Feb 2019 14:43:23 +0100
+Message-Id: <20190218133508.757497289@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190218133508.567416115@linuxfoundation.org>
+References: <20190218133508.567416115@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 18 Feb 2019 13:57:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On attach_pasid_table() we program STE S1 related info set
-by the guest into the actual physical STEs. At minimum
-we need to program the context descriptor GPA and compute
-whether the stage1 is translated/bypassed or aborted.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
+------------------
 
+commit 37cf28d3b5bca1b532a0b6aac722e7f2788a9294 upstream.
+
+Works with ST M24M02.
+
+Signed-off-by: Adrian Bunk <bunk@kernel.org>
+Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-v3 -> v4:
-- adapt to changes in iommu_pasid_table_config
-- different programming convention at s1_cfg/s2_cfg/ste.abort
+ drivers/misc/eeprom/Kconfig | 2 +-
+ drivers/misc/eeprom/at24.c  | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-v2 -> v3:
-- callback now is named set_pasid_table and struct fields
-  are laid out differently.
-
-v1 -> v2:
-- invalidate the STE before changing them
-- hold init_mutex
-- handle new fields
----
- drivers/iommu/arm-smmu-v3.c | 114 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 114 insertions(+)
-
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 80ab9a77cf80..77e7e2accd99 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -2207,6 +2207,118 @@ static void arm_smmu_put_resv_regions(struct device *dev,
- 		kfree(entry);
- }
+diff --git a/drivers/misc/eeprom/Kconfig b/drivers/misc/eeprom/Kconfig
+index c4e41c26649e..fac10c0e852c 100644
+--- a/drivers/misc/eeprom/Kconfig
++++ b/drivers/misc/eeprom/Kconfig
+@@ -12,7 +12,7 @@ config EEPROM_AT24
+ 	  ones like at24c64, 24lc02 or fm24c04:
  
-+static int arm_smmu_attach_pasid_table(struct iommu_domain *domain,
-+				       struct iommu_pasid_table_config *cfg)
-+{
-+	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
-+	struct arm_smmu_master_data *entry;
-+	struct arm_smmu_s1_cfg *s1_cfg;
-+	struct arm_smmu_device *smmu;
-+	unsigned long flags;
-+	int ret = -EINVAL;
-+
-+	if (cfg->format != IOMMU_PASID_FORMAT_SMMUV3)
-+		return -EINVAL;
-+
-+	mutex_lock(&smmu_domain->init_mutex);
-+
-+	smmu = smmu_domain->smmu;
-+
-+	if (!smmu)
-+		goto out;
-+
-+	if (!((smmu->features & ARM_SMMU_FEAT_TRANS_S1) &&
-+	      (smmu->features & ARM_SMMU_FEAT_TRANS_S2))) {
-+		dev_info(smmu_domain->smmu->dev,
-+			 "does not implement two stages\n");
-+		goto out;
-+	}
-+
-+	if (smmu_domain->stage != ARM_SMMU_DOMAIN_NESTED)
-+		goto out;
-+
-+	switch (cfg->config) {
-+	case IOMMU_PASID_CONFIG_ABORT:
-+		spin_lock_irqsave(&smmu_domain->devices_lock, flags);
-+		list_for_each_entry(entry, &smmu_domain->devices, list) {
-+			entry->ste.s1_cfg = NULL;
-+			entry->ste.abort = true;
-+			arm_smmu_install_ste_for_dev(entry->dev->iommu_fwspec);
-+		}
-+		spin_unlock_irqrestore(&smmu_domain->devices_lock, flags);
-+		ret = 0;
-+		break;
-+	case IOMMU_PASID_CONFIG_BYPASS:
-+		spin_lock_irqsave(&smmu_domain->devices_lock, flags);
-+		list_for_each_entry(entry, &smmu_domain->devices, list) {
-+			entry->ste.s1_cfg = NULL;
-+			entry->ste.abort = false;
-+			arm_smmu_install_ste_for_dev(entry->dev->iommu_fwspec);
-+		}
-+		spin_unlock_irqrestore(&smmu_domain->devices_lock, flags);
-+		ret = 0;
-+		break;
-+	case IOMMU_PASID_CONFIG_TRANSLATE:
-+		/* we currently support a single CD */
-+		if (cfg->pasid_bits)
-+			goto out;
-+
-+		s1_cfg = &smmu_domain->s1_cfg;
-+		s1_cfg->cdptr_dma = cfg->base_ptr;
-+
-+		spin_lock_irqsave(&smmu_domain->devices_lock, flags);
-+		list_for_each_entry(entry, &smmu_domain->devices, list) {
-+			entry->ste.s1_cfg = &smmu_domain->s1_cfg;
-+			entry->ste.abort = false;
-+			arm_smmu_install_ste_for_dev(entry->dev->iommu_fwspec);
-+		}
-+		spin_unlock_irqrestore(&smmu_domain->devices_lock, flags);
-+		ret = 0;
-+		break;
-+	default:
-+		break;
-+	}
-+out:
-+	mutex_unlock(&smmu_domain->init_mutex);
-+	return ret;
-+}
-+
-+static void arm_smmu_detach_pasid_table(struct iommu_domain *domain)
-+{
-+	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
-+	struct arm_smmu_master_data *entry;
-+	struct arm_smmu_device *smmu;
-+	unsigned long flags;
-+
-+	mutex_lock(&smmu_domain->init_mutex);
-+
-+	smmu = smmu_domain->smmu;
-+
-+	if (!smmu)
-+		return;
-+
-+	if (!((smmu->features & ARM_SMMU_FEAT_TRANS_S1) &&
-+	      (smmu->features & ARM_SMMU_FEAT_TRANS_S2))) {
-+		dev_info(smmu_domain->smmu->dev,
-+			 "does not implement two stages\n");
-+		return;
-+	}
-+
-+	if (smmu_domain->stage != ARM_SMMU_DOMAIN_NESTED)
-+		return;
-+
-+	spin_lock_irqsave(&smmu_domain->devices_lock, flags);
-+	list_for_each_entry(entry, &smmu_domain->devices, list) {
-+		entry->ste.s1_cfg = NULL;
-+		entry->ste.abort = true;
-+		arm_smmu_install_ste_for_dev(entry->dev->iommu_fwspec);
-+	}
-+	spin_unlock_irqrestore(&smmu_domain->devices_lock, flags);
-+
-+	memset(&smmu_domain->s1_cfg, 0, sizeof(struct arm_smmu_s1_cfg));
-+	mutex_unlock(&smmu_domain->init_mutex);
-+}
-+
- static struct iommu_ops arm_smmu_ops = {
- 	.capable		= arm_smmu_capable,
- 	.domain_alloc		= arm_smmu_domain_alloc,
-@@ -2225,6 +2337,8 @@ static struct iommu_ops arm_smmu_ops = {
- 	.of_xlate		= arm_smmu_of_xlate,
- 	.get_resv_regions	= arm_smmu_get_resv_regions,
- 	.put_resv_regions	= arm_smmu_put_resv_regions,
-+	.attach_pasid_table	= arm_smmu_attach_pasid_table,
-+	.detach_pasid_table	= arm_smmu_detach_pasid_table,
- 	.pgsize_bitmap		= -1UL, /* Restricted during device attach */
+ 	     24c00, 24c01, 24c02, spd (readonly 24c02), 24c04, 24c08,
+-	     24c16, 24c32, 24c64, 24c128, 24c256, 24c512, 24c1024
++	     24c16, 24c32, 24c64, 24c128, 24c256, 24c512, 24c1024, 24c2048
+ 
+ 	  Unless you like data loss puzzles, always be sure that any chip
+ 	  you configure as a 24c32 (32 kbit) or larger is NOT really a
+diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
+index d8a485f1798b..a37b9b6a315a 100644
+--- a/drivers/misc/eeprom/at24.c
++++ b/drivers/misc/eeprom/at24.c
+@@ -170,6 +170,7 @@ static const struct i2c_device_id at24_ids[] = {
+ 	{ "24c256",	AT24_DEVICE_MAGIC(262144 / 8,	AT24_FLAG_ADDR16) },
+ 	{ "24c512",	AT24_DEVICE_MAGIC(524288 / 8,	AT24_FLAG_ADDR16) },
+ 	{ "24c1024",	AT24_DEVICE_MAGIC(1048576 / 8,	AT24_FLAG_ADDR16) },
++	{ "24c2048",	AT24_DEVICE_MAGIC(2097152 / 8,	AT24_FLAG_ADDR16) },
+ 	{ "at24", 0 },
+ 	{ /* END OF LIST */ }
  };
- 
 -- 
-2.20.1
+2.19.1
+
+
 
