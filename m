@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD43EC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2149DC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:17:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A060A2177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:17:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA2242177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:17:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499436;
-	bh=zfxu9IFXo5FrTd9bDyB56xS2nrOOkwexPrvtVrgVB8Y=;
+	s=default; t=1550499446;
+	bh=vv4v/nqTAiuS87MuDqlGKVSNHYuz3XoI4Fe8Hk9gvwA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oh0QlDgSz3JIoH87l2w2pioTt62hYMNYtg4YXYTueIrF1ExKIazpdvkzulsUjiSA+
-	 mVDPdpGuwBtQVhXEzSMy/VzAEMVz/jB60HyK9lu+ola3FpHHHLx+0q/D9ZdQ7vqWRu
-	 F6xRN806bNEeueVfuIhnmcKxqzN8RAyzbvouMBYg=
+	b=HeJNbj1YqJW+K4IKzE3Pq6SDhbXYU6bfnhRfiTodh8XMssp1Dy4WxXqsuRpf1Syu/
+	 jPNrKdZYnSsBqaye6jeaZ55Tp81dC86H90tee8PriY3kIJ5u4BtnwgUO7kRW503Ywv
+	 PepOscbqdYyxZDzkdEny3WBpSMwLgGY66XKHPFEg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391378AbfBROKF (ORCPT
+        id S2391319AbfBROJv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:10:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53748 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:09:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732314AbfBROKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:10:03 -0500
+        id S2391288AbfBROJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:09:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8225421902;
-        Mon, 18 Feb 2019 14:10:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31D8C217D9;
+        Mon, 18 Feb 2019 14:09:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550499003;
-        bh=zfxu9IFXo5FrTd9bDyB56xS2nrOOkwexPrvtVrgVB8Y=;
+        s=default; t=1550498987;
+        bh=vv4v/nqTAiuS87MuDqlGKVSNHYuz3XoI4Fe8Hk9gvwA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DdHS1FimxO+0w+n8nzdikSwYsFw7A6mDMFCK4vcQO7BGQ6eK43pk6zxdF476CrCEt
-         3XfRyZBPMumWcuJlvKkWFnE8zoEfB2PP88RK1SV6MVyqXDU2DvBZ+Tq16tz/GHa263
-         JvHk2WiD+un8O/0OyaVTwMLWkegyKtb/XVt/XCB0=
+        b=phmaaD8y+lyVPMuPNjv0/EfhV0ZjBmhMMM1vGJiF7dgGx3a82Zz19zT2uZx7H1szS
+         YtDBTdnWkLvSbpQsDUQnexf+9olgOSrjOfL3eYyGKxZW5JUWJ30akZ2M2rsYH/g8vK
+         iIPqQNJF1o4acH+RkFlfp2nCAUkhS9ow+4CBxGnc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <stfrench@microsoft.com>,
+        stable@vger.kernel.org, Chris Perl <cperl@janestreet.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 045/108] cifs: check ntwrk_buf_start for NULL before dereferencing it
-Date:   Mon, 18 Feb 2019 14:43:41 +0100
-Message-Id: <20190218133521.620317709@linuxfoundation.org>
+Subject: [PATCH 3.18 040/108] NFS: nfs_compare_mount_options always compare auth flavors.
+Date:   Mon, 18 Feb 2019 14:43:36 +0100
+Message-Id: <20190218133521.383715167@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -66,46 +66,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 59a63e479ce36a3f24444c3a36efe82b78e4a8e0 ]
+[ Upstream commit 594d1644cd59447f4fceb592448d5cd09eb09b5e ]
 
-RHBZ: 1021460
+This patch removes the check from nfs_compare_mount_options to see if a
+`sec' option was passed for the current mount before comparing auth
+flavors and instead just always compares auth flavors.
 
-There is an issue where when multiple threads open/close the same directory
-ntwrk_buf_start might end up being NULL, causing the call to smbCalcSize
-later to oops with a NULL deref.
+Consider the following scenario:
 
-The real bug is why this happens and why this can become NULL for an
-open cfile, which should not be allowed.
-This patch tries to avoid a oops until the time when we fix the underlying
-issue.
+You have a server with the address 192.168.1.1 and two exports /export/a
+and /export/b.  The first export supports `sys' and `krb5' security, the
+second just `sys'.
 
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Assume you start with no mounts from the server.
+
+The following results in EIOs being returned as the kernel nfs client
+incorrectly thinks it can share the underlying `struct nfs_server's:
+
+$ mkdir /tmp/{a,b}
+$ sudo mount -t nfs -o vers=3,sec=krb5 192.168.1.1:/export/a /tmp/a
+$ sudo mount -t nfs -o vers=3          192.168.1.1:/export/b /tmp/b
+$ df >/dev/null
+df: ‘/tmp/b’: Input/output error
+
+Signed-off-by: Chris Perl <cperl@janestreet.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/readdir.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ fs/nfs/super.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/cifs/readdir.c b/fs/cifs/readdir.c
-index 707d8cf95348..116985335cc1 100644
---- a/fs/cifs/readdir.c
-+++ b/fs/cifs/readdir.c
-@@ -645,7 +645,14 @@ find_cifs_entry(const unsigned int xid, struct cifs_tcon *tcon, loff_t pos,
- 		/* scan and find it */
- 		int i;
- 		char *cur_ent;
--		char *end_of_smb = cfile->srch_inf.ntwrk_buf_start +
-+		char *end_of_smb;
-+
-+		if (cfile->srch_inf.ntwrk_buf_start == NULL) {
-+			cifs_dbg(VFS, "ntwrk_buf_start is NULL during readdir\n");
-+			return -EIO;
-+		}
-+
-+		end_of_smb = cfile->srch_inf.ntwrk_buf_start +
- 			server->ops->calc_smb_size(
- 					cfile->srch_inf.ntwrk_buf_start);
- 
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index dbdc2d2f91cf..655ac3a196e4 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -2376,8 +2376,7 @@ static int nfs_compare_mount_options(const struct super_block *s, const struct n
+ 		goto Ebusy;
+ 	if (a->acdirmax != b->acdirmax)
+ 		goto Ebusy;
+-	if (b->auth_info.flavor_len > 0 &&
+-	   clnt_a->cl_auth->au_flavor != clnt_b->cl_auth->au_flavor)
++	if (clnt_a->cl_auth->au_flavor != clnt_b->cl_auth->au_flavor)
+ 		goto Ebusy;
+ 	return 1;
+ Ebusy:
 -- 
 2.19.1
 
