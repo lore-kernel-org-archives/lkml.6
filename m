@@ -2,279 +2,131 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A47C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:31:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D35C7C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:31:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60DA92081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:31:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FE612081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:31:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="10Vi4ixR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388676AbfBROba (ORCPT
+        id S2388844AbfBRObj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:31:30 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49810 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387688AbfBRN6G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:58:06 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0299DC0C234C;
-        Mon, 18 Feb 2019 13:58:06 +0000 (UTC)
-Received: from laptop.redhat.com (ovpn-116-102.ams2.redhat.com [10.36.116.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 592C65D70E;
-        Mon, 18 Feb 2019 13:57:56 +0000 (UTC)
-From:   Eric Auger <eric.auger@redhat.com>
-To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
-        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
-        yi.l.liu@linux.intel.com, jean-philippe.brucker@arm.com,
-        will.deacon@arm.com, robin.murphy@arm.com
-Cc:     kevin.tian@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, peter.maydell@linaro.org
-Subject: [PATCH v4 17/22] iommu/smmuv3: Report non recoverable faults
-Date:   Mon, 18 Feb 2019 14:54:58 +0100
-Message-Id: <20190218135504.25048-18-eric.auger@redhat.com>
-In-Reply-To: <20190218135504.25048-1-eric.auger@redhat.com>
-References: <20190218135504.25048-1-eric.auger@redhat.com>
+        Mon, 18 Feb 2019 09:31:39 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:60436 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387394AbfBRObh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:31:37 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1IEO5Fb053824;
+        Mon, 18 Feb 2019 14:31:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=cf6CRf7d2ecUJqXR2V8Upy1NKbRy/xou2lem06sozaI=;
+ b=10Vi4ixReGdXDTYiCY1fwPpkSKIEygG6eUOfQQZpGy00VzSzlIBi3K2v17YSEPazSBmf
+ oUmRgqNZQmFGU7Xil/H+6sqoRH3078rHieNgMd83ktsPQ/7hhDv7MjCLxIoDluE06ZyE
+ cbTyV6SWr5ce4vuPMj2n7F4GZlq/KfdzvVJY+IRCqIINyXZWYJPoCET7jthcSoi6i8Hx
+ y3KP0SzHwy/MotkFBjNmvCzxQKzaZr0cFwWsKq0FIkqtkf0hJoOFYl7z0MS3Owr40jOw
+ 1eh5bYmYKDUxUsv3ZR4YVQjCoerS0RVjpNIAKIis6yuFYRCL7wIdNo+jVifLpLCnSRbf gA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2qp9xtpjyy-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 18 Feb 2019 14:31:25 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1IEVOvG004865
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 18 Feb 2019 14:31:24 GMT
+Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x1IEVNhq013049;
+        Mon, 18 Feb 2019 14:31:23 GMT
+Received: from kadam (/197.157.0.22)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 18 Feb 2019 06:31:22 -0800
+Date:   Mon, 18 Feb 2019 17:31:14 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Himadri Pandya <himadri18.07@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Colin Ian King <colin.king@canonical.com>,
+        devel@driverdev.osuosl.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] staging: rtl8192e: Remove set but not used
+ variables 'broad_addr, stype'
+Message-ID: <20190218143114.GD17104@kadam>
+References: <20190218123359.83746-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 18 Feb 2019 13:58:06 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190218123359.83746-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9170 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902180108
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a stage 1 related fault event is read from the event queue,
-let's propagate it to potential external fault listeners, ie. users
-who registered a fault handler.
+On Mon, Feb 18, 2019 at 12:33:59PM +0000, YueHaibing wrote:
+> @@ -1747,11 +1747,10 @@ static short _rtl92e_tx(struct net_device *dev, struct sk_buff *skb)
+>  	header = (struct rtllib_hdr_1addr *)(((u8 *)skb->data) + fwinfo_size);
+>  	fc = le16_to_cpu(header->frame_ctl);
+>  	type = WLAN_FC_GET_TYPE(fc);
+> -	stype = WLAN_FC_GET_STYPE(fc);
+>  	pda_addr = header->addr1;
+>  
+>  	if (is_broadcast_ether_addr(pda_addr))
+> -		broad_addr = true;
+> +		;
+>  	else if (is_multicast_ether_addr(pda_addr))
+>  		multi_addr = true;
+>  	else
+> 
 
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
----
- drivers/iommu/arm-smmu-v3.c | 169 +++++++++++++++++++++++++++++++++---
- 1 file changed, 158 insertions(+), 11 deletions(-)
+This is ugly.  Please do it like this:
 
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 7b6b5a70fb39..1fc6d7ea0d37 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -168,6 +168,26 @@
- #define ARM_SMMU_PRIQ_IRQ_CFG1		0xd8
- #define ARM_SMMU_PRIQ_IRQ_CFG2		0xdc
+
+diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
+index c145b689175c..29b53e2246b4 100644
+--- a/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
++++ b/drivers/staging/rtl8192e/rtl8192e/rtl_core.c
+@@ -1729,7 +1729,6 @@ static short _rtl92e_tx(struct net_device *dev, struct sk_buff *skb)
+ 	struct tx_desc *pdesc = NULL;
+ 	struct rtllib_hdr_1addr *header = NULL;
+ 	u16 fc = 0, type = 0, stype = 0;
+-	bool  multi_addr = false, broad_addr = false, uni_addr = false;
+ 	u8 *pda_addr = NULL;
+ 	int   idx;
+ 	u32 fwinfo_size = 0;
+@@ -1751,18 +1750,11 @@ static short _rtl92e_tx(struct net_device *dev, struct sk_buff *skb)
+ 	pda_addr = header->addr1;
  
-+/* Events */
-+#define ARM_SMMU_EVT_F_UUT		0x01
-+#define ARM_SMMU_EVT_C_BAD_STREAMID	0x02
-+#define ARM_SMMU_EVT_F_STE_FETCH	0x03
-+#define ARM_SMMU_EVT_C_BAD_STE		0x04
-+#define ARM_SMMU_EVT_F_BAD_ATS_TREQ	0x05
-+#define ARM_SMMU_EVT_F_STREAM_DISABLED	0x06
-+#define ARM_SMMU_EVT_F_TRANSL_FORBIDDEN	0x07
-+#define ARM_SMMU_EVT_C_BAD_SUBSTREAMID	0x08
-+#define ARM_SMMU_EVT_F_CD_FETCH		0x09
-+#define ARM_SMMU_EVT_C_BAD_CD		0x0a
-+#define ARM_SMMU_EVT_F_WALK_EABT	0x0b
-+#define ARM_SMMU_EVT_F_TRANSLATION	0x10
-+#define ARM_SMMU_EVT_F_ADDR_SIZE	0x11
-+#define ARM_SMMU_EVT_F_ACCESS		0x12
-+#define ARM_SMMU_EVT_F_PERMISSION	0x13
-+#define ARM_SMMU_EVT_F_TLB_CONFLICT	0x20
-+#define ARM_SMMU_EVT_F_CFG_CONFLICT	0x21
-+#define ARM_SMMU_EVT_E_PAGE_REQUEST	0x24
-+
- /* Common MSI config fields */
- #define MSI_CFG0_ADDR_MASK		GENMASK_ULL(51, 2)
- #define MSI_CFG2_SH			GENMASK(5, 4)
-@@ -333,6 +353,15 @@
- #define EVTQ_MAX_SZ_SHIFT		7
- 
- #define EVTQ_0_ID			GENMASK_ULL(7, 0)
-+#define EVTQ_0_SSV			GENMASK_ULL(11, 11)
-+#define EVTQ_0_SUBSTREAMID		GENMASK_ULL(31, 12)
-+#define EVTQ_0_STREAMID			GENMASK_ULL(63, 32)
-+#define EVTQ_1_PNU			GENMASK_ULL(33, 33)
-+#define EVTQ_1_IND			GENMASK_ULL(34, 34)
-+#define EVTQ_1_RNW			GENMASK_ULL(35, 35)
-+#define EVTQ_1_S2			GENMASK_ULL(39, 39)
-+#define EVTQ_1_CLASS			GENMASK_ULL(40, 41)
-+#define EVTQ_3_FETCH_ADDR		GENMASK_ULL(51, 3)
- 
- /* PRI queue */
- #define PRIQ_ENT_DWORDS			2
-@@ -640,6 +669,64 @@ struct arm_smmu_domain {
- 	spinlock_t			devices_lock;
- };
- 
-+/* fault propagation */
-+
-+#define IOMMU_FAULT_F_FIELDS	(IOMMU_FAULT_UNRECOV_PASID_VALID | \
-+				 IOMMU_FAULT_UNRECOV_PERM_VALID | \
-+				 IOMMU_FAULT_UNRECOV_ADDR_VALID)
-+
-+struct arm_smmu_fault_propagation_data {
-+	enum iommu_fault_reason reason;
-+	bool s1_check;
-+	u32 fields; /* IOMMU_FAULT_UNRECOV_*_VALID bits */
-+};
-+
-+/*
-+ * Describes how SMMU faults translate into generic IOMMU faults
-+ * and if they need to be reported externally
-+ */
-+static const struct arm_smmu_fault_propagation_data fault_propagation[] = {
-+[ARM_SMMU_EVT_F_UUT]			= { },
-+[ARM_SMMU_EVT_C_BAD_STREAMID]		= { },
-+[ARM_SMMU_EVT_F_STE_FETCH]		= { },
-+[ARM_SMMU_EVT_C_BAD_STE]		= { },
-+[ARM_SMMU_EVT_F_BAD_ATS_TREQ]		= { },
-+[ARM_SMMU_EVT_F_STREAM_DISABLED]	= { },
-+[ARM_SMMU_EVT_F_TRANSL_FORBIDDEN]	= { },
-+[ARM_SMMU_EVT_C_BAD_SUBSTREAMID]	= {IOMMU_FAULT_REASON_PASID_INVALID,
-+					   false,
-+					   IOMMU_FAULT_UNRECOV_PASID_VALID
-+					  },
-+[ARM_SMMU_EVT_F_CD_FETCH]		= {IOMMU_FAULT_REASON_PASID_FETCH,
-+					   false,
-+					   IOMMU_FAULT_UNRECOV_PASID_VALID |
-+					   IOMMU_FAULT_UNRECOV_FETCH_ADDR_VALID
-+					  },
-+[ARM_SMMU_EVT_C_BAD_CD]			= {IOMMU_FAULT_REASON_BAD_PASID_ENTRY,
-+					   false,
-+					   IOMMU_FAULT_UNRECOV_PASID_VALID
-+					  },
-+[ARM_SMMU_EVT_F_WALK_EABT]		= {IOMMU_FAULT_REASON_WALK_EABT, true,
-+					   IOMMU_FAULT_F_FIELDS |
-+					   IOMMU_FAULT_UNRECOV_FETCH_ADDR_VALID
-+					  },
-+[ARM_SMMU_EVT_F_TRANSLATION]		= {IOMMU_FAULT_REASON_PTE_FETCH, true,
-+					   IOMMU_FAULT_F_FIELDS
-+					  },
-+[ARM_SMMU_EVT_F_ADDR_SIZE]		= {IOMMU_FAULT_REASON_OOR_ADDRESS, true,
-+					   IOMMU_FAULT_F_FIELDS
-+					  },
-+[ARM_SMMU_EVT_F_ACCESS]			= {IOMMU_FAULT_REASON_ACCESS, true,
-+					   IOMMU_FAULT_F_FIELDS
-+					  },
-+[ARM_SMMU_EVT_F_PERMISSION]		= {IOMMU_FAULT_REASON_PERMISSION, true,
-+					   IOMMU_FAULT_F_FIELDS
-+					  },
-+[ARM_SMMU_EVT_F_TLB_CONFLICT]		= { },
-+[ARM_SMMU_EVT_F_CFG_CONFLICT]		= { },
-+[ARM_SMMU_EVT_E_PAGE_REQUEST]		= { },
-+};
-+
- struct arm_smmu_option_prop {
- 	u32 opt;
- 	const char *prop;
-@@ -1259,7 +1346,6 @@ static int arm_smmu_init_l2_strtab(struct arm_smmu_device *smmu, u32 sid)
- 	return 0;
- }
- 
--__maybe_unused
- static struct arm_smmu_master_data *
- arm_smmu_find_master(struct arm_smmu_device *smmu, u32 sid)
- {
-@@ -1285,24 +1371,85 @@ arm_smmu_find_master(struct arm_smmu_device *smmu, u32 sid)
- 	return master;
- }
- 
-+/* Populates the record fields according to the input SMMU event */
-+static bool arm_smmu_transcode_fault(u64 *evt, u8 type,
-+				     struct iommu_fault_unrecoverable *record)
-+{
-+	const struct arm_smmu_fault_propagation_data *data;
-+	u32 fields;
-+
-+	if (type >= ARRAY_SIZE(fault_propagation))
-+		return false;
-+
-+	data = &fault_propagation[type];
-+	if (!data->reason)
-+		return false;
-+
-+	fields = data->fields;
-+
-+	if (data->s1_check & FIELD_GET(EVTQ_1_S2, evt[1]))
-+		return false; /* S2 related fault, don't propagate */
-+
-+	if (fields & IOMMU_FAULT_UNRECOV_PASID_VALID) {
-+		if (FIELD_GET(EVTQ_0_SSV, evt[0]))
-+			record->pasid = FIELD_GET(EVTQ_0_SUBSTREAMID, evt[0]);
-+		else
-+			fields &= ~IOMMU_FAULT_UNRECOV_PASID_VALID;
-+	}
-+	if (fields & IOMMU_FAULT_UNRECOV_PERM_VALID) {
-+		if (!FIELD_GET(EVTQ_1_RNW, evt[1]))
-+			record->perm |= IOMMU_FAULT_PERM_WRITE;
-+		if (FIELD_GET(EVTQ_1_PNU, evt[1]))
-+			record->perm |= IOMMU_FAULT_PERM_PRIV;
-+		if (FIELD_GET(EVTQ_1_IND, evt[1]))
-+			record->perm |= IOMMU_FAULT_PERM_INST;
-+	}
-+	if (fields & IOMMU_FAULT_UNRECOV_ADDR_VALID)
-+		record->addr = evt[2];
-+
-+	if (fields & IOMMU_FAULT_UNRECOV_FETCH_ADDR_VALID)
-+		record->fetch_addr = FIELD_GET(EVTQ_3_FETCH_ADDR, evt[3]);
-+
-+	record->flags = fields;
-+	return true;
-+}
-+
-+static void arm_smmu_report_event(struct arm_smmu_device *smmu, u64 *evt)
-+{
-+	u32 sid = FIELD_GET(EVTQ_0_STREAMID, evt[0]);
-+	u8 type = FIELD_GET(EVTQ_0_ID, evt[0]);
-+	struct arm_smmu_master_data *master;
-+	struct iommu_fault_event event = {};
-+	int i;
-+
-+	master = arm_smmu_find_master(smmu, sid);
-+	if (WARN_ON(!master))
-+		return;
-+
-+	event.fault.type = IOMMU_FAULT_DMA_UNRECOV;
-+
-+	if (arm_smmu_transcode_fault(evt, type, &event.fault.event)) {
-+		iommu_report_device_fault(master->dev, &event);
-+		return;
-+	}
-+
-+	dev_info(smmu->dev, "event 0x%02x received:\n", type);
-+	for (i = 0; i < EVTQ_ENT_DWORDS; ++i) {
-+		dev_info(smmu->dev, "\t0x%016llx\n",
-+			 (unsigned long long)evt[i]);
-+	}
-+}
-+
- /* IRQ and event handlers */
- static irqreturn_t arm_smmu_evtq_thread(int irq, void *dev)
- {
--	int i;
- 	struct arm_smmu_device *smmu = dev;
- 	struct arm_smmu_queue *q = &smmu->evtq.q;
- 	u64 evt[EVTQ_ENT_DWORDS];
- 
- 	do {
--		while (!queue_remove_raw(q, evt)) {
--			u8 id = FIELD_GET(EVTQ_0_ID, evt[0]);
+ 	if (is_broadcast_ether_addr(pda_addr))
+-		broad_addr = true;
++		priv->stats.txbytesbroadcast += skb->len - fwinfo_size;
+ 	else if (is_multicast_ether_addr(pda_addr))
+-		multi_addr = true;
+-	else
+-		uni_addr = true;
 -
--			dev_info(smmu->dev, "event 0x%02x received:\n", id);
--			for (i = 0; i < ARRAY_SIZE(evt); ++i)
--				dev_info(smmu->dev, "\t0x%016llx\n",
--					 (unsigned long long)evt[i]);
--
--		}
-+		while (!queue_remove_raw(q, evt))
-+			arm_smmu_report_event(smmu, evt);
+-	if (uni_addr)
+-		priv->stats.txbytesunicast += skb->len - fwinfo_size;
+-	else if (multi_addr)
+ 		priv->stats.txbytesmulticast += skb->len - fwinfo_size;
+ 	else
+-		priv->stats.txbytesbroadcast += skb->len - fwinfo_size;
++		priv->stats.txbytesunicast += skb->len - fwinfo_size;
  
- 		/*
- 		 * Not much we can do on overflow, so scream and pretend we're
--- 
-2.20.1
-
+ 	spin_lock_irqsave(&priv->irq_th_lock, flags);
+ 	ring = &priv->tx_ring[tcb_desc->queue_index];
