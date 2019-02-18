@@ -2,108 +2,85 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29866C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBFF0C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4F63218C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:27:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HaQpINCk"
+	by mail.kernel.org (Postfix) with ESMTP id 8596E218C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:31:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728446AbfBRD1y (ORCPT
+        id S1728464AbfBRDbs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 22:27:54 -0500
-Received: from ozlabs.org ([203.11.71.1]:53323 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728174AbfBRD1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 22:27:54 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 442q7V6MFwz9s3x;
-        Mon, 18 Feb 2019 14:27:50 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1550460471;
-        bh=EnZSJ0lmXHUMZ7oaddG/0w8KNVS0r5OJwmBmT5l/fw4=;
-        h=Date:From:To:Cc:Subject:From;
-        b=HaQpINCkEUy0vog7pnQ9QLN5pgXMwud9m8NjUiJ8hRjwI1X2mHS6rx9L9igJaxG7f
-         prCjsYNXz0O6RDYW/c9xtLga/MuoceERQQcndlu8EZ2fbyoc3SciOQTeFJ5ZE5LJ42
-         YgN/WOYe01n80C5JkkeO1l/PRZHmQAvZCUNIrAFKVlHTpbmAG+/e83kDcLTHNcjZhh
-         /Ic+6koSswS8JKTZlvwRvF+e+hF5O916qhhHYXPyVCRHbrC3ySJhCa+kZ1Y+Hx7U8m
-         H6KgDBVEBsoykVBZcDdYpge/+eCT2uk0HHskbog0+SnldH4mq4zTZKRMpiw43tv8Ky
-         8ZoCZBpiXlsHQ==
-Date:   Mon, 18 Feb 2019 14:27:49 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Luwei Kang <luwei.kang@intel.com>
-Subject: linux-next: manual merge of the kvm tree with the kvm-fixes tree
-Message-ID: <20190218142749.04daecaa@canb.auug.org.au>
+        Sun, 17 Feb 2019 22:31:48 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:43197 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727939AbfBRDbr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 22:31:47 -0500
+Received: by mail-ed1-f67.google.com with SMTP id m35so8650959ede.10
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 19:31:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Y1jbZK2oK+T+9k9VdDasqi0vOffyrkQfUDkEzJRzB2w=;
+        b=MsuM7Ms/ICqs4ryTB87uFvhbUxyFaFdAX4NUoXwA3hQEL36zlgZXaLguTv+1gybCRB
+         df+L/jzY7229MIpv7O0J8Nv7stoJcwMsGvsG5Hr7R23ESGeIAM3Mnj9BjCDbzRiaJl8K
+         NZ5YSvh5FIAs6f2hiKbKhvU056ZGDavxmNdOVufHlHnivviSQzhMrZtaYxVnzPITGiu0
+         xh689X9zrUfZB3m4jOXPTrCwiN+leJJ/nEvAePcEfGc7OsKKL1S7g/vx/Jf3tjygK2vV
+         5d3HXq9bMdUqA/ePFVOM0/3nhhQM06b84Sa2sc0uSqCIAHApkZicV+JtCm25xU6NJCmp
+         8Gzw==
+X-Gm-Message-State: AHQUAubKu7eqgEWWDfgJR+mLFOXEEZcTMGq4lbwJma35X9rOLLup6mdM
+        mGfdZk8GTf+eq6kadtg8LQn5HxctbTE=
+X-Google-Smtp-Source: AHgI3IZkJV8nEo5TexCnm14cakVFbBVG7ufWOsd6yFAm6TXQ4BoCC7Fk7KtvnsDy6HvKXCWjZHPoRA==
+X-Received: by 2002:a17:906:f87:: with SMTP id q7mr15066081ejj.158.1550460705910;
+        Sun, 17 Feb 2019 19:31:45 -0800 (PST)
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com. [209.85.221.42])
+        by smtp.gmail.com with ESMTPSA id h44sm1589880edh.34.2019.02.17.19.31.45
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 17 Feb 2019 19:31:45 -0800 (PST)
+Received: by mail-wr1-f42.google.com with SMTP id f14so16770468wrg.1
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 19:31:45 -0800 (PST)
+X-Received: by 2002:adf:efc2:: with SMTP id i2mr14684795wrp.44.1550460704807;
+ Sun, 17 Feb 2019 19:31:44 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/zq4D+8ArvcK_JRDm6BNeBnl"; protocol="application/pgp-signature"
+References: <641301f26ac895e39b15d62a2ba069b853ab5b09.1550178066.git.rask@formelder.dk>
+In-Reply-To: <641301f26ac895e39b15d62a2ba069b853ab5b09.1550178066.git.rask@formelder.dk>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Mon, 18 Feb 2019 11:31:35 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64u-3bei1X_P+bandmnPqvMrShEq_mniEzm4DdEn29CQw@mail.gmail.com>
+Message-ID: <CAGb2v64u-3bei1X_P+bandmnPqvMrShEq_mniEzm4DdEn29CQw@mail.gmail.com>
+Subject: Re: [PATCH] regulator: axp20x: Fix AXP806 dcdcb copy/paste bug
+To:     Rask Ingemann Lambertsen <rask@formelder.dk>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Olliver Schinagl <oliver@schinagl.nl>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/zq4D+8ArvcK_JRDm6BNeBnl
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Fri, Feb 15, 2019 at 5:24 AM Rask Ingemann Lambertsen
+<rask@formelder.dk> wrote:
+>
+> An obvious copy/paste bug was introduced with the conversion to sybolic
+> register masks. The result is contradictory output like this:
+>
+> vcc-dram: Bringing 1100000uV into 1450000-1450000uV
+> vcc-dram: 1450 <--> 1550 mV at 1050 mV
+>
+> This patch fixes it:
+>
+> vcc-dram: 1450 <--> 1550 mV at 1500 mV
+>
+> Fixes: db4a555f7c4c ("regulator: axp20x: use defines for masks")
+> Signed-off-by: Rask Ingemann Lambertsen <rask@formelder.dk>
 
-Hi all,
-
-Today's linux-next merge of the kvm tree got conflicts in:
-
-  arch/x86/kvm/vmx/vmx.c
-  arch/x86/kvm/vmx/vmx.h
-
-between commit:
-
-  c112b5f50232 ("KVM: x86: Recompute PID.ON when clearing PID.SN")
-
-from the kvm-fixes tree and commit:
-
-  abd2fb15a57e ("KVM: x86: Sync the pending Posted-Interrupts")
-
-from the kvm tree.
-
-These 2 commits are very similar so I just used the latter version of
-the comflicting bits.
-
-I fixed it up (see above) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/zq4D+8ArvcK_JRDm6BNeBnl
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxqJjUACgkQAVBC80lX
-0Gz+Nwf/WVzAAx/aqMYuwqlu9CBxLl71/F19xDtrLRYZmNOVihMu6UWezsKEgPDp
-+ICSAyMI7rdgkSIml2kcdrPj7IVRUMw7dXUe2iU3/zT9ccg6qLrGZDwj7tCz5Qmo
-MojziMb6YILT3lG2moiTQiCQk52X2AEfC/YupHL1ANk0DldqdWWVfTfg9JGnuWK5
-X6LIOIYDKuMtduN6L8ardPgXeIYqJ7vKtDG4XRaTMnxR3DamzA5vPnym9Q0BSR2I
-CNyt2vFJBon26NJqp1J4Ow9c70flDAJNEhY0PbuEfHrKSVdYYyVJUJhuf19EHLC2
-r3J1hGdQB3MMLpGK0NEcU4RHvxYLCg==
-=8t9u
------END PGP SIGNATURE-----
-
---Sig_/zq4D+8ArvcK_JRDm6BNeBnl--
+Acked-by: Chen-Yu Tsai <wens@csie.org>
