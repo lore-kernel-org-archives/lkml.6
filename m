@@ -2,114 +2,115 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 473F2C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD39EC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:25:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C22C21848
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:25:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71AA5217F9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:25:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="C0mXpBzm"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vSHv3Azy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731828AbfBRPZt (ORCPT
+        id S1732164AbfBRPZ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 10:25:49 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:52214 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729621AbfBRPZs (ORCPT
+        Mon, 18 Feb 2019 10:25:58 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34038 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729621AbfBRPZ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 10:25:48 -0500
-Received: by mail-it1-f194.google.com with SMTP id y184so42060298itc.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 07:25:48 -0800 (PST)
+        Mon, 18 Feb 2019 10:25:57 -0500
+Received: by mail-pf1-f195.google.com with SMTP id u9so1479021pfn.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 07:25:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Bl6rs6RX153LdwLHI2UrqaYAKdWkw0C1baNVJVgsEbA=;
-        b=C0mXpBzmrv+hMytXXriS0AZKnClVeKejq7zbg+X8qgz6U1wHJIgIgfOlOXEWSVRYPf
-         lUslz+ngRsKLQCqW5OaktWe0/LirWNZ/h5Gf2fIMAI9ZU64y18Anxd0Vff9p4cE+KZh4
-         aOElwqgAnym74Xc4Pi8Wlrk1IvTTrJZdaFos4=
+        bh=jZM7ZiHVQG9OziFvs2AnUsvoK7AiW4q5xi1NxMlkl6g=;
+        b=vSHv3AzyCbWSr589HtaNNKpur1UiY5+jPg8/vQQzllunLl/aDvzZK+Q5lq5iMCD3lk
+         uYnjhCYIE3f3+guOw52YyDhPRUF5s+e1TEdMgmcFKjxaKfdv/EJpIg/WCBqtyFBlPIr0
+         6g763Pd7QhyHS0zcTtyuVM89WL1po1l34Hxs+0w36MAp9B4TqSY8bACzWmXuRkNFd+5/
+         GX/rC6AStlOkJJh/0HjqcslGd+B5Tr6t/9LR283Bg/qPh7lVc6kYEzGRk+1qFDaP3qJm
+         r5uRlDmsTu2vxzN0xBHeDaW5SCd/9iYfCzSKdHFoFYEkKnM/yHrehoJF5/lEt2r2u7Lc
+         pm4w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Bl6rs6RX153LdwLHI2UrqaYAKdWkw0C1baNVJVgsEbA=;
-        b=m7T3tG/DpWFz0v90EuGd8ijv6pwnkTXXMulklQ9WpGuh6Wg7RqX7Q7peUei/tr/6Fs
-         tQ2P1e4IyAf7Td00NAVQ9CE9RisIVXzrY6GmDgZODE7Kq+XbBTgiAEgCiLDdZHa1Eeh3
-         HfYaLrsi8tLqNMRm3G6dfC+oYVycWccEsmAPYvgZ5fuYkEfNSZkiqlwK5R1t+FEVlBzO
-         jsEtOYaqhX4PsYSBupvskdG08YlRfQ21loyuHzX9rkxbyraIVPwVkUlboQA6rBsoJTLm
-         dhSZq6C2xeqO5vf8T83fT3pvKa98tyeZ0yu/htviYkWJR8i1TeRnFvzxlDzpT5NEHn6z
-         S7oA==
-X-Gm-Message-State: AHQUAub/MEPOZboOu6zviqsi9mHjagb0lsuRT1Am9t1HjO2jAtoVEft9
-        iM6op4vo91V2j+0fhOGeRbzu1gTzSfi2fmEyWWcplA==
-X-Google-Smtp-Source: AHgI3IZEHmQu7SZBcBLxGZ7OJuQM/p41Mvmj6kmOAc44+EvHewQajec932gtylnd0jb4Eyx6QSImbyVRyY2+AqIl7dE=
-X-Received: by 2002:a24:385:: with SMTP id e127mr11667120ite.32.1550503547783;
- Mon, 18 Feb 2019 07:25:47 -0800 (PST)
+        bh=jZM7ZiHVQG9OziFvs2AnUsvoK7AiW4q5xi1NxMlkl6g=;
+        b=WKxrg14QCtuWzZpDQ6Xoy4ip7uxLMFjbNhv/e5BleeVvfxpD8w8t6A7YGqrx/nuqfQ
+         gZ5fp02sZDZZ0WxgzljelUZqwXBXur7KtzfUDg987qtjCTxQz9LNU4+wHtGdoQwD6uqA
+         inVFsLZilBQ+b1ump00VoruHtwL8aVZFM8h8PBVGMDb2erQJppxDt+QnTlQ3btyUk1lv
+         gEwq8+miOxzFoPu9RsomAPaCkx0EhBsKPQDA45Sh+gQ7tP9YiA6tC9WMlZhmSt/TRJfW
+         vfXEplj+YEBvG9k6C8BdcdcO0P3Jh0CQyz5GFP9jiZfZ8Eg7OVXjZlJ9CHYt+Bdaxc8N
+         9hZQ==
+X-Gm-Message-State: AHQUAuY233iFW+AVDQI+AUzKeaiHurWizKbVkZtVz6SHSucJCsXhyXCX
+        2s7fyH4l0pDDxAdZuxZCUg5z98AuWGCz6RMeO7GD6Q==
+X-Google-Smtp-Source: AHgI3IY3Y4pVRqsvmzgvBt01A6JRyNzrR6X8Dzlf1raJJfRx7vp4mMtvw/pULtIX4bcVD4+Xsnjy4WX7LSOWwwKdF/k=
+X-Received: by 2002:a63:7f46:: with SMTP id p6mr23252259pgn.54.1550503556849;
+ Mon, 18 Feb 2019 07:25:56 -0800 (PST)
 MIME-Version: 1.0
-References: <20190212204109.3528-1-jagan@amarulasolutions.com> <20190212204109.3528-2-jagan@amarulasolutions.com>
-In-Reply-To: <20190212204109.3528-2-jagan@amarulasolutions.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 18 Feb 2019 20:55:36 +0530
-Message-ID: <CAMty3ZA401nRh+nqFUcVMOv+or8NWoYU+y72gUPONy7ovyqgSw@mail.gmail.com>
-Subject: Re: [PATCH v7 2/2] drm/panel: Add Feiyang FY07024DI26A30-D MIPI-DSI
- LCD panel
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Sam Ravnborg <sam@ravnborg.org>
-Cc:     Michael Trimarchi <michael@amarulasolutions.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-amarula@amarulasolutions.com
+References: <20190217043434.46233-1-cai@lca.pw>
+In-Reply-To: <20190217043434.46233-1-cai@lca.pw>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Mon, 18 Feb 2019 16:25:45 +0100
+Message-ID: <CAAeHK+y8Xd1J2DppUMQLVhoc69wrqgNA=9hV45Jsd7V97CN6yw@mail.gmail.com>
+Subject: Re: [PATCH] trace: skip hwasan
+To:     Qian Cai <cai@lca.pw>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thierry and Sam,
+On Sun, Feb 17, 2019 at 5:34 AM Qian Cai <cai@lca.pw> wrote:
+>
+> Enabling function tracer with CONFIG_KASAN_SW_TAGS=y (hwasan) tracer
+> causes the whole system frozen on ThunderX2 systems with 256 CPUs,
+> because there is a burst of too much pointer access, and then KASAN will
+> dereference each byte of the shadow address for the tag checking which
+> will kill all the CPUs.
 
-On Wed, Feb 13, 2019 at 2:11 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+Hi Qian,
+
+Could you check if adding "CFLAGS_REMOVE_tags.o = -pg" into
+mm/kasan/Makefile helps with that?
+
+Thanks!
+
 >
-> Feiyang FY07024DI26A30-D is 1024x600, 4-lane MIPI-DSI LCD panel.
->
-> Add panel driver for it.
->
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
-> Tested-by: Bhushan Shah <bshah@kde.org>
-> Tested-by: Merlijn Wajer <merlijn@wizzup.org>
+> Signed-off-by: Qian Cai <cai@lca.pw>
 > ---
-> Changes for v7:
-> - rebase on master
-> - collect Merlijn Tested-by
-> - add tabs about drm timings
-> Changes for v6:
-> - add space b/w msleep and comment line
-> - use multi comment line style
-> - add sentinel
-> - collect Sam Ravnborg Reviewed-by
-> Changes for v5:
-> - drop drmP.h header
-> - order include files
-> - add empty line after kzalloc()
-> - drop gpio set for reset
-> - drop backlight put_device from probe()
-> - drop backlight put_device from remove()
-> - collect Tested-by from Bhushan Shah
-> Changes for v4:
-> - rebase on master
-> - adjust the hporch values to satisfy the refresh
-> Changes for v3:
-> - use simple structure for command init
-> - update proper comments on power, reset delay sequnce
-> - fix to use set_display_off in disable function
-> - move mode type to structure
-> - drop refres rate value, let drm compute
-> Changes for v2:
-> - new patch, derived from another dsi series
-
-Pleas let me know if you any further comments on this?
+>  kernel/trace/Makefile | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/kernel/trace/Makefile b/kernel/trace/Makefile
+> index c2b2148bb1d2..fdd547a68385 100644
+> --- a/kernel/trace/Makefile
+> +++ b/kernel/trace/Makefile
+> @@ -28,6 +28,11 @@ ifdef CONFIG_GCOV_PROFILE_FTRACE
+>  GCOV_PROFILE := y
+>  endif
+>
+> +# Too much pointer access will kill hwasan.
+> +ifdef CONFIG_KASAN_SW_TAGS
+> +KASAN_SANITIZE := n
+> +endif
+> +
+>  CFLAGS_trace_benchmark.o := -I$(src)
+>  CFLAGS_trace_events_filter.o := -I$(src)
+>
+> --
+> 2.17.2 (Apple Git-113)
+>
