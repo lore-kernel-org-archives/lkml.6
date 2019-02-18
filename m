@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E127C10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF9D9C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:58:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FA1020842
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:58:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FAAB2077B
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:58:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498294;
-	bh=DdrxByqldE88cHpw4aq+Hy5o46jznDruIxqd7c+HCJ8=;
+	s=default; t=1550498296;
+	bh=zCjIa/T1uM8zwij4jPOf/mH+TDrt45Ih03ZauBjMMTQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KAdHAbvluuftp5JL/st+qbhC3lx5gHZEB8yBd+Sl9L8AGG+gpvFSybg0KTRCsNcs1
-	 p3HDCJWFqdrXMNBNFPkFJtlOHFqYFZrvai12XJi8STH6H8kArfDeMWuZesaJrkOOVM
-	 hrOH7p4RIArHZ78ExUTtnaTi4Dq/PMz8XAkAk8qE=
+	b=f1RILNSkesUmb49yk/r2O+FhRLcgs7LmhwJ4Y+idx+QuCucY9w2eQ5Kynen4AZVN9
+	 gz0M4STDiYqtY8lQYP5Ub7V8CzUONtUt+5Tj+XDokMV+ASWeVe6xyjT73Waf/me+5B
+	 GG3HL7x7CIFloImSQiphw3hGYscAAypc6Ev7eRu4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730932AbfBRN6N (ORCPT
+        id S2388293AbfBRN6P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:58:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38752 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:58:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388022AbfBRN6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:58:10 -0500
+        id S2388268AbfBRN6M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:58:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 820C520842;
-        Mon, 18 Feb 2019 13:58:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A3B72077B;
+        Mon, 18 Feb 2019 13:58:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498289;
-        bh=DdrxByqldE88cHpw4aq+Hy5o46jznDruIxqd7c+HCJ8=;
+        s=default; t=1550498291;
+        bh=zCjIa/T1uM8zwij4jPOf/mH+TDrt45Ih03ZauBjMMTQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hm2UT8Q4ScS2qLvMRhb5FFuJ9U3Q2YKEPZ36C0KmrGZehdq46nbO8aFRTbopbIIsZ
-         jTC3wv3AIy11B41mxTwBmlhDgoSROqu+Jn97Ibozd86Iqr68EJHqD+SP1yTjneb5VG
-         QnMMimGxQz8rZL+q63xz8/iWDUCXRpX2IKSBTfUc=
+        b=UoxVZNJMqx7TAOLqVWCfFcXCKxWcUTMT0WsSu7WIAgOd9MqjC3RMAO62bSbU9xlnt
+         xjza8SKGYRElBZFyZ+Q1G6wSOa9pgHzJK6ADCXm/erASBxYmFZidcGTGccq8CDSPAX
+         LKbQ9uG8BIvHa+k/DwfrHlpcm47bbxQ0rNc5avuU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -46,9 +46,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Russell King <rmk+kernel@armlinux.org.uk>,
         "David A. Long" <dave.long@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 05/58] ARM: 8791/1: vfp: use __copy_to_user() when saving VFP state
-Date:   Mon, 18 Feb 2019 14:43:26 +0100
-Message-Id: <20190218133508.991569808@linuxfoundation.org>
+Subject: [PATCH 4.9 06/58] ARM: 8792/1: oabi-compat: copy oabi events using __copy_to_user()
+Date:   Mon, 18 Feb 2019 14:43:27 +0100
+Message-Id: <20190218133509.070271254@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133508.567416115@linuxfoundation.org>
 References: <20190218133508.567416115@linuxfoundation.org>
@@ -67,12 +67,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-Commit 3aa2df6ec2ca6bc143a65351cca4266d03a8bc41 upstream.
+Commit 319508902600c2688e057750148487996396e9ca upstream.
 
-Use __copy_to_user() rather than __put_user_error() for individual
-members when saving VFP state.
-This has the benefit of disabling/enabling PAN once per copied struct
-intead of once per write.
+Copy events to user using __copy_to_user() rather than copy members of
+individually with __put_user_error().
+This has the benefit of disabling/enabling PAN once per event intead of
+once per event member.
 
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
@@ -80,103 +80,35 @@ Signed-off-by: David A. Long <dave.long@linaro.org>
 Reviewed-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/include/asm/thread_info.h |  4 ++--
- arch/arm/kernel/signal.c           | 13 +++++++------
- arch/arm/vfp/vfpmodule.c           | 20 ++++++++------------
- 3 files changed, 17 insertions(+), 20 deletions(-)
+ arch/arm/kernel/sys_oabi-compat.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/include/asm/thread_info.h b/arch/arm/include/asm/thread_info.h
-index 57d2ad9c75ca..df8420672c7e 100644
---- a/arch/arm/include/asm/thread_info.h
-+++ b/arch/arm/include/asm/thread_info.h
-@@ -124,8 +124,8 @@ extern void vfp_flush_hwstate(struct thread_info *);
- struct user_vfp;
- struct user_vfp_exc;
- 
--extern int vfp_preserve_user_clear_hwstate(struct user_vfp __user *,
--					   struct user_vfp_exc __user *);
-+extern int vfp_preserve_user_clear_hwstate(struct user_vfp *,
-+					   struct user_vfp_exc *);
- extern int vfp_restore_user_hwstate(struct user_vfp *,
- 				    struct user_vfp_exc *);
- #endif
-diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
-index fbb325ff8acc..135b1a8e12eb 100644
---- a/arch/arm/kernel/signal.c
-+++ b/arch/arm/kernel/signal.c
-@@ -94,17 +94,18 @@ static int restore_iwmmxt_context(struct iwmmxt_sigframe *frame)
- 
- static int preserve_vfp_context(struct vfp_sigframe __user *frame)
+diff --git a/arch/arm/kernel/sys_oabi-compat.c b/arch/arm/kernel/sys_oabi-compat.c
+index 640748e27035..d844c5c9364b 100644
+--- a/arch/arm/kernel/sys_oabi-compat.c
++++ b/arch/arm/kernel/sys_oabi-compat.c
+@@ -276,6 +276,7 @@ asmlinkage long sys_oabi_epoll_wait(int epfd,
+ 				    int maxevents, int timeout)
  {
--	const unsigned long magic = VFP_MAGIC;
--	const unsigned long size = VFP_STORAGE_SIZE;
-+	struct vfp_sigframe kframe;
- 	int err = 0;
+ 	struct epoll_event *kbuf;
++	struct oabi_epoll_event e;
+ 	mm_segment_t fs;
+ 	long ret, err, i;
  
--	__put_user_error(magic, &frame->magic, err);
--	__put_user_error(size, &frame->size, err);
-+	memset(&kframe, 0, sizeof(kframe));
-+	kframe.magic = VFP_MAGIC;
-+	kframe.size = VFP_STORAGE_SIZE;
- 
-+	err = vfp_preserve_user_clear_hwstate(&kframe.ufp, &kframe.ufp_exc);
- 	if (err)
--		return -EFAULT;
-+		return err;
- 
--	return vfp_preserve_user_clear_hwstate(&frame->ufp, &frame->ufp_exc);
-+	return __copy_to_user(frame, &kframe, sizeof(kframe));
- }
- 
- static int restore_vfp_context(struct vfp_sigframe __user *auxp)
-diff --git a/arch/arm/vfp/vfpmodule.c b/arch/arm/vfp/vfpmodule.c
-index 8e5e97989fda..df3fa52c0aa3 100644
---- a/arch/arm/vfp/vfpmodule.c
-+++ b/arch/arm/vfp/vfpmodule.c
-@@ -554,12 +554,11 @@ void vfp_flush_hwstate(struct thread_info *thread)
-  * Save the current VFP state into the provided structures and prepare
-  * for entry into a new function (signal handler).
-  */
--int vfp_preserve_user_clear_hwstate(struct user_vfp __user *ufp,
--				    struct user_vfp_exc __user *ufp_exc)
-+int vfp_preserve_user_clear_hwstate(struct user_vfp *ufp,
-+				    struct user_vfp_exc *ufp_exc)
- {
- 	struct thread_info *thread = current_thread_info();
- 	struct vfp_hard_struct *hwstate = &thread->vfpstate.hard;
--	int err = 0;
- 
- 	/* Ensure that the saved hwstate is up-to-date. */
- 	vfp_sync_hwstate(thread);
-@@ -568,22 +567,19 @@ int vfp_preserve_user_clear_hwstate(struct user_vfp __user *ufp,
- 	 * Copy the floating point registers. There can be unused
- 	 * registers see asm/hwcap.h for details.
- 	 */
--	err |= __copy_to_user(&ufp->fpregs, &hwstate->fpregs,
--			      sizeof(hwstate->fpregs));
-+	memcpy(&ufp->fpregs, &hwstate->fpregs, sizeof(hwstate->fpregs));
-+
- 	/*
- 	 * Copy the status and control register.
- 	 */
--	__put_user_error(hwstate->fpscr, &ufp->fpscr, err);
-+	ufp->fpscr = hwstate->fpscr;
- 
- 	/*
- 	 * Copy the exception registers.
- 	 */
--	__put_user_error(hwstate->fpexc, &ufp_exc->fpexc, err);
--	__put_user_error(hwstate->fpinst, &ufp_exc->fpinst, err);
--	__put_user_error(hwstate->fpinst2, &ufp_exc->fpinst2, err);
--
--	if (err)
--		return -EFAULT;
-+	ufp_exc->fpexc = hwstate->fpexc;
-+	ufp_exc->fpinst = hwstate->fpinst;
-+	ufp_exc->fpinst2 = ufp_exc->fpinst2;
- 
- 	/* Ensure that VFP is disabled. */
- 	vfp_flush_hwstate(thread);
+@@ -294,8 +295,11 @@ asmlinkage long sys_oabi_epoll_wait(int epfd,
+ 	set_fs(fs);
+ 	err = 0;
+ 	for (i = 0; i < ret; i++) {
+-		__put_user_error(kbuf[i].events, &events->events, err);
+-		__put_user_error(kbuf[i].data,   &events->data,   err);
++		e.events = kbuf[i].events;
++		e.data = kbuf[i].data;
++		err = __copy_to_user(events, &e, sizeof(e));
++		if (err)
++			break;
+ 		events++;
+ 	}
+ 	kfree(kbuf);
 -- 
 2.19.1
 
