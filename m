@@ -2,183 +2,95 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FFB6C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:02:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A56D1C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:02:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67D3A20700
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:02:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71FE720700
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:02:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nH2FfnmE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390912AbfBRRB6 (ORCPT
+        id S2390937AbfBRRCK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 12:01:58 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44066 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387648AbfBRRB4 (ORCPT
+        Mon, 18 Feb 2019 12:02:10 -0500
+Received: from mail-it1-f177.google.com ([209.85.166.177]:40158 "EHLO
+        mail-it1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387648AbfBRRCJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 12:01:56 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1IGsbUq186820
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 12:01:54 -0500
-Received: from e34.co.us.ibm.com (e34.co.us.ibm.com [32.97.110.152])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qqxatg8e0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 12:01:53 -0500
-Received: from localhost
-        by e34.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Mon, 18 Feb 2019 17:01:52 -0000
-Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
-        by e34.co.us.ibm.com (192.168.1.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 18 Feb 2019 17:01:49 -0000
-Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1IH1gx425952462
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 18 Feb 2019 17:01:42 GMT
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9961C7806A;
-        Mon, 18 Feb 2019 17:01:42 +0000 (GMT)
-Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A3F2A78068;
-        Mon, 18 Feb 2019 17:01:40 +0000 (GMT)
-Received: from akrowiak-ThinkPad-P50.ibm.com (unknown [9.85.134.111])
-        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Mon, 18 Feb 2019 17:01:40 +0000 (GMT)
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-To:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, pmorel@linux.vnet.ibm.com,
-        pasic@linux.vnet.ibm.com, akrowiak@linux.vnet.ibm.com,
-        oberpar@linux.ibm.com, sebott@linux.ibm.com,
-        Tony Krowiak <akrowiak@linux.ibm.com>
-Subject: [PATCH v3] zcrypt: handle AP Info notification from CHSC SEI command
-Date:   Mon, 18 Feb 2019 12:01:35 -0500
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 19021817-0016-0000-0000-00000985B5A3
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010620; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000281; SDB=6.01162912; UDB=6.00607158; IPR=6.00943488;
- MB=3.00025639; MTD=3.00000008; XFM=3.00000015; UTC=2019-02-18 17:01:50
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19021817-0017-0000-0000-000042319FEA
-Message-Id: <1550509295-1199-1-git-send-email-akrowiak@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-18_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902180126
+        Mon, 18 Feb 2019 12:02:09 -0500
+Received: by mail-it1-f177.google.com with SMTP id i2so42589717ite.5
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 09:02:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=8giBFLa/6EJULGKbVseEpa5JgyJ5hnHBS5FmwtBLcvo=;
+        b=nH2FfnmEMYbVA5JGK+Ii5TNJNGtPIeft3XTi60B2+FhIjVBDXzL9C9LWIfZg+Zb57R
+         m5b6F1+lh8HI0QxXWjWyCwm2UKjAUKJHzEcOcPfH7inLBhOZdnZ7jC+j3RGW0umjuG5L
+         MC6VXZp2SefY6cd54cF4RGOsHJK/Yk84nf3/uKZpafBkBE5h1UYu4zWBM/sKsO2PkX1g
+         wCvISVOHpbs50hyJboeAf1PjocFgCwrtyTFi9Xb6gy4RLV77zGvSY4LcwTa3tcyed2Pi
+         Lgz1KPSNS4RBOuLiUghZWMaCEkx7ubI0CpgKPyQ3XOvhSq15lKoS26b9uKrnp04taeHh
+         JXFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=8giBFLa/6EJULGKbVseEpa5JgyJ5hnHBS5FmwtBLcvo=;
+        b=sKQC9QFvKgJ8OqOYSbZdg25/6aRXwQg8Ko5w+G1+AW+Vv2zl2kB/mcwWYqw01mPqcu
+         HKgs1oZH3Duj96xV4rFhiWTVffpeSWKzvqV9c7McvEVJy4s78tGXTuceX0CtvNhmUODp
+         rrs5W0H2qlOWGPrlkCNZpMXZUrRHFDIVgz850u2SglHmBbi0duUz6O/y6dgmQF4GINJU
+         dT30wSeNZqeLH0pHiT39o1Vdmw2APdYUYKWGECRiBbNLKGQdA0KGAMAtW7ss6vV/ppBW
+         oiHiRnZlTcqKu74Dm5ekEsTtBZszPXqkW5oKEiJwulKR/PaJZpNMO/ZzOW/cPPTTKCP9
+         BTHg==
+X-Gm-Message-State: AHQUAuYPDyocqMDGQKHkhmQf8pT9IHbwujfJG9XLmHbj45NlRE6A3Ben
+        aHaLljIeFSijBqEVtiudD+h2FsKg6LcvWKPrsSuuf74U
+X-Google-Smtp-Source: AHgI3IYSMpmkE/KaLQCY1dJwB5T55Q4SPc++viyH62BASZZ//WnbYPiPAdNtkQo6EOuP8/Chvnq1pBJFVy958rgl1gI=
+X-Received: by 2002:a24:5608:: with SMTP id o8mr11834924itb.35.1550509328514;
+ Mon, 18 Feb 2019 09:02:08 -0800 (PST)
+MIME-Version: 1.0
+From:   Jassi Brar <jassisinghbrar@gmail.com>
+Date:   Mon, 18 Feb 2019 11:01:57 -0600
+Message-ID: <CABb+yY2SrgwFNgKa4+ossU3i3U76m2sa63r1=QsRg=PGGWAPxw@mail.gmail.com>
+Subject: [GIT PULL] Mailbox fixes for v5.0
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current AP bus implementation periodically polls the AP configuration
-to detect changes. When the AP configuration is dynamically changed via the
-SE or an SCLP instruction, the changes will not be reflected to sysfs until
-the next time the AP configuration is polled. The CHSC architecture
-provides a Store Event Information (SEI) command to make notification of an
-AP configuration change. This patch introduces a handler to process
-notification from the CHSC SEI command by immediately kicking off an AP bus
-scan-after-event.
+Hi Linus,
 
-Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
-Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
-Reviewed-by: Sebastian Ott <sebott@linux.ibm.com>
-Reviewed-by: Harald Freudenberger <FREUDE@de.ibm.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
----
- arch/s390/include/asm/ap.h   | 11 +++++++++++
- drivers/s390/cio/chsc.c      | 13 +++++++++++++
- drivers/s390/crypto/ap_bus.c | 10 ++++++++++
- 3 files changed, 34 insertions(+)
+The following changes since commit a3b22b9f11d9fbc48b0291ea92259a5a810e9438:
 
-diff --git a/arch/s390/include/asm/ap.h b/arch/s390/include/asm/ap.h
-index 1a6a7092d942..e94a0a28b5eb 100644
---- a/arch/s390/include/asm/ap.h
-+++ b/arch/s390/include/asm/ap.h
-@@ -360,4 +360,15 @@ static inline struct ap_queue_status ap_dqap(ap_qid_t qid,
- 	return reg1;
- }
- 
-+/*
-+ * Interface to tell the AP bus code that a configuration
-+ * change has happened. The bus code should at least do
-+ * an ap bus resource rescan.
-+ */
-+#if IS_ENABLED(CONFIG_ZCRYPT)
-+void ap_bus_cfg_chg(void);
-+#else
-+static inline void ap_bus_cfg_chg(void){};
-+#endif
-+
- #endif /* _ASM_S390_AP_H_ */
-diff --git a/drivers/s390/cio/chsc.c b/drivers/s390/cio/chsc.c
-index a0baee25134c..eaf4699be2c5 100644
---- a/drivers/s390/cio/chsc.c
-+++ b/drivers/s390/cio/chsc.c
-@@ -24,6 +24,7 @@
- #include <asm/crw.h>
- #include <asm/isc.h>
- #include <asm/ebcdic.h>
-+#include <asm/ap.h>
- 
- #include "css.h"
- #include "cio.h"
-@@ -586,6 +587,15 @@ static void chsc_process_sei_scm_avail(struct chsc_sei_nt0_area *sei_area)
- 			      " failed (rc=%d).\n", ret);
- }
- 
-+static void chsc_process_sei_ap_cfg_chg(struct chsc_sei_nt0_area *sei_area)
-+{
-+	CIO_CRW_EVENT(3, "chsc: ap config changed\n");
-+	if (sei_area->rs != 5)
-+		return;
-+
-+	ap_bus_cfg_chg();
-+}
-+
- static void chsc_process_sei_nt2(struct chsc_sei_nt2_area *sei_area)
- {
- 	switch (sei_area->cc) {
-@@ -612,6 +622,9 @@ static void chsc_process_sei_nt0(struct chsc_sei_nt0_area *sei_area)
- 	case 2: /* i/o resource accessibility */
- 		chsc_process_sei_res_acc(sei_area);
- 		break;
-+	case 3: /* ap config changed */
-+		chsc_process_sei_ap_cfg_chg(sei_area);
-+		break;
- 	case 7: /* channel-path-availability information */
- 		chsc_process_sei_chp_avail(sei_area);
- 		break;
-diff --git a/drivers/s390/crypto/ap_bus.c b/drivers/s390/crypto/ap_bus.c
-index 5a699746c357..d0d415954142 100644
---- a/drivers/s390/crypto/ap_bus.c
-+++ b/drivers/s390/crypto/ap_bus.c
-@@ -861,6 +861,16 @@ void ap_bus_force_rescan(void)
- EXPORT_SYMBOL(ap_bus_force_rescan);
- 
- /*
-+* A config change has happened, force an ap bus rescan.
-+*/
-+void ap_bus_cfg_chg(void)
-+{
-+	AP_DBF(DBF_INFO, "%s config change, forcing bus rescan\n", __func__);
-+
-+	ap_bus_force_rescan();
-+}
-+
-+/*
-  * hex2bitmap() - parse hex mask string and set bitmap.
-  * Valid strings are "0x012345678" with at least one valid hex number.
-  * Rest of the bitmap to the right is padded with 0. No spaces allowed
--- 
-2.7.4
+  Linux 5.0-rc7 (2019-02-17 18:46:40 -0800)
 
+are available in the Git repository at:
+
+  git://git.linaro.org/landing-teams/working/fujitsu/integration.git
+tags/mailbox-fixes-v5.0-rc7
+
+for you to fetch changes up to d7bf31a0f85faaf63c63c39d55154825a1eaaea9:
+
+  mailbox: bcm-flexrm-mailbox: Fix FlexRM ring flush timeout issue
+(2019-02-18 10:40:58 -0600)
+
+----------------------------------------------------------------
+- API: Fix build breakge by exporting the function mbox_flush
+- BRCM: Fix FlexRM ring flush timeout issue
+
+----------------------------------------------------------------
+Rayagonda Kokatanur (1):
+      mailbox: bcm-flexrm-mailbox: Fix FlexRM ring flush timeout issue
+
+Thierry Reding (1):
+      mailbox: Export mbox_flush()
+
+ drivers/mailbox/bcm-flexrm-mailbox.c | 4 ++--
+ drivers/mailbox/mailbox.c            | 1 +
+ 2 files changed, 3 insertions(+), 2 deletions(-)
