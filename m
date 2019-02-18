@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF3DC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91412C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F099F21901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F8812070D
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498522;
-	bh=fCBdobyvBHCq4jVjs7xcAC2o0V88TcUeaorbvya3q+c=;
+	s=default; t=1550498527;
+	bh=w08EYP4GavT7AozW074LhVSzzCSQhhOFxsnba0kxqu8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QFNK6/yFXyRc0TR5i3NDGARo/do22s/xGEIAYib8zODyb7PQvVcvaDCstrwLPRYPM
-	 AgBrkDcdK9t61YikEsE3jEDytjNhmobuSrEc5IZ3r+Jhg8rPxBrJZGrR2BFdzhUlHv
-	 HnJ2pK+t60bsDDoSFOiGFB5g2922LJv3D5uYsN4E=
+	b=RndsJrt/FobehaJG/13EjHcRiliykjDvo83RAGW+giQKcsanpSXkoUpdP5PCqHVU7
+	 vZqlso4rP4yGIEMNSetWuxaXB8NnH2AzrXKRzxVg9dNqN/fLfZbOsgqZD/QEuSxVFa
+	 4q2sxqMVEu725m/lP95GygrLQvIwwCslnAYR6sQo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389227AbfBROCA (ORCPT
+        id S2389256AbfBROCD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:02:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43502 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:02:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389209AbfBROB4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:01:56 -0500
+        id S2388705AbfBROB7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:01:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 170732070D;
-        Mon, 18 Feb 2019 14:01:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C1042070D;
+        Mon, 18 Feb 2019 14:01:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498515;
-        bh=fCBdobyvBHCq4jVjs7xcAC2o0V88TcUeaorbvya3q+c=;
+        s=default; t=1550498519;
+        bh=w08EYP4GavT7AozW074LhVSzzCSQhhOFxsnba0kxqu8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QeZdYMJ9GKF3FiDxRefUOXl25wwTkA9Rlqg7k9gNbuc5D4zXA91xcsnzgW1gwZ2xS
-         qNPwbOgZDr60Cxi4YDXpTGysA/c1s9yzsLwdzFH8QHtdLtK3paLGztYcSE4mWUX7SY
-         BvC7pn0oGymY9nebWMXPSX22Q7RNt3CElxmP7QzE=
+        b=g1wMi0VeQKmUpS0PjkQQm98rFX6KvsbmAUxZVgsmPDnVlus+T5Z95OY2YPDG1WVSZ
+         g8egSFAgxNMjusqSzmUg4OQWQ2ZmDG2rw+C0GPm6ox1kx9HbfAk4j88MCqkPvXBjCi
+         uH7jCdeNbfYOMqBgSiFV1+LLGe4ilh2l/kreaj3A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Krzysztof Adamski <krzysztof.adamski@nokia.com>,
-        Alexander Sverdlin <alexander.sverdlin@nokia.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 034/143] i2c-axxia: check for error conditions first
-Date:   Mon, 18 Feb 2019 14:42:42 +0100
-Message-Id: <20190218133530.381031191@linuxfoundation.org>
+        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
+        Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 035/143] udf: Fix BUG on corrupted inode
+Date:   Mon, 18 Feb 2019 14:42:43 +0100
+Message-Id: <20190218133530.415327095@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -68,83 +66,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 4f5c85fe3a60ace555d09898166af372547f97fc ]
+[ Upstream commit d288d95842f1503414b7eebce3773bac3390457e ]
 
-It was observed that when using seqentional mode contrary to the
-documentation, the SS bit (which is supposed to only be set if
-automatic/sequence command completed normally), is sometimes set
-together with NA (NAK in address phase) causing transfer to falsely be
-considered successful.
+When inode is corrupted so that extent type is invalid, some functions
+(such as udf_truncate_extents()) will just BUG. Check that extent type
+is valid when loading the inode to memory.
 
-My assumption is that this does not happen during manual mode since the
-controller is stopping its work the moment it sets NA/ND bit in status
-register. This is not the case in Automatic/Sequentional mode where it
-is still working to send STOP condition and the actual status we get
-depends on the time when the ISR is run.
-
-This patch changes the order of checking status bits in ISR - error
-conditions are checked first and only if none of them occurred, the
-transfer may be considered successful. This is required to introduce
-using of sequentional mode in next patch.
-
-Signed-off-by: Krzysztof Adamski <krzysztof.adamski@nokia.com>
-Reviewed-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-axxia.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ fs/udf/inode.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-axxia.c b/drivers/i2c/busses/i2c-axxia.c
-index 9c9fd2e87a4b..1c68b05c8649 100644
---- a/drivers/i2c/busses/i2c-axxia.c
-+++ b/drivers/i2c/busses/i2c-axxia.c
-@@ -296,22 +296,7 @@ static irqreturn_t axxia_i2c_isr(int irq, void *_dev)
- 			i2c_int_disable(idev, MST_STATUS_TFL);
- 	}
+diff --git a/fs/udf/inode.c b/fs/udf/inode.c
+index 0e659d9c69a1..613193c6bb42 100644
+--- a/fs/udf/inode.c
++++ b/fs/udf/inode.c
+@@ -1364,6 +1364,12 @@ reread:
  
--	if (status & MST_STATUS_SCC) {
--		/* Stop completed */
--		i2c_int_disable(idev, ~MST_STATUS_TSS);
--		complete(&idev->msg_complete);
--	} else if (status & MST_STATUS_SNS) {
--		/* Transfer done */
--		i2c_int_disable(idev, ~MST_STATUS_TSS);
--		if (i2c_m_rd(idev->msg) && idev->msg_xfrd < idev->msg->len)
--			axxia_i2c_empty_rx_fifo(idev);
--		complete(&idev->msg_complete);
--	} else if (status & MST_STATUS_TSS) {
--		/* Transfer timeout */
--		idev->msg_err = -ETIMEDOUT;
--		i2c_int_disable(idev, ~MST_STATUS_TSS);
--		complete(&idev->msg_complete);
--	} else if (unlikely(status & MST_STATUS_ERR)) {
-+	if (unlikely(status & MST_STATUS_ERR)) {
- 		/* Transfer error */
- 		i2c_int_disable(idev, ~0);
- 		if (status & MST_STATUS_AL)
-@@ -328,6 +313,21 @@ static irqreturn_t axxia_i2c_isr(int irq, void *_dev)
- 			readl(idev->base + MST_TX_BYTES_XFRD),
- 			readl(idev->base + MST_TX_XFER));
- 		complete(&idev->msg_complete);
-+	} else if (status & MST_STATUS_SCC) {
-+		/* Stop completed */
-+		i2c_int_disable(idev, ~MST_STATUS_TSS);
-+		complete(&idev->msg_complete);
-+	} else if (status & MST_STATUS_SNS) {
-+		/* Transfer done */
-+		i2c_int_disable(idev, ~MST_STATUS_TSS);
-+		if (i2c_m_rd(idev->msg) && idev->msg_xfrd < idev->msg->len)
-+			axxia_i2c_empty_rx_fifo(idev);
-+		complete(&idev->msg_complete);
-+	} else if (status & MST_STATUS_TSS) {
-+		/* Transfer timeout */
-+		idev->msg_err = -ETIMEDOUT;
-+		i2c_int_disable(idev, ~MST_STATUS_TSS);
-+		complete(&idev->msg_complete);
- 	}
- 
- out:
+ 	iinfo->i_alloc_type = le16_to_cpu(fe->icbTag.flags) &
+ 							ICBTAG_FLAG_AD_MASK;
++	if (iinfo->i_alloc_type != ICBTAG_FLAG_AD_SHORT &&
++	    iinfo->i_alloc_type != ICBTAG_FLAG_AD_LONG &&
++	    iinfo->i_alloc_type != ICBTAG_FLAG_AD_IN_ICB) {
++		ret = -EIO;
++		goto out;
++	}
+ 	iinfo->i_unique = 0;
+ 	iinfo->i_lenEAttr = 0;
+ 	iinfo->i_lenExtents = 0;
 -- 
 2.19.1
 
