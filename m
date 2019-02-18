@@ -4,53 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B773C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:08:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47D74C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29B9821916
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:08:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 166F121934
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:08:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498887;
-	bh=dGBrEl2Qd+13N9I2u+fe8yahnJBIIoS5WFC+CKJi1/U=;
+	s=default; t=1550498890;
+	bh=5mfjDthBBkvnYCTtl4r4wq6hCu4gxu/RSYvZJECSXao=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tmT+ayEOtLfhKyHfX8HHXLM8sP4dWr9rcjEDCIvtiYC4GdRte8N0gC4i+0BabmDhj
-	 VzgvsdraNrw6xwvUd0mjwR72NBjd1xP4UoS3AIB5yczzuXv4MwZNDe6hsEO4er0PI7
-	 rLh/3vO0ZGOa9suMMZ7/GpEjbtZZQqAyz8iLNWRs=
+	b=zTFawp60DxcUJGKT5m5uTWFV5XhL2TWvAr4XgsReE2Ee6/FCE8h1yvswuhABVAcQ9
+	 wcAjyRV7iHhzB6tMa2oUtG7h1UUe9AhY0rkTr+n/g7HNqokg4uPZNZzbDMiLG5Gu5B
+	 xGKwdpdKf5rHm/lnXj1pe551Yv+PlGlzbHKQGW0s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390854AbfBROIF (ORCPT
+        id S2390868AbfBROII (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:08:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51216 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:08:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50166 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390808AbfBROIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:08:01 -0500
+        id S2390553AbfBROHE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:07:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDF33204FD;
-        Mon, 18 Feb 2019 14:07:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D0D221901;
+        Mon, 18 Feb 2019 14:07:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498880;
-        bh=dGBrEl2Qd+13N9I2u+fe8yahnJBIIoS5WFC+CKJi1/U=;
+        s=default; t=1550498824;
+        bh=5mfjDthBBkvnYCTtl4r4wq6hCu4gxu/RSYvZJECSXao=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=04kYyrk1TEaHRtIDbq0Qlyomeh6rxJD3qHsn81RhoHF7j2WI8uRoust7LoWjufEfZ
-         93648IuUxLVWuMmPoN8E+OcdxQOfUrJWNQRoho00C36NsOH4x71EqBS7dafMW//7Va
-         vb3mfxssiBBwipJMzIkhUv4qUVFHu+lDiHlzsSJ4=
+        b=196joY4rtJZtxba8HOR02JIJaOCN8tNMpS9+MvgsoBkAwza3jl4ZEhykecy/612C9
+         1Evyb9n+fGm2brYGLKaG9exuJR8dokq5mDczv1m2bXdQvrig+9PSExgEtWzdYg5EqK
+         B9CcT5WpNUsz5dlskAusOZJ9OPwl60ANZRTIiCuM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Richard Henderson <rth@twiddle.net>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        linux-alpha@vger.kernel.org,
-        Sergei Trofimovich <slyfox@gentoo.org>,
-        Matt Turner <mattst88@gmail.com>,
-        "Dmitry V. Levin" <ldv@altlinux.org>
-Subject: [PATCH 4.4 132/143] alpha: fix page fault handling for r16-r18 targets
-Date:   Mon, 18 Feb 2019 14:44:20 +0100
-Message-Id: <20190218133533.806037827@linuxfoundation.org>
+        stable@vger.kernel.org, Meelis Roos <mroos@linux.ee>,
+        Matt Turner <mattst88@gmail.com>
+Subject: [PATCH 4.4 133/143] alpha: Fix Eiger NR_IRQS to 128
+Date:   Mon, 18 Feb 2019 14:44:21 +0100
+Message-Id: <20190218133533.843134961@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -69,118 +64,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sergei Trofimovich <slyfox@gentoo.org>
+From: Meelis Roos <mroos@linux.ee>
 
-commit 491af60ffb848b59e82f7c9145833222e0bf27a5 upstream.
+commit bfc913682464f45bc4d6044084e370f9048de9d5 upstream.
 
-Fix page fault handling code to fixup r16-r18 registers.
-Before the patch code had off-by-two registers bug.
-This bug caused overwriting of ps,pc,gp registers instead
-of fixing intended r16,r17,r18 (see `struct pt_regs`).
+Eiger machine vector definition has nr_irqs 128, and working 2.6.26
+boot shows SCSI getting IRQ-s 64 and 65. Current kernel boot fails
+because Symbios SCSI fails to request IRQ-s and does not find the disks.
+It has been broken at least since 3.18 - the earliest I could test with
+my gcc-5.
 
-More details:
+The headers have moved around and possibly another order of defines has
+worked in the past - but since 128 seems to be correct and used, fix
+arch/alpha/include/asm/irq.h to have NR_IRQS=128 for Eiger.
 
-Initially Dmitry noticed a kernel bug as a failure
-on strace test suite. Test passes unmapped userspace
-pointer to io_submit:
+This fixes 4.19-rc7 boot on my Force Flexor A264 (Eiger subarch).
 
-```c
-    #include <err.h>
-    #include <unistd.h>
-    #include <sys/mman.h>
-    #include <asm/unistd.h>
-    int main(void)
-    {
-        unsigned long ctx = 0;
-        if (syscall(__NR_io_setup, 1, &ctx))
-            err(1, "io_setup");
-        const size_t page_size = sysconf(_SC_PAGESIZE);
-        const size_t size = page_size * 2;
-        void *ptr = mmap(NULL, size, PROT_READ | PROT_WRITE,
-                         MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-        if (MAP_FAILED == ptr)
-            err(1, "mmap(%zu)", size);
-        if (munmap(ptr, size))
-            err(1, "munmap");
-        syscall(__NR_io_submit, ctx, 1, ptr + page_size);
-        syscall(__NR_io_destroy, ctx);
-        return 0;
-    }
-```
-
-Running this test causes kernel to crash when handling page fault:
-
-```
-    Unable to handle kernel paging request at virtual address ffffffffffff9468
-    CPU 3
-    aio(26027): Oops 0
-    pc = [<fffffc00004eddf8>]  ra = [<fffffc00004edd5c>]  ps = 0000    Not tainted
-    pc is at sys_io_submit+0x108/0x200
-    ra is at sys_io_submit+0x6c/0x200
-    v0 = fffffc00c58e6300  t0 = fffffffffffffff2  t1 = 000002000025e000
-    t2 = fffffc01f159fef8  t3 = fffffc0001009640  t4 = fffffc0000e0f6e0
-    t5 = 0000020001002e9e  t6 = 4c41564e49452031  t7 = fffffc01f159c000
-    s0 = 0000000000000002  s1 = 000002000025e000  s2 = 0000000000000000
-    s3 = 0000000000000000  s4 = 0000000000000000  s5 = fffffffffffffff2
-    s6 = fffffc00c58e6300
-    a0 = fffffc00c58e6300  a1 = 0000000000000000  a2 = 000002000025e000
-    a3 = 00000200001ac260  a4 = 00000200001ac1e8  a5 = 0000000000000001
-    t8 = 0000000000000008  t9 = 000000011f8bce30  t10= 00000200001ac440
-    t11= 0000000000000000  pv = fffffc00006fd320  at = 0000000000000000
-    gp = 0000000000000000  sp = 00000000265fd174
-    Disabling lock debugging due to kernel taint
-    Trace:
-    [<fffffc0000311404>] entSys+0xa4/0xc0
-```
-
-Here `gp` has invalid value. `gp is s overwritten by a fixup for the
-following page fault handler in `io_submit` syscall handler:
-
-```
-    __se_sys_io_submit
-    ...
-        ldq     a1,0(t1)
-        bne     t0,4280 <__se_sys_io_submit+0x180>
-```
-
-After a page fault `t0` should contain -EFALUT and `a1` is 0.
-Instead `gp` was overwritten in place of `a1`.
-
-This happens due to a off-by-two bug in `dpf_reg()` for `r16-r18`
-(aka `a0-a2`).
-
-I think the bug went unnoticed for a long time as `gp` is one
-of scratch registers. Any kernel function call would re-calculate `gp`.
-
-Dmitry tracked down the bug origin back to 2.1.32 kernel version
-where trap_a{0,1,2} fields were inserted into struct pt_regs.
-And even before that `dpf_reg()` contained off-by-one error.
-
-Cc: Richard Henderson <rth@twiddle.net>
-Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
-Cc: linux-alpha@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Reported-and-reviewed-by: "Dmitry V. Levin" <ldv@altlinux.org>
-Cc: stable@vger.kernel.org # v2.1.32+
-Bug: https://bugs.gentoo.org/672040
-Signed-off-by: Sergei Trofimovich <slyfox@gentoo.org>
+Cc: stable@vger.kernel.org # v3.18+
+Signed-off-by: Meelis Roos <mroos@linux.ee>
 Signed-off-by: Matt Turner <mattst88@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/alpha/mm/fault.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/alpha/include/asm/irq.h |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/alpha/mm/fault.c
-+++ b/arch/alpha/mm/fault.c
-@@ -77,7 +77,7 @@ __load_new_mm_context(struct mm_struct *
- /* Macro for exception fixup code to access integer registers.  */
- #define dpf_reg(r)							\
- 	(((unsigned long *)regs)[(r) <= 8 ? (r) : (r) <= 15 ? (r)-16 :	\
--				 (r) <= 18 ? (r)+8 : (r)-10])
-+				 (r) <= 18 ? (r)+10 : (r)-10])
+--- a/arch/alpha/include/asm/irq.h
++++ b/arch/alpha/include/asm/irq.h
+@@ -55,15 +55,15 @@
  
- asmlinkage void
- do_page_fault(unsigned long address, unsigned long mmcsr,
+ #elif defined(CONFIG_ALPHA_DP264) || \
+       defined(CONFIG_ALPHA_LYNX)  || \
+-      defined(CONFIG_ALPHA_SHARK) || \
+-      defined(CONFIG_ALPHA_EIGER)
++      defined(CONFIG_ALPHA_SHARK)
+ # define NR_IRQS	64
+ 
+ #elif defined(CONFIG_ALPHA_TITAN)
+ #define NR_IRQS		80
+ 
+ #elif defined(CONFIG_ALPHA_RAWHIDE) || \
+-	defined(CONFIG_ALPHA_TAKARA)
++      defined(CONFIG_ALPHA_TAKARA) || \
++      defined(CONFIG_ALPHA_EIGER)
+ # define NR_IRQS	128
+ 
+ #elif defined(CONFIG_ALPHA_WILDFIRE)
 
 
