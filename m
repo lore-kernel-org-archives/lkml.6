@@ -2,116 +2,156 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD5E0C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 04:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE8BC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 04:54:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 730A5218D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 04:53:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1AE7218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 04:54:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LBXtpmA6"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="G6/IAkOX";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cTlpoGxX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbfBRExe (ORCPT
+        id S1728496AbfBREyy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 23:53:34 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:40402 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727003AbfBRExd (ORCPT
+        Sun, 17 Feb 2019 23:54:54 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:35968 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727003AbfBREyy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 23:53:33 -0500
-Received: by mail-pl1-f193.google.com with SMTP id bj4so8126708plb.7
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 20:53:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=j86UcfahKzsFa6NJtZ03NxMBaTCekIZNcioiQ8oFeYU=;
-        b=LBXtpmA60N52gDa+seH5jDoL6QW2F6DebYVZbyyEucVuLun4F+/SozFJgjl45In7da
-         41E2RJsX19yQX08JQDc/HdQPGqsFHFxPGoH1yc+n0ApRgj2Z8GaVBr5WLcwZ0nOzpA/d
-         /kwtLrg+G1akRLc5gJggcmD9Fss1BKza+ul0NjBhiP8Y6em9c/as8OZWbEuvVEspbxmI
-         62mBYR+Xo/mg+DtG2zU2GPVuMdTXJl9BV4utFK0zbkDp8wrr1Eu+Jl6V071TMBMWfuhA
-         gzAVWEFv6zEvn/U7EqeMFYUtPSJpDd1IH4FYVIPXTTU/Mp2hk1x5sWknO7Di/xI9hLj0
-         qSIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=j86UcfahKzsFa6NJtZ03NxMBaTCekIZNcioiQ8oFeYU=;
-        b=gbM8aOJoKhN23448ohoUqEN7bK1VqRw54psgUSjsj9hBNB0q1CN7f9E/7nM9nVOiUY
-         NDFFbnSxF1G785W7EqRntsCBhWhpoKo5XBuAJF0K0Kil1Sb4lju20JGaa9kzksn9x79G
-         GB34QH/aZ+4wLyDotla+Yj/VTfxg8jB1sGGfuyolT2jsODNETHwewVYnuoC06050TsBy
-         aQDRVKh1g4LWLCWMeSeK5RupMhgxhsWZeBg0u/+7NseFB10uXH7lCR6oMRxlGUn/qBHs
-         qYP6Wli6ohQ8oERapIQeMxoGod1Wu5RXqLs2f3DnSFdrJ3OXymk+EURD1AWLqoFw9MWI
-         ONpw==
-X-Gm-Message-State: AHQUAuZwhWH5OthLdCSCqSVMHpjBNC2jKsz/r8nd4VC+Cx6BbPzymC07
-        kh5GhqTlOMFne/QyFVAEq2Z7BA==
-X-Google-Smtp-Source: AHgI3IbuhWpSM85Pnea4k/eny8phFUFt9I/rmezmrqyac75qyM2gu4PG5aDj3K9H6Qh5rgZEwegekA==
-X-Received: by 2002:a17:902:be15:: with SMTP id r21mr21220479pls.143.1550465613006;
-        Sun, 17 Feb 2019 20:53:33 -0800 (PST)
-Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id y21sm14522494pfe.57.2019.02.17.20.53.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Feb 2019 20:53:32 -0800 (PST)
-Date:   Mon, 18 Feb 2019 10:23:30 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     sudeep.holla@arm.com, rjw@rjwysocki.net,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpufreq: scmi: fix use-after-free in scmi_cpufreq_exit()
-Message-ID: <20190218045330.zpiivw7mvv4hzctq@vireshk-i7>
-References: <20190216163148.12375-1-tiny.windzz@gmail.com>
+        Sun, 17 Feb 2019 23:54:54 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9348060854; Mon, 18 Feb 2019 04:54:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550465692;
+        bh=owqk7lVRPTa2q/3GtSPz9RH+2MX0SUtcTd29pLPYjZc=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=G6/IAkOXagsYPBpq590izPkDhef3nhOhtgB0lHHHuHEq7mxc5cfy9hpsB0eb4QcxP
+         GLWJ9hpKo8s4y+ltNCDMzunkwK6emIlJHt92BCWiPonbUXuIJPxttjeGnPfx8g2Gkw
+         A6Wky6rB/FPUKgi9x+Zqr29yy9v5KRhHuPRHJwng=
+Received: from [10.204.110.203] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rohitkr@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id AFDD76020B;
+        Mon, 18 Feb 2019 04:54:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1550465691;
+        bh=owqk7lVRPTa2q/3GtSPz9RH+2MX0SUtcTd29pLPYjZc=;
+        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
+        b=cTlpoGxXsAQu1GhG0qlLhSKsoLkAZe8EgStBVmaYucHfKPAU6b28buQpcZBb/6Ylo
+         cTAxdu+UaxEwNyD1JlX36tNlz1d3aa1K61YZacTA1D+F7OMOKIrjdSnYeB2PqHm12X
+         v3FOPVIgYzQUqNRqvZ0rSpNvEwkvhNaRVRvlIHnc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AFDD76020B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
+Subject: Re: [PATCH 2/2] remoteproc: q6v5_adsp: Remove voting for lpass_aon
+ clock
+From:   Rohit Kumar <rohitkr@codeaurora.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, plai@codeaurora.org,
+        bgoswami@codeaurora.org
+References: <1543562950-23997-1-git-send-email-rohitkr@codeaurora.org>
+ <1543562950-23997-3-git-send-email-rohitkr@codeaurora.org>
+ <f6f9b4a2-6205-0ba5-9a3a-b34bd814d303@codeaurora.org>
+ <20190107071359.GK31596@builder>
+ <214831ef-2139-7b48-1654-537634f898f4@codeaurora.org>
+ <d90f7817-294e-a96e-0eb0-293a06e9190a@codeaurora.org>
+Message-ID: <bca57260-6e1e-f808-afd4-2d6264e5c3f2@codeaurora.org>
+Date:   Mon, 18 Feb 2019 10:24:46 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190216163148.12375-1-tiny.windzz@gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <d90f7817-294e-a96e-0eb0-293a06e9190a@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16-02-19, 11:31, Yangtao Li wrote:
-> This issue was detected with the help of Coccinelle. So
-> change the order of function calls to fix it.
-> 
-> Fixes: 1690d8bb91e37 (cpufreq: scpi/scmi: Fix freeing of dynamic OPPs)
-> 
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-> ---
->  drivers/cpufreq/scmi-cpufreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
-> index 242c3370544e..9ed46d188cb5 100644
-> --- a/drivers/cpufreq/scmi-cpufreq.c
-> +++ b/drivers/cpufreq/scmi-cpufreq.c
-> @@ -187,8 +187,8 @@ static int scmi_cpufreq_exit(struct cpufreq_policy *policy)
->  
->  	cpufreq_cooling_unregister(priv->cdev);
->  	dev_pm_opp_free_cpufreq_table(priv->cpu_dev, &policy->freq_table);
-> -	kfree(priv);
->  	dev_pm_opp_remove_all_dynamic(priv->cpu_dev);
-> +	kfree(priv);
->  
->  	return 0;
->  }
+Hello Bjorn,
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-@Rafael: Please pick it up for 5.0-rc8 as the bug was introduced
-during 5.0 cycle only.
+On 1/30/2019 10:38 AM, Rohit Kumar wrote:
+> Hello Bjorn,
+>
+> On 1/14/2019 4:14 PM, Rohit Kumar wrote:
+>>
+>> On 1/7/2019 12:43 PM, Bjorn Andersson wrote:
+>>> On Thu 03 Jan 20:36 PST 2019, Rohit Kumar wrote:
+>>>
+>>>> Hello Bjorn,
+>>>>
+>>>> Can you please review this patch series too.
+>>>>
+>>>> LPASS_AON clock support is already removed from lpass clock driver.
+>>>>
+>>> Applied the two patches.
+>>
+Can you please apply these patches. I don't see them in next.
+>>
+> I did not see this in next yet. Can you please pick this up.
+>
+> Thanks,
+>
+> Rohit
+>
+>> Hello Bjorn,
+>>
+>>
+>> Can you please point me to the tree where this is applied.
+>>
+>>
+>> Thanks,
+>>
+>> Rohit
+>>
+>>> Thanks,
+>>> Bjorn
+>>>
+>>>> Thanks,
+>>>>
+>>>> Rohit
+>>>>
+>>>> On 11/30/2018 12:59 PM, Rohit kumar wrote:
+>>>>> Lpass_aon clock is on by default. Remove it from lpass
+>>>>> clock list to avoid voting for it.
+>>>>>
+>>>>> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
+>>>>> ---
+>>>>>    drivers/remoteproc/qcom_q6v5_adsp.c | 2 +-
+>>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c 
+>>>>> b/drivers/remoteproc/qcom_q6v5_adsp.c
+>>>>> index 79374d1..4829173 100644
+>>>>> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
+>>>>> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
+>>>>> @@ -48,7 +48,7 @@
+>>>>>    /* list of clocks required by ADSP PIL */
+>>>>>    static const char * const adsp_clk_id[] = {
+>>>>> -    "sway_cbcr", "lpass_aon", "lpass_ahbs_aon_cbcr", 
+>>>>> "lpass_ahbm_aon_cbcr",
+>>>>> +    "sway_cbcr", "lpass_ahbs_aon_cbcr", "lpass_ahbm_aon_cbcr",
+>>>>>        "qdsp6ss_xo", "qdsp6ss_sleep", "qdsp6ss_core",
+>>>>>    };
+>>>> -- 
+>>>> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a 
+>>>> member
+>>>> of the Code Aurora Forum, hosted by the Linux Foundation.
+>>>>
+Thanks,
 
-The patch it fixes had this tag:
-
-    Cc: 4.20 <stable@vger.kernel.org> # v4.20
-
-And so will get applied to 4.20.N, I guess we need to mark this patch
-as well for stable then.
+Rohit
 
 -- 
-viresh
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the Linux Foundation.
+
