@@ -2,156 +2,158 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE8BC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 04:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A49B8C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 04:55:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1AE7218D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 04:54:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 737C1218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 04:55:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="G6/IAkOX";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cTlpoGxX"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="at2CW2W4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728496AbfBREyy (ORCPT
+        id S1728552AbfBREzc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 23:54:54 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:35968 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727003AbfBREyy (ORCPT
+        Sun, 17 Feb 2019 23:55:32 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:18501 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727003AbfBREzb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 23:54:54 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9348060854; Mon, 18 Feb 2019 04:54:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550465692;
-        bh=owqk7lVRPTa2q/3GtSPz9RH+2MX0SUtcTd29pLPYjZc=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=G6/IAkOXagsYPBpq590izPkDhef3nhOhtgB0lHHHuHEq7mxc5cfy9hpsB0eb4QcxP
-         GLWJ9hpKo8s4y+ltNCDMzunkwK6emIlJHt92BCWiPonbUXuIJPxttjeGnPfx8g2Gkw
-         A6Wky6rB/FPUKgi9x+Zqr29yy9v5KRhHuPRHJwng=
-Received: from [10.204.110.203] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rohitkr@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AFDD76020B;
-        Mon, 18 Feb 2019 04:54:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550465691;
-        bh=owqk7lVRPTa2q/3GtSPz9RH+2MX0SUtcTd29pLPYjZc=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=cTlpoGxXsAQu1GhG0qlLhSKsoLkAZe8EgStBVmaYucHfKPAU6b28buQpcZBb/6Ylo
-         cTAxdu+UaxEwNyD1JlX36tNlz1d3aa1K61YZacTA1D+F7OMOKIrjdSnYeB2PqHm12X
-         v3FOPVIgYzQUqNRqvZ0rSpNvEwkvhNaRVRvlIHnc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AFDD76020B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
-Subject: Re: [PATCH 2/2] remoteproc: q6v5_adsp: Remove voting for lpass_aon
- clock
-From:   Rohit Kumar <rohitkr@codeaurora.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     ohad@wizery.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, plai@codeaurora.org,
-        bgoswami@codeaurora.org
-References: <1543562950-23997-1-git-send-email-rohitkr@codeaurora.org>
- <1543562950-23997-3-git-send-email-rohitkr@codeaurora.org>
- <f6f9b4a2-6205-0ba5-9a3a-b34bd814d303@codeaurora.org>
- <20190107071359.GK31596@builder>
- <214831ef-2139-7b48-1654-537634f898f4@codeaurora.org>
- <d90f7817-294e-a96e-0eb0-293a06e9190a@codeaurora.org>
-Message-ID: <bca57260-6e1e-f808-afd4-2d6264e5c3f2@codeaurora.org>
-Date:   Mon, 18 Feb 2019 10:24:46 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.0
+        Sun, 17 Feb 2019 23:55:31 -0500
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id x1I4tGjs014460;
+        Mon, 18 Feb 2019 13:55:17 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com x1I4tGjs014460
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1550465717;
+        bh=/8fb9DxCXw4pkz63E7lkQjXEm5ZgP36Q8aoPdWS1I/g=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=at2CW2W48FcnXOU7jU8IunniLa/XG7GHTjGDLbuZtJBezvFNcrPqkOqWmIY1dwQkA
+         GZGyv7HI/z8J5VnuKQ5NJBZMH2ko0SRYYuZ8nq3I1W4R7tQgkbm0nx5CwcpejL+KyW
+         9FGZRKBik0Q0uhGFT96KH3DWIbdwDBBcLwbK4PHjNAboKddmbqfFf1XEKLbgTnpljp
+         LnnuHs3XIW7K6KiirpUvQFzLBDPWpPMLAfhgoNs/xW8eYy6e8Olezt8zthkKDVqtUu
+         jMUIXdbVWu9CnifQt3AS1f+L9+0MnHl8ViFYfsti+0kAAURhQeCjGfWoVuffkQXjx5
+         hEG25SNKxLs1Q==
+X-Nifty-SrcIP: [209.85.221.173]
+Received: by mail-vk1-f173.google.com with SMTP id v187so1783157vkf.12;
+        Sun, 17 Feb 2019 20:55:16 -0800 (PST)
+X-Gm-Message-State: AHQUAuaUenigz+6now8CM0O96foO1lL99Z7E+hBxmvc1sEneMBgJDlFj
+        jGeKEeRuJAAAMsmFgN4Phn2Mwd2CglVJkj7oVDM=
+X-Google-Smtp-Source: AHgI3IYQxb/QEAju+Stcm2S+o930eoFQQrXDucxiKDJJCNo8tsdmAjQe7YbUjR7/qdQSsw45whkzt66yEbuddj0yU2A=
+X-Received: by 2002:a1f:27d7:: with SMTP id n206mr11086951vkn.0.1550465715769;
+ Sun, 17 Feb 2019 20:55:15 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <d90f7817-294e-a96e-0eb0-293a06e9190a@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+References: <1548400703-27945-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1548400703-27945-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 18 Feb 2019 13:54:39 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARf-P0Qjj2ScgQHk2yFw13h7zXk0VCB0MJe3W2ka3s40A@mail.gmail.com>
+Message-ID: <CAK7LNARf-P0Qjj2ScgQHk2yFw13h7zXk0VCB0MJe3W2ka3s40A@mail.gmail.com>
+Subject: Re: [PATCH] ia64: prefix header search path with $(srctree)/
+To:     Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
+        linux-ia64@vger.kernel.org
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Bjorn,
+On Fri, Jan 25, 2019 at 4:21 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> Currently, the Kbuild core manipulates header search paths in a crazy
+> way [1].
+>
+> To fix this mess, I want all Makefiles to add explicit $(srctree)/ to
+> the search paths in the srctree. Some Makefiles are already written in
+> that way, but not all. The goal of this work is to make the notation
+> consistent, and finally get rid of the gross hacks.
+>
+> Having whitespaces after -I does not matter since commit 48f6e3cf5bc6
+> ("kbuild: do not drop -I without parameter").
+>
+> I removed some header search paths because I was able to build ia64
+> without them.
+>
+> [1]: https://patchwork.kernel.org/patch/9632347/
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
 
-On 1/30/2019 10:38 AM, Rohit Kumar wrote:
-> Hello Bjorn,
->
-> On 1/14/2019 4:14 PM, Rohit Kumar wrote:
->>
->> On 1/7/2019 12:43 PM, Bjorn Andersson wrote:
->>> On Thu 03 Jan 20:36 PST 2019, Rohit Kumar wrote:
->>>
->>>> Hello Bjorn,
->>>>
->>>> Can you please review this patch series too.
->>>>
->>>> LPASS_AON clock support is already removed from lpass clock driver.
->>>>
->>> Applied the two patches.
->>
-Can you please apply these patches. I don't see them in next.
->>
-> I did not see this in next yet. Can you please pick this up.
->
-> Thanks,
->
-> Rohit
->
->> Hello Bjorn,
->>
->>
->> Can you please point me to the tree where this is applied.
->>
->>
->> Thanks,
->>
->> Rohit
->>
->>> Thanks,
->>> Bjorn
->>>
->>>> Thanks,
->>>>
->>>> Rohit
->>>>
->>>> On 11/30/2018 12:59 PM, Rohit kumar wrote:
->>>>> Lpass_aon clock is on by default. Remove it from lpass
->>>>> clock list to avoid voting for it.
->>>>>
->>>>> Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
->>>>> ---
->>>>>    drivers/remoteproc/qcom_q6v5_adsp.c | 2 +-
->>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/remoteproc/qcom_q6v5_adsp.c 
->>>>> b/drivers/remoteproc/qcom_q6v5_adsp.c
->>>>> index 79374d1..4829173 100644
->>>>> --- a/drivers/remoteproc/qcom_q6v5_adsp.c
->>>>> +++ b/drivers/remoteproc/qcom_q6v5_adsp.c
->>>>> @@ -48,7 +48,7 @@
->>>>>    /* list of clocks required by ADSP PIL */
->>>>>    static const char * const adsp_clk_id[] = {
->>>>> -    "sway_cbcr", "lpass_aon", "lpass_ahbs_aon_cbcr", 
->>>>> "lpass_ahbm_aon_cbcr",
->>>>> +    "sway_cbcr", "lpass_ahbs_aon_cbcr", "lpass_ahbm_aon_cbcr",
->>>>>        "qdsp6ss_xo", "qdsp6ss_sleep", "qdsp6ss_core",
->>>>>    };
->>>> -- 
->>>> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a 
->>>> member
->>>> of the Code Aurora Forum, hosted by the Linux Foundation.
->>>>
-Thanks,
+ia64 development is not very active these days.
 
-Rohit
+I will wait for response from the maintainers.
+
+If they are silent, I want to pick up this to my kbuild tree.
+
+
+Thanks.
+
+
+>  arch/ia64/sn/kernel/Makefile     | 2 +-
+>  arch/ia64/sn/kernel/sn2/Makefile | 2 --
+>  arch/ia64/sn/pci/Makefile        | 2 --
+>  arch/ia64/sn/pci/pcibr/Makefile  | 2 +-
+>  4 files changed, 2 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/ia64/sn/kernel/Makefile b/arch/ia64/sn/kernel/Makefile
+> index d27df1d..9c349dd 100644
+> --- a/arch/ia64/sn/kernel/Makefile
+> +++ b/arch/ia64/sn/kernel/Makefile
+> @@ -7,7 +7,7 @@
+>  # Copyright (C) 1999,2001-2006,2008 Silicon Graphics, Inc.  All Rights Reserved.
+>  #
+>
+> -ccflags-y := -Iarch/ia64/sn/include
+> +ccflags-y := -I $(srctree)/arch/ia64/sn/include
+>
+>  obj-y                          += setup.o bte.o bte_error.o irq.o mca.o idle.o \
+>                                    huberror.o io_acpi_init.o io_common.o \
+> diff --git a/arch/ia64/sn/kernel/sn2/Makefile b/arch/ia64/sn/kernel/sn2/Makefile
+> index 3d09108..170bde4 100644
+> --- a/arch/ia64/sn/kernel/sn2/Makefile
+> +++ b/arch/ia64/sn/kernel/sn2/Makefile
+> @@ -9,7 +9,5 @@
+>  # sn2 specific kernel files
+>  #
+>
+> -ccflags-y := -Iarch/ia64/sn/include
+> -
+>  obj-y += cache.o io.o ptc_deadlock.o sn2_smp.o sn_proc_fs.o \
+>          prominfo_proc.o timer.o timer_interrupt.o sn_hwperf.o
+> diff --git a/arch/ia64/sn/pci/Makefile b/arch/ia64/sn/pci/Makefile
+> index df2a901..321576b 100644
+> --- a/arch/ia64/sn/pci/Makefile
+> +++ b/arch/ia64/sn/pci/Makefile
+> @@ -7,6 +7,4 @@
+>  #
+>  # Makefile for the sn pci general routines.
+>
+> -ccflags-y := -Iarch/ia64/sn/include
+> -
+>  obj-y := pci_dma.o tioca_provider.o tioce_provider.o pcibr/
+> diff --git a/arch/ia64/sn/pci/pcibr/Makefile b/arch/ia64/sn/pci/pcibr/Makefile
+> index 396bcae..712f6af 100644
+> --- a/arch/ia64/sn/pci/pcibr/Makefile
+> +++ b/arch/ia64/sn/pci/pcibr/Makefile
+> @@ -7,7 +7,7 @@
+>  #
+>  # Makefile for the sn2 io routines.
+>
+> -ccflags-y := -Iarch/ia64/sn/include
+> +ccflags-y := -I $(srctree)/arch/ia64/sn/include
+>
+>  obj-y                          +=  pcibr_dma.o pcibr_reg.o \
+>                                     pcibr_ate.o pcibr_provider.o
+> --
+> 2.7.4
+>
+
 
 -- 
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the Linux Foundation.
-
+Best Regards
+Masahiro Yamada
