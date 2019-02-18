@@ -2,171 +2,106 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C79F3C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF7FC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:33:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C9D721738
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:33:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="te9hzEBa"
+	by mail.kernel.org (Postfix) with ESMTP id 3B7DE21738
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:33:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550507631;
+	bh=0q/kfWNKqGdkpY+YX5rZDiPKXLbEOK7j9UPuGWBuO3Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=JqLFINFDuePpzh/rlUN3W4/liG/wbEBhfL0lyOVjt7RXkibQ92VxeMoXl6372J3K9
+	 7bT2KmYWqOe5eAl32ImjXw47jKlYKDtF1UL3+/sUnv4X8lB90zb+UNylzbqkM6mn20
+	 oZPl7Cu8PM7OXb+iWNDH6eL9qJ7iCJ91O09q2fdE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389614AbfBRQdo (ORCPT
+        id S2389686AbfBRQdu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 11:33:44 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:47124 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731238AbfBRQdo (ORCPT
+        Mon, 18 Feb 2019 11:33:50 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:38288 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732534AbfBRQdo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 18 Feb 2019 11:33:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=12/BgepHdPMkSN+4ChlSX9dMnpQZdKeGatQFZq6z9P4=; b=te9hzEBaj9JP3pm+rYeWnwYhNM
-        ev9ZPftCT5WpBgz2UA9facaTVmD26Uws9Bmgu9N0vStBtLstyEz9gnWw0qHkC1a25RTqav75KwNN2
-        vILsdzYy1xmjh2lfLx4tWGHOV5+cEtl5ajgzIjILnrIpVgm6gTBEXi/jqxn+mEL/Avs169vDNh3de
-        8EXWY4PbKkWH4yAY9+Us007Qg5pRZhLPOkilNyaTuOYSNBAjv9zlD+yVSQQbcsssgw66LIa3mcnv9
-        L6Ovu+QJCN/eOrzEIce6j/2wXKCuhFuvxJ6rlHZDeW+yQzI7ZiNTKfPzJt1hOtoczXeZStx9YO/01
-        3cYEDHGQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gvlrJ-0008Na-LG; Mon, 18 Feb 2019 16:33:33 +0000
-Subject: Re: [PATCH] drivers/component: kerneldoc polish
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Daniel Vetter <daniel.vetter@intel.com>,
+Received: by mail-ot1-f68.google.com with SMTP id m1so29272600otf.5;
+        Mon, 18 Feb 2019 08:33:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/3OTtw+XimbN3zuGxZJlMD8HX9wbXSnJdqnMGNSEaO0=;
+        b=XcO3FhMRzXSMMQ1Mv8N9XWGSJTiHNlx77PEQAL5H5S5FJx0/JIpqpJ6tMF66pCtaS8
+         M0rUDYtGS2tWTHn0ttBdtwGpv4jFfQcUCV1n/D6XtQC2xCudLZil+OxP53bHJGCkoaME
+         8TCZq2Mgpux5ptY/yFVaGrHQLtsXfCsmDwiK5URt0w9HjAVjSjrJgn6bbz7C7r0tlx0h
+         pYTaP4L4PQ3VkUgrhRXbEAq8SwQxfKvrRgHLcf3zq0+KAAqqVttEad1kGhkVPxDDvgLJ
+         TGBcxUAd6OGE2EwlVxwcpjY7SX0iIgRbbRJfYU30RTmKhvt4jd4giCbJHN4Lh9MaXkPv
+         Luqw==
+X-Gm-Message-State: AHQUAuYJvBV3jeXH06XnEoHwzEBNtvcR9sCquOrjRHXltqE9FhS/mevw
+        v8OA2G7NZkOMCoFnb/tc0AXF9Ss=
+X-Google-Smtp-Source: AHgI3Ia77PdVDQPtBsuUkPNc0UKt1rxr5mMlVLuVXmIc0fOQ927DI6NDVQ/XIZyfkht6kBngYUUVsw==
+X-Received: by 2002:a9d:22a4:: with SMTP id y33mr3595921ota.218.1550507623523;
+        Mon, 18 Feb 2019 08:33:43 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id m84sm867636oig.49.2019.02.18.08.33.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Feb 2019 08:33:42 -0800 (PST)
+Date:   Mon, 18 Feb 2019 10:33:42 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Erin Lo <erin.lo@mediatek.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Ramalingam C <ramalingam.c@intel.com>
-References: <20190218085242.18845-1-daniel.vetter@ffwll.ch>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <ceedac5a-9781-972b-54e4-c8c8fb8c18c6@infradead.org>
-Date:   Mon, 18 Feb 2019 08:33:30 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Stephen Boyd <sboyd@codeaurora.org>,
+        devicetree@vger.kernel.org,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, yingjoe.chen@mediatek.com,
+        mars.cheng@mediatek.com, eddie.huang@mediatek.com,
+        linux-clk@vger.kernel.org, Zhiyong Tao <zhiyong.tao@mediatek.com>
+Subject: Re: [PATCH v7 5/6] arm64: dts: mt8183: add pintcrl file
+Message-ID: <20190218163342.GA12014@bogus>
+References: <1550210558-30516-1-git-send-email-erin.lo@mediatek.com>
+ <1550210558-30516-6-git-send-email-erin.lo@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <20190218085242.18845-1-daniel.vetter@ffwll.ch>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1550210558-30516-6-git-send-email-erin.lo@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2/18/19 12:52 AM, Daniel Vetter wrote:
-> Polish the kerneldoc a bit with suggestions from Randy.
+On Fri, Feb 15, 2019 at 02:02:37PM +0800, Erin Lo wrote:
+> This patch adds pinctrl file for mt8183.
 > 
-
-Hi Daniel,
-There are 2 more typos below.  With those fixed, you or Greg can add:
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
-> Cc: Randy Dunlap <rdunlap@infradead.org>
-> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: Ramalingam C <ramalingam.c@intel.com>
-> --
-> Greg, I don't need this in any of the topic branches, best if you
-> pick this one up into your -next tree directly.
-> 
-> Cheers, Daniel
+> Signed-off-by: Zhiyong Tao <zhiyong.tao@mediatek.com>
+> Signed-off-by: Erin Lo <erin.lo@mediatek.com>
 > ---
->  drivers/base/component.c  | 14 +++++++-------
->  include/linux/component.h |  2 +-
->  2 files changed, 8 insertions(+), 8 deletions(-)
+>  arch/arm64/boot/dts/mediatek/mt8183-pinfunc.h | 1120 +++++++++++++++++++++++++
+>  1 file changed, 1120 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt8183-pinfunc.h
 > 
-> diff --git a/drivers/base/component.c b/drivers/base/component.c
-> index 7dbc41cccd58..6954e448f46b 100644
-> --- a/drivers/base/component.c
-> +++ b/drivers/base/component.c
-> @@ -27,7 +27,7 @@
->   * helper fills the niche of aggregate drivers for specific hardware, where
->   * further standardization into a subsystem would not be practical. The common
->   * example is when a logical device (e.g. a DRM display driver) is spread around
-> - * the SoC on various component (scanout engines, blending blocks, transcoders
-> + * the SoC on various components (scanout engines, blending blocks, transcoders
->   * for various outputs and so on).
->   *
->   * The component helper also doesn't solve runtime dependencies, e.g. for system
-> @@ -378,7 +378,7 @@ static void __component_match_add(struct device *master,
->  }
->  
->  /**
-> - * component_match_add_release - add a component match with release callback
-> + * component_match_add_release - add a component match entry with release callback
->   * @master: device with the aggregate driver
->   * @matchptr: pointer to the list of component matches
->   * @release: release function for @compare_data
-> @@ -408,7 +408,7 @@ void component_match_add_release(struct device *master,
->  EXPORT_SYMBOL(component_match_add_release);
->  
->  /**
-> - * component_match_add_typed - add a compent match for a typed component
-> + * component_match_add_typed - add a compent match entry for a typed component
+> diff --git a/arch/arm64/boot/dts/mediatek/mt8183-pinfunc.h b/arch/arm64/boot/dts/mediatek/mt8183-pinfunc.h
+> new file mode 100644
+> index 0000000..768e41e
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/mediatek/mt8183-pinfunc.h
+> @@ -0,0 +1,1120 @@
+> +// SPDX-License-Identifier: GPL-2.0
 
-                                        component
+Run checkpatch. It will tell you that this should be /* */ comments.
 
->   * @master: device with the aggregate driver
->   * @matchptr: pointer to the list of component matches
->   * @compare_typed: compare function to match against all typed components
-> @@ -537,11 +537,11 @@ static void component_unbind(struct component *component,
->  }
->  
->  /**
-> - * component_unbind_all - unbind all component to an aggregate driver
-> + * component_unbind_all - unbind all components of an aggregate driver
->   * @master_dev: device with the aggregate driver
->   * @data: opaque pointer, passed to all components
->   *
-> - * Unbinds all components to the aggregate @dev by passing @data to their
-> + * Unbinds all components of the aggregate @dev by passing @data to their
->   * &component_ops.unbind functions. Should be called from
->   * &component_master_ops.unbind.
->   */
-> @@ -619,11 +619,11 @@ static int component_bind(struct component *component, struct master *master,
->  }
->  
->  /**
-> - * component_bind_all - bind all component to an aggregate driver
-> + * component_bind_all - bind all components of an aggregate driver
->   * @master_dev: device with the aggregate driver
->   * @data: opaque pointer, passed to all components
->   *
-> - * Binds all components to the aggregate @dev by passing @data to their
-> + * Binds all components of the aggregate @dev by passing @data to their
->   * &component_ops.bind functions. Should be called from
->   * &component_master_ops.bind.
->   */
-> diff --git a/include/linux/component.h b/include/linux/component.h
-> index 30bcc7e590eb..8628d4d0aff1 100644
-> --- a/include/linux/component.h
-> +++ b/include/linux/component.h
-> @@ -98,7 +98,7 @@ void component_match_add_typed(struct device *master,
->  	int (*compare_typed)(struct device *, int, void *), void *compare_data);
->  
->  /**
-> - * component_match_add - add a compent match
-> + * component_match_add - add a compent match entry
+Otherwise,
 
-                                  component
-
->   * @master: device with the aggregate driver
->   * @matchptr: pointer to the list of component matches
->   * @compare: compare function to match against all components
-> 
-
-
--- 
-~Randy
+Reviewed-by: Rob Herring <robh@kernel.org>
