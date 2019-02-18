@@ -4,50 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65755C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:11:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DECB2C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 363D3217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:11:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADB0D217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:11:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499086;
-	bh=aE8nuzA6YoagFRY4dMrDwT6HhsUvXp6MMTeNCn6+syM=;
+	s=default; t=1550499088;
+	bh=XRBLBcCnGgYnNeX01CF7ghpMsCwxzUxLvoOZBvkjeCU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=sR86GcOkk1idvtsTmajYWjXDmI4sFqSbZ9EoE/kyJdR4kp3HmXzRnTWCtpSdKxNLT
-	 QldnQoEZe2NLdfpLvWTzEnJakYSdzpVS44Eju/rfpH5jE12vIcsvURrU2xItxhKdlC
-	 OygVzuV03rwBiiHZU9rEwv1zhJtwj5ImfHhZKxHg=
+	b=nGGKSrVnmL/BGYRsopf1Xp042RviU5DDZk9vYMyjTgzxNKvdpqTMJN4RjeCgqdf0s
+	 DTAxMFq43vu9EVhgpI573wvWkx0+5SOQXYe2mS2E8S6rKZpHsbgp29FIpYVPJI0KgB
+	 gJhINsKWWEMsARuMW3G3gB451bRmapNthRSR1uRs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731192AbfBROLZ (ORCPT
+        id S2391731AbfBROL1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:11:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55308 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:11:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55398 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391689AbfBROLS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:11:18 -0500
+        id S2391701AbfBROLW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:11:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 941FA217D9;
-        Mon, 18 Feb 2019 14:11:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B9CB217D9;
+        Mon, 18 Feb 2019 14:11:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550499078;
-        bh=aE8nuzA6YoagFRY4dMrDwT6HhsUvXp6MMTeNCn6+syM=;
+        s=default; t=1550499081;
+        bh=XRBLBcCnGgYnNeX01CF7ghpMsCwxzUxLvoOZBvkjeCU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=duttz05jlz9M81e9io6Fz9ef+jPOblkNcY+IWQhEVM6ptBFtKX+3TqAy3JzKhpsjh
-         krtnw6a7ZeTUC0A8F5JEO8sP8MgtFnUtXD65Y2h3rR3z2AF5bGg9xPuFoKcW2h31R4
-         mGEEli1CUkfB23kF36wPcJcQXSl5VQN2OEsZVju8=
+        b=hVIA/APX+jlcuYVzedMcHgNyHIer10+2KO5TCeTpgWrcFExIlsUSlMvGwG62XNHq+
+         uMC0A2wfngCp80V/1WYDsQ9lZkf6F4DPN+VDJE/KxpS6MkmVVwUCtnXcs3alifZeii
+         zQ6AA/BUJPl7dPJ7zKJFPOtscldRDnVyXJJR0eFw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Subject: [PATCH 3.18 069/108] scsi: aic94xx: fix module loading
-Date:   Mon, 18 Feb 2019 14:44:05 +0100
-Message-Id: <20190218133522.722310403@linuxfoundation.org>
+        stable@vger.kernel.org, Felix Wilhelm <fwilhelm@google.com>,
+        stable@kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 3.18 070/108] KVM: x86: work around leak of uninitialized stack contents (CVE-2019-7222)
+Date:   Mon, 18 Feb 2019 14:44:06 +0100
+Message-Id: <20190218133522.768681865@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -66,65 +64,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit 42caa0edabd6a0a392ec36a5f0943924e4954311 upstream.
+commit 353c0956a618a07ba4bbe7ad00ff29fe70e8412a upstream.
 
-The aic94xx driver is currently failing to load with errors like
+Bugzilla: 1671930
 
-sysfs: cannot create duplicate filename '/devices/pci0000:00/0000:00:03.0/0000:02:00.3/0000:07:02.0/revision'
+Emulation of certain instructions (VMXON, VMCLEAR, VMPTRLD, VMWRITE with
+memory operand, INVEPT, INVVPID) can incorrectly inject a page fault
+when passed an operand that points to an MMIO address.  The page fault
+will use uninitialized kernel stack memory as the CR2 and error code.
 
-Because the PCI code had recently added a file named 'revision' to every
-PCI device.  Fix this by renaming the aic94xx revision file to
-aic_revision.  This is safe to do for us because as far as I can tell,
-there's nothing in userspace relying on the current aic94xx revision file
-so it can be renamed without breaking anything.
+The right behavior would be to abort the VM with a KVM_EXIT_INTERNAL_ERROR
+exit to userspace; however, it is not an easy fix, so for now just
+ensure that the error code and CR2 are zero.
 
-Fixes: 702ed3be1b1b (PCI: Create revision file in sysfs)
-Cc: stable@vger.kernel.org
-Signed-off-by: James Bottomley <James.Bottomley@HansenPartnership.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Embargoed until Feb 7th 2019.
+
+Reported-by: Felix Wilhelm <fwilhelm@google.com>
+Cc: stable@kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/scsi/aic94xx/aic94xx_init.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/x86/kvm/x86.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/scsi/aic94xx/aic94xx_init.c
-+++ b/drivers/scsi/aic94xx/aic94xx_init.c
-@@ -294,7 +294,7 @@ static ssize_t asd_show_dev_rev(struct d
- 	return snprintf(buf, PAGE_SIZE, "%s\n",
- 			asd_dev_rev[asd_ha->revision_id]);
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4279,6 +4279,13 @@ int kvm_read_guest_virt(struct x86_emula
+ 	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
+ 	u32 access = (kvm_x86_ops->get_cpl(vcpu) == 3) ? PFERR_USER_MASK : 0;
+ 
++	/*
++	 * FIXME: this should call handle_emulation_failure if X86EMUL_IO_NEEDED
++	 * is returned, but our callers are not ready for that and they blindly
++	 * call kvm_inject_page_fault.  Ensure that they at least do not leak
++	 * uninitialized kernel stack memory into cr2 and error code.
++	 */
++	memset(exception, 0, sizeof(*exception));
+ 	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, access,
+ 					  exception);
  }
--static DEVICE_ATTR(revision, S_IRUGO, asd_show_dev_rev, NULL);
-+static DEVICE_ATTR(aic_revision, S_IRUGO, asd_show_dev_rev, NULL);
- 
- static ssize_t asd_show_dev_bios_build(struct device *dev,
- 				       struct device_attribute *attr,char *buf)
-@@ -491,7 +491,7 @@ static int asd_create_dev_attrs(struct a
- {
- 	int err;
- 
--	err = device_create_file(&asd_ha->pcidev->dev, &dev_attr_revision);
-+	err = device_create_file(&asd_ha->pcidev->dev, &dev_attr_aic_revision);
- 	if (err)
- 		return err;
- 
-@@ -513,13 +513,13 @@ err_update_bios:
- err_biosb:
- 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_bios_build);
- err_rev:
--	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_revision);
-+	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_aic_revision);
- 	return err;
- }
- 
- static void asd_remove_dev_attrs(struct asd_ha_struct *asd_ha)
- {
--	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_revision);
-+	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_aic_revision);
- 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_bios_build);
- 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_pcba_sn);
- 	device_remove_file(&asd_ha->pcidev->dev, &dev_attr_update_bios);
 
 
