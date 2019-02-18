@@ -2,177 +2,196 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63968C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 11:08:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF441C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 11:12:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15504217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 11:08:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="cPbuUpcB";
-	dkim=pass (1024-bit key) header.d=marvell.onmicrosoft.com header.i=@marvell.onmicrosoft.com header.b="V0NhN1pi"
+	by mail.kernel.org (Postfix) with ESMTP id 979BA2173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 11:12:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729339AbfBRLIs (ORCPT
+        id S1729722AbfBRLM2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 06:08:48 -0500
-Received: from mx0b-0016f401.pphosted.com ([67.231.156.173]:40890 "EHLO
-        mx0b-0016f401.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727058AbfBRLIs (ORCPT
+        Mon, 18 Feb 2019 06:12:28 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:42224 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729013AbfBRLM1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 06:08:48 -0500
-Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
-        by mx0b-0016f401.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1IB4pJ2022712;
-        Mon, 18 Feb 2019 03:08:37 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pfpt0818;
- bh=cxg51Hu5t8kJNfn2axqRCCKIVavffFVk7npLRZStn8A=;
- b=cPbuUpcBfX3iLS14mKZKOJ4ytHsOrjiOCO84D6z1eGBmIw2PYY2BH6MdviW005+fu4E6
- bes+4bMQ64Qktegb2qtF6CICKz/D+hGq1IK7SWC/wXV3bK+Dx5lWTxMGGkx3QJ2Ex7rK
- qPtrx8xxsypnPh5qeg4R5uHxN4yAwDPf1uR7yb69L+81IzvImcKi7AZLVM5F90tuOZ7B
- UiuG643XODhi400BKG2sU6erl0b82SI5Ih7D1y8+PTGFPR8R38RkCyZJKppDd+wa2XSE
- YZWgBL6Eh6147g2O84s+Egok9rkn/s92ReZFYH+Y8Ie+qwYXCgXpKeguPUJA2SLsEB8L nw== 
-Received: from sc-exch03.marvell.com ([199.233.58.183])
-        by mx0b-0016f401.pphosted.com with ESMTP id 2qpjwpw7x9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 18 Feb 2019 03:08:37 -0800
-Received: from SC-EXCH01.marvell.com (10.93.176.81) by SC-EXCH03.marvell.com
- (10.93.176.83) with Microsoft SMTP Server (TLS) id 15.0.1367.3; Mon, 18 Feb
- 2019 03:08:35 -0800
-Received: from NAM01-BY2-obe.outbound.protection.outlook.com (104.47.34.57) by
- SC-EXCH01.marvell.com (10.93.176.81) with Microsoft SMTP Server (TLS) id
- 15.0.1367.3 via Frontend Transport; Mon, 18 Feb 2019 03:08:35 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=marvell.onmicrosoft.com; s=selector1-marvell-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cxg51Hu5t8kJNfn2axqRCCKIVavffFVk7npLRZStn8A=;
- b=V0NhN1pidTpJslqpwT1aHEabXROQfgGF8AJ44+aZ9ZEurVEGvM68a13jX9+JTgoufBvFXCawwuO0xTS526VSMpr3NNkwGIftpjTRz8nkmtRSkXJ8KARTaAyV/vBNiCamcyWxrbYI1cZ5EWG8xZ+QzLr8MPdaHPeBbXIoOqOTTec=
-Received: from DM5PR18MB1067.namprd18.prod.outlook.com (10.168.118.137) by
- DM5PR18MB0955.namprd18.prod.outlook.com (10.168.117.138) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.19; Mon, 18 Feb 2019 11:08:34 +0000
-Received: from DM5PR18MB1067.namprd18.prod.outlook.com
- ([fe80::6855:16f9:7163:6aaa]) by DM5PR18MB1067.namprd18.prod.outlook.com
- ([fe80::6855:16f9:7163:6aaa%12]) with mapi id 15.20.1622.018; Mon, 18 Feb
- 2019 11:08:34 +0000
-From:   Stefan Chulski <stefanc@marvell.com>
-To:     Antoine Tenart <antoine.tenart@bootlin.com>,
-        "Russell King - ARM Linux admin" <linux@armlinux.org.uk>
-CC:     "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "thomas.petazzoni@bootlin.com" <thomas.petazzoni@bootlin.com>,
-        "maxime.chevallier@bootlin.com" <maxime.chevallier@bootlin.com>,
-        "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Yan Markman <ymarkman@marvell.com>,
-        "mw@semihalf.com" <mw@semihalf.com>
-Subject: RE: [EXT] Re: [PATCH net-next 10/13] net: mvpp2: reset the XPCS while
- reconfiguring the serdes lanes
-Thread-Topic: [EXT] Re: [PATCH net-next 10/13] net: mvpp2: reset the XPCS
- while reconfiguring the serdes lanes
-Thread-Index: AQHUx3bFS7RNBEaHv0ChYqzQ9pH1J6XlX+OAgAABPACAAAEokA==
-Date:   Mon, 18 Feb 2019 11:08:34 +0000
-Message-ID: <DM5PR18MB1067E1DD47E7094E02043A58B0630@DM5PR18MB1067.namprd18.prod.outlook.com>
-References: <20190215153241.6857-1-antoine.tenart@bootlin.com>
- <20190215153241.6857-11-antoine.tenart@bootlin.com>
- <20190215171224.sjfrid5csseywuks@shell.armlinux.org.uk>
- <20190218102630.GA3784@kwain>
- <20190218104302.bp6ccmpkt26dflyx@shell.armlinux.org.uk>
- <20190218104757.be63b5ft5jpongn3@shell.armlinux.org.uk>
- <20190218105222.GD3784@kwain>
-In-Reply-To: <20190218105222.GD3784@kwain>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [212.199.69.1]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 7f9901d0-29dc-479a-86ec-08d695916c8b
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:DM5PR18MB0955;
-x-ms-traffictypediagnostic: DM5PR18MB0955:
-x-microsoft-exchange-diagnostics: 1;DM5PR18MB0955;20:0sbyWYCfBprKiUFCL+8xJwAtz6achl24TUGmAMB+f7jMJsuTXESfHwWmAI2Gv1QI5krVUzSIkoH++u34cNRgacwuhMo9nY54QbyqmibKV96Xqvr/sAB91AG02plYF5ZWoU1K7nGCyg6KugNyhh8eGAjhHWRz9OyG1Qp+fyIXhkA=
-x-microsoft-antispam-prvs: <DM5PR18MB09554AD55FFF98D3487DB8F3B0630@DM5PR18MB0955.namprd18.prod.outlook.com>
-x-forefront-prvs: 09525C61DB
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(396003)(346002)(39850400004)(376002)(13464003)(189003)(199004)(76176011)(2906002)(97736004)(102836004)(6506007)(305945005)(33656002)(7416002)(7696005)(74316002)(53546011)(3846002)(6116002)(7736002)(25786009)(81166006)(93886005)(9686003)(4326008)(316002)(110136005)(6246003)(54906003)(186003)(55016002)(26005)(86362001)(14454004)(5660300002)(486006)(11346002)(446003)(476003)(99286004)(8936002)(81156014)(256004)(53936002)(8676002)(105586002)(478600001)(71200400001)(66066001)(106356001)(229853002)(71190400001)(68736007)(6436002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR18MB0955;H:DM5PR18MB1067.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: marvell.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: F6sKg3ouyO3tRPbOQ/kCF8b76qpkWx/GOuGcBqVEmQhXfQXO2TmOeAu4epz0+MxpyxptZCUsH9vWKodaTQ8NtyzwHzdgO4/BUE/Z60AWRQzJ2dpu6msSQ1G+0B/nPibCjLpXKJkX3ayGMOO+27ON6C9ymXy1cgHarKdwk5eLZFun5QDf//LzbRZvON0iu/1++G6zQZW4HsCatQkXdr2FwhD/BBolsP2IR+17PdtLMhPZqlCW0AVt5NfplVUo4f0nkjoH1qTkeKT7Bb4VvNjOXT2ROJpK3Hvy/5EfyKpGR7jJ/csAgXLmp0lBMg77SKnV55NLwgmZMxrVgnFaZmDU0hWPAtN4SRqU50dQvDVxudd7zxw2Jx7FbvD8HMkoTAwaHgWeDr6apoew3bga/1b5yY7uyjvJA7myzzUqr6i/4zQ=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 18 Feb 2019 06:12:27 -0500
+Received: by mail-ed1-f67.google.com with SMTP id j89so4084420edb.9
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 03:12:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+m3L/IeBglQAy401vuVM/5Heee7mjNGQdnMC755SIlk=;
+        b=o/E2UfvAh7a3v+OpyJc8ST1janLbZBBkkIy3VMliFRQyhZOd2JO4sNTVAG8pDA1CQ9
+         EqM74Gty4EVpY6krpLY2JDTVBmh8LgOomNHvtgFDwoUBlQeEBmHy06ZXqvs0eEWKUcQ1
+         MLgA455t/0GQq/kcfFdxRaoPKongsbmWSA8KGDs0flHPTgfAX0+jkfUf4O0gUFIOsw02
+         BrQYYV+qh0Cb7+pdiTX00AhI8c+w9T92HT9uQg/zx6wzsttw1Gkn0drqEaYJd9HB5GtY
+         3hLaFT2V208o8ptEFWsLX13BZSpNZKoTkklN5ZFD/+yRwvPn+ayegIQLtMiFU3dHUSRk
+         Cu3g==
+X-Gm-Message-State: AHQUAuZKt6tirnXbWP4MGoMXKm1j9veBnvtKta+duxAHyJeodM/P72eD
+        PL3jUenbtBn4iS7bDMU9pbArPw==
+X-Google-Smtp-Source: AHgI3IbKWh6UvsEcQVf/n/xppbKWEULDYt/0ytXbsBMc4f/d+MSs5UsEa5TKY7qVPzwKJjl58pHQnw==
+X-Received: by 2002:a50:ed81:: with SMTP id h1mr11933707edr.145.1550488345346;
+        Mon, 18 Feb 2019 03:12:25 -0800 (PST)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id j46sm2588236ede.6.2019.02.18.03.12.24
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Feb 2019 03:12:24 -0800 (PST)
+Subject: Re: [PATCH v2 1/2] leds: Add Intel Cherry Trail Whiskey Cove PMIC
+ LEDs
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Yauhen Kharuzhy <jekhor@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+References: <3d5407a7-9458-f071-a1d5-511b09678e20@gmail.com>
+ <87a21c4e-8e5e-c180-2ff3-eb8170746e71@redhat.com>
+ <80971bc3-1193-83ed-913a-12f6217016c8@gmail.com>
+ <b15fd048-8206-4057-a354-07dc14ca15e3@redhat.com>
+ <8a263266-a41f-c916-e990-02d04de9b5d0@gmail.com>
+ <af5bec7b-0da1-ee19-cdf4-0240f56221ad@redhat.com>
+ <20190216193727.GA14305@amd>
+ <7be63b6b-8d8d-90b8-fb17-d219b87a101f@redhat.com>
+ <20190217000851.GA29803@amd>
+ <81cc42f5-1f3d-c7f2-eb13-c2f8c4f9bfb4@redhat.com>
+ <20190217174549.GA13301@amd>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <98896f2f-1752-d52a-f755-3daa3b29a83f@redhat.com>
+Date:   Mon, 18 Feb 2019 12:12:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7f9901d0-29dc-479a-86ec-08d695916c8b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2019 11:08:34.2453
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR18MB0955
-X-OriginatorOrg: marvell.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-18_08:,,
- signatures=0
-X-Proofpoint-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=929 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1902180085
+In-Reply-To: <20190217174549.GA13301@amd>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
+
+On 17-02-19 18:45, Pavel Machek wrote:
+> Hi!
+> 
+>>> I see... and yes, that would be the easiest solution.
+>>>
+>>> But somehow I see "this LED is controlled by charging state" as
+>>> primary and "it shows pulses instead of staying on" as secondary
+>>> eye-candy.
+>>>
+>>> This week there was another driver for charger LED.. but that one does
+>>> not do pulses. Ideally, we'd like consistent interface to the
+>>> userland.
+>>>
+>>> (To make it complex, the other driver supports things like:
+>>>    LED solid on -- fully charged
+>>>    LED blinking slowly -- charging
+>>>    LED blinking fast -- charge error
+>>>    LED off -- not charging).
+>>
+>> Something like that could be supported with my original hw_pattern
+>> proposal where we simply encode all of this in the hw-pattern file:
+>>
+>> tupple0: charging blinking_on_time
+>> tupple1: charging blinking_off_time
+>> tupple2: charging breathing_time
+>> tupple3: manual blinking_on_time
+>> tupple4: manual blinking_off_time
+>> tupple5: manual breathing_time
+> 
+> So the userland would need to know "I'm on yoga, so 3rd tupple sets up
+> breathing when charging"?
+
+Yes this is for the hw_pattern file not the regular pattern file and if I've
+understood things correctly then the hw_pattern file is often (always?)
+specific to the LED controller model. See e.g. :
+Documentation/ABI/testing/sysfs-class-led-driver-sc27xx
+
+Also userland is not really expected to touch this, the user himself
+could touch it if he/she wants to customize things.
+
+>> So for this chip you mention, we do not need the breathing time (no breathing support),
+>> so we would get the following tupples:
+>>
+>> tupple0: not charging blinking_on_time
+>> tupple1: not charging blinking_off_time
+>> tupple2: slow charging blinking_on_time
+>> tupple3: slow charging blinking_off_time
+>> tupple4: fast charging blinking_on_time
+>> tupple5: fast charging blinking_off_time
+>> tupple6: charging error blinking_on_time
+>> tupple7: charging error blinking_off_time
+> 
+> Patterns and their meanings are fixed (or almost) on that driver, so
+> fortunately that will not be neccessary.
+
+Ok, so back the Whiskey Cove PMIC LED controller, I think
+there was some agreement to add a hw_control sysfs
+attribute and simplify the hw_pattern ABI to:
+
+tupple0: blinking_on_time
+tupple1: blinking_off_time
+tupple2: breathing_time
+
+You suggested adding support for a hw_control
+sysfs attribute to the core, activated by a flag.
+
+I assume that there will then be a callback into the
+driver when that file gets written. The semantics for
+the Whiskey Cove PMIC LED controller are clear, but
+how should the patch adding support for this to the LED core
+describe the new hw_control sysfs attribute in:
+Documentation/ABI/testing/sysfs-class-led ?
+
+Or do you just want to have the basic handling in the
+core and then describe the semantics in a per LED controller
+way like how we do for hw_pattern, so for the
+Whiskey Cove PMIC LED controller we would add a:
+Documentation/ABI/testing/sysfs-class-led-cht-wc
+file, which we need to do anyways for the hw_pattern file?
+
+<snip stuff about N900>
+
+Regards,
+
+Hans
 
 
-> -----Original Message-----
-> From: Antoine Tenart <antoine.tenart@bootlin.com>
-> Sent: Monday, February 18, 2019 12:52 PM
-> To: Russell King - ARM Linux admin <linux@armlinux.org.uk>
-> Cc: Antoine Tenart <antoine.tenart@bootlin.com>; davem@davemloft.net;
-> netdev@vger.kernel.org; linux-kernel@vger.kernel.org;
-> thomas.petazzoni@bootlin.com; maxime.chevallier@bootlin.com;
-> gregory.clement@bootlin.com; miquel.raynal@bootlin.com; Nadav Haklai
-> <nadavh@marvell.com>; Stefan Chulski <stefanc@marvell.com>; Yan
-> Markman <ymarkman@marvell.com>; mw@semihalf.com
-> Subject: [EXT] Re: [PATCH net-next 10/13] net: mvpp2: reset the XPCS whil=
-e
-> reconfiguring the serdes lanes
->=20
-> External Email
->=20
-> ----------------------------------------------------------------------
-> Russell,
->=20
-> On Mon, Feb 18, 2019 at 10:47:57AM +0000, Russell King - ARM Linux admin
-> wrote:
-> >
-> > Another case that needs to be considered: if the XPCS should be placed
-> > into reset while reconfiguring the serdes lanes, is the same treatment
-> > needed for the GMAC?
->=20
-> That's something I wanted to check as well. I don't know for the GMAC, wh=
-ile
-> I'm sure the documentation explicitly state to put the XPCS in reset when
-> reconfiguring the lanes.
 
-HW recommendation upon Serdes reconfiguration are the following:
 
-1. Disable port(CTRL0_REG - in XLG/GMAC)=20
-2. Put port in reset (both XLG/GMAC)
-3. For KR - put in reset MPCS (MAC control clock, RX SD clock, TX SD clock)=
-, XPSC is RXAUI/XAUI clock domain
-4. Power down Serdes lane
-
-Do reconfiguration of Serdes.
-
-5. Enable Serdes lane
-6. Disable MPCS reset for KR
-7. Disable port reset (both XLG/GMAC)
-8. Enable port  (both XLG/GMAC)
-
-Stefan,
-Best Regards.
+> 
+>> Where by solid on/off can be done by setting one
+>> of the blinking times to 0.
+>>
+>> Having hw_pattern ABIs like this where some of
+>> the tupples only activate on certain conditions
+>> might be better then a hardware_control sysfs
+>> file as it offers more flexibility.
+> 
+> Agreed about flexibility, but I don't think it does enough to provide
+> hardware abstraction. It might be too much flexibility.
+> 
+> Also it only works with hw controlled LEDs.
+> 
+> With RGB LED multiple patterns per LED make a lot of sense (as there's
+> typically just one led.
+> 
+> For example on N900, we have
+> 
+> green: fully charged.
+> yellow pulsing: charging.
+> solid yellow: hardware feature, emergency charging.
+> white pulsing: happy phone, no events
+> blue fast pulses: message waiting
+> 
+> On N900, I'm handling that in userspace, but...
+> 
+> Best regards,
+> 									Pavel
+> 
