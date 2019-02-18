@@ -2,126 +2,130 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B6CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:51:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82F77C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:52:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8367E2177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:51:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550515871;
-	bh=/rCWwqwqjTc2NthJjuY1C0yFEchIeltLg4z1eHsSC5A=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=g+fPnk0UE8SDW/ryFRclPkYxFRvuV8BeSmfaJ0MUB5yCrt/u0t9M2ukqaq7E21CC/
-	 rEnnhtjMCfJtGNfjiO6F0kpPbIGenBrlsJ3Q4v4fWoWOU0/WL9cLKYvnEedMSimvNM
-	 PHz9/GBatJu/S5R061l9GhHg7DJpxbJ9Cx7cz/9I=
+	by mail.kernel.org (Postfix) with ESMTP id 5D4AE2177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:52:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727532AbfBRSvJ (ORCPT
+        id S1727570AbfBRSwH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:51:09 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41982 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726258AbfBRSti (ORCPT
+        Mon, 18 Feb 2019 13:52:07 -0500
+Received: from gateway32.websitewelcome.com ([192.185.145.119]:21987 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726258AbfBRSwG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:49:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=13lp7NHrAyPopvrzvdz/efiwrYBrCVekBuLzo05L/p8=; b=Hj3G73k/G0g2
-        QyG5zxBBA9nN0cQF3aajN/zMG2IAdIwTlCkmy6TKLz4QNm1lDVIIeV4zHN3HU1vZpa/aoZbT230vV
-        gybXg2Hi6cVCJlW5Sk/hdG2ZuS5Ge6UsqkNRvVuSZn/7N8ifFD+wcuqZ0vzol9854lUUOmIjYweGf
-        dQmPA=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gvnyr-0001eF-9d; Mon, 18 Feb 2019 18:49:29 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id B77BB1128009; Mon, 18 Feb 2019 18:49:28 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Viorel Suman <viorel.suman@nxp.com>
-Cc:     Mark Brown <broonie@kernel.org>, Timur Tabi <timur@kernel.org>,
-        Nicolin Chen <nicoleotsuka@gmail.com>,
-        Xiubo Li <Xiubo.Lee@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Viorel Suman <viorel.suman@gmail.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: fsl_spdif: fix TXCLK_DF mask" to the asoc tree
-In-Reply-To:  <1550499117-11801-1-git-send-email-viorel.suman@nxp.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190218184928.B77BB1128009@debutante.sirena.org.uk>
-Date:   Mon, 18 Feb 2019 18:49:28 +0000 (GMT)
+        Mon, 18 Feb 2019 13:52:06 -0500
+Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
+        by gateway32.websitewelcome.com (Postfix) with ESMTP id C300D12C7B5A
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 12:52:05 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id vo1NgIe7biQervo1NgWvTf; Mon, 18 Feb 2019 12:52:05 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.119.20] (port=43684 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gvo1M-000UmY-En; Mon, 18 Feb 2019 12:52:05 -0600
+Date:   Mon, 18 Feb 2019 12:52:01 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Forest Bond <forest@alittletooquiet.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] staging: vt6656: key: Mark expected switch fall-throughs
+Message-ID: <20190218185201.GA15168@embeddedor>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.119.20
+X-Source-L: No
+X-Exim-ID: 1gvo1M-000UmY-En
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.119.20]:43684
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 12
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+In preparation to enabling -Wimplicit-fallthrough, mark switch
+cases where we are expecting to fall through.
 
-   ASoC: fsl_spdif: fix TXCLK_DF mask
+This patch fixes the following warnings:
 
-has been applied to the asoc tree at
+drivers/staging/vt6656/key.c: In function ‘vnt_set_keymode’:
+drivers/staging/vt6656/key.c:70:19: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   key->hw_key_idx = entry;
+   ~~~~~~~~~~~~~~~~^~~~~~~
+drivers/staging/vt6656/key.c:71:2: note: here
+  case VNT_KEY_ALLGROUP:
+  ^~~~
+drivers/staging/vt6656/key.c:73:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   if (onfly_latch)
+      ^
+drivers/staging/vt6656/key.c:75:2: note: here
+  case VNT_KEY_GROUP_ADDRESS:
+  ^~~~
+drivers/staging/vt6656/key.c:76:12: warning: this statement may fall through [-Wimplicit-fallthrough=]
+   key_mode |= mode;
+   ~~~~~~~~~^~~~~~~
+drivers/staging/vt6656/key.c:77:2: note: here
+  case VNT_KEY_GROUP:
+  ^~~~
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+Warning level 3 was used: -Wimplicit-fallthrough=3
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+This patch is part of the ongoing efforts to enable
+-Wimplicit-fallthrough.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 30c498a10ac6586778062062c064ae54e3897762 Mon Sep 17 00:00:00 2001
-From: Viorel Suman <viorel.suman@nxp.com>
-Date: Mon, 18 Feb 2019 14:12:17 +0000
-Subject: [PATCH] ASoC: fsl_spdif: fix TXCLK_DF mask
-
-According to RM SPDIF TXCLK_DF mask is 7-bit wide.
-
-Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 ---
- sound/soc/fsl/fsl_spdif.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/vt6656/key.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/fsl/fsl_spdif.h b/sound/soc/fsl/fsl_spdif.h
-index 7666dabaccfd..e6c61e07bc1a 100644
---- a/sound/soc/fsl/fsl_spdif.h
-+++ b/sound/soc/fsl/fsl_spdif.h
-@@ -152,7 +152,7 @@ enum spdif_gainsel {
- #define STC_TXCLK_ALL_EN_MASK		(1 << STC_TXCLK_ALL_EN_OFFSET)
- #define STC_TXCLK_ALL_EN		(1 << STC_TXCLK_ALL_EN_OFFSET)
- #define STC_TXCLK_DF_OFFSET		0
--#define STC_TXCLK_DF_MASK		(0x7ff << STC_TXCLK_DF_OFFSET)
-+#define STC_TXCLK_DF_MASK		(0x7f << STC_TXCLK_DF_OFFSET)
- #define STC_TXCLK_DF(x)		((((x) - 1) << STC_TXCLK_DF_OFFSET) & STC_TXCLK_DF_MASK)
- #define STC_TXCLK_SRC_MAX		8
+diff --git a/drivers/staging/vt6656/key.c b/drivers/staging/vt6656/key.c
+index 91dede54cc1f..dcd933a6b66e 100644
+--- a/drivers/staging/vt6656/key.c
++++ b/drivers/staging/vt6656/key.c
+@@ -63,17 +63,19 @@ static int vnt_set_keymode(struct ieee80211_hw *hw, u8 *mac_addr,
+ 	}
  
+ 	switch (key_type) {
+-		/* fallthrough */
+ 	case VNT_KEY_DEFAULTKEY:
+ 		/* default key last entry */
+ 		entry = MAX_KEY_TABLE - 1;
+ 		key->hw_key_idx = entry;
++		/* fall through */
+ 	case VNT_KEY_ALLGROUP:
+ 		key_mode |= VNT_KEY_ALLGROUP;
+ 		if (onfly_latch)
+ 			key_mode |= VNT_KEY_ONFLY_ALL;
++		/* fall through */
+ 	case VNT_KEY_GROUP_ADDRESS:
+ 		key_mode |= mode;
++		/* fall through */
+ 	case VNT_KEY_GROUP:
+ 		key_mode |= (mode << 4);
+ 		key_mode |= VNT_KEY_GROUP;
 -- 
 2.20.1
 
