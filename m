@@ -2,179 +2,155 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB99C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:32:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96DDBC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:33:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08E9C2177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:32:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550518377;
-	bh=z4JP9lNSTz5HcBmX4WFF5gD2KBHAEGJjKY+Va69qEl0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=RBtXzoIJhym/1tKkN5YQdMJu2uKSR4+s6aQy5rkDbMSPsqrUxloOvfTBaJL1V/qiy
-	 Q+mUe0NBh6RKqLATXtcomrIBLoeQt31zCIpkana7tTGrF0nCzkty/FapuYEfC6ye0M
-	 OEWMOQf5xWb9ygQd3DjnC2y3B9bcBEdZpHIAKJ7I=
+	by mail.kernel.org (Postfix) with ESMTP id 5C387217F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:33:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="kz83DvL6";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="EZJngiYt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbfBRTcz (ORCPT
+        id S1726938AbfBRTdf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 14:32:55 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41394 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbfBRTcy (ORCPT
+        Mon, 18 Feb 2019 14:33:35 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:54382 "EHLO
+        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726523AbfBRTdf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 14:32:54 -0500
-Received: by mail-ot1-f67.google.com with SMTP id t7so13797266otk.8;
-        Mon, 18 Feb 2019 11:32:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CwK/t3EqiCQBADQ2CrSpZEUtlJF0kCvDoIFGC7QJMs4=;
-        b=rZ3XVOVjAgoCeVN5VB3o+SD7OPtdSDYdk2FSi6DJVEudT+Fbygq5ZVrHBmnYA6St3P
-         Lc7quLU8NBPIyNSt9s7sBLLUzT+X7Zjy0YaQw+ChsuTjFZKGrrxmmjKHNQOFL+QokSqn
-         YaK+Wk3diqLdFH7GjL0Mqf1X984z29HlOMWQ7mjEAIdS2Z4RyAufZwKivBh92Yso8rQ6
-         12qwmFywCU7cJwgAyjsZCcKw45fUCF9d906z05ysYKoU4xpH9j8yy8pvLNXvyDBEK50Z
-         E/2Lkh0xZn5VYM7TLB7AdMe/YhFYSNDUfzGVY7kwUFWEcrARzgcqYmp/jElkZnbdK4oZ
-         N8tg==
-X-Gm-Message-State: AHQUAuZQhzcg36g+oR1/hyJ2/IWv+8mh3FlfEZaXRHLu6J/tnp+AfsQp
-        HcedzXY87ywXTYiuaZuPhg==
-X-Google-Smtp-Source: AHgI3IbmFrN1GPCux7cPUAlRZbe43Ar6DQ1GWo2D32tfx7TwNiSNcRS+UQa0k33YfETSIv1AoENZyw==
-X-Received: by 2002:aca:5e82:: with SMTP id s124mr255622oib.7.1550518373515;
-        Mon, 18 Feb 2019 11:32:53 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id y5sm6206961oix.38.2019.02.18.11.32.52
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Feb 2019 11:32:52 -0800 (PST)
-Date:   Mon, 18 Feb 2019 13:32:52 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Roger Quadros <rogerq@ti.com>
-Cc:     tony@atomide.com, ohad@wizery.com, bjorn.andersson@linaro.org,
-        s-anna@ti.com, david@lechnology.com, nsekhar@ti.com,
-        t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com,
-        m-karicheri2@ti.com, woods.technical@gmail.com,
-        linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        "Andrew F. Davis" <afd@ti.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH v2 03/14] dt-binding: irqchip: Add pruss-intc-irq driver
- for PRUSS interrupts
-Message-ID: <20190218193252.GA6313@bogus>
-References: <1549290167-876-1-git-send-email-rogerq@ti.com>
- <1549290167-876-4-git-send-email-rogerq@ti.com>
+        Mon, 18 Feb 2019 14:33:35 -0500
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1IJSVqn012247;
+        Mon, 18 Feb 2019 11:31:16 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=facebook;
+ bh=HIa/12XbhDM0KThCXxwFTDSrfucOVuFRzB7CRdDmX5U=;
+ b=kz83DvL6qgVmAGfkmIsbRCXiyLHAX2epH3HGsERW4uYdAhoeP6+BrsIGqaOneV3kwn+V
+ GxqNXxq70rILltluNubaMN1yF56rzagL94Xxg+sQIYNg0VdWnk4AQikA+wtPUDLGtvuT
+ ukZLOmEw7Vn/SqJ8KD+agX41IKgx71Skz90= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2qr2eeg2na-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 18 Feb 2019 11:31:15 -0800
+Received: from frc-mbx04.TheFacebook.com (192.168.155.19) by
+ frc-hub03.TheFacebook.com (192.168.177.73) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Mon, 18 Feb 2019 11:31:15 -0800
+Received: from frc-hub06.TheFacebook.com (192.168.177.76) by
+ frc-mbx04.TheFacebook.com (192.168.155.19) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Mon, 18 Feb 2019 11:31:15 -0800
+Received: from NAM04-SN1-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Mon, 18 Feb 2019 11:31:15 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HIa/12XbhDM0KThCXxwFTDSrfucOVuFRzB7CRdDmX5U=;
+ b=EZJngiYtoeggGfoU59BIpIqeBVFDHVl9+C/ZJ8KIbdhFMWCHS3K3tLvlbtXBzVwiQEu7a79+x8Q+mgpVMBba6mp6Psf+HoQ6fssTaCpjrhJe7EfWh/xsyhEC8bF5UG8+0g9cycY+3mOJodi9cF/5N8lTUGthbTvRRiQOZfVyvac=
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.156.24) by
+ BYAPR15MB2934.namprd15.prod.outlook.com (20.178.237.27) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1622.16; Mon, 18 Feb 2019 19:30:54 +0000
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::ecc7:1a8c:289f:df92]) by BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::ecc7:1a8c:289f:df92%3]) with mapi id 15.20.1601.016; Mon, 18 Feb 2019
+ 19:30:53 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rik van Riel <riel@surriel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        Dave Chinner <dchinner@redhat.com>,
+        Wolfgang Walter <linux@stwm.de>, Spock <dairinin@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH 4.20 71/92] Revert "mm: slowly shrink slabs with a
+ relatively small number of objects"
+Thread-Topic: [PATCH 4.20 71/92] Revert "mm: slowly shrink slabs with a
+ relatively small number of objects"
+Thread-Index: AQHUx5DFfbn2t2YpWUeoO4VrMVhutaXlrrEAgAAMzwCAABbegP//kAgAgACKxoCAAASfJA==
+Date:   Mon, 18 Feb 2019 19:30:53 +0000
+Message-ID: <10295CCD-16FD-44B4-A232-4DE4A1238FFA@fb.com>
+References: <20190218133454.668268457@linuxfoundation.org>
+ <20190218133501.533140116@linuxfoundation.org>
+ <a998a5028aa3bb17a5a60fffd3db558223b84cd5.camel@surriel.com>
+ <20190218161634.GA30873@kroah.com> <20190218173825.GB4525@dhcp22.suse.cz>
+ <20190218185738.GA3745@castle.DHCP.thefacebook.com>,<20190218191421.GE4525@dhcp22.suse.cz>
+In-Reply-To: <20190218191421.GE4525@dhcp22.suse.cz>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [107.77.214.211]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f5f7efef-3a45-48c1-3e51-08d695d79908
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605104)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BYAPR15MB2934;
+x-ms-traffictypediagnostic: BYAPR15MB2934:
+x-microsoft-exchange-diagnostics: 1;BYAPR15MB2934;20:meE1fdxTWzw+1p0Pisi43iAGcglVK3oqKx41nR4BUISXb2oUQ1UGsjd0Jimvdn0L1Wt3OTc0Lyp1i6qbo6HUfx/8ea9tj8KmtwXmVi7M1ohbfP0gz98f19pMM4N2FkTrNc/lVt1PWDarNDrjRIOwlMZWX/xOcOwsBQslPnlvSd8=
+x-microsoft-antispam-prvs: <BYAPR15MB2934DA1168CFA39582A50123BE630@BYAPR15MB2934.namprd15.prod.outlook.com>
+x-forefront-prvs: 09525C61DB
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(136003)(346002)(396003)(39860400002)(189003)(199004)(8936002)(6486002)(6512007)(82746002)(25786009)(305945005)(99286004)(2906002)(6916009)(86362001)(5660300002)(229853002)(81156014)(81166006)(8676002)(7736002)(6506007)(53546011)(102836004)(54906003)(478600001)(93886005)(76176011)(4326008)(316002)(11346002)(6246003)(53936002)(446003)(2616005)(33656002)(105586002)(256004)(36756003)(106356001)(14454004)(9886003)(476003)(486006)(561944003)(6436002)(186003)(6116002)(3846002)(26005)(83716004)(66066001)(97736004)(7416002)(71190400001)(71200400001)(68736007);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2934;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 57Hk8Er2tEjJ5vhNIi5SuTCMFEuowoQiU0MacDVw2jwFwxFHkmgGW7eUB9+JTy01Q2OSRbJEjwech7VSvJ5JlPmUsQ/gOkgBioxdfflRC/aKegoPXRpRis/FvirFFpVeAQe+hbHw4XtNepakYzbJsPkcY6XH9oY5iqmFCM6sO+StVBPattJId9ZJEukGhmHz50BSgl1+QE5rSjmJrUaQzg2/+jGIHTBQBO5FcsGVupsc+1BhS5DU9hvDRdqPWuY268sE7k+JXsULOAgUWhwUbHmoctAFirBKntiyEVHnBn0C3i5sFKdlLEEkbpZ/m+gCmrek5n1ZSexBAjWuPLmy9aAKhJtsuvsAIUhyPgvlFOaBHWIemAochAEkpD7JS3FWqyU7moReHWlL+W8VhM6RNOC1hvD1UNlumknKgHsbpLo=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1549290167-876-4-git-send-email-rogerq@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MS-Exchange-CrossTenant-Network-Message-Id: f5f7efef-3a45-48c1-3e51-08d695d79908
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2019 19:30:53.6374
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2934
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-18_14:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 04, 2019 at 04:22:36PM +0200, Roger Quadros wrote:
-> From: "Andrew F. Davis" <afd@ti.com>
-> 
-> The Programmable Real-Time Unit Subsystem (PRUSS) contains an
-> interrupt controller (INTC) that can handle various system input
-> events and post interrupts back to the device-level initiators.
-> The INTC can support upto 64 input events with individual control
-> configuration and hardware prioritization. These events are mapped
-> onto 10 interrupt signals through two levels of many-to-one mapping
-> support. Different interrupt signals are routed to the individual
-> PRU cores or to the host CPU.
-> 
-> The PRUSS INTC platform driver manages this PRUSS interrupt
-> controller and implements an irqchip driver to provide a Linux
-> standard way for the PRU client users to enable/disable/ack/
-> re-trigger a PRUSS system event. The system events to interrupt
-> channels and host interrupts relies on the mapping configuration
-> provided through a firmware resource table for now. This will be
-> revisited and enhanced in the future for a better interface. The
-> mappings will currently be programmed during the boot/shutdown
-> of the PRU.
-> 
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Jason Cooper <jason@lakedaemon.net>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Signed-off-by: Andrew F. Davis <afd@ti.com>
-> Signed-off-by: Roger Quadros <rogerq@ti.com>
-> ---
->  .../interrupt-controller/ti,pruss-intc-irq.txt     | 51 ++++++++++++++++++++++
->  1 file changed, 51 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc-irq.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc-irq.txt b/Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc-irq.txt
-> new file mode 100644
-> index 0000000..c70221c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc-irq.txt
-> @@ -0,0 +1,51 @@
-> +PRU ICSS INTC on TI SoCs
-> +========================
-> +
-> +Each PRUSS has a single interrupt controller instance that is common to both
-> +the PRU cores. Each interrupt controller can detect 64 input events which are
-> +then mapped to 10 possible output interrupts through two levels of mapping. The
-> +input events can be triggered by either the PRUs and/or various other PRUSS
-> +internal and external peripherals. The first 2 output interrupts are fed
-> +exclusively to the internal PRU cores, with the remaining 8 connected to
-> +external interrupt controllers including the MPU.
-> +
-> +Required Properties:
-> +--------------------
-> +- compatible           : should be one of,
-> +                             "ti,am3356-pruss-intc" for AM335x family of SoCs
-> +                             "ti,am4376-pruss-intc" for AM437x family of SoCs
-> +                             "ti,am5728-pruss-intc" for AM57xx family of SoCs
-> +                             "ti,k2g-pruss-intc" for 66AK2G family of SoCs
-> +- reg                  : base address and size for the PRUSS INTC sub-module
-> +- reg-names            : should contain the string "intc"
-
-Not really useful with only 1 entry.
-
-> +- interrupts     : all the interrupts generated towards the main host
-> +                   processor in the SoC. The format depends on the
-> +                   interrupt specifier for the particular SoC's MPU
-> +                   parent interrupt controller
-> +- interrupt-names: should use one of the following names for each interrupt,
-> +                   the name should match the corresponding host interrupt
-> +                   number,
-> +                       "host2", "host3", "host4", "host5", "host6",
-> +                       "host7", "host8" or "host9"
-> +                   NOTE: AM437x and 66AK2G SoCs do not have "host7" interrupt
-> +                         connected to MPU
-> +- interrupt-controller : mark this node as an interrupt controller
-> +- #interrupt-cells     : should be 1. Client users shall use the PRU System
-> +                         event number (the interrupt source that the client
-> +                         is interested in) as the value of the interrupts
-> +                         property in their node
-> +
-> +Example:
-> +--------
-> +		pruss_intc: intc@20000 {
-
-interrupt-controller@20000
-
-> +			compatible = "ti,am3356-pruss-intc";
-> +			reg = <0x20000 0x2000>;
-> +			reg-names = "intc";
-> +			interrupt-controller;
-> +			#interrupt-cells = <1>;
-> +			interrupts = <20 21 22 23 24 25 26 27>;
-> +			interrupt-names = "host2", "host3", "host4",
-> +					  "host5", "host6", "host7",
-> +					  "host8", "host9";
-> +		};
-> +
-> -- 
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
-> 
+T2ssIEnigJlsbCBzZW5kIHRoZSBwcm9wb3NhbCBsYXRlciB0b2RheS4NCg0KVGhhbmtzIQ0KDQpT
+ZW50IGZyb20gbXkgaVBob25lDQoNCj4gT24gRmViIDE4LCAyMDE5LCBhdCAxMToxNCwgTWljaGFs
+IEhvY2tvIDxtaG9ja29Aa2VybmVsLm9yZz4gd3JvdGU6DQo+IA0KPj4gT24gTW9uIDE4LTAyLTE5
+IDE4OjU3OjQ1LCBSb21hbiBHdXNoY2hpbiB3cm90ZToNCj4+PiBPbiBNb24sIEZlYiAxOCwgMjAx
+OSBhdCAwNjozODoyNVBNICswMTAwLCBNaWNoYWwgSG9ja28gd3JvdGU6DQo+Pj4+IE9uIE1vbiAx
+OC0wMi0xOSAxNzoxNjozNCwgR3JlZyBLSCB3cm90ZToNCj4+Pj4+IE9uIE1vbiwgRmViIDE4LCAy
+MDE5IGF0IDEwOjMwOjQ0QU0gLTA1MDAsIFJpayB2YW4gUmllbCB3cm90ZToNCj4+Pj4+PiBPbiBN
+b24sIDIwMTktMDItMTggYXQgMTQ6NDMgKzAxMDAsIEdyZWcgS3JvYWgtSGFydG1hbiB3cm90ZToN
+Cj4+Pj4+PiA0LjIwLXN0YWJsZSByZXZpZXcgcGF0Y2guICBJZiBhbnlvbmUgaGFzIGFueSBvYmpl
+Y3Rpb25zLCBwbGVhc2UgbGV0DQo+Pj4+Pj4gbWUga25vdy4NCj4+Pj4+PiANCj4+Pj4+PiAtLS0t
+LS0tLS0tLS0tLS0tLS0NCj4+Pj4+PiANCj4+Pj4+PiBGcm9tOiBEYXZlIENoaW5uZXIgPGRjaGlu
+bmVyQHJlZGhhdC5jb20+DQo+Pj4+Pj4gDQo+Pj4+Pj4gY29tbWl0IGE5YTIzOGU4M2ZiYjBkZjMx
+YzNiOWI2NzAwM2Y4ZjlkMWQxYjZjOTYgdXBzdHJlYW0uDQo+Pj4+Pj4gDQo+Pj4+Pj4gVGhpcyBy
+ZXZlcnRzIGNvbW1pdCAxNzJiMDZjMzJiOTQ5NyAoIm1tOiBzbG93bHkgc2hyaW5rIHNsYWJzIHdp
+dGggYQ0KPj4+Pj4+IHJlbGF0aXZlbHkgc21hbGwgbnVtYmVyIG9mIG9iamVjdHMiKS4NCj4+Pj4+
+IA0KPj4+Pj4gVGhpcyByZXZlcnQgd2lsbCByZXN1bHQgaW4gdGhlIHNsYWIgY2FjaGVzIG9mIGRl
+YWQNCj4+Pj4+IGNncm91cHMgd2l0aCBhIHNtYWxsIG51bWJlciBvZiByZW1haW5pbmcgb2JqZWN0
+cyBuZXZlcg0KPj4+Pj4gZ2V0dGluZyByZWNsYWltZWQsIHdoaWNoIGNhbiBiZSBhIG1lbW9yeSBs
+ZWFrIGluIHNvbWUNCj4+Pj4+IGNvbmZpZ3VyYXRpb25zLg0KPj4+Pj4gDQo+Pj4+PiBCdXQgaGV5
+LCB0aGF0J3MgeW91ciB0cmFkZW9mZiB0byBtYWtlLg0KPj4+PiANCj4+Pj4gVGhhdCdzIHdoYXQg
+aXMgaW4gTGludXMncyB0cmVlLiAgU2hvdWxkIHdlIHNvbWVob3cgZGl2ZXJnZSBmcm9tIHRoYXQ/
+DQo+Pj4gDQo+Pj4gSSBiZWxpZXZlIHdlIHNob3VsZCBzdGFydCB3b3JraW5nIG9uIGEgbWVtY2cg
+c3BlY2lmaWMgc29sdXRpb24gdG8NCj4+PiBtaW5pbWl6ZSByZWdyZXNzaW9ucyBmb3Igb3RoZXJz
+IGFuZCBzdGFydCBhIG1vcmUgY29tcGxleCBzb2x1dGlvbiBmcm9tDQo+Pj4gdGhlcmUuDQo+Pj4g
+DQo+Pj4gQ2FuIHdlIHNwZWNpYWwgY2FzZSBkZWFkIG1lbWNncyBpbiB0aGUgc2xhYiByZWNsYWlt
+IGFuZCByZWNsYWltIG1vcmUNCj4+PiBhZ2dyZXNzaXZlbHk/DQo+PiANCj4+IEl0J3MgcHJvYmFi
+bHkgYmV0dGVyIHRvIHN0YXJ0IGEgbmV3IHRocmVhZCB0byBkaXNjdXNzIHRoaXMgaXNzdWUNCj4g
+DQo+IGFncmVlZA0KPiANCj4+IChidHcsIGRvZXNuJ3QgTFNGL01NIGxvb2tzIGxpa2UgdGhlIGJl
+c3QgcGxhY2UgdG8gZG8gaXQ/IEkgY2FuIHNlbmQgYSBwcm9wb3NhbCkuDQo+IA0KPiBJIHdhcyBh
+Ym91dCB0byBkbyB0aGF0IGlmIG5vYm9keSBlbHNlIGRpZC4NCj4gDQo+IGRyb3BwZWQgdGhlIHJl
+c3Qgb2YgdGhlIGVtYWlsIGJlY2F1c2UgdGhpcyByZWFsbHkgZGVzZXJ2ZXMgYSBuZXcNCj4gZGlz
+Y3Vzc2lvbi4NCj4gLS0gDQo+IE1pY2hhbCBIb2Nrbw0KPiBTVVNFIExhYnMNCg==
