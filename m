@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5A43C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:12:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1135C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:12:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B464621901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:12:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 885D5218AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:12:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499136;
-	bh=m1YsGFE9LpO5o3YzBJsKL0Ceo7xgf3LMc9ca9iqqR0c=;
+	s=default; t=1550499128;
+	bh=Tb/la7LA/pdDVAtRC4jcc33CofbvOh7Yq0WuppYDXtU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ztMSpQVJjJAndCBbC1G3kJgOooP3yQdO1dE83cRn0Qo+VU8BKNWPgoypIRxkyxQBN
-	 N+vYY9McWjurCrf0MYfEkPrwIELXKksq1pEgLOZWP401NwuKm4k4SNGZd2XNZpmhE4
-	 q2OroS8EF/HoXYe9H8GJPM2xm0n39ne0HBBItIWQ=
+	b=Ls1kH+RFI1KJfpAZujPQBnAR2VEgRzK2I4nMM9x4KC4UHMN8ptXU0IHzr2t4T9lij
+	 g1BxNid58SkUe2/FobCaI9Vs2Bp2bN2GzyQZQ+KQfLzTBkF/0GFFzbeooyplx3Su2e
+	 mla4ZOYmMkpJBwj4DXCTLrdehTti22cAvSHIsaVQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391967AbfBROMP (ORCPT
+        id S2392023AbfBROMG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:12:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56624 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:12:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391907AbfBROMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:12:09 -0500
+        id S2391885AbfBROLy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:11:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67740217D7;
-        Mon, 18 Feb 2019 14:12:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D202C217D7;
+        Mon, 18 Feb 2019 14:11:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550499128;
-        bh=m1YsGFE9LpO5o3YzBJsKL0Ceo7xgf3LMc9ca9iqqR0c=;
+        s=default; t=1550499113;
+        bh=Tb/la7LA/pdDVAtRC4jcc33CofbvOh7Yq0WuppYDXtU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TpOxOMy8vGnkv6TzCOmYA8xnDIaCJcMCjr1GqidDnQKMrh8lTmIlYRG2p/LAepgNF
-         gQuOTDkIWibSPlAXVxtv540zJOuLm+PzLYUXSWHXjey4JsDcukz0zP/Wo3PLyPPYIc
-         hFbHT2bfD+Giddtt39lnqicWZC7PJxe1rgStLuVc=
+        b=r8JBrzj7G9CzbPaviN3QtYzmC+hRa4cWi6hYuPg/w+ap7M7eGlziTJQxefncyK48G
+         zGXsrLYq/rNKqJIzNvgoY2L9n/uH5IkH5hy5xPhIX7wEASFqi2YFlrGhw8XnY/aAZw
+         eGibALium9fCKrCrE7QBMS/APrYkPrSMY3TNKlCU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+acdeb633f6211ccdf886@syzkaller.appspotmail.com,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Myungho Jung <mhjungk@gmail.com>
-Subject: [PATCH 3.18 086/108] libceph: avoid KEEPALIVE_PENDING races in ceph_con_keepalive()
-Date:   Mon, 18 Feb 2019 14:44:22 +0100
-Message-Id: <20190218133523.562175618@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Gerrit Renker <gerrit@erg.abdn.ac.uk>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 057/108] dccp: fool proof ccid_hc_[rt]x_parse_options()
+Date:   Mon, 18 Feb 2019 14:43:53 +0100
+Message-Id: <20190218133522.159914290@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -67,60 +67,106 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ilya Dryomov <idryomov@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 4aac9228d16458cedcfd90c7fb37211cf3653ac3 upstream.
+[ Upstream commit 9b1f19d810e92d6cdc68455fbc22d9f961a58ce1 ]
 
-con_fault() can transition the connection into STANDBY right after
-ceph_con_keepalive() clears STANDBY in clear_standby():
+Similarly to commit 276bdb82dedb ("dccp: check ccid before dereferencing")
+it is wise to test for a NULL ccid.
 
-    libceph user thread               ceph-msgr worker
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 16 Comm: ksoftirqd/1 Not tainted 5.0.0-rc3+ #37
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+RIP: 0010:ccid_hc_tx_parse_options net/dccp/ccid.h:205 [inline]
+RIP: 0010:dccp_parse_options+0x8d9/0x12b0 net/dccp/options.c:233
+Code: c5 0f b6 75 b3 80 38 00 0f 85 d6 08 00 00 48 b9 00 00 00 00 00 fc ff df 48 8b 45 b8 4c 8b b8 f8 07 00 00 4c 89 f8 48 c1 e8 03 <80> 3c 08 00 0f 85 95 08 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
+kobject: 'loop5' (0000000080f78fc1): kobject_uevent_env
+RSP: 0018:ffff8880a94df0b8 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff8880858ac723 RCX: dffffc0000000000
+RDX: 0000000000000100 RSI: 0000000000000007 RDI: 0000000000000001
+RBP: ffff8880a94df140 R08: 0000000000000001 R09: ffff888061b83a80
+R10: ffffed100c370752 R11: ffff888061b83a97 R12: 0000000000000026
+R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f0defa33518 CR3: 000000008db5e000 CR4: 00000000001406e0
+kobject: 'loop5' (0000000080f78fc1): fill_kobj_path: path = '/devices/virtual/block/loop5'
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ dccp_rcv_state_process+0x2b6/0x1af6 net/dccp/input.c:654
+ dccp_v4_do_rcv+0x100/0x190 net/dccp/ipv4.c:688
+ sk_backlog_rcv include/net/sock.h:936 [inline]
+ __sk_receive_skb+0x3a9/0xea0 net/core/sock.c:473
+ dccp_v4_rcv+0x10cb/0x1f80 net/dccp/ipv4.c:880
+ ip_protocol_deliver_rcu+0xb6/0xa20 net/ipv4/ip_input.c:208
+ ip_local_deliver_finish+0x23b/0x390 net/ipv4/ip_input.c:234
+ NF_HOOK include/linux/netfilter.h:289 [inline]
+ NF_HOOK include/linux/netfilter.h:283 [inline]
+ ip_local_deliver+0x1f0/0x740 net/ipv4/ip_input.c:255
+ dst_input include/net/dst.h:450 [inline]
+ ip_rcv_finish+0x1f4/0x2f0 net/ipv4/ip_input.c:414
+ NF_HOOK include/linux/netfilter.h:289 [inline]
+ NF_HOOK include/linux/netfilter.h:283 [inline]
+ ip_rcv+0xed/0x620 net/ipv4/ip_input.c:524
+ __netif_receive_skb_one_core+0x160/0x210 net/core/dev.c:4973
+ __netif_receive_skb+0x2c/0x1c0 net/core/dev.c:5083
+ process_backlog+0x206/0x750 net/core/dev.c:5923
+ napi_poll net/core/dev.c:6346 [inline]
+ net_rx_action+0x76d/0x1930 net/core/dev.c:6412
+ __do_softirq+0x30b/0xb11 kernel/softirq.c:292
+ run_ksoftirqd kernel/softirq.c:654 [inline]
+ run_ksoftirqd+0x8e/0x110 kernel/softirq.c:646
+ smpboot_thread_fn+0x6ab/0xa10 kernel/smpboot.c:164
+ kthread+0x357/0x430 kernel/kthread.c:246
+ ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+Modules linked in:
+---[ end trace 58a0ba03bea2c376 ]---
+RIP: 0010:ccid_hc_tx_parse_options net/dccp/ccid.h:205 [inline]
+RIP: 0010:dccp_parse_options+0x8d9/0x12b0 net/dccp/options.c:233
+Code: c5 0f b6 75 b3 80 38 00 0f 85 d6 08 00 00 48 b9 00 00 00 00 00 fc ff df 48 8b 45 b8 4c 8b b8 f8 07 00 00 4c 89 f8 48 c1 e8 03 <80> 3c 08 00 0f 85 95 08 00 00 48 b8 00 00 00 00 00 fc ff df 4d 8b
+RSP: 0018:ffff8880a94df0b8 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff8880858ac723 RCX: dffffc0000000000
+RDX: 0000000000000100 RSI: 0000000000000007 RDI: 0000000000000001
+RBP: ffff8880a94df140 R08: 0000000000000001 R09: ffff888061b83a80
+R10: ffffed100c370752 R11: ffff888061b83a97 R12: 0000000000000026
+R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8880ae700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f0defa33518 CR3: 0000000009871000 CR4: 00000000001406e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-ceph_con_keepalive()
-  mutex_lock(&con->mutex)
-  clear_standby(con)
-  mutex_unlock(&con->mutex)
-                                mutex_lock(&con->mutex)
-                                con_fault()
-                                  ...
-                                  if KEEPALIVE_PENDING isn't set
-                                    set state to STANDBY
-                                  ...
-                                mutex_unlock(&con->mutex)
-  set KEEPALIVE_PENDING
-  set WRITE_PENDING
-
-This triggers warnings in clear_standby() when either ceph_con_send()
-or ceph_con_keepalive() get to clearing STANDBY next time.
-
-I don't see a reason to condition queue_con() call on the previous
-value of KEEPALIVE_PENDING, so move the setting of KEEPALIVE_PENDING
-into the critical section -- unlike WRITE_PENDING, KEEPALIVE_PENDING
-could have been a non-atomic flag.
-
-Reported-by: syzbot+acdeb633f6211ccdf886@syzkaller.appspotmail.com
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
-Tested-by: Myungho Jung <mhjungk@gmail.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Gerrit Renker <gerrit@erg.abdn.ac.uk>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/ceph/messenger.c |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ net/dccp/ccid.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/net/ceph/messenger.c
-+++ b/net/ceph/messenger.c
-@@ -3068,9 +3068,10 @@ void ceph_con_keepalive(struct ceph_conn
- 	dout("con_keepalive %p\n", con);
- 	mutex_lock(&con->mutex);
- 	clear_standby(con);
-+	con_flag_set(con, CON_FLAG_KEEPALIVE_PENDING);
- 	mutex_unlock(&con->mutex);
--	if (con_flag_test_and_set(con, CON_FLAG_KEEPALIVE_PENDING) == 0 &&
--	    con_flag_test_and_set(con, CON_FLAG_WRITE_PENDING) == 0)
-+
-+	if (con_flag_test_and_set(con, CON_FLAG_WRITE_PENDING) == 0)
- 		queue_con(con);
+--- a/net/dccp/ccid.h
++++ b/net/dccp/ccid.h
+@@ -202,7 +202,7 @@ static inline void ccid_hc_tx_packet_rec
+ static inline int ccid_hc_tx_parse_options(struct ccid *ccid, struct sock *sk,
+ 					   u8 pkt, u8 opt, u8 *val, u8 len)
+ {
+-	if (ccid->ccid_ops->ccid_hc_tx_parse_options == NULL)
++	if (!ccid || !ccid->ccid_ops->ccid_hc_tx_parse_options)
+ 		return 0;
+ 	return ccid->ccid_ops->ccid_hc_tx_parse_options(sk, pkt, opt, val, len);
  }
- EXPORT_SYMBOL(ceph_con_keepalive);
+@@ -214,7 +214,7 @@ static inline int ccid_hc_tx_parse_optio
+ static inline int ccid_hc_rx_parse_options(struct ccid *ccid, struct sock *sk,
+ 					   u8 pkt, u8 opt, u8 *val, u8 len)
+ {
+-	if (ccid->ccid_ops->ccid_hc_rx_parse_options == NULL)
++	if (!ccid || !ccid->ccid_ops->ccid_hc_rx_parse_options)
+ 		return 0;
+ 	return ccid->ccid_ops->ccid_hc_rx_parse_options(sk, pkt, opt, val, len);
+ }
 
 
