@@ -4,52 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD28AC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:00:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33970C10F01
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:00:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAF7121903
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:00:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 007A7217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:00:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498409;
-	bh=ZiLYm00Y9WbTe6RWU/9F+/Xl5JToCuaSPKpCwtonAXg=;
+	s=default; t=1550498411;
+	bh=aFjieyZYYwveOPYqSr/9Es57ygI1lunuUOj0vtRubAg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NlWRow685/V1H9JGvKVrkPMXEuSb47EXsY4Cab1ni1LfKfcgCsEcXQdF6RfLYT0os
-	 rHpHJUyzy7xzo6AknivrZCAhbCYP5HTMRMLqjHcUCuLDZhxQyPZ6rZQxfV7bqVx+p2
-	 +K0NidpQ9vj/avWWt0XQ3Y04fQKie1wQKJlSrJQo=
+	b=MjGiRTwemYJtRpC0bp2f9bU2qJeS3c3peb/CWkVEw+c/5f0VGdTis1Ius1EU6nVoN
+	 RrQBJmfWAPNUFmONsvxvhokvC7nhF+yDFMeG6lKj584EkS89pICRdGDZnQcv8M+g+C
+	 aGXYAgAgx288M+4+zoa39QjtKIvThPypCWVswyio=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388752AbfBROAI (ORCPT
+        id S2387927AbfBROAJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:00:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41100 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:00:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388014AbfBROAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:00:02 -0500
+        id S2388729AbfBROAE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:00:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DA432173C;
-        Mon, 18 Feb 2019 14:00:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0EEED21901;
+        Mon, 18 Feb 2019 14:00:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498401;
-        bh=ZiLYm00Y9WbTe6RWU/9F+/Xl5JToCuaSPKpCwtonAXg=;
+        s=default; t=1550498403;
+        bh=aFjieyZYYwveOPYqSr/9Es57ygI1lunuUOj0vtRubAg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M/DhlIqsGoyHLCBaJhLMjFPoQbDnG/bffI3ayUkLllfl3nhBTtirwc1vsi/8qqf8Z
-         xSyAxmgfwpTHUFGwbMS3rHZqPi/jjvN9I5JsvfrWg9xilUDqrWhtohSV8iJbOMAPrL
-         MLRaXXZcOwfJWJuuoEdc9XcPrB7BeEumNKprkRdQ=
+        b=NwpgX1lTtQK4iR969mMI814Fxsr7g5XFfyxQer7Y3qtkJv3von0+f1Gvq640x7DCr
+         777mxTpY8yvE0LLAgjhZpW4HjHqJk7BDzazZq/9ONu4hmAQ+sA1sVCy0ScUQwB9IaV
+         NkrsjMDoi3ysW3jKOjlEJ8NVlDGYzCikqmYKR6uA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sven Eckelmann <sven.eckelmann@openmesh.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Christian Lamparter <chunkeey@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 4.9 57/58] pinctrl: msm: fix gpio-hog related boot issues
-Date:   Mon, 18 Feb 2019 14:44:18 +0100
-Message-Id: <20190218133512.764287176@linuxfoundation.org>
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Neuling <mikey@neuling.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Hugh Dickins <hughd@google.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Minchan Kim <minchan@kernel.org>
+Subject: [PATCH 4.9 58/58] mm: stop leaking PageTables
+Date:   Mon, 18 Feb 2019 14:44:19 +0100
+Message-Id: <20190218133512.824952794@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133508.567416115@linuxfoundation.org>
 References: <20190218133508.567416115@linuxfoundation.org>
@@ -68,101 +74,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christian Lamparter <chunkeey@gmail.com>
+From: Hugh Dickins <hughd@google.com>
 
-commit a86caa9ba5d70696ceb35d1d39caa20d8b641387 upstream.
+commit b0b9b3df27d100a975b4e8818f35382b64a5e35c upstream.
 
-Sven Eckelmann reported an issue with the current IPQ4019 pinctrl.
-Setting up any gpio-hog in the device-tree for his device would
-"kill the bootup completely":
+4.10-rc loadtest (even on x86, and even without THPCache) fails with
+"fork: Cannot allocate memory" or some such; and /proc/meminfo shows
+PageTables growing.
 
-| [    0.477838] msm_serial 78af000.serial: could not find pctldev for node /soc/pinctrl@1000000/serial_pinmux, deferring probe
-| [    0.499828] spi_qup 78b5000.spi: could not find pctldev for node /soc/pinctrl@1000000/spi_0_pinmux, deferring probe
-| [    1.298883] requesting hog GPIO enable USB2 power (chip 1000000.pinctrl, offset 58) failed, -517
-| [    1.299609] gpiochip_add_data: GPIOs 0..99 (1000000.pinctrl) failed to register
-| [    1.308589] ipq4019-pinctrl 1000000.pinctrl: Failed register gpiochip
-| [    1.316586] msm_serial 78af000.serial: could not find pctldev for node /soc/pinctrl@1000000/serial_pinmux, deferring probe
-| [    1.322415] spi_qup 78b5000.spi: could not find pctldev for node /soc/pinctrl@1000000/spi_0_pinmux, deferri
+Commit 953c66c2b22a ("mm: THP page cache support for ppc64") that got
+merged in rc1 removed the freeing of an unused preallocated pagetable
+after do_fault_around() has called map_pages().
 
-This was also verified on a RT-AC58U (IPQ4018) which would
-no longer boot, if a gpio-hog was specified. (Tried forcing
-the USB LED PIN (GPIO0) to high.).
+This is usually a good optimization, so that the followup doesn't have
+to reallocate one; but it's not sufficient to shift the freeing into
+alloc_set_pte(), since there are failure cases (most commonly
+VM_FAULT_RETRY) which never reach finish_fault().
 
-The problem is that Pinctrl+GPIO registration is currently
-peformed in the following order in pinctrl-msm.c:
-	1. pinctrl_register()
-	2. gpiochip_add()
-	3. gpiochip_add_pin_range()
+Check and free it at the outer level in do_fault(), then we don't need
+to worry in alloc_set_pte(), and can restore that to how it was (I
+cannot find any reason to pte_free() under lock as it was doing).
 
-The actual error code -517 == -EPROBE_DEFER is coming from
-pinctrl_get_device_gpio_range(), which is called through:
-        gpiochip_add
-            of_gpiochip_add
-                of_gpiochip_scan_gpios
-                    gpiod_hog
-                        gpiochip_request_own_desc
-                            __gpiod_request
-                                chip->request
-                                    gpiochip_generic_request
-                                       pinctrl_gpio_request
-                                          pinctrl_get_device_gpio_range
+And fix a separate pagetable leak, or crash, introduced by the same
+change, that could only show up on some ppc64: why does do_set_pmd()'s
+failure case attempt to withdraw a pagetable when it never deposited
+one, at the same time overwriting (so leaking) the vmf->prealloc_pte?
+Residue of an earlier implementation, perhaps? Delete it.
 
-pinctrl_get_device_gpio_range() is unable to find any valid
-pin ranges, since nothing has been added to the pinctrldev_list yet.
-so the range can't be found, and the operation fails with -EPROBE_DEFER.
-
-This patch fixes the issue by adding the "gpio-ranges" property to
-the pinctrl device node of all upstream Qcom SoC. The pin ranges are
-then added by the gpio core.
-
-In order to remain compatible with older, existing DTs (and ACPI)
-a check for the "gpio-ranges" property has been added to
-msm_gpio_init(). This prevents the driver of adding the same entry
-to the pinctrldev_list twice.
-
-Reported-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
-Tested-by: Sven Eckelmann <sven.eckelmann@openmesh.com> [ipq4019]
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+Fixes: 953c66c2b22a ("mm: THP page cache support for ppc64")
+Cc: Aneesh Kumar K.V <aneesh.kumar@linux.vnet.ibm.com>
+Cc: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Michael Neuling <mikey@neuling.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Balbir Singh <bsingharora@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Hugh Dickins <hughd@google.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Minchan Kim <minchan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/pinctrl/qcom/pinctrl-msm.c |   23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
+ mm/memory.c |   21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -803,11 +803,24 @@ static int msm_gpio_init(struct msm_pinc
- 		return ret;
- 	}
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3329,15 +3329,24 @@ static int do_fault(struct fault_env *fe
+ {
+ 	struct vm_area_struct *vma = fe->vma;
+ 	pgoff_t pgoff = linear_page_index(vma, fe->address);
++	int ret;
  
--	ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev), 0, 0, chip->ngpio);
--	if (ret) {
--		dev_err(pctrl->dev, "Failed to add pin range\n");
--		gpiochip_remove(&pctrl->chip);
--		return ret;
-+	/*
-+	 * For DeviceTree-supported systems, the gpio core checks the
-+	 * pinctrl's device node for the "gpio-ranges" property.
-+	 * If it is present, it takes care of adding the pin ranges
-+	 * for the driver. In this case the driver can skip ahead.
-+	 *
-+	 * In order to remain compatible with older, existing DeviceTree
-+	 * files which don't set the "gpio-ranges" property or systems that
-+	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
-+	 */
-+	if (!of_property_read_bool(pctrl->dev->of_node, "gpio-ranges")) {
-+		ret = gpiochip_add_pin_range(&pctrl->chip,
-+			dev_name(pctrl->dev), 0, 0, chip->ngpio);
-+		if (ret) {
-+			dev_err(pctrl->dev, "Failed to add pin range\n");
-+			gpiochip_remove(&pctrl->chip);
-+			return ret;
-+		}
- 	}
+ 	/* The VMA was not fully populated on mmap() or missing VM_DONTEXPAND */
+ 	if (!vma->vm_ops->fault)
+-		return VM_FAULT_SIGBUS;
+-	if (!(fe->flags & FAULT_FLAG_WRITE))
+-		return do_read_fault(fe, pgoff);
+-	if (!(vma->vm_flags & VM_SHARED))
+-		return do_cow_fault(fe, pgoff);
+-	return do_shared_fault(fe, pgoff);
++		ret = VM_FAULT_SIGBUS;
++	else if (!(fe->flags & FAULT_FLAG_WRITE))
++		ret = do_read_fault(fe, pgoff);
++	else if (!(vma->vm_flags & VM_SHARED))
++		ret = do_cow_fault(fe, pgoff);
++	else
++		ret = do_shared_fault(fe, pgoff);
++
++	/* preallocated pagetable is unused: free it */
++	if (fe->prealloc_pte) {
++		pte_free(vma->vm_mm, fe->prealloc_pte);
++		fe->prealloc_pte = 0;
++	}
++	return ret;
+ }
  
- 	ret = gpiochip_irqchip_add(chip,
+ static int numa_migrate_prep(struct page *page, struct vm_area_struct *vma,
 
 
