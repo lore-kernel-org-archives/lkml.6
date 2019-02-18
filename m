@@ -2,80 +2,93 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F8E2C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D58DC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:41:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBD4D2184E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:41:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 455152184E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:41:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729278AbfBRIlL (ORCPT
+        id S1729304AbfBRIlY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 03:41:11 -0500
-Received: from mail-ed1-f44.google.com ([209.85.208.44]:46918 "EHLO
-        mail-ed1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727423AbfBRIlK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 03:41:10 -0500
-Received: by mail-ed1-f44.google.com with SMTP id f2so13064132edy.13;
-        Mon, 18 Feb 2019 00:41:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rrvN2fxzNsgbOib5GzTyYbcbZZj2FKN9mxwLPe1rUjM=;
-        b=a7tRMwd1L407q9j90V9vCfuFcIqP7BQtXJcgwCDEHJ8HgxS/14Y8nAbHHfNNKx+PGk
-         RdrSmO7dU4nTi7m8LZAwiW78N3GyqaIsdN6PCiWkLBOVhrm95/Y2GuMS671ghdnnb5f1
-         4ynvRmXJHrq/60xXc+fKk6U2UvYu2BVg6irs3WM2pMNYXhvBz8XU9xLox+5lI6sskUCo
-         z6JFGQZ9z8q6lWuJ9iva9juEPwSiGTxs3qTtzu6OSsdOtP8GsXuGVZOS97aN0TB9V7O4
-         20Cv/9v33mXiHlBAhfmdl7PthyX5hPl+y6LaaqLTTdGz1vZlA7zdajyDOMIndGgFdr3O
-         lc/g==
-X-Gm-Message-State: AHQUAuY2mzJoYwspEoyVuZGVWQryt4hVO4GZi9h/bBvIA3wPKKIXy992
-        cs894vLWAKvUM1LejLag88P0jeNPYFw=
-X-Google-Smtp-Source: AHgI3IZQNv8WIMm4XKHpMQbBYS3DJzMwjCQYVJup3LM+Mhv9fvARkla6HVB/nGd8Q1aGq6vH+R5U4g==
-X-Received: by 2002:aa7:d41a:: with SMTP id z26mr18107826edq.224.1550479268543;
-        Mon, 18 Feb 2019 00:41:08 -0800 (PST)
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com. [209.85.128.46])
-        by smtp.gmail.com with ESMTPSA id x2sm2420157eji.15.2019.02.18.00.41.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Feb 2019 00:41:08 -0800 (PST)
-Received: by mail-wm1-f46.google.com with SMTP id a62so16445684wmh.4;
-        Mon, 18 Feb 2019 00:41:08 -0800 (PST)
-X-Received: by 2002:a1c:20d0:: with SMTP id g199mr14996721wmg.111.1550479267635;
- Mon, 18 Feb 2019 00:41:07 -0800 (PST)
+        Mon, 18 Feb 2019 03:41:24 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3662 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727423AbfBRIlX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 03:41:23 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 3567E462276564538129;
+        Mon, 18 Feb 2019 16:41:21 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.408.0; Mon, 18 Feb 2019 16:41:11 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Dave Airlie <airlied@redhat.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        "David Airlie" <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <virtualization@lists.linux-foundation.org>,
+        <spice-devel@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] drm/qxl: remove set but not used variable 'bo_old'
+Date:   Mon, 18 Feb 2019 08:54:59 +0000
+Message-ID: <20190218085459.196470-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190215094554.28593-1-colin.king@canonical.com>
-In-Reply-To: <20190215094554.28593-1-colin.king@canonical.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Mon, 18 Feb 2019 16:40:57 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65JsDOMoUy8E1NbM8ccob7B110hZLbO18+3oS-i6m9w+A@mail.gmail.com>
-Message-ID: <CAGb2v65JsDOMoUy8E1NbM8ccob7B110hZLbO18+3oS-i6m9w+A@mail.gmail.com>
-Subject: Re: [PATCH][V3] regulator: axp20x: remove a redundant null check on rdev
-To:     Colin King <colin.king@canonical.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 5:46 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently rdev is dereferenced when assigning desc before rdev is null
-> checked, this is leading to static analysis warnings.  However, rdev
-> can never be null, so the null check is redundant and can be removed.
->
-> Detected by CoverityScan, CID#1476031 ("Dereference before null check")
->
-> Fixes: 77e3e3b165db ("regulator: axp20x: add software based soft_start for AXP209 LDO3")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+drivers/gpu/drm/qxl/qxl_display.c: In function 'qxl_primary_atomic_update':
+drivers/gpu/drm/qxl/qxl_display.c:538:17: warning:
+ variable 'bo_old' set but not used [-Wunused-but-set-variable]
+
+It's not used any more after 4979904c62b9 ("drm/qxl: use shadow bo directly")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/qxl/qxl_display.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/qxl/qxl_display.c b/drivers/gpu/drm/qxl/qxl_display.c
+index 08c725544a2f..8b319ebbb0fb 100644
+--- a/drivers/gpu/drm/qxl/qxl_display.c
++++ b/drivers/gpu/drm/qxl/qxl_display.c
+@@ -535,7 +535,7 @@ static void qxl_primary_atomic_update(struct drm_plane *plane,
+ {
+ 	struct qxl_device *qdev = plane->dev->dev_private;
+ 	struct qxl_bo *bo = gem_to_qxl_bo(plane->state->fb->obj[0]);
+-	struct qxl_bo *bo_old, *primary;
++	struct qxl_bo *primary;
+ 	struct drm_clip_rect norect = {
+ 	    .x1 = 0,
+ 	    .y1 = 0,
+@@ -544,12 +544,6 @@ static void qxl_primary_atomic_update(struct drm_plane *plane,
+ 	};
+ 	uint32_t dumb_shadow_offset = 0;
+ 
+-	if (old_state->fb) {
+-		bo_old = gem_to_qxl_bo(old_state->fb->obj[0]);
+-	} else {
+-		bo_old = NULL;
+-	}
+-
+ 	primary = bo->shadow ? bo->shadow : bo;
+ 
+ 	if (!primary->is_primary) {
+
+
+
+
+
