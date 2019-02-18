@@ -2,155 +2,256 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 708EDC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:33:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D901C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:34:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4183F2081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:33:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550500434;
-	bh=C6lQ+B20K4rzZ8yWwSIX8gOwnehvztd7UBiqmlDGWLw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uniUkL285RAVtgNmUj1NCvzXe92e3ZeYsEIBJ09slXIPRnlLnq+k6i+YMNOT3buXG
-	 WB1AcW3iq0oRfHyW4xgs7CxXvdXYGzqAHVJTsl2kYZOTw7FlXCtjejD23e/Vy9vQam
-	 2XrrWSpDwWTSdLDjau5Ub9gWthR+6fuhQNf1aM1g=
+	by mail.kernel.org (Postfix) with ESMTP id F05F42190C
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:33:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388205AbfBRN56 (ORCPT
+        id S2388948AbfBROd6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:57:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38314 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:33:58 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38448 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388147AbfBRN5r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:57:47 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2387926AbfBRN4x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:56:53 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 333552077B;
-        Mon, 18 Feb 2019 13:57:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498266;
-        bh=C6lQ+B20K4rzZ8yWwSIX8gOwnehvztd7UBiqmlDGWLw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Me9gM+NXwndZdLrZPvETpq85Ssv+etWW9fCJCYKBTi5GKHiPUtRAuFlu4jJUiCy8a
-         s2RVttcrStVA9or2sDUIPYpXRLwyciiUErs6RGSNQmRQhq/0BY1ISihMGeVN71xQd4
-         rFhJrX3gghQx6EHI4NDDX56UhW1n46T10cQHq+Es=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        "David A. Long" <dave.long@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 14/58] ARM: split out processor lookup
-Date:   Mon, 18 Feb 2019 14:43:35 +0100
-Message-Id: <20190218133509.652631899@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190218133508.567416115@linuxfoundation.org>
-References: <20190218133508.567416115@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        by mx1.redhat.com (Postfix) with ESMTPS id 984113B3C0;
+        Mon, 18 Feb 2019 13:56:52 +0000 (UTC)
+Received: from laptop.redhat.com (ovpn-116-102.ams2.redhat.com [10.36.116.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9A4F35D70A;
+        Mon, 18 Feb 2019 13:56:45 +0000 (UTC)
+From:   Eric Auger <eric.auger@redhat.com>
+To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
+        yi.l.liu@linux.intel.com, jean-philippe.brucker@arm.com,
+        will.deacon@arm.com, robin.murphy@arm.com
+Cc:     kevin.tian@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org
+Subject: [PATCH v4 11/22] iommu/arm-smmu-v3: Maintain a SID->device structure
+Date:   Mon, 18 Feb 2019 14:54:52 +0100
+Message-Id: <20190218135504.25048-12-eric.auger@redhat.com>
+In-Reply-To: <20190218135504.25048-1-eric.auger@redhat.com>
+References: <20190218135504.25048-1-eric.auger@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 18 Feb 2019 13:56:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+From: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
 
-------------------
+When handling faults from the event or PRI queue, we need to find the
+struct device associated to a SID. Add a rb_tree to keep track of SIDs.
 
-Commit 65987a8553061515b5851b472081aedb9837a391 upstream.
-
-Split out the lookup of the processor type and associated error handling
-from the rest of setup_processor() - we will need to use this in the
-secondary CPU bringup path for big.Little Spectre variant 2 mitigation.
-
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: David A. Long <dave.long@linaro.org>
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
 ---
- arch/arm/include/asm/cputype.h |  1 +
- arch/arm/kernel/setup.c        | 31 +++++++++++++++++++------------
- 2 files changed, 20 insertions(+), 12 deletions(-)
+ drivers/iommu/arm-smmu-v3.c | 136 ++++++++++++++++++++++++++++++++++--
+ 1 file changed, 132 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/include/asm/cputype.h b/arch/arm/include/asm/cputype.h
-index c55db1e22f0c..b9356dbfded0 100644
---- a/arch/arm/include/asm/cputype.h
-+++ b/arch/arm/include/asm/cputype.h
-@@ -106,6 +106,7 @@
- #define ARM_CPU_PART_SCORPION		0x510002d0
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index ce222705f52b..9af68266bbb1 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -589,6 +589,16 @@ struct arm_smmu_device {
  
- extern unsigned int processor_id;
-+struct proc_info_list *lookup_processor(u32 midr);
+ 	/* IOMMU core code handle */
+ 	struct iommu_device		iommu;
++
++	struct rb_root			streams;
++	struct mutex			streams_mutex;
++
++};
++
++struct arm_smmu_stream {
++	u32				id;
++	struct arm_smmu_master_data	*master;
++	struct rb_node			node;
+ };
  
- #ifdef CONFIG_CPU_CP15
- #define read_cpuid(reg)							\
-diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
-index f4e54503afa9..8d5c3a118abe 100644
---- a/arch/arm/kernel/setup.c
-+++ b/arch/arm/kernel/setup.c
-@@ -667,22 +667,29 @@ static void __init smp_build_mpidr_hash(void)
+ /* SMMU private data for each master */
+@@ -598,6 +608,7 @@ struct arm_smmu_master_data {
+ 
+ 	struct arm_smmu_domain		*domain;
+ 	struct list_head		list; /* domain->devices */
++	struct arm_smmu_stream		*streams;
+ 
+ 	struct device			*dev;
+ };
+@@ -1244,6 +1255,32 @@ static int arm_smmu_init_l2_strtab(struct arm_smmu_device *smmu, u32 sid)
+ 	return 0;
  }
- #endif
  
--static void __init setup_processor(void)
-+/*
-+ * locate processor in the list of supported processor types.  The linker
-+ * builds this table for us from the entries in arch/arm/mm/proc-*.S
-+ */
-+struct proc_info_list *lookup_processor(u32 midr)
- {
--	struct proc_info_list *list;
-+	struct proc_info_list *list = lookup_processor_type(midr);
- 
--	/*
--	 * locate processor in the list of supported processor
--	 * types.  The linker builds this table for us from the
--	 * entries in arch/arm/mm/proc-*.S
--	 */
--	list = lookup_processor_type(read_cpuid_id());
- 	if (!list) {
--		pr_err("CPU configuration botched (ID %08x), unable to continue.\n",
--		       read_cpuid_id());
--		while (1);
-+		pr_err("CPU%u: configuration botched (ID %08x), CPU halted\n",
-+		       smp_processor_id(), midr);
-+		while (1)
-+		/* can't use cpu_relax() here as it may require MMU setup */;
- 	}
- 
-+	return list;
++__maybe_unused
++static struct arm_smmu_master_data *
++arm_smmu_find_master(struct arm_smmu_device *smmu, u32 sid)
++{
++	struct rb_node *node;
++	struct arm_smmu_stream *stream;
++	struct arm_smmu_master_data *master = NULL;
++
++	mutex_lock(&smmu->streams_mutex);
++	node = smmu->streams.rb_node;
++	while (node) {
++		stream = rb_entry(node, struct arm_smmu_stream, node);
++		if (stream->id < sid) {
++			node = node->rb_right;
++		} else if (stream->id > sid) {
++			node = node->rb_left;
++		} else {
++			master = stream->master;
++			break;
++		}
++	}
++	mutex_unlock(&smmu->streams_mutex);
++
++	return master;
 +}
 +
-+static void __init setup_processor(void)
+ /* IRQ and event handlers */
+ static irqreturn_t arm_smmu_evtq_thread(int irq, void *dev)
+ {
+@@ -1882,6 +1919,71 @@ static bool arm_smmu_sid_in_range(struct arm_smmu_device *smmu, u32 sid)
+ 	return sid < limit;
+ }
+ 
++static int arm_smmu_insert_master(struct arm_smmu_device *smmu,
++				  struct arm_smmu_master_data *master)
 +{
-+	unsigned int midr = read_cpuid_id();
-+	struct proc_info_list *list = lookup_processor(midr);
++	int i;
++	int ret = 0;
++	struct arm_smmu_stream *new_stream, *cur_stream;
++	struct rb_node **new_node, *parent_node = NULL;
++	struct iommu_fwspec *fwspec = master->dev->iommu_fwspec;
 +
- 	cpu_name = list->cpu_name;
- 	__cpu_architecture = __get_cpu_architecture();
++	master->streams = kcalloc(fwspec->num_ids,
++				  sizeof(struct arm_smmu_stream), GFP_KERNEL);
++	if (!master->streams)
++		return -ENOMEM;
++
++	mutex_lock(&smmu->streams_mutex);
++	for (i = 0; i < fwspec->num_ids && !ret; i++) {
++		new_stream = &master->streams[i];
++		new_stream->id = fwspec->ids[i];
++		new_stream->master = master;
++
++		new_node = &(smmu->streams.rb_node);
++		while (*new_node) {
++			cur_stream = rb_entry(*new_node, struct arm_smmu_stream,
++					      node);
++			parent_node = *new_node;
++			if (cur_stream->id > new_stream->id) {
++				new_node = &((*new_node)->rb_left);
++			} else if (cur_stream->id < new_stream->id) {
++				new_node = &((*new_node)->rb_right);
++			} else {
++				dev_warn(master->dev,
++					 "stream %u already in tree\n",
++					 cur_stream->id);
++				ret = -EINVAL;
++				break;
++			}
++		}
++
++		if (!ret) {
++			rb_link_node(&new_stream->node, parent_node, new_node);
++			rb_insert_color(&new_stream->node, &smmu->streams);
++		}
++	}
++	mutex_unlock(&smmu->streams_mutex);
++
++	return ret;
++}
++
++static void arm_smmu_remove_master(struct arm_smmu_device *smmu,
++				   struct arm_smmu_master_data *master)
++{
++	int i;
++	struct iommu_fwspec *fwspec = master->dev->iommu_fwspec;
++
++	if (!master->streams)
++		return;
++
++	mutex_lock(&smmu->streams_mutex);
++	for (i = 0; i < fwspec->num_ids; i++)
++		rb_erase(&master->streams[i].node, &smmu->streams);
++	mutex_unlock(&smmu->streams_mutex);
++
++	kfree(master->streams);
++}
++
+ static struct iommu_ops arm_smmu_ops;
  
-@@ -700,7 +707,7 @@ static void __init setup_processor(void)
- #endif
+ static int arm_smmu_add_device(struct device *dev)
+@@ -1930,13 +2032,35 @@ static int arm_smmu_add_device(struct device *dev)
+ 		}
+ 	}
  
- 	pr_info("CPU: %s [%08x] revision %d (ARMv%s), cr=%08lx\n",
--		cpu_name, read_cpuid_id(), read_cpuid_id() & 15,
-+		list->cpu_name, midr, midr & 15,
- 		proc_arch[cpu_architecture()], get_cr());
++	ret = iommu_device_link(&smmu->iommu, dev);
++	if (ret)
++		goto err_free_master;
++
++	ret = arm_smmu_insert_master(smmu, master);
++	if (ret)
++		goto err_unlink;
++
+ 	group = iommu_group_get_for_dev(dev);
+-	if (!IS_ERR(group)) {
+-		iommu_group_put(group);
+-		iommu_device_link(&smmu->iommu, dev);
++	if (IS_ERR(group)) {
++		ret = PTR_ERR(group);
++		goto err_remove_master;
+ 	}
  
- 	snprintf(init_utsname()->machine, __NEW_UTS_LEN + 1, "%s%c",
+-	return PTR_ERR_OR_ZERO(group);
++	iommu_group_put(group);
++
++	return 0;
++
++err_remove_master:
++	arm_smmu_remove_master(smmu, master);
++
++err_unlink:
++	iommu_device_unlink(&smmu->iommu, dev);
++
++err_free_master:
++	kfree(master);
++	fwspec->iommu_priv = NULL;
++
++	return ret;
+ }
+ 
+ static void arm_smmu_remove_device(struct device *dev)
+@@ -1953,6 +2077,7 @@ static void arm_smmu_remove_device(struct device *dev)
+ 	if (master && master->ste.assigned)
+ 		arm_smmu_detach_dev(dev);
+ 	iommu_group_remove_device(dev);
++	arm_smmu_remove_master(smmu, master);
+ 	iommu_device_unlink(&smmu->iommu, dev);
+ 	kfree(master);
+ 	iommu_fwspec_free(dev);
+@@ -2266,6 +2391,9 @@ static int arm_smmu_init_structures(struct arm_smmu_device *smmu)
+ {
+ 	int ret;
+ 
++	mutex_init(&smmu->streams_mutex);
++	smmu->streams = RB_ROOT;
++
+ 	ret = arm_smmu_init_queues(smmu);
+ 	if (ret)
+ 		return ret;
 -- 
-2.19.1
-
-
+2.20.1
 
