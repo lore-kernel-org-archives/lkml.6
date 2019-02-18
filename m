@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54690C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51273C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F7BA20842
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F2A6217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498106;
-	bh=IDqVaifCncmyqhpwyFP8PJZVk16qA/KdoKHF6I6F3I0=;
+	s=default; t=1550498110;
+	bh=Pfqgf6qkYUj6MjWIH5UWOVX1JqVa+YcUE6i14hnlE80=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AAToMguxYtq5Zm6IR5uqN8aT37G2/i/4bONp+H7us1x1rhWXFLT19sJD5YLrL6TGa
-	 CwjqJGU4cCRA841KPaqnEMJjtUNt70yYUteHgRj+4gXt77eveaAO5liU6JyMoWbULX
-	 +C86J5mfi03fePTMDlQwOXNA/xbnutNPlIEppyYM=
+	b=nsM6Ij2NWAaXj6BbnAqPFDh+Wa44wLaAAGrMeq7jLbylidzLEKFZpASKd/hQ98YzS
+	 ijUxb0DNwmRXrAJnH6QQX9BApHIKogYy3Okf8yrPg8quTJixyeVcdoBIR5x7mqcb1F
+	 SK92eVeNVbmxGV7GMOXhwA5AuuxU+Tv4PMZNtL4I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387447AbfBRNzE (ORCPT
+        id S2387461AbfBRNzI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:55:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35026 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:55:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35082 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387414AbfBRNzC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:55:02 -0500
+        id S2387446AbfBRNzF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:55:05 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52FE820842;
-        Mon, 18 Feb 2019 13:55:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C301217D9;
+        Mon, 18 Feb 2019 13:55:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498101;
-        bh=IDqVaifCncmyqhpwyFP8PJZVk16qA/KdoKHF6I6F3I0=;
+        s=default; t=1550498104;
+        bh=Pfqgf6qkYUj6MjWIH5UWOVX1JqVa+YcUE6i14hnlE80=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bQKOfW69pNuvio/X5QXAZZkMEsOlwuGow+V9Mp9+YGlmlj3oB6XxtJPUdFHObH1TE
-         GIpTxhHZm/XpfQkP2jjl1mXXGzmCv0CSFgdH2IWx2KuUPhHBNY9TNSekyJFPKo0lzI
-         cuHi6ADs2UjHyU4MXKzKBO0ZmwNfmlGXtNr2A07U=
+        b=NTMcg73xp7sD4g9jYp1fzf4twqTaukSAY30gWpJD20CWQbFuzZlo9aAqR0CaKc6yy
+         /rrG6qi0I4osKkQKYjs1e+MinBIhClep4QI15zQoR3IBYpXj8BkB6aAmqS7xWylFG5
+         ZN0OFzQ+ufJQkgXJZf4LTsGj11sOKttG40au75pw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -46,9 +46,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Russell King <rmk+kernel@armlinux.org.uk>,
         "David A. Long" <dave.long@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 05/62] ARM: 8789/1: signal: copy registers using __copy_to_user()
-Date:   Mon, 18 Feb 2019 14:43:11 +0100
-Message-Id: <20190218133506.231756602@linuxfoundation.org>
+Subject: [PATCH 4.14 06/62] ARM: 8790/1: signal: always use __copy_to_user to save iwmmxt context
+Date:   Mon, 18 Feb 2019 14:43:12 +0100
+Message-Id: <20190218133506.328269515@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
 References: <20190218133505.801423074@linuxfoundation.org>
@@ -67,10 +67,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-Commit 5ca451cf6ed04443774bbb7ee45332dafa42e99f upstream.
+Commit 73839798af7ebc6c8d0c9271ebbbc148700e521f upstream.
 
-When saving the ARM integer registers, use __copy_to_user() to
-copy them into user signal frame, rather than __put_user_error().
+When setting a dummy iwmmxt context, create a local instance and
+use __copy_to_user both cases whether iwmmxt is being used or not.
 This has the benefit of disabling/enabling PAN once for the whole copy
 intead of once per write.
 
@@ -80,70 +80,38 @@ Signed-off-by: David A. Long <dave.long@linaro.org>
 Reviewed-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/kernel/signal.c | 49 ++++++++++++++++++++++------------------
- 1 file changed, 27 insertions(+), 22 deletions(-)
+ arch/arm/kernel/signal.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
-index cdfe52b15a0a..1dc1f39825b6 100644
+index 1dc1f39825b6..b12499cc3582 100644
 --- a/arch/arm/kernel/signal.c
 +++ b/arch/arm/kernel/signal.c
-@@ -296,30 +296,35 @@ static int
- setup_sigframe(struct sigframe __user *sf, struct pt_regs *regs, sigset_t *set)
- {
- 	struct aux_sigframe __user *aux;
-+	struct sigcontext context;
- 	int err = 0;
- 
--	__put_user_error(regs->ARM_r0, &sf->uc.uc_mcontext.arm_r0, err);
--	__put_user_error(regs->ARM_r1, &sf->uc.uc_mcontext.arm_r1, err);
--	__put_user_error(regs->ARM_r2, &sf->uc.uc_mcontext.arm_r2, err);
--	__put_user_error(regs->ARM_r3, &sf->uc.uc_mcontext.arm_r3, err);
--	__put_user_error(regs->ARM_r4, &sf->uc.uc_mcontext.arm_r4, err);
--	__put_user_error(regs->ARM_r5, &sf->uc.uc_mcontext.arm_r5, err);
--	__put_user_error(regs->ARM_r6, &sf->uc.uc_mcontext.arm_r6, err);
--	__put_user_error(regs->ARM_r7, &sf->uc.uc_mcontext.arm_r7, err);
--	__put_user_error(regs->ARM_r8, &sf->uc.uc_mcontext.arm_r8, err);
--	__put_user_error(regs->ARM_r9, &sf->uc.uc_mcontext.arm_r9, err);
--	__put_user_error(regs->ARM_r10, &sf->uc.uc_mcontext.arm_r10, err);
--	__put_user_error(regs->ARM_fp, &sf->uc.uc_mcontext.arm_fp, err);
--	__put_user_error(regs->ARM_ip, &sf->uc.uc_mcontext.arm_ip, err);
--	__put_user_error(regs->ARM_sp, &sf->uc.uc_mcontext.arm_sp, err);
--	__put_user_error(regs->ARM_lr, &sf->uc.uc_mcontext.arm_lr, err);
--	__put_user_error(regs->ARM_pc, &sf->uc.uc_mcontext.arm_pc, err);
--	__put_user_error(regs->ARM_cpsr, &sf->uc.uc_mcontext.arm_cpsr, err);
+@@ -76,8 +76,6 @@ static int preserve_iwmmxt_context(struct iwmmxt_sigframe __user *frame)
+ 		kframe->magic = IWMMXT_MAGIC;
+ 		kframe->size = IWMMXT_STORAGE_SIZE;
+ 		iwmmxt_task_copy(current_thread_info(), &kframe->storage);
 -
--	__put_user_error(current->thread.trap_no, &sf->uc.uc_mcontext.trap_no, err);
--	__put_user_error(current->thread.error_code, &sf->uc.uc_mcontext.error_code, err);
--	__put_user_error(current->thread.address, &sf->uc.uc_mcontext.fault_address, err);
--	__put_user_error(set->sig[0], &sf->uc.uc_mcontext.oldmask, err);
-+	context = (struct sigcontext) {
-+		.arm_r0        = regs->ARM_r0,
-+		.arm_r1        = regs->ARM_r1,
-+		.arm_r2        = regs->ARM_r2,
-+		.arm_r3        = regs->ARM_r3,
-+		.arm_r4        = regs->ARM_r4,
-+		.arm_r5        = regs->ARM_r5,
-+		.arm_r6        = regs->ARM_r6,
-+		.arm_r7        = regs->ARM_r7,
-+		.arm_r8        = regs->ARM_r8,
-+		.arm_r9        = regs->ARM_r9,
-+		.arm_r10       = regs->ARM_r10,
-+		.arm_fp        = regs->ARM_fp,
-+		.arm_ip        = regs->ARM_ip,
-+		.arm_sp        = regs->ARM_sp,
-+		.arm_lr        = regs->ARM_lr,
-+		.arm_pc        = regs->ARM_pc,
-+		.arm_cpsr      = regs->ARM_cpsr,
-+
-+		.trap_no       = current->thread.trap_no,
-+		.error_code    = current->thread.error_code,
-+		.fault_address = current->thread.address,
-+		.oldmask       = set->sig[0],
-+	};
-+
-+	err |= __copy_to_user(&sf->uc.uc_mcontext, &context, sizeof(context));
+-		err = __copy_to_user(frame, kframe, sizeof(*frame));
+ 	} else {
+ 		/*
+ 		 * For bug-compatibility with older kernels, some space
+@@ -85,10 +83,14 @@ static int preserve_iwmmxt_context(struct iwmmxt_sigframe __user *frame)
+ 		 * Set the magic and size appropriately so that properly
+ 		 * written userspace can skip it reliably:
+ 		 */
+-		__put_user_error(DUMMY_MAGIC, &frame->magic, err);
+-		__put_user_error(IWMMXT_STORAGE_SIZE, &frame->size, err);
++		*kframe = (struct iwmmxt_sigframe) {
++			.magic = DUMMY_MAGIC,
++			.size  = IWMMXT_STORAGE_SIZE,
++		};
+ 	}
  
- 	err |= __copy_to_user(&sf->uc.uc_sigmask, set, sizeof(*set));
++	err = __copy_to_user(frame, kframe, sizeof(*kframe));
++
+ 	return err;
+ }
  
 -- 
 2.19.1
