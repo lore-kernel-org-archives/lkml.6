@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F39C2C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:25:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E0CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:25:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C75F821903
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:25:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C34820851
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:25:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499926;
-	bh=NY8LO495SfcL0AZRL3NHNf2G2BR+waq9+arxqMPsLkw=;
+	s=default; t=1550499936;
+	bh=M2puCQdhACYHsrKbUl5tJKmwlLEmIUdyqy4JXmdvpJc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UNFTKEYl3NBct6F3PN5Upo+33Q1lOZfPfH8Iu9Y2nPYlt1Zx4I1ldpnMX0MikGvc6
-	 lCcK5M2n0m9AiwIK2OXH0K8TEG64Bl7tNXw9QBxnAqh4WdMgJ0sY+bwHOjJ48LxCoJ
-	 Nt02EXdQvcnLwJXVUldu3NzjCeG2RGWMLTw5pfNo=
+	b=QqIggDUrbEYqUkCo5lTodpx+WbSxt49FqWaHQSMxKRCG7DF9+MDt7IInY6Qe2X5tc
+	 RezxBypnYucdiT/wRyF8QBjzbRmoI/Of0wWasR0/TE8nm8+I8v4yCbYi/XnBzPRtHs
+	 CxYc1qns+VDdYJj4Bk75BnmLhknpNwf8oCabWXXw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389926AbfBROZZ (ORCPT
+        id S2390003AbfBROZe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:25:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45532 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:25:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388531AbfBRODe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:03:34 -0500
+        id S2389652AbfBRODY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:03:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C45F21901;
-        Mon, 18 Feb 2019 14:03:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 107762070D;
+        Mon, 18 Feb 2019 14:03:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498613;
-        bh=NY8LO495SfcL0AZRL3NHNf2G2BR+waq9+arxqMPsLkw=;
+        s=default; t=1550498603;
+        bh=M2puCQdhACYHsrKbUl5tJKmwlLEmIUdyqy4JXmdvpJc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sXZ3jRcnaTs33tft4mIdeBgZ0Q3TjVVo5RqI8CsbEZC5PZmPyWjgLO5rq6viM1DT0
-         fLHV2CBj1Pq/h8b+LsX3DhaagER1i4jIXdO6U803yriZvwQJtbkvYYSrMLnK5DDeGx
-         tDH9pz+CqjzTx3NlUCjaOhDzWNg1+e4LdbtWulJ4=
+        b=VlR6TwMzHidUsesgXCr0BKENjulbH+Ijv8ibjwWXc6S/lGmYfJddF60IdAPe68+uH
+         h0BZ8zw5jBrJrSzZCh+G4Tn1PuaGmhZ8OWzGCgCqVP2o3Zf+O69DM4/Uwup2ONxCNl
+         cT6Ck3bWY5DQEf5rY5hCMTsv5IsB3rjCyUxkttbk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Zyngier <marc.zyngier@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Johan Hedberg <johan.hedberg@intel.com>,
+        Luiz Augusto von Dentz <luiz.von.dentz@intel.com>,
+        Marcel Holtmann <marcel@holtmann.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 064/143] scripts/decode_stacktrace: only strip base path when a prefix of the path
-Date:   Mon, 18 Feb 2019 14:43:12 +0100
-Message-Id: <20190218133531.439753203@linuxfoundation.org>
+Subject: [PATCH 4.4 044/143] Bluetooth: Fix unnecessary error message for HCI request completion
+Date:   Mon, 18 Feb 2019 14:42:52 +0100
+Message-Id: <20190218133530.751032594@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -68,45 +67,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 67a28de47faa83585dd644bd4c31e5a1d9346c50 ]
+[ Upstream commit 1629db9c75342325868243d6bca5853017d91cf8 ]
 
-Running something like:
+In case a command which completes in Command Status was sent using the
+hci_cmd_send-family of APIs there would be a misleading error in the
+hci_get_cmd_complete function, since the code would be trying to fetch
+the Command Complete parameters when there are none.
 
-	decodecode vmlinux .
+Avoid the misleading error and silently bail out from the function in
+case the received event is a command status.
 
-leads to interested results where not only the leading "." gets stripped
-from the displayed paths, but also anywhere in the string, displaying
-something like:
-
-	kvm_vcpu_check_block (arch/arm64/kvm/virt/kvm/kvm_mainc:2141)
-
-which doesn't help further processing.
-
-Fix it by only stripping the base path if it is a prefix of the path.
-
-Link: http://lkml.kernel.org/r/20181210174659.31054-3-marc.zyngier@arm.com
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
+Acked-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/decode_stacktrace.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ net/bluetooth/hci_event.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
-index 00d6d53c2681..ffc46c7c3afb 100755
---- a/scripts/decode_stacktrace.sh
-+++ b/scripts/decode_stacktrace.sh
-@@ -64,7 +64,7 @@ parse_symbol() {
- 	fi
+diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+index d40d32a2c12d..37fe2b158c2a 100644
+--- a/net/bluetooth/hci_event.c
++++ b/net/bluetooth/hci_event.c
+@@ -5185,6 +5185,12 @@ static bool hci_get_cmd_complete(struct hci_dev *hdev, u16 opcode,
+ 		return true;
+ 	}
  
- 	# Strip out the base of the path
--	code=${code//$basepath/""}
-+	code=${code//^$basepath/""}
- 
- 	# In the case of inlines, move everything to same line
- 	code=${code//$'\n'/' '}
++	/* Check if request ended in Command Status - no way to retreive
++	 * any extra parameters in this case.
++	 */
++	if (hdr->evt == HCI_EV_CMD_STATUS)
++		return false;
++
+ 	if (hdr->evt != HCI_EV_CMD_COMPLETE) {
+ 		BT_DBG("Last event is not cmd complete (0x%2.2x)", hdr->evt);
+ 		return false;
 -- 
 2.19.1
 
