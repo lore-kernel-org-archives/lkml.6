@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD97CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:09:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88902C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:09:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE7DD2173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:09:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 572F72173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:09:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498986;
-	bh=zXqwcncJiOmfC48P+7v3313I1g3iRW40Ep99Dhdn3kc=;
+	s=default; t=1550498989;
+	bh=u+fhuPa24U23KArZ6uAa9/XYZX1cF/lCmzihsp36Nuc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QySUX4s0rkcpBGPx/IFQDPcRgHyALOPm7sDQWqBu+tIAEM8H2hCAUytcDhaBKDByc
-	 +JFquUL/kBV4cDhE/2wonfiAGiaLolpqzvI25v5Z13WCzITGcoWrZn2OYmnWthyc6o
-	 UdTAU9P+98P1ZxU+E4EUFqFMh/0ZslKlhWwq1nzQ=
+	b=hSQ5QYocFTZhSy2CLun7xyOqRBFGZt+surNcRkB+osLon04zWQxABkExV3hkLwUec
+	 /jenprgfWS3vIhY2I2kEuAd7qUBoRi+hxkP5lFSjVxt9ec+7CTEbWzt2l7MzeQvgnu
+	 zXBo4cu9GAC9bypm230WZGAQjaZIIhRHDUCnlj74=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391277AbfBROJn (ORCPT
+        id S2391292AbfBROJs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:09:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53270 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:09:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53368 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391257AbfBROJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:09:38 -0500
+        id S2390752AbfBROJo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:09:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28B2821901;
-        Mon, 18 Feb 2019 14:09:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8579217D9;
+        Mon, 18 Feb 2019 14:09:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498977;
-        bh=zXqwcncJiOmfC48P+7v3313I1g3iRW40Ep99Dhdn3kc=;
+        s=default; t=1550498984;
+        bh=u+fhuPa24U23KArZ6uAa9/XYZX1cF/lCmzihsp36Nuc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xZbniszqQ/VujMDngvAICa63wtSHtry4SVS4q0oFXmlT0zXkgWP3K53b9jY7MFhVw
-         cIHqajXwiJRq+KxNeT4cZtWgGM48YfG7VYcb1hEtzK7GMzJRZ20r5Yin2FqUe3ppgw
-         xi1JaTGmQjxuzuP7k151jIm8s70CS0xCiEZ5asC0=
+        b=pk+IXl3mxDv2M4BGD+gnlJnjm0CQlXYeTPqfwcnrhlVbMUhxVZQog6l4NmPTT8dol
+         cJ1lHOaqBYVu8yG7hQ1sFuG6yaYYy0b0gvNGGHE3VKmsqUBrAaZ9+lRp87CKcEWNju
+         RHPzsJmhQrd+g4UChAoMGh6tG0u9DwqddC7PAQlw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Aaron Brown <aaron.f.brown@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 038/108] igb: Fix an issue that PME is not enabled during runtime suspend
-Date:   Mon, 18 Feb 2019 14:43:34 +0100
-Message-Id: <20190218133521.292263326@linuxfoundation.org>
+        stable@vger.kernel.org, Simon Horman <horms+renesas@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 022/108] sata_rcar: fix deferred probing
+Date:   Mon, 18 Feb 2019 14:43:18 +0100
+Message-Id: <20190218133520.545510319@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -68,46 +67,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1fb3a7a75e2efcc83ef21f2434069cddd6fae6f5 ]
+[ Upstream commit 9f83cfdb1ace3ef268ecc6fda50058d2ec37d603 ]
 
-I210 ethernet card doesn't wakeup when a cable gets plugged. It's
-because its PME is not set.
+The driver overrides the error codes returned by platform_get_irq() to
+-EINVAL, so if it returns -EPROBE_DEFER, the driver would fail the probe
+permanently instead of the deferred probing. Switch to propagating the
+error code upstream, still checking/overriding IRQ0 as libata regards it
+as "no IRQ" (thus polling) anyway...
 
-Since commit 42eca2302146 ("PCI: Don't touch card regs after runtime
-suspend D3"), if the PCI state is saved, pci_pm_runtime_suspend() stops
-calling pci_finish_runtime_suspend(), which enables the PCI PME.
-
-To fix the issue, let's not to save PCI states when it's runtime
-suspend, to let the PCI subsystem enables PME.
-
-Fixes: 42eca2302146 ("PCI: Don't touch card regs after runtime suspend D3")
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Fixes: 9ec36cafe43b ("of/irq: do irq resolution in platform_get_irq")
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/igb/igb_main.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/ata/sata_rcar.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index b73c896ed184..390d96ae4147 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -7351,9 +7351,11 @@ static int __igb_shutdown(struct pci_dev *pdev, bool *enable_wake,
- 	rtnl_unlock();
+diff --git a/drivers/ata/sata_rcar.c b/drivers/ata/sata_rcar.c
+index ea1fbc1d4c5f..e7e259a6c732 100644
+--- a/drivers/ata/sata_rcar.c
++++ b/drivers/ata/sata_rcar.c
+@@ -879,7 +879,9 @@ static int sata_rcar_probe(struct platform_device *pdev)
+ 	int ret = 0;
  
- #ifdef CONFIG_PM
--	retval = pci_save_state(pdev);
--	if (retval)
--		return retval;
-+	if (!runtime) {
-+		retval = pci_save_state(pdev);
-+		if (retval)
-+			return retval;
-+	}
- #endif
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq <= 0)
++	if (irq < 0)
++		return irq;
++	if (!irq)
+ 		return -EINVAL;
  
- 	status = rd32(E1000_STATUS);
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(struct sata_rcar_priv),
 -- 
 2.19.1
 
