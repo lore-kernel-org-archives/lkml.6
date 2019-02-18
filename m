@@ -2,128 +2,372 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0078C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:35:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22BC2C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:35:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF9BC21736
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:35:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550500553;
-	bh=LMZSKr/B1Pugzg0aQKVy53+oDWVKVom40ZCqLVl+o9g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KIL0MTVrRrXBBc1NF92WVbMXMfbEaAAj6nQwZXXVtH4zWlrNjecWujHElMmxqEM1G
-	 1kCMkGuUTqY9zt21b7YmM6ycyiRI95u3OrWeU3jYAzv9lr/ZnfDvMM+ItM3iFZe6+C
-	 9LZXmRoeBld77ug4NAZV1wGnZQ24UkRLISsv4tzc=
+	by mail.kernel.org (Postfix) with ESMTP id DD14721736
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:35:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387651AbfBRNz7 (ORCPT
+        id S2388113AbfBROfy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:55:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36028 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:35:54 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54179 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387627AbfBRNzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:55:55 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1733074AbfBRN4E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:56:04 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45BFD20842;
-        Mon, 18 Feb 2019 13:55:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498154;
-        bh=LMZSKr/B1Pugzg0aQKVy53+oDWVKVom40ZCqLVl+o9g=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zIamtyFHJQIsHv4OQrFRz1xcBJzYbrgoA4TI54Hj9oqy9kWx9RZjUKVHbL5muIzp4
-         eeFXDgzDG1juc3GxSzAI7Y8XjAfY5LCknxQvPNh72iNsdkpk3t4E0abSSbvIs5MTeH
-         kM6+wxWT7VmHVidG8i1hq1a1xBYzcsNC22W8VrJU=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Axtens <dja@axtens.net>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jack Wang <jinpu.wang@cloud.ionos.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 23/62] bnx2x: disable GSO where gso_size is too big for hardware
-Date:   Mon, 18 Feb 2019 14:43:29 +0100
-Message-Id: <20190218133507.952903511@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
-References: <20190218133505.801423074@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        by mx1.redhat.com (Postfix) with ESMTPS id 9E9A288E62;
+        Mon, 18 Feb 2019 13:56:03 +0000 (UTC)
+Received: from laptop.redhat.com (ovpn-116-102.ams2.redhat.com [10.36.116.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5D6E75D70E;
+        Mon, 18 Feb 2019 13:55:57 +0000 (UTC)
+From:   Eric Auger <eric.auger@redhat.com>
+To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
+        yi.l.liu@linux.intel.com, jean-philippe.brucker@arm.com,
+        will.deacon@arm.com, robin.murphy@arm.com
+Cc:     kevin.tian@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org
+Subject: [PATCH v4 03/22] iommu: introduce device fault report API
+Date:   Mon, 18 Feb 2019 14:54:44 +0100
+Message-Id: <20190218135504.25048-4-eric.auger@redhat.com>
+In-Reply-To: <20190218135504.25048-1-eric.auger@redhat.com>
+References: <20190218135504.25048-1-eric.auger@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 18 Feb 2019 13:56:04 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+From: Jacob Pan <jacob.jun.pan@linux.intel.com>
 
-------------------
+Traditionally, device specific faults are detected and handled within
+their own device drivers. When IOMMU is enabled, faults such as DMA
+related transactions are detected by IOMMU. There is no generic
+reporting mechanism to report faults back to the in-kernel device
+driver or the guest OS in case of assigned devices.
 
-commit 8914a595110a6eca69a5e275b323f5d09e18f4f9 upstream
+Faults detected by IOMMU is based on the transaction's source ID which
+can be reported at per device basis, regardless of the device type is a
+PCI device or not.
 
-If a bnx2x card is passed a GSO packet with a gso_size larger than
-~9700 bytes, it will cause a firmware error that will bring the card
-down:
+The fault types include recoverable (e.g. page request) and
+unrecoverable faults(e.g. access error). In most cases, faults can be
+handled by IOMMU drivers internally. The primary use cases are as
+follows:
+1. page request fault originated from an SVM capable device that is
+assigned to guest via vIOMMU. In this case, the first level page tables
+are owned by the guest. Page request must be propagated to the guest to
+let guest OS fault in the pages then send page response. In this
+mechanism, the direct receiver of IOMMU fault notification is VFIO,
+which can relay notification events to QEMU or other user space
+software.
 
-bnx2x: [bnx2x_attn_int_deasserted3:4323(enP24p1s0f0)]MC assert!
-bnx2x: [bnx2x_mc_assert:720(enP24p1s0f0)]XSTORM_ASSERT_LIST_INDEX 0x2
-bnx2x: [bnx2x_mc_assert:736(enP24p1s0f0)]XSTORM_ASSERT_INDEX 0x0 = 0x00000000 0x25e43e47 0x00463e01 0x00010052
-bnx2x: [bnx2x_mc_assert:750(enP24p1s0f0)]Chip Revision: everest3, FW Version: 7_13_1
-... (dump of values continues) ...
+2. faults need more subtle handling by device drivers. Other than
+simply invoke reset function, there are needs to let device driver
+handle the fault with a smaller impact.
 
-Detect when the mac length of a GSO packet is greater than the maximum
-packet size (9700 bytes) and disable GSO.
+This patchset is intended to create a generic fault report API such
+that it can scale as follows:
+- all IOMMU types
+- PCI and non-PCI devices
+- recoverable and unrecoverable faults
+- VFIO and other other in kernel users
+- DMA & IRQ remapping (TBD)
+The original idea was brought up by David Woodhouse and discussions
+summarized at https://lwn.net/Articles/608914/.
 
-Signed-off-by: Daniel Axtens <dja@axtens.net>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[jwang: cherry pick for CVE-2018-1000026]
-Signed-off-by: Jack Wang <jinpu.wang@cloud.ionos.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+[adapt to new iommu_fault fault field, test fault_param on
+ iommu_unregister_device_fault_handler]
 ---
- .../net/ethernet/broadcom/bnx2x/bnx2x_main.c   | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/iommu/iommu.c | 154 +++++++++++++++++++++++++++++++++++++++++-
+ include/linux/iommu.h |  36 +++++++++-
+ 2 files changed, 188 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-index 022b06e770d1..41ac9a2bc153 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@ -12978,6 +12978,24 @@ static netdev_features_t bnx2x_features_check(struct sk_buff *skb,
- 					      struct net_device *dev,
- 					      netdev_features_t features)
- {
-+	/*
-+	 * A skb with gso_size + header length > 9700 will cause a
-+	 * firmware panic. Drop GSO support.
-+	 *
-+	 * Eventually the upper layer should not pass these packets down.
-+	 *
-+	 * For speed, if the gso_size is <= 9000, assume there will
-+	 * not be 700 bytes of headers and pass it through. Only do a
-+	 * full (slow) validation if the gso_size is > 9000.
-+	 *
-+	 * (Due to the way SKB_BY_FRAGS works this will also do a full
-+	 * validation in that case.)
-+	 */
-+	if (unlikely(skb_is_gso(skb) &&
-+		     (skb_shinfo(skb)->gso_size > 9000) &&
-+		     !skb_gso_validate_mac_len(skb, 9700)))
-+		features &= ~NETIF_F_GSO_MASK;
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 3ed4db334341..c297cdcf7f89 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -648,6 +648,13 @@ int iommu_group_add_device(struct iommu_group *group, struct device *dev)
+ 		goto err_free_name;
+ 	}
+ 
++	dev->iommu_param = kzalloc(sizeof(*dev->iommu_param), GFP_KERNEL);
++	if (!dev->iommu_param) {
++		ret = -ENOMEM;
++		goto err_free_name;
++	}
++	mutex_init(&dev->iommu_param->lock);
 +
- 	features = vlan_features_check(skb, features);
- 	return vxlan_features_check(skb, features);
+ 	kobject_get(group->devices_kobj);
+ 
+ 	dev->iommu_group = group;
+@@ -678,6 +685,7 @@ int iommu_group_add_device(struct iommu_group *group, struct device *dev)
+ 	mutex_unlock(&group->mutex);
+ 	dev->iommu_group = NULL;
+ 	kobject_put(group->devices_kobj);
++	kfree(dev->iommu_param);
+ err_free_name:
+ 	kfree(device->name);
+ err_remove_link:
+@@ -724,7 +732,7 @@ void iommu_group_remove_device(struct device *dev)
+ 	sysfs_remove_link(&dev->kobj, "iommu_group");
+ 
+ 	trace_remove_device_from_group(group->id, dev);
+-
++	kfree(dev->iommu_param);
+ 	kfree(device->name);
+ 	kfree(device);
+ 	dev->iommu_group = NULL;
+@@ -858,6 +866,150 @@ int iommu_group_unregister_notifier(struct iommu_group *group,
  }
+ EXPORT_SYMBOL_GPL(iommu_group_unregister_notifier);
+ 
++/**
++ * iommu_register_device_fault_handler() - Register a device fault handler
++ * @dev: the device
++ * @handler: the fault handler
++ * @data: private data passed as argument to the handler
++ *
++ * When an IOMMU fault event is received, call this handler with the fault event
++ * and data as argument. The handler should return 0 on success. If the fault is
++ * recoverable (IOMMU_FAULT_PAGE_REQ), the handler can also complete
++ * the fault by calling iommu_page_response() with one of the following
++ * response code:
++ * - IOMMU_PAGE_RESP_SUCCESS: retry the translation
++ * - IOMMU_PAGE_RESP_INVALID: terminate the fault
++ * - IOMMU_PAGE_RESP_FAILURE: terminate the fault and stop reporting
++ *   page faults if possible.
++ *
++ * Return 0 if the fault handler was installed successfully, or an error.
++ */
++int iommu_register_device_fault_handler(struct device *dev,
++					iommu_dev_fault_handler_t handler,
++					void *data)
++{
++	struct iommu_param *param = dev->iommu_param;
++	int ret = 0;
++
++	/*
++	 * Device iommu_param should have been allocated when device is
++	 * added to its iommu_group.
++	 */
++	if (!param)
++		return -EINVAL;
++
++	mutex_lock(&param->lock);
++	/* Only allow one fault handler registered for each device */
++	if (param->fault_param) {
++		ret = -EBUSY;
++		goto done_unlock;
++	}
++
++	get_device(dev);
++	param->fault_param =
++		kzalloc(sizeof(struct iommu_fault_param), GFP_KERNEL);
++	if (!param->fault_param) {
++		put_device(dev);
++		ret = -ENOMEM;
++		goto done_unlock;
++	}
++	mutex_init(&param->fault_param->lock);
++	param->fault_param->handler = handler;
++	param->fault_param->data = data;
++	INIT_LIST_HEAD(&param->fault_param->faults);
++
++done_unlock:
++	mutex_unlock(&param->lock);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(iommu_register_device_fault_handler);
++
++/**
++ * iommu_unregister_device_fault_handler() - Unregister the device fault handler
++ * @dev: the device
++ *
++ * Remove the device fault handler installed with
++ * iommu_register_device_fault_handler().
++ *
++ * Return 0 on success, or an error.
++ */
++int iommu_unregister_device_fault_handler(struct device *dev)
++{
++	struct iommu_param *param = dev->iommu_param;
++	int ret = 0;
++
++	if (!param)
++		return -EINVAL;
++
++	mutex_lock(&param->lock);
++
++	if (!param->fault_param)
++		goto unlock;
++
++	/* we cannot unregister handler if there are pending faults */
++	if (!list_empty(&param->fault_param->faults)) {
++		ret = -EBUSY;
++		goto unlock;
++	}
++
++	kfree(param->fault_param);
++	param->fault_param = NULL;
++	put_device(dev);
++unlock:
++	mutex_unlock(&param->lock);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(iommu_unregister_device_fault_handler);
++
++
++/**
++ * iommu_report_device_fault() - Report fault event to device
++ * @dev: the device
++ * @evt: fault event data
++ *
++ * Called by IOMMU model specific drivers when fault is detected, typically
++ * in a threaded IRQ handler.
++ *
++ * Return 0 on success, or an error.
++ */
++int iommu_report_device_fault(struct device *dev, struct iommu_fault_event *evt)
++{
++	int ret = 0;
++	struct iommu_fault_event *evt_pending;
++	struct iommu_fault_param *fparam;
++
++	/* iommu_param is allocated when device is added to group */
++	if (!dev->iommu_param | !evt)
++		return -EINVAL;
++	/* we only report device fault if there is a handler registered */
++	mutex_lock(&dev->iommu_param->lock);
++	if (!dev->iommu_param->fault_param ||
++		!dev->iommu_param->fault_param->handler) {
++		ret = -EINVAL;
++		goto done_unlock;
++	}
++	fparam = dev->iommu_param->fault_param;
++	if (evt->fault.type == IOMMU_FAULT_PAGE_REQ &&
++	    evt->fault.prm.flags & IOMMU_FAULT_PAGE_REQUEST_LAST_PAGE) {
++		evt_pending = kmemdup(evt, sizeof(struct iommu_fault_event),
++				GFP_KERNEL);
++		if (!evt_pending) {
++			ret = -ENOMEM;
++			goto done_unlock;
++		}
++		mutex_lock(&fparam->lock);
++		list_add_tail(&evt_pending->list, &fparam->faults);
++		mutex_unlock(&fparam->lock);
++	}
++	ret = fparam->handler(evt, fparam->data);
++done_unlock:
++	mutex_unlock(&dev->iommu_param->lock);
++	return ret;
++}
++EXPORT_SYMBOL_GPL(iommu_report_device_fault);
++
+ /**
+  * iommu_group_id - Return ID for a group
+  * @group: the group to ID
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 032d33894723..b38e0c100940 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -256,11 +256,13 @@ struct iommu_device {
+  * - DMA remapping and IRQ remapping faults
+  *
+  * @fault: fault descriptor
++ * @list pending fault event list, used for tracking responses
+  * @iommu_private: used by the IOMMU driver for storing fault-specific
+  *                 data. Users should not modify this field before
+  *                 sending the fault response.
+  */
+ struct iommu_fault_event {
++	struct list_head list;
+ 	struct iommu_fault fault;
+ 	u64 iommu_private;
+ };
+@@ -269,10 +271,13 @@ struct iommu_fault_event {
+  * struct iommu_fault_param - per-device IOMMU fault data
+  * @dev_fault_handler: Callback function to handle IOMMU faults at device level
+  * @data: handler private data
+- *
++ * @faults: holds the pending faults which needs response, e.g. page response.
++ * @lock: protect pending PRQ event list
+  */
+ struct iommu_fault_param {
+ 	iommu_dev_fault_handler_t handler;
++	struct list_head faults;
++	struct mutex lock;
+ 	void *data;
+ };
+ 
+@@ -286,6 +291,7 @@ struct iommu_fault_param {
+  *	struct iommu_fwspec	*iommu_fwspec;
+  */
+ struct iommu_param {
++	struct mutex lock;
+ 	struct iommu_fault_param *fault_param;
+ };
+ 
+@@ -378,6 +384,15 @@ extern int iommu_group_register_notifier(struct iommu_group *group,
+ 					 struct notifier_block *nb);
+ extern int iommu_group_unregister_notifier(struct iommu_group *group,
+ 					   struct notifier_block *nb);
++extern int iommu_register_device_fault_handler(struct device *dev,
++					iommu_dev_fault_handler_t handler,
++					void *data);
++
++extern int iommu_unregister_device_fault_handler(struct device *dev);
++
++extern int iommu_report_device_fault(struct device *dev,
++				     struct iommu_fault_event *evt);
++
+ extern int iommu_group_id(struct iommu_group *group);
+ extern struct iommu_group *iommu_group_get_for_dev(struct device *dev);
+ extern struct iommu_domain *iommu_group_default_domain(struct iommu_group *);
+@@ -658,6 +673,25 @@ static inline int iommu_group_unregister_notifier(struct iommu_group *group,
+ 	return 0;
+ }
+ 
++static inline
++int iommu_register_device_fault_handler(struct device *dev,
++					iommu_dev_fault_handler_t handler,
++					void *data)
++{
++	return -ENODEV;
++}
++
++static inline int iommu_unregister_device_fault_handler(struct device *dev)
++{
++	return 0;
++}
++
++static inline
++int iommu_report_device_fault(struct device *dev, struct iommu_fault_event *evt)
++{
++	return -ENODEV;
++}
++
+ static inline int iommu_group_id(struct iommu_group *group)
+ {
+ 	return -ENODEV;
 -- 
-2.19.1
-
-
+2.20.1
 
