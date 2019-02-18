@@ -2,119 +2,110 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B573C10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:06:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81C97C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:12:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6014217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:06:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42972217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:12:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UNmLNLgt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728342AbfBRTGp (ORCPT
+        id S1728460AbfBRTMC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 14:06:45 -0500
-Received: from gateway31.websitewelcome.com ([192.185.143.51]:24488 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726380AbfBRTGn (ORCPT
+        Mon, 18 Feb 2019 14:12:02 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:41453 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728262AbfBRTMB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 14:06:43 -0500
-Received: from cm14.websitewelcome.com (cm14.websitewelcome.com [100.42.49.7])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id 58B701C20E
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 13:06:42 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id voFWg9hl42qH7voFWggfj0; Mon, 18 Feb 2019 13:06:42 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=44716 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gvoFV-000cwg-KH; Mon, 18 Feb 2019 13:06:41 -0600
-Date:   Mon, 18 Feb 2019 13:06:41 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] usb: core: config: Use struct_size() in kzalloc()
-Message-ID: <20190218190641.GA18000@embeddedor>
+        Mon, 18 Feb 2019 14:12:01 -0500
+Received: by mail-pl1-f193.google.com with SMTP id y5so3610430plk.8;
+        Mon, 18 Feb 2019 11:12:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=x6Nzx1UBHbUz3hyzl5qrUbTEPXuO+FY0q06jvpcgndA=;
+        b=UNmLNLgtSp5b9Sl12DMhlj+eN4/iQVFaEJp0K555aL7xdfI2VHi15ibQBlF4nkyV/q
+         4nxy+TPLZJWuhRjFVuOADgIslzdS/F3aE/wsWMMRkHEDhekWGn5sZx4q7N0eGE+myCnW
+         LUyTWht45PZYmu9jEX8LQyIj4jciZQfqHD0TgHuO1ivEjVYVmvFqy4AmhdmaJV0wG4cT
+         e0pOvNhNTXgXvzBriGRHJ6b6fNfKit1v81ppZ9oRbg27JGXbVhVte6FUXiN1rnsSvcNA
+         abnWshAOe5Ge/3DJKp0/Xz6DSJ5IKbcgChvLiDpHscfbcFSc0sZYIJRjZ5BRSYGFmyCs
+         FY8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=x6Nzx1UBHbUz3hyzl5qrUbTEPXuO+FY0q06jvpcgndA=;
+        b=Bx6/IlVBFcsc+zvATqxbcI3x2ud9S/PkBFbYy60xA3teoqhv170qZ8dTOmge4JUmm0
+         0vuyNuS2lVEUY5j0CiqaLDRyiGACtgWFkqckvjJ6CjJm4xtNZx9W+UQNk9SF/ftT+9Ia
+         yRxT7NRqA0K4CYfH6NipByGV0g8WW6tRSI32VPqDYZuAhz7fglzrXEHMiXdpXPt7ZFV6
+         gC8f/15iTw/cfWBHBLxf1A/3m6nrCoEUgWBHxuuitM9EKmGU1doiVATGT4lxRNWOxNHp
+         GkLN/gwEpUO+crVUw4Hx/A8qGiZaQDak7R5iM6IGrfLLbvpQyMuKQ6uXFzRaQ87CwnqI
+         defg==
+X-Gm-Message-State: AHQUAuZNjXZUIfiI2Ll4v0WFQkmbaURZzI6yyyYppsvxarLtd9dS/CcV
+        WukEgVqouX4MJrkc9pkAqrajYAfn
+X-Google-Smtp-Source: AHgI3IZJU6pNjf0ooQXeDMruY/fSPVXJNgsPbIiW8z2ziyPzKC3pN3ngAeGpBufWuxs1mgCcP3vn/w==
+X-Received: by 2002:a17:902:9b96:: with SMTP id y22mr27344771plp.179.1550517120410;
+        Mon, 18 Feb 2019 11:12:00 -0800 (PST)
+Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
+        by smtp.gmail.com with ESMTPSA id t12sm33189727pgq.68.2019.02.18.11.11.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Feb 2019 11:11:59 -0800 (PST)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-pm@vger.kernel.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 00/12] QorIQ TMU multi-sensor and HWMON support
+Date:   Mon, 18 Feb 2019 11:11:29 -0800
+Message-Id: <20190218191141.3729-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gvoFV-000cwg-KH
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.119.20]:44716
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the more common cases of allocation size calculations is finding
-the size of a structure that has a zero-sized array at the end, along
-with memory for some number of elements for that array. For example:
+Everyone:
 
-struct foo {
-    int stuff;
-    struct boo entry[];
-};
+This series contains patches adding support for HWMON integration,
+multi-sensor support as well as a small fix and general improvements
+(hopefully) for TMU driver I made while working on it on i.MX8MQ.
 
-size = sizeof(struct foo) + count * sizeof(struct boo);
-instance = kzalloc(size, GFP_KERNEL);
+Feedback is welcome!
 
-Instead of leaving these open-coded and prone to type mistakes, we can
-now use the new struct_size() helper:
+Thanks,
+Andrey Smirnov
 
-instance = kzalloc(struct_size(instance, entry, count), GFP_KERNEL);
+Andrey Smirnov (12):
+  thermal_hwmon: Add devres wrapper for thermal_add_hwmon_sysfs()
+  thermal: qoriq: Remove unnecessary DT node is NULL check
+  thermal: qoriq: Add local struct device pointer in qoriq_tmu_probe()
+  thermal: qoriq: Don't pass platform_device to qoriq_tmu_calibration()
+  thermal: qoriq: Convert driver to use devm_ioremap()
+  thermal: qoriq: Add hwmon support
+  thermal: qoriq: Convert driver to use regmap API
+  thermal: qoriq: Enable monitoring before querying temperature
+  thermal: qoriq: Do not report invalid temperature reading
+  thermal: qoriq: Simplify error handling in qoriq_tmu_get_sensor_id()
+  thermal: qoriq: Be more strict when parsing "thermal-sensors"
+  thermal: qoriq: Add support for multiple thremal sites
 
-Notice that, in this case, variable len is not necessary, hence
-it is removed.
+ drivers/thermal/qoriq_thermal.c | 326 ++++++++++++++++++--------------
+ drivers/thermal/thermal_hwmon.c |  28 +++
+ drivers/thermal/thermal_hwmon.h |   7 +
+ 3 files changed, 214 insertions(+), 147 deletions(-)
 
-This code was detected with the help of Coccinelle.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/usb/core/config.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/usb/core/config.c b/drivers/usb/core/config.c
-index 7bb6b1bd06c8..20ff036b4c22 100644
---- a/drivers/usb/core/config.c
-+++ b/drivers/usb/core/config.c
-@@ -552,7 +552,7 @@ static int usb_parse_configuration(struct usb_device *dev, int cfgidx,
- 	unsigned char *buffer2;
- 	int size2;
- 	struct usb_descriptor_header *header;
--	int len, retval;
-+	int retval;
- 	u8 inums[USB_MAXINTERFACES], nalts[USB_MAXINTERFACES];
- 	unsigned iad_num = 0;
- 
-@@ -707,8 +707,8 @@ static int usb_parse_configuration(struct usb_device *dev, int cfgidx,
- 			nalts[i] = j = USB_MAXALTSETTING;
- 		}
- 
--		len = sizeof(*intfc) + sizeof(struct usb_host_interface) * j;
--		config->intf_cache[i] = intfc = kzalloc(len, GFP_KERNEL);
-+		intfc = kzalloc(struct_size(intfc, altsetting, j), GFP_KERNEL);
-+		config->intf_cache[i] = intfc;
- 		if (!intfc)
- 			return -ENOMEM;
- 		kref_init(&intfc->ref);
 -- 
 2.20.1
 
