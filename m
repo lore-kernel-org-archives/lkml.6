@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88902C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71988C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:09:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 572F72173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:09:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 368BF217D7
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:09:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498989;
-	bh=u+fhuPa24U23KArZ6uAa9/XYZX1cF/lCmzihsp36Nuc=;
+	s=default; t=1550498993;
+	bh=sHShWx7ZeTPJBS+D0IOvDFZg4MKcUzd3mmdVbM72lE8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hSQ5QYocFTZhSy2CLun7xyOqRBFGZt+surNcRkB+osLon04zWQxABkExV3hkLwUec
-	 /jenprgfWS3vIhY2I2kEuAd7qUBoRi+hxkP5lFSjVxt9ec+7CTEbWzt2l7MzeQvgnu
-	 zXBo4cu9GAC9bypm230WZGAQjaZIIhRHDUCnlj74=
+	b=nImGUy1pdUJ+wmOCju3BRQtKPLlt1vfi6kwrLPQJBJvJXdSzYWo8IjiMXAMqBkzb0
+	 NamMDIQVXgsEmJA4RREio3Gitj/GkuNlDgkJmMnAUbAg2EYI14+Md+T1JgQDA2ux59
+	 ppTLe/54BgYhJTaHfGO6VQlkqCKnzwop4n54N1P4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391292AbfBROJs (ORCPT
+        id S2391336AbfBROJw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:09:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53368 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:09:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390752AbfBROJo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:09:44 -0500
+        id S2391313AbfBROJu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:09:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8579217D9;
-        Mon, 18 Feb 2019 14:09:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DEF842173C;
+        Mon, 18 Feb 2019 14:09:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498984;
-        bh=u+fhuPa24U23KArZ6uAa9/XYZX1cF/lCmzihsp36Nuc=;
+        s=default; t=1550498990;
+        bh=sHShWx7ZeTPJBS+D0IOvDFZg4MKcUzd3mmdVbM72lE8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pk+IXl3mxDv2M4BGD+gnlJnjm0CQlXYeTPqfwcnrhlVbMUhxVZQog6l4NmPTT8dol
-         cJ1lHOaqBYVu8yG7hQ1sFuG6yaYYy0b0gvNGGHE3VKmsqUBrAaZ9+lRp87CKcEWNju
-         RHPzsJmhQrd+g4UChAoMGh6tG0u9DwqddC7PAQlw=
+        b=BChDmxzy1sQP1lsoIp0eMw1eS0ZKkHvBvrUzqmgN7EY6Al2UQfp+5W3d018Cj32J5
+         VehOihbdKhSY5GEB+uO9aYOvV/wKOAsvsYeNvL98MdVZeHTb18rmDPcnXnujx3CNVM
+         mLXGtuzMyWvOnT0xHhZ8dnwzO77kNx8KZvf7+L2c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Simon Horman <horms+renesas@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 022/108] sata_rcar: fix deferred probing
-Date:   Mon, 18 Feb 2019 14:43:18 +0100
-Message-Id: <20190218133520.545510319@linuxfoundation.org>
+        stable@vger.kernel.org, Kangjie Lu <kjlu@umn.edu>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 041/108] hwmon: (lm80) fix a missing check of the status of SMBus read
+Date:   Mon, 18 Feb 2019 14:43:37 +0100
+Message-Id: <20190218133521.430063395@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -67,39 +66,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 9f83cfdb1ace3ef268ecc6fda50058d2ec37d603 ]
+[ Upstream commit c9c63915519b1def7043b184680f33c24cd49d7b ]
 
-The driver overrides the error codes returned by platform_get_irq() to
--EINVAL, so if it returns -EPROBE_DEFER, the driver would fail the probe
-permanently instead of the deferred probing. Switch to propagating the
-error code upstream, still checking/overriding IRQ0 as libata regards it
-as "no IRQ" (thus polling) anyway...
+If lm80_read_value() fails, it returns a negative number instead of the
+correct read data. Therefore, we should avoid using the data if it
+fails.
 
-Fixes: 9ec36cafe43b ("of/irq: do irq resolution in platform_get_irq")
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+The fix checks if lm80_read_value() fails, and if so, returns with the
+error number.
+
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+[groeck: One variable for return values is enough]
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ata/sata_rcar.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/hwmon/lm80.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/ata/sata_rcar.c b/drivers/ata/sata_rcar.c
-index ea1fbc1d4c5f..e7e259a6c732 100644
---- a/drivers/ata/sata_rcar.c
-+++ b/drivers/ata/sata_rcar.c
-@@ -879,7 +879,9 @@ static int sata_rcar_probe(struct platform_device *pdev)
- 	int ret = 0;
+diff --git a/drivers/hwmon/lm80.c b/drivers/hwmon/lm80.c
+index 4bcd9b882948..47ddae6b7038 100644
+--- a/drivers/hwmon/lm80.c
++++ b/drivers/hwmon/lm80.c
+@@ -360,9 +360,11 @@ static ssize_t set_fan_div(struct device *dev, struct device_attribute *attr,
+ 	struct i2c_client *client = data->client;
+ 	unsigned long min, val;
+ 	u8 reg;
+-	int err = kstrtoul(buf, 10, &val);
+-	if (err < 0)
+-		return err;
++	int rv;
++
++	rv = kstrtoul(buf, 10, &val);
++	if (rv < 0)
++		return rv;
  
- 	irq = platform_get_irq(pdev, 0);
--	if (irq <= 0)
-+	if (irq < 0)
-+		return irq;
-+	if (!irq)
+ 	/* Save fan_min */
+ 	mutex_lock(&data->update_lock);
+@@ -390,8 +392,11 @@ static ssize_t set_fan_div(struct device *dev, struct device_attribute *attr,
  		return -EINVAL;
+ 	}
  
- 	priv = devm_kzalloc(&pdev->dev, sizeof(struct sata_rcar_priv),
+-	reg = (lm80_read_value(client, LM80_REG_FANDIV) &
+-	       ~(3 << (2 * (nr + 1)))) | (data->fan_div[nr] << (2 * (nr + 1)));
++	rv = lm80_read_value(client, LM80_REG_FANDIV);
++	if (rv < 0)
++		return rv;
++	reg = (rv & ~(3 << (2 * (nr + 1))))
++	    | (data->fan_div[nr] << (2 * (nr + 1)));
+ 	lm80_write_value(client, LM80_REG_FANDIV, reg);
+ 
+ 	/* Restore fan_min */
 -- 
 2.19.1
 
