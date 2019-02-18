@@ -2,203 +2,134 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92481C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 06:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99A78C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 06:17:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60E8C218AD
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 06:16:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 680D6218AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 06:17:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u0wYuFCr"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VG2EqToA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbfBRGQP (ORCPT
+        id S1727655AbfBRGRF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 01:16:15 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35178 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbfBRGQO (ORCPT
+        Mon, 18 Feb 2019 01:17:05 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:38846 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726863AbfBRGRE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 01:16:14 -0500
-Received: by mail-pf1-f194.google.com with SMTP id j5so3506249pfa.2
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 22:16:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=7HmJzfmEj9xsQYL5N418Naa1i0UMoglBgv9NHMmbkso=;
-        b=u0wYuFCrQ3JpIshn7VtaCh9AO/+vjnQRnM+3SBXbL8JssbeCcgD9IXKVyfNz0uGYPp
-         xaB/Lfcy7QYOH83IZHbos0EmyCUxk6QgSfmMPuZsRjm4bQ53Y4zdOitf6ldq3i95szAl
-         1AwUDn6PLT5h1ONdIx6wfmaVbff/yd8tX0E/P80cYejQbxByLKnf52GO3Z0ah2twOKTe
-         ZWOYZcKq0nKFLH7oh85WY0razVknpZfGUXrIFp21GhSYgJgjbcjuD9JeOPDijvF+jWrW
-         9Lrvigo3WkpIcDnyl7n8PODNGh70i8gklKtlo32G5H1a/3oHr2DcDbJLg+SUgmCMnC74
-         GDyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7HmJzfmEj9xsQYL5N418Naa1i0UMoglBgv9NHMmbkso=;
-        b=Z6c0W4iW8aOwH0kdD8/LcE5EKdt2y/3fewOoUD9Yd/1viZmaLkJtPwqMIbMV/w3xFj
-         Skm8dYZat6g1y/w5VbheYVnwa6fjiTHbGjeYOnumzTvlPtQV70/tIK1iOBF0UGX7U65h
-         jXCnVcjplRPbXnwtkOb67d+epi/Pw51beAz3nbrhH9RNotwEneBqitqybplaPCdH75mA
-         +6pZONUWMP155jM7dDzPyrFSWodQ67xbscBSSJneQgpF+w7Rdsadx3BIVVigbg/Zwf0A
-         /Wsd2d7jG6HSFhg73ebKKJxhdS+38/TC/1wgF72v99FKGOuat7GurqoYuTLLYB+ge/OF
-         kVCA==
-X-Gm-Message-State: AHQUAubXyB6hindhqGf1yT/WB7H49buafU2SL8YV+SeRdEeEMs/mBIQO
-        vTYp05w/IoAu/ECFiwDwCcWKBw==
-X-Google-Smtp-Source: AHgI3IaFZ0aCjQk8ePhCtVb1GFZ4f398NUPYKnOhFYn5oY1LZ0Ma65w9Rcm9u7fs0oTIqzQWrf486g==
-X-Received: by 2002:a62:b286:: with SMTP id z6mr22587501pfl.106.1550470573467;
-        Sun, 17 Feb 2019 22:16:13 -0800 (PST)
-Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id o6sm5219529pgo.27.2019.02.17.22.16.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Feb 2019 22:16:12 -0800 (PST)
-Date:   Mon, 18 Feb 2019 11:46:10 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH] cpufreq: davinci: move configuration to
- include/linux/platform_data
-Message-ID: <20190218061610.cwvwij7aoemi2gbe@vireshk-i7>
-References: <20190214170505.27251-1-brgl@bgdev.pl>
+        Mon, 18 Feb 2019 01:17:04 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1I6E5BI046806;
+        Mon, 18 Feb 2019 06:16:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=ZeA6I+/9EPnVW7DS4DxIPE7KyEb1gaKlFyPwY86yAz4=;
+ b=VG2EqToAKNh/J9SMC33R0rQPqQm0bc+r1HfBrYHYulFbGlStNsjsOeJ7yHaX2EzRjIMH
+ Viqx9qyB/zUuYCoNbGiJtgZ2hLxblt2gcTjxg95O7vrywKuWFhpgadU8OKf5Su4NfEx2
+ xB3pLFAp4zZYmWZ6wsjCHIZLrx+clRK7jO0cmBdW605zkVilj1UurGgNiBjJOwenXsui
+ yzTkDphwq5+gpbYRPpzZnn9VC+41nvx+xdOd//JktBizbFac7Sdy9vWMzquMrnIBT/7Y
+ ehnkY5vDvCr4plDpIOUE1UgV2P0OQYmw6lb8w20BAzMfgbeVcR56cVfrM2XZAsamkjfu ew== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2qp9xtmdn6-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 18 Feb 2019 06:16:47 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x1I6GldO022885
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 18 Feb 2019 06:16:47 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1I6Gjxr010197;
+        Mon, 18 Feb 2019 06:16:45 GMT
+Received: from kadam (/197.157.0.22)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sun, 17 Feb 2019 22:16:44 -0800
+Date:   Mon, 18 Feb 2019 09:16:36 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Miao Xie <miaoxie@huawei.com>, Chao Yu <chao@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
+        weidu.du@huawei.com, Al Viro <viro@ZenIV.linux.org.uk>,
+        linux-erofs@lists.ozlabs.org, Fang Wei <fangwei1@huawei.com>
+Subject: Re: [PATCH v2] staging: erofs: keep corrupted fs from crashing
+ kernel in erofs_namei()
+Message-ID: <20190218061635.GJ2304@kadam>
+References: <20190201121631.15179-1-gaoxiang25@huawei.com>
+ <a9381c0d-9857-4d03-710d-80006d426bbc@huawei.com>
+ <20190215075757.GG2326@kadam>
+ <fb99bac2-2587-04fa-6ac2-f2e5f83af7c9@huawei.com>
+ <20190215093503.GH2326@kadam>
+ <d5567c5c-7ceb-a9cc-0fb8-b6b04a4d42ca@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190214170505.27251-1-brgl@bgdev.pl>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <d5567c5c-7ceb-a9cc-0fb8-b6b04a4d42ca@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9170 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=883 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
+ definitions=main-1902180049
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14-02-19, 18:05, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+On Mon, Feb 18, 2019 at 10:41:36AM +0800, Chao Yu wrote:
+> On 2019/2/15 17:35, Dan Carpenter wrote:
+> > On Fri, Feb 15, 2019 at 05:32:33PM +0800, Chao Yu wrote:
+> >> On 2019/2/15 15:57, Dan Carpenter wrote:
+> >>> On Fri, Feb 15, 2019 at 03:02:25PM +0800, Chao Yu wrote:
+> >>>> On 2019/2/1 20:16, Gao Xiang wrote:
+> >>>>> +	/*
+> >>>>> +	 * on-disk error, let's only BUG_ON in the debugging mode.
+> >>>>> +	 * otherwise, it will return 1 to just skip the invalid name
+> >>>>> +	 * and go on (in consideration of the lookup performance).
+> >>>>> +	 */
+> >>>>> +	DBG_BUGON(qd->name > qd->end);
+> >>>>
+> >>>> qd->name == qd->end is not allowed as well?
+> >>>>
+> >>>> So will it be better to return directly here?
+> >>>>
+> >>>> 	if (unlikely(qd->name >= qd->end)) {
+> >>>> 		DBG_BUGON(1);
+> >>>> 		return 1;
+> >>>> 	}
+> >>>
+> >>> Please don't add likely/unlikely() annotations unless you have
+> >>> benchmarked it and it makes a difference.
+> >>
+> >> Well, it only occur for corrupted image, since the image is readonly, so it
+> >> is really rare.
+> > 
+> > The likely/unlikely() annotations make the code harder to read.  It's
 > 
-> The header containing the configuration structure for davinci cpufreq
-> driver lives in mach-davinci/include/mach/. This is fine for now but
-> if we want to make davinci part of the multi_v5 build, no code external
-> to mach-davinci should include machine-specific headers.
+> Well, I think unlikely here can imply this is a rare case which may help to
+> read...
 > 
-> Move the configuration structure to include/linux/platform_data.
+> > only worth it if it's is a speedup on a fast path.
 > 
-> While we're at it: convert the GPL-2.0 boilerplate to a proper SPDX
-> license identifier.
+> I guess unlikely here can help pipeline to load/execute right branch codes
+> instead of that rare branch one with BUGON(), is that right?
 > 
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> ---
->  arch/arm/mach-davinci/da850.c                 |  2 +-
->  arch/arm/mach-davinci/include/mach/cpufreq.h  | 26 -------------------
->  drivers/cpufreq/davinci-cpufreq.c             |  5 +---
->  include/linux/platform_data/davinci-cpufreq.h | 19 ++++++++++++++
->  4 files changed, 21 insertions(+), 31 deletions(-)
->  delete mode 100644 arch/arm/mach-davinci/include/mach/cpufreq.h
->  create mode 100644 include/linux/platform_data/davinci-cpufreq.h
-> 
-> diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
-> index e7b78df2bfef..a02ff431ba47 100644
-> --- a/arch/arm/mach-davinci/da850.c
-> +++ b/arch/arm/mach-davinci/da850.c
-> @@ -21,6 +21,7 @@
->  #include <linux/mfd/da8xx-cfgchip.h>
->  #include <linux/platform_data/clk-da8xx-cfgchip.h>
->  #include <linux/platform_data/clk-davinci-pll.h>
-> +#include <linux/platform_data/davinci-cpufreq.h>
->  #include <linux/platform_data/gpio-davinci.h>
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
-> @@ -29,7 +30,6 @@
->  #include <asm/mach/map.h>
->  
->  #include <mach/common.h>
-> -#include <mach/cpufreq.h>
->  #include <mach/cputype.h>
->  #include <mach/da8xx.h>
->  #include <mach/irqs.h>
-> diff --git a/arch/arm/mach-davinci/include/mach/cpufreq.h b/arch/arm/mach-davinci/include/mach/cpufreq.h
-> deleted file mode 100644
-> index 3c089cfb6cd6..000000000000
-> --- a/arch/arm/mach-davinci/include/mach/cpufreq.h
-> +++ /dev/null
-> @@ -1,26 +0,0 @@
-> -/*
-> - * TI DaVinci CPUFreq platform support.
-> - *
-> - * Copyright (C) 2009 Texas Instruments, Inc. http://www.ti.com/
-> - *
-> - * This program is free software; you can redistribute it and/or
-> - * modify it under the terms of the GNU General Public License as
-> - * published by the Free Software Foundation version 2.
-> - *
-> - * This program is distributed "as is" WITHOUT ANY WARRANTY of any
-> - * kind, whether express or implied; without even the implied warranty
-> - * of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - */
-> -#ifndef _MACH_DAVINCI_CPUFREQ_H
-> -#define _MACH_DAVINCI_CPUFREQ_H
-> -
-> -#include <linux/cpufreq.h>
-> -
-> -struct davinci_cpufreq_config {
-> -	struct cpufreq_frequency_table *freq_table;
-> -	int (*set_voltage) (unsigned int index);
-> -	int (*init) (void);
-> -};
-> -
-> -#endif
-> diff --git a/drivers/cpufreq/davinci-cpufreq.c b/drivers/cpufreq/davinci-cpufreq.c
-> index d54a27c99121..940fe85db97a 100644
-> --- a/drivers/cpufreq/davinci-cpufreq.c
-> +++ b/drivers/cpufreq/davinci-cpufreq.c
-> @@ -23,13 +23,10 @@
->  #include <linux/init.h>
->  #include <linux/err.h>
->  #include <linux/clk.h>
-> +#include <linux/platform_data/davinci-cpufreq.h>
->  #include <linux/platform_device.h>
->  #include <linux/export.h>
->  
-> -#include <mach/hardware.h>
-> -#include <mach/cpufreq.h>
-> -#include <mach/common.h>
-> -
->  struct davinci_cpufreq {
->  	struct device *dev;
->  	struct clk *armclk;
-> diff --git a/include/linux/platform_data/davinci-cpufreq.h b/include/linux/platform_data/davinci-cpufreq.h
-> new file mode 100644
-> index 000000000000..3fbf9f2793b5
-> --- /dev/null
-> +++ b/include/linux/platform_data/davinci-cpufreq.h
-> @@ -0,0 +1,19 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * TI DaVinci CPUFreq platform support.
-> + *
-> + * Copyright (C) 2009 Texas Instruments, Inc. http://www.ti.com/
-> + */
-> +
-> +#ifndef _MACH_DAVINCI_CPUFREQ_H
-> +#define _MACH_DAVINCI_CPUFREQ_H
-> +
-> +#include <linux/cpufreq.h>
-> +
-> +struct davinci_cpufreq_config {
-> +	struct cpufreq_frequency_table *freq_table;
-> +	int (*set_voltage)(unsigned int index);
-> +	int (*init)(void);
-> +};
-> +
-> +#endif /* _MACH_DAVINCI_CPUFREQ_H */
 
-Applied. Thanks.
+Correct.  If you really think the likely/unlikely on this line will lead
+to a performance improvement which will show up on a benchmark then you
+should use it.  (But there is no way that it really show on benchmarks,
+let's not pretend).
 
--- 
-viresh
+If it doesn't show up on benchmarking, then we're just discussing style.
+Kernel style tends to be minimalist.
+
+regards,
+dan carpenter
+
