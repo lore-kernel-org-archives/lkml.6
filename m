@@ -2,128 +2,111 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D44C6C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:10:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D1D4C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:11:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A901F2177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:10:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 430B1218AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:11:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729469AbfBRJKd (ORCPT
+        id S1729477AbfBRJLd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 04:10:33 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:35074 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727423AbfBRJKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 04:10:32 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 699DA840F74464F182B5;
-        Mon, 18 Feb 2019 17:10:30 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.408.0; Mon, 18 Feb 2019
- 17:10:25 +0800
-Subject: Re: [f2fs-dev] [PATCH] f2fs: don't clear CP_QUOTA_NEED_FSCK_FLAG
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20190212023343.52215-1-jaegeuk@kernel.org>
- <df77f830-e5dd-5943-d5b0-e21ced3a7df2@huawei.com>
- <20190216045530.GA57019@jaegeuk-macbookpro.roam.corp.google.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <29a4fd24-6340-41df-7199-6e89b70c6341@huawei.com>
-Date:   Mon, 18 Feb 2019 17:10:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 18 Feb 2019 04:11:33 -0500
+Received: from mga06.intel.com ([134.134.136.31]:61312 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727423AbfBRJLc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 04:11:32 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2019 01:11:32 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,384,1544515200"; 
+   d="scan'208";a="321251592"
+Received: from shao2-debian.sh.intel.com (HELO [10.239.13.107]) ([10.239.13.107])
+  by fmsmga005.fm.intel.com with ESMTP; 18 Feb 2019 01:11:31 -0800
+Subject: Re: [LKP] efad4e475c [ 40.308255] Oops: 0000 [#1] PREEMPT SMP PTI
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Oscar Salvador <osalvador@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-kernel@vger.kernel.org, LKP <lkp@01.org>
+References: <20190218052823.GH29177@shao2-debian>
+ <20190218070844.GC4525@dhcp22.suse.cz>
+ <79a3d305-1d96-3938-dc14-617a9e475648@intel.com>
+ <20190218090310.GE4525@dhcp22.suse.cz>
+From:   Rong Chen <rong.a.chen@intel.com>
+Message-ID: <f688387a-6052-6481-57f4-d3b20b2ea3bb@intel.com>
+Date:   Mon, 18 Feb 2019 17:11:49 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190216045530.GA57019@jaegeuk-macbookpro.roam.corp.google.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
+In-Reply-To: <20190218090310.GE4525@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/2/16 12:55, Jaegeuk Kim wrote:
-> On 02/13, Chao Yu wrote:
->> On 2019/2/12 10:33, Jaegeuk Kim wrote:
->>> If we met this once, let fsck.f2fs clear this only.
->>> Note that, this addresses all the subtle fault injection test.
->>>
->>> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
->>> ---
->>>  fs/f2fs/checkpoint.c | 2 --
->>>  1 file changed, 2 deletions(-)
->>>
->>> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
->>> index 03fea4efd64b..10a3ada28715 100644
->>> --- a/fs/f2fs/checkpoint.c
->>> +++ b/fs/f2fs/checkpoint.c
->>> @@ -1267,8 +1267,6 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
->>>  
->>>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
->>>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>> -	else
->>> -		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
+
+On 2/18/19 5:03 PM, Michal Hocko wrote:
+> On Mon 18-02-19 16:47:26, Rong Chen wrote:
+>> On 2/18/19 3:08 PM, Michal Hocko wrote:
+>>> On Mon 18-02-19 13:28:23, kernel test robot wrote:
+> [...]
+>>>> [   40.305212] PGD 0 P4D 0
+>>>> [   40.308255] Oops: 0000 [#1] PREEMPT SMP PTI
+>>>> [   40.313055] CPU: 1 PID: 239 Comm: udevd Not tainted 5.0.0-rc4-00149-gefad4e4 #1
+>>>> [   40.321348] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
+>>>> [   40.330813] RIP: 0010:page_mapping+0x12/0x80
+>>>> [   40.335709] Code: 5d c3 48 89 df e8 0e ad 02 00 85 c0 75 da 89 e8 5b 5d c3 0f 1f 44 00 00 53 48 89 fb 48 8b 43 08 48 8d 50 ff a8 01 48 0f 45 da <48> 8b 53 08 48 8d 42 ff 83 e2 01 48 0f 44 c3 48 83 38 ff 74 2f 48
+>>>> [   40.356704] RSP: 0018:ffff88801fa87cd8 EFLAGS: 00010202
+>>>> [   40.362714] RAX: ffffffffffffffff RBX: fffffffffffffffe RCX: 000000000000000a
+>>>> [   40.370798] RDX: fffffffffffffffe RSI: ffffffff820b9a20 RDI: ffff88801e5c0000
+>>>> [   40.378830] RBP: 6db6db6db6db6db7 R08: ffff88801e8bb000 R09: 0000000001b64d13
+>>>> [   40.386902] R10: ffff88801fa87cf8 R11: 0000000000000001 R12: ffff88801e640000
+>>>> [   40.395033] R13: ffffffff820b9a20 R14: ffff88801f145258 R15: 0000000000000001
+>>>> [   40.403138] FS:  00007fb2079817c0(0000) GS:ffff88801dd00000(0000) knlGS:0000000000000000
+>>>> [   40.412243] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>> [   40.418846] CR2: 0000000000000006 CR3: 000000001fa82000 CR4: 00000000000006a0
+>>>> [   40.426951] Call Trace:
+>>>> [   40.429843]  __dump_page+0x14/0x2c0
+>>>> [   40.433947]  is_mem_section_removable+0x24c/0x2c0
+>>> This looks like we are stumbling over an unitialized struct page again.
+>>> Something this patch should prevent from. Could you try to apply [1]
+>>> which will make __dump_page more robust so that we do not blow up there
+>>> and give some more details in return.
 >>
->> I didn't get it, previously, if we didn't persist all quota file's data in
->> checkpoint, then we will tag CP_QUOTA_NEED_FSCK_FLAG in CP area, but in current
->> checkpoint, we have persisted all quota file's data, quota files are consistent
->> with all other files in filesystem, why we can't remove this NEED_FSCK flag..?
-> 
-> I said it's subtle. So, I guessed 1) set CP_QUOTA_NEED_FSCK_FLAG, 2) clear
-
-I know it's subtle... and I agreed we can fix it like this in upstream
-first, but in our product, it's not rare that we hit the
-QUOTA_SKIP_FLUSH(its value is 4) case, later we may encounter long latency
-caused by quota repairing of fsck.
-
-> SBI_QUOTA_SKIP_FLUSH by checkpoint, 3) clear CP_QUOTA_NEED_FSCK_FLAG by another
-> checkpoint?
-
-But later if QUOTA_NEED_REPAIR is set, we will set QUOTA_NEED_FSCK_FLAG
-again, right?
-
-if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
-	__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-
-
-So in order to figure out whether this is caused by out-of-order execution
-of below assignments:
-
-	if (is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
-		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-	else
-		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- clear flag later
-
-	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
-		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG); --- set flag first
-
-
-Could you have a try:
-
-	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR) ||
-			is_sbi_flag_set(sbi, SBI_QUOTA_SKIP_FLUSH))
-		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-	else
-		__clear_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
-
-Thanks,
-
-> 
+>> Hi Hocko,
 >>
->> Thanks,
->>
->>>  
->>>  	if (is_sbi_flag_set(sbi, SBI_QUOTA_NEED_REPAIR))
->>>  		__set_ckpt_flags(ckpt, CP_QUOTA_NEED_FSCK_FLAG);
->>>
-> 
-> .
-> 
+>> I have applied [1] and attached the dmesg file.
+> Thanks so the log confirms that this is really an unitialized struct
+> page
+> [   12.228622] raw: ffffffffffffffff ffffffffffffffff ffffffffffffffff
+> [   12.231474] page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
+> [   12.232135] ------------[ cut here ]------------
+> [   12.232649] kernel BUG at include/linux/mm.h:1020!
+>
+> So now, we have to find out what has been left behind. Please see my
+> other email. Also could you give me faddr2line of the
+> is_mem_section_removable offset please? I assume it is
+> is_pageblock_removable_nolock:
+> 	if (!node_online(page_to_nid(page)))
+> 		return false;
+
+
+faddr2line result:
+
+is_mem_section_removable+0x24c/0x2c0:
+page_to_nid at include/linux/mm.h:1020
+(inlined by) is_pageblock_removable_nolock at mm/memory_hotplug.c:1221
+(inlined by) is_mem_section_removable at mm/memory_hotplug.c:1241
+
+Best Regards,
+Rong Chen
+
 
