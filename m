@@ -4,65 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B728C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:52:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68740C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:52:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 001DE2177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:52:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D0B42177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:52:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550515957;
-	bh=EK3mHZDtHUhFoY5ZAYwFkIu2chk/mSe7eq6FQzfDdp8=;
+	s=default; t=1550515961;
+	bh=FTBPbaPV5AfbGpUtx43+ePkqVlO443VfbUe6v309n7w=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=iIkjTdf09IFWe+/I7x5K+Q/XiPXFo9/9UpVarRkzvSAu91X0iieOjLZhXRVhwHk3+
-	 AwwBOzNaIVmial6cIdxaodFEI9PAKPOmfm+5F+gXf0CKt6gfOyVqtBrY8Z/sQjZh76
-	 nTUcYEcJpzGXmHtEYkxfONHDNjGEeVWa/KK6U4Ps=
+	b=op4uBoRkvJtzYaDpze6CTu0SmpgzZKxE+ravUj759bN1e1necdzCJRHB6D2smFCl8
+	 USyZA1nN0oojEYY+/gWsvQ4/D9Bbmn9HwFN3llw5D9/spsmLHMDXjlU2pPRhVQ4Nj9
+	 2OxdZmSNoiZo3Lxc/r6igF8ZvMO67A4qOLjPNqZQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727671AbfBRSwf (ORCPT
+        id S1727745AbfBRSwj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:52:35 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47032 "EHLO
+        Mon, 18 Feb 2019 13:52:39 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47140 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726258AbfBRSwe (ORCPT
+        with ESMTP id S1726258AbfBRSwg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:52:34 -0500
+        Mon, 18 Feb 2019 13:52:36 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=h3IvtyV+tDBtFWNwf1GwwoOFE6oJ9gCF69TG37Rz5oY=; b=aJkK3yqtNBRV
-        u+j/DjnVR+sttHqApWfkWhkG3fQph6bgoqz3XdOWM3T5Yqor83yd6GrM/H7b80x3y+vYbSsnQqmD4
-        ZheerPraYxBZJG4nJ4CxQ+tqgskkNyNaKqgxq5y+gF9PwJ+A34rnd7yonKQ9VEZRo1zPG28cgNn2X
-        r2/ho=;
+        List-Archive; bh=V462IumyxR+y3sckXpOoKDQDxLViaSTjuv8PZIOQYrY=; b=GYXKkNsazdMR
+        mgDLS1grSjybWo4N0h1xoNw+OJHrefmMfyhxEme68zJziWUOfWgp3KfORvIeaxypBa59xdg8bhEil
+        d3d6RD4ZxEkdMC4alyYP8DsMNfahwvgScyH0HNSgEfFQ4vuYJfNBSGDGTNdoaxkv6FH5R/UsrFzm5
+        pC9LE=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gvo1d-0001i6-Iv; Mon, 18 Feb 2019 18:52:21 +0000
+        id 1gvo1o-0001iv-Ge; Mon, 18 Feb 2019 18:52:32 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 0C4301128008; Mon, 18 Feb 2019 18:52:21 +0000 (GMT)
+        id DDB971128008; Mon, 18 Feb 2019 18:52:31 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Daniel Baluta <daniel.baluta@nxp.com>
-Cc:     Vicente Bergas <vicencb@gmail.com>,
+To:     Cheng-Yi Chiang <cychiang@chromium.org>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, tzungbi@chromium.org,
         Mark Brown <broonie@kernel.org>,
-        "kuninori.morimoto.gx@renesas.com" <kuninori.morimoto.gx@renesas.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "vicencb@gmail.com" <vicencb@gmail.com>,
-        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: simple-card: Fix refcount underflow" to the asoc tree
-In-Reply-To:  <20190216100927.10017-1-daniel.baluta@nxp.com>
+        Rohit kumar <rohitkr@codeaurora.org>, dgreid@chromium.org,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: qcom: Kconfig: select dmic for sdm845" to the asoc tree
+In-Reply-To:  <20190218041819.115729-1-cychiang@chromium.org>
 X-Patchwork-Hint: ignore
-Message-Id: <20190218185221.0C4301128008@debutante.sirena.org.uk>
-Date:   Mon, 18 Feb 2019 18:52:21 +0000 (GMT)
+Message-Id: <20190218185231.DDB971128008@debutante.sirena.org.uk>
+Date:   Mon, 18 Feb 2019 18:52:31 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -70,7 +63,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: simple-card: Fix refcount underflow
+   ASoC: qcom: Kconfig: select dmic for sdm845
 
 has been applied to the asoc tree at
 
@@ -95,58 +88,31 @@ to this mail.
 Thanks,
 Mark
 
-From 461d854c0dba3cdf63cce37ffb9423eca0793a47 Mon Sep 17 00:00:00 2001
-From: Daniel Baluta <daniel.baluta@nxp.com>
-Date: Sat, 16 Feb 2019 10:09:42 +0000
-Subject: [PATCH] ASoC: simple-card: Fix refcount underflow
+From 74c6ecf4194ebed285b29964a950e0cd7414fe19 Mon Sep 17 00:00:00 2001
+From: Cheng-Yi Chiang <cychiang@chromium.org>
+Date: Mon, 18 Feb 2019 12:18:19 +0800
+Subject: [PATCH] ASoC: qcom: Kconfig: select dmic for sdm845
 
-of_get_child_by_name() takes a reference we'll need to drop
-later so when we substitute in top we need to take a reference
-as well as just assigning.
+sdm845 uses dmic on EC so it should select CROS_EC_CODEC.
 
-Without this patch we hit the following error:
-
-[    1.246852] OF: ERROR: Bad of_node_put() on /sound-wm8524
-[    1.262261] Hardware name: NXP i.MX8MQ EVK (DT)
-[    1.266807] Workqueue: events deferred_probe_work_func
-[    1.271950] Call trace:
-[    1.274406]  dump_backtrace+0x0/0x158
-[    1.278074]  show_stack+0x14/0x20
-[    1.281396]  dump_stack+0xa8/0xcc
-[    1.284717]  of_node_release+0xb0/0xc8
-[    1.288474]  kobject_put+0x74/0xf0
-[    1.291879]  of_node_put+0x14/0x28
-[    1.295286]  __of_get_next_child+0x44/0x70
-[    1.299387]  of_get_next_child+0x3c/0x60
-[    1.303315]  simple_for_each_link+0x1dc/0x230
-[    1.307676]  simple_probe+0x80/0x540
-[    1.311256]  platform_drv_probe+0x50/0xa0
-
-This patch is based on an earlier version posted by Kuninori Morimoto
-and commit message includes explanations from Mark Brown.
-
-https://patchwork.kernel.org/patch/10814255/
-
-Reported-by: Vicente Bergas <vicencb@gmail.com>
-Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/generic/simple-card.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/qcom/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index 08df261024cf..dc18c4492955 100644
---- a/sound/soc/generic/simple-card.c
-+++ b/sound/soc/generic/simple-card.c
-@@ -445,7 +445,7 @@ static int simple_for_each_link(struct simple_priv *priv,
- 	/* Check if it has dai-link */
- 	node = of_get_child_by_name(top, PREFIX "dai-link");
- 	if (!node) {
--		node = top;
-+		node = of_node_get(top);
- 		is_top = 1;
- 	}
- 
+diff --git a/sound/soc/qcom/Kconfig b/sound/soc/qcom/Kconfig
+index 7948e993adba..8f206cb4fcc0 100644
+--- a/sound/soc/qcom/Kconfig
++++ b/sound/soc/qcom/Kconfig
+@@ -103,6 +103,7 @@ config SND_SOC_SDM845
+ 	select SND_SOC_QCOM_COMMON
+ 	select SND_SOC_RT5663
+ 	select SND_SOC_MAX98927
++	select SND_SOC_CROS_EC_CODEC
+ 	help
+ 	  To add support for audio on Qualcomm Technologies Inc.
+ 	  SDM845 SoC-based systems.
 -- 
 2.20.1
 
