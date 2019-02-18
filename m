@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D412C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:56:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA8FC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1B3B21916
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:56:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEBA520842
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:57:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498216;
-	bh=ntYefK9ARmAhYbTXMksCfI1UGCm12Snrj/FV6pd278k=;
+	s=default; t=1550498226;
+	bh=Iy2CSy1MYgq5yboS91cvX4wk2U7r0pWnxBo+nBMy1VA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uZbc5u7kEF2WB4xxdkMG+o1j4Hfbg+DYU0DxTk2UnNK0WD2vZ4ioJbOmHRqMZgdDI
-	 /PUFNiYGKynwFboKMv+8YuLB6el5EPDBLeZPBgr8+7bxMoZQpfVyMlIMaDwjS2tF+O
-	 t9pXXrcU/sHrmFMNMM57bP7cxOGK4n6Odnm6Zghs=
+	b=b1OR33Zlbt/KscgSRMf9BC4i4KecnVAsc5VgtNvxiNJk2lkT3ddhA4Fcb0s6mOoRn
+	 RtjptbwXwr4lUNfaWjtsMpnXl3DRiH/ZGTx8kiDxjdg1JdGWCIx5LA+Jak1UBwH74u
+	 2vwkDa2WwHtcwqISdX7g+CK72KtJ7154ZLN5cwtY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387932AbfBRN4z (ORCPT
+        id S2387977AbfBRN5D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:56:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37176 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:57:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37322 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387912AbfBRN4v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:56:51 -0500
+        id S2387935AbfBRN46 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:56:58 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A3B2217D9;
-        Mon, 18 Feb 2019 13:56:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AAAD20842;
+        Mon, 18 Feb 2019 13:56:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498210;
-        bh=ntYefK9ARmAhYbTXMksCfI1UGCm12Snrj/FV6pd278k=;
+        s=default; t=1550498217;
+        bh=Iy2CSy1MYgq5yboS91cvX4wk2U7r0pWnxBo+nBMy1VA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ObVKVyAJvtOwhj4M4Q+3Z/6dOiJ/v29Y0u6k1V2AT7ZoZmFzJ+UAYwTL5WhGrhibF
-         EPGagwTebCjBRKM+lEsvbwRtivTUxKJ8dA6qQ7uo7/hpM/ru6Qh2F5TkHfoH5/DBHc
-         mom313LHbD+zJlAMzA5OgF2pN1KtqSrlRlASq4AE=
+        b=pyb6ZQttkdSqK1RytiNNriPMY3GEAQMwP7PPcidY+w2ow0q2oEhB2iOwogoo0ms14
+         bXtq2caGYix8uowrFoXFyyx9jB9Bf7+FLXL0ZssaujOd1/KWB/ell22IKYJfqJPLyy
+         26heysHMRkKxy9Q3UeuZ82pRzDYzBMnX6QvXDgy4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adam Zabrocki <adamza@microsoft.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Akash Goel <akash.goel@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Tvrtko Ursulin <tvrtko.ursulin@intel.com>
-Subject: [PATCH 4.14 59/62] drm/i915: Prevent a race during I915_GEM_MMAP ioctl with WC set
-Date:   Mon, 18 Feb 2019 14:44:05 +0100
-Message-Id: <20190218133510.823296615@linuxfoundation.org>
+        stable@vger.kernel.org, Stefan Liebler <stli@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH 4.14 61/62] futex: Cure exit race
+Date:   Mon, 18 Feb 2019 14:44:07 +0100
+Message-Id: <20190218133511.018011829@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
 References: <20190218133505.801423074@linuxfoundation.org>
@@ -71,67 +71,178 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+From: Thomas Gleixner <tglx@linutronix.de>
 
-commit 2e7bd10e05afb866b5fb13eda25095c35d7a27cc upstream.
+commit da791a667536bf8322042e38ca85d55a78d3c273 upstream.
 
-Make sure the underlying VMA in the process address space is the
-same as it was during vm_mmap to avoid applying WC to wrong VMA.
+Stefan reported, that the glibc tst-robustpi4 test case fails
+occasionally. That case creates the following race between
+sys_exit() and sys_futex_lock_pi():
 
-A more long-term solution would be to have vm_mmap_locked variant
-in linux/mmap.h for when caller wants to hold mmap_sem for an
-extended duration.
+ CPU0				CPU1
 
-v2:
-- Refactor the compare function
+ sys_exit()			sys_futex()
+  do_exit()			 futex_lock_pi()
+   exit_signals(tsk)		  No waiters:
+    tsk->flags |= PF_EXITING;	  *uaddr == 0x00000PID
+  mm_release(tsk)		  Set waiter bit
+   exit_robust_list(tsk) {	  *uaddr = 0x80000PID;
+      Set owner died		  attach_to_pi_owner() {
+    *uaddr = 0xC0000000;	   tsk = get_task(PID);
+   }				   if (!tsk->flags & PF_EXITING) {
+  ...				     attach();
+  tsk->flags |= PF_EXITPIDONE;	   } else {
+				     if (!(tsk->flags & PF_EXITPIDONE))
+				       return -EAGAIN;
+				     return -ESRCH; <--- FAIL
+				   }
 
-Fixes: 1816f9236303 ("drm/i915: Support creation of unbound wc user mappings for objects")
-Reported-by: Adam Zabrocki <adamza@microsoft.com>
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-Cc: <stable@vger.kernel.org> # v4.0+
-Cc: Akash Goel <akash.goel@intel.com>
-Cc: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Tvrtko Ursulin <tvrtko.ursulin@linux.intel.com>
-Cc: Adam Zabrocki <adamza@microsoft.com>
-Reviewed-by: Chris Wilson <chris@chris-wilson.co.uk>
-Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@intel.com> #v1
-Link: https://patchwork.freedesktop.org/patch/msgid/20190207085454.10598-1-joonas.lahtinen@linux.intel.com
-(cherry picked from commit 5c4604e757ba9b193b09768d75a7d2105a5b883f)
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+ESRCH is returned all the way to user space, which triggers the glibc test
+case assert. Returning ESRCH unconditionally is wrong here because the user
+space value has been changed by the exiting task to 0xC0000000, i.e. the
+FUTEX_OWNER_DIED bit is set and the futex PID value has been cleared. This
+is a valid state and the kernel has to handle it, i.e. taking the futex.
+
+Cure it by rereading the user space value when PF_EXITING and PF_EXITPIDONE
+is set in the task which 'owns' the futex. If the value has changed, let
+the kernel retry the operation, which includes all regular sanity checks
+and correctly handles the FUTEX_OWNER_DIED case.
+
+If it hasn't changed, then return ESRCH as there is no way to distinguish
+this case from malfunctioning user space. This happens when the exiting
+task did not have a robust list, the robust list was corrupted or the user
+space value in the futex was simply bogus.
+
+Reported-by: Stefan Liebler <stli@linux.ibm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Darren Hart <dvhart@infradead.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Sasha Levin <sashal@kernel.org>
+Cc: stable@vger.kernel.org
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=200467
+Link: https://lkml.kernel.org/r/20181210152311.986181245@linutronix.de
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/i915/i915_gem.c |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ kernel/futex.c |   69 ++++++++++++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 63 insertions(+), 6 deletions(-)
 
---- a/drivers/gpu/drm/i915/i915_gem.c
-+++ b/drivers/gpu/drm/i915/i915_gem.c
-@@ -1633,6 +1633,16 @@ i915_gem_sw_finish_ioctl(struct drm_devi
- 	return 0;
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -1166,11 +1166,65 @@ out_error:
+ 	return ret;
  }
  
-+static inline bool
-+__vma_matches(struct vm_area_struct *vma, struct file *filp,
-+	      unsigned long addr, unsigned long size)
++static int handle_exit_race(u32 __user *uaddr, u32 uval,
++			    struct task_struct *tsk)
 +{
-+	if (vma->vm_file != filp)
-+		return false;
++	u32 uval2;
 +
-+	return vma->vm_start == addr && (vma->vm_end - vma->vm_start) == size;
++	/*
++	 * If PF_EXITPIDONE is not yet set, then try again.
++	 */
++	if (tsk && !(tsk->flags & PF_EXITPIDONE))
++		return -EAGAIN;
++
++	/*
++	 * Reread the user space value to handle the following situation:
++	 *
++	 * CPU0				CPU1
++	 *
++	 * sys_exit()			sys_futex()
++	 *  do_exit()			 futex_lock_pi()
++	 *                                futex_lock_pi_atomic()
++	 *   exit_signals(tsk)		    No waiters:
++	 *    tsk->flags |= PF_EXITING;	    *uaddr == 0x00000PID
++	 *  mm_release(tsk)		    Set waiter bit
++	 *   exit_robust_list(tsk) {	    *uaddr = 0x80000PID;
++	 *      Set owner died		    attach_to_pi_owner() {
++	 *    *uaddr = 0xC0000000;	     tsk = get_task(PID);
++	 *   }				     if (!tsk->flags & PF_EXITING) {
++	 *  ...				       attach();
++	 *  tsk->flags |= PF_EXITPIDONE;     } else {
++	 *				       if (!(tsk->flags & PF_EXITPIDONE))
++	 *				         return -EAGAIN;
++	 *				       return -ESRCH; <--- FAIL
++	 *				     }
++	 *
++	 * Returning ESRCH unconditionally is wrong here because the
++	 * user space value has been changed by the exiting task.
++	 *
++	 * The same logic applies to the case where the exiting task is
++	 * already gone.
++	 */
++	if (get_futex_value_locked(&uval2, uaddr))
++		return -EFAULT;
++
++	/* If the user space value has changed, try again. */
++	if (uval2 != uval)
++		return -EAGAIN;
++
++	/*
++	 * The exiting task did not have a robust list, the robust list was
++	 * corrupted or the user space value in *uaddr is simply bogus.
++	 * Give up and tell user space.
++	 */
++	return -ESRCH;
 +}
 +
+ /*
+  * Lookup the task for the TID provided from user space and attach to
+  * it after doing proper sanity checks.
+  */
+-static int attach_to_pi_owner(u32 uval, union futex_key *key,
++static int attach_to_pi_owner(u32 __user *uaddr, u32 uval, union futex_key *key,
+ 			      struct futex_pi_state **ps)
+ {
+ 	pid_t pid = uval & FUTEX_TID_MASK;
+@@ -1180,12 +1234,15 @@ static int attach_to_pi_owner(u32 uval,
+ 	/*
+ 	 * We are the first waiter - try to look up the real owner and attach
+ 	 * the new pi_state to it, but bail out when TID = 0 [1]
++	 *
++	 * The !pid check is paranoid. None of the call sites should end up
++	 * with pid == 0, but better safe than sorry. Let the caller retry
+ 	 */
+ 	if (!pid)
+-		return -ESRCH;
++		return -EAGAIN;
+ 	p = futex_find_get_task(pid);
+ 	if (!p)
+-		return -ESRCH;
++		return handle_exit_race(uaddr, uval, NULL);
+ 
+ 	if (unlikely(p->flags & PF_KTHREAD)) {
+ 		put_task_struct(p);
+@@ -1205,7 +1262,7 @@ static int attach_to_pi_owner(u32 uval,
+ 		 * set, we know that the task has finished the
+ 		 * cleanup:
+ 		 */
+-		int ret = (p->flags & PF_EXITPIDONE) ? -ESRCH : -EAGAIN;
++		int ret = handle_exit_race(uaddr, uval, p);
+ 
+ 		raw_spin_unlock_irq(&p->pi_lock);
+ 		put_task_struct(p);
+@@ -1262,7 +1319,7 @@ static int lookup_pi_state(u32 __user *u
+ 	 * We are the first waiter - try to look up the owner based on
+ 	 * @uval and attach to it.
+ 	 */
+-	return attach_to_pi_owner(uval, key, ps);
++	return attach_to_pi_owner(uaddr, uval, key, ps);
+ }
+ 
+ static int lock_pi_update_atomic(u32 __user *uaddr, u32 uval, u32 newval)
+@@ -1370,7 +1427,7 @@ static int futex_lock_pi_atomic(u32 __us
+ 	 * attach to the owner. If that fails, no harm done, we only
+ 	 * set the FUTEX_WAITERS bit in the user space variable.
+ 	 */
+-	return attach_to_pi_owner(uval, key, ps);
++	return attach_to_pi_owner(uaddr, newval, key, ps);
+ }
+ 
  /**
-  * i915_gem_mmap_ioctl - Maps the contents of an object, returning the address
-  *			 it is mapped to.
-@@ -1691,7 +1701,7 @@ i915_gem_mmap_ioctl(struct drm_device *d
- 			return -EINTR;
- 		}
- 		vma = find_vma(mm, addr);
--		if (vma)
-+		if (vma && __vma_matches(vma, obj->base.filp, addr, args->size))
- 			vma->vm_page_prot =
- 				pgprot_writecombine(vm_get_page_prot(vma->vm_flags));
- 		else
 
 
