@@ -2,83 +2,97 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 045BDC4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:46:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE0C5C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:46:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C44352084D
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:46:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 867C92084D
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:46:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729354AbfBRIqN (ORCPT
+        id S1729375AbfBRIq1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 03:46:13 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3764 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727423AbfBRIqN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 03:46:13 -0500
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id D4D8ECE0E8781D9C789D;
-        Mon, 18 Feb 2019 16:46:09 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 18 Feb 2019 16:45:59 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Boris Brezillon <bbrezillon@kernel.org>,
-        Arnaud Ebalard <arno@natisbad.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-CC:     YueHaibing <yuehaibing@huawei.com>, <linux-crypto@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] crypto: marvell - Remove set but not used variable 'ivsize'
-Date:   Mon, 18 Feb 2019 08:59:47 +0000
-Message-ID: <20190218085947.3800-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        Mon, 18 Feb 2019 03:46:27 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:60941 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727423AbfBRIq1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 03:46:27 -0500
+X-Originating-IP: 90.88.30.68
+Received: from localhost (aaubervilliers-681-1-89-68.w90-88.abo.wanadoo.fr [90.88.30.68])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 9A7394001E;
+        Mon, 18 Feb 2019 08:46:24 +0000 (UTC)
+Date:   Mon, 18 Feb 2019 09:46:24 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Frank Lee <tiny.windzz@gmail.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, robh+dt@kernel.org,
+        mark.rutland@arm.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATVH v2 0/4] arm64: dts: allwinner: h6: Enable CPU
+Message-ID: <20190218084624.qmv4wavag4uymvrf@flea>
+References: <20190215134937.10259-1-tiny.windzz@gmail.com>
+ <20190215151357.noovkx3r6ia4boag@flea>
+ <CAEExFWs2VuOpZu=Mw221Gp3RDbw=Q24eh8Y=pWdfh-c+mPvwuw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="vd75snmr6a42d2ox"
+Content-Disposition: inline
+In-Reply-To: <CAEExFWs2VuOpZu=Mw221Gp3RDbw=Q24eh8Y=pWdfh-c+mPvwuw@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/crypto/marvell/cipher.c: In function 'mv_cesa_skcipher_dma_req_init':
-drivers/crypto/marvell/cipher.c:325:15: warning:
- variable 'ivsize' set but not used [-Wunused-but-set-variable]
+--vd75snmr6a42d2ox
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-It's not used any more after 0c99620f0ac1 ("crypto: marvell - Use an unique
-pool to copy results of requests")
+Hi,
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/crypto/marvell/cipher.c | 2 --
- 1 file changed, 2 deletions(-)
+On Fri, Feb 15, 2019 at 11:35:20PM +0800, Frank Lee wrote:
+> On Fri, Feb 15, 2019 at 11:13 PM Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> >
+> > On Fri, Feb 15, 2019 at 08:49:33AM -0500, Yangtao Li wrote:
+> > > Add the cpufreq support of h6, source of information is as follows.
+> > >
+> > > h6 cpu opp info:
+> > > https://github.com/Allwinner-Homlet/H6-BSP4.9-linux/blob/master/arch/=
+arm64/boot/dts/sunxi/sun50iw6p1.dtsi
+> > >
+> > > axp805 spec:
+> > > http://linux-sunxi.org/images/b/bc/AXP805_Datasheet_V1.0_en.pdf
+> >
+> > Was that tested on the two H6 boards this time?
+>
+> I tested two boards for about two hours.
 
-diff --git a/drivers/crypto/marvell/cipher.c b/drivers/crypto/marvell/cipher.c
-index 066830dcc53e..fb279b3a1ca1 100644
---- a/drivers/crypto/marvell/cipher.c
-+++ b/drivers/crypto/marvell/cipher.c
-@@ -322,7 +322,6 @@ static int mv_cesa_skcipher_dma_req_init(struct skcipher_request *req,
- 	struct mv_cesa_skcipher_dma_iter iter;
- 	bool skip_ctx = false;
- 	int ret;
--	unsigned int ivsize;
- 
- 	basereq->chain.first = NULL;
- 	basereq->chain.last = NULL;
-@@ -381,7 +380,6 @@ static int mv_cesa_skcipher_dma_req_init(struct skcipher_request *req,
- 	} while (mv_cesa_skcipher_req_iter_next_op(&iter));
- 
- 	/* Add output data for IV */
--	ivsize = crypto_skcipher_ivsize(crypto_skcipher_reqtfm(req));
- 	ret = mv_cesa_dma_add_result_op(&basereq->chain, CESA_SA_CFG_SRAM_OFFSET,
- 				    CESA_SA_DATA_SRAM_OFFSET,
- 				    CESA_TDMA_SRC_IN_SRAM, flags);
+How did you test it?
 
+Maxime
 
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
+--vd75snmr6a42d2ox
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXGpw4AAKCRDj7w1vZxhR
+xbwFAQCJqNtKoCeGw9tRc81u7tcH5VqkkQkk0iVMDl1/nfnXxwD/f5a37BMO/YWd
+UG1fZ+OOS0sBayfIjZQoG/Yo/8dl2gM=
+=G4JI
+-----END PGP SIGNATURE-----
+
+--vd75snmr6a42d2ox--
