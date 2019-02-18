@@ -2,137 +2,118 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37EF1C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:19:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD1BBC10F01
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F164221902
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:19:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499571;
-	bh=/Q7asnHEvtYZbGowDsqMBio6p2qVX/A4QZ4pmzXjQE0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aHK2Yp9TRoi32491S08xg7mZ9CQaMTWW1Nn/HwJ5feQ0bzI9TDItYVhlvvkz7JIwH
-	 NfEFuq9PRHCYcUX+5gB7iOK9mlXkYnqolL13HkEo8mo2Dme6YbTIMHoxIT0uWlU8eX
-	 06L3os8uUPO7lLbUAjxgbBi3rZsWb5QHOJhhWjEk=
+	by mail.kernel.org (Postfix) with ESMTP id 8875821902
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:19:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389228AbfBROT3 (ORCPT
+        id S2390276AbfBROTg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:19:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51276 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:19:36 -0500
+Received: from foss.arm.com ([217.140.101.70]:59640 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390839AbfBROIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:08:04 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF17521902;
-        Mon, 18 Feb 2019 14:08:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498883;
-        bh=/Q7asnHEvtYZbGowDsqMBio6p2qVX/A4QZ4pmzXjQE0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QmTtgZifWiiFAAv423D163n0ALGE0VpCW+LbLDdLnVUD2+bYKZ52Mjjxo5A3y49I8
-         7qUusP6YXOO1ywo15elN1AcVWZ21BoYjfL8XAwkzfuE2RH9ZcNfvwojVihWkrpaXyk
-         tVUzmRe0QhSuSH9v8FFGthIpJzi7QHkPLETKs1Us=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
-        Steve French <stfrench@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 123/143] cifs: Limit memory used by lock request calls to a page
-Date:   Mon, 18 Feb 2019 14:44:11 +0100
-Message-Id: <20190218133533.494382891@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
-References: <20190218133529.099444112@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        id S2389442AbfBROTe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:19:34 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B64AF15AB;
+        Mon, 18 Feb 2019 06:19:33 -0800 (PST)
+Received: from [10.1.196.69] (e112269-lin.cambridge.arm.com [10.1.196.69])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 770F73F589;
+        Mon, 18 Feb 2019 06:19:15 -0800 (PST)
+Subject: Re: [PATCH 03/13] mm: Add generic p?d_large() macros
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     x86@kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        kirill@shutemov.name, Dave Hansen <dave.hansen@linux.intel.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        James Morse <james.morse@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org, kan.liang@linux.intel.com
+References: <20190215170235.23360-1-steven.price@arm.com>
+ <20190215170235.23360-4-steven.price@arm.com>
+ <20190218113134.GU32477@hirez.programming.kicks-ass.net>
+From:   Steven Price <steven.price@arm.com>
+Message-ID: <aad21496-a86b-ca91-70b7-0c23ea6fefd3@arm.com>
+Date:   Mon, 18 Feb 2019 14:19:14 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.5.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190218113134.GU32477@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On 18/02/2019 11:31, Peter Zijlstra wrote:
+> On Fri, Feb 15, 2019 at 05:02:24PM +0000, Steven Price wrote:
+>> From: James Morse <james.morse@arm.com>
+>>
+>> Exposing the pud/pgd levels of the page tables to walk_page_range() means
+>> we may come across the exotic large mappings that come with large areas
+>> of contiguous memory (such as the kernel's linear map).
+>>
+>> For architectures that don't provide p?d_large() macros, provided a
+>> does nothing default.
+> 
+> Kan was going to fix that for all archs I think..
 
-------------------
+The latest series I can find from Kan is still x86 specific. I'm happy
+to rebase onto something else if Kan has an implementation already
+(please point me in the right direction). Otherwise Kan is obviously
+free to base on these changes.
 
-[ Upstream commit 92a8109e4d3a34fb6b115c9098b51767dc933444 ]
+Steve
 
-The code tries to allocate a contiguous buffer with a size supplied by
-the server (maxBuf). This could fail if memory is fragmented since it
-results in high order allocations for commonly used server
-implementations. It is also wasteful since there are probably
-few locks in the usual case. Limit the buffer to be no larger than a
-page to avoid memory allocation failures due to fragmentation.
-
-Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/cifs/file.c     | 8 ++++++++
- fs/cifs/smb2file.c | 4 ++++
- 2 files changed, 12 insertions(+)
-
-diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-index 026b399af215..1062e96ee272 100644
---- a/fs/cifs/file.c
-+++ b/fs/cifs/file.c
-@@ -1081,6 +1081,10 @@ cifs_push_mandatory_locks(struct cifsFileInfo *cfile)
- 		return -EINVAL;
- 	}
- 
-+	BUILD_BUG_ON(sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE) >
-+		     PAGE_SIZE);
-+	max_buf = min_t(unsigned int, max_buf - sizeof(struct smb_hdr),
-+			PAGE_SIZE);
- 	max_num = (max_buf - sizeof(struct smb_hdr)) /
- 						sizeof(LOCKING_ANDX_RANGE);
- 	buf = kcalloc(max_num, sizeof(LOCKING_ANDX_RANGE), GFP_KERNEL);
-@@ -1410,6 +1414,10 @@ cifs_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
- 	if (max_buf < (sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE)))
- 		return -EINVAL;
- 
-+	BUILD_BUG_ON(sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE) >
-+		     PAGE_SIZE);
-+	max_buf = min_t(unsigned int, max_buf - sizeof(struct smb_hdr),
-+			PAGE_SIZE);
- 	max_num = (max_buf - sizeof(struct smb_hdr)) /
- 						sizeof(LOCKING_ANDX_RANGE);
- 	buf = kcalloc(max_num, sizeof(LOCKING_ANDX_RANGE), GFP_KERNEL);
-diff --git a/fs/cifs/smb2file.c b/fs/cifs/smb2file.c
-index b7885dc0d9bb..dee5250701de 100644
---- a/fs/cifs/smb2file.c
-+++ b/fs/cifs/smb2file.c
-@@ -129,6 +129,8 @@ smb2_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
- 	if (max_buf < sizeof(struct smb2_lock_element))
- 		return -EINVAL;
- 
-+	BUILD_BUG_ON(sizeof(struct smb2_lock_element) > PAGE_SIZE);
-+	max_buf = min_t(unsigned int, max_buf, PAGE_SIZE);
- 	max_num = max_buf / sizeof(struct smb2_lock_element);
- 	buf = kcalloc(max_num, sizeof(struct smb2_lock_element), GFP_KERNEL);
- 	if (!buf)
-@@ -265,6 +267,8 @@ smb2_push_mandatory_locks(struct cifsFileInfo *cfile)
- 		return -EINVAL;
- 	}
- 
-+	BUILD_BUG_ON(sizeof(struct smb2_lock_element) > PAGE_SIZE);
-+	max_buf = min_t(unsigned int, max_buf, PAGE_SIZE);
- 	max_num = max_buf / sizeof(struct smb2_lock_element);
- 	buf = kcalloc(max_num, sizeof(struct smb2_lock_element), GFP_KERNEL);
- 	if (!buf) {
--- 
-2.19.1
-
-
+> See:
+> 
+>   http://lkml.kernel.org/r/20190204105409.GA17550@hirez.programming.kicks-ass.net
+> 
+>> Signed-off-by: James Morse <james.morse@arm.com>
+>> Signed-off-by: Steven Price <steven.price@arm.com>
+>> ---
+>>  include/asm-generic/pgtable.h | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
+>>
+>> diff --git a/include/asm-generic/pgtable.h b/include/asm-generic/pgtable.h
+>> index 05e61e6c843f..7630d663cd51 100644
+>> --- a/include/asm-generic/pgtable.h
+>> +++ b/include/asm-generic/pgtable.h
+>> @@ -1186,4 +1186,14 @@ static inline bool arch_has_pfn_modify_check(void)
+>>  #define mm_pmd_folded(mm)	__is_defined(__PAGETABLE_PMD_FOLDED)
+>>  #endif
+>>  
+>> +#ifndef pgd_large
+>> +#define pgd_large(x)	0
+>> +#endif
+>> +#ifndef pud_large
+>> +#define pud_large(x)	0
+>> +#endif
+>> +#ifndef pmd_large
+>> +#define pmd_large(x)	0
+>> +#endif
+>> +
+>>  #endif /* _ASM_GENERIC_PGTABLE_H */
+>> -- 
+>> 2.20.1
+>>
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
 
