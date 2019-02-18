@@ -2,169 +2,115 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 133CFC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 11:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E65C10F01
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 11:57:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC2CF206BA
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 11:54:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59B812147C
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 11:57:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ysoft.com header.i=@ysoft.com header.b="UaJfd1I/"
+	dkim=pass (2048-bit key) header.d=benyossef-com.20150623.gappssmtp.com header.i=@benyossef-com.20150623.gappssmtp.com header.b="NuGOmLGE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729681AbfBRLyn (ORCPT
+        id S1729804AbfBRL5Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 06:54:43 -0500
-Received: from uho.ysoft.cz ([81.19.3.130]:55240 "EHLO uho.ysoft.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728293AbfBRLyn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 06:54:43 -0500
-Received: from [10.1.8.111] (unknown [10.1.8.111])
-        by uho.ysoft.cz (Postfix) with ESMTP id F3DF9A4087;
-        Mon, 18 Feb 2019 12:54:39 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ysoft.com;
-        s=20160406-ysoft-com; t=1550490880;
-        bh=5P7YgJCbEUjTEt6oIZYQqmnB4f8AHSDzilbNSbQGbDM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=UaJfd1I/SkJWzVI5MXfPxKdNmcNzTU3M29A6zYooiERkax8tCQWbntw73jpDcmEsi
-         CJE43YrVr8HhW4SVQW4dWrh7b0cEIoiip6HCoO3GVuoTVACqQsrw0vXYRhmZ2C4ne4
-         z9av5XFuf1kQAVFIcpj6WUdOK8Y7Z4v76okZzkWc=
-Subject: Re: [RFC] net: dsa: qca8k: implement rgmii-id mode
-To:     Vinod Koul <vkoul@kernel.org>, Andrew Lunn <andrew@lunn.ch>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>
-References: <0c7428dc-736e-c5c4-13e7-b42052c60cd7@ysoft.com>
- <20190215152356.GP708@lunn.ch> <20190218104539.GL21884@vkoul-mobl>
-From:   =?UTF-8?B?TWljaGFsIFZva8OhxI0=?= <michal.vokac@ysoft.com>
-Message-ID: <40d0e8b0-b16d-85ef-e647-944bc7dbd571@ysoft.com>
-Date:   Mon, 18 Feb 2019 12:54:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 18 Feb 2019 06:57:25 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:32907 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728394AbfBRL5Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 06:57:24 -0500
+Received: by mail-ua1-f68.google.com with SMTP id q17so5725136uam.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 03:57:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=benyossef-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=weT4TD1xezzx/iYCiwVCobi5Soc4QsB9VKo5sTQMWUM=;
+        b=NuGOmLGEv9vFd1kLoZ00BSI2cZCQd/6AsEokJA5o5ioLKOPAO6Xk8kpyqEInZp30Xz
+         F91HL3fI3+5skkRTZU+nZQYsBEyY5Vh/IMHqq0pwL7ERpimmqOlzlBkEy/FhbJOzp11X
+         ypumI8h1PLJB4aC6WldSllCN8s4vzUFSvd291zyoIFByZDWRlshPlXqq/S/pd9oe9dQP
+         1Mu1epZekavFcN1bvqAnwxvk9zQWkMyHFIq0v4hABpLSM7SRtfTRx7cJWsW7loZETh+8
+         /QDpGYiH/pHWhXF9LfCI0OvOE4cla0bVVP+XVfaqUHaZRF5YfdfelT88gbATKCAWks5V
+         Qo+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=weT4TD1xezzx/iYCiwVCobi5Soc4QsB9VKo5sTQMWUM=;
+        b=VLveCSK3jiT6jjqQKTxAzpKi2D2o8u8C6Nc3r62INr57y39oJbORxXrkPx2uw/lwNO
+         XnPJbEuX1BxHqfi44+9moIvEeyCoSxjt6YRxvdJGTPbijaqGLfVxlf0OYaZ3I04fpQ1d
+         6e17F0haNoF5BVkAnTWsuAtcc/UCKq7u5MW7jlSGSz0bKQFKuM3jyWUJSKkxxnfd4+EN
+         G8wWGscRMpShlNAY1jvWruO0zM2QgHVJ/DESbnJ79/qV4hzUGsAQSIr4q3EgS3X2S+Xi
+         /1oKdY+UC8SNqIvqwb9ZBqtlJ9kETwo5jCiVdPFa13tkv3S8Sm3dWOJ5JT/rDpgim3QB
+         S6Ow==
+X-Gm-Message-State: AHQUAuaB+8L7jNJL4+1HMu0Hv91RZMqcOPNhfV7KqqsF8JAlBH253tt0
+        1krfeJ5g2zDzXFW5+Z2q1ctIkKyxSchr7NeWnFlctA==
+X-Google-Smtp-Source: AHgI3IYAN0ZekUY/dAup2LjXp43TPno6n27TskQqbfxEJKUmKCBuyxJSbiTHmzWm6ijpRQX7Oir8+k7o4B9qnLQHkFg=
+X-Received: by 2002:ab0:2c08:: with SMTP id l8mr11413017uar.113.1550491043805;
+ Mon, 18 Feb 2019 03:57:23 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190218104539.GL21884@vkoul-mobl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20190211142758.16718-1-gilad@benyossef.com> <CAMuHMdUXAY7wBjCYH94V2NV7+MXdOKufnWpi=B1vAWkNFysxpg@mail.gmail.com>
+In-Reply-To: <CAMuHMdUXAY7wBjCYH94V2NV7+MXdOKufnWpi=B1vAWkNFysxpg@mail.gmail.com>
+From:   Gilad Ben-Yossef <gilad@benyossef.com>
+Date:   Mon, 18 Feb 2019 13:57:11 +0200
+Message-ID: <CAOtvUMcss05jdH1JWaw3Z7eKvp3+gsMLvR+NSUxK--8Zu726aQ@mail.gmail.com>
+Subject: Re: [PATCH] crypto: ccree: add missing inline qualifier
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Ofir Drag <ofir.drang@arm.com>, stable <stable@kernel.org>,
+        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18. 02. 19 11:45, Vinod Koul wrote:
-> On 15-02-19, 16:23, Andrew Lunn wrote:
->> On Fri, Feb 15, 2019 at 04:01:08PM +0100, Michal Vokáč wrote:
->>> Hi,
->>>
->>> networking on my boards [1], which are currently in linux-next, suddently
->>> stopped working. I tracked it down to this commit 5ecdd77c61c8 ("net: dsa:
->>> qca8k: disable delay for RGMII mode") [2].
->>>
->>> So I think the rgmii-id mode is obviously needed in my case.
->>> I was able to find a couple drivers that read tx/rx-delay or
->>> tx/rx-internal-delay from device tree. Namely:
->>>
->>>    drivers/net/ethernet/apm/xgene/xgene_enet_main.c
->>>    drivers/net/ethernet/stmicro/stmmac/dwmac-mediatek.c
->>>    drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.c
->>>    drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
->>>    drivers/net/phy/dp83867.c
->>>
->>> I would appreciate any hints how to add similar function to qca8k driver
->>> if that is the correct way to go. Can I take some of the above mentioned
->>> drivers as a good example for that? How should the binding look like?
->>>
->>> I would expect something like this:
->>>
->>> 	switch@0 {
->>> 		compatible = "qca,qca8334";
->>> 		reg = <0>;
->>>
->>> 		switch_ports: ports {
->>> 			#address-cells = <1>;
->>> 			#size-cells = <0>;
->>>
->>> 			ethphy0: port@0 {
->>> 				reg = <0>;
->>> 				label = "cpu";
->>> 				phy-mode = "rgmii-id";
->>> 				qca,tx-delay = <3>;
->>> 				qca,rx-delay = <3>;
->>> 				ethernet = <&fec>;
->>> 		};
->>
->> Hi Michal
->>
->> Your submission used:
->>
->> +				ethphy0: port@0 {
->> +					reg = <0>;
->> +					label = "cpu";
->> +					phy-mode = "rgmii";
->> +					ethernet = <&fec>;
->> +
->> +					fixed-link {
->> +						speed = <1000>;
->> +						full-duplex;
->> +					};
->> +				};
->>
->> This is good. If you have a fixed-link you can pass a phy-mode.
+Hi,
 
-Yes, I am using fixed-link and the plan was to implement the rgmii-id
-mode.
+On Mon, Feb 18, 2019 at 10:48 AM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+>
+> On Mon, Feb 11, 2019 at 3:29 PM Gilad Ben-Yossef <gilad@benyossef.com> wr=
+ote:
+> > Commit 1358c13a48c4 ("crypto: ccree - fix resume race condition on init=
+")
+> > was missing a "inline" qualifier for stub function used when CONFIG_PM
+> > is not set causing a build warning.
+> >
+> > Fixes: 1358c13a48c4 ("crypto: ccree - fix resume race condition on init=
+")
+> > Cc: stable@kernel.org # v4.20
+>
+> # v5.0
+>
+> However, I believe the version comment is not necessary, as the same
+> version is indicated by the Fixes tag.
 
->>
->> The comment that was removed was:
->>
->> -               /* According to the datasheet, RGMII delay is enabled through
->> -                * PORT5_PAD_CTRL for all ports, rather than individual port
->> -                * registers
->> -                */
->>
->> Is it possible to enable delays per port? Ideally, you want to enable
->> delays for just selected ports. Add another case for
->> PHY_INTERFACE_MODE_RGMII_ID to enable the delays.
+I've marked it v4.20 since I've marked the patch that this fixes for
+inclusion in 4.20.
 
-I am still trying to collect all the relevant notes and bits from the
-horrible docs to understand how this is done. The problem is different
-parts and different versions of the documentation provide diffrerent
-details.
+Although the underlying bug was there all along, it was only revealed
+by a change that
+went into 4.20.
+>
+> > Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+>
+> Acked-by: Geert Uytterhoeven <geert@linux-m68k.org>
+>
 
-For example the QCA8334 model does not have PORT5 and so that registers
-are not documented. Though some application note document says:
 
-   """
-   The MAC0 timing control is in the Port0 PAD Mode Control Register (offset 0x0004):
+Thanks!
+Gilad
 
-   1. RGMII timing delay for the output path of QCA8337(N) is enabled by 0x8[24].
-      Set 1 to add 2ns delay in 1000 mode for all RGMII interfaces.
 
-   2. Bit [21:20]: select the delay time for the output path in 10/100 mode.
+--=20
+Gilad Ben-Yossef
+Chief Coffee Drinker
 
-   3. Bit 25: enable the timing delay for the input path of QCA8337(N) in 1000 mode.
-
-   4. Bit [23:22]: select the delay time for the input path in 1000 mode.
-     00: 0.2ns
-     01: 1.2ns
-     10: 2.1ns
-     11: 3.1ns
-   """
-
-That is in line with the removed comment. The bit 24 at address 0x8 is
-used to enable/disable delays globally. And obviously it is needed on the
-QCA8334 model as well even though it should not have the PORT5.
-
-> In the hindsight I should not have removed the comment, let me ressurect
-> that as well as add handling of the RGMII modes...
-
-OK, thanks.
-
-> Please do test
-
-Sure, will do. Just let me know when you have something ready.
-Thank you!
-
-Michal
+values of =CE=B2 will give rise to dom!
