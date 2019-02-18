@@ -3,282 +3,702 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A1E5C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 918A9C4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:22:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 235D22146E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:22:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DA652146E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:22:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392298AbfBRSWP (ORCPT
+        id S2403953AbfBRSWT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:22:15 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46258 "EHLO mx1.suse.de"
+        Mon, 18 Feb 2019 13:22:19 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46460 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2403896AbfBRSWL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:22:11 -0500
+        id S2391710AbfBRSWR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 13:22:17 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1DAF5AEB8;
-        Mon, 18 Feb 2019 18:22:10 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 281EDAFD4;
+        Mon, 18 Feb 2019 18:22:15 +0000 (UTC)
 Received: by unicorn.suse.cz (Postfix, from userid 1000)
-        id BE4EEE0122; Mon, 18 Feb 2019 19:22:09 +0100 (CET)
-Message-Id: <f2dba0ea8b404c12876204fab73663d0b1e8e7b5.1550513384.git.mkubecek@suse.cz>
+        id C50B3E0122; Mon, 18 Feb 2019 19:22:14 +0100 (CET)
+Message-Id: <abfb63ea613f295a68a77f8ffba202d198c38fe1.1550513384.git.mkubecek@suse.cz>
 In-Reply-To: <cover.1550513384.git.mkubecek@suse.cz>
 References: <cover.1550513384.git.mkubecek@suse.cz>
 From:   Michal Kubecek <mkubecek@suse.cz>
-Subject: [RFC PATCH net-next v3 09/21] ethtool: move string arrays into common
- file
+Subject: [RFC PATCH net-next v3 10/21] ethtool: provide string sets with
+ GET_STRSET request
 To:     netdev@vger.kernel.org
 Cc:     David Miller <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
         Jakub Kicinski <jakub.kicinski@netronome.com>,
         Jiri Pirko <jiri@resnulli.us>, linux-kernel@vger.kernel.org
-Date:   Mon, 18 Feb 2019 19:22:09 +0100 (CET)
+Date:   Mon, 18 Feb 2019 19:22:14 +0100 (CET)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce file net/ethtool/common.c for code shared by ioctl and netlink
-ethtool interface. Move name tables of features, RSS hash functions,
-tunables and PHY tunables into this file.
+Requests a contents of one or more string sets, i.e. indexed arrays of
+strings; this information is provided by ETHTOOL_GSSET_INFO and
+ETHTOOL_GSTRINGS commands of ioctl interface. There are three types of
+requests:
+
+  - no NLM_F_DUMP, no device: get "global" stringsets
+  - no NLM_F_DUMP, with device: get string sets related to the device
+  - NLM_F_DUMP, no device: get device related string sets for all devices
+
+It's possible to request all string sets of given type or only specific
+sets. With ETHA_STRSET_COUNTS flag, only set sizes (number of strings) are
+returned.
 
 Signed-off-by: Michal Kubecek <mkubecek@suse.cz>
 ---
- net/ethtool/Makefile |  2 +-
- net/ethtool/common.c | 83 ++++++++++++++++++++++++++++++++++++++++++++
- net/ethtool/common.h | 17 +++++++++
- net/ethtool/ioctl.c  | 82 ++-----------------------------------------
- 4 files changed, 103 insertions(+), 81 deletions(-)
- create mode 100644 net/ethtool/common.c
- create mode 100644 net/ethtool/common.h
+ Documentation/networking/ethtool-netlink.txt |  46 +-
+ include/uapi/linux/ethtool.h                 |   2 +
+ include/uapi/linux/ethtool_netlink.h         |  43 ++
+ net/ethtool/Makefile                         |   2 +-
+ net/ethtool/netlink.c                        |  10 +
+ net/ethtool/strset.c                         | 437 +++++++++++++++++++
+ 6 files changed, 537 insertions(+), 3 deletions(-)
+ create mode 100644 net/ethtool/strset.c
 
+diff --git a/Documentation/networking/ethtool-netlink.txt b/Documentation/networking/ethtool-netlink.txt
+index b79c26b5e92b..f0fe4f50db9f 100644
+--- a/Documentation/networking/ethtool-netlink.txt
++++ b/Documentation/networking/ethtool-netlink.txt
+@@ -126,6 +126,8 @@ List of message types
+ ---------------------
+ 
+     ETHNL_CMD_EVENT			notification only
++    ETHNL_CMD_GET_STRSET
++    ETHNL_CMD_SET_STRSET		response only
+ 
+ All constants use ETHNL_CMD_ prefix, usually followed by "GET", "SET" or "ACT"
+ to indicate the type.
+@@ -166,6 +168,46 @@ and also multiple events of the same type (e.g. two or more newly registered
+ devices).
+ 
+ 
++GET_STRSET
++----------
++
++Requests contents of a string set as provided by ioctl commands
++ETHTOOL_GSSET_INFO and ETHTOOL_GSTRINGS. String sets are not user writeable so
++that the corresponding SET_STRSET message is only used in kernel replies.
++There are two types of string sets: global (independent of a device, e.g.
++device feature names) and device specific (e.g. device private flags).
++
++Request contents:
++
++    ETHA_STRSET_DEV		(nested)	device identification
++    ETHA_STRSET_COUNTS		(flag)		request only string counts
++    ETHA_STRSET_STRINGSET	(nested)	string set to request
++        ETHA_STRINGSET_ID		(u32)		set id
++
++Kernel response contents:
++
++    ETHA_STRSET_DEV		(nested)	device identification
++    ETHA_STRSET_STRINGSET	(nested)	string set to request
++        ETHA_STRINGSET_ID		(u32)		set id
++        ETHA_STRINGSET_COUNT		(u32)		number of strings
++        ETHA_STRINGSET_STRINGS		(nested)	array of strings
++            ETHA_STRING_INDEX			(u32)		string index
++            ETHA_STRING_VALUE			(string)	string value
++
++ETHA_STRSET_DEV, if present, identifies the device to request device specific
++string sets for. Depending on its presence a and NLM_F_DUMP flag, there are
++three type of GET_STRSET requests:
++
++ - no NLM_F_DUMP, no device: get "global" stringsets
++ - no NLM_F_DUMP, with device: get string sets related to the device
++ - NLM_F_DUMP, no device: get device related string sets for all devices
++
++If there is no ETHA_STRSET_STRINGSET attribute, all string sets of requested
++type are returned, otherwise only those specified in the request. Flag
++ETHA_STRSET_COUNTS tells kernel to only return string counts of the sets, not
++the actual strings.
++
++
+ Request translation
+ -------------------
+ 
+@@ -200,7 +242,7 @@ ETHTOOL_STXCSUM			n/a
+ ETHTOOL_GSG			n/a
+ ETHTOOL_SSG			n/a
+ ETHTOOL_TEST			n/a
+-ETHTOOL_GSTRINGS		n/a
++ETHTOOL_GSTRINGS		ETHNL_CMD_GET_STRSET
+ ETHTOOL_PHYS_ID			n/a
+ ETHTOOL_GSTATS			n/a
+ ETHTOOL_GTSO			n/a
+@@ -228,7 +270,7 @@ ETHTOOL_FLASHDEV		n/a
+ ETHTOOL_RESET			n/a
+ ETHTOOL_SRXNTUPLE		n/a
+ ETHTOOL_GRXNTUPLE		n/a
+-ETHTOOL_GSSET_INFO		n/a
++ETHTOOL_GSSET_INFO		ETHNL_CMD_GET_STRSET
+ ETHTOOL_GRXFHINDIR		n/a
+ ETHTOOL_SRXFHINDIR		n/a
+ ETHTOOL_GFEATURES		n/a
+diff --git a/include/uapi/linux/ethtool.h b/include/uapi/linux/ethtool.h
+index 17be76aeb468..9ea278961d80 100644
+--- a/include/uapi/linux/ethtool.h
++++ b/include/uapi/linux/ethtool.h
+@@ -574,6 +574,8 @@ enum ethtool_stringset {
+ 	ETH_SS_TUNABLES,
+ 	ETH_SS_PHY_STATS,
+ 	ETH_SS_PHY_TUNABLES,
++
++	ETH_SS_COUNT
+ };
+ 
+ /**
+diff --git a/include/uapi/linux/ethtool_netlink.h b/include/uapi/linux/ethtool_netlink.h
+index 7e192ad8ce3a..630b66732dc9 100644
+--- a/include/uapi/linux/ethtool_netlink.h
++++ b/include/uapi/linux/ethtool_netlink.h
+@@ -8,6 +8,8 @@
+ enum {
+ 	ETHNL_CMD_NOOP,
+ 	ETHNL_CMD_EVENT,		/* only for notifications */
++	ETHNL_CMD_GET_STRSET,
++	ETHNL_CMD_SET_STRSET,		/* only for reply */
+ 
+ 	__ETHNL_CMD_CNT,
+ 	ETHNL_CMD_MAX = (__ETHNL_CMD_CNT - 1)
+@@ -92,6 +94,47 @@ enum {
+ 	ETHA_EVENT_MAX = (__ETHA_EVENT_CNT - 1)
+ };
+ 
++/* string sets */
++
++enum {
++	ETHA_STRING_UNSPEC,
++	ETHA_STRING_INDEX,			/* u32 */
++	ETHA_STRING_VALUE,			/* string */
++
++	__ETHA_STRING_CNT,
++	ETHA_STRING_MAX = (__ETHA_STRING_CNT - 1)
++};
++
++enum {
++	ETHA_STRINGS_UNSPEC,
++	ETHA_STRINGS_STRING,			/* nest - ETHA_STRINGS_* */
++
++	__ETHA_STRINGS_CNT,
++	ETHA_STRINGS_MAX = (__ETHA_STRINGS_CNT - 1)
++};
++
++enum {
++	ETHA_STRINGSET_UNSPEC,
++	ETHA_STRINGSET_ID,			/* u32 */
++	ETHA_STRINGSET_COUNT,			/* u32 */
++	ETHA_STRINGSET_STRINGS,			/* nest - ETHA_STRINGS_* */
++
++	__ETHA_STRINGSET_CNT,
++	ETHA_STRINGSET_MAX = (__ETHA_STRINGSET_CNT - 1)
++};
++
++/* GET_STRINGSET / SET_STRINGSET */
++
++enum {
++	ETHA_STRSET_UNSPEC,
++	ETHA_STRSET_DEV,			/* nest - ETHA_DEV_* */
++	ETHA_STRSET_COUNTS,			/* flag */
++	ETHA_STRSET_STRINGSET,			/* nest - ETHA_STRSET_* */
++
++	__ETHA_STRSET_CNT,
++	ETHA_STRSET_MAX = (__ETHA_STRSET_CNT - 1)
++};
++
+ /* generic netlink info */
+ #define ETHTOOL_GENL_NAME "ethtool"
+ #define ETHTOOL_GENL_VERSION 1
 diff --git a/net/ethtool/Makefile b/net/ethtool/Makefile
-index 482fdb9380fa..11782306593b 100644
+index 11782306593b..11ceb00821b3 100644
 --- a/net/ethtool/Makefile
 +++ b/net/ethtool/Makefile
-@@ -1,6 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- 
--obj-y				+= ioctl.o
-+obj-y				+= ioctl.o common.o
+@@ -4,4 +4,4 @@ obj-y				+= ioctl.o common.o
  
  obj-$(CONFIG_ETHTOOL_NETLINK)	+= ethtool_nl.o
  
-diff --git a/net/ethtool/common.c b/net/ethtool/common.c
+-ethtool_nl-y	:= netlink.o bitset.o
++ethtool_nl-y	:= netlink.o bitset.o strset.o
+diff --git a/net/ethtool/netlink.c b/net/ethtool/netlink.c
+index 8cdb6f52cb4a..082a9f2aa0a7 100644
+--- a/net/ethtool/netlink.c
++++ b/net/ethtool/netlink.c
+@@ -86,7 +86,10 @@ int ethnl_fill_dev(struct sk_buff *msg, struct net_device *dev, u16 attrtype)
+ 
+ /* GET request helpers */
+ 
++extern const struct get_request_ops strset_request_ops;
++
+ const struct get_request_ops *get_requests[__ETHNL_CMD_CNT] = {
++	[ETHNL_CMD_GET_STRSET]		= &strset_request_ops,
+ };
+ 
+ static struct common_req_info *alloc_get_data(const struct get_request_ops *ops)
+@@ -498,6 +501,13 @@ static struct notifier_block ethnl_netdev_notifier = {
+ /* genetlink setup */
+ 
+ static const struct genl_ops ethtool_genl_ops[] = {
++	{
++		.cmd	= ETHNL_CMD_GET_STRSET,
++		.doit	= ethnl_get_doit,
++		.start	= ethnl_get_start,
++		.dumpit	= ethnl_get_dumpit,
++		.done	= ethnl_get_done,
++	},
+ };
+ 
+ static const struct genl_multicast_group ethtool_nl_mcgrps[] = {
+diff --git a/net/ethtool/strset.c b/net/ethtool/strset.c
 new file mode 100644
-index 000000000000..73f721a1c557
+index 000000000000..a7d0ec2865fb
 --- /dev/null
-+++ b/net/ethtool/common.c
-@@ -0,0 +1,83 @@
++++ b/net/ethtool/strset.c
+@@ -0,0 +1,437 @@
 +// SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note
 +
-+#include "common.h"
-+
-+const char netdev_features_strings[NETDEV_FEATURE_COUNT][ETH_GSTRING_LEN] = {
-+	[NETIF_F_SG_BIT] =               "tx-scatter-gather",
-+	[NETIF_F_IP_CSUM_BIT] =          "tx-checksum-ipv4",
-+	[NETIF_F_HW_CSUM_BIT] =          "tx-checksum-ip-generic",
-+	[NETIF_F_IPV6_CSUM_BIT] =        "tx-checksum-ipv6",
-+	[NETIF_F_HIGHDMA_BIT] =          "highdma",
-+	[NETIF_F_FRAGLIST_BIT] =         "tx-scatter-gather-fraglist",
-+	[NETIF_F_HW_VLAN_CTAG_TX_BIT] =  "tx-vlan-hw-insert",
-+
-+	[NETIF_F_HW_VLAN_CTAG_RX_BIT] =  "rx-vlan-hw-parse",
-+	[NETIF_F_HW_VLAN_CTAG_FILTER_BIT] = "rx-vlan-filter",
-+	[NETIF_F_HW_VLAN_STAG_TX_BIT] =  "tx-vlan-stag-hw-insert",
-+	[NETIF_F_HW_VLAN_STAG_RX_BIT] =  "rx-vlan-stag-hw-parse",
-+	[NETIF_F_HW_VLAN_STAG_FILTER_BIT] = "rx-vlan-stag-filter",
-+	[NETIF_F_VLAN_CHALLENGED_BIT] =  "vlan-challenged",
-+	[NETIF_F_GSO_BIT] =              "tx-generic-segmentation",
-+	[NETIF_F_LLTX_BIT] =             "tx-lockless",
-+	[NETIF_F_NETNS_LOCAL_BIT] =      "netns-local",
-+	[NETIF_F_GRO_BIT] =              "rx-gro",
-+	[NETIF_F_GRO_HW_BIT] =           "rx-gro-hw",
-+	[NETIF_F_LRO_BIT] =              "rx-lro",
-+
-+	[NETIF_F_TSO_BIT] =              "tx-tcp-segmentation",
-+	[NETIF_F_GSO_ROBUST_BIT] =       "tx-gso-robust",
-+	[NETIF_F_TSO_ECN_BIT] =          "tx-tcp-ecn-segmentation",
-+	[NETIF_F_TSO_MANGLEID_BIT] =	 "tx-tcp-mangleid-segmentation",
-+	[NETIF_F_TSO6_BIT] =             "tx-tcp6-segmentation",
-+	[NETIF_F_FSO_BIT] =              "tx-fcoe-segmentation",
-+	[NETIF_F_GSO_GRE_BIT] =		 "tx-gre-segmentation",
-+	[NETIF_F_GSO_GRE_CSUM_BIT] =	 "tx-gre-csum-segmentation",
-+	[NETIF_F_GSO_IPXIP4_BIT] =	 "tx-ipxip4-segmentation",
-+	[NETIF_F_GSO_IPXIP6_BIT] =	 "tx-ipxip6-segmentation",
-+	[NETIF_F_GSO_UDP_TUNNEL_BIT] =	 "tx-udp_tnl-segmentation",
-+	[NETIF_F_GSO_UDP_TUNNEL_CSUM_BIT] = "tx-udp_tnl-csum-segmentation",
-+	[NETIF_F_GSO_PARTIAL_BIT] =	 "tx-gso-partial",
-+	[NETIF_F_GSO_SCTP_BIT] =	 "tx-sctp-segmentation",
-+	[NETIF_F_GSO_ESP_BIT] =		 "tx-esp-segmentation",
-+	[NETIF_F_GSO_UDP_L4_BIT] =	 "tx-udp-segmentation",
-+
-+	[NETIF_F_FCOE_CRC_BIT] =         "tx-checksum-fcoe-crc",
-+	[NETIF_F_SCTP_CRC_BIT] =        "tx-checksum-sctp",
-+	[NETIF_F_FCOE_MTU_BIT] =         "fcoe-mtu",
-+	[NETIF_F_NTUPLE_BIT] =           "rx-ntuple-filter",
-+	[NETIF_F_RXHASH_BIT] =           "rx-hashing",
-+	[NETIF_F_RXCSUM_BIT] =           "rx-checksum",
-+	[NETIF_F_NOCACHE_COPY_BIT] =     "tx-nocache-copy",
-+	[NETIF_F_LOOPBACK_BIT] =         "loopback",
-+	[NETIF_F_RXFCS_BIT] =            "rx-fcs",
-+	[NETIF_F_RXALL_BIT] =            "rx-all",
-+	[NETIF_F_HW_L2FW_DOFFLOAD_BIT] = "l2-fwd-offload",
-+	[NETIF_F_HW_TC_BIT] =		 "hw-tc-offload",
-+	[NETIF_F_HW_ESP_BIT] =		 "esp-hw-offload",
-+	[NETIF_F_HW_ESP_TX_CSUM_BIT] =	 "esp-tx-csum-hw-offload",
-+	[NETIF_F_RX_UDP_TUNNEL_PORT_BIT] =	 "rx-udp_tunnel-port-offload",
-+	[NETIF_F_HW_TLS_RECORD_BIT] =	"tls-hw-record",
-+	[NETIF_F_HW_TLS_TX_BIT] =	 "tls-hw-tx-offload",
-+	[NETIF_F_HW_TLS_RX_BIT] =	 "tls-hw-rx-offload",
-+};
-+
-+const char
-+rss_hash_func_strings[ETH_RSS_HASH_FUNCS_COUNT][ETH_GSTRING_LEN] = {
-+	[ETH_RSS_HASH_TOP_BIT] =	"toeplitz",
-+	[ETH_RSS_HASH_XOR_BIT] =	"xor",
-+	[ETH_RSS_HASH_CRC32_BIT] =	"crc32",
-+};
-+
-+const char
-+tunable_strings[__ETHTOOL_TUNABLE_COUNT][ETH_GSTRING_LEN] = {
-+	[ETHTOOL_ID_UNSPEC]     = "Unspec",
-+	[ETHTOOL_RX_COPYBREAK]	= "rx-copybreak",
-+	[ETHTOOL_TX_COPYBREAK]	= "tx-copybreak",
-+	[ETHTOOL_PFC_PREVENTION_TOUT] = "pfc-prevention-tout",
-+};
-+
-+const char
-+phy_tunable_strings[__ETHTOOL_PHY_TUNABLE_COUNT][ETH_GSTRING_LEN] = {
-+	[ETHTOOL_ID_UNSPEC]     = "Unspec",
-+	[ETHTOOL_PHY_DOWNSHIFT]	= "phy-downshift",
-+};
-diff --git a/net/ethtool/common.h b/net/ethtool/common.h
-new file mode 100644
-index 000000000000..41b2efc1e4e1
---- /dev/null
-+++ b/net/ethtool/common.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+
-+#ifndef _ETHTOOL_COMMON_H
-+#define _ETHTOOL_COMMON_H
-+
 +#include <linux/ethtool.h>
-+
-+extern const char
-+netdev_features_strings[NETDEV_FEATURE_COUNT][ETH_GSTRING_LEN];
-+extern const char
-+rss_hash_func_strings[ETH_RSS_HASH_FUNCS_COUNT][ETH_GSTRING_LEN];
-+extern const char
-+tunable_strings[__ETHTOOL_TUNABLE_COUNT][ETH_GSTRING_LEN];
-+extern const char
-+phy_tunable_strings[__ETHTOOL_PHY_TUNABLE_COUNT][ETH_GSTRING_LEN];
-+
-+#endif /* _ETHTOOL_COMMON_H */
-diff --git a/net/ethtool/ioctl.c b/net/ethtool/ioctl.c
-index 1320e8dce559..71a1643adb2b 100644
---- a/net/ethtool/ioctl.c
-+++ b/net/ethtool/ioctl.c
-@@ -31,6 +31,8 @@
- #include <net/xdp_sock.h>
- #include <net/flow_offload.h>
- 
++#include <linux/phy.h>
++#include "netlink.h"
 +#include "common.h"
 +
- /*
-  * Some useful ethtool_ops methods that're device independent.
-  * If we find that all drivers want to do the same thing here,
-@@ -58,86 +60,6 @@ EXPORT_SYMBOL(ethtool_op_get_ts_info);
- 
- #define ETHTOOL_DEV_FEATURE_WORDS	((NETDEV_FEATURE_COUNT + 31) / 32)
- 
--static const char netdev_features_strings[NETDEV_FEATURE_COUNT][ETH_GSTRING_LEN] = {
--	[NETIF_F_SG_BIT] =               "tx-scatter-gather",
--	[NETIF_F_IP_CSUM_BIT] =          "tx-checksum-ipv4",
--	[NETIF_F_HW_CSUM_BIT] =          "tx-checksum-ip-generic",
--	[NETIF_F_IPV6_CSUM_BIT] =        "tx-checksum-ipv6",
--	[NETIF_F_HIGHDMA_BIT] =          "highdma",
--	[NETIF_F_FRAGLIST_BIT] =         "tx-scatter-gather-fraglist",
--	[NETIF_F_HW_VLAN_CTAG_TX_BIT] =  "tx-vlan-hw-insert",
--
--	[NETIF_F_HW_VLAN_CTAG_RX_BIT] =  "rx-vlan-hw-parse",
--	[NETIF_F_HW_VLAN_CTAG_FILTER_BIT] = "rx-vlan-filter",
--	[NETIF_F_HW_VLAN_STAG_TX_BIT] =  "tx-vlan-stag-hw-insert",
--	[NETIF_F_HW_VLAN_STAG_RX_BIT] =  "rx-vlan-stag-hw-parse",
--	[NETIF_F_HW_VLAN_STAG_FILTER_BIT] = "rx-vlan-stag-filter",
--	[NETIF_F_VLAN_CHALLENGED_BIT] =  "vlan-challenged",
--	[NETIF_F_GSO_BIT] =              "tx-generic-segmentation",
--	[NETIF_F_LLTX_BIT] =             "tx-lockless",
--	[NETIF_F_NETNS_LOCAL_BIT] =      "netns-local",
--	[NETIF_F_GRO_BIT] =              "rx-gro",
--	[NETIF_F_GRO_HW_BIT] =           "rx-gro-hw",
--	[NETIF_F_LRO_BIT] =              "rx-lro",
--
--	[NETIF_F_TSO_BIT] =              "tx-tcp-segmentation",
--	[NETIF_F_GSO_ROBUST_BIT] =       "tx-gso-robust",
--	[NETIF_F_TSO_ECN_BIT] =          "tx-tcp-ecn-segmentation",
--	[NETIF_F_TSO_MANGLEID_BIT] =	 "tx-tcp-mangleid-segmentation",
--	[NETIF_F_TSO6_BIT] =             "tx-tcp6-segmentation",
--	[NETIF_F_FSO_BIT] =              "tx-fcoe-segmentation",
--	[NETIF_F_GSO_GRE_BIT] =		 "tx-gre-segmentation",
--	[NETIF_F_GSO_GRE_CSUM_BIT] =	 "tx-gre-csum-segmentation",
--	[NETIF_F_GSO_IPXIP4_BIT] =	 "tx-ipxip4-segmentation",
--	[NETIF_F_GSO_IPXIP6_BIT] =	 "tx-ipxip6-segmentation",
--	[NETIF_F_GSO_UDP_TUNNEL_BIT] =	 "tx-udp_tnl-segmentation",
--	[NETIF_F_GSO_UDP_TUNNEL_CSUM_BIT] = "tx-udp_tnl-csum-segmentation",
--	[NETIF_F_GSO_PARTIAL_BIT] =	 "tx-gso-partial",
--	[NETIF_F_GSO_SCTP_BIT] =	 "tx-sctp-segmentation",
--	[NETIF_F_GSO_ESP_BIT] =		 "tx-esp-segmentation",
--	[NETIF_F_GSO_UDP_L4_BIT] =	 "tx-udp-segmentation",
--
--	[NETIF_F_FCOE_CRC_BIT] =         "tx-checksum-fcoe-crc",
--	[NETIF_F_SCTP_CRC_BIT] =        "tx-checksum-sctp",
--	[NETIF_F_FCOE_MTU_BIT] =         "fcoe-mtu",
--	[NETIF_F_NTUPLE_BIT] =           "rx-ntuple-filter",
--	[NETIF_F_RXHASH_BIT] =           "rx-hashing",
--	[NETIF_F_RXCSUM_BIT] =           "rx-checksum",
--	[NETIF_F_NOCACHE_COPY_BIT] =     "tx-nocache-copy",
--	[NETIF_F_LOOPBACK_BIT] =         "loopback",
--	[NETIF_F_RXFCS_BIT] =            "rx-fcs",
--	[NETIF_F_RXALL_BIT] =            "rx-all",
--	[NETIF_F_HW_L2FW_DOFFLOAD_BIT] = "l2-fwd-offload",
--	[NETIF_F_HW_TC_BIT] =		 "hw-tc-offload",
--	[NETIF_F_HW_ESP_BIT] =		 "esp-hw-offload",
--	[NETIF_F_HW_ESP_TX_CSUM_BIT] =	 "esp-tx-csum-hw-offload",
--	[NETIF_F_RX_UDP_TUNNEL_PORT_BIT] =	 "rx-udp_tunnel-port-offload",
--	[NETIF_F_HW_TLS_RECORD_BIT] =	"tls-hw-record",
--	[NETIF_F_HW_TLS_TX_BIT] =	 "tls-hw-tx-offload",
--	[NETIF_F_HW_TLS_RX_BIT] =	 "tls-hw-rx-offload",
--};
--
--static const char
--rss_hash_func_strings[ETH_RSS_HASH_FUNCS_COUNT][ETH_GSTRING_LEN] = {
--	[ETH_RSS_HASH_TOP_BIT] =	"toeplitz",
--	[ETH_RSS_HASH_XOR_BIT] =	"xor",
--	[ETH_RSS_HASH_CRC32_BIT] =	"crc32",
--};
--
--static const char
--tunable_strings[__ETHTOOL_TUNABLE_COUNT][ETH_GSTRING_LEN] = {
--	[ETHTOOL_ID_UNSPEC]     = "Unspec",
--	[ETHTOOL_RX_COPYBREAK]	= "rx-copybreak",
--	[ETHTOOL_TX_COPYBREAK]	= "tx-copybreak",
--	[ETHTOOL_PFC_PREVENTION_TOUT] = "pfc-prevention-tout",
--};
--
--static const char
--phy_tunable_strings[__ETHTOOL_PHY_TUNABLE_COUNT][ETH_GSTRING_LEN] = {
--	[ETHTOOL_ID_UNSPEC]     = "Unspec",
--	[ETHTOOL_PHY_DOWNSHIFT]	= "phy-downshift",
--};
--
- static int ethtool_get_features(struct net_device *dev, void __user *useraddr)
- {
- 	struct ethtool_gfeatures cmd = {
++enum strset_type {
++	ETH_SS_TYPE_NONE,
++	ETH_SS_TYPE_LEGACY,
++	ETH_SS_TYPE_SIMPLE,
++};
++
++struct strset_info {
++	enum strset_type type;
++	bool per_dev;
++	bool free_data;
++	unsigned int count;
++	union {
++		const char (*legacy)[ETH_GSTRING_LEN];
++		const char * const *simple;
++		void *ptr;
++	} data;
++};
++
++static const struct strset_info info_template[] = {
++	[ETH_SS_TEST] = {
++		.type		= ETH_SS_TYPE_LEGACY,
++		.per_dev	= true,
++	},
++	[ETH_SS_STATS] = {
++		.type		= ETH_SS_TYPE_LEGACY,
++		.per_dev	= true,
++	},
++	[ETH_SS_PRIV_FLAGS] = {
++		.type		= ETH_SS_TYPE_LEGACY,
++		.per_dev	= true,
++	},
++	[ETH_SS_NTUPLE_FILTERS] = {
++		.type		= ETH_SS_TYPE_NONE,
++	},
++	[ETH_SS_FEATURES] = {
++		.type		= ETH_SS_TYPE_LEGACY,
++		.per_dev	= false,
++		.count		= ARRAY_SIZE(netdev_features_strings),
++		.data		= { .legacy = netdev_features_strings },
++	},
++	[ETH_SS_RSS_HASH_FUNCS] = {
++		.type		= ETH_SS_TYPE_LEGACY,
++		.per_dev	= false,
++		.count		= ARRAY_SIZE(rss_hash_func_strings),
++		.data		= { .legacy = rss_hash_func_strings },
++	},
++	[ETH_SS_TUNABLES] = {
++		.type		= ETH_SS_TYPE_LEGACY,
++		.per_dev	= false,
++		.count		= ARRAY_SIZE(tunable_strings),
++		.data		= { .legacy = tunable_strings },
++	},
++	[ETH_SS_PHY_STATS] = {
++		.type		= ETH_SS_TYPE_LEGACY,
++		.per_dev	= true,
++	},
++	[ETH_SS_PHY_TUNABLES] = {
++		.type		= ETH_SS_TYPE_LEGACY,
++		.per_dev	= false,
++		.count		= ARRAY_SIZE(phy_tunable_strings),
++		.data		= { .legacy = phy_tunable_strings },
++	},
++};
++
++struct strset_data {
++	struct common_req_info		reqinfo_base;
++	u32				req_ids;
++	bool				counts_only;
++
++	/* everything below here will be reset for each device in dumps */
++	struct common_reply_data	repdata_base;
++	struct strset_info		info[ETH_SS_COUNT];
++};
++
++static const struct nla_policy get_strset_policy[ETHA_STRSET_MAX + 1] = {
++	[ETHA_STRSET_UNSPEC]		= { .type = NLA_REJECT },
++	[ETHA_STRSET_DEV]		= { .type = NLA_NESTED },
++	[ETHA_STRSET_COUNTS]		= { .type = NLA_FLAG },
++	[ETHA_STRSET_STRINGSET]		= { .type = NLA_NESTED },
++};
++
++static const struct nla_policy stringset_policy[ETHA_STRINGSET_MAX + 1] = {
++	[ETHA_STRINGSET_UNSPEC]		= { .type = NLA_REJECT },
++	[ETHA_STRINGSET_ID]		= { .type = NLA_U32 },
++	[ETHA_STRINGSET_COUNT]		= { .type = NLA_REJECT },
++	[ETHA_STRINGSET_STRINGS]	= { .type = NLA_REJECT },
++};
++
++static bool id_requested(const struct strset_data *data, u32 id)
++{
++	return data->req_ids & (1U << id);
++}
++
++static bool include_set(const struct strset_data *data, u32 id)
++{
++	bool per_dev;
++
++	BUILD_BUG_ON(ETH_SS_COUNT >= BITS_PER_BYTE * sizeof(data->req_ids));
++
++	if (data->req_ids)
++		return id_requested(data, id);
++
++	per_dev = data->info[id].per_dev;
++	if (data->info[id].type == ETH_SS_TYPE_NONE)
++		return false;
++	return data->repdata_base.dev ? per_dev : !per_dev;
++}
++
++const char *str_value(const struct strset_info *info, unsigned int i)
++{
++	switch (info->type) {
++	case ETH_SS_TYPE_LEGACY:
++		return info->data.legacy[i];
++	case ETH_SS_TYPE_SIMPLE:
++		return info->data.simple[i];
++	default:
++		WARN_ONCE(1, "unexpected string set type");
++		return "";
++	}
++}
++
++static int get_strset_id(const struct nlattr *nest, u32 *val,
++			 struct genl_info *info)
++{
++	struct nlattr *tb[ETHA_STRINGSET_MAX + 1];
++	int ret;
++
++	ret = nla_parse_nested(tb, ETHA_STRINGSET_MAX, nest, stringset_policy,
++			       info ? info->extack : NULL);
++	if (ret < 0)
++		return ret;
++	if (!tb[ETHA_STRINGSET_ID])
++		return -EINVAL;
++
++	*val = nla_get_u32(tb[ETHA_STRINGSET_ID]);
++	return 0;
++}
++
++static int parse_strset(struct common_req_info *req_info, struct sk_buff *skb,
++			struct genl_info *info, const struct nlmsghdr *nlhdr)
++{
++	struct strset_data *data =
++		container_of(req_info, struct strset_data, reqinfo_base);
++	struct nlattr *attr;
++	int rem, ret;
++
++	ret = nlmsg_validate(nlhdr, GENL_HDRLEN, ETHA_STRSET_MAX,
++			     get_strset_policy, info ? info->extack : NULL);
++	if (ret < 0)
++		return ret;
++
++	nlmsg_for_each_attr(attr, nlhdr, GENL_HDRLEN, rem) {
++		u32 id;
++
++		switch (nla_type(attr)) {
++		case ETHA_STRSET_DEV:
++			req_info->dev = ethnl_dev_get(info, attr);
++			if (IS_ERR(req_info->dev)) {
++				ret = PTR_ERR(req_info->dev);
++				req_info->dev = NULL;
++				return ret;
++			}
++			break;
++		case ETHA_STRSET_COUNTS:
++			data->counts_only = true;
++			break;
++		case ETHA_STRSET_STRINGSET:
++			ret = get_strset_id(attr, &id, info);
++			if (ret < 0)
++				return ret;
++			if (ret >= ETH_SS_COUNT)
++				return -EOPNOTSUPP;
++			data->req_ids |= (1U << id);
++			break;
++		}
++	}
++
++	return 0;
++}
++
++static void free_strset(struct strset_data *data)
++{
++	unsigned int i;
++
++	for (i = 0; i < ETH_SS_COUNT; i++)
++		if (data->info[i].free_data) {
++			kfree(data->info[i].data.ptr);
++			data->info[i].data.ptr = NULL;
++			data->info[i].free_data = false;
++		}
++}
++
++static int prepare_one_stringset(struct strset_info *info,
++				 struct net_device *dev, unsigned int id,
++				 bool counts_only)
++{
++	const struct ethtool_ops *ops = dev->ethtool_ops;
++	void *strings;
++	int count, ret;
++
++	if (id == ETH_SS_PHY_STATS && dev->phydev &&
++	    !ops->get_ethtool_phy_stats)
++		ret = phy_ethtool_get_sset_count(dev->phydev);
++	else if (ops->get_sset_count && ops->get_strings)
++		ret = ops->get_sset_count(dev, id);
++	else
++		ret = -EOPNOTSUPP;
++	if (ret <= 0) {
++		info->count = 0;
++		return 0;
++	}
++
++	count = ret;
++	if (!counts_only) {
++		strings = kcalloc(count, ETH_GSTRING_LEN, GFP_KERNEL);
++		if (!strings)
++			return -ENOMEM;
++		if (id == ETH_SS_PHY_STATS && dev->phydev &&
++		    !ops->get_ethtool_phy_stats)
++			phy_ethtool_get_strings(dev->phydev, strings);
++		else
++			ops->get_strings(dev, id, strings);
++		info->data.legacy = strings;
++		info->free_data = true;
++	}
++	info->count = count;
++
++	return 0;
++}
++
++static int prepare_strset(struct common_req_info *req_info,
++			  struct genl_info *info)
++{
++	struct strset_data *data =
++		container_of(req_info, struct strset_data, reqinfo_base);
++	struct net_device *dev = data->repdata_base.dev;
++	unsigned int i;
++	int ret;
++
++	memcpy(&data->info, &info_template, sizeof(data->info));
++
++	if (!dev) {
++		for (i = 0; i < ETH_SS_COUNT; i++) {
++			if (id_requested(data, i) &&
++			    data->info[i].per_dev) {
++				ETHNL_SET_ERRMSG(info,
++						 "requested per device strings without dev");
++				return -EINVAL;
++			}
++		}
++	}
++
++	ret = ethnl_before_ops(dev);
++	if (ret < 0)
++		goto err_strset;
++	for (i = 0; i < ETH_SS_COUNT; i++) {
++		if (!include_set(data, i) || !data->info[i].per_dev)
++			continue;
++		if (WARN_ONCE(data->info[i].type != ETH_SS_TYPE_LEGACY,
++			      "unexpected string set type %u",
++			      data->info[i].type))
++			goto err_ops;
++
++		ret = prepare_one_stringset(&data->info[i], dev, i,
++					    data->counts_only);
++		if (ret < 0)
++			goto err_ops;
++	}
++	ethnl_after_ops(dev);
++
++	return 0;
++err_ops:
++	ethnl_after_ops(dev);
++err_strset:
++	free_strset(data);
++	return ret;
++}
++
++static int legacy_set_size(const char (*set)[ETH_GSTRING_LEN],
++			   unsigned int count)
++{
++	unsigned int len = 0;
++	unsigned int i;
++
++	for (i = 0; i < count; i++)
++		len += nla_total_size(nla_total_size(sizeof(u32)) +
++				      ethnl_str_size(set[i]));
++	len = 2 * nla_total_size(sizeof(u32)) + nla_total_size(len);
++
++	return nla_total_size(len);
++}
++
++static int simple_set_size(const char * const *set, unsigned int count)
++{
++	unsigned int len = 0;
++	unsigned int i;
++
++	for (i = 0; i < count; i++)
++		len += nla_total_size(nla_total_size(sizeof(u32)) +
++				      ethnl_str_size(set[i]));
++	len = 2 * nla_total_size(sizeof(u32)) + nla_total_size(len);
++
++	return nla_total_size(len);
++}
++
++static int set_size(const struct strset_info *info, bool counts_only)
++{
++	if (info->count == 0)
++		return 0;
++	if (counts_only)
++		return nla_total_size(2 * nla_total_size(sizeof(u32)));
++
++	switch (info->type) {
++	case ETH_SS_TYPE_LEGACY:
++		return legacy_set_size(info->data.legacy, info->count);
++	case ETH_SS_TYPE_SIMPLE:
++		return simple_set_size(info->data.simple, info->count);
++	default:
++		return -EINVAL;
++	};
++}
++
++static int strset_size(const struct common_req_info *req_info)
++{
++	const struct strset_data *data =
++		container_of(req_info, struct strset_data, reqinfo_base);
++	unsigned int i;
++	int len = 0;
++	int ret;
++
++	len += dev_ident_size();
++	for (i = 0; i < ETH_SS_COUNT; i++) {
++		const struct strset_info *info = &data->info[i];
++
++		if (!include_set(data, i) || info->type == ETH_SS_TYPE_NONE)
++			continue;
++
++		ret = set_size(info, data->counts_only);
++		if (ret < 0)
++			return ret;
++		len += ret;
++	}
++
++	return len;
++}
++
++static int fill_string(struct sk_buff *skb, const struct strset_info *info,
++		       u32 idx)
++{
++	struct nlattr *string = ethnl_nest_start(skb, ETHA_STRINGS_STRING);
++
++	if (!string)
++		return -EMSGSIZE;
++	if (nla_put_u32(skb, ETHA_STRING_INDEX, idx) ||
++	    nla_put_string(skb, ETHA_STRING_VALUE, str_value(info, idx)))
++		return -EMSGSIZE;
++	nla_nest_end(skb, string);
++
++	return 0;
++}
++
++static int fill_set(struct sk_buff *skb, const struct strset_data *data, u32 id)
++{
++	const struct strset_info *info = &data->info[id];
++	struct nlattr *strings;
++	struct nlattr *nest;
++	unsigned int i = (unsigned int)(-1);
++
++	if (info->type == ETH_SS_TYPE_NONE)
++		return -EOPNOTSUPP;
++	if (info->count == 0)
++		return 0;
++	nest = ethnl_nest_start(skb, ETHA_STRSET_STRINGSET);
++	if (!nest)
++		return -EMSGSIZE;
++
++	if (nla_put_u32(skb, ETHA_STRINGSET_ID, id) ||
++	    nla_put_u32(skb, ETHA_STRINGSET_COUNT, info->count))
++		goto err;
++
++	if (!data->counts_only) {
++		strings = ethnl_nest_start(skb, ETHA_STRINGSET_STRINGS);
++		if (!strings)
++			goto err;
++		for (i = 0; i < info->count; i++) {
++			if (fill_string(skb, info, i) < 0)
++				goto err;
++		}
++		nla_nest_end(skb, strings);
++	}
++
++	nla_nest_end(skb, nest);
++	return 0;
++
++err:
++	nla_nest_cancel(skb, nest);
++	return -EMSGSIZE;
++}
++
++static int fill_strset(struct sk_buff *skb,
++		       const struct common_req_info *req_info)
++{
++	const struct strset_data *data =
++		container_of(req_info, struct strset_data, reqinfo_base);
++	unsigned int i;
++	int ret;
++
++	for (i = 0; i < ETH_SS_COUNT; i++)
++		if (include_set(data, i)) {
++			ret = fill_set(skb, data, i);
++			if (ret < 0)
++				return ret;
++		}
++
++	return 0;
++}
++
++const struct get_request_ops strset_request_ops = {
++	.request_cmd		= ETHNL_CMD_GET_STRSET,
++	.reply_cmd		= ETHNL_CMD_SET_STRSET,
++	.dev_attrtype		= ETHA_STRSET_DEV,
++	.data_size		= sizeof(struct strset_data),
++	.repdata_offset		= offsetof(struct strset_data, repdata_base),
++	.allow_nodev_do		= true,
++
++	.parse_request		= parse_strset,
++	.prepare_data		= prepare_strset,
++	.reply_size		= strset_size,
++	.fill_reply		= fill_strset,
++};
 -- 
 2.20.1
 
