@@ -2,151 +2,148 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63CD3C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:30:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83C14C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:31:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 368822173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:30:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A62421738
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:31:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389222AbfBRQaF (ORCPT
+        id S2389271AbfBRQbM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 11:30:05 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33896 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730711AbfBRQaF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 11:30:05 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 76E2180D;
-        Mon, 18 Feb 2019 08:30:03 -0800 (PST)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 824583F675;
-        Mon, 18 Feb 2019 08:29:56 -0800 (PST)
-Date:   Mon, 18 Feb 2019 16:29:54 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-arch <linux-arch@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RFC PATCH] docs/memory-barriers.txt: Rewrite "KERNEL I/O
- BARRIER EFFECTS" section
-Message-ID: <20190218162954.GB16713@fuggles.cambridge.arm.com>
-References: <20190211172948.3322-1-will.deacon@arm.com>
- <CAK8P3a2Pr2oWYB7QHQMaHRq6H8h9xMwhhyJz5Pu67bVe4GaK9g@mail.gmail.com>
+        Mon, 18 Feb 2019 11:31:12 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:57142 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732378AbfBRQbL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 11:31:11 -0500
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1gvloy-000396-PA; Mon, 18 Feb 2019 17:31:08 +0100
+Date:   Mon, 18 Feb 2019 17:31:08 +0100
+From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To:     linux-rt-users@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH RT 1/2] softirq: Avoid "local_softirq_pending" messages if
+ ksoftirqd is blocked
+Message-ID: <20190218163107.iwdpngwmbs6xyk7x@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a2Pr2oWYB7QHQMaHRq6H8h9xMwhhyJz5Pu67bVe4GaK9g@mail.gmail.com>
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+If the ksoftirqd thread has a softirq pending and is blocked on the
+`local_softirq_locks' lock then softirq_check_pending_idle() won't
+complain because the "lock owner" will mask away this softirq from the
+mask of pending softirqs.
+If ksoftirqd has an additional softirq pending then it won't be masked
+out because we never look at ksoftirqd's mask.
 
-On Tue, Feb 12, 2019 at 02:03:04PM +0100, Arnd Bergmann wrote:
-> On Mon, Feb 11, 2019 at 6:29 PM Will Deacon <will.deacon@arm.com> wrote:
-> 
-> > +     __iomem pointers obtained with non-default attributes (e.g. those returned
-> > +     by ioremap_wc()) are unlikely to provide many of these guarantees. If
-> > +     ordering is required for such mappings, then the mandatory barriers should
-> > +     be used in conjunction with the _relaxed() accessors defined below.
-> 
-> I wonder if we are even able to guarantee consistent behavior across
-> architectures
-> in the last case here (wc mapping with relaxed accessors and barriers).
-> 
-> Fortunately, there are only five implementations that actually differ from
-> ioremap_nocache(): arm32, arm64, ppc32, ppc64 and x86 (both 32/64), so
-> that is something we can probably figure out between the people on Cc.
+If there are still pending softirqs while going to idle check
+ksoftirqd's and ktimersfotd's mask before complaining about unhandled
+softirqs.
 
-I'd be keen to try to document this as a follow-up patch, otherwise there's
-the risk of biting off more than I can chew, which is easily done with this
-stuff! For arm32 (v7) and arm64, ioremap_wc() returns "normal, non-cacheable
-memory". Some notable differences between this and the memory type returned
-by ioremap() are:
+Cc: stable-rt@vger.kernel.org
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ kernel/softirq.c | 58 +++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 42 insertions(+), 16 deletions(-)
 
- * ioremap_wc() allows speculative reads
- * ioremap_wc() allows unaligned access
- * ioremap_wc() allows reordering of accesses to different addresses
- * ioremap_wc() allows merging of accesses
+diff --git a/kernel/softirq.c b/kernel/softirq.c
+index c15583162a559..8da664eb843a4 100644
+--- a/kernel/softirq.c
++++ b/kernel/softirq.c
+@@ -92,6 +92,31 @@ static inline void softirq_clr_runner(unsigned int sirq)
+ 	sr->runner[sirq] = NULL;
+ }
+ 
++static bool softirq_check_runner_tsk(struct task_struct *tsk,
++				     unsigned int *pending)
++{
++	bool ret = false;
++
++	if (!tsk)
++		return ret;
++
++	/*
++	 * The wakeup code in rtmutex.c wakes up the task
++	 * _before_ it sets pi_blocked_on to NULL under
++	 * tsk->pi_lock. So we need to check for both: state
++	 * and pi_blocked_on.
++	 */
++	raw_spin_lock(&tsk->pi_lock);
++	if (tsk->pi_blocked_on || tsk->state == TASK_RUNNING) {
++		/* Clear all bits pending in that task */
++		*pending &= ~(tsk->softirqs_raised);
++		ret = true;
++	}
++	raw_spin_unlock(&tsk->pi_lock);
++
++	return ret;
++}
++
+ /*
+  * On preempt-rt a softirq running context might be blocked on a
+  * lock. There might be no other runnable task on this CPU because the
+@@ -104,6 +129,7 @@ static inline void softirq_clr_runner(unsigned int sirq)
+  */
+ void softirq_check_pending_idle(void)
+ {
++	struct task_struct *tsk;
+ 	static int rate_limit;
+ 	struct softirq_runner *sr = this_cpu_ptr(&softirq_runners);
+ 	u32 warnpending;
+@@ -113,26 +139,26 @@ void softirq_check_pending_idle(void)
+ 		return;
+ 
+ 	warnpending = local_softirq_pending() & SOFTIRQ_STOP_IDLE_MASK;
++	if (!warnpending)
++		return;
+ 	for (i = 0; i < NR_SOFTIRQS; i++) {
+-		struct task_struct *tsk = sr->runner[i];
++		tsk = sr->runner[i];
+ 
+-		/*
+-		 * The wakeup code in rtmutex.c wakes up the task
+-		 * _before_ it sets pi_blocked_on to NULL under
+-		 * tsk->pi_lock. So we need to check for both: state
+-		 * and pi_blocked_on.
+-		 */
+-		if (tsk) {
+-			raw_spin_lock(&tsk->pi_lock);
+-			if (tsk->pi_blocked_on || tsk->state == TASK_RUNNING) {
+-				/* Clear all bits pending in that task */
+-				warnpending &= ~(tsk->softirqs_raised);
+-				warnpending &= ~(1 << i);
+-			}
+-			raw_spin_unlock(&tsk->pi_lock);
+-		}
++		if (softirq_check_runner_tsk(tsk, &warnpending))
++			warnpending &= ~(1 << i);
+ 	}
+ 
++	if (warnpending) {
++		tsk = __this_cpu_read(ksoftirqd);
++		softirq_check_runner_tsk(tsk, &warnpending);
++	}
++
++	if (warnpending) {
++		tsk = __this_cpu_read(ktimer_softirqd);
++		softirq_check_runner_tsk(tsk, &warnpending);
++	}
++
++
+ 	if (warnpending) {
+ 		printk(KERN_ERR "NOHZ: local_softirq_pending %02x\n",
+ 		       warnpending);
+-- 
+2.20.1
 
-so for us, you really only want to use it to map things that look an awful
-lot like memory.
-
-> The problem with recommending *_relaxed() + barrier() is that it ends
-> up being more expensive than the non-relaxed accessors whenever
-> _relaxed() implies the barrier already (true on most architectures other
-> than arm).
-> 
-> ioremap_wc() in turn is used almost exclusively to map RAM behind
-> a bus, (typically for frame buffers) and we may be better off not
-> assuming any particular MMIO barrier semantics for it at all, but possibly
-> audit the few uses that are not frame buffers.
-
-Right, my expectation is actually that you very rarely need ordering
-guarantees for wc mappings, and so saying "relaxed + mandatory barriers"
-is the best thing to say for portable driver code. I'm deliberately /not/
-trying to enumerate arch or device-specific behaviours.
-
-> > +     Since many CPU architectures ultimately access these peripherals via an
-> > +     internal virtual memory mapping, the portable ordering guarantees provided
-> > +     by inX() and outX() are the same as those provided by readX() and writeX()
-> > +     respectively when accessing a mapping with the default I/O attributes.
-> 
-> This is notably weaker than the PCI mandated non-posted write semantics.
-> As I said earlier, not all architectures or PCI host implementations can provide
-> non-posted writes though, but maybe we can document that fact here, e.g.
-> 
-> | Device drivers may expect outX() to be a non-posted write, i.e. waiting for
-> | a completion response from the I/O device, which may not be possible
-> | on a particular hardware.
-
-I can add something along these lines, since this seems like it could be a
-bit of a "gotcha" given the macro names and implicit x86 heritage.
-
-> >   (*) ioreadX(), iowriteX()
-> >
-> >       These will perform appropriately for the type of access they're actually
-> >       doing, be it inX()/outX() or readX()/writeX().
-> 
-> This probably needs clarification as well then: On architectures that
-> have a stronger barrier after outX() than writeX() but that use memory
-> mapped access for both, the statement is currently not true. We could
-> either strengthen the requirement by requiring CONFIG_GENERIC_IOMAP
-> on such architectures, or we could document the current behavior
-> as intentional and explicitly not allow iowriteX() on I/O ports to be posted.
-
-At least on arm and arm64, the heavy barrier in outX() is *before* the I/O
-access, and so it does nothing to prevent the access from being posted. It
-looks like the asm-generic/io.h behaviour is the same in the case that none
-of the __io_* barriers are provided by the architecture.
-
-Do you think this is something we actually need to strengthen, or are
-drivers that rely on this going to be x86-specific anyway?
-
-> > +All of these accessors assume that the underlying peripheral is little-endian,
-> > +and will therefore perform byte-swapping operations on big-endian architectures.
-> 
-> This sounds like a useful addition and the only sane way to do it IMHO, but
-> I think at least traditionally we've had architectures that do not work like
-> this but that make readX()/writeX() do native big-endian loads and stores, with
-> a hardware byteswap on the PCI bus.
-
-Sure, hence my disclaimer at the beginning about non-portable drivers :)
-My goal here is really to document the portable semantics for the common
-architectures, so that driver developers and reviewers can get the usual
-case right.
-
-Will
