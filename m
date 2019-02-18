@@ -2,87 +2,158 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A99DEC10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:49:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A61C4C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:49:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A35E208E4
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:49:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550519353;
-	bh=5tGe11uimKPnWJghYOTSy8TXUq53/J3Z9G3EX+abXaQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xsE73GXlSjsvGeHOCOsP4P8Fz4bPwslTa+eCkvPaJ+x4bzWy3e4tvTd6ZniMiU2Bl
-	 tDWK1xjpjnY8UM90qBOROaSMm/XONO3O7C6zfKQb7qLPR0uwrBu4+b+0WHbkkvMjPE
-	 WVoPiuNHJIl4Zdc7Ob/v9J//tzvaJ7xkrLxvI/KQ=
+	by mail.kernel.org (Postfix) with ESMTP id 6CBC5217F9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:49:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lnCZINN7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726992AbfBRTtM (ORCPT
+        id S1727143AbfBRTtn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 14:49:12 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:36139 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725535AbfBRTtL (ORCPT
+        Mon, 18 Feb 2019 14:49:43 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:40382 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726316AbfBRTtm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 14:49:11 -0500
-Received: by mail-ot1-f66.google.com with SMTP id v62so21431207otb.3;
-        Mon, 18 Feb 2019 11:49:11 -0800 (PST)
+        Mon, 18 Feb 2019 14:49:42 -0500
+Received: by mail-it1-f194.google.com with SMTP id i2so713727ite.5
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 11:49:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0wtsBdExeMA1wwCJ28I4aSi9QBIDjm+ySXCh9WlH+r8=;
+        b=lnCZINN7IoVMhyN6Ibb/qlSwbfdgcKLoKqRCpyFvlLWtuAoP/FCJcQKLFGQi09gDVr
+         5DiPNsJ3wLufD+iHIhNZDCwwyRCLWiwKRGn/GJIg8q191GC4x6c+6wVVnjJ1WaSYzq9O
+         3x4YrPPt0p1oh4zkAc1KgwK83gxLOg25m+qlcqCvbwwptQv/6HSlZVPVC36c+OTBDIBy
+         APQe2ue7roT6A2u6aQFmTgeF65aUI+pCdpn/VkyjDeN3Lu2FSg8S8Dqg0Li9uFHFoFEt
+         Kjpz3ydKeddO0GqHPTLYFF+2YmEsV0f+vPa64ELLx8sRS1MhTdY5T/XF3M1qgBM3LpeO
+         eB8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vOK+4qtemVEZSOAnA8zIaao8MQOq+8sUNCoT3jozv2I=;
-        b=SdvTm6cu5DM4AhvFiQBgH1a2M7v/1sjosduknvzC3KcnSZX7Oclu2v/oWgucW+ClFA
-         HKm/CbC3x0p9DESrWTfRSVoKpyJrLEt3VzB4mqXIH2eP/XxocUFC5pKKszdv+sFBbNVa
-         o2xUSUsOS2RpG2D0jF7UU0suyjRE/do98FjxPX4RfjHusSSadQ0vl5mG2bhLgYoHPnEM
-         q6egy9AL2+HVWiJ1Hro8u7SzMbWpf52GfLbcq/T29LVMqIuaXleDgBx3pREVdtOhr2tY
-         tfXGxBjmT3X+ulQdEaqnhoBt5XUuASiBYi4hzWwNuZsumHIVunSsZMKqlM/MDRDiU0Tz
-         VZ9Q==
-X-Gm-Message-State: AHQUAube5A/GtecmNAnkcHOWAn/E6NfTO4s44tUpHshy7ql+RJq5j6w9
-        1jtZaif9Lfc0NDlKp0idmSqtKwY=
-X-Google-Smtp-Source: AHgI3IbLJBtJMSXy6Td45k9NLFpSMoKE5Xz7D9T8jv/QYUf9cB/2luiAQUc04+2PeRthqP/tx48ALw==
-X-Received: by 2002:a05:6830:104e:: with SMTP id b14mr1836646otp.250.1550519350685;
-        Mon, 18 Feb 2019 11:49:10 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id a12sm6322407otl.39.2019.02.18.11.49.09
+        bh=0wtsBdExeMA1wwCJ28I4aSi9QBIDjm+ySXCh9WlH+r8=;
+        b=B8TXjlXXDSHlf1dYyT4zentR5lBF/OxlgJNGae4FI8btNRr7fsRl7/vvSaGm7AnHzf
+         CK4HD0TjDN1gF8sT+tcR2lWprxsLZWpIqYdIB6v4o9+wJP9Z+1uYJM1TffpQM5R8zTNQ
+         giMVmQ2ykqa2qQFuf2YbmmjoDoYlJjx6/SSeoaTC2CUOxR0VXacenQqFtYC2Wwk30aWY
+         zAIX7hYC1AfUpoDxyGciUGXtxWS2GQodVugOU1S0SZnTTBs6m4PqYAqXXOhYkUpHLsTc
+         k5BTGUUGiqp7eKuxrzTTcVpY7vNroy8X74Q12F4tVGvwfC3wCkrakFIdw5/okfEnONWa
+         mAOA==
+X-Gm-Message-State: AHQUAuZI3CRTjihXgwykARXPEki6J2Wg8od06drcItEKp85Ge1FGTqaq
+        7/+OG++ry7lEYHBsuwBxXy2qVw==
+X-Google-Smtp-Source: AHgI3IYgK3DVojWmklhiIeoLq404ESnMMVIaR2vGDGMXORI8El0uFkQrhGihzkrV0E3C0Mg6kZr77A==
+X-Received: by 2002:a02:c943:: with SMTP id u3mr13451152jao.96.1550519381443;
+        Mon, 18 Feb 2019 11:49:41 -0800 (PST)
+Received: from google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
+        by smtp.gmail.com with ESMTPSA id x17sm5606036ioa.6.2019.02.18.11.49.40
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Feb 2019 11:49:10 -0800 (PST)
-Date:   Mon, 18 Feb 2019 13:49:09 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sugaya Taichi <sugaya.taichi@socionext.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>,
-        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Sugaya Taichi <sugaya.taichi@socionext.com>
-Subject: Re: [PATCH v2 01/15] dt-bindings: sram: milbeaut: Add binding for
- Milbeaut smp-sram
-Message-ID: <20190218194909.GA9552@bogus>
-References: <1549628733-30171-1-git-send-email-sugaya.taichi@socionext.com>
+        Mon, 18 Feb 2019 11:49:40 -0800 (PST)
+Date:   Mon, 18 Feb 2019 12:49:38 -0700
+From:   Yu Zhao <yuzhao@google.com>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nick Piggin <npiggin@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org,
+        mark.rutland@arm.com
+Subject: Re: [PATCH] arm64: mm: enable per pmd page table lock
+Message-ID: <20190218194938.GA184109@google.com>
+References: <20190214211642.2200-1-yuzhao@google.com>
+ <20190218151223.GB16091@fuggles.cambridge.arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1549628733-30171-1-git-send-email-sugaya.taichi@socionext.com>
+In-Reply-To: <20190218151223.GB16091@fuggles.cambridge.arm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  8 Feb 2019 21:25:33 +0900, Sugaya Taichi wrote:
-> The Milbeaut M10V SoC needs a part of sram for smp, so this adds the
-> M10V sram compatible and binding.
+On Mon, Feb 18, 2019 at 03:12:23PM +0000, Will Deacon wrote:
+> [+Mark]
 > 
-> Signed-off-by: Sugaya Taichi <sugaya.taichi@socionext.com>
-> ---
->  .../devicetree/bindings/sram/milbeaut-smp-sram.txt | 24 ++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sram/milbeaut-smp-sram.txt
+> On Thu, Feb 14, 2019 at 02:16:42PM -0700, Yu Zhao wrote:
+> > Switch from per mm_struct to per pmd page table lock by enabling
+> > ARCH_ENABLE_SPLIT_PMD_PTLOCK. This provides better granularity for
+> > large system.
+> > 
+> > I'm not sure if there is contention on mm->page_table_lock. Given
+> > the option comes at no cost (apart from initializing more spin
+> > locks), why not enable it now.
+> > 
+> > Signed-off-by: Yu Zhao <yuzhao@google.com>
+> > ---
+> >  arch/arm64/Kconfig               |  3 +++
+> >  arch/arm64/include/asm/pgalloc.h | 12 +++++++++++-
+> >  arch/arm64/include/asm/tlb.h     |  5 ++++-
+> >  3 files changed, 18 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> > index a4168d366127..104325a1ffc3 100644
+> > --- a/arch/arm64/Kconfig
+> > +++ b/arch/arm64/Kconfig
+> > @@ -872,6 +872,9 @@ config ARCH_WANT_HUGE_PMD_SHARE
+> >  config ARCH_HAS_CACHE_LINE_SIZE
+> >  	def_bool y
+> >  
+> > +config ARCH_ENABLE_SPLIT_PMD_PTLOCK
+> > +	def_bool y
+> > +
+> >  config SECCOMP
+> >  	bool "Enable seccomp to safely compute untrusted bytecode"
+> >  	---help---
+> > diff --git a/arch/arm64/include/asm/pgalloc.h b/arch/arm64/include/asm/pgalloc.h
+> > index 52fa47c73bf0..dabba4b2c61f 100644
+> > --- a/arch/arm64/include/asm/pgalloc.h
+> > +++ b/arch/arm64/include/asm/pgalloc.h
+> > @@ -33,12 +33,22 @@
+> >  
+> >  static inline pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long addr)
+> >  {
+> > -	return (pmd_t *)__get_free_page(PGALLOC_GFP);
+> > +	struct page *page;
+> > +
+> > +	page = alloc_page(PGALLOC_GFP);
+> > +	if (!page)
+> > +		return NULL;
+> > +	if (!pgtable_pmd_page_ctor(page)) {
+> > +		__free_page(page);
+> > +		return NULL;
+> > +	}
+> > +	return page_address(page);
 > 
+> I'm a bit worried as to how this interacts with the page-table code in
+> arch/arm64/mm/mmu.c when pgd_pgtable_alloc is used as the allocator. It
+> looks like that currently always calls pgtable_page_ctor(), regardless of
+> level. Do we now need a separate allocator function for the PMD level?
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Thanks for reminding me, I never noticed this. The short answer is
+no.
+
+I guess pgtable_page_ctor() is used on all pud/pmd/pte entries
+there because it's also compatible with pud, and pmd too without
+this patch. So your concern is valid. Thanks again.
+
+Why my answer is no? Because I don't think the ctor matters for
+pgd_pgtable_alloc(). The ctor is only required for userspace page
+tables, and that's why we don't have it in pte_alloc_one_kernel().
+AFAICT, none of the pgds (efi_mm.pgd, tramp_pg_dir and init_mm.pgd)
+pre-populated by pgd_pgtable_alloc() is. (I doubt we pre-populate
+userspace page tables in any other arch).
+
+So to avoid future confusion, we might just remove the ctor from
+pgd_pgtable_alloc().
