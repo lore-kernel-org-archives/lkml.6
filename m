@@ -7,58 +7,57 @@ X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3352CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 05:36:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D0EC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 05:41:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5B4B218EA
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 05:36:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDF93218EA
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 05:41:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EchuLGh+"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kye1UkiM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727673AbfBRFgr (ORCPT
+        id S1727055AbfBRFlH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 00:36:47 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:30701 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725822AbfBRFgr (ORCPT
+        Mon, 18 Feb 2019 00:41:07 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:59393 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725776AbfBRFlH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 00:36:47 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20190218053642epoutp017248e736c6cb5d4b51ce6d1ed0147203~EXp1-55kt0381803818epoutp01d
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 05:36:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20190218053642epoutp017248e736c6cb5d4b51ce6d1ed0147203~EXp1-55kt0381803818epoutp01d
+        Mon, 18 Feb 2019 00:41:07 -0500
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190218054103epoutp03f123b782d2c1b0ee5115eebb4b086632~EXtpHOoQo2176621766epoutp03O
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 05:41:03 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190218054103epoutp03f123b782d2c1b0ee5115eebb4b086632~EXtpHOoQo2176621766epoutp03O
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1550468202;
-        bh=pT7r93x8NOS0V+1AX3aAlXFD9FZIViA0ImorjW4h91g=;
+        s=mail20170921; t=1550468463;
+        bh=nnmNNttPtuN6se7xv1VYYxQmNoYsrYbagrHYgLCaDP8=;
         h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=EchuLGh+1rGBwOcgsIFv3Uz5rA0eoLRg/TNmQAtcTlShZBg8Fglsm40u/oYSfr7K3
-         XddSEMiLV0dBS62gKoCEzfKkceWA53O3KjeOHGOHrECcjFvs4Z+iohT/G2RSwGxLgj
-         yINt2mUJH4x5TPyOdLgBSz/w/W/Byf2YQ/0/GpxQ=
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.157]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190218053639epcas1p1dbb3da50081d4a07a347c323522293cd~EXpzezAAI0901809018epcas1p1-;
-        Mon, 18 Feb 2019 05:36:39 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DA.5D.04074.7644A6C5; Mon, 18 Feb 2019 14:36:39 +0900 (KST)
+        b=kye1UkiMQjKCuSasLabGj68mGI6F3jpYBaarmQik90i+C4XvlR9x8kcdvmexMR+6y
+         UH07W7QbgQaJ1NiLMOPswQmTKuvL3n5ntjt3zSWr7u6ifSv0Wr/tXPBGZnjsyTBrOn
+         o7zbRTqwFZWokALOEghSCgcKhG0tT+gAKe1g0in8=
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.154]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190218054100epcas1p25e53070440ea98d558c2c9ffb2bd5f1a~EXtmDy4cf2979529795epcas1p2m;
+        Mon, 18 Feb 2019 05:41:00 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A0.E6.04288.B654A6C5; Mon, 18 Feb 2019 14:40:59 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-        20190218053639epcas1p47275220703fd351b7ed30c311c474e22~EXpzKcjOr0130001300epcas1p4r;
-        Mon, 18 Feb 2019 05:36:39 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190218054059epcas1p18d05c5bf923bc990aab78586080f1a61~EXtlQfqAA0085200852epcas1p15;
+        Mon, 18 Feb 2019 05:40:59 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
         epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190218053639epsmtrp25e7ac7b6e4d7c2f3f5cc9afe8a4ebf03~EXpzJK5_g2423724237epsmtrp28;
-        Mon, 18 Feb 2019 05:36:39 +0000 (GMT)
-X-AuditID: b6c32a35-297ff70000000fea-a3-5c6a4467ae6f
+        20190218054059epsmtrp24fe16f5ec6dd1f2d4202251d9f175259~EXtlPQFWB2618626186epsmtrp26;
+        Mon, 18 Feb 2019 05:40:59 +0000 (GMT)
+X-AuditID: b6c32a38-bf7ff700000010c0-d4-5c6a456b6879
 Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3C.96.03971.7644A6C5; Mon, 18 Feb 2019 14:36:39 +0900 (KST)
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        76.B4.03601.B654A6C5; Mon, 18 Feb 2019 14:40:59 +0900 (KST)
 Received: from [10.113.221.102] (unknown [10.113.221.102]) by
         epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190218053638epsmtip290a703178da3a6c2ecdd6bb3823e8e59~EXpy7QlGA3020630206epsmtip2a;
-        Mon, 18 Feb 2019 05:36:38 +0000 (GMT)
-Subject: Re: [PATCH v2 2/2] drivers: devfreq: add tracing for scheduling
- work
+        20190218054058epsmtip29c3304a26b14906df774bb1f3a2bac3e~EXtlBcaIq3262932629epsmtip2t;
+        Mon, 18 Feb 2019 05:40:58 +0000 (GMT)
+Subject: Re: [PATCH v2 1/2] trace: events: add devfreq trace event file
 To:     Lukasz Luba <l.luba@partner.samsung.com>,
         linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 Cc:     b.zolnierkie@samsung.com, myungjoo.ham@samsung.com,
@@ -67,52 +66,52 @@ Cc:     b.zolnierkie@samsung.com, myungjoo.ham@samsung.com,
         mingo@redhat.com
 From:   Chanwoo Choi <cw00.choi@samsung.com>
 Organization: Samsung Electronics
-Message-ID: <0c03a781-5a81-46ab-9e92-9534e72c4201@samsung.com>
-Date:   Mon, 18 Feb 2019 14:36:38 +0900
+Message-ID: <bfe5eced-712e-774a-a5d9-3649e276e848@samsung.com>
+Date:   Mon, 18 Feb 2019 14:40:58 +0900
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
         Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <1550235913-5189-3-git-send-email-l.luba@partner.samsung.com>
+In-Reply-To: <1550235913-5189-2-git-send-email-l.luba@partner.samsung.com>
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLJsWRmVeSWpSXmKPExsWy7bCmvm66S1aMwfJLshYbZ6xntTjb9Ibd
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLJsWRmVeSWpSXmKPExsWy7bCmnm62a1aMwcmVFhYbZ6xntTjb9Ibd
         4laDjMXlXXPYLD73HmG0WHvkLrvFpQMLmCw+b3jMaHG7cQWbxb6OB0wWh9+0szpwe8xuuMji
         0bLvFrvHwXd7mDze77vK5tG3ZRWjx+dNcgFsUdk2GamJKalFCql5yfkpmXnptkrewfHO8aZm
         Boa6hpYW5koKeYm5qbZKLj4Bum6ZOUDnKSmUJeaUAoUCEouLlfTtbIryS0tSFTLyi0tslVIL
-        UnIKLAv0ihNzi0vz0vWS83OtDA0MjEyBChOyMzru3mAuaOSsuLFpOmsD40r2LkZODgkBE4kb
-        bZOAbC4OIYEdjBJ3V+5ng3A+MUpM37+GFcL5xigxZVUDE0zLld2XmCESexklHl1sZIJw3jNK
-        vPs6B2ywsIC/xJSZTWC2iECaxNv2u2BFzAIHgDpWrgBLsAloSex/cYMNxOYXUJS4+uMxI4jN
-        K2AnsXj/aqA4BweLgKrEkpMxIGFRgQiJw73voEoEJU7OfMICYnMKeEl8fXIezGYWEJe49WQ+
-        E4QtL9G8dTbYpRIC/ewSj2++BpspIeAi0bU7BeIbYYlXx7dAA0NK4vO7vWwQdrXEypNH2CB6
-        Oxgltuy/wAqRMJbYv3QyE8gcZgFNifW79CF28QH93sMKMZ5XoqNNCKJaWeLyg7vQgJOUWNze
-        CTXeQ+L38Qb2CYyKs5B8MwvJB7OQfDALYdkCRpZVjGKpBcW56anFhgWGyLG9iRGcdLVMdzBO
-        OedziFGAg1GJh/dDWWaMEGtiWXFl7iFGCQ5mJRHeXY5ZMUK8KYmVValF+fFFpTmpxYcYTYFh
-        PZFZSjQ5H5gR8kriDU2NjI2NLUwMzUwNDZXEedc7OMcICaQnlqRmp6YWpBbB9DFxcEo1MPYH
-        /DgrtHXVii2JCo8XevoXVouwC76/OcPM+MaVhU90u5mPG1x3uSt688LKb69FsiUzxBcf2Skq
-        6bdzudNmYcfrThZHLCP//7ts7/Wdaa2bQMSty4LFzbtqQ5Tb6hMro6/v6xGu63r0RHupIv82
-        6/8mXBs+BAcIlojZKp2ZbDq/f5LHQZkvHUosxRmJhlrMRcWJAAVhic/QAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGIsWRmVeSWpSXmKPExsWy7bCSvG66S1aMQddmTouNM9azWpxtesNu
-        catBxuLyrjlsFp97jzBarD1yl93i0oEFTBafNzxmtLjduILNYl/HAyaLw2/aWR24PWY3XGTx
-        aNl3i93j4Ls9TB7v911l8+jbsorR4/MmuQC2KC6blNSczLLUIn27BK6Mjrs3mAsaOStubJrO
-        2sC4kr2LkZNDQsBE4sruS8wgtpDAbkaJNwecIOKSEtMuHgWKcwDZwhKHDxd3MXIBlbxllFj3
-        ZilYr7CAr8TuPffBbBGBNIlDDbfBbGaBA4wSzTd9IBruMkpsefyFESTBJqAlsf/FDTYQm19A
-        UeLqj8dgcV4BO4nF+1ezgSxjEVCVWHIyBiQsKhAh8fHpPiaIEkGJkzOfsIDYnAJeEl+fnGeB
-        2KUu8WcexP3MAuISt57MZ4Kw5SWat85mnsAoPAtJ+ywkLbOQtMxC0rKAkWUVo2RqQXFuem6x
-        YYFhXmq5XnFibnFpXrpecn7uJkZw7Glp7mC8vCT+EKMAB6MSD++HsswYIdbEsuLK3EOMEhzM
-        SiK8uxyzYoR4UxIrq1KL8uOLSnNSiw8xSnOwKInzPs07FikkkJ5YkpqdmlqQWgSTZeLglGpg
-        bNPu3fLfZGfU7RkXI4JkOC69tpz9QUreR7Fdd33dWwbW3benSQls+jPR0flK0UqvwztWLP33
-        d5vZ+tuVO92nW1vMEbtqIXDR+sKJXqXq13NfFgqc1kvlzZ795O4CZs3ksvNiRYICxoeK5lUp
-        H4h27VX9mx64IvVM/+RNu47H1DDGTV5/0X2PsBJLcUaioRZzUXEiALiMLNK5AgAA
-X-CMS-MailID: 20190218053639epcas1p47275220703fd351b7ed30c311c474e22
+        UnIKLAv0ihNzi0vz0vWS83OtDA0MjEyBChOyM/7NW8RW0CVW0XfgH0sD4wShLkYODgkBE4ld
+        U2O7GLk4hAR2MEo8mHuUFcL5xCixb85XJgjnG6PE5KcPgBxOsI45Jz+wQST2MkrsbLgM5bxn
+        lDi7ppURpEpYwF3iyZJJrCC2iECaxNv2u2CjmAUOMEo8WrmCHSTBJqAlsf/FDTYQm19AUeLq
+        j8dgzbwCdhJXvs8HW8cioCoxdddnFhBbVCBC4nDvO6gaQYmTM5+AxTkFvCRubVgLtoxZQFzi
+        1hOIXmYBeYnmrbOZQRZLCExmlzjwdg4jxA8uEh8OrYWyhSVeHd/CDmFLSXx+t5cNwq6WWHny
+        CBtEcwejxJb9F1ghEsYS+5dOZgIFH7OApsT6XfoQy/gk3n3tYYWEKq9ER5sQRLWyxOUHd6FB
+        JymxuL2TDaLEQ+JMm+sERsVZSL6ZheSDWUg+mIWwawEjyypGsdSC4tz01GLDAhPk2N7ECE66
+        WhY7GPec8znEKMDBqMTD+6EsM0aINbGsuDL3EKMEB7OSCO8ux6wYId6UxMqq1KL8+KLSnNTi
+        Q4ymwMCeyCwlmpwPzAh5JfGGpkbGxsYWJoZmpoaGSuK86x2cY4QE0hNLUrNTUwtSi2D6mDg4
+        pRoYJy8WUcxyXTQ399VE50MLVzxUnL3ZxfgJz9RndrGVtu5HV7/4ViVvGTXtsx6zQOi3QI5l
+        s/TUD79u41JImH66N+zO1s2Cvvn6Tls1L6qc8sw5Xe7g/msmT4ndSV+11YwCW+d7MDjW3RD4
+        qHq+2uXDprfrPxzxaNI4Mjnvz2pHBuPDGVp632YIKbEUZyQaajEXFScCAKP41F3QAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrOIsWRmVeSWpSXmKPExsWy7bCSvG62a1aMwaP/TBYbZ6xntTjb9Ibd
+        4laDjMXlXXPYLD73HmG0WHvkLrvFpQMLmCw+b3jMaHG7cQWbxb6OB0wWh9+0szpwe8xuuMji
+        0bLvFrvHwXd7mDze77vK5tG3ZRWjx+dNcgFsUVw2Kak5mWWpRfp2CVwZ/+YtYivoEqvoO/CP
+        pYFxglAXIyeHhICJxJyTH9hAbCGB3YwSx/v8IeKSEtMuHmXuYuQAsoUlDh8u7mLkAip5yyjR
+        M6GRBaRGWMBd4smSSawgtohAmsShhtvsIDazwAFGieabPhANdxkl3j7aAZZgE9CS2P/iBtgy
+        fgFFias/HjOC2LwCdhJXvs9nArFZBFQlpu76DLZAVCBC4uPTfUwQNYISJ2c+AYtzCnhJ3Nqw
+        lhVimbrEn3mXmCFscYlbTyDmMAvISzRvnc08gVF4FpL2WUhaZiFpmYWkZQEjyypGydSC4tz0
+        3GLDAqO81HK94sTc4tK8dL3k/NxNjODo09LawXjiRPwhRgEORiUe3g9lmTFCrIllxZW5hxgl
+        OJiVRHh3OWbFCPGmJFZWpRblxxeV5qQWH2KU5mBREueVzz8WKSSQnliSmp2aWpBaBJNl4uCU
+        amCMeXRoWszH/5acswN5PjnG7We776bn29NoX+YUdWTrUx3FlZPb8g+t829/VlD5VP5aeid3
+        ms5qs+kffk6I3cDIodC5YUGP3dsrb60D3Hd/Xy85u7aB60tH3Bv9T8JBX/k3V2pa+WRPmJie
+        9p2J+dhhiemKfWz/eNs+li5wsjwVZNv6UHLCIU8lluKMREMt5qLiRAClANh0ugIAAA==
+X-CMS-MailID: 20190218054059epcas1p18d05c5bf923bc990aab78586080f1a61
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 CMS-TYPE: 101P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190215130555eucas1p297d048d01902e2bb88e6db158d53fd88
+X-CMS-RootMailID: 20190215130555eucas1p219217e3f1d0901f61be78870df0ecf6d
 References: <1550235913-5189-1-git-send-email-l.luba@partner.samsung.com>
-        <CGME20190215130555eucas1p297d048d01902e2bb88e6db158d53fd88@eucas1p2.samsung.com>
-        <1550235913-5189-3-git-send-email-l.luba@partner.samsung.com>
+        <CGME20190215130555eucas1p219217e3f1d0901f61be78870df0ecf6d@eucas1p2.samsung.com>
+        <1550235913-5189-2-git-send-email-l.luba@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -121,41 +120,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 Hi Lukasz,
 
 On 19. 2. 15. 오후 10:05, Lukasz Luba wrote:
-> This patch add basic tracing of the devfreq workqueue and delayed work.
-> It aims to capture changes of the polling intervals and device state.
+> The patch adds a new file for with trace events for devfreq
+> framework. They are used for performance analysis of the framework.
+> It also contains updates in MAINTAINERS file adding new entry for
+> devfreq maintainers.
 > 
 > Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
 > ---
->  drivers/devfreq/devfreq.c | 5 +++++
->  1 file changed, 5 insertions(+)
+>  MAINTAINERS                    |  1 +
+>  include/trace/events/devfreq.h | 40 ++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 41 insertions(+)
+>  create mode 100644 include/trace/events/devfreq.h
 > 
-> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
-> index 0ae3de7..660365a 100644
-> --- a/drivers/devfreq/devfreq.c
-> +++ b/drivers/devfreq/devfreq.c
-> @@ -29,6 +29,9 @@
->  #include <linux/of.h>
->  #include "governor.h"
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 41ce5f4..9c44076 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -4447,6 +4447,7 @@ S:	Maintained
+>  F:	drivers/devfreq/
+>  F:	include/linux/devfreq.h
+>  F:	Documentation/devicetree/bindings/devfreq/
+> +F:	include/trace/events/devfreq.h
 >  
-> +#define CREATE_TRACE_POINTS
-> +#include <trace/events/devfreq.h>
+>  DEVICE FREQUENCY EVENT (DEVFREQ-EVENT)
+>  M:	Chanwoo Choi <cw00.choi@samsung.com>
+> diff --git a/include/trace/events/devfreq.h b/include/trace/events/devfreq.h
+> new file mode 100644
+> index 0000000..ce83dba
+> --- /dev/null
+> +++ b/include/trace/events/devfreq.h
+> @@ -0,0 +1,40 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#undef TRACE_SYSTEM
+> +#define TRACE_SYSTEM devfreq
 > +
->  static struct class *devfreq_class;
->  
->  /*
-> @@ -394,6 +397,8 @@ static void devfreq_monitor(struct work_struct *work)
->  	queue_delayed_work(devfreq_wq, &devfreq->work,
->  				msecs_to_jiffies(devfreq->profile->polling_ms));
->  	mutex_unlock(&devfreq->lock);
+> +#if !defined(_TRACE_DEVFREQ_H) || defined(TRACE_HEADER_MULTI_READ)
+> +#define _TRACE_DEVFREQ_H
 > +
-> +	trace_devfreq_monitor(devfreq);
->  }
->  
->  /**
+> +#include <linux/devfreq.h>
+> +#include <linux/tracepoint.h>
+> +
+> +TRACE_EVENT(devfreq_monitor,
+> +	TP_PROTO(struct devfreq *devfreq),
+> +
+> +	TP_ARGS(devfreq),
+> +
+> +	TP_STRUCT__entry(
+> +		__field(unsigned long, freq)
+> +		__field(unsigned long, busy_time)
+> +		__field(unsigned long, total_time)
+> +		__field(unsigned int, polling_ms)
+> +		__string(dev_name, dev_name(&devfreq->dev))
+> +	),
+> +
+> +	TP_fast_assign(
+> +		__entry->freq = devfreq->previous_freq;
+> +		__entry->busy_time = devfreq->last_status.busy_time;
+> +		__entry->total_time = devfreq->last_status.total_time;
+> +		__entry->polling_ms = devfreq->profile->polling_ms;
+> +		__assign_str(dev_name, dev_name(&devfreq->dev));
+> +	),
+> +
+> +	TP_printk("dev_name=%s freq=%lu polling_ms=%u load=%lu",
+> +		__get_str(dev_name), __entry->freq, __entry->polling_ms,
+> +		__entry->total_time == 0 ? 100 :
+
+I case of __entry->total_time is zero,
+why do you show '100' instead of '0'(zero)?
+I think that it might make the some confusion for user.
+
+If it show the '100' in case of "__entry->total_time is zero",
+it cannot distinguish between the real 100% utilization
+and "total_time is zero".
+
+> +			(100 * __entry->busy_time) / __entry->total_time)
+> +);
+> +#endif /* _TRACE_DEVFREQ_H */
+> +
+> +/* This part must be outside protection */
+> +#include <trace/define_trace.h>
 > 
 
-Looks good to me.
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
 -- 
 Best Regards,
