@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06564C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF72C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9E1F21904
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C71821905
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497880;
-	bh=QMi2YnG8q/mNDCozqJ8m8+IhtQq4RNtzaH7NT6HaXBs=;
+	s=default; t=1550497885;
+	bh=zFn94Cbi+FUQGtoue4pclIKlx7t8Ppk2UUxUvADp+oY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hpuANTnU0CXDxNHKytG2H/C4l4cuZGvi+eAY2tvXdPH6rOv3hk9JGiPMVozROeNvL
-	 tao2qtXJWCyuahA4LMvLSWOlYRHYjRMehSwyBd6siyDza8qpbOhagvh1l1vOoS6W5a
-	 EgtMPwAyaVeBHP13qrqMAuPfZi18cYiMQlv4LXXc=
+	b=b2WNkL7fyZGBqdxt+PzpXkTRvpbyxRRzKHPe0tXly0fgZRywWWm8/MWrLg4fiTMvp
+	 nIEeA1fSGGjsyxwcrFp7/Sr4x2fvbXoy+DLRTVmnNTlNab3s6w/nOyWtg6t60cDB+4
+	 vjzqhmXzC+jskQaTk8Z8Lq1MDoqmzZXIFcwddujQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732388AbfBRNvT (ORCPT
+        id S1732404AbfBRNvX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:51:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59152 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:51:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731866AbfBRNvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:51:16 -0500
+        id S1731883AbfBRNvU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:51:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C585D21905;
-        Mon, 18 Feb 2019 13:51:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 566B720449;
+        Mon, 18 Feb 2019 13:51:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497876;
-        bh=QMi2YnG8q/mNDCozqJ8m8+IhtQq4RNtzaH7NT6HaXBs=;
+        s=default; t=1550497878;
+        bh=zFn94Cbi+FUQGtoue4pclIKlx7t8Ppk2UUxUvADp+oY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iRMFdrtsbmqtKBTLC7Um5fiW83LV9b6UD+0WAaupWc68q25UdHay3f/7MH5vEdOP6
-         Is2AXswSIs66bj5uiZ7Fg7USlU3qpyKB+xkS8UijXFqJR/iee4S42Wbmwh7CZ51Zi0
-         E7RrTqpGFmu1fXg3BOF2e6HjqgO8U6DqFuo/2hxw=
+        b=TQBRh7hbsY9haD58bIx4fB2d02SaG6PrD9MqSvdllYEAaa3F7dqqIMEkL+A+uvIvE
+         OeBh4Zxz4NKhC5t+xp5xfEL1Kotr8EAkfPv2wWOVyFw173QXGTiWtv1ggL98i7qkrM
+         cV5cQsk+/NVabFohl0FUPkVlkpD7NeUJUsvQSnQw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Emily Deng <Emily.Deng@amd.com>,
-        Xiangliang Yu <Xiangliang.Yu@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 21/85] drm/amdgpu/sriov:Correct pfvf exchange logic
-Date:   Mon, 18 Feb 2019 14:42:47 +0100
-Message-Id: <20190218133501.920603023@linuxfoundation.org>
+Subject: [PATCH 4.19 22/85] ACPI: NUMA: Use correct type for printing addresses on i386-PAE
+Date:   Mon, 18 Feb 2019 14:42:48 +0100
+Message-Id: <20190218133502.025698194@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -67,67 +66,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b8cf66182eddb22e9c7539821ed6eecdb4f86d1a ]
+[ Upstream commit b9ced18acf68dffebe6888c7ec765a2b1db7a039 ]
 
-The pfvf exchange need be in exclusive mode. And add pfvf exchange in gpu
-reset.
+The addresses of NUMA nodes are not printed correctly on i386-PAE
+which is misleading.
 
-Signed-off-by: Emily Deng <Emily.Deng@amd.com>
-Reviewed-By: Xiangliang Yu <Xiangliang.Yu@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Here is a debian9-32bit with PAE in a QEMU guest having more than 4G
+of memory:
+
+qemu-system-i386 \
+-hda /var/lib/libvirt/images/debian32.qcow2 \
+-m 5G \
+-enable-kvm \
+-smp 10 \
+-numa node,mem=512M,nodeid=0,cpus=0 \
+-numa node,mem=512M,nodeid=1,cpus=1 \
+-numa node,mem=512M,nodeid=2,cpus=2 \
+-numa node,mem=512M,nodeid=3,cpus=3 \
+-numa node,mem=512M,nodeid=4,cpus=4 \
+-numa node,mem=512M,nodeid=5,cpus=5 \
+-numa node,mem=512M,nodeid=6,cpus=6 \
+-numa node,mem=512M,nodeid=7,cpus=7 \
+-numa node,mem=512M,nodeid=8,cpus=8 \
+-numa node,mem=512M,nodeid=9,cpus=9 \
+-serial stdio
+
+Because of the wrong value type, it prints as below:
+
+[    0.021049] ACPI: SRAT Memory (0x0 length 0xa0000) in proximity domain 0 enabled
+[    0.021740] ACPI: SRAT Memory (0x100000 length 0x1ff00000) in proximity domain 0 enabled
+[    0.022425] ACPI: SRAT Memory (0x20000000 length 0x20000000) in proximity domain 1 enabled
+[    0.023092] ACPI: SRAT Memory (0x40000000 length 0x20000000) in proximity domain 2 enabled
+[    0.023764] ACPI: SRAT Memory (0x60000000 length 0x20000000) in proximity domain 3 enabled
+[    0.024431] ACPI: SRAT Memory (0x80000000 length 0x20000000) in proximity domain 4 enabled
+[    0.025104] ACPI: SRAT Memory (0xa0000000 length 0x20000000) in proximity domain 5 enabled
+[    0.025791] ACPI: SRAT Memory (0x0 length 0x20000000) in proximity domain 6 enabled
+[    0.026412] ACPI: SRAT Memory (0x20000000 length 0x20000000) in proximity domain 7 enabled
+[    0.027118] ACPI: SRAT Memory (0x40000000 length 0x20000000) in proximity domain 8 enabled
+[    0.027802] ACPI: SRAT Memory (0x60000000 length 0x20000000) in proximity domain 9 enabled
+
+The upper half of the start address of the NUMA domains between 6
+and 9 inclusive was cut, so the printed values are incorrect.
+
+Fix the value type, to get the correct values in the log as follows:
+
+[    0.023698] ACPI: SRAT Memory (0x0 length 0xa0000) in proximity domain 0 enabled
+[    0.024325] ACPI: SRAT Memory (0x100000 length 0x1ff00000) in proximity domain 0 enabled
+[    0.024981] ACPI: SRAT Memory (0x20000000 length 0x20000000) in proximity domain 1 enabled
+[    0.025659] ACPI: SRAT Memory (0x40000000 length 0x20000000) in proximity domain 2 enabled
+[    0.026317] ACPI: SRAT Memory (0x60000000 length 0x20000000) in proximity domain 3 enabled
+[    0.026980] ACPI: SRAT Memory (0x80000000 length 0x20000000) in proximity domain 4 enabled
+[    0.027635] ACPI: SRAT Memory (0xa0000000 length 0x20000000) in proximity domain 5 enabled
+[    0.028311] ACPI: SRAT Memory (0x100000000 length 0x20000000) in proximity domain 6 enabled
+[    0.028985] ACPI: SRAT Memory (0x120000000 length 0x20000000) in proximity domain 7 enabled
+[    0.029667] ACPI: SRAT Memory (0x140000000 length 0x20000000) in proximity domain 8 enabled
+[    0.030334] ACPI: SRAT Memory (0x160000000 length 0x20000000) in proximity domain 9 enabled
+
+Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+[ rjw: Subject & changelog ]
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 8 ++++----
- drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c      | 2 +-
- 2 files changed, 5 insertions(+), 5 deletions(-)
+ drivers/acpi/numa.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-index 39bf2ce548c6..7f6af421d3e9 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
-@@ -1653,8 +1653,10 @@ static int amdgpu_device_ip_init(struct amdgpu_device *adev)
- 
- 	amdgpu_amdkfd_device_init(adev);
- 
--	if (amdgpu_sriov_vf(adev))
-+	if (amdgpu_sriov_vf(adev)) {
-+		amdgpu_virt_init_data_exchange(adev);
- 		amdgpu_virt_release_full_gpu(adev, true);
-+	}
- 
- 	return 0;
- }
-@@ -2555,9 +2557,6 @@ int amdgpu_device_init(struct amdgpu_device *adev,
- 		goto failed;
- 	}
- 
--	if (amdgpu_sriov_vf(adev))
--		amdgpu_virt_init_data_exchange(adev);
--
- 	amdgpu_fbdev_init(adev);
- 
- 	r = amdgpu_pm_sysfs_init(adev);
-@@ -3269,6 +3268,7 @@ static int amdgpu_device_reset_sriov(struct amdgpu_device *adev,
- 	r = amdgpu_ib_ring_tests(adev);
- 
- error:
-+	amdgpu_virt_init_data_exchange(adev);
- 	amdgpu_virt_release_full_gpu(adev, true);
- 	if (!r && adev->virt.gim_feature & AMDGIM_FEATURE_GIM_FLR_VRAMLOST) {
- 		atomic_inc(&adev->vram_lost_counter);
-diff --git a/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c b/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c
-index 078f70faedcb..d06332be59d3 100644
---- a/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c
-+++ b/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c
-@@ -174,7 +174,7 @@ static int xgpu_ai_send_access_requests(struct amdgpu_device *adev,
- 			return r;
- 		}
- 		/* Retrieve checksum from mailbox2 */
--		if (req == IDH_REQ_GPU_INIT_ACCESS) {
-+		if (req == IDH_REQ_GPU_INIT_ACCESS || req == IDH_REQ_GPU_RESET_ACCESS) {
- 			adev->virt.fw_reserve.checksum_key =
- 				RREG32_NO_KIQ(SOC15_REG_OFFSET(NBIO, 0,
- 					mmBIF_BX_PF0_MAILBOX_MSGBUF_RCV_DW2));
+diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
+index 85167603b9c9..0da58f0bf7e5 100644
+--- a/drivers/acpi/numa.c
++++ b/drivers/acpi/numa.c
+@@ -147,9 +147,9 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
+ 		{
+ 			struct acpi_srat_mem_affinity *p =
+ 			    (struct acpi_srat_mem_affinity *)header;
+-			pr_debug("SRAT Memory (0x%lx length 0x%lx) in proximity domain %d %s%s%s\n",
+-				 (unsigned long)p->base_address,
+-				 (unsigned long)p->length,
++			pr_debug("SRAT Memory (0x%llx length 0x%llx) in proximity domain %d %s%s%s\n",
++				 (unsigned long long)p->base_address,
++				 (unsigned long long)p->length,
+ 				 p->proximity_domain,
+ 				 (p->flags & ACPI_SRAT_MEM_ENABLED) ?
+ 				 "enabled" : "disabled",
 -- 
 2.19.1
 
