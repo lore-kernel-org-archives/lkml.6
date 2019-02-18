@@ -7,54 +7,51 @@ X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D70C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:50:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A382BC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:50:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6360217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:50:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 763182177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:50:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550515803;
-	bh=2HauBEx2Qdtv8fyMr8OsRdvr2yGmnKnwWBHSpy8oAiY=;
+	s=default; t=1550515809;
+	bh=Nqazs6dCz7nnNGPncwfaf+fEFCL8BFno+Yurfljz6SU=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=bKW3FmpWgUrLiHbfYAnYGKU0jQuVjcVDV4BAKwOZz3viyukPcbDQt3f52RHz7CxgP
-	 xw6At/GN3ozVePE8a8EG/YksA+BWZYrDnVWmjW5BKT/WzhBpnRnx4l6V8k+myNmuL/
-	 LhkOd4en7CbAYtIxRF/0QKNxddm2FtLgR41hPQRk=
+	b=g464UjA+fEwXrlHMsvK801npwB19ZrFsuny+bqjVwz5qRjnT60jAArRz0nFKXYtC1
+	 lokj9IF4vNNlj4OVygAZLMTFqXl4vYKzie3G5r33kT1T9euiHGoWSeHxq89GzQXV23
+	 fMBZJWUHgFmXZFRSzjolZLLoHHQ5yComsCD2ikEU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727152AbfBRSuC (ORCPT
+        id S1727225AbfBRSuH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:50:02 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42372 "EHLO
+        Mon, 18 Feb 2019 13:50:07 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42624 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726920AbfBRSty (ORCPT
+        with ESMTP id S1727054AbfBRSt6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:49:54 -0500
+        Mon, 18 Feb 2019 13:49:58 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=hgkkgjXd7cfvUAFliA6I4VRanwFsbcmTtS8eFelkOsA=; b=rCEepe5glGpU
-        Tq9oUpRttY23Mk5t8iVnc1VIQ6CaAFJhl24is4hR1oXS1+g7fBTTqi+6zZlBuYXt0MaEokJg5PXgP
-        M9QZ8oRv/DEXbBFL1pUxf6GMLWyv9i0450jryam1R0Sl80cSE36B2qM/JgKn8BdpY0YAXooXhkq9k
-        ZKRVU=;
+        List-Archive; bh=Mb0xm3Ib7nbXLk5IiJhHA4eN67THNLTNmzqjrTintaw=; b=D+C3ciluKAS8
+        IJ7GKIbP6ViyiIZJ+vXmHQEo8IaAjDW+k6AdLe+F2GWhTUKasUHvV3gXg3md2UxsCBIVRFVmfogKZ
+        B+/jlS1vsl1FrZE9Gch6pV6wkSrPeOZvsyNUpTiPhlu+72uMI+t2RS+qz+v8PrqcZxfi+pC3TE3Xd
+        2o57A=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gvnz0-0001fA-4y; Mon, 18 Feb 2019 18:49:38 +0000
+        id 1gvnzF-0001g2-KC; Mon, 18 Feb 2019 18:49:53 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 98EA21128008; Mon, 18 Feb 2019 18:49:37 +0000 (GMT)
+        id 3E6531128008; Mon, 18 Feb 2019 18:49:53 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Cc:     Mark Brown <broonie@kernel.org>, lars@metafoo.de,
-        lgirdwood@gmail.com, broonie@kernel.org,
-        alsa-devel@alsa-project.org, Codrin.Ciubotariu@microchip.com,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: codecs: ad193x: Set constraint to always have 32 sample bits" to the asoc tree
-In-Reply-To:  <20190218160954.13929-3-codrin.ciubotariu@microchip.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: core: remove unused rdev_get_supply()" to the regulator tree
+In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190218184937.98EA21128008@debutante.sirena.org.uk>
-Date:   Mon, 18 Feb 2019 18:49:37 +0000 (GMT)
+Message-Id: <20190218184953.3E6531128008@debutante.sirena.org.uk>
+Date:   Mon, 18 Feb 2019 18:49:53 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,11 +59,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: codecs: ad193x: Set constraint to always have 32 sample bits
+   regulator: core: remove unused rdev_get_supply()
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -87,56 +84,39 @@ to this mail.
 Thanks,
 Mark
 
-From 75c2ecb4bda296f89d4ea6a42750f48bfcd8a1d9 Mon Sep 17 00:00:00 2001
-From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Date: Mon, 18 Feb 2019 16:10:30 +0000
-Subject: [PATCH] ASoC: codecs: ad193x: Set constraint to always have 32 sample
- bits
+From 075ddd75680f3556e18f74198622529fba8f2a00 Mon Sep 17 00:00:00 2001
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Date: Mon, 18 Feb 2019 15:08:38 +0900
+Subject: [PATCH] regulator: core: remove unused rdev_get_supply()
 
-DACs and ADCs on ad193x codecs require a 32 bit slot size. We should
-assure that no other size is used.
+This is a remnant of commit 70a7fb80e85a ("regulator: core: Fix nested
+locking of supplies").
 
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/ad193x.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/regulator/core.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/sound/soc/codecs/ad193x.c b/sound/soc/codecs/ad193x.c
-index 21a38cc9e3da..c16c9969d1a0 100644
---- a/sound/soc/codecs/ad193x.c
-+++ b/sound/soc/codecs/ad193x.c
-@@ -37,6 +37,13 @@ static SOC_ENUM_SINGLE_DECL(ad193x_deemp_enum, AD193X_DAC_CTRL2, 1,
- 
- static const DECLARE_TLV_DB_MINMAX(adau193x_tlv, -9563, 0);
- 
-+static const unsigned int ad193x_sb[] = {32};
-+
-+static struct snd_pcm_hw_constraint_list constr = {
-+	.list = ad193x_sb,
-+	.count = ARRAY_SIZE(ad193x_sb),
-+};
-+
- static const struct snd_kcontrol_new ad193x_snd_controls[] = {
- 	/* DAC volume control */
- 	SOC_DOUBLE_R_TLV("DAC1 Volume", AD193X_DAC_L1_VOL,
-@@ -321,7 +328,16 @@ static int ad193x_hw_params(struct snd_pcm_substream *substream,
- 	return 0;
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 4fb475a2e4f2..defde9125a50 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -143,14 +143,6 @@ static bool regulator_ops_is_valid(struct regulator_dev *rdev, int ops)
+ 	return false;
  }
  
-+static int ad193x_startup(struct snd_pcm_substream *substream,
-+			  struct snd_soc_dai *dai)
-+{
-+	return snd_pcm_hw_constraint_list(substream->runtime, 0,
-+				   SNDRV_PCM_HW_PARAM_SAMPLE_BITS,
-+				   &constr);
-+}
-+
- static const struct snd_soc_dai_ops ad193x_dai_ops = {
-+	.startup = ad193x_startup,
- 	.hw_params = ad193x_hw_params,
- 	.digital_mute = ad193x_mute,
- 	.set_tdm_slot = ad193x_set_tdm_slot,
+-static inline struct regulator_dev *rdev_get_supply(struct regulator_dev *rdev)
+-{
+-	if (rdev && rdev->supply)
+-		return rdev->supply->rdev;
+-
+-	return NULL;
+-}
+-
+ /**
+  * regulator_lock_nested - lock a single regulator
+  * @rdev:		regulator source
 -- 
 2.20.1
 
