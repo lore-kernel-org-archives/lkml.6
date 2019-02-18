@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50D26C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 23:13:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCE48C4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 23:13:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22535218AD
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 23:13:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C9F8218AD
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 23:13:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bsfGy1P+"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oz6Vj4Z9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731942AbfBRXNd (ORCPT
+        id S1728622AbfBRXNk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 18:13:33 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:36591 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730200AbfBRXN0 (ORCPT
+        Mon, 18 Feb 2019 18:13:40 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:55310 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730739AbfBRXN2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 18:13:26 -0500
-Received: by mail-it1-f194.google.com with SMTP id h6so1953726itl.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 15:13:26 -0800 (PST)
+        Mon, 18 Feb 2019 18:13:28 -0500
+Received: by mail-it1-f193.google.com with SMTP id z131so1857693itf.5
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 15:13:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=V1IdqbYubtCixESl5TR0muUvkg/E2O8mQvzM202vMJY=;
-        b=bsfGy1P+JAaNzK2xsZmC2Tj104zGh/lur1QTBqvenBJ2/qYq2g/zlrWxNZQtQfM35p
-         SvHcbH51aav58mTv6SC3r+eXafQV/q2wT7dySMfLdYtqGwd3IU4BO5OncxK0Sc1m+fIj
-         nQfKurxrxsrekUV5Engn2LJyRILWrYvwJyz5n0SWzgddARHKb325HaCw91Il4vDU1Zx/
-         mk9/PYlyIFAHhkP2hr5znpaOUFZOUpl6KFCa/NcBzVtwHJoN4RB7/T7YpN2vbUZpYTCL
-         LQgIbfhf2ht7PVFcOoXfG78S2gMcj0aiK0WoV3lEAuUhwncWxtNbknbhAN1dIFxSI790
-         gxtw==
+        bh=Ptp8Fjet112pFAX81FwzCfRXujZdfs3mZO2hPYz+OK0=;
+        b=oz6Vj4Z9Eu13inGGnH5X0txN4tIEXnED3IA3SA+DL8Hs6lXNzNnfm18np5LEndb7ZA
+         voPhslSSyKSjUqu885dvRfDAXX/PbCgZmQFNVkOsVEN+4xI1ESCcr1mz5xtEvA5kvars
+         09wiPRS+Hwsa+5nu9xpAsdZrJaodFZfBOg3XimOLubN9MU2y8MKftP9YelUNkAzC/6g9
+         QAcyLa4Y+3B7hEfLJ2RdQBWvCjW1fk05ykLXknVMZlQjFrReHBgkwhMkb22PovOrMA07
+         3g+h9qiMKm7CgJHN837fmuTIcRUGWB9IqflxYJVAswPy/99fhVawSTjRKNSbOu0mCQwq
+         hz5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=V1IdqbYubtCixESl5TR0muUvkg/E2O8mQvzM202vMJY=;
-        b=ix+/27a2sxe0Lzn+2iN5AZYN1ROeWhA2bMgthcuZFWOK5mY3oqMUEoUD/MhcQWrTA+
-         S2BtF/viW78JDcPsk7PwVcuZP5iQCyGdlm6/UpKQ5Ob0c2BMmr4Fho6FgZfUPYl+5KId
-         lSXlQe5eAt9zIEyq+aYt9UiwzgjFkHMQXcogFgooPHQWWheC58cppSamkm99sJu6d/Xx
-         yS8zvkDuUxNfoJZ5vBxts+dMIItrwmLAQVON7MAUh2BCDMKX/SwKYd9dMIOcBcqphdI7
-         FVj6IckJVzxwStZKN7c3dCjv7KMuKGt+Gsyl5c1BHt/13rEDjFtPXbgKC2acfYRYkzlG
-         frlQ==
-X-Gm-Message-State: AHQUAuapBi6WCXO6p6LGi7gJzJrqR5YKdI+rPHed7J6XYCqTly82Ws3D
-        6JZdhtVdtP+EZhy7+q2ps9/rpQ==
-X-Google-Smtp-Source: AHgI3IZT6Mu4hL5CdKV5I1EiL7aKLnA6dLePkX8jtfw/N38Liese0eXKCRasVCtk+AF0ZUvijxlkeQ==
-X-Received: by 2002:a24:7d88:: with SMTP id b130mr796701itc.163.1550531606189;
-        Mon, 18 Feb 2019 15:13:26 -0800 (PST)
+        bh=Ptp8Fjet112pFAX81FwzCfRXujZdfs3mZO2hPYz+OK0=;
+        b=DyVyeNhR4XPTorsd9YH+p0XDcUJLGM4TWWde0W5/iHtgQ8aSMTmAX1qcJE3iumhbnn
+         VfMesp+pXz6sQJxuPqXHsZS6/dIV/ennfvvZd2GvOSYCC//BhGZlurzoZwf1mR7kS2c5
+         dfOsNw7Wm71Y1yGrf9YLSdWKHJJn5hL0D86wQ8sC6yEeEIGD5DIyLHF5nT0AVwY+kzeb
+         qHfNieltFoBE/EWM9jSfd6fuQV13XErIoVZQOlPAwdFvgV0nf8h602SSIRVZ2q53kaCt
+         8RSMuVSb1vSNsSr32todw0TlaWnTvihu1IKsYDGic7ywI0cYE3hTO7apttqu7yrcqO6X
+         jpZw==
+X-Gm-Message-State: AHQUAuZ9p7zpZBFIX0rzjIKTdGfrGt7E9AsllWj/GhfYMfheWfAoBqTa
+        1y/PUnckAeFgupAzzeLg6WNMwQ==
+X-Google-Smtp-Source: AHgI3IacpXhp7hqR4gpLOYb6jmTOiOS9RIZiMJQCPu5S8CRxsY3H9kPVQ0HReFAyHwtbAO1IIUX12g==
+X-Received: by 2002:a5d:8545:: with SMTP id b5mr15973963ios.288.1550531607332;
+        Mon, 18 Feb 2019 15:13:27 -0800 (PST)
 Received: from yuzhao.bld.corp.google.com ([2620:15c:183:0:a0c3:519e:9276:fc96])
-        by smtp.gmail.com with ESMTPSA id x23sm6541463ion.38.2019.02.18.15.13.24
+        by smtp.gmail.com with ESMTPSA id x23sm6541463ion.38.2019.02.18.15.13.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Feb 2019 15:13:25 -0800 (PST)
+        Mon, 18 Feb 2019 15:13:26 -0800 (PST)
 From:   Yu Zhao <yuzhao@google.com>
 To:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>
@@ -73,9 +73,9 @@ Cc:     "Aneesh Kumar K . V" <aneesh.kumar@linux.vnet.ibm.com>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-mm@kvack.org,
         Yu Zhao <yuzhao@google.com>
-Subject: [PATCH v2 2/3] arm64: mm: don't call page table ctors for init_mm
-Date:   Mon, 18 Feb 2019 16:13:18 -0700
-Message-Id: <20190218231319.178224-2-yuzhao@google.com>
+Subject: [PATCH v2 3/3] arm64: mm: enable per pmd page table lock
+Date:   Mon, 18 Feb 2019 16:13:19 -0700
+Message-Id: <20190218231319.178224-3-yuzhao@google.com>
 X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
 In-Reply-To: <20190218231319.178224-1-yuzhao@google.com>
 References: <20190214211642.2200-1-yuzhao@google.com>
@@ -87,59 +87,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-init_mm doesn't require page table lock to be initialized at
-any level. Add a separate page table allocator for it, and the
-new one skips page table ctors.
+Switch from per mm_struct to per pmd page table lock by enabling
+ARCH_ENABLE_SPLIT_PMD_PTLOCK. This provides better granularity for
+large system.
 
-The ctors allocate memory when ALLOC_SPLIT_PTLOCKS is set. Not
-calling them avoids memory leak in case we call pte_free_kernel()
-on init_mm.
+I'm not sure if there is contention on mm->page_table_lock. Given
+the option comes at no cost (apart from initializing more spin
+locks), why not enable it now.
 
 Signed-off-by: Yu Zhao <yuzhao@google.com>
 ---
- arch/arm64/mm/mmu.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ arch/arm64/Kconfig               |  3 +++
+ arch/arm64/include/asm/pgalloc.h | 12 +++++++++++-
+ arch/arm64/include/asm/tlb.h     |  5 ++++-
+ 3 files changed, 18 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index fa7351877af3..e8bf8a6300e8 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -370,6 +370,16 @@ static void __create_pgd_mapping(pgd_t *pgdir, phys_addr_t phys,
- 	} while (pgdp++, addr = next, addr != end);
+diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+index a4168d366127..8dbfa49d926c 100644
+--- a/arch/arm64/Kconfig
++++ b/arch/arm64/Kconfig
+@@ -872,6 +872,9 @@ config ARCH_WANT_HUGE_PMD_SHARE
+ config ARCH_HAS_CACHE_LINE_SIZE
+ 	def_bool y
+ 
++config ARCH_ENABLE_SPLIT_PMD_PTLOCK
++	def_bool y if PGTABLE_LEVELS > 2
++
+ config SECCOMP
+ 	bool "Enable seccomp to safely compute untrusted bytecode"
+ 	---help---
+diff --git a/arch/arm64/include/asm/pgalloc.h b/arch/arm64/include/asm/pgalloc.h
+index 52fa47c73bf0..dabba4b2c61f 100644
+--- a/arch/arm64/include/asm/pgalloc.h
++++ b/arch/arm64/include/asm/pgalloc.h
+@@ -33,12 +33,22 @@
+ 
+ static inline pmd_t *pmd_alloc_one(struct mm_struct *mm, unsigned long addr)
+ {
+-	return (pmd_t *)__get_free_page(PGALLOC_GFP);
++	struct page *page;
++
++	page = alloc_page(PGALLOC_GFP);
++	if (!page)
++		return NULL;
++	if (!pgtable_pmd_page_ctor(page)) {
++		__free_page(page);
++		return NULL;
++	}
++	return page_address(page);
  }
  
-+static phys_addr_t pgd_kernel_pgtable_alloc(int shift)
-+{
-+	void *ptr = (void *)__get_free_page(PGALLOC_GFP);
-+	BUG_ON(!ptr);
-+
-+	/* Ensure the zeroed page is visible to the page table walker */
-+	dsb(ishst);
-+	return __pa(ptr);
-+}
-+
- static phys_addr_t pgd_pgtable_alloc(int shift)
+ static inline void pmd_free(struct mm_struct *mm, pmd_t *pmdp)
  {
- 	void *ptr = (void *)__get_free_page(PGALLOC_GFP);
-@@ -591,7 +601,7 @@ static int __init map_entry_trampoline(void)
- 	/* Map only the text into the trampoline page table */
- 	memset(tramp_pg_dir, 0, PGD_SIZE);
- 	__create_pgd_mapping(tramp_pg_dir, pa_start, TRAMP_VALIAS, PAGE_SIZE,
--			     prot, pgd_pgtable_alloc, 0);
-+			     prot, pgd_kernel_pgtable_alloc, 0);
+ 	BUG_ON((unsigned long)pmdp & (PAGE_SIZE-1));
++	pgtable_pmd_page_dtor(virt_to_page(pmdp));
+ 	free_page((unsigned long)pmdp);
+ }
  
- 	/* Map both the text and data into the kernel page table */
- 	__set_fixmap(FIX_ENTRY_TRAMP_TEXT, pa_start, prot);
-@@ -1067,7 +1077,8 @@ int arch_add_memory(int nid, u64 start, u64 size, struct vmem_altmap *altmap,
- 		flags = NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
+diff --git a/arch/arm64/include/asm/tlb.h b/arch/arm64/include/asm/tlb.h
+index 106fdc951b6e..4e3becfed387 100644
+--- a/arch/arm64/include/asm/tlb.h
++++ b/arch/arm64/include/asm/tlb.h
+@@ -62,7 +62,10 @@ static inline void __pte_free_tlb(struct mmu_gather *tlb, pgtable_t pte,
+ static inline void __pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmdp,
+ 				  unsigned long addr)
+ {
+-	tlb_remove_table(tlb, virt_to_page(pmdp));
++	struct page *page = virt_to_page(pmdp);
++
++	pgtable_pmd_page_dtor(page);
++	tlb_remove_table(tlb, page);
+ }
+ #endif
  
- 	__create_pgd_mapping(swapper_pg_dir, start, __phys_to_virt(start),
--			     size, PAGE_KERNEL, pgd_pgtable_alloc, flags);
-+			     size, PAGE_KERNEL, pgd_kernel_pgtable_alloc,
-+			     flags);
- 
- 	return __add_pages(nid, start >> PAGE_SHIFT, size >> PAGE_SHIFT,
- 			   altmap, want_memblock);
 -- 
 2.21.0.rc0.258.g878e2cd30e-goog
 
