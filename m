@@ -2,114 +2,178 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23FDCC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:33:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D3E1C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:34:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E62CB2184A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:33:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F41832184A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 09:34:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="hF/2TvPp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729665AbfBRJdn (ORCPT
+        id S1729677AbfBRJeK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 04:33:43 -0500
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:44195 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726312AbfBRJdn (ORCPT
+        Mon, 18 Feb 2019 04:34:10 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:51259 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728118AbfBRJeK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 04:33:43 -0500
-X-Originating-IP: 90.88.30.68
-Received: from localhost (aaubervilliers-681-1-89-68.w90-88.abo.wanadoo.fr [90.88.30.68])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 7EBB3E000E;
-        Mon, 18 Feb 2019 09:33:40 +0000 (UTC)
-Date:   Mon, 18 Feb 2019 10:33:40 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Frank Lee <tiny.windzz@gmail.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, robh+dt@kernel.org,
-        mark.rutland@arm.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/4] arm64: dts: allwinner: h6: Add CPU Operating
- Performance Points table
-Message-ID: <20190218093340.jcggm7jplpwrogsv@flea>
-References: <20190214130910.9201-1-tiny.windzz@gmail.com>
- <20190214130910.9201-5-tiny.windzz@gmail.com>
- <20190214143842.nqsh6trwdjxq2ecd@flea>
- <CAEExFWuxrVC1J0g93R3ifaDxOGy-20B4jftoHw932V7+wqhtxw@mail.gmail.com>
- <CAEExFWv_K_07e30dgPbafVhDD_smwZkpi6Fqk6yzCahesdnrGg@mail.gmail.com>
- <20190215135613.sdz56vtiawqeryi5@flea>
- <CAEExFWt84MmpoWeibVf4bBJXOuPy9P7RrAFmEx304zz5z1GHwQ@mail.gmail.com>
+        Mon, 18 Feb 2019 04:34:10 -0500
+Received: by mail-it1-f195.google.com with SMTP id y184so39675528itc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 01:34:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MUOg8Om4YLtv3u6DkfSDIFC+tC55you6YAJzX+ij6dc=;
+        b=hF/2TvPpCQ6PF1oVi2a4utv8tyXUdMmYYmWBwvKcL9XhYzBjbL0cKC5x9mdyZZ1FnW
+         FhM+UhJpZpExKJpPh29PYbn94fdqzC9bSXhAth297M3vl2LL3RuEQiq6cWOL3ZqWwTn+
+         3bungHq+tGimvH/hoUSkpOVn7HHMPddO+Ml5E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MUOg8Om4YLtv3u6DkfSDIFC+tC55you6YAJzX+ij6dc=;
+        b=PKy1q8uZTXUAYc1q3aIE9ASj2qhzdNT6wWOkTP05hCuINiFhgPjdCI+q/4VbY+41yZ
+         u37InfJqQREUz7JXTCyziAABje12pOqriGzSHeuH63b46YtkW+BuHMexymOA5noMzBh3
+         TsUcd67l+ul6ABYJOrqxkLiazMU7ix++qHWt6Q3d2SLZ2PGfA2mFdOekyuNvINAL3A61
+         /Yyzfhzufyi2JVOcKkT+hD9Ai5D9m8ut9ClKGxtO25An21PfZM6sJSCYmJneMxJuA5I7
+         O9X8KnYoZceP4gbSyAkWa9CWVmzDzGpa0k1BDYEmyCi4P7+uIpdXGTvexbKcBvlUoa9q
+         sL8w==
+X-Gm-Message-State: AHQUAuai1uwtc40SHirPq6g8Mhf5WZNHrlWljn7QAO/C508ihCBQBFB4
+        /Fizo2y03eZx4oFUrjN8dm6nbs24R7W4m9JCUYJaMQ==
+X-Google-Smtp-Source: AHgI3Ibp+qODP1lhe1yVM1lq5ofpIvdkqm4F8Pv5zuPodpeehpTl9lG88sxAqE90tmGHyNy/PMmx/XCilWD+IzGBGkI=
+X-Received: by 2002:a24:6891:: with SMTP id v139mr12267126itb.107.1550482448846;
+ Mon, 18 Feb 2019 01:34:08 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="i5c56aqsedye5nda"
-Content-Disposition: inline
-In-Reply-To: <CAEExFWt84MmpoWeibVf4bBJXOuPy9P7RrAFmEx304zz5z1GHwQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+References: <20181215151802.18592-1-jagan@amarulasolutions.com>
+ <20181215151802.18592-2-jagan@amarulasolutions.com> <20190107225810.ggmkkbrnkoy2ykx5@penguin>
+ <CAL_JsqKTnPVM7Qahy9ejQbPfENpLCdzf5K5uUTcPh8j3EiqWRA@mail.gmail.com>
+ <CAMty3ZCyq=tZMt6RC1aYJuEWgYp2zv1LBh+ZUwucE+g4RCoUaQ@mail.gmail.com>
+ <CAL_JsqKCw3EV+0_DuMiHh7GRGxv7YogQf-xwp71n9gpc2GzSSQ@mail.gmail.com>
+ <CAMty3ZBtoocXBW5A0astyQPh2y7vG7NtbZ_M0BjSeex2etmGsw@mail.gmail.com>
+ <CAL_JsqJSMX7E2zQA2O8ofZQPDrm3S6PMCLG1iAQ95P10Pe2yFg@mail.gmail.com>
+ <CAMty3ZDMB=pwY8Rxdt3du=90pksBedLo0Pc_-=diqx9-Xndzqg@mail.gmail.com>
+ <CAMty3ZDBu2Y9psNu9nrZ=BNVvhpJ2qYn-Qp7MDqdhK9_SrcpNg@mail.gmail.com> <20190218071207.GE242714@dtor-ws>
+In-Reply-To: <20190218071207.GE242714@dtor-ws>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Mon, 18 Feb 2019 15:03:56 +0530
+Message-ID: <CAMty3ZDbFU-NpWQvkaUWgUiVTabjTZoFWUCUZSPKMA6VuHc+iQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] dt-bindings: input: touchscreen: goodix: Document
+ AVDD28-supply property
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, linux-input@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Dmitry,
 
---i5c56aqsedye5nda
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Fri, Feb 15, 2019 at 10:09:51PM +0800, Frank Lee wrote:
-> On Fri, Feb 15, 2019 at 9:56 PM Maxime Ripard <maxime.ripard@bootlin.com>=
- wrote:
-> >
-> > Hi
-> >
-> > On Fri, Feb 15, 2019 at 12:56:03AM +0800, Frank Lee wrote:
-> > > How about to implement a thermal driver that is not integrated with
-> > > gpadc =EF=BC=9F
-> > >
-> > > GPADC on soc is rarely used now.
-> >
-> > You mean GPADC in general, or the gpadc driver in particular?
-> > Otherwise, yes, having a driver for the thermal sensor in the H6
-> > sounds like a good plan for thermal throttling, but I don't see it as
-> > a dependency for that whole series.
+On Mon, Feb 18, 2019 at 12:42 PM Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
 >
-> At present, sunxi's thermal driver is integrated with the gpadc driver.
-> I have a idea to implement the thermal driver alone. I haven't started ye=
-t,
-> and it may take a while to do it.
->=20
-> How about the plan to implement a thermal drive alone and put i
-> under drivers/thermal?
+> On Sun, Feb 17, 2019 at 02:45:52PM +0530, Jagan Teki wrote:
+> > On Sun, Feb 17, 2019 at 1:21 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> > >
+> > > Hi Dmitry and Rob,
+> > >
+> > > On Thu, Feb 14, 2019 at 3:21 AM Rob Herring <robh@kernel.org> wrote:
+> > > >
+> > > > On Tue, Jan 22, 2019 at 7:39 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> > > > >
+> > > > > On Mon, Jan 21, 2019 at 9:46 PM Rob Herring <robh@kernel.org> wrote:
+> > > > > >
+> > > > > > On Fri, Jan 18, 2019 at 10:01 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
+> > > > > > >
+> > > > > > > On Wed, Jan 9, 2019 at 7:08 PM Rob Herring <robh@kernel.org> wrote:
+> > > > > > > >
+> > > > > > > > Please CC DT list if you want bindings reviewed.
+> > > > > > >
+> > > > > > > Sorry I forgot.
+> > > > > > >
+> > > > > > > >
+> > > > > > > > On Wed, Jan 9, 2019 at 1:40 AM Dmitry Torokhov
+> > > > > > > > <dmitry.torokhov@gmail.com> wrote:
+> > > > > > > > >
+> > > > > > > > > On Sat, Dec 15, 2018 at 08:47:59PM +0530, Jagan Teki wrote:
+> > > > > > > > > > Most of the Goodix CTP controllers are supply with AVDD28 pin.
+> > > > > > > > > > which need to supply for controllers like GT5663 on some boards
+> > > > > > > > > > to trigger the power.
+> > > > > > > > > >
+> > > > > > > > > > So, document the supply property so-that the require boards
+> > > > > > > > > > that used on GT5663 can enable it via device tree.
+> > > > > > > > > >
+> > > > > > > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > > > > > > > > ---
+> > > > > > > > > >  Documentation/devicetree/bindings/input/touchscreen/goodix.txt | 1 +
+> > > > > > > > > >  1 file changed, 1 insertion(+)
+> > > > > > > > > >
+> > > > > > > > > > diff --git a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
+> > > > > > > > > > index f7e95c52f3c7..c4622c983e08 100644
+> > > > > > > > > > --- a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
+> > > > > > > > > > +++ b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
+> > > > > > > > > > @@ -23,6 +23,7 @@ Optional properties:
+> > > > > > > > > >   - touchscreen-inverted-y  : Y axis is inverted (boolean)
+> > > > > > > > > >   - touchscreen-swapped-x-y : X and Y axis are swapped (boolean)
+> > > > > > > > > >                               (swapping is done after inverting the axis)
+> > > > > > > > > > + - AVDD28-supply     : Analog power supply regulator on AVDD28 pin
+> > > > > > > > >
+> > > > > > > > > I think we normally use lower case in DT bindings and rarely encode
+> > > > > > > > > voltage in the supply name unless we are dealing with several supplies
+> > > > > > > > > of the same kind, but I'll let Ron comment on this.
+> > > > > > > >
+> > > > > > > > Yes on lowercase though there are some exceptions.
+> > > > > > > >
+> > > > > > > > There's also a AVDD22 supply as well as DVDD12 and VDDIO. So we
+> > > > > > > > probably need to keep the voltage, but the binding is incomplete.
+> > > > > > >
+> > > > > > > What is incomplete here? can you please elaborate.
+> > > > > >
+> > > > > > You are missing the 3 other supplies the chip has: AVDD22, DVDD12 and VDDIO.
+> > > > >
+> > > > > Though it has other supplies, only AVDD28 is connected in the Host
+> > > > > interface design similar like 9. Reference Schematic on Page, 23 in
+> > > > > attached manual.
+> > > >
+> > > > That is for a particular board design. It still has other supplies.
+> > > > Just make the binding complete please. You can make them optional. I
+> > > > don't care if the driver supports controlling all the supplies or not
+> > > > (though Dmitry might).
+> > >
+> > > So, Can I make bulk get and enable in all 4 regulators global to
+> > > driver or specific to that chip, in either way the regulators which
+> > > are not used to process via dummy regulators (which we all know).
+> > >
+> > > or regulator which are not using are get via devm_regulator_get_optional.
+> > >
+> > > Any suggestions?
+> >
+> > Just realized to go with bulk calls, please have a look at on v5 [1]
+>
+> I do not believe you can use bulk regulator API here as you need to
+> implement the power up timing scheme mentioned on p. 12 of the spec you
+> referenced earlier. And, because of that timing diagram, I believe if
+> you want to control AVDD supply, you also have to control VDDIO supply
+> as it has to be on only after enabling AVDD.
 
-The Thermal Sensor is basically a stripped down GPADC, which is why it
-would make sense to have a single driver.
+AVDD here is AVDD28 it' is an out name of pin (mentioned in p. 23). So
+the power scheme goes to enable AVDD28 and then VDDIO does that really
+mean bulk of two regulators?
 
-There was a pending series doing this that could be a good idea to
-improve and merge:
-https://lkml.org/lkml/2018/8/30/729
+>
+> I also wonder if it is valid to have both AVDD28 and AVDD22 connected at
+> the same time.
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---i5c56aqsedye5nda
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXGp78wAKCRDj7w1vZxhR
-xYT8AQDFxHvCKmLk+1YErRAvdFGGHBrdOrKxpjtJeofe/lDUvQD/Uhgp577MmwWQ
-kR6nS3Mly0LqyrhHUlvweeyb6jR+zw8=
-=qt/e
------END PGP SIGNATURE-----
-
---i5c56aqsedye5nda--
+Yes, DVDD12 and AVDD22 not been part of power-up schema at-least from
+the datasheet. I'm thinking we can skip these until any of other
+goodix CTP needed, what do you think Rob?
