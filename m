@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF374C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8AA9C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 995B820842
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89B7B20842
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498128;
-	bh=HvywHUCZYG/4LJ+naJoD/GvaSV3oAH2GwBd2eB9WbmM=;
+	s=default; t=1550498132;
+	bh=O+0odnefRpdwelyxl34YRXKO0UZFLK0Xh68rIN2Gqyk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LVtnaVRql8/8tJA6GoYOpf3s4pRVXlNXBCBKsWqGkY/x29ADnchrlWzmQqWX2AEve
-	 49PFzrRisWXD5OfKkDPgUbDIp1WrZ0uXn5t4syOgcRC+W8YuLGT1b+m3G4qAF7tZ6i
-	 6zxb5siEsESqTeq7k9NNhYPy9L+K8k1capuYSSQ4=
+	b=KPeXro+VS3vBUA9DL/upFn7HkyLL8g87NXq1J3W+/wiOrDyZhsjv0EBbpFJ60D8p0
+	 sOK8mYb9zv8MG5nWTB6et8zDzZHMVpviur5xLcj7pU94xdwX9bkHywlVxZ6ZaGw6nm
+	 gtD5ZM5PcNHK/c7zIRD8UqNk8AmkhM6dZGbwl9Y0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387531AbfBRNz1 (ORCPT
+        id S1731696AbfBRNzb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:55:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35438 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:55:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387519AbfBRNzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:55:24 -0500
+        id S2387528AbfBRNz1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:55:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E82D2077B;
-        Mon, 18 Feb 2019 13:55:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91D942077B;
+        Mon, 18 Feb 2019 13:55:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498123;
-        bh=HvywHUCZYG/4LJ+naJoD/GvaSV3oAH2GwBd2eB9WbmM=;
+        s=default; t=1550498127;
+        bh=O+0odnefRpdwelyxl34YRXKO0UZFLK0Xh68rIN2Gqyk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k2fVR1Q8K9kfmNszK0d6p0KtidUgGlXevt4Eiy66hDAXQHC1AmCpAHsFh/BIcb9Jm
-         3Rcmf3eImsjM04L/yRFiDipZGwzQXDH9TxtCO0BMfFYLrvqpaJ7yQtx23ikGCa5z4O
-         N6SX4mqyFUJ0S1Hyp6AvWwUhGjDPdkbdfkLQ5Mgk=
+        b=bJ+2699XlGfdonx9hGn09HQJWH3qs/VJOnhy2YjuoqyvrAweGa6Zi7lyD1hSz1z5R
+         KI72CLSvXBWI1gzEIe/los5PnhquM6MxlNMxlYs97VJh6UZfPCMoyByQu5prE2q8xb
+         rinGEivuC17/vXs0wNFWXoA9v+PjzDG/AZEBcz2g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 31/62] drm/bridge: tc358767: fix output H/V syncs
-Date:   Mon, 18 Feb 2019 14:43:37 +0100
-Message-Id: <20190218133508.628978409@linuxfoundation.org>
+        stable@vger.kernel.org, Liviu Dudau <liviu@dudau.co.uk>,
+        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 32/62] nvme-pci: use the same attributes when freeing host_mem_desc_bufs.
+Date:   Mon, 18 Feb 2019 14:43:38 +0100
+Message-Id: <20190218133508.709483503@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
 References: <20190218133505.801423074@linuxfoundation.org>
@@ -66,44 +65,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7923e09c7a766e2d58de7fc395bb84c18e5bc625 ]
+[ Upstream commit cc667f6d5de023ee131e96bb88e5cddca23272bd ]
 
-The H and V syncs of the DP output are always set to active high. This
-patch fixes the syncs by configuring them according to the videomode.
+When using HMB the PCIe host driver allocates host_mem_desc_bufs using
+dma_alloc_attrs() but frees them using dma_free_coherent(). Use the
+correct dma_free_attrs() function to free the buffers.
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-7-tomi.valkeinen@ti.com
+Signed-off-by: Liviu Dudau <liviu@dudau.co.uk>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/bridge/tc358767.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/nvme/host/pci.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index 792a2548d3bb..6eebd8ad0c52 100644
---- a/drivers/gpu/drm/bridge/tc358767.c
-+++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -96,6 +96,8 @@
- #define DP0_STARTVAL		0x064c
- #define DP0_ACTIVEVAL		0x0650
- #define DP0_SYNCVAL		0x0654
-+#define SYNCVAL_HS_POL_ACTIVE_LOW	(1 << 15)
-+#define SYNCVAL_VS_POL_ACTIVE_LOW	(1 << 31)
- #define DP0_MISC		0x0658
- #define TU_SIZE_RECOMMENDED		(63) /* LSCLK cycles per TU */
- #define BPC_6				(0 << 5)
-@@ -724,7 +726,9 @@ static int tc_set_video_mode(struct tc_data *tc, struct drm_display_mode *mode)
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index afb99876fa9e..06355ca832db 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1624,8 +1624,9 @@ static void nvme_free_host_mem(struct nvme_dev *dev)
+ 		struct nvme_host_mem_buf_desc *desc = &dev->host_mem_descs[i];
+ 		size_t size = le32_to_cpu(desc->size) * dev->ctrl.page_size;
  
- 	tc_write(DP0_ACTIVEVAL, (mode->vdisplay << 16) | (mode->hdisplay));
+-		dma_free_coherent(dev->dev, size, dev->host_mem_desc_bufs[i],
+-				le64_to_cpu(desc->addr));
++		dma_free_attrs(dev->dev, size, dev->host_mem_desc_bufs[i],
++			       le64_to_cpu(desc->addr),
++			       DMA_ATTR_NO_KERNEL_MAPPING | DMA_ATTR_NO_WARN);
+ 	}
  
--	tc_write(DP0_SYNCVAL, (vsync_len << 16) | (hsync_len << 0));
-+	tc_write(DP0_SYNCVAL, (vsync_len << 16) | (hsync_len << 0) |
-+		 ((mode->flags & DRM_MODE_FLAG_NHSYNC) ? SYNCVAL_HS_POL_ACTIVE_LOW : 0) |
-+		 ((mode->flags & DRM_MODE_FLAG_NVSYNC) ? SYNCVAL_VS_POL_ACTIVE_LOW : 0));
+ 	kfree(dev->host_mem_desc_bufs);
+@@ -1691,8 +1692,9 @@ static int __nvme_alloc_host_mem(struct nvme_dev *dev, u64 preferred,
+ 	while (--i >= 0) {
+ 		size_t size = le32_to_cpu(descs[i].size) * dev->ctrl.page_size;
  
- 	tc_write(DPIPXLFMT, VS_POL_ACTIVE_LOW | HS_POL_ACTIVE_LOW |
- 		 DE_POL_ACTIVE_HIGH | SUB_CFG_TYPE_CONFIG1 | DPI_BPP_RGB888);
+-		dma_free_coherent(dev->dev, size, bufs[i],
+-				le64_to_cpu(descs[i].addr));
++		dma_free_attrs(dev->dev, size, bufs[i],
++			       le64_to_cpu(descs[i].addr),
++			       DMA_ATTR_NO_KERNEL_MAPPING | DMA_ATTR_NO_WARN);
+ 	}
+ 
+ 	kfree(bufs);
 -- 
 2.19.1
 
