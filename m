@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8EB0C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDC57C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:46:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EBE72070B
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DBE42070B
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:46:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550501181;
-	bh=2OwR7qGKgkkCFxgPfywGkgN2MT6DuzLGzeoCdOo+rvI=;
+	s=default; t=1550501189;
+	bh=/pS3mQ3m9rCsWKhJg0xACN8mhv8ofwO4Nm8S1XSCyCo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vNAJDIXfRl76ysuLP3+kH++wMKCGU+0/CPppVYSdkzyCnzTJdUoClD0/N97RE+Lvr
-	 pjo1xRXRtdyDSLKm/LX9umuAJtr9ogYTT9KUHgWq1M8mGkvMcSr16IYYNG/On46phV
-	 8v5jiE6Ow45sCku98x5sXDhEo3CKwD8LU/GqcuxI=
+	b=LG3ZFBicLpuICqiiFXMEa8cNmAl18kPyqSfM8IKfQhz9JPiDcElePy8RKNonhwIoh
+	 fxLL1KLoKZGzqJXfnLPKG+4RSUfAWTSFzd3N3TDfP8qcbNqLRVOWsN9teNuuYt/HH9
+	 AHS7kjOCiaynaqxwu6KjX3PGp9nwZTsTcrRPp/9Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731668AbfBRNqk (ORCPT
+        id S1731626AbfBRNqc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:46:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53054 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:46:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730429AbfBRNqg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:46:36 -0500
+        id S1731620AbfBRNq1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:46:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30703217F5;
-        Mon, 18 Feb 2019 13:46:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFF05217F5;
+        Mon, 18 Feb 2019 13:46:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497595;
-        bh=2OwR7qGKgkkCFxgPfywGkgN2MT6DuzLGzeoCdOo+rvI=;
+        s=default; t=1550497586;
+        bh=/pS3mQ3m9rCsWKhJg0xACN8mhv8ofwO4Nm8S1XSCyCo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mp+0WEdd+621uYJ37qU5U4yjsXbPBFKenh6hNZAH0EMxREAku/LZH5YdhxR9XUDlq
-         XbedtFt9q2MIYatOegf+tVGVe3FCRnN+gMJ15140ezPJQrEUn0KEbfgcWWsrDDyIyO
-         9ZsqVY9VGI5I+dlwz3B23NHBBQTlnju3SwcAiPKE=
+        b=LcgNU258yYln1KIa6dOfJZGLVqB5e1bAqu9WgDQQsP0wYl5UEt7eS9kZ8SXaXCjA3
+         JK77kVHlg1qA+uMYlHpXthY1qDKGxfXATFuEDwRlmOm++QMtPdVLncflYfzD6S7gCI
+         1NeOZ2sbM0hQkXMAJKbcjUjJZgFe4f6ANAJXoWXU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liviu Dudau <liviu@dudau.co.uk>,
-        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 24/92] nvme-pci: use the same attributes when freeing host_mem_desc_bufs.
-Date:   Mon, 18 Feb 2019 14:42:27 +0100
-Message-Id: <20190218133456.973128738@linuxfoundation.org>
+        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 21/92] drm/bridge: tc358767: fix initial DP0/1_SRCCTRL value
+Date:   Mon, 18 Feb 2019 14:42:24 +0100
+Message-Id: <20190218133456.698970208@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
 References: <20190218133454.668268457@linuxfoundation.org>
@@ -65,47 +66,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit cc667f6d5de023ee131e96bb88e5cddca23272bd ]
+[ Upstream commit 9a63bd6fe1b5590ffa42ae2ed22ee21363293e31 ]
 
-When using HMB the PCIe host driver allocates host_mem_desc_bufs using
-dma_alloc_attrs() but frees them using dma_free_coherent(). Use the
-correct dma_free_attrs() function to free the buffers.
+Initially DP0_SRCCTRL is set to a static value which includes
+DP0_SRCCTRL_LANES_2 and DP0_SRCCTRL_BW27, even when only 1 lane of
+1.62Gbps speed is used. DP1_SRCCTRL is configured to a magic number.
 
-Signed-off-by: Liviu Dudau <liviu@dudau.co.uk>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+This patch changes the configuration as follows:
+
+Configure DP0_SRCCTRL by using tc_srcctrl() which provides the correct
+value.
+
+DP1_SRCCTRL needs two bits to be set to the same value as DP0_SRCCTRL:
+SSCG and BW27. All other bits can be zero.
+
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-5-tomi.valkeinen@ti.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/pci.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/bridge/tc358767.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index c33bb201b884..0f45868e8af9 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -1748,8 +1748,9 @@ static void nvme_free_host_mem(struct nvme_dev *dev)
- 		struct nvme_host_mem_buf_desc *desc = &dev->host_mem_descs[i];
- 		size_t size = le32_to_cpu(desc->size) * dev->ctrl.page_size;
+diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
+index fee53422c31f..ab299f4debfa 100644
+--- a/drivers/gpu/drm/bridge/tc358767.c
++++ b/drivers/gpu/drm/bridge/tc358767.c
+@@ -836,12 +836,11 @@ static int tc_main_link_setup(struct tc_data *tc)
+ 	if (!tc->mode)
+ 		return -EINVAL;
  
--		dma_free_coherent(dev->dev, size, dev->host_mem_desc_bufs[i],
--				le64_to_cpu(desc->addr));
-+		dma_free_attrs(dev->dev, size, dev->host_mem_desc_bufs[i],
-+			       le64_to_cpu(desc->addr),
-+			       DMA_ATTR_NO_KERNEL_MAPPING | DMA_ATTR_NO_WARN);
- 	}
+-	/* from excel file - DP0_SrcCtrl */
+-	tc_write(DP0_SRCCTRL, DP0_SRCCTRL_SCRMBLDIS | DP0_SRCCTRL_EN810B |
+-		 DP0_SRCCTRL_LANESKEW | DP0_SRCCTRL_LANES_2 |
+-		 DP0_SRCCTRL_BW27 | DP0_SRCCTRL_AUTOCORRECT);
+-	/* from excel file - DP1_SrcCtrl */
+-	tc_write(DP1_SRCCTRL, 0x00003083);
++	tc_write(DP0_SRCCTRL, tc_srcctrl(tc));
++	/* SSCG and BW27 on DP1 must be set to the same as on DP0 */
++	tc_write(DP1_SRCCTRL,
++		 (tc->link.spread ? DP0_SRCCTRL_SSCG : 0) |
++		 ((tc->link.base.rate != 162000) ? DP0_SRCCTRL_BW27 : 0));
  
- 	kfree(dev->host_mem_desc_bufs);
-@@ -1815,8 +1816,9 @@ static int __nvme_alloc_host_mem(struct nvme_dev *dev, u64 preferred,
- 	while (--i >= 0) {
- 		size_t size = le32_to_cpu(descs[i].size) * dev->ctrl.page_size;
- 
--		dma_free_coherent(dev->dev, size, bufs[i],
--				le64_to_cpu(descs[i].addr));
-+		dma_free_attrs(dev->dev, size, bufs[i],
-+			       le64_to_cpu(descs[i].addr),
-+			       DMA_ATTR_NO_KERNEL_MAPPING | DMA_ATTR_NO_WARN);
- 	}
- 
- 	kfree(bufs);
+ 	rate = clk_get_rate(tc->refclk);
+ 	switch (rate) {
 -- 
 2.19.1
 
