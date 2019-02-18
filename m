@@ -2,51 +2,53 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39451C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:04:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A924C4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:04:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F101B218E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:04:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16EFF218E2
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:04:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550455495;
-	bh=fUt5ne/do8DiecWMEQjfmjsywr7kuiyzBVLjH8hVEe4=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=bP3cRSoVilpjq1Z9KDGwbGcVvxCjUTnfyBasnCSFUHgsXY2oYjUgdSuBuN7fH0HmX
-	 Zl9BYMiDzqdMtWVlpkbUD/jszvRD2H7UZScAtAmdbLq2qLcu4+J7+Dmt5Es7LHf0+o
-	 G1VeX80STxYGNzlGMN1e/u+eoQLpb+7zuTmSFp9A=
+	s=default; t=1550455499;
+	bh=20IxQcKtvMjnGmPcHi4tb/gLtPQMwZQtDNrgo0pMoe8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=KeRL5j8ebZjMt3piJKM9RgwOe5GY8fKyiPagyWz0zx3YzCmIMDXJHeD+GV2Zyr4Kj
+	 YLrAZtJN+++qGrQxwq5VII1zsmugL65S81zPkEbY0WZBgL4rek7h411gXpaZFtgxAf
+	 2QJdboKVTME86UpS2u8HHsucHJNVLXTecCaH7wJQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728149AbfBRCEx (ORCPT
+        id S1728245AbfBRCE5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 21:04:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52838 "EHLO mail.kernel.org"
+        Sun, 17 Feb 2019 21:04:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52864 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727621AbfBRCEx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 21:04:53 -0500
+        id S1728098AbfBRCEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 21:04:55 -0500
 Received: from localhost.localdomain (unknown [122.234.57.149])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45260218C3;
-        Mon, 18 Feb 2019 02:04:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53A3B218D8;
+        Mon, 18 Feb 2019 02:04:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550455491;
-        bh=fUt5ne/do8DiecWMEQjfmjsywr7kuiyzBVLjH8hVEe4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=FwUmjE8bNd0Jy3wpl3W+bjdNsOyKasWzJeW88n8R7D5I5zbBM/cJzjNqrekAv8BrG
-         JRk7oIzlaimuKiom+o4+StCE3ElMB82EWxW7nsblqUVBRNHnmifcc0mcOO9Ri/TXDR
-         oFW7Onae8Le3RiWWaUUe4Nc3owfYHpm/pAGl8CnQ=
+        s=default; t=1550455494;
+        bh=20IxQcKtvMjnGmPcHi4tb/gLtPQMwZQtDNrgo0pMoe8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gQkA8M+/UL0OrEaKDSSwsDMwaJNYS3YWlONrGZ9MyzyeUhpCOr44ydr5ipNW9BQzO
+         WMj+zmtq/t8aWv0+jDqn+H5AY0sdl+y5GZHvkxZL8/wTNMWZXgHzv5Ib6ZImung0p5
+         8q+OhpKeQ7zdk9Ww/nt1e5IUXMlVgQDPue0cXL5g=
 From:   guoren@kernel.org
 To:     marc.zyngier@arm.com, tglx@linutronix.de, robh+dt@kernel.org
 Cc:     linux-kernel@vger.kernel.org, guoren@kernel.org,
         Guo Ren <ren_guo@c-sky.com>
-Subject: [PATCH V2 1/7] irqchip/csky: Support csky,dh7k SOC intc driver
-Date:   Mon, 18 Feb 2019 10:04:37 +0800
-Message-Id: <1550455483-11710-1-git-send-email-guoren@kernel.org>
+Subject: [PATCH V2 2/7] dt-bindings: csky,apb-intc: Add dh7k SOC support
+Date:   Mon, 18 Feb 2019 10:04:38 +0800
+Message-Id: <1550455483-11710-2-git-send-email-guoren@kernel.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1550455483-11710-1-git-send-email-guoren@kernel.org>
+References: <1550455483-11710-1-git-send-email-guoren@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -54,169 +56,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Guo Ren <ren_guo@c-sky.com>
 
-C-SKY dh7k SOC use simple APB interrupt controller and most of driver's
-implementation codes could be reused in csky-apb-intc.c. So merge them
-together.
+Add C-SKY dh7k SOC description.
 
 Signed-off-by: Guo Ren <ren_guo@c-sky.com>
 Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Rob Herring <robh+dt@kernel.org>
 ---
- drivers/irqchip/irq-csky-apb-intc.c | 95 +++++++++++++++++++++++++++++++++----
- 1 file changed, 85 insertions(+), 10 deletions(-)
+ Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/irqchip/irq-csky-apb-intc.c b/drivers/irqchip/irq-csky-apb-intc.c
-index 5a2ec43..fcc5444 100644
---- a/drivers/irqchip/irq-csky-apb-intc.c
-+++ b/drivers/irqchip/irq-csky-apb-intc.c
-@@ -12,6 +12,7 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <asm/irq.h>
-+#include <asm/traps.h>
- 
- #define INTC_IRQS		64
- 
-@@ -31,6 +32,17 @@
- #define GX_INTC_NMASK63_32	0x54
- #define GX_INTC_SOURCE		0x60
- 
-+#define DH_INTC_CLR		0x10
-+#define DH_INTC_INIT		0x34
-+#define DH_INTC_NMASK31_00	0x08
-+#define DH_INTC_NMASK63_32	0x68
-+#define DH_INTC_SOURCE31_00	0x14
-+#define DH_INTC_SOURCE63_32	0x6c
-+#define DH_INTC_EDGE31_00	0x00
-+#define DH_INTC_EDGE63_32	0x60
-+#define DH_INTC_POLL31_00	0x04
-+#define DH_INTC_POLL63_32	0x64
-+
- static void __iomem *reg_base;
- static struct irq_domain *root_domain;
- 
-@@ -58,15 +70,21 @@ static void irq_ck_mask_set_bit(struct irq_data *d)
- }
- 
- static void __init ck_set_gc(struct device_node *node, void __iomem *reg_base,
--			     u32 mask_reg, u32 irq_base)
-+				u32 en_off, u32 mask_off, u32 irq_base)
- {
- 	struct irq_chip_generic *gc;
- 
- 	gc = irq_get_domain_generic_chip(root_domain, irq_base);
- 	gc->reg_base = reg_base;
--	gc->chip_types[0].regs.mask = mask_reg;
--	gc->chip_types[0].chip.irq_mask = irq_gc_mask_clr_bit;
--	gc->chip_types[0].chip.irq_unmask = irq_gc_mask_set_bit;
-+	if (en_off) {
-+		gc->chip_types[0].regs.mask = en_off;
-+		gc->chip_types[0].chip.irq_mask = irq_gc_mask_clr_bit;
-+		gc->chip_types[0].chip.irq_unmask = irq_gc_mask_set_bit;
-+	} else if (mask_off) {
-+		gc->chip_types[0].regs.mask = mask_off;
-+		gc->chip_types[0].chip.irq_mask = irq_gc_mask_set_bit;
-+		gc->chip_types[0].chip.irq_unmask = irq_gc_mask_clr_bit;
-+	}
- 
- 	if (of_find_property(node, "csky,support-pulse-signal", NULL))
- 		gc->chip_types[0].chip.irq_unmask = irq_ck_mask_set_bit;
-@@ -183,8 +201,8 @@ gx_intc_init(struct device_node *node, struct device_node *parent)
- 
- 	setup_irq_channel(0x03020100, reg_base + GX_INTC_SOURCE);
- 
--	ck_set_gc(node, reg_base, GX_INTC_NEN31_00, 0);
--	ck_set_gc(node, reg_base, GX_INTC_NEN63_32, 32);
-+	ck_set_gc(node, reg_base, GX_INTC_NEN31_00, 0, 0);
-+	ck_set_gc(node, reg_base, GX_INTC_NEN63_32, 0, 32);
- 
- 	set_handle_irq(gx_irq_handler);
- 
-@@ -192,6 +210,63 @@ gx_intc_init(struct device_node *node, struct device_node *parent)
- }
- IRQCHIP_DECLARE(csky_gx6605s_intc, "csky,gx6605s-intc", gx_intc_init);
- 
-+static void dh_irq_handler(struct pt_regs *regs)
-+{
-+	u32 tmp;
-+	unsigned long vector = (mfcr("psr") >> 16) & 0xff;
-+
-+	tmp = readl(reg_base + DH_INTC_CLR);
-+	tmp |= BIT(2);
-+	writel(tmp, reg_base + DH_INTC_CLR);
-+
-+	handle_domain_irq(root_domain, vector - 32, regs);
-+}
-+
-+extern void csky_irq(void);
-+
-+static int __init
-+dh_intc_init(struct device_node *node, struct device_node *parent)
-+{
-+	int ret, i;
-+
-+	ret = ck_intc_init_comm(node, parent);
-+	if (ret)
-+		return ret;
-+
-+	/* set default mode */
-+	writel(0xffffffff, reg_base + DH_INTC_EDGE31_00);
-+	writel(0xffffffff, reg_base + DH_INTC_EDGE63_32);
-+	writel(0xffffffff, reg_base + DH_INTC_POLL31_00);
-+	writel(0xffffffff, reg_base + DH_INTC_POLL63_32);
-+
-+	writel(BIT(1) | BIT(6), reg_base + DH_INTC_INIT);
-+
-+	/* Setup  0-31 channel slots */
-+	for (i = 0; i < INTC_IRQS/2; i += 4)
-+		writel(build_channel_val(i, 0x03020100) + 0x40404040,
-+				reg_base + DH_INTC_SOURCE31_00 + i);
-+
-+	/* Setup 32-63 channel slots */
-+	for (i = 0; i < INTC_IRQS/2; i += 4)
-+		writel(build_channel_val(i, 0x03020100) + 0x40404040,
-+				reg_base + DH_INTC_SOURCE63_32 + i);
-+
-+	/* mask all interrrupts */
-+	writel(0xffffffff, reg_base + DH_INTC_NMASK31_00);
-+	writel(0xffffffff, reg_base + DH_INTC_NMASK63_32);
-+
-+	ck_set_gc(node, reg_base, 0, DH_INTC_NMASK31_00, 0);
-+	ck_set_gc(node, reg_base, 0, DH_INTC_NMASK63_32, 32);
-+
-+	for (i = 32; i < 128; i++)
-+		VEC_INIT(i, csky_irq);
-+
-+	set_handle_irq(dh_irq_handler);
-+
-+	return 0;
-+}
-+IRQCHIP_DECLARE(csky_dh7k_intc, "csky,dh7k-intc", dh_intc_init);
-+
- /*
-  * C-SKY simple 64 irqs interrupt controller, dual-together could support 128
-  * irqs.
-@@ -243,8 +318,8 @@ ck_intc_init(struct device_node *node, struct device_node *parent)
- 	/* Enable irq intc */
- 	writel(BIT(31), reg_base + CK_INTC_ICR);
- 
--	ck_set_gc(node, reg_base, CK_INTC_NEN31_00, 0);
--	ck_set_gc(node, reg_base, CK_INTC_NEN63_32, 32);
-+	ck_set_gc(node, reg_base, CK_INTC_NEN31_00, 0, 0);
-+	ck_set_gc(node, reg_base, CK_INTC_NEN63_32, 0, 32);
- 
- 	setup_irq_channel(0x00010203, reg_base + CK_INTC_SOURCE);
- 
-@@ -270,8 +345,8 @@ ck_dual_intc_init(struct device_node *node, struct device_node *parent)
- 	writel(0, reg_base + CK_INTC_NEN31_00 + CK_INTC_DUAL_BASE);
- 	writel(0, reg_base + CK_INTC_NEN63_32 + CK_INTC_DUAL_BASE);
- 
--	ck_set_gc(node, reg_base + CK_INTC_DUAL_BASE, CK_INTC_NEN31_00, 64);
--	ck_set_gc(node, reg_base + CK_INTC_DUAL_BASE, CK_INTC_NEN63_32, 96);
-+	ck_set_gc(node, reg_base + CK_INTC_DUAL_BASE, CK_INTC_NEN31_00, 0, 64);
-+	ck_set_gc(node, reg_base + CK_INTC_DUAL_BASE, CK_INTC_NEN63_32, 0, 96);
- 
- 	setup_irq_channel(0x00010203,
- 			  reg_base + CK_INTC_SOURCE + CK_INTC_DUAL_BASE);
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt b/Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
+index 44286dc..63bc9dc 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
++++ b/Documentation/devicetree/bindings/interrupt-controller/csky,apb-intc.txt
+@@ -23,6 +23,7 @@ intc node bindings definition
+ 		Definition: must be "csky,apb-intc"
+ 				    "csky,dual-apb-intc"
+ 				    "csky,gx6605s-intc"
++				    "csky,dh7k-intc"
+ 	- #interrupt-cells
+ 		Usage: required
+ 		Value type: <u32>
 -- 
 2.7.4
 
