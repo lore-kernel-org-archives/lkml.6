@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C457CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C2ECC10F01
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:56:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AABE20842
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:56:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D16021900
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:56:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498196;
-	bh=FNogbKtoQc/yhXVjBXju00R1LI5JcbcQ41Pwe4WdEl4=;
+	s=default; t=1550498201;
+	bh=DTLFsRnA83Z9uEdRks2Gm+ZSlt1B8b0rM/4tOPI7ls8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iFbAcIinfJNA0SAkAPmI79sClyXqbRsOwEFLACWixTK/b8S0Txsqhsgo4qnplfElk
-	 nINW3TSrE2WEsWgkyWJfqH1O+xhciZEnky640YU/M+FLa6miVJIIwshGqG9arF5E4Q
-	 oUeAkBdaqiSFU1dJ2fYeHvawbcK8IBsqjUMDubtc=
+	b=DBP5YnQcR+zFFZ+ne9ZNRaP8BHuq5YZOVaI6wQFZ5X9VvuPo9rpt2yZ+obezqLSsX
+	 xJUJDeJx5WmN/d0SK3jzyTYQk/bG9qh5YYm0K3NRWqkZg64NtoitQ91DxjWgzNpsjL
+	 G8AL3I9LZV5jVFXm8WiN/Y/oGymh+qorMjH1WI1s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387838AbfBRN4f (ORCPT
+        id S2387853AbfBRN4j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:56:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36760 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:56:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730949AbfBRN4d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:56:33 -0500
+        id S1730949AbfBRN4g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:56:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C36B5217D9;
-        Mon, 18 Feb 2019 13:56:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 10A062077B;
+        Mon, 18 Feb 2019 13:56:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498192;
-        bh=FNogbKtoQc/yhXVjBXju00R1LI5JcbcQ41Pwe4WdEl4=;
+        s=default; t=1550498195;
+        bh=DTLFsRnA83Z9uEdRks2Gm+ZSlt1B8b0rM/4tOPI7ls8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EQLD7zQmXRJIH1mXKdkbN1x9sT8eE3C2AL86QbCrGU/ko3ckT1j29ACq7gbQUdTsu
-         3AYAKzsNQamZrFb5OMZf1QYIfxwpuOkZVlJK4fs5jRxCQx7iP6HKBY5n34Vx1+0RpL
-         XqXJzKw1JNHiSYhOHNBDP79Vg9cBK3knX0WLUV9U=
+        b=1XNPgsjmdch60nU+xhsD6CYAqfyxN0UCvGIVlwqpcSigbNxULNUMhbGIf0/z6LR55
+         kaFooWXt/YvoNE4aZXockOOihjZWt1ja1AC435/EarBnS3BgxDCAqTGjmLnrAMB/us
+         /nOVxO2deY122m0yW2IFAZQoLXPeMZLF6KykUMBI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Manuel Reinhardt <manuel.rhdt@gmail.com>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.14 45/62] ALSA: usb-audio: Fix implicit fb endpoint setup by quirk
-Date:   Mon, 18 Feb 2019 14:43:51 +0100
-Message-Id: <20190218133509.716240418@linuxfoundation.org>
+        stable@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
+        Ivan Delalande <colona@arista.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>
+Subject: [PATCH 4.14 54/62] signal: Restore the stop PTRACE_EVENT_EXIT
+Date:   Mon, 18 Feb 2019 14:44:00 +0100
+Message-Id: <20190218133510.407139360@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
 References: <20190218133505.801423074@linuxfoundation.org>
@@ -64,58 +66,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Manuel Reinhardt <manuel.rhdt@gmail.com>
+From: Eric W. Biederman <ebiederm@xmission.com>
 
-commit 2bc16b9f3223d049b57202ee702fcb5b9b507019 upstream.
+commit cf43a757fd49442bc38f76088b70c2299eed2c2f upstream.
 
-The commit a60945fd08e4 ("ALSA: usb-audio: move implicit fb quirks to
-separate function") introduced an error in the handling of quirks for
-implicit feedback endpoints. This commit fixes this.
+In the middle of do_exit() there is there is a call
+"ptrace_event(PTRACE_EVENT_EXIT, code);" That call places the process
+in TACKED_TRACED aka "(TASK_WAKEKILL | __TASK_TRACED)" and waits for
+for the debugger to release the task or SIGKILL to be delivered.
 
-If a quirk successfully sets up an implicit feedback endpoint, usb-audio
-no longer tries to find the implicit fb endpoint itself.
+Skipping past dequeue_signal when we know a fatal signal has already
+been delivered resulted in SIGKILL remaining pending and
+TIF_SIGPENDING remaining set.  This in turn caused the
+scheduler to not sleep in PTACE_EVENT_EXIT as it figured
+a fatal signal was pending.  This also caused ptrace_freeze_traced
+in ptrace_check_attach to fail because it left a per thread
+SIGKILL pending which is what fatal_signal_pending tests for.
 
-Fixes: a60945fd08e4 ("ALSA: usb-audio: move implicit fb quirks to separate function")
-Signed-off-by: Manuel Reinhardt <manuel.rhdt@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+This difference in signal state caused strace to report
+strace: Exit of unknown pid NNNNN ignored
+
+Therefore update the signal handling state like dequeue_signal
+would when removing a per thread SIGKILL, by removing SIGKILL
+from the per thread signal mask and clearing TIF_SIGPENDING.
+
+Acked-by: Oleg Nesterov <oleg@redhat.com>
+Reported-by: Oleg Nesterov <oleg@redhat.com>
+Reported-by: Ivan Delalande <colona@arista.com>
+Cc: stable@vger.kernel.org
+Fixes: 35634ffa1751 ("signal: Always notice exiting tasks")
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/usb/pcm.c |    9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ kernel/signal.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/sound/usb/pcm.c
-+++ b/sound/usb/pcm.c
-@@ -313,6 +313,9 @@ static int search_roland_implicit_fb(str
- 	return 0;
- }
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -2268,9 +2268,12 @@ relock:
+ 	}
  
-+/* Setup an implicit feedback endpoint from a quirk. Returns 0 if no quirk
-+ * applies. Returns 1 if a quirk was found.
-+ */
- static int set_sync_ep_implicit_fb_quirk(struct snd_usb_substream *subs,
- 					 struct usb_device *dev,
- 					 struct usb_interface_descriptor *altsd,
-@@ -391,7 +394,7 @@ add_sync_ep:
+ 	/* Has this task already been marked for death? */
+-	ksig->info.si_signo = signr = SIGKILL;
+-	if (signal_group_exit(signal))
++	if (signal_group_exit(signal)) {
++		ksig->info.si_signo = signr = SIGKILL;
++		sigdelset(&current->pending.signal, SIGKILL);
++		recalc_sigpending();
+ 		goto fatal;
++	}
  
- 	subs->data_endpoint->sync_master = subs->sync_endpoint;
- 
--	return 0;
-+	return 1;
- }
- 
- static int set_sync_endpoint(struct snd_usb_substream *subs,
-@@ -430,6 +433,10 @@ static int set_sync_endpoint(struct snd_
- 	if (err < 0)
- 		return err;
- 
-+	/* endpoint set by quirk */
-+	if (err > 0)
-+		return 0;
-+
- 	if (altsd->bNumEndpoints < 2)
- 		return 0;
- 
+ 	for (;;) {
+ 		struct k_sigaction *ka;
 
 
