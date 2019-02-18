@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FAEFC4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE66C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60C0221901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F412E20842
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498561;
-	bh=X1hwG470/jO5ZRDHnBrGj94Y9KSdeWbFHsc7hFNVf80=;
+	s=default; t=1550498567;
+	bh=8MM1SJvvo1Y80iyN0O0dwq4GjKxoYEO1VRb2giv7PYA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LmDlFzjhs3pwGfVDzB12CyRBvSr/Z7IU7+4CJidIEU641ZBbDegTdJGXInJHjwzKP
-	 Tl5VSU95VquYMMfGT8EGdihcQ8iCy8MC+4nZFzpJsjqXvwQkbBjgIfiTw+ROEn8lsN
-	 NT+8F17n68XFG/mxuV+vme+C1J1pTHb9rickUtYA=
+	b=eUx/W0Zz9+7zUY8a990RBOxWwj8EtjySNvkFcXkvSgpzCkG/JjB32GsJUtoY4MNIQ
+	 pi4dmhoml9+VLIuTHgkjlitlPIC4UrA4JV+4qyr4a4ehUOjkOuukegEF5pJ7vpjpQq
+	 HL83KTf8s98vJHP3HKH+SAKzgLutijger6zrwnYs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389453AbfBROCj (ORCPT
+        id S2388087AbfBROCp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:02:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44420 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:02:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388532AbfBROCh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:02:37 -0500
+        id S2389486AbfBROCn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:02:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6BD002070D;
-        Mon, 18 Feb 2019 14:02:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A56F320842;
+        Mon, 18 Feb 2019 14:02:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498557;
-        bh=X1hwG470/jO5ZRDHnBrGj94Y9KSdeWbFHsc7hFNVf80=;
+        s=default; t=1550498563;
+        bh=8MM1SJvvo1Y80iyN0O0dwq4GjKxoYEO1VRb2giv7PYA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cmJcf0R+9O81PYwJq74nYstNmoWgDhNTTr0+Mc/BsDoQxassbEA0jaBjtcWsgj4rq
-         jfH5DnbAh+TZoXlnGeocYngDApcfmTjOscOVygHF4X7Wd1w4YbLSvTxtPScYlG2erg
-         V2tGHDpanPw0Sho1yvB2GSFU6p9sOp1oFqknQkuE=
+        b=aUgRlGmaEqX/ktLZFOl2nTN2QRmTq+IGeshgIeIfccOQqjRK5iPbXljfpp3Meo7VK
+         3wPg77s+NHeN0hrY/nZtCrxOrU0Qm6ih+OS7wkqKrs8VCAKtL1yQyL8BrnUJ0Yk1Gz
+         QHJ79VEzb0o6KKpDSRKt0dGm3i1isFE89Y1ZYQ90=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        stable@vger.kernel.org,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 024/143] media: DaVinci-VPBE: fix error handling in vpbe_initialize()
-Date:   Mon, 18 Feb 2019 14:42:32 +0100
-Message-Id: <20190218133530.036978025@linuxfoundation.org>
+Subject: [PATCH 4.4 026/143] usb: hub: delay hub autosuspend if USB3 port is still link training
+Date:   Mon, 18 Feb 2019 14:42:34 +0100
+Message-Id: <20190218133530.107708512@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -67,53 +67,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit aa35dc3c71950e3fec3e230c06c27c0fbd0067f8 ]
+[ Upstream commit e86108940e541febf35813402ff29fa6f4a9ac0b ]
 
-If vpbe_set_default_output() or vpbe_set_default_mode() fails,
-vpbe_initialize() returns error code without releasing resources.
+When initializing a hub we want to give a USB3 port in link training
+the same debounce delay time before autosuspening the hub as already
+trained, connected enabled ports.
 
-The patch adds error handling for that case.
+USB3 ports won't reach the enabled state with "current connect status" and
+"connect status change" bits set until the USB3 link training finishes.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+Catching the port in link training (polling) and adding the debounce delay
+prevents unnecessary failed attempts to autosuspend the hub.
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/davinci/vpbe.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/usb/core/hub.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
-index 9a6c2cc38acb..abce9c4a1a8e 100644
---- a/drivers/media/platform/davinci/vpbe.c
-+++ b/drivers/media/platform/davinci/vpbe.c
-@@ -753,7 +753,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
- 	if (ret) {
- 		v4l2_err(&vpbe_dev->v4l2_dev, "Failed to set default output %s",
- 			 def_output);
--		return ret;
-+		goto fail_kfree_amp;
- 	}
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index be63db142d3f..3a6978458d95 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -1092,6 +1092,16 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
+ 						   USB_PORT_FEAT_ENABLE);
+ 		}
  
- 	printk(KERN_NOTICE "Setting default mode to %s\n", def_mode);
-@@ -761,12 +761,15 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
- 	if (ret) {
- 		v4l2_err(&vpbe_dev->v4l2_dev, "Failed to set default mode %s",
- 			 def_mode);
--		return ret;
-+		goto fail_kfree_amp;
- 	}
- 	vpbe_dev->initialized = 1;
- 	/* TBD handling of bootargs for default output and mode */
- 	return 0;
- 
-+fail_kfree_amp:
-+	mutex_lock(&vpbe_dev->lock);
-+	kfree(vpbe_dev->amp);
- fail_kfree_encoders:
- 	kfree(vpbe_dev->encoders);
- fail_dev_unregister:
++		/*
++		 * Add debounce if USB3 link is in polling/link training state.
++		 * Link will automatically transition to Enabled state after
++		 * link training completes.
++		 */
++		if (hub_is_superspeed(hdev) &&
++		    ((portstatus & USB_PORT_STAT_LINK_STATE) ==
++						USB_SS_PORT_LS_POLLING))
++			need_debounce_delay = true;
++
+ 		/* Clear status-change flags; we'll debounce later */
+ 		if (portchange & USB_PORT_STAT_C_CONNECTION) {
+ 			need_debounce_delay = true;
 -- 
 2.19.1
 
