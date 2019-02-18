@@ -2,115 +2,118 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81798C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:07:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 365D4C4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:07:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4367D21901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:07:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498859;
-	bh=xqhDh9aoPUsKfy0Dhk2sYeKq17olYfKLyh9ObawwcFg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=a308CnRxOuncopflkb3UBpe7V+YZo3ELN7uPh789uYyMf7Se6BlcN8J2MKlTjyTEk
-	 FKrGQzUvoQGTdxxfwztMv5x4mIgQ862d0zKsw36M1T8Ob+DN1Y75OEKTJK/HF02P/A
-	 Wpos7Ue5e+jhScxReptZIVzPeUCsA5rq5p6DCNEE=
+	by mail.kernel.org (Postfix) with ESMTP id 1115A21901
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:07:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390737AbfBROHi (ORCPT
+        id S2389339AbfBROHk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:07:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50638 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:07:40 -0500
+Received: from foss.arm.com ([217.140.101.70]:59262 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390623AbfBROH3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:07:29 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A35021901;
-        Mon, 18 Feb 2019 14:07:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498848;
-        bh=xqhDh9aoPUsKfy0Dhk2sYeKq17olYfKLyh9ObawwcFg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aV6ZyLcCg06RKxmcrXdo3i8ECVk55wObO77x+2FInNk8E5qfd5atxAJutIMjs27VF
-         30tGx9PNaCdFs3RRjqWJRNc/iuHfW4PdBGPUjoIgE/cpXMrvDfcaAtolD3fumT/WNK
-         wSONAcdljSwTaXpvsdMNGPzIo91iQsr/JqSRl7IM=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        James Hughes <james.hughes@raspberrypi.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 4.4 141/143] kaweth: use skb_cow_head() to deal with cloned skbs
-Date:   Mon, 18 Feb 2019 14:44:29 +0100
-Message-Id: <20190218133534.122964458@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
-References: <20190218133529.099444112@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        id S2389283AbfBROHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:07:38 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 084E7A78;
+        Mon, 18 Feb 2019 06:07:34 -0800 (PST)
+Received: from [10.1.196.50] (e108454-lin.cambridge.arm.com [10.1.196.50])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7A6C33F720;
+        Mon, 18 Feb 2019 06:07:27 -0800 (PST)
+Subject: Re: [RFC PATCH] arm64/fpsimd: Don't disable softirq when touching
+ FPSIMD/SVE state
+To:     Julia Cartwright <julia@ni.com>
+Cc:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "bigeasy@linutronix.de" <bigeasy@linutronix.de>,
+        "Dave.Martin@arm.com" <Dave.Martin@arm.com>,
+        "linux-rt-users@vger.kernel.org" <linux-rt-users@vger.kernel.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190208165513.8435-1-julien.grall@arm.com>
+ <20190212171350.GB1002@jcartwri.amer.corp.natinst.com>
+From:   Julien Grall <julien.grall@arm.com>
+Message-ID: <7671d868-9d33-dfe1-851a-b72271f12d5f@arm.com>
+Date:   Mon, 18 Feb 2019 14:07:26 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190212171350.GB1002@jcartwri.amer.corp.natinst.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On 12/02/2019 17:13, Julia Cartwright wrote:
+> Hello Julien-
 
-------------------
+Hello Julien,
 
-From: Eric Dumazet <edumazet@google.com>
+> 
+> On Fri, Feb 08, 2019 at 04:55:13PM +0000, Julien Grall wrote:
+>> When the kernel is compiled with CONFIG_KERNEL_MODE_NEON, some part of
+>> the kernel may be able to use FPSIMD/SVE. This is for instance the case
+>> for crypto code.
+>>
+>> Any use of FPSIMD/SVE in the kernel are clearly marked by using the
+>> function kernel_neon_{begin, end}. Furthermore, this can only be used
+>> when may_use_simd() returns true.
+>>
+>> The current implementation of may_use_simd() allows softirq to use
+>> FPSIMD/SVE unless it is currently in used (i.e kernel_neon_busy is true).
+>> When in used, softirqs usually fallback to a software method.
+>>
+>> At the moment, as a softirq may use FPSIMD/SVE, softirqs are disabled
+>> when touching the FPSIMD/SVE context. This has the drawback to disable
+>> all softirqs even if they are not using FPSIMD/SVE.
+>>
+>> As a softirq should not rely on been able to use simd at a given time,
+>> there are limited reason to keep softirq disabled when touching the
+>> FPSIMD/SVE context. Instead, we can only disable preemption and tell
+>> the NEON unit is currently in use.
+>>
+>> This patch introduces two new helpers kernel_neon_{disable, enable} to
+>> mark the area using FPSIMD/SVE context and use them in replacement of
+>> local_bh_{disable, enable}. The functions kernel_neon_{begin, end} are
+>> also re-implemented to use the new helpers.
+>>
+>> Signed-off-by: Julien Grall <julien.grall@arm.com>
+>>
+>> ---
+>>
+>> I have been exploring this solution as an alternative approach to the RT
+>> patch "arm64: fpsimd: use preemp_disable in addition to local_bh_disable()".
+>>
+>> So far, the patch has only been lightly tested.
+>>
+>> For RT-linux, it might be possible to use migrate_{enable, disable}. I
+>> am quite new with RT and have some trouble to understand the semantics
+>> of migrate_{enable, disable}. So far, I am still unsure if it is possible
+>> to run another userspace task on the same CPU while getting preempted
+>> when the migration is disabled.
+> 
+> Yes, a thread in a migrate_disable()-protected critical section can be
+> preempted, and another thread on the same CPU may enter the critical
+> section.
+> 
+> If it's necessary to prevent this from happening, then you need to also
+> make use of a per-CPU mutex.  On RT, this would do the right thing
+> w.r.t. priority inheritance.
 
-commit 39fba7835aacda65284a86e611774cbba71dac20 upstream.
+Thank you for the explanation, I now understand better the concept of 
+migrate_disable.
 
-We can use skb_cow_head() to properly deal with clones,
-especially the ones coming from TCP stack that allow their head being
-modified. This avoids a copy.
+Best regards,
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: James Hughes <james.hughes@raspberrypi.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/net/usb/kaweth.c |   18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
-
---- a/drivers/net/usb/kaweth.c
-+++ b/drivers/net/usb/kaweth.c
-@@ -812,18 +812,12 @@ static netdev_tx_t kaweth_start_xmit(str
- 	}
- 
- 	/* We now decide whether we can put our special header into the sk_buff */
--	if (skb_cloned(skb) || skb_headroom(skb) < 2) {
--		/* no such luck - we make our own */
--		struct sk_buff *copied_skb;
--		copied_skb = skb_copy_expand(skb, 2, 0, GFP_ATOMIC);
--		dev_kfree_skb_irq(skb);
--		skb = copied_skb;
--		if (!copied_skb) {
--			kaweth->stats.tx_errors++;
--			netif_start_queue(net);
--			spin_unlock_irq(&kaweth->device_lock);
--			return NETDEV_TX_OK;
--		}
-+	if (skb_cow_head(skb, 2)) {
-+		kaweth->stats.tx_errors++;
-+		netif_start_queue(net);
-+		spin_unlock_irq(&kaweth->device_lock);
-+		dev_kfree_skb_any(skb);
-+		return NETDEV_TX_OK;
- 	}
- 
- 	private_header = (__le16 *)__skb_push(skb, 2);
-
-
+-- 
+Julien Grall
