@@ -2,99 +2,101 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C25E2C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:08:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C9F6C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:08:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88BBF21736
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:08:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dDmdOEhY";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dDmdOEhY"
+	by mail.kernel.org (Postfix) with ESMTP id 22B1920661
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:08:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391838AbfBRSI1 (ORCPT
+        id S2391914AbfBRSI5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:08:27 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:42446 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387806AbfBRSI0 (ORCPT
+        Mon, 18 Feb 2019 13:08:57 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:51072 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2390095AbfBRSI4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:08:26 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E4C82608CF; Mon, 18 Feb 2019 18:08:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550513305;
-        bh=xCjBUogtWIOqJZsdmRtXiOBmgDLvp893h57ZpPCX8xw=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=dDmdOEhYTB4RXWskygVmUXPMZ/rPdDYnOA2nlpyw3yQmLZ/zOgW3+9KLRub13wxR4
-         Wkc8atuV3wEHk7OO37OzpZEgujivVZ/qedzl2jkAGR1waUU/dm2pIsqagd5u9WRYwI
-         b5/8cGWxRbLAHA92ZO7C/N78Km9Z676Hyyv42Ewk=
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 83FD560388;
-        Mon, 18 Feb 2019 18:08:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1550513305;
-        bh=xCjBUogtWIOqJZsdmRtXiOBmgDLvp893h57ZpPCX8xw=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=dDmdOEhYTB4RXWskygVmUXPMZ/rPdDYnOA2nlpyw3yQmLZ/zOgW3+9KLRub13wxR4
-         Wkc8atuV3wEHk7OO37OzpZEgujivVZ/qedzl2jkAGR1waUU/dm2pIsqagd5u9WRYwI
-         b5/8cGWxRbLAHA92ZO7C/N78Km9Z676Hyyv42Ewk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 83FD560388
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-wireless@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, Felix Fietkau <nbd@nbd.name>,
-        Matthias Brugger <matthias.bgg@gmail.com>
-Subject: Re: [PATCH 1/2] wireless: mt76: call hweight8() instead of __sw_hweight8()
-References: <1550469571-25933-1-git-send-email-yamada.masahiro@socionext.com>
-        <1550469571-25933-2-git-send-email-yamada.masahiro@socionext.com>
-Date:   Mon, 18 Feb 2019 20:08:18 +0200
-In-Reply-To: <1550469571-25933-2-git-send-email-yamada.masahiro@socionext.com>
-        (Masahiro Yamada's message of "Mon, 18 Feb 2019 14:59:30 +0900")
-Message-ID: <877edxt1f1.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 18 Feb 2019 13:08:56 -0500
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1II5SVm079367
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 13:08:56 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qr1p9r50x-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 13:08:55 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Mon, 18 Feb 2019 18:08:53 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 18 Feb 2019 18:08:50 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1II8nGC11010270
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 18 Feb 2019 18:08:49 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5DD68A405B;
+        Mon, 18 Feb 2019 18:08:49 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DD031A4062;
+        Mon, 18 Feb 2019 18:08:48 +0000 (GMT)
+Received: from morel-ThinkPad-W530.numericable.fr (unknown [9.145.70.2])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 18 Feb 2019 18:08:48 +0000 (GMT)
+From:   Pierre Morel <pmorel@linux.ibm.com>
+To:     borntraeger@de.ibm.com
+Cc:     cohuck@redhat.com, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, frankja@linux.ibm.com,
+        akrowiak@linux.ibm.com, pasic@linux.ibm.com, david@redhat.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        freude@linux.ibm.com
+Subject: [PATCH v2 0/1] s390: vfio_ap: link the vfio_ap devices to the vfio_ap bus subsystem
+Date:   Mon, 18 Feb 2019 19:08:47 +0100
+X-Mailer: git-send-email 2.7.4
+X-TM-AS-GCONF: 00
+x-cbid: 19021818-4275-0000-0000-00000310F18B
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021818-4276-0000-0000-0000381F1B38
+Message-Id: <1550513328-12646-1-git-send-email-pmorel@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-18_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=649 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902180134
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Masahiro Yamada <yamada.masahiro@socionext.com> writes:
+This is the second version of this patch.
+The first version was part of a patch series on VFIO AP IRQ.
 
-> __sw_hweight8() is just internal implementation.
->
-> Drivers should use the common API, hweight8().
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+The goal of this patch is to standardize the device-driver interface
+for the VFIO_AP ap_matrix_device to satisfy user-land tools working on
+hot-plug (UDEV/LIBVIRT).
 
-Acked-by: Kalle Valo <kvalo@codeaurora.org>
+Christian Borntraeger reported libvirt looping when a matrix device
+was available before the libvirt start.
 
-> This patch should go to x86 tree along with 2/2.
->
-> Otherwise, all{yes,mod}config of x86 would be broken.
->
-> This patch is trivial enough.
-> I want ACK from the net/wireless maintainer
-> so that this can go in via x86 tree.
+Marc Hartmayer debugged this and circumvented this in libvirt:
+https://www.redhat.com/archives/libvir-list/2019-February/msg00837.html
 
-Sounds good to me, feel free to push via the x86 tree.
+
+Pierre Morel (1):
+  s390: vfio_ap: link the vfio_ap devices to the vfio_ap bus subsystem
+
+ drivers/s390/crypto/vfio_ap_drv.c     | 48 +++++++++++++++++++++++++++++------
+ drivers/s390/crypto/vfio_ap_ops.c     |  4 +--
+ drivers/s390/crypto/vfio_ap_private.h |  1 +
+ 3 files changed, 43 insertions(+), 10 deletions(-)
 
 -- 
-Kalle Valo
+2.7.4
+
