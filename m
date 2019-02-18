@@ -2,100 +2,128 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A400C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD44C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:12:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFBC6218D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:12:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E7EE2184A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:12:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="p07Z1RO2"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="UVPP6vyO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729079AbfBRIMf (ORCPT
+        id S1729128AbfBRIMi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 03:12:35 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:32948 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725881AbfBRIMe (ORCPT
+        Mon, 18 Feb 2019 03:12:38 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:38423 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728976AbfBRIMf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 03:12:34 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x1I89LEx133886;
-        Mon, 18 Feb 2019 08:12:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=tg0iUNhXRNq8Ygnl4Lw6BXr0Lrjm5aFIIFYjgxxhzig=;
- b=p07Z1RO2daTAZhuviKUh3iNf6bmvq56FMXh9RbkopkGipvuWqbKYSMvkESOCnp3+At4Y
- e/LLDp3mHakgmESfCBHHJaNmyhnS6yxiZjli+3T+6u6NruIEve4Srt/z53EiB+XOSWPj
- ZN8figJK+El3wh/m3ivrFl+ri9DKw6HuCqKZzPQ3fKEJeuT1dmWuessMlIv2Q2rYmZty
- 1+dxdLN3iyOPlsLY95civ/mFWrW0hWCw6qfZShGKI++uwtxRoXFtbcY4wbFVbJk4LLh4
- 97Flbzf9RViB7+5pvdbFCkAt4Kq4wBxuZx14T+Ha7k0/tvPO1RbobC2qy64vHqJt8fZm rg== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2qp9xtmtqy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 18 Feb 2019 08:12:26 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x1I8CPqo013094
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 18 Feb 2019 08:12:25 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x1I8CPHb000635;
-        Mon, 18 Feb 2019 08:12:25 GMT
-Received: from kadam (/197.157.0.22)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 18 Feb 2019 00:12:24 -0800
-Date:   Mon, 18 Feb 2019 11:12:17 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][V3] regulator: axp20x: remove a redundant null check on
- rdev
-Message-ID: <20190218081217.GA17104@kadam>
-References: <20190215094554.28593-1-colin.king@canonical.com>
+        Mon, 18 Feb 2019 03:12:35 -0500
+Received: by mail-ot1-f68.google.com with SMTP id m1so26875130otf.5
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 00:12:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=A/GWwL8QsoA/seKkkwP2J9Rz4+w3VPL6GFqZWoskLzA=;
+        b=UVPP6vyO6mqbqmeag02MDV50meAuUyc/reRiyqD1HAshwhNPf9m48CWFS4i3Rr9vO/
+         BpNN6Njm93uloF2GJG9SIM2gSBDEm6FlB1ashfnnP4Ok7i3fPBX4q8sZII/qgvzwZsP4
+         ZqTK6tGqVw76f0WNbdW+Mzo24B7GwYgAH0fsMTfZYFb3AcqFn+ItpQoWaTKNfhBwUNeD
+         HL6/B/x7tJAeGQmUy9/6+RYdW96hMUoBBOwFmMEBJg78mWEAL/q/wwS8mpfuC8JKOS5I
+         phd4wECfsq9dVBSuUhnSVV77/6dyNitmUM8ssZs40jXA79dRSkOapDwzTiY8zy3nAVRz
+         Xipw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=A/GWwL8QsoA/seKkkwP2J9Rz4+w3VPL6GFqZWoskLzA=;
+        b=Z7xL6MgHDj3j380EupQVFh285hSMCkw8C583dLJ+wdbDuW1Jmjv0tpifltVe84T+IL
+         8vC2ckrmqNb9gRkRDsqXj+HVNAMhIaMC21ZzhF3IRopAwzA9q+roSDcNMjyzJXKd33dy
+         Rkz6Toi/0i26trZfrxQ+ooFjcbhRAuE6s+H1NXqHgPGYlmFbkArocthHKRHCEf2uK2B5
+         i/jtM+JDaR2OiprNP0nHxuA25HLiy0sqq6ThXrlG4AXxBBQujrSSAFT6VWu/BC7GwR+/
+         lFY1jXJ7oOGdQSZ7eYrwHtaqFN1jCyDk3aMxHXFRx1hgMP06VUv5jjDFd5KXscxXzrEP
+         D03g==
+X-Gm-Message-State: AHQUAuYmQBdmmiKITxEGnkUDBfC7npclGWcU62Yw9F6nIoOPftallAeY
+        Vhjsb5I2LZRB6PAS7qKSf11CNgvynKurzVV4wQRf2A==
+X-Google-Smtp-Source: AHgI3IbBhU0uXZ3HcV9Mi3MayiF/4EjW2u7ivl66FSIeVS6rpMai7dtp6S21GB5UJuNrejIUHtbT/e8YX+ykhhFSMzY=
+X-Received: by 2002:a9d:635a:: with SMTP id y26mr13090952otk.27.1550477554190;
+ Mon, 18 Feb 2019 00:12:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190215094554.28593-1-colin.king@canonical.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9170 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=835 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1810050000
- definitions=main-1902180065
+References: <20190214145231.8750-1-brgl@bgdev.pl> <20190214145231.8750-34-brgl@bgdev.pl>
+ <681a7831-8c20-d634-a1cb-04064e3077b8@lechnology.com>
+In-Reply-To: <681a7831-8c20-d634-a1cb-04064e3077b8@lechnology.com>
+From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Date:   Mon, 18 Feb 2019 09:12:23 +0100
+Message-ID: <CAMpxmJXvqTCYCHwJujx=A4Ga+bZP+fKpJTf++FkmYdQHR5HJew@mail.gmail.com>
+Subject: Re: [PATCH v4 33/37] ARM: davinci: cp-intc: use readl/writel_relaxed()
+To:     David Lechner <david@lechnology.com>
+Cc:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Kevin Hilman <khilman@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 09:45:54AM +0000, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently rdev is dereferenced when assigning desc before rdev is null
-> checked, this is leading to static analysis warnings.  However, rdev
-> can never be null, so the null check is redundant and can be removed.
-> 
-> Detected by CoverityScan, CID#1476031 ("Dereference before null check")
-> 
-> Fixes: 77e3e3b165db ("regulator: axp20x: add software based soft_start for AXP209 LDO3")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> 
-> --
+niedz., 17 lut 2019 o 11:01 David Lechner <david@lechnology.com> napisa=C5=
+=82(a):
+>
+> On 2/14/19 8:52 AM, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> >
+> > Raplace all calls to __raw_readl() & __raw_writel() with readl_relaxed(=
+)
+>
+> s/Raplace/Replace/
+>
+> > and writel_relaxed() respectively. It's safe to do as there's no
+> > endianness conversion being done in the code.
+>
+> Should this be combined with patch 14/37?
+>
 
-We need a third '-' character on the cut off marker.
+No, this is for cp-intc and the other one is for aintc. I'd keep them separ=
+ate.
 
-> 
-> V2: Fix 2nd occurrance of this thinko
-> V3: Remove null check, Dan Carpenter noted that rdev can never be null.
-> ---
+Bart
 
-regards,
-dan carpenter
-
+> >
+> > Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> > ---
+> >   arch/arm/mach-davinci/cp_intc.c | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/arch/arm/mach-davinci/cp_intc.c b/arch/arm/mach-davinci/cp=
+_intc.c
+> > index 1bf11fa8be76..f88b7f0978aa 100644
+> > --- a/arch/arm/mach-davinci/cp_intc.c
+> > +++ b/arch/arm/mach-davinci/cp_intc.c
+> > @@ -45,13 +45,13 @@ static struct irq_domain *davinci_cp_intc_irq_domai=
+n;
+> >
+> >   static inline unsigned int davinci_cp_intc_read(unsigned int offset)
+> >   {
+> > -     return __raw_readl(davinci_cp_intc_base + offset);
+> > +     return readl_relaxed(davinci_cp_intc_base + offset);
+> >   }
+> >
+> >   static inline void davinci_cp_intc_write(unsigned long value,
+> >                                        unsigned int offset)
+> >   {
+> > -     __raw_writel(value, davinci_cp_intc_base + offset);
+> > +     writel_relaxed(value, davinci_cp_intc_base + offset);
+> >   }
+> >
+> >   static void davinci_cp_intc_ack_irq(struct irq_data *d)
+> >
