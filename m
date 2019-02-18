@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDFF4C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C87FEC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:01:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD7ED21901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:01:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9923C21902
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:01:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498497;
-	bh=nzaFoPDV3IihhwSAgLUF1kLV3EQT7mygryimi8McFqE=;
+	s=default; t=1550498502;
+	bh=Q37mU7aCtZdtAFTq/sCgz25tryKVUPdurLXvF5jyMb4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ArfD/4CdNWiZ4k6IsaDdbEn9lmHbO5afbEZfUp+jaIFAl65/fvT+rsG8Xv6xAeNKJ
-	 BZHmTlX4enx+Ma5CaCM1bjs+VkHzfAmA1W5eiToaLVr5ofTru295qmIvuYq2tBTuhT
-	 6wa1/DyAZeHxrJCm7ZcqdEv+sUy4e6LzBXHQ4l04=
+	b=KvU4DcWuEfLanKhu+d3hw6AzOQjZGlFAwqTC8i+QEfPIJ6ePS0063bn0Snha2J6yW
+	 ONg43rj7d7KXuMcdx8leEK505MMuvZ1WVumCOZ09xLEYAlhi6THVdGGCGHUPD7kyWq
+	 4ml7WaeBu5SIhjxOPbvrRmV98N99R5eLZCc8l3H4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389123AbfBROBf (ORCPT
+        id S2389135AbfBROBk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:01:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42998 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:01:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389102AbfBROBb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:01:31 -0500
+        id S2389125AbfBROBi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:01:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 431FF21902;
-        Mon, 18 Feb 2019 14:01:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 88D6620842;
+        Mon, 18 Feb 2019 14:01:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498490;
-        bh=nzaFoPDV3IihhwSAgLUF1kLV3EQT7mygryimi8McFqE=;
+        s=default; t=1550498497;
+        bh=Q37mU7aCtZdtAFTq/sCgz25tryKVUPdurLXvF5jyMb4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c9HSr0CK6Fibe1MttyrokeHOxsOzwDWZl7lMI+nVMAXJ3zJSNTGhcm+PHOHNVgDz3
-         f4MsRqJR/p9Dz3hj7YnrZy265gpA01AbB8tAByGirWtG4pSRIGuaiS+/4QQRqI+BmQ
-         +2OxYpS6NWKWRKn+f9QMbN5IUxsU778MNfeJDn0I=
+        b=As5djbGRCu9qvLjoIGC2MKH2DvDCofJDLCXUa5OmdDckm7OlhG7LzdFMW7DNwRfjJ
+         vvu5N7lva60LCCDt4VtqPyrhjgnSfi4iEIadWbv/XV/v9AMI41wlfvQoDiTTVcS7RN
+         haTa0xrR2AdkhaIEgf7NnOKFINcBQtrzphHIjmvs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tiezhu Yang <kernelpatch@126.com>,
-        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 018/143] f2fs: fix wrong return value of f2fs_acl_create
-Date:   Mon, 18 Feb 2019 14:42:26 +0100
-Message-Id: <20190218133529.824859615@linuxfoundation.org>
+Subject: [PATCH 4.4 028/143] ARM: dts: Fix OMAP4430 SDP Ethernet startup
+Date:   Mon, 18 Feb 2019 14:42:36 +0100
+Message-Id: <20190218133530.175556923@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -66,59 +67,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f6176473a0c7472380eef72ebeb330cf9485bf0a ]
+[ Upstream commit 84fb6c7feb1494ebb7d1ec8b95cfb7ada0264465 ]
 
-When call f2fs_acl_create_masq() failed, the caller f2fs_acl_create()
-should return -EIO instead of -ENOMEM, this patch makes it consistent
-with posix_acl_create() which has been fixed in commit beaf226b863a
-("posix_acl: don't ignore return value of posix_acl_create_masq()").
+It was noticed that unbinding and rebinding the KSZ8851 ethernet
+resulted in the driver reporting "failed to read device ID" at probe.
+Probing the reset line with a 'scope while repeatedly attempting to
+bind the driver in a shell loop revealed that the KSZ8851 RSTN pin is
+constantly held at zero, meaning the device is held in reset, and
+does not respond on the SPI bus.
 
-Fixes: 83dfe53c185e ("f2fs: fix reference leaks in f2fs_acl_create")
-Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Experimentation with the startup delay on the regulator set to 50ms
+shows that the reset is positively released after 20ms.
+
+Schematics for this board are not available, and the traces are buried
+in the inner layers of the board which makes tracing where the RSTN pin
+extremely difficult.  We can only guess that the RSTN pin is wired to a
+reset generator chip driven off the ethernet supply, which fits the
+observed behaviour.
+
+Include this delay in the regulator startup delay - effectively
+treating the reset as a "supply stable" indicator.
+
+This can not be modelled as a delay in the KSZ8851 driver since the
+reset generation is board specific - if the RSTN pin had been wired to
+a GPIO, reset could be released earlier via the already provided support
+in the KSZ8851 driver.
+
+This also got confirmed by Peter Ujfalusi <peter.ujfalusi@ti.com> based
+on Blaze schematics that should be very close to SDP4430:
+
+TPS22902YFPR is used as the regulator switch (gpio48 controlled):
+Convert arm boot_lock to raw The VOUT is routed to TPS3808G01DBV.
+(SCH Note: Threshold set at 90%. Vsense: 0.405V).
+
+According to the TPS3808 data sheet the RESET delay time when Ct is
+open (this is the case in the schema): MIN/TYP/MAX: 12/20/28 ms.
+
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Reviewed-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+[tony@atomide.com: updated with notes from schematics from Peter]
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/acl.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ arch/arm/boot/dts/omap4-sdp.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
-index 83dcf7bfd7b8..f0ea91925343 100644
---- a/fs/f2fs/acl.c
-+++ b/fs/f2fs/acl.c
-@@ -350,12 +350,14 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
- 		return PTR_ERR(p);
+diff --git a/arch/arm/boot/dts/omap4-sdp.dts b/arch/arm/boot/dts/omap4-sdp.dts
+index f0bdc41f8eff..235d1493f8aa 100644
+--- a/arch/arm/boot/dts/omap4-sdp.dts
++++ b/arch/arm/boot/dts/omap4-sdp.dts
+@@ -33,6 +33,7 @@
+ 		gpio = <&gpio2 16 GPIO_ACTIVE_HIGH>;  /* gpio line 48 */
+ 		enable-active-high;
+ 		regulator-boot-on;
++		startup-delay-us = <25000>;
+ 	};
  
- 	clone = f2fs_acl_clone(p, GFP_NOFS);
--	if (!clone)
--		goto no_mem;
-+	if (!clone) {
-+		ret = -ENOMEM;
-+		goto release_acl;
-+	}
- 
- 	ret = f2fs_acl_create_masq(clone, mode);
- 	if (ret < 0)
--		goto no_mem_clone;
-+		goto release_clone;
- 
- 	if (ret == 0)
- 		posix_acl_release(clone);
-@@ -369,11 +371,11 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
- 
- 	return 0;
- 
--no_mem_clone:
-+release_clone:
- 	posix_acl_release(clone);
--no_mem:
-+release_acl:
- 	posix_acl_release(p);
--	return -ENOMEM;
-+	return ret;
- }
- 
- int f2fs_init_acl(struct inode *inode, struct inode *dir, struct page *ipage,
+ 	vbat: fixedregulator-vbat {
 -- 
 2.19.1
 
