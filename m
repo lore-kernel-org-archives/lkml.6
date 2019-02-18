@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDFCDC10F01
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB49BC4360F
 	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85A0721905
+	by mail.kernel.org (Postfix) with ESMTP id BD3E121924
 	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:38:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1550500702;
-	bh=Yzw5b912Y6czzP3hX9x8RssitF/RzGwOtwlqrN9fEb8=;
+	bh=Gwokh3fJVOQrKBBwDwHBFmkofxkNWeYXKGi52H1B1J4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jL0QGIrn4mz73yh01il81ssm2qIOc+DYoaHm/WJKKbfVDaiks0lSZnol0myXhnbwX
-	 VY9PmIQP2QEX/Oq/baDi6fDyEbY1yvuSAY9WQ7pjYt7iodJaONP9VbQMbE/PZ0eS3d
-	 H6CBjG8mHgVnkY6U2jCOnVDdVjFbd9B/+ROj81GE=
+	b=hweW+4jlgh6bqsE+kR66Tjtjt/+gU7dqOi4yXYzJGG3PYps8b8m3clm4UcMvtaD5O
+	 df08tUrkaJiofKQAIrnJWMQbQElosVFRoC7lhXB9QrQxTi4QkBzMau+HglFKIp8JEM
+	 GU4JaGI7FNOjSZiICv1k7ypYcK1pavudIsmkpy8w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387623AbfBROiD (ORCPT
+        id S2389387AbfBROiJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:38:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34768 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:38:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733288AbfBRNyu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:54:50 -0500
+        id S1732799AbfBRNyi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:54:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00DBA2077B;
-        Mon, 18 Feb 2019 13:54:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E9BC21900;
+        Mon, 18 Feb 2019 13:54:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498089;
-        bh=Yzw5b912Y6czzP3hX9x8RssitF/RzGwOtwlqrN9fEb8=;
+        s=default; t=1550498077;
+        bh=Gwokh3fJVOQrKBBwDwHBFmkofxkNWeYXKGi52H1B1J4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AHesVHQ13Xk5UoE4is+G76snRg4iO2WA2MhPcIgIlS0pHYM01aQJjUHSA+UXU9S/H
-         cOoHogZSuAkIU4Vc/ZKZfYKh6tfs5iPpMqioLjDnNPXEOp4F9F2sCC0YMM5mynID9o
-         5jKAu0Nq7Ipes1e72EFDrP2lxdNStgzey6uP+ApA=
+        b=Lvs0+OC2XNuFYpfaX6PN4rlkBGRhOIB+r/KNoN1HNqOUYpUxoo0cD45yZb9HpNUOx
+         /+XgJhFS9Z3ZDPfqUYjyaVJlFT5bXpadidBtZFQsOECpHlVerZVg+aA02TD34H6ZSC
+         TvDdW3X7PQB+niCaFKsYdXWC9OXAFAPCItTfeNGg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Bunk <bunk@kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
+        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        "David A. Long" <dave.long@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 02/62] eeprom: at24: add support for 24c2048
-Date:   Mon, 18 Feb 2019 14:43:08 +0100
-Message-Id: <20190218133506.003435422@linuxfoundation.org>
+Subject: [PATCH 4.14 16/62] ARM: split out processor lookup
+Date:   Mon, 18 Feb 2019 14:43:22 +0100
+Message-Id: <20190218133507.229374606@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
 References: <20190218133505.801423074@linuxfoundation.org>
@@ -66,43 +67,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 37cf28d3b5bca1b532a0b6aac722e7f2788a9294 upstream.
+Commit 65987a8553061515b5851b472081aedb9837a391 upstream.
 
-Works with ST M24M02.
+Split out the lookup of the processor type and associated error handling
+from the rest of setup_processor() - we will need to use this in the
+secondary CPU bringup path for big.Little Spectre variant 2 mitigation.
 
-Signed-off-by: Adrian Bunk <bunk@kernel.org>
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: David A. Long <dave.long@linaro.org>
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Tested-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/eeprom/Kconfig | 2 +-
- drivers/misc/eeprom/at24.c  | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/include/asm/cputype.h |  1 +
+ arch/arm/kernel/setup.c        | 31 +++++++++++++++++++------------
+ 2 files changed, 20 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/misc/eeprom/Kconfig b/drivers/misc/eeprom/Kconfig
-index de58762097c4..3f93e4564cab 100644
---- a/drivers/misc/eeprom/Kconfig
-+++ b/drivers/misc/eeprom/Kconfig
-@@ -12,7 +12,7 @@ config EEPROM_AT24
- 	  ones like at24c64, 24lc02 or fm24c04:
+diff --git a/arch/arm/include/asm/cputype.h b/arch/arm/include/asm/cputype.h
+index 3379c2c684c2..25d523185c6a 100644
+--- a/arch/arm/include/asm/cputype.h
++++ b/arch/arm/include/asm/cputype.h
+@@ -107,6 +107,7 @@
+ #define ARM_CPU_PART_SCORPION		0x510002d0
  
- 	     24c00, 24c01, 24c02, spd (readonly 24c02), 24c04, 24c08,
--	     24c16, 24c32, 24c64, 24c128, 24c256, 24c512, 24c1024
-+	     24c16, 24c32, 24c64, 24c128, 24c256, 24c512, 24c1024, 24c2048
+ extern unsigned int processor_id;
++struct proc_info_list *lookup_processor(u32 midr);
  
- 	  Unless you like data loss puzzles, always be sure that any chip
- 	  you configure as a 24c32 (32 kbit) or larger is NOT really a
-diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
-index ded48a0c77ee..59dcd97ee3de 100644
---- a/drivers/misc/eeprom/at24.c
-+++ b/drivers/misc/eeprom/at24.c
-@@ -170,6 +170,7 @@ static const struct i2c_device_id at24_ids[] = {
- 	{ "24c256",	AT24_DEVICE_MAGIC(262144 / 8,	AT24_FLAG_ADDR16) },
- 	{ "24c512",	AT24_DEVICE_MAGIC(524288 / 8,	AT24_FLAG_ADDR16) },
- 	{ "24c1024",	AT24_DEVICE_MAGIC(1048576 / 8,	AT24_FLAG_ADDR16) },
-+	{ "24c2048",	AT24_DEVICE_MAGIC(2097152 / 8,	AT24_FLAG_ADDR16) },
- 	{ "at24", 0 },
- 	{ /* END OF LIST */ }
- };
+ #ifdef CONFIG_CPU_CP15
+ #define read_cpuid(reg)							\
+diff --git a/arch/arm/kernel/setup.c b/arch/arm/kernel/setup.c
+index 8e9a3e40d949..1a041ad4881e 100644
+--- a/arch/arm/kernel/setup.c
++++ b/arch/arm/kernel/setup.c
+@@ -667,22 +667,29 @@ static void __init smp_build_mpidr_hash(void)
+ }
+ #endif
+ 
+-static void __init setup_processor(void)
++/*
++ * locate processor in the list of supported processor types.  The linker
++ * builds this table for us from the entries in arch/arm/mm/proc-*.S
++ */
++struct proc_info_list *lookup_processor(u32 midr)
+ {
+-	struct proc_info_list *list;
++	struct proc_info_list *list = lookup_processor_type(midr);
+ 
+-	/*
+-	 * locate processor in the list of supported processor
+-	 * types.  The linker builds this table for us from the
+-	 * entries in arch/arm/mm/proc-*.S
+-	 */
+-	list = lookup_processor_type(read_cpuid_id());
+ 	if (!list) {
+-		pr_err("CPU configuration botched (ID %08x), unable to continue.\n",
+-		       read_cpuid_id());
+-		while (1);
++		pr_err("CPU%u: configuration botched (ID %08x), CPU halted\n",
++		       smp_processor_id(), midr);
++		while (1)
++		/* can't use cpu_relax() here as it may require MMU setup */;
+ 	}
+ 
++	return list;
++}
++
++static void __init setup_processor(void)
++{
++	unsigned int midr = read_cpuid_id();
++	struct proc_info_list *list = lookup_processor(midr);
++
+ 	cpu_name = list->cpu_name;
+ 	__cpu_architecture = __get_cpu_architecture();
+ 
+@@ -700,7 +707,7 @@ static void __init setup_processor(void)
+ #endif
+ 
+ 	pr_info("CPU: %s [%08x] revision %d (ARMv%s), cr=%08lx\n",
+-		cpu_name, read_cpuid_id(), read_cpuid_id() & 15,
++		list->cpu_name, midr, midr & 15,
+ 		proc_arch[cpu_architecture()], get_cr());
+ 
+ 	snprintf(init_utsname()->machine, __NEW_UTS_LEN + 1, "%s%c",
 -- 
 2.19.1
 
