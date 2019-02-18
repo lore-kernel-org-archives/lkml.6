@@ -2,189 +2,139 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E96C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:43:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B436C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:43:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C18B621736
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:43:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550501015;
-	bh=DyuurUfuQtSAttTcG9JNUs/Z9oHcOkiyw63IqkJNp44=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YyoUEI7ZU01uoObpnRIIDRyhVqzFnGFnJs/x9RcSA3/Eg0TgjcTMHll1IHGq6JAHe
-	 1SCT/E2dn+CNmCfhyrcc0Dz5t02ymQsWwCXvHpAKR87o+00TgRGeZnzy2vt41a/dGI
-	 2T5fi4ZfTxpfwCPLKnRg2mWq031E1f6Mzgz+TYxQ=
+	by mail.kernel.org (Postfix) with ESMTP id 548AB21736
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:43:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UCDjMOzf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731975AbfBRNtM (ORCPT
+        id S1732141AbfBROnm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:49:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56298 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730684AbfBRNtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:49:09 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB33B21901;
-        Mon, 18 Feb 2019 13:49:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497748;
-        bh=DyuurUfuQtSAttTcG9JNUs/Z9oHcOkiyw63IqkJNp44=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yxAyCjKNoOprJbcJ7ayRKeEu/I0RJLhOZxg26KgSfAdtA6b53PI1Xme+5QyuFYvQz
-         FxMjiujNW54CGwd23U/uTD3vo7/+NrRRGCPexVaOID/E/86EG4PsriuACaSd+JIpgc
-         SaQfNb2QQCo8rz1QVHT1ZZLGaPdE9P0AwzZQ2YoM=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sandeep Patil <sspatil@android.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Daniel Colascione <dancol@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.20 72/92] mm: proc: smaps_rollup: fix pss_locked calculation
-Date:   Mon, 18 Feb 2019 14:43:15 +0100
-Message-Id: <20190218133501.617334685@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
-References: <20190218133454.668268457@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Mon, 18 Feb 2019 09:43:42 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:39959 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730366AbfBROnk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:43:40 -0500
+Received: by mail-wm1-f68.google.com with SMTP id t15so9256858wmi.5;
+        Mon, 18 Feb 2019 06:43:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=aeur/q/3yWzC3nkpi8nxeHc+K6TQc9JCz1dt6FZUrek=;
+        b=UCDjMOzfW5AIIYjmVupvfJW12cJU3lIQXbJnOsJM5ZlTpQ++dKScqq8ko80ZBQBEwZ
+         XLXbB/y1Q58WzAADmQeztpbGvVH4d/+5Bw7/PUaq9HDExwjQqtgoRrgissKpOzOBVylz
+         wklWwa/YQzbQtRW8xK3PHDra4DI/7sqQ9GXMsBy4rx0Kt2XpUHFSEYTwZulU1nOInabd
+         GcfndqbFIm8K1Jwvk8Iwxl1bD9/Jztw0nvlrVZDamzkWtTw8Pr+5qdHdonkyyAyVoeza
+         T57qxi6/ET0pgp90uIzw0AMrVvExmp//nMUb/Qi8ViWilw8VNtMf0se0SuhuoUX0N2P3
+         JuJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=aeur/q/3yWzC3nkpi8nxeHc+K6TQc9JCz1dt6FZUrek=;
+        b=E18r5D8/lNjsRtl8APuPO19BA441Xdk8iBvirlqbRnrg/e7ry8uotTNypj0PZnzweK
+         GieiggAhHUONjfFxhPa4kAOkC3Qh3cyWlAXZL7nuJpnNy70Cp27dXZ5xdQTdaURAp6XK
+         ZaL/Mv7BjuYPK20rY62LNOZqOMx8HyWmWPres7XS9hIags0tnfQSGzjW7RbhpuRIbJ3I
+         h2XxMN7muzPXqvbybI2jMCkDyX4IkiSgD0r+Qxdg0ES1d/ST2cWfJXaSppyaIgONYk4D
+         lHbHc3ESKS+BpxtIncfetmDQq2gMC3Jn3yikeRh88dGg0Olu+EjVMyU/Pdo5OYAADSpq
+         gyjA==
+X-Gm-Message-State: AHQUAuZIkX3P0EN8TRTGbjskcSUsfcUiXX30omwqJ/kMatGsvioAeQKU
+        Y/HmS6P1B+9Y9RagKxPXhRXMbiyb
+X-Google-Smtp-Source: AHgI3Ia1pKS7FgVeeJkhSzEw5jWEjA1WD+t/cRpB/vglsM8ItC1NfOMk49SmIBMJvj6r2OD5KEehZA==
+X-Received: by 2002:a7b:c0c3:: with SMTP id s3mr15391171wmh.141.1550501018870;
+        Mon, 18 Feb 2019 06:43:38 -0800 (PST)
+Received: from localhost (pD9E51D2D.dip0.t-ipconnect.de. [217.229.29.45])
+        by smtp.gmail.com with ESMTPSA id a8sm16839482wmh.26.2019.02.18.06.43.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Feb 2019 06:43:38 -0800 (PST)
+Date:   Mon, 18 Feb 2019 15:43:37 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Anders Roxell <anders.roxell@linaro.org>
+Cc:     airlied@linux.ie, daniel@ffwll.ch, jonathanh@nvidia.com,
+        dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/tegra: vic: fix implicit function declaration warning
+Message-ID: <20190218144337.GB19190@ulmo>
+References: <20190218110050.10589-1-anders.roxell@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="wq9mPyueHGvFACwf"
+Content-Disposition: inline
+In-Reply-To: <20190218110050.10589-1-anders.roxell@linaro.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.20-stable review patch.  If anyone has any objections, please let me know.
 
-------------------
+--wq9mPyueHGvFACwf
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-From: Sandeep Patil <sspatil@android.com>
+On Mon, Feb 18, 2019 at 12:00:50PM +0100, Anders Roxell wrote:
+> When CONFIG_IOMMU_API isn't set the following warnings pops up:
+>=20
+> drivers/gpu/drm/tegra/vic.c: In function =E2=80=98vic_boot=E2=80=99:
+> drivers/gpu/drm/tegra/vic.c:110:31: error: implicit declaration of functi=
+on =E2=80=98dev_iommu_fwspec_get=E2=80=99; did you mean =E2=80=98iommu_fwsp=
+ec_free=E2=80=99? [-Werror=3Dimplicit-function-declaration]
+>    struct iommu_fwspec *spec =3D dev_iommu_fwspec_get(vic->dev);
+>                                ^~~~~~~~~~~~~~~~~~~~
+>                                iommu_fwspec_free
+> drivers/gpu/drm/tegra/vic.c:110:31: warning: initialization of =E2=80=98s=
+truct iommu_fwspec *=E2=80=99 from =E2=80=98int=E2=80=99 makes pointer from=
+ integer without a cast [-Wint-conversion]
+> drivers/gpu/drm/tegra/vic.c:117:19: error: =E2=80=98struct iommu_fwspec=
+=E2=80=99 has no member named =E2=80=98num_ids=E2=80=99
+>    if (spec && spec->num_ids > 0) {
+>                    ^~
+> drivers/gpu/drm/tegra/vic.c:118:16: error: =E2=80=98struct iommu_fwspec=
+=E2=80=99 has no member named =E2=80=98ids=E2=80=99
+>     value =3D spec->ids[0] & 0xffff;
+>                 ^~
+>=20
+> Rework so that its inside a '#ifdef CONFIG_IOMMU_API' block.
+>=20
+> Fixes: f3779cb190a5 ("drm/tegra: vic: Support stream ID register programm=
+ing")
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> ---
+>  drivers/gpu/drm/tegra/vic.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-commit 27dd768ed8db48beefc4d9e006c58e7a00342bde upstream.
+Applied, thanks.
 
-The 'pss_locked' field of smaps_rollup was being calculated incorrectly.
-It accumulated the current pss everytime a locked VMA was found.  Fix
-that by adding to 'pss_locked' the same time as that of 'pss' if the vma
-being walked is locked.
+Thierry
 
-Link: http://lkml.kernel.org/r/20190203065425.14650-1-sspatil@android.com
-Fixes: 493b0e9d945f ("mm: add /proc/pid/smaps_rollup")
-Signed-off-by: Sandeep Patil <sspatil@android.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Daniel Colascione <dancol@google.com>
-Cc: <stable@vger.kernel.org>	[4.14.x, 4.19.x]
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+--wq9mPyueHGvFACwf
+Content-Type: application/pgp-signature; name="signature.asc"
 
----
- fs/proc/task_mmu.c |   22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -423,7 +423,7 @@ struct mem_size_stats {
- };
- 
- static void smaps_account(struct mem_size_stats *mss, struct page *page,
--		bool compound, bool young, bool dirty)
-+		bool compound, bool young, bool dirty, bool locked)
- {
- 	int i, nr = compound ? 1 << compound_order(page) : 1;
- 	unsigned long size = nr * PAGE_SIZE;
-@@ -450,24 +450,31 @@ static void smaps_account(struct mem_siz
- 		else
- 			mss->private_clean += size;
- 		mss->pss += (u64)size << PSS_SHIFT;
-+		if (locked)
-+			mss->pss_locked += (u64)size << PSS_SHIFT;
- 		return;
- 	}
- 
- 	for (i = 0; i < nr; i++, page++) {
- 		int mapcount = page_mapcount(page);
-+		unsigned long pss = (PAGE_SIZE << PSS_SHIFT);
- 
- 		if (mapcount >= 2) {
- 			if (dirty || PageDirty(page))
- 				mss->shared_dirty += PAGE_SIZE;
- 			else
- 				mss->shared_clean += PAGE_SIZE;
--			mss->pss += (PAGE_SIZE << PSS_SHIFT) / mapcount;
-+			mss->pss += pss / mapcount;
-+			if (locked)
-+				mss->pss_locked += pss / mapcount;
- 		} else {
- 			if (dirty || PageDirty(page))
- 				mss->private_dirty += PAGE_SIZE;
- 			else
- 				mss->private_clean += PAGE_SIZE;
--			mss->pss += PAGE_SIZE << PSS_SHIFT;
-+			mss->pss += pss;
-+			if (locked)
-+				mss->pss_locked += pss;
- 		}
- 	}
- }
-@@ -490,6 +497,7 @@ static void smaps_pte_entry(pte_t *pte,
- {
- 	struct mem_size_stats *mss = walk->private;
- 	struct vm_area_struct *vma = walk->vma;
-+	bool locked = !!(vma->vm_flags & VM_LOCKED);
- 	struct page *page = NULL;
- 
- 	if (pte_present(*pte)) {
-@@ -532,7 +540,7 @@ static void smaps_pte_entry(pte_t *pte,
- 	if (!page)
- 		return;
- 
--	smaps_account(mss, page, false, pte_young(*pte), pte_dirty(*pte));
-+	smaps_account(mss, page, false, pte_young(*pte), pte_dirty(*pte), locked);
- }
- 
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-@@ -541,6 +549,7 @@ static void smaps_pmd_entry(pmd_t *pmd,
- {
- 	struct mem_size_stats *mss = walk->private;
- 	struct vm_area_struct *vma = walk->vma;
-+	bool locked = !!(vma->vm_flags & VM_LOCKED);
- 	struct page *page;
- 
- 	/* FOLL_DUMP will return -EFAULT on huge zero page */
-@@ -555,7 +564,7 @@ static void smaps_pmd_entry(pmd_t *pmd,
- 		/* pass */;
- 	else
- 		VM_BUG_ON_PAGE(1, page);
--	smaps_account(mss, page, true, pmd_young(*pmd), pmd_dirty(*pmd));
-+	smaps_account(mss, page, true, pmd_young(*pmd), pmd_dirty(*pmd), locked);
- }
- #else
- static void smaps_pmd_entry(pmd_t *pmd, unsigned long addr,
-@@ -737,11 +746,8 @@ static void smap_gather_stats(struct vm_
- 		}
- 	}
- #endif
--
- 	/* mmap_sem is held in m_start */
- 	walk_page_vma(vma, &smaps_walk);
--	if (vma->vm_flags & VM_LOCKED)
--		mss->pss_locked += mss->pss;
- }
- 
- #define SEQ_PUT_DEC(str, val) \
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxqxJgACgkQ3SOs138+
+s6FdzxAAqMQwVpAXY7534MRScbODw+x2lR1SKl9F6NuD2JXGRtMUFBPehoy/2Z/P
+pWmBhDczB9oqD7kbLPeyjcmg1UH76F7ozMFpbmuL8+G/UFBBkv5tFnzWGWGremPC
+DdmOUVwb79F10AUFmhb2lzvYD7IqV0FVWcQ9TmTpXnEr41jvXtGrmwbhOvS0Ihfa
+l1fx07dybPZ3M/qmMHxT7Jf8iXPvxOv5KUjSpbIo89JXOguMirXNt1W5PfUkA2j+
+D5ek4bHO2Y83kSUi2lQ99qZ7Yfm2XLkutGrGS1aWaWPkPusz9eAoBPOQhNs28Jjq
+NC7VcuztkJDVMZYa2MR+vtMoGD371/OdHST7lI+4KfM+u5oE/rWx/CzK8gUc6Nlm
+3QyIsLsf2/NAoK77FSffAtrTq2TBUviZFEPKxZ2RcZkAji22DkQtQfv1UgPAGbPK
+RFju4jRiez2QPEj6HzIZllrZSkkD0GTaN6vc2BsJ1ZCkLutB2GyQMJPFJtWlxlvp
+Q4+UumjC3COO5XHZhh5WLfMqYfvI1A0hLk/2C1aILC83xh36ZJUjdNAejtpAPa/6
+O1BLgZRphcNtXfRzr2Kojd7yL2oHchazE7vqEO5qQeHe4V7fkHFp0m/7gn28RuXn
+KkKV2p56dYWnXfDU9mvN2d3kvzqT3wIkM+tx/qDP3pmRgmYYdGA=
+=6gu4
+-----END PGP SIGNATURE-----
 
-
+--wq9mPyueHGvFACwf--
