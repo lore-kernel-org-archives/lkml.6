@@ -2,94 +2,97 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFBAAC4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:46:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D12C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:47:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B00C92184A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:46:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA2472184A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:47:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="sfIDCqcd"
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="q43yr37d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728248AbfBRCqL (ORCPT
+        id S1728684AbfBRCrC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 21:46:11 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:42883 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727517AbfBRCqL (ORCPT
+        Sun, 17 Feb 2019 21:47:02 -0500
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:52579 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728661AbfBRCrB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 21:46:11 -0500
-Received: by mail-lj1-f196.google.com with SMTP id d14so1821758ljl.9
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 18:46:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=/DFwKuZhp2tGU3us6NJa0n5ClRLptAu1w9i5MbORi1M=;
-        b=sfIDCqcdOgxM6O9aAAqtZFjFWOJI+8fFxB3Ka8z80V1UdQ5bGCGBHkv9UTNkNe0Mzt
-         eFIzlvt8RtfWMyaRAEQNkTiOHRNTPMHKzyqVFoJgVA0ye3IphqmE8Xsfk0oW9NL1rVaH
-         wdNU4u8WJ2evLyJyCwIttFzdNk3IkHqh/QhoT/cvlBVAn9Whii+J+O2eAPrOGskSOUwj
-         xypDlv6Zwb9An+ZX3vYRWt+Na6JEQISntD/qhKddagBhWpXUX7NDt//1u33B6/nDYto7
-         Ws8+XC14CCTqaAL4e4K5fUv5R6Uq6+WqcSqTWAk+d0UTZanFIoabr7QmNT/bophUiMnV
-         RpMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=/DFwKuZhp2tGU3us6NJa0n5ClRLptAu1w9i5MbORi1M=;
-        b=G3EKbSj+oVp8Of+SEM6Hw604CL1dhV7NvXa0saOQK1p9xP1g0icNaP3zyaBV/kAA64
-         YJ2w5qNLX3guG1B2tGG3eGhQqACrjhJQHRZdqG82btwaDMg3cTcUBYmOqkkEli3HEnev
-         S9rdauGYTYTIAL1pwnqS24trB3YuMUZ7nqz5l7l1uw54qNVGhdufAI0EM8S9RtEAwKS2
-         9yn2uCfBBHM51qFdQ5HxBo7CbLgzgnvNl3Rm0XuICmfVqfKLG5BV+poO7BV2BOaXZY23
-         kOP1Uuiv6sQW6jkEVpQgc94vidHu0BI2JuFyFyf5b+zHpeOjng15Q7EP6KaW0ZcPADZq
-         aeDQ==
-X-Gm-Message-State: AHQUAuYgjUDEQO0JiDKBIjfy8If8Lb7Su/b9JdIFYo5r4I/fl4HGRQvA
-        QSYfleT+ARA249lxNVhDLoqm44c7EfasHgy3JzUx
-X-Google-Smtp-Source: AHgI3IYLzrhZQodvsXcPvyhPGwNyP3HL+2e5zzLCWSy5/pcGAcvohlbqnDcpE0X+wSIBYk8Tz2XUeDvnKfJivuGH/uQ=
-X-Received: by 2002:a2e:968c:: with SMTP id q12mr2450505lji.95.1550457968559;
- Sun, 17 Feb 2019 18:46:08 -0800 (PST)
+        Sun, 17 Feb 2019 21:47:01 -0500
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 5EB858025D;
+        Mon, 18 Feb 2019 15:46:59 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1550458019;
+        bh=n1alTCC7WHm6zo9Ntn3rKKP6y1i5sw0ivAch/0Pk6pY=;
+        h=From:To:Cc:Subject:Date;
+        b=q43yr37d5ZEeKVh3FltxlV03mPzWYQfbuXlwrStnrGAt/8bur8wAx+nT3PQDMrhR6
+         UssJFDNQLhP5gLUE7Xsbvr9tDRgxcXf/eZeZ1Ng8a84SHe/6IVJMaF8ysuxsgjpCoG
+         XJSRHD5rZ1WreLUCMdiugOUup2gz/krrxkdfSHryckMi8OKgyNEta8AcoTCji3IViI
+         h6QVL/XvsLi3VAHXAg2EQjimIkC2L8dqQK85dpPIv+m7nzaa7cDCIyYNA7MNxqKWIM
+         ESZaDPBQFDWXa+bxhDo/I1EjevObbLnqoqTAi5/JAYvNp3IoFFfp0fL0+0bejSj+OM
+         vEuWlChZPNgBQ==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5c6a1ca10000>; Mon, 18 Feb 2019 15:46:59 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+        by smtp (Postfix) with ESMTP id 7918A13EEFC;
+        Mon, 18 Feb 2019 15:46:57 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id 626091E111B; Mon, 18 Feb 2019 15:46:57 +1300 (NZDT)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     andrew@lunn.ch, jason@lakedaemon.net, gregory.clement@bootlin.com
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Russell King <linux@armlinux.org.uk>
+Subject: [PATCH] ARM: mvebu: kirkwood: remove error message when retrieving mac address
+Date:   Mon, 18 Feb 2019 15:46:45 +1300
+Message-Id: <20190218024645.29059-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190212182318.GA16669@beast> <5260689d-9016-bdf4-6070-13d2c88ac8a8@schaufler-ca.com>
- <4ed50852-abfb-773b-01e4-b4ac83e32ed3@I-love.SAKURA.ne.jp>
-In-Reply-To: <4ed50852-abfb-773b-01e4-b4ac83e32ed3@I-love.SAKURA.ne.jp>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sun, 17 Feb 2019 21:45:57 -0500
-Message-ID: <CAHC9VhSy8iVUtN1Wt+cy-2RmJQhy34=0zKrUj+RQNEvNuD7y0w@mail.gmail.com>
-Subject: Re: [PATCH v2] LSM: Ignore "security=" when "lsm=" is specified
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     SELinux <selinux@vger.kernel.org>, kernel-team@lists.ubuntu.com,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Kees Cook <keescook@chromium.org>,
-        James Morris <jmorris@namei.org>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Feb 17, 2019 at 12:17 AM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> On 2019/02/14 1:05, Casey Schaufler wrote:
-> > On 2/12/2019 10:23 AM, Kees Cook wrote:
-> >> To avoid potential confusion, explicitly ignore "security=" when "lsm=" is
-> >> used on the command line, and report that it is happening.
-> >>
-> >> Suggested-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-> >> Signed-off-by: Kees Cook <keescook@chromium.org>
-> >
-> > Acked-by: Casey Schaufler <casey@schaufler-ca.com>
->
-> The manual for TOMOYO was updated to follow this change.
-> SELinux folks and AppArmor folks, can we apply this change?
+Kirkwood has always had the ability to retrieve the local-mac-address
+from the hardware (usually this was configured by the bootloader). This
+is particularly useful when dealing with a legacy non-DT aware
+bootloader.
 
-My main concern is that "selinux={0|1}" continues to work as it has
-for years.  It doesn't look like this affects that, but I can't say
-I've dug into these changes very far.
+The "error" message just indicated that the board used an old bootloader
+and in many cases users can't do anything about this. The message
+probably should have been pr_info() to inform the user that the kernel
+has been helpful but rather than than let's remove it entirely to make
+the kernel less noisy.
 
--- 
-paul moore
-www.paul-moore.com
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
+ arch/arm/mach-mvebu/kirkwood.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/arch/arm/mach-mvebu/kirkwood.c b/arch/arm/mach-mvebu/kirkwoo=
+d.c
+index 0aa88105d46e..bf3ff0f580c2 100644
+--- a/arch/arm/mach-mvebu/kirkwood.c
++++ b/arch/arm/mach-mvebu/kirkwood.c
+@@ -107,8 +107,6 @@ static void __init kirkwood_dt_eth_fixup(void)
+ 		clk_prepare_enable(clk);
+=20
+ 		/* store MAC address register contents in local-mac-address */
+-		pr_err(FW_INFO "%pOF: local-mac-address is not set\n", np);
+-
+ 		pmac =3D kzalloc(sizeof(*pmac) + 6, GFP_KERNEL);
+ 		if (!pmac)
+ 			goto eth_fixup_no_mem;
+--=20
+2.20.1
+
