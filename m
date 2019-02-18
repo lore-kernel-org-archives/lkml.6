@@ -2,82 +2,106 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46517C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:31:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66CA6C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:31:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11A1D2184E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:31:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32BBC218C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:31:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550478718;
+	bh=wmH5xtrgzA6vrA5s9kCPo+qLnTfqVMbr6qZ+lWy+EM4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=ol3VFNsMXMFj1zUvEGHsdeI8r1ENBjAKukeH94uDgfsAuz1GWayNj428jW8LpSLbT
+	 A3IZ+LwtltRG9uZElqbqpd/VlChduqiIceZz4z8agRKlyhSzW1tGUzF7uH9k6N4jv5
+	 dDCmu63+ZPkltOQKcy5Cq9RR5Kmi6mqxBvWbLexw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729251AbfBRIbi (ORCPT
+        id S1729266AbfBRIb4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 03:31:38 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3763 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728690AbfBRIbi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 03:31:38 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id B309D4A8F2C3A0164ED5;
-        Mon, 18 Feb 2019 16:31:35 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 18 Feb 2019 16:31:26 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
-        <David1.Zhou@amd.com>, <airlied@linux.ie>, <daniel@ffwll.ch>
-CC:     YueHaibing <yuehaibing@huawei.com>,
-        <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] drm/radeon: remove set but not used variable 'vbi_time_out'
-Date:   Mon, 18 Feb 2019 08:45:14 +0000
-Message-ID: <20190218084514.194011-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        Mon, 18 Feb 2019 03:31:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59508 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728690AbfBRIb4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 03:31:56 -0500
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22F2F218C3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 08:31:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550478715;
+        bh=wmH5xtrgzA6vrA5s9kCPo+qLnTfqVMbr6qZ+lWy+EM4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=pD6cFgu9rQIBsdvsW3SekMfzUj6fRazCGoqLUXEWqvZEyNpaeFA+M5VPt94f5Ld1U
+         ijXWJ2kOsKhUniOiazelRKlDF16vvccnJGKd1ykhPMy1JQpEJBNhVSDz1ZcHlskofc
+         vZ+1TJN4S2CHcgqpdoOOcFcuia6UA8f2V1yyjS0A=
+Received: by mail-lf1-f50.google.com with SMTP id n15so11632699lfe.5
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 00:31:55 -0800 (PST)
+X-Gm-Message-State: AHQUAuYZhT6skpnRxBCocwp6CMgBu3Xc4XWLh/5qIPNJyI++obX5NZDj
+        l3IDMVZEs2tqnXjLsFXqF3Ym0DzICj2+PP4bGUk=
+X-Google-Smtp-Source: AHgI3IZoFcJL28ctPEYUCpGrFnIwO2+Z/GGca1/qGaJRZdLKm5M9Xwo5aAW/zr7opiASot7/ykth+xaA7ebzpqhVxBU=
+X-Received: by 2002:a19:d83:: with SMTP id 125mr12665670lfn.159.1550478713232;
+ Mon, 18 Feb 2019 00:31:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+References: <CGME20190215144822epcas2p4a6187a4e4d45c7ac3ea067ac428b3678@epcas2p4.samsung.com>
+ <20190215144809.28007-1-s.nawrocki@samsung.com>
+In-Reply-To: <20190215144809.28007-1-s.nawrocki@samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Mon, 18 Feb 2019 09:31:42 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPdViVjS9ZzbBy94+UPK6-DEbCdPx-vsAa-SvrntyNunAA@mail.gmail.com>
+Message-ID: <CAJKOXPdViVjS9ZzbBy94+UPK6-DEbCdPx-vsAa-SvrntyNunAA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ASoC: samsung: i2s: Fix the secondary platform device registration
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     broonie@kernel.org, lgirdwood@gmail.com, sbkim73@samsung.com,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+On Fri, 15 Feb 2019 at 15:48, Sylwester Nawrocki <s.nawrocki@samsung.com> wrote:
+>
+> This fixes unregistration of the secondary platform device so all
+> resources are properly released. The test for NULL priv->pdev_sec
+> is not necessary and it is removed.
+>
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> ---
+> This patch is based off of ASoC for-next and patches:
+>  ASoC: samsung: odroid: Ensure proper sample rate on pri/sec PCM
+>  ASoC: samsung: i2s: Prevent potential NULL platform data dereference
+>  ASoC: samsung: odroid: Add missing DAPM routes
+>
+>  sound/soc/samsung/i2s.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+>
+> diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+> index 6bf0f55d1e51..e36c44e2f1bb 100644
+> --- a/sound/soc/samsung/i2s.c
+> +++ b/sound/soc/samsung/i2s.c
+> @@ -1359,11 +1359,10 @@ static int i2s_create_secondary_device(struct samsung_i2s_priv *priv)
+>
+>  static void i2s_delete_secondary_device(struct samsung_i2s_priv *priv)
+>  {
+> -       if (priv->pdev_sec) {
+> -               platform_device_del(priv->pdev_sec);
+> -               priv->pdev_sec = NULL;
+> -       }
+> +       platform_device_unregister(priv->pdev_sec);
+> +       priv->pdev_sec = NULL;
 
-drivers/gpu/drm/radeon/si_dpm.c: In function 'si_program_response_times':
-drivers/gpu/drm/radeon/si_dpm.c:3640:29: warning:
- variable 'backbias_response_time' set but not used [-Wunused-but-set-variable]
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-It never used since introduction.
+Although I think that you might need to re-order calls in
+samsung_i2s_remove(). In general they should be in exact reverse order
+of probe(). In this case, clk_disable_unprepare(priv->clk) should be
+after unregistering secondary device. If order has to be different
+because of some reasons - could you document them in comment?
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/gpu/drm/radeon/si_dpm.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/radeon/si_dpm.c b/drivers/gpu/drm/radeon/si_dpm.c
-index 0a785ef0ab66..de8bd245497f 100644
---- a/drivers/gpu/drm/radeon/si_dpm.c
-+++ b/drivers/gpu/drm/radeon/si_dpm.c
-@@ -3637,14 +3637,13 @@ static int si_notify_smc_display_change(struct radeon_device *rdev,
- 
- static void si_program_response_times(struct radeon_device *rdev)
- {
--	u32 voltage_response_time, backbias_response_time, acpi_delay_time, vbi_time_out;
-+	u32 voltage_response_time, acpi_delay_time, vbi_time_out;
- 	u32 vddc_dly, acpi_dly, vbi_dly;
- 	u32 reference_clock;
- 
- 	si_write_smc_soft_register(rdev, SI_SMC_SOFT_REGISTER_mvdd_chg_time, 1);
- 
- 	voltage_response_time = (u32)rdev->pm.dpm.voltage_response_time;
--	backbias_response_time = (u32)rdev->pm.dpm.backbias_response_time;
- 
- 	if (voltage_response_time == 0)
- 		voltage_response_time = 1000;
-
-
-
+Best regards,
+Krzysztof
