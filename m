@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F57C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:19:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF798C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:19:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22C0321902
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:19:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A312B21901
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:19:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499585;
-	bh=O9zp4adY/8RJK/DcvByr6q2DT7tyKXSFn5YKE8GMT9Q=;
+	s=default; t=1550499592;
+	bh=WC4utT67xxDaNq7Ve0dGMUF+3iznKeNW/Q1CpYU2+YA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fLyI2wsG3AK1/qd8poiyzJMBdrby7kRXD4Ei33AM9FGJlZAALG67eJcNpActhY/uN
-	 3Lt+MXjSrhC2HdsiZ7A+IIUDihYa9TgAXNg3QUw0CO/zyIWc/kUqA5114g2sRLy50H
-	 BZQP/cJXIapWgsx4YC38fD7Ego57xBZ+155Bq3rk=
+	b=moyQu7rooe3OcKD/4jvArIhQV3tO2BNN4qOINV/X6YviUvBPsMjCRrmU5tYHiyqxB
+	 fZadZsz9bNRjX8hQa2H1ZMIUQ0V9YgnGeRGWMkbSRzl1swg2/MXL9/d6/sMQtvQaQn
+	 lUxD7VYMjJ3MmK7jlBTEM2HcHbJ0+F/CQ3O3B/SA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390680AbfBROTn (ORCPT
+        id S2390849AbfBROTv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:19:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51168 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:19:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390795AbfBROH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:07:57 -0500
+        id S2389931AbfBROHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:07:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86FC321916;
-        Mon, 18 Feb 2019 14:07:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F9E721917;
+        Mon, 18 Feb 2019 14:07:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498877;
-        bh=O9zp4adY/8RJK/DcvByr6q2DT7tyKXSFn5YKE8GMT9Q=;
+        s=default; t=1550498870;
+        bh=WC4utT67xxDaNq7Ve0dGMUF+3iznKeNW/Q1CpYU2+YA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bx2YDMkw6Cq2ctSyEiw5/ku5MsbpFcCFzaUZJSBF5iB4BTsZYkaYDpaHzB4QAA6X5
-         T95wU7c/25CJpy96O7vlxrilU673qrggQtk57zHMEgwncVwZILgUJZAtvd0BpBLqIT
-         qvEwZlVaLVld5Fpba24eol85SZFopPByy7rh8O1s=
+        b=Y9Av9UlD+YaBM/vu0Bh91/o3rP30DPpp2+ovgehYwFC8PG8adRwM6/fvs26apC29N
+         +hkvucOoy2FgTwkKuUFGDjdmrSEgI5J7S1PcEZP76T5LB6Hm4loIXJ/Lu54zWUy2EU
+         8Sm52z2x1FdrEnKQX4AQ65ZUe1YOQoGQEiGYXky0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Matti Kurkela <Matti.Kurkela@iki.fi>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.4 131/143] Input: elantech - enable 3rd button support on Fujitsu CELSIUS H780
-Date:   Mon, 18 Feb 2019 14:44:19 +0100
-Message-Id: <20190218133533.771686744@linuxfoundation.org>
+        stable@vger.kernel.org, Manuel Reinhardt <manuel.rhdt@gmail.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.4 129/143] ALSA: usb-audio: Fix implicit fb endpoint setup by quirk
+Date:   Mon, 18 Feb 2019 14:44:17 +0100
+Message-Id: <20190218133533.703740169@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -65,52 +65,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Matti Kurkela <Matti.Kurkela@iki.fi>
+From: Manuel Reinhardt <manuel.rhdt@gmail.com>
 
-commit e8b22d0a329f0fb5c7ef95406872d268f01ee3b1 upstream.
+commit 2bc16b9f3223d049b57202ee702fcb5b9b507019 upstream.
 
-Like Fujitsu CELSIUS H760, the H780 also has a three-button Elantech
-touchpad, but the driver needs to be told so to enable the middle touchpad
-button.
+The commit a60945fd08e4 ("ALSA: usb-audio: move implicit fb quirks to
+separate function") introduced an error in the handling of quirks for
+implicit feedback endpoints. This commit fixes this.
 
-The elantech_dmi_force_crc_enabled quirk was not necessary with the H780.
+If a quirk successfully sets up an implicit feedback endpoint, usb-audio
+no longer tries to find the implicit fb endpoint itself.
 
-Also document the fw_version and caps values detected for both H760 and
-H780 models.
-
-Signed-off-by: Matti Kurkela <Matti.Kurkela@iki.fi>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Fixes: a60945fd08e4 ("ALSA: usb-audio: move implicit fb quirks to separate function")
+Signed-off-by: Manuel Reinhardt <manuel.rhdt@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/elantech.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ sound/usb/pcm.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/drivers/input/mouse/elantech.c
-+++ b/drivers/input/mouse/elantech.c
-@@ -1121,6 +1121,8 @@ static int elantech_get_resolution_v4(st
-  * Asus UX31               0x361f00        20, 15, 0e      clickpad
-  * Asus UX32VD             0x361f02        00, 15, 0e      clickpad
-  * Avatar AVIU-145A2       0x361f00        ?               clickpad
-+ * Fujitsu CELSIUS H760    0x570f02        40, 14, 0c      3 hw buttons (**)
-+ * Fujitsu CELSIUS H780    0x5d0f02        41, 16, 0d      3 hw buttons (**)
-  * Fujitsu LIFEBOOK E544   0x470f00        d0, 12, 09      2 hw buttons
-  * Fujitsu LIFEBOOK E546   0x470f00        50, 12, 09      2 hw buttons
-  * Fujitsu LIFEBOOK E547   0x470f00        50, 12, 09      2 hw buttons
-@@ -1173,6 +1175,13 @@ static const struct dmi_system_id elante
- 			DMI_MATCH(DMI_PRODUCT_NAME, "CELSIUS H760"),
- 		},
- 	},
-+	{
-+		/* Fujitsu H780 also has a middle button */
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "FUJITSU"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "CELSIUS H780"),
-+		},
-+	},
- #endif
- 	{ }
- };
+--- a/sound/usb/pcm.c
++++ b/sound/usb/pcm.c
+@@ -313,6 +313,9 @@ static int search_roland_implicit_fb(str
+ 	return 0;
+ }
+ 
++/* Setup an implicit feedback endpoint from a quirk. Returns 0 if no quirk
++ * applies. Returns 1 if a quirk was found.
++ */
+ static int set_sync_ep_implicit_fb_quirk(struct snd_usb_substream *subs,
+ 					 struct usb_device *dev,
+ 					 struct usb_interface_descriptor *altsd,
+@@ -381,7 +384,7 @@ add_sync_ep:
+ 
+ 	subs->data_endpoint->sync_master = subs->sync_endpoint;
+ 
+-	return 0;
++	return 1;
+ }
+ 
+ static int set_sync_endpoint(struct snd_usb_substream *subs,
+@@ -420,6 +423,10 @@ static int set_sync_endpoint(struct snd_
+ 	if (err < 0)
+ 		return err;
+ 
++	/* endpoint set by quirk */
++	if (err > 0)
++		return 0;
++
+ 	if (altsd->bNumEndpoints < 2)
+ 		return 0;
+ 
 
 
