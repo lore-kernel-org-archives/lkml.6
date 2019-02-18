@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B91DFC10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A236C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8165A20842
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEE0D20842
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498570;
-	bh=UWH2TC2pRDdl9d3AqWLosnPdQ2oaKAxu+4cL3c0jQu8=;
+	s=default; t=1550498574;
+	bh=zuMB8RNTtf22NcGKGiUxRmFYu/XKNx5T+J+v+stytpk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ErF4c8w9cQcV4iggOTwyVMWuL0WHPeDUPPXLQCq0ICCHt+zvp2XO44PU7NSSGbZID
-	 TfP/avTSyJGMmCgF4x4YdrfvOzYJnmW6NrUhK1+OZ/ehOvTx/scdnkaCX/8toOlwjS
-	 9o55zU+zYCG9sme5mJvJMWj5Y3YVv1FI1cpdXZUg=
+	b=BT8/qTf52th/0/WcvWfii3jOv/fBllR7HkaH4zjduQXxKxydOrjAMEHxRU9xiXRaa
+	 tNuflEsZwuTYxYVj9qkObxER/JC5GlqONQwui7G6ViAskNaULCyO9T+KBuYh9lsqVW
+	 siccWRp0URhL1eJYEBRJIs9qtOShu0Svow4FmHG8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389521AbfBROCt (ORCPT
+        id S2388906AbfBROCw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:02:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44600 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:02:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44672 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389486AbfBROCq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:02:46 -0500
+        id S2389486AbfBROCu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:02:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77E9E2070D;
-        Mon, 18 Feb 2019 14:02:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0CB0B2173C;
+        Mon, 18 Feb 2019 14:02:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498566;
-        bh=UWH2TC2pRDdl9d3AqWLosnPdQ2oaKAxu+4cL3c0jQu8=;
+        s=default; t=1550498569;
+        bh=zuMB8RNTtf22NcGKGiUxRmFYu/XKNx5T+J+v+stytpk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l+L1O2/n9JBfxhHklLQwKyAQHBPKEoOqX7Dqv8/wiy2tu1oFaJ6I2/yFXRI4YUGG2
-         ZEY6ktJSPA/5xzS/ICRISRBW1cCh/xjLnqzFGE0i5sJMZJUQ5KiGFs6Y83uq+8hUn9
-         mBZ0wqBdJF+uPQf8ASx69FHWtehcAju1uAIEtFpw=
+        b=qqzANzrrr+FW2Jm2vj6dulzPrjOLy4SdR6BsMfQx9nGqfyj6CLlV4Na8Y3ri0nGUi
+         31dc4AweMT91FJqEbDuKhbTAFI1RIRELM6nPczujvklX8hLvoYqkS0JiPF81ukJqdN
+         KJjuw6lBFhy/8S90sUIAc50F3YDjhiFObqpKfcBM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yunlei He <heyunlei@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 017/143] f2fs: move dir data flush to write checkpoint process
-Date:   Mon, 18 Feb 2019 14:42:25 +0100
-Message-Id: <20190218133529.788746982@linuxfoundation.org>
+Subject: [PATCH 4.4 043/143] xfrm6_tunnel: Fix spi check in __xfrm6_tunnel_alloc_spi
+Date:   Mon, 18 Feb 2019 14:42:51 +0100
+Message-Id: <20190218133530.717207836@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -66,46 +66,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b61ac5b720146c619c7cdf17eff2551b934399e5 ]
+[ Upstream commit fa89a4593b927b3f59c3b69379f31d3b22272e4e ]
 
-This patch move dir data flush to write checkpoint process, by
-doing this, it may reduce some time for dir fsync.
+gcc warn this:
 
-pre:
-	-f2fs_do_sync_file enter
-		-file_write_and_wait_range  <- flush & wait
-		-write_checkpoint
-			-do_checkpoint	    <- wait all
-	-f2fs_do_sync_file exit
+net/ipv6/xfrm6_tunnel.c:143 __xfrm6_tunnel_alloc_spi() warn:
+ always true condition '(spi <= 4294967295) => (0-u32max <= u32max)'
 
-now:
-	-f2fs_do_sync_file enter
-		-write_checkpoint
-			-block_operations   <- flush dir & no wait
-			-do_checkpoint	    <- wait all
-	-f2fs_do_sync_file exit
+'spi' is u32, which always not greater than XFRM6_TUNNEL_SPI_MAX
+because of wrap around. So the second forloop will never reach.
 
-Signed-off-by: Yunlei He <heyunlei@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/file.c | 3 +++
+ net/ipv6/xfrm6_tunnel.c | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 96bfd9f0ea02..bee3bc7a16ac 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -200,6 +200,9 @@ int f2fs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
- 
- 	trace_f2fs_sync_file_enter(inode);
- 
-+	if (S_ISDIR(inode->i_mode))
-+		goto go_write;
+diff --git a/net/ipv6/xfrm6_tunnel.c b/net/ipv6/xfrm6_tunnel.c
+index 5743044cd660..56b72cada346 100644
+--- a/net/ipv6/xfrm6_tunnel.c
++++ b/net/ipv6/xfrm6_tunnel.c
+@@ -144,6 +144,9 @@ static u32 __xfrm6_tunnel_alloc_spi(struct net *net, xfrm_address_t *saddr)
+ 		index = __xfrm6_tunnel_spi_check(net, spi);
+ 		if (index >= 0)
+ 			goto alloc_spi;
 +
- 	/* if fdatasync is triggered, let's do in-place-update */
- 	if (get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
- 		set_inode_flag(fi, FI_NEED_IPU);
++		if (spi == XFRM6_TUNNEL_SPI_MAX)
++			break;
+ 	}
+ 	for (spi = XFRM6_TUNNEL_SPI_MIN; spi < xfrm6_tn->spi; spi++) {
+ 		index = __xfrm6_tunnel_spi_check(net, spi);
 -- 
 2.19.1
 
