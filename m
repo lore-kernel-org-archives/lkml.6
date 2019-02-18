@@ -2,315 +2,390 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22F04C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 11:24:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA532C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 11:24:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0DE62147C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 11:24:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=armh.onmicrosoft.com header.i=@armh.onmicrosoft.com header.b="Q5k32Tlp"
+	by mail.kernel.org (Postfix) with ESMTP id 6E68B2147C
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 11:24:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730768AbfBRLYN (ORCPT
+        id S1730812AbfBRLYV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 06:24:13 -0500
-Received: from mail-eopbgr150079.outbound.protection.outlook.com ([40.107.15.79]:52597
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        Mon, 18 Feb 2019 06:24:21 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3769 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728647AbfBRLX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 06:23:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
- s=selector1-arm-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ua2Y2pqLglvhPkZ5x4rnHUcO+Ns/IxJSCHYCvBPPNoc=;
- b=Q5k32TlppmzCtC/ulLxPV4cJ/up4QTPgc4l+w4pRq97/6vkVBnHdHiVdbZVk9+I7jlarqrSXXxBZNuBBAZ1uzHvw3+tiIc+wr+vYE3vY7LMg9gwrWPZGSI0fSQVq2tLnWNt25zQuWsb9553d3Tf+WXwctnCJiby3+R+hSJHorHw=
-Received: from VI1PR08MB3742.eurprd08.prod.outlook.com (20.178.15.26) by
- VI1PR08MB3040.eurprd08.prod.outlook.com (52.133.14.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.16; Mon, 18 Feb 2019 11:23:53 +0000
-Received: from VI1PR08MB3742.eurprd08.prod.outlook.com
- ([fe80::2508:8790:80cb:2f91]) by VI1PR08MB3742.eurprd08.prod.outlook.com
- ([fe80::2508:8790:80cb:2f91%6]) with mapi id 15.20.1622.018; Mon, 18 Feb 2019
- 11:23:53 +0000
-From:   Mark Rutland <Mark.Rutland@arm.com>
-To:     Steven Price <Steven.Price@arm.com>
-CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <Catalin.Marinas@arm.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        James Morse <James.Morse@arm.com>,
-        =?iso-8859-1?Q?J=E9r=F4me_Glisse?= <jglisse@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <Will.Deacon@arm.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 06/13] mm: pagewalk: Add 'depth' parameter to pte_hole
-Thread-Topic: [PATCH 06/13] mm: pagewalk: Add 'depth' parameter to pte_hole
-Thread-Index: AQHUxVB7+BoYcscuHEWALktrgxL4UKXlbjYA
-Date:   Mon, 18 Feb 2019 11:23:53 +0000
-Message-ID: <20190218112350.GE8036@lakrids.cambridge.arm.com>
-References: <20190215170235.23360-1-steven.price@arm.com>
- <20190215170235.23360-7-steven.price@arm.com>
-In-Reply-To: <20190215170235.23360-7-steven.price@arm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
-x-originating-ip: [217.140.106.52]
-x-clientproxiedby: LO2P265CA0329.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a4::29) To VI1PR08MB3742.eurprd08.prod.outlook.com
- (2603:10a6:803:bc::26)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Mark.Rutland@arm.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 370a9579-1a6c-451b-2e5e-08d695939028
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR08MB3040;
-x-ms-traffictypediagnostic: VI1PR08MB3040:
-x-microsoft-exchange-diagnostics: 1;VI1PR08MB3040;20:j3A26RUPxyVy73IxvMJUrlJIUlgZiBohxGZW3WtKAldNIbRtRL02dglFutJEmghL1zRlUvvvHRC4JYyz2IkEipAse0/9hzIv/rPlCJJngEUBt8rdIS7ywKmZEHGbqDNDXvaBjuv71X+RaxJS9yDydhIAHZNNOKrmIObs9BHnGDs=
-x-microsoft-antispam-prvs: <VI1PR08MB3040736376D9DA0A8F28240D84630@VI1PR08MB3040.eurprd08.prod.outlook.com>
-x-forefront-prvs: 09525C61DB
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(39860400002)(346002)(396003)(136003)(40434004)(189003)(199004)(8936002)(186003)(99286004)(6636002)(25786009)(229853002)(81166006)(81156014)(7736002)(8676002)(5660300002)(26005)(68736007)(316002)(86362001)(446003)(1076003)(14454004)(72206003)(2906002)(6506007)(386003)(476003)(305945005)(11346002)(478600001)(102836004)(6116002)(3846002)(44832011)(6512007)(6246003)(53936002)(58126008)(71200400001)(54906003)(14444005)(4326008)(256004)(6436002)(33656002)(5024004)(71190400001)(105586002)(76176011)(52116002)(7416002)(486006)(97736004)(66066001)(6862004)(6486002)(106356001)(18370500001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR08MB3040;H:VI1PR08MB3742.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: arm.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: AlU0ZG8sPR36ZyJW9lSnMGHUc7UfbyIfYyDgaUgLTowsd+vfNIW3shucra3cU+jblcq6ml48MigkLwjRFLEtcZyjOYQt7RCLhta3e9gb56Kwo8BnFvCuu4O1DV9ZWlGzVb+5TlwnuxE90mrvJU2PHM0qYL1UZNlvDCZILiUi9AmmTTNBFO7cRbPFt7OH5Xep39UvrF2/V1Ow6lPj3fseicxaHA15UO6MO1nzwF3cvc57UVg+KjnbHv5kCGAEZxI1zT0E/A8MxllNaYyLvO0WUi2rqLtflUHmRpq5cH6Q7NLFAYs4zswDtOyqg/YsYugBRwSb14Pfj4dMf1GSTjsO2iwz6rD00+DdUGfnzbmWz7m/xlFOu8vGyqL6lXEToTmK0lIXVh2N5kDH9os65+l1ZcK14D+7p7Vp/0+Dly7ZV4Y=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-ID: <B21B81C21E7E834CB0208E2833B2C1CC@eurprd08.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1730621AbfBRLXe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 06:23:34 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id D4BCEDBDAA62540E854B;
+        Mon, 18 Feb 2019 19:23:26 +0800 (CST)
+Received: from vm100-107-113-134.huawei.com (100.107.113.134) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.408.0; Mon, 18 Feb 2019 19:23:20 +0800
+From:   Yu Chen <chenyu56@huawei.com>
+To:     <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <john.stultz@linaro.org>, <suzhuangluan@hisilicon.com>,
+        <kongfei@hisilicon.com>, <liuyu712@hisilicon.com>,
+        <wanghu17@hisilicon.com>, <butao@hisilicon.com>,
+        <chenyao11@huawei.com>, <fangshengzhou@hisilicon.com>,
+        <lipengcheng8@huawei.com>, <songxiaowei@hisilicon.com>,
+        <xuyiping@hisilicon.com>, <xuyoujun4@huawei.com>,
+        <yudongbin@hisilicon.com>, <zangleigang@hisilicon.com>,
+        Yu Chen <chenyu56@huawei.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Arnd Bergmann" <arnd@arndb.de>, Shawn Guo <shawnguo@kernel.org>,
+        Pengcheng Li <lpc.li@hisilicon.com>,
+        Jianguo Sun <sunjianguo1@huawei.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jiancheng Xue <xuejiancheng@hisilicon.com>,
+        Binghui Wang <wangbinghui@hisilicon.com>
+Subject: [PATCH v2 05/10] phy: Add usb phy support for hi3660 Soc of Hisilicon
+Date:   Mon, 18 Feb 2019 19:23:05 +0800
+Message-ID: <20190218112310.17860-6-chenyu56@huawei.com>
+X-Mailer: git-send-email 2.15.0-rc2
+In-Reply-To: <20190218112310.17860-1-chenyu56@huawei.com>
+References: <20190218112310.17860-1-chenyu56@huawei.com>
 MIME-Version: 1.0
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 370a9579-1a6c-451b-2e5e-08d695939028
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2019 11:23:52.4773
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB3040
+Content-Type: text/plain
+X-Originating-IP: [100.107.113.134]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 05:02:27PM +0000, Steven Price wrote:
-> The pte_hole() callback is called at multiple levels of the page tables.
-> Code dumping the kernel page tables needs to know what at what depth
-> the missing entry is. Add this is an extra parameter to pte_hole().
-> When the depth isn't know (e.g. processing a vma) then -1 is passed.
->
-> Note that depth starts at 0 for a PGD so that PUD/PMD/PTE retain their
-> natural numbers as levels 2/3/4.
->
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
->  fs/proc/task_mmu.c |  4 ++--
->  include/linux/mm.h |  5 +++--
->  mm/hmm.c           |  2 +-
->  mm/migrate.c       |  1 +
->  mm/mincore.c       |  1 +
->  mm/pagewalk.c      | 16 ++++++++++------
->  6 files changed, 18 insertions(+), 11 deletions(-)
->
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index f0ec9edab2f3..91131cd4e9e0 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -474,7 +474,7 @@ static void smaps_account(struct mem_size_stats *mss,=
- struct page *page,
->
->  #ifdef CONFIG_SHMEM
->  static int smaps_pte_hole(unsigned long addr, unsigned long end,
-> -struct mm_walk *walk)
-> +  __always_unused int depth, struct mm_walk *walk)
->  {
->  struct mem_size_stats *mss =3D walk->private;
->
-> @@ -1203,7 +1203,7 @@ static int add_to_pagemap(unsigned long addr, pagem=
-ap_entry_t *pme,
->  }
->
->  static int pagemap_pte_hole(unsigned long start, unsigned long end,
-> -struct mm_walk *walk)
-> +    __always_unused int depth, struct mm_walk *walk)
->  {
->  struct pagemapread *pm =3D walk->private;
->  unsigned long addr =3D start;
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 1a4b1615d012..0418a018d7b3 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -1420,7 +1420,8 @@ void unmap_vmas(struct mmu_gather *tlb, struct vm_a=
-rea_struct *start_vma,
->   *       pmd_trans_huge() pmds.  They may simply choose to
->   *       split_huge_page() instead of handling it explicitly.
->   * @pte_entry: if set, called for each non-empty PTE (4th-level) entry
-> - * @pte_hole: if set, called for each hole at all levels
-> + * @pte_hole: if set, called for each hole at all levels,
-> + *            depth is -1 if not known
->   * @hugetlb_entry: if set, called for each hugetlb entry
->   * @test_walk: caller specific callback function to determine whether
->   *             we walk over the current vma or not. Returning 0
-> @@ -1445,7 +1446,7 @@ struct mm_walk {
->  int (*pte_entry)(pte_t *pte, unsigned long addr,
->   unsigned long next, struct mm_walk *walk);
->  int (*pte_hole)(unsigned long addr, unsigned long next,
-> -struct mm_walk *walk);
-> +int depth, struct mm_walk *walk);
->  int (*hugetlb_entry)(pte_t *pte, unsigned long hmask,
->       unsigned long addr, unsigned long next,
->       struct mm_walk *walk);
-> diff --git a/mm/hmm.c b/mm/hmm.c
-> index a04e4b810610..e3e6b8fda437 100644
-> --- a/mm/hmm.c
-> +++ b/mm/hmm.c
-> @@ -440,7 +440,7 @@ static void hmm_range_need_fault(const struct hmm_vma=
-_walk *hmm_vma_walk,
->  }
->
->  static int hmm_vma_walk_hole(unsigned long addr, unsigned long end,
-> -     struct mm_walk *walk)
-> +     __always_unused int depth, struct mm_walk *walk)
->  {
->  struct hmm_vma_walk *hmm_vma_walk =3D walk->private;
->  struct hmm_range *range =3D hmm_vma_walk->range;
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index d4fd680be3b0..8b62a9fecb5c 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -2121,6 +2121,7 @@ struct migrate_vma {
->
->  static int migrate_vma_collect_hole(unsigned long start,
->      unsigned long end,
-> +    __always_unused int depth,
->      struct mm_walk *walk)
->  {
->  struct migrate_vma *migrate =3D walk->private;
-> diff --git a/mm/mincore.c b/mm/mincore.c
-> index 218099b5ed31..c4edbc688241 100644
-> --- a/mm/mincore.c
-> +++ b/mm/mincore.c
-> @@ -104,6 +104,7 @@ static int __mincore_unmapped_range(unsigned long add=
-r, unsigned long end,
->  }
->
->  static int mincore_unmapped_range(unsigned long addr, unsigned long end,
-> +   __always_unused int depth,
->     struct mm_walk *walk)
->  {
->  walk->private +=3D __mincore_unmapped_range(addr, end,
-> diff --git a/mm/pagewalk.c b/mm/pagewalk.c
-> index dac0c848b458..b8038f852f06 100644
-> --- a/mm/pagewalk.c
-> +++ b/mm/pagewalk.c
-> @@ -38,7 +38,7 @@ static int walk_pmd_range(pud_t *pud, unsigned long add=
-r, unsigned long end,
->  next =3D pmd_addr_end(addr, end);
->  if (pmd_none(*pmd)) {
->  if (walk->pte_hole)
-> -err =3D walk->pte_hole(addr, next, walk);
-> +err =3D walk->pte_hole(addr, next, 3, walk);
->  if (err)
->  break;
->  continue;
-> @@ -88,7 +88,7 @@ static int walk_pud_range(p4d_t *p4d, unsigned long add=
-r, unsigned long end,
->  next =3D pud_addr_end(addr, end);
->  if (pud_none(*pud)) {
->  if (walk->pte_hole)
-> -err =3D walk->pte_hole(addr, next, walk);
-> +err =3D walk->pte_hole(addr, next, 2, walk);
->  if (err)
->  break;
->  continue;
-> @@ -123,13 +123,17 @@ static int walk_p4d_range(pgd_t *pgd, unsigned long=
- addr, unsigned long end,
->  p4d_t *p4d;
->  unsigned long next;
->  int err =3D 0;
-> +/* If the p4ds are actually just pgds then we should report a depth
-> + * of 0 not 1 (as a missing entry is really a missing pgd
-> + */
+This driver handles usb phy power on and shutdown for hi3660 Soc of
+Hisilicon.
 
-Nit: comment style violation. This should look like:
-should be:
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Pengcheng Li <lpc.li@hisilicon.com>
+Cc: Jianguo Sun <sunjianguo1@huawei.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Jiancheng Xue <xuejiancheng@hisilicon.com>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Binghui Wang <wangbinghui@hisilicon.com>
+Signed-off-by: Yu Chen <chenyu56@huawei.com>
+---
+v1:
+* Remove unused code and add comment for time delay as suggested by
+Kishon Vijay Abraham I.
+v2:
+* Fix license declaration.
+* Remove redundant parens.
+* Remove unused member variables in struct hi3660_priv.
+---
+---
+ MAINTAINERS                             |   8 ++
+ drivers/phy/hisilicon/Kconfig           |  10 ++
+ drivers/phy/hisilicon/Makefile          |   1 +
+ drivers/phy/hisilicon/phy-hi3660-usb3.c | 232 ++++++++++++++++++++++++++++++++
+ 4 files changed, 251 insertions(+)
+ create mode 100644 drivers/phy/hisilicon/phy-hi3660-usb3.c
 
-/*
- * If the p4ds are actually just pgds then we should report a depth
- * of 0 not 1 (as a missing entry is really a missing pgd
- */
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4d04cebb4a71..8dc289faa2c4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15790,6 +15790,14 @@ L:	linux-usb@vger.kernel.org
+ S:	Maintained
+ F:	drivers/usb/roles/intel-xhci-usb-role-switch.c
+ 
++USB IP DRIVER FOR HISILICON KIRIN
++M:	Yu Chen <chenyu56@huawei.com>
++M:	Binghui Wang <wangbinghui@hisilicon.com>
++L:	linux-usb@vger.kernel.org
++S:	Maintained
++F:	Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt
++F:	drivers/phy/hisilicon/phy-hi3660-usb3.c
++
+ USB ISP116X DRIVER
+ M:	Olav Kongas <ok@artecdesign.ee>
+ L:	linux-usb@vger.kernel.org
+diff --git a/drivers/phy/hisilicon/Kconfig b/drivers/phy/hisilicon/Kconfig
+index b40ee54a1a50..3c142f08987c 100644
+--- a/drivers/phy/hisilicon/Kconfig
++++ b/drivers/phy/hisilicon/Kconfig
+@@ -12,6 +12,16 @@ config PHY_HI6220_USB
+ 
+ 	  To compile this driver as a module, choose M here.
+ 
++config PHY_HI3660_USB
++	tristate "hi3660 USB PHY support"
++	depends on (ARCH_HISI && ARM64) || COMPILE_TEST
++	select GENERIC_PHY
++	select MFD_SYSCON
++	help
++	  Enable this to support the HISILICON HI3660 USB PHY.
++
++	  To compile this driver as a module, choose M here.
++
+ config PHY_HISTB_COMBPHY
+ 	tristate "HiSilicon STB SoCs COMBPHY support"
+ 	depends on (ARCH_HISI && ARM64) || COMPILE_TEST
+diff --git a/drivers/phy/hisilicon/Makefile b/drivers/phy/hisilicon/Makefile
+index f662a4fe18d8..75ba64e2faf8 100644
+--- a/drivers/phy/hisilicon/Makefile
++++ b/drivers/phy/hisilicon/Makefile
+@@ -1,4 +1,5 @@
+ obj-$(CONFIG_PHY_HI6220_USB)		+= phy-hi6220-usb.o
++obj-$(CONFIG_PHY_HI3660_USB)		+= phy-hi3660-usb3.o
+ obj-$(CONFIG_PHY_HISTB_COMBPHY)		+= phy-histb-combphy.o
+ obj-$(CONFIG_PHY_HISI_INNO_USB2)	+= phy-hisi-inno-usb2.o
+ obj-$(CONFIG_PHY_HIX5HD2_SATA)		+= phy-hix5hd2-sata.o
+diff --git a/drivers/phy/hisilicon/phy-hi3660-usb3.c b/drivers/phy/hisilicon/phy-hi3660-usb3.c
+new file mode 100644
+index 000000000000..97184e6f0d41
+--- /dev/null
++++ b/drivers/phy/hisilicon/phy-hi3660-usb3.c
+@@ -0,0 +1,232 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Phy provider for USB 3.0 controller on HiSilicon 3660 platform
++ *
++ * Copyright (C) 2017-2018 Hilisicon Electronics Co., Ltd.
++ *		http://www.huawei.com
++ *
++ * Authors: Yu Chen <chenyu56@huawei.com>
++ */
++
++#include <linux/kernel.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
++#include <linux/phy/phy.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++#define PERI_CRG_CLK_EN4			0x40
++#define PERI_CRG_CLK_DIS4			0x44
++#define GT_CLK_USB3OTG_REF			BIT(0)
++#define GT_ACLK_USB3OTG				BIT(1)
++
++#define PERI_CRG_RSTEN4				0x90
++#define PERI_CRG_RSTDIS4			0x94
++#define IP_RST_USB3OTGPHY_POR			BIT(3)
++#define IP_RST_USB3OTG				BIT(5)
++
++#define PERI_CRG_ISODIS				0x148
++#define USB_REFCLK_ISO_EN			BIT(25)
++
++#define PCTRL_PERI_CTRL3			0x10
++#define PCTRL_PERI_CTRL3_MSK_START		16
++#define USB_TCXO_EN				BIT(1)
++
++#define PCTRL_PERI_CTRL24			0x64
++#define SC_CLK_USB3PHY_3MUX1_SEL		BIT(25)
++
++#define USBOTG3_CTRL0				0x00
++#define SC_USB3PHY_ABB_GT_EN			BIT(15)
++
++#define USBOTG3_CTRL2				0x08
++#define USBOTG3CTRL2_POWERDOWN_HSP		BIT(0)
++#define USBOTG3CTRL2_POWERDOWN_SSP		BIT(1)
++
++#define USBOTG3_CTRL3				0x0C
++#define USBOTG3_CTRL3_VBUSVLDEXT		BIT(6)
++#define USBOTG3_CTRL3_VBUSVLDEXTSEL		BIT(5)
++
++#define USBOTG3_CTRL4				0x10
++
++#define USBOTG3_CTRL7				0x1c
++#define REF_SSP_EN				BIT(16)
++
++#define HI3660_USB_DEFAULT_PHY_PARAM		0x1c466e3
++
++struct hi3660_priv {
++	struct device *dev;
++	struct regmap *peri_crg;
++	struct regmap *pctrl;
++	struct regmap *otg_bc;
++	u32 eye_diagram_param;
++};
++
++static int hi3660_phy_init(struct phy *phy)
++{
++	struct hi3660_priv *priv = phy_get_drvdata(phy);
++	u32 val, mask;
++	int ret;
++
++	/* usb refclk iso disable */
++	ret = regmap_write(priv->peri_crg, PERI_CRG_ISODIS, USB_REFCLK_ISO_EN);
++	if (ret)
++		goto out;
++
++	/* enable usb_tcxo_en */
++	val = USB_TCXO_EN | (USB_TCXO_EN << PCTRL_PERI_CTRL3_MSK_START);
++	ret = regmap_write(priv->pctrl, PCTRL_PERI_CTRL3, val);
++	if (ret)
++		goto out;
++
++	/* assert phy */
++	val = IP_RST_USB3OTGPHY_POR | IP_RST_USB3OTG;
++	ret = regmap_write(priv->peri_crg, PERI_CRG_RSTEN4, val);
++	if (ret)
++		goto out;
++
++	/* enable phy ref clk */
++	val = SC_USB3PHY_ABB_GT_EN;
++	mask = val;
++	ret = regmap_update_bits(priv->otg_bc, USBOTG3_CTRL0, mask, val);
++	if (ret)
++		goto out;
++
++	val = REF_SSP_EN;
++	mask = val;
++	ret = regmap_update_bits(priv->otg_bc, USBOTG3_CTRL7, mask, val);
++	if (ret)
++		goto out;
++
++	/* exit from IDDQ mode */
++	mask = USBOTG3CTRL2_POWERDOWN_HSP | USBOTG3CTRL2_POWERDOWN_SSP;
++	ret = regmap_update_bits(priv->otg_bc, USBOTG3_CTRL2, mask, 0);
++	if (ret)
++		goto out;
++
++	/* delay for exit from IDDQ mode */
++	usleep_range(100, 100);
++
++	/* deassert phy */
++	val = IP_RST_USB3OTGPHY_POR | IP_RST_USB3OTG;
++	ret = regmap_write(priv->peri_crg, PERI_CRG_RSTDIS4, val);
++	if (ret)
++		goto out;
++
++	/* delay for phy deasserted */
++	usleep_range(10000, 15000);
++
++	/* fake vbus valid signal */
++	val = USBOTG3_CTRL3_VBUSVLDEXT | USBOTG3_CTRL3_VBUSVLDEXTSEL;
++	mask = val;
++	ret = regmap_update_bits(priv->otg_bc, USBOTG3_CTRL3, mask, val);
++	if (ret)
++		goto out;
++
++	/* delay for vbus valid */
++	usleep_range(100, 100);
++
++	ret = regmap_write(priv->otg_bc, USBOTG3_CTRL4,
++			priv->eye_diagram_param);
++	if (ret)
++		goto out;
++
++	return 0;
++out:
++	dev_err(priv->dev, "failed to init phy ret: %d\n", ret);
++	return ret;
++}
++
++static int hi3660_phy_exit(struct phy *phy)
++{
++	struct hi3660_priv *priv = phy_get_drvdata(phy);
++	u32 val;
++	int ret;
++
++	/* assert phy */
++	val = IP_RST_USB3OTGPHY_POR;
++	ret = regmap_write(priv->peri_crg, PERI_CRG_RSTEN4, val);
++	if (ret)
++		goto out;
++
++	/* disable usb_tcxo_en */
++	val = USB_TCXO_EN << PCTRL_PERI_CTRL3_MSK_START;
++	ret = regmap_write(priv->pctrl, PCTRL_PERI_CTRL3, val);
++	if (ret)
++		goto out;
++
++	return 0;
++out:
++	dev_err(priv->dev, "failed to exit phy ret: %d\n", ret);
++	return ret;
++}
++
++static struct phy_ops hi3660_phy_ops = {
++	.init		= hi3660_phy_init,
++	.exit		= hi3660_phy_exit,
++	.owner		= THIS_MODULE,
++};
++
++static int hi3660_phy_probe(struct platform_device *pdev)
++{
++	struct phy_provider *phy_provider;
++	struct device *dev = &pdev->dev;
++	struct phy *phy;
++	struct hi3660_priv *priv;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->dev = dev;
++	priv->peri_crg = syscon_regmap_lookup_by_phandle(dev->of_node,
++					"hisilicon,pericrg-syscon");
++	if (IS_ERR(priv->peri_crg)) {
++		dev_err(dev, "no hisilicon,pericrg-syscon\n");
++		return PTR_ERR(priv->peri_crg);
++	}
++
++	priv->pctrl = syscon_regmap_lookup_by_phandle(dev->of_node,
++					"hisilicon,pctrl-syscon");
++	if (IS_ERR(priv->pctrl)) {
++		dev_err(dev, "no hisilicon,pctrl-syscon\n");
++		return PTR_ERR(priv->pctrl);
++	}
++
++	priv->otg_bc = syscon_regmap_lookup_by_phandle(dev->of_node,
++					"hisilicon,usb3-otg-bc-syscon");
++	if (IS_ERR(priv->otg_bc)) {
++		dev_err(dev, "no hisilicon,usb3-otg-bc-syscon\n");
++		return PTR_ERR(priv->otg_bc);
++	}
++
++	if (of_property_read_u32(dev->of_node, "hisilicon,eye-diagram-param",
++		&(priv->eye_diagram_param)))
++		priv->eye_diagram_param = HI3660_USB_DEFAULT_PHY_PARAM;
++
++	phy = devm_phy_create(dev, NULL, &hi3660_phy_ops);
++	if (IS_ERR(phy))
++		return PTR_ERR(phy);
++
++	phy_set_drvdata(phy, priv);
++	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
++	return PTR_ERR_OR_ZERO(phy_provider);
++}
++
++static const struct of_device_id hi3660_phy_of_match[] = {
++	{.compatible = "hisilicon,hi3660-usb-phy",},
++	{ }
++};
++MODULE_DEVICE_TABLE(of, hi3660_phy_of_match);
++
++static struct platform_driver hi3660_phy_driver = {
++	.probe	= hi3660_phy_probe,
++	.driver = {
++		.name	= "hi3660-usb-phy",
++		.of_match_table	= hi3660_phy_of_match,
++	}
++};
++module_platform_driver(hi3660_phy_driver);
++
++MODULE_AUTHOR("Yu Chen <chenyu56@huawei.com>");
++MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("Hilisicon Hi3660 USB3 PHY Driver");
+-- 
+2.15.0-rc2
 
-> +int depth =3D (PTRS_PER_P4D =3D=3D 1)?0:1;
-
-Nit: the ternary should have spacing.
-
-We don't seem to do this at any other level that could be folded, so why
-does p4d need special care?
-
-For example, what happens on arm64 when using 64K pages and 3 level
-paging, where puds are folded into pgds?
-
-Thanks,
-Mark.
-
->
->  p4d =3D p4d_offset(pgd, addr);
->  do {
->  next =3D p4d_addr_end(addr, end);
->  if (p4d_none_or_clear_bad(p4d)) {
->  if (walk->pte_hole)
-> -err =3D walk->pte_hole(addr, next, walk);
-> +err =3D walk->pte_hole(addr, next, depth, walk);
->  if (err)
->  break;
->  continue;
-> @@ -160,7 +164,7 @@ static int walk_pgd_range(unsigned long addr, unsigne=
-d long end,
->  next =3D pgd_addr_end(addr, end);
->  if (pgd_none_or_clear_bad(pgd)) {
->  if (walk->pte_hole)
-> -err =3D walk->pte_hole(addr, next, walk);
-> +err =3D walk->pte_hole(addr, next, 0, walk);
->  if (err)
->  break;
->  continue;
-> @@ -206,7 +210,7 @@ static int walk_hugetlb_range(unsigned long addr, uns=
-igned long end,
->  if (pte)
->  err =3D walk->hugetlb_entry(pte, hmask, addr, next, walk);
->  else if (walk->pte_hole)
-> -err =3D walk->pte_hole(addr, next, walk);
-> +err =3D walk->pte_hole(addr, next, -1, walk);
->
->  if (err)
->  break;
-> @@ -249,7 +253,7 @@ static int walk_page_test(unsigned long start, unsign=
-ed long end,
->  if (vma->vm_flags & VM_PFNMAP) {
->  int err =3D 1;
->  if (walk->pte_hole)
-> -err =3D walk->pte_hole(start, end, walk);
-> +err =3D walk->pte_hole(start, end, -1, walk);
->  return err ? err : 1;
->  }
->  return 0;
-> --
-> 2.20.1
->
-IMPORTANT NOTICE: The contents of this email and any attachments are confid=
-ential and may also be privileged. If you are not the intended recipient, p=
-lease notify the sender immediately and do not disclose the contents to any=
- other person, use it for any purpose, or store or copy the information in =
-any medium. Thank you.
