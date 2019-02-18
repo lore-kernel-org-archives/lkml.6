@@ -4,48 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B508C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BA9C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:53:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA1F321904
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:53:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A91221906
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:53:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497986;
-	bh=dYNwiHqNTc2JnVADaNBH+3D6uJlPxREo/i4LUywMm2Y=;
+	s=default; t=1550497990;
+	bh=K8d7LfGfXhNzhU4dsTM6z6d7MbZtdb0zJyLPccE41Qc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MqKvsyjk16NXOzE3iKc25nM452WYCIY3SNEO/muCzrY3rJeJuwcjroosoZKO2r6iL
-	 GkwnAnZxPzMw+8Ez1FgltChVg6Az3aPtzp3eF9UoHppHjb4KpV6d5mrm4J9pXnG5Xr
-	 37wM3YSTMwBciIxPqCt0N7qo3EoobYD22O+8mRRg=
+	b=bFOhlAcA41mMUQtWlSaD3vHvBbANFz304XXffy8bIyZqLNlk+sXqSrXJqz9xSH7ej
+	 UClw6WJmDeFcjPNpf8u2lvJB4Gfopmh6tQFK+/hbpjnxcze6qIMlyn5xaqkM6EOnLF
+	 3o0ODzeYvlkldFqi++CLDmgOivOcHE5n8xVVxJYI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732877AbfBRNxF (ORCPT
+        id S1732890AbfBRNxJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:53:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60914 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:53:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732849AbfBRNxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:53:00 -0500
+        id S1732875AbfBRNxG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:53:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BDA0420449;
-        Mon, 18 Feb 2019 13:52:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD75720449;
+        Mon, 18 Feb 2019 13:53:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497979;
-        bh=dYNwiHqNTc2JnVADaNBH+3D6uJlPxREo/i4LUywMm2Y=;
+        s=default; t=1550497985;
+        bh=K8d7LfGfXhNzhU4dsTM6z6d7MbZtdb0zJyLPccE41Qc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jVz74M6T+sX7mHh8iPTm9YY+dACI4QCgtlouiOypy9VVI/7Ckc5lNnGCctXQwVBj7
-         +NrwbIkBH1gJQvc7XzZHTkgLs53qxMKSPLLK7g8wdJOwGBvn2fOgLM03U+6PfofsKy
-         bN3mXXLxWSZsTadnv4cdxmmK3wcviQogLWn/+SLM=
+        b=DYSZ/YpZiwBKeqNlllvg7zzhTiqFwnV4wV+DLbXqmCJA2cP10H4Sr4IGdZO3L28HS
+         mGBAb7iSjw0m5wQTxZrZ9Luxwp2df1Ug0DMcof5m1coUVCYjd+Rlqhbc2bDScodLYS
+         jUIeDpAqnPcg5VkcgHwND0Ob4YipxazHOWkbd45Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Meelis Roos <mroos@linux.ee>,
-        Matt Turner <mattst88@gmail.com>
-Subject: [PATCH 4.19 71/85] alpha: Fix Eiger NR_IRQS to 128
-Date:   Mon, 18 Feb 2019 14:43:37 +0100
-Message-Id: <20190218133506.760823229@linuxfoundation.org>
+        stable@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Andreas Ziegler <andreas.ziegler@fau.de>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>
+Subject: [PATCH 4.19 73/85] tracing/uprobes: Fix output for multiple string arguments
+Date:   Mon, 18 Feb 2019 14:43:39 +0100
+Message-Id: <20190218133506.940076780@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -64,51 +67,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Meelis Roos <mroos@linux.ee>
+From: Andreas Ziegler <andreas.ziegler@fau.de>
 
-commit bfc913682464f45bc4d6044084e370f9048de9d5 upstream.
+commit 0722069a5374b904ec1a67f91249f90e1cfae259 upstream.
 
-Eiger machine vector definition has nr_irqs 128, and working 2.6.26
-boot shows SCSI getting IRQ-s 64 and 65. Current kernel boot fails
-because Symbios SCSI fails to request IRQ-s and does not find the disks.
-It has been broken at least since 3.18 - the earliest I could test with
-my gcc-5.
+When printing multiple uprobe arguments as strings the output for the
+earlier arguments would also include all later string arguments.
 
-The headers have moved around and possibly another order of defines has
-worked in the past - but since 128 seems to be correct and used, fix
-arch/alpha/include/asm/irq.h to have NR_IRQS=128 for Eiger.
+This is best explained in an example:
 
-This fixes 4.19-rc7 boot on my Force Flexor A264 (Eiger subarch).
+Consider adding a uprobe to a function receiving two strings as
+parameters which is at offset 0xa0 in strlib.so and we want to print
+both parameters when the uprobe is hit (on x86_64):
 
-Cc: stable@vger.kernel.org # v3.18+
-Signed-off-by: Meelis Roos <mroos@linux.ee>
-Signed-off-by: Matt Turner <mattst88@gmail.com>
+$ echo 'p:func /lib/strlib.so:0xa0 +0(%di):string +0(%si):string' > \
+    /sys/kernel/debug/tracing/uprobe_events
+
+When the function is called as func("foo", "bar") and we hit the probe,
+the trace file shows a line like the following:
+
+  [...] func: (0x7f7e683706a0) arg1="foobar" arg2="bar"
+
+Note the extra "bar" printed as part of arg1. This behaviour stacks up
+for additional string arguments.
+
+The strings are stored in a dynamically growing part of the uprobe
+buffer by fetch_store_string() after copying them from userspace via
+strncpy_from_user(). The return value of strncpy_from_user() is then
+directly used as the required size for the string. However, this does
+not take the terminating null byte into account as the documentation
+for strncpy_from_user() cleary states that it "[...] returns the
+length of the string (not including the trailing NUL)" even though the
+null byte will be copied to the destination.
+
+Therefore, subsequent calls to fetch_store_string() will overwrite
+the terminating null byte of the most recently fetched string with
+the first character of the current string, leading to the
+"accumulation" of strings in earlier arguments in the output.
+
+Fix this by incrementing the return value of strncpy_from_user() by
+one if we did not hit the maximum buffer size.
+
+Link: http://lkml.kernel.org/r/20190116141629.5752-1-andreas.ziegler@fau.de
+
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: stable@vger.kernel.org
+Fixes: 5baaa59ef09e ("tracing/probes: Implement 'memory' fetch method for uprobes")
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Andreas Ziegler <andreas.ziegler@fau.de>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/alpha/include/asm/irq.h |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ kernel/trace/trace_uprobe.c |    9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
---- a/arch/alpha/include/asm/irq.h
-+++ b/arch/alpha/include/asm/irq.h
-@@ -56,15 +56,15 @@
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -141,7 +141,14 @@ static void FETCH_FUNC_NAME(memory, stri
  
- #elif defined(CONFIG_ALPHA_DP264) || \
-       defined(CONFIG_ALPHA_LYNX)  || \
--      defined(CONFIG_ALPHA_SHARK) || \
--      defined(CONFIG_ALPHA_EIGER)
-+      defined(CONFIG_ALPHA_SHARK)
- # define NR_IRQS	64
+ 	ret = strncpy_from_user(dst, src, maxlen);
+ 	if (ret == maxlen)
+-		dst[--ret] = '\0';
++		dst[ret - 1] = '\0';
++	else if (ret >= 0)
++		/*
++		 * Include the terminating null byte. In this case it
++		 * was copied by strncpy_from_user but not accounted
++		 * for in ret.
++		 */
++		ret++;
  
- #elif defined(CONFIG_ALPHA_TITAN)
- #define NR_IRQS		80
- 
- #elif defined(CONFIG_ALPHA_RAWHIDE) || \
--	defined(CONFIG_ALPHA_TAKARA)
-+      defined(CONFIG_ALPHA_TAKARA) || \
-+      defined(CONFIG_ALPHA_EIGER)
- # define NR_IRQS	128
- 
- #elif defined(CONFIG_ALPHA_WILDFIRE)
+ 	if (ret < 0) {	/* Failed to fetch string */
+ 		((u8 *)get_rloc_data(dest))[0] = '\0';
 
 
