@@ -2,51 +2,54 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 990C3C10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7E8EC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B8ED2070B
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:47:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAD3C2070B
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:47:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550501251;
-	bh=OfJ+lcQcqPZ6jmLvp9uYhnCoYwIruvVu6EdRU9P50pA=;
+	s=default; t=1550501259;
+	bh=49fVJJZn3Pxqhk48+uJhW6TY+JcqOEwd7pPFZiJK4cw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zLSG1ayUl0lfzcJPKSiJAw4GD+sPHw7H4eI6UsKYS3BnSpoyo50Bw3T7dctSUFoZB
-	 iow6R58zsAfGBduGEYTTxWKwB8VCs7LziKG3UEWu+/nQzYhia/gxRo6SVjRnHL/ep7
-	 G1/bM4a6b2sHvt2LL42roT/OQCmDxDw8mfbrI1L0=
+	b=uJ101DtD08cp0WYRzedkjLjTCt39uAcLuTcwNzjUeDPY44vgKiY063v4iAWVcxCp3
+	 thd3CBeVClIIKlX5sroB7v4WfqOKSYLq6r6GRuo9V6ei04aBKRl5Fw+FAGmewAWe33
+	 qvQRkRywgmZkgBU81iTx8dCK9MMLVRuBKh4UGiCo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730936AbfBROr3 (ORCPT
+        id S1731377AbfBRNpi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:47:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52078 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:45:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731420AbfBRNpq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:45:46 -0500
+        id S1731350AbfBRNpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:45:34 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46942218FC;
-        Mon, 18 Feb 2019 13:45:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE140218FC;
+        Mon, 18 Feb 2019 13:45:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497545;
-        bh=OfJ+lcQcqPZ6jmLvp9uYhnCoYwIruvVu6EdRU9P50pA=;
+        s=default; t=1550497533;
+        bh=49fVJJZn3Pxqhk48+uJhW6TY+JcqOEwd7pPFZiJK4cw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hhWMlc4Ugcol3owg/fg0nDsXUswabqgpDAZzulTFolTpBdJagAzAmGlTKUwbscwOC
-         EgmUKA/FmVYtvgIHdRBdUR/Uyjc8K62OrPEx3kT04svke0tghwSqqn5FgPMOuTUUYt
-         tgN2kEQzk7fC0sqpwx0tKLuh1go+YHPFWeV3PCQY=
+        b=q56mvZZUmCTrlHgX8PXv/ayqfAlFvYNITuRSVOB3btF7rbsMNHh0y2UASO089czmb
+         An0j4nP3Y9gEE8fGP7AtWMhS/OKUbg0MHW69NCHam7PKDGt3OP+MpzZOHGX5IGmTR4
+         9bvph0n4rVOTpliY/2Yqcbio1o1KN74VPqp8ZDNc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hongbo Yao <yaohongbo@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 25/92] nvme-pci: fix out of bounds access in nvme_cqe_pending
-Date:   Mon, 18 Feb 2019 14:42:28 +0100
-Message-Id: <20190218133457.073670440@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 08/92] perf test shell: Use a fallback to get the pathname in vfs_getname
+Date:   Mon, 18 Feb 2019 14:42:11 +0100
+Message-Id: <20190218133455.403916951@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
 References: <20190218133454.668268457@linuxfoundation.org>
@@ -65,40 +68,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit dcca1662727220d18fa351097ddff33f95f516c5 ]
+[ Upstream commit 03fa483821c0b4db7c2b1453d3332f397d82313f ]
 
-There is an out of bounds array access in nvme_cqe_peding().
+Some kernels, like 4.19.13-300.fc29.x86_64 in fedora 29, fail with the
+existing probe definition asking for the contents of result->name,
+working when we ask for the 'filename' variable instead, so add a
+fallback to that.
 
-When enable irq_thread for nvme interrupt, there is racing between the
-nvmeq->cq_head updating and reading.
+Now those tests are back working on fedora 29 systems with that kernel:
 
-nvmeq->cq_head is updated in nvme_update_cq_head(), if nvmeq->cq_head
-equals nvmeq->q_depth and before its value set to zero, nvme_cqe_pending()
-uses its value as an array index, the index will be out of bounds.
+  # perf test vfs_getname
+  65: Use vfs_getname probe to get syscall args filenames   : Ok
+  66: Add vfs_getname probe to get syscall args filenames   : Ok
+  67: Check open filename arg using perf trace + vfs_getname: Ok
+  #
 
-Signed-off-by: Hongbo Yao <yaohongbo@huawei.com>
-[hch: slight coding style update]
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-klt3n0i58dfqttveti09q3fi@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/pci.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ tools/perf/tests/shell/lib/probe_vfs_getname.sh | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 0f45868e8af9..47597046c14f 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -913,9 +913,11 @@ static void nvme_complete_cqes(struct nvme_queue *nvmeq, u16 start, u16 end)
- 
- static inline void nvme_update_cq_head(struct nvme_queue *nvmeq)
- {
--	if (++nvmeq->cq_head == nvmeq->q_depth) {
-+	if (nvmeq->cq_head == nvmeq->q_depth - 1) {
- 		nvmeq->cq_head = 0;
- 		nvmeq->cq_phase = !nvmeq->cq_phase;
-+	} else {
-+		nvmeq->cq_head++;
- 	}
+diff --git a/tools/perf/tests/shell/lib/probe_vfs_getname.sh b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
+index 1c16e56cd93e..7cb99b433888 100644
+--- a/tools/perf/tests/shell/lib/probe_vfs_getname.sh
++++ b/tools/perf/tests/shell/lib/probe_vfs_getname.sh
+@@ -13,7 +13,8 @@ add_probe_vfs_getname() {
+ 	local verbose=$1
+ 	if [ $had_vfs_getname -eq 1 ] ; then
+ 		line=$(perf probe -L getname_flags 2>&1 | egrep 'result.*=.*filename;' | sed -r 's/[[:space:]]+([[:digit:]]+)[[:space:]]+result->uptr.*/\1/')
+-		perf probe $verbose "vfs_getname=getname_flags:${line} pathname=result->name:string"
++		perf probe -q       "vfs_getname=getname_flags:${line} pathname=result->name:string" || \
++		perf probe $verbose "vfs_getname=getname_flags:${line} pathname=filename:string"
+ 	fi
  }
  
 -- 
