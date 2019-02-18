@@ -2,125 +2,193 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F299CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:33:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40EC8C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:33:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEFA62081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:33:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550500420;
-	bh=w7PE5pTB+23ZTx0dFRdbQK+KJ0+18+FL3r/7zqju1w8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DSBPRpV2Ex4eIlH4KHbez1RdT54EZlC4KETeu0h1Xmb8IW51QBzTrYh+bLGtDlF3G
-	 YwqqcuiBYaBkZXi7SU/MZTupsUH2igZI0OIRRh3NOanPchw9tXc3abqtLP0B150mbu
-	 8j6yRSDhLkcPtAq+vKkf4iXWL0kbeh1VCQ/zytoo=
+	by mail.kernel.org (Postfix) with ESMTP id 1A5902081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:33:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387950AbfBRN5A (ORCPT
+        id S2388364AbfBROdp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:57:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37258 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:33:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:40462 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732840AbfBRN4y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:56:54 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2387937AbfBRN45 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:56:57 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDC7D2077B;
-        Mon, 18 Feb 2019 13:56:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498214;
-        bh=w7PE5pTB+23ZTx0dFRdbQK+KJ0+18+FL3r/7zqju1w8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BVxzTQkK8O7vw5BlJWBsDFmbKOtpdnLEPvdjCp3ziFDpy+vwt/GPEKdgaeaL2VxBH
-         ZYGBr3SEz6whqnL2pqljPWnGpeOQg9fOAqym/z/ATQI2uDLzF3VZTUp69tAYxZgOyb
-         ljonkzDx4LfAKpuw+/FF007jNzfTCTD0/+FGqLlU=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Pavankumar Kondeti <pkondeti@codeaurora.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Subject: [PATCH 4.14 60/62] sched, trace: Fix prev_state output in sched_switch tracepoint
-Date:   Mon, 18 Feb 2019 14:44:06 +0100
-Message-Id: <20190218133510.921592262@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
-References: <20190218133505.801423074@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        by mx1.redhat.com (Postfix) with ESMTPS id E4DD240D87;
+        Mon, 18 Feb 2019 13:56:56 +0000 (UTC)
+Received: from laptop.redhat.com (ovpn-116-102.ams2.redhat.com [10.36.116.102])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id ED7FB5D70A;
+        Mon, 18 Feb 2019 13:56:52 +0000 (UTC)
+From:   Eric Auger <eric.auger@redhat.com>
+To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
+        yi.l.liu@linux.intel.com, jean-philippe.brucker@arm.com,
+        will.deacon@arm.com, robin.murphy@arm.com
+Cc:     kevin.tian@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org
+Subject: [PATCH v4 12/22] iommu/smmuv3: Get prepared for nested stage support
+Date:   Mon, 18 Feb 2019 14:54:53 +0100
+Message-Id: <20190218135504.25048-13-eric.auger@redhat.com>
+In-Reply-To: <20190218135504.25048-1-eric.auger@redhat.com>
+References: <20190218135504.25048-1-eric.auger@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 18 Feb 2019 13:56:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+To allow nested stage support, we need to store both
+stage 1 and stage 2 configurations (and remove the former
+union).
 
-------------------
+A nested setup is characterized by both s1_cfg and s2_cfg
+set. If s1_cfg is NULL, if ste.abort is set, traffic can't pass.
+If abort is not set, S1 is bypassed. Abort can be induced by the
+guest of by the host.
 
-From: Pavankumar Kondeti <pkondeti@codeaurora.org>
+arm_smmu_write_strtab_ent() is modified to write both stage
+fields in the STE and deal with the abort field.
 
-commit 3054426dc68e5d63aa6a6e9b91ac4ec78e3f3805 upstream.
+Only S2 stage is "finalized" as the host does not configure
+S1 CD, guest does.
 
-commit 3f5fe9fef5b2 ("sched/debug: Fix task state recording/printout")
-tried to fix the problem introduced by a previous commit efb40f588b43
-("sched/tracing: Fix trace_sched_switch task-state printing"). However
-the prev_state output in sched_switch is still broken.
-
-task_state_index() uses fls() which considers the LSB as 1. Left
-shifting 1 by this value gives an incorrect mapping to the task state.
-Fix this by decrementing the value returned by __get_task_state()
-before shifting.
-
-Link: http://lkml.kernel.org/r/1540882473-1103-1-git-send-email-pkondeti@codeaurora.org
-
-Cc: stable@vger.kernel.org
-Fixes: 3f5fe9fef5b2 ("sched/debug: Fix task state recording/printout")
-Signed-off-by: Pavankumar Kondeti <pkondeti@codeaurora.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
 
 ---
- include/trace/events/sched.h |   12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
 
---- a/include/trace/events/sched.h
-+++ b/include/trace/events/sched.h
-@@ -107,6 +107,8 @@ DEFINE_EVENT(sched_wakeup_template, sche
- #ifdef CREATE_TRACE_POINTS
- static inline long __trace_sched_switch_state(bool preempt, struct task_struct *p)
+v2 -> v3:
+- s1_cfg.nested_abort and nested_bypass removed.
+- s/ste.nested/ste.abort
+- arm_smmu_write_strtab_ent modifications with introduction
+  of local abort, bypass and translate local variables
+- comment updated
+
+v1 -> v2:
+- invalidate the STE before moving from a live STE config to another
+- add the nested_abort and nested_bypass fields
+---
+ drivers/iommu/arm-smmu-v3.c | 34 +++++++++++++++++++---------------
+ 1 file changed, 19 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index 9af68266bbb1..80ab9a77cf80 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -212,6 +212,7 @@
+ #define STRTAB_STE_0_CFG_BYPASS		4
+ #define STRTAB_STE_0_CFG_S1_TRANS	5
+ #define STRTAB_STE_0_CFG_S2_TRANS	6
++#define STRTAB_STE_0_CFG_NESTED		7
+ 
+ #define STRTAB_STE_0_S1FMT		GENMASK_ULL(5, 4)
+ #define STRTAB_STE_0_S1FMT_LINEAR	0
+@@ -515,6 +516,7 @@ struct arm_smmu_strtab_ent {
+ 	 * configured according to the domain type.
+ 	 */
+ 	bool				assigned;
++	bool				abort;
+ 	struct arm_smmu_s1_cfg		*s1_cfg;
+ 	struct arm_smmu_s2_cfg		*s2_cfg;
+ };
+@@ -629,10 +631,8 @@ struct arm_smmu_domain {
+ 	bool				non_strict;
+ 
+ 	enum arm_smmu_domain_stage	stage;
+-	union {
+-		struct arm_smmu_s1_cfg	s1_cfg;
+-		struct arm_smmu_s2_cfg	s2_cfg;
+-	};
++	struct arm_smmu_s1_cfg	s1_cfg;
++	struct arm_smmu_s2_cfg	s2_cfg;
+ 
+ 	struct iommu_domain		domain;
+ 
+@@ -1109,12 +1109,13 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
+ 				      __le64 *dst, struct arm_smmu_strtab_ent *ste)
  {
-+	unsigned int state;
-+
- #ifdef CONFIG_SCHED_DEBUG
- 	BUG_ON(p != current);
- #endif /* CONFIG_SCHED_DEBUG */
-@@ -118,7 +120,15 @@ static inline long __trace_sched_switch_
- 	if (preempt)
- 		return TASK_REPORT_MAX;
+ 	/*
+-	 * This is hideously complicated, but we only really care about
+-	 * three cases at the moment:
++	 * We care about the following transitions:
+ 	 *
+ 	 * 1. Invalid (all zero) -> bypass/fault (init)
+-	 * 2. Bypass/fault -> translation/bypass (attach)
+-	 * 3. Translation/bypass -> bypass/fault (detach)
++	 * 2. Bypass/fault -> single stage translation/bypass (attach)
++	 * 3. single stage Translation/bypass -> bypass/fault (detach)
++	 * 4. S2 -> S1 + S2 (attach_pasid_table)
++	 * 5. S1 + S2 -> S2 (detach_pasid_table)
+ 	 *
+ 	 * Given that we can't update the STE atomically and the SMMU
+ 	 * doesn't read the thing in a defined order, that leaves us
+@@ -1125,7 +1126,7 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
+ 	 * 3. Update Config, sync
+ 	 */
+ 	u64 val = le64_to_cpu(dst[0]);
+-	bool ste_live = false;
++	bool abort, bypass, translate, ste_live = false;
+ 	struct arm_smmu_cmdq_ent prefetch_cmd = {
+ 		.opcode		= CMDQ_OP_PREFETCH_CFG,
+ 		.prefetch	= {
+@@ -1139,11 +1140,11 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
+ 			break;
+ 		case STRTAB_STE_0_CFG_S1_TRANS:
+ 		case STRTAB_STE_0_CFG_S2_TRANS:
++		case STRTAB_STE_0_CFG_NESTED:
+ 			ste_live = true;
+ 			break;
+ 		case STRTAB_STE_0_CFG_ABORT:
+-			if (disable_bypass)
+-				break;
++			break;
+ 		default:
+ 			BUG(); /* STE corruption */
+ 		}
+@@ -1153,8 +1154,13 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
+ 	val = STRTAB_STE_0_V;
  
--	return 1 << __get_task_state(p);
-+	/*
-+	 * task_state_index() uses fls() and returns a value from 0-8 range.
-+	 * Decrement it by 1 (except TASK_RUNNING state i.e 0) before using
-+	 * it for left shift operation to get the correct task->state
-+	 * mapping.
-+	 */
-+	state = __get_task_state(p);
+ 	/* Bypass/fault */
+-	if (!ste->assigned || !(ste->s1_cfg || ste->s2_cfg)) {
+-		if (!ste->assigned && disable_bypass)
 +
-+	return state ? (1 << (state - 1)) : state;
- }
- #endif /* CREATE_TRACE_POINTS */
++	abort = (!ste->assigned && disable_bypass) || ste->abort;
++	translate = ste->s1_cfg || ste->s2_cfg;
++	bypass = !abort && !translate;
++
++	if (abort || bypass) {
++		if (abort)
+ 			val |= FIELD_PREP(STRTAB_STE_0_CFG, STRTAB_STE_0_CFG_ABORT);
+ 		else
+ 			val |= FIELD_PREP(STRTAB_STE_0_CFG, STRTAB_STE_0_CFG_BYPASS);
+@@ -1173,7 +1179,6 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
+ 	}
  
-
+ 	if (ste->s1_cfg) {
+-		BUG_ON(ste_live);
+ 		dst[1] = cpu_to_le64(
+ 			 FIELD_PREP(STRTAB_STE_1_S1CIR, STRTAB_STE_1_S1C_CACHE_WBRA) |
+ 			 FIELD_PREP(STRTAB_STE_1_S1COR, STRTAB_STE_1_S1C_CACHE_WBRA) |
+@@ -1192,7 +1197,6 @@ static void arm_smmu_write_strtab_ent(struct arm_smmu_device *smmu, u32 sid,
+ 	}
+ 
+ 	if (ste->s2_cfg) {
+-		BUG_ON(ste_live);
+ 		dst[2] = cpu_to_le64(
+ 			 FIELD_PREP(STRTAB_STE_2_S2VMID, ste->s2_cfg->vmid) |
+ 			 FIELD_PREP(STRTAB_STE_2_VTCR, ste->s2_cfg->vtcr) |
+-- 
+2.20.1
 
