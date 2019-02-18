@@ -2,193 +2,116 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8192BC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 04:43:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD5E0C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 04:53:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E5C1218D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 04:43:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 730A5218D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 04:53:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="1O0vn34J"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LBXtpmA6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728535AbfBREnn (ORCPT
+        id S1727771AbfBRExe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 23:43:43 -0500
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:49901 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727024AbfBREnn (ORCPT
+        Sun, 17 Feb 2019 23:53:34 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40402 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727003AbfBRExd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 23:43:43 -0500
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id x1I4hMfP005648;
-        Mon, 18 Feb 2019 13:43:23 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x1I4hMfP005648
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1550465003;
-        bh=xsUZFvL5CTUDGQrfaNZH+zG2OPJPifptmxt30v8BUlA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=1O0vn34Jpe58f2bWdd2/ru2W91NiMQKYy9CH73VR2Iqh3dFqdlRlYAHZU5Nxbt1Jn
-         FtBmudNXx8UwxrkvfkD8reG6eoHLoYlkj5O2tJsvsYFF6Fi+Ny3oPl2hcIak8o+CWJ
-         QqSnhvuzp3RzYYeFSOJLM0gncd4G8fU1gN9ISTwLlwX0vkZ5jWo38XYN5xg/FbPIHd
-         lILqh5O1qWX0MsezkswoHIcAgNrFjqX497g11SOeIyIgsOe5ZqoedvJLO51IP9/nP+
-         10yRm3rHNJnYkoN2nRRB7G3pb3RMr7wZXIRcIIml8b4GbJV1w87yhZ2qFl3jp/yu1q
-         YN93X5ByKtTEw==
-X-Nifty-SrcIP: [209.85.222.49]
-Received: by mail-ua1-f49.google.com with SMTP id s15so5399534uap.6;
-        Sun, 17 Feb 2019 20:43:23 -0800 (PST)
-X-Gm-Message-State: AHQUAuYTCyHucP51jaq0IyI8HBzm4mD1VvJ2wc5yVnvY6vhF+YYKYn1n
-        qmFGri0Im4e4dyutqzCL3r8OpFm9bbwqSAZCq9U=
-X-Google-Smtp-Source: AHgI3IY/r1POG5nrvpxPTFLf2AMYCa0zDBbPhR46wUgJIO22wNFAE2rGet/QcCOJh49vjWk7iSJSfCUmZLFW49o+pjs=
-X-Received: by 2002:ab0:648c:: with SMTP id p12mr6419793uam.93.1550465002431;
- Sun, 17 Feb 2019 20:43:22 -0800 (PST)
+        Sun, 17 Feb 2019 23:53:33 -0500
+Received: by mail-pl1-f193.google.com with SMTP id bj4so8126708plb.7
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Feb 2019 20:53:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=j86UcfahKzsFa6NJtZ03NxMBaTCekIZNcioiQ8oFeYU=;
+        b=LBXtpmA60N52gDa+seH5jDoL6QW2F6DebYVZbyyEucVuLun4F+/SozFJgjl45In7da
+         41E2RJsX19yQX08JQDc/HdQPGqsFHFxPGoH1yc+n0ApRgj2Z8GaVBr5WLcwZ0nOzpA/d
+         /kwtLrg+G1akRLc5gJggcmD9Fss1BKza+ul0NjBhiP8Y6em9c/as8OZWbEuvVEspbxmI
+         62mBYR+Xo/mg+DtG2zU2GPVuMdTXJl9BV4utFK0zbkDp8wrr1Eu+Jl6V071TMBMWfuhA
+         gzAVWEFv6zEvn/U7EqeMFYUtPSJpDd1IH4FYVIPXTTU/Mp2hk1x5sWknO7Di/xI9hLj0
+         qSIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=j86UcfahKzsFa6NJtZ03NxMBaTCekIZNcioiQ8oFeYU=;
+        b=gbM8aOJoKhN23448ohoUqEN7bK1VqRw54psgUSjsj9hBNB0q1CN7f9E/7nM9nVOiUY
+         NDFFbnSxF1G785W7EqRntsCBhWhpoKo5XBuAJF0K0Kil1Sb4lju20JGaa9kzksn9x79G
+         GB34QH/aZ+4wLyDotla+Yj/VTfxg8jB1sGGfuyolT2jsODNETHwewVYnuoC06050TsBy
+         aQDRVKh1g4LWLCWMeSeK5RupMhgxhsWZeBg0u/+7NseFB10uXH7lCR6oMRxlGUn/qBHs
+         qYP6Wli6ohQ8oERapIQeMxoGod1Wu5RXqLs2f3DnSFdrJ3OXymk+EURD1AWLqoFw9MWI
+         ONpw==
+X-Gm-Message-State: AHQUAuZwhWH5OthLdCSCqSVMHpjBNC2jKsz/r8nd4VC+Cx6BbPzymC07
+        kh5GhqTlOMFne/QyFVAEq2Z7BA==
+X-Google-Smtp-Source: AHgI3IbuhWpSM85Pnea4k/eny8phFUFt9I/rmezmrqyac75qyM2gu4PG5aDj3K9H6Qh5rgZEwegekA==
+X-Received: by 2002:a17:902:be15:: with SMTP id r21mr21220479pls.143.1550465613006;
+        Sun, 17 Feb 2019 20:53:33 -0800 (PST)
+Received: from localhost ([122.172.102.63])
+        by smtp.gmail.com with ESMTPSA id y21sm14522494pfe.57.2019.02.17.20.53.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 17 Feb 2019 20:53:32 -0800 (PST)
+Date:   Mon, 18 Feb 2019 10:23:30 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     sudeep.holla@arm.com, rjw@rjwysocki.net,
+        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpufreq: scmi: fix use-after-free in scmi_cpufreq_exit()
+Message-ID: <20190218045330.zpiivw7mvv4hzctq@vireshk-i7>
+References: <20190216163148.12375-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-References: <1548906999-22143-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1548906999-22143-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 18 Feb 2019 13:42:46 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARkmkQr7Q2rhdB0GVFnvSpspRkoM1f9+=ULJ9y-aXQ3NQ@mail.gmail.com>
-Message-ID: <CAK7LNARkmkQr7Q2rhdB0GVFnvSpspRkoM1f9+=ULJ9y-aXQ3NQ@mail.gmail.com>
-Subject: Re: [PATCH] drm: prefix header search paths with $(srctree)/
-To:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Cc:     freedreno@lists.freedesktop.org,
-        Zhenyu Wang <zhenyuw@linux.intel.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        intel-gfx@lists.freedesktop.org, Ben Skeggs <bskeggs@redhat.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Rob Clark <robdclark@gmail.com>, amd-gfx@lists.freedesktop.org,
-        nouveau@lists.freedesktop.org,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Zhi Wang <zhi.a.wang@intel.com>,
-        intel-gvt-dev@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190216163148.12375-1-tiny.windzz@gmail.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 31, 2019 at 1:01 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> Currently, the Kbuild core manipulates header search paths in a crazy
-> way [1].
->
-> To fix this mess, I want all Makefiles to add explicit $(srctree)/ to
-> the search paths in the srctree. Some Makefiles are already written in
-> that way, but not all. The goal of this work is to make the notation
-> consistent, and finally get rid of the gross hacks.
->
-> Having whitespaces after -I does not matter since commit 48f6e3cf5bc6
-> ("kbuild: do not drop -I without parameter").
->
-> [1]: https://patchwork.kernel.org/patch/9632347/
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+On 16-02-19, 11:31, Yangtao Li wrote:
+> This issue was detected with the help of Coccinelle. So
+> change the order of function calls to fix it.
+> 
+> Fixes: 1690d8bb91e37 (cpufreq: scpi/scmi: Fix freeing of dynamic OPPs)
+> 
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 > ---
+>  drivers/cpufreq/scmi-cpufreq.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
+> index 242c3370544e..9ed46d188cb5 100644
+> --- a/drivers/cpufreq/scmi-cpufreq.c
+> +++ b/drivers/cpufreq/scmi-cpufreq.c
+> @@ -187,8 +187,8 @@ static int scmi_cpufreq_exit(struct cpufreq_policy *policy)
+>  
+>  	cpufreq_cooling_unregister(priv->cdev);
+>  	dev_pm_opp_free_cpufreq_table(priv->cpu_dev, &policy->freq_table);
+> -	kfree(priv);
+>  	dev_pm_opp_remove_all_dynamic(priv->cpu_dev);
+> +	kfree(priv);
+>  
+>  	return 0;
+>  }
 
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Could you take a look at this series, please?
+@Rafael: Please pick it up for 5.0-rc8 as the bug was introduced
+during 5.0 cycle only.
 
-Thanks.
+The patch it fixes had this tag:
 
+    Cc: 4.20 <stable@vger.kernel.org> # v4.20
 
-
-
-
-> I put all gpu/drm changes into a single patch because
-> they are trivial conversion.
->
-> Please let me know if I need to split this into per-driver patches.
->
->
->  drivers/gpu/drm/amd/amdgpu/Makefile | 2 +-
->  drivers/gpu/drm/amd/lib/Makefile    | 2 +-
->  drivers/gpu/drm/i915/gvt/Makefile   | 2 +-
->  drivers/gpu/drm/msm/Makefile        | 6 +++---
->  drivers/gpu/drm/nouveau/Kbuild      | 8 ++++----
->  5 files changed, 10 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/Makefile b/drivers/gpu/drm/amd/amdgpu/Makefile
-> index f76bcb9..b21ebb0 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/Makefile
-> +++ b/drivers/gpu/drm/amd/amdgpu/Makefile
-> @@ -23,7 +23,7 @@
->  # Makefile for the drm device driver.  This driver provides support for the
->  # Direct Rendering Infrastructure (DRI) in XFree86 4.1.0 and higher.
->
-> -FULL_AMD_PATH=$(src)/..
-> +FULL_AMD_PATH=$(srctree)/$(src)/..
->  DISPLAY_FOLDER_NAME=display
->  FULL_AMD_DISPLAY_PATH = $(FULL_AMD_PATH)/$(DISPLAY_FOLDER_NAME)
->
-> diff --git a/drivers/gpu/drm/amd/lib/Makefile b/drivers/gpu/drm/amd/lib/Makefile
-> index 6902430..d534992 100644
-> --- a/drivers/gpu/drm/amd/lib/Makefile
-> +++ b/drivers/gpu/drm/amd/lib/Makefile
-> @@ -27,6 +27,6 @@
->  # driver components or later moved to kernel/lib for sharing with
->  # other drivers.
->
-> -ccflags-y := -I$(src)/../include
-> +ccflags-y := -I $(srctree)/$(src)/../include
->
->  obj-$(CONFIG_CHASH) += chash.o
-> diff --git a/drivers/gpu/drm/i915/gvt/Makefile b/drivers/gpu/drm/i915/gvt/Makefile
-> index b016dc7..a4a5a96 100644
-> --- a/drivers/gpu/drm/i915/gvt/Makefile
-> +++ b/drivers/gpu/drm/i915/gvt/Makefile
-> @@ -5,6 +5,6 @@ GVT_SOURCE := gvt.o aperture_gm.o handlers.o vgpu.o trace_points.o firmware.o \
->         execlist.o scheduler.o sched_policy.o mmio_context.o cmd_parser.o debugfs.o \
->         fb_decoder.o dmabuf.o page_track.o
->
-> -ccflags-y                              += -I$(src) -I$(src)/$(GVT_DIR)
-> +ccflags-y                              += -I $(srctree)/$(src) -I $(srctree)/$(src)/$(GVT_DIR)/
->  i915-y                                 += $(addprefix $(GVT_DIR)/, $(GVT_SOURCE))
->  obj-$(CONFIG_DRM_I915_GVT_KVMGT)       += $(GVT_DIR)/kvmgt.o
-> diff --git a/drivers/gpu/drm/msm/Makefile b/drivers/gpu/drm/msm/Makefile
-> index 56a70c7..b7b1ebd 100644
-> --- a/drivers/gpu/drm/msm/Makefile
-> +++ b/drivers/gpu/drm/msm/Makefile
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0
-> -ccflags-y := -Idrivers/gpu/drm/msm
-> -ccflags-y += -Idrivers/gpu/drm/msm/disp/dpu1
-> -ccflags-$(CONFIG_DRM_MSM_DSI) += -Idrivers/gpu/drm/msm/dsi
-> +ccflags-y := -I $(srctree)/$(src)
-> +ccflags-y += -I $(srctree)/$(src)/disp/dpu1
-> +ccflags-$(CONFIG_DRM_MSM_DSI) += -I $(srctree)/$(src)/dsi
->
->  msm-y := \
->         adreno/adreno_device.o \
-> diff --git a/drivers/gpu/drm/nouveau/Kbuild b/drivers/gpu/drm/nouveau/Kbuild
-> index b17843d..b4bc88ad 100644
-> --- a/drivers/gpu/drm/nouveau/Kbuild
-> +++ b/drivers/gpu/drm/nouveau/Kbuild
-> @@ -1,7 +1,7 @@
-> -ccflags-y += -I$(src)/include
-> -ccflags-y += -I$(src)/include/nvkm
-> -ccflags-y += -I$(src)/nvkm
-> -ccflags-y += -I$(src)
-> +ccflags-y += -I $(srctree)/$(src)/include
-> +ccflags-y += -I $(srctree)/$(src)/include/nvkm
-> +ccflags-y += -I $(srctree)/$(src)/nvkm
-> +ccflags-y += -I $(srctree)/$(src)
->
->  # NVKM - HW resource manager
->  #- code also used by various userspace tools/tests
-> --
-> 2.7.4
->
-
+And so will get applied to 4.20.N, I guess we need to mark this patch
+as well for stable then.
 
 -- 
-Best Regards
-Masahiro Yamada
+viresh
