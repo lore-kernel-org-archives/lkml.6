@@ -2,92 +2,149 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9621C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7765C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:51:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8E39217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:50:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=eblau.com header.i=@eblau.com header.b="fJSDa5Vz"
+	by mail.kernel.org (Postfix) with ESMTP id 75A6A2177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:51:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550515865;
+	bh=0ETMWvI6u4hm9CC2z6WYFglqAeNjN2QSF2E3OcSzaT8=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
+	b=mo2ecGksNfaTbRerKsflk/ZYbhrVVawr6v3MMPEBgUdXVq0f3PIHpw3teV2tcYSOF
+	 079EQ2zMARi6Fjxf5uqi22K2HlaOHPYRXfQTRW/fgUhVAQmvk4tglzbLNVDHM3rbSH
+	 YUF3/s4gC5bICFp0N8o+FzJgbzy7CqPIR/C9DoUE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727404AbfBRSuu (ORCPT
+        id S1727458AbfBRSvD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:50:50 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:44180 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbfBRSuo (ORCPT
+        Mon, 18 Feb 2019 13:51:03 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41980 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726252AbfBRSti (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:50:44 -0500
-Received: by mail-ed1-f66.google.com with SMTP id b20so14639518edw.11;
-        Mon, 18 Feb 2019 10:50:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=eblau.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9HYnI0pKPwLMrXoZ67fMcaawonsUJOabh0lXdrscyIk=;
-        b=fJSDa5Vzy0vcbWsCVe9n9MXYHCcQAr8ZAi0hwhflza0qtTiC9UPZNvNqdG089w4k8j
-         2/6QNF4cpV5y0otIGdF4cKPChMY/+QmZwzMBNlBRWjjZaUgp21jXc5jDnxVkmWLKVE8/
-         BJVItCk5KnkVZAfsUstXveSWkLCngXY3zCiU8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9HYnI0pKPwLMrXoZ67fMcaawonsUJOabh0lXdrscyIk=;
-        b=fuH7N35Ut70uM+NMGSJZQaQQ1s3ZIwqtXi5mjjkqGLxbgho8xnCrwiPalEVow1JR6y
-         OjU3FXvqr7HNwtF1dBlHb3ItMMLOyENAuvPXgN1pgKw4d8bdIKPFc9+kkC7EevlFEPdk
-         9lcV9bm7Kn6/6KNxy7H2D8mpSW/uPND8AtqgdqKaSKP8nHGsFcRQP7TIR0VKsBlHLT48
-         YolqopswK4IeGVE61TZD7Y4QNAIKsZQ0Evfr7QnTH2+XDYZpGr1Y3IGx5P8LNRNFB8S1
-         gMPggIk9JMA0efKdF/esS8YDoEf6A6gDpDNO2rGqr8FW/MYfRNRR43xLvshYRdSwAW2N
-         BafA==
-X-Gm-Message-State: AHQUAuYaQc69zOp8JqqI8xZxkQspajCpGUvOijB7ilGx/dNtFYS8Hqes
-        fUkpKMT6Myb9pdfcOiCxDAwBra77wPAUYxVWv5hphPDz
-X-Google-Smtp-Source: AHgI3IaZzUsxeD4lO4dzvjcBWI8xxCbkvtFAyaSN/QkVE3TEYRSuLfq8QIsOsPKKr/aAHEZGr5DMIcd8odnV2/QH1g4=
-X-Received: by 2002:a50:b16d:: with SMTP id l42mr17862054edd.98.1550515842360;
- Mon, 18 Feb 2019 10:50:42 -0800 (PST)
-MIME-Version: 1.0
-References: <20190213211323.6072-1-mironov.ivan@gmail.com>
-In-Reply-To: <20190213211323.6072-1-mironov.ivan@gmail.com>
-From:   Eric Blau <eblau@eblau.com>
-Date:   Mon, 18 Feb 2019 10:50:33 -0800
-Message-ID: <CADU241P6-VZggZ44ZEcLOj+A0zWqvWRUSoTLdmWAGCS+aiseog@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/2] Fix for the internal card reader and suspend on MacBooks
-To:     Ivan Mironov <mironov.ivan@gmail.com>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Martin Liu <liumartin@google.com>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Jon Flatley <jflat@chromium.org>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Benson Leung <bleung@chromium.org>,
-        Harry Pan <harry.pan@intel.com>,
-        Jack Stocker <jackstocker.93@gmail.com>,
-        Danilo Krummrich <danilokrummrich@dk-develop.de>,
-        Samuel Sadok <samuel.sadok@bluewin.ch>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 18 Feb 2019 13:49:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=FZw/nIU94/BV3+eC5ofCCRLmhZpkDi3wgLtrY44XoZg=; b=LfPHU/XQA5FP
+        UooC6adsaDzjfoyEVIyslL4h6s86A4skorywc6ZLkBuS92azF4Dps9XX+hNEVTrHyPJxzlmQMUv2B
+        z48WOZzMI7k3CBGfJyJD+Rsn22EVfyULl2WRX8fNsx45WAmkN3yJEYjTxFRvr7YNyeT1HEnu0xcoH
+        37ykE=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gvnyp-0001e4-3E; Mon, 18 Feb 2019 18:49:27 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 887FC1128009; Mon, 18 Feb 2019 18:49:26 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Viorel Suman <viorel.suman@nxp.com>
+Cc:     Mark Brown <broonie@kernel.org>, Timur Tabi <timur@kernel.org>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Viorel Suman <viorel.suman@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: fsl_spdif: fix sysclk_df type" to the asoc tree
+In-Reply-To:  <1550503474-18865-1-git-send-email-viorel.suman@nxp.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190218184926.887FC1128009@debutante.sirena.org.uk>
+Date:   Mon, 18 Feb 2019 18:49:26 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Feb 13, 2019 at 1:14 PM Ivan Mironov <mironov.ivan@gmail.com> wrote:
->
-> First patch adds code for this new quirk, and second patch enables this
-> quirk for card reader device which is used in my macbook.
+The patch
 
-Hi Ivan,
+   ASoC: fsl_spdif: fix sysclk_df type
 
-Thanks for sending these patches along. I've applied them against
-4.20.8 and they fix the suspend/resume issues I've hit since November
-in the -stable series. On resume, I see logs indicating that the stuck
-card reader on usb2-3 on my MacBook Pro is being reset. It shows up
-fine afterwards.
+has been applied to the asoc tree at
+
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
 Thanks,
-Eric
+Mark
+
+From 2231609a2c0a4807c017822ecb5834bbb7f59fb9 Mon Sep 17 00:00:00 2001
+From: Viorel Suman <viorel.suman@nxp.com>
+Date: Mon, 18 Feb 2019 15:25:00 +0000
+Subject: [PATCH] ASoC: fsl_spdif: fix sysclk_df type
+
+According to RM SPDIF STC SYSCLK_DF field is 9-bit wide, values
+being in 0..511 range. Use a proper type to handle sysclk_df.
+
+Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/fsl/fsl_spdif.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/sound/soc/fsl/fsl_spdif.c b/sound/soc/fsl/fsl_spdif.c
+index a26686e7281c..4842e6df9a2d 100644
+--- a/sound/soc/fsl/fsl_spdif.c
++++ b/sound/soc/fsl/fsl_spdif.c
+@@ -96,7 +96,7 @@ struct fsl_spdif_priv {
+ 	bool dpll_locked;
+ 	u32 txrate[SPDIF_TXRATE_MAX];
+ 	u8 txclk_df[SPDIF_TXRATE_MAX];
+-	u8 sysclk_df[SPDIF_TXRATE_MAX];
++	u16 sysclk_df[SPDIF_TXRATE_MAX];
+ 	u8 txclk_src[SPDIF_TXRATE_MAX];
+ 	u8 rxclk_src;
+ 	struct clk *txclk[SPDIF_TXRATE_MAX];
+@@ -376,7 +376,8 @@ static int spdif_set_sample_rate(struct snd_pcm_substream *substream,
+ 	struct platform_device *pdev = spdif_priv->pdev;
+ 	unsigned long csfs = 0;
+ 	u32 stc, mask, rate;
+-	u8 clk, txclk_df, sysclk_df;
++	u16 sysclk_df;
++	u8 clk, txclk_df;
+ 	int ret;
+ 
+ 	switch (sample_rate) {
+@@ -1109,8 +1110,9 @@ static u32 fsl_spdif_txclk_caldiv(struct fsl_spdif_priv *spdif_priv,
+ 	static const u32 rate[] = { 32000, 44100, 48000, 96000, 192000 };
+ 	bool is_sysclk = clk_is_match(clk, spdif_priv->sysclk);
+ 	u64 rate_ideal, rate_actual, sub;
+-	u32 sysclk_dfmin, sysclk_dfmax;
+-	u32 txclk_df, sysclk_df, arate;
++	u32 arate;
++	u16 sysclk_dfmin, sysclk_dfmax, sysclk_df;
++	u8 txclk_df;
+ 
+ 	/* The sysclk has an extra divisor [2, 512] */
+ 	sysclk_dfmin = is_sysclk ? 2 : 1;
+-- 
+2.20.1
+
