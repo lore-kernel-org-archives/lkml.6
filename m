@@ -2,90 +2,68 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C87B1C10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19429C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:20:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E795217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:16:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550506599;
-	bh=9JmnPrZ50hdAOW8UXqjf28MDlx26RzMdqnblmO6f7vY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=swiZw4WWtuuLZoriOGT6y2jmE5LKN6cP6vGOv0vd2KrYB6ge0OmIFJBM3RCpCTQeY
-	 gmVFKGx84PKdbsTmSM1S3+XSqiI6ZUbDNuCUHDZ3NWC4k4hrWUfmUUlBTNJSImRn0G
-	 nVWZqLdZxiVgjt+2PUGnDqb0zSY7q1vV8HZBD+eY=
+	by mail.kernel.org (Postfix) with ESMTP id E19A6214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:20:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732896AbfBRQQi (ORCPT
+        id S1733041AbfBRQUi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 11:16:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36164 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 11:20:38 -0500
+Received: from muru.com ([72.249.23.125]:39270 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730659AbfBRQQi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 11:16:38 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8B5C208E4;
-        Mon, 18 Feb 2019 16:16:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550506597;
-        bh=9JmnPrZ50hdAOW8UXqjf28MDlx26RzMdqnblmO6f7vY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=s900sfsRBcUDVflf/yU/5n4YsRKk1POfUeOKZxj0vbZmbbfmIWaURa2nbzDesoVyY
-         DDU+MUaSnyEsIpMP+qM78ITatso8Wkfzhd2IICFRSF3wONuLUBF0/ImWHFMN71Kr3x
-         Eq4O4ENif287aRP7l2kxPK6F3bV82BFwu4aIlVeQ=
-Date:   Mon, 18 Feb 2019 17:16:34 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Rik van Riel <riel@surriel.com>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Dave Chinner <dchinner@redhat.com>,
-        Wolfgang Walter <linux@stwm.de>, Roman Gushchin <guro@fb.com>,
-        Spock <dairinin@gmail.com>, Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 4.20 71/92] Revert "mm: slowly shrink slabs with a
- relatively small number of objects"
-Message-ID: <20190218161634.GA30873@kroah.com>
-References: <20190218133454.668268457@linuxfoundation.org>
- <20190218133501.533140116@linuxfoundation.org>
- <a998a5028aa3bb17a5a60fffd3db558223b84cd5.camel@surriel.com>
+        id S1730659AbfBRQUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 11:20:37 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 8BC8480E4;
+        Mon, 18 Feb 2019 16:20:46 +0000 (UTC)
+Date:   Mon, 18 Feb 2019 08:20:33 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Faiz Abbas <faiz_abbas@ti.com>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org,
+        ulf.hansson@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        adrian.hunter@intel.com, kishon@ti.com, zhang.chunyan@linaro.org
+Subject: Re: [PATCH v2 3/8] dt-bindings: sdhci-omap: Add properties for using
+ external dma
+Message-ID: <20190218162033.GF15711@atomide.com>
+References: <20190215192033.24203-1-faiz_abbas@ti.com>
+ <20190215192033.24203-4-faiz_abbas@ti.com>
+ <20190215200718.GB15711@atomide.com>
+ <2aa0f7e4-c880-ee88-2e88-dc2c3187f0c9@ti.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a998a5028aa3bb17a5a60fffd3db558223b84cd5.camel@surriel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <2aa0f7e4-c880-ee88-2e88-dc2c3187f0c9@ti.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 10:30:44AM -0500, Rik van Riel wrote:
-> On Mon, 2019-02-18 at 14:43 +0100, Greg Kroah-Hartman wrote:
-> > 4.20-stable review patch.  If anyone has any objections, please let
-> > me know.
-> > 
-> > ------------------
-> > 
-> > From: Dave Chinner <dchinner@redhat.com>
-> > 
-> > commit a9a238e83fbb0df31c3b9b67003f8f9d1d1b6c96 upstream.
-> > 
-> > This reverts commit 172b06c32b9497 ("mm: slowly shrink slabs with a
-> > relatively small number of objects").
+* Faiz Abbas <faiz_abbas@ti.com> [190218 13:38]:
+> Hi Tony,
 > 
-> This revert will result in the slab caches of dead
-> cgroups with a small number of remaining objects never
-> getting reclaimed, which can be a memory leak in some
-> configurations.
-> 
-> But hey, that's your tradeoff to make.
+> On 16/02/19 1:37 AM, Tony Lindgren wrote:
+> > * Faiz Abbas <faiz_abbas@ti.com> [190215 19:18]:
+> >> From: Chunyan Zhang <zhang.chunyan@linaro.org>
+> >>
+> >> sdhci-omap can support both external dma controller via dmaengine
+> >> framework as well as ADMA which standard SD host controller
+> >> provides.
+> > 
+> > Care to describe here also how to configure things for ADMA and
+> > instead of DMA? Just leave out dmas property?
+> >
+> That's correct. If dmas property is populated, then use external DMA.
+> Otherwise use ADMA/SDMA depending on what you read from the CAPS register.
 
-That's what is in Linus's tree.  Should we somehow diverge from that?
+OK thanks.
 
-thanks,
+Tony
 
-greg k-h
