@@ -6,48 +6,50 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25EFEC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B8ACC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:13:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED22221905
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:13:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AED521917
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:13:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499226;
-	bh=ux3LlgsOWX42zrVPz0W+U3QMMEsBW6XW0OpkHNLc51E=;
+	s=default; t=1550499228;
+	bh=r19kt9IIzaTP39J4RQt6EY0idhn86c9awsYykmW9UFg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=g1x7C7EuXyfkBR2mTTpnINy+NjJs3IcuuUHuAby1l7thPdLQTvEJykygwC49T6YiV
-	 Nk++IXkuNNRGfsAftekGxYtdsKtN/bZ6XpQ1twz8k7qfVaAsz+omNqw+LLo9X54mXt
-	 WnLN3oKz80VUs3idN2h21eDgDz4EP2lSj0Ww3CnU=
+	b=cwcd2g7Zsio37oj3x04BPt9EH5Un2Tn3O9a6iUcxioQYxi6czkhsg/xS2KXNT0Wj6
+	 WL5XsNb7LB4nlTrfdr8HNM2h+dhFmVAKE7XtjdGGs7pRW4OMmEYgg7L8hbtZo4cw/h
+	 iau/AlVE5/kcCbIlr9pj3xc6aLepWWc8AUaMzbME=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392419AbfBRONo (ORCPT
+        id S2392429AbfBRONq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:13:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58376 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:13:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392379AbfBRONh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:13:37 -0500
+        id S2392407AbfBRONo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:13:44 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 110D321905;
-        Mon, 18 Feb 2019 14:13:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F82A21905;
+        Mon, 18 Feb 2019 14:13:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550499216;
-        bh=ux3LlgsOWX42zrVPz0W+U3QMMEsBW6XW0OpkHNLc51E=;
+        s=default; t=1550499222;
+        bh=r19kt9IIzaTP39J4RQt6EY0idhn86c9awsYykmW9UFg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jZoUYd3DY3+ss/NMyKTzcSrjTlUMFbEzdDVoTOIHcZuMQrrtgMI+wDVRRTLnuakRG
-         NDlGp+Es89B50hh1DSDgjnIWBcwkcfQxu+9kPLG76KivZpY0H5Q9Rlxu0TcTLDnjP2
-         Y7yowF0Wuu5df8jVKB+3E+LMxER5+Xr5yGhFTEKw=
+        b=dQpj12E6Bbv+wPr9t9AMBD/GslQe2PDpndDXcyCnzl1J/oPkmrsmz5G9s9aKN0tkw
+         OpqZWKUB1dj/NWCpCOfTKe97UVpWqlLZgIjg6XK8haQFDnU4H8h86XHH+40F3SNQmw
+         qhQJasybFXOaifqemcr6wdH/ki/wRg4png5s0OJw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        James Hughes <james.hughes@raspberrypi.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 3.18 106/108] kaweth: use skb_cow_head() to deal with cloned skbs
-Date:   Mon, 18 Feb 2019 14:44:42 +0100
-Message-Id: <20190218133524.581030970@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sven Eckelmann <sven.eckelmann@openmesh.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Christian Lamparter <chunkeey@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH 3.18 108/108] pinctrl: msm: fix gpio-hog related boot issues
+Date:   Mon, 18 Feb 2019 14:44:44 +0100
+Message-Id: <20190218133524.673247416@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -66,50 +68,101 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eric Dumazet <edumazet@google.com>
+From: Christian Lamparter <chunkeey@gmail.com>
 
-commit 39fba7835aacda65284a86e611774cbba71dac20 upstream.
+commit a86caa9ba5d70696ceb35d1d39caa20d8b641387 upstream.
 
-We can use skb_cow_head() to properly deal with clones,
-especially the ones coming from TCP stack that allow their head being
-modified. This avoids a copy.
+Sven Eckelmann reported an issue with the current IPQ4019 pinctrl.
+Setting up any gpio-hog in the device-tree for his device would
+"kill the bootup completely":
 
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Cc: James Hughes <james.hughes@raspberrypi.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+| [    0.477838] msm_serial 78af000.serial: could not find pctldev for node /soc/pinctrl@1000000/serial_pinmux, deferring probe
+| [    0.499828] spi_qup 78b5000.spi: could not find pctldev for node /soc/pinctrl@1000000/spi_0_pinmux, deferring probe
+| [    1.298883] requesting hog GPIO enable USB2 power (chip 1000000.pinctrl, offset 58) failed, -517
+| [    1.299609] gpiochip_add_data: GPIOs 0..99 (1000000.pinctrl) failed to register
+| [    1.308589] ipq4019-pinctrl 1000000.pinctrl: Failed register gpiochip
+| [    1.316586] msm_serial 78af000.serial: could not find pctldev for node /soc/pinctrl@1000000/serial_pinmux, deferring probe
+| [    1.322415] spi_qup 78b5000.spi: could not find pctldev for node /soc/pinctrl@1000000/spi_0_pinmux, deferri
+
+This was also verified on a RT-AC58U (IPQ4018) which would
+no longer boot, if a gpio-hog was specified. (Tried forcing
+the USB LED PIN (GPIO0) to high.).
+
+The problem is that Pinctrl+GPIO registration is currently
+peformed in the following order in pinctrl-msm.c:
+	1. pinctrl_register()
+	2. gpiochip_add()
+	3. gpiochip_add_pin_range()
+
+The actual error code -517 == -EPROBE_DEFER is coming from
+pinctrl_get_device_gpio_range(), which is called through:
+        gpiochip_add
+            of_gpiochip_add
+                of_gpiochip_scan_gpios
+                    gpiod_hog
+                        gpiochip_request_own_desc
+                            __gpiod_request
+                                chip->request
+                                    gpiochip_generic_request
+                                       pinctrl_gpio_request
+                                          pinctrl_get_device_gpio_range
+
+pinctrl_get_device_gpio_range() is unable to find any valid
+pin ranges, since nothing has been added to the pinctrldev_list yet.
+so the range can't be found, and the operation fails with -EPROBE_DEFER.
+
+This patch fixes the issue by adding the "gpio-ranges" property to
+the pinctrl device node of all upstream Qcom SoC. The pin ranges are
+then added by the gpio core.
+
+In order to remain compatible with older, existing DTs (and ACPI)
+a check for the "gpio-ranges" property has been added to
+msm_gpio_init(). This prevents the driver of adding the same entry
+to the pinctrldev_list twice.
+
+Reported-by: Sven Eckelmann <sven.eckelmann@openmesh.com>
+Tested-by: Sven Eckelmann <sven.eckelmann@openmesh.com> [ipq4019]
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Christian Lamparter <chunkeey@gmail.com>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/usb/kaweth.c |   18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
+ drivers/pinctrl/qcom/pinctrl-msm.c |   23 ++++++++++++++++++-----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
 
---- a/drivers/net/usb/kaweth.c
-+++ b/drivers/net/usb/kaweth.c
-@@ -812,18 +812,12 @@ static netdev_tx_t kaweth_start_xmit(str
+--- a/drivers/pinctrl/qcom/pinctrl-msm.c
++++ b/drivers/pinctrl/qcom/pinctrl-msm.c
+@@ -825,11 +825,24 @@ static int msm_gpio_init(struct msm_pinc
+ 		return ret;
  	}
  
- 	/* We now decide whether we can put our special header into the sk_buff */
--	if (skb_cloned(skb) || skb_headroom(skb) < 2) {
--		/* no such luck - we make our own */
--		struct sk_buff *copied_skb;
--		copied_skb = skb_copy_expand(skb, 2, 0, GFP_ATOMIC);
--		dev_kfree_skb_irq(skb);
--		skb = copied_skb;
--		if (!copied_skb) {
--			kaweth->stats.tx_errors++;
--			netif_start_queue(net);
--			spin_unlock_irq(&kaweth->device_lock);
--			return NETDEV_TX_OK;
--		}
-+	if (skb_cow_head(skb, 2)) {
-+		kaweth->stats.tx_errors++;
-+		netif_start_queue(net);
-+		spin_unlock_irq(&kaweth->device_lock);
-+		dev_kfree_skb_any(skb);
-+		return NETDEV_TX_OK;
+-	ret = gpiochip_add_pin_range(&pctrl->chip, dev_name(pctrl->dev), 0, 0, chip->ngpio);
+-	if (ret) {
+-		dev_err(pctrl->dev, "Failed to add pin range\n");
+-		gpiochip_remove(&pctrl->chip);
+-		return ret;
++	/*
++	 * For DeviceTree-supported systems, the gpio core checks the
++	 * pinctrl's device node for the "gpio-ranges" property.
++	 * If it is present, it takes care of adding the pin ranges
++	 * for the driver. In this case the driver can skip ahead.
++	 *
++	 * In order to remain compatible with older, existing DeviceTree
++	 * files which don't set the "gpio-ranges" property or systems that
++	 * utilize ACPI the driver has to call gpiochip_add_pin_range().
++	 */
++	if (!of_property_read_bool(pctrl->dev->of_node, "gpio-ranges")) {
++		ret = gpiochip_add_pin_range(&pctrl->chip,
++			dev_name(pctrl->dev), 0, 0, chip->ngpio);
++		if (ret) {
++			dev_err(pctrl->dev, "Failed to add pin range\n");
++			gpiochip_remove(&pctrl->chip);
++			return ret;
++		}
  	}
  
- 	private_header = (__le16 *)__skb_push(skb, 2);
+ 	ret = gpiochip_irqchip_add(chip,
 
 
