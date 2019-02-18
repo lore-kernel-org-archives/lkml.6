@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB9A6C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:03:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C6EC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:03:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B82A21901
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:03:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA7EF21901
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:03:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498624;
-	bh=6NF5Xuex9WKLkGKkEWkSRq8rqstK5GLhVAY3pwjaJ/U=;
+	s=default; t=1550498626;
+	bh=EIYsO8mXMJBGQDes7FaU+b1+AgQ/LNzMp32bkUbPBkQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ts68JLaQHPlT7OfgrNx1NJTXY7uqz5c9LIDNdmZ4wTLqAvjDLdsKr45izX46F4/t+
-	 yo5lQSmDKKljCwqmEXzlEDDVMdAK9yABCvHcXywNwrzzYvestsj9SOsgEL/spISAqG
-	 VSuGHaoHXmvGDKPMGdyWMXnE6MJZ1+yxQ3JOk7IQ=
+	b=Tov4N7SzebdvOuZjgu9iwzpFKVvkrXJv1jVuy1ywLWLSDVth0DL/2E9jI1j8YxV3/
+	 2fZBnLsGOtOCQWc9Y6/OGfgnX7iXz5GkGiY528LaGiTiNoNQZHzpJwGCQKGZZe9QEP
+	 8eV5lBEqk1i7XmB6GhpPOmTK2OzJ828J3BKksp24=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389735AbfBRODn (ORCPT
+        id S2389117AbfBRODp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:03:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45640 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:03:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45700 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388728AbfBRODk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:03:40 -0500
+        id S2389726AbfBRODm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:03:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C94BB21901;
-        Mon, 18 Feb 2019 14:03:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AC3621902;
+        Mon, 18 Feb 2019 14:03:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498619;
-        bh=6NF5Xuex9WKLkGKkEWkSRq8rqstK5GLhVAY3pwjaJ/U=;
+        s=default; t=1550498622;
+        bh=EIYsO8mXMJBGQDes7FaU+b1+AgQ/LNzMp32bkUbPBkQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wrT2xewcQ+w0h2oWl2EyQnZiPvmQ4E2m52toh0klBY6ZswdSusEvN3GMAWr9Sv8lr
-         XBx9TLOXi5QQZjPC3KFdMuoMCnixWBUWnHcPzG+owHfHvsIjmbMKnysqnDaNdXkx4y
-         yw7cKxwe7uITPaMhi7F0bxrZ7BND+PMu6U5O7vss=
+        b=ubLRtyUFectiMoegqMzc4h8FELg1dZ0l2fLkBBb8+W4B17PbPZervOrbiQJpB9rKY
+         3x0cHvviM3az3jkQCbv9gCypWtTPHAhU3MhAWnA9RAz7shJX5JLO/duN5/ta2WFgb0
+         XUFK8SUKgINZIe7VZy0/cv2O4O7mTxPQFFk6lntI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 066/143] isdn: hisax: hfc_pci: Fix a possible concurrency use-after-free bug in HFCPCI_l1hw()
-Date:   Mon, 18 Feb 2019 14:43:14 +0100
-Message-Id: <20190218133531.516530976@linuxfoundation.org>
+Subject: [PATCH 4.4 045/143] cw1200: Fix concurrency use-after-free bugs in cw1200_hw_scan()
+Date:   Mon, 18 Feb 2019 14:42:53 +0100
+Message-Id: <20190218133530.784715432@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -66,50 +66,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7418e6520f22a2e35815122fa5a53d5bbfa2c10f ]
+[ Upstream commit 4f68ef64cd7feb1220232bd8f501d8aad340a099 ]
 
-In drivers/isdn/hisax/hfc_pci.c, the functions hfcpci_interrupt() and
-HFCPCI_l1hw() may be concurrently executed.
+The function cw1200_bss_info_changed() and cw1200_hw_scan() can be
+concurrently executed.
+The two functions both access a possible shared variable "frame.skb".
 
-HFCPCI_l1hw()
-  line 1173: if (!cs->tx_skb)
+This shared variable is freed by dev_kfree_skb() in cw1200_upload_beacon(),
+which is called by cw1200_bss_info_changed(). The free operation is
+protected by a mutex lock "priv->conf_mutex" in cw1200_bss_info_changed().
 
-hfcpci_interrupt()
-  line 942: spin_lock_irqsave();
-  line 1066: dev_kfree_skb_irq(cs->tx_skb);
+In cw1200_hw_scan(), this shared variable is accessed without the
+protection of the mutex lock "priv->conf_mutex".
+Thus, concurrency use-after-free bugs may occur.
 
-Thus, a possible concurrency use-after-free bug may occur
-in HFCPCI_l1hw().
-
-To fix these bugs, the calls to spin_lock_irqsave() and
-spin_unlock_irqrestore() are added in HFCPCI_l1hw(), to protect the
-access to cs->tx_skb.
+To fix these bugs, the original calls to mutex_lock(&priv->conf_mutex) and
+mutex_unlock(&priv->conf_mutex) are moved to the places, which can
+protect the accesses to the shared variable.
 
 Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/isdn/hisax/hfc_pci.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/wireless/cw1200/scan.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/isdn/hisax/hfc_pci.c b/drivers/isdn/hisax/hfc_pci.c
-index 90449e1e91e5..1b1453d62fed 100644
---- a/drivers/isdn/hisax/hfc_pci.c
-+++ b/drivers/isdn/hisax/hfc_pci.c
-@@ -1169,11 +1169,13 @@ HFCPCI_l1hw(struct PStack *st, int pr, void *arg)
- 		if (cs->debug & L1_DEB_LAPD)
- 			debugl1(cs, "-> PH_REQUEST_PULL");
- #endif
-+		spin_lock_irqsave(&cs->lock, flags);
- 		if (!cs->tx_skb) {
- 			test_and_clear_bit(FLG_L1_PULL_REQ, &st->l1.Flags);
- 			st->l1.l1l2(st, PH_PULL | CONFIRM, NULL);
- 		} else
- 			test_and_set_bit(FLG_L1_PULL_REQ, &st->l1.Flags);
-+		spin_unlock_irqrestore(&cs->lock, flags);
- 		break;
- 	case (HW_RESET | REQUEST):
- 		spin_lock_irqsave(&cs->lock, flags);
+diff --git a/drivers/net/wireless/cw1200/scan.c b/drivers/net/wireless/cw1200/scan.c
+index bff81b8d4164..9f1037e7e55c 100644
+--- a/drivers/net/wireless/cw1200/scan.c
++++ b/drivers/net/wireless/cw1200/scan.c
+@@ -78,6 +78,10 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
+ 	if (req->n_ssids > WSM_SCAN_MAX_NUM_OF_SSIDS)
+ 		return -EINVAL;
+ 
++	/* will be unlocked in cw1200_scan_work() */
++	down(&priv->scan.lock);
++	mutex_lock(&priv->conf_mutex);
++
+ 	frame.skb = ieee80211_probereq_get(hw, priv->vif->addr, NULL, 0,
+ 		req->ie_len);
+ 	if (!frame.skb)
+@@ -86,19 +90,15 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
+ 	if (req->ie_len)
+ 		memcpy(skb_put(frame.skb, req->ie_len), req->ie, req->ie_len);
+ 
+-	/* will be unlocked in cw1200_scan_work() */
+-	down(&priv->scan.lock);
+-	mutex_lock(&priv->conf_mutex);
+-
+ 	ret = wsm_set_template_frame(priv, &frame);
+ 	if (!ret) {
+ 		/* Host want to be the probe responder. */
+ 		ret = wsm_set_probe_responder(priv, true);
+ 	}
+ 	if (ret) {
++		dev_kfree_skb(frame.skb);
+ 		mutex_unlock(&priv->conf_mutex);
+ 		up(&priv->scan.lock);
+-		dev_kfree_skb(frame.skb);
+ 		return ret;
+ 	}
+ 
+@@ -120,10 +120,9 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
+ 		++priv->scan.n_ssids;
+ 	}
+ 
+-	mutex_unlock(&priv->conf_mutex);
+-
+ 	if (frame.skb)
+ 		dev_kfree_skb(frame.skb);
++	mutex_unlock(&priv->conf_mutex);
+ 	queue_work(priv->workqueue, &priv->scan.work);
+ 	return 0;
+ }
 -- 
 2.19.1
 
