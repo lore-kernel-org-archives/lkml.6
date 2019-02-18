@@ -2,127 +2,86 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DAA4C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0819DC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D6FA2070D
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498542;
-	bh=63lu6OHPJYHbiZTufuNVG8mDeyuk8eUtb7a+1FFrdOs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=S1bxY+2NkdcRxwvRF8Z9l3LgBkyh2/+m4Q6AFzxUkFjKdBencyXp3GIXAoIIx7GRg
-	 g9g8A0pbNvjwW1nEc+ApAHGZbDLhL/NVXxpoSznZ6evHJZ6rsKMVQyKRDRVpxJNmXF
-	 +2GNzrkUA95EfMkuaIMK8lQc8StvFto3y6RIrRbQ=
+	by mail.kernel.org (Postfix) with ESMTP id D804320842
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:02:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387643AbfBROCU (ORCPT
+        id S2389334AbfBROCX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:02:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43904 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388374AbfBROCS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:02:18 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        Mon, 18 Feb 2019 09:02:23 -0500
+Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:47376 "EHLO
+        mx-rz-2.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388451AbfBROCV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:02:21 -0500
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 90C2A2070D;
-        Mon, 18 Feb 2019 14:02:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498538;
-        bh=63lu6OHPJYHbiZTufuNVG8mDeyuk8eUtb7a+1FFrdOs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ToTvbtcNPLaADk7NgoRnyb00//4eyuMh3zbao7a/Fp3N19sbYwqGtsq6iXSB3wlpm
-         SdUbH8/0HGKjmexzT3tov2KfJrtsBuX/80FYH6gEmYbUz71YoGh9sPJ8bROLjN0HTf
-         F+fiC9pK5dY7DAVfTGOhbgCqSGZK5CcvZlmL69lg=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Maydell <peter.maydell@linaro.org>,
-        =?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 040/143] arm64: KVM: Skip MMIO insn after emulation
-Date:   Mon, 18 Feb 2019 14:42:48 +0100
-Message-Id: <20190218133530.614487420@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
-References: <20190218133529.099444112@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        by mx-rz-2.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4435CZ3nxPzPkPx;
+        Mon, 18 Feb 2019 15:02:18 +0100 (CET)
+Authentication-Results: mx-rz-2.rrze.uni-erlangen.de; dkim=none
+        reason="no signature"; dkim-adsp=none (unprotected policy);
+        dkim-atps=neutral
+X-Virus-Scanned: amavisd-new at boeck4.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 10.21.16.14
+Received: from fau.de (faustud-010-021-016-014.pool.uni-erlangen.de [10.21.16.14])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: U2FsdGVkX1/dulJGEPno+Vvdk1U8UpPYDgeiHbCvdTU=)
+        by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4435CS3C2tzPkjJ;
+        Mon, 18 Feb 2019 15:02:12 +0100 (CET)
+From:   Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+To:     linux-perf-users@vger.kernel.org
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        Stephane Eranian <eranian@google.com>,
+        Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] perf: fix HEADER_CMDLINE description in perf.data documentation
+Date:   Mon, 18 Feb 2019 15:02:03 +0100
+Message-Id: <20190218140203.1982-1-jonas.rabenstein@studium.uni-erlangen.de>
+X-Mailer: git-send-email 2.19.2
+In-Reply-To: <20190218124648.GN31177@kernel.org>
+References: <20190218124648.GN31177@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
-
-------------------
-
-[ Upstream commit 0d640732dbebed0f10f18526de21652931f0b2f2 ]
-
-When we emulate an MMIO instruction, we advance the CPU state within
-decode_hsr(), before emulating the instruction effects.
-
-Having this logic in decode_hsr() is opaque, and advancing the state
-before emulation is problematic. It gets in the way of applying
-consistent single-step logic, and it prevents us from being able to fail
-an MMIO instruction with a synchronous exception.
-
-Clean this up by only advancing the CPU state *after* the effects of the
-instruction are emulated.
-
-Cc: Peter Maydell <peter.maydell@linaro.org>
-Reviewed-by: Alex Bennée <alex.bennee@linaro.org>
-Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The content of this feature header is a perf_header_string_list of
+the argument vector and not a perf_header_string of the commandline.
 ---
- arch/arm/kvm/mmio.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ tools/perf/Documentation/perf.data-file-format.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/kvm/mmio.c b/arch/arm/kvm/mmio.c
-index 387ee2a11e36..885cd0e0015b 100644
---- a/arch/arm/kvm/mmio.c
-+++ b/arch/arm/kvm/mmio.c
-@@ -118,6 +118,12 @@ int kvm_handle_mmio_return(struct kvm_vcpu *vcpu, struct kvm_run *run)
- 		vcpu_set_reg(vcpu, vcpu->arch.mmio_decode.rt, data);
- 	}
+diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
+index dfb218feaad9..5f9a3924830b 100644
+--- a/tools/perf/Documentation/perf.data-file-format.txt
++++ b/tools/perf/Documentation/perf.data-file-format.txt
+@@ -131,7 +131,7 @@ An uint64_t with the total memory in bytes.
  
-+	/*
-+	 * The MMIO instruction is emulated and should not be re-executed
-+	 * in the guest.
-+	 */
-+	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
-+
- 	return 0;
- }
+ 	HEADER_CMDLINE = 11,
  
-@@ -151,11 +157,6 @@ static int decode_hsr(struct kvm_vcpu *vcpu, bool *is_write, int *len)
- 	vcpu->arch.mmio_decode.sign_extend = sign_extend;
- 	vcpu->arch.mmio_decode.rt = rt;
+-A perf_header_string with the perf command line used to collect the data.
++A perf_header_string_list with the perf arg-vector used to collect the data.
  
--	/*
--	 * The MMIO instruction is emulated and should not be re-executed
--	 * in the guest.
--	 */
--	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
- 	return 0;
- }
+ 	HEADER_EVENT_DESC = 12,
  
 -- 
-2.19.1
-
-
+2.19.2
 
