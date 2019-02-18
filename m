@@ -2,140 +2,84 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2E9FC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:09:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3CBEC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:10:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA45C2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:09:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8164D214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:10:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550484604;
+	bh=x2YxbIibcRpS3JCBBhmlIUFNRtqMc538gIKyPVT69z8=;
+	h=From:To:Subject:Date:List-ID:From;
+	b=iAWLtN6DF+4SkvXK18APSXFYunFHDZ23EOH3RvD8IiGOu7ESDxP1WECx+esNBBquI
+	 SMHEGvSOTonGUT74hWHRQPn1pEN3ghsIoIASi/mmUhwkVIM0c91X/JeITUYQWQnpNA
+	 qCikj2eVrLF/QrmbXW9+S9FAG2Bs9TZYFNJseVFA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729624AbfBRKJg (ORCPT
+        id S1729747AbfBRKKD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 05:09:36 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51548 "EHLO mx1.redhat.com"
+        Mon, 18 Feb 2019 05:10:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728908AbfBRKJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 05:09:35 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728705AbfBRKKD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 05:10:03 -0500
+Received: from PC-kkoz.proceq.com (unknown [213.160.61.66])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D6105203D6;
-        Mon, 18 Feb 2019 10:09:34 +0000 (UTC)
-Received: from localhost (ovpn-12-45.pek2.redhat.com [10.72.12.45])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CFB125EDE1;
-        Mon, 18 Feb 2019 10:09:33 +0000 (UTC)
-Date:   Mon, 18 Feb 2019 18:09:31 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
+        by mail.kernel.org (Postfix) with ESMTPSA id 791212147A;
+        Mon, 18 Feb 2019 10:10:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550484602;
+        bh=x2YxbIibcRpS3JCBBhmlIUFNRtqMc538gIKyPVT69z8=;
+        h=From:To:Subject:Date:From;
+        b=MI7kUcTne/D/wZ7869PqljelgXNrTHvJl2rCXEEB7ehtFrGr5YaMvm4k8gZGjOUk1
+         prKJd1tVluksweCxNY88D6ZpEGnJlWjJ6G06CLS0aTje0i6Uafya/IqADOrQHbqq8m
+         WFnrKRvpbzCW1W8JmKoEJ619X/3wYWR0yqoGeOHI=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, X86 ML <x86@kernel.org>,
-        Mike Travis <travis@sgi.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>
-Subject: Re: [PATCH v3 5/6] x86/mm/KASLR: Calculate the actual size of
- vmemmap region
-Message-ID: <20190218100931.GK14858@MiWiFi-R3L-srv>
-References: <20190216140008.28671-1-bhe@redhat.com>
- <20190216140008.28671-6-bhe@redhat.com>
- <CAGXu5jJjed2yS1OZ2+rKuMiPr7HTXLx5qMSV+xWHJs-DJGT4-A@mail.gmail.com>
- <20190218095010.GJ14858@MiWiFi-R3L-srv>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190218095010.GJ14858@MiWiFi-R3L-srv>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 18 Feb 2019 10:09:35 +0000 (UTC)
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org
+Subject: [PATCH] clocksource: exynos_mct: Remove unused header includes
+Date:   Mon, 18 Feb 2019 11:09:58 +0100
+Message-Id: <1550484598-1952-1-git-send-email-krzk@kernel.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/18/19 at 05:50pm, Baoquan He wrote:
-> On 02/17/19 at 09:25am, Kees Cook wrote:
-> > On Sat, Feb 16, 2019 at 6:04 AM Baoquan He <bhe@redhat.com> wrote:
-> > >
-> > > Vmemmap region has different maximum size depending on paging mode.
-> > > Now its size is hardcoded as 1TB in memory KASLR, this is not
-> > > right for 5-level paging mode. It will cause overflow if vmemmap
-> > > region is randomized to be adjacent to cpu_entry_area region and
-> > > its actual size is bigger than 1TB.
-> > >
-> > > So here calculate how many TB by the actual size of vmemmap region
-> > > and align up to 1TB boundary.
-> > >
-> > > Signed-off-by: Baoquan He <bhe@redhat.com>
-> > > ---
-> > >  arch/x86/mm/kaslr.c | 11 ++++++++++-
-> > >  1 file changed, 10 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-> > > index 97768df923e3..ca12ed4e5239 100644
-> > > --- a/arch/x86/mm/kaslr.c
-> > > +++ b/arch/x86/mm/kaslr.c
-> > > @@ -101,7 +101,7 @@ static __initdata struct kaslr_memory_region {
-> > >  } kaslr_regions[] = {
-> > >         { &page_offset_base, 0 },
-> > >         { &vmalloc_base, 0 },
-> > > -       { &vmemmap_base, 1 },
-> > > +       { &vmemmap_base, 0 },
-> > >  };
-> > >
-> > >  /*
-> > > @@ -121,6 +121,7 @@ void __init kernel_randomize_memory(void)
-> > >         unsigned long rand, memory_tb;
-> > >         struct rnd_state rand_state;
-> > >         unsigned long remain_entropy;
-> > > +       unsigned long vmemmap_size;
-> > >
-> > >         vaddr_start = pgtable_l5_enabled() ? __PAGE_OFFSET_BASE_L5 : __PAGE_OFFSET_BASE_L4;
-> > >         vaddr = vaddr_start;
-> > > @@ -152,6 +153,14 @@ void __init kernel_randomize_memory(void)
-> > >         if (memory_tb < kaslr_regions[0].size_tb)
-> > >                 kaslr_regions[0].size_tb = memory_tb;
-> > >
-> > > +       /*
-> > > +        * Calculate how many TB vmemmap region needs, and align to
-> > > +        * 1TB boundary.
-> > 
-> > Can you describe why this is the right calculation? (This will help
-> > explain why 4-level is different from 5-level here.)
-> 
-> In the old code, the size of vmemmap is hardcoded as 1 TB. This is true
-> in 4-level paging mode, 64 TB RAM supported at most, and usually
-> sizeof(struct page) is 64 Bytes, it happens to be 1 TB.
-> 
-> However, in 5-level paging mode, 4 PB is the biggest RAM size we can
-> support, it's (4 PB)/64 == 1<<48, namely 256 TB area needed for vmemmap,
-> assuming sizeof(struct page) is 64 Bytes here.
-> 
-> So, the hardcoding of 1 TB is not correct for 5-level paging mode. 
-> 
-> Thanks
-> Baoquan
-> 
-> > 
-> > > +        */
-> > > +       vmemmap_size = (kaslr_regions[0].size_tb << (TB_SHIFT - PAGE_SHIFT)) *
-> > > +               sizeof(struct page);
-> > > +       kaslr_regions[2].size_tb = DIV_ROUND_UP(vmemmap_size, 1UL << TB_SHIFT);
+The driver does not use sched.h and platform_device.h.
 
-Forgot mentioning what this patch is trying to do. As you can see, we
-just use the adjusted size of the direct mapping section, including the
-possible later hotplugged memory region, to calculate the actual needed
-size for vmemmap, then aligned up to 1 TB. For 4-level paging mode, it's
-still 1 TB. For 5-level paging mode, it will be smaller than 256 TB
-which is in the case of 4 PB RAM installed.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/clocksource/exynos_mct.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-Thanks
-Baoquan
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index 7a244b681876..33fc4038da06 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -10,14 +10,12 @@
+  * published by the Free Software Foundation.
+ */
+ 
+-#include <linux/sched.h>
+ #include <linux/interrupt.h>
+ #include <linux/irq.h>
+ #include <linux/err.h>
+ #include <linux/clk.h>
+ #include <linux/clockchips.h>
+ #include <linux/cpu.h>
+-#include <linux/platform_device.h>
+ #include <linux/delay.h>
+ #include <linux/percpu.h>
+ #include <linux/of.h>
+-- 
+2.7.4
+
