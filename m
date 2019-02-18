@@ -7,47 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF72C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64298C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C71821905
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27F4321906
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497885;
-	bh=zFn94Cbi+FUQGtoue4pclIKlx7t8Ppk2UUxUvADp+oY=;
+	s=default; t=1550497891;
+	bh=xHVH6HlfYOmHAIH0PcmV7RCdr7m3ixFIi37swglZnMc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=b2WNkL7fyZGBqdxt+PzpXkTRvpbyxRRzKHPe0tXly0fgZRywWWm8/MWrLg4fiTMvp
-	 nIEeA1fSGGjsyxwcrFp7/Sr4x2fvbXoy+DLRTVmnNTlNab3s6w/nOyWtg6t60cDB+4
-	 vjzqhmXzC+jskQaTk8Z8Lq1MDoqmzZXIFcwddujQ=
+	b=IgGXU792RiRMK8jWwn9sFgzfOxetAQydisrIGr5Yh+F7IsAl9YexVbIQa52KcORho
+	 nZLC6qD7gnL/taOgKt5wZpfsQHL7g0VbFtR5r6G0XUod7945GZGMsnel5LRrVbaFq1
+	 HZwKwuBQtHFb2l+H6BbSPpuwk3IukvEtL0SF1Mms=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732404AbfBRNvX (ORCPT
+        id S1732431AbfBRNv3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:51:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59172 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:51:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59228 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731883AbfBRNvU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:51:20 -0500
+        id S1732396AbfBRNvX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:51:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 566B720449;
-        Mon, 18 Feb 2019 13:51:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A0C2B21904;
+        Mon, 18 Feb 2019 13:51:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497878;
-        bh=zFn94Cbi+FUQGtoue4pclIKlx7t8Ppk2UUxUvADp+oY=;
+        s=default; t=1550497882;
+        bh=xHVH6HlfYOmHAIH0PcmV7RCdr7m3ixFIi37swglZnMc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TQBRh7hbsY9haD58bIx4fB2d02SaG6PrD9MqSvdllYEAaa3F7dqqIMEkL+A+uvIvE
-         OeBh4Zxz4NKhC5t+xp5xfEL1Kotr8EAkfPv2wWOVyFw173QXGTiWtv1ggL98i7qkrM
-         cV5cQsk+/NVabFohl0FUPkVlkpD7NeUJUsvQSnQw=
+        b=frVMqwaMW1hTWpHWIb2B7DSeZuZOulh3hXQlCATsHnteH/TDsTgoE+2my3QLXO2KA
+         ZqZAgYYT6SqLzWAUjhPBMkQ8o3ZOV+jPNw1O4xYRjls+Dpx1gelQ4EN/0rKUqavjNR
+         aRmeVRERWyb3qXPC+jsLEzTy0MD5MVXWdf07HQDE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Fan <fanc.fnst@cn.fujitsu.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Jin Yao <yao.jin@linux.intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 22/85] ACPI: NUMA: Use correct type for printing addresses on i386-PAE
-Date:   Mon, 18 Feb 2019 14:42:48 +0100
-Message-Id: <20190218133502.025698194@linuxfoundation.org>
+Subject: [PATCH 4.19 23/85] perf report: Fix wrong iteration count in --branch-history
+Date:   Mon, 18 Feb 2019 14:42:49 +0100
+Message-Id: <20190218133502.144952478@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -66,87 +70,223 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit b9ced18acf68dffebe6888c7ec765a2b1db7a039 ]
+[ Upstream commit a3366db06bb656cef2e03f30f780d93059bcc594 ]
 
-The addresses of NUMA nodes are not printed correctly on i386-PAE
-which is misleading.
+By calculating the removed loops, we can get the iteration count.
 
-Here is a debian9-32bit with PAE in a QEMU guest having more than 4G
-of memory:
+But the iteration count could be reported incorrectly, reporting
+impossibly high counts.
 
-qemu-system-i386 \
--hda /var/lib/libvirt/images/debian32.qcow2 \
--m 5G \
--enable-kvm \
--smp 10 \
--numa node,mem=512M,nodeid=0,cpus=0 \
--numa node,mem=512M,nodeid=1,cpus=1 \
--numa node,mem=512M,nodeid=2,cpus=2 \
--numa node,mem=512M,nodeid=3,cpus=3 \
--numa node,mem=512M,nodeid=4,cpus=4 \
--numa node,mem=512M,nodeid=5,cpus=5 \
--numa node,mem=512M,nodeid=6,cpus=6 \
--numa node,mem=512M,nodeid=7,cpus=7 \
--numa node,mem=512M,nodeid=8,cpus=8 \
--numa node,mem=512M,nodeid=9,cpus=9 \
--serial stdio
+That's because previous code uses the number of removed LBR entries for
+the iteration count. That's not good. Fix this by increasing the
+iteration count when a loop is detected.
 
-Because of the wrong value type, it prints as below:
+When matching the chain, the iteration count would be added up, finally we need
+to compute the average value when printing out.
 
-[    0.021049] ACPI: SRAT Memory (0x0 length 0xa0000) in proximity domain 0 enabled
-[    0.021740] ACPI: SRAT Memory (0x100000 length 0x1ff00000) in proximity domain 0 enabled
-[    0.022425] ACPI: SRAT Memory (0x20000000 length 0x20000000) in proximity domain 1 enabled
-[    0.023092] ACPI: SRAT Memory (0x40000000 length 0x20000000) in proximity domain 2 enabled
-[    0.023764] ACPI: SRAT Memory (0x60000000 length 0x20000000) in proximity domain 3 enabled
-[    0.024431] ACPI: SRAT Memory (0x80000000 length 0x20000000) in proximity domain 4 enabled
-[    0.025104] ACPI: SRAT Memory (0xa0000000 length 0x20000000) in proximity domain 5 enabled
-[    0.025791] ACPI: SRAT Memory (0x0 length 0x20000000) in proximity domain 6 enabled
-[    0.026412] ACPI: SRAT Memory (0x20000000 length 0x20000000) in proximity domain 7 enabled
-[    0.027118] ACPI: SRAT Memory (0x40000000 length 0x20000000) in proximity domain 8 enabled
-[    0.027802] ACPI: SRAT Memory (0x60000000 length 0x20000000) in proximity domain 9 enabled
+For example,
 
-The upper half of the start address of the NUMA domains between 6
-and 9 inclusive was cut, so the printed values are incorrect.
+  $ perf report --branch-history --stdio --no-children
 
-Fix the value type, to get the correct values in the log as follows:
+Before:
 
-[    0.023698] ACPI: SRAT Memory (0x0 length 0xa0000) in proximity domain 0 enabled
-[    0.024325] ACPI: SRAT Memory (0x100000 length 0x1ff00000) in proximity domain 0 enabled
-[    0.024981] ACPI: SRAT Memory (0x20000000 length 0x20000000) in proximity domain 1 enabled
-[    0.025659] ACPI: SRAT Memory (0x40000000 length 0x20000000) in proximity domain 2 enabled
-[    0.026317] ACPI: SRAT Memory (0x60000000 length 0x20000000) in proximity domain 3 enabled
-[    0.026980] ACPI: SRAT Memory (0x80000000 length 0x20000000) in proximity domain 4 enabled
-[    0.027635] ACPI: SRAT Memory (0xa0000000 length 0x20000000) in proximity domain 5 enabled
-[    0.028311] ACPI: SRAT Memory (0x100000000 length 0x20000000) in proximity domain 6 enabled
-[    0.028985] ACPI: SRAT Memory (0x120000000 length 0x20000000) in proximity domain 7 enabled
-[    0.029667] ACPI: SRAT Memory (0x140000000 length 0x20000000) in proximity domain 8 enabled
-[    0.030334] ACPI: SRAT Memory (0x160000000 length 0x20000000) in proximity domain 9 enabled
+  ---f2 +0
+     |
+     |--33.62%--f1 +9 (cycles:1)
+     |          f1 +0
+     |          main +22 (cycles:1)
+     |          main +17
+     |          main +38 (cycles:1)
+     |          main +27
+     |          f1 +26 (cycles:1)
+     |          f1 +24
+     |          f2 +27 (cycles:7)
+     |          f2 +0
+     |          f1 +19 (cycles:1)
+     |          f1 +14
+     |          f2 +27 (cycles:11)
+     |          f2 +0
+     |          f1 +9 (cycles:1 iter:2968 avg_cycles:3)
+     |          f1 +0
+     |          main +22 (cycles:1 iter:2968 avg_cycles:3)
+     |          main +17
+     |          main +38 (cycles:1 iter:2968 avg_cycles:3)
 
-Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
-[ rjw: Subject & changelog ]
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+2968 is an impossible high iteration count and avg_cycles is too small.
+
+After:
+
+  ---f2 +0
+     |
+     |--33.62%--f1 +9 (cycles:1)
+     |          f1 +0
+     |          main +22 (cycles:1)
+     |          main +17
+     |          main +38 (cycles:1)
+     |          main +27
+     |          f1 +26 (cycles:1)
+     |          f1 +24
+     |          f2 +27 (cycles:7)
+     |          f2 +0
+     |          f1 +19 (cycles:1)
+     |          f1 +14
+     |          f2 +27 (cycles:11)
+     |          f2 +0
+     |          f1 +9 (cycles:1 iter:1 avg_cycles:23)
+     |          f1 +0
+     |          main +22 (cycles:1 iter:1 avg_cycles:23)
+     |          main +17
+     |          main +38 (cycles:1 iter:1 avg_cycles:23)
+
+avg_cycles:23 is the average cycles of this iteration.
+
+Fixes: c4ee06251d42 ("perf report: Calculate the average cycles of iterations")
+
+Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/1546582230-17507-1-git-send-email-yao.jin@linux.intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/numa.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ tools/perf/util/callchain.c | 32 ++++++++++++++++++++------------
+ tools/perf/util/callchain.h |  1 +
+ tools/perf/util/machine.c   |  2 +-
+ 3 files changed, 22 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/acpi/numa.c b/drivers/acpi/numa.c
-index 85167603b9c9..0da58f0bf7e5 100644
---- a/drivers/acpi/numa.c
-+++ b/drivers/acpi/numa.c
-@@ -147,9 +147,9 @@ acpi_table_print_srat_entry(struct acpi_subtable_header *header)
- 		{
- 			struct acpi_srat_mem_affinity *p =
- 			    (struct acpi_srat_mem_affinity *)header;
--			pr_debug("SRAT Memory (0x%lx length 0x%lx) in proximity domain %d %s%s%s\n",
--				 (unsigned long)p->base_address,
--				 (unsigned long)p->length,
-+			pr_debug("SRAT Memory (0x%llx length 0x%llx) in proximity domain %d %s%s%s\n",
-+				 (unsigned long long)p->base_address,
-+				 (unsigned long long)p->length,
- 				 p->proximity_domain,
- 				 (p->flags & ACPI_SRAT_MEM_ENABLED) ?
- 				 "enabled" : "disabled",
+diff --git a/tools/perf/util/callchain.c b/tools/perf/util/callchain.c
+index 32ef7bdca1cf..dc2212e12184 100644
+--- a/tools/perf/util/callchain.c
++++ b/tools/perf/util/callchain.c
+@@ -766,6 +766,7 @@ static enum match_result match_chain(struct callchain_cursor_node *node,
+ 			cnode->cycles_count += node->branch_flags.cycles;
+ 			cnode->iter_count += node->nr_loop_iter;
+ 			cnode->iter_cycles += node->iter_cycles;
++			cnode->from_count++;
+ 		}
+ 	}
+ 
+@@ -1345,10 +1346,10 @@ static int branch_to_str(char *bf, int bfsize,
+ static int branch_from_str(char *bf, int bfsize,
+ 			   u64 branch_count,
+ 			   u64 cycles_count, u64 iter_count,
+-			   u64 iter_cycles)
++			   u64 iter_cycles, u64 from_count)
+ {
+ 	int printed = 0, i = 0;
+-	u64 cycles;
++	u64 cycles, v = 0;
+ 
+ 	cycles = cycles_count / branch_count;
+ 	if (cycles) {
+@@ -1357,14 +1358,16 @@ static int branch_from_str(char *bf, int bfsize,
+ 				bf + printed, bfsize - printed);
+ 	}
+ 
+-	if (iter_count) {
+-		printed += count_pri64_printf(i++, "iter",
+-				iter_count,
+-				bf + printed, bfsize - printed);
++	if (iter_count && from_count) {
++		v = iter_count / from_count;
++		if (v) {
++			printed += count_pri64_printf(i++, "iter",
++					v, bf + printed, bfsize - printed);
+ 
+-		printed += count_pri64_printf(i++, "avg_cycles",
+-				iter_cycles / iter_count,
+-				bf + printed, bfsize - printed);
++			printed += count_pri64_printf(i++, "avg_cycles",
++					iter_cycles / iter_count,
++					bf + printed, bfsize - printed);
++		}
+ 	}
+ 
+ 	if (i)
+@@ -1377,6 +1380,7 @@ static int counts_str_build(char *bf, int bfsize,
+ 			     u64 branch_count, u64 predicted_count,
+ 			     u64 abort_count, u64 cycles_count,
+ 			     u64 iter_count, u64 iter_cycles,
++			     u64 from_count,
+ 			     struct branch_type_stat *brtype_stat)
+ {
+ 	int printed;
+@@ -1389,7 +1393,8 @@ static int counts_str_build(char *bf, int bfsize,
+ 				predicted_count, abort_count, brtype_stat);
+ 	} else {
+ 		printed = branch_from_str(bf, bfsize, branch_count,
+-				cycles_count, iter_count, iter_cycles);
++				cycles_count, iter_count, iter_cycles,
++				from_count);
+ 	}
+ 
+ 	if (!printed)
+@@ -1402,13 +1407,14 @@ static int callchain_counts_printf(FILE *fp, char *bf, int bfsize,
+ 				   u64 branch_count, u64 predicted_count,
+ 				   u64 abort_count, u64 cycles_count,
+ 				   u64 iter_count, u64 iter_cycles,
++				   u64 from_count,
+ 				   struct branch_type_stat *brtype_stat)
+ {
+ 	char str[256];
+ 
+ 	counts_str_build(str, sizeof(str), branch_count,
+ 			 predicted_count, abort_count, cycles_count,
+-			 iter_count, iter_cycles, brtype_stat);
++			 iter_count, iter_cycles, from_count, brtype_stat);
+ 
+ 	if (fp)
+ 		return fprintf(fp, "%s", str);
+@@ -1422,6 +1428,7 @@ int callchain_list_counts__printf_value(struct callchain_list *clist,
+ 	u64 branch_count, predicted_count;
+ 	u64 abort_count, cycles_count;
+ 	u64 iter_count, iter_cycles;
++	u64 from_count;
+ 
+ 	branch_count = clist->branch_count;
+ 	predicted_count = clist->predicted_count;
+@@ -1429,11 +1436,12 @@ int callchain_list_counts__printf_value(struct callchain_list *clist,
+ 	cycles_count = clist->cycles_count;
+ 	iter_count = clist->iter_count;
+ 	iter_cycles = clist->iter_cycles;
++	from_count = clist->from_count;
+ 
+ 	return callchain_counts_printf(fp, bf, bfsize, branch_count,
+ 				       predicted_count, abort_count,
+ 				       cycles_count, iter_count, iter_cycles,
+-				       &clist->brtype_stat);
++				       from_count, &clist->brtype_stat);
+ }
+ 
+ static void free_callchain_node(struct callchain_node *node)
+diff --git a/tools/perf/util/callchain.h b/tools/perf/util/callchain.h
+index 154560b1eb65..99d38ac019b8 100644
+--- a/tools/perf/util/callchain.h
++++ b/tools/perf/util/callchain.h
+@@ -118,6 +118,7 @@ struct callchain_list {
+ 		bool		has_children;
+ 	};
+ 	u64			branch_count;
++	u64			from_count;
+ 	u64			predicted_count;
+ 	u64			abort_count;
+ 	u64			cycles_count;
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index d7403d1207d7..b1508ce3e412 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -1988,7 +1988,7 @@ static void save_iterations(struct iterations *iter,
+ {
+ 	int i;
+ 
+-	iter->nr_loop_iter = nr;
++	iter->nr_loop_iter++;
+ 	iter->cycles = 0;
+ 
+ 	for (i = 0; i < nr; i++)
 -- 
 2.19.1
 
