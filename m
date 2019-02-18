@@ -7,25 +7,25 @@ X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 454EFC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7200DC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 158BA217F9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:49:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44427217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:50:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550515798;
-	bh=mLJzmFmJ/aVgW2RQhTVQsGuqaZl9P5ut9SnH72GagTY=;
+	s=default; t=1550515802;
+	bh=3cXQ+0xCAaTduWip3T8EvLqFvQJMJwNHZvXs/IESxwk=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=Tl2dOW+TJ7DxQ4B0lAgf6UwjkTW3OPcGq2zg3ODyF68HEd+CEGvyv9eV70SmU2+vq
-	 r4OC5gCguLRDUsMV7UX9M4gbNwfA71mNUzuVIMGRst34E2/2rPlQwboGN/B/h3yF9/
-	 rhKi07rGlM7aEvKE/Oh7v/2KYyP9ZwUO5X8xYIDY=
+	b=cbvNwfYzszZeQub4USXqbkHl+TAjezvN6kLUcMR2C+A20fxylFZE4wVn3OLOqIA5s
+	 pMQDepPcw58ndM2kWNfZY5vrp8/p4t+YvE8exjzrFA/U7BwLutTNyXj287rjawv5BH
+	 bHT24/ulwKd+6T37ILp9Y94nni8PJxEZeC2s7CDA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727039AbfBRSt4 (ORCPT
+        id S1727102AbfBRSuB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:49:56 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42502 "EHLO
+        Mon, 18 Feb 2019 13:50:01 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42500 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726940AbfBRSty (ORCPT
+        with ESMTP id S1726938AbfBRSty (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 18 Feb 2019 13:49:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -34,24 +34,31 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=rkwHCN0C+itYbacENpj9r9+r0CKDNRL4OLkQ9ej7ROU=; b=Hr3PoUk2eqmf
-        dx6yHT34bLNUTP1xN/swwheWESPAel56sa8z1LZbX7EA1PywsHP78KSi+LBay0axthphV+KZQl79W
-        k6vkYirl7tbJTbNd7jGPtvXsZNQJBXliW4uIu3MrlfRd3FHa0dNE6b6wN6ExBCsVJ2ntMdFmpdjqm
-        Av9s4=;
+        List-Archive; bh=u/OkHuu+AV+tn03svW73wHPMHurg+7Ec81ryOycPr+0=; b=ay3SYFsbp4gC
+        vuuWE2dWQCVzLI5AKfFRag4YlBpr4wcnB3NA11wohUMKuUOR0mSsGpiJjZ3uOKMNpF8ryDnXVM+ry
+        ZjTM7pSgN/NSFTlRMjv73Ln7id70N5TzTPEQhV7b9djW95U1CGUZExja02yt7bLfi96po860WgTYZ
+        Mu3Ck=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gvnzE-0001fs-0r; Mon, 18 Feb 2019 18:49:52 +0000
+        id 1gvnz4-0001fO-FX; Mon, 18 Feb 2019 18:49:42 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 90E6D1128008; Mon, 18 Feb 2019 18:49:51 +0000 (GMT)
+        id E31E11128008; Mon, 18 Feb 2019 18:49:41 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: pv88060: Fix .ops for PV88060_SW" to the regulator tree
-In-Reply-To: 
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: fsi: fix spelling mistake "doens't" -> "doesn't"" to the asoc tree
+In-Reply-To:  <20190217224830.17355-1-colin.king@canonical.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190218184951.90E6D1128008@debutante.sirena.org.uk>
-Date:   Mon, 18 Feb 2019 18:49:51 +0000 (GMT)
+Message-Id: <20190218184941.E31E11128008@debutante.sirena.org.uk>
+Date:   Mon, 18 Feb 2019 18:49:41 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,11 +66,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: pv88060: Fix .ops for PV88060_SW
+   ASoC: fsi: fix spelling mistake "doens't" -> "doesn't"
 
-has been applied to the regulator tree at
+has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -84,51 +91,32 @@ to this mail.
 Thanks,
 Mark
 
-From 55e72728cd2dd9f9cd1cec92c4171aa63d000c30 Mon Sep 17 00:00:00 2001
-From: Axel Lin <axel.lin@ingics.com>
-Date: Fri, 15 Feb 2019 09:42:49 +0800
-Subject: [PATCH] regulator: pv88060: Fix .ops for PV88060_SW
+From cb8cdb6f3344bcb472640d2f5f956dbde0bfd509 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Sun, 17 Feb 2019 22:48:30 +0000
+Subject: [PATCH] ASoC: fsi: fix spelling mistake "doens't" -> "doesn't"
 
-There is no vsel_reg/vsel_mask settings for PV88060_ID_SWx, so don't use
-pv88060_ldo_ops for PV88060_SW. The PV88060_ID_SWx is fixed voltage,
-set .fixed_uV instead of .min_uV then regulator core will automatically
-support get_voltage and list_voltage.
+There is a spelling mistake in a dev_err message. Fix it.
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/pv88060-regulator.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ sound/soc/sh/fsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/pv88060-regulator.c b/drivers/regulator/pv88060-regulator.c
-index a9446056435f..d5dab9bef378 100644
---- a/drivers/regulator/pv88060-regulator.c
-+++ b/drivers/regulator/pv88060-regulator.c
-@@ -184,6 +184,12 @@ static const struct regulator_ops pv88060_ldo_ops = {
- 	.list_voltage = regulator_list_voltage_linear,
- };
- 
-+static const struct regulator_ops pv88060_sw_ops = {
-+	.enable = regulator_enable_regmap,
-+	.disable = regulator_disable_regmap,
-+	.is_enabled = regulator_is_enabled_regmap,
-+};
-+
- #define PV88060_BUCK(chip, regl_name, min, step, max, limits_array) \
- {\
- 	.desc	=	{\
-@@ -237,9 +243,8 @@ static const struct regulator_ops pv88060_ldo_ops = {
- 		.regulators_node = of_match_ptr("regulators"),\
- 		.type = REGULATOR_VOLTAGE,\
- 		.owner = THIS_MODULE,\
--		.ops = &pv88060_ldo_ops,\
--		.min_uV = max,\
--		.uV_step = 0,\
-+		.ops = &pv88060_sw_ops,\
-+		.fixed_uV = max,\
- 		.n_voltages = 1,\
- 		.enable_reg = PV88060_REG_##regl_name##_CONF,\
- 		.enable_mask = PV88060_SW_EN,\
+diff --git a/sound/soc/sh/fsi.c b/sound/soc/sh/fsi.c
+index aa7e902f0c02..db929b00ae5e 100644
+--- a/sound/soc/sh/fsi.c
++++ b/sound/soc/sh/fsi.c
+@@ -780,7 +780,7 @@ static int fsi_clk_init(struct device *dev,
+ 			return -EINVAL;
+ 		}
+ 		if (clock->div == clock->own) {
+-			dev_err(dev, "cpu doens't support div clock\n");
++			dev_err(dev, "cpu doesn't support div clock\n");
+ 			return -EINVAL;
+ 		}
+ 	}
 -- 
 2.20.1
 
