@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BEB2C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3779DC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:42:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D175B2173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:41:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08D992173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:42:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550500919;
-	bh=YQC8j3huhLVLPn39NwaduJRn2EWCOoOUcD+mls4LPoo=;
+	s=default; t=1550500935;
+	bh=kR4FGI+KOqCTDOARt/W8ZxepERzMoFDUSW78OqDLIHo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Of3REwyHpvMQTs6iboCSM6fQgLFX2fpzauAVH//BP+itJ5X0GJNfarRMEO/3ZGrZU
-	 4UyehxhIDmJCeUDAKdDaEoTUM4nbGWkD5oWiJYy1MG2gpYK/bdGJ2xVjM3WTYZWYbu
-	 vmSqwj+0OzEXcvB6g4MhbPFlQ7S89upnhxc7Jyjk=
+	b=sMuGyPU6/r6g5VVP0a7EwP9YuhrZ2Gb3soCIMSBYEO8P9z4z9Zkj9ugJVemVdpX8P
+	 kQ2m+VWV42ra9WWa4SRFKDsLf7bmwcMZp8+KSOnCIG6RCq5mfJpySC58KFOlAUevnn
+	 o0zaCGvy7C1ASzDVVugGSRtaKt9kH25VL0Vi1u/Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388314AbfBROl6 (ORCPT
+        id S1731033AbfBRNu1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:41:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58344 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:50:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58044 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730497AbfBRNuj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:50:39 -0500
+        id S1732210AbfBRNuX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:50:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 216AC20842;
-        Mon, 18 Feb 2019 13:50:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2713520449;
+        Mon, 18 Feb 2019 13:50:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497838;
-        bh=YQC8j3huhLVLPn39NwaduJRn2EWCOoOUcD+mls4LPoo=;
+        s=default; t=1550497822;
+        bh=kR4FGI+KOqCTDOARt/W8ZxepERzMoFDUSW78OqDLIHo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eiZjSkTe0GlPAy8uESIWZSbEIlverEknnZp03gwX+/qcm9DLH57FqPPDR6wqToWMh
-         iLAsMA4ZS/tH4tsLlf4eZfvGm0E0Jnh5dOEugMS+cPCWxr5KJRFDiAUD7PWjBnQ1eT
-         nuutfCxkHN9EpW48uuF7lOgh+ha/x8aftrkZ+zQE=
+        b=vZswXxqgcQRFrgQASG2TExTTBOUZXZfl4aCkXhDFvEzXJvQ5oAqAsMK3+6RcsgHAj
+         7+DO5p2rnrfhN8qdrHSECu14lMCdC6TvussfPfM77ym89RMPmD/g3HvqftJPTyQsxZ
+         MkBLfEr8OoiBYgyjuXSxjdbdCh2NI3upde4ZEgRI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -46,9 +46,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Russell King <rmk+kernel@armlinux.org.uk>,
         "David A. Long" <dave.long@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 09/85] ARM: 8794/1: uaccess: Prevent speculative use of the current addr_limit
-Date:   Mon, 18 Feb 2019 14:42:35 +0100
-Message-Id: <20190218133500.750195556@linuxfoundation.org>
+Subject: [PATCH 4.19 04/85] ARM: 8789/1: signal: copy registers using __copy_to_user()
+Date:   Mon, 18 Feb 2019 14:42:30 +0100
+Message-Id: <20190218133500.252073490@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -67,18 +67,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-Commit 621afc677465db231662ed126ae1f355bf8eac47 upstream.
+Commit 5ca451cf6ed04443774bbb7ee45332dafa42e99f upstream.
 
-A mispredicted conditional call to set_fs could result in the wrong
-addr_limit being forwarded under speculation to a subsequent access_ok
-check, potentially forming part of a spectre-v1 attack using uaccess
-routines.
-
-This patch prevents this forwarding from taking place, but putting heavy
-barriers in set_fs after writing the addr_limit.
-
-Porting commit c2f0ad4fc089cff8 ("arm64: uaccess: Prevent speculative use
-of the current addr_limit").
+When saving the ARM integer registers, use __copy_to_user() to
+copy them into user signal frame, rather than __put_user_error().
+This has the benefit of disabling/enabling PAN once for the whole copy
+intead of once per write.
 
 Signed-off-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
@@ -86,27 +80,70 @@ Signed-off-by: David A. Long <dave.long@linaro.org>
 Reviewed-by: Julien Thierry <julien.thierry@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/include/asm/uaccess.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ arch/arm/kernel/signal.c | 49 ++++++++++++++++++++++------------------
+ 1 file changed, 27 insertions(+), 22 deletions(-)
 
-diff --git a/arch/arm/include/asm/uaccess.h b/arch/arm/include/asm/uaccess.h
-index 5451e1f05a19..d65ef85fc617 100644
---- a/arch/arm/include/asm/uaccess.h
-+++ b/arch/arm/include/asm/uaccess.h
-@@ -69,6 +69,14 @@ extern int __put_user_bad(void);
- static inline void set_fs(mm_segment_t fs)
+diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
+index b8f766cf3a90..76fe75d36312 100644
+--- a/arch/arm/kernel/signal.c
++++ b/arch/arm/kernel/signal.c
+@@ -288,30 +288,35 @@ static int
+ setup_sigframe(struct sigframe __user *sf, struct pt_regs *regs, sigset_t *set)
  {
- 	current_thread_info()->addr_limit = fs;
+ 	struct aux_sigframe __user *aux;
++	struct sigcontext context;
+ 	int err = 0;
+ 
+-	__put_user_error(regs->ARM_r0, &sf->uc.uc_mcontext.arm_r0, err);
+-	__put_user_error(regs->ARM_r1, &sf->uc.uc_mcontext.arm_r1, err);
+-	__put_user_error(regs->ARM_r2, &sf->uc.uc_mcontext.arm_r2, err);
+-	__put_user_error(regs->ARM_r3, &sf->uc.uc_mcontext.arm_r3, err);
+-	__put_user_error(regs->ARM_r4, &sf->uc.uc_mcontext.arm_r4, err);
+-	__put_user_error(regs->ARM_r5, &sf->uc.uc_mcontext.arm_r5, err);
+-	__put_user_error(regs->ARM_r6, &sf->uc.uc_mcontext.arm_r6, err);
+-	__put_user_error(regs->ARM_r7, &sf->uc.uc_mcontext.arm_r7, err);
+-	__put_user_error(regs->ARM_r8, &sf->uc.uc_mcontext.arm_r8, err);
+-	__put_user_error(regs->ARM_r9, &sf->uc.uc_mcontext.arm_r9, err);
+-	__put_user_error(regs->ARM_r10, &sf->uc.uc_mcontext.arm_r10, err);
+-	__put_user_error(regs->ARM_fp, &sf->uc.uc_mcontext.arm_fp, err);
+-	__put_user_error(regs->ARM_ip, &sf->uc.uc_mcontext.arm_ip, err);
+-	__put_user_error(regs->ARM_sp, &sf->uc.uc_mcontext.arm_sp, err);
+-	__put_user_error(regs->ARM_lr, &sf->uc.uc_mcontext.arm_lr, err);
+-	__put_user_error(regs->ARM_pc, &sf->uc.uc_mcontext.arm_pc, err);
+-	__put_user_error(regs->ARM_cpsr, &sf->uc.uc_mcontext.arm_cpsr, err);
+-
+-	__put_user_error(current->thread.trap_no, &sf->uc.uc_mcontext.trap_no, err);
+-	__put_user_error(current->thread.error_code, &sf->uc.uc_mcontext.error_code, err);
+-	__put_user_error(current->thread.address, &sf->uc.uc_mcontext.fault_address, err);
+-	__put_user_error(set->sig[0], &sf->uc.uc_mcontext.oldmask, err);
++	context = (struct sigcontext) {
++		.arm_r0        = regs->ARM_r0,
++		.arm_r1        = regs->ARM_r1,
++		.arm_r2        = regs->ARM_r2,
++		.arm_r3        = regs->ARM_r3,
++		.arm_r4        = regs->ARM_r4,
++		.arm_r5        = regs->ARM_r5,
++		.arm_r6        = regs->ARM_r6,
++		.arm_r7        = regs->ARM_r7,
++		.arm_r8        = regs->ARM_r8,
++		.arm_r9        = regs->ARM_r9,
++		.arm_r10       = regs->ARM_r10,
++		.arm_fp        = regs->ARM_fp,
++		.arm_ip        = regs->ARM_ip,
++		.arm_sp        = regs->ARM_sp,
++		.arm_lr        = regs->ARM_lr,
++		.arm_pc        = regs->ARM_pc,
++		.arm_cpsr      = regs->ARM_cpsr,
 +
-+	/*
-+	 * Prevent a mispredicted conditional call to set_fs from forwarding
-+	 * the wrong address limit to access_ok under speculation.
-+	 */
-+	dsb(nsh);
-+	isb();
++		.trap_no       = current->thread.trap_no,
++		.error_code    = current->thread.error_code,
++		.fault_address = current->thread.address,
++		.oldmask       = set->sig[0],
++	};
 +
- 	modify_domain(DOMAIN_KERNEL, fs ? DOMAIN_CLIENT : DOMAIN_MANAGER);
- }
++	err |= __copy_to_user(&sf->uc.uc_mcontext, &context, sizeof(context));
+ 
+ 	err |= __copy_to_user(&sf->uc.uc_sigmask, set, sizeof(*set));
  
 -- 
 2.19.1
