@@ -4,65 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57650C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:52:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A347FC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:52:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 282702177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:52:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7684C217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:52:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550515965;
-	bh=9lWJY3aZWr6YBk9u3ZAv4XZIA/7VvI/gSHDFzob2frQ=;
+	s=default; t=1550515971;
+	bh=0ETMWvI6u4hm9CC2z6WYFglqAeNjN2QSF2E3OcSzaT8=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=z9R35ApESkkjHNnS2FWMSNSEcIJO9Q843Uti+lNQg8OXDfy04D6i5lGnGzoAXrtNQ
-	 fUvAc3jTxK1F4e23YY0+ONYsGlXLiWup7wc86B3mH6kzhDf19qSzm1goHq686mj7Zo
-	 GJkjUdx3bw6eNjmnpzc889MzhD69Af2e8EzbRtck=
+	b=wtVMKOZTUgw1Uyou5C1cVCU5fQQB3j7zIchcv6K9VlsGD6mEgjjzC3wyZEzkAfG64
+	 4ni2TbBC1nqMinOQIomUctAEFqlOtPLnKyzaaJriyD8mFY9fDft0dpUun8Rv2KNWHu
+	 f3Aaix5mmMFSikGh2WgcJJkorLxQ7Js7rxBjiDfc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727834AbfBRSwn (ORCPT
+        id S1727882AbfBRSwt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:52:43 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47244 "EHLO
+        Mon, 18 Feb 2019 13:52:49 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47304 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727721AbfBRSwk (ORCPT
+        with ESMTP id S1726258AbfBRSwm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:52:40 -0500
+        Mon, 18 Feb 2019 13:52:42 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=39BnjRBP3mAF1mj98V17S7lBxoprAgwGQFFxs8scGXw=; b=xf5SY8Bu22cO
-        j3Y/61hUhcYes/SWLwWKtyz3XmfARfNF/OUIYAziaWhlsOZKEvfDyMTWBh6EQHK9GUNMrBZWqgzfD
-        YWZuk4xKWa5bla25HTSh1O8YGBz5G+z0XBqU795stltU6IgfLYm6VR+e34Md4P3D9UrYudiqKhbAB
-        Wcdbk=;
+        List-Archive; bh=FZw/nIU94/BV3+eC5ofCCRLmhZpkDi3wgLtrY44XoZg=; b=eAq5EE7nZDud
+        dmbtKTP1W+FrhG20c9ohfE4oa6bD5yAHrN0JBTwxHx97nBtVmTi8AO2UD3Jnx1H+yKXBpuz+imKw1
+        4lnCgsi4vhARZYile/e2oR305VU0eIZu+Sc0shpsvE9qN/5URKsDTvyntOjdl65QmG6Xy7sQFHVHP
+        yuFVA=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gvo1h-0001iU-Sq; Mon, 18 Feb 2019 18:52:25 +0000
+        id 1gvo1q-0001jC-MV; Mon, 18 Feb 2019 18:52:34 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 691B01128008; Mon, 18 Feb 2019 18:52:25 +0000 (GMT)
+        id 163961128008; Mon, 18 Feb 2019 18:52:34 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Olivier Moysan <olivier.moysan@st.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
+To:     Viorel Suman <viorel.suman@nxp.com>
+Cc:     Mark Brown <broonie@kernel.org>, Timur Tabi <timur@kernel.org>,
+        Nicolin Chen <nicoleotsuka@gmail.com>,
+        Xiubo Li <Xiubo.Lee@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Takashi Iwai <tiwai@suse.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: stm32: sai: remove set but not used variables 'mask, cr1'" to the asoc tree
-In-Reply-To:  <20190218145026.142805-1-yuehaibing@huawei.com>
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Viorel Suman <viorel.suman@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: fsl_spdif: fix sysclk_df type" to the asoc tree
+In-Reply-To:  <1550503474-18865-1-git-send-email-viorel.suman@nxp.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190218185225.691B01128008@debutante.sirena.org.uk>
-Date:   Mon, 18 Feb 2019 18:52:25 +0000 (GMT)
+Message-Id: <20190218185234.163961128008@debutante.sirena.org.uk>
+Date:   Mon, 18 Feb 2019 18:52:34 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -70,7 +71,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: stm32: sai: remove set but not used variables 'mask, cr1'
+   ASoC: fsl_spdif: fix sysclk_df type
 
 has been applied to the asoc tree at
 
@@ -95,55 +96,55 @@ to this mail.
 Thanks,
 Mark
 
-From 70605450fd42060783b0072a61a30f42a74f2917 Mon Sep 17 00:00:00 2001
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Mon, 18 Feb 2019 14:50:26 +0000
-Subject: [PATCH] ASoC: stm32: sai: remove set but not used variables 'mask,
- cr1'
+From 2231609a2c0a4807c017822ecb5834bbb7f59fb9 Mon Sep 17 00:00:00 2001
+From: Viorel Suman <viorel.suman@nxp.com>
+Date: Mon, 18 Feb 2019 15:25:00 +0000
+Subject: [PATCH] ASoC: fsl_spdif: fix sysclk_df type
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+According to RM SPDIF STC SYSCLK_DF field is 9-bit wide, values
+being in 0..511 range. Use a proper type to handle sysclk_df.
 
-sound/soc/stm/stm32_sai_sub.c: In function 'stm32_sai_configure_clock':
-sound/soc/stm/stm32_sai_sub.c:902:11: warning:
- variable 'mask' set but not used [-Wunused-but-set-variable]
-sound/soc/stm/stm32_sai_sub.c:902:6: warning:
- variable 'cr1' set but not used [-Wunused-but-set-variable]
-
-It's not used any more after 8307b2afd386 ("ASoC: stm32: sai: set sai as
-mclk clock provider")
-
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Viorel Suman <viorel.suman@nxp.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/stm/stm32_sai_sub.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ sound/soc/fsl/fsl_spdif.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
-index d4825700b63f..f9297228c41c 100644
---- a/sound/soc/stm/stm32_sai_sub.c
-+++ b/sound/soc/stm/stm32_sai_sub.c
-@@ -898,7 +898,7 @@ static int stm32_sai_configure_clock(struct snd_soc_dai *cpu_dai,
- 				     struct snd_pcm_hw_params *params)
- {
- 	struct stm32_sai_sub_data *sai = snd_soc_dai_get_drvdata(cpu_dai);
--	int cr1, mask, div = 0;
-+	int div = 0;
- 	int sai_clk_rate, mclk_ratio, den;
- 	unsigned int rate = params_rate(params);
+diff --git a/sound/soc/fsl/fsl_spdif.c b/sound/soc/fsl/fsl_spdif.c
+index a26686e7281c..4842e6df9a2d 100644
+--- a/sound/soc/fsl/fsl_spdif.c
++++ b/sound/soc/fsl/fsl_spdif.c
+@@ -96,7 +96,7 @@ struct fsl_spdif_priv {
+ 	bool dpll_locked;
+ 	u32 txrate[SPDIF_TXRATE_MAX];
+ 	u8 txclk_df[SPDIF_TXRATE_MAX];
+-	u8 sysclk_df[SPDIF_TXRATE_MAX];
++	u16 sysclk_df[SPDIF_TXRATE_MAX];
+ 	u8 txclk_src[SPDIF_TXRATE_MAX];
+ 	u8 rxclk_src;
+ 	struct clk *txclk[SPDIF_TXRATE_MAX];
+@@ -376,7 +376,8 @@ static int spdif_set_sample_rate(struct snd_pcm_substream *substream,
+ 	struct platform_device *pdev = spdif_priv->pdev;
+ 	unsigned long csfs = 0;
+ 	u32 stc, mask, rate;
+-	u8 clk, txclk_df, sysclk_df;
++	u16 sysclk_df;
++	u8 clk, txclk_df;
+ 	int ret;
  
-@@ -943,10 +943,8 @@ static int stm32_sai_configure_clock(struct snd_soc_dai *cpu_dai,
- 		} else {
- 			if (sai->mclk_rate) {
- 				mclk_ratio = sai->mclk_rate / rate;
--				if (mclk_ratio == 512) {
--					mask = SAI_XCR1_OSR;
--					cr1 = SAI_XCR1_OSR;
--				} else if (mclk_ratio != 256) {
-+				if ((mclk_ratio != 512) &&
-+				    (mclk_ratio != 256)) {
- 					dev_err(cpu_dai->dev,
- 						"Wrong mclk ratio %d\n",
- 						mclk_ratio);
+ 	switch (sample_rate) {
+@@ -1109,8 +1110,9 @@ static u32 fsl_spdif_txclk_caldiv(struct fsl_spdif_priv *spdif_priv,
+ 	static const u32 rate[] = { 32000, 44100, 48000, 96000, 192000 };
+ 	bool is_sysclk = clk_is_match(clk, spdif_priv->sysclk);
+ 	u64 rate_ideal, rate_actual, sub;
+-	u32 sysclk_dfmin, sysclk_dfmax;
+-	u32 txclk_df, sysclk_df, arate;
++	u32 arate;
++	u16 sysclk_dfmin, sysclk_dfmax, sysclk_df;
++	u8 txclk_df;
+ 
+ 	/* The sysclk has an extra divisor [2, 512] */
+ 	sysclk_dfmin = is_sysclk ? 2 : 1;
 -- 
 2.20.1
 
