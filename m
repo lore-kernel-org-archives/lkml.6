@@ -2,124 +2,111 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE44C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 07:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00DB2C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 07:33:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48D69218B0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 07:26:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rakg7VBL"
+	by mail.kernel.org (Postfix) with ESMTP id C35852184A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 07:33:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728843AbfBRH0L (ORCPT
+        id S1728854AbfBRHdY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 02:26:11 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34497 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728791AbfBRH0K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 02:26:10 -0500
-Received: by mail-pg1-f196.google.com with SMTP id i130so8025740pgd.1;
-        Sun, 17 Feb 2019 23:26:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=gI2IVNHRseX2/6HJCtg5WpZCFOPz99s8lcwv2ABbK5k=;
-        b=rakg7VBLj/A5RlsvA0YDPseiGIPA9XDnFDAB7hVdo+5WF5cO6uW3PTG7nMIBa6wWSt
-         KDg16sGpgN4ujt8fqlm1gyPK4NIiX36tcKGUK9WNj0DI7rDNKeTzO+H9fKYBt9ku3PIi
-         vwrN+8f7EQekTdYIJsH9EhawQQ/wF8CZkQ1lrY6bkvXz+tl2OhfyolgcucOpCSAX424m
-         5TcSj9zDZQpm3Ji8VEwqtrPU1HcKIDyugULdak/oHNsPFFyoKsd2W7Z9v5B0o2ta2fGg
-         wO2oktsn8tHAJ8F2jyW2VOOE4FtapzgAw7znkUX/dfRfPbkeQhvLyKvtiN5HOQwYSa+t
-         ABpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gI2IVNHRseX2/6HJCtg5WpZCFOPz99s8lcwv2ABbK5k=;
-        b=SdpXrdk2I3lA8CFfXAomV61FozeWJfiMRSBmN785psjHd1K/FxLIFp061/6Kio7kZp
-         IAmwjAz6q0pGv8CQ1+MC4bJTaa+brMw70A9MZ86KNXeHpPbBXFuEUQB5KUjBaOnWvF24
-         F0oY8Bp368lqRLRmUGxq+mHrPRjqxiNXvOTeosY5XUTnoewGlPtTBsgcrHKgEQqPawu+
-         4bbe6AftAsOWlyXmitjUFRWR0X8jP4tpQAhmkmLFs2FOxvnNDrFdXG/62lP3dav8Vp/5
-         Mg3+jnUKO2HSSMXbgZFkO+Pb9Z9+vIOoS3uxA3kO7rEcm1a0L0NQK8+JBgyZFNjp+QOU
-         /NKQ==
-X-Gm-Message-State: AHQUAuZGtqg3SKn7zY6B2TdQNsTi87MX9gIQ8b4APUvRJ/0H+YK8VIfI
-        gYeBjf/V287IQQ6DA3PNGFY=
-X-Google-Smtp-Source: AHgI3IabuMI6d6htCCRWxH3JhttPdAzW4BlHx+qzhIhaYRRwX0Ce86RSFTWikURb1T+n/HSv4UT9WQ==
-X-Received: by 2002:a62:4b11:: with SMTP id y17mr23226949pfa.124.1550474768842;
-        Sun, 17 Feb 2019 23:26:08 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id 67sm42404591pfl.175.2019.02.17.23.26.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 17 Feb 2019 23:26:08 -0800 (PST)
-Date:   Sun, 17 Feb 2019 23:26:06 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org
-Subject: Re: [PATCH 2/7] [media] doc-rst: switch to new names for Full
- Screen/Aspect keys
-Message-ID: <20190218072606.GG242714@dtor-ws>
-References: <20190118233037.87318-1-dmitry.torokhov@gmail.com>
- <20190118233037.87318-2-dmitry.torokhov@gmail.com>
+        Mon, 18 Feb 2019 02:33:24 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:3760 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727875AbfBRHdY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 02:33:24 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 8F759C59CF292B4C3BE1;
+        Mon, 18 Feb 2019 15:33:13 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.408.0; Mon, 18 Feb 2019 15:33:06 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     Brian Austin <brian.austin@cirrus.com>,
+        Paul Handrigan <Paul.Handrigan@cirrus.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        James Schulman <james.schulman@cirrus.com>
+CC:     Wei Yongjun <weiyongjun1@huawei.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] ASoC: cs35l36: Make some symbols static
+Date:   Mon, 18 Feb 2019 07:46:53 +0000
+Message-ID: <20190218074653.181365-1-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190118233037.87318-2-dmitry.torokhov@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 03:30:32PM -0800, Dmitry Torokhov wrote:
-> We defined better names for keys to activate full screen mode or
-> change aspect ratio (while keeping the existing keycodes to avoid
-> breaking userspace), so let's use them in the document.
-> 
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> ---
->  Documentation/media/uapi/rc/rc-tables.rst | 4 ++--
+Fixes the following sparse warnings:
 
-Mauro, do you want to take this through your tree or I should pick it up
-with the patch that does renames in uapi header?
+sound/soc/codecs/cs35l36.c:135:20: warning:
+ symbol 'cs35l36_reg' was not declared. Should it be static?
+sound/soc/codecs/cs35l36.c:248:6: warning:
+ symbol 'cs35l36_readable_reg' was not declared. Should it be static?
+sound/soc/codecs/cs35l36.c:398:6: warning:
+ symbol 'cs35l36_precious_reg' was not declared. Should it be static?
+sound/soc/codecs/cs35l36.c:410:6: warning:
+ symbol 'cs35l36_volatile_reg' was not declared. Should it be static?
 
-Thanks!
+Fixes: 6ba9dd6c893b ("ASoC: cs35l36: Add support for Cirrus CS35L36 Amplifier")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+---
+ sound/soc/codecs/cs35l36.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/media/uapi/rc/rc-tables.rst b/Documentation/media/uapi/rc/rc-tables.rst
-> index c8ae9479f842..57797e56f45e 100644
-> --- a/Documentation/media/uapi/rc/rc-tables.rst
-> +++ b/Documentation/media/uapi/rc/rc-tables.rst
-> @@ -616,7 +616,7 @@ the remote via /dev/input/event devices.
->  
->      -  .. row 78
->  
-> -       -  ``KEY_SCREEN``
-> +       -  ``KEY_ASPECT_RATIO``
->  
->         -  Select screen aspect ratio
->  
-> @@ -624,7 +624,7 @@ the remote via /dev/input/event devices.
->  
->      -  .. row 79
->  
-> -       -  ``KEY_ZOOM``
-> +       -  ``KEY_FULL_SCREEN``
->  
->         -  Put device into zoom/full screen mode
->  
-> -- 
-> 2.20.1.321.g9e740568ce-goog
-> 
+diff --git a/sound/soc/codecs/cs35l36.c b/sound/soc/codecs/cs35l36.c
+index 4f880a678812..005f1adc80b8 100644
+--- a/sound/soc/codecs/cs35l36.c
++++ b/sound/soc/codecs/cs35l36.c
+@@ -132,7 +132,7 @@ static const struct cs35l36_pll_config cs35l36_pll_sysclk[] = {
+ 	{27000000,	0x3F, 0x0A},
+ };
+ 
+-struct reg_default cs35l36_reg[] = {
++static struct reg_default cs35l36_reg[] = {
+ 	{CS35L36_TESTKEY_CTRL,			0x00000000},
+ 	{CS35L36_USERKEY_CTL,			0x00000000},
+ 	{CS35L36_OTP_CTRL1,			0x00002460},
+@@ -245,7 +245,7 @@ struct reg_default cs35l36_reg[] = {
+ 	{CS35L36_PAC_INT7_CTRL,			0x00000001},
+ };
+ 
+-bool cs35l36_readable_reg(struct device *dev, unsigned int reg)
++static bool cs35l36_readable_reg(struct device *dev, unsigned int reg)
+ {
+ 	switch (reg) {
+ 	case CS35L36_SW_RESET:
+@@ -395,7 +395,7 @@ bool cs35l36_readable_reg(struct device *dev, unsigned int reg)
+ 	}
+ }
+ 
+-bool cs35l36_precious_reg(struct device *dev, unsigned int reg)
++static bool cs35l36_precious_reg(struct device *dev, unsigned int reg)
+ {
+ 	switch (reg) {
+ 	case CS35L36_TESTKEY_CTRL:
+@@ -407,7 +407,7 @@ bool cs35l36_precious_reg(struct device *dev, unsigned int reg)
+ 	}
+ }
+ 
+-bool cs35l36_volatile_reg(struct device *dev, unsigned int reg)
++static bool cs35l36_volatile_reg(struct device *dev, unsigned int reg)
+ {
+ 	switch (reg) {
+ 	case CS35L36_SW_RESET:
 
--- 
-Dmitry
+
+
