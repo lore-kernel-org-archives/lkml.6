@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 483A2C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:08:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24314C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:08:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A41621916
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:08:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E73B4204FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:08:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498909;
-	bh=OrtPiLExRlQQDWmtPQR8DYgMbvnrgC91nH+2C3i+0ug=;
+	s=default; t=1550498914;
+	bh=fMa151jteBhDx6yIqm2yaPxv9r5fVyj4U1kXQaqWKGI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=kKPjcr5iEaB1yDVF4vUWVQrBoBMfEh9ZUQY5lpQMNqCzOVYXCz3ls1+jqjy9bDv8Z
-	 Pc7vtjUdNyGqBz0G3OzcauLhDHdrAezF5cAmglI+/CJDtxyFMQoXIRxSy7rSL5QO8S
-	 1YKO1vsb4X5DUfgj+tS8RTL5oPkLf77eVomU0Zk0=
+	b=vqkeW2l0ByqQzrgy+V+w4EEl7pS4nOxmg/7V+qBy3cDDxOHCG5b3yK19S5UIi5jEL
+	 dqwA6IyISOmA/5lRralC+4vEfsh58uxKbVAnBIPwSDcFkOuOtn1RDPzzgx2X6CzINO
+	 /lWDsQ0lwu164W+vLGBBzr7LKSave/XZEGuTjShU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390914AbfBROI1 (ORCPT
+        id S2390933AbfBROIc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:08:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51694 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:08:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390899AbfBROIX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:08:23 -0500
+        id S2389506AbfBROI3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:08:29 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 839CB204FD;
-        Mon, 18 Feb 2019 14:08:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C59A6204FD;
+        Mon, 18 Feb 2019 14:08:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498903;
-        bh=OrtPiLExRlQQDWmtPQR8DYgMbvnrgC91nH+2C3i+0ug=;
+        s=default; t=1550498909;
+        bh=fMa151jteBhDx6yIqm2yaPxv9r5fVyj4U1kXQaqWKGI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yw/Giaan1561Qfz0DeGP8ylidp0HryjCGOTWfjqaiL+QRnPVqH5CnPlw5+15lvvpq
-         bjBnQW7SmQKnfBDp4p6gyjntzXdVpecfQwKvv21HTz/Wf+QpNeyytL54E36CL83+EU
-         GC9TdtHSX7DQ/9Bt6XSfJ8LMONSh+j31oIKwn2DI=
+        b=xEmYcUSUMe3RqLLDnzE9CKpZQ35dGPztmObeIkX1scyPn2ViU+86vEQDwEHYczKzR
+         zacVKVHbWA1ra4Kpb4uCHXHGYgJQvs84uvOsT2PnQgpgBf8RTP5zOOoDgfwx2ehlR/
+         dVLNt5A8VJ6CzoE6oz35cwTGen2fOGKJ2jh9Fq0U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
-        "J. Bruce Fields" <bfields@redhat.com>,
+        stable@vger.kernel.org, Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 014/108] nfsd4: fix crash on writing v4_end_grace before nfsd startup
-Date:   Mon, 18 Feb 2019 14:43:10 +0100
-Message-Id: <20190218133520.167754768@linuxfoundation.org>
+Subject: [PATCH 3.18 016/108] media: DaVinci-VPBE: fix error handling in vpbe_initialize()
+Date:   Mon, 18 Feb 2019 14:43:12 +0100
+Message-Id: <20190218133520.262102150@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -67,38 +67,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 62a063b8e7d1db684db3f207261a466fa3194e72 ]
+[ Upstream commit aa35dc3c71950e3fec3e230c06c27c0fbd0067f8 ]
 
-Anatoly Trosinenko reports that this:
+If vpbe_set_default_output() or vpbe_set_default_mode() fails,
+vpbe_initialize() returns error code without releasing resources.
 
-1) Checkout fresh master Linux branch (tested with commit e195ca6cb)
-2) Copy x84_64-config-4.14 to .config, then enable NFS server v4 and build
-3) From `kvm-xfstests shell`:
+The patch adds error handling for that case.
 
-results in NULL dereference in locks_end_grace.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Check that nfsd has been started before trying to end the grace period.
-
-Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfsd/nfsctl.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/media/platform/davinci/vpbe.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-index ca73ca79a0ee..0e8574af298b 100644
---- a/fs/nfsd/nfsctl.c
-+++ b/fs/nfsd/nfsctl.c
-@@ -1110,6 +1110,8 @@ static ssize_t write_v4_end_grace(struct file *file, char *buf, size_t size)
- 		case 'Y':
- 		case 'y':
- 		case '1':
-+			if (nn->nfsd_serv)
-+				return -EBUSY;
- 			nfsd4_end_grace(nn);
- 			break;
- 		default:
+diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+index 33b9660b7f77..40d462cac5ec 100644
+--- a/drivers/media/platform/davinci/vpbe.c
++++ b/drivers/media/platform/davinci/vpbe.c
+@@ -740,7 +740,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 	if (ret) {
+ 		v4l2_err(&vpbe_dev->v4l2_dev, "Failed to set default output %s",
+ 			 def_output);
+-		return ret;
++		goto fail_kfree_amp;
+ 	}
+ 
+ 	printk(KERN_NOTICE "Setting default mode to %s\n", def_mode);
+@@ -748,12 +748,15 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 	if (ret) {
+ 		v4l2_err(&vpbe_dev->v4l2_dev, "Failed to set default mode %s",
+ 			 def_mode);
+-		return ret;
++		goto fail_kfree_amp;
+ 	}
+ 	vpbe_dev->initialized = 1;
+ 	/* TBD handling of bootargs for default output and mode */
+ 	return 0;
+ 
++fail_kfree_amp:
++	mutex_lock(&vpbe_dev->lock);
++	kfree(vpbe_dev->amp);
+ fail_kfree_encoders:
+ 	kfree(vpbe_dev->encoders);
+ fail_dev_unregister:
 -- 
 2.19.1
 
