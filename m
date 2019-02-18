@@ -2,184 +2,117 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 754DAC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:04:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA711C10F01
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:04:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 411D120836
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:04:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fpiz3aAW"
+	by mail.kernel.org (Postfix) with ESMTP id 8622F20836
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 16:04:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388283AbfBRQEO (ORCPT
+        id S2388360AbfBRQEU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 11:04:14 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:45965 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731057AbfBRQEO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 11:04:14 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 32so29003689ota.12
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 08:04:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=m+lidQw3+CwGVLVVkUFOmOJusJPLo4FhCDb4zUr+4K4=;
-        b=fpiz3aAW8nHDHMJAu6WHVdxOgqunzkE7bf9gkunuHa/BM8tRNKxQRowZ99w5PB4NKV
-         cgMi/jSVuK8sdW5HeZdt86IbMsatEX7xf7nag1YsBdiPZggJZk8FiAecR0D2IzVqkWA7
-         nSD9Cxy3RDKFd6TPaMM3P033/H5uq5AIXcyGqvLZnzo2rdgg6q7d/MXfZRMUZvmWMnvv
-         jyoWcOIgUPyB1XwonfgLFVlQgaUKqZEFGoGtal1nZpksshKqfEKuGgrnT6OB6wHzyCXM
-         9gD4TGbDpMbSrUphCG/J5zoAbRYx1SZgVYFQLcw20mP7zklJ7DxRBQw1GkjswOXBsCrI
-         eCpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=m+lidQw3+CwGVLVVkUFOmOJusJPLo4FhCDb4zUr+4K4=;
-        b=Xe23ZMnyEwp/iyRtjpBZQHFux+pFR1rs6Kq2vJT9NTYEeGI+nKK/noZFhe4gAoiNdo
-         5HPS9dZXVGEwPRfIeXMDsSiPBpSnLbuWPZE/8Jxs68/4SfxLxXMhTOZfNUTCdk2qH6CH
-         PW2f3eBlF2aACQFITCnWPqZuWw3tJoEtJz5VkG3v9ks9qx14PfiTCZI2pSt+gc8n0tOQ
-         orvptE1rqFBaijlq+BaTnJZxhRGWt0sewNNo2j1pJWJipR+lGmJjfGWCHJoLIutRnF2M
-         CcpxWZg0c7X555v0+xqWEFcfEh9gmE5U2xPKmeMjDe3Tkv3EpUUBeYLm+7zWfnLzQRGL
-         njKA==
-X-Gm-Message-State: AHQUAuaIVDXtSVe78SpJokInsEPyEGQrMItAem5MLzbJ+uCIfl8qoIW/
-        jGaRRBScVTt+Vh1luhSMFofUS4efah25CF1G8bQnYg==
-X-Google-Smtp-Source: AHgI3Ibe3FvpE2nMhR/pmTjFU7Ghac0QgtFhBCfHVPTEU9Oe8rO/Tq2OD8kLthLdSyCea0wWkivfU/rQy10PK3qO0f8=
-X-Received: by 2002:aca:d509:: with SMTP id m9mr13940235oig.64.1550505853166;
- Mon, 18 Feb 2019 08:04:13 -0800 (PST)
+        Mon, 18 Feb 2019 11:04:20 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51946 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732251AbfBRQEU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 11:04:20 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 18709315FC5;
+        Mon, 18 Feb 2019 16:04:19 +0000 (UTC)
+Received: from redhat.com (ovpn-125-191.rdu2.redhat.com [10.10.125.191])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DBA20A68E5;
+        Mon, 18 Feb 2019 16:04:16 +0000 (UTC)
+Date:   Mon, 18 Feb 2019 11:04:13 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Andrea Arcangeli <aarcange@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Peter Xu <peterx@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>, kvm@vger.kernel.org
+Subject: Re: [RFC PATCH 0/4] Restore change_pte optimization to its former
+ glory
+Message-ID: <20190218160411.GA3142@redhat.com>
+References: <20190131183706.20980-1-jglisse@redhat.com>
+ <20190201235738.GA12463@redhat.com>
+ <20190211190931.GA3908@redhat.com>
+ <20190211200200.GA30128@redhat.com>
 MIME-Version: 1.0
-References: <20190128142313.17036-1-benjamin.gaignard@st.com> <20190128142313.17036-2-benjamin.gaignard@st.com>
-In-Reply-To: <20190128142313.17036-2-benjamin.gaignard@st.com>
-From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
-Date:   Mon, 18 Feb 2019 17:04:02 +0100
-Message-ID: <CA+M3ks4S3y9=VvAu1Vah9crd-g_Ri3T4szS-FkwiNP6rfXqO1g@mail.gmail.com>
-Subject: Re: [RFC v2 1/7] devicetree: bindings: Document domains controller bindings
-To:     Benjamin Gaignard <benjamin.gaignard@st.com>
-Cc:     Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Shawn Guo <shawnguo@kernel.org>,
-        s.hauer@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Loic PALLARDY <loic.pallardy@st.com>, kernel@pengutronix.de,
-        linux-imx@nxp.com, Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190211200200.GA30128@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 18 Feb 2019 16:04:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le lun. 28 janv. 2019 =C3=A0 15:23, Benjamin Gaignard
-<benjamin.gaignard@st.com> a =C3=A9crit :
->
-> Document commons domains controller bindings for controller
-> and client devices.
+On Mon, Feb 11, 2019 at 03:02:00PM -0500, Andrea Arcangeli wrote:
+> On Mon, Feb 11, 2019 at 02:09:31PM -0500, Jerome Glisse wrote:
+> > Yeah, between do you have any good workload for me to test this ? I
+> > was thinking of running few same VM and having KSM work on them. Is
+> > there some way to trigger KVM to fork ? As the other case is breaking
+> > COW after fork.
+> 
+> KVM can fork on guest pci-hotplug events or network init to run host
+> scripts and re-init the signals before doing the exec, but it won't
+> move the needle because all guest memory registered in the MMU
+> notifier is set as MADV_DONTFORK... so fork() is a noop unless qemu is
+> also modified not to call MADV_DONTFORK.
+> 
+> Calling if (!fork()) exit(0) from a timer at regular intervals during
+> qemu runtime after turning off MADV_DONTFORK in qemu would allow to
+> exercise fork against the KVM MMU Notifier methods.
+> 
+> The optimized change_pte code in copy-on-write code is the same
+> post-fork or post-KSM merge and fork() itself doesn't use change_pte
+> while KSM does, so with regard to change_pte it should already provide
+> a good test coverage to test with only KSM without fork(). It'll cover
+> the read-write -> readonly transition with same PFN
+> (write_protect_page), the read-only to read-only changing PFN
+> (replace_page) as well as the readonly -> read-write transition
+> changing PFN (wp_page_copy) all three optimized with change_pte. Fork
+> would not leverage change_pte for the first two cases.
 
-Gentle ping to get comments on those bindings,
+So i run 2 exact same VMs side by side (copy of same COW image) and
+built the same kernel tree inside each (that is the only important
+workload that exist ;)) but the change_pte did not have any impact:
 
-Thanks,
-Benjamin
->
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
-> ---
-> version 2:
-> - complete rework of bindings description to try to give a better definit=
-ion
->   of what bus domains could be.
->  .../bindings/bus/domains/domainsctrl.txt           | 55 ++++++++++++++++=
-++++++
->  1 file changed, 55 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/bus/domains/domains=
-ctrl.txt
->
-> diff --git a/Documentation/devicetree/bindings/bus/domains/domainsctrl.tx=
-t b/Documentation/devicetree/bindings/bus/domains/domainsctrl.txt
-> new file mode 100644
-> index 000000000000..a3fced91842d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/bus/domains/domainsctrl.txt
-> @@ -0,0 +1,55 @@
-> +Common Domains Controller bindings properties
-> +
-> +Bus domains controllers allow to divided system on chip into multiple do=
-mains
-> +that can be used to select by who hardware blocks could be accessed.
-> +A domain could be a cluster of CPUs (or coprocessors), a range of addres=
-ses or
-> +a group of hardware blocks.
-> +
-> +This device tree bindings can be used to bind bus domain consumer device=
-s with
-> +their bus domains provided by bus domains controllers. A bus domain prov=
-ider
-> +can be represented by any node in the device tree and can provide one or=
- more
-> +bus domains. A consumer node can refer to the provider by a phandle and =
-a set
-> +of phandle arguments of length specified by the #domainctrl-cells proper=
-ty in
-> +the bus domain provider node.
-> +
-> +=3D=3DBus domain provider=3D=3D
-> +
-> +Required properties:
-> +- #domainctrl-cells    : Number of cells in a bus domain specifier;
-> +                         Can be any value as specified by device tree bi=
-nding
-> +                         documentation of a particular provider.
-> +
-> +=3D=3DBus domain consumer=3D=3D
-> +
-> +Required properties:
-> +- domainsctrl-X                : A list of bus domain specifiers, as def=
-ined by
-> +                         bindings of the bus domain controller that is t=
-he
-> +                         bus domain provider.
-> +
-> +Optional properties:
-> +- domainsctrl-names    : A list of bus domain name string sorted in the =
-same
-> +                         order as the domainsctrl-X proprerties. Consume=
-r
-> +                         drivers will use domainsctrl-names to match bus
-> +                         domains with bus domains specifiers.
-> +                         Note that "default" and "unbind" are reserved n=
-ames
-> +                         used by the framework.
-> +
-> +Example of usage with:
-> +- a domains controller with a 2 parameters cell
-> +- a domains controller with a 3 parameters cell
-> +- a client device node using the both controllers and 2 configurations
-> +  named "default" and "unbind"
-> +
-> +ctrl0: ctrl@0 {
-> +       #domainctrl-cells =3D <2>;
-> +};
-> +
-> +ctrl1: ctrl@1 {
-> +       #domainctrl-cells =3D <3>;
-> +};
-> +
-> +foo@0 {
-> +       domains-names =3D "default", "unbind";
-> +       domainctrl-0 =3D <&ctrl0 1 2>, <&ctrl1 3 4 5>;
-> +       domainctrl-1 =3D <&ctrl0 6 7>, <&ctrl1 8 9 0>;
-> +};
-> --
-> 2.15.0
->
+before  mean  {real: 1358.250977, user: 16650.880859, sys: 839.199524, npages: 76855.390625}
+before  stdev {real:    6.744010, user:   108.863762, sys:   6.840437, npages:  1868.071899}
+after   mean  {real: 1357.833740, user: 16685.849609, sys: 839.646973, npages: 76210.601562}
+after   stdev {real:    5.124797, user:    78.469360, sys:   7.009164, npages:  2468.017578}
+without mean  {real: 1358.501343, user: 16674.478516, sys: 837.791992, npages: 76225.203125}
+without stdev {real:    5.541104, user:    97.998367, sys:   6.715869, npages:  1682.392578}
 
+Above is time taken by make inside each VM for all yes config. npages
+is the number of page shared reported on the host at the end of the
+build.
 
---=20
-Benjamin Gaignard
+There is no change before and after the patchset to restore change
+pte. I tried removing the change_pte callback alltogether to see if
+that did have any effect (without above) and it did not have any
+effect either.
 
-Graphic Study Group
+Should we still restore change_pte() ? It does not hurt, but it does
+not seems to help in anyway. Maybe you have a better benchmark i could
+run ?
 
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-
-Follow Linaro: Facebook | Twitter | Blog
+Cheers,
+Jérôme
