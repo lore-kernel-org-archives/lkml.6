@@ -2,124 +2,116 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6DFBC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A5CC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:32:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C06052081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:32:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 792732081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:32:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550500348;
+	bh=ujGyIIbntFGT65JqiqRj6B5cA+NDXrjaZJqsHvCkPlQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=1Pyn95Fbrq+Z3/cR0VPzY/Jgn2S42TwCLzQRIN88yP3+pOYC53IXJFelk+8iofWsN
+	 zQh5Nvx+kt5kBhgQZYJwBVh95Q1M0nV0JBz8GW/4+/hg+ZRF9QvyAimwCxo76F+J3I
+	 jQf780sci/1uobsMolR2yzuLFo/n8AtpbcnuUzYY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388891AbfBROcS (ORCPT
+        id S2388171AbfBRN5y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:32:18 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:40302 "EHLO mx1.redhat.com"
+        Mon, 18 Feb 2019 08:57:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388148AbfBRN54 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:57:56 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2387592AbfBRN5u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:57:50 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 01A45637FE;
-        Mon, 18 Feb 2019 13:57:56 +0000 (UTC)
-Received: from laptop.redhat.com (ovpn-116-102.ams2.redhat.com [10.36.116.102])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 000DF5D70E;
-        Mon, 18 Feb 2019 13:57:46 +0000 (UTC)
-From:   Eric Auger <eric.auger@redhat.com>
-To:     eric.auger.pro@gmail.com, eric.auger@redhat.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
-        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
-        yi.l.liu@linux.intel.com, jean-philippe.brucker@arm.com,
-        will.deacon@arm.com, robin.murphy@arm.com
-Cc:     kevin.tian@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, peter.maydell@linaro.org
-Subject: [PATCH v4 16/22] iommu/smmuv3: Implement bind/unbind_guest_msi
-Date:   Mon, 18 Feb 2019 14:54:57 +0100
-Message-Id: <20190218135504.25048-17-eric.auger@redhat.com>
-In-Reply-To: <20190218135504.25048-1-eric.auger@redhat.com>
-References: <20190218135504.25048-1-eric.auger@redhat.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id C400620842;
+        Mon, 18 Feb 2019 13:57:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1550498270;
+        bh=ujGyIIbntFGT65JqiqRj6B5cA+NDXrjaZJqsHvCkPlQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ul1xAj36+itJ8J7HrnerPjN2uVahS8Z20FV7Xl1zVoZwv2tFW5SaC4vLCKY4IIlSo
+         ACahV/koMTW70k5AEaKtQQJ5EIQAHxY3O2KwMsymysYCY5uyzQ17seAJ5iRtbX2j28
+         uoehhDQ3cfQ0/AMKmlWdfj4hdPMfq0QqPJzjOgzE=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        "David A. Long" <dave.long@linaro.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 15/58] ARM: clean up per-processor check_bugs method call
+Date:   Mon, 18 Feb 2019 14:43:36 +0100
+Message-Id: <20190218133509.730251254@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190218133508.567416115@linuxfoundation.org>
+References: <20190218133508.567416115@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 18 Feb 2019 13:57:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The bind/unbind_guest_msi() callbacks check the domain
-is NESTED and redirect to the dma-iommu implementation.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
+------------------
+
+Commit 945aceb1db8885d3a35790cf2e810f681db52756 upstream.
+
+Call the per-processor type check_bugs() method in the same way as we
+do other per-processor functions - move the "processor." detail into
+proc-fns.h.
+
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: David A. Long <dave.long@linaro.org>
+Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/arm-smmu-v3.c | 44 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+ arch/arm/include/asm/proc-fns.h | 1 +
+ arch/arm/kernel/bugs.c          | 4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index edff7ccf8b71..7b6b5a70fb39 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -2207,6 +2207,48 @@ static void arm_smmu_put_resv_regions(struct device *dev,
- 		kfree(entry);
+diff --git a/arch/arm/include/asm/proc-fns.h b/arch/arm/include/asm/proc-fns.h
+index f379f5f849a9..19939e88efca 100644
+--- a/arch/arm/include/asm/proc-fns.h
++++ b/arch/arm/include/asm/proc-fns.h
+@@ -99,6 +99,7 @@ extern void cpu_do_suspend(void *);
+ extern void cpu_do_resume(void *);
+ #else
+ #define cpu_proc_init			processor._proc_init
++#define cpu_check_bugs			processor.check_bugs
+ #define cpu_proc_fin			processor._proc_fin
+ #define cpu_reset			processor.reset
+ #define cpu_do_idle			processor._do_idle
+diff --git a/arch/arm/kernel/bugs.c b/arch/arm/kernel/bugs.c
+index 7be511310191..d41d3598e5e5 100644
+--- a/arch/arm/kernel/bugs.c
++++ b/arch/arm/kernel/bugs.c
+@@ -6,8 +6,8 @@
+ void check_other_bugs(void)
+ {
+ #ifdef MULTI_CPU
+-	if (processor.check_bugs)
+-		processor.check_bugs();
++	if (cpu_check_bugs)
++		cpu_check_bugs();
+ #endif
  }
  
-+static int
-+arm_smmu_bind_guest_msi(struct iommu_domain *domain, struct device *dev,
-+			dma_addr_t giova, phys_addr_t gpa, size_t size)
-+{
-+	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
-+	struct arm_smmu_device *smmu;
-+	int ret = -EINVAL;
-+
-+	mutex_lock(&smmu_domain->init_mutex);
-+	smmu = smmu_domain->smmu;
-+	if (!smmu)
-+		goto out;
-+
-+	if (smmu_domain->stage != ARM_SMMU_DOMAIN_NESTED)
-+		goto out;
-+
-+	ret = iommu_dma_bind_guest_msi(domain, dev, giova, gpa, size);
-+out:
-+	mutex_unlock(&smmu_domain->init_mutex);
-+	return ret;
-+}
-+
-+static void
-+arm_smmu_unbind_guest_msi(struct iommu_domain *domain,
-+			  struct device *dev, dma_addr_t giova)
-+{
-+	struct arm_smmu_domain *smmu_domain = to_smmu_domain(domain);
-+	struct arm_smmu_device *smmu;
-+
-+	mutex_lock(&smmu_domain->init_mutex);
-+	smmu = smmu_domain->smmu;
-+	if (!smmu)
-+		goto unlock;
-+
-+	if (smmu_domain->stage != ARM_SMMU_DOMAIN_NESTED)
-+		goto unlock;
-+
-+	iommu_dma_unbind_guest_msi(domain, dev, giova);
-+unlock:
-+	mutex_unlock(&smmu_domain->init_mutex);
-+}
-+
- static int arm_smmu_attach_pasid_table(struct iommu_domain *domain,
- 				       struct iommu_pasid_table_config *cfg)
- {
-@@ -2396,6 +2438,8 @@ static struct iommu_ops arm_smmu_ops = {
- 	.attach_pasid_table	= arm_smmu_attach_pasid_table,
- 	.detach_pasid_table	= arm_smmu_detach_pasid_table,
- 	.cache_invalidate	= arm_smmu_cache_invalidate,
-+	.bind_guest_msi		= arm_smmu_bind_guest_msi,
-+	.unbind_guest_msi	= arm_smmu_unbind_guest_msi,
- 	.pgsize_bitmap		= -1UL, /* Restricted during device attach */
- };
- 
 -- 
-2.20.1
+2.19.1
+
+
 
