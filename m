@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7850C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:45:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31EE0C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:45:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A3B321902
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:45:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0144B218FC
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:45:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497520;
-	bh=wm/xvyKAh4hOPZeBLhIj5oV9Sy1L0m+PWfkeJ/MaCPA=;
+	s=default; t=1550497525;
+	bh=4bFnIsdXg55p+eIb1TKr2naeNkOSvdw6mjz19Cju5IQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=k7Pj3xVC0KRS7otdfkKX+/QsjNfxEasOGm4/z8MkS4IsWg/hauA/PugBTapXDgcC5
-	 I6SgA1kksYQdRoEMnk9r/59HeIWcJcRJTLiyKMliQJI477e03ED5dhcQsE2V7D4adS
-	 cvOLLB1YlkMKtpFckmofScuilV+ZOOCmFRJ1b7lc=
+	b=YlzXHTHHCftFeOyl9lgLPwxT4o+/qWgLiLLHH/4tRclRTpsC7pfRP0qD6QByMAlcA
+	 svtmhF6BkFV84fXGr/l5awvgJUgOxaYKLuWlNbuEKDwFQzxGmzg7xw3EL+iWYCJzsx
+	 zANMRwrlbgE6QaEOrr61HomEmI6uzbLwIioaXCos=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729542AbfBRNpT (ORCPT
+        id S1731318AbfBRNpX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:45:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51300 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:45:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731281AbfBRNpP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:45:15 -0500
+        id S1731293AbfBRNpS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:45:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D6E521902;
-        Mon, 18 Feb 2019 13:45:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 014CF218FC;
+        Mon, 18 Feb 2019 13:45:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497514;
-        bh=wm/xvyKAh4hOPZeBLhIj5oV9Sy1L0m+PWfkeJ/MaCPA=;
+        s=default; t=1550497517;
+        bh=4bFnIsdXg55p+eIb1TKr2naeNkOSvdw6mjz19Cju5IQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DXYpxvX2gTmD9XeRw54F2BQIgWriuLmm3m8zxpoiOzKtKmY1MvJdrP7Oa1yEaV7/L
-         3dWDyJ8JgRVs8QmxlcCiH1xYdaG6fAidnGhxFFZqe2GbRhw+xovvvCIYHwgdNkNx60
-         0PLJ7a7WPYVUAMv0dYl4RDPaCGMmnACjidrxPk7I=
+        b=DqyFS1FBT8RHihNhJNUAKcacxClNT52/E4w8Fx9f/as+kiARQxkW7Ze0f6xXsg/nB
+         Zi3GBo0lJNpNVTJ9RuPSVAcWCw8OhlRrCmSvlosEunIilDWwRu6sO5M5/97cKSbebF
+         0wbo0xukXqsQNB4teIr6PQ6O69hF0CR9LyjagZqQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Bunk <bunk@kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 02/92] eeprom: at24: add support for 24c2048
-Date:   Mon, 18 Feb 2019 14:42:05 +0100
-Message-Id: <20190218133454.872363445@linuxfoundation.org>
+        stable@vger.kernel.org, Florian Stecker <m19@florianstecker.de>,
+        Jianchao Wang <jianchao.w.wang@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 03/92] blk-mq: fix a hung issue when fsync
+Date:   Mon, 18 Feb 2019 14:42:06 +0100
+Message-Id: <20190218133454.948976156@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
 References: <20190218133454.668268457@linuxfoundation.org>
@@ -66,59 +66,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 37cf28d3b5bca1b532a0b6aac722e7f2788a9294 ]
+[ Upstream commit 85bd6e61f34dffa8ec2dc75ff3c02ee7b2f1cbce ]
 
-Works with ST M24M02.
+Florian reported a io hung issue when fsync(). It should be
+triggered by following race condition.
 
-Signed-off-by: Adrian Bunk <bunk@kernel.org>
-Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
+data + post flush         a flush
+
+blk_flush_complete_seq
+  case REQ_FSEQ_DATA
+    blk_flush_queue_rq
+    issued to driver      blk_mq_dispatch_rq_list
+                            try to issue a flush req
+                            failed due to NON-NCQ command
+                            .queue_rq return BLK_STS_DEV_RESOURCE
+
+request completion
+  req->end_io // doesn't check RESTART
+  mq_flush_data_end_io
+    case REQ_FSEQ_POSTFLUSH
+      blk_kick_flush
+        do nothing because previous flush
+        has not been completed
+     blk_mq_run_hw_queue
+                              insert rq to hctx->dispatch
+                              due to RESTART is still set, do nothing
+
+To fix this, replace the blk_mq_run_hw_queue in mq_flush_data_end_io
+with blk_mq_sched_restart to check and clear the RESTART flag.
+
+Fixes: bd166ef1 (blk-mq-sched: add framework for MQ capable IO schedulers)
+Reported-by: Florian Stecker <m19@florianstecker.de>
+Tested-by: Florian Stecker <m19@florianstecker.de>
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/misc/eeprom/Kconfig | 2 +-
- drivers/misc/eeprom/at24.c  | 3 +++
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ block/blk-flush.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/misc/eeprom/Kconfig b/drivers/misc/eeprom/Kconfig
-index fe7a1d27a017..a846faefa210 100644
---- a/drivers/misc/eeprom/Kconfig
-+++ b/drivers/misc/eeprom/Kconfig
-@@ -13,7 +13,7 @@ config EEPROM_AT24
- 	  ones like at24c64, 24lc02 or fm24c04:
+diff --git a/block/blk-flush.c b/block/blk-flush.c
+index 8b44b86779da..87fc49daa2b4 100644
+--- a/block/blk-flush.c
++++ b/block/blk-flush.c
+@@ -424,7 +424,7 @@ static void mq_flush_data_end_io(struct request *rq, blk_status_t error)
+ 	blk_flush_complete_seq(rq, fq, REQ_FSEQ_DATA, error);
+ 	spin_unlock_irqrestore(&fq->mq_flush_lock, flags);
  
- 	     24c00, 24c01, 24c02, spd (readonly 24c02), 24c04, 24c08,
--	     24c16, 24c32, 24c64, 24c128, 24c256, 24c512, 24c1024
-+	     24c16, 24c32, 24c64, 24c128, 24c256, 24c512, 24c1024, 24c2048
+-	blk_mq_run_hw_queue(hctx, true);
++	blk_mq_sched_restart(hctx);
+ }
  
- 	  Unless you like data loss puzzles, always be sure that any chip
- 	  you configure as a 24c32 (32 kbit) or larger is NOT really a
-diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
-index 636ed7149793..ddfcf4ade7bf 100644
---- a/drivers/misc/eeprom/at24.c
-+++ b/drivers/misc/eeprom/at24.c
-@@ -156,6 +156,7 @@ AT24_CHIP_DATA(at24_data_24c128, 131072 / 8, AT24_FLAG_ADDR16);
- AT24_CHIP_DATA(at24_data_24c256, 262144 / 8, AT24_FLAG_ADDR16);
- AT24_CHIP_DATA(at24_data_24c512, 524288 / 8, AT24_FLAG_ADDR16);
- AT24_CHIP_DATA(at24_data_24c1024, 1048576 / 8, AT24_FLAG_ADDR16);
-+AT24_CHIP_DATA(at24_data_24c2048, 2097152 / 8, AT24_FLAG_ADDR16);
- /* identical to 24c08 ? */
- AT24_CHIP_DATA(at24_data_INT3499, 8192 / 8, 0);
- 
-@@ -182,6 +183,7 @@ static const struct i2c_device_id at24_ids[] = {
- 	{ "24c256",	(kernel_ulong_t)&at24_data_24c256 },
- 	{ "24c512",	(kernel_ulong_t)&at24_data_24c512 },
- 	{ "24c1024",	(kernel_ulong_t)&at24_data_24c1024 },
-+	{ "24c2048",    (kernel_ulong_t)&at24_data_24c2048 },
- 	{ "at24",	0 },
- 	{ /* END OF LIST */ }
- };
-@@ -210,6 +212,7 @@ static const struct of_device_id at24_of_match[] = {
- 	{ .compatible = "atmel,24c256",		.data = &at24_data_24c256 },
- 	{ .compatible = "atmel,24c512",		.data = &at24_data_24c512 },
- 	{ .compatible = "atmel,24c1024",	.data = &at24_data_24c1024 },
-+	{ .compatible = "atmel,24c2048",	.data = &at24_data_24c2048 },
- 	{ /* END OF LIST */ },
- };
- MODULE_DEVICE_TABLE(of, at24_of_match);
+ /**
 -- 
 2.19.1
 
