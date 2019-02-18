@@ -4,54 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95F43C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:39:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7595FC10F01
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:39:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6836F20838
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:39:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44B7B2173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:39:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550500798;
-	bh=F1tCQTmk/wfW1At715d2KqK//xBYl4LXBVKGP7NW8w4=;
+	s=default; t=1550500799;
+	bh=EZZGIyIbHJRVyKHZRdylxf4aHgOFITWQu4Az2+JgUmQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oP4BMRyROhTbUowOZeu/xwWAEyvbnC+1oKSdRgJbExNyqa/QunpDKOMc6VFqsFf4X
-	 86f/kGADiNCcXeqij5G2+/0PSvHEnpnu8P/PDzhxC6q3QOJqGt8tIN/oCH6hbM5rzn
-	 rOpCFLGFOWS95c80I8aEIKHvBxnlWKH31h/JI2Xg=
+	b=l5FTP+nBwr/5WjmRyTNAIryb1a/XAeGlb0rjxhJ2E6fW4C9rftODKG2eAbbsobVFR
+	 XEKSuhiMJR80tDv1DoEXd74Ce/2e3KximmlHTK4L6e3VXX6Z9A3evJ0iUuDD7XlYwP
+	 1LiMJDEuPLFjH2ddvWeI1l5hLwpyB7Nvoq5HU0ss=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389852AbfBROg5 (ORCPT
+        id S2387572AbfBROj5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:36:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35266 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:39:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387478AbfBRNzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:55:15 -0500
+        id S1732745AbfBRNwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:52:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E974920842;
-        Mon, 18 Feb 2019 13:55:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18CE921904;
+        Mon, 18 Feb 2019 13:52:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498114;
-        bh=F1tCQTmk/wfW1At715d2KqK//xBYl4LXBVKGP7NW8w4=;
+        s=default; t=1550497957;
+        bh=EZZGIyIbHJRVyKHZRdylxf4aHgOFITWQu4Az2+JgUmQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H+vV8XfJQohovQ2DwBAzSvQUvZN+nb6s7IlPNGYr8FImhwUmL/ssw5v6cYg65i+dF
-         uhAfbRWR9IjDYXWeYxILv2Ur3AmaukMw7PCd0uxT+yyfBS/ZSqHBCgwl/Zey7syqn+
-         ak650L6pu6+oTlzyTU7juSdvjVgYBCi1DfGBilTs=
+        b=SclG2uKsnWgA+fjKHd2GCQmJ5Y6393vJGYX0+Q0boNJ2xz+JHiXWEv9lqMu8SvWp8
+         JrDDdPrgrzYZtLZB+nm10UkQIGJXK6xJbDsvA7z7Kw7aT5ylza2hKZlyiBGLfRULNL
+         UkrMeul4YJtBk08e0uYDQ+3EGTsmQj5GfWOliz2M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julien Thierry <julien.thierry@arm.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        "David A. Long" <dave.long@linaro.org>,
+        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
+        Steve French <stfrench@microsoft.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 09/62] ARM: 8793/1: signal: replace __put_user_error with __put_user
-Date:   Mon, 18 Feb 2019 14:43:15 +0100
-Message-Id: <20190218133506.623694641@linuxfoundation.org>
+Subject: [PATCH 4.19 47/85] cifs: Limit memory used by lock request calls to a page
+Date:   Mon, 18 Feb 2019 14:43:13 +0100
+Message-Id: <20190218133504.690693305@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
-References: <20190218133505.801423074@linuxfoundation.org>
+In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
+References: <20190218133459.758004711@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -63,57 +62,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-Commit 18ea66bd6e7a95bdc598223d72757190916af28b upstream.
+[ Upstream commit 92a8109e4d3a34fb6b115c9098b51767dc933444 ]
 
-With Spectre-v1.1 mitigations, __put_user_error is pointless. In an attempt
-to remove it, replace its references in frame setups with __put_user.
+The code tries to allocate a contiguous buffer with a size supplied by
+the server (maxBuf). This could fail if memory is fragmented since it
+results in high order allocations for commonly used server
+implementations. It is also wasteful since there are probably
+few locks in the usual case. Limit the buffer to be no larger than a
+page to avoid memory allocation failures due to fragmentation.
 
-Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Signed-off-by: David A. Long <dave.long@linaro.org>
-Reviewed-by: Julien Thierry <julien.thierry@arm.com>
+Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/kernel/signal.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/cifs/file.c     | 8 ++++++++
+ fs/cifs/smb2file.c | 4 ++++
+ 2 files changed, 12 insertions(+)
 
-diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
-index 1eb83ee7e1cc..02e6b6dfffa7 100644
---- a/arch/arm/kernel/signal.c
-+++ b/arch/arm/kernel/signal.c
-@@ -344,7 +344,7 @@ setup_sigframe(struct sigframe __user *sf, struct pt_regs *regs, sigset_t *set)
- 	if (err == 0)
- 		err |= preserve_vfp_context(&aux->vfp);
- #endif
--	__put_user_error(0, &aux->end_magic, err);
-+	err |= __put_user(0, &aux->end_magic);
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index 7b637fc27990..23db881daab5 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -1128,6 +1128,10 @@ cifs_push_mandatory_locks(struct cifsFileInfo *cfile)
+ 		return -EINVAL;
+ 	}
  
- 	return err;
- }
-@@ -476,7 +476,7 @@ setup_frame(struct ksignal *ksig, sigset_t *set, struct pt_regs *regs)
- 	/*
- 	 * Set uc.uc_flags to a value which sc.trap_no would never have.
- 	 */
--	__put_user_error(0x5ac3c35a, &frame->uc.uc_flags, err);
-+	err = __put_user(0x5ac3c35a, &frame->uc.uc_flags);
++	BUILD_BUG_ON(sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE) >
++		     PAGE_SIZE);
++	max_buf = min_t(unsigned int, max_buf - sizeof(struct smb_hdr),
++			PAGE_SIZE);
+ 	max_num = (max_buf - sizeof(struct smb_hdr)) /
+ 						sizeof(LOCKING_ANDX_RANGE);
+ 	buf = kcalloc(max_num, sizeof(LOCKING_ANDX_RANGE), GFP_KERNEL);
+@@ -1466,6 +1470,10 @@ cifs_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
+ 	if (max_buf < (sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE)))
+ 		return -EINVAL;
  
- 	err |= setup_sigframe(frame, regs, set);
- 	if (err == 0)
-@@ -496,8 +496,8 @@ setup_rt_frame(struct ksignal *ksig, sigset_t *set, struct pt_regs *regs)
++	BUILD_BUG_ON(sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE) >
++		     PAGE_SIZE);
++	max_buf = min_t(unsigned int, max_buf - sizeof(struct smb_hdr),
++			PAGE_SIZE);
+ 	max_num = (max_buf - sizeof(struct smb_hdr)) /
+ 						sizeof(LOCKING_ANDX_RANGE);
+ 	buf = kcalloc(max_num, sizeof(LOCKING_ANDX_RANGE), GFP_KERNEL);
+diff --git a/fs/cifs/smb2file.c b/fs/cifs/smb2file.c
+index 2fc3d31967ee..b204e84b87fb 100644
+--- a/fs/cifs/smb2file.c
++++ b/fs/cifs/smb2file.c
+@@ -128,6 +128,8 @@ smb2_unlock_range(struct cifsFileInfo *cfile, struct file_lock *flock,
+ 	if (max_buf < sizeof(struct smb2_lock_element))
+ 		return -EINVAL;
  
- 	err |= copy_siginfo_to_user(&frame->info, &ksig->info);
++	BUILD_BUG_ON(sizeof(struct smb2_lock_element) > PAGE_SIZE);
++	max_buf = min_t(unsigned int, max_buf, PAGE_SIZE);
+ 	max_num = max_buf / sizeof(struct smb2_lock_element);
+ 	buf = kcalloc(max_num, sizeof(struct smb2_lock_element), GFP_KERNEL);
+ 	if (!buf)
+@@ -264,6 +266,8 @@ smb2_push_mandatory_locks(struct cifsFileInfo *cfile)
+ 		return -EINVAL;
+ 	}
  
--	__put_user_error(0, &frame->sig.uc.uc_flags, err);
--	__put_user_error(NULL, &frame->sig.uc.uc_link, err);
-+	err |= __put_user(0, &frame->sig.uc.uc_flags);
-+	err |= __put_user(NULL, &frame->sig.uc.uc_link);
- 
- 	err |= __save_altstack(&frame->sig.uc.uc_stack, regs->ARM_sp);
- 	err |= setup_sigframe(&frame->sig, regs, set);
++	BUILD_BUG_ON(sizeof(struct smb2_lock_element) > PAGE_SIZE);
++	max_buf = min_t(unsigned int, max_buf, PAGE_SIZE);
+ 	max_num = max_buf / sizeof(struct smb2_lock_element);
+ 	buf = kcalloc(max_num, sizeof(struct smb2_lock_element), GFP_KERNEL);
+ 	if (!buf) {
 -- 
 2.19.1
 
