@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 589F6C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF374C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 196D32077B
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 995B820842
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:55:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498126;
-	bh=DDvg8cwB/nrY1/y+TkFUE6r3UbnxBgrdNq/b5/UvBTQ=;
+	s=default; t=1550498128;
+	bh=HvywHUCZYG/4LJ+naJoD/GvaSV3oAH2GwBd2eB9WbmM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vGVT/r+w6sZWi/vM7NalBtoCoHzK7pkJTsSsWFpY2MG8Zi3Yyhry1s6MfcY4XlL2V
-	 eOnka8RwCJnVKnRx7eqf5jBAlsB4euixzexP4ZryRhgUVb5020egTmW4CfpVU54uGB
-	 vWVM5Hivz1f20lp4SZDiZKI72VoO+j+N1hgNO6Dg=
+	b=LVtnaVRql8/8tJA6GoYOpf3s4pRVXlNXBCBKsWqGkY/x29ADnchrlWzmQqWX2AEve
+	 49PFzrRisWXD5OfKkDPgUbDIp1WrZ0uXn5t4syOgcRC+W8YuLGT1b+m3G4qAF7tZ6i
+	 6zxb5siEsESqTeq7k9NNhYPy9L+K8k1capuYSSQ4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387522AbfBRNzY (ORCPT
+        id S2387531AbfBRNz1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:55:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35400 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:55:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35438 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387432AbfBRNzV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:55:21 -0500
+        id S2387519AbfBRNzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:55:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41A8B2077B;
-        Mon, 18 Feb 2019 13:55:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E82D2077B;
+        Mon, 18 Feb 2019 13:55:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498120;
-        bh=DDvg8cwB/nrY1/y+TkFUE6r3UbnxBgrdNq/b5/UvBTQ=;
+        s=default; t=1550498123;
+        bh=HvywHUCZYG/4LJ+naJoD/GvaSV3oAH2GwBd2eB9WbmM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fI1jtnszlG7VnR90qrOwFDmmdyhGCeB7ACxdTF/oR6AVD8kQuEstHpbjl53AZ276x
-         dQc/ThBGvrr3yeqtmz5d2cecxwpBuXU3g5EZjfo6MGYsd0zi0MPwEHUnCEOvZFFdDX
-         /aCCSrH5p1qQ81rToUpiWDhAdnZ7AEa4oxEcY1t0=
+        b=k2fVR1Q8K9kfmNszK0d6p0KtidUgGlXevt4Eiy66hDAXQHC1AmCpAHsFh/BIcb9Jm
+         3Rcmf3eImsjM04L/yRFiDipZGwzQXDH9TxtCO0BMfFYLrvqpaJ7yQtx23ikGCa5z4O
+         N6SX4mqyFUJ0S1Hyp6AvWwUhGjDPdkbdfkLQ5Mgk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Axtens <dja@axtens.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jack Wang <jinpu.wang@cloud.ionos.com>,
+        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 22/62] net: create skb_gso_validate_mac_len()
-Date:   Mon, 18 Feb 2019 14:43:28 +0100
-Message-Id: <20190218133507.858947854@linuxfoundation.org>
+Subject: [PATCH 4.14 31/62] drm/bridge: tc358767: fix output H/V syncs
+Date:   Mon, 18 Feb 2019 14:43:37 +0100
+Message-Id: <20190218133508.628978409@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
 References: <20190218133505.801423074@linuxfoundation.org>
@@ -67,174 +66,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-commit 2b16f048729bf35e6c28a40cbfad07239f9dcd90 upstream
+[ Upstream commit 7923e09c7a766e2d58de7fc395bb84c18e5bc625 ]
 
-If you take a GSO skb, and split it into packets, will the MAC
-length (L2 + L3 + L4 headers + payload) of those packets be small
-enough to fit within a given length?
+The H and V syncs of the DP output are always set to active high. This
+patch fixes the syncs by configuring them according to the videomode.
 
-Move skb_gso_mac_seglen() to skbuff.h with other related functions
-like skb_gso_network_seglen() so we can use it, and then create
-skb_gso_validate_mac_len to do the full calculation.
-
-Signed-off-by: Daniel Axtens <dja@axtens.net>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-[jwang: cherry pick for CVE-2018-1000026]
-Signed-off-by: Jack Wang <jinpu.wang@cloud.ionos.com>
+Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
+Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-7-tomi.valkeinen@ti.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/skbuff.h | 16 +++++++++++
- net/core/skbuff.c      | 63 +++++++++++++++++++++++++++++++++---------
- net/sched/sch_tbf.c    | 10 -------
- 3 files changed, 66 insertions(+), 23 deletions(-)
+ drivers/gpu/drm/bridge/tc358767.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index 39c2570ddcf6..50a4a5968f3a 100644
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -3317,6 +3317,7 @@ int skb_shift(struct sk_buff *tgt, struct sk_buff *skb, int shiftlen);
- void skb_scrub_packet(struct sk_buff *skb, bool xnet);
- unsigned int skb_gso_transport_seglen(const struct sk_buff *skb);
- bool skb_gso_validate_mtu(const struct sk_buff *skb, unsigned int mtu);
-+bool skb_gso_validate_mac_len(const struct sk_buff *skb, unsigned int len);
- struct sk_buff *skb_segment(struct sk_buff *skb, netdev_features_t features);
- struct sk_buff *skb_vlan_untag(struct sk_buff *skb);
- int skb_ensure_writable(struct sk_buff *skb, int write_len);
-@@ -4087,6 +4088,21 @@ static inline unsigned int skb_gso_network_seglen(const struct sk_buff *skb)
- 	return hdr_len + skb_gso_transport_seglen(skb);
- }
+diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
+index 792a2548d3bb..6eebd8ad0c52 100644
+--- a/drivers/gpu/drm/bridge/tc358767.c
++++ b/drivers/gpu/drm/bridge/tc358767.c
+@@ -96,6 +96,8 @@
+ #define DP0_STARTVAL		0x064c
+ #define DP0_ACTIVEVAL		0x0650
+ #define DP0_SYNCVAL		0x0654
++#define SYNCVAL_HS_POL_ACTIVE_LOW	(1 << 15)
++#define SYNCVAL_VS_POL_ACTIVE_LOW	(1 << 31)
+ #define DP0_MISC		0x0658
+ #define TU_SIZE_RECOMMENDED		(63) /* LSCLK cycles per TU */
+ #define BPC_6				(0 << 5)
+@@ -724,7 +726,9 @@ static int tc_set_video_mode(struct tc_data *tc, struct drm_display_mode *mode)
  
-+/**
-+ * skb_gso_mac_seglen - Return length of individual segments of a gso packet
-+ *
-+ * @skb: GSO skb
-+ *
-+ * skb_gso_mac_seglen is used to determine the real size of the
-+ * individual segments, including MAC/L2, Layer3 (IP, IPv6) and L4
-+ * headers (TCP/UDP).
-+ */
-+static inline unsigned int skb_gso_mac_seglen(const struct sk_buff *skb)
-+{
-+	unsigned int hdr_len = skb_transport_header(skb) - skb_mac_header(skb);
-+	return hdr_len + skb_gso_transport_seglen(skb);
-+}
-+
- /* Local Checksum Offload.
-  * Compute outer checksum based on the assumption that the
-  * inner checksum will be offloaded later.
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index 873032d1a083..6dbd2c54b2c9 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -4930,37 +4930,74 @@ unsigned int skb_gso_transport_seglen(const struct sk_buff *skb)
- EXPORT_SYMBOL_GPL(skb_gso_transport_seglen);
+ 	tc_write(DP0_ACTIVEVAL, (mode->vdisplay << 16) | (mode->hdisplay));
  
- /**
-- * skb_gso_validate_mtu - Return in case such skb fits a given MTU
-+ * skb_gso_size_check - check the skb size, considering GSO_BY_FRAGS
-  *
-- * @skb: GSO skb
-- * @mtu: MTU to validate against
-+ * There are a couple of instances where we have a GSO skb, and we
-+ * want to determine what size it would be after it is segmented.
-  *
-- * skb_gso_validate_mtu validates if a given skb will fit a wanted MTU
-- * once split.
-+ * We might want to check:
-+ * -    L3+L4+payload size (e.g. IP forwarding)
-+ * - L2+L3+L4+payload size (e.g. sanity check before passing to driver)
-+ *
-+ * This is a helper to do that correctly considering GSO_BY_FRAGS.
-+ *
-+ * @seg_len: The segmented length (from skb_gso_*_seglen). In the
-+ *           GSO_BY_FRAGS case this will be [header sizes + GSO_BY_FRAGS].
-+ *
-+ * @max_len: The maximum permissible length.
-+ *
-+ * Returns true if the segmented length <= max length.
-  */
--bool skb_gso_validate_mtu(const struct sk_buff *skb, unsigned int mtu)
--{
-+static inline bool skb_gso_size_check(const struct sk_buff *skb,
-+				      unsigned int seg_len,
-+				      unsigned int max_len) {
- 	const struct skb_shared_info *shinfo = skb_shinfo(skb);
- 	const struct sk_buff *iter;
--	unsigned int hlen;
--
--	hlen = skb_gso_network_seglen(skb);
+-	tc_write(DP0_SYNCVAL, (vsync_len << 16) | (hsync_len << 0));
++	tc_write(DP0_SYNCVAL, (vsync_len << 16) | (hsync_len << 0) |
++		 ((mode->flags & DRM_MODE_FLAG_NHSYNC) ? SYNCVAL_HS_POL_ACTIVE_LOW : 0) |
++		 ((mode->flags & DRM_MODE_FLAG_NVSYNC) ? SYNCVAL_VS_POL_ACTIVE_LOW : 0));
  
- 	if (shinfo->gso_size != GSO_BY_FRAGS)
--		return hlen <= mtu;
-+		return seg_len <= max_len;
- 
- 	/* Undo this so we can re-use header sizes */
--	hlen -= GSO_BY_FRAGS;
-+	seg_len -= GSO_BY_FRAGS;
- 
- 	skb_walk_frags(skb, iter) {
--		if (hlen + skb_headlen(iter) > mtu)
-+		if (seg_len + skb_headlen(iter) > max_len)
- 			return false;
- 	}
- 
- 	return true;
- }
-+
-+/**
-+ * skb_gso_validate_mtu - Return in case such skb fits a given MTU
-+ *
-+ * @skb: GSO skb
-+ * @mtu: MTU to validate against
-+ *
-+ * skb_gso_validate_mtu validates if a given skb will fit a wanted MTU
-+ * once split.
-+ */
-+bool skb_gso_validate_mtu(const struct sk_buff *skb, unsigned int mtu)
-+{
-+	return skb_gso_size_check(skb, skb_gso_network_seglen(skb), mtu);
-+}
- EXPORT_SYMBOL_GPL(skb_gso_validate_mtu);
- 
-+/**
-+ * skb_gso_validate_mac_len - Will a split GSO skb fit in a given length?
-+ *
-+ * @skb: GSO skb
-+ * @len: length to validate against
-+ *
-+ * skb_gso_validate_mac_len validates if a given skb will fit a wanted
-+ * length once split, including L2, L3 and L4 headers and the payload.
-+ */
-+bool skb_gso_validate_mac_len(const struct sk_buff *skb, unsigned int len)
-+{
-+	return skb_gso_size_check(skb, skb_gso_mac_seglen(skb), len);
-+}
-+EXPORT_SYMBOL_GPL(skb_gso_validate_mac_len);
-+
- static struct sk_buff *skb_reorder_vlan_header(struct sk_buff *skb)
- {
- 	int mac_len;
-diff --git a/net/sched/sch_tbf.c b/net/sched/sch_tbf.c
-index b36ecb58aa6e..107cc76b6e24 100644
---- a/net/sched/sch_tbf.c
-+++ b/net/sched/sch_tbf.c
-@@ -142,16 +142,6 @@ static u64 psched_ns_t2l(const struct psched_ratecfg *r,
- 	return len;
- }
- 
--/*
-- * Return length of individual segments of a gso packet,
-- * including all headers (MAC, IP, TCP/UDP)
-- */
--static unsigned int skb_gso_mac_seglen(const struct sk_buff *skb)
--{
--	unsigned int hdr_len = skb_transport_header(skb) - skb_mac_header(skb);
--	return hdr_len + skb_gso_transport_seglen(skb);
--}
--
- /* GSO packet is too big, segment it so that tbf can transmit
-  * each segment in time
-  */
+ 	tc_write(DPIPXLFMT, VS_POL_ACTIVE_LOW | HS_POL_ACTIVE_LOW |
+ 		 DE_POL_ACTIVE_HIGH | SUB_CFG_TYPE_CONFIG1 | DPI_BPP_RGB888);
 -- 
 2.19.1
 
