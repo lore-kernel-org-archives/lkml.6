@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A01C5C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:05:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F04DDC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:05:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71C8A204FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:05:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B65BC2190C
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:05:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498727;
-	bh=xvEabbRGBqNlLB407qoypuYo/LqRuUblc6/8FtX6UT8=;
+	s=default; t=1550498731;
+	bh=/EGLtWXX8qQ5x3PDE3JkF0S2vtxL6TvE20FUSdxe/ng=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ITppe2lB1z1wkRiwkWH/VslNDXNU491wUe4CFSjc8Hgsn46UmjrpEbMiNcLgigJec
-	 +XJl+Wt/VzIZuJ3WyyQvOXg2t3h5lQg7Li+ZX++NdzUxF+B+UiKfSRVWQ7xs0wx4d2
-	 qS6UoIshudyxcUrWRKOfAHAUjxVUbrAXrrZnlqpY=
+	b=W2+mai9zmGIXLp355ZgyAIJrvIGvQme2lULqnyzcrDjJ6lEj5GkWLK78FhsPogcFB
+	 C74CE9tIy8ZYhxdqewmcSiJcj32sd7QRYmRSQBpMbERO9M8CfLj0sLxcOZT3Q58GBm
+	 DXBEx4nQG4S8CmHHWgKSM0GuBz2d6rpmDU87QvD8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389655AbfBROFZ (ORCPT
+        id S2390163AbfBROFa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:05:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48166 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:05:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390137AbfBROFV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:05:21 -0500
+        id S2389643AbfBROFZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:05:25 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D37FB204FD;
-        Mon, 18 Feb 2019 14:05:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 534E1204FD;
+        Mon, 18 Feb 2019 14:05:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498721;
-        bh=xvEabbRGBqNlLB407qoypuYo/LqRuUblc6/8FtX6UT8=;
+        s=default; t=1550498724;
+        bh=/EGLtWXX8qQ5x3PDE3JkF0S2vtxL6TvE20FUSdxe/ng=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l5UOe0Uem2sR4VA+tT0/TYpQBCKgvAGBkR1jTR9ftnkLEnGii41zOkpEMwlkyVdar
-         vp7YdDKvUXmUdZY2z7ZRLxC7u7i/N/dxurxJdybXMQodVNsleWGnlIfWCXYNTPz2jt
-         gNgAHfWUEsToaIDR72tCDat8q5uqs76sRKZCV6aw=
+        b=tJia0uvyCCKaG6Ou9TtPGGuC2b5GPf0a2dzGziqHmeZZVoO6eZPNA85U8KxPnYLyE
+         zNNwPuJQsvmKmR4qK0lu4lHDF/lhr+jGcBZe9x99n6mv2KG+tWnJR9L9iv1NGYvfcO
+         Xh53hJnDE9J+hxHamLIbBjS/Z6xguW8M1elZ1ftA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH 4.4 074/143] test_hexdump: use memcpy instead of strncpy
-Date:   Mon, 18 Feb 2019 14:43:22 +0100
-Message-Id: <20190218133531.797224373@linuxfoundation.org>
+        stable@vger.kernel.org, Guoqing Jiang <gqjiang@suse.com>,
+        Ying Xue <ying.xue@windriver.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 075/143] tipc: use destination length for copy string
+Date:   Mon, 18 Feb 2019 14:43:23 +0100
+Message-Id: <20190218133531.831329997@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -66,38 +66,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Linus Torvalds <torvalds@linux-foundation.org>
+From: Guoqing Jiang <gqjiang@suse.com>
 
-commit b1286ed7158e9b62787508066283ab0b8850b518 upstream.
+commit 29e270fc32192e7729057963ae7120663856c93e upstream.
 
-New versions of gcc reasonably warn about the odd pattern of
+Got below warning with gcc 8.2 compiler.
 
-	strncpy(p, q, strlen(q));
+net/tipc/topsrv.c: In function ‘tipc_topsrv_start’:
+net/tipc/topsrv.c:660:2: warning: ‘strncpy’ specified bound depends on the length of the source argument [-Wstringop-overflow=]
+  strncpy(srv->name, name, strlen(name) + 1);
+  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+net/tipc/topsrv.c:660:27: note: length computed here
+  strncpy(srv->name, name, strlen(name) + 1);
+                           ^~~~~~~~~~~~
+So change it to correct length and use strscpy.
 
-which really doesn't make sense: the strncpy() ends up being just a slow
-and odd way to write memcpy() in this case.
-
-Apparently there was a patch for this floating around earlier, but it
-got lost.
-
-Acked-again-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Guoqing Jiang <gqjiang@suse.com>
+Acked-by: Ying Xue <ying.xue@windriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- lib/test-hexdump.c |    2 +-
+ net/tipc/subscr.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/lib/test-hexdump.c
-+++ b/lib/test-hexdump.c
-@@ -81,7 +81,7 @@ static void __init test_hexdump(size_t l
- 		const char *q = *result++;
- 		size_t amount = strlen(q);
+--- a/net/tipc/subscr.c
++++ b/net/tipc/subscr.c
+@@ -337,7 +337,7 @@ int tipc_topsrv_start(struct net *net)
+ 	topsrv->tipc_conn_new		= tipc_subscrb_connect_cb;
+ 	topsrv->tipc_conn_shutdown	= tipc_subscrb_shutdown_cb;
  
--		strncpy(p, q, amount);
-+		memcpy(p, q, amount);
- 		p += amount + 1;
- 	}
- 	if (i)
+-	strncpy(topsrv->name, name, strlen(name) + 1);
++	strscpy(topsrv->name, name, sizeof(topsrv->name));
+ 	tn->topsrv = topsrv;
+ 	atomic_set(&tn->subscription_count, 0);
+ 
 
 
