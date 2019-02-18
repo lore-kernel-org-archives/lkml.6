@@ -2,142 +2,108 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE74C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 22:05:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93685C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 22:07:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3F8A21479
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 22:05:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AF6321479
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 22:07:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d75Mlvqb"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oCyOYBPN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731419AbfBRWE7 (ORCPT
+        id S1731447AbfBRWHd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 17:04:59 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44850 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729530AbfBRWE7 (ORCPT
+        Mon, 18 Feb 2019 17:07:33 -0500
+Received: from mail-yb1-f202.google.com ([209.85.219.202]:38648 "EHLO
+        mail-yb1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729530AbfBRWHd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 17:04:59 -0500
-Received: by mail-qt1-f194.google.com with SMTP id n32so20905549qte.11;
-        Mon, 18 Feb 2019 14:04:58 -0800 (PST)
+        Mon, 18 Feb 2019 17:07:33 -0500
+Received: by mail-yb1-f202.google.com with SMTP id 69so9620236ybf.5
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 14:07:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UJEIjvFn5lDWyFGKQ6nt9TMgckGmOcCuBM72TI/2smU=;
-        b=d75MlvqbxFQqce46nPdMbicc+JCmML4ejDSpaQ2ahLgc12VraUb4wVPwzyd7wUYXTv
-         yfis+GaGOHF/1Vw+is5EzYiRLMBO/eH0wMTZ5XHyrkgbqXw901a9NCPlgZv4fa5UrtiK
-         0Tg0SQ3y1z4o5l3re/2cu68hMJjjgk7vGBwoZW2TJDGRJ0R8lANedHQ/PcD53lDtqKgP
-         gbdqmW2sizt3JCjdNLm+2z3qqnZ24g7PhU/qnItzMXCOZzkg2JY/PWEA4QLEnX+e3vyi
-         RBqs6M5yMaLg3kt/gLRdb20iN6RwRd96nhB8mGYnBt3L2MreIeuR0LYIzZAdfPL6oXu1
-         V4QQ==
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=uyrjSL12XYcAJ7X16b+lcNVmEe0yoTnAu2FCRMKgvOY=;
+        b=oCyOYBPNAQ/y50GYzlEq92tvgttp46mIb6X4hWkZMRrJZwfa9+aaPhVtjBGZ+UshAn
+         uOaKOGEb86VZIO9eoqnHmN5GdRMnW9PVP8iV7dfjlQSoHs0JUZ6xE7v0+CEACcrQ1/AK
+         2DkarS3nkjX9/yi/64oguVlPgL6uKvAQ/24J8HjHYP9HIXBSPuMB82e1+GMofkVt/YUJ
+         crkhTWRC4QleyW2Pl3EkJdKSwkqdkmDeurAnYfSPsbLa1Pa386/QY9aZGuS8QGeIy1Ax
+         TdE/sIkRZof3PHqDKwCN4znVVW9IVB+EOtuI1RSI2hL9fOmFSuKKEkDKwOHsJhGy8xxy
+         z9vA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UJEIjvFn5lDWyFGKQ6nt9TMgckGmOcCuBM72TI/2smU=;
-        b=CkJ/je2St/xGp/dUNIaUJlRFEAfyezEqxJaZnJ1ND/SmwdZPWynXo/zyCmbjiGegO5
-         VWxdfF8kyew/N6b9JLAS2MlFurS7PVUviFP2YPos4HuhE8s6AxNKfAAxINBROC96NSYL
-         bg8u9uV96zRaHltbqFp11Le30Osa+8it1E/5O9vavatBs0fVbnDYksE4BNbAjvFTngOZ
-         JFsEF+j5IrdO7lUmQmDIi7Kzp/ZrPIGZc1koDcfqEMPHfv94VRn3HOLLISPK+g7UD58F
-         50Q45Cs4AEZGF2xpl7JeMnbH/KMVY3i7yyav8qb/snVcyQLxjTCvayKjfruFhdTjhTpX
-         AAlA==
-X-Gm-Message-State: AHQUAubjQ2gxjVryrbDMESVW52x4rY+BPV0P98TIkuJzE2+hu9JCbPYd
-        +0Tlxo3H2sQiHwuT3qwZoCXV1XA6zNxfYNUBDbk=
-X-Google-Smtp-Source: AHgI3IayEKqP5K/9ta9zQQ8xRffxLB9j+zI0CAuiSixorC6YG4GFoRQVMKpWCGKl5j9r6SK2Zl6rz6NIyfwUBuUzrow=
-X-Received: by 2002:a0c:963d:: with SMTP id 58mr19213670qvx.25.1550527497638;
- Mon, 18 Feb 2019 14:04:57 -0800 (PST)
-MIME-Version: 1.0
-References: <20181221011752.25627-1-sre@kernel.org> <20181221011752.25627-3-sre@kernel.org>
-In-Reply-To: <20181221011752.25627-3-sre@kernel.org>
-From:   Enric Balletbo Serra <eballetbo@gmail.com>
-Date:   Mon, 18 Feb 2019 23:04:46 +0100
-Message-ID: <CAFqH_50kd4TRg6FTNZ-hZAPN14X8t++zY7mobTmPDfre8x59JQ@mail.gmail.com>
-Subject: Re: [PATCH 02/14] ARM: dts: IGEP: Add WiLink UART node
-To:     Sebastian Reichel <sre@kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pavel Machek <pavel@ucw.cz>, linux-bluetooth@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=uyrjSL12XYcAJ7X16b+lcNVmEe0yoTnAu2FCRMKgvOY=;
+        b=BPykV32U+/h2iyfhuUMuk+yk3FVKjIYezI5lCXYjQUgdObxiVd8ZGJNaMLgIB1oEDT
+         ibNDOio/Ufd2IGoFSqAEvArdo9/npJ23RuNKGGyVu85L7xV+aRned4mnqy+hYbnA56lT
+         pWHp3bkbjiLowHy0CG2td3ZRHXwJKhEbRl4g8Fu/eZJQCt2p02i9c4QefqAiSK/M53td
+         pezpsoZhzy6xfPCHsHVrfBKog8eg8TkoeJ1or1gqEv4Y5q1Z8rBdtF/OsRgZ7Y3Eahmt
+         akFOlZMvoIpvzRdApg13hprnBDF9uNh4cHhU/nZyN8HFgqZs1fulQCsTzXS9RnopP189
+         c0Qw==
+X-Gm-Message-State: AHQUAuY1vqPMkh9RtrFq4ZqChiRT4o13CkjZVJamg+0t8Knt6jzlsvun
+        ORVZK2YRSk778fqofxf0cXIs6AXY9g==
+X-Google-Smtp-Source: AHgI3IYISTPyZVE1YaUvvnYT8JzsNYCnJX6rE3bGDjoc6CyIj2tRodjW+zM3fbrbZHHPgl9MyIBGmHI9Iw==
+X-Received: by 2002:a81:6c48:: with SMTP id h69mr3505905ywc.17.1550527652619;
+ Mon, 18 Feb 2019 14:07:32 -0800 (PST)
+Date:   Mon, 18 Feb 2019 23:07:23 +0100
+Message-Id: <20190218220723.176737-1-jannh@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.21.0.rc0.258.g878e2cd30e-goog
+Subject: [PATCH] perf/core: use strndup_user() instead of buggy open-coded version
+From:   Jann Horn <jannh@google.com>
+To:     Ingo Molnar <mingo@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>, jannh@google.com
+Cc:     linux-kernel@vger.kernel.org, Song Liu <songliubraving@fb.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sebastian,
+The first version of this method was missing the check for
+`ret == PATH_MAX`; then such a check was added, but it didn't call kfree()
+on error, so there was still a small memory leak in the error case.
+Fix it by using strndup_user() instead of open-coding it.
 
-Sorry to take so long to reply
+Fixes: 0eadcc7a7bc0 ("perf/core: Fix perf_uprobe_init()")
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+compile-tested only
 
-Missatge de Sebastian Reichel <sre@kernel.org> del dia dv., 21 de des.
-2018 a les 9:05:
->
-> From: Sebastian Reichel <sebastian.reichel@collabora.com>
->
-> Add a node for the UART part of WiLink chip.
->
-> Cc: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> ---
-> This is compile tested only!
-> ---
->  arch/arm/boot/dts/omap3-igep0020-rev-f.dts | 8 ++++++++
->  arch/arm/boot/dts/omap3-igep0030-rev-g.dts | 8 ++++++++
->  2 files changed, 16 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/omap3-igep0020-rev-f.dts b/arch/arm/boot/dts/omap3-igep0020-rev-f.dts
-> index 285681d7af49..8bb4298ca05e 100644
-> --- a/arch/arm/boot/dts/omap3-igep0020-rev-f.dts
-> +++ b/arch/arm/boot/dts/omap3-igep0020-rev-f.dts
-> @@ -52,3 +52,11 @@
->                 interrupts = <17 IRQ_TYPE_EDGE_RISING>; /* gpio 177 */
->         };
->  };
-> +
-> +&uart2 {
-> +       bluetooth {
-> +               compatible = "ti,wl1835-st";
+ kernel/trace/trace_event_perf.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
-That should be "ti,wl1831-st"
+diff --git a/kernel/trace/trace_event_perf.c b/kernel/trace/trace_event_perf.c
+index 76217bbef815..c744b02081c3 100644
+--- a/kernel/trace/trace_event_perf.c
++++ b/kernel/trace/trace_event_perf.c
+@@ -299,15 +299,11 @@ int perf_uprobe_init(struct perf_event *p_event,
+ 
+ 	if (!p_event->attr.uprobe_path)
+ 		return -EINVAL;
+-	path = kzalloc(PATH_MAX, GFP_KERNEL);
+-	if (!path)
+-		return -ENOMEM;
+-	ret = strncpy_from_user(
+-		path, u64_to_user_ptr(p_event->attr.uprobe_path), PATH_MAX);
+-	if (ret == PATH_MAX)
+-		return -E2BIG;
+-	if (ret < 0)
+-		goto out;
++
++	path = strndup_user(u64_to_user_ptr(p_event->attr.uprobe_path),
++			    PATH_MAX);
++	if (IS_ERR(path))
++		return PTR_ERR(path);
+ 	if (path[0] == '\0') {
+ 		ret = -EINVAL;
+ 		goto out;
+-- 
+2.21.0.rc0.258.g878e2cd30e-goog
 
-> +               enable-gpios = <&gpio5 9 GPIO_ACTIVE_HIGH>; /* gpio 137 */
-> +               max-speed = <300000>;
-> +       };
-> +};
-> diff --git a/arch/arm/boot/dts/omap3-igep0030-rev-g.dts b/arch/arm/boot/dts/omap3-igep0030-rev-g.dts
-> index 1adc73bd2ca0..03be171e9de7 100644
-> --- a/arch/arm/boot/dts/omap3-igep0030-rev-g.dts
-> +++ b/arch/arm/boot/dts/omap3-igep0030-rev-g.dts
-> @@ -74,3 +74,11 @@
->                 interrupts = <8 IRQ_TYPE_EDGE_RISING>; /* gpio 136 */
->         };
->  };
-> +
-> +&uart2 {
-> +       bluetooth {
-> +               compatible = "ti,wl1835-st";
-
-That should be "ti,wl1831-st"
-
-> +               enable-gpios = <&gpio5 9 GPIO_ACTIVE_HIGH>; /* gpio 137 */
-> +               max-speed = <300000>;
-> +       };
-> +};
-> --
-> 2.19.2
->
-
-Apart from that,
-
-Acked-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
