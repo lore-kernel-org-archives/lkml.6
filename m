@@ -2,100 +2,100 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC25C4360F
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 01:36:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54DD4C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 01:37:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F5582184E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 01:36:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550453796;
-	bh=0GxfKPj4pEmfC3cXYWHjeK7KcnZGhnQZKBn15z/Rj58=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=aS5eg+oKbwZ3qywzG7s5yQcHe9d5jR0Twadyxd1ckFHV0Wkvq+ikEISIhIJ4p6zNp
-	 OREfk9P52WJcZnH3RJ8jzJcAnr01QAHjQf8y2pcQGNSCxsDP//v0PhBJtHFpHU76ZB
-	 aD4EKTeoMCVaW1ZLaEf3cxlhDJWnBlcT4YHSeQ4I=
+	by mail.kernel.org (Postfix) with ESMTP id 2D0362184E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 01:37:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728109AbfBRBgf (ORCPT
+        id S1728135AbfBRBhj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 20:36:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49560 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726281AbfBRBge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 20:36:34 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A35472184E;
-        Mon, 18 Feb 2019 01:36:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550453793;
-        bh=0GxfKPj4pEmfC3cXYWHjeK7KcnZGhnQZKBn15z/Rj58=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1gltCXkcyaUmfoJBO5YT2N2/7/GWd1EhzJG03FpsXY7eM4iwuWkDxqQLxl57HZ10X
-         yRNy2lTrqKQ4WJLtZbcUGfYqfTz/ihKzyp18El/b9eoT3MOhzgqK3gPoijHSY9hbNG
-         DzJLwdHIGaesKuPn/Pm/zpX4oEc3zpN9E5xdnm38=
-Date:   Sun, 17 Feb 2019 20:36:32 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Mark Rustad <mrustad@gmail.com>
-Cc:     gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [RFC PATCH 4.4] Documentation/network: reword kernel version
- reference
-Message-ID: <20190218013632.GQ10616@sasha-vm>
-References: <20190215161955.12119.77812.stgit@mdr-mbp.hsd1.ca.comcast.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190215161955.12119.77812.stgit@mdr-mbp.hsd1.ca.comcast.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Sun, 17 Feb 2019 20:37:39 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:6442 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726281AbfBRBhj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 20:37:39 -0500
+Date:   18 Feb 2019 10:37:36 +0900
+X-IronPort-AV: E=Sophos;i="5.58,382,1544454000"; 
+   d="scan'208";a="7900423"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 18 Feb 2019 10:37:36 +0900
+Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id DA54241BDD93;
+        Mon, 18 Feb 2019 10:37:36 +0900 (JST)
+Message-ID: <87lg2d51lv.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     Daniel Baluta <daniel.baluta@nxp.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "vicencb@gmail.com" <vicencb@gmail.com>,
+        "alsa-devel@alsa-project.org" <alsa-devel@alsa-project.org>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "S.j. Wang" <shengjiu.wang@nxp.com>
+Subject: Re: [PATCH] ASoC: simple-card: Fix refcount underflow
+In-Reply-To: <87pnrp52jl.wl-kuninori.morimoto.gx@renesas.com>
+References: <20190216100927.10017-1-daniel.baluta@nxp.com>
+        <87pnrp52jl.wl-kuninori.morimoto.gx@renesas.com>
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 08:19:55AM -0800, Mark Rustad wrote:
->It seemed odd to say "since 4.17" in a 4.4 kernel. Consider
->rewording the reference to indicate where in the stable series
->it was introduced as well as where it originated.
->
->Signed-off-by: Mark Rustad <mrustad@gmail.com>
->
->---
->
->Does this brief elaboration add useful information? It seems to
->me that someone using a particular series of stable kernels would
->find this information to be helpful or at least potentially less
->confusing to a non-developer.
->---
-> Documentation/networking/ip-sysctl.txt |    2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
->
->diff --git a/Documentation/networking/ip-sysctl.txt b/Documentation/networking/ip-sysctl.txt
->index 7c229f59016f..2fb35658d151 100644
->--- a/Documentation/networking/ip-sysctl.txt
->+++ b/Documentation/networking/ip-sysctl.txt
->@@ -116,7 +116,7 @@ ipfrag_high_thresh - LONG INTEGER
-> 	Maximum memory used to reassemble IP fragments.
->
-> ipfrag_low_thresh - LONG INTEGER
->-	(Obsolete since linux-4.17)
->+	(Obsolete since linux-4.4.174, backported from linux-4.17)
-> 	Maximum memory used to reassemble IP fragments before the kernel
-> 	begins to remove incomplete fragment queues to free up resources.
-> 	The kernel still accepts new fragments for defragmentation.
 
-Admittingly the stabke kernel rules do not allow documentation fixes,
-but I can see how this can be confusing, and the fact that someone
-actually hit it, wrote a patch and submitted it makes me want to ignore
-that rule.
+Hi Daniel, Mark, again
 
-Queued, thank you!
+> > of_get_child_by_name() takes a reference we'll need to drop
+> > later so when we substitute in top we need to take a reference
+> > as well as just assigning.
+> > 
+> > Without this patch we hit the following error:
+> > 
+> > [    1.246852] OF: ERROR: Bad of_node_put() on /sound-wm8524
+> > [    1.262261] Hardware name: NXP i.MX8MQ EVK (DT)
+> > [    1.266807] Workqueue: events deferred_probe_work_func
+> > [    1.271950] Call trace:
+> > [    1.274406]  dump_backtrace+0x0/0x158
+> > [    1.278074]  show_stack+0x14/0x20
+> > [    1.281396]  dump_stack+0xa8/0xcc
+> > [    1.284717]  of_node_release+0xb0/0xc8
+> > [    1.288474]  kobject_put+0x74/0xf0
+> > [    1.291879]  of_node_put+0x14/0x28
+> > [    1.295286]  __of_get_next_child+0x44/0x70
+> > [    1.299387]  of_get_next_child+0x3c/0x60
+> > [    1.303315]  simple_for_each_link+0x1dc/0x230
+> > [    1.307676]  simple_probe+0x80/0x540
+> > [    1.311256]  platform_drv_probe+0x50/0xa0
+> > 
+> > This patch is based on an earlier version posted by Kuninori Morimoto
+> > and commit message includes explanations from Mark Brown.
+> > 
+> > https://patchwork.kernel.org/patch/10814255/
+> > 
+> > Reported-by: Vicente Bergas <vicencb@gmail.com>
+> > Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> > ---
+> 
+> I'm not sure which one is correct in this case
+> 
+> Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> 
+> or
+> 
+> Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
---
-Thanks,
-Sasha
+And we want to add
+
+Fixes: commit da215354eb55c ("ASoC: simple-card: merge simple-scu-card")
+
