@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE1B7C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06564C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEFC320449
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9E1F21904
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:51:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497875;
-	bh=5+Tg6BXsZkSFr7eUcHOT6+9KfBiybyIGZaVL0m7nr2U=;
+	s=default; t=1550497880;
+	bh=QMi2YnG8q/mNDCozqJ8m8+IhtQq4RNtzaH7NT6HaXBs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FDEDycPPisEu6bG5C41ZN6Cs623pCLlUTd4W8zWJOifLTosq4cXMgJmy8W3b53GxQ
-	 8UBjgiy/AF9IYghaXpyXYlm3RtUzzL0FKAc6bc4wdehwH+TFoBXVn/AdRNVoLs0NRV
-	 BQLHmhqnIqPJ8hldE+1fxrmTb/JgqoJNhYDloufA=
+	b=hpuANTnU0CXDxNHKytG2H/C4l4cuZGvi+eAY2tvXdPH6rOv3hk9JGiPMVozROeNvL
+	 tao2qtXJWCyuahA4LMvLSWOlYRHYjRMehSwyBd6siyDza8qpbOhagvh1l1vOoS6W5a
+	 EgtMPwAyaVeBHP13qrqMAuPfZi18cYiMQlv4LXXc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731347AbfBRNvO (ORCPT
+        id S1732388AbfBRNvT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:51:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59026 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:51:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732124AbfBRNvK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:51:10 -0500
+        id S1731866AbfBRNvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:51:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EB5B21901;
-        Mon, 18 Feb 2019 13:51:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C585D21905;
+        Mon, 18 Feb 2019 13:51:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497869;
-        bh=5+Tg6BXsZkSFr7eUcHOT6+9KfBiybyIGZaVL0m7nr2U=;
+        s=default; t=1550497876;
+        bh=QMi2YnG8q/mNDCozqJ8m8+IhtQq4RNtzaH7NT6HaXBs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZzaoHkGor9kjpA5j1/+AKN+Ui35Dq0m0q7pkPajcT6t5FnfrOjygmfXtFiQSWQMC/
-         l50KxhH0FS6A7uvNoNrqAeupY0ii8CZiK0i1E6PlEbZRzDdlbrQ2F8rLj5tUsNkcCt
-         907KZ5Z5bhaEFXi8H3uBh5NgKiQN47BGJ/ELtqBI=
+        b=iRMFdrtsbmqtKBTLC7Um5fiW83LV9b6UD+0WAaupWc68q25UdHay3f/7MH5vEdOP6
+         Is2AXswSIs66bj5uiZ7Fg7USlU3qpyKB+xkS8UijXFqJR/iee4S42Wbmwh7CZ51Zi0
+         E7RrTqpGFmu1fXg3BOF2e6HjqgO8U6DqFuo/2hxw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
-        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 36/85] nvme-multipath: zero out ANA log buffer
-Date:   Mon, 18 Feb 2019 14:43:02 +0100
-Message-Id: <20190218133503.756303601@linuxfoundation.org>
+        stable@vger.kernel.org, Emily Deng <Emily.Deng@amd.com>,
+        Xiangliang Yu <Xiangliang.Yu@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 21/85] drm/amdgpu/sriov:Correct pfvf exchange logic
+Date:   Mon, 18 Feb 2019 14:42:47 +0100
+Message-Id: <20190218133501.920603023@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -65,38 +67,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c7055fd15ff46d92eb0dd1c16a4fe010d58224c8 ]
+[ Upstream commit b8cf66182eddb22e9c7539821ed6eecdb4f86d1a ]
 
-When nvme_init_identify() fails the ANA log buffer is deallocated
-but _not_ set to NULL. This can cause double free oops when this
-controller is deleted without ever being reconnected.
+The pfvf exchange need be in exclusive mode. And add pfvf exchange in gpu
+reset.
 
-Signed-off-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Emily Deng <Emily.Deng@amd.com>
+Reviewed-By: Xiangliang Yu <Xiangliang.Yu@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/multipath.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/gpu/drm/amd/amdgpu/amdgpu_device.c | 8 ++++----
+ drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c      | 2 +-
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index c27af277e14e..815509dbed84 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -556,6 +556,7 @@ int nvme_mpath_init(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
- 	return 0;
- out_free_ana_log_buf:
- 	kfree(ctrl->ana_log_buf);
-+	ctrl->ana_log_buf = NULL;
- out:
- 	return error;
- }
-@@ -563,5 +564,6 @@ int nvme_mpath_init(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
- void nvme_mpath_uninit(struct nvme_ctrl *ctrl)
- {
- 	kfree(ctrl->ana_log_buf);
-+	ctrl->ana_log_buf = NULL;
- }
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+index 39bf2ce548c6..7f6af421d3e9 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_device.c
+@@ -1653,8 +1653,10 @@ static int amdgpu_device_ip_init(struct amdgpu_device *adev)
  
+ 	amdgpu_amdkfd_device_init(adev);
+ 
+-	if (amdgpu_sriov_vf(adev))
++	if (amdgpu_sriov_vf(adev)) {
++		amdgpu_virt_init_data_exchange(adev);
+ 		amdgpu_virt_release_full_gpu(adev, true);
++	}
+ 
+ 	return 0;
+ }
+@@ -2555,9 +2557,6 @@ int amdgpu_device_init(struct amdgpu_device *adev,
+ 		goto failed;
+ 	}
+ 
+-	if (amdgpu_sriov_vf(adev))
+-		amdgpu_virt_init_data_exchange(adev);
+-
+ 	amdgpu_fbdev_init(adev);
+ 
+ 	r = amdgpu_pm_sysfs_init(adev);
+@@ -3269,6 +3268,7 @@ static int amdgpu_device_reset_sriov(struct amdgpu_device *adev,
+ 	r = amdgpu_ib_ring_tests(adev);
+ 
+ error:
++	amdgpu_virt_init_data_exchange(adev);
+ 	amdgpu_virt_release_full_gpu(adev, true);
+ 	if (!r && adev->virt.gim_feature & AMDGIM_FEATURE_GIM_FLR_VRAMLOST) {
+ 		atomic_inc(&adev->vram_lost_counter);
+diff --git a/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c b/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c
+index 078f70faedcb..d06332be59d3 100644
+--- a/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c
++++ b/drivers/gpu/drm/amd/amdgpu/mxgpu_ai.c
+@@ -174,7 +174,7 @@ static int xgpu_ai_send_access_requests(struct amdgpu_device *adev,
+ 			return r;
+ 		}
+ 		/* Retrieve checksum from mailbox2 */
+-		if (req == IDH_REQ_GPU_INIT_ACCESS) {
++		if (req == IDH_REQ_GPU_INIT_ACCESS || req == IDH_REQ_GPU_RESET_ACCESS) {
+ 			adev->virt.fw_reserve.checksum_key =
+ 				RREG32_NO_KIQ(SOC15_REG_OFFSET(NBIO, 0,
+ 					mmBIF_BX_PF0_MAILBOX_MSGBUF_RCV_DW2));
 -- 
 2.19.1
 
