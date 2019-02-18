@@ -2,140 +2,88 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3802DC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4AE5C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:06:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E85320645
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:05:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B342A20645
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:06:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730804AbfBRNFN convert rfc822-to-8bit (ORCPT
+        id S1730358AbfBRNF7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:05:13 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:33617 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728900AbfBRNFN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:05:13 -0500
-Received: from marcel-macpro.fritz.box (p4FF9F361.dip0.t-ipconnect.de [79.249.243.97])
-        by mail.holtmann.org (Postfix) with ESMTPSA id F4131CF2C7;
-        Mon, 18 Feb 2019 14:13:04 +0100 (CET)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH 1/6] dt-bindings: net: bluetooth: add support for MediaTek
- MT7663U and MT7668U UART devices
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <c31b9ed0f2c711f53ad88c96f2d0a1bd22d9de58.1550184473.git.sean.wang@mediatek.com>
-Date:   Mon, 18 Feb 2019 14:05:11 +0100
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-mediatek@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <0EF74A38-3D1F-4BD1-9B72-78E8720C125D@holtmann.org>
-References: <cover.1550184473.git.sean.wang@mediatek.com>
- <c31b9ed0f2c711f53ad88c96f2d0a1bd22d9de58.1550184473.git.sean.wang@mediatek.com>
-To:     Sean Wang <sean.wang@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Mon, 18 Feb 2019 08:05:59 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:3665 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728833AbfBRNF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:05:59 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 19A6297C14510CBF73B7;
+        Mon, 18 Feb 2019 21:05:54 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.132) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.408.0; Mon, 18 Feb 2019 21:05:48 +0800
+From:   Shaokun Zhang <zhangshaokun@hisilicon.com>
+To:     <x86@kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     Shaokun Zhang <zhangshaokun@hisilicon.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Igor Mammedov <imammedo@redhat.com>
+Subject: [PATCH] x86/smpboot: Remove unused phys_id variable
+Date:   Mon, 18 Feb 2019 21:05:01 +0800
+Message-ID: <1550495101-41755-1-git-send-email-zhangshaokun@hisilicon.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.132]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+The 'phys_id' local variable became unused after commit ce4b1b16502b
+("x86/smpboot: Initialize secondary CPU only if master CPU will wait for it").
+Remove it.
 
-> Update binding document with adding support of MT7663U and MT7668U UART
-> devices to mediatek-bluetooth.
-> 
-> Signed-off-by: Sean Wang <sean.wang@mediatek.com>
-> ---
-> .../bindings/net/mediatek-bluetooth.txt       | 64 +++++++++++++++++++
-> 1 file changed, 64 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt b/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
-> index 14ceb2a5b4e8..41a7dcc80f5b 100644
-> --- a/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
-> +++ b/Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
-> @@ -33,3 +33,67 @@ Example:
-> 			clock-names = "ref";
-> 		};
-> 	};
-> +
-> +MediaTek UART based Bluetooth Devices
-> +==================================
-> +
-> +This device is a serial attached device to UART device and thus it must be a
-> +child node of the serial node with UART.
-> +
-> +Please refer to the following documents for generic properties:
-> +
-> +	Documentation/devicetree/bindings/serial/slave-device.txt
-> +
-> +Required properties:
-> +
-> +- compatible:	Must be
-> +		  "mediatek,mt7663u-bluetooth": for MT7663U device
-> +		  "mediatek,mt7668u-bluetooth": for MT7668U device
-> +- vcc-supply:	Main voltage regulator
-> +- pinctrl-names: Should be "default", "runtime"
-> +- pinctrl-0: Should contain UART RXD low when the device is powered up to
-> +	     enter proper bootstrap mode.
-> +- pinctrl-1: Should contain UART mode pin ctrl
-> +
-> +Optional properties:
-> +
-> +- reset-gpios:	GPIO used to reset the device whose initial state keeps low,
-> +		if the GPIO is missing, then board-level design should be
-> +		guaranteed.
-> +- current-speed:  Current baud rate of the device whose defaults to 921600
-> +
-> +Example:
-> +
-> +	uart1_pins_boot: uart1-default {
-> +		pins-dat {
-> +			pinmux = <MT7623_PIN_81_URXD1_FUNC_GPIO81>;
-> +			output-low;
-> +		};
-> +	};
-> +
-> +	uart1_pins_runtime: uart1-runtime {
-> +		pins-dat {
-> +			pinmux = <MT7623_PIN_81_URXD1_FUNC_URXD1>,
-> +				 <MT7623_PIN_82_UTXD1_FUNC_UTXD1>;
-> +		};
-> +	};
-> +
-> +	uart1: serial@11003000 {
-> +		compatible = "mediatek,mt7623-uart",
-> +			     "mediatek,mt6577-uart";
-> +		reg = <0 0x11003000 0 0x400>;
-> +		interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_LOW>;
-> +		clocks = <&pericfg CLK_PERI_UART1_SEL>,
-> +			 <&pericfg CLK_PERI_UART1>;
-> +		clock-names = "baud", "bus";
-> +
-> +		bluetooth {
-> +			compatible = "mediatek,mt7663u-bluetooth";
-> +			vcc-supply = <&reg_5v>;
-> +			reset-gpios = <&pio 24 GPIO_ACTIVE_LOW>;
-> +			pinctrl-names = "default", "runtime";
-> +			pinctrl-0 = <&uart1_pins_boot>;
-> +			pinctrl-1 = <&uart1_pins_runtime>;
-> +			current-speed = <921600>;
-> +		};
-> +	};
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Igor Mammedov <imammedo@redhat.com>
+Signed-off-by: Shaokun Zhang <zhangshaokun@hisilicon.com>
+---
+ arch/x86/kernel/smpboot.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
-can you ACK this please.
-
-Regards
-
-Marcel
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index ccd1f2a8e557..5d5421b48e55 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -149,7 +149,7 @@ static inline void smpboot_restore_warm_reset_vector(void)
+  */
+ static void smp_callin(void)
+ {
+-	int cpuid, phys_id;
++	int cpuid;
+ 
+ 	/*
+ 	 * If waken up by an INIT in an 82489DX configuration
+@@ -160,11 +160,6 @@ static void smp_callin(void)
+ 	cpuid = smp_processor_id();
+ 
+ 	/*
+-	 * (This works even if the APIC is not enabled.)
+-	 */
+-	phys_id = read_apic_id();
+-
+-	/*
+ 	 * the boot CPU has finished the init stage and is spinning
+ 	 * on callin_map until we finish. We are free to set up this
+ 	 * CPU, first the APIC. (this is probably redundant on most
+-- 
+2.7.4
 
