@@ -4,51 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1A66C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:17:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AB70C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:17:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70DAC2177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:17:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 405862177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:17:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499468;
-	bh=P7PjiGXx/IFsvzPnISDCt+LFOBK1rdo+znQSwLVZrbQ=;
+	s=default; t=1550499476;
+	bh=mH2l9aAGj6Ly+flAAVJ26qd6dRAZ8A9DxURwmQYB37A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OLI7CKplYMcD/vYd8KQlREW5FiwN7sWewtAJPwRMxKe1FDwFHLhbxLvXmfqnF1ZMm
-	 jPZ3pfxbVZ5hTJgbQT6S29RrPWR4R15yHXuOipOKybJ9t9SzerZnSDvcTaeGF8xdQV
-	 AmXYjkw1mXylkhkUA5fSA/6Cjx/BByyJrryPMCPk=
+	b=uKb91LGuzJ3AT4/MfuYD8Ghg9QwlTItaADu5ZKi5xvE69wZuGqj8klVzqo7dN3VbF
+	 efWY2nHjJsbS/1UXiTLYunF/oLTMh3Gasksnh3j54uEAPZnr+I7KpsoRjOGI4uBWci
+	 YX7bPA62Rw0m4izAD3XO7sm1ZmrGmOM3agutI/K0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391189AbfBROJX (ORCPT
+        id S2391145AbfBROJP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:09:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52872 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:09:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391159AbfBROJU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:09:20 -0500
+        id S2391108AbfBROJK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:09:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0828921902;
-        Mon, 18 Feb 2019 14:09:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 813E421901;
+        Mon, 18 Feb 2019 14:09:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498959;
-        bh=P7PjiGXx/IFsvzPnISDCt+LFOBK1rdo+znQSwLVZrbQ=;
+        s=default; t=1550498950;
+        bh=mH2l9aAGj6Ly+flAAVJ26qd6dRAZ8A9DxURwmQYB37A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bIRkWKfHI6jOy2uw2cr31cNCJQZ5mCr+dOd/XCwn/5TZA+ltfP9ua8M9lm+F+sVCB
-         2h/ljFFRX3M426cOXapwrJjrSb6s9N0xoIqp/Iq1pxFvY63FVm9BqAxuPyhZ+UPw+J
-         yM6Wnk2JWViCRX4pOkkFoskUUfoARKkANbbWcYek=
+        b=TxKGr7oaW3A4URxUuhn5URSTc+7AkbMuor91JfAqstz1bIsGvADcsATQkHIIqPybf
+         zKoWWSyfzO83ujxe1sz4msQ+icUYoltuYCNY3QjYlIOk+shDPJofh5N82+AmXT5PPG
+         nszyci5hQP8ZBYoMG1yHAFRgJjt6IeTTk44Lu3PU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@163.com>,
-        Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Roland Kammerer <roland.kammerer@linbit.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 032/108] drbd: narrow rcu_read_lock in drbd_sync_handshake
-Date:   Mon, 18 Feb 2019 14:43:28 +0100
-Message-Id: <20190218133521.022897567@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Markos Chandras <markos.chandras@imgtec.com>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Song Liu <songliubraving@fb.com>,
+        Jiong Wang <jiong.wang@netronome.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 021/108] mips: bpf: fix encoding bug for mm_srlv32_op
+Date:   Mon, 18 Feb 2019 14:43:17 +0100
+Message-Id: <20190218133520.493782313@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -67,80 +71,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d29e89e34952a9ad02c77109c71a80043544296e ]
+[ Upstream commit 17f6c83fb5ebf7db4fcc94a5be4c22d5a7bfe428 ]
 
-So far there was the possibility that we called
-genlmsg_new(GFP_NOIO)/mutex_lock() while holding an rcu_read_lock().
+For micro-mips, srlv inside POOL32A encoding space should use 0x50
+sub-opcode, NOT 0x90.
 
-This included cases like:
+Some early version ISA doc describes the encoding as 0x90 for both srlv and
+srav, this looks to me was a typo. I checked Binutils libopcode
+implementation which is using 0x50 for srlv and 0x90 for srav.
 
-drbd_sync_handshake (acquire the RCU lock)
-  drbd_asb_recover_1p
-    drbd_khelper
-      drbd_bcast_event
-        genlmsg_new(GFP_NOIO) --> may sleep
+v1->v2:
+  - Keep mm_srlv32_op sorted by value.
 
-drbd_sync_handshake (acquire the RCU lock)
-  drbd_asb_recover_1p
-    drbd_khelper
-      notify_helper
-        genlmsg_new(GFP_NOIO) --> may sleep
-
-drbd_sync_handshake (acquire the RCU lock)
-  drbd_asb_recover_1p
-    drbd_khelper
-      notify_helper
-        mutex_lock --> may sleep
-
-While using GFP_ATOMIC whould have been possible in the first two cases,
-the real fix is to narrow the rcu_read_lock.
-
-Reported-by: Jia-Ju Bai <baijiaju1990@163.com>
-Reviewed-by: Lars Ellenberg <lars.ellenberg@linbit.com>
-Signed-off-by: Roland Kammerer <roland.kammerer@linbit.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: f31318fdf324 ("MIPS: uasm: Add srlv uasm instruction")
+Cc: Markos Chandras <markos.chandras@imgtec.com>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
+Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Acked-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Jiong Wang <jiong.wang@netronome.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/drbd/drbd_receiver.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ arch/mips/include/uapi/asm/inst.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index 6960fb064731..4f18ec5198fb 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -3125,7 +3125,7 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
- 	enum drbd_conns rv = C_MASK;
- 	enum drbd_disk_state mydisk;
- 	struct net_conf *nc;
--	int hg, rule_nr, rr_conflict, tentative;
-+	int hg, rule_nr, rr_conflict, tentative, always_asbp;
- 
- 	mydisk = device->state.disk;
- 	if (mydisk == D_NEGOTIATING)
-@@ -3167,8 +3167,12 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
- 
- 	rcu_read_lock();
- 	nc = rcu_dereference(peer_device->connection->net_conf);
-+	always_asbp = nc->always_asbp;
-+	rr_conflict = nc->rr_conflict;
-+	tentative = nc->tentative;
-+	rcu_read_unlock();
- 
--	if (hg == 100 || (hg == -100 && nc->always_asbp)) {
-+	if (hg == 100 || (hg == -100 && always_asbp)) {
- 		int pcount = (device->state.role == R_PRIMARY)
- 			   + (peer_role == R_PRIMARY);
- 		int forced = (hg == -100);
-@@ -3207,9 +3211,6 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
- 			     "Sync from %s node\n",
- 			     (hg < 0) ? "peer" : "this");
- 	}
--	rr_conflict = nc->rr_conflict;
--	tentative = nc->tentative;
--	rcu_read_unlock();
- 
- 	if (hg == -100) {
- 		/* FIXME this log message is not correct if we end up here
+diff --git a/arch/mips/include/uapi/asm/inst.h b/arch/mips/include/uapi/asm/inst.h
+index 4bfdb9d4c186..3eb4d6177266 100644
+--- a/arch/mips/include/uapi/asm/inst.h
++++ b/arch/mips/include/uapi/asm/inst.h
+@@ -262,8 +262,8 @@ enum mm_32a_minor_op {
+ 	mm_ext_op = 0x02c,
+ 	mm_pool32axf_op = 0x03c,
+ 	mm_srl32_op = 0x040,
++	mm_srlv32_op = 0x050,
+ 	mm_sra_op = 0x080,
+-	mm_srlv32_op = 0x090,
+ 	mm_rotr_op = 0x0c0,
+ 	mm_lwxs_op = 0x118,
+ 	mm_addu32_op = 0x150,
 -- 
 2.19.1
 
