@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 148A9C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:13:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25EFEC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:13:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8CB421905
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:13:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED22221905
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:13:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499220;
-	bh=YPe4yvoudXS+CHeARtuNVNWXbRSiQfKWLv2cQQBvh5E=;
+	s=default; t=1550499226;
+	bh=ux3LlgsOWX42zrVPz0W+U3QMMEsBW6XW0OpkHNLc51E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=V5wxBa+skgqWEfec/Oe6OHiDnK+tn8UswXaEr0jrHfNIIMcneFVUL/gEHF9Xoh/7W
-	 p4mAwGVE75uvEcWb23+t4YxsvMdXFqUrKD5Gq0SONy6byw/xyIsQLqaaZw8c2nh3yU
-	 EVtiO26Z3ZZxX5uYlbVWDOGI54wp6Fv9fAdVfqkE=
+	b=g1x7C7EuXyfkBR2mTTpnINy+NjJs3IcuuUHuAby1l7thPdLQTvEJykygwC49T6YiV
+	 Nk++IXkuNNRGfsAftekGxYtdsKtN/bZ6XpQ1twz8k7qfVaAsz+omNqw+LLo9X54mXt
+	 WnLN3oKz80VUs3idN2h21eDgDz4EP2lSj0Ww3CnU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392395AbfBRONj (ORCPT
+        id S2392419AbfBRONo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:13:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58236 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:13:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58376 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392351AbfBRONa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:13:30 -0500
+        id S2392379AbfBRONh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:13:37 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D5DC21916;
-        Mon, 18 Feb 2019 14:13:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 110D321905;
+        Mon, 18 Feb 2019 14:13:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550499210;
-        bh=YPe4yvoudXS+CHeARtuNVNWXbRSiQfKWLv2cQQBvh5E=;
+        s=default; t=1550499216;
+        bh=ux3LlgsOWX42zrVPz0W+U3QMMEsBW6XW0OpkHNLc51E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mk5MKm+zWfpnRwDGKuLb/C3mof9FS0SQ1azEFRxu7Fvmtt0Nk3yj/Xb3B5iF3Crp5
-         lhGfjDTtbIcnKdvLYQVLXJUuJaYjiA9QKmJs9DMiAzWmNnuoItoyWKw60ixFTQZrHt
-         cNjC3mv+3wBTxaGf83psIyYdsfX6Y2CEjTUynC1E=
+        b=jZoUYd3DY3+ss/NMyKTzcSrjTlUMFbEzdDVoTOIHcZuMQrrtgMI+wDVRRTLnuakRG
+         NDlGp+Es89B50hh1DSDgjnIWBcwkcfQxu+9kPLG76KivZpY0H5Q9Rlxu0TcTLDnjP2
+         Y7yowF0Wuu5df8jVKB+3E+LMxER5+Xr5yGhFTEKw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        Derek Robson <robsonde@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Matz <matz@suse.de>, x86@kernel.org
-Subject: [PATCH 3.18 104/108] x86/a.out: Clear the dump structure initially
-Date:   Mon, 18 Feb 2019 14:44:40 +0100
-Message-Id: <20190218133524.495775511@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        James Hughes <james.hughes@raspberrypi.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 3.18 106/108] kaweth: use skb_cow_head() to deal with cloned skbs
+Date:   Mon, 18 Feb 2019 14:44:42 +0100
+Message-Id: <20190218133524.581030970@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -67,59 +66,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Borislav Petkov <bp@suse.de>
+From: Eric Dumazet <edumazet@google.com>
 
-commit 10970e1b4be9c74fce8ab6e3c34a7d718f063f2c upstream.
+commit 39fba7835aacda65284a86e611774cbba71dac20 upstream.
 
-dump_thread32() in aout_core_dump() does not clear the user32 structure
-allocated on the stack as the first thing on function entry.
+We can use skb_cow_head() to properly deal with clones,
+especially the ones coming from TCP stack that allow their head being
+modified. This avoids a copy.
 
-As a result, the dump.u_comm, dump.u_ar0 and dump.signal which get
-assigned before the clearing, get overwritten.
-
-Rename that function to fill_dump() to make it clear what it does and
-call it first thing.
-
-This was caught while staring at a patch by Derek Robson
-<robsonde@gmail.com>.
-
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Derek Robson <robsonde@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Matz <matz@suse.de>
-Cc: x86@kernel.org
-Cc: <stable@vger.kernel.org>
-Link: https://lkml.kernel.org/r/20190202005512.3144-1-robsonde@gmail.com
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Cc: James Hughes <james.hughes@raspberrypi.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/ia32/ia32_aout.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/usb/kaweth.c |   18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
---- a/arch/x86/ia32/ia32_aout.c
-+++ b/arch/x86/ia32/ia32_aout.c
-@@ -50,7 +50,7 @@ static unsigned long get_dr(int n)
- /*
-  * fill in the user structure for a core dump..
-  */
--static void dump_thread32(struct pt_regs *regs, struct user32 *dump)
-+static void fill_dump(struct pt_regs *regs, struct user32 *dump)
- {
- 	u32 fs, gs;
- 	memset(dump, 0, sizeof(*dump));
-@@ -156,10 +156,12 @@ static int aout_core_dump(struct coredum
- 	fs = get_fs();
- 	set_fs(KERNEL_DS);
- 	has_dumped = 1;
-+
-+	fill_dump(cprm->regs, &dump);
-+
- 	strncpy(dump.u_comm, current->comm, sizeof(current->comm));
- 	dump.u_ar0 = offsetof(struct user32, regs);
- 	dump.signal = cprm->siginfo->si_signo;
--	dump_thread32(cprm->regs, &dump);
+--- a/drivers/net/usb/kaweth.c
++++ b/drivers/net/usb/kaweth.c
+@@ -812,18 +812,12 @@ static netdev_tx_t kaweth_start_xmit(str
+ 	}
  
- 	/*
- 	 * If the size of the dump file exceeds the rlimit, then see
+ 	/* We now decide whether we can put our special header into the sk_buff */
+-	if (skb_cloned(skb) || skb_headroom(skb) < 2) {
+-		/* no such luck - we make our own */
+-		struct sk_buff *copied_skb;
+-		copied_skb = skb_copy_expand(skb, 2, 0, GFP_ATOMIC);
+-		dev_kfree_skb_irq(skb);
+-		skb = copied_skb;
+-		if (!copied_skb) {
+-			kaweth->stats.tx_errors++;
+-			netif_start_queue(net);
+-			spin_unlock_irq(&kaweth->device_lock);
+-			return NETDEV_TX_OK;
+-		}
++	if (skb_cow_head(skb, 2)) {
++		kaweth->stats.tx_errors++;
++		netif_start_queue(net);
++		spin_unlock_irq(&kaweth->device_lock);
++		dev_kfree_skb_any(skb);
++		return NETDEV_TX_OK;
+ 	}
+ 
+ 	private_header = (__le16 *)__skb_push(skb, 2);
 
 
