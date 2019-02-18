@@ -2,123 +2,120 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19FA0C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:47:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80226C4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:49:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7AB8218C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:47:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59B3D218C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:49:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728651AbfBRCrH (ORCPT
+        id S1728317AbfBRCtk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 21:47:07 -0500
-Received: from SMTPBG357.QQ.COM ([183.61.51.175]:60228 "EHLO SMTPBG357.QQ.COM"
+        Sun, 17 Feb 2019 21:49:40 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:58790 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728279AbfBRCrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 21:47:06 -0500
-X-Greylist: delayed 425 seconds by postgrey-1.27 at vger.kernel.org; Sun, 17 Feb 2019 21:47:05 EST
-X-QQ-mid: bizesmtp20t1550457587tuv3gfrq
-Received: from Macbook.Pro (unknown [218.76.23.26])
-        by esmtp6.qq.com (ESMTP) with 
-        id ; Mon, 18 Feb 2019 10:39:46 +0800 (CST)
-X-QQ-SSF: 01400000000000P0TL50B00A0000000
-X-QQ-FEAT: 9MsTBLS6yXFMFVA+TA6wpjC0SxHpTPzkPmjtMJBmt4CiRjJrsbmatQjcIxeIe
-        LMJqZGfQ8Wwk2lknwNsgiTLySXe3Dd3iPsoTii1IC3STWyrdvfG8gZfBRi2hgs+urt3jFKO
-        zQz/7/3+r2q1+Z2msNHUgWE5dDy9WVEu2dAyWGTpiwWML+IeNb3C/DJetTCzhtzpK5Yrylw
-        ijBM/Ppxohr92tGcHnidAorYbYdHBfvhS65kPHtfi1Tj7nH8h3tmlxU6QNN3YaqVaEgmZ45
-        ye0xrOFNfFy1A6GlSEwV5LCoaOCFDoNQRw5yD6gRSe8Qns
-X-QQ-GoodBg: 1
-From:   Jackie Liu <liuyun01@kylinos.cn>
-To:     kieran.bingham@linaro.org
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        Jackie Liu <liuyun01@kylinos.cn>
-Subject: [PATCH] script/gdb: replace flags (MS_xyz -> SB_xyz)
-Date:   Mon, 18 Feb 2019 10:39:21 +0800
-Message-Id: <20190218023921.1882-1-liuyun01@kylinos.cn>
-X-Mailer: git-send-email 2.20.1
+        id S1728093AbfBRCtj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 21:49:39 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 138AD7F769;
+        Mon, 18 Feb 2019 02:49:39 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0DE1860C76;
+        Mon, 18 Feb 2019 02:49:27 +0000 (UTC)
+Date:   Mon, 18 Feb 2019 10:49:23 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+        Keith Busch <keith.busch@intel.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Sumit Saxena <sumit.saxena@broadcom.com>,
+        Kashyap Desai <kashyap.desai@broadcom.com>,
+        Shivasharan Srikanteshwara 
+        <shivasharan.srikanteshwara@broadcom.com>
+Subject: Re: [patch v6 7/7] genirq/affinity: Add support for non-managed
+ affinity sets
+Message-ID: <20190218024922.GA27779@ming.t460p>
+References: <20190216171306.403545970@linutronix.de>
+ <20190216172228.869750763@linutronix.de>
+ <20190217134522.GH7296@ming.t460p>
+ <alpine.DEB.2.21.1902172010060.1683@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:kylinos.cn:qybgforeign:qybgforeign2
-X-QQ-Bgrelay: 1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1902172010060.1683@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 18 Feb 2019 02:49:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit (1751e8a6cb935e555fcdbcb9ab4f0446e322ca3e)
-Rename superblock flags (MS_xyz -> SB_xyz). script/gdb
-need replace MS_xyz to SB_xyz.
+Hi Thomas,
 
-Fix following problem:
+On Sun, Feb 17, 2019 at 08:17:05PM +0100, Thomas Gleixner wrote:
+> On Sun, 17 Feb 2019, Ming Lei wrote:
+> > On Sat, Feb 16, 2019 at 06:13:13PM +0100, Thomas Gleixner wrote:
+> > > Some drivers need an extra set of interrupts which should not be marked
+> > > managed, but should get initial interrupt spreading.
+> > 
+> > Could you share the drivers and their use case?
+> 
+> You were Cc'ed on that old discussion:
+> 
+>  https://lkml.kernel.org/r/300d6fef733ca76ced581f8c6304bac6@mail.gmail.com
 
-root@localhost:/data# gdb -q vmlinux
-Reading symbols from vmlinux...done.
-Traceback (most recent call last):
-  File "/data/vmlinux-gdb.py", line 32, in <module>
-    import linux.proc
-  File "/data/scripts/gdb/linux/proc.py", line 15, in <module>
-    from linux import constants
-  File "/data/scripts/gdb/linux/constants.py", line 2, in <module>
-    LX_SB_RDONLY = MS_RDONLY
-NameError: name 'MS_RDONLY' is not defined
-(gdb)
+Thanks for providing the link.
 
-Signed-off-by: Jackie Liu <liuyun01@kylinos.cn>
----
- scripts/gdb/linux/constants.py.in | 12 ++++++------
- scripts/gdb/linux/proc.py         | 10 +++++-----
- 2 files changed, 11 insertions(+), 11 deletions(-)
+> 
+> > > For both interrupt sets the interrupts are properly spread out, but the
+> > > second set is not marked managed.
+> > 
+> > Given drivers only care the managed vs non-managed interrupt numbers,
+> > just wondering why this case can't be covered by .pre_vectors &
+> > .post_vectors?
+> 
+> Well, yes, but post/pre are not subject to spreading and I really don't
+> want to go there.
+> 
+> > Also this kind of usage may break blk-mq easily, in which the following
+> > rule needs to be respected:
+> > 
+> > 1) all CPUs are required to spread among each interrupt set
+> > 
+> > 2) no any CPU is shared between two IRQs in same set.
+> 
+> I don't see how that would break blk-mq. The unmanaged set is not used by
+> the blk-mq stuff, that's some driver internal voodoo. So blk-mq still gets
+> a perfectly spread and managed interrupt set for the queues.
 
-diff --git a/scripts/gdb/linux/constants.py.in b/scripts/gdb/linux/constants.py.in
-index 7aad82406422..d3319a80788a 100644
---- a/scripts/gdb/linux/constants.py.in
-+++ b/scripts/gdb/linux/constants.py.in
-@@ -37,12 +37,12 @@
- import gdb
- 
- /* linux/fs.h */
--LX_VALUE(MS_RDONLY)
--LX_VALUE(MS_SYNCHRONOUS)
--LX_VALUE(MS_MANDLOCK)
--LX_VALUE(MS_DIRSYNC)
--LX_VALUE(MS_NOATIME)
--LX_VALUE(MS_NODIRATIME)
-+LX_VALUE(SB_RDONLY)
-+LX_VALUE(SB_SYNCHRONOUS)
-+LX_VALUE(SB_MANDLOCK)
-+LX_VALUE(SB_DIRSYNC)
-+LX_VALUE(SB_NOATIME)
-+LX_VALUE(SB_NODIRATIME)
- 
- /* linux/mount.h */
- LX_VALUE(MNT_NOSUID)
-diff --git a/scripts/gdb/linux/proc.py b/scripts/gdb/linux/proc.py
-index 0aebd7565b03..cdc9c3e76c55 100644
---- a/scripts/gdb/linux/proc.py
-+++ b/scripts/gdb/linux/proc.py
-@@ -114,11 +114,11 @@ def info_opts(lst, opt):
-     return opts
- 
- 
--FS_INFO = {constants.LX_MS_SYNCHRONOUS: ",sync",
--           constants.LX_MS_MANDLOCK: ",mand",
--           constants.LX_MS_DIRSYNC: ",dirsync",
--           constants.LX_MS_NOATIME: ",noatime",
--           constants.LX_MS_NODIRATIME: ",nodiratime"}
-+FS_INFO = {constants.LX_SB_SYNCHRONOUS: ",sync",
-+           constants.LX_SB_MANDLOCK: ",mand",
-+           constants.LX_SB_DIRSYNC: ",dirsync",
-+           constants.LX_SB_NOATIME: ",noatime",
-+           constants.LX_SB_NODIRATIME: ",nodiratime"}
- 
- MNT_INFO = {constants.LX_MNT_NOSUID: ",nosuid",
-             constants.LX_MNT_NODEV: ",nodev",
--- 
-2.20.1
+From the discussion above, the use case is for megaraid_sas. And one of the
+two interrupt sets(managed and non-managed) will be chosen according to
+workloads runtime.
+
+Each interrupt set actually defines one blk-mq queue mapping, and the
+queue mapping needs to respect the rule I mentioned now. However,
+non-managed affinity can be changed to any way anytime by user-space.
+
+Recently HPSA tried to add one module parameter to use non-managed
+IRQ[1].
+
+Also NVMe RDMA uses non-managed interrupts, and at least one CPU hotplug
+issue is never fixed yet[2]. 
+
+[1] https://marc.info/?t=154387665200001&r=1&w=2
+[2] https://www.spinics.net/lists/linux-block/msg24140.html
 
 
-
+thanks,
+Ming
