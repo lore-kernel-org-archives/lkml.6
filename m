@@ -4,47 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0B51C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E96C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:43:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76DB721736
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:43:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C18B621736
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:43:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550501006;
-	bh=+om2ETSsJST+cHybbdGHxDMHsVk1aemtohHTNv2TOPU=;
+	s=default; t=1550501015;
+	bh=DyuurUfuQtSAttTcG9JNUs/Z9oHcOkiyw63IqkJNp44=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fw2MY24dk2vWSEaVyqBUY5Jw/pN7BDgF/6nksD6ZhbOC9WzfZ+6YbB9S9jPZp6EVT
-	 lXvDdBLrr8mC9hQQNy4sJGtASAhrf0yWO3T1X2uPgMIaAzETvGnFyYu98NBBDr+/t5
-	 JMwUyEQ7KDEVNLzt7GG6tVYKPXjN9+nXWRlKedrg=
+	b=YyoUEI7ZU01uoObpnRIIDRyhVqzFnGFnJs/x9RcSA3/Eg0TgjcTMHll1IHGq6JAHe
+	 1SCT/E2dn+CNmCfhyrcc0Dz5t02ymQsWwCXvHpAKR87o+00TgRGeZnzy2vt41a/dGI
+	 2T5fi4ZfTxpfwCPLKnRg2mWq031E1f6Mzgz+TYxQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731264AbfBRNtV (ORCPT
+        id S1731975AbfBRNtM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:49:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56540 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:49:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732005AbfBRNtS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:49:18 -0500
+        id S1730684AbfBRNtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:49:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DDF121901;
-        Mon, 18 Feb 2019 13:49:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB33B21901;
+        Mon, 18 Feb 2019 13:49:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497757;
-        bh=+om2ETSsJST+cHybbdGHxDMHsVk1aemtohHTNv2TOPU=;
+        s=default; t=1550497748;
+        bh=DyuurUfuQtSAttTcG9JNUs/Z9oHcOkiyw63IqkJNp44=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zAhzbHBstSku6FKUPSUIJ4b6qkhOFJ4OPOpEAXH60Qmg0IeArErW37gg2s5kgYhr7
-         8gs1BSNLd3gjjWJLb2BTCt+o0vqohC22nyuCDb9Ee685/YSkeNtHCq3mAIPndmLilS
-         EuWPrUqfglMDSjV+3dESAqQ/29fer29UBkg7mCKc=
+        b=yxAyCjKNoOprJbcJ7ayRKeEu/I0RJLhOZxg26KgSfAdtA6b53PI1Xme+5QyuFYvQz
+         FxMjiujNW54CGwd23U/uTD3vo7/+NrRRGCPexVaOID/E/86EG4PsriuACaSd+JIpgc
+         SaQfNb2QQCo8rz1QVHT1ZZLGaPdE9P0AwzZQ2YoM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: [PATCH 4.20 75/92] s390/suspend: fix stack setup in swsusp_arch_suspend
-Date:   Mon, 18 Feb 2019 14:43:18 +0100
-Message-Id: <20190218133501.887436700@linuxfoundation.org>
+        stable@vger.kernel.org, Sandeep Patil <sspatil@android.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Daniel Colascione <dancol@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [PATCH 4.20 72/92] mm: proc: smaps_rollup: fix pss_locked calculation
+Date:   Mon, 18 Feb 2019 14:43:15 +0100
+Message-Id: <20190218133501.617334685@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
 References: <20190218133454.668268457@linuxfoundation.org>
@@ -63,40 +70,121 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Sandeep Patil <sspatil@android.com>
 
-commit 634692ab7007e8e3fec758ab0b26e65abf7c79e0 upstream.
+commit 27dd768ed8db48beefc4d9e006c58e7a00342bde upstream.
 
-The patch that added support for the virtually mapped kernel stacks changed
-swsusp_arch_suspend to switch to the nodat-stack as the vmap stack is not
-available while going in and out of suspend.
+The 'pss_locked' field of smaps_rollup was being calculated incorrectly.
+It accumulated the current pss everytime a locked VMA was found.  Fix
+that by adding to 'pss_locked' the same time as that of 'pss' if the vma
+being walked is locked.
 
-Unfortunately the switch to the nodat-stack is incorrect which breaks
-suspend to disk.
-
-Cc: stable@vger.kernel.org # v4.20
-Fixes: ce3dc447493f ("s390: add support for virtually mapped kernel stacks")
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Link: http://lkml.kernel.org/r/20190203065425.14650-1-sspatil@android.com
+Fixes: 493b0e9d945f ("mm: add /proc/pid/smaps_rollup")
+Signed-off-by: Sandeep Patil <sspatil@android.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Daniel Colascione <dancol@google.com>
+Cc: <stable@vger.kernel.org>	[4.14.x, 4.19.x]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/s390/kernel/swsusp.S |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/proc/task_mmu.c |   22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
---- a/arch/s390/kernel/swsusp.S
-+++ b/arch/s390/kernel/swsusp.S
-@@ -30,10 +30,10 @@
- 	.section .text
- ENTRY(swsusp_arch_suspend)
- 	lg	%r1,__LC_NODAT_STACK
--	aghi	%r1,-STACK_FRAME_OVERHEAD
- 	stmg	%r6,%r15,__SF_GPRS(%r1)
-+	aghi	%r1,-STACK_FRAME_OVERHEAD
- 	stg	%r15,__SF_BACKCHAIN(%r1)
--	lgr	%r1,%r15
-+	lgr	%r15,%r1
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -423,7 +423,7 @@ struct mem_size_stats {
+ };
  
- 	/* Store FPU registers */
- 	brasl	%r14,save_fpu_regs
+ static void smaps_account(struct mem_size_stats *mss, struct page *page,
+-		bool compound, bool young, bool dirty)
++		bool compound, bool young, bool dirty, bool locked)
+ {
+ 	int i, nr = compound ? 1 << compound_order(page) : 1;
+ 	unsigned long size = nr * PAGE_SIZE;
+@@ -450,24 +450,31 @@ static void smaps_account(struct mem_siz
+ 		else
+ 			mss->private_clean += size;
+ 		mss->pss += (u64)size << PSS_SHIFT;
++		if (locked)
++			mss->pss_locked += (u64)size << PSS_SHIFT;
+ 		return;
+ 	}
+ 
+ 	for (i = 0; i < nr; i++, page++) {
+ 		int mapcount = page_mapcount(page);
++		unsigned long pss = (PAGE_SIZE << PSS_SHIFT);
+ 
+ 		if (mapcount >= 2) {
+ 			if (dirty || PageDirty(page))
+ 				mss->shared_dirty += PAGE_SIZE;
+ 			else
+ 				mss->shared_clean += PAGE_SIZE;
+-			mss->pss += (PAGE_SIZE << PSS_SHIFT) / mapcount;
++			mss->pss += pss / mapcount;
++			if (locked)
++				mss->pss_locked += pss / mapcount;
+ 		} else {
+ 			if (dirty || PageDirty(page))
+ 				mss->private_dirty += PAGE_SIZE;
+ 			else
+ 				mss->private_clean += PAGE_SIZE;
+-			mss->pss += PAGE_SIZE << PSS_SHIFT;
++			mss->pss += pss;
++			if (locked)
++				mss->pss_locked += pss;
+ 		}
+ 	}
+ }
+@@ -490,6 +497,7 @@ static void smaps_pte_entry(pte_t *pte,
+ {
+ 	struct mem_size_stats *mss = walk->private;
+ 	struct vm_area_struct *vma = walk->vma;
++	bool locked = !!(vma->vm_flags & VM_LOCKED);
+ 	struct page *page = NULL;
+ 
+ 	if (pte_present(*pte)) {
+@@ -532,7 +540,7 @@ static void smaps_pte_entry(pte_t *pte,
+ 	if (!page)
+ 		return;
+ 
+-	smaps_account(mss, page, false, pte_young(*pte), pte_dirty(*pte));
++	smaps_account(mss, page, false, pte_young(*pte), pte_dirty(*pte), locked);
+ }
+ 
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+@@ -541,6 +549,7 @@ static void smaps_pmd_entry(pmd_t *pmd,
+ {
+ 	struct mem_size_stats *mss = walk->private;
+ 	struct vm_area_struct *vma = walk->vma;
++	bool locked = !!(vma->vm_flags & VM_LOCKED);
+ 	struct page *page;
+ 
+ 	/* FOLL_DUMP will return -EFAULT on huge zero page */
+@@ -555,7 +564,7 @@ static void smaps_pmd_entry(pmd_t *pmd,
+ 		/* pass */;
+ 	else
+ 		VM_BUG_ON_PAGE(1, page);
+-	smaps_account(mss, page, true, pmd_young(*pmd), pmd_dirty(*pmd));
++	smaps_account(mss, page, true, pmd_young(*pmd), pmd_dirty(*pmd), locked);
+ }
+ #else
+ static void smaps_pmd_entry(pmd_t *pmd, unsigned long addr,
+@@ -737,11 +746,8 @@ static void smap_gather_stats(struct vm_
+ 		}
+ 	}
+ #endif
+-
+ 	/* mmap_sem is held in m_start */
+ 	walk_page_vma(vma, &smaps_walk);
+-	if (vma->vm_flags & VM_LOCKED)
+-		mss->pss_locked += mss->pss;
+ }
+ 
+ #define SEQ_PUT_DEC(str, val) \
 
 
