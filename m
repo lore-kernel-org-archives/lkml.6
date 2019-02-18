@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03458C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 23:24:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26A0AC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 23:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC5B021900
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 23:24:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCEF621901
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 23:24:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550532251;
-	bh=I6fF2a34BugTTiZ8oGrSZOnvBIMJK2lW3I4eTG/Vscs=;
+	s=default; t=1550532262;
+	bh=JwIQF2ouCes3Rq8CDXefH5ISvwDDLRTTBG9PgF2ptFo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uUHYaKIfKpKry0akYiK59xuhp6l0A9VY9Sr7W40BjZquFbZunv76kxxp4OBJrg2Sf
-	 CmI8PcONiD6wlb9NUOrJWviUgomwgZ7mEDTIDMA+mq4HQPyTiOE52157HVOP5tmNTs
-	 ZIOzZpGxHhOIfrGvXta0nIQnZgdySuWAw0+QnkPs=
+	b=vWkg1Ok0VZIO9AW6VnGk+VwWS4dupsQ9cU16a2ad/1tFXGLxmdt+c1uJM6ljUNtib
+	 OEDSmPiddTDnB8C/9s52Ng3kORfSWcEofyGnRhXyQVBzRt/TEo4ISabX7Z/z02Czn0
+	 XVgkt9lqFQPjnH4uWc06z988W+HADe9ck/bGDxkI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730214AbfBRXYF (ORCPT
+        id S1731331AbfBRXYT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 18:24:05 -0500
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:51507 "EHLO
+        Mon, 18 Feb 2019 18:24:19 -0500
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:43959 "EHLO
         wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727464AbfBRXYF (ORCPT
+        by vger.kernel.org with ESMTP id S1730730AbfBRXYP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 18:24:05 -0500
+        Mon, 18 Feb 2019 18:24:15 -0500
 Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.west.internal (Postfix) with ESMTP id D34FC32FB;
-        Mon, 18 Feb 2019 18:24:03 -0500 (EST)
+        by mailout.west.internal (Postfix) with ESMTP id EF318345F;
+        Mon, 18 Feb 2019 18:24:13 -0500 (EST)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Mon, 18 Feb 2019 18:24:04 -0500
+  by compute3.internal (MEProxy); Mon, 18 Feb 2019 18:24:14 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm2; bh=wasUhckRRwTncBVgrgQrKvaKFiFeouSK0zO9OtZYhFI=; b=yblAlgZn
-        ihQXtnigyXi9F08dbJa3yzakSWETwT2MdTcwr2/s3wB7Z0ZVLroeZCm4b2MHnNwK
-        Rq/3sXCEynHBhlp+rVULogpaoPScmRGxbsIlo2UnBLwudVJ+TqoACSBexKpfToZ+
-        n0mbRDgPe1icwVbCdciXc6PRaHX9SvVjlfl0RyEaiVoxdNxGMo1G3AR/DVlCL29l
-        AReCzPKGb8qcppr6/ROSbsvTZa+D0/zsAWsum9jEagiA13HxeZ8rtD5KMChhqu2B
-        +YOmqL6SKCQjgazmMyF+3hbFwGt48PTVqFB9fI/wDUySxr1Tl+1yJ4e8vgU5LH2F
-        AfJDLk3UOS6dEg==
-X-ME-Sender: <xms:kz5rXDS6W2a9H4_fY8Rf_iYL3qyDRQrkWSOfOIeDq1ADIfDcqPAztA>
+        fm2; bh=w3SU4u4HWNHuX1tPAKs+oZt1jVykzBguylycKMLAXFA=; b=PW9yqsvk
+        9dfYbiIsTA3bZ4rwBOGtN1aQbQlZtA3WK/1OyFTFoPRJWkb07JqHmTpvkx5THvc+
+        0I3GjPHCMk1weivf7uIWrUp5c1QSSpxJTDqdq1UhsDeynhcBm1SUldc1/R8ENYvz
+        YDx7PjKYBhUeBfWTt1TiLc6VXwcI77hAjKvXPKrHX663Zm89Pe5feGaFhCdMexHb
+        b2bf9xN1haJLsbarBBoCdm1Q9aUJxPtDwz0KtZbBbk44Te8+GI56/qKhkHr+1GMn
+        gdlxninAwzOzqovaxsf20Y9DhrUOsO1iYClbx6TAZRPm7l+xdH4o74ell1H5Yvdl
+        P+/WsjbEUI2nng==
+X-ME-Sender: <xms:nT5rXMRfFxCHTeJuxZOCLEuq_tgiHw4XMn7DlnNSotTqgbH43foY0g>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrtddvgddtjeculddtuddrgedtledrtddtmd
     cutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
@@ -51,13 +51,13 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrtddvgddtjeculddtuddrgedtle
     nhcuvedrucfjrghrughinhhgfdcuoehtohgsihhnsehkvghrnhgvlhdrohhrgheqnecukf
     hppeduvddurdeggedrvddtvddrudeftdenucfrrghrrghmpehmrghilhhfrhhomhepthho
     sghinheskhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:kz5rXApABgdSWryWNuMdxC_--wVs-IM91vIipVOo1giXEzcoF76IOg>
-    <xmx:kz5rXBpRRsKwUQtiaFdOhhvcOLfDCC5b8CVt3GKX4aTsw91lqjkVhQ>
-    <xmx:kz5rXL02jgOTVe125mcPrVeILFDTio_HiuZ2y2hteDQwlGt0hKRi5g>
-    <xmx:kz5rXLcXQpfhpzmqq-7Ld5whjOrhJn6oC9-4G5Dtd-0InbIunOgGwA>
+X-ME-Proxy: <xmx:nT5rXBZXZRIU9s1sv8FEJ_AtxSDlDNoYctujM63fb_3vLZnH1F_osA>
+    <xmx:nT5rXKDfdFMYMFgHQps5p7kLaWc8MYyU8DB3oh5tek2WXYze5cBCfQ>
+    <xmx:nT5rXIDc7tdTEDR_ab6Syu6XsztjwrASCyYcnCOBKWYlOd81RI-WBQ>
+    <xmx:nT5rXLVrmqN2I-NHu6HR88Q6Cc5FraWpvgKDQP6yh8CoQ6LCGGvEAQ>
 Received: from eros.localdomain (ppp121-44-202-130.bras1.syd2.internode.on.net [121.44.202.130])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 8760D1026E;
-        Mon, 18 Feb 2019 18:24:00 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 95629100E5;
+        Mon, 18 Feb 2019 18:24:10 -0500 (EST)
 From:   "Tobin C. Harding" <tobin@kernel.org>
 To:     Kees Cook <keescook@chromium.org>
 Cc:     "Tobin C. Harding" <tobin@kernel.org>,
@@ -66,9 +66,9 @@ Cc:     "Tobin C. Harding" <tobin@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org
-Subject: [PATCH 1/6] lib/string: Enable string selftesting
-Date:   Tue, 19 Feb 2019 10:23:03 +1100
-Message-Id: <20190218232308.11241-2-tobin@kernel.org>
+Subject: [PATCH 4/6] lib/string: Add string copy/zero function
+Date:   Tue, 19 Feb 2019 10:23:06 +1100
+Message-Id: <20190218232308.11241-5-tobin@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218232308.11241-1-tobin@kernel.org>
 References: <20190218232308.11241-1-tobin@kernel.org>
@@ -79,129 +79,151 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently we have a test module but it is not tied into the kselftest
-infrastructure.  In preparation for adding string manipulation functions
-and testing we should enable kselftest to utilize the test module.
+We have a function to copy strings safely and we have a function to copy
+strings _and_ zero the tail of the destination (if source string is
+shorter than destination buffer) but we do not have a function to do
+both at once.  This means developers must write this themselves if they
+desire this functionality.  This is a chore, and also leaves us open to
+off by one errors unnecessarily.
 
-Enable string testing via kselftest infrastructure.
+Add a function that calls strscpy() then memset()s the tail to zero if
+the source string is shorter than the destination buffer.
+
+Add testing via kselftest.
 
 Signed-off-by: Tobin C. Harding <tobin@kernel.org>
 ---
- lib/Kconfig.debug                     | 14 ++++++++++++++
- lib/Makefile                          |  2 +-
- lib/test_string.c                     |  4 ++--
- tools/testing/selftests/lib/Makefile  |  2 +-
- tools/testing/selftests/lib/config    |  1 +
- tools/testing/selftests/lib/string.sh | 19 +++++++++++++++++++
- 6 files changed, 38 insertions(+), 4 deletions(-)
- create mode 100755 tools/testing/selftests/lib/string.sh
+ include/linux/string.h |  4 ++++
+ lib/Kconfig.debug      |  2 +-
+ lib/string.c           | 30 ++++++++++++++++++++++++++++--
+ lib/test_string.c      | 31 +++++++++++++++++++++++++++++++
+ 4 files changed, 64 insertions(+), 3 deletions(-)
 
+diff --git a/include/linux/string.h b/include/linux/string.h
+index 7927b875f80c..695a5e6a31e3 100644
+--- a/include/linux/string.h
++++ b/include/linux/string.h
+@@ -31,6 +31,10 @@ size_t strlcpy(char *, const char *, size_t);
+ #ifndef __HAVE_ARCH_STRSCPY
+ ssize_t strscpy(char *, const char *, size_t);
+ #endif
++
++/* Wrapper function, no arch specific code required */
++ssize_t strscpy_zeroed(char *dest, const char *src, size_t count);
++
+ #ifndef __HAVE_ARCH_STRCAT
+ extern char * strcat(char *, const char *);
+ #endif
 diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index d4df5b24d75e..0dca64c1d8a4 100644
+index 0dca64c1d8a4..faa15ff47c4f 100644
 --- a/lib/Kconfig.debug
 +++ b/lib/Kconfig.debug
-@@ -1802,8 +1802,22 @@ config ASYNC_RAID6_TEST
- config TEST_HEXDUMP
- 	tristate "Test functions located in the hexdump module at runtime"
+@@ -1807,7 +1807,7 @@ config TEST_STRING
+        default n
+        help
+         Enable this option to test string manipulation functions.
+-	Currently this only tests memset_{16,32,64}.
++	Currently this only tests memset_{16,32,64} and strscpy_zeroed().
  
-+config TEST_STRING
-+       tristate "Perform selftest on string manipulation functions"
-+       default n
-+       help
-+        Enable this option to test string manipulation functions.
-+	Currently this only tests memset_{16,32,64}.
-+
-+	If unsure, say N.
-+
- config TEST_STRING_HELPERS
- 	tristate "Test functions located in the string_helpers module at runtime"
-+	default n
-+	help
-+	 Enable this option to unit test code in lib/string_helpers.c
-+
-+	 If unsure, say N.
+ 	If unsure, say N.
  
- config TEST_KSTRTOX
- 	tristate "Test kstrto*() family of functions at runtime"
-diff --git a/lib/Makefile b/lib/Makefile
-index e1b59da71418..9c30e1fee27f 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -39,7 +39,7 @@ obj-y += bcd.o div64.o sort.o parser.o debug_locks.o random32.o \
- 	 bsearch.o find_bit.o llist.o memweight.o kfifo.o \
- 	 percpu-refcount.o rhashtable.o reciprocal_div.o \
- 	 once.o refcount.o usercopy.o errseq.o bucket_locks.o
--obj-$(CONFIG_STRING_SELFTEST) += test_string.o
-+obj-$(CONFIG_TEST_STRING) += test_string.o
- obj-y += string_helpers.o
- obj-$(CONFIG_TEST_STRING_HELPERS) += test-string_helpers.o
- obj-y += hexdump.o
+diff --git a/lib/string.c b/lib/string.c
+index 65969cf32f5d..ff5106e8249f 100644
+--- a/lib/string.c
++++ b/lib/string.c
+@@ -171,8 +171,7 @@ EXPORT_SYMBOL(strlcpy);
+  *
+  * Preferred to strncpy() since it always returns a valid string, and
+  * doesn't unnecessarily force the tail of the destination buffer to be
+- * zeroed.  If the zeroing is desired, it's likely cleaner to use strscpy(),
+- * check the return size, then just memset() the tail of the dest buffer.
++ * zeroed.  If the zeroing is desired use strscpy_zeroed().
+  *
+  * Return: The number of characters copied (not including the trailing
+  *         NUL) or -E2BIG if the destination buffer wasn't big enough.
+@@ -238,6 +237,33 @@ ssize_t strscpy(char *dest, const char *src, size_t count)
+ EXPORT_SYMBOL(strscpy);
+ #endif
+ 
++/**
++ * strscopy_zeroed() - Copy a C-string into a sized buffer
++ * @dest: Where to copy the string to
++ * @src: Where to copy the string from
++ * @count: Size of destination buffer
++ *
++ * If the source string is shorter than the destination buffer, zeros
++ * the tail of the destination buffer.
++ *
++ * Return: The number of characters copied (not including the trailing
++ *         NUL) or -E2BIG if the destination buffer wasn't big enough.
++ */
++ssize_t strscpy_zeroed(char *dest, const char *src, size_t count)
++{
++	ssize_t written;
++
++	written = strscpy(dest, src, count);
++	if (written < 0)
++		return written;
++
++	if (written < count)
++		memset(dest + written, 0, count - written);
++
++	return written;
++}
++EXPORT_SYMBOL(strscpy_zeroed);
++
+ #ifndef __HAVE_ARCH_STRCAT
+ /**
+  * strcat - Append one %NUL-terminated string to another
 diff --git a/lib/test_string.c b/lib/test_string.c
-index 0fcdb82dca86..a9cba442389a 100644
+index a9cba442389a..cc4eef51a395 100644
 --- a/lib/test_string.c
 +++ b/lib/test_string.c
-@@ -111,7 +111,7 @@ static __init int memset64_selftest(void)
+@@ -111,6 +111,32 @@ static __init int memset64_selftest(void)
  	return 0;
  }
  
--static __init int string_selftest_init(void)
-+static __init int test_string_init(void)
++static __init int strscpy_zeroed_selftest(void)
++{
++	char buf[6];
++	int written;
++
++	memset(buf, 'a', sizeof(buf));
++
++	written = strscpy_zeroed(buf, "bb", 4);
++	if (written != 2)
++		return 1;
++
++	/* Copied correctly */
++	if (buf[0] != 'b' || buf[1] != 'b')
++		return 2;
++
++	/* Zeroed correctly */
++	if (buf[2] != '\0' || buf[3] != '\0')
++		return 3;
++
++	/* Only touched what it was supposed to */
++	if (buf[4] != 'a' || buf[5] != 'a')
++		return 4;
++
++	return 0;
++}
++
+ static __init int test_string_init(void)
  {
  	int test, subtest;
+@@ -130,6 +156,11 @@ static __init int test_string_init(void)
+ 	if (subtest)
+ 		goto fail;
  
-@@ -137,5 +137,5 @@ static __init int string_selftest_init(void)
++	test = 4;
++	subtest = strscpy_zeroed_selftest();
++	if (subtest)
++		goto fail;
++
+ 	pr_info("String selftests succeeded\n");
  	return 0;
- }
- 
--module_init(string_selftest_init);
-+module_init(test_string_init);
- MODULE_LICENSE("GPL v2");
-diff --git a/tools/testing/selftests/lib/Makefile b/tools/testing/selftests/lib/Makefile
-index 70d5711e3ac8..2ee4559b277e 100644
---- a/tools/testing/selftests/lib/Makefile
-+++ b/tools/testing/selftests/lib/Makefile
-@@ -3,6 +3,6 @@
- # No binaries, but make sure arg-less "make" doesn't trigger "run_tests"
- all:
- 
--TEST_PROGS := printf.sh bitmap.sh prime_numbers.sh
-+TEST_PROGS := printf.sh bitmap.sh prime_numbers.sh string.sh
- 
- include ../lib.mk
-diff --git a/tools/testing/selftests/lib/config b/tools/testing/selftests/lib/config
-index 126933bcc950..2032402ad409 100644
---- a/tools/testing/selftests/lib/config
-+++ b/tools/testing/selftests/lib/config
-@@ -1,3 +1,4 @@
- CONFIG_TEST_PRINTF=m
- CONFIG_TEST_BITMAP=m
-+CONFIG_TEST_STRING=m
- CONFIG_PRIME_NUMBERS=m
-diff --git a/tools/testing/selftests/lib/string.sh b/tools/testing/selftests/lib/string.sh
-new file mode 100755
-index 000000000000..99024b6f3a6a
---- /dev/null
-+++ b/tools/testing/selftests/lib/string.sh
-@@ -0,0 +1,19 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# Runs string manipulation tests using test_string kernel module
-+
-+# Kselftest framework requirement - SKIP code is 4.
-+ksft_skip=4
-+
-+if ! /sbin/modprobe -q -n test_string; then
-+	echo "string: module test_string is not found [SKIP]"
-+	exit $ksft_skip
-+fi
-+
-+if /sbin/modprobe -q test_string; then
-+	/sbin/modprobe -q -r test_string
-+	echo "string: ok"
-+else
-+	echo "string: [FAIL]"
-+	exit 1
-+fi
+ fail:
 -- 
 2.20.1
 
