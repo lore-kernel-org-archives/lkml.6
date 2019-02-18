@@ -4,57 +4,65 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DDFEC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:50:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6882C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:50:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D17BC2177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:50:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99D6B2177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 18:50:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550515832;
-	bh=osMQM4LRc6uAlORfGNIq0IQ12Epj6H/f5wZUSxRb7+g=;
+	s=default; t=1550515837;
+	bh=9lWJY3aZWr6YBk9u3ZAv4XZIA/7VvI/gSHDFzob2frQ=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=IpZtk4SyGVHaAUykWymgijqcvQohLJmaz9WLbiF3LQINkNNtHnVrbsF5EHYNlYWqg
-	 tZycwWcVr9v/9mll0S/m+FLCxwfGlgbVjH5DJQJ3RjugQe38azIFN4xsl72qJWVb7r
-	 tpRJQrtFvZWWPuT7/ZVH7l+OSU7Dh1x+IVJPUcSg=
+	b=bI8Nb1nvrc9mzRz2+8WQ3Y/RLvyppzWalNi35HhkSA3qn+WMOVmhCxNtPdvwghriF
+	 oiih75zPdmD97X2/v1qp+cd1BbnS48PgktLCEmIUb5PsGfqosYMLsnoSWLBTfOfSlf
+	 1xhxprDuZKadsh/xVNUgkqx9okHxF1RZ8Ks8QlF0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727311AbfBRSua (ORCPT
+        id S1726441AbfBRSto (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 13:50:30 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42466 "EHLO
+        Mon, 18 Feb 2019 13:49:44 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42018 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726924AbfBRStx (ORCPT
+        with ESMTP id S1726272AbfBRStk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 13:49:53 -0500
+        Mon, 18 Feb 2019 13:49:40 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=W1gsUMiLEbeWMTVS3jKPejmRZbMzUdLeBmtMgFrJaPM=; b=RSotHbzHjtvY
-        hNClOq/yopfqROj0UbTBc2ZeBz0bt2MAUMtW45zXXJSsJajHWt0cDSh3CVr9XdiHJdRSUhiSVJyIH
-        ESPb/+dYlE3r6Fx4r1L56BS2ulwWOv7Xtsw/x7Psv7m6Quue1MHv126OY+w2BfmoQQpkfQOQ2UkGx
-        0Qzw4=;
+        List-Archive; bh=39BnjRBP3mAF1mj98V17S7lBxoprAgwGQFFxs8scGXw=; b=G0kq8j3fA/nT
+        WsohoCUvuOH3V2iTvkp3rNj/ClOXcSjW0TSr0qalCpXG1LLzr5+ohQbOjJ7Cs3iJnmJFwPSU9sU8a
+        dlPagFXxQz9tYBwYjZN+tKio7ezI1gXfn2jfHQRjCHpRBVXMaSkbEBPPeKhgNaPGrqKpQsHpZBupB
+        y6hTI=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gvnyt-0001eV-HT; Mon, 18 Feb 2019 18:49:31 +0000
+        id 1gvnyg-0001dc-CQ; Mon, 18 Feb 2019 18:49:18 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id F3E631128008; Mon, 18 Feb 2019 18:49:30 +0000 (GMT)
+        id CDEC21128008; Mon, 18 Feb 2019 18:49:17 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Cc:     Mark Brown <broonie@kernel.org>, lars@metafoo.de,
-        lgirdwood@gmail.com, broonie@kernel.org,
-        alsa-devel@alsa-project.org, Codrin.Ciubotariu@microchip.com,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: codecs: ad193x: Add support to disable on-chip PLL" to the asoc tree
-In-Reply-To:  <20190218160954.13929-6-codrin.ciubotariu@microchip.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Olivier Moysan <olivier.moysan@st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: stm32: sai: remove set but not used variables 'mask, cr1'" to the asoc tree
+In-Reply-To:  <20190218145026.142805-1-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190218184930.F3E631128008@debutante.sirena.org.uk>
-Date:   Mon, 18 Feb 2019 18:49:30 +0000 (GMT)
+Message-Id: <20190218184917.CDEC21128008@debutante.sirena.org.uk>
+Date:   Mon, 18 Feb 2019 18:49:17 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -62,7 +70,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: codecs: ad193x: Add support to disable on-chip PLL
+   ASoC: stm32: sai: remove set but not used variables 'mask, cr1'
 
 has been applied to the asoc tree at
 
@@ -87,100 +95,55 @@ to this mail.
 Thanks,
 Mark
 
-From 59529473751e987e28c926838f70aaef588b83b0 Mon Sep 17 00:00:00 2001
-From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Date: Mon, 18 Feb 2019 16:10:36 +0000
-Subject: [PATCH] ASoC: codecs: ad193x: Add support to disable on-chip PLL
+From 70605450fd42060783b0072a61a30f42a74f2917 Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Mon, 18 Feb 2019 14:50:26 +0000
+Subject: [PATCH] ASoC: stm32: sai: remove set but not used variables 'mask,
+ cr1'
 
-The on-chip PLL can be disabled if on the MCLKI pin we have an external
-clock at 512 x fs. This clock can be used as direct internal clock for
-ADCs or DACs.
-To support this, we add an extra clock id that can be configured
-using the set_sysclk() callback.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+sound/soc/stm/stm32_sai_sub.c: In function 'stm32_sai_configure_clock':
+sound/soc/stm/stm32_sai_sub.c:902:11: warning:
+ variable 'mask' set but not used [-Wunused-but-set-variable]
+sound/soc/stm/stm32_sai_sub.c:902:6: warning:
+ variable 'cr1' set but not used [-Wunused-but-set-variable]
+
+It's not used any more after 8307b2afd386 ("ASoC: stm32: sai: set sai as
+mclk clock provider")
+
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/ad193x.c | 26 +++++++++++++++++++++++++-
- sound/soc/codecs/ad193x.h |  8 ++++++++
- 2 files changed, 33 insertions(+), 1 deletion(-)
+ sound/soc/stm/stm32_sai_sub.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/sound/soc/codecs/ad193x.c b/sound/soc/codecs/ad193x.c
-index f8cf182518a3..96d7cb2e4a56 100644
---- a/sound/soc/codecs/ad193x.c
-+++ b/sound/soc/codecs/ad193x.c
-@@ -100,6 +100,15 @@ static const struct snd_soc_dapm_widget ad193x_adc_widgets[] = {
- 	SND_SOC_DAPM_INPUT("ADC2IN"),
- };
- 
-+static int ad193x_check_pll(struct snd_soc_dapm_widget *source,
-+			    struct snd_soc_dapm_widget *sink)
-+{
-+	struct snd_soc_component *component = snd_soc_dapm_to_component(source->dapm);
-+	struct ad193x_priv *ad193x = snd_soc_component_get_drvdata(component);
-+
-+	return !!ad193x->sysclk;
-+}
-+
- static const struct snd_soc_dapm_route audio_paths[] = {
- 	{ "DAC", NULL, "SYSCLK" },
- 	{ "DAC Output", NULL, "DAC" },
-@@ -108,7 +117,7 @@ static const struct snd_soc_dapm_route audio_paths[] = {
- 	{ "DAC2OUT", NULL, "DAC Output" },
- 	{ "DAC3OUT", NULL, "DAC Output" },
- 	{ "DAC4OUT", NULL, "DAC Output" },
--	{ "SYSCLK", NULL, "PLL_PWR" },
-+	{ "SYSCLK", NULL, "PLL_PWR", &ad193x_check_pll },
- };
- 
- static const struct snd_soc_dapm_route ad193x_adc_audio_paths[] = {
-@@ -276,7 +285,22 @@ static int ad193x_set_dai_sysclk(struct snd_soc_dai *codec_dai,
- 		int clk_id, unsigned int freq, int dir)
+diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
+index d4825700b63f..f9297228c41c 100644
+--- a/sound/soc/stm/stm32_sai_sub.c
++++ b/sound/soc/stm/stm32_sai_sub.c
+@@ -898,7 +898,7 @@ static int stm32_sai_configure_clock(struct snd_soc_dai *cpu_dai,
+ 				     struct snd_pcm_hw_params *params)
  {
- 	struct snd_soc_component *component = codec_dai->component;
-+	struct snd_soc_dapm_context *dapm = snd_soc_component_get_dapm(component);
- 	struct ad193x_priv *ad193x = snd_soc_component_get_drvdata(component);
-+
-+	if (clk_id == AD193X_SYSCLK_MCLK) {
-+		/* MCLK must be 512 x fs */
-+		if (dir == SND_SOC_CLOCK_OUT || freq != 24576000)
-+			return -EINVAL;
-+
-+		regmap_update_bits(ad193x->regmap, AD193X_PLL_CLK_CTRL1,
-+				   AD193X_PLL_SRC_MASK,
-+				   AD193X_PLL_DAC_SRC_MCLK |
-+				   AD193X_PLL_CLK_SRC_MCLK);
-+
-+		snd_soc_dapm_sync(dapm);
-+		return 0;
-+	}
- 	switch (freq) {
- 	case 12288000:
- 	case 18432000:
-diff --git a/sound/soc/codecs/ad193x.h b/sound/soc/codecs/ad193x.h
-index 8b1e65f928d2..27d6afbd7dfb 100644
---- a/sound/soc/codecs/ad193x.h
-+++ b/sound/soc/codecs/ad193x.h
-@@ -31,6 +31,11 @@ int ad193x_probe(struct device *dev, struct regmap *regmap,
- #define AD193X_PLL_INPUT_512    (2 << 1)
- #define AD193X_PLL_INPUT_768    (3 << 1)
- #define AD193X_PLL_CLK_CTRL1    0x01
-+#define AD193X_PLL_SRC_MASK	0x03
-+#define AD193X_PLL_DAC_SRC_PLL  0
-+#define AD193X_PLL_DAC_SRC_MCLK 1
-+#define AD193X_PLL_CLK_SRC_PLL  (0 << 1)
-+#define AD193X_PLL_CLK_SRC_MCLK	(1 << 1)
- #define AD193X_DAC_CTRL0        0x02
- #define AD193X_DAC_POWERDOWN           0x01
- #define AD193X_DAC_SERFMT_MASK		0xC0
-@@ -96,4 +101,7 @@ int ad193x_probe(struct device *dev, struct regmap *regmap,
+ 	struct stm32_sai_sub_data *sai = snd_soc_dai_get_drvdata(cpu_dai);
+-	int cr1, mask, div = 0;
++	int div = 0;
+ 	int sai_clk_rate, mclk_ratio, den;
+ 	unsigned int rate = params_rate(params);
  
- #define AD193X_NUM_REGS          17
- 
-+#define AD193X_SYSCLK_PLL	0
-+#define AD193X_SYSCLK_MCLK	1
-+
- #endif
+@@ -943,10 +943,8 @@ static int stm32_sai_configure_clock(struct snd_soc_dai *cpu_dai,
+ 		} else {
+ 			if (sai->mclk_rate) {
+ 				mclk_ratio = sai->mclk_rate / rate;
+-				if (mclk_ratio == 512) {
+-					mask = SAI_XCR1_OSR;
+-					cr1 = SAI_XCR1_OSR;
+-				} else if (mclk_ratio != 256) {
++				if ((mclk_ratio != 512) &&
++				    (mclk_ratio != 256)) {
+ 					dev_err(cpu_dai->dev,
+ 						"Wrong mclk ratio %d\n",
+ 						mclk_ratio);
 -- 
 2.20.1
 
