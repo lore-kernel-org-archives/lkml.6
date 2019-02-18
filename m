@@ -2,93 +2,87 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E967C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 01:48:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B895DC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 01:55:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A969218C3
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 01:48:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86E13218D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 01:55:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728194AbfBRBsi (ORCPT
+        id S1728221AbfBRBzB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 20:48:38 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48844 "EHLO mx1.redhat.com"
+        Sun, 17 Feb 2019 20:55:01 -0500
+Received: from mga11.intel.com ([192.55.52.93]:57638 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726281AbfBRBsi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 20:48:38 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CAB04461FF;
-        Mon, 18 Feb 2019 01:48:37 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-23.pek2.redhat.com [10.72.12.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BCCBA60139;
-        Mon, 18 Feb 2019 01:48:30 +0000 (UTC)
-Date:   Mon, 18 Feb 2019 09:48:20 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     bhe@redhat.com, Jerry Hoemann <jerry.hoemann@hpe.com>,
-        x86@kernel.org, Randy Dunlap <rdunlap@infradead.org>,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Pingfan Liu <kernelfans@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, yinghai@kernel.org,
-        vgoyal@redhat.com, iommu@lists.linux-foundation.org,
-        konrad.wilk@oracle.com
-Subject: Re: [PATCHv7] x86/kdump: bugfix, make the behavior of crashkernel=X
- consistent with kaslr
-Message-ID: <20190218014820.GA10711@dhcp-128-65.nay.redhat.com>
-References: <20190125140823.GC27998@zn.tnic>
- <20190131075907.GB19091@dhcp-128-65.nay.redhat.com>
- <20190131105732.GC6749@zn.tnic>
- <20190131222732.GA946@anatevka>
- <20190131234740.GO6749@zn.tnic>
- <20190204223016.GB11986@anatevka>
- <20190205081552.GG21801@zn.tnic>
- <20190206120804.GC10062@dhcp-128-65.nay.redhat.com>
- <20190211204816.GB21473@dhcp-128-65.nay.redhat.com>
- <20190215102458.GD10433@zn.tnic>
+        id S1727948AbfBRBzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 20:55:00 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Feb 2019 17:55:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,382,1544515200"; 
+   d="scan'208";a="127243187"
+Received: from unknown (HELO [10.239.13.114]) ([10.239.13.114])
+  by orsmga003.jf.intel.com with ESMTP; 17 Feb 2019 17:54:57 -0800
+Message-ID: <5C6A119C.8080009@intel.com>
+Date:   Mon, 18 Feb 2019 09:59:56 +0800
+From:   Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190215102458.GD10433@zn.tnic>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 18 Feb 2019 01:48:38 +0000 (UTC)
+To:     Andi Kleen <ak@linux.intel.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "Liang, Kan" <kan.liang@intel.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "Xu, Like" <like.xu@intel.com>,
+        "jannh@google.com" <jannh@google.com>,
+        "arei.gonglei@huawei.com" <arei.gonglei@huawei.com>,
+        "jmattson@google.com" <jmattson@google.com>
+Subject: Re: [PATCH v5 12/12] KVM/VMX/vPMU: support to report GLOBAL_STATUS_LBRS_FROZEN
+References: <1550135174-5423-1-git-send-email-wei.w.wang@intel.com> <1550135174-5423-13-git-send-email-wei.w.wang@intel.com> <20190214163147.GL16922@tassilo.jf.intel.com> <286AC319A985734F985F78AFA26841F73DF71ED6@shsmsx102.ccr.corp.intel.com> <20190215131014.GC16922@tassilo.jf.intel.com>
+In-Reply-To: <20190215131014.GC16922@tassilo.jf.intel.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/15/19 at 11:24am, Borislav Petkov wrote:
-> On Tue, Feb 12, 2019 at 04:48:16AM +0800, Dave Young wrote:
-> > Even we make it automatic in kernel, but we have to have some default
-> > value for swiotlb in case crashkernel can not find a free region under 4G.
-> > So this default value can not work for every use cases, people need 
-> > manually use crashkernel=,low and crashkernel=,high in case
-> > crashkernel=X does not work.
-> 
-> Why would the user need to find swiotlb range? The kernel has all the
-> information it requires at its finger tips in order to decide properly.
-> 
-> The user wants a crashkernel range, the kernel tries the low range =>
-> no workie, then it tries the next range => workie but needs to allocate
-> swiotlb range so that DMA can happen too. Doh, then the kernel does
-> allocate that too.
+On 02/15/2019 09:10 PM, Andi Kleen wrote:
+>
+> OK. The freeze bits need to be cleared by IA32_PERF_GLOBAL_STATUS_RESET, which seems not supported by the perf code yet (thus guest won't clear them). Would handle_irq_v4 also need to be changed to support that?
+> In Arch Perfmon v4 it is  cleared by the MSR_CORE_PERF_GLOBAL_OVF_CTRL write
 
-It is ideal if kernel can do it automatically, but I'm not sure if
-kernel can predict the swiotlb reserved size automatically.
+Not very sure about this one. The spec 18.2.4.2 mentions
+"IA32_PERF_GLOBAL_STATUS_RESET provides additional bit fields to clear 
+the new indicators.."
+IIUIC, the new freeze bits can only be cleared by RESET.
 
-Let's add more people to seek for comments. 
 
-> 
-> Why would the user need to do anything here?!
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> Good mailing practices for 400: avoid top-posting and trim the reply.
+> But the guest KVM pmu doesn't support v4 so far, so the only way to clear it is through DEBUGCTL.
+>
+> STATUS_RESET would only be needed to set it from the guest, which is not necessary at least for now
+> (and would be also v4)
+>
+> At some point the guest PMU should probably be updated for v4, but it can be done
+> separately from this.
+>
+
+Agree. I think the guest perf won't work in v4 mode if the KVM vPMU 
+exposes it is v3.
+Probably we could also leave the freeze bits virtualization support to 
+another series of vPMU v4 support?
+We would also need to use the STATUS_SET in v4 to set the freeze bits of 
+GLOBAL_STATUS when
+entering the guest (instead of clearing the guest debugctl), so that we 
+could achieve architectural emulation.
+
+Best,
+Wei
+
