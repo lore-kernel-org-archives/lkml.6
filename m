@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B23DFC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:38:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CC56C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:39:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 832BD20700
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:38:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E8AA20838
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:39:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550500739;
-	bh=1ujP1TfwCDeFtiq3dVMwcpXWuPe3pHmdpj9U8n3+akU=;
+	s=default; t=1550500750;
+	bh=02/olCY8EHlEVDTv5KxdQVSYegowzzmvwwgbkKM/npE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WLCBJR365YxV92p8LRDw8aILTBGFXqMRIpppPN1HJv2aC/R/1Z0bMLEiWzixk2lym
-	 DtnGFjkbCZGISoLAA2DkAhhbLCzA6sVaZBj32vmFBYXAJGVr0Vr/05OAFXeok1PYKY
-	 uue3s+8p4cJ2hBjEmzpHlpqXBOCl9+mjlKL5VZmI=
+	b=jIHl7VZgo90fJI20uwEhRk8KTUHomya0jR5c1ARbiA+B2NMioJ7iL3GN1xMEfsYMv
+	 77KRAkEweuU9cb5DwD+kGhiSMHij8BQImRajO93JDTeSMV03N5MO04qX6WAzMEj4FZ
+	 Auym8aYKZ/3VUwnQ04DvE3oRrGF71W3ZcgcrfiJQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387661AbfBROi6 (ORCPT
+        id S2387466AbfBROjJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:38:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33542 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:39:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733022AbfBRNxr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:53:47 -0500
+        id S1732627AbfBRNxf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:53:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB98720449;
-        Mon, 18 Feb 2019 13:53:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BD28420449;
+        Mon, 18 Feb 2019 13:53:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498026;
-        bh=1ujP1TfwCDeFtiq3dVMwcpXWuPe3pHmdpj9U8n3+akU=;
+        s=default; t=1550498014;
+        bh=02/olCY8EHlEVDTv5KxdQVSYegowzzmvwwgbkKM/npE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dwCTRXAWFndroSeH/nY5Z+ujlWtxNbqADQT3xWbdh5h3ceZ7bYZ3t3AoJm+QYEHOU
-         jcYDNyFSORu9k5uut0OfYpUilFhdve2HYLRySp6cvJNFVcqZVyu54gCROThBLRjpJT
-         +hR9MkdiYp51KZcuVnbV5N6gKquqfg1Q2IVWwbew=
+        b=DEwipv1BojA6gnIIoKB5T2t5+NQGcl484uwZGIDgBxeJ4q5wzgHhDB0ZXI32qBj/F
+         OuCuTonE/AnAT2yXLDITjkvtKligrTzdDJ/4zhdwE+wa5r0dJqGU26xhqTOiucI/ZC
+         DGTl6cjaSL+EjaOJ9mpRz1eEtXQncLBmqD6vr1Ck=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jack Wang <jinpu.wang@cloud.ionos.com>,
-        Nate Dailey <nate.dailey@stratus.com>,
-        Song Liu <songliubraving@fb.com>
-Subject: [PATCH 4.19 77/85] md/raid1: dont clear bitmap bits on interrupted recovery.
-Date:   Mon, 18 Feb 2019 14:43:43 +0100
-Message-Id: <20190218133507.301048122@linuxfoundation.org>
+        stable@vger.kernel.org, Matti Kurkela <Matti.Kurkela@iki.fi>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.19 66/85] Input: elantech - enable 3rd button support on Fujitsu CELSIUS H780
+Date:   Mon, 18 Feb 2019 14:43:32 +0100
+Message-Id: <20190218133506.310298666@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133459.758004711@linuxfoundation.org>
 References: <20190218133459.758004711@linuxfoundation.org>
@@ -66,83 +65,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nate Dailey <nate.dailey@stratus.com>
+From: Matti Kurkela <Matti.Kurkela@iki.fi>
 
-commit dfcc34c99f3ebc16b787b118763bf9cb6b1efc7a upstream.
+commit e8b22d0a329f0fb5c7ef95406872d268f01ee3b1 upstream.
 
-sync_request_write no longer submits writes to a Faulty device. This has
-the unfortunate side effect that bitmap bits can be incorrectly cleared
-if a recovery is interrupted (previously, end_sync_write would have
-prevented this). This means the next recovery may not copy everything
-it should, potentially corrupting data.
+Like Fujitsu CELSIUS H760, the H780 also has a three-button Elantech
+touchpad, but the driver needs to be told so to enable the middle touchpad
+button.
 
-Add a function for doing the proper md_bitmap_end_sync, called from
-end_sync_write and the Faulty case in sync_request_write.
+The elantech_dmi_force_crc_enabled quirk was not necessary with the H780.
 
-backport note to 4.14: s/md_bitmap_end_sync/bitmap_end_sync
-Cc: stable@vger.kernel.org 4.14+
-Fixes: 0c9d5b127f69 ("md/raid1: avoid reusing a resync bio after error handling.")
-Reviewed-by: Jack Wang <jinpu.wang@cloud.ionos.com>
-Tested-by: Jack Wang <jinpu.wang@cloud.ionos.com>
-Signed-off-by: Nate Dailey <nate.dailey@stratus.com>
-Signed-off-by: Song Liu <songliubraving@fb.com>
+Also document the fw_version and caps values detected for both H760 and
+H780 models.
+
+Signed-off-by: Matti Kurkela <Matti.Kurkela@iki.fi>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/md/raid1.c |   28 ++++++++++++++++++----------
- 1 file changed, 18 insertions(+), 10 deletions(-)
+ drivers/input/mouse/elantech.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/md/raid1.c
-+++ b/drivers/md/raid1.c
-@@ -1863,6 +1863,20 @@ static void end_sync_read(struct bio *bi
- 		reschedule_retry(r1_bio);
- }
- 
-+static void abort_sync_write(struct mddev *mddev, struct r1bio *r1_bio)
-+{
-+	sector_t sync_blocks = 0;
-+	sector_t s = r1_bio->sector;
-+	long sectors_to_go = r1_bio->sectors;
-+
-+	/* make sure these bits don't get cleared. */
-+	do {
-+		md_bitmap_end_sync(mddev->bitmap, s, &sync_blocks, 1);
-+		s += sync_blocks;
-+		sectors_to_go -= sync_blocks;
-+	} while (sectors_to_go > 0);
-+}
-+
- static void end_sync_write(struct bio *bio)
- {
- 	int uptodate = !bio->bi_status;
-@@ -1874,15 +1888,7 @@ static void end_sync_write(struct bio *b
- 	struct md_rdev *rdev = conf->mirrors[find_bio_disk(r1_bio, bio)].rdev;
- 
- 	if (!uptodate) {
--		sector_t sync_blocks = 0;
--		sector_t s = r1_bio->sector;
--		long sectors_to_go = r1_bio->sectors;
--		/* make sure these bits doesn't get cleared. */
--		do {
--			md_bitmap_end_sync(mddev->bitmap, s, &sync_blocks, 1);
--			s += sync_blocks;
--			sectors_to_go -= sync_blocks;
--		} while (sectors_to_go > 0);
-+		abort_sync_write(mddev, r1_bio);
- 		set_bit(WriteErrorSeen, &rdev->flags);
- 		if (!test_and_set_bit(WantReplacement, &rdev->flags))
- 			set_bit(MD_RECOVERY_NEEDED, &
-@@ -2172,8 +2178,10 @@ static void sync_request_write(struct md
- 		     (i == r1_bio->read_disk ||
- 		      !test_bit(MD_RECOVERY_SYNC, &mddev->recovery))))
- 			continue;
--		if (test_bit(Faulty, &conf->mirrors[i].rdev->flags))
-+		if (test_bit(Faulty, &conf->mirrors[i].rdev->flags)) {
-+			abort_sync_write(mddev, r1_bio);
- 			continue;
-+		}
- 
- 		bio_set_op_attrs(wbio, REQ_OP_WRITE, 0);
- 		if (test_bit(FailFast, &conf->mirrors[i].rdev->flags))
+--- a/drivers/input/mouse/elantech.c
++++ b/drivers/input/mouse/elantech.c
+@@ -1119,6 +1119,8 @@ static int elantech_get_resolution_v4(st
+  * Asus UX31               0x361f00        20, 15, 0e      clickpad
+  * Asus UX32VD             0x361f02        00, 15, 0e      clickpad
+  * Avatar AVIU-145A2       0x361f00        ?               clickpad
++ * Fujitsu CELSIUS H760    0x570f02        40, 14, 0c      3 hw buttons (**)
++ * Fujitsu CELSIUS H780    0x5d0f02        41, 16, 0d      3 hw buttons (**)
+  * Fujitsu LIFEBOOK E544   0x470f00        d0, 12, 09      2 hw buttons
+  * Fujitsu LIFEBOOK E546   0x470f00        50, 12, 09      2 hw buttons
+  * Fujitsu LIFEBOOK E547   0x470f00        50, 12, 09      2 hw buttons
+@@ -1171,6 +1173,13 @@ static const struct dmi_system_id elante
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "CELSIUS H760"),
+ 		},
+ 	},
++	{
++		/* Fujitsu H780 also has a middle button */
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "FUJITSU"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "CELSIUS H780"),
++		},
++	},
+ #endif
+ 	{ }
+ };
 
 
