@@ -2,134 +2,162 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4605CC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:13:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54A1FC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:15:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 211EE20838
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:13:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29842217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:15:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731294AbfBRPNM (ORCPT
+        id S1731329AbfBRPP2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 10:13:12 -0500
-Received: from foss.arm.com ([217.140.101.70]:33138 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730904AbfBRPNM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 10:13:12 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A6971650;
-        Mon, 18 Feb 2019 07:13:12 -0800 (PST)
-Received: from why.wild-wind.fr.eu.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AA7323F740;
-        Mon, 18 Feb 2019 07:12:48 -0800 (PST)
-Date:   Mon, 18 Feb 2019 15:12:19 +0000
-From:   Marc Zyngier <marc.zyngier@arm.com>
-To:     Lokesh Vutla <lokeshvutla@ti.com>
-Cc:     Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Device Tree Mailing List <devicetree@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-Subject: Re: [PATCH v5 05/10] dt-bindings: irqchip: Introduce TISCI
- Interrupt router bindings
-Message-ID: <20190218150738.527a0507@why.wild-wind.fr.eu.org>
-In-Reply-To: <20190212074237.2875-6-lokeshvutla@ti.com>
-References: <20190212074237.2875-1-lokeshvutla@ti.com>
-        <20190212074237.2875-6-lokeshvutla@ti.com>
-Organization: ARM Ltd
-X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Mon, 18 Feb 2019 10:15:28 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55352 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730214AbfBRPP2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 10:15:28 -0500
+Received: by mail-wm1-f67.google.com with SMTP id q187so5441863wme.5
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 07:15:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=UHPpJT5oiNNLod+IJDRGWkaQD0QAk6ppGoNG+v3R+44=;
+        b=Pp0Lwk1KLUuJ+S7wqUR3cx7E/sVZ20vOLvLCSfOcjnixH/99SS9Tqi+e7ia6+MbaVn
+         roPEHbpmW22Nl8xeh8PCXKRPh+m3XgQ8SjYz+IRPGJuIsB230f3P2vQr+zgB9NZkXd6S
+         RU5Ys7NaAqWlApHKZC2oMMi52vk8d19o7PnpzgUJjuESNjuxhgWcoxlMmSDg3uB+LqWm
+         li/sn/EnDwe2aipHHvZDnGAREfSZ06dYJw5Pef5RHLwoavYKAJi3Fl2BXXt6F+aUjDqX
+         u1exRRsdpd6XfrENhZBtCM8leRNnz5+pfXJkQCSjuNAh5iNhJlPa/Pe3HuqxZPXgDLrz
+         +9rg==
+X-Gm-Message-State: AHQUAuZILcXk2mBpPPggzWgS3vp+kjjPNB9zWu4DTswm3DATWmB4MVmk
+        SqCcCpKWrj6tqkU2q03hU3amRw==
+X-Google-Smtp-Source: AHgI3Ib0T5ZaxEzdKMFpaqEIMeBm80RzQaKocrsq+3wRzwjmD+fvbRzgpX2QU36WjA8ziBF9TxIaTg==
+X-Received: by 2002:a1c:80c4:: with SMTP id b187mr15261442wmd.23.1550502925478;
+        Mon, 18 Feb 2019 07:15:25 -0800 (PST)
+Received: from localhost.localdomain (nat-pool-mxp-t.redhat.com. [149.6.153.186])
+        by smtp.gmail.com with ESMTPSA id c18sm16373689wre.32.2019.02.18.07.15.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Feb 2019 07:15:24 -0800 (PST)
+Date:   Mon, 18 Feb 2019 16:15:22 +0100
+From:   Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+To:     Stanislaw Gruszka <sgruszka@redhat.com>
+Cc:     Rosen Penev <rosenp@gmail.com>,
+        linux-wireless <linux-wireless@vger.kernel.org>,
+        Samuel Sieb <samuel@sieb.net>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: MT76x2U crashes XHCI driver on AMD Ryzen system
+Message-ID: <20190218151521.GB9283@localhost.localdomain>
+References: <CAJ0CqmVNF83bWgc+LSQ3_i=zfp-sXC5Nf=nKfqB3SWa8r7sKdQ@mail.gmail.com>
+ <83A1D243-9073-48D1-9F26-5A2581DCB829@gmail.com>
+ <CAJ0CqmUgPWNJtCW4Q__sOtB8w-YtwW+uZy7crxMNrmSgQ6OFyA@mail.gmail.com>
+ <1547404075.1582.0@smtp.gmail.com>
+ <CAJ0CqmU7k5i26g7dGPxNdts7Gm67W6qNsr4vYuW05ugsEF1ohw@mail.gmail.com>
+ <CAKxU2N-+CTaRdJMFVRdozJ5TTpN+_4thiDRBJBFq8gGtuRVYvA@mail.gmail.com>
+ <20190114091841.GA23045@localhost.localdomain>
+ <CAKxU2N8ioMszBCyQcH7CVhgBdW4aj7yZ+kYQe14DCV5OSAnxrg@mail.gmail.com>
+ <20190115090400.GA2267@localhost.localdomain>
+ <20190218143742.GA11872@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190218143742.GA11872@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Feb 2019 13:12:32 +0530
-Lokesh Vutla <lokeshvutla@ti.com> wrote:
-
-> Add the DT binding documentation for Interrupt router driver.
+> (cc: IOMMU & page_frag_alloc maintainers)
 > 
-> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
-> ---
-> Changes since v4:
-> - None
+> On Tue, Jan 15, 2019 at 10:04:01AM +0100, Lorenzo Bianconi wrote:
+> > > On Mon, Jan 14, 2019 at 1:18 AM Lorenzo Bianconi
+> > > <lorenzo.bianconi@redhat.com> wrote:
+> > > >
+> > > > > On Sun, Jan 13, 2019 at 11:00 AM Lorenzo Bianconi
+> > > > > <lorenzo.bianconi@redhat.com> wrote:
+> > > > > >
+> > > > > > >
+> > > > > > >
+> > > > > > > On Sun, Jan 13, 2019 at 5:33 AM, Lorenzo Bianconi <lorenzo.bianconi@redhat.com> wrote:
+> > > > > > >
+> > > > > > > Direct. No VM used. This is the only peripheral causing this issue.
+> > > > > > >
+> > > > > > > Is the device connected to a usb3.0 port? If so, could you please try to connect the dongle to a 2.0 one?
+> > > > > > >
+> > > > > > > I tried through a USB 2.0 port. Shouldn't make a difference as they both use the xhci driver.
+> > > > > > >
+> > > > > >
+> > > > > > mt76x2u supports scatter-gather on usb 3.0 (not on 2.0)
+> > > > > Tried a USB 3 port. Same result.
+> > > > > >
+> > > > > > > Could you please double check if IOMMU is enabled?
+> > > > > > >
+> > > > > >
+> > > > > > Have you tried to disable it? Does it make any difference?
+> > > > > No idea how. UEFI doesn't seem to show anything similar.
+> > > > >
+> > > > > Similar bug report: https://bugzilla.kernel.org/show_bug.cgi?id=202241
 > 
->  .../interrupt-controller/ti,sci-intr.txt      | 85 +++++++++++++++++++
->  MAINTAINERS                                   |  1 +
->  2 files changed, 86 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
+> FWIW: I provided some patches in the bugzilla, which were reported to
+> solve the problem. But I looking for confirmation if both are needed:
 > 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt b/Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
-> new file mode 100644
-> index 000000000000..4b0ca797fda1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
-> @@ -0,0 +1,85 @@
-> +Texas Instruments K3 Interrupt Router
-> +=====================================
-> +
-> +The Interrupt Router (INTR) module provides a mechanism to route M
-> +interrupt inputs to N interrupt outputs, where all M inputs are selectable
-> +to be driven per N output. There is one register per output (MUXCNTL_N) that
-> +controls the selection.
-> +
-> +
-> +                                 Interrupt Router
-> +                             +----------------------+
-> +                             |  Inputs     Outputs  |
-> +        +-------+            | +------+             |
-> +        | GPIO  |----------->| | irq0 |             |       Host IRQ
-> +        +-------+            | +------+             |      controller
-> +                             |    .        +-----+  |      +-------+
-> +        +-------+            |    .        |  0  |  |----->|  IRQ  |
-> +        | INTA  |----------->|    .        +-----+  |      +-------+
-> +        +-------+            |    .          .      |
-> +                             | +------+      .      |
-> +                             | | irqM |    +-----+  |
-> +                             | +------+    |  N  |  |
-> +                             |             +-----+  |
-> +                             +----------------------+
-> +
-> +Configuration of these MUXCNTL_N registers is done by a system controller
-> +(like the Device Memory and Security Controller on K3 AM654 SoC). System
-> +controller will keep track of the used and unused registers within the Router.
-> +Driver should request the system controller to get the range of GIC IRQs
-> +assigned to the requesting hosts. It is the drivers responsibility to keep
-> +track of Host IRQs.
-> +
-> +Communication between the host processor running an OS and the system
-> +controller happens through a protocol called TI System Control Interface
-> +(TISCI protocol). For more details refer:
-> +Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
-> +
-> +TISCI Interrupt Router Node:
-> +----------------------------
-> +- compatible:		Must be "ti,sci-intr".
-> +- interrupt-controller:	Identifies the node as an interrupt controller
-> +- #interrupt-cells:	Specifies the number of cells needed to encode an
-> +			interrupt source. The value should be 4.
-> +			First cell should contain the TISCI device ID of source
-> +			Second cell should contain the interrupt source offset
-> +			within the device
-> +			Third cell specifies the trigger type as defined
-> +			in interrupts.txt in this directory.
-> +			Fourth cell should be 1 if the irq is coming from
-> +			interrupt aggregator else 0.
+> 0001-mt76x02u-use-usb_bulk_msg-to-upload-firmware.patch
+> 0002-mt76usb-do-not-use-compound-head-page-for-SG-I-O.patch
+> 
+> Or problem can be solved by just one of it (either first or second).
+> 
+> Additionally I'm not 100% sure if
+> 
+> 0002-mt76usb-do-not-use-compound-head-page-for-SG-I-O.patch
+> 
+> is correct. So perhaps some IOMMU maintainer could look at it.
+> 
+> > > > You should be able to disable iommu using GRUB_CMDLINE_LINUX in
+> > > > /etc/default/grub (I guess setting iommu=off and reinstalling grub)
+> > > > https://wiki.gentoo.org/wiki/IOMMU_SWIOTLB
+> > > Yep. Working great now. I wonder what mt76 is doing to cause the crash though...
+> > 
+> > Thanks for bisecting the issue. 
+> 
+> Lorenzo, what you mean by 'bisecting' here ? Someone did 'git bisect'
+> on this issue?
+> 
 
-This is odd. Doesn't the aggregator have a device ID too, which could
-be used to discriminate between the two?
+Hi Stanislaw,
 
-Thanks,
+I was meaning 'help bisecting' the issue
 
-	M.
--- 
-Without deviation from the norm, progress is not possible.
+> > I think amd iommu does not support well usb scatter-gather
+> > (used by default in mt76u). I am working on a series in order to add the possibility to
+> > disable it.
+> 
+> Even if that true that AMD IOMMU does not support 'well' SG (what I think
+> is not true) disabling SG in mt76 driver is not right solution. Right
+> solution would be propagate the issue to AMD IOMMU maintainers
+> (already CCed).
+
+I meant that AMD iommu seems to have different constraints respect to Intel
+one.
+
+Regards,
+Lorenzo
+
+> 
+> One problem in mt76 is page_frag_alloc() usage with different sizes.
+> page_frag_alloc() unlike like other allocators do not assure alignment
+> and relay on callers to provide buffers sizes that are aligned.
+> Unaligned buffer might then not be appropriate for DMA.
+> 
+> Another issue is that dma_map_sg() & dma_map_page() may require some 
+> constraints. I'm not sure about that and I want to clarify that with 
+> CCed mm maintainers. I think DMA drivers may expect sg->offset < PAGE_SIZE
+> for both dma_map_sg() and dma_map_page(). Additionally dma_map_page()
+> maight expect that offset & length specify buffer within one page.
+> 
+> Stanislaw
