@@ -2,157 +2,171 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8914C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 12:29:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6553C4360F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 12:29:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C59D21479
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 12:29:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75D0121479
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 12:29:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="qUxWwbHf"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xfmONUNS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730912AbfBRM3B (ORCPT
+        id S1730926AbfBRM3c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 07:29:01 -0500
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:32242 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728293AbfBRM3A (ORCPT
+        Mon, 18 Feb 2019 07:29:32 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36956 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729690AbfBRM3b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 07:29:00 -0500
-X-IronPort-AV: E=Sophos;i="5.58,384,1544511600"; 
-   d="scan'208";a="24837105"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 18 Feb 2019 05:28:59 -0700
-Received: from NAM02-BL2-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.106) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Mon, 18 Feb 2019 05:28:58 -0700
+        Mon, 18 Feb 2019 07:29:31 -0500
+Received: by mail-wm1-f65.google.com with SMTP id x10so16786425wmg.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 04:29:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2qzLqmDASAnVczV+mXixLdUlxbyLm3SedR09cZDgmvg=;
- b=qUxWwbHfAr7LOK/PEjxzEuN0GwHkVLcfNxlSD2rlszx7TUyHuMR+mJ7EhmvGHcTa+5uAHlAGBOkKanHPDr7w0tpaoKE8exBj+f8U+s3AdYy6PLXSHwfsWegZUpzJ9iKKrjx941ARNdQENd8+kuY6jWbwFvoGSRNwZ/KgPEYFGPI=
-Received: from MWHPR11MB1662.namprd11.prod.outlook.com (10.172.55.15) by
- MWHPR11MB1821.namprd11.prod.outlook.com (10.175.53.136) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1622.19; Mon, 18 Feb 2019 12:28:56 +0000
-Received: from MWHPR11MB1662.namprd11.prod.outlook.com
- ([fe80::b92e:f982:af32:2887]) by MWHPR11MB1662.namprd11.prod.outlook.com
- ([fe80::b92e:f982:af32:2887%5]) with mapi id 15.20.1622.018; Mon, 18 Feb 2019
- 12:28:56 +0000
-From:   <Nicolas.Ferre@microchip.com>
-To:     <alexandre.belloni@bootlin.com>, <Ludovic.Desroches@microchip.com>,
-        <gregkh@linuxfoundation.org>, <robh+dt@kernel.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <stern@rowland.harvard.edu>,
-        <Tudor.Ambarus@microchip.com>
-Subject: Re: [RESEND PATCH] dt-bindings: arm: atmel: add new sam9x60 SFR
- binding
-Thread-Topic: [RESEND PATCH] dt-bindings: arm: atmel: add new sam9x60 SFR
- binding
-Thread-Index: AQHUx4WEXfob+TfGvkO0ZSe4kBgSnw==
-Date:   Mon, 18 Feb 2019 12:28:56 +0000
-Message-ID: <51c2d2af-3d2f-0fa8-c9e7-5fc6a4f1a1b4@microchip.com>
-References: <20190206180425.27324-1-nicolas.ferre@microchip.com>
-In-Reply-To: <20190206180425.27324-1-nicolas.ferre@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: LO2P265CA0250.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:8a::22) To MWHPR11MB1662.namprd11.prod.outlook.com
- (2603:10b6:301:e::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Nicolas.Ferre@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [195.6.168.232]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2edbae24-6594-4d4f-374e-08d6959ca6d0
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605104)(2017052603328)(7153060)(7193020);SRVR:MWHPR11MB1821;
-x-ms-traffictypediagnostic: MWHPR11MB1821:
-x-microsoft-exchange-diagnostics: =?utf-8?B?MTtNV0hQUjExTUIxODIxOzIzOkh6MTNqNi9ua09QZW4rSjZrMnFHZ09McmFI?=
- =?utf-8?B?dUN4SzNhMEpJQUZjcDl5cm9uOU94TEJUMUhIczZmeDlBdnZYNHArQTdvMHE3?=
- =?utf-8?B?bXc4Yk9SRUhIQktZb0E4dGROVzlYMC9UQnJnenJyeE5MQit4ZHVMYWw2dkxT?=
- =?utf-8?B?ZmFYRHN5elplYVhjVTFTakhYaGtnRWpaVXBiUEFjcHlXeDJzOFlTS0NCRGhs?=
- =?utf-8?B?ZW5pRVR3U0dIcTVSOFBBN3lubTFZemJSVGRxelRvZE9nSzIvOFNQTW0xbGR1?=
- =?utf-8?B?cXNCUG1EdUFoVDRTQUR6UVc4eFhBMDJTTkhFZjhiUUcvZ1U4THJNRHVzN2Y2?=
- =?utf-8?B?WTVpZ1JyZUJkdUwyaE5WLzgvaXoxWWtBZHROTnVlK281SHRGSFBjYlBBVVB6?=
- =?utf-8?B?SThma0VyWmUxSVdqcjhMU3I4RVJ3Lzg1cCtiU1VJaHhQK05KYlE2UHZyYm15?=
- =?utf-8?B?aXNrNnJkV1hGbDFqUldIQ1UxSnZ5SXpHTk1MMUl4M1hqQ0p1NkNPdWViWE82?=
- =?utf-8?B?WEI1WjQ5ckhhK1N2dlVqMUYyQm1VMzd3RkdaMDNYb3FSOWo5MStHVFZnemZy?=
- =?utf-8?B?UE1SYzkweXQvdFZvR2JPOXFla2ZhOFVoZTJpaytnaTdUbXNEbStVUVVQaWha?=
- =?utf-8?B?VlNHMnRzaGJ1RHFhbkFRZHZzTFpHRVIvcndIQ0FBRmp4WXl4T1o1UzRib0JJ?=
- =?utf-8?B?QUkvQ0FTdWUyOVhpUUEwOGUvMm8welBmQ3JMWHl0RmYzbmFGdlo1SGRBRzgx?=
- =?utf-8?B?L0h6T2o2Q2p0VzVEclhVVEIyR3oxNENhQXA2NGtPc2wxUWFUWWlZY2pJN2lN?=
- =?utf-8?B?VGZVcUs0dWI5VHhOWDFBWTRkNmhIWTM1OXppdlduT2ZocU1pRkdNbFRDbk90?=
- =?utf-8?B?eE1uZ2s2d3hxZVpPUTJ5Ry9XclhHNkNMOFZzRUYxT1EyNnVJZ1AySXU0TmRK?=
- =?utf-8?B?bmxXa2lIeTV2Mis4cm1JMTQycWxCRVcvU0M0ZUYycUdtd3hpTE9rSDJUUGwz?=
- =?utf-8?B?ak02TjZIYW5NdFpGRlZCRkd5aWpnM0RYYnErWFM4QWUwTlppbXE4TnV4cUls?=
- =?utf-8?B?bEh1STNveUprWDBkRlZYSkJZYTE3NzBIYW9mMGRkSkNjM1NiOVl5RDcyM0Vr?=
- =?utf-8?B?NmloTkpDNDNDMmFJRWVXYjF2WXhoQmRuUGFCZ2Q3cmRUZk4vSmxXRnUyd2ln?=
- =?utf-8?B?TEdIT05jeXpjQVl4elNCL05kTEV5K3BiMkVxWWFsQmcyUk1icHNHaXplaEVH?=
- =?utf-8?B?RjhtMWNiM2JqOERlWk15VHBFOFZkUWdSSUROWkg1WG5BbFoxdHJaUWw4Y2o2?=
- =?utf-8?B?a1dJVlNFRWlCMWE2WDFZbjZHZ2UrcmFUcTY4UlRFNHljU0lWclVodFdGMzQx?=
- =?utf-8?B?a1FyZEFOQ2FXNzl3eENkV2tDaEtaWTNlR0RnNEV0UUpaN1pNMXhUU3I1SVZL?=
- =?utf-8?B?TWlkN1JiS3d4czVnK2NEZ0dMQy9kcEE0VTVwcm1XbndLM1pKcXdOQUVpdWgw?=
- =?utf-8?B?QWU1b3hmK1h1MWw0aTg3cFZPM2hHOGUrbGU3aWJCZ25mZTN1WDV6UkErUjZt?=
- =?utf-8?B?aWkrU0N4TlRrdklVZEpRRjJJd0N3SjI3MURzR0R1OXRCYVM4VWdRMEhXdGJz?=
- =?utf-8?B?MlpsaEFSVjZrQjdJZ1p2NlVUREpQVnlkQjI4ZmhBTkV2eG0xamFiYXJZcmV2?=
- =?utf-8?B?cWpVMzZlQXJ3dG12d25NUUYrSHp5NUFCZWc2YThMVURveitpRjE3NEVMZkhZ?=
- =?utf-8?B?M2d4NDRpQ2I2cU1ycURyTlk1aVo0Y1JMNkloZ2lXWmFDOUtGUmpSajFXSkJ5?=
- =?utf-8?Q?aIwvHaPB1SWCL?=
-x-microsoft-antispam-prvs: <MWHPR11MB1821F9B35A418F4DBDB75F13E0630@MWHPR11MB1821.namprd11.prod.outlook.com>
-x-forefront-prvs: 09525C61DB
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(39860400002)(366004)(346002)(376002)(396003)(199004)(189003)(478600001)(8936002)(8676002)(97736004)(81166006)(53936002)(14454004)(5660300002)(186003)(26005)(81156014)(102836004)(31696002)(229853002)(6512007)(6436002)(6246003)(86362001)(68736007)(4326008)(36756003)(107886003)(6486002)(66066001)(3846002)(6116002)(71190400001)(71200400001)(316002)(105586002)(54906003)(2906002)(305945005)(72206003)(7736002)(99286004)(52116002)(106356001)(110136005)(486006)(11346002)(476003)(446003)(386003)(2616005)(6506007)(53546011)(25786009)(31686004)(14444005)(256004)(76176011);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1821;H:MWHPR11MB1662.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: UAQcHt6ohuM1supUOwjZmcfOCSoa9F+Nn8FK1COgXbOCEohaSecWrPMleBb/HL8X1WzuQOReVqrPPHCzvUQrThCKqr7ZZxyoUrK2W6OMGzOnDuPXviRMd9RV+8T25txStJvhjE0PVR4EGaYTkZpD6svYkOnaGP7gocOuix643f1/v0rDUSbzigFA0IzyyyK/nqEuTDnVFdG78/JugUOzhpsLv76W0ro1aVV6/UBL1Ogd1nhflM3mCjQs13wQv3dsBPsMJjNy6Q7nj8K/3xglMkqtxyruCU0UahFKvIluE5qoZ5EMnQoZQJ3zlKUKJI6CRbWQ2BmDYYOxWKSgyGzFIDzpJIIO+cIjfKhDOLoIS4pa08IagkjGNMasC7wF0CL4VONwJR+USRHthbTxeSMzcBqct3WU7UORPFkcf8DJN3A=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DE25B2A2E8D5964B884831A01533094A@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=MRzmTEn9G8kwM20BMcAVcDRHrXJ3gBe2p0nBD+YMJro=;
+        b=xfmONUNSh0hOZbxqpkLcUrMqFonwDGkiq7gydIXoj42z/Gb5HT1YcUJLifIQzWTLRh
+         GJgrv9gs5/p39PWaUPyVLGO4IpPHPxExIHO3RNX2MtHkVzk5Q+VYC00tQbb6LUMCaDK0
+         /C4P5p5mrYvVulsNYXenT3ywd7lByEAC1S5WfrYHgzdXhy3WGHFKpKpko4f8vB80YroU
+         OrepEqlRm0CG4sc549aFHTaZ4Bo1Dc37aRbmgiR8n0pQkxVA8MeMBwgO2geLNA41aUrH
+         o+ueQgCTi254uj0tB/6ygVPeFf8Kxb1jGFni4aVjLETBBp58gVhsBdFI/nlruuJpNP3R
+         N5pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=MRzmTEn9G8kwM20BMcAVcDRHrXJ3gBe2p0nBD+YMJro=;
+        b=lndTNpz3+xzvpQ7r53f5o49tIWBgL641WgyXhT2bCLF5c1cG7PIzPpfRFsZhPVNEuV
+         BJgovTIPCGrjOQArKz8TMqCNNuJlVTjdaW3yFcUHdVWX+5w0Ofgbif682NeDKzMHtika
+         VMnsk78SMJu4a/qF4VKG9d8CimLIFFW+pY785a8ydzb0dUcYcDswQtyuaOncR8eS/C3h
+         tUzeLqJwjnghacP7pxKpucTDn2w7JlaPLLki0GChoVT5syKyT5VYfVBY8Ijctigb/42n
+         HgT5eeLEa9TsjdjFJxIBDcB9saH23OxM9W3kkJ4ymmVBkwt5Eqom5YzKggUVU+Zfn0hR
+         kWuA==
+X-Gm-Message-State: AHQUAub81ApOaVL1HxjYJjdmagZqZNu157cdGTjqaMSpXbQypY73Q2xS
+        Tcn0uChQ6K8La238p/B9r0vdrw==
+X-Google-Smtp-Source: AHgI3IaWwB7F0Gq3PtNhGGuTd0bA3jVnrHb0zcpRv2/sVP8qXGbPFPDEaQ4O+kOCPSRcyB3zrni5TA==
+X-Received: by 2002:a7b:cb0a:: with SMTP id u10mr16453075wmj.0.1550492969297;
+        Mon, 18 Feb 2019 04:29:29 -0800 (PST)
+Received: from [192.168.0.41] (148.125.92.92.rev.sfr.net. [92.92.125.148])
+        by smtp.googlemail.com with ESMTPSA id v4sm5034268wmg.1.2019.02.18.04.29.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Feb 2019 04:29:28 -0800 (PST)
+Subject: Re: [PATCH v2 00/15] Add basic support for Socionext Milbeaut M10V
+ SoC
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Sugaya Taichi <sugaya.taichi@socionext.com>
+Cc:     DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-serial@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Russell King <linux@armlinux.org.uk>,
+        Jiri Slaby <jslaby@suse.com>,
+        Takao Orito <orito.takao@socionext.com>,
+        Kazuhiro Kasai <kasai.kazuhiro@socionext.com>,
+        Shinji Kanematsu <kanematsu.shinji@socionext.com>,
+        Jassi Brar <jaswinder.singh@linaro.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>
+References: <1549628687-29628-1-git-send-email-sugaya.taichi@socionext.com>
+ <CAK8P3a3_j2W+KXSynW_SkVZk_+PJ-DqyxjLkgJL-OichS0fwWw@mail.gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <10a0375b-0814-6b7d-97d5-ed2c2838c4b4@linaro.org>
+Date:   Mon, 18 Feb 2019 13:29:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2edbae24-6594-4d4f-374e-08d6959ca6d0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Feb 2019 12:28:53.9152
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1821
-X-OriginatorOrg: microchip.com
+In-Reply-To: <CAK8P3a3_j2W+KXSynW_SkVZk_+PJ-DqyxjLkgJL-OichS0fwWw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMDYvMDIvMjAxOSBhdCAxOTowNCwgTmljb2xhcyBGZXJyZSB3cm90ZToNCj4gQWRkIHRoaXMg
-U0ZSIGNvbXBhdGlibGUgZGVmaW5pdGlvbiBmb3IgdGhlIHNhbTl4NjAgU29DLiBXaWxsIGJlIG5l
-ZWRlZA0KPiBpbiBPSENJIGRyaXZlcjogb2hjaS1hdDkxLmMuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5
-OiBOaWNvbGFzIEZlcnJlIDxuaWNvbGFzLmZlcnJlQG1pY3JvY2hpcC5jb20+DQo+IC0tLQ0KPiBI
-aSBSb2IsDQo+IEl0IHNlZW1zIHRoYXQgdGhpcyBwYXRjaCB3YXMgbG9zdCBpbiBteSBzZXJpZXMg
-IltQQVRDSCAwLzhdIEFSTTogYXQ5MS9kdDoNCj4gdXBkYXRlIHRvIGV4aXN0aW5nIGRyaXZlcnMg
-Zm9yIHRoZSBzYW05eDYwIFNvQyIuIEkgc3BsaXQgaXQgYW5kIHJlc2VuZCBpdCBvbmx5DQo+IGZv
-ciBVU0IgdHJlZS4NCg0KUm9iLA0KDQpQaW5nLi4uDQoNCg0KPiBIaSBHcmVnLA0KPiANCj4gVGhp
-cyBEVCBiaW5kaW5kIGdvZXMgd2l0aCB0aGUgcGF0Y2ggYWxyZWFkeSBxdWV1ZWQgaW4geW91ciB1
-c2ItbmV4dCB0cmVlICJVU0I6DQo+IGhvc3Q6IG9oY2ktYXQ5MTogYWRkIHNhbTl4NjAtc2ZyIGRl
-ZmluaXRpb24gZm9yIG9oY2kiLg0KPiANCj4gT25jZSBSb2IgYWRkZWQgaGlzIHRhZywgY2FuIHlv
-dSBwbGVhc2UgcXVldWUgaXQgaW4geW91ciB0cmVlIGFzIEkgcmV2aWV3ZWQgbXkNCj4gZmlyc3Qg
-aWRlYSBvZiBhZGRpbmcgaXQgdG8gdGhlIGFybS1zb2MgdHJlZT8NCj4gDQo+IEJlc3QgcmVnYXJk
-cywNCj4gICAgTmljb2xhcw0KPiANCj4gICBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvYXJtL2F0bWVsLXN5c3JlZ3MudHh0IHwgMSArDQo+ICAgMSBmaWxlIGNoYW5nZWQsIDEgaW5z
-ZXJ0aW9uKCspDQo+IA0KPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2Jp
-bmRpbmdzL2FybS9hdG1lbC1zeXNyZWdzLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy9hcm0vYXRtZWwtc3lzcmVncy50eHQNCj4gaW5kZXggYmFkY2U2ZWYzYWIzLi5kZmM5
-MWJjMDJiOTcgMTAwNjQ0DQo+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5n
-cy9hcm0vYXRtZWwtc3lzcmVncy50eHQNCj4gKysrIGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
-L2JpbmRpbmdzL2FybS9hdG1lbC1zeXNyZWdzLnR4dA0KPiBAQCAtMTQ4LDYgKzE0OCw3IEBAIHJl
-cXVpcmVkIHByb3BlcnRpZXM6DQo+ICAgLSBjb21wYXRpYmxlOiBTaG91bGQgYmUgImF0bWVsLDxj
-aGlwPi1zZnIiLCAic3lzY29uIiBvcg0KPiAgIAkiYXRtZWwsPGNoaXA+LXNmcmJ1IiwgInN5c2Nv
-biINCj4gICAgIDxjaGlwPiBjYW4gYmUgInNhbWE1ZDMiLCAic2FtYTVkNCIgb3IgInNhbWE1ZDIi
-Lg0KPiArICBJdCBhbHNvIGNhbiBiZSAibWljcm9jaGlwLHNhbTl4NjAtc2ZyIiwgInN5c2NvbiIu
-DQo+ICAgLSByZWc6IFNob3VsZCBjb250YWluIHJlZ2lzdGVycyBsb2NhdGlvbiBhbmQgbGVuZ3Ro
-DQo+ICAgDQo+ICAgCXNmckBmMDAzODAwMCB7DQo+IA0KDQoNCi0tIA0KTmljb2xhcyBGZXJyZQ0K
+On 18/02/2019 13:20, Arnd Bergmann wrote:
+> On Fri, Feb 8, 2019 at 1:24 PM Sugaya Taichi
+> <sugaya.taichi@socionext.com> wrote:
+>>
+>> Hi,
+>>
+>> Here is the series of patches the initial support for SC2000(M10V) of
+>> Milbeaut SoCs. "M10V" is the internal name of SC2000, so commonly used in
+>> source code.
+>>
+>> SC2000 is a SoC of the Milbeaut series. equipped with a DSP optimized for
+>> computer vision. It also features advanced functionalities such as 360-degree,
+>> real-time spherical stitching with multi cameras, image stabilization for
+>> without mechanical gimbals, and rolling shutter correction. More detail is
+>> below:
+>> https://www.socionext.com/en/products/assp/milbeaut/SC2000.html
+>>
+>> Specifications for developers are below:
+>>  - Quad-core 32bit Cortex-A7 on ARMv7-A architecture
+>>  - NEON support
+>>  - DSP
+>>  - GPU
+>>  - MAX 3GB DDR3
+>>  - Cortex-M0 for power control
+>>  - NAND Flash Interface
+>>  - SD UHS-I
+>>  - SD UHS-II
+>>  - SDIO
+>>  - USB2.0 HOST / Device
+>>  - USB3.0 HOST / Device
+>>  - PCI express Gen2
+>>  - Ethernet Engine
+>>  - I2C
+>>  - UART
+>>  - SPI
+>>  - PWM
+>>
+>> Support is quite minimal for now, since it only includes timer, clock,
+>> pictrl and serial controller drivers, so we can only boot to userspace
+>> through initramfs. Support for the other peripherals  will come eventually.
+> 
+> I've looked over the platform once more. Overall, it looks very good, and
+> I'd still like to merge this for linux-5.1, but we are running out of time
+> there. If you send the patches to soc@kernel.org quickly, we can try to
+> still merge them in, but if anything goes wrong, it will have to wait until
+> we start merging patches for 5.2, directly after 5.1 is out.
+> 
+> I did not look at the device driver patches (clk, clocksource, pinctrl, serial)
+> in much detail. If you have an Ack from the maintainers, feel free to
+> include them in the series, otherwise let's merge the rest now and then
+> you can send the updated patches for inclusion through the subsystem
+> trees in 5.2.
+
+I'm not in copy of the clocksource patch but I acked it for the initial
+post.
+
+> I have sent a few comments. The only one that is really important
+> here is the missing platform check in the suspend options. Please
+> try to address most of the other commentsm, either by changing the
+> code, or by explaining why your version is correct.
+> 
+> 
+> 
+>      Arnd
+> 
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
+
