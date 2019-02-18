@@ -2,112 +2,167 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5204C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:51:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB71C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:52:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9034421479
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:51:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B1D22089F
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 08:52:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="jfdoqrlv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729577AbfBRIv3 (ORCPT
+        id S1728998AbfBRIwu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 03:51:29 -0500
-Received: from mga12.intel.com ([192.55.52.136]:33430 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727951AbfBRIv2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 03:51:28 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Feb 2019 00:51:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,384,1544515200"; 
-   d="scan'208";a="147713706"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 18 Feb 2019 00:51:25 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 18 Feb 2019 10:51:24 +0200
-Date:   Mon, 18 Feb 2019 10:51:24 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Chen Yu <chenyu56@huawei.com>, Jun Li <jun.li@nxp.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/9] device connection: Add support for device graphs
-Message-ID: <20190218085124.GA1605@kuha.fi.intel.com>
-References: <20190213074557.66028-1-heikki.krogerus@linux.intel.com>
- <20190214101043.GA4316@kroah.com>
- <20190215124715.GA10182@kuha.fi.intel.com>
- <20190218080727.GA21246@kroah.com>
+        Mon, 18 Feb 2019 03:52:50 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42926 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728166AbfBRIwu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 03:52:50 -0500
+Received: by mail-ed1-f66.google.com with SMTP id j89so3737919edb.9
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 00:52:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Nm/bJIx/uRsVjpVSSqXPJfAsT7u+Yco2/xHd2+oE910=;
+        b=jfdoqrlvpd/cD8um/uOFOs1Sr+YtCRHF2bYyMMyP1mBji+yrclrWIs3a/JoRKzwyio
+         CIwtUzcYIWM0xqmYU4bl+PLhNzKY/RAJ9K8WABbLqcgyXVVW3Hp/IaGOksOi5i8ChREN
+         LrhwfkCeNDya9ZfrYDejm7P47CJr5gikhwX3U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Nm/bJIx/uRsVjpVSSqXPJfAsT7u+Yco2/xHd2+oE910=;
+        b=GBDFH40IHdjLfIBj2cL0o3JwLArXCXSFg7g0uwgZ+2aaIzIHZbhT+Uee2DoVL2q7Rt
+         F0dutM860aAiUOaFbDLgsT2LhMHJXyLL/cCH2y06vTQC9bNCx1mL/yqH+fWDD9qJyKhB
+         xcyG9yyKVIelzJYq5yKd+xrMgLNyODOLwf6TixLGb7yq3ZXP3eJCu+SXv9odF3obeYdn
+         18aviprtJuvrFVOIpuDs/E4n7J/eeLE47R++OW87b642Qn0a9eu9dfRp97lsgvHYehuz
+         u5DXGXHsJzj52GKOacNJSwBNQR6teIMKa2Q2R068ABivPUkeNpd1/UVEaE3CG4H/Rv6m
+         y06w==
+X-Gm-Message-State: AHQUAuZ9+cLlCJSrweuWRqWTrchunKPIAb9Fq1snR8Zft//KjCgY0x70
+        J0386Gqj62zS2LPvlNkE51qwdUZBQTXZrQ==
+X-Google-Smtp-Source: AHgI3Ib0ZWCsJJt5IkLB7PS4n9y4b3XIKAouGrPg1KToD5Da+zn6fzs79JtxOn/EuSuyVo4Mhv65UA==
+X-Received: by 2002:a17:906:52d5:: with SMTP id w21mr15678439ejn.172.1550479968233;
+        Mon, 18 Feb 2019 00:52:48 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id k17sm3805306edr.59.2019.02.18.00.52.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Feb 2019 00:52:47 -0800 (PST)
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+To:     DRI Development <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Ramalingam C <ramalingam.c@intel.com>
+Subject: [PATCH] drivers/component: kerneldoc polish
+Date:   Mon, 18 Feb 2019 09:52:42 +0100
+Message-Id: <20190218085242.18845-1-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190218080727.GA21246@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 09:07:27AM +0100, Greg Kroah-Hartman wrote:
-> On Fri, Feb 15, 2019 at 02:47:15PM +0200, Heikki Krogerus wrote:
-> > Hi Greg,
-> > 
-> > On Thu, Feb 14, 2019 at 11:10:44AM +0100, Greg Kroah-Hartman wrote:
-> > > On Wed, Feb 13, 2019 at 10:45:48AM +0300, Heikki Krogerus wrote:
-> > > > Hi,
-> > > > 
-> > > > This is the third version of my proposal to add device graph parsing
-> > > > to the device connection API. There was only one problem reported in
-> > > > v2 by Jun - kernel-doc entry was missing for the new fwnode member in
-> > > > struct usb_role_switch_desc - and it's now fixed.
-> > > > 
-> > > > The second version of the series:
-> > > > https://lkml.org/lkml/2019/1/30/622
-> > > > 
-> > > > The commit message from v1:
-> > > > 
-> > > > This series adds support for OF and ACPI device graph parsing to the
-> > > > device connection API.
-> > > > 
-> > > > Handling the graph is straightforward, but because I'm adding that
-> > > > fwnode member to struct device_connection, I had to make sure all the
-> > > > existing users consider it.
-> > > > 
-> > > > The plan is to only support matching with fwnode in the future, so no
-> > > > more device name matching. The software fwnodes that we now have in
-> > > > kernel should make that possible, once we add support for references
-> > > > to them.
-> > > > 
-> > > > The original RFC:
-> > > > https://lkml.org/lkml/2018/10/24/619
-> > > 
-> > > All now merged, thanks.
-> > 
-> > It looks like you have not followed the order of the patches in this
-> > series.
-> > 
-> > You applied at least the patch 4/9 ("device connection: Add fwnode
-> > member to struct device_connection") as the last patch to your
-> > usb-next branch. The rest of the series, patches starting from 5/9,
-> > depend on that patch.
-> 
-> Ugh, did I just apply them out of order?  I can't rewrite my tree now,
-> sorry about that, odd that my sorting didn't work.
-> 
-> I think all of the patches are now in the tree, so I didn't miss
-> anything, is there anything I can do now?  Want me to revert them and
-> then add them back in the correct order?
+Polish the kerneldoc a bit with suggestions from Randy.
 
-The problem is with bisecting, so I'm not sure if reverting helps. I
-don't think there's anything else that can be done about this now.
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Ramalingam C <ramalingam.c@intel.com>
+--
+Greg, I don't need this in any of the topic branches, best if you
+pick this one up into your -next tree directly.
 
+Cheers, Daniel
+---
+ drivers/base/component.c  | 14 +++++++-------
+ include/linux/component.h |  2 +-
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-thanks,
-
+diff --git a/drivers/base/component.c b/drivers/base/component.c
+index 7dbc41cccd58..6954e448f46b 100644
+--- a/drivers/base/component.c
++++ b/drivers/base/component.c
+@@ -27,7 +27,7 @@
+  * helper fills the niche of aggregate drivers for specific hardware, where
+  * further standardization into a subsystem would not be practical. The common
+  * example is when a logical device (e.g. a DRM display driver) is spread around
+- * the SoC on various component (scanout engines, blending blocks, transcoders
++ * the SoC on various components (scanout engines, blending blocks, transcoders
+  * for various outputs and so on).
+  *
+  * The component helper also doesn't solve runtime dependencies, e.g. for system
+@@ -378,7 +378,7 @@ static void __component_match_add(struct device *master,
+ }
+ 
+ /**
+- * component_match_add_release - add a component match with release callback
++ * component_match_add_release - add a component match entry with release callback
+  * @master: device with the aggregate driver
+  * @matchptr: pointer to the list of component matches
+  * @release: release function for @compare_data
+@@ -408,7 +408,7 @@ void component_match_add_release(struct device *master,
+ EXPORT_SYMBOL(component_match_add_release);
+ 
+ /**
+- * component_match_add_typed - add a compent match for a typed component
++ * component_match_add_typed - add a compent match entry for a typed component
+  * @master: device with the aggregate driver
+  * @matchptr: pointer to the list of component matches
+  * @compare_typed: compare function to match against all typed components
+@@ -537,11 +537,11 @@ static void component_unbind(struct component *component,
+ }
+ 
+ /**
+- * component_unbind_all - unbind all component to an aggregate driver
++ * component_unbind_all - unbind all components of an aggregate driver
+  * @master_dev: device with the aggregate driver
+  * @data: opaque pointer, passed to all components
+  *
+- * Unbinds all components to the aggregate @dev by passing @data to their
++ * Unbinds all components of the aggregate @dev by passing @data to their
+  * &component_ops.unbind functions. Should be called from
+  * &component_master_ops.unbind.
+  */
+@@ -619,11 +619,11 @@ static int component_bind(struct component *component, struct master *master,
+ }
+ 
+ /**
+- * component_bind_all - bind all component to an aggregate driver
++ * component_bind_all - bind all components of an aggregate driver
+  * @master_dev: device with the aggregate driver
+  * @data: opaque pointer, passed to all components
+  *
+- * Binds all components to the aggregate @dev by passing @data to their
++ * Binds all components of the aggregate @dev by passing @data to their
+  * &component_ops.bind functions. Should be called from
+  * &component_master_ops.bind.
+  */
+diff --git a/include/linux/component.h b/include/linux/component.h
+index 30bcc7e590eb..8628d4d0aff1 100644
+--- a/include/linux/component.h
++++ b/include/linux/component.h
+@@ -98,7 +98,7 @@ void component_match_add_typed(struct device *master,
+ 	int (*compare_typed)(struct device *, int, void *), void *compare_data);
+ 
+ /**
+- * component_match_add - add a compent match
++ * component_match_add - add a compent match entry
+  * @master: device with the aggregate driver
+  * @matchptr: pointer to the list of component matches
+  * @compare: compare function to match against all components
 -- 
-heikki
+2.20.1
+
