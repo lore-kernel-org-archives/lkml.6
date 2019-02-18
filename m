@@ -2,87 +2,108 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B895DC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 01:55:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E629C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 01:56:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86E13218D3
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 01:55:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3C08218D3
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 01:56:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="caJ87TWt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728221AbfBRBzB (ORCPT
+        id S1728228AbfBRB4c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 20:55:01 -0500
-Received: from mga11.intel.com ([192.55.52.93]:57638 "EHLO mga11.intel.com"
+        Sun, 17 Feb 2019 20:56:32 -0500
+Received: from ozlabs.org ([203.11.71.1]:35055 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727948AbfBRBzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 20:55:00 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Feb 2019 17:55:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,382,1544515200"; 
-   d="scan'208";a="127243187"
-Received: from unknown (HELO [10.239.13.114]) ([10.239.13.114])
-  by orsmga003.jf.intel.com with ESMTP; 17 Feb 2019 17:54:57 -0800
-Message-ID: <5C6A119C.8080009@intel.com>
-Date:   Mon, 18 Feb 2019 09:59:56 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        id S1727873AbfBRB4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 20:56:31 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 442n644x8pz9s3x;
+        Mon, 18 Feb 2019 12:56:28 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1550454989;
+        bh=zeFyI3Sji6Kn/aPLs7IbNq6lJmmgpgQsM7fhcHSedLQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=caJ87TWtKvUms6Gwbhb9oTFYu92SRw1hPuTRqiTsePth9lmWsq4yVT5bRJYhpi9iS
+         j76RJVDHf/dc5e2DzfmK0tonXzok84DMVX9IzKoFeBCRcFE2sg5DmQnO180NMip4Vi
+         oPEpUzcrUfyEsigGEVuU4pWbhNj4RVRZF/6nzfFOKkxwyqI1umIdsYcAgoPtzfVYQ2
+         kEwGwXvqIcb5jpL4nUpMqFfet/pnMcplS7iliTsgLevbYfgxDxMXYjy7ctlMwvUoiF
+         BfNMx3hy7EBZL6Bv6nmXl82D7QVsieEy7BGvhpUAzmSMf6StHTzfBd+lZ6BoxVBUnQ
+         ahmKNHwC9oM7w==
+Date:   Mon, 18 Feb 2019 12:56:27 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        ARM <linux-arm-kernel@lists.infradead.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Daniel Mack <daniel@zonque.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: linux-next: manual merge of the regulator tree with the arm-soc
+ tree
+Message-ID: <20190218125627.003fc22c@canb.auug.org.au>
 MIME-Version: 1.0
-To:     Andi Kleen <ak@linux.intel.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "Liang, Kan" <kan.liang@intel.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "Xu, Like" <like.xu@intel.com>,
-        "jannh@google.com" <jannh@google.com>,
-        "arei.gonglei@huawei.com" <arei.gonglei@huawei.com>,
-        "jmattson@google.com" <jmattson@google.com>
-Subject: Re: [PATCH v5 12/12] KVM/VMX/vPMU: support to report GLOBAL_STATUS_LBRS_FROZEN
-References: <1550135174-5423-1-git-send-email-wei.w.wang@intel.com> <1550135174-5423-13-git-send-email-wei.w.wang@intel.com> <20190214163147.GL16922@tassilo.jf.intel.com> <286AC319A985734F985F78AFA26841F73DF71ED6@shsmsx102.ccr.corp.intel.com> <20190215131014.GC16922@tassilo.jf.intel.com>
-In-Reply-To: <20190215131014.GC16922@tassilo.jf.intel.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/6OserSKOC8v+jPaIAfQNoFv"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/15/2019 09:10 PM, Andi Kleen wrote:
->
-> OK. The freeze bits need to be cleared by IA32_PERF_GLOBAL_STATUS_RESET, which seems not supported by the perf code yet (thus guest won't clear them). Would handle_irq_v4 also need to be changed to support that?
-> In Arch Perfmon v4 it is  cleared by the MSR_CORE_PERF_GLOBAL_OVF_CTRL write
+--Sig_/6OserSKOC8v+jPaIAfQNoFv
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Not very sure about this one. The spec 18.2.4.2 mentions
-"IA32_PERF_GLOBAL_STATUS_RESET provides additional bit fields to clear 
-the new indicators.."
-IIUIC, the new freeze bits can only be cleared by RESET.
+Hi all,
 
+Today's linux-next merge of the regulator tree got a conflict in:
 
-> But the guest KVM pmu doesn't support v4 so far, so the only way to clear it is through DEBUGCTL.
->
-> STATUS_RESET would only be needed to set it from the guest, which is not necessary at least for now
-> (and would be also v4)
->
-> At some point the guest PMU should probably be updated for v4, but it can be done
-> separately from this.
->
+  arch/arm/mach-pxa/raumfeld.c
 
-Agree. I think the guest perf won't work in v4 mode if the KVM vPMU 
-exposes it is v3.
-Probably we could also leave the freeze bits virtualization support to 
-another series of vPMU v4 support?
-We would also need to use the STATUS_SET in v4 to set the freeze bits of 
-GLOBAL_STATUS when
-entering the guest (instead of clearing the guest debugctl), so that we 
-could achieve architectural emulation.
+between commit:
 
-Best,
-Wei
+  0f884f8a090e ("ARM: pxa: remove raumfeld board files and defconfig")
 
+from the arm-soc tree and commit:
+
+  01dc79cd6fe7 ("regulator: fixed/gpio: Pull inversion/OD into gpiolib")
+
+from the regulator tree.
+
+I fixed it up (the former removed the file, so I did that) and can
+carry the fix as necessary. This is now fixed as far as linux-next is
+concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/6OserSKOC8v+jPaIAfQNoFv
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxqEMsACgkQAVBC80lX
+0GwROwf/SwwGRVit6+U+LEWNBpX8CiZt4OZKHSBnOtuEr11de294QGLeYUbkspmB
+a18CsDhMcidHv5ubE8N1e53bUgOBmuc/LIZZKGrFuhT1+uouboE36CM3bHZKUeXQ
+WY0O6rEHmI1Dy3wNAm/rFQjKe+2o53EHyEM2EU6vJp/aDDhWt2SA6LKnrS0J8Lxc
+mWt4KvzL+ZuYx3son78AE95O2YB1A8XOh2m+231k62wGPd1VMcpgQ94l3IZXt7or
+klA5dRTpVn+W5AIHTLY6JURBgkdf+ykIZh+zOfiOPJpE4nneXKKUvkWhZ6QhHaS1
+nxI0ZhIEMh7jA9v9cdbnvBWK6fkJHA==
+=P9BI
+-----END PGP SIGNATURE-----
+
+--Sig_/6OserSKOC8v+jPaIAfQNoFv--
