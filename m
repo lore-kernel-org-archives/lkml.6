@@ -2,157 +2,103 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63A59C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:42:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 788E9C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:48:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B97D218D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:42:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BD6A218D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 03:48:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="L65vyQQH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fGMARITx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728442AbfBRDmG (ORCPT
+        id S1728431AbfBRDs0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 22:42:06 -0500
-Received: from ozlabs.org ([203.11.71.1]:58651 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727806AbfBRDmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 22:42:06 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 442qRs3JDMz9s3x;
-        Mon, 18 Feb 2019 14:42:01 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1550461321;
-        bh=6LoDtU7qK9+pONGYsy7pcrn9THXZJVLXhkxOZBSfHTk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=L65vyQQHyUqpNENdZyaIySkfghueQnZMSLljFMWttwMTBtF8+xp9mOVmEYVPsdCbM
-         BVLnuAm/jU4coOfKTjItVlhCIChzr6gSzOva/mToa5ua5pcv/52ePMw6hJ1ZwpYTSm
-         pqrfBldD/DkwASknXctJ80AwEqFY/4MjuD5AfhflK/DoXbLXVYu4X2mxoO5IMJGs90
-         klTWu+WhB7UOEvKAdd7meHgd0JE8RFZ5sqTPWiqKFkBUeayVhEXydgTXQA39ioekEC
-         tvVBwVHTLg+vVx2jWUlZtt7jI0m153cedWDDcgK2bZSb1SorVJN0HcHqQOOpn6CZ91
-         dwj/e8i6bgWSA==
-Date:   Mon, 18 Feb 2019 14:42:00 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM <kvm@vger.kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Sean Christopherson <sean.j.christopherson@intel.com>
-Subject: linux-next: build failure after merge of the kvm tree
-Message-ID: <20190218144200.2dc3283f@canb.auug.org.au>
+        Sun, 17 Feb 2019 22:48:26 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40216 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726892AbfBRDs0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 22:48:26 -0500
+Received: by mail-pg1-f193.google.com with SMTP id u9so4217260pgo.7;
+        Sun, 17 Feb 2019 19:48:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Ry56zsJvQYyPJb5k5ciiC9BPYowLGJa4fdvmLCYeIYw=;
+        b=fGMARITx2nfOjwZl7p8gRfDq5VPV5YgbK9vS9/5FCZNE+4fxvDH2X1OOcHXTx+NHSf
+         IkwIRt+ht4QQz928vvP7j75Xq4O4rpuMqaxUthv3MaCxHVH+QxwoYEcxJuvrD9KWRAO2
+         aw82x5FQs+4T7yKyTkKNi7QKwZTiaIcLoYQvUfON1xHSCn6/DSCclT/mqdflmg5adQA0
+         BsNal23B5RXDSyRSQoF0UugW/d1gQRlxTHIel/HHeXs3zsB+KbTIFsFgkYANIym/S31A
+         L0Az+k1mFaAr1x5IbwC+cpL3yQiJW8TZMLXRczJmMc47fcNHmFMBayf1GkQjdXqXOmV5
+         cV6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Ry56zsJvQYyPJb5k5ciiC9BPYowLGJa4fdvmLCYeIYw=;
+        b=sngY0MTQ5Xs22K0jmFmWwXqUyNrNV3UBIYn1c8cNjYDxBbU4JVQBdPpuN1ik7i3Z/2
+         qAdjCf9AQ24ZT9Wu8Y+yE4ayC6bg/A4t5Fk5KJvJd9s4uNxGX8emyB462H41Rf2mHwMK
+         vwvcgP0yNsJEd0tBM+yIIdRoGJh51PohQ6o2r6tafoVkWOZc4PFr13o9gZzwncf2suKJ
+         y62fWqiFI0S1GZuyJY0fz7XpAL59I7sCU7CRT3G06VJz3GAlulLY6krxCz6s6qEdUn0h
+         r8w1Uuohglum0Zv7MLQ/X/yXiNas1Hr8hVQknJwT7ZKwHic8EYlXg1+KzxJ0hEC8BuOs
+         JTEg==
+X-Gm-Message-State: AHQUAubldQuIBCJBu2rHtZdc+s5ZFf5KKJtcdcXywlmoGPvltbh/0Rqe
+        OXMG+O4mUCD0uVNC+kNOGORB2+DSFGo=
+X-Google-Smtp-Source: AHgI3Ib0yAoekfEMO+6Sp9SkDV3CRLmgmuoiJmUwtAjBrIHFRuYDWbDwH8qQxgaYyaEMeAyvQPJn/A==
+X-Received: by 2002:a63:618d:: with SMTP id v135mr16822164pgb.238.1550461705043;
+        Sun, 17 Feb 2019 19:48:25 -0800 (PST)
+Received: from localhost.localdomain (2001-b011-1004-3ad8-7167-dbfd-33d1-77de.dynamic-ip6.hinet.net. [2001:b011:1004:3ad8:7167:dbfd:33d1:77de])
+        by smtp.gmail.com with ESMTPSA id p2sm13720582pgs.7.2019.02.17.19.48.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 17 Feb 2019 19:48:24 -0800 (PST)
+From:   David Chen <david0813@gmail.com>
+To:     linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     davem@davemloft.net, hayeswang@realtek.com,
+        mario.limonciello@dell.com, bigeasy@linutronix.de,
+        edumazet@google.com, jslaby@suse.cz, f.fainelli@gmail.com,
+        david.chen7@dell.com, kai.heng.feng@canonical.com,
+        zhongjiang@huawei.com
+Subject: [PATCH 2/2] RTL8153-BD is used in Dell DA300 type-C dongle. It should be added to the whitelist of devices to activate MAC address pass through.
+Date:   Mon, 18 Feb 2019 11:48:17 +0800
+Message-Id: <20190218034817.7515-1-david0813@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/kBSwC6M=QS2NBKYnWU6mIKd"; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/kBSwC6M=QS2NBKYnWU6mIKd
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: David Chen <david.chen7@dell.com>
 
-Hi all,
+Per confirming with Realtek all devices containing RTL8153-BD should
+activate MAC pass through and there won't use pass through bit on efuse
+like in RTL8153-AD.
 
-After merging the kvm tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+Signed-off-by: David Chen <david.chen7@dell.com>
+---
+ drivers/net/usb/r8152.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-In file included from include/linux/kvm_host.h:38,
-                 from arch/x86/kvm/../../../virt/kvm/coalesced_mmio.c:14:
-arch/x86/include/asm/kvm_host.h:38:10: fatal error: asm/kvm_vcpu_regs.h: No=
- such file or directory
- #include <asm/kvm_vcpu_regs.h>
-          ^~~~~~~~~~~~~~~~~~~~~
-In file included from include/linux/kvm_host.h:38,
-                 from arch/x86/kvm/../../../virt/kvm/kvm_main.c:21:
-arch/x86/include/asm/kvm_host.h:38:10: fatal error: asm/kvm_vcpu_regs.h: No=
- such file or directory
- #include <asm/kvm_vcpu_regs.h>
-          ^~~~~~~~~~~~~~~~~~~~~
-In file included from include/linux/kvm_host.h:38,
-                 from arch/x86/kvm/../../../virt/kvm/eventfd.c:24:
-arch/x86/include/asm/kvm_host.h:38:10: fatal error: asm/kvm_vcpu_regs.h: No=
- such file or directory
- #include <asm/kvm_vcpu_regs.h>
-          ^~~~~~~~~~~~~~~~~~~~~
-In file included from include/linux/kvm_host.h:38,
-                 from arch/x86/kvm/../../../virt/kvm/irqchip.c:27:
-arch/x86/include/asm/kvm_host.h:38:10: fatal error: asm/kvm_vcpu_regs.h: No=
- such file or directory
- #include <asm/kvm_vcpu_regs.h>
-          ^~~~~~~~~~~~~~~~~~~~~
-In file included from include/linux/kvm_host.h:38,
-                 from arch/x86/kvm/../../../virt/kvm/async_pf.c:23:
-arch/x86/include/asm/kvm_host.h:38:10: fatal error: asm/kvm_vcpu_regs.h: No=
- such file or directory
- #include <asm/kvm_vcpu_regs.h>
-          ^~~~~~~~~~~~~~~~~~~~~
-In file included from include/linux/kvm_host.h:38,
-                 from arch/x86/kvm/../../../virt/kvm/vfio.c:14:
-arch/x86/include/asm/kvm_host.h:38:10: fatal error: asm/kvm_vcpu_regs.h: No=
- such file or directory
- #include <asm/kvm_vcpu_regs.h>
-          ^~~~~~~~~~~~~~~~~~~~~
-In file included from include/linux/kvm_host.h:38,
-                 from arch/x86/kvm/x86.c:22:
-arch/x86/include/asm/kvm_host.h:38:10: fatal error: asm/kvm_vcpu_regs.h: No=
- such file or directory
- #include <asm/kvm_vcpu_regs.h>
-          ^~~~~~~~~~~~~~~~~~~~~
-In file included from include/linux/kvm_host.h:38,
-                 from arch/x86/kvm/irq.h:27,
-                 from arch/x86/kvm/mmu.c:21:
-arch/x86/include/asm/kvm_host.h:38:10: fatal error: asm/kvm_vcpu_regs.h: No=
- such file or directory
- #include <asm/kvm_vcpu_regs.h>
-          ^~~~~~~~~~~~~~~~~~~~~
-In file included from include/linux/kvm_host.h:38,
-                 from arch/x86/kvm/emulate.c:23:
-arch/x86/include/asm/kvm_host.h:38:10: fatal error: asm/kvm_vcpu_regs.h: No=
- such file or directory
- #include <asm/kvm_vcpu_regs.h>
-          ^~~~~~~~~~~~~~~~~~~~~
-In file included from include/linux/kvm_host.h:38,
-                 from drivers/gpu/drm/i915/gvt/kvmgt.c:42:
-arch/x86/include/asm/kvm_host.h:38:10: fatal error: asm/kvm_vcpu_regs.h: No=
- such file or directory
- #include <asm/kvm_vcpu_regs.h>
-          ^~~~~~~~~~~~~~~~~~~~~
+diff --git a/drivers/net/usb/r8152.c b/drivers/net/usb/r8152.c
+index ada6baf8847a..86c8c64fbb0f 100644
+--- a/drivers/net/usb/r8152.c
++++ b/drivers/net/usb/r8152.c
+@@ -1179,7 +1179,7 @@ static int vendor_mac_passthru_addr_read(struct r8152 *tp, struct sockaddr *sa)
+ 	} else {
+ 		/* test for RTL8153-BND and RTL8153-BD */
+ 		ocp_data = ocp_read_byte(tp, MCU_TYPE_USB, USB_MISC_1);
+-		if ((ocp_data & BND_MASK) == 0 && (ocp_data & BD_MASK)) {
++		if ((ocp_data & BND_MASK) == 0 && (ocp_data & BD_MASK) == 0) {
+ 			netif_dbg(tp, probe, tp->netdev,
+ 				  "Invalid variant for MAC pass through\n");
+ 			return -ENODEV;
+-- 
+2.19.1
 
-Caused by commits
-
-  1561fcbc8e16 ("KVM: x86: Explicitly #define the VCPU_REGS_* indices")
-  a46e726511f4 ("KVM: VMX: Move vCPU-run code to a proper assembly routine")
-
-It looks like a file was not git added :-(
-
-I have used the kvm tree from next-20190215 for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/kBSwC6M=QS2NBKYnWU6mIKd
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxqKYgACgkQAVBC80lX
-0GwXJggAmATWb08AJYliDghecOEVUJ6KsLonX8QoruP/A+RWn1jUrxXwlk/aK42R
-k0PKpAE1hNuvKQZVHZLa8KCuC5EbwM+9XjKm7OUd1Mu/czRJ1ceimTj3QdqUJEb8
-U3gdHWbHM+G0jE1xIWKqMMyE31inS6D+4bUq/6t16Day86KcW3FdeSfrBh5JAn+k
-VGWGzOoAdj4HWWxwDAVbnf2c5pY0VwoZamInLa6GihJB+7ii7SvGxdJdyPPH3BWS
-OlfPdwISVUTFCKDwWT3ngp348TBRC6Mhbto5C6aezK22/VhyPO5dwo2A6UIbQcMY
-y3e1HwvJyrN4+MliMZYnEd8xlGM+vw==
-=N5hA
------END PGP SIGNATURE-----
-
---Sig_/kBSwC6M=QS2NBKYnWU6mIKd--
