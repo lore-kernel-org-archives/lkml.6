@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E995C10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D3AC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:33:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F7082081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:33:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CF4121736
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:33:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550500394;
-	bh=BBBy0FBp4xMvzVsKGvl+c9f48kYtOd3UDXZu296oHmw=;
+	s=default; t=1550500401;
+	bh=tuUJjp1rIEhPRTPWr0dJZMu7fj2lKEFO6hDe5O1Agt8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LEXIrJcnL4C+Jw6btnXutW3OCXxXYnOQzrXFiujJL86KPlNrsUu1k+nIWkEfAlvpq
-	 eZfAKVONqqtcOIOLI3Bl93+6ebwnBr1JGgO/T4FOSGuFo03v7GIe/45UxIZfA+761g
-	 d2J3Mn3dHN333UOMS5gkuk9DkGka5zyqhF7ytaLk=
+	b=VzQb0+8cfuXwYU63Xu00mbyCpx9hHeFu/c5k/j/nzUceXkngT7wmAfJtSf05C2Xk0
+	 dXxEWBne6iG2FmLTIW+gaKTS/a4rUIMrAB6f4/sRRt7yliTgj4cg0GqYnU/C9F5RKc
+	 5bFv1YkdYkwbFQjR2MCrqiPjZXDckmP2Pwxfomes=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732695AbfBRN5Q (ORCPT
+        id S2388315AbfBROdU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:57:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37502 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:33:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732115AbfBRN5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:57:08 -0500
+        id S2388043AbfBRN5K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:57:10 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42C3020842;
-        Mon, 18 Feb 2019 13:57:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F20EF20842;
+        Mon, 18 Feb 2019 13:57:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498226;
-        bh=BBBy0FBp4xMvzVsKGvl+c9f48kYtOd3UDXZu296oHmw=;
+        s=default; t=1550498229;
+        bh=tuUJjp1rIEhPRTPWr0dJZMu7fj2lKEFO6hDe5O1Agt8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uRXROI1Ik9HKJ2OVa6slKoj9ku8Gx+ASNPFFwkYIfIhmzs9MLpRaZG7elWDwmEmXv
-         tazYppZDumdZ58L2SipQFjtWkAzqLkzLhKO0QnbzQw8KAOSSmdCIy621Ndw05AcAsp
-         4zhiS97OuMsvvXcRR2LW61RTjD/JQS3uGXUFN0+g=
+        b=LqA60vqAmdJ6TKunVGeJNHxEDEy/h0+QZVA3+o+gvS+oAt55WlVNcDKeNdSv2ZQEi
+         pXF7PtAKlmbLpOqqk9zS1cpSpsP7qDL51tVM23ZuGSo1V8DdB2cQer9ZF68UcT40LH
+         sxDwEYfDHmYll/K+KRr+tWoY/wF7e1pwQPQptF/4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jonathan Bakker <xc-racer2@live.ca>,
-        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        stable@vger.kernel.org, Matti Kurkela <Matti.Kurkela@iki.fi>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.14 47/62] Input: bma150 - register input device after setting private data
-Date:   Mon, 18 Feb 2019 14:43:53 +0100
-Message-Id: <20190218133509.858963760@linuxfoundation.org>
+Subject: [PATCH 4.14 48/62] Input: elantech - enable 3rd button support on Fujitsu CELSIUS H780
+Date:   Mon, 18 Feb 2019 14:43:54 +0100
+Message-Id: <20190218133509.933211574@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133505.801423074@linuxfoundation.org>
 References: <20190218133505.801423074@linuxfoundation.org>
@@ -66,103 +65,52 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jonathan Bakker <xc-racer2@live.ca>
+From: Matti Kurkela <Matti.Kurkela@iki.fi>
 
-commit 90cc55f067f6ca0e64e5e52883ece47d8af7b67b upstream.
+commit e8b22d0a329f0fb5c7ef95406872d268f01ee3b1 upstream.
 
-Otherwise we introduce a race condition where userspace can request input
-before we're ready leading to null pointer dereference such as
+Like Fujitsu CELSIUS H760, the H780 also has a three-button Elantech
+touchpad, but the driver needs to be told so to enable the middle touchpad
+button.
 
-input: bma150 as /devices/platform/i2c-gpio-2/i2c-5/5-0038/input/input3
-Unable to handle kernel NULL pointer dereference at virtual address 00000018
-pgd = (ptrval)
-[00000018] *pgd=55dac831, *pte=00000000, *ppte=00000000
-Internal error: Oops: 17 [#1] PREEMPT ARM
-Modules linked in: bma150 input_polldev [last unloaded: bma150]
-CPU: 0 PID: 2870 Comm: accelerometer Not tainted 5.0.0-rc3-dirty #46
-Hardware name: Samsung S5PC110/S5PV210-based board
-PC is at input_event+0x8/0x60
-LR is at bma150_report_xyz+0x9c/0xe0 [bma150]
-pc : [<80450f70>]    lr : [<7f0a614c>]    psr: 800d0013
-sp : a4c1fd78  ip : 00000081  fp : 00020000
-r10: 00000000  r9 : a5e2944c  r8 : a7455000
-r7 : 00000016  r6 : 00000101  r5 : a7617940  r4 : 80909048
-r3 : fffffff2  r2 : 00000000  r1 : 00000003  r0 : 00000000
-Flags: Nzcv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-Control: 10c5387d  Table: 54e34019  DAC: 00000051
-Process accelerometer (pid: 2870, stack limit = 0x(ptrval))
-Stackck: (0xa4c1fd78 to 0xa4c20000)
-fd60:                                                       fffffff3 fc813f6c
-fd80: 40410581 d7530ce3 a5e2817c a7617f00 a5e29404 a5e2817c 00000000 7f008324
-fda0: a5e28000 8044f59c a5fdd9d0 a5e2945c a46a4a00 a5e29668 a7455000 80454f10
-fdc0: 80909048 a5e29668 a5fdd9d0 a46a4a00 806316d0 00000000 a46a4a00 801df5f0
-fde0: 00000000 d7530ce3 a4c1fec0 a46a4a00 00000000 a5fdd9d0 a46a4a08 801df53c
-fe00: 00000000 801d74bc a4c1fec0 00000000 a4c1ff70 00000000 a7038da8 00000000
-fe20: a46a4a00 801e91fc a411bbe0 801f2e88 00000004 00000000 80909048 00000041
-fe40: 00000000 00020000 00000000 dead4ead a6a88da0 00000000 ffffe000 806fcae8
-fe60: a4c1fec8 00000000 80909048 00000002 a5fdd9d0 a7660110 a411bab0 00000001
-fe80: dead4ead ffffffff ffffffff a4c1fe8c a4c1fe8c d7530ce3 20000013 80909048
-fea0: 80909048 a4c1ff70 00000001 fffff000 a4c1e000 00000005 00026038 801eabd8
-fec0: a7660110 a411bab0 b9394901 00000006 a696201b 76fb3000 00000000 a7039720
-fee0: a5fdd9d0 00000101 00000002 00000096 00000000 00000000 00000000 a4c1ff00
-ff00: a6b310f4 805cb174 a6b310f4 00000010 00000fe0 00000010 a4c1e000 d7530ce3
-ff20: 00000003 a5f41400 a5f41424 00000000 a6962000 00000000 00000003 00000002
-ff40: ffffff9c 000a0000 80909048 d7530ce3 a6962000 00000003 80909048 ffffff9c
-ff60: a6962000 801d890c 00000000 00000000 00020000 a7590000 00000004 00000100
-ff80: 00000001 d7530ce3 000288b8 00026320 000288b8 00000005 80101204 a4c1e000
-ffa0: 00000005 80101000 000288b8 00026320 000288b8 000a0000 00000000 00000000
-ffc0: 000288b8 00026320 000288b8 00000005 7eef3bac 000264e8 00028ad8 00026038
-ffe0: 00000005 7eef3300 76f76e91 76f78546 800d0030 000288b8 00000000 00000000
-[<80450f70>] (input_event) from [<a5e2817c>] (0xa5e2817c)
-Code: e1a08148 eaffffa8 e351001f 812fff1e (e590c018)
----[ end trace 1c691ee85f2ff243 ]---
+The elantech_dmi_force_crc_enabled quirk was not necessary with the H780.
 
-Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Also document the fw_version and caps values detected for both H760 and
+H780 models.
+
+Signed-off-by: Matti Kurkela <Matti.Kurkela@iki.fi>
 Cc: stable@vger.kernel.org
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/misc/bma150.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/input/mouse/elantech.c |    9 +++++++++
+ 1 file changed, 9 insertions(+)
 
---- a/drivers/input/misc/bma150.c
-+++ b/drivers/input/misc/bma150.c
-@@ -481,13 +481,14 @@ static int bma150_register_input_device(
- 	idev->close = bma150_irq_close;
- 	input_set_drvdata(idev, bma150);
- 
-+	bma150->input = idev;
-+
- 	error = input_register_device(idev);
- 	if (error) {
- 		input_free_device(idev);
- 		return error;
- 	}
- 
--	bma150->input = idev;
- 	return 0;
- }
- 
-@@ -510,15 +511,15 @@ static int bma150_register_polled_device
- 
- 	bma150_init_input_device(bma150, ipoll_dev->input);
- 
-+	bma150->input_polled = ipoll_dev;
-+	bma150->input = ipoll_dev->input;
-+
- 	error = input_register_polled_device(ipoll_dev);
- 	if (error) {
- 		input_free_polled_device(ipoll_dev);
- 		return error;
- 	}
- 
--	bma150->input_polled = ipoll_dev;
--	bma150->input = ipoll_dev->input;
--
- 	return 0;
- }
- 
+--- a/drivers/input/mouse/elantech.c
++++ b/drivers/input/mouse/elantech.c
+@@ -1121,6 +1121,8 @@ static int elantech_get_resolution_v4(st
+  * Asus UX31               0x361f00        20, 15, 0e      clickpad
+  * Asus UX32VD             0x361f02        00, 15, 0e      clickpad
+  * Avatar AVIU-145A2       0x361f00        ?               clickpad
++ * Fujitsu CELSIUS H760    0x570f02        40, 14, 0c      3 hw buttons (**)
++ * Fujitsu CELSIUS H780    0x5d0f02        41, 16, 0d      3 hw buttons (**)
+  * Fujitsu LIFEBOOK E544   0x470f00        d0, 12, 09      2 hw buttons
+  * Fujitsu LIFEBOOK E546   0x470f00        50, 12, 09      2 hw buttons
+  * Fujitsu LIFEBOOK E547   0x470f00        50, 12, 09      2 hw buttons
+@@ -1173,6 +1175,13 @@ static const struct dmi_system_id elante
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "CELSIUS H760"),
+ 		},
+ 	},
++	{
++		/* Fujitsu H780 also has a middle button */
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "FUJITSU"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "CELSIUS H780"),
++		},
++	},
+ #endif
+ 	{ }
+ };
 
 
