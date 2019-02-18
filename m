@@ -2,328 +2,755 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1519C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:50:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10018C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:53:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E45820C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:50:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEA5320C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 15:53:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387782AbfBRPu3 (ORCPT
+        id S2387862AbfBRPxD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 10:50:29 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:56658 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726535AbfBRPu2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 10:50:28 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 82E47315D44;
-        Mon, 18 Feb 2019 15:50:27 +0000 (UTC)
-Received: from [10.18.17.32] (dhcp-17-32.bos.redhat.com [10.18.17.32])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DDF7F5C1B2;
-        Mon, 18 Feb 2019 15:50:25 +0000 (UTC)
-Subject: Re: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
-To:     David Hildenbrand <david@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, pbonzini@redhat.com,
-        lcapitulino@redhat.com, pagupta@redhat.com, wei.w.wang@intel.com,
-        yang.zhang.wz@gmail.com, riel@surriel.com, mst@redhat.com,
-        dodgen@google.com, konrad.wilk@oracle.com, dhildenb@redhat.com,
-        aarcange@redhat.com, Alexander Duyck <alexander.duyck@gmail.com>
-References: <20190204201854.2328-1-nitesh@redhat.com>
- <af4430fd-0a2c-8f35-b767-3f93fc6db270@redhat.com>
-From:   Nitesh Narayan Lal <nitesh@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nitesh@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- VujM7c/b4pps
-Organization: Red Hat Inc,
-Message-ID: <cb7888fc-52c9-8735-61e4-870e7e3c0e5f@redhat.com>
-Date:   Mon, 18 Feb 2019 10:50:24 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 18 Feb 2019 10:53:03 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:33502 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726535AbfBRPxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 10:53:02 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5D1CB80D;
+        Mon, 18 Feb 2019 07:53:01 -0800 (PST)
+Received: from why.wild-wind.fr.eu.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 791003F675;
+        Mon, 18 Feb 2019 07:52:53 -0800 (PST)
+Date:   Mon, 18 Feb 2019 15:52:17 +0000
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Lokesh Vutla <lokeshvutla@ti.com>
+Cc:     Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Device Tree Mailing List <devicetree@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>
+Subject: Re: [PATCH v5 06/10] irqchip: ti-sci-intr: Add support for
+ Interrupt Router driver
+Message-ID: <20190218155217.5195f118@why.wild-wind.fr.eu.org>
+In-Reply-To: <20190212074237.2875-7-lokeshvutla@ti.com>
+References: <20190212074237.2875-1-lokeshvutla@ti.com>
+        <20190212074237.2875-7-lokeshvutla@ti.com>
+Organization: ARM Ltd
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <af4430fd-0a2c-8f35-b767-3f93fc6db270@redhat.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="mdyfYfDmjN5MPMwf7kRhxeoJJoZlN6TOI"
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 18 Feb 2019 15:50:28 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---mdyfYfDmjN5MPMwf7kRhxeoJJoZlN6TOI
-Content-Type: multipart/mixed; boundary="cW9cKcy4XGSw0A67mbAvusrJdUVpT6K3Y";
- protected-headers="v1"
-From: Nitesh Narayan Lal <nitesh@redhat.com>
-To: David Hildenbrand <david@redhat.com>, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org, pbonzini@redhat.com, lcapitulino@redhat.com,
- pagupta@redhat.com, wei.w.wang@intel.com, yang.zhang.wz@gmail.com,
- riel@surriel.com, mst@redhat.com, dodgen@google.com, konrad.wilk@oracle.com,
- dhildenb@redhat.com, aarcange@redhat.com,
- Alexander Duyck <alexander.duyck@gmail.com>
-Message-ID: <cb7888fc-52c9-8735-61e4-870e7e3c0e5f@redhat.com>
-Subject: Re: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
-References: <20190204201854.2328-1-nitesh@redhat.com>
- <af4430fd-0a2c-8f35-b767-3f93fc6db270@redhat.com>
-In-Reply-To: <af4430fd-0a2c-8f35-b767-3f93fc6db270@redhat.com>
+On Tue, 12 Feb 2019 13:12:33 +0530
+Lokesh Vutla <lokeshvutla@ti.com> wrote:
 
---cW9cKcy4XGSw0A67mbAvusrJdUVpT6K3Y
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
+> Texas Instruments' K3 generation SoCs has an IP Interrupt Router
+> that does allows for redirection of input interrupts to host
+> interrupt controller. Interrupt Router inputs are either from a
+> peripheral or from an Interrupt Aggregator which is another
+> interrupt controller.
+> 
+> Configuration of the interrupt router registers can only be done by
+> a system co-processor and the driver needs to send a message to this
+> co processor over TISCI protocol.
+> 
+> Add support for Interrupt Router driver over TISCI protocol.
+> 
+> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+> ---
+> Changes since v4:
+> - Moved the ti_sci irq resource handling to ti-sci-common.c from ti_sci.c.
+>   Firmware maintainer rejected the idea of having this in firmware
+> driver as the resource handling is specific to the client.
+> - Obtain the number of peripheral interrupts attached to INTR by
+> parsing DT. Using this information store the max irqs that can be
+> allocated to INTA. This is done for pre allocating the INTA
+> irqs(vints) during inta driver probe.
+>   This will not work for cases where there are more that 1 INTAs
+> attached to INTR, but wanted to show this approach as suggested by
+> Marc.
+
+Or not.
+
+> 
+>  MAINTAINERS                         |   3 +
+>  drivers/irqchip/Kconfig             |  11 +
+>  drivers/irqchip/Makefile            |   1 +
+>  drivers/irqchip/irq-ti-sci-common.c | 131 ++++++++++++
+>  drivers/irqchip/irq-ti-sci-common.h |  59 ++++++
+>  drivers/irqchip/irq-ti-sci-intr.c   | 315
+> ++++++++++++++++++++++++++++ 6 files changed, 520 insertions(+)
+>  create mode 100644 drivers/irqchip/irq-ti-sci-common.c
+>  create mode 100644 drivers/irqchip/irq-ti-sci-common.h
+>  create mode 100644 drivers/irqchip/irq-ti-sci-intr.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index c918d9b2ee18..823eeb672cf0 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -15065,6 +15065,9 @@ F:
+> Documentation/devicetree/bindings/clock/ti,sci-clk.txt F:
+> drivers/clk/keystone/sci-clk.c F:	drivers/reset/reset-ti-sci.c
+>  F:
+> Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
+> +F:	drivers/irqchip/irq-ti-sci-intr.c +F:
+> drivers/irqchip/irq-ti-sci-common.c +F:
+> drivers/irqchip/irq-ti-sci-common.h 
+>  Texas Instruments ASoC drivers
+>  M:	Peter Ujfalusi <peter.ujfalusi@ti.com>
+> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+> index 3d1e60779078..a8d9bed0254b 100644
+> --- a/drivers/irqchip/Kconfig
+> +++ b/drivers/irqchip/Kconfig
+> @@ -406,6 +406,17 @@ config IMX_IRQSTEER
+>  	help
+>  	  Support for the i.MX IRQSTEER interrupt
+> multiplexer/remapper. 
+> +config TI_SCI_INTR_IRQCHIP
+> +	bool
+> +	depends on TI_SCI_PROTOCOL && ARCH_K3
+> +	select IRQ_DOMAIN
+> +	select IRQ_DOMAIN_HIERARCHY
+> +	help
+> +	  This enables the irqchip driver support for K3 Interrupt
+> router
+> +	  over TI System Control Interface available on some new
+> TI's SoCs.
+> +	  If you wish to use interrupt router irq resources managed
+> by the
+> +	  TI System Controller, say Y here. Otherwise, say N.
+> +
+>  endmenu
+>  
+>  config SIFIVE_PLIC
+> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+> index c93713d24b86..0499fae148a9 100644
+> --- a/drivers/irqchip/Makefile
+> +++ b/drivers/irqchip/Makefile
+> @@ -94,3 +94,4 @@ obj-$(CONFIG_CSKY_APB_INTC)		+=
+> irq-csky-apb-intc.o obj-$(CONFIG_SIFIVE_PLIC)		+=
+> irq-sifive-plic.o obj-$(CONFIG_IMX_IRQSTEER)		+=
+> irq-imx-irqsteer.o obj-$(CONFIG_MADERA_IRQ)		+=
+> irq-madera.o +obj-$(CONFIG_TI_SCI_INTR_IRQCHIP)	+=
+> irq-ti-sci-intr.o irq-ti-sci-common.o diff --git
+> a/drivers/irqchip/irq-ti-sci-common.c
+> b/drivers/irqchip/irq-ti-sci-common.c new file mode 100644 index
+> 000000000000..79d9c4e8ea14 --- /dev/null
+> +++ b/drivers/irqchip/irq-ti-sci-common.c
+> @@ -0,0 +1,131 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Common Code for TISCI IRQCHIP drivers
+> + *
+> + * Copyright (C) 2019 Texas Instruments Incorporated -
+> http://www.ti.com/
+> + *	Lokesh Vutla <lokeshvutla@ti.com>
+> + */
+> +
+> +#include <linux/of.h>
+> +#include <linux/bitmap.h>
+> +#include <linux/device.h>
+> +#include <linux/soc/ti/ti_sci_protocol.h>
+> +#include "irq-ti-sci-common.h"
+> +
+> +/**
+> + * ti_sci_get_free_resource() - Get a free resource from TISCI
+> resource.
+> + * @res:	Pointer to the TISCI resource
+> + *
+> + * Return: resource num if all went ok else TI_SCI_RESOURCE_NULL.
+> + */
+> +u16 ti_sci_get_free_resource(struct ti_sci_resource *res)
+> +{
+> +	u16 set, free_bit;
+> +
+> +	mutex_lock(&res->request_mutex);
+> +	for (set = 0; set < res->sets; set++) {
+> +		free_bit =
+> find_first_zero_bit(res->desc[set].res_map,
+> +					       res->desc[set].num);
+> +		if (free_bit != res->desc[set].num) {
+> +			set_bit(free_bit, res->desc[set].res_map);
+> +			mutex_unlock(&res->request_mutex);
+> +			return res->desc[set].start + free_bit;
+> +		}
+> +	}
+> +	mutex_unlock(&res->request_mutex);
+> +
+> +	return TI_SCI_RESOURCE_NULL;
+> +}
+> +
+> +/**
+> + * ti_sci_release_resource() - Release a resource from TISCI
+> resource.
+> + * @res:	Pointer to the TISCI resource
+> + * @id:		Resource id to be released.
+> + */
+> +void ti_sci_release_resource(struct ti_sci_resource *res, u16 id)
+> +{
+> +	u16 set;
+> +
+> +	mutex_lock(&res->request_mutex);
+> +	for (set = 0; set < res->sets; set++) {
+> +		if (res->desc[set].start <= id &&
+> +		    (res->desc[set].num + res->desc[set].start) > id)
+> +			clear_bit(id - res->desc[set].start,
+> +				  res->desc[set].res_map);
+> +	}
+> +	mutex_unlock(&res->request_mutex);
+> +}
+> +
+> +u32 ti_sci_get_num_resources(struct ti_sci_resource *res)
+> +{
+> +	u32 count = 0, set;
+> +
+> +	for (set = 0; set < res->sets; set++)
+> +		count += res->desc[set].num;
+> +
+> +	return count;
+> +}
+> +
+> +/**
+> + * devm_ti_sci_get_of_resource() - Get a TISCI resource assigned to
+> a device
+> + * @handle:	TISCI handle
+> + * @dev:	Device pointer to which the resource is assigned
+> + * @of_prop:	property name by which the resource are
+> represented
+> + *
+> + * Return: Pointer to ti_sci_resource if all went well else
+> appropriate
+> + *	   error pointer.
+> + */
+> +struct ti_sci_resource *
+> +devm_ti_sci_get_of_resource(const struct ti_sci_handle *handle,
+> +			    struct device *dev, u32 dev_id, char
+> *of_prop) +{
+> +	struct ti_sci_resource *res;
+> +	u32 resource_subtype;
+> +	int i, ret;
+> +
+> +	res = devm_kzalloc(dev, sizeof(*res), GFP_KERNEL);
+> +	if (!res)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	res->sets =
+> of_property_count_elems_of_size(dev_of_node(dev), of_prop,
+> +						    sizeof(u32));
+> +	if (res->sets < 0) {
+> +		dev_err(dev, "%s resource type ids not available\n",
+> of_prop);
+> +		return ERR_PTR(res->sets);
+> +	}
+> +
+> +	res->desc = devm_kcalloc(dev, res->sets, sizeof(*res->desc),
+> +				 GFP_KERNEL);
+> +	if (!res->desc)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	for (i = 0; i < res->sets; i++) {
+> +		ret = of_property_read_u32_index(dev_of_node(dev),
+> of_prop, i,
+> +						 &resource_subtype);
+> +		if (ret)
+> +			return ERR_PTR(-EINVAL);
+> +
+> +		ret = handle->ops.rm_core_ops.get_range(handle,
+> dev_id,
+> +
+> resource_subtype,
+> +
+> &res->desc[i].start,
+> +
+> &res->desc[i].num);
+> +		if (ret) {
+> +			dev_err(dev, "dev = %d subtype %d not
+> allocated for this host\n",
+> +				dev_id, resource_subtype);
+> +			return ERR_PTR(ret);
+> +		}
+> +
+> +		dev_dbg(dev, "dev = %d, subtype = %d, start = %d,
+> num = %d\n",
+> +			dev_id, resource_subtype, res->desc[i].start,
+> +			res->desc[i].num);
+> +
+> +		res->desc[i].res_map =
+> +			devm_kzalloc(dev,
+> BITS_TO_LONGS(res->desc[i].num) *
+> +				     sizeof(*res->desc[i].res_map),
+> GFP_KERNEL);
+> +		if (!res->desc[i].res_map)
+> +			return ERR_PTR(-ENOMEM);
+> +	}
+> +	mutex_init(&res->request_mutex);
+> +
+> +	return res;
+> +}
+> diff --git a/drivers/irqchip/irq-ti-sci-common.h
+> b/drivers/irqchip/irq-ti-sci-common.h new file mode 100644
+> index 000000000000..60c4b28bebab
+> --- /dev/null
+> +++ b/drivers/irqchip/irq-ti-sci-common.h
+> @@ -0,0 +1,59 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Common header file for TISCI IRQCHIP drivers
+> + *
+> + * Copyright (C) 2019 Texas Instruments Incorporated -
+> http://www.ti.com/
+> + *	Lokesh Vutla <lokeshvutla@ti.com>
+> + */
+> +
+> +#ifndef __TI_SCI_COMMON_IRQCHIP_H
+> +#define __TI_SCI_COMMON_IRQCHIP_H
+> +
+> +#include <linux/mutex.h>
+> +
+> +#define TI_SCI_RESOURCE_NULL	0xffff
+> +#define TI_SCI_DEV_ID_MASK	0xffff
+> +#define TI_SCI_DEV_ID_SHIFT	16
+> +#define TI_SCI_IRQ_ID_MASK	0xffff
+> +#define TI_SCI_IRQ_ID_SHIFT	0
+> +#define TI_SCI_VINT_IRQ		BIT(0)
+> +#define HWIRQ_TO_DEVID(hwirq)	(((hwirq) >>
+> (TI_SCI_DEV_ID_SHIFT)) & \
+> +				 (TI_SCI_DEV_ID_MASK))
+> +#define HWIRQ_TO_IRQID(hwirq)	((hwirq) & (TI_SCI_IRQ_ID_MASK))
+> +#define TO_HWIRQ(dev, index)	((((dev) & TI_SCI_DEV_ID_MASK)
+> << \
+> +				 TI_SCI_DEV_ID_SHIFT) | \
+> +				((index) & TI_SCI_IRQ_ID_MASK))
+> +
+> +/**
+> + * struct ti_sci_resource_desc - Description of TI SCI resource
+> instance range.
+> + * @start:	Start index of the resource.
+> + * @num:	Number of resources.
+> + * @res_map:	Bitmap to manage the allocation of these
+> resources.
+> + */
+> +struct ti_sci_resource_desc {
+> +	u16 start;
+> +	u16 num;
+> +	unsigned long *res_map;
+> +};
+> +
+> +/**
+> + * struct ti_sci_resource - Structure representing a resource
+> assigned
+> + *			    to a device.
+> + * @sets:		Number of sets available from this resource
+> type
+> + * @request_mutex:	mutex to protect request and release of
+> resources.
+> + * @desc:		Array of resource descriptors.
+> + */
+> +struct ti_sci_resource {
+> +	u16 sets;
+> +	/* Mutex to protect request and release of resources */
+> +	struct mutex request_mutex;
+> +	struct ti_sci_resource_desc *desc;
+> +};
+> +
+> +u16 ti_sci_get_free_resource(struct ti_sci_resource *res);
+> +void ti_sci_release_resource(struct ti_sci_resource *res, u16 id);
+> +u32 ti_sci_get_num_resources(struct ti_sci_resource *res);
+> +struct ti_sci_resource *
+> +devm_ti_sci_get_of_resource(const struct ti_sci_handle *handle,
+> +			    struct device *dev, u32 dev_id, char
+> *of_prop); +#endif /*__TI_SCI_COMMON_IRQCHIP_H */
+
+Most the above "common" should be a separate patch, really. Also, why
+isn't the whole resource management part of the firmware interface? I
+see that "Firmware maintainer rejected the idea", but I don't really
+buy the rational. I don't see anything irq specific to the whole
+devm_ti_sci_get_of_resource and co, to be honest.
+
+> diff --git a/drivers/irqchip/irq-ti-sci-intr.c b/drivers/irqchip/irq-ti-sci-intr.c
+> new file mode 100644
+> index 000000000000..7e224552a735
+> --- /dev/null
+> +++ b/drivers/irqchip/irq-ti-sci-intr.c
+> @@ -0,0 +1,315 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Texas Instruments' K3 Interrupt Router irqchip driver
+> + *
+> + * Copyright (C) 2018-2019 Texas Instruments Incorporated - http://www.ti.com/
+> + *	Lokesh Vutla <lokeshvutla@ti.com>
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/irqchip.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/module.h>
+> +#include <linux/moduleparam.h>
+> +#include <linux/irqdomain.h>
+> +#include <linux/soc/ti/ti_sci_protocol.h>
+> +#include "irq-ti-sci-common.h"
+> +
+> +/**
+> + * struct ti_sci_intr_irq_domain - Structure representing a TISCI based
+> + *				   Interrupt Router IRQ domain.
+> + * @sci:	Pointer to TISCI handle
+> + * @dst_irq:	TISCI resource pointer representing GIC irq controller.
+> + * @:	Number of GIC irqs that can be allocated to INTA.
+> + * @dst_id:	TISCI device ID of the GIC irq controller.
+> + */
+> +struct ti_sci_intr_irq_domain {
+> +	const struct ti_sci_handle *sci;
+> +	struct ti_sci_resource *dst_irq;
+> +	u32 vint_irqs;
+> +	u16 dst_id;
+> +};
+> +
+> +static struct irq_chip ti_sci_intr_irq_chip = {
+> +	.name			= "INTR",
+> +	.irq_eoi		= irq_chip_eoi_parent,
+> +	.irq_mask		= irq_chip_mask_parent,
+> +	.irq_unmask		= irq_chip_unmask_parent,
+> +	.irq_retrigger		= irq_chip_retrigger_hierarchy,
+> +	.irq_set_type		= irq_chip_set_type_parent,
+
+The DT seems to be able to express settings that are not necessarily
+compatible with the underlying interrupt controller (GIC500). So either
+you're missing the code that will turn configure this controller to
+change levels/edges, or you need to change the DT.
+
+> +	.irq_set_affinity	= irq_chip_set_affinity_parent,
+> +};
+> +
+> +/**
+> + * ti_sci_intr_irq_domain_translate() - Retrieve hwirq and type from
+> + *					IRQ firmware specific handler.
+> + * @domain:	Pointer to IRQ domain
+> + * @fwspec:	Pointer to IRQ specific firmware structure
+> + * @hwirq:	IRQ number identified by hardware
+> + * @type:	IRQ type
+> + *
+> + * Return 0 if all went ok else appropriate error.
+> + */
+> +static int ti_sci_intr_irq_domain_translate(struct irq_domain *domain,
+> +					    struct irq_fwspec *fwspec,
+> +					    unsigned long *hwirq,
+> +					    unsigned int *type)
+> +{
+> +	struct ti_sci_intr_irq_domain *intr = domain->host_data;
+> +
+> +	if (fwspec->param_count != 4)
+> +		return -EINVAL;
+> +
+> +	*hwirq = TO_HWIRQ(fwspec->param[0], fwspec->param[1]);
+> +	*type = fwspec->param[2];
+> +
+> +	if (fwspec->param[3] != 0 && fwspec->param[3] != 1)
+> +		return -EINVAL;
+> +
+> +	if (fwspec->param[3] && intr->vint_irqs <= 0)
+
+How can vint_irqs be negative?
+
+> +		return -ERANGE;
+> +
+> +	return 0;
+> +}
+> +
+> +static inline void ti_sci_intr_free_gic_irq(struct ti_sci_intr_irq_domain *intr,
+
+Why the inline?
+
+> +					    u32 hwirq, u16 dst_irq, u8 vint_irq)
+> +{
+> +	u16 src_id, src_index;
+> +
+> +	src_id = HWIRQ_TO_DEVID(hwirq);
+> +	src_index = HWIRQ_TO_IRQID(hwirq);
+> +	intr->sci->ops.rm_irq_ops.free_irq(intr->sci, src_id, src_index,
+> +					   intr->dst_id, dst_irq, vint_irq);
+> +	ti_sci_release_resource(intr->dst_irq, dst_irq);
+> +	if (vint_irq == TI_SCI_VINT_IRQ)
+> +		intr->vint_irqs++;
+
+What ensures that an alloc/free happening in parallel on the same data
+structure will not corrupt the state?
+
+> +}
+> +
+> +/**
+> + * ti_sci_intr_irq_domain_free() - Free the specified IRQs from the domain.
+> + * @domain:	Domain to which the irqs belong
+> + * @virq:	Linux virtual IRQ to be freed.
+> + * @nr_irqs:	Number of continuous irqs to be freed
+> + */
+> +static void ti_sci_intr_irq_domain_free(struct irq_domain *domain,
+> +					unsigned int virq, unsigned int nr_irqs)
+> +{
+> +	struct ti_sci_intr_irq_domain *intr = domain->host_data;
+> +	struct irq_data *data, *parent_data;
+> +	phys_addr_t vint_irq;
+
+What???? phys_addr_t???
+
+> +
+> +	data = irq_domain_get_irq_data(domain, virq);
+> +	vint_irq = (phys_addr_t)irq_data_get_irq_chip_data(data);
+> +	parent_data = irq_domain_get_irq_data(domain->parent, virq);
+> +
+> +	ti_sci_intr_free_gic_irq(intr, data->hwirq, parent_data->hwirq,
+> +				 vint_irq);
+
+Err... Isn't vint_irq supposed to be a u8? But on the other side,
+intr->vint_irqs is a u32. I'm sorry, but none of that makes any sense.
+Please explain what is what.
+
+> +	irq_domain_free_irqs_parent(domain, virq, 1);
+> +	irq_domain_reset_irq_data(data);
+> +}
+> +
+> +/**
+> + * ti_sci_intr_alloc_gic_irq() - Allocate GIC specific IRQ
+> + * @domain:	Point to the interrupt router IRQ domain
+> + * @virq:	Corresponding Linux virtual IRQ number
+> + * @dev:	TISCI device IRQ generating the IRQ
+> + * @irq:	IRQ offset within the device
+> + * @flags:	Corresponding flags to the IRQ
+> + * @vint_irq:	Flag to tell if requested irq is from interrupt aggregator.
+> + *
+> + * Returns 0 if all went well else appropriate error pointer.
+> + */
+> +static int ti_sci_intr_alloc_gic_irq(struct irq_domain *domain,
+> +				     unsigned int virq, u32 hwirq, u32 flags,
+> +				     u8 vint_irq)
+> +{
+> +	struct ti_sci_intr_irq_domain *intr = domain->host_data;
+> +	struct irq_fwspec fwspec;
+> +	u16 src_id, src_index;
+> +	u16 dst_irq;
+> +	int err;
+> +
+> +	src_id = HWIRQ_TO_DEVID(hwirq);
+> +	src_index = HWIRQ_TO_IRQID(hwirq);
+> +
+> +	dst_irq = ti_sci_get_free_resource(intr->dst_irq);
+> +	if (dst_irq == TI_SCI_RESOURCE_NULL)
+> +		return -EINVAL;
+> +
+> +	fwspec.fwnode = domain->parent->fwnode;
+> +	fwspec.param_count = 3;
+> +	fwspec.param[0] = 0;	/* SPI */
+> +	fwspec.param[1] = dst_irq - 32; /* SPI offset */
+> +	fwspec.param[2] = flags & IRQ_TYPE_SENSE_MASK;
+> +
+> +	err = irq_domain_alloc_irqs_parent(domain, virq, 1, &fwspec);
+> +	if (err)
+> +		goto err_irqs;
+> +
+> +	err = intr->sci->ops.rm_irq_ops.set_irq(intr->sci, src_id, src_index,
+> +						intr->dst_id, dst_irq,
+> +						vint_irq);
+> +	if (err)
+> +		goto err_msg;
+> +
+> +	if (vint_irq == TI_SCI_VINT_IRQ)
+> +		intr->vint_irqs--;
+
+Same RMW problem.
+
+> +
+> +	return 0;
+> +
+> +err_msg:
+> +	irq_domain_free_irqs_parent(domain, virq, 1);
+> +err_irqs:
+> +	ti_sci_release_resource(intr->dst_irq, dst_irq);
+> +	return err;
+> +}
+> +
+> +/**
+> + * ti_sci_intr_irq_domain_alloc() - Allocate Interrupt router IRQs
+> + * @domain:	Point to the interrupt router IRQ domain
+> + * @virq:	Corresponding Linux virtual IRQ number
+> + * @nr_irqs:	Continuous irqs to be allocated
+> + * @data:	Pointer to firmware specifier
+> + *
+> + * Return 0 if all went well else appropriate error value.
+> + */
+> +static int ti_sci_intr_irq_domain_alloc(struct irq_domain *domain,
+> +					unsigned int virq, unsigned int nr_irqs,
+> +					void *data)
+> +{
+> +	struct irq_fwspec *fwspec = data;
+> +	phys_addr_t vint_irq;
+
+This is sad.
+
+> +	unsigned long hwirq;
+> +	u32 type;
+> +	int err;
+> +
+> +	err = ti_sci_intr_irq_domain_translate(domain, fwspec, &hwirq, &type);
+> +	if (err)
+> +		return err;
+> +
+> +	vint_irq = fwspec->param[3] & TI_SCI_VINT_IRQ;
+> +
+> +	err = ti_sci_intr_alloc_gic_irq(domain, virq, hwirq, type, vint_irq);
+> +	if (err)
+> +		return err;
+> +
+> +	err = irq_domain_set_hwirq_and_chip(domain, virq, hwirq,
+> +					    &ti_sci_intr_irq_chip,
+> +					    (void *)vint_irq);
+
+I think I see what you're trying to achieve. I suggest you look a
+uintptr_t instead of playing with unrelated data types whose semantic
+really doesn't apply here.
+
+> +	if (err) {
+> +		ti_sci_intr_irq_domain_free(domain, virq, 1);
+> +		return err;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct irq_domain_ops ti_sci_intr_irq_domain_ops = {
+> +	.alloc		= ti_sci_intr_irq_domain_alloc,
+> +	.free		= ti_sci_intr_irq_domain_free,
+> +	.translate	= ti_sci_intr_irq_domain_translate,
+> +};
+> +
+> +static int ti_sci_intr_irq_domain_probe(struct platform_device *pdev)
+> +{
+> +	struct irq_domain *parent_domain, *domain;
+> +	struct device_node *parent_node, *dn;
+> +	struct ti_sci_intr_irq_domain *intr;
+> +	struct device *dev = &pdev->dev;
+> +	struct of_phandle_iterator it;
+> +	int ret, count, intsize;
+> +
+> +	parent_node = of_irq_find_parent(dev_of_node(dev));
+> +	if (!parent_node) {
+> +		dev_err(dev, "Failed to get IRQ parent node\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	parent_domain = irq_find_host(parent_node);
+> +	if (!parent_domain) {
+> +		dev_err(dev, "Failed to find IRQ parent domain\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	intr = devm_kzalloc(dev, sizeof(*intr), GFP_KERNEL);
+> +	if (!intr)
+> +		return -ENOMEM;
+> +
+> +	intr->sci = devm_ti_sci_get_by_phandle(dev, "ti,sci");
+> +	if (IS_ERR(intr->sci)) {
+> +		ret = PTR_ERR(intr->sci);
+> +		if (ret != -EPROBE_DEFER)
+> +			dev_err(dev, "ti,sci read fail %d\n", ret);
+> +		intr->sci = NULL;
+> +		return ret;
+> +	}
+> +
+> +	ret = of_property_read_u32(dev_of_node(dev), "ti,sci-dst-id",
+> +				   (u32 *)&intr->dst_id);
+> +	if (ret) {
+> +		dev_err(dev, "missing 'ti,sci-dst-id' property\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	intr->dst_irq = devm_ti_sci_get_of_resource(intr->sci, dev,
+> +						    intr->dst_id,
+> +						    "ti,sci-rm-range-girq");
+> +	if (IS_ERR(intr->dst_irq)) {
+> +		dev_err(dev, "Destination irq resource allocation failed\n");
+> +		return PTR_ERR(intr->dst_irq);
+> +	}
+> +
+> +	domain = irq_domain_add_hierarchy(parent_domain, 0, 0, dev_of_node(dev),
+> +					  &ti_sci_intr_irq_domain_ops, intr);
+> +	if (!domain) {
+> +		dev_err(dev, "Failed to allocate IRQ domain\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	if (of_property_read_u32(dev_of_node(dev), "#interrupt-cells",
+> +				 &intsize))
+> +		return -EINVAL;
+> +
+> +	count = 0;
+> +	for_each_node_with_property(dn, "interrupts") {
+> +		if (of_irq_find_parent(dn) != dev_of_node(dev))
+> +			continue;
+> +		count += of_property_count_elems_of_size(dn, "interrupts",
+> +							 sizeof(u32) * intsize);
+> +	}
+> +
+> +	for_each_node_with_property(dn, "interrupts-extended") {
+> +		of_for_each_phandle(&it, ret, dn, "interrupts-extended",
+> +				    "#interrupt-cells", 0) {
+> +			if (it.node == dev_of_node(dev))
+> +				count++;
+> +		}
+> +	}
+
+What is this trying to do? Counting the number of interrupt descriptors
+in the whole system? What does this even mean?
+
+What I suggested was to allocate the required number of interrupts
+for a given device, based on the requirements of that device. I also
+suggested to investigate the x86 two phase allocation mechanism for the
+INTA driver.
+
+I never suggested that you'd parse the DT to guess how many interrupts
+you'd need to allocate...
+
+	M.
+
+> +
+> +	intr->vint_irqs = ti_sci_get_num_resources(intr->dst_irq) - count;
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id ti_sci_intr_irq_domain_of_match[] = {
+> +	{ .compatible = "ti,sci-intr", },
+> +	{ /* sentinel */ },
+> +};
+> +MODULE_DEVICE_TABLE(of, ti_sci_intr_irq_domain_of_match);
+> +
+> +static struct platform_driver ti_sci_intr_irq_domain_driver = {
+> +	.probe = ti_sci_intr_irq_domain_probe,
+> +	.driver = {
+> +		.name = "ti-sci-intr",
+> +		.of_match_table = ti_sci_intr_irq_domain_of_match,
+> +	},
+> +};
+> +module_platform_driver(ti_sci_intr_irq_domain_driver);
+> +
+> +MODULE_AUTHOR("Lokesh Vutla <lokeshvutla@ticom>");
+> +MODULE_DESCRIPTION("K3 Interrupt Router driver over TI SCI protocol");
+> +MODULE_LICENSE("GPL v2");
 
 
-On 2/16/19 4:40 AM, David Hildenbrand wrote:
-> On 04.02.19 21:18, Nitesh Narayan Lal wrote:
->
-> Hi Nitesh,
->
-> I thought again about how s390x handles free page hinting. As that seem=
-s
-> to work just fine, I guess sticking to a similar model makes sense.
->
->
-> I already explained in this thread how it works on s390x, a short summa=
-ry:
->
-> 1. Each VCPU has a buffer of pfns to be reported to the hypervisor. If =
-I
-> am not wrong, it contains 512 entries, so is exactly 1 page big. This
-> buffer is stored in the hypervisor and is on page granularity.
->
-> 2. This page buffer is managed via the ESSA instruction. In addition, t=
-o
-> synchronize with the guest ("page reused when freeing in the
-> hypervisor"), special bits in the host->guest page table can be
-> set/locked via the ESSA instruction by the guest and similarly accessed=
 
-> by the hypervisor.
->
-> 3. Once the buffer is full, the guest does a synchronous hypercall,
-> going over all 512 entries and zapping them (=3D=3D similar to MADV_DON=
-TNEED)
->
->
-> To mimic that, we
->
-> 1. Have a static buffer per VCPU in the guest with 512 entries. You
-> basically have that already.
->
-> 2. On every free, add the page _or_ the page after merging by the buddy=
-
-> (e.g. MAX_ORDER - 1) to the buffer (this is where we could be better
-> than s390x). You basically have that already.
->
-> 3. If the buffer is full, try to isolate all pages and do a synchronous=
-
-> report to the hypervisor. You have the first part already. The second
-> part would require a change (don't use a separate/global thread to do
-> the hinting, just do it synchronously).
->
-> 4. One hinting is done, putback all isolated pages to the budy. You
-> basically have that already.
->
->
-> For 3. we can try what you have right now, using virtio. If we detect
-> that's a problem, we can do it similar to what Alexander proposes and
-> just do a bare hypercall. It's just a different way of carrying out the=
-
-> same task.
->
->
-> This approach
-> 1. Mimics what s390x does, besides supporting different granularities.
-> To synchronize guest->host we simply take the pages off the buddy.
->
-> 2. Is basically what Alexander does, however his design limitation is
-> that doing any hinting on smaller granularities will not work because
-> there will be too many synchronous hints. Bad on fragmented guests.
->
-> 3. Does not require any dynamic data structures in the guest.
->
-> 4. Does not block allocation paths.
->
-> 5. Blocks on e.g. every 512'ed free. It seems to work on s390x, why
-> shouldn't it for us. We have to measure.
->
-> 6. We are free to decide which granularity we report.
->
-> 7. Potentially works even if the guest memory is fragmented (little
-> MAX_ORDER - 1) pages.
->
-> It would be worth a try. My feeling is that a synchronous report after
-> e.g. 512 frees should be acceptable, as it seems to be acceptable on
-> s390x. (basically always enabled, nobody complains).
-
-The reason I like the current approach of reporting via separate kernel
-thread is that it doesn't block any regular allocation/freeing code path
-in anyways.
->
-> We would have to play with how to enable/disable reporting and when to
-> not report because it's not worth it in the guest (e.g. low on memory).=
-
->
->
-> Do you think something like this would be easy to change/implement and
-> measure?
-
-I can do that as I figure out a real world guest workload using which
-the two approaches can be compared.
-
-> Thanks!
->
->> The following patch-set proposes an efficient mechanism for handing fr=
-eed memory between the guest and the host. It enables the guests with no =
-page cache to rapidly free and reclaims memory to and from the host respe=
-ctively.
->>
->> Benefit:
->> With this patch-series, in our test-case, executed on a single system =
-and single NUMA node with 15GB memory, we were able to successfully launc=
-h atleast 5 guests=20
->> when page hinting was enabled and 3 without it. (Detailed explanation =
-of the test procedure is provided at the bottom).
->>
->> Changelog in V8:
->> In this patch-series, the earlier approach [1] which was used to captu=
-re and scan the pages freed by the guest has been changed. The new approa=
-ch is briefly described below:
->>
->> The patch-set still leverages the existing arch_free_page() to add thi=
-s functionality. It maintains a per CPU array which is used to store the =
-pages freed by the guest. The maximum number of entries which it can hold=
- is defined by MAX_FGPT_ENTRIES(1000). When the array is completely fille=
-d, it is scanned and only the pages which are available in the buddy are =
-stored. This process continues until the array is filled with pages which=
- are part of the buddy free list. After which it wakes up a kernel per-cp=
-u-thread.
->> This kernel per-cpu-thread rescans the per-cpu-array for any re-alloca=
-tion and if the page is not reallocated and present in the buddy, the ker=
-nel thread attempts to isolate it from the buddy. If it is successfully i=
-solated, the page is added to another per-cpu array. Once the entire scan=
-ning process is complete, all the isolated pages are reported to the host=
- through an existing virtio-balloon driver.
->>
->> Known Issues:
->> 	* Fixed array size: The problem with having a fixed/hardcoded array s=
-ize arises when the size of the guest varies. For example when the guest =
-size increases and it starts making large allocations fixed size limits t=
-his solution's ability to capture all the freed pages. This will result i=
-n less guest free memory getting reported to the host.
->>
->> Known code re-work:
->> 	* Plan to re-use Wei's work, which communicates the poison value to t=
-he host.
->> 	* The nomenclatures used in virtio-balloon needs to be changed so tha=
-t the code can easily be distinguished from Wei's Free Page Hint code.
->> 	* Sorting based on zonenum, to avoid repetitive zone locks for the sa=
-me zone.
->>
->> Other required work:
->> 	* Run other benchmarks to evaluate the performance/impact of this app=
-roach.
->>
->> Test case:
->> Setup:
->> Memory-15837 MB
->> Guest Memory Size-5 GB
->> Swap-Disabled
->> Test Program-Simple program which allocates 4GB memory via malloc, tou=
-ches it via memset and exits.
->> Use case-Number of guests that can be launched completely including th=
-e successful execution of the test program.
->> Procedure:=20
->> The first guest is launched and once its console is up, the test alloc=
-ation program is executed with 4 GB memory request (Due to this the guest=
- occupies almost 4-5 GB of memory in the host in a system without page hi=
-nting). Once this program exits at that time another guest is launched in=
- the host and the same process is followed. We continue launching the gue=
-sts until a guest gets killed due to low memory condition in the host.
->>
->> Result:
->> Without Hinting-3 Guests
->> With Hinting-5 to 7 Guests(Based on the amount of memory freed/capture=
-d).
->>
->> [1] https://www.spinics.net/lists/kvm/msg170113.html=20
->>
->>
->
---=20
-Regards
-Nitesh
-
-
---cW9cKcy4XGSw0A67mbAvusrJdUVpT6K3Y--
-
---mdyfYfDmjN5MPMwf7kRhxeoJJoZlN6TOI
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEkXcoRVGaqvbHPuAGo4ZA3AYyozkFAlxq1EAACgkQo4ZA3AYy
-oznNBg/9FBQq6/Y7BO+Pr9oEa3tWOX/G/VUwS5uvPHVbLYC/M6vyp+3lc3HoGGZP
-Ecez6jDTUS2iwOkp2etWgYPKqfp93+UtSbGGCCEms2UI1SteTTozPSkSHOf4SAPa
-+2z6XB6s0vmuCEvQoxy7LPN/vgKd7aCgDHR/GN/iueuYZzUdrHPjMGVPBmtyCh7i
-sZx9b9lFW70tDH+Tyxez2LA7do/fYmDpzc3mVIENZ9si+mRVJsxwVIWlPPOga2wI
-WxF2oOqiTEQixHxPKxgc97qYAR1pdspLeFWyMxY+wdWA03vVpeYFj9XJs15Mv72/
-cP4OPSdFAM/XZ++4ioAFutLMuuehZYtP/8IcO4u5TLzwlsOeftnDhxbt6vjChgrd
-QAoD58TpcfoMnarhdcPQmX9tRRjHKRS5IPksHufpvd8CQGIAPrPLwW1Zs2Mx9VRC
-3UeRJrvD5yJmoYjJND5bkchJoJShSPeCdG1WCcM7PH+Jrtkg1w3iSVkl2T3tGVuA
-XdjRuvzDazrvDiYFjgnfzatM86V/yZhY7qdM5E9U0l1IrscX1i+eyBZJUZG1DNie
-VV1vdIlHQefW2hBVXGhOIHZO/APs7BrW9BVi9lPZpAGmztG1eJpbI//dsGEKK2aO
-qxiB/3IQCRhdxYHXoWVsrrlcmrKgFeF/k039hC6U/E56/5EuZ9k=
-=FxZ6
------END PGP SIGNATURE-----
-
---mdyfYfDmjN5MPMwf7kRhxeoJJoZlN6TOI--
+-- 
+Without deviation from the norm, progress is not possible.
