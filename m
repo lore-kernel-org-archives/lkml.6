@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3447EC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:10:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1014C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:10:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05719217D7
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:10:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA3A921901
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:10:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499055;
-	bh=cWkvYAIYSuuxTWFENCUoA4MC6iEiqsfnTdUI59HMRtQ=;
+	s=default; t=1550499058;
+	bh=UUzycFdO9P3qEEBnRfjzvjvivja4YgUSzXIaLPJTrTI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eudW7+6irYfUU+T2Kql39+CqxbnZPI1wG7HQfK0Rt/hgdl99e5deCFA+kaYR877wW
-	 mRNPQM7a1W01UUauiECeCq1FljROd5mRcyOdMVVV/Bpz0Oy18YtXoZ4P6w5eFU+AlE
-	 puokfxPOW5VDlaJMZvIFBk5fcRTlQQMcBL7p822w=
+	b=cjT9RDCO7Q73sVpryAa+GjcJJ392uOOB2A4OxpUKSvw2lK+2louCPhsx2rfAKlu3U
+	 0AfqklGcTmR7I3wRr/LdX5T9CAZA/JAwtqEoM1ZI80vOc5CHOvhudo17fWxLGBGW/Y
+	 Y47JEF8YCcQRUSNouCHla+i9MS9f9ZtAOV8LCiuM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390268AbfBROKx (ORCPT
+        id S2391620AbfBROK5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:10:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54698 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:10:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391578AbfBROKv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:10:51 -0500
+        id S2391605AbfBROKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:10:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E2DD1217D7;
-        Mon, 18 Feb 2019 14:10:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2DCB217D7;
+        Mon, 18 Feb 2019 14:10:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550499050;
-        bh=cWkvYAIYSuuxTWFENCUoA4MC6iEiqsfnTdUI59HMRtQ=;
+        s=default; t=1550499053;
+        bh=UUzycFdO9P3qEEBnRfjzvjvivja4YgUSzXIaLPJTrTI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DvQrt7HJJ+60bvbEgN1oiYhZRQq9zFcmCY+kO3/HBbcNUa04BB9THGe3jiSte02UD
-         w4kWqj69ySxcFShGGzUF4WQwfEJvj4tJ0f3f1g4qZsxS9RKwjdVi0B66O5HzWBkUNc
-         h+Y4y0OT1JZTFIq15lRQ311c7pumWZPMs+u8v66s=
+        b=d6IhoyNjDZ4V4/gyz5zkmSb42geQmTTh1TzAEA+U69MyrgGlIAh+bTyjjiBFI5Tw0
+         3S8Uf1N7lP0qYFoggGC6IVkjK+iukbiX2WoSikVAdTA96aUUaPZ3RfF7SCBpHvXMh4
+         Vdad49BgJpwk5iYwqdBTX1vDeHMBR9WGX7faiKwE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Govindarajulu Varadarajan <gvaradar@cisco.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 061/108] enic: fix checksum validation for IPv6
-Date:   Mon, 18 Feb 2019 14:43:57 +0100
-Message-Id: <20190218133522.350361632@linuxfoundation.org>
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 3.18 062/108] ALSA: compress: Fix stop handling on compressed capture streams
+Date:   Mon, 18 Feb 2019 14:43:58 +0100
+Message-Id: <20190218133522.394681154@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -66,30 +65,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Govindarajulu Varadarajan <gvaradar@cisco.com>
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-[ Upstream commit 7596175e99b3d4bce28022193efd954c201a782a ]
+commit 4f2ab5e1d13d6aa77c55f4914659784efd776eb4 upstream.
 
-In case of IPv6 pkts, ipv4_csum_ok is 0. Because of this, driver does
-not set skb->ip_summed. So IPv6 rx checksum is not offloaded.
+It is normal user behaviour to start, stop, then start a stream
+again without closing it. Currently this works for compressed
+playback streams but not capture ones.
 
-Signed-off-by: Govindarajulu Varadarajan <gvaradar@cisco.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The states on a compressed capture stream go directly from OPEN to
+PREPARED, unlike a playback stream which moves to SETUP and waits
+for a write of data before moving to PREPARED. Currently however,
+when a stop is sent the state is set to SETUP for both types of
+streams. This leaves a capture stream in the situation where a new
+start can't be sent as that requires the state to be PREPARED and
+a new set_params can't be sent as that requires the state to be
+OPEN. The only option being to close the stream, and then reopen.
+
+Correct this issues by allowing snd_compr_drain_notify to set the
+state depending on the stream direction, as we already do in
+set_params.
+
+Fixes: 49bb6402f1aa ("ALSA: compress_core: Add support for capture streams")
+Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/cisco/enic/enic_main.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/cisco/enic/enic_main.c
-+++ b/drivers/net/ethernet/cisco/enic/enic_main.c
-@@ -1065,7 +1065,7 @@ static void enic_rq_indicate_buf(struct
- 		 * CHECSUM_UNNECESSARY.
- 		 */
- 		if ((netdev->features & NETIF_F_RXCSUM) && tcp_udp_csum_ok &&
--		    ipv4_csum_ok)
-+		    (ipv4_csum_ok || ipv6))
- 			skb->ip_summed = CHECKSUM_UNNECESSARY;
+---
+ include/sound/compress_driver.h |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+--- a/include/sound/compress_driver.h
++++ b/include/sound/compress_driver.h
+@@ -176,7 +176,11 @@ static inline void snd_compr_drain_notif
+ 	if (snd_BUG_ON(!stream))
+ 		return;
  
- 		if (vlan_stripped)
+-	stream->runtime->state = SNDRV_PCM_STATE_SETUP;
++	if (stream->direction == SND_COMPRESS_PLAYBACK)
++		stream->runtime->state = SNDRV_PCM_STATE_SETUP;
++	else
++		stream->runtime->state = SNDRV_PCM_STATE_PREPARED;
++
+ 	wake_up(&stream->runtime->sleep);
+ }
+ 
 
 
