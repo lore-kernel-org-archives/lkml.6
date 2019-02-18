@@ -3,93 +3,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F6EFC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:31:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C347EC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:33:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79D52218DE
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:31:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D3B8218DE
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:33:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728306AbfBRCb3 (ORCPT
+        id S1728354AbfBRCd2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 21:31:29 -0500
-Received: from mga18.intel.com ([134.134.136.126]:23874 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727266AbfBRCb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 21:31:28 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Feb 2019 18:31:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.58,382,1544515200"; 
-   d="scan'208";a="134311016"
-Received: from unknown (HELO [10.239.13.114]) ([10.239.13.114])
-  by FMSMGA003.fm.intel.com with ESMTP; 17 Feb 2019 18:31:25 -0800
-Message-ID: <5C6A1A28.40808@intel.com>
-Date:   Mon, 18 Feb 2019 10:36:24 +0800
-From:   Wei Wang <wei.w.wang@intel.com>
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
+        Sun, 17 Feb 2019 21:33:28 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:49800 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727266AbfBRCd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 21:33:27 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 767B451E2AF09FD68B05;
+        Mon, 18 Feb 2019 10:33:24 +0800 (CST)
+Received: from [127.0.0.1] (10.177.96.96) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Mon, 18 Feb 2019
+ 10:33:18 +0800
+Subject: Re: [net-next] net: crypto set sk to NULL when af_alg_release.
+To:     David Miller <davem@davemloft.net>
+References: <20190215142415.149153-1-maowenan@huawei.com>
+ <20190217.154218.1671210082238894003.davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <xiyou.wangcong@gmail.com>,
+        <linux-kernel@vger.kernel.org>
+From:   maowenan <maowenan@huawei.com>
+Message-ID: <e6185caf-4807-eb26-969b-b4f189b84f38@huawei.com>
+Date:   Mon, 18 Feb 2019 10:33:01 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-To:     David Hildenbrand <david@redhat.com>,
-        'Nitesh Narayan Lal' <nitesh@redhat.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
-        "pagupta@redhat.com" <pagupta@redhat.com>,
-        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
-        "riel@surriel.com" <riel@surriel.com>,
-        "mst@redhat.com" <mst@redhat.com>,
-        "dodgen@google.com" <dodgen@google.com>,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        "dhildenb@redhat.com" <dhildenb@redhat.com>,
-        "aarcange@redhat.com" <aarcange@redhat.com>
-Subject: Re: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
-References: <20190204201854.2328-1-nitesh@redhat.com> <286AC319A985734F985F78AFA26841F73DF6B56A@shsmsx102.ccr.corp.intel.com> <f9516222-793a-a169-c18a-728ca0256cd3@redhat.com> <286AC319A985734F985F78AFA26841F73DF6F0E3@shsmsx102.ccr.corp.intel.com> <bdd4298d-b84b-1ffb-0d9c-3ff5798da325@redhat.com> <286AC319A985734F985F78AFA26841F73DF71F38@shsmsx102.ccr.corp.intel.com> <751444f1-2ff8-e6f8-3501-b0408e3f6035@redhat.com>
-In-Reply-To: <751444f1-2ff8-e6f8-3501-b0408e3f6035@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20190217.154218.1671210082238894003.davem@davemloft.net>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.96.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 02/15/2019 05:41 PM, David Hildenbrand wrote:
-> On 15.02.19 10:05, Wang, Wei W wrote:
->> On Thursday, February 14, 2019 5:43 PM, David Hildenbrand wrote:
->>> Yes indeed, that is the important bit. They must not be put pack to the
->>> buddy before they have been processed by the hypervisor. But as the pages
->>> are not in the buddy, no one allocating a page will stumble over such a page
->>> and try to allocate it. Threads trying to allocate memory will simply pick
->>> another buddy page instead of "busy waiting" for that page to be finished
->>> reporting.
->> What if a guest thread try to allocate some pages but the buddy cannot satisfy
->> because all the pages are isolated? Would it be the same case that the guest thread
->> gets blocked by waiting all the isolated pages to get madvised by the host and
->> returned to the guest buddy, or even worse, some guest threads get killed due to oom?
-> Your question targets low memory situations in the guest. I think Nitesh
-> already answered parts of that question somewhere and I'll let him
-> answer it in detail, only a short comment from my side :)
->
-> I can imagine techniques where the OOM killer can be avoided, but the
-> OOM handler will eventually kick in and handle it.
->
-> In general your question is valid and we will have to think about a way
-> to avoid that from happening. However, in contrast to your approach
-> blocking on potentially every page that is being hinted, in Nitesh's
-> approach this would only happen when the guest is really low on memory.
-> And the question is in general, if a guest wants to hint if low on
-> memory ("safety buffer").
 
-I think we should forget that the guest is low on memory because
-this approach takes all the pages off the list, not because the guest really
-uses up the free memory.
 
-Guest allocating one page could also potentially be blocked until all 
-the pages
-(as opposed to one page) being madvised and returned to the guest buddy.
+On 2019/2/18 7:42, David Miller wrote:
+> From: Mao Wenan <maowenan@huawei.com>
+> Date: Fri, 15 Feb 2019 22:24:15 +0800
+> 
+>> KASAN has found use-after-free in sockfs_setattr.
+>> The existed commit 6d8c50dcb029 ("socket: close race condition between sock_close()
+>> and sockfs_setattr()") is to fix this simillar issue, but it seems to ignore
+>> that crypto module forgets to set the sk to NULL after af_alg_release.
+> 
+> Please target this at 'net' since this is a bug fix.
 
-Best,
-Wei
+Thank you, I have sent the v2 patch targets to "net" mail list.
+
+> 
+> .
+> 
+
