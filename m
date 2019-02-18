@@ -2,98 +2,174 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCC25C10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8213DC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:21:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6445217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:14:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XlPaoM/y"
+	by mail.kernel.org (Postfix) with ESMTP id 4F2D7217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 17:21:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388392AbfBRROM (ORCPT
+        id S2388026AbfBRRVO convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 12:14:12 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:41850 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731396AbfBRROL (ORCPT
+        Mon, 18 Feb 2019 12:21:14 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:42300 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726380AbfBRRVN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 12:14:11 -0500
-Received: by mail-ot1-f66.google.com with SMTP id t7so13085984otk.8;
-        Mon, 18 Feb 2019 09:14:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=e9Ju8o7UI0AE5oEO08Wi6g50YqLMKlVnM2Sf/QzK7J0=;
-        b=XlPaoM/yy+gaPvXUQlf6IVhNEhO4cWMtw9PNgcOtK5VapyrujCJK4FOLkoMVamEFhV
-         Mwe9FKkHAGW2iZGhwGpq6I56RkEU4SqNMGlTvOVcSIh4ivP+lpG8EtwaLTYNYGsq9VHy
-         7glXivZuZoFubR8VZ5a7TaL/KSTrpVfxFk2NZOZ3arNqziF5UVfcy6w3Nbnv5VPoBieJ
-         v+WLD1XKGZ/z8PwGf6R0GOQAROBeY6Cu0trwEp0bRJiDAkItF4k3KQI26w08dFsH8BcX
-         vs03CmgyN9zf3f2b/lXLPLXELrjcr+vAScslA28gSSy1cX+dFlObPokLv6/ITCRRBcT4
-         kuoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=e9Ju8o7UI0AE5oEO08Wi6g50YqLMKlVnM2Sf/QzK7J0=;
-        b=Bv1azvVBiCuKPHLHLAhn6xCMh34k7Uoq6HGU5FWjiT/HTodmqSZstr9kAPvs+vz0tq
-         MSJ6bk0gU506G6eXffMPB1pLhGomuOcNNSos5VypuZ5J9MnDOPwAS/SBZK97x3N+1y8r
-         JIEsw7Dyc3+11hXHK0iLMJ1TLlNDiqFB+M1PdXs3HAFNcD2xKZi5Z8DXVVKoUR2EXMQO
-         iyhChAIda7+NAfJyB+utharmSqMNqprhXBbS6hwqfwYqOR4CuLO6qhqV5O6Bfj+Wx2o0
-         OkYkl2Q7mpoe6XOOo5vrT+aclmDKbaVEJNZVeeNJ+sBSeSuC4jXKNk7aFVxhvYWXhmbX
-         hffA==
-X-Gm-Message-State: AHQUAuYbhl66iX5gFgk49FICwO0YaC5pIekE9VihQ3QsRLXA+1ScNubT
-        dxZWAMjjNWDaEjL+SbIfPtf9Z/Dp6vNy48AR2z4=
-X-Google-Smtp-Source: AHgI3IYiqorHvlu0UFdovwaDJepUFtIFyU0xQLLdv8hhpT7WH6kAgAQBbl4JMYoHtfMXXpJ+mmgWBZNUvhxGG/Eyadc=
-X-Received: by 2002:a05:6808:693:: with SMTP id k19mr14234489oig.77.1550510050977;
- Mon, 18 Feb 2019 09:14:10 -0800 (PST)
+        Mon, 18 Feb 2019 12:21:13 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x1IHKAmo119458
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 12:21:12 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qqx03jn5r-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 12:21:11 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+        Mon, 18 Feb 2019 17:21:10 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 18 Feb 2019 17:21:08 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x1IHL7RP10027116
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 18 Feb 2019 17:21:07 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 41ECF42045;
+        Mon, 18 Feb 2019 17:21:07 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 111FC4203F;
+        Mon, 18 Feb 2019 17:21:07 +0000 (GMT)
+Received: from mschwideX1 (unknown [9.152.212.164])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 18 Feb 2019 17:21:07 +0000 (GMT)
+Date:   Mon, 18 Feb 2019 18:21:06 +0100
+From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Heiko Carstens <heiko.carstens@de.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] s390/setup: fix early warning messages
+In-Reply-To: <20190218180146.79930fe6@mschwideX1>
+References: <20190218154640.GA27699@roeck-us.net>
+        <20190218180146.79930fe6@mschwideX1>
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <89716a4433cd83aea5f4200359b184b0ee2cc8bd.1549828313.git.bobbyeshleman@gmail.com>
- <CAGngYiXPsj-TAZxC43UtAZYTkbztFtDB-z4jW29CthmaoeNy_w@mail.gmail.com>
- <20190213021753.GA19621@bobby.localdomain> <CAGngYiUvEpSgESzFGJOtYjLi+_xmZ18GwiSTxaaMjEmjk2pu4Q@mail.gmail.com>
- <20190218152224.00007920@huawei.com>
-In-Reply-To: <20190218152224.00007920@huawei.com>
-From:   Sven Van Asbroeck <thesven73@gmail.com>
-Date:   Mon, 18 Feb 2019 12:13:59 -0500
-Message-ID: <CAGngYiXz=o6m41wsETbt7i9c6Ut=GsW2Kvf8cwhqSQnO6Jg4zA@mail.gmail.com>
-Subject: Re: [PATCH 1/3] iio: light: Add driver for ap3216c
-To:     Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc:     Robert Eshleman <bobbyeshleman@gmail.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-iio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-TM-AS-GCONF: 00
+x-cbid: 19021817-0016-0000-0000-00000257E0B9
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19021817-0017-0000-0000-000032B2219E
+Message-Id: <20190218182106.61b10ee4@mschwideX1>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 8BIT
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-02-18_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1902180129
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Jonathan,
+On Mon, 18 Feb 2019 18:01:46 +0100
+Martin Schwidefsky <schwidefsky@de.ibm.com> wrote:
 
-First of all, thank you so much for taking the time for such a detailed
-reply !
+> On Mon, 18 Feb 2019 07:46:40 -0800
+> Guenter Roeck <linux@roeck-us.net> wrote:
+> 
+> > Hi,
+> > 
+> > On Thu, Feb 14, 2019 at 03:40:56PM +0100, Martin Schwidefsky wrote:  
+> > > The setup_lowcore() function creates a new prefix page for the boot CPU.
+> > > The PSW mask for the system_call, external interrupt, i/o interrupt and
+> > > the program check handler have the DAT bit set in this new prefix page.
+> > > 
+> > > At the time setup_lowcore is called the system still runs without virtual
+> > > address translation, the paging_init() function creates the kernel page
+> > > table and loads the CR13 with the kernel ASCE.
+> > > 
+> > > Any code between setup_lowcore() and the end of paging_init() that has
+> > > a BUG or WARN statement will create a program check that can not be
+> > > handled correctly as there is no kernel page table yet.
+> > > 
+> > > To allow early WARN statements initially setup the lowcore with DAT off
+> > > and set the DAT bit only after paging_init() has completed.
+> > > 
+> > > Cc: stable@vger.kernel.org
+> > > Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>    
+> > 
+> > This patch causes s390 qemu emulations to crash with a kernel stack overflow.
+> > Reverting the patch fixes the problem. Crash log and bisect results below.  
+> 
+> Urgs, yes. That is EDAT-1 again that makes it work with 1MB pages but breaks
+> with 4K mapping where the prefix page is mapped to absolute zero.
+> 
+> Just using S390_lowcore instead of lowcore_ptr[0] does not work either
+> because low-address protection is already active. I'll think of something.
+> 
+> Thanks for bug report!
+ 
+This patch should fix the problem:
+--
+From d4393e82c3ec9b2fe5dba4b0d1b6eef29f8d15c8 Mon Sep 17 00:00:00 2001
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Date: Mon, 18 Feb 2019 18:10:08 +0100
+Subject: [PATCH] s390/setup: fix boot crash for machine without EDAT-1
 
-On Mon, Feb 18, 2019 at 10:22 AM Jonathan Cameron
-<jonathan.cameron@huawei.com> wrote:
->
->
-> So, what I'm reading above is worrying.   The interrupt is cleared
-> by the read of the data registers?  I thought the datasheet allowed
-> for an explicit clear?
->
+The fix to make WARN work in the early boot code created a problem
+on older machines without EDAT-1. The setup_lowcore_dat_on function
+uses the pointer from lowcore_ptr[0] to set the DAT bit in the new
+PSWs. That does not work if the kernel page table is set up with
+4K pages as the prefix address maps to absolute zero.
 
-I don't think there's any need to worry. The part allows us to choose between
-clear-on-read, and explicit clear. Bobby's approach is fundamentally sound.
+To make this work the PSWs need to be changed with via address 0 in
+form of the S390_lowcore definition.
 
-IMHO most of my suggestions were based on an incomplete understanding of
-a) the interrupt in the device, and b) the event guarantees in iio.
+Cc: stable@vger.kernel.org
+Fixes: 94f85ed3e2 ("s390/setup: fix early warning messages")
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+---
+ arch/s390/kernel/setup.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-I will respond to your larger reply properly soon.
+diff --git a/arch/s390/kernel/setup.c b/arch/s390/kernel/setup.c
+index 65b22ef5141a..12934e8fbb91 100644
+--- a/arch/s390/kernel/setup.c
++++ b/arch/s390/kernel/setup.c
+@@ -451,13 +451,12 @@ static void __init setup_lowcore_dat_off(void)
+ 
+ static void __init setup_lowcore_dat_on(void)
+ {
+-	struct lowcore *lc;
+-
+-	lc = lowcore_ptr[0];
+-	lc->external_new_psw.mask |= PSW_MASK_DAT;
+-	lc->svc_new_psw.mask |= PSW_MASK_DAT;
+-	lc->program_new_psw.mask |= PSW_MASK_DAT;
+-	lc->io_new_psw.mask |= PSW_MASK_DAT;
++	__ctl_clear_bit(0, 28);
++	S390_lowcore.external_new_psw.mask |= PSW_MASK_DAT;
++	S390_lowcore.svc_new_psw.mask |= PSW_MASK_DAT;
++	S390_lowcore.program_new_psw.mask |= PSW_MASK_DAT;
++	S390_lowcore.io_new_psw.mask |= PSW_MASK_DAT;
++	__ctl_set_bit(0, 28);
+ }
+ 
+ static struct resource code_resource = {
+-- 
+2.16.4
+
+
+-- 
+blue skies,
+   Martin.
+
+"Reality continues to ruin my life." - Calvin.
+
