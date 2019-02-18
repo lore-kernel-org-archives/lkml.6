@@ -2,165 +2,471 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE872C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 22:48:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F6BC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 22:56:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A9DF217D9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 22:48:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF7A8217D9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 22:56:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DCmzcB66"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731997AbfBRWsP (ORCPT
+        id S1727592AbfBRW4K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 17:48:15 -0500
-Received: from gateway20.websitewelcome.com ([192.185.65.13]:41139 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731937AbfBRWsO (ORCPT
+        Mon, 18 Feb 2019 17:56:10 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42354 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726180AbfBRW4J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 17:48:14 -0500
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 2C1AD400D057F
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 16:48:13 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id vrhtgTgmrdnCevrhtgRdX8; Mon, 18 Feb 2019 16:48:13 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.119.20] (port=43190 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gvrhs-002Vxn-Io; Mon, 18 Feb 2019 16:48:12 -0600
-Subject: Re: [PATCH] drm/amdgpu/powerplay/polaris10_smumgr: Mark expected
- switch fall-through
-To:     Alex Deucher <alexdeucher@gmail.com>
-Cc:     Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Kees Cook <keescook@chromium.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20190215170253.GA30719@embeddedor>
- <CADnq5_OtPhhES1gm=0CZBPYYJqCpQccjYrmwTTftw8gwVSL30w@mail.gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <9e973389-d995-4063-9fec-7c41b27238a3@embeddedor.com>
-Date:   Mon, 18 Feb 2019 16:48:11 -0600
+        Mon, 18 Feb 2019 17:56:09 -0500
+Received: by mail-pf1-f193.google.com with SMTP id n74so9243520pfi.9;
+        Mon, 18 Feb 2019 14:56:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=iArAmDP+xoIkZF1Xqi2UwoZPuYyIhop07CMZicYNuG4=;
+        b=DCmzcB66eIiRuhRxSon9u0bNDp1PLyl4npkSGRnMNAE3diKcxf0sU1yGtsMJcvqA1X
+         vF9R4Ky0ZaPkVy0OiPlE6SkigOTGsOEloY+Sq4ejVvRwSepOY1U8/QlOy97iS3mGfxhB
+         yQQmeCTs4exkqtJrULdvnvuL0WfC0zqeltHQ1JQkwae4MY2Q3ptx0CBIEMqzXADfHcfP
+         GFqx6tc6zyGsyeANN0gP8ps9Bvye3DqqXqGClFZFpwfyY3y3XSxP86ulqqF1UmcIlNxG
+         TOii7bm6++SX89zmg9HqEvdoo1QJAz4LlsmpWp1c1/3l8sTrj0AsVb19QW29IgiSSYNV
+         go1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=iArAmDP+xoIkZF1Xqi2UwoZPuYyIhop07CMZicYNuG4=;
+        b=JoTFqxrqlsnchAwDgCB94/5H5OOANGz+/fZDCTIycAWIrPpJhgMm4Cii/QAMRhX/s2
+         +G0FBst7zlWKOPBp4lp18JXFx5Z/N5nfkPlLjgaaOCjrCOAGMEC5uR5GcUYYJPgnVJ7R
+         JsjkvFXuEXnFGLThch0UlsNOQosFjDzoceK7Xj6VknzhgDq7O6T4ffRygINEZsZLB8S0
+         QEWsC+PklJj4nDvb7eoNkJ1To+rCuvP5rm0c7Gnl+SEuR5fkReJd/rzgCuOjKCPtc1eB
+         usXvHLskI9yTJOEZrwVzncAbC5kgSzKzzgBEv0GBZD3ZmJHhlk7XWvH6Ho3LVbnoJy3m
+         S5+A==
+X-Gm-Message-State: AHQUAuZsGJcoI4HFnypAfWXs4Pmv4pdEODa5quBrloYtsbLgMrkkehxY
+        sD6jh6QbsK+R+Vu/AwbUlmc=
+X-Google-Smtp-Source: AHgI3IaedeiIhY4u66DDu/uRJTa+MUDbBjr3L/RVCunx1NPMXzIP1YdfkJR7gs4cplp+p/6sfItyyg==
+X-Received: by 2002:a62:2044:: with SMTP id g65mr26249809pfg.127.1550530567623;
+        Mon, 18 Feb 2019 14:56:07 -0800 (PST)
+Received: from [192.168.1.70] (c-24-6-192-50.hsd1.ca.comcast.net. [24.6.192.50])
+        by smtp.gmail.com with ESMTPSA id s190sm23297184pfb.103.2019.02.18.14.56.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Feb 2019 14:56:06 -0800 (PST)
+Subject: Re: [RFC v3 17/19] of: unittest: migrate tests to run on KUnit
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        Rob Herring <robh@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kees Cook <keescook@google.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>, shuah@kernel.org,
+        Joel Stanley <joel@jms.id.au>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Joe Perches <joe@perches.com>, brakmo@fb.com,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Jeff Dike <jdike@addtoit.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-um@lists.infradead.org, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Knut Omang <knut.omang@oracle.com>
+References: <20181128193636.254378-1-brendanhiggins@google.com>
+ <20181128193636.254378-18-brendanhiggins@google.com>
+ <CAL_Jsq+09Kx7yMBC_Jw45QGmk6U_fp4N6HOZDwYrM4tWw+_dOA@mail.gmail.com>
+ <CAFd5g46NehKo=TT4reQ8r74bDTG9BkR=ELg+Q3n5YooUxFwBmA@mail.gmail.com>
+From:   Frank Rowand <frowand.list@gmail.com>
+Message-ID: <1d72f04e-08ba-e3dd-c8c0-512946126113@gmail.com>
+Date:   Mon, 18 Feb 2019 14:56:03 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <CADnq5_OtPhhES1gm=0CZBPYYJqCpQccjYrmwTTftw8gwVSL30w@mail.gmail.com>
+In-Reply-To: <CAFd5g46NehKo=TT4reQ8r74bDTG9BkR=ELg+Q3n5YooUxFwBmA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.119.20
-X-Source-L: No
-X-Exim-ID: 1gvrhs-002Vxn-Io
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.119.20]:43190
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 12
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 2/18/19 4:40 PM, Alex Deucher wrote:
-> On Fri, Feb 15, 2019 at 1:50 PM Gustavo A. R. Silva
-> <gustavo@embeddedor.com> wrote:
+On 2/12/19 5:44 PM, Brendan Higgins wrote:
+> On Wed, Nov 28, 2018 at 12:56 PM Rob Herring <robh@kernel.org> wrote:
 >>
->> In preparation to enabling -Wimplicit-fallthrough, mark switch
->> cases where we are expecting to fall through.
+>> On Wed, Nov 28, 2018 at 1:38 PM Brendan Higgins
+>> <brendanhiggins@google.com> wrote:
+>>>
+>>> Migrate tests without any cleanup, or modifying test logic in anyway to
+>>> run under KUnit using the KUnit expectation and assertion API.
 >>
->> Warning level 3 was used: -Wimplicit-fallthrough=3
+>> Nice! You beat me to it. This is probably going to conflict with what
+>> is in the DT tree for 4.21. Also, please Cc the DT list for
+>> drivers/of/ changes.
 >>
->> This patch is part of the ongoing efforts to enable
->> -Wimplicit-fallthrough.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>  drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c
->> index 52abca065764..92de1bbb2e33 100644
->> --- a/drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c
->> +++ b/drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c
->> @@ -2330,6 +2330,7 @@ static uint32_t polaris10_get_offsetof(uint32_t type, uint32_t member)
->>                 case DRAM_LOG_BUFF_SIZE:
->>                         return offsetof(SMU74_SoftRegisters, DRAM_LOG_BUFF_SIZE);
->>                 }
->> +               /* fall through */
+>> Looks good to me, but a few mostly formatting comments below.
 > 
-> These should be breaks, although I don't think we ever currently hit
-> this case.  I've sent out a patch to fix it and applied the rest of
-> the radeon and amdgpu patches.  Thanks!
+> I just realized that we never talked about your other comments, and I
+> still have some questions. (Sorry, it was the last thing I looked at
+> while getting v4 ready.) No worries if you don't get to it before I
+> send v4 out, I just didn't want you to think I was ignoring you.
+> 
+>>
+>>>
+>>> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+>>> ---
+>>>  drivers/of/Kconfig    |    1 +
+>>>  drivers/of/unittest.c | 1405 ++++++++++++++++++++++-------------------
+>>>  2 files changed, 752 insertions(+), 654 deletions(-)
+>>>
+> <snip>
+>>> diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
+>>> index 41b49716ac75f..a5ef44730ffdb 100644
+>>> --- a/drivers/of/unittest.c
+>>> +++ b/drivers/of/unittest.c
+> <snip>
+>>> -
+>>> -static void __init of_unittest_find_node_by_name(void)
+>>> +static void of_unittest_find_node_by_name(struct kunit *test)
+>>
+>> Why do we have to drop __init everywhere? The tests run later?
+> 
+>>From the standpoint of a unit test __init doesn't really make any
+> sense, right? I know that right now we are running as part of a
+> kernel, but the goal should be that a unit test is not part of a
+> kernel and we just include what we need.
+> 
+> Even so, that's the future. For now, I did not put the KUnit
+> infrastructure in the .init section because I didn't think it belonged
+> there. In practice, KUnit only knows how to run during the init phase
+> of the kernel, but I don't think it should be restricted there. You
+> should be able to run tests whenever you want because you should be
+> able to test anything right? I figured any restriction on that is
+> misleading and will potentially get in the way at worst, and
+> unnecessary at best especially since people shouldn't build a
+> production kernel with all kinds of unit tests inside.
+> 
+>>
+>>>  {
+>>>         struct device_node *np;
+>>>         const char *options, *name;
+>>>
+> <snip>
+>>>
+>>>
+>>> -       np = of_find_node_by_path("/testcase-data/missing-path");
+>>> -       unittest(!np, "non-existent path returned node %pOF\n", np);
+>>> +       KUNIT_EXPECT_EQ_MSG(test,
+>>> +                           of_find_node_by_path("/testcase-data/missing-path"),
+>>> +                           NULL,
+>>> +                           "non-existent path returned node %pOF\n", np);
+>>
+>> 1 tab indent would help with less vertical code (in general, not this
+>> one so much).
+> 
+> Will do.
+> 
+>>
+>>>         of_node_put(np);
+>>>
+>>> -       np = of_find_node_by_path("missing-alias");
+>>> -       unittest(!np, "non-existent alias returned node %pOF\n", np);
+>>> +       KUNIT_EXPECT_EQ_MSG(test, of_find_node_by_path("missing-alias"), NULL,
+>>> +                           "non-existent alias returned node %pOF\n", np);
+>>>         of_node_put(np);
+>>>
+>>> -       np = of_find_node_by_path("testcase-alias/missing-path");
+>>> -       unittest(!np, "non-existent alias with relative path returned node %pOF\n", np);
+>>> +       KUNIT_EXPECT_EQ_MSG(test,
+>>> +                           of_find_node_by_path("testcase-alias/missing-path"),
+>>> +                           NULL,
+>>> +                           "non-existent alias with relative path returned node %pOF\n",
+>>> +                           np);
+>>>         of_node_put(np);
+>>>
+> <snip>
+>>>
+>>> -static void __init of_unittest_property_string(void)
+>>> +static void of_unittest_property_string(struct kunit *test)
+>>>  {
+>>>         const char *strings[4];
+>>>         struct device_node *np;
+>>>         int rc;
+>>>
+>>>         np = of_find_node_by_path("/testcase-data/phandle-tests/consumer-a");
+>>> -       if (!np) {
+>>> -               pr_err("No testcase data in device tree\n");
+>>> -               return;
+>>> -       }
+>>> -
+>>> -       rc = of_property_match_string(np, "phandle-list-names", "first");
+>>> -       unittest(rc == 0, "first expected:0 got:%i\n", rc);
+>>> -       rc = of_property_match_string(np, "phandle-list-names", "second");
+>>> -       unittest(rc == 1, "second expected:1 got:%i\n", rc);
+>>> -       rc = of_property_match_string(np, "phandle-list-names", "third");
+>>> -       unittest(rc == 2, "third expected:2 got:%i\n", rc);
+>>> -       rc = of_property_match_string(np, "phandle-list-names", "fourth");
+>>> -       unittest(rc == -ENODATA, "unmatched string; rc=%i\n", rc);
+>>> -       rc = of_property_match_string(np, "missing-property", "blah");
+>>> -       unittest(rc == -EINVAL, "missing property; rc=%i\n", rc);
+>>> -       rc = of_property_match_string(np, "empty-property", "blah");
+>>> -       unittest(rc == -ENODATA, "empty property; rc=%i\n", rc);
+>>> -       rc = of_property_match_string(np, "unterminated-string", "blah");
+>>> -       unittest(rc == -EILSEQ, "unterminated string; rc=%i\n", rc);
+>>> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
+>>> +
+>>> +       KUNIT_EXPECT_EQ(test,
+>>> +                       of_property_match_string(np,
+>>> +                                                "phandle-list-names",
+>>> +                                                "first"),
+>>> +                       0);
+>>> +       KUNIT_EXPECT_EQ(test,
+>>> +                       of_property_match_string(np,
+>>> +                                                "phandle-list-names",
+>>> +                                                "second"),
+>>> +                       1);
+>>
+>> Fewer lines on these would be better even if we go over 80 chars.
+
+Agreed.  unittest.c already is a greater than 80 char file in general, and
+is a file that benefits from that.
+
+
+> On the of_property_match_string(...), I have no opinion. I will do
+> whatever you like best.
+> 
+> Nevertheless, as far as the KUNIT_EXPECT_*(...), I do have an opinion: I am
+> trying to establish a good, readable convention. Given an expect statement
+> structured as
+> ```
+> KUNIT_EXPECT_*(
+>     test,
+>     expect_arg_0, ..., expect_arg_n,
+>     fmt_str, fmt_arg_0, ..., fmt_arg_n)
+> ```
+> where `test` is the `struct kunit` context argument, `expect_arg_{0, ..., n}`
+> are the arguments the expectations is being made about (so in the above example,
+> `of_property_match_string(...)` and `1`), and `fmt_*` is the optional format
+> string that comes at the end of some expectations.
+> 
+> The pattern I had been trying to promote is the following:
+> 
+> 1) If everything fits on 1 line, do that.
+> 2) If you must make a line split, prefer to keep `test` on its own line,
+> `expect_arg_{0, ..., n}` should be kept together, if possible, and the format
+> string should follow the conventions already most commonly used with format
+> strings.
+> 3) If you must split up `expect_arg_{0, ..., n}` each argument should get its
+> own line and should not share a line with either `test` or any `fmt_*`.
+> 
+> The reason I care about this so much is because expectations should be
+> extremely easy to read; they are the most important part of a unit
+> test because they tell you what the test is verifying. I am not
+> married to the formatting I proposed above, but I want something that
+> will be extremely easy to identify the arguments that the expectation
+> is on. Maybe that means that I need to add some syntactic fluff to
+> make it clearer, I don't know, but this is definitely something we
+> need to get right, especially in the earliest examples.
+
+I will probably raise the ire of the kernel formatting rule makers by offering
+what I think is a _much_ more readable format __for this specific case__.
+In other words for drivers/of/unittest.c.
+
+If you can not make your mail window _very_ wide, or if this email has been
+line wrapped, this example will not be clear.
+
+Two possible formats:
+
+
+### -----  version 1, as created by the patch series
+
+static void of_unittest_property_string(struct kunit *test)
+{
+        const char *strings[4];
+        struct device_node *np;
+        int rc;
+
+        np = of_find_node_by_path("/testcase-data/phandle-tests/consumer-a");
+        KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
+
+        KUNIT_EXPECT_EQ(
+                test,
+                of_property_match_string(np, "phandle-list-names", "first"),
+                0);
+        KUNIT_EXPECT_EQ(
+                test,
+                of_property_match_string(np, "phandle-list-names", "second"),
+                1);
+        KUNIT_EXPECT_EQ(
+                test,
+                of_property_match_string(np, "phandle-list-names", "third"),
+                2);
+        KUNIT_EXPECT_EQ_MSG(
+                test,
+                of_property_match_string(np, "phandle-list-names", "fourth"),
+                -ENODATA,
+                "unmatched string");
+        KUNIT_EXPECT_EQ_MSG(
+                test,
+                of_property_match_string(np, "missing-property", "blah"),
+                -EINVAL,
+                "missing property");
+        KUNIT_EXPECT_EQ_MSG(
+                test,
+                of_property_match_string(np, "empty-property", "blah"),
+                -ENODATA,
+                "empty property");
+        KUNIT_EXPECT_EQ_MSG(
+                test,
+                of_property_match_string(np, "unterminated-string", "blah"),
+                -EILSEQ,
+                "unterminated string");
+
+        /* of_property_count_strings() tests */
+        KUNIT_EXPECT_EQ(test,
+                        of_property_count_strings(np, "string-property"), 1);
+        KUNIT_EXPECT_EQ(test,
+                        of_property_count_strings(np, "phandle-list-names"), 3);
+        KUNIT_EXPECT_EQ_MSG(
+                test,
+                of_property_count_strings(np, "unterminated-string"), -EILSEQ,
+                "unterminated string");
+        KUNIT_EXPECT_EQ_MSG(
+                test,
+                of_property_count_strings(np, "unterminated-string-list"),
+                -EILSEQ,
+                "unterminated string array");
+
+
+
+
+### -----  version 2, modified to use really long lines
+
+static void of_unittest_property_string(struct kunit *test)
+{
+        const char *strings[4];
+        struct device_node *np;
+        int rc;
+
+        np = of_find_node_by_path("/testcase-data/phandle-tests/consumer-a");
+        KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
+
+        KUNIT_EXPECT_EQ(    test, of_property_match_string(np, "phandle-list-names", "first"),  0);
+        KUNIT_EXPECT_EQ(    test, of_property_match_string(np, "phandle-list-names", "second"), 1);
+        KUNIT_EXPECT_EQ(    test, of_property_match_string(np, "phandle-list-names", "third"),  2);
+        KUNIT_EXPECT_EQ_MSG(test, of_property_match_string(np, "phandle-list-names", "fourth"), -ENODATA, "unmatched string");
+        KUNIT_EXPECT_EQ_MSG(test, of_property_match_string(np, "missing-property", "blah"),     -EINVAL, "missing property");
+        KUNIT_EXPECT_EQ_MSG(test, of_property_match_string(np, "empty-property", "blah"),       -ENODATA, "empty property");
+        KUNIT_EXPECT_EQ_MSG(test, of_property_match_string(np, "unterminated-string", "blah"),  -EILSEQ, "unterminated string");
+
+        /* of_property_count_strings() tests */
+        KUNIT_EXPECT_EQ(    test, of_property_count_strings(np, "string-property"),             1);
+        KUNIT_EXPECT_EQ(    test, of_property_count_strings(np, "phandle-list-names"),          3);
+        KUNIT_EXPECT_EQ_MSG(test, of_property_count_strings(np, "unterminated-string"),         -EILSEQ, "unterminated string");
+        KUNIT_EXPECT_EQ_MSG(test, of_property_count_strings(np, "unterminated-string-list"),    -EILSEQ, "unterminated string array");
+
+        
+        ------------------------  ------------------------------------------------------------- --------------------------------------
+             ^                         ^                                                             ^
+             |                         |                                                             |
+             |                         |                                                             |
+            mostly boilerplate        what is being tested                                          expected result, error message
+            (can vary in relop
+             and _MSG or not)
+
+In my opinion, the second version is much more readable.  It is easy to see the
+differences in the boilerplate.  It is easy to see what is being tested, and how
+the arguments of the tested function vary for each test.  It is easy to see the
+expected result and error message.  The entire block fits into a single short
+window (though much wider).
+
+- Frank
+
+>>
+>>> +       KUNIT_EXPECT_EQ(test,
+>>> +                       of_property_match_string(np,
+>>> +                                                "phandle-list-names",
+>>> +                                                "third"),
+>>> +                       2);
+>>> +       KUNIT_EXPECT_EQ_MSG(test,
+>>> +                           of_property_match_string(np,
+>>> +                                                    "phandle-list-names",
+>>> +                                                    "fourth"),
+>>> +                           -ENODATA,
+>>> +                           "unmatched string");
+>>> +       KUNIT_EXPECT_EQ_MSG(test,
+>>> +                           of_property_match_string(np,
+>>> +                                                    "missing-property",
+>>> +                                                    "blah"),
+>>> +                           -EINVAL,
+>>> +                           "missing property");
+>>> +       KUNIT_EXPECT_EQ_MSG(test,
+>>> +                           of_property_match_string(np,
+>>> +                                                    "empty-property",
+>>> +                                                    "blah"),
+>>> +                           -ENODATA,
+>>> +                           "empty property");
+>>> +       KUNIT_EXPECT_EQ_MSG(test,
+>>> +                           of_property_match_string(np,
+>>> +                                                    "unterminated-string",
+>>> +                                                    "blah"),
+>>> +                           -EILSEQ,
+>>> +                           "unterminated string");
+> <snip>
+>>>  /* test insertion of a bus with parent devices */
+>>> -static void __init of_unittest_overlay_10(void)
+>>> +static void of_unittest_overlay_10(struct kunit *test)
+>>>  {
+>>> -       int ret;
+>>>         char *child_path;
+>>>
+>>>         /* device should disable */
+>>> -       ret = of_unittest_apply_overlay_check(10, 10, 0, 1, PDEV_OVERLAY);
+>>> -       if (unittest(ret == 0,
+>>> -                       "overlay test %d failed; overlay application\n", 10))
+>>> -               return;
+>>> +       KUNIT_ASSERT_EQ_MSG(test,
+>>> +                           of_unittest_apply_overlay_check(test,
+>>> +                                                           10,
+>>> +                                                           10,
+>>> +                                                           0,
+>>> +                                                           1,
+>>> +                                                           PDEV_OVERLAY),
+>>
+>> I prefer putting multiple args on a line and having fewer lines.
+> 
+> Looking at this now, I tend to agree, but I don't think I saw a
+> consistent way to break them up for these functions. I figured there
+> should be some type of pattern.
+> 
+>>
+>>> +                           0,
+>>> +                           "overlay test %d failed; overlay application\n",
+>>> +                           10);
+>>>
+>>>         child_path = kasprintf(GFP_KERNEL, "%s/test-unittest101",
+>>>                         unittest_path(10, PDEV_OVERLAY));
+>>> -       if (unittest(child_path, "overlay test %d failed; kasprintf\n", 10))
+>>> -               return;
+>>> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, child_path);
+>>>
+>>> -       ret = of_path_device_type_exists(child_path, PDEV_OVERLAY);
+>>> +       KUNIT_EXPECT_TRUE_MSG(test,
+>>> +                             of_path_device_type_exists(child_path,
+>>> +                                                        PDEV_OVERLAY),
+>>> +                             "overlay test %d failed; no child device\n", 10);
+>>>         kfree(child_path);
+>>> -
+>>> -       unittest(ret, "overlay test %d failed; no child device\n", 10);
+>>>  }
+> <snip>
 > 
 
-Awesome!
-
-Thanks, Alex.
-
---
-Gustavo
