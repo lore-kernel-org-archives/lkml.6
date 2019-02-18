@@ -2,52 +2,60 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD249C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:15:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06458C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:15:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A71D2177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:15:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C27732177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:15:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550499342;
-	bh=7OIWxanLDuxb4z6stzDFMikdg1l8FTjbcfJycHKJ1uc=;
+	s=default; t=1550499352;
+	bh=94C2DwuoAJ6qFgEwlITyrqTcbn9UyEEj8hSvPLbdtXk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Vz4gy6daQZI0z+YeDU0luWdrOnK33liAehz1YQcmBultKdIsIl+NQt7C/4Z3AUGhE
-	 Ylr0IEQq5IUB6ZLh0PGoQWLEXS6sarhb4uJ4+KIdNX7aVV3VVAkE/oWg6JYQs62DLF
-	 LpbXJaxX96Ymw7FhRlARwiMVlW4o0eBJY5BCGp5E=
+	b=2Kjl+faOfC2/+nh9kASkt4GaZySECc4hnX5LQwkU98/Vi/Ku8cjbSSTufgVrLcfM1
+	 WvyIU0hPhCxVHMqTqwnNQw06im5OPPE8KjvnPyCw3mg+qnryzaEGwIFmmYMJdzjRbp
+	 xpSUCS3I8Fq2LM1i5vMMt8iQenfV7VoPv2BqFV0s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391893AbfBROLy (ORCPT
+        id S2391819AbfBROLo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:11:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56116 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:11:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391837AbfBROLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:11:50 -0500
+        id S2390605AbfBROLl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:11:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6196021934;
-        Mon, 18 Feb 2019 14:11:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3162621905;
+        Mon, 18 Feb 2019 14:11:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550499109;
-        bh=7OIWxanLDuxb4z6stzDFMikdg1l8FTjbcfJycHKJ1uc=;
+        s=default; t=1550499100;
+        bh=94C2DwuoAJ6qFgEwlITyrqTcbn9UyEEj8hSvPLbdtXk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fMbJXQnetgcuPy0TkoZkjyDe+kyPi2zCH/cUshCzATjBFWEzpZ86mqnP2LtjrnkQ6
-         TB36tuH4TXwQYxlYak1gzsAOCn62hXtXQ/Gof5Ay4r5lYletMZdg/tVD/oCU9DRuZg
-         pXg09/Zn78Y/lt4f9zLocyl+vHcUQUhrgUR8cY3U=
+        b=Oaud4EuCV33yeG4X7CpxzRJiYMelPAgCroK5gEySen3kTzCp5OuC9CoCXN0V07jBq
+         Yd722PnA9cKWMcAtffQ8gTFwFT1+Pa6ldnRHWJZttILnxWcFQwFRABQ0sAIMBKxEAo
+         rsGlMJIsz525xHiYDk8SKdPl0HMIVFzIsSRw6i0E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Eduardo Valentin <edubezval@gmail.com>
-Subject: [PATCH 3.18 056/108] thermal: hwmon: inline helpers when CONFIG_THERMAL_HWMON is not set
-Date:   Mon, 18 Feb 2019 14:43:52 +0100
-Message-Id: <20190218133522.106938400@linuxfoundation.org>
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 3.18 053/108] kernel/hung_task.c: break RCU locks based on jiffies
+Date:   Mon, 18 Feb 2019 14:43:49 +0100
+Message-Id: <20190218133521.970037388@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133519.525507231@linuxfoundation.org>
 References: <20190218133519.525507231@linuxfoundation.org>
@@ -66,40 +74,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Eduardo Valentin <edubezval@gmail.com>
+[ Upstream commit 304ae42739b108305f8d7b3eb3c1aec7c2b643a9 ]
 
-commit 03334ba8b425b2ad275c8f390cf83c7b081c3095 upstream.
+check_hung_uninterruptible_tasks() is currently calling rcu_lock_break()
+for every 1024 threads.  But check_hung_task() is very slow if printk()
+was called, and is very fast otherwise.
 
-Avoid warnings like this:
-thermal_hwmon.h:29:1: warning: ‘thermal_remove_hwmon_sysfs’ defined but not used [-Wunused-function]
- thermal_remove_hwmon_sysfs(struct thermal_zone_device *tz)
+If many threads within some 1024 threads called printk(), the RCU grace
+period might be extended enough to trigger RCU stall warnings.
+Therefore, calling rcu_lock_break() for every some fixed jiffies will be
+safer.
 
-Fixes: 0dd88793aacd ("thermal: hwmon: move hwmon support to single file")
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Link: http://lkml.kernel.org/r/1544800658-11423-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Acked-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thermal/thermal_hwmon.h |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ kernel/hung_task.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/thermal/thermal_hwmon.h
-+++ b/drivers/thermal/thermal_hwmon.h
-@@ -34,13 +34,13 @@
- int thermal_add_hwmon_sysfs(struct thermal_zone_device *tz);
- void thermal_remove_hwmon_sysfs(struct thermal_zone_device *tz);
- #else
--static int
-+static inline int
- thermal_add_hwmon_sysfs(struct thermal_zone_device *tz)
- {
- 	return 0;
- }
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index 06db12434d72..eda60beeac7d 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -30,7 +30,7 @@ int __read_mostly sysctl_hung_task_check_count = PID_MAX_LIMIT;
+  * is disabled during the critical section. It also controls the size of
+  * the RCU grace period. So it needs to be upper-bound.
+  */
+-#define HUNG_TASK_BATCHING 1024
++#define HUNG_TASK_LOCK_BREAK (HZ / 10)
  
--static void
-+static inline void
- thermal_remove_hwmon_sysfs(struct thermal_zone_device *tz)
+ /*
+  * Zero means infinite timeout - no checking done:
+@@ -158,7 +158,7 @@ static bool rcu_lock_break(struct task_struct *g, struct task_struct *t)
+ static void check_hung_uninterruptible_tasks(unsigned long timeout)
  {
- }
+ 	int max_count = sysctl_hung_task_check_count;
+-	int batch_count = HUNG_TASK_BATCHING;
++	unsigned long last_break = jiffies;
+ 	struct task_struct *g, *t;
+ 
+ 	/*
+@@ -172,10 +172,10 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+ 	do_each_thread(g, t) {
+ 		if (!max_count--)
+ 			goto unlock;
+-		if (!--batch_count) {
+-			batch_count = HUNG_TASK_BATCHING;
++		if (time_after(jiffies, last_break + HUNG_TASK_LOCK_BREAK)) {
+ 			if (!rcu_lock_break(g, t))
+ 				goto unlock;
++			last_break = jiffies;
+ 		}
+ 		/* use "==" to skip the TASK_KILLABLE tasks waiting on NFS */
+ 		if (t->state == TASK_UNINTERRUPTIBLE)
+-- 
+2.19.1
+
 
 
