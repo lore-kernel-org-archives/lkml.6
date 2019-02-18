@@ -7,59 +7,65 @@ X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AC2FC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:07:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89988C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:07:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEFD7217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:07:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59C7D217F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 21:07:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Xfw54vrP"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="i/20fYYO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727550AbfBRVHn (ORCPT
+        id S1727852AbfBRVHs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 16:07:43 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:14135 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725806AbfBRVHm (ORCPT
+        Mon, 18 Feb 2019 16:07:48 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:8214 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725806AbfBRVHn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 16:07:42 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c6b1ea40000>; Mon, 18 Feb 2019 13:07:48 -0800
+        Mon, 18 Feb 2019 16:07:43 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c6b1ea30001>; Mon, 18 Feb 2019 13:07:47 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 18 Feb 2019 13:07:41 -0800
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 18 Feb 2019 13:07:43 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 18 Feb 2019 13:07:41 -0800
-Received: from HQMAIL103.nvidia.com (172.20.187.11) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 18 Feb
- 2019 21:07:41 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL103.nvidia.com
- (172.20.187.11) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Mon, 18 Feb 2019 21:07:40 +0000
+        by hqpgpgate101.nvidia.com on Mon, 18 Feb 2019 13:07:43 -0800
+Received: from HQMAIL102.nvidia.com (172.18.146.10) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 18 Feb
+ 2019 21:07:42 +0000
+Received: from HQMAIL108.nvidia.com (172.18.146.13) by HQMAIL102.nvidia.com
+ (172.18.146.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 18 Feb
+ 2019 21:07:42 +0000
+Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL108.nvidia.com
+ (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
+ Transport; Mon, 18 Feb 2019 21:07:42 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.161.150]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c6b1e9b0002>; Mon, 18 Feb 2019 13:07:40 -0800
+        id <B5c6b1e9d0000>; Mon, 18 Feb 2019 13:07:42 -0800
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <talho@nvidia.com>, <skomatineni@nvidia.com>
 CC:     <wsa@the-dreams.de>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>
-Subject: [PATCH V2] i2c: tegra: fix tegra186 hw feature support for has_mst_fifo_reg
-Date:   Mon, 18 Feb 2019 13:07:35 -0800
-Message-ID: <1550524059-28900-1-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH V2] i2c: tegra: fix tegra186 hw feature support
+Date:   Mon, 18 Feb 2019 13:07:36 -0800
+Message-ID: <1550524059-28900-2-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1550524059-28900-1-git-send-email-skomatineni@nvidia.com>
+References: <1550524059-28900-1-git-send-email-skomatineni@nvidia.com>
 X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
         t=1550524068; bh=HaLrXyjeA/kqNrsW1idTNvDYdlNKXy7I/XwbBqQpmgQ=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=Xfw54vrPs2JCJIFIP/+gJkkIGwzt/xmBkXVTXsRjksApzIjemlHJUi2GZt7MV+jQH
-         WQxikhhOGtDGe25P0zRggQZlgZVvPFhBIlxL2eOde2/zWB09zgf6MUbjIl2DUFip7/
-         whSl79gek6NjInTUn1ok/ZmRLeJ+3w+nHwNBq7J1fRteFrYQRtGexwdLKzSjABbYcW
-         c2aMF0Qd/6+mkVHxUoM6b+TfRYoAoqAEaJKM5SIQZBV+DNMeziBGbQkG6k5u60X+Ls
-         Y8yx7TafOuU7ch7eHu6BkNKooni6hlceiCtEm47DKwNsrlxG7V+C8eDNutmHLbjWxw
-         K4FVG4A4L1Azw==
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=i/20fYYOCpP/NTjUN/IaSWtfs9vDHGrTYZBpuOcXmu5o2tsMSf5S0ddQwOj2LG3W1
+         LcVXPS/2+95m/0bFkLB9F+U7BoZjEdfwkInp8/pjMXjn8ah1XnBIWWVwzqotncZUUz
+         J05ElTXL3Wecj7v1oBJXvlT6I+v55ZAzvtmzRc1V2UmSvWFkDaZKsGfFvNLI1iLiSB
+         Pvqpj/3Co2bkvWbtUfCvPDjqu+Ml5QHVjIwdBylM6vZQe1Zn8Dw9O5eET7zv3OUcZa
+         it5Oj8CSHpOP8SSOcP7JWiGV0fQtHIM0FFRWLHtm1+fhcjBnNwUaNVKXChC8eW5eKM
+         NDlZK1k3EnGtg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
