@@ -2,61 +2,62 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2479C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 23:24:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FFD5C00319
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 23:24:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A735218AD
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 23:24:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F35E421903
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 23:24:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550532244;
-	bh=YDmOKMkgvE1tKivEbAyluX4b/hDh9yig7Er+g2La4QE=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=lartkIMCE+AkWWVEfvikLL6/uXjAGhefkmTf8LyA2ha/xsIVMWvgXNqAT9/LMPQeP
-	 hzBFOZMUbYwNQZERrkGpzgoBJwe3YIiJxR9ZCzjg6lIDnqRfu/KU02aJT7KPQbsW2c
-	 RAhyBtRvgcZpd+cNef7TYgqf7n3ZolRVN3kXmTss=
+	s=default; t=1550532252;
+	bh=b/J+nEpPdlIDxobQarQoZbcNwWM9QE/ZCM2/IMXv+NA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=rtGiynLkfywjQjaeWcrbyMyxFd8muhdudfoMP11qCb910igIb9ophEX7/r1+8HP6R
+	 zNCbVhNx8cHwaUi/MYxmk5+MoaX9mn3gczU4ijVkAlMcA+i2LP1O9WUL2MssYKOdmF
+	 CM69zndbhYpBnwRD+OztCljBf0wIel5MbD1gKv5Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729693AbfBRXYD (ORCPT
+        id S1730613AbfBRXYK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 18:24:03 -0500
-Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:34397 "EHLO
+        Mon, 18 Feb 2019 18:24:10 -0500
+Received: from wout2-smtp.messagingengine.com ([64.147.123.25]:54869 "EHLO
         wout2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727464AbfBRXYC (ORCPT
+        by vger.kernel.org with ESMTP id S1727464AbfBRXYI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 18:24:02 -0500
+        Mon, 18 Feb 2019 18:24:08 -0500
 Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-        by mailout.west.internal (Postfix) with ESMTP id 6536E3481;
-        Mon, 18 Feb 2019 18:24:01 -0500 (EST)
+        by mailout.west.internal (Postfix) with ESMTP id 269E7348E;
+        Mon, 18 Feb 2019 18:24:07 -0500 (EST)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Mon, 18 Feb 2019 18:24:01 -0500
+  by compute3.internal (MEProxy); Mon, 18 Feb 2019 18:24:07 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; bh=hNMkb4bQzXmhzFly4
-        1b0O1VF8jmcWk9234vaYcXiT5k=; b=HrgFS/uhpclN20gHq6RMtROZyPmPAqEu0
-        eExlNoL3NYneeWlZKL3VmAN6a0lHz2gGIBE3hnPNP+Bv3FcWv61xun1uPrwJd6xn
-        pXC1JdR07fHqzvdJncK0QAQYUGYpzo1qqR3AO+7CiCQJBFX4+/tzECT5F9OMo+ZI
-        TrrlweemTnbWZg8NFB93MVhwD0C4SqlB3oBJrB0/p70TDyMCTKdsgp64kfODTUe+
-        qZBd5Jf9I77mUZQjR6N6A3ySOoU8J4vs//7WXpGIvacZt5p7FBIuYCRI+7H73YMP
-        /j0v0bhRCZ47rl/OZlowcGR39hNdQTdaCexS6EuUgOW2BoDFho4yg==
-X-ME-Sender: <xms:kD5rXOk3TtbYyfz3oEJMlPCPQhrL290etHtk8JBeTR-KVyNgEm-VMQ>
+        :in-reply-to:message-id:mime-version:references:subject:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm2; bh=FNg57b3mZQ18XqGRkwxeXlfXTue/1VAjFPcRQ/di6iA=; b=HkFG0q7f
+        Pu0O2WG+TdH1jEASZUAmFu1oOySZ7YTFPwGO/sywuOaU89tP18BFzlCaINLXDk1Z
+        rQmyGGsE5acxTw4ANliQQ4FhEwqWhIvfyi55XOxZXdm3ryfBMSw0PEXXJ/+VeIcl
+        95vAzRzSrD+C4C6ooGbxCjhLP5Fd0Wtl5syu+4bnF/aDdyL4EHZzu7yK973Q02Sm
+        5eoiUjsBpPlNzU4Muy1t3f/FSwaDHliQ50YB5fuffy2Aw3TB2A3sh4OnxjIJrZyD
+        bFJNKgAui4sW92LfSmzTKCvZDplh3etucmrYKgcJ9PqMlRKeYndVRbdBfk116WPU
+        qWTrR67bBJDhQg==
+X-ME-Sender: <xms:lj5rXO3ZaUgPIxqh_7aDPMFYIJ28_QvhPod7wI4LJvM3m0iJXJAA3w>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedutddrtddvgddtjeculddtuddrgedtledrtddtmd
     cutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfhuthen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpedfvfhosghinhcu
-    vedrucfjrghrughinhhgfdcuoehtohgsihhnsehkvghrnhgvlhdrohhrgheqnecukfhppe
-    duvddurdeggedrvddtvddrudeftdenucfrrghrrghmpehmrghilhhfrhhomhepthhosghi
-    nheskhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:kD5rXBWvHGEyseG9N-sokjCClprP2_WqTwx_Un9Z9uZrwLCy2SX7zA>
-    <xmx:kD5rXBu5AR8EvHFLP6H6iMbktFlDjrxSl1W9LFR9rwXYHuCSbb3yNg>
-    <xmx:kD5rXBjff1AU9LlMouiCRynFSAkcfo1H5sAVK52SVeSI55UXYxBpIA>
-    <xmx:kT5rXG8kBCRdsAjCVxjDv_KTTWEVRTeXWkpo9-d21Zq-iVp06_FlQg>
+    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpedfvfhosghi
+    nhcuvedrucfjrghrughinhhgfdcuoehtohgsihhnsehkvghrnhgvlhdrohhrgheqnecukf
+    hppeduvddurdeggedrvddtvddrudeftdenucfrrghrrghmpehmrghilhhfrhhomhepthho
+    sghinheskhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:lj5rXJoMIbit2828gV3-Ln-QPgIdio0Y29z1Ryon-BEI3sE4XZwKGA>
+    <xmx:lj5rXN9dVt61DNwr0KSU5IIHBXl9FmNscxoYHvFjYsldr6E8IneYpQ>
+    <xmx:lj5rXE6vg0tsttui3p_DBUB52QKbFdVZZMefm8ggbz2jSYSbqLQEbg>
+    <xmx:lj5rXPu2lUvZuGkjGRmLaBkMyvS0VsLiahwSxQRRo-KTtLMV46zc3g>
 Received: from eros.localdomain (ppp121-44-202-130.bras1.syd2.internode.on.net [121.44.202.130])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 1E2E7100E5;
-        Mon, 18 Feb 2019 18:23:56 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id DB82110316;
+        Mon, 18 Feb 2019 18:24:03 -0500 (EST)
 From:   "Tobin C. Harding" <tobin@kernel.org>
 To:     Kees Cook <keescook@chromium.org>
 Cc:     "Tobin C. Harding" <tobin@kernel.org>,
@@ -65,10 +66,12 @@ Cc:     "Tobin C. Harding" <tobin@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         kernel-hardening@lists.openwall.com, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/6] lib: Add safe string funtions 
-Date:   Tue, 19 Feb 2019 10:23:02 +1100
-Message-Id: <20190218232308.11241-1-tobin@kernel.org>
+Subject: [PATCH 2/6] lib/string: Fix erroneous 'overflow' documentation
+Date:   Tue, 19 Feb 2019 10:23:04 +1100
+Message-Id: <20190218232308.11241-3-tobin@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190218232308.11241-1-tobin@kernel.org>
+References: <20190218232308.11241-1-tobin@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,76 +79,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-No file maintainer, CC'ing all those who touched this file :) And
-Shua for kselftest stuff.
+Current documentation uses 'overflow' to describe a situation where less
+data is written to a buffer than buffer size not more.  'overflow' is
+the wrong word here - since we don't typically say 'underflow' change
+the whole sentence.
 
+Fix erroneous 'overflow' documentation for under filled buffer.
 
-Hi Kess,
+Signed-off-by: Tobin C. Harding <tobin@kernel.org>
+---
+ lib/string.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-During your talk at LCA you mentioned that we could do with a couple
-more safe string functions.  One to zero the tail of the destination
-buffer after call to strscpy() and also the self explanatory
-strscpy_from_user().
-
-Here is a patch set with my attempts to implement these two functions.
-
-While doing this I noticed that we have a test module for lib/string.c
-(lib/test_string.c) that is not tied into kselftest.  So I enable this
-first up in patch 1.
-
-Patch 2 and 3 are function docstring cleanups.
-
-Patch 4 adds the copy and zero function, naming it strscpy_zeroed().
-I'd love some help naming this better.  Patch also adds test code.
-
-Patch 5 fixes function docstring to correctly document the behavior of
-strncpy_from_user().
-
-Patch 6 adds strscpy_from_user().  Does not include test code.
-
-I had to do a bit of learning for getting the tests hooked into
-kselftest, I think its all correct.  Module is built correctly when the
-config option is present and the tests run both via
-
-	make -C tools/testing/selftests TARGETS=lib run_tests
-
-and via loading the module manually.  As a side note, this series leaves
-tools/testing/selftests/lib with 4 shell scripts that are identical
-except the test name.  We could probably do with refactoring them into a
-single script.
-
-Patchset introduces a checkpatch warning
-
-	WARNING:CONFIG_DESCRIPTION: please write a paragraph that describes the config symbol fully
-
-I couldn't work out if this is a false positive or not?  Does the new
-config option CONFIG_TEST_STRING need more documentation?  I don't see
-where extra docs should be added and it seems self explanatory as is.
-
-
-thanks,
-Tobin.
-
-Tobin C. Harding (6):
-  lib/string: Enable string selftesting
-  lib/string: Fix erroneous 'overflow' documentation
-  lib/string: Use correct docstring format
-  lib/string: Add string copy/zero function
-  lib: Fix function documentation for strncpy_from_user
-  lib: Add function strscpy_from_user()
-
- include/linux/string.h                |  4 ++
- lib/Kconfig.debug                     | 14 +++++++
- lib/Makefile                          |  2 +-
- lib/string.c                          | 41 ++++++++++++++----
- lib/strncpy_from_user.c               | 60 ++++++++++++++++++++++-----
- lib/test_string.c                     | 35 +++++++++++++++-
- tools/testing/selftests/lib/Makefile  |  2 +-
- tools/testing/selftests/lib/config    |  1 +
- tools/testing/selftests/lib/string.sh | 19 +++++++++
- 9 files changed, 157 insertions(+), 21 deletions(-)
- create mode 100755 tools/testing/selftests/lib/string.sh
-
+diff --git a/lib/string.c b/lib/string.c
+index 38e4ca08e757..7f1d72db53c5 100644
+--- a/lib/string.c
++++ b/lib/string.c
+@@ -173,8 +173,8 @@ EXPORT_SYMBOL(strlcpy);
+  *
+  * Preferred to strncpy() since it always returns a valid string, and
+  * doesn't unnecessarily force the tail of the destination buffer to be
+- * zeroed.  If the zeroing is desired, it's likely cleaner to use strscpy()
+- * with an overflow test, then just memset() the tail of the dest buffer.
++ * zeroed.  If the zeroing is desired, it's likely cleaner to use strscpy(),
++ * check the return size, then just memset() the tail of the dest buffer.
+  */
+ ssize_t strscpy(char *dest, const char *src, size_t count)
+ {
 -- 
 2.20.1
 
