@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F782C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:04:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DF5FC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:04:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0081B204FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:04:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2524121902
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 14:04:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550498693;
-	bh=f2fdH5ehsZ0A9l2BluGcts9s4Bp2gfTz43PVkdcGBN0=;
+	s=default; t=1550498698;
+	bh=s9pk6ACczLUjMgzErAPJQ5DIBIUrxu8ODIOS/gTMQnc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OS8PTfimDRZ7SjlX3jRLn1G/dfrtSZwRoD6bfvaGFUaB5+bjdK3saoEfQhTnBOBVJ
-	 2m0ZBLVeTv0SJC0FSMP+lCfWx2MVfMmGwl1XUUlXUi2rPbNxI1LMxsDEhvIWtVhSy6
-	 6Bz3++OU1yXgDdOS+nzl9adfKNoyFSFym+nlT1+4=
+	b=g1B4N6Od1u6gsc28icbm9mpfRqISE3c4SwhoK7Zpj7euJOesHqypakZ7P9uQsLTk7
+	 syIdGY3THnydk/gb38aWDYYE3tCnWm7amqAl2CwJSuJCEb4LinpTFzi2HjqRupP+2m
+	 mpTt6aCx8KWc6d+a3pFv8DQQUE9vnGA/govSS+HU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390022AbfBROEv (ORCPT
+        id S2390052AbfBROE4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 09:04:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47348 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 09:04:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389973AbfBROEs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 09:04:48 -0500
+        id S2389083AbfBROEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 09:04:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A23221908;
-        Mon, 18 Feb 2019 14:04:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55782204FD;
+        Mon, 18 Feb 2019 14:04:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550498688;
-        bh=f2fdH5ehsZ0A9l2BluGcts9s4Bp2gfTz43PVkdcGBN0=;
+        s=default; t=1550498693;
+        bh=s9pk6ACczLUjMgzErAPJQ5DIBIUrxu8ODIOS/gTMQnc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0fW1g2Xa6sflkzJVnIxn1m66w/uACRS3hOQheN9buOzoYE3xM4Uf6keFz4AwF/fQm
-         GOgjvupLMokEsOgNGI8r03ovv2LDmFotpZzoFfzDa5MxZPMAjSA6SAmb8foYOSa8el
-         H3UEVcLXOMSaTML0w5aTB2syxJGcToVMPWC47wC0=
+        b=2OFehZPZiY/pxAY6lov4wf2i/66XiWo+FJROVLgdKY8+KymCoCc9Q1Y7TcRYZfISc
+         2c7Hknd3kX8+d8QRDHVuKlyR0LyC7bWq4uySwcdbfN9/2jMvTqLNsCB4IG3blaVUEs
+         hzkQOGl/YzWRom0EE2FWFBCVBNf13VUdS24E+B70=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Leonid Iziumtsev <leonid.iziumtsev@gmail.com>,
-        Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 4.4 088/143] dmaengine: imx-dma: fix wrong callback invoke
-Date:   Mon, 18 Feb 2019 14:43:36 +0100
-Message-Id: <20190218133532.278858029@linuxfoundation.org>
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.4 090/143] usb: gadget: udc: net2272: Fix bitwise and boolean operations
+Date:   Mon, 18 Feb 2019 14:43:38 +0100
+Message-Id: <20190218133532.348180223@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133529.099444112@linuxfoundation.org>
 References: <20190218133529.099444112@linuxfoundation.org>
@@ -65,64 +65,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leonid Iziumtsev <leonid.iziumtsev@gmail.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit 341198eda723c8c1cddbb006a89ad9e362502ea2 upstream.
+commit 07c69f1148da7de3978686d3af9263325d9d60bd upstream.
 
-Once the "ld_queue" list is not empty, next descriptor will migrate
-into "ld_active" list. The "desc" variable will be overwritten
-during that transition. And later the dmaengine_desc_get_callback_invoke()
-will use it as an argument. As result we invoke wrong callback.
+(!x & y) strikes again.
 
-That behaviour was in place since:
-commit fcaaba6c7136 ("dmaengine: imx-dma: fix callback path in tasklet").
-But after commit 4cd13c21b207 ("softirq: Let ksoftirqd do its job")
-things got worse, since possible delay between tasklet_schedule()
-from DMA irq handler and actual tasklet function execution got bigger.
-And that gave more time for new DMA request to be submitted and
-to be put into "ld_queue" list.
+Fix bitwise and boolean operations by enclosing the expression:
 
-It has been noticed that DMA issue is causing problems for "mxc-mmc"
-driver. While stressing the system with heavy network traffic and
-writing/reading to/from sd card simultaneously the timeout may happen:
+	intcsr & (1 << NET2272_PCI_IRQ)
 
-10013000.sdhci: mxcmci_watchdog: read time out (status = 0x30004900)
+in parentheses, before applying the boolean operator '!'.
 
-That often lead to file system corruption.
+Notice that this code has been there since 2011. So, it would
+be helpful if someone can double-check this.
 
-Signed-off-by: Leonid Iziumtsev <leonid.iziumtsev@gmail.com>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+This issue was detected with the help of Coccinelle.
+
+Fixes: ceb80363b2ec ("USB: net2272: driver for PLX NET2272 USB device controller")
 Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/dma/imx-dma.c |    8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/usb/gadget/udc/net2272.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/dma/imx-dma.c
-+++ b/drivers/dma/imx-dma.c
-@@ -619,7 +619,7 @@ static void imxdma_tasklet(unsigned long
- {
- 	struct imxdma_channel *imxdmac = (void *)data;
- 	struct imxdma_engine *imxdma = imxdmac->imxdma;
--	struct imxdma_desc *desc;
-+	struct imxdma_desc *desc, *next_desc;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&imxdma->lock, flags);
-@@ -649,10 +649,10 @@ static void imxdma_tasklet(unsigned long
- 	list_move_tail(imxdmac->ld_active.next, &imxdmac->ld_free);
- 
- 	if (!list_empty(&imxdmac->ld_queue)) {
--		desc = list_first_entry(&imxdmac->ld_queue, struct imxdma_desc,
--					node);
-+		next_desc = list_first_entry(&imxdmac->ld_queue,
-+					     struct imxdma_desc, node);
- 		list_move_tail(imxdmac->ld_queue.next, &imxdmac->ld_active);
--		if (imxdma_xfer_desc(desc) < 0)
-+		if (imxdma_xfer_desc(next_desc) < 0)
- 			dev_warn(imxdma->dev, "%s: channel: %d couldn't xfer desc\n",
- 				 __func__, imxdmac->channel);
+--- a/drivers/usb/gadget/udc/net2272.c
++++ b/drivers/usb/gadget/udc/net2272.c
+@@ -2100,7 +2100,7 @@ static irqreturn_t net2272_irq(int irq,
+ #if defined(PLX_PCI_RDK2)
+ 	/* see if PCI int for us by checking irqstat */
+ 	intcsr = readl(dev->rdk2.fpga_base_addr + RDK2_IRQSTAT);
+-	if (!intcsr & (1 << NET2272_PCI_IRQ)) {
++	if (!(intcsr & (1 << NET2272_PCI_IRQ))) {
+ 		spin_unlock(&dev->lock);
+ 		return IRQ_NONE;
  	}
 
 
