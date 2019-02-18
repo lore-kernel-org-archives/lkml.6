@@ -4,50 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E561AC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:46:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE44C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:46:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B56F9218FC
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:46:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD97421903
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 13:46:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1550497596;
-	bh=O7TdLZ6cId8lXiaGoqlrM8HsRQ7vevjcelffFHaDRb8=;
+	s=default; t=1550497604;
+	bh=QKamiL862+13LXB3EaWqANZJQWaB6qsOlI/3uzTM5KI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OoBswYFZnxm5mR/F1JAQxMltJoOHuHmk3DmbHKT4HdjXMCdZx64TYlTGGPkcoyRJc
-	 pT/eJxjMTSSuL8GYJrmIAZ/AE8RB1FPHBLQXiFxUR5T4MJFsHMvL8rsCvRH7TI7DF4
-	 s7oCheCrL18ZbX3SwzrYXMFEpf1OOyakLtwRtdlw=
+	b=pkhzRPdNM4rZr4jAciUH0dF3hgSe5PXXgZ0iwe5WtqE3kNBDdxASpqzbQmH9iT+Vm
+	 FWNfNmud+lTKx0/UneWrHap2gUdAwHeNfY+lD9+ySD1lmLh18FqocQ1qqsXg7Apz4f
+	 4EFJfcvwWGVXDbafYSG8hKJvnCvcFBe08DE1oHpA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729141AbfBRNqf (ORCPT
+        id S1730839AbfBRNqm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 08:46:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52980 "EHLO mail.kernel.org"
+        Mon, 18 Feb 2019 08:46:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731639AbfBRNqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 08:46:33 -0500
+        id S1730359AbfBRNqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 08:46:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDBE9217F5;
-        Mon, 18 Feb 2019 13:46:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1809218FC;
+        Mon, 18 Feb 2019 13:46:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1550497592;
-        bh=O7TdLZ6cId8lXiaGoqlrM8HsRQ7vevjcelffFHaDRb8=;
+        s=default; t=1550497598;
+        bh=QKamiL862+13LXB3EaWqANZJQWaB6qsOlI/3uzTM5KI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=adOdOiyYFrGuUqh0wZxz5GeUVC19FqFLbFlTLtPpxJKOqRyWeqUK5asBHNA9gnA9a
-         51FVvRV6PdO/HidQ+WqsRQdEDFKkjNwe4J+aIl9sbFdOkT7bl1hGPu954Mjf1Do4h2
-         QRZZxOWz3IUTAV1GvO8GNDj3vB+lGaDz7Ptg5H5w=
+        b=pU5F4Kh3A+VpTGVgt1ZUrM11RRFRUr2ruxi/cDjzWcp/RzyWcTbvwY9+0KmSl1oUy
+         nq52qOVwd7pltQgXQ+EigiVQo1gZyE1ATGbhgHEgyX5n1fEyohUOvCQfqNphLjFDZs
+         FJj+6Wr4IBdStrBRFchyzLFw8IHB/xpWs6EmFuzs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
+        stable@vger.kernel.org, Guo Ren <ren_guo@c-sky.com>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 23/92] drm/bridge: tc358767: fix output H/V syncs
-Date:   Mon, 18 Feb 2019 14:42:26 +0100
-Message-Id: <20190218133456.890221854@linuxfoundation.org>
+Subject: [PATCH 4.20 15/92] csky: fixup compile error with pte_alloc
+Date:   Mon, 18 Feb 2019 14:42:18 +0100
+Message-Id: <20190218133456.077826606@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190218133454.668268457@linuxfoundation.org>
 References: <20190218133454.668268457@linuxfoundation.org>
@@ -66,44 +69,87 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7923e09c7a766e2d58de7fc395bb84c18e5bc625 ]
+[ Upstream commit 2a60aa14a9a0333b3eef58150bc1ef654f7321ef ]
 
-The H and V syncs of the DP output are always set to active high. This
-patch fixes the syncs by configuring them according to the videomode.
+Commit: 4cf58924951e remove the address argument of pte_alloc without
+modify csky related code. linux-5.0-rc1 compile failed with csky.
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
-Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190103115954.12785-7-tomi.valkeinen@ti.com
+Remove the unnecessary address testing in pte_alloc().
+
+Signed-off-by: Guo Ren <ren_guo@c-sky.com>
+Cc: Joel Fernandes (Google) <joel@joelfernandes.org>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/bridge/tc358767.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/csky/include/asm/pgalloc.h | 43 ++++++++++++++-------------------
+ 1 file changed, 18 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/tc358767.c b/drivers/gpu/drm/bridge/tc358767.c
-index a1f3dd2afbb1..391547358756 100644
---- a/drivers/gpu/drm/bridge/tc358767.c
-+++ b/drivers/gpu/drm/bridge/tc358767.c
-@@ -98,6 +98,8 @@
- #define DP0_STARTVAL		0x064c
- #define DP0_ACTIVEVAL		0x0650
- #define DP0_SYNCVAL		0x0654
-+#define SYNCVAL_HS_POL_ACTIVE_LOW	(1 << 15)
-+#define SYNCVAL_VS_POL_ACTIVE_LOW	(1 << 31)
- #define DP0_MISC		0x0658
- #define TU_SIZE_RECOMMENDED		(63) /* LSCLK cycles per TU */
- #define BPC_6				(0 << 5)
-@@ -726,7 +728,9 @@ static int tc_set_video_mode(struct tc_data *tc, struct drm_display_mode *mode)
+diff --git a/arch/csky/include/asm/pgalloc.h b/arch/csky/include/asm/pgalloc.h
+index bf4f4a0e140e..d213bb47b717 100644
+--- a/arch/csky/include/asm/pgalloc.h
++++ b/arch/csky/include/asm/pgalloc.h
+@@ -24,41 +24,34 @@ static inline void pmd_populate(struct mm_struct *mm, pmd_t *pmd,
  
- 	tc_write(DP0_ACTIVEVAL, (mode->vdisplay << 16) | (mode->hdisplay));
+ extern void pgd_init(unsigned long *p);
  
--	tc_write(DP0_SYNCVAL, (vsync_len << 16) | (hsync_len << 0));
-+	tc_write(DP0_SYNCVAL, (vsync_len << 16) | (hsync_len << 0) |
-+		 ((mode->flags & DRM_MODE_FLAG_NHSYNC) ? SYNCVAL_HS_POL_ACTIVE_LOW : 0) |
-+		 ((mode->flags & DRM_MODE_FLAG_NVSYNC) ? SYNCVAL_VS_POL_ACTIVE_LOW : 0));
+-static inline pte_t *pte_alloc_one_kernel(struct mm_struct *mm,
+-					unsigned long address)
++static inline pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
+ {
+ 	pte_t *pte;
+-	unsigned long *kaddr, i;
++	unsigned long i;
  
- 	tc_write(DPIPXLFMT, VS_POL_ACTIVE_LOW | HS_POL_ACTIVE_LOW |
- 		 DE_POL_ACTIVE_HIGH | SUB_CFG_TYPE_CONFIG1 | DPI_BPP_RGB888);
+-	pte = (pte_t *) __get_free_pages(GFP_KERNEL | __GFP_RETRY_MAYFAIL,
+-					 PTE_ORDER);
+-	kaddr = (unsigned long *)pte;
+-	if (address & 0x80000000)
+-		for (i = 0; i < (PAGE_SIZE/4); i++)
+-			*(kaddr + i) = 0x1;
+-	else
+-		clear_page(kaddr);
++	pte = (pte_t *) __get_free_page(GFP_KERNEL);
++	if (!pte)
++		return NULL;
++
++	for (i = 0; i < PAGE_SIZE/sizeof(pte_t); i++)
++		(pte + i)->pte_low = _PAGE_GLOBAL;
+ 
+ 	return pte;
+ }
+ 
+-static inline struct page *pte_alloc_one(struct mm_struct *mm,
+-						unsigned long address)
++static inline struct page *pte_alloc_one(struct mm_struct *mm)
+ {
+ 	struct page *pte;
+-	unsigned long *kaddr, i;
+-
+-	pte = alloc_pages(GFP_KERNEL | __GFP_RETRY_MAYFAIL, PTE_ORDER);
+-	if (pte) {
+-		kaddr = kmap_atomic(pte);
+-		if (address & 0x80000000) {
+-			for (i = 0; i < (PAGE_SIZE/4); i++)
+-				*(kaddr + i) = 0x1;
+-		} else
+-			clear_page(kaddr);
+-		kunmap_atomic(kaddr);
+-		pgtable_page_ctor(pte);
++
++	pte = alloc_pages(GFP_KERNEL | __GFP_ZERO, 0);
++	if (!pte)
++		return NULL;
++
++	if (!pgtable_page_ctor(pte)) {
++		__free_page(pte);
++		return NULL;
+ 	}
++
+ 	return pte;
+ }
+ 
 -- 
 2.19.1
 
