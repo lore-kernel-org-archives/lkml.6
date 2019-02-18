@@ -2,137 +2,108 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CAEC10F01
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:43:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C85E9C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:43:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F375E2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:43:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="R0zYh+jU"
+	by mail.kernel.org (Postfix) with ESMTP id A20B42147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:43:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730279AbfBRKnM (ORCPT
+        id S1730235AbfBRKnI convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 05:43:12 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:52040 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730249AbfBRKnL (ORCPT
+        Mon, 18 Feb 2019 05:43:08 -0500
+Received: from skedge03.snt-world.com ([91.208.41.68]:50256 "EHLO
+        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730141AbfBRKmt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 05:43:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=UuZkd/Jut273cvMO2fyUUs93pqGa6sMlvcuJvXMAO/A=; b=R0zYh+jUpLhfXxhbUGpRDk+Ho
-        HIGBhqugUNqrs70+bd96B1G9BHsm2Znlp4fwy1RCFKJSRVfJ4cw3Y3nGidPxi2JjM8kt1VIHXEKIv
-        XLZFTPGxBVAeCUjyO4LQ8rfGy0BpUvph3seBhLYvyJDQyoyNcPOHAnrNbz85WSYS7/QWQV32XNGld
-        fUae1swSluetsg9B0OHCqvIb11N2dq67rLxK2ahmWQie6T6YuhIfjk/+BU/Em2y8l/qtOJuIX4r32
-        fYfewSF79tUMftZ5EhvnAjCZW/WPRUAOe0sIxogG7OXrBCfI6Scr9WrzwmIye185mbHGism3wTYL5
-        NDyFGw02Q==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:51210)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gvgOA-0006Uh-MR; Mon, 18 Feb 2019 10:43:06 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.89)
-        (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1gvgO6-00076a-QX; Mon, 18 Feb 2019 10:43:02 +0000
-Date:   Mon, 18 Feb 2019 10:43:02 +0000
-From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
-To:     Antoine Tenart <antoine.tenart@bootlin.com>
-Cc:     davem@davemloft.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-        maxime.chevallier@bootlin.com, gregory.clement@bootlin.com,
-        miquel.raynal@bootlin.com, nadavh@marvell.com, stefanc@marvell.com,
-        ymarkman@marvell.com, mw@semihalf.com
-Subject: Re: [PATCH net-next 10/13] net: mvpp2: reset the XPCS while
- reconfiguring the serdes lanes
-Message-ID: <20190218104302.bp6ccmpkt26dflyx@shell.armlinux.org.uk>
-References: <20190215153241.6857-1-antoine.tenart@bootlin.com>
- <20190215153241.6857-11-antoine.tenart@bootlin.com>
- <20190215171224.sjfrid5csseywuks@shell.armlinux.org.uk>
- <20190218102630.GA3784@kwain>
+        Mon, 18 Feb 2019 05:42:49 -0500
+Received: from sntmail11s.snt-is.com (unknown [10.203.32.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by skedge03.snt-world.com (Postfix) with ESMTPS id E571E603769;
+        Mon, 18 Feb 2019 11:42:46 +0100 (CET)
+Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail11s.snt-is.com
+ (10.203.32.181) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Mon, 18 Feb
+ 2019 11:42:46 +0100
+Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
+ sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
+ 15.01.1713.004; Mon, 18 Feb 2019 11:42:46 +0100
+From:   Schrempf Frieder <frieder.schrempf@kontron.de>
+To:     "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "Schrempf Frieder" <frieder.schrempf@kontron.de>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>
+Subject: [PATCH v4 7/7] mtd: rawnand: AMD: Also use the last page for bad
+ block markers
+Thread-Topic: [PATCH v4 7/7] mtd: rawnand: AMD: Also use the last page for bad
+ block markers
+Thread-Index: AQHUx3av5nN+rA7yBUm0nQr4UWWfjQ==
+Date:   Mon, 18 Feb 2019 10:42:46 +0000
+Message-ID: <20190218104122.18788-8-frieder.schrempf@kontron.de>
+References: <20190218104122.18788-1-frieder.schrempf@kontron.de>
+In-Reply-To: <20190218104122.18788-1-frieder.schrempf@kontron.de>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.25.9.43]
+x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190218102630.GA3784@kwain>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-SnT-MailScanner-Information: Please contact the ISP for more information
+X-SnT-MailScanner-ID: E571E603769.AE56B
+X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
+X-SnT-MailScanner-SpamCheck: 
+X-SnT-MailScanner-From: frieder.schrempf@kontron.de
+X-SnT-MailScanner-To: bbrezillon@kernel.org, computersforpeace@gmail.com,
+        dwmw2@infradead.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, marek.vasut@gmail.com,
+        miquel.raynal@bootlin.com, richard@nod.at
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 11:26:30AM +0100, Antoine Tenart wrote:
-> Hi Russell,
-> 
-> On Fri, Feb 15, 2019 at 05:12:24PM +0000, Russell King - ARM Linux admin wrote:
-> > On Fri, Feb 15, 2019 at 04:32:38PM +0100, Antoine Tenart wrote:
-> > > The documentation advises to set the XPCS in reset while reconfiguring
-> > > the serdes lanes. This seems to be a good thing to do, but the PPv2
-> > > driver wasn't doing it. This patch fixes it.
-> > 
-> > Hmm.  That statment seems to have some ambiguity in it - we do two
-> > "reconfigurations" - one may be upon initialisation, where the lane
-> > is already configured for 10Gbase-KR, and we're re-initialising it
-> > for the same mode.  The other case is when we're switching between
-> > 10Gbase-KR and SGMII, or as will be the case with 2.5G support for
-> > the Alaska PHYs, 2500base-X.
-> 
-> The configuration at the lane at boot time is dependent to the
-> firmware or bootloader configuration. On the mcbin, the lane may be
-> configured in 10Gbase-KR, but it could be configured in SGMII as well.
-> The configuration upon initialization and the re-configuration are quite
-> similar then, as we might change mode as well at boot time.
-> 
-> You're right in that we might be re-configuring the lane for the same
-> exact mode at boot time, if it was already configured in the same mode.
-> 
-> > Does this apply to reconfiguration of the serdes lane between
-> > 10Gbase-KR and slower modes?
-> 
-> This applies only when configuring a line in a 10G mode,
-> mvpp22_gop_init_10gkr isn't called otherwise.
-> 
-> When switching to an non-10G mode we might want to put the XPCS in reset
-> though, which is not done today with this patch.
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-I'm merely pointing out the discrepency between the commit message and
-what is actually being done.  I'm not particularly concerned about what
-happens at boot.
+According to the datasheet of some Cypress SLC NANDs, the bad
+block markers can be in the first, second or last page of a block.
+So let's check all three locations.
 
-We have four different transitions a port can go through, all of which
-reconfigure the serdes lanes:
+Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
+Reviewed-by: Boris Brezillon <bbrezillon@kernel.org>
+---
+ drivers/mtd/nand/raw/nand_amd.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-1. 10gkr -> 10gkr
-2. 10gkr -> non-10gkr
-3. non-10gkr -> non-10gkr
-4. non-10gkr -> 10gkr
-
-With this patch, XPCS is only placed into reset during the
-reconfiguration for cases 1 and 4.  Case 3 doesn't matter (the XPCS
-should already be in reset right?)  Case 2 isn't covered, and this
-leaves a rather big hole.
-
-It seems to me that if the documentation states that the XPCS needs to
-be placed in reset while the serdes is reconfigured, then what should
-be happening is:
-
-- at boot, place the XPCS into reset.
-- when we configure for 10gkr, release the reset once we've finished
-  configuring the serdes.
-- when we configure away from 10gkr, place the XPCS back into reset
-  before configuring the serdes.
-
-Merely placing the XPCS into reset while we configure the serdes for
-10gkr doesn't seem to be "fixing" the driver to conform to your commit
-message opening statement.
-
+diff --git a/drivers/mtd/nand/raw/nand_amd.c b/drivers/mtd/nand/raw/nand_amd.c
+index 6202cbf7ee8d..2ffcddff3e27 100644
+--- a/drivers/mtd/nand/raw/nand_amd.c
++++ b/drivers/mtd/nand/raw/nand_amd.c
+@@ -40,7 +40,13 @@ static void amd_nand_decode_id(struct nand_chip *chip)
+ static int amd_nand_init(struct nand_chip *chip)
+ {
+ 	if (nand_is_slc(chip))
+-		chip->options |= NAND_BBM_FIRSTPAGE | NAND_BBM_SECONDPAGE;
++		/*
++		 * According to the datasheet of some Cypress SLC NANDs,
++		 * the bad block markers can be in the first, second or last
++		 * page of a block. So let's check all three locations.
++		 */
++		chip->options |= NAND_BBM_FIRSTPAGE | NAND_BBM_SECONDPAGE |
++				 NAND_BBM_LASTPAGE;
+ 
+ 	return 0;
+ }
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+2.17.1
