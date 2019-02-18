@@ -2,179 +2,179 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B5C3C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB99C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:32:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEBBD2177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:30:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="KW12Jx+Y"
+	by mail.kernel.org (Postfix) with ESMTP id 08E9C2177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 19:32:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1550518377;
+	bh=z4JP9lNSTz5HcBmX4WFF5gD2KBHAEGJjKY+Va69qEl0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=RBtXzoIJhym/1tKkN5YQdMJu2uKSR4+s6aQy5rkDbMSPsqrUxloOvfTBaJL1V/qiy
+	 Q+mUe0NBh6RKqLATXtcomrIBLoeQt31zCIpkana7tTGrF0nCzkty/FapuYEfC6ye0M
+	 OEWMOQf5xWb9ygQd3DjnC2y3B9bcBEdZpHIAKJ7I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726661AbfBRTac (ORCPT
+        id S1726851AbfBRTcz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 14:30:32 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:37449 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfBRTac (ORCPT
+        Mon, 18 Feb 2019 14:32:55 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:41394 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbfBRTcy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 14:30:32 -0500
-Received: by mail-it1-f193.google.com with SMTP id z124so626634itc.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Feb 2019 11:30:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lXhtUK9yvDv33+alsQQVdc5aweSnwD0PtOPFyoh7TbE=;
-        b=KW12Jx+Yg+w+7LGEVs421mHid8FaFDqaepoQ9ju8EPzH+gzRM0MhmrBIw7bLDoy8Im
-         Paz1t0TMDcTBjVE9QCWBbx5OCY52mx9QBEGtT6CxHi8SsDdiPgKhicHAvGO7zF8Zlry3
-         +OzVidYfRGsCgdnNUyYRobdJ+x42VKgBTpoWY=
+        Mon, 18 Feb 2019 14:32:54 -0500
+Received: by mail-ot1-f67.google.com with SMTP id t7so13797266otk.8;
+        Mon, 18 Feb 2019 11:32:54 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lXhtUK9yvDv33+alsQQVdc5aweSnwD0PtOPFyoh7TbE=;
-        b=bl6EDkJb7MRZQ3nYzscwMeElui+Yembpcj+9vyvZbbA9anLgv3y+i2LptyFj+RJ1Na
-         ZlnJfxZ0aUSXqJ+DY/w8fD8TTuZz8aYboeeYvFFgdN0t8RYcXBOJXBIyoDYVqa8VAaO5
-         Y+ZkNmJALFJZ1hAij2pnfKdKD6kBMsS5uVZo+AuIX0MqxBwRmsGxSjTIyHkMD0KYbMsl
-         kX55VWc0jrGWAqbf1GlBA/pZ/fEfC3FcT56bw69Vq1xKR1v3tGe9WQqAUVC0roZ7RnnB
-         a0PyIyl4ibif5f51uUFKjwz8sAeqHtFeEby5HLarLiyfXTIjzjLwI5yZqnqVHGXE7sdc
-         gUFw==
-X-Gm-Message-State: AHQUAuagphBXd7UIKA4CvBkzFpKGrQN91RTkNvhphRwHJOC52s1AQYgE
-        p65ISg0n2M4Riw9dCdTwe4SjUaRTHU0rwvoELd1/BQ==
-X-Google-Smtp-Source: AHgI3Ia3h+oETBfjiDLUKCCdRG3QGdGq/4zXrHXtPp8zcLGEKAcJw1xsNXgGZaLkf9WpTyAvNdcrLYIIFe14z8zU/Fo=
-X-Received: by 2002:a02:104a:: with SMTP id 71mr1611038jay.103.1550518230924;
- Mon, 18 Feb 2019 11:30:30 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CwK/t3EqiCQBADQ2CrSpZEUtlJF0kCvDoIFGC7QJMs4=;
+        b=rZ3XVOVjAgoCeVN5VB3o+SD7OPtdSDYdk2FSi6DJVEudT+Fbygq5ZVrHBmnYA6St3P
+         Lc7quLU8NBPIyNSt9s7sBLLUzT+X7Zjy0YaQw+ChsuTjFZKGrrxmmjKHNQOFL+QokSqn
+         YaK+Wk3diqLdFH7GjL0Mqf1X984z29HlOMWQ7mjEAIdS2Z4RyAufZwKivBh92Yso8rQ6
+         12qwmFywCU7cJwgAyjsZCcKw45fUCF9d906z05ysYKoU4xpH9j8yy8pvLNXvyDBEK50Z
+         E/2Lkh0xZn5VYM7TLB7AdMe/YhFYSNDUfzGVY7kwUFWEcrARzgcqYmp/jElkZnbdK4oZ
+         N8tg==
+X-Gm-Message-State: AHQUAuZQhzcg36g+oR1/hyJ2/IWv+8mh3FlfEZaXRHLu6J/tnp+AfsQp
+        HcedzXY87ywXTYiuaZuPhg==
+X-Google-Smtp-Source: AHgI3IbmFrN1GPCux7cPUAlRZbe43Ar6DQ1GWo2D32tfx7TwNiSNcRS+UQa0k33YfETSIv1AoENZyw==
+X-Received: by 2002:aca:5e82:: with SMTP id s124mr255622oib.7.1550518373515;
+        Mon, 18 Feb 2019 11:32:53 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id y5sm6206961oix.38.2019.02.18.11.32.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Feb 2019 11:32:52 -0800 (PST)
+Date:   Mon, 18 Feb 2019 13:32:52 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Roger Quadros <rogerq@ti.com>
+Cc:     tony@atomide.com, ohad@wizery.com, bjorn.andersson@linaro.org,
+        s-anna@ti.com, david@lechnology.com, nsekhar@ti.com,
+        t-kristo@ti.com, nsaulnier@ti.com, jreeder@ti.com,
+        m-karicheri2@ti.com, woods.technical@gmail.com,
+        linux-omap@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        "Andrew F. Davis" <afd@ti.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH v2 03/14] dt-binding: irqchip: Add pruss-intc-irq driver
+ for PRUSS interrupts
+Message-ID: <20190218193252.GA6313@bogus>
+References: <1549290167-876-1-git-send-email-rogerq@ti.com>
+ <1549290167-876-4-git-send-email-rogerq@ti.com>
 MIME-Version: 1.0
-References: <20181215151802.18592-1-jagan@amarulasolutions.com>
- <20181215151802.18592-2-jagan@amarulasolutions.com> <20190107225810.ggmkkbrnkoy2ykx5@penguin>
- <CAL_JsqKTnPVM7Qahy9ejQbPfENpLCdzf5K5uUTcPh8j3EiqWRA@mail.gmail.com>
- <CAMty3ZCyq=tZMt6RC1aYJuEWgYp2zv1LBh+ZUwucE+g4RCoUaQ@mail.gmail.com>
- <CAL_JsqKCw3EV+0_DuMiHh7GRGxv7YogQf-xwp71n9gpc2GzSSQ@mail.gmail.com>
- <CAMty3ZBtoocXBW5A0astyQPh2y7vG7NtbZ_M0BjSeex2etmGsw@mail.gmail.com>
- <CAL_JsqJSMX7E2zQA2O8ofZQPDrm3S6PMCLG1iAQ95P10Pe2yFg@mail.gmail.com>
- <CAMty3ZDMB=pwY8Rxdt3du=90pksBedLo0Pc_-=diqx9-Xndzqg@mail.gmail.com>
- <CAMty3ZDBu2Y9psNu9nrZ=BNVvhpJ2qYn-Qp7MDqdhK9_SrcpNg@mail.gmail.com>
- <20190218071207.GE242714@dtor-ws> <CAMty3ZDbFU-NpWQvkaUWgUiVTabjTZoFWUCUZSPKMA6VuHc+iQ@mail.gmail.com>
-In-Reply-To: <CAMty3ZDbFU-NpWQvkaUWgUiVTabjTZoFWUCUZSPKMA6VuHc+iQ@mail.gmail.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Tue, 19 Feb 2019 01:00:19 +0530
-Message-ID: <CAMty3ZBVpNY+JF_vEMs83M29WKQDhzmk7LyL-HHCCA7uD0Y+=g@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: input: touchscreen: goodix: Document
- AVDD28-supply property
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, linux-input@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1549290167-876-4-git-send-email-rogerq@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Feb 18, 2019 at 3:03 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> Hi Dmitry,
->
-> On Mon, Feb 18, 2019 at 12:42 PM Dmitry Torokhov
-> <dmitry.torokhov@gmail.com> wrote:
-> >
-> > On Sun, Feb 17, 2019 at 02:45:52PM +0530, Jagan Teki wrote:
-> > > On Sun, Feb 17, 2019 at 1:21 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > > >
-> > > > Hi Dmitry and Rob,
-> > > >
-> > > > On Thu, Feb 14, 2019 at 3:21 AM Rob Herring <robh@kernel.org> wrote:
-> > > > >
-> > > > > On Tue, Jan 22, 2019 at 7:39 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > > > > >
-> > > > > > On Mon, Jan 21, 2019 at 9:46 PM Rob Herring <robh@kernel.org> wrote:
-> > > > > > >
-> > > > > > > On Fri, Jan 18, 2019 at 10:01 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > > > > > > >
-> > > > > > > > On Wed, Jan 9, 2019 at 7:08 PM Rob Herring <robh@kernel.org> wrote:
-> > > > > > > > >
-> > > > > > > > > Please CC DT list if you want bindings reviewed.
-> > > > > > > >
-> > > > > > > > Sorry I forgot.
-> > > > > > > >
-> > > > > > > > >
-> > > > > > > > > On Wed, Jan 9, 2019 at 1:40 AM Dmitry Torokhov
-> > > > > > > > > <dmitry.torokhov@gmail.com> wrote:
-> > > > > > > > > >
-> > > > > > > > > > On Sat, Dec 15, 2018 at 08:47:59PM +0530, Jagan Teki wrote:
-> > > > > > > > > > > Most of the Goodix CTP controllers are supply with AVDD28 pin.
-> > > > > > > > > > > which need to supply for controllers like GT5663 on some boards
-> > > > > > > > > > > to trigger the power.
-> > > > > > > > > > >
-> > > > > > > > > > > So, document the supply property so-that the require boards
-> > > > > > > > > > > that used on GT5663 can enable it via device tree.
-> > > > > > > > > > >
-> > > > > > > > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > > > > > > > > > ---
-> > > > > > > > > > >  Documentation/devicetree/bindings/input/touchscreen/goodix.txt | 1 +
-> > > > > > > > > > >  1 file changed, 1 insertion(+)
-> > > > > > > > > > >
-> > > > > > > > > > > diff --git a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-> > > > > > > > > > > index f7e95c52f3c7..c4622c983e08 100644
-> > > > > > > > > > > --- a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-> > > > > > > > > > > +++ b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-> > > > > > > > > > > @@ -23,6 +23,7 @@ Optional properties:
-> > > > > > > > > > >   - touchscreen-inverted-y  : Y axis is inverted (boolean)
-> > > > > > > > > > >   - touchscreen-swapped-x-y : X and Y axis are swapped (boolean)
-> > > > > > > > > > >                               (swapping is done after inverting the axis)
-> > > > > > > > > > > + - AVDD28-supply     : Analog power supply regulator on AVDD28 pin
-> > > > > > > > > >
-> > > > > > > > > > I think we normally use lower case in DT bindings and rarely encode
-> > > > > > > > > > voltage in the supply name unless we are dealing with several supplies
-> > > > > > > > > > of the same kind, but I'll let Ron comment on this.
-> > > > > > > > >
-> > > > > > > > > Yes on lowercase though there are some exceptions.
-> > > > > > > > >
-> > > > > > > > > There's also a AVDD22 supply as well as DVDD12 and VDDIO. So we
-> > > > > > > > > probably need to keep the voltage, but the binding is incomplete.
-> > > > > > > >
-> > > > > > > > What is incomplete here? can you please elaborate.
-> > > > > > >
-> > > > > > > You are missing the 3 other supplies the chip has: AVDD22, DVDD12 and VDDIO.
-> > > > > >
-> > > > > > Though it has other supplies, only AVDD28 is connected in the Host
-> > > > > > interface design similar like 9. Reference Schematic on Page, 23 in
-> > > > > > attached manual.
-> > > > >
-> > > > > That is for a particular board design. It still has other supplies.
-> > > > > Just make the binding complete please. You can make them optional. I
-> > > > > don't care if the driver supports controlling all the supplies or not
-> > > > > (though Dmitry might).
-> > > >
-> > > > So, Can I make bulk get and enable in all 4 regulators global to
-> > > > driver or specific to that chip, in either way the regulators which
-> > > > are not used to process via dummy regulators (which we all know).
-> > > >
-> > > > or regulator which are not using are get via devm_regulator_get_optional.
-> > > >
-> > > > Any suggestions?
-> > >
-> > > Just realized to go with bulk calls, please have a look at on v5 [1]
-> >
-> > I do not believe you can use bulk regulator API here as you need to
-> > implement the power up timing scheme mentioned on p. 12 of the spec you
-> > referenced earlier. And, because of that timing diagram, I believe if
-> > you want to control AVDD supply, you also have to control VDDIO supply
-> > as it has to be on only after enabling AVDD.
->
-> AVDD here is AVDD28 it' is an out name of pin (mentioned in p. 23). So
-> the power scheme goes to enable AVDD28 and then VDDIO does that really
-> mean bulk of two regulators?
+On Mon, Feb 04, 2019 at 04:22:36PM +0200, Roger Quadros wrote:
+> From: "Andrew F. Davis" <afd@ti.com>
+> 
+> The Programmable Real-Time Unit Subsystem (PRUSS) contains an
+> interrupt controller (INTC) that can handle various system input
+> events and post interrupts back to the device-level initiators.
+> The INTC can support upto 64 input events with individual control
+> configuration and hardware prioritization. These events are mapped
+> onto 10 interrupt signals through two levels of many-to-one mapping
+> support. Different interrupt signals are routed to the individual
+> PRU cores or to the host CPU.
+> 
+> The PRUSS INTC platform driver manages this PRUSS interrupt
+> controller and implements an irqchip driver to provide a Linux
+> standard way for the PRU client users to enable/disable/ack/
+> re-trigger a PRUSS system event. The system events to interrupt
+> channels and host interrupts relies on the mapping configuration
+> provided through a firmware resource table for now. This will be
+> revisited and enhanced in the future for a better interface. The
+> mappings will currently be programmed during the boot/shutdown
+> of the PRU.
+> 
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Jason Cooper <jason@lakedaemon.net>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Signed-off-by: Andrew F. Davis <afd@ti.com>
+> Signed-off-by: Roger Quadros <rogerq@ti.com>
+> ---
+>  .../interrupt-controller/ti,pruss-intc-irq.txt     | 51 ++++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc-irq.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc-irq.txt b/Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc-irq.txt
+> new file mode 100644
+> index 0000000..c70221c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/ti,pruss-intc-irq.txt
+> @@ -0,0 +1,51 @@
+> +PRU ICSS INTC on TI SoCs
+> +========================
+> +
+> +Each PRUSS has a single interrupt controller instance that is common to both
+> +the PRU cores. Each interrupt controller can detect 64 input events which are
+> +then mapped to 10 possible output interrupts through two levels of mapping. The
+> +input events can be triggered by either the PRUs and/or various other PRUSS
+> +internal and external peripherals. The first 2 output interrupts are fed
+> +exclusively to the internal PRU cores, with the remaining 8 connected to
+> +external interrupt controllers including the MPU.
+> +
+> +Required Properties:
+> +--------------------
+> +- compatible           : should be one of,
+> +                             "ti,am3356-pruss-intc" for AM335x family of SoCs
+> +                             "ti,am4376-pruss-intc" for AM437x family of SoCs
+> +                             "ti,am5728-pruss-intc" for AM57xx family of SoCs
+> +                             "ti,k2g-pruss-intc" for 66AK2G family of SoCs
+> +- reg                  : base address and size for the PRUSS INTC sub-module
+> +- reg-names            : should contain the string "intc"
 
-The time between these two regulator operations is nearly 0, as per
-power scheme diagram T1 >= 0us. I think I can use bulk since there is
-no necessity of delay between these two regulator operations.
+Not really useful with only 1 entry.
 
-What do you think?
+> +- interrupts     : all the interrupts generated towards the main host
+> +                   processor in the SoC. The format depends on the
+> +                   interrupt specifier for the particular SoC's MPU
+> +                   parent interrupt controller
+> +- interrupt-names: should use one of the following names for each interrupt,
+> +                   the name should match the corresponding host interrupt
+> +                   number,
+> +                       "host2", "host3", "host4", "host5", "host6",
+> +                       "host7", "host8" or "host9"
+> +                   NOTE: AM437x and 66AK2G SoCs do not have "host7" interrupt
+> +                         connected to MPU
+> +- interrupt-controller : mark this node as an interrupt controller
+> +- #interrupt-cells     : should be 1. Client users shall use the PRU System
+> +                         event number (the interrupt source that the client
+> +                         is interested in) as the value of the interrupts
+> +                         property in their node
+> +
+> +Example:
+> +--------
+> +		pruss_intc: intc@20000 {
+
+interrupt-controller@20000
+
+> +			compatible = "ti,am3356-pruss-intc";
+> +			reg = <0x20000 0x2000>;
+> +			reg-names = "intc";
+> +			interrupt-controller;
+> +			#interrupt-cells = <1>;
+> +			interrupts = <20 21 22 23 24 25 26 27>;
+> +			interrupt-names = "host2", "host3", "host4",
+> +					  "host5", "host6", "host7",
+> +					  "host8", "host9";
+> +		};
+> +
+> -- 
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> 
