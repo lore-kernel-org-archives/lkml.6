@@ -2,95 +2,163 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2551C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 07:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B84C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 07:23:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A6EF218B0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 07:21:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D68E218C3
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 07:23:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="ESgw5T/T"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qdNepYOK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728788AbfBRHV4 (ORCPT
+        id S1728807AbfBRHX3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 02:21:56 -0500
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:21849 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728775AbfBRHV4 (ORCPT
+        Mon, 18 Feb 2019 02:23:29 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:38786 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727423AbfBRHX2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 02:21:56 -0500
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id x1I7LS4i014294;
-        Mon, 18 Feb 2019 16:21:29 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x1I7LS4i014294
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1550474489;
-        bh=EFqsu5kq8IKOae+Xwksxc2hxBmo8o3hEkNaFC68ve0Y=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ESgw5T/TBcOa6LnGuGo3qNSS9iwo4TXZLt1LHh81hlKWam3eDzgWiKwih0/KQT3xV
-         cXzrmNOrpbf+efecsPz7kzp2sugHenxZ9r+7PjCIWTg7AB0Wv1+3DA3KiDz6ymexUZ
-         mrYfkJTUXaPprFwr/SnsfA0W0UdjVRzErZA8fxnanOf5FCvcl/R0l4qjN/SGjv6sXg
-         nnuXPD3NRhvf0526JReSQy5K0QM5eycow0WgNB0Dye/bSYfgXFRkmzZOiKyHiNTr0G
-         0rnSwLlWrR1p/R9THUJoJEM0H9+vu8OWCuYMXrxzxc/M2vQyQOIpsp3EiazHEaEzs2
-         MCjmKF4rQp4zQ==
-X-Nifty-SrcIP: [209.85.222.53]
-Received: by mail-ua1-f53.google.com with SMTP id j3so5506397uap.3;
-        Sun, 17 Feb 2019 23:21:29 -0800 (PST)
-X-Gm-Message-State: AHQUAuaAfk/EtilsVeXrgJxtZ9IXADU9BFDYUqvll1x/k/gng80OUhY2
-        ksv8chZdqAY6k8E69H8S4Ri9Zd9AW43ZeKPynRI=
-X-Google-Smtp-Source: AHgI3Ib+T07tKbdDZhKstm6j3PUoSjoqt1MGcjEWaCqndR34OF7iXAwuDFxPAMaqEGyJjS9SC4FUBdX/jtrLoIdogg4=
-X-Received: by 2002:ab0:648c:: with SMTP id p12mr6655199uam.93.1550474488067;
- Sun, 17 Feb 2019 23:21:28 -0800 (PST)
+        Mon, 18 Feb 2019 02:23:28 -0500
+Received: by mail-pg1-f195.google.com with SMTP id m2so5741075pgl.5;
+        Sun, 17 Feb 2019 23:23:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FTZkn+V6r3SZF8iWxRRdmUw/z6+ykv2abHF6AhksFOY=;
+        b=qdNepYOKfpVxbGSY6dh4uNwpIrtgL/4VqplafL6VO6VDqXbBAVUY0pHyIcExQaMa0Q
+         CDEZmRHbeCOvnUDk6/NkFZwwiUlJUfkmufLxci9zMtlA/FmfF3VCjg7OnyZfaqhjjTUR
+         WvMvQbkrfGldzsuOA04mI1nLOmQjatyy3duhPPya+XusN9WkFcqI9Ncx+s9LchOHSBLo
+         Cy9uZWxSdr9LE1L56rZHazJ0cg99iwOfI3cJ/WhS8qcbv9KvYxUlb42AwOAQDqR8iuq5
+         76eX7ilx07TK/X99c16x8pBPfWiK/Uby0/01yX3JMidEfanhG9RkymF3VZ3fcLBDx1hz
+         x5ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FTZkn+V6r3SZF8iWxRRdmUw/z6+ykv2abHF6AhksFOY=;
+        b=S0DSZbwRW0kF7WyX1wAvg9iknbLvWwTJLffxFja8M8LX6WQILcGaq3pX7zZl33w+X5
+         jOucRDsbg3bmbUrg9FJAD4rxdEHos+mavxrCZ22y2RmBmoZpwCo6hXe1ntumurXuqFmZ
+         HsWu3kDmN6nb41AtqAbMShDhcIjEgqD20F8mNOIN7x+QVRa0GlEPMZDtFSmCyRgP7TJY
+         SEw51gjERDqWVj680Nz0MmQzcyH166xlmWfNyrDsVbl/KQZTNnlJxhtoQpTfEgN6sbHd
+         ivQGyKkdOWn19ZsfKNB1kyhqbBl2hBbkNmVz0Lx+FMybMuxeJWbdeMUWcUTM/L4y+EJU
+         xxUA==
+X-Gm-Message-State: AHQUAuZe0+QBJeUO1bIVbifePIZ9Dpo2tYQeEzJ2UANZqMaYfvi+sHiz
+        IlhtPzsRqOq2fVHg4HQs8tA=
+X-Google-Smtp-Source: AHgI3Iab6GMU1unyw+qDbbZ5QUGF/NJ5odW3HLjjPnLR16Ax1R7M6vmKluU0fWoyB3jhD9DtsSgQcw==
+X-Received: by 2002:a62:3047:: with SMTP id w68mr9493339pfw.17.1550474607433;
+        Sun, 17 Feb 2019 23:23:27 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id i71sm37223030pfi.170.2019.02.17.23.23.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 17 Feb 2019 23:23:26 -0800 (PST)
+Date:   Sun, 17 Feb 2019 23:23:25 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-input@vger.kernel.org
+Subject: Re: [PATCH] Input: i8042 - Rework DT node name comparisons
+Message-ID: <20190218072325.GF242714@dtor-ws>
+References: <20190213161631.17028-1-robh@kernel.org>
 MIME-Version: 1.0
-References: <20190207123022.7961-1-2pi@mok.nu>
-In-Reply-To: <20190207123022.7961-1-2pi@mok.nu>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 18 Feb 2019 16:20:52 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQZ7PDZ4+uZu-FT4V8yw9oUGz6e++9xSshWJvALj3gN0Q@mail.gmail.com>
-Message-ID: <CAK7LNAQZ7PDZ4+uZu-FT4V8yw9oUGz6e++9xSshWJvALj3gN0Q@mail.gmail.com>
-Subject: Re: [PATCH] modpost: file2alias: define size of alias
-To:     Mattias Jacobsson <2pi@mok.nu>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190213161631.17028-1-robh@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mattias,
+On Wed, Feb 13, 2019 at 10:16:31AM -0600, Rob Herring wrote:
+> Convert string compares of DT node names to use of_node_name_eq helper
+> instead. For the root node on SUN DT, we need to retrieve the 'name'
+> property as it is the rare case where the 'name' property and node name
+> differ. With both changes, it removes direct access to the node name
+> pointer.
+> 
+> While at it, comvert the open coded loop to use
+> for_each_child_of_node().
+> 
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: linux-input@vger.kernel.org
+> Signed-off-by: Rob Herring <robh@kernel.org>
 
-On Thu, Feb 7, 2019 at 9:31 PM Mattias Jacobsson <2pi@mok.nu> wrote:
->
-> The size of the variable alias provided to do_entry functions are
-> currently not readily available. Thus hindering do_entry functions to
-> perform bounds checking.
->
-> Define the macro ALIAS_SIZE containing the size of the variable alias.
->
-> Signed-off-by: Mattias Jacobsson <2pi@mok.nu>
+Applied, thank you.
 
-
-Sorry for late reply.
-
-I can apply this to my kbuild tree shortly, but
-it looks like a prerequisite for your
-"platform/x86: wmi: use MODULE_DEVICE_TABLE() instead of MODULE_ALIAS()"
-
-
-If you want all the patches to go through x86 platform-driver tree,
-I am fine with that too.
-
-Please let me know what you want.
-
-Thanks.
-
-
+> ---
+>  drivers/input/serio/i8042-sparcio.h | 21 ++++++++++-----------
+>  1 file changed, 10 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/input/serio/i8042-sparcio.h b/drivers/input/serio/i8042-sparcio.h
+> index 796289846204..fce76812843b 100644
+> --- a/drivers/input/serio/i8042-sparcio.h
+> +++ b/drivers/input/serio/i8042-sparcio.h
+> @@ -53,12 +53,11 @@ static struct resource *kbd_res;
+>  
+>  static int sparc_i8042_probe(struct platform_device *op)
+>  {
+> -	struct device_node *dp = op->dev.of_node;
+> +	struct device_node *dp;
+>  
+> -	dp = dp->child;
+> -	while (dp) {
+> -		if (!strcmp(dp->name, OBP_PS2KBD_NAME1) ||
+> -		    !strcmp(dp->name, OBP_PS2KBD_NAME2)) {
+> +	for_each_child_of_node(op->dev.of_node, dp) {
+> +		if (of_node_name_eq(dp, OBP_PS2KBD_NAME1) ||
+> +		    of_node_name_eq(dp, OBP_PS2KBD_NAME2)) {
+>  			struct platform_device *kbd = of_find_device_by_node(dp);
+>  			unsigned int irq = kbd->archdata.irqs[0];
+>  			if (irq == 0xffffffff)
+> @@ -67,16 +66,14 @@ static int sparc_i8042_probe(struct platform_device *op)
+>  			kbd_iobase = of_ioremap(&kbd->resource[0],
+>  						0, 8, "kbd");
+>  			kbd_res = &kbd->resource[0];
+> -		} else if (!strcmp(dp->name, OBP_PS2MS_NAME1) ||
+> -			   !strcmp(dp->name, OBP_PS2MS_NAME2)) {
+> +		} else if (of_node_name_eq(dp, OBP_PS2MS_NAME1) ||
+> +			   of_node_name_eq(dp, OBP_PS2MS_NAME2)) {
+>  			struct platform_device *ms = of_find_device_by_node(dp);
+>  			unsigned int irq = ms->archdata.irqs[0];
+>  			if (irq == 0xffffffff)
+>  				irq = op->archdata.irqs[0];
+>  			i8042_aux_irq = irq;
+>  		}
+> -
+> -		dp = dp->sibling;
+>  	}
+>  
+>  	return 0;
+> @@ -109,8 +106,9 @@ static struct platform_driver sparc_i8042_driver = {
+>  static int __init i8042_platform_init(void)
+>  {
+>  	struct device_node *root = of_find_node_by_path("/");
+> +	const char *name = of_get_property(root, "name", NULL);
+>  
+> -	if (!strcmp(root->name, "SUNW,JavaStation-1")) {
+> +	if (name && !strcmp(name, "SUNW,JavaStation-1")) {
+>  		/* Hardcoded values for MrCoffee.  */
+>  		i8042_kbd_irq = i8042_aux_irq = 13 | 0x20;
+>  		kbd_iobase = ioremap(0x71300060, 8);
+> @@ -139,8 +137,9 @@ static int __init i8042_platform_init(void)
+>  static inline void i8042_platform_exit(void)
+>  {
+>  	struct device_node *root = of_find_node_by_path("/");
+> +	const char *name = of_get_property(root, "name", NULL);
+>  
+> -	if (strcmp(root->name, "SUNW,JavaStation-1"))
+> +	if (!name || strcmp(name, "SUNW,JavaStation-1"))
+>  		platform_driver_unregister(&sparc_i8042_driver);
+>  }
+>  
+> -- 
+> 2.19.1
+> 
 
 -- 
-Best Regards
-Masahiro Yamada
+Dmitry
