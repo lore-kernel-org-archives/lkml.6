@@ -2,159 +2,94 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,NORMAL_HTTP_TO_IP,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD868C43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F6EFC43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:31:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B147A218DE
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:31:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79D52218DE
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 02:31:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728259AbfBRCbR (ORCPT
+        id S1728306AbfBRCb3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Feb 2019 21:31:17 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:3755 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727266AbfBRCbR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Feb 2019 21:31:17 -0500
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 175F56F765F8D249A42F;
-        Mon, 18 Feb 2019 10:31:15 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
- 14.3.408.0; Mon, 18 Feb 2019 10:31:10 +0800
-From:   Mao Wenan <maowenan@huawei.com>
-To:     <netdev@vger.kernel.org>, <xiyou.wangcong@gmail.com>,
-        <linux-kernel@vger.kernel.org>, <davem@davemloft.net>
-Subject: [PATCH net v2] net: crypto set sk to NULL when af_alg_release.
-Date:   Mon, 18 Feb 2019 10:44:44 +0800
-Message-ID: <20190218024444.137328-1-maowenan@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        Sun, 17 Feb 2019 21:31:29 -0500
+Received: from mga18.intel.com ([134.134.136.126]:23874 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727266AbfBRCb2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Feb 2019 21:31:28 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Feb 2019 18:31:27 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.58,382,1544515200"; 
+   d="scan'208";a="134311016"
+Received: from unknown (HELO [10.239.13.114]) ([10.239.13.114])
+  by FMSMGA003.fm.intel.com with ESMTP; 17 Feb 2019 18:31:25 -0800
+Message-ID: <5C6A1A28.40808@intel.com>
+Date:   Mon, 18 Feb 2019 10:36:24 +0800
+From:   Wei Wang <wei.w.wang@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101 Thunderbird/31.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+To:     David Hildenbrand <david@redhat.com>,
+        'Nitesh Narayan Lal' <nitesh@redhat.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "lcapitulino@redhat.com" <lcapitulino@redhat.com>,
+        "pagupta@redhat.com" <pagupta@redhat.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "riel@surriel.com" <riel@surriel.com>,
+        "mst@redhat.com" <mst@redhat.com>,
+        "dodgen@google.com" <dodgen@google.com>,
+        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
+        "dhildenb@redhat.com" <dhildenb@redhat.com>,
+        "aarcange@redhat.com" <aarcange@redhat.com>
+Subject: Re: [RFC][Patch v8 0/7] KVM: Guest Free Page Hinting
+References: <20190204201854.2328-1-nitesh@redhat.com> <286AC319A985734F985F78AFA26841F73DF6B56A@shsmsx102.ccr.corp.intel.com> <f9516222-793a-a169-c18a-728ca0256cd3@redhat.com> <286AC319A985734F985F78AFA26841F73DF6F0E3@shsmsx102.ccr.corp.intel.com> <bdd4298d-b84b-1ffb-0d9c-3ff5798da325@redhat.com> <286AC319A985734F985F78AFA26841F73DF71F38@shsmsx102.ccr.corp.intel.com> <751444f1-2ff8-e6f8-3501-b0408e3f6035@redhat.com>
+In-Reply-To: <751444f1-2ff8-e6f8-3501-b0408e3f6035@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KASAN has found use-after-free in sockfs_setattr.
-The existed commit 6d8c50dcb029 ("socket: close race condition between sock_close()
-and sockfs_setattr()") is to fix this simillar issue, but it seems to ignore
-that crypto module forgets to set the sk to NULL after af_alg_release.
+On 02/15/2019 05:41 PM, David Hildenbrand wrote:
+> On 15.02.19 10:05, Wang, Wei W wrote:
+>> On Thursday, February 14, 2019 5:43 PM, David Hildenbrand wrote:
+>>> Yes indeed, that is the important bit. They must not be put pack to the
+>>> buddy before they have been processed by the hypervisor. But as the pages
+>>> are not in the buddy, no one allocating a page will stumble over such a page
+>>> and try to allocate it. Threads trying to allocate memory will simply pick
+>>> another buddy page instead of "busy waiting" for that page to be finished
+>>> reporting.
+>> What if a guest thread try to allocate some pages but the buddy cannot satisfy
+>> because all the pages are isolated? Would it be the same case that the guest thread
+>> gets blocked by waiting all the isolated pages to get madvised by the host and
+>> returned to the guest buddy, or even worse, some guest threads get killed due to oom?
+> Your question targets low memory situations in the guest. I think Nitesh
+> already answered parts of that question somewhere and I'll let him
+> answer it in detail, only a short comment from my side :)
+>
+> I can imagine techniques where the OOM killer can be avoided, but the
+> OOM handler will eventually kick in and handle it.
+>
+> In general your question is valid and we will have to think about a way
+> to avoid that from happening. However, in contrast to your approach
+> blocking on potentially every page that is being hinted, in Nitesh's
+> approach this would only happen when the guest is really low on memory.
+> And the question is in general, if a guest wants to hint if low on
+> memory ("safety buffer").
 
-KASAN report details as below:
-BUG: KASAN: use-after-free in sockfs_setattr+0x120/0x150
-Write of size 4 at addr ffff88837b956128 by task syz-executor0/4186
+I think we should forget that the guest is low on memory because
+this approach takes all the pages off the list, not because the guest really
+uses up the free memory.
 
-CPU: 2 PID: 4186 Comm: syz-executor0 Not tainted xxx + #1
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-1.10.2-1ubuntu1 04/01/2014
-Call Trace:
- dump_stack+0xca/0x13e
- print_address_description+0x79/0x330
- ? vprintk_func+0x5e/0xf0
- kasan_report+0x18a/0x2e0
- ? sockfs_setattr+0x120/0x150
- sockfs_setattr+0x120/0x150
- ? sock_register+0x2d0/0x2d0
- notify_change+0x90c/0xd40
- ? chown_common+0x2ef/0x510
- chown_common+0x2ef/0x510
- ? chmod_common+0x3b0/0x3b0
- ? __lock_is_held+0xbc/0x160
- ? __sb_start_write+0x13d/0x2b0
- ? __mnt_want_write+0x19a/0x250
- do_fchownat+0x15c/0x190
- ? __ia32_sys_chmod+0x80/0x80
- ? trace_hardirqs_on_thunk+0x1a/0x1c
- __x64_sys_fchownat+0xbf/0x160
- ? lockdep_hardirqs_on+0x39a/0x5e0
- do_syscall_64+0xc8/0x580
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x462589
-Code: f7 d8 64 89 02 b8 ff ff ff ff c3 66 0f 1f 44 00 00 48 89 f8 48 89
-f7 48 89 d6 48 89
-ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3
-48 c7 c1 bc ff ff
-ff f7 d8 64 89 01 48
-RSP: 002b:00007fb4b2c83c58 EFLAGS: 00000246 ORIG_RAX: 0000000000000104
-RAX: ffffffffffffffda RBX: 000000000072bfa0 RCX: 0000000000462589
-RDX: 0000000000000000 RSI: 00000000200000c0 RDI: 0000000000000007
-RBP: 0000000000000005 R08: 0000000000001000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fb4b2c846bc
-R13: 00000000004bc733 R14: 00000000006f5138 R15: 00000000ffffffff
+Guest allocating one page could also potentially be blocked until all 
+the pages
+(as opposed to one page) being madvised and returned to the guest buddy.
 
-Allocated by task 4185:
- kasan_kmalloc+0xa0/0xd0
- __kmalloc+0x14a/0x350
- sk_prot_alloc+0xf6/0x290
- sk_alloc+0x3d/0xc00
- af_alg_accept+0x9e/0x670
- hash_accept+0x4a3/0x650
- __sys_accept4+0x306/0x5c0
- __x64_sys_accept4+0x98/0x100
- do_syscall_64+0xc8/0x580
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 4184:
- __kasan_slab_free+0x12e/0x180
- kfree+0xeb/0x2f0
- __sk_destruct+0x4e6/0x6a0
- sk_destruct+0x48/0x70
- __sk_free+0xa9/0x270
- sk_free+0x2a/0x30
- af_alg_release+0x5c/0x70
- __sock_release+0xd3/0x280
- sock_close+0x1a/0x20
- __fput+0x27f/0x7f0
- task_work_run+0x136/0x1b0
- exit_to_usermode_loop+0x1a7/0x1d0
- do_syscall_64+0x461/0x580
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Syzkaller reproducer:
-r0 = perf_event_open(&(0x7f0000000000)={0x0, 0x70, 0x0, 0x0, 0x0, 0x0,
-0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
-0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, @perf_config_ext}, 0x0, 0x0,
-0xffffffffffffffff, 0x0)
-r1 = socket$alg(0x26, 0x5, 0x0)
-getrusage(0x0, 0x0)
-bind(r1, &(0x7f00000001c0)=@alg={0x26, 'hash\x00', 0x0, 0x0,
-'sha256-ssse3\x00'}, 0x80)
-r2 = accept(r1, 0x0, 0x0)
-r3 = accept4$unix(r2, 0x0, 0x0, 0x0)
-r4 = dup3(r3, r0, 0x0)
-fchownat(r4, &(0x7f00000000c0)='\x00', 0x0, 0x0, 0x1000)
-
-Fixes: 6d8c50dcb029 ("socket: close race condition between sock_close() and sockfs_setattr()")
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- v1->v2: target patch to "net" mail list.
- crypto/af_alg.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/crypto/af_alg.c b/crypto/af_alg.c
-index 17eb09d222ff..ec78a04eb136 100644
---- a/crypto/af_alg.c
-+++ b/crypto/af_alg.c
-@@ -122,8 +122,10 @@ static void alg_do_release(const struct af_alg_type *type, void *private)
- 
- int af_alg_release(struct socket *sock)
- {
--	if (sock->sk)
-+	if (sock->sk) {
- 		sock_put(sock->sk);
-+		sock->sk = NULL;
-+	}
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(af_alg_release);
--- 
-2.20.1
-
+Best,
+Wei
