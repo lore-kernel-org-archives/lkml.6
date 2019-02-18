@@ -2,117 +2,143 @@ Return-Path: <SRS0=sLOc=QZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 662ECC43381
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:41:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E9C0C43381
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:42:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C57D2173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:41:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05FCD2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Feb 2019 10:42:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730074AbfBRKlk (ORCPT
+        id S1730084AbfBRKm3 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Feb 2019 05:41:40 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55872 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727004AbfBRKlk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Feb 2019 05:41:40 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CE5E780D;
-        Mon, 18 Feb 2019 02:41:39 -0800 (PST)
-Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 774793F720;
-        Mon, 18 Feb 2019 02:41:38 -0800 (PST)
-Date:   Mon, 18 Feb 2019 10:41:33 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Qian Cai <cai@lca.pw>
-Cc:     catalin.marinas@arm.com, andreyknvl@google.com,
-        aryabinin@virtuozzo.com, linux-arm-kernel@lists.infradead.org,
-        kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64/mm: skip hwasan callbacks for pgtable walker
-Message-ID: <20190218104133.GA10743@fuggles.cambridge.arm.com>
-References: <20190216044735.32315-1-cai@lca.pw>
+        Mon, 18 Feb 2019 05:42:29 -0500
+Received: from skedge04.snt-world.com ([91.208.41.69]:56694 "EHLO
+        skedge04.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727004AbfBRKm2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Feb 2019 05:42:28 -0500
+Received: from sntmail12r.snt-is.com (unknown [10.203.32.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by skedge04.snt-world.com (Postfix) with ESMTPS id 6A949600387;
+        Mon, 18 Feb 2019 11:42:18 +0100 (CET)
+Received: from sntmail12r.snt-is.com (10.203.32.182) by sntmail12r.snt-is.com
+ (10.203.32.182) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5; Mon, 18 Feb
+ 2019 11:42:18 +0100
+Received: from sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305]) by
+ sntmail12r.snt-is.com ([fe80::e551:8750:7bba:3305%3]) with mapi id
+ 15.01.1713.004; Mon, 18 Feb 2019 11:42:18 +0100
+From:   Schrempf Frieder <frieder.schrempf@kontron.de>
+To:     "bbrezillon@kernel.org" <bbrezillon@kernel.org>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "Schrempf Frieder" <frieder.schrempf@kontron.de>
+Subject: [PATCH v4 0/7] mtd: rawnand: Support bad block markers in first,
+ second or last page
+Thread-Topic: [PATCH v4 0/7] mtd: rawnand: Support bad block markers in first,
+ second or last page
+Thread-Index: AQHUx3aePo7JMrWUtkuj0rXSuXPgHQ==
+Date:   Mon, 18 Feb 2019 10:42:17 +0000
+Message-ID: <20190218104122.18788-1-frieder.schrempf@kontron.de>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.25.9.43]
+x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190216044735.32315-1-cai@lca.pw>
-User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
+X-SnT-MailScanner-Information: Please contact the ISP for more information
+X-SnT-MailScanner-ID: 6A949600387.AC325
+X-SnT-MailScanner: Not scanned: please contact your Internet E-Mail Service Provider for details
+X-SnT-MailScanner-SpamCheck: 
+X-SnT-MailScanner-From: frieder.schrempf@kontron.de
+X-SnT-MailScanner-To: bbrezillon@kernel.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org, miquel.raynal@bootlin.com,
+        richard@nod.at
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Feb 15, 2019 at 11:47:35PM -0500, Qian Cai wrote:
-> Page table walkers trigger soft lockups below with KASAN_SW_TAGS outline
-> mode on a large ThunderX2 system, because there is too much overhead to
-> call check_memory_region() for every memory access where it needs to
-> dereference every byte of the corresponding KASAN shadow address for the
-> correct tag.
-> 
-> [   76.531328] watchdog: BUG: soft lockup - CPU#65 stuck for 23s! [swapper/0:1]
-> [   76.538372] Modules linked in:
-> [   76.541433] CPU: 65 PID: 1 Comm: swapper/0 Not tainted 5.0.0-rc6+ #62
-> [   76.557697] pstate: 60400009 (nZCv daif +PAN -UAO)
-> [   76.562491] pc : check_memory_region+0x64/0x94
-> [   76.566934] lr : __hwasan_load8_noabort+0x20/0x2c
-> [   76.571633] sp : 7eff808ba0247ca0
-> [   76.574943] x29: 7eff808ba0247cc0 x28: ffff068cef720000
-> [   76.580256] x27: ffff080000000000 x26: 0060000000000793
-> [   76.585568] x25: ffff068d00000000 x24: ffff800003537b98
-> [   76.590880] x23: 7eff808ba0247e08 x22: 0000000000000000
-> [   76.596192] x21: 7eff808ba0247e08 x20: 0000000000000008
-> [   76.601503] x19: ffff1000100a8d64 x18: 0000000000000000
-> [   76.606814] x17: 0000000001000100 x16: 0000000000000000
-> [   76.612125] x15: ffff100013805578 x14: ffff100014085000
-> [   76.617437] x13: 0000000030373a2e x12: 00f0000000000793
-> [   76.622749] x11: ffff808ba0247e0f x10: ffff0808ba0247e0
-> [   76.628060] x9 : ffff0808ba0247e0 x8 : 000000000000007e
-> [   76.633371] x7 : 0000000000000000 x6 : 0000000000000002
-> [   76.638682] x5 : 0000000000000000 x4 : 00e0000000000793
-> [   76.643994] x3 : ffff1000100a8d64 x2 : 0000000000000000
-> [   76.649305] x1 : 0000000000000008 x0 : 7eff808ba0247e08
-> [   76.654617] Call trace:
-> [   76.657066]  check_memory_region+0x64/0x94
-> [   76.661162]  __hwasan_load8_noabort+0x20/0x2c
-> [   76.665519]  note_page+0x84/0x708
-> [   76.668833]  walk_pgd+0x174/0x258
-> [   76.672147]  ptdump_check_wx+0x90/0xfc
-> [   76.675894]  mark_rodata_ro+0x38/0x44
-> [   76.679557]  kernel_init+0x48/0x180
-> [   76.683045]  ret_from_fork+0x10/0x18
-> 
-> Signed-off-by: Qian Cai <cai@lca.pw>
-> ---
->  arch/arm64/mm/Makefile | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/arm64/mm/Makefile b/arch/arm64/mm/Makefile
-> index 849c1df3d214..4b9a7a50faaf 100644
-> --- a/arch/arm64/mm/Makefile
-> +++ b/arch/arm64/mm/Makefile
-> @@ -12,3 +12,9 @@ KASAN_SANITIZE_physaddr.o	+= n
->  
->  obj-$(CONFIG_KASAN)		+= kasan_init.o
->  KASAN_SANITIZE_kasan_init.o	:= n
-> +
-> +ifdef CONFIG_KASAN_SW_TAGS
-> +ifdef CONFIG_KASAN_OUTLINE
-> +KASAN_SANITIZE_dump.o		:= n
-> +endif
-> +endif
+From: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-I really don't think this is the right way to go about this. Either the
-machine eventually makes progress, in which case perhaps the default soft
-watchdog timeout should increase when KASAN is enabled, or the machine locks
-up, which is a bug.
+Currently supported bad block marker positions within the block are:
+* in first page only
+* in last page only
+* in first or second page
 
-With your proposal, it will be very difficult to justify ever re-enabling
-KASAN on this file and therefore it just chips away at the code coverage
-because of an issue that doesn't appear to be well understood.
+After some cleanup and preparation in patch 1 and 2, we make it
+possible to set NAND_BBM_FIRSTPAGE, NAND_BBM_SECONDPAGE and
+NAND_BBM_LASTPAGE independently of each other (patch 3).
 
-So please consider this a "NAK" from me based on the current information
-that we have.
+Some ESMT NANDs are known to have been shipped by the manufacturer
+with bad block markers in the first or last page, instead of the
+first or second page.
 
-Will
+Also the datasheets for Cypress/Spansion/AMD NANDs claim that the
+first, second *and* last page needs to be checked.
+
+Therefore in patch 4 and 5 we set all three flags for
+AMD/Spansion/Cypress and ESMT chips.
+---
+Changes in v4:
+==============
+* Move onenand changes to separate patch
+* Add missing badblockpos field to onenand_chip struct
+* Move cleanup of badblockpos field and flags to separate patch
+* Move assignemnt of badblockpos from onenand_bbt.c to onenand_base.c
+* Fix incorrect usage of bbt_options in nand_bbt.c
+* Add R-b tags
+
+Changes in v3:
+==============
+* Fix bit offsets for new flags in nand_chip->options
+* Move separation of flags for first and second page markers to a
+  separate patch
+* Fix cover letter
+* Fix S-o-b tag
+* Add R-b tags
+
+Changes in v2:
+==============
+* Rebase on 5.0-rc1
+* Add patch to move bad block marker position info to a common place and
+  rename/prepare existing flags
+* improve/rename function nand_bbm_get_next_page() to use new flags
+---
+Frieder Schrempf (7):
+  mtd: rawnand: Always store info about bad block markers in chip struct
+  mtd: onenand: Store bad block marker position in chip struct
+  mtd: nand: Cleanup flags and fields for bad block marker position
+  mtd: nand: Make flags for bad block marker position more granular
+  mtd: rawnand: Support bad block markers in first, second or last page
+  mtd: rawnand: ESMT: Also use the last page for bad block markers
+  mtd: rawnand: AMD: Also use the last page for bad block markers
+
+ drivers/mtd/nand/onenand/onenand_base.c |  5 +-
+ drivers/mtd/nand/onenand/onenand_bbt.c  |  3 --
+ drivers/mtd/nand/raw/internals.h        |  1 +
+ drivers/mtd/nand/raw/nand_amd.c         |  8 +++-
+ drivers/mtd/nand/raw/nand_base.c        | 64 +++++++++++++++++--------
+ drivers/mtd/nand/raw/nand_bbt.c         | 28 +++++------
+ drivers/mtd/nand/raw/nand_esmt.c        |  9 +++-
+ drivers/mtd/nand/raw/nand_hynix.c       |  4 +-
+ drivers/mtd/nand/raw/nand_macronix.c    |  2 +-
+ drivers/mtd/nand/raw/nand_micron.c      |  2 +-
+ drivers/mtd/nand/raw/nand_samsung.c     |  4 +-
+ drivers/mtd/nand/raw/nand_toshiba.c     |  2 +-
+ drivers/mtd/nand/raw/sh_flctl.c         |  4 +-
+ include/linux/mtd/bbm.h                 | 14 +-----
+ include/linux/mtd/onenand.h             |  3 ++
+ include/linux/mtd/rawnand.h             | 15 ++++++
+ 16 files changed, 104 insertions(+), 64 deletions(-)
+
+-- 
+2.17.1
